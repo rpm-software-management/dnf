@@ -22,8 +22,7 @@
 
 _dnf_helper()
 {
-    local helper=$( ${python_exec} -c "import dnf.cli; print('{}/completion_helper.py'.format(dnf.cli.__path__[0]))" )
-    COMPREPLY+=( $( ${python_exec} ${helper} "$@" -d 0 -q -C 2>/dev/null ) )
+    COMPREPLY+=( $( ${python_exec} -c "import sys; from dnf.cli import completion_helper as ch; ch.main(sys.argv[1:])" "$@" -d 0 -q -C 2>/dev/null ) )
 }
 
 _is_path()
