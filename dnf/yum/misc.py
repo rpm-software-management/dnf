@@ -275,7 +275,7 @@ def keyInstalled(ts, keyid, timestamp):
     Return values:
         - -1      key is not installed
         - 0       key with matching ID and timestamp is installed
-        - 1       key with matching ID is installed but has a older timestamp
+        - 1       key with matching ID is installed but has an older timestamp
         - 2       key with matching ID is installed but has a newer timestamp
 
     No effort is made to handle duplicates. The first matching keyid is used to
