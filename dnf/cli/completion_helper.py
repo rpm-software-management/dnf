@@ -152,7 +152,7 @@ class CleanCompletionCommand(dnf.cli.commands.clean.CleanCommand):
         super(CleanCompletionCommand, self).__init__(args)
 
     def run(self, args):
-        subcmds = self.__class__.__base__.usage[1:-1].split("|")[1:]
+        subcmds = self.__class__.__base__.usage[1:-1].split("|")
         print("\n".join(filter_list_by_kw(args[1], subcmds)))
 
 
