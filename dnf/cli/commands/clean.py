@@ -32,12 +32,12 @@ import os
 
 logger = logging.getLogger("dnf")
 
+valid_args = ('packages', 'metadata', 'dbcache', 'plugins', 'expire-cache',
+              'rpmdb', 'all')
+
 
 def _check_args(cli, basecmd, extcmds):
     """Verify that extcmds are valid options for clean."""
-
-    valid_args = ('packages', 'metadata', 'dbcache', 'plugins',
-                  'expire-cache', 'rpmdb', 'all')
 
     if len(extcmds) == 0:
         logger.critical(_('Error: clean requires an option: %s'),
@@ -141,7 +141,7 @@ class CleanCommand(commands.Command):
 
     aliases = ('clean',)
     summary = _("Remove cached data")
-    usage = "[packages|metadata|dbcache|plugins|expire-cache|rpmdb|all]"
+    usage = "[%s]" % "".join(valid_args)
 
 
     def clean(self, userlist):
