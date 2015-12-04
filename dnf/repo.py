@@ -117,10 +117,14 @@ class _DownloadErrors(object):
         return pload.download_size
 
 
+def _download_sort_key(payload):
+    return not hasattr(payload, 'delta')
+
 def download_payloads(payloads, drpm):
     # download packages
     drpm.err.clear()
-    targets = [pload.librepo_target() for pload in payloads]
+    targets = [pload.librepo_target()
+               for pload in sorted(payloads, key=_download_sort_key)]
     errs = _DownloadErrors()
     try:
         librepo.download_packages(targets, failfast=True)
