@@ -739,7 +739,7 @@ class Output(object):
     def display_groups_in_environment(self, environment):
         """Output information about the packages in a given environment
 
-        :param environment: a Environment object to output information about
+        :param environment: an Environment object to output information about
         """
         def names(groups):
             return sorted(group.name for group in groups)

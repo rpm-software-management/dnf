@@ -347,7 +347,7 @@ exit 0
 - fixed downgrade with wildcard (RhBug:1234763) (Adam Salih)
 - reorganize logic of get_best_selector(s) and query (RhBug:1242946) (Adam
   Salih)
-- completion_helper: don't crash if exception was occured (RhBug:1225225) (Igor
+- completion_helper: don't crash if exception occurred (RhBug:1225225) (Igor
   Gnatenko)
 - base: expire cache if repo is not available (Michal Luscon)
 - Don't suggest --allowerasing if it is enabled (Christian Stadelmann)
@@ -427,7 +427,7 @@ exit 0
 * Fri Jul 17 2015 Michal Luscon <mluscon@redhat.com> 1.0.2-1
 - give --allowerasing hint when error occurs during resolution (RhBug:1148630)
   (Jan Silhan)
-- show --best hint with skipped packages everytime (RhBug:1176351) (Jan Silhan)
+- show --best hint with skipped packages every time (RhBug:1176351) (Jan Silhan)
 - notify about skipped packages when upgrade (RhBug:1210445) (Jan Silhan)
 - dnf-automatic: Document apply_updates=no behavior wrt keepcache (Ville
   Skyttä)
@@ -889,7 +889,7 @@ exit 0
 - cli: sort packages in the transaction summary. (Ales Kozumplik)
 - refactor: cli: massively simplify how errors are propagated from do_transaction(). (Ales Kozumplik)
 - groups: rearrange things in CLI so user has to confirm the group changes. (Ales Kozumplik)
-- groups: commiting the persistor data should only happen at one place. (Ales Kozumplik)
+- groups: committing the persistor data should only happen at one place. (Ales Kozumplik)
 - groups: visualizing the groups transactions. (Ales Kozumplik)
 - Add dnf.util.get_in() to navigate nested dicts with sequences of keys. (Ales Kozumplik)
 - group persistor: generate diffs between old and new DBs. (Ales Kozumplik)

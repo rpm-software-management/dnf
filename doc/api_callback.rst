@@ -52,7 +52,7 @@
     STATUS_FAILED          Download failed because of another error.
     ====================== =======================================================
 
-    `msg` is a an optional string error message further explaining the `status`.
+    `msg` is an optional string error message further explaining the `status`.
 
   .. method:: progress(payload, done)
 

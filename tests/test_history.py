@@ -610,7 +610,7 @@ class TransactionConverterTest(TestCase):
                    item.reason)
 
 
-class ComparisionTests(TestCase):
+class ComparisonTests(TestCase):
 
     def test_transaction(self):
         a = dnf.yum.history.YumHistoryTransaction(None, [1, 5, 0, 5, 0, 0, 0])

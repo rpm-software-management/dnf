@@ -55,7 +55,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
         print(*objects, file=self._stdout)
 
     def test_avail_filter_pkgs(self):
-        """Test querying with an packages filter."""
+        """Test querying with a packages filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
         mixed, apkg_adv_insts = cmd.available_apkg_adv_insts(['to*r', 'nxst'])
