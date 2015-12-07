@@ -117,6 +117,9 @@ class _DownloadErrors(object):
         return pload.download_size
 
 
+def _download_sort_key(payload):
+    return not hasattr(payload, 'delta')
+
 def download_payloads(payloads, drpm):
     # download packages
     def _download_sort_key(payload):
