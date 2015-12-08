@@ -227,19 +227,13 @@ class RPMTransaction(object):
         self._shutdownOutputLogging()
 
     def _extract_cbkey(self, cbkey):
-        if isinstance(cbkey, dnf.transaction.TransactionItem):
-            return self._extract_tsi_cbkey(cbkey)
-        else:
-            return self._cb_package
-
-    @staticmethod
-    def _extract_tsi_cbkey(tsi):
-        assert(isinstance(tsi, dnf.transaction.TransactionItem))
-        return tsi.active, tsi.active_history_state, tsi
-
-    @property
-    def _cb_package(self):
         """Obtain the package related to the calling callback."""
+
+        if isinstance(cbkey, dnf.transaction.TransactionItem):
+            # Easy, tsi is provided by the callback (only happens on installs)
+            return cbkey.active, cbkey.active_history_state, cbkey
+
+        # We don't have the tsi, let's look it up (only happens on erasures)
         te = self._te_list[self._te_index]
         obsoleted = obsoleted_state = obsoleted_tsi = None
         for tsi in self.base.transaction:
@@ -463,7 +457,7 @@ class RPMTransaction(object):
 
     def _instOpenFile(self, bytes, total, h):
         self.lastmsg = None
-        pkg, _, _ = self._extract_tsi_cbkey(h)
+        pkg, _, _ = self._extract_cbkey(h)
         rpmloc = pkg.localPkg()
         try:
             self.fd = open(rpmloc)
@@ -478,7 +472,7 @@ class RPMTransaction(object):
             return self.fd.fileno()
 
     def _instCloseFile(self, bytes, total, h):
-        pkg, state, tsi = self._extract_tsi_cbkey(h)
+        pkg, state, tsi = self._extract_cbkey(h)
         self.fd.close()
         self.fd = None
 
@@ -501,7 +495,7 @@ class RPMTransaction(object):
                 display.progress(None, action, None, None, None, None)
 
     def _instProgress(self, bytes, total, h):
-        pkg, _, tsi = self._extract_tsi_cbkey(h)
+        pkg, _, tsi = self._extract_cbkey(h)
         action = TransactionDisplay.ACTION_FROM_OP_TYPE[tsi.op_type]
         for display in self.displays:
             display.progress(
@@ -515,7 +509,7 @@ class RPMTransaction(object):
         pass
 
     def _unInstStop(self, bytes, total, h):
-        pkg, state, _ = self._cb_package
+        pkg, state, _ = self._extract_cbkey(h)
         self.total_removed += 1
         self.complete_actions += 1
         if state == 'Obsoleted':
