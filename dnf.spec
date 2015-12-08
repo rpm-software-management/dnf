@@ -1,7 +1,7 @@
 %global hawkey_version 0.7.0
 %global librepo_version 1.7.16
 %global libcomps_version 0.1.6
-%global rpm_version 4.12.0
+%global rpm_version 4.13.0-0.rc1.29
 
 %global confdir %{_sysconfdir}/%{name}
 

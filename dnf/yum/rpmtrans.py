@@ -169,6 +169,10 @@ class RPMTransaction(object):
 
         self._setupOutputLogging(base.conf.rpmverbosity)
         self._ts_done = None
+        self._te_list = []
+        # Index in _te_list of the transaction element being processed (for use
+        # in callbacks)
+        self._te_index = 0
 
     def _fdSetCloseOnExec(self, fd):
         """ Set the close on exec. flag for a filedescriptor. """
@@ -226,23 +230,25 @@ class RPMTransaction(object):
         if isinstance(cbkey, dnf.transaction.TransactionItem):
             return self._extract_tsi_cbkey(cbkey)
         else:
-            return self._extract_str_cbkey(cbkey)
+            return self._cb_package
 
     @staticmethod
     def _extract_tsi_cbkey(tsi):
         assert(isinstance(tsi, dnf.transaction.TransactionItem))
         return tsi.active, tsi.active_history_state, tsi
 
-    def _extract_str_cbkey(self, name):
-        assert(isinstance(name, basestring))
+    @property
+    def _cb_package(self):
+        """Obtain the package related to the calling callback."""
+        te = self._te_list[self._te_index]
         obsoleted = obsoleted_state = obsoleted_tsi = None
         for tsi in self.base.transaction:
             # only walk the tsis once. prefer finding an erase over an obsoleted
             # package:
-            if tsi.erased is not None and tsi.erased.name == name:
+            if tsi.erased is not None and str(tsi.erased) == te.NEVRA():
                 return tsi.erased, tsi.erased_history_state, tsi
             for o in tsi.obsoleted:
-                if o.name == name:
+                if str(o) == te.NEVRA():
                     obsoleted = o
                     obsoleted_state = tsi.obsoleted_history_state
                     obsoleted_tsi = tsi
@@ -407,6 +413,11 @@ class RPMTransaction(object):
             self._transProgress( bytes, total, h )
         elif what == rpm.RPMCALLBACK_TRANS_STOP:
             self._transStop( bytes, total, h )
+        elif what == rpm.RPMCALLBACK_ELEM_PROGRESS:
+            # This callback type is issued every time the next transaction
+            # element is about to be processed by RPM, before any other
+            # callbacks are issued.
+            self._elemProgress(bytes, total, h)
         elif what == rpm.RPMCALLBACK_INST_OPEN_FILE:
             return self._instOpenFile( bytes, total, h )
         elif what == rpm.RPMCALLBACK_INST_CLOSE_FILE:
@@ -437,6 +448,7 @@ class RPMTransaction(object):
         self.trans_running = True
         self.ts_all() # write out what transaction will do
         self.ts_done_open()
+        self._te_list = list(self.base._ts)
 
     def _transProgress(self, bytes, total, h):
         pass
@@ -444,6 +456,10 @@ class RPMTransaction(object):
     def _transStop(self, bytes, total, h):
         if self._ts_done is not None:
             self._ts_done.close()
+
+    def _elemProgress(self, bytes, total, h):
+        # "bytes" carries the index of the element
+        self._te_index = bytes
 
     def _instOpenFile(self, bytes, total, h):
         self.lastmsg = None
@@ -499,7 +515,7 @@ class RPMTransaction(object):
         pass
 
     def _unInstStop(self, bytes, total, h):
-        pkg, state, _ = self._extract_str_cbkey(h)
+        pkg, state, _ = self._cb_package
         self.total_removed += 1
         self.complete_actions += 1
         if state == 'Obsoleted':
