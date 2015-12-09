@@ -23,6 +23,25 @@ import dnf.conf.parser
 class SubstituteTest(tests.support.TestCase):
     def test_read(self):
         substs = {'lies' : 'fact'}
+        # Test a single word without braces
         rawstr = '$Substitute some $lies.'
-        self.assertEqual(dnf.conf.parser.substitute(rawstr, substs),
-                         '$Substitute some fact.')
+        result = '$Substitute some fact.'
+        self.assertEqual(substitute(rawstr, substs), result)
+        # And with braces
+        rawstr = '$Substitute some ${lies}.'
+        self.assertEqual(substitute(rawstr, substs), result)
+
+        # Test a word with braces without space
+        rawstr = '$Substitute some ${lies}withoutspace.'
+        result = '$Substitute some factwithoutspace.'
+        self.assertEqual(substitute(rawstr, substs), result)
+
+        # Tests a single brace before (no substitution)
+        rawstr = '$Substitute some ${lieswithoutspace.'
+        result = '$Substitute some ${lieswithoutspace.'
+        self.assertEqual(substitute(rawstr, substs), result)
+
+        # Tests a single brace after (substitution and leave the brace)
+        rawstr = '$Substitute some $lies}withoutspace.'
+        result = '$Substitute some fact}withoutspace.'
+        self.assertEqual(substitute(rawstr, substs), result)
