@@ -112,7 +112,7 @@ The email emitter configuration.
 ``[base]`` section
 ------------------
 
-Can be used to override settings from DNF's main configuration file. See :doc:`command_ref`.
+Can be used to override settings from DNF's main configuration file. See :doc:`conf_ref`.
 
 ===================
  Run dnf-automatic
