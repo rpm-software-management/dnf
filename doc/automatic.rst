@@ -87,6 +87,11 @@ Choosing how the results should be reported.
 
     How the system is called in the reports.
 
+``output_width``
+    number, default: 80
+
+    The width, in characters, that messages that are emitted should be formatted to.
+
 -------------------
 ``[email]`` section
 -------------------
@@ -112,7 +117,7 @@ The email emitter configuration.
 ``[base]`` section
 ------------------
 
-Can be used to override settings from DNF's main configuration file. See :doc:`command_ref`.
+Can be used to override settings from DNF's main configuration file. See :doc:`conf_ref`.
 
 ===================
  Run dnf-automatic
