@@ -33,7 +33,7 @@ Description
 
 .. _command_provides-label:
 
-`DNF`_ is the next upcoming major version of `Yum`_, a package manager for RPM-based Linux distributions. It roughly maintains CLI compatibility with Yum and defines strict API for extensions and plugins. Plugins can modify or extend features of DNF or provide additional CLI commands on top of those mentioned below. If you know the name of such a command (including commands mentioned bellow), you may find/install the package which provides it using the appropriate virtual provide in the form of ``dnf-command(<alias>)`` where ``<alias>`` is the name of the command; e.g. ``dnf-command(repoquery)`` for a ``repoquery`` command (the same applies to specifying dependencies of packages that require a particular command).
+`DNF`_ is the next upcoming major version of `Yum`_, a package manager for RPM-based Linux distributions. It roughly maintains CLI compatibility with Yum and defines strict API for extensions and plugins. Plugins can modify or extend features of DNF or provide additional CLI commands on top of those mentioned below. If you know the name of such a command (including commands mentioned below), you may find/install the package which provides it using the appropriate virtual provide in the form of ``dnf-command(<alias>)`` where ``<alias>`` is the name of the command; e.g. ``dnf-command(repoquery)`` for a ``repoquery`` command (the same applies to specifying dependencies of packages that require a particular command).
 
 Available commands:
 
@@ -322,7 +322,7 @@ Groups are virtual collections of packages. DNF keeps track of groups that the u
 ``dnf [options] group upgrade <group-spec>...``
     Upgrades the packages from the group and upgrades the group itself. The latter comprises of installing pacakges that were added to the group by the distribution and removing packages that got removed from the group as far as they were not installed explicitly by the user.
 
-Groups can be also be marked installed or removed without physically manipualting any packages:
+Groups can also be marked installed or removed without physically manipulating any packages:
 
 ``dnf [options] group mark install <group-spec>...``
     Mark the specified group installed. No packages will be installed by this command but the group is then considered installed.
@@ -412,7 +412,7 @@ Install Command
 
 ``dnf [options] install <spec>...``
     DNF makes sure that the given packages and their dependencies are installed on the system. Each ``<spec>`` can be
-    either a ``<package-spec>``, which specifies a package directly, or a path to the local rpm package, or an URL to a remote rpm package, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If a given package cannot be (and is not already) installed, the exit code will be non-zero.
+    either a ``<package-spec>``, which specifies a package directly, or a path to the local rpm package, or a URL to a remote rpm package, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If a given package cannot be (and is not already) installed, the exit code will be non-zero.
 
     Please make sure that you understand which package will be selected in case of multiple matches (see :ref:`\specifying_packages-label`). See also :ref:`\configuration_files_replacement_policy-label`.
 
@@ -487,7 +487,7 @@ Mark Command
     Marks the specified packages as installed by user. This can be useful if any package was installed as a dependency and is desired to stay on the system when :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with `clean_requirements_on_remove` configuration option set to True is executed.
 
 ``dnf mark remove <package-specs>...``
-    Unmarks the specified packages as installed by user. Whenever you as a user don't need a specific package you can mark it for removal. The package stay still installed on the system and will removed when :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with `clean_requirements_on_remove` configuration option set to True is executed. You should use this operation instead of :ref:`\remove_command-label` if your not sure whether the package is a requirement of other user installed package on the system.
+    Unmarks the specified packages as installed by user. Whenever you as a user don't need a specific package you can mark it for removal. The package stays installed on the system but will be removed when :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with `clean_requirements_on_remove` configuration option set to True is executed. You should use this operation instead of :ref:`\remove_command-label` if you're not sure whether the package is a requirement of other user installed packages on the system.
 
 .. _provides_command-label:
 
@@ -606,10 +606,10 @@ The repository-packages command allows the user to run commands on top of all pa
     Remove all packages installed from the repository along with any packages depending on the packages being removed. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
 ``dnf [options] repository-packages <repoid> remove-or-distro-sync [<package-name-spec>...]``
-    Select all packages installed from the repository. Upgrade, downgrade or keep those of them that are available in another repositories to match the latest version available there and remove the others along with any packages depending on the packages being removed. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
+    Select all packages installed from the repository. Upgrade, downgrade or keep those of them that are available in another repository to match the latest version available there and remove the others along with any packages depending on the packages being removed. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
 ``dnf [options] repository-packages <repoid> remove-or-reinstall [<package-name-spec>...]``
-    Select all packages installed from the repository. Reinstall those of them that are available in another repositories and remove the others along with any packages depending on the packages being removed. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
+    Select all packages installed from the repository. Reinstall those of them that are available in another repository and remove the others along with any packages depending on the packages being removed. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
 ``dnf [options] repository-packages <repoid> upgrade [<package-name-spec>...]``
     Update all packages to the highest resolvable version available in the repository.
@@ -674,7 +674,7 @@ Upgrade Command
 ---------------
 
 ``dnf [options] upgrade``
-    Updates each package to a highest version that is both available and
+    Updates each package to the latest version that is both available and
     resolvable.
 
 ``dnf [options] upgrade <package-installed-specs>...``
