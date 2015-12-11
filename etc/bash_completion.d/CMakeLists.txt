@@ -1,1 +1,5 @@
-INSTALL (FILES "dnf-completion.bash" DESTINATION ${SYSCONFDIR}/bash_completion.d)
+find_package(bash-completion QUIET)
+if(NOT BASH_COMPLETION_COMPLETIONSDIR)
+	set(BASH_COMPLETION_COMPLETIONSDIR "${SYSCONFDIR}/bash_completion.d")
+endif()
+install(FILES "dnf" DESTINATION ${BASH_COMPLETION_COMPLETIONSDIR})
