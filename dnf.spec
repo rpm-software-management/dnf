@@ -185,6 +185,7 @@ popd
 %license COPYING PACKAGE-LICENSING
 %doc AUTHORS README.rst
 %{_bindir}/dnf
+%{_sysconfdir}/bash_completion.d/dnf-completion.bash
 %{_mandir}/man8/dnf.8.gz
 %{_mandir}/man8/yum2dnf.8.gz
 %{_unitdir}/dnf-makecache.service
@@ -206,7 +207,6 @@ popd
 %ghost %{_localstatedir}/log/%{name}.librepo.log
 %ghost %{_localstatedir}/log/%{name}.rpm.log
 %ghost %{_localstatedir}/log/%{name}.plugin.log
-%config %{_sysconfdir}/bash_completion.d/dnf-completion.bash
 %{_mandir}/man5/dnf.conf.5.gz
 %{_tmpfilesdir}/dnf.conf
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
