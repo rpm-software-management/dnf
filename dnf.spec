@@ -23,6 +23,7 @@ BuildRequires:  gettext
 BuildRequires:  python-bugzilla
 BuildRequires:  python-sphinx
 BuildRequires:  systemd
+BuildRequires:  pkgconfig(bash-completion)
 %if 0%{?fedora} >= 23
 Requires:   python3-dnf = %{version}-%{release}
 %else
@@ -183,7 +184,9 @@ popd
 %files -f %{name}.lang
 %doc AUTHORS README.rst COPYING PACKAGE-LICENSING
 %{_bindir}/dnf
-%{_sysconfdir}/bash_completion.d/dnf-completion.bash
+%dir %{_datadir}/bash-completion
+%dir %{_datadir}/bash-completion/completions
+%{_datadir}/bash-completion/completions/dnf
 %{_mandir}/man8/dnf.8.gz
 %{_mandir}/man8/yum2dnf.8.gz
 %{_unitdir}/dnf-makecache.service
