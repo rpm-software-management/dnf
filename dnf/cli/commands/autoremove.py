@@ -22,8 +22,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from .. import commands
 
-import dnf
-
 
 class AutoremoveCommand(commands.Command):
 

@@ -22,7 +22,7 @@ import dnf.callback
 import dnf.cli.progress
 import dnf.pycomp
 import tests.support
-import time
+
 
 class MockStdout(dnf.pycomp.StringIO):
     def visible_lines(self):

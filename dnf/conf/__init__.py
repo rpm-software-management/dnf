@@ -42,7 +42,7 @@ from dnf.yum import misc
 import dnf.const
 import dnf.yum.config
 import logging
-import os.path
+
 
 Conf = dnf.yum.config.YumConf # :api
 logger = logging.getLogger('dnf')

@@ -27,7 +27,7 @@ import logging
 import sys
 from . import misc
 import tempfile
-import collections
+
 
 # transaction set states
 TS_UPDATE = 10

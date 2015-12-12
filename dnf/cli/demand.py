@@ -20,7 +20,6 @@
 
 from __future__ import unicode_literals
 
-from . import output
 
 class _BoolDefault(object):
     def __init__(self, default):

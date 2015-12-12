@@ -22,7 +22,6 @@ from dnf.pycomp import is_py3bytes
 import dnf.const
 import dnf.exceptions
 import rpm
-import sys
 
 
 def detect_releasever(installroot):
