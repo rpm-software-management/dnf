@@ -20,7 +20,6 @@ from __future__ import unicode_literals
 from tests import support
 import dnf.query
 import dnf.subject
-import hawkey
 import time
 from tests.support import TestCase
 

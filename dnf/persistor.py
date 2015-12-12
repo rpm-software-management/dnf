@@ -32,7 +32,6 @@ import distutils.version
 import dnf.util
 import errno
 import fnmatch
-import itertools
 import json
 import logging
 import os

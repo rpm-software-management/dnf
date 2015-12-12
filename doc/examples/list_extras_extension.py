@@ -18,10 +18,8 @@
    in any remote repository.
 """
 
-import sys
-
 import dnf
-import time
+
 
 if __name__ == '__main__':
 

@@ -28,7 +28,6 @@ import dnf.package
 import dnf.subject
 import dnf.transaction
 import hawkey
-import os
 import re
 import rpm
 

@@ -20,7 +20,6 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-import functools
 import hawkey
 import dnf.exceptions
 import dnf.selector

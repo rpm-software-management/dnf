@@ -21,7 +21,6 @@
 
 import dnf.exceptions
 import dnf.cli
-import re
 import sys
 
 
