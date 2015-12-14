@@ -90,7 +90,7 @@ def _clean_files(repos, exts, pathattr, filetype):
     filelist = []
     for ext in exts:
         for repo in repos.iter_enabled():
-            if repo.local:
+            if repo.local and filetype != 'metadata':
                 continue
             path = getattr(repo, pathattr)
             if os.path.exists(path) and os.path.isdir(path):
