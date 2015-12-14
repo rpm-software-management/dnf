@@ -74,7 +74,11 @@ class GroupCommand(commands.Command):
         if extcmds[0] == 'with-optional':
             types = tuple(dnf.const.GROUP_PACKAGE_TYPES + ('optional',))
             return types, extcmds[1:]
-        return dnf.const.GROUP_PACKAGE_TYPES, extcmds
+        elif extcmds[0] == 'mandatory-only':
+            types = ('mandatory',)
+            return types, extcmds[1:]
+        else:
+            return dnf.const.GROUP_PACKAGE_TYPES, extcmds
 
     @classmethod
     def canonical(cls, command_list):
