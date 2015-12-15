@@ -334,7 +334,8 @@ class LocalRepoTest(support.TestCase):
 
     def test_mirrors(self):
         self.repo.md_only_cached = True
-        self.assertFalse(self.repo.load()) # got a cache
+        with mock.patch('dnf.repo.Repo.cachedir', REPOS + "/rpm"):
+            self.assertFalse(self.repo.load())  # got a cache
         self.assertLength(self.repo.metadata.mirrors, 4)
         self.assertEqual(self.repo.metadata.mirrors[0], 'http://many/x86_64')
 
