@@ -181,7 +181,7 @@ make ARGS="-V" test
 popd
 
 %files -f %{name}.lang
-%{!?_licensedir:%global license %%doc}
+%{!?_licensedir:%global license %doc}
 %license COPYING PACKAGE-LICENSING
 %doc AUTHORS README.rst
 %{_bindir}/dnf
