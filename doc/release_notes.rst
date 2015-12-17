@@ -22,6 +22,27 @@
 .. contents::
 
 ===================
+1.1.5 Release Notes
+===================
+
+Improved the start-up time of bash completion.
+
+Reviewed documentation.
+
+Bugs fixed in 1.1.5:
+
+* :rhbug:`1286619`
+* :rhbug:`1229046`
+* :rhbug:`1282250`
+* :rhbug:`1265391`
+* :rhbug:`1283017`
+* :rhbug:`1278592`
+* :rhbug:`1260421`
+* :rhbug:`1278382`
+* :rhbug:`1230820`
+* :rhbug:`1280240`
+
+===================
 1.1.4 Release Notes
 ===================
 
