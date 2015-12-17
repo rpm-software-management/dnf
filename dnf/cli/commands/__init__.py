@@ -1026,10 +1026,10 @@ class HelpCommand(Command):
         command_names = command.aliases
         if len(command_names) > 1:
             if len(command_names) > 2:
-                help_output += _("\n\naliases: ")
+                help_output += _("aliases: ")
             else:
-                help_output += _("\n\nalias: ")
-            help_output += ', '.join(command.aliases[1:])
+                help_output += _("alias: ")
+            help_output = '\n\n' + help_output + ', '.join(command.aliases[1:])
 
         return help_output
 
