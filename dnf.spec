@@ -10,7 +10,7 @@
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 
 Name:		dnf
-Version:	1.1.4
+Version:	1.1.5
 Release:	1%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -275,6 +275,31 @@ exit 0
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Thu Dec 17 2015 Michal Luscon <mluscon@redhat.com> 1.1.5-1
+- base: save group persistor only after successful transaction (RhBug:1229046)
+  (Michal Luscon)
+- base: do not clean tempfiles after remove transaction (RhBug:1282250) (Michal
+  Luscon)
+- base: clean packages that do not belong to any trans (Michal Luscon)
+- upgrade: allow group upgrade via @ syntax (RhBug:1265391) (Michal Luscon)
+- spec: Mark license files as %%license where available (Ville Skyttä)
+- Remove unused imports (Ville Skyttä)
+- Spelling fixes (Ville Skyttä)
+- Fix typos in documentation (Rob Cutmore)
+- parser: add support for braces in substitution (RhBug:1283017) (Dave
+  Johansen)
+- completion_helper: Don't omit "packages" from clean completions (Ville
+  Skyttä)
+- bash-completion: Avoid unnecessary python invocation per _dnf_helper (Ville
+  Skyttä)
+- repo: Download drpms early (RhBug:1260421) (Ville Skyttä)
+- clean: Don't hardcode list of args in two places (Ville Skyttä)
+- cli: don't crash if y/n and sys.stdin is None (RhBug:1278382) (Adam
+  Williamson)
+- sp err "environement" -> "environment" (Michael Goodwin)
+- Remove -OO from #!/usr/bin/python (RhBug:1230820) (Jaroslav Mracek)
+- cli: warn if plugins are disabled (RhBug:1280240) (Michal Luscon)
+
 * Mon Nov 16 2015 Michal Luscon <mluscon@redhat.com> 1.1.4-1
 - AUTHORS: updated (Jan Silhan)
 - query: add compatibility methods (Michal Luscon)

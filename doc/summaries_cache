@@ -1370,5 +1370,45 @@
     [
         1274946, 
         "[abrt] dnf: main.py:99:main:IOError: [Errno 5] Input/output error"
+    ], 
+    [
+        1286619, 
+        "[abrt] dnf: group.py:253:_mark_install:AttributeError: 'GroupPersistor' object has no attribute 'environement'"
+    ], 
+    [
+        1229046, 
+        "mark group as installed only after successful transaction"
+    ], 
+    [
+        1282250, 
+        "RFE: don't consider remove operations as successful transactions"
+    ], 
+    [
+        1265391, 
+        "`dnf update @group` doesn't work"
+    ], 
+    [
+        1283017, 
+        "[rfe] support braces in variable substitution"
+    ], 
+    [
+        1278592, 
+        "Bad default for email_from in automatic.conf"
+    ], 
+    [
+        1260421, 
+        "[rfe] dnf should download drpms first"
+    ], 
+    [
+        1278382, 
+        "DNF python programming error when run from virt-builder"
+    ], 
+    [
+        1230820, 
+        "/usr/bin/dnf using -OO"
+    ], 
+    [
+        1280240, 
+        "dnf should warn if plugins are disabled and an unknown command is requested"
     ]
 ]
