@@ -189,7 +189,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 ``name``
     :ref:`string <string-label>`
 
-    A human-readable name of the repository. Defaults to the ID of the repository. 
+    A human-readable name of the repository. Defaults to the ID of the repository.
 
 .. _repo_priority-label:
 
@@ -204,6 +204,8 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     :ref:`boolean <boolean-label>`
 
     If enabled, DNF will continue running and disable the repository that couldn't be contacted for any reason when downloading metadata. This option doesn't affect skipping of unavailable packages after dependency resolution. To check inaccessibility of repository use it in combination with :ref:`refresh command line option <refresh_command-label>`. The default is True.
+
+.. _strict-label:
 
 ``strict``
     :ref:`boolean <boolean-label>`
