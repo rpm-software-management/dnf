@@ -630,12 +630,12 @@ class Base(object):
                 disk[m.group(2)] = int(m.group(1))
 
         if disk:
-            summary += _('Disk Requirements:\n')
+            summary += _('Disk Requirements:') + "\n"
             for k in disk:
-                summary += P_(
-                    '  At least %dMB more space needed on the %s filesystem.\n',
-                    '  At least %dMB more space needed on the %s filesystem.\n',
-                    disk[k]) % (disk[k], k)
+                summary += "   " + P_(
+                    'At least %dMB more space needed on the %s filesystem.',
+                    'At least %dMB more space needed on the %s filesystem.',
+                    disk[k]) % (disk[k], k) + '\n'
 
         summary = _('Error Summary\n-------------\n') + summary
 
@@ -1831,11 +1831,10 @@ class Base(object):
         key_installed = False
 
         def _prov_key_data(msg):
-            msg += _('\n\n\n'
-                     ' Failing package is: %s\n'
+            msg += _('Failing package is: %s\n'
                      ' GPG Keys are configured as: %s\n'
                      ) % (po, ", ".join(repo.gpgkey))
-            return msg
+            return '\n\n\n' + msg
 
         user_cb_fail = False
         for keyurl in keyurls:
