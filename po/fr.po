@@ -18,31 +18,31 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-16 13:32+0100\n"
+"POT-Creation-Date: 2015-12-17 14:25+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2015-11-09 08:58-0500\n"
-"Last-Translator: Maxim Therrien <acerspyro@gmail.com>\n"
+"PO-Revision-Date: 2015-12-02 05:15-0500\n"
+"Last-Translator: Jérôme Fenal <jfenal@gmail.com>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/dnf/language/fr/)\n"
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
 "X-Generator: Zanata 3.7.3\n"
 
-#: ../dnf/persistor.py:315
+#: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
 msgstr "Base de données des groupes invalide, nettoyage."
 
-#: ../dnf/persistor.py:334
+#: ../dnf/persistor.py:333
 msgid "Unsupported installed groups database found, resetting."
 msgstr "Base de données des groupes installés non supportée : remise à zéro."
 
-#: ../dnf/persistor.py:414
+#: ../dnf/persistor.py:413
 #, python-format
 msgid "%s is empty file"
 msgstr "%s est un fichier vide"
 
-#: ../dnf/drpm.py:63 ../dnf/repo.py:357
+#: ../dnf/drpm.py:63 ../dnf/repo.py:361
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr "type de somme de contrôle non supporté: %s"
@@ -89,7 +89,7 @@ msgstr "Le groupe « %s » est déjà installé."
 msgid "Group '%s' not installed."
 msgstr "Le groupe « %s » n'est pas installé."
 
-#: ../dnf/repo.py:815
+#: ../dnf/repo.py:819
 #, python-format
 msgid "Failed to synchronize cache for repo '%s' from '%s': %s"
 msgstr ""
@@ -404,7 +404,7 @@ msgstr "Opération annulée."
 #: ../dnf/cli/commands/__init__.py:448 ../dnf/cli/commands/__init__.py:536
 #: ../dnf/cli/commands/__init__.py:602 ../dnf/cli/commands/__init__.py:647
 #: ../dnf/cli/commands/__init__.py:720 ../dnf/cli/commands/__init__.py:778
-#: ../dnf/base.py:1308
+#: ../dnf/base.py:1313
 msgid "Nothing to do."
 msgstr "Rien à faire"
 
@@ -431,7 +431,7 @@ msgstr ""
 msgid "Obsoleting Packages"
 msgstr "Obsolescence des paquets"
 
-#: ../dnf/cli/cli.py:307 ../dnf/cli/commands/upgrade.py:91
+#: ../dnf/cli/cli.py:307 ../dnf/cli/commands/upgrade.py:87
 #: ../dnf/cli/commands/__init__.py:872
 msgid "No packages marked for upgrade."
 msgstr "Aucun paquet marqué pour mise à jour"
@@ -548,19 +548,25 @@ msgstr "Vous devez spécifier des commandes"
 msgid "No such command: %s. Please use %s --help"
 msgstr "Aucune commande telle que : %s. Veuillez utiliser %s --help"
 
-#: ../dnf/cli/cli.py:863
+#: ../dnf/cli/cli.py:864
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
 "Cela est peut-être une commande d'un greffon DNF, essayez : \"dnf install "
 "'dnf-command(%s)'\""
 
-#: ../dnf/cli/cli.py:965 ../dnf/cli/cli.py:969
+#: ../dnf/cli/cli.py:867
+msgid ""
+"It could be a DNF plugin command, but loading of plugins is currently "
+"disabled."
+msgstr ""
+
+#: ../dnf/cli/cli.py:969 ../dnf/cli/cli.py:973
 #, python-format
 msgid "Config error: %s"
 msgstr "Erreur de configuration : %s"
 
-#: ../dnf/cli/cli.py:1075
+#: ../dnf/cli/cli.py:1079
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Commande « %s » déjà définie"
@@ -900,7 +906,7 @@ msgstr "Installé "
 #: ../dnf/cli/output.py:1170 ../dnf/cli/output.py:1556
 #: ../dnf/cli/output.py:1720
 msgid "Upgraded"
-msgstr "Mise à niveau"
+msgstr "Mis à niveau"
 
 #: ../dnf/cli/output.py:1171 ../dnf/cli/output.py:1556
 #: ../dnf/cli/output.py:1718
@@ -1239,7 +1245,7 @@ msgstr "installé"
 
 #: ../dnf/cli/output.py:2075
 msgid "an upgrade"
-msgstr "une mise à niveau"
+msgstr "la mise à niveau"
 
 #: ../dnf/cli/output.py:2076
 msgid "erased"
@@ -1259,7 +1265,7 @@ msgstr "obsolète"
 
 #: ../dnf/cli/output.py:2080
 msgid "upgraded"
-msgstr "mise à niveau"
+msgstr "mis à niveau"
 
 #: ../dnf/cli/output.py:2081
 msgid "obsoleted"
@@ -1272,7 +1278,7 @@ msgstr "rétrogradé"
 #: ../dnf/cli/output.py:2085
 #, python-format
 msgid "---> Package %s.%s %s will be %s"
-msgstr "---> Le paquet %s.%s %s deviendra %s"
+msgstr "---> Le paquet %s.%s %s sera %s"
 
 #: ../dnf/cli/output.py:2092
 msgid "--> Starting dependency resolution"
@@ -1330,7 +1336,7 @@ msgid "reinstall a package"
 msgstr "Réinstaller un paquet"
 
 #: ../dnf/cli/commands/reinstall.py:84 ../dnf/cli/commands/remove.py:76
-#: ../dnf/cli/commands/upgrade.py:86 ../dnf/cli/commands/__init__.py:518
+#: ../dnf/cli/commands/upgrade.py:72 ../dnf/cli/commands/__init__.py:518
 #: ../dnf/cli/commands/__init__.py:584 ../dnf/cli/commands/__init__.py:714
 #: ../dnf/cli/commands/__init__.py:770 ../dnf/cli/commands/__init__.py:821
 #: ../dnf/cli/commands/__init__.py:866
@@ -1641,7 +1647,7 @@ msgstr "nom du dépôt"
 
 #: ../dnf/cli/commands/upgradeto.py:31
 msgid "Upgrade a package on your system to the specified version"
-msgstr "Mettre à niveau un paquet du système vers la version spécifiée."
+msgstr "Mettre à niveau un paquet du système vers la version indiquée"
 
 #: ../dnf/cli/commands/downgrade.py:34
 msgid "downgrade a package"
@@ -2007,206 +2013,204 @@ msgstr ""
 "Empreinte : %s\n"
 "Provenance : %s"
 
-#: ../dnf/base.py:109
+#: ../dnf/base.py:116
 #, python-format
 msgid "%s, disabling."
 msgstr "%s, désactivation."
 
-#: ../dnf/base.py:289
+#: ../dnf/base.py:301
 msgid ""
-"The downloaded packages were saved in cache till the next successful "
+"The downloaded packages were saved in cache until the next successful "
 "transaction."
 msgstr ""
-"Les paquets téléchargés ont été enregistrés dans le cache jusqu'à la "
-"prochaine transaction réussie."
 
-#: ../dnf/base.py:291
+#: ../dnf/base.py:303
 #, python-format
 msgid "You can remove cached packages by executing '%s'."
 msgstr "Vous pouvez supprimer les paquets en cache en exécutant « %s »."
 
-#: ../dnf/base.py:351
+#: ../dnf/base.py:363
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "tsflag invalide dans le fichier de configuration : %s"
 
-#: ../dnf/base.py:403
+#: ../dnf/base.py:415
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Échec d'ajout du fichier de groupes pour le dépôt : %s - %s"
 
-#: ../dnf/base.py:552
+#: ../dnf/base.py:560
 msgid "Running transaction check"
 msgstr "Test de la transaction en cours"
 
-#: ../dnf/base.py:562
+#: ../dnf/base.py:570
 msgid "Error: transaction check vs depsolve:"
 msgstr ""
 "Erreur : vérification de transaction contre résolution des dépendances :"
 
-#: ../dnf/base.py:568
+#: ../dnf/base.py:576
 msgid "Transaction check succeeded."
 msgstr "La vérification de la transaction a réussi."
 
-#: ../dnf/base.py:571
+#: ../dnf/base.py:579
 msgid "Running transaction test"
 msgstr "Lancement de la transaction de test"
 
-#: ../dnf/base.py:583
+#: ../dnf/base.py:591
 msgid "Transaction check error:\n"
 msgstr "Erreur du contrôle de transaction\n"
 
-#: ../dnf/base.py:590
+#: ../dnf/base.py:598
 msgid "Transaction test succeeded."
 msgstr "Transaction de test réussie."
 
-#: ../dnf/base.py:603
+#: ../dnf/base.py:611
 msgid "Running transaction"
 msgstr "Exécution de la transaction"
 
-#: ../dnf/base.py:625
+#: ../dnf/base.py:633
 msgid "Disk Requirements:\n"
 msgstr "Besoins en espace disque :\n"
 
-#: ../dnf/base.py:628
+#: ../dnf/base.py:636
 #, python-format
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
 msgid_plural "  At least %dMB more space needed on the %s filesystem.\n"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../dnf/base.py:632
+#: ../dnf/base.py:640
 msgid "Error Summary\n"
 "-------------\n"
 msgstr "Résumé des erreurs\n"
 "-------------\n"
 
-#: ../dnf/base.py:694
+#: ../dnf/base.py:702
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
 "Attention : scriptlet ou autres erreurs non fatales apparues pendant la "
 "transaction."
 
-#: ../dnf/base.py:699
+#: ../dnf/base.py:707
 #, python-format
 msgid "Failed to obtain the transaction lock (logged in as: %s)."
 msgstr "Impossible d'obtenir le verrou de transaction (utilisateur : %s)."
 
-#: ../dnf/base.py:702 ../dnf/base.py:712
+#: ../dnf/base.py:710 ../dnf/base.py:720
 msgid "Could not run transaction."
 msgstr "Impossible d'exécuter la transaction."
 
-#: ../dnf/base.py:709
+#: ../dnf/base.py:717
 msgid "Transaction couldn't start:"
 msgstr "La transaction n'a pas pu démarrer :"
 
-#: ../dnf/base.py:721
+#: ../dnf/base.py:729
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Échec de la suppression du fichier de transaction %s"
 
-#: ../dnf/base.py:773
+#: ../dnf/base.py:781
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s est censé être installé, mais ne l'est pas !"
 
-#: ../dnf/base.py:834
+#: ../dnf/base.py:842
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s est censé être supprimé, mais ne l'est pas !"
 
-#: ../dnf/base.py:912
+#: ../dnf/base.py:920
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
 msgstr ""
 "Delta RPMs a réduit la taille des mises à jour de %.1f Mio à %.1f Mio (%d."
 "1%%  économisés)"
 
-#: ../dnf/base.py:960
+#: ../dnf/base.py:968
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "La clé publique pour %s n'est pas installée"
 
-#: ../dnf/base.py:964
+#: ../dnf/base.py:972
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Problème à l'ouverture du paquet %s"
 
-#: ../dnf/base.py:972
+#: ../dnf/base.py:980
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "La clé publique pour %s n'est pas de confiance"
 
-#: ../dnf/base.py:976
+#: ../dnf/base.py:984
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Le paquet %s n'est pas signé"
 
-#: ../dnf/base.py:994
+#: ../dnf/base.py:999
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Impossible de supprimer %s"
 
-#: ../dnf/base.py:998
+#: ../dnf/base.py:1003
 #, python-format
 msgid "%s removed"
 msgstr "%s supprimé"
 
-#: ../dnf/base.py:1333
+#: ../dnf/base.py:1338
 msgid "No groups marked for removal."
 msgstr "Aucun groupe marqué pour suppression."
 
-#: ../dnf/base.py:1352
+#: ../dnf/base.py:1357
 msgid "No group marked for upgrade."
 msgstr ""
 
-#: ../dnf/base.py:1416 ../dnf/base.py:1428
+#: ../dnf/base.py:1421 ../dnf/base.py:1433
 msgid "no package matched"
 msgstr "aucun paquet correspondant"
 
-#: ../dnf/base.py:1467
+#: ../dnf/base.py:1472
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
 msgstr "Le paquet %s n'est pas installé, impossible de le rétrograder."
 
-#: ../dnf/base.py:1474
+#: ../dnf/base.py:1479
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
 msgstr ""
 "Le paquet %s est déjà installé dans une version inférieure, impossible de le "
 "rétrograder."
 
-#: ../dnf/base.py:1493
+#: ../dnf/base.py:1498
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
 msgstr "Impossible de réinstaller le paquet non-installé %s."
 
-#: ../dnf/base.py:1509 ../dnf/base.py:1536
+#: ../dnf/base.py:1514 ../dnf/base.py:1541
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr "Impossible de mettre à jour le paquet non-installé %s."
 
-#: ../dnf/base.py:1516
+#: ../dnf/base.py:1521
 #, python-format
 msgid "Package %s of higher version already installed, cannot update it."
 msgstr ""
 "Le paquet %s est déjà installé dans une version ultérieure, impossible de le "
 "mettre à jour."
 
-#: ../dnf/base.py:1581
+#: ../dnf/base.py:1586
 #, python-format
 msgid "No package %s installed."
 msgstr "Pas de paquet %s à installer"
 
-#: ../dnf/base.py:1693
+#: ../dnf/base.py:1698
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr ""
 "La version la plus ancienne du paquet %s est déjà installée, impossible de "
 "le rétrograder."
 
-#: ../dnf/base.py:1829
+#: ../dnf/base.py:1834
 #, python-format
 msgid "\n"
 "\n"
@@ -2220,25 +2224,25 @@ msgstr ""
 " Le paquet en erreur est : %s\n"
 " Les clés GPG sont configurés comme : %s\n"
 
-#: ../dnf/base.py:1843
+#: ../dnf/base.py:1848
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "La clé GPG %s (0x%s) est déjà installée"
 
-#: ../dnf/base.py:1877
+#: ../dnf/base.py:1882
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "L'import de la clé à échoué (code %d)"
 
-#: ../dnf/base.py:1879
+#: ../dnf/base.py:1884
 msgid "Key imported successfully"
 msgstr "La clé a été importée avec succès"
 
-#: ../dnf/base.py:1883
+#: ../dnf/base.py:1888
 msgid "Didn't install any keys"
 msgstr "Toutes les clés n'ont pas été installées"
 
-#: ../dnf/base.py:1886
+#: ../dnf/base.py:1891
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they "
@@ -2249,12 +2253,12 @@ msgstr ""
 "incorrectes pour ce paquet.\n"
 "Vérifiez que les URL des clés pour ce dépôt soient correctes."
 
-#: ../dnf/base.py:1896
+#: ../dnf/base.py:1901
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr ""
 "L'import de la ou des clés n'a pas résolu le problème, clés incorrectes ?"
 
-#: ../dnf/base.py:1923
+#: ../dnf/base.py:1928
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr "Le paquet %s est déjà installé, ignorer"
