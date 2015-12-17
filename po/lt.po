@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-16 13:32+0100\n"
+"POT-Creation-Date: 2015-12-17 14:25+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -23,20 +23,20 @@ msgstr ""
 "(n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Zanata 3.7.3\n"
 
-#: ../dnf/persistor.py:315
+#: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
 msgstr "Netinkama grupių duomenų bazė, išvaloma."
 
-#: ../dnf/persistor.py:334
+#: ../dnf/persistor.py:333
 msgid "Unsupported installed groups database found, resetting."
 msgstr ""
 
-#: ../dnf/persistor.py:414
+#: ../dnf/persistor.py:413
 #, python-format
 msgid "%s is empty file"
 msgstr "%s yra tuščias failas"
 
-#: ../dnf/drpm.py:63 ../dnf/repo.py:357
+#: ../dnf/drpm.py:63 ../dnf/repo.py:361
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr "nepalaikomas kontrolinės sumos tipas: %s"
@@ -83,7 +83,7 @@ msgstr ""
 msgid "Group '%s' not installed."
 msgstr ""
 
-#: ../dnf/repo.py:815
+#: ../dnf/repo.py:819
 #, python-format
 msgid "Failed to synchronize cache for repo '%s' from '%s': %s"
 msgstr ""
@@ -380,7 +380,7 @@ msgstr ""
 #: ../dnf/cli/commands/__init__.py:448 ../dnf/cli/commands/__init__.py:536
 #: ../dnf/cli/commands/__init__.py:602 ../dnf/cli/commands/__init__.py:647
 #: ../dnf/cli/commands/__init__.py:720 ../dnf/cli/commands/__init__.py:778
-#: ../dnf/base.py:1308
+#: ../dnf/base.py:1313
 msgid "Nothing to do."
 msgstr "Nereikia nieko daryti."
 
@@ -407,7 +407,7 @@ msgstr ""
 msgid "Obsoleting Packages"
 msgstr "Paketai žymimi pasenusiais"
 
-#: ../dnf/cli/cli.py:307 ../dnf/cli/commands/upgrade.py:91
+#: ../dnf/cli/cli.py:307 ../dnf/cli/commands/upgrade.py:87
 #: ../dnf/cli/commands/__init__.py:872
 msgid "No packages marked for upgrade."
 msgstr "Nėra paketų, pažymėtų atnaujinimui."
@@ -523,17 +523,23 @@ msgstr "Reikia pateikti kokią nors komandą"
 msgid "No such command: %s. Please use %s --help"
 msgstr "Nėra komandos: %s. Naudokite %s --help"
 
-#: ../dnf/cli/cli.py:863
+#: ../dnf/cli/cli.py:864
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
 
-#: ../dnf/cli/cli.py:965 ../dnf/cli/cli.py:969
+#: ../dnf/cli/cli.py:867
+msgid ""
+"It could be a DNF plugin command, but loading of plugins is currently "
+"disabled."
+msgstr ""
+
+#: ../dnf/cli/cli.py:969 ../dnf/cli/cli.py:973
 #, python-format
 msgid "Config error: %s"
 msgstr "Konfigūracijos klaida: %s"
 
-#: ../dnf/cli/cli.py:1075
+#: ../dnf/cli/cli.py:1079
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Komanda „%s“ jau apibrėžta"
@@ -1291,7 +1297,7 @@ msgid "reinstall a package"
 msgstr "perdiegti paketą"
 
 #: ../dnf/cli/commands/reinstall.py:84 ../dnf/cli/commands/remove.py:76
-#: ../dnf/cli/commands/upgrade.py:86 ../dnf/cli/commands/__init__.py:518
+#: ../dnf/cli/commands/upgrade.py:72 ../dnf/cli/commands/__init__.py:518
 #: ../dnf/cli/commands/__init__.py:584 ../dnf/cli/commands/__init__.py:714
 #: ../dnf/cli/commands/__init__.py:770 ../dnf/cli/commands/__init__.py:821
 #: ../dnf/cli/commands/__init__.py:866
@@ -1960,65 +1966,65 @@ msgid ""
 " From       : %s"
 msgstr ""
 
-#: ../dnf/base.py:109
+#: ../dnf/base.py:116
 #, python-format
 msgid "%s, disabling."
 msgstr "%s, išjungiama."
 
-#: ../dnf/base.py:289
+#: ../dnf/base.py:301
 msgid ""
-"The downloaded packages were saved in cache till the next successful "
+"The downloaded packages were saved in cache until the next successful "
 "transaction."
 msgstr ""
 
-#: ../dnf/base.py:291
+#: ../dnf/base.py:303
 #, python-format
 msgid "You can remove cached packages by executing '%s'."
 msgstr ""
 
-#: ../dnf/base.py:351
+#: ../dnf/base.py:363
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "Netinkama tsflag konfigūracijos faile: %s"
 
-#: ../dnf/base.py:403
+#: ../dnf/base.py:415
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Nepavyko pridėti grupių failo saugyklai: %s - %s"
 
-#: ../dnf/base.py:552
+#: ../dnf/base.py:560
 msgid "Running transaction check"
 msgstr "Vykdomas tranzakcijos tikrinimas"
 
-#: ../dnf/base.py:562
+#: ../dnf/base.py:570
 msgid "Error: transaction check vs depsolve:"
 msgstr ""
 
-#: ../dnf/base.py:568
+#: ../dnf/base.py:576
 msgid "Transaction check succeeded."
 msgstr "Tranzakcijos tikrinimas sėkmingas."
 
-#: ../dnf/base.py:571
+#: ../dnf/base.py:579
 msgid "Running transaction test"
 msgstr "Vykdomas tranzakcijos testas"
 
-#: ../dnf/base.py:583
+#: ../dnf/base.py:591
 msgid "Transaction check error:\n"
 msgstr "Tranzakcijos tikrinimo klaida:\n"
 
-#: ../dnf/base.py:590
+#: ../dnf/base.py:598
 msgid "Transaction test succeeded."
 msgstr "Tranzakcijos testas sėkmingas."
 
-#: ../dnf/base.py:603
+#: ../dnf/base.py:611
 msgid "Running transaction"
 msgstr "Vykdoma tranzakcija"
 
-#: ../dnf/base.py:625
+#: ../dnf/base.py:633
 msgid "Disk Requirements:\n"
 msgstr "Disko reikalavimai:\n"
 
-#: ../dnf/base.py:628
+#: ../dnf/base.py:636
 #, python-format
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
 msgid_plural "  At least %dMB more space needed on the %s filesystem.\n"
@@ -2026,130 +2032,130 @@ msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
-#: ../dnf/base.py:632
+#: ../dnf/base.py:640
 msgid "Error Summary\n"
 "-------------\n"
 msgstr "Klaidos santrauka\n"
 "-------------\n"
 
-#: ../dnf/base.py:694
+#: ../dnf/base.py:702
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
 "Įspėjimas: scenarijaus arba kitos negalutinės klaidos įvyko tranzakcijos "
 "metu."
 
-#: ../dnf/base.py:699
+#: ../dnf/base.py:707
 #, python-format
 msgid "Failed to obtain the transaction lock (logged in as: %s)."
 msgstr ""
 
-#: ../dnf/base.py:702 ../dnf/base.py:712
+#: ../dnf/base.py:710 ../dnf/base.py:720
 msgid "Could not run transaction."
 msgstr "Nepavyko paleisti tranzakcijos."
 
-#: ../dnf/base.py:709
+#: ../dnf/base.py:717
 msgid "Transaction couldn't start:"
 msgstr "Tranzakcijos paleisti nepavyko:"
 
-#: ../dnf/base.py:721
+#: ../dnf/base.py:729
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Nepavyko pašalinti tranzakcijos failo %s"
 
-#: ../dnf/base.py:773
+#: ../dnf/base.py:781
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s turėjo būti įdiegtas, bet nebuvo!"
 
-#: ../dnf/base.py:834
+#: ../dnf/base.py:842
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s turėjo būti pašalintas, bet nebuvo!"
 
-#: ../dnf/base.py:912
+#: ../dnf/base.py:920
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
 msgstr ""
 
-#: ../dnf/base.py:960
+#: ../dnf/base.py:968
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "%s viešas raktas neįdiegtas"
 
-#: ../dnf/base.py:964
+#: ../dnf/base.py:972
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Problema atveriant paketą %s"
 
-#: ../dnf/base.py:972
+#: ../dnf/base.py:980
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "%s viešasis raktas nepatikimas"
 
-#: ../dnf/base.py:976
+#: ../dnf/base.py:984
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Paketas %s nepasirašytas"
 
-#: ../dnf/base.py:994
+#: ../dnf/base.py:999
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Nepavyksta pašalinti %s"
 
-#: ../dnf/base.py:998
+#: ../dnf/base.py:1003
 #, python-format
 msgid "%s removed"
 msgstr "%s pašalintas"
 
-#: ../dnf/base.py:1333
+#: ../dnf/base.py:1338
 msgid "No groups marked for removal."
 msgstr ""
 
-#: ../dnf/base.py:1352
+#: ../dnf/base.py:1357
 msgid "No group marked for upgrade."
 msgstr ""
 
-#: ../dnf/base.py:1416 ../dnf/base.py:1428
+#: ../dnf/base.py:1421 ../dnf/base.py:1433
 msgid "no package matched"
 msgstr ""
 
-#: ../dnf/base.py:1467
+#: ../dnf/base.py:1472
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
 msgstr ""
 
-#: ../dnf/base.py:1474
+#: ../dnf/base.py:1479
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
 msgstr ""
 
-#: ../dnf/base.py:1493
+#: ../dnf/base.py:1498
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
 msgstr ""
 
-#: ../dnf/base.py:1509 ../dnf/base.py:1536
+#: ../dnf/base.py:1514 ../dnf/base.py:1541
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr ""
 
-#: ../dnf/base.py:1516
+#: ../dnf/base.py:1521
 #, python-format
 msgid "Package %s of higher version already installed, cannot update it."
 msgstr ""
 
-#: ../dnf/base.py:1581
+#: ../dnf/base.py:1586
 #, python-format
 msgid "No package %s installed."
 msgstr "Nėra įdiegto paketo %s"
 
-#: ../dnf/base.py:1693
+#: ../dnf/base.py:1698
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr ""
 
-#: ../dnf/base.py:1829
+#: ../dnf/base.py:1834
 #, python-format
 msgid "\n"
 "\n"
@@ -2162,25 +2168,25 @@ msgstr "\n"
 " Nepavykęs paketas yra: %s\n"
 " GPG raktai sukonfigūruoti taip: %s\n"
 
-#: ../dnf/base.py:1843
+#: ../dnf/base.py:1848
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "GPG raktas iš %s (0x%s) jau įdiegtas"
 
-#: ../dnf/base.py:1877
+#: ../dnf/base.py:1882
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Rakto importas neapvyko (kodas %d)"
 
-#: ../dnf/base.py:1879
+#: ../dnf/base.py:1884
 msgid "Key imported successfully"
 msgstr "Raktas sėkmingai importuotas"
 
-#: ../dnf/base.py:1883
+#: ../dnf/base.py:1888
 msgid "Didn't install any keys"
 msgstr "Neįdiegta jokių raktų"
 
-#: ../dnf/base.py:1886
+#: ../dnf/base.py:1891
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they "
@@ -2191,11 +2197,11 @@ msgstr ""
 "šiam paketui.\n"
 "Patikrinkite, ar teisingi URL yra nustatyti šiai saugyklai."
 
-#: ../dnf/base.py:1896
+#: ../dnf/base.py:1901
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Rakto(-ų) importas nepadėjo, neteisingas(-i) raktas(-ai)?"
 
-#: ../dnf/base.py:1923
+#: ../dnf/base.py:1928
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr "Paketas %s jau įdiegtas, praleidžiama."

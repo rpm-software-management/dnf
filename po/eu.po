@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-11-16 13:32+0100\n"
+"POT-Creation-Date: 2015-12-17 14:25+0100\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -22,21 +22,21 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Zanata 3.7.3\n"
 
-#: ../dnf/persistor.py:315
+#: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
 msgstr "Taldeen datu-base baliogabea, garbitzen"
 
-#: ../dnf/persistor.py:334
+#: ../dnf/persistor.py:333
 msgid "Unsupported installed groups database found, resetting."
 msgstr ""
 "Onartzen ez den talde instalatuen datu-basea aurkitu da, berrezartzen."
 
-#: ../dnf/persistor.py:414
+#: ../dnf/persistor.py:413
 #, python-format
 msgid "%s is empty file"
 msgstr "%s fitxategi hutsa da"
 
-#: ../dnf/drpm.py:63 ../dnf/repo.py:357
+#: ../dnf/drpm.py:63 ../dnf/repo.py:361
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr "onartzen ez den kontroleko batura mota: %s"
@@ -83,7 +83,7 @@ msgstr "'%s' taldea instalatuta dago."
 msgid "Group '%s' not installed."
 msgstr "'%s' taldea ez dago instalatuta."
 
-#: ../dnf/repo.py:815
+#: ../dnf/repo.py:819
 #, python-format
 msgid "Failed to synchronize cache for repo '%s' from '%s': %s"
 msgstr ""
@@ -383,7 +383,7 @@ msgstr "Eragiketa abortatu da."
 #: ../dnf/cli/commands/__init__.py:448 ../dnf/cli/commands/__init__.py:536
 #: ../dnf/cli/commands/__init__.py:602 ../dnf/cli/commands/__init__.py:647
 #: ../dnf/cli/commands/__init__.py:720 ../dnf/cli/commands/__init__.py:778
-#: ../dnf/base.py:1308
+#: ../dnf/base.py:1313
 msgid "Nothing to do."
 msgstr "Ez dago egiteko ezer."
 
@@ -411,7 +411,7 @@ msgstr ""
 msgid "Obsoleting Packages"
 msgstr "Paketeak zaharkitutzat hartzen"
 
-#: ../dnf/cli/cli.py:307 ../dnf/cli/commands/upgrade.py:91
+#: ../dnf/cli/cli.py:307 ../dnf/cli/commands/upgrade.py:87
 #: ../dnf/cli/commands/__init__.py:872
 msgid "No packages marked for upgrade."
 msgstr "Ez da paketerik markatu bertsio-berritzeko."
@@ -527,19 +527,25 @@ msgstr "Komandoren bat eman behar duzu"
 msgid "No such command: %s. Please use %s --help"
 msgstr "Ez dago halako komandorik: %s. Erabili %s --help"
 
-#: ../dnf/cli/cli.py:863
+#: ../dnf/cli/cli.py:864
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
 "DNF plugin baten komandoa izan daiteke, saiatu: \"dnf install 'dnf-"
 "command(%s)'\""
 
-#: ../dnf/cli/cli.py:965 ../dnf/cli/cli.py:969
+#: ../dnf/cli/cli.py:867
+msgid ""
+"It could be a DNF plugin command, but loading of plugins is currently "
+"disabled."
+msgstr ""
+
+#: ../dnf/cli/cli.py:969 ../dnf/cli/cli.py:973
 #, python-format
 msgid "Config error: %s"
 msgstr "Konfigurazio-errorea: %s"
 
-#: ../dnf/cli/cli.py:1075
+#: ../dnf/cli/cli.py:1079
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "\"%s\" komandoa jadanik definitua"
@@ -1299,7 +1305,7 @@ msgid "reinstall a package"
 msgstr "Berrinstalatu pakete bat"
 
 #: ../dnf/cli/commands/reinstall.py:84 ../dnf/cli/commands/remove.py:76
-#: ../dnf/cli/commands/upgrade.py:86 ../dnf/cli/commands/__init__.py:518
+#: ../dnf/cli/commands/upgrade.py:72 ../dnf/cli/commands/__init__.py:518
 #: ../dnf/cli/commands/__init__.py:584 ../dnf/cli/commands/__init__.py:714
 #: ../dnf/cli/commands/__init__.py:770 ../dnf/cli/commands/__init__.py:821
 #: ../dnf/cli/commands/__init__.py:866
@@ -1974,203 +1980,201 @@ msgstr ""
 " Hatz-marka: %s\n"
 " Hemendik : %s"
 
-#: ../dnf/base.py:109
+#: ../dnf/base.py:116
 #, python-format
 msgid "%s, disabling."
 msgstr "%s, desgaitzen."
 
-#: ../dnf/base.py:289
+#: ../dnf/base.py:301
 msgid ""
-"The downloaded packages were saved in cache till the next successful "
+"The downloaded packages were saved in cache until the next successful "
 "transaction."
 msgstr ""
-"Deskargatutako paketeak cache-an gorde dira hurrengo transakzio "
-"arrakastatsura arte."
 
-#: ../dnf/base.py:291
+#: ../dnf/base.py:303
 #, python-format
 msgid "You can remove cached packages by executing '%s'."
 msgstr ""
 
-#: ../dnf/base.py:351
+#: ../dnf/base.py:363
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "Baliogabeko tsflag konfigurazio-fitxategian: %s"
 
-#: ../dnf/base.py:403
+#: ../dnf/base.py:415
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Taldeen fitxategiak biltegitik gehitzeak huts egin du: %s - %s"
 
-#: ../dnf/base.py:552
+#: ../dnf/base.py:560
 msgid "Running transaction check"
 msgstr "Transakzio-egiaztapena exekutatzen"
 
-#: ../dnf/base.py:562
+#: ../dnf/base.py:570
 msgid "Error: transaction check vs depsolve:"
 msgstr ""
 
-#: ../dnf/base.py:568
+#: ../dnf/base.py:576
 msgid "Transaction check succeeded."
 msgstr "Transakzio-egiaztapena ongi egin da."
 
-#: ../dnf/base.py:571
+#: ../dnf/base.py:579
 msgid "Running transaction test"
 msgstr "Transakzio-proba exekutatzen"
 
-#: ../dnf/base.py:583
+#: ../dnf/base.py:591
 msgid "Transaction check error:\n"
 msgstr "Errorea transakzio-egiaztapenean:\n"
 
-#: ../dnf/base.py:590
+#: ../dnf/base.py:598
 msgid "Transaction test succeeded."
 msgstr "Transakzio-proba ongi egin da."
 
-#: ../dnf/base.py:603
+#: ../dnf/base.py:611
 msgid "Running transaction"
 msgstr "Transakzioa exekutatzen"
 
-#: ../dnf/base.py:625
+#: ../dnf/base.py:633
 msgid "Disk Requirements:\n"
 msgstr "Disko-eskakizunak:\n"
 
-#: ../dnf/base.py:628
+#: ../dnf/base.py:636
 #, python-format
 msgid "  At least %dMB more space needed on the %s filesystem.\n"
 msgid_plural "  At least %dMB more space needed on the %s filesystem.\n"
 msgstr[0] ""
 msgstr[1] ""
 
-#: ../dnf/base.py:632
+#: ../dnf/base.py:640
 msgid "Error Summary\n"
 "-------------\n"
 msgstr "Erroreen laburpena\n"
 "-------------\n"
 
-#: ../dnf/base.py:694
+#: ../dnf/base.py:702
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
 "Abisua: transakzioan zehar erroreak scriptlet-ekin edo beste errore ez-larri "
 "batzuk gertatu dira"
 
-#: ../dnf/base.py:699
+#: ../dnf/base.py:707
 #, python-format
 msgid "Failed to obtain the transaction lock (logged in as: %s)."
 msgstr "Ezin izan da transakzio-blokeoa eskuratu (honela saioa hasita: %s)."
 
-#: ../dnf/base.py:702 ../dnf/base.py:712
+#: ../dnf/base.py:710 ../dnf/base.py:720
 msgid "Could not run transaction."
 msgstr "Ezin izan da transakzioa exekutatu."
 
-#: ../dnf/base.py:709
+#: ../dnf/base.py:717
 msgid "Transaction couldn't start:"
 msgstr "Transakzioa ezin izan da abiarazi:"
 
-#: ../dnf/base.py:721
+#: ../dnf/base.py:729
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "%s transakzio-fitxategia kentzeak huts egin du"
 
-#: ../dnf/base.py:773
+#: ../dnf/base.py:781
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s instalatuko zela uste zen baina ez dago instalatuta!"
 
-#: ../dnf/base.py:834
+#: ../dnf/base.py:842
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s kenduko zela uste zen baina ez da kendu!"
 
-#: ../dnf/base.py:912
+#: ../dnf/base.py:920
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
 msgstr ""
 "Eguneratzeen %.1f MBak %.1f MBera murriztu dira delta RPMei esker (%d.1%% "
 "gutxiago dira)"
 
-#: ../dnf/base.py:960
+#: ../dnf/base.py:968
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "%s-(r)entzako gako publikoa ez dago instalatuta"
 
-#: ../dnf/base.py:964
+#: ../dnf/base.py:972
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Arazoa %s paketea irekitzen"
 
-#: ../dnf/base.py:972
+#: ../dnf/base.py:980
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "%s-(r)entzako gako publikoa ez da fidagarria"
 
-#: ../dnf/base.py:976
+#: ../dnf/base.py:984
 #, python-format
 msgid "Package %s is not signed"
 msgstr "%s paketea ez dago sinatuta"
 
-#: ../dnf/base.py:994
+#: ../dnf/base.py:999
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Ezin da %s kendu"
 
-#: ../dnf/base.py:998
+#: ../dnf/base.py:1003
 #, python-format
 msgid "%s removed"
 msgstr "%s kendu da"
 
-#: ../dnf/base.py:1333
+#: ../dnf/base.py:1338
 msgid "No groups marked for removal."
 msgstr "Ez da talderik markatu hura kentzeko."
 
-#: ../dnf/base.py:1352
+#: ../dnf/base.py:1357
 msgid "No group marked for upgrade."
 msgstr ""
 
-#: ../dnf/base.py:1416 ../dnf/base.py:1428
+#: ../dnf/base.py:1421 ../dnf/base.py:1433
 msgid "no package matched"
 msgstr "ez dago bat datorren paketerik"
 
-#: ../dnf/base.py:1467
+#: ../dnf/base.py:1472
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
 msgstr "%s paketea ez dago instalatuta, ezin da bertsio zaharragoa instalatu."
 
-#: ../dnf/base.py:1474
+#: ../dnf/base.py:1479
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
 msgstr ""
 "Bertsio zaharragoko %s paketea instalatuta dago, ezin da bertsio zaharragoa "
 "instalatu."
 
-#: ../dnf/base.py:1493
+#: ../dnf/base.py:1498
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
 msgstr "%s paketea ez dago instalatuta, ezin da berrinstalatu."
 
-#: ../dnf/base.py:1509 ../dnf/base.py:1536
+#: ../dnf/base.py:1514 ../dnf/base.py:1541
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr "%s paketea ez dago instalatuta, ezin da eguneratu."
 
-#: ../dnf/base.py:1516
+#: ../dnf/base.py:1521
 #, python-format
 msgid "Package %s of higher version already installed, cannot update it."
 msgstr "Bertsio berriagoko %s paketea instalatuta dago, ezin da eguneratu."
 
-#: ../dnf/base.py:1581
+#: ../dnf/base.py:1586
 #, python-format
 msgid "No package %s installed."
 msgstr "%s paketea ez dago instalatuta."
 
-#: ../dnf/base.py:1693
+#: ../dnf/base.py:1698
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr ""
 "%s paketearen bertsio zaharra dagoeneko instalatuta, ezin da bertsio "
 "zaharragoa instalatu."
 
-#: ../dnf/base.py:1829
+#: ../dnf/base.py:1834
 #, python-format
 msgid "\n"
 "\n"
@@ -2184,25 +2188,25 @@ msgstr ""
 " Huts egin duen paketea: %s\n"
 " GPG gakoak honela daude konfiguratuta: %s\n"
 
-#: ../dnf/base.py:1843
+#: ../dnf/base.py:1848
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "%s-(e)ko GPG gakoa (0x%s) jadanik instalatuta dago"
 
-#: ../dnf/base.py:1877
+#: ../dnf/base.py:1882
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Gakoaren inportazioak huts egin du (%d kodea)"
 
-#: ../dnf/base.py:1879
+#: ../dnf/base.py:1884
 msgid "Key imported successfully"
 msgstr "Gakoa ongi inportatu da"
 
-#: ../dnf/base.py:1883
+#: ../dnf/base.py:1888
 msgid "Didn't install any keys"
 msgstr "Ez da gakorik instalatu"
 
-#: ../dnf/base.py:1886
+#: ../dnf/base.py:1891
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they "
@@ -2213,11 +2217,11 @@ msgstr ""
 "baina ez dira zuzenak pakete honetarako.\n"
 "Egiaztatu gako URL zuzena konfiguratuta dagoela biltegi honetarako."
 
-#: ../dnf/base.py:1896
+#: ../dnf/base.py:1901
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Gako(ar)en inportazioak ez du balio izan, gako okerra(k)?"
 
-#: ../dnf/base.py:1923
+#: ../dnf/base.py:1928
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr "%s dagoeneko instalatuta dago, saltatzen."
