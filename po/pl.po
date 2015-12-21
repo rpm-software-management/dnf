@@ -11,15 +11,14 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2015-12-17 14:25+0100\n"
-"MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=UTF-8\n"
-"Content-Transfer-Encoding: 8bit\n"
 "PO-Revision-Date: 2015-11-16 11:54-0500\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/dnf/language/pl/)\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
 "Language: pl\n"
-"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
-"|| n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Zanata 3.7.3\n"
 
 #: ../dnf/persistor.py:314
@@ -119,13 +118,10 @@ msgstr "--> Wyszukiwanie niepotrzebnych pozostałych zależności"
 #, python-format
 msgid ""
 "Malformed lock file found: %s.\n"
-"Ensure no other dnf process is running and remove the lock file manually or "
-"run systemd-tmpfiles --remove dnf.conf."
+"Ensure no other dnf process is running and remove the lock file manually or run systemd-tmpfiles --remove dnf.conf."
 msgstr ""
 "Odnaleziono uszkodzony plik blokady: %s.\n"
-"Proszę się upewnić, że żaden inny proces dnf nie jest uruchomiony oraz "
-"ręcznie usunąć plik blokady lub wykonać polecenie systemd-tmpfiles --remove "
-"dnf.conf."
+"Proszę się upewnić, że żaden inny proces dnf nie jest uruchomiony oraz ręcznie usunąć plik blokady lub wykonać polecenie systemd-tmpfiles --remove dnf.conf."
 
 #: ../dnf/lock.py:136
 #, python-format
@@ -400,9 +396,11 @@ msgstr "Pobieranie pakietów:"
 
 #: ../dnf/cli/cli.py:215
 #, python-format
-msgid "Error downloading packages:\n"
+msgid ""
+"Error downloading packages:\n"
 "%s"
-msgstr "Błąd podczas pobierania pakietów:\n"
+msgstr ""
+"Błąd podczas pobierania pakietów:\n"
 "%s"
 
 #: ../dnf/cli/cli.py:252
@@ -410,8 +408,7 @@ msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
 msgstr ""
-"Odmawianie automatycznego zaimportowania kluczy podczas nienadzorowanego "
-"uruchomienia.\n"
+"Odmawianie automatycznego zaimportowania kluczy podczas nienadzorowanego uruchomienia.\n"
 "Należy użyć „-y”, aby wymusić."
 
 #: ../dnf/cli/cli.py:292 ../dnf/cli/cli.py:450 ../dnf/cli/cli.py:456
@@ -538,8 +535,8 @@ msgstr "Nie ma takiego polecenia: %s. Proszę użyć %s --help"
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
-"Może to być polecenie wtyczki programu DNF, proszę spróbować polecenia: „dnf "
-"install 'dnf-command(%s)'”"
+"Może to być polecenie wtyczki programu DNF, proszę spróbować polecenia: „dnf"
+" install 'dnf-command(%s)'”"
 
 #: ../dnf/cli/cli.py:867
 msgid ""
@@ -590,7 +587,8 @@ msgstr "Nazwa"
 
 #: ../dnf/cli/output.py:467 ../dnf/cli/output.py:1050
 msgid "Arch"
-msgstr "Arch."
+msgstr ""
+"Arch................................................................................................................................"
 
 #: ../dnf/cli/output.py:469
 msgid "Epoch"
@@ -610,7 +608,8 @@ msgstr "Rozm."
 
 #: ../dnf/cli/output.py:473
 msgid "Repo"
-msgstr "Repoz."
+msgstr ""
+"Repoz.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z.z."
 
 #: ../dnf/cli/output.py:475
 msgid "From repo"
@@ -674,9 +673,11 @@ msgstr "W porządku? [T/n]: "
 
 #: ../dnf/cli/output.py:707
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "Group: %s"
-msgstr "\n"
+msgstr ""
+"\n"
 "Grupa: %s"
 
 #: ../dnf/cli/output.py:711
@@ -835,10 +836,12 @@ msgstr "     zastępuje  %s%s%s.%s %s\n"
 
 #: ../dnf/cli/output.py:1072
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "Transaction Summary\n"
 "%s\n"
-msgstr "\n"
+msgstr ""
+"\n"
 "Podsumowanie transakcji\n"
 "%s\n"
 
@@ -1365,9 +1368,11 @@ msgstr "Ostrzeżenie: grupa %s nie istnieje."
 
 #: ../dnf/cli/commands/group.py:172
 #, python-format
-msgid "Warning: No groups match:\n"
+msgid ""
+"Warning: No groups match:\n"
 "   %s"
-msgstr "Ostrzeżenie: brak pasujących grup:\n"
+msgstr ""
+"Ostrzeżenie: brak pasujących grup:\n"
 "   %s"
 
 #: ../dnf/cli/commands/group.py:199
@@ -1684,7 +1689,6 @@ msgid ""
 "\n"
 "For more information contact your distribution or package provider."
 msgstr ""
-"\n"
 "Włączono sprawdzanie pakietów za pomocą kluczy GPG. To dobry pomysł, brak\n"
 "jednak zainstalowanych żadnych kluczy publicznych GPG. Należy pobrać klucze\n"
 "dla pakietów, które mają zostać zainstalowane i zainstalować je.\n"
@@ -1764,7 +1768,8 @@ msgstr "Wykonuje polecenia na wszystkich pakietach w podanym repozytorium"
 
 #: ../dnf/cli/commands/__init__.py:919
 msgid "REPO"
-msgstr "REPOZYTORIUM"
+msgstr ""
+"REPOZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUMZYTORIUM"
 
 #: ../dnf/cli/commands/__init__.py:919
 msgid "ARG"
@@ -1788,18 +1793,22 @@ msgid "No help available for %s"
 msgstr "Brak dostępnej pomocy dla %s"
 
 #: ../dnf/cli/commands/__init__.py:1029
-msgid "\n"
+msgid ""
+"\n"
 "\n"
 "aliases: "
-msgstr "\n"
+msgstr ""
+"\n"
 "\n"
 "aliasy: "
 
 #: ../dnf/cli/commands/__init__.py:1031
-msgid "\n"
+msgid ""
+"\n"
 "\n"
 "alias: "
-msgstr "\n"
+msgstr ""
+"\n"
 "\n"
 "alias: "
 
@@ -1810,8 +1819,8 @@ msgstr "Wyświetla lub używa historii transakcji"
 #: ../dnf/cli/commands/__init__.py:1063
 #, python-format
 msgid ""
-"Cannot undo transaction %s, doing so would result in an inconsistent package "
-"database."
+"Cannot undo transaction %s, doing so would result in an inconsistent package"
+" database."
 msgstr ""
 "Nie można cofnąć transakcji %s, zrobienie tego spowodowałoby niespójność "
 "bazy danych pakietów."
@@ -1822,8 +1831,8 @@ msgid ""
 "Cannot rollback transaction %s, doing so would result in an inconsistent "
 "package database."
 msgstr ""
-"Nie można przywrócić transakcji %s, zrobienie tego spowodowałoby niespójność "
-"bazy danych pakietów."
+"Nie można przywrócić transakcji %s, zrobienie tego spowodowałoby niespójność"
+" bazy danych pakietów."
 
 #: ../dnf/cli/commands/__init__.py:1155
 msgid "Transactions:"
@@ -2071,22 +2080,24 @@ msgid_plural "  At least %dMB more space needed on the %s filesystem.\n"
 msgstr[0] ""
 "  Wymagany jest co najmniej %d MB więcej miejsca w systemie plików %s.\n"
 msgstr[1] ""
-"  Wymagane są co najmniej %d MB więcej miejsca w systemie plików %s."
+"  Wymagane są co najmniej %d MB więcej miejsca w systemie plików %s.\n"
 msgstr[2] ""
-"  Wymaganych jest co najmniej %d MB więcej miejsca w systemie plików %s."
+"  Wymaganych jest co najmniej %d MB więcej miejsca w systemie plików %s.\n"
 
 #: ../dnf/base.py:640
-msgid "Error Summary\n"
+msgid ""
+"Error Summary\n"
 "-------------\n"
-msgstr "Podsumowanie błędów\n"
+msgstr ""
+"Podsumowanie błędów\n"
 "-------------------\n"
 
 #: ../dnf/base.py:702
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
-"Ostrzeżenie: podczas transakcji wystąpił skrypt lub inne nie krytyczne błędy."
-""
+"Ostrzeżenie: podczas transakcji wystąpił skrypt lub inne nie krytyczne "
+"błędy."
 
 #: ../dnf/base.py:707
 #, python-format
@@ -2204,17 +2215,19 @@ msgstr "Nie zainstalowano pakietu %s."
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr ""
-"Pakiet %s jest już zainstalowany w najniższej wersji, nie można zainstalować "
-"poprzedniej wersji."
+"Pakiet %s jest już zainstalowany w najniższej wersji, nie można zainstalować"
+" poprzedniej wersji."
 
 #: ../dnf/base.py:1834
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "\n"
 "\n"
 " Failing package is: %s\n"
 " GPG Keys are configured as: %s\n"
-msgstr "\n"
+msgstr ""
+"\n"
 "\n"
 "\n"
 " Nieudany pakiet: %s\n"
@@ -2241,14 +2254,11 @@ msgstr "Nie zainstalowano żadnych kluczy"
 #: ../dnf/base.py:1891
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they "
-"are not correct for this package.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"Klucze GPG wyświetlone dla repozytorium „%s” są już zainstalowane, ale nie "
-"są poprawne dla tego pakietu.\n"
-"Proszę sprawdzić, czy dla tego repozytorium skonfigurowane są poprawne "
-"adresy URL do kluczy."
+"Klucze GPG wyświetlone dla repozytorium „%s” są już zainstalowane, ale nie są poprawne dla tego pakietu.\n"
+"Proszę sprawdzić, czy dla tego repozytorium skonfigurowane są poprawne adresy URL do kluczy."
 
 #: ../dnf/base.py:1901
 msgid "Import of key(s) didn't help, wrong key(s)?"

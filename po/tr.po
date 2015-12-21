@@ -1162,7 +1162,7 @@ msgstr "Lisans:"
 
 #: ../dnf/cli/output.py:2022
 msgid "URL            :"
-msgstr "\n"
+msgstr ""
 
 #: ../dnf/cli/output.py:2024
 msgid "Source RPM     :"
