@@ -47,12 +47,12 @@ class MarkCommand(commands.Command):
     def _mark_install(self, pkg):
         yumdb = self.base.yumdb
         yumdb.get_package(pkg).reason = 'user'
-        logger.info(_('%s marked as user installed.' % str(pkg)))
+        logger.info(_('%s marked as user installed.'), str(pkg))
 
     def _mark_remove(self, pkg):
         yumdb = self.base.yumdb
         yumdb.get_package(pkg).reason = 'dep'
-        logger.info(_('%s unmarked as user installed.' % str(pkg)))
+        logger.info(_('%s unmarked as user installed.'), str(pkg))
 
     def configure(self, extcmds):
         demands = self.cli.demands
@@ -90,5 +90,5 @@ class MarkCommand(commands.Command):
         if notfound:
             logger.error(_('Error:'))
             for pkg in notfound:
-                logger.error(_('Package %s is not installed.') % pkg)
+                logger.error(_('Package %s is not installed.'), pkg)
             raise dnf.cli.CliError

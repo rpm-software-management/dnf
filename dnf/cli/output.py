@@ -1869,7 +1869,7 @@ Transaction Summary
                 return 1, ['Failed history addon-info']
 
         if not old:
-            logger.critical(_('No Transaction %s found') % tid)
+            logger.critical(_('No Transaction %s found'), tid)
             return 1, ['Failed history addon-info']
 
         hist_data = old[0]

@@ -195,7 +195,7 @@ class Package(hawkey.Package):
         real_sum = dnf.yum.misc.checksum(chksum_type, self.localPkg(),
                                          datasize=self.size)
         if real_sum != chksum:
-            logger.debug('%s: %s check failed: %s vs %s' %
-                         (self, chksum_type, real_sum, chksum))
+            logger.debug('%s: %s check failed: %s vs %s',
+                         self, chksum_type, real_sum, chksum)
             return False
         return True
