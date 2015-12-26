@@ -95,7 +95,7 @@ def checkPackageArg(cli, basecmd, extcmds):
     """
     if len(extcmds) == 0:
         logger.critical(
-                _('Error: Need to pass a list of pkgs to %s') % basecmd)
+                _('Error: Need to pass a list of pkgs to %s'), basecmd)
         err_mini_usage(cli, basecmd)
         raise dnf.cli.CliError
 
@@ -1180,7 +1180,7 @@ class HistoryCommand(Command):
     def _hcmd_userinstalled(self, extcmds):
         """Execute history userinstalled command."""
         if extcmds:
-            logger.critical(_('Unrecognized options "%s"!') %
+            logger.critical(_('Unrecognized options "%s"!'),
                                       ' '.join(extcmds))
             return 1, ['Failed history userinstalled']
 

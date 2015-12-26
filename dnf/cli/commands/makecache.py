@@ -75,8 +75,8 @@ class MakeCacheCommand(commands.Command):
             elif timer and expires_in < period:
                 # expires within the checking period:
                 msg = "%s: metadata will expire after %d seconds " \
-                    "and will be refreshed now" % (r.id, expires_in)
-                logger.debug(msg)
+                    "and will be refreshed now"
+                logger.debug(msg, r.id, expires_in)
                 r.md_expire_cache()
             else:
                 logger.debug('%s: will expire after %d seconds.', r.id,
