@@ -124,11 +124,11 @@ class Base(object):
         if repo.presto_fn:
             hrepo.presto_fn = repo.presto_fn
         else:
-            logger.debug("not found deltainfo for: %s" % repo.name)
+            logger.debug("not found deltainfo for: %s", repo.name)
         if repo.updateinfo_fn:
             hrepo.updateinfo_fn = repo.updateinfo_fn
         else:
-            logger.debug("not found updateinfo for: %s" % repo.name)
+            logger.debug("not found updateinfo for: %s", repo.name)
         self._sack.load_repo(hrepo, build_cache=True, load_filelists=True,
                              load_presto=repo.deltarpm,
                              load_updateinfo=True)
@@ -413,7 +413,7 @@ class Base(object):
                 self._comps.add_from_xml_filename(decompressed)
             except dnf.exceptions.CompsError as e:
                 msg = _('Failed to add groups file for repository: %s - %s')
-                logger.critical(msg % (repo.id, e))
+                logger.critical(msg, repo.id, e)
 
         self._group_persistor = self._activate_group_persistor()
         timer()
@@ -706,7 +706,7 @@ class Base(object):
                 login = dnf.util.get_effective_login()
                 msg = _("Failed to obtain the transaction lock "
                         "(logged in as: %s).")
-                logger.critical(msg % login)
+                logger.critical(msg, login)
                 msg = _('Could not run transaction.')
                 raise dnf.exceptions.Error(msg)
         else:
@@ -779,7 +779,7 @@ class Base(object):
             if len(installed) < 1:
                 tsi.op_type = dnf.transaction.FAIL
                 logger.critical(_('%s was supposed to be installed'
-                                  ' but is not!' % rpo))
+                                  ' but is not!'), rpo)
                 count = display_banner(rpo, count)
                 continue
             po = installed[0]
@@ -840,7 +840,7 @@ class Base(object):
                 if not len(just_installed.filter(arch=rpo.arch, name=rpo.name,
                                                  evr=rpo.evr)):
                     msg = _('%s was supposed to be removed but is not!')
-                    logger.critical(msg % rpo)
+                    logger.critical(msg, rpo)
                     count = display_banner(rpo, count)
                     continue
             count = display_banner(rpo, count)
@@ -1477,8 +1477,8 @@ class Base(object):
             return 1
         else:
             msg = _("Package %s of lower version already installed, "
-                    "cannot downgrade it.") % pkg.name
-            logger.warning(msg)
+                    "cannot downgrade it.")
+            logger.warning(msg, pkg.name)
             return 0
 
     def package_install(self, pkg, strict=True):
@@ -1495,8 +1495,8 @@ class Base(object):
         if self.sack.query().installed().filter(nevra=str(pkg)):
             self._goal.install(pkg)
             return 1
-        msg = _("Package %s not installed, cannot reinstall it.") % str(pkg)
-        logger.warning(msg)
+        msg = _("Package %s not installed, cannot reinstall it.")
+        logger.warning(msg, str(pkg))
         return 0
 
     def package_remove(self, pkg):
@@ -1511,16 +1511,16 @@ class Base(object):
 
         q = self.sack.query().installed().filter(name=pkg.name, arch=pkg.arch)
         if not q:
-            msg = _("Package %s not installed, cannot update it.") % pkg.name
-            logger.warning(msg)
+            msg = _("Package %s not installed, cannot update it.")
+            logger.warning(msg, pkg.name)
             return 0
         elif sorted(q)[-1] < pkg:
             self._goal.upgrade_to(pkg)
             return 1
         else:
             msg = _("Package %s of higher version already installed, "
-                    "cannot update it.") % pkg.name
-            logger.warning(msg)
+                    "cannot update it.")
+            logger.warning(msg, pkg.name)
             return 0
 
     def upgrade(self, pkg_spec, reponame=None):
@@ -1696,8 +1696,8 @@ class Base(object):
         downgrade_pkgs = available_pkgs.downgrades().latest()
         if not downgrade_pkgs:
             msg = _("Package %s of lowest version already installed, "
-                    "cannot downgrade it.") % nevra.name
-            logger.warning(msg)
+                    "cannot downgrade it.")
+            logger.warning(msg, nevra.name)
             return 0
         dnf.util.mapall(self._goal.downgrade_to, downgrade_pkgs)
         return 1
@@ -1924,5 +1924,5 @@ class Base(object):
 
 def _msg_installed(pkg):
     name = ucd(pkg)
-    msg = _('Package %s is already installed, skipping.') % name
-    logger.warning(msg)
+    msg = _('Package %s is already installed, skipping.')
+    logger.warning(msg, name)

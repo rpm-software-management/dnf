@@ -743,7 +743,7 @@ class Cli(object):
                 repofp = dnf.repo.Repo(label, self.base.conf.cachedir)
                 repofp.baseurl = path
                 self.base.repos.add(repofp)
-                logger.info(_("Added %s repo from %s") % (label, path))
+                logger.info(_("Added %s repo from %s"), label, path)
 
         # Process repo enables and disables in order
         try:
@@ -962,7 +962,7 @@ class Cli(object):
                 for opt in self.main_setopts.items:
                     if not hasattr(self.base.conf, opt):
                         msg ="Main config did not have a %s attr. before setopt"
-                        logger.warning(msg % opt)
+                        logger.warning(msg, opt)
                     setattr(self.base.conf, opt, getattr(self.main_setopts, opt))
 
         except (dnf.exceptions.ConfigError, ValueError) as e:
@@ -974,10 +974,10 @@ class Cli(object):
             sys.exit(1)
         for item in bad_setopt_tm:
             msg = "Setopt argument has multiple values: %s"
-            logger.warning(msg % item)
+            logger.warning(msg, item)
         for item in bad_setopt_ne:
             msg = "Setopt argument has no value: %s"
-            logger.warning(msg % item)
+            logger.warning(msg, item)
 
         self.optparser.configure_from_options(opts, self.base.conf, self.demands,
                                               self.base.output)

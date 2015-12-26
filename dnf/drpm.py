@@ -60,7 +60,7 @@ class DeltaPayload(dnf.repo.PackagePayload):
 
         ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
         if ctype_code == librepo.CHECKSUM_UNKNOWN:
-            logger.warn(_("unsupported checksum type: %s") % ctype)
+            logger.warn(_("unsupported checksum type: %s"), ctype)
 
         return {
             'relative_url' : delta.location,
