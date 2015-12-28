@@ -137,7 +137,7 @@ class DeltaInfo(object):
             self.err[pkg] = [_('Checksum of the delta-rebuilt RPM failed')]
         else:
             os.unlink(pload.localPkg())
-            self.progress.end(pload, dnf.callback.STATUS_DRPM, 'done')
+            self.progress.end(pload, dnf.callback.STATUS_DRPM, _('done'))
 
     def start_job(self, pload):
         # spawn a delta rebuild job
