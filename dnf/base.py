@@ -1413,7 +1413,7 @@ class Base(object):
         subj = dnf.subject.Subject(pkg_spec)
         if self.conf.multilib_policy == "all" or \
            subj.is_arch_specified(self.sack):
-            q = subj.get_best_query(self.sack)
+            q = subj.get_best_query(self.sack).filter(arch__neq="src")
             if reponame is not None:
                 q = q.filter(reponame=reponame)
             if not q:
