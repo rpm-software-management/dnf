@@ -69,7 +69,9 @@ class MakeCacheCommand(commands.Command):
 
         for r in self.base.repos.iter_enabled():
             (is_cache, expires_in) = r.metadata_expire_in()
-            if not is_cache or expires_in <= 0:
+            if expires_in is None:
+                logger.info('%s: will never be expired and will not be refreshed.', r.id)
+            elif not is_cache or expires_in <= 0:
                 logger.debug('%s: has expired and will be refreshed.', r.id)
                 r.md_expire_cache()
             elif timer and expires_in < period:
