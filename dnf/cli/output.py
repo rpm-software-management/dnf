@@ -2185,6 +2185,9 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
             if ti_done == ti_total:
                 print(" ")
 
+    def filelog(self, package, action):
+        pass
+
     def scriptout(self, msgs):
         """Print messages originating from a package script.
 
