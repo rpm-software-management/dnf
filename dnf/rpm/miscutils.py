@@ -17,14 +17,8 @@ from __future__ import print_function, absolute_import
 from __future__ import unicode_literals
 import dnf.pycomp
 import rpm
-import gzip
 import os
-import sys
 import locale
-import signal
-
-from .error import RpmUtilsError
-from . import transaction
 
 
 def checkSig(ts, package):
@@ -60,11 +54,12 @@ def checkSig(ts, package):
 
     try:
         os.close(fdno)
-    except OSError as e: # if we're not opened, don't scream about it
+    except OSError as e:  # if we're not opened, don't scream about it
         pass
 
-    ts.setVSFlags(currentflags) # put things back like they were before
+    ts.setVSFlags(currentflags)  # put things back like they were before
     return value
+
 
 def getSigInfo(hdr):
     """checks signature from an hdr hand back signature information and/or
