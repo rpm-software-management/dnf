@@ -139,28 +139,6 @@ def splitFilename(filename):
     return name, ver, rel, epoch, arch
 
 
-def rpm2cpio(fdno, out=sys.stdout, bufsize=2048):
-    """Performs roughly the equivalent of rpm2cpio(8).
-       Reads the package from fdno, and dumps the cpio payload to out,
-       using bufsize as the buffer size."""
-    ts = transaction.initReadOnlyTransaction()
-    hdr = ts.hdrFromFdno(fdno)
-    del ts
-
-    compr = hdr[rpm.RPMTAG_PAYLOADCOMPRESSOR] or 'gzip'
-    #XXX FIXME
-    #if compr == 'bzip2':
-        # TODO: someone implement me!
-    #el
-    if compr != 'gzip':
-        raise RpmUtilsError('Unsupported payload compressor: "%s"' % compr)
-    f = gzip.GzipFile(None, 'rb', None, os.fdopen(fdno, 'rb', bufsize))
-    while 1:
-        tmp = f.read(bufsize)
-        if tmp == "": break
-        out.write(tmp)
-    f.close()
-
 def checkSignals():
     if hasattr(rpm, "checkSignals") and hasattr(rpm, 'signalsCaught'):
         if rpm.signalsCaught([signal.SIGINT,
