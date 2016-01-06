@@ -19,9 +19,10 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _, ucd
+import hawkey
 import time
-import os, os.path
 import glob
+import os
 
 from .sqlutils import sqlite, executeSQL, sql_esc_glob
 from . import misc as misc
@@ -155,14 +156,16 @@ class YumHistoryPackage(object):
                              # ?
                              "committer", "committime"])
 
+    def to_nevra(self):
+        return hawkey.NEVRA(self.name, int(self.epoch), self.version,
+                            self.release, self.arch)
+
     def __le__(self, other):
         """Test whether the *self* is less than or equal to the *other*."""
-        ret = self.verCMP(other)
-        if ret != 0:
-            return ret < 0  # less or grater
-
-        if self.arch != other.arch:
-            return self.arch < other.arch  # less or greater
+        s = self.to_nevra()
+        o = other.to_nevra()
+        if s != o:
+            return s < o
 
         try:
             self_repoid, other_repoid = self.repoid, other.repoid
@@ -179,15 +182,6 @@ class YumHistoryPackage(object):
             return True  # less
 
         return self_repoid < other_repoid  # less or grater
-
-    @staticmethod
-    def __comparePoEVR(po1, po2):
-        """
-        Compare two Package or PackageEVR objects.
-        """
-        (e1, v1, r1) = (po1.epoch, po1.version, po1.release)
-        (e2, v2, r2) = (po2.epoch, po2.version, po2.release)
-        return dnf.rpm.miscutils.compareEVR((e1, v1, r1), (e2, v2, r2))
 
     def __eq__(self, other):
         """ Compare packages for yes/no equality, includes everything in the
@@ -284,14 +278,6 @@ class YumHistoryPackage(object):
             return self.nvra
         else:
             return self.nevra
-
-    def verCMP(self, other):
-        """ Compare package to another one, only rpm-version ordering. """
-        if not other:
-            return 1
-        if self.name != other.name:
-            return -1 if self.name < other.name else +1
-        return self.__comparePoEVR(self, other)
 
 
 class YumHistoryPackageState(YumHistoryPackage):
