@@ -137,14 +137,3 @@ def splitFilename(filename):
 
     name = filename[epochIndex + 1:verIndex]
     return name, ver, rel, epoch, arch
-
-
-def checkSignals():
-    if hasattr(rpm, "checkSignals") and hasattr(rpm, 'signalsCaught'):
-        if rpm.signalsCaught([signal.SIGINT,
-                              signal.SIGTERM,
-                              signal.SIGPIPE,
-                              signal.SIGQUIT,
-                              signal.SIGHUP]):
-            sys.exit(1)
-
