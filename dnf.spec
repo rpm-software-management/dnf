@@ -204,12 +204,15 @@ popd
 %config(noreplace) %{confdir}/dnf.conf
 %config(noreplace) %{confdir}/protected.d/dnf.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
-%ghost %{_localstatedir}/%{_lib}/dnf
 %ghost %{_localstatedir}/log/hawkey.log
 %ghost %{_localstatedir}/log/%{name}.log
 %ghost %{_localstatedir}/log/%{name}.librepo.log
 %ghost %{_localstatedir}/log/%{name}.rpm.log
 %ghost %{_localstatedir}/log/%{name}.plugin.log
+%ghost %{_sharedstatedir}/dnf
+%ghost %{_sharedstatedir}/dnf/groups.json
+%ghost %{_sharedstatedir}/dnf/yumdb
+%ghost %{_sharedstatedir}/dnf/history
 %{_mandir}/man5/dnf.conf.5.gz
 %{_tmpfilesdir}/dnf.conf
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
