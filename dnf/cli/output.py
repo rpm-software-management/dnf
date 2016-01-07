@@ -1382,65 +1382,63 @@ Transaction Summary
             1 = we've errored, exit with error string
         """
         tids = self._history_list_transactions(extcmds)
-        if tids is None:
-            return 1, ['Failed history list']
-
-        old_tids = self.history.old(tids)
-        if self.conf.history_list_view == 'users':
-            uids = [1, 2]
-        elif self.conf.history_list_view == 'commands':
-            uids = [1]
-        else:
-            assert self.conf.history_list_view == 'single-user-commands'
-            uids = set()
-            done = 0
-            blanks = 0
-            for old in old_tids:
-                done += 1
-                if old.cmdline is None:
-                    blanks += 1
-                uids.add(old.loginuid)
-
-        fmt = "%s | %s | %s | %s | %s"
-        if len(uids) == 1:
-            name = _("Command line")
-        else:
-            name = _("Login user")
-        print(fmt % (fill_exact_width(_("ID"), 6, 6),
-                     fill_exact_width(name, 24, 24),
-                     fill_exact_width(_("Date and time"), 6, 6),
-                     fill_exact_width(_("Action(s)"), 6, 6),
-                     fill_exact_width(_("Altered"), 6, 6)))
-        print("-" * 79)
-        fmt = "%6u | %s | %-16.16s | %s | %4u"
-
-        for old in old_tids:
-            if len(uids) == 1:
-                name = old.cmdline or ''
+        if tids is not None:
+            old_tids = self.history.old(tids)
+            if self.conf.history_list_view == 'users':
+                uids = [1, 2]
+            elif self.conf.history_list_view == 'commands':
+                uids = [1]
             else:
-                name = self._pwd_ui_username(old.loginuid, 24)
-            tm = time.strftime("%Y-%m-%d %H:%M",
-                               time.localtime(old.beg_timestamp))
-            num, uiacts = self._history_uiactions(old.trans_data)
-            name = fill_exact_width(name, 24, 24)
-            uiacts = fill_exact_width(uiacts, 14, 14)
-            rmark = lmark = ' '
-            if old.return_code is None:
-                rmark = lmark = '*'
-            elif old.return_code:
-                rmark = lmark = '#'
-                # We don't check .errors, because return_code will be non-0
-            elif old.output:
-                rmark = lmark = 'E'
-            elif old.rpmdb_problems:
-                rmark = lmark = 'P'
-            elif old.trans_skip:
-                rmark = lmark = 's'
-            if old.altered_lt_rpmdb:
-                rmark = '<'
-            if old.altered_gt_rpmdb:
-                lmark = '>'
-            print(fmt % (old.tid, name, tm, uiacts, num), "%s%s" % (lmark, rmark))
+                assert self.conf.history_list_view == 'single-user-commands'
+                uids = set()
+                done = 0
+                blanks = 0
+                for old in old_tids:
+                    done += 1
+                    if old.cmdline is None:
+                        blanks += 1
+                    uids.add(old.loginuid)
+
+            fmt = "%s | %s | %s | %s | %s"
+            if len(uids) == 1:
+                name = _("Command line")
+            else:
+                name = _("Login user")
+            print(fmt % (fill_exact_width(_("ID"), 6, 6),
+                        fill_exact_width(name, 24, 24),
+                        fill_exact_width(_("Date and time"), 6, 6),
+                        fill_exact_width(_("Action(s)"), 6, 6),
+                        fill_exact_width(_("Altered"), 6, 6)))
+            print("-" * 79)
+            fmt = "%6u | %s | %-16.16s | %s | %4u"
+
+            for old in old_tids:
+                if len(uids) == 1:
+                    name = old.cmdline or ''
+                else:
+                    name = self._pwd_ui_username(old.loginuid, 24)
+                tm = time.strftime("%Y-%m-%d %H:%M",
+                                time.localtime(old.beg_timestamp))
+                num, uiacts = self._history_uiactions(old.trans_data)
+                name = fill_exact_width(name, 24, 24)
+                uiacts = fill_exact_width(uiacts, 14, 14)
+                rmark = lmark = ' '
+                if old.return_code is None:
+                    rmark = lmark = '*'
+                elif old.return_code:
+                    rmark = lmark = '#'
+                    # We don't check .errors, because return_code will be non-0
+                elif old.output:
+                    rmark = lmark = 'E'
+                elif old.rpmdb_problems:
+                    rmark = lmark = 'P'
+                elif old.trans_skip:
+                    rmark = lmark = 's'
+                if old.altered_lt_rpmdb:
+                    rmark = '<'
+                if old.altered_gt_rpmdb:
+                    lmark = '>'
+                print(fmt % (old.tid, name, tm, uiacts, num), "%s%s" % (lmark, rmark))
 
     def historyInfoCmd(self, extcmds):
         """Output information about a transaction in history
