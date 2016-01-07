@@ -68,6 +68,13 @@ def _clean(dirpath, files):
     return count
 
 
+def _cached_repos(files):
+    """Return the repo IDs that have some cached metadata around."""
+    metapat = dnf.repo.CACHE_FILES['metadata']
+    matches = (re.match(metapat, f) for f in files)
+    return set(m.group('repoid') for m in matches if m)
+
+
 class CleanCommand(commands.Command):
     """A class containing methods needed by the cli to execute the
     clean command.
@@ -78,9 +85,8 @@ class CleanCommand(commands.Command):
     usage = "[%s]" % "|".join(_CACHE_TYPES)
 
     def doCheck(self, basecmd, extcmds):
-        """Verify that conditions are met so that this command can run.
-        These include that there is at least one enabled repository,
-        and that this command is called with appropriate arguments.
+        """Verify that conditions are met so that this command can
+        run; namely that this command is called with appropriate arguments.
 
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
@@ -97,24 +103,17 @@ class CleanCommand(commands.Command):
                 commands.err_mini_usage(self.cli, basecmd)
                 raise dnf.cli.CliError
 
-        commands.checkEnabledRepo(self.base)
-
     def run(self, extcmds):
         cachedir = self.base.conf.cachedir
-        repos = self.base.repos.enabled()
         types = set(t for c in extcmds for t in _CACHE_TYPES[c])
-        files = _tree(cachedir)
-        msg = self.output.fmtKeyValFill(_('Cleaning repos: '),
-                                        ' '.join([r.id for r in repos]))
-        logger.info(msg)
+        files = list(_tree(cachedir))
         logger.debug(_('Cleaning data: ' + ' '.join(types)))
 
         if 'expire-cache' in types:
-            for repo in repos:
-                repo.md_expire_cache()
+            expired = _cached_repos(files)
+            self.base.repo_persistor.expired_to_add.update(expired)
             types.remove('expire-cache')
 
-        pdict = dnf.repo.cache_files(repos)
-        patterns = [pdict[t] for t in types]
+        patterns = [dnf.repo.CACHE_FILES[t] for t in types]
         count = _clean(cachedir, _filter(files, patterns))
         logger.info(P_('%d file removed', '%d files removed', count) % count)

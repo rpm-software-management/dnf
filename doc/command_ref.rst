@@ -243,7 +243,9 @@ Check Update Command
 -------------
 Clean Command
 -------------
-Performs cleanup of temporary files for the currently enabled repositories.
+Performs cleanup of temporary files kept for repositories. This includes any
+such data left behind from disabled or removed repositories as well as for
+different distribution release versions.
 
 ``dnf clean dbcache``
     Removes cache files generated from the repository metadata. This forces DNF

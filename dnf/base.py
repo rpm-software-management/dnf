@@ -181,7 +181,7 @@ class Base(object):
         if self.repo_persistor:
             expired = [r.id for r in self.repos.iter_enabled()
                        if check_expired(r)]
-            self.repo_persistor.expired_to_add = set(expired)
+            self.repo_persistor.expired_to_add.update(expired)
             self.repo_persistor.save()
 
         if self._group_persistor:
