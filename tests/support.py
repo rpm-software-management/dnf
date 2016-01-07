@@ -476,6 +476,7 @@ class FakeConf(object):
 
 class FakePersistor(object):
     reset_last_makecache = False
+    expired_to_add = set()
 
     def get_expired_repos(self):
         return set()

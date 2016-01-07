@@ -52,24 +52,21 @@ _MIRRORLIST_FILENAME = "mirrorlist"
 _RECOGNIZED_CHKSUMS = ['sha512', 'sha256']
 # Chars allowed in a repo ID
 _REPOID_CHARS = string.ascii_letters + string.digits + '-_.:'
+# Regex pattern that matches a repo cachedir and captures the repo ID
+_CACHEDIR_RE = r'(?P<repoid>[%s]+)\-[%s]{16}' % (re.escape(_REPOID_CHARS),
+                                                 string.hexdigits)
+
+# Regex patterns matching any filename that is repo-specific cache data of a
+# particular type.  The filename is expected to not contain the base cachedir
+# path components.
+CACHE_FILES = {
+    'metadata': r'^%s\/.*(xml(\.gz|\.xz|\.bz2)?|asc|cachecookie|%s)$' %
+                (_CACHEDIR_RE, _MIRRORLIST_FILENAME),
+    'packages': r'^%s\/%s\/.+rpm$' % (_CACHEDIR_RE, _PACKAGES_RELATIVE_DIR),
+    'dbcache': r'^.+(solv|solvx)$',
+}
 
 logger = logging.getLogger("dnf")
-
-
-def cache_files(repos):
-    """Return regex patterns matching repository cache filenames."""
-    dirs, rids = [], [hawkey.SYSTEM_REPO_NAME]
-    for repo in repos:
-        dirs += [os.path.basename(repo.cachedir)]
-        rids += [repo.id]
-    dirs = '|'.join(re.escape(d) for d in dirs)
-    rids = '|'.join(re.escape(r) for r in rids)
-    metaext = r'xml(\.gz|\.xz|\.bz2)?|asc|cachecookie|' + _MIRRORLIST_FILENAME
-    return {
-        'metadata': r'^(%s)\/.*(%s)$' % (dirs, metaext),
-        'packages': r'^(%s)\/%s\/.+rpm$' % (dirs, _PACKAGES_RELATIVE_DIR),
-        'dbcache': r'^(%s).+(solv|solvx)$' % rids,
-    }
 
 
 def repo_id_invalid(repo_id):

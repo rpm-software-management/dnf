@@ -30,6 +30,7 @@ import iniparse.compat
 import io
 import librepo
 import os
+import re
 import tempfile
 import unittest
 
@@ -40,6 +41,21 @@ ce77c1e5694b037b6687cf0ab812ca60431ec0b65116abbb7b82684f0b092d62"""
 
 
 class RepoFunctionsTest(unittest.TestCase):
+    def test_cachedir_re(self):
+        pairs = [
+            ('fedora-fe3d2f0c91e9b65c', 'fedora'),
+            ('foo-bar-eb0d6f10ccbdafba', 'foo-bar'),
+            ('a%^&$b-fe3d2f0c91e9b65c', None),
+            ('fedora-91e9b65c', None),
+            ('fedora-xe3d2f0c91e9b65c', None),
+            ('-fe3d2f0c91e9b65c', None),
+            ('fedorafe3d2f0c91e9b65c', None),
+        ]
+        for filename, expected in pairs:
+            match = re.match(dnf.repo._CACHEDIR_RE, filename)
+            repoid = match.group('repoid') if match else None
+            self.assertEqual(repoid, expected)
+
     def test_repo_id_invalid(self):
         """Test repo_id_invalid."""
         index = dnf.repo.repo_id_invalid('R_e-p.o:i3d')
