@@ -90,7 +90,7 @@ def _main(base, args):
     # do our cli parsing and config file setup
     # also sanity check the things being passed on the cli
     try:
-        cli.configure(map(ucd, args))
+        cli.configure(list(map(ucd, args)))
         cli.check()
     except dnf.exceptions.LockError:
         raise
