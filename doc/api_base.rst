@@ -121,9 +121,9 @@
 
   .. method:: resolve(allow_erasing=True)
 
-    Resolve the marked requirements and store the resulting :class:`dnf.transaction.Transaction` into :attr:`transaction`. Raise :exc:`dnf.exceptions.DepsolveError` on a depsolving error. Return ``True`` iff the resolved transaction is non-empty.
+    Resolve the marked requirements and store the resulting :class:`dnf.transaction.Transaction` into :attr:`transaction`. Raise :exc:`dnf.exceptions.DepsolveError` on a depsolving error. Return ``True`` if the resolved transaction is non-empty.
 
-    Enabling `allow_erasing` lets to solver remove other packages while looking to fulfill the current packaging requests. For instance, this is used to allow the solver remove dependants of a package being removed.
+    Enabling `allow_erasing` lets the solver remove other packages while looking to fulfill the current packaging requests. For instance, this is used to allow the solver to remove dependants of a package being removed.
 
     The exact operation of the solver further depends on the :attr:`dnf.conf.Conf.best` setting.
 

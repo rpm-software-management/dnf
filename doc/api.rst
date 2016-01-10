@@ -46,7 +46,7 @@ This basically means that if your piece of software depends on e.g. DNF 1.1, the
 
 .. _deprecating-label:
 
-Incompatible API changes are subject to our deprecation policy. Depracated API items (classes, methods, etc.) are designated as such in the :doc:`release_notes`. The first release where support for such items can be dropped entirely must have, relatively to the deprecating release, a higher major version number. DNF will log a warning when a deprecated item is used.
+Incompatible API changes are subject to our deprecation policy. Deprecated API items (classes, methods, etc.) are designated as such in the :doc:`release_notes`. The first release where support for such items can be dropped entirely must have, relative to the deprecating release, a higher major version number. DNF will log a warning when a deprecated item is used.
 
 ===========
  Contents
