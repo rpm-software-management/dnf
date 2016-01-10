@@ -23,7 +23,7 @@
 
 .. class:: Comps
 
-  An object of this class can merges comps information from arbitrary repositories. It typically is instantiated from :class:`dnf.Base` and covers all the available repositories.
+  An object of this class can merge comps information from arbitrary repositories. It typically is instantiated from :class:`dnf.Base` and covers all the available repositories.
 
   The ``*_by_pattern`` methods all take a `pattern` and an optional `case_sensitive` parameter. The pattern is matched against names and IDs of objects in the domain (groups, categories, environments), the globbing characters in `pattern` retain their usual expanding meaning. If `case_sensitive` is ``True``, matching is done in a case-sensitive manner.
 
@@ -81,7 +81,7 @@
 
   .. NOTE::
 
-    Should not be confused with :class:`dnf.package.Package` which represents a pacakge contained in a :class:`~.Sack`. There is no guarantee whether the comps package has a corresponding real sack package, i.e. there can be no package of given name in the sack, one such package, or more than one. For this reason two separate types are introduced.
+    Should not be confused with :class:`dnf.package.Package` which represents a package contained in a :class:`~.Sack`. There is no guarantee whether the comps package has a corresponding real sack package, i.e. there can be no package of given name in the sack, one such package, or more than one. For this reason two separate types are introduced.
 
   .. attribute:: name
 
