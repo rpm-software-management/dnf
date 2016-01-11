@@ -380,8 +380,9 @@ class LocalRepoTest(support.TestCase):
         new_remote_m().metalink = \
             {'hashes': [('md5', 'fcf04ce803b3e15cbef6ea6f12ed4533'),
                         ('sha1', '3731498f6b7b96316590205a4d7a2add484471e0')]}
-        self.repo._try_cache()
-        self.assertFalse(self.repo._try_revive())
+        with mock.patch('dnf.repo.Repo.cachedir', REPOS + "/rpm"):
+            self.repo._try_cache()
+            self.assertFalse(self.repo._try_revive())
 
     @mock.patch.object(dnf.repo.Metadata, 'reset_age')
     @mock.patch('dnf.repo.Repo._handle_new_remote')
@@ -393,8 +394,9 @@ class LocalRepoTest(support.TestCase):
                         ('sha512', 'obviousfail')]}
         # can not do the entire load() here, it would run on after try_revive()
         # failed.
-        self.repo._try_cache()
-        self.assertFalse(self.repo._try_revive())
+        with mock.patch('dnf.repo.Repo.cachedir', REPOS + "/rpm"):
+            self.repo._try_cache()
+            self.assertFalse(self.repo._try_revive())
 
     @mock.patch('dnf.repo.Repo._handle_new_remote')
     def test_reviving_404(self, new_remote_m):
@@ -405,7 +407,8 @@ class LocalRepoTest(support.TestCase):
             librepo.LRE_CURL, 'Error HTTP/FTP status code: 404', 'Curl error.')
         exc = dnf.repo._DetailedLibrepoError(lr_exc, url)
         new_remote_m().perform = mock.Mock(side_effect=exc)
-        self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
+        with mock.patch('dnf.repo.Repo.cachedir', REPOS + "/rpm"):
+            self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
 
 
 class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
