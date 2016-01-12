@@ -164,9 +164,7 @@ Options
 
 ``--releasever=<release>``
     configure DNF as if the distribution release was ``<release>``. This can
-    affect cache paths, values in configuration files and mirrorlist URLs. Using
-    '/' for this value makes DNF detect the release number from the running
-    system.
+    affect cache paths, values in configuration files and mirrorlist URLs.
 
 ``--repofrompath <repo>,<path/url>``
     Specify a path or url to a repository (same path as in a baseurl) to add to
