@@ -25,6 +25,7 @@ import argparse
 import dnf.exceptions
 import dnf.yum.misc
 import logging
+import os.path
 import re
 import sys
 
@@ -80,7 +81,9 @@ class OptionParser(argparse.ArgumentParser):
             if opts.installroot:
                 self._checkAbsInstallRoot(opts.installroot)
                 conf.installroot = opts.installroot
-
+                if True in [os.path.isdir(os.path.join(conf.installroot, reposdir.lstrip('/')))
+                            for reposdir in conf.reposdir]:
+                    conf.reposdir = [os.path.join(conf.installroot, reposdir.lstrip('/')) for reposdir in conf.reposdir]
             demands.freshest_metadata = opts.freshest_metadata
 
             if opts.color not in (None, 'auto', 'always', 'never',
