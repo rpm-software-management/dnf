@@ -830,20 +830,16 @@ class Cli(object):
 
         :return: installroot and conffile strings
         """
-        # If the conf file is inside the  installroot - use that.
+        # If --installroot the conf file inside the installroot is used.
         # otherwise look for it in the normal root
-        if installroot and conffile:
-            abs_fn = os.path.join(installroot, conffile)
-            if os.access(abs_fn, os.R_OK):
-                conffile = abs_fn
-        elif installroot:
+        if installroot and not conffile:
             conffile = dnf.const.CONF_FILENAME
             abs_fn = os.path.join(installroot, conffile[1:])
             if os.access(abs_fn, os.R_OK):
                 conffile = abs_fn
-        if installroot is None:
+        if not installroot:
             installroot = '/'
-        if conffile is None:
+        if not conffile:
             conffile = dnf.const.CONF_FILENAME
         return installroot, conffile
 
