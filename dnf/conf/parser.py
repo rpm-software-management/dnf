@@ -22,11 +22,13 @@ import dnf.exceptions
 import dnf.i18n
 import dnf.pycomp
 import dnf.util
+import logging
 import os.path
 import re
 
 _KEYCRE = re.compile(r"\$(\w+)|\${(\w+)}")
 
+logger = logging.getLogger("dnf")
 
 def substitute(raw, substs):
     '''Perform variable replacement
@@ -106,8 +108,6 @@ class ConfigPreProcessor(object):
 
         # _pushfile will return None if he couldn't open the file
         fo = self._pushfile(url)
-        if fo is None:
-            raise dnf.exceptions.ConfigError('Error accessing file: %s' % url)
 
     def readline(self, _size=0):
         """
@@ -198,7 +198,7 @@ class ConfigPreProcessor(object):
         Opens the url specified, pushes it on the stack, and
         returns a file like object. Returns None if the url
         has previously been included.
-        If the file can not be opened this function exits.
+        If the file can not be opened this function writes a warning.
         """
 
         # absolutize this url using the including files url
@@ -221,8 +221,8 @@ class ConfigPreProcessor(object):
             self._alreadyincluded.append(includetuple)
         else:
             fn = dnf.util.strip_prefix(absurl, 'file://')
-            msg = "Can not read configuration: %s" % fn if fn else absurl
-            raise dnf.exceptions.ConfigError(msg)
+            msg = "Can not read configuration: %s , ignoring" % fn if fn else absurl
+            logger.warning(msg)
 
         return fo
 
