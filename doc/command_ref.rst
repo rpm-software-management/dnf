@@ -143,7 +143,39 @@ Options
     Show the help.
 
 ``--installroot=<path>``
-    set install root
+    Specifies an alternative installroot, relative to where all packages will be
+    installed. Think of this like doing ``chroot <root> dnf`` except using
+    ``--installroot`` allows dnf to work before the chroot is created.
+
+- *cachedir*, *log files*, *releasever*, and *gpgkey* are taken from or
+  stored in installroot. *Gpgkeys* are imported into installroot from
+  path, related to the host, described in .repo file.
+
+- *config file* and *reposdir* are searched inside the installroot first. If
+  they are not present, they are taken from host system.
+  Note:  When a path is specified within command line argument
+  (``--config=<config file>`` in case of *config file* and
+  ``--setopt=reposdir=<reposdir>`` for *reposdir*) then this path is always
+  related to the host with no exceptions.
+
+- The *pluginpath* and *pluginconfpath* are not related to installroot.
+
+ Note: You may also want to use the command-line option
+ ``--releasever=<release>`` when creating the installroot otherwise the
+ *$releasever* value is taken from the rpmdb within the installroot (and thus
+ it is empty at time of creation, the transaction will fail).
+ The new installroot path at time of creation do not contain *repository*,
+ *releasever*, and *dnf.conf* file.
+
+ Installroot examples:
+
+ ``dnf --installroot=<installroot> --releasever=<release> install system-release``
+     Sets permanently the ``releasever`` of the system within
+     ``<installroot>`` directory from given ``<release>``.
+
+ ``dnf --installroot=<installroot> --setopt=reposdir=<path> --config /path/dnf.conf upgrade``
+     Upgrade packages inside of installroot from repository described by
+     ``--setopt`` using configuration from ``/path/dnf.conf``
 
 ``--nogpgcheck``
     skip checking GPG signatures on packages
@@ -165,6 +197,8 @@ Options
 ``--releasever=<release>``
     configure DNF as if the distribution release was ``<release>``. This can
     affect cache paths, values in configuration files and mirrorlist URLs.
+
+.. _repofrompath_options-label:
 
 ``--repofrompath <repo>,<path/url>``
     Specify a path or url to a repository (same path as in a baseurl) to add to
@@ -892,3 +926,5 @@ See Also
 * `DNF`_ project homepage (https://github.com/rpm-software-management/dnf/)
 * How to report a bug (https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting)
 * `Yum`_ project homepage (http://yum.baseurl.org/)
+
+.. _dnf config-manager: https://dnf-plugins-core.readthedocs.org/en/latest/config_manager.html
