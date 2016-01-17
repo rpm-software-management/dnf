@@ -745,7 +745,7 @@ class YumConf(BaseConfig):
     exclude = ListOption()
     include = ListOption()
     fastestmirror = BoolOption(False)
-    proxy = UrlOption(schemes=('http', 'ftp', 'https'), allow_none=True) #:api
+    proxy = UrlOption(schemes=('http', 'ftp', 'https', 'socks5', 'socks5h', 'socks4', 'socks4a'), allow_none=True) #:api
     proxy_username = Option() #:api
     proxy_password = Option() #:api
     username = Option() #:api
