@@ -9,3 +9,5 @@ TAGS
 build/
 package/dnf.spec
 dnf/const.py
+bin/dnf*-2
+bin/dnf*-3
