@@ -20,6 +20,12 @@
 
 from __future__ import unicode_literals
 import warnings
+
+CHECKOUT_DIR = '@CHECKOUT_DIR@'
+
+if CHECKOUT_DIR:
+    __path__.append(CHECKOUT_DIR + '/dnf')  # noqa
+
 import dnf.exceptions
 import dnf.pycomp
 

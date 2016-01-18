@@ -30,15 +30,22 @@ From the DNF git checkout directory::
 
     mkdir build;
     pushd build;
-    cmake .. && make;
+    cmake -DUSE_CHECKOUT=ON .. && make;
     popd;
 
 Then to run DNF::
 
-    PYTHONPATH=`readlink -f .` bin/dnf <arguments>
+    build/bin/dnf <arguments>
 
 To build DNF for Python 3, use the option ``-DPYTHON_DESIRED:str=3`` with
 cmake.
+
+To use the shipped bash completion::
+
+    source etc/bash_completion.d/dnf
+
+Note that the completion will only work from within the build directory.  To
+make it work globally, add the build directory to your ``PYTHONPATH``.
 
 =============================
  Building and installing rpm
@@ -54,12 +61,9 @@ From the DNF git checkout directory::
  Running tests
 ===============
 
-From the DNF git checkout directory::
+From the build directory::
 
-    mkdir build;
-    pushd build;
-    cmake .. && make ARGS="-V" test;
-    popd;
+    make ARGS="-V" test
 
 ==============
  Contribution

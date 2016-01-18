@@ -24,6 +24,7 @@ from tests.support import mock
 
 import dnf.cli.cli
 import dnf.conf
+import dnf.const
 import dnf.goal
 import dnf.repo
 import dnf.repodict
@@ -214,10 +215,11 @@ class ConfigureTest(TestCase):
     def test_installroot_explicit(self, read_conf_file):
         self.cli.base.basecmd = 'update'
         self.cli.base.extcmds = []
+        sysconf = dnf.const.CONF_FILENAME
 
         self.cli.configure(['--installroot', '/roots/dnf', 'update'])
-        read_conf_file.assert_called_with('/etc/dnf/dnf.conf', '/roots/dnf', None,
-                                          {'conffile': '/etc/dnf/dnf.conf',
+        read_conf_file.assert_called_with(sysconf, '/roots/dnf', None,
+                                          {'conffile': sysconf,
                                            'installroot': '/roots/dnf'})
 
     @mock.patch('dnf.cli.cli.Cli.read_conf_file')
