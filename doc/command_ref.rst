@@ -143,18 +143,6 @@ Options
 ``--installroot=<path>``
     set install root
 
-.. _refresh_command-label:
-
-``--refresh``
-    set metadata as expired before running the command
-
-``--repofrompath <repo>,<path/url>``
-    Specify a path or url to a repository (same path as in a baseurl) to add to
-    the repositories for this query. This option can be used multiple times. The
-    repo label for the repository is specified by <repo>. If you want to view
-    only the packages from this repository, combine this with options
-    ``--disablerepo=*`` and ``--enablerepo=<repo>``.
-
 ``--nogpgcheck``
     skip checking GPG signatures on packages
 
@@ -167,11 +155,23 @@ Options
 ``-R <minutes>, --randomwait=<minutes>``
     maximum command wait time
 
+.. _refresh_command-label:
+
+``--refresh``
+    set metadata as expired before running the command
+
 ``--releasever=<release>``
     configure DNF as if the distribution release was ``<release>``. This can
     affect cache paths, values in configuration files and mirrorlist URLs. Using
     '/' for this value makes DNF detect the release number from the running
     system.
+
+``--repofrompath <repo>,<path/url>``
+    Specify a path or url to a repository (same path as in a baseurl) to add to
+    the repositories for this query. This option can be used multiple times. The
+    repo label for the repository is specified by <repo>. If you want to view
+    only the packages from this repository, combine this with options
+    ``--disablerepo=*`` and ``--enablerepo=<repo>``.
 
 ``--rpmverbosity=<debug level name>``
     debugging output level for rpm
