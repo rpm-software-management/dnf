@@ -103,7 +103,7 @@ _dnf()
             install|update|upgrade|reinstall|info)
                 if ! _is_path "$cur"; then
                     if [ -r $cache_file ] && ! _modified_sack words[@]; then
-                        COMPREPLY=( $( compgen -W '$( $sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" 2>/dev/null )' ) )
+                        COMPREPLY=( $( compgen -W '$( $sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" | awk "BEGIN { FS=\"-\";OFS=\"-\"} {print} {NF-=2;$1=$1;print}" 2>/dev/null )' ) )
                     else
                         _dnf_helper $command "$cur"
                     fi
