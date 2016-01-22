@@ -19,12 +19,16 @@
 #
 
 from __future__ import unicode_literals
+import sys
 import warnings
 
 CHECKOUT_DIR = '@CHECKOUT_DIR@'
+CUSTOM_PATH = '@PYTHONPATH@'
 
 if CHECKOUT_DIR:
     __path__.append(CHECKOUT_DIR + '/dnf')  # noqa
+if CUSTOM_PATH:
+    sys.path[1:1] = CUSTOM_PATH.split(':')
 
 import dnf.exceptions
 import dnf.pycomp
