@@ -40,6 +40,11 @@ Then to run DNF::
 To build DNF for Python 3, use the option ``-DPYTHON_DESIRED:str=3`` with
 cmake.
 
+If you're also developing some plugins, you can make your DNF build aware of
+them by using the following option when building::
+
+    -DPLUGINPATH="/path/to/plugins:/another/one"
+
 You can also specify ``PYTHONPATH`` that your DNF build will use.  This is
 useful if you want to use your checkout of a dependency like libcomps::
 

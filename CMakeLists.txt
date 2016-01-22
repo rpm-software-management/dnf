@@ -32,6 +32,17 @@ if (USE_CHECKOUT AND NOT (${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_SOURCE_DIR}))
     FILE(REMOVE ${CMAKE_SOURCE_DIR}/dnf/__init__.pyc)
 endif()
 
+if (PLUGINPATH)
+    # Custom value specified, append it to PYTHONPATH
+    if (PYTHONPATH)
+        SET(PYTHONPATH ${PYTHONPATH}:)
+    endif()
+    SET(PYTHONPATH ${PYTHONPATH}${PLUGINPATH})
+else()
+    # Use the default value
+    SET(PLUGINPATH ${PYTHON_INSTALL_DIR}/dnf-plugins)
+endif()
+
 ADD_SUBDIRECTORY (dnf)
 ADD_SUBDIRECTORY (bin)
 ADD_SUBDIRECTORY (etc)
