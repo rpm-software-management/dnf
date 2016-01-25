@@ -10,7 +10,7 @@
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 
 Name:		dnf
-Version:	1.1.5
+Version:	1.1.6
 Release:	1%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -281,6 +281,22 @@ exit 0
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Mon Jan 25 2016 Michal Luscon <mluscon@redhat.com> 1.1.6-1
+- history: don't fail if there is no history (RhBug:1291895) (Michal Luscon)
+- Allow dnf to use a socks5 proxy, since curl support it (RhBug:1256587)
+  (Michael Scherer)
+- output: do not log rpm info twice (RhBug:1287221) (Michal Luscon)
+- dnf owns /var/lib/dnf dir (RhBug:1294241) (Jan Silhan)
+- Fix handling of repo that never expire (RhBug:1289166) (Jaroslav Mracek)
+- Filter out .src packages when multilib_proto=all (Jeff Smith)
+- Enable string for translation (RhBug:1294355) (Parag Nemade)
+- Let logging format messages on demand (Ville Skyttä)
+- clean: include metadata of local repos (RhBug:1226322) (Michal Domonkos)
+- completion: Install to where bash-completion.pc says (Ville Skyttä)
+- spec: bash completion is not a %%config file (Ville Skyttä)
+- Change assertion handling for rpmsack.py (RhBug:1275878) (Jaroslav Mracek)
+- cli: fix storing arguments in history (RhBug:1239274) (Ting-Wei Lan)
+
 * Thu Dec 17 2015 Michal Luscon <mluscon@redhat.com> 1.1.5-1
 - base: save group persistor only after successful transaction (RhBug:1229046)
   (Michal Luscon)
