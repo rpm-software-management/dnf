@@ -6,18 +6,18 @@
 # Robert Antoni Buj i Gelonch, 2014-2015
 # Jan Silhan <jsilhan@redhat.com>, 2015. #zanata
 # Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>, 2015. #zanata
+# Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>, 2016. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-17 14:25+0100\n"
+"POT-Creation-Date: 2016-01-25 16:00+0100\n"
+"PO-Revision-Date: 2016-01-24 02:51-0500\n"
+"Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
+"Language-Team: Catalan (https://fedora.zanata.org/language/view/ca) <fedora@llistes.softcatala.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2015-12-04 06:55-0500\n"
-"Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
-"Language-Team: Catalan (https://fedora.zanata.org/language/view/ca) "
-"<fedora@llistes.softcatala.org>\n"
 "Language: ca\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Zanata 3.7.3\n"
@@ -49,6 +49,10 @@ msgstr "Ha fallat la reconstrucció delta RPM"
 #: ../dnf/drpm.py:137
 msgid "Checksum of the delta-rebuilt RPM failed"
 msgstr "Ha fallat la suma de verificació de la reconstrucció delta RPM"
+
+#: ../dnf/drpm.py:140
+msgid "done"
+msgstr ""
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -121,13 +125,10 @@ msgstr "--> S'estan trobant les dependències sobrants innecessàries"
 #, python-format
 msgid ""
 "Malformed lock file found: %s.\n"
-"Ensure no other dnf process is running and remove the lock file manually or "
-"run systemd-tmpfiles --remove dnf.conf."
+"Ensure no other dnf process is running and remove the lock file manually or run systemd-tmpfiles --remove dnf.conf."
 msgstr ""
 "S'ha trobat un bloqueig de fitxer amb format incorrecte: %s.\n"
-"Assegureu-vos que no hi hagi cap altre procés dnf en execució i suprimiu "
-"manualment el fitxer del bloqueig o executeu systemd-tmpfiles --remove dnf."
-"conf."
+"Assegureu-vos que no hi hagi cap altre procés dnf en execució i suprimiu manualment el fitxer del bloqueig o executeu systemd-tmpfiles --remove dnf.conf."
 
 #: ../dnf/lock.py:136
 #, python-format
@@ -150,7 +151,7 @@ msgstr "Eliminar"
 msgid "Installing"
 msgstr "Instal·lar"
 
-#: ../dnf/yum/rpmtrans.py:127 ../dnf/cli/output.py:1714
+#: ../dnf/yum/rpmtrans.py:127 ../dnf/cli/output.py:1712
 msgid "Obsoleting"
 msgstr "Devaluar"
 
@@ -166,12 +167,12 @@ msgstr "Actualitzar"
 msgid "Verifying"
 msgstr "Verificar"
 
-#: ../dnf/yum/history.py:758
+#: ../dnf/yum/history.py:744
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
 msgstr "No s'ha pogut inicialitzar l'històric de la base de dades de DNF: %s"
 
-#: ../dnf/yum/history.py:1675
+#: ../dnf/yum/history.py:1661
 #, python-format
 msgid "Can not create history database at '%s'."
 msgstr "No s'ha pogut crear la base de dades de l'històric a «%s»."
@@ -405,9 +406,11 @@ msgstr "Es baixen els paquets:"
 
 #: ../dnf/cli/cli.py:215
 #, python-format
-msgid "Error downloading packages:\n"
+msgid ""
+"Error downloading packages:\n"
 "%s"
-msgstr "S'ha produït un error durant la baixada dels següents paquets:\n"
+msgstr ""
+"S'ha produït un error durant la baixada dels següents paquets:\n"
 "%s"
 
 #: ../dnf/cli/cli.py:252
@@ -480,7 +483,7 @@ msgstr "No s'ha trobat cap coincidència"
 msgid "No transaction ID given"
 msgstr "No s'ha proporcionat cap id. de transacció"
 
-#: ../dnf/cli/cli.py:589 ../dnf/cli/cli.py:597 ../dnf/cli/output.py:1860
+#: ../dnf/cli/cli.py:589 ../dnf/cli/cli.py:597 ../dnf/cli/output.py:1858
 msgid "Bad transaction ID given"
 msgstr "S'ha proporcionat un id. de transacció dolent"
 
@@ -544,14 +547,16 @@ msgstr "No existeix l'ordre: %s. Utilitzeu %s --help"
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
-"Podria ser que l'ordre fos d'un connector de DNF, proveu: \"dnf install 'dnf-"
-"command(%s)'\""
+"Podria ser que l'ordre fos d'un connector de DNF, proveu: \"dnf install "
+"'dnf-command(%s)'\""
 
 #: ../dnf/cli/cli.py:867
 msgid ""
 "It could be a DNF plugin command, but loading of plugins is currently "
 "disabled."
 msgstr ""
+"Podria ser que l'ordre fos d'un connector de DNF, però actualment la carrega"
+" dels connectors està inhabilitada."
 
 #: ../dnf/cli/cli.py:969 ../dnf/cli/cli.py:973
 #, python-format
@@ -682,9 +687,11 @@ msgstr "És correcte [N/s]: "
 
 #: ../dnf/cli/output.py:707
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "Group: %s"
-msgstr "\n"
+msgstr ""
+"\n"
 "Grup: %s"
 
 #: ../dnf/cli/output.py:711
@@ -825,7 +832,7 @@ msgid "Skipping packages with broken dependencies"
 msgstr "S'ignoren els paquets amb dependències trencades"
 
 #: ../dnf/cli/output.py:1050 ../dnf/cli/output.py:1090
-#: ../dnf/cli/output.py:1106 ../dnf/cli/output.py:1915
+#: ../dnf/cli/output.py:1106 ../dnf/cli/output.py:1913
 msgid "Package"
 msgid_plural "Packages"
 msgstr[0] "Paquet"
@@ -838,23 +845,25 @@ msgstr "Dipòsit"
 #: ../dnf/cli/output.py:1064
 #, python-format
 msgid "     replacing  %s%s%s.%s %s\n"
-msgstr "substituint %s%s%s.%s %s\n"
+msgstr "     substituint %s%s%s.%s %s\n"
 
 #: ../dnf/cli/output.py:1072
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "Transaction Summary\n"
 "%s\n"
-msgstr "\n"
+msgstr ""
+"\n"
 "Resum de la transacció\n"
 "%s\n"
 
-#: ../dnf/cli/output.py:1077 ../dnf/cli/output.py:1710
-#: ../dnf/cli/output.py:1711
+#: ../dnf/cli/output.py:1077 ../dnf/cli/output.py:1708
+#: ../dnf/cli/output.py:1709
 msgid "Install"
 msgstr "Instal·la"
 
-#: ../dnf/cli/output.py:1078 ../dnf/cli/output.py:1719
+#: ../dnf/cli/output.py:1078 ../dnf/cli/output.py:1717
 msgid "Upgrade"
 msgstr "Actualitza"
 
@@ -862,7 +871,7 @@ msgstr "Actualitza"
 msgid "Remove"
 msgstr "Treu"
 
-#: ../dnf/cli/output.py:1080 ../dnf/cli/output.py:1717
+#: ../dnf/cli/output.py:1080 ../dnf/cli/output.py:1715
 msgid "Downgrade"
 msgstr "Reverteix"
 
@@ -884,18 +893,18 @@ msgstr "Reinstal·lat"
 msgid "Removed"
 msgstr "Tret"
 
-#: ../dnf/cli/output.py:1169 ../dnf/cli/output.py:1555
-#: ../dnf/cli/output.py:1557 ../dnf/cli/commands/updateinfo.py:296
+#: ../dnf/cli/output.py:1169 ../dnf/cli/output.py:1553
+#: ../dnf/cli/output.py:1555 ../dnf/cli/commands/updateinfo.py:296
 msgid "Installed"
 msgstr "Instal·lat"
 
-#: ../dnf/cli/output.py:1170 ../dnf/cli/output.py:1556
-#: ../dnf/cli/output.py:1720
+#: ../dnf/cli/output.py:1170 ../dnf/cli/output.py:1554
+#: ../dnf/cli/output.py:1718
 msgid "Upgraded"
 msgstr "Actualitzat"
 
-#: ../dnf/cli/output.py:1171 ../dnf/cli/output.py:1556
-#: ../dnf/cli/output.py:1718
+#: ../dnf/cli/output.py:1171 ../dnf/cli/output.py:1554
+#: ../dnf/cli/output.py:1716
 msgid "Downgraded"
 msgstr "Revertit"
 
@@ -939,337 +948,337 @@ msgstr "<no establert>"
 msgid "System"
 msgstr "Sistema"
 
-#: ../dnf/cli/output.py:1348 ../dnf/cli/output.py:1461
+#: ../dnf/cli/output.py:1348 ../dnf/cli/output.py:1459
 msgid "No transactions"
 msgstr "Sense transaccions"
 
-#: ../dnf/cli/output.py:1368 ../dnf/cli/output.py:1904
-#: ../dnf/cli/output.py:1981
+#: ../dnf/cli/output.py:1368 ../dnf/cli/output.py:1902
+#: ../dnf/cli/output.py:1979
 msgid "Bad transaction IDs, or package(s), given"
 msgstr "S'ha proporcionat un id. de transacció o un paquet que era dolent"
 
-#: ../dnf/cli/output.py:1406
+#: ../dnf/cli/output.py:1404
 msgid "Command line"
 msgstr "Línia d'ordres"
 
-#: ../dnf/cli/output.py:1408 ../dnf/cli/output.py:1792
+#: ../dnf/cli/output.py:1406 ../dnf/cli/output.py:1790
 msgid "Login user"
 msgstr "Usuari registrat"
 
-#: ../dnf/cli/output.py:1409 ../dnf/cli/output.py:1913
+#: ../dnf/cli/output.py:1407 ../dnf/cli/output.py:1911
 msgid "ID"
 msgstr "Id."
 
-#: ../dnf/cli/output.py:1411
+#: ../dnf/cli/output.py:1409
 msgid "Date and time"
 msgstr "Data i hora"
 
-#: ../dnf/cli/output.py:1412 ../dnf/cli/output.py:1794
-#: ../dnf/cli/output.py:1914
+#: ../dnf/cli/output.py:1410 ../dnf/cli/output.py:1792
+#: ../dnf/cli/output.py:1912
 msgid "Action(s)"
 msgstr "Acció"
 
-#: ../dnf/cli/output.py:1413 ../dnf/cli/output.py:1795
+#: ../dnf/cli/output.py:1411 ../dnf/cli/output.py:1793
 msgid "Altered"
 msgstr "Alterats"
 
-#: ../dnf/cli/output.py:1494 ../dnf/cli/output.py:1868
+#: ../dnf/cli/output.py:1492 ../dnf/cli/output.py:1866
 msgid "No transaction ID, or package, given"
 msgstr "No hi ha l'id. de transacció o el paquet que s'ha proporcionat"
 
-#: ../dnf/cli/output.py:1555
+#: ../dnf/cli/output.py:1553
 msgid "Erased"
 msgstr "Eliminat"
 
-#: ../dnf/cli/output.py:1557
+#: ../dnf/cli/output.py:1555
 msgid "Not installed"
 msgstr "No instal·lat"
 
-#: ../dnf/cli/output.py:1558
+#: ../dnf/cli/output.py:1556
 msgid "Older"
 msgstr "Més antic"
 
-#: ../dnf/cli/output.py:1558
+#: ../dnf/cli/output.py:1556
 msgid "Newer"
 msgstr "Més recent"
 
-#: ../dnf/cli/output.py:1595 ../dnf/cli/output.py:1597
-#: ../dnf/cli/output.py:2002
+#: ../dnf/cli/output.py:1593 ../dnf/cli/output.py:1595
+#: ../dnf/cli/output.py:2000
 msgid "Transaction ID :"
 msgstr "Id. de transacció:"
 
-#: ../dnf/cli/output.py:1599 ../dnf/cli/output.py:2004
+#: ../dnf/cli/output.py:1597 ../dnf/cli/output.py:2002
 msgid "Begin time     :"
 msgstr "Hora d'inici:"
 
-#: ../dnf/cli/output.py:1602 ../dnf/cli/output.py:1604
+#: ../dnf/cli/output.py:1600 ../dnf/cli/output.py:1602
 msgid "Begin rpmdb    :"
 msgstr "rpmdb d'inici:"
 
-#: ../dnf/cli/output.py:1620
+#: ../dnf/cli/output.py:1618
 #, python-format
 msgid "(%u seconds)"
 msgstr "(%u segons)"
 
-#: ../dnf/cli/output.py:1622
+#: ../dnf/cli/output.py:1620
 #, python-format
 msgid "(%u minutes)"
 msgstr "(%u minuts)"
 
-#: ../dnf/cli/output.py:1624
+#: ../dnf/cli/output.py:1622
 #, python-format
 msgid "(%u hours)"
 msgstr "(%u hores)"
 
-#: ../dnf/cli/output.py:1626
+#: ../dnf/cli/output.py:1624
 #, python-format
 msgid "(%u days)"
 msgstr "(%u dies)"
 
-#: ../dnf/cli/output.py:1627
+#: ../dnf/cli/output.py:1625
 msgid "End time       :"
 msgstr "Hora de finalització:"
 
-#: ../dnf/cli/output.py:1630 ../dnf/cli/output.py:1632
+#: ../dnf/cli/output.py:1628 ../dnf/cli/output.py:1630
 msgid "End rpmdb      :"
 msgstr "rpmdb de finalització:"
 
-#: ../dnf/cli/output.py:1635 ../dnf/cli/output.py:1637
+#: ../dnf/cli/output.py:1633 ../dnf/cli/output.py:1635
 msgid "User           :"
 msgstr "Usuari:"
 
-#: ../dnf/cli/output.py:1641 ../dnf/cli/output.py:1644
-#: ../dnf/cli/output.py:1646 ../dnf/cli/output.py:1648
-#: ../dnf/cli/output.py:1650
+#: ../dnf/cli/output.py:1639 ../dnf/cli/output.py:1642
+#: ../dnf/cli/output.py:1644 ../dnf/cli/output.py:1646
+#: ../dnf/cli/output.py:1648
 msgid "Return-Code    :"
 msgstr "Codi de retorn:"
 
-#: ../dnf/cli/output.py:1641 ../dnf/cli/output.py:1646
+#: ../dnf/cli/output.py:1639 ../dnf/cli/output.py:1644
 msgid "Aborted"
 msgstr "Avortat"
 
-#: ../dnf/cli/output.py:1644
+#: ../dnf/cli/output.py:1642
 msgid "Failures:"
 msgstr "Errors:"
 
-#: ../dnf/cli/output.py:1648
+#: ../dnf/cli/output.py:1646
 msgid "Failure:"
 msgstr "Error:"
 
-#: ../dnf/cli/output.py:1650
+#: ../dnf/cli/output.py:1648
 msgid "Success"
 msgstr "Ha tingut èxit"
 
-#: ../dnf/cli/output.py:1655 ../dnf/cli/output.py:1657
-#: ../dnf/cli/output.py:2033
+#: ../dnf/cli/output.py:1653 ../dnf/cli/output.py:1655
+#: ../dnf/cli/output.py:2031
 msgid "Command Line   :"
 msgstr "Línia d'ordres:"
 
-#: ../dnf/cli/output.py:1666
+#: ../dnf/cli/output.py:1664
 #, python-format
 msgid "Additional non-default information stored: %d"
 msgstr "Informació no predeterminada que addicionalment s'ha emmagatzemat: %d"
 
-#: ../dnf/cli/output.py:1671
+#: ../dnf/cli/output.py:1669
 msgid "Transaction performed with:"
 msgstr "La transacció es va realitzar amb:"
 
-#: ../dnf/cli/output.py:1675
+#: ../dnf/cli/output.py:1673
 msgid "Packages Altered:"
 msgstr "Alteracions dels paquets:"
 
-#: ../dnf/cli/output.py:1679
+#: ../dnf/cli/output.py:1677
 msgid "Packages Skipped:"
 msgstr "Paquets ignorats:"
 
-#: ../dnf/cli/output.py:1687
+#: ../dnf/cli/output.py:1685
 msgid "Rpmdb Problems:"
 msgstr "Problemes del rpmdb:"
 
-#: ../dnf/cli/output.py:1698
+#: ../dnf/cli/output.py:1696
 msgid "Scriptlet output:"
 msgstr "Sortida de l'scriptlet:"
 
-#: ../dnf/cli/output.py:1704
+#: ../dnf/cli/output.py:1702
 msgid "Errors:"
 msgstr "Errors:"
 
-#: ../dnf/cli/output.py:1712
+#: ../dnf/cli/output.py:1710
 msgid "Dep-Install"
 msgstr "Instal·lar-Dep"
 
-#: ../dnf/cli/output.py:1713
+#: ../dnf/cli/output.py:1711
 msgid "Obsoleted"
 msgstr "Devaluat"
 
-#: ../dnf/cli/output.py:1715
+#: ../dnf/cli/output.py:1713
 msgid "Erase"
 msgstr "Elimina"
 
-#: ../dnf/cli/output.py:1716
+#: ../dnf/cli/output.py:1714
 msgid "Reinstall"
 msgstr "Reinstal·la"
 
-#: ../dnf/cli/output.py:1793
+#: ../dnf/cli/output.py:1791
 msgid "Time"
 msgstr "Moment"
 
-#: ../dnf/cli/output.py:1819
+#: ../dnf/cli/output.py:1817
 msgid "Last day"
 msgstr "L'últim dia"
 
-#: ../dnf/cli/output.py:1820
+#: ../dnf/cli/output.py:1818
 msgid "Last week"
 msgstr "L'última setmana"
 
-#: ../dnf/cli/output.py:1821
+#: ../dnf/cli/output.py:1819
 msgid "Last 2 weeks"
 msgstr "Les últimes 2 setmanes"
 
-#: ../dnf/cli/output.py:1822
+#: ../dnf/cli/output.py:1820
 msgid "Last 3 months"
 msgstr "Els últims 3 mesos"
 
-#: ../dnf/cli/output.py:1823
+#: ../dnf/cli/output.py:1821
 msgid "Last 6 months"
 msgstr "Els últims 6 mesos"
 
-#: ../dnf/cli/output.py:1824
+#: ../dnf/cli/output.py:1822
 msgid "Last year"
 msgstr "L'últim any"
 
-#: ../dnf/cli/output.py:1825
+#: ../dnf/cli/output.py:1823
 msgid "Over a year ago"
 msgstr "Fa més d'un any"
 
-#: ../dnf/cli/output.py:1872
+#: ../dnf/cli/output.py:1870
 #, python-format
 msgid "No Transaction %s found"
 msgstr "No s'ha trobat la transacció %s"
 
-#: ../dnf/cli/output.py:1878
+#: ../dnf/cli/output.py:1876
 msgid "Transaction ID:"
 msgstr "Id. de transacció:"
 
-#: ../dnf/cli/output.py:1879
+#: ../dnf/cli/output.py:1877
 msgid "Available additional history information:"
 msgstr "Informació addicional disponible de l'historial:"
 
-#: ../dnf/cli/output.py:1892
+#: ../dnf/cli/output.py:1890
 #, python-format
 msgid "%s: No additional data found by this name"
 msgstr "%s: No s'han trobat dades addicionals amb aquest nom"
 
-#: ../dnf/cli/output.py:2005
+#: ../dnf/cli/output.py:2003
 msgid "Package        :"
 msgstr "Paquet:"
 
-#: ../dnf/cli/output.py:2006
+#: ../dnf/cli/output.py:2004
 msgid "State          :"
 msgstr "Estat:"
 
-#: ../dnf/cli/output.py:2009
+#: ../dnf/cli/output.py:2007
 msgid "Size           :"
 msgstr "Mida:"
 
-#: ../dnf/cli/output.py:2011
+#: ../dnf/cli/output.py:2009
 msgid "Build host     :"
 msgstr "Amfitrió de la construcció:"
 
-#: ../dnf/cli/output.py:2014
+#: ../dnf/cli/output.py:2012
 msgid "Build time     :"
 msgstr "Hora de la construcció:"
 
-#: ../dnf/cli/output.py:2016
+#: ../dnf/cli/output.py:2014
 msgid "Packager       :"
 msgstr "Empaquetador:"
 
-#: ../dnf/cli/output.py:2018
+#: ../dnf/cli/output.py:2016
 msgid "Vendor         :"
 msgstr "Proveïdor:"
 
-#: ../dnf/cli/output.py:2020
+#: ../dnf/cli/output.py:2018
 msgid "License        :"
 msgstr "Llicència:"
 
-#: ../dnf/cli/output.py:2022
+#: ../dnf/cli/output.py:2020
 msgid "URL            :"
 msgstr "URL:"
 
-#: ../dnf/cli/output.py:2024
+#: ../dnf/cli/output.py:2022
 msgid "Source RPM     :"
 msgstr "RPM del codi:"
 
-#: ../dnf/cli/output.py:2027
+#: ../dnf/cli/output.py:2025
 msgid "Commit Time    :"
 msgstr "Hora del commit:"
 
-#: ../dnf/cli/output.py:2029
+#: ../dnf/cli/output.py:2027
 msgid "Committer      :"
 msgstr "Va fer el commit:"
 
-#: ../dnf/cli/output.py:2031
+#: ../dnf/cli/output.py:2029
 msgid "Reason         :"
 msgstr "Motiu:"
 
-#: ../dnf/cli/output.py:2035
+#: ../dnf/cli/output.py:2033
 msgid "From repo      :"
 msgstr "Del dipòsit:"
 
-#: ../dnf/cli/output.py:2039
+#: ../dnf/cli/output.py:2037
 msgid "Installed by   :"
 msgstr "Instal·lat per:"
 
-#: ../dnf/cli/output.py:2043
+#: ../dnf/cli/output.py:2041
 msgid "Changed by     :"
 msgstr "Canviat per:"
 
-#: ../dnf/cli/output.py:2074 ../dnf/cli/commands/updateinfo.py:328
+#: ../dnf/cli/output.py:2072 ../dnf/cli/commands/updateinfo.py:328
 msgid "installed"
 msgstr "instal·lat"
 
-#: ../dnf/cli/output.py:2075
+#: ../dnf/cli/output.py:2073
 msgid "an upgrade"
 msgstr "una actualització"
 
-#: ../dnf/cli/output.py:2076
+#: ../dnf/cli/output.py:2074
 msgid "erased"
 msgstr "eliminat"
 
-#: ../dnf/cli/output.py:2077
+#: ../dnf/cli/output.py:2075
 msgid "reinstalled"
 msgstr "reinstal·lat"
 
-#: ../dnf/cli/output.py:2078
+#: ../dnf/cli/output.py:2076
 msgid "a downgrade"
 msgstr "una reversió"
 
-#: ../dnf/cli/output.py:2079
+#: ../dnf/cli/output.py:2077
 msgid "obsoleting"
 msgstr "devaluant"
 
-#: ../dnf/cli/output.py:2080
+#: ../dnf/cli/output.py:2078
 msgid "upgraded"
 msgstr "actualitzat"
 
-#: ../dnf/cli/output.py:2081
+#: ../dnf/cli/output.py:2079
 msgid "obsoleted"
 msgstr "devaluat"
 
-#: ../dnf/cli/output.py:2082
+#: ../dnf/cli/output.py:2080
 msgid "downgraded"
 msgstr "revertit"
 
-#: ../dnf/cli/output.py:2085
+#: ../dnf/cli/output.py:2083
 #, python-format
 msgid "---> Package %s.%s %s will be %s"
 msgstr "---> El paquet %s.%s %s serà %s"
 
-#: ../dnf/cli/output.py:2092
+#: ../dnf/cli/output.py:2090
 msgid "--> Starting dependency resolution"
 msgstr "--> S'inicia la resolució de dependències"
 
-#: ../dnf/cli/output.py:2097
+#: ../dnf/cli/output.py:2095
 msgid "--> Finished dependency resolution"
 msgstr "--> La resolució de dependències ha finalitzat"
 
@@ -1299,7 +1308,7 @@ msgstr ""
 msgid "Metadata cache refreshed recently."
 msgstr "Recentment s'ha refrescat la memòria cau de les metadades."
 
-#: ../dnf/cli/commands/makecache.py:88
+#: ../dnf/cli/commands/makecache.py:90
 msgid "Metadata cache created."
 msgstr "S'ha creat la memòria cau de les metadades."
 
@@ -1375,9 +1384,11 @@ msgstr "Advertència: El grup %s no existeix."
 
 #: ../dnf/cli/commands/group.py:172
 #, python-format
-msgid "Warning: No groups match:\n"
+msgid ""
+"Warning: No groups match:\n"
 "   %s"
-msgstr "Advertència: No hi ha grups que coincideixin:\n"
+msgstr ""
+"Advertència: No hi ha grups que coincideixin:\n"
 " %s"
 
 #: ../dnf/cli/commands/group.py:199
@@ -1550,75 +1561,75 @@ msgstr "deshabilitat"
 
 #: ../dnf/cli/commands/repolist.py:156
 msgid "Repo-id      : "
-msgstr "Id. del dipòsit:"
+msgstr "Id. del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:157
 msgid "Repo-name    : "
-msgstr "Nom del dipòsit:"
+msgstr "Nom del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:160
 msgid "Repo-status  : "
-msgstr "Estat del dipòsit:"
+msgstr "Estat del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:163
 msgid "Repo-revision: "
-msgstr "Revisió del dipòsit:"
+msgstr "Revisió del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:167
 msgid "Repo-tags    : "
-msgstr "Etiquetes del dipòsit:"
+msgstr "Etiquetes del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:172
 msgid "Repo-distro-tags: "
-msgstr "Etiquetes distro del dipòsit:"
+msgstr "Etiquetes distro del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:178
 msgid "Repo-updated : "
-msgstr "Dipòsit actualitzat:"
+msgstr "Dipòsit actualitzat: "
 
 #: ../dnf/cli/commands/repolist.py:180
 msgid "Repo-pkgs    : "
-msgstr "Paquets del dipòsit:"
+msgstr "Paquets del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:181
 msgid "Repo-size    : "
-msgstr "Mida del dipòsit:"
+msgstr "Mida del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:184
 msgid "Repo-metalink: "
-msgstr "Meta enllaç del dipòsit:"
+msgstr "Meta enllaç del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:188
 msgid "  Updated    : "
-msgstr "Actualitzat:"
+msgstr "  Actualitzat: "
 
 #: ../dnf/cli/commands/repolist.py:191
 msgid "Repo-mirrors : "
-msgstr "Rèpliques dels dipòsits:"
+msgstr "Rèpliques dels dipòsits: "
 
 #: ../dnf/cli/commands/repolist.py:195 ../dnf/cli/commands/repolist.py:199
 msgid "Repo-baseurl : "
-msgstr "URL-base del dipòsit:"
+msgstr "URL-base del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:202
 msgid "Repo-expire  : "
-msgstr "Venciment del dipòsit:"
+msgstr "Venciment del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:205
 msgid "Repo-exclude : "
-msgstr "Exclou del dipòsit:"
+msgstr "Exclou del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:209
 msgid "Repo-include : "
-msgstr "Inclou del dipòsit:"
+msgstr "Inclou del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:213
 msgid "Repo-excluded: "
-msgstr "Exclòs del dipòsit:"
+msgstr "Exclòs del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:217
 msgid "Repo-filename: "
-msgstr "Nom del fitxer del dipòsit:"
+msgstr "Nom del fitxer del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:225 ../dnf/cli/commands/repolist.py:254
 msgid "repo id"
@@ -1676,8 +1687,8 @@ msgstr "Per diagnosticar el problema, proveu a executar: «%s»."
 #, python-format
 msgid "You probably have corrupted RPMDB, running '%s' might fix the issue."
 msgstr ""
-"Probablement teniu malmesa la RPMDB, l'execució de «%s» pot corregir aquesta "
-"incidència."
+"Probablement teniu malmesa la RPMDB, l'execució de «%s» pot corregir aquesta"
+" incidència."
 
 #: ../dnf/cli/commands/__init__.py:48
 msgid ""
@@ -1694,10 +1705,8 @@ msgid ""
 "\n"
 "For more information contact your distribution or package provider."
 msgstr ""
-"Heu habilitat la comprovació de paquets a través de claus GPG. És una bona "
-"opció.\n"
-"No obstant això, no teniu instal·lada cap clau pública GPG. Necessiteu "
-"baixar\n"
+"Heu habilitat la comprovació de paquets a través de claus GPG. És una bona opció.\n"
+"No obstant això, no teniu instal·lada cap clau pública GPG. Necessiteu baixar\n"
 "les claus per als paquets que desitgeu instal·lar i instal·lar-les.\n"
 "Podeu fer-ho amb l'execució de l'ordre:\n"
 "    rpm --import public.gpg.key\n"
@@ -1707,8 +1716,7 @@ msgstr ""
 "per a un dipòsit en l'opció «gpgkey» en la secció d'un dipòsit i DNF \n"
 "la instal·larà per vosaltres.\n"
 "\n"
-"Per a més informació contacteu amb el vostre distribuïdor o proveïdor de "
-"paquets."
+"Per a més informació contacteu amb el vostre distribuïdor o proveïdor de paquets."
 
 #: ../dnf/cli/commands/__init__.py:68
 msgid " Mini usage:\n"
@@ -1801,20 +1809,12 @@ msgid "No help available for %s"
 msgstr "No hi ha ajuda disponible per a %s"
 
 #: ../dnf/cli/commands/__init__.py:1029
-msgid "\n"
-"\n"
-"aliases: "
-msgstr "\n"
-"\n"
-"àlies: "
+msgid "aliases: "
+msgstr "àlies: "
 
 #: ../dnf/cli/commands/__init__.py:1031
-msgid "\n"
-"\n"
-"alias: "
-msgstr "\n"
-"\n"
-"àlies: "
+msgid "alias: "
+msgstr "àlies: "
 
 #: ../dnf/cli/commands/__init__.py:1047
 msgid "Display, or use, the transaction history"
@@ -1823,8 +1823,8 @@ msgstr "Mostra o utilitza l'històric de transaccions"
 #: ../dnf/cli/commands/__init__.py:1063
 #, python-format
 msgid ""
-"Cannot undo transaction %s, doing so would result in an inconsistent package "
-"database."
+"Cannot undo transaction %s, doing so would result in an inconsistent package"
+" database."
 msgstr ""
 "No es pot desfer la transacció %s, fer-ho podria resultar en una base de "
 "dades inconsistent de paquets."
@@ -1848,7 +1848,7 @@ msgstr "Hora d'inici:"
 
 #: ../dnf/cli/commands/__init__.py:1157
 msgid "End time    :"
-msgstr "Hora de finalització: "
+msgstr "Hora de finalització:"
 
 #: ../dnf/cli/commands/__init__.py:1158
 msgid "Counts      :"
@@ -1910,7 +1910,7 @@ msgstr "Mostra les advertències quant als paquets"
 
 #: ../dnf/cli/commands/updateinfo.py:177
 msgid "Updates Information Summary: "
-msgstr "Resum informatiu de les actualitzacions:"
+msgstr "Resum informatiu de les actualitzacions: "
 
 #: ../dnf/cli/commands/updateinfo.py:180
 msgid "Security notice(s)"
@@ -2027,6 +2027,8 @@ msgid ""
 "The downloaded packages were saved in cache until the next successful "
 "transaction."
 msgstr ""
+"Els paquets baixats es desen a la memòria cau fins a la propera transacció "
+"reeixida."
 
 #: ../dnf/base.py:303
 #, python-format
@@ -2072,39 +2074,40 @@ msgid "Running transaction"
 msgstr "S'executa la transacció"
 
 #: ../dnf/base.py:633
-msgid "Disk Requirements:\n"
-msgstr "Requeriments de disc:\n"
+msgid "Disk Requirements:"
+msgstr "Requeriments de disc:"
 
 #: ../dnf/base.py:636
 #, python-format
-msgid "  At least %dMB more space needed on the %s filesystem.\n"
-msgid_plural "  At least %dMB more space needed on the %s filesystem.\n"
+msgid "At least %dMB more space needed on the %s filesystem."
+msgid_plural "At least %dMB more space needed on the %s filesystem."
 msgstr[0] ""
-"  Com a mínim es requereix %d MB més d'espai lliure al sistema de fitxers %s."
-"\n"
+"Com a mínim es requereix %d MB més d'espai lliure al sistema de fitxers %s."
 msgstr[1] ""
-"  Com a mínim es requereixen %d MB més d'espai lliure al sistema de fitxers "
-"%s.\n"
+"Com a mínim es requereixen %d MB més d'espai lliure al sistema de fitxers "
+"%s."
 
 #: ../dnf/base.py:640
-msgid "Error Summary\n"
+msgid ""
+"Error Summary\n"
 "-------------\n"
-msgstr "Resum d'errors\n"
+msgstr ""
+"Resum d'errors\n"
 "-------------\n"
 
 #: ../dnf/base.py:702
 msgid ""
 "Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
-"Advertència: ha fallat el scriptlet o s'han produït altres tipus d'errors no "
-"fatals durant la transacció."
+"Advertència: ha fallat el scriptlet o s'han produït altres tipus d'errors no"
+" fatals durant la transacció."
 
 #: ../dnf/base.py:707
 #, python-format
 msgid "Failed to obtain the transaction lock (logged in as: %s)."
 msgstr ""
-"No s'ha pogut obtenir el bloqueig de la transacció (inici de sessió com: %s)."
-""
+"No s'ha pogut obtenir el bloqueig de la transacció (inici de sessió com: "
+"%s)."
 
 #: ../dnf/base.py:710 ../dnf/base.py:720
 msgid "Could not run transaction."
@@ -2203,8 +2206,8 @@ msgstr "El paquet %s no està instal·lat, no es pot actualitzar."
 #, python-format
 msgid "Package %s of higher version already installed, cannot update it."
 msgstr ""
-"Un paquet %s d'una versió superior ja està instal·lat, no es pot actualitzar."
-""
+"Un paquet %s d'una versió superior ja està instal·lat, no es pot "
+"actualitzar."
 
 #: ../dnf/base.py:1586
 #, python-format
@@ -2219,53 +2222,45 @@ msgstr ""
 
 #: ../dnf/base.py:1834
 #, python-format
-msgid "\n"
-"\n"
-"\n"
-" Failing package is: %s\n"
+msgid ""
+"Failing package is: %s\n"
 " GPG Keys are configured as: %s\n"
 msgstr ""
-"\n"
-"\n"
-"\n"
-" El paquet defectuós és: %s\n"
+"El paquet defectuós és: %s\n"
 " Les claus GPG estan configurades com: %s\n"
 
-#: ../dnf/base.py:1848
+#: ../dnf/base.py:1847
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "La clau GPG de %s (0x%s) ja està instal·lada"
 
-#: ../dnf/base.py:1882
+#: ../dnf/base.py:1881
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "La importació de la clau ha fallat (codi %d)"
 
-#: ../dnf/base.py:1884
+#: ../dnf/base.py:1883
 msgid "Key imported successfully"
 msgstr "La clau s'ha importat amb èxit"
 
-#: ../dnf/base.py:1888
+#: ../dnf/base.py:1887
 msgid "Didn't install any keys"
 msgstr "No es va instal·lar cap clau"
 
-#: ../dnf/base.py:1891
+#: ../dnf/base.py:1890
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they "
-"are not correct for this package.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"Les claus GPG llistades per al dipòsit «%s» ja estan instal·lades però no "
-"són correctes per a aquest paquet.\n"
-"Comproveu que els URL de les claus estan configurades amb la clau correcta "
-"per a aquest dipòsit."
+"Les claus GPG llistades per al dipòsit «%s» ja estan instal·lades però no són correctes per a aquest paquet.\n"
+"Comproveu que els URL de les claus estan configurades amb la clau correcta per a aquest dipòsit."
 
-#: ../dnf/base.py:1901
+#: ../dnf/base.py:1900
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "La importació de claus no ha ajudat, eren claus incorrectes?"
 
-#: ../dnf/base.py:1928
+#: ../dnf/base.py:1927
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr "El paquet %s ja està instal·lat i s'ignora."

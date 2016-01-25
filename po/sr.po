@@ -9,17 +9,15 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2015-12-17 14:25+0100\n"
+"POT-Creation-Date: 2016-01-25 16:00+0100\n"
+"PO-Revision-Date: 2015-11-16 06:48-0500\n"
+"Last-Translator: Momcilo Medic <medicmomcilo@gmail.com>\n"
+"Language-Team: Serbian (http://www.transifex.com/projects/p/dnf/language/sr/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"PO-Revision-Date: 2015-11-16 06:48-0500\n"
-"Last-Translator: Momcilo Medic <medicmomcilo@gmail.com>\n"
-"Language-Team: Serbian (http://www.transifex.com/projects/p/dnf/language/sr/"
-")\n"
 "Language: sr\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Zanata 3.7.3\n"
 
 #: ../dnf/persistor.py:314
@@ -48,6 +46,10 @@ msgstr "Грешка у поновној изградњи delta RPM-а"
 #: ../dnf/drpm.py:137
 msgid "Checksum of the delta-rebuilt RPM failed"
 msgstr "Контролни збир delta-rebuilt RPM-а није тачан"
+
+#: ../dnf/drpm.py:140
+msgid "done"
+msgstr ""
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -116,13 +118,10 @@ msgstr "--> Проналазим преостале непотребне про�
 #, python-format
 msgid ""
 "Malformed lock file found: %s.\n"
-"Ensure no other dnf process is running and remove the lock file manually or "
-"run systemd-tmpfiles --remove dnf.conf."
+"Ensure no other dnf process is running and remove the lock file manually or run systemd-tmpfiles --remove dnf.conf."
 msgstr ""
 "Пронађен неисправан облик закључавајуће датотеке: %s.\n"
-"Осигурајте се да ниједан други dnf процес није покренут и уклоните "
-"закључавајућу датотеку ручно или покрените systemd-tmpfiles --remove dnf."
-"conf."
+"Осигурајте се да ниједан други dnf процес није покренут и уклоните закључавајућу датотеку ручно или покрените systemd-tmpfiles --remove dnf.conf."
 
 #: ../dnf/lock.py:136
 #, python-format
@@ -145,7 +144,7 @@ msgstr "Бришем"
 msgid "Installing"
 msgstr "Инсталирам"
 
-#: ../dnf/yum/rpmtrans.py:127 ../dnf/cli/output.py:1714
+#: ../dnf/yum/rpmtrans.py:127 ../dnf/cli/output.py:1712
 msgid "Obsoleting"
 msgstr "Постаје застарело"
 
@@ -161,12 +160,12 @@ msgstr "Надоградња"
 msgid "Verifying"
 msgstr "Проверавам"
 
-#: ../dnf/yum/history.py:758
+#: ../dnf/yum/history.py:744
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
 msgstr "Неуспела иницијализација базе података DNF историје: %s"
 
-#: ../dnf/yum/history.py:1675
+#: ../dnf/yum/history.py:1661
 #, python-format
 msgid "Can not create history database at '%s'."
 msgstr "Не могу да направим базу података историје на '%s'."
@@ -396,9 +395,11 @@ msgstr "Преузимам пакете:"
 
 #: ../dnf/cli/cli.py:215
 #, python-format
-msgid "Error downloading packages:\n"
+msgid ""
+"Error downloading packages:\n"
 "%s"
-msgstr "Грешка при преузимању пакета:\n"
+msgstr ""
+"Грешка при преузимању пакета:\n"
 "%s"
 
 #: ../dnf/cli/cli.py:252
@@ -471,7 +472,7 @@ msgstr "Нису пронађена подударања"
 msgid "No transaction ID given"
 msgstr "Није задат ID трансакције"
 
-#: ../dnf/cli/cli.py:589 ../dnf/cli/cli.py:597 ../dnf/cli/output.py:1860
+#: ../dnf/cli/cli.py:589 ../dnf/cli/cli.py:597 ../dnf/cli/output.py:1858
 msgid "Bad transaction ID given"
 msgstr "Задат је неисправан ID трансакције"
 
@@ -667,9 +668,11 @@ msgstr "Да ли је ово у реду [Д/н]: "
 
 #: ../dnf/cli/output.py:707
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "Group: %s"
-msgstr "\n"
+msgstr ""
+"\n"
 "Група: %s"
 
 #: ../dnf/cli/output.py:711
@@ -715,11 +718,11 @@ msgstr " Id окружења: %s"
 
 #: ../dnf/cli/output.py:755
 msgid " Mandatory Groups:"
-msgstr "Обавезне групе:"
+msgstr " Обавезне групе:"
 
 #: ../dnf/cli/output.py:756
 msgid " Optional Groups:"
-msgstr "Изборне групе:"
+msgstr " Изборне групе:"
 
 #: ../dnf/cli/output.py:791
 #, python-format
@@ -808,7 +811,7 @@ msgid "Skipping packages with broken dependencies"
 msgstr ""
 
 #: ../dnf/cli/output.py:1050 ../dnf/cli/output.py:1090
-#: ../dnf/cli/output.py:1106 ../dnf/cli/output.py:1915
+#: ../dnf/cli/output.py:1106 ../dnf/cli/output.py:1913
 #, fuzzy
 msgid "Package"
 msgid_plural "Packages"
@@ -827,19 +830,21 @@ msgstr "     замењујем  %s%s%s.%s %s\n"
 
 #: ../dnf/cli/output.py:1072
 #, python-format
-msgid "\n"
+msgid ""
+"\n"
 "Transaction Summary\n"
 "%s\n"
-msgstr "\n"
+msgstr ""
+"\n"
 "Сажетак трансакције\n"
 "%s\n"
 
-#: ../dnf/cli/output.py:1077 ../dnf/cli/output.py:1710
-#: ../dnf/cli/output.py:1711
+#: ../dnf/cli/output.py:1077 ../dnf/cli/output.py:1708
+#: ../dnf/cli/output.py:1709
 msgid "Install"
 msgstr "Инсталирање"
 
-#: ../dnf/cli/output.py:1078 ../dnf/cli/output.py:1719
+#: ../dnf/cli/output.py:1078 ../dnf/cli/output.py:1717
 msgid "Upgrade"
 msgstr "Надоградња"
 
@@ -847,7 +852,7 @@ msgstr "Надоградња"
 msgid "Remove"
 msgstr "Уклањање"
 
-#: ../dnf/cli/output.py:1080 ../dnf/cli/output.py:1717
+#: ../dnf/cli/output.py:1080 ../dnf/cli/output.py:1715
 msgid "Downgrade"
 msgstr "Деградирање"
 
@@ -870,18 +875,18 @@ msgstr "Поново инсталирано"
 msgid "Removed"
 msgstr "Уклоњено"
 
-#: ../dnf/cli/output.py:1169 ../dnf/cli/output.py:1555
-#: ../dnf/cli/output.py:1557 ../dnf/cli/commands/updateinfo.py:296
+#: ../dnf/cli/output.py:1169 ../dnf/cli/output.py:1553
+#: ../dnf/cli/output.py:1555 ../dnf/cli/commands/updateinfo.py:296
 msgid "Installed"
 msgstr "Инсталирани"
 
-#: ../dnf/cli/output.py:1170 ../dnf/cli/output.py:1556
-#: ../dnf/cli/output.py:1720
+#: ../dnf/cli/output.py:1170 ../dnf/cli/output.py:1554
+#: ../dnf/cli/output.py:1718
 msgid "Upgraded"
 msgstr "Надограђено"
 
-#: ../dnf/cli/output.py:1171 ../dnf/cli/output.py:1556
-#: ../dnf/cli/output.py:1718
+#: ../dnf/cli/output.py:1171 ../dnf/cli/output.py:1554
+#: ../dnf/cli/output.py:1716
 msgid "Downgraded"
 msgstr "Деградирано"
 
@@ -925,337 +930,337 @@ msgstr "<unset>"
 msgid "System"
 msgstr "Систем"
 
-#: ../dnf/cli/output.py:1348 ../dnf/cli/output.py:1461
+#: ../dnf/cli/output.py:1348 ../dnf/cli/output.py:1459
 msgid "No transactions"
 msgstr "Нема трансакција"
 
-#: ../dnf/cli/output.py:1368 ../dnf/cli/output.py:1904
-#: ../dnf/cli/output.py:1981
+#: ../dnf/cli/output.py:1368 ../dnf/cli/output.py:1902
+#: ../dnf/cli/output.py:1979
 msgid "Bad transaction IDs, or package(s), given"
 msgstr "Задати су неисправни пакети или ID трансакције"
 
-#: ../dnf/cli/output.py:1406
+#: ../dnf/cli/output.py:1404
 msgid "Command line"
 msgstr "Командна линија"
 
-#: ../dnf/cli/output.py:1408 ../dnf/cli/output.py:1792
+#: ../dnf/cli/output.py:1406 ../dnf/cli/output.py:1790
 msgid "Login user"
 msgstr "Пријављивање корисника"
 
-#: ../dnf/cli/output.py:1409 ../dnf/cli/output.py:1913
+#: ../dnf/cli/output.py:1407 ../dnf/cli/output.py:1911
 msgid "ID"
 msgstr "ID"
 
-#: ../dnf/cli/output.py:1411
+#: ../dnf/cli/output.py:1409
 msgid "Date and time"
 msgstr "Датум и време"
 
-#: ../dnf/cli/output.py:1412 ../dnf/cli/output.py:1794
-#: ../dnf/cli/output.py:1914
+#: ../dnf/cli/output.py:1410 ../dnf/cli/output.py:1792
+#: ../dnf/cli/output.py:1912
 msgid "Action(s)"
 msgstr "Акција(е)"
 
-#: ../dnf/cli/output.py:1413 ../dnf/cli/output.py:1795
+#: ../dnf/cli/output.py:1411 ../dnf/cli/output.py:1793
 msgid "Altered"
 msgstr "Промењено"
 
-#: ../dnf/cli/output.py:1494 ../dnf/cli/output.py:1868
+#: ../dnf/cli/output.py:1492 ../dnf/cli/output.py:1866
 msgid "No transaction ID, or package, given"
 msgstr "Није задат пакет или ID трансакције"
 
-#: ../dnf/cli/output.py:1555
+#: ../dnf/cli/output.py:1553
 msgid "Erased"
 msgstr "Обрисани"
 
-#: ../dnf/cli/output.py:1557
+#: ../dnf/cli/output.py:1555
 msgid "Not installed"
 msgstr "Није инсталирано"
 
-#: ../dnf/cli/output.py:1558
+#: ../dnf/cli/output.py:1556
 msgid "Older"
 msgstr "Старије"
 
-#: ../dnf/cli/output.py:1558
+#: ../dnf/cli/output.py:1556
 msgid "Newer"
 msgstr "Новије"
 
-#: ../dnf/cli/output.py:1595 ../dnf/cli/output.py:1597
-#: ../dnf/cli/output.py:2002
+#: ../dnf/cli/output.py:1593 ../dnf/cli/output.py:1595
+#: ../dnf/cli/output.py:2000
 msgid "Transaction ID :"
 msgstr "ID трансакције   :"
 
-#: ../dnf/cli/output.py:1599 ../dnf/cli/output.py:2004
+#: ../dnf/cli/output.py:1597 ../dnf/cli/output.py:2002
 msgid "Begin time     :"
 msgstr "Време почетка    :"
 
-#: ../dnf/cli/output.py:1602 ../dnf/cli/output.py:1604
+#: ../dnf/cli/output.py:1600 ../dnf/cli/output.py:1602
 msgid "Begin rpmdb    :"
 msgstr "Време rpmdb      :"
 
-#: ../dnf/cli/output.py:1620
+#: ../dnf/cli/output.py:1618
 #, python-format
 msgid "(%u seconds)"
 msgstr "(%u секунди)"
 
-#: ../dnf/cli/output.py:1622
+#: ../dnf/cli/output.py:1620
 #, python-format
 msgid "(%u minutes)"
 msgstr "(%u минута)"
 
-#: ../dnf/cli/output.py:1624
+#: ../dnf/cli/output.py:1622
 #, python-format
 msgid "(%u hours)"
 msgstr "(%u сати)"
 
-#: ../dnf/cli/output.py:1626
+#: ../dnf/cli/output.py:1624
 #, python-format
 msgid "(%u days)"
 msgstr "(%u дана)"
 
-#: ../dnf/cli/output.py:1627
+#: ../dnf/cli/output.py:1625
 msgid "End time       :"
 msgstr "Време краја      :"
 
-#: ../dnf/cli/output.py:1630 ../dnf/cli/output.py:1632
+#: ../dnf/cli/output.py:1628 ../dnf/cli/output.py:1630
 msgid "End rpmdb      :"
 msgstr "Крај rpmdb       :"
 
-#: ../dnf/cli/output.py:1635 ../dnf/cli/output.py:1637
+#: ../dnf/cli/output.py:1633 ../dnf/cli/output.py:1635
 msgid "User           :"
 msgstr "Корисник         :"
 
-#: ../dnf/cli/output.py:1641 ../dnf/cli/output.py:1644
-#: ../dnf/cli/output.py:1646 ../dnf/cli/output.py:1648
-#: ../dnf/cli/output.py:1650
+#: ../dnf/cli/output.py:1639 ../dnf/cli/output.py:1642
+#: ../dnf/cli/output.py:1644 ../dnf/cli/output.py:1646
+#: ../dnf/cli/output.py:1648
 msgid "Return-Code    :"
 msgstr "Повратна вредност:"
 
-#: ../dnf/cli/output.py:1641 ../dnf/cli/output.py:1646
+#: ../dnf/cli/output.py:1639 ../dnf/cli/output.py:1644
 msgid "Aborted"
 msgstr "Заустављено"
 
-#: ../dnf/cli/output.py:1644
+#: ../dnf/cli/output.py:1642
 msgid "Failures:"
 msgstr "Грешке:"
 
-#: ../dnf/cli/output.py:1648
+#: ../dnf/cli/output.py:1646
 msgid "Failure:"
 msgstr "Грешка:"
 
-#: ../dnf/cli/output.py:1650
+#: ../dnf/cli/output.py:1648
 msgid "Success"
 msgstr "Успех"
 
-#: ../dnf/cli/output.py:1655 ../dnf/cli/output.py:1657
-#: ../dnf/cli/output.py:2033
+#: ../dnf/cli/output.py:1653 ../dnf/cli/output.py:1655
+#: ../dnf/cli/output.py:2031
 msgid "Command Line   :"
 msgstr "Командна линија :"
 
-#: ../dnf/cli/output.py:1666
+#: ../dnf/cli/output.py:1664
 #, python-format
 msgid "Additional non-default information stored: %d"
 msgstr "Додатне сачуване информације које нису подразумеване: %d"
 
-#: ../dnf/cli/output.py:1671
+#: ../dnf/cli/output.py:1669
 msgid "Transaction performed with:"
 msgstr "Трансакција извршена са:"
 
-#: ../dnf/cli/output.py:1675
+#: ../dnf/cli/output.py:1673
 msgid "Packages Altered:"
 msgstr "Пакети промењени:"
 
-#: ../dnf/cli/output.py:1679
+#: ../dnf/cli/output.py:1677
 msgid "Packages Skipped:"
 msgstr "Пакети прескочени:"
 
-#: ../dnf/cli/output.py:1687
+#: ../dnf/cli/output.py:1685
 msgid "Rpmdb Problems:"
 msgstr "Rpmdb проблеми:"
 
-#: ../dnf/cli/output.py:1698
+#: ../dnf/cli/output.py:1696
 msgid "Scriptlet output:"
 msgstr "Излази scriptlet-а:"
 
-#: ../dnf/cli/output.py:1704
+#: ../dnf/cli/output.py:1702
 msgid "Errors:"
 msgstr "Грешке:"
 
-#: ../dnf/cli/output.py:1712
+#: ../dnf/cli/output.py:1710
 msgid "Dep-Install"
 msgstr "Инсталирање-зависности"
 
-#: ../dnf/cli/output.py:1713
+#: ../dnf/cli/output.py:1711
 msgid "Obsoleted"
 msgstr "Превазиђени"
 
-#: ../dnf/cli/output.py:1715
+#: ../dnf/cli/output.py:1713
 msgid "Erase"
 msgstr "Уклони"
 
-#: ../dnf/cli/output.py:1716
+#: ../dnf/cli/output.py:1714
 msgid "Reinstall"
 msgstr "Поново инсталирај"
 
-#: ../dnf/cli/output.py:1793
+#: ../dnf/cli/output.py:1791
 msgid "Time"
 msgstr "Време"
 
-#: ../dnf/cli/output.py:1819
+#: ../dnf/cli/output.py:1817
 msgid "Last day"
 msgstr "Прошлог дана"
 
-#: ../dnf/cli/output.py:1820
+#: ../dnf/cli/output.py:1818
 msgid "Last week"
 msgstr "Прошле недеље"
 
-#: ../dnf/cli/output.py:1821
+#: ../dnf/cli/output.py:1819
 msgid "Last 2 weeks"
 msgstr "Прошле две недеље"
 
-#: ../dnf/cli/output.py:1822
+#: ../dnf/cli/output.py:1820
 msgid "Last 3 months"
 msgstr "Прошла 3 месеца"
 
-#: ../dnf/cli/output.py:1823
+#: ../dnf/cli/output.py:1821
 msgid "Last 6 months"
 msgstr "Прошлих 6 месеци"
 
-#: ../dnf/cli/output.py:1824
+#: ../dnf/cli/output.py:1822
 msgid "Last year"
 msgstr "Прошле године"
 
-#: ../dnf/cli/output.py:1825
+#: ../dnf/cli/output.py:1823
 msgid "Over a year ago"
 msgstr "Пре више од годину дана"
 
-#: ../dnf/cli/output.py:1872
+#: ../dnf/cli/output.py:1870
 #, python-format
 msgid "No Transaction %s found"
-msgstr "Није пронађена трансакција %s "
+msgstr "Није пронађена трансакција %s"
 
-#: ../dnf/cli/output.py:1878
+#: ../dnf/cli/output.py:1876
 msgid "Transaction ID:"
 msgstr "ID трансакције:"
 
-#: ../dnf/cli/output.py:1879
+#: ../dnf/cli/output.py:1877
 msgid "Available additional history information:"
 msgstr "Додатне доступне информације о историји:"
 
-#: ../dnf/cli/output.py:1892
+#: ../dnf/cli/output.py:1890
 #, python-format
 msgid "%s: No additional data found by this name"
 msgstr "%s: Нема пронађених додатних података под овим именом"
 
-#: ../dnf/cli/output.py:2005
+#: ../dnf/cli/output.py:2003
 msgid "Package        :"
 msgstr "Пакет           :"
 
-#: ../dnf/cli/output.py:2006
+#: ../dnf/cli/output.py:2004
 msgid "State          :"
 msgstr "Стање           :"
 
-#: ../dnf/cli/output.py:2009
+#: ../dnf/cli/output.py:2007
 msgid "Size           :"
 msgstr "Величина        :"
 
-#: ../dnf/cli/output.py:2011
+#: ../dnf/cli/output.py:2009
 msgid "Build host     :"
 msgstr "Домаћин изградње:"
 
-#: ../dnf/cli/output.py:2014
+#: ../dnf/cli/output.py:2012
 msgid "Build time     :"
 msgstr "Време изградње  :"
 
-#: ../dnf/cli/output.py:2016
+#: ../dnf/cli/output.py:2014
 msgid "Packager       :"
 msgstr "Пакетер         :"
 
-#: ../dnf/cli/output.py:2018
+#: ../dnf/cli/output.py:2016
 msgid "Vendor         :"
 msgstr "Добављач        :"
 
-#: ../dnf/cli/output.py:2020
+#: ../dnf/cli/output.py:2018
 msgid "License        :"
 msgstr "Лиценца         :"
 
-#: ../dnf/cli/output.py:2022
+#: ../dnf/cli/output.py:2020
 msgid "URL            :"
 msgstr "URL             :"
 
-#: ../dnf/cli/output.py:2024
+#: ../dnf/cli/output.py:2022
 msgid "Source RPM     :"
 msgstr "Изворни RPM     :"
 
-#: ../dnf/cli/output.py:2027
+#: ../dnf/cli/output.py:2025
 msgid "Commit Time    :"
 msgstr "Време постављања:"
 
-#: ../dnf/cli/output.py:2029
+#: ../dnf/cli/output.py:2027
 msgid "Committer      :"
 msgstr "Поставио        :"
 
-#: ../dnf/cli/output.py:2031
+#: ../dnf/cli/output.py:2029
 msgid "Reason         :"
 msgstr "Разлог          :"
 
-#: ../dnf/cli/output.py:2035
+#: ../dnf/cli/output.py:2033
 msgid "From repo      :"
 msgstr "Из ризнице      :"
 
-#: ../dnf/cli/output.py:2039
+#: ../dnf/cli/output.py:2037
 msgid "Installed by   :"
 msgstr "Инсталирано од  :"
 
-#: ../dnf/cli/output.py:2043
+#: ../dnf/cli/output.py:2041
 msgid "Changed by     :"
 msgstr "Промењено од    :"
 
-#: ../dnf/cli/output.py:2074 ../dnf/cli/commands/updateinfo.py:328
+#: ../dnf/cli/output.py:2072 ../dnf/cli/commands/updateinfo.py:328
 msgid "installed"
 msgstr "инсталиран"
 
-#: ../dnf/cli/output.py:2075
+#: ../dnf/cli/output.py:2073
 msgid "an upgrade"
 msgstr "надоградња"
 
-#: ../dnf/cli/output.py:2076
+#: ../dnf/cli/output.py:2074
 msgid "erased"
 msgstr "обрисан"
 
-#: ../dnf/cli/output.py:2077
+#: ../dnf/cli/output.py:2075
 msgid "reinstalled"
 msgstr "поново инсталиран"
 
-#: ../dnf/cli/output.py:2078
+#: ../dnf/cli/output.py:2076
 msgid "a downgrade"
 msgstr "деградирање"
 
-#: ../dnf/cli/output.py:2079
+#: ../dnf/cli/output.py:2077
 msgid "obsoleting"
 msgstr "застаревање"
 
-#: ../dnf/cli/output.py:2080
+#: ../dnf/cli/output.py:2078
 msgid "upgraded"
 msgstr "надограђено"
 
-#: ../dnf/cli/output.py:2081
+#: ../dnf/cli/output.py:2079
 msgid "obsoleted"
 msgstr "превазиђен"
 
-#: ../dnf/cli/output.py:2082
+#: ../dnf/cli/output.py:2080
 msgid "downgraded"
 msgstr "деградирано"
 
-#: ../dnf/cli/output.py:2085
+#: ../dnf/cli/output.py:2083
 #, python-format
 msgid "---> Package %s.%s %s will be %s"
 msgstr "---> Пакет %s.%s %s ће бити %s"
 
-#: ../dnf/cli/output.py:2092
+#: ../dnf/cli/output.py:2090
 msgid "--> Starting dependency resolution"
 msgstr "--> Започињем разрешење програмских зависности"
 
-#: ../dnf/cli/output.py:2097
+#: ../dnf/cli/output.py:2095
 msgid "--> Finished dependency resolution"
 msgstr "--> Завршено разрешење програмских зависности"
 
@@ -1279,7 +1284,7 @@ msgstr "Онемогућено заказивање кеширања међуп�
 msgid "Metadata cache refreshed recently."
 msgstr "Кеш међуподатака недавно освежен."
 
-#: ../dnf/cli/commands/makecache.py:88
+#: ../dnf/cli/commands/makecache.py:90
 msgid "Metadata cache created."
 msgstr "Направљен кеш међуподатака."
 
@@ -1355,7 +1360,8 @@ msgstr "Упозорење: група %s не постоји."
 
 #: ../dnf/cli/commands/group.py:172
 #, python-format
-msgid "Warning: No groups match:\n"
+msgid ""
+"Warning: No groups match:\n"
 "   %s"
 msgstr ""
 
@@ -1470,7 +1476,7 @@ msgstr "Уклони кеширане податке"
 
 #: ../dnf/cli/commands/clean.py:176
 msgid "Cleaning repos: "
-msgstr "Чишћење ризница:"
+msgstr "Чишћење ризница: "
 
 #: ../dnf/cli/commands/clean.py:183
 msgid "Cleaning up Everything"
@@ -1529,15 +1535,15 @@ msgstr "искључена"
 
 #: ../dnf/cli/commands/repolist.py:156
 msgid "Repo-id      : "
-msgstr "ID ризнице          :"
+msgstr "ID ризнице          : "
 
 #: ../dnf/cli/commands/repolist.py:157
 msgid "Repo-name    : "
-msgstr "Име ризнице         :"
+msgstr "Име ризнице         : "
 
 #: ../dnf/cli/commands/repolist.py:160
 msgid "Repo-status  : "
-msgstr "Стање ризнице       :"
+msgstr "Стање ризнице       : "
 
 #: ../dnf/cli/commands/repolist.py:163
 msgid "Repo-revision: "
@@ -1545,7 +1551,7 @@ msgstr "Ревизија ризнице     : "
 
 #: ../dnf/cli/commands/repolist.py:167
 msgid "Repo-tags    : "
-msgstr "Ознака ризница      :"
+msgstr "Ознака ризница      : "
 
 #: ../dnf/cli/commands/repolist.py:172
 msgid "Repo-distro-tags: "
@@ -1553,15 +1559,15 @@ msgstr "Дистро ознаке ризнице: "
 
 #: ../dnf/cli/commands/repolist.py:178
 msgid "Repo-updated : "
-msgstr "Ризница ажурирана   :"
+msgstr "Ризница ажурирана   : "
 
 #: ../dnf/cli/commands/repolist.py:180
 msgid "Repo-pkgs    : "
-msgstr "Пакета из ризнице   :"
+msgstr "Пакета из ризнице   : "
 
 #: ../dnf/cli/commands/repolist.py:181
 msgid "Repo-size    : "
-msgstr "Величина ризнице    :"
+msgstr "Величина ризнице    : "
 
 #: ../dnf/cli/commands/repolist.py:184
 msgid "Repo-metalink: "
@@ -1573,31 +1579,31 @@ msgstr "  Ажурирано          : "
 
 #: ../dnf/cli/commands/repolist.py:191
 msgid "Repo-mirrors : "
-msgstr "Огледала ризнице    :"
+msgstr "Огледала ризнице    : "
 
 #: ../dnf/cli/commands/repolist.py:195 ../dnf/cli/commands/repolist.py:199
 msgid "Repo-baseurl : "
-msgstr "Основни url ризнице :"
+msgstr "Основни url ризнице : "
 
 #: ../dnf/cli/commands/repolist.py:202
 msgid "Repo-expire  : "
-msgstr "Ризница истиче      :"
+msgstr "Ризница истиче      : "
 
 #: ../dnf/cli/commands/repolist.py:205
 msgid "Repo-exclude : "
-msgstr "Ризница искључује   :"
+msgstr "Ризница искључује   : "
 
 #: ../dnf/cli/commands/repolist.py:209
 msgid "Repo-include : "
-msgstr "Укључени у ризници  :"
+msgstr "Укључени у ризници  : "
 
 #: ../dnf/cli/commands/repolist.py:213
 msgid "Repo-excluded: "
-msgstr "Искључени из ризнице:"
+msgstr "Искључени из ризнице: "
 
 #: ../dnf/cli/commands/repolist.py:217
 msgid "Repo-filename: "
-msgstr "Име датотеке ризнице:"
+msgstr "Име датотеке ризнице: "
 
 #: ../dnf/cli/commands/repolist.py:225 ../dnf/cli/commands/repolist.py:254
 msgid "repo id"
@@ -1762,20 +1768,12 @@ msgid "No help available for %s"
 msgstr "Није доступна помоћ за %s"
 
 #: ../dnf/cli/commands/__init__.py:1029
-msgid "\n"
-"\n"
-"aliases: "
-msgstr "\n"
-"\n"
-"псеудоними: "
+msgid "aliases: "
+msgstr ""
 
 #: ../dnf/cli/commands/__init__.py:1031
-msgid "\n"
-"\n"
-"alias: "
-msgstr "\n"
-"\n"
-"псеудоним: "
+msgid "alias: "
+msgstr ""
 
 #: ../dnf/cli/commands/__init__.py:1047
 msgid "Display, or use, the transaction history"
@@ -1784,8 +1782,8 @@ msgstr "Приказује или користи, историју транса�
 #: ../dnf/cli/commands/__init__.py:1063
 #, python-format
 msgid ""
-"Cannot undo transaction %s, doing so would result in an inconsistent package "
-"database."
+"Cannot undo transaction %s, doing so would result in an inconsistent package"
+" database."
 msgstr ""
 "Не могу да опозовем трансакцију %s, чинивши то би узроковало нетачну базу "
 "података пакета."
@@ -1817,11 +1815,11 @@ msgstr "Бројева  :"
 
 #: ../dnf/cli/commands/__init__.py:1159
 msgid "  NEVRAC :"
-msgstr " ИЕВИА :"
+msgstr "  ИЕВИА :"
 
 #: ../dnf/cli/commands/__init__.py:1160
 msgid "  NEVRA  :"
-msgstr " ИЕВИ :"
+msgstr "  ИЕВИ :"
 
 #: ../dnf/cli/commands/__init__.py:1161
 msgid "  NA     :"
@@ -1833,11 +1831,11 @@ msgstr "  ИЕВИ   :"
 
 #: ../dnf/cli/commands/__init__.py:1163
 msgid "  rpm DB :"
-msgstr "rpm база података:"
+msgstr "  rpm база података:"
 
 #: ../dnf/cli/commands/__init__.py:1164
 msgid "  DNF DB :"
-msgstr " DNF база података:"
+msgstr "  DNF база података:"
 
 #: ../dnf/cli/commands/__init__.py:1183
 #, python-format
@@ -1871,7 +1869,7 @@ msgstr "Приказује савете о пакетима"
 
 #: ../dnf/cli/commands/updateinfo.py:177
 msgid "Updates Information Summary: "
-msgstr "Сажетак информација о ажурирањима:"
+msgstr "Сажетак информација о ажурирањима: "
 
 #: ../dnf/cli/commands/updateinfo.py:180
 msgid "Security notice(s)"
@@ -2032,21 +2030,23 @@ msgid "Running transaction"
 msgstr "Извршавам трансакцију"
 
 #: ../dnf/base.py:633
-msgid "Disk Requirements:\n"
-msgstr "Захтеви диска:\n"
+msgid "Disk Requirements:"
+msgstr ""
 
 #: ../dnf/base.py:636
 #, python-format
-msgid "  At least %dMB more space needed on the %s filesystem.\n"
-msgid_plural "  At least %dMB more space needed on the %s filesystem.\n"
+msgid "At least %dMB more space needed on the %s filesystem."
+msgid_plural "At least %dMB more space needed on the %s filesystem."
 msgstr[0] ""
 msgstr[1] ""
 msgstr[2] ""
 
 #: ../dnf/base.py:640
-msgid "Error Summary\n"
+msgid ""
+"Error Summary\n"
 "-------------\n"
-msgstr "Сажетак грешака\n"
+msgstr ""
+"Сажетак грешака\n"
 "-------------\n"
 
 #: ../dnf/base.py:702
@@ -2169,51 +2169,43 @@ msgstr "Пакет %s најниже верзије је већ инсталир
 
 #: ../dnf/base.py:1834
 #, python-format
-msgid "\n"
-"\n"
-"\n"
-" Failing package is: %s\n"
+msgid ""
+"Failing package is: %s\n"
 " GPG Keys are configured as: %s\n"
-msgstr "\n"
-"\n"
-"\n"
-" Пакет који не успева: %s\n"
-" GPG кључеви су подешени као: %s\n"
+msgstr ""
 
-#: ../dnf/base.py:1848
+#: ../dnf/base.py:1847
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "GPG кључ на %s (0x%s) је већ инсталиран"
 
-#: ../dnf/base.py:1882
+#: ../dnf/base.py:1881
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Није успео увоз кључа (код %d)"
 
-#: ../dnf/base.py:1884
+#: ../dnf/base.py:1883
 msgid "Key imported successfully"
 msgstr "Кључ је успешно увезен"
 
-#: ../dnf/base.py:1888
+#: ../dnf/base.py:1887
 msgid "Didn't install any keys"
 msgstr "Ниједан кључ није инсталиран"
 
-#: ../dnf/base.py:1891
+#: ../dnf/base.py:1890
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they "
-"are not correct for this package.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"GPG кључеви излистани за „%s“ ризницу су већ инсталирани али нису "
-"одговарајући за овај пакет.\n"
+"GPG кључеви излистани за „%s“ ризницу су већ инсталирани али нису одговарајући за овај пакет.\n"
 "Проверите да ли су подешени одговарајући УРЛ-ови кључева за ову ризницу."
 
-#: ../dnf/base.py:1901
+#: ../dnf/base.py:1900
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Увоз кључа(кључева) није помогао, погрешан кључ(кључеви)?"
 
-#: ../dnf/base.py:1928
+#: ../dnf/base.py:1927
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr "Пакет %s је већ инсталиран, прескачем."

@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
 msgid ""
 msgstr ""
@@ -10,14 +10,12 @@ msgstr ""
 "POT-Creation-Date: 2015-06-16 13:25-0400\n"
 "PO-Revision-Date: 2015-03-16 16:46+0000\n"
 "Last-Translator: Jan silhan <jsilhan@redhat.com>\n"
-"Language-Team: Serbian (Latin) (http://www.transifex.com/projects/p/dnf/"
-"language/sr@latin/)\n"
-"Language: sr@latin\n"
+"Language-Team: Serbian (Latin) (http://www.transifex.com/projects/p/dnf/language/sr@latin/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
-"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Language: sr@latin\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 
 #: ../dnf/base.py:1744
 #, python-format
@@ -70,8 +68,7 @@ msgstr ""
 msgid ""
 "\n"
 "You have enabled checking of packages via GPG keys. This is a good thing.\n"
-"However, you do not have any GPG public keys installed. You need to "
-"download\n"
+"However, you do not have any GPG public keys installed. You need to download\n"
 "the keys for packages you wish to install and install them.\n"
 "You can do that by running the command:\n"
 "    rpm --import public.gpg.key\n"
@@ -428,8 +425,8 @@ msgstr ""
 #: ../dnf/cli/commands/__init__.py:1062
 #, python-format
 msgid ""
-"Cannot undo transaction %s, doing so would result in an inconsistent package "
-"database."
+"Cannot undo transaction %s, doing so would result in an inconsistent package"
+" database."
 msgstr ""
 
 #: ../dnf/cli/output.py:494
@@ -966,8 +963,7 @@ msgstr "Da li je ovo u redu [d/N]: "
 
 #: ../dnf/cli/cli.py:841
 #, python-format
-msgid ""
-"It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
+msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
 
 #: ../dnf/base.py:1792
@@ -1045,8 +1041,7 @@ msgstr "Pravim keš datoteke za sve datoteke sa metapodacima."
 #, python-format
 msgid ""
 "Malformed lock file found: %s.\n"
-"Ensure no other dnf process is running and remove the lock file manually or "
-"run systemd-tmpfiles --remove dnf.conf."
+"Ensure no other dnf process is running and remove the lock file manually or run systemd-tmpfiles --remove dnf.conf."
 msgstr ""
 
 #: ../dnf/cli/output.py:911
@@ -1609,12 +1604,10 @@ msgstr ""
 #: ../dnf/base.py:1801
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they "
-"are not correct for this package.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"GPG ključevi izlistani za „%s“ riznicu su već instalirani ali nisu "
-"odgovarajući za ovaj paket.\n"
+"GPG ključevi izlistani za „%s“ riznicu su već instalirani ali nisu odgovarajući za ovaj paket.\n"
 "Proverite da li su podešeni odgovarajući URL-ovi ključeva za ovu riznicu."
 
 #: ../dnf/cli/commands/clean.py:134
