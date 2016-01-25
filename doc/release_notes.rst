@@ -22,6 +22,25 @@
 .. contents::
 
 ===================
+1.1.6 Release Notes
+===================
+
+Added support of socks5 proxy.
+
+Bugs fixed in 1.1.6:
+
+* :rhbug:`1291895`
+* :rhbug:`1256587`
+* :rhbug:`1287221`
+* :rhbug:`1277360`
+* :rhbug:`1294241`
+* :rhbug:`1289166`
+* :rhbug:`1294355`
+* :rhbug:`1226322`
+* :rhbug:`1275878`
+* :rhbug:`1239274`
+
+===================
 1.1.5 Release Notes
 ===================
 

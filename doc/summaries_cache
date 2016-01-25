@@ -1410,5 +1410,45 @@
     [
         1280240, 
         "dnf should warn if plugins are disabled and an unknown command is requested"
+    ], 
+    [
+        1291895, 
+        "DNF history failure if no history"
+    ], 
+    [
+        1256587, 
+        "The proxy option in dnf.conf doesn't support socks5"
+    ], 
+    [
+        1287221, 
+        "dnf stutters when writing in /var/log/dnf.rpm.log"
+    ], 
+    [
+        1277360, 
+        "doc: update specifying the packages in commands"
+    ], 
+    [
+        1294241, 
+        "file /var/lib/dnf/* is not owned by any package"
+    ], 
+    [
+        1289166, 
+        "dnf makecache triggers a python exception"
+    ], 
+    [
+        1294355, 
+        "German translation incomplete on delta RPMS"
+    ], 
+    [
+        1226322, 
+        "dnf clean all does not clean package metadata for local repos"
+    ], 
+    [
+        1275878, 
+        "[abrt] dnf: rpmsack.py:288:_delete:AttributeError: Cannot delete attribute installed_by on <dnf.yum.rpmsack.RPMDBAdditionalDataPackage object at 0x7f10c32f15d0>"
+    ], 
+    [
+        1239274, 
+        "dnf history does not show command line"
     ]
 ]
