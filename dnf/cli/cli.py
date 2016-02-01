@@ -818,7 +818,7 @@ class Cli(object):
                         logger.debug(_("%s: using metadata from %s."),
                                      repo.id,
                                      time.ctime(repo.metadata.md_timestamp))
-                    logger.info(_("Last metadata expiration check performed "
+                    logger.info(_("Last metadata expiration check: "
                                   "%s ago on %s."),
                                 datetime.timedelta(seconds=age),
                                 time.ctime(mts))
