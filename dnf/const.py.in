@@ -21,8 +21,8 @@
 from __future__ import unicode_literals
 import distutils.sysconfig
 
-CONF_FILENAME='/etc/dnf/dnf.conf' # :api
-CONF_AUTOMATIC_FILENAME='/etc/dnf/automatic.conf'
+CONF_FILENAME='@CHECKOUT_DIR@/etc/dnf/dnf.conf' # :api
+CONF_AUTOMATIC_FILENAME='@CHECKOUT_DIR@/etc/dnf/automatic.conf'
 DISTROVERPKG=('system-release(releasever)', 'redhat-release')
 GROUP_PACKAGE_TYPES = ('mandatory', 'default') # :api
 INSTALLONLYPKGS=('kernel',
@@ -47,8 +47,7 @@ VERBOSE_LEVEL=6
 PREFIX=NAME.lower()
 PROGRAM_NAME=NAME.lower()
 PLUGINCONFPATH = '/etc/dnf/plugins'  # :api
-PLUGINPATH = '%s/%s-plugins' % (distutils.sysconfig.get_python_lib(),
-                                PROGRAM_NAME)
+PLUGINPATH = '@PLUGINPATH@'
 VERSION='@DNF_VERSION@'
 USER_AGENT = "dnf/%s" % VERSION
 

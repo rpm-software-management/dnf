@@ -699,7 +699,7 @@ class YumConf(BaseConfig):
     installroot = Option('/') # :api
     config_file_path = Option(dnf.const.CONF_FILENAME) # :api
     plugins = BoolOption(True)
-    pluginpath = ListOption([dnf.const.PLUGINPATH]) # :api
+    pluginpath = ListOption(dnf.const.PLUGINPATH.split(':')) # :api
     pluginconfpath = ListOption([dnf.const.PLUGINCONFPATH])  # :api
     persistdir = Option(dnf.const.PERSISTDIR) # :api
 
