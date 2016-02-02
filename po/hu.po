@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-25 16:00+0100\n"
+"POT-Creation-Date: 2016-02-02 19:06+0100\n"
 "PO-Revision-Date: 2015-07-19 03:29-0400\n"
 "Last-Translator: Kardos László <kardiweb@protonmail.ch>\n"
 "Language-Team: Hungarian (http://www.transifex.com/projects/p/dnf/language/hu/)\n"
@@ -22,7 +22,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: hu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 3.7.3\n"
+"X-Generator: Zanata 3.8.2\n"
 
 #: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
@@ -163,12 +163,12 @@ msgstr "Frissítés"
 msgid "Verifying"
 msgstr "Ellenőrzés"
 
-#: ../dnf/yum/history.py:744
+#: ../dnf/yum/history.py:745
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
 msgstr ""
 
-#: ../dnf/yum/history.py:1661
+#: ../dnf/yum/history.py:1662
 #, python-format
 msgid "Can not create history database at '%s'."
 msgstr "Nem sikerült előzmény-adatbázist készíteni a következőnél: '%s'"
@@ -595,7 +595,7 @@ msgstr "Arch"
 
 #: ../dnf/cli/output.py:469
 msgid "Epoch"
-msgstr "Epochaaaa"
+msgstr "Epocha"
 
 #: ../dnf/cli/output.py:470 ../dnf/cli/output.py:1051
 msgid "Version"

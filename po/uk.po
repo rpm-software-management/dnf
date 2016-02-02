@@ -6,12 +6,13 @@
 # Yuri Chornoivan <yurchor@ukr.net>, 2011
 # Jan Silhan <jsilhan@redhat.com>, 2015. #zanata
 # Yuri Chornoivan <yurchor@ukr.net>, 2015. #zanata
+# Yuri Chornoivan <yurchor@ukr.net>, 2016. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-25 16:00+0100\n"
-"PO-Revision-Date: 2015-12-28 12:39-0500\n"
+"POT-Creation-Date: 2016-02-02 19:06+0100\n"
+"PO-Revision-Date: 2016-01-27 06:21-0500\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/projects/p/dnf/language/uk/)\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +20,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: uk\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Zanata 3.7.3\n"
+"X-Generator: Zanata 3.8.2\n"
 
 #: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
@@ -51,7 +52,7 @@ msgstr "Контрольна сума перезібраної RPM-різниц�
 
 #: ../dnf/drpm.py:140
 msgid "done"
-msgstr ""
+msgstr "виконано"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -164,12 +165,12 @@ msgstr "Оновлення"
 msgid "Verifying"
 msgstr "Перевіряємо"
 
-#: ../dnf/yum/history.py:744
+#: ../dnf/yum/history.py:745
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
 msgstr "Не вдалося започаткувати журнал бази даних DNF: %s"
 
-#: ../dnf/yum/history.py:1661
+#: ../dnf/yum/history.py:1662
 #, python-format
 msgid "Can not create history database at '%s'."
 msgstr "Не вдалося створити базу даних журналу на «%s»."

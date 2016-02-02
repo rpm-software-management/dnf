@@ -20,7 +20,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-25 16:00+0100\n"
+"POT-Creation-Date: 2016-02-02 19:06+0100\n"
 "PO-Revision-Date: 2016-01-17 03:27-0500\n"
 "Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/dnf/language/de/)\n"
@@ -29,7 +29,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 3.7.3\n"
+"X-Generator: Zanata 3.8.2\n"
 
 #: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
@@ -175,12 +175,12 @@ msgstr "Aktualisieren"
 msgid "Verifying"
 msgstr "Überprüfung läuft"
 
-#: ../dnf/yum/history.py:744
+#: ../dnf/yum/history.py:745
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
 msgstr "DNF-Datenbankchronik konnte nicht initialisiert werden: %s"
 
-#: ../dnf/yum/history.py:1661
+#: ../dnf/yum/history.py:1662
 #, python-format
 msgid "Can not create history database at '%s'."
 msgstr "Chronik-Datenbank kann nicht in »%s« erstellt werden."
@@ -874,7 +874,7 @@ msgstr ""
 #: ../dnf/cli/output.py:1077 ../dnf/cli/output.py:1708
 #: ../dnf/cli/output.py:1709
 msgid "Install"
-msgstr "Installierenierenierenieren"
+msgstr "Installieren"
 
 #: ../dnf/cli/output.py:1078 ../dnf/cli/output.py:1717
 msgid "Upgrade"

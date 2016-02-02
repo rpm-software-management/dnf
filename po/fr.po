@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-25 16:00+0100\n"
+"POT-Creation-Date: 2016-02-02 19:06+0100\n"
 "PO-Revision-Date: 2015-12-02 05:15-0500\n"
 "Last-Translator: Jérôme Fenal <jfenal@gmail.com>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/dnf/language/fr/)\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: fr\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Zanata 3.7.3\n"
+"X-Generator: Zanata 3.8.2\n"
 
 #: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
@@ -171,12 +171,12 @@ msgstr "Mise à jour"
 msgid "Verifying"
 msgstr "Vérifie"
 
-#: ../dnf/yum/history.py:744
+#: ../dnf/yum/history.py:745
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
 msgstr "Impossible d'initialiser l'historique DNF DB : %s"
 
-#: ../dnf/yum/history.py:1661
+#: ../dnf/yum/history.py:1662
 #, python-format
 msgid "Can not create history database at '%s'."
 msgstr "Impossible de créer la base de donnée d'historiques '%s'"
@@ -611,7 +611,7 @@ msgstr "Nom"
 
 #: ../dnf/cli/output.py:467 ../dnf/cli/output.py:1050
 msgid "Arch"
-msgstr "Architectureitectureitectureitecture"
+msgstr "Architecture"
 
 #: ../dnf/cli/output.py:469
 msgid "Epoch"
@@ -683,7 +683,7 @@ msgstr "n"
 
 #: ../dnf/cli/output.py:623
 msgid "no"
-msgstr "nonnnn"
+msgstr "non"
 
 #: ../dnf/cli/output.py:626
 msgid "Is this ok [y/N]: "
@@ -820,7 +820,7 @@ msgstr "Marqué pour être supprimé :"
 
 #: ../dnf/cli/output.py:931
 msgid "Group"
-msgstr "Groupeeee"
+msgstr "Groupe"
 
 #: ../dnf/cli/output.py:931
 msgid "Packages"
@@ -874,7 +874,7 @@ msgstr ""
 #: ../dnf/cli/output.py:1077 ../dnf/cli/output.py:1708
 #: ../dnf/cli/output.py:1709
 msgid "Install"
-msgstr "Installationationationation"
+msgstr "Installation"
 
 #: ../dnf/cli/output.py:1078 ../dnf/cli/output.py:1717
 msgid "Upgrade"
@@ -1382,7 +1382,7 @@ msgstr "Affiche ou utilise les informations des groupes"
 
 #: ../dnf/cli/commands/group.py:61
 msgid "GROUP"
-msgstr "GROUPEEEE"
+msgstr "GROUPE"
 
 #: ../dnf/cli/commands/group.py:99
 msgid "No group data available for configured repositories."
@@ -1800,7 +1800,7 @@ msgstr "Affiche un message d'aide à l'utilisation"
 
 #: ../dnf/cli/commands/__init__.py:992
 msgid "COMMAND"
-msgstr "COMMANDEEEE"
+msgstr "COMMANDE"
 
 #: ../dnf/cli/commands/__init__.py:1024
 #, python-format

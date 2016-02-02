@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-25 16:00+0100\n"
+"POT-Creation-Date: 2016-02-02 19:06+0100\n"
 "PO-Revision-Date: 2015-11-11 05:18-0500\n"
 "Last-Translator: Michal Pohorely <michal@pohorely.cz>\n"
 "Language-Team: Czech (http://www.transifex.com/projects/p/dnf/language/cs/)\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: cs\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Zanata 3.7.3\n"
+"X-Generator: Zanata 3.8.2\n"
 
 #: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
@@ -169,12 +169,12 @@ msgstr "Aktualizace"
 msgid "Verifying"
 msgstr "Ověřuji"
 
-#: ../dnf/yum/history.py:744
+#: ../dnf/yum/history.py:745
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
 msgstr "Není možné inicializovat historii DB DNF: %s"
 
-#: ../dnf/yum/history.py:1661
+#: ../dnf/yum/history.py:1662
 #, python-format
 msgid "Can not create history database at '%s'."
 msgstr "Nelze vytvořit databázi historie v '%s'."
@@ -612,7 +612,7 @@ msgstr "Vel."
 
 #: ../dnf/cli/output.py:473
 msgid "Repo"
-msgstr "Repozitářzitářzitářzitář"
+msgstr "Repozitář"
 
 #: ../dnf/cli/output.py:475
 msgid "From repo"
@@ -1759,11 +1759,11 @@ msgstr "Spustit příkazy pro všechny balíčky v daném repositáři"
 
 #: ../dnf/cli/commands/__init__.py:919
 msgid "REPO"
-msgstr "REPOZITÁŘZITÁŘZITÁŘZITÁŘ"
+msgstr "REPOZITÁŘ"
 
 #: ../dnf/cli/commands/__init__.py:919
 msgid "ARG"
-msgstr "ARGUMENTUMENTUMENTUMENT"
+msgstr "ARGUMENT"
 
 #: ../dnf/cli/commands/__init__.py:964
 msgid "Error: Requires a repo ID and a valid sub-command"

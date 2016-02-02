@@ -10,12 +10,13 @@
 # Hajime Taira <htaira@fedoraproject.org>, 2015. #zanata
 # Jan Silhan <jsilhan@redhat.com>, 2015. #zanata
 # Ooyama Yosiyuki <qqke6wd9k@apricot.ocn.ne.jp>, 2015. #zanata
+# Ooyama Yosiyuki <qqke6wd9k@apricot.ocn.ne.jp>, 2016. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-25 16:00+0100\n"
-"PO-Revision-Date: 2015-12-12 07:32-0500\n"
+"POT-Creation-Date: 2016-02-02 19:06+0100\n"
+"PO-Revision-Date: 2016-02-02 09:03-0500\n"
 "Last-Translator: Ooyama Yosiyuki <qqke6wd9k@apricot.ocn.ne.jp>\n"
 "Language-Team: Japanese (http://www.transifex.com/projects/p/dnf/language/ja/)\n"
 "MIME-Version: 1.0\n"
@@ -23,7 +24,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ja\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Zanata 3.7.3\n"
+"X-Generator: Zanata 3.8.2\n"
 
 #: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
@@ -164,12 +165,12 @@ msgstr "アップグレード"
 msgid "Verifying"
 msgstr "検証中"
 
-#: ../dnf/yum/history.py:744
+#: ../dnf/yum/history.py:745
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
 msgstr "DNF DB 履歴を初期化することができません: %s"
 
-#: ../dnf/yum/history.py:1661
+#: ../dnf/yum/history.py:1662
 #, python-format
 msgid "Can not create history database at '%s'."
 msgstr "'%s' で履歴データベースを作成できません。"
@@ -813,7 +814,6 @@ msgstr "依存性の破損のためスキップされるパッケージ"
 
 #: ../dnf/cli/output.py:1050 ../dnf/cli/output.py:1090
 #: ../dnf/cli/output.py:1106 ../dnf/cli/output.py:1913
-#, fuzzy
 msgid "Package"
 msgid_plural "Packages"
 msgstr[0] "パッケージ"
@@ -862,7 +862,7 @@ msgstr "スキップ"
 #: ../dnf/cli/output.py:1108
 msgid "Dependent package"
 msgid_plural "Dependent packages"
-msgstr[0] ""
+msgstr[0] "依存パッケージ"
 
 #: ../dnf/cli/output.py:1167
 msgid "Reinstalled"

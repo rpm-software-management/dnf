@@ -6,12 +6,13 @@
 # Piotr Drąg <piotrdrag@gmail.com>, 2011,2014,2015
 # Jan Silhan <jsilhan@redhat.com>, 2015. #zanata
 # Piotr Drąg <piotrdrag@gmail.com>, 2015. #zanata
+# Piotr Drąg <piotrdrag@gmail.com>, 2016. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-25 16:00+0100\n"
-"PO-Revision-Date: 2015-12-22 11:32-0500\n"
+"POT-Creation-Date: 2016-02-02 19:06+0100\n"
+"PO-Revision-Date: 2016-01-28 10:28-0500\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/dnf/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -19,7 +20,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: pl\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
-"X-Generator: Zanata 3.7.3\n"
+"X-Generator: Zanata 3.8.2\n"
 
 #: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
@@ -50,7 +51,7 @@ msgstr "Suma kontrolna pakietu RPM przebudowanego z delty się nie powiodła"
 
 #: ../dnf/drpm.py:140
 msgid "done"
-msgstr ""
+msgstr "ukończono"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -164,12 +165,12 @@ msgstr "Aktualizowanie"
 msgid "Verifying"
 msgstr "Sprawdzanie"
 
-#: ../dnf/yum/history.py:744
+#: ../dnf/yum/history.py:745
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
 msgstr "Nie można zainicjować historii DNF DB: %s"
 
-#: ../dnf/yum/history.py:1661
+#: ../dnf/yum/history.py:1662
 #, python-format
 msgid "Can not create history database at '%s'."
 msgstr "Nie można utworzyć bazy danych historii w „%s”."
@@ -374,12 +375,12 @@ msgstr "    Stan       : %s"
 #: ../dnf/cli/cli.py:129
 #, python-format
 msgid "  Installed: %s-%s at %s"
-msgstr "  Zainstalowane: %s-%s o %s"
+msgstr "  Zainstalowane: %s-%s w dniu %s"
 
 #: ../dnf/cli/cli.py:131
 #, python-format
 msgid "  Built    : %s at %s"
-msgstr "  Zbudowane    : %s o %s"
+msgstr "  Zbudowane    : %s w dniu %s"
 
 #: ../dnf/cli/cli.py:201
 msgid "Operation aborted."
@@ -593,7 +594,7 @@ msgstr "Nazwa"
 
 #: ../dnf/cli/output.py:467 ../dnf/cli/output.py:1050
 msgid "Arch"
-msgstr "Arch...."
+msgstr "Arch."
 
 #: ../dnf/cli/output.py:469
 msgid "Epoch"
@@ -613,7 +614,7 @@ msgstr "Rozm."
 
 #: ../dnf/cli/output.py:473
 msgid "Repo"
-msgstr "Repoz.z.z.z."
+msgstr "Repo."
 
 #: ../dnf/cli/output.py:475
 msgid "From repo"
@@ -825,9 +826,9 @@ msgstr "Pomijanie pakietów z uszkodzonymi zależnościami"
 #: ../dnf/cli/output.py:1106 ../dnf/cli/output.py:1913
 msgid "Package"
 msgid_plural "Packages"
-msgstr[0] "Pakiet"
-msgstr[1] "Pakiety"
-msgstr[2] "Pakietów"
+msgstr[0] "pakiet"
+msgstr[1] "pakiety"
+msgstr[2] "pakietów"
 
 #: ../dnf/cli/output.py:1051
 msgid "Repository"
@@ -873,9 +874,9 @@ msgstr "Pominięcie"
 #: ../dnf/cli/output.py:1108
 msgid "Dependent package"
 msgid_plural "Dependent packages"
-msgstr[0] "Zależny pakiet"
-msgstr[1] "Zależne pakiety"
-msgstr[2] "Zależnych pakietów"
+msgstr[0] "zależny pakiet"
+msgstr[1] "zależne pakiety"
+msgstr[2] "zależnych pakietów"
 
 #: ../dnf/cli/output.py:1167
 msgid "Reinstalled"
@@ -1772,7 +1773,7 @@ msgstr "Wykonuje polecenia na wszystkich pakietach w podanym repozytorium"
 
 #: ../dnf/cli/commands/__init__.py:919
 msgid "REPO"
-msgstr "REPOZYTORIUMZYTORIUMZYTORIUMZYTORIUM"
+msgstr "REPOZYTORIUM"
 
 #: ../dnf/cli/commands/__init__.py:919
 msgid "ARG"

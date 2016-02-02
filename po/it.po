@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-25 16:00+0100\n"
+"POT-Creation-Date: 2016-02-02 19:06+0100\n"
 "PO-Revision-Date: 2015-09-23 08:24-0400\n"
 "Last-Translator: Andrea Masala <andrea.masala87@gmail.com>\n"
 "Language-Team: Italian (http://www.transifex.com/projects/p/dnf/language/it/)\n"
@@ -21,7 +21,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: it\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 3.7.3\n"
+"X-Generator: Zanata 3.8.2\n"
 
 #: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
@@ -163,12 +163,12 @@ msgstr "Aggiornamento in corso"
 msgid "Verifying"
 msgstr "Verifica in corso"
 
-#: ../dnf/yum/history.py:744
+#: ../dnf/yum/history.py:745
 #, fuzzy, python-format
 msgid "Unable to initialize DNF DB history: %s"
 msgstr "Impossibile inizializzare lo storico di DNF DB: %s"
 
-#: ../dnf/yum/history.py:1661
+#: ../dnf/yum/history.py:1662
 #, python-format
 msgid "Can not create history database at '%s'."
 msgstr "Impossibile creare history database a '%s'."
@@ -596,7 +596,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:470 ../dnf/cli/output.py:1051
 msgid "Version"
-msgstr "Versioneeee"
+msgstr "Versione"
 
 #: ../dnf/cli/output.py:471
 msgid "Release"
@@ -902,7 +902,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1226
 msgid "Total"
-msgstr "Totaleeee"
+msgstr "Totale"
 
 #: ../dnf/cli/output.py:1247
 msgid "I"
