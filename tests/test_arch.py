@@ -18,14 +18,14 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import dnf.arch
+import dnf.rpm
 import tests.support
 
 
 class ArchTest(tests.support.TestCase):
 
     def test_basearch(self):
-        fn = dnf.arch.basearch
+        fn = dnf.rpm.basearch
         self.assertEqual(fn('armv6hl'), 'armhfp')
         self.assertEqual(fn('armv7hl'), 'armhfp')
         self.assertEqual(fn('i686'), 'i386')

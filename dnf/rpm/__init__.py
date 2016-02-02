@@ -17,6 +17,8 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
+from __future__ import unicode_literals
 from . import transaction
 from dnf.pycomp import is_py3bytes
 import dnf.const
@@ -28,7 +30,7 @@ def detect_releasever(installroot):
     """Calculate the release version for the system. :api"""
 
     ts = transaction.initReadOnlyTransaction(root=installroot)
-    ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES|rpm._RPMVSF_NODIGESTS))
+    ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES | rpm._RPMVSF_NODIGESTS))
     for distroverpkg in dnf.const.DISTROVERPKG:
         try:
             idx = ts.dbMatch('provides', distroverpkg)
@@ -47,9 +49,43 @@ def detect_releasever(installroot):
         return releasever
     return None
 
+
 def header(path):
     """Return RPM header of the file."""
     ts = transaction.initReadOnlyTransaction()
     with open(path) as package:
         fdno = package.fileno()
         return ts.hdrFromFdno(fdno)
+
+
+def _invert(dct):
+    return {v: k for k in dct for v in dct[k]}
+
+_BASEARCH_MAP = _invert({
+    'aarch64': ('aarch64',),
+    'alpha': ('alpha', 'alphaev4', 'alphaev45', 'alphaev5', 'alphaev56',
+              'alphaev6', 'alphaev67', 'alphaev68', 'alphaev7', 'alphapca56'),
+    'arm': ('armv5tejl', 'armv5tel', 'armv6l', 'armv7l'),
+    'armhfp': ('armv6hl', 'armv7hl', 'armv7hnl'),
+    'i386': ('i386', 'athlon', 'geode', 'i386', 'i486', 'i586', 'i686'),
+    'ia64': ('ia64',),
+    'mips': ('mips',),
+    'mipsel': ('mipsel',),
+    'mips64': ('mips64',),
+    'mips64el': ('mips64el',),
+    'noarch': ('noarch',),
+    'ppc': ('ppc',),
+    'ppc64': ('ppc64', 'ppc64iseries', 'ppc64p7', 'ppc64pseries'),
+    'ppc64le': ('ppc64le',),
+    's390': ('s390',),
+    's390x': ('s390x',),
+    'sh3': ('sh3',),
+    'sh4': ('sh4', 'sh4a'),
+    'sparc': ('sparc', 'sparc64', 'sparc64v', 'sparcv8', 'sparcv9',
+              'sparcv9v'),
+    'x86_64': ('x86_64', 'amd64', 'ia32e'),
+})
+
+
+def basearch(arch):
+    return _BASEARCH_MAP[arch]
