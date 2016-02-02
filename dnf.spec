@@ -174,6 +174,9 @@ mv $RPM_BUILD_ROOT%{_bindir}/dnf-automatic-2 $RPM_BUILD_ROOT%{_bindir}/dnf-autom
 rm $RPM_BUILD_ROOT%{_bindir}/dnf-automatic-3
 %endif
 
+# This will eventually be the new default location for repo files
+mkdir $RPM_BUILD_ROOT%{_sysconfdir}/distro.repos.d
+
 %check
 make ARGS="-V" test
 pushd py3
@@ -190,6 +193,7 @@ popd
 %{_unitdir}/dnf-makecache.service
 %{_unitdir}/dnf-makecache.timer
 %{_var}/cache/dnf
+%ghost %{_sysconfdir}/distro.repos.d
 
 %files conf
 %license COPYING PACKAGE-LICENSING
