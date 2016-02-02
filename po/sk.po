@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-25 16:00+0100\n"
+"POT-Creation-Date: 2016-02-02 19:06+0100\n"
 "PO-Revision-Date: 2015-11-16 06:48-0500\n"
 "Last-Translator: Dusan Kazik <prescott66@gmail.com>\n"
 "Language-Team: Slovak\n"
@@ -12,7 +12,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: sk\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
-"X-Generator: Zanata 3.7.3\n"
+"X-Generator: Zanata 3.8.2\n"
 
 #: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
@@ -152,12 +152,12 @@ msgstr "Aktualizuje sa"
 msgid "Verifying"
 msgstr "Overuje sa"
 
-#: ../dnf/yum/history.py:744
+#: ../dnf/yum/history.py:745
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
 msgstr "Nie je možné inicializovať históriu databázy DNF: %s"
 
-#: ../dnf/yum/history.py:1661
+#: ../dnf/yum/history.py:1662
 #, python-format
 msgid "Can not create history database at '%s'."
 msgstr "Nedá sa vytvoriť databáza histórie v „%s“."
@@ -573,7 +573,7 @@ msgstr "Názov"
 
 #: ../dnf/cli/output.py:467 ../dnf/cli/output.py:1050
 msgid "Arch"
-msgstr "Architektúraitektúraitektúraitektúra"
+msgstr "Architektúra"
 
 #: ../dnf/cli/output.py:469
 msgid "Epoch"
@@ -593,7 +593,7 @@ msgstr "Veľkosť"
 
 #: ../dnf/cli/output.py:473
 msgid "Repo"
-msgstr "Repozitárzitárzitárzitár"
+msgstr "Repozitár"
 
 #: ../dnf/cli/output.py:475
 msgid "From repo"

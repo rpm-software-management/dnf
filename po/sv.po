@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-25 16:00+0100\n"
+"POT-Creation-Date: 2016-02-02 19:06+0100\n"
 "PO-Revision-Date: 2015-08-31 01:41-0400\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/dnf/language/sv/)\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: sv\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 3.7.3\n"
+"X-Generator: Zanata 3.8.2\n"
 
 #: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
@@ -160,12 +160,12 @@ msgstr "Uppgraderar"
 msgid "Verifying"
 msgstr "Verifierar"
 
-#: ../dnf/yum/history.py:744
+#: ../dnf/yum/history.py:745
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
 msgstr "Kan inte initiera DNF DB-historiken: %s"
 
-#: ../dnf/yum/history.py:1661
+#: ../dnf/yum/history.py:1662
 #, python-format
 msgid "Can not create history database at '%s'."
 msgstr "Kan inte skapa en historikdatabas i ”%s”."
@@ -842,7 +842,7 @@ msgstr ""
 #: ../dnf/cli/output.py:1077 ../dnf/cli/output.py:1708
 #: ../dnf/cli/output.py:1709
 msgid "Install"
-msgstr "Installeraeraeraera"
+msgstr "Installera"
 
 #: ../dnf/cli/output.py:1078 ../dnf/cli/output.py:1717
 msgid "Upgrade"
@@ -895,7 +895,7 @@ msgstr "Misslyckades"
 
 #: ../dnf/cli/output.py:1226
 msgid "Total"
-msgstr "Totaltttt"
+msgstr "Totalt"
 
 #: ../dnf/cli/output.py:1247
 msgid "I"
@@ -1931,7 +1931,7 @@ msgstr "uppdaterar"
 
 #: ../dnf/cli/commands/updateinfo.py:334
 msgid "all"
-msgstr "allaaaa"
+msgstr "alla"
 
 #: ../dnf/cli/commands/updateinfo.py:339
 msgid "available"

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-25 16:00+0100\n"
+"POT-Creation-Date: 2016-02-02 19:06+0100\n"
 "PO-Revision-Date: 2015-10-23 01:20-0400\n"
 "Last-Translator: Asier Sarasua Garmendia <asier.sarasua@gmail.com>\n"
 "Language-Team: Basque (http://www.transifex.com/projects/p/dnf/language/eu/)\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: eu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 3.7.3\n"
+"X-Generator: Zanata 3.8.2\n"
 
 #: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
@@ -161,12 +161,12 @@ msgstr "Eguneratzen"
 msgid "Verifying"
 msgstr "Egiaztatzen"
 
-#: ../dnf/yum/history.py:744
+#: ../dnf/yum/history.py:745
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
 msgstr "Ezin da DNF DB historia hasieratu: %s"
 
-#: ../dnf/yum/history.py:1661
+#: ../dnf/yum/history.py:1662
 #, python-format
 msgid "Can not create history database at '%s'."
 msgstr "Ezin izan da historiaren datu-basea sortu '%s'(e)n."
@@ -635,7 +635,7 @@ msgstr "Laburpena"
 
 #: ../dnf/cli/output.py:500
 msgid "URL"
-msgstr "URLaaaa"
+msgstr "URLa"
 
 #: ../dnf/cli/output.py:501
 msgid "License"
@@ -952,7 +952,7 @@ msgstr "Saioa hasteko erabiltzailea"
 
 #: ../dnf/cli/output.py:1407 ../dnf/cli/output.py:1911
 msgid "ID"
-msgstr "IDaaaa"
+msgstr "IDa"
 
 #: ../dnf/cli/output.py:1409
 msgid "Date and time"

@@ -11,8 +11,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-01-25 16:00+0100\n"
-"PO-Revision-Date: 2016-01-24 02:51-0500\n"
+"POT-Creation-Date: 2016-02-02 19:06+0100\n"
+"PO-Revision-Date: 2016-01-26 07:39-0500\n"
 "Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
 "Language-Team: Catalan (https://fedora.zanata.org/language/view/ca) <fedora@llistes.softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Language: ca\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 3.7.3\n"
+"X-Generator: Zanata 3.8.2\n"
 
 #: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
@@ -52,7 +52,7 @@ msgstr "Ha fallat la suma de verificació de la reconstrucció delta RPM"
 
 #: ../dnf/drpm.py:140
 msgid "done"
-msgstr ""
+msgstr "fet"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -167,12 +167,12 @@ msgstr "Actualitzar"
 msgid "Verifying"
 msgstr "Verificar"
 
-#: ../dnf/yum/history.py:744
+#: ../dnf/yum/history.py:745
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
 msgstr "No s'ha pogut inicialitzar l'històric de la base de dades de DNF: %s"
 
-#: ../dnf/yum/history.py:1661
+#: ../dnf/yum/history.py:1662
 #, python-format
 msgid "Can not create history database at '%s'."
 msgstr "No s'ha pogut crear la base de dades de l'històric a «%s»."
