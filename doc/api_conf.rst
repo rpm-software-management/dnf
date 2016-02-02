@@ -140,7 +140,7 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
         base = dnf.Base()
         base.conf.substitutions['arch'] = arch
-        base.conf.substitutions['basearch'] = dnf.arch.basearch(arch)
+        base.conf.substitutions['basearch'] = dnf.rpm.basearch(arch)
         base.fill_sack()
         ...
 

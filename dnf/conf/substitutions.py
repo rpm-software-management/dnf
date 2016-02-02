@@ -18,7 +18,7 @@
 # Red Hat, Inc.
 #
 
-import dnf.arch
+import dnf
 import dnf.exceptions
 import hawkey
 import os
@@ -30,7 +30,7 @@ class Substitutions(dict):
         super(Substitutions, self).__init__()
         arch = hawkey.detect_arch()
         self['arch'] = arch
-        self['basearch'] = dnf.arch.basearch(arch)
+        self['basearch'] = dnf.rpm.basearch(arch)
         self._update_from_env()
 
     def _update_from_env(self):

@@ -26,7 +26,7 @@ import os
 
 from .sqlutils import sqlite, executeSQL, sql_esc_glob
 from . import misc as misc
-import dnf.arch
+import dnf
 import dnf.exceptions
 import dnf.rpm.miscutils
 import dnf.i18n
@@ -478,7 +478,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
             state = pkg.state
         #  Arch is needed so multilib. works, dito. basearch() -- (so .i586
         # => .i686 moves are seen)
-        return (pkg.name, dnf.arch.basearch(pkg.arch), state)
+        return (pkg.name, dnf.rpm.basearch(pkg.arch), state)
 
     @staticmethod
     def _list2dict(pkgs):
