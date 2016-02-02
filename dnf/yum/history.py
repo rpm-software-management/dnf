@@ -163,7 +163,8 @@ class YumHistoryPackage(object):
     def __le__(self, other):
         """Test whether the *self* is less than or equal to the *other*."""
         s = self.to_nevra()
-        o = other.to_nevra()
+        o = hawkey.NEVRA(other.name, int(other.epoch), other.version,
+                         other.release, other.arch)
         if s != o:
             return s < o
 
