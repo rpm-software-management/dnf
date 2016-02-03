@@ -1047,10 +1047,12 @@ class HistoryCommand(Command):
     summary = _("Display, or use, the transaction history")
     usage = "[info|list|redo|undo|rollback|userinstalled]"
 
-    def configure(self, _):
+    def configure(self, args):
         demands = self.cli.demands
-        demands.available_repos = True
-        demands.fresh_metadata = False
+        if args[0] in ['redo', 'undo', 'rollback']:
+            demands.available_repos = True
+        else:
+            demands.fresh_metadata = False
         demands.sack_activation = True
 
     def get_error_output(self, error):
