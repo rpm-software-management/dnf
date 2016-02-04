@@ -765,7 +765,6 @@ class YumConf(BaseConfig):
     diskspacecheck = BoolOption(True)
     gpgcheck = BoolOption(False)
     repo_gpgcheck = BoolOption(False)
-    localpkg_gpgcheck = BoolOption(False)
     obsoletes = BoolOption(True)
     showdupesfromrepos = BoolOption(False)
     enabled = BoolOption(True)

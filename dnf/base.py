@@ -943,7 +943,7 @@ class Base(object):
               2 = Fatal GPG verification error, give up.
         """
         if po.from_cmdline:
-            check = self.conf.localpkg_gpgcheck
+            check = self.conf.gpgcheck
             hasgpgkey = 0
         else:
             repo = self.repos[po.repoid]
