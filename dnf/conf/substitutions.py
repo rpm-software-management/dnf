@@ -31,6 +31,7 @@ class Substitutions(dict):
         arch = hawkey.detect_arch()
         self['arch'] = arch
         self['basearch'] = dnf.arch.basearch(arch)
+        self.update_from_etc('/')
         self._update_from_env()
 
     def _update_from_env(self):
