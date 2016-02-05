@@ -518,6 +518,15 @@ class Repo(dnf.yum.config.RepoConf):
             self.sync_strategy = SYNC_TRY_CACHE
 
     @property
+    def md_expired(self):
+        """Return whether the cached metadata is expired."""
+        try:
+            exp_remaining = self.metadata_expire_in()[1]
+            return False if exp_remaining is None else exp_remaining <= 0
+        except dnf.exceptions.MetadataError:
+            return False
+
+    @property
     def metadata_dir(self):
         return os.path.join(self.cachedir, _METADATA_RELATIVE_DIR)
 
