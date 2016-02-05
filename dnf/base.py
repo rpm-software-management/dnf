@@ -162,16 +162,8 @@ class Base(object):
                 self.sack.add_includes(pkgs)
 
     def _store_persistent_data(self):
-        def check_expired(repo):
-            try:
-                exp_remaining = repo.metadata_expire_in()[1]
-                return False if exp_remaining is None else exp_remaining <= 0
-            except dnf.exceptions.MetadataError:
-                return False
-
         if self.repo_persistor:
-            expired = [r.id for r in self.repos.iter_enabled()
-                       if check_expired(r)]
+            expired = [r.id for r in self.repos.iter_enabled() if r.md_expired]
             self.repo_persistor.expired_to_add.update(expired)
             self.repo_persistor.save()
 
