@@ -155,11 +155,19 @@ class GroupCommand(commands.Command):
 
     def _list(self, userlist):
         uservisible = 1
-
+        showinstalled = 0
+        showavailable = 0
         if len(userlist) > 0:
             if userlist[0] == 'hidden':
                 uservisible = 0
                 userlist.pop(0)
+            elif userlist[0] == 'installed':
+                showinstalled = 1
+                userlist.pop(0)
+            elif userlist[0] == 'available':
+                showavailable = 1
+                userlist.pop(0)
+
         if not userlist:
             userlist = None # Match everything...
 
@@ -196,22 +204,28 @@ class GroupCommand(commands.Command):
                     msg += ' (%s)' % e.id
                 logger.info(msg)
 
-        _out_env(_('Available environment groups:'), env_avail)
-        _out_env(_('Installed environment groups:'), env_inst)
+        if not showinstalled:
+            _out_env(_('Available environment groups:'), env_avail)
+        if not showavailable:
+            _out_env(_('Installed environment groups:'), env_inst)
 
-        done = False
-        for group in installed:
-            if group.lang_only:
-                continue
-            _out_grp(_('Installed groups:'), group)
-            done = True
+        if not showavailable:
+            done = False
+            for group in installed:
+                if group.lang_only:
+                    continue
+                _out_grp(_('Installed groups:'), group)
+                done = True
 
-        done = False
-        for group in installed:
-            if not group.lang_only:
-                continue
-            _out_grp(_('Installed language groups:'), group)
-            done = True
+            done = False
+            for group in installed:
+                if not group.lang_only:
+                    continue
+                _out_grp(_('Installed language groups:'), group)
+                done = True
+
+        if showinstalled:
+            return 0, []
 
         done = False
         for group in available:
