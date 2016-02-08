@@ -118,7 +118,8 @@ class RepoPersistorTest(tests.support.TestCase):
 
     def test_expired_repos(self):
         self.assertLength(self.prst.get_expired_repos(), 0)
-        self.prst.set_expired_repos(IDS)
+        self.prst.expired_to_add = IDS
+        self.prst.save()
         self.assertEqual(self.prst.get_expired_repos(), IDS)
 
         prst = dnf.persistor.RepoPersistor(self.persistdir)

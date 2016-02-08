@@ -85,7 +85,7 @@ class MakeCacheCommand(commands.Command):
                              expires_in)
 
         if timer:
-            persistor.reset_last_makecache()
+            persistor.reset_last_makecache = True
         self.base.fill_sack() # performs the md sync
         logger.info(_('Metadata cache created.'))
         return True

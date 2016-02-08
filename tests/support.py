@@ -475,11 +475,10 @@ class FakeConf(object):
         return self.substitutions['releasever']
 
 class FakePersistor(object):
+    reset_last_makecache = False
+
     def get_expired_repos(self):
         return set()
-
-    def reset_last_makecache(self):
-        pass
 
     def since_last_makecache(self):
         return None
