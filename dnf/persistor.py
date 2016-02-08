@@ -441,6 +441,8 @@ class RepoPersistor(JSONDB):
     def __init__(self, cachedir):
         self.cachedir = cachedir
         self.db_path = os.path.join(self.cachedir, "expired_repos.json")
+        self.expired_to_add = set()
+        self.reset_last_makecache = False
 
     @property
     def _last_makecache_path(self):
@@ -450,18 +452,16 @@ class RepoPersistor(JSONDB):
         self._check_json_db(self.db_path)
         return set(self._get_json_db(self.db_path))
 
-    def reset_last_makecache(self):
-        try:
-            dnf.util.touch(self._last_makecache_path)
-            return True
-        except IOError:
-            logger.info("Failed storing last makecache time.")
-            return False
-
-    def set_expired_repos(self, expired_iterable):
+    def save(self):
         self._check_json_db(self.db_path)
-        json_path = os.path.join(self.cachedir, "expired_repos.json")
-        self._write_json_db(json_path, list(set(expired_iterable)))
+        self._write_json_db(self.db_path, list(self.expired_to_add))
+        if self.reset_last_makecache:
+            try:
+                dnf.util.touch(self._last_makecache_path)
+                return True
+            except IOError:
+                logger.info("Failed storing last makecache time.")
+                return False
 
     def since_last_makecache(self):
         try:
