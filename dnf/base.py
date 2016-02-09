@@ -1427,8 +1427,7 @@ class Base(object):
             return len(available)
         elif self.conf.multilib_policy == "best":
             sltrs = subj.get_best_selectors(self.sack)
-            match = reduce(lambda x, y: y.matches() or x, sltrs, [])
-            if not match:
+            if not any((s.matches() for s in sltrs)):
                 raise dnf.exceptions.MarkingError(
                     _('no package matched'), pkg_spec)
             for sltr in sltrs:
@@ -1529,8 +1528,7 @@ class Base(object):
             return first(self.sack.query().installed().filter(name=pkg_name))
         wildcard = True if dnf.util.is_glob_pattern(pkg_spec) else False
         sltrs = dnf.subject.Subject(pkg_spec).get_best_selectors(self.sack)
-        match = reduce(lambda x, y: y.matches() or x, sltrs, [])
-        if match:
+        if any((s.matches() for s in sltrs)):
             prev_count = self._goal.req_length()
             for sltr in sltrs:
                 if not sltr.matches():
@@ -1581,8 +1579,7 @@ class Base(object):
             self._goal.distupgrade_all()
         else:
             sltrs = dnf.subject.Subject(pkg_spec).get_best_selectors(self.sack)
-            match = reduce(lambda x, y: y.matches() or x, sltrs, [])
-            if not match:
+            if not any((s.matches() for s in sltrs)):
                 logger.info(_('No package %s installed.'), pkg_spec)
                 return 0
             for sltr in sltrs:
