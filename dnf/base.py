@@ -1524,18 +1524,18 @@ class Base(object):
 
     def upgrade(self, pkg_spec, reponame=None):
         # :api
-        def is_installed_by_name(pkg_name):
-            return first(self.sack.query().installed().filter(name=pkg_name))
         wildcard = True if dnf.util.is_glob_pattern(pkg_spec) else False
         sltrs = dnf.subject.Subject(pkg_spec).get_best_selectors(self.sack)
         if any((s.matches() for s in sltrs)):
             prev_count = self._goal.req_length()
+            installed = self.sack.query().installed()
             for sltr in sltrs:
                 if not sltr.matches():
                     continue
                 pkg_name = sltr.matches()[0].name
-                if not is_installed_by_name(pkg_name):
-                    if not wildcard: # wildcard shouldn't print not installed packages
+                if not installed.filter(name=pkg_name):
+                    # wildcard shouldn't print not installed packages
+                    if not wildcard:
                         msg = _("Package %s not installed, cannot update it.")
                         logger.warning(msg, pkg_name)
                     continue
