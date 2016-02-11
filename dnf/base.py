@@ -1553,10 +1553,8 @@ class Base(object):
         if reponame is None:
             self._goal.upgrade_all()
         else:
-            try:
-                self.upgrade('*', reponame)
-            except dnf.exceptions.MarkingError:
-                pass
+            for pkg in self.sack.query().filter(reponame=reponame).upgrades():
+                self._goal.install(package=pkg, optional=True)
         return 1
 
     def upgrade_to(self, pkg_spec, reponame=None):
