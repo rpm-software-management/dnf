@@ -1560,7 +1560,6 @@ class Base(object):
                 for item in rent:
                     if "@"+reponame == item.from_repo:
                         self.upgrade(str(item.name), reponame)
-                #self.upgrade('*', reponame)
             except dnf.exceptions.MarkingError:
                 pass
         return 1
