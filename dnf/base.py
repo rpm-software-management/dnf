@@ -1556,7 +1556,10 @@ class Base(object):
             self._goal.upgrade_all()
         else:
             try:
-                self.upgrade('*', reponame)
+                rent=self.sack.query().installed()
+                for item in rent:
+                    if "@"+reponame == item.from_repo:
+                        self.upgrade(str(item.name), reponame)
             except dnf.exceptions.MarkingError:
                 pass
         return 1
