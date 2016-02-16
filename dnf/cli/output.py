@@ -911,18 +911,18 @@ class Output(object):
         out = []
         rows = []
         if diff.new_groups:
-            out.append(_('Marking installed:'))
+            out.append(_('Marking packages as installed by the group:'))
         for grp_id in diff.new_groups:
             pkgs = list(diff.added_packages(grp_id))
             grp_name = comps.group_by_id(grp_id).ui_name
-            rows.extend(_spread_in_columns(4, grp_name, pkgs))
+            rows.extend(_spread_in_columns(4, "@" + grp_name, pkgs))
         if diff.removed_groups:
             assert not rows
-            out.append(_('Marking removed:'))
+            out.append(_('Marking packages as removed by the group:'))
         for grp_id in diff.removed_groups:
             pkgs = list(diff.removed_packages(grp_id))
             grp_name = prst.group(grp_id).ui_name
-            rows.extend(_spread_in_columns(4, grp_name, pkgs))
+            rows.extend(_spread_in_columns(4, "@" + grp_name, pkgs))
 
         if rows:
             col_data = self._col_widths(rows)
