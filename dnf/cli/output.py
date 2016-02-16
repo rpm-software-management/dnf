@@ -1639,7 +1639,7 @@ Transaction Summary
                 print(_("Return-Code    :"), "**", _("Aborted"), "**")
                 codes = codes[1:]
             if codes:
-                print(_("Return-Code    :"), _("Failures:"), ", ".join(codes))
+                print(_("Return-Code    :"), _("Failures:"), ", ".join(map(dnf.i18n.ucd, codes)))
         elif old.return_code is None:
             print(_("Return-Code    :"), "**", _("Aborted"), "**")
         elif old.return_code:

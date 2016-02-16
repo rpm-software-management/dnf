@@ -435,9 +435,16 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
     tid         = property(fget=lambda self: self._getAllTids())
 
     def _getLoginUIDs(self):
-        ret = set((tid.loginuid for tid in self._merged_objs))
+        ret = set((tid.loginuid for tid in self._merged_objs if tid.loginuid is not None))
         if len(ret) == 1:
-            return list(ret)[0]
+            return ret.pop()
+
+        # Py3 does not allow comparing None with int
+        try:
+            ret.remove(None)
+        except KeyError:
+            pass
+
         return sorted(ret)
     loginuid    = property(fget=lambda self: self._getLoginUIDs())
 
@@ -445,8 +452,19 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
         ret_codes = set((tid.return_code for tid in self._merged_objs))
         if len(ret_codes) == 1 and 0 in ret_codes:
             return 0
-        if 0 in ret_codes:
+
+        # Py3 does not allow comparing None with int
+        try:
+            ret_codes.remove(None)
+        except KeyError:
+            pass
+
+        # Remove a success code since we already know there are errors
+        try:
             ret_codes.remove(0)
+        except KeyError:
+            pass
+
         return sorted(ret_codes)
     return_code = property(fget=lambda self: self._getReturnCodes())
 
@@ -712,10 +730,12 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
         # Oldest first...
         self._merged_objs.sort(reverse=True)
 
-        if self.beg_timestamp > obj.beg_timestamp:
+        # Manually check for unset timestamps, as Python 2 will allow such a
+        # comparison while Python 3 will not.
+        if obj.beg_timestamp is not None and self.beg_timestamp > obj.beg_timestamp:
             self.beg_timestamp    = obj.beg_timestamp
             self.beg_rpmdbversion = obj.beg_rpmdbversion
-        if self.end_timestamp < obj.end_timestamp:
+        if obj.end_timestamp is not None and self.end_timestamp < obj.end_timestamp:
             self.end_timestamp    = obj.end_timestamp
             self.end_rpmdbversion = obj.end_rpmdbversion
 
