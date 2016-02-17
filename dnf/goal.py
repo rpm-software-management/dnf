@@ -71,7 +71,10 @@ class Goal(hawkey.Goal):
 
         pkgs_run1 = set(self.list_upgrades()).union(set(self.list_installs()))
         ng = deepcopy(self)
-        if not ng.run(allow_uninstall=True, force_best=True):
+        params = {"allow_uninstall": True, "force_best": True}
+        if hawkey.IGNORE_WEAK_DEPS in self.actions:
+            params["ignore_weak_deps"] = True
+        if not ng.run(**params):
             return map(lambda p: (p, None), pkgs_run1)
         pkgs_run2 = set(ng.list_upgrades()).union(set(ng.list_installs()))
         pkgs_diff_run1 = pkgs_run1 - pkgs_run2
