@@ -373,6 +373,15 @@ class GroupPersistor(object):
         return _by_pattern(pattern, self.environments,
                            self.environment, case_sensitive)
 
+    def update_group_env_installed(self, installed, goal):
+        """add to the persistor packages that are already installed or are
+           being installed by group transaction"""
+        ins = {p.name for p in set(goal.list_installs()).union(set(installed))}
+        for g in self.diff().new_groups:
+            all_pkgs = set(self.group(g).full_list)
+            installed_in_group = list(all_pkgs.intersection(ins))
+            self.group(g).param_dct['full_list'] = installed_in_group
+
     def group(self, id_):
         return self._access('GROUPS', id_)
 

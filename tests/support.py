@@ -488,6 +488,7 @@ class MockGroupPersistor(dnf.persistor.GroupPersistor):
     """Empty persistor that doesn't need any I/O."""
     def __init__(self):
         self.db = self._empty_db()
+        self._original = self._empty_db()
 
 
 # object matchers for asserts

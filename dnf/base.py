@@ -545,6 +545,9 @@ class Base(object):
 
         if exc is not None:
             raise exc
+        if self.group_persistor:
+            installed = self.sack.query().installed()
+            self.group_persistor.update_group_env_installed(installed, goal)
         return got_transaction
 
     def do_transaction(self, display=()):
