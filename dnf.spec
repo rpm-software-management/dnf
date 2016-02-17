@@ -1,4 +1,4 @@
-%global hawkey_version 0.6.1
+%global hawkey_version 0.7.0
 %global librepo_version 1.7.16
 %global libcomps_version 0.1.6
 %global rpm_version 4.12.0
