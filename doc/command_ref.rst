@@ -321,7 +321,7 @@ Groups are virtual collections of packages. DNF keeps track of groups that the u
     available from a repo when ``-v`` is used.
 
 ``dnf [options] group install [with-optional] <group-spec>...``
-    Mark the specified group installed and install packages it contains. Also include optional packages of the group if ``with-optional`` is specified.
+    Mark the specified group installed and install packages it contains. Also include `optional` packages of the group if ``with-optional`` is specified. All `mandatory` packages are going to be installed otherwise the transaction fails. `Default` packages will be installed whenever possible. `Optional` and `default` packages that are in conflict with other packages or have missing dependencies does not terminate the transaction and will be skipped.
 
 .. _grouplist_command-label:
 
