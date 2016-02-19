@@ -472,6 +472,9 @@ Install Examples
 ``dnf install '@Web Server'``
     Install environmental group 'Web Server'
 
+``dnf install /usr/bin/rpmsign``
+    Install a package that provides /usr/bin/rpmsign file.
+
 .. _list_command-label:
 
 ------------
