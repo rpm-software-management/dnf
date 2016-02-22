@@ -26,7 +26,13 @@ sources.
  Building from source
 ======================
 
-From the DNF git checkout directory::
+All commands should be run from the DNF git checkout directory.
+
+To install the build dependancies::
+
+    sudo dnf builddep dnf.spec
+
+To build DNF::
 
     mkdir build;
     pushd build;
@@ -41,6 +47,12 @@ To run DNF when compiled for Python2::
 To run DNF when compiled for Python3::
 
     PYTHONPATH=`readlink -f .` bin/dnf-3 <arguments>
+
+If you want to build the manpages, use the option ``-DWITH_MAN=0`` with cmake.
+
+Man pages will be located in ``build/doc`` and can be read with ``man -l``, e.g::
+
+    man -l build/doc/dnf.8
 
 =============================
  Building and installing rpm
