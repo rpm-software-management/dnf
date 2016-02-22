@@ -622,10 +622,11 @@ class Output(object):
         yui = (ucd(_('y')), ucd(_('yes')))
         nui = (ucd(_('n')), ucd(_('no')))
         aui = yui + nui
+        defaultyes = not self.conf.defaultno and self.conf.defaultyes
         while True:
             msg = _('Is this ok [y/N]: ')
             choice = ''
-            if self.conf.defaultyes:
+            if defaultyes:
                 msg = _('Is this ok [Y/n]: ')
             try:
                 choice = dnf.i18n.ucd_input(msg)
@@ -635,7 +636,7 @@ class Output(object):
                 choice = nui[0]
             choice = ucd(choice).lower()
             if len(choice) == 0:
-                choice = yui[0] if self.conf.defaultyes else nui[0]
+                choice = yui[0] if defaultyes else nui[0]
             if choice in aui:
                 break
 

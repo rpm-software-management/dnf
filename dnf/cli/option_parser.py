@@ -61,7 +61,7 @@ class OptionParser(argparse.ArgumentParser):
     def configure_from_options(self, opts, conf, demands, output):
         """Configure parts of CLI from the opts. """
 
-        options_to_move = ('best', 'assumeyes', 'assumeno',
+        options_to_move = ('best', 'assumeyes', 'assumeno', 'defaultyes', 'defaultno',
                            'showdupesfromrepos', 'plugins', 'ip_resolve',
                            'rpmverbosity', 'disable_excludes')
 
@@ -183,9 +183,13 @@ class OptionParser(argparse.ArgumentParser):
         self.add_argument("-v", "--verbose", action="store_true",
                            default=None, help=_("verbose operation"))
         self.add_argument("-y", "--assumeyes", action="store_true",
-                           default=None, help=_("answer yes for all questions"))
+                           default=None, help=_("automatically answer yes for all questions"))
         self.add_argument("--assumeno", action="store_true",
-                           default=None, help=_("answer no for all questions"))
+                           default=None, help=_("automatically answer no for all questions"))
+        self.add_argument("--defaultyes", action="store_true",
+                           default=None, help=_("set the default answer to yes for all questions"))
+        self.add_argument("--defaultno", action="store_true",
+                           default=None, help=_("set the default answer to no for all questions"))
         self.add_argument("--version", action="store_true", default=None,
                            help=_("show DNF version and exit"))
         self.add_argument("--installroot", help=_("set install root"),

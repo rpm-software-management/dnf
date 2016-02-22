@@ -27,6 +27,11 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Boolean option, if set to ``True`` on any user input asking for confirmation
     (e.g. after transaction summary) the answer is implicitly ``yes``. Default is ``False``.
+
+  .. attribute:: assumeno
+
+    Boolean option, if set to ``True`` on any user input asking for confirmation
+    (e.g. after transaction summary) the answer is implicitly ``no``. This option will override ``assumeyes`` and should be used with caution. Default is ``False``.
   
   .. attribute:: best
 
@@ -43,6 +48,18 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
   .. attribute:: debuglevel
 
     Debug messages output level, in the range 0 to 10. Default is 2.
+
+
+  .. attribute::defaultyes
+
+    Boolean option, if set to ``True`` on any user input asking for confirmation
+    (e.g. after transaction summary) the default answer is ``yes``. The default is ``False``.
+
+  .. attribute:: defaultno
+
+    Boolean option, if set to ``True`` on any user input asking for confirmation
+    (e.g. after transaction summary) the default answer is ``no``. This option will override ``defaultyes`` and should be used with caution. Default is ``False``.
+  
 
   .. attribute:: installonly_limit
 

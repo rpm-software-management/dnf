@@ -89,7 +89,7 @@ Options
     Allow erasing of installed packages to resolve dependencies. This option could be used as an alternative to ``yum swap`` command where packages to remove are not explicitly defined.
 
 ``--assumeno``
-    answer no for all questions
+    Automatically answer no for all questions
 
 ``-b, --best``
     Try the best available package versions in transactions. Specifically during ``dnf upgrade``, which by default skips over updates that can not be installed for dependency reasons, the switch forces DNF to only consider the latest packages and possibly fail giving a reason why the latest version can not be installed.
@@ -107,6 +107,12 @@ Options
 
 ``--debugsolver``
     Dump data aiding in dependency solver debugging into ``./debugdata``.
+
+``--defaultno``
+    Set the default answer to no for all questions. Will override ``--defaultyes``.
+
+``--defaultyes``
+    Set the default answer to yes for all questions.
 
 ``--disableexcludes=[all|main|<repoid>]``
 
@@ -189,7 +195,7 @@ Options
     show DNF version and exit
 
 ``-y, --assumeyes``
-    answer yes for all questions
+    Automatically answer yes for all questions
 
 List options are comma separated. Command-line options override respective settings from configuration files.
 
