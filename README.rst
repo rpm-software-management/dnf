@@ -30,15 +30,17 @@ From the DNF git checkout directory::
 
     mkdir build;
     pushd build;
-    cmake .. && make;
+    cmake ..; # add '-DPYTHON_DESIRED="3"' option for Python 3 build
+    make;
     popd;
 
-Then to run DNF::
+To run DNF when compiled for Python2::
 
-    PYTHONPATH=`readlink -f .` bin/dnf <arguments>
+    PYTHONPATH=`readlink -f .` bin/dnf-2 <arguments>
 
-To build DNF for Python 3, use the option ``-DPYTHON_DESIRED:str=3`` with
-cmake.
+To run DNF when compiled for Python3::
+
+    PYTHONPATH=`readlink -f .` bin/dnf-3 <arguments>
 
 =============================
  Building and installing rpm
