@@ -1,21 +1,21 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# 
+#
 # Translators:
 # András Bögöly <ebogoly@gmail.com>, 2011,2014
 # Peter Borsa <peter.borsa@gmail.com>, 2014
 # teknos.ferenc <teknos.ferenc@gmail.com>, 2014
 # Zoltan Hoppár <zoltanh721@fedoraproject.org>, 2014
 # Jan Silhan <jsilhan@redhat.com>, 2015. #zanata
-# Kardos László <kardiweb@protonmail.ch>, 2015. #zanata
+# Meskó Balázs <meskobalazs@gmail.com>, 2016. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-02 19:06+0100\n"
-"PO-Revision-Date: 2015-07-19 03:29-0400\n"
-"Last-Translator: Kardos László <kardiweb@protonmail.ch>\n"
+"POT-Creation-Date: 2016-02-22 14:45+0100\n"
+"PO-Revision-Date: 2016-02-19 06:01-0500\n"
+"Last-Translator: Meskó Balázs <meskobalazs@gmail.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/projects/p/dnf/language/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -23,113 +23,6 @@ msgstr ""
 "Language: hu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Zanata 3.8.2\n"
-
-#: ../dnf/persistor.py:314
-msgid "Invalid groups database, clearing."
-msgstr "Hibás csoportadatbázis, tisztítás alatt."
-
-#: ../dnf/persistor.py:333
-msgid "Unsupported installed groups database found, resetting."
-msgstr "Nem támogatott csoportadatbázis található, helyrerakás alatt."
-
-#: ../dnf/persistor.py:413
-#, python-format
-msgid "%s is empty file"
-msgstr "%s egy üres fájl"
-
-#: ../dnf/drpm.py:63 ../dnf/repo.py:361
-#, python-format
-msgid "unsupported checksum type: %s"
-msgstr "nem támogatott ellenőrzőösszeg típus: %s"
-
-#: ../dnf/drpm.py:135
-msgid "Delta RPM rebuild failed"
-msgstr "Delta RPM újraépítés meghiúsult"
-
-#: ../dnf/drpm.py:137
-msgid "Checksum of the delta-rebuilt RPM failed"
-msgstr "Az ellenőrzőösszeg a delta-újraépített RPM-en meghiúsult"
-
-#: ../dnf/drpm.py:140
-msgid "done"
-msgstr ""
-
-#: ../dnf/comps.py:92
-msgid "skipping."
-msgstr "kihagyás."
-
-#: ../dnf/comps.py:170
-#, python-format
-msgid "Group '%s' is not installed."
-msgstr "'%s' csoport nem került telepítésre."
-
-#: ../dnf/comps.py:172
-#, python-format
-msgid "Group '%s' does not exist."
-msgstr "'%s' csoport nem található."
-
-#: ../dnf/comps.py:468
-#, python-format
-msgid "Environment '%s' is already installed."
-msgstr "A(z) '%s' környezet már telepítve van."
-
-#: ../dnf/comps.py:490 ../dnf/comps.py:511
-#, python-format
-msgid "Environment '%s' is not installed."
-msgstr "A(z) '%s' nevű környezet nincs telepítve."
-
-#: ../dnf/comps.py:536
-#, python-format
-msgid "Group '%s' is already installed."
-msgstr "A(z) '%s' nevű csoport már telepítve van."
-
-#: ../dnf/comps.py:561 ../dnf/comps.py:577
-#, python-format
-msgid "Group '%s' not installed."
-msgstr "A(z) '%s' nevű csoport nincs telepítve."
-
-#: ../dnf/repo.py:819
-#, python-format
-msgid "Failed to synchronize cache for repo '%s' from '%s': %s"
-msgstr ""
-"A(z) '%s' gyorsítótár szinkronizációja meghiúsult a következőnél '%s': %s"
-
-#: ../dnf/conf/read.py:51
-#, python-format
-msgid "Warning: failed loading '%s', skipping."
-msgstr "Figyelmeztetés: nem sikerült betölteni: '%s', átugrás."
-
-#: ../dnf/conf/read.py:61
-#, python-format
-msgid "Repository %r: Error parsing config: %s"
-msgstr "%r tároló: Hiba a konfigurációs fájl elemzése során: %s"
-
-#: ../dnf/conf/read.py:67
-#, python-format
-msgid "Repository %r is missing name in configuration, using id."
-msgstr ""
-"A(z) %r tárolónak hiányzik a neve a konfigurációból, id használata helyette."
-
-#: ../dnf/conf/__init__.py:73
-#, python-format
-msgid "Could not set cachedir: %s"
-msgstr "Gyorsítótár-mappa beállítása meghiúsult: %s"
-
-#: ../dnf/goal.py:51
-msgid "--> Finding unneeded leftover dependencies"
-msgstr "--> Szükségtelen függőségek keresése"
-
-#: ../dnf/lock.py:97
-#, python-format
-msgid ""
-"Malformed lock file found: %s.\n"
-"Ensure no other dnf process is running and remove the lock file manually or run systemd-tmpfiles --remove dnf.conf."
-msgstr ""
-
-#: ../dnf/lock.py:136
-#, python-format
-msgid "Waiting for process with pid %d to finish."
-msgstr ""
 
 #: ../dnf/yum/rpmtrans.py:123
 msgid "Cleanup"
@@ -149,7 +42,7 @@ msgstr "Telepítés"
 
 #: ../dnf/yum/rpmtrans.py:127 ../dnf/cli/output.py:1712
 msgid "Obsoleting"
-msgstr "Elavulttá tevés"
+msgstr "Elavulttá tétel"
 
 #: ../dnf/yum/rpmtrans.py:128 ../dnf/cli/output.py:1006
 msgid "Reinstalling"
@@ -166,235 +59,301 @@ msgstr "Ellenőrzés"
 #: ../dnf/yum/history.py:745
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
-msgstr ""
+msgstr "Nem lehet a DNF előzmény-adatbázist inicializálni: %s"
 
 #: ../dnf/yum/history.py:1662
 #, python-format
 msgid "Can not create history database at '%s'."
-msgstr "Nem sikerült előzmény-adatbázist készíteni a következőnél: '%s'"
+msgstr "Nem sikerült előzmény-adatbázist készíteni a következőnél: '%s'."
 
-#: ../dnf/cli/option_parser.py:51
+#: ../dnf/plugin.py:126
 #, python-format
-msgid "Command line error: %s"
-msgstr "Parancssori hiba a következőben: %s"
+msgid "Failed loading plugin: %s"
+msgstr "A következő kiegészítő betöltése sikertelen: %s"
 
-#: ../dnf/cli/option_parser.py:88
-msgid "--color takes one of: auto, always, never"
-msgstr "--Szín egyikét veszi fel: auto, mindig, soha"
-
-#: ../dnf/cli/option_parser.py:105
+#: ../dnf/drpm.py:63 ../dnf/repo.py:361
 #, python-format
-msgid "Options Error: %s"
-msgstr "Opció hiba: %s"
+msgid "unsupported checksum type: %s"
+msgstr "nem támogatott ellenőrzőösszeg típus: %s"
 
-#: ../dnf/cli/option_parser.py:116
+#: ../dnf/drpm.py:135
+msgid "Delta RPM rebuild failed"
+msgstr "Delta RPM újraépítés meghiúsult"
+
+#: ../dnf/drpm.py:137
+msgid "Checksum of the delta-rebuilt RPM failed"
+msgstr "Az ellenőrzőösszeg előállítása a delta-újraépített RPM-en meghiúsult"
+
+#: ../dnf/drpm.py:140
+msgid "done"
+msgstr "kész"
+
+#: ../dnf/base.py:116
 #, python-format
-msgid "--installroot must be an absolute path: %s"
-msgstr "A(z) --instalroot -nak abszolút elérési útnak kell lennie: %s"
+msgid "%s, disabling."
+msgstr "%s, letiltás."
 
-#: ../dnf/cli/option_parser.py:142
-#, python-format
-msgid "bad format: %s"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:154
-msgid "allow erasing of installed packages to resolve dependencies"
-msgstr ""
-"engedélyezi a telepített csomagok törlését a függőségek feloldása végett."
-
-#: ../dnf/cli/option_parser.py:157
-msgid "try the best available package versions in transactions."
-msgstr ""
-"megkísérli a legjobb elérhető verziójú csomagokat a tranzakciók alatt."
-
-#: ../dnf/cli/option_parser.py:161
-msgid "run entirely from system cache, don't update cache"
-msgstr ""
-"futtatás a rendszer gyorsítótárából anélkül, hogy a csomagok vagy "
-"tárolóinformációk frissítve lennének"
-
-#: ../dnf/cli/option_parser.py:165
-msgid "config file location"
-msgstr "konfigurációs fájl elérésí útja"
-
-#: ../dnf/cli/option_parser.py:168
-msgid "debugging output level"
-msgstr "a hibakeresés szintje"
-
-#: ../dnf/cli/option_parser.py:171
-msgid "dumps detailed solving results into files"
-msgstr "kiírja a részletes feloldási útvonalat fájlokba"
-
-#: ../dnf/cli/option_parser.py:174
-msgid "show duplicates, in repos, in list/search commands"
-msgstr "ismétlődések mutatása a tárolókban és a keresési parancsokban"
-
-#: ../dnf/cli/option_parser.py:177
-msgid "error output level"
-msgstr "hiba kimeneti szintje"
-
-#: ../dnf/cli/option_parser.py:179
-msgid "debugging output level for rpm"
-msgstr "rpm hibakereső szint"
-
-#: ../dnf/cli/option_parser.py:182
-msgid "quiet operation"
-msgstr "csendes működés"
-
-#: ../dnf/cli/option_parser.py:184
-msgid "verbose operation"
-msgstr "visszajelzés működés közben"
-
-#: ../dnf/cli/option_parser.py:186
-msgid "answer yes for all questions"
-msgstr "igennel válaszol minden felmerülő kérdésre"
-
-#: ../dnf/cli/option_parser.py:188
-msgid "answer no for all questions"
-msgstr "minden kérdésre a válasz nemleges"
-
-#: ../dnf/cli/option_parser.py:190
-msgid "show DNF version and exit"
-msgstr "A DNF verziójának mutatása, majd kilépés"
-
-#: ../dnf/cli/option_parser.py:191
-msgid "set install root"
-msgstr "telepítési root beállítása"
-
-#: ../dnf/cli/option_parser.py:201
-msgid "exclude packages by name or glob"
-msgstr "csomagok kizárása név vagy glob alapján"
-
-#: ../dnf/cli/option_parser.py:206
-msgid "disable excludes"
-msgstr "a tiltás kizárja"
-
-#: ../dnf/cli/option_parser.py:211
+#: ../dnf/base.py:301
 msgid ""
-"label and path to additional repository, can be specified multiple times."
+"The downloaded packages were saved in cache until the next successful "
+"transaction."
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:214
-msgid "disable all plugins"
-msgstr "az összes beépülő modul letiltása"
-
-#: ../dnf/cli/option_parser.py:216
-msgid "disable gpg signature checking"
-msgstr "gpg-aláírás ellenőrzés kihagyása"
-
-#: ../dnf/cli/option_parser.py:219
-msgid "disable plugins by name"
-msgstr "bővítmények tiltása név szerint"
-
-#: ../dnf/cli/option_parser.py:222
-msgid "control whether color is used"
-msgstr "szín használatának befolyásolása"
-
-#: ../dnf/cli/option_parser.py:224
-msgid "override the value of $releasever in config and repo files"
-msgstr ""
-"felülírja a $releasever értékét a konfigurációs és tárolóleíró fájlokban"
-
-#: ../dnf/cli/option_parser.py:228
-msgid "set arbitrary config and repo options"
-msgstr "tetszőleges konfiguráció- és tárolóbeállítások"
-
-#: ../dnf/cli/option_parser.py:231
-msgid "set metadata as expired before running the command"
+#: ../dnf/base.py:303
+#, python-format
+msgid "You can remove cached packages by executing '%s'."
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:233
-msgid "resolve to IPv4 addresses only"
-msgstr "csak IPv4 címek feloldása"
+#: ../dnf/base.py:363
+#, python-format
+msgid "Invalid tsflag in config file: %s"
+msgstr "Hibás tsflag a következő konfigurációs fájlban: %s"
 
-#: ../dnf/cli/option_parser.py:236
-msgid "resolve to IPv6 addresses only"
-msgstr "csak IPv6 címek feloldása"
+#: ../dnf/base.py:415
+#, python-format
+msgid "Failed to add groups file for repository: %s - %s"
+msgstr "A csoportfájl hozzáadása sikertelen a következő tárolónál: %s - %s"
 
-#: ../dnf/cli/option_parser.py:239
-msgid "only download packages"
+#: ../dnf/base.py:560
+msgid "Running transaction check"
+msgstr "Tranzakciós ellenőrzés futtatásra"
+
+#: ../dnf/base.py:570
+msgid "Error: transaction check vs depsolve:"
+msgstr "HIBA: tranzakció ellenőrzés- és függőségfeloldásnál:"
+
+#: ../dnf/base.py:576
+msgid "Transaction check succeeded."
+msgstr "Tranzakciós ellenőrzés sikeres."
+
+#: ../dnf/base.py:579
+msgid "Running transaction test"
+msgstr "Tranzakciós teszt futtatása"
+
+#: ../dnf/base.py:591
+msgid "Transaction check error:\n"
+msgstr "Tranzakciós hiba ellenőrzése:\n"
+
+#: ../dnf/base.py:598
+msgid "Transaction test succeeded."
+msgstr "A tranzakciós teszt sikeres."
+
+#: ../dnf/base.py:611
+msgid "Running transaction"
+msgstr "Tranzakció futtatása"
+
+#: ../dnf/base.py:633
+msgid "Disk Requirements:"
+msgstr "Szükséges hely:"
+
+#: ../dnf/base.py:636
+#, python-format
+msgid "At least %dMB more space needed on the %s filesystem."
+msgid_plural "At least %dMB more space needed on the %s filesystem."
+msgstr[0] ""
+"Még legalább %dMB szabad helyre van szükség a(z) %s fájlrendszeren."
+msgstr[1] ""
+"Még legalább %dMB szabad helyre van szükség a(z) %s fájlrendszeren."
+
+#: ../dnf/base.py:640
+msgid ""
+"Error Summary\n"
+"-------------\n"
 msgstr ""
+"Hiba összegzés\n"
+"-------------\n"
 
-#: ../dnf/cli/option_parser.py:264
-msgid "List of Main Commands"
-msgstr "Alapvető parancsok listázása"
-
-#: ../dnf/cli/option_parser.py:265
-msgid "List of Plugin Commands"
-msgstr "Beépülő modulok parancsainak listázása"
-
-#: ../dnf/cli/utils.py:96
-msgid "Running"
-msgstr "Fut"
-
-#: ../dnf/cli/utils.py:97
-msgid "Sleeping"
-msgstr "Alszik"
-
-#: ../dnf/cli/utils.py:98
-msgid "Uninterruptible"
-msgstr "Nem megszakítható"
-
-#: ../dnf/cli/utils.py:99
-msgid "Zombie"
-msgstr "Zombi"
-
-#: ../dnf/cli/utils.py:100
-msgid "Traced/Stopped"
-msgstr "Nyomozott/Megállított"
-
-#: ../dnf/cli/utils.py:101
-msgid "Unknown"
-msgstr "Ismeretlen"
-
-#: ../dnf/cli/utils.py:111
-#, python-format
-msgid "Unable to find information about the locking process (PID %d)"
+#: ../dnf/base.py:702
+msgid ""
+"Warning: scriptlet or other non-fatal errors occurred during transaction."
 msgstr ""
-"Nem sikerült információt szerezni a zárolásért felelős folyamatról (PID %d)"
+"Figyelmeztetés: scriptlet vagy egyéb nem végzetes hiba történt a tranzakció "
+"során."
 
-#: ../dnf/cli/utils.py:115
+#: ../dnf/base.py:707
 #, python-format
-msgid "  The application with PID %d is: %s"
-msgstr "  Az alkalmazás a(z) %d PID számmal: %s"
+msgid "Failed to obtain the transaction lock (logged in as: %s)."
+msgstr "Nem sikerült tranzakciós zárat szerezni (bejelentkezve mint: %s)."
 
-#: ../dnf/cli/utils.py:118
-#, python-format
-msgid "    Memory : %5s RSS (%5sB VSZ)"
-msgstr "    Memória : %5s RSS (%5sB VSZ)"
+#: ../dnf/base.py:710 ../dnf/base.py:720
+msgid "Could not run transaction."
+msgstr "Tranzakció futtatása meghiúsult."
 
-#: ../dnf/cli/utils.py:123
-#, python-format
-msgid "    Started: %s - %s ago"
-msgstr "    Elindítva: %s - %s"
+#: ../dnf/base.py:717
+msgid "Transaction couldn't start:"
+msgstr "A tranzakció nem indítható:"
 
-#: ../dnf/cli/utils.py:125
+#: ../dnf/base.py:729
 #, python-format
-msgid "    State  : %s"
-msgstr "    Állapot : %s"
+msgid "Failed to remove transaction file %s"
+msgstr "A következő tranzakció-fájl eltávolítása meghiúsult: %s"
+
+#: ../dnf/base.py:781
+#, python-format
+msgid "%s was supposed to be installed but is not!"
+msgstr "A(z) %s csomagnak már telepítve kellett volna lennie, de nincs!"
+
+#: ../dnf/base.py:842
+#, python-format
+msgid "%s was supposed to be removed but is not!"
+msgstr "A(z) %s csomagot már el kellett volna távolítani, de nem lett!"
+
+#: ../dnf/base.py:920
+#, python-format
+msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
+msgstr ""
+"A DeltaRPMek lecsökkentették a(z) %.1f MB-nyi frissítést %.1f MB-ra. (%d.1%%"
+" megspórolva)"
+
+#: ../dnf/base.py:968
+#, python-format
+msgid "Public key for %s is not installed"
+msgstr "A publikus kulcs nincs telepítve a következőhöz: %s"
+
+#: ../dnf/base.py:972
+#, python-format
+msgid "Problem opening package %s"
+msgstr "Hiba a következő csomag megnyitásánál: %s"
+
+#: ../dnf/base.py:980
+#, python-format
+msgid "Public key for %s is not trusted"
+msgstr "A publikus kulcs nem megbízható a következőhöz: %s"
+
+#: ../dnf/base.py:984
+#, python-format
+msgid "Package %s is not signed"
+msgstr "A következő csomag nincs aláírva: %s"
+
+#: ../dnf/base.py:999
+#, python-format
+msgid "Cannot remove %s"
+msgstr "Nem távolítható el: %s"
+
+#: ../dnf/base.py:1003
+#, python-format
+msgid "%s removed"
+msgstr "%s eltávolítva"
+
+#: ../dnf/base.py:1313 ../dnf/cli/cli.py:203 ../dnf/cli/cli.py:373
+#: ../dnf/cli/commands/install.py:100 ../dnf/cli/commands/__init__.py:448
+#: ../dnf/cli/commands/__init__.py:536 ../dnf/cli/commands/__init__.py:602
+#: ../dnf/cli/commands/__init__.py:647 ../dnf/cli/commands/__init__.py:720
+#: ../dnf/cli/commands/__init__.py:778 ../dnf/cli/commands/reinstall.py:100
+msgid "Nothing to do."
+msgstr "Nincs tennivaló."
+
+#: ../dnf/base.py:1338
+msgid "No groups marked for removal."
+msgstr "Nincsenek eltávolításra jelölt csoportok."
+
+#: ../dnf/base.py:1357
+msgid "No group marked for upgrade."
+msgstr "Nincsenek frissítésre jelölt csoportok."
+
+#: ../dnf/base.py:1421 ../dnf/base.py:1433
+msgid "no package matched"
+msgstr "nincs egyező csomag"
+
+#: ../dnf/base.py:1472
+#, python-format
+msgid "Package %s not installed, cannot downgrade it."
+msgstr "A(z) %s csomag nincs telepítve, nem lehet visszaállítani."
+
+#: ../dnf/base.py:1479
+#, python-format
+msgid "Package %s of lower version already installed, cannot downgrade it."
+msgstr ""
+"A(z) %s csomag egy alacsonyabb verziója már telepítve van, nem lehet "
+"visszaállítani."
+
+#: ../dnf/base.py:1498
+#, python-format
+msgid "Package %s not installed, cannot reinstall it."
+msgstr "A(z) %s csomag nincs telepítve, nem lehet újratelepíteni."
+
+#: ../dnf/base.py:1514 ../dnf/base.py:1541
+#, python-format
+msgid "Package %s not installed, cannot update it."
+msgstr "A(z) %s csomag nincs telepítve, nem lehet frissíteni."
+
+#: ../dnf/base.py:1521
+#, python-format
+msgid "Package %s of higher version already installed, cannot update it."
+msgstr ""
+"A(z) %s csomag egy magasabb verziója már telepítve van, nem lehet "
+"frissíteni."
+
+#: ../dnf/base.py:1586
+#, python-format
+msgid "No package %s installed."
+msgstr "Nincs telepítve a(z) %s csomag."
+
+#: ../dnf/base.py:1698
+#, python-format
+msgid "Package %s of lowest version already installed, cannot downgrade it."
+msgstr ""
+"A legalacsonyabb verziójú %s csomag már telepítve van, nem lehet "
+"visszaállítani."
+
+#: ../dnf/base.py:1834
+#, python-format
+msgid ""
+"Failing package is: %s\n"
+" GPG Keys are configured as: %s\n"
+msgstr ""
+"A hibás csomag: %s\n"
+"A GPG kulcsok konfigurálva mint: %s\n"
+
+#: ../dnf/base.py:1847
+#, python-format
+msgid "GPG key at %s (0x%s) is already installed"
+msgstr "A következő GPG kulcs már telepítve van: %s (0x%s)"
+
+#: ../dnf/base.py:1881
+#, python-format
+msgid "Key import failed (code %d)"
+msgstr "A kulcs importálása meghiúsult (hibakód %d)"
+
+#: ../dnf/base.py:1883
+msgid "Key imported successfully"
+msgstr "A kulcs importálása sikeres"
+
+#: ../dnf/base.py:1887
+msgid "Didn't install any keys"
+msgstr "Nem lett telepítve egyetlen kulcs sem"
+
+#: ../dnf/base.py:1890
+#, python-format
+msgid ""
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
+"Check that the correct key URLs are configured for this repository."
+msgstr ""
+"A GPG kulcsok a(z) \"%s\" nevű tárolóhoz már telepítve vannak, de nem jók ehhez a csomaghoz.\n"
+"Kérjük, ellenőrizze, hogy az URL címek helyesen vannak-e megadva ehhez a tárolóhoz."
+
+#: ../dnf/base.py:1900
+msgid "Import of key(s) didn't help, wrong key(s)?"
+msgstr "A kulcs(ok) importálása nem segített, rossz kulcs(ok)?"
+
+#: ../dnf/base.py:1927
+#, python-format
+msgid "Package %s is already installed, skipping."
+msgstr "A(z) %s csomag már telepítve van, átugrás."
 
 #: ../dnf/cli/cli.py:129
 #, python-format
 msgid "  Installed: %s-%s at %s"
-msgstr "  Telepítve : %s-%s at %s"
+msgstr "  Telepítve : %s-%s, ekkor: %s"
 
 #: ../dnf/cli/cli.py:131
 #, python-format
 msgid "  Built    : %s at %s"
-msgstr "  Létrehozva: %s at %s"
+msgstr "  Létrehozva: %s, ekkor: %s"
 
 #: ../dnf/cli/cli.py:201
 msgid "Operation aborted."
 msgstr "Művelet megszakítva."
-
-#: ../dnf/cli/cli.py:203 ../dnf/cli/cli.py:373
-#: ../dnf/cli/commands/install.py:100 ../dnf/cli/commands/reinstall.py:100
-#: ../dnf/cli/commands/__init__.py:448 ../dnf/cli/commands/__init__.py:536
-#: ../dnf/cli/commands/__init__.py:602 ../dnf/cli/commands/__init__.py:647
-#: ../dnf/cli/commands/__init__.py:720 ../dnf/cli/commands/__init__.py:778
-#: ../dnf/base.py:1313
-msgid "Nothing to do."
-msgstr "Nincs tennivaló."
 
 #: ../dnf/cli/cli.py:208
 msgid "Downloading Packages:"
@@ -414,28 +373,28 @@ msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
 msgstr ""
-"Felügyelet nélküli futás közben kulcsok nem importálhatóak.\n"
-"Használjuk az \"-y\" kapcsolót a felülbíráláshoz."
+"Felügyelet nélküli futás közben a kulcsok nem importálhatóak.\n"
+"Használja az \"-y\" kapcsolót a felülbíráláshoz."
 
 #: ../dnf/cli/cli.py:292 ../dnf/cli/cli.py:450 ../dnf/cli/cli.py:456
 msgid "Obsoleting Packages"
-msgstr "Elavult csomagok"
+msgstr "Csomagok elavulttá tétele"
 
 #: ../dnf/cli/cli.py:307 ../dnf/cli/commands/upgrade.py:87
 #: ../dnf/cli/commands/__init__.py:872
 msgid "No packages marked for upgrade."
-msgstr "Nincsenek frissítésre kijelölt csomagok"
+msgstr "Nincsenek frissítésre kijelölt csomagok."
 
 #: ../dnf/cli/cli.py:329
 msgid "No packages marked for distribution synchronization."
-msgstr "Nincsenek disztribúció-szinkronizációra kijelölt csomagok"
+msgstr "Nincsenek disztribúció-szinkronizációra kijelölt csomagok."
 
 #: ../dnf/cli/cli.py:361 ../dnf/cli/cli.py:660 ../dnf/cli/cli.py:689
 #: ../dnf/cli/commands/install.py:91 ../dnf/cli/commands/__init__.py:440
 #: ../dnf/cli/commands/__init__.py:1105
 #, python-format
 msgid "No package %s%s%s available."
-msgstr "Nincs ilyen csomag: %s%s%s."
+msgstr "Nincs ilyen elérhető csomag: %s%s%s."
 
 #: ../dnf/cli/cli.py:368
 #, python-format
@@ -506,12 +465,12 @@ msgstr "A tranzakciós előzmények hiányosak a következő után: %u."
 #: ../dnf/cli/commands/__init__.py:1101
 #, python-format
 msgid "No package %s%s%s installed."
-msgstr "Nem található telepített csomag a következő névvel: %s%s%s."
+msgstr "Nincs ilyen telepített csomag: %s%s%s."
 
 #: ../dnf/cli/cli.py:746
 #, python-format
 msgid "Added %s repo from %s"
-msgstr ""
+msgstr "Hozzáadott %s tároló, innen: %s"
 
 #: ../dnf/cli/cli.py:753
 #, python-format
@@ -521,16 +480,16 @@ msgstr "Ismeretlen tároló: '%s'"
 #: ../dnf/cli/cli.py:818
 #, python-format
 msgid "%s: using metadata from %s."
-msgstr ""
+msgstr "%s: metaadatok használata innen: %s."
 
 #: ../dnf/cli/cli.py:821
 #, python-format
-msgid "Last metadata expiration check performed %s ago on %s."
+msgid "Last metadata expiration check: %s ago on %s."
 msgstr ""
 
 #: ../dnf/cli/cli.py:854
 msgid "You need to give some command"
-msgstr "Egy parancs megadása szükségeltetik"
+msgstr "Egy parancs megadása szükséges"
 
 #: ../dnf/cli/cli.py:861
 #, python-format
@@ -541,12 +500,16 @@ msgstr "Nincs ilyen parancs: %s. Kérjük használja a következőt: %s --help"
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
+"Lehet hogy egy DNF bővítmény parancs, próbálja ezt: \"dnf install 'dnf-"
+"parancs(%s)'\""
 
 #: ../dnf/cli/cli.py:867
 msgid ""
 "It could be a DNF plugin command, but loading of plugins is currently "
 "disabled."
 msgstr ""
+"Lehet hogy egy DNF bővítmény parancs, de a bővítmények betöltése jelenleg "
+"tiltott."
 
 #: ../dnf/cli/cli.py:969 ../dnf/cli/cli.py:973
 #, python-format
@@ -556,34 +519,7 @@ msgstr "Konfigurációs hiba: %s."
 #: ../dnf/cli/cli.py:1079
 #, python-format
 msgid "Command \"%s\" already defined"
-msgstr "\"%s\" nevű parancs már létezik"
-
-#: ../dnf/cli/main.py:53 ../dnf/automatic/main.py:170
-#, python-format
-msgid "Error: %s"
-msgstr "Hiba: %s"
-
-#: ../dnf/cli/main.py:75
-msgid "Terminated."
-msgstr "Megszakítva."
-
-#: ../dnf/cli/main.py:106
-msgid "No read/execute access in current directory, moving to /"
-msgstr ""
-"Nincs olvasási/futtatási jogosultság a jelenlegi könyvtárban, ugrás ide: /"
-
-#: ../dnf/cli/main.py:124
-#, python-format
-msgid "(try to add '%s' to command line to replace conflicting packages)"
-msgstr ""
-
-#: ../dnf/cli/main.py:140
-msgid "Dependencies resolved."
-msgstr "Függőségek feloldva."
-
-#: ../dnf/cli/main.py:160
-msgid "Complete!"
-msgstr "Kész!"
+msgstr "\"%s\" parancs már létezik"
 
 #: ../dnf/cli/output.py:466
 msgid "Name"
@@ -619,7 +555,7 @@ msgstr "Tárolóból"
 
 #: ../dnf/cli/output.py:480
 msgid "Buildtime"
-msgstr "Build idő"
+msgstr "Építés ideje"
 
 #: ../dnf/cli/output.py:482
 msgid "Install time"
@@ -707,7 +643,7 @@ msgstr " Alapértelmezett csomagok:"
 
 #: ../dnf/cli/output.py:720
 msgid " Optional Packages:"
-msgstr " Opcionális csomagok:"
+msgstr " Választható csomagok:"
 
 #: ../dnf/cli/output.py:721
 msgid " Conditional Packages:"
@@ -716,20 +652,20 @@ msgstr " Feltételes csomagok:"
 #: ../dnf/cli/output.py:746
 #, python-format
 msgid "Environment Group: %s"
-msgstr ""
+msgstr "Környezeti csoport: %s"
 
 #: ../dnf/cli/output.py:749
 #, python-format
 msgid " Environment-Id: %s"
-msgstr ""
+msgstr " Környezet azonosító: %s"
 
 #: ../dnf/cli/output.py:755
 msgid " Mandatory Groups:"
-msgstr ""
+msgstr " Kötelező csoportok:"
 
 #: ../dnf/cli/output.py:756
 msgid " Optional Groups:"
-msgstr " Tetszőleges csoportok:"
+msgstr " Választható csoportok:"
 
 #: ../dnf/cli/output.py:791
 #, python-format
@@ -765,7 +701,7 @@ msgstr "Egyéb       : "
 
 #: ../dnf/cli/output.py:871
 msgid "There was an error calculating total download size"
-msgstr "Hiba történt a teljes letöltési méret számítása során"
+msgstr "Hiba történt a teljes letöltési méret kiszámítása során"
 
 #: ../dnf/cli/output.py:877
 #, python-format
@@ -784,7 +720,7 @@ msgstr "Telepített méret: %s"
 
 #: ../dnf/cli/output.py:901
 msgid "There was an error calculating installed size"
-msgstr "Hiba történt a telepített méret számítása során"
+msgstr "Hiba történt a telepített méret kiszámítása során"
 
 #: ../dnf/cli/output.py:914
 msgid "Marking installed:"
@@ -812,18 +748,19 @@ msgid ""
 "Skipping packages with conflicts:\n"
 "(add '%s' to command line to force their upgrade)"
 msgstr ""
+"Ütköző csomagok kihagyása:\n"
+"(adja a következőt a parancshoz a frissítésük kényszerítéséhez: '%s')"
 
 #: ../dnf/cli/output.py:1033
 msgid "Skipping packages with broken dependencies"
-msgstr ""
+msgstr "Törött függőségekkel rendelkező csomagok kihagyása"
 
 #: ../dnf/cli/output.py:1050 ../dnf/cli/output.py:1090
 #: ../dnf/cli/output.py:1106 ../dnf/cli/output.py:1913
-#, fuzzy
 msgid "Package"
 msgid_plural "Packages"
 msgstr[0] "Csomag"
-msgstr[1] ""
+msgstr[1] "Csomagok"
 
 #: ../dnf/cli/output.py:1051
 msgid "Repository"
@@ -842,7 +779,7 @@ msgid ""
 "%s\n"
 msgstr ""
 "\n"
-"Tranzakció Összegzés\n"
+"Tranzakció összegzés\n"
 "%s\n"
 
 #: ../dnf/cli/output.py:1077 ../dnf/cli/output.py:1708
@@ -864,13 +801,13 @@ msgstr "Visszaállítás"
 
 #: ../dnf/cli/output.py:1081
 msgid "Skip"
-msgstr ""
+msgstr "Kihagyás"
 
 #: ../dnf/cli/output.py:1108
 msgid "Dependent package"
 msgid_plural "Dependent packages"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Függő csomag"
+msgstr[1] "Függő csomagok"
 
 #: ../dnf/cli/output.py:1167
 msgid "Reinstalled"
@@ -897,7 +834,7 @@ msgstr "Visszaállítva"
 
 #: ../dnf/cli/output.py:1172
 msgid "Failed"
-msgstr ""
+msgstr "Sikertelen"
 
 #: ../dnf/cli/output.py:1226
 msgid "Total"
@@ -954,7 +891,7 @@ msgstr "Felhasználó"
 
 #: ../dnf/cli/output.py:1407 ../dnf/cli/output.py:1911
 msgid "ID"
-msgstr "azonosító"
+msgstr "Azonosító"
 
 #: ../dnf/cli/output.py:1409
 msgid "Date and time"
@@ -1028,7 +965,7 @@ msgstr "Befejezés ideje:"
 
 #: ../dnf/cli/output.py:1628 ../dnf/cli/output.py:1630
 msgid "End rpmdb      :"
-msgstr "rpmdb befejezése:"
+msgstr "rpmdb vége     :"
 
 #: ../dnf/cli/output.py:1633 ../dnf/cli/output.py:1635
 msgid "User           :"
@@ -1038,7 +975,7 @@ msgstr "Felhasználó    :"
 #: ../dnf/cli/output.py:1644 ../dnf/cli/output.py:1646
 #: ../dnf/cli/output.py:1648
 msgid "Return-Code    :"
-msgstr "Visszatérési érték:"
+msgstr "Vissz. érték   :"
 
 #: ../dnf/cli/output.py:1639 ../dnf/cli/output.py:1644
 msgid "Aborted"
@@ -1064,7 +1001,7 @@ msgstr "Parancssor     :"
 #: ../dnf/cli/output.py:1664
 #, python-format
 msgid "Additional non-default information stored: %d"
-msgstr "További nem alapértelmezett információ lett eltárolva: %d"
+msgstr "További nem alapértelmezett információ eltárolva: %d"
 
 #: ../dnf/cli/output.py:1669
 msgid "Transaction performed with:"
@@ -1158,43 +1095,43 @@ msgstr "%s: Nem található további adat erre a névre"
 
 #: ../dnf/cli/output.py:2003
 msgid "Package        :"
-msgstr "Csomag :"
+msgstr "Csomag         :"
 
 #: ../dnf/cli/output.py:2004
 msgid "State          :"
-msgstr "Állapot :"
+msgstr "Állapot        :"
 
 #: ../dnf/cli/output.py:2007
 msgid "Size           :"
-msgstr "Méret :"
+msgstr "Méret          :"
 
 #: ../dnf/cli/output.py:2009
 msgid "Build host     :"
-msgstr "Build kiszolgáló :"
+msgstr "Építési kisz.  :"
 
 #: ../dnf/cli/output.py:2012
 msgid "Build time     :"
-msgstr "Build idő :"
+msgstr "Építés ideje   :"
 
 #: ../dnf/cli/output.py:2014
 msgid "Packager       :"
-msgstr "Csomagoló :"
+msgstr "Csomagoló      :"
 
 #: ../dnf/cli/output.py:2016
 msgid "Vendor         :"
-msgstr "Kiadó :"
+msgstr "Gyártó         :"
 
 #: ../dnf/cli/output.py:2018
 msgid "License        :"
-msgstr "Licenc :"
+msgstr "Licenc         :"
 
 #: ../dnf/cli/output.py:2020
 msgid "URL            :"
-msgstr "URL :"
+msgstr "URL            :"
 
 #: ../dnf/cli/output.py:2022
 msgid "Source RPM     :"
-msgstr "Forrás RPM :"
+msgstr "Forrás RPM     :"
 
 #: ../dnf/cli/output.py:2025
 msgid "Commit Time    :"
@@ -1202,19 +1139,19 @@ msgstr "Beküldés ideje :"
 
 #: ../dnf/cli/output.py:2027
 msgid "Committer      :"
-msgstr "Beküldő :"
+msgstr "Beküldő        :"
 
 #: ../dnf/cli/output.py:2029
 msgid "Reason         :"
-msgstr "Oka :"
+msgstr "Ok             :"
 
 #: ../dnf/cli/output.py:2033
 msgid "From repo      :"
-msgstr "Ebből a tárolóból :"
+msgstr "Tároló         :"
 
 #: ../dnf/cli/output.py:2037
 msgid "Installed by   :"
-msgstr "Telepítette :"
+msgstr "Telepítette    :"
 
 #: ../dnf/cli/output.py:2041
 msgid "Changed by     :"
@@ -1242,7 +1179,7 @@ msgstr "egy visszaállítás"
 
 #: ../dnf/cli/output.py:2077
 msgid "obsoleting"
-msgstr "visszaállítás"
+msgstr "elavulttá tétel"
 
 #: ../dnf/cli/output.py:2078
 msgid "upgraded"
@@ -1269,6 +1206,84 @@ msgstr "--> Függőségek feloldásának kezdete"
 msgid "--> Finished dependency resolution"
 msgstr "--> A függőségek feloldása befejeződött"
 
+#: ../dnf/cli/utils.py:96
+msgid "Running"
+msgstr "Fut"
+
+#: ../dnf/cli/utils.py:97
+msgid "Sleeping"
+msgstr "Alszik"
+
+#: ../dnf/cli/utils.py:98
+msgid "Uninterruptible"
+msgstr "Nem megszakítható"
+
+#: ../dnf/cli/utils.py:99
+msgid "Zombie"
+msgstr "Zombi"
+
+#: ../dnf/cli/utils.py:100
+msgid "Traced/Stopped"
+msgstr "Nyomozott/Megállított"
+
+#: ../dnf/cli/utils.py:101
+msgid "Unknown"
+msgstr "Ismeretlen"
+
+#: ../dnf/cli/utils.py:111
+#, python-format
+msgid "Unable to find information about the locking process (PID %d)"
+msgstr ""
+"Nem sikerült információt szerezni a zárolásért felelős folyamatról (PID %d)"
+
+#: ../dnf/cli/utils.py:115
+#, python-format
+msgid "  The application with PID %d is: %s"
+msgstr "  A(z) %d PID-ű alkalmazás: %s"
+
+#: ../dnf/cli/utils.py:118
+#, python-format
+msgid "    Memory : %5s RSS (%5sB VSZ)"
+msgstr "    Memória : %5s RSS (%5sB VSZ)"
+
+#: ../dnf/cli/utils.py:123
+#, python-format
+msgid "    Started: %s - %s ago"
+msgstr "    Elindítva: %s - %s"
+
+#: ../dnf/cli/utils.py:125
+#, python-format
+msgid "    State  : %s"
+msgstr "    Állapot  : %s"
+
+#: ../dnf/cli/main.py:53 ../dnf/automatic/main.py:170
+#, python-format
+msgid "Error: %s"
+msgstr "Hiba: %s"
+
+#: ../dnf/cli/main.py:75
+msgid "Terminated."
+msgstr "Megszakítva."
+
+#: ../dnf/cli/main.py:106
+msgid "No read/execute access in current directory, moving to /"
+msgstr ""
+"Nincs olvasási/futtatási jogosultság a jelenlegi könyvtárban, ugrás ide: /"
+
+#: ../dnf/cli/main.py:124
+#, python-format
+msgid "(try to add '%s' to command line to replace conflicting packages)"
+msgstr ""
+"(próbálja hozzáadni ezt a parancshoz az ütköző csomagok lecseréléséhez: %s)"
+
+#: ../dnf/cli/main.py:140
+msgid "Dependencies resolved."
+msgstr "Függőségek feloldva."
+
+#: ../dnf/cli/main.py:160
+msgid "Complete!"
+msgstr "Kész!"
+
 #: ../dnf/cli/commands/makecache.py:36
 msgid "Generate the metadata cache"
 msgstr "Metaadat-gyorsítótár generálása"
@@ -1285,7 +1300,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/makecache.py:61
 msgid "Metadata timer caching disabled."
-msgstr "A metaadat időzítő gyorsítótár nincs letiltva."
+msgstr "A metaadat időzítő gyorsítótár letiltva."
 
 #: ../dnf/cli/commands/makecache.py:66
 msgid "Metadata cache refreshed recently."
@@ -1293,56 +1308,202 @@ msgstr "A metaadat gyorsítótár mostanában került frissítésre."
 
 #: ../dnf/cli/commands/makecache.py:90
 msgid "Metadata cache created."
-msgstr "Metaadat gyorsítótár került létrehozásra."
+msgstr "Metaadat gyorsítótár létrehozva."
+
+#: ../dnf/cli/commands/clean.py:43
+#, python-format
+msgid "Error: clean requires an option: %s"
+msgstr "Hiba: a clean parancsnak szüksége van egy opcióra: %s"
+
+#: ../dnf/cli/commands/clean.py:49
+#, python-format
+msgid "Error: invalid clean argument: %r"
+msgstr "Hiba: helytelen clean argumentum: %r"
+
+#: ../dnf/cli/commands/clean.py:77
+#, python-format
+msgid "Cannot remove %s file %s"
+msgstr "Nem távolítható el a(z) %2$s %1$s fájl"
+
+#: ../dnf/cli/commands/clean.py:82
+#, python-format
+msgid "%s file %s removed"
+msgstr "%2$s %1$s fájl eltávolítva"
+
+#: ../dnf/cli/commands/clean.py:84
+#, python-format
+msgid "%d %s file removed"
+msgid_plural "%d %s files removed"
+msgstr[0] "%d %s fájl eltávolítva"
+msgstr[1] "%d %s fájl eltávolítva"
+
+#: ../dnf/cli/commands/clean.py:134
+msgid "The enabled repos were expired"
+msgstr "Az engedélyezett tárolók lejártak"
+
+#: ../dnf/cli/commands/clean.py:143
+msgid "Remove cached data"
+msgstr "Gyorsítótárazott adat eltávolítása"
+
+#: ../dnf/cli/commands/clean.py:176
+msgid "Cleaning repos: "
+msgstr "Tárolók tisztítása "
+
+#: ../dnf/cli/commands/clean.py:183
+msgid "Cleaning up Everything"
+msgstr "Minden tisztítása"
+
+#: ../dnf/cli/commands/clean.py:196
+msgid "Cleaning up Packages"
+msgstr "Csomagok tisztítása"
+
+#: ../dnf/cli/commands/clean.py:199
+msgid "Cleaning up xml metadata"
+msgstr "XML metaadatok tisztítása"
+
+#: ../dnf/cli/commands/clean.py:202
+msgid "Cleaning up database cache"
+msgstr "Adatbázis-gyorsítótár tisztítása"
+
+#: ../dnf/cli/commands/clean.py:205
+msgid "Cleaning up expire-cache metadata"
+msgstr "Elévülési gyorsítótár tisztítása"
+
+#: ../dnf/cli/commands/clean.py:208
+msgid "Cleaning up cached rpmdb data"
+msgstr "Gyorsítótárazott rpmdb adatok tisztítása"
 
 #: ../dnf/cli/commands/install.py:42
 msgid "Install a package or packages on your system"
 msgstr "Csomag(ok) telepítése a rendszerre"
 
-#: ../dnf/cli/commands/install.py:43 ../dnf/cli/commands/reinstall.py:43
-#: ../dnf/cli/commands/remove.py:37 ../dnf/cli/commands/upgrade.py:42
-#: ../dnf/cli/commands/distrosync.py:35 ../dnf/cli/commands/upgradeto.py:32
-#: ../dnf/cli/commands/downgrade.py:35 ../dnf/cli/commands/__init__.py:233
-#: ../dnf/cli/commands/__init__.py:310 ../dnf/cli/commands/mark.py:38
+#: ../dnf/cli/commands/install.py:43 ../dnf/cli/commands/remove.py:37
+#: ../dnf/cli/commands/downgrade.py:35 ../dnf/cli/commands/upgrade.py:42
+#: ../dnf/cli/commands/distrosync.py:35 ../dnf/cli/commands/mark.py:38
+#: ../dnf/cli/commands/__init__.py:233 ../dnf/cli/commands/__init__.py:310
+#: ../dnf/cli/commands/reinstall.py:43 ../dnf/cli/commands/upgradeto.py:32
 msgid "PACKAGE"
 msgstr "CSOMAG"
 
 #: ../dnf/cli/commands/install.py:97
 msgid "Unable to find a match."
-msgstr ""
+msgstr "Nem található egyezés."
 
-#: ../dnf/cli/commands/reinstall.py:42
-msgid "reinstall a package"
-msgstr "egy csomag újratelepítése"
+#: ../dnf/cli/commands/repolist.py:36 ../dnf/cli/commands/updateinfo.py:48
+msgid "unknown"
+msgstr "ismeretlen"
 
-#: ../dnf/cli/commands/reinstall.py:84 ../dnf/cli/commands/remove.py:76
-#: ../dnf/cli/commands/upgrade.py:72 ../dnf/cli/commands/__init__.py:518
-#: ../dnf/cli/commands/__init__.py:584 ../dnf/cli/commands/__init__.py:714
-#: ../dnf/cli/commands/__init__.py:770 ../dnf/cli/commands/__init__.py:821
-#: ../dnf/cli/commands/__init__.py:866
+#: ../dnf/cli/commands/repolist.py:38
 #, python-format
-msgid "No match for argument: %s"
-msgstr "Nem található egyezés a következő argumentumra: %s"
+msgid "Never (last: %s)"
+msgstr "Soha (utoljára: %s)"
 
-#: ../dnf/cli/commands/reinstall.py:90 ../dnf/cli/commands/__init__.py:525
-#: ../dnf/cli/commands/__init__.py:591
+#: ../dnf/cli/commands/repolist.py:40
 #, python-format
-msgid " (from %s)"
-msgstr " (ebből: %s)"
+msgid "Instant (last: %s)"
+msgstr "Azonnal (utoljára: %s)"
 
-#: ../dnf/cli/commands/reinstall.py:91 ../dnf/cli/commands/__init__.py:526
-#: ../dnf/cli/commands/__init__.py:592
+#: ../dnf/cli/commands/repolist.py:43
 #, python-format
-msgid "Installed package %s%s%s%s not available."
-msgstr "A következő telepített csomag nem elérhető: %s%s%s%s"
+msgid "%s second(s) (last: %s)"
+msgstr "%s másodperc (utoljára: %s)"
 
-#: ../dnf/cli/commands/remove.py:36
-msgid "Remove a package or packages from your system"
-msgstr "Csomag(ok) eltávolítása a rendszerből"
+#: ../dnf/cli/commands/repolist.py:74
+msgid "Display the configured software repositories"
+msgstr "Beállított szoftvertárolók megjelenítése"
 
-#: ../dnf/cli/commands/remove.py:82 ../dnf/cli/commands/__init__.py:827
-msgid "No packages marked for removal."
-msgstr "Nincsenek eltávolításra kijelölt csomagok."
+#: ../dnf/cli/commands/repolist.py:121 ../dnf/cli/commands/repolist.py:122
+msgid "enabled"
+msgstr "engedélyezett"
+
+#: ../dnf/cli/commands/repolist.py:140 ../dnf/cli/commands/repolist.py:141
+msgid "disabled"
+msgstr "tiltott"
+
+#: ../dnf/cli/commands/repolist.py:156
+msgid "Repo-id      : "
+msgstr "Tároló azonosító: "
+
+#: ../dnf/cli/commands/repolist.py:157
+msgid "Repo-name    : "
+msgstr "Tároló név       : "
+
+#: ../dnf/cli/commands/repolist.py:160
+msgid "Repo-status  : "
+msgstr "Tároló állapot   : "
+
+#: ../dnf/cli/commands/repolist.py:163
+msgid "Repo-revision: "
+msgstr "Tároló verzió    : "
+
+#: ../dnf/cli/commands/repolist.py:167
+msgid "Repo-tags    : "
+msgstr "Tároló címkék    : "
+
+#: ../dnf/cli/commands/repolist.py:172
+msgid "Repo-distro-tags: "
+msgstr "Tároló disztr.   : "
+
+#: ../dnf/cli/commands/repolist.py:178
+msgid "Repo-updated : "
+msgstr "Tároló frissítve : "
+
+#: ../dnf/cli/commands/repolist.py:180
+msgid "Repo-pkgs    : "
+msgstr "Tároló csomagok  : "
+
+#: ../dnf/cli/commands/repolist.py:181
+msgid "Repo-size    : "
+msgstr "Tároló mérete    : "
+
+#: ../dnf/cli/commands/repolist.py:184
+msgid "Repo-metalink: "
+msgstr "Tároló metalink  : "
+
+#: ../dnf/cli/commands/repolist.py:188
+msgid "  Updated    : "
+msgstr "  Frissítve      : "
+
+#: ../dnf/cli/commands/repolist.py:191
+msgid "Repo-mirrors : "
+msgstr "Tároló tükrök    : "
+
+#: ../dnf/cli/commands/repolist.py:195 ../dnf/cli/commands/repolist.py:199
+msgid "Repo-baseurl : "
+msgstr "Tároló bázis-URL : "
+
+#: ../dnf/cli/commands/repolist.py:202
+msgid "Repo-expire  : "
+msgstr "Tároló lejárata  : "
+
+#: ../dnf/cli/commands/repolist.py:205
+msgid "Repo-exclude : "
+msgstr "Tároló-kizárás: "
+
+#: ../dnf/cli/commands/repolist.py:209
+msgid "Repo-include : "
+msgstr "Tároló-tartalmaz: "
+
+#: ../dnf/cli/commands/repolist.py:213
+msgid "Repo-excluded: "
+msgstr "Tároló-kizárt: "
+
+#: ../dnf/cli/commands/repolist.py:217
+msgid "Repo-filename: "
+msgstr "Tároló-fájlnév: "
+
+#: ../dnf/cli/commands/repolist.py:225 ../dnf/cli/commands/repolist.py:254
+msgid "repo id"
+msgstr "tároló azonosító"
+
+#: ../dnf/cli/commands/repolist.py:242 ../dnf/cli/commands/repolist.py:243
+#: ../dnf/cli/commands/repolist.py:259
+msgid "status"
+msgstr "állapot"
+
+#: ../dnf/cli/commands/repolist.py:255
+msgid "repo name"
+msgstr "tároló neve"
 
 #: ../dnf/cli/commands/group.py:45
 msgid "Error: Need a group or list of groups"
@@ -1350,7 +1511,7 @@ msgstr "Hiba: Szükség van legalább egy csoportra"
 
 #: ../dnf/cli/commands/group.py:60
 msgid "Display, or use, the groups information"
-msgstr "Megjeleníti, vagy alkalmazza, a csoportinformációkat"
+msgstr "Megjeleníti, vagy alkalmazza a csoportinformációkat"
 
 #: ../dnf/cli/commands/group.py:61
 msgid "GROUP"
@@ -1363,7 +1524,7 @@ msgstr "Nem érhetők el csoportadatok a konfigurált tárolókhoz."
 #: ../dnf/cli/commands/group.py:152
 #, python-format
 msgid "Warning: Group %s does not exist."
-msgstr "Figyelem: Az alábbi csoport nem létezik: %s"
+msgstr "Figyelmeztetés: A(z) %s csoport nem létezik"
 
 #: ../dnf/cli/commands/group.py:172
 #, python-format
@@ -1371,6 +1532,8 @@ msgid ""
 "Warning: No groups match:\n"
 "   %s"
 msgstr ""
+"Figyelmeztetés: Nincs egyező csoport:\n"
+"   %s"
 
 #: ../dnf/cli/commands/group.py:199
 msgid "Available environment groups:"
@@ -1437,427 +1600,34 @@ msgstr "Elérhető nyelvi csoportok:"
 msgid "Invalid groups sub-command, use: %s."
 msgstr "Érvénytelen csoport alparancs, kérjük használja ezt: %s."
 
-#: ../dnf/cli/commands/upgrade.py:41
-msgid "Upgrade a package or packages on your system"
-msgstr "Csomagok frissítése az ön rendszerében"
+#: ../dnf/cli/commands/remove.py:36
+msgid "Remove a package or packages from your system"
+msgstr "Csomag(ok) eltávolítása a rendszerből"
 
-#: ../dnf/cli/commands/distrosync.py:34
-msgid "Synchronize installed packages to the latest available versions"
-msgstr "Telepített csomagok szinkronizálása a legfrissebb verzióhoz"
-
-#: ../dnf/cli/commands/clean.py:43
+#: ../dnf/cli/commands/remove.py:76 ../dnf/cli/commands/upgrade.py:72
+#: ../dnf/cli/commands/__init__.py:518 ../dnf/cli/commands/__init__.py:584
+#: ../dnf/cli/commands/__init__.py:714 ../dnf/cli/commands/__init__.py:770
+#: ../dnf/cli/commands/__init__.py:821 ../dnf/cli/commands/__init__.py:866
+#: ../dnf/cli/commands/reinstall.py:84
 #, python-format
-msgid "Error: clean requires an option: %s"
-msgstr "Hiba: a clean parancsnak szüksége van egy opcióra: %s"
+msgid "No match for argument: %s"
+msgstr "Nem található egyezés a következő argumentumra: %s"
 
-#: ../dnf/cli/commands/clean.py:49
-#, python-format
-msgid "Error: invalid clean argument: %r"
-msgstr "Hiba: helytelen clean argumentum: %r"
-
-#: ../dnf/cli/commands/clean.py:77
-#, python-format
-msgid "Cannot remove %s file %s"
-msgstr "Nem távolítható el a %s nevű fájl: %s"
-
-#: ../dnf/cli/commands/clean.py:82
-#, python-format
-msgid "%s file %s removed"
-msgstr "%s fájl %s eltávolította"
-
-#: ../dnf/cli/commands/clean.py:84
-#, python-format
-msgid "%d %s file removed"
-msgid_plural "%d %s files removed"
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../dnf/cli/commands/clean.py:134
-msgid "The enabled repos were expired"
-msgstr "Az engedélyezett tárolók lejártak"
-
-#: ../dnf/cli/commands/clean.py:143
-msgid "Remove cached data"
-msgstr "Gyorsítótárazott adat eltávolítása"
-
-#: ../dnf/cli/commands/clean.py:176
-msgid "Cleaning repos: "
-msgstr "Tárolók tisztítása "
-
-#: ../dnf/cli/commands/clean.py:183
-msgid "Cleaning up Everything"
-msgstr "Minden tisztítása"
-
-#: ../dnf/cli/commands/clean.py:196
-msgid "Cleaning up Packages"
-msgstr "Csomagok tisztítása"
-
-#: ../dnf/cli/commands/clean.py:199
-msgid "Cleaning up xml metadata"
-msgstr "xml metaadat tisztítása"
-
-#: ../dnf/cli/commands/clean.py:202
-msgid "Cleaning up database cache"
-msgstr "Adatbázis-gyorsítótár tisztítása"
-
-#: ../dnf/cli/commands/clean.py:205
-msgid "Cleaning up expire-cache metadata"
-msgstr "Elévülési gyorsítótár tisztítása"
-
-#: ../dnf/cli/commands/clean.py:208
-msgid "Cleaning up cached rpmdb data"
-msgstr "Gyorsítótárazott rpmdb adatok tisztítása"
-
-#: ../dnf/cli/commands/repolist.py:36 ../dnf/cli/commands/updateinfo.py:48
-msgid "unknown"
-msgstr "ismeretlen"
-
-#: ../dnf/cli/commands/repolist.py:38
-#, python-format
-msgid "Never (last: %s)"
-msgstr "Soha (utoljára: %s)"
-
-#: ../dnf/cli/commands/repolist.py:40
-#, python-format
-msgid "Instant (last: %s)"
-msgstr "Most (utoljára: %s)"
-
-#: ../dnf/cli/commands/repolist.py:43
-#, python-format
-msgid "%s second(s) (last: %s)"
-msgstr "%s másodperc (utoljára: %s)"
-
-#: ../dnf/cli/commands/repolist.py:74
-msgid "Display the configured software repositories"
-msgstr "Beállított szoftverforrások megjelenítése"
-
-#: ../dnf/cli/commands/repolist.py:121 ../dnf/cli/commands/repolist.py:122
-msgid "enabled"
-msgstr "engedélyezett"
-
-#: ../dnf/cli/commands/repolist.py:140 ../dnf/cli/commands/repolist.py:141
-msgid "disabled"
-msgstr "tiltott"
-
-#: ../dnf/cli/commands/repolist.py:156
-msgid "Repo-id      : "
-msgstr "Tároló-azonosító: "
-
-#: ../dnf/cli/commands/repolist.py:157
-msgid "Repo-name    : "
-msgstr "Tároló-név   : "
-
-#: ../dnf/cli/commands/repolist.py:160
-msgid "Repo-status  : "
-msgstr "Tároló-állapot: "
-
-#: ../dnf/cli/commands/repolist.py:163
-msgid "Repo-revision: "
-msgstr "Tároló-vizsgálat: "
-
-#: ../dnf/cli/commands/repolist.py:167
-msgid "Repo-tags    : "
-msgstr "Tároló-címkék : "
-
-#: ../dnf/cli/commands/repolist.py:172
-msgid "Repo-distro-tags: "
-msgstr "Tároló-diszt.-címkék: "
-
-#: ../dnf/cli/commands/repolist.py:178
-msgid "Repo-updated : "
-msgstr "Tároló-frissítve: "
-
-#: ../dnf/cli/commands/repolist.py:180
-msgid "Repo-pkgs    : "
-msgstr "Tároló-csomagok: "
-
-#: ../dnf/cli/commands/repolist.py:181
-msgid "Repo-size    : "
-msgstr "Tároló-méret  : "
-
-#: ../dnf/cli/commands/repolist.py:184
-msgid "Repo-metalink: "
-msgstr "Tároló-metalink: "
-
-#: ../dnf/cli/commands/repolist.py:188
-msgid "  Updated    : "
-msgstr "  Frissítve  : "
-
-#: ../dnf/cli/commands/repolist.py:191
-msgid "Repo-mirrors : "
-msgstr "Tároló-tükrök: "
-
-#: ../dnf/cli/commands/repolist.py:195 ../dnf/cli/commands/repolist.py:199
-msgid "Repo-baseurl : "
-msgstr "Tároló-baseurl: "
-
-#: ../dnf/cli/commands/repolist.py:202
-msgid "Repo-expire  : "
-msgstr "Tároló-lejárat: "
-
-#: ../dnf/cli/commands/repolist.py:205
-msgid "Repo-exclude : "
-msgstr "Tároló-kizárás: "
-
-#: ../dnf/cli/commands/repolist.py:209
-msgid "Repo-include : "
-msgstr "Tároló-tartalmaz: "
-
-#: ../dnf/cli/commands/repolist.py:213
-msgid "Repo-excluded: "
-msgstr "Tároló-kizárt: "
-
-#: ../dnf/cli/commands/repolist.py:217
-msgid "Repo-filename: "
-msgstr "Tároló-fájlnév: "
-
-#: ../dnf/cli/commands/repolist.py:225 ../dnf/cli/commands/repolist.py:254
-msgid "repo id"
-msgstr "tároló azon"
-
-#: ../dnf/cli/commands/repolist.py:242 ../dnf/cli/commands/repolist.py:243
-#: ../dnf/cli/commands/repolist.py:259
-msgid "status"
-msgstr "állapot"
-
-#: ../dnf/cli/commands/repolist.py:255
-msgid "repo name"
-msgstr "tároló név"
-
-#: ../dnf/cli/commands/upgradeto.py:31
-msgid "Upgrade a package on your system to the specified version"
-msgstr "Csomag frissítése a meghatározott verzióra az ön rendszerében"
+#: ../dnf/cli/commands/remove.py:82 ../dnf/cli/commands/__init__.py:827
+msgid "No packages marked for removal."
+msgstr "Nincsenek eltávolításra kijelölt csomagok."
 
 #: ../dnf/cli/commands/downgrade.py:34
 msgid "downgrade a package"
 msgstr "egy csomag visszaállítása"
 
-#: ../dnf/cli/commands/search.py:42
-msgid "Search package details for the given string"
-msgstr "Csomagrészletek keresése egy megadott szöveg alapján"
+#: ../dnf/cli/commands/upgrade.py:41
+msgid "Upgrade a package or packages on your system"
+msgstr "Csomagok frissítése az ön rendszerén"
 
-#: ../dnf/cli/commands/search.py:43
-msgid "QUERY_STRING"
-msgstr "LEKÉRDEZŐ_SZÖVEG"
-
-#: ../dnf/cli/commands/search.py:65
-#, python-format
-msgid "N/S Matched: %s"
-msgstr "N/S Megegyezett: %s"
-
-#: ../dnf/cli/commands/search.py:67
-#, python-format
-msgid "Matched: %s"
-msgstr "Találat: %s"
-
-#: ../dnf/cli/commands/search.py:84
-msgid "No matches found."
-msgstr "Nem található egyezés."
-
-#: ../dnf/cli/commands/search.py:105
-msgid "Searching Packages: "
-msgstr "Csomagok keresése: "
-
-#: ../dnf/cli/commands/__init__.py:42
-#, python-format
-msgid "To diagnose the problem, try running: '%s'."
-msgstr "A probléma diagnosztizálásához próbálja futtatni a következőt: '%s'."
-
-#: ../dnf/cli/commands/__init__.py:44
-#, python-format
-msgid "You probably have corrupted RPMDB, running '%s' might fix the issue."
-msgstr ""
-
-#: ../dnf/cli/commands/__init__.py:48
-msgid ""
-"You have enabled checking of packages via GPG keys. This is a good thing.\n"
-"However, you do not have any GPG public keys installed. You need to download\n"
-"the keys for packages you wish to install and install them.\n"
-"You can do that by running the command:\n"
-"    rpm --import public.gpg.key\n"
-"\n"
-"\n"
-"Alternatively you can specify the url to the key you would like to use\n"
-"for a repository in the 'gpgkey' option in a repository section and DNF\n"
-"will install it for you.\n"
-"\n"
-"For more information contact your distribution or package provider."
-msgstr ""
-
-#: ../dnf/cli/commands/__init__.py:68
-msgid " Mini usage:\n"
-msgstr " Használat:\n"
-
-#: ../dnf/cli/commands/__init__.py:84
-#, python-format
-msgid "Problem repository: %s"
-msgstr "Hibás tároló: %s"
-
-#: ../dnf/cli/commands/__init__.py:98
-#, python-format
-msgid "Error: Need to pass a list of pkgs to %s"
-msgstr "Hiba: Meg kell adni a csomagok listáját a következőhöz: %s"
-
-#: ../dnf/cli/commands/__init__.py:114
-msgid "Error: Need an item to match"
-msgstr "Hiba: egy elemnek legalább egyeznie kell"
-
-#: ../dnf/cli/commands/__init__.py:133
-msgid "There are no enabled repos."
-msgstr "Nincsenek engedélyezett tárolók"
-
-#: ../dnf/cli/commands/__init__.py:232
-msgid "Display details about a package or group of packages"
-msgstr "Részletek megjelenítése egy csomagról vagy egy csomagcsoportról"
-
-#: ../dnf/cli/commands/__init__.py:267
-msgid "List a package or groups of packages"
-msgstr "Csomag vagy csomagcsoport listázása"
-
-#: ../dnf/cli/commands/__init__.py:280
-msgid "Find what package provides the given value"
-msgstr "Megtalálja, mely csomag tartalmazza a megadott értéket"
-
-#: ../dnf/cli/commands/__init__.py:281
-msgid "SOME_STRING"
-msgstr "EGY_SZÖVEG"
-
-#: ../dnf/cli/commands/__init__.py:309
-msgid "Check for available package upgrades"
-msgstr "Elérhető csomagfrissítések keresése"
-
-#: ../dnf/cli/commands/__init__.py:431 ../dnf/cli/commands/__init__.py:507
-#: ../dnf/cli/commands/__init__.py:573
-msgid "No package available."
-msgstr "Nincs elérhető csomag."
-
-#: ../dnf/cli/commands/__init__.py:505
-msgid "No package installed."
-msgstr "Nincs telepített csomag."
-
-#: ../dnf/cli/commands/__init__.py:570 ../dnf/cli/commands/__init__.py:704
-#: ../dnf/cli/commands/__init__.py:756 ../dnf/cli/commands/__init__.py:811
-msgid "No package installed from the repository."
-msgstr "Nincs telepített csomag a tárolóból."
-
-#: ../dnf/cli/commands/__init__.py:893
-msgid "Error: Requires at least one package specification"
-msgstr "Hiba: Legalább egy csomagspecifikáció szükségeltetik"
-
-#: ../dnf/cli/commands/__init__.py:916
-msgid "Run commands on top of all packages in given repository"
-msgstr ""
-"Egy meghatározott tároló feletti összes csomagon futtatja az adott "
-"parancsokat"
-
-#: ../dnf/cli/commands/__init__.py:919
-msgid "REPO"
-msgstr "TÁROLÓ"
-
-#: ../dnf/cli/commands/__init__.py:919
-msgid "ARG"
-msgstr "ARG"
-
-#: ../dnf/cli/commands/__init__.py:964
-msgid "Error: Requires a repo ID and a valid sub-command"
-msgstr "Hiba: tárolóazonosító és helyes alparancs szükségeltetik"
-
-#: ../dnf/cli/commands/__init__.py:991
-msgid "Display a helpful usage message"
-msgstr "Egy használati tipp mutatása"
-
-#: ../dnf/cli/commands/__init__.py:992
-msgid "COMMAND"
-msgstr "PARANCS"
-
-#: ../dnf/cli/commands/__init__.py:1024
-#, python-format
-msgid "No help available for %s"
-msgstr "Nincs súgó az alábbi témakörben: %s"
-
-#: ../dnf/cli/commands/__init__.py:1029
-msgid "aliases: "
-msgstr ""
-
-#: ../dnf/cli/commands/__init__.py:1031
-msgid "alias: "
-msgstr ""
-
-#: ../dnf/cli/commands/__init__.py:1047
-msgid "Display, or use, the transaction history"
-msgstr "Korábbi tranzakciók használata vagy megjelenítése"
-
-#: ../dnf/cli/commands/__init__.py:1063
-#, python-format
-msgid ""
-"Cannot undo transaction %s, doing so would result in an inconsistent package"
-" database."
-msgstr ""
-"Nem lehet visszavonni a következő tranzakciót: %s. Ennek a következménye "
-"inkonzisztens csomagadatbázisban mutatkozna meg."
-
-#: ../dnf/cli/commands/__init__.py:1067
-#, python-format
-msgid ""
-"Cannot rollback transaction %s, doing so would result in an inconsistent "
-"package database."
-msgstr ""
-"Nem lehet visszagörgetni a következő tranzakciót: %s. Ennek a következménye "
-"inkonzisztens csomagadatbázisban mutatkozna meg."
-
-#: ../dnf/cli/commands/__init__.py:1155
-msgid "Transactions:"
-msgstr "Műveletek:"
-
-#: ../dnf/cli/commands/__init__.py:1156
-msgid "Begin time  :"
-msgstr "Kezdés ideje :"
-
-#: ../dnf/cli/commands/__init__.py:1157
-msgid "End time    :"
-msgstr "Befejezés ideje :"
-
-#: ../dnf/cli/commands/__init__.py:1158
-msgid "Counts      :"
-msgstr "Találat :"
-
-#: ../dnf/cli/commands/__init__.py:1159
-msgid "  NEVRAC :"
-msgstr "  NEVRAC :"
-
-#: ../dnf/cli/commands/__init__.py:1160
-msgid "  NEVRA  :"
-msgstr "  NEVRA  :"
-
-#: ../dnf/cli/commands/__init__.py:1161
-msgid "  NA     :"
-msgstr "  NA     :"
-
-#: ../dnf/cli/commands/__init__.py:1162
-msgid "  NEVR   :"
-msgstr "  NEVR   :"
-
-#: ../dnf/cli/commands/__init__.py:1163
-msgid "  rpm DB :"
-msgstr "  rpm DB :"
-
-#: ../dnf/cli/commands/__init__.py:1164
-msgid "  DNF DB :"
-msgstr "  DNF DB :"
-
-#: ../dnf/cli/commands/__init__.py:1183
-#, python-format
-msgid "Unrecognized options \"%s\"!"
-msgstr "Ismeretlen opciók: \"%s\""
-
-#: ../dnf/cli/commands/__init__.py:1200
-#, python-format
-msgid "Invalid history sub-command, use: %s."
-msgstr "Helytelen alparancs az előzményekhez, használja a következőt: %s"
-
-#: ../dnf/cli/commands/__init__.py:1206
-msgid "You don't have access to the history DB."
-msgstr "Ön nem tudja elérni az előzmények adatbázisát."
+#: ../dnf/cli/commands/distrosync.py:34
+msgid "Synchronize installed packages to the latest available versions"
+msgstr "Telepített csomagok szinkronizálása a legfrissebb verzióhoz"
 
 #: ../dnf/cli/commands/updateinfo.py:45
 msgid "bugfix"
@@ -1905,7 +1675,7 @@ msgstr "hamis"
 
 #: ../dnf/cli/commands/updateinfo.py:294
 msgid "Update ID"
-msgstr "Frissítési ID"
+msgstr "Frissítési azonosító"
 
 #: ../dnf/cli/commands/updateinfo.py:294
 msgid "Type"
@@ -1970,265 +1740,474 @@ msgstr ""
 msgid "Package %s is not installed."
 msgstr ""
 
-#: ../dnf/crypto.py:81
+#: ../dnf/cli/commands/__init__.py:42
+#, python-format
+msgid "To diagnose the problem, try running: '%s'."
+msgstr "A probléma diagnosztizálásához próbálja futtatni a következőt: '%s'."
+
+#: ../dnf/cli/commands/__init__.py:44
+#, python-format
+msgid "You probably have corrupted RPMDB, running '%s' might fix the issue."
+msgstr ""
+
+#: ../dnf/cli/commands/__init__.py:48
+msgid ""
+"You have enabled checking of packages via GPG keys. This is a good thing.\n"
+"However, you do not have any GPG public keys installed. You need to download\n"
+"the keys for packages you wish to install and install them.\n"
+"You can do that by running the command:\n"
+"    rpm --import public.gpg.key\n"
+"\n"
+"\n"
+"Alternatively you can specify the url to the key you would like to use\n"
+"for a repository in the 'gpgkey' option in a repository section and DNF\n"
+"will install it for you.\n"
+"\n"
+"For more information contact your distribution or package provider."
+msgstr ""
+
+#: ../dnf/cli/commands/__init__.py:68
+msgid " Mini usage:\n"
+msgstr " Használat:\n"
+
+#: ../dnf/cli/commands/__init__.py:84
+#, python-format
+msgid "Problem repository: %s"
+msgstr "Hibás tároló: %s"
+
+#: ../dnf/cli/commands/__init__.py:98
+#, python-format
+msgid "Error: Need to pass a list of pkgs to %s"
+msgstr "Hiba: Meg kell adni a csomagok listáját a következőhöz: %s"
+
+#: ../dnf/cli/commands/__init__.py:114
+msgid "Error: Need an item to match"
+msgstr "Hiba: egy elemnek legalább egyeznie kell"
+
+#: ../dnf/cli/commands/__init__.py:133
+msgid "There are no enabled repos."
+msgstr "Nincsenek engedélyezett tárolók."
+
+#: ../dnf/cli/commands/__init__.py:232
+msgid "Display details about a package or group of packages"
+msgstr "Részletek megjelenítése egy csomagról vagy egy csomagcsoportról"
+
+#: ../dnf/cli/commands/__init__.py:267
+msgid "List a package or groups of packages"
+msgstr "Csomag vagy csomagcsoport listázása"
+
+#: ../dnf/cli/commands/__init__.py:280
+msgid "Find what package provides the given value"
+msgstr "Keresés, hogy mely csomag tartalmazza a megadott értéket"
+
+#: ../dnf/cli/commands/__init__.py:281
+msgid "SOME_STRING"
+msgstr "EGY_SZÖVEG"
+
+#: ../dnf/cli/commands/__init__.py:309
+msgid "Check for available package upgrades"
+msgstr "Elérhető csomagfrissítések keresése"
+
+#: ../dnf/cli/commands/__init__.py:431 ../dnf/cli/commands/__init__.py:507
+#: ../dnf/cli/commands/__init__.py:573
+msgid "No package available."
+msgstr "Nincs elérhető csomag."
+
+#: ../dnf/cli/commands/__init__.py:505
+msgid "No package installed."
+msgstr "Nincs telepített csomag."
+
+#: ../dnf/cli/commands/__init__.py:525 ../dnf/cli/commands/__init__.py:591
+#: ../dnf/cli/commands/reinstall.py:90
+#, python-format
+msgid " (from %s)"
+msgstr " (ebből: %s)"
+
+#: ../dnf/cli/commands/__init__.py:526 ../dnf/cli/commands/__init__.py:592
+#: ../dnf/cli/commands/reinstall.py:91
+#, python-format
+msgid "Installed package %s%s%s%s not available."
+msgstr "A következő telepített csomag nem elérhető: %s%s%s%s"
+
+#: ../dnf/cli/commands/__init__.py:570 ../dnf/cli/commands/__init__.py:704
+#: ../dnf/cli/commands/__init__.py:756 ../dnf/cli/commands/__init__.py:811
+msgid "No package installed from the repository."
+msgstr "Nincs telepített csomag a tárolóból."
+
+#: ../dnf/cli/commands/__init__.py:893
+msgid "Error: Requires at least one package specification"
+msgstr "Hiba: Legalább egy csomagspecifikáció szükséges"
+
+#: ../dnf/cli/commands/__init__.py:916
+msgid "Run commands on top of all packages in given repository"
+msgstr "Parancsok futtatása a megadott tárolóban lévő összes csomagon"
+
+#: ../dnf/cli/commands/__init__.py:919
+msgid "REPO"
+msgstr "TÁROLÓ"
+
+#: ../dnf/cli/commands/__init__.py:919
+msgid "ARG"
+msgstr "ARG"
+
+#: ../dnf/cli/commands/__init__.py:964
+msgid "Error: Requires a repo ID and a valid sub-command"
+msgstr "Hiba: tárolóazonosító és érvényes alparancs szükséges"
+
+#: ../dnf/cli/commands/__init__.py:991
+msgid "Display a helpful usage message"
+msgstr "Egy használati tipp mutatása"
+
+#: ../dnf/cli/commands/__init__.py:992
+msgid "COMMAND"
+msgstr "PARANCS"
+
+#: ../dnf/cli/commands/__init__.py:1024
+#, python-format
+msgid "No help available for %s"
+msgstr "Nincs súgó az alábbi témakörben: %s"
+
+#: ../dnf/cli/commands/__init__.py:1029
+msgid "aliases: "
+msgstr "álnevek: "
+
+#: ../dnf/cli/commands/__init__.py:1031
+msgid "alias: "
+msgstr "álnév: "
+
+#: ../dnf/cli/commands/__init__.py:1047
+msgid "Display, or use, the transaction history"
+msgstr "Korábbi tranzakciók megjelenítése vagy használata"
+
+#: ../dnf/cli/commands/__init__.py:1063
 #, python-format
 msgid ""
-"Importing GPG key 0x%s:\n"
-" Userid     : \"%s\"\n"
-" Fingerprint: %s\n"
-" From       : %s"
+"Cannot undo transaction %s, doing so would result in an inconsistent package"
+" database."
 msgstr ""
-"GPG kulcs importálása 0x%s:\n"
-"Felhasználó: \"%s\"\n"
-"Ujjlenyomat: %s\n"
-"Származás: %s"
+"Nem lehet visszavonni a következő tranzakciót: %s. Eredménye inkonzisztens "
+"csomagadatbázis lenne."
 
-#: ../dnf/base.py:116
-#, python-format
-msgid "%s, disabling."
-msgstr "%s, letiltás."
-
-#: ../dnf/base.py:301
-msgid ""
-"The downloaded packages were saved in cache until the next successful "
-"transaction."
-msgstr ""
-
-#: ../dnf/base.py:303
-#, python-format
-msgid "You can remove cached packages by executing '%s'."
-msgstr ""
-
-#: ../dnf/base.py:363
-#, python-format
-msgid "Invalid tsflag in config file: %s"
-msgstr "Hibás tsflag a következő konfigurációs fájlban: %s"
-
-#: ../dnf/base.py:415
-#, python-format
-msgid "Failed to add groups file for repository: %s - %s"
-msgstr "Sikertelen a csoportfájl hozzáadása a következő tárolónál: %s - %s"
-
-#: ../dnf/base.py:560
-msgid "Running transaction check"
-msgstr "Tranzakciós ellenőrzés futtatásra"
-
-#: ../dnf/base.py:570
-msgid "Error: transaction check vs depsolve:"
-msgstr "HIBA: tranzakció ellenőrzés- és függőségfeloldásnál:"
-
-#: ../dnf/base.py:576
-msgid "Transaction check succeeded."
-msgstr "Tranzakciós ellenőrzés sikerrel járt."
-
-#: ../dnf/base.py:579
-msgid "Running transaction test"
-msgstr "Tranzakció teszt futtatása"
-
-#: ../dnf/base.py:591
-msgid "Transaction check error:\n"
-msgstr "Tranzakciós hiba ellenőrzése:\n"
-
-#: ../dnf/base.py:598
-msgid "Transaction test succeeded."
-msgstr "A tranzakció teszt sikeres."
-
-#: ../dnf/base.py:611
-msgid "Running transaction"
-msgstr "Tranzakció futtatása"
-
-#: ../dnf/base.py:633
-msgid "Disk Requirements:"
-msgstr ""
-
-#: ../dnf/base.py:636
-#, python-format
-msgid "At least %dMB more space needed on the %s filesystem."
-msgid_plural "At least %dMB more space needed on the %s filesystem."
-msgstr[0] ""
-msgstr[1] ""
-
-#: ../dnf/base.py:640
-msgid ""
-"Error Summary\n"
-"-------------\n"
-msgstr ""
-"Hiba összegzés\n"
-"-------------\n"
-
-#: ../dnf/base.py:702
-msgid ""
-"Warning: scriptlet or other non-fatal errors occurred during transaction."
-msgstr ""
-"Figyelem: scriptlet vagy egyéb nem végzetes hiba adódott a tranzakció során."
-
-#: ../dnf/base.py:707
-#, python-format
-msgid "Failed to obtain the transaction lock (logged in as: %s)."
-msgstr "Nem sikerült tranzakciós zárat szerezni (bejelentkezve mint: %s)"
-
-#: ../dnf/base.py:710 ../dnf/base.py:720
-msgid "Could not run transaction."
-msgstr "Tranzakció futtatása meghiúsult."
-
-#: ../dnf/base.py:717
-msgid "Transaction couldn't start:"
-msgstr "A tranzakció nem indítható:"
-
-#: ../dnf/base.py:729
-#, python-format
-msgid "Failed to remove transaction file %s"
-msgstr "A következő tranzakció-fájl eltávolítása meghiúsult: %s"
-
-#: ../dnf/base.py:781
-#, python-format
-msgid "%s was supposed to be installed but is not!"
-msgstr ""
-"A(z) %s nevű csomagnak már telepítve kellett volna lennie, habár nincs."
-
-#: ../dnf/base.py:842
-#, python-format
-msgid "%s was supposed to be removed but is not!"
-msgstr ""
-"A(z) %s nevű csomagok már el kellett volna távolítani, habár ez még nem "
-"történt meg."
-
-#: ../dnf/base.py:920
-#, python-format
-msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
-msgstr ""
-"A DeltaRPMek lecsökkentették a(z) %.1f MB-tnyi frissítést %.1f MB-ra. "
-"(%d.1%% megspórolva)"
-
-#: ../dnf/base.py:968
-#, python-format
-msgid "Public key for %s is not installed"
-msgstr "A publikus kulcs nincs telepítve a következőhöz: %s"
-
-#: ../dnf/base.py:972
-#, python-format
-msgid "Problem opening package %s"
-msgstr "Hiba a következő csomag megnyitásánál: %s"
-
-#: ../dnf/base.py:980
-#, python-format
-msgid "Public key for %s is not trusted"
-msgstr "A publikus kulcs nem megbízható a következőhöz: %s"
-
-#: ../dnf/base.py:984
-#, python-format
-msgid "Package %s is not signed"
-msgstr "A következő csomag nincs aláírva: %s"
-
-#: ../dnf/base.py:999
-#, python-format
-msgid "Cannot remove %s"
-msgstr "Nem távolítható el: %s"
-
-#: ../dnf/base.py:1003
-#, python-format
-msgid "%s removed"
-msgstr "%s eltávolítva"
-
-#: ../dnf/base.py:1338
-msgid "No groups marked for removal."
-msgstr "Nincsenek eltávolításra jelölt csoportok."
-
-#: ../dnf/base.py:1357
-msgid "No group marked for upgrade."
-msgstr ""
-
-#: ../dnf/base.py:1421 ../dnf/base.py:1433
-msgid "no package matched"
-msgstr ""
-
-#: ../dnf/base.py:1472
-#, python-format
-msgid "Package %s not installed, cannot downgrade it."
-msgstr ""
-
-#: ../dnf/base.py:1479
-#, python-format
-msgid "Package %s of lower version already installed, cannot downgrade it."
-msgstr ""
-
-#: ../dnf/base.py:1498
-#, python-format
-msgid "Package %s not installed, cannot reinstall it."
-msgstr ""
-
-#: ../dnf/base.py:1514 ../dnf/base.py:1541
-#, python-format
-msgid "Package %s not installed, cannot update it."
-msgstr "A(z) %s nevű csomag nincs telepítve, így a frissítése nem lehetséges."
-
-#: ../dnf/base.py:1521
-#, python-format
-msgid "Package %s of higher version already installed, cannot update it."
-msgstr ""
-
-#: ../dnf/base.py:1586
-#, python-format
-msgid "No package %s installed."
-msgstr "Nincs %s nevű csomag telepítve."
-
-#: ../dnf/base.py:1698
-#, python-format
-msgid "Package %s of lowest version already installed, cannot downgrade it."
-msgstr ""
-
-#: ../dnf/base.py:1834
+#: ../dnf/cli/commands/__init__.py:1067
 #, python-format
 msgid ""
-"Failing package is: %s\n"
-" GPG Keys are configured as: %s\n"
+"Cannot rollback transaction %s, doing so would result in an inconsistent "
+"package database."
 msgstr ""
+"Nem lehet visszagörgetni a következő tranzakciót: %s. Eredménye "
+"inkonzisztens csomagadatbázis lenne."
 
-#: ../dnf/base.py:1847
+#: ../dnf/cli/commands/__init__.py:1155
+msgid "Transactions:"
+msgstr "Tranzakciók     :"
+
+#: ../dnf/cli/commands/__init__.py:1156
+msgid "Begin time  :"
+msgstr "Kezdés ideje    :"
+
+#: ../dnf/cli/commands/__init__.py:1157
+msgid "End time    :"
+msgstr "Befejezés ideje :"
+
+#: ../dnf/cli/commands/__init__.py:1158
+msgid "Counts      :"
+msgstr "Találat         :"
+
+#: ../dnf/cli/commands/__init__.py:1159
+msgid "  NEVRAC :"
+msgstr "  NEVRAC :"
+
+#: ../dnf/cli/commands/__init__.py:1160
+msgid "  NEVRA  :"
+msgstr "  NEVRA  :"
+
+#: ../dnf/cli/commands/__init__.py:1161
+msgid "  NA     :"
+msgstr "  NA     :"
+
+#: ../dnf/cli/commands/__init__.py:1162
+msgid "  NEVR   :"
+msgstr "  NEVR   :"
+
+#: ../dnf/cli/commands/__init__.py:1163
+msgid "  rpm DB :"
+msgstr "  rpm DB :"
+
+#: ../dnf/cli/commands/__init__.py:1164
+msgid "  DNF DB :"
+msgstr "  DNF DB :"
+
+#: ../dnf/cli/commands/__init__.py:1183
 #, python-format
-msgid "GPG key at %s (0x%s) is already installed"
-msgstr "A következő GPG kulcs már telepítve van: %s (0x%s)"
+msgid "Unrecognized options \"%s\"!"
+msgstr "Ismeretlen opciók: \"%s\""
 
-#: ../dnf/base.py:1881
+#: ../dnf/cli/commands/__init__.py:1200
 #, python-format
-msgid "Key import failed (code %d)"
-msgstr "A kulcs importálása meghiúsult (hibakód %d)"
+msgid "Invalid history sub-command, use: %s."
+msgstr "Helytelen alparancs az előzményekhez, használja a következőt: %s"
 
-#: ../dnf/base.py:1883
-msgid "Key imported successfully"
-msgstr "A kulcs importálása sikeres"
+#: ../dnf/cli/commands/__init__.py:1206
+msgid "You don't have access to the history DB."
+msgstr "Ön nem tudja elérni az előzmények adatbázisát."
 
-#: ../dnf/base.py:1887
-msgid "Didn't install any keys"
-msgstr "Nem lett telepítve egyetlen kulcs sem"
+#: ../dnf/cli/commands/reinstall.py:42
+msgid "reinstall a package"
+msgstr "egy csomag újratelepítése"
 
-#: ../dnf/base.py:1890
+#: ../dnf/cli/commands/search.py:42
+msgid "Search package details for the given string"
+msgstr "Csomagrészletek keresése egy megadott szöveg alapján"
+
+#: ../dnf/cli/commands/search.py:43
+msgid "QUERY_STRING"
+msgstr "LEKÉRDEZŐ_SZÖVEG"
+
+#: ../dnf/cli/commands/search.py:65
+#, python-format
+msgid "N/S Matched: %s"
+msgstr "Illeszkedő N/S: %s"
+
+#: ../dnf/cli/commands/search.py:67
+#, python-format
+msgid "Matched: %s"
+msgstr "Találat: %s"
+
+#: ../dnf/cli/commands/search.py:84
+msgid "No matches found."
+msgstr "Nem található egyezés."
+
+#: ../dnf/cli/commands/search.py:105
+msgid "Searching Packages: "
+msgstr "Csomagok keresése: "
+
+#: ../dnf/cli/commands/upgradeto.py:31
+msgid "Upgrade a package on your system to the specified version"
+msgstr "Csomag frissítése a meghatározott verzióra az ön rendszerén"
+
+#: ../dnf/cli/option_parser.py:51
+#, python-format
+msgid "Command line error: %s"
+msgstr "Parancssori hiba: %s"
+
+#: ../dnf/cli/option_parser.py:88
+msgid "--color takes one of: auto, always, never"
+msgstr "--color ezek egyike lehet: auto, always, never"
+
+#: ../dnf/cli/option_parser.py:105
+#, python-format
+msgid "Options Error: %s"
+msgstr "Opció hiba: %s"
+
+#: ../dnf/cli/option_parser.py:116
+#, python-format
+msgid "--installroot must be an absolute path: %s"
+msgstr "Az --instalroot értékének abszolút elérési útnak kell lennie: %s"
+
+#: ../dnf/cli/option_parser.py:142
+#, python-format
+msgid "bad format: %s"
+msgstr "hibás formátum: %s"
+
+#: ../dnf/cli/option_parser.py:154
+msgid "allow erasing of installed packages to resolve dependencies"
+msgstr ""
+"engedélyezi a telepített csomagok törlését a függőségek feloldása végett"
+
+#: ../dnf/cli/option_parser.py:157
+msgid "try the best available package versions in transactions."
+msgstr ""
+"megkísérli a legjobb elérhető verziójú csomagokat a tranzakciók alatt."
+
+#: ../dnf/cli/option_parser.py:161
+msgid "run entirely from system cache, don't update cache"
+msgstr ""
+"futtatás a rendszer gyorsítótárából anélkül, hogy a csomagok vagy "
+"tárolóinformációk frissítve lennének"
+
+#: ../dnf/cli/option_parser.py:165
+msgid "config file location"
+msgstr "konfigurációs fájl elérésí útja"
+
+#: ../dnf/cli/option_parser.py:168
+msgid "debugging output level"
+msgstr "a hibakeresés kimeneti szintje"
+
+#: ../dnf/cli/option_parser.py:171
+msgid "dumps detailed solving results into files"
+msgstr "kiírja a részletes feloldási útvonalat fájlokba"
+
+#: ../dnf/cli/option_parser.py:174
+msgid "show duplicates, in repos, in list/search commands"
+msgstr "ismétlődések mutatása a tárolókban és a keresési parancsokban"
+
+#: ../dnf/cli/option_parser.py:177
+msgid "error output level"
+msgstr "hiba kimeneti szintje"
+
+#: ../dnf/cli/option_parser.py:179
+msgid "debugging output level for rpm"
+msgstr "rpm hibakereső kimeneti szintje"
+
+#: ../dnf/cli/option_parser.py:182
+msgid "quiet operation"
+msgstr "csendes működés"
+
+#: ../dnf/cli/option_parser.py:184
+msgid "verbose operation"
+msgstr "bőbeszédű működés"
+
+#: ../dnf/cli/option_parser.py:186
+msgid "answer yes for all questions"
+msgstr "igennel válaszol minden felmerülő kérdésre"
+
+#: ../dnf/cli/option_parser.py:188
+msgid "answer no for all questions"
+msgstr "nemmel válaszol minden felmerülő kérdésre"
+
+#: ../dnf/cli/option_parser.py:190
+msgid "show DNF version and exit"
+msgstr "A DNF verziójának megjelenítése, majd kilépés"
+
+#: ../dnf/cli/option_parser.py:191
+msgid "set install root"
+msgstr "telepítési gyökérkönyvtár beállítása"
+
+#: ../dnf/cli/option_parser.py:201
+msgid "exclude packages by name or glob"
+msgstr "csomagok kizárása név vagy glob alapján"
+
+#: ../dnf/cli/option_parser.py:206
+msgid "disable excludes"
+msgstr "a kizárások letiltása"
+
+#: ../dnf/cli/option_parser.py:211
+msgid ""
+"label and path to additional repository, can be specified multiple times."
+msgstr "címke és útvonal további tárolóhoz, többször is megadható."
+
+#: ../dnf/cli/option_parser.py:214
+msgid "disable all plugins"
+msgstr "az összes bővítmény letiltása"
+
+#: ../dnf/cli/option_parser.py:216
+msgid "disable gpg signature checking"
+msgstr "gpg-aláírás ellenőrzés kihagyása"
+
+#: ../dnf/cli/option_parser.py:219
+msgid "disable plugins by name"
+msgstr "bővítmények tiltása név szerint"
+
+#: ../dnf/cli/option_parser.py:222
+msgid "control whether color is used"
+msgstr "színek használatának beállítása"
+
+#: ../dnf/cli/option_parser.py:224
+msgid "override the value of $releasever in config and repo files"
+msgstr ""
+"felülírja a $releasever értékét a konfigurációs és tárolóleíró fájlokban"
+
+#: ../dnf/cli/option_parser.py:228
+msgid "set arbitrary config and repo options"
+msgstr "tetszőleges konfiguráció- és tárolóbeállítások"
+
+#: ../dnf/cli/option_parser.py:231
+msgid "set metadata as expired before running the command"
+msgstr "metaadatok beállítása lejártként a parancs futtatása előtt"
+
+#: ../dnf/cli/option_parser.py:233
+msgid "resolve to IPv4 addresses only"
+msgstr "csak IPv4 címek feloldása"
+
+#: ../dnf/cli/option_parser.py:236
+msgid "resolve to IPv6 addresses only"
+msgstr "csak IPv6 címek feloldása"
+
+#: ../dnf/cli/option_parser.py:239
+msgid "only download packages"
+msgstr "csak a csomagok letöltése"
+
+#: ../dnf/cli/option_parser.py:264
+msgid "List of Main Commands"
+msgstr "Alapvető parancsok listázása"
+
+#: ../dnf/cli/option_parser.py:265
+msgid "List of Plugin Commands"
+msgstr "Bővítmények parancsainak listázása"
+
+#: ../dnf/goal.py:51
+msgid "--> Finding unneeded leftover dependencies"
+msgstr "--> Szükségtelen függőségek keresése"
+
+#: ../dnf/lock.py:97
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
-"Check that the correct key URLs are configured for this repository."
+"Malformed lock file found: %s.\n"
+"Ensure no other dnf process is running and remove the lock file manually or run systemd-tmpfiles --remove dnf.conf."
 msgstr ""
-"A GPG kulcsok a(z) \"%s\" nevű tárolóhoz már telepítve vannak, de nem jók ehhez a csomaghoz.\n"
-"Kérjük, ellenőrizze, hogy az URL címek helyesen vannak-e megadva ezen tárolóhoz."
+"Rosszul formázott zár fájl találva: %s.\n"
+"Bizonyosodjon meg róla, hogy nem fut más dnf folyamat és törölje kézzel a zár fájlt, vagy futtassa a systemd-tmpfiles --remove dnf.conf parancsot."
 
-#: ../dnf/base.py:1900
-msgid "Import of key(s) didn't help, wrong key(s)?"
-msgstr "A kulcsok importálása nem segített, rossz kulcsok?"
-
-#: ../dnf/base.py:1927
+#: ../dnf/lock.py:136
 #, python-format
-msgid "Package %s is already installed, skipping."
-msgstr "A(z) %s nevű csomag már telepítve van, átugrás."
+msgid "Waiting for process with pid %d to finish."
+msgstr "Várakozás a %d pid-ű folyamat befejeződésére."
 
-#: ../dnf/transaction.py:209
-#, python-format
-msgid "Will not install a source rpm package (%s)."
-msgstr "Nem fogja telepíteni a forrásrpm csomagokat (%s)."
+#: ../dnf/comps.py:92
+msgid "skipping."
+msgstr "kihagyás."
 
-#: ../dnf/plugin.py:126
+#: ../dnf/comps.py:170
 #, python-format
-msgid "Failed loading plugin: %s"
-msgstr "A következő beépülő modul betöltése sikertelen: %s"
+msgid "Group '%s' is not installed."
+msgstr "A(z) '%s' csoport nincs telepítve."
+
+#: ../dnf/comps.py:172
+#, python-format
+msgid "Group '%s' does not exist."
+msgstr "A(z) '%s' csoport nem létezik."
+
+#: ../dnf/comps.py:468
+#, python-format
+msgid "Environment '%s' is already installed."
+msgstr "A(z) '%s' környezet már telepítve van."
+
+#: ../dnf/comps.py:490 ../dnf/comps.py:511
+#, python-format
+msgid "Environment '%s' is not installed."
+msgstr "A(z) '%s' környezet nincs telepítve."
+
+#: ../dnf/comps.py:536
+#, python-format
+msgid "Group '%s' is already installed."
+msgstr "A(z) '%s' csoport már telepítve van."
+
+#: ../dnf/comps.py:561 ../dnf/comps.py:577
+#, python-format
+msgid "Group '%s' not installed."
+msgstr "A(z) '%s' csoport nincs telepítve."
+
+#: ../dnf/conf/read.py:51
+#, python-format
+msgid "Warning: failed loading '%s', skipping."
+msgstr "Figyelmeztetés: nem sikerült betölteni: '%s', átugrás."
+
+#: ../dnf/conf/read.py:61
+#, python-format
+msgid "Repository %r: Error parsing config: %s"
+msgstr "%r tároló: Hiba a konfigurációs fájl feldolgozása során: %s"
+
+#: ../dnf/conf/read.py:67
+#, python-format
+msgid "Repository %r is missing name in configuration, using id."
+msgstr ""
+"A(z) %r tárolónak hiányzik a neve a konfigurációból, azonosító használata "
+"helyette."
+
+#: ../dnf/conf/__init__.py:73
+#, python-format
+msgid "Could not set cachedir: %s"
+msgstr "Gyorsítótár-mappa beállítása meghiúsult: %s"
 
 #: ../dnf/automatic/emitter.py:29
 #, python-format
@@ -2263,4 +2242,42 @@ msgstr "A frissítések elérhetőek innen: '%s'"
 #: ../dnf/automatic/emitter.py:103
 #, python-format
 msgid "Failed to send an email via '%s': %s"
-msgstr "Sikertelen email küldési kísérlet: '%s': %s"
+msgstr "Sikertelen e-mail küldési kísérlet: '%s': %s"
+
+#: ../dnf/persistor.py:314
+msgid "Invalid groups database, clearing."
+msgstr "Hibás csoportadatbázis, tisztítás alatt."
+
+#: ../dnf/persistor.py:333
+msgid "Unsupported installed groups database found, resetting."
+msgstr "Nem támogatott csoportadatbázis található, helyreállítás alatt."
+
+#: ../dnf/persistor.py:413
+#, python-format
+msgid "%s is empty file"
+msgstr "%s egy üres fájl"
+
+#: ../dnf/crypto.py:81
+#, python-format
+msgid ""
+"Importing GPG key 0x%s:\n"
+" Userid     : \"%s\"\n"
+" Fingerprint: %s\n"
+" From       : %s"
+msgstr ""
+"0x%s GPG kulcs importálása:\n"
+"Felhasználó: \"%s\"\n"
+"Ujjlenyomat: %s\n"
+"Származás  : %s"
+
+#: ../dnf/transaction.py:209
+#, python-format
+msgid "Will not install a source rpm package (%s)."
+msgstr "Nem fogja telepíteni a forrásrpm csomagot (%s)."
+
+#: ../dnf/repo.py:819
+#, python-format
+msgid "Failed to synchronize cache for repo '%s' from '%s': %s"
+msgstr ""
+"A(z) '%s' tároló gyorsítótár szinkronizációja meghiúsult a(z) '%s' helyről: "
+"%s"
