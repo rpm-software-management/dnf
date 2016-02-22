@@ -44,6 +44,11 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Debug messages output level, in the range 0 to 10. Default is 2.
 
+
+  .. attribute::defaultyes
+
+    Like ``assumeyes`` but will still prompt for confirmation. The default is ``False``.
+
   .. attribute:: installonly_limit
 
     An integer to limit the number of installed installonly packages (packages that do not upgrade, instead few versions are installed in parallel). Defaults to ``0``, that is the limiting is disabled.
