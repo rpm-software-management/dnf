@@ -148,6 +148,8 @@ Options
 ``-h, --help``
     Show the help.
 
+.. _installroot-label:
+
 ``--installroot=<path>``
     Specifies an alternative installroot, relative to where all packages will be
     installed. Think of this like doing ``chroot <root> dnf`` except using
@@ -157,7 +159,7 @@ Options
   stored in installroot. *Gpgkeys* are imported into installroot from
   path, related to the host, described in .repo file.
 
-- *config file* and *reposdir* are searched inside the installroot first. If
+- *config file* and :ref:`reposdir <reposdir-label>` are searched inside the installroot first. If
   they are not present, they are taken from host system.
   Note:  When a path is specified within command line argument
   (``--config=<config file>`` in case of *config file* and
