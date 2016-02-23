@@ -145,7 +145,9 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 ``pluginconfpath``
     :ref:`list <list-label>`
 
-    List of directories that are searched for plugin configuration to load. All configuration files found in these directories, that are named same as a plugin, are parsed. The default contains ``/etc/dnf/plugins`` path.
+    List of directories that are searched for plugin configurations to load. All
+    configuration files found in these directories, that are named same as a
+    plugin, are parsed. The default path is ``/etc/dnf/plugins``.
 
 ``pluginpath``
     :ref:`list <list-label>`
