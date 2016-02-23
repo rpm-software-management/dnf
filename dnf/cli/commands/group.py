@@ -195,6 +195,7 @@ class GroupCommand(commands.Command):
                 msg += ' [%s]' % group.lang_only
             logger.info('%s', msg)
 
+
         def _out_env(sect, envs):
             if envs:
                 logger.info(sect)
