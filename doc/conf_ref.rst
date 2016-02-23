@@ -150,6 +150,15 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     List of directories that are searched for plugins to load. Plugins found in *any of the directories* in this configuration option are used. The default contains a Python version-specific path.
 
+.. _reposdir-label:
+
+``reposdir``
+    :ref:`list <list-label>`
+
+    DNF searches for repository configuration files in the paths specified by
+    ``reposdir``. The behavior of ``reposdir`` could differ when it is used
+    along with \-\ :ref:`-installroot <installroot-label>` option.
+
 ==============
  Repo Options
 ==============
