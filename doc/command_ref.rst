@@ -108,6 +108,8 @@ Options
 ``--debugsolver``
     Dump data aiding in dependency solver debugging into ``./debugdata``.
 
+.. _disableexcludes-label:
+
 ``--disableexcludes=[all|main|<repoid>]``
 
     Disable the config file excludes. Takes one of three options:
@@ -485,7 +487,11 @@ Dumps lists of packages depending on the packages' relation to the
 system. A package is ``installed`` if it is present in the RPMDB, and it is ``available``
 if it is not installed but it is present in a repository that DNF knows about.
 The list command can also limit the displayed packages according to other criteria,
-e.g. to only those that update an installed package.
+e.g. to only those that update an installed package. The :ref:`exclude
+<exclude-label>` option in configuration file (.conf) might influence the
+result, but if the command line option \-\ :ref:`-disableexcludes
+<disableexcludes-label>` is used, it ensure that all installed packages will be
+listed.
 
 All the forms take a ``[<package-specs>...]`` parameter to further limit the
 result to only those packages matching it.
