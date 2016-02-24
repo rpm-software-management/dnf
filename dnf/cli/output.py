@@ -42,6 +42,7 @@ import operator
 import pwd
 import sys
 import time
+from dnf.cli.utils import normalize_time
 
 logger = logging.getLogger('dnf')
 
@@ -502,9 +503,10 @@ class Output(object):
             # print(_("Committer   : %s") % ucd(pkg.committer))
             # print(_("Committime  : %s") % time.ctime(pkg.committime))
             print_key_val(_("Packager"), pkg.packager)
-            print_key_val(_("Buildtime"), time.ctime(pkg.buildtime))
+            print_key_val(_("Buildtime"), normalize_time(pkg.buildtime))
             if pkg.installtime:
-                print_key_val(_("Install time"), time.ctime(pkg.installtime))
+                print_key_val(_("Install time"),
+                              normalize_time(pkg.installtime))
             if yumdb_info:
                 uid = None
                 if 'installed_by' in yumdb_info:
