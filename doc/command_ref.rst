@@ -320,8 +320,8 @@ Groups are virtual collections of packages. DNF keeps track of groups that the u
     Display package lists of a group. Shows which packages are installed or
     available from a repo when ``-v`` is used.
 
-``dnf [options] group install [with-optional] <group-spec>...``
-    Mark the specified group installed and install packages it contains. Also include optional packages of the group if ``with-optional`` is specified.
+``dnf [options] group install [install-option] <group-spec>...``
+    Mark the specified group installed and install packages it contains (mandatory and defaults). If [install-option] is specified with ``mandatory-only``, it installs only mandatory packages. If [install-option] is specified with ``with-optional``, it also includes optional packages of the group.
 
 .. _grouplist_command-label:
 
