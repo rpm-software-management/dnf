@@ -49,7 +49,8 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 ``assumeyes``
     :ref:`boolean <boolean-label>`
 
-    If enabled then on any user input asking for confirmation (e.g. after transaction summary) the answer is implicitly ``yes``. The default is False.
+    If enabled ``dnf`` will assume ``Yes`` where it would normally prompt for
+    confirmation from user input (see also ``defaultyes``). Default is False.
 
 ``best``
     :ref:`boolean <boolean-label>`
@@ -75,6 +76,13 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     Debug messages output level, in the range 0 to 10. The higher the number the
     more debug output is put to stdout. Default is 2.
+
+
+``defaultyes``
+    :ref:`boolean <boolean-label>`
+
+    If enabled the default answer to user confirmation prompts will be ``Yes``. Not
+    to be confused with ``assumeyes`` which will not prompt at all. Default is False.
 
 ``errorlevel``
     :ref:`integer <integer-label>`

@@ -761,6 +761,7 @@ class YumConf(BaseConfig):
     assumeyes = BoolOption(False)  # :api
     assumeno = BoolOption(False)
     defaultyes = BoolOption(False)
+    defaultno = BoolOption(False)
     alwaysprompt = BoolOption(True)
     diskspacecheck = BoolOption(True)
     gpgcheck = BoolOption(False)
