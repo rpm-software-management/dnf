@@ -1,3 +1,5 @@
+# Copyright (C) 2016  Red Hat, Inc.
+#
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
 # the Free Software Foundation; either version 2 of the License, or
@@ -125,3 +127,9 @@ def show_lock_owner(pid):
     logger.critical(_('    State  : %s'), ps['state'])
 
     return
+
+
+def normalize_time(timestamp):
+    """ Convert time into Timezone aware datetime string object"""
+    t = time.strftime("%a %b %d %H:%M:%S %Y %Z", time.localtime(timestamp))
+    return t
