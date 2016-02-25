@@ -1450,5 +1450,41 @@
     [
         1239274, 
         "dnf history does not show command line"
+    ], 
+    [
+        1286477, 
+        "DNF creates /etc/yum/repos.d instead of /etc/dnf/repos.d when no repodir is present/configured"
+    ], 
+    [
+        1305356, 
+        "dnf groupinstall does not install packages, only marks them"
+    ], 
+    [
+        1258503, 
+        "regression in dnf, requires network access for history"
+    ], 
+    [
+        1283432, 
+        "dnf group list --installed / --available"
+    ], 
+    [
+        1268818, 
+        "dnf -v group list not mentioned in man page"
+    ], 
+    [
+        1306304, 
+        "[perf] cache installed set of packages in query (for updates)"
+    ], 
+    [
+        1302934, 
+        "Malformed translations in 1.1.6"
+    ], 
+    [
+        1303149, 
+        "dnf history info failing"
+    ], 
+    [
+        1302217, 
+        "dnf metadata expiration message does not fit on screen"
     ]
 ]

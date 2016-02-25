@@ -22,6 +22,28 @@
 .. contents::
 
 ===================
+1.1.7 Release Notes
+===================
+
+Added :meth:`dnf.rpm.basearch` method, intended for the detection of CPU base architecture.
+
+The :ref:`group list <grouplist_command-label>` command was enriched with ``installed`` and ``available`` switches.
+
+Documented a standard way of overriding autodetected arhitectures in :doc:`DNF API <api_conf>`.
+
+Bugs fixed in 1.1.7:
+
+* :rhbug:`1286477`
+* :rhbug:`1305356`
+* :rhbug:`1258503`
+* :rhbug:`1283432`
+* :rhbug:`1268818`
+* :rhbug:`1306304`
+* :rhbug:`1302934`
+* :rhbug:`1303149`
+* :rhbug:`1302217`
+
+===================
 1.1.6 Release Notes
 ===================
 
