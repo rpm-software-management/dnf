@@ -183,9 +183,9 @@ class OptionParser(argparse.ArgumentParser):
         self.add_argument("-v", "--verbose", action="store_true",
                            default=None, help=_("verbose operation"))
         self.add_argument("-y", "--assumeyes", action="store_true",
-                           default=None, help=_("answer yes for all questions"))
+                           default=None, help=_("Automatically answer yes for all questions"))
         self.add_argument("--assumeno", action="store_true",
-                           default=None, help=_("answer no for all questions"))
+                           default=None, help=_("Automatically answer no for all questions"))
         self.add_argument("--version", action="store_true", default=None,
                            help=_("show DNF version and exit"))
         self.add_argument("--installroot", help=_("set install root"),
