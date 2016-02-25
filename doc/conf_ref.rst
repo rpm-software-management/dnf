@@ -76,6 +76,12 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     Debug messages output level, in the range 0 to 10. The higher the number the
     more debug output is put to stdout. Default is 2.
 
+
+``defaultyes``
+    :ref:`boolean <boolean-label>`
+
+    Like ``assumeyes`` but will still prompt for confirmation. The default is False.
+
 ``errorlevel``
     :ref:`integer <integer-label>`
 
