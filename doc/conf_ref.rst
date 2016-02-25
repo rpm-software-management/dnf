@@ -47,6 +47,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 ================
 
 .. _assumeyes-label:
+
 ``assumeyes``
     :ref:`boolean <boolean-label>`
 
@@ -79,6 +80,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     more debug output is put to stdout. Default is 2.
 
 .. _defaultyes-label:
+
 ``defaultyes``
     :ref:`boolean <boolean-label>`
 
