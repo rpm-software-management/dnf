@@ -2,6 +2,8 @@
  Dandified Yum
 ###############
 
+.. image:: https://raw.githubusercontent.com/rpm-software-management/dnf/gh-pages/logos/DNF_logo.png
+ 
 Dandified Yum (DNF) is the next upcoming major version of `Yum <http://yum.baseurl.org/>`_. It does package management using `RPM <http://rpm.org/>`_, `libsolv <https://github.com/openSUSE/libsolv>`_ and `hawkey <https://github.com/rpm-software-management/hawkey>`_ libraries. For metadata handling and package downloads it utilizes `librepo <https://github.com/tojaj/librepo>`_. To process and effectively handle the comps data it uses `libcomps <https://github.com/midnightercz/libcomps>`_.
 
 ============
