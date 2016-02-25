@@ -10,7 +10,7 @@
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 
 Name:		dnf
-Version:	1.1.6
+Version:	1.1.7
 Release:	1%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -285,6 +285,23 @@ exit 0
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Thu Feb 25 2016 Michal Luscon <mluscon@redhat.com> 1.1.7-1
+- Add `/etc/distro.repos.d` as a path owned by the dnf package (Neal Gompa
+  (ニール・ゴンパ))
+- Change order of search and add new default repodirs (RhBug:1286477) (Neal
+  Gompa (ニール・ゴンパ))
+- group: don't mark available packages as installed (RhBug:1305356) (Jan
+  Silhan)
+- history: adjust demands for particular subcommands (RhBug:1258503) (Michal
+  Luscon)
+- Added extension command for group list (RhBug:1283432) (Abhijeet Kasurde)
+- perf: dnf repository-packages <repo> upgrade (RhBug:1306304) (Jan Silhan)
+- sack: Pass base.conf.substitutions["arch"] to sack in build_sack() function.
+  (Daniel Mach)
+- build: make python2/3 binaries at build time (Michal Domonkos)
+- fix dnf history traceback (RhBug:1303149) (Jan Silhan)
+- cli: truncate expiration msg (RhBug:1302217) (Michal Luscon)
+
 * Mon Jan 25 2016 Michal Luscon <mluscon@redhat.com> 1.1.6-1
 - history: don't fail if there is no history (RhBug:1291895) (Michal Luscon)
 - Allow dnf to use a socks5 proxy, since curl support it (RhBug:1256587)
