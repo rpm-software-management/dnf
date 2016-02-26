@@ -88,4 +88,5 @@ _BASEARCH_MAP = _invert({
 
 
 def basearch(arch):
+    # :api
     return _BASEARCH_MAP[arch]
