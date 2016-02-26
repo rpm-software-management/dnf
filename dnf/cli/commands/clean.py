@@ -32,8 +32,7 @@ import os
 
 logger = logging.getLogger("dnf")
 
-valid_args = ('packages', 'metadata', 'dbcache', 'plugins', 'expire-cache',
-              'rpmdb', 'all')
+valid_args = ('packages', 'metadata', 'dbcache', 'expire-cache', 'all')
 
 
 def _check_args(cli, basecmd, extcmds):
@@ -114,17 +113,6 @@ def _clean_packages(repos):
     return _clean_files(repos, exts, 'pkgdir', 'package')
 
 
-def _clean_rpmdb(persistdir):
-    """Delete any cached data from the local rpmdb."""
-
-    cachedir = persistdir + "/rpmdb-indexes/"
-    if not os.path.exists(cachedir):
-        filelist = []
-    else:
-        filelist = misc.getFileList(cachedir, '', [])
-    return _clean_filelist('rpmdb', filelist)
-
-
 def clean_expire_cache(repos):
     """Delete the local data saying when the metadata and mirror
        lists were downloaded for each repository."""
@@ -159,7 +147,6 @@ class CleanCommand(commands.Command):
                determine the remote availability of packages
              dbcache = Eliminate the sqlite cache used for faster
                access to metadata
-             rpmdb = Eliminate any cached datat from the local rpmdb
              all = do all of the above
         :return: (exit_code, [ errors ])
 
@@ -177,18 +164,15 @@ class CleanCommand(commands.Command):
             ' '.join([x.id for x in repos.iter_enabled()]))
         logger.info(msg)
 
-        persistdir = self.base.conf.persistdir
         cachedir = self.base.conf.cachedir
         if 'all' in userlist:
             logger.info(_('Cleaning up Everything'))
             pkgcode, pkgresults = _clean_packages(repos)
             xmlcode, xmlresults = _clean_metadata(repos)
             dbcode, dbresults = _clean_binary_cache(repos, cachedir)
-            rpmcode, rpmresults = _clean_rpmdb(persistdir)
 
-            code = pkgcode + xmlcode + dbcode + rpmcode
-            results = (pkgresults + xmlresults + dbresults +
-                       rpmresults)
+            code = pkgcode + xmlcode + dbcode
+            results = (pkgresults + xmlresults + dbresults)
             for msg in results:
                 logger.debug(msg)
             return code, []
@@ -204,9 +188,6 @@ class CleanCommand(commands.Command):
         if 'expire-cache' in userlist or 'metadata' in userlist:
             logger.debug(_('Cleaning up expire-cache metadata'))
             clean_expire_cache(repos)
-        if 'rpmdb' in userlist:
-            logger.debug(_('Cleaning up cached rpmdb data'))
-            expccode, expcresults = _clean_rpmdb(persistdir)
 
         results = pkgresults + xmlresults + dbresults + expcresults
         for msg in results:

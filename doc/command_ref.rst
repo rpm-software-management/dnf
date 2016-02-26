@@ -262,9 +262,6 @@ Performs cleanup of temporary files for the currently enabled repositories.
 ``dnf clean packages``
     Removes any cached packages from the system.
 
-``dnf clean plugins``
-    Tells all enabled plugins to eliminate their cached data.
-
 ``dnf clean all``
     Does all of the above.
 
