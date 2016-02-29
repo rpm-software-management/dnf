@@ -98,7 +98,7 @@ Options
     Automatically answer no for all questions
 
 ``-b, --best``
-    Try the best available package versions in transactions. Specifically during ``dnf upgrade``, which by default skips over updates that can not be installed for dependency reasons, the switch forces DNF to only consider the latest packages and possibly fail giving a reason why the latest version can not be installed.
+    Try the best available package versions in transactions. Specifically during :ref:`dnf upgrade <upgrade_command-label>`, which by default skips over updates that can not be installed for dependency reasons, the switch forces DNF to only consider the latest packages. When running into packages with broken dependencies, DNF will fail giving a reason why the latest version can not be installed.
 
 ``-C, --cacheonly``
     Run entirely from system cache, don't update the cache and use it even in case it is expired.
