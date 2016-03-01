@@ -620,7 +620,7 @@ msgstr "Ist dies in Ordnung? [j/N] : "
 
 #: ../dnf/cli/output.py:629
 msgid "Is this ok [Y/n]: "
-msgstr "Ist dies in Ordnung? [j/N] : "
+msgstr "Ist dies in Ordnung? [J/n] : "
 
 #: ../dnf/cli/output.py:707
 #, python-format
