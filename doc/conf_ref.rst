@@ -108,7 +108,9 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     These packages are never removed by ``dnf autoremove`` even if they were
     installed as dependencies (see
     :ref:`clean_requirements_on_remove <clean_requirements_on_remove-label>`
-    for auto removal details). The number of kept package versions is regulated by :ref:`installonly_limit <installonly-limit-label>`.
+    for auto removal details).
+    This option overrides the default installonlypkgs list used by DNF.
+    The number of kept package versions is regulated by :ref:`installonly_limit <installonly-limit-label>`.
 
 .. _installonly-limit-label:
 
