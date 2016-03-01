@@ -586,7 +586,7 @@ msgstr "Er dette ok [j/N]: "
 
 #: ../dnf/cli/output.py:629
 msgid "Is this ok [Y/n]: "
-msgstr ""
+msgstr "Er dette ok [J/n]: "
 
 #: ../dnf/cli/output.py:707
 #, python-format
