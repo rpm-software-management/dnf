@@ -579,7 +579,7 @@ msgstr "શું આ બરાબર છે [y/N]: "
 
 #: ../dnf/cli/output.py:629
 msgid "Is this ok [Y/n]: "
-msgstr ""
+msgstr "શું આ બરાબર છે [Y/n]: "
 
 #: ../dnf/cli/output.py:707
 #, python-format

@@ -590,7 +590,7 @@ msgstr "Procedere [s/N]: "
 
 #: ../dnf/cli/output.py:629
 msgid "Is this ok [Y/n]: "
-msgstr "Procedere [s/N]: "
+msgstr "Procedere [S/n]: "
 
 #: ../dnf/cli/output.py:707
 #, python-format

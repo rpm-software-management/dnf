@@ -587,7 +587,7 @@ msgstr "Correto? [s/N]: "
 
 #: ../dnf/cli/output.py:629
 msgid "Is this ok [Y/n]: "
-msgstr ""
+msgstr "Correto? [S/n]: "
 
 #: ../dnf/cli/output.py:707
 #, python-format

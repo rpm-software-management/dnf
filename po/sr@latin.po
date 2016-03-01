@@ -955,7 +955,7 @@ msgstr "Pogrešan tsflag u datoteci podešavanja: %s"
 
 #: ../dnf/cli/output.py:626
 msgid "Is this ok [Y/n]: "
-msgstr ""
+msgstr "Da li je ovo u redu [D/n]: "
 
 #: ../dnf/cli/output.py:623
 msgid "Is this ok [y/N]: "

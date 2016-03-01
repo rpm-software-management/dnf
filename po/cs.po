@@ -601,7 +601,7 @@ msgstr "V pořádku [a/N]: "
 
 #: ../dnf/cli/output.py:629
 msgid "Is this ok [Y/n]: "
-msgstr "V pořádku [a/N]: "
+msgstr "V pořádku [A/n]: "
 
 #: ../dnf/cli/output.py:707
 #, python-format
