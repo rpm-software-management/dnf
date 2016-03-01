@@ -83,7 +83,8 @@ class Goal(hawkey.Goal):
         return res
 
     def available_updates_diff(self, query):
-        available_updates = set(query.upgrades().latest().run())
+        available_updates = set(query.upgrades().filter(arch__neq="src")
+                                .latest().run())
         installable_updates = set(self.list_upgrades())
         installs = set(self.list_installs())
         return (available_updates - installable_updates) - installs
