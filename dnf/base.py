@@ -209,6 +209,7 @@ class Base(object):
 
     @property
     def repos(self):
+        # :api
         return self._repos
 
     @repos.deleter
