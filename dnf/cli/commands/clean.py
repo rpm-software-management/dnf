@@ -26,7 +26,7 @@ from dnf.yum import misc
 
 import dnf.cli
 import dnf.logging
-import hawkey
+import dnf.repo
 import logging
 import os
 import re
@@ -41,22 +41,6 @@ _CACHE_TYPES = {
     'expire-cache': ['expire-cache'],
     'all': ['metadata', 'packages', 'dbcache'],
 }
-
-
-def _cache_files(repos):
-    """Return regex patterns matching repository cache filenames."""
-    dirs, rids = [], [hawkey.SYSTEM_REPO_NAME]
-    for repo in repos:
-        dirs += [os.path.basename(repo.cachedir)]
-        rids += [repo.id]
-    dirs = '|'.join(re.escape(d) for d in dirs)
-    rids = '|'.join(re.escape(r) for r in rids)
-    metaext = r'xml(\.gz|\.xz|\.bz2)?|asc|cachecookie|mirrorlist'
-    return {
-        'metadata': r'^(%s)\/.*(%s)$' % (dirs, metaext),
-        'packages': r'^(%s)\/packages\/.+rpm$' % dirs,
-        'dbcache': r'^(%s).+(solv|solvx)$' % rids,
-    }
 
 
 def _check_args(cli, basecmd, extcmds):
@@ -134,7 +118,7 @@ class CleanCommand(commands.Command):
                 repo.md_expire_cache()
             types.remove('expire-cache')
 
-        pdict = _cache_files(repos)
+        pdict = dnf.repo.cache_files(repos)
         patterns = [pdict[t] for t in types]
         count = _clean(cachedir, _filter(files, patterns))
         logger.info(P_('%d file removed', '%d files removed', count) % count)

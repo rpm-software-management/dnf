@@ -39,17 +39,35 @@ import logging
 import librepo
 import operator
 import os
+import re
 import shutil
 import string
 import time
 import types
 
 _METADATA_RELATIVE_DIR = "repodata"
+_PACKAGES_RELATIVE_DIR = "packages"
 _METALINK_FILENAME = "metalink.xml"
 _MIRRORLIST_FILENAME = "mirrorlist"
 _RECOGNIZED_CHKSUMS = ['sha512', 'sha256']
 
 logger = logging.getLogger("dnf")
+
+
+def cache_files(repos):
+    """Return regex patterns matching repository cache filenames."""
+    dirs, rids = [], [hawkey.SYSTEM_REPO_NAME]
+    for repo in repos:
+        dirs += [os.path.basename(repo.cachedir)]
+        rids += [repo.id]
+    dirs = '|'.join(re.escape(d) for d in dirs)
+    rids = '|'.join(re.escape(r) for r in rids)
+    metaext = r'xml(\.gz|\.xz|\.bz2)?|asc|cachecookie|' + _MIRRORLIST_FILENAME
+    return {
+        'metadata': r'^(%s)\/.*(%s)$' % (dirs, metaext),
+        'packages': r'^(%s)\/%s\/.+rpm$' % (dirs, _PACKAGES_RELATIVE_DIR),
+        'dbcache': r'^(%s).+(solv|solvx)$' % rids,
+    }
 
 
 def repo_id_invalid(repo_id):
@@ -523,7 +541,7 @@ class Repo(dnf.yum.config.RepoConf):
             return dnf.util.strip_prefix(self.baseurl[0], 'file://')
         if self._pkgdir is not None:
             return self._pkgdir
-        return os.path.join(self.cachedir, 'packages')
+        return os.path.join(self.cachedir, _PACKAGES_RELATIVE_DIR)
 
     @pkgdir.setter
     def pkgdir(self, val):
