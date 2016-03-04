@@ -43,21 +43,6 @@ _CACHE_TYPES = {
 }
 
 
-def _check_args(cli, basecmd, extcmds):
-    """Verify that extcmds are valid options for clean."""
-
-    if len(extcmds) == 0:
-        logger.critical(_('Error: clean requires an option: %s'),
-                        ", ".join(_CACHE_TYPES))
-        raise dnf.cli.CliError
-
-    for cmd in extcmds:
-        if cmd not in _CACHE_TYPES:
-            logger.critical(_('Error: invalid clean argument: %r'), cmd)
-            commands.err_mini_usage(cli, basecmd)
-            raise dnf.cli.CliError
-
-
 def _tree(dirpath):
     """Traverse dirpath recursively and yield relative filenames."""
     for root, dirs, files in os.walk(dirpath):
@@ -100,7 +85,18 @@ class CleanCommand(commands.Command):
         :param basecmd: the name of the command
         :param extcmds: the command line arguments passed to *basecmd*
         """
-        _check_args(self.cli, basecmd, extcmds)
+
+        if len(extcmds) == 0:
+            logger.critical(_('Error: clean requires an option: %s'),
+                            ", ".join(_CACHE_TYPES))
+            raise dnf.cli.CliError
+
+        for cmd in extcmds:
+            if cmd not in _CACHE_TYPES:
+                logger.critical(_('Error: invalid clean argument: %r'), cmd)
+                commands.err_mini_usage(self.cli, basecmd)
+                raise dnf.cli.CliError
+
         commands.checkEnabledRepo(self.base)
 
     def run(self, extcmds):
