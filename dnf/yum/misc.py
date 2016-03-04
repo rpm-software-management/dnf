@@ -185,26 +185,6 @@ def checksum(sumtype, file, CHUNK=2**16, datasize=None):
     except (IOError, OSError) as e:
         raise MiscError('Error reading file for checksum: %s' % file)
 
-def getFileList(path, ext, filelist):
-    """Return all files in path matching ext, store them in filelist,
-       recurse dirs return list object"""
-
-    extlen = len(ext)
-    try:
-        dir_list = os.listdir(path)
-    except OSError as e:
-        raise MiscError(('Error accessing directory %s, %s') % (path, e))
-
-    for d in dir_list:
-        if os.path.isdir(path + '/' + d):
-            filelist = getFileList(path + '/' + d, ext, filelist)
-        else:
-            if not ext or d[-extlen:].lower() == '%s' % (ext):
-                newpath = os.path.normpath(path + '/' + d)
-                filelist.append(newpath)
-
-    return filelist
-
 class GenericHolder(object):
     """Generic Holder class used to hold other objects of known types
        It exists purely to be able to do object.somestuff, object.someotherstuff

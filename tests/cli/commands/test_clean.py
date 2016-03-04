@@ -17,38 +17,63 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from tests import support
 from tests.support import mock
 
-import dnf.const
 import dnf.cli.commands.clean as clean
-import hawkey
+import os
 import tests.support
 
 
 class CleanTest(tests.support.TestCase):
-    def test_clean_binary_cache(self):
-        base = tests.support.MockBase('main')
-        with mock.patch('os.access', return_value=True) as access,\
-             mock.patch('dnf.cli.commands.clean._clean_filelist'):
-            clean._clean_binary_cache(base.repos, base.conf.cachedir)
-        self.assertEqual(len(access.call_args_list), 5)
-        fname = access.call_args_list[0][0][0]
-        assert fname.startswith(dnf.const.TMPDIR)
-        assert fname.endswith(hawkey.SYSTEM_REPO_NAME + '.solv')
-        fname = access.call_args_list[1][0][0]
-        assert fname.endswith('main.solv')
-        fname = access.call_args_list[2][0][0]
-        assert fname.endswith('main-filenames.solvx')
+    def setUp(self):
+        base = support.MockBase("main")
+        base.output = mock.MagicMock()
 
-    def test_clean_files_local(self):
-        """Do not delete files from a local repo."""
-        base = tests.support.MockBase("main")
         repo = base.repos['main']
-        repo.baseurl = ['file:///dnf-bad-test']
-        repo.basecachedir = '/tmp/dnf-bad-test'
-        with mock.patch('dnf.cli.commands.clean._clean_filelist'),\
-             mock.patch('os.path.exists', return_value=True) as exists_mock:
-            dnf.cli.commands.clean._clean_files(base.repos, ['rpm'], 'pkgdir',
-                                                'package')
-        # local repo is not even checked for directory existence:
-        self.assertIsNone(exists_mock.call_args)
+        repo.baseurl = ['http:///dnf-test']
+        repo.basecachedir = base.conf.cachedir
+
+        walk = [
+            (
+                repo.basecachedir,
+                [os.path.basename(repo.cachedir)],
+                [repo.id + '.solv'],
+            ),
+            (repo.cachedir, ['repodata', 'packages'], ['metalink.xml']),
+            (repo.cachedir + '/repodata', [], ['foo.xml', 'bar.xml.bz2']),
+            (repo.cachedir + '/packages', [], ['foo.rpm']),
+        ]
+        os.walk = self.walk = mock.Mock(return_value=walk)
+        self.base = base
+        self.cmd = clean.CleanCommand(base.mock_cli())
+
+    def test_run(self):
+        with mock.patch('dnf.cli.commands.clean._clean') as _clean:
+            self.cmd.run(['all'])
+            self.cmd.run(['metadata'])
+            self.cmd.run(['metadata', 'packages'])
+            self.cmd.run(['metadata', 'packages', 'expire-cache'])
+            self.cmd.run(['dbcache'])
+            self.cmd.run(['expire-cache'])
+
+        calls = [call[0] for call in _clean.call_args_list]
+        counts = (5, 4, 5, 5, 1, 0)
+        for call, count in zip(calls, counts):
+            files = list(call[1])
+            assert len(files) == count
+
+    def test_walk_once(self):
+        self.cmd.run(['all'])
+        assert len(self.walk.call_args_list) == 1
+
+    def test_clean_local_repo(self):
+        cachedir = self.base.conf.cachedir
+        repo = self.base.repos['main']
+        repo.baseurl = ['file:///localrepo']
+
+        self.cmd.run(['all'])
+
+        # Make sure we never looked outside the base cachedir
+        dirs = [call[0][0] for call in self.walk.call_args_list]
+        assert all(d == cachedir for d in dirs)
