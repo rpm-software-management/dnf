@@ -29,10 +29,34 @@ import dnf.logging
 import hawkey
 import logging
 import os
+import re
 
 logger = logging.getLogger("dnf")
 
-valid_args = ('packages', 'metadata', 'dbcache', 'expire-cache', 'all')
+# Dict mapping cmdline arguments to actual data types to be cleaned up
+_CACHE_TYPES = {
+    'metadata': ['metadata', 'dbcache', 'expire-cache'],
+    'packages': ['packages'],
+    'dbcache': ['dbcache'],
+    'expire-cache': ['expire-cache'],
+    'all': ['metadata', 'packages', 'dbcache'],
+}
+
+
+def _cache_files(repos):
+    """Return regex patterns matching repository cache filenames."""
+    dirs, rids = [], [hawkey.SYSTEM_REPO_NAME]
+    for repo in repos:
+        dirs += [os.path.basename(repo.cachedir)]
+        rids += [repo.id]
+    dirs = '|'.join(re.escape(d) for d in dirs)
+    rids = '|'.join(re.escape(r) for r in rids)
+    metaext = r'xml(\.gz|\.xz|\.bz2)?|asc|cachecookie|mirrorlist'
+    return {
+        'metadata': r'^(%s)\/.*(%s)$' % (dirs, metaext),
+        'packages': r'^(%s)\/packages\/.+rpm$' % dirs,
+        'dbcache': r'^(%s).+(solv|solvx)$' % rids,
+    }
 
 
 def _check_args(cli, basecmd, extcmds):
@@ -40,86 +64,39 @@ def _check_args(cli, basecmd, extcmds):
 
     if len(extcmds) == 0:
         logger.critical(_('Error: clean requires an option: %s'),
-                        ", ".join(valid_args))
+                        ", ".join(_CACHE_TYPES))
         raise dnf.cli.CliError
 
     for cmd in extcmds:
-        if cmd not in valid_args:
+        if cmd not in _CACHE_TYPES:
             logger.critical(_('Error: invalid clean argument: %r'), cmd)
             commands.err_mini_usage(cli, basecmd)
             raise dnf.cli.CliError
 
 
-def _clean_binary_cache(repos, cachedir):
-    """ Delete the binary cache files from the DNF cache.
-
-        IOW, clean up the .solv and .solvx hawkey cache files.
-    """
-    files = [os.path.join(cachedir, hawkey.SYSTEM_REPO_NAME + ".solv")]
-    for repo in repos.iter_enabled():
-        basename = os.path.join(cachedir, repo.id)
-        files.append(basename + ".solv")
-        files.append(basename + "-filenames.solvx")
-        files.append(basename + "-presto.solvx")
-        files.append(basename + "-updateinfo.solvx")
-    files = [f for f in files if os.access(f, os.F_OK)]
-
-    return _clean_filelist('dbcache', files)
+def _tree(dirpath):
+    """Traverse dirpath recursively and yield relative filenames."""
+    for root, dirs, files in os.walk(dirpath):
+        base = os.path.relpath(root, dirpath)
+        for f in files:
+            path = os.path.join(base, f)
+            yield os.path.normpath(path)
 
 
-def _clean_filelist(filetype, filelist):
-    removed = 0
-    for item in filelist:
-        try:
-            misc.unlink_f(item)
-        except OSError:
-            logger.critical(_('Cannot remove %s file %s'),
-                                 filetype, item)
-            continue
-        else:
-            logger.log(dnf.logging.DDEBUG,
-                _('%s file %s removed'), filetype, item)
-            removed += 1
-    msg = P_('%d %s file removed', '%d %s files removed', removed)
-    msg %= (removed, filetype)
-    return 0, [msg]
+def _filter(files, patterns):
+    """Yield those filenames that match any of the patterns."""
+    return (f for f in files for p in patterns if re.match(p, f))
 
 
-def _clean_files(repos, exts, pathattr, filetype):
-    filelist = []
-    for ext in exts:
-        for repo in repos.iter_enabled():
-            if repo.local and filetype != 'metadata':
-                continue
-            path = getattr(repo, pathattr)
-            if os.path.exists(path) and os.path.isdir(path):
-                filelist = misc.getFileList(path, ext, filelist)
-    return _clean_filelist(filetype, filelist)
-
-
-def _clean_metadata(repos):
-    """Delete the metadata files from the yum cache."""
-
-    exts = ('xml.gz', 'xml', 'cachecookie', 'mirrorlist', 'asc',
-            'xml.bz2', 'xml.xz')
-    # Metalink is also here, but is a *.xml file
-    return _clean_files(repos, exts, 'cachedir', 'metadata')
-
-
-def _clean_packages(repos):
-    """Delete the package files from the yum cache."""
-
-    exts = ('rpm',)
-    return _clean_files(repos, exts, 'pkgdir', 'package')
-
-
-def clean_expire_cache(repos):
-    """Delete the local data saying when the metadata and mirror
-       lists were downloaded for each repository."""
-
-    for repo in repos.iter_enabled():
-        repo.md_expire_cache()
-    return 0, [_('The enabled repos were expired')]
+def _clean(dirpath, files):
+    """Remove the given filenames from dirpath."""
+    count = 0
+    for f in files:
+        path = os.path.join(dirpath, f)
+        logger.log(dnf.logging.DDEBUG, 'Removing file %s', path)
+        misc.unlink_f(path)
+        count += 1
+    return count
 
 
 class CleanCommand(commands.Command):
@@ -129,72 +106,7 @@ class CleanCommand(commands.Command):
 
     aliases = ('clean',)
     summary = _("Remove cached data")
-    usage = "[%s]" % "|".join(valid_args)
-
-
-    def clean(self, userlist):
-        """Remove data from the yum cache directory.  What data is
-        removed depends on the options supplied by the user.
-
-        :param userlist: a list of options.  The following are valid
-           options::
-
-             expire-cache = Eliminate the local data saying when the
-               metadata and mirror lists were downloaded for each
-               repository.
-             packages = Eliminate any cached packages
-             metadata = Eliminate all of the files which yum uses to
-               determine the remote availability of packages
-             dbcache = Eliminate the sqlite cache used for faster
-               access to metadata
-             all = do all of the above
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
-        """
-        pkgcode = xmlcode = dbcode = expccode = 0
-        pkgresults = xmlresults = dbresults = expcresults = []
-        repos = self.base.repos
-        msg = self.output.fmtKeyValFill(
-            _('Cleaning repos: '),
-            ' '.join([x.id for x in repos.iter_enabled()]))
-        logger.info(msg)
-
-        cachedir = self.base.conf.cachedir
-        if 'all' in userlist:
-            logger.info(_('Cleaning up Everything'))
-            pkgcode, pkgresults = _clean_packages(repos)
-            xmlcode, xmlresults = _clean_metadata(repos)
-            dbcode, dbresults = _clean_binary_cache(repos, cachedir)
-
-            code = pkgcode + xmlcode + dbcode
-            results = (pkgresults + xmlresults + dbresults)
-            for msg in results:
-                logger.debug(msg)
-            return code, []
-        if 'packages' in userlist:
-            logger.debug(_('Cleaning up Packages'))
-            pkgcode, pkgresults = _clean_packages(repos)
-        if 'metadata' in userlist:
-            logger.debug(_('Cleaning up xml metadata'))
-            xmlcode, xmlresults = _clean_metadata(repos)
-        if 'dbcache' in userlist or 'metadata' in userlist:
-            logger.debug(_('Cleaning up database cache'))
-            dbcode, dbresults = _clean_binary_cache(repos, cachedir)
-        if 'expire-cache' in userlist or 'metadata' in userlist:
-            logger.debug(_('Cleaning up expire-cache metadata'))
-            clean_expire_cache(repos)
-
-        results = pkgresults + xmlresults + dbresults + expcresults
-        for msg in results:
-            logger.info(msg)
-        code = pkgcode + xmlcode + dbcode + expccode
-        if code:
-            raise dnf.exceptions.Error('Error cleaning up.')
+    usage = "[%s]" % "|".join(_CACHE_TYPES)
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can run.
@@ -208,4 +120,21 @@ class CleanCommand(commands.Command):
         commands.checkEnabledRepo(self.base)
 
     def run(self, extcmds):
-        return self.clean(extcmds)
+        cachedir = self.base.conf.cachedir
+        repos = self.base.repos.enabled()
+        types = set(t for c in extcmds for t in _CACHE_TYPES[c])
+        files = _tree(cachedir)
+        msg = self.output.fmtKeyValFill(_('Cleaning repos: '),
+                                        ' '.join([r.id for r in repos]))
+        logger.info(msg)
+        logger.debug(_('Cleaning data: ' + ' '.join(types)))
+
+        if 'expire-cache' in types:
+            for repo in repos:
+                repo.md_expire_cache()
+            types.remove('expire-cache')
+
+        pdict = _cache_files(repos)
+        patterns = [pdict[t] for t in types]
+        count = _clean(cachedir, _filter(files, patterns))
+        logger.info(P_('%d file removed', '%d files removed', count) % count)
