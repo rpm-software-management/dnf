@@ -1406,9 +1406,9 @@ Transaction Summary
                 name = _("Login user")
             print(fmt % (fill_exact_width(_("ID"), 6, 6),
                         fill_exact_width(name, 24, 24),
-                        fill_exact_width(_("Date and time"), 6, 6),
-                        fill_exact_width(_("Action(s)"), 6, 6),
-                        fill_exact_width(_("Altered"), 6, 6)))
+                        fill_exact_width(_("Date and time"), 16, 16),
+                        fill_exact_width(_("Action(s)"), 14, 14),
+                        fill_exact_width(_("Altered"), 7, 7)))
             print("-" * 79)
             fmt = "%6u | %s | %-16.16s | %s | %4u"
 
