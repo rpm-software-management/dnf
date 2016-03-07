@@ -1049,7 +1049,7 @@ class HistoryCommand(Command):
 
     def configure(self, args):
         demands = self.cli.demands
-        if args[0] in ['redo', 'undo', 'rollback']:
+        if args and args[0] in ['redo', 'undo', 'rollback']:
             demands.available_repos = True
         else:
             demands.fresh_metadata = False
