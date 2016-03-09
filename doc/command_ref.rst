@@ -250,9 +250,8 @@ Performs cleanup of temporary files for the currently enabled repositories.
     to regenerate the cache files the next time it is run.
 
 ``dnf clean expire-cache``
-    Removes local cookie files saying when the metadata and mirrorlists were
-    downloaded for each repo. DNF will re-validate the cache for each repo the
-    next time it is used.
+    Marks the repository metadata expired. DNF will re-validate the cache for
+    each repo the next time it is used.
 
 ``dnf clean metadata``
     Removes repository metadata. Those are the files which DNF uses to determine
