@@ -50,6 +50,8 @@ _PACKAGES_RELATIVE_DIR = "packages"
 _METALINK_FILENAME = "metalink.xml"
 _MIRRORLIST_FILENAME = "mirrorlist"
 _RECOGNIZED_CHKSUMS = ['sha512', 'sha256']
+# Chars allowed in a repo ID
+_REPOID_CHARS = string.ascii_letters + string.digits + '-_.:'
 
 logger = logging.getLogger("dnf")
 
@@ -71,10 +73,9 @@ def cache_files(repos):
 
 
 def repo_id_invalid(repo_id):
-    """Return index of an invalid character in the repo ID (if present). :api"""
-    allowed_chars = ''.join((string.ascii_letters, string.digits, '-_.:'))
-    invalids = (index for index, char in enumerate(repo_id)
-                if char not in allowed_chars)
+    """Return index of an invalid character in the repo ID (if present).
+    :api"""
+    invalids = (i for i, c in enumerate(repo_id) if c not in _REPOID_CHARS)
     return dnf.util.first(invalids)
 
 
