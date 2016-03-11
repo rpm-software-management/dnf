@@ -371,8 +371,8 @@ Detailed table for ``package-cleanup`` replacement:
 
 ================================        =============================
 ``package-cleanup --dupes``             ``dnf repoquery --duplicated``
-``package-cleanup --leaves``            ``dnf list autoremove``
-``package-cleanup --orphans``           ``dnf list extras``
+``package-cleanup --leaves``            ``dnf repoquery --unneeded``
+``package-cleanup --orphans``           ``dnf repoquery --extras``
 ``package-cleanup --oldkernels``        ``dnf repoquery --installonly``
 ``package-cleanup --problems``          ``dnf repoquery --unsatisfied``
 ``package-cleanup --cleandupes``        ``dnf remove $(dnf repoquery --duplicated --latest-limit -1 -q)``
