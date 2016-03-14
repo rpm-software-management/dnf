@@ -299,6 +299,18 @@ DNF will not magically replace a request for installing package ``X`` to install
 See the the related `Fedora bug 1096506
 <https://bugzilla.redhat.com/show_bug.cgi?id=1096506>`_ and `guidelines for renaming and obsoleting packages in Fedora <http://fedoraproject.org/wiki/Upgrade_paths_%E2%80%94_renaming_or_splitting_packages>`_.
 
+====================================
+Behavior of ``--installroot`` option
+====================================
+
+DNF offer more predictable behavior of installroot. DNF differently handles path
+from ``--config`` command-line option, where this path is always related to host
+system (Yum combines this path with installroot). Reposdir is also slightly
+differently handled, if one path of reposdirs exists inside of installroot, than
+repos are strictly taken from installroot (Yum tests each path from reposdir
+separately and use installroot path if existed). See detailed description for
+\-\ :ref:`-installroot <installroot-label>` option.
+
 ###############################################
  Changes in DNF plugins compared to Yum plugins
 ###############################################
