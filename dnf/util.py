@@ -33,6 +33,7 @@ import os
 import pwd
 import shutil
 import subprocess
+import sys
 import tempfile
 import time
 
@@ -54,6 +55,27 @@ def clear_dir(path):
     for entry in os.listdir(path):
         contained_path = os.path.join(path, entry)
         rm_rf(contained_path)
+
+def enforce_api(C):
+    class Wrapper(C):
+        def __getattr__(self, name):
+            priv_attr = '_' + name
+            if not name.startswith('_') and hasattr(self, priv_attr):
+                msg = ('The \'%s\' function is not a part of DNF API '
+                       'and will be removed in the upcoming DNF release. '
+                       'Please use only officially supported API functions. '
+                       'DNF API documentation is available at '
+                       'https://dnf.readthedocs.org/en/latest/api.html.\n'
+                       % (name))
+                if sys.stdout:
+                    sys.stdout.write(msg)
+                if sys.stderr:
+                    sys.stderr.write(msg)
+                return getattr(self, priv_attr)
+            else:
+                raise AttributeError('\'%s\' object has no attribute \'%s\''
+                                     % (C.__name__, name))
+    return Wrapper
 
 def ensure_dir(dname):
     try:
