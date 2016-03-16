@@ -1,5 +1,5 @@
 # Copyright 2002 Duke University
-# Copyright (C) 2012-2013  Red Hat, Inc.
+# Copyright (C) 2012-2016  Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -305,9 +305,11 @@ class IntOption(Option):
 
     def parse_int(self, n):
         if self._range_max is not None and n > self._range_max:
-            raise ValueError('Out of range integer value.')
+            raise ValueError('Given value [%d] should be less than '
+                             'allowed value [%d].' % (n, self._range_max))
         if self._range_min is not None and n < self._range_min:
-            raise ValueError('Out of range integer value.')
+            raise ValueError('Given value [%d] should be greater than '
+                             'allowed value [%d].' % (n, self._range_min))
         return n
 
 class PositiveIntOption(IntOption):
