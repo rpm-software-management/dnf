@@ -46,11 +46,19 @@ import time
 logger = logging.getLogger('dnf')
 
 
-def _make_lists(transaction):
+def _make_lists(transaction, goal):
     def tsi_cmp_key(tsi):
         return str(tsi.active)
 
-    TYPES = ('downgraded', 'erased', 'installed', 'reinstalled', 'upgraded', 'failed')
+    TYPES = ('downgraded',
+             'erased',
+             'erased_clean',
+             'installed',
+             'installed_dep',
+             'installed_weak',
+             'reinstalled',
+             'upgraded',
+             'failed')
     b = dnf.util.Bunch()
     for ttype in TYPES:
         b[ttype] = []
@@ -58,9 +66,20 @@ def _make_lists(transaction):
         if tsi.op_type == dnf.transaction.DOWNGRADE:
             b.downgraded.append(tsi)
         elif tsi.op_type == dnf.transaction.ERASE:
-            b.erased.append(tsi)
+            if tsi.erased and goal.get_reason(tsi.erased) == 'clean':
+                b.erased_clean.append(tsi)
+            else:
+                b.erased.append(tsi)
         elif tsi.op_type == dnf.transaction.INSTALL:
-            b.installed.append(tsi)
+            if tsi.installed:
+                reason = goal.get_reason(tsi.installed)
+                if reason == 'user':
+                    b.installed.append(tsi)
+                    continue
+                elif reason == 'weak':
+                    b.installed_weak.append(tsi)
+                    continue
+            b.installed_dep.append(tsi)
         elif tsi.op_type == dnf.transaction.REINSTALL:
             b.reinstalled.append(tsi)
         elif tsi.op_type == dnf.transaction.UPGRADE:
@@ -978,7 +997,7 @@ class Output(object):
         if transaction is None:
             return None
 
-        list_bunch = _make_lists(transaction)
+        list_bunch = _make_lists(transaction, self.base._goal)
         pkglist_lines = []
         data = {'n' : {}, 'v' : {}, 'r' : {}}
         a_wid = 0 # Arch can't get "that big" ... so always use the max.
@@ -1009,9 +1028,12 @@ class Output(object):
             return a_wid
 
         for (action, pkglist) in [(_('Installing'), list_bunch.installed),
+                                  (_('Installing weak dependencies'), list_bunch.installed_weak),
+                                  (_('Installing dependencies'), list_bunch.installed_dep),
                                   (_('Upgrading'), list_bunch.upgraded),
                                   (_('Reinstalling'), list_bunch.reinstalled),
                                   (_('Removing'), list_bunch.erased),
+                                  (_('Removing unused dependencies'), list_bunch.erased_clean),
                                   (_('Downgrading'), list_bunch.downgraded)]:
             lines = []
             for tsi in pkglist:
@@ -1081,9 +1103,12 @@ Transaction Summary
 %s
 """) % ('=' * self.term.columns))
         summary_data = (
-            (_('Install'), len(list_bunch.installed), 0),
+            (_('Install'), len(list_bunch.installed) +
+             len(list_bunch.installed_weak) +
+             len(list_bunch.installed_dep), 0),
             (_('Upgrade'), len(list_bunch.upgraded), 0),
-            (_('Remove'), len(list_bunch.erased), 0),
+            (_('Remove'), len(list_bunch.erased) +
+             len(list_bunch.erased_clean), 0),
             (_('Downgrade'), len(list_bunch.downgraded), 0),
             (_('Skip'), len(skipped_conflicts) + len(skipped_broken), 0))
         max_msg_action = 0
@@ -1169,11 +1194,14 @@ Transaction Summary
             return col_lens
 
         out = ''
-        list_bunch = _make_lists(transaction)
+        list_bunch = _make_lists(transaction, self.base._goal)
 
         for (action, tsis) in [(_('Reinstalled'), list_bunch.reinstalled),
-                               (_('Removed'), list_bunch.erased),
-                               (_('Installed'), list_bunch.installed),
+                               (_('Removed'), list_bunch.erased +
+                                list_bunch.erased_clean),
+                               (_('Installed'), list_bunch.installed +
+                                list_bunch.installed_weak +
+                                list_bunch.installed_dep),
                                (_('Upgraded'), list_bunch.upgraded),
                                (_('Downgraded'), list_bunch.downgraded),
                                (_('Failed'), list_bunch.failed)]:
