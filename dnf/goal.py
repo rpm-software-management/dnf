@@ -40,6 +40,10 @@ class Goal(hawkey.Goal):
             if pkg.name in self.group_members:
                 return 'group'
             return 'user'
+        if code == hawkey.REASON_CLEAN:
+            return 'clean'
+        if code == hawkey.REASON_WEAKDEP:
+            return 'weak'
         assert False, 'Unknown reason: %d' % code
 
     def group_reason(self, pkg, current_reason):

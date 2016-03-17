@@ -57,10 +57,11 @@ class OutputFunctionsTest(support.TestCase):
     def test_make_lists(self):
         TSI = dnf.transaction.TransactionItem
 
+        goal = mock.Mock(get_reason=lambda x: 'user')
         ts = dnf.transaction.Transaction()
         ts.add_install('pepper-3', [])
         ts.add_install('pepper-2', [])
-        lists = dnf.cli.output._make_lists(ts)
+        lists = dnf.cli.output._make_lists(ts, goal)
         self.assertEmpty(lists.erased)
         self.assertEqual([tsi.active for tsi in lists.installed],
                          ['pepper-2', 'pepper-3'])
