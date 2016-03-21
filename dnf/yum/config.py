@@ -87,14 +87,14 @@ class Option(object):
             try:
                 value = self.parse(value)
             except ValueError as e:
-                raise ValueError('Error parsing "%s = %r": %s' % (self._optname,
-                                                                 value, str(e)))
+                raise ValueError('Error parsing "%s = %s": %s' % (self._optname,
+                                                                  value, str(e)))
         elif isinstance(value, int):
             try:
                 value = self.parse_int(value)
             except ValueError as e:
-                raise ValueError('Error parsing "%s = %r": %s' % (self._optname,
-                                                                 value, str(e)))
+                raise ValueError('Error parsing "%s = %s": %s' % (self._optname,
+                                                                  value, str(e)))
 
         setattr(obj, self._attrname, value)
 
