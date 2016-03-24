@@ -816,8 +816,9 @@ class Repo(dnf.yum.config.RepoConf):
             self.metadata = self._handle_load(handle)
             self.metadata.fresh = True
         except _DetailedLibrepoError as e:
-            msg = _("Failed to synchronize cache for repo '%s' from '%s': %s") % \
-                  (self.id, e.source_url, e.librepo_msg)
+            dmsg = _("Cannot download '%s': %s.")
+            logger.log(dnf.logging.DEBUG, dmsg, e.source_url, e.librepo_msg)
+            msg = _("Failed to synchronize cache for repo '%s'") % (self.id)
             raise dnf.exceptions.RepoError(msg)
         self._expired = False
         return True
