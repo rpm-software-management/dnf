@@ -26,10 +26,6 @@ class DeprecationWarning(DeprecationWarning):
     pass
 
 
-class NonApiWarning(DeprecationWarning):
-    pass
-
-
 class Error(Exception):
     """Base Error. All other Errors thrown by DNF should inherit from this.
 

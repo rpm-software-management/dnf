@@ -103,9 +103,6 @@ def _paint_mark(logger):
 def depr(msg):
     warnings.warn(msg, dnf.exceptions.DeprecationWarning, 2)
 
-def nonapi(msg):
-    warnings.warn(msg, dnf.exceptions.NonApiWarning, 2)
-
 
 class Logging(object):
     def __init__(self):
