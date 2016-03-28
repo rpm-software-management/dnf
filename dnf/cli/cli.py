@@ -818,10 +818,11 @@ class Cli(object):
                         logger.debug(_("%s: using metadata from %s."),
                                      repo.id,
                                      time.ctime(repo.metadata.md_timestamp))
-                    logger.info(_("Last metadata expiration check: "
-                                  "%s ago on %s."),
-                                datetime.timedelta(seconds=age),
-                                time.ctime(mts))
+                    if age != 0:
+                        logger.info(_("Last metadata expiration check: "
+                                    "%s ago on %s."),
+                                    datetime.timedelta(seconds=age),
+                                    time.ctime(mts))
             self.base.plugins.run_sack()
 
     def _root_and_conffile(self, installroot, conffile):
