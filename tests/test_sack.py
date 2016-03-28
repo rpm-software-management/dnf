@@ -61,7 +61,9 @@ class SackTest(support.TestCase):
         self.assertLength(peppers, 1)
         self.assertEqual(str(peppers[0]), "librita-1-1.x86_64")
 
-    def test_add_repo_to_sack(self):
+    @mock.patch('dnf.sack.build_sack', lambda x: mock.Mock())
+    @mock.patch('dnf.goal.Goal', lambda x: mock.Mock())
+    def test_fill_sack(self):
         def raiser():
             raise dnf.exceptions.RepoError()
 
@@ -72,8 +74,8 @@ class SackTest(support.TestCase):
         r.load = mock.Mock(side_effect=raiser)
         r.skip_if_unavailable = False
         self.assertRaises(dnf.exceptions.RepoError,
-                          base._add_repo_to_sack, "bag")
+                          base.fill_sack, load_system_repo=False)
         self.assertTrue(r.enabled)
         r.skip_if_unavailable = True
-        base._add_repo_to_sack("bag")
+        base.fill_sack(load_system_repo=False)
         self.assertFalse(r.enabled)

@@ -105,17 +105,8 @@ class Base(object):
         else:
             self._tempfiles.update(files)
 
-    def _add_repo_to_sack(self, name):
-        repo = self.repos[name]
-        try:
-            repo.load()
-        except dnf.exceptions.RepoError as e:
-            repo.md_expire_cache()
-            if repo.skip_if_unavailable is False:
-                raise
-            logger.warning(_("%s, disabling."), e)
-            repo.disable()
-            return
+    def _add_repo_to_sack(self, repo):
+        repo.load()
         hrepo = repo.hawkey_repo
         hrepo.repomd_fn = repo.repomd_fn
         hrepo.primary_fn = repo.primary_fn
@@ -253,8 +244,18 @@ class Base(object):
                     if load_system_repo != 'auto':
                         raise
             if load_available_repos:
+                errors = []
                 for r in self.repos.iter_enabled():
-                    self._add_repo_to_sack(r.id)
+                    try:
+                        self._add_repo_to_sack(r)
+                    except dnf.exceptions.RepoError as e:
+                        r.md_expire_cache()
+                        if r.skip_if_unavailable is False:
+                            raise
+                        errors.append(e)
+                        r.disable()
+                for e in errors:
+                    logger.warning(_("%s, disabling."), e)
         conf = self.conf
         self._sack.configure(conf.installonlypkgs, conf.installonly_limit)
         self._setup_excludes_includes()
