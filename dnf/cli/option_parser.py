@@ -59,7 +59,7 @@ class OptionParser(argparse.ArgumentParser):
                if in_dct[k] != []}
         return dct
 
-    def configure_from_options(self, opts, conf, demands, output):
+    def configure_from_options(self, opts, conf, demands, output, main_setopts={}):
         """Configure parts of CLI from the opts. """
 
         options_to_move = ('best', 'assumeyes', 'assumeno',
@@ -81,7 +81,9 @@ class OptionParser(argparse.ArgumentParser):
             if opts.installroot:
                 self._checkAbsInstallRoot(opts.installroot)
                 conf.installroot = opts.installroot
-                if True in [os.path.isdir(os.path.join(conf.installroot, reposdir.lstrip('/')))
+                if 'reposdir' in main_setopts.items:
+                    pass
+                elif True in [os.path.isdir(os.path.join(conf.installroot, reposdir.lstrip('/')))
                             for reposdir in conf.reposdir]:
                     conf.reposdir = [os.path.join(conf.installroot, reposdir.lstrip('/')) for reposdir in conf.reposdir]
             demands.freshest_metadata = opts.freshest_metadata

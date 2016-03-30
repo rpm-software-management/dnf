@@ -976,7 +976,7 @@ class Cli(object):
             logger.warning(msg, item)
 
         self.optparser.configure_from_options(opts, self.base.conf, self.demands,
-                                              self.base.output)
+                                              self.base.output, self.main_setopts)
         self.base.cmds = cmds
 
         if opts.version:
