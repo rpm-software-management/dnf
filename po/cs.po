@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-#
+# 
 # Translators:
 # Adam  Pribyl <covex@lowlevel.cz>, 2011
 # zdenek <chmelarz@gmail.com>, 2015
@@ -12,15 +12,17 @@
 # zpavlas <zpavlas@redhat.com>, 2011
 # xMstSpider <zse@apgrco.com>, 2014
 # Jan Silhan <jsilhan@redhat.com>, 2015. #zanata
-# Josef Hruška <josef.hruska@upcmail.cz>, 2015. #zanata
+# Josef Hruška <hrusjos@gmail.com>, 2015. #zanata
 # Michal Pohorely <michal@pohorely.cz>, 2015. #zanata
+# František Zatloukal <Zatloukal.Frantisek@gmail.com>, 2016. #zanata
+# Josef Hruška <hrusjos@gmail.com>, 2016. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-02-22 14:45+0100\n"
-"PO-Revision-Date: 2015-11-11 05:18-0500\n"
-"Last-Translator: Michal Pohorely <michal@pohorely.cz>\n"
+"POT-Creation-Date: 2016-03-31 15:23+0200\n"
+"PO-Revision-Date: 2016-03-29 10:16-0400\n"
+"Last-Translator: František Zatloukal <Zatloukal.Frantisek@gmail.com>\n"
 "Language-Team: Czech (http://www.transifex.com/projects/p/dnf/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -28,6 +30,114 @@ msgstr ""
 "Language: cs\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Generator: Zanata 3.8.2\n"
+
+#: ../dnf/persistor.py:314
+msgid "Invalid groups database, clearing."
+msgstr "Neplatná databáze skupin, uklízí se."
+
+#: ../dnf/persistor.py:333
+msgid "Unsupported installed groups database found, resetting."
+msgstr ""
+"Nalezena nepodporovaná databáze nainstalovaných skupin, přenastavuje se."
+
+#: ../dnf/persistor.py:422
+#, python-format
+msgid "%s is empty file"
+msgstr "%s je prázdný soubor"
+
+#: ../dnf/drpm.py:63 ../dnf/repo.py:361
+#, python-format
+msgid "unsupported checksum type: %s"
+msgstr "nepodporovaný typ kontrolního součtu: %s"
+
+#: ../dnf/drpm.py:135
+msgid "Delta RPM rebuild failed"
+msgstr "Znovu-sestavení Delta RPM selhalo"
+
+#: ../dnf/drpm.py:137
+msgid "Checksum of the delta-rebuilt RPM failed"
+msgstr "Kontrolní součet znovu-sestavení Delta RPM selhal"
+
+#: ../dnf/drpm.py:140
+msgid "done"
+msgstr "hotovo"
+
+#: ../dnf/comps.py:92
+msgid "skipping."
+msgstr "přeskakuji."
+
+#: ../dnf/comps.py:170
+#, python-format
+msgid "Group '%s' is not installed."
+msgstr "Skupina \"%s\" není nainstalována."
+
+#: ../dnf/comps.py:172
+#, python-format
+msgid "Group '%s' does not exist."
+msgstr "Skupina \"%s\" neexistuje."
+
+#: ../dnf/comps.py:468
+#, python-format
+msgid "Environment '%s' is already installed."
+msgstr "Prostředí \"%s\" je již nainstalováno."
+
+#: ../dnf/comps.py:490 ../dnf/comps.py:511
+#, python-format
+msgid "Environment '%s' is not installed."
+msgstr "Prostředí \"%s\" není nainstalováno."
+
+#: ../dnf/comps.py:536
+#, python-format
+msgid "Group '%s' is already installed."
+msgstr "Skupina '%s' je již nainstalována."
+
+#: ../dnf/comps.py:561 ../dnf/comps.py:577
+#, python-format
+msgid "Group '%s' not installed."
+msgstr "Skupina \"%s\" není nainstalována."
+
+#: ../dnf/repo.py:819
+#, python-format
+msgid "Failed to synchronize cache for repo '%s' from '%s': %s"
+msgstr "Chyba synchronizace repozitáře '%s' z '%s': %s"
+
+#: ../dnf/conf/read.py:51
+#, python-format
+msgid "Warning: failed loading '%s', skipping."
+msgstr "Varování: chyba načítání '%s', přeskakuji."
+
+#: ../dnf/conf/read.py:61
+#, python-format
+msgid "Repository %r: Error parsing config: %s"
+msgstr "Repozitář  %r: Chyba při parsování konfigurace:  %s"
+
+#: ../dnf/conf/read.py:67
+#, python-format
+msgid "Repository %r is missing name in configuration, using id."
+msgstr "Repozitáři %r chybí v konfiguraci jméno, použito id."
+
+#: ../dnf/conf/__init__.py:73
+#, python-format
+msgid "Could not set cachedir: %s"
+msgstr "Nelze nastavit adresář pro cache: %s"
+
+#: ../dnf/goal.py:51
+msgid "--> Finding unneeded leftover dependencies"
+msgstr "--> Hledání nepotřebných závislostí"
+
+#: ../dnf/lock.py:97
+#, python-format
+msgid ""
+"Malformed lock file found: %s.\n"
+"Ensure no other dnf process is running and remove the lock file manually or run systemd-tmpfiles --remove dnf.conf."
+msgstr ""
+"Nalezen poškozený soubor zámku: %s.\n"
+"Ujistěte se, že neběží žádný další proces dnf a odstraňte soubor zámku ručně nebo spusťte systemd-tmpfiles --remove dnf.conf."
+
+#: ../dnf/lock.py:136
+#, python-format
+msgid "Waiting for process with pid %d to finish."
+msgstr "Čekám, až proces s pid %d skončí."
 
 #: ../dnf/yum/rpmtrans.py:123
 msgid "Cleanup"
@@ -71,271 +181,199 @@ msgstr "Není možné inicializovat historii DB DNF: %s"
 msgid "Can not create history database at '%s'."
 msgstr "Nelze vytvořit databázi historie v '%s'."
 
-#: ../dnf/plugin.py:126
+#: ../dnf/cli/option_parser.py:51
 #, python-format
-msgid "Failed loading plugin: %s"
-msgstr "Nepodařilo se načíst plugin: %s"
+msgid "Command line error: %s"
+msgstr "Chyba na příkazovém řádku: %s"
 
-#: ../dnf/drpm.py:63 ../dnf/repo.py:361
+#: ../dnf/cli/option_parser.py:88
+msgid "--color takes one of: auto, always, never"
+msgstr "--color může být jen: auto, always, never"
+
+#: ../dnf/cli/option_parser.py:105
 #, python-format
-msgid "unsupported checksum type: %s"
-msgstr "nepodporovaný typ kontrolního součtu: %s"
+msgid "Options Error: %s"
+msgstr "Chybná volba: %s"
 
-#: ../dnf/drpm.py:135
-msgid "Delta RPM rebuild failed"
-msgstr "Znovu-sestavení Delta RPM selhalo"
+#: ../dnf/cli/option_parser.py:116
+#, python-format
+msgid "--installroot must be an absolute path: %s"
+msgstr "--installroot musí být absolutní cesta: %s"
 
-#: ../dnf/drpm.py:137
-msgid "Checksum of the delta-rebuilt RPM failed"
-msgstr "Kontrolní součet znovu-sestavení Delta RPM selhal"
+#: ../dnf/cli/option_parser.py:142
+#, python-format
+msgid "bad format: %s"
+msgstr "špatný formát: %s"
 
-#: ../dnf/drpm.py:140
-msgid "done"
+#: ../dnf/cli/option_parser.py:154
+msgid "allow erasing of installed packages to resolve dependencies"
+msgstr "pro vyřešení závislostí povolit vymazání nainstalovaných balíčků"
+
+#: ../dnf/cli/option_parser.py:157
+msgid "try the best available package versions in transactions."
+msgstr "v transakcích zkoušet nejlepší dostupné verze balíčku"
+
+#: ../dnf/cli/option_parser.py:161
+msgid "run entirely from system cache, don't update cache"
+msgstr "spustit vše ze systémové cache, bez její aktualizace"
+
+#: ../dnf/cli/option_parser.py:165
+msgid "config file location"
+msgstr "umístění konfiguračního souboru"
+
+#: ../dnf/cli/option_parser.py:168
+msgid "debugging output level"
+msgstr "úroveň výpisu ladících informací"
+
+#: ../dnf/cli/option_parser.py:171
+msgid "dumps detailed solving results into files"
+msgstr "vypíše detailní výsledky rešení do souborů"
+
+#: ../dnf/cli/option_parser.py:174
+msgid "show duplicates, in repos, in list/search commands"
+msgstr "ukázat duplikáty v repozitářích, v list/search příkazech"
+
+#: ../dnf/cli/option_parser.py:177
+msgid "error output level"
+msgstr "úroveň výpisu chyb"
+
+#: ../dnf/cli/option_parser.py:179
+msgid "debugging output level for rpm"
+msgstr "úroveň výpisu ladících informací pro rpm"
+
+#: ../dnf/cli/option_parser.py:182
+msgid "quiet operation"
+msgstr "tichý běh"
+
+#: ../dnf/cli/option_parser.py:184
+msgid "verbose operation"
+msgstr "užvaněný běh"
+
+#: ../dnf/cli/option_parser.py:186
+msgid "Automatically answer yes for all questions"
 msgstr ""
 
-#: ../dnf/base.py:116
-#, python-format
-msgid "%s, disabling."
-msgstr "%s, deaktivováno."
+#: ../dnf/cli/option_parser.py:188
+msgid "Automatically answer no for all questions"
+msgstr ""
 
-#: ../dnf/base.py:301
+#: ../dnf/cli/option_parser.py:190
+msgid "show DNF version and exit"
+msgstr "ukázat verzi DNF a skončit"
+
+#: ../dnf/cli/option_parser.py:191
+msgid "set install root"
+msgstr "nastavit kořen instalace"
+
+#: ../dnf/cli/option_parser.py:201
+msgid "exclude packages by name or glob"
+msgstr "vyloučit balíček/balíčky na základě jména nebo vzoru"
+
+#: ../dnf/cli/option_parser.py:206
+msgid "disable excludes"
+msgstr "zakázat výjimky"
+
+#: ../dnf/cli/option_parser.py:211
 msgid ""
-"The downloaded packages were saved in cache until the next successful "
-"transaction."
-msgstr ""
+"label and path to additional repository, can be specified multiple times."
+msgstr "jmenovka a cesta k dodatečnému repozitáři, lze je uvést několikrát."
 
-#: ../dnf/base.py:303
+#: ../dnf/cli/option_parser.py:214
+msgid "disable all plugins"
+msgstr "Vypnout všechny pluginy"
+
+#: ../dnf/cli/option_parser.py:216
+msgid "disable gpg signature checking"
+msgstr "zakázat kontrolu GPG podpisů"
+
+#: ../dnf/cli/option_parser.py:219
+msgid "disable plugins by name"
+msgstr "zakázat zásuvné moduly podle jména"
+
+#: ../dnf/cli/option_parser.py:222
+msgid "control whether color is used"
+msgstr "kontrola zda jsou použity barvy"
+
+#: ../dnf/cli/option_parser.py:224
+msgid "override the value of $releasever in config and repo files"
+msgstr "přenastavit hodnotu $releasever v konfiguračních a repo souborech"
+
+#: ../dnf/cli/option_parser.py:228
+msgid "set arbitrary config and repo options"
+msgstr "nastavit doplňkové konfigurace a možnosti repozitáře"
+
+#: ../dnf/cli/option_parser.py:231
+msgid "set metadata as expired before running the command"
+msgstr "nastavit metada před spuštěním příkazu jako časově neplatná"
+
+#: ../dnf/cli/option_parser.py:233
+msgid "resolve to IPv4 addresses only"
+msgstr "vyřešit pouze IPv4 adresy"
+
+#: ../dnf/cli/option_parser.py:236
+msgid "resolve to IPv6 addresses only"
+msgstr "vyřešit pouze IPv6 adresy"
+
+#: ../dnf/cli/option_parser.py:239
+msgid "only download packages"
+msgstr "jen stáhnout balíčky"
+
+#: ../dnf/cli/option_parser.py:264
+msgid "List of Main Commands"
+msgstr "Seznam hlavních příkazů"
+
+#: ../dnf/cli/option_parser.py:265
+msgid "List of Plugin Commands"
+msgstr "Seznam příkazů zásuvných modulů"
+
+#: ../dnf/cli/utils.py:96
+msgid "Running"
+msgstr "Běží"
+
+#: ../dnf/cli/utils.py:97
+msgid "Sleeping"
+msgstr "Spí"
+
+#: ../dnf/cli/utils.py:98
+msgid "Uninterruptible"
+msgstr "Nepřerušitelné"
+
+#: ../dnf/cli/utils.py:99
+msgid "Zombie"
+msgstr "Zombie"
+
+#: ../dnf/cli/utils.py:100
+msgid "Traced/Stopped"
+msgstr "Trasován/Zastaven"
+
+#: ../dnf/cli/utils.py:101
+msgid "Unknown"
+msgstr "Neznámý"
+
+#: ../dnf/cli/utils.py:111
 #, python-format
-msgid "You can remove cached packages by executing '%s'."
-msgstr ""
+msgid "Unable to find information about the locking process (PID %d)"
+msgstr "Nelze najít informace o procesu zamykání (PID %d)"
 
-#: ../dnf/base.py:363
+#: ../dnf/cli/utils.py:115
 #, python-format
-msgid "Invalid tsflag in config file: %s"
-msgstr "Neplatný tsflag v konfiguračním souboru: %s"
+msgid "  The application with PID %d is: %s"
+msgstr "  Aplikace s PID %d je: %s"
 
-#: ../dnf/base.py:415
+#: ../dnf/cli/utils.py:118
 #, python-format
-msgid "Failed to add groups file for repository: %s - %s"
-msgstr "Selhalo přidání souboru se skupinou pro repozitář: %s - %s"
+msgid "    Memory : %5s RSS (%5sB VSZ)"
+msgstr "    Paměť  : %5s RSS (%5sB VSZ)"
 
-#: ../dnf/base.py:560
-msgid "Running transaction check"
-msgstr "Spouštím kontrolu transakce"
-
-#: ../dnf/base.py:570
-msgid "Error: transaction check vs depsolve:"
-msgstr "Chyba: kontrola transakce vs řešení závislostí:"
-
-#: ../dnf/base.py:576
-msgid "Transaction check succeeded."
-msgstr "Kontrola transakce byla úspěšná"
-
-#: ../dnf/base.py:579
-msgid "Running transaction test"
-msgstr "Probíhá test transakce"
-
-#: ../dnf/base.py:591
-msgid "Transaction check error:\n"
-msgstr "Kontrola transakce selhala:\n"
-
-#: ../dnf/base.py:598
-msgid "Transaction test succeeded."
-msgstr "Test transakce byl úspěšný."
-
-#: ../dnf/base.py:611
-msgid "Running transaction"
-msgstr "Transakce běží"
-
-#: ../dnf/base.py:633
-msgid "Disk Requirements:"
-msgstr ""
-
-#: ../dnf/base.py:636
+#: ../dnf/cli/utils.py:123
 #, python-format
-msgid "At least %dMB more space needed on the %s filesystem."
-msgid_plural "At least %dMB more space needed on the %s filesystem."
-msgstr[0] ""
-msgstr[1] ""
-msgstr[2] ""
+msgid "    Started: %s - %s ago"
+msgstr "    Spuštěn: %s - před %s"
 
-#: ../dnf/base.py:640
-msgid ""
-"Error Summary\n"
-"-------------\n"
-msgstr ""
-"Přehled chyb\n"
-"------------\n"
-
-#: ../dnf/base.py:702
-msgid ""
-"Warning: scriptlet or other non-fatal errors occurred during transaction."
-msgstr ""
-"Varování: Během transakce došlo k chybě skriptletu nebo jiné nefatální "
-"chybě."
-
-#: ../dnf/base.py:707
+#: ../dnf/cli/utils.py:125
 #, python-format
-msgid "Failed to obtain the transaction lock (logged in as: %s)."
-msgstr "Nepodařilo se získat zámek transakce (přihlášen jako: %s)."
-
-#: ../dnf/base.py:710 ../dnf/base.py:720
-msgid "Could not run transaction."
-msgstr "Nelze spustit transakci."
-
-#: ../dnf/base.py:717
-msgid "Transaction couldn't start:"
-msgstr "Transakce nemůže začít:"
-
-#: ../dnf/base.py:729
-#, python-format
-msgid "Failed to remove transaction file %s"
-msgstr "Selhalo odstranění transakčního souboru %s."
-
-#: ../dnf/base.py:781
-#, python-format
-msgid "%s was supposed to be installed but is not!"
-msgstr "%s by mělo být nainstalováno, ale není!"
-
-#: ../dnf/base.py:842
-#, python-format
-msgid "%s was supposed to be removed but is not!"
-msgstr "%s by mělo být odstraněno, ale není!"
-
-#: ../dnf/base.py:920
-#, python-format
-msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
-msgstr "Delta RPM zmenšil %.1f MB aktualizací na %.1f MB (%d.1%% ušetřeno)"
-
-#: ../dnf/base.py:968
-#, python-format
-msgid "Public key for %s is not installed"
-msgstr "Veřejný klíč %s není nainstalován"
-
-#: ../dnf/base.py:972
-#, python-format
-msgid "Problem opening package %s"
-msgstr "Problém s otevřením balíčku %s"
-
-#: ../dnf/base.py:980
-#, python-format
-msgid "Public key for %s is not trusted"
-msgstr "Veřejný klíč %s není důvěryhodný"
-
-#: ../dnf/base.py:984
-#, python-format
-msgid "Package %s is not signed"
-msgstr "Balíček %s není podepsán"
-
-#: ../dnf/base.py:999
-#, python-format
-msgid "Cannot remove %s"
-msgstr "Nelze odstranit %s"
-
-#: ../dnf/base.py:1003
-#, python-format
-msgid "%s removed"
-msgstr "%s odstraněn"
-
-#: ../dnf/base.py:1313 ../dnf/cli/cli.py:203 ../dnf/cli/cli.py:373
-#: ../dnf/cli/commands/install.py:100 ../dnf/cli/commands/__init__.py:448
-#: ../dnf/cli/commands/__init__.py:536 ../dnf/cli/commands/__init__.py:602
-#: ../dnf/cli/commands/__init__.py:647 ../dnf/cli/commands/__init__.py:720
-#: ../dnf/cli/commands/__init__.py:778 ../dnf/cli/commands/reinstall.py:100
-msgid "Nothing to do."
-msgstr "Není co dělat"
-
-#: ../dnf/base.py:1338
-msgid "No groups marked for removal."
-msgstr ""
-
-#: ../dnf/base.py:1357
-msgid "No group marked for upgrade."
-msgstr ""
-
-#: ../dnf/base.py:1421 ../dnf/base.py:1433
-msgid "no package matched"
-msgstr ""
-
-#: ../dnf/base.py:1472
-#, python-format
-msgid "Package %s not installed, cannot downgrade it."
-msgstr "Balíček %s není nainstalován, nelze ho downgradovat."
-
-#: ../dnf/base.py:1479
-#, python-format
-msgid "Package %s of lower version already installed, cannot downgrade it."
-msgstr "Balíček %s nižší verze je již nainstalován, nelze jej downgradovat."
-
-#: ../dnf/base.py:1498
-#, python-format
-msgid "Package %s not installed, cannot reinstall it."
-msgstr "Balíček %s není nainstalován, nelze jej přeinstalovat."
-
-#: ../dnf/base.py:1514 ../dnf/base.py:1541
-#, python-format
-msgid "Package %s not installed, cannot update it."
-msgstr "Balíček %s není nainstalován, nelze jej aktualizovat."
-
-#: ../dnf/base.py:1521
-#, python-format
-msgid "Package %s of higher version already installed, cannot update it."
-msgstr "Balíček %s vyšší verze je již nainstalován, nelze jej aktualizovat."
-
-#: ../dnf/base.py:1586
-#, python-format
-msgid "No package %s installed."
-msgstr "Balík %s nenainstalován."
-
-#: ../dnf/base.py:1698
-#, python-format
-msgid "Package %s of lowest version already installed, cannot downgrade it."
-msgstr ""
-"Balíček %s nejstarší verze je již nainstalován, nelze nainstalovat starší "
-"verzi."
-
-#: ../dnf/base.py:1834
-#, python-format
-msgid ""
-"Failing package is: %s\n"
-" GPG Keys are configured as: %s\n"
-msgstr ""
-
-#: ../dnf/base.py:1847
-#, python-format
-msgid "GPG key at %s (0x%s) is already installed"
-msgstr "GPG klíč %s (0x%s) je již nainstalován"
-
-#: ../dnf/base.py:1881
-#, python-format
-msgid "Key import failed (code %d)"
-msgstr "Import klíče selhal (kód %d)"
-
-#: ../dnf/base.py:1883
-msgid "Key imported successfully"
-msgstr "Import klíče proběhl úspěšně"
-
-#: ../dnf/base.py:1887
-msgid "Didn't install any keys"
-msgstr "Nebyly instalovány žádné klíče"
-
-#: ../dnf/base.py:1890
-#, python-format
-msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
-"Check that the correct key URLs are configured for this repository."
-msgstr ""
-"GPG klíče určené pro repozitář „%s“ jsou již nainstalovány, avšak pro tento balíček nejsou správné.\n"
-"Zkontrolujte, zda URL klíčů jsou pro tento repozitář správně nastaveny."
-
-#: ../dnf/base.py:1900
-msgid "Import of key(s) didn't help, wrong key(s)?"
-msgstr "Import klíče/ů nepomohl, špatný klíč(e)?"
-
-#: ../dnf/base.py:1927
-#, python-format
-msgid "Package %s is already installed, skipping."
-msgstr "Balíček %s už je nainstalován, přeskakuji."
+msgid "    State  : %s"
+msgstr "    Stav : %s"
 
 #: ../dnf/cli/cli.py:129
 #, python-format
@@ -350,6 +388,15 @@ msgstr "  Sestaveno    : %s na %s"
 #: ../dnf/cli/cli.py:201
 msgid "Operation aborted."
 msgstr "Operace přerušena."
+
+#: ../dnf/cli/cli.py:203 ../dnf/cli/cli.py:373
+#: ../dnf/cli/commands/install.py:100 ../dnf/cli/commands/reinstall.py:100
+#: ../dnf/cli/commands/__init__.py:448 ../dnf/cli/commands/__init__.py:536
+#: ../dnf/cli/commands/__init__.py:602 ../dnf/cli/commands/__init__.py:647
+#: ../dnf/cli/commands/__init__.py:720 ../dnf/cli/commands/__init__.py:778
+#: ../dnf/base.py:1317
+msgid "Nothing to do."
+msgstr "Není co dělat"
 
 #: ../dnf/cli/cli.py:208
 msgid "Downloading Packages:"
@@ -387,7 +434,7 @@ msgstr "K synchronizaci distribuce nebyly určeny žádné balíčky"
 
 #: ../dnf/cli/cli.py:361 ../dnf/cli/cli.py:660 ../dnf/cli/cli.py:689
 #: ../dnf/cli/commands/install.py:91 ../dnf/cli/commands/__init__.py:440
-#: ../dnf/cli/commands/__init__.py:1105
+#: ../dnf/cli/commands/__init__.py:1107
 #, python-format
 msgid "No package %s%s%s available."
 msgstr "Balíček %s%s%s není dostupný."
@@ -429,8 +476,8 @@ msgstr "Nenalezeny odpovídající balíčky"
 msgid "No Matches found"
 msgstr "Nebyla nalezena shoda"
 
-#: ../dnf/cli/cli.py:580 ../dnf/cli/commands/__init__.py:1080
-#: ../dnf/cli/commands/__init__.py:1117 ../dnf/cli/commands/__init__.py:1133
+#: ../dnf/cli/cli.py:580 ../dnf/cli/commands/__init__.py:1082
+#: ../dnf/cli/commands/__init__.py:1119 ../dnf/cli/commands/__init__.py:1135
 msgid "No transaction ID given"
 msgstr "Nezadáno ID transakce"
 
@@ -442,8 +489,8 @@ msgstr "Špatné ID transakce"
 msgid "Not found given transaction ID"
 msgstr "Zadané ID transakce nenalezeno"
 
-#: ../dnf/cli/cli.py:614 ../dnf/cli/commands/__init__.py:1082
-#: ../dnf/cli/commands/__init__.py:1119 ../dnf/cli/commands/__init__.py:1135
+#: ../dnf/cli/cli.py:614 ../dnf/cli/commands/__init__.py:1084
+#: ../dnf/cli/commands/__init__.py:1121 ../dnf/cli/commands/__init__.py:1137
 msgid "Found more than one transaction ID!"
 msgstr "Nalezeno více než jedno ID transakce!"
 
@@ -458,7 +505,7 @@ msgid "Transaction history is incomplete, after %u."
 msgstr "Historie transakcí není kompletní, po %u."
 
 #: ../dnf/cli/cli.py:656 ../dnf/cli/cli.py:685
-#: ../dnf/cli/commands/__init__.py:1101
+#: ../dnf/cli/commands/__init__.py:1103
 #, python-format
 msgid "No package %s%s%s installed."
 msgstr "Balíček %s%s%s není nainstalován."
@@ -514,6 +561,33 @@ msgstr "Chyba konfigurace: %s"
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Příkaz „%s“ již definován"
+
+#: ../dnf/cli/main.py:53 ../dnf/automatic/main.py:170
+#, python-format
+msgid "Error: %s"
+msgstr "Chyba: %s"
+
+#: ../dnf/cli/main.py:75
+msgid "Terminated."
+msgstr "Ukončeno."
+
+#: ../dnf/cli/main.py:106
+msgid "No read/execute access in current directory, moving to /"
+msgstr "V současném adresáři nelze číst/spouštět, přesouvám do /"
+
+#: ../dnf/cli/main.py:124
+#, python-format
+msgid "(try to add '%s' to command line to replace conflicting packages)"
+msgstr ""
+"(zkuste do příkazové řádky přidat '%s' pro nahrazení konfliktních balíčků)"
+
+#: ../dnf/cli/main.py:140
+msgid "Dependencies resolved."
+msgstr "Závislosti vyřešeny."
+
+#: ../dnf/cli/main.py:160
+msgid "Complete!"
+msgstr "Hotovo!"
 
 #: ../dnf/cli/output.py:466
 msgid "Name"
@@ -601,7 +675,7 @@ msgstr "V pořádku [a/N]: "
 
 #: ../dnf/cli/output.py:629
 msgid "Is this ok [Y/n]: "
-msgstr "V pořádku [a/N]: "
+msgstr "V pořádku [A/n]: "
 
 #: ../dnf/cli/output.py:707
 #, python-format
@@ -717,12 +791,12 @@ msgid "There was an error calculating installed size"
 msgstr "Při výpočtu velikosti po instalaci došlo k chybě"
 
 #: ../dnf/cli/output.py:914
-msgid "Marking installed:"
-msgstr "Označení nainstalovaných:"
+msgid "Marking packages as installed by the group:"
+msgstr ""
 
 #: ../dnf/cli/output.py:921
-msgid "Marking removed:"
-msgstr "Označení odstraněných:"
+msgid "Marking packages as removed by the group:"
+msgstr ""
 
 #: ../dnf/cli/output.py:931
 msgid "Group"
@@ -797,7 +871,7 @@ msgstr "Snížit verzi"
 
 #: ../dnf/cli/output.py:1081
 msgid "Skip"
-msgstr ""
+msgstr "Přeskočit"
 
 #: ../dnf/cli/output.py:1108
 msgid "Dependent package"
@@ -1203,81 +1277,6 @@ msgstr "--> Zahajuji řešení závislostí"
 msgid "--> Finished dependency resolution"
 msgstr "--> Řešení závislostí dokončeno"
 
-#: ../dnf/cli/utils.py:96
-msgid "Running"
-msgstr "Běží"
-
-#: ../dnf/cli/utils.py:97
-msgid "Sleeping"
-msgstr "Spí"
-
-#: ../dnf/cli/utils.py:98
-msgid "Uninterruptible"
-msgstr "Nepřerušitelné"
-
-#: ../dnf/cli/utils.py:99
-msgid "Zombie"
-msgstr "Zombie"
-
-#: ../dnf/cli/utils.py:100
-msgid "Traced/Stopped"
-msgstr "Trasován/Zastaven"
-
-#: ../dnf/cli/utils.py:101
-msgid "Unknown"
-msgstr "Neznámý"
-
-#: ../dnf/cli/utils.py:111
-#, python-format
-msgid "Unable to find information about the locking process (PID %d)"
-msgstr "Nelze najít informace o procesu zamykání (PID %d)"
-
-#: ../dnf/cli/utils.py:115
-#, python-format
-msgid "  The application with PID %d is: %s"
-msgstr "  Aplikace s PID %d je: %s"
-
-#: ../dnf/cli/utils.py:118
-#, python-format
-msgid "    Memory : %5s RSS (%5sB VSZ)"
-msgstr "    Paměť  : %5s RSS (%5sB VSZ)"
-
-#: ../dnf/cli/utils.py:123
-#, python-format
-msgid "    Started: %s - %s ago"
-msgstr "    Spuštěn: %s - před %s"
-
-#: ../dnf/cli/utils.py:125
-#, python-format
-msgid "    State  : %s"
-msgstr "    Stav : %s"
-
-#: ../dnf/cli/main.py:53 ../dnf/automatic/main.py:170
-#, python-format
-msgid "Error: %s"
-msgstr "Chyba: %s"
-
-#: ../dnf/cli/main.py:75
-msgid "Terminated."
-msgstr "Ukončeno."
-
-#: ../dnf/cli/main.py:106
-msgid "No read/execute access in current directory, moving to /"
-msgstr "V současném adresáři nelze číst/spouštět, přesouvám do /"
-
-#: ../dnf/cli/main.py:124
-#, python-format
-msgid "(try to add '%s' to command line to replace conflicting packages)"
-msgstr ""
-
-#: ../dnf/cli/main.py:140
-msgid "Dependencies resolved."
-msgstr "Závislosti vyřešeny."
-
-#: ../dnf/cli/main.py:160
-msgid "Complete!"
-msgstr "Hotovo!"
-
 #: ../dnf/cli/commands/makecache.py:36
 msgid "Generate the metadata cache"
 msgstr "Vygenerovat cache s metadaty"
@@ -1303,6 +1302,159 @@ msgstr "Mezipaměť metadat čerstvě obnovena."
 #: ../dnf/cli/commands/makecache.py:90
 msgid "Metadata cache created."
 msgstr "Cache s metadaty vytvořena."
+
+#: ../dnf/cli/commands/install.py:42
+msgid "Install a package or packages on your system"
+msgstr "Instalovat balíček nebo balíčky do vašeho systému"
+
+#: ../dnf/cli/commands/install.py:43 ../dnf/cli/commands/reinstall.py:43
+#: ../dnf/cli/commands/remove.py:37 ../dnf/cli/commands/upgrade.py:42
+#: ../dnf/cli/commands/distrosync.py:35 ../dnf/cli/commands/upgradeto.py:32
+#: ../dnf/cli/commands/downgrade.py:35 ../dnf/cli/commands/__init__.py:233
+#: ../dnf/cli/commands/__init__.py:310 ../dnf/cli/commands/mark.py:38
+msgid "PACKAGE"
+msgstr "BALÍČEK"
+
+#: ../dnf/cli/commands/install.py:97
+msgid "Unable to find a match."
+msgstr "Shoda nenalezena."
+
+#: ../dnf/cli/commands/reinstall.py:42
+msgid "reinstall a package"
+msgstr "Reinstalace balíčku"
+
+#: ../dnf/cli/commands/reinstall.py:84 ../dnf/cli/commands/remove.py:76
+#: ../dnf/cli/commands/upgrade.py:72 ../dnf/cli/commands/__init__.py:518
+#: ../dnf/cli/commands/__init__.py:584 ../dnf/cli/commands/__init__.py:714
+#: ../dnf/cli/commands/__init__.py:770 ../dnf/cli/commands/__init__.py:821
+#: ../dnf/cli/commands/__init__.py:866
+#, python-format
+msgid "No match for argument: %s"
+msgstr "Žádná shoda pro argument: %s"
+
+#: ../dnf/cli/commands/reinstall.py:90 ../dnf/cli/commands/__init__.py:525
+#: ../dnf/cli/commands/__init__.py:591
+#, python-format
+msgid " (from %s)"
+msgstr " (z %s)"
+
+#: ../dnf/cli/commands/reinstall.py:91 ../dnf/cli/commands/__init__.py:526
+#: ../dnf/cli/commands/__init__.py:592
+#, python-format
+msgid "Installed package %s%s%s%s not available."
+msgstr "Instalované balíčky %s%s%s%s nejsou dostupné"
+
+#: ../dnf/cli/commands/remove.py:36
+msgid "Remove a package or packages from your system"
+msgstr "Odstranit balíček nebo balíčky ze systému"
+
+#: ../dnf/cli/commands/remove.py:82 ../dnf/cli/commands/__init__.py:827
+msgid "No packages marked for removal."
+msgstr "Žádné balíčky ke smazání"
+
+#: ../dnf/cli/commands/group.py:45
+msgid "Error: Need a group or list of groups"
+msgstr "Chyba: Je potřeba skupina nebo seznam skupin"
+
+#: ../dnf/cli/commands/group.py:60
+msgid "Display, or use, the groups information"
+msgstr "Zobrazit nebo používat skupinové informace"
+
+#: ../dnf/cli/commands/group.py:61
+msgid "GROUP"
+msgstr "SKUPINA"
+
+#: ../dnf/cli/commands/group.py:99
+msgid "No group data available for configured repositories."
+msgstr ""
+"Pro nakonfigurované repozitáře nejsou k dispozici informace o skupinách."
+
+#: ../dnf/cli/commands/group.py:152
+#, python-format
+msgid "Warning: Group %s does not exist."
+msgstr "Varování: skupina %s neexistuje."
+
+#: ../dnf/cli/commands/group.py:180
+#, python-format
+msgid ""
+"Warning: No groups match:\n"
+"   %s"
+msgstr ""
+"Varování: Žádná shoda skupiny pro:\n"
+"   %s"
+
+#: ../dnf/cli/commands/group.py:208
+msgid "Available environment groups:"
+msgstr "Dostupné skupiny prostředí:"
+
+#: ../dnf/cli/commands/group.py:210
+msgid "Installed environment groups:"
+msgstr "Nainstalované skupiny prostředí:"
+
+#: ../dnf/cli/commands/group.py:217
+msgid "Installed groups:"
+msgstr "Nainstalované skupiny:"
+
+#: ../dnf/cli/commands/group.py:224
+msgid "Installed language groups:"
+msgstr "Nainstalované jazykové skupiny:"
+
+#: ../dnf/cli/commands/group.py:234
+msgid "Available groups:"
+msgstr "Dostupné skupiny:"
+
+#: ../dnf/cli/commands/group.py:241
+msgid "Available language groups:"
+msgstr "Dostupné jazykové skupiny:"
+
+#: ../dnf/cli/commands/group.py:265
+#, python-format
+msgid "Environments marked installed: %s"
+msgstr "Prostředí označená za nainstalovaná: %s"
+
+#: ../dnf/cli/commands/group.py:269
+#, python-format
+msgid "Groups marked installed: %s"
+msgstr "Skupiny označeny za nainstalované: %s"
+
+#: ../dnf/cli/commands/group.py:286
+#, python-format
+msgid "Environments marked removed: %s"
+msgstr "Prostředí označená za ostraněná: %s"
+
+#: ../dnf/cli/commands/group.py:290
+#, python-format
+msgid "Groups marked removed: %s"
+msgstr "Skupiny označeny za ostraněné: %s"
+
+#: ../dnf/cli/commands/group.py:320
+msgid "Installed Groups:"
+msgstr "Nainstalované skupiny:"
+
+#: ../dnf/cli/commands/group.py:327
+msgid "Installed Language Groups:"
+msgstr "Nainstalované jazykové skupiny:"
+
+#: ../dnf/cli/commands/group.py:334
+msgid "Available Groups:"
+msgstr "Dostupné skupiny:"
+
+#: ../dnf/cli/commands/group.py:341
+msgid "Available Language Groups:"
+msgstr "Dostupné jazykové skupiny:"
+
+#: ../dnf/cli/commands/group.py:380
+#, python-format
+msgid "Invalid groups sub-command, use: %s."
+msgstr "Neplatný subpříkaz skupin, použijte: %s."
+
+#: ../dnf/cli/commands/upgrade.py:41
+msgid "Upgrade a package or packages on your system"
+msgstr "Aktualizovat balíček nebo balíčky ve vašem systému"
+
+#: ../dnf/cli/commands/distrosync.py:34
+msgid "Synchronize installed packages to the latest available versions"
+msgstr "Synchronizovat nainstalované balíčky na poslední dostupnou verzi"
 
 #: ../dnf/cli/commands/clean.py:43
 #, python-format
@@ -1367,22 +1519,6 @@ msgstr "Vymazání zastaralých metadat"
 #: ../dnf/cli/commands/clean.py:208
 msgid "Cleaning up cached rpmdb data"
 msgstr "Vymazání rpmdb cache"
-
-#: ../dnf/cli/commands/install.py:42
-msgid "Install a package or packages on your system"
-msgstr "Instalovat balíček nebo balíčky do vašeho systému"
-
-#: ../dnf/cli/commands/install.py:43 ../dnf/cli/commands/remove.py:37
-#: ../dnf/cli/commands/downgrade.py:35 ../dnf/cli/commands/upgrade.py:42
-#: ../dnf/cli/commands/distrosync.py:35 ../dnf/cli/commands/mark.py:38
-#: ../dnf/cli/commands/__init__.py:233 ../dnf/cli/commands/__init__.py:310
-#: ../dnf/cli/commands/reinstall.py:43 ../dnf/cli/commands/upgradeto.py:32
-msgid "PACKAGE"
-msgstr "BALÍČEK"
-
-#: ../dnf/cli/commands/install.py:97
-msgid "Unable to find a match."
-msgstr "Shoda nenalezena."
 
 #: ../dnf/cli/commands/repolist.py:36 ../dnf/cli/commands/updateinfo.py:48
 msgid "unknown"
@@ -1500,130 +1636,240 @@ msgstr "Stav:"
 msgid "repo name"
 msgstr "Název repozitáře:"
 
-#: ../dnf/cli/commands/group.py:45
-msgid "Error: Need a group or list of groups"
-msgstr "Chyba: Je potřeba skupina nebo seznam skupin"
-
-#: ../dnf/cli/commands/group.py:60
-msgid "Display, or use, the groups information"
-msgstr "Zobrazit nebo používat skupinové informace"
-
-#: ../dnf/cli/commands/group.py:61
-msgid "GROUP"
-msgstr "SKUPINA"
-
-#: ../dnf/cli/commands/group.py:99
-msgid "No group data available for configured repositories."
-msgstr ""
-"Pro nakonfigurované repozitáře nejsou k dispozici informace o skupinách."
-
-#: ../dnf/cli/commands/group.py:152
-#, python-format
-msgid "Warning: Group %s does not exist."
-msgstr "Varování: skupina %s neexistuje."
-
-#: ../dnf/cli/commands/group.py:172
-#, python-format
-msgid ""
-"Warning: No groups match:\n"
-"   %s"
-msgstr ""
-"Varování: Žádná shoda skupiny pro:\n"
-"   %s"
-
-#: ../dnf/cli/commands/group.py:199
-msgid "Available environment groups:"
-msgstr "Dostupné skupiny prostředí:"
-
-#: ../dnf/cli/commands/group.py:200
-msgid "Installed environment groups:"
-msgstr "Nainstalované skupiny prostředí:"
-
-#: ../dnf/cli/commands/group.py:206
-msgid "Installed groups:"
-msgstr "Nainstalované skupiny:"
-
-#: ../dnf/cli/commands/group.py:213
-msgid "Installed language groups:"
-msgstr "Nainstalované jazykové skupiny:"
-
-#: ../dnf/cli/commands/group.py:220
-msgid "Available groups:"
-msgstr "Dostupné skupiny:"
-
-#: ../dnf/cli/commands/group.py:227
-msgid "Available language groups:"
-msgstr "Dostupné jazykové skupiny:"
-
-#: ../dnf/cli/commands/group.py:251
-#, python-format
-msgid "Environments marked installed: %s"
-msgstr "Prostředí označená za nainstalovaná: %s"
-
-#: ../dnf/cli/commands/group.py:255
-#, python-format
-msgid "Groups marked installed: %s"
-msgstr "Skupiny označeny za nainstalované: %s"
-
-#: ../dnf/cli/commands/group.py:272
-#, python-format
-msgid "Environments marked removed: %s"
-msgstr "Prostředí označená za ostraněná: %s"
-
-#: ../dnf/cli/commands/group.py:276
-#, python-format
-msgid "Groups marked removed: %s"
-msgstr "Skupiny označeny za ostraněné: %s"
-
-#: ../dnf/cli/commands/group.py:306
-msgid "Installed Groups:"
-msgstr "Nainstalované skupiny:"
-
-#: ../dnf/cli/commands/group.py:313
-msgid "Installed Language Groups:"
-msgstr "Nainstalované jazykové skupiny:"
-
-#: ../dnf/cli/commands/group.py:320
-msgid "Available Groups:"
-msgstr "Dostupné skupiny:"
-
-#: ../dnf/cli/commands/group.py:327
-msgid "Available Language Groups:"
-msgstr "Dostupné jazykové skupiny:"
-
-#: ../dnf/cli/commands/group.py:366
-#, python-format
-msgid "Invalid groups sub-command, use: %s."
-msgstr "Neplatný subpříkaz skupin, použijte: %s."
-
-#: ../dnf/cli/commands/remove.py:36
-msgid "Remove a package or packages from your system"
-msgstr "Odstranit balíček nebo balíčky ze systému"
-
-#: ../dnf/cli/commands/remove.py:76 ../dnf/cli/commands/upgrade.py:72
-#: ../dnf/cli/commands/__init__.py:518 ../dnf/cli/commands/__init__.py:584
-#: ../dnf/cli/commands/__init__.py:714 ../dnf/cli/commands/__init__.py:770
-#: ../dnf/cli/commands/__init__.py:821 ../dnf/cli/commands/__init__.py:866
-#: ../dnf/cli/commands/reinstall.py:84
-#, python-format
-msgid "No match for argument: %s"
-msgstr "Žádná shoda pro argument: %s"
-
-#: ../dnf/cli/commands/remove.py:82 ../dnf/cli/commands/__init__.py:827
-msgid "No packages marked for removal."
-msgstr "Žádné balíčky ke smazání"
+#: ../dnf/cli/commands/upgradeto.py:31
+msgid "Upgrade a package on your system to the specified version"
+msgstr "Aktualizovat balíček ve vašem systému na uvedenou verzi"
 
 #: ../dnf/cli/commands/downgrade.py:34
 msgid "downgrade a package"
 msgstr "Snížení verze balíčku"
 
-#: ../dnf/cli/commands/upgrade.py:41
-msgid "Upgrade a package or packages on your system"
-msgstr "Aktualizovat balíček nebo balíčky ve vašem systému"
+#: ../dnf/cli/commands/search.py:42
+msgid "Search package details for the given string"
+msgstr "Vyhledat detaily balíčku pro zadaný řetězec"
 
-#: ../dnf/cli/commands/distrosync.py:34
-msgid "Synchronize installed packages to the latest available versions"
-msgstr "Synchronizovat nainstalované balíčky na poslední dostupnou verzi"
+#: ../dnf/cli/commands/search.py:43
+msgid "QUERY_STRING"
+msgstr "ŘETĚZEC_DOTAZU"
+
+#: ../dnf/cli/commands/search.py:65
+#, python-format
+msgid "N/S Matched: %s"
+msgstr "Jméno/Souhrn odpovídá: %s"
+
+#: ../dnf/cli/commands/search.py:67
+#, python-format
+msgid "Matched: %s"
+msgstr "Shoda: %s"
+
+#: ../dnf/cli/commands/search.py:84
+msgid "No matches found."
+msgstr "Nebyla nalezena shoda."
+
+#: ../dnf/cli/commands/search.py:105
+msgid "Searching Packages: "
+msgstr "Prohledávání balíčků: "
+
+#: ../dnf/cli/commands/__init__.py:42
+#, python-format
+msgid "To diagnose the problem, try running: '%s'."
+msgstr "Pro zjištění příčin tohoto problému zkuste spustit: '%s'"
+
+#: ../dnf/cli/commands/__init__.py:44
+#, python-format
+msgid "You probably have corrupted RPMDB, running '%s' might fix the issue."
+msgstr ""
+"Pravděpodobně máte poškozenou RPMDB, spuštění '%s' by mohlo problém "
+"napravit."
+
+#: ../dnf/cli/commands/__init__.py:48
+msgid ""
+"You have enabled checking of packages via GPG keys. This is a good thing.\n"
+"However, you do not have any GPG public keys installed. You need to download\n"
+"the keys for packages you wish to install and install them.\n"
+"You can do that by running the command:\n"
+"    rpm --import public.gpg.key\n"
+"\n"
+"\n"
+"Alternatively you can specify the url to the key you would like to use\n"
+"for a repository in the 'gpgkey' option in a repository section and DNF\n"
+"will install it for you.\n"
+"\n"
+"For more information contact your distribution or package provider."
+msgstr ""
+
+#: ../dnf/cli/commands/__init__.py:68
+msgid " Mini usage:\n"
+msgstr " Mini použití:\n"
+
+#: ../dnf/cli/commands/__init__.py:84
+#, python-format
+msgid "Problem repository: %s"
+msgstr "Problém v repozitáři: %s"
+
+#: ../dnf/cli/commands/__init__.py:98
+#, python-format
+msgid "Error: Need to pass a list of pkgs to %s"
+msgstr "Chyba: Je potřeba předat seznam balíčků do %s"
+
+#: ../dnf/cli/commands/__init__.py:114
+msgid "Error: Need an item to match"
+msgstr "Chyba: K nalezení shody je potřeba položka"
+
+#: ../dnf/cli/commands/__init__.py:133
+msgid "There are no enabled repos."
+msgstr "Žádné repositáře nejsou povoleny."
+
+#: ../dnf/cli/commands/__init__.py:232
+msgid "Display details about a package or group of packages"
+msgstr "Zobrazit detaily o balíčku nebo skupině balíčků"
+
+#: ../dnf/cli/commands/__init__.py:267
+msgid "List a package or groups of packages"
+msgstr "Vypsat balíček nebo skupiny balíčků"
+
+#: ../dnf/cli/commands/__init__.py:280
+msgid "Find what package provides the given value"
+msgstr "Nalézt balíček, který poskytuje danou hodnotu"
+
+#: ../dnf/cli/commands/__init__.py:281
+msgid "SOME_STRING"
+msgstr "NĚJAKÝ_ŘETĚZEC"
+
+#: ../dnf/cli/commands/__init__.py:309
+msgid "Check for available package upgrades"
+msgstr "Zkontrolovat dostupnost aktualizací pro balíčky"
+
+#: ../dnf/cli/commands/__init__.py:431 ../dnf/cli/commands/__init__.py:507
+#: ../dnf/cli/commands/__init__.py:573
+msgid "No package available."
+msgstr "Žádný balíček není k disozici."
+
+#: ../dnf/cli/commands/__init__.py:505
+msgid "No package installed."
+msgstr "Žádný balík nebyl nainstalován."
+
+#: ../dnf/cli/commands/__init__.py:570 ../dnf/cli/commands/__init__.py:704
+#: ../dnf/cli/commands/__init__.py:756 ../dnf/cli/commands/__init__.py:811
+msgid "No package installed from the repository."
+msgstr "Žádný balík z repozitáře nebyl nainstalován"
+
+#: ../dnf/cli/commands/__init__.py:893
+msgid "Error: Requires at least one package specification"
+msgstr "Chyba: Vyžadován popis alespoň jednoho balíčku"
+
+#: ../dnf/cli/commands/__init__.py:916
+msgid "Run commands on top of all packages in given repository"
+msgstr "Spustit příkazy pro všechny balíčky v daném repositáři"
+
+#: ../dnf/cli/commands/__init__.py:919
+msgid "REPO"
+msgstr "REPOZITÁŘ"
+
+#: ../dnf/cli/commands/__init__.py:919
+msgid "ARG"
+msgstr "ARGUMENT"
+
+#: ../dnf/cli/commands/__init__.py:964
+msgid "Error: Requires a repo ID and a valid sub-command"
+msgstr "Chyba: Vyžadováno ID repositáře a podpříkaz"
+
+#: ../dnf/cli/commands/__init__.py:991
+msgid "Display a helpful usage message"
+msgstr "Zobrazit užitečnou nápovědu"
+
+#: ../dnf/cli/commands/__init__.py:992
+msgid "COMMAND"
+msgstr "PŘÍKAZ"
+
+#: ../dnf/cli/commands/__init__.py:1024
+#, python-format
+msgid "No help available for %s"
+msgstr "Pro %s není dostupná nápověda"
+
+#: ../dnf/cli/commands/__init__.py:1029
+msgid "aliases: "
+msgstr "aliasy: "
+
+#: ../dnf/cli/commands/__init__.py:1031
+msgid "alias: "
+msgstr "alias: "
+
+#: ../dnf/cli/commands/__init__.py:1047
+msgid "Display, or use, the transaction history"
+msgstr "Zobrazit nebo používat historii transakcí"
+
+#: ../dnf/cli/commands/__init__.py:1065
+#, python-format
+msgid ""
+"Cannot undo transaction %s, doing so would result in an inconsistent package"
+" database."
+msgstr ""
+"Nelze zrušit transakci %s, mohlo by dojít k porušení integrity databáze "
+"balíčků."
+
+#: ../dnf/cli/commands/__init__.py:1069
+#, python-format
+msgid ""
+"Cannot rollback transaction %s, doing so would result in an inconsistent "
+"package database."
+msgstr ""
+"Nelze vrátit transakci %s, mohlo by dojít k porušení integrity databáze "
+"balíčků."
+
+#: ../dnf/cli/commands/__init__.py:1157
+msgid "Transactions:"
+msgstr "Transakce:"
+
+#: ../dnf/cli/commands/__init__.py:1158
+msgid "Begin time  :"
+msgstr "Počáteční čas  :"
+
+#: ../dnf/cli/commands/__init__.py:1159
+msgid "End time    :"
+msgstr "Čas ukončení    :"
+
+#: ../dnf/cli/commands/__init__.py:1160
+msgid "Counts      :"
+msgstr "Počet :"
+
+#: ../dnf/cli/commands/__init__.py:1161
+msgid "  NEVRAC :"
+msgstr "  NEVRAC :"
+
+#: ../dnf/cli/commands/__init__.py:1162
+msgid "  NEVRA  :"
+msgstr "  NEVRA :"
+
+#: ../dnf/cli/commands/__init__.py:1163
+msgid "  NA     :"
+msgstr "  NA :"
+
+#: ../dnf/cli/commands/__init__.py:1164
+msgid "  NEVR   :"
+msgstr "  NEVR :"
+
+#: ../dnf/cli/commands/__init__.py:1165
+msgid "  rpm DB :"
+msgstr "  rpm DB :"
+
+#: ../dnf/cli/commands/__init__.py:1166
+msgid "  DNF DB :"
+msgstr "  DNF DB:"
+
+#: ../dnf/cli/commands/__init__.py:1185
+#, python-format
+msgid "Unrecognized options \"%s\"!"
+msgstr "Neznámé volby \"%s\"!"
+
+#: ../dnf/cli/commands/__init__.py:1202
+#, python-format
+msgid "Invalid history sub-command, use: %s."
+msgstr "Neplatný subpříkaz historie, použijte: %s."
+
+#: ../dnf/cli/commands/__init__.py:1208
+msgid "You don't have access to the history DB."
+msgstr "Nemáte přístup k databázi s historií."
 
 #: ../dnf/cli/commands/updateinfo.py:45
 msgid "bugfix"
@@ -1725,478 +1971,277 @@ msgstr ""
 
 #: ../dnf/cli/commands/mark.py:66
 msgid "Error: Need a package or list of packages"
-msgstr ""
+msgstr "Chyba: Potřebuji balíček a nebo seznam balíčků"
 
 #: ../dnf/cli/commands/mark.py:91
 msgid "Error:"
-msgstr ""
+msgstr "Chyba:"
 
 #: ../dnf/cli/commands/mark.py:93
 #, python-format
 msgid "Package %s is not installed."
-msgstr ""
+msgstr "Balíček %s není nainstalován."
 
-#: ../dnf/cli/commands/__init__.py:42
-#, python-format
-msgid "To diagnose the problem, try running: '%s'."
-msgstr "Pro zjištění příčin tohoto problému zkuste spustit: '%s'"
-
-#: ../dnf/cli/commands/__init__.py:44
-#, python-format
-msgid "You probably have corrupted RPMDB, running '%s' might fix the issue."
-msgstr ""
-
-#: ../dnf/cli/commands/__init__.py:48
-msgid ""
-"You have enabled checking of packages via GPG keys. This is a good thing.\n"
-"However, you do not have any GPG public keys installed. You need to download\n"
-"the keys for packages you wish to install and install them.\n"
-"You can do that by running the command:\n"
-"    rpm --import public.gpg.key\n"
-"\n"
-"\n"
-"Alternatively you can specify the url to the key you would like to use\n"
-"for a repository in the 'gpgkey' option in a repository section and DNF\n"
-"will install it for you.\n"
-"\n"
-"For more information contact your distribution or package provider."
-msgstr ""
-
-#: ../dnf/cli/commands/__init__.py:68
-msgid " Mini usage:\n"
-msgstr " Mini použití:\n"
-
-#: ../dnf/cli/commands/__init__.py:84
-#, python-format
-msgid "Problem repository: %s"
-msgstr "Problém v repozitáři: %s"
-
-#: ../dnf/cli/commands/__init__.py:98
-#, python-format
-msgid "Error: Need to pass a list of pkgs to %s"
-msgstr "Chyba: Je potřeba předat seznam balíčků do %s"
-
-#: ../dnf/cli/commands/__init__.py:114
-msgid "Error: Need an item to match"
-msgstr "Chyba: K nalezení shody je potřeba položka"
-
-#: ../dnf/cli/commands/__init__.py:133
-msgid "There are no enabled repos."
-msgstr "Žádné repositáře nejsou povoleny."
-
-#: ../dnf/cli/commands/__init__.py:232
-msgid "Display details about a package or group of packages"
-msgstr "Zobrazit detaily o balíčku nebo skupině balíčků"
-
-#: ../dnf/cli/commands/__init__.py:267
-msgid "List a package or groups of packages"
-msgstr "Vypsat balíček nebo skupiny balíčků"
-
-#: ../dnf/cli/commands/__init__.py:280
-msgid "Find what package provides the given value"
-msgstr "Nalézt balíček, který poskytuje danou hodnotu"
-
-#: ../dnf/cli/commands/__init__.py:281
-msgid "SOME_STRING"
-msgstr "NĚJAKÝ_ŘETĚZEC"
-
-#: ../dnf/cli/commands/__init__.py:309
-msgid "Check for available package upgrades"
-msgstr "Zkontrolovat dostupnost aktualizací pro balíčky"
-
-#: ../dnf/cli/commands/__init__.py:431 ../dnf/cli/commands/__init__.py:507
-#: ../dnf/cli/commands/__init__.py:573
-msgid "No package available."
-msgstr "Žádný balíček není k disozici."
-
-#: ../dnf/cli/commands/__init__.py:505
-msgid "No package installed."
-msgstr "Žádný balík nebyl nainstalován."
-
-#: ../dnf/cli/commands/__init__.py:525 ../dnf/cli/commands/__init__.py:591
-#: ../dnf/cli/commands/reinstall.py:90
-#, python-format
-msgid " (from %s)"
-msgstr " (z %s)"
-
-#: ../dnf/cli/commands/__init__.py:526 ../dnf/cli/commands/__init__.py:592
-#: ../dnf/cli/commands/reinstall.py:91
-#, python-format
-msgid "Installed package %s%s%s%s not available."
-msgstr "Instalované balíčky %s%s%s%s nejsou dostupné"
-
-#: ../dnf/cli/commands/__init__.py:570 ../dnf/cli/commands/__init__.py:704
-#: ../dnf/cli/commands/__init__.py:756 ../dnf/cli/commands/__init__.py:811
-msgid "No package installed from the repository."
-msgstr "Žádný balík z repozitáře nebyl nainstalován"
-
-#: ../dnf/cli/commands/__init__.py:893
-msgid "Error: Requires at least one package specification"
-msgstr "Chyba: Vyžadován popis alespoň jednoho balíčku"
-
-#: ../dnf/cli/commands/__init__.py:916
-msgid "Run commands on top of all packages in given repository"
-msgstr "Spustit příkazy pro všechny balíčky v daném repositáři"
-
-#: ../dnf/cli/commands/__init__.py:919
-msgid "REPO"
-msgstr "REPOZITÁŘ"
-
-#: ../dnf/cli/commands/__init__.py:919
-msgid "ARG"
-msgstr "ARGUMENT"
-
-#: ../dnf/cli/commands/__init__.py:964
-msgid "Error: Requires a repo ID and a valid sub-command"
-msgstr "Chyba: Vyžadováno ID repositáře a podpříkaz"
-
-#: ../dnf/cli/commands/__init__.py:991
-msgid "Display a helpful usage message"
-msgstr "Zobrazit užitečnou nápovědu"
-
-#: ../dnf/cli/commands/__init__.py:992
-msgid "COMMAND"
-msgstr "PŘÍKAZ"
-
-#: ../dnf/cli/commands/__init__.py:1024
-#, python-format
-msgid "No help available for %s"
-msgstr "Pro %s není dostupná nápověda"
-
-#: ../dnf/cli/commands/__init__.py:1029
-msgid "aliases: "
-msgstr ""
-
-#: ../dnf/cli/commands/__init__.py:1031
-msgid "alias: "
-msgstr ""
-
-#: ../dnf/cli/commands/__init__.py:1047
-msgid "Display, or use, the transaction history"
-msgstr "Zobrazit nebo používat historii transakcí"
-
-#: ../dnf/cli/commands/__init__.py:1063
+#: ../dnf/crypto.py:81
 #, python-format
 msgid ""
-"Cannot undo transaction %s, doing so would result in an inconsistent package"
-" database."
+"Importing GPG key 0x%s:\n"
+" Userid     : \"%s\"\n"
+" Fingerprint: %s\n"
+" From       : %s"
 msgstr ""
-"Nelze zrušit transakci %s, mohlo by dojít k porušení integrity databáze "
-"balíčků."
+"Importuji GPG klíč 0x%s:\n"
+"Uživatelské ID : \"%s\"\n"
+"Otisk: %s\n"
+"Zdroj : %s"
 
-#: ../dnf/cli/commands/__init__.py:1067
+#: ../dnf/base.py:116
+#, python-format
+msgid "%s, disabling."
+msgstr "%s, deaktivováno."
+
+#: ../dnf/base.py:302
+msgid ""
+"The downloaded packages were saved in cache until the next successful "
+"transaction."
+msgstr ""
+
+#: ../dnf/base.py:304
+#, python-format
+msgid "You can remove cached packages by executing '%s'."
+msgstr ""
+
+#: ../dnf/base.py:364
+#, python-format
+msgid "Invalid tsflag in config file: %s"
+msgstr "Neplatný tsflag v konfiguračním souboru: %s"
+
+#: ../dnf/base.py:416
+#, python-format
+msgid "Failed to add groups file for repository: %s - %s"
+msgstr "Selhalo přidání souboru se skupinou pro repozitář: %s - %s"
+
+#: ../dnf/base.py:564
+msgid "Running transaction check"
+msgstr "Spouštím kontrolu transakce"
+
+#: ../dnf/base.py:574
+msgid "Error: transaction check vs depsolve:"
+msgstr "Chyba: kontrola transakce vs řešení závislostí:"
+
+#: ../dnf/base.py:580
+msgid "Transaction check succeeded."
+msgstr "Kontrola transakce byla úspěšná"
+
+#: ../dnf/base.py:583
+msgid "Running transaction test"
+msgstr "Probíhá test transakce"
+
+#: ../dnf/base.py:595
+msgid "Transaction check error:\n"
+msgstr "Kontrola transakce selhala:\n"
+
+#: ../dnf/base.py:602
+msgid "Transaction test succeeded."
+msgstr "Test transakce byl úspěšný."
+
+#: ../dnf/base.py:615
+msgid "Running transaction"
+msgstr "Transakce běží"
+
+#: ../dnf/base.py:637
+msgid "Disk Requirements:"
+msgstr "Požadavky na místo na disku:"
+
+#: ../dnf/base.py:640
+#, python-format
+msgid "At least %dMB more space needed on the %s filesystem."
+msgid_plural "At least %dMB more space needed on the %s filesystem."
+msgstr[0] ""
+msgstr[1] ""
+msgstr[2] ""
+
+#: ../dnf/base.py:644
+msgid ""
+"Error Summary\n"
+"-------------\n"
+msgstr ""
+"Přehled chyb\n"
+"------------\n"
+
+#: ../dnf/base.py:706
+msgid ""
+"Warning: scriptlet or other non-fatal errors occurred during transaction."
+msgstr ""
+"Varování: Během transakce došlo k chybě skriptletu nebo jiné nefatální "
+"chybě."
+
+#: ../dnf/base.py:711
+#, python-format
+msgid "Failed to obtain the transaction lock (logged in as: %s)."
+msgstr "Nepodařilo se získat zámek transakce (přihlášen jako: %s)."
+
+#: ../dnf/base.py:714 ../dnf/base.py:724
+msgid "Could not run transaction."
+msgstr "Nelze spustit transakci."
+
+#: ../dnf/base.py:721
+msgid "Transaction couldn't start:"
+msgstr "Transakce nemůže začít:"
+
+#: ../dnf/base.py:733
+#, python-format
+msgid "Failed to remove transaction file %s"
+msgstr "Selhalo odstranění transakčního souboru %s."
+
+#: ../dnf/base.py:785
+#, python-format
+msgid "%s was supposed to be installed but is not!"
+msgstr "%s by mělo být nainstalováno, ale není!"
+
+#: ../dnf/base.py:846
+#, python-format
+msgid "%s was supposed to be removed but is not!"
+msgstr "%s by mělo být odstraněno, ale není!"
+
+#: ../dnf/base.py:924
+#, python-format
+msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
+msgstr "Delta RPM zmenšil %.1f MB aktualizací na %.1f MB (%d.1%% ušetřeno)"
+
+#: ../dnf/base.py:972
+#, python-format
+msgid "Public key for %s is not installed"
+msgstr "Veřejný klíč %s není nainstalován"
+
+#: ../dnf/base.py:976
+#, python-format
+msgid "Problem opening package %s"
+msgstr "Problém s otevřením balíčku %s"
+
+#: ../dnf/base.py:984
+#, python-format
+msgid "Public key for %s is not trusted"
+msgstr "Veřejný klíč %s není důvěryhodný"
+
+#: ../dnf/base.py:988
+#, python-format
+msgid "Package %s is not signed"
+msgstr "Balíček %s není podepsán"
+
+#: ../dnf/base.py:1003
+#, python-format
+msgid "Cannot remove %s"
+msgstr "Nelze odstranit %s"
+
+#: ../dnf/base.py:1007
+#, python-format
+msgid "%s removed"
+msgstr "%s odstraněn"
+
+#: ../dnf/base.py:1342
+msgid "No groups marked for removal."
+msgstr "Nebyly vybrány žádné skupiny pro odstranění."
+
+#: ../dnf/base.py:1361
+msgid "No group marked for upgrade."
+msgstr "Nebyly vybrány žádné skupiny pro aktualizaci."
+
+#: ../dnf/base.py:1425 ../dnf/base.py:1436
+msgid "no package matched"
+msgstr "žádný balíček není vhodný"
+
+#: ../dnf/base.py:1475
+#, python-format
+msgid "Package %s not installed, cannot downgrade it."
+msgstr "Balíček %s není nainstalován, nelze ho downgradovat."
+
+#: ../dnf/base.py:1482
+#, python-format
+msgid "Package %s of lower version already installed, cannot downgrade it."
+msgstr "Balíček %s nižší verze je již nainstalován, nelze jej downgradovat."
+
+#: ../dnf/base.py:1501
+#, python-format
+msgid "Package %s not installed, cannot reinstall it."
+msgstr "Balíček %s není nainstalován, nelze jej přeinstalovat."
+
+#: ../dnf/base.py:1517 ../dnf/base.py:1543
+#, python-format
+msgid "Package %s not installed, cannot update it."
+msgstr "Balíček %s není nainstalován, nelze jej aktualizovat."
+
+#: ../dnf/base.py:1524
+#, python-format
+msgid "Package %s of higher version already installed, cannot update it."
+msgstr "Balíček %s vyšší verze je již nainstalován, nelze jej aktualizovat."
+
+#: ../dnf/base.py:1585
+#, python-format
+msgid "No package %s installed."
+msgstr "Balík %s nenainstalován."
+
+#: ../dnf/base.py:1697
+#, python-format
+msgid "Package %s of lowest version already installed, cannot downgrade it."
+msgstr ""
+"Balíček %s nejstarší verze je již nainstalován, nelze nainstalovat starší "
+"verzi."
+
+#: ../dnf/base.py:1833
 #, python-format
 msgid ""
-"Cannot rollback transaction %s, doing so would result in an inconsistent "
-"package database."
+"Failing package is: %s\n"
+" GPG Keys are configured as: %s\n"
 msgstr ""
-"Nelze vrátit transakci %s, mohlo by dojít k porušení integrity databáze "
-"balíčků."
+"Chybující balíček je: %s\n"
+"GPG klíče jsou zkonfigurovány jako: %s\n"
 
-#: ../dnf/cli/commands/__init__.py:1155
-msgid "Transactions:"
-msgstr "Transakce:"
-
-#: ../dnf/cli/commands/__init__.py:1156
-msgid "Begin time  :"
-msgstr "Počáteční čas  :"
-
-#: ../dnf/cli/commands/__init__.py:1157
-msgid "End time    :"
-msgstr "Čas ukončení    :"
-
-#: ../dnf/cli/commands/__init__.py:1158
-msgid "Counts      :"
-msgstr "Počet :"
-
-#: ../dnf/cli/commands/__init__.py:1159
-msgid "  NEVRAC :"
-msgstr "  NEVRAC :"
-
-#: ../dnf/cli/commands/__init__.py:1160
-msgid "  NEVRA  :"
-msgstr "  NEVRA :"
-
-#: ../dnf/cli/commands/__init__.py:1161
-msgid "  NA     :"
-msgstr "  NA :"
-
-#: ../dnf/cli/commands/__init__.py:1162
-msgid "  NEVR   :"
-msgstr "  NEVR :"
-
-#: ../dnf/cli/commands/__init__.py:1163
-msgid "  rpm DB :"
-msgstr "  rpm DB :"
-
-#: ../dnf/cli/commands/__init__.py:1164
-msgid "  DNF DB :"
-msgstr ""
-
-#: ../dnf/cli/commands/__init__.py:1183
+#: ../dnf/base.py:1846
 #, python-format
-msgid "Unrecognized options \"%s\"!"
-msgstr "Neznámé volby \"%s\"!"
+msgid "GPG key at %s (0x%s) is already installed"
+msgstr "GPG klíč %s (0x%s) je již nainstalován"
 
-#: ../dnf/cli/commands/__init__.py:1200
+#: ../dnf/base.py:1880
 #, python-format
-msgid "Invalid history sub-command, use: %s."
-msgstr "Neplatný subpříkaz historie, použijte: %s."
+msgid "Key import failed (code %d)"
+msgstr "Import klíče selhal (kód %d)"
 
-#: ../dnf/cli/commands/__init__.py:1206
-msgid "You don't have access to the history DB."
-msgstr "Nemáte přístup k databázi s historií."
+#: ../dnf/base.py:1882
+msgid "Key imported successfully"
+msgstr "Import klíče proběhl úspěšně"
 
-#: ../dnf/cli/commands/reinstall.py:42
-msgid "reinstall a package"
-msgstr "Reinstalace balíčku"
+#: ../dnf/base.py:1886
+msgid "Didn't install any keys"
+msgstr "Nebyly instalovány žádné klíče"
 
-#: ../dnf/cli/commands/search.py:42
-msgid "Search package details for the given string"
-msgstr "Vyhledat detaily balíčku pro zadaný řetězec"
-
-#: ../dnf/cli/commands/search.py:43
-msgid "QUERY_STRING"
-msgstr "ŘETĚZEC_DOTAZU"
-
-#: ../dnf/cli/commands/search.py:65
-#, python-format
-msgid "N/S Matched: %s"
-msgstr "Jméno/Souhrn odpovídá: %s"
-
-#: ../dnf/cli/commands/search.py:67
-#, python-format
-msgid "Matched: %s"
-msgstr "Shoda: %s"
-
-#: ../dnf/cli/commands/search.py:84
-msgid "No matches found."
-msgstr "Nebyla nalezena shoda."
-
-#: ../dnf/cli/commands/search.py:105
-msgid "Searching Packages: "
-msgstr "Prohledávání balíčků: "
-
-#: ../dnf/cli/commands/upgradeto.py:31
-msgid "Upgrade a package on your system to the specified version"
-msgstr "Aktualizovat balíček ve vašem systému na uvedenou verzi"
-
-#: ../dnf/cli/option_parser.py:51
-#, python-format
-msgid "Command line error: %s"
-msgstr "Chyba na příkazovém řádku: %s"
-
-#: ../dnf/cli/option_parser.py:88
-msgid "--color takes one of: auto, always, never"
-msgstr "--color může být jen: auto, always, never"
-
-#: ../dnf/cli/option_parser.py:105
-#, python-format
-msgid "Options Error: %s"
-msgstr "Chybná volba: %s"
-
-#: ../dnf/cli/option_parser.py:116
-#, python-format
-msgid "--installroot must be an absolute path: %s"
-msgstr "--installroot musí být absolutní cesta: %s"
-
-#: ../dnf/cli/option_parser.py:142
-#, python-format
-msgid "bad format: %s"
-msgstr "špatný formát: %s"
-
-#: ../dnf/cli/option_parser.py:154
-msgid "allow erasing of installed packages to resolve dependencies"
-msgstr "pro vyřešení závislostí povolit vymazání nainstalovaných balíčků"
-
-#: ../dnf/cli/option_parser.py:157
-msgid "try the best available package versions in transactions."
-msgstr "v transakcích zkoušet nejlepší dostupné verze balíčku"
-
-#: ../dnf/cli/option_parser.py:161
-msgid "run entirely from system cache, don't update cache"
-msgstr "spustit vše ze systémové cache, bez její aktualizace"
-
-#: ../dnf/cli/option_parser.py:165
-msgid "config file location"
-msgstr "umístění konfiguračního souboru"
-
-#: ../dnf/cli/option_parser.py:168
-msgid "debugging output level"
-msgstr "úroveň výpisu ladících informací"
-
-#: ../dnf/cli/option_parser.py:171
-msgid "dumps detailed solving results into files"
-msgstr "vypíše detailní výsledky rešení do souborů"
-
-#: ../dnf/cli/option_parser.py:174
-msgid "show duplicates, in repos, in list/search commands"
-msgstr "ukázat duplikáty v repozitářích, v list/search příkazech"
-
-#: ../dnf/cli/option_parser.py:177
-msgid "error output level"
-msgstr "úroveň výpisu chyb"
-
-#: ../dnf/cli/option_parser.py:179
-msgid "debugging output level for rpm"
-msgstr "úroveň výpisu ladících informací pro rpm"
-
-#: ../dnf/cli/option_parser.py:182
-msgid "quiet operation"
-msgstr "tichý běh"
-
-#: ../dnf/cli/option_parser.py:184
-msgid "verbose operation"
-msgstr "užvaněný běh"
-
-#: ../dnf/cli/option_parser.py:186
-msgid "answer yes for all questions"
-msgstr "odpovědět na všechny otázky ano"
-
-#: ../dnf/cli/option_parser.py:188
-msgid "answer no for all questions"
-msgstr "odpovědět na všechny otázky ne"
-
-#: ../dnf/cli/option_parser.py:190
-msgid "show DNF version and exit"
-msgstr "ukázat verzi DNF a skončit"
-
-#: ../dnf/cli/option_parser.py:191
-msgid "set install root"
-msgstr "nastavit kořen instalace"
-
-#: ../dnf/cli/option_parser.py:201
-msgid "exclude packages by name or glob"
-msgstr "vyloučit balíček/balíčky na základě jména nebo vzoru"
-
-#: ../dnf/cli/option_parser.py:206
-msgid "disable excludes"
-msgstr "zakázat výjimky"
-
-#: ../dnf/cli/option_parser.py:211
-msgid ""
-"label and path to additional repository, can be specified multiple times."
-msgstr "jmenovka a cesta k dodatečnému repozitáři, lze je uvést několikrát."
-
-#: ../dnf/cli/option_parser.py:214
-msgid "disable all plugins"
-msgstr "Vypnout všechny pluginy"
-
-#: ../dnf/cli/option_parser.py:216
-msgid "disable gpg signature checking"
-msgstr "zakázat kontrolu GPG podpisů"
-
-#: ../dnf/cli/option_parser.py:219
-msgid "disable plugins by name"
-msgstr "zakázat zásuvné moduly podle jména"
-
-#: ../dnf/cli/option_parser.py:222
-msgid "control whether color is used"
-msgstr "kontrola zda jsou použity barvy"
-
-#: ../dnf/cli/option_parser.py:224
-msgid "override the value of $releasever in config and repo files"
-msgstr "přenastavit hodnotu $releasever v konfiguračních a repo souborech"
-
-#: ../dnf/cli/option_parser.py:228
-msgid "set arbitrary config and repo options"
-msgstr "nastavit doplňkové konfigurace a možnosti repozitáře"
-
-#: ../dnf/cli/option_parser.py:231
-msgid "set metadata as expired before running the command"
-msgstr "nastavit metada před spuštěním příkazu jako časově neplatná"
-
-#: ../dnf/cli/option_parser.py:233
-msgid "resolve to IPv4 addresses only"
-msgstr "vyřešit pouze IPv4 adresy"
-
-#: ../dnf/cli/option_parser.py:236
-msgid "resolve to IPv6 addresses only"
-msgstr "vyřešit pouze IPv6 adresy"
-
-#: ../dnf/cli/option_parser.py:239
-msgid "only download packages"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:264
-msgid "List of Main Commands"
-msgstr "Seznam hlavních příkazů"
-
-#: ../dnf/cli/option_parser.py:265
-msgid "List of Plugin Commands"
-msgstr "Seznam příkazů zásuvných modulů"
-
-#: ../dnf/goal.py:51
-msgid "--> Finding unneeded leftover dependencies"
-msgstr "--> Hledání nepotřebných závislostí"
-
-#: ../dnf/lock.py:97
+#: ../dnf/base.py:1889
 #, python-format
 msgid ""
-"Malformed lock file found: %s.\n"
-"Ensure no other dnf process is running and remove the lock file manually or run systemd-tmpfiles --remove dnf.conf."
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
+"Check that the correct key URLs are configured for this repository."
 msgstr ""
-"Nalezen poškozený soubor zámku: %s.\n"
-"Ujistěte se, že neběží žádný další proces dnf a odstraňte soubor zámku ručně nebo spusťte systemd-tmpfiles --remove dnf.conf."
+"GPG klíče určené pro repozitář „%s“ jsou již nainstalovány, avšak pro tento balíček nejsou správné.\n"
+"Zkontrolujte, zda URL klíčů jsou pro tento repozitář správně nastaveny."
 
-#: ../dnf/lock.py:136
+#: ../dnf/base.py:1899
+msgid "Import of key(s) didn't help, wrong key(s)?"
+msgstr "Import klíče/ů nepomohl, špatný klíč(e)?"
+
+#: ../dnf/base.py:1926
 #, python-format
-msgid "Waiting for process with pid %d to finish."
-msgstr "Čekám, až proces s pid %d skončí."
+msgid "Package %s is already installed, skipping."
+msgstr "Balíček %s už je nainstalován, přeskakuji."
 
-#: ../dnf/comps.py:92
-msgid "skipping."
-msgstr "přeskakuji."
-
-#: ../dnf/comps.py:170
+#: ../dnf/transaction.py:209
 #, python-format
-msgid "Group '%s' is not installed."
-msgstr "Skupina \"%s\" není nainstalována."
+msgid "Will not install a source rpm package (%s)."
+msgstr "Nenainstaluje zdrojový rpm balíček (%s)."
 
-#: ../dnf/comps.py:172
+#: ../dnf/plugin.py:126
 #, python-format
-msgid "Group '%s' does not exist."
-msgstr "Skupina \"%s\" neexistuje."
-
-#: ../dnf/comps.py:468
-#, python-format
-msgid "Environment '%s' is already installed."
-msgstr "Prostředí \"%s\" je již nainstalováno."
-
-#: ../dnf/comps.py:490 ../dnf/comps.py:511
-#, python-format
-msgid "Environment '%s' is not installed."
-msgstr "Prostředí \"%s\" není nainstalováno."
-
-#: ../dnf/comps.py:536
-#, python-format
-msgid "Group '%s' is already installed."
-msgstr "Skupina '%s' je již nainstalována."
-
-#: ../dnf/comps.py:561 ../dnf/comps.py:577
-#, python-format
-msgid "Group '%s' not installed."
-msgstr "Skupina \"%s\" není nainstalována."
-
-#: ../dnf/conf/read.py:51
-#, python-format
-msgid "Warning: failed loading '%s', skipping."
-msgstr "Varování: chyba načítání '%s', přeskakuji."
-
-#: ../dnf/conf/read.py:61
-#, python-format
-msgid "Repository %r: Error parsing config: %s"
-msgstr "Repozitář  %r: Chyba při parsování konfigurace:  %s"
-
-#: ../dnf/conf/read.py:67
-#, python-format
-msgid "Repository %r is missing name in configuration, using id."
-msgstr "Repozitáři %r chybí v konfiguraci jméno, použito id."
-
-#: ../dnf/conf/__init__.py:73
-#, python-format
-msgid "Could not set cachedir: %s"
-msgstr "Nelze nastavit adresář pro cache: %s"
+msgid "Failed loading plugin: %s"
+msgstr "Nepodařilo se načíst plugin: %s"
 
 #: ../dnf/automatic/emitter.py:29
 #, python-format
@@ -2232,40 +2277,3 @@ msgstr "Aktualizace dostupné pro '%s'."
 #, python-format
 msgid "Failed to send an email via '%s': %s"
 msgstr "Nepodařilo se poslat e-mail prostřednictvím '%s': %s"
-
-#: ../dnf/persistor.py:314
-msgid "Invalid groups database, clearing."
-msgstr "Neplatná databáze skupin, uklízí se."
-
-#: ../dnf/persistor.py:333
-msgid "Unsupported installed groups database found, resetting."
-msgstr ""
-"Nalezena nepodporovaná databáze nainstalovaných skupin, přenastavuje se."
-
-#: ../dnf/persistor.py:413
-#, python-format
-msgid "%s is empty file"
-msgstr "%s je prázdný soubor"
-
-#: ../dnf/crypto.py:81
-#, python-format
-msgid ""
-"Importing GPG key 0x%s:\n"
-" Userid     : \"%s\"\n"
-" Fingerprint: %s\n"
-" From       : %s"
-msgstr ""
-"Importuji GPG klíč 0x%s:\n"
-"Uživatelské ID : \"%s\"\n"
-"Otisk: %s\n"
-"Zdroj : %s"
-
-#: ../dnf/transaction.py:209
-#, python-format
-msgid "Will not install a source rpm package (%s)."
-msgstr "Nenainstaluje zdrojový rpm balíček (%s)."
-
-#: ../dnf/repo.py:819
-#, python-format
-msgid "Failed to synchronize cache for repo '%s' from '%s': %s"
-msgstr "Chyba synchronizace repozitáře '%s' z '%s': %s"

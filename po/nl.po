@@ -1,23 +1,17 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# 
-# Translators:
-# Dimitris Glezos <glezos@indifex.com>, 2011
-# Jan Silhan <jsilhan@redhat.com>, 2015. #zanata
+# Richard E. van der Luit <nippur@fedoraproject.org>, 2016. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-03-31 15:23+0200\n"
-"PO-Revision-Date: 2015-03-16 12:46-0400\n"
-"Last-Translator: Jan silhan <jsilhan@redhat.com>\n"
-"Language-Team: Greek (http://www.transifex.com/projects/p/dnf/language/el/)\n"
+"PO-Revision-Date: 2016-02-23 05:22-0500\n"
+"Last-Translator: Richard E. van der Luit <nippur@fedoraproject.org>\n"
+"Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: el\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: nl\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Zanata 3.8.2\n"
 
 #: ../dnf/persistor.py:314
@@ -36,19 +30,19 @@ msgstr ""
 #: ../dnf/drpm.py:63 ../dnf/repo.py:361
 #, python-format
 msgid "unsupported checksum type: %s"
-msgstr ""
+msgstr "Niet ondersteund checksumtype: %s"
 
 #: ../dnf/drpm.py:135
 msgid "Delta RPM rebuild failed"
-msgstr ""
+msgstr "Herbouwen delta-RPM mislukt"
 
 #: ../dnf/drpm.py:137
 msgid "Checksum of the delta-rebuilt RPM failed"
-msgstr ""
+msgstr "Checksum van delta-herbouwde RPM mislukt"
 
 #: ../dnf/drpm.py:140
 msgid "done"
-msgstr ""
+msgstr "klaar"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -127,45 +121,45 @@ msgstr ""
 
 #: ../dnf/yum/rpmtrans.py:123
 msgid "Cleanup"
-msgstr ""
+msgstr "Schonen"
 
 #: ../dnf/yum/rpmtrans.py:124 ../dnf/cli/output.py:1008
 msgid "Downgrading"
-msgstr ""
+msgstr "Downgraden"
 
 #: ../dnf/yum/rpmtrans.py:125
 msgid "Erasing"
-msgstr "Διαγραφή"
+msgstr "Wissen"
 
 #: ../dnf/yum/rpmtrans.py:126 ../dnf/cli/output.py:1004
 msgid "Installing"
-msgstr "Εγκατάσταση"
+msgstr "Installeren"
 
 #: ../dnf/yum/rpmtrans.py:127 ../dnf/cli/output.py:1712
 msgid "Obsoleting"
-msgstr ""
+msgstr "Als verouderd aanmerken"
 
 #: ../dnf/yum/rpmtrans.py:128 ../dnf/cli/output.py:1006
 msgid "Reinstalling"
-msgstr ""
+msgstr "Herinstalleren"
 
 #: ../dnf/yum/rpmtrans.py:129 ../dnf/cli/output.py:1005
 msgid "Upgrading"
-msgstr ""
+msgstr "Upgraden"
 
 #: ../dnf/yum/rpmtrans.py:130
 msgid "Verifying"
-msgstr ""
+msgstr "Verifiëren"
 
 #: ../dnf/yum/history.py:745
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
-msgstr ""
+msgstr "Kan DNF DB-geschiedenis niet initialiseren: %s"
 
 #: ../dnf/yum/history.py:1662
 #, python-format
 msgid "Can not create history database at '%s'."
-msgstr ""
+msgstr "Kan geen geschiedenisdatabase aanmaken op '%s'."
 
 #: ../dnf/cli/option_parser.py:51
 #, python-format
@@ -785,7 +779,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1007
 msgid "Removing"
-msgstr "Γίνεται αφαίρεση"
+msgstr ""
 
 #: ../dnf/cli/output.py:1022
 #, python-format
@@ -860,7 +854,7 @@ msgstr ""
 #: ../dnf/cli/output.py:1169 ../dnf/cli/output.py:1553
 #: ../dnf/cli/output.py:1555 ../dnf/cli/commands/updateinfo.py:296
 msgid "Installed"
-msgstr "Εγκαταστάθηκε"
+msgstr ""
 
 #: ../dnf/cli/output.py:1170 ../dnf/cli/output.py:1554
 #: ../dnf/cli/output.py:1718
@@ -952,7 +946,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1553
 msgid "Erased"
-msgstr "Διαγράφηκε"
+msgstr ""
 
 #: ../dnf/cli/output.py:1555
 msgid "Not installed"
@@ -1882,7 +1876,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/updateinfo.py:294
 msgid "Updated"
-msgstr "Ενημερώθηκε"
+msgstr ""
 
 #: ../dnf/cli/commands/updateinfo.py:294
 msgid "Bugs"
@@ -1949,15 +1943,17 @@ msgid ""
 msgstr ""
 
 #: ../dnf/base.py:116
-#, python-format
+#, fuzzy, python-format
 msgid "%s, disabling."
-msgstr ""
+msgstr "%s, uitschakelen."
 
 #: ../dnf/base.py:302
 msgid ""
 "The downloaded packages were saved in cache until the next successful "
 "transaction."
 msgstr ""
+"De gedownloade pakketten zijn opgeslagen in de cache tot de volgende "
+"sucessvolle transactie."
 
 #: ../dnf/base.py:304
 #, python-format
@@ -2183,7 +2179,7 @@ msgstr ""
 #: ../dnf/plugin.py:126
 #, python-format
 msgid "Failed loading plugin: %s"
-msgstr ""
+msgstr "Fout bij laden plugin: %s"
 
 #: ../dnf/automatic/emitter.py:29
 #, python-format
