@@ -645,9 +645,12 @@ class Repo(dnf.yum.config.RepoConf):
         h.setopt(librepo.LRO_PROXYAUTH, True)
         h.proxy = self.proxy
         h.lowspeedlimit = self.minrate
-        h.lowspeedtime = self.timeout
-        current_timeout = h.getinfo(librepo.LRO_CONNECTTIMEOUT)
-        h.connecttimeout = max(self.timeout, current_timeout)
+        if self.timeout > 0:
+            h.connecttimeout = self.timeout
+            h.lowspeedtime = self.timeout
+        else:
+            h.connecttimeout = None
+            h.lowspeedtime = None
         h.proxyuserpwd = _user_pass_str(self.proxy_username, self.proxy_password)
         h.sslverifypeer = h.sslverifyhost = self.sslverify
 
