@@ -10,7 +10,7 @@
 %global py3pluginpath %{python3_sitelib}/dnf-plugins
 
 Name:		dnf
-Version:	1.1.7
+Version:	1.1.8
 Release:	1%{?snapshot}%{?dist}
 Summary:	Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -285,6 +285,35 @@ exit 0
 %systemd_postun_with_restart dnf-automatic.timer
 
 %changelog
+* Tue Apr 05 2016 Michal Luscon <mluscon@redhat.com> 1.1.8-1
+- refactor: repo: add md_expired property (Michal Domonkos)
+- test: fix cachedir usage in LocalRepoTest (Michal Domonkos)
+- clean: operate on all cached repos (RhBug:1278225) (Michal Domonkos)
+- refactor: repo: globally define valid repoid chars (Michal Domonkos)
+- RepoPersistor: only write to disk when requested (Michal Domonkos)
+- clean: remove dead subcommands (Michal Domonkos)
+- doc: --best in case of problem (RhBug:1309408) (Jan Silhan)
+- Added fix for correct error message for group info (RhBug:1209649) (Abhijeet
+  Kasurde)
+- repo: don't get current timeout for librepo (RhBug:1272977) (Igor Gnatenko)
+- doc: fix default timeout value (Michal Luscon)
+- cli: inform only about nonzero md cache check interval (Michal Luscon)
+- base: report errors in batch at the end of md downloading (Michal Luscon)
+- repo: produce more sane error if md download fails (Michal Luscon)
+- zanata update (RhBug:1322226) (Jan Silhan)
+- doc: Fixed syntax of `assumeyes` and `defaultyes` ref lables in
+  `conf_ref.rst` (Matt Sturgeon)
+- Fix output headers for dnf history command (Michael Dunphy)
+- doc: change example of 'dnf-command(repoquery)' (Jaroslav Mracek)
+- makacache.service: shorten journal logs (RhBug:1315349) (Michal Luscon)
+- config: improve UX of error msg (Michal Luscon)
+- Added user friendly message for out of range value (RhBug:1214562) (Abhijeet
+  Kasurde)
+- doc: prefer repoquery to list (Jan Silhan)
+- history: fix empty history cmd (RhBug:1313215) (Michal Luscon)
+- Very minor tweak to the docs for `--assumeyes` and `--assumeno` (Matt
+  Sturgeon)
+
 * Thu Feb 25 2016 Michal Luscon <mluscon@redhat.com> 1.1.7-1
 - Add `/etc/distro.repos.d` as a path owned by the dnf package (Neal Gompa
   (ニール・ゴンパ))
