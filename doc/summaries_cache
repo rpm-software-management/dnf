@@ -1486,5 +1486,41 @@
     [
         1302217, 
         "dnf metadata expiration message does not fit on screen"
+    ], 
+    [
+        1309408, 
+        "[RFE] Add docs that --best is showing more details on broken package dependencies"
+    ], 
+    [
+        1209649, 
+        "[UX] dnf group info (and other two word commands) give wrong mini_usage info"
+    ], 
+    [
+        1272977, 
+        "dnf waits 10 minutes for a single repo (for unresponsive ftp server?)"
+    ], 
+    [
+        1322226, 
+        "[pt-BR] some strings translated in zanata are missing in the terminal"
+    ], 
+    [
+        1315349, 
+        "dnf-makecache.service fills journal with useless lines because of verbose option"
+    ], 
+    [
+        1214562, 
+        "Config error: Error parsing \"installonly_limit = u'1'\": Out of range integer value."
+    ], 
+    [
+        1313215, 
+        "got \"IndexError: list index out of range \" after ran dnf history command"
+    ], 
+    [
+        1306057, 
+        "[UX] different behaviour of installonly in  yum/dnf"
+    ], 
+    [
+        1289164, 
+        "[RFE]  positive prompt answer by default"
     ]
 ]

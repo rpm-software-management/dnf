@@ -22,6 +22,24 @@
 .. contents::
 
 ===================
+1.1.8 Release Notes
+===================
+
+Improvements in documentation, bugfixes, translation updates.
+
+Bugs fixed in 1.1.8:
+
+* :rhbug:`1309408`
+* :rhbug:`1209649`
+* :rhbug:`1272977`
+* :rhbug:`1322226`
+* :rhbug:`1315349`
+* :rhbug:`1214562`
+* :rhbug:`1313215`
+* :rhbug:`1306057`
+* :rhbug:`1289164`
+
+===================
 1.1.7 Release Notes
 ===================
 
