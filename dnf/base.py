@@ -1512,7 +1512,7 @@ class Base(object):
             msg = 'downgrade_package() for an installed package.'
             raise NotImplementedError(msg)
 
-        q = self.sack.query().installed().filter(name=pkg.name, arch=pkg.arch)
+        q = self.sack.query().installed().filter(name=pkg.name, arch=[pkg.arch, "noarch"])
         if not q:
             msg = _("Package %s not installed, cannot downgrade it.")
             logger.warning(msg, pkg.name)
@@ -1554,7 +1554,7 @@ class Base(object):
             msg = 'upgrade_package() for an installed package.'
             raise NotImplementedError(msg)
 
-        q = self.sack.query().installed().filter(name=pkg.name, arch=pkg.arch)
+        q = self.sack.query().installed().filter(name=pkg.name, arch=[pkg.arch, "noarch"])
         if not q:
             msg = _("Package %s not installed, cannot update it.")
             logger.warning(msg, pkg.name)
