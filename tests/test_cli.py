@@ -164,7 +164,7 @@ class CliTest(TestCase):
         opts.cacheonly = True
         opts.repofrompath = {}
 
-        pers = self.base.repo_persistor
+        pers = self.base._repo_persistor
         pers.get_expired_repos = mock.Mock(return_value=('one',))
         self.base._repos = dnf.repodict.RepoDict()
         self.base._repos.add(support.MockRepo('one', None))
@@ -181,7 +181,7 @@ class ConfigureTest(TestCase):
         self.base = support.MockBase("main")
         self.base._conf = dnf.conf.Conf()
         self.base.output = support.MockOutput()
-        self.base.plugins = mock.Mock()
+        self.base._plugins = mock.Mock()
         self.cli = dnf.cli.cli.Cli(self.base)
         self.cli.command = mock.Mock()
         self.conffile = os.path.join(support.dnf_toplevel(), "etc/dnf/dnf.conf")

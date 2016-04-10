@@ -102,7 +102,7 @@ class GroupCommand(commands.Command):
 
     def _environment_lists(self, patterns):
         def available_pred(env):
-            return not self.base.group_persistor.environment(env.id).installed
+            return not self.base._group_persistor.environment(env.id).installed
 
         self._assert_comps()
         if patterns is None:
@@ -114,7 +114,7 @@ class GroupCommand(commands.Command):
 
     def _group_lists(self, uservisible, patterns):
         def installed_pred(group):
-            return self.base.group_persistor.group(group.id).installed
+            return self.base._group_persistor.group(group.id).installed
         installed = []
         available = []
 
@@ -244,11 +244,11 @@ class GroupCommand(commands.Command):
         return 0, []
 
     def _mark_install(self, patterns):
-        prst = self.base.group_persistor
+        prst = self.base._group_persistor
         q = CompsQuery(self.base.comps, prst,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
-        solver = self.base.build_comps_solver()
+        solver = self.base._build_comps_solver()
         res = q.get(*patterns)
         types = dnf.comps.DEFAULT | dnf.comps.MANDATORY | dnf.comps.OPTIONAL
 
@@ -271,11 +271,11 @@ class GroupCommand(commands.Command):
         prst.commit()
 
     def _mark_remove(self, patterns):
-        prst = self.base.group_persistor
+        prst = self.base._group_persistor
         q = CompsQuery(self.base.comps, prst,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.INSTALLED)
-        solver = self.base.build_comps_solver()
+        solver = self.base._build_comps_solver()
         res = q.get(*patterns)
         for env_id in res.environments:
             solver.environment_remove(env_id)
@@ -421,8 +421,8 @@ class GroupCommand(commands.Command):
     def run_transaction(self):
         if not self._remark:
             return
-        goal = self.base.goal
-        pkgdb = self.base.yumdb
+        goal = self.base._goal
+        pkgdb = self.base._yumdb
         names = goal.group_members
         for pkg in self.base.sack.query().installed().filter(name=names):
             db_pkg = pkgdb.get_package(pkg)

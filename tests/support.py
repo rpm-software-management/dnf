@@ -180,9 +180,9 @@ class _BaseStubMixin(object):
             repo.enable()
             self._repos.add(repo)
 
-        self.repo_persistor = FakePersistor()
-        self._yumdb = MockYumDB()
-        self.ds_callback = mock.Mock()
+        self._repo_persistor = FakePersistor()
+        self._priv_yumdb = MockYumDB()
+        self._ds_callback = mock.Mock()
 
     def add_test_dir_repo(self, id_, cachedir):
         """Add a repository located in a directory in the tests."""
@@ -200,11 +200,11 @@ class _BaseStubMixin(object):
     def _activate_group_persistor(self):
         return MockGroupPersistor()
 
-    def build_comps_solver(self):
-        return dnf.comps.Solver(self.group_persistor, self._comps,
+    def _build_comps_solver(self):
+        return dnf.comps.Solver(self._group_persistor, self._comps,
                                 REASONS.get)
 
-    def activate_persistor(self):
+    def _activate_persistor(self):
         pass
 
     def init_sack(self):

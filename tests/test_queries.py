@@ -39,10 +39,10 @@ class QueriesTest(support.TestCase):
         base = support.MockBase("main")
         installed = sack.query().installed()
         for pkg in installed:
-            base.yumdb.get_package(pkg).reason = "dep"
+            base._yumdb.get_package(pkg).reason = "dep"
         hole = installed.filter(name="hole")[0]
-        base.yumdb.get_package(hole).reason = "user"
-        pkgs = installed.unneeded(sack, base.yumdb)
+        base._yumdb.get_package(hole).reason = "user"
+        pkgs = installed.unneeded(sack, base._yumdb)
         self.assertEqual(len(pkgs), support.TOTAL_RPMDB_COUNT-1)
 
     def test_by_file(self):

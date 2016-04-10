@@ -183,8 +183,8 @@ class ReinstallCommandTest(support.ResultTestCase):
         base = self._cmd.cli.base
         holes_query = dnf.subject.Subject('hole').get_best_query(base.sack)
         for pkg in holes_query.installed():
-            self._cmd.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
-            self._cmd.base.yumdb.get_package(pkg).from_repo = 'unknown'
+            self._cmd.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self._cmd.base._yumdb.get_package(pkg).from_repo = 'unknown'
         stdout = dnf.pycomp.StringIO()
 
         with support.wiretap_logs('dnf', logging.INFO, stdout):
@@ -222,8 +222,8 @@ class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
     def test(self):
         """Test whether only upgrades in the repository are listed."""
         for pkg in self.cli.base.sack.query().installed().filter(name='tour'):
-            self.cli.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
-            self.cli.base.yumdb.get_package(pkg).from_repo = 'updates'
+            self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self.cli.base._yumdb.get_package(pkg).from_repo = 'updates'
 
         cmd = dnf.cli.commands.RepoPkgsCommand.CheckUpdateSubCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
@@ -319,8 +319,8 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
     def test_info_all(self):
         """Test whether only packages related to the repository are listed."""
         for pkg in self.cli.base.sack.query().installed().filter(name='pepper'):
-            self.cli.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
-            self.cli.base.yumdb.get_package(pkg).from_repo = 'main'
+            self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self.cli.base._yumdb.get_package(pkg).from_repo = 'main'
 
         cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
@@ -372,8 +372,8 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
     def test_info_extras(self):
         """Test whether only extras installed from the repository are listed."""
         for pkg in self.cli.base.sack.query().installed().filter(name='tour'):
-            self.cli.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
-            self.cli.base.yumdb.get_package(pkg).from_repo = 'unknown'
+            self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self.cli.base._yumdb.get_package(pkg).from_repo = 'unknown'
 
         cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
@@ -397,8 +397,8 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
     def test_info_installed(self):
         """Test whether only packages installed from the repository are listed."""
         for pkg in self.cli.base.sack.query().installed().filter(name='pepper'):
-            self.cli.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
-            self.cli.base.yumdb.get_package(pkg).from_repo = 'main'
+            self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self.cli.base._yumdb.get_package(pkg).from_repo = 'main'
 
         cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
@@ -519,8 +519,8 @@ class RepoPkgsReinstallOldSubCommandTest(support.ResultTestCase):
         """Test whether all packages from the repository are reinstalled."""
         for pkg in self.cli.base.sack.query().installed():
             reponame = 'main' if pkg.name != 'pepper' else 'non-main'
-            self.cli.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
-            self.cli.base.yumdb.get_package(pkg).from_repo = reponame
+            self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self.cli.base._yumdb.get_package(pkg).from_repo = reponame
 
         cmd = dnf.cli.commands.RepoPkgsCommand.ReinstallOldSubCommand(self.cli)
         cmd.run_on_repo('main', [])
@@ -600,7 +600,7 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
         for pkg in self.cli.base.sack.query().installed():
             data = support.RPMDBAdditionalDataPackageStub()
             data.from_repo = 'non-distro' if pkg.name == 'pepper' else 'distro'
-            self.cli.base.yumdb.db[str(pkg)] = data
+            self.cli.base._yumdb.db[str(pkg)] = data
 
         cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrDistroSyncSubCommand(
             self.cli)
@@ -616,7 +616,7 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
         for pkg in self.cli.base.sack.query().installed():
             data = support.RPMDBAdditionalDataPackageStub()
             data.from_repo = 'non-distro' if pkg.name == 'hole' else 'distro'
-            self.cli.base.yumdb.db[str(pkg)] = data
+            self.cli.base._yumdb.db[str(pkg)] = data
 
         cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrDistroSyncSubCommand(
             self.cli)
@@ -632,7 +632,7 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
         for pkg in self.cli.base.sack.query().installed():
             data = support.RPMDBAdditionalDataPackageStub()
             data.from_repo = 'non-distro' if pkg.name in nondist else 'distro'
-            self.cli.base.yumdb.db[str(pkg)] = data
+            self.cli.base._yumdb.db[str(pkg)] = data
 
         cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrDistroSyncSubCommand(
             self.cli)
@@ -696,8 +696,8 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(support.ResultTestCase):
         """Test whether all packages from the repository are reinstalled."""
         for pkg in self.cli.base.sack.query().installed():
             reponame = 'distro' if pkg.name != 'tour' else 'non-distro'
-            self.cli.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
-            self.cli.base.yumdb.get_package(pkg).from_repo = reponame
+            self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self.cli.base._yumdb.get_package(pkg).from_repo = reponame
 
         cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrReinstallSubCommand(
             self.cli)
@@ -712,8 +712,8 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(support.ResultTestCase):
         """Test whether all packages from the repository are removed."""
         for pkg in self.cli.base.sack.query().installed():
             reponame = 'distro' if pkg.name != 'hole' else 'non-distro'
-            self.cli.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
-            self.cli.base.yumdb.get_package(pkg).from_repo = reponame
+            self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self.cli.base._yumdb.get_package(pkg).from_repo = reponame
 
         cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrReinstallSubCommand(
             self.cli)
@@ -738,8 +738,8 @@ class RepoPkgsRemoveSubCommandTest(support.ResultTestCase):
         """Test whether only packages from the repository are removed."""
         for pkg in self.cli.base.sack.query().installed():
             reponame = 'main' if pkg.name == 'pepper' else 'non-main'
-            self.cli.base.yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
-            self.cli.base.yumdb.get_package(pkg).from_repo = reponame
+            self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
+            self.cli.base._yumdb.get_package(pkg).from_repo = reponame
 
         cmd = dnf.cli.commands.RepoPkgsCommand.RemoveSubCommand(self.cli)
         cmd.run_on_repo('main', [])

@@ -62,8 +62,8 @@ class BaseTest(support.TestCase):
     @mock.patch('dnf.rpm.transaction.TransactionWrapper')
     def test_ts(self, mock_ts):
         base = dnf.Base()
-        self.assertEqual(base._ts, None)
-        ts = base.ts
+        self.assertEqual(base._priv_ts, None)
+        ts = base._ts
         # check the setup is correct
         ts.setFlags.call_args.assert_called_with(0)
         flags = ts.setProbFilter.call_args[0][0]
@@ -72,17 +72,17 @@ class BaseTest(support.TestCase):
         # check file conflicts are reported:
         self.assertFalse(flags & rpm.RPMPROB_FILTER_REPLACENEWFILES)
         # check we can close the connection
-        del base.ts
-        self.assertEqual(base._ts, None)
+        del base._ts
+        self.assertEqual(base._priv_ts, None)
         ts.close.assert_called_once_with()
 
     def test_iter_userinstalled(self):
         """Test iter_userinstalled with a package installed by the user."""
         base = dnf.Base()
         base._sack = support.mock_sack('main')
-        base._yumdb = support.MockYumDB()
+        base._priv_yumdb = support.MockYumDB()
         pkg, = base.sack.query().installed().filter(name='pepper')
-        base.yumdb.get_package(pkg).get = {'reason': 'user', 'from_repo': 'main'}.get
+        base._yumdb.get_package(pkg).get = {'reason': 'user', 'from_repo': 'main'}.get
 
         iterator = base.iter_userinstalled()
 
@@ -93,10 +93,10 @@ class BaseTest(support.TestCase):
         """Test iter_userinstalled with a package installed from a bad repository."""
         base = dnf.Base()
         base._sack = support.mock_sack('main')
-        base._yumdb = support.MockYumDB()
+        base._priv_yumdb = support.MockYumDB()
 
         pkg, = base.sack.query().installed().filter(name='pepper')
-        base.yumdb.get_package(pkg).get = {'reason': 'user', 'from_repo': 'anakonda'}.get
+        base._yumdb.get_package(pkg).get = {'reason': 'user', 'from_repo': 'anakonda'}.get
 
         iterator = base.iter_userinstalled()
 
@@ -106,10 +106,10 @@ class BaseTest(support.TestCase):
         """Test iter_userinstalled with a package installed for a wrong reason."""
         base = dnf.Base()
         base._sack = support.mock_sack('main')
-        base._yumdb = support.MockYumDB()
+        base._priv_yumdb = support.MockYumDB()
 
         pkg, = base.sack.query().installed().filter(name='pepper')
-        base.yumdb.get_package(pkg).get = {'reason': 'dep', 'from_repo': 'main'}.get
+        base._yumdb.get_package(pkg).get = {'reason': 'dep', 'from_repo': 'main'}.get
 
         iterator = base.iter_userinstalled()
 
@@ -136,9 +136,9 @@ class BuildTransactionTest(support.TestCase):
         base = support.MockBase("updates")
         base.upgrade("pepper")
         self.assertTrue(base.resolve())
-        base.ds_callback.assert_has_calls([mock.call.start(),
-                                           mock.call.pkg_added(mock.ANY, 'ud'),
-                                           mock.call.pkg_added(mock.ANY, 'u')])
+        base._ds_callback.assert_has_calls([mock.call.start(),
+                                            mock.call.pkg_added(mock.ANY, 'ud'),
+                                            mock.call.pkg_added(mock.ANY, 'u')])
         self.assertLength(base.transaction, 1)
 
 # verify transaction test helpers
@@ -168,16 +168,16 @@ class VerifyTransactionTest(TestCase):
 
         self.base.transaction.add_install(new_pkg, [])
         self.base.transaction.add_erase(removed_pkg)
-        self.base.verify_transaction()
+        self.base._verify_transaction()
         # mock is designed so this returns the exact same mock object it did
         # during the method call:
-        yumdb_info = self.base.yumdb.get_package(new_pkg)
+        yumdb_info = self.base._yumdb.get_package(new_pkg)
         self.assertEqual(yumdb_info.from_repo, 'main')
         self.assertEqual(yumdb_info.reason, 'unknown')
         self.assertEqual(yumdb_info.releasever, 'Fedora69')
         self.assertEqual(yumdb_info.checksum_type, 'md5')
         self.assertEqual(yumdb_info.checksum_data, HASH)
-        self.base.yumdb.assertLength(2)
+        self.base._yumdb.assertLength(2)
 
 class InstallReasonTest(support.ResultTestCase):
     def setUp(self):
@@ -232,7 +232,7 @@ class Goal2TransactionTest(support.TestCase):
         base = support.MockBase("main", "updates")
         base.upgrade("hole")
         goal = base._goal
-        self.assertTrue(base.run_hawkey_goal(goal, allow_erasing=False))
+        self.assertTrue(base._run_hawkey_goal(goal, allow_erasing=False))
         ts = base._goal2transaction(goal)
         self.assertLength(ts._tsis, 1)
         tsi = ts._tsis[0]

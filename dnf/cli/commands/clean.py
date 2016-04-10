@@ -111,7 +111,7 @@ class CleanCommand(commands.Command):
 
         if 'expire-cache' in types:
             expired = _cached_repos(files)
-            self.base.repo_persistor.expired_to_add.update(expired)
+            self.base._repo_persistor.expired_to_add.update(expired)
             types.remove('expire-cache')
 
         patterns = [dnf.repo.CACHE_FILES[t] for t in types]

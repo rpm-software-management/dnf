@@ -26,7 +26,7 @@ class List(support.TestCase):
         """Test whether packages are filtered by the reponame."""
         reponame = 'main'
         base = support.MockBase(reponame)
-        lists = base.doPackageLists(reponame=reponame)
+        lists = base._do_package_lists(reponame=reponame)
 
         pkgs = itertools.chain.from_iterable(lists.all_lists().values())
         self.assertCountEqual({pkg.reponame for pkg in pkgs}, {reponame})
@@ -37,7 +37,7 @@ class List(support.TestCase):
 
     def test_list_installed(self):
         base = support.MockBase()
-        ypl = base.doPackageLists('installed')
+        ypl = base._do_package_lists('installed')
         self.assertEqual(len(ypl.installed), support.TOTAL_RPMDB_COUNT)
 
     def test_list_installed_reponame(self):
@@ -46,29 +46,29 @@ class List(support.TestCase):
         expected = base.sack.query().installed().filter(name={'pepper',
                                                               'librita'})
         for pkg in expected:
-            base.yumdb.db[str(pkg)] = {'from_repo': 'main'}
+            base._yumdb.db[str(pkg)] = {'from_repo': 'main'}
 
-        lists = base.doPackageLists('installed', reponame='main')
+        lists = base._do_package_lists('installed', reponame='main')
 
         self.assertCountEqual(lists.installed, expected)
 
     def test_list_updates(self):
         base = support.MockBase("updates", "main")
-        ypl = base.doPackageLists('upgrades')
+        ypl = base._do_package_lists('upgrades')
         self.assertEqual(len(ypl.updates), support.UPDATES_NSOLVABLES - 1)
         pkg = ypl.updates[0]
         self.assertEqual(pkg.name, "hole")
-        ypl = base.doPackageLists('upgrades', ["pepper"])
+        ypl = base._do_package_lists('upgrades', ["pepper"])
         self.assertEqual(len(ypl.updates), 1)
-        ypl = base.doPackageLists('upgrades', ["mrkite"])
+        ypl = base._do_package_lists('upgrades', ["mrkite"])
         self.assertEqual(len(ypl.updates), 0)
 
-        ypl = base.doPackageLists('upgrades', ["hole"])
+        ypl = base._do_package_lists('upgrades', ["hole"])
         self.assertEqual(len(ypl.updates), 2)
 
     def test_lists_multiple(self):
         base = support.MockBase('updates', "main")
-        ypl = base.doPackageLists('upgrades', ['pepper', 'hole'])
+        ypl = base._do_package_lists('upgrades', ['pepper', 'hole'])
         self.assertLength(ypl.updates, 3)
 
 class TestListAllRepos(support.TestCase):
@@ -77,21 +77,21 @@ class TestListAllRepos(support.TestCase):
         self.base.conf.multilib_policy = "all"
 
     def test_list_pattern(self):
-        ypl = self.base.doPackageLists('all', ['hole'])
+        ypl = self.base._do_package_lists('all', ['hole'])
         self.assertLength(ypl.installed, 1)
         self.assertLength(ypl.available, 2)
 
     def test_list_pattern_arch(self):
-        ypl = self.base.doPackageLists('all', ['hole.x86_64'])
+        ypl = self.base._do_package_lists('all', ['hole.x86_64'])
         self.assertLength(ypl.installed, 1)
         self.assertLength(ypl.available, 1)
 
     def test_list_available(self):
-        ypl = self.base.doPackageLists('available', ['hole'], showdups=False)
+        ypl = self.base._do_package_lists('available', ['hole'], showdups=False)
         self.assertCountEqual(map(str, ypl.available), ('hole-2-1.i686',
                                                         'hole-2-1.x86_64'))
 
-        ypl = self.base.doPackageLists('available', ['hole'], showdups=True)
+        ypl = self.base._do_package_lists('available', ['hole'], showdups=True)
         self.assertCountEqual(map(str, ypl.available), ('hole-2-1.i686',
                                                         'hole-2-1.x86_64',
                                                         'hole-1-2.x86_64'))
