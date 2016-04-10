@@ -102,7 +102,7 @@ class GroupCommand(commands.Command):
 
     def _environment_lists(self, patterns):
         def available_pred(env):
-            return not self.base.group_persistor.environment(env.id).installed
+            return not self.base._group_persistor.environment(env.id).installed
 
         self._assert_comps()
         if patterns is None:
@@ -114,7 +114,7 @@ class GroupCommand(commands.Command):
 
     def _group_lists(self, uservisible, patterns):
         def installed_pred(group):
-            return self.base.group_persistor.group(group.id).installed
+            return self.base._group_persistor.group(group.id).installed
         installed = []
         available = []
 
@@ -244,7 +244,7 @@ class GroupCommand(commands.Command):
         return 0, []
 
     def _mark_install(self, patterns):
-        prst = self.base.group_persistor
+        prst = self.base._group_persistor
         q = CompsQuery(self.base.comps, prst,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
@@ -271,7 +271,7 @@ class GroupCommand(commands.Command):
         prst.commit()
 
     def _mark_remove(self, patterns):
-        prst = self.base.group_persistor
+        prst = self.base._group_persistor
         q = CompsQuery(self.base.comps, prst,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.INSTALLED)
@@ -414,7 +414,7 @@ class GroupCommand(commands.Command):
         if not self._remark:
             return
         goal = self.base.goal
-        pkgdb = self.base.yumdb
+        pkgdb = self.base._yumdb
         names = goal.group_members
         for pkg in self.base.sack.query().installed().filter(name=names):
             db_pkg = pkgdb.get_package(pkg)

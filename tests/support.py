@@ -181,7 +181,7 @@ class _BaseStubMixin(object):
             self._repos.add(repo)
 
         self.repo_persistor = FakePersistor()
-        self._yumdb = MockYumDB()
+        self._priv_yumdb = MockYumDB()
         self.ds_callback = mock.Mock()
 
     def add_test_dir_repo(self, id_, cachedir):
@@ -201,10 +201,10 @@ class _BaseStubMixin(object):
         return MockGroupPersistor()
 
     def build_comps_solver(self):
-        return dnf.comps.Solver(self.group_persistor, self._comps,
+        return dnf.comps.Solver(self._group_persistor, self._comps,
                                 REASONS.get)
 
-    def activate_persistor(self):
+    def _activate_persistor(self):
         pass
 
     def init_sack(self):

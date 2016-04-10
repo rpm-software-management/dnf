@@ -77,7 +77,7 @@ def checkGPGKey(base, cli):
     """
     if cli.nogpgcheck:
         return
-    if not base.gpgKeyCheck():
+    if not base._gpg_key_check():
         for repo in base.repos.iter_enabled():
             if (repo.gpgcheck or repo.repo_gpgcheck) and not repo.gpgkey:
                 logger.critical("\n%s\n", gpg_msg)
@@ -520,7 +520,7 @@ class RepoPkgsCommand(Command):
                     except dnf.exceptions.PackagesNotAvailableError as err:
                         for pkg in err.packages:
                             xmsg = ''
-                            yumdb_info = self.base.yumdb.get_package(pkg)
+                            yumdb_info = self.base._yumdb.get_package(pkg)
                             if 'from_repo' in yumdb_info:
                                 xmsg = _(' (from %s)') % yumdb_info.from_repo
                             msg = _('Installed package %s%s%s%s not available.')
@@ -586,7 +586,7 @@ class RepoPkgsCommand(Command):
                     except dnf.exceptions.PackagesNotAvailableError as err:
                         for pkg in err.packages:
                             xmsg = ''
-                            yumdb_info = self.base.yumdb.get_package(pkg)
+                            yumdb_info = self.base._yumdb.get_package(pkg)
                             if 'from_repo' in yumdb_info:
                                 xmsg = _(' (from %s)') % yumdb_info.from_repo
                             msg = _('Installed package %s%s%s%s not available.')
@@ -674,7 +674,7 @@ class RepoPkgsCommand(Command):
 
             subject = dnf.subject.Subject(pkg_spec)
             matches = subject.get_best_query(self.cli.base.sack)
-            yumdb = self.cli.base.yumdb
+            yumdb = self.cli.base._yumdb
             installed = [
                 pkg for pkg in matches.installed()
                 if yumdb.get_package(pkg).get('from_repo') == reponame]
@@ -685,9 +685,9 @@ class RepoPkgsCommand(Command):
             clean_deps = self.cli.base.conf.clean_requirements_on_remove
             for package in installed:
                 if available.filter(name=package.name, arch=package.arch):
-                    self.cli.base.goal.distupgrade(package)
+                    self.cli.base._goal.distupgrade(package)
                 else:
-                    self.cli.base.goal.erase(package, clean_deps=clean_deps)
+                    self.cli.base._goal.erase(package, clean_deps=clean_deps)
 
         def run_on_repo(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""

@@ -32,7 +32,7 @@ class DowngradeTest(support.ResultTestCase):
 
         pkg = base.add_remote_rpm(support.TOUR_44_PKG_PATH)
         cnt = base.package_downgrade(pkg)
-        base.ts.setProbFilter.assert_called_with(
+        base._ts.setProbFilter.assert_called_with(
             rpm.RPMPROB_FILTER_OLDPACKAGE)
         self.assertGreater(cnt, 0)
         (installed, removed) = self.installed_removed(base)
