@@ -88,7 +88,7 @@ class PresetPersistorTest(support.ResultTestCase):
                           ['nonexistent'])
 
     def test_environment_remove(self):
-        prst = self.base.group_persistor
+        prst = self.base._group_persistor
         env_ids = prst.environments_by_pattern("sugar-desktop-environment")
         self.assertEqual(env_ids, set(['sugar-desktop-environment']))
         env_id = dnf.util.first(env_ids)
@@ -101,7 +101,7 @@ class PresetPersistorTest(support.ResultTestCase):
         self.assertFalse(somerset.installed)
 
     def test_env_upgrade(self):
-        prst = self.base.group_persistor
+        prst = self.base._group_persistor
         cnt = self.base.environment_upgrade("sugar-desktop-environment")
         self.assertEqual(4, cnt)
         peppers = prst.group('Peppers')
@@ -110,7 +110,7 @@ class PresetPersistorTest(support.ResultTestCase):
         self.assertTrue(somerset.installed)
 
     def test_group_install(self):
-        prst = self.base.group_persistor
+        prst = self.base._group_persistor
         grp = self.base.comps.group_by_pattern('Base')
         p_grp = prst.group('base')
         self.assertFalse(p_grp.installed)
@@ -122,7 +122,7 @@ class PresetPersistorTest(support.ResultTestCase):
         self.assertTrue(p_grp.installed)
 
     def test_group_remove(self):
-        prst = self.base.group_persistor
+        prst = self.base._group_persistor
         grp_ids = prst.groups_by_pattern('somerset')
         self.assertEqual(grp_ids, set(['somerset']))
         grp_id = dnf.util.first(grp_ids)
@@ -141,7 +141,7 @@ class EnvironmentInstallTest(support.ResultTestCase):
         self.base = support.MockBase("main")
         self.base.init_sack()
         self.base.read_mock_comps()
-        self.prst = self.base.group_persistor
+        self.prst = self.base._group_persistor
         p_env = self.prst.environment('sugar-desktop-environment')
         p_env.pkg_types = 0
         p_env.grp_types = 0
@@ -222,7 +222,7 @@ class PresetPersistorTestDeprecated(support.ResultTestCase):
         self.base.init_sack()
 
     def test_group_install(self):
-        prst = self.base.group_persistor
+        prst = self.base._group_persistor
         grp = self.base.comps.group_by_pattern('Base')
         p_grp = prst.group('base')
         self.assertFalse(p_grp.installed)
@@ -234,7 +234,7 @@ class PresetPersistorTestDeprecated(support.ResultTestCase):
         self.assertTrue(p_grp.installed)
 
     def test_group_remove(self):
-        prst = self.base.group_persistor
+        prst = self.base._group_persistor
         grp_ids = prst.groups_by_pattern('somerset')
         self.assertEqual(grp_ids, set(['somerset']))
         grp_id = dnf.util.first(grp_ids)

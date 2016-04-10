@@ -45,12 +45,12 @@ class MarkCommand(commands.Command):
         super(MarkCommand, self).__init__(cli)
 
     def _mark_install(self, pkg):
-        yumdb = self.base.yumdb
+        yumdb = self.base._yumdb
         yumdb.get_package(pkg).reason = 'user'
         logger.info(_('%s marked as user installed.'), str(pkg))
 
     def _mark_remove(self, pkg):
-        yumdb = self.base.yumdb
+        yumdb = self.base._yumdb
         yumdb.get_package(pkg).reason = 'dep'
         logger.info(_('%s unmarked as user installed.'), str(pkg))
 

@@ -25,6 +25,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
+from dnf.util import enforce_api
 from dnf.util import first
 from dnf.yum import history
 from dnf.yum import misc
@@ -69,6 +70,7 @@ import time
 logger = logging.getLogger("dnf")
 
 
+@enforce_api
 class Base(object):
 
     def __init__(self, conf=None):
@@ -79,7 +81,7 @@ class Base(object):
         self.repo_persistor = None
         self._sack = None
         self._transaction = None
-        self._ts = None
+        self._priv_ts = None
         self._comps = None
         self._history = None
         self._tempfiles = set()
@@ -200,25 +202,18 @@ class Base(object):
         return self._conf
 
     @property
-    def goal(self):
-        return self._goal
-
-    @property
-    def group_persistor(self):
-        return self._group_persistor
-
-    @property
     def repos(self):
         # :api
         return self._repos
 
     @repos.deleter
     def repos(self):
+        # :api
         self._repos = None
 
     @property
-    @dnf.util.lazyattr("_rpmconn")
-    def rpmconn(self):
+    @dnf.util.lazyattr("_priv_rpmconn")
+    def _rpmconn(self):
         return dnf.rpm.connection.RpmConnection(self.conf.installroot)
 
     @property
@@ -233,11 +228,12 @@ class Base(object):
 
     @transaction.setter
     def transaction(self, value):
+        # :api
         if self._transaction:
             raise ValueError('transaction already set')
         self._transaction = value
 
-    def activate_persistor(self):
+    def _activate_persistor(self):
         self.repo_persistor = dnf.persistor.RepoPersistor(self.conf.cachedir)
 
     def fill_sack(self, load_system_repo=True, load_available_repos=True):
@@ -263,8 +259,8 @@ class Base(object):
         return self._sack
 
     @property
-    @dnf.util.lazyattr("_yumdb")
-    def yumdb(self):
+    @dnf.util.lazyattr("_priv_yumdb")
+    def _yumdb(self):
         db_path = os.path.normpath(self.conf.persistdir + '/yumdb')
         return rpmsack.AdditionalPkgDB(db_path)
 
@@ -287,13 +283,13 @@ class Base(object):
             self._group_persistor.commit()
 
         if not self.conf.keepcache:
-            self.clean_packages(self._tempfiles)
+            self._clean_packages(self._tempfiles)
             if self.trans_success:
                 self._trans_tempfiles.update(
                     self._tempfile_persistor.get_saved_tempfiles())
                 self._tempfile_persistor.empty()
                 if self._transaction.install_set:
-                    self.clean_packages(self._trans_tempfiles)
+                    self._clean_packages(self._trans_tempfiles)
             else:
                 self._tempfile_persistor.tempfiles_to_add.update(
                     self._trans_tempfiles)
@@ -308,7 +304,7 @@ class Base(object):
         if self._history is not None:
             self.history.close()
         self._store_persistent_data()
-        self.closeRpmDB()
+        self._closeRpmDB()
 
     def read_all_repos(self, repo_setopts=None):
         """Read repositories from the main conf file and from .repo files."""
@@ -334,9 +330,9 @@ class Base(object):
             if self._group_persistor is not None:
                 self._group_persistor = self._activate_group_persistor()
 
-    def closeRpmDB(self):
+    def _closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""
-        del self.ts
+        del self._ts
         self._comps = None
 
     _TS_FLAGS_TO_RPM = {'noscripts': rpm.RPMTRANS_FLAG_NOSCRIPTS,
@@ -350,36 +346,36 @@ class Base(object):
                           rpm._RPMVSF_NODIGESTS}
 
     @property
-    def ts(self):
+    def _ts(self):
         """Set up the RPM transaction set that will be used
            for all the work."""
-        if self._ts is not None:
-            return self._ts
-        self._ts = dnf.rpm.transaction.TransactionWrapper(
+        if self._priv_ts is not None:
+            return self._priv_ts
+        self._priv_ts = dnf.rpm.transaction.TransactionWrapper(
             self.conf.installroot)
-        self._ts.setFlags(0)  # reset everything.
+        self._priv_ts.setFlags(0)  # reset everything.
         for flag in self.conf.tsflags:
             rpm_flag = self._TS_FLAGS_TO_RPM.get(flag)
             if rpm_flag is None:
                 logger.critical(_('Invalid tsflag in config file: %s'), flag)
                 continue
-            self._ts.addTsFlag(rpm_flag)
+            self._priv_ts.addTsFlag(rpm_flag)
             vs_flag = self._TS_VSFLAGS_TO_RPM.get(flag)
             if vs_flag is not None:
-                self._ts.pushVSFlags(vs_flag)
+                self._priv_ts.pushVSFlags(vs_flag)
 
         probfilter = reduce(operator.or_, self.rpm_probfilter, 0)
-        self._ts.setProbFilter(probfilter)
-        return self._ts
+        self._priv_ts.setProbFilter(probfilter)
+        return self._priv_ts
 
-    @ts.deleter
-    def ts(self):
+    @_ts.deleter
+    def _ts(self):
         """Releases the RPM transaction set. """
-        if self._ts is None:
+        if self._priv_ts is None:
             return
-        self._ts.close()
-        del self._ts
-        self._ts = None
+        self._priv_ts.close()
+        del self._priv_ts
+        self._priv_ts = None
 
     def _activate_group_persistor(self):
         return dnf.persistor.GroupPersistor(self.conf.persistdir, self._comps)
@@ -426,7 +422,7 @@ class Base(object):
         if self._history is None:
             db_path = self.conf.persistdir + "/history"
             releasever = self.conf.releasever
-            self._history = history.YumHistory(db_path, self.yumdb,
+            self._history = history.YumHistory(db_path, self._yumdb,
                                                root=self.conf.installroot,
                                                releasever=releasever)
         return self._history
@@ -507,10 +503,10 @@ class Base(object):
     def iter_userinstalled(self):
         """Get iterator over the packages installed by the user."""
         return (pkg for pkg in self.sack.query().installed()
-                if self.yumdb.get_package(pkg).get('reason') == 'user' and
-                self.yumdb.get_package(pkg).get('from_repo') != 'anakonda')
+                if self._yumdb.get_package(pkg).get('reason') == 'user' and
+                self._yumdb.get_package(pkg).get('from_repo') != 'anakonda')
 
-    def run_hawkey_goal(self, goal, allow_erasing):
+    def _run_hawkey_goal(self, goal, allow_erasing):
         ret = goal.run(
             allow_uninstall=allow_erasing, force_best=self.conf.best,
             ignore_weak_deps=(not self.conf.install_weak_deps))
@@ -526,8 +522,8 @@ class Base(object):
         self.ds_callback.start()
         goal = self._goal
         if goal.req_has_erase():
-            goal.push_userinstalled(self.sack.query().installed(), self.yumdb)
-        if not self.run_hawkey_goal(goal, allow_erasing):
+            goal.push_userinstalled(self.sack.query().installed(), self._yumdb)
+        if not self._run_hawkey_goal(goal, allow_erasing):
             if self.conf.debuglevel >= 6:
                 goal.log_decisions()
             exc = dnf.exceptions.DepsolveError('.\n'.join(goal.problems))
@@ -546,9 +542,9 @@ class Base(object):
 
         if exc is not None:
             raise exc
-        if self.group_persistor:
+        if self._group_persistor:
             installed = self.sack.query().installed()
-            self.group_persistor.update_group_env_installed(installed, goal)
+            self._group_persistor.update_group_env_installed(installed, goal)
         return got_transaction
 
     def do_transaction(self, display=()):
@@ -567,7 +563,7 @@ class Base(object):
             # save our ds_callback out
             dscb = self.ds_callback
             self.ds_callback = None
-            self.transaction.populate_rpm_ts(self.ts)
+            self.transaction.populate_rpm_ts(self._ts)
 
             msgs = self._run_rpm_check()
             if msgs:
@@ -584,11 +580,11 @@ class Base(object):
             if not self.conf.diskspacecheck:
                 self.rpm_probfilter.add(rpm.RPMPROB_FILTER_DISKSPACE)
 
-            self.ts.order()  # order the transaction
-            self.ts.clean()  # release memory not needed beyond this point
+            self._ts.order()  # order the transaction
+            self._ts.clean()  # release memory not needed beyond this point
 
             testcb = dnf.yum.rpmtrans.RPMTransaction(self, test=True)
-            tserrors = self.ts.test(testcb)
+            tserrors = self._ts.test(testcb)
             del testcb
 
             if len(tserrors) > 0:
@@ -647,7 +643,7 @@ class Base(object):
 
     def _record_history(self):
         return self.conf.history_record and \
-            not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)
+            not self._ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)
 
     def _run_transaction(self, cb):
         """Perform the RPM transaction."""
@@ -656,7 +652,7 @@ class Base(object):
             using_pkgs_pats = list(self.conf.history_record_packages)
             installed_query = self.sack.query().installed()
             using_pkgs = installed_query.filter(name=using_pkgs_pats).run()
-            rpmdbv = self.sack.rpmdb_version(self.yumdb)
+            rpmdbv = self.sack.rpmdb_version(self._yumdb)
             lastdbv = self.history.last()
             if lastdbv is not None:
                 lastdbv = lastdbv.end_rpmdbversion
@@ -684,7 +680,7 @@ class Base(object):
                     onice = 0
 
         logger.log(dnf.logging.DDEBUG, 'RPM transaction start.')
-        errors = self.ts.run(cb.callback, '')
+        errors = self._ts.run(cb.callback, '')
         logger.log(dnf.logging.DDEBUG, 'RPM transaction over.')
         # ts.run() exit codes are, hmm, "creative": None means all ok, empty
         # list means some errors happened in the transaction and non-empty
@@ -702,7 +698,7 @@ class Base(object):
             # to obtain the transaction lock. We can only try to see if a
             # particular element failed and if not, decide that is the
             # case.
-            if len([el for el in self.ts if el.Failed()]) > 0:
+            if len([el for el in self._ts if el.Failed()]) > 0:
                 errstring = _('Warning: scriptlet or other non-fatal errors '
                               'occurred during transaction.')
                 logger.debug(errstring)
@@ -734,10 +730,10 @@ class Base(object):
                     logger.critical(msg, fn)
 
         # sync up what just happened versus what is in the rpmdb
-        if not self.ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
-            self.verify_transaction(cb.verify_tsi_package)
+        if not self._ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
+            self._verify_transaction(cb.verify_tsi_package)
 
-    def verify_transaction(self, verify_pkg_cb=None):
+    def _verify_transaction(self, verify_pkg_cb=None):
         """Check that the transaction did what was expected, and
         propagate external yumdb information.  Output error messages
         if the transaction did not do what was expected.
@@ -788,10 +784,10 @@ class Base(object):
                 continue
             po = installed[0]
             count = display_banner(rpo, count)
-            yumdb_info = self.yumdb.get_package(po)
+            yumdb_info = self._yumdb.get_package(po)
             yumdb_info.from_repo = rpo.repoid
 
-            yumdb_info.reason = tsi.propagated_reason(self.yumdb,
+            yumdb_info.reason = tsi.propagated_reason(self._yumdb,
                                                       self.conf.installonlypkgs)
             yumdb_info.releasever = self.conf.releasever
             if hasattr(self, 'args') and self.args:
@@ -824,7 +820,7 @@ class Base(object):
                                dnf.transaction.REINSTALL,
                                dnf.transaction.UPGRADE):
                 opo = tsi.erased
-                opo_yumdb_info = self.yumdb.get_package(opo)
+                opo_yumdb_info = self._yumdb.get_package(opo)
                 if 'installed_by' in opo_yumdb_info:
                     yumdb_info.installed_by = opo_yumdb_info.installed_by
                 if loginuid is not None:
@@ -848,11 +844,11 @@ class Base(object):
                     count = display_banner(rpo, count)
                     continue
             count = display_banner(rpo, count)
-            yumdb_item = self.yumdb.get_package(rpo)
+            yumdb_item = self._yumdb.get_package(rpo)
             yumdb_item.clean()
 
         if self._record_history():
-            rpmdbv = rpmdb_sack.rpmdb_version(self.yumdb)
+            rpmdbv = rpmdb_sack.rpmdb_version(self._yumdb)
             self.history.end(rpmdbv, 0)
         timer()
         self.trans_success = True
@@ -934,7 +930,7 @@ class Base(object):
             self._add_tempfiles([path])
         return self.sack.add_cmdline_package(path)
 
-    def sigCheckPkg(self, po):
+    def _sig_check_pkg(self, po):
         """Verify the GPG signature of the given package object.
 
         :param po: the package object to verify the signature of
@@ -993,7 +989,7 @@ class Base(object):
 
         return result, msg
 
-    def clean_packages(self, packages):
+    def _clean_packages(self, packages):
         for fn in packages:
             if not os.path.exists(fn):
                 continue
@@ -1006,7 +1002,7 @@ class Base(object):
                 logger.log(dnf.logging.DDEBUG,
                            _('%s removed'), fn)
 
-    def doPackageLists(self, pkgnarrow='all', patterns=None, showdups=None,
+    def _do_package_lists(self, pkgnarrow='all', patterns=None, showdups=None,
                        ignore_case=False, reponame=None):
         """Return a :class:`misc.GenericHolder` containing
         lists of package objects.  The contents of the lists are
@@ -1053,7 +1049,7 @@ class Base(object):
             """Test whether given package originates from the repository."""
             if reponame is None:
                 return True
-            return self.yumdb.get_package(package).get('from_repo') == reponame
+            return self._yumdb.get_package(package).get('from_repo') == reponame
 
         def pkgs_from_repo(packages):
             """Filter out the packages which do not originate from the repo."""
@@ -1155,7 +1151,7 @@ class Base(object):
 
         # packages to be removed by autoremove
         elif pkgnarrow == 'autoremove':
-            autoremove_q = query_for_repo(q).unneeded(self.sack, self.yumdb)
+            autoremove_q = query_for_repo(q).unneeded(self.sack, self._yumdb)
             autoremove = autoremove_q.run()
 
         # not in a repo but installed
@@ -1218,20 +1214,20 @@ class Base(object):
         self._goal.group_members.update(trans.install_opt)
         return cnt
 
-    def build_comps_solver(self):
+    def _build_comps_solver(self):
         def reason_fn(pkgname):
             q = self.sack.query().installed().filter(name=pkgname)
             if not q:
                 return None
             try:
-                return self.yumdb.get_package(q[0]).reason
+                return self._yumdb.get_package(q[0]).reason
             except AttributeError:
                 return 'unknown'
 
         return dnf.comps.Solver(self._group_persistor, self._comps, reason_fn)
 
     def environment_install(self, env_id, types, exclude=None, strict=True):
-        solver = self.build_comps_solver()
+        solver = self._build_comps_solver()
         types = self._translate_comps_pkg_types(types)
         trans = dnf.comps.install_or_skip(solver.environment_install,
                                           env_id, types, exclude or set(),
@@ -1297,7 +1293,7 @@ class Base(object):
         return self._add_comps_trans(trans)
 
     def env_group_install(self, patterns, types, strict=True):
-        q = CompsQuery(self.comps, self.group_persistor,
+        q = CompsQuery(self.comps, self._group_persistor,
                        CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
                        CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
         cnt = 0
@@ -1332,7 +1328,7 @@ class Base(object):
         return self._add_comps_trans(trans)
 
     def env_group_remove(self, patterns):
-        q = CompsQuery(self.comps, self.group_persistor,
+        q = CompsQuery(self.comps, self._group_persistor,
                        CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
                        CompsQuery.INSTALLED)
         try:
@@ -1348,7 +1344,7 @@ class Base(object):
         return cnt
 
     def env_group_upgrade(self, patterns):
-        q = CompsQuery(self.comps, self.group_persistor,
+        q = CompsQuery(self.comps, self._group_persistor,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.INSTALLED)
         res = q.get(*patterns)
@@ -1380,7 +1376,7 @@ class Base(object):
         trans = solver.group_upgrade(grp_id)
         return self._add_comps_trans(trans)
 
-    def gpgKeyCheck(self):
+    def _gpg_key_check(self):
         """Checks for the presence of GPG keys in the rpmdb.
 
         :return: 0 if there are no GPG keys in the rpmdb, and 1 if
@@ -1597,7 +1593,7 @@ class Base(object):
         installed = [
             pkg for pkg in matches.installed()
             if reponame is None or
-            self.yumdb.get_package(pkg).get('from_repo') == reponame]
+            self._yumdb.get_package(pkg).get('from_repo') == reponame]
         if not installed:
             raise dnf.exceptions.PackagesNotInstalledError(
                 'no package matched', pkg_spec)
@@ -1614,7 +1610,7 @@ class Base(object):
         installed_pkgs = [
             pkg for pkg in q.installed()
             if old_reponame is None or
-            self.yumdb.get_package(pkg).get('from_repo') == old_reponame]
+            self._yumdb.get_package(pkg).get('from_repo') == old_reponame]
 
         available_q = q.available()
         if new_reponame is not None:
@@ -1709,7 +1705,7 @@ class Base(object):
             return self.sack.query().filter(file__glob=provides_spec)
         return self.sack.query().filter(file=provides_spec)
 
-    def history_undo_operations(self, operations):
+    def _history_undo_operations(self, operations):
         """Undo the operations on packages by their NEVRAs.
 
         :param operations: a NEVRAOperations to be undone
@@ -1811,7 +1807,7 @@ class Base(object):
             else:
                 assert False
 
-    def getKeyForPackage(self, po, askcb=None, fullaskcb=None):
+    def _get_key_for_package(self, po, askcb=None, fullaskcb=None):
         """Retrieve a key for a package. If needed, use the given
         callback to prompt whether the key should be imported.
 
@@ -1840,7 +1836,7 @@ class Base(object):
             keys = dnf.crypto.retrieve(keyurl, repo)
 
             for info in keys:
-                ts = self.rpmconn.readonly_ts
+                ts = self._rpmconn.readonly_ts
                 # Check if key is already installed
                 if misc.keyInstalled(ts, info.rpm_id, info.timestamp) >= 0:
                     msg = _('GPG key at %s (0x%s) is already installed')
@@ -1894,7 +1890,7 @@ class Base(object):
             raise dnf.exceptions.Error(_prov_key_data(msg))
 
         # Check if the newly installed keys helped
-        result, errmsg = self.sigCheckPkg(po)
+        result, errmsg = self._sig_check_pkg(po)
         if result != 0:
             msg = _("Import of key(s) didn't help, wrong key(s)?")
             logger.info(msg)
@@ -1903,8 +1899,8 @@ class Base(object):
 
     def _run_rpm_check(self):
         results = []
-        self.ts.check()
-        for prob in self.ts.problems():
+        self._ts.check()
+        for prob in self._ts.problems():
             #  Newer rpm (4.8.0+) has problem objects, older have just strings.
             #  Should probably move to using the new objects, when we can. For
             # now just be compatible.
