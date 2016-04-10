@@ -27,7 +27,7 @@ class AutoRemoveCommandTest(support.ResultTestCase):
         base = support.MockBase()
         q = base.sack.query()
         pkgs = list(q.filter(name='librita')) + list(q.filter(name='pepper'))
-        yumdb = base.yumdb
+        yumdb = base._yumdb
         for pkg in pkgs:
             yumdb.get_package(pkg).reason = 'dep'
 

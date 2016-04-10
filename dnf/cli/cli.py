@@ -145,9 +145,9 @@ class BaseCli(dnf.Base):
         self.output = output.Output(self, self.conf)
 
     def _groups_diff(self):
-        if not self.group_persistor:
+        if not self._group_persistor:
             return None
-        return self.group_persistor.diff()
+        return self._group_persistor.diff()
 
     def do_transaction(self, display=()):
         """Take care of package downloading, checking, user
@@ -160,7 +160,7 @@ class BaseCli(dnf.Base):
         """
 
         grp_diff = self._groups_diff()
-        grp_str = self.output.list_group_transaction(self.comps, self.group_persistor, grp_diff)
+        grp_str = self.output.list_group_transaction(self.comps, self._group_persistor, grp_diff)
         if grp_str:
             logger.info(grp_str)
         trans = self.transaction
@@ -186,7 +186,7 @@ class BaseCli(dnf.Base):
 
             # Close the connection to the rpmdb so that rpm doesn't hold the
             # SIGINT handler during the downloads.
-            del self.ts
+            del self._ts
 
             # report the total download size to the user
             if not stuff_to_download:
@@ -240,7 +240,7 @@ class BaseCli(dnf.Base):
         :raises: Will raise :class:`Error` if there's a problem
         """
         for po in pkgs:
-            result, errmsg = self.sigCheckPkg(po)
+            result, errmsg = self._sig_check_pkg(po)
 
             if result == 0:
                 # Verified ok, or verify not req'd
@@ -255,7 +255,7 @@ class BaseCli(dnf.Base):
                 # the callback here expects to be able to take options which
                 # userconfirm really doesn't... so fake it
                 fn = lambda x, y, z: self.output.userconfirm()
-                self.getKeyForPackage(po, fn)
+                self._get_key_for_package(po, fn)
 
             else:
                 # Fatal error
@@ -496,7 +496,7 @@ class BaseCli(dnf.Base):
             done_hidden_installed = True
             pkgnarrow = 'all'
 
-        ypl = self.doPackageLists(
+        ypl = self._do_package_lists(
             pkgnarrow, patterns, ignore_case=True, reponame=reponame)
         if self.conf.showdupesfromrepos:
             ypl.available += ypl.reinstall_available
@@ -651,7 +651,7 @@ class BaseCli(dnf.Base):
         hibeg = self.output.term.MODE['bold']
         hiend = self.output.term.MODE['normal']
         try:
-            self.history_undo_operations(operations)
+            self._history_undo_operations(operations)
         except dnf.exceptions.PackagesNotInstalledError as err:
             logger.info(_('No package %s%s%s installed.'),
                              hibeg, ucd(err.pkg_spec), hiend)
@@ -680,7 +680,7 @@ class BaseCli(dnf.Base):
         hibeg = self.output.term.MODE['bold']
         hiend = self.output.term.MODE['normal']
         try:
-            self.history_undo_operations(history.transaction_nevra_ops(old.tid))
+            self._history_undo_operations(history.transaction_nevra_ops(old.tid))
         except dnf.exceptions.PackagesNotInstalledError as err:
             logger.info(_('No package %s%s%s installed.'),
                              hibeg, ucd(err.pkg_spec), hiend)
@@ -996,7 +996,7 @@ class Cli(object):
         # the configuration reading phase is now concluded, finish the init
         self._configure_cachedir()
         # with cachedir in place we can configure stuff depending on it:
-        self.base.activate_persistor()
+        self.base._activate_persistor()
         self._configure_repos(opts)
 
         if opts.version:

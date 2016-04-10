@@ -183,7 +183,7 @@ class RPMTransaction(object):
         io_r = tempfile.NamedTemporaryFile()
         self._readpipe = io_r
         self._writepipe = open(io_r.name, 'w+b')
-        self.base.ts.setScriptFd(self._writepipe)
+        self.base._ts.setScriptFd(self._writepipe)
         rpmverbosity = {'critical' : 'crit',
                         'emergency' : 'emerg',
                         'error' : 'err',
@@ -350,7 +350,7 @@ class RPMTransaction(object):
         if not hasattr(self, '_te_tuples'):
             self._te_tuples = []
 
-        for te in self.base.ts:
+        for te in self.base._ts:
             n = te.N()
             a = te.A()
             v = te.V()
