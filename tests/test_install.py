@@ -235,7 +235,7 @@ class MultilibAllTest(support.ResultTestCase):
         stdout = dnf.pycomp.StringIO()
         with support.wiretap_logs('dnf', logging.WARNING, stdout):
             self.base.install('librita')
-        self.assertEqual(self.base.goal.req_length(), 0)
+        self.assertEqual(self.base._goal.req_length(), 0)
         self.assertIn(
             'Package librita-1-1.x86_64 is already installed, skipping.',
             stdout.getvalue())
@@ -268,7 +268,7 @@ class MultilibAllTest(support.ResultTestCase):
         stdout = dnf.pycomp.StringIO()
         with support.wiretap_logs('dnf', logging.WARNING, stdout):
             self.base.install('pepper')
-        self.assertEqual(self.base.goal.req_length(), 0)
+        self.assertEqual(self.base._goal.req_length(), 0)
         self.assertIn(
             'Package pepper-20-0.x86_64 is already installed, skipping.',
             stdout.getvalue())

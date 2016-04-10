@@ -85,7 +85,7 @@ class ReinstallCommand(commands.Command):
             except dnf.exceptions.PackagesNotAvailableError as err:
                 for pkg in err.packages:
                     xmsg = ''
-                    yumdb_info = self.base.yumdb.get_package(pkg)
+                    yumdb_info = self.base._yumdb.get_package(pkg)
                     if 'from_repo' in yumdb_info:
                         xmsg = _(' (from %s)') % yumdb_info.from_repo
                     msg = _('Installed package %s%s%s%s not available.')
