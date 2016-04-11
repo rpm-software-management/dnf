@@ -738,10 +738,13 @@ class Cli(object):
         self.base.read_all_repos(self.repo_setopts)
         if opts.repofrompath:
             for label, path in opts.repofrompath.items():
-                if path[0] == '/':
-                    path = 'file://' + path
+                if '://' not in path:
+                    path = 'file://{}'.format(os.path.abspath(path))
                 repofp = dnf.repo.Repo(label, self.base.conf.cachedir)
-                repofp.baseurl = path
+                try:
+                    repofp.baseurl = path
+                except ValueError as e:
+                    raise dnf.exceptions.RepoError(e)
                 self.base.repos.add(repofp)
                 logger.info(_("Added %s repo from %s"), label, path)
 
