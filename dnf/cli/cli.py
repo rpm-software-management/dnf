@@ -844,15 +844,10 @@ class Cli(object):
             conffile = dnf.const.CONF_FILENAME
         return installroot, conffile
 
-    def _parse_commands(self):
+    def _parse_commands(self, opts, args):
         """Check that the requested CLI command exists."""
 
-        if len(self.base.cmds) < 1:
-            logger.critical(_('You need to give some command'))
-            self.print_usage()
-            raise CliError
-
-        basecmd = self.base.cmds[0] # our base command
+        basecmd = opts.command
         command_cls = self.cli_commands.get(basecmd)
         if command_cls is None:
             logger.critical(_('No such command: %s. Please use %s --help'),
@@ -866,10 +861,9 @@ class Cli(object):
             raise CliError
         self.command = command_cls(self)
 
-        (base, ext) = self.command.canonical(self.base.cmds)
-        self.base.basecmd, self.base.extcmds = (base, ext)
-        logger.log(dnf.logging.DDEBUG, 'Base command: %s', base)
-        logger.log(dnf.logging.DDEBUG, 'Extra commands: %s', ext)
+        self.base.basecmd, self.base.extcmds = (basecmd, args)
+        logger.log(dnf.logging.DDEBUG, 'Base command: %s', basecmd)
+        logger.log(dnf.logging.DDEBUG, 'Extra commands: %s', args)
 
     def _parse_setopts(self, setopts):
         """Parse setopts and repo_setopts."""
@@ -909,7 +903,7 @@ class Cli(object):
         return bad_setopt_tm, bad_setopt_ne
 
     def _get_first_config(self, opts):
-        config_args = ['noplugins', 'version', "quiet", "verbose", 'conffile',
+        config_args = ['plugins', 'version', "quiet", "verbose", 'conffile',
                        'debuglevel', 'errorlevel', 'installroot', 'releasever',
                        'setopt']
         in_dict = opts.__dict__
@@ -922,13 +916,14 @@ class Cli(object):
         :param args: a list of command line arguments
         """
         self.optparser = dnf.cli.option_parser.OptionParser()
-        opts, cmds = self.optparser.parse_known_args(args)
+        opts = self.optparser.parse_main_args(args)
 
         # Just print out the version if that's what the user wanted
         if opts.version:
             print(dnf.const.VERSION)
-            opts.quiet = True
-            opts.verbose = False
+            print_versions(self.base.conf.history_record_packages, self.base,
+                           self.base.output)
+            sys.exit(0)
 
         # go through all the setopts and set the global ones
         bad_setopt_tm, bad_setopt_ne = self._parse_setopts(opts.setopts)
@@ -976,19 +971,6 @@ class Cli(object):
             msg = "Setopt argument has no value: %s"
             logger.warning(msg, item)
 
-        self.optparser.configure_from_options(opts, self.base.conf, self.demands,
-                                              self.base.output, self.main_setopts)
-        self.base.cmds = cmds
-
-        if opts.version:
-            opts.quiet = True
-            opts.verbose = False
-        if opts.quiet:
-            opts.debuglevel = 0
-        if opts.verbose:
-            opts.debuglevel = opts.errorlevel = dnf.const.VERBOSE_LEVEL
-        self.nogpgcheck = opts.nogpgcheck
-
         # store the main commands & summaries, before plugins are loaded
         self.optparser.add_commands(self.cli_commands, 'main')
         if self.base.conf.plugins:
@@ -997,24 +979,10 @@ class Cli(object):
         # store the plugin commands & summaries
         self.optparser.add_commands(self.cli_commands,'plugin')
 
-        # the configuration reading phase is now concluded, finish the init
-        self._configure_cachedir()
-        # with cachedir in place we can configure stuff depending on it:
-        self.base._activate_persistor()
-        self._configure_repos(opts)
-
-        if opts.version:
-            print_versions(self.base.conf.history_record_packages, self.base,
-                           self.base.output)
-            sys.exit(0)
-
-        # build the usage info and put it into the optparser.
-        self.optparser.usage = self.optparser.get_usage()
-
         # show help if the user requests it
         # this is done here, because we first have the full
         # usage info after the plugins are loaded.
-        if opts.help:
+        if not opts.command and opts.help:
             self.optparser.print_help()
             sys.exit(0)
 
@@ -1027,11 +995,24 @@ class Cli(object):
 
         self._log_essentials()
         try:
-            self._parse_commands() # before we return check over the base command
-                                  # + args make sure they match/make sense
+            self._parse_commands(opts, args)
         except CliError:
             sys.exit(1)
-        self.command.configure(self.base.extcmds)
+
+        opts = self.optparser.parse_command_args(self.command, args)
+        self.nogpgcheck = opts.nogpgcheck
+
+        # the configuration reading phase is now concluded, finish the init
+        self._configure_cachedir()
+        # with cachedir in place we can configure stuff depending on it:
+        self.base._activate_persistor()
+        self._configure_repos(opts)
+
+
+        self.command.configure(args)
+
+        self.optparser.configure_from_options(opts, self.base.conf, self.demands,
+                                              self.base.output, self.main_setopts)
 
         if opts.debugsolver:
             self.base.conf.debug_solver = True
@@ -1089,10 +1070,10 @@ class Cli(object):
             2 = we've got work yet to do, onto the next stage
         """
         self._process_demands()
-        return self.command.run(self.base.extcmds)
+        return self.command.run([])
 
     def print_usage(self):
-        return self.optparser.print_usage()
+        return self.optparser.print_help()
 
 
 class CmdConf(object):

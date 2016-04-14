@@ -32,15 +32,25 @@ import sys
 logger = logging.getLogger("dnf")
 
 class OptionParser(argparse.ArgumentParser):
-    """Subclass that makes some minor tweaks to make ArgumentParser do things the
-    "yum way".
-    """
+    """ArgumentParser like class to do things the "yum way"."""
 
-    def __init__(self, **kwargs):
-        argparse.ArgumentParser.__init__(self, add_help=False, **kwargs)
+    def __init__(self):
+        super(OptionParser, self).__init__()
         self._cmd_usage = {} # names, summary for dnf commands, to build usage
         self._cmd_groups = set() # cmd groups added (main, plugin)
-        self._addYumBasicOptions()
+        self.main_parser = self._main_parser()
+        self.command_arg_parser = None
+
+    def error(self, msg):
+        """Output an error message, and exit the program.
+           This method overrides standard argparser's error
+           so that error output goes to the logger.
+
+        :param msg: the error message to output
+        """
+        self.print_usage()
+        logger.critical(_("Command line error: %s"), msg)
+        sys.exit(1)
 
     def error(self, msg):
         """Output an error message, and exit the program.  This method
@@ -128,12 +138,13 @@ class OptionParser(argparse.ArgumentParser):
             l = getattr(namespace, self.dest)
             l.append((values, operation))
 
-    class _SplitCallback(argparse.Action):
+    class _SplitCallback(argparse._AppendAction):
         """ Split all strings in seq, at "," and whitespace.
         Returns a new list. """
         def __call__(self, parser, namespace, values, opt_str):
-            res = getattr(namespace, self.dest)
-            res.extend(re.split('\s*[,\s]\s*', values))
+            for val in re.split('\s*[,\s]\s*', values):
+                super(OptionParser._SplitCallback, self).__call__(
+                                        parser, namespace, val, opt_str)
 
     class _SplitExtendDictCallback(argparse.Action):
         """ Split string at "," or whitespace to (key, value).
@@ -149,103 +160,113 @@ class OptionParser(argparse.ArgumentParser):
             dct = getattr(namespace, self.dest)
             dct[key] = val
 
-    def _addYumBasicOptions(self):
+    def _main_parser(self):
+        """ Standard options known to all dnf subcommands. """
         # All defaults need to be a None, so we can always tell whether the user
         # has set something or whether we are getting a default.
-        self.conflict_handler = "resolve"
-        self.conflict_handler = "error"
+        main_parser = argparse.ArgumentParser(dnf.const.PROGRAM_NAME, add_help=False)
+        main_parser.add_argument("-c", "--config", dest="conffile",
+                           default=None, metavar='[config file]',
+                           help=_("config file location"))
+        main_parser.add_argument("-q", "--quiet", dest="quiet", action="store_true",
+                           default=None, help=_("quiet operation"))
+        main_parser.add_argument("-v", "--verbose", action="store_true",
+                           default=None, help=_("verbose operation"))
+        main_parser.add_argument("--version", action="store_true", default=None,
+                           help=_("show DNF version and exit"))
+        main_parser.add_argument("--installroot", help=_("set install root"),
+                           metavar='[path]')
+        main_parser.add_argument("--noplugins", action="store_false", default=None,
+                          dest='plugins', help=_("disable all plugins"))
+        main_parser.add_argument("--disableplugins", dest="disableplugins", default=[],
+                          action=self._SplitCallback,
+                          help=_("disable plugins by name"),
+                          metavar='[plugin]')
+        main_parser.add_argument("--releasever", default=None,
+                           help=_("override the value of $releasever in config"
+                                  " and repo files"))
+        main_parser.add_argument("--setopt", dest="setopts", default=[],
+                           action="append",
+                           help=_("set arbitrary config and repo options"))
+        main_parser.add_argument('-h', '--help', action="store_true", help="show help")
 
-        self.add_argument('--allowerasing', action='store_true', default=None,
+        main_parser.add_argument('--allowerasing', action='store_true', default=None,
                            help=_('allow erasing of installed packages to '
                                   'resolve dependencies'))
-        self.add_argument("-b", "--best", action="store_true", default=None,
+        main_parser.add_argument("-b", "--best", action="store_true", default=None,
                            help=_("try the best available package versions in "
                                   "transactions."))
-        self.add_argument("-C", "--cacheonly", dest="cacheonly",
+        main_parser.add_argument("-C", "--cacheonly", dest="cacheonly",
                            action="store_true", default=None,
                            help=_("run entirely from system cache, "
                                   "don't update cache"))
-        self.add_argument("-c", "--config", dest="conffile",
-                           default=None, metavar='[config file]',
-                           help=_("config file location"))
-        self.add_argument("-d", "--debuglevel", dest="debuglevel",
+        main_parser.add_argument("-d", "--debuglevel", dest="debuglevel",
                            metavar='[debug level]', default=None,
                            help=_("debugging output level"), type=int)
-        self.add_argument("--debugsolver",
+        main_parser.add_argument("--debugsolver",
                            action="store_true", default=None,
                            help=_("dumps detailed solving results into files"))
-        self.add_argument("--showduplicates", dest="showdupesfromrepos",
+        main_parser.add_argument("--showduplicates", dest="showdupesfromrepos",
                            action="store_true", default=None,
                            help=_("show duplicates, in repos, "
                                   "in list/search commands"))
-        self.add_argument("-e", "--errorlevel", default=None, type=int,
+        main_parser.add_argument("-e", "--errorlevel", default=None, type=int,
                            help=_("error output level"))
-        self.add_argument("--rpmverbosity", default=None,
+        main_parser.add_argument("--rpmverbosity", default=None,
                            help=_("debugging output level for rpm"),
                            metavar='[debug level name]')
-        self.add_argument("-q", "--quiet", dest="quiet", action="store_true",
-                           default=None, help=_("quiet operation"))
-        self.add_argument("-v", "--verbose", action="store_true",
-                           default=None, help=_("verbose operation"))
-        self.add_argument("-y", "--assumeyes", action="store_true",
-                           default=None, help=_("Automatically answer yes for all questions"))
-        self.add_argument("--assumeno", action="store_true",
-                           default=None, help=_("Automatically answer no for all questions"))
-        self.add_argument("--version", action="store_true", default=None,
-                           help=_("show DNF version and exit"))
-        self.add_argument("--installroot", help=_("set install root"),
-                           metavar='[path]')
-        self.add_argument("--enablerepo", action=self._RepoCallback,
+        main_parser.add_argument("-y", "--assumeyes", action="store_true",
+                           default=None, help=_("automatically answer yes for all questions"))
+        main_parser.add_argument("--assumeno", action="store_true",
+                           default=None, help=_("automatically answer no for all questions"))
+        main_parser.add_argument("--enablerepo", action=self._RepoCallback,
                            dest='repos_ed', default=[],
                            metavar='[repo]')
-        self.add_argument("--disablerepo", action=self._RepoCallback,
+        main_parser.add_argument("--disablerepo", action=self._RepoCallback,
                            dest='repos_ed', default=[],
                            metavar='[repo]')
-        self.add_argument("-x", "--exclude", default=[], dest='excludepkgs',
+        main_parser.add_argument("-x", "--exclude", default=[], dest='excludepkgs',
                           action=self._SplitCallback,
                           help=_("exclude packages by name or glob"),
                           metavar='[package]')
-        self.add_argument("--disableexcludes", default=[],
+        main_parser.add_argument("--disableexcludes", default=[],
                           dest="disable_excludes",
                           action=self._SplitCallback,
                           help=_("disable excludes"),
                           metavar='[repo]')
-        self.add_argument("--repofrompath", default={},
+        main_parser.add_argument("--repofrompath", default={},
                           action=self._SplitExtendDictCallback,
                           metavar='[repo,path]',
                           help=_("label and path to additional repository," \
                                  " can be specified multiple times."))
-        self.add_argument("--noplugins", action="store_false", default=None,
-                          dest='plugins', help=_("disable all plugins"))
-        self.add_argument("--nogpgcheck", action="store_true", default=None,
+        main_parser.add_argument("--nogpgcheck", action="store_true", default=None,
                           help=_("disable gpg signature checking"))
-        self.add_argument("--disableplugin", dest="disableplugins", default=[],
-                          action=self._SplitCallback,
-                          help=_("disable plugins by name"),
-                          metavar='[plugin]')
-        self.add_argument("--color", dest="color", default=None,
+        main_parser.add_argument("--color", dest="color", default=None,
                           help=_("control whether color is used"))
-        self.add_argument("--releasever", default=None,
-                           help=_("override the value of $releasever in config"
-                                  " and repo files"))
-        self.add_argument("--setopt", dest="setopts", default=[],
-                           action="append",
-                           help=_("set arbitrary config and repo options"))
-        self.add_argument("--refresh", dest="freshest_metadata",
+        main_parser.add_argument("--refresh", dest="freshest_metadata",
                           action="store_true",
                           help=_("set metadata as expired before running the command"))
-        self.add_argument("-4", dest="ip_resolve", default=None,
+        main_parser.add_argument("-4", dest="ip_resolve", default=None,
                           help=_("resolve to IPv4 addresses only"),
                           action="store_const", const='ipv4')
-        self.add_argument("-6", dest="ip_resolve", default=None,
+        main_parser.add_argument("-6", dest="ip_resolve", default=None,
                           help=_("resolve to IPv6 addresses only"),
                           action="store_const", const='ipv6')
-        self.add_argument("--downloadonly", dest="downloadonly", action="store_true",
+        main_parser.add_argument("--downloadonly", dest="downloadonly", action="store_true",
                           help=_("only download packages"), default=False)
-        # we add our own help option, so we can control that help is not shown
-        # automatic when we do the .parse_known_args(args)
-        # but first after plugins are loaded.
-        self.add_argument('-h', '--help', action="store_true", help="show help")
+        return main_parser
+
+    def _command_parser(self, command):
+        prog = "%s %s" % (dnf.const.PROGRAM_NAME, command.basecmd)
+        super(OptionParser, self).__init__(prog, add_help=False,
+                                parents=[self.main_parser],
+                                description=command.summary)
+        super(OptionParser, self).add_argument('command', nargs=1,
+                                               help=argparse.SUPPRESS)
+        self.command_arg_parser = argparse.ArgumentParser(prog, add_help=False)
+        self.command_arg_parser.print_usage = self.print_usage
+        command.set_argparser(self)
+        return self
 
     def _add_cmd_usage(self, cmd, group):
         """ store usage info about a single dnf command."""
@@ -279,3 +300,28 @@ class OptionParser(argparse.ArgumentParser):
                 if group == grp:
                     usage += "%-25s %s\n" % (name, summary)
         return usage
+
+    def add_argument(self, *args, **kwargs):
+        # process options and arguments separately
+        if all([(arg[0] in self.prefix_chars) for arg in args]):
+            return super(OptionParser, self).add_argument(*args, **kwargs)
+        else:
+            return self.command_arg_parser.add_argument(*args, **kwargs)
+
+    def parse_main_args(self, args):
+        parser = argparse.ArgumentParser(dnf.const.PROGRAM_NAME, add_help=False,
+                                         parents=[self.main_parser])
+        parser.add_argument('command', nargs='?', help=argparse.SUPPRESS)
+        namespace, _unused_args = parser.parse_known_args(args)
+        return namespace
+
+    def parse_command_args(self, command, args):
+        self._command_parser(command)
+        namespace, extras = super(OptionParser,
+                                  self).parse_known_args(args)
+        command.opts = self.command_arg_parser.parse_args(extras, namespace)
+        return command.opts
+
+    def print_help(self):
+        self.main_parser.usage = self.get_usage()
+        self.main_parser.print_help()

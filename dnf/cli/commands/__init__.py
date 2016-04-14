@@ -156,6 +156,7 @@ class Command(object):
     summary = ""  # :api
     usage = ""  # :api
     writes_rpmdb = False
+    opts = None
 
     def __init__(self, cli):
         # :api
@@ -167,19 +168,28 @@ class Command(object):
         return self.cli.base
 
     @property
+    def basecmd(self):
+        # :api
+        return self.aliases[0]
+
+    @property
     def output(self):
         return self.cli.base.output
 
     @classmethod
-    def canonical(cls, command_list):
+    def canonical(cls, basecmd, command_list):
         """Turn list of commands into a canonical form.
 
         Returns the base command and a list of extra commands.
 
         """
         base = cls.aliases[0]
-        extra = command_list[1:]
+        extra = [arg for arg in command_list if arg != basecmd]
         return (base, extra)
+
+    def set_argparser(self, parser):
+        """Define command specific options and arguments. #:api"""
+        pass
 
     def configure(self, args):
         # :api
