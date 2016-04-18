@@ -404,7 +404,15 @@ class GroupCommand(commands.Command):
         if cmd == 'install':
             types, patterns = self._split_extcmds(extcmds)
             self._remark = True
-            return self.base.env_group_install(patterns, types)
+            try:
+                return self.base.env_group_install(patterns, types,
+                                                   self.base.conf.strict)
+            except dnf.exceptions.MarkingError as e:
+                msg = _('No package %s%s%s available.')
+                logger.info(msg, self.base.output.term.MODE['bold'], e,
+                            self.base.output.term.MODE['normal'])
+                raise dnf.exceptions.PackagesNotAvailableError(
+                    _("Unable to find a mandatory group package."))
         if cmd == 'upgrade':
             return self.base.env_group_upgrade(extcmds)
         if cmd == 'remove':
