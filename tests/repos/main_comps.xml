@@ -39,6 +39,14 @@
       <packagereq>lotus</packagereq>
     </packagelist>
   </group>
+  <group>
+    <id>broken-group</id>
+    <name>Broken Group</name>
+    <packagelist>
+      <packagereq type="mandatory">meaning-of-life</packagereq>
+      <packagereq>lotus</packagereq>
+    </packagelist>
+  </group>
   <category>
    <id>base-system</id>
    <display_order>99</display_order>
