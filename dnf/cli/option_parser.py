@@ -160,6 +160,19 @@ class OptionParser(argparse.ArgumentParser):
             dct = getattr(namespace, self.dest)
             dct[key] = val
 
+    class ParseSpecGroupFileCallback(argparse.Action):
+        def __call__(self, parser, namespace, values, opt_str):
+            setattr(namespace, "filenames", [])
+            setattr(namespace, "grp_specs", [])
+            setattr(namespace, "pkg_specs", [])
+            for value in values:
+                if value.endswith('.rpm'):
+                    namespace.filenames.append(value)
+                elif value.startswith('@'):
+                    namespace.grp_specs.append(value[1:])
+                else:
+                    namespace.pkg_specs.append(value)
+
     def _main_parser(self):
         """ Standard options known to all dnf subcommands. """
         # All defaults need to be a None, so we can always tell whether the user
