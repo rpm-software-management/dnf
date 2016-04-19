@@ -24,6 +24,7 @@ from dnf.i18n import _
 import argparse
 import dnf.exceptions
 import dnf.yum.misc
+import functools
 import logging
 import os.path
 import re
@@ -45,16 +46,6 @@ class OptionParser(argparse.ArgumentParser):
         """Output an error message, and exit the program.
            This method overrides standard argparser's error
            so that error output goes to the logger.
-
-        :param msg: the error message to output
-        """
-        self.print_usage()
-        logger.critical(_("Command line error: %s"), msg)
-        sys.exit(1)
-
-    def error(self, msg):
-        """Output an error message, and exit the program.  This method
-        is overridden so that error output goes to the logger.
 
         :param msg: the error message to output
         """
@@ -201,7 +192,8 @@ class OptionParser(argparse.ArgumentParser):
         main_parser.add_argument("--setopt", dest="setopts", default=[],
                            action="append",
                            help=_("set arbitrary config and repo options"))
-        main_parser.add_argument('-h', '--help', action="store_true", help="show help")
+        main_parser.add_argument('-h', '--help', '--help-cmd', action="store_true",
+                           dest='help', help=_("show command help"))
 
         main_parser.add_argument('--allowerasing', action='store_true', default=None,
                            help=_('allow erasing of installed packages to '
@@ -335,6 +327,13 @@ class OptionParser(argparse.ArgumentParser):
         command.opts = self.command_arg_parser.parse_args(extras, namespace)
         return command.opts
 
-    def print_help(self):
-        self.main_parser.usage = self.get_usage()
-        self.main_parser.print_help()
+    def print_usage(self, file=None):
+        self._actions += self.command_arg_parser._actions
+        super(OptionParser, self).print_usage(file)
+
+    def print_help(self, command=None):
+        if command:
+            self.command_parser.print_help()
+        else:
+            self.main_parser.usage = self.get_usage()
+            self.main_parser.print_help()

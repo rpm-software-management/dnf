@@ -979,10 +979,10 @@ class Cli(object):
         # store the plugin commands & summaries
         self.optparser.add_commands(self.cli_commands,'plugin')
 
-        # show help if the user requests it
+        # show help if no command specified
         # this is done here, because we first have the full
         # usage info after the plugins are loaded.
-        if not opts.command and opts.help:
+        if not opts.command:
             self.optparser.print_help()
             sys.exit(0)
 
@@ -1001,6 +1001,11 @@ class Cli(object):
 
         opts = self.optparser.parse_command_args(self.command, args)
         self.nogpgcheck = opts.nogpgcheck
+
+        # show help for dnf <command> --help / --help-cmd
+        if opts.help:
+            self.optparser.print_help(self.command)
+            sys.exit(0)
 
         # the configuration reading phase is now concluded, finish the init
         self._configure_cachedir()
