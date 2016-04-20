@@ -32,21 +32,6 @@ import logging
 logger = logging.getLogger("dnf")
 
 
-def _ensure_grp_arg(cli, basecmd, extcmds):
-    """Verify that *extcmds* contains the name of at least one group for
-    *basecmd* to act on.
-
-    :param base: a :class:`dnf.Base` object.
-    :param basecmd: the name of the command being checked for
-    :param extcmds: a list of arguments passed to *basecmd*
-    :raises: :class:`cli.CliError`
-    """
-    if len(extcmds) == 0:
-        logger.critical(_('Error: Need a group or list of groups'))
-        commands.err_mini_usage(cli, 'group')
-        raise dnf.cli.CliError
-
-
 class GroupCommand(commands.Command):
     """ Single sub-command interface for most groups interaction. """
 
@@ -66,30 +51,23 @@ class GroupCommand(commands.Command):
 
 
     @staticmethod
-    def _grp_cmd(extcmds):
-        return extcmds[0], extcmds[1:]
-
-    @staticmethod
     def _split_extcmds(extcmds):
         if extcmds[0] == 'with-optional':
             types = tuple(dnf.const.GROUP_PACKAGE_TYPES + ('optional',))
             return types, extcmds[1:]
         return dnf.const.GROUP_PACKAGE_TYPES, extcmds
 
-    @classmethod
-    def canonical(cls, command_list):
-        first = command_list[0]
-        rest = command_list[1:]
-
-        cmd = cls.direct_commands.get(first)
-        if cmd is None:
-            cmd = 'summary'
-            if rest:
-                cmd = rest.pop(0)
-        cmd = cls._CMD_ALIASES.get(cmd, cmd)
-
-        rest.insert(0, cmd)
-        return ('groups', rest)
+    def _canonical(self):
+        # were we called with direct command?
+        direct = self.direct_commands.get(self.opts.command[0])
+        if direct:
+            # canonize subcmd and args
+            self.opts.args.insert(0, self.opts.subcmd)
+            self.opts.subcmd = direct
+        if self.opts.subcmd is None:
+            self.opts.subcmd = 'summary'
+        self.opts.subcmd = self._CMD_ALIASES.get(self.opts.subcmd,
+                                                 self.opts.subcmd)
 
     def __init__(self, cli):
         super(GroupCommand, self).__init__(cli)
@@ -342,8 +320,23 @@ class GroupCommand(commands.Command):
 
         return 0, []
 
+    @staticmethod
+    def set_argparser(parser):
+        parser.add_argument('subcmd', nargs='?', metavar='COMMAND')
+        parser.add_argument('args', nargs='*')
+
     def configure(self, extcmds):
-        cmd = extcmds[0]
+        self._canonical()
+
+        cmd = self.opts.subcmd
+        args = self.opts.args
+
+        cmds = ('list', 'info', 'remove', 'install', 'upgrade', 'summary', 'mark')
+        if cmd not in cmds:
+            logger.critical(_('Invalid groups sub-command, use: %s.'),
+                                 ", ".join(cmds))
+            raise dnf.cli.CliError
+
         demands = self.cli.demands
         demands.sack_activation = True
         if cmd in ('install', 'mark', 'remove', 'upgrade'):
@@ -357,32 +350,19 @@ class GroupCommand(commands.Command):
         else:
             demands.available_repos = True
 
-    def doCheck(self, basecmd, extcmds):
-        """Verify that conditions are met so that this command can run.
-        The exact conditions checked will vary depending on the
-        subcommand that is being called.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
-        cmd, extcmds = self._grp_cmd(extcmds)
-
         commands.checkEnabledRepo(self.base)
 
         if cmd in ('install', 'remove', 'mark', 'info'):
-            _ensure_grp_arg(self.cli, cmd, extcmds)
+            if not args:
+                self.cli.optparser.print_help(self)
+                raise dnf.cli.CliError
 
         if cmd in ('install', 'upgrade'):
             commands.checkGPGKey(self.base, self.cli)
 
-        cmds = ('list', 'info', 'remove', 'install', 'upgrade', 'summary', 'mark')
-        if cmd not in cmds:
-            logger.critical(_('Invalid groups sub-command, use: %s.'),
-                                 ", ".join(cmds))
-            raise dnf.cli.CliError
-
-    def run(self, extcmds):
-        cmd, extcmds = self._grp_cmd(extcmds)
+    def run(self, _):
+        cmd = self.opts.subcmd
+        extcmds = self.opts.args
 
         self._grp_setup()
 
