@@ -82,30 +82,16 @@ class CleanCommand(commands.Command):
 
     aliases = ('clean',)
     summary = _('remove cached data')
-    usage = "[%s]" % "|".join(_CACHE_TYPES)
 
-    def doCheck(self, basecmd, extcmds):
-        """Verify that conditions are met so that this command can
-        run; namely that this command is called with appropriate arguments.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
-
-        if len(extcmds) == 0:
-            logger.critical(_('Error: clean requires an option: %s'),
-                            ", ".join(_CACHE_TYPES))
-            raise dnf.cli.CliError
-
-        for cmd in extcmds:
-            if cmd not in _CACHE_TYPES:
-                logger.critical(_('Error: invalid clean argument: %r'), cmd)
-                commands.err_mini_usage(self.cli, basecmd)
-                raise dnf.cli.CliError
+    @staticmethod
+    def set_argparser(parser):
+        parser.add_argument('type', nargs='+',
+                           choices=_CACHE_TYPES.keys(),
+                           help=_('Metadata type to clean'))
 
     def run(self, extcmds):
         cachedir = self.base.conf.cachedir
-        types = set(t for c in extcmds for t in _CACHE_TYPES[c])
+        types = set(t for c in self.opts.type for t in _CACHE_TYPES[c])
         files = list(_tree(cachedir))
         logger.debug(_('Cleaning data: ' + ' '.join(types)))
 
