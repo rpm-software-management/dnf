@@ -65,7 +65,7 @@ def err_mini_usage(cli, basecmd):
         return
     cmd = cli.cli_commands[basecmd]
     txt = cli.cli_commands["help"]._makeOutput(cmd)
-    logger.critical(_(' Mini usage:\n'))
+    logger.critical(_(' Mini usage:') + '\n')
     logger.critical(txt)
 
 def checkGPGKey(base, cli):

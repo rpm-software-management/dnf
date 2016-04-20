@@ -704,7 +704,7 @@ class Output(object):
         """
         def names(packages):
             return sorted(pkg.name for pkg in packages)
-        print(_('\nGroup: %s') % group.ui_name)
+        print('\n' + _('Group: %s') % group.ui_name)
 
         verbose = self.conf.verbose
         if verbose:
@@ -1061,7 +1061,7 @@ class Output(object):
                 msg = self.fmtColumns(columns, u" ", u"\n")
                 hibeg, hiend = self._highlight(self.conf.color_update_installed)
                 for obspo in sorted(obsoletes):
-                    appended = _('     replacing  %s%s%s.%s %s\n')
+                    appended = '     ' + _('replacing') + '  %s%s%s.%s %s\n'
                     appended %= (hibeg, obspo.name, hiend, obspo.arch, obspo.evr)
                     msg += appended
                 totalmsg = totalmsg + msg
