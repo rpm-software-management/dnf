@@ -49,7 +49,6 @@ class UpdateInfoCommand(commands.Command):
 
     aliases = ['updateinfo']
     summary = _('display advisories about packages')
-    usage = ''
 
     def __init__(self, cli):
         """Initialize the command."""
@@ -95,9 +94,12 @@ class UpdateInfoCommand(commands.Command):
         assert self._ina2evr_cache is not None
         return (apkg.name, apkg.arch) in self._ina2evr_cache
 
+    @staticmethod
+    def set_argparser(parser):
+        parser.add_argument('extcmds', nargs='*', metavar='SPEC')
+
     def configure(self, args):
         """Do any command-specific configuration based on command arguments."""
-        super(UpdateInfoCommand, self).configure(args)
         self.cli.demands.sack_activation = True
 
     @staticmethod
@@ -312,7 +314,7 @@ class UpdateInfoCommand(commands.Command):
     def run(self, args):
         """Execute the command with arguments."""
 
-        super(UpdateInfoCommand, self).run(args)
+        args = self.opts.extcmds
         display = self.display_summary
         if args[:1] in (['summary'], []):
             args = args[1:]
