@@ -84,21 +84,6 @@ def checkGPGKey(base, cli):
                 logger.critical(_("Problem repository: %s"), repo)
                 raise dnf.cli.CliError
 
-def checkPackageArg(cli, basecmd, extcmds):
-    """Verify that *extcmds* contains the name of at least one package for
-    *basecmd* to act on.
-
-    :param base: a :class:`dnf.Base` object.
-    :param basecmd: the name of the command being checked for
-    :param extcmds: a list of arguments passed to *basecmd*
-    :raises: :class:`cli.CliError`
-    """
-    if len(extcmds) == 0:
-        logger.critical(
-                _('Error: Need to pass a list of pkgs to %s'), basecmd)
-        err_mini_usage(cli, basecmd)
-        raise dnf.cli.CliError
-
 def checkItemArg(cli, basecmd, extcmds):
     """Verify that *extcmds* contains the name of at least one item for
     *basecmd* to act on.  Generally, the items are command-line

@@ -22,6 +22,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from .. import commands
 from dnf.i18n import _
+from dnf.cli.option_parser import OptionParser
 
 import dnf.exceptions
 import logging
@@ -36,6 +37,12 @@ class RemoveCommand(commands.Command):
     summary = _('remove a package or packages from your system')
     usage = "%s..." % _('PACKAGE')
 
+    @staticmethod
+    def set_argparser(parser):
+        parser.add_argument('packages', nargs='+', help=_('Package to remove'),
+                            action=OptionParser.ParseSpecGroupFileCallback,
+                            metavar=_('PACKAGE'))
+
     def configure(self, _):
         demands = self.cli.demands
         demands.allow_erasing = True
@@ -46,30 +53,18 @@ class RemoveCommand(commands.Command):
         demands.root_user = True
         demands.sack_activation = True
 
-    def doCheck(self, basecmd, extcmds):
-        """Verify that conditions are met so that this command can
-        run.  These include that the program is being run by the root
-        user, and that this command is called with appropriate
-        arguments.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
-        commands.checkPackageArg(self.cli, basecmd, extcmds)
-
     def run(self, extcmds):
-        pkg_specs, grp_specs, filenames = commands.parse_spec_group_file(
-            extcmds)
-        pkg_specs += filenames  # local pkgs not supported in erase command
+        # local pkgs not supported in erase command
+        self.opts.pkg_specs += self.opts.filenames
         done = False
 
         # Remove groups.
-        if grp_specs:
+        if self.opts.grp_specs:
             self.base.read_comps()
-            if self.base.env_group_remove(grp_specs):
+            if self.base.env_group_remove(self.opts.grp_specs):
                 done = True
 
-        for pkg_spec in pkg_specs:
+        for pkg_spec in self.opts.pkg_specs:
             try:
                 self.base.remove(pkg_spec)
             except dnf.exceptions.MarkingError:
