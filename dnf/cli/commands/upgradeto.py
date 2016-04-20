@@ -22,19 +22,28 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from .. import commands
 from dnf.i18n import _
+from dnf.cli.option_parser import OptionParser
 
 
 class UpgradeToCommand(commands.Command):
     aliases = ('upgrade-to', 'update-to')
-    activate_sack = True
-    resolve = True
     summary = _('upgrade a package on your system to the specified version')
-    usage = "[%s...]" % _('PACKAGE')
-    writes_rpmdb = True
 
-    def doCheck(self, basecmd, extcmds):
+    @staticmethod
+    def set_argparser(parser):
+        parser.add_argument('packages', nargs='*', help=_('Package to upgrade'),
+                            action=OptionParser.ParseSpecGroupFileCallback,
+                            metavar=_('PACKAGE'))
+
+    def configure(self, args):
+        demands = self.cli.demands
+        demands.sack_activation = True
+        demands.available_repos = True
+        demands.resolving = True
+        demands.root_user = True
         commands.checkGPGKey(self.base, self.cli)
-        commands.checkEnabledRepo(self.base, extcmds)
+        commands.checkEnabledRepo(self.base, self.opts.packages)
 
     def run(self, extcmds):
-        return self.base.upgrade_userlist_to(extcmds)
+        self.opts.pkg_specs += self.opts.filenames
+        return self.base.upgrade_userlist_to(self.opts.pkg_specs)
