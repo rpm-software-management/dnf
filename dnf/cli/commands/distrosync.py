@@ -29,22 +29,20 @@ class DistroSyncCommand(commands.Command):
     """
 
     aliases = ('distro-sync', 'distribution-synchronization')
-    activate_sack = True
-    resolve = True
     summary = _('synchronize installed packages to the latest available versions')
-    usage = '[%s...]' % _('PACKAGE')
-    writes_rpmdb = True
 
-    def doCheck(self, basecmd, extcmds):
-        """Verify that conditions are met so that this command can run.
-        These include that the program is being run by the root user,
-        and that there are enabled repositories with gpg keys.
+    @staticmethod
+    def set_argparser(parser):
+        parser.add_argument('package', nargs='*', help=_('Package to synchronize'))
 
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
+    def configure(self, args):
+        demands = self.cli.demands
+        demands.sack_activation = True
+        demands.available_repos = True
+        demands.resolving = True
+        demands.root_user = True
         commands.checkGPGKey(self.base, self.cli)
-        commands.checkEnabledRepo(self.base, extcmds)
+        commands.checkEnabledRepo(self.base, self.opts.package)
 
     def run(self, extcmds):
-        return self.base.distro_sync_userlist(extcmds)
+        return self.base.distro_sync_userlist(self.opts.package)
