@@ -119,17 +119,6 @@ def checkEnabledRepo(base, possible_local_files=[]):
     raise dnf.cli.CliError(msg)
 
 
-def parse_spec_group_file(extcmds):
-    pkg_specs, grp_specs, filenames = [], [], []
-    for argument in extcmds:
-        if argument.endswith('.rpm'):
-            filenames.append(argument)
-        elif argument.startswith('@'):
-            grp_specs.append(argument[1:])
-        else:
-            pkg_specs.append(argument)
-    return pkg_specs, grp_specs, filenames
-
 class Command(object):
     """Abstract base class for CLI commands."""
 
@@ -228,7 +217,6 @@ class InfoCommand(Command):
 
     aliases = ('info',)
     summary = _('display details about a package or group of packages')
-    usage = "[%s|all|available|installed|updates|extras|autoremove|obsoletes|recent]" % _('PACKAGE')
 
     @staticmethod
     def parse_extcmds(extcmds):
@@ -246,6 +234,13 @@ class InfoCommand(Command):
         else:
             return DEFAULT_PKGNARROW, extcmds
 
+    @staticmethod
+    def set_argparser(parser):
+        parser.add_argument('packages', nargs='*', metavar=_('PACKAGE'),
+                             help=("[%s | all | available | installed | updates"
+                                   " | extras | autoremove | obsoletes | recent]"
+                                   % _('PACKAGE')))
+
     def configure(self, _):
         demands = self.cli.demands
         demands.available_repos = True
@@ -253,7 +248,7 @@ class InfoCommand(Command):
         demands.sack_activation = True
 
     def run(self, extcmds):
-        pkgnarrow, patterns = self.parse_extcmds(extcmds)
+        pkgnarrow, patterns = self.parse_extcmds(self.opts.packages)
         return self.base.output_packages('info', pkgnarrow, patterns)
 
 class ListCommand(InfoCommand):
@@ -265,7 +260,7 @@ class ListCommand(InfoCommand):
     summary = _('list a package or groups of packages')
 
     def run(self, extcmds):
-        pkgnarrow, patterns = self.parse_extcmds(extcmds)
+        pkgnarrow, patterns = self.parse_extcmds(self.opts.packages)
         return self.base.output_packages('list', pkgnarrow, patterns)
 
 
