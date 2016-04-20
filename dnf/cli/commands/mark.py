@@ -38,11 +38,10 @@ class MarkCommand(commands.Command):
     usage = "[install|remove [%s]]" % _('PACKAGE')
 
     @staticmethod
-    def _split_cmd(extcmds):
-        return extcmds[0], extcmds[1:]
-
-    def __init__(self, cli):
-        super(MarkCommand, self).__init__(cli)
+    def set_argparser(parser):
+        parser.add_argument('mark', nargs=1, choices=['install', 'remove'],
+                             metavar='[ install | remove ]')
+        parser.add_argument('package', nargs='+')
 
     def _mark_install(self, pkg):
         yumdb = self.base._yumdb
@@ -61,20 +60,9 @@ class MarkCommand(commands.Command):
         demands.available_repos = False
         demands.resolving = False
 
-    def doCheck(self, basecmd, extcmds):
-        if len(extcmds) < 2:
-            logger.critical(_('Error: Need a package or list of packages'))
-            commands.err_mini_usage(self.cli, basecmd)
-            raise dnf.cli.CliError
-
-        cmd, pkgs = self._split_cmd(extcmds)
-
-        if cmd not in ('install', 'remove'):
-            commands.err_mini_usage(self.cli, basecmd)
-            raise dnf.cli.CliError
-
     def run(self, extcmds):
-        cmd, pkgs = self._split_cmd(extcmds)
+        cmd = self.opts.mark[0]
+        pkgs = self.opts.package
 
         mark_func = functools.partial(getattr(self, '_mark_' + cmd))
 
