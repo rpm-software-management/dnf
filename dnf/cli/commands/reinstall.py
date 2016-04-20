@@ -36,26 +36,28 @@ class ReinstallCommand(commands.Command):
     reinstall command.
     """
 
-    activate_sack = True
     aliases = ('reinstall',)
-    resolve = True
     summary = _('reinstall a package')
-    usage = "%s..." % _('PACKAGE')
-    writes_rpmdb = True
 
-    def doCheck(self, basecmd, extcmds):
+
+    @staticmethod
+    def set_argparser(parser):
+        parser.add_argument('packages', nargs='+', help=_('Package to reinstall'),
+                            metavar=_('PACKAGE'))
+
+    def configure(self, args):
         """Verify that conditions are met so that this command can
         run.  These include that the program is being run by the root
         user, that there are enabled repositories with gpg keys, and
         that this command is called with appropriate arguments.
-
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
         """
+        demands = self.cli.demands
+        demands.sack_activation = True
+        demands.available_repos = True
+        demands.resolving = True
+        demands.root_user = True
         commands.checkGPGKey(self.base, self.cli)
-        commands.checkPackageArg(self.cli, basecmd, extcmds)
-        commands.checkEnabledRepo(self.base, extcmds)
+        commands.checkEnabledRepo(self.base, self.opts.packages)
 
     @staticmethod
     def parse_extcmds(extcmds):
@@ -69,7 +71,7 @@ class ReinstallCommand(commands.Command):
         return pkg_specs, filenames
 
     def run(self, extcmds):
-        pkg_specs, filenames = self.parse_extcmds(extcmds)
+        pkg_specs, filenames = self.parse_extcmds(self.opts.packages)
 
         # Reinstall files.
         local_pkgs = map(self.base.add_remote_rpm, filenames)
