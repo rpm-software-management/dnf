@@ -28,26 +28,22 @@ class DowngradeCommand(commands.Command):
     downgrade command.
     """
 
-    activate_sack = True
     aliases = ('downgrade',)
-    resolve = True
-    summary = _("downgrade a package")
-    usage = "%s..."  % _('PACKAGE')
-    writes_rpmdb = True
+    summary = _("Downgrade a package")
 
-    def doCheck(self, basecmd, extcmds):
-        """Verify that conditions are met so that this command can
-        run.  These include that the program is being run by the root
-        user, that there are enabled repositories with gpg keys, and
-        that this command is called with appropriate arguments.
+    @staticmethod
+    def set_argparser(parser):
+        parser.add_argument('package', nargs='*', help=_('Package to downgrade'))
 
+    def configure(self, args):
+        demands = self.cli.demands
+        demands.sack_activation = True
+        demands.available_repos = True
+        demands.resolving = True
+        demands.root_user = True
 
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
         commands.checkGPGKey(self.base, self.cli)
-        commands.checkPackageArg(self.cli, basecmd, extcmds)
-        commands.checkEnabledRepo(self.base, extcmds)
+        commands.checkEnabledRepo(self.base, self.opts.package)
 
     def run(self, extcmds):
-        return self.base.downgradePkgs(extcmds)
+        return self.base.downgradePkgs(self.opts.package)
