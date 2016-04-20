@@ -72,7 +72,10 @@ class RepoListCommand(commands.Command):
 
     aliases = ('repolist',)
     summary = _('display the configured software repositories')
-    usage = '[all|enabled|disabled]'
+
+    @staticmethod
+    def set_argparser(parser):
+        parser.add_argument('extcmds', nargs='*', metavar='[all|enabled|disabled]')
 
     def configure(self, _):
         demands = self.cli.demands
@@ -81,6 +84,7 @@ class RepoListCommand(commands.Command):
         demands.sack_activation = True
 
     def run(self, extcmds):
+        extcmds = self.opts.extcmds
         if len(extcmds) >= 1 and extcmds[0] in ('all', 'disabled', 'enabled'):
             arg = extcmds[0]
             extcmds = extcmds[1:]
