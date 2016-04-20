@@ -22,6 +22,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from .. import commands
 from dnf.i18n import _
+from dnf.cli.option_parser import OptionParser
 
 import dnf.exceptions
 import functools
@@ -36,36 +37,37 @@ class UpgradeCommand(commands.Command):
     update command.
     """
     aliases = ('upgrade', 'update')
-    activate_sack = True
-    resolve = True
     summary = _('upgrade a package or packages on your system')
-    usage = "[%s...]" % _('PACKAGE')
-    writes_rpmdb = True
 
-    def doCheck(self, basecmd, extcmds):
+    @staticmethod
+    def set_argparser(parser):
+        parser.add_argument('packages', nargs='*', help=_('Package to upgrade'),
+                            action=OptionParser.ParseSpecGroupFileCallback,
+                            metavar=_('PACKAGE'))
+
+    def configure(self, args):
         """Verify that conditions are met so that this command can run.
 
         These include that there are enabled repositories with gpg
         keys, and that this command is being run by the root user.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
         """
+        demands = self.cli.demands
+        demands.sack_activation = True
+        demands.available_repos = True
+        demands.resolving = True
+        demands.root_user = True
         commands.checkGPGKey(self.base, self.cli)
-        commands.checkEnabledRepo(self.base, extcmds)
+        commands.checkEnabledRepo(self.base, self.opts.packages)
 
     def run(self, extcmds):
-        pkg_specs, grp_specs, filenames = commands.parse_spec_group_file(
-            extcmds)
-
-        if pkg_specs or grp_specs or filenames:
+        if self.opts.pkg_specs or self.opts.grp_specs or self.opts.filenames:
             # Update files.
-            local_pkgs = map(self.base.add_remote_rpm, filenames)
+            local_pkgs = map(self.base.add_remote_rpm, self.opts.filenames)
             results = map(self.base.package_upgrade, local_pkgs)
             done = functools.reduce(operator.or_, results, False)
 
             # Update packages.
-            for pkg_spec in pkg_specs:
+            for pkg_spec in self.opts.pkg_specs:
                 try:
                     self.base.upgrade(pkg_spec)
                 except dnf.exceptions.MarkingError:
@@ -74,9 +76,9 @@ class UpgradeCommand(commands.Command):
                     done = True
 
             # Update groups.
-            if grp_specs:
+            if self.opts.grp_specs:
                 self.base.read_comps()
-                self.base.env_group_upgrade(grp_specs)
+                self.base.env_group_upgrade(self.opts.grp_specs)
                 done = True
         else:
             # Update all packages.
