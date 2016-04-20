@@ -177,7 +177,7 @@ class GroupCommand(commands.Command):
                 in_group = len(self.base.comps.groups_by_pattern(group)) > 0
                 in_environment = len(self.base.comps.environments_by_pattern(group)) > 0
                 if not in_group and not in_environment:
-                    logger.error(_('Warning: No groups match:\n   %s'), group)
+                    logger.error(_('Warning: No groups match:') + '\n   %s', group)
                     errs = True
             if errs:
                 return 0, []

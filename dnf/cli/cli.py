@@ -212,7 +212,7 @@ class BaseCli(dnf.Base):
                                        total_cb)
             except dnf.exceptions.DownloadError as e:
                 specific = dnf.cli.format.indent_block(ucd(e))
-                errstring = _('Error downloading packages:\n%s') % specific
+                errstring = _('Error downloading packages:') + '\n%s' % specific
                 # setting the new line to prevent next chars being eaten up by carriage returns
                 print()
                 raise dnf.exceptions.Error(errstring)

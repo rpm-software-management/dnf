@@ -587,7 +587,7 @@ class Base(object):
             del testcb
 
             if len(tserrors) > 0:
-                errstring = _('Transaction check error:\n')
+                errstring = _('Transaction check error:') + '\n'
                 for descr in tserrors:
                     errstring += '  %s\n' % ucd(descr)
 
@@ -636,7 +636,7 @@ class Base(object):
                     'At least %dMB more space needed on the %s filesystem.',
                     disk[k]) % (disk[k], k) + '\n'
 
-        summary = _('Error Summary\n-------------\n') + summary
+        summary = _('Error Summary') + '\n-------------\n' + summary
 
         return summary
 
@@ -1825,9 +1825,9 @@ class Base(object):
         key_installed = False
 
         def _prov_key_data(msg):
-            msg += _('Failing package is: %s\n'
-                     ' GPG Keys are configured as: %s\n'
-                     ) % (po, ", ".join(repo.gpgkey))
+            msg += _('Failing package is: %s') % (po) + '\n '
+            msg += _('GPG Keys are configured as: %s') % \
+                    (', '.join(repo.gpgkey) + '\n')
             return '\n\n\n' + msg
 
         user_cb_fail = False
