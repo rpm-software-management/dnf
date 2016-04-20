@@ -291,31 +291,21 @@ class CheckUpdateCommand(Command):
     check-update command.
     """
 
-    activate_sack = True
     aliases = ('check-update',)
     summary = _('check for available package upgrades')
-    usage = "[%s...]" % _('PACKAGE')
-
-    def __init__(self, cli):
-        super(CheckUpdateCommand, self).__init__(cli)
-
-    def doCheck(self, basecmd, extcmds):
-        """Verify that conditions are met so that this command can
-        run; namely that there is at least one enabled repository.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
-        checkEnabledRepo(self.base)
 
     @staticmethod
-    def parse_extcmds(extcmds):
-        """Parse command arguments."""
-        return extcmds
+    def set_argparser(parser):
+        parser.add_argument('packages', nargs='*', metavar=_('PACKAGE'))
+
+    def configure(self, _):
+        demands = self.cli.demands
+        demands.sack_activation = True
+        demands.available_repos = True
+        checkEnabledRepo(self.base)
 
     def run(self, extcmds):
-        patterns = self.parse_extcmds(extcmds)
-        found = self.base.check_updates(patterns, print_=True)
+        found = self.base.check_updates(self.opts.packages, print_=True)
         if found:
             self.cli.demands.success_exit_status = 100
 
