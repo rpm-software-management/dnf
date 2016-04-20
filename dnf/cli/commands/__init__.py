@@ -271,7 +271,10 @@ class ProvidesCommand(Command):
 
     aliases = ('provides', 'whatprovides')
     summary = _('find what package provides the given value')
-    usage = _("SOME_STRING")
+
+    @staticmethod
+    def set_argparser(parser):
+        parser.add_argument('dependency', nargs='+', metavar=_('SOME_STRING'))
 
     def configure(self, _):
         demands = self.cli.demands
@@ -279,18 +282,9 @@ class ProvidesCommand(Command):
         demands.fresh_metadata = False
         demands.sack_activation = True
 
-    def doCheck(self, basecmd, extcmds):
-        """Verify that conditions are met so that this command can
-        run; namely that this command is called with appropriate arguments.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
-        checkItemArg(self.cli, basecmd, extcmds)
-
     def run(self, extcmds):
         logger.debug("Searching Packages: ")
-        return self.base.provides(extcmds)
+        return self.base.provides(self.opts.dependency)
 
 class CheckUpdateCommand(Command):
     """A class containing methods needed by the cli to execute the
