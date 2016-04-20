@@ -36,12 +36,14 @@ class MakeCacheCommand(commands.Command):
     summary = _('generate the metadata cache')
     usage = ''
 
-    def doCheck(self, basecmd, extcmds):
+    @staticmethod
+    def set_argparser(parser):
+        parser.add_argument('timer', nargs='?', choices=['timer'],
+                            metavar='timer')
+
+    def configure(self, args):
         """Verify that conditions are met so that this command can
         run; namely that there is an enabled repository.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
         """
         commands.checkEnabledRepo(self.base)
 
@@ -49,7 +51,7 @@ class MakeCacheCommand(commands.Command):
         msg = _("Making cache files for all metadata files.")
         logger.debug(msg)
         period = self.base.conf.metadata_timer_sync
-        timer = 'timer' == dnf.util.first(extcmds)
+        timer = self.opts.timer is not None
         persistor = self.base._repo_persistor
         if timer:
             if dnf.util.on_ac_power() is False:
