@@ -40,7 +40,10 @@ class SearchCommand(commands.Command):
 
     aliases = ('search',)
     summary = _('search package details for the given string')
-    usage = _('QUERY_STRING')
+
+    @staticmethod
+    def set_argparser(parser):
+        parser.add_argument('query_string', nargs='+', metavar=_('QUERY_STRING'))
 
     def _search(self, args):
         """Search for simple text tags in a package object."""
@@ -98,9 +101,6 @@ class SearchCommand(commands.Command):
         demands.fresh_metadata = False
         demands.sack_activation = True
 
-    def doCheck(self, basecmd, extcmds):
-        commands.checkItemArg(self.cli, basecmd, extcmds)
-
     def run(self, extcmds):
         logger.debug(_('Searching Packages: '))
-        return self._search(extcmds)
+        return self._search(self.opts.query_string)
