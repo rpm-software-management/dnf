@@ -868,7 +868,6 @@ class Cli(object):
             raise CliError
         self.command = command_cls(self)
 
-        self.base.basecmd, self.base.extcmds = (basecmd, args)
         logger.log(dnf.logging.DDEBUG, 'Base command: %s', basecmd)
         logger.log(dnf.logging.DDEBUG, 'Extra commands: %s', args)
 
@@ -1033,10 +1032,6 @@ class Cli(object):
         self.base.cmd_conf.downloadonly = opts.downloadonly
 
         self.base._plugins.run_config()
-
-    def check(self):
-        """Make sure the command line and options make sense."""
-        self.command.doCheck(self.base.basecmd, self.base.extcmds)
 
     def read_conf_file(self, path=None, root="/", releasever=None,
                        overrides=None):

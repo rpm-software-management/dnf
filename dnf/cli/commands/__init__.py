@@ -163,15 +163,6 @@ class Command(object):
             return (_RPM_VERIFY, _RPM_REBUILDDB)
         raise NotImplementedError('error not supported yet: %s' % error)
 
-    def doCheck(self, basecmd, extcmds):
-        """Verify that various conditions are met so that the command
-        can run.
-
-        :param basecmd: the name of the command being checked for
-        :param extcmds: a list of arguments passed to *basecmd*
-        """
-        pass
-
     def run(self, extcmds):
         # :api
         """Execute the command
