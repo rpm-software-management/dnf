@@ -125,17 +125,6 @@ class Command(object):
     def output(self):
         return self.cli.base.output
 
-    @classmethod
-    def canonical(cls, basecmd, command_list):
-        """Turn list of commands into a canonical form.
-
-        Returns the base command and a list of extra commands.
-
-        """
-        base = cls.aliases[0]
-        extra = [arg for arg in command_list if arg != basecmd]
-        return (base, extra)
-
     def set_argparser(self, parser):
         """Define command specific options and arguments. #:api"""
         pass
