@@ -1380,7 +1380,7 @@ Transaction Summary
 
         tids = set()
         pats = []
-        usertids = extcmds[1:]
+        usertids = extcmds
         for tid in usertids:
             try:
                 int(tid)
@@ -1489,7 +1489,7 @@ Transaction Summary
             logger.critical(_('No transactions'))
             return 1, ['Failed history info']
 
-        for tid in extcmds[1:]:
+        for tid in extcmds:
             if self._historyRangeRTIDs(old, tid):
                 # Have a range ... do a "merged" transaction.
                 mtids.add(self._historyRangeRTIDs(old, tid))

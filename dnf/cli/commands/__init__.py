@@ -988,13 +988,35 @@ class HistoryCommand(Command):
     summary = _('display, or use, the transaction history')
     usage = "[info|list|redo|undo|rollback|userinstalled]"
 
+    @staticmethod
+    def set_argparser(parser):
+        sub_p = parser.add_subparsers(dest='vcmd',
+                        metavar="[info|list|redo|undo|rollback|userinstalled]")
+        info_p = sub_p.add_parser('info')
+        info_p.add_argument('tid', metavar='transaction_id', nargs='*')
+        list_p = sub_p.add_parser('list')
+        list_p.add_argument('tid', metavar='transaction_id', nargs='*')
+        redo_p = sub_p.add_parser('redo')
+        redo_p.add_argument('tid', metavar='transaction_id', nargs=1)
+        undo_p = sub_p.add_parser('undo')
+        undo_p.add_argument('tid', metavar='transaction_id', nargs=1)
+        rollback_p = sub_p.add_parser('rollback')
+        rollback_p.add_argument('tid', metavar='transaction_id', nargs=1)
+        userinstalled_p = sub_p.add_parser('userinstalled')
+
     def configure(self, args):
         demands = self.cli.demands
-        if args and args[0] in ['redo', 'undo', 'rollback']:
+        if not self.opts.vcmd:
+            self.opts.vcmd = 'list'
+        if self.opts.vcmd in ['redo', 'undo', 'rollback']:
             demands.available_repos = True
+            checkGPGKey(self.base, self.cli)
         else:
             demands.fresh_metadata = False
         demands.sack_activation = True
+        if not os.access(self.base.history._db_file, os.R_OK):
+            logger.critical(_("You don't have access to the history DB."))
+            raise dnf.cli.CliError
 
     def get_error_output(self, error):
         """Get suggestions for resolving the given error."""
@@ -1012,19 +1034,7 @@ class HistoryCommand(Command):
 
         return Command.get_error_output(self, error)
 
-    def __init__(self, cli):
-        super(HistoryCommand, self).__init__(cli)
-
     def _hcmd_redo(self, extcmds):
-        try:
-            extcmd, = extcmds
-        except ValueError:
-            if not extcmds:
-                logger.critical(_('No transaction ID given'))
-            elif len(extcmds) > 1:
-                logger.critical(_('Found more than one transaction ID!'))
-            return 1, ['Failed history redo']
-
         old = self.base.history_get_transaction((extcmd,))
         if old is None:
             return 1, ['Failed history redo']
@@ -1052,32 +1062,12 @@ class HistoryCommand(Command):
             return 2, ['Repeating transaction %u' % (old.tid,)]
 
     def _hcmd_undo(self, extcmds):
-        # Parse the transaction specification.
-        try:
-            extcmd, = extcmds
-        except ValueError:
-            if not extcmds:
-                logger.critical(_('No transaction ID given'))
-            elif len(extcmds) > 1:
-                logger.critical(_('Found more than one transaction ID!'))
-            return 1, ['Failed history undo']
-
         try:
             return self.base.history_undo_transaction(extcmd)
         except dnf.exceptions.Error as err:
             return 1, [str(err)]
 
     def _hcmd_rollback(self, extcmds):
-        # Parse the transaction specification.
-        try:
-            extcmd, = extcmds
-        except ValueError:
-            if not extcmds:
-                logger.critical(_('No transaction ID given'))
-            elif len(extcmds) > 1:
-                logger.critical(_('Found more than one transaction ID!'))
-            return 1, ['Failed history rollback']
-
         try:
             return self.base.history_rollback_transaction(extcmd)
         except dnf.exceptions.Error as err:
@@ -1120,39 +1110,14 @@ class HistoryCommand(Command):
             else:
                 print("FAILED.")
 
-    def _hcmd_userinstalled(self, extcmds):
+    def _hcmd_userinstalled(self):
         """Execute history userinstalled command."""
-        if extcmds:
-            logger.critical(_('Unrecognized options "%s"!'),
-                                      ' '.join(extcmds))
-            return 1, ['Failed history userinstalled']
-
         pkgs = tuple(self.base.iter_userinstalled())
         return self.output.listPkgs(pkgs, 'Packages installed by user', 'name')
 
-    def doCheck(self, basecmd, extcmds):
-        """Verify that conditions are met so that this command can
-        run.  The exact conditions checked will vary depending on the
-        subcommand that is being called.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
-        cmds = ('list', 'info', 'redo', 'undo', 'rollback', 'userinstalled')
-        if extcmds and extcmds[0] not in cmds:
-            logger.critical(_('Invalid history sub-command, use: %s.'),
-                                 ", ".join(cmds))
-            raise dnf.cli.CliError
-        if extcmds and extcmds[0] in ('repeat', 'redo', 'undo', 'rollback'):
-            checkGPGKey(self.base, self.cli)
-        elif not os.access(self.base.history._db_file, os.R_OK):
-            logger.critical(_("You don't have access to the history DB."))
-            raise dnf.cli.CliError
-
     def run(self, extcmds):
-        vcmd = 'list'
-        if extcmds:
-            vcmd = extcmds[0]
+        vcmd = self.opts.vcmd
+        extcmds = getattr(self.opts, 'tid', [])
 
         if False: pass
         elif vcmd == 'list':
@@ -1167,11 +1132,11 @@ class HistoryCommand(Command):
                       'package', 'package-list', 'packages', 'packages-list'):
             ret = self.output.historyPackageListCmd(extcmds)
         elif vcmd == 'undo':
-            ret = self._hcmd_undo(extcmds[1:])
+            ret = self._hcmd_undo(extcmds)
         elif vcmd in ('redo', 'repeat'):
-            ret = self._hcmd_redo(extcmds[1:])
+            ret = self._hcmd_redo(extcmds)
         elif vcmd == 'rollback':
-            ret = self._hcmd_rollback(extcmds[1:])
+            ret = self._hcmd_rollback(extcmds)
         elif vcmd == 'new':
             ret = self._hcmd_new(extcmds)
         elif vcmd in ('stats', 'statistics'):
@@ -1181,7 +1146,7 @@ class HistoryCommand(Command):
         elif vcmd in ('pkg-info', 'pkgs-info', 'package-info', 'packages-info'):
             ret = self.output.historyPackageInfoCmd(extcmds)
         elif vcmd == 'userinstalled':
-            ret = self._hcmd_userinstalled(extcmds[1:])
+            ret = self._hcmd_userinstalled()
 
         if ret is None:
             return
