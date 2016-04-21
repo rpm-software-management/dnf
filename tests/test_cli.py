@@ -132,11 +132,18 @@ class CliTest(TestCase):
         self.cli.configure(['update', '-y'])
         self.assertTrue(self.base.conf.assumeyes)
 
-    def test_opt_between_cmds(self, _):
-        self.cli.configure(args=['install', 'pkg1', '-y', 'pkg2'])
-        self.assertTrue(self.base.conf.assumeyes)
-        self.assertEqual(self.base.basecmd, "install")
-        self.assertEqual(self.base.extcmds, ["pkg1", "pkg2"])
+    def test_glob_options_cmds(self, _):
+        params = [
+            ['install', '-y', 'pkg1', 'pkg2'],
+            ['install', 'pkg1', '-y', 'pkg2'],
+            ['install', 'pkg1', 'pkg2', '-y'],
+            ['-y', 'install', 'pkg1', 'pkg2']
+        ]
+        for param in params:
+            self.cli.configure(args=param)
+            self.assertTrue(self.base.conf.assumeyes)
+            self.assertEqual(self.cli.command.opts.command, ["install"])
+            self.assertEqual(self.cli.command.opts.pkg_specs, ["pkg1", "pkg2"])
 
     def test_configure_repos(self, _):
         opts = Namespace()
@@ -199,10 +206,11 @@ class ConfigureTest(TestCase):
     @mock.patch('dnf.util.am_i_root', lambda: True)
     def test_configure_root(self):
         """ Test Cli.configure as root."""
-        self.cli.configure(['update', '-c', self.conffile])
+        self.cli.configure(['update', '--nogpgcheck', '-c', self.conffile])
         reg = re.compile('^/var/cache/dnf$')
         self.assertIsNotNone(reg.match(self.base.conf.cachedir))
-        self.assertEqual(self.cli.cmdstring, "dnf update -c %s " % self.conffile)
+        self.assertEqual(self.cli.cmdstring,
+                         "dnf update --nogpgcheck -c %s " % self.conffile)
 
     def test_configure_verbose(self):
         self.cli.configure(['-v', 'update', '-c', self.conffile])
@@ -241,5 +249,5 @@ class ConfigureTest(TestCase):
         self.cli.base.basecmd = 'update'
 
         conf = os.path.join(support.dnf_toplevel(), "tests/etc/installroot.conf")
-        self.cli.configure(['-c', conf, '--releasever', '17', 'update'])
+        self.cli.configure(['-c', conf, '--nogpgcheck', '--releasever', '17', 'update'])
         self.assertEqual(self.base.conf.installroot, '/roots/dnf')
