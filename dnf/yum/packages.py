@@ -73,7 +73,7 @@ def parsePackages(pkgs, usercommands, casematch=0):
         if not casematch:
             command = command.lower()
         if command in pkgdict:
-            exactmatch.update(pkgdict[command])
+            exactmatch = pkgdict[command]
             del pkgdict[command]
         else:
             # anything we couldn't find a match for
@@ -87,7 +87,7 @@ def parsePackages(pkgs, usercommands, casematch=0):
                 foundit = 0
                 for item in trylist:
                     if regex.match(item):
-                        matched.update(pkgdict[item])
+                        matched = pkgdict[item]
                         del pkgdict[item]
                         foundit = 1
 
