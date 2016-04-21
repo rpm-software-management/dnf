@@ -324,13 +324,6 @@ class RepoPkgsCommand(Command):
         def check(self, cli_args):
             """Verify whether the command can run with given arguments."""
 
-        def doCheck(self, alias, cli_args):
-            """Verify whether the command can run with given arguments."""
-            super(RepoPkgsCommand.SubCommand, self).doCheck(alias, cli_args)
-            if alias not in self.aliases:
-                raise ValueError("alias must be one of command's aliases")
-            self.check(cli_args)
-
     class CheckUpdateSubCommand(SubCommand):
         """Implementation of the info sub-command."""
 
@@ -891,9 +884,6 @@ class RepoPkgsCommand(Command):
     aliases = ('repository-packages',
                'repo-pkgs', 'repo-packages', 'repository-pkgs')
     summary = _('run commands on top of all packages in given repository')
-    usage = '%s check-update|info|install|list|move-to|reinstall|' \
-            'reinstall-old|remove|remove-or-distro-sync|remove-or-reinstall|' \
-            'upgrade|upgrade-to [%s...]' % (_('REPO'), _('ARG'))
 
     def __init__(self, cli):
         """Initialize the command."""
@@ -914,48 +904,34 @@ class RepoPkgsCommand(Command):
         self.writes_rpmdb = functools.reduce(
             operator.or_, sub_vals, super(RepoPkgsCommand, self).writes_rpmdb)
 
-    def parse_extcmds(self, extcmds):
-        """Parse command arguments *extcmds*."""
-        # TODO: replace with ``repo, subcmd_name, *subargs = extcmds`` after
-        # switching to Python 3.
-        (repo, subcmd_name), subargs = extcmds[:2], extcmds[2:]
+    @staticmethod
+    def set_argparser(parser):
+        subcommands = ['check-update', 'info', 'install', 'list', 'move-to',
+                       'reinstall', 'reinstall-old', 'remove',
+                       'remove-or-distro-sync', 'remove-or-reinstall', 'upgrade',
+                       'upgrade-to']
+        parser.add_argument('cmdrepo', nargs=1, metavar=_('REPO'))
+        parser.add_argument('subcmd', nargs=1,
+                            choices = subcommands,
+                            metavar='[ %s ]' % ' | '.join(subcommands))
+        parser.add_argument('subargs', nargs='*', metavar=_('ARG'))
 
-        try:
-            subcmd_obj = self._subcmd_name2obj[subcmd_name]
-        except KeyError:
-            raise ValueError('invalid sub-command')
-
-        return repo, subcmd_obj, subargs
-
-    def doCheck(self, basecmd, extcmds):
+    def configure(self, args):
         """Verify whether the command can run with given arguments."""
-        # Check basecmd.
-        if basecmd not in self.aliases:
-            raise ValueError('basecmd should be one of the command aliases')
-
-        # Check command arguments.
-        try:
-            _repo, subcmd, subargs = self.parse_extcmds(extcmds)
-        except ValueError:
-            logger.critical(
-                _('Error: Requires a repo ID and a valid sub-command'))
-            dnf.cli.commands.err_mini_usage(self.cli, basecmd)
-            raise dnf.cli.CliError('a repo ID and a valid sub-command required')
-
         # Check sub-command.
         try:
-            subcmd.check(subargs)
-        except dnf.cli.CliError:
-            dnf.cli.commands.err_mini_usage(self.cli, basecmd)
-            raise
+            subcmd = self._subcmd_name2obj[self.opts.subcmd[0]]
+            subcmd.check(self.opts.subargs)
+        except (dnf.cli.CliError, KeyError) as e:
+            self.cli.optparser.print_usage()
+            raise dnf.cli.CliError
+        subcmd.configure(args)
 
     def run(self, extcmds):
         """Execute the command with respect to given arguments *extcmds*."""
-        self.doCheck(self.base.basecmd, extcmds)
+        subcmd = self._subcmd_name2obj[self.opts.subcmd[0]]
 
-        repo, subcmd, subargs = self.parse_extcmds(extcmds)
-
-        subcmd.run_on_repo(repo, subargs)
+        subcmd.run_on_repo(self.opts.cmdrepo, self.opts.subargs)
 
         self.cli.demands.resolving = subcmd.resolve
 
