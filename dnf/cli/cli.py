@@ -765,7 +765,7 @@ class Cli(object):
                     repolist.disable()
         except dnf.exceptions.ConfigError as e:
             logger.critical(e)
-            self.print_usage()
+            self.optparser.print_help()
             sys.exit(1)
 
         if self.nogpgcheck:
@@ -857,7 +857,6 @@ class Cli(object):
         basecmd = opts.command
         command_cls = self.cli_commands.get(basecmd)
         if command_cls is None:
-            self.optparser.print_help()
             logger.critical(_('No such command: %s. Please use %s --help'),
                             basecmd, sys.argv[0])
             if self.base.conf.plugins:
@@ -1007,13 +1006,14 @@ class Cli(object):
         except CliError:
             sys.exit(1)
 
-        opts = self.optparser.parse_command_args(self.command, args)
         self.nogpgcheck = opts.nogpgcheck
 
         # show help for dnf <command> --help / --help-cmd
         if opts.help:
             self.optparser.print_help(self.command)
             sys.exit(0)
+
+        opts = self.optparser.parse_command_args(self.command, args)
 
         # the configuration reading phase is now concluded, finish the init
         self._configure_cachedir()
@@ -1084,9 +1084,6 @@ class Cli(object):
         """
         self._process_demands()
         return self.command.run([])
-
-    def print_usage(self):
-        return self.optparser.print_help()
 
 
 class CmdConf(object):

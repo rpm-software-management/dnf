@@ -340,7 +340,8 @@ class OptionParser(argparse.ArgumentParser):
 
     def print_help(self, command=None):
         if command:
-            self.command_parser.print_help()
+            cp = self._command_parser(command)
+            super(OptionParser, cp).print_help()
         else:
             self.main_parser.usage = self.get_usage()
             self.main_parser.print_help()

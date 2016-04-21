@@ -966,54 +966,18 @@ class HelpCommand(Command):
 
     aliases = ('help',)
     summary = _('display a helpful usage message')
-    usage = _("COMMAND")
-
-    def doCheck(self, basecmd, extcmds):
-        """Verify that conditions are met so that this command can
-        run; namely that this command is called with appropriate
-        arguments.
-
-        :param basecmd: the name of the command
-        :param extcmds: the command line arguments passed to *basecmd*
-        """
-        if len(extcmds) == 0:
-            self.cli.print_usage()
-            raise dnf.cli.CliError
-        elif len(extcmds) > 1 or extcmds[0] not in self.cli.cli_commands:
-            self.cli.print_usage()
-            raise dnf.cli.CliError
 
     @staticmethod
-    def _makeOutput(command):
-        canonical_name = command.aliases[0]
-
-        usage = command.usage
-        summary = command.summary
-
-        # XXX need detailed help here, too
-        help_output = ""
-        if usage is not None:
-            help_output += "%s %s" % (canonical_name, usage)
-        if summary is not None:
-            help_output += "\n\n%s" % summary
-
-        if usage is None and summary is None:
-            help_output = _("No help available for %s") % canonical_name
-
-        command_names = command.aliases
-        if len(command_names) > 1:
-            if len(command_names) > 2:
-                help_output += _("\naliases: ")
-            else:
-                help_output += _("\nalias: ")
-            help_output += ', '.join(command.aliases[1:])
-
-        return help_output
+    def set_argparser(parser):
+        parser.add_argument('cmd', nargs='?', metavar=_('COMMAND'))
 
     def run(self, extcmds):
-        if extcmds[0] in self.cli.cli_commands:
-            command = self.cli.cli_commands[extcmds[0]]
-            logger.info(self._makeOutput(command))
+        if (not self.opts.cmd
+            or self.opts.cmd not in self.cli.cli_commands):
+            self.cli.optparser.print_help()
+        else:
+            command = self.cli.cli_commands[self.opts.cmd]
+            self.cli.optparser.print_help(command(self))
 
 class HistoryCommand(Command):
     """A class containing methods needed by the cli to execute the
