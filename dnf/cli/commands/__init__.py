@@ -1073,43 +1073,6 @@ class HistoryCommand(Command):
         except dnf.exceptions.Error as err:
             return 1, [str(err)]
 
-    def _hcmd_new(self, extcmds):
-        self.base.history._create_db_file()
-
-    def _hcmd_stats(self, extcmds):
-        def six_digits(num):
-            return ucd(dnf.pycomp.format("%6d", num, True))
-        print("File        :", self.base.history._db_file)
-        num = os.stat(self.base.history._db_file).st_size
-        print("Size        :", ucd(dnf.pycomp.format("%d", num, True)))
-        counts = self.base.history._pkg_stats()
-        trans_1 = self.base.history.old("1")[0]
-        trans_N = self.base.history.last()
-        print(_("Transactions:"), trans_N.tid)
-        print(_("Begin time  :"), time.ctime(trans_1.beg_timestamp))
-        print(_("End time    :"), time.ctime(trans_N.end_timestamp))
-        print(_("Counts      :"))
-        print(_("  NEVRAC :"), six_digits(counts['nevrac']))
-        print(_("  NEVRA  :"), six_digits(counts['nevra']))
-        print(_("  NA     :"), six_digits(counts['na']))
-        print(_("  NEVR   :"), six_digits(counts['nevr']))
-        print(_("  rpm DB :"), six_digits(counts['rpmdb']))
-        print(_("  DNF DB :"), six_digits(counts['yumdb']))
-
-    def _hcmd_sync(self, extcmds):
-        extcmds = extcmds[1:]
-        if not extcmds:
-            extcmds = None
-        for ipkg in sorted(self.base.rpmdb.returnPackages(patterns=extcmds)):
-            if self.base.history.pkg2pid(ipkg, create=False) is None:
-                continue
-
-            print("Syncing rpm/yum DB data for:", ipkg, "...", end='')
-            if self.base.history.sync_alldb(ipkg):
-                print("Done.")
-            else:
-                print("FAILED.")
-
     def _hcmd_userinstalled(self):
         """Execute history userinstalled command."""
         pkgs = tuple(self.base.iter_userinstalled())
@@ -1124,27 +1087,12 @@ class HistoryCommand(Command):
             ret = self.output.historyListCmd(extcmds)
         elif vcmd == 'info':
             ret = self.output.historyInfoCmd(extcmds)
-        elif vcmd == 'summary':
-            ret = self.output.historySummaryCmd(extcmds)
-        elif vcmd in ('addon', 'addon-info'):
-            ret = self.output.historyAddonInfoCmd(extcmds)
-        elif vcmd in ('pkg', 'pkgs', 'pkg-list', 'pkgs-list',
-                      'package', 'package-list', 'packages', 'packages-list'):
-            ret = self.output.historyPackageListCmd(extcmds)
         elif vcmd == 'undo':
             ret = self._hcmd_undo(extcmds)
-        elif vcmd in ('redo', 'repeat'):
+        elif vcmd == 'redo':
             ret = self._hcmd_redo(extcmds)
         elif vcmd == 'rollback':
             ret = self._hcmd_rollback(extcmds)
-        elif vcmd == 'new':
-            ret = self._hcmd_new(extcmds)
-        elif vcmd in ('stats', 'statistics'):
-            ret = self._hcmd_stats(extcmds)
-        elif vcmd in ('sync', 'synchronize'):
-            ret = self._hcmd_sync(extcmds)
-        elif vcmd in ('pkg-info', 'pkgs-info', 'package-info', 'packages-info'):
-            ret = self.output.historyPackageInfoCmd(extcmds)
         elif vcmd == 'userinstalled':
             ret = self._hcmd_userinstalled()
 
