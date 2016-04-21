@@ -59,15 +59,6 @@ will install it for you.
 For more information contact your distribution or package provider.""")
 
 
-def err_mini_usage(cli, basecmd):
-    if basecmd not in cli.cli_commands:
-        cli.print_usage()
-        return
-    cmd = cli.cli_commands[basecmd]
-    txt = cli.cli_commands["help"]._makeOutput(cmd)
-    logger.critical(_(' Mini usage:') + '\n')
-    logger.critical(txt)
-
 def checkGPGKey(base, cli):
     """Verify that there are gpg keys for the enabled repositories in the
     rpm database.
