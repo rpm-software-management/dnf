@@ -22,6 +22,7 @@ import contextlib
 import dnf
 import dnf.cli.cli
 import dnf.cli.demand
+import dnf.cli.option_parser
 import dnf.comps
 import dnf.exceptions
 import dnf.goal
@@ -135,6 +136,17 @@ def wiretap_logs(logger_name, level, stream):
     finally:
         logger.removeHandler(handler)
         logger.setLevel(orig_level)
+
+def command_configure(cmd, args):
+    parser = dnf.cli.option_parser.OptionParser()
+    args = [cmd.basecmd] + args
+    parser.parse_main_args(args)
+    parser.parse_command_args(cmd, args)
+    return cmd.configure()
+
+def command_run(cmd, args):
+    command_configure(cmd, args)
+    return cmd.run()
 
 # mock objects
 

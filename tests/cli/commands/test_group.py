@@ -18,6 +18,7 @@
 from __future__ import absolute_import
 from tests import support
 from dnf.comps import CompsQuery
+from dnf.cli.option_parser import OptionParser
 
 import dnf.cli.commands.group as group
 import dnf.comps
@@ -27,19 +28,19 @@ import dnf.exceptions
 class GroupCommandStaticTest(support.TestCase):
 
     def test_canonical(self):
-        cmd = group.GroupCommand(None)
-        (basecmd, extcmds) = cmd.canonical(['grouplist', 'crack'])
-        self.assertEqual(basecmd, 'groups')
-        self.assertEqual(extcmds, ['list', 'crack'])
+        cmd = group.GroupCommand(support.mock.MagicMock())
 
-        (_, extcmds) = cmd.canonical(['groups'])
-        self.assertEqual(extcmds, ['summary'])
-
-        (_, extcmds) = cmd.canonical(['group', 'info', 'crack'])
-        self.assertEqual(extcmds, ['info', 'crack'])
-
-        (_, extcmds) = cmd.canonical(['group', 'update', 'crack'])
-        self.assertEqual(extcmds, ['upgrade', 'crack'])
+        for args, out in [
+                (['grouplist', 'crack'], ['list', 'crack']),
+                (['groups'], ['summary']),
+                (['group', 'info', 'crack'], ['info', 'crack']),
+                (['group', 'update', 'crack'], ['upgrade', 'crack'])]:
+            parser = OptionParser()
+            parser.parse_main_args(args)
+            parser.parse_command_args(cmd, args)
+            cmd._canonical()
+            self.assertEqual(cmd.opts.subcmd, out[0])
+            self.assertEqual(cmd.opts.args, out[1:])
 
     def test_split_extcmds(self):
         split = group.GroupCommand._split_extcmds(['with-optional', 'crack'])
@@ -54,6 +55,7 @@ class GroupCommandTest(support.TestCase):
         base.read_mock_comps()
         base.init_sack()
         self.cmd = group.GroupCommand(base.mock_cli())
+        self.parser = OptionParser()
 
     def test_environment_list(self):
         env_inst, env_avail = self.cmd._environment_lists(['sugar*'])
@@ -62,7 +64,7 @@ class GroupCommandTest(support.TestCase):
         self.assertEqual(env_inst[0].name, 'Sugar Desktop Environment')
 
     def test_configure(self):
-        self.cmd.configure(['remove', 'crack'])
+        support.command_configure(self.cmd, ['remove', 'crack'])
         demands = self.cmd.cli.demands
         self.assertTrue(demands.allow_erasing)
         self.assertFalse(demands.freshest_metadata)
