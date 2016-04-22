@@ -19,6 +19,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
+from dnf.cli.option_parser import OptionParser
 
 import dnf.cli.commands.remove
 import logging
@@ -44,7 +45,7 @@ class RemoveCommandTest(support.ResultTestCase):
         stdout = dnf.pycomp.StringIO()
 
         with support.wiretap_logs('dnf', logging.INFO, stdout):
-            self.assertRaises(dnf.exceptions.Error, self.cmd.run,
+            self.assertRaises(dnf.exceptions.Error, support.command_run, self.cmd,
                               ['non-existent'])
 
         self.assertEqual(stdout.getvalue(),
