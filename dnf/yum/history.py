@@ -184,6 +184,9 @@ class YumHistoryPackage(object):
 
         return self_repoid < other_repoid  # less or grater
 
+    def __hash__(self):
+        return hash(self.pkgtup)
+
     def __eq__(self, other):
         """ Compare packages for yes/no equality, includes everything in the
             UI package comparison. """
