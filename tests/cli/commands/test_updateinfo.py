@@ -269,7 +269,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
     def test_run_available(self):
         """Test running with available advisories."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.run([])
+        tests.support.command_run(cmd, [])
         self.assertEqual(self._stdout.getvalue(),
                          'Updates Information Summary: available\n'
                          '    1 Security notice(s)\n',
@@ -280,7 +280,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
     def test_run_list(self):
         """Test running the list sub-command."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.run(['list'])
+        tests.support.command_run(cmd, ['list'])
         self.assertEqual(self._stdout.getvalue(),
                          'DNF-2014-3 security tour-5-1.noarch\n',
                          'incorrect output')
@@ -290,7 +290,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
     def test_run_info(self):
         """Test running the info sub-command."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.run(['info'])
+        tests.support.command_run(cmd, ['info'])
         updated = datetime.datetime.fromtimestamp(1404841143)
         self.assertEqual(self._stdout.getvalue(),
                          '========================================'
