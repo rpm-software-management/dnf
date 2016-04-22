@@ -20,15 +20,25 @@ from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
 
+import dnf.cli.cli
 import dnf.cli.commands.clean as clean
 import os
 import tests.support
 
 
+def _run(cli, args):
+    with mock.patch('sys.stdout') as stdout:
+        cli.configure(['clean', '--config', '/dev/null'] + args)
+        cli.run()
+
 class CleanTest(tests.support.TestCase):
     def setUp(self):
-        base = support.MockBase("main")
-        base.output = mock.MagicMock()
+        conf = dnf.base.Base()._setup_default_conf()
+        base = dnf.cli.cli.BaseCli(conf)
+        base.repos.add(support.MockRepo('main', None))
+        base.conf.reposdir = '/dev/null'
+        base.conf.plugins = False
+        base.output = support.MockOutput()
 
         repo = base.repos['main']
         repo.baseurl = ['http:///dnf-test']
@@ -46,16 +56,17 @@ class CleanTest(tests.support.TestCase):
         ]
         os.walk = self.walk = mock.Mock(return_value=walk)
         self.base = base
-        self.cmd = clean.CleanCommand(base.mock_cli())
+        self.cli = dnf.cli.cli.Cli(base)
 
     def test_run(self):
         with mock.patch('dnf.cli.commands.clean._clean') as _clean:
-            self.cmd.run(['all'])
-            self.cmd.run(['metadata'])
-            self.cmd.run(['metadata', 'packages'])
-            self.cmd.run(['metadata', 'packages', 'expire-cache'])
-            self.cmd.run(['dbcache'])
-            self.cmd.run(['expire-cache'])
+            for args in [['all'],
+                         ['metadata'],
+                         ['metadata', 'packages'],
+                         ['metadata', 'packages', 'expire-cache'],
+                         ['dbcache'],
+                         ['expire-cache']]:
+                _run(self.cli, args)
 
         calls = [call[0] for call in _clean.call_args_list]
         counts = (5, 4, 5, 5, 1, 0)
@@ -64,7 +75,7 @@ class CleanTest(tests.support.TestCase):
             assert len(files) == count
 
     def test_walk_once(self):
-        self.cmd.run(['all'])
+        _run(self.cli, ['all'])
         assert len(self.walk.call_args_list) == 1
 
     def test_clean_local_repo(self):
@@ -72,7 +83,7 @@ class CleanTest(tests.support.TestCase):
         repo = self.base.repos['main']
         repo.baseurl = ['file:///localrepo']
 
-        self.cmd.run(['all'])
+        _run(self.cli, ['all'])
 
         # Make sure we never looked outside the base cachedir
         dirs = [call[0][0] for call in self.walk.call_args_list]
