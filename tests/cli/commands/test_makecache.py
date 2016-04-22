@@ -20,17 +20,20 @@ from tests import support
 from tests.support import mock
 import dnf.cli.commands.makecache as makecache
 import dnf.pycomp
+import tempfile
 
 
 class MakeCacheCommandTest(support.TestCase):
     def setUp(self):
-        self.base = support.MockBase()
+        self.base = support.MockBase('main')
         self.cli = self.base.mock_cli()
+        for r in self.base.repos.values():
+            r.basecachedir = self.base.conf.cachedir
 
     @staticmethod
     @mock.patch('dnf.Base.fill_sack', new=mock.MagicMock())
     def _do_makecache(cmd):
-        return cmd.run(['timer'])
+        return support.command_run(cmd, ['timer'])
 
     def assert_last_info(self, logger, msg):
         self.assertEqual(logger.info.mock_calls[-1], mock.call(msg))
