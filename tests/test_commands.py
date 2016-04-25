@@ -68,10 +68,15 @@ class CommandsCliTest(support.TestCase):
 
 class CommandTest(support.TestCase):
     def test_canonical(self):
-        cmd = dnf.cli.commands.upgrade.UpgradeCommand(None)
-        (base, ext) = cmd.canonical(['update', 'cracker', 'filling'])
-        self.assertEqual(base, 'upgrade')
-        self.assertEqual(ext, ['cracker', 'filling'])
+        cmd = dnf.cli.commands.upgrade.UpgradeCommand(
+                                support.BaseCliStub('main').mock_cli())
+        try:
+            support.command_run(cmd, ['cracker', 'filling'])
+        except dnf.exceptions.Error as e:
+            if e.value != 'No packages marked for upgrade.':
+                raise
+        self.assertEqual(cmd.basecmd, 'upgrade')
+        self.assertEqual(cmd.opts.pkg_specs, ['cracker', 'filling'])
 
 
 class InstallCommandTest(support.ResultTestCase):
@@ -88,13 +93,13 @@ class InstallCommandTest(support.ResultTestCase):
 
     def test_configure(self):
         cli = self._cmd.cli
-        self._cmd.configure([])
+        support.command_configure(self._cmd, ['pkg'])
         self.assertFalse(cli.demands.allow_erasing)
         self.assertTrue(cli.demands.sack_activation)
 
     def test_run_group(self):
         """Test whether a group is installed."""
-        self._cmd.run(['@Solid Ground'])
+        support.command_run(self._cmd, ['@Solid Ground'])
 
         base = self._cmd.cli.base
         self.assertResult(base, itertools.chain(
@@ -109,7 +114,7 @@ class InstallCommandTest(support.ResultTestCase):
 
         with support.wiretap_logs('dnf', logging.INFO, stdout):
             self.assertRaises(dnf.exceptions.Error,
-                              self._cmd.run, ['@non-existent'])
+                              support.command_run, self._cmd, ['@non-existent'])
 
         self.assertEqual(stdout.getvalue(),
                          "Warning: Group 'non-existent' does not exist.\n")
@@ -118,7 +123,7 @@ class InstallCommandTest(support.ResultTestCase):
 
     def test_run_package(self):
         """Test whether a package is installed."""
-        self._cmd.run(['lotus'])
+        support.command_run(self._cmd, ['lotus'])
 
         base = self._cmd.cli.base
         self.assertResult(base, itertools.chain(
@@ -133,7 +138,7 @@ class InstallCommandTest(support.ResultTestCase):
 
         with support.wiretap_logs('dnf', logging.INFO, stdout):
             self.assertRaises(dnf.exceptions.Error,
-                              self._cmd.run, ['non-existent', 'lotus'])
+                              support.command_run, self._cmd, ['non-existent', 'lotus'])
 
         self.assertEqual(stdout.getvalue(),
                          'No package non-existent available.\n')
@@ -155,7 +160,7 @@ class ReinstallCommandTest(support.ResultTestCase):
 
     def test_run(self):
         """Test whether the package is installed."""
-        self._cmd.run(['pepper'])
+        support.command_run(self._cmd, ['pepper'])
 
         base = self._cmd.cli.base
         self.assertResult(base, itertools.chain(
@@ -170,7 +175,7 @@ class ReinstallCommandTest(support.ResultTestCase):
         stdout = dnf.pycomp.StringIO()
 
         with support.wiretap_logs('dnf', logging.INFO, stdout):
-            self.assertRaises(dnf.exceptions.Error, self._cmd.run, ['lotus'])
+            self.assertRaises(dnf.exceptions.Error, support.command_run, self._cmd, ['lotus'])
 
         self.assertEqual(stdout.getvalue(), 'No match for argument: lotus\n')
         self.assertResult(self._cmd.cli.base,
@@ -188,7 +193,7 @@ class ReinstallCommandTest(support.ResultTestCase):
         stdout = dnf.pycomp.StringIO()
 
         with support.wiretap_logs('dnf', logging.INFO, stdout):
-            self.assertRaises(dnf.exceptions.Error, self._cmd.run, ['hole'])
+            self.assertRaises(dnf.exceptions.Error, support.command_run, self._cmd, ['hole'])
 
         self.assertEqual(
             stdout.getvalue(),
@@ -206,8 +211,11 @@ class RepoPkgsCommandTest(unittest.TestCase):
         self.cmd = dnf.cli.commands.RepoPkgsCommand(cli)
 
     def test_configure_badargs(self):
-        """Test whether the method does not fail even in case of wrong args."""
-        self.cmd.configure([])
+        """Test whether the command fail in case of wrong args."""
+        with self.assertRaises(SystemExit) as exit, \
+             mock.patch('sys.stdout') as stdout:
+             support.command_configure(self.cmd, [])
+        self.assertEqual(exit.exception.code, 2)
 
 class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
 
@@ -803,7 +811,7 @@ class UpgradeCommandTest(support.ResultTestCase):
 
     def test_run(self):
         """Test whether a package is updated."""
-        self.cmd.run(['pepper'])
+        support.command_run(self.cmd, ['pepper'])
 
         self.assertResult(self.cmd.base, itertools.chain(
             self.cmd.base.sack.query().installed().filter(name__neq='pepper'),
@@ -817,7 +825,7 @@ class UpgradeCommandTest(support.ResultTestCase):
 
         with support.wiretap_logs('dnf', logging.INFO, stdout):
             self.assertRaises(dnf.exceptions.Error,
-                              self.cmd.run, ['non-existent'])
+                              support.command_run, self.cmd, ['non-existent'])
 
         self.assertEqual(stdout.getvalue(),
                          'No match for argument: non-existent\n')
