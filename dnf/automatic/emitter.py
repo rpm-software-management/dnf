@@ -25,6 +25,7 @@ from dnf.i18n import _
 import logging
 import dnf.pycomp
 import smtplib
+import subprocess
 
 APPLIED = _("The following updates have been applied on '%s':")
 AVAILABLE = _("The following updates are available on '%s':")
@@ -102,6 +103,25 @@ class EmailEmitter(Emitter):
         except smtplib.SMTPException as exc:
             msg = _("Failed to send an email via '%s': %s") % (
                 self._conf.email_host, exc)
+            logger.error(msg)
+
+class CommandEmailEmitter(EmailEmitter):
+    def commit(self):
+        command_fmt = self._conf.command
+        subj, body = self._prepare_msg()
+        cmd_subject = dnf.pycomp.shlex_quote(subj)
+        cmd_email_from = dnf.pycomp.shlex_quote(self._conf.email_from)
+        cmd_email_to = dnf.pycomp.shlex_quote(' '.join(self._conf.email_to))
+        command = command_fmt.format(subject=cmd_subject,
+                                     email_from=cmd_email_from,
+                                     email_to=cmd_email_to)
+
+        # Send by executing the command
+        subp = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE)
+        subp.communicate(body)
+        subp.stdin.close()
+        if subp.wait() != 0:
+            msg = _("Failed to send an email via '%s': command returned %d") % (command, subp.returncode)
             logger.error(msg)
 
 class StdIoEmitter(Emitter):
