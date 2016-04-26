@@ -128,7 +128,7 @@ class OptionParser(argparse.ArgumentParser):
         Returns a new list. """
         def __call__(self, parser, namespace, values, opt_str):
             res = getattr(namespace, self.dest)
-            res.extend(re.split("\s*,?\s*", values))
+            res.extend(re.split('\s*[,\s]\s*', values))
 
     class _SplitExtendDictCallback(argparse.Action):
         """ Split string at "," or whitespace to (key, value).
