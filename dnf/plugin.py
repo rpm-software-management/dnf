@@ -133,3 +133,16 @@ def iter_py_files(paths, skips):
             if any(fnmatch.fnmatch(name, pattern) for pattern in skips):
                 continue
             yield fn
+
+def register_command(command_class):
+    #:api
+    """A class decorator for automatic command registration."""
+    def __init__(self, base, cli):
+        if cli:
+            cli.register_command(command_class)
+    plugin_class = type(command_class.__name__ + 'Plugin',
+                        (dnf.Plugin,),
+                        {"__init__": __init__,
+                         "name": command_class.aliases[0]})
+    command_class._plugin = plugin_class
+    return command_class
