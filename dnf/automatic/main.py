@@ -59,6 +59,9 @@ def build_emitters(conf):
             elif name == 'motd':
                 emitter = dnf.automatic.emitter.MotdEmitter(system_name)
                 emitters.append(emitter)
+            elif name == 'command_email':
+                emitter = dnf.automatic.emitter.CommandEmailEmitter(system_name, conf.command_email)
+                emitters.append(emitter)
             else:
                 raise dnf.exceptions.ConfigError("Unknowr emitter option: %s" % name)
     return emitters
@@ -82,6 +85,7 @@ class AutomaticConfig(object):
         self.commands = CommandsConfig()
         self.email = EmailConfig()
         self.emitters = EmittersConfig()
+        self.command_email = CommandEmailConfig()
         self._parser = None
         self._load(filename)
 
@@ -132,6 +136,28 @@ class EmailConfig(dnf.conf.BaseConfig):
         self._add_option('email_from',  dnf.conf.Option("root"))
         self._add_option('email_host',  dnf.conf.Option("localhost"))
         self._add_option('email_port',  dnf.conf.IntOption(25))
+
+
+class CommandConfig(dnf.conf.BaseConfig):
+    _default_command_format = "cat"
+    _default_stdin_format = "{body}"
+
+    def __init__(self, section='command', parser=None):
+        super(CommandConfig, self).__init__(section, parser)
+        self._add_option('command_format',
+                         dnf.conf.Option(self._default_command_format))
+        self._add_option('stdin_format',
+                         dnf.conf.Option(self._default_stdin_format))
+
+
+class CommandEmailConfig(CommandConfig):
+    _default_command_format = "mail -s {subject} -r {email_from} {email_to}"
+
+    def __init__(self, section='command_email', parser=None):
+        super(CommandEmailConfig, self).__init__(section, parser)
+        self._add_option('email_to', dnf.conf.ListOption(["root"]))
+        self._add_option('email_from', dnf.conf.Option("root"))
+
 
 class EmittersConfig(dnf.conf.BaseConfig):
     def __init__(self, section='emiter', parser=None):

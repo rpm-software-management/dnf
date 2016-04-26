@@ -26,6 +26,7 @@ import logging
 import dnf.pycomp
 import smtplib
 import email.utils
+import subprocess
 
 APPLIED = _("The following updates have been applied on '%s':")
 AVAILABLE = _("The following updates are available on '%s':")
@@ -106,6 +107,51 @@ class EmailEmitter(Emitter):
             msg = _("Failed to send an email via '%s': %s") % (
                 self._conf.email_host, exc)
             logger.error(msg)
+
+
+class CommandEmitterMixIn(object):
+    """
+    Executes a desired command, and pushes data into its stdin.
+    Both data and command can be formatted according to user preference.
+    For this reason, this class expects a {str:str} dictionary as _prepare_msg
+    return value.
+    Meant for mixing with Emitter classes, as it does not define any names used
+    for formatting on its own.
+    """
+    def commit(self):
+        command_fmt = self._conf.command_format
+        stdin_fmt = self._conf.stdin_format
+        msg = self._prepare_msg()
+        # all strings passed to shell should be quoted to avoid accidental code
+        # execution
+        quoted_msg = dict((key, dnf.pycomp.shlex_quote(val))
+                          for key, val in msg.items())
+        command = command_fmt.format(**quoted_msg)
+        stdin_feed = stdin_fmt.format(**msg).encode('utf-8')
+
+        # Execute the command
+        subp = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE)
+        subp.communicate(stdin_feed)
+        subp.stdin.close()
+        if subp.wait() != 0:
+            msg = _("Failed to execute command '%s': returned %d") \
+                  % (command, subp.returncode)
+            logger.error(msg)
+
+
+class CommandEmitter(CommandEmitterMixIn, Emitter):
+    def _prepare_msg(self):
+        return {'body': super(CommandEmitter, self)._prepare_msg()}
+
+
+class CommandEmailEmitter(CommandEmitterMixIn, EmailEmitter):
+    def _prepare_msg(self):
+        subject, body = super(CommandEmailEmitter, self)._prepare_msg()
+        return {'subject': subject,
+                'body': body,
+                'email_from': self._conf.email_from,
+                'email_to': ' '.join(self._conf.email_to)}
+
 
 class StdIoEmitter(Emitter):
     def commit(self):
