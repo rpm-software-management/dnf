@@ -52,7 +52,6 @@ Transaction Summary
 Upgrade  1 Package
 """
 
-
 class OutputFunctionsTest(support.TestCase):
     def test_make_lists(self):
         TSI = dnf.transaction.TransactionItem
@@ -254,3 +253,90 @@ class GroupOutputTest(unittest.TestCase):
         with support.patch_std_streams() as (stdout, stderr):
             self.output.display_groups_in_environment(env)
         self.assertEqual(stdout.getvalue(), GROUPS_IN_ENVIRONMENT_OUTPUT)
+
+QUERYFORMATOUTPUT = """name: foobar
+arch: x86_64
+epoch: 0
+version: 1.0.1
+release: 1.f20
+reponame: @System
+evr: 0:1.0.1-1.f20
+installtime: 1430299004
+buildtime: 1429435035
+size: 12345678
+downloadsize: 1234
+installsize: 12345
+provides: foo
+bar
+requires: /bin/sh
+/bin/ldconfig
+obsoletes: 
+conflicts: bar
+sourcerpm: foo-1.0.1-1.f20.src.rpm
+description:  A desc. A desc. A desc. A desc. A desc. A desc. A desc. A desc. A desc. A desc. A desc. A desc. A desc. A desc. A desc. A desc.
+summary: it.
+license: BSD
+url: foorl.net
+filenames: /tmp/foobar
+/var/foobar
+packager: Eastford"""
+
+class PackageFormatterTest(unittest.TestCase):
+    def setUp(self):
+        pkg = support.MockPackage('foo-1.0.1-1.f20.x86_64')
+        pkg.arch = 'x86_64'
+        pkg.buildtime = 1429435035
+        pkg.installtime = 1430299004
+        pkg.description = ' A desc.' * 16
+        pkg.license = 'BSD'
+        pkg.name = 'foobar'
+        pkg.packager = 'Eastford'
+        pkg.release = '1.f20'
+        pkg.reponame = '@System'
+        pkg.size = 12345678
+        pkg.sourcerpm = 'foo-1.0.1-1.f20.src.rpm'
+        pkg.summary = 'it.'
+        pkg.url = 'foorl.net'
+        pkg.version = '1.0.1'
+        pkg.files = ['/tmp/foobar', '/var/foobar']
+        pkg.downloadsize = 1234
+        pkg.installsize = 12345
+        pkg.provides = ['foo', 'bar']
+        pkg.requires = ['/bin/sh', '/bin/ldconfig']
+        pkg.conflicts = ['bar']
+        pkg.obsoletes = []
+        self.pkg = pkg
+
+    def test_all_tags(self):
+        qf = '\n'.join(["%s: %%{%s}" % (t, t)
+                        for t in dnf.cli.output.PackageFormatter().TAGS])
+        self.maxDiff = None
+        pkgfmt = dnf.cli.output.PackageFormatter(qf)
+        self.assertEqual(pkgfmt.format(self.pkg), QUERYFORMATOUTPUT)
+
+    def test_formats(self):
+        formats = {
+            '%{installtime:day}': 'Wed Apr 29 2015',
+            '%{buildtime:date}': 'Sun Apr 19 11:17:15 2015',
+            '%{size:units}': '12 M',
+            '%{description:wrapped}': ' A desc. A desc. A desc. A desc. A desc.'
+            ' A desc. A desc. A desc. A\ndesc. A desc. A desc. A desc. A desc.'
+            ' A desc. A desc. A desc.',
+        }
+        for qf, out in formats.items():
+             pkgfmt = dnf.cli.output.PackageFormatter(qf)
+             self.assertEqual(pkgfmt.format(self.pkg), out)
+
+    def test_invalid_tag(self):
+        with self.assertRaises(KeyError) as ctx:
+            pkgfmt = dnf.cli.output.PackageFormatter('%{invalidtag}')
+            pkgfmt.format(self.pkg)
+        self.assertEqual(str(ctx.exception), str(KeyError('invalidtag')))
+
+    def test_invalid_tag_format(self):
+        with self.assertRaises(ValueError) as ctx:
+            pkgfmt = dnf.cli.output.PackageFormatter('%{name:invalidformat}')
+            pkgfmt.format(self.pkg)
+        self.assertEqual(str(ctx.exception),
+                         str(ValueError("Unknown format code 'invalidformat'")))
+
