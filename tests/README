@@ -12,3 +12,9 @@ What will not be tested:
 This directory contains sample package data for testing. The goal is to have as
 few packages as possible, ideally one or two per a specific testing role they
 can play.
+
+
+== Notes ==
+
+On Python2 you need the mock module installed. On Python3 the tests use
+the unittest.mock module instead.

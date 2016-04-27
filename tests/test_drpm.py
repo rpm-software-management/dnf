@@ -17,7 +17,8 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests import support, mock
+from tests import support
+from tests.support import mock
 from dnf.yum.misc import unlink_f
 from dnf.util import Bunch
 
