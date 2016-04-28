@@ -1,7 +1,7 @@
 # sack.py
 # The dnf.Sack class, derived from hawkey.Sack
 #
-# Copyright (C) 2012-2015  Red Hat, Inc.
+# Copyright (C) 2012-2016 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of

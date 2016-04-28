@@ -1,7 +1,7 @@
 # repo.py
 # DNF Repository objects.
 #
-# Copyright (C) 2013-2015  Red Hat, Inc.
+# Copyright (C) 2013-2016 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
