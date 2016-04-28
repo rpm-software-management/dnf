@@ -885,7 +885,7 @@ Files
     /etc/dnf/dnf.conf
 
 ``Repository``
-    /etc/yum.repos.d/
+    /etc/sys.repos.d/
 
 .. _see_also-label:
 

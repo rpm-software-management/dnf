@@ -26,7 +26,7 @@
 =============
 
 `DNF`_ by default uses the global configuration file at ``/etc/dnf/dnf.conf`` and
-all \*.repo files found under ``/etc/yum.repos.d``. The latter is typically used
+all \*.repo files found under ``/etc/sys.repos.d``. The latter is typically used
 for repository configuration and takes precedence over global configuration.
 
 The configuration file has INI format consisting of section declaration and
@@ -444,7 +444,7 @@ Files
     /etc/dnf/dnf.conf
 
 ``Repository``
-    /etc/yum.repos.d/
+    /etc/sys.repos.d/
 
 ==========
  See Also
