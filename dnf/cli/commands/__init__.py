@@ -158,7 +158,8 @@ class Command(object):
     writes_rpmdb = False
 
     def __init__(self, cli):
-        self.cli = cli # :api
+        # :api
+        self.cli = cli
 
     @property
     def base(self):
@@ -181,7 +182,8 @@ class Command(object):
         return (base, extra)
 
     def configure(self, args):
-        """Do any command-specific configuration. #:api"""
+        # :api
+        """Do any command-specific configuration."""
 
         # built-in commands use class/instance attributes to state their demands:
         demands = self.cli.demands
@@ -212,7 +214,8 @@ class Command(object):
         pass
 
     def run(self, extcmds):
-        """Execute the command #:api
+        # :api
+        """Execute the command
 
         :param extcmds: a list of arguments passed to *basecmd*
 
