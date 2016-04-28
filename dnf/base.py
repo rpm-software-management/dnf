@@ -362,6 +362,9 @@ class Base(object):
             if vs_flag is not None:
                 self._ts.pushVSFlags(vs_flag)
 
+        if not self.conf.diskspacecheck:
+            self.rpm_probfilter.add(rpm.RPMPROB_FILTER_DISKSPACE)
+
         probfilter = reduce(operator.or_, self.rpm_probfilter, 0)
         self._ts.setProbFilter(probfilter)
         return self._ts
@@ -575,8 +578,6 @@ class Base(object):
 
             timer = dnf.logging.Timer('transaction test')
             logger.info(_('Running transaction test'))
-            if not self.conf.diskspacecheck:
-                self.rpm_probfilter.add(rpm.RPMPROB_FILTER_DISKSPACE)
 
             self.ts.order()  # order the transaction
             self.ts.clean()  # release memory not needed beyond this point

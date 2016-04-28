@@ -452,6 +452,7 @@ class FakeConf(object):
         self.debuglevel = 8
         self.defaultyes = False
         self.disable_excludes = []
+        self.diskspacecheck = True
         self.exclude = []
         self.include = []
         self.install_weak_deps = True
