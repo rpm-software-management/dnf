@@ -38,7 +38,6 @@ def is_nevra(pattern):
 
 class Query(hawkey.Query):
     # :api
-    # :api also includes hawkey.Query.filter
 
     def available(self):
         # :api
@@ -77,14 +76,18 @@ class Query(hawkey.Query):
                 extras.extend(pkgs)
         return self.filter(pkg=extras)
 
-    def filter_autoglob(self, *args, **kwargs):
+    def filter(self, *args, **kwargs):
+        # :api
+        return super(Query, self).filter(*args, **kwargs)
+
+    def filterm(self, *args, **kwargs):
         nargs = {}
         for (key, value) in kwargs.items():
-            if dnf.util.is_glob_pattern(value):
-                nargs[key + "__glob"] = value
-            else:
-                nargs[key] = value
-        return self.filter(*args, **nargs)
+            if (key.endswith("__glob") and not dnf.util.is_glob_pattern(value)):
+                # remove __glob when pattern is not glob
+                key = key[:-6]
+            nargs[key] = value
+        return super(Query, self).filterm(*args, **nargs)
 
     def installed(self):
         # :api
@@ -155,12 +158,7 @@ def by_provides(sack, patterns, ignore_case=False, get_query=False):
     if ignore_case:
         flags.append(hawkey.ICASE)
 
-    if any(map(dnf.util.is_glob_pattern, patterns)):
-        kw = 'provides__glob'
-    else:
-        kw = 'provides'
-
-    q.filterm(*flags, **{kw: patterns})
+    q.filterm(*flags, provides__glob=patterns)
     if get_query:
         return q
     return q.run()
