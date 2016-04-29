@@ -186,9 +186,9 @@ class Transaction(object):
                 else:
                     ts.addInstall(hdr, tsi, 'i')
             elif tsi.op_type == REINSTALL:
-                # note: in rpm 4.12 there should not be set
-                # rpm.RPMPROB_FILTER_REPLACEPKG to work
-                ts.addReinstall(tsi.installed.header, tsi)
+                ts.addErase(tsi.erased.idx)
+                hdr = tsi.installed.header
+                ts.addInstall(hdr, tsi, 'i')
             elif tsi.op_type == UPGRADE:
                 hdr = tsi.installed.header
                 ts.addInstall(hdr, tsi, 'u')
