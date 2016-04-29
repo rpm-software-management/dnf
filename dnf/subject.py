@@ -35,20 +35,17 @@ class Subject(object):
         self.icase = ignore_case
 
     def _nevra_to_filters(self, query, nevra):
-        nevra_attrs = [("name", True, True), ("epoch", False, False),
-                       ("version", True, False), ("release", False, False),
-                       ("arch", True, False)]
+        nevra_attrs = [("name", True), ("epoch", False),
+                       ("version", False), ("release", False),
+                       ("arch", False)]
 
-        for (name, check_glob, add_flags) in nevra_attrs:
+        for (name, add_flags) in nevra_attrs:
             attr = getattr(nevra, name)
             flags = []
             if attr:
                 if add_flags:
                     flags = self._query_flags
-                if check_glob:
-                    query = query.filter_autoglob(*flags, **{name: attr})
-                else:
-                    query.filterm(*flags, **{name: attr})
+                query.filterm(*flags, **{name + '__glob': attr})
 
         return query
 
@@ -113,7 +110,7 @@ class Subject(object):
                     return q
 
         if self.filename_pattern:
-            return sack.query().filter_autoglob(file=pat)
+            return sack.query().filter(file__glob=pat)
 
         return sack.query().filter(empty=True)
 

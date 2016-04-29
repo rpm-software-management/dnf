@@ -117,7 +117,9 @@ def is_exhausted(iterator):
         return False
 
 def is_glob_pattern(pattern):
-    return set(pattern) & set("*[?")
+    if is_string_type(pattern):
+        pattern = [pattern]
+    return (isinstance(pattern, list) and any(set(p) & set("*[?") for p in pattern))
 
 def is_string_type(obj):
     return isinstance(obj, basestring)

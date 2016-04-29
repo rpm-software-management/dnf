@@ -154,11 +154,11 @@ class Base(object):
                 continue
             for excl in r.exclude:
                 pkgs = self.sack.query().filter(reponame=r.id).\
-                    filter_autoglob(name=excl)
+                    filter(name__glob=excl)
                 self.sack.add_excludes(pkgs)
             for incl in r.include:
                 pkgs = self.sack.query().filter(reponame=r.id).\
-                    filter_autoglob(name=incl)
+                    filter(name__glob=incl)
                 self.sack.add_includes(pkgs)
 
     def _store_persistent_data(self):
@@ -1702,9 +1702,7 @@ class Base(object):
         providers = dnf.query.by_provides(self.sack, provides_spec)
         if providers:
             return providers
-        if any(map(dnf.util.is_glob_pattern, provides_spec)):
-            return self.sack.query().filter(file__glob=provides_spec)
-        return self.sack.query().filter(file=provides_spec)
+        return self.sack.query().filter(file__glob=provides_spec)
 
     def history_undo_operations(self, operations):
         """Undo the operations on packages by their NEVRAs.
