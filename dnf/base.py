@@ -577,6 +577,8 @@ class Base(object):
             logger.info(_('Running transaction test'))
             if not self.conf.diskspacecheck:
                 self.rpm_probfilter.add(rpm.RPMPROB_FILTER_DISKSPACE)
+                probfilter = reduce(operator.or_, self.rpm_probfilter, 0)
+                self.ts.setProbFilter(probfilter)
 
             self.ts.order()  # order the transaction
             self.ts.clean()  # release memory not needed beyond this point
