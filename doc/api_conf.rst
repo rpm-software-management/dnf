@@ -84,6 +84,10 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
       <scheme>://<ip-or-hostname>[:port]
 
+  .. attribute:: protected_packages
+
+    List of packages that DNF should never completely remove. They are protected via Obsoletes as well as user/plugin removals.
+
   .. attribute:: proxy_username
 
     The username to use for connecting to the proxy server. Defaults to ``None``.
