@@ -477,6 +477,7 @@ class FakeConf(object):
         self.obsoletes = True
         self.persistdir = '/should-not-exist-bad-test/persist'
         self.plugins = False
+        self.protected_packages = ["dnf"]
         self.showdupesfromrepos = False
         self.tsflags = []
         self.verbose = False

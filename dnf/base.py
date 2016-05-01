@@ -536,6 +536,8 @@ class Base(object):
         goal = self._goal
         if goal.req_has_erase():
             goal.push_userinstalled(self.sack.query().installed(), self._yumdb)
+        goal.add_protected(self.sack.query().filter(
+            name=self.conf.protected_packages))
         if not self._run_hawkey_goal(goal, allow_erasing):
             if self.conf.debuglevel >= 6:
                 goal.log_decisions()
