@@ -118,7 +118,7 @@ def ucd(obj):
             return str(obj, _guess_encoding(), errors='ignore')
         elif isinstance(obj, str):
             return obj
-        return str(obj)
+        return str(obj, _guess_encoding(), errors='ignore')
     else:
         if isinstance(obj, dnf.pycomp.unicode):
             return obj
@@ -127,7 +127,8 @@ def ucd(obj):
             # implements __unicode__, let it take a crack at it, but handle the
             # situation if it fails:
             try:
-                return dnf.pycomp.unicode(obj)
+                return dnf.pycomp.unicode(
+                    obj, _guess_encoding(), errors='ignore')
             except UnicodeError:
                 pass
         return dnf.pycomp.unicode(str(obj), _guess_encoding(), errors='ignore')
