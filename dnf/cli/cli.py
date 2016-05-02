@@ -329,12 +329,12 @@ class BaseCli(dnf.Base):
             msg = _('No packages marked for distribution synchronization.')
             raise dnf.exceptions.Error(msg)
 
-    def downgradePkgs(self, userlist):
+    def downgradePkgs(self, extcmds):
         """Attempt to take the user specified list of packages or
         wildcards and downgrade them. If a complete version number if
         specified, attempt to downgrade them to the specified version
 
-        :param userlist: a list of names or wildcards specifying
+        :param extcmds: a list of names or wildcards specifying
            packages to downgrade
         :return: (exit_code, [ errors ])
 
@@ -347,7 +347,7 @@ class BaseCli(dnf.Base):
 
         oldcount = self._goal.req_length()
 
-        for arg in userlist:
+        for arg in extcmds:
             wildcard = True if dnf.util.is_glob_pattern(arg) else False
             if arg.endswith('.rpm'):
                 pkg = self.add_remote_rpm(arg)
