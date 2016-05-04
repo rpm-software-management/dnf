@@ -1,7 +1,7 @@
 # __init__.py
 # DNF cli subpackage.
 #
-# Copyright (C) 2012-2014  Red Hat, Inc.
+# Copyright (C) 2012-2016 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of

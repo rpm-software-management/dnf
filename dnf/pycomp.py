@@ -1,7 +1,7 @@
 # pycomp.py
 # Python 2 and Python 3 compatibility module
 #
-# Copyright (C) 2013  Red Hat, Inc.
+# Copyright (C) 2013-2016 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
