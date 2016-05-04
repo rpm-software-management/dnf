@@ -409,7 +409,7 @@ class GroupCommand(commands.Command):
                                                    self.base.conf.strict)
             except dnf.exceptions.MarkingError as e:
                 msg = _('No package %s%s%s available.')
-                logger.info(msg, self.base.output.term.MODE['bold'], e.pkg_spec,
+                logger.info(msg, self.base.output.term.MODE['bold'], e,
                             self.base.output.term.MODE['normal'])
                 raise dnf.exceptions.PackagesNotAvailableError(
                     _("Unable to find a mandatory group package."))
