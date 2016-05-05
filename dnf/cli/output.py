@@ -455,10 +455,10 @@ class Output(object):
            package
         """
         def print_key_val(key, val):
-            print(fill_exact_width(key, 11, 11), ":", val)
+            print(fill_exact_width(key, 12, 12), ":", val)
 
         def print_key_val_fill(key, val):
-            print(self.fmtKeyValFill(fill_exact_width(key, 11, 11) +
+            print(self.fmtKeyValFill(fill_exact_width(key, 12, 12) +
                   " : ", val or ""))
 
         (hibeg, hiend) = self._highlight(highlight)
