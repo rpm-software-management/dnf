@@ -499,20 +499,20 @@ class Output(object):
             # print(_("Committime  : %s") % time.ctime(pkg.committime))
             print_key_val(_("Packager"), pkg.packager)
             print_key_val(_("Buildtime"), time.ctime(pkg.buildtime))
-            if pkg.installtime > 0:
+            if pkg.installtime:
                 print_key_val(_("Install time"), time.ctime(pkg.installtime))
-            if pkg.repoid == 'installed':
+            if yumdb_info:
                 uid = None
-                if 'installed_by' in pkg.yumdb_info:
+                if 'installed_by' in yumdb_info:
                     try:
-                        uid = int(pkg.yumdb_info.installed_by)
+                        uid = int(yumdb_info.installed_by)
                     except ValueError: # In case int() fails
                         uid = None
                 print_key_val(_("Installed by"), self._pwd_ui_username(uid))
                 uid = None
-                if 'changed_by' in pkg.yumdb_info:
+                if 'changed_by' in yumdb_info:
                     try:
-                        uid = int(pkg.yumdb_info.changed_by)
+                        uid = int(yumdb_info.changed_by)
                     except ValueError: # In case int() fails
                         uid = None
                 print_key_val(_("Changed by"), self._pwd_ui_username(uid))
