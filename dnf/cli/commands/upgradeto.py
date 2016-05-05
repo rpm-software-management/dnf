@@ -35,7 +35,7 @@ class UpgradeToCommand(commands.Command):
                             action=OptionParser.ParseSpecGroupFileCallback,
                             metavar=_('PACKAGE'))
 
-    def configure(self, args):
+    def configure(self):
         demands = self.cli.demands
         demands.sack_activation = True
         demands.available_repos = True
@@ -44,6 +44,6 @@ class UpgradeToCommand(commands.Command):
         commands.checkGPGKey(self.base, self.cli)
         commands.checkEnabledRepo(self.base, self.opts.packages)
 
-    def run(self, extcmds):
+    def run(self):
         self.opts.pkg_specs += self.opts.filenames
         return self.base.upgrade_userlist_to(self.opts.pkg_specs)

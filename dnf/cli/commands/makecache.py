@@ -41,13 +41,13 @@ class MakeCacheCommand(commands.Command):
         parser.add_argument('timer', nargs='?', choices=['timer'],
                             metavar='timer')
 
-    def configure(self, args):
+    def configure(self):
         """Verify that conditions are met so that this command can
         run; namely that there is an enabled repository.
         """
         commands.checkEnabledRepo(self.base)
 
-    def run(self, extcmds):
+    def run(self):
         msg = _("Making cache files for all metadata files.")
         logger.debug(msg)
         period = self.base.conf.metadata_timer_sync

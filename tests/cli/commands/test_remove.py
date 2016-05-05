@@ -35,7 +35,7 @@ class RemoveCommandTest(support.ResultTestCase):
         self.cmd = dnf.cli.commands.remove.RemoveCommand(base.mock_cli())
 
     def test_configure(self):
-        self.cmd.configure([])
+        self.cmd.configure()
         self.assertTrue(self.cmd.cli.demands.allow_erasing)
 
     @mock.patch('dnf.cli.commands.remove._',

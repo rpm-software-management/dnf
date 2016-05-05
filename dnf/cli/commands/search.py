@@ -95,12 +95,12 @@ class SearchCommand(commands.Command):
             counter.add(pkg, attr, needle)
         return counter
 
-    def configure(self, _):
+    def configure(self):
         demands = self.cli.demands
         demands.available_repos = True
         demands.fresh_metadata = False
         demands.sack_activation = True
 
-    def run(self, extcmds):
+    def run(self):
         logger.debug(_('Searching Packages: '))
         return self._search(self.opts.query_string)

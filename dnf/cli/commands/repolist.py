@@ -77,13 +77,13 @@ class RepoListCommand(commands.Command):
     def set_argparser(parser):
         parser.add_argument('extcmds', nargs='*', metavar='[all|enabled|disabled]')
 
-    def configure(self, _):
+    def configure(self):
         demands = self.cli.demands
         demands.available_repos = True
         demands.fresh_metadata = False
         demands.sack_activation = True
 
-    def run(self, extcmds):
+    def run(self):
         extcmds = self.opts.extcmds
         if len(extcmds) >= 1 and extcmds[0] in ('all', 'disabled', 'enabled'):
             arg = extcmds[0]

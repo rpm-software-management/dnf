@@ -1021,7 +1021,7 @@ class Cli(object):
         self._configure_repos(opts)
 
 
-        self.command.configure(args)
+        self.command.configure()
 
         self.optparser.configure_from_options(opts, self.base.conf, self.demands,
                                               self.base.output, self.main_setopts)
@@ -1078,7 +1078,7 @@ class Cli(object):
             2 = we've got work yet to do, onto the next stage
         """
         self._process_demands()
-        return self.command.run([])
+        return self.command.run()
 
 
 class CmdConf(object):

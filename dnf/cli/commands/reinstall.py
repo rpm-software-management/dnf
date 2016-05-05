@@ -45,7 +45,7 @@ class ReinstallCommand(commands.Command):
         parser.add_argument('packages', nargs='+', help=_('Package to reinstall'),
                             metavar=_('PACKAGE'))
 
-    def configure(self, args):
+    def configure(self):
         """Verify that conditions are met so that this command can
         run.  These include that the program is being run by the root
         user, that there are enabled repositories with gpg keys, and
@@ -70,7 +70,7 @@ class ReinstallCommand(commands.Command):
                 pkg_specs.append(argument)
         return pkg_specs, filenames
 
-    def run(self, extcmds):
+    def run(self):
         pkg_specs, filenames = self.parse_extcmds(self.opts.packages)
 
         # Reinstall files.

@@ -30,7 +30,7 @@ class AutoremoveCommand(commands.Command):
     summary = _('remove all unneeded packages that were originally installed '
                 'as dependencies')
 
-    def configure(self, _):
+    def configure(self):
         demands = self.cli.demands
         demands.available_repos = True
         demands.fresh_metadata = False
@@ -38,7 +38,7 @@ class AutoremoveCommand(commands.Command):
         demands.root_user = True
         demands.sack_activation = True
 
-    def run(self, extcmds):
+    def run(self):
         base = self.base
         pkgs = base.sack.query().unneeded(base.sack, base._yumdb,
                                           debug_solver=base.conf.debug_solver)

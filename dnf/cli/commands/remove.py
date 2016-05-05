@@ -43,7 +43,7 @@ class RemoveCommand(commands.Command):
                             action=OptionParser.ParseSpecGroupFileCallback,
                             metavar=_('PACKAGE'))
 
-    def configure(self, _):
+    def configure(self):
         demands = self.cli.demands
         demands.allow_erasing = True
         # disable all available repos to delete whole dependency tree
@@ -53,7 +53,7 @@ class RemoveCommand(commands.Command):
         demands.root_user = True
         demands.sack_activation = True
 
-    def run(self, extcmds):
+    def run(self):
         # local pkgs not supported in erase command
         self.opts.pkg_specs += self.opts.filenames
         done = False

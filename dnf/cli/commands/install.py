@@ -46,7 +46,7 @@ class InstallCommand(commands.Command):
                           action=OptionParser.ParseSpecGroupFileCallback,
                           help=_('Package to install'))
 
-    def configure(self, args):
+    def configure(self):
         """Verify that conditions are met so that this command can run.
         That there are enabled repositories with gpg keys, and that
         this command is called with appropriate arguments.
@@ -59,7 +59,7 @@ class InstallCommand(commands.Command):
         commands.checkGPGKey(self.base, self.cli)
         commands.checkEnabledRepo(self.base, self.opts.filenames)
 
-    def run(self, extcmds):
+    def run(self):
         strict = self.base.conf.strict
         package_install_fnc = functools.partial(self.base.package_install,
                                                 strict=strict)

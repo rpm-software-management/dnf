@@ -53,14 +53,14 @@ class MarkCommand(commands.Command):
         yumdb.get_package(pkg).reason = 'dep'
         logger.info(_('%s unmarked as user installed.'), str(pkg))
 
-    def configure(self, extcmds):
+    def configure(self):
         demands = self.cli.demands
         demands.sack_activation = True
         demands.root_user = True
         demands.available_repos = False
         demands.resolving = False
 
-    def run(self, extcmds):
+    def run(self):
         cmd = self.opts.mark[0]
         pkgs = self.opts.package
 

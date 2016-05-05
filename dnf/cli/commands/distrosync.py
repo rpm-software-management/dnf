@@ -35,7 +35,7 @@ class DistroSyncCommand(commands.Command):
     def set_argparser(parser):
         parser.add_argument('package', nargs='*', help=_('Package to synchronize'))
 
-    def configure(self, args):
+    def configure(self):
         demands = self.cli.demands
         demands.sack_activation = True
         demands.available_repos = True
@@ -44,5 +44,5 @@ class DistroSyncCommand(commands.Command):
         commands.checkGPGKey(self.base, self.cli)
         commands.checkEnabledRepo(self.base, self.opts.package)
 
-    def run(self, extcmds):
+    def run(self):
         return self.base.distro_sync_userlist(self.opts.package)

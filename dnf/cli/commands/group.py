@@ -325,7 +325,7 @@ class GroupCommand(commands.Command):
         parser.add_argument('subcmd', nargs='?', metavar='COMMAND')
         parser.add_argument('args', nargs='*')
 
-    def configure(self, extcmds):
+    def configure(self):
         self._canonical()
 
         cmd = self.opts.subcmd
@@ -360,7 +360,7 @@ class GroupCommand(commands.Command):
         if cmd in ('install', 'upgrade'):
             commands.checkGPGKey(self.base, self.cli)
 
-    def run(self, _):
+    def run(self):
         cmd = self.opts.subcmd
         extcmds = self.opts.args
 

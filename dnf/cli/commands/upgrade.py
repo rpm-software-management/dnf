@@ -45,7 +45,7 @@ class UpgradeCommand(commands.Command):
                             action=OptionParser.ParseSpecGroupFileCallback,
                             metavar=_('PACKAGE'))
 
-    def configure(self, args):
+    def configure(self):
         """Verify that conditions are met so that this command can run.
 
         These include that there are enabled repositories with gpg
@@ -57,9 +57,9 @@ class UpgradeCommand(commands.Command):
         demands.resolving = True
         demands.root_user = True
         commands.checkGPGKey(self.base, self.cli)
-        commands.checkEnabledRepo(self.base, self.opts.packages)
+        commands.checkEnabledRepo(self.base, self.opts.pkg_specs)
 
-    def run(self, extcmds):
+    def run(self):
         if self.opts.pkg_specs or self.opts.grp_specs or self.opts.filenames:
             # Update files.
             local_pkgs = map(self.base.add_remote_rpm, self.opts.filenames)

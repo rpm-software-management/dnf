@@ -89,7 +89,7 @@ class CleanCommand(commands.Command):
                            choices=_CACHE_TYPES.keys(),
                            help=_('Metadata type to clean'))
 
-    def run(self, extcmds):
+    def run(self):
         cachedir = self.base.conf.cachedir
         types = set(t for c in self.opts.type for t in _CACHE_TYPES[c])
         files = list(_tree(cachedir))

@@ -21,6 +21,7 @@
 
 import dnf.exceptions
 import dnf.cli
+import dnf.cli.commands.clean
 import sys
 
 
@@ -34,12 +35,12 @@ class RemoveCompletionCommand(dnf.cli.commands.remove.RemoveCommand):
     def __init__(self, args):
         super(RemoveCompletionCommand, self).__init__(args)
 
-    def configure(self, args):
+    def configure(self):
         self.cli.demands.root_user = False
         self.cli.demands.sack_activation = True
 
-    def run(self, args):
-        for pkg in ListCompletionCommand.installed(self.base, args[0]):
+    def run(self):
+        for pkg in ListCompletionCommand.installed(self.base, self.opts.pkg_specs):
             print(str(pkg))
 
 
@@ -47,14 +48,14 @@ class InstallCompletionCommand(dnf.cli.commands.install.InstallCommand):
     def __init__(self, args):
         super(InstallCompletionCommand, self).__init__(args)
 
-    def configure(self, args):
+    def configure(self):
         self.cli.demands.root_user = False
         self.cli.demands.available_repos = True
         self.cli.demands.sack_activation = True
 
-    def run(self, args):
-        installed =  listpkg_to_setstr(ListCompletionCommand.installed(self.base, args[0]))
-        available = listpkg_to_setstr(ListCompletionCommand.available(self.base, args[0]))
+    def run(self):
+        installed =  listpkg_to_setstr(ListCompletionCommand.installed(self.base, self.opts.pkg_specs))
+        available = listpkg_to_setstr(ListCompletionCommand.available(self.base, self.opts.pkg_specs))
         for pkg in (available - installed):
             print(str(pkg))
 
@@ -63,14 +64,14 @@ class ReinstallCompletionCommand(dnf.cli.commands.reinstall.ReinstallCommand):
     def __init__(self, args):
         super(ReinstallCompletionCommand, self).__init__(args)
 
-    def configure(self, args):
+    def configure(self):
         self.cli.demands.root_user = False
         self.cli.demands.available_repos = True
         self.cli.demands.sack_activation = True
 
-    def run(self, args):
-        installed =  listpkg_to_setstr(ListCompletionCommand.installed(self.base, args[0]))
-        available = listpkg_to_setstr(ListCompletionCommand.available(self.base, args[0]))
+    def run(self):
+        installed =  listpkg_to_setstr(ListCompletionCommand.installed(self.base, self.opts.packages))
+        available = listpkg_to_setstr(ListCompletionCommand.available(self.base, self.opts.packages))
         for pkg in (installed & available):
             print(str(pkg))
 
@@ -78,8 +79,9 @@ class ListCompletionCommand(dnf.cli.commands.ListCommand):
     def __init__(self, args):
         super(ListCompletionCommand, self).__init__(args)
 
-    def run(self, args):
-        subcmds = self.__class__.__base__.usage[1:-1].split("|")[1:]
+    def run(self):
+        subcmds = self.pkgnarrows
+        args = self.opts.packages
         if args[0] not in subcmds:
             print("\n".join(filter_list_by_kw(args[1], subcmds)))
         else:
@@ -111,7 +113,8 @@ class RepoListCompletionCommand(dnf.cli.commands.repolist.RepoListCommand):
     def __init__(self, args):
         super(RepoListCompletionCommand, self).__init__(args)
 
-    def run(self, args):
+    def run(self):
+        args = self.opts.extcmds
         if args[0] == "enabled":
             print("\n".join(filter_list_by_kw(args[1], [r.id for r in self.base.repos.iter_enabled()])))
         elif args[0] == "disabled":
@@ -122,13 +125,13 @@ class UpgradeCompletionCommand(dnf.cli.commands.upgrade.UpgradeCommand):
     def __init__(self, args):
         super(UpgradeCompletionCommand, self).__init__(args)
 
-    def configure(self, args):
+    def configure(self):
         self.cli.demands.root_user = False
         self.cli.demands.available_repos = True
         self.cli.demands.sack_activation = True
 
-    def run(self, args):
-        for pkg in ListCompletionCommand.updates(self.base, args[0]):
+    def run(self):
+        for pkg in ListCompletionCommand.updates(self.base, self.opts.pkg_specs):
             print(str(pkg))
 
 
@@ -136,13 +139,13 @@ class DowngradeCompletionCommand(dnf.cli.commands.downgrade.DowngradeCommand):
     def __init__(self, args):
         super(DowngradeCompletionCommand, self).__init__(args)
 
-    def configure(self, args):
+    def configure(self):
         self.cli.demands.root_user = False
         self.cli.demands.available_repos = True
         self.cli.demands.sack_activation = True
 
-    def run(self, args):
-        for pkg in ListCompletionCommand.available(self.base, args[0]).downgrades():
+    def run(self):
+        for pkg in ListCompletionCommand.available(self.base, self.opts.package).downgrades():
             print(str(pkg))
 
 
@@ -150,9 +153,9 @@ class CleanCompletionCommand(dnf.cli.commands.clean.CleanCommand):
     def __init__(self, args):
         super(CleanCompletionCommand, self).__init__(args)
 
-    def run(self, args):
-        subcmds = self.__class__.__base__.usage[1:-1].split("|")
-        print("\n".join(filter_list_by_kw(args[1], subcmds)))
+    def run(self):
+        subcmds = dnf.cli.commands.clean._CACHE_TYPES.keys()
+        print("\n".join(filter_list_by_kw(self.opts.type[1], subcmds)))
 
 
 class HistoryCompletionCommand(dnf.cli.commands.HistoryCommand):
@@ -162,7 +165,7 @@ class HistoryCompletionCommand(dnf.cli.commands.HistoryCommand):
     def run(self, args):
         subcmds = self.__class__.__base__.usage[1:-1].split("|")[1:]
         if args[0] not in subcmds:
-            print("\n".join(filter_list_by_kw(args[1], subcmds)))
+            print("\n".join(filter_list_by_kw(self.opts.tid, subcmds)))
 
 
 def main(args):

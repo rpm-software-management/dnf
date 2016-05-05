@@ -129,7 +129,7 @@ class Command(object):
         """Define command specific options and arguments. #:api"""
         pass
 
-    def configure(self, args):
+    def configure(self):
         # :api
         """Do any command-specific configuration."""
 
@@ -152,13 +152,9 @@ class Command(object):
             return (_RPM_VERIFY, _RPM_REBUILDDB)
         raise NotImplementedError('error not supported yet: %s' % error)
 
-    def run(self, extcmds):
+    def run(self):
         # :api
-        """Execute the command
-
-        :param extcmds: a list of arguments passed to *basecmd*
-
-        """
+        """Execute the command."""
         pass
 
     def run_transaction(self):
@@ -172,17 +168,17 @@ class InfoCommand(Command):
 
     aliases = ('info',)
     summary = _('display details about a package or group of packages')
+    DEFAULT_PKGNARROW = 'all'
+    pkgnarrows = {'available', 'installed', 'extras', 'upgrades', 'autoremove',
+                      'recent', 'obsoletes', DEFAULT_PKGNARROW}
 
     @staticmethod
     def parse_extcmds(extcmds):
         """Parse command arguments."""
-        DEFAULT_PKGNARROW = 'all'
         if len(extcmds) == 0:
             return DEFAULT_PKGNARROW, extcmds
 
-        pkgnarrows = {'available', 'installed', 'extras', 'upgrades', 'autoremove',
-                      'recent', 'obsoletes', DEFAULT_PKGNARROW}
-        if extcmds[0] in pkgnarrows:
+        if extcmds[0] in self.pkgnarrows:
             return extcmds[0], extcmds[1:]
         elif extcmds[0] == 'updates':
             return 'upgrades', extcmds[1:]
@@ -196,13 +192,13 @@ class InfoCommand(Command):
                                    " | extras | autoremove | obsoletes | recent]"
                                    % _('PACKAGE')))
 
-    def configure(self, _):
+    def configure(self):
         demands = self.cli.demands
         demands.available_repos = True
         demands.fresh_metadata = False
         demands.sack_activation = True
 
-    def run(self, extcmds):
+    def run(self):
         pkgnarrow, patterns = self.parse_extcmds(self.opts.packages)
         return self.base.output_packages('info', pkgnarrow, patterns)
 
@@ -214,7 +210,7 @@ class ListCommand(InfoCommand):
     aliases = ('list',)
     summary = _('list a package or groups of packages')
 
-    def run(self, extcmds):
+    def run(self):
         pkgnarrow, patterns = self.parse_extcmds(self.opts.packages)
         return self.base.output_packages('list', pkgnarrow, patterns)
 
@@ -231,13 +227,13 @@ class ProvidesCommand(Command):
     def set_argparser(parser):
         parser.add_argument('dependency', nargs='+', metavar=_('SOME_STRING'))
 
-    def configure(self, _):
+    def configure(self):
         demands = self.cli.demands
         demands.available_repos = True
         demands.fresh_metadata = False
         demands.sack_activation = True
 
-    def run(self, extcmds):
+    def run(self):
         logger.debug("Searching Packages: ")
         return self.base.provides(self.opts.dependency)
 
@@ -253,13 +249,13 @@ class CheckUpdateCommand(Command):
     def set_argparser(parser):
         parser.add_argument('packages', nargs='*', metavar=_('PACKAGE'))
 
-    def configure(self, _):
+    def configure(self):
         demands = self.cli.demands
         demands.sack_activation = True
         demands.available_repos = True
         checkEnabledRepo(self.base)
 
-    def run(self, extcmds):
+    def run(self):
         found = self.base.check_updates(self.opts.packages, print_=True)
         if found:
             self.cli.demands.success_exit_status = 100
@@ -871,7 +867,7 @@ class RepoPkgsCommand(Command):
                             metavar='[ %s ]' % ' | '.join(subcommands))
         parser.add_argument('subargs', nargs='*', metavar=_('ARG'))
 
-    def configure(self, args):
+    def configure(self):
         """Verify whether the command can run with given arguments."""
         # Check sub-command.
         try:
@@ -880,9 +876,9 @@ class RepoPkgsCommand(Command):
         except (dnf.cli.CliError, KeyError) as e:
             self.cli.optparser.print_usage()
             raise dnf.cli.CliError
-        subcmd.configure(args)
+        subcmd.configure()
 
-    def run(self, extcmds):
+    def run(self):
         """Execute the command with respect to given arguments *extcmds*."""
         subcmd = self._subcmd_name2obj[self.opts.subcmd[0]]
 
@@ -902,7 +898,7 @@ class HelpCommand(Command):
     def set_argparser(parser):
         parser.add_argument('cmd', nargs='?', metavar=_('COMMAND'))
 
-    def run(self, extcmds):
+    def run(self):
         if (not self.opts.cmd
             or self.opts.cmd not in self.cli.cli_commands):
             self.cli.optparser.print_help()
@@ -935,7 +931,7 @@ class HistoryCommand(Command):
         rollback_p.add_argument('tid', metavar='transaction_id', nargs=1)
         userinstalled_p = sub_p.add_parser('userinstalled')
 
-    def configure(self, args):
+    def configure(self):
         demands = self.cli.demands
         if not self.opts.vcmd:
             self.opts.vcmd = 'list'
@@ -1009,7 +1005,7 @@ class HistoryCommand(Command):
         pkgs = tuple(self.base.iter_userinstalled())
         return self.output.listPkgs(pkgs, 'Packages installed by user', 'name')
 
-    def run(self, extcmds):
+    def run(self):
         vcmd = self.opts.vcmd
         extcmds = getattr(self.opts, 'tid', [])
 

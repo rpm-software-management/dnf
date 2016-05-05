@@ -98,7 +98,7 @@ class UpdateInfoCommand(commands.Command):
     def set_argparser(parser):
         parser.add_argument('extcmds', nargs='*', metavar='SPEC')
 
-    def configure(self, args):
+    def configure(self):
         """Do any command-specific configuration based on command arguments."""
         self.cli.demands.sack_activation = True
 
@@ -311,7 +311,7 @@ class UpdateInfoCommand(commands.Command):
                     print('%*s : %s' % (width, label_, line))
             print()
 
-    def run(self, args):
+    def run(self):
         """Execute the command with arguments."""
 
         args = self.opts.extcmds
