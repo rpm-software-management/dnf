@@ -464,11 +464,11 @@ class Output(object):
         (hibeg, hiend) = self._highlight(highlight)
         yumdb_info = self.yumdb.get_package(pkg) if pkg.from_system else {}
         print_key_val(_("Name"), "%s%s%s" % (hibeg, pkg.name, hiend))
+        if pkg.epoch != "0":
+            print_key_val(_("Epoch"), pkg.epoch)
+        print_key_val(_("Version"), pkg.version)
+        print_key_val(_("Release"), pkg.release)
         print_key_val(_("Arch"), pkg.arch)
-        if pkg.e != "0":
-            print_key_val(_("Epoch"), pkg.e)
-        print_key_val(_("Version"), pkg.v)
-        print_key_val(_("Release"), pkg.r)
         print_key_val(_("Size"), format_number(float(pkg.size)))
         print_key_val(_("Repo"), pkg.repoid)
         if 'from_repo' in yumdb_info:
