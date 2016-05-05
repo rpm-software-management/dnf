@@ -41,7 +41,16 @@ class UnicodeStream(object):
         if not isinstance(s, str):
             s = (s.decode(self.encoding, 'replace') if dnf.pycomp.PY3 else
                  s.encode(self.encoding, 'replace'))
-        self.stream.write(s)
+        try:
+            self.stream.write(s)
+        except UnicodeEncodeError:
+            bytes = s.encode(self.stream.encoding, 'backslashreplace')
+            if hasattr(self.stream, 'buffer'):
+                self.stream.buffer.write(bytes)
+            else:
+                s = bytes.decode(self.stream.encoding, 'ignore')
+                self.stream.write(s)
+
 
     def __getattr__(self, name):
         return getattr(self.stream, name)
