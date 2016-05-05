@@ -26,6 +26,7 @@ from __future__ import unicode_literals
 from dnf.i18n import _, ucd
 
 import dnf.cli
+import dnf.cli.demand
 import dnf.const
 import dnf.exceptions
 import dnf.i18n
@@ -97,14 +98,9 @@ def checkEnabledRepo(base, possible_local_files=[]):
 class Command(object):
     """Abstract base class for CLI commands."""
 
-    activate_sack = False
     aliases = [] # :api
-    allow_erasing = False
-    load_available_repos = True
-    resolve = False
     summary = ""  # :api
     usage = ""  # :api
-    writes_rpmdb = False
     opts = None
 
     def __init__(self, cli):
@@ -132,19 +128,7 @@ class Command(object):
     def configure(self):
         # :api
         """Do any command-specific configuration."""
-
-        # built-in commands use class/instance attributes to state their demands:
-        demands = self.cli.demands
-        if self.activate_sack:
-            demands.sack_activation = True
-        if self.allow_erasing:
-            demands.allow_erasing = True
-        if self.load_available_repos:
-            demands.available_repos = True
-        if self.resolve:
-            demands.resolving = True
-        if self.writes_rpmdb:
-            demands.root_user = True
+        pass
 
     def get_error_output(self, error):
         """Get suggestions for resolving the given error."""
@@ -278,9 +262,12 @@ class RepoPkgsCommand(Command):
     class CheckUpdateSubCommand(SubCommand):
         """Implementation of the info sub-command."""
 
-        activate_sack = True
-
         aliases = ('check-update',)
+
+        def configure(self):
+            demands = self.cli.demands
+            demands.available_repos = True
+            demands.activate_sack = True
 
         def parse_arguments(self, cli_args):
             """Parse command arguments."""
@@ -297,9 +284,12 @@ class RepoPkgsCommand(Command):
     class InfoSubCommand(SubCommand):
         """Implementation of the info sub-command."""
 
-        activate_sack = True
-
         aliases = ('info',)
+
+        def configure(self):
+            demands = self.cli.demands
+            demands.available_repos = True
+            demands.activate_sack = True
 
         def parse_arguments(self, cli_args):
             """Parse command arguments."""
@@ -320,13 +310,14 @@ class RepoPkgsCommand(Command):
     class InstallSubCommand(SubCommand):
         """Implementation of the install sub-command."""
 
-        activate_sack = True
-
         aliases = ('install',)
 
-        resolve = True
-
-        writes_rpmdb = True
+        def configure(self):
+            demands = self.cli.demands
+            demands.available_repos = True
+            demands.activate_sack = True
+            demands.resolving = True
+            demands.root_user = True
 
         def check(self, cli_args):
             """Verify whether the command can run with given arguments."""
@@ -371,9 +362,12 @@ class RepoPkgsCommand(Command):
     class ListSubCommand(SubCommand):
         """Implementation of the list sub-command."""
 
-        activate_sack = True
-
         aliases = ('list',)
+
+        def configure(self):
+            demands = self.cli.demands
+            demands.available_repos = True
+            demands.activate_sack = True
 
         def parse_arguments(self, cli_args):
             """Parse command arguments."""
@@ -394,13 +388,14 @@ class RepoPkgsCommand(Command):
     class MoveToSubCommand(SubCommand):
         """Implementation of the move-to sub-command."""
 
-        activate_sack = True
-
         aliases = ('move-to',)
 
-        resolve = True
-
-        writes_rpmdb = True
+        def configure(self):
+            demands = self.cli.demands
+            demands.activate_sack = True
+            demands.available_repos = True
+            demands.resolving = True
+            demands.root_user = True
 
         def check(self, cli_args):
             """Verify whether the command can run with given arguments."""
@@ -459,13 +454,14 @@ class RepoPkgsCommand(Command):
     class ReinstallOldSubCommand(SubCommand):
         """Implementation of the reinstall-old sub-command."""
 
-        activate_sack = True
-
         aliases = ('reinstall-old',)
 
-        resolve = True
-
-        writes_rpmdb = True
+        def configure(self):
+            demands = self.cli.demands
+            demands.activate_sack = True
+            demands.available_repos = True
+            demands.resolving = True
+            demands.root_user = True
 
         def check(self, cli_args):
             """Verify whether the command can run with given arguments."""
@@ -533,23 +529,16 @@ class RepoPkgsCommand(Command):
             self.wrapped_commands = (RepoPkgsCommand.ReinstallOldSubCommand(cli),
                                      RepoPkgsCommand.MoveToSubCommand(cli))
 
-            cmds_vals = (cmd.activate_sack for cmd in self.wrapped_commands)
-            self.activate_sack = functools.reduce(
-                operator.or_, cmds_vals, Command.activate_sack)
-
-            cmds_vals = (cmd.load_available_repos for cmd in self.wrapped_commands)
-            self.load_available_repos = functools.reduce(
-                operator.or_, cmds_vals, Command.load_available_repos)
-
-            cmds_vals = (cmd.writes_rpmdb for cmd in self.wrapped_commands)
-            self.writes_rpmdb = functools.reduce(
-                operator.or_, cmds_vals, Command.writes_rpmdb)
-
         def check(self, cli_args):
             """Verify whether the command can run with given arguments."""
             super(RepoPkgsCommand.ReinstallSubCommand, self).check(cli_args)
             for command in self.wrapped_commands:
                 command.check(cli_args)
+
+        def chonfigure(self):
+            self.cli.demands.available_repos = True
+            for command in self.wrapped_commands:
+                command.configure()
 
         def run_on_repo(self, reponame, cli_args):
             """Execute the command with respect to given arguments *cli_args*."""
@@ -561,22 +550,20 @@ class RepoPkgsCommand(Command):
                     continue
                 else:
                     break
-                finally:
-                    if command.resolve:
-                        self.cli.demands.resolving = True
             else:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
 
     class RemoveOrDistroSyncSubCommand(SubCommand):
         """Implementation of the remove-or-distro-sync sub-command."""
 
-        activate_sack = True
-
         aliases = ('remove-or-distro-sync',)
 
-        resolve = True
-
-        writes_rpmdb = True
+        def configure(self):
+            demands = self.cli.demands
+            demands.available_repos = True
+            demands.activate_sack = True
+            demands.resolving = True
+            demands.root_user = True
 
         def check(self, cli_args):
             """Verify whether the command can run with given arguments."""
@@ -643,13 +630,14 @@ class RepoPkgsCommand(Command):
     class RemoveOrReinstallSubCommand(SubCommand):
         """Implementation of the remove-or-reinstall sub-command."""
 
-        activate_sack = True
-
         aliases = ('remove-or-reinstall',)
 
-        resolve = True
-
-        writes_rpmdb = True
+        def configure(self):
+            demands = self.cli.demands
+            demands.activate_sack = True
+            demands.available_repos = True
+            demands.resolving = True
+            demands.root_user = True
 
         def check(self, cli_args):
             """Verify whether the command can run with given arguments."""
@@ -701,17 +689,15 @@ class RepoPkgsCommand(Command):
     class RemoveSubCommand(SubCommand):
         """Implementation of the remove sub-command."""
 
-        activate_sack = True
-
         aliases = ('remove',)
 
-        load_available_repos = False
-
-        resolve = True
-
-        allow_erasing = True
-
-        writes_rpmdb = True
+        def configure(self):
+            demands = self.cli.demands
+            demands.activate_sack = True
+            demands.allow_erasing = True
+            demands.available_repos = False
+            demands.resolving = True
+            demands.root_user = True
 
         def parse_arguments(self, cli_args):
             """Parse command arguments."""
@@ -750,13 +736,14 @@ class RepoPkgsCommand(Command):
     class UpgradeSubCommand(SubCommand):
         """Implementation of the upgrade sub-command."""
 
-        activate_sack = True
-
         aliases = ('upgrade',)
 
-        resolve = True
-
-        writes_rpmdb = True
+        def configure(self):
+            demands = self.cli.demands
+            demands.activate_sack = True
+            demands.available_repos = True
+            demands.resolving = True
+            demands.root_user = True
 
         def check(self, cli_args):
             """Verify whether the command can run with given arguments."""
@@ -795,13 +782,14 @@ class RepoPkgsCommand(Command):
     class UpgradeToSubCommand(SubCommand):
         """Implementation of the upgrade-to sub-command."""
 
-        activate_sack = True
-
         aliases = ('upgrade-to',)
 
-        resolve = True
-
-        writes_rpmdb = True
+        def configure(self):
+            demands = self.cli.demands
+            demands.activate_sack = True
+            demands.available_repos = True
+            demands.resolving = True
+            demands.root_user = True
 
         def check(self, cli_args):
             """Verify whether the command can run with given arguments."""
@@ -842,18 +830,6 @@ class RepoPkgsCommand(Command):
         subcmd_objs = (subcmd(cli) for subcmd in self.SUBCMDS)
         self._subcmd_name2obj = {
             alias: subcmd for subcmd in subcmd_objs for alias in subcmd.aliases}
-
-        sub_vals = (cmd.activate_sack for cmd in self._subcmd_name2obj.values())
-        self.activate_sack = functools.reduce(
-            operator.or_, sub_vals, super(RepoPkgsCommand, self).activate_sack)
-
-        sub_vals = (cmd.load_available_repos for cmd in self._subcmd_name2obj.values())
-        self.load_available_repos = functools.reduce(
-            operator.or_, sub_vals, super(RepoPkgsCommand, self).load_available_repos)
-
-        sub_vals = (cmd.writes_rpmdb for cmd in self._subcmd_name2obj.values())
-        self.writes_rpmdb = functools.reduce(
-            operator.or_, sub_vals, super(RepoPkgsCommand, self).writes_rpmdb)
 
     @staticmethod
     def set_argparser(parser):
@@ -940,6 +916,7 @@ class HistoryCommand(Command):
             checkGPGKey(self.base, self.cli)
         else:
             demands.fresh_metadata = False
+        demands.available_repos = True
         demands.sack_activation = True
         if not os.access(self.base.history._db_file, os.R_OK):
             logger.critical(_("You don't have access to the history DB."))

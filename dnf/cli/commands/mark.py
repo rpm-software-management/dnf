@@ -32,7 +32,6 @@ logger = logging.getLogger("dnf")
 
 class MarkCommand(commands.Command):
 
-    activate_sack = True
     aliases = ('mark',)
     summary = _('mark or unmark installed packages as installed by user.')
     usage = "[install|remove [%s]]" % _('PACKAGE')
