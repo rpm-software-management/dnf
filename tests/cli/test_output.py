@@ -26,7 +26,7 @@ import unittest
 
 INFOOUTPUT_OUTPUT="""\
 Name         : tour
-Epoch        : 0
+Epoch        : 1
 Version      : 5
 Release      : 0
 Arch         : noarch
@@ -181,7 +181,7 @@ class OutputTest(support.TestCase):
         pkg.size = 0
         pkg.pkgid = None
         pkg.repoid = None
-        pkg.e = pkg.epoch
+        pkg.e = pkg.epoch = 1
         pkg.v = pkg.version
         pkg.r = pkg.release
         pkg.sourcerpm = 'tour.src.rpm'
