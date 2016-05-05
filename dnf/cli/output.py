@@ -455,10 +455,10 @@ class Output(object):
            package
         """
         def print_key_val(key, val):
-            print(fill_exact_width(key, 12, 12), ":", val)
+            print(fill_exact_width(key, 14, 14), ":", val)
 
         def print_key_val_fill(key, val):
-            print(self.fmtKeyValFill(fill_exact_width(key, 12, 12) +
+            print(self.fmtKeyValFill(fill_exact_width(key, 14, 14) +
                   " : ", val or ""))
 
         (hibeg, hiend) = self._highlight(highlight)
@@ -473,7 +473,7 @@ class Output(object):
         print_key_val(_("Source"), pkg.sourcerpm)
         print_key_val(_("Repo"), pkg.repoid)
         if 'from_repo' in yumdb_info:
-            print_key_val(_("From repo"), yumdb_info.from_repo)
+            print_key_val(_("Installed from"), yumdb_info.from_repo)
         if self.conf.verbose:
             # :hawkey does not support changelog information
             # print(_("Committer   : %s") % ucd(pkg.committer))
