@@ -470,6 +470,7 @@ class Output(object):
         print_key_val(_("Release"), pkg.release)
         print_key_val(_("Arch"), pkg.arch)
         print_key_val(_("Size"), format_number(float(pkg.size)))
+        print_key_val(_("Source"), pkg.sourcerpm)
         print_key_val(_("Repo"), pkg.repoid)
         if 'from_repo' in yumdb_info:
             print_key_val(_("From repo"), yumdb_info.from_repo)
@@ -477,6 +478,7 @@ class Output(object):
             # :hawkey does not support changelog information
             # print(_("Committer   : %s") % ucd(pkg.committer))
             # print(_("Committime  : %s") % time.ctime(pkg.committime))
+            print_key_val(_("Packager"), pkg.packager)
             print_key_val(_("Buildtime"), time.ctime(pkg.buildtime))
             if pkg.installtime > 0:
                 print_key_val(_("Install time"), time.ctime(pkg.installtime))
