@@ -262,10 +262,10 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
     AVAILABLE_TITLE = u'Available Packages\n'
 
     HOLE_I686_INFO = (u'Name        : hole\n'
-                      u'Arch        : i686\n'
                       u'Epoch       : 0\n'
                       u'Version     : 2\n'
                       u'Release     : 1\n'
+                      u'Arch        : i686\n'
                       u'Size        : 0.0  \n'
                       u'Repo        : updates\n'
                       u'Summary     : \n'
@@ -274,10 +274,10 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                       u'\n')
 
     HOLE_X86_64_INFO = (u'Name        : hole\n'
-                        u'Arch        : x86_64\n'
                         u'Epoch       : 0\n'
                         u'Version     : 2\n'
                         u'Release     : 1\n'
+                        u'Arch        : x86_64\n'
                         u'Size        : 0.0  \n'
                         u'Repo        : updates\n'
                         u'Summary     : \n'
@@ -287,10 +287,10 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
     INSTALLED_TITLE = u'Installed Packages\n'
 
     PEPPER_SYSTEM_INFO = (u'Name        : pepper\n'
-                          u'Arch        : x86_64\n'
                           u'Epoch       : 0\n'
                           u'Version     : 20\n'
                           u'Release     : 0\n'
+                          u'Arch        : x86_64\n'
                           u'Size        : 0.0  \n'
                           u'Repo        : @System\n'
                           u'From repo   : main\n'
@@ -299,10 +299,10 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                           u'Description : \n\n')
 
     PEPPER_UPDATES_INFO = (u'Name        : pepper\n'
-                           u'Arch        : x86_64\n'
                            u'Epoch       : 0\n'
                            u'Version     : 20\n'
                            u'Release     : 1\n'
+                           u'Arch        : x86_64\n'
                            u'Size        : 0.0  \n'
                            u'Repo        : updates\n'
                            u'Summary     : \n'
@@ -333,10 +333,10 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                 self.PEPPER_SYSTEM_INFO,
                 self.AVAILABLE_TITLE,
                 u'Name        : pepper\n'
-                u'Arch        : src\n'
                 u'Epoch       : 0\n'
                 u'Version     : 20\n'
                 u'Release     : 0\n'
+                u'Arch        : src\n'
                 u'Size        : 0.0  \n'
                 u'Repo        : main\n'
                 u'Summary     : \n'
@@ -344,10 +344,10 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                 u'Description : \n'
                 u'\n',
                 u'Name        : trampoline\n'
-                u'Arch        : noarch\n'
                 u'Epoch       : 0\n'
                 u'Version     : 2.1\n'
                 u'Release     : 1\n'
+                u'Arch        : noarch\n'
                 u'Size        : 0.0  \n'
                 u'Repo        : main\n'
                 u'Summary     : \n'
@@ -383,10 +383,10 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
             stdout.getvalue(),
             u'Extra Packages\n'
             u'Name        : tour\n'
-            u'Arch        : noarch\n'
             u'Epoch       : 0\n'
             u'Version     : 5\n'
             u'Release     : 0\n'
+            u'Arch        : noarch\n'
             u'Size        : 0.0  \n'
             u'Repo        : @System\n'
             u'From repo   : unknown\n'
@@ -447,10 +447,10 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
             ''.join((
                 u'Upgraded Packages\n'
                 u'Name        : hole\n'
-                u'Arch        : x86_64\n'
                 u'Epoch       : 0\n'
                 u'Version     : 1\n'
                 u'Release     : 2\n'
+                u'Arch        : x86_64\n'
                 u'Size        : 0.0  \n'
                 u'Repo        : updates\n'
                 u'Summary     : \n'

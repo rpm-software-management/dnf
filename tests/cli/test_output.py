@@ -26,10 +26,10 @@ import unittest
 
 INFOOUTPUT_OUTPUT="""\
 Name        : tour
-Arch        : noarch
 Epoch       : 0
 Version     : 5
 Release     : 0
+Arch        : noarch
 Size        : 0.0  
 Repo        : None
 Summary     : A summary of the package.
