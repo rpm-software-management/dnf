@@ -31,6 +31,7 @@ Version     : 5
 Release     : 0
 Arch        : noarch
 Size        : 0.0  
+Source      : tour.src.rpm
 Repo        : None
 Summary     : A summary of the package.
 URL         : http://example.com
@@ -183,6 +184,7 @@ class OutputTest(support.TestCase):
         pkg.e = pkg.epoch
         pkg.v = pkg.version
         pkg.r = pkg.release
+        pkg.sourcerpm = 'tour.src.rpm'
         pkg.summary = 'A summary of the package.'
         pkg.url = 'http://example.com'
         pkg.license = 'GPL+'
