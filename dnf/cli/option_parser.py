@@ -127,7 +127,8 @@ class OptionParser(argparse.ArgumentParser):
         def __call__(self, parser, namespace, values, opt_str):
             operation = 'disable' if opt_str == '--disablerepo' else 'enable'
             l = getattr(namespace, self.dest)
-            l.append((values, operation))
+            l.extend(map(lambda x: (x, operation),
+                         re.split('\s*[,\s]\s*', values)))
 
     class _SplitCallback(argparse._AppendAction):
         """ Split all strings in seq, at "," and whitespace.
