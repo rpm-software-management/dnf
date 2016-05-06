@@ -46,7 +46,7 @@ class UnicodeStream(object):
         except UnicodeEncodeError:
             s_bytes = s.encode(self.stream.encoding, 'backslashreplace')
             if hasattr(self.stream, 'buffer'):
-                self.stream.buffer.write(bytes)
+                self.stream.buffer.write(s_bytes)
             else:
                 s = s_bytes.decode(self.stream.encoding, 'ignore')
                 self.stream.write(s)
