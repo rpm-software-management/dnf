@@ -1,7 +1,7 @@
 # autoremove.py
 # Autoremove CLI command.
 #
-# Copyright (C) 2014-2015  Red Hat, Inc.
+# Copyright (C) 2014-2016  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -21,11 +21,14 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from .. import commands
+from dnf.i18n import _
 
 
 class AutoremoveCommand(commands.Command):
 
     aliases = ('autoremove',)
+    summary = _('remove all unneeded packages that were originally installed '
+                'as dependencies')
 
     def configure(self, _):
         demands = self.cli.demands
