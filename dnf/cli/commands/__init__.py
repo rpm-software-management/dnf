@@ -26,6 +26,7 @@ from __future__ import unicode_literals
 from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _, ucd
 
+import argparse
 import dnf.cli
 import dnf.cli.demand
 import dnf.const
@@ -247,9 +248,9 @@ class RepoPkgsCommand(Command):
         of unset attributes.
 
         """
-
-        def check(self, cli_args):
-            """Verify whether the command can run with given arguments."""
+        @staticmethod
+        def set_argparser(parser):
+            parser.add_argument('pkg_specs', nargs='*', metavar=_('PACKAGE'))
 
     class CheckUpdateSubCommand(SubCommand):
         """Implementation of the info sub-command."""
@@ -259,17 +260,12 @@ class RepoPkgsCommand(Command):
         def configure(self):
             demands = self.cli.demands
             demands.available_repos = True
-            demands.activate_sack = True
+            demands.sack_activation = True
 
-        def parse_arguments(self, cli_args):
-            """Parse command arguments."""
-            return cli_args
-
-        def run_on_repo(self, reponame, cli_args):
+        def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            self.check(cli_args)
-            patterns = self.parse_arguments(cli_args)
-            found = self.base.check_updates(patterns, reponame, print_=True)
+            found = self.base.check_updates(self.opts.pkg_specs,
+                                            self.reponame, print_=True)
             if found:
                 self.cli.demands.success_exit_status = 100
 
@@ -281,23 +277,22 @@ class RepoPkgsCommand(Command):
         def configure(self):
             demands = self.cli.demands
             demands.available_repos = True
-            demands.activate_sack = True
+            demands.sack_activation = True
 
-        def parse_arguments(self, cli_args):
-            """Parse command arguments."""
+        @staticmethod
+        def set_argparser(parser):
             DEFAULT_PKGNARROW = 'all'
             pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available', 'autoremove',
                           'extras', 'obsoletes', 'recent', 'upgrades'}
-            if not cli_args or cli_args[0] not in pkgnarrows:
-                return DEFAULT_PKGNARROW, cli_args
-            else:
-                return cli_args[0], cli_args[1:]
+            parser.add_argument('pkg_specs', nargs='*', metavar=_('PACKAGE'),
+                                choices=pkgnarrows, default=DEFAULT_PKGNARROW,
+                                action=OptionParser.PkgNarrowCallback)
 
-        def run_on_repo(self, reponame, cli_args):
+        def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            self.check(cli_args)
-            pkgnarrow, patterns = self.parse_arguments(cli_args)
-            self.base.output_packages('info', pkgnarrow, patterns, reponame)
+            self.base.output_packages('info', self.opts.pkg_specs_action,
+                                              self.opts.pkg_specs,
+                                              self.reponame)
 
     class InstallSubCommand(SubCommand):
         """Implementation of the install sub-command."""
@@ -307,39 +302,29 @@ class RepoPkgsCommand(Command):
         def configure(self):
             demands = self.cli.demands
             demands.available_repos = True
-            demands.activate_sack = True
+            demands.sack_activation = True
             demands.resolving = True
             demands.root_user = True
 
-        def check(self, cli_args):
-            """Verify whether the command can run with given arguments."""
-            super(RepoPkgsCommand.InstallSubCommand, self).check(cli_args)
-            checkGPGKey(self.base, self.cli)
-
-        def parse_arguments(self, cli_args):
-            """Parse command arguments."""
-            return cli_args
-
-        def run_on_repo(self, reponame, cli_args):
+        def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            self.check(cli_args)
-            pkg_specs = self.parse_arguments(cli_args)
+            checkGPGKey(self.base, self.cli)
 
             done = False
 
-            if not pkg_specs:
+            if not self.opts.pkg_specs:
                 # Install all packages.
                 try:
-                    self.base.install('*', reponame)
+                    self.base.install('*', self.reponame)
                 except dnf.exceptions.MarkingError:
                     logger.info(_('No package available.'))
                 else:
                     done = True
             else:
                 # Install packages.
-                for pkg_spec in pkg_specs:
+                for pkg_spec in self.opts.pkg_specs:
                     try:
-                        self.base.install(pkg_spec, reponame)
+                        self.base.install(pkg_spec, self.reponame)
                     except dnf.exceptions.MarkingError:
                         msg = _('No package %s%s%s available.')
                         logger.info(
@@ -359,23 +344,22 @@ class RepoPkgsCommand(Command):
         def configure(self):
             demands = self.cli.demands
             demands.available_repos = True
-            demands.activate_sack = True
+            demands.sack_activation = True
 
-        def parse_arguments(self, cli_args):
-            """Parse command arguments."""
+        @staticmethod
+        def set_argparser(parser):
             DEFAULT_PKGNARROW = 'all'
             pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available', 'autoremove',
                           'extras', 'obsoletes', 'recent', 'upgrades'}
-            if not cli_args or cli_args[0] not in pkgnarrows:
-                return DEFAULT_PKGNARROW, cli_args
-            else:
-                return cli_args[0], cli_args[1:]
+            parser.add_argument('pkg_specs', nargs='*', metavar=_('PACKAGE'),
+                                choices=pkgnarrows, default=DEFAULT_PKGNARROW,
+                                action=OptionParser.PkgNarrowCallback)
 
-        def run_on_repo(self, reponame, cli_args):
+        def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            self.check(cli_args)
-            pkgnarrow, patterns = self.parse_arguments(cli_args)
-            self.base.output_packages('list', pkgnarrow, patterns, reponame)
+            self.base.output_packages('list', self.opts.pkg_specs_action,
+                                              self.opts.pkg_specs,
+                                              self.reponame)
 
     class MoveToSubCommand(SubCommand):
         """Implementation of the move-to sub-command."""
@@ -384,31 +368,21 @@ class RepoPkgsCommand(Command):
 
         def configure(self):
             demands = self.cli.demands
-            demands.activate_sack = True
+            demands.sack_activation = True
             demands.available_repos = True
             demands.resolving = True
             demands.root_user = True
 
-        def check(self, cli_args):
-            """Verify whether the command can run with given arguments."""
-            super(RepoPkgsCommand.MoveToSubCommand, self).check(cli_args)
-            checkGPGKey(self.base, self.cli)
-
-        def parse_arguments(self, cli_args):
-            """Parse command arguments."""
-            return cli_args
-
-        def run_on_repo(self, reponame, cli_args):
+        def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            self.check(cli_args)
-            pkg_specs = self.parse_arguments(cli_args)
+            checkGPGKey(self.base, self.cli)
 
             done = False
 
-            if not pkg_specs:
+            if not self.opts.pkg_specs:
                 # Reinstall all packages.
                 try:
-                    self.base.reinstall('*', new_reponame=reponame)
+                    self.base.reinstall('*', new_reponame=self.reponame)
                 except dnf.exceptions.PackagesNotInstalledError:
                     logger.info(_('No package installed.'))
                 except dnf.exceptions.PackagesNotAvailableError:
@@ -419,9 +393,9 @@ class RepoPkgsCommand(Command):
                     done = True
             else:
                 # Reinstall packages.
-                for pkg_spec in pkg_specs:
+                for pkg_spec in self.opts.pkg_specs:
                     try:
-                        self.base.reinstall(pkg_spec, new_reponame=reponame)
+                        self.base.reinstall(pkg_spec, new_reponame=self.reponame)
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
                         logger.info(msg, pkg_spec)
@@ -450,31 +424,21 @@ class RepoPkgsCommand(Command):
 
         def configure(self):
             demands = self.cli.demands
-            demands.activate_sack = True
+            demands.sack_activation = True
             demands.available_repos = True
             demands.resolving = True
             demands.root_user = True
 
-        def check(self, cli_args):
-            """Verify whether the command can run with given arguments."""
-            super(RepoPkgsCommand.ReinstallOldSubCommand, self).check(cli_args)
-            checkGPGKey(self.base, self.cli)
-
-        def parse_arguments(self, cli_args):
-            """Parse command arguments."""
-            return cli_args
-
-        def run_on_repo(self, reponame, cli_args):
+        def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            self.check(cli_args)
-            pkg_specs = self.parse_arguments(cli_args)
+            checkGPGKey(self.base, self.cli)
 
             done = False
 
-            if not pkg_specs:
+            if not self.opts.pkg_specs:
                 # Reinstall all packages.
                 try:
-                    self.base.reinstall('*', reponame, reponame)
+                    self.base.reinstall('*', self.reponame, self.reponame)
                 except dnf.exceptions.PackagesNotInstalledError:
                     msg = _('No package installed from the repository.')
                     logger.info(msg)
@@ -486,9 +450,9 @@ class RepoPkgsCommand(Command):
                     done = True
             else:
                 # Reinstall packages.
-                for pkg_spec in pkg_specs:
+                for pkg_spec in self.opts.pkg_specs:
                     try:
-                        self.base.reinstall(pkg_spec, reponame, reponame)
+                        self.base.reinstall(pkg_spec, self.reponame, self.reponame)
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
                         logger.info(msg, pkg_spec)
@@ -521,23 +485,19 @@ class RepoPkgsCommand(Command):
             self.wrapped_commands = (RepoPkgsCommand.ReinstallOldSubCommand(cli),
                                      RepoPkgsCommand.MoveToSubCommand(cli))
 
-        def check(self, cli_args):
-            """Verify whether the command can run with given arguments."""
-            super(RepoPkgsCommand.ReinstallSubCommand, self).check(cli_args)
-            for command in self.wrapped_commands:
-                command.check(cli_args)
-
-        def chonfigure(self):
+        def configure(self):
             self.cli.demands.available_repos = True
             for command in self.wrapped_commands:
+                command.opts = self.opts
+                command.reponame = self.reponame
                 command.configure()
 
-        def run_on_repo(self, reponame, cli_args):
+        def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            self.check(cli_args)
+            checkGPGKey(self.base, self.cli)
             for command in self.wrapped_commands:
                 try:
-                    command.run_on_repo(reponame, cli_args)
+                    command.run_on_repo()
                 except dnf.exceptions.Error:
                     continue
                 else:
@@ -553,20 +513,9 @@ class RepoPkgsCommand(Command):
         def configure(self):
             demands = self.cli.demands
             demands.available_repos = True
-            demands.activate_sack = True
+            demands.sack_activation = True
             demands.resolving = True
             demands.root_user = True
-
-        def check(self, cli_args):
-            """Verify whether the command can run with given arguments."""
-            super(RepoPkgsCommand.RemoveOrDistroSyncSubCommand, self).check(
-                cli_args)
-            checkGPGKey(self.base, self.cli)
-
-        @staticmethod
-        def parse_arguments(cli_args):
-            """Parse command arguments."""
-            return cli_args
 
         def _replace(self, pkg_spec, reponame):
             """Synchronize a package with another repository or remove it."""
@@ -589,17 +538,16 @@ class RepoPkgsCommand(Command):
                 else:
                     self.cli.base._goal.erase(package, clean_deps=clean_deps)
 
-        def run_on_repo(self, reponame, cli_args):
+        def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            self.check(cli_args)
-            pkg_specs = self.parse_arguments(cli_args)
+            checkGPGKey(self.base, self.cli)
 
             done = False
 
-            if not pkg_specs:
+            if not self.opts.pkg_specs:
                 # Sync all packages.
                 try:
-                    self._replace('*', reponame)
+                    self._replace('*', self.reponame)
                 except dnf.exceptions.PackagesNotInstalledError:
                     msg = _('No package installed from the repository.')
                     logger.info(msg)
@@ -607,9 +555,9 @@ class RepoPkgsCommand(Command):
                     done = True
             else:
                 # Reinstall packages.
-                for pkg_spec in pkg_specs:
+                for pkg_spec in self.opts.pkg_specs:
                     try:
-                        self._replace(pkg_spec, reponame)
+                        self._replace(pkg_spec, self.reponame)
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
                         logger.info(msg, pkg_spec)
@@ -626,32 +574,22 @@ class RepoPkgsCommand(Command):
 
         def configure(self):
             demands = self.cli.demands
-            demands.activate_sack = True
+            demands.sack_activation = True
             demands.available_repos = True
             demands.resolving = True
             demands.root_user = True
 
-        def check(self, cli_args):
-            """Verify whether the command can run with given arguments."""
-            super(RepoPkgsCommand.RemoveOrReinstallSubCommand, self).check(cli_args)
-            checkGPGKey(self.base, self.cli)
-
-        def parse_arguments(self, cli_args):
-            """Parse command arguments."""
-            return cli_args
-
-        def run_on_repo(self, reponame, cli_args):
+        def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            self.check(cli_args)
-            pkg_specs = self.parse_arguments(cli_args)
+            checkGPGKey(self.base, self.cli)
 
             done = False
 
-            if not pkg_specs:
+            if not self.opts.pkg_specs:
                 # Reinstall all packages.
                 try:
                     self.base.reinstall(
-                        '*', old_reponame=reponame, new_reponame_neq=reponame,
+                        '*', old_reponame=self.reponame, new_reponame_neq=self.reponame,
                         remove_na=True)
                 except dnf.exceptions.PackagesNotInstalledError:
                     msg = _('No package installed from the repository.')
@@ -662,11 +600,11 @@ class RepoPkgsCommand(Command):
                     done = True
             else:
                 # Reinstall packages.
-                for pkg_spec in pkg_specs:
+                for pkg_spec in self.opts.pkg_specs:
                     try:
                         self.base.reinstall(
-                            pkg_spec, old_reponame=reponame,
-                            new_reponame_neq=reponame, remove_na=True)
+                            pkg_spec, old_reponame=self.reponame,
+                            new_reponame_neq=self.reponame, remove_na=True)
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
                         logger.info(msg, pkg_spec)
@@ -685,27 +623,21 @@ class RepoPkgsCommand(Command):
 
         def configure(self):
             demands = self.cli.demands
-            demands.activate_sack = True
+            demands.sack_activation = True
             demands.allow_erasing = True
             demands.available_repos = False
             demands.resolving = True
             demands.root_user = True
 
-        def parse_arguments(self, cli_args):
-            """Parse command arguments."""
-            return cli_args
-
-        def run_on_repo(self, reponame, cli_args):
+        def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            self.check(cli_args)
-            pkg_specs = self.parse_arguments(cli_args)
 
             done = False
 
-            if not pkg_specs:
+            if not self.opts.pkg_specs:
                 # Remove all packages.
                 try:
-                    self.base.remove('*', reponame)
+                    self.base.remove('*', self.reponame)
                 except dnf.exceptions.MarkingError:
                     msg = _('No package installed from the repository.')
                     logger.info(msg)
@@ -713,9 +645,9 @@ class RepoPkgsCommand(Command):
                     done = True
             else:
                 # Remove packages.
-                for pkg_spec in pkg_specs:
+                for pkg_spec in self.opts.pkg_specs:
                     try:
-                        self.base.remove(pkg_spec, reponame)
+                        self.base.remove(pkg_spec, self.reponame)
                     except dnf.exceptions.MarkingError:
                         logger.info(_('No match for argument: %s'),
                                               pkg_spec)
@@ -732,36 +664,26 @@ class RepoPkgsCommand(Command):
 
         def configure(self):
             demands = self.cli.demands
-            demands.activate_sack = True
+            demands.sack_activation = True
             demands.available_repos = True
             demands.resolving = True
             demands.root_user = True
 
-        def check(self, cli_args):
-            """Verify whether the command can run with given arguments."""
-            super(RepoPkgsCommand.UpgradeSubCommand, self).check(cli_args)
-            checkGPGKey(self.base, self.cli)
-
-        def parse_arguments(self, cli_args):
-            """Parse command arguments."""
-            return cli_args
-
-        def run_on_repo(self, reponame, cli_args):
+        def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            self.check(cli_args)
-            pkg_specs = self.parse_arguments(cli_args)
+            checkGPGKey(self.base, self.cli)
 
             done = False
 
-            if not pkg_specs:
+            if not self.opts.pkg_specs:
                 # Update all packages.
-                self.base.upgrade_all(reponame)
+                self.base.upgrade_all(self.reponame)
                 done = True
             else:
                 # Update packages.
-                for pkg_spec in pkg_specs:
+                for pkg_spec in self.opts.pkg_specs:
                     try:
-                        self.base.upgrade(pkg_spec, reponame)
+                        self.base.upgrade(pkg_spec, self.reponame)
                     except dnf.exceptions.MarkingError:
                         logger.info(_('No match for argument: %s'),
                                               pkg_spec)
@@ -778,33 +700,19 @@ class RepoPkgsCommand(Command):
 
         def configure(self):
             demands = self.cli.demands
-            demands.activate_sack = True
+            demands.sack_activation = True
             demands.available_repos = True
             demands.resolving = True
             demands.root_user = True
 
-        def check(self, cli_args):
-            """Verify whether the command can run with given arguments."""
-            super(RepoPkgsCommand.UpgradeToSubCommand, self).check(cli_args)
-            checkGPGKey(self.base, self.cli)
-            try:
-                self.parse_arguments(cli_args)
-            except ValueError:
-                logger.critical(
-                    _('Error: Requires at least one package specification'))
-                raise dnf.cli.CliError('a package specification required')
+        @staticmethod
+        def set_argparser(parser):
+            parser.add_argument('pkg_specs', nargs='+', metavar=_('PACKAGE'))
 
-        def parse_arguments(self, cli_args):
-            """Parse command arguments."""
-            if not cli_args:
-                raise ValueError('at least one argument must be given')
-            return cli_args
-
-        def run_on_repo(self, reponame, cli_args):
+        def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            self.check(cli_args)
-            pkg_specs = self.parse_arguments(cli_args)
-            self.base.upgrade_userlist_to(pkg_specs, reponame)
+            checkGPGKey(self.base, self.cli)
+            self.base.upgrade_userlist_to(selt.opts.pkg_specs, selt.opts.reponame)
 
     SUBCMDS = {CheckUpdateSubCommand, InfoSubCommand, InstallSubCommand,
                ListSubCommand, MoveToSubCommand, ReinstallOldSubCommand,
@@ -820,39 +728,33 @@ class RepoPkgsCommand(Command):
         """Initialize the command."""
         super(RepoPkgsCommand, self).__init__(cli)
         subcmd_objs = (subcmd(cli) for subcmd in self.SUBCMDS)
+        self.subcmd = None
         self._subcmd_name2obj = {
             alias: subcmd for subcmd in subcmd_objs for alias in subcmd.aliases}
 
-    @staticmethod
-    def set_argparser(parser):
-        subcommands = ['check-update', 'info', 'install', 'list', 'move-to',
-                       'reinstall', 'reinstall-old', 'remove',
-                       'remove-or-distro-sync', 'remove-or-reinstall', 'upgrade',
-                       'upgrade-to']
-        parser.add_argument('cmdrepo', nargs=1, metavar=_('REPO'))
-        parser.add_argument('subcmd', nargs=1,
-                            choices = subcommands,
-                            metavar='[ %s ]' % ' | '.join(subcommands))
-        parser.add_argument('subargs', nargs='*', metavar=_('ARG'))
+    def set_argparser(self, parser):
+        super(OptionParser, parser).add_argument('reponame', nargs=1, metavar=_('REPO'))
+        subparser = parser.add_subparsers(dest='subcmd',
+                                          parser_class=argparse.ArgumentParser)
+        for subcommand in self._subcmd_name2obj.keys():
+             p = subparser.add_parser(subcommand)
+             self._subcmd_name2obj[subcommand].set_argparser(p)
 
     def configure(self):
         """Verify whether the command can run with given arguments."""
         # Check sub-command.
         try:
-            subcmd = self._subcmd_name2obj[self.opts.subcmd[0]]
-            subcmd.check(self.opts.subargs)
+            self.subcmd = self._subcmd_name2obj[self.opts.subcmd]
         except (dnf.cli.CliError, KeyError) as e:
             self.cli.optparser.print_usage()
             raise dnf.cli.CliError
-        subcmd.configure()
+        self.subcmd.opts = self.opts
+        self.subcmd.reponame = self.opts.reponame[0]
+        self.subcmd.configure()
 
     def run(self):
         """Execute the command with respect to given arguments *extcmds*."""
-        subcmd = self._subcmd_name2obj[self.opts.subcmd[0]]
-
-        subcmd.run_on_repo(self.opts.cmdrepo, self.opts.subargs)
-
-        self.cli.demands.resolving = subcmd.resolve
+        self.subcmd.run_on_repo()
 
 class HelpCommand(Command):
     """A class containing methods needed by the cli to execute the
