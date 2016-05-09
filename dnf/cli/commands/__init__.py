@@ -23,6 +23,7 @@ Classes for subcommands of the yum command line interface.
 
 from __future__ import print_function
 from __future__ import unicode_literals
+from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _, ucd
 
 import dnf.cli
@@ -153,38 +154,29 @@ class InfoCommand(Command):
     aliases = ('info',)
     summary = _('display details about a package or group of packages')
     DEFAULT_PKGNARROW = 'all'
-    pkgnarrows = {'available', 'installed', 'extras', 'upgrades', 'autoremove',
+    pkgnarrows = {'available', 'installed', 'extras', 'updates', 'upgrades', 'autoremove',
                       'recent', 'obsoletes', DEFAULT_PKGNARROW}
 
-    @staticmethod
-    def parse_extcmds(extcmds):
-        """Parse command arguments."""
-        if len(extcmds) == 0:
-            return DEFAULT_PKGNARROW, extcmds
-
-        if extcmds[0] in self.pkgnarrows:
-            return extcmds[0], extcmds[1:]
-        elif extcmds[0] == 'updates':
-            return 'upgrades', extcmds[1:]
-        else:
-            return DEFAULT_PKGNARROW, extcmds
-
-    @staticmethod
-    def set_argparser(parser):
+    @classmethod
+    def set_argparser(cls, parser):
         parser.add_argument('packages', nargs='*', metavar=_('PACKAGE'),
                              help=("[%s | all | available | installed | updates"
                                    " | extras | autoremove | obsoletes | recent]"
-                                   % _('PACKAGE')))
+                                   % _('PACKAGE')),
+                             choices=cls.pkgnarrows, default=cls.DEFAULT_PKGNARROW,
+                             action=OptionParser.PkgNarrowCallback)
 
     def configure(self):
         demands = self.cli.demands
         demands.available_repos = True
         demands.fresh_metadata = False
         demands.sack_activation = True
+        if self.opts.packages_action == 'updates':
+                 self.opts.packages_action = 'upgrades'
 
     def run(self):
-        pkgnarrow, patterns = self.parse_extcmds(self.opts.packages)
-        return self.base.output_packages('info', pkgnarrow, patterns)
+        return self.base.output_packages('info', self.opts.packages_action,
+                                                 self.opts.packages)
 
 class ListCommand(InfoCommand):
     """A class containing methods needed by the cli to execute the
@@ -195,8 +187,8 @@ class ListCommand(InfoCommand):
     summary = _('list a package or groups of packages')
 
     def run(self):
-        pkgnarrow, patterns = self.parse_extcmds(self.opts.packages)
-        return self.base.output_packages('list', pkgnarrow, patterns)
+        return self.base.output_packages('list', self.opts.packages_action,
+                                                 self.opts.packages)
 
 
 class ProvidesCommand(Command):
@@ -893,25 +885,21 @@ class HistoryCommand(Command):
 
     @staticmethod
     def set_argparser(parser):
-        sub_p = parser.add_subparsers(dest='vcmd',
-                        metavar="[info|list|redo|undo|rollback|userinstalled]")
-        info_p = sub_p.add_parser('info')
-        info_p.add_argument('tid', metavar='transaction_id', nargs='*')
-        list_p = sub_p.add_parser('list')
-        list_p.add_argument('tid', metavar='transaction_id', nargs='*')
-        redo_p = sub_p.add_parser('redo')
-        redo_p.add_argument('tid', metavar='transaction_id', nargs=1)
-        undo_p = sub_p.add_parser('undo')
-        undo_p.add_argument('tid', metavar='transaction_id', nargs=1)
-        rollback_p = sub_p.add_parser('rollback')
-        rollback_p.add_argument('tid', metavar='transaction_id', nargs=1)
-        userinstalled_p = sub_p.add_parser('userinstalled')
+        cmds = ['list', 'info', 'redo', 'undo', 'rollback', 'userinstalled']
+        parser.add_argument('tid', nargs='*',
+                        choices=cmds, default=cmds[0],
+                        action=OptionParser.PkgNarrowCallback,
+                        metavar="[%s]" % "|".join(cmds))
 
     def configure(self):
         demands = self.cli.demands
-        if not self.opts.vcmd:
-            self.opts.vcmd = 'list'
-        if self.opts.vcmd in ['redo', 'undo', 'rollback']:
+        if self.opts.tid_action in ['redo', 'undo', 'rollback']:
+            if not self.opts.tid:
+                 logger.critical(_('No transaction ID given'))
+                 raise dnf.cli.CliError
+            elif len(self.opts.tid) > 1:
+                 logger.critical(_('Found more than one transaction ID!'))
+                 raise dnf.cli.CliError
             demands.available_repos = True
             checkGPGKey(self.base, self.cli)
         else:
@@ -924,22 +912,20 @@ class HistoryCommand(Command):
 
     def get_error_output(self, error):
         """Get suggestions for resolving the given error."""
-        basecmd, extcmds = self.base.basecmd, self.base.extcmds
         if isinstance(error, dnf.exceptions.TransactionCheckError):
-            assert basecmd == 'history'
-            if extcmds[0] == 'undo':
-                id_, = extcmds[1:]
+            if self.opts.tid_action == 'undo':
+                id_, = self.opts.tid
                 return (_('Cannot undo transaction %s, doing so would result '
                           'in an inconsistent package database.') % id_,)
-            elif extcmds[0] == 'rollback':
-                id_, = extcmds[1:] if extcmds[1] != 'force' else extcmds[2:]
+            elif self.opts.tid_action == 'rollback':
+                id_, = self.opts.tid if self.opts.tid[0] != 'force' else self.opts.tid[1:]
                 return (_('Cannot rollback transaction %s, doing so would '
                           'result in an inconsistent package database.') % id_,)
 
         return Command.get_error_output(self, error)
 
     def _hcmd_redo(self, extcmds):
-        old = self.base.history_get_transaction((extcmd,))
+        old = self.base.history_get_transaction(extcmds)
         if old is None:
             return 1, ['Failed history redo']
         tm = time.ctime(old.beg_timestamp)
@@ -967,13 +953,13 @@ class HistoryCommand(Command):
 
     def _hcmd_undo(self, extcmds):
         try:
-            return self.base.history_undo_transaction(extcmd)
+            return self.base.history_undo_transaction(extcmds[0])
         except dnf.exceptions.Error as err:
             return 1, [str(err)]
 
     def _hcmd_rollback(self, extcmds):
         try:
-            return self.base.history_rollback_transaction(extcmd)
+            return self.base.history_rollback_transaction(extcmds[0])
         except dnf.exceptions.Error as err:
             return 1, [str(err)]
 
@@ -983,8 +969,8 @@ class HistoryCommand(Command):
         return self.output.listPkgs(pkgs, 'Packages installed by user', 'name')
 
     def run(self):
-        vcmd = self.opts.vcmd
-        extcmds = getattr(self.opts, 'tid', [])
+        vcmd = self.opts.tid_action
+        extcmds = self.opts.tid
 
         if False: pass
         elif vcmd == 'list':

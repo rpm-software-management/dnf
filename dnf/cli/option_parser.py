@@ -165,6 +165,28 @@ class OptionParser(argparse.ArgumentParser):
                 else:
                     namespace.pkg_specs.append(value)
 
+    class PkgNarrowCallback(argparse.Action):
+        def __init__(self, *args, **kwargs):
+            self.pkgnarrow = {}
+            try:
+                for k in ['choices', 'default']:
+                    self.pkgnarrow[k] = kwargs[k]
+                    del kwargs[k]
+            except KeyError as e:
+                raise TypeError("%s() missing mandatory argument %s"
+                                % (self.__class__.__name__, e))
+            kwargs['default'] = []
+            super(OptionParser.PkgNarrowCallback, self).__init__(*args, **kwargs)
+
+        def __call__(self, parser, namespace, values, opt_str):
+            dest_action = self.dest + '_action'
+            if not values or values[0] not in self.pkgnarrow['choices']:
+                narrow = self.pkgnarrow['default']
+            else:
+                narrow = values.pop(0)
+            setattr(namespace, dest_action, narrow)
+            setattr(namespace, self.dest, values)
+
     def _main_parser(self):
         """ Standard options known to all dnf subcommands. """
         # All defaults need to be a None, so we can always tell whether the user
