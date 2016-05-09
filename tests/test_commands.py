@@ -29,6 +29,7 @@ import dnf.pycomp
 import dnf.repo
 import itertools
 import logging
+import tempfile
 import unittest
 
 
@@ -36,13 +37,13 @@ class CommandsCliTest(support.TestCase):
     def setUp(self):
         self.base = support.MockBase()
         self.cli = self.base.mock_cli()
+        self.base.conf.persistdir = tempfile.mkdtemp()
 
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     def test_history_get_error_output_rollback_transactioncheckerror(self):
         """Test get_error_output with the history rollback and a TransactionCheckError."""
         cmd = dnf.cli.commands.HistoryCommand(self.cli)
-        self.base.basecmd = 'history'
-        self.base.extcmds = ('rollback', '1')
+        support.command_configure(cmd, ['rollback', '1'])
 
         lines = cmd.get_error_output(dnf.exceptions.TransactionCheckError())
 
@@ -55,8 +56,7 @@ class CommandsCliTest(support.TestCase):
     def test_history_get_error_output_undo_transactioncheckerror(self):
         """Test get_error_output with the history undo and a TransactionCheckError."""
         cmd = dnf.cli.commands.HistoryCommand(self.cli)
-        self.base.basecmd = 'history'
-        self.base.extcmds = ('undo', '1')
+        support.command_configure(cmd, ['undo', '1'])
 
         lines = cmd.get_error_output(dnf.exceptions.TransactionCheckError())
 
@@ -215,7 +215,7 @@ class RepoPkgsCommandTest(unittest.TestCase):
         with self.assertRaises(SystemExit) as exit, \
              mock.patch('sys.stdout') as stdout:
              support.command_configure(self.cmd, [])
-        self.assertEqual(exit.exception.code, 2)
+        self.assertEqual(exit.exception.code, 1)
 
 class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
 
@@ -233,9 +233,9 @@ class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
             self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
             self.cli.base._yumdb.get_package(pkg).from_repo = 'updates'
 
-        cmd = dnf.cli.commands.RepoPkgsCommand.CheckUpdateSubCommand(self.cli)
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
-            cmd.run_on_repo('updates', [])
+            support.command_run(cmd, ['updates', 'check-update'])
 
         self.assertEqual(
             stdout.getvalue(),
@@ -259,9 +259,10 @@ class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
 
     def test_not_found(self):
         """Test whether exit code differs if updates are not found."""
-        cmd = dnf.cli.commands.RepoPkgsCommand.CheckUpdateSubCommand(self.cli)
-        cmd.run_on_repo('main', [])
-        self.assertNotEqual(self.cli.demands.success_exit_status, 100)
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
+        with self.assertRaises(SystemExit) as exit:
+            support.command_run(cmd, ['main', 'check-updates'])
+        self.assertEqual(exit.exception.code, 1)
 
 class RepoPkgsInfoSubCommandTest(unittest.TestCase):
 
@@ -330,9 +331,9 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
             self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
             self.cli.base._yumdb.get_package(pkg).from_repo = 'main'
 
-        cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(self.cli)
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
-            cmd.run_on_repo('main', ['all', '*p*'])
+            support.command_run(cmd, ['main', 'info', 'all', '*p*'])
 
         self.assertEqual(
             stdout.getvalue(),
@@ -365,9 +366,9 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
 
     def test_info_available(self):
         """Test whether only packages in the repository are listed."""
-        cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(self.cli)
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
-            cmd.run_on_repo('updates', ['available'])
+            support.command_run(cmd, ['updates', 'info', 'available'])
 
         self.assertEqual(
             stdout.getvalue(),
@@ -383,9 +384,9 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
             self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
             self.cli.base._yumdb.get_package(pkg).from_repo = 'unknown'
 
-        cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(self.cli)
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
-            cmd.run_on_repo('unknown', ['extras'])
+            support.command_run(cmd, ['unknown', 'info', 'extras'])
 
         self.assertEqual(
             stdout.getvalue(),
@@ -408,9 +409,9 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
             self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
             self.cli.base._yumdb.get_package(pkg).from_repo = 'main'
 
-        cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(self.cli)
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
-            cmd.run_on_repo('main', ['installed'])
+            support.command_run(cmd, ['main', 'info', 'installed'])
 
         self.assertEqual(
             stdout.getvalue(),
@@ -418,9 +419,9 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
 
     def test_info_obsoletes(self):
         """Test whether only obsoletes in the repository are listed."""
-        cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(self.cli)
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
-            cmd.run_on_repo('updates', ['obsoletes'])
+            support.command_run(cmd, ['updates', 'info', 'obsoletes'])
 
         self.assertEqual(
             stdout.getvalue(),
@@ -431,10 +432,10 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
 
     def test_info_recent(self):
         """Test whether only packages in the repository are listed."""
-        cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(self.cli)
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with mock.patch('time.time', return_value=0), \
                 support.patch_std_streams() as (stdout, _):
-            cmd.run_on_repo('updates', ['recent'])
+            support.command_run(cmd, ['updates', 'info', 'recent'])
 
         self.assertEqual(
             stdout.getvalue(),
@@ -446,9 +447,9 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
 
     def test_info_upgrades(self):
         """Test whether only upgrades in the repository are listed."""
-        cmd = dnf.cli.commands.RepoPkgsCommand.InfoSubCommand(self.cli)
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
-            cmd.run_on_repo('updates', ['upgrades'])
+            support.command_run(cmd, ['updates', 'info', 'upgrades'])
 
         self.assertEqual(
             stdout.getvalue(),
@@ -483,8 +484,8 @@ class RepoPkgsInstallSubCommandTest(support.ResultTestCase):
 
     def test_all(self):
         """Test whether all packages from the repository are installed."""
-        cmd = dnf.cli.commands.RepoPkgsCommand.InstallSubCommand(self.cli)
-        cmd.run_on_repo('third_party', [])
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
+        support.command_run(cmd, ['third_party', 'install'])
 
         self.assertResult(self.cli.base, itertools.chain(
             self.cli.base.sack.query().installed().filter(name__neq='hole'),
@@ -504,8 +505,8 @@ class RepoPkgsMoveToSubCommandTest(support.ResultTestCase):
 
     def test_all(self):
         """Test whether only packages in the repository are installed."""
-        cmd = dnf.cli.commands.RepoPkgsCommand.MoveToSubCommand(self.cli)
-        cmd.run_on_repo('distro', [])
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
+        support.command_run(cmd, ['distro', 'move-to'])
 
         self.assertResult(self.cli.base, itertools.chain(
             self.cli.base.sack.query().installed().filter(name__neq='tour'),
@@ -530,8 +531,8 @@ class RepoPkgsReinstallOldSubCommandTest(support.ResultTestCase):
             self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
             self.cli.base._yumdb.get_package(pkg).from_repo = reponame
 
-        cmd = dnf.cli.commands.RepoPkgsCommand.ReinstallOldSubCommand(self.cli)
-        cmd.run_on_repo('main', [])
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
+        support.command_run(cmd, ['main', 'reinstall-old'])
 
         self.assertResult(self.cli.base, itertools.chain(
               self.cli.base.sack.query().installed().filter(name__neq='librita'),
@@ -567,31 +568,31 @@ class RepoPkgsReinstallSubCommandTest(unittest.TestCase):
         self.mock.reinstall_old_run.side_effect = dnf.exceptions.Error('test')
         self.mock.move_to_run.side_effect = dnf.exceptions.Error('test')
 
-        cmd = dnf.cli.commands.RepoPkgsCommand.ReinstallSubCommand(self.cli)
-        self.assertRaises(dnf.exceptions.Error, cmd.run_on_repo, 'main', [])
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
+        self.assertRaises(dnf.exceptions.Error, support.command_run, cmd, ['main', 'reinstall'])
 
         self.assertEqual(self.mock.mock_calls,
-                         [mock.call.reinstall_old_run('main', []),
-                          mock.call.move_to_run('main', [])])
+                         [mock.call.reinstall_old_run(),
+                          mock.call.move_to_run()])
 
     def test_all_moveto(self):
         """Test whether reinstall-old is called first and move-to next."""
         self.mock.reinstall_old_run.side_effect = dnf.exceptions.Error('test')
 
-        cmd = dnf.cli.commands.RepoPkgsCommand.ReinstallSubCommand(self.cli)
-        cmd.run_on_repo('main', [])
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
+        support.command_run(cmd, ['main', 'reinstall'])
 
         self.assertEqual(self.mock.mock_calls,
-                         [mock.call.reinstall_old_run('main', []),
-                          mock.call.move_to_run('main', [])])
+                         [mock.call.reinstall_old_run(),
+                          mock.call.move_to_run()])
 
     def test_all_reinstallold(self):
         """Test whether only reinstall-old is called."""
-        cmd = dnf.cli.commands.RepoPkgsCommand.ReinstallSubCommand(self.cli)
-        cmd.run_on_repo('main', [])
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
+        support.command_run(cmd, ['main', 'reinstall'])
 
         self.assertEqual(self.mock.mock_calls,
-                         [mock.call.reinstall_old_run('main', [])])
+                         [mock.call.reinstall_old_run()])
 
 class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
 
@@ -610,9 +611,8 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
             data.from_repo = 'non-distro' if pkg.name == 'pepper' else 'distro'
             self.cli.base._yumdb.db[str(pkg)] = data
 
-        cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrDistroSyncSubCommand(
-            self.cli)
-        cmd.run_on_repo('non-distro', ['pepper'])
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
+        support.command_run(cmd, ['non-distro', 'remove-or-distro-sync', 'pepper'])
 
         self.assertResult(self.cli.base, itertools.chain(
             self.cli.base.sack.query().installed().filter(name__neq='pepper'),
@@ -626,9 +626,8 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
             data.from_repo = 'non-distro' if pkg.name == 'hole' else 'distro'
             self.cli.base._yumdb.db[str(pkg)] = data
 
-        cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrDistroSyncSubCommand(
-            self.cli)
-        cmd.run_on_repo('non-distro', ['hole'])
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
+        support.command_run(cmd, ['non-distro', 'remove-or-distro-sync', 'hole'])
 
         self.assertResult(
             self.cli.base,
@@ -642,9 +641,8 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
             data.from_repo = 'non-distro' if pkg.name in nondist else 'distro'
             self.cli.base._yumdb.db[str(pkg)] = data
 
-        cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrDistroSyncSubCommand(
-            self.cli)
-        cmd.run_on_repo('non-distro', [])
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
+        support.command_run(cmd, ['non-distro', 'remove-or-distro-sync'])
 
         self.assertResult(self.cli.base, itertools.chain(
             self.cli.base.sack.query().installed().filter(name__neq='pepper')
@@ -657,11 +655,11 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
         """Test running with a package which is not installed."""
         stdout = dnf.pycomp.StringIO()
 
-        cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrDistroSyncSubCommand(
-            self.cli)
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with support.wiretap_logs('dnf', logging.INFO, stdout):
             self.assertRaises(dnf.exceptions.Error,
-                              cmd.run_on_repo, 'non-distro', ['not-installed'])
+                              support.command_run, cmd,
+                              ['non-distro', 'remove-or-distro-sync', 'not-installed'])
 
         self.assertIn('No match for argument: not-installed\n', stdout.getvalue(),
                       'mismatch not logged')
@@ -671,11 +669,11 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
         """Test running with a repository from which nothing is installed."""
         stdout = dnf.pycomp.StringIO()
 
-        cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrDistroSyncSubCommand(
-            self.cli)
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with support.wiretap_logs('dnf', logging.INFO, stdout):
             self.assertRaises(dnf.exceptions.Error,
-                              cmd.run_on_repo, 'non-distro', [])
+                              support.command_run, cmd,
+                              ['non-distro', 'remove-or-distro-sync'])
 
         self.assertIn('No package installed from the repository.\n',
                       stdout.getvalue(), 'mismatch not logged')
@@ -693,10 +691,10 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(support.ResultTestCase):
 
     def test_all_not_installed(self):
         """Test whether it fails if no package is installed from the repository."""
-        cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrReinstallSubCommand(
-            self.cli)
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         self.assertRaises(dnf.exceptions.Error,
-                          cmd.run_on_repo, 'non-distro', [])
+                          support.command_run, cmd,
+                          ['non-distro', 'remove-or-distro-sync'])
 
         self.assertResult(self.cli.base, self.cli.base.sack.query().installed())
 
@@ -707,9 +705,8 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(support.ResultTestCase):
             self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
             self.cli.base._yumdb.get_package(pkg).from_repo = reponame
 
-        cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrReinstallSubCommand(
-            self.cli)
-        cmd.run_on_repo('non-distro', [])
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
+        support.command_run(cmd, ['non-distro', 'remove-or-reinstall'])
 
         self.assertResult(self.cli.base, itertools.chain(
               self.cli.base.sack.query().installed().filter(name__neq='tour'),
@@ -723,9 +720,8 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(support.ResultTestCase):
             self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
             self.cli.base._yumdb.get_package(pkg).from_repo = reponame
 
-        cmd = dnf.cli.commands.RepoPkgsCommand.RemoveOrReinstallSubCommand(
-            self.cli)
-        cmd.run_on_repo('non-distro', [])
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
+        support.command_run(cmd, ['non-distro', 'remove-or-reinstall'])
 
         self.assertResult(
             self.cli.base,
@@ -749,8 +745,8 @@ class RepoPkgsRemoveSubCommandTest(support.ResultTestCase):
             self.cli.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
             self.cli.base._yumdb.get_package(pkg).from_repo = reponame
 
-        cmd = dnf.cli.commands.RepoPkgsCommand.RemoveSubCommand(self.cli)
-        cmd.run_on_repo('main', [])
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
+        support.command_run(cmd, ['main', 'remove'])
 
         self.assertResult(
             self.cli.base,
@@ -769,8 +765,8 @@ class RepoPkgsUpgradeSubCommandTest(support.ResultTestCase):
 
     def test_all(self):
         """Test whether all packages from the repository are installed."""
-        cmd = dnf.cli.commands.RepoPkgsCommand.UpgradeSubCommand(self.cli)
-        cmd.run_on_repo('third_party', [])
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
+        support.command_run(cmd, ['third_party', 'upgrade'])
 
         self.assertResult(self.cli.base, itertools.chain(
             self.cli.base.sack.query().installed().filter(name__neq='hole'),
@@ -790,8 +786,8 @@ class RepoPkgsUpgradeToSubCommandTest(support.ResultTestCase):
 
     def test_all(self):
         """Test whether the package from the repository is installed."""
-        cmd = dnf.cli.commands.RepoPkgsCommand.UpgradeToSubCommand(self.cli)
-        cmd.run_on_repo('updates', ['hole-1-2'])
+        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
+        support.command_run(cmd, ['updates', 'upgrade', 'hole-1-2'])
 
         self.assertResult(self.cli.base, itertools.chain(
             self.cli.base.sack.query().installed().filter(name__neq='hole'),
