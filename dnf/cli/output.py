@@ -198,7 +198,7 @@ class Output(object):
 
     @property
     def yumdb(self):
-        return self.base.yumdb
+        return self.base._yumdb
 
     def calcColumns(self, data, columns=None, remainder_column=0,
                     total_width=None, indent=''):

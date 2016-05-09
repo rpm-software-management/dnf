@@ -37,7 +37,7 @@ class AutoremoveCommand(commands.Command):
 
     def run(self, extcmds):
         base = self.base
-        pkgs = base.sack.query().unneeded(base.sack, base.yumdb,
+        pkgs = base.sack.query().unneeded(base.sack, base._yumdb,
                                           debug_solver=base.conf.debug_solver)
         for pkg in pkgs:
             base.package_remove(pkg)
