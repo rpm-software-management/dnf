@@ -122,7 +122,7 @@ class PresetPersistorTest(support.ResultTestCase):
         self.assertTrue(p_grp.installed)
 
     def test_group_install_broken(self):
-        prst = self.base.group_persistor
+        prst = self.base._group_persistor
         grp = self.base.comps.group_by_pattern('Broken Group')
         p_grp = prst.group('broken-group')
         self.assertFalse(p_grp.installed)
