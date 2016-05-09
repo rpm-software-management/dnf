@@ -39,7 +39,7 @@ class SearchCommand(commands.Command):
     """
 
     aliases = ('search',)
-    summary = _('Search package details for the given string')
+    summary = _('search package details for the given string')
     usage = _('QUERY_STRING')
 
     def _search(self, args):

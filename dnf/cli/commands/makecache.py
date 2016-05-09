@@ -33,7 +33,7 @@ logger = logging.getLogger("dnf")
 
 class MakeCacheCommand(commands.Command):
     aliases = ('makecache',)
-    summary = _('Generate the metadata cache')
+    summary = _('generate the metadata cache')
     usage = ''
 
     def doCheck(self, basecmd, extcmds):
