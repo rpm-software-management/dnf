@@ -38,7 +38,7 @@ class UpgradeCommand(commands.Command):
     aliases = ('upgrade', 'update')
     activate_sack = True
     resolve = True
-    summary = _("Upgrade a package or packages on your system")
+    summary = _('upgrade a package or packages on your system')
     usage = "[%s...]" % _('PACKAGE')
     writes_rpmdb = True
 

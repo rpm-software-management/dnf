@@ -71,7 +71,7 @@ class RepoListCommand(commands.Command):
     """
 
     aliases = ('repolist',)
-    summary = _('Display the configured software repositories')
+    summary = _('display the configured software repositories')
     usage = '[all|enabled|disabled]'
 
     def configure(self, _):

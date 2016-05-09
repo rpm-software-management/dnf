@@ -229,7 +229,7 @@ class InfoCommand(Command):
     """
 
     aliases = ('info',)
-    summary = _("Display details about a package or group of packages")
+    summary = _('display details about a package or group of packages')
     usage = "[%s|all|available|installed|updates|extras|autoremove|obsoletes|recent]" % _('PACKAGE')
 
     @staticmethod
@@ -264,7 +264,7 @@ class ListCommand(InfoCommand):
     """
 
     aliases = ('list',)
-    summary = _("List a package or groups of packages")
+    summary = _('list a package or groups of packages')
 
     def run(self, extcmds):
         pkgnarrow, patterns = self.parse_extcmds(extcmds)
@@ -277,7 +277,7 @@ class ProvidesCommand(Command):
     """
 
     aliases = ('provides', 'whatprovides')
-    summary = _("Find what package provides the given value")
+    summary = _('find what package provides the given value')
     usage = _("SOME_STRING")
 
     def configure(self, _):
@@ -306,7 +306,7 @@ class CheckUpdateCommand(Command):
 
     activate_sack = True
     aliases = ('check-update',)
-    summary = _("Check for available package upgrades")
+    summary = _('check for available package upgrades')
     usage = "[%s...]" % _('PACKAGE')
 
     def __init__(self, cli):
@@ -913,7 +913,7 @@ class RepoPkgsCommand(Command):
 
     aliases = ('repository-packages',
                'repo-pkgs', 'repo-packages', 'repository-pkgs')
-    summary = _('Run commands on top of all packages in given repository')
+    summary = _('run commands on top of all packages in given repository')
     usage = '%s check-update|info|install|list|move-to|reinstall|' \
             'reinstall-old|remove|remove-or-distro-sync|remove-or-reinstall|' \
             'upgrade|upgrade-to [%s...]' % (_('REPO'), _('ARG'))
@@ -988,7 +988,7 @@ class HelpCommand(Command):
     """
 
     aliases = ('help',)
-    summary = _("Display a helpful usage message")
+    summary = _('display a helpful usage message')
     usage = _("COMMAND")
 
     def doCheck(self, basecmd, extcmds):
@@ -1044,7 +1044,7 @@ class HistoryCommand(Command):
     """
 
     aliases = ('history',)
-    summary = _("Display, or use, the transaction history")
+    summary = _('display, or use, the transaction history')
     usage = "[info|list|redo|undo|rollback|userinstalled]"
 
     def configure(self, args):

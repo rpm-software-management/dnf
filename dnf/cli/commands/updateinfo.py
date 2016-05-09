@@ -48,7 +48,7 @@ class UpdateInfoCommand(commands.Command):
                   hawkey.ADVISORY_UNKNOWN: _('unknown')}
 
     aliases = ['updateinfo']
-    summary = _('Display advisories about packages')
+    summary = _('display advisories about packages')
     usage = ''
 
     def __init__(self, cli):

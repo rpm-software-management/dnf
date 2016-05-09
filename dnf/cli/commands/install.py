@@ -39,7 +39,7 @@ class InstallCommand(commands.Command):
     aliases = ('install',)
     activate_sack = True
     resolve = True
-    summary = _("Install a package or packages on your system")
+    summary = _('install a package or packages on your system')
     usage = "%s..." % _('PACKAGE')
     writes_rpmdb = True
 

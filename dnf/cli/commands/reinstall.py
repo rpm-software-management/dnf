@@ -39,7 +39,7 @@ class ReinstallCommand(commands.Command):
     activate_sack = True
     aliases = ('reinstall',)
     resolve = True
-    summary = _("reinstall a package")
+    summary = _('reinstall a package')
     usage = "%s..." % _('PACKAGE')
     writes_rpmdb = True
 
