@@ -81,7 +81,7 @@ class CleanCommand(commands.Command):
     """
 
     aliases = ('clean',)
-    summary = _("Remove cached data")
+    summary = _('remove cached data')
     usage = "[%s]" % "|".join(_CACHE_TYPES)
 
     def doCheck(self, basecmd, extcmds):

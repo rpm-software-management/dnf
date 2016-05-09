@@ -33,7 +33,7 @@ class RemoveCommand(commands.Command):
     """Remove command."""
 
     aliases = ('remove', 'erase')
-    summary = _("Remove a package or packages from your system")
+    summary = _('remove a package or packages from your system')
     usage = "%s..." % _('PACKAGE')
 
     def configure(self, _):

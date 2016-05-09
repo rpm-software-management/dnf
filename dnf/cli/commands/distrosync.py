@@ -31,7 +31,7 @@ class DistroSyncCommand(commands.Command):
     aliases = ('distro-sync', 'distribution-synchronization')
     activate_sack = True
     resolve = True
-    summary = _("Synchronize installed packages to the latest available versions")
+    summary = _('synchronize installed packages to the latest available versions')
     usage = '[%s...]' % _('PACKAGE')
     writes_rpmdb = True
 
