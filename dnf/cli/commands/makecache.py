@@ -50,7 +50,7 @@ class MakeCacheCommand(commands.Command):
         logger.debug(msg)
         period = self.base.conf.metadata_timer_sync
         timer = 'timer' == dnf.util.first(extcmds)
-        persistor = self.base.repo_persistor
+        persistor = self.base._repo_persistor
         if timer:
             if dnf.util.on_ac_power() is False:
                 msg = _('Metadata timer caching disabled '

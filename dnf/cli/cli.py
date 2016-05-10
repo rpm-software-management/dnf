@@ -766,7 +766,7 @@ class Cli(object):
                 repo.gpgcheck = False
                 repo.repo_gpgcheck = False
 
-        for rid in self.base.repo_persistor.get_expired_repos():
+        for rid in self.base._repo_persistor.get_expired_repos():
             repo = self.base.repos.get(rid)
             if repo:
                 repo.md_expire_cache()
@@ -778,7 +778,7 @@ class Cli(object):
                 repo.md_only_cached = True
 
         # setup the progress bars/callbacks
-        (bar, self.base.ds_callback) = self.base.output.setup_progress_callbacks()
+        (bar, self.base._ds_callback) = self.base.output.setup_progress_callbacks()
         self.base.repos.all().set_progress_bar(bar)
         key_import = output.CliKeyImport(self.base, self.base.output)
         self.base.repos.all().set_key_import(key_import)
@@ -823,7 +823,7 @@ class Cli(object):
                                     "%s ago on %s."),
                                     datetime.timedelta(seconds=age),
                                     time.ctime(mts))
-            self.base.plugins.run_sack()
+            self.base._plugins.run_sack()
 
     def _root_and_conffile(self, installroot, conffile):
         """After the first parse of the cmdline options, find initial values for
@@ -1007,8 +1007,8 @@ class Cli(object):
         # store the main commands & summaries, before plugins are loaded
         self.optparser.add_commands(self.cli_commands, 'main')
         if self.base.conf.plugins:
-            self.base.plugins.load(self.base.conf.pluginpath, opts.disableplugins)
-        self.base.plugins.run_init(self.base, self)
+            self.base._plugins.load(self.base.conf.pluginpath, opts.disableplugins)
+        self.base._plugins.run_init(self.base, self)
         # store the plugin commands & summaries
         self.optparser.add_commands(self.cli_commands,'plugin')
 
@@ -1042,7 +1042,7 @@ class Cli(object):
 
         self.base.cmd_conf.downloadonly = opts.downloadonly
 
-        self.base.plugins.run_config()
+        self.base._plugins.run_config()
 
     def check(self):
         """Make sure the command line and options make sense."""
@@ -1068,7 +1068,7 @@ class Cli(object):
             conf.prepend_installroot(opt)
             conf._var_replace(opt)
 
-        self.base.logging.setup_from_dnf_conf(conf)
+        self.base._logging.setup_from_dnf_conf(conf)
 
         timer()
         return conf

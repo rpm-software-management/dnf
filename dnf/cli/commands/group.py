@@ -248,7 +248,7 @@ class GroupCommand(commands.Command):
         q = CompsQuery(self.base.comps, prst,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
-        solver = self.base.build_comps_solver()
+        solver = self.base._build_comps_solver()
         res = q.get(*patterns)
         types = dnf.comps.DEFAULT | dnf.comps.MANDATORY | dnf.comps.OPTIONAL
 
@@ -275,7 +275,7 @@ class GroupCommand(commands.Command):
         q = CompsQuery(self.base.comps, prst,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.INSTALLED)
-        solver = self.base.build_comps_solver()
+        solver = self.base._build_comps_solver()
         res = q.get(*patterns)
         for env_id in res.environments:
             solver.environment_remove(env_id)
@@ -421,7 +421,7 @@ class GroupCommand(commands.Command):
     def run_transaction(self):
         if not self._remark:
             return
-        goal = self.base.goal
+        goal = self.base._goal
         pkgdb = self.base._yumdb
         names = goal.group_members
         for pkg in self.base.sack.query().installed().filter(name=names):

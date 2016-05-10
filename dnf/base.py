@@ -78,7 +78,7 @@ class Base(object):
         self._closed = False
         self._conf = conf or self._setup_default_conf()
         self._goal = None
-        self.repo_persistor = None
+        self._repo_persistor = None
         self._sack = None
         self._transaction = None
         self._priv_ts = None
@@ -86,13 +86,13 @@ class Base(object):
         self._history = None
         self._tempfiles = set()
         self._trans_tempfiles = set()
-        self.ds_callback = dnf.callback.Depsolve()
+        self._ds_callback = dnf.callback.Depsolve()
         self._group_persistor = None
-        self.logging = dnf.logging.Logging()
+        self._logging = dnf.logging.Logging()
         self._repos = dnf.repodict.RepoDict()
-        self.rpm_probfilter = set([rpm.RPMPROB_FILTER_OLDPACKAGE])
-        self.plugins = dnf.plugin.Plugins()
-        self.trans_success = False
+        self._rpm_probfilter = set([rpm.RPMPROB_FILTER_OLDPACKAGE])
+        self._plugins = dnf.plugin.Plugins()
+        self._trans_success = False
         self._tempfile_persistor = None
 
     def __enter__(self):
@@ -164,10 +164,10 @@ class Base(object):
                 self.sack.add_includes(pkgs)
 
     def _store_persistent_data(self):
-        if self.repo_persistor:
+        if self._repo_persistor:
             expired = [r.id for r in self.repos.iter_enabled() if r.md_expired]
-            self.repo_persistor.expired_to_add.update(expired)
-            self.repo_persistor.save()
+            self._repo_persistor.expired_to_add.update(expired)
+            self._repo_persistor.save()
 
         if self._group_persistor:
             self._group_persistor.save()
@@ -218,7 +218,7 @@ class Base(object):
         self._transaction = value
 
     def _activate_persistor(self):
-        self.repo_persistor = dnf.persistor.RepoPersistor(self.conf.cachedir)
+        self._repo_persistor = dnf.persistor.RepoPersistor(self.conf.cachedir)
 
     def fill_sack(self, load_system_repo=True, load_available_repos=True):
         """Prepare the Sack and the Goal objects. :api."""
@@ -273,12 +273,12 @@ class Base(object):
             self.conf.cachedir)
 
         if self._group_persistor and \
-                (not self._transaction or self.trans_success):
+                (not self._transaction or self._trans_success):
             self._group_persistor.commit()
 
         if not self.conf.keepcache:
             self._clean_packages(self._tempfiles)
-            if self.trans_success:
+            if self._trans_success:
                 self._trans_tempfiles.update(
                     self._tempfile_persistor.get_saved_tempfiles())
                 self._tempfile_persistor.empty()
@@ -359,9 +359,9 @@ class Base(object):
                 self._priv_ts.pushVSFlags(vs_flag)
 
         if not self.conf.diskspacecheck:
-            self.rpm_probfilter.add(rpm.RPMPROB_FILTER_DISKSPACE)
+            self._rpm_probfilter.add(rpm.RPMPROB_FILTER_DISKSPACE)
 
-        probfilter = reduce(operator.or_, self.rpm_probfilter, 0)
+        probfilter = reduce(operator.or_, self._rpm_probfilter, 0)
         self._priv_ts.setProbFilter(probfilter)
         return self._priv_ts
 
@@ -437,35 +437,35 @@ class Base(object):
         for pkg in goal.list_downgrades():
             obs = goal.obsoleted_by_package(pkg)
             downgraded = obs[0]
-            self.ds_callback.pkg_added(downgraded, 'dd')
-            self.ds_callback.pkg_added(pkg, 'd')
+            self._ds_callback.pkg_added(downgraded, 'dd')
+            self._ds_callback.pkg_added(pkg, 'd')
             ts.add_downgrade(pkg, downgraded, obs[1:])
         for pkg in goal.list_reinstalls():
-            self.ds_callback.pkg_added(pkg, 'r')
+            self._ds_callback.pkg_added(pkg, 'r')
             obs = goal.obsoleted_by_package(pkg)
             reinstalled = obs[0]
             ts.add_reinstall(pkg, reinstalled, obs[1:])
         for pkg in goal.list_installs():
-            self.ds_callback.pkg_added(pkg, 'i')
+            self._ds_callback.pkg_added(pkg, 'i')
             obs = goal.obsoleted_by_package(pkg)
             ts.add_install(pkg, obs, goal.get_reason(pkg))
-            cb = lambda pkg: self.ds_callback.pkg_added(pkg, 'od')
+            cb = lambda pkg: self._ds_callback.pkg_added(pkg, 'od')
             dnf.util.mapall(cb, obs)
         for pkg in goal.list_upgrades():
             group_fn = functools.partial(operator.contains, all_obsoleted)
             obs, upgraded = dnf.util.group_by_filter(
                 group_fn, goal.obsoleted_by_package(pkg))
-            cb = lambda pkg: self.ds_callback.pkg_added(pkg, 'od')
+            cb = lambda pkg: self._ds_callback.pkg_added(pkg, 'od')
             dnf.util.mapall(cb, obs)
             if pkg.name in self.conf.installonlypkgs:
                 ts.add_install(pkg, obs)
             else:
                 ts.add_upgrade(pkg, upgraded[0], obs)
-                cb = lambda pkg: self.ds_callback.pkg_added(pkg, 'ud')
+                cb = lambda pkg: self._ds_callback.pkg_added(pkg, 'ud')
                 dnf.util.mapall(cb, upgraded)
-            self.ds_callback.pkg_added(pkg, 'u')
+            self._ds_callback.pkg_added(pkg, 'u')
         for pkg in goal.list_erasures():
-            self.ds_callback.pkg_added(pkg, 'e')
+            self._ds_callback.pkg_added(pkg, 'e')
             ts.add_erase(pkg)
         return ts
 
@@ -516,7 +516,7 @@ class Base(object):
         exc = None
 
         timer = dnf.logging.Timer('depsolve')
-        self.ds_callback.start()
+        self._ds_callback.start()
         goal = self._goal
         if goal.req_has_erase():
             goal.push_userinstalled(self.sack.query().installed(), self._yumdb)
@@ -527,7 +527,7 @@ class Base(object):
         else:
             self._transaction = self._goal2transaction(goal)
 
-        self.ds_callback.end()
+        self._ds_callback.end()
         timer()
 
         got_transaction = self._transaction is not None and \
@@ -558,8 +558,8 @@ class Base(object):
         lock = dnf.lock.build_rpmdb_lock(self.conf.persistdir)
         with lock:
             # save our ds_callback out
-            dscb = self.ds_callback
-            self.ds_callback = None
+            dscb = self._ds_callback
+            self._ds_callback = None
             self.transaction.populate_rpm_ts(self._ts)
 
             msgs = self._run_rpm_check()
@@ -596,7 +596,7 @@ class Base(object):
             # unset the sigquit handler
             timer = dnf.logging.Timer('transaction')
             # put back our depcheck callback
-            self.ds_callback = dscb
+            self._ds_callback = dscb
             # setup our rpm ts callback
             cb = dnf.yum.rpmtrans.RPMTransaction(self, displays=display)
             if self.conf.debuglevel < 2:
@@ -846,7 +846,7 @@ class Base(object):
             rpmdbv = rpmdb_sack.rpmdb_version(self._yumdb)
             self.history.end(rpmdbv, 0)
         timer()
-        self.trans_success = True
+        self._trans_success = True
 
     def download_packages(self, pkglist, progress=None, callback_total=None):
         """Download the packages specified by the given list of packages. :api
@@ -1234,7 +1234,7 @@ class Base(object):
         return self._add_comps_trans(trans)
 
     def environment_remove(self, env_id):
-        solver = self.build_comps_solver()
+        solver = self._build_comps_solver()
         trans = solver.environment_remove(env_id)
         return self._add_comps_trans(trans)
 
@@ -1278,7 +1278,7 @@ class Base(object):
             nested_excludes = [_pattern_to_pkgname(p) for p in exclude]
             exclude_pkgnames = itertools.chain.from_iterable(nested_excludes)
 
-        solver = self.build_comps_solver()
+        solver = self._build_comps_solver()
         pkg_types = self._translate_comps_pkg_types(pkg_types)
         trans = dnf.comps.install_or_skip(solver.group_install,
                                           grp_id, pkg_types, exclude_pkgnames,
@@ -1320,7 +1320,7 @@ class Base(object):
                 dnf.logging.depr(msg)
                 grp_id = grp_id.id
 
-        solver = self.build_comps_solver()
+        solver = self._build_comps_solver()
         trans = solver.group_remove(grp_id)
         return self._add_comps_trans(trans)
 
@@ -1355,7 +1355,7 @@ class Base(object):
             raise dnf.cli.CliError(msg)
 
     def environment_upgrade(self, env_id):
-        solver = self.build_comps_solver()
+        solver = self._build_comps_solver()
         trans = solver.environment_upgrade(env_id)
         return self._add_comps_trans(trans)
 
@@ -1369,7 +1369,7 @@ class Base(object):
                 dnf.logging.depr(msg)
                 grp_id = grp_id.id
 
-        solver = self.build_comps_solver()
+        solver = self._build_comps_solver()
         trans = solver.group_upgrade(grp_id)
         return self._add_comps_trans(trans)
 
