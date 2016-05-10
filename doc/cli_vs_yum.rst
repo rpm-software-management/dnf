@@ -303,24 +303,26 @@ See the the related `Fedora bug 1096506
  Changes in DNF plugins compared to Yum plugins
 ###############################################
 
-==================================  ========================================  ===============================
-Original Yum tool                   DNF command/option                        Package
-----------------------------------  ----------------------------------------  -------------------------------
-``yum check``                       `dnf repoquery`_ ``--unsatisfied``        ``dnf-plugins-core``
-``yum-langpacks``                                                             ``dnf-langpacks``
-``yum-plugin-copr``                 `dnf copr`_                               ``dnf-plugins-core``
-``yum-plugin-fastestmirror``        ``fastestmirror`` option in `dnf.conf`_   ``dnf``
-``yum-plugin-fs-snapshot``                                                    ``dnf-plugins-extras-snapper``
-``yum-plugin-local``                                                          ``dnf-plugins-extras-local``
-``yum-plugin-merge-conf``                                                     ``dnf-plugins-extras-rpmconf``
-``yum-plugin-priorities``           ``priority`` option in `dnf.conf`_        ``dnf``
-``yum-plugin-remove-with-leaves``   ``dnf autoremove``                        ``dnf``
-==================================  ========================================  ===============================
+======================================  ========================================  ===================================
+Original Yum tool                       DNF command/option                        Package
+--------------------------------------  ----------------------------------------  -----------------------------------
+``yum-plugin-auto-update-debug-info``   option in ``debuginfo-install.conf``      ``dnf-plugins-core``
+``yum check``                           `dnf repoquery`_ ``--unsatisfied``        ``dnf-plugins-core``
+``yum-langpacks``                                                                 ``dnf-langpacks``
+``yum-plugin-copr``                     `dnf copr`_                               ``dnf-plugins-core``
+``yum-plugin-fastestmirror``            ``fastestmirror`` option in `dnf.conf`_   ``dnf``
+``yum-plugin-fs-snapshot``                                                        ``dnf-plugins-extras-snapper``
+``yum-plugin-local``                                                              ``dnf-plugins-extras-local``
+``yum-plugin-merge-conf``                                                         ``dnf-plugins-extras-rpmconf``
+``yum-plugin-priorities``               ``priority`` option in `dnf.conf`_        ``dnf``
+``yum-plugin-remove-with-leaves``       ``dnf autoremove``                        ``dnf``
+``yum-plugin-show-leaves``                                                        ``dnf-plugins-extras-show-leaves``
+``yum-plugin-versionlock``                                                        ``dnf-plugins-extras-versionlock``
+======================================  ========================================  ===================================
 
 Plugins that have not been ported yet:
 
 ``yum-plugin-aliases``,
-``yum-plugin-auto-update-debug-info``,
 ``yum-plugin-changelog``,
 ``yum-plugin-filter-data``,
 ``yum-plugin-keys``,
@@ -331,12 +333,10 @@ Plugins that have not been ported yet:
 ``yum-plugin-puppetverify``,
 ``yum-plugin-refresh-updatesd``,
 ``yum-plugin-rpm-warm-cache``,
-``yum-plugin-show-leaves``,
 ``yum-plugin-tmprepo``,
 ``yum-plugin-tsflags``,
 ``yum-plugin-upgrade-helper``,
-``yum-plugin-verify``,
-``yum-plugin-versionlock``
+``yum-plugin-verify``
 
 Feel free to file a RFE_ for missing functionality if you need it.
 
