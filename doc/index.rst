@@ -34,11 +34,12 @@ Contents:
    cli_vs_yum
    api_vs_yum
 
-DNF Plugins
+DNF Plugins and components
 
 
 * `DNF Plugins Core`_
 * `DNF Plugins Extras`_
+* `Hawkey`_
 
 Indices and tables
 
@@ -49,4 +50,3 @@ Indices and tables
 
 .. _DNF Plugins Core: https://dnf-plugins-core.readthedocs.org/en/latest/
 .. _DNF Plugins Extras: https://dnf-plugins-extras.readthedocs.org/en/latest/
-
