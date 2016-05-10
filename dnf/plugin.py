@@ -43,18 +43,21 @@ class Plugin(object):
     """The base class custom plugins must derive from. #:api"""
 
     name = '<invalid>'
+    config_name = None
 
-    @staticmethod
-    def read_config(conf, name):
+    @classmethod
+    def read_config(cls, conf):
         # :api
         parser = iniparse.compat.ConfigParser()
+        name = cls.config_name if cls.config_name else cls.name
         files = ['%s/%s.conf' % (path, name) for path in conf.pluginconfpath]
         parser.read(files)
         return parser
 
     def __init__(self, base, cli):
         # :api
-        pass
+        self.base = base
+        self.cli = cli
 
     def config(self):
         # :api
@@ -82,7 +85,19 @@ class Plugins(object):
             dnf.util.mapall(operator.methodcaller(method), self.plugins)
         return fn
 
-    def load(self, paths, skips):
+    def check_enabled(self, conf):
+        """Checks whether plugins are enabled or disabled in configuration files
+           and removes disabled plugins from list"""
+        for plug_cls in self.plugin_cls[:]:
+            parser = plug_cls.read_config(conf)
+            # has it enabled = False?
+            disabled = (parser.has_section('main')
+                        and parser.has_option('main', 'enabled')
+                        and not parser.getboolean('main', 'enabled'))
+            if disabled:
+                self.plugin_cls.remove(plug_cls)
+
+    def load(self, conf, skips):
         """Dynamically load relevant plugin modules."""
 
         if DYNAMIC_PACKAGE in sys.modules:
@@ -90,11 +105,12 @@ class Plugins(object):
         sys.modules[DYNAMIC_PACKAGE] = package = dnf.pycomp.ModuleType(DYNAMIC_PACKAGE)
         package.__path__ = []
 
-        files = iter_py_files(paths, skips)
+        files = iter_py_files(conf.pluginpath, skips)
         import_modules(package, files)
         self.plugin_cls = plugin_classes()[:]
+        self.check_enabled(conf)
         if len(self.plugin_cls) > 0:
-            names = [plugin.name for plugin in self.plugin_cls]
+            names = sorted(plugin.name for plugin in self.plugin_cls)
             logger.debug('Loaded plugins: %s', ', '.join(names))
 
     run_config = _caller('config')

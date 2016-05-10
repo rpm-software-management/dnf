@@ -929,7 +929,7 @@ class Cli(object):
         # store the main commands & summaries, before plugins are loaded
         self.optparser.add_commands(self.cli_commands, 'main')
         if self.base.conf.plugins:
-            self.base._plugins.load(self.base.conf.pluginpath, opts.disableplugins)
+            self.base._plugins.load(self.base.conf, opts.disableplugins)
         self.base._plugins.run_init(self.base, self)
         # store the plugin commands & summaries
         self.optparser.add_commands(self.cli_commands,'plugin')
