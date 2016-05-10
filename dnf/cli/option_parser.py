@@ -60,7 +60,7 @@ class OptionParser(argparse.ArgumentParser):
                if in_dct[k] != []}
         return dct
 
-    def configure_from_options(self, opts, conf, demands, output, main_setopts={}):
+    def configure_from_options(self, opts, conf, demands, output, installroot_repos=True):
         """Configure parts of CLI from the opts. """
 
         options_to_move = ('best', 'assumeyes', 'assumeno',
@@ -82,11 +82,10 @@ class OptionParser(argparse.ArgumentParser):
             if opts.installroot:
                 self._checkAbsInstallRoot(opts.installroot)
                 conf.installroot = opts.installroot
-                if 'reposdir' in main_setopts.items:
-                    pass
-                elif True in [os.path.isdir(os.path.join(conf.installroot, reposdir.lstrip('/')))
-                            for reposdir in conf.reposdir]:
-                    conf.reposdir = [os.path.join(conf.installroot, reposdir.lstrip('/')) for reposdir in conf.reposdir]
+                instroot_reposdir = [os.path.join(conf.installroot, reposdir.lstrip('/'))
+                                         for reposdir in conf.reposdir]
+                if (installroot_repos and any(map(os.path.isdir, instroot_reposdir))):
+                    conf.reposdir = instroot_reposdir
             demands.freshest_metadata = opts.freshest_metadata
 
             if opts.color not in (None, 'auto', 'always', 'never',
@@ -152,6 +151,36 @@ class OptionParser(argparse.ArgumentParser):
             dct = getattr(namespace, self.dest)
             dct[key] = val
 
+    class _SetoptsCallback(argparse.Action):
+        """ Parse setopts arguments and put them into main_<setopts>
+            and repo_<setopts>."""
+        def __init__(self, *args, **kwargs):
+            super(OptionParser._SetoptsCallback, self).__init__(*args, **kwargs)
+            self.repoopts = {}
+            self.mainopts = argparse.Namespace()
+
+        def __call__(self, parser, namespace, values, opt_str):
+            vals = values.split('=')
+            if len(vals) > 2:
+                logger.warning("Setopt argument has multiple values: %s", values)
+                return
+            if len(vals) < 2:
+                logger.warning("Setopt argument has no value: %s", values)
+                return
+            k,v = vals
+            period = k.find('.')
+            if period != -1:
+                repo = k[:period]
+                k = k[period+1:]
+                if repo not in self.repoopts:
+                    self.repoopts[repo] = argparse.Namespace()
+                setattr(self.repoopts[repo], k, v)
+                setattr(namespace, 'repo_' + self.dest, self.repoopts)
+            else:
+                setattr(self.mainopts, k, v)
+                setattr(namespace, k, v)
+                setattr(namespace, 'main_' + self.dest, self.mainopts)
+
     class ParseSpecGroupFileCallback(argparse.Action):
         def __call__(self, parser, namespace, values, opt_str):
             setattr(namespace, "filenames", [])
@@ -213,7 +242,7 @@ class OptionParser(argparse.ArgumentParser):
                            help=_("override the value of $releasever in config"
                                   " and repo files"))
         main_parser.add_argument("--setopt", dest="setopts", default=[],
-                           action="append",
+                           action=self._SetoptsCallback,
                            help=_("set arbitrary config and repo options"))
         main_parser.add_argument('-h', '--help', '--help-cmd', action="store_true",
                            dest='help', help=_("show command help"))

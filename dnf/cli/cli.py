@@ -701,9 +701,7 @@ class Cli(object):
         self.cli_commands = {}
         self.command = None
         self.demands = dnf.cli.demand.DemandSheet() #:cli
-        self.main_setopts = {}
         self.nogpgcheck = False
-        self.repo_setopts = {}
 
         self.register_command(dnf.cli.commands.autoremove.AutoremoveCommand)
         self.register_command(dnf.cli.commands.clean.CleanCommand)
@@ -735,7 +733,8 @@ class Cli(object):
         logger.debug("cachedir: %s", conf.cachedir)
 
     def _configure_repos(self, opts):
-        self.base.read_all_repos(self.repo_setopts)
+        repo_setopts = opts.repo_setopts if hasattr(opts, 'repo_setopts') else {}
+        self.base.read_all_repos(repo_setopts)
         if opts.repofrompath:
             for label, path in opts.repofrompath.items():
                 if path[0] == '/':
@@ -871,43 +870,6 @@ class Cli(object):
         logger.log(dnf.logging.DDEBUG, 'Base command: %s', basecmd)
         logger.log(dnf.logging.DDEBUG, 'Extra commands: %s', args)
 
-    def _parse_setopts(self, setopts):
-        """Parse setopts and repo_setopts."""
-
-        repoopts = {}
-        mainopts = dnf.yum.misc.GenericHolder()
-        mainopts.items = []
-
-        bad_setopt_tm = []
-        bad_setopt_ne = []
-
-        for item in setopts:
-            vals = item.split('=')
-            if len(vals) > 2:
-                bad_setopt_tm.append(item)
-                continue
-            if len(vals) < 2:
-                bad_setopt_ne.append(item)
-                continue
-            k,v = vals
-            period = k.find('.')
-            if period != -1:
-                repo = k[:period]
-                k = k[period+1:]
-                if repo not in repoopts:
-                    repoopts[repo] = dnf.yum.misc.GenericHolder()
-                    repoopts[repo].items = []
-                setattr(repoopts[repo], k, v)
-                repoopts[repo].items.append(k)
-            else:
-                setattr(mainopts, k, v)
-                mainopts.items.append(k)
-
-        self.main_setopts = mainopts
-        self.repo_setopts = repoopts
-
-        return bad_setopt_tm, bad_setopt_ne
-
     def _get_first_config(self, opts):
         config_args = ['plugins', 'version', "quiet", "verbose", 'conffile',
                        'debuglevel', 'errorlevel', 'installroot', 'releasever',
@@ -931,13 +893,6 @@ class Cli(object):
                            self.base.output)
             sys.exit(0)
 
-        # go through all the setopts and set the global ones
-        bad_setopt_tm, bad_setopt_ne = self._parse_setopts(opts.setopts)
-
-        if self.main_setopts:
-            for opt in self.main_setopts.items:
-                setattr(opts, opt, getattr(self.main_setopts, opt))
-
         # get the install root to use
         self.optparser._checkAbsInstallRoot(opts.installroot)
         (root, opts.conffile) = self._root_and_conffile(opts.installroot,
@@ -956,12 +911,12 @@ class Cli(object):
             self.read_conf_file(opts.conffile, root, releasever, overrides)
 
             # now set all the non-first-start opts from main from our setopts
-            if self.main_setopts:
-                for opt in self.main_setopts.items:
+            if hasattr(opts, 'main_setopts'):
+                for opt, val in opts.main_setopts._get_kwargs():
                     if not hasattr(self.base.conf, opt):
                         msg ="Main config did not have a %s attr. before setopt"
                         logger.warning(msg, opt)
-                    setattr(self.base.conf, opt, getattr(self.main_setopts, opt))
+                    setattr(self.base.conf, opt, getattr(opts.main_setopts, opt))
 
         except (dnf.exceptions.ConfigError, ValueError) as e:
             logger.critical(_('Config error: %s'), e)
@@ -970,12 +925,6 @@ class Cli(object):
             e = '%s: %s' % (ucd(e.args[1]), repr(e.filename))
             logger.critical(_('Config error: %s'), e)
             sys.exit(1)
-        for item in bad_setopt_tm:
-            msg = "Setopt argument has multiple values: %s"
-            logger.warning(msg, item)
-        for item in bad_setopt_ne:
-            msg = "Setopt argument has no value: %s"
-            logger.warning(msg, item)
 
         # store the main commands & summaries, before plugins are loaded
         self.optparser.add_commands(self.cli_commands, 'main')
@@ -1024,7 +973,7 @@ class Cli(object):
         self.command.configure()
 
         self.optparser.configure_from_options(opts, self.base.conf, self.demands,
-                                              self.base.output, self.main_setopts)
+                        self.base.output, ('reposdir' in getattr(opts, 'main_setopts', {})))
 
         if opts.debugsolver:
             self.base.conf.debug_solver = True
