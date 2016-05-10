@@ -421,7 +421,7 @@ class GroupCommand(commands.Command):
     def run_transaction(self):
         if not self._remark:
             return
-        goal = self.base.goal
+        goal = self.base._goal
         pkgdb = self.base._yumdb
         names = goal.group_members
         for pkg in self.base.sack.query().installed().filter(name=names):

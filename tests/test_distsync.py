@@ -29,7 +29,7 @@ class DistroSyncAll(support.ResultTestCase):
 
     def test_distro_sync_all(self):
         self.base.distro_sync()
-        self.assertIn(rpm.RPMPROB_FILTER_OLDPACKAGE, self.base.rpm_probfilter)
+        self.assertIn(rpm.RPMPROB_FILTER_OLDPACKAGE, self.base._rpm_probfilter)
         packages = support.installed_but(self.sack, "pepper", "librita").run()
         q = self.sack.query().available().filter(name=["pepper", "librita"])
         packages.extend(q)

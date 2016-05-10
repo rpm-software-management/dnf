@@ -84,7 +84,7 @@ def _main(base, args):
     dnf.i18n.setup_stdout()
 
     # our core object for the cli
-    base.logging.presetup()
+    base._logging.presetup()
     cli = dnf.cli.cli.Cli(base)
 
     # do our cli parsing and config file setup
@@ -139,7 +139,7 @@ def resolving(cli, base):
         base.resolve(cli.demands.allow_erasing)
         logger.info(_('Dependencies resolved.'))
 
-    base.plugins.run_resolved()
+    base._plugins.run_resolved()
 
     # Run the transaction
     displays = []
@@ -156,7 +156,7 @@ def resolving(cli, base):
     except IOError as e:
         return ex_IOError(e)
     else:
-        base.plugins.run_transaction()
+        base._plugins.run_transaction()
         logger.info(_('Complete!'))
     return 0
 

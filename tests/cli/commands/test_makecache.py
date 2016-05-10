@@ -47,11 +47,11 @@ class MakeCacheCommandTest(support.TestCase):
         self.assert_last_info(logger, u'Metadata timer caching disabled.')
 
         self.base.conf.metadata_timer_sync = 5 # resync after 5 seconds
-        self.base.repo_persistor.since_last_makecache = mock.Mock(return_value=3)
+        self.base._repo_persistor.since_last_makecache = mock.Mock(return_value=3)
         self.assertFalse(self._do_makecache(cmd))
         self.assert_last_info(logger, u'Metadata cache refreshed recently.')
 
-        self.base.repo_persistor.since_last_makecache = mock.Mock(return_value=10)
+        self.base._repo_persistor.since_last_makecache = mock.Mock(return_value=10)
         self.base._sack = 'nonempty'
         r = support.MockRepo("glimpse", None)
         self.base.repos.add(r)
