@@ -25,10 +25,16 @@ import tests.support
 
 PLUGINS = "%s/tests/plugins" % tests.support.dnf_toplevel()
 
+def testconf():
+    conf = tests.support.FakeConf()
+    conf.pluginpath = [PLUGINS]
+    conf.pluginconfpath = [PLUGINS]
+    return conf
+
 class PluginTest(tests.support.TestCase):
     def setUp(self):
         self.plugins = dnf.plugin.Plugins()
-        self.plugins.load([PLUGINS], ())
+        self.plugins.load(testconf(), ())
 
     def tearDown(self):
         self.plugins.unload()
@@ -52,14 +58,23 @@ class PluginTest(tests.support.TestCase):
         base.conf.pluginconfpath = ['/wrong', PLUGINS]
         self.plugins.run_init(base, None)
         lucky = self.plugins.plugins[0]
-        conf = lucky.read_config(base.conf, 'lucky')
+        conf = lucky.read_config(base.conf)
         self.assertTrue(conf.getboolean('main', 'enabled'))
         self.assertEqual(conf.get('main', 'wanted'), '/to/be/haunted')
+
+    def test_disabled(self):
+        base = tests.support.MockBase()
+        base.conf.pluginconfpath = [PLUGINS]
+        self.plugins.run_init(base, None)
+        self.assertFalse(any([p.name == 'disabled-plugin'
+                              for p in self.plugins.plugins]))
+        self.assertLength(self.plugins.plugin_cls, 1)
+        self.assertEqual(self.plugins.plugin_cls[0].name, 'lucky')
 
 class PluginSkipsTest(tests.support.TestCase):
     def test_skip(self):
         self.plugins = dnf.plugin.Plugins()
-        self.plugins.load([PLUGINS], ('luck*',))
+        self.plugins.load(testconf(), ('luck*',))
         self.assertLength(self.plugins.plugin_cls, 0)
 
     def tearDown(self):
