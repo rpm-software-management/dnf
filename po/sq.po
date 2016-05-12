@@ -1,23 +1,17 @@
-# SOME DESCRIPTIVE TITLE.
-# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
-# This file is distributed under the same license as the PACKAGE package.
-# 
-# Translators:
-# Rabin.IO <rabin@rabin.io>, 2014
-# Jan Silhan <jsilhan@redhat.com>, 2015. #zanata
+# Anxhelo Lushka <an_xhelo@hotmail.com>, 2016. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2016-05-12 22:13+0200\n"
-"PO-Revision-Date: 2015-03-16 12:46-0400\n"
-"Last-Translator: Jan silhan <jsilhan@redhat.com>\n"
-"Language-Team: Hebrew (http://www.transifex.com/projects/p/dnf/language/he/)\n"
+"PO-Revision-Date: 2016-04-30 10:31-0400\n"
+"Last-Translator: Anxhelo Lushka <an_xhelo@hotmail.com>\n"
+"Language-Team: Albanian\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: he\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"Language: sq\n"
+"Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Zanata 3.8.4\n"
 
 #: ../dnf/persistor.py:314
@@ -29,9 +23,9 @@ msgid "Unsupported installed groups database found, resetting."
 msgstr ""
 
 #: ../dnf/persistor.py:425
-#, python-format
+#, fuzzy, python-format
 msgid "%s is empty file"
-msgstr ""
+msgstr "%s është"
 
 #: ../dnf/drpm.py:63 ../dnf/repo.py:377
 #, python-format
@@ -97,7 +91,7 @@ msgstr ""
 #: ../dnf/conf/read.py:51
 #, python-format
 msgid "Warning: failed loading '%s', skipping."
-msgstr "התראה: נכשלה טעינת '%s', מדלג."
+msgstr ""
 
 #: ../dnf/conf/read.py:61
 #, python-format
@@ -132,19 +126,19 @@ msgstr ""
 
 #: ../dnf/yum/rpmtrans.py:123
 msgid "Cleanup"
-msgstr "ניקוי"
+msgstr ""
 
 #: ../dnf/yum/rpmtrans.py:124 ../dnf/cli/output.py:1008
 msgid "Downgrading"
-msgstr "שימנוך"
+msgstr ""
 
 #: ../dnf/yum/rpmtrans.py:125
 msgid "Erasing"
-msgstr "מוחק"
+msgstr ""
 
 #: ../dnf/yum/rpmtrans.py:126 ../dnf/cli/output.py:1004
 msgid "Installing"
-msgstr "מתקין"
+msgstr ""
 
 #: ../dnf/yum/rpmtrans.py:127 ../dnf/cli/output.py:1712
 msgid "Obsoleting"
@@ -156,7 +150,7 @@ msgstr ""
 
 #: ../dnf/yum/rpmtrans.py:129 ../dnf/cli/output.py:1005
 msgid "Upgrading"
-msgstr "משדרג"
+msgstr ""
 
 #: ../dnf/yum/rpmtrans.py:130
 msgid "Verifying"
@@ -175,11 +169,11 @@ msgstr ""
 #: ../dnf/cli/option_parser.py:51
 #, python-format
 msgid "Command line error: %s"
-msgstr "שגיאה בשורת הפקודה: %s"
+msgstr ""
 
 #: ../dnf/cli/option_parser.py:88
 msgid "--color takes one of: auto, always, never"
-msgstr "הפרמטר --color מקבל את אחד הפרמטרים הבאים:"
+msgstr ""
 
 #: ../dnf/cli/option_parser.py:105
 #, python-format
@@ -189,7 +183,7 @@ msgstr ""
 #: ../dnf/cli/option_parser.py:116
 #, python-format
 msgid "--installroot must be an absolute path: %s"
-msgstr "הפרמטר --installroot מקבל רק נתיב מלא: %s"
+msgstr ""
 
 #: ../dnf/cli/option_parser.py:142
 #, python-format
@@ -234,11 +228,11 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:182
 msgid "quiet operation"
-msgstr "פעולה שקטה"
+msgstr ""
 
 #: ../dnf/cli/option_parser.py:184
 msgid "verbose operation"
-msgstr "פעולה מפורטת"
+msgstr ""
 
 #: ../dnf/cli/option_parser.py:186
 msgid "Automatically answer yes for all questions"
@@ -279,7 +273,7 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:219
 msgid "disable plugins by name"
-msgstr "ביטול תוסף לפי שם"
+msgstr ""
 
 #: ../dnf/cli/option_parser.py:222
 msgid "control whether color is used"
@@ -391,7 +385,7 @@ msgstr ""
 
 #: ../dnf/cli/cli.py:208
 msgid "Downloading Packages:"
-msgstr "חבילות להורדה:"
+msgstr ""
 
 #: ../dnf/cli/cli.py:215
 msgid "Error downloading packages:"
@@ -402,8 +396,6 @@ msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
 msgstr ""
-"מסרב לייבא מפתחות אוטומטית במצב עבודה ללא התערבות. ניתן לכפות פעולה זאת ע\"י"
-" שימוש \"-y\" בשורת הפקודה."
 
 #: ../dnf/cli/cli.py:292 ../dnf/cli/cli.py:450 ../dnf/cli/cli.py:456
 msgid "Obsoleting Packages"
@@ -460,7 +452,7 @@ msgstr ""
 
 #: ../dnf/cli/cli.py:539
 msgid "No Matches found"
-msgstr "לא נמצאה התאמה"
+msgstr ""
 
 #: ../dnf/cli/cli.py:580 ../dnf/cli/commands/__init__.py:1082
 #: ../dnf/cli/commands/__init__.py:1119 ../dnf/cli/commands/__init__.py:1135
@@ -518,7 +510,7 @@ msgstr ""
 
 #: ../dnf/cli/cli.py:855
 msgid "You need to give some command"
-msgstr "יש להזין פקודה כל שהיא"
+msgstr ""
 
 #: ../dnf/cli/cli.py:862
 #, python-format
@@ -544,7 +536,7 @@ msgstr ""
 #: ../dnf/cli/cli.py:1080
 #, python-format
 msgid "Command \"%s\" already defined"
-msgstr "הפקודה \"%s\" כבר מוגדרת"
+msgstr ""
 
 #: ../dnf/cli/main.py:53 ../dnf/automatic/main.py:170
 #, python-format
@@ -673,12 +665,12 @@ msgstr ""
 #: ../dnf/cli/output.py:713 ../dnf/cli/output.py:752
 #, python-format
 msgid " Description: %s"
-msgstr " תאור: %s"
+msgstr ""
 
 #: ../dnf/cli/output.py:715
 #, python-format
 msgid " Language: %s"
-msgstr " שפה: %s"
+msgstr ""
 
 #: ../dnf/cli/output.py:718
 msgid " Mandatory Packages:"
@@ -686,11 +678,11 @@ msgstr ""
 
 #: ../dnf/cli/output.py:719
 msgid " Default Packages:"
-msgstr " חבילות ברירת מחדל:"
+msgstr ""
 
 #: ../dnf/cli/output.py:720
 msgid " Optional Packages:"
-msgstr " חבילות אופצוינאליות:"
+msgstr ""
 
 #: ../dnf/cli/output.py:721
 msgid " Conditional Packages:"
@@ -717,7 +709,7 @@ msgstr ""
 #: ../dnf/cli/output.py:791
 #, python-format
 msgid "Repo        : %s"
-msgstr "מאגר : %s"
+msgstr ""
 
 #: ../dnf/cli/output.py:798
 msgid "Matched from:"
@@ -725,12 +717,12 @@ msgstr ""
 
 #: ../dnf/cli/output.py:802
 msgid "Description : "
-msgstr "תאור: "
+msgstr ""
 
 #: ../dnf/cli/output.py:805
 #, python-format
 msgid "URL         : %s"
-msgstr "קישור: %s"
+msgstr ""
 
 #: ../dnf/cli/output.py:808
 #, python-format
@@ -787,7 +779,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1007
 msgid "Removing"
-msgstr "מסיר"
+msgstr ""
 
 #: ../dnf/cli/output.py:1022
 #, python-format
@@ -826,19 +818,19 @@ msgstr ""
 #: ../dnf/cli/output.py:1077 ../dnf/cli/output.py:1708
 #: ../dnf/cli/output.py:1709
 msgid "Install"
-msgstr "התקנה"
+msgstr ""
 
 #: ../dnf/cli/output.py:1078 ../dnf/cli/output.py:1717
 msgid "Upgrade"
-msgstr "שדרוג"
+msgstr ""
 
 #: ../dnf/cli/output.py:1079
 msgid "Remove"
-msgstr "הסרה"
+msgstr ""
 
 #: ../dnf/cli/output.py:1080 ../dnf/cli/output.py:1715
 msgid "Downgrade"
-msgstr "שימנוך"
+msgstr ""
 
 #: ../dnf/cli/output.py:1081
 msgid "Skip"
@@ -856,12 +848,12 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1168
 msgid "Removed"
-msgstr "הוסר"
+msgstr ""
 
 #: ../dnf/cli/output.py:1169 ../dnf/cli/output.py:1553
 #: ../dnf/cli/output.py:1555 ../dnf/cli/commands/updateinfo.py:296
 msgid "Installed"
-msgstr "הותקנו"
+msgstr ""
 
 #: ../dnf/cli/output.py:1170 ../dnf/cli/output.py:1554
 #: ../dnf/cli/output.py:1718
@@ -871,7 +863,7 @@ msgstr ""
 #: ../dnf/cli/output.py:1171 ../dnf/cli/output.py:1554
 #: ../dnf/cli/output.py:1716
 msgid "Downgraded"
-msgstr "שומנך"
+msgstr ""
 
 #: ../dnf/cli/output.py:1172
 msgid "Failed"
@@ -879,31 +871,31 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1226
 msgid "Total"
-msgstr "סה\"כ"
+msgstr ""
 
 #: ../dnf/cli/output.py:1247
 msgid "I"
-msgstr "I"
+msgstr ""
 
 #: ../dnf/cli/output.py:1248
 msgid "O"
-msgstr "O"
+msgstr ""
 
 #: ../dnf/cli/output.py:1249
 msgid "E"
-msgstr "E"
+msgstr ""
 
 #: ../dnf/cli/output.py:1250
 msgid "R"
-msgstr "R"
+msgstr ""
 
 #: ../dnf/cli/output.py:1251
 msgid "D"
-msgstr "D"
+msgstr ""
 
 #: ../dnf/cli/output.py:1252
 msgid "U"
-msgstr "U"
+msgstr ""
 
 #: ../dnf/cli/output.py:1266
 msgid "<unset>"
@@ -953,7 +945,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1553
 msgid "Erased"
-msgstr "נמחק"
+msgstr ""
 
 #: ../dnf/cli/output.py:1555
 msgid "Not installed"
@@ -961,11 +953,11 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1556
 msgid "Older"
-msgstr "ישן יותר"
+msgstr ""
 
 #: ../dnf/cli/output.py:1556
 msgid "Newer"
-msgstr "חדש יותר"
+msgstr ""
 
 #: ../dnf/cli/output.py:1593 ../dnf/cli/output.py:1595
 #: ../dnf/cli/output.py:2000
@@ -974,7 +966,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1597 ../dnf/cli/output.py:2002
 msgid "Begin time     :"
-msgstr "שעת התחלה :"
+msgstr ""
 
 #: ../dnf/cli/output.py:1600 ../dnf/cli/output.py:1602
 msgid "Begin rpmdb    :"
@@ -1002,7 +994,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1625
 msgid "End time       :"
-msgstr "שעת סיום :"
+msgstr ""
 
 #: ../dnf/cli/output.py:1628 ../dnf/cli/output.py:1630
 msgid "End rpmdb      :"
@@ -1010,7 +1002,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1633 ../dnf/cli/output.py:1635
 msgid "User           :"
-msgstr "משתמש :"
+msgstr ""
 
 #: ../dnf/cli/output.py:1639 ../dnf/cli/output.py:1642
 #: ../dnf/cli/output.py:1644 ../dnf/cli/output.py:1646
@@ -1024,11 +1016,11 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1642
 msgid "Failures:"
-msgstr "כשלונות:"
+msgstr ""
 
 #: ../dnf/cli/output.py:1646
 msgid "Failure:"
-msgstr "כשלון:"
+msgstr ""
 
 #: ../dnf/cli/output.py:1648
 msgid "Success"
@@ -1037,7 +1029,7 @@ msgstr ""
 #: ../dnf/cli/output.py:1653 ../dnf/cli/output.py:1655
 #: ../dnf/cli/output.py:2031
 msgid "Command Line   :"
-msgstr "שורת פקודה :"
+msgstr ""
 
 #: ../dnf/cli/output.py:1664
 #, python-format
@@ -1050,11 +1042,11 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1673
 msgid "Packages Altered:"
-msgstr "חבילות שונו:"
+msgstr ""
 
 #: ../dnf/cli/output.py:1677
 msgid "Packages Skipped:"
-msgstr "חבילות שדולגו:"
+msgstr ""
 
 #: ../dnf/cli/output.py:1685
 msgid "Rpmdb Problems:"
@@ -1066,7 +1058,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1702
 msgid "Errors:"
-msgstr "שגיאות:"
+msgstr ""
 
 #: ../dnf/cli/output.py:1710
 msgid "Dep-Install"
@@ -1074,7 +1066,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1711
 msgid "Obsoleted"
-msgstr "הוצאו משימוש"
+msgstr ""
 
 #: ../dnf/cli/output.py:1713
 msgid "Erase"
@@ -1082,7 +1074,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1714
 msgid "Reinstall"
-msgstr "התקנה חוזרת"
+msgstr ""
 
 #: ../dnf/cli/output.py:1791
 msgid "Time"
@@ -1090,27 +1082,27 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1817
 msgid "Last day"
-msgstr "ביום האחרון"
+msgstr ""
 
 #: ../dnf/cli/output.py:1818
 msgid "Last week"
-msgstr "בשבוע האחרון"
+msgstr ""
 
 #: ../dnf/cli/output.py:1819
 msgid "Last 2 weeks"
-msgstr "בשבועיים האחרונים"
+msgstr ""
 
 #: ../dnf/cli/output.py:1820
 msgid "Last 3 months"
-msgstr "ב-3 החודשים האחרונים"
+msgstr ""
 
 #: ../dnf/cli/output.py:1821
 msgid "Last 6 months"
-msgstr "ב-6 החודשים האחרונים"
+msgstr ""
 
 #: ../dnf/cli/output.py:1822
 msgid "Last year"
-msgstr "בשנה האחרונה"
+msgstr ""
 
 #: ../dnf/cli/output.py:1823
 msgid "Over a year ago"
@@ -1136,7 +1128,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:2003
 msgid "Package        :"
-msgstr "חבילה :"
+msgstr ""
 
 #: ../dnf/cli/output.py:2004
 msgid "State          :"
@@ -1144,15 +1136,15 @@ msgstr ""
 
 #: ../dnf/cli/output.py:2007
 msgid "Size           :"
-msgstr "גודל :"
+msgstr ""
 
 #: ../dnf/cli/output.py:2009
 msgid "Build host     :"
-msgstr "נבנה על :"
+msgstr ""
 
 #: ../dnf/cli/output.py:2012
 msgid "Build time     :"
-msgstr "תאריך בניה:"
+msgstr ""
 
 #: ../dnf/cli/output.py:2014
 msgid "Packager       :"
@@ -1160,15 +1152,15 @@ msgstr ""
 
 #: ../dnf/cli/output.py:2016
 msgid "Vendor         :"
-msgstr "ספק:"
+msgstr ""
 
 #: ../dnf/cli/output.py:2018
 msgid "License        :"
-msgstr "רישיון :"
+msgstr ""
 
 #: ../dnf/cli/output.py:2020
 msgid "URL            :"
-msgstr "קישור :"
+msgstr ""
 
 #: ../dnf/cli/output.py:2022
 msgid "Source RPM     :"
@@ -1396,19 +1388,19 @@ msgstr ""
 
 #: ../dnf/cli/commands/group.py:320
 msgid "Installed Groups:"
-msgstr "קבוצות מותקנות:"
+msgstr ""
 
 #: ../dnf/cli/commands/group.py:327
 msgid "Installed Language Groups:"
-msgstr "חבילות שפה מותקנות:"
+msgstr ""
 
 #: ../dnf/cli/commands/group.py:334
 msgid "Available Groups:"
-msgstr "קבוצות זמינות:"
+msgstr ""
 
 #: ../dnf/cli/commands/group.py:341
 msgid "Available Language Groups:"
-msgstr "חבילות שפה זמינות:"
+msgstr ""
 
 #: ../dnf/cli/commands/group.py:380
 #, python-format
@@ -2098,7 +2090,7 @@ msgstr ""
 #: ../dnf/base.py:1578
 #, python-format
 msgid "No package %s installed."
-msgstr "החבילה %s לא מותקנת."
+msgstr ""
 
 #: ../dnf/base.py:1690
 #, python-format
