@@ -812,8 +812,6 @@ class Cli(object):
 
         if demands.sack_activation:
             lar = self.demands.available_repos
-            self.base.fill_sack(load_system_repo='auto',
-                                load_available_repos=lar)
             if lar:
                 repos = list(self.base.repos.iter_enabled())
                 if repos:
@@ -829,7 +827,8 @@ class Cli(object):
                                     "%s ago on %s."),
                                     datetime.timedelta(seconds=age),
                                     time.ctime(mts))
-            self.base._plugins.run_sack()
+            self.base.fill_sack(load_system_repo='auto',
+                                load_available_repos=lar)
 
     def _root_and_conffile(self, installroot, conffile):
         """After the first parse of the cmdline options, find initial values for
@@ -928,10 +927,8 @@ class Cli(object):
 
         # store the main commands & summaries, before plugins are loaded
         self.optparser.add_commands(self.cli_commands, 'main')
-        if self.base.conf.plugins:
-            self.base._plugins.load(self.base.conf, opts.disableplugins)
-        self.base._plugins.run_init(self.base, self)
         # store the plugin commands & summaries
+        self.base.init_plugins(opts.disableplugins, self)
         self.optparser.add_commands(self.cli_commands,'plugin')
 
         # show help if no command specified
@@ -969,6 +966,7 @@ class Cli(object):
         self.base._activate_persistor()
         self._configure_repos(opts)
 
+        self.base.configure_plugins()
 
         self.command.configure()
 
@@ -979,8 +977,6 @@ class Cli(object):
             self.base.conf.debug_solver = True
 
         self.base.cmd_conf.downloadonly = opts.downloadonly
-
-        self.base._plugins.run_config()
 
     def read_conf_file(self, path=None, root="/", releasever=None,
                        overrides=None):

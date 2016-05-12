@@ -218,6 +218,18 @@ class Base(object):
     def _activate_persistor(self):
         self._repo_persistor = dnf.persistor.RepoPersistor(self.conf.cachedir)
 
+    def init_plugins(self, disabled_glob=None, cli=None):
+        # :api
+        """Load plugins and run their __init__()."""
+        if self.conf.plugins:
+            self._plugins.load(self.conf, disabled_glob)
+        self._plugins.run_init(self, cli)
+
+    def configure_plugins(self):
+        # :api
+        """Run plugins configure() method."""
+        self._plugins.run_config()
+
     def fill_sack(self, load_system_repo=True, load_available_repos=True):
         # :api
         """Prepare the Sack and the Goal objects. """
@@ -249,6 +261,7 @@ class Base(object):
         self._setup_excludes_includes()
         timer()
         self._goal = dnf.goal.Goal(self._sack)
+        self._plugins.run_sack()
         return self._sack
 
     @property
@@ -545,6 +558,7 @@ class Base(object):
         if self._group_persistor:
             installed = self.sack.query().installed()
             self._group_persistor.update_group_env_installed(installed, goal)
+        self._plugins.run_resolved()
         return got_transaction
 
     def do_transaction(self, display=()):
@@ -609,6 +623,7 @@ class Base(object):
             logger.info(_('Running transaction'))
             self._run_transaction(cb=cb)
         timer()
+        self._plugins.run_transaction()
 
     def _trans_error_summary(self, errstring):
         """Parse the error string for 'interesting' errors which can
