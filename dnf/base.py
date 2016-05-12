@@ -219,7 +219,8 @@ class Base(object):
         self._repo_persistor = dnf.persistor.RepoPersistor(self.conf.cachedir)
 
     def fill_sack(self, load_system_repo=True, load_available_repos=True):
-        """Prepare the Sack and the Goal objects. :api."""
+        # :api
+        """Prepare the Sack and the Goal objects. """
         timer = dnf.logging.Timer('sack setup')
         self._sack = dnf.sack.build_sack(self)
         lock = dnf.lock.build_metadata_lock(self.conf.cachedir)
@@ -257,7 +258,8 @@ class Base(object):
         return rpmsack.AdditionalPkgDB(db_path)
 
     def close(self):
-        """Close all potential handles and clean cache. :api
+        # :api
+        """Close all potential handles and clean cache.
 
         Typically the handles are to data sources and sinks.
 
@@ -299,8 +301,8 @@ class Base(object):
         self._closeRpmDB()
 
     def read_all_repos(self, repo_setopts=None):
-        """Read repositories from the main conf file and from .repo files."""
         # :api
+        """Read repositories from the main conf file and from .repo files."""
 
         reader = dnf.conf.read.RepoReader(self.conf, repo_setopts or {})
         for repo in reader:
@@ -310,7 +312,8 @@ class Base(object):
                 logger.warning(e)
 
     def reset(self, sack=False, repos=False, goal=False):
-        """Make the Base object forget about various things. :api"""
+        # :api
+        """Make the Base object forget about various things."""
         if sack:
             self._sack = None
         if repos:
@@ -376,7 +379,8 @@ class Base(object):
         return dnf.persistor.GroupPersistor(self.conf.persistdir, self._comps)
 
     def read_comps(self):
-        """Create the groups object to access the comps metadata. :api"""
+        # :api
+        """Create the groups object to access the comps metadata."""
         timer = dnf.logging.Timer('loading comps')
         self._comps = dnf.comps.Comps()
 
@@ -510,7 +514,8 @@ class Base(object):
         return ret
 
     def resolve(self, allow_erasing=False):
-        """Build the transaction set. :api"""
+        # :api
+        """Build the transaction set."""
         exc = None
 
         timer = dnf.logging.Timer('depsolve')
@@ -847,7 +852,8 @@ class Base(object):
         self._trans_success = True
 
     def download_packages(self, pkglist, progress=None, callback_total=None):
-        """Download the packages specified by the given list of packages. :api
+        # :api
+        """Download the packages specified by the given list of packages.
 
         `pkglist` is a list of packages to download, `progress` is an optional
          DownloadProgress instance, `callback_total` an optional callback to
@@ -1251,11 +1257,11 @@ class Base(object):
         return ret
 
     def group_install(self, grp_id, pkg_types, exclude=None, strict=True):
+        # :api
         """Installs packages of selected group
         :param exclude: list of package name glob patterns
             that will be excluded from install set
         """
-        # :api
         def _pattern_to_pkgname(pattern):
             if dnf.util.is_glob_pattern(pattern):
                 q = self.sack.query().filter(name__glob=pattern)
@@ -1402,8 +1408,8 @@ class Base(object):
             return 1
 
     def install(self, pkg_spec, reponame=None, strict=True):
-        """Mark package(s) given by pkg_spec and reponame for installation.:api
-        """
+        # :api
+        """Mark package(s) given by pkg_spec and reponame for installation."""
 
         subj = dnf.subject.Subject(pkg_spec)
         if self.conf.multilib_policy == "all" or \
@@ -1582,7 +1588,8 @@ class Base(object):
         return 1
 
     def remove(self, pkg_spec, reponame=None):
-        """Mark the specified package for removal. #:api """
+        # :api
+        """Mark the specified package for removal."""
 
         matches = dnf.subject.Subject(pkg_spec).get_best_query(self.sack)
         installed = [
@@ -1638,7 +1645,8 @@ class Base(object):
         return cnt
 
     def downgrade(self, pkg_spec):
-        """Mark a package to be downgraded. :api
+        # :api
+        """Mark a package to be downgraded.
 
         This is equivalent to first removing the currently installed package,
         and then installing an older version.
