@@ -36,8 +36,11 @@ BuildRequires:  python-bugzilla
 BuildRequires:  python-sphinx
 BuildRequires:  systemd
 BuildRequires:  bash-completion
-# We don't need to have python with specific version as we use %%python_provide
-Requires:       python-%{name} = %{version}-%{release}
+%if %{with python3}
+Requires:       python3-%{name} = %{version}-%{release}
+%else
+Requires:       python2-%{name} = %{version}-%{release}
+%endif
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
