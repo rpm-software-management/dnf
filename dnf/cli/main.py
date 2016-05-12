@@ -138,8 +138,6 @@ def resolving(cli, base):
         base.resolve(cli.demands.allow_erasing)
         logger.info(_('Dependencies resolved.'))
 
-    base._plugins.run_resolved()
-
     # Run the transaction
     displays = []
     if cli.demands.transaction_display is not None:
@@ -155,7 +153,6 @@ def resolving(cli, base):
     except IOError as e:
         return ex_IOError(e)
     else:
-        base._plugins.run_transaction()
         logger.info(_('Complete!'))
     return 0
 

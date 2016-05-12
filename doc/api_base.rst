@@ -57,6 +57,15 @@
 
     Close all external handles the object holds. This is called automatically via context manager mechanism if the instance is handled using the ``with`` statement.
 
+  .. method:: init_plugins([disabled_glob=None, cli=None])
+
+     Initialize plugins. If you want to disable some plugins pass the list of their name patterns to
+     `disabled_glob`. When run from interactive script then also pass your :class:`dnf.cli.Cli` instance.
+
+  .. method:: configure_plugins()
+
+     Configure plugins by runing their configure() method.
+
   .. method:: fill_sack([load_system_repo=True, load_available_repos=True])
 
     Setup the package sack. If `load_system_repo` is ``True``, load information about packages in the local RPMDB into the sack. Else no package is considered installed during dependency solving. If `load_available_repos` is ``True``, load information about packages from the available repositories into the sack.
