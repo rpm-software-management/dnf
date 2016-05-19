@@ -1522,5 +1522,29 @@
     [
         1289164, 
         "[RFE]  positive prompt answer by default"
+    ], 
+    [
+        1324086, 
+        "dnf \"autoremove\" command has no description in dnf --help"
+    ], 
+    [
+        1332012, 
+        "UnicodeEncodeError: 'ascii' codec can't encode characters in position 342-343: ordinal not in range(128)"
+    ], 
+    [
+        1292892, 
+        "dnf groupinstall ignores errors"
+    ], 
+    [
+        1328674, 
+        "diskspacecheck=0 in dnf.conf has no effect"
+    ], 
+    [
+        1286556, 
+        "/usr/lib64/python3.5/re.py:203: FutureWarning: split() requires a non-empty pattern match."
+    ], 
+    [
+        1245121, 
+        "TypeError: unhashable type: 'YumHistoryPackageState'"
     ]
 ]

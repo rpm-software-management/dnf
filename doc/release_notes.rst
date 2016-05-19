@@ -22,6 +22,22 @@
 .. contents::
 
 ===================
+1.1.9 Release Notes
+===================
+
+From this release if you use any non-API methods warning will be printed and
+bugfixes.
+
+Bugs fixed in 1.1.9:
+
+* :rhbug:`1324086`
+* :rhbug:`1332012`
+* :rhbug:`1292892`
+* :rhbug:`1328674`
+* :rhbug:`1286556`
+* :rhbug:`1245121`
+
+===================
 1.1.8 Release Notes
 ===================
 
