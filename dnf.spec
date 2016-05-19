@@ -309,6 +309,42 @@ exit 0
 %endif
 
 %changelog
+* Thu May 19 2016 Igor Gnatenko <ignatenko@redhat.com> 1.1.9-1
+- doc: release notes 1.1.9 (Igor Gnatenko)
+- spec: correctly set up requirements for python subpkg (Igor Gnatenko)
+- spec: follow new packaging guidelines & make compatible with el7 (Igor
+  Gnatenko)
+- zanata update (Jan Silhan)
+- enforce-api: add missing bits of Base class (Michal Luscon)
+- help: unify help msg strings (Michal Luscon)
+- enforce-api: decorate Base class (Michal Luscon)
+- util: add decorator informing users of nonapi functions (Michal Luscon)
+- Added description for 'autoremove' in dnf help (RhBug:1324086) (Abhijeet
+  Kasurde)
+- i18n: fixup for 0db13feed (Michal Luscon)
+- i18n: use fallback mode if terminal does not support UTF-8 (RhBug:1332012)
+  (Michal Luscon)
+- Revert "spec: follow new packaging guidelines & make compatible with el7"
+  (Michal Luscon)
+- move autoglob feature directly to filterm() and filter() (Michael Mraka)
+- group: treat mandatory pkgs as mandatory if strict=true (RhBug:1292892)
+  (Michal Luscon)
+- locks: fix lock paths in tmpfsd config since cachedir has been changed
+  (Michal Luscon)
+- remove formating from translation strings (Michal Luscon)
+- base: set diskspace check filter before applying the filters (RhBug:1328674)
+  (Michal Luscon)
+- order repos by priority and cost (Michael Mraka)
+- spec: follow new packaging guidelines & make compatible with el7 (Igor
+  Gnatenko)
+- bash-completion: first try to set fallback to BASH_COMPLETION_COMPATDIR (Igor
+  Gnatenko)
+- updated copyrights for files changed this year (Michael Mraka)
+- cli: fix warning from re.split() about non-empty pattern (RhBug:1286556)
+  (Igor Gnatenko)
+- update authors file (Michal Luscon)
+- Define __hash__ method for YumHistoryPackage (RhBug:1245121) (Max Prokhorov)
+
 * Tue Apr 05 2016 Michal Luscon <mluscon@redhat.com> 1.1.8-1
 - refactor: repo: add md_expired property (Michal Domonkos)
 - test: fix cachedir usage in LocalRepoTest (Michal Domonkos)
