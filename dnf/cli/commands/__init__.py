@@ -868,7 +868,7 @@ class HistoryCommand(Command):
     def _hcmd_userinstalled(self):
         """Execute history userinstalled command."""
         pkgs = tuple(self.base.iter_userinstalled())
-        return self.output.listPkgs(pkgs, 'Packages installed by user', 'name')
+        return self.output.listPkgs(pkgs, 'Packages installed by user', 'nevra')
 
     def run(self):
         vcmd = self.opts.tid_action
