@@ -27,12 +27,12 @@ import dnf.automatic.emitter
 import dnf.cli
 import dnf.cli.cli
 import dnf.cli.output
+import dnf.conf
 import dnf.conf.parser
 import dnf.const
 import dnf.exceptions
 import dnf.util
 import dnf.logging
-import dnf.yum.config
 import hawkey
 import iniparse.compat
 import logging
@@ -87,40 +87,44 @@ class AutomaticConfig(object):
         except iniparse.compat.ParsingError as e:
             raise dnf.exceptions.ConfigError("Parsing file failed: %s" % e)
 
-        self.commands.populate(parser, 'commands')
-        self.email.populate(parser, 'email')
-        self.emitters.populate(parser, 'emitters')
+        self.commands.populate(parser, 'commands', dnf.conf.PRIO_AUTOMATICCONFIG)
+        self.email.populate(parser, 'email', dnf.conf.PRIO_AUTOMATICCONFIG)
+        self.emitters.populate(parser, 'emitters', dnf.conf.PRIO_AUTOMATICCONFIG)
         self._parser = parser
 
-    @property
-    def base_overrides(self):
-        return {k: v for (k, v) in self._parser.items('base')}
+    def update_baseconf(self, baseconf):
+        baseconf.populate(self._parser, 'base', dnf.conf.PRIO_AUTOMATICCONFIG)
 
 
-class CommandsConfig(dnf.yum.config.BaseConfig):
-    apply_updates = dnf.yum.config.BoolOption(False)
-    base_config_file = dnf.yum.config.Option('/etc/dnf/dnf.conf')
-    download_updates = dnf.yum.config.BoolOption(False)
-    upgrade_type = dnf.yum.config.SelectionOption(
-        'default', ('default', 'security'))
-    random_sleep = dnf.yum.config.SecondsOption(300)
+class CommandsConfig(dnf.conf.BaseConfig):
+    def __init__(self, section='commands', parser=None):
+        super(CommandsConfig, self).__init__(section, parser)
+        self.add_option('apply_updates',  dnf.conf.BoolOption(False))
+        self.add_option('base_config_file',  dnf.conf.Option('/etc/dnf/dnf.conf'))
+        self.add_option('download_updates',  dnf.conf.BoolOption(False))
+        self.add_option('upgrade_type',  dnf.conf.SelectionOption('default',
+                                        choices=('default', 'security')))
+        self.add_option('random_sleep',  dnf.conf.SecondsOption(300))
 
     def imply(self):
         if self.apply_updates:
-            self.download_updates = True
+            self.get_option('download_updates').set(True, dnf.conf.PRIO_RUNTIME)
 
 
-class EmailConfig(dnf.yum.config.BaseConfig):
-    email_to = dnf.yum.config.ListOption(["root"])
-    email_from = dnf.yum.config.Option("root")
-    email_host = dnf.yum.config.Option("localhost")
-    email_port = dnf.yum.config.IntOption(25)
+class EmailConfig(dnf.conf.BaseConfig):
+    def __init__(self, section='email', parser=None):
+        super(EmailConfig, self).__init__(section, parser)
+        self.add_option('email_to',  dnf.conf.ListOption(["root"]))
+        self.add_option('email_from',  dnf.conf.Option("root"))
+        self.add_option('email_host',  dnf.conf.Option("localhost"))
+        self.add_option('email_port',  dnf.conf.IntOption(25))
 
-
-class EmittersConfig(dnf.yum.config.BaseConfig):
-    emit_via = dnf.yum.config.ListOption(['email', 'stdio'])
-    output_width = dnf.yum.config.IntOption(80)
-    system_name = dnf.yum.config.Option(socket.gethostname())
+class EmittersConfig(dnf.conf.BaseConfig):
+    def __init__(self, section='emiter', parser=None):
+        super(EmittersConfig, self).__init__(section, parser)
+        self.add_option('emit_via',  dnf.conf.ListOption(['email', 'stdio']))
+        self.add_option('output_width',  dnf.conf.IntOption(80))
+        self.add_option('system_name',  dnf.conf.Option(socket.gethostname()))
 
 
 def main(args):
@@ -130,10 +134,8 @@ def main(args):
         conf = AutomaticConfig(opts.conf_path)
         with dnf.Base() as base:
             cli = dnf.cli.Cli(base)
-            cli.read_conf_file(conf.commands.base_config_file,
-                               overrides=conf.base_overrides)
-            base_conf = base.conf
-            base_conf.cachedir, _alt_dir = dnf.cli.cli.cachedir_fit(base_conf)
+            cli.read_conf_file(conf.commands.base_config_file)
+            conf.update_baseconf(base.conf)
             logger.debug('Started dnf-automatic.')
 
             if opts.timer:
