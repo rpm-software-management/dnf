@@ -1187,7 +1187,7 @@ class HistoryCommand(Command):
             return 1, ['Failed history userinstalled']
 
         pkgs = tuple(self.base.iter_userinstalled())
-        return self.output.listPkgs(pkgs, 'Packages installed by user', 'name')
+        return self.output.listPkgs(pkgs, 'Packages installed by user', 'nevra')
 
     def doCheck(self, basecmd, extcmds):
         """Verify that conditions are met so that this command can

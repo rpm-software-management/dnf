@@ -403,6 +403,10 @@ class Output(object):
         """Print a package as a line containing its name."""
         print(ucd(pkg.name))
 
+    def simple_nevra_list(self, pkg):
+        """Print a package as a line containing its NEVRA."""
+        print(ucd(pkg))
+
     def fmtKeyValFill(self, key, val):
         """Return a key value pair in the common two column output
         format.
@@ -551,6 +555,7 @@ class Output(object):
               'list' - simple pkg list
               'info' - similar to rpm -qi output
               'name' - simple name list
+              'nevra' - simple nevra list
         :param highlight_na: a dictionary containing information about
               packages that should be highlighted in the output.  The
               dictionary keys are (name, arch) tuples for the package,
@@ -582,7 +587,7 @@ class Output(object):
             1 = we've errored, exit with error string
 
         """
-        if outputType in ['list', 'info', 'name']:
+        if outputType in ['list', 'info', 'name', 'nevra']:
             thingslisted = 0
             if len(lst) > 0:
                 thingslisted = 1
@@ -606,6 +611,8 @@ class Output(object):
                         self.infoOutput(pkg, highlight=highlight)
                     elif outputType == 'name':
                         self.simple_name_list(pkg)
+                    elif outputType == 'nevra':
+                        self.simple_nevra_list(pkg)
                     else:
                         pass
 
