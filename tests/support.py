@@ -20,6 +20,7 @@ from __future__ import unicode_literals
 from functools import reduce
 import contextlib
 import dnf
+import dnf.conf
 import dnf.cli.cli
 import dnf.cli.demand
 import dnf.cli.option_parser
@@ -148,6 +149,11 @@ def command_run(cmd, args):
     command_configure(cmd, args)
     return cmd.run()
 
+class Base(dnf.Base):
+    def __init__(self, *args, **kwargs):
+        with mock.patch('dnf.rpm.detect_releasever', return_value=69):
+            super(Base, self).__init__(*args, **kwargs)
+
 # mock objects
 
 def mock_comps(seed_persistor):
@@ -188,7 +194,7 @@ class _BaseStubMixin(object):
         self.cmd_conf = dnf.cli.cli.CmdConf()
         super(_BaseStubMixin, self).__init__(FakeConf())
         for r in extra_repos:
-            repo = MockRepo(r, None)
+            repo = MockRepo(r, self.conf)
             repo.enable()
             self._repos.add(repo)
 
@@ -253,6 +259,8 @@ class _BaseStubMixin(object):
     def read_all_repos(self, repo_setopts=None):
         pass
 
+    def set_debuglevel(self, level):
+        self.conf.get_option('debuglevel').set(level, dnf.conf.PRIO_RUNTIME)
 
 class BaseCliStub(_BaseStubMixin, dnf.cli.cli.BaseCli):
     """A class mocking `dnf.cli.cli.BaseCli`."""
@@ -405,7 +413,7 @@ class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
                                pkginitval=base,
                                make_cache_dir=True)
 
-class MockBase(_BaseStubMixin, dnf.Base):
+class MockBase(_BaseStubMixin, Base):
     """A class mocking `dnf.Base`."""
 
 def mock_sack(*extra_repos):
@@ -463,48 +471,50 @@ class RPMDBAdditionalDataPackageStub(dnf.yum.rpmsack.RPMDBAdditionalDataPackage)
             self._delete(item)
 
 
-class FakeConf(object):
-    def __init__(self):
-        self.assumeyes = None
-        self.best = False
-        self.cachedir = dnf.const.TMPDIR
-        self.clean_requirements_on_remove = False
-        self.color = 'never'
-        self.color_update_installed = 'normal'
-        self.color_update_remote = 'normal'
-        self.color_list_available_downgrade = 'dim'
-        self.color_list_available_install = 'normal'
-        self.color_list_available_reinstall = 'bold'
-        self.color_list_available_upgrade = 'bold'
-        self.color_list_installed_extra = 'bold'
-        self.color_list_installed_newer = 'bold'
-        self.color_list_installed_older = 'bold'
-        self.color_list_installed_reinstall = 'normal'
-        self.color_update_local = 'bold'
-        self.commands = []
-        self.debug_solver = False
-        self.debuglevel = 8
-        self.defaultyes = False
-        self.disable_excludes = []
-        self.diskspacecheck = True
-        self.exclude = []
-        self.include = []
-        self.install_weak_deps = True
-        self.history_record = False
-        self.installonly_limit = 0
-        self.installonlypkgs = ['kernel']
-        self.installroot = '/'
-        self.ip_resolve = None
-        self.multilib_policy = 'best'
-        self.obsoletes = True
-        self.persistdir = '/should-not-exist-bad-test/persist'
-        self.plugins = False
-        self.protected_packages = ["dnf"]
-        self.showdupesfromrepos = False
-        self.tsflags = []
-        self.verbose = False
-        self.substitutions = {'releasever' : 'Fedora69'}
-        self.strict = True
+class FakeConf(dnf.conf.Conf):
+    def __init__(self, **kwargs):
+        super(FakeConf, self).__init__()
+        self.substitutions['releasever'] = 'Fedora69'
+        for optname, val in [
+                ('assumeyes', None),
+                ('best', False),
+                ('cachedir', dnf.const.TMPDIR),
+                ('clean_requirements_on_remove', False),
+                ('color', 'never'),
+                ('color_update_installed', 'normal'),
+                ('color_update_remote', 'normal'),
+                ('color_list_available_downgrade', 'dim'),
+                ('color_list_available_install', 'normal'),
+                ('color_list_available_reinstall', 'bold'),
+                ('color_list_available_upgrade', 'bold'),
+                ('color_list_installed_extra', 'bold'),
+                ('color_list_installed_newer', 'bold'),
+                ('color_list_installed_older', 'bold'),
+                ('color_list_installed_reinstall', 'normal'),
+                ('color_update_local', 'bold'),
+                ('debug_solver', False),
+                ('debuglevel', 2),
+                ('defaultyes', False),
+                ('disable_excludes', []),
+                ('diskspacecheck', True),
+                ('exclude', []),
+                ('include', []),
+                ('install_weak_deps', True),
+                ('history_record', False),
+                ('installonly_limit', 0),
+                ('installonlypkgs', ['kernel']),
+                ('installroot', '/'),
+                ('ip_resolve', None),
+                ('multilib_policy', 'best'),
+                ('obsoletes', True),
+                ('persistdir', '/should-not-exist-bad-test/persist'),
+                ('protected_packages', ["dnf"]),
+                ('plugins', False),
+                ('showdupesfromrepos', False),
+                ('tsflags', []),
+                ('strict', True),
+                ] + list(kwargs.items()):
+            setattr(self, optname, dnf.conf.Value(val, dnf.conf.PRIO_DEFAULT))
 
     @property
     def releasever(self):

@@ -56,7 +56,7 @@ class MakeCacheCommandTest(support.TestCase):
 
         self.base._repo_persistor.since_last_makecache = mock.Mock(return_value=10)
         self.base._sack = 'nonempty'
-        r = support.MockRepo("glimpse", None)
+        r = support.MockRepo("glimpse", self.base.conf)
         self.base.repos.add(r)
 
         # regular case 1: metadata is already expired:

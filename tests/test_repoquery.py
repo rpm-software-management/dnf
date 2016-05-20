@@ -19,7 +19,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
-from tests.support import command_configure, mock, BaseCliStub, CliStub
+from tests import support
 
 import dnf.cli.commands.repoquery
 import dnf.exceptions
@@ -68,28 +68,31 @@ class PkgStub(object):
 
 class ArgParseTest(unittest.TestCase):
     def setUp(self):
-        self.cmd = dnf.cli.commands.repoquery.RepoQueryCommand(CliStub(BaseCliStub()))
+        self.cmd = dnf.cli.commands.repoquery.RepoQueryCommand(
+            support.CliStub(support.BaseCliStub()))
 
     def test_parse(self):
-        command_configure(self.cmd, ['--whatrequires', 'prudence'])
+        support.command_configure(self.cmd, ['--whatrequires', 'prudence'])
         self.assertIsNone(self.cmd.opts.whatprovides)
         self.assertEqual(self.cmd.opts.whatrequires, 'prudence')
-        self.assertEqual(self.cmd.opts.queryformat, dnf.cli.commands.repoquery.QFORMAT_DEFAULT)
+        self.assertEqual(self.cmd.opts.queryformat,
+                         dnf.cli.commands.repoquery.QFORMAT_DEFAULT)
 
-    @mock.patch('argparse.ArgumentParser.print_help', lambda x: x)
+    @support.mock.patch('argparse.ArgumentParser.print_help', lambda x: x)
     def test_conflict(self):
-        with self.assertRaises(SystemExit) as exit:
-            command_configure(self.cmd, ['--conflicts', '%{name}', '--provides'])
-        self.assertEqual(exit.exception.code, 1)
+        with self.assertRaises(SystemExit) as sysexit:
+            support.command_configure(self.cmd,
+                                      ['--conflicts', '%{name}', '--provides'])
+        self.assertEqual(sysexit.exception.code, 1)
 
     def test_options(self):
-        for arg in ('conflicts', 'enhances', 'obsoletes', 'provides', 'recommends',
-                    'requires', 'suggests', 'supplements'):
-            command_configure(self.cmd, ['--' + arg])
+        for arg in ('conflicts', 'enhances', 'obsoletes', 'provides',
+                    'recommends', 'requires', 'suggests', 'supplements'):
+            support.command_configure(self.cmd, ['--' + arg])
             self.assertEqual(self.cmd.opts.packageatr, arg)
 
     def test_file(self):
-        command_configure(self.cmd, ['/var/foobar'])
+        support.command_configure(self.cmd, ['/var/foobar'])
         self.assertIsNone(self.cmd.opts.file)
 
 
@@ -128,5 +131,6 @@ class Rpm2PyFormatTest(unittest.TestCase):
         self.assertEqual(fmt, '{0.name:<40}')
         fmt = dnf.cli.commands.repoquery.rpm2py_format('%-40{name}')
         self.assertEqual(fmt, '{0.name:>40}')
-        fmt = dnf.cli.commands.repoquery.rpm2py_format('%{name}-%{repoid} :: %-40{arch}')
+        fmt = dnf.cli.commands.repoquery.rpm2py_format(
+            '%{name}-%{repoid} :: %-40{arch}')
         self.assertEqual(fmt, '{0.name}-{0.repoid} :: {0.arch:>40}')

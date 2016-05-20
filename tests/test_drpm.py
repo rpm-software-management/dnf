@@ -36,7 +36,7 @@ class DrpmTest(support.TestCase):
         self.base.conf.cachedir = support.USER_RUNDIR
 
         # load the testing repo
-        repo = self.base.add_test_dir_repo('drpm', cachedir)
+        repo = self.base.add_test_dir_repo('drpm', self.base.conf)
         repo.deltarpm = True
 
         # find the newest 'tour' package available

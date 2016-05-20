@@ -17,15 +17,15 @@
 
 from __future__ import unicode_literals
 from dnf.pycomp import unicode
-from tests.support import TestCase
+from tests import support
 import dnf
 
-class APITest(TestCase):
+class APITest(support.TestCase):
     def test_base(self):
         self.assertIsInstance(dnf.Base, type)
 
     def test_conf(self):
-        base = dnf.Base()
+        base = support.Base()
         self.assertIsInstance(base.conf.installroot, unicode)
         # reasonable default
         self.assertEqual(base.conf.installroot, '/')
