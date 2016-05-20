@@ -152,9 +152,9 @@ class CliTest(TestCase):
         opts.cacheonly = True
         opts.repofrompath = {}
         self.base._repos = dnf.repodict.RepoDict()
-        self.base._repos.add(support.MockRepo('one', None))
-        self.base._repos.add(support.MockRepo('two', None))
-        self.base._repos.add(support.MockRepo('comb', None))
+        self.base._repos.add(support.MockRepo('one', self.base.conf))
+        self.base._repos.add(support.MockRepo('two', self.base.conf))
+        self.base._repos.add(support.MockRepo('comb', self.base.conf))
         self.cli.nogpgcheck = True
         self.cli._configure_repos(opts)
         self.assertFalse(self.base.repos['one'].enabled)
@@ -176,7 +176,7 @@ class CliTest(TestCase):
         pers = self.base._repo_persistor
         pers.get_expired_repos = mock.Mock(return_value=('one',))
         self.base._repos = dnf.repodict.RepoDict()
-        self.base._repos.add(support.MockRepo('one', None))
+        self.base._repos.add(support.MockRepo('one', self.base.conf))
         self.cli._configure_repos(opts)
         # _process_demands() should respect --cacheonly in spite of modified demands
         self.cli.demands.fresh_metadata = False
@@ -198,7 +198,9 @@ class ConfigureTest(TestCase):
     @mock.patch('dnf.util.am_i_root', lambda: False)
     def test_configure_user(self):
         """ Test Cli.configure as user."""
-        self.cli.configure(['update', '-c', self.conffile])
+        self.base._conf = dnf.conf.Conf()
+        with mock.patch('dnf.rpm.detect_releasever', return_value=69):
+            self.cli.configure(['update', '-c', self.conffile])
         reg = re.compile('^/var/tmp/dnf-[a-zA-Z0-9_-]+$')
         self.assertIsNotNone(reg.match(self.base.conf.cachedir))
         self.assertEqual(self.cli.cmdstring, "dnf update -c %s " % self.conffile)
@@ -206,43 +208,48 @@ class ConfigureTest(TestCase):
     @mock.patch('dnf.util.am_i_root', lambda: True)
     def test_configure_root(self):
         """ Test Cli.configure as root."""
-        self.cli.configure(['update', '--nogpgcheck', '-c', self.conffile])
+        self.base._conf = dnf.conf.Conf()
+        with mock.patch('dnf.rpm.detect_releasever', return_value=69):
+            self.cli.configure(['update', '--nogpgcheck', '-c', self.conffile])
         reg = re.compile('^/var/cache/dnf$')
-        self.assertIsNotNone(reg.match(self.base.conf.cachedir))
+        self.assertIsNotNone(reg.match(self.base.conf.system_cachedir))
         self.assertEqual(self.cli.cmdstring,
                          "dnf update --nogpgcheck -c %s " % self.conffile)
 
     def test_configure_verbose(self):
-        self.cli.configure(['-v', 'update', '-c', self.conffile])
+        with mock.patch('dnf.rpm.detect_releasever', return_value=69):
+            self.cli.configure(['-v', 'update', '-c', self.conffile])
         self.assertEqual(self.cli.cmdstring, "dnf -v update -c %s " %
                          self.conffile)
         self.assertEqual(self.base.conf.debuglevel, 6)
         self.assertEqual(self.base.conf.errorlevel, 6)
 
-    @mock.patch('dnf.cli.cli.Cli.read_conf_file')
     @mock.patch('dnf.cli.cli.Cli._parse_commands', new=mock.MagicMock)
-    def test_installroot_explicit(self, read_conf_file):
-        self.cli.base.basecmd = 'update'
-        self.cli.base.extcmds = []
+    @mock.patch('os.path.exists', return_value=True)
+    def test_conf_exists_in_installroot(self, ospathexists):
+        with mock.patch('logging.Logger.warning') as warn, \
+            mock.patch('dnf.rpm.detect_releasever', return_value=69):
+            self.cli.configure(['--installroot', '/roots/dnf', 'update'])
+        self.assertEqual(self.base.conf.config_file_path, '/roots/dnf/etc/dnf/dnf.conf')
+        self.assertEqual(self.base.conf.installroot, '/roots/dnf')
 
-        self.cli.configure(['--installroot', '/roots/dnf', 'update'])
-        read_conf_file.assert_called_with('/etc/dnf/dnf.conf', '/roots/dnf', None,
-                                          {'conffile': '/etc/dnf/dnf.conf',
-                                           'installroot': '/roots/dnf'})
-
-    @mock.patch('dnf.cli.cli.Cli.read_conf_file')
     @mock.patch('dnf.cli.cli.Cli._parse_commands', new=mock.MagicMock)
-    def test_installroot_with_etc(self, read_conf_file):
+    @mock.patch('os.path.exists', return_value=False)
+    def test_conf_notexists_in_installroot(self, ospathexists):
+        with mock.patch('dnf.rpm.detect_releasever', return_value=69):
+            self.cli.configure(['--installroot', '/roots/dnf', 'update'])
+        self.assertEqual(self.base.conf.config_file_path, '/etc/dnf/dnf.conf')
+        self.assertEqual(self.base.conf.installroot, '/roots/dnf')
+
+    @mock.patch('dnf.cli.cli.Cli._parse_commands', new=mock.MagicMock)
+    def test_installroot_with_etc(self):
         """Test that conffile is detected in a new installroot."""
         self.cli.base.basecmd = 'update'
         self.cli.base.extcmds = []
 
         tlv = support.dnf_toplevel()
         self.cli.configure(['--installroot', tlv, 'update'])
-        read_conf_file.assert_called_with(
-            '%s/etc/dnf/dnf.conf' % tlv, tlv, None,
-            {'conffile': '%s/etc/dnf/dnf.conf' % tlv,
-             'installroot': tlv})
+        self.assertEqual(self.base.conf.config_file_path, '%s/etc/dnf/dnf.conf' % tlv)
 
     def test_installroot_configurable(self):
         """Test that conffile is detected in a new installroot."""

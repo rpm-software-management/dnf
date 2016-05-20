@@ -26,6 +26,6 @@ class TestRepolist(tests.support.TestCase):
     @tests.support.mock.patch('dnf.cli.commands.repolist._',
                               dnf.pycomp.NullTranslations().ugettext)
     def test_expire_str(self):
-        repo = dnf.repo.Repo('rollup', None)
+        repo = dnf.repo.Repo('rollup', tests.support.FakeConf())
         expire = repolist._expire_str(repo, None)
         self.assertEqual(expire, '172800 second(s) (last: unknown)')

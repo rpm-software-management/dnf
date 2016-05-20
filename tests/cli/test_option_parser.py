@@ -40,24 +40,8 @@ class OptionParserTest(support.TestCase):
     def test_parse(self):
         parser, opts = _parse(self.command, ['update', '--nogpgcheck'])
         self.assertEqual(opts.command, ['update'])
-        self.assertTrue(opts.nogpgcheck)
+        self.assertFalse(opts.gpgcheck)
         self.assertIsNone(opts.color)
-
-    def test_configure_from_options(self):
-        parser, opts = _parse(self.command, ['update', '-y', '--allowerasing'])
-        conf = dnf.util.Bunch()
-        conf.color = 'auto'
-        conf.exclude = []
-        demands = dnf.util.Bunch()
-        parser.configure_from_options(opts, conf, demands, None)
-        self.assertTrue(demands.allow_erasing)
-        self.assertTrue(conf.assumeyes)
-
-    def test_non_nones2dict(self):
-        parser, values = _parse(self.command, ['install', '-y'])
-        self.assertIsInstance(values, argparse.Namespace)
-        dct = parser._non_nones2dict(values.__dict__)
-        self.assertTrue(dct['assumeyes'])
 
 
 class MyTestCommand(dnf.cli.commands.Command):

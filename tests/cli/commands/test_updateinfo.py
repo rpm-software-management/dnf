@@ -40,7 +40,8 @@ class UpdateInfoCommandTest(tests.support.TestCase):
         cachedir = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, cachedir)
         self.cli = tests.support.MockBase().mock_cli()
-        self.cli.base.add_test_dir_repo('rpm', cachedir)
+        self.cli.base.conf.cachedir = cachedir
+        self.cli.base.add_test_dir_repo('rpm', self.cli.base.conf)
         self._stdout = dnf.pycomp.StringIO()
         self.addCleanup(tests.mock.patch.stopall)
         tests.support.mock.patch(
@@ -190,7 +191,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
                      for pkg in self.cli.base.sack.query().installed()
                      for adv in pkg.get_advisories(hawkey.GT)
                      for apkg in adv.packages)
-        self.cli.base.conf.verbose = True
+        self.cli.base.set_debuglevel(dnf.const.VERBOSE_LEVEL)
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.display_info(apkg_adv_insts, False, '')
         updated = datetime.datetime.fromtimestamp(1404841143)
@@ -219,7 +220,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
              for pkg in self.cli.base.sack.query().installed()
              for adv in pkg.get_advisories(hawkey.LT | hawkey.EQ)
              for apkg in adv.packages))
-        self.cli.base.conf.verbose = True
+        self.cli.base.set_debuglevel(dnf.const.VERBOSE_LEVEL)
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.display_info(apkg_adv_insts, True, '')
         updated1 = datetime.datetime.fromtimestamp(1404840841)
@@ -289,6 +290,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
     # methods.
     def test_run_info(self):
         """Test running the info sub-command."""
+        self.cli.base.set_debuglevel(2)
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         tests.support.command_run(cmd, ['info'])
         updated = datetime.datetime.fromtimestamp(1404841143)

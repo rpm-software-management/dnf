@@ -27,15 +27,16 @@ import tests.support
 
 
 def _run(cli, args):
-    with mock.patch('sys.stdout') as stdout:
+    with mock.patch('sys.stdout') as stdout, \
+         mock.patch('dnf.rpm.detect_releasever', return_value=69):
         cli.configure(['clean', '--config', '/dev/null'] + args)
         cli.run()
 
 class CleanTest(tests.support.TestCase):
     def setUp(self):
-        conf = dnf.base.Base()._setup_default_conf()
-        base = dnf.cli.cli.BaseCli(conf)
-        base.repos.add(support.MockRepo('main', None))
+        conf = dnf.conf.Conf()
+        base = support.Base(conf)
+        base.repos.add(support.MockRepo('main', conf))
         base.conf.reposdir = '/dev/null'
         base.conf.plugins = False
         base.output = support.MockOutput()

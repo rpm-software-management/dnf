@@ -22,14 +22,13 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf import Base
 from dnf.exceptions import PackagesNotAvailableError, PackagesNotInstalledError
 from dnf.history import NEVRAOperations
 from dnf.package import Package
 from dnf.transaction import (ERASE, DOWNGRADE, INSTALL, REINSTALL,
                              TransactionItem, UPGRADE)
 from hawkey import split_nevra
-from tests.support import mock_sack, ObjectMatcher
+from tests.support import mock_sack, Base, ObjectMatcher
 from unittest import TestCase
 
 class BaseTest(TestCase):

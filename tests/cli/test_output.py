@@ -21,6 +21,7 @@ from tests import support
 from tests.support import mock
 
 import dnf.cli.output
+import dnf.const
 import dnf.transaction
 import unittest
 
@@ -245,7 +246,7 @@ class GroupOutputTest(unittest.TestCase):
     @mock.patch('dnf.cli.term._term_width', return_value=80)
     def test_group_verbose_info(self, _term_width):
         group = self.base.comps.group_by_pattern('Peppers')
-        self.output.conf.verbose = True
+        self.base.set_debuglevel(dnf.const.VERBOSE_LEVEL)
         with support.patch_std_streams() as (stdout, stderr):
             self.output.display_pkgs_in_groups(group)
         self.assertEqual(stdout.getvalue(), PKGS_IN_GROUPS_VERBOSE_OUTPUT)

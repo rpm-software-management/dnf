@@ -17,7 +17,7 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests.support import mock
+from tests.support import mock, FakeConf
 
 import dnf.goal
 import dnf.repo
@@ -174,7 +174,8 @@ class PopulateTSTest(tests.support.TestCase):
     @staticmethod
     def test_populate_rpm_ts():
         ts = dnf.transaction.Transaction()
-        repo = dnf.repo.Repo('r', '/tmp')
+        conf = FakeConf(cachedir='/tmp')
+        repo = dnf.repo.Repo('r', conf)
 
         inst = tests.support.MockPackage("ago-20.0-1.x86_64.fc69", repo)
         upg = tests.support.MockPackage("billy-1.2-1.x86_64.fc69", repo)

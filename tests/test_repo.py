@@ -88,13 +88,14 @@ class RepoTestMixin(object):
     @classmethod
     def setUpClass(cls):
         cls.TMP_CACHEDIR = tempfile.mkdtemp(prefix='dnf-repotest-')
+        cls.conf = support.FakeConf(cachedir=cls.TMP_CACHEDIR)
 
     @classmethod
     def tearDownClass(cls):
         dnf.util.rm_rf(cls.TMP_CACHEDIR)
 
     def build_repo(self, id_, name=None):
-        repo = dnf.repo.Repo(id_, self.TMP_CACHEDIR)
+        repo = dnf.repo.Repo(id_, self.conf)
         repo.baseurl = [BASEURL]
         repo.name = id_ if name is None else name
         return repo
@@ -195,7 +196,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.repo.load()
         # the second time we only hit the cache:
         del self.repo
-        self.repo = dnf.repo.Repo("r", self.TMP_CACHEDIR)
+        self.repo = dnf.repo.Repo("r", self.conf)
         self.repo.baseurl = [BASEURL]
         self.repo.md_expire_cache()
         self.assertTrue(self.repo.load())
@@ -217,7 +218,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.assertTrue(self.repo.load())
         # the second time we only hit the cache:
         del self.repo
-        self.repo = dnf.repo.Repo("r", self.TMP_CACHEDIR)
+        self.repo = dnf.repo.Repo("r", self.conf)
         self.repo.baseurl = [BASEURL]
         self.assertFalse(self.repo.load())
         self.assertIsNotNone(self.repo.metadata)
@@ -319,7 +320,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
     def test_valid(self):
         self.assertIsNone(self.repo.valid())
 
-        repo = dnf.repo.Repo('r', None)
+        repo = dnf.repo.Repo('r', self.conf)
         self.assertRegexpMatches(repo.valid(), 'no mirror or baseurl')
 
     def test_handle_new_pkg_download(self):
@@ -345,7 +346,8 @@ class RepoTest(RepoTestMixin, support.TestCase):
 class LocalRepoTest(support.TestCase):
     def setUp(self):
         # directly loads the repo as created by createrepo
-        self.repo = dnf.repo.Repo("rpm", REPOS)
+        self.conf = support.FakeConf(cachedir=REPOS)
+        self.repo = dnf.repo.Repo("rpm", self.conf)
         self.repo.name = "r for riot"
 
     def test_mirrors(self):

@@ -33,7 +33,7 @@ import rpm
 
 class BaseTest(support.TestCase):
     def test_instance(self):
-        base = dnf.Base()
+        base = support.Base()
 
     @mock.patch('dnf.rpm.detect_releasever', lambda x: 'x')
     @mock.patch('dnf.util.am_i_root', lambda: True)
@@ -78,7 +78,7 @@ class BaseTest(support.TestCase):
 
     def test_iter_userinstalled(self):
         """Test iter_userinstalled with a package installed by the user."""
-        base = dnf.Base()
+        base = support.Base()
         base._sack = support.mock_sack('main')
         base._priv_yumdb = support.MockYumDB()
         pkg, = base.sack.query().installed().filter(name='pepper')
@@ -91,7 +91,7 @@ class BaseTest(support.TestCase):
 
     def test_iter_userinstalled_badfromrepo(self):
         """Test iter_userinstalled with a package installed from a bad repository."""
-        base = dnf.Base()
+        base = support.Base()
         base._sack = support.mock_sack('main')
         base._priv_yumdb = support.MockYumDB()
 
@@ -104,7 +104,7 @@ class BaseTest(support.TestCase):
 
     def test_iter_userinstalled_badreason(self):
         """Test iter_userinstalled with a package installed for a wrong reason."""
-        base = dnf.Base()
+        base = support.Base()
         base._sack = support.mock_sack('main')
         base._priv_yumdb = support.MockYumDB()
 
@@ -116,7 +116,7 @@ class BaseTest(support.TestCase):
         self.assertRaises(StopIteration, next, iterator)
 
     def test_translate_comps_pkg_types(self):
-        base = dnf.Base()
+        base = support.Base()
         num = base._translate_comps_pkg_types(('mandatory', 'optional'))
         self.assertEqual(num, 12)
 

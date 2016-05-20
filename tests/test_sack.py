@@ -68,7 +68,7 @@ class SackTest(support.TestCase):
             raise dnf.exceptions.RepoError()
 
         base = support.MockBase()
-        r = support.MockRepo('bag', None)
+        r = support.MockRepo('bag', base.conf)
         r.enable()
         base._repos.add(r)
         r.load = mock.Mock(side_effect=raiser)

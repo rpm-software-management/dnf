@@ -23,10 +23,11 @@ import dnf.repodict
 
 class TestRepoDict(TestCase):
     def setUp(self):
-        self.x  = support.MockRepo('x', None)
-        self.xx = support.MockRepo('xx', None)
-        self.y  = support.MockRepo('y', None)
-        self.z  = support.MockRepo('z', None)
+        conf = support.FakeConf()
+        self.x  = support.MockRepo('x', conf)
+        self.xx = support.MockRepo('xx', conf)
+        self.y  = support.MockRepo('y', conf)
+        self.z  = support.MockRepo('z', conf)
 
         self.repos = dnf.repodict.RepoDict()
         self.repos.add(self.x)
