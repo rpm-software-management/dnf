@@ -270,53 +270,53 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
 
     AVAILABLE_TITLE = u'Available Packages\n'
 
-    HOLE_I686_INFO = (u'Name           : hole\n'
-                      u'Version        : 2\n'
-                      u'Release        : 1\n'
-                      u'Arch           : i686\n'
-                      u'Size           : 0.0  \n'
-                      u'Source         : None\n'
-                      u'Repo           : updates\n'
-                      u'Summary        : \n'
-                      u'License        : \n'
-                      u'Description    : \n'
+    HOLE_I686_INFO = (u'Name         : hole\n'
+                      u'Version      : 2\n'
+                      u'Release      : 1\n'
+                      u'Arch         : i686\n'
+                      u'Size         : 0.0  \n'
+                      u'Source       : None\n'
+                      u'Repo         : updates\n'
+                      u'Summary      : \n'
+                      u'License      : \n'
+                      u'Description  : \n'
                       u'\n')
 
-    HOLE_X86_64_INFO = (u'Name           : hole\n'
-                        u'Version        : 2\n'
-                        u'Release        : 1\n'
-                        u'Arch           : x86_64\n'
-                        u'Size           : 0.0  \n'
-                        u'Source         : None\n'
-                        u'Repo           : updates\n'
-                        u'Summary        : \n'
-                        u'License        : \n'
-                        u'Description    : \n\n')
+    HOLE_X86_64_INFO = (u'Name         : hole\n'
+                        u'Version      : 2\n'
+                        u'Release      : 1\n'
+                        u'Arch         : x86_64\n'
+                        u'Size         : 0.0  \n'
+                        u'Source       : None\n'
+                        u'Repo         : updates\n'
+                        u'Summary      : \n'
+                        u'License      : \n'
+                        u'Description  : \n\n')
 
     INSTALLED_TITLE = u'Installed Packages\n'
 
-    PEPPER_SYSTEM_INFO = (u'Name           : pepper\n'
-                          u'Version        : 20\n'
-                          u'Release        : 0\n'
-                          u'Arch           : x86_64\n'
-                          u'Size           : 0.0  \n'
-                          u'Source         : None\n'
-                          u'Repo           : @System\n'
-                          u'Installed from : main\n'
-                          u'Summary        : \n'
-                          u'License        : \n'
-                          u'Description    : \n\n')
+    PEPPER_SYSTEM_INFO = (u'Name         : pepper\n'
+                          u'Version      : 20\n'
+                          u'Release      : 0\n'
+                          u'Arch         : x86_64\n'
+                          u'Size         : 0.0  \n'
+                          u'Source       : None\n'
+                          u'Repo         : @System\n'
+                          u'From repo    : main\n'
+                          u'Summary      : \n'
+                          u'License      : \n'
+                          u'Description  : \n\n')
 
-    PEPPER_UPDATES_INFO = (u'Name           : pepper\n'
-                           u'Version        : 20\n'
-                           u'Release        : 1\n'
-                           u'Arch           : x86_64\n'
-                           u'Size           : 0.0  \n'
-                           u'Source         : None\n'
-                           u'Repo           : updates\n'
-                           u'Summary        : \n'
-                           u'License        : \n'
-                           u'Description    : \n\n')
+    PEPPER_UPDATES_INFO = (u'Name         : pepper\n'
+                           u'Version      : 20\n'
+                           u'Release      : 1\n'
+                           u'Arch         : x86_64\n'
+                           u'Size         : 0.0  \n'
+                           u'Source       : None\n'
+                           u'Repo         : updates\n'
+                           u'Summary      : \n'
+                           u'License      : \n'
+                           u'Description  : \n\n')
 
     def setUp(self):
         """Prepare the test fixture."""
@@ -341,27 +341,27 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                 self.INSTALLED_TITLE,
                 self.PEPPER_SYSTEM_INFO,
                 self.AVAILABLE_TITLE,
-                u'Name           : pepper\n'
-                u'Version        : 20\n'
-                u'Release        : 0\n'
-                u'Arch           : src\n'
-                u'Size           : 0.0  \n'
-                u'Source         : None\n'
-                u'Repo           : main\n'
-                u'Summary        : \n'
-                u'License        : \n'
-                u'Description    : \n'
+                u'Name         : pepper\n'
+                u'Version      : 20\n'
+                u'Release      : 0\n'
+                u'Arch         : src\n'
+                u'Size         : 0.0  \n'
+                u'Source       : None\n'
+                u'Repo         : main\n'
+                u'Summary      : \n'
+                u'License      : \n'
+                u'Description  : \n'
                 u'\n',
-                u'Name           : trampoline\n'
-                u'Version        : 2.1\n'
-                u'Release        : 1\n'
-                u'Arch           : noarch\n'
-                u'Size           : 0.0  \n'
-                u'Source         : None\n'
-                u'Repo           : main\n'
-                u'Summary        : \n'
-                u'License        : \n'
-                u'Description    : \n'
+                u'Name         : trampoline\n'
+                u'Version      : 2.1\n'
+                u'Release      : 1\n'
+                u'Arch         : noarch\n'
+                u'Size         : 0.0  \n'
+                u'Source       : None\n'
+                u'Repo         : main\n'
+                u'Summary      : \n'
+                u'License      : \n'
+                u'Description  : \n'
                 u'\n')))
 
     def test_info_available(self):
@@ -391,17 +391,17 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
         self.assertEqual(
             stdout.getvalue(),
             u'Extra Packages\n'
-            u'Name           : tour\n'
-            u'Version        : 5\n'
-            u'Release        : 0\n'
-            u'Arch           : noarch\n'
-            u'Size           : 0.0  \n'
-            u'Source         : None\n'
-            u'Repo           : @System\n'
-            u'Installed from : unknown\n'
-            u'Summary        : \n'
-            u'License        : \n'
-            u'Description    : \n\n')
+            u'Name         : tour\n'
+            u'Version      : 5\n'
+            u'Release      : 0\n'
+            u'Arch         : noarch\n'
+            u'Size         : 0.0  \n'
+            u'Source       : None\n'
+            u'Repo         : @System\n'
+            u'From repo    : unknown\n'
+            u'Summary      : \n'
+            u'License      : \n'
+            u'Description  : \n\n')
 
     def test_info_installed(self):
         """Test whether only packages installed from the repository are listed."""
@@ -455,16 +455,16 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
             stdout.getvalue(),
             ''.join((
                 u'Upgraded Packages\n'
-                u'Name           : hole\n'
-                u'Version        : 1\n'
-                u'Release        : 2\n'
-                u'Arch           : x86_64\n'
-                u'Size           : 0.0  \n'
-                u'Source         : None\n'
-                u'Repo           : updates\n'
-                u'Summary        : \n'
-                u'License        : \n'
-                u'Description    : \n'
+                u'Name         : hole\n'
+                u'Version      : 1\n'
+                u'Release      : 2\n'
+                u'Arch         : x86_64\n'
+                u'Size         : 0.0  \n'
+                u'Source       : None\n'
+                u'Repo         : updates\n'
+                u'Summary      : \n'
+                u'License      : \n'
+                u'Description  : \n'
                 u'\n',
                 self.HOLE_X86_64_INFO,
                 self.PEPPER_UPDATES_INFO)))

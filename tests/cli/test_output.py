@@ -25,18 +25,18 @@ import dnf.transaction
 import unittest
 
 INFOOUTPUT_OUTPUT="""\
-Name           : tour
-Epoch          : 1
-Version        : 5
-Release        : 0
-Arch           : noarch
-Size           : 0.0  
-Source         : tour.src.rpm
-Repo           : None
-Summary        : A summary of the package.
-URL            : http://example.com
-License        : GPL+
-Description    : 
+Name         : tour
+Epoch        : 1
+Version      : 5
+Release      : 0
+Arch         : noarch
+Size         : 0.0  
+Source       : tour.src.rpm
+Repo         : None
+Summary      : A summary of the package.
+URL          : http://example.com
+License      : GPL+
+Description  : 
 
 """
 
