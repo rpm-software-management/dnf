@@ -644,10 +644,10 @@ class Output(object):
         nui = (ucd(_('n')), ucd(_('no')))
         aui = yui + nui
         while True:
-            msg = _('Is this ok [y/N]: ')
+            msg = _('Is this ok to perform [y/N]: ')
             choice = ''
             if self.conf.defaultyes:
-                msg = _('Is this ok [Y/n]: ')
+                msg = _('Is this ok to perform [Y/n]: ')
             try:
                 choice = dnf.i18n.ucd_input(msg)
             except EOFError:
