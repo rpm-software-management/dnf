@@ -682,7 +682,7 @@ resulting packages matching the specification. All packages are considered if no
     switch lists packages that are going to be removed after executing ``dnf autoremove`` command.
 
 ``--available``
-    Limit the resulting set to available packages only.
+    Limit the resulting set to available packages only (set by default).
 
 ``--extras``
     Limit the resulting set to packages that are not present in any of available repositories.
