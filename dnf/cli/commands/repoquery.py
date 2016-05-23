@@ -216,11 +216,9 @@ class RepoQueryCommand(commands.Command):
             'extras': _('Display only packages that are not present in any of available repositories.'),
             'upgrades': _('Display only packages that provide an upgrade for some already installed package.'),
             'unneeded': _('Display only packages that can be removed by "dnf autoremove" command.'),
-            'recent': _('Display only recently edited packages')
         }
         list_group = parser.add_mutually_exclusive_group()
-        for list_arg in ('available', 'installed', 'extras', 'upgrades', 'unneeded',
-                         'recent'):
+        for list_arg in ('available', 'installed', 'extras', 'upgrades', 'unneeded'):
             switch = '--%s' % list_arg
             list_group.add_argument(switch, dest='list', action='store_const',
                                     const=list_arg, help=help_list[list_arg])
@@ -229,6 +227,7 @@ class RepoQueryCommand(commands.Command):
         list_group.add_argument(
             '--autoremove', dest='list', action='store_const',
             const="unneeded", help=argparse.SUPPRESS)
+        parser.add_argument('--recent', action="store_true", help=_('Display only recently edited packages'))
 
     def configure(self):
         demands = self.cli.demands
@@ -280,9 +279,9 @@ class RepoQueryCommand(commands.Command):
                 pkgs += q.run()
             q = self.base.sack.query().filter(pkg=pkgs)
 
-        if self.opts.list == "recent":
+        if self.opts.recent:
             q.recent(self.base.conf.recent)
-        elif self.opts.list == "unneeded":
+        if self.opts.list == "unneeded":
             q = q.unneeded(self.base.sack, self.base._yumdb)
         elif self.opts.list:
             q = getattr(q, self.opts.list)()
