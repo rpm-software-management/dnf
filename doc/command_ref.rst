@@ -736,7 +736,11 @@ resulting packages matching the specification. All packages are considered if no
 
 ``--alldeps``
     This option is stackable with ``--whatrequires`` only. Additionally it adds to the result set all packages requiring
-    the package features.
+    the package features (used as default).
+
+``--exactdeps``
+    This option is stackable with ``--whatrequires`` only. Limit the resulting set only to packages that require
+    ``<capability>`` specified by --whatrequires.
 
 ``--srpm``
     Operate on corresponding source RPM.
