@@ -22,6 +22,13 @@
 .. contents::
 
 ===================
+2.0.0 Release Notes
+===================
+
+Import repoquery into DNF from dnf-plugins-core
+Set --alldeps as defaults in Repoquery plugin and added --exactdeps option.
+
+===================
 1.1.9 Release Notes
 ===================
 
