@@ -301,7 +301,7 @@ class RepoQueryCommand(commands.Command):
                 for msg in goal.problems:
                     print(msg)
             return
-        elif self.opts.pkgfilter == "unsatisfied":
+        elif not self.opts.list:
             # do not show packages from @System repo
             q = q.available()
 
