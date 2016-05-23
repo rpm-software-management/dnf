@@ -77,8 +77,10 @@ class ProcessLock(object):
             os.write(fd, pid)
             os.close(fd)
             return True
-        except OSError:
-            return False
+        except OSError as e:
+            if e.errno == 17:   # File exists
+                return False
+            raise
 
     def _try_read_lock(self):
         try:
