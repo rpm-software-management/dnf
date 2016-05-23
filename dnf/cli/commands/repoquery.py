@@ -20,6 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from datetime import datetime
 from dnfpluginscore import _
+from .. import commands
 
 import argparse
 import dnf
@@ -111,10 +112,11 @@ def rpm2py_format(queryformat):
     return fmt
 
 
-@dnf.plugin.register_command
-class RepoQueryCommand(dnf.cli.Command):
+class RepoQueryCommand(commands.Command):
+    """A class containing s needed by the cli to execute the
+    reinstall command.
+    """
 
-    """The util command there is extending the dnf command line."""
     aliases = ('repoquery',)
     summary = _('search for packages matching keyword')
 
