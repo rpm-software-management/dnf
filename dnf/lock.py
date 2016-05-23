@@ -25,6 +25,7 @@ from dnf.i18n import _
 from dnf.yum import misc
 import dnf.logging
 import dnf.util
+import errno
 import hashlib
 import logging
 import os
@@ -77,8 +78,10 @@ class ProcessLock(object):
             os.write(fd, pid)
             os.close(fd)
             return True
-        except OSError:
-            return False
+        except OSError as e:
+            if e.errno == errno.EEXIST:   # File exists
+                return False
+            raise
 
     def _try_read_lock(self):
         try:
