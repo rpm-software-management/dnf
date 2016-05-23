@@ -209,16 +209,16 @@ class RepoQueryCommand(commands.Command):
             name = '--%s' % arg
             package_atribute.add_argument(name, dest='packageatr', action='store_const',
                                           const=arg, help=help_msgs[arg])
+        parser.add_argument('--available', action="store_true", help=_('Display only available packages.'))
 
         help_list = {
-            'available': _('Display only available packages.'),
             'installed': _('Display only installed packages.'),
             'extras': _('Display only packages that are not present in any of available repositories.'),
             'upgrades': _('Display only packages that provide an upgrade for some already installed package.'),
             'unneeded': _('Display only packages that can be removed by "dnf autoremove" command.'),
         }
         list_group = parser.add_mutually_exclusive_group()
-        for list_arg in ('available', 'installed', 'extras', 'upgrades', 'unneeded'):
+        for list_arg in ('installed', 'extras', 'upgrades', 'unneeded'):
             switch = '--%s' % list_arg
             list_group.add_argument(switch, dest='list', action='store_const',
                                     const=list_arg, help=help_list[list_arg])
@@ -238,8 +238,7 @@ class RepoQueryCommand(commands.Command):
         if self.opts.srpm:
             dnfpluginscore.lib.enable_source_repos(self.base.repos)
 
-        if self.opts.pkgfilter != "installonly" and \
-           self.opts.list != "installed":
+        if (self.opts.pkgfilter != "installonly" and self.opts.list != "installed") or self.opts.available:
             demands.available_repos = True
 
         demands.sack_activation = True
@@ -270,7 +269,6 @@ class RepoQueryCommand(commands.Command):
             return
 
         q = self.base.sack.query()
-
         if self.opts.key:
             pkgs = []
             for key in self.opts.key:
@@ -281,7 +279,12 @@ class RepoQueryCommand(commands.Command):
 
         if self.opts.recent:
             q.recent(self.base.conf.recent)
-        if self.opts.list == "unneeded":
+        if self.opts.available:
+            if self.opts.list and self.opts.list != "installed":
+                print(self.parser.format_help())
+                raise dnf.exceptions.Error(_("argument {}: not allowed with argument {}".format(
+                    "--available", "--" + self.opts.list)))
+        elif self.opts.list == "unneeded":
             q = q.unneeded(self.base.sack, self.base._yumdb)
         elif self.opts.list:
             q = getattr(q, self.opts.list)()
