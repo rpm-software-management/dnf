@@ -27,7 +27,11 @@ import dnf
 import dnf.cli
 import dnf.exceptions
 import dnf.subject
+import logging
 import re
+
+logger = logging.getLogger('dnf')
+
 
 QFORMAT_DEFAULT = '%{name}-%{epoch}:%{version}-%{release}.%{arch}'
 # matches %[-][dd]{attr}
@@ -76,6 +80,46 @@ def build_format_fn(opts):
         return sourcerpm_format
     else:
         return rpm2py_format(opts.queryformat).format
+
+
+def _enable_sub_repos(repos, sub_name_fn):
+    for repo in repos.iter_enabled():
+        for found in repos.get_matching(sub_name_fn(repo.id)):
+            if not found.enabled:
+                logger.info(_('enabling %s repository'), found.id)
+                found.enable()
+
+
+def enable_source_repos(repos):
+    """
+    enable source repos corresponding to already enabled binary repos
+    """
+    def source_name(name):
+        return ("{}-source-rpms".format(name[:-5]) if name.endswith("-rpms")
+                else "{}-source".format(name))
+    _enable_sub_repos(repos, source_name)
+
+
+def package_source_name(package):
+    """"
+    returns name of source package for given pkgname
+    e.g. krb5-libs -> krb5
+    """
+    if package.sourcerpm is not None:
+        # trim suffix first
+        srcname = rtrim(package.sourcerpm, ".src.rpm")
+        # source package filenames may not contain epoch, handle both cases
+        srcname = rtrim(srcname, "-{}".format(package.evr))
+        srcname = rtrim(srcname, "-{0.version}-{0.release}".format(package))
+    else:
+        srcname = None
+    return srcname
+
+
+def rtrim(s, r):
+    while s.endswith(r):
+        s = s[:-len(r)]
+    return s
 
 
 def info_format(pkg):
@@ -236,7 +280,7 @@ class RepoQueryCommand(commands.Command):
             return
 
         if self.opts.srpm:
-            dnfpluginscore.lib.enable_source_repos(self.base.repos)
+            enable_source_repos(self.base.repos)
 
         if (self.opts.pkgfilter != "installonly" and self.opts.list != "installed") or self.opts.available:
             demands.available_repos = True
@@ -339,7 +383,7 @@ class RepoQueryCommand(commands.Command):
         if self.opts.srpm:
             pkg_list = []
             for pkg in q:
-                srcname = dnfpluginscore.lib.package_source_name(pkg)
+                srcname = package_source_name(pkg)
                 if srcname is not None:
                     tmp_query = self.base.sack.query().filter(
                         name=srcname,
