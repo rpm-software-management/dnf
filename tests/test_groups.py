@@ -68,7 +68,7 @@ class EmptyPersistorTest(support.ResultTestCase):
         self.assertEmpty(removed)
 
         trans = dnf.comps.TransactionBunch()
-        trans.install_opt.add('waltz')
+        trans.install.add('waltz')
         self.assertEqual(self.base._add_comps_trans(trans), 0)
 
 
@@ -119,27 +119,6 @@ class PresetPersistorTest(support.ResultTestCase):
         inst, removed = self.installed_removed(self.base)
         self.assertEmpty(inst)
         self.assertEmpty(removed)
-        self.assertTrue(p_grp.installed)
-
-    def test_group_install_broken(self):
-        prst = self.base._group_persistor
-        grp = self.base.comps.group_by_pattern('Broken Group')
-        p_grp = prst.group('broken-group')
-        self.assertFalse(p_grp.installed)
-
-        self.assertRaises(dnf.exceptions.MarkingError,
-                          self.base.group_install, grp.id,
-                          ('mandatory', 'default'))
-        p_grp = prst.group('broken-group')
-        self.assertFalse(p_grp.installed)
-
-        self.assertEquals(self.base.group_install(grp.id,
-                                                  ('mandatory', 'default'),
-                                                  strict=False), 1)
-        inst, removed = self.installed_removed(self.base)
-        self.assertLength(inst, 1)
-        self.assertEmpty(removed)
-        p_grp = prst.group('broken-group')
         self.assertTrue(p_grp.installed)
 
     def test_group_remove(self):

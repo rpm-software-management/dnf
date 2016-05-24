@@ -1208,14 +1208,12 @@ class Base(object):
             for it in attr:
                 if not self.sack.query().filter(name=it):
                     # a comps item that doesn't refer to anything real
-                    if (attr == trans.install):
-                        self._group_persistor._rollback()
-                        raise dnf.exceptions.MarkingError(it)
                     continue
                 sltr = dnf.selector.Selector(self.sack)
                 sltr.set(name=it)
                 fn(select=sltr)
                 cnt += 1
+
         self._goal.group_members.update(trans.install)
         self._goal.group_members.update(trans.install_opt)
         return cnt

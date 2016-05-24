@@ -100,7 +100,7 @@ class CompsTest(support.TestCase):
     def test_iteration(self):
         comps = self.comps
         self.assertEqual([g.name for g in comps.groups_iter()],
-                         ['Base', 'Solid Ground', "Pepper's", "Broken Group"])
+                         ['Base', 'Solid Ground', "Pepper's"])
         self.assertEqual([c.name for c in comps.categories_iter()],
                          ['Base System'])
         g = dnf.util.first(comps.groups_iter())
@@ -108,7 +108,7 @@ class CompsTest(support.TestCase):
 
     def test_group_display_order(self):
         self.assertEqual([g.name for g in self.comps.groups],
-                         ["Pepper's", 'Base', 'Solid Ground', 'Broken Group'])
+                         ["Pepper's", 'Base', 'Solid Ground'])
 
     def test_packages(self):
         comps = self.comps
@@ -120,7 +120,7 @@ class CompsTest(support.TestCase):
 
     def test_size(self):
         comps = self.comps
-        self.assertLength(comps, 6)
+        self.assertLength(comps, 5)
         self.assertLength(comps.groups, support.TOTAL_GROUPS)
         self.assertLength(comps.categories, 1)
         self.assertLength(comps.environments, 1)

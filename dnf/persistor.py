@@ -356,9 +356,6 @@ class GroupPersistor(object):
             for id_ in del_list:
                 del members_dct[id_]
 
-    def _rollback(self):
-        self.db = self._original.clone()
-
     def commit(self):
         self._commit = True
 
