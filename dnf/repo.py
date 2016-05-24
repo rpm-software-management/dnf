@@ -23,6 +23,7 @@ from __future__ import unicode_literals
 from dnf.i18n import ucd, _
 
 import dnf.callback
+import dnf.conf
 import dnf.conf.substitutions
 import dnf.const
 import dnf.crypto
@@ -30,7 +31,6 @@ import dnf.exceptions
 import dnf.logging
 import dnf.pycomp
 import dnf.util
-import dnf.yum.config
 import dnf.yum.misc
 import functools
 import hashlib
@@ -452,18 +452,16 @@ SYNC_ONLY_CACHE = 2
 # try the cache, if it is expired download new md.
 SYNC_TRY_CACHE = 3
 
-class Repo(dnf.yum.config.RepoConf):
+class Repo(dnf.conf.RepoConf):
     # :api
     DEFAULT_SYNC = SYNC_TRY_CACHE
 
-    def __init__(self, id_, cachedir):
+    def __init__(self, name=None, parent_conf=None):
         # :api
-        super(Repo, self).__init__()
+        super(Repo, self).__init__(section=name, parent=parent_conf)
         self._expired = False
         self._pkgdir = None
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
-        self.basecachedir = cachedir
-        self.id = id_ # :api
         self.name = self.id
         self.key_import = _NullKeyImport()
         self.metadata = None # :api
@@ -472,6 +470,11 @@ class Repo(dnf.yum.config.RepoConf):
         self.max_mirror_tries = 0 # try them all
         self._handle = None
         self.hawkey_repo = self._init_hawkey_repo()
+
+    @property
+    def id(self):
+        # :api
+        return self.section
 
     @property
     def cachedir(self):
@@ -764,28 +767,6 @@ class Repo(dnf.yum.config.RepoConf):
     def disable(self):
         # :api
         self.enabled = False
-
-    _REPOCONF_ATTRS = set(dir(dnf.yum.config.RepoConf))
-    def dump(self):
-        """Return a string representing configuration of this repo."""
-        output = '[%s]\n' % self.id
-        for attr in dir(self):
-            # exclude all vars which are not opts
-            if attr not in self._REPOCONF_ATTRS:
-                continue
-            if attr.startswith('_'):
-                continue
-
-            res = getattr(self, attr)
-            if isinstance(res, types.MethodType):
-                continue
-            if not res and type(res) not in (type(False), type(0)):
-                res = ''
-            if isinstance(res, list):
-                res = ',\n   '.join(res)
-            output = output + '%s = %s\n' % (attr, res)
-
-        return output
 
     def enable(self):
         # :api
