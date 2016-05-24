@@ -925,6 +925,10 @@ class Base(object):
             self._add_tempfiles([path])
         return self.sack.add_cmdline_package(path)
 
+    def _sigCheckPkg(self, po):
+        # :compat method
+        self._sig_check_pkg(po)
+
     def _sig_check_pkg(self, po):
         """Verify the GPG signature of the given package object.
 
@@ -996,6 +1000,11 @@ class Base(object):
             else:
                 logger.log(dnf.logging.DDEBUG,
                            _('%s removed'), fn)
+
+    def _doPackageLists(self, pkgnarrow='all', patterns=None, showdups=None,
+                        ignore_case=False, reponame=None):
+        # :compat method
+        self._do_package_lists(pkgnarrow, patterns, showdups, ignore_case, reponame)
 
     def _do_package_lists(self, pkgnarrow='all', patterns=None, showdups=None,
                        ignore_case=False, reponame=None):
@@ -1801,6 +1810,10 @@ class Base(object):
                 handle_upgrade(nevra, replaced_nevra, obsoleted_nevras)
             else:
                 assert False
+
+    def _getKeyForPackage(self, po, askcb=None, fullaskcb=None):
+        # :compat method
+        self._get_key_for_package(po, askcb, fullaskcb)
 
     def _get_key_for_package(self, po, askcb=None, fullaskcb=None):
         """Retrieve a key for a package. If needed, use the given
