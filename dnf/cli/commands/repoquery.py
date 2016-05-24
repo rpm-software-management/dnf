@@ -37,21 +37,6 @@ QFORMAT_DEFAULT = '%{name}-%{epoch}:%{version}-%{release}.%{arch}'
 # matches %[-][dd]{attr}
 QFORMAT_MATCH = re.compile(r'%([-\d]*?){([:\.\w]*?)}')
 
-QUERY_INFO = """\
-Name        : {0.name}
-Version     : {0.version}
-Release     : {0.release}
-Architecture: {0.arch}
-Size        : {0.size}
-License     : {0.license}
-Source RPM  : {0.sourcerpm}
-Build Date  : {0.buildtime}
-Packager    : {0.packager}
-URL         : {0.url}
-Summary     : {0.summary}
-Description :
-{0.description}\n"""
-
 QUERY_TAGS = """
 name, arch, epoch, version, release, reponame (repoid), evr
 installtime, buildtime, size, downloadsize, installsize
@@ -70,17 +55,6 @@ OPTS_MAPPING = {
     'suggests': 'suggests',
     'supplements': 'supplements'
 }
-
-def build_format_fn(opts):
-    if opts.queryinfo:
-        return info_format
-    elif opts.queryfilelist:
-        return filelist_format
-    elif opts.querysourcerpm:
-        return sourcerpm_format
-    else:
-        return rpm2py_format(opts.queryformat).format
-
 
 def _enable_sub_repos(repos, sub_name_fn):
     for repo in repos.iter_enabled():
@@ -120,10 +94,6 @@ def rtrim(s, r):
     while s.endswith(r):
         s = s[:-len(r)]
     return s
-
-
-def info_format(pkg):
-    return QUERY_INFO.format(pkg)
 
 
 def filelist_format(pkg):
@@ -287,6 +257,18 @@ class RepoQueryCommand(commands.Command):
 
         demands.sack_activation = True
 
+    def build_format_fn(self, opts, pkg):
+        po = PackageWrapper(pkg)
+        if opts.queryinfo:
+            return self.base.output.infoOutput(pkg)
+        elif opts.queryfilelist:
+            return self.filelist_format(po)
+        elif opts.querysourcerpm:
+            return self.sourcerpm_format(po)
+        else:
+           return rpm2py_format(opts.queryformat).format(po)
+
+
     def by_all_deps(self, name, query):
         defaultquery = query.filter(name=name)
         allpkgs = set()
@@ -391,7 +373,6 @@ class RepoQueryCommand(commands.Command):
                         arch='src')
                     pkg_list += tmp_query.run()
             q = self.base.sack.query().filter(pkg=pkg_list)
-        fmt_fn = build_format_fn(self.opts)
         if self.opts.tree:
             if not self.opts.whatrequires and not self.opts.packageatr:
                 raise dnf.exceptions.Error(
@@ -410,9 +391,8 @@ class RepoQueryCommand(commands.Command):
                     pkgs.add(str(rel))
         else:
             for pkg in q.run():
-                po = PackageWrapper(pkg)
                 try:
-                    pkgs.add(fmt_fn(po))
+                    pkgs.add(self.build_format_fn(self.opts, pkg))
                 except AttributeError as e:
                     # catch that the user has specified attributes
                     # there don't exist on the dnf Package object.
@@ -424,9 +404,8 @@ class RepoQueryCommand(commands.Command):
             providers = query.filter(provides__glob=list(pkgs))
             pkgs = set()
             for pkg in providers.latest().run():
-                po = PackageWrapper(pkg)
                 try:
-                    pkgs.add(fmt_fn(po))
+                    pkgs.add(self.build_format_fn(self.opts, pkg))
                 except AttributeError as e:
                     # catch that the user has specified attributes
                     # there don't exist on the dnf Package object.

@@ -92,11 +92,6 @@ class ArgParseTest(unittest.TestCase):
         command_configure(self.cmd, ['/var/foobar'])
         self.assertIsNone(self.cmd.opts.file)
 
-class InfoFormatTest(unittest.TestCase):
-    def test_info(self):
-        pkg = dnf.cli.commands.repoquery.PackageWrapper(PkgStub())
-        self.assertEqual(dnf.cli.commands.repoquery.info_format(pkg), EXPECTED_INFO_FORMAT)
-
 
 class FilelistFormatTest(unittest.TestCase):
     def test_filelist(self):
