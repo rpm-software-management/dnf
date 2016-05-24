@@ -262,6 +262,28 @@ class BaseCliStub(_BaseStubMixin, dnf.cli.cli.BaseCli):
         super(BaseCliStub, self).__init__(*extra_repos)
         self.output.term = MockTerminal()
 
+
+class CliStub(object):
+    """A class mocking `dnf.cli.Cli`."""
+    nogpgcheck = True
+
+    def __init__(self, base):
+        """Initialize the CLI."""
+        self.base = base
+        self.cli_commands = {}
+        self.demands = DemandsStub()
+        self.logger = logging.getLogger()
+        self.register_command(dnf.cli.commands.HelpCommand)
+
+    def register_command(self, command):
+        """Register given *command*."""
+        self.cli_commands.update({alias: command for alias in command.aliases})
+
+
+class DemandsStub(object):
+    pass
+
+
 class HistoryStub(dnf.yum.history.YumHistory):
     """Stub of dnf.yum.history.YumHistory for easier testing."""
 

@@ -19,7 +19,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from datetime import datetime
-from dnfpluginscore import _
+from dnf.i18n import _
 from .. import commands
 
 import argparse
@@ -27,7 +27,6 @@ import dnf
 import dnf.cli
 import dnf.exceptions
 import dnf.subject
-import dnfpluginscore
 import re
 
 QFORMAT_DEFAULT = '%{name}-%{epoch}:%{version}-%{release}.%{arch}'
