@@ -169,8 +169,8 @@ def main(args):
     base = dnf.cli.cli.BaseCli()
     cli = dnf.cli.Cli(base)
     if args[0] == "_cmds":
-        base.plugins.load(base.conf.pluginpath, [])
-        base.plugins.run_init(base, cli)
+        base._plugins.load(base.conf.pluginpath, [])
+        base._plugins.run_init(base, cli)
         print("\n".join(filter_list_by_kw(args[1], cli.cli_commands)))
         return
     cli.cli_commands.clear()
