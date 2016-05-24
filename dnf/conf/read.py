@@ -21,10 +21,10 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _, ucd
+import dnf.conf
 import dnf.conf.parser
 import dnf.exceptions
 import dnf.repo
-import dnf.yum.config
 import glob
 import logging
 
@@ -54,9 +54,9 @@ class RepoReader(object):
     def _build_repo(self, parser, id_):
         """Build a repository using the parsed data."""
 
-        repo = dnf.repo.Repo(id_, self.conf.cachedir)
+        repo = dnf.repo.Repo(id_, self.conf)
         try:
-            repo.populate(parser, id_, self.conf)
+            repo.populate(parser, id_, dnf.conf.PRIO_REPOCONFIG)
         except ValueError as e:
             msg = _('Repository %r: Error parsing config: %s' % (id_, e))
             raise dnf.exceptions.ConfigError(msg)
@@ -76,12 +76,12 @@ class RepoReader(object):
         """Parse and yield all repositories from a config file."""
 
         substs = self.conf.substitutions
-        parser = dnf.yum.config.ConfigParser()
+        parser = dnf.conf.ConfigParser()
         try:
             confpp_obj = dnf.conf.parser.ConfigPreProcessor(repofn, vars=substs)
 
             parser.readfp(confpp_obj)
-        except dnf.yum.config.ParsingError as e:
+        except dnf.conf.ParsingError as e:
             msg = str(e)
             raise dnf.exceptions.ConfigError(msg)
 
