@@ -21,6 +21,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from .. import commands
+from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _
 
 import dnf.exceptions
@@ -39,10 +40,10 @@ class ReinstallCommand(commands.Command):
     aliases = ('reinstall',)
     summary = _('reinstall a package')
 
-
     @staticmethod
     def set_argparser(parser):
         parser.add_argument('packages', nargs='+', help=_('Package to reinstall'),
+                            action=OptionParser.ParseSpecGroupFileCallback,
                             metavar=_('PACKAGE'))
 
     def configure(self):
@@ -57,29 +58,17 @@ class ReinstallCommand(commands.Command):
         demands.resolving = True
         demands.root_user = True
         commands.checkGPGKey(self.base, self.cli)
-        commands.checkEnabledRepo(self.base, self.opts.packages)
-
-    @staticmethod
-    def parse_extcmds(extcmds):
-        """Parse command arguments."""
-        pkg_specs, filenames = [], []
-        for argument in extcmds:
-            if argument.endswith('.rpm'):
-                filenames.append(argument)
-            else:
-                pkg_specs.append(argument)
-        return pkg_specs, filenames
+        commands.checkEnabledRepo(self.base, self.opts.filenames)
 
     def run(self):
-        pkg_specs, filenames = self.parse_extcmds(self.opts.packages)
 
         # Reinstall files.
-        local_pkgs = map(self.base.add_remote_rpm, filenames)
+        local_pkgs = map(self.base.add_remote_rpm, self.opts.filenames)
         results = map(self.base.package_reinstall, local_pkgs)
         done = functools.reduce(operator.or_, results, False)
 
         # Reinstall packages.
-        for pkg_spec in pkg_specs:
+        for pkg_spec in self.opts.pkg_specs + ['@' + x for x in self.opts.grp_specs]:
             try:
                 self.base.reinstall(pkg_spec)
             except dnf.exceptions.PackagesNotInstalledError:
