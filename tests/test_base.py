@@ -126,10 +126,10 @@ class MockBaseTest(TestCase):
     def setUp(self):
         self.base = support.MockBase("main")
 
-    def test_add_remote_rpm(self):
-        pkg = self.base.add_remote_rpm(support.TOUR_50_PKG_PATH)
-        self.assertIsInstance(pkg, dnf.package.Package)
-        self.assertEqual(pkg.name, 'tour')
+    def test_add_remote_rpms(self):
+        pkgs = self.base.add_remote_rpms([support.TOUR_50_PKG_PATH])
+        self.assertIsInstance(pkgs[0], dnf.package.Package)
+        self.assertEqual(pkgs[0].name, 'tour')
 
 class BuildTransactionTest(support.TestCase):
     def test_resolve(self):

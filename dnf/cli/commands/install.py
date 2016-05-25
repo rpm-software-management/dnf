@@ -25,9 +25,7 @@ from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _
 
 import dnf.exceptions
-import functools
 import logging
-import operator
 
 logger = logging.getLogger('dnf')
 
@@ -61,15 +59,11 @@ class InstallCommand(commands.Command):
 
     def run(self):
         strict = self.base.conf.strict
-        package_install_fnc = functools.partial(self.base.package_install,
-                                                strict=strict)
 
         # Install files.
-        local_pkgs = map(self.base.add_remote_rpm, self.opts.filenames)
         # try to install packages with higher version first
-        local_pkgs = sorted(local_pkgs, reverse=True)
-        results = map(package_install_fnc, local_pkgs)
-        done = functools.reduce(operator.or_, results, False)
+        for pkg in sorted(self.base.add_remote_rpms(self.opts.filenames, strict=strict), reverse=True):
+            self.base.package_install(pkg, strict=strict)
 
         # Install groups.
         if self.opts.grp_specs:
@@ -81,7 +75,6 @@ class InstallCommand(commands.Command):
             except dnf.exceptions.Error:
                 if self.base.conf.strict:
                     raise
-            done = True
 
         # Install packages.
         errs = []
@@ -93,9 +86,5 @@ class InstallCommand(commands.Command):
                 logger.info(msg, self.base.output.term.MODE['bold'], pkg_spec,
                             self.base.output.term.MODE['normal'])
                 errs.append(pkg_spec)
-            done = True
         if len(errs) != 0 and self.base.conf.strict:
             raise dnf.exceptions.PackagesNotAvailableError(_("Unable to find a match."), packages=errs)
-
-        if not done:
-            raise dnf.exceptions.Error(_('Nothing to do.'))

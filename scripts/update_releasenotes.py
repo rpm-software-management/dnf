@@ -1335,7 +1335,7 @@ class TestCase(unittest.TestCase):
             'found and fixed.\n\nAPI changes in 0.5.0:\n\n* it is now '
             'recommended that either :meth:`dnf.Base.close` is used, or that '
             ':class:`dnf.Base` instances are treated as a context manager.\n\n'
-            'API extensions in 0.5.0:\n\n* :meth:`dnf.Base.add_remote_rpm`\n* '
+            'API extensions in 0.5.0:\n\n* :meth:`dnf.Base.add_remote_rpms`\n* '
             ':meth:`dnf.Base.close`\n* :meth:`dnf.Base.group_upgrade`\n* '
             ':meth:`dnf.Base.resolve` optionally accepts `allow_erasing` '
             'arguments now.\n* :meth:`dnf.Base.package_downgrade`\n* '

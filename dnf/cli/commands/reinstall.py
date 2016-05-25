@@ -25,9 +25,7 @@ from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _
 
 import dnf.exceptions
-import functools
 import logging
-import operator
 
 logger = logging.getLogger('dnf')
 
@@ -63,9 +61,14 @@ class ReinstallCommand(commands.Command):
     def run(self):
 
         # Reinstall files.
-        local_pkgs = map(self.base.add_remote_rpm, self.opts.filenames)
-        results = map(self.base.package_reinstall, local_pkgs)
-        done = functools.reduce(operator.or_, results, False)
+        done = False
+        for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=False):
+            try:
+                self.base.package_reinstall(pkg)
+            except dnf.exceptions.MarkingError as e:
+                logger.info(e)
+            else:
+                done = True
 
         # Reinstall packages.
         for pkg_spec in self.opts.pkg_specs + ['@' + x for x in self.opts.grp_specs]:

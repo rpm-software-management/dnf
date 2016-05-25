@@ -648,7 +648,7 @@ API changes in 0.5.0:
 
 API extensions in 0.5.0:
 
-* :meth:`dnf.Base.add_remote_rpm`
+* :meth:`dnf.Base.add_remote_rpms`
 * :meth:`dnf.Base.close`
 * :meth:`dnf.Base.group_upgrade`
 * :meth:`dnf.Base.resolve` optionally accepts `allow_erasing` arguments now.

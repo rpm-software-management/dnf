@@ -25,9 +25,7 @@ from dnf.i18n import _
 from dnf.cli.option_parser import OptionParser
 
 import dnf.exceptions
-import functools
 import logging
-import operator
 
 logger = logging.getLogger('dnf')
 
@@ -60,11 +58,17 @@ class UpgradeCommand(commands.Command):
         commands.checkEnabledRepo(self.base, self.opts.pkg_specs)
 
     def run(self):
-        if self.opts.pkg_specs or self.opts.grp_specs or self.opts.filenames:
+        done = False
+        if self.opts.filenames or self.opts.pkg_specs or self.opts.grp_specs:
             # Update files.
-            local_pkgs = map(self.base.add_remote_rpm, self.opts.filenames)
-            results = map(self.base.package_upgrade, local_pkgs)
-            done = functools.reduce(operator.or_, results, False)
+            if self.opts.filenames:
+                for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=False):
+                    try:
+                        self.base.package_upgrade(pkg)
+                    except dnf.exceptions.MarkingError as e:
+                        logger.info(e)
+                    else:
+                        done = True
 
             # Update packages.
             for pkg_spec in self.opts.pkg_specs:
@@ -84,6 +88,5 @@ class UpgradeCommand(commands.Command):
             # Update all packages.
             self.base.upgrade_all()
             done = True
-
         if not done:
             raise dnf.exceptions.Error(_('No packages marked for upgrade.'))

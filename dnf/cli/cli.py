@@ -329,13 +329,14 @@ class BaseCli(dnf.Base):
             msg = _('No packages marked for distribution synchronization.')
             raise dnf.exceptions.Error(msg)
 
-    def downgradePkgs(self, extcmds):
+    def downgradePkgs(self, specs=[], file_pkgs=[]):
         """Attempt to take the user specified list of packages or
         wildcards and downgrade them. If a complete version number if
         specified, attempt to downgrade them to the specified version
 
-        :param extcmds: a list of names or wildcards specifying
-           packages to downgrade
+        :param pkg_specs: a list of names or wildcards specifying packages to downgrade
+        :param grp_specs: a list of grp_specs
+        :param grp_specs: a list of pkg objects from local files
         :return: (exit_code, [ errors ])
 
         exit_code is::
@@ -346,15 +347,18 @@ class BaseCli(dnf.Base):
         """
 
         oldcount = self._goal.req_length()
-
-        for arg in extcmds:
-            wildcard = True if dnf.util.is_glob_pattern(arg) else False
-            if arg.endswith('.rpm'):
-                pkg = self.add_remote_rpm(arg)
+        for pkg in file_pkgs:
+            try:
                 self.package_downgrade(pkg)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
+            except dnf.exceptions.MarkingError as e:
+                logger.info(e)
+                # it was something on disk and it ended in rpm
+                # no matter what we don't go looking at repos
 
+        for arg in specs:
+            wildcard = True if dnf.util.is_glob_pattern(arg) else False
             try:
                 self.downgrade_to(arg)
             except dnf.exceptions.PackageNotFoundError as err:
