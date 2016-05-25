@@ -954,13 +954,24 @@ class Base(object):
             percent = 100 - real / full * 100
             logger.info(msg, full / 1024 ** 2, real / 1024 ** 2, percent)
 
-    def add_remote_rpm(self, path):
+    def add_remote_rpms(self, path_list, strict=True):
         # :api
-        if not os.path.exists(path) and '://' in path:
-            # download remote rpm to a tempfile
-            path = self.urlopen(path, suffix='.rpm', delete=False).name
-            self._add_tempfiles([path])
-        return self.sack.add_cmdline_package(path)
+        pkgs = []
+        pkgs_error = []
+        for path in path_list:
+            if not os.path.exists(path) and '://' in path:
+                # download remote rpm to a tempfile
+                path = self.urlopen(path, suffix='.rpm', delete=False).name
+                self._add_tempfiles([path])
+            try:
+                pkgs.append(self.sack.add_cmdline_package(path))
+            except EnvironmentError as e:
+                logger.warning(e)
+                pkgs_error.append(path)
+        self._setup_excludes_includes()
+        if pkgs_error and strict:
+            raise EnvironmentError(_("Could not open {}").format(', '.join(pkgs_error)))
+        return pkgs
 
     def _sig_check_pkg(self, po):
         """Verify the GPG signature of the given package object.

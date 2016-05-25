@@ -21,6 +21,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.cli import commands
+from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _
 
 class DowngradeCommand(commands.Command):
@@ -33,7 +34,8 @@ class DowngradeCommand(commands.Command):
 
     @staticmethod
     def set_argparser(parser):
-        parser.add_argument('package', nargs='*', help=_('Package to downgrade'))
+        parser.add_argument('package', nargs='*', help=_('Package to downgrade'),
+                            action=OptionParser.ParseSpecGroupFileCallback)
 
     def configure(self):
         demands = self.cli.demands
@@ -43,7 +45,8 @@ class DowngradeCommand(commands.Command):
         demands.root_user = True
 
         commands.checkGPGKey(self.base, self.cli)
-        commands.checkEnabledRepo(self.base, self.opts.package)
+        commands.checkEnabledRepo(self.base, self.opts.filenames)
 
     def run(self):
-        return self.base.downgradePkgs(self.opts.package)
+        return self.base.downgradePkgs(specs=self.opts.pkg_specs + [ '@' + x for x in self.opts.grp_specs],
+                                       file_pkgs=self.base.add_remote_rpms(self.opts.filenames, strict=False))
