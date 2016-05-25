@@ -30,8 +30,8 @@ class DowngradeTest(support.ResultTestCase):
     def test_package_downgrade(self, ts):
         base = support.MockBase()
 
-        pkg = base.add_remote_rpm(support.TOUR_44_PKG_PATH)
-        cnt = base.package_downgrade(pkg)
+        pkgs = base.add_remote_rpm([support.TOUR_44_PKG_PATH])
+        cnt = base.package_downgrade(pkgs[0])
         base._ts.setProbFilter.assert_called_with(
             rpm.RPMPROB_FILTER_OLDPACKAGE)
         self.assertGreater(cnt, 0)

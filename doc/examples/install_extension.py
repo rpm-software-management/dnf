@@ -42,11 +42,10 @@ if __name__ == '__main__':
             except dnf.exceptions.MarkingError:
                 sys.exit('Feature(s) cannot be found: ' + ftr_spec)
         # Package marking methods set the user request.
-        for rpm_spec in RPM_SPECS:
-            try:
-                base.package_install(base.add_remote_rpm(rpm_spec))
-            except IOError:
-                sys.exit('RPM cannot be loaded: ' + rpm_spec)
+        try:
+            base.package_install(base.add_remote_rpm(RPM_SPECS))
+        except EnvironmentError as e:
+            sys.exit(e)
         # Comps data reading initializes the base.comps attribute.
         if GRP_SPECS:
             base.read_comps()

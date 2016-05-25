@@ -65,11 +65,10 @@ class Command(dnf.cli.Command):
             except dnf.exceptions.MarkingError:
                 raise dnf.exceptions.Error('feature(s) not found: ' + ftr_spec)
         # Package marking methods set the user request.
-        for rpm_spec in rpm_specs:
-            try:
-                self.base.package_install(self.base.add_remote_rpm(rpm_spec))
-            except IOError:
-                raise dnf.exceptions.Error('RPM not loadable: ' + rpm_spec)
+        try:
+            self.base.package_install(self.base.add_remote_rpm(rpm_specs))
+        except EnvironmentError as e:
+            raise dnf.exceptions.Error(e)
         # Comps data reading initializes the base.comps attribute.
         if grp_specs:
             self.base.read_comps()
