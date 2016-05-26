@@ -68,7 +68,7 @@ A feature may be for example a concrete version of a package
 (``/var/lib/mock/fedora-21-i386/result/hawkey-0.5.3-2.20150116gitd002c90.fc21.i686.rpm``),
 an URL of a binary RPM file
 (``http://jenkins.cloud.fedoraproject.org/job/DNF/lastSuccessfulBuild/artifact/fedora-21-i386-build/hawkey-0.5.3-99.649.20150116gitd002c90233fc96893806836a258f14a50ee0cf47.fc21.i686.rpm``),
-a configuration file (``/etc/yum.repos.d/fedora-rawhide.repo``), a language
+a configuration file (``/etc/sys.repos.d/fedora-rawhide.repo``), a language
 interpreter (``ruby(runtime_executable)``), an extension (``python3-dnf``), a
 support for building modules for the current running kernel
 (``kernel-devel-uname-r = $(uname -r)``), an executable (``*/binaryname``) or a
