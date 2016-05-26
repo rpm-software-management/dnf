@@ -177,7 +177,8 @@ class ReinstallCommandTest(support.ResultTestCase):
         with support.wiretap_logs('dnf', logging.INFO, stdout):
             self.assertRaises(dnf.exceptions.Error, support.command_run, self._cmd, ['lotus'])
 
-        self.assertEqual(stdout.getvalue(), 'No match for argument: lotus\n')
+        self.assertEqual(stdout.getvalue(), 'Package lotus available, but not installed.\n'
+                                            'No match for argument: lotus\n')
         self.assertResult(self._cmd.cli.base,
                           self._cmd.cli.base.sack.query().installed())
 

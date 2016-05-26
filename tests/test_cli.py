@@ -87,7 +87,8 @@ class BaseCliTest(support.ResultTestCase):
 
         self.assertEqual(self._base.downgrade_to.mock_calls, [mock.call('lotus')])
         self.assertEqual(logger.mock_calls, [
-            mock.call.info('No match for available package: %s', pkg)] * 2)
+            mock.call.info('Package %s%s%s available, but not installed.', u'', 'lotus', u''),
+            mock.call.info('No match for argument: %s%s%s', u'', 'lotus', u'')])
 
     def test_transaction_id_or_offset_bad(self, _):
         """Test transaction_id_or_offset with a bad input."""
