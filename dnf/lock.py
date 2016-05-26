@@ -25,6 +25,7 @@ from dnf.i18n import _
 from dnf.yum import misc
 import dnf.logging
 import dnf.util
+import errno
 import hashlib
 import logging
 import os
@@ -78,7 +79,7 @@ class ProcessLock(object):
             os.close(fd)
             return True
         except OSError as e:
-            if e.errno == 17:   # File exists
+            if e.errno == errno.EEXIST:   # File exists
                 return False
             raise
 
