@@ -801,25 +801,6 @@ class Cli(object):
             self.base.fill_sack(load_system_repo='auto',
                                 load_available_repos=self.demands.available_repos)
 
-    def _root_and_conffile(self, installroot, conffile):
-        """After the first parse of the cmdline options, find initial values for
-        installroot and conffile.
-
-        :return: installroot and conffile strings
-        """
-        # If --installroot the conf file inside the installroot is used.
-        # otherwise look for it in the normal root
-        if installroot and not conffile:
-            conffile = dnf.const.CONF_FILENAME
-            abs_fn = os.path.join(installroot, conffile[1:])
-            if os.access(abs_fn, os.R_OK):
-                conffile = abs_fn
-        if not installroot:
-            installroot = '/'
-        if not conffile:
-            conffile = dnf.const.CONF_FILENAME
-        return installroot, conffile
-
     def _parse_commands(self, opts, args):
         """Check that the requested CLI command exists."""
 
@@ -856,11 +837,6 @@ class Cli(object):
                            self.base.output)
             sys.exit(0)
 
-        # get the install root to use
-        (root, opts.conffile) = self._root_and_conffile(opts.installroot,
-                                                        opts.conffile)
-        # the conffile is solid now
-        assert(opts.conffile is not None)
         if opts.quiet:
             opts.debuglevel = 0
         if opts.verbose:
@@ -936,16 +912,25 @@ class Cli(object):
 
         self.base.cmd_conf.downloadonly = opts.downloadonly
 
-    def read_conf_file(self, path=None, root="/", releasever=None):
+    def read_conf_file(self, releasever=None):
         timer = dnf.logging.Timer('config')
         conf = self.base.conf
-        conf.installroot = root
-        conf.read(path, dnf.conf.PRIO_MAINCONFIG)
+
+        # search config file inside the installroot first
+        conf.search_inside_installroot('config_file_path')
+
+        # read config
+        conf.read(priority=dnf.conf.PRIO_MAINCONFIG)
+
+        # search reposdir file inside the installroot first
+        conf.search_inside_installroot('reposdir')
+
+        # cachedir, logs, releasever, and gpgkey are taken from or stored in installroot
         if releasever is None:
-            releasever = dnf.rpm.detect_releasever(root)
+            releasever = dnf.rpm.detect_releasever(conf.installroot)
         conf.releasever = releasever
         subst = conf.substitutions
-        subst.update_from_etc(root)
+        subst.update_from_etc(conf.installroot)
 
         for opt in ('cachedir', 'logdir', 'persistdir'):
             conf.prepend_installroot(opt)

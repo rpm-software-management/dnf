@@ -718,14 +718,33 @@ class Conf(BaseConfig):
                              choices=('single-user-commands', 'users', 'commands'),
                              mapper={'cmds': 'commands', 'default': 'commands'}))
 
+    def search_inside_installroot(self, optname):
+        opt = self.get_option(optname)
+        prio = opt.get_priority()
+        # dont modify paths specified on commandline
+        if prio >= PRIO_COMMANDLINE:
+            return
+        val = opt.get()
+        # if it exists inside installroot use it (i.e. adjust configuration)
+        # for lists any component counts
+        if isinstance(val, list):
+            if any(os.path.exists(os.path.join(self.installroot, p.lstrip('/')))
+                    for p in val):
+                opt.set(Value([self._prepend_installroot_path(p) for p in val], prio))
+        elif os.path.exists(os.path.join(self.installroot, val.lstrip('/'))):
+            self.prepend_installroot(optname)
+            opt.set(Value(self._prepend_installroot_path(val), prio))
+
     def prepend_installroot(self, optname):
         # :api
         opt = self.get_option(optname)
         prio = opt.get_priority()
-        path = opt.get().lstrip('/')
-        new_path = dnf.conf.parser.substitute(os.path.join(self.installroot, path),
-                                              self.substitutions)
+        new_path = self._prepend_installroot_path(opt.get())
         opt.set(Value(new_path, prio))
+
+    def _prepend_installroot_path(self, path):
+        return dnf.conf.parser.substitute(
+                os.path.join(self.installroot, path.lstrip('/')), self.substitutions)
 
     def configure_from_options(self, opts):
         """Configure parts of CLI from the opts. """
