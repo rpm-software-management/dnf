@@ -163,6 +163,15 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     ``reposdir``. The behavior of ``reposdir`` could differ when it is used
     along with \-\ :ref:`-installroot <installroot-label>` option.
 
+``protected_packages``
+    :ref:`list <list-label>`
+
+    List of packages that DNF should never completely remove. They are protected via Obsoletes as well as user/plugin removals.
+
+    The default is: ``dnf``, ``glob:/etc/yum/protected.d/*.conf`` and ``glob:/etc/dnf/protected.d/*.conf``. So any packages which should be protected can do so by including a file in ``/etc/dnf/protected.d`` with their package name in it.
+
+    DNF will protect also the package corresponding to the running version of the kernel.
+
 ==============
  Repo Options
 ==============

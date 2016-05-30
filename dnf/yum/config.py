@@ -750,6 +750,10 @@ class YumConf(BaseConfig):
     proxy = UrlOption(schemes=('http', 'ftp', 'https', 'socks5', 'socks5h', 'socks4', 'socks4a'), allow_none=True) #:api
     proxy_username = Option() #:api
     proxy_password = Option() #:api
+    protected_packages = ListOption(
+        "dnf glob:/etc/yum/protected.d/*.conf \
+        glob:/etc/dnf/protected.d/*.conf",
+        parse_default=True)  #:api
     username = Option() #:api
     password = Option() #:api
     installonlypkgs = ListOption(dnf.const.INSTALLONLYPKGS)
@@ -911,6 +915,7 @@ class RepoConf(BaseConfig):
     proxy_password = Inherit(YumConf.proxy_password) #:api
     username = Inherit(YumConf.username) #:api
     password = Inherit(YumConf.password) #:api
+    protected_packages = Inherit(YumConf.protected_packages)  #:api
 
     gpgcheck = Inherit(YumConf.gpgcheck)
     repo_gpgcheck = Inherit(YumConf.repo_gpgcheck)
