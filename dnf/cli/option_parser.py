@@ -52,78 +52,6 @@ class OptionParser(argparse.ArgumentParser):
         logger.critical(_("Command line error: %s"), msg)
         sys.exit(1)
 
-    @staticmethod
-    def _non_nones2dict(in_dct):
-        dct = {k: in_dct[k] for k in in_dct
-               if in_dct[k] is not None
-               if in_dct[k] != []}
-        return dct
-
-    def configure_from_options(self, opts, conf, demands, output,
-                               installroot_repos=True):
-        """Configure parts of CLI from the opts. """
-
-        options_to_move = ('best', 'assumeyes', 'assumeno',
-                           'showdupesfromrepos', 'plugins', 'ip_resolve',
-                           'rpmverbosity', 'disable_excludes')
-
-        # transfer user specified options to conf
-        for option_name in options_to_move:
-            opt = getattr(opts, option_name)
-            if opt is not None:
-                setattr(conf, option_name, opt)
-
-        if opts.allowerasing:
-            demands.allow_erasing = opts.allowerasing
-
-        try:
-            # config file is parsed and moving us forward
-            # set some things in it.
-            if opts.installroot:
-                self._checkAbsInstallRoot(opts.installroot)
-                conf.installroot = opts.installroot
-                instroot_reposdir = [os.path.join(conf.installroot,
-                                                  reposdir.lstrip('/'))
-                                     for reposdir in conf.reposdir]
-                if (installroot_repos
-                        and any(map(os.path.isdir, instroot_reposdir))):
-                    conf.reposdir = instroot_reposdir
-            demands.freshest_metadata = opts.freshest_metadata
-
-            if opts.color not in (None, 'auto', 'always', 'never',
-                                  'tty', 'if-tty', 'yes', 'no', 'on', 'off'):
-                raise ValueError(_("--color takes one of: auto, always, never"))
-            elif opts.color is None:
-                if conf.color != 'auto':
-                    output.term.reinit(color=conf.color)
-            else:
-                _remap = {'tty' : 'auto', 'if-tty' : 'auto',
-                          '1' : 'always', 'true' : 'always',
-                          'yes' : 'always', 'on' : 'always',
-                          '0' : 'always', 'false' : 'always',
-                          'no' : 'never', 'off' : 'never'}
-                opts.color = _remap.get(opts.color, opts.color)
-                if opts.color != 'auto':
-                    output.term.reinit(color=opts.color)
-
-            conf.exclude.extend(opts.excludepkgs)
-
-        except ValueError as e:
-            logger.critical(_('Options Error: %s'), e)
-            self.print_help()
-            sys.exit(1)
-
-    @staticmethod
-    def _checkAbsInstallRoot(installroot):
-        if not installroot:
-            return
-        if installroot[0] == '/':
-            return
-        # We have a relative installroot ... haha
-        logger.critical(_('--installroot must be an absolute path: %s'),
-                        installroot)
-        sys.exit(1)
-
     class _RepoCallback(argparse.Action):
         def __call__(self, parser, namespace, values, opt_str):
             operation = 'disable' if opt_str == '--disablerepo' else 'enable'
@@ -223,7 +151,7 @@ class OptionParser(argparse.ArgumentParser):
         # has set something or whether we are getting a default.
         main_parser = argparse.ArgumentParser(dnf.const.PROGRAM_NAME,
                                               add_help=False)
-        main_parser.add_argument("-c", "--config", dest="conffile",
+        main_parser.add_argument("-c", "--config", dest="config_file_path",
                                  default=None, metavar='[config file]',
                                  help=_("config file location"))
         main_parser.add_argument("-q", "--quiet", dest="quiet",
@@ -312,8 +240,8 @@ class OptionParser(argparse.ArgumentParser):
                                  metavar='[repo,path]',
                                  help=_("label and path to additional repository,"
                                         " can be specified multiple times."))
-        main_parser.add_argument("--nogpgcheck", action="store_true",
-                                 default=None,
+        main_parser.add_argument("--nogpgcheck", action="store_false",
+                                 default=None, dest='gpgcheck',
                                  help=_("disable gpg signature checking"))
         main_parser.add_argument("--color", dest="color", default=None,
                                  help=_("control whether color is used"))

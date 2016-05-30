@@ -730,19 +730,31 @@ class Conf(BaseConfig):
     def configure_from_options(self, opts):
         """Configure parts of CLI from the opts. """
 
-        options_to_move = ('best', 'assumeyes', 'assumeno',
-                           'showdupesfromrepos', 'plugins', 'ip_resolve',
-                           'rpmverbosity', 'disable_excludes',
-                           'color')
+        config_args = ['plugins', 'version', 'config_file_path',
+                       'debuglevel', 'errorlevel', 'installroot',
+                       'best', 'assumeyes', 'assumeno', 'gpgcheck',
+                       'showdupesfromrepos', 'plugins', 'ip_resolve',
+                       'rpmverbosity', 'disable_excludes',
+                       'color', 'downloadonly']
 
-        for name in options_to_move:
+        for name in config_args:
             value = getattr(opts, name, None)
-            if value is not None:
+            if value is not None and value != []:
                 confopt = self.get_option(name)
                 if confopt:
-                    confopt.set(value, dnf.conf.PRIO_RUNTIME)
+                    confopt.set(value, dnf.conf.PRIO_COMMANDLINE)
                 else:
                     logger.warning(_('Unknown configuration option: %s = %s'), ucd(name), ucd(value))
+
+        if hasattr(opts, 'main_setopts'):
+            # now set all the non-first-start opts from main from our setopts
+            for name, val in opts.main_setopts._get_kwargs():
+                opt = self.get_option(name)
+                if opt:
+                    opt.set(val, dnf.conf.PRIO_COMMANDLINE)
+                else:
+                    msg ="Main config did not have a %s attr. before setopt"
+                    logger.warning(msg, name)
 
     @property
     def releasever(self):
