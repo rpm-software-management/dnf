@@ -306,9 +306,9 @@ See the the related `Fedora bug 1096506
 ======================================  ========================================  ===================================
 Original Yum tool                       DNF command/option                        Package
 --------------------------------------  ----------------------------------------  -----------------------------------
-``yum-plugin-auto-update-debug-info``   option in ``debuginfo-install.conf``      ``dnf-plugins-core``
 ``yum check``                           `dnf repoquery`_ ``--unsatisfied``        ``dnf-plugins-core``
 ``yum-langpacks``                                                                 ``dnf-langpacks``
+``yum-plugin-auto-update-debug-info``   option in ``debuginfo-install.conf``      ``dnf-plugins-core``
 ``yum-plugin-copr``                     `dnf copr`_                               ``dnf-plugins-core``
 ``yum-plugin-fastestmirror``            ``fastestmirror`` option in `dnf.conf`_   ``dnf``
 ``yum-plugin-fs-snapshot``                                                        ``dnf-plugins-extras-snapper``
