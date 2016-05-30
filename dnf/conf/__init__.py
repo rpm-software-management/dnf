@@ -130,6 +130,10 @@ class Option(object):
         """Was value changed from default?"""
         return self.actual is None
 
+    def is_runtimeonly(self):
+        """Was value changed from default?"""
+        return self.runtimeonly
+
     def parse(self, strval):
         """Parse the string value to the option's native value."""
         return strval
@@ -524,7 +528,7 @@ class BaseConfig(object):
             for name in parser.options(section):
                 value = parser.get(section, name)
                 opt = self.get_option(name)
-                if opt:
+                if opt and not opt.is_runtimeonly():
                     opt.set(value, priority)
                 else:
                     logger.warning(_('Unknown configuration option: %s = %s'), ucd(name), ucd(value))
@@ -539,8 +543,9 @@ class BaseConfig(object):
         """
         output = ['[%s]' % self.section]
         for name, opt in sorted(self.config_items()):
-            val = opt.tostring()
-            output.append('%s = %s' % (name, val))
+            if not opt.is_runtimeonly():
+                val = opt.tostring()
+                output.append('%s = %s' % (name, val))
 
         return '\n'.join(output) + '\n'
 
@@ -563,8 +568,9 @@ class BaseConfig(object):
         # Updated the ConfigParser with the changed values
         cfg_options = self.parser.options(section)
         for name, option in self.config_items():
-            if always is None or name in always or not option.is_default() \
-               or name in cfg_options:
+            if (not option.is_runtimeonly() and
+                        (always is None or name in always or not option.is_default() \
+                         or name in cfg_options)):
                 self.parser.set(section, name, option.tostring())
         # write the updated ConfigParser to the fileobj.
         self.parser.write(fileobj)
@@ -717,6 +723,9 @@ class Conf(BaseConfig):
         self.add_option('history_list_view',  SelectionOption('commands',
                              choices=('single-user-commands', 'users', 'commands'),
                              mapper={'cmds': 'commands', 'default': 'commands'}))
+
+        # runtime only options
+        self.add_option('downloadonly', BoolOption(False, runtimeonly=True))
 
     def search_inside_installroot(self, optname):
         opt = self.get_option(optname)
