@@ -55,7 +55,6 @@ import dnf.sack
 import dnf.subject
 import dnf.transaction
 import dnf.util
-import dnf.yum.config
 import dnf.yum.rpmtrans
 import functools
 import hawkey
@@ -132,9 +131,6 @@ class Base(object):
         if 'releasever' not in subst:
             subst['releasever'] = \
                 dnf.rpm.detect_releasever(conf.installroot)
-        cache_dirs = dnf.conf.CliCache(conf.cachedir)
-
-        conf.cachedir = cache_dirs.cachedir
         return conf
 
     def _setup_excludes_includes(self):

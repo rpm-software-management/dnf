@@ -61,7 +61,6 @@ import dnf.persistor
 import dnf.rpm
 import dnf.sack
 import dnf.util
-import dnf.yum.config
 import dnf.yum.misc
 import hawkey
 import logging
@@ -100,11 +99,6 @@ def _list_cmd_calc_columns(output, ypl):
     data = [data['na'], data['ver'], data['rid']]
     columns = output.calcColumns(data, remainder_column=1)
     return (-columns[0], -columns[1], -columns[2])
-
-
-def cachedir_fit(conf):
-    cli_cache = dnf.conf.CliCache(conf.cachedir)
-    return cli_cache.cachedir, cli_cache.system_cachedir
 
 
 def print_versions(pkgs, base, output):
@@ -692,7 +686,6 @@ class BaseCli(dnf.Base):
 
 class Cli(object):
     def __init__(self, base):
-        self._system_cachedir = None
         self.base = base
         self.cli_commands = {}
         self.command = None
@@ -723,12 +716,6 @@ class Cli(object):
         self.register_command(dnf.cli.commands.HelpCommand)
         self.register_command(dnf.cli.commands.HistoryCommand)
 
-    def _configure_cachedir(self):
-        """Set CLI-specific cachedir and its alternative."""
-        conf = self.base.conf
-        conf.cachedir, self._system_cachedir = cachedir_fit(conf)
-        logger.debug("cachedir: %s", conf.cachedir)
-
     def _configure_repos(self, opts):
         repo_setopts = opts.repo_setopts if hasattr(opts, 'repo_setopts') else {}
         self.base.read_all_repos(repo_setopts)
@@ -736,7 +723,7 @@ class Cli(object):
             for label, path in opts.repofrompath.items():
                 if '://' not in path:
                     path = 'file://{}'.format(os.path.abspath(path))
-                repofp = dnf.repo.Repo(label, self.base.conf.cachedir)
+                repofp = dnf.repo.Repo(label, self.base.conf)
                 try:
                     repofp.baseurl = path
                 except ValueError as e:
@@ -780,7 +767,6 @@ class Cli(object):
         if opts.cacheonly:
             self.demands.cacheonly = True
             for repo in self.base.repos.values():
-                repo.basecachedir = self._system_cachedir
                 repo.md_only_cached = True
 
         # setup the progress bars/callbacks
@@ -797,6 +783,7 @@ class Cli(object):
                         'Installroot: %s', self.base.conf.installroot)
         logger.log(dnf.logging.DDEBUG, 'Releasever: %s',
                         self.base.conf.releasever)
+        logger.debug("cachedir: %s", self.base.conf.cachedir)
 
     def _process_demands(self):
         demands = self.demands
@@ -853,13 +840,6 @@ class Cli(object):
         logger.log(dnf.logging.DDEBUG, 'Base command: %s', basecmd)
         logger.log(dnf.logging.DDEBUG, 'Extra commands: %s', args)
 
-    def _get_first_config(self, opts):
-        config_args = ['plugins', 'version', "quiet", "verbose", 'conffile',
-                       'debuglevel', 'errorlevel', 'installroot', 'releasever',
-                       'setopt']
-        in_dict = opts.__dict__
-        return {k: in_dict[k] for k in in_dict if k in config_args}
-
     def configure(self, args):
         """Parse command line arguments, and set up :attr:`self.base.conf` and
         :attr:`self.cmds`, as well as logger objects in base instance.
@@ -877,7 +857,6 @@ class Cli(object):
             sys.exit(0)
 
         # get the install root to use
-        self.optparser._checkAbsInstallRoot(opts.installroot)
         (root, opts.conffile) = self._root_and_conffile(opts.installroot,
                                                         opts.conffile)
         # the conffile is solid now
@@ -888,19 +867,9 @@ class Cli(object):
             opts.debuglevel = opts.errorlevel = dnf.const.VERBOSE_LEVEL
 
         # Read up configuration options and initialize plugins
-        overrides = self.optparser._non_nones2dict(self._get_first_config(opts))
-        releasever = opts.releasever
         try:
-            self.read_conf_file(opts.conffile, root, releasever, overrides)
-
-            # now set all the non-first-start opts from main from our setopts
-            if hasattr(opts, 'main_setopts'):
-                for opt, val in opts.main_setopts._get_kwargs():
-                    if not hasattr(self.base.conf, opt):
-                        msg ="Main config did not have a %s attr. before setopt"
-                        logger.warning(msg, opt)
-                    setattr(self.base.conf, opt, getattr(opts.main_setopts, opt))
-
+            self.base.conf.configure_from_options(opts)
+            self.read_conf_file(opts.releasever)
         except (dnf.exceptions.ConfigError, ValueError) as e:
             logger.critical(_('Config error: %s'), e)
             sys.exit(1)
@@ -944,45 +913,42 @@ class Cli(object):
 
         opts = self.optparser.parse_command_args(self.command, args)
 
-        # the configuration reading phase is now concluded, finish the init
-        self._configure_cachedir()
         # with cachedir in place we can configure stuff depending on it:
         self.base._activate_persistor()
-
-        self.optparser.configure_from_options(
-            opts, self.base.conf,self.demands, self.base.output,
-            ('reposdir' not in getattr(opts, 'main_setopts', {})))
 
         self._configure_repos(opts)
 
         self.base.configure_plugins()
 
+        self.base.conf.configure_from_options(opts)
+
         self.command.configure()
 
+        if opts.allowerasing:
+            self.demands.allow_erasing = opts.allowerasing
+        if opts.freshest_metadata:
+            self.demands.freshest_metadata = opts.freshest_metadata
         if opts.debugsolver:
             self.base.conf.debug_solver = True
 
+        if self.base.conf.color != 'auto':
+            self.base.output.term.reinit(color=self.base.conf.color)
+
         self.base.cmd_conf.downloadonly = opts.downloadonly
 
-    def read_conf_file(self, path=None, root="/", releasever=None,
-                       overrides=None):
+    def read_conf_file(self, path=None, root="/", releasever=None):
         timer = dnf.logging.Timer('config')
         conf = self.base.conf
         conf.installroot = root
-        conf.read(path)
+        conf.read(path, dnf.conf.PRIO_MAINCONFIG)
         if releasever is None:
             releasever = dnf.rpm.detect_releasever(root)
         conf.releasever = releasever
         subst = conf.substitutions
         subst.update_from_etc(root)
 
-        if overrides is not None:
-            conf.override(overrides)
-
-        conf.logdir = dnf.yum.config.logdir_fit(conf.logdir)
         for opt in ('cachedir', 'logdir', 'persistdir'):
             conf.prepend_installroot(opt)
-            conf._var_replace(opt)
 
         self.base._logging.setup_from_dnf_conf(conf)
 
