@@ -34,7 +34,6 @@ import dnf.exceptions
 import dnf.i18n
 import dnf.pycomp
 import dnf.util
-import dnf.yum.config
 import functools
 import logging
 import operator
