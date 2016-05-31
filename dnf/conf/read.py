@@ -32,9 +32,9 @@ logger = logging.getLogger('dnf')
 
 
 class RepoReader(object):
-    def __init__(self, conf, repo_setopts):
+    def __init__(self, conf, opts):
         self.conf = conf
-        self.repo_setopts = repo_setopts
+        self.opts = opts
 
     def __iter__(self):
         # get the repos from the main yum.conf file
@@ -106,12 +106,6 @@ class RepoReader(object):
             else:
                 thisrepo.repofile = repofn
 
-            if thisrepo.id in self.repo_setopts:
-                for opt in self.repo_setopts[thisrepo.id].items:
-                    if not hasattr(thisrepo, opt):
-                        msg = "Repo %s did not have a %s attr. before setopt"
-                        logger.warning(msg, thisrepo.id, opt)
-                    setattr(thisrepo, opt, getattr(self.repo_setopts[thisrepo.id],
-                                                   opt))
+            thisrepo.configure_from_options(self.opts)
 
             yield thisrepo

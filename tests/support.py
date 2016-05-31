@@ -255,8 +255,10 @@ class _BaseStubMixin(object):
         self._comps, self._group_persistor = mock_comps(seed_persistor)
         return self._comps
 
-    def read_all_repos(self, repo_setopts=None):
-        pass
+    def read_all_repos(self, opts=None):
+        for repo in self.repos.values():
+            repo.configure_from_options(opts)
+
 
     def set_debuglevel(self, level):
         self.conf.get_option('debuglevel').set(level, dnf.conf.PRIO_RUNTIME)

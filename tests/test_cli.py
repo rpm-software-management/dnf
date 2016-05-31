@@ -150,12 +150,12 @@ class CliTest(TestCase):
         opts.repo = []
         opts.repos_ed = [('*', 'disable'), ('comb', 'enable')]
         opts.cacheonly = True
+        opts.nogpgcheck = True
         opts.repofrompath = {}
         self.base._repos = dnf.repodict.RepoDict()
         self.base._repos.add(support.MockRepo('one', self.base.conf))
         self.base._repos.add(support.MockRepo('two', self.base.conf))
         self.base._repos.add(support.MockRepo('comb', self.base.conf))
-        self.cli.nogpgcheck = True
         self.cli._configure_repos(opts)
         self.assertFalse(self.base.repos['one'].enabled)
         self.assertFalse(self.base.repos['two'].enabled)
@@ -180,6 +180,7 @@ class CliTest(TestCase):
         self.cli._configure_repos(opts)
         # _process_demands() should respect --cacheonly in spite of modified demands
         self.cli.demands.fresh_metadata = False
+        self.cli.demands.cacheonly = True
         self.cli._process_demands()
         self.assertEqual(self.base.repos['one'].sync_strategy,
                          dnf.repo.SYNC_ONLY_CACHE)
