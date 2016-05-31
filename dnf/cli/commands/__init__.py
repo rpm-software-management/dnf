@@ -68,7 +68,7 @@ def checkGPGKey(base, cli):
     :param base: a :class:`dnf.Base` object.
     :raises: :class:`cli.CliError`
     """
-    if cli.nogpgcheck:
+    if not base.conf.gpgcheck:
         return
     if not base._gpg_key_check():
         for repo in base.repos.iter_enabled():

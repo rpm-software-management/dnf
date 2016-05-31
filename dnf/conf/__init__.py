@@ -864,3 +864,23 @@ class RepoConf(BaseConfig):
         self.add_option('deltarpm',  Inherit(parent.get_option('deltarpm')))
 
         self.add_option('skip_if_unavailable',  BoolOption(True)) # :api
+
+    def configure_from_options(self, opts):
+        """Configure repos from the opts. """
+
+        if getattr(opts, 'nogpgcheck', None):
+            for optname in ['gpgcheck', 'repo_gpgcheck']:
+                opt = self.get_option(optname)
+                opt.set(False, dnf.conf.PRIO_RUNTIME)
+
+        if getattr(opts, 'cacheonly', None):
+            self.md_only_cached = True
+
+        if self.id in getattr(opts, 'repo_setopts', []):
+            for name, val in self.repo_setopts[self.id]._get_kwargs():
+                opt = self.get_option(name)
+                if opt:
+                    opt.set(val, dnf.conf.PRIO_COMMANDLINE)
+                else:
+                    msg = "Repo %s did not have a %s attr. before setopt"
+                    logger.warning(msg, self.id, name)

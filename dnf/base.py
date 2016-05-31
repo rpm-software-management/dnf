@@ -319,11 +319,11 @@ class Base(object):
         self._store_persistent_data()
         self._closeRpmDB()
 
-    def read_all_repos(self, repo_setopts=None):
+    def read_all_repos(self, opts=None):
         # :api
         """Read repositories from the main conf file and from .repo files."""
 
-        reader = dnf.conf.read.RepoReader(self.conf, repo_setopts or {})
+        reader = dnf.conf.read.RepoReader(self.conf, opts)
         for repo in reader:
             try:
                 self.repos.add(repo)

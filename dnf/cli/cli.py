@@ -689,7 +689,6 @@ class Cli(object):
         self.cli_commands = {}
         self.command = None
         self.demands = dnf.cli.demand.DemandSheet() #:cli
-        self.nogpgcheck = False
 
         self.register_command(dnf.cli.commands.autoremove.AutoremoveCommand)
         self.register_command(dnf.cli.commands.clean.CleanCommand)
@@ -716,8 +715,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.HistoryCommand)
 
     def _configure_repos(self, opts):
-        repo_setopts = opts.repo_setopts if hasattr(opts, 'repo_setopts') else {}
-        self.base.read_all_repos(repo_setopts)
+        self.base.read_all_repos(opts)
         if opts.repofrompath:
             for label, path in opts.repofrompath.items():
                 if '://' not in path:
@@ -753,20 +751,10 @@ class Cli(object):
             self.optparser.print_help()
             sys.exit(1)
 
-        if self.nogpgcheck:
-            for repo in self.base.repos.values():
-                repo.gpgcheck = False
-                repo.repo_gpgcheck = False
-
         for rid in self.base._repo_persistor.get_expired_repos():
             repo = self.base.repos.get(rid)
             if repo:
                 repo.md_expire_cache()
-
-        if opts.cacheonly:
-            self.demands.cacheonly = True
-            for repo in self.base.repos.values():
-                repo.md_only_cached = True
 
         # setup the progress bars/callbacks
         (bar, self.base._ds_callback) = self.base.output.setup_progress_callbacks()
@@ -879,14 +867,21 @@ class Cli(object):
         except CliError:
             sys.exit(1)
 
-        self.nogpgcheck = opts.nogpgcheck
-
         # show help for dnf <command> --help / --help-cmd
         if opts.help:
             self.optparser.print_help(self.command)
             sys.exit(0)
 
         opts = self.optparser.parse_command_args(self.command, args)
+
+        if opts.allowerasing:
+            self.demands.allow_erasing = opts.allowerasing
+        if opts.freshest_metadata:
+            self.demands.freshest_metadata = opts.freshest_metadata
+        if opts.debugsolver:
+            self.base.conf.debug_solver = True
+        if opts.cacheonly:
+            self.demands.cacheonly = True
 
         # with cachedir in place we can configure stuff depending on it:
         self.base._activate_persistor()
@@ -898,13 +893,6 @@ class Cli(object):
         self.base.conf.configure_from_options(opts)
 
         self.command.configure()
-
-        if opts.allowerasing:
-            self.demands.allow_erasing = opts.allowerasing
-        if opts.freshest_metadata:
-            self.demands.freshest_metadata = opts.freshest_metadata
-        if opts.debugsolver:
-            self.base.conf.debug_solver = True
 
         if self.base.conf.color != 'auto':
             self.base.output.term.reinit(color=self.base.conf.color)
