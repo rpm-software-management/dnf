@@ -285,10 +285,6 @@ class Base(object):
         self._tempfile_persistor = dnf.persistor.TempfilePersistor(
             self.conf.cachedir)
 
-        if self._group_persistor and \
-                (not self._transaction or self._trans_success):
-            self._group_persistor.commit()
-
         if not self.conf.keepcache:
             self._clean_packages(self._tempfiles)
             if self._trans_success:
@@ -554,6 +550,8 @@ class Base(object):
                 exc = dnf.exceptions.Error(msg)
 
         if exc is not None:
+            if self._group_persistor:
+                self._group_persistor._rollback()
             raise exc
         if self._group_persistor:
             installed = self.sack.query().installed()
@@ -569,6 +567,8 @@ class Base(object):
             [dnf.yum.rpmtrans.LoggingTransactionDisplay()] + list(display)
 
         if not self.transaction:
+            if self._group_persistor:
+                self._group_persistor.commit()
             return
 
         logger.info(_('Running transaction check'))
@@ -624,6 +624,8 @@ class Base(object):
             self._run_transaction(cb=cb)
         timer()
         self._plugins.run_transaction()
+        if self._group_persistor and self._trans_success:
+            self._group_persistor.commit()
 
     def _trans_error_summary(self, errstring):
         """Parse the error string for 'interesting' errors which can
@@ -1326,6 +1328,7 @@ class Base(object):
             for env_id in res.environments:
                 cnt += self.environment_install(env_id, types, strict=strict)
         if not done and strict:
+            self._group_persistor._rollback()
             raise dnf.exceptions.Error(_('Nothing to do.'))
         return cnt
 
