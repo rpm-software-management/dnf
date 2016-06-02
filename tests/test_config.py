@@ -16,13 +16,14 @@
 #
 
 from __future__ import unicode_literals
-from dnf.conf import Option, BaseConfig, Conf
+from dnf.conf import Option, BaseConfig, Conf, RepoConf
 from tests.support import TestCase
 from tests.support import mock
 from tests import support
 
 import argparse
 import dnf.conf
+import dnf.conf.read
 import dnf.exceptions
 import unittest
 
@@ -74,6 +75,18 @@ class ConfTest(TestCase):
                          "https://bugzilla.redhat.com/enter_bug.cgi" +
                          "?product=Fedora&component=dnf")
 
+    def test_conf_from_file(self):
+        conf = Conf()
+        # defaults
+        self.assertFalse(conf.gpgcheck)
+        self.assertEqual(conf.installonly_limit, 0)
+        self.assertTrue(conf.clean_requirements_on_remove)
+        conf.config_file_path = '%s/etc/dnf/dnf.conf' % support.dnf_toplevel()
+        conf.read(priority=dnf.conf.PRIO_MAINCONFIG)
+        self.assertTrue(conf.gpgcheck)
+        self.assertEqual(conf.installonly_limit, 3)
+        self.assertTrue(conf.clean_requirements_on_remove)
+
     def test_overrides(self):
         conf = Conf()
         self.assertFalse(conf.assumeyes)
@@ -85,6 +98,56 @@ class ConfTest(TestCase):
         self.assertTrue(conf.assumeyes)
         self.assertFalse(conf.assumeno)  # no change
         self.assertEqual(conf.color, 'never')
+
+    def test_order_insensitive(self):
+        conf = Conf()
+        conf.config_file_path = '%s/etc/dnf/dnf.conf' % support.dnf_toplevel()
+        opts = argparse.Namespace(gpgcheck=False,
+                        main_setopts=argparse.Namespace(installonly_limit=5))
+        # read config
+        conf.read(priority=dnf.conf.PRIO_MAINCONFIG)
+        # update from commandline
+        conf.configure_from_options(opts)
+        self.assertFalse(conf.gpgcheck)
+        self.assertEqual(conf.installonly_limit, 5)
+
+        # and the other way round should have the same result
+        # update from commandline
+        conf.configure_from_options(opts)
+        # read config
+        conf.read(priority=dnf.conf.PRIO_MAINCONFIG)
+        self.assertFalse(conf.gpgcheck)
+        self.assertEqual(conf.installonly_limit, 5)
+
+    def test_inheritance1(self):
+        conf = Conf()
+        repo = RepoConf(conf)
+
+        # minrate is inherited from conf
+        # default should be the same
+        self.assertEqual(conf.minrate, 1000)
+        self.assertEqual(repo.minrate, 1000)
+
+        # after conf change, repoconf still should inherit its value
+        conf.minrate = 2000
+        self.assertEqual(conf.minrate, 2000)
+        self.assertEqual(repo.minrate, 2000)
+
+    def test_inheritance2(self):
+        conf = Conf()
+
+        # if repoconf reads value from config it no more inherits changes from conf
+        conf.config_file_path = support.resource_path('etc/repos.conf')
+        reader = dnf.conf.read.RepoReader(conf, {})
+        repo = list(reader)[0]
+
+        self.assertEqual(conf.minrate, 1000)
+        self.assertEqual(repo.minrate, 4096)
+
+        # after global change
+        conf.minrate = 2000
+        self.assertEqual(conf.minrate, 2000)
+        self.assertEqual(repo.minrate, 4096)
 
     def test_prepend_installroot(self):
         conf = Conf()
