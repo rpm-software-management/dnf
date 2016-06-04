@@ -54,9 +54,9 @@ class CryptoTest(tests.support.TestCase):
                          '0BE4 9FAF 9C95 5F4F 1A98 D14B 2436 2A84 9253 0C8E')
 
     def test_pubring_dir(self):
-        self.assertNotEquals(os.environ.get('GNUPGHOME'), self.PUBRING_DIR)
+        self.assertNotEqual(os.environ.get('GNUPGHOME'), self.PUBRING_DIR)
         with dnf.crypto.pubring_dir(self.PUBRING_DIR):
-            self.assertEquals(os.environ['GNUPGHOME'], self.PUBRING_DIR)
+            self.assertEqual(os.environ['GNUPGHOME'], self.PUBRING_DIR)
 
     def test_rawkey2infos(self):
         with open(KEYFILE, 'rb') as keyfile:

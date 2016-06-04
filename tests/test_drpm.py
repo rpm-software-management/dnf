@@ -80,13 +80,13 @@ class DrpmTest(support.TestCase):
         return urls
 
     def test_simple_download(self):
-        self.assertEquals(self.download(), [PACKAGE +'.rpm'])
+        self.assertEqual(self.download(), [PACKAGE +'.rpm'])
 
     def test_drpm_download(self):
         # the testing drpm is about 150% of the target..
         self.pkg.repo.deltarpm = 1
         dnf.drpm.APPLYDELTA = '/bin/true'
         with mock.patch('dnf.drpm.MAX_PERCENTAGE', 50):
-            self.assertEquals(self.download(), ['tour-5-1.noarch.rpm'])
+            self.assertEqual(self.download(), ['tour-5-1.noarch.rpm'])
         with mock.patch('dnf.drpm.MAX_PERCENTAGE', 200):
-            self.assertEquals(self.download(), ['drpms/tour-5-1.noarch.drpm'])
+            self.assertEqual(self.download(), ['drpms/tour-5-1.noarch.drpm'])

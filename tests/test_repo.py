@@ -334,12 +334,12 @@ class RepoTest(RepoTestMixin, support.TestCase):
     def test_throttle(self):
         self.repo.throttle = '50%'
         self.repo.bandwidth = '10M'
-        self.assertEquals(self.repo.throttle, 0.5)
-        self.assertEquals(self.repo.bandwidth, 10 << 20)
+        self.assertEqual(self.repo.throttle, 0.5)
+        self.assertEqual(self.repo.bandwidth, 10 << 20)
         opts = {}
         with mock.patch('librepo.Handle.setopt', opts.__setitem__):
             self.repo.get_handle()
-        self.assertEquals(opts[librepo.LRO_MAXSPEED], 5 << 20)
+        self.assertEqual(opts[librepo.LRO_MAXSPEED], 5 << 20)
 
 
 class LocalRepoTest(support.TestCase):
