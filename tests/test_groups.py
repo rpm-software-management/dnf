@@ -133,9 +133,9 @@ class PresetPersistorTest(support.ResultTestCase):
         p_grp = prst.group('broken-group')
         self.assertFalse(p_grp.installed)
 
-        self.assertEquals(self.base.group_install(grp.id,
-                                                  ('mandatory', 'default'),
-                                                  strict=False), 1)
+        self.assertEqual(self.base.group_install(grp.id,
+                                                 ('mandatory', 'default'),
+                                                 strict=False), 1)
         inst, removed = self.installed_removed(self.base)
         self.assertLength(inst, 1)
         self.assertEmpty(removed)
