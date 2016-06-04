@@ -61,7 +61,7 @@ class ProgressTest(tests.support.TestCase):
                 p.progress(pload, i)
             p.end(pload, None, None)
 
-        self.assertEquals(fo.lines(), [
+        self.assertEqual(fo.lines(), [
             'dummy-text  0% [          ] ---  B/s |   0  B     --:-- ETA\r',
             'dummy-text 20% [==        ] 1.0  B/s |   1  B     00:04 ETA\r',
             'dummy-text 40% [====      ] 1.0  B/s |   2  B     00:03 ETA\r',
@@ -117,7 +117,7 @@ class ProgressTest(tests.support.TestCase):
                 now += 0.5
 
                 p.progress(pload2, float(i*2))
-                self.assertEquals(self._REFERENCE_TAB[i], fo.visible_lines())
+                self.assertEqual(self._REFERENCE_TAB[i], fo.visible_lines())
                 if i == 10:
                     p.end(pload2, dnf.callback.STATUS_FAILED, 'some error')
                 now += 0.5

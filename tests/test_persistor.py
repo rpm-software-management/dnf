@@ -49,7 +49,7 @@ class GroupPersistorTest(tests.support.TestCase):
         """Default items are empty."""
         grp = self.prst.group('pepper')
         self.assertEmpty(grp.full_list)
-        self.assertEquals(grp.pkg_types, 0)
+        self.assertEqual(grp.pkg_types, 0)
 
     def test_prune_db(self):
         prst = self.prst
