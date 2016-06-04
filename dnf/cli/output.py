@@ -1374,7 +1374,7 @@ Transaction Summary
         for mtid in sorted(rtids):
             if mtid[0] < last_end:
                 msg = ('Skipping merged transaction %d to %d, as it overlaps')
-                logger.warn(msg, mtid[0], mtid[1])
+                logger.warning(msg, mtid[0], mtid[1])
                 continue # Don't do overlapping
             last_end = mtid[1]
             for num in range(mtid[0], mtid[1] + 1):

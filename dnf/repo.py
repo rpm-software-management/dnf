@@ -374,7 +374,7 @@ class RPMPayload(PackagePayload):
         ctype, csum = pkg.returnIdSum()
         ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
         if ctype_code == librepo.CHECKSUM_UNKNOWN:
-            logger.warn(_("unsupported checksum type: %s"), ctype)
+            logger.warning(_("unsupported checksum type: %s"), ctype)
 
         return {
             'relative_url' : pkg.location,
