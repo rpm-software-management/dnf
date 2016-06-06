@@ -400,7 +400,7 @@ Utilities that have not been ported yet:
 ``verifytree``,
 ``yum-groups-manager``
 
-Feel free to file a RFE_ for missing functionality if you need it.
+Take a look at FAQ_ about yum to DNF migration. Feel free to file a RFE_ for missing functionality if you need it.
 
 .. _dnf debuginfo-install: http://dnf-plugins-core.readthedocs.org/en/latest/debuginfo-install.html
 .. _dnf list installed: http://dnf.readthedocs.org/en/latest/command_ref.html
@@ -418,3 +418,4 @@ Feel free to file a RFE_ for missing functionality if you need it.
 .. _dnf copr: http://rpm-software-management.github.io/dnf-plugins-core/copr.html
 .. _dnf.conf: http://dnf.readthedocs.org/en/latest/conf_ref.html
 .. _RFE: https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting#new-feature-request
+.. _FAQ: http://dnf.readthedocs.io/en/latest/user_faq.html

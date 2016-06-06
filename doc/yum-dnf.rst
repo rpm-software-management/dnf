@@ -27,8 +27,9 @@ See Also
 ========
 
 * :manpage:`dnf.conf(8)`, :ref:`DNF Configuration Reference <conf_ref-label>`
-* :manpage:`yum2dnf(8)`,
+* :manpage:`yum2dnf(8)`, Description of differences between yum and DNF
 * `DNF`_ project homepage (https://github.com/rpm-software-management/dnf/)
 * `Fedora wiki`_ page (http://fedoraproject.org/wiki/Changes/ReplaceYumWithDNF)
+* yum to DNF migration FAQ (http://dnf.readthedocs.io/en/latest/user_faq.html)
 
 .. _Fedora wiki: http://fedoraproject.org/wiki/Changes/ReplaceYumWithDNF
