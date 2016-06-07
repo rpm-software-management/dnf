@@ -32,10 +32,9 @@ import dnf.const
 import dnf.exceptions
 import dnf.pycomp
 import dnf.util
+import iniparse
 import logging
 import os
-import shlex
-import types
 
 PRIO_DEFAULT = 10
 PRIO_MAINCONFIG = 20
@@ -64,8 +63,8 @@ class Value(object):
 class Option(object):
     """ This class handles a single configuration file option.
         Create subclasses for each type of supported configuration option.
-        Each option remembers its default value and can inherit from a parent option
-        (e.g. repo.gpgcheck inherits from main.gpgcheck).
+        Each option remembers its default value and can inherit from a parent
+        option (e.g. repo.gpgcheck inherits from main.gpgcheck).
         Some options can may be runtimeonly which means they are not read from or
         written to config file.
     """
@@ -81,7 +80,8 @@ class Option(object):
             try:
                 value = self.parse(value)
             except ValueError as e:
-                raise dnf.exceptions.ConfigError('Error parsing "%s": %s' % (value, str(e)))
+                raise dnf.exceptions.ConfigError('Error parsing "%s": %s'
+                                                 % (value, str(e)))
         if not isinstance(value, Value):
             value = Value(value, priority)
         return value
@@ -103,7 +103,8 @@ class Option(object):
         return self.default.priority
 
     def set(self, value, priority=PRIO_RUNTIME):
-        """Set option's value if priority is equal or higher than curent priority."""
+        """Set option's value if priority is equal or higher
+           than curent priority."""
         value = self._make_value(value, priority)
         if self.is_default() or self.actual.priority <= value.priority:
             self.actual = value
@@ -118,18 +119,19 @@ class Option(object):
 
     def parse(self, strval):
         """Parse the string value to the option's native value."""
+        # pylint: disable=R0201
         return strval
 
     def tostring(self):
         """Convert the option's native actual value to a string."""
         val = ('' if self.is_default() or self.actual.value is None
-                  else self.actual.value)
+               else self.actual.value)
         return str(val)
 
 
-def Inherit(option):
+def inherit(option):
     """Clone an option instance for the purposes of inheritance.
-       Inherited instance has the same properties and parent set to
+       inherited instance has the same properties and parent set to
        the input option."""
     clone = copy.copy(option)
     clone.parent = option
@@ -164,7 +166,7 @@ class ListOption(Option):
 
     def tostring(self):
         val = ('' if self.is_default()
-                  else '\n '.join(self.actual.value))
+               else '\n '.join(self.actual.value))
         return val
 
 
@@ -210,8 +212,8 @@ class UrlListOption(ListOption, UrlOption):
     """Option for handling lists of URLs with validation of the URL scheme."""
     def __init__(self, default=None, parent=None, runtimeonly=False,
                  schemes=('http', 'ftp', 'file', 'https'), allow_none=False):
-        self.schemes = schemes
-        self.allow_none = allow_none
+        UrlOption.__init__(self, default, parent, runtimeonly,
+                           schemes, allow_none)
         ListOption.__init__(self, default, parent, runtimeonly)
 
     def parse(self, val):
@@ -235,7 +237,7 @@ class PathOption(Option):
             val = val[7:]
         if self.abspath and val[0] != '/':
             raise ValueError("Given path '%s' is not absolute." % val)
-        if self.exists and not os.path.exists(va):
+        if self.exists and not os.path.exists(val):
             raise ValueError("Given path '%s' does not exist." % val)
         return val
 
@@ -270,8 +272,8 @@ class PositiveIntOption(IntOption):
     have a special representation.
     """
     def __init__(self, default=None, parent=None, runtimeonly=False,
-                 range_min=0, range_max=None, names_of_0=[]):
-        self._names0 = names_of_0
+                 range_min=0, range_max=None, names_of_0=None):
+        self._names0 = [] if names_of_0 is None else names_of_0
         super(PositiveIntOption, self).__init__(default, parent, runtimeonly,
                                                 range_min, range_max)
 
@@ -359,8 +361,8 @@ class BoolOption(Option):
 
     def tostring(self):
         val = ('' if self.is_default()
-                  else (self._true_names[0] if self.actual.value
-                                            else self._false_names[0]))
+               else (self._true_names[0] if self.actual.value
+                     else self._false_names[0]))
         return val
 
 
@@ -379,6 +381,7 @@ class SelectionOption(Option):
     """Handles string values where only specific values are allowed."""
     def __init__(self, default=None, parent=None, runtimeonly=False,
                  choices=(), mapper={}):
+        # pylint: disable=W0102
         self._choices = choices
         self._mapper = mapper
         super(SelectionOption, self).__init__(default, parent, runtimeonly)
@@ -489,12 +492,13 @@ class BaseConfig(object):
     def __str__(self):
         out = []
         out.append('[%s]' % self.section)
-        for name, value in self._options.items():
+        for name, value in self._option.items():
             out.append('%s: %r' % (name, value))
         return '\n'.join(out)
 
     def add_option(self, name, optionobj):
         self._option[name] = optionobj
+        # pylint: disable=W0212
         def prop_get(obj):
             return obj._option[name].get()
         def prop_set(obj, val):
@@ -503,6 +507,12 @@ class BaseConfig(object):
 
     def get_option(self, name):
         return self._option.get(name, None)
+
+    def get_value(self, name):
+        return self._option[name].get()
+
+    def set_value(self, name, value, priority=PRIO_RUNTIME):
+        return self._option[name].set(value, priority)
 
     def populate(self, parser, section, priority=PRIO_DEFAULT):
         """Set option values from an INI file section."""
@@ -513,7 +523,8 @@ class BaseConfig(object):
                 if opt and not opt.is_runtimeonly():
                     opt.set(value, priority)
                 else:
-                    logger.warning(_('Unknown configuration option: %s = %s'), ucd(name), ucd(value))
+                    logger.warning(_('Unknown configuration option: %s = %s'),
+                                   ucd(name), ucd(value))
 
     def config_items(self):
         """Yield (name, value) pairs for every option in the instance."""
@@ -551,13 +562,14 @@ class BaseConfig(object):
         cfg_options = self.parser.options(section)
         for name, option in self.config_items():
             if (not option.is_runtimeonly() and
-                        (always is None or name in always or not option.is_default() \
-                         or name in cfg_options)):
+                    (always is None or name in always or not option.is_default()
+                     or name in cfg_options)):
                 self.parser.set(section, name, option.tostring())
         # write the updated ConfigParser to the fileobj.
         self.parser.write(fileobj)
 
-    def write_raw_configfile(self, filename, section_id, substitutions, modify):
+    @staticmethod
+    def write_raw_configfile(filename, section_id, substitutions, modify):
         # :api
         """
         filename   - name of config file (.conf or .repo)
@@ -589,6 +601,7 @@ class MainConf(BaseConfig):
     """Configuration option definitions for dnf.conf's [main] section."""
 
     def __init__(self, section='main', parser=None):
+        # pylint: disable=R0915
         super(MainConf, self).__init__(section, parser)
         self.substitutions = dnf.conf.substitutions.Substitutions()
         # setup different cache and log for non-priviledged users
@@ -601,110 +614,132 @@ class MainConf(BaseConfig):
             except (IOError, OSError) as e:
                 logger.critical(_('Could not set cachedir: %s'), ucd(e))
 
-        self.add_option('debuglevel',  IntOption(2, range_min=0, range_max=10)) # :api
-        self.add_option('errorlevel',  IntOption(2, range_min=0, range_max=10))
+        self.add_option('debuglevel',
+                        IntOption(2, range_min=0, range_max=10)) # :api
+        self.add_option('errorlevel', IntOption(2, range_min=0, range_max=10))
 
-        self.add_option('installroot',  PathOption('/', abspath=True)) # :api
-        self.add_option('config_file_path',  PathOption(dnf.const.CONF_FILENAME)) # :api
-        self.add_option('plugins',  BoolOption(True))
-        self.add_option('pluginpath',  ListOption([dnf.const.PLUGINPATH])) # :api
-        self.add_option('pluginconfpath',  ListOption([dnf.const.PLUGINCONFPATH])) # :api
-        self.add_option('persistdir',  PathOption(dnf.const.PERSISTDIR)) # :api
-        self.add_option('recent',  IntOption(7, range_min=0))
-        self.add_option('reset_nice',  BoolOption(True))
+        self.add_option('installroot', PathOption('/', abspath=True)) # :api
+        self.add_option('config_file_path',
+                        PathOption(dnf.const.CONF_FILENAME)) # :api
+        self.add_option('plugins', BoolOption(True))
+        self.add_option('pluginpath', ListOption([dnf.const.PLUGINPATH])) # :api
+        self.add_option('pluginconfpath',
+                        ListOption([dnf.const.PLUGINCONFPATH])) # :api
+        self.add_option('persistdir', PathOption(dnf.const.PERSISTDIR)) # :api
+        self.add_option('recent', IntOption(7, range_min=0))
+        self.add_option('reset_nice', BoolOption(True))
 
-        self.add_option('cachedir',  PathOption(cachedir)) # :api
-        self.add_option('system_cachedir',  PathOption(dnf.const.SYSTEM_CACHEDIR)) # :api
+        self.add_option('cachedir', PathOption(cachedir)) # :api
+        self.add_option('system_cachedir',
+                        PathOption(dnf.const.SYSTEM_CACHEDIR)) # :api
 
-        self.add_option('keepcache',  BoolOption(False))
-        self.add_option('logdir',  Option(logdir)) # :api
-        self.add_option('reposdir',  ListOption(['/etc/yum.repos.d', '/etc/yum/repos.d', '/etc/distro.repos.d'])) # :api
+        self.add_option('keepcache', BoolOption(False))
+        self.add_option('logdir', Option(logdir)) # :api
+        self.add_option('reposdir', ListOption(['/etc/yum.repos.d',
+                                                '/etc/yum/repos.d',
+                                                '/etc/distro.repos.d'])) # :api
 
-        self.add_option('debug_solver',  BoolOption(False))
+        self.add_option('debug_solver', BoolOption(False))
 
-        self.add_option('exclude',  ListOption())
-        self.add_option('include',  ListOption())
-        self.add_option('fastestmirror',  BoolOption(False))
-        self.add_option('proxy',  UrlOption(schemes=('http', 'ftp', 'https', 'socks5', 'socks5h', 'socks4', 'socks4a'), allow_none=True)) # :api
-        self.add_option('proxy_username',  Option()) # :api
-        self.add_option('proxy_password',  Option()) # :api
-        self.add_option('protected_packages', ListOption(
-                "dnf glob:/etc/yum/protected.d/*.conf " \
-                "glob:/etc/dnf/protected.d/*.conf")) #:api
-        self.add_option('username',  Option()) # :api
-        self.add_option('password',  Option()) # :api
-        self.add_option('installonlypkgs',  ListOption(dnf.const.INSTALLONLYPKGS))
-            # NOTE: If you set this to 2, then because it keeps the current kernel it
-            # means if you ever install an "old" kernel it'll get rid of the newest one
-            # so you probably want to use 3 as a minimum ... if you turn it on.
-        self.add_option('installonly_limit',  PositiveIntOption(0, range_min=2, # :api
-                                                  names_of_0=["0", "<off>"]))
-        self.add_option('tsflags',  ListOption()) # :api
+        self.add_option('exclude', ListOption())
+        self.add_option('include', ListOption())
+        self.add_option('fastestmirror', BoolOption(False))
+        self.add_option('proxy', UrlOption(schemes=('http', 'ftp', 'https',
+                                                    'socks5', 'socks5h',
+                                                    'socks4', 'socks4a'),
+                                           allow_none=True)) # :api
+        self.add_option('proxy_username', Option()) # :api
+        self.add_option('proxy_password', Option()) # :api
+        self.add_option('protected_packages',
+                        ListOption("dnf glob:/etc/yum/protected.d/*.conf " \
+                                   "glob:/etc/dnf/protected.d/*.conf")) #:api
+        self.add_option('username', Option()) # :api
+        self.add_option('password', Option()) # :api
+        self.add_option('installonlypkgs', ListOption(dnf.const.INSTALLONLYPKGS))
+            # NOTE: If you set this to 2, then because it keeps the current
+            # kernel it means if you ever install an "old" kernel it'll get rid
+            # of the newest one so you probably want to use 3 as a minimum
+            # ... if you turn it on.
+        self.add_option('installonly_limit',
+                        PositiveIntOption(0, range_min=2,
+                                          names_of_0=["0", "<off>"])) # :api
+        self.add_option('tsflags', ListOption()) # :api
 
-        self.add_option('assumeyes',  BoolOption(False)) # :api
-        self.add_option('assumeno',  BoolOption(False))
-        self.add_option('defaultyes',  BoolOption(False))
-        self.add_option('alwaysprompt',  BoolOption(True))
-        self.add_option('diskspacecheck',  BoolOption(True))
-        self.add_option('gpgcheck',  BoolOption(False))
-        self.add_option('repo_gpgcheck',  BoolOption(False))
-        self.add_option('localpkg_gpgcheck',  BoolOption(False))
-        self.add_option('obsoletes',  BoolOption(True))
-        self.add_option('showdupesfromrepos',  BoolOption(False))
-        self.add_option('enabled',  BoolOption(True))
-        self.add_option('enablegroups',  BoolOption(True))
+        self.add_option('assumeyes', BoolOption(False)) # :api
+        self.add_option('assumeno', BoolOption(False))
+        self.add_option('defaultyes', BoolOption(False))
+        self.add_option('alwaysprompt', BoolOption(True))
+        self.add_option('diskspacecheck', BoolOption(True))
+        self.add_option('gpgcheck', BoolOption(False))
+        self.add_option('repo_gpgcheck', BoolOption(False))
+        self.add_option('localpkg_gpgcheck', BoolOption(False))
+        self.add_option('obsoletes', BoolOption(True))
+        self.add_option('showdupesfromrepos', BoolOption(False))
+        self.add_option('enabled', BoolOption(True))
+        self.add_option('enablegroups', BoolOption(True))
 
-        self.add_option('bandwidth',  BytesOption(0))
-        self.add_option('minrate',  BytesOption(1000))
-        self.add_option('ip_resolve',  CaselessSelectionOption(
-                    choices=('ipv4', 'ipv6', 'whatever'),
-                    mapper={'4': 'ipv4', '6': 'ipv6'}))
-        self.add_option('throttle',  ThrottleOption(0))
-        self.add_option('timeout',  SecondsOption(120))
-        self.add_option('max_parallel_downloads',  IntOption(None, range_min=1))
+        self.add_option('bandwidth', BytesOption(0))
+        self.add_option('minrate', BytesOption(1000))
+        self.add_option('ip_resolve',
+                        CaselessSelectionOption(choices=('ipv4', 'ipv6',
+                                                         'whatever'),
+                                                mapper={'4': 'ipv4',
+                                                        '6': 'ipv6'}))
+        self.add_option('throttle', ThrottleOption(0))
+        self.add_option('timeout', SecondsOption(120))
+        self.add_option('max_parallel_downloads', IntOption(None, range_min=1))
 
-        self.add_option('metadata_expire',  SecondsOption(60 * 60 * 48))    # 48 hours
-        self.add_option('metadata_timer_sync',  SecondsOption(60 * 60 * 3)) #  3 hours
-        self.add_option('disable_excludes',  ListOption())
-        self.add_option('multilib_policy',  SelectionOption('best', choices=('best', 'all'))) # :api
-        self.add_option('best',  BoolOption(False)) # :api
-        self.add_option('install_weak_deps',  BoolOption(True))
-        self.add_option('bugtracker_url',  Option(dnf.const.BUGTRACKER))
+        self.add_option('metadata_expire',
+                        SecondsOption(60 * 60 * 48))    # 48 hours
+        self.add_option('metadata_timer_sync',
+                        SecondsOption(60 * 60 * 3)) #  3 hours
+        self.add_option('disable_excludes', ListOption())
+        self.add_option('multilib_policy',
+                        SelectionOption('best', choices=('best', 'all'))) # :api
+        self.add_option('best', BoolOption(False)) # :api
+        self.add_option('install_weak_deps', BoolOption(True))
+        self.add_option('bugtracker_url', Option(dnf.const.BUGTRACKER))
 
-        self.add_option('color',  SelectionOption('auto', choices=('auto', 'never', 'always'),
-                                    mapper={'on' : 'always', 'yes' : 'always',
-                                            '1' : 'always', 'true' : 'always',
-                                            'off' : 'never', 'no' : 'never',
-                                            '0' : 'never', 'false' : 'never',
-                                            'tty' : 'auto', 'if-tty' : 'auto'}))
-        self.add_option('color_list_installed_older',  Option('bold'))
-        self.add_option('color_list_installed_newer',  Option('bold,yellow'))
-        self.add_option('color_list_installed_reinstall',  Option('normal'))
-        self.add_option('color_list_installed_extra',  Option('bold,red'))
-        self.add_option('color_list_available_upgrade',  Option('bold,blue'))
-        self.add_option('color_list_available_downgrade',  Option('dim,cyan'))
-        self.add_option('color_list_available_reinstall',  Option('bold,underline,green'))
-        self.add_option('color_list_available_install',  Option('normal'))
-        self.add_option('color_update_installed',  Option('normal'))
-        self.add_option('color_update_local',  Option('bold'))
-        self.add_option('color_update_remote',  Option('normal'))
-        self.add_option('color_search_match',  Option('bold'))
+        self.add_option('color',
+                        SelectionOption('auto',
+                                        choices=('auto', 'never', 'always'),
+                                        mapper={'on': 'always', 'yes' : 'always',
+                                                '1' : 'always', 'true': 'always',
+                                                'off': 'never', 'no':   'never',
+                                                '0':   'never', 'false': 'never',
+                                                'tty': 'auto', 'if-tty': 'auto'}))
+        self.add_option('color_list_installed_older', Option('bold'))
+        self.add_option('color_list_installed_newer', Option('bold,yellow'))
+        self.add_option('color_list_installed_reinstall', Option('normal'))
+        self.add_option('color_list_installed_extra', Option('bold,red'))
+        self.add_option('color_list_available_upgrade', Option('bold,blue'))
+        self.add_option('color_list_available_downgrade', Option('dim,cyan'))
+        self.add_option('color_list_available_reinstall',
+                        Option('bold,underline,green'))
+        self.add_option('color_list_available_install', Option('normal'))
+        self.add_option('color_update_installed', Option('normal'))
+        self.add_option('color_update_local', Option('bold'))
+        self.add_option('color_update_remote', Option('normal'))
+        self.add_option('color_search_match', Option('bold'))
 
-        self.add_option('sslcacert',  PathOption()) # :api
-        self.add_option('sslverify',  BoolOption(True)) # :api
-        self.add_option('sslclientcert',  Option()) # :api
-        self.add_option('sslclientkey',  Option()) # :api
-        self.add_option('deltarpm',  BoolOption(True))
+        self.add_option('sslcacert', PathOption()) # :api
+        self.add_option('sslverify', BoolOption(True)) # :api
+        self.add_option('sslclientcert', Option()) # :api
+        self.add_option('sslclientkey', Option()) # :api
+        self.add_option('deltarpm', BoolOption(True))
 
-        self.add_option('history_record',  BoolOption(True))
-        self.add_option('history_record_packages',  ListOption(['dnf', 'rpm']))
+        self.add_option('history_record', BoolOption(True))
+        self.add_option('history_record_packages', ListOption(['dnf', 'rpm']))
 
-        self.add_option('rpmverbosity',  Option('info'))
-        self.add_option('strict',  BoolOption(True)) # :api
-        self.add_option('clean_requirements_on_remove',  BoolOption(True))
-        self.add_option('history_list_view',  SelectionOption('commands',
-                             choices=('single-user-commands', 'users', 'commands'),
-                             mapper={'cmds': 'commands', 'default': 'commands'}))
+        self.add_option('rpmverbosity', Option('info'))
+        self.add_option('strict', BoolOption(True)) # :api
+        self.add_option('clean_requirements_on_remove', BoolOption(True))
+        self.add_option('history_list_view',
+                        SelectionOption('commands',
+                                        choices=('single-user-commands',
+                                                 'users', 'commands'),
+                                        mapper={'cmds': 'commands',
+                                                'default': 'commands'}))
 
         # runtime only options
         self.add_option('downloadonly', BoolOption(False, runtimeonly=True))
@@ -735,10 +770,13 @@ class MainConf(BaseConfig):
         # if it exists inside installroot use it (i.e. adjust configuration)
         # for lists any component counts
         if isinstance(val, list):
-            if any(os.path.exists(os.path.join(self.installroot, p.lstrip('/')))
-                    for p in val):
-                opt.set(Value([self._prepend_installroot_path(p) for p in val], prio))
-        elif os.path.exists(os.path.join(self.installroot, val.lstrip('/'))):
+            if any(os.path.exists(os.path.join(self.get_value('installroot'),
+                                               p.lstrip('/')))
+                   for p in val):
+                opt.set(Value([self._prepend_installroot_path(p) for p in val],
+                              prio))
+        elif os.path.exists(os.path.join(self.get_value('installroot'),
+                                         val.lstrip('/'))):
             self.prepend_installroot(optname)
             opt.set(Value(self._prepend_installroot_path(val), prio))
 
@@ -750,8 +788,8 @@ class MainConf(BaseConfig):
         opt.set(Value(new_path, prio))
 
     def _prepend_installroot_path(self, path):
-        return dnf.conf.parser.substitute(
-                os.path.join(self.installroot, path.lstrip('/')), self.substitutions)
+        root_path = os.path.join(self.get_value('installroot'), path.lstrip('/'))
+        return dnf.conf.parser.substitute(root_path, self.substitutions)
 
     def configure_from_options(self, opts):
         """Configure parts of CLI from the opts. """
@@ -770,16 +808,18 @@ class MainConf(BaseConfig):
                 if confopt:
                     confopt.set(value, dnf.conf.PRIO_COMMANDLINE)
                 else:
-                    logger.warning(_('Unknown configuration option: %s = %s'), ucd(name), ucd(value))
+                    logger.warning(_('Unknown configuration option: %s = %s'),
+                                   ucd(name), ucd(value))
 
         if hasattr(opts, 'main_setopts'):
             # now set all the non-first-start opts from main from our setopts
+            # pylint: disable=W0212
             for name, val in opts.main_setopts._get_kwargs():
                 opt = self.get_option(name)
                 if opt:
                     opt.set(val, dnf.conf.PRIO_COMMANDLINE)
                 else:
-                    msg ="Main config did not have a %s attr. before setopt"
+                    msg = "Main config did not have a %s attr. before setopt"
                     logger.warning(msg, name)
 
     @property
@@ -799,7 +839,7 @@ class MainConf(BaseConfig):
     def read(self, filename=None, priority=PRIO_DEFAULT):
         # :api
         if filename is None:
-            filename = self.config_file_path
+            filename = self.get_value('config_file_path')
         self.parser = ConfigParser()
         config_pp = dnf.conf.parser.ConfigPreProcessor(filename)
         try:
@@ -809,11 +849,11 @@ class MainConf(BaseConfig):
         self.populate(self.parser, self.section, priority)
 
         # update to where we read the file from
-        self.config_file_path = filename
+        self.set_value('config_file_path', filename, priority)
 
     @property
     def verbose(self):
-        return self.debuglevel >= dnf.const.VERBOSE_LEVEL
+        return self.get_value('debuglevel') >= dnf.const.VERBOSE_LEVEL
 
 
 class RepoConf(BaseConfig):
@@ -821,48 +861,62 @@ class RepoConf(BaseConfig):
 
     def __init__(self, parent, section=None, parser=None):
         super(RepoConf, self).__init__(section, parser)
-        self.add_option('name',  Option()) # :api
-        self.add_option('enabled',  Inherit(parent.get_option('enabled')))
-        self.add_option('basecachedir',  Inherit(parent.get_option('cachedir')))
-        self.add_option('baseurl',  UrlListOption()) # :api
-        self.add_option('mirrorlist',  UrlOption()) # :api
-        self.add_option('metalink',  UrlOption()) # :api
-        self.add_option('mediaid',  Option())
-        self.add_option('gpgkey',  UrlListOption())
-        self.add_option('exclude',  ListOption())
-        self.add_option('include',  ListOption())
 
-        self.add_option('fastestmirror',  Inherit(parent.get_option('fastestmirror')))
-        self.add_option('proxy',  Inherit(parent.get_option('proxy'))) # :api
-        self.add_option('proxy_username',  Inherit(parent.get_option('proxy_username'))) # :api
-        self.add_option('proxy_password',  Inherit(parent.get_option('proxy_password'))) # :api
-        self.add_option('username',  Inherit(parent.get_option('username'))) # :api
-        self.add_option('password',  Inherit(parent.get_option('password'))) # :api
+        self.add_option('name', Option()) # :api
+        self.add_option('enabled', inherit(parent.get_option('enabled')))
+        self.add_option('basecachedir', inherit(parent.get_option('cachedir')))
+        self.add_option('baseurl', UrlListOption()) # :api
+        self.add_option('mirrorlist', UrlOption()) # :api
+        self.add_option('metalink', UrlOption()) # :api
+        self.add_option('mediaid', Option())
+        self.add_option('gpgkey', UrlListOption())
+        self.add_option('exclude', ListOption())
+        self.add_option('include', ListOption())
+
+        self.add_option('fastestmirror',
+                        inherit(parent.get_option('fastestmirror')))
+        self.add_option('proxy', inherit(parent.get_option('proxy'))) # :api
+        self.add_option('proxy_username',
+                        inherit(parent.get_option('proxy_username'))) # :api
+        self.add_option('proxy_password',
+                        inherit(parent.get_option('proxy_password'))) # :api
+        self.add_option('username',
+                        inherit(parent.get_option('username'))) # :api
+        self.add_option('password',
+                        inherit(parent.get_option('password'))) # :api
         self.add_option('protected_packages',
-                Inherit(parent.get_option('protected_packages'))) # :api
+                        inherit(parent.get_option('protected_packages'))) # :api
 
-        self.add_option('gpgcheck',  Inherit(parent.get_option('gpgcheck')))
-        self.add_option('repo_gpgcheck',  Inherit(parent.get_option('repo_gpgcheck')))
-        self.add_option('enablegroups',  Inherit(parent.get_option('enablegroups')))
+        self.add_option('gpgcheck', inherit(parent.get_option('gpgcheck')))
+        self.add_option('repo_gpgcheck',
+                        inherit(parent.get_option('repo_gpgcheck')))
+        self.add_option('enablegroups',
+                        inherit(parent.get_option('enablegroups')))
 
-        self.add_option('bandwidth',  Inherit(parent.get_option('bandwidth')))
-        self.add_option('minrate',  Inherit(parent.get_option('minrate')))
-        self.add_option('ip_resolve',  Inherit(parent.get_option('ip_resolve')))
-        self.add_option('throttle',  Inherit(parent.get_option('throttle')))
-        self.add_option('timeout',  Inherit(parent.get_option('timeout')))
-        self.add_option('max_parallel_downloads',  Inherit(parent.get_option('max_parallel_downloads')))
+        self.add_option('bandwidth', inherit(parent.get_option('bandwidth')))
+        self.add_option('minrate', inherit(parent.get_option('minrate')))
+        self.add_option('ip_resolve', inherit(parent.get_option('ip_resolve')))
+        self.add_option('throttle', inherit(parent.get_option('throttle')))
+        self.add_option('timeout', inherit(parent.get_option('timeout')))
+        self.add_option('max_parallel_downloads',
+                        inherit(parent.get_option('max_parallel_downloads')))
 
-        self.add_option('metadata_expire',  Inherit(parent.get_option('metadata_expire')))
-        self.add_option('cost',  IntOption(1000))
-        self.add_option('priority',  IntOption(99))
+        self.add_option('metadata_expire',
+                        inherit(parent.get_option('metadata_expire')))
+        self.add_option('cost', IntOption(1000))
+        self.add_option('priority', IntOption(99))
 
-        self.add_option('sslcacert',  Inherit(parent.get_option('sslcacert'))) # :api
-        self.add_option('sslverify',  Inherit(parent.get_option('sslverify'))) # :api
-        self.add_option('sslclientcert',  Inherit(parent.get_option('sslclientcert'))) # :api
-        self.add_option('sslclientkey',  Inherit(parent.get_option('sslclientkey'))) # :api
-        self.add_option('deltarpm',  Inherit(parent.get_option('deltarpm')))
+        self.add_option('sslcacert',
+                        inherit(parent.get_option('sslcacert'))) # :api
+        self.add_option('sslverify',
+                        inherit(parent.get_option('sslverify'))) # :api
+        self.add_option('sslclientcert',
+                        inherit(parent.get_option('sslclientcert'))) # :api
+        self.add_option('sslclientkey',
+                        inherit(parent.get_option('sslclientkey'))) # :api
+        self.add_option('deltarpm', inherit(parent.get_option('deltarpm')))
 
-        self.add_option('skip_if_unavailable',  BoolOption(True)) # :api
+        self.add_option('skip_if_unavailable', BoolOption(True)) # :api
 
     def configure_from_options(self, opts):
         """Configure repos from the opts. """
@@ -870,16 +924,16 @@ class RepoConf(BaseConfig):
         if getattr(opts, 'nogpgcheck', None):
             for optname in ['gpgcheck', 'repo_gpgcheck']:
                 opt = self.get_option(optname)
-                opt.set(False, dnf.conf.PRIO_RUNTIME)
+                opt.set(False, dnf.conf.PRIO_COMMANDLINE)
 
-        if getattr(opts, 'cacheonly', None):
-            self.md_only_cached = True
-
-        if self.id in getattr(opts, 'repo_setopts', []):
-            for name, val in self.repo_setopts[self.id]._get_kwargs():
+        repo_setopts = getattr(opts, 'repo_setopts', {})
+        if self.section in repo_setopts:
+            # pylint: disable=W0212
+            setopts = repo_setopts[self.section]._get_kwargs()
+            for name, val in setopts:
                 opt = self.get_option(name)
                 if opt:
                     opt.set(val, dnf.conf.PRIO_COMMANDLINE)
                 else:
                     msg = "Repo %s did not have a %s attr. before setopt"
-                    logger.warning(msg, self.id, name)
+                    logger.warning(msg, self.section, name)

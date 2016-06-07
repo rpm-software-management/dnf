@@ -261,7 +261,7 @@ class _BaseStubMixin(object):
 
 
     def set_debuglevel(self, level):
-        self.conf.get_option('debuglevel').set(level, dnf.conf.PRIO_RUNTIME)
+        self.conf.set_value('debuglevel', level, dnf.conf.PRIO_RUNTIME)
 
 class BaseCliStub(_BaseStubMixin, dnf.cli.cli.BaseCli):
     """A class mocking `dnf.cli.cli.BaseCli`."""

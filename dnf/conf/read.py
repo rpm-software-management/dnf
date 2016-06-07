@@ -78,7 +78,8 @@ class RepoReader(object):
         substs = self.conf.substitutions
         parser = dnf.conf.ConfigParser()
         try:
-            confpp_obj = dnf.conf.parser.ConfigPreProcessor(repofn, vars=substs)
+            confpp_obj = dnf.conf.parser.ConfigPreProcessor(repofn,
+                                                            variables=substs)
 
             parser.readfp(confpp_obj)
         except dnf.conf.ParsingError as e:

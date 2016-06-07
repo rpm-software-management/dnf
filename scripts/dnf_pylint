@@ -23,9 +23,12 @@ function disable()
 }
 
 disable "-d C0111" # docstrings
+disable "-d I0011" # locally disabled warnings
+disable "-d R0801" # similar lines
 disable "-d R0904" # too many public methods
 disable "-d R0911" # too many return statements
 disable "-d R0912" # too many branches
+disable "-d R0913" # too many arguments
 disable "-d R0903" # too few public methods
 disable "-d W0141" # used builtin 'map' function
 disable "-d W0142" # used star magic
