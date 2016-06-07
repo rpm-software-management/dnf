@@ -78,9 +78,9 @@ class ConfigPreProcessor(object):
     """
 
 
-    def __init__(self, configfile, vars=None):
+    def __init__(self, configfile, variables=None):
         # put the vars away in a helpful place
-        self._vars = vars
+        self._vars = variables
 
         # used to track the current ini-section
         self._section = None
@@ -106,8 +106,8 @@ class ConfigPreProcessor(object):
         self._incstack = []
         self._alreadyincluded = []
 
-        # _pushfile will return None if he couldn't open the file
-        fo = self._pushfile(url)
+        # _pushfile will return None if it couldn't open the file
+        _fo = self._pushfile(url)
 
     def readline(self, _size=0):
         """
@@ -221,7 +221,8 @@ class ConfigPreProcessor(object):
             self._alreadyincluded.append(includetuple)
         else:
             fn = dnf.util.strip_prefix(absurl, 'file://')
-            msg = "Can not read configuration: %s , ignoring" % fn if fn else absurl
+            msg = "Can not read configuration: %s , ignoring" % (fn if fn
+                                                                 else absurl)
             logger.warning(msg)
 
         return fo

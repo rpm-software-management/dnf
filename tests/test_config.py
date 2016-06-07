@@ -43,7 +43,7 @@ class OptionTest(unittest.TestCase):
         cfg.a_setting = "turn left"
         self.assertEqual(cfg.a_setting, "turn left")
         # new value with lower priority does nothing
-        cfg.get_option('a_setting').set("turn right", dnf.conf.PRIO_DEFAULT)
+        cfg.set_value('a_setting', "turn right", dnf.conf.PRIO_DEFAULT)
         self.assertEqual(cfg.a_setting, "turn left")
 
 

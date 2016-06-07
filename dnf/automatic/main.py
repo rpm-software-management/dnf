@@ -108,7 +108,7 @@ class CommandsConfig(dnf.conf.BaseConfig):
 
     def imply(self):
         if self.apply_updates:
-            self.get_option('download_updates').set(True, dnf.conf.PRIO_RUNTIME)
+            self.set_value('download_updates', True, dnf.conf.PRIO_RUNTIME)
 
 
 class EmailConfig(dnf.conf.BaseConfig):

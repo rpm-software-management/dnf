@@ -50,7 +50,7 @@ from dnf.conf.config import BytesOption, ThrottleOption
 
 from dnf.conf.config import BaseConfig, MainConf, RepoConf
 
-from dnf.conf.config import ConfigParser
+from dnf.conf.config import ParsingError, ConfigParser
 
 
 Conf = MainConf
