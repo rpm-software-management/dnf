@@ -298,10 +298,6 @@ class OptionParser(argparse.ArgumentParser):
                                 help=_('enable just specific repositories '
                                        'by an id or a glob, '
                                        'can be specified multiple times'))
-        #  compat: erase in 2.0.0 --repoid hidden compatibility alias for --repo
-        repo_group.add_argument('--repoid', dest='repo',
-                                action=self._SplitCallback,
-                                help=argparse.SUPPRESS)
         main_parser.add_argument("-x", "--exclude", default=[],
                                  dest='excludepkgs', action=self._SplitCallback,
                                  help=_("exclude packages by name or glob"),
