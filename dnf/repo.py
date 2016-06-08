@@ -737,7 +737,7 @@ class Repo(dnf.yum.config.RepoConf):
             handle = self._handle_new_remote(tmpdir)
             handle.fetchmirrors = True
             handle.perform()
-            if handle.metalink is None:
+            if handle.metalink is None or not handle.mirrorlisturl:
                 logger.debug("reviving: repo '%s' skipped, no metalink.", self.id)
                 return False
             hashes = handle.metalink['hashes']
