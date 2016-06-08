@@ -143,7 +143,8 @@ class CommonTest(support.ResultTestCase):
     def test_package_install_installed(self):
         """Test that nothing changes if an installed package matches."""
         p = self.base.sack.query().available().nevra("librita-1-1.x86_64")[0]
-        self.base.package_install(p)
+        with support.mock.patch('logging.Logger.warning') as warn:
+            self.base.package_install(p)
         self.base.resolve()
         self.assertEmpty(self.base._goal.list_reinstalls())
 
@@ -485,6 +486,7 @@ class BestTrueTest(support.ResultTestCase):
 
     def test_install_name_choice(self):
         """Test that the latest version of the matching pkg is installed."""
-        self.base.install('pepper')
+        with support.mock.patch('logging.Logger.warning') as warn:
+            self.base.install('pepper')
         with self.assertRaises(dnf.exceptions.DepsolveError):
             self.base.resolve()

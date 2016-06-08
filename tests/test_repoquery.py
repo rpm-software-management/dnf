@@ -80,7 +80,8 @@ class ArgParseTest(unittest.TestCase):
 
     @support.mock.patch('argparse.ArgumentParser.print_help', lambda x: x)
     def test_conflict(self):
-        with self.assertRaises(SystemExit) as sysexit:
+        with self.assertRaises(SystemExit) as sysexit, \
+            support.patch_std_streams() as (stdout, stderr):
             support.command_configure(self.cmd,
                                       ['--conflicts', '%{name}', '--provides'])
         self.assertEqual(sysexit.exception.code, 1)

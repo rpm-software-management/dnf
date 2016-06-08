@@ -130,6 +130,8 @@ def wiretap_logs(logger_name, level, stream):
     logger.setLevel(level)
 
     handler = logging.StreamHandler(stream)
+    orig_handlers = logger.handlers
+    logger.handlers = []
     logger.addHandler(handler)
 
     try:
@@ -137,6 +139,7 @@ def wiretap_logs(logger_name, level, stream):
     finally:
         logger.removeHandler(handler)
         logger.setLevel(orig_level)
+        logger.handlers = orig_handlers
 
 def command_configure(cmd, args):
     parser = dnf.cli.option_parser.OptionParser()

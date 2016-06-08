@@ -213,8 +213,9 @@ class RepoPkgsCommandTest(unittest.TestCase):
     def test_configure_badargs(self):
         """Test whether the command fail in case of wrong args."""
         with self.assertRaises(SystemExit) as exit, \
-             mock.patch('sys.stdout') as stdout:
-             support.command_configure(self.cmd, [])
+            support.patch_std_streams() as (stdout, stderr), \
+            mock.patch('logging.Logger.critical') as clog:
+            support.command_configure(self.cmd, [])
         self.assertEqual(exit.exception.code, 1)
 
 class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
@@ -260,9 +261,8 @@ class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
     def test_not_found(self):
         """Test whether exit code differs if updates are not found."""
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
-        with self.assertRaises(SystemExit) as exit:
-            support.command_run(cmd, ['main', 'check-updates'])
-        self.assertEqual(exit.exception.code, 1)
+        support.command_run(cmd, ['main', 'check-update'])
+        self.assertNotEqual(self.cli.demands.success_exit_status, 100)
 
 class RepoPkgsInfoSubCommandTest(unittest.TestCase):
 
