@@ -57,28 +57,6 @@ OPTS_MAPPING = {
 }
 
 
-def package_source_name(package):
-    """"
-    returns name of source package for given pkgname
-    e.g. krb5-libs -> krb5
-    """
-    if package.sourcerpm is not None:
-        # trim suffix first
-        srcname = rtrim(package.sourcerpm, ".src.rpm")
-        # source package filenames may not contain epoch, handle both cases
-        srcname = rtrim(srcname, "-{}".format(package.evr))
-        srcname = rtrim(srcname, "-{0.version}-{0.release}".format(package))
-    else:
-        srcname = None
-    return srcname
-
-
-def rtrim(s, r):
-    while s.endswith(r):
-        s = s[:-len(r)]
-    return s
-
-
 def filelist_format(pkg):
     return pkg.files
 
@@ -348,7 +326,7 @@ class RepoQueryCommand(commands.Command):
         if self.opts.srpm:
             pkg_list = []
             for pkg in q:
-                srcname = package_source_name(pkg)
+                srcname = dnf.util.package_source_name(pkg)
                 if srcname is not None:
                     tmp_query = self.base.sack.query().filter(
                         name=srcname,
