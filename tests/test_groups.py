@@ -83,9 +83,10 @@ class PresetPersistorTest(support.ResultTestCase):
     def test_env_group_remove(self):
         cnt = self.base.env_group_remove(["sugar-desktop-environment"])
         self.assertEqual(3, cnt)
-        self.assertRaises(dnf.exceptions.Error,
-                          self.base.env_group_remove,
-                          ['nonexistent'])
+        with support.mock.patch('logging.Logger.error') as log:
+            self.assertRaises(dnf.exceptions.Error,
+                              self.base.env_group_remove,
+                              ['nonexistent'])
 
     def test_environment_remove(self):
         prst = self.base._group_persistor

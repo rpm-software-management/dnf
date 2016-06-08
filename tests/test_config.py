@@ -138,8 +138,9 @@ class ConfTest(TestCase):
 
         # if repoconf reads value from config it no more inherits changes from conf
         conf.config_file_path = support.resource_path('etc/repos.conf')
-        reader = dnf.conf.read.RepoReader(conf, {})
-        repo = list(reader)[0]
+        with mock.patch('logging.Logger.warning') as warn:
+            reader = dnf.conf.read.RepoReader(conf, {})
+            repo = list(reader)[0]
 
         self.assertEqual(conf.minrate, 1000)
         self.assertEqual(repo.minrate, 4096)

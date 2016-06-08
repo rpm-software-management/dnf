@@ -26,8 +26,9 @@ class DowngradeTo(support.ResultTestCase):
         self.base = support.MockBase('main', 'old_versions')
 
     def test_downgrade_to_lowest(self):
-        self.base.downgrade_to('hole')
-        self.assertEqual(0, self.base.downgrade_to('hole'))
+        with support.mock.patch('logging.Logger.warning') as warn:
+            self.base.downgrade_to('hole')
+            self.assertEqual(0, self.base.downgrade_to('hole'))
         self.assertResult(self.base, self.base._sack.query().installed())
 
     def test_downgrade_to_name(self):
