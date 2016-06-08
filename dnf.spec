@@ -2,6 +2,7 @@
 %global librepo_version 1.7.16
 %global libcomps_version 0.1.6
 %global rpm_version 4.13.0-0.rc1.29
+%global min_plugins_core 0.1.13
 
 %global confdir %{_sysconfdir}/%{name}
 
@@ -66,6 +67,8 @@ Provides:       dnf-command(search)
 Provides:       dnf-command(updateinfo)
 Provides:       dnf-command(upgrade)
 Provides:       dnf-command(upgrade-to)
+Conflicts:      python2-dnf-plugins-core < %{min_plugins_core}
+Conflicts:      python3-dnf-plugins-core < %{min_plugins_core}
 
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.

@@ -354,10 +354,7 @@ class GroupCommand(commands.Command):
             demands.root_user = True
         if cmd == 'remove':
             demands.allow_erasing = True
-            # temporary set to true because of migration
-            # to new groups.json format
-            # compat: set to False in 2.0.0
-            demands.available_repos = True
+            demands.available_repos = False
         else:
             demands.available_repos = True
 
