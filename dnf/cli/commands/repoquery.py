@@ -56,23 +56,6 @@ OPTS_MAPPING = {
     'supplements': 'supplements'
 }
 
-def _enable_sub_repos(repos, sub_name_fn):
-    for repo in repos.iter_enabled():
-        for found in repos.get_matching(sub_name_fn(repo.id)):
-            if not found.enabled:
-                logger.info(_('enabling %s repository'), found.id)
-                found.enable()
-
-
-def enable_source_repos(repos):
-    """
-    enable source repos corresponding to already enabled binary repos
-    """
-    def source_name(name):
-        return ("{}-source-rpms".format(name[:-5]) if name.endswith("-rpms")
-                else "{}-source".format(name))
-    _enable_sub_repos(repos, source_name)
-
 
 def package_source_name(package):
     """"
@@ -250,7 +233,7 @@ class RepoQueryCommand(commands.Command):
             return
 
         if self.opts.srpm:
-            enable_source_repos(self.base.repos)
+            dnf.util.enable_source_repos(self.base.repos)
 
         if (self.opts.pkgfilter != "installonly" and self.opts.list != "installed") or self.opts.available:
             demands.available_repos = True
