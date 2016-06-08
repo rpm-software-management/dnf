@@ -62,21 +62,6 @@ def get_reposdir(plugin):
     return myrepodir
 
 
-def current_value(plugin, repo, option):
-    """
-    # :api
-    Returns current value of the option
-    (set in .repo or dnf.conf or on commandline).
-    """
-    if (repo is not None and
-            hasattr(repo, option) and getattr(repo, option) is not None):
-        return getattr(repo, option)
-    conf = plugin.base.conf
-    if (hasattr(conf, option) and getattr(conf, option) is not None):
-        return getattr(conf, option)
-    return None
-
-
 def urlopen(plugin, repo, url, mode='w+b', **kwargs):
     """
     # :api
