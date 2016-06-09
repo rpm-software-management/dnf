@@ -35,6 +35,12 @@ class SackTest(support.TestCase):
 
     def test_setup_excludes_includes(self):
         base = support.MockBase()
+        base.conf.excludepkgs=['pepper']
+        base._setup_excludes_includes()
+        peppers = base.sack.query().filter(name='pepper').run()
+        self.assertLength(peppers, 0)
+
+        base = support.MockBase()
         base.conf.exclude=['pepper']
         base._setup_excludes_includes()
         peppers = base.sack.query().filter(name='pepper').run()
@@ -42,20 +48,20 @@ class SackTest(support.TestCase):
 
         base = support.MockBase()
         base.conf.disable_excludes = ['all']
-        base.conf.exclude=['pepper']
+        base.conf.excludepkgs=['pepper']
         base._setup_excludes_includes()
         peppers = base.sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 1)
 
         base = support.MockBase('main')
-        base.repos['main'].exclude=['pepp*']
+        base.repos['main'].excludepkgs=['pepp*']
         base._setup_excludes_includes()
         peppers = base.sack.query().filter(name='pepper', reponame='main')
         self.assertLength(peppers, 0)
 
         base = support.MockBase()
-        base.conf.exclude = ['*.i?86']
-        base.conf.include = ['lib*']
+        base.conf.excludepkgs = ['*.i?86']
+        base.conf.includepkgs = ['lib*']
         base._setup_excludes_includes()
         peppers = base.sack.query().filter().run()
         self.assertLength(peppers, 1)

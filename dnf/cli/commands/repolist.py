@@ -215,13 +215,13 @@ class RepoListCommand(commands.Command):
                 expire = _expire_str(repo, md)
                 out += [self.output.fmtKeyValFill(_("Repo-expire  : "), expire)]
 
-                if repo.exclude:
+                if repo.excludepkgs:
                     out += [self.output.fmtKeyValFill(_("Repo-exclude : "),
-                                                      ", ".join(repo.exclude))]
+                                                      ", ".join(repo.excludepkgs))]
 
-                if repo.include:
+                if repo.includepkgs:
                     out += [self.output.fmtKeyValFill(_("Repo-include : "),
-                                                      ", ".join(repo.include))]
+                                                      ", ".join(repo.includepkgs))]
 
                 if ui_excludes_num:
                     out += [self.output.fmtKeyValFill(_("Repo-excluded: "),
