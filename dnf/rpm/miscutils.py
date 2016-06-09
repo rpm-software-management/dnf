@@ -65,7 +65,6 @@ def getSigInfo(hdr):
     """checks signature from an hdr hand back signature information and/or
        an error code"""
 
-    dnf.pycomp.setlocale(locale.LC_ALL, 'C')
     string = '%|DSAHEADER?{%{DSAHEADER:pgpsig}}:{%|RSAHEADER?{%{RSAHEADER:pgpsig}}:{%|SIGGPG?{%{SIGGPG:pgpsig}}:{%|SIGPGP?{%{SIGPGP:pgpsig}}:{(none)}|}|}|}|'
     siginfo = hdr.sprintf(string)
     if siginfo != '(none)':
