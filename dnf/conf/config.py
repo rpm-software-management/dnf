@@ -641,8 +641,10 @@ class MainConf(BaseConfig):
 
         self._add_option('debug_solver', BoolOption(False))
 
-        self._add_option('exclude', ListOption())
-        self._add_option('include', ListOption())
+        self._add_option('excludepkgs', ListOption())
+        self._add_option('includepkgs', ListOption())
+        self._add_option('exclude', self._get_option('excludepkgs'))
+            # ^ compatibility with yum
         self._add_option('fastestmirror', BoolOption(False))
         self._add_option('proxy', UrlOption(schemes=('http', 'ftp', 'https',
                                                      'socks5', 'socks5h',
@@ -823,6 +825,10 @@ class MainConf(BaseConfig):
                     msg = "Main config did not have a %s attr. before setopt"
                     logger.warning(msg, name)
 
+        if hasattr(opts, 'excludepkgs'):
+            excl = self._get_value('excludepkgs') + opts.excludepkgs
+            self._set_value('excludepkgs', excl, dnf.conf.PRIO_COMMANDLINE)
+
     @property
     def releasever(self):
         # :api
@@ -870,8 +876,10 @@ class RepoConf(BaseConfig):
         self._add_option('metalink', UrlOption()) # :api
         self._add_option('mediaid', Option())
         self._add_option('gpgkey', UrlListOption())
-        self._add_option('exclude', ListOption())
-        self._add_option('include', ListOption())
+        self._add_option('excludepkgs', ListOption())
+        self._add_option('includepkgs', ListOption())
+        self._add_option('exclude', self._get_option('excludepkgs'))
+            # ^ compatibility with yum
 
         self._add_option('fastestmirror',
                          inherit(parent._get_option('fastestmirror')))

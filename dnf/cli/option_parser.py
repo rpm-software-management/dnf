@@ -226,14 +226,14 @@ class OptionParser(argparse.ArgumentParser):
                                 help=_('enable just specific repositories '
                                        'by an id or a glob, '
                                        'can be specified multiple times'))
-        main_parser.add_argument("-x", "--exclude", default=[],
+        main_parser.add_argument("-x", "--exclude", "--excludepkgs", default=[],
                                  dest='excludepkgs', action=self._SplitCallback,
                                  help=_("exclude packages by name or glob"),
                                  metavar='[package]')
-        main_parser.add_argument("--disableexcludes", default=[],
-                                 dest="disable_excludes",
+        main_parser.add_argument("--disableexcludes", "--disableexcludepkgs",
+                                 default=[], dest="disable_excludes",
                                  action=self._SplitCallback,
-                                 help=_("disable excludes"),
+                                 help=_("disable excludepkgs"),
                                  metavar='[repo]')
         main_parser.add_argument("--repofrompath", default={},
                                  action=self._SplitExtendDictCallback,

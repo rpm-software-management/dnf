@@ -138,22 +138,22 @@ class Base(object):
         if 'all' in disabled:
             return
         if 'main' not in disabled:
-            for excl in self.conf.exclude:
+            for excl in self.conf.excludepkgs:
                 subj = dnf.subject.Subject(excl)
                 pkgs = subj.get_best_query(self.sack)
                 self.sack.add_excludes(pkgs)
-            for incl in self.conf.include:
+            for incl in self.conf.includepkgs:
                 subj = dnf.subject.Subject(incl)
                 pkgs = subj.get_best_query(self.sack)
                 self.sack.add_includes(pkgs)
         for r in self.repos.iter_enabled():
             if r.id in disabled:
                 continue
-            for excl in r.exclude:
+            for excl in r.excludepkgs:
                 pkgs = self.sack.query().filter(reponame=r.id).\
                     filter(name__glob=excl)
                 self.sack.add_excludes(pkgs)
-            for incl in r.include:
+            for incl in r.includepkgs:
                 pkgs = self.sack.query().filter(reponame=r.id).\
                     filter(name__glob=incl)
                 self.sack.add_includes(pkgs)
