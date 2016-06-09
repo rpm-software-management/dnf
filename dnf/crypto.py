@@ -120,7 +120,7 @@ def rawkey2infos(key_fo):
 
 
 def retrieve(keyurl, repo=None):
-    with dnf.util.urlopen(keyurl, repo) as handle:
+    with dnf.util._urlopen(keyurl, repo=repo) as handle:
         keyinfos = rawkey2infos(handle)
     for keyinfo in keyinfos:
         keyinfo.url = keyurl
