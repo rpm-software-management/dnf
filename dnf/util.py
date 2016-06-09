@@ -135,36 +135,6 @@ def write_raw_configfile(filename, section_id, substitutions,
     fp.close()
 
 
-def _enable_sub_repos(repos, sub_name_fn):
-    for repo in repos.iter_enabled():
-        for found in repos.get_matching(sub_name_fn(repo.id)):
-            if not found.enabled:
-                logger.info(_('enabling %s repository'), found.id)
-                found.enable()
-
-
-def enable_source_repos(repos):
-    """
-    # :api
-    enable source repos corresponding to already enabled binary repos
-    """
-    def source_name(name):
-        return ("{}-source-rpms".format(name[:-5]) if name.endswith("-rpms")
-                else "{}-source".format(name))
-    _enable_sub_repos(repos, source_name)
-
-
-def enable_debug_repos(repos):
-    """
-    # :api
-    enable debug repos corresponding to already enabled binary repos
-    """
-    def debug_name(name):
-        return ("{}-debug-rpms".format(name[:-5]) if name.endswith("-rpms")
-                else "{}-debuginfo".format(name))
-    _enable_sub_repos(repos, debug_name)
-
-
 def package_debug_name(package):
     """
     # :api
@@ -206,10 +176,6 @@ def rtrim(s, r):
         s = s[:-len(r)]
     return s
 
-"""
-Generally these are not a part of the public DNF API.
-
-"""
 
 def am_i_root():
     return os.geteuid() == 0

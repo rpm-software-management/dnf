@@ -20,8 +20,12 @@
 
 from __future__ import unicode_literals
 from dnf.exceptions import ConfigError
+from dnf.i18n import _
+
 import dnf.util
 import fnmatch
+
+logger = dnf.util.logger
 
 
 class RepoDict(dict):
@@ -43,6 +47,23 @@ class RepoDict(dict):
 
     def any_enabled(self):
         return not dnf.util.empty(self.iter_enabled())
+
+    def _enable_sub_repos(self, sub_name_fn):
+        for repo in self.iter_enabled():
+            for found in self.get_matching(sub_name_fn(repo.id)):
+                if not found.enabled:
+                    logger.info(_('enabling %s repository'), found.id)
+                    found.enable()
+
+    def enable_source_repos(self):
+        # :api
+        """enable source repos corresponding to already enabled binary repos"""
+
+        def source_name(name):
+            return ("{}-source-rpms".format(name[:-5]) if name.endswith("-rpms")
+                    else "{}-source".format(name))
+
+        self._enable_sub_repos(source_name)
 
     def enabled(self):
         return [r for r in self.values() if r.enabled]

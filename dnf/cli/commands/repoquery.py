@@ -211,7 +211,7 @@ class RepoQueryCommand(commands.Command):
             return
 
         if self.opts.srpm:
-            dnf.util.enable_source_repos(self.base.repos)
+            self.base.repos.enable_source_repos()
 
         if (self.opts.pkgfilter != "installonly" and self.opts.list != "installed") or self.opts.available:
             demands.available_repos = True
