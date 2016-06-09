@@ -65,33 +65,40 @@ def get_reposdir(plugin):
     return myrepodir
 
 
-def urlopen(plugin, repo, url, mode='w+b', **kwargs):
+def _non_repo_handle(conf):
+    handle = librepo.Handle()
+    handle.useragent = dnf.const.USER_AGENT
+    # see dnf.repo.Repo._handle_new_remote() how to pass
+    handle.maxspeed = conf.throttle if type(conf.throttle) is int \
+        else int(conf.bandwidth * conf.throttle)
+    handle.proxy = conf.proxy
+    handle.proxyuserpwd = dnf.repo._user_pass_str(conf.proxy_username,
+                                                  conf.proxy_password)
+    handle.sslverifypeer = handle.sslverifyhost = conf.sslverify
+    return handle
+
+
+def _build_default_handle():
+    handle = librepo.Handle()
+    handle.useragent = dnf.const.USER_AGENT
+    return handle
+
+
+def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
     """
     # :api
-    modified dnf.util.urlopen() which respects proxy setting
-    even for non-repo downloads
+    Open the specified absolute url, return a file object
+    which respects proxy setting even for non-repo downloads
     """
-    conf = plugin.base.conf
-
-    def non_repo_handle():
-        handle = librepo.Handle()
-        handle.useragent = dnf.const.USER_AGENT
-        # see dnf.repo.Repo._handle_new_remote() how to pass
-        handle.maxspeed = conf.throttle if type(conf.throttle) is int \
-                     else int(conf.bandwidth * conf.throttle)
-        handle.proxy = conf.proxy
-        handle.proxyuserpwd = dnf.repo._user_pass_str(conf.proxy_username,
-                                                      conf.proxy_password)
-        handle.sslverifypeer = handle.sslverifyhost = conf.sslverify
-        return handle
-
     if PY3 and 'b' not in mode:
         kwargs.setdefault('encoding', 'utf-8')
     fo = tempfile.NamedTemporaryFile(mode, **kwargs)
     if repo:
         handle = repo.get_handle()
+    elif conf:
+        handle = _non_repo_handle(conf)
     else:
-        handle = non_repo_handle()
+        handle = _build_default_handle()
     try:
         librepo.download_url(url, fo.fileno(), handle)
     except librepo.LibrepoException as e:
@@ -387,33 +394,6 @@ def touch(path, no_create=False):
         return os.utime(path, None)
     with open(path, 'a'):
         pass
-
-
-def urlopen(absurl, repo=None, mode='w+b', **kwargs):
-    """Open the specified absolute url, return a file object.
-
-    repo -- Use this repo-specific config (proxies, certs)
-    kwargs -- These are passed to TemporaryFile
-    """
-
-    def build_default_handle():
-        handle = librepo.Handle()
-        handle.useragent = dnf.const.USER_AGENT
-        return handle
-
-    if PY3 and 'b' not in mode:
-        kwargs.setdefault('encoding', 'utf-8')
-    fo = tempfile.NamedTemporaryFile(mode, **kwargs)
-    if repo:
-        handle = repo.get_handle()
-    else:
-        handle = build_default_handle()
-    try:
-        librepo.download_url(absurl, fo.fileno(), handle)
-    except librepo.LibrepoException as e:
-        raise IOError(e.args[1])
-    fo.seek(0)
-    return fo
 
 
 class tmpdir(object):

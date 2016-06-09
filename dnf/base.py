@@ -940,7 +940,7 @@ class Base(object):
         # :api
         if not os.path.exists(path) and '://' in path:
             # download remote rpm to a tempfile
-            path = dnf.util.urlopen(path, suffix='.rpm', delete=False).name
+            path = self.urlopen(path, suffix='.rpm', delete=False).name
             self._add_tempfiles([path])
         return self.sack.add_cmdline_package(path)
 
@@ -1931,6 +1931,14 @@ class Base(object):
             myrepos += repo.dump()
             myrepos += '\n'
         self.history.write_addon_data('config-repos', myrepos)
+
+    def urlopen(self, url, repo=None, mode='w+b', **kwargs):
+        # :api
+        """
+        Open the specified absolute url, return a file object
+        which respects proxy setting even for non-repo downloads
+        """
+        return dnf.util._urlopen(url, self.conf, repo, mode, **kwargs)
 
 
 def _msg_installed(pkg):
