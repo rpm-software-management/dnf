@@ -202,7 +202,7 @@ def package_source_debug_name(package):
 
 
 def rtrim(s, r):
-    while s.endswith(r):
+    if s.endswith(r):
         s = s[:-len(r)]
     return s
 
