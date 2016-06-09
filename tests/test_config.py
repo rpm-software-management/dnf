@@ -33,7 +33,7 @@ class OptionTest(unittest.TestCase):
     class Cfg(BaseConfig):
         def __init__(self):
             super(OptionTest.Cfg, self).__init__()
-            self.add_option('a_setting', Option("roundabout"))
+            self._add_option('a_setting', Option("roundabout"))
 
     def test_option(self):
         cfg = self.Cfg()
@@ -43,7 +43,7 @@ class OptionTest(unittest.TestCase):
         cfg.a_setting = "turn left"
         self.assertEqual(cfg.a_setting, "turn left")
         # new value with lower priority does nothing
-        cfg.set_value('a_setting', "turn right", dnf.conf.PRIO_DEFAULT)
+        cfg._set_value('a_setting', "turn right", dnf.conf.PRIO_DEFAULT)
         self.assertEqual(cfg.a_setting, "turn left")
 
 
@@ -94,7 +94,7 @@ class ConfTest(TestCase):
         self.assertEqual(conf.color, 'auto')
 
         opts = argparse.Namespace(assumeyes=True, color='never')
-        conf.configure_from_options(opts)
+        conf._configure_from_options(opts)
         self.assertTrue(conf.assumeyes)
         self.assertFalse(conf.assumeno)  # no change
         self.assertEqual(conf.color, 'never')
@@ -107,13 +107,13 @@ class ConfTest(TestCase):
         # read config
         conf.read(priority=dnf.conf.PRIO_MAINCONFIG)
         # update from commandline
-        conf.configure_from_options(opts)
+        conf._configure_from_options(opts)
         self.assertFalse(conf.gpgcheck)
         self.assertEqual(conf.installonly_limit, 5)
 
         # and the other way round should have the same result
         # update from commandline
-        conf.configure_from_options(opts)
+        conf._configure_from_options(opts)
         # read config
         conf.read(priority=dnf.conf.PRIO_MAINCONFIG)
         self.assertFalse(conf.gpgcheck)

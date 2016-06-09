@@ -764,10 +764,10 @@ class Repo(dnf.conf.RepoConf):
         logger.debug("reviving: '%s' can be revived.", self.id)
         return True
 
-    def configure_from_options(self, opts):
+    def _configure_from_options(self, opts):
         if getattr(opts, 'cacheonly', None):
             self.md_only_cached = True
-        super(Repo, self).configure_from_options(opts)
+        super(Repo, self)._configure_from_options(opts)
 
     def disable(self):
         # :api

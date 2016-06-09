@@ -56,7 +56,7 @@ class RepoReader(object):
 
         repo = dnf.repo.Repo(id_, self.conf)
         try:
-            repo.populate(parser, id_, dnf.conf.PRIO_REPOCONFIG)
+            repo._populate(parser, id_, dnf.conf.PRIO_REPOCONFIG)
         except ValueError as e:
             msg = _('Repository %r: Error parsing config: %s' % (id_, e))
             raise dnf.exceptions.ConfigError(msg)
@@ -107,6 +107,6 @@ class RepoReader(object):
             else:
                 thisrepo.repofile = repofn
 
-            thisrepo.configure_from_options(self.opts)
+            thisrepo._configure_from_options(self.opts)
 
             yield thisrepo

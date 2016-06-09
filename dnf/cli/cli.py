@@ -831,7 +831,7 @@ class Cli(object):
 
         # Read up configuration options and initialize plugins
         try:
-            self.base.conf.configure_from_options(opts)
+            self.base.conf._configure_from_options(opts)
             self.read_conf_file(opts.releasever)
         except (dnf.exceptions.ConfigError, ValueError) as e:
             logger.critical(_('Config error: %s'), e)
@@ -890,7 +890,7 @@ class Cli(object):
 
         self.base.configure_plugins()
 
-        self.base.conf.configure_from_options(opts)
+        self.base.conf._configure_from_options(opts)
 
         self.command.configure()
 
@@ -902,13 +902,13 @@ class Cli(object):
         conf = self.base.conf
 
         # search config file inside the installroot first
-        conf.search_inside_installroot('config_file_path')
+        conf._search_inside_installroot('config_file_path')
 
         # read config
         conf.read(priority=dnf.conf.PRIO_MAINCONFIG)
 
         # search reposdir file inside the installroot first
-        conf.search_inside_installroot('reposdir')
+        conf._search_inside_installroot('reposdir')
 
         # cachedir, logs, releasever, and gpgkey are taken from or stored in installroot
         if releasever is None:
