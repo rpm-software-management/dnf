@@ -78,7 +78,7 @@ class Option(object):
         if isinstance(value, basestring):
             # try to parse a string (from config file)
             try:
-                value = self.parse(value)
+                value = self._parse(value)
             except ValueError as e:
                 raise dnf.exceptions.ConfigError('Error parsing "%s": %s'
                                                  % (value, str(e)))
@@ -86,45 +86,45 @@ class Option(object):
             value = Value(value, priority)
         return value
 
-    def get(self):
+    def _get(self):
         """Get option's value, if not set return parent's value."""
         if self.actual:
             return self.actual.value
         if self.parent:
-            return self.parent.get()
+            return self.parent._get()
         return self.default.value
 
-    def get_priority(self):
+    def _get_priority(self):
         """Get option's priority, if not set return parent's priority."""
         if self.actual:
             return self.actual.priority
         if self.parent:
-            return self.parent.get_priority()
+            return self.parent._get_priority()
         return self.default.priority
 
-    def set(self, value, priority=PRIO_RUNTIME):
+    def _set(self, value, priority=PRIO_RUNTIME):
         """Set option's value if priority is equal or higher
            than curent priority."""
         value = self._make_value(value, priority)
-        if self.is_default() or self.actual.priority <= value.priority:
+        if self._is_default() or self.actual.priority <= value.priority:
             self.actual = value
 
-    def is_default(self):
+    def _is_default(self):
         """Was value changed from default?"""
         return self.actual is None
 
-    def is_runtimeonly(self):
+    def _is_runtimeonly(self):
         """Was value changed from default?"""
         return self.runtimeonly
 
-    def parse(self, strval):
+    def _parse(self, strval):
         """Parse the string value to the option's native value."""
         # pylint: disable=R0201
         return strval
 
-    def tostring(self):
+    def _tostring(self):
         """Convert the option's native actual value to a string."""
-        val = ('' if self.is_default() or self.actual.value is None
+        val = ('' if self._is_default() or self.actual.value is None
                else self.actual.value)
         return str(val)
 
@@ -146,7 +146,7 @@ class ListOption(Option):
             default = []
         super(ListOption, self).__init__(default, parent, runtimeonly)
 
-    def parse(self, strval):
+    def _parse(self, strval):
         """Convert a string from the config file to a list, parses
            globdir: paths as foo.d-style dirs.
         """
@@ -164,8 +164,8 @@ class ListOption(Option):
 
         return results
 
-    def tostring(self):
-        val = ('' if self.is_default()
+    def _tostring(self):
+        val = ('' if self._is_default()
                else '\n '.join(self.actual.value))
         return val
 
@@ -179,7 +179,7 @@ class UrlOption(Option):
         self.allow_none = allow_none
         super(UrlOption, self).__init__(default, parent, runtimeonly)
 
-    def parse(self, url):
+    def _parse(self, url):
         """Parse a url to make sure that it is valid, and in a scheme
         that can be used."""
         url = url.strip()
@@ -216,11 +216,11 @@ class UrlListOption(ListOption, UrlOption):
                            schemes, allow_none)
         ListOption.__init__(self, default, parent, runtimeonly)
 
-    def parse(self, val):
+    def _parse(self, val):
         """Parse a string containing multiple urls into a list, and
            ensure that they are in a scheme that can be used."""
-        strlist = ListOption.parse(self, val)
-        return [UrlOption.parse(self, s) for s in strlist]
+        strlist = ListOption._parse(self, val)
+        return [UrlOption._parse(self, s) for s in strlist]
 
 
 class PathOption(Option):
@@ -231,7 +231,7 @@ class PathOption(Option):
         self.abspath = abspath
         super(PathOption, self).__init__(default, parent, runtimeonly)
 
-    def parse(self, val):
+    def _parse(self, val):
         """Validate path."""
         if val.startswith('file://'):
             val = val[7:]
@@ -251,7 +251,7 @@ class IntOption(Option):
         self._range_max = range_max
         super(IntOption, self).__init__(default, parent, runtimeonly)
 
-    def parse(self, s):
+    def _parse(self, s):
         """Parse a string containing an integer."""
         try:
             n = int(s)
@@ -277,12 +277,12 @@ class PositiveIntOption(IntOption):
         super(PositiveIntOption, self).__init__(default, parent, runtimeonly,
                                                 range_min, range_max)
 
-    def parse(self, s):
+    def _parse(self, s):
         """Parse a string containing a positive integer, where 0 can
            have a special representation."""
         if s in self._names0:
             return 0
-        return super(PositiveIntOption, self).parse(s)
+        return super(PositiveIntOption, self)._parse(s)
 
 
 class SecondsOption(Option):
@@ -299,7 +299,7 @@ class SecondsOption(Option):
     """
     MULTS = {'d': 60 * 60 * 24, 'h' : 60 * 60, 'm' : 60, 's': 1}
 
-    def parse(self, s):
+    def _parse(self, s):
         """Parse a string containing an integer value of seconds, or a human
         readable variation specifying days, hours, minutes or seconds
         until something happens. Works like :class:`BytesOption`.  Note
@@ -346,7 +346,7 @@ class BoolOption(Option):
         self._false_names = false_names
         super(BoolOption, self).__init__(default, parent, runtimeonly)
 
-    def parse(self, s):
+    def _parse(self, s):
         """Parse a string containing a boolean value.  1, yes, and
         true will evaluate to True; and 0, no, and false will evaluate
         to False.  Case is ignored.
@@ -359,8 +359,8 @@ class BoolOption(Option):
         else:
             raise ValueError('invalid boolean value')
 
-    def tostring(self):
-        val = ('' if self.is_default()
+    def _tostring(self):
+        val = ('' if self._is_default()
                else (self._true_names[0] if self.actual.value
                      else self._false_names[0]))
         return val
@@ -369,7 +369,7 @@ class BoolOption(Option):
 class FloatOption(Option):
     """An option representing a numeric float value."""
 
-    def parse(self, s):
+    def _parse(self, s):
         """Parse a string containing a numeric float value."""
         try:
             return float(s.strip())
@@ -386,7 +386,7 @@ class SelectionOption(Option):
         self._mapper = mapper
         super(SelectionOption, self).__init__(default, parent, runtimeonly)
 
-    def parse(self, s):
+    def _parse(self, s):
         """Parse a string for specific values."""
         if s in self._mapper:
             s = self._mapper[s]
@@ -399,9 +399,9 @@ class CaselessSelectionOption(SelectionOption):
     """Mainly for compatibility with :class:`BoolOption`, works like
     :class:`SelectionOption` but lowers input case.
     """
-    def parse(self, s):
+    def _parse(self, s):
         """Parse a string for specific values."""
-        return super(CaselessSelectionOption, self).parse(s.lower())
+        return super(CaselessSelectionOption, self)._parse(s.lower())
 
 
 class BytesOption(Option):
@@ -414,7 +414,7 @@ class BytesOption(Option):
         'g': 1024*1024*1024,
     }
 
-    def parse(self, s):
+    def _parse(self, s):
         """Parse a friendly bandwidth option to bytes.  The input
         should be a string containing a (possibly floating point)
         number followed by an optional single character unit. Valid
@@ -450,10 +450,10 @@ class BytesOption(Option):
 
 class ThrottleOption(BytesOption):
     """An option representing a bandwidth throttle value. See
-    :func:`parse` for acceptable input values.
+    :func:`_parse` for acceptable input values.
     """
 
-    def parse(self, s):
+    def _parse(self, s):
         """Get a throttle option. Input may either be a percentage or
         a "friendly bandwidth value" as accepted by the
         :class:`BytesOption`.
@@ -474,7 +474,7 @@ class ThrottleOption(BytesOption):
                 raise ValueError("percentage is out of range")
             return n / 100.0
         else:
-            return BytesOption.parse(self, s)
+            return BytesOption._parse(self, s)
 
 
 class BaseConfig(object):
@@ -496,53 +496,53 @@ class BaseConfig(object):
             out.append('%s: %r' % (name, value))
         return '\n'.join(out)
 
-    def add_option(self, name, optionobj):
+    def _add_option(self, name, optionobj):
         self._option[name] = optionobj
         # pylint: disable=W0212
         def prop_get(obj):
-            return obj._option[name].get()
+            return obj._option[name]._get()
         def prop_set(obj, val):
-            obj._option[name].set(val)
+            obj._option[name]._set(val)
         setattr(type(self), name, property(prop_get, prop_set))
 
-    def get_option(self, name):
+    def _get_option(self, name):
         return self._option.get(name, None)
 
-    def get_value(self, name):
-        return self._option[name].get()
+    def _get_value(self, name):
+        return self._option[name]._get()
 
-    def set_value(self, name, value, priority=PRIO_RUNTIME):
-        return self._option[name].set(value, priority)
+    def _set_value(self, name, value, priority=PRIO_RUNTIME):
+        return self._option[name]._set(value, priority)
 
-    def populate(self, parser, section, priority=PRIO_DEFAULT):
+    def _populate(self, parser, section, priority=PRIO_DEFAULT):
         """Set option values from an INI file section."""
         if parser.has_section(section):
             for name in parser.options(section):
                 value = parser.get(section, name)
-                opt = self.get_option(name)
-                if opt and not opt.is_runtimeonly():
-                    opt.set(value, priority)
+                opt = self._get_option(name)
+                if opt and not opt._is_runtimeonly():
+                    opt._set(value, priority)
                 else:
                     logger.warning(_('Unknown configuration option: %s = %s'),
                                    ucd(name), ucd(value))
 
-    def config_items(self):
+    def _config_items(self):
         """Yield (name, value) pairs for every option in the instance."""
         return self._option.items()
 
-    def dump(self):
+    def _dump(self):
         """Return a string representing the values of all the
            configuration options.
         """
         output = ['[%s]' % self.section]
-        for name, opt in sorted(self.config_items()):
-            if not opt.is_runtimeonly():
-                val = opt.tostring()
+        for name, opt in sorted(self._config_items()):
+            if not opt._is_runtimeonly():
+                val = opt._tostring()
                 output.append('%s = %s' % (name, val))
 
         return '\n'.join(output) + '\n'
 
-    def write(self, fileobj, section=None, always=()):
+    def _write(self, fileobj, section=None, always=()):
         """Write out the configuration to a file-like object.
 
         :param fileobj: File-like object to write to
@@ -560,11 +560,11 @@ class BaseConfig(object):
 
         # Updated the ConfigParser with the changed values
         cfg_options = self.parser.options(section)
-        for name, option in self.config_items():
-            if (not option.is_runtimeonly() and
-                    (always is None or name in always or not option.is_default()
+        for name, option in self._config_items():
+            if (not option._is_runtimeonly() and
+                    (always is None or name in always or not option._is_default()
                      or name in cfg_options)):
-                self.parser.set(section, name, option.tostring())
+                self.parser.set(section, name, option._tostring())
         # write the updated ConfigParser to the fileobj.
         self.parser.write(fileobj)
 
@@ -614,135 +614,136 @@ class MainConf(BaseConfig):
             except (IOError, OSError) as e:
                 logger.critical(_('Could not set cachedir: %s'), ucd(e))
 
-        self.add_option('debuglevel',
-                        IntOption(2, range_min=0, range_max=10)) # :api
-        self.add_option('errorlevel', IntOption(2, range_min=0, range_max=10))
+        self._add_option('debuglevel',
+                         IntOption(2, range_min=0, range_max=10)) # :api
+        self._add_option('errorlevel', IntOption(2, range_min=0, range_max=10))
 
-        self.add_option('installroot', PathOption('/', abspath=True)) # :api
-        self.add_option('config_file_path',
-                        PathOption(dnf.const.CONF_FILENAME)) # :api
-        self.add_option('plugins', BoolOption(True))
-        self.add_option('pluginpath', ListOption([dnf.const.PLUGINPATH])) # :api
-        self.add_option('pluginconfpath',
-                        ListOption([dnf.const.PLUGINCONFPATH])) # :api
-        self.add_option('persistdir', PathOption(dnf.const.PERSISTDIR)) # :api
-        self.add_option('recent', IntOption(7, range_min=0))
-        self.add_option('reset_nice', BoolOption(True))
+        self._add_option('installroot', PathOption('/', abspath=True)) # :api
+        self._add_option('config_file_path',
+                         PathOption(dnf.const.CONF_FILENAME)) # :api
+        self._add_option('plugins', BoolOption(True))
+        self._add_option('pluginpath', ListOption([dnf.const.PLUGINPATH])) # :api
+        self._add_option('pluginconfpath',
+                         ListOption([dnf.const.PLUGINCONFPATH])) # :api
+        self._add_option('persistdir', PathOption(dnf.const.PERSISTDIR)) # :api
+        self._add_option('recent', IntOption(7, range_min=0))
+        self._add_option('reset_nice', BoolOption(True))
 
-        self.add_option('cachedir', PathOption(cachedir)) # :api
-        self.add_option('system_cachedir',
-                        PathOption(dnf.const.SYSTEM_CACHEDIR)) # :api
+        self._add_option('cachedir', PathOption(cachedir)) # :api
+        self._add_option('system_cachedir',
+                         PathOption(dnf.const.SYSTEM_CACHEDIR)) # :api
 
-        self.add_option('keepcache', BoolOption(False))
-        self.add_option('logdir', Option(logdir)) # :api
-        self.add_option('reposdir', ListOption(['/etc/yum.repos.d',
-                                                '/etc/yum/repos.d',
-                                                '/etc/distro.repos.d'])) # :api
+        self._add_option('keepcache', BoolOption(False))
+        self._add_option('logdir', Option(logdir)) # :api
+        self._add_option('reposdir', ListOption(['/etc/yum.repos.d',
+                                                 '/etc/yum/repos.d',
+                                                 '/etc/distro.repos.d'])) # :api
 
-        self.add_option('debug_solver', BoolOption(False))
+        self._add_option('debug_solver', BoolOption(False))
 
-        self.add_option('exclude', ListOption())
-        self.add_option('include', ListOption())
-        self.add_option('fastestmirror', BoolOption(False))
-        self.add_option('proxy', UrlOption(schemes=('http', 'ftp', 'https',
-                                                    'socks5', 'socks5h',
-                                                    'socks4', 'socks4a'),
-                                           allow_none=True)) # :api
-        self.add_option('proxy_username', Option()) # :api
-        self.add_option('proxy_password', Option()) # :api
-        self.add_option('protected_packages',
-                        ListOption("dnf glob:/etc/yum/protected.d/*.conf " \
-                                   "glob:/etc/dnf/protected.d/*.conf")) #:api
-        self.add_option('username', Option()) # :api
-        self.add_option('password', Option()) # :api
-        self.add_option('installonlypkgs', ListOption(dnf.const.INSTALLONLYPKGS))
+        self._add_option('exclude', ListOption())
+        self._add_option('include', ListOption())
+        self._add_option('fastestmirror', BoolOption(False))
+        self._add_option('proxy', UrlOption(schemes=('http', 'ftp', 'https',
+                                                     'socks5', 'socks5h',
+                                                     'socks4', 'socks4a'),
+                                            allow_none=True)) # :api
+        self._add_option('proxy_username', Option()) # :api
+        self._add_option('proxy_password', Option()) # :api
+        self._add_option('protected_packages',
+                         ListOption("dnf glob:/etc/yum/protected.d/*.conf " \
+                                    "glob:/etc/dnf/protected.d/*.conf")) #:api
+        self._add_option('username', Option()) # :api
+        self._add_option('password', Option()) # :api
+        self._add_option('installonlypkgs', ListOption(dnf.const.INSTALLONLYPKGS))
             # NOTE: If you set this to 2, then because it keeps the current
             # kernel it means if you ever install an "old" kernel it'll get rid
             # of the newest one so you probably want to use 3 as a minimum
             # ... if you turn it on.
-        self.add_option('installonly_limit',
-                        PositiveIntOption(0, range_min=2,
-                                          names_of_0=["0", "<off>"])) # :api
-        self.add_option('tsflags', ListOption()) # :api
+        self._add_option('installonly_limit',
+                         PositiveIntOption(0, range_min=2,
+                                           names_of_0=["0", "<off>"])) # :api
+        self._add_option('tsflags', ListOption()) # :api
 
-        self.add_option('assumeyes', BoolOption(False)) # :api
-        self.add_option('assumeno', BoolOption(False))
-        self.add_option('defaultyes', BoolOption(False))
-        self.add_option('alwaysprompt', BoolOption(True))
-        self.add_option('diskspacecheck', BoolOption(True))
-        self.add_option('gpgcheck', BoolOption(False))
-        self.add_option('repo_gpgcheck', BoolOption(False))
-        self.add_option('localpkg_gpgcheck', BoolOption(False))
-        self.add_option('obsoletes', BoolOption(True))
-        self.add_option('showdupesfromrepos', BoolOption(False))
-        self.add_option('enabled', BoolOption(True))
-        self.add_option('enablegroups', BoolOption(True))
+        self._add_option('assumeyes', BoolOption(False)) # :api
+        self._add_option('assumeno', BoolOption(False))
+        self._add_option('defaultyes', BoolOption(False))
+        self._add_option('alwaysprompt', BoolOption(True))
+        self._add_option('diskspacecheck', BoolOption(True))
+        self._add_option('gpgcheck', BoolOption(False))
+        self._add_option('repo_gpgcheck', BoolOption(False))
+        self._add_option('localpkg_gpgcheck', BoolOption(False))
+        self._add_option('obsoletes', BoolOption(True))
+        self._add_option('showdupesfromrepos', BoolOption(False))
+        self._add_option('enabled', BoolOption(True))
+        self._add_option('enablegroups', BoolOption(True))
 
-        self.add_option('bandwidth', BytesOption(0))
-        self.add_option('minrate', BytesOption(1000))
-        self.add_option('ip_resolve',
-                        CaselessSelectionOption(choices=('ipv4', 'ipv6',
-                                                         'whatever'),
-                                                mapper={'4': 'ipv4',
-                                                        '6': 'ipv6'}))
-        self.add_option('throttle', ThrottleOption(0))
-        self.add_option('timeout', SecondsOption(120))
-        self.add_option('max_parallel_downloads', IntOption(None, range_min=1))
+        self._add_option('bandwidth', BytesOption(0))
+        self._add_option('minrate', BytesOption(1000))
+        self._add_option('ip_resolve',
+                         CaselessSelectionOption(choices=('ipv4', 'ipv6',
+                                                          'whatever'),
+                                                 mapper={'4': 'ipv4',
+                                                         '6': 'ipv6'}))
+        self._add_option('throttle', ThrottleOption(0))
+        self._add_option('timeout', SecondsOption(120))
+        self._add_option('max_parallel_downloads', IntOption(None, range_min=1))
 
-        self.add_option('metadata_expire',
-                        SecondsOption(60 * 60 * 48))    # 48 hours
-        self.add_option('metadata_timer_sync',
-                        SecondsOption(60 * 60 * 3)) #  3 hours
-        self.add_option('disable_excludes', ListOption())
-        self.add_option('multilib_policy',
-                        SelectionOption('best', choices=('best', 'all'))) # :api
-        self.add_option('best', BoolOption(False)) # :api
-        self.add_option('install_weak_deps', BoolOption(True))
-        self.add_option('bugtracker_url', Option(dnf.const.BUGTRACKER))
+        self._add_option('metadata_expire',
+                         SecondsOption(60 * 60 * 48))    # 48 hours
+        self._add_option('metadata_timer_sync',
+                         SecondsOption(60 * 60 * 3)) #  3 hours
+        self._add_option('disable_excludes', ListOption())
+        self._add_option('multilib_policy',
+                         SelectionOption('best', choices=('best', 'all'))) # :api
+        self._add_option('best', BoolOption(False)) # :api
+        self._add_option('install_weak_deps', BoolOption(True))
+        self._add_option('bugtracker_url', Option(dnf.const.BUGTRACKER))
 
-        self.add_option('color',
-                        SelectionOption('auto',
-                                        choices=('auto', 'never', 'always'),
-                                        mapper={'on': 'always', 'yes' : 'always',
-                                                '1' : 'always', 'true': 'always',
-                                                'off': 'never', 'no':   'never',
-                                                '0':   'never', 'false': 'never',
-                                                'tty': 'auto', 'if-tty': 'auto'}))
-        self.add_option('color_list_installed_older', Option('bold'))
-        self.add_option('color_list_installed_newer', Option('bold,yellow'))
-        self.add_option('color_list_installed_reinstall', Option('normal'))
-        self.add_option('color_list_installed_extra', Option('bold,red'))
-        self.add_option('color_list_available_upgrade', Option('bold,blue'))
-        self.add_option('color_list_available_downgrade', Option('dim,cyan'))
-        self.add_option('color_list_available_reinstall',
-                        Option('bold,underline,green'))
-        self.add_option('color_list_available_install', Option('normal'))
-        self.add_option('color_update_installed', Option('normal'))
-        self.add_option('color_update_local', Option('bold'))
-        self.add_option('color_update_remote', Option('normal'))
-        self.add_option('color_search_match', Option('bold'))
+        self._add_option('color',
+                         SelectionOption('auto',
+                                         choices=('auto', 'never', 'always'),
+                                         mapper={'on': 'always', 'yes' : 'always',
+                                                 '1' : 'always', 'true': 'always',
+                                                 'off': 'never', 'no':   'never',
+                                                 '0':   'never', 'false': 'never',
+                                                 'tty': 'auto', 'if-tty': 'auto'})
+                        )
+        self._add_option('color_list_installed_older', Option('bold'))
+        self._add_option('color_list_installed_newer', Option('bold,yellow'))
+        self._add_option('color_list_installed_reinstall', Option('normal'))
+        self._add_option('color_list_installed_extra', Option('bold,red'))
+        self._add_option('color_list_available_upgrade', Option('bold,blue'))
+        self._add_option('color_list_available_downgrade', Option('dim,cyan'))
+        self._add_option('color_list_available_reinstall',
+                         Option('bold,underline,green'))
+        self._add_option('color_list_available_install', Option('normal'))
+        self._add_option('color_update_installed', Option('normal'))
+        self._add_option('color_update_local', Option('bold'))
+        self._add_option('color_update_remote', Option('normal'))
+        self._add_option('color_search_match', Option('bold'))
 
-        self.add_option('sslcacert', PathOption()) # :api
-        self.add_option('sslverify', BoolOption(True)) # :api
-        self.add_option('sslclientcert', Option()) # :api
-        self.add_option('sslclientkey', Option()) # :api
-        self.add_option('deltarpm', BoolOption(True))
+        self._add_option('sslcacert', PathOption()) # :api
+        self._add_option('sslverify', BoolOption(True)) # :api
+        self._add_option('sslclientcert', Option()) # :api
+        self._add_option('sslclientkey', Option()) # :api
+        self._add_option('deltarpm', BoolOption(True))
 
-        self.add_option('history_record', BoolOption(True))
-        self.add_option('history_record_packages', ListOption(['dnf', 'rpm']))
+        self._add_option('history_record', BoolOption(True))
+        self._add_option('history_record_packages', ListOption(['dnf', 'rpm']))
 
-        self.add_option('rpmverbosity', Option('info'))
-        self.add_option('strict', BoolOption(True)) # :api
-        self.add_option('clean_requirements_on_remove', BoolOption(True))
-        self.add_option('history_list_view',
-                        SelectionOption('commands',
-                                        choices=('single-user-commands',
-                                                 'users', 'commands'),
-                                        mapper={'cmds': 'commands',
-                                                'default': 'commands'}))
+        self._add_option('rpmverbosity', Option('info'))
+        self._add_option('strict', BoolOption(True)) # :api
+        self._add_option('clean_requirements_on_remove', BoolOption(True))
+        self._add_option('history_list_view',
+                         SelectionOption('commands',
+                                         choices=('single-user-commands',
+                                                  'users', 'commands'),
+                                         mapper={'cmds': 'commands',
+                                                 'default': 'commands'}))
 
         # runtime only options
-        self.add_option('downloadonly', BoolOption(False, runtimeonly=True))
+        self._add_option('downloadonly', BoolOption(False, runtimeonly=True))
 
     @property
     def get_reposdir(self):
@@ -760,38 +761,38 @@ class MainConf(BaseConfig):
             dnf.util.ensure_dir(myrepodir)
         return myrepodir
 
-    def search_inside_installroot(self, optname):
-        opt = self.get_option(optname)
-        prio = opt.get_priority()
+    def _search_inside_installroot(self, optname):
+        opt = self._get_option(optname)
+        prio = opt._get_priority()
         # dont modify paths specified on commandline
         if prio >= PRIO_COMMANDLINE:
             return
-        val = opt.get()
+        val = opt._get()
         # if it exists inside installroot use it (i.e. adjust configuration)
         # for lists any component counts
         if isinstance(val, list):
-            if any(os.path.exists(os.path.join(self.get_value('installroot'),
+            if any(os.path.exists(os.path.join(self._get_value('installroot'),
                                                p.lstrip('/')))
                    for p in val):
-                opt.set(Value([self._prepend_installroot_path(p) for p in val],
-                              prio))
-        elif os.path.exists(os.path.join(self.get_value('installroot'),
+                opt._set(Value([self._prepend_installroot_path(p) for p in val],
+                               prio))
+        elif os.path.exists(os.path.join(self._get_value('installroot'),
                                          val.lstrip('/'))):
             self.prepend_installroot(optname)
-            opt.set(Value(self._prepend_installroot_path(val), prio))
+            opt._set(Value(self._prepend_installroot_path(val), prio))
 
     def prepend_installroot(self, optname):
         # :api
-        opt = self.get_option(optname)
-        prio = opt.get_priority()
-        new_path = self._prepend_installroot_path(opt.get())
-        opt.set(Value(new_path, prio))
+        opt = self._get_option(optname)
+        prio = opt._get_priority()
+        new_path = self._prepend_installroot_path(opt._get())
+        opt._set(Value(new_path, prio))
 
     def _prepend_installroot_path(self, path):
-        root_path = os.path.join(self.get_value('installroot'), path.lstrip('/'))
+        root_path = os.path.join(self._get_value('installroot'), path.lstrip('/'))
         return dnf.conf.parser.substitute(root_path, self.substitutions)
 
-    def configure_from_options(self, opts):
+    def _configure_from_options(self, opts):
         """Configure parts of CLI from the opts. """
 
         config_args = ['plugins', 'version', 'config_file_path',
@@ -804,9 +805,9 @@ class MainConf(BaseConfig):
         for name in config_args:
             value = getattr(opts, name, None)
             if value is not None and value != []:
-                confopt = self.get_option(name)
+                confopt = self._get_option(name)
                 if confopt:
-                    confopt.set(value, dnf.conf.PRIO_COMMANDLINE)
+                    confopt._set(value, dnf.conf.PRIO_COMMANDLINE)
                 else:
                     logger.warning(_('Unknown configuration option: %s = %s'),
                                    ucd(name), ucd(value))
@@ -815,9 +816,9 @@ class MainConf(BaseConfig):
             # now set all the non-first-start opts from main from our setopts
             # pylint: disable=W0212
             for name, val in opts.main_setopts._get_kwargs():
-                opt = self.get_option(name)
+                opt = self._get_option(name)
                 if opt:
-                    opt.set(val, dnf.conf.PRIO_COMMANDLINE)
+                    opt._set(val, dnf.conf.PRIO_COMMANDLINE)
                 else:
                     msg = "Main config did not have a %s attr. before setopt"
                     logger.warning(msg, name)
@@ -839,21 +840,21 @@ class MainConf(BaseConfig):
     def read(self, filename=None, priority=PRIO_DEFAULT):
         # :api
         if filename is None:
-            filename = self.get_value('config_file_path')
+            filename = self._get_value('config_file_path')
         self.parser = ConfigParser()
         config_pp = dnf.conf.parser.ConfigPreProcessor(filename)
         try:
             self.parser.readfp(config_pp)
         except ParsingError as e:
             raise dnf.exceptions.ConfigError("Parsing file failed: %s" % e)
-        self.populate(self.parser, self.section, priority)
+        self._populate(self.parser, self.section, priority)
 
         # update to where we read the file from
-        self.set_value('config_file_path', filename, priority)
+        self._set_value('config_file_path', filename, priority)
 
     @property
     def verbose(self):
-        return self.get_value('debuglevel') >= dnf.const.VERBOSE_LEVEL
+        return self._get_value('debuglevel') >= dnf.const.VERBOSE_LEVEL
 
 
 class RepoConf(BaseConfig):
@@ -861,79 +862,78 @@ class RepoConf(BaseConfig):
 
     def __init__(self, parent, section=None, parser=None):
         super(RepoConf, self).__init__(section, parser)
+        self._add_option('name', Option()) # :api
+        self._add_option('enabled', inherit(parent._get_option('enabled')))
+        self._add_option('basecachedir', inherit(parent._get_option('cachedir')))
+        self._add_option('baseurl', UrlListOption()) # :api
+        self._add_option('mirrorlist', UrlOption()) # :api
+        self._add_option('metalink', UrlOption()) # :api
+        self._add_option('mediaid', Option())
+        self._add_option('gpgkey', UrlListOption())
+        self._add_option('exclude', ListOption())
+        self._add_option('include', ListOption())
 
-        self.add_option('name', Option()) # :api
-        self.add_option('enabled', inherit(parent.get_option('enabled')))
-        self.add_option('basecachedir', inherit(parent.get_option('cachedir')))
-        self.add_option('baseurl', UrlListOption()) # :api
-        self.add_option('mirrorlist', UrlOption()) # :api
-        self.add_option('metalink', UrlOption()) # :api
-        self.add_option('mediaid', Option())
-        self.add_option('gpgkey', UrlListOption())
-        self.add_option('exclude', ListOption())
-        self.add_option('include', ListOption())
+        self._add_option('fastestmirror',
+                         inherit(parent._get_option('fastestmirror')))
+        self._add_option('proxy', inherit(parent._get_option('proxy'))) # :api
+        self._add_option('proxy_username',
+                         inherit(parent._get_option('proxy_username'))) # :api
+        self._add_option('proxy_password',
+                         inherit(parent._get_option('proxy_password'))) # :api
+        self._add_option('username',
+                         inherit(parent._get_option('username'))) # :api
+        self._add_option('password',
+                         inherit(parent._get_option('password'))) # :api
+        self._add_option('protected_packages',
+                         inherit(parent._get_option('protected_packages'))) # :api
 
-        self.add_option('fastestmirror',
-                        inherit(parent.get_option('fastestmirror')))
-        self.add_option('proxy', inherit(parent.get_option('proxy'))) # :api
-        self.add_option('proxy_username',
-                        inherit(parent.get_option('proxy_username'))) # :api
-        self.add_option('proxy_password',
-                        inherit(parent.get_option('proxy_password'))) # :api
-        self.add_option('username',
-                        inherit(parent.get_option('username'))) # :api
-        self.add_option('password',
-                        inherit(parent.get_option('password'))) # :api
-        self.add_option('protected_packages',
-                        inherit(parent.get_option('protected_packages'))) # :api
+        self._add_option('gpgcheck', inherit(parent._get_option('gpgcheck')))
+        self._add_option('repo_gpgcheck',
+                         inherit(parent._get_option('repo_gpgcheck')))
+        self._add_option('enablegroups',
+                         inherit(parent._get_option('enablegroups')))
 
-        self.add_option('gpgcheck', inherit(parent.get_option('gpgcheck')))
-        self.add_option('repo_gpgcheck',
-                        inherit(parent.get_option('repo_gpgcheck')))
-        self.add_option('enablegroups',
-                        inherit(parent.get_option('enablegroups')))
+        self._add_option('bandwidth', inherit(parent._get_option('bandwidth')))
+        self._add_option('minrate', inherit(parent._get_option('minrate')))
+        self._add_option('ip_resolve', inherit(parent._get_option('ip_resolve')))
+        self._add_option('throttle', inherit(parent._get_option('throttle')))
+        self._add_option('timeout', inherit(parent._get_option('timeout')))
+        self._add_option('max_parallel_downloads',
+                         inherit(parent._get_option('max_parallel_downloads')))
 
-        self.add_option('bandwidth', inherit(parent.get_option('bandwidth')))
-        self.add_option('minrate', inherit(parent.get_option('minrate')))
-        self.add_option('ip_resolve', inherit(parent.get_option('ip_resolve')))
-        self.add_option('throttle', inherit(parent.get_option('throttle')))
-        self.add_option('timeout', inherit(parent.get_option('timeout')))
-        self.add_option('max_parallel_downloads',
-                        inherit(parent.get_option('max_parallel_downloads')))
+        self._add_option('metadata_expire',
+                         inherit(parent._get_option('metadata_expire')))
+        self._add_option('cost', IntOption(1000))
+        self._add_option('priority', IntOption(99))
 
-        self.add_option('metadata_expire',
-                        inherit(parent.get_option('metadata_expire')))
-        self.add_option('cost', IntOption(1000))
-        self.add_option('priority', IntOption(99))
+        self._add_option('sslcacert',
+                         inherit(parent._get_option('sslcacert'))) # :api
+        self._add_option('sslverify',
+                         inherit(parent._get_option('sslverify'))) # :api
+        self._add_option('sslclientcert',
+                         inherit(parent._get_option('sslclientcert'))) # :api
+        self._add_option('sslclientkey',
+                         inherit(parent._get_option('sslclientkey'))) # :api
+        self._add_option('deltarpm', inherit(parent._get_option('deltarpm')))
 
-        self.add_option('sslcacert',
-                        inherit(parent.get_option('sslcacert'))) # :api
-        self.add_option('sslverify',
-                        inherit(parent.get_option('sslverify'))) # :api
-        self.add_option('sslclientcert',
-                        inherit(parent.get_option('sslclientcert'))) # :api
-        self.add_option('sslclientkey',
-                        inherit(parent.get_option('sslclientkey'))) # :api
-        self.add_option('deltarpm', inherit(parent.get_option('deltarpm')))
+        self._add_option('skip_if_unavailable', BoolOption(True)) # :api
 
-        self.add_option('skip_if_unavailable', BoolOption(True)) # :api
-
-    def configure_from_options(self, opts):
+    def _configure_from_options(self, opts):
         """Configure repos from the opts. """
 
         if getattr(opts, 'nogpgcheck', None):
             for optname in ['gpgcheck', 'repo_gpgcheck']:
-                opt = self.get_option(optname)
-                opt.set(False, dnf.conf.PRIO_COMMANDLINE)
+                opt = self._get_option(optname)
+                opt._set(False, dnf.conf.PRIO_COMMANDLINE)
 
         repo_setopts = getattr(opts, 'repo_setopts', {})
         if self.section in repo_setopts:
             # pylint: disable=W0212
             setopts = repo_setopts[self.section]._get_kwargs()
             for name, val in setopts:
-                opt = self.get_option(name)
+                opt = self._get_option(name)
                 if opt:
-                    opt.set(val, dnf.conf.PRIO_COMMANDLINE)
+                    opt._set(val, dnf.conf.PRIO_COMMANDLINE)
                 else:
                     msg = "Repo %s did not have a %s attr. before setopt"
                     logger.warning(msg, self.section, name)

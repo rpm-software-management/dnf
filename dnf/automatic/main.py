@@ -87,44 +87,44 @@ class AutomaticConfig(object):
         except iniparse.compat.ParsingError as e:
             raise dnf.exceptions.ConfigError("Parsing file failed: %s" % e)
 
-        self.commands.populate(parser, 'commands', dnf.conf.PRIO_AUTOMATICCONFIG)
-        self.email.populate(parser, 'email', dnf.conf.PRIO_AUTOMATICCONFIG)
-        self.emitters.populate(parser, 'emitters', dnf.conf.PRIO_AUTOMATICCONFIG)
+        self.commands._populate(parser, 'commands', dnf.conf.PRIO_AUTOMATICCONFIG)
+        self.email._populate(parser, 'email', dnf.conf.PRIO_AUTOMATICCONFIG)
+        self.emitters._populate(parser, 'emitters', dnf.conf.PRIO_AUTOMATICCONFIG)
         self._parser = parser
 
     def update_baseconf(self, baseconf):
-        baseconf.populate(self._parser, 'base', dnf.conf.PRIO_AUTOMATICCONFIG)
+        baseconf._populate(self._parser, 'base', dnf.conf.PRIO_AUTOMATICCONFIG)
 
 
 class CommandsConfig(dnf.conf.BaseConfig):
     def __init__(self, section='commands', parser=None):
         super(CommandsConfig, self).__init__(section, parser)
-        self.add_option('apply_updates',  dnf.conf.BoolOption(False))
-        self.add_option('base_config_file',  dnf.conf.Option('/etc/dnf/dnf.conf'))
-        self.add_option('download_updates',  dnf.conf.BoolOption(False))
-        self.add_option('upgrade_type',  dnf.conf.SelectionOption('default',
+        self._add_option('apply_updates',  dnf.conf.BoolOption(False))
+        self._add_option('base_config_file',  dnf.conf.Option('/etc/dnf/dnf.conf'))
+        self._add_option('download_updates',  dnf.conf.BoolOption(False))
+        self._add_option('upgrade_type',  dnf.conf.SelectionOption('default',
                                         choices=('default', 'security')))
-        self.add_option('random_sleep',  dnf.conf.SecondsOption(300))
+        self._add_option('random_sleep',  dnf.conf.SecondsOption(300))
 
     def imply(self):
         if self.apply_updates:
-            self.set_value('download_updates', True, dnf.conf.PRIO_RUNTIME)
+            self._set_value('download_updates', True, dnf.conf.PRIO_RUNTIME)
 
 
 class EmailConfig(dnf.conf.BaseConfig):
     def __init__(self, section='email', parser=None):
         super(EmailConfig, self).__init__(section, parser)
-        self.add_option('email_to',  dnf.conf.ListOption(["root"]))
-        self.add_option('email_from',  dnf.conf.Option("root"))
-        self.add_option('email_host',  dnf.conf.Option("localhost"))
-        self.add_option('email_port',  dnf.conf.IntOption(25))
+        self._add_option('email_to',  dnf.conf.ListOption(["root"]))
+        self._add_option('email_from',  dnf.conf.Option("root"))
+        self._add_option('email_host',  dnf.conf.Option("localhost"))
+        self._add_option('email_port',  dnf.conf.IntOption(25))
 
 class EmittersConfig(dnf.conf.BaseConfig):
     def __init__(self, section='emiter', parser=None):
         super(EmittersConfig, self).__init__(section, parser)
-        self.add_option('emit_via',  dnf.conf.ListOption(['email', 'stdio']))
-        self.add_option('output_width',  dnf.conf.IntOption(80))
-        self.add_option('system_name',  dnf.conf.Option(socket.gethostname()))
+        self._add_option('emit_via',  dnf.conf.ListOption(['email', 'stdio']))
+        self._add_option('output_width',  dnf.conf.IntOption(80))
+        self._add_option('system_name',  dnf.conf.Option(socket.gethostname()))
 
 
 def main(args):

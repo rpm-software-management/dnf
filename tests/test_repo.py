@@ -168,7 +168,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
                          os.path.join(self.TMP_CACHEDIR, 'r-0824b1db602c8695'))
 
     def test_dump(self):
-        dump = self.repo.dump()
+        dump = self.repo._dump()
         f = io.StringIO(ucd(dump))
         parser = iniparse.compat.ConfigParser()
         parser.readfp(f)

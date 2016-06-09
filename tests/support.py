@@ -260,11 +260,11 @@ class _BaseStubMixin(object):
 
     def read_all_repos(self, opts=None):
         for repo in self.repos.values():
-            repo.configure_from_options(opts)
+            repo._configure_from_options(opts)
 
 
     def set_debuglevel(self, level):
-        self.conf.set_value('debuglevel', level, dnf.conf.PRIO_RUNTIME)
+        self.conf._set_value('debuglevel', level, dnf.conf.PRIO_RUNTIME)
 
 class BaseCliStub(_BaseStubMixin, dnf.cli.cli.BaseCli):
     """A class mocking `dnf.cli.cli.BaseCli`."""
