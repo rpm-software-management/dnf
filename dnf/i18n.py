@@ -74,7 +74,7 @@ def _full_ucd_support(encoding):
 
 def _guess_encoding():
     """ Take the best shot at the current system's string encoding. """
-    encoding = locale.getpreferredencoding()
+    encoding = locale.getpreferredencoding(False)
     return 'utf-8' if encoding.startswith("ANSI") else encoding
 
 def setup_locale():
