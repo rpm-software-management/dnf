@@ -59,7 +59,7 @@ class Query(hawkey.Query):
 
     def duplicated(self):
         # :api
-        installed_na = self.installed().na_dict()
+        installed_na = self.installed()._na_dict()
         duplicated = []
         for (name, arch), pkgs in installed_na.items():
             if len(pkgs) > 1:
@@ -98,7 +98,7 @@ class Query(hawkey.Query):
         if limit == 1:
             return self.filter(latest_per_arch=True)
         else:
-            pkgs_na = self.na_dict()
+            pkgs_na = self._na_dict()
             latest_pkgs = []
             for pkg_list in pkgs_na.values():
                 pkg_list.sort(reverse=True)
@@ -118,7 +118,7 @@ class Query(hawkey.Query):
             d.setdefault(pkg.name, []).append(pkg)
         return d
 
-    def na_dict(self):
+    def _na_dict(self):
         d = {}
         for pkg in self.run():
             key = (pkg.name, pkg.arch)
