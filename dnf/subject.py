@@ -81,7 +81,7 @@ class Subject(object):
     def _pattern(self):
         return self.subj.pattern
 
-    def is_arch_specified(self, sack):
+    def _is_arch_specified(self, sack):
         nevra = first(self.subj.nevra_possibilities_real(sack, allow_globs=True))
         if nevra and nevra.arch:
             return is_glob_pattern(nevra.arch)
