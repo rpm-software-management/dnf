@@ -478,8 +478,8 @@ class Base(object):
             installed.
         """
         inst = q.installed()
-        inst_per_arch = inst.na_dict()
-        avail_per_arch = q.latest().available().na_dict()
+        inst_per_arch = inst._na_dict()
+        avail_per_arch = q.latest().available()._na_dict()
         avail_l = []
         inst_l = []
         for na in avail_per_arch:
@@ -1128,7 +1128,7 @@ class Base(object):
         elif pkgnarrow == 'available':
             if showdups:
                 avail = query_for_repo(q).available()
-                installed_dict = q.installed().na_dict()
+                installed_dict = q.installed()._na_dict()
                 for avail_pkg in avail:
                     key = (avail_pkg.name, avail_pkg.arch)
                     installed_pkgs = installed_dict.get(key, [])
@@ -1141,8 +1141,8 @@ class Base(object):
             else:
                 # we will only look at the latest versions of packages:
                 available_dict = query_for_repo(
-                    q).available().latest().na_dict()
-                installed_dict = q.installed().latest().na_dict()
+                    q).available().latest()._na_dict()
+                installed_dict = q.installed().latest()._na_dict()
                 for (name, arch) in available_dict:
                     avail_pkg = available_dict[(name, arch)][0]
                     inst_pkg = installed_dict.get((name, arch), [None])[0]
