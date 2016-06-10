@@ -112,7 +112,7 @@ class Query(hawkey.Query):
         # :api
         return self.filter(upgrades=True)
 
-    def name_dict(self):
+    def _name_dict(self):
         d = {}
         for pkg in self:
             d.setdefault(pkg.name, []).append(pkg)
