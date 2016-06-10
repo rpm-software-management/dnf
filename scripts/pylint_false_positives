@@ -16,6 +16,7 @@
 ^E1002: dnf.repo:[0-9,: ]*Use of super on an old style class$
 ^E1101: dnf.repo:[0-9,: ]*Instance of 'PackagePayload' has no '_target_params' member$
 ^W0201: dnf.repo:[0-9,: ]*Attribute '[_a-z]+' defined outside __init__$
+^W0212: dnf.conf.[a-z]*:[ 0-9,]*: Access to a protected member _.* of a client class$
 ^W0212: tests[ a-z0-9,._:]*Access to a protected member .*$
 ^W0613: dnf.cli.commands.updateinfo:[0-9,: ]*Unused argument 'description'$
 ^W0613: dnf.cli.commands.updateinfo:[0-9,: ]*Unused argument 'mixed'$
