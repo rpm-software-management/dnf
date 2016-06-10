@@ -29,12 +29,6 @@ import time
 from dnf.i18n import ucd
 from dnf.pycomp import basestring
 
-def is_nevra(pattern):
-    try:
-        hawkey.split_nevra(pattern)
-    except hawkey.ValueException:
-        return False
-    return True
 
 class Query(hawkey.Query):
     # :api
