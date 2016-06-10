@@ -47,7 +47,7 @@ class Reinstall(support.ResultTestCase):
         self.assertEqual(cnt, 1)
         new_set = support.installed_but(self.sack, "pepper")
         available_query = self.sack.query().available()
-        new_set += list(available_query.nevra("pepper-20-0.x86_64"))
+        new_set += list(available_query._nevra("pepper-20-0.x86_64"))
         self.assertResult(self.base, new_set)
 
     def test_reinstall_new_reponame_available(self):
