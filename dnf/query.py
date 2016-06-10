@@ -68,8 +68,8 @@ class Query(hawkey.Query):
 
     def extras(self):
         # anything installed but not in a repo is an extra
-        avail_dict = self.available().pkgtup_dict()
-        inst_dict = self.installed().pkgtup_dict()
+        avail_dict = self.available()._pkgtup_dict()
+        inst_dict = self.installed()._pkgtup_dict()
         extras = []
         for pkgtup, pkgs in inst_dict.items():
             if pkgtup not in avail_dict:
@@ -125,7 +125,7 @@ class Query(hawkey.Query):
             d.setdefault(key, []).append(pkg)
         return d
 
-    def pkgtup_dict(self):
+    def _pkgtup_dict(self):
         return per_pkgtup_dict(self.run())
 
     def recent(self, recent):
