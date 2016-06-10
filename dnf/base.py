@@ -1442,7 +1442,7 @@ class Base(object):
                 self._goal.install(a, optional=(not strict))
             return len(available)
         elif self.conf.multilib_policy == "best":
-            sltrs = subj.get_best_selectors(self.sack)
+            sltrs = subj._get_best_selectors(self.sack)
             if not any((s.matches() for s in sltrs)):
                 raise dnf.exceptions.MarkingError(
                     _('no package matched'), pkg_spec)
@@ -1541,7 +1541,7 @@ class Base(object):
     def upgrade(self, pkg_spec, reponame=None):
         # :api
         wildcard = True if dnf.util.is_glob_pattern(pkg_spec) else False
-        sltrs = dnf.subject.Subject(pkg_spec).get_best_selectors(self.sack)
+        sltrs = dnf.subject.Subject(pkg_spec)._get_best_selectors(self.sack)
         if any((s.matches() for s in sltrs)):
             prev_count = self._goal.req_length()
             installed = self.sack.query().installed()
@@ -1592,7 +1592,7 @@ class Base(object):
         if pkg_spec is None:
             self._goal.distupgrade_all()
         else:
-            sltrs = dnf.subject.Subject(pkg_spec).get_best_selectors(self.sack)
+            sltrs = dnf.subject.Subject(pkg_spec)._get_best_selectors(self.sack)
             if not any((s.matches() for s in sltrs)):
                 logger.info(_('No package %s installed.'), pkg_spec)
                 return 0
