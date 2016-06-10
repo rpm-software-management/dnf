@@ -270,7 +270,7 @@ class Base(object):
                 for e in errors:
                     logger.warning(_("%s, disabling."), e)
         conf = self.conf
-        self._sack.configure(conf.installonlypkgs, conf.installonly_limit)
+        self._sack._configure(conf.installonlypkgs, conf.installonly_limit)
         self._setup_excludes_includes()
         timer()
         self._goal = dnf.goal.Goal(self._sack)
