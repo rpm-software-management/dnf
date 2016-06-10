@@ -120,7 +120,7 @@ class Query(hawkey.Query):
         return d
 
     def _pkgtup_dict(self):
-        return per_pkgtup_dict(self.run())
+        return _per_pkgtup_dict(self.run())
 
     def _recent(self, recent):
         now = time.time()
@@ -158,7 +158,7 @@ def _by_provides(sack, patterns, ignore_case=False, get_query=False):
     return q.run()
 
 
-def per_pkgtup_dict(pkg_list):
+def _per_pkgtup_dict(pkg_list):
     d = {}
     for pkg in pkg_list:
         d.setdefault(pkg.pkgtup, []).append(pkg)
