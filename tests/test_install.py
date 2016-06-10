@@ -142,7 +142,7 @@ class CommonTest(support.ResultTestCase):
 
     def test_package_install_installed(self):
         """Test that nothing changes if an installed package matches."""
-        p = self.base.sack.query().available().nevra("librita-1-1.x86_64")[0]
+        p = self.base.sack.query().available()._nevra("librita-1-1.x86_64")[0]
         self.base.package_install(p)
         self.base.resolve()
         self.assertEmpty(self.base._goal.list_reinstalls())
@@ -247,7 +247,7 @@ class MultilibAllTest(support.ResultTestCase):
         installed, removed = self.installed_removed(self.base)
         self.assertGreaterEqual(
             installed,
-            set(self.base.sack.query().available().nevra('hole-1-2.x86_64')))
+            set(self.base.sack.query().available()._nevra('hole-1-2.x86_64')))
         self.assertEmpty(removed)
 
     def test_install_multilib(self):
@@ -306,7 +306,7 @@ class MultilibAllTest(support.ResultTestCase):
         installed, removed = self.installed_removed(self.base)
         self.assertGreaterEqual(
             installed,
-            set(self.base.sack.query().available().nevra('hole-1-2.x86_64')))
+            set(self.base.sack.query().available()._nevra('hole-1-2.x86_64')))
         self.assertGreaterEqual(
             removed,
             set(self.base.sack.query().installed().filter(name='hole')))
@@ -384,7 +384,7 @@ class MultilibBestTest(support.ResultTestCase):
         installed, removed = self.installed_removed(self.base)
         self.assertGreaterEqual(
             installed,
-            set(self.base.sack.query().available().nevra('hole-1-2.x86_64')))
+            set(self.base.sack.query().available()._nevra('hole-1-2.x86_64')))
         self.assertEmpty(removed)
 
     def test_install_multilib(self):
@@ -463,7 +463,7 @@ class MultilibBestTest(support.ResultTestCase):
         installed, removed = self.installed_removed(self.base)
         self.assertGreaterEqual(
             installed,
-            set(self.base.sack.query().available().nevra('hole-1-2.x86_64')))
+            set(self.base.sack.query().available()._nevra('hole-1-2.x86_64')))
         self.assertGreaterEqual(
             removed,
             set(self.base.sack.query().installed().filter(name='hole')))

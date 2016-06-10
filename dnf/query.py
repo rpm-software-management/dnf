@@ -134,7 +134,7 @@ class Query(hawkey.Query):
         recent = [po for po in self if int(po.buildtime) > recentlimit]
         return self.filter(pkg=recent)
 
-    def nevra(self, *args):
+    def _nevra(self, *args):
         args_len = len(args)
         if args_len == 3:
             return self.filter(name=args[0], evr=args[1], arch=args[2])

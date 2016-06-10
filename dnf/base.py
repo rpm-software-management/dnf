@@ -769,7 +769,7 @@ class Base(object):
             if rpo is None:
                 continue
 
-            installed = rpmdb_sack.query().installed().nevra(
+            installed = rpmdb_sack.query().installed()._nevra(
                 rpo.name, rpo.evr, rpo.arch)
             if len(installed) < 1:
                 tsi.op_type = dnf.transaction.FAIL
@@ -829,7 +829,7 @@ class Base(object):
         just_installed = self.sack.query().\
             filter(pkg=self.transaction.install_set)
         for rpo in self.transaction.remove_set:
-            installed = rpmdb_sack.query().installed().nevra(
+            installed = rpmdb_sack.query().installed()._nevra(
                 rpo.name, rpo.evr, rpo.arch)
             if len(installed) > 0:
                 if not len(just_installed.filter(arch=rpo.arch, name=rpo.name,
@@ -1486,7 +1486,7 @@ class Base(object):
 
     def package_install(self, pkg, strict=True):
         # :api
-        q = self.sack.query().nevra(pkg.name, pkg.evr, pkg.arch)
+        q = self.sack.query()._nevra(pkg.name, pkg.evr, pkg.arch)
         already_inst, _ = self._query_matches_installed(q)
         if pkg in already_inst:
             _msg_installed(pkg)
@@ -1722,11 +1722,11 @@ class Base(object):
 
         def handle_downgrade(new_nevra, old_nevra, obsoleted_nevras):
             """Handle a downgraded package."""
-            news = self.sack.query().installed().nevra(new_nevra)
+            news = self.sack.query().installed()._nevra(new_nevra)
             if not news:
                 raise dnf.exceptions.PackagesNotInstalledError(
                     'no package matched', new_nevra)
-            olds = self.sack.query().available().nevra(old_nevra)
+            olds = self.sack.query().available()._nevra(old_nevra)
             if not olds:
                 raise dnf.exceptions.PackagesNotAvailableError(
                     'no package matched', old_nevra)
@@ -1737,7 +1737,7 @@ class Base(object):
 
         def handle_erase(old_nevra):
             """Handle an erased package."""
-            pkgs = self.sack.query().available().nevra(old_nevra)
+            pkgs = self.sack.query().available()._nevra(old_nevra)
             if not pkgs:
                 raise dnf.exceptions.PackagesNotAvailableError(
                     'no package matched', old_nevra)
@@ -1746,7 +1746,7 @@ class Base(object):
 
         def handle_install(new_nevra, obsoleted_nevras):
             """Handle an installed package."""
-            pkgs = self.sack.query().installed().nevra(new_nevra)
+            pkgs = self.sack.query().installed()._nevra(new_nevra)
             if not pkgs:
                 raise dnf.exceptions.PackagesNotInstalledError(
                     'no package matched', new_nevra)
@@ -1757,17 +1757,17 @@ class Base(object):
 
         def handle_reinstall(new_nevra, old_nevra, obsoleted_nevras):
             """Handle a reinstalled package."""
-            news = self.sack.query().installed().nevra(new_nevra)
+            news = self.sack.query().installed()._nevra(new_nevra)
             if not news:
                 raise dnf.exceptions.PackagesNotInstalledError(
                     'no package matched', new_nevra)
-            olds = self.sack.query().available().nevra(old_nevra)
+            olds = self.sack.query().available()._nevra(old_nevra)
             if not olds:
                 raise dnf.exceptions.PackagesNotAvailableError(
                     'no package matched', old_nevra)
             obsoleteds = []
             for nevra in obsoleted_nevras:
-                obsoleteds_ = self.sack.query().installed().nevra(nevra)
+                obsoleteds_ = self.sack.query().installed()._nevra(nevra)
                 if obsoleteds_:
                     assert len(obsoleteds_) == 1
                     obsoleteds.append(obsoleteds_[0])
@@ -1777,11 +1777,11 @@ class Base(object):
 
         def handle_upgrade(new_nevra, old_nevra, obsoleted_nevras):
             """Handle an upgraded package."""
-            news = self.sack.query().installed().nevra(new_nevra)
+            news = self.sack.query().installed()._nevra(new_nevra)
             if not news:
                 raise dnf.exceptions.PackagesNotInstalledError(
                     'no package matched', new_nevra)
-            olds = self.sack.query().available().nevra(old_nevra)
+            olds = self.sack.query().available()._nevra(old_nevra)
             if not olds:
                 raise dnf.exceptions.PackagesNotAvailableError(
                     'no package matched', old_nevra)
