@@ -49,6 +49,10 @@
 
     Return a new query that limits the result only to installed packages of same name and different version. Optional argument exclude accepts a list of package names that will be excluded from result.
 
+  .. method:: extras()
+
+    Return a new query that limits the result to installed packages that are not present in any repo
+
   .. method:: filter(**kwargs)
 
     Return a new query limiting the original query to the key/value pairs from `kwargs`. Multiple `kwargs` can be passed, the filter then works by applying all of them together (logical AND). Values inside of list or query are cumulative (logical OR).

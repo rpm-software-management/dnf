@@ -61,6 +61,7 @@ class Query(hawkey.Query):
         return self.filter(pkg=duplicated)
 
     def extras(self):
+        # :api
         # anything installed but not in a repo is an extra
         avail_dict = self.available()._pkgtup_dict()
         inst_dict = self.installed()._pkgtup_dict()
