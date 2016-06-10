@@ -45,7 +45,7 @@ class Subject(object):
             if attr:
                 if add_flags:
                     flags = self._query_flags
-                query.filterm(*flags, **{name + '__glob': attr})
+                query._filterm(*flags, **{name + '__glob': attr})
 
         return query
 

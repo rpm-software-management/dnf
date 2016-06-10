@@ -80,7 +80,7 @@ class Query(hawkey.Query):
         # :api
         return super(Query, self).filter(*args, **kwargs)
 
-    def filterm(self, *args, **kwargs):
+    def _filterm(self, *args, **kwargs):
         nargs = {}
         for (key, value) in kwargs.items():
             if (key.endswith("__glob") and not dnf.util.is_glob_pattern(value)):
@@ -158,7 +158,7 @@ def by_provides(sack, patterns, ignore_case=False, get_query=False):
     if ignore_case:
         flags.append(hawkey.ICASE)
 
-    q.filterm(*flags, provides__glob=patterns)
+    q._filterm(*flags, provides__glob=patterns)
     if get_query:
         return q
     return q.run()
