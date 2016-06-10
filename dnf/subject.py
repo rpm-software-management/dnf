@@ -74,7 +74,7 @@ class Subject(object):
         return flags
 
     @property
-    def filename_pattern(self):
+    def _filename_pattern(self):
         return re.search(r"^\*?/", self.subj.pattern)
 
     @property
@@ -109,7 +109,7 @@ class Subject(object):
                 if q:
                     return q
 
-        if self.filename_pattern:
+        if self._filename_pattern:
             return sack.query().filter(file__glob=pat)
 
         return sack.query().filter(empty=True)
@@ -135,7 +135,7 @@ class Subject(object):
             if len(s.matches()) > 0:
                 return s
 
-        if self.filename_pattern:
+        if self._filename_pattern:
             sltr = dnf.selector.Selector(sack)
             key = "file__glob" if is_glob_pattern(self.pattern) else "file"
             return sltr.set(**{key: self.pattern})
@@ -144,7 +144,7 @@ class Subject(object):
         return sltr
 
     def get_best_selectors(self, sack, forms=None):
-        if not self.filename_pattern and is_glob_pattern(self.pattern):
+        if not self._filename_pattern and is_glob_pattern(self.pattern):
             nevras = self.subj.nevra_possibilities_real(sack, allow_globs=True)
             nevra = first(nevras)
             if nevra and nevra.name:
