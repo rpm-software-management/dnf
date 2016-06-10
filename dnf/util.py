@@ -215,19 +215,6 @@ def strip_prefix(s, prefix):
         return s[len(prefix):]
     return None
 
-def timed(fn):
-    """Decorator, prints out the ms a function took to complete.
-
-    Used for debugging.
-
-    """
-    def decorated(*args, **kwargs):
-        start = time.time()
-        retval = fn(*args, **kwargs)
-        length = time.time() - start
-        print("%s took %.02f ms" % (fn.__name__, length * 1000))
-        return retval
-    return decorated
 
 def touch(path, no_create=False):
     """Create an empty file if it doesn't exist or bump it's timestamps.
