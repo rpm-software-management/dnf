@@ -36,6 +36,8 @@ def is_nevra(pattern):
         return False
     return True
 
+
+@dnf.util.enforce_api
 class Query(hawkey.Query):
     # :api
 
