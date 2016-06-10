@@ -1716,7 +1716,7 @@ class Base(object):
         return 1
 
     def provides(self, provides_spec):
-        providers = dnf.query.by_provides(self.sack, provides_spec)
+        providers = dnf.query._by_provides(self.sack, provides_spec)
         if providers:
             return providers
         return self.sack.query().filter(file__glob=provides_spec)
