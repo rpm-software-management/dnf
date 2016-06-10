@@ -94,7 +94,7 @@ class QueriesTest(support.TestCase):
         now = time.time()
         installed = support.MockQuery(sack.query().installed())
         installed[0].buildtime = now - 86400/2
-        pkgs = installed.recent(1)
+        pkgs = installed._recent(1)
         self.assertEqual(len(pkgs), 1)
 
 class SubjectTest(support.TestCase):
