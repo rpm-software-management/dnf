@@ -399,7 +399,7 @@ class TransactionConverter(object):
 
     def _find_available(self, nevra):
         """Find an available package."""
-        packages = self.sack.query().available().nevra(nevra)
+        packages = self.sack.query().available()._nevra(nevra)
         if not packages:
             raise dnf.exceptions.PackagesNotAvailableError(
                 'no package matched', nevra)
@@ -407,7 +407,7 @@ class TransactionConverter(object):
 
     def _find_installed(self, nevra):
         """Find an installed package."""
-        packages = self.sack.query().installed().nevra(nevra)
+        packages = self.sack.query().installed()._nevra(nevra)
         if not packages:
             raise dnf.exceptions.PackagesNotInstalledError(
                 'no package matched', nevra)

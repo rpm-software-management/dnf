@@ -78,8 +78,8 @@ class Update(support.ResultTestCase):
         sack = base.sack
         base.upgrade_all()
         expected = support.installed_but(sack, "pepper", "hole", "tour") + \
-            list(sack.query().available().nevra("pepper-20-1.x86_64")) + \
-            list(sack.query().available().nevra("hole-2-1.x86_64"))
+            list(sack.query().available()._nevra("pepper-20-1.x86_64")) + \
+            list(sack.query().available()._nevra("hole-2-1.x86_64"))
         self.assertResult(base, expected)
 
     def test_upgrade_all_reponame(self):
@@ -155,7 +155,7 @@ class SkipBroken(support.ResultTestCase):
         """
         self.base.upgrade_all()
         new_set = support.installed_but(self.sack, "pepper").run()
-        new_set.extend(self.sack.query().available().nevra("pepper-20-1.x86_64"))
+        new_set.extend(self.sack.query().available()._nevra("pepper-20-1.x86_64"))
         self.assertResult(self.base, new_set)
 
 class CostUpdate(tests.test_repo.RepoTestMixin, support.ResultTestCase):
