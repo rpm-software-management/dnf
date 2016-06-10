@@ -128,7 +128,7 @@ class Query(hawkey.Query):
     def _pkgtup_dict(self):
         return per_pkgtup_dict(self.run())
 
-    def recent(self, recent):
+    def _recent(self, recent):
         now = time.time()
         recentlimit = now - (recent*86400)
         recent = [po for po in self if int(po.buildtime) > recentlimit]
@@ -210,4 +210,4 @@ def latest_limit_pkgs(query, limit):
 def recent_pkgs(query, recent):
     # compat: erase in 2.0.0
     # required by dnf-plugins-core =< 0.1.12-2
-    return query.recent(recent).run()
+    return query._recent(recent).run()

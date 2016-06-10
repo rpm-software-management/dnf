@@ -1179,7 +1179,7 @@ class Base(object):
             avail = q.available()
             if not showdups:
                 avail = avail.latest()
-            recent = query_for_repo(avail).recent(self.conf.recent)
+            recent = query_for_repo(avail)._recent(self.conf.recent)
 
         ygh.installed = installed
         ygh.available = available
