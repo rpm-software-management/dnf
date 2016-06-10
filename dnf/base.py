@@ -1621,7 +1621,7 @@ class Base(object):
             available_q = available_q.filter(reponame=new_reponame)
         if new_reponame_neq is not None:
             available_q = available_q.filter(reponame__neq=new_reponame_neq)
-        available_nevra2pkg = dnf.query.per_nevra_dict(available_q)
+        available_nevra2pkg = dnf.query._per_nevra_dict(available_q)
 
         if not installed_pkgs:
             raise dnf.exceptions.PackagesNotInstalledError(

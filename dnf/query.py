@@ -171,7 +171,7 @@ def _per_pkgtup_dict(pkg_list):
     return d
 
 
-def per_nevra_dict(pkg_list):
+def _per_nevra_dict(pkg_list):
     return {ucd(pkg):pkg for pkg in pkg_list}
 
 

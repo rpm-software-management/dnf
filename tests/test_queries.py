@@ -139,7 +139,7 @@ class DictsTest(TestCase):
     def test_per_nevra_dict(self):
         sack = support.mock_sack("main")
         pkgs = sack.query().filter(name="lotus")
-        dct = dnf.query.per_nevra_dict(pkgs)
+        dct = dnf.query._per_nevra_dict(pkgs)
         self.assertCountEqual(dct.keys(),
                               ["lotus-3-16.x86_64", "lotus-3-16.i686"])
         self.assertCountEqual(dct.values(), pkgs)
