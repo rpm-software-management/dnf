@@ -143,7 +143,7 @@ class Subject(object):
         sltr = dnf.selector.Selector(sack)
         return sltr
 
-    def get_best_selectors(self, sack, forms=None):
+    def _get_best_selectors(self, sack, forms=None):
         if not self._filename_pattern and is_glob_pattern(self._pattern):
             nevras = self.subj.nevra_possibilities_real(sack, allow_globs=True)
             nevra = first(nevras)
