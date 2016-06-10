@@ -128,7 +128,7 @@ class Query(hawkey.Query):
     def _pkgtup_dict(self):
         return per_pkgtup_dict(self.run())
 
-    def recent(self, recent):
+    def _recent(self, recent):
         now = time.time()
         recentlimit = now - (recent*86400)
         recent = [po for po in self if int(po.buildtime) > recentlimit]
