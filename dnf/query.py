@@ -149,7 +149,7 @@ class Query(hawkey.Query):
             release=nevra.release, arch=nevra.arch)
 
 
-def by_provides(sack, patterns, ignore_case=False, get_query=False):
+def _by_provides(sack, patterns, ignore_case=False, get_query=False):
     if isinstance(patterns, basestring):
         patterns = [patterns]
 
