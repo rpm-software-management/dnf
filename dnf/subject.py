@@ -78,7 +78,7 @@ class Subject(object):
         return re.search(r"^\*?/", self.subj.pattern)
 
     @property
-    def pattern(self):
+    def _pattern(self):
         return self.subj.pattern
 
     def is_arch_specified(self, sack):
@@ -89,7 +89,7 @@ class Subject(object):
 
     def get_best_query(self, sack, with_provides=True, forms=None):
         # :api
-        pat = self.subj.pattern
+        pat = self._pattern
 
         kwargs = {'allow_globs': True,
                   'icase': self.icase}
@@ -137,21 +137,21 @@ class Subject(object):
 
         if self._filename_pattern:
             sltr = dnf.selector.Selector(sack)
-            key = "file__glob" if is_glob_pattern(self.pattern) else "file"
-            return sltr.set(**{key: self.pattern})
+            key = "file__glob" if is_glob_pattern(self._pattern) else "file"
+            return sltr.set(**{key: self._pattern})
 
         sltr = dnf.selector.Selector(sack)
         return sltr
 
     def get_best_selectors(self, sack, forms=None):
-        if not self._filename_pattern and is_glob_pattern(self.pattern):
+        if not self._filename_pattern and is_glob_pattern(self._pattern):
             nevras = self.subj.nevra_possibilities_real(sack, allow_globs=True)
             nevra = first(nevras)
             if nevra and nevra.name:
                 sltrs = []
                 pkgs = self._nevra_to_filters(sack.query(), nevra)
                 for pkg_name in {pkg.name for pkg in pkgs}:
-                    exp_name = self.pattern.replace(nevra.name, pkg_name, 1)
+                    exp_name = self._pattern.replace(nevra.name, pkg_name, 1)
                     sltrs.append(Subject(exp_name).get_best_selector(sack, forms))
                 return sltrs
 
