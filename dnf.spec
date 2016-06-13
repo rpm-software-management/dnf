@@ -1,4 +1,4 @@
-%global hawkey_min_ver 0.6.1
+%global hawkey_min_ver 0.6.4
 %global hawkey_max_ver 0.7.0
 %global librepo_version 1.7.16
 %global libcomps_version 0.1.6
