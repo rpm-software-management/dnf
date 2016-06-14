@@ -326,7 +326,7 @@ class RepoQueryCommand(commands.Command):
         if self.opts.srpm:
             pkg_list = []
             for pkg in q:
-                srcname = dnf.util.package_source_name(pkg)
+                srcname = pkg.source_name
                 if srcname is not None:
                     tmp_query = self.base.sack.query().filter(
                         name=srcname,
