@@ -135,15 +135,6 @@ def write_raw_configfile(filename, section_id, substitutions,
     fp.close()
 
 
-def package_source_debug_name(package):
-    """
-    # :api
-    returns name of debuginfo package for source package of given package
-    e.g. krb5-libs -> krb5-debuginfo
-    """
-    return "{}-debuginfo".format(package.source_name)
-
-
 def rtrim(s, r):
     if s.endswith(r):
         s = s[:-len(r)]
