@@ -55,6 +55,16 @@ class RepoDict(dict):
                     logger.info(_('enabling %s repository'), found.id)
                     found.enable()
 
+    def enable_debug_repos(self):
+        # :api
+        """enable debug repos corresponding to already enabled binary repos"""
+
+        def debug_name(name):
+            return ("{}-debug-rpms".format(name[:-5]) if name.endswith("-rpms")
+                    else "{}-debuginfo".format(name))
+
+        self._enable_sub_repos(debug_name)
+
     def enable_source_repos(self):
         # :api
         """enable source repos corresponding to already enabled binary repos"""
