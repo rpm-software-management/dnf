@@ -59,6 +59,14 @@ class Package(hawkey.Package):
         self._chksum = val
 
     @property
+    def debug_name(self):
+        """
+        returns name of debuginfo package for given package
+        e.g. kernel-PAE -> kernel-PAE-debuginfo
+        """
+        return "{}-debuginfo".format(self.name)
+
+    @property
     def from_cmdline(self):
         return self.reponame == hawkey.CMDLINE_REPO_NAME
 
@@ -86,6 +94,22 @@ class Package(hawkey.Package):
     @size.setter
     def size(self, val):
         self._size = val
+
+    @property
+    def source_name(self):
+        """"
+        returns name of source package
+        e.g. krb5-libs -> krb5
+        """
+        if self.sourcerpm is not None:
+            # trim suffix first
+            srcname = dnf.util.rtrim(self.sourcerpm, ".src.rpm")
+            # source package filenames may not contain epoch, handle both cases
+            srcname = dnf.util.rtrim(srcname, "-{}".format(self.evr))
+            srcname = dnf.util.rtrim(srcname, "-{0.version}-{0.release}".format(self))
+        else:
+            srcname = None
+        return srcname
 
     @property
     def pkgid(self):
