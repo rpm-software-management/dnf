@@ -96,6 +96,14 @@ class Package(hawkey.Package):
         self._size = val
 
     @property
+    def source_debug_name(self):
+        """
+        returns name of debuginfo package for source package of given package
+        e.g. krb5-libs -> krb5-debuginfo
+        """
+        return "{}-debuginfo".format(self.source_name)
+
+    @property
     def source_name(self):
         """"
         returns name of source package
