@@ -108,8 +108,6 @@ Requires:       pygpgme
 Requires:       rpm-plugin-systemd-inhibit
 Requires:       rpm-python >= %{rpm_version}
 Obsoletes:      %{name} <= 0.6.4
-# bellow explicit requires were added to workaround bugs 1284349 and 1338921
-Requires:       expat libcurl libidn libstdc++ libuuid libxml2 python-libs sqlite-libs xz-libs zlib
 
 %description -n python2-%{name}
 Python 2 interface to DNF.
@@ -137,8 +135,6 @@ Requires:       python3-pygpgme
 Requires:       rpm-plugin-systemd-inhibit
 Requires:       rpm-python3 >= %{rpm_version}
 Obsoletes:      %{name} <= 0.6.4
-# bellow explicit requires were added to workaround bugs 1284349 and 1338921
-Requires:       expat libcurl libidn libstdc++ libuuid libxml2 python-libs sqlite-libs xz-libs zlib
 
 %description -n python3-%{name}
 Python 3 interface to DNF.
