@@ -22,6 +22,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.cli import commands
 from dnf.i18n import _, ucd, fill_exact_width, exact_width
+from dnf.cli.option_parser import OptionParser
 import dnf.cli.format
 import dnf.pycomp
 import fnmatch
@@ -75,22 +76,31 @@ class RepoListCommand(commands.Command):
 
     @staticmethod
     def set_argparser(parser):
-        parser.add_argument('extcmds', nargs='*', metavar='[all|enabled|disabled]')
+        repolimit = parser.add_mutually_exclusive_group()
+        repolimit.add_argument('--all', dest='_repo_action',
+                               action='store_const', const='all', default=None,
+                               help=_("show all repos"))
+        repolimit.add_argument('--enabled', dest='_repo_action',
+                               action='store_const', const='enabled',
+                               help=_("show enabled repos (default)"))
+        repolimit.add_argument('--disabled', dest='_repo_action',
+                               action='store_const', const='disabled',
+                               help=_("show disabled repos"))
+        parser.add_argument('repo', nargs='*', default='enabled',
+                            choices=['all', 'enabled', 'disabled'],
+                            action=OptionParser.PkgNarrowCallback)
 
     def configure(self):
         demands = self.cli.demands
         demands.available_repos = True
         demands.fresh_metadata = False
         demands.sack_activation = True
+        if self.opts._repo_action:
+            self.opts.repo_action = self.opts._repo_action
 
     def run(self):
-        extcmds = self.opts.extcmds
-        if len(extcmds) >= 1 and extcmds[0] in ('all', 'disabled', 'enabled'):
-            arg = extcmds[0]
-            extcmds = extcmds[1:]
-        else:
-            arg = 'enabled'
-        extcmds = [x.lower() for x in extcmds]
+        arg = self.opts.repo_action
+        extcmds = [x.lower() for x in self.opts.repo]
 
         verbose = self.base.conf.verbose
 
