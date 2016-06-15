@@ -714,6 +714,22 @@ class YumConf(BaseConfig):
         new_path = dnf.conf.parser.substitute(path, self.substitutions)
         setattr(self, option, new_path)
 
+    @property
+    def get_reposdir(self):
+        # :api
+        """Returns the value of reposdir"""
+        myrepodir = None
+        # put repo file into first reposdir which exists or create it
+        for rdir in self.reposdir:
+            if os.path.exists(rdir):
+                myrepodir = rdir
+                break
+
+        if not myrepodir:
+            myrepodir = self.reposdir[0]
+            dnf.util.ensure_dir(myrepodir)
+        return myrepodir
+
     def prepend_installroot(self, option):
         # :api
         path = getattr(self, option)
