@@ -170,15 +170,13 @@ class BaseCli(dnf.Base):
 
         if trans:
             # Check which packages have to be downloaded
-            downloadpkgs = []
+            install_pkgs = []
             rmpkgs = []
-            stuff_to_download = False
             install_only = True
             for tsi in trans:
                 installed = tsi.installed
                 if installed is not None:
-                    stuff_to_download = True
-                    downloadpkgs.append(installed)
+                    install_pkgs.append(installed)
                 erased = tsi.erased
                 if erased is not None:
                     install_only = False
@@ -189,10 +187,10 @@ class BaseCli(dnf.Base):
             del self._ts
 
             # report the total download size to the user
-            if not stuff_to_download:
+            if not install_pkgs:
                 self.output.reportRemoveSize(rmpkgs)
             else:
-                self.output.reportDownloadSize(downloadpkgs, install_only)
+                self.output.reportDownloadSize(install_pkgs, install_only)
 
         if trans or (grp_diff and not grp_diff.empty()):
             # confirm with user
@@ -204,20 +202,22 @@ class BaseCli(dnf.Base):
             return
 
         if trans:
-            if downloadpkgs:
+            remote_pkgs = [pkg for pkg in install_pkgs if not pkg._is_local_pkg()]
+            if remote_pkgs:
                 logger.info(_('Downloading Packages:'))
-            try:
-                total_cb = self.output.download_callback_total_cb
-                self.download_packages(downloadpkgs, self.output.progress,
-                                       total_cb)
-            except dnf.exceptions.DownloadError as e:
-                specific = dnf.cli.format.indent_block(ucd(e))
-                errstring = _('Error downloading packages:') + '\n%s' % specific
-                # setting the new line to prevent next chars being eaten up by carriage returns
-                print()
-                raise dnf.exceptions.Error(errstring)
+                try:
+                    total_cb = self.output.download_callback_total_cb
+                    self.download_packages(remote_pkgs, self.output.progress,
+                                           total_cb)
+                except dnf.exceptions.DownloadError as e:
+                    specific = dnf.cli.format.indent_block(ucd(e))
+                    errstr = _('Error downloading packages:') + '\n%s' % specific
+                    # setting the new line to prevent next chars being eaten up
+                    # by carriage returns
+                    print()
+                    raise dnf.exceptions.Error(errstr)
             # Check GPG signatures
-            self.gpgsigcheck(downloadpkgs)
+            self.gpgsigcheck(install_pkgs)
 
         if self.cmd_conf.downloadonly:
             return
