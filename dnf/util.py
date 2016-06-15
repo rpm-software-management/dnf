@@ -48,23 +48,6 @@ logger = logging.getLogger('dnf')
 """DNF Utilities."""
 
 
-def get_reposdir(plugin):
-    """
-    # :api
-    Returns the value of reposdir
-    """
-    myrepodir = None
-    # put repo file into first reposdir which exists or create it
-    for rdir in plugin.base.conf.reposdir:
-        if os.path.exists(rdir):
-            myrepodir = rdir
-
-    if not myrepodir:
-        myrepodir = plugin.base.conf.reposdir[0]
-        dnf.util.ensure_dir(myrepodir)
-    return myrepodir
-
-
 def _non_repo_handle(conf):
     handle = librepo.Handle()
     handle.useragent = dnf.const.USER_AGENT
