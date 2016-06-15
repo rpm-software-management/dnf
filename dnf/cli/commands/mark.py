@@ -21,7 +21,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.i18n import _
-from .. import commands
+from dnf.cli import commands
 
 import dnf
 import functools

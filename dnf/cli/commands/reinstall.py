@@ -20,7 +20,7 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from .. import commands
+from dnf.cli import commands
 from dnf.i18n import _
 
 import dnf.exceptions
@@ -32,8 +32,7 @@ logger = logging.getLogger('dnf')
 
 
 class ReinstallCommand(commands.Command):
-    """A class containing s needed by the cli to execute the
-    reinstall command.
+    """A class containing methods needed by the cli to execute the reinstall command.
     """
 
     aliases = ('reinstall',)
