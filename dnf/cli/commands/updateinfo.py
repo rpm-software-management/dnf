@@ -25,6 +25,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from collections import OrderedDict
 from dnf.cli import commands
+from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _
 from dnf.pycomp import unicode
 from itertools import chain
@@ -96,10 +97,14 @@ class UpdateInfoCommand(commands.Command):
 
     @staticmethod
     def set_argparser(parser):
-        parser.add_argument('extcmds', nargs='*', metavar='SPEC')
+        cmds = ['summary', 'list', 'info']
+        parser.add_argument('spec', nargs='*', metavar='SPEC',
+                            choices=cmds, default=cmds[0],
+                            action=OptionParser.PkgNarrowCallback)
 
     def configure(self):
         """Do any command-specific configuration based on command arguments."""
+        self.cli.demands.available_repos = True
         self.cli.demands.sack_activation = True
 
     @staticmethod
@@ -314,14 +319,12 @@ class UpdateInfoCommand(commands.Command):
     def run(self):
         """Execute the command with arguments."""
 
-        args = self.opts.extcmds
+        args = self.opts.spec
         display = self.display_summary
-        if args[:1] in (['summary'], []):
-            args = args[1:]
-        elif args[:1] == ['list']:
-            display, args = self.display_list, args[1:]
-        elif args[:1] == ['info']:
-            display, args = self.display_info, args[1:]
+        if self.opts.spec_action == 'list':
+            display = self.display_list
+        elif self.opts.spec_action == 'info':
+            display = self.display_info
 
         self.refresh_installed_cache()
 
