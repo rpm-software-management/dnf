@@ -20,7 +20,7 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from .. import commands
+from dnf.cli import commands
 from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _
 

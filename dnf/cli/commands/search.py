@@ -21,7 +21,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
-from .. import commands
+from dnf.cli import commands
 from dnf.i18n import ucd, _
 
 import dnf.i18n
