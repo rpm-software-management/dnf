@@ -50,13 +50,6 @@ class GroupCommand(commands.Command):
     _MARK_CMDS = ('install', 'remove')
 
 
-    @staticmethod
-    def _split_extcmds(extcmds):
-        if extcmds[0] == 'with-optional':
-            types = tuple(dnf.const.GROUP_PACKAGE_TYPES + ('optional',))
-            return types, extcmds[1:]
-        return dnf.const.GROUP_PACKAGE_TYPES, extcmds
-
     def _canonical(self):
         # were we called with direct command?
         direct = self.direct_commands.get(self.opts.command[0])
@@ -322,6 +315,8 @@ class GroupCommand(commands.Command):
 
     @staticmethod
     def set_argparser(parser):
+        parser.add_argument('--with-optional', action='store_true',
+                            help=_("include optional packages from group"))
         parser.add_argument('subcmd', nargs='?', metavar='COMMAND')
         parser.add_argument('args', nargs='*')
 
@@ -382,10 +377,14 @@ class GroupCommand(commands.Command):
 
         self.cli.demands.resolving = True
         if cmd == 'install':
-            types, patterns = self._split_extcmds(extcmds)
+            if self.opts.with_optional:
+                types = tuple(dnf.const.GROUP_PACKAGE_TYPES + ('optional',))
+            else:
+                types = dnf.const.GROUP_PACKAGE_TYPES
+
             self._remark = True
             try:
-                return self.base.env_group_install(patterns, types,
+                return self.base.env_group_install(extcmds, types,
                                                    self.base.conf.strict)
             except dnf.exceptions.MarkingError as e:
                 msg = _('No package %s%s%s available.')
