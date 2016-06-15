@@ -160,10 +160,35 @@ class InfoCommand(Command):
 
     @classmethod
     def set_argparser(cls, parser):
+        narrows = parser.add_mutually_exclusive_group()
+        narrows.add_argument('--all', dest='_packages_action',
+                            action='store_const', const='all', default=None,
+                            help=_("show all packages (default)"))
+        narrows.add_argument('--available', dest='_packages_action',
+                            action='store_const', const='available',
+                            help=_("show only available packages"))
+        narrows.add_argument('--installed', dest='_packages_action',
+                            action='store_const', const='installed',
+                            help=_("show only installed packages"))
+        narrows.add_argument('--extras', dest='_packages_action',
+                            action='store_const', const='extras',
+                            help=_("show only extras packages"))
+        narrows.add_argument('--updates', dest='_packages_action',
+                            action='store_const', const='upgrades',
+                            help=_("show only upgrades packages"))
+        narrows.add_argument('--upgrades', dest='_packages_action',
+                            action='store_const', const='upgrades',
+                            help=_("show only upgrades packages"))
+        narrows.add_argument('--autoremove', dest='_packages_action',
+                            action='store_const', const='autoremove',
+                            help=_("show only autoremove packages"))
+        narrows.add_argument('--recent', dest='_packages_action',
+                            action='store_const', const='recent',
+                            help=_("show only recently changed packages"))
+        narrows.add_argument('--obsoletes', dest='_packages_action',
+                            action='store_const', const='obsoletes',
+                            help=_("show only obsoletes packages"))
         parser.add_argument('packages', nargs='*', metavar=_('PACKAGE'),
-                             help=("[%s | all | available | installed | updates"
-                                   " | extras | autoremove | obsoletes | recent]"
-                                   % _('PACKAGE')),
                              choices=cls.pkgnarrows, default=cls.DEFAULT_PKGNARROW,
                              action=OptionParser.PkgNarrowCallback)
 
@@ -172,6 +197,8 @@ class InfoCommand(Command):
         demands.available_repos = True
         demands.fresh_metadata = False
         demands.sack_activation = True
+        if self.opts._packages_action:
+            self.opts.packages_action = self.opts._packages_action
         if self.opts.packages_action == 'updates':
                  self.opts.packages_action = 'upgrades'
 
@@ -278,12 +305,43 @@ class RepoPkgsCommand(Command):
             demands = self.cli.demands
             demands.available_repos = True
             demands.sack_activation = True
+            if self.opts._pkg_specs_action:
+                self.opts.pkg_specs_action = self.opts._pkg_specs_action
 
         @staticmethod
         def set_argparser(parser):
             DEFAULT_PKGNARROW = 'all'
             pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available', 'autoremove',
                           'extras', 'obsoletes', 'recent', 'upgrades'}
+
+            narrows = parser.add_mutually_exclusive_group()
+            narrows.add_argument('--all', dest='_pkg_specs_action',
+                                action='store_const', const='all', default=None,
+                                help=_("show all packages (default)"))
+            narrows.add_argument('--available', dest='_pkg_specs_action',
+                                action='store_const', const='available',
+                                help=_("show only available packages"))
+            narrows.add_argument('--installed', dest='_pkg_specs_action',
+                                action='store_const', const='installed',
+                                help=_("show only installed packages"))
+            narrows.add_argument('--extras', dest='_pkg_specs_action',
+                                action='store_const', const='extras',
+                                help=_("show only extras packages"))
+            narrows.add_argument('--updates', dest='_pkg_specs_action',
+                                action='store_const', const='upgrades',
+                                help=_("show only upgrades packages"))
+            narrows.add_argument('--upgrades', dest='_pkg_specs_action',
+                                action='store_const', const='upgrades',
+                                help=_("show only upgrades packages"))
+            narrows.add_argument('--autoremove', dest='_pkg_specs_action',
+                                action='store_const', const='autoremove',
+                                help=_("show only autoremove packages"))
+            narrows.add_argument('--recent', dest='_pkg_specs_action',
+                                action='store_const', const='recent',
+                                help=_("show only recently changed packages"))
+            narrows.add_argument('--obsoletes', dest='_pkg_specs_action',
+                                action='store_const', const='obsoletes',
+                                help=_("show only obsoletes packages"))
             parser.add_argument('pkg_specs', nargs='*', metavar=_('PACKAGE'),
                                 choices=pkgnarrows, default=DEFAULT_PKGNARROW,
                                 action=OptionParser.PkgNarrowCallback)
@@ -336,24 +394,10 @@ class RepoPkgsCommand(Command):
             if not done:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
 
-    class ListSubCommand(SubCommand):
+    class ListSubCommand(InfoSubCommand):
         """Implementation of the list sub-command."""
 
         aliases = ('list',)
-
-        def configure(self):
-            demands = self.cli.demands
-            demands.available_repos = True
-            demands.sack_activation = True
-
-        @staticmethod
-        def set_argparser(parser):
-            DEFAULT_PKGNARROW = 'all'
-            pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available', 'autoremove',
-                          'extras', 'obsoletes', 'recent', 'upgrades'}
-            parser.add_argument('pkg_specs', nargs='*', metavar=_('PACKAGE'),
-                                choices=pkgnarrows, default=DEFAULT_PKGNARROW,
-                                action=OptionParser.PkgNarrowCallback)
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
