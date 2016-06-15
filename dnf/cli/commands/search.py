@@ -22,6 +22,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.cli import commands
+from dnf.cli.option_parser import OptionParser
 from dnf.i18n import ucd, _
 
 import dnf.i18n
@@ -43,7 +44,11 @@ class SearchCommand(commands.Command):
 
     @staticmethod
     def set_argparser(parser):
-        parser.add_argument('query_string', nargs='+', metavar=_('QUERY_STRING'))
+        parser.add_argument('--all', action='store_true',
+                            help=_("search also package description and URL"))
+        parser.add_argument('query_string', nargs='+', metavar=_('QUERY_STRING'),
+                            choices=['all'], default=None,
+                            action=OptionParser.PkgNarrowCallback)
 
     def _search(self, args):
         """Search for simple text tags in a package object."""
@@ -54,19 +59,13 @@ class SearchCommand(commands.Command):
             formatted = self.base.output.fmtSection(text % ", ".join(used_keys))
             print(ucd(formatted))
 
-        # prepare the input
-        search_all = False
-        if len(args) > 1 and args[0] == 'all':
-            args.pop(0)
-            search_all = True
-
         counter = dnf.match_counter.MatchCounter()
         for arg in args:
             self._search_counted(counter, 'name', arg)
             self._search_counted(counter, 'summary', arg)
 
         section_text = _('N/S Matched: %s')
-        if search_all or counter.total() == 0:
+        if self.opts.all or counter.total() == 0:
             section_text = _('Matched: %s')
             for arg in args:
                 self._search_counted(counter, 'description', arg)
@@ -100,6 +99,7 @@ class SearchCommand(commands.Command):
         demands.available_repos = True
         demands.fresh_metadata = False
         demands.sack_activation = True
+        self.opts.all = self.opts.all or self.opts.query_string_action
 
     def run(self):
         logger.debug(_('Searching Packages: '))
