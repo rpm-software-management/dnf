@@ -149,6 +149,7 @@ class Option(object):
         """
         return str(value)
 
+
 def Inherit(option_obj):
     """Clone an Option` instance for the purposes of inheritance.
 
@@ -160,6 +161,7 @@ def Inherit(option_obj):
     new_option = option_obj.clone()
     new_option.inherit = True
     return new_option
+
 
 class ListOption(Option):
     """An option containing a list of strings."""
@@ -199,6 +201,7 @@ class ListOption(Option):
         :return: string representation of input
         """
         return '\n '.join(value)
+
 
 class UrlOption(Option):
     """This option handles lists of URLs with validation of the URL
@@ -244,6 +247,7 @@ class UrlOption(Option):
             return self.schemes[0]
         else:
             return '%s or %s' % (', '.join(self.schemes[:-1]), self.schemes[-1])
+
 
 class UrlListOption(ListOption):
     """Option for handling lists of URLs with validation of the URL
@@ -312,6 +316,7 @@ class IntOption(Option):
                              'allowed value [%d].' % (n, self._range_min))
         return n
 
+
 class PositiveIntOption(IntOption):
     """An option representing a positive integer value, where 0 can
     have a special representation.
@@ -333,6 +338,7 @@ class PositiveIntOption(IntOption):
         if s in self._names0:
             return 0
         return super(PositiveIntOption, self).parse(s)
+
 
 class SecondsOption(Option):
     """An option representing an integer value of seconds, or a human
@@ -388,6 +394,7 @@ class SecondsOption(Option):
 
         return int(n * mult)
 
+
 class BoolOption(Option):
     """An option representing a boolean value.  The value can be one
     of 0, 1, yes, no, true, or false.
@@ -423,6 +430,7 @@ class BoolOption(Option):
         else:
             return "0"
 
+
 class FloatOption(Option):
     """An option representing a numeric float value."""
 
@@ -438,6 +446,7 @@ class FloatOption(Option):
             return float(s.strip())
         except (ValueError, TypeError):
             raise ValueError('invalid float value')
+
 
 class SelectionOption(Option):
     """Handles string values where only specific values are
@@ -461,6 +470,7 @@ class SelectionOption(Option):
             raise ValueError('"%s" is not an allowed value' % s)
         return s
 
+
 class CaselessSelectionOption(SelectionOption):
     """Mainly for compatibility with :class:`BoolOption`, works like
     :class:`SelectionOption` but lowers input case.
@@ -473,6 +483,7 @@ class CaselessSelectionOption(SelectionOption):
         :raises: :class:`ValueError` if there is an error parsing the values
         """
         return super(CaselessSelectionOption, self).parse(s.lower())
+
 
 class BytesOption(Option):
     """An option representing a value in bytes. The value may be given
@@ -522,6 +533,7 @@ class BytesOption(Option):
 
         return int(n * mult)
 
+
 class ThrottleOption(BytesOption):
     """An option representing a bandwidth throttle value. See
     :func:`parse` for acceptable input values.
@@ -555,6 +567,7 @@ class ThrottleOption(BytesOption):
             return n / 100.0
         else:
             return BytesOption.parse(self, s)
+
 
 class BaseConfig(object):
     """Base class for storing configuration definitions.
@@ -691,6 +704,7 @@ class BaseConfig(object):
                 self.cfg.set(section, name, option.tostring(value))
         # write the updated ConfigParser to the fileobj.
         self.cfg.write(fileobj)
+
 
 class YumConf(BaseConfig):
     """Configuration option definitions for yum.conf's [main] section."""
@@ -898,6 +912,7 @@ class YumConf(BaseConfig):
     @property
     def verbose(self):
         return self.debuglevel >= dnf.const.VERBOSE_LEVEL
+
 
 class RepoConf(BaseConfig):
     """Option definitions for repository INI file sections."""
