@@ -24,13 +24,7 @@ from __future__ import unicode_literals
 
 from .pycomp import PY3, basestring
 from functools import reduce
-
-
-##from dnfpluginscore import _, logger
-from dnf.i18n import _
 import dnf
-import iniparse
-
 import dnf.const
 import dnf.pycomp
 import itertools
@@ -48,28 +42,22 @@ logger = logging.getLogger('dnf')
 """DNF Utilities."""
 
 
-def _non_repo_handle(conf):
+def _non_repo_handle(conf=None):
     handle = librepo.Handle()
     handle.useragent = dnf.const.USER_AGENT
     # see dnf.repo.Repo._handle_new_remote() how to pass
-    handle.maxspeed = conf.throttle if type(conf.throttle) is int \
-        else int(conf.bandwidth * conf.throttle)
-    handle.proxy = conf.proxy
-    handle.proxyuserpwd = dnf.repo._user_pass_str(conf.proxy_username,
-                                                  conf.proxy_password)
-    handle.sslverifypeer = handle.sslverifyhost = conf.sslverify
-    return handle
-
-
-def _build_default_handle():
-    handle = librepo.Handle()
-    handle.useragent = dnf.const.USER_AGENT
+    if conf:
+        handle.maxspeed = conf.throttle if type(conf.throttle) is int \
+            else int(conf.bandwidth * conf.throttle)
+        handle.proxy = conf.proxy
+        handle.proxyuserpwd = dnf.repo._user_pass_str(conf.proxy_username,
+                                                      conf.proxy_password)
+        handle.sslverifypeer = handle.sslverifyhost = conf.sslverify
     return handle
 
 
 def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
     """
-    # :api
     Open the specified absolute url, return a file object
     which respects proxy setting even for non-repo downloads
     """
@@ -78,44 +66,14 @@ def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
     fo = tempfile.NamedTemporaryFile(mode, **kwargs)
     if repo:
         handle = repo.get_handle()
-    elif conf:
-        handle = _non_repo_handle(conf)
     else:
-        handle = _build_default_handle()
+        handle = _non_repo_handle(conf)
     try:
         librepo.download_url(url, fo.fileno(), handle)
     except librepo.LibrepoException as e:
         raise IOError(e.args[1])
     fo.seek(0)
     return fo
-
-
-def write_raw_configfile(filename, section_id, substitutions,
-                         modify):
-    """
-    # :api
-    filename   - name of config file (.conf or .repo)
-    section_id - id of modified section (e.g. main, fedora, updates)
-    substitutions - instance of base.conf.substitutions
-    modify     - dict of modified options
-    """
-    ini = iniparse.INIConfig(open(filename))
-
-    # b/c repoids can have $values in them we need to map both ways to figure
-    # out which one is which
-    if section_id not in ini:
-        for sect in ini:
-            if dnf.conf.parser.substitute(sect, substitutions) == section_id:
-                section_id = sect
-
-    for name, value in modify.items():
-        if isinstance(value, list):
-            value = ' '.join(value)
-        ini[section_id][name] = value
-
-    fp = open(filename, "w")
-    fp.write(str(ini))
-    fp.close()
 
 
 def rtrim(s, r):

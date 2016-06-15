@@ -20,7 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from datetime import datetime
 from dnf.i18n import _
-from .. import commands
+from dnf.cli import commands
 
 import argparse
 import dnf
@@ -87,8 +87,7 @@ def rpm2py_format(queryformat):
 
 
 class RepoQueryCommand(commands.Command):
-    """A class containing s needed by the cli to execute the
-    reinstall command.
+    """A class containing methods needed by the cli to execute the repoquery command.
     """
 
     aliases = ('repoquery',)

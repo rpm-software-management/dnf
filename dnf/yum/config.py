@@ -34,6 +34,7 @@ import dnf.const
 import dnf.exceptions
 import dnf.pycomp
 import dnf.util
+import iniparse
 import os
 import shlex
 import types
@@ -704,6 +705,32 @@ class BaseConfig(object):
                 self.cfg.set(section, name, option.tostring(value))
         # write the updated ConfigParser to the fileobj.
         self.cfg.write(fileobj)
+
+    def write_raw_configfile(self, filename, section_id, substitutions, modify):
+        # :api
+        """
+        filename   - name of config file (.conf or .repo)
+        section_id - id of modified section (e.g. main, fedora, updates)
+        substitutions - instance of base.conf.substitutions
+        modify     - dict of modified options
+        """
+        ini = iniparse.INIConfig(open(filename))
+
+        # b/c repoids can have $values in them we need to map both ways to figure
+        # out which one is which
+        if section_id not in ini:
+            for sect in ini:
+                if dnf.conf.parser.substitute(sect, substitutions) == section_id:
+                    section_id = sect
+
+        for name, value in modify.items():
+            if isinstance(value, list):
+                value = ' '.join(value)
+            ini[section_id][name] = value
+
+        fp = open(filename, "w")
+        fp.write(str(ini))
+        fp.close()
 
 
 class YumConf(BaseConfig):
