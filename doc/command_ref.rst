@@ -369,8 +369,8 @@ Groups are virtual collections of packages. DNF keeps track of groups that the u
     Display package lists of a group. Shows which packages are installed or
     available from a repo when ``-v`` is used.
 
-``dnf [options] group install [with-optional] <group-spec>...``
-    Mark the specified group installed and install packages it contains. Also include `optional` packages of the group if ``with-optional`` is specified. All `mandatory` packages are going to be installed otherwise the transaction fails. `Default` packages will be installed whenever possible. `Optional` and `default` packages that are in conflict with other packages or have missing dependencies does not terminate the transaction and will be skipped.
+``dnf [options] group install [--with-optional] <group-spec>...``
+    Mark the specified group installed and install packages it contains. Also include `optional` packages of the group if ``--with-optional`` is specified. All `mandatory` packages are going to be installed otherwise the transaction fails. `Default` packages will be installed whenever possible. `Optional` and `default` packages that are in conflict with other packages or have missing dependencies does not terminate the transaction and will be skipped.
 
 .. _grouplist_command-label:
 
@@ -543,30 +543,30 @@ listed.
 All the forms take a ``[<package-specs>...]`` parameter to further limit the
 result to only those packages matching it.
 
-``dnf [options] list [all] [<package-name-specs>...]``
+``dnf [options] list [--all] [<package-name-specs>...]``
     Lists all packages known to us, present in the RPMDB, in a repo or in both.
 
-``dnf [options] list installed [<package-name-specs>...]``
+``dnf [options] list --installed [<package-name-specs>...]``
     Lists installed packages.
 
-``dnf [options] list available [<package-name-specs>...]``
+``dnf [options] list --available [<package-name-specs>...]``
     Lists available packages.
 
-``dnf [options] list extras [<package-name-specs>...]``
+``dnf [options] list --extras [<package-name-specs>...]``
     Lists extras, that is packages installed on the system that are not
     available in any known repository.
 
-``dnf [options] list obsoletes [<package-name-specs>...]``
+``dnf [options] list --obsoletes [<package-name-specs>...]``
     List the packages installed on the system that are obsoleted by packages in
     any known repository.
 
-``dnf [options] list recent [<package-name-specs>...]``
+``dnf [options] list --recent [<package-name-specs>...]``
     List packages recently added into the repositories.
 
-``dnf [options] list upgrades [<package-name-specs>...]``
+``dnf [options] list --upgrades [<package-name-specs>...]``
     List upgrades available for the installed packages.
 
-``dnf [options] list autoremove``
+``dnf [options] list --autoremove``
     List packages which will be removed by ``dnf autoremove`` command.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
@@ -582,7 +582,7 @@ Makecache Command
     avoid downloading whenever possible (e.g. when the local metadata hasn't
     expired yet or when the metadata timestamp hasn't changed).
 
-``dnf [options] makecache timer``
+``dnf [options] makecache --timer``
     Like plain ``makecache`` but instructs DNF to be more resource-aware,
     meaning will not do anything if running on battery power and will terminate
     immediately if it's too soon after the last successful ``makecache`` run
@@ -640,7 +640,7 @@ Remove Command
 Repolist Command
 ----------------
 
-``dnf [options] repolist [enabled|disabled|all]``
+``dnf [options] repolist [--enabled|--disabled|--all]``
     Depending on the exact command, lists enabled, disabled or all known
     repositories. Lists all enabled repositories by default. Provides more
     detailed information when ``-v`` option is used.
@@ -866,49 +866,49 @@ The repository-packages command allows the user to run commands on top of all pa
 ``dnf [options] repository-packages <repoid> check-update [<package-name-spec>...]``
     Non-interactively checks if updates of the specified packages in the repository are available. DNF exit code will be 100 when there are updates available and a list of the updates will be printed.
 
-``dnf [options] repository-packages <repoid> info [all] [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info [--all] [<package-name-spec>...]``
     List all related packages.
 
-``dnf [options] repository-packages <repoid> info installed [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info --installed [<package-name-spec>...]``
     List packages installed from the repository.
 
-``dnf [options] repository-packages <repoid> info available [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info --available [<package-name-spec>...]``
     List packages available in the repository but not currently installed on the system.
 
-``dnf [options] repository-packages <repoid> info extras [<package-name-specs>...]``
+``dnf [options] repository-packages <repoid> info --extras [<package-name-specs>...]``
     List packages installed from the repository that are not available in any repository.
 
-``dnf [options] repository-packages <repoid> info obsoletes [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info --obsoletes [<package-name-spec>...]``
     List packages in the repository that obsolete packages installed on the system.
 
-``dnf [options] repository-packages <repoid> info recent [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info --recent [<package-name-spec>...]``
     List packages recently added into the repository.
 
-``dnf [options] repository-packages <repoid> info upgrades [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info --upgrades [<package-name-spec>...]``
     List packages in the repository that upgrade packages installed on the system.
 
 ``dnf [options] repository-packages <repoid> install [<package-spec>...]``
     Install all packages in the repository.
 
-``dnf [options] repository-packages <repoid> list [all] [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list [--all] [<package-name-spec>...]``
     List all related packages.
 
-``dnf [options] repository-packages <repoid> list installed [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --installed [<package-name-spec>...]``
     List packages installed from the repository.
 
-``dnf [options] repository-packages <repoid> list available [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --available [<package-name-spec>...]``
     List packages available in the repository but not currently installed on the system.
 
-``dnf [options] repository-packages <repoid> list extras [<package-name-specs>...]``
+``dnf [options] repository-packages <repoid> list --extras [<package-name-specs>...]``
     List packages installed from the repository that are not available in any repository.
 
-``dnf [options] repository-packages <repoid> list obsoletes [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --obsoletes [<package-name-spec>...]``
     List packages in the repository that obsolete packages installed on the system.
 
-``dnf [options] repository-packages <repoid> list recent [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --recent [<package-name-spec>...]``
     List packages recently added into the repository.
 
-``dnf [options] repository-packages <repoid> list upgrades [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --upgrades [<package-name-spec>...]``
     List packages in the repository that upgrade packages installed on the system.
 
 ``dnf [options] repository-packages <repoid> move-to [<package-name-spec>...]``
@@ -941,7 +941,7 @@ The repository-packages command allows the user to run commands on top of all pa
 Search Command
 --------------
 
-``dnf [options] search [all] <keywords>...``
+``dnf [options] search [--all] <keywords>...``
     Search package metadata for the keywords. Keywords are matched as case-insensitive substrings, globbing is supported. By default the command will only look at package names and summaries, failing that (or whenever ``all`` was given as an argument) it will match against package descriptions and URLs. The result is sorted from the most relevant results to the least.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
@@ -961,12 +961,12 @@ Update Command
 Updateinfo Command
 ------------------
 
-``dnf [options] updateinfo [<output>] [<availability>] [<spec>...]``
+``dnf [options] updateinfo [--summary|--list|--info] [<availability>] [<spec>...]``
     Display information about update advisories.
 
-    Depending on ``<output>``, DNF displays just counts of advisory types
-    (omitted or ``summary``), list of advisories (``list``) or detailed
-    information (``info``). When ``info`` with ``-v`` option is used, the
+    Depending on output type, DNF displays just counts of advisory types
+    (omitted or ``--summary``), list of advisories (``--list``) or detailed
+    information (``--info``). When ``--info`` with ``-v`` option is used, the
     information is even more detailed.
 
     ``<availability>`` specifies whether advisories about newer versions of
