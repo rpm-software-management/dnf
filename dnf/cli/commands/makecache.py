@@ -23,6 +23,7 @@ from __future__ import unicode_literals
 from dnf.cli import commands
 from dnf.i18n import _
 
+import argparse
 import dnf.cli
 import dnf.exceptions
 import dnf.util
@@ -38,8 +39,10 @@ class MakeCacheCommand(commands.Command):
 
     @staticmethod
     def set_argparser(parser):
+        parser.add_argument('--timer', action='store_true')
+        # compatibility with dnf < 2.0
         parser.add_argument('timer', nargs='?', choices=['timer'],
-                            metavar='timer')
+                            metavar='timer', help=argparse.SUPPRESS)
 
     def configure(self):
         """Verify that conditions are met so that this command can
