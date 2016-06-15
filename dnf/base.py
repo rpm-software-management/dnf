@@ -884,7 +884,7 @@ class Base(object):
         with lock:
             drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(), progress)
             remote_pkgs = [po for po in pkglist
-                           if not (po.from_cmdline or po.repo.local)]
+                           if not po._is_local_pkg()]
             self._add_tempfiles([pkg.localPkg() for pkg in remote_pkgs])
 
             payloads = [dnf.repo.pkg2payload(pkg, progress, drpm.delta_factory,
