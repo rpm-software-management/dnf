@@ -31,6 +31,10 @@
 
     Seconds since the epoch when the package was built (integer).
 
+  .. attribute:: debug_name
+
+    The name of the gebug-info package (string).
+
   .. attribute:: downloadsize
 
     The size of rpm package in bytes (integer).
@@ -70,6 +74,14 @@
   .. attribute:: requires
 
     Package's requirements (list of Hawkey.Reldep).
+
+  .. attribute:: source_debug_name
+
+    The name of the source gebug-info package (string).
+
+  .. attribute:: source_name
+
+    The name of the source package (string).
 
   .. attribute:: sourcerpm
 

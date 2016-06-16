@@ -33,6 +33,14 @@ Repository Configuration
 
     See the note at :meth:`get_matching` for special semantics of the returned object.
 
+  .. method:: enable_debug_repos()
+
+    Enable debug repos corresponding to already enabled binary repos.
+
+  .. method:: enable_source_repos()
+
+    Enable source repos corresponding to already enabled binary repos.
+
   .. method:: get_matching(key)
 
     Return a list of repositories which ID matches (possibly globbed) `key` or an empty list if no matching repository is found.
