@@ -50,9 +50,9 @@ class SearchTest(support.TestCase):
         self.base.output.fmtSection = lambda str: str
         self.cmd = search.SearchCommand(self.base.mock_cli())
 
-    def patched_search(self, *args, **kwargs):
+    def patched_search(self, *args):
         with support.patch_std_streams() as (stdout, _):
-            self.cmd._search(*args, **kwargs)
+            support.command_run(self.cmd, *args)
             call_args = self.base.output.matchcallback.call_args_list
             pkgs = [c[0][0] for c in call_args]
             return (stdout.getvalue(), pkgs)
