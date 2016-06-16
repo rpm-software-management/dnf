@@ -143,9 +143,10 @@ Repository Configuration
 
     The password to use for connecting to repo with basic HTTP authentication. Defaults to ``None``.
 
-  .. method:: __init__(id_, cachedir)
+  .. method:: __init__(name, parent_conf)
 
-    Init repository with ID `id_` and using the `cachedir` path for storing downloaded and temporary files.
+    Init repository with ID `name` and the `parent_conf` which an instance of :class:`dnf.conf.Conf`
+    holding main dnf configuration.
 
   .. method:: disable()
 
