@@ -737,9 +737,7 @@ class Cli(object):
         self.base.read_all_repos(repo_setopts)
         if opts.repofrompath:
             for label, path in opts.repofrompath.items():
-                if os.path.isabs(path):
-                    path = 'file://{}'.format(path)
-                elif os.path.isdir(path):
+                if '://' not in path:
                     path = 'file://{}'.format(os.path.abspath(path))
                 repofp = dnf.repo.Repo(label, self.base.conf.cachedir)
                 try:
