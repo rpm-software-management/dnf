@@ -44,6 +44,10 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Debug messages output level, in the range 0 to 10. Default is 2.
 
+  .. attribute:: get_reposdir
+
+    Returns the value of the first valid reposdir or if unavailable the value of created reposdir (string)
+
   .. attribute:: installonly_limit
 
     An integer to limit the number of installed installonly packages (packages that do not upgrade, instead few versions are installed in parallel). Defaults to ``0``, that is the limiting is disabled.
@@ -182,3 +186,9 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
   .. method:: read(filename=None)
 
     Read configuration options from the ``main`` section in `filename`. Option values not present there are left at their current values. If `filename` is ``None``, :attr:`config_file_path` is used. Conversely, the configuration path used to load the configuration file that was used is stored into :attr:`config_file_path` before the function returns.
+
+  .. method:: write_raw_configfile(filename, section_id, substitutions, modify)
+
+    Update or create config file. Where `filename` represents name of config file (.conf or .repo); `section_id`
+    represents id of modified section (e.g. main, fedora, updates); `substitutions` represents an instance of
+    base.conf.substitutions; `modify` represents dict of modified options.
