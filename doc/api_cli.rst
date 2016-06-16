@@ -84,17 +84,19 @@ When packaging your custom command, we recommend you to define a virtual provide
 
     One line summary for the command as displayed by the CLI help.
 
-  .. attribute:: usage
+  .. method:: __init__(cli)
 
-    Usage string for the command used as displayed by the CLI help.
+    Command constructor which can be overriden. The constructor is called during
+    CLI configure phase when one of the command's aliases is parsed from `dnf`
+    commandline. `cli` is an instance of :class:`dnf.cli.Cli.
 
-  .. method:: configure(args)
+  .. method:: configure()
 
-    Perform any configuration on the command itself and on the CLI. `args` is a list of additional arguments to the command. Typically, the command implements this call to set up any :class:`demands <.DemandSheet>` it has on the way the :class:`.Sack` will be initialized. Default no-op implementation is provided.
+    Perform any configuration on the command itself and on the CLI. Typically, the command implements this call to set up any :class:`demands <.DemandSheet>`, tweak the global configuration or the repository configuration. This method is called immediately after the CLI/extension is finished configuring DNF.
 
-  .. method:: run(args)
+  .. method:: run()
 
-    Run the command. This method is invoked by the CLI when this command is executed. `args` is a list of additional arguments to the command, entered after the command's name on the command line. Should raise :exc:`dnf.exceptions.Error` with a proper message if the command fails. Otherwise should return ``None``. Custom commands typically override this method.
+    Run the command. This method is invoked by the CLI when this command is executed. Should raise :exc:`dnf.exceptions.Error` with a proper message if the command fails. Otherwise should return ``None``. Custom commands typically override this method and put their main work code here.
 
 .. class:: Cli
 

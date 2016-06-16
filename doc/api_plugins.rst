@@ -35,9 +35,9 @@ When DNF CLI runs it loads the plugins found in the paths during the CLI's initi
 
     Plugin must set this class variable to a string identifying the plugin. The string can only contain alphanumeric characters and underscores.
 
-  .. staticmethod:: read_config(conf, name)
+  .. staticmethod:: read_config(conf)
 
-    Read plugin's configuration into a `ConfigParser <http://docs.python.org/3/library/configparser.html>`_ compatible instance. `conf` is a :class:`.Conf` instance used to look up the plugin configuration directory, `name` is the basename of the relevant conf file.
+    Read plugin's configuration into a `ConfigParser <http://docs.python.org/3/library/configparser.html>`_ compatible instance. `conf` is a :class:`.Conf` instance used to look up the plugin configuration directory.
 
   .. method:: __init__(base, cli)
 
