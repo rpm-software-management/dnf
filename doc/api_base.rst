@@ -171,3 +171,7 @@
   .. method:: upgrade_all
 
     Mark all installed packages for an upgrade.
+
+  .. method:: urlopen(url, repo=None, mode='w+b', **kwargs):
+
+    Open the specified absolute `url` and return a file object which respects proxy setting even for non-repo downloads
