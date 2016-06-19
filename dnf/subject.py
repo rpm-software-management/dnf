@@ -27,11 +27,12 @@ import dnf.selector
 import hawkey
 import re
 
+
 class Subject(object):
     # :api
 
     def __init__(self, pkg_spec, ignore_case=False):
-        self.subj = hawkey.Subject(pkg_spec) # internal subject
+        self.subj = hawkey.Subject(pkg_spec)  # internal subject
         self.icase = ignore_case
 
     def _nevra_to_filters(self, query, nevra):
@@ -82,15 +83,16 @@ class Subject(object):
         return self.subj.pattern
 
     def _is_arch_specified(self, sack):
-        nevra = first(self.subj.nevra_possibilities_real(sack, allow_globs=True))
+        nevra = first(
+            self.subj.nevra_possibilities_real(sack, allow_globs=True))
         if nevra and nevra.arch:
             return is_glob_pattern(nevra.arch)
         return False
 
     def get_best_query(self, sack, with_provides=True, forms=None):
         # :api
-        pat = self._pattern
 
+        pat = self._pattern
         kwargs = {'allow_globs': True,
                   'icase': self.icase}
         if forms:
@@ -102,7 +104,8 @@ class Subject(object):
                 return q
 
         if with_provides:
-            reldeps = self.subj.reldep_possibilities_real(sack, icase=self.icase)
+            reldeps = self.subj.reldep_possibilities_real(
+                sack, icase=self.icase)
             reldep = first(reldeps)
             if reldep:
                 q = sack.query().filter(provides=reldep)
@@ -158,7 +161,8 @@ class Subject(object):
                 pkgs = self._nevra_to_filters(sack.query(), nevra)
                 for pkg_name in {pkg.name for pkg in pkgs}:
                     exp_name = self._pattern.replace(nevra.name, pkg_name, 1)
-                    sltrs.append(Subject(exp_name).get_best_selector(sack, forms))
+                    sltrs.append(
+                        Subject(exp_name).get_best_selector(sack, forms))
                 return sltrs
 
         return [self.get_best_selector(sack, forms)]
