@@ -95,8 +95,8 @@ class Update(support.ResultTestCase):
 
     def test_upgrade_to_package(self):
         base = support.MockBase()
-        pkg = base.add_remote_rpm(support.TOUR_51_PKG_PATH)
-        cnt = base.package_upgrade(pkg)
+        pkgs = base.add_remote_rpm([support.TOUR_51_PKG_PATH])
+        cnt = base.package_upgrade(pkgs[0])
         self.assertEqual(cnt, 1)
         new_pkg = base.sack.query().available().filter(name="tour")[0]
         new_set = support.installed_but(base.sack, "tour") + [new_pkg]

@@ -49,9 +49,9 @@
 
     Init an instance with a reasonable default configuration. The constructor takes no arguments.
 
-  .. method:: add_remote_rpm(path)
+  .. method:: add_remote_rpm(path_list)
 
-    Add RPM file at `path` to the :attr:`sack` and return the respective :class:`dnf.package.Package` instance. Does the download to a temporary file if `path` is a remote URL. Raises :exc:`IOError` if there are problems obtaining or reading the file.
+    Add RPM files at list `path_list` to the :attr:`sack` and return the list of respective :class:`dnf.package.Package` instances. Does the download to a temporary files for each path if `path` is a remote URL. Raises :exc:`EnvironmentError` if there are problems obtaining or reading files.
 
   .. method:: close()
 
