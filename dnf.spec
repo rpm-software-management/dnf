@@ -96,7 +96,6 @@ BuildRequires:  python-nose
 BuildRequires:  pygpgme
 BuildRequires:  pyliblzma
 BuildRequires:  rpm-python >= %{rpm_version}
-Recommends:     bash-completion
 Requires:       pyliblzma
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
@@ -123,7 +122,6 @@ BuildRequires:  python3-librepo >= %{librepo_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-pygpgme
 BuildRequires:  rpm-python3 >= %{rpm_version}
-Recommends:     bash-completion
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
 Requires:       python3-hawkey >= %{hawkey_version}
