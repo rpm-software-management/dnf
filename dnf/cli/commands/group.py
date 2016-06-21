@@ -138,7 +138,12 @@ class GroupCommand(commands.Command):
             elif userlist[0] == 'available':
                 showavailable = 1
                 userlist.pop(0)
-
+        if self.opts.hidden:
+            uservisible = 0
+        if self.opts.installed:
+            showinstalled = 1
+        if self.opts.available:
+            showavailable = 1
         if not userlist:
             userlist = None # Match everything...
 
@@ -274,6 +279,8 @@ class GroupCommand(commands.Command):
             if userlist[0] == 'hidden':
                 uservisible = 0
                 userlist.pop(0)
+        if self.opts.hidden:
+            uservisible = 0
         if not userlist:
             userlist = None # Match everything...
 
@@ -317,6 +324,13 @@ class GroupCommand(commands.Command):
     def set_argparser(parser):
         parser.add_argument('--with-optional', action='store_true',
                             help=_("include optional packages from group"))
+        grpparser = parser.add_mutually_exclusive_group()
+        grpparser.add_argument('--hidden', action='store_true',
+                            help=_("show also hidden groups"))
+        grpparser.add_argument('--installed', action='store_true',
+                            help=_("show only installed groups"))
+        grpparser.add_argument('--available', action='store_true',
+                            help=_("show only available groups"))
         parser.add_argument('subcmd', nargs='?', metavar='COMMAND')
         parser.add_argument('args', nargs='*')
 
