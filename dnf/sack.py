@@ -67,6 +67,14 @@ class Sack(hawkey.Sack):
         """Factory function returning a DNF Query. :api"""
         return dnf.query.Query(self)
 
+    def add_includes(self, pkgq, reponame=None):
+        # exclude all but includes from repo
+        excl = self.query()
+        if reponame:
+            excl = excl.filter(reponame=reponame)
+        excl = excl.difference(pkgq)
+        self.add_excludes(excl)
+
     def rpmdb_version(self, yumdb):
         pkgs = self.query().installed().run()
         main = SackVersion()
