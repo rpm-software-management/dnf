@@ -20,15 +20,18 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from dnf.util import enforce_api
+from dnf.pycomp import basestring
+
 import dnf.util
 import dnf.yum.misc
 import dnf.package
 import dnf.query
 import hawkey
 import os
-from dnf.pycomp import basestring
 
 
+@enforce_api
 class SackVersion(object):
     def __init__(self):
         self._num = 0
@@ -59,6 +62,7 @@ class SackVersion(object):
             self._chksum.update(csum[1])
 
 
+@enforce_api
 class Sack(hawkey.Sack):
     def __init__(self, *args, **kwargs):
         super(Sack, self).__init__(*args, **kwargs)
