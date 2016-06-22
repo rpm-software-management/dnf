@@ -234,7 +234,7 @@ class Base(object):
         # :api
         """Prepare the Sack and the Goal objects. """
         timer = dnf.logging.Timer('sack setup')
-        self._sack = dnf.sack.build_sack(self)
+        self._sack = dnf.sack._build_sack(self)
         lock = dnf.lock.build_metadata_lock(self.conf.cachedir)
         with lock:
             if load_system_repo is not False:
