@@ -1190,7 +1190,7 @@ class Base(object):
 
         # packages to be removed by autoremove
         elif pkgnarrow == 'autoremove':
-            autoremove_q = query_for_repo(q).unneeded(self.sack, self._yumdb)
+            autoremove_q = query_for_repo(q)._unneeded(self.sack, self._yumdb)
             autoremove = autoremove_q.run()
 
         # not in a repo but installed
