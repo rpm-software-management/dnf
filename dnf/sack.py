@@ -28,6 +28,7 @@ import hawkey
 import os
 from dnf.pycomp import basestring
 
+
 class SackVersion(object):
     def __init__(self):
         self._num = 0
@@ -37,11 +38,14 @@ class SackVersion(object):
         return "%u:%s" % (self._num, self._chksum.hexdigest())
 
     def __eq__(self, other):
-        if other is None: return False
+        if other is None:
+            return False
         if isinstance(other, basestring):
             return str(self) == other
-        if self._num != other._num: return False
-        if self._chksum.digest() != other._chksum.digest(): return False
+        if self._num != other._num:
+            return False
+        if self._chksum.digest() != other._chksum.digest():
+            return False
         return True
 
     def __ne__(self, other):
@@ -53,6 +57,7 @@ class SackVersion(object):
         if csum is not None:
             self._chksum.update(csum[0])
             self._chksum.update(csum[1])
+
 
 class Sack(hawkey.Sack):
     def __init__(self, *args, **kwargs):
@@ -79,6 +84,7 @@ class Sack(hawkey.Sack):
             main.update(pkg, csum)
         return main
 
+
 def _build_sack(base):
     cachedir = base.conf.cachedir
     # create the dir ourselves so we have the permissions under control:
@@ -87,6 +93,7 @@ def _build_sack(base):
                 arch=base.conf.substitutions["arch"],
                 cachedir=cachedir, rootdir=base.conf.installroot,
                 logfile=os.path.join(base.conf.logdir, dnf.const.LOG_HAWKEY))
+
 
 def rpmdb_sack(base):
     sack = _build_sack(base)
