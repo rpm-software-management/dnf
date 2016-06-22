@@ -87,7 +87,7 @@ class Sack(hawkey.Sack):
             main.update(pkg, csum)
         return main
 
-def build_sack(base):
+def _build_sack(base):
     cachedir = base.conf.cachedir
     # create the dir ourselves so we have the permissions under control:
     dnf.util.ensure_dir(cachedir)
@@ -97,6 +97,6 @@ def build_sack(base):
                 logfile=os.path.join(base.conf.logdir, dnf.const.LOG_HAWKEY))
 
 def rpmdb_sack(base):
-    sack = build_sack(base)
+    sack = _build_sack(base)
     sack.load_system_repo()
     return sack
