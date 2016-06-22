@@ -113,7 +113,7 @@ def print_versions(pkgs, base, output):
     def sm_ui_date(x): # For changelogs, there is no time
         return time.strftime("%Y-%m-%d", time.gmtime(x))
 
-    rpmdb_sack = dnf.sack.rpmdb_sack(base)
+    rpmdb_sack = dnf.sack._rpmdb_sack(base)
     done = False
     for pkg in rpmdb_sack.query().installed().filter(name=pkgs):
         if done:
