@@ -37,7 +37,7 @@ class Query(hawkey.Query):
         # :api
         return self.filter(reponame__neq=hawkey.SYSTEM_REPO_NAME)
 
-    def unneeded(self, sack, yumdb, debug_solver=False):
+    def _unneeded(self, sack, yumdb, debug_solver=False):
         goal = dnf.goal.Goal(sack)
         goal.push_userinstalled(self.installed(), yumdb)
         solved = goal.run()

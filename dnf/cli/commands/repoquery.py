@@ -271,7 +271,7 @@ class RepoQueryCommand(commands.Command):
                 raise dnf.exceptions.Error(_("argument {}: not allowed with argument {}".format(
                     "--available", "--" + self.opts.list)))
         elif self.opts.list == "unneeded":
-            q = q.unneeded(self.base.sack, self.base._yumdb)
+            q = q._unneeded(self.base.sack, self.base._yumdb)
         elif self.opts.list:
             q = getattr(q, self.opts.list)()
 
