@@ -44,7 +44,7 @@ class VersionStringTest(TestCase):
         base = support.MockBase()
         output = support.MockOutput()
         with mock.patch('sys.stdout') as stdout,\
-                mock.patch('dnf.sack.rpmdb_sack', return_value=base.sack):
+                mock.patch('dnf.sack._rpmdb_sack', return_value=base.sack):
             dnf.cli.cli.print_versions(['pepper', 'tour'], base, output)
         written = ''.join([mc[1][0] for mc in stdout.method_calls
                            if mc[0] == 'write'])
