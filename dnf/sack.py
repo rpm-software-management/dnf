@@ -103,7 +103,7 @@ def _build_sack(base):
                 logfile=os.path.join(base.conf.logdir, dnf.const.LOG_HAWKEY))
 
 
-def rpmdb_sack(base):
+def _rpmdb_sack(base):
     sack = _build_sack(base)
     sack.load_system_repo()
     return sack

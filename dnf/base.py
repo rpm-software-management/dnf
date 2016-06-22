@@ -797,7 +797,7 @@ class Base(object):
         # with only rpmdb in it. In the future when RPM Python bindings can
         # tell us if a particular transaction element failed or not we can skip
         # this completely.
-        rpmdb_sack = dnf.sack.rpmdb_sack(self)
+        rpmdb_sack = dnf.sack._rpmdb_sack(self)
 
         for tsi in self._transaction:
             rpo = tsi.installed
