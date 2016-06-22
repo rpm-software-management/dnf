@@ -51,7 +51,7 @@ class SackVersion(object):
     def __ne__(self, other):
         return not (self == other)
 
-    def update(self, pkg, csum):
+    def _update(self, pkg, csum):
         self._num += 1
         self._chksum.update(str(pkg))
         if csum is not None:
@@ -89,7 +89,7 @@ class Sack(hawkey.Sack):
             csum = None
             if 'checksum_type' in ydbi and 'checksum_data' in ydbi:
                 csum = (ydbi.checksum_type, ydbi.checksum_data)
-            main.update(pkg, csum)
+            main._update(pkg, csum)
         return main
 
 
