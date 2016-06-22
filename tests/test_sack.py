@@ -29,7 +29,7 @@ class SackTest(support.TestCase):
         base = support.MockBase()
         sack = base.sack
         yumdb = mock.MagicMock()
-        version = base.sack.rpmdb_version(yumdb)
+        version = base.sack._rpmdb_version(yumdb)
         self.assertEqual(version._num, support.TOTAL_RPMDB_COUNT)
         self.assertEqual(version._chksum.hexdigest(), support.RPMDB_CHECKSUM)
 

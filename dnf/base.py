@@ -682,7 +682,7 @@ class Base(object):
             using_pkgs_pats = list(self.conf.history_record_packages)
             installed_query = self.sack.query().installed()
             using_pkgs = installed_query.filter(name=using_pkgs_pats).run()
-            rpmdbv = self.sack.rpmdb_version(self._yumdb)
+            rpmdbv = self.sack._rpmdb_version(self._yumdb)
             lastdbv = self.history.last()
             if lastdbv is not None:
                 lastdbv = lastdbv.end_rpmdbversion
@@ -878,7 +878,7 @@ class Base(object):
             yumdb_item.clean()
 
         if self._record_history():
-            rpmdbv = rpmdb_sack.rpmdb_version(self._yumdb)
+            rpmdbv = rpmdb_sack._rpmdb_version(self._yumdb)
             self.history.end(rpmdbv, 0)
         timer()
         self._trans_success = True

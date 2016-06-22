@@ -1545,7 +1545,7 @@ Transaction Summary
             if lastdbv is not None and tid.tid == lasttid:
                 #  If this is the last transaction, is good and it doesn't
                 # match the current rpmdb ... then mark it as bad.
-                rpmdbv = self.sack.rpmdb_version(self.yumdb)
+                rpmdbv = self.sack._rpmdb_version(self.yumdb)
                 if lastdbv != rpmdbv:
                     tid.altered_gt_rpmdb = True
             lastdbv = None

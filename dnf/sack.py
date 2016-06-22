@@ -76,7 +76,7 @@ class Sack(hawkey.Sack):
         excl = excl.difference(pkgq)
         self.add_excludes(excl)
 
-    def rpmdb_version(self, yumdb):
+    def _rpmdb_version(self, yumdb):
         pkgs = self.query().installed().run()
         main = SackVersion()
         for pkg in pkgs:
