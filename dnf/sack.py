@@ -68,7 +68,7 @@ class Sack(hawkey.Sack):
         """Factory function returning a DNF Query."""
         return dnf.query.Query(self)
 
-    def rpmdb_version(self, yumdb):
+    def _rpmdb_version(self, yumdb):
         pkgs = self.query().installed().run()
         main = SackVersion()
         for pkg in pkgs:
