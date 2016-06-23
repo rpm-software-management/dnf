@@ -70,8 +70,8 @@ logger = logging.getLogger("dnf")
 
 
 def repo_id_invalid(repo_id):
-    """Return index of an invalid character in the repo ID (if present).
-    :api"""
+    # :api
+    """Return index of an invalid character in the repo ID (if present)."""
     invalids = (i for i, c in enumerate(repo_id) if c not in _REPOID_CHARS)
     return dnf.util.first(invalids)
 
@@ -164,6 +164,7 @@ def download_payloads(payloads, drpm):
 
     return errs
 
+
 def update_saving(saving, payloads, errs):
     real, full = saving
     for pload in payloads:
@@ -237,7 +238,7 @@ class _NullKeyImport(dnf.callback.KeyImport):
 
 class Metadata(object):
     def __init__(self, res, handle):
-        self.fresh = False # :api
+        self.fresh = False  # :api
         self.repo_dct = res.yum_repo
         self.repomd_dct = res.yum_repomd
         self._mirrors = handle.mirrors[:]
@@ -310,6 +311,7 @@ class Metadata(object):
     @property
     def updateinfo_fn(self):
         return self.repo_dct.get('updateinfo')
+
 
 class PackagePayload(dnf.callback.Payload):
     def __init__(self, pkg, progress):
@@ -452,6 +454,7 @@ SYNC_ONLY_CACHE = 2
 # try the cache, if it is expired download new md.
 SYNC_TRY_CACHE = 3
 
+
 class Repo(dnf.conf.RepoConf):
     # :api
     DEFAULT_SYNC = SYNC_TRY_CACHE
@@ -463,10 +466,10 @@ class Repo(dnf.conf.RepoConf):
         self._pkgdir = None
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
         self.key_import = _NullKeyImport()
-        self.metadata = None # :api
+        self.metadata = None  # :api
         self.sync_strategy = self.DEFAULT_SYNC
         self.substitutions = dnf.conf.substitutions.Substitutions()
-        self.max_mirror_tries = 0 # try them all
+        self.max_mirror_tries = 0  # try them all
         self._handle = None
         self.hawkey_repo = self._init_hawkey_repo()
 
@@ -786,7 +789,8 @@ class Repo(dnf.conf.RepoConf):
         return self._handle
 
     def load(self):
-        """Load the metadata for this repo. :api
+        # :api
+        """Load the metadata for this repo.
 
         Depending on the configuration and the age and consistence of data
         available on the disk cache, either loads the metadata from the cache or
