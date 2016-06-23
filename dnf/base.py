@@ -915,7 +915,7 @@ class Base(object):
             if errors._irrecoverable:
                 raise dnf.exceptions.DownloadError(errors._irrecoverable)
 
-            remote_size = sum(errors.bandwidth_used(pload)
+            remote_size = sum(errors._bandwidth_used(pload)
                               for pload in payloads)
             saving = dnf.repo._update_saving((0, 0), payloads,
                                             errors._recoverable)
@@ -939,7 +939,7 @@ class Base(object):
                     raise dnf.exceptions.DownloadError(errors._irrecoverable)
 
                 remote_size += \
-                    sum(errors.bandwidth_used(pload) for pload in payloads)
+                    sum(errors._bandwidth_used(pload) for pload in payloads)
                 saving = dnf.repo._update_saving(saving, payloads, {})
 
         if callback_total is not None:

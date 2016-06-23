@@ -128,7 +128,7 @@ def _download_payloads(payloads, drpm):
         payload = tgt.cbdata
         pkg = payload.pkg
         if err == 'Already downloaded':
-            errs.skipped.add(pkg)
+            errs._skipped.add(pkg)
             continue
         pkg.repo.md_expire_cache()
         errs._irrecoverable[pkg] = [err]
@@ -153,7 +153,7 @@ class _DownloadErrors(object):
         self._val_irrecoverable = {}
         self._val_recoverable = {}
         self._fatal = None
-        self.skipped = set()
+        self._skipped = set()
 
     @property
     def _irrecoverable(self):
@@ -171,8 +171,8 @@ class _DownloadErrors(object):
     def _recoverable(self, new_dct):
         self._val_recoverable = new_dct
 
-    def bandwidth_used(self, pload):
-        if pload.pkg in self.skipped:
+    def _bandwidth_used(self, pload):
+        if pload.pkg in self._skipped:
             return 0
         return pload.download_size
 
