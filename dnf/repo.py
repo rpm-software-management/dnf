@@ -136,7 +136,7 @@ def _download_payloads(payloads, drpm):
     return errs
 
 
-def update_saving(saving, payloads, errs):
+def _update_saving(saving, payloads, errs):
     real, full = saving
     for pload in payloads:
         pkg = pload.pkg
