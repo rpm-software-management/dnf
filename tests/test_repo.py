@@ -423,13 +423,13 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
         with mock.patch('dnf.drpm.DeltaInfo.wait', wait):
             errs = dnf.repo._download_payloads([], drpm)
         self.assertEqual(errs.recoverable, {'step' : ['right']})
-        self.assertEmpty(errs.irrecoverable)
+        self.assertEmpty(errs._irrecoverable)
 
     def test_empty_transaction(self):
         drpm = dnf.drpm.DeltaInfo(None, None)
         errs = dnf.repo._download_payloads([], drpm)
         self.assertEmpty(errs.recoverable)
-        self.assertEmpty(errs.irrecoverable)
+        self.assertEmpty(errs._irrecoverable)
 
     def test_fatal_error(self):
         def raiser(_, failfast):
@@ -438,7 +438,7 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
         drpm = dnf.drpm.DeltaInfo(None, None)
         with mock.patch('librepo.download_packages', side_effect=raiser):
             errs = dnf.repo._download_payloads([], drpm)
-        self.assertEqual(errs.irrecoverable, {'' : ['hit']})
+        self.assertEqual(errs._irrecoverable, {'' : ['hit']})
         self.assertEmpty(errs.recoverable)
 
     # twist Repo to think it's remote:
@@ -454,7 +454,7 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
         drpm = dnf.drpm.DeltaInfo(None, None)
         errs = dnf.repo._download_payloads([pload], drpm)
         self.assertEmpty(errs.recoverable)
-        self.assertEmpty(errs.irrecoverable)
+        self.assertEmpty(errs._irrecoverable)
         path = os.path.join(repo.cachedir, 'packages/tour-4-4.noarch.rpm')
         self.assertFile(path)
 

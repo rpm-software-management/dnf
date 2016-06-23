@@ -116,7 +116,7 @@ def _download_payloads(payloads, drpm):
     try:
         librepo.download_packages(targets, failfast=True)
     except librepo.LibrepoException as e:
-        errs.fatal = e.args[1] or '<unspecified librepo error>'
+        errs._fatal = e.args[1] or '<unspecified librepo error>'
     drpm.wait()
 
     # process downloading errors
@@ -131,7 +131,7 @@ def _download_payloads(payloads, drpm):
             errs.skipped.add(pkg)
             continue
         pkg.repo.md_expire_cache()
-        errs.irrecoverable[pkg] = [err]
+        errs._irrecoverable[pkg] = [err]
 
     return errs
 
@@ -150,17 +150,17 @@ def _update_saving(saving, payloads, errs):
 
 class _DownloadErrors(object):
     def __init__(self):
-        self._irrecoverable = {}
+        self._val_irrecoverable = {}
         self._recoverable = {}
-        self.fatal = None
+        self._fatal = None
         self.skipped = set()
 
     @property
-    def irrecoverable(self):
-        if self._irrecoverable:
-            return self._irrecoverable
-        if self.fatal:
-            return {'': [self.fatal]}
+    def _irrecoverable(self):
+        if self._val_irrecoverable:
+            return self._val_irrecoverable
+        if self._fatal:
+            return {'': [self._fatal]}
         return {}
 
     @property
