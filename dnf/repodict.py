@@ -75,9 +75,6 @@ class RepoDict(dict):
 
         self._enable_sub_repos(source_name)
 
-    def enabled(self):
-        return [r for r in self.values() if r.enabled]
-
     def get_matching(self, key):
         # :api
         if dnf.util.is_glob_pattern(key):
