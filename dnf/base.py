@@ -903,7 +903,7 @@ class Base(object):
                            if not po._is_local_pkg()]
             self._add_tempfiles([pkg.localPkg() for pkg in remote_pkgs])
 
-            payloads = [dnf.repo.pkg2payload(pkg, progress, drpm.delta_factory,
+            payloads = [dnf.repo._pkg2payload(pkg, progress, drpm.delta_factory,
                                              dnf.repo.RPMPayload)
                         for pkg in remote_pkgs]
 
@@ -927,7 +927,7 @@ class Base(object):
 
                 remaining_pkgs = [pkg for pkg in errors.recoverable]
                 payloads = \
-                    [dnf.repo.pkg2payload(pkg, progress, dnf.repo.RPMPayload)
+                    [dnf.repo._pkg2payload(pkg, progress, dnf.repo.RPMPayload)
                      for pkg in remaining_pkgs]
                 est_remote_size = sum(pload.download_size
                                       for pload in payloads)

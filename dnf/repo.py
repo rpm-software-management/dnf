@@ -96,7 +96,7 @@ def _subst2tuples(subst_dct):
     return [(k, v) for (k, v) in subst_dct.items()]
 
 
-def pkg2payload(pkg, progress, *factories):
+def _pkg2payload(pkg, progress, *factories):
     for fn in factories:
         pload = fn(pkg, progress)
         if pload is not None:
