@@ -114,10 +114,10 @@ class DownloadErrorsTest(support.TestCase):
         pkg2.downloadsize = 1
         pl1 = dnf.repo.RPMPayload(pkg1, None)
         pl2 = dnf.repo.RPMPayload(pkg2, None)
-        errors.skipped.add(pl2.pkg)
+        errors._skipped.add(pl2.pkg)
 
-        self.assertEqual(errors.bandwidth_used(pl1), 10)
-        self.assertEqual(errors.bandwidth_used(pl2), 0)
+        self.assertEqual(errors._bandwidth_used(pl1), 10)
+        self.assertEqual(errors._bandwidth_used(pl2), 0)
 
 
 class HandleTest(support.TestCase):
