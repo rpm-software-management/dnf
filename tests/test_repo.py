@@ -421,13 +421,13 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
 
         drpm = dnf.drpm.DeltaInfo(None, None)
         with mock.patch('dnf.drpm.DeltaInfo.wait', wait):
-            errs = dnf.repo.download_payloads([], drpm)
+            errs = dnf.repo._download_payloads([], drpm)
         self.assertEqual(errs.recoverable, {'step' : ['right']})
         self.assertEmpty(errs.irrecoverable)
 
     def test_empty_transaction(self):
         drpm = dnf.drpm.DeltaInfo(None, None)
-        errs = dnf.repo.download_payloads([], drpm)
+        errs = dnf.repo._download_payloads([], drpm)
         self.assertEmpty(errs.recoverable)
         self.assertEmpty(errs.irrecoverable)
 
@@ -437,7 +437,7 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
 
         drpm = dnf.drpm.DeltaInfo(None, None)
         with mock.patch('librepo.download_packages', side_effect=raiser):
-            errs = dnf.repo.download_payloads([], drpm)
+            errs = dnf.repo._download_payloads([], drpm)
         self.assertEqual(errs.irrecoverable, {'' : ['hit']})
         self.assertEmpty(errs.recoverable)
 
@@ -452,7 +452,7 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
 
         pload = dnf.repo.RPMPayload(pkg, progress)
         drpm = dnf.drpm.DeltaInfo(None, None)
-        errs = dnf.repo.download_payloads([pload], drpm)
+        errs = dnf.repo._download_payloads([pload], drpm)
         self.assertEmpty(errs.recoverable)
         self.assertEmpty(errs.irrecoverable)
         path = os.path.join(repo.cachedir, 'packages/tour-4-4.noarch.rpm')

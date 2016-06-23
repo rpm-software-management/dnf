@@ -104,7 +104,7 @@ def _pkg2payload(pkg, progress, *factories):
     raise ValueError('no matching payload factory for %s' % pkg)
 
 
-def download_payloads(payloads, drpm):
+def _download_payloads(payloads, drpm):
     # download packages
     def _download_sort_key(payload):
         return not hasattr(payload, 'delta')
