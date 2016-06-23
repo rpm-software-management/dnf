@@ -120,7 +120,7 @@ def _download_payloads(payloads, drpm):
     drpm.wait()
 
     # process downloading errors
-    errs.recoverable = drpm.err.copy()
+    errs._recoverable = drpm.err.copy()
     for tgt in targets:
         err = tgt.err
         if err is None or err.startswith('Not finished'):
@@ -151,7 +151,7 @@ def _update_saving(saving, payloads, errs):
 class _DownloadErrors(object):
     def __init__(self):
         self._val_irrecoverable = {}
-        self._recoverable = {}
+        self._val_recoverable = {}
         self._fatal = None
         self.skipped = set()
 
@@ -164,12 +164,12 @@ class _DownloadErrors(object):
         return {}
 
     @property
-    def recoverable(self):
-        return self._recoverable
+    def _recoverable(self):
+        return self._val_recoverable
 
-    @recoverable.setter
-    def recoverable(self, new_dct):
-        self._recoverable = new_dct
+    @_recoverable.setter
+    def _recoverable(self, new_dct):
+        self._val_recoverable = new_dct
 
     def bandwidth_used(self, pload):
         if pload.pkg in self.skipped:
