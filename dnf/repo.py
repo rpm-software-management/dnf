@@ -104,35 +104,6 @@ def pkg2payload(pkg, progress, *factories):
     raise ValueError('no matching payload factory for %s' % pkg)
 
 
-class _DownloadErrors(object):
-    def __init__(self):
-        self._irrecoverable = {}
-        self._recoverable = {}
-        self.fatal = None
-        self.skipped = set()
-
-    @property
-    def irrecoverable(self):
-        if self._irrecoverable:
-            return self._irrecoverable
-        if self.fatal:
-            return {'': [self.fatal]}
-        return {}
-
-    @property
-    def recoverable(self):
-        return self._recoverable
-
-    @recoverable.setter
-    def recoverable(self, new_dct):
-        self._recoverable = new_dct
-
-    def bandwidth_used(self, pload):
-        if pload.pkg in self.skipped:
-            return 0
-        return pload.download_size
-
-
 def download_payloads(payloads, drpm):
     # download packages
     def _download_sort_key(payload):
@@ -175,6 +146,35 @@ def update_saving(saving, payloads, errs):
         real += pload.download_size
         full += pload.full_size
     return real, full
+
+
+class _DownloadErrors(object):
+    def __init__(self):
+        self._irrecoverable = {}
+        self._recoverable = {}
+        self.fatal = None
+        self.skipped = set()
+
+    @property
+    def irrecoverable(self):
+        if self._irrecoverable:
+            return self._irrecoverable
+        if self.fatal:
+            return {'': [self.fatal]}
+        return {}
+
+    @property
+    def recoverable(self):
+        return self._recoverable
+
+    @recoverable.setter
+    def recoverable(self, new_dct):
+        self._recoverable = new_dct
+
+    def bandwidth_used(self, pload):
+        if pload.pkg in self.skipped:
+            return 0
+        return pload.download_size
 
 
 class _DetailedLibrepoError(Exception):
