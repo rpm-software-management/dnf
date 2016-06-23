@@ -37,9 +37,9 @@ class TestRepoDict(TestCase):
         self.full_set = {self.x, self.xx, self.y, self.z}
 
     def test_any_enabled(self):
-        self.assertTrue(self.repos.any_enabled())
+        self.assertTrue(self.repos._any_enabled())
         self.repos.get_matching("*").disable()
-        self.assertFalse(self.repos.any_enabled())
+        self.assertFalse(self.repos._any_enabled())
 
     def test_enabled(self):
         self.assertSequenceEqual(self.repos.enabled(),

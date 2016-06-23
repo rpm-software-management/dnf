@@ -45,7 +45,7 @@ class RepoDict(dict):
         # :api
         return dnf.util.MultiCallList(self.values())
 
-    def any_enabled(self):
+    def _any_enabled(self):
         return not dnf.util.empty(self.iter_enabled())
 
     def _enable_sub_repos(self, sub_name_fn):
