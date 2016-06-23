@@ -85,7 +85,7 @@ def checkEnabledRepo(base, possible_local_files=[]):
     :param extcmds: a list of arguments passed to *basecmd*
     :raises: :class:`cli.CliError`:
     """
-    if base.repos.any_enabled():
+    if base.repos._any_enabled():
         return
 
     for lfile in possible_local_files:
