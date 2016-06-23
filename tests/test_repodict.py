@@ -41,10 +41,6 @@ class TestRepoDict(TestCase):
         self.repos.get_matching("*").disable()
         self.assertFalse(self.repos._any_enabled())
 
-    def test_enabled(self):
-        self.assertSequenceEqual(self.repos.enabled(),
-                                 list(self.repos.iter_enabled()))
-
     def test_get_matching(self):
         self.assertEqual(self.repos['x'], self.x)
         self.assertCountEqual(self.repos.get_matching('*'), self.full_set)
