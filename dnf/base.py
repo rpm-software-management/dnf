@@ -918,7 +918,7 @@ class Base(object):
 
             remote_size = sum(errors.bandwidth_used(pload)
                               for pload in payloads)
-            saving = dnf.repo.update_saving((0, 0), payloads,
+            saving = dnf.repo._update_saving((0, 0), payloads,
                                             errors.recoverable)
 
             if errors.recoverable:
@@ -941,7 +941,7 @@ class Base(object):
 
                 remote_size += \
                     sum(errors.bandwidth_used(pload) for pload in payloads)
-                saving = dnf.repo.update_saving(saving, payloads, {})
+                saving = dnf.repo._update_saving(saving, payloads, {})
 
         if callback_total is not None:
             callback_total(remote_size, beg_download)

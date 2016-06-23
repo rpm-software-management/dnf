@@ -479,7 +479,7 @@ class SavingTest(unittest.TestCase):
         pload2 = dnf.drpm.DeltaPayload(None, mock.Mock(downloadsize=5), pkg,
                                        progress)
         saving = (5, 10)
-        saving = dnf.repo.update_saving(saving, (pload1, pload2), {})
+        saving = dnf.repo._update_saving(saving, (pload1, pload2), {})
         self.assertEqual(saving, (15, 23))
 
     def test_update_saving_with_err(self):
@@ -490,5 +490,5 @@ class SavingTest(unittest.TestCase):
         pload = dnf.drpm.DeltaPayload(None, mock.Mock(downloadsize=5), pkg,
                                       progress)
         saving = (5, 10)
-        saving = dnf.repo.update_saving(saving, (pload,), {pkg:'failed'})
+        saving = dnf.repo._update_saving(saving, (pload,), {pkg:'failed'})
         self.assertEqual(saving, (10, 10))
