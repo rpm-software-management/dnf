@@ -181,8 +181,8 @@ class RepoListCommand(commands.Command):
                     out += [self.output.fmtKeyValFill(_("Repo-tags    : "),
                                                       ", ".join(sorted(tags)))]
 
-                if md and md.distro_tags:
-                    for (distro, tags) in md.distro_tags.items():
+                if md and md._distro_tags:
+                    for (distro, tags) in md._distro_tags.items():
                         out += [self.output.fmtKeyValFill(
                             _("Repo-distro-tags: "),
                             "[%s]: %s" % (distro, ", ".join(sorted(tags))))]

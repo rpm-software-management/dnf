@@ -256,7 +256,7 @@ class Metadata(object):
         return self._repomd_dct.get('content_tags')
 
     @property
-    def distro_tags(self):
+    def _distro_tags(self):
         pairs = self._repomd_dct.get('distro_tags', [])
         return {k:v for (k, v) in pairs}
 
