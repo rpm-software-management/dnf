@@ -232,7 +232,7 @@ class _Handle(librepo.Handle):
 
 
 class _NullKeyImport(dnf.callback.KeyImport):
-    def confirm(self, _keyinfo):
+    def _confirm(self, _keyinfo):
         return True
 
 
