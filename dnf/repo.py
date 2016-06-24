@@ -239,7 +239,7 @@ class _NullKeyImport(dnf.callback.KeyImport):
 class Metadata(object):
     def __init__(self, res, handle):
         self.fresh = False  # :api
-        self.repo_dct = res.yum_repo
+        self._repo_dct = res.yum_repo
         self.repomd_dct = res.yum_repomd
         self._mirrors = handle.mirrors[:]
 
@@ -249,7 +249,7 @@ class Metadata(object):
 
     @property
     def comps_fn(self):
-        return self.repo_dct.get("group_gz") or self.repo_dct.get("group")
+        return self._repo_dct.get("group_gz") or self._repo_dct.get("group")
 
     @property
     def content_tags(self):
@@ -265,13 +265,13 @@ class Metadata(object):
 
     def file_timestamp(self, what):
         try:
-            return dnf.util.file_timestamp(self.repo_dct[what])
+            return dnf.util.file_timestamp(self._repo_dct[what])
         except OSError as e:
             raise dnf.exceptions.MetadataError(ucd(e))
 
     @property
     def filelists_fn(self):
-        return self.repo_dct.get('filelists')
+        return self._repo_dct.get('filelists')
 
     @property
     def mirrors(self):
@@ -287,18 +287,18 @@ class Metadata(object):
 
     @property
     def presto_fn(self):
-        return self.repo_dct.get('prestodelta')
+        return self._repo_dct.get('prestodelta')
 
     @property
     def primary_fn(self):
-        return self.repo_dct.get('primary')
+        return self._repo_dct.get('primary')
 
     def reset_age(self):
         dnf.util.touch(self.primary_fn, no_create=True)
 
     @property
     def repomd_fn(self):
-        return self.repo_dct.get('repomd')
+        return self._repo_dct.get('repomd')
 
     @property
     def revision(self):
@@ -310,7 +310,7 @@ class Metadata(object):
 
     @property
     def updateinfo_fn(self):
-        return self.repo_dct.get('updateinfo')
+        return self._repo_dct.get('updateinfo')
 
 
 class PackagePayload(dnf.callback.Payload):
@@ -737,7 +737,7 @@ class Repo(dnf.conf.RepoConf):
             return False
         if not self.metalink:
             return False
-        repomd_fn = self.metadata.repo_dct['repomd']
+        repomd_fn = self.metadata._repo_dct['repomd']
         with dnf.util.tmpdir() as tmpdir, open(repomd_fn) as repomd:
             handle = self._handle_new_remote(tmpdir)
             handle.fetchmirrors = True
