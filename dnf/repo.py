@@ -248,7 +248,7 @@ class Metadata(object):
         return self.file_age('primary')
 
     @property
-    def comps_fn(self):
+    def _comps_fn(self):
         return self._repo_dct.get("group_gz") or self._repo_dct.get("group")
 
     @property

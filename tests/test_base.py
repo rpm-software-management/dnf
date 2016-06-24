@@ -217,7 +217,7 @@ class CompsTest(support.TestCase):
     @mock.patch('dnf.yum.misc.repo_gen_decompress', lambda x, y: x)
     def test_read_comps(self):
         base = support.MockBase("main")
-        base.repos['main'].metadata = mock.Mock(comps_fn=support.COMPS_PATH)
+        base.repos['main'].metadata = mock.Mock(_comps_fn=support.COMPS_PATH)
         base.read_comps()
         groups = base.comps.groups
         self.assertLength(groups, support.TOTAL_GROUPS)

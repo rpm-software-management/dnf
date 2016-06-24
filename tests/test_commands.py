@@ -87,7 +87,7 @@ class InstallCommandTest(support.ResultTestCase):
         """Prepare the test fixture."""
         super(InstallCommandTest, self).setUp()
         base = support.BaseCliStub('main')
-        base.repos['main'].metadata = mock.Mock(comps_fn=support.COMPS_PATH)
+        base.repos['main'].metadata = mock.Mock(_comps_fn=support.COMPS_PATH)
         base.init_sack()
         self._cmd = dnf.cli.commands.install.InstallCommand(base.mock_cli())
 
@@ -478,7 +478,7 @@ class RepoPkgsInstallSubCommandTest(support.ResultTestCase):
         """Prepare the test fixture."""
         super(RepoPkgsInstallSubCommandTest, self).setUp()
         base = support.BaseCliStub('main', 'third_party')
-        base.repos['main'].metadata = mock.Mock(comps_fn=support.COMPS_PATH)
+        base.repos['main'].metadata = mock.Mock(_comps_fn=support.COMPS_PATH)
         base.repos['third_party'].enablegroups = False
         base.init_sack()
         self.cli = base.mock_cli()
