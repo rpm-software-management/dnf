@@ -84,11 +84,11 @@ def _user_pass_str(user, password):
     return '%s:%s' % (user, password)
 
 
-def _metalink_path(dirname):
+def _priv_metalink_path(dirname):
     return os.path.join(dirname, _METALINK_FILENAME)
 
 
-def _mirrorlist_path(dirname):
+def _priv_mirrorlist_path(dirname):
     return os.path.join(dirname, _MIRRORLIST_FILENAME)
 
 
@@ -215,12 +215,12 @@ class _Handle(librepo.Handle):
         return os.path.join(self.destdir, _METADATA_RELATIVE_DIR)
 
     @property
-    def metalink_path(self):
-        return _metalink_path(self.destdir)
+    def _metalink_path(self):
+        return _priv_metalink_path(self.destdir)
 
     @property
-    def mirrorlist_path(self):
-        return _mirrorlist_path(self.destdir)
+    def _mirrorlist_path(self):
+        return _priv_mirrorlist_path(self.destdir)
 
     def perform(self, result=None):
         try:
@@ -537,11 +537,11 @@ class Repo(dnf.conf.RepoConf):
 
     @property
     def metalink_path(self):
-        return _metalink_path(self.cachedir)
+        return _priv_metalink_path(self.cachedir)
 
     @property
     def mirrorlist_path(self):
-        return _mirrorlist_path(self.cachedir)
+        return _priv_mirrorlist_path(self.cachedir)
 
     @property
     def pkgdir(self):
@@ -696,9 +696,9 @@ class Repo(dnf.conf.RepoConf):
         dnf.util.rm_rf(self.mirrorlist_path)
         shutil.move(handle._metadata_dir, self.metadata_dir)
         if handle.metalink:
-            shutil.move(handle.metalink_path, self.metalink_path)
+            shutil.move(handle._metalink_path, self.metalink_path)
         elif handle.mirrorlist:
-            shutil.move(handle.mirrorlist_path, self.mirrorlist_path)
+            shutil.move(handle._mirrorlist_path, self.mirrorlist_path)
 
     def _reset_metadata_expired(self):
         if self._expired:
