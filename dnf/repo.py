@@ -202,7 +202,7 @@ class _Handle(librepo.Handle):
             (self.metalinkurl, self.mirrorlisturl, self.urls)
 
     @classmethod
-    def new_local(cls, subst_dct, gpgcheck, max_mirror_tries, cachedir):
+    def _new_local(cls, subst_dct, gpgcheck, max_mirror_tries, cachedir):
         h = cls(gpgcheck, max_mirror_tries)
         h.varsub = _subst2tuples(subst_dct)
         h.destdir = cachedir
@@ -615,7 +615,7 @@ class Repo(dnf.conf.RepoConf):
             return self._handle_load_core(handle)
 
     def _handle_new_local(self, destdir):
-        return _Handle.new_local(self.substitutions, self.repo_gpgcheck,
+        return _Handle._new_local(self.substitutions, self.repo_gpgcheck,
                                  self.max_mirror_tries, destdir)
 
     def _handle_new_pkg_download(self):
