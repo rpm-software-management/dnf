@@ -718,7 +718,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
         if self.beg_timestamp > obj.beg_timestamp:
             self.beg_timestamp    = obj.beg_timestamp
             self.beg_rpmdbversion = obj.beg_rpmdbversion
-        if self.end_timestamp < obj.end_timestamp:
+        if obj.end_timestamp and self.end_timestamp < obj.end_timestamp:
             self.end_timestamp    = obj.end_timestamp
             self.end_rpmdbversion = obj.end_rpmdbversion
 
