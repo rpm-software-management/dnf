@@ -240,7 +240,7 @@ class Metadata(object):
     def __init__(self, res, handle):
         self.fresh = False  # :api
         self._repo_dct = res.yum_repo
-        self.repomd_dct = res.yum_repomd
+        self._repomd_dct = res.yum_repomd
         self._mirrors = handle.mirrors[:]
 
     @property
@@ -253,11 +253,11 @@ class Metadata(object):
 
     @property
     def content_tags(self):
-        return self.repomd_dct.get('content_tags')
+        return self._repomd_dct.get('content_tags')
 
     @property
     def distro_tags(self):
-        pairs = self.repomd_dct.get('distro_tags', [])
+        pairs = self._repomd_dct.get('distro_tags', [])
         return {k:v for (k, v) in pairs}
 
     def file_age(self, what):
@@ -281,7 +281,7 @@ class Metadata(object):
     def md_timestamp(self):
         """Gets the highest timestamp of all metadata types."""
         timestamps = [content.get('timestamp')
-                      for (_, content) in self.repomd_dct.items()
+                      for (_, content) in self._repomd_dct.items()
                       if isinstance(content, dict)]
         return max(timestamps)
 
@@ -302,7 +302,7 @@ class Metadata(object):
 
     @property
     def revision(self):
-        return self.repomd_dct.get('revision')
+        return self._repomd_dct.get('revision')
 
     @property
     def timestamp(self):
