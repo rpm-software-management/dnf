@@ -222,7 +222,7 @@ class _Handle(librepo.Handle):
     def _mirrorlist_path(self):
         return _priv_mirrorlist_path(self.destdir)
 
-    def perform(self, result=None):
+    def _perform(self, result=None):
         try:
             return super(_Handle, self).perform(result)
         except librepo.LibrepoException as exc:
@@ -605,7 +605,7 @@ class Repo(dnf.conf.RepoConf):
     def _handle_load_core(self, handle):
         if handle.progresscb:
             self._md_pload.start(self.name)
-        result = handle.perform()
+        result = handle._perform()
         if handle.progresscb:
             self._md_pload.end()
         return Metadata(result, handle)
@@ -741,7 +741,7 @@ class Repo(dnf.conf.RepoConf):
         with dnf.util.tmpdir() as tmpdir, open(repomd_fn) as repomd:
             handle = self._handle_new_remote(tmpdir)
             handle.fetchmirrors = True
-            handle.perform()
+            handle._perform()
             if handle.metalink is None:
                 logger.debug("reviving: repo '%s' skipped, no metalink.", self.id)
                 return False
