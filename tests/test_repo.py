@@ -408,7 +408,7 @@ class LocalRepoTest(support.TestCase):
         lr_exc = librepo.LibrepoException(
             librepo.LRE_CURL, 'Error HTTP/FTP status code: 404', 'Curl error.')
         exc = dnf.repo._DetailedLibrepoError(lr_exc, url)
-        new_remote_m().perform = mock.Mock(side_effect=exc)
+        new_remote_m()._perform = mock.Mock(side_effect=exc)
         with mock.patch('dnf.repo.Repo.cachedir', REPOS + "/rpm"):
             self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
 
