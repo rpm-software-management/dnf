@@ -412,7 +412,7 @@ class Base(object):
                 continue
             if not repo.metadata:
                 continue
-            comps_fn = repo.metadata.comps_fn
+            comps_fn = repo.metadata._comps_fn
             if comps_fn is None:
                 continue
 
