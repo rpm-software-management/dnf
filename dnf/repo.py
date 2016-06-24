@@ -245,7 +245,7 @@ class Metadata(object):
 
     @property
     def age(self):
-        return self.file_age('primary')
+        return self._file_age('primary')
 
     @property
     def _comps_fn(self):
@@ -260,7 +260,7 @@ class Metadata(object):
         pairs = self._repomd_dct.get('distro_tags', [])
         return {k:v for (k, v) in pairs}
 
-    def file_age(self, what):
+    def _file_age(self, what):
         return time.time() - self.file_timestamp(what)
 
     def file_timestamp(self, what):
