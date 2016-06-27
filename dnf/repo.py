@@ -270,7 +270,7 @@ class Metadata(object):
             raise dnf.exceptions.MetadataError(ucd(e))
 
     @property
-    def filelists_fn(self):
+    def _filelists_fn(self):
         return self._repo_dct.get('filelists')
 
     @property
@@ -488,7 +488,7 @@ class Repo(dnf.conf.RepoConf):
 
     @property
     def filelists_fn(self):
-        return self.metadata.filelists_fn
+        return self.metadata._filelists_fn
 
     @property
     def local(self):
