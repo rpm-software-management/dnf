@@ -339,11 +339,6 @@ class PackagePayload(dnf.callback.Payload):
         self.progress.progress(self, done)
 
     @property
-    def error(self):
-        """Error obtaining the Payload."""
-        pass
-
-    @property
     def _full_size(self):
         return self.download_size
 
