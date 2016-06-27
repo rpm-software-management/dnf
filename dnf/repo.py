@@ -309,7 +309,7 @@ class Metadata(object):
         return self._file_timestamp('primary')
 
     @property
-    def updateinfo_fn(self):
+    def _updateinfo_fn(self):
         return self._repo_dct.get('updateinfo')
 
 
@@ -575,7 +575,7 @@ class Repo(dnf.conf.RepoConf):
 
     @property
     def updateinfo_fn(self):
-        return self.metadata.updateinfo_fn
+        return self.metadata._updateinfo_fn
 
     def __lt__(self, other):
         return self.id < other.id
