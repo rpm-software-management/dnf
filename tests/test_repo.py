@@ -328,7 +328,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         repo = self.repo
         repo.mirrorlist = 'http://anything'
         repo.metadata = mock.Mock()
-        repo.metadata.mirrors = ['resolved']
+        repo.metadata._mirrors = ['resolved']
         h = repo._handle_new_pkg_download()
         self.assertIsNone(h.mirrorlist)
 
@@ -354,8 +354,8 @@ class LocalRepoTest(support.TestCase):
         self.repo.md_only_cached = True
         with mock.patch('dnf.repo.Repo.cachedir', REPOS + "/rpm"):
             self.assertFalse(self.repo.load())  # got a cache
-        self.assertLength(self.repo.metadata.mirrors, 4)
-        self.assertEqual(self.repo.metadata.mirrors[0], 'http://many/x86_64')
+        self.assertLength(self.repo.metadata._mirrors, 4)
+        self.assertEqual(self.repo.metadata._mirrors[0], 'http://many/x86_64')
 
     @mock.patch.object(dnf.repo.Metadata, 'reset_age')
     @mock.patch('dnf.repo.Repo._handle_new_remote')

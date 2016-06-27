@@ -208,8 +208,8 @@ class RepoListCommand(commands.Command):
                 if baseurls:
                     out += [self.output.fmtKeyValFill(_("Repo-baseurl : "),
                                                       ", ".join(baseurls))]
-                elif enabled and md.mirrors:
-                    url = "%s (%d more)" % (md.mirrors[0], len(md.mirrors) - 1)
+                elif enabled and md._mirrors:
+                    url = "%s (%d more)" % (md._mirrors[0], len(md._mirrors) - 1)
                     out += [self.output.fmtKeyValFill(_("Repo-baseurl : "), url)]
 
                 expire = _expire_str(repo, md)

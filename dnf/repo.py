@@ -241,7 +241,7 @@ class Metadata(object):
         self.fresh = False  # :api
         self._repo_dct = res.yum_repo
         self._repomd_dct = res.yum_repomd
-        self._mirrors = handle.mirrors[:]
+        self._priv_mirrors = handle.mirrors[:]
 
     @property
     def age(self):
@@ -274,8 +274,8 @@ class Metadata(object):
         return self._repo_dct.get('filelists')
 
     @property
-    def mirrors(self):
-        return self._mirrors
+    def _mirrors(self):
+        return self._priv_mirrors
 
     @property
     def md_timestamp(self):
@@ -639,7 +639,7 @@ class Repo(dnf.conf.RepoConf):
                          os.path.join(self.basecachedir, 'fastestmirror.cache'))
             else:
                 # use already resolved mirror list
-                h.setopt(librepo.LRO_URLS, self.metadata.mirrors)
+                h.setopt(librepo.LRO_URLS, self.metadata._mirrors)
         elif self.baseurl:
             h.setopt(librepo.LRO_URLS, self.baseurl)
         else:
