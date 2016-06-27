@@ -110,7 +110,7 @@ def _download_payloads(payloads, drpm):
         return not hasattr(payload, 'delta')
 
     drpm.err.clear()
-    targets = [pload.librepo_target()
+    targets = [pload._librepo_target()
                for pload in sorted(payloads, key=_download_sort_key)]
     errs = _DownloadErrors()
     try:
@@ -347,7 +347,7 @@ class PackagePayload(dnf.callback.Payload):
     def _full_size(self):
         return self.download_size
 
-    def librepo_target(self):
+    def _librepo_target(self):
         pkg = self.pkg
         pkgdir = pkg.repo.pkgdir
         dnf.util.ensure_dir(pkgdir)
