@@ -290,11 +290,11 @@ class Metadata(object):
         return self._repo_dct.get('prestodelta')
 
     @property
-    def primary_fn(self):
+    def _primary_fn(self):
         return self._repo_dct.get('primary')
 
     def reset_age(self):
-        dnf.util.touch(self.primary_fn, no_create=True)
+        dnf.util.touch(self._primary_fn, no_create=True)
 
     @property
     def repomd_fn(self):
@@ -563,7 +563,7 @@ class Repo(dnf.conf.RepoConf):
 
     @property
     def primary_fn(self):
-        return self.metadata.primary_fn
+        return self.metadata._primary_fn
 
     @property
     def pubring_dir(self):
