@@ -34,7 +34,7 @@ logger = logging.getLogger('dnf')
 
 
 def _expire_str(repo, md):
-    last = time.ctime(md.timestamp) if md else _("unknown")
+    last = time.ctime(md._timestamp) if md else _("unknown")
     if repo.metadata_expire <= -1:
         return _("Never (last: %s)") % last
     elif not repo.metadata_expire:
@@ -157,7 +157,7 @@ class RepoListCommand(commands.Command):
             if not verbose:
                 rid = repo.id
                 if enabled and repo.metalink:
-                    mdts = repo.metadata.timestamp
+                    mdts = repo.metadata._timestamp
                     if mdts > repo.metadata._md_timestamp:
                         rid = '*' + rid
                 cols.append((rid, repo.name,
@@ -198,7 +198,7 @@ class RepoListCommand(commands.Command):
                     out += [self.output.fmtKeyValFill(_("Repo-metalink: "),
                                                       repo.metalink)]
                     if enabled:
-                        ts = repo.metadata.timestamp
+                        ts = repo.metadata._timestamp
                         out += [self.output.fmtKeyValFill(_("  Updated    : "),
                                                           time.ctime(ts))]
                 elif repo.mirrorlist:
