@@ -173,9 +173,9 @@ class RepoListCommand(commands.Command):
                 if force_show or extcmds:
                     out += [self.output.fmtKeyValFill(_("Repo-status  : "),
                                                       ui_enabled)]
-                if md and md.revision is not None:
+                if md and md._revision is not None:
                     out += [self.output.fmtKeyValFill(_("Repo-revision: "),
-                                                      md.revision)]
+                                                      md._revision)]
                 if md and md.content_tags:
                     tags = md.content_tags
                     out += [self.output.fmtKeyValFill(_("Repo-tags    : "),
