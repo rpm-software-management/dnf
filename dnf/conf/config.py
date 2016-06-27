@@ -69,10 +69,10 @@ class Option(object):
         written to config file.
     """
     def __init__(self, default=None, parent=None, runtimeonly=False):
-        self.parent = parent
-        self.runtimeonly = runtimeonly
-        self.actual = None
-        self.default = self._make_value(default, PRIO_DEFAULT)
+        self._parent = parent
+        self._runtimeonly = runtimeonly
+        self._actual = None
+        self._default = self._make_value(default, PRIO_DEFAULT)
 
     def _make_value(self, value, priority):
         if isinstance(value, basestring):
@@ -88,34 +88,34 @@ class Option(object):
 
     def _get(self):
         """Get option's value, if not set return parent's value."""
-        if self.actual:
-            return self.actual.value
-        if self.parent:
-            return self.parent._get()
-        return self.default.value
+        if self._actual:
+            return self._actual.value
+        if self._parent:
+            return self._parent._get()
+        return self._default.value
 
     def _get_priority(self):
         """Get option's priority, if not set return parent's priority."""
-        if self.actual:
-            return self.actual.priority
-        if self.parent:
-            return self.parent._get_priority()
-        return self.default.priority
+        if self._actual:
+            return self._actual.priority
+        if self._parent:
+            return self._parent._get_priority()
+        return self._default.priority
 
     def _set(self, value, priority=PRIO_RUNTIME):
         """Set option's value if priority is equal or higher
            than curent priority."""
         value = self._make_value(value, priority)
-        if self._is_default() or self.actual.priority <= value.priority:
-            self.actual = value
+        if self._is_default() or self._actual.priority <= value.priority:
+            self._actual = value
 
     def _is_default(self):
         """Was value changed from default?"""
-        return self.actual is None
+        return self._actual is None
 
     def _is_runtimeonly(self):
         """Was value changed from default?"""
-        return self.runtimeonly
+        return self._runtimeonly
 
     def _parse(self, strval):
         """Parse the string value to the option's native value."""
@@ -124,8 +124,8 @@ class Option(object):
 
     def _tostring(self):
         """Convert the option's native actual value to a string."""
-        val = ('' if self._is_default() or self.actual.value is None
-               else self.actual.value)
+        val = ('' if self._is_default() or self._actual.value is None
+               else self._actual.value)
         return str(val)
 
 
@@ -134,7 +134,7 @@ def inherit(option):
        inherited instance has the same properties and parent set to
        the input option."""
     clone = copy.copy(option)
-    clone.parent = option
+    clone._parent = option
     return clone
 
 
@@ -166,7 +166,7 @@ class ListOption(Option):
 
     def _tostring(self):
         val = ('' if self._is_default()
-               else '\n '.join(self.actual.value))
+               else '\n '.join(self._actual.value))
         return val
 
 
@@ -175,8 +175,8 @@ class UrlOption(Option):
 
     def __init__(self, default=None, parent=None, runtimeonly=False,
                  schemes=('http', 'ftp', 'file', 'https'), allow_none=False):
-        self.schemes = schemes
-        self.allow_none = allow_none
+        self._schemes = schemes
+        self._allow_none = allow_none
         super(UrlOption, self).__init__(default, parent, runtimeonly)
 
     def _parse(self, url):
@@ -186,26 +186,26 @@ class UrlOption(Option):
 
         # Handle the "_none_" special case
         if url.lower() == '_none_':
-            if self.allow_none:
+            if self._allow_none:
                 return None
             else:
                 raise ValueError('"_none_" is not a valid value')
 
         # Check that scheme is valid
         s = dnf.pycomp.urlparse.urlparse(url)[0]
-        if s not in self.schemes:
+        if s not in self._schemes:
             raise ValueError('URL must be %s not "%s"' % (self._schemelist(), s))
 
         return url
 
     def _schemelist(self):
         """Return a user friendly list of the allowed schemes."""
-        if len(self.schemes) < 1:
+        if len(self._schemes) < 1:
             return 'empty'
-        elif len(self.schemes) == 1:
-            return self.schemes[0]
+        elif len(self._schemes) == 1:
+            return self._schemes[0]
         else:
-            return '%s or %s' % (', '.join(self.schemes[:-1]), self.schemes[-1])
+            return '%s or %s' % (', '.join(self._schemes[:-1]), self._schemes[-1])
 
 
 class UrlListOption(ListOption, UrlOption):
@@ -227,17 +227,17 @@ class PathOption(Option):
     """Option for file path which can validate path existence."""
     def __init__(self, default=None, parent=None, runtimeonly=False,
                  exists=False, abspath=False):
-        self.exists = exists
-        self.abspath = abspath
+        self._exists = exists
+        self._abspath = abspath
         super(PathOption, self).__init__(default, parent, runtimeonly)
 
     def _parse(self, val):
         """Validate path."""
         if val.startswith('file://'):
             val = val[7:]
-        if self.abspath and val[0] != '/':
+        if self._abspath and val[0] != '/':
             raise ValueError("Given path '%s' is not absolute." % val)
-        if self.exists and not os.path.exists(val):
+        if self._exists and not os.path.exists(val):
             raise ValueError("Given path '%s' does not exist." % val)
         return val
 
@@ -361,7 +361,7 @@ class BoolOption(Option):
 
     def _tostring(self):
         val = ('' if self._is_default()
-               else (self._true_names[0] if self.actual.value
+               else (self._true_names[0] if self._actual.value
                      else self._false_names[0]))
         return val
 
@@ -486,12 +486,12 @@ class BaseConfig(object):
 
     def __init__(self, section=None, parser=None):
         self._option = {}
-        self.section = section
-        self.parser = parser
+        self._section = section
+        self._parser = parser
 
     def __str__(self):
         out = []
-        out.append('[%s]' % self.section)
+        out.append('[%s]' % self._section)
         for name, value in self._option.items():
             out.append('%s: %r' % (name, value))
         return '\n'.join(out)
@@ -534,7 +534,7 @@ class BaseConfig(object):
         """Return a string representing the values of all the
            configuration options.
         """
-        output = ['[%s]' % self.section]
+        output = ['[%s]' % self._section]
         for name, opt in sorted(self._config_items()):
             if not opt._is_runtimeonly():
                 val = opt._tostring()
@@ -554,19 +554,19 @@ class BaseConfig(object):
         """
         # Write section heading
         if section is None:
-            if self.section is None:
+            if self._section is None:
                 raise ValueError("not populated, don't know section")
-            section = self.section
+            section = self._section
 
         # Updated the ConfigParser with the changed values
-        cfg_options = self.parser.options(section)
+        cfg_options = self._parser.options(section)
         for name, option in self._config_items():
             if (not option._is_runtimeonly() and
                     (always is None or name in always or not option._is_default()
                      or name in cfg_options)):
-                self.parser.set(section, name, option._tostring())
+                self._parser.set(section, name, option._tostring())
         # write the updated ConfigParser to the fileobj.
-        self.parser.write(fileobj)
+        self._parser.write(fileobj)
 
     @staticmethod
     def write_raw_configfile(filename, section_id, substitutions, modify):
@@ -847,13 +847,13 @@ class MainConf(BaseConfig):
         # :api
         if filename is None:
             filename = self._get_value('config_file_path')
-        self.parser = ConfigParser()
+        self._parser = ConfigParser()
         config_pp = dnf.conf.parser.ConfigPreProcessor(filename)
         try:
-            self.parser.readfp(config_pp)
+            self._parser.readfp(config_pp)
         except ParsingError as e:
             raise dnf.exceptions.ConfigError("Parsing file failed: %s" % e)
-        self._populate(self.parser, self.section, priority)
+        self._populate(self._parser, self._section, priority)
 
         # update to where we read the file from
         self._set_value('config_file_path', filename, priority)
@@ -935,13 +935,13 @@ class RepoConf(BaseConfig):
                 opt._set(False, dnf.conf.PRIO_COMMANDLINE)
 
         repo_setopts = getattr(opts, 'repo_setopts', {})
-        if self.section in repo_setopts:
+        if self._section in repo_setopts:
             # pylint: disable=W0212
-            setopts = repo_setopts[self.section]._get_kwargs()
+            setopts = repo_setopts[self._section]._get_kwargs()
             for name, val in setopts:
                 opt = self._get_option(name)
                 if opt:
                     opt._set(val, dnf.conf.PRIO_COMMANDLINE)
                 else:
                     msg = "Repo %s did not have a %s attr. before setopt"
-                    logger.warning(msg, self.section, name)
+                    logger.warning(msg, self._section, name)

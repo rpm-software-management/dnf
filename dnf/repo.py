@@ -474,7 +474,7 @@ class Repo(dnf.conf.RepoConf):
     @property
     def id(self):
         # :api
-        return self.section
+        return self._section
 
     @property
     def cachedir(self):
