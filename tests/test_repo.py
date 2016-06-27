@@ -142,7 +142,7 @@ class MetadataTest(support.TestCase):
 
     def test_file_timestamp(self):
         self.assertRaises(dnf.exceptions.MetadataError,
-                          self.metadata.file_timestamp, 'primary')
+                          self.metadata._file_timestamp, 'primary')
 
 
 class RepoTest(RepoTestMixin, support.TestCase):

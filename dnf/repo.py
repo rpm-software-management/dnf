@@ -261,9 +261,9 @@ class Metadata(object):
         return {k:v for (k, v) in pairs}
 
     def _file_age(self, what):
-        return time.time() - self.file_timestamp(what)
+        return time.time() - self._file_timestamp(what)
 
-    def file_timestamp(self, what):
+    def _file_timestamp(self, what):
         try:
             return dnf.util.file_timestamp(self._repo_dct[what])
         except OSError as e:
@@ -306,7 +306,7 @@ class Metadata(object):
 
     @property
     def timestamp(self):
-        return self.file_timestamp('primary')
+        return self._file_timestamp('primary')
 
     @property
     def updateinfo_fn(self):
