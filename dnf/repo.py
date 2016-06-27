@@ -144,7 +144,7 @@ def _update_saving(saving, payloads, errs):
             real += pload.download_size
             continue
         real += pload.download_size
-        full += pload.full_size
+        full += pload._full_size
     return real, full
 
 
@@ -344,7 +344,7 @@ class PackagePayload(dnf.callback.Payload):
         pass
 
     @property
-    def full_size(self):
+    def _full_size(self):
         return self.download_size
 
     def librepo_target(self):

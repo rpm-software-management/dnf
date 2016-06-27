@@ -75,7 +75,7 @@ class DeltaPayload(dnf.repo.PackagePayload):
         return self.delta.downloadsize
 
     @property
-    def full_size(self):
+    def _full_size(self):
         return self.pkg.downloadsize
 
     def localPkg(self):
