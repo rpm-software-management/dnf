@@ -297,7 +297,7 @@ class Metadata(object):
         dnf.util.touch(self._primary_fn, no_create=True)
 
     @property
-    def repomd_fn(self):
+    def _repomd_fn(self):
         return self._repo_dct.get('repomd')
 
     @property
@@ -571,7 +571,7 @@ class Repo(dnf.conf.RepoConf):
 
     @property
     def repomd_fn(self):
-        return self.metadata.repomd_fn
+        return self.metadata._repomd_fn
 
     @property
     def updateinfo_fn(self):
