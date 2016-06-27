@@ -293,7 +293,7 @@ class Metadata(object):
     def _primary_fn(self):
         return self._repo_dct.get('primary')
 
-    def reset_age(self):
+    def _reset_age(self):
         dnf.util.touch(self._primary_fn, no_create=True)
 
     @property
@@ -813,7 +813,7 @@ class Repo(dnf.conf.RepoConf):
         try:
             if self._try_revive():
                 # the expired metadata still reflect the origin:
-                self.metadata.reset_age()
+                self.metadata._reset_age()
                 self._expired = False
                 return True
 

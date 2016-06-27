@@ -357,7 +357,7 @@ class LocalRepoTest(support.TestCase):
         self.assertLength(self.repo.metadata._mirrors, 4)
         self.assertEqual(self.repo.metadata._mirrors[0], 'http://many/x86_64')
 
-    @mock.patch.object(dnf.repo.Metadata, 'reset_age')
+    @mock.patch.object(dnf.repo.Metadata, '_reset_age')
     @mock.patch('dnf.repo.Repo._handle_new_remote')
     def test_reviving(self, new_remote_m, reset_age_m):
         self.repo.md_expire_cache()
@@ -374,7 +374,7 @@ class LocalRepoTest(support.TestCase):
         self.assertFalse(self.repo._expired)
         reset_age_m.assert_called_with()
 
-    @mock.patch.object(dnf.repo.Metadata, 'reset_age')
+    @mock.patch.object(dnf.repo.Metadata, '_reset_age')
     @mock.patch('dnf.repo.Repo._handle_new_remote')
     def test_reviving_lame_hashes(self, new_remote_m, _):
         self.repo.md_expire_cache()
@@ -386,7 +386,7 @@ class LocalRepoTest(support.TestCase):
             self.repo._try_cache()
             self.assertFalse(self.repo._try_revive())
 
-    @mock.patch.object(dnf.repo.Metadata, 'reset_age')
+    @mock.patch.object(dnf.repo.Metadata, '_reset_age')
     @mock.patch('dnf.repo.Repo._handle_new_remote')
     def test_reviving_mismatched_hashes(self, new_remote_m, _):
         self.repo.md_expire_cache()
