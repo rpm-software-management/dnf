@@ -250,8 +250,8 @@ class Base(object):
                 for r in self.repos.iter_enabled():
                     try:
                         self._add_repo_to_sack(r)
-                        if r.metadata.timestamp > mts:
-                            mts = r.metadata.timestamp
+                        if r.metadata._timestamp > mts:
+                            mts = r.metadata._timestamp
                         if r.metadata.age < age:
                             age = r.metadata.age
                         logger.debug(_("%s: using metadata from %s."), r.id,

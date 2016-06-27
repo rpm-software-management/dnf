@@ -305,7 +305,7 @@ class Metadata(object):
         return self._repomd_dct.get('revision')
 
     @property
-    def timestamp(self):
+    def _timestamp(self):
         return self._file_timestamp('primary')
 
     @property
