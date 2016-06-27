@@ -286,7 +286,7 @@ class Metadata(object):
         return max(timestamps)
 
     @property
-    def presto_fn(self):
+    def _presto_fn(self):
         return self._repo_dct.get('prestodelta')
 
     @property
@@ -559,7 +559,7 @@ class Repo(dnf.conf.RepoConf):
 
     @property
     def presto_fn(self):
-        return self.metadata.presto_fn
+        return self.metadata._presto_fn
 
     @property
     def primary_fn(self):
