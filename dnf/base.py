@@ -255,7 +255,7 @@ class Base(object):
                         if r.metadata.age < age:
                             age = r.metadata.age
                         logger.debug(_("%s: using metadata from %s."), r.id,
-                                     time.ctime(r.metadata.md_timestamp))
+                                     time.ctime(r.metadata._md_timestamp))
                     except dnf.exceptions.RepoError as e:
                         r.md_expire_cache()
                         if r.skip_if_unavailable is False:

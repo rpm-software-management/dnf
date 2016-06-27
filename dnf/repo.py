@@ -278,7 +278,7 @@ class Metadata(object):
         return self._priv_mirrors
 
     @property
-    def md_timestamp(self):
+    def _md_timestamp(self):
         """Gets the highest timestamp of all metadata types."""
         timestamps = [content.get('timestamp')
                       for (_, content) in self._repomd_dct.items()
