@@ -158,7 +158,7 @@ class RepoListCommand(commands.Command):
                 rid = repo.id
                 if enabled and repo.metalink:
                     mdts = repo.metadata.timestamp
-                    if mdts > repo.metadata.md_timestamp:
+                    if mdts > repo.metadata._md_timestamp:
                         rid = '*' + rid
                 cols.append((rid, repo.name,
                              (ui_enabled, ui_endis_wid), ui_num))
@@ -190,7 +190,7 @@ class RepoListCommand(commands.Command):
                 if md:
                     out += [
                         self.output.fmtKeyValFill(_("Repo-updated : "),
-                                                  time.ctime(md.md_timestamp)),
+                                                  time.ctime(md._md_timestamp)),
                         self.output.fmtKeyValFill(_("Repo-pkgs    : "), ui_num),
                         self.output.fmtKeyValFill(_("Repo-size    : "), ui_size)]
 
