@@ -301,7 +301,7 @@ class Metadata(object):
         return self._repo_dct.get('repomd')
 
     @property
-    def revision(self):
+    def _revision(self):
         return self._repomd_dct.get('revision')
 
     @property
