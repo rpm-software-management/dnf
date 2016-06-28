@@ -232,7 +232,6 @@ class PathOption(Option):
         super(PathOption, self).__init__(default, parent, runtimeonly)
 
     def _parse(self, val):
-        """Validate path."""
         if val.startswith('file://'):
             val = val[7:]
         if self._abspath and val[0] != '/':
@@ -252,7 +251,6 @@ class IntOption(Option):
         super(IntOption, self).__init__(default, parent, runtimeonly)
 
     def _parse(self, s):
-        """Parse a string containing an integer."""
         try:
             n = int(s)
         except (ValueError, TypeError):
@@ -278,8 +276,6 @@ class PositiveIntOption(IntOption):
                                                 range_min, range_max)
 
     def _parse(self, s):
-        """Parse a string containing a positive integer, where 0 can
-           have a special representation."""
         if s in self._names0:
             return 0
         return super(PositiveIntOption, self)._parse(s)
@@ -300,15 +296,6 @@ class SecondsOption(Option):
     MULTS = {'d': 60 * 60 * 24, 'h' : 60 * 60, 'm' : 60, 's': 1}
 
     def _parse(self, s):
-        """Parse a string containing an integer value of seconds, or a human
-        readable variation specifying days, hours, minutes or seconds
-        until something happens. Works like :class:`BytesOption`.  Note
-        that due to historical president -1 means "never", so this accepts
-        that and allows the word never, too.
-
-        Valid inputs: 100, 1.5m, 90s, 1.2d, 1d, 0xF, 0.1, -1, never.
-        Invalid inputs: -10, -0.1, 45.6Z, 1d6h, 1day, 1y.
-        """
         if len(s) < 1:
             raise ValueError(_("no value specified"))
 
@@ -347,10 +334,6 @@ class BoolOption(Option):
         super(BoolOption, self).__init__(default, parent, runtimeonly)
 
     def _parse(self, s):
-        """Parse a string containing a boolean value.  1, yes, and
-        true will evaluate to True; and 0, no, and false will evaluate
-        to False.  Case is ignored.
-        """
         s = s.lower()
         if s in self._false_names:
             return False
@@ -370,7 +353,6 @@ class FloatOption(Option):
     """An option representing a numeric float value."""
 
     def _parse(self, s):
-        """Parse a string containing a numeric float value."""
         try:
             return float(s.strip())
         except (ValueError, TypeError):
@@ -387,7 +369,6 @@ class SelectionOption(Option):
         super(SelectionOption, self).__init__(default, parent, runtimeonly)
 
     def _parse(self, s):
-        """Parse a string for specific values."""
         if s in self._mapper:
             s = self._mapper[s]
         if s not in self._choices:
@@ -400,7 +381,6 @@ class CaselessSelectionOption(SelectionOption):
     :class:`SelectionOption` but lowers input case.
     """
     def _parse(self, s):
-        """Parse a string for specific values."""
         return super(CaselessSelectionOption, self)._parse(s.lower())
 
 
