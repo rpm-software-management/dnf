@@ -31,6 +31,7 @@ from dnf.yum import misc
 from dnf.yum import rpmsack
 from functools import reduce
 import collections
+import datetime
 import dnf.callback
 import dnf.comps
 import dnf.conf
@@ -245,15 +246,28 @@ class Base(object):
                         raise
             if load_available_repos:
                 errors = []
+                mts = 0
+                age = time.time()
                 for r in self.repos.iter_enabled():
                     try:
                         self._add_repo_to_sack(r)
+                        if r.metadata.timestamp > mts:
+                            mts = r.metadata.timestamp
+                        if r.metadata.age < age:
+                            age = r.metadata.age
+                        logger.debug(_("%s: using metadata from %s."), r.id,
+                                     time.ctime(r.metadata.md_timestamp))
                     except dnf.exceptions.RepoError as e:
                         r.md_expire_cache()
                         if r.skip_if_unavailable is False:
                             raise
                         errors.append(e)
                         r.disable()
+                if age != 0:
+                    logger.info(_("Last metadata expiration check: "
+                                  "%s ago on %s."),
+                                datetime.timedelta(seconds=int(age)),
+                                time.ctime(mts))
                 for e in errors:
                     logger.warning(_("%s, disabling."), e)
         conf = self.conf

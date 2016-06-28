@@ -29,7 +29,6 @@ from dnf.cli import CliError
 from dnf.i18n import ucd, _
 
 import collections
-import datetime
 import dnf
 import dnf.cli.commands
 import dnf.cli.commands.autoremove
@@ -816,25 +815,8 @@ class Cli(object):
                     repo.md_lazy = True
 
         if demands.sack_activation:
-            lar = self.demands.available_repos
-            if lar:
-                repos = list(repo for repo in self.base.repos.iter_enabled()
-                                           if repo.metadata)
-                if repos:
-                    mts = max(repo.metadata.timestamp for repo in repos)
-                    # do not bother users with fractions of seconds
-                    age = int(min(repo.metadata.age for repo in repos))
-                    for repo in repos:
-                        logger.debug(_("%s: using metadata from %s."),
-                                     repo.id,
-                                     time.ctime(repo.metadata.md_timestamp))
-                    if age != 0:
-                        logger.info(_("Last metadata expiration check: "
-                                    "%s ago on %s."),
-                                    datetime.timedelta(seconds=age),
-                                    time.ctime(mts))
             self.base.fill_sack(load_system_repo='auto',
-                                load_available_repos=lar)
+                                load_available_repos=self.demands.available_repos)
 
     def _root_and_conffile(self, installroot, conffile):
         """After the first parse of the cmdline options, find initial values for
