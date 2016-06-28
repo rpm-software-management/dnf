@@ -398,45 +398,45 @@ class RPMTransaction(object):
             misc.unlink_f(tsfn)
             self._ts_done = None
 
-    def callback( self, what, bytes, total, h, user ):
-        if isinstance(h, str):
-            h = ucd(h)
+    def callback(self, what, amount, total, key, client_data):
+        if isinstance(key, str):
+            key = ucd(key)
         if what == rpm.RPMCALLBACK_TRANS_START:
-            self._transStart( bytes, total, h )
+            self._transStart(total)
         elif what == rpm.RPMCALLBACK_TRANS_PROGRESS:
-            self._transProgress( bytes, total, h )
+            self._transProgress()
         elif what == rpm.RPMCALLBACK_TRANS_STOP:
-            self._transStop( bytes, total, h )
+            self._transStop()
         elif what == rpm.RPMCALLBACK_ELEM_PROGRESS:
             # This callback type is issued every time the next transaction
             # element is about to be processed by RPM, before any other
-            # callbacks are issued.
-            self._elemProgress(bytes, total, h)
+            # callbacks are issued.  "amount" carries the index of the element.
+            self._elemProgress(amount)
         elif what == rpm.RPMCALLBACK_INST_OPEN_FILE:
-            return self._instOpenFile( bytes, total, h )
+            return self._instOpenFile(key)
         elif what == rpm.RPMCALLBACK_INST_CLOSE_FILE:
-            self._instCloseFile(  bytes, total, h )
+            self._instCloseFile(key)
         elif what == rpm.RPMCALLBACK_INST_PROGRESS:
-            self._instProgress( bytes, total, h )
+            self._instProgress(amount, total, key)
         elif what == rpm.RPMCALLBACK_UNINST_START:
-            self._unInstStart( bytes, total, h )
+            self._unInstStart()
         elif what == rpm.RPMCALLBACK_UNINST_PROGRESS:
-            self._unInstProgress( bytes, total, h )
+            self._unInstProgress()
         elif what == rpm.RPMCALLBACK_UNINST_STOP:
-            self._unInstStop( bytes, total, h )
+            self._unInstStop(key)
         elif what == rpm.RPMCALLBACK_CPIO_ERROR:
-            self._cpioError(bytes, total, h)
+            self._cpioError(key)
         elif what == rpm.RPMCALLBACK_UNPACK_ERROR:
-            self._unpackError(bytes, total, h)
+            self._unpackError(key)
         elif what == rpm.RPMCALLBACK_SCRIPT_ERROR:
-            self._scriptError(bytes, total, h)
+            self._scriptError(amount, total, key)
         elif what == rpm.RPMCALLBACK_SCRIPT_START:
-            self._scriptStart(bytes, total, h)
+            self._scriptStart()
         elif what == rpm.RPMCALLBACK_SCRIPT_STOP:
-            self._scriptStop(bytes, total, h);
+            self._scriptStop()
 
 
-    def _transStart(self, bytes, total, h):
+    def _transStart(self, total):
         self.total_actions = total
         if self.test: return
         self.trans_running = True
@@ -444,20 +444,19 @@ class RPMTransaction(object):
         self.ts_done_open()
         self._te_list = list(self.base._ts)
 
-    def _transProgress(self, bytes, total, h):
+    def _transProgress(self):
         pass
 
-    def _transStop(self, bytes, total, h):
+    def _transStop(self):
         if self._ts_done is not None:
             self._ts_done.close()
 
-    def _elemProgress(self, bytes, total, h):
-        # "bytes" carries the index of the element
-        self._te_index = bytes
+    def _elemProgress(self, index):
+        self._te_index = index
 
-    def _instOpenFile(self, bytes, total, h):
+    def _instOpenFile(self, key):
         self.lastmsg = None
-        pkg, _, _ = self._extract_cbkey(h)
+        pkg, _, _ = self._extract_cbkey(key)
         rpmloc = pkg.localPkg()
         try:
             self.fd = open(rpmloc)
@@ -471,8 +470,8 @@ class RPMTransaction(object):
                 self.installed_pkg_names.add(pkg.name)
             return self.fd.fileno()
 
-    def _instCloseFile(self, bytes, total, h):
-        pkg, state, tsi = self._extract_cbkey(h)
+    def _instCloseFile(self, key):
+        pkg, state, tsi = self._extract_cbkey(key)
         self.fd.close()
         self.fd = None
 
@@ -494,22 +493,22 @@ class RPMTransaction(object):
             for display in self.displays:
                 display.progress(None, action, None, None, None, None)
 
-    def _instProgress(self, bytes, total, h):
-        pkg, _, tsi = self._extract_cbkey(h)
+    def _instProgress(self, amount, total, key):
+        pkg, _, tsi = self._extract_cbkey(key)
         action = TransactionDisplay.ACTION_FROM_OP_TYPE[tsi.op_type]
         for display in self.displays:
             display.progress(
-                pkg, action, bytes, total, self.complete_actions,
+                pkg, action, amount, total, self.complete_actions,
                 self.total_actions)
 
-    def _unInstStart(self, bytes, total, h):
+    def _unInstStart(self):
         pass
 
-    def _unInstProgress(self, bytes, total, h):
+    def _unInstProgress(self):
         pass
 
-    def _unInstStop(self, bytes, total, h):
-        pkg, state, _ = self._extract_cbkey(h)
+    def _unInstStop(self, key):
+        pkg, state, _ = self._extract_cbkey(key)
         self.total_removed += 1
         self.complete_actions += 1
         if state == 'Obsoleted':
@@ -546,25 +545,25 @@ class RPMTransaction(object):
             # :dead
             # self.ts_done(name, action)
 
-    def _cpioError(self, bytes, total, h):
+    def _cpioError(self, key):
         # In the case of a remove, we only have a name, not a tsi:
-        pkg, _, _ = self._extract_cbkey(h)
+        pkg, _, _ = self._extract_cbkey(key)
         msg = "Error in cpio payload of rpm package %s" % pkg
         for display in self.displays:
             display.error(msg)
 
-    def _unpackError(self, bytes, total, h):
-        pkg, _, _ = self._extract_cbkey(h)
+    def _unpackError(self, key):
+        pkg, _, _ = self._extract_cbkey(key)
         msg = "Error unpacking rpm package %s" % pkg
         for display in self.displays:
             display.error(msg)
 
-    def _scriptError(self, bytes, total, h):
-        # "bytes" carries the failed scriptlet tag,
+    def _scriptError(self, amount, total, key):
+        # "amount" carries the failed scriptlet tag,
         # "total" carries fatal/non-fatal status
-        scriptlet_name = rpm.tagnames.get(bytes, "<unknown>")
+        scriptlet_name = rpm.tagnames.get(amount, "<unknown>")
 
-        pkg, _, _ = self._extract_cbkey(h)
+        pkg, _, _ = self._extract_cbkey(key)
         name = pkg.name
 
         if total:
@@ -576,10 +575,10 @@ class RPMTransaction(object):
         for display in self.displays:
             display.error(msg)
 
-    def _scriptStart(self, bytes, total, h):
+    def _scriptStart(self):
         pass
 
-    def _scriptStop(self, bytes, total, h):
+    def _scriptStop(self):
         self._scriptout()
 
     def verify_tsi_package(self, pkg, count, total):
