@@ -403,8 +403,6 @@ class RPMTransaction(object):
             key = ucd(key)
         if what == rpm.RPMCALLBACK_TRANS_START:
             self._transStart(total)
-        elif what == rpm.RPMCALLBACK_TRANS_PROGRESS:
-            self._transProgress()
         elif what == rpm.RPMCALLBACK_TRANS_STOP:
             self._transStop()
         elif what == rpm.RPMCALLBACK_ELEM_PROGRESS:
@@ -418,10 +416,6 @@ class RPMTransaction(object):
             self._instCloseFile(key)
         elif what == rpm.RPMCALLBACK_INST_PROGRESS:
             self._instProgress(amount, total, key)
-        elif what == rpm.RPMCALLBACK_UNINST_START:
-            self._unInstStart()
-        elif what == rpm.RPMCALLBACK_UNINST_PROGRESS:
-            self._unInstProgress()
         elif what == rpm.RPMCALLBACK_UNINST_STOP:
             self._unInstStop(key)
         elif what == rpm.RPMCALLBACK_CPIO_ERROR:
@@ -430,8 +424,6 @@ class RPMTransaction(object):
             self._unpackError(key)
         elif what == rpm.RPMCALLBACK_SCRIPT_ERROR:
             self._scriptError(amount, total, key)
-        elif what == rpm.RPMCALLBACK_SCRIPT_START:
-            self._scriptStart()
         elif what == rpm.RPMCALLBACK_SCRIPT_STOP:
             self._scriptStop()
 
@@ -443,9 +435,6 @@ class RPMTransaction(object):
         self.ts_all() # write out what transaction will do
         self.ts_done_open()
         self._te_list = list(self.base._ts)
-
-    def _transProgress(self):
-        pass
 
     def _transStop(self):
         if self._ts_done is not None:
@@ -500,12 +489,6 @@ class RPMTransaction(object):
             display.progress(
                 pkg, action, amount, total, self.complete_actions,
                 self.total_actions)
-
-    def _unInstStart(self):
-        pass
-
-    def _unInstProgress(self):
-        pass
 
     def _unInstStop(self, key):
         pkg, state, _ = self._extract_cbkey(key)
@@ -574,9 +557,6 @@ class RPMTransaction(object):
                    (scriptlet_name, name))
         for display in self.displays:
             display.error(msg)
-
-    def _scriptStart(self):
-        pass
 
     def _scriptStop(self):
         self._scriptout()
