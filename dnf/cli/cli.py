@@ -818,8 +818,9 @@ class Cli(object):
         if demands.sack_activation:
             lar = self.demands.available_repos
             if lar:
-                repos = list(repo for repo in self.base.repos.iter_enabled()
-                                           if repo.metadata)
+                for repo in self.base.repos.iter_enabled():
+                    repo.load()
+                repos = list(self.base.repos.iter_enabled())
                 if repos:
                     mts = max(repo.metadata.timestamp for repo in repos)
                     # do not bother users with fractions of seconds
