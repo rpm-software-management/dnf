@@ -80,7 +80,7 @@ class Option(object):
             try:
                 value = self._parse(value)
             except ValueError as e:
-                raise dnf.exceptions.ConfigError('Error parsing "%s": %s'
+                raise dnf.exceptions.ConfigError(_('Error parsing %r: %s')
                                                  % (value, str(e)))
         if not isinstance(value, Value):
             value = Value(value, priority)
@@ -189,12 +189,12 @@ class UrlOption(Option):
             if self._allow_none:
                 return None
             else:
-                raise ValueError('"_none_" is not a valid value')
+                raise ValueError(_('"_none_" is not a valid value'))
 
         # Check that scheme is valid
         s = dnf.pycomp.urlparse.urlparse(url)[0]
         if s not in self._schemes:
-            raise ValueError('URL must be %s not "%s"' % (self._schemelist(), s))
+            raise ValueError(_('URL must be %s not %r') % (self._schemelist(), s))
 
         return url
 
@@ -236,9 +236,9 @@ class PathOption(Option):
         if val.startswith('file://'):
             val = val[7:]
         if self._abspath and val[0] != '/':
-            raise ValueError("Given path '%s' is not absolute." % val)
+            raise ValueError(_("given path %r is not absolute.") % val)
         if self._exists and not os.path.exists(val):
-            raise ValueError("Given path '%s' does not exist." % val)
+            raise ValueError(_("given path %r does not exist.") % val)
         return val
 
 
@@ -256,14 +256,14 @@ class IntOption(Option):
         try:
             n = int(s)
         except (ValueError, TypeError):
-            raise ValueError('invalid integer value')
+            raise ValueError(_('invalid integer value'))
 
         if self._range_max is not None and n > self._range_max:
-            raise ValueError('Given value [%d] should be less than '
-                             'allowed value [%d].' % (n, self._range_max))
+            raise ValueError(_('given value [%d] should be less than '
+                               'allowed value [%d].') % (n, self._range_max))
         if self._range_min is not None and n < self._range_min:
-            raise ValueError('Given value [%d] should be greater than '
-                             'allowed value [%d].' % (n, self._range_min))
+            raise ValueError(_('given value [%d] should be greater than '
+                               'allowed value [%d].') % (n, self._range_min))
         return n
 
 
@@ -310,7 +310,7 @@ class SecondsOption(Option):
         Invalid inputs: -10, -0.1, 45.6Z, 1d6h, 1day, 1y.
         """
         if len(s) < 1:
-            raise ValueError("no value specified")
+            raise ValueError(_("no value specified"))
 
         if s == "-1" or s == "never": # Special cache timeout, meaning never
             return -1
@@ -319,7 +319,7 @@ class SecondsOption(Option):
             unit = s[-1].lower()
             mult = self.MULTS.get(unit, None)
             if not mult:
-                raise ValueError("unknown unit '%s'" % unit)
+                raise ValueError(_("unknown unit %r") % unit)
         else:
             n = s
             mult = 1
@@ -327,10 +327,10 @@ class SecondsOption(Option):
         try:
             n = float(n)
         except (ValueError, TypeError):
-            raise ValueError('invalid value')
+            raise ValueError(_('invalid value %r') % s)
 
         if n < 0:
-            raise ValueError("seconds value may not be negative")
+            raise ValueError(_("seconds value %r must not be negative") % s)
 
         return int(n * mult)
 
@@ -357,7 +357,7 @@ class BoolOption(Option):
         elif s in self._true_names:
             return True
         else:
-            raise ValueError('invalid boolean value')
+            raise ValueError(_('invalid boolean value %r') % s)
 
     def _tostring(self):
         val = ('' if self._is_default()
@@ -374,7 +374,7 @@ class FloatOption(Option):
         try:
             return float(s.strip())
         except (ValueError, TypeError):
-            raise ValueError('invalid float value')
+            raise ValueError(_('invalid float value %r') % s)
 
 
 class SelectionOption(Option):
@@ -391,7 +391,7 @@ class SelectionOption(Option):
         if s in self._mapper:
             s = self._mapper[s]
         if s not in self._choices:
-            raise ValueError('"%s" is not an allowed value' % s)
+            raise ValueError(_('%r is not an allowed value') % s)
         return s
 
 
@@ -425,14 +425,14 @@ class BytesOption(Option):
         Invalid inputs: -10, -0.1, 45.6L, 123Mb.
         """
         if len(s) < 1:
-            raise ValueError("no value specified")
+            raise ValueError(_("no value specified"))
 
         if s[-1].isalpha():
             n = s[:-1]
             unit = s[-1].lower()
             mult = self.MULTS.get(unit, None)
             if not mult:
-                raise ValueError("unknown unit '%s'" % unit)
+                raise ValueError(_("unknown unit %r") % unit)
         else:
             n = s
             mult = 1
@@ -440,10 +440,10 @@ class BytesOption(Option):
         try:
             n = float(n)
         except ValueError:
-            raise ValueError("couldn't convert '%s' to number" % n)
+            raise ValueError(_("couldn't convert %r to number") % s)
 
         if n < 0:
-            raise ValueError("bytes value may not be negative")
+            raise ValueError(_("bytes value %r must not be negative") % s)
 
         return int(n * mult)
 
@@ -462,16 +462,16 @@ class ThrottleOption(BytesOption):
         Invalid inputs: 100.1%, -4%, -500.
         """
         if len(s) < 1:
-            raise ValueError("no value specified")
+            raise ValueError(_("no value specified"))
 
         if s[-1] == '%':
             n = s[:-1]
             try:
                 n = float(n)
             except ValueError:
-                raise ValueError("couldn't convert '%s' to number" % n)
+                raise ValueError(_("couldn't convert %r to number") % s)
             if n < 0 or n > 100:
-                raise ValueError("percentage is out of range")
+                raise ValueError(_("percentage %r is out of range") % s)
             return n / 100.0
         else:
             return BytesOption._parse(self, s)
