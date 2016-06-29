@@ -953,8 +953,9 @@ class Cli(object):
         # with cachedir in place we can configure stuff depending on it:
         self.base._activate_persistor()
 
-        self.optparser.configure_from_options(opts, self.base.conf, self.demands,
-                                              self.base.output, ('reposdir' not in getattr(opts, 'main_setopts', {})))
+        self.optparser.configure_from_options(
+            opts, self.base.conf,self.demands, self.base.output,
+            ('reposdir' not in getattr(opts, 'main_setopts', {})))
 
         self._configure_repos(opts)
 
