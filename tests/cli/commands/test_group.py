@@ -46,11 +46,11 @@ class GroupCommandStaticTest(support.TestCase):
         cmd = group.GroupCommand(support.mock.MagicMock())
         support.command_run(cmd, ['install', '--with-optional', 'crack'])
         cmd.base.env_group_install.assert_called_with(
-                ['crack'], ('mandatory', 'default', 'optional'),
-                cmd.base.conf.strict)
+            ['crack'], ('mandatory', 'default', 'optional'),
+            cmd.base.conf.strict)
         support.command_run(cmd, ['install', 'crack'])
         cmd.base.env_group_install.assert_called_with(
-                ['crack'], ('mandatory', 'default'), cmd.base.conf.strict)
+            ['crack'], ('mandatory', 'default'), cmd.base.conf.strict)
 
 
 class GroupCommandTest(support.TestCase):

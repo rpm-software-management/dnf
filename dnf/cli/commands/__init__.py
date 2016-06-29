@@ -155,42 +155,42 @@ class InfoCommand(Command):
     aliases = ('info',)
     summary = _('display details about a package or group of packages')
     DEFAULT_PKGNARROW = 'all'
-    pkgnarrows = {'available', 'installed', 'extras', 'updates', 'upgrades', 'autoremove',
-                      'recent', 'obsoletes', DEFAULT_PKGNARROW}
+    pkgnarrows = {'available', 'installed', 'extras', 'updates', 'upgrades',
+                  'autoremove', 'recent', 'obsoletes', DEFAULT_PKGNARROW}
 
     @classmethod
     def set_argparser(cls, parser):
         narrows = parser.add_mutually_exclusive_group()
         narrows.add_argument('--all', dest='_packages_action',
-                            action='store_const', const='all', default=None,
-                            help=_("show all packages (default)"))
+                             action='store_const', const='all', default=None,
+                             help=_("show all packages (default)"))
         narrows.add_argument('--available', dest='_packages_action',
-                            action='store_const', const='available',
-                            help=_("show only available packages"))
+                             action='store_const', const='available',
+                             help=_("show only available packages"))
         narrows.add_argument('--installed', dest='_packages_action',
-                            action='store_const', const='installed',
-                            help=_("show only installed packages"))
+                             action='store_const', const='installed',
+                             help=_("show only installed packages"))
         narrows.add_argument('--extras', dest='_packages_action',
-                            action='store_const', const='extras',
-                            help=_("show only extras packages"))
+                             action='store_const', const='extras',
+                             help=_("show only extras packages"))
         narrows.add_argument('--updates', dest='_packages_action',
-                            action='store_const', const='upgrades',
-                            help=_("show only upgrades packages"))
+                             action='store_const', const='upgrades',
+                             help=_("show only upgrades packages"))
         narrows.add_argument('--upgrades', dest='_packages_action',
-                            action='store_const', const='upgrades',
-                            help=_("show only upgrades packages"))
+                             action='store_const', const='upgrades',
+                             help=_("show only upgrades packages"))
         narrows.add_argument('--autoremove', dest='_packages_action',
-                            action='store_const', const='autoremove',
-                            help=_("show only autoremove packages"))
+                             action='store_const', const='autoremove',
+                             help=_("show only autoremove packages"))
         narrows.add_argument('--recent', dest='_packages_action',
-                            action='store_const', const='recent',
-                            help=_("show only recently changed packages"))
+                             action='store_const', const='recent',
+                             help=_("show only recently changed packages"))
         narrows.add_argument('--obsoletes', dest='_packages_action',
-                            action='store_const', const='obsoletes',
-                            help=_("show only obsoletes packages"))
+                             action='store_const', const='obsoletes',
+                             help=_("show only obsoletes packages"))
         parser.add_argument('packages', nargs='*', metavar=_('PACKAGE'),
-                             choices=cls.pkgnarrows, default=cls.DEFAULT_PKGNARROW,
-                             action=OptionParser.PkgNarrowCallback)
+                            choices=cls.pkgnarrows, default=cls.DEFAULT_PKGNARROW,
+                            action=OptionParser.PkgNarrowCallback)
 
     def configure(self):
         demands = self.cli.demands
@@ -200,11 +200,11 @@ class InfoCommand(Command):
         if self.opts._packages_action:
             self.opts.packages_action = self.opts._packages_action
         if self.opts.packages_action == 'updates':
-                 self.opts.packages_action = 'upgrades'
+            self.opts.packages_action = 'upgrades'
 
     def run(self):
         return self.base.output_packages('info', self.opts.packages_action,
-                                                 self.opts.packages)
+                                         self.opts.packages)
 
 class ListCommand(InfoCommand):
     """A class containing methods needed by the cli to execute the
@@ -216,7 +216,7 @@ class ListCommand(InfoCommand):
 
     def run(self):
         return self.base.output_packages('list', self.opts.packages_action,
-                                                 self.opts.packages)
+                                         self.opts.packages)
 
 
 class ProvidesCommand(Command):
@@ -311,37 +311,38 @@ class RepoPkgsCommand(Command):
         @staticmethod
         def set_argparser(parser):
             DEFAULT_PKGNARROW = 'all'
-            pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available', 'autoremove',
-                          'extras', 'obsoletes', 'recent', 'upgrades'}
+            pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available',
+                          'autoremove', 'extras', 'obsoletes', 'recent',
+                          'upgrades'}
 
             narrows = parser.add_mutually_exclusive_group()
             narrows.add_argument('--all', dest='_pkg_specs_action',
-                                action='store_const', const='all', default=None,
-                                help=_("show all packages (default)"))
+                                 action='store_const', const='all', default=None,
+                                 help=_("show all packages (default)"))
             narrows.add_argument('--available', dest='_pkg_specs_action',
-                                action='store_const', const='available',
-                                help=_("show only available packages"))
+                                 action='store_const', const='available',
+                                 help=_("show only available packages"))
             narrows.add_argument('--installed', dest='_pkg_specs_action',
-                                action='store_const', const='installed',
-                                help=_("show only installed packages"))
+                                 action='store_const', const='installed',
+                                 help=_("show only installed packages"))
             narrows.add_argument('--extras', dest='_pkg_specs_action',
-                                action='store_const', const='extras',
-                                help=_("show only extras packages"))
+                                 action='store_const', const='extras',
+                                 help=_("show only extras packages"))
             narrows.add_argument('--updates', dest='_pkg_specs_action',
-                                action='store_const', const='upgrades',
-                                help=_("show only upgrades packages"))
+                                 action='store_const', const='upgrades',
+                                 help=_("show only upgrades packages"))
             narrows.add_argument('--upgrades', dest='_pkg_specs_action',
-                                action='store_const', const='upgrades',
-                                help=_("show only upgrades packages"))
+                                 action='store_const', const='upgrades',
+                                 help=_("show only upgrades packages"))
             narrows.add_argument('--autoremove', dest='_pkg_specs_action',
-                                action='store_const', const='autoremove',
-                                help=_("show only autoremove packages"))
+                                 action='store_const', const='autoremove',
+                                 help=_("show only autoremove packages"))
             narrows.add_argument('--recent', dest='_pkg_specs_action',
-                                action='store_const', const='recent',
-                                help=_("show only recently changed packages"))
+                                 action='store_const', const='recent',
+                                 help=_("show only recently changed packages"))
             narrows.add_argument('--obsoletes', dest='_pkg_specs_action',
-                                action='store_const', const='obsoletes',
-                                help=_("show only obsoletes packages"))
+                                 action='store_const', const='obsoletes',
+                                 help=_("show only obsoletes packages"))
             parser.add_argument('pkg_specs', nargs='*', metavar=_('PACKAGE'),
                                 choices=pkgnarrows, default=DEFAULT_PKGNARROW,
                                 action=OptionParser.PkgNarrowCallback)
@@ -349,8 +350,7 @@ class RepoPkgsCommand(Command):
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
             self.base.output_packages('info', self.opts.pkg_specs_action,
-                                              self.opts.pkg_specs,
-                                              self.reponame)
+                                      self.opts.pkg_specs, self.reponame)
 
     class InstallSubCommand(SubCommand):
         """Implementation of the install sub-command."""
@@ -402,8 +402,7 @@ class RepoPkgsCommand(Command):
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
             self.base.output_packages('list', self.opts.pkg_specs_action,
-                                              self.opts.pkg_specs,
-                                              self.reponame)
+                                      self.opts.pkg_specs, self.reponame)
 
     class MoveToSubCommand(SubCommand):
         """Implementation of the move-to sub-command."""
@@ -454,7 +453,8 @@ class RepoPkgsCommand(Command):
                                 msg, self.output.term.MODE['bold'], pkg,
                                 self.output.term.MODE['normal'], xmsg)
                     except dnf.exceptions.MarkingError:
-                        assert False, 'Only the above marking errors are expected.'
+                        assert False, \
+                               'Only the above marking errors are expected.'
                     else:
                         done = True
 
@@ -496,7 +496,8 @@ class RepoPkgsCommand(Command):
                 # Reinstall packages.
                 for pkg_spec in self.opts.pkg_specs:
                     try:
-                        self.base.reinstall(pkg_spec, self.reponame, self.reponame)
+                        self.base.reinstall(pkg_spec, self.reponame,
+                                            self.reponame)
                     except dnf.exceptions.PackagesNotInstalledError:
                         msg = _('No match for argument: %s')
                         logger.info(msg, pkg_spec)
@@ -511,7 +512,8 @@ class RepoPkgsCommand(Command):
                                 msg, self.output.term.MODE['bold'], pkg,
                                 self.output.term.MODE['normal'], xmsg)
                     except dnf.exceptions.MarkingError:
-                        assert False, 'Only the above marking errors are expected.'
+                        assert False, \
+                               'Only the above marking errors are expected.'
                     else:
                         done = True
 
@@ -632,9 +634,9 @@ class RepoPkgsCommand(Command):
             if not self.opts.pkg_specs:
                 # Reinstall all packages.
                 try:
-                    self.base.reinstall(
-                        '*', old_reponame=self.reponame, new_reponame_neq=self.reponame,
-                        remove_na=True)
+                    self.base.reinstall('*', old_reponame=self.reponame,
+                                        new_reponame_neq=self.reponame,
+                                        remove_na=True)
                 except dnf.exceptions.PackagesNotInstalledError:
                     msg = _('No package installed from the repository.')
                     logger.info(msg)
@@ -693,8 +695,7 @@ class RepoPkgsCommand(Command):
                     try:
                         self.base.remove(pkg_spec, self.reponame)
                     except dnf.exceptions.MarkingError:
-                        logger.info(_('No match for argument: %s'),
-                                              pkg_spec)
+                        logger.info(_('No match for argument: %s'), pkg_spec)
                     else:
                         done = True
 
@@ -729,8 +730,7 @@ class RepoPkgsCommand(Command):
                     try:
                         self.base.upgrade(pkg_spec, self.reponame)
                     except dnf.exceptions.MarkingError:
-                        logger.info(_('No match for argument: %s'),
-                                              pkg_spec)
+                        logger.info(_('No match for argument: %s'), pkg_spec)
                     else:
                         done = True
 
@@ -777,12 +777,13 @@ class RepoPkgsCommand(Command):
             alias: subcmd for subcmd in subcmd_objs for alias in subcmd.aliases}
 
     def set_argparser(self, parser):
-        super(OptionParser, parser).add_argument('reponame', nargs=1, metavar=_('REPO'))
+        super(OptionParser, parser).add_argument('reponame', nargs=1,
+                                                 metavar=_('REPO'))
         subparser = parser.add_subparsers(dest='subcmd',
                                           parser_class=argparse.ArgumentParser)
         for subcommand in self._subcmd_name2obj.keys():
-             p = subparser.add_parser(subcommand)
-             self._subcmd_name2obj[subcommand].set_argparser(p)
+            p = subparser.add_parser(subcommand)
+            self._subcmd_name2obj[subcommand].set_argparser(p)
 
     def configure(self):
         """Verify whether the command can run with given arguments."""
@@ -814,7 +815,7 @@ class HelpCommand(Command):
 
     def run(self):
         if (not self.opts.cmd
-            or self.opts.cmd not in self.cli.cli_commands):
+                or self.opts.cmd not in self.cli.cli_commands):
             self.cli.optparser.print_help()
         else:
             command = self.cli.cli_commands[self.opts.cmd]
@@ -833,19 +834,19 @@ class HistoryCommand(Command):
     def set_argparser(parser):
         cmds = ['list', 'info', 'redo', 'undo', 'rollback', 'userinstalled']
         parser.add_argument('tid', nargs='*',
-                        choices=cmds, default=cmds[0],
-                        action=OptionParser.PkgNarrowCallback,
-                        metavar="[%s]" % "|".join(cmds))
+                            choices=cmds, default=cmds[0],
+                            action=OptionParser.PkgNarrowCallback,
+                            metavar="[%s]" % "|".join(cmds))
 
     def configure(self):
         demands = self.cli.demands
         if self.opts.tid_action in ['redo', 'undo', 'rollback']:
             if not self.opts.tid:
-                 logger.critical(_('No transaction ID given'))
-                 raise dnf.cli.CliError
+                logger.critical(_('No transaction ID given'))
+                raise dnf.cli.CliError
             elif len(self.opts.tid) > 1:
-                 logger.critical(_('Found more than one transaction ID!'))
-                 raise dnf.cli.CliError
+                logger.critical(_('Found more than one transaction ID!'))
+                raise dnf.cli.CliError
             demands.available_repos = True
             checkGPGKey(self.base, self.cli)
         else:
@@ -864,7 +865,8 @@ class HistoryCommand(Command):
                 return (_('Cannot undo transaction %s, doing so would result '
                           'in an inconsistent package database.') % id_,)
             elif self.opts.tid_action == 'rollback':
-                id_, = self.opts.tid if self.opts.tid[0] != 'force' else self.opts.tid[1:]
+                id_, = (self.opts.tid if self.opts.tid[0] != 'force'
+                        else self.opts.tid[1:])
                 return (_('Cannot rollback transaction %s, doing so would '
                           'result in an inconsistent package database.') % id_,)
 

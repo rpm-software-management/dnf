@@ -105,7 +105,7 @@ class GroupCommand(commands.Command):
         return installed, available
 
     def _grp_setup(self):
-        comps = self.base.read_comps()
+        self.base.read_comps()
 
     def _info(self, userlist):
         for strng in userlist:
@@ -150,10 +150,12 @@ class GroupCommand(commands.Command):
         errs = False
         if userlist is not None:
             for group in userlist:
-                in_group = len(self.base.comps.groups_by_pattern(group)) > 0
-                in_environment = len(self.base.comps.environments_by_pattern(group)) > 0
+                comps = self.base.comps
+                in_group = len(comps.groups_by_pattern(group)) > 0
+                in_environment = len(comps.environments_by_pattern(group)) > 0
                 if not in_group and not in_environment:
-                    logger.error(_('Warning: No groups match:') + '\n   %s', group)
+                    logger.error(_('Warning: No groups match:') + '\n   %s',
+                                 group)
                     errs = True
             if errs:
                 return 0, []
@@ -326,11 +328,11 @@ class GroupCommand(commands.Command):
                             help=_("include optional packages from group"))
         grpparser = parser.add_mutually_exclusive_group()
         grpparser.add_argument('--hidden', action='store_true',
-                            help=_("show also hidden groups"))
+                               help=_("show also hidden groups"))
         grpparser.add_argument('--installed', action='store_true',
-                            help=_("show only installed groups"))
+                               help=_("show only installed groups"))
         grpparser.add_argument('--available', action='store_true',
-                            help=_("show only available groups"))
+                               help=_("show only available groups"))
         parser.add_argument('subcmd', nargs='?', metavar='COMMAND')
         parser.add_argument('args', nargs='*')
 
@@ -343,7 +345,7 @@ class GroupCommand(commands.Command):
         cmds = ('list', 'info', 'remove', 'install', 'upgrade', 'summary', 'mark')
         if cmd not in cmds:
             logger.critical(_('Invalid groups sub-command, use: %s.'),
-                                 ", ".join(cmds))
+                            ", ".join(cmds))
             raise dnf.cli.CliError
 
         demands = self.cli.demands
