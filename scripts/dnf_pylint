@@ -29,6 +29,7 @@ disable "-d R0912" # too many branches
 disable "-d R0903" # too few public methods
 disable "-d W0141" # used builtin 'map' function
 disable "-d W0142" # used star magic
+disable "-d W0212" # access to a protected member
 
 VAR_NAMES='--variable-rgx=[a-z_][a-z0-9_]*$'
 DUMMY_NAMES='--dummy-variables-rgx=_.*'

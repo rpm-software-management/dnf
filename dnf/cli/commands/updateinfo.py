@@ -297,7 +297,7 @@ class UpdateInfoCommand(commands.Command):
                    (id_title[0] for id_title in cvs), desc.splitlines(),
                    verbse(rigs.splitlines() if rigs else None), verbse(fils),
                    None if not mixed else [_('true') if ins else _('false')]))
-             for tit, (id_, typ, upd, bzs, cvs, desc, rigs, fils, ins) in info)
+            for tit, (id_, typ, upd, bzs, cvs, desc, rigs, fils, ins) in info)
         labels = (_('Update ID'), _('Type'), _('Updated'), _('Bugs'),
                   _('CVEs'), _('Description'), _('Rights'), _('Files'),
                   _('Installed'))

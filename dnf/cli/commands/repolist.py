@@ -172,20 +172,20 @@ class RepoListCommand(commands.Command):
 
                 if force_show or extcmds:
                     out += [self.output.fmtKeyValFill(_("Repo-status  : "),
-                                               ui_enabled)]
+                                                      ui_enabled)]
                 if md and md.revision is not None:
                     out += [self.output.fmtKeyValFill(_("Repo-revision: "),
-                                               md.revision)]
+                                                      md.revision)]
                 if md and md.content_tags:
                     tags = md.content_tags
                     out += [self.output.fmtKeyValFill(_("Repo-tags    : "),
-                                               ", ".join(sorted(tags)))]
+                                                      ", ".join(sorted(tags)))]
 
                 if md and md.distro_tags:
                     for (distro, tags) in md.distro_tags.items():
-                        out += [self.output.fmtKeyValFill(_("Repo-distro-tags: "),
-                                                   "[%s]: %s" % (distro,
-                                                   ", ".join(sorted(tags))))]
+                        out += [self.output.fmtKeyValFill(
+                            _("Repo-distro-tags: "),
+                            "[%s]: %s" % (distro, ", ".join(sorted(tags))))]
 
                 if md:
                     out += [
@@ -196,18 +196,18 @@ class RepoListCommand(commands.Command):
 
                 if repo.metalink:
                     out += [self.output.fmtKeyValFill(_("Repo-metalink: "),
-                                               repo.metalink)]
+                                                      repo.metalink)]
                     if enabled:
                         ts = repo.metadata.timestamp
                         out += [self.output.fmtKeyValFill(_("  Updated    : "),
-                                                   time.ctime(ts))]
+                                                          time.ctime(ts))]
                 elif repo.mirrorlist:
                     out += [self.output.fmtKeyValFill(_("Repo-mirrors : "),
-                                               repo.mirrorlist)]
+                                                      repo.mirrorlist)]
                 baseurls = repo.baseurl
                 if baseurls:
                     out += [self.output.fmtKeyValFill(_("Repo-baseurl : "),
-                                               ", ".join(baseurls))]
+                                                      ", ".join(baseurls))]
                 elif enabled and md.mirrors:
                     url = "%s (%d more)" % (md.mirrors[0], len(md.mirrors) - 1)
                     out += [self.output.fmtKeyValFill(_("Repo-baseurl : "), url)]
@@ -217,19 +217,19 @@ class RepoListCommand(commands.Command):
 
                 if repo.exclude:
                     out += [self.output.fmtKeyValFill(_("Repo-exclude : "),
-                                               ", ".join(repo.exclude))]
+                                                      ", ".join(repo.exclude))]
 
                 if repo.include:
                     out += [self.output.fmtKeyValFill(_("Repo-include : "),
-                                               ", ".join(repo.include))]
+                                                      ", ".join(repo.include))]
 
                 if ui_excludes_num:
                     out += [self.output.fmtKeyValFill(_("Repo-excluded: "),
-                                               ui_excludes_num)]
+                                                      ui_excludes_num)]
 
                 if repo.repofile:
                     out += [self.output.fmtKeyValFill(_("Repo-filename: "),
-                                               repo.repofile)]
+                                                      repo.repofile)]
 
                 logger.log(dnf.logging.DEBUG, "%s\n", "\n".join(map(ucd, out)))
 
