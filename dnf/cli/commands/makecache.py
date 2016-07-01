@@ -69,7 +69,7 @@ class MakeCacheCommand(commands.Command):
             if since_last_makecache is not None and since_last_makecache < period:
                 logger.info(_('Metadata cache refreshed recently.'))
                 return False
-            self.base.repos.all().max_mirror_tries = 1
+            self.base.repos.all()._max_mirror_tries = 1
 
         for r in self.base.repos.iter_enabled():
             (is_cache, expires_in) = r.metadata_expire_in()

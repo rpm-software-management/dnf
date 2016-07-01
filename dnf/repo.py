@@ -464,7 +464,7 @@ class Repo(dnf.conf.RepoConf):
         self.metadata = None  # :api
         self._sync_strategy = self.DEFAULT_SYNC
         self._substitutions = dnf.conf.substitutions.Substitutions()
-        self.max_mirror_tries = 0  # try them all
+        self._max_mirror_tries = 0  # try them all
         self._handle = None
         self.hawkey_repo = self._init_hawkey_repo()
 
@@ -611,13 +611,13 @@ class Repo(dnf.conf.RepoConf):
 
     def _handle_new_local(self, destdir):
         return _Handle._new_local(self._substitutions, self.repo_gpgcheck,
-                                 self.max_mirror_tries, destdir)
+                                 self._max_mirror_tries, destdir)
 
     def _handle_new_pkg_download(self):
         return self._handle_new_remote(self.pkgdir, mirror_setup=False)
 
     def _handle_new_remote(self, destdir, mirror_setup=True):
-        h = _Handle(self.repo_gpgcheck, self.max_mirror_tries,
+        h = _Handle(self.repo_gpgcheck, self._max_mirror_tries,
                     self.max_parallel_downloads)
         h.varsub = _subst2tuples(self._substitutions)
         h.destdir = destdir
