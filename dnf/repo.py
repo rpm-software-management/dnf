@@ -466,7 +466,7 @@ class Repo(dnf.conf.RepoConf):
         self._substitutions = dnf.conf.substitutions.Substitutions()
         self._max_mirror_tries = 0  # try them all
         self._handle = None
-        self.hawkey_repo = self._init_hawkey_repo()
+        self._hawkey_repo = self._init_hawkey_repo()
 
     @property
     def id(self):
@@ -581,9 +581,9 @@ class Repo(dnf.conf.RepoConf):
     def __setattr__(self, name, value):
         super(Repo, self).__setattr__(name, value)
         if name == 'cost':
-            self.hawkey_repo.cost = self.cost
+            self._hawkey_repo.cost = self.cost
         if name == 'priority':
-            self.hawkey_repo.priority = self.priority
+            self._hawkey_repo.priority = self.priority
 
     def _handle_load(self, handle):
         if not self.repo_gpgcheck:
