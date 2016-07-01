@@ -462,7 +462,7 @@ class Repo(dnf.conf.RepoConf):
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
         self._key_import = _NullKeyImport()
         self.metadata = None  # :api
-        self.sync_strategy = self.DEFAULT_SYNC
+        self._sync_strategy = self.DEFAULT_SYNC
         self.substitutions = dnf.conf.substitutions.Substitutions()
         self.max_mirror_tries = 0  # try them all
         self._handle = None
@@ -495,27 +495,27 @@ class Repo(dnf.conf.RepoConf):
 
     @property
     def md_lazy(self):
-        return self.sync_strategy == SYNC_LAZY
+        return self._sync_strategy == SYNC_LAZY
 
     @md_lazy.setter
     def md_lazy(self, val):
         """Set whether it is fine to use stale metadata."""
         if val:
-            self.sync_strategy = SYNC_LAZY
+            self._sync_strategy = SYNC_LAZY
         else:
-            self.sync_strategy = SYNC_TRY_CACHE
+            self._sync_strategy = SYNC_TRY_CACHE
 
     @property
     def md_only_cached(self):
-        return self.sync_strategy == SYNC_ONLY_CACHE
+        return self._sync_strategy == SYNC_ONLY_CACHE
 
     @md_only_cached.setter
     def md_only_cached(self, val):
         """Force using only the metadata the repo has in the local cache."""
         if val:
-            self.sync_strategy = SYNC_ONLY_CACHE
+            self._sync_strategy = SYNC_ONLY_CACHE
         else:
-            self.sync_strategy = SYNC_TRY_CACHE
+            self._sync_strategy = SYNC_TRY_CACHE
 
     @property
     def md_expired(self):
@@ -798,11 +798,11 @@ class Repo(dnf.conf.RepoConf):
 
         """
         if self.metadata or self._try_cache():
-            if self.sync_strategy in (SYNC_ONLY_CACHE, SYNC_LAZY) or \
+            if self._sync_strategy in (SYNC_ONLY_CACHE, SYNC_LAZY) or \
                not self._expired:
                 logger.debug('repo: using cache for: %s', self.id)
                 return False
-        if self.sync_strategy == SYNC_ONLY_CACHE:
+        if self._sync_strategy == SYNC_ONLY_CACHE:
             msg = "Cache-only enabled but no cache for '%s'" % self.id
             raise dnf.exceptions.RepoError(msg)
         try:
@@ -843,7 +843,7 @@ class Repo(dnf.conf.RepoConf):
 
     def md_try_cache(self):
         """Use cache for metadata if possible, sync otherwise."""
-        self.sync_strategy = SYNC_TRY_CACHE
+        self._sync_strategy = SYNC_TRY_CACHE
 
     def metadata_expire_in(self):
         """Get the number of seconds after which the cached metadata will expire.

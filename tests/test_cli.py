@@ -162,7 +162,7 @@ class CliTest(TestCase):
         self.assertTrue(self.base.repos['comb'].enabled)
         self.assertFalse(self.base.repos["comb"].gpgcheck)
         self.assertFalse(self.base.repos["comb"].repo_gpgcheck)
-        self.assertEqual(self.base.repos["comb"].sync_strategy,
+        self.assertEqual(self.base.repos["comb"]._sync_strategy,
                          dnf.repo.SYNC_ONLY_CACHE)
 
     def test_configure_repos_expired(self, _):
@@ -182,7 +182,7 @@ class CliTest(TestCase):
         self.cli.demands.fresh_metadata = False
         self.cli.demands.cacheonly = True
         self.cli._process_demands()
-        self.assertEqual(self.base.repos['one'].sync_strategy,
+        self.assertEqual(self.base.repos['one']._sync_strategy,
                          dnf.repo.SYNC_ONLY_CACHE)
 
 @mock.patch('dnf.logging.Logging.setup', new=mock.MagicMock)
