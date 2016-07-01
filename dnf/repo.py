@@ -460,7 +460,7 @@ class Repo(dnf.conf.RepoConf):
         self._expired = False
         self._pkgdir = None
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
-        self.key_import = _NullKeyImport()
+        self._key_import = _NullKeyImport()
         self.metadata = None  # :api
         self.sync_strategy = self.DEFAULT_SYNC
         self.substitutions = dnf.conf.substitutions.Substitutions()
@@ -865,7 +865,7 @@ class Repo(dnf.conf.RepoConf):
         return False, 0
 
     def set_key_import(self, key_import):
-        self.key_import = key_import
+        self._key_import = key_import
 
     def set_progress_bar(self, progress):
         # :api
