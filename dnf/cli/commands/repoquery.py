@@ -298,7 +298,7 @@ class RepoQueryCommand(commands.Command):
         orquery = q
 
         if self.opts.file:
-            q = q.filter(file=self.opts.file)
+            q = q.filter(file__glob=self.opts.file)
         if self.opts.whatprovides:
             q = q.filter(provides__glob=[self.opts.whatprovides])
         if self.opts.alldeps or self.opts.exactdeps:
