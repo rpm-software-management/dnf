@@ -865,10 +865,10 @@ class Cli(object):
             logger.critical(_('No such command: %s. Please use %s --help'),
                             basecmd, sys.argv[0])
             if self.base.conf.plugins:
-                logger.info(_("It could be a DNF plugin command, "
+                logger.critical(_("It could be a DNF plugin command, "
                             "try: \"dnf install 'dnf-command(%s)'\""), basecmd)
             else:
-                logger.info(_("It could be a DNF plugin command, "
+                logger.critical(_("It could be a DNF plugin command, "
                             "but loading of plugins is currently disabled."))
             raise CliError
         self.command = command_cls(self)
