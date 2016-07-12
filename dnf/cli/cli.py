@@ -697,13 +697,18 @@ class Cli(object):
             opts.repos_ed.insert(0, ("*", "disable"))
             opts.repos_ed.extend([(r, "enable") for r in opts.repo])
 
+        notmatch = set()
+
         # Process repo enables and disables in order
         try:
             for (repo, operation) in opts.repos_ed:
                 repolist = self.base.repos.get_matching(repo)
                 if not repolist:
-                    msg = _("Unknown repo: '%s'")
-                    raise dnf.exceptions.RepoError(msg % repo)
+                    if self.base.conf.strict and operation == "enable":
+                        msg = _("Unknown repo: '%s'")
+                        raise dnf.exceptions.RepoError(msg % repo)
+                    notmatch.add(repo)
+
                 if operation == "enable":
                     repolist.enable()
                 else:
@@ -712,6 +717,9 @@ class Cli(object):
             logger.critical(e)
             self.optparser.print_help()
             sys.exit(1)
+
+        for repo in notmatch:
+            logger.warning(_("No repository match: %s"), repo)
 
         for rid in self.base._repo_persistor.get_expired_repos():
             repo = self.base.repos.get(rid)
