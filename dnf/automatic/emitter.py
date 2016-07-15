@@ -105,10 +105,13 @@ class EmailEmitter(Emitter):
                 self._conf.email_host, exc)
             logger.error(msg)
 
+
 class CommandEmailEmitter(EmailEmitter):
     def commit(self):
         command_fmt = self._conf.command
         subj, body = self._prepare_msg()
+        if dnf.pycomp.PY3:
+            body = body.encode('utf-8')
         cmd_subject = dnf.pycomp.shlex_quote(subj)
         cmd_email_from = dnf.pycomp.shlex_quote(self._conf.email_from)
         cmd_email_to = dnf.pycomp.shlex_quote(' '.join(self._conf.email_to))
