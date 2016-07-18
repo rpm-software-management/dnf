@@ -557,7 +557,7 @@ class BaseCli(dnf.Base):
     def transaction_id_or_offset(extcmd):
         """Convert user input to a transaction ID or an offset from the end."""
         try:
-            offset_str, = re.match('^last(-\d+)?$', extcmd).groups()
+            offset_str, = re.match('^--last(-\d+)?$', extcmd).groups()
         except AttributeError:  # extcmd does not match the regex.
             id_ = int(extcmd)
             if id_ < 0:
@@ -565,7 +565,7 @@ class BaseCli(dnf.Base):
                 raise ValueError('bad transaction ID given: %s' % extcmd)
             return id_
         else:
-            # Was extcmd 'last-N' or just 'last'?
+            # Was extcmd '--last-N' or just '--last'?
             offset = int(offset_str) if offset_str else 0
             # Return offsets as negative numbers, where -1 means the last
             # transaction as when indexing sequences.
