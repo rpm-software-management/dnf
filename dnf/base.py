@@ -874,10 +874,10 @@ class Base(object):
                     logger.critical(msg, rpo)
                     count = display_banner(rpo, count)
                     continue
+            else:
+                self._yumdb.get_package(rpo).clean()
             count = display_banner(rpo, count)
-            yumdb_item = self._yumdb.get_package(rpo)
-            yumdb_item.clean()
-
+            
         if self._record_history():
             rpmdbv = rpmdb_sack.rpmdb_version(self._yumdb)
             self.history.end(rpmdbv, 0)
