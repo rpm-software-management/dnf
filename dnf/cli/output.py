@@ -1334,10 +1334,10 @@ Transaction Summary
         ''' Convert a user "TID" string of 2..4 into: (2, 4). '''
         def str2int(x):
             try:
-                if x == 'last' or x.startswith('last-'):
+                if x == '--last' or x.startswith('--last-'):
                     tid = old.tid
-                    if x.startswith('last-'):
-                        off = int(x[len('last-'):])
+                    if x.startswith('--last-'):
+                        off = int(x[len('--last-'):])
                         if off <= 0:
                             int("z")
                         tid -= off

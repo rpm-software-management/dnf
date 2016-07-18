@@ -210,14 +210,6 @@ There is no shell in DNF but the case above is still valid. We provide the ``--a
 
 This command is equal to ``yum swap A B``.
 
-===========================
- ``dnf history info last``
-===========================
-
-In this case, DNF recognizes ``last`` as the ID of the last transaction (like
-other ``history`` subcommands), while Yum considers it a package name. It goes
-similarly for ``last-N``.
-
 ========================================================
  Dependency processing details are not shown in the CLI
 ========================================================

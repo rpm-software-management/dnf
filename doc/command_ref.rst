@@ -1100,8 +1100,8 @@ Specifying Transactions
 =======================
 
 ``<transaction-spec>`` can be in one of several forms. If it is an integer, it
-specifies a transaction ID. Specifying ``last`` is the same as specifying the ID
-of the most recent transaction. The last form is ``last-<offset>``, where
+specifies a transaction ID. Specifying ``--last`` is the same as specifying the ID
+of the most recent transaction. The last form is ``--last-<offset>``, where
 ``<offset>`` is a positive integer. It specifies offset-th transaction preceding
 the most recent transaction.
 
