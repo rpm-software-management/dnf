@@ -170,6 +170,20 @@ class ListOption(Option):
         return val
 
 
+class ListAppendOption(ListOption):
+    """A list option which appends not sets values."""
+
+    def _set(self, value, priority=PRIO_RUNTIME):
+        """Set option's value if priority is equal or higher
+           than curent priority."""
+        if self._is_default():
+            super(ListAppendOption, self)._set(value, priority)
+        else:
+            # append
+            new = self._make_value(value, priority)
+            self._actual = Value(self._actual.value + new.value, priority)
+
+
 class UrlOption(Option):
     """An option handles an URL with validation of the URL scheme."""
 
@@ -621,8 +635,8 @@ class MainConf(BaseConfig):
 
         self._add_option('debug_solver', BoolOption(False))
 
-        self._add_option('excludepkgs', ListOption())
-        self._add_option('includepkgs', ListOption())
+        self._add_option('excludepkgs', ListAppendOption())
+        self._add_option('includepkgs', ListAppendOption())
         self._add_option('exclude', self._get_option('excludepkgs'))
             # ^ compatibility with yum
         self._add_option('fastestmirror', BoolOption(False))
@@ -782,7 +796,7 @@ class MainConf(BaseConfig):
                        'best', 'assumeyes', 'assumeno', 'gpgcheck',
                        'showdupesfromrepos', 'plugins', 'ip_resolve',
                        'rpmverbosity', 'disable_excludes',
-                       'color', 'downloadonly']
+                       'color', 'downloadonly', 'exclude', 'excludepkgs']
 
         for name in config_args:
             value = getattr(opts, name, None)
@@ -804,10 +818,6 @@ class MainConf(BaseConfig):
                 else:
                     msg = "Main config did not have a %s attr. before setopt"
                     logger.warning(msg, name)
-
-        if hasattr(opts, 'excludepkgs'):
-            excl = self._get_value('excludepkgs') + opts.excludepkgs
-            self._set_value('excludepkgs', excl, dnf.conf.PRIO_COMMANDLINE)
 
     @property
     def releasever(self):
@@ -856,8 +866,8 @@ class RepoConf(BaseConfig):
         self._add_option('metalink', UrlOption()) # :api
         self._add_option('mediaid', Option())
         self._add_option('gpgkey', UrlListOption())
-        self._add_option('excludepkgs', ListOption())
-        self._add_option('includepkgs', ListOption())
+        self._add_option('excludepkgs', ListAppendOption())
+        self._add_option('includepkgs', ListAppendOption())
         self._add_option('exclude', self._get_option('excludepkgs'))
             # ^ compatibility with yum
 
