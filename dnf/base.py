@@ -109,7 +109,7 @@ class Base(object):
         repo.load()
         hrepo = repo._hawkey_repo
         hrepo.repomd_fn = repo._repomd_fn
-        hrepo.primary_fn = repo.primary_fn
+        hrepo.primary_fn = repo._primary_fn
         hrepo.filelists_fn = repo.filelists_fn
         hrepo.cost = repo.cost
         if repo.presto_fn:
