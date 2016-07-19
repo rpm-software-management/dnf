@@ -258,7 +258,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
     def test_md_only_cached(self):
         self.repo.md_only_cached = True
         self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
-        self.repo.md_try_cache()
+        self.repo._sync_strategy = 3
         self.repo.load()
         del self.repo
         self.setUp() # get a new repo
