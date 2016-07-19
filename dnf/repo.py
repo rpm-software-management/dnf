@@ -506,11 +506,11 @@ class Repo(dnf.conf.RepoConf):
             self._sync_strategy = SYNC_TRY_CACHE
 
     @property
-    def md_only_cached(self):
+    def _md_only_cached(self):
         return self._sync_strategy == SYNC_ONLY_CACHE
 
-    @md_only_cached.setter
-    def md_only_cached(self, val):
+    @_md_only_cached.setter
+    def _md_only_cached(self, val):
         """Force using only the metadata the repo has in the local cache."""
         if val:
             self._sync_strategy = SYNC_ONLY_CACHE
@@ -763,7 +763,7 @@ class Repo(dnf.conf.RepoConf):
 
     def _configure_from_options(self, opts):
         if getattr(opts, 'cacheonly', None):
-            self.md_only_cached = True
+            self._md_only_cached = True
         super(Repo, self)._configure_from_options(opts)
 
     def disable(self):

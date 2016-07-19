@@ -418,7 +418,7 @@ class Base(object):
 
             logger.log(dnf.logging.DDEBUG,
                        'Adding group file from repository: %s', repo.id)
-            if repo.md_only_cached:
+            if repo._md_only_cached:
                 decompressed = misc.calculate_repo_gen_dest(comps_fn,
                                                             'groups.xml')
                 if not os.path.exists(decompressed):
