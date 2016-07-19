@@ -58,3 +58,7 @@ When DNF CLI runs it loads the plugins found in the paths during the CLI's initi
   .. method:: transaction
 
     Plugin can override this. This hook is called immediately after a successful transaction.
+
+You may want to see the comparison with `yum plugin hook API`_.
+
+.. _yum plugin hook API: http://dnf.readthedocs.org/en/latest/api_vs_yum.html
