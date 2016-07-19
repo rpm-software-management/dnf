@@ -589,3 +589,14 @@ class Solver(object):
         trans.remove = old_set - new_set
         trans.upgrade = old_set - trans.remove
         return trans
+
+    def _exclude_packages_from_installed_groups(self, base):
+        for group in self.persistor.groups:
+            p_grp = self.persistor.group(group)
+            if p_grp.installed:
+                installed_pkg_names = \
+                    set(p_grp.full_list) - set(p_grp.pkg_exclude)
+                installed_pkgs = base.sack.query().installed().filter(
+                    name=installed_pkg_names)
+                for pkg in installed_pkgs:
+                    base._goal.install(pkg)

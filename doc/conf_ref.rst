@@ -184,6 +184,11 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     ``reposdir``. The behavior of ``reposdir`` could differ when it is used
     along with \-\ :ref:`-installroot <installroot-label>` option.
 
+``upgrade_group_objects_upgrade``
+    :ref:`boolean <boolean-label>`
+
+    Set this to False to disable the automatic running of ``group upgrade`` when running the ``upgrade`` command. Default is True (perform the operation).
+
 ==============
  Repo Options
 ==============
