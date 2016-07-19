@@ -557,7 +557,7 @@ class Repo(dnf.conf.RepoConf):
         return self.metadata._presto_fn
 
     @property
-    def primary_fn(self):
+    def _primary_fn(self):
         return self.metadata._primary_fn
 
     @property
