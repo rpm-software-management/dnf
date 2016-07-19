@@ -203,7 +203,7 @@ class Package(hawkey.Package):
         if self._from_cmdline:
             return self.location
         loc = self.location
-        if not self.repo.local:
+        if not self.repo._local:
             loc = os.path.basename(loc)
         elif self.baseurl and self.baseurl.startswith('file://'):
             return os.path.join(self.baseurl, loc)[7:]
@@ -211,7 +211,7 @@ class Package(hawkey.Package):
 
     def _is_local_pkg(self):
         return self._from_cmdline or \
-            (self.repo.local and (not self.baseurl or self.baseurl.startswith('file://')))
+            (self.repo._local and (not self.baseurl or self.baseurl.startswith('file://')))
 
     # yum compatibility method
     def returnIdSum(self):

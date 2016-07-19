@@ -486,7 +486,7 @@ class Repo(dnf.conf.RepoConf):
         return self.metadata._filelists_fn
 
     @property
-    def local(self):
+    def _local(self):
         if self.metalink or self.mirrorlist:
             return False
         if self.baseurl[0].startswith('file://'):
@@ -541,7 +541,7 @@ class Repo(dnf.conf.RepoConf):
     @property
     def pkgdir(self):
         # :api
-        if self.local:
+        if self._local:
             return dnf.util.strip_prefix(self.baseurl[0], 'file://')
         if self._pkgdir is not None:
             return self._pkgdir
