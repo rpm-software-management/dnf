@@ -256,13 +256,13 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.assertEqual(repo._metadata_expire_in(), (True, None))
 
     def test_md_only_cached(self):
-        self.repo.md_only_cached = True
+        self.repo._md_only_cached = True
         self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
         self.repo._sync_strategy = 3
         self.repo.load()
         del self.repo
         self.setUp() # get a new repo
-        self.repo.md_only_cached = True
+        self.repo._md_only_cached = True
         self.assertFalse(self.repo.load())
         self.assertFalse(self.repo.metadata.fresh)
 
@@ -270,7 +270,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         del self.repo
         self.setUp()
         self.repo.metadata_expire = 0
-        self.repo.md_only_cached = True
+        self.repo._md_only_cached = True
         self.assertFalse(self.repo.load())
 
     def test_pkgdir(self):
@@ -351,7 +351,7 @@ class LocalRepoTest(support.TestCase):
         self.repo.name = "r for riot"
 
     def test_mirrors(self):
-        self.repo.md_only_cached = True
+        self.repo._md_only_cached = True
         with mock.patch('dnf.repo.Repo.cachedir', REPOS + "/rpm"):
             self.assertFalse(self.repo.load())  # got a cache
         self.assertLength(self.repo.metadata._mirrors, 4)
