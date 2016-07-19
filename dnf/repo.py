@@ -252,7 +252,7 @@ class Metadata(object):
         return self._repo_dct.get("group_gz") or self._repo_dct.get("group")
 
     @property
-    def content_tags(self):
+    def _content_tags(self):
         return self._repomd_dct.get('content_tags')
 
     @property
