@@ -535,7 +535,7 @@ class Repo(dnf.conf.RepoConf):
         return _priv_metalink_path(self.cachedir)
 
     @property
-    def mirrorlist_path(self):
+    def _mirrorlist_path(self):
         return _priv_mirrorlist_path(self.cachedir)
 
     @property
@@ -688,7 +688,7 @@ class Repo(dnf.conf.RepoConf):
         dnf.util.ensure_dir(self.cachedir)
         dnf.util.rm_rf(self.metadata_dir)
         dnf.util.rm_rf(self.metalink_path)
-        dnf.util.rm_rf(self.mirrorlist_path)
+        dnf.util.rm_rf(self._mirrorlist_path)
         shutil.move(handle._metadata_dir, self.metadata_dir)
         if handle.metalink:
             shutil.move(handle._metalink_path, self.metalink_path)
