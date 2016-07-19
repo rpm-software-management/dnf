@@ -130,7 +130,7 @@ def _download_payloads(payloads, drpm):
         if err == 'Already downloaded':
             errs._skipped.add(pkg)
             continue
-        pkg.repo.md_expire_cache()
+        pkg.repo._md_expire_cache()
         errs._irrecoverable[pkg] = [err]
 
     return errs
@@ -832,7 +832,7 @@ class Repo(dnf.conf.RepoConf):
         self._expired = False
         return True
 
-    def md_expire_cache(self):
+    def _md_expire_cache(self):
         """Mark whatever is in the current cache expired.
 
         This repo instance will alway try to fetch a fresh metadata after this
