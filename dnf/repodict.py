@@ -36,7 +36,7 @@ class RepoDict(dict):
         if id_ in self:
             msg = 'Repository %s is listed more than once in the configuration'
             raise ConfigError(msg % id_)
-        msg = repo.valid()
+        msg = repo._valid()
         if msg:
             raise ConfigError(msg)
         self[id_] = repo

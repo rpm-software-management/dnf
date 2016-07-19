@@ -318,10 +318,10 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.assertFalse(repo._expired)
 
     def test_valid(self):
-        self.assertIsNone(self.repo.valid())
+        self.assertIsNone(self.repo._valid())
 
         repo = dnf.repo.Repo('r', self.conf)
-        self.assertRegexpMatches(repo.valid(), 'no mirror or baseurl')
+        self.assertRegexpMatches(repo._valid(), 'no mirror or baseurl')
 
     def test_handle_new_pkg_download(self):
         """Ensure mirrors are never resolved for package download."""
