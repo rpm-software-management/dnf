@@ -474,7 +474,7 @@ class Repo(dnf.conf.RepoConf):
         return self._section
 
     @property
-    def cachedir(self):
+    def _cachedir(self):
         s = self.metalink or self.mirrorlist or \
             (self.baseurl and self.baseurl[0]) or self.id
         digest = hashlib.sha256(s.encode('utf8')).hexdigest()[:16]
@@ -528,15 +528,15 @@ class Repo(dnf.conf.RepoConf):
 
     @property
     def _metadata_dir(self):
-        return os.path.join(self.cachedir, _METADATA_RELATIVE_DIR)
+        return os.path.join(self._cachedir, _METADATA_RELATIVE_DIR)
 
     @property
     def _metalink_path(self):
-        return _priv_metalink_path(self.cachedir)
+        return _priv_metalink_path(self._cachedir)
 
     @property
     def _mirrorlist_path(self):
-        return _priv_mirrorlist_path(self.cachedir)
+        return _priv_mirrorlist_path(self._cachedir)
 
     @property
     def pkgdir(self):
@@ -545,7 +545,7 @@ class Repo(dnf.conf.RepoConf):
             return dnf.util.strip_prefix(self.baseurl[0], 'file://')
         if self._pkgdir is not None:
             return self._pkgdir
-        return os.path.join(self.cachedir, _PACKAGES_RELATIVE_DIR)
+        return os.path.join(self._cachedir, _PACKAGES_RELATIVE_DIR)
 
     @pkgdir.setter
     def pkgdir(self, val):
@@ -562,7 +562,7 @@ class Repo(dnf.conf.RepoConf):
 
     @property
     def _pubring_dir(self):
-        return os.path.join(self.cachedir, 'pubring')
+        return os.path.join(self._cachedir, 'pubring')
 
     @property
     def _repomd_fn(self):
@@ -685,7 +685,7 @@ class Repo(dnf.conf.RepoConf):
         return hrepo
 
     def _replace_metadata(self, handle):
-        dnf.util.ensure_dir(self.cachedir)
+        dnf.util.ensure_dir(self._cachedir)
         dnf.util.rm_rf(self._metadata_dir)
         dnf.util.rm_rf(self._metalink_path)
         dnf.util.rm_rf(self._mirrorlist_path)
@@ -718,7 +718,7 @@ class Repo(dnf.conf.RepoConf):
 
         """
         assert self.metadata is None
-        handle = self._handle_new_local(self.cachedir)
+        handle = self._handle_new_local(self._cachedir)
         try:
             self.metadata = self._handle_load(handle)
         except (_DetailedLibrepoError, IOError):
@@ -821,7 +821,7 @@ class Repo(dnf.conf.RepoConf):
                 self._replace_metadata(handle)
 
             # get md from the cache now:
-            handle = self._handle_new_local(self.cachedir)
+            handle = self._handle_new_local(self._cachedir)
             self.metadata = self._handle_load(handle)
             self.metadata.fresh = True
         except _DetailedLibrepoError as e:

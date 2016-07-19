@@ -160,11 +160,11 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.repo = self.build_repo('r', 'r for riot')
 
     def tearDown(self):
-        dnf.util.rm_rf(self.repo.cachedir)
+        dnf.util.rm_rf(self.repo._cachedir)
 
     def test_cachedir(self):
         self.repo.baseurl = ["http://download.repo.org/r"]
-        self.assertEqual(self.repo.cachedir,
+        self.assertEqual(self.repo._cachedir,
                          os.path.join(self.TMP_CACHEDIR, 'r-0824b1db602c8695'))
 
     def test_dump(self):
@@ -228,7 +228,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.assertIsNone(repo.metadata)
         self.assertTrue(repo.load())
         self.assertIsNotNone(repo.metadata)
-        repomd = os.path.join(self.repo.cachedir, "repodata/repomd.xml")
+        repomd = os.path.join(self.repo._cachedir, "repodata/repomd.xml")
         self.assertTrue(os.path.isfile(repomd))
         self.assertTrue(repo.metadata.fresh)
 
@@ -352,7 +352,7 @@ class LocalRepoTest(support.TestCase):
 
     def test_mirrors(self):
         self.repo._md_only_cached = True
-        with mock.patch('dnf.repo.Repo.cachedir', REPOS + "/rpm"):
+        with mock.patch('dnf.repo.Repo._cachedir', REPOS + "/rpm"):
             self.assertFalse(self.repo.load())  # got a cache
         self.assertLength(self.repo.metadata._mirrors, 4)
         self.assertEqual(self.repo.metadata._mirrors[0], 'http://many/x86_64')
@@ -368,7 +368,7 @@ class LocalRepoTest(support.TestCase):
                         ('sha1', 'd5f18c856e765cd88a50dbf1bfaea51de3b5e516'),
                         ('sha256', 'ead48d5c448a481bd66a4413d7be28bd44ce5de1ee59ecb723c78dcf4e441696'),
                         ('sha512', '9a3131485c0c0a3f65bb5f25155e89d2d6b09e74ffdaa1c3339d3874885d160d8b4667a4a83dbd7d2702a5d41a4e1bc5622c4783b77dcf1f69626c68975202ce')]}
-        with mock.patch('dnf.repo.Repo.cachedir', REPOS + "/rpm"):
+        with mock.patch('dnf.repo.Repo._cachedir', REPOS + "/rpm"):
             self.assertTrue(self.repo.load())
         self.assertTrue(remote_handle_m.fetchmirrors)
         self.assertFalse(self.repo._expired)
@@ -382,7 +382,7 @@ class LocalRepoTest(support.TestCase):
         new_remote_m().metalink = \
             {'hashes': [('md5', 'fcf04ce803b3e15cbef6ea6f12ed4533'),
                         ('sha1', '3731498f6b7b96316590205a4d7a2add484471e0')]}
-        with mock.patch('dnf.repo.Repo.cachedir', REPOS + "/rpm"):
+        with mock.patch('dnf.repo.Repo._cachedir', REPOS + "/rpm"):
             self.repo._try_cache()
             self.assertFalse(self.repo._try_revive())
 
@@ -396,7 +396,7 @@ class LocalRepoTest(support.TestCase):
                         ('sha512', 'obviousfail')]}
         # can not do the entire load() here, it would run on after try_revive()
         # failed.
-        with mock.patch('dnf.repo.Repo.cachedir', REPOS + "/rpm"):
+        with mock.patch('dnf.repo.Repo._cachedir', REPOS + "/rpm"):
             self.repo._try_cache()
             self.assertFalse(self.repo._try_revive())
 
@@ -409,7 +409,7 @@ class LocalRepoTest(support.TestCase):
             librepo.LRE_CURL, 'Error HTTP/FTP status code: 404', 'Curl error.')
         exc = dnf.repo._DetailedLibrepoError(lr_exc, url)
         new_remote_m()._perform = mock.Mock(side_effect=exc)
-        with mock.patch('dnf.repo.Repo.cachedir', REPOS + "/rpm"):
+        with mock.patch('dnf.repo.Repo._cachedir', REPOS + "/rpm"):
             self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
 
 
@@ -455,7 +455,7 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
         errs = dnf.repo._download_payloads([pload], drpm)
         self.assertEmpty(errs._recoverable)
         self.assertEmpty(errs._irrecoverable)
-        path = os.path.join(repo.cachedir, 'packages/tour-4-4.noarch.rpm')
+        path = os.path.join(repo._cachedir, 'packages/tour-4-4.noarch.rpm')
         self.assertFile(path)
 
 
