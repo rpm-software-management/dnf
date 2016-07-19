@@ -47,7 +47,7 @@ def _printable_fingerprint(fpr_hex):
 
 
 def import_repo_keys(repo):
-    gpgdir = repo.pubring_dir
+    gpgdir = repo._pubring_dir
     known_keys = keyids_from_pubring(gpgdir)
     for keyurl in repo.gpgkey:
         for keyinfo in retrieve(keyurl):
