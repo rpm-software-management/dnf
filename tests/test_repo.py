@@ -198,7 +198,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         del self.repo
         self.repo = dnf.repo.Repo("r", self.conf)
         self.repo.baseurl = [BASEURL]
-        self.repo.md_expire_cache()
+        self.repo._md_expire_cache()
         self.assertTrue(self.repo.load())
 
     def test_gpgcheck(self):
@@ -240,7 +240,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.repo.load()
         self.setUp()
         repo = self.repo
-        repo.md_expire_cache()
+        repo._md_expire_cache()
         repo.md_lazy = True
         self.assertFalse(repo.load())
 
@@ -360,7 +360,7 @@ class LocalRepoTest(support.TestCase):
     @mock.patch.object(dnf.repo.Metadata, '_reset_age')
     @mock.patch('dnf.repo.Repo._handle_new_remote')
     def test_reviving(self, new_remote_m, reset_age_m):
-        self.repo.md_expire_cache()
+        self.repo._md_expire_cache()
         self.repo.metalink = 'http://meh'
         remote_handle_m = new_remote_m()
         remote_handle_m.metalink = \
@@ -377,7 +377,7 @@ class LocalRepoTest(support.TestCase):
     @mock.patch.object(dnf.repo.Metadata, '_reset_age')
     @mock.patch('dnf.repo.Repo._handle_new_remote')
     def test_reviving_lame_hashes(self, new_remote_m, _):
-        self.repo.md_expire_cache()
+        self.repo._md_expire_cache()
         self.repo.metalink = 'http://meh'
         new_remote_m().metalink = \
             {'hashes': [('md5', 'fcf04ce803b3e15cbef6ea6f12ed4533'),
@@ -389,7 +389,7 @@ class LocalRepoTest(support.TestCase):
     @mock.patch.object(dnf.repo.Metadata, '_reset_age')
     @mock.patch('dnf.repo.Repo._handle_new_remote')
     def test_reviving_mismatched_hashes(self, new_remote_m, _):
-        self.repo.md_expire_cache()
+        self.repo._md_expire_cache()
         self.repo.metalink = 'http://meh'
         new_remote_m().metalink = \
             {'hashes': [('sha256', '4394be16de62563321f6ea9604513a8a2f6b9ab67898bbed218feeca8e6a7180'),
@@ -403,7 +403,7 @@ class LocalRepoTest(support.TestCase):
     @mock.patch('dnf.repo.Repo._handle_new_remote')
     def test_reviving_404(self, new_remote_m):
         url = 'http://meh'
-        self.repo.md_expire_cache()
+        self.repo._md_expire_cache()
         self.repo.metalink = url
         lr_exc = librepo.LibrepoException(
             librepo.LRE_CURL, 'Error HTTP/FTP status code: 404', 'Curl error.')
