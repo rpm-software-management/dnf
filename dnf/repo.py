@@ -864,7 +864,7 @@ class Repo(dnf.conf.RepoConf):
             return True, expiration
         return False, 0
 
-    def set_key_import(self, key_import):
+    def _set_key_import(self, key_import):
         self._key_import = key_import
 
     def set_progress_bar(self, progress):
