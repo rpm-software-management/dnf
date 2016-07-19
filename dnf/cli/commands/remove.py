@@ -39,7 +39,12 @@ class RemoveCommand(commands.Command):
 
     @staticmethod
     def set_argparser(parser):
-        parser.add_argument('packages', nargs='+', help=_('Package to remove'),
+        mgroup = parser.add_mutually_exclusive_group()
+        mgroup.add_argument('--duplicated', action='store_true',
+                            help=_('remove duplicated packages'))
+        mgroup.add_argument('--oldinstallonly', action='store_true',
+                            help=_('remove installonly packages over the limit'))
+        parser.add_argument('packages', nargs='*', help=_('Package to remove'),
                             action=OptionParser.ParseSpecGroupFileCallback,
                             metavar=_('PACKAGE'))
 
@@ -57,6 +62,29 @@ class RemoveCommand(commands.Command):
         # local pkgs not supported in erase command
         self.opts.pkg_specs += self.opts.filenames
         done = False
+
+        if self.opts.duplicated:
+            q = self.base.sack.query()
+            instonly = q.installed().filter(
+                provides__glob=self.base.conf.installonlypkgs)
+            dups = q.duplicated().difference(instonly).latest(-1)
+            if dups:
+                for pkg in dups:
+                    self.base.package_remove(pkg)
+            else:
+                raise dnf.exceptions.Error(_('No duplicated packages for removal.'))
+            return
+        if self.opts.oldinstallonly:
+            q = self.base.sack.query()
+            instonly = q.installed().filter(
+                provides__glob=self.base.conf.installonlypkgs).latest(
+                - self.base.conf.installonly_limit)
+            if instonly:
+                for pkg in instonly:
+                    self.base.package_remove(pkg)
+            else:
+                raise dnf.exceptions.Error(_('No old installonly packages for removal.'))
+            return
 
         # Remove groups.
         if self.opts.grp_specs:
