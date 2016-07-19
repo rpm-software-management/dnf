@@ -759,7 +759,7 @@ class Cli(object):
         (bar, self.base._ds_callback) = self.base.output.setup_progress_callbacks()
         self.base.repos.all().set_progress_bar(bar)
         key_import = output.CliKeyImport(self.base, self.base.output)
-        self.base.repos.all().set_key_import(key_import)
+        self.base.repos.all()._set_key_import(key_import)
 
     def _log_essentials(self):
         logger.debug('DNF version: %s', dnf.const.VERSION)
