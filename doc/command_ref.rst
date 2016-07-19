@@ -634,6 +634,12 @@ Remove Command
 ``dnf [options] remove <package-specs>...``
     Removes the specified packages from the system along with any packages depending on the packages being removed. Each ``<spec>`` can be either a ``<package-spec>``, which specifies a package directly, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
+``dnf [options] remove --duplicated``
+    Removes older version of duplicated packages.
+
+``dnf [options] remove --oldinstallonly``
+    Removes old installonly packages keeping only ``installonly_limit`` latest versions.
+
 .. _repolist_command-label:
 
 ----------------
