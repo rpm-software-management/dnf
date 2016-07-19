@@ -360,7 +360,7 @@ class MockPackage(object):
         return self._chksum
 
 class MockRepo(dnf.repo.Repo):
-    def valid(self):
+    def _valid(self):
         return None
 
 
