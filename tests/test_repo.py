@@ -205,7 +205,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.repo.gpgcheck = True
         self.assertTrue(self.repo.load())
 
-    @mock.patch('dnf.repo.Repo.local', False)
+    @mock.patch('dnf.repo.Repo._local', False)
     def test_keep_old_pgks(self):
         dnf.util.ensure_dir(self.repo.pkgdir)
         survivor = os.path.join(self.repo.pkgdir, "survivor")
@@ -442,7 +442,7 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
         self.assertEmpty(errs._recoverable)
 
     # twist Repo to think it's remote:
-    @mock.patch('dnf.repo.Repo.local', False)
+    @mock.patch('dnf.repo.Repo._local', False)
     def test_remote_download(self):
         progress = dnf.callback.NullDownloadProgress()
         repo = self.build_repo('r', 'r for riot')

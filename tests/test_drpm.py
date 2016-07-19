@@ -45,7 +45,7 @@ class DrpmTest(support.TestCase):
 
         # pretend it's remote and not cached
         self.addCleanup(mock.patch.stopall)
-        mock.patch.object(self.pkg.repo.__class__, 'local', False).start()
+        mock.patch.object(self.pkg.repo.__class__, '_local', False).start()
         self.pkg.localPkg = lambda: '/tmp/%s.rpm' % PACKAGE
         unlink_f(self.pkg.localPkg())
 
