@@ -241,7 +241,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.setUp()
         repo = self.repo
         repo._md_expire_cache()
-        repo.md_lazy = True
+        repo._md_lazy = True
         self.assertFalse(repo.load())
 
     def test_metadata_expire_in(self):

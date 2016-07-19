@@ -782,7 +782,7 @@ class Cli(object):
                     repo._md_expire_cache()
             elif not demands.fresh_metadata:
                 for repo in repos.values():
-                    repo.md_lazy = True
+                    repo._md_lazy = True
 
         if demands.sack_activation:
             self.base.fill_sack(load_system_repo='auto',
