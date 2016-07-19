@@ -531,7 +531,7 @@ class Repo(dnf.conf.RepoConf):
         return os.path.join(self.cachedir, _METADATA_RELATIVE_DIR)
 
     @property
-    def metalink_path(self):
+    def _metalink_path(self):
         return _priv_metalink_path(self.cachedir)
 
     @property
@@ -687,7 +687,7 @@ class Repo(dnf.conf.RepoConf):
     def _replace_metadata(self, handle):
         dnf.util.ensure_dir(self.cachedir)
         dnf.util.rm_rf(self.metadata_dir)
-        dnf.util.rm_rf(self.metalink_path)
+        dnf.util.rm_rf(self._metalink_path)
         dnf.util.rm_rf(self._mirrorlist_path)
         shutil.move(handle._metadata_dir, self.metadata_dir)
         if handle.metalink:
