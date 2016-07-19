@@ -65,7 +65,7 @@ def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
         kwargs.setdefault('encoding', 'utf-8')
     fo = tempfile.NamedTemporaryFile(mode, **kwargs)
     if repo:
-        handle = repo.get_handle()
+        handle = repo._get_handle()
     else:
         handle = _non_repo_handle(conf)
     try:

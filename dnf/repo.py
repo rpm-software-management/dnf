@@ -348,7 +348,7 @@ class PackagePayload(dnf.callback.Payload):
         dnf.util.ensure_dir(pkgdir)
 
         target_dct = {
-            'handle' : pkg.repo.get_handle(),
+            'handle' : pkg.repo._get_handle(),
             'dest' : pkgdir,
             'resume' : True,
             'cbdata' : self,
@@ -774,7 +774,7 @@ class Repo(dnf.conf.RepoConf):
         # :api
         self.enabled = True
 
-    def get_handle(self):
+    def _get_handle(self):
         """Returns a librepo handle, set as per the repo options
 
         Note that destdir is None, and the handle is cached.
