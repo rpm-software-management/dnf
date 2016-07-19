@@ -482,7 +482,7 @@ class Repo(dnf.conf.RepoConf):
         return os.path.join(self.basecachedir, repodir)
 
     @property
-    def filelists_fn(self):
+    def _filelists_fn(self):
         return self.metadata._filelists_fn
 
     @property
