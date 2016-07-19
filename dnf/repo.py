@@ -569,7 +569,7 @@ class Repo(dnf.conf.RepoConf):
         return self.metadata._repomd_fn
 
     @property
-    def updateinfo_fn(self):
+    def _updateinfo_fn(self):
         return self.metadata._updateinfo_fn
 
     def __lt__(self, other):

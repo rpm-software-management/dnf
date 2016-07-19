@@ -116,8 +116,8 @@ class Base(object):
             hrepo.presto_fn = repo.presto_fn
         else:
             logger.debug("not found deltainfo for: %s", repo.name)
-        if repo.updateinfo_fn:
-            hrepo.updateinfo_fn = repo.updateinfo_fn
+        if repo._updateinfo_fn:
+            hrepo.updateinfo_fn = repo._updateinfo_fn
         else:
             logger.debug("not found updateinfo for: %s", repo.name)
         self._sack.load_repo(hrepo, build_cache=True, load_filelists=True,
