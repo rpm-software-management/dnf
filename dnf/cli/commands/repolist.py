@@ -176,8 +176,8 @@ class RepoListCommand(commands.Command):
                 if md and md._revision is not None:
                     out += [self.output.fmtKeyValFill(_("Repo-revision: "),
                                                       md._revision)]
-                if md and md.content_tags:
-                    tags = md.content_tags
+                if md and md._content_tags:
+                    tags = md._content_tags
                     out += [self.output.fmtKeyValFill(_("Repo-tags    : "),
                                                       ", ".join(sorted(tags)))]
 
