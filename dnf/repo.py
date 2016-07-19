@@ -244,7 +244,7 @@ class Metadata(object):
         self._priv_mirrors = handle.mirrors[:]
 
     @property
-    def age(self):
+    def _age(self):
         return self._file_age('primary')
 
     @property
@@ -699,7 +699,7 @@ class Repo(dnf.conf.RepoConf):
         if self._expired:
             # explicitly requested expired state
             return
-        self._expired = self.metadata.age >= self.metadata_expire
+        self._expired = self.metadata._age >= self.metadata_expire
         if self.metadata_expire == -1:
             self._expired = False
 
@@ -854,7 +854,7 @@ class Repo(dnf.conf.RepoConf):
         if self.metadata:
             if self.metadata_expire == -1:
                 return True, None
-            expiration = self.metadata_expire - self.metadata.age
+            expiration = self.metadata_expire - self.metadata._age
             if self._expired:
                 expiration = min(0, expiration)
             return True, expiration

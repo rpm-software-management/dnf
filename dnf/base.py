@@ -252,8 +252,8 @@ class Base(object):
                         self._add_repo_to_sack(r)
                         if r.metadata._timestamp > mts:
                             mts = r.metadata._timestamp
-                        if r.metadata.age < age:
-                            age = r.metadata.age
+                        if r.metadata._age < age:
+                            age = r.metadata._age
                         logger.debug(_("%s: using metadata from %s."), r.id,
                                      time.ctime(r.metadata._md_timestamp))
                     except dnf.exceptions.RepoError as e:
