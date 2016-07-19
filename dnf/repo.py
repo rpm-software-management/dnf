@@ -553,7 +553,7 @@ class Repo(dnf.conf.RepoConf):
         self._pkgdir = val
 
     @property
-    def presto_fn(self):
+    def _presto_fn(self):
         return self.metadata._presto_fn
 
     @property

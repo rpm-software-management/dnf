@@ -112,8 +112,8 @@ class Base(object):
         hrepo.primary_fn = repo._primary_fn
         hrepo.filelists_fn = repo.filelists_fn
         hrepo.cost = repo.cost
-        if repo.presto_fn:
-            hrepo.presto_fn = repo.presto_fn
+        if repo._presto_fn:
+            hrepo.presto_fn = repo._presto_fn
         else:
             logger.debug("not found deltainfo for: %s", repo.name)
         if repo._updateinfo_fn:
