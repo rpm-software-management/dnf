@@ -339,7 +339,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.assertEqual(self.repo.bandwidth, 10 << 20)
         opts = {}
         with mock.patch('librepo.Handle.setopt', opts.__setitem__):
-            self.repo.get_handle()
+            self.repo._get_handle()
         self.assertEqual(opts[librepo.LRO_MAXSPEED], 5 << 20)
 
 
