@@ -546,6 +546,18 @@ class Base(object):
         goal = self._goal
         if goal.req_has_erase():
             goal.push_userinstalled(self.sack.query().installed(), self._yumdb)
+        elif not self.conf.upgrade_group_objects_upgrade:
+            # exclude packages installed from groups
+            # these packages will be marked to installation
+            # which could prevent them from upgrade, downgrade
+            # to prevent "conflicting job" error it's not applied
+            # to "remove" and "reinstall" commands
+
+            if not self._group_persistor:
+                self._group_persistor = self._activate_group_persistor()
+            solver = self._build_comps_solver()
+            solver._exclude_packages_from_installed_groups(self)
+
         goal.add_protected(self.sack.query().filter(
             name=self.conf.protected_packages))
         if not self._run_hawkey_goal(goal, allow_erasing):

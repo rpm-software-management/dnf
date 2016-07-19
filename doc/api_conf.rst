@@ -197,6 +197,10 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     The username to use for connecting to repo with basic HTTP authentication. Defaults to ``None``.
 
+  .. attribute:: upgrade_group_objects_upgrade
+
+    Set this to False to disable the automatic running of ``group upgrade`` when running the ``upgrade`` command. Default is ``True`` (perform the operation).
+
   .. attribute:: password
 
     The password to use for connecting to repo with basic HTTP authentication. Defaults to ``None``.
