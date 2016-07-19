@@ -494,11 +494,11 @@ class Repo(dnf.conf.RepoConf):
         return False
 
     @property
-    def md_lazy(self):
+    def _md_lazy(self):
         return self._sync_strategy == SYNC_LAZY
 
-    @md_lazy.setter
-    def md_lazy(self, val):
+    @_md_lazy.setter
+    def _md_lazy(self, val):
         """Set whether it is fine to use stale metadata."""
         if val:
             self._sync_strategy = SYNC_LAZY
