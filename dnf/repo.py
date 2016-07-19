@@ -521,7 +521,7 @@ class Repo(dnf.conf.RepoConf):
     def md_expired(self):
         """Return whether the cached metadata is expired."""
         try:
-            exp_remaining = self.metadata_expire_in()[1]
+            exp_remaining = self._metadata_expire_in()[1]
             return False if exp_remaining is None else exp_remaining <= 0
         except dnf.exceptions.MetadataError:
             return False
@@ -845,7 +845,7 @@ class Repo(dnf.conf.RepoConf):
         """Use cache for metadata if possible, sync otherwise."""
         self._sync_strategy = SYNC_TRY_CACHE
 
-    def metadata_expire_in(self):
+    def _metadata_expire_in(self):
         """Get the number of seconds after which the cached metadata will expire.
 
         Returns a tuple, boolean whether there even is cached metadata and the

@@ -73,7 +73,7 @@ class MakeCacheCommand(commands.Command):
             self.base.repos.all()._max_mirror_tries = 1
 
         for r in self.base.repos.iter_enabled():
-            (is_cache, expires_in) = r.metadata_expire_in()
+            (is_cache, expires_in) = r._metadata_expire_in()
             if expires_in is None:
                 logger.info('%s: will never be expired'
                             ' and will not be refreshed.', r.id)

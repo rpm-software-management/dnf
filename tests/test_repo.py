@@ -246,14 +246,14 @@ class RepoTest(RepoTestMixin, support.TestCase):
 
     def test_metadata_expire_in(self):
         repo = self.repo
-        self.assertEqual(repo.metadata_expire_in(), (False, 0))
+        self.assertEqual(repo._metadata_expire_in(), (False, 0))
         repo.load()
-        (has, time) = repo.metadata_expire_in()
+        (has, time) = repo._metadata_expire_in()
         self.assertTrue(has)
         self.assertGreater(time, 0)
 
         repo.metadata_expire = 'never'
-        self.assertEqual(repo.metadata_expire_in(), (True, None))
+        self.assertEqual(repo._metadata_expire_in(), (True, None))
 
     def test_md_only_cached(self):
         self.repo.md_only_cached = True
