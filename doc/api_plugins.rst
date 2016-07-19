@@ -19,7 +19,7 @@
  Plugin Interface
 ==================
 
-DNF plugin can be any Python class fullfilling the following criteria:
+DNF plugin can be any Python class fulfilling the following criteria:
 
 1. it derives from :class:`dnf.Plugin`,
 2. it is made available in a Python module stored in one of the :attr:`.Conf.pluginpath`,
