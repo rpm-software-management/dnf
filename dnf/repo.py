@@ -518,7 +518,7 @@ class Repo(dnf.conf.RepoConf):
             self._sync_strategy = SYNC_TRY_CACHE
 
     @property
-    def md_expired(self):
+    def _md_expired(self):
         """Return whether the cached metadata is expired."""
         try:
             exp_remaining = self._metadata_expire_in()[1]
