@@ -565,7 +565,7 @@ class Repo(dnf.conf.RepoConf):
         return os.path.join(self.cachedir, 'pubring')
 
     @property
-    def repomd_fn(self):
+    def _repomd_fn(self):
         return self.metadata._repomd_fn
 
     @property
