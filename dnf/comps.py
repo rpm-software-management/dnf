@@ -354,7 +354,7 @@ class Comps(object):
         # :api
         return sorted(self.environments_iter(), key=_fn_display_order)
 
-    def environment_by_id(self, id):
+    def _environment_by_id(self, id):
         return dnf.util.first(g for g in self.environments_iter() if g.id == id)
 
     def environment_by_pattern(self, pattern, case_sensitive=False):
@@ -462,7 +462,7 @@ class Solver(object):
         return count < 2
 
     def environment_install(self, env_id, pkg_types, exclude, strict=True):
-        env = self.comps.environment_by_id(env_id)
+        env = self.comps._environment_by_id(env_id)
         p_env = self.persistor.environment(env_id)
         if p_env.installed:
             raise CompsError(_("Environment '%s' is already installed.") %
@@ -505,7 +505,7 @@ class Solver(object):
         return trans
 
     def environment_upgrade(self, env_id):
-        env = self.comps.environment_by_id(env_id)
+        env = self.comps._environment_by_id(env_id)
         p_env = self.persistor.environment(env.id)
         if not p_env.installed:
             raise CompsError(_("Environment '%s' is not installed.") %

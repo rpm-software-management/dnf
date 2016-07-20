@@ -280,7 +280,7 @@ class GroupPersistor(object):
                 except KeyError:
                     if self._comps:
                         try:
-                            comps_env = self._comps.environment_by_id(env_id)
+                            comps_env = self._comps._environment_by_id(env_id)
                             if comps_env:
                                 value = getattr(comps_env, key)
                                 setattr(env, key, value)
