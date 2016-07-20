@@ -39,14 +39,14 @@ class Package(hawkey.Package):
     def __init__(self, initobject, base):
         super(Package, self).__init__(initobject)
         self.base = base
-        self._chksum = None
+        self._priv_chksum = None
         self._repo = None
         self._size = None
 
     @property
-    def chksum(self):
-        if self._chksum:
-            return self._chksum
+    def _chksum(self):
+        if self._priv_chksum:
+            return self._priv_chksum
         if self.from_cmdline:
             chksum_type = dnf.yum.misc.get_default_chksum_type()
             chksum_val = dnf.yum.misc.checksum(chksum_type, self.location)
@@ -54,9 +54,9 @@ class Package(hawkey.Package):
                     binascii.unhexlify(chksum_val))
         return super(Package, self).chksum
 
-    @chksum.setter
-    def chksum(self, val):
-        self._chksum = val
+    @_chksum.setter
+    def _chksum(self, val):
+        self._priv_chksum = val
 
     @property
     def debug_name(self):
@@ -218,7 +218,7 @@ class Package(hawkey.Package):
         """ Return the chksum type and chksum string how the legacy yum expects
             it.
         """
-        (chksum_type, chksum) = self.chksum
+        (chksum_type, chksum) = self._chksum
         return (hawkey.chksum_name(chksum_type), binascii.hexlify(chksum).decode())
 
     # yum compatibility method

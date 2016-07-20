@@ -161,7 +161,7 @@ class VerifyTransactionTest(TestCase):
         # we don't simulate the transaction itself here, just "install" what is
         # already there and "remove" what is not.
         new_pkg = self.base.sack.query().available().filter(name="pepper")[1]
-        new_pkg.chksum = (hawkey.CHKSUM_MD5, binascii.unhexlify(HASH))
+        new_pkg._chksum = (hawkey.CHKSUM_MD5, binascii.unhexlify(HASH))
         new_pkg.repo = mock.Mock()
         removed_pkg = self.base.sack.query().available().filter(
             name="mrkite")[0]
