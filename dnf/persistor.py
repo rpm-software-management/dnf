@@ -297,7 +297,7 @@ class GroupPersistor(object):
                 except KeyError:
                     if self._comps:
                         try:
-                            comps_grp = self._comps.group_by_id(grp_id)
+                            comps_grp = self._comps._group_by_id(grp_id)
                             if comps_grp:
                                 value = getattr(comps_grp, key)
                                 setattr(grp, key, value)
