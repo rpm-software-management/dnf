@@ -62,7 +62,7 @@ def _repo_match(repo, patterns):
 def _repo_size(sack, repo):
     ret = 0
     for pkg in sack.query().filter(reponame__eq=repo.id):
-        ret += pkg.size
+        ret += pkg._size
     return dnf.cli.format.format_number(ret)
 
 

@@ -37,14 +37,14 @@ class MockStdout(dnf.pycomp.StringIO):
 class FakePayload(object):
     def __init__(self, string, size):
         self.string = string
-        self.size = size
+        self._size = size
 
     def __str__(self):
         return self.string
 
     @property
     def download_size(self):
-        return self.size
+        return self._size
 
 class ProgressTest(tests.support.TestCase):
     def test_single(self):
@@ -136,6 +136,6 @@ class ProgressTest(tests.support.TestCase):
         pload1 = FakePayload('club', 20.0)
         p.end(pload1, dnf.callback.STATUS_ALREADY_EXISTS, 'already got')
         self.assertEqual(p.done_files, 1)
-        self.assertEqual(p.done_size, pload1.size)
+        self.assertEqual(p.done_size, pload1._size)
         self.assertEqual(fo.getvalue(),
                          '[SKIPPED] club: already got            \n')

@@ -179,7 +179,7 @@ class OutputTest(support.TestCase):
     def test_infoOutput_with_none_description(self):
         pkg = support.MockPackage('tour-5-0.noarch')
         pkg._from_system = False
-        pkg.size = 0
+        pkg._size = 0
         pkg.pkgid = None
         pkg.repoid = None
         pkg.e = pkg.epoch = 1

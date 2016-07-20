@@ -81,7 +81,7 @@ class PackageTest(support.TestCase):
         with mock.patch.object(self.pkg, 'localPkg',
                                return_value=support.TOUR_44_PKG_PATH):
             self.pkg._chksum = (hawkey.CHKSUM_MD5, TOUR_MD5)
-            self.pkg.size = TOUR_SIZE
+            self.pkg._size = TOUR_SIZE
             self.assertTrue(self.pkg.verifyLocalPkg())
             self.pkg._chksum = (hawkey.CHKSUM_MD5, TOUR_WRONG_MD5)
             self.assertFalse(self.pkg.verifyLocalPkg())

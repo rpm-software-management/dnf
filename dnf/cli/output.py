@@ -493,7 +493,7 @@ class Output(object):
         print_key_val(_("Version"), pkg.version)
         print_key_val(_("Release"), pkg.release)
         print_key_val(_("Arch"), pkg.arch)
-        print_key_val(_("Size"), format_number(float(pkg.size)))
+        print_key_val(_("Size"), format_number(float(pkg._size)))
         print_key_val(_("Source"), pkg.sourcerpm)
         print_key_val(_("Repo"), pkg.repoid)
         if 'from_repo' in yumdb_info:
@@ -880,7 +880,7 @@ class Output(object):
             # the package size fails, log the error and don't report download
             # size
             try:
-                size = int(pkg.size)
+                size = int(pkg._size)
                 totsize += size
                 try:
                     if pkg.verifyLocalPkg():
@@ -924,7 +924,7 @@ class Output(object):
             # the package size fails, log the error and don't report download
             # size
             try:
-                size = pkg.size
+                size = pkg._size
                 totsize += size
             except Exception:
                 error = True
@@ -1010,7 +1010,7 @@ class Output(object):
             (n, a, e, v, r) = po.pkgtup
             evr = po.evr
             repoid = po._from_repo
-            size = format_number(po.size)
+            size = format_number(po._size)
 
             if a is None: # gpgkeys are weird
                 a = 'noarch'

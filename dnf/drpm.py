@@ -112,7 +112,7 @@ class DeltaInfo(object):
             # already there
             return None
 
-        best = po.size * MAX_PERCENTAGE / 100
+        best = po._size * MAX_PERCENTAGE / 100
         best_delta = None
         for ipo in self.query.filter(name=po.name, arch=po.arch):
             delta = po.get_delta_from_evr(ipo.evr)
