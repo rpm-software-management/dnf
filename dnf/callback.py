@@ -111,32 +111,5 @@ class Depsolve(object):
     def end(self):
         pass
 
-# :deprecated in 1.1.0, eligible for dropping in 2.0
-# de facto API - never documented but used by Anaconda thanks to us
-class LoggingTransactionDisplay(dnf.yum.rpmtrans.LoggingTransactionDisplay):
-
-    def error(self, message):
-        super(LoggingTransactionDisplay, self).error(message)
-        # Compatibility: Originally, "error" was "errorlog". Let's call it in
-        # case somebody overrides it.
-        self.errorlog(message)
-
-    def errorlog(self, msg):
-        # Compatibility: Originally, "error" was "errorlog". Let's define it in
-        # case somebody extends it.
-        pass
-
-    def event(self, package, action, te_current, te_total, ts_current, ts_total):
-        # Compatibility: Originally, "progress" was "event". Let's define it in
-        # case somebody extends it.
-        pass
-
-    def progress(self, package, action, ti_done, ti_total, ts_done, ts_total):
-        super(LoggingTransactionDisplay, self).progress(
-            package, action, ti_done, ti_total, ts_done, ts_total)
-        # Compatibility: Originally, "progress" was "event". Let's call it in
-        # case somebody overrides it.
-        self.event(package, action, ti_done, ti_total, ts_done, ts_total)
-
 
 TransactionProgress = dnf.yum.rpmtrans.TransactionDisplay  # :api
