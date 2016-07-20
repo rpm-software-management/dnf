@@ -123,7 +123,7 @@ class Package(hawkey.Package):
         return srcname
 
     @property
-    def pkgid(self):
+    def _pkgid(self):
         try:
             (_, chksum) = self.hdr_chksum
             return binascii.hexlify(chksum)

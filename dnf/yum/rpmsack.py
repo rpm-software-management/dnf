@@ -110,7 +110,7 @@ class AdditionalPkgDB(object):
     def get_package(self, po=None, pkgtup=None, pkgid=None):
         """Return an RPMDBAdditionalDataPackage Object for this package"""
         if po:
-            thisdir = self._get_dir_name(po.pkgtup, po.pkgid)
+            thisdir = self._get_dir_name(po.pkgtup, po._pkgid)
         elif pkgtup and pkgid:
             thisdir = self._get_dir_name(pkgtup, pkgid)
         else:
