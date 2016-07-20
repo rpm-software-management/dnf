@@ -52,7 +52,7 @@ class Subject(object):
     @staticmethod
     def _nevra_to_selector(sltr, nevra):
         if nevra.name is not None:
-            sltr.set_autoglob(name=nevra.name)
+            sltr._set_autoglob(name=nevra.name)
         if nevra.version is not None:
             evr = nevra.version
             if nevra.epoch is not None and nevra.epoch > 0:
