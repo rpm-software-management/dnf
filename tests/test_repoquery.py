@@ -58,7 +58,7 @@ class PkgStub(object):
         self.packager = 'Eastford'
         self.release = '1.f20'
         self.reponame = '@System'
-        self.size = 100
+        self._size = 100
         self.sourcerpm = 'foo-1.0.1-1.f20.src.rpm'
         self.summary = 'it.'
         self.url = 'foorl.net'

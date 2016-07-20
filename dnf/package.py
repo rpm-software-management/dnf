@@ -41,7 +41,7 @@ class Package(hawkey.Package):
         self.base = base
         self._priv_chksum = None
         self._repo = None
-        self._size = None
+        self._priv_size = None
 
     @property
     def _chksum(self):
@@ -87,14 +87,14 @@ class Package(hawkey.Package):
         return dnf.rpm._header(self.localPkg())
 
     @property
-    def size(self):
-        if self._size:
-            return self._size
+    def _size(self):
+        if self._priv_size:
+            return self._priv_size
         return super(Package, self).size
 
-    @size.setter
-    def size(self, val):
-        self._size = val
+    @_size.setter
+    def _size(self, val):
+        self._priv_size = val
 
     @property
     def source_debug_name(self):
@@ -229,7 +229,7 @@ class Package(hawkey.Package):
             return True # local package always verifies against itself
         (chksum_type, chksum) = self.returnIdSum()
         real_sum = dnf.yum.misc.checksum(chksum_type, self.localPkg(),
-                                         datasize=self.size)
+                                         datasize=self._size)
         if real_sum != chksum:
             logger.debug('%s: %s check failed: %s vs %s',
                          self, chksum_type, real_sum, chksum)
