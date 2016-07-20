@@ -826,7 +826,7 @@ class Base(object):
                 yumdb_info.checksum_type = str(csum[0])
                 yumdb_info.checksum_data = csum[1]
 
-            if rpo.from_cmdline:
+            if rpo._from_cmdline:
                 try:
                     st = os.stat(rpo.localPkg())
                     lp_ctime = str(int(st.st_ctime))
@@ -981,7 +981,7 @@ class Base(object):
                     might help.
               2 = Fatal GPG verification error, give up.
         """
-        if po.from_cmdline:
+        if po._from_cmdline:
             check = self.conf.localpkg_gpgcheck
             hasgpgkey = 0
         else:

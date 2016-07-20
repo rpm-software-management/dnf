@@ -47,7 +47,7 @@ class Package(hawkey.Package):
     def _chksum(self):
         if self._priv_chksum:
             return self._priv_chksum
-        if self.from_cmdline:
+        if self._from_cmdline:
             chksum_type = dnf.yum.misc.get_default_chksum_type()
             chksum_val = dnf.yum.misc.checksum(chksum_type, self.location)
             return (hawkey.chksum_type(chksum_type),
@@ -68,7 +68,7 @@ class Package(hawkey.Package):
         return "{}-debuginfo".format(self.name)
 
     @property
-    def from_cmdline(self):
+    def _from_cmdline(self):
         return self.reponame == hawkey.CMDLINE_REPO_NAME
 
     @property
@@ -200,7 +200,7 @@ class Package(hawkey.Package):
             For packages in remote repo returns where the package will be/has
             been downloaded.
         """
-        if self.from_cmdline:
+        if self._from_cmdline:
             return self.location
         loc = self.location
         if not self.repo.local:
@@ -210,7 +210,7 @@ class Package(hawkey.Package):
         return os.path.join(self.repo.pkgdir, loc)
 
     def _is_local_pkg(self):
-        return self.from_cmdline or \
+        return self._from_cmdline or \
             (self.repo.local and (not self.baseurl or self.baseurl.startswith('file://')))
 
     # yum compatibility method
@@ -225,7 +225,7 @@ class Package(hawkey.Package):
     def verifyLocalPkg(self):
         if self.from_system:
             raise ValueError("Can not verify an installed package.")
-        if self.from_cmdline:
+        if self._from_cmdline:
             return True # local package always verifies against itself
         (chksum_type, chksum) = self.returnIdSum()
         real_sum = dnf.yum.misc.checksum(chksum_type, self.localPkg(),
