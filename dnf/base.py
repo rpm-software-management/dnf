@@ -231,7 +231,7 @@ class Base(object):
         # :api
         """Prepare the Sack and the Goal objects. """
         timer = dnf.logging.Timer('sack setup')
-        self._sack = dnf.sack.build_sack(self)
+        self._sack = dnf.sack._build_sack(self)
         lock = dnf.lock.build_metadata_lock(self.conf.cachedir)
         with lock:
             if load_system_repo is not False:
@@ -267,7 +267,7 @@ class Base(object):
                 for e in errors:
                     logger.warning(_("%s, disabling."), e)
         conf = self.conf
-        self._sack.configure(conf.installonlypkgs, conf.installonly_limit)
+        self._sack._configure(conf.installonlypkgs, conf.installonly_limit)
         self._setup_excludes_includes()
         timer()
         self._goal = dnf.goal.Goal(self._sack)
@@ -679,7 +679,7 @@ class Base(object):
             using_pkgs_pats = list(self.conf.history_record_packages)
             installed_query = self.sack.query().installed()
             using_pkgs = installed_query.filter(name=using_pkgs_pats).run()
-            rpmdbv = self.sack.rpmdb_version(self._yumdb)
+            rpmdbv = self.sack._rpmdb_version(self._yumdb)
             lastdbv = self.history.last()
             if lastdbv is not None:
                 lastdbv = lastdbv.end_rpmdbversion
@@ -794,7 +794,7 @@ class Base(object):
         # with only rpmdb in it. In the future when RPM Python bindings can
         # tell us if a particular transaction element failed or not we can skip
         # this completely.
-        rpmdb_sack = dnf.sack.rpmdb_sack(self)
+        rpmdb_sack = dnf.sack._rpmdb_sack(self)
 
         for tsi in self._transaction:
             rpo = tsi.installed
@@ -875,7 +875,7 @@ class Base(object):
             yumdb_item.clean()
 
         if self._record_history():
-            rpmdbv = rpmdb_sack.rpmdb_version(self._yumdb)
+            rpmdbv = rpmdb_sack._rpmdb_version(self._yumdb)
             self.history.end(rpmdbv, 0)
         timer()
         self._trans_success = True

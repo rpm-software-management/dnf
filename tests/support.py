@@ -239,7 +239,7 @@ class _BaseStubMixin(object):
                 fn = "%s.repo" % repo.id
                 self._sack.load_test_repo(repo.id, fn)
 
-        self._sack.configure(self.conf.installonlypkgs)
+        self._sack._configure(self.conf.installonlypkgs)
         self._goal = dnf.goal.Goal(self._sack)
         return self._sack
 

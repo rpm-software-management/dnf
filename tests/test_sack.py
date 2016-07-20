@@ -29,7 +29,7 @@ class SackTest(support.TestCase):
         base = support.MockBase()
         sack = base.sack
         yumdb = mock.MagicMock()
-        version = base.sack.rpmdb_version(yumdb)
+        version = base.sack._rpmdb_version(yumdb)
         self.assertEqual(version._num, support.TOTAL_RPMDB_COUNT)
         self.assertEqual(version._chksum.hexdigest(), support.RPMDB_CHECKSUM)
 
@@ -67,7 +67,7 @@ class SackTest(support.TestCase):
         self.assertLength(peppers, 1)
         self.assertEqual(str(peppers[0]), "librita-1-1.x86_64")
 
-    @mock.patch('dnf.sack.build_sack', lambda x: mock.Mock())
+    @mock.patch('dnf.sack._build_sack', lambda x: mock.Mock())
     @mock.patch('dnf.goal.Goal', lambda x: mock.Mock())
     def test_fill_sack(self):
         def raiser():

@@ -20,14 +20,18 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from dnf.util import enforce_api
+from dnf.pycomp import basestring
+
 import dnf.util
 import dnf.yum.misc
 import dnf.package
 import dnf.query
 import hawkey
 import os
-from dnf.pycomp import basestring
 
+
+@enforce_api
 class SackVersion(object):
     def __init__(self):
         self._num = 0
@@ -37,37 +41,43 @@ class SackVersion(object):
         return "%u:%s" % (self._num, self._chksum.hexdigest())
 
     def __eq__(self, other):
-        if other is None: return False
+        if other is None:
+            return False
         if isinstance(other, basestring):
             return str(self) == other
-        if self._num != other._num: return False
-        if self._chksum.digest() != other._chksum.digest(): return False
+        if self._num != other._num:
+            return False
+        if self._chksum.digest() != other._chksum.digest():
+            return False
         return True
 
     def __ne__(self, other):
         return not (self == other)
 
-    def update(self, pkg, csum):
+    def _update(self, pkg, csum):
         self._num += 1
         self._chksum.update(str(pkg))
         if csum is not None:
             self._chksum.update(csum[0])
             self._chksum.update(csum[1])
 
+
+@enforce_api
 class Sack(hawkey.Sack):
     def __init__(self, *args, **kwargs):
         super(Sack, self).__init__(*args, **kwargs)
 
-    def configure(self, installonly=None, installonly_limit=0):
+    def _configure(self, installonly=None, installonly_limit=0):
         if installonly:
             self.installonly = installonly
         self.installonly_limit = installonly_limit
 
     def query(self):
-        """Factory function returning a DNF Query. :api"""
+        # :api
+        """Factory function returning a DNF Query."""
         return dnf.query.Query(self)
 
-    def rpmdb_version(self, yumdb):
+    def _rpmdb_version(self, yumdb):
         pkgs = self.query().installed().run()
         main = SackVersion()
         for pkg in pkgs:
@@ -75,10 +85,11 @@ class Sack(hawkey.Sack):
             csum = None
             if 'checksum_type' in ydbi and 'checksum_data' in ydbi:
                 csum = (ydbi.checksum_type, ydbi.checksum_data)
-            main.update(pkg, csum)
+            main._update(pkg, csum)
         return main
 
-def build_sack(base):
+
+def _build_sack(base):
     cachedir = base.conf.cachedir
     # create the dir ourselves so we have the permissions under control:
     dnf.util.ensure_dir(cachedir)
@@ -87,7 +98,8 @@ def build_sack(base):
                 cachedir=cachedir, rootdir=base.conf.installroot,
                 logfile=os.path.join(base.conf.logdir, dnf.const.LOG_HAWKEY))
 
-def rpmdb_sack(base):
-    sack = build_sack(base)
+
+def _rpmdb_sack(base):
+    sack = _build_sack(base)
     sack.load_system_repo()
     return sack
