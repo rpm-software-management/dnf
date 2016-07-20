@@ -30,5 +30,5 @@ class SelectorTest(TestCase):
     def test_set_autoglob(self):
         sltr = dnf.selector.Selector(self.sack)
         with mock.patch.object(sltr, 'set') as mock_set:
-            sltr.set_autoglob(learn="how", to="play*")
+            sltr._set_autoglob(learn="how", to="play*")
             mock_set.assert_called_with(learn="how", to__glob="play*")

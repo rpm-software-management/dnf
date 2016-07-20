@@ -26,7 +26,7 @@ import dnf.util
 
 class Selector(hawkey.Selector):
     # :api
-    def set_autoglob(self, **kwargs):
+    def _set_autoglob(self, **kwargs):
         nargs = {}
         for (key, value) in kwargs.items():
             if dnf.util.is_glob_pattern(value):
