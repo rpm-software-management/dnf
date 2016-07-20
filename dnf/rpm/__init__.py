@@ -27,7 +27,8 @@ import rpm
 
 
 def detect_releasever(installroot):
-    """Calculate the release version for the system. :api"""
+    # :api
+    """Calculate the release version for the system."""
 
     ts = transaction.initReadOnlyTransaction(root=installroot)
     ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES | rpm._RPMVSF_NODIGESTS))
