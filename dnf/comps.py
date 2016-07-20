@@ -312,10 +312,10 @@ class Comps(object):
         return _internal_comps_length(self._i)
 
     def _build_category(self, icategory):
-        return Category(icategory, self._langs, self.group_by_id)
+        return Category(icategory, self._langs, self._group_by_id)
 
     def _build_environment(self, ienvironment):
-        return Environment(ienvironment, self._langs, self.group_by_id)
+        return Environment(ienvironment, self._langs, self._group_by_id)
 
     def _build_group(self, igroup):
         return Group(igroup, self._langs, self._build_package)
@@ -377,7 +377,7 @@ class Comps(object):
         # :api
         return sorted(self.groups_iter(), key=_fn_display_order)
 
-    def group_by_id(self, id_):
+    def _group_by_id(self, id_):
         return dnf.util.first(g for g in self.groups_iter() if g.id == id_)
 
     def group_by_pattern(self, pattern, case_sensitive=False):
@@ -530,7 +530,7 @@ class Solver(object):
         return trans
 
     def group_install(self, group_id, pkg_types, exclude, strict=True):
-        group = self.comps.group_by_id(group_id)
+        group = self.comps._group_by_id(group_id)
         p_grp = self.persistor.group(group_id)
         if p_grp.installed:
             raise CompsError(_("Group '%s' is already installed.") %
@@ -571,7 +571,7 @@ class Solver(object):
         return trans
 
     def group_upgrade(self, group_id):
-        group = self.comps.group_by_id(group_id)
+        group = self.comps._group_by_id(group_id)
         p_grp = self.persistor.group(group.id)
         if not p_grp.installed:
             raise CompsError(_("Group '%s' not installed.") %
