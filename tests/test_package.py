@@ -44,8 +44,8 @@ class PackageTest(support.TestCase):
 
     def test_from_system(self):
         pkg = self.sack.query().installed().filter(name="pepper")[0]
-        self.assertTrue(pkg.from_system)
-        self.assertFalse(self.pkg.from_system)
+        self.assertTrue(pkg._from_system)
+        self.assertFalse(self.pkg._from_system)
 
     def test_header(self):
         self.sack.create_cmdline_repo()

@@ -1478,7 +1478,7 @@ class Base(object):
 
     def package_downgrade(self, pkg):
         # :api
-        if pkg.from_system:
+        if pkg._from_system:
             msg = 'downgrade_package() for an installed package.'
             raise NotImplementedError(msg)
 
@@ -1520,7 +1520,7 @@ class Base(object):
 
     def package_upgrade(self, pkg):
         # :api
-        if pkg.from_system:
+        if pkg._from_system:
             msg = 'upgrade_package() for an installed package.'
             raise NotImplementedError(msg)
 

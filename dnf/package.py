@@ -72,12 +72,12 @@ class Package(hawkey.Package):
         return self.reponame == hawkey.CMDLINE_REPO_NAME
 
     @property
-    def from_system(self):
+    def _from_system(self):
         return self.reponame == hawkey.SYSTEM_REPO_NAME
 
     @property
     def from_repo(self):
-        yumdb_info = self.base._yumdb.get_package(self) if self.from_system else {}
+        yumdb_info = self.base._yumdb.get_package(self) if self._from_system else {}
         if 'from_repo' in yumdb_info:
             return '@'+yumdb_info.from_repo
         return self.reponame
@@ -223,7 +223,7 @@ class Package(hawkey.Package):
 
     # yum compatibility method
     def verifyLocalPkg(self):
-        if self.from_system:
+        if self._from_system:
             raise ValueError("Can not verify an installed package.")
         if self._from_cmdline:
             return True # local package always verifies against itself
