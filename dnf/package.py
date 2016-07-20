@@ -83,7 +83,7 @@ class Package(hawkey.Package):
 
     @property
     def header(self):
-        return dnf.rpm.header(self.localPkg())
+        return dnf.rpm._header(self.localPkg())
 
     @property
     def size(self):
