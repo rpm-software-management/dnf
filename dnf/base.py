@@ -1928,10 +1928,10 @@ class Base(object):
         return results
 
     def _store_config_in_history(self):
-        self.history.write_addon_data('config-main', self.conf._dump())
+        self.history.write_addon_data('config-main', self.conf.dump())
         myrepos = ''
         for repo in self.repos.iter_enabled():
-            myrepos += repo._dump()
+            myrepos += repo.dump()
             myrepos += '\n'
         self.history.write_addon_data('config-repos', myrepos)
 
