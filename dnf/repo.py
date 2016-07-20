@@ -462,7 +462,6 @@ class Repo(dnf.conf.RepoConf):
         self._expired = False
         self._pkgdir = None
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
-        self.name = self.id
         self.key_import = _NullKeyImport()
         self.metadata = None # :api
         self.sync_strategy = self.DEFAULT_SYNC

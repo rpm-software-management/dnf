@@ -524,14 +524,15 @@ class BaseConfig(object):
         """Yield (name, value) pairs for every option in the instance."""
         return self._option.items()
 
-    def _dump(self):
+    def dump(self):
+        # :api
         """Return a string representing the values of all the
            configuration options.
         """
         output = ['[%s]' % self._section]
         for name, opt in sorted(self._config_items()):
             if not opt._is_runtimeonly():
-                val = opt._tostring()
+                val = str(opt._get())
                 output.append('%s = %s' % (name, val))
 
         return '\n'.join(output) + '\n'
