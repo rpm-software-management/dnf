@@ -338,7 +338,7 @@ class MockPackage(object):
         self.baseurl = None
         self._chksum = (None, None)
         self.downloadsize = None
-        self.header = None
+        self._header = None
         self.location = '%s.rpm' % nevra
         self.repo = repo
         self.reponame = None if repo is None else repo.id
