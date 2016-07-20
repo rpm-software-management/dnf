@@ -180,7 +180,7 @@ class OutputTest(support.TestCase):
         pkg = support.MockPackage('tour-5-0.noarch')
         pkg._from_system = False
         pkg._size = 0
-        pkg.pkgid = None
+        pkg._pkgid = None
         pkg.repoid = None
         pkg.e = pkg.epoch = 1
         pkg.v = pkg.version

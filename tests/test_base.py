@@ -156,7 +156,7 @@ class VerifyTransactionTest(TestCase):
         self.base._transaction = dnf.transaction.Transaction()
 
     @mock.patch('dnf.sack.build_sack', new_callable=mock_sack_fn)
-    @mock.patch('dnf.package.Package.pkgid', ret_pkgid) # neutralize @property
+    @mock.patch('dnf.package.Package._pkgid', ret_pkgid) # neutralize @property
     def test_verify_transaction(self, unused_build_sack):
         # we don't simulate the transaction itself here, just "install" what is
         # already there and "remove" what is not.
