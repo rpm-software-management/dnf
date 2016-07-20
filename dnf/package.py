@@ -60,6 +60,7 @@ class Package(hawkey.Package):
 
     @property
     def debug_name(self):
+        # :api
         """
         returns name of debuginfo package for given package
         e.g. kernel-PAE -> kernel-PAE-debuginfo
@@ -97,6 +98,7 @@ class Package(hawkey.Package):
 
     @property
     def source_debug_name(self):
+        # :api
         """
         returns name of debuginfo package for source package of given package
         e.g. krb5-libs -> krb5-debuginfo
@@ -105,6 +107,7 @@ class Package(hawkey.Package):
 
     @property
     def source_name(self):
+        # :api
         """"
         returns name of source package
         e.g. krb5-libs -> krb5
