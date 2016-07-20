@@ -448,7 +448,7 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
         repo = self.build_repo('r', 'r for riot')
         pkg = support.MockPackage("tour-4-4.noarch", repo=repo)
         pkg.downloadsize = 2317
-        pkg.chksum = ('sha256', TOUR_CHKSUM)
+        pkg._chksum = ('sha256', TOUR_CHKSUM)
 
         pload = dnf.repo.RPMPayload(pkg, progress)
         drpm = dnf.drpm.DeltaInfo(None, None)

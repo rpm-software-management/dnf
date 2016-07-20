@@ -80,14 +80,14 @@ class PackageTest(support.TestCase):
     def test_verify(self):
         with mock.patch.object(self.pkg, 'localPkg',
                                return_value=support.TOUR_44_PKG_PATH):
-            self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_MD5)
+            self.pkg._chksum = (hawkey.CHKSUM_MD5, TOUR_MD5)
             self.pkg.size = TOUR_SIZE
             self.assertTrue(self.pkg.verifyLocalPkg())
-            self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_WRONG_MD5)
+            self.pkg._chksum = (hawkey.CHKSUM_MD5, TOUR_WRONG_MD5)
             self.assertFalse(self.pkg.verifyLocalPkg())
 
     def test_return_id_sum(self):
-        self.pkg.chksum = (hawkey.CHKSUM_MD5, TOUR_MD5)
+        self.pkg._chksum = (hawkey.CHKSUM_MD5, TOUR_MD5)
         self.assertEqual(self.pkg.returnIdSum(),
                          ('md5', '68e9ded8ea25137c964a638f12e9987c'))
 
@@ -100,7 +100,7 @@ class PackageTest(support.TestCase):
     def test_chksum_local(self):
         self.sack.create_cmdline_repo()
         local_pkg = self.sack.add_cmdline_package(support.TOUR_44_PKG_PATH)
-        chksum = local_pkg.chksum
+        chksum = local_pkg._chksum
         self.assertEqual(chksum[0], hawkey.CHKSUM_SHA256)
         self.assertEqual(chksum[1], TOUR_SHA256)
 

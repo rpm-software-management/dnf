@@ -336,7 +336,7 @@ class MockOutput(object):
 class MockPackage(object):
     def __init__(self, nevra, repo=None):
         self.baseurl = None
-        self.chksum = (None, None)
+        self._chksum = (None, None)
         self.downloadsize = None
         self.header = None
         self.location = '%s.rpm' % nevra
@@ -357,7 +357,7 @@ class MockPackage(object):
         return os.path.join(self.repo.pkgdir, os.path.basename(self.location))
 
     def returnIdSum(self):
-        return self.chksum
+        return self._chksum
 
 class MockRepo(dnf.repo.Repo):
     def valid(self):
