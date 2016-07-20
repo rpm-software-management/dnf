@@ -323,7 +323,7 @@ class Comps(object):
     def _build_package(self, ipkg):
         return Package(ipkg)
 
-    def add_from_xml_filename(self, fn):
+    def _add_from_xml_filename(self, fn):
         comps = libcomps.Comps()
         ret = comps.fromxml_f(fn)
         if ret == -1:
