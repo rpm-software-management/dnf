@@ -1018,7 +1018,7 @@ class Output(object):
             # none, partial, full?
             if po.from_system:
                 hi = self.conf.color_update_installed
-            elif po.from_cmdline:
+            elif po._from_cmdline:
                 hi = self.conf.color_update_local
             else:
                 hi = self.conf.color_update_remote

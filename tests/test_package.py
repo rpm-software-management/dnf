@@ -39,8 +39,8 @@ class PackageTest(support.TestCase):
     def test_from_cmdline(self):
         self.sack.create_cmdline_repo()
         local_pkg = self.sack.add_cmdline_package(support.TOUR_44_PKG_PATH)
-        self.assertTrue(local_pkg.from_cmdline)
-        self.assertFalse(self.pkg.from_cmdline)
+        self.assertTrue(local_pkg._from_cmdline)
+        self.assertFalse(self.pkg._from_cmdline)
 
     def test_from_system(self):
         pkg = self.sack.query().installed().filter(name="pepper")[0]
