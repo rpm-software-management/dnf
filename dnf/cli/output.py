@@ -486,7 +486,7 @@ class Output(object):
                   " : ", val or ""))
 
         (hibeg, hiend) = self._highlight(highlight)
-        yumdb_info = self.yumdb.get_package(pkg) if pkg.from_system else {}
+        yumdb_info = self.yumdb.get_package(pkg) if pkg._from_system else {}
         print_key_val(_("Name"), "%s%s%s" % (hibeg, pkg.name, hiend))
         if pkg.epoch:
             print_key_val(_("Epoch"), pkg.epoch)
@@ -720,7 +720,7 @@ class Output(object):
                 print('%s%s' % (self.GRP_PACKAGE_INDENT, name))
                 continue
             highlight = False
-            if not pkg.from_system:
+            if not pkg._from_system:
                 highlight = self.conf.color_list_available_install
             self.simpleEnvraList(pkg, ui_overflow=True,
                                  indent=self.GRP_PACKAGE_INDENT,
@@ -1016,7 +1016,7 @@ class Output(object):
                 a = 'noarch'
 
             # none, partial, full?
-            if po.from_system:
+            if po._from_system:
                 hi = self.conf.color_update_installed
             elif po._from_cmdline:
                 hi = self.conf.color_update_local

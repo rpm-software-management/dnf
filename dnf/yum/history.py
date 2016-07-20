@@ -870,7 +870,7 @@ class YumHistory(object):
     def pkg2pid(self, po, create=True):
         if isinstance(po, YumHistoryPackage):
             return self._hpkg2pid(po, create)
-        if po.from_system:
+        if po._from_system:
             return self._ipkg2pid(po, create)
         return self._apkg2pid(po, create)
 
