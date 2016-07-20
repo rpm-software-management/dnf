@@ -393,7 +393,7 @@ class Output(object):
             columns = (-40, -22, -16) # Old default
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
         hi_cols = [highlight, 'normal', 'normal']
-        columns = zip((na, pkg.evr, pkg.from_repo), columns, hi_cols)
+        columns = zip((na, pkg.evr, pkg._from_repo), columns, hi_cols)
         print(self.fmtColumns(columns))
 
     def simpleEnvraList(self, pkg, ui_overflow=False,
@@ -1009,7 +1009,7 @@ class Output(object):
         def _add_line(lines, data, a_wid, po, obsoletes=[]):
             (n, a, e, v, r) = po.pkgtup
             evr = po.evr
-            repoid = po.from_repo
+            repoid = po._from_repo
             size = format_number(po.size)
 
             if a is None: # gpgkeys are weird
