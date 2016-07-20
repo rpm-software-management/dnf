@@ -83,7 +83,7 @@ class Package(hawkey.Package):
         return self.reponame
 
     @property
-    def header(self):
+    def _header(self):
         return dnf.rpm._header(self.localPkg())
 
     @property

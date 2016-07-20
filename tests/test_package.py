@@ -50,12 +50,12 @@ class PackageTest(support.TestCase):
     def test_header(self):
         self.sack.create_cmdline_repo()
         pkg = self.sack.add_cmdline_package(support.TOUR_44_PKG_PATH)
-        header = pkg.header
+        header = pkg._header
         self.assertIsInstance(header, rpm.hdr)
         fn_getter = lambda: support.NONEXISTENT_FILE
         with mock.patch.object(pkg, 'localPkg', fn_getter):
             with self.assertRaises(IOError):
-                pkg.header
+                pkg._header
 
     @mock.patch("dnf.package.Package.rpmdbid", long(3))
     def test_idx(self):
