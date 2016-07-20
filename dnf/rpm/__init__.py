@@ -51,7 +51,7 @@ def detect_releasever(installroot):
     return None
 
 
-def header(path):
+def _header(path):
     """Return RPM header of the file."""
     ts = transaction.initReadOnlyTransaction()
     with open(path) as package:
