@@ -41,7 +41,7 @@ class LangsTest(support.TestCase):
 class CompsTest(support.TestCase):
     def setUp(self):
         comps = dnf.comps.Comps()
-        comps.add_from_xml_filename(support.COMPS_PATH)
+        comps._add_from_xml_filename(support.COMPS_PATH)
         self.comps = comps
 
     def test_by_pattern(self):
@@ -164,7 +164,7 @@ class SolverTestMixin(object):
 
     def setUp(self):
         comps = dnf.comps.Comps()
-        comps.add_from_xml_filename(support.COMPS_PATH)
+        comps._add_from_xml_filename(support.COMPS_PATH)
         self.comps = comps
         self.persistor = support.MockGroupPersistor()
         self.solver = dnf.comps.Solver(self.persistor, self.comps, support.REASONS.get)
