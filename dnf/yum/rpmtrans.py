@@ -244,7 +244,7 @@ class RPMTransaction(object):
             for o in tsi.obsoleted:
                 if str(o) == te.NEVRA():
                     obsoleted = o
-                    obsoleted_state = tsi.obsoleted_history_state
+                    obsoleted_state = tsi._obsoleted_history_state
                     obsoleted_tsi = tsi
         return obsoleted, obsoleted_state, obsoleted_tsi
 

@@ -80,7 +80,7 @@ class TransactionItem(object):
         if self.obsoleted:
             yield(self.installed, self.obsoleting_history_state)
         for obs in self.obsoleted:
-            yield(obs, self.obsoleted_history_state)
+            yield(obs, self._obsoleted_history_state)
 
     @property
     def _installed_history_state(self):
@@ -91,7 +91,7 @@ class TransactionItem(object):
         return [] if self.installed is None else [self.installed]
 
     @property
-    def obsoleted_history_state(self):
+    def _obsoleted_history_state(self):
         return 'Obsoleted'
 
     @property
