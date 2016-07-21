@@ -230,8 +230,8 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
 class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
 
     def _install(self, env):
-        return self.solver.environment_install(env.id, dnf.comps.MANDATORY,
-                                               ('lotus',))
+        return self.solver._environment_install(env.id, dnf.comps.MANDATORY,
+                                                ('lotus',))
 
     def test_install(self):
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
