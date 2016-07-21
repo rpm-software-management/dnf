@@ -235,7 +235,7 @@ class GroupCommand(commands.Command):
                                              env_id, types):
                 res.environments.remove(env_id)
         for group_id in res.groups:
-            if not dnf.comps.install_or_skip(solver.group_install,
+            if not dnf.comps.install_or_skip(solver._group_install,
                                              group_id, types):
                 res.groups.remove(group_id)
 
