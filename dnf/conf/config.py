@@ -135,6 +135,7 @@ def inherit(option):
        the input option."""
     clone = copy.copy(option)
     clone._parent = option
+    clone._actual = None
     return clone
 
 
