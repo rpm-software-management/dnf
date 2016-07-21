@@ -101,7 +101,6 @@ class Command(object):
 
     aliases = [] # :api
     summary = ""  # :api
-    usage = ""  # :api
     opts = None
 
     def __init__(self, cli):
@@ -827,7 +826,6 @@ class HistoryCommand(Command):
 
     aliases = ('history',)
     summary = _('display, or use, the transaction history')
-    usage = "[info|list|redo|undo|rollback|userinstalled]"
 
     @staticmethod
     def set_argparser(parser):

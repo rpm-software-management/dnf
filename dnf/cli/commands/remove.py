@@ -35,7 +35,6 @@ class RemoveCommand(commands.Command):
 
     aliases = ('remove', 'erase')
     summary = _('remove a package or packages from your system')
-    usage = "%s..." % _('PACKAGE')
 
     @staticmethod
     def set_argparser(parser):

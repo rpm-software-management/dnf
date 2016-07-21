@@ -35,7 +35,6 @@ logger = logging.getLogger("dnf")
 class MakeCacheCommand(commands.Command):
     aliases = ('makecache',)
     summary = _('generate the metadata cache')
-    usage = ''
 
     @staticmethod
     def set_argparser(parser):

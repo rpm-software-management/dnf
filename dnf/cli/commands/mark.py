@@ -34,7 +34,6 @@ class MarkCommand(commands.Command):
 
     aliases = ('mark',)
     summary = _('mark or unmark installed packages as installed by user.')
-    usage = "[install|remove [%s]]" % _('PACKAGE')
 
     @staticmethod
     def set_argparser(parser):
