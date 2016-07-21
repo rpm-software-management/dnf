@@ -504,7 +504,7 @@ class Solver(object):
         p_env.pkg_types = 0
         return trans
 
-    def environment_upgrade(self, env_id):
+    def _environment_upgrade(self, env_id):
         env = self.comps._environment_by_id(env_id)
         p_env = self.persistor.environment(env.id)
         if not p_env.installed:
