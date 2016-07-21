@@ -54,7 +54,7 @@ class InstallCommand(commands.Command):
         demands.available_repos = True
         demands.resolving = True
         demands.root_user = True
-        commands.checkGPGKey(self.base, self.cli)
+        commands._checkGPGKey(self.base, self.cli)
         commands.checkEnabledRepo(self.base, self.opts.filenames)
 
     def run(self):

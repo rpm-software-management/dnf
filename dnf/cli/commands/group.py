@@ -365,7 +365,7 @@ class GroupCommand(commands.Command):
                 raise dnf.cli.CliError
 
         if cmd in ('install', 'upgrade'):
-            commands.checkGPGKey(self.base, self.cli)
+            commands._checkGPGKey(self.base, self.cli)
 
     def run(self):
         cmd = self.opts.subcmd
