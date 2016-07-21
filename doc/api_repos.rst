@@ -152,6 +152,10 @@ Repository Configuration
 
     Disable the repository. Repositories are enabled by default.
 
+  .. method:: dump()
+
+    Print repository configuration, including inherited values.
+
   .. method:: enable()
 
     Enable the repository (the default).

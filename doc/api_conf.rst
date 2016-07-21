@@ -187,6 +187,10 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Read configuration options from the ``main`` section in `filename`. Option values not present there are left at their current values. If `filename` is ``None``, :attr:`config_file_path` is used. Conversely, the configuration path used to load the configuration file that was used is stored into :attr:`config_file_path` before the function returns.
 
+  .. method:: dump()
+
+    Print configuration values, including inherited values.
+
   .. method:: write_raw_configfile(filename, section_id, substitutions, modify)
 
     Update or create config file. Where `filename` represents name of config file (.conf or .repo); `section_id`
