@@ -209,7 +209,7 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
 
         grps = self.persistor.groups_by_pattern('base')
         for grp in grps:
-            trans = self.solver.group_remove(grp)
+            trans = self.solver._group_remove(grp)
             self.assertFalse(p_grp.installed)
             self.assertCountEqual(trans.remove, ('tour',))
 
