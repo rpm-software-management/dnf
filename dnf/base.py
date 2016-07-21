@@ -1282,7 +1282,7 @@ class Base(object):
 
     def environment_remove(self, env_id):
         solver = self._build_comps_solver()
-        trans = solver.environment_remove(env_id)
+        trans = solver._environment_remove(env_id)
         return self._add_comps_trans(trans)
 
     _COMPS_TRANSLATION = {
