@@ -40,7 +40,7 @@ class TransactionItemTest(tests.support.TestCase):
         tsi = dnf.transaction.TransactionItem(
             dnf.transaction.ERASE, erased=self.oldpkg)
 
-        history_state = tsi.active_history_state
+        history_state = tsi._active_history_state
 
         self.assertEqual(history_state, 'Erase')
 
@@ -50,7 +50,7 @@ class TransactionItemTest(tests.support.TestCase):
             dnf.transaction.INSTALL, installed=self.newpkg,
             obsoleted=[self.obspkg1, self.obspkg2])
 
-        history_state = tsi.active_history_state
+        history_state = tsi._active_history_state
 
         self.assertEqual(history_state, 'Install')
 

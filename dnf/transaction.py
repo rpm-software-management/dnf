@@ -50,7 +50,7 @@ class TransactionItem(object):
         return self.installed if self.installed is not None else self.erased
 
     @property
-    def active_history_state(self):
+    def _active_history_state(self):
         return (self.installed_history_state if self.installed is not None
                 else self.erased_history_state)
 
