@@ -115,7 +115,7 @@ class BaseCliTest(support.ResultTestCase):
         self.assertEqual(id_or_offset, 1)
 
 
-@mock.patch('dnf.cli.cli.Cli.read_conf_file')
+@mock.patch('dnf.cli.cli.Cli._read_conf_file')
 class CliTest(TestCase):
     def setUp(self):
         self.base = support.MockBase("main")
