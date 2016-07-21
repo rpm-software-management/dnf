@@ -49,7 +49,7 @@ logger = logging.getLogger('dnf')
 
 def _make_lists(transaction, goal):
     def tsi_cmp_key(tsi):
-        return str(tsi.active)
+        return str(tsi._active)
 
     TYPES = ('downgraded',
              'erased',
@@ -1213,7 +1213,7 @@ Transaction Summary
                 continue
             msgs = []
             out += '\n%s:\n' % action
-            for pkg in [tsi.active for tsi in tsis]:
+            for pkg in [tsi._active for tsi in tsis]:
                 (n, a, e, v, r) = pkg.pkgtup
                 evr = pkg.evr
                 msg = "%s.%s %s" % (n, a, evr)
