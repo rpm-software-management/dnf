@@ -484,7 +484,7 @@ class Solver(object):
                 pass
         return trans
 
-    def environment_remove(self, env_id):
+    def _environment_remove(self, env_id):
         p_env = self.persistor.environment(env_id)
         if not p_env.installed:
             raise CompsError(_("Environment '%s' is not installed.") %

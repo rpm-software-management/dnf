@@ -256,7 +256,7 @@ class GroupCommand(commands.Command):
         solver = self.base._build_comps_solver()
         res = q.get(*patterns)
         for env_id in res.environments:
-            solver.environment_remove(env_id)
+            solver._environment_remove(env_id)
         for grp_id in res.groups:
             solver.group_remove(grp_id)
 

@@ -249,7 +249,7 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
     def test_remove(self):
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
         self._install(env)
-        trans = self.solver.environment_remove(env.id)
+        trans = self.solver._environment_remove(env.id)
 
         p_env = self.persistor.environment('sugar-desktop-environment')
         self.assertCountEqual(trans.remove, ('pepper', 'trampoline', 'hole'))
