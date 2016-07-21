@@ -409,7 +409,7 @@ class GroupCommand(commands.Command):
         if cmd == 'remove':
             return self.base.env_group_remove(extcmds)
 
-    def run_transaction(self):
+    def _run_transaction(self):
         if not self._remark:
             return
         goal = self.base._goal

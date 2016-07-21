@@ -141,7 +141,7 @@ class Command(object):
         """Execute the command."""
         pass
 
-    def run_transaction(self):
+    def _run_transaction(self):
         """Finalize operations post-transaction."""
         pass
 
