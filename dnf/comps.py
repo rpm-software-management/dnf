@@ -83,7 +83,7 @@ def install_or_skip(install_fnc, grp_or_env_id, types, exclude=None,
                     strict=True):
     """Either mark in persistor as installed given `grp_or_env` (group
        or environment) or skip it (if it's already installed).
-       `install_fnc` has to be Solver.group_install
+       `install_fnc` has to be Solver._group_install
        or Solver._environment_install.
        """
     try:
@@ -479,7 +479,7 @@ class Solver(object):
         trans = TransactionBunch()
         for grp in env.mandatory_groups:
             try:
-                trans += self.group_install(grp.id, pkg_types, exclude, strict)
+                trans += self._group_install(grp.id, pkg_types, exclude, strict)
             except dnf.exceptions.CompsError:
                 pass
         return trans
@@ -526,10 +526,10 @@ class Solver(object):
                     pass
             else:
                 # install
-                trans += self.group_install(grp.id, pkg_types, exclude)
+                trans += self._group_install(grp.id, pkg_types, exclude)
         return trans
 
-    def group_install(self, group_id, pkg_types, exclude, strict=True):
+    def _group_install(self, group_id, pkg_types, exclude, strict=True):
         group = self.comps._group_by_id(group_id)
         p_grp = self.persistor.group(group_id)
         if p_grp.installed:

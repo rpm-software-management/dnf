@@ -174,7 +174,7 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
 
     def test_install(self):
         grp = self.comps.group_by_pattern('base')
-        trans = self.solver.group_install(grp.id, dnf.comps.MANDATORY, ['right'])
+        trans = self.solver._group_install(grp.id, dnf.comps.MANDATORY, ['right'])
         self.assertLength(trans.install, 2)
         p_grp = self.persistor.group('base')
         self.assertCountEqual(p_grp.full_list, ['pepper', 'tour'])
@@ -184,7 +184,7 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
     def test_install_opt(self):
         grp = self.comps.group_by_pattern('somerset')
         types = dnf.comps.DEFAULT | dnf.comps.OPTIONAL
-        trans = self.solver.group_install(grp.id, types, [])
+        trans = self.solver._group_install(grp.id, types, [])
         self.assertLength(trans.install, 0)
         self.assertLength(trans.install_opt, 1)
 

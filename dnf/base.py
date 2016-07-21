@@ -1316,7 +1316,7 @@ class Base(object):
 
         solver = self._build_comps_solver()
         pkg_types = self._translate_comps_pkg_types(pkg_types)
-        trans = dnf.comps.install_or_skip(solver.group_install,
+        trans = dnf.comps.install_or_skip(solver._group_install,
                                           grp_id, pkg_types, exclude_pkgnames,
                                           strict)
         if not trans:
