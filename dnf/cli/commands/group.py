@@ -357,7 +357,7 @@ class GroupCommand(commands.Command):
         else:
             demands.available_repos = True
 
-        commands.checkEnabledRepo(self.base)
+        commands._checkEnabledRepo(self.base)
 
         if cmd in ('install', 'remove', 'mark', 'info'):
             if not args:

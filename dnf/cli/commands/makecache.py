@@ -47,7 +47,7 @@ class MakeCacheCommand(commands.Command):
         """Verify that conditions are met so that this command can
         run; namely that there is an enabled repository.
         """
-        commands.checkEnabledRepo(self.base)
+        commands._checkEnabledRepo(self.base)
 
     def run(self):
         msg = _("Making cache files for all metadata files.")

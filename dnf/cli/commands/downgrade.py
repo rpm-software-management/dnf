@@ -45,7 +45,7 @@ class DowngradeCommand(commands.Command):
         demands.root_user = True
 
         commands._checkGPGKey(self.base, self.cli)
-        commands.checkEnabledRepo(self.base, self.opts.filenames)
+        commands._checkEnabledRepo(self.base, self.opts.filenames)
 
     def run(self):
         return self.base.downgradePkgs(specs=self.opts.pkg_specs + [ '@' + x for x in self.opts.grp_specs],

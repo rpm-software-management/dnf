@@ -77,7 +77,8 @@ def _checkGPGKey(base, cli):
                 logger.critical(_("Problem repository: %s"), repo)
                 raise dnf.cli.CliError
 
-def checkEnabledRepo(base, possible_local_files=[]):
+
+def _checkEnabledRepo(base, possible_local_files=[]):
     """Verify that there is at least one enabled repo.
 
     :param base: a :class:`dnf.Base` object.
@@ -255,7 +256,7 @@ class CheckUpdateCommand(Command):
         demands = self.cli.demands
         demands.sack_activation = True
         demands.available_repos = True
-        checkEnabledRepo(self.base)
+        _checkEnabledRepo(self.base)
 
     def run(self):
         found = self.base.check_updates(self.opts.packages, print_=True)

@@ -42,7 +42,7 @@ class DistroSyncCommand(commands.Command):
         demands.resolving = True
         demands.root_user = True
         commands._checkGPGKey(self.base, self.cli)
-        commands.checkEnabledRepo(self.base, self.opts.package)
+        commands._checkEnabledRepo(self.base, self.opts.package)
 
     def run(self):
         return self.base.distro_sync_userlist(self.opts.package)

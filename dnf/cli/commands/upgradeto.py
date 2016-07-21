@@ -42,7 +42,7 @@ class UpgradeToCommand(commands.Command):
         demands.resolving = True
         demands.root_user = True
         commands._checkGPGKey(self.base, self.cli)
-        commands.checkEnabledRepo(self.base, self.opts.packages)
+        commands._checkEnabledRepo(self.base, self.opts.packages)
 
     def run(self):
         self.opts.pkg_specs += self.opts.filenames
