@@ -258,7 +258,7 @@ class GroupCommand(commands.Command):
         for env_id in res.environments:
             solver._environment_remove(env_id)
         for grp_id in res.groups:
-            solver.group_remove(grp_id)
+            solver._group_remove(grp_id)
 
         if res.environments:
             logger.info(_('Environments marked removed: %s'),

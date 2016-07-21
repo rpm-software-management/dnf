@@ -1352,7 +1352,7 @@ class Base(object):
 
     def group_remove(self, grp_id):
         solver = self._build_comps_solver()
-        trans = solver.group_remove(grp_id)
+        trans = solver._group_remove(grp_id)
         return self._add_comps_trans(trans)
 
     def env_group_remove(self, patterns):

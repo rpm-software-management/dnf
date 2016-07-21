@@ -496,7 +496,7 @@ class Solver(object):
         for grp in group_ids:
             if not self._removable_grp(grp):
                 continue
-            trans += self.group_remove(grp)
+            trans += self._group_remove(grp)
 
         del p_env.full_list[:]
         del p_env.pkg_exclude[:]
@@ -555,7 +555,7 @@ class Solver(object):
             trans.install_opt.update(mandatory)
         return trans
 
-    def group_remove(self, group_id):
+    def _group_remove(self, group_id):
         p_grp = self.persistor.group(group_id)
         if not p_grp.installed:
             raise CompsError(_("Group '%s' not installed.") %
