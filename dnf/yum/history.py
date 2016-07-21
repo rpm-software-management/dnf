@@ -992,7 +992,7 @@ class YumHistory(object):
             self.trans_with_pid(pid)
 
         for tsi in tsis:
-            for (pkg, state) in tsi.history_iterator():
+            for (pkg, state) in tsi._history_iterator():
                 pid   = self.pkg2pid(pkg)
                 self.trans_data_pid_beg(pid, state)
 
