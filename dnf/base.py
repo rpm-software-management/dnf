@@ -1389,7 +1389,7 @@ class Base(object):
 
     def group_upgrade(self, grp_id):
         solver = self._build_comps_solver()
-        trans = solver.group_upgrade(grp_id)
+        trans = solver._group_upgrade(grp_id)
         return self._add_comps_trans(trans)
 
     def _gpg_key_check(self):
