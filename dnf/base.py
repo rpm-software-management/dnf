@@ -1270,7 +1270,7 @@ class Base(object):
     def environment_install(self, env_id, types, exclude=None, strict=True):
         solver = self._build_comps_solver()
         types = self._translate_comps_pkg_types(types)
-        trans = dnf.comps.install_or_skip(solver.environment_install,
+        trans = dnf.comps.install_or_skip(solver._environment_install,
                                           env_id, types, exclude or set(),
                                           strict)
         if not trans:

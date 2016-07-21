@@ -84,7 +84,7 @@ def install_or_skip(install_fnc, grp_or_env_id, types, exclude=None,
     """Either mark in persistor as installed given `grp_or_env` (group
        or environment) or skip it (if it's already installed).
        `install_fnc` has to be Solver.group_install
-       or Solver.environment_install.
+       or Solver._environment_install.
        """
     try:
         return install_fnc(grp_or_env_id, types, exclude, strict)
@@ -461,7 +461,7 @@ class Solver(object):
             count += sum(1 for grp in p_env.full_list if grp == grp_name)
         return count < 2
 
-    def environment_install(self, env_id, pkg_types, exclude, strict=True):
+    def _environment_install(self, env_id, pkg_types, exclude, strict=True):
         env = self.comps._environment_by_id(env_id)
         p_env = self.persistor.environment(env_id)
         if p_env.installed:
