@@ -65,7 +65,7 @@ class OutputFunctionsTest(support.TestCase):
         ts.add_install('pepper-2', [])
         lists = dnf.cli.output._make_lists(ts, goal)
         self.assertEmpty(lists.erased)
-        self.assertEqual([tsi.active for tsi in lists.installed],
+        self.assertEqual([tsi._active for tsi in lists.installed],
                          ['pepper-2', 'pepper-3'])
 
     def test_spread(self):

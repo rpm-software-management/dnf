@@ -46,7 +46,7 @@ class TransactionItem(object):
         self.reason = reason # reason for it to be in the transaction set
 
     @property
-    def active(self):
+    def _active(self):
         return self.installed if self.installed is not None else self.erased
 
     @property
