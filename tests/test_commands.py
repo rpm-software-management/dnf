@@ -75,7 +75,7 @@ class CommandTest(support.TestCase):
         except dnf.exceptions.Error as e:
             if e.value != 'No packages marked for upgrade.':
                 raise
-        self.assertEqual(cmd.basecmd, 'upgrade')
+        self.assertEqual(cmd._basecmd, 'upgrade')
         self.assertEqual(cmd.opts.pkg_specs, ['cracker', 'filling'])
 
 

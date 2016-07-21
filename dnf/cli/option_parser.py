@@ -261,7 +261,7 @@ class OptionParser(argparse.ArgumentParser):
         return main_parser
 
     def _command_parser(self, command):
-        prog = "%s %s" % (dnf.const.PROGRAM_NAME, command.basecmd)
+        prog = "%s %s" % (dnf.const.PROGRAM_NAME, command._basecmd)
         super(OptionParser, self).__init__(prog, add_help=False,
                                            parents=[self.main_parser],
                                            description=command.summary)

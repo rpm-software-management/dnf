@@ -114,8 +114,7 @@ class Command(object):
         return self.cli.base
 
     @property
-    def basecmd(self):
-        # :api
+    def _basecmd(self):
         return self.aliases[0]
 
     @property

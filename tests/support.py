@@ -143,7 +143,7 @@ def wiretap_logs(logger_name, level, stream):
 
 def command_configure(cmd, args):
     parser = dnf.cli.option_parser.OptionParser()
-    args = [cmd.basecmd] + args
+    args = [cmd._basecmd] + args
     parser.parse_main_args(args)
     parser.parse_command_args(cmd, args)
     return cmd.configure()

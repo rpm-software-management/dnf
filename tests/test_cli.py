@@ -245,7 +245,6 @@ class ConfigureTest(TestCase):
     @mock.patch('dnf.cli.cli.Cli._parse_commands', new=mock.MagicMock)
     def test_installroot_with_etc(self):
         """Test that conffile is detected in a new installroot."""
-        self.cli.base.basecmd = 'update'
         self.cli.base.extcmds = []
 
         tlv = support.dnf_toplevel()
@@ -254,7 +253,6 @@ class ConfigureTest(TestCase):
 
     def test_installroot_configurable(self):
         """Test that conffile is detected in a new installroot."""
-        self.cli.base.basecmd = 'update'
 
         conf = os.path.join(support.dnf_toplevel(), "tests/etc/installroot.conf")
         self.cli.configure(['-c', conf, '--nogpgcheck', '--releasever', '17', 'update'])
