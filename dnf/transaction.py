@@ -98,7 +98,7 @@ class TransactionItem(object):
     def _obsoleting_history_state(self):
         return 'Obsoleting'
 
-    def propagated_reason(self, yumdb, installonlypkgs):
+    def _propagated_reason(self, yumdb, installonlypkgs):
         if self.reason == 'user':
             return self.reason
         if self.installed.name in installonlypkgs:
