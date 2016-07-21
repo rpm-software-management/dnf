@@ -78,7 +78,7 @@ class TransactionItem(object):
         if self.erased is not None:
             yield(self.erased, self._erased_history_state)
         if self.obsoleted:
-            yield(self.installed, self.obsoleting_history_state)
+            yield(self.installed, self._obsoleting_history_state)
         for obs in self.obsoleted:
             yield(obs, self._obsoleted_history_state)
 
@@ -95,7 +95,7 @@ class TransactionItem(object):
         return 'Obsoleted'
 
     @property
-    def obsoleting_history_state(self):
+    def _obsoleting_history_state(self):
         return 'Obsoleting'
 
     def propagated_reason(self, yumdb, installonlypkgs):
