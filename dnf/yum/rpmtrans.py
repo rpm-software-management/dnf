@@ -231,7 +231,7 @@ class RPMTransaction(object):
 
         if isinstance(cbkey, dnf.transaction.TransactionItem):
             # Easy, tsi is provided by the callback (only happens on installs)
-            return cbkey._active, cbkey.active_history_state, cbkey
+            return cbkey._active, cbkey._active_history_state, cbkey
 
         # We don't have the tsi, let's look it up (only happens on erasures)
         te = self._te_list[self._te_index]
