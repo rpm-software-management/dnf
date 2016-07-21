@@ -75,7 +75,7 @@ class TransactionItemTest(tests.support.TestCase):
             dnf.transaction.REINSTALL, self.newpkg, self.oldpkg,
             [self.obspkg1, self.obspkg2, self.obspkg3])
         self.assertCountEqual(
-            tsi.history_iterator(),
+            tsi._history_iterator(),
             [(self.newpkg, 'Reinstall'), (self.oldpkg, 'Reinstalled'),
              (self.newpkg, 'Obsoleting'), (self.obspkg1, 'Obsoleted'),
              (self.obspkg2, 'Obsoleted'), (self.obspkg3, 'Obsoleted')])
@@ -86,7 +86,7 @@ class TransactionItemTest(tests.support.TestCase):
             dnf.transaction.UPGRADE, self.newpkg, self.oldpkg,
             [self.obspkg1, self.obspkg2, self.obspkg3])
         self.assertCountEqual(
-            tsi.history_iterator(),
+            tsi._history_iterator(),
             [(self.newpkg, 'Update'), (self.oldpkg, 'Updated'),
              (self.newpkg, 'Obsoleting'), (self.obspkg1, 'Obsoleted'),
              (self.obspkg2, 'Obsoleted'), (self.obspkg3, 'Obsoleted')])

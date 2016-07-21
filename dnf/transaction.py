@@ -72,7 +72,7 @@ class TransactionItem(object):
         UPGRADE   : 'Updated'
         }
 
-    def history_iterator(self):
+    def _history_iterator(self):
         if self.installed is not None:
             yield(self.installed, self.installed_history_state)
         if self.erased is not None:
