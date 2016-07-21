@@ -1387,7 +1387,7 @@ class Base(object):
 
     def environment_upgrade(self, env_id):
         solver = self._build_comps_solver()
-        trans = solver.environment_upgrade(env_id)
+        trans = solver._environment_upgrade(env_id)
         return self._add_comps_trans(trans)
 
     def group_upgrade(self, grp_id):

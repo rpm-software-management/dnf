@@ -264,6 +264,6 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
         p_env.pkg_types = dnf.comps.ALL_TYPES
 
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
-        trans = self.solver.environment_upgrade(env.id)
+        trans = self.solver._environment_upgrade(env.id)
         self.assertCountEqual(trans.install, ('hole', 'lotus'))
         self.assertEmpty(trans.upgrade)
