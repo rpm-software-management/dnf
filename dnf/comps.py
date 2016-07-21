@@ -520,7 +520,7 @@ class Solver(object):
             if grp.id in old_set:
                 # upgrade
                 try:
-                    trans += self.group_upgrade(grp.id)
+                    trans += self._group_upgrade(grp.id)
                 except dnf.exceptions.CompsError:
                     # might no longer be installed
                     pass
@@ -570,7 +570,7 @@ class Solver(object):
         del p_grp.pkg_exclude[:]
         return trans
 
-    def group_upgrade(self, group_id):
+    def _group_upgrade(self, group_id):
         group = self.comps._group_by_id(group_id)
         p_grp = self.persistor.group(group.id)
         if not p_grp.installed:

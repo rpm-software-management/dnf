@@ -220,7 +220,7 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
         p_grp.full_list.extend(('pepper', 'handerson'))
 
         grp = self.comps.group_by_pattern('base')
-        trans = self.solver.group_upgrade(grp.id)
+        trans = self.solver._group_upgrade(grp.id)
         self.assertCountEqual(trans.install, ('tour',))
         self.assertCountEqual(trans.remove, ('handerson',))
         self.assertCountEqual(trans.upgrade, ('pepper',))
