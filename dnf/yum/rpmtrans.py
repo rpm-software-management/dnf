@@ -240,7 +240,7 @@ class RPMTransaction(object):
             # only walk the tsis once. prefer finding an erase over an obsoleted
             # package:
             if tsi.erased is not None and str(tsi.erased) == te.NEVRA():
-                return tsi.erased, tsi.erased_history_state, tsi
+                return tsi.erased, tsi._erased_history_state, tsi
             for o in tsi.obsoleted:
                 if str(o) == te.NEVRA():
                     obsoleted = o

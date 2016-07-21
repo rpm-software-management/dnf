@@ -52,10 +52,10 @@ class TransactionItem(object):
     @property
     def _active_history_state(self):
         return (self.installed_history_state if self.installed is not None
-                else self.erased_history_state)
+                else self._erased_history_state)
 
     @property
-    def erased_history_state(self):
+    def _erased_history_state(self):
         return self._HISTORY_ERASE_STATES[self.op_type]
 
     _HISTORY_INSTALLED_STATES = {
@@ -76,7 +76,7 @@ class TransactionItem(object):
         if self.installed is not None:
             yield(self.installed, self.installed_history_state)
         if self.erased is not None:
-            yield(self.erased, self.erased_history_state)
+            yield(self.erased, self._erased_history_state)
         if self.obsoleted:
             yield(self.installed, self.obsoleting_history_state)
         for obs in self.obsoleted:
