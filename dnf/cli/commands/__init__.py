@@ -61,7 +61,7 @@ will install it for you.
 For more information contact your distribution or package provider.""")
 
 
-def checkGPGKey(base, cli):
+def _checkGPGKey(base, cli):
     """Verify that there are gpg keys for the enabled repositories in the
     rpm database.
 
@@ -77,7 +77,8 @@ def checkGPGKey(base, cli):
                 logger.critical(_("Problem repository: %s"), repo)
                 raise dnf.cli.CliError
 
-def checkEnabledRepo(base, possible_local_files=[]):
+
+def _checkEnabledRepo(base, possible_local_files=[]):
     """Verify that there is at least one enabled repo.
 
     :param base: a :class:`dnf.Base` object.
@@ -101,7 +102,6 @@ class Command(object):
 
     aliases = [] # :api
     summary = ""  # :api
-    usage = ""  # :api
     opts = None
 
     def __init__(self, cli):
@@ -114,8 +114,7 @@ class Command(object):
         return self.cli.base
 
     @property
-    def basecmd(self):
-        # :api
+    def _basecmd(self):
         return self.aliases[0]
 
     @property
@@ -142,7 +141,7 @@ class Command(object):
         """Execute the command."""
         pass
 
-    def run_transaction(self):
+    def _run_transaction(self):
         """Finalize operations post-transaction."""
         pass
 
@@ -256,7 +255,7 @@ class CheckUpdateCommand(Command):
         demands = self.cli.demands
         demands.sack_activation = True
         demands.available_repos = True
-        checkEnabledRepo(self.base)
+        _checkEnabledRepo(self.base)
 
     def run(self):
         found = self.base.check_updates(self.opts.packages, print_=True)
@@ -365,7 +364,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            checkGPGKey(self.base, self.cli)
+            _checkGPGKey(self.base, self.cli)
 
             done = False
 
@@ -415,7 +414,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            checkGPGKey(self.base, self.cli)
+            _checkGPGKey(self.base, self.cli)
 
             done = False
 
@@ -470,7 +469,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            checkGPGKey(self.base, self.cli)
+            _checkGPGKey(self.base, self.cli)
 
             done = False
 
@@ -533,7 +532,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            checkGPGKey(self.base, self.cli)
+            _checkGPGKey(self.base, self.cli)
             for command in self.wrapped_commands:
                 try:
                     command.run_on_repo()
@@ -579,7 +578,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            checkGPGKey(self.base, self.cli)
+            _checkGPGKey(self.base, self.cli)
 
             done = False
 
@@ -620,7 +619,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            checkGPGKey(self.base, self.cli)
+            _checkGPGKey(self.base, self.cli)
 
             done = False
 
@@ -709,7 +708,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            checkGPGKey(self.base, self.cli)
+            _checkGPGKey(self.base, self.cli)
 
             done = False
 
@@ -748,7 +747,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            checkGPGKey(self.base, self.cli)
+            _checkGPGKey(self.base, self.cli)
             self.base.upgrade_userlist_to(selt.opts.pkg_specs, selt.opts.reponame)
 
     SUBCMDS = {CheckUpdateSubCommand, InfoSubCommand, InstallSubCommand,
@@ -821,7 +820,6 @@ class HistoryCommand(Command):
 
     aliases = ('history',)
     summary = _('display, or use, the transaction history')
-    usage = "[info|list|redo|undo|rollback|userinstalled]"
 
     @staticmethod
     def set_argparser(parser):
@@ -841,7 +839,7 @@ class HistoryCommand(Command):
                 logger.critical(_('Found more than one transaction ID!'))
                 raise dnf.cli.CliError
             demands.available_repos = True
-            checkGPGKey(self.base, self.cli)
+            _checkGPGKey(self.base, self.cli)
         else:
             demands.fresh_metadata = False
         demands.available_repos = True

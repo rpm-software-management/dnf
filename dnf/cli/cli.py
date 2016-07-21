@@ -831,7 +831,7 @@ class Cli(object):
         # Read up configuration options and initialize plugins
         try:
             self.base.conf._configure_from_options(opts)
-            self.read_conf_file(opts.releasever)
+            self._read_conf_file(opts.releasever)
         except (dnf.exceptions.ConfigError, ValueError) as e:
             logger.critical(_('Config error: %s'), e)
             sys.exit(1)
@@ -896,7 +896,7 @@ class Cli(object):
         if self.base.conf.color != 'auto':
             self.base.output.term.reinit(color=self.base.conf.color)
 
-    def read_conf_file(self, releasever=None):
+    def _read_conf_file(self, releasever=None):
         timer = dnf.logging.Timer('config')
         conf = self.base.conf
 

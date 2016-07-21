@@ -43,7 +43,6 @@ class GroupCommand(commands.Command):
                        'groupinfo'    : 'info'}
     aliases = ('group', 'groups') + tuple(direct_commands.keys())
     summary = _('display, or use, the groups information')
-    usage = "[list|info|summary|install|upgrade|remove|mark] [%s]" % _('GROUP')
 
     _CMD_ALIASES = {'update'     : 'upgrade',
                     'erase'      : 'remove'}
@@ -358,7 +357,7 @@ class GroupCommand(commands.Command):
         else:
             demands.available_repos = True
 
-        commands.checkEnabledRepo(self.base)
+        commands._checkEnabledRepo(self.base)
 
         if cmd in ('install', 'remove', 'mark', 'info'):
             if not args:
@@ -366,7 +365,7 @@ class GroupCommand(commands.Command):
                 raise dnf.cli.CliError
 
         if cmd in ('install', 'upgrade'):
-            commands.checkGPGKey(self.base, self.cli)
+            commands._checkGPGKey(self.base, self.cli)
 
     def run(self):
         cmd = self.opts.subcmd
@@ -409,7 +408,7 @@ class GroupCommand(commands.Command):
         if cmd == 'remove':
             return self.base.env_group_remove(extcmds)
 
-    def run_transaction(self):
+    def _run_transaction(self):
         if not self._remark:
             return
         goal = self.base._goal

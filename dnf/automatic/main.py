@@ -134,7 +134,7 @@ def main(args):
         conf = AutomaticConfig(opts.conf_path)
         with dnf.Base() as base:
             cli = dnf.cli.Cli(base)
-            cli.read_conf_file(conf.commands.base_config_file)
+            cli._read_conf_file(conf.commands.base_config_file)
             conf.update_baseconf(base.conf)
             logger.debug('Started dnf-automatic.')
 

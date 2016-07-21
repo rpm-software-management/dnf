@@ -48,7 +48,6 @@ class MyTestCommand(dnf.cli.commands.Command):
 
     aliases = ["test-cmd"]
     summary = 'summary'
-    usage = 'usage'
 
     def __init__(self, cli):
         dnf.cli.commands.Command.__init__(self, cli)
@@ -58,7 +57,6 @@ class MyTestCommand2(dnf.cli.commands.Command):
 
     aliases = ["test-cmd2"]
     summary = 'summary2'
-    usage = 'usage2'
 
     def __init__(self, cli):
         dnf.cli.commands.Command.__init__(self, cli)

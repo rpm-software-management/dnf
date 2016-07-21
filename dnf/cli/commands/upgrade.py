@@ -54,8 +54,8 @@ class UpgradeCommand(commands.Command):
         demands.available_repos = True
         demands.resolving = True
         demands.root_user = True
-        commands.checkGPGKey(self.base, self.cli)
-        commands.checkEnabledRepo(self.base, self.opts.pkg_specs)
+        commands._checkGPGKey(self.base, self.cli)
+        commands._checkEnabledRepo(self.base, self.opts.pkg_specs)
 
     def run(self):
         done = False
