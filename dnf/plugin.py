@@ -115,7 +115,7 @@ class Plugins(object):
             names = sorted(plugin.name for plugin in self.plugin_cls)
             logger.debug('Loaded plugins: %s', ', '.join(names))
 
-    run_config = _caller('config')
+    _run_config = _caller('config')
 
     def run_init(self, base, cli=None):
         for p_cls in self.plugin_cls:
