@@ -167,7 +167,7 @@ class RPMLimitationsTest(tests.support.TestCase):
         ts = dnf.transaction.Transaction()
         pkg = tests.support.MockPackage('anyway-2-0.src')
         ts.add_install(pkg, [])
-        msg = ts.rpm_limitations()
+        msg = ts._rpm_limitations()
         self.assertIsNot(msg, None)
 
 class PopulateTSTest(tests.support.TestCase):
