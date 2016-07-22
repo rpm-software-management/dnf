@@ -39,6 +39,7 @@ logger = logging.getLogger('dnf')
 
 DYNAMIC_PACKAGE = 'dnf.plugin.dynamic'
 
+
 class Plugin(object):
     """The base class custom plugins must derive from. #:api"""
 
@@ -74,6 +75,7 @@ class Plugin(object):
     def transaction(self):
         # :api
         pass
+
 
 class Plugins(object):
     def __init__(self):
@@ -127,8 +129,10 @@ class Plugins(object):
     def unload(self):
         del sys.modules[DYNAMIC_PACKAGE]
 
+
 def plugin_classes():
     return Plugin.__subclasses__()
+
 
 def import_modules(package, py_files):
     for fn in py_files:
@@ -142,6 +146,7 @@ def import_modules(package, py_files):
             logger.error(_('Failed loading plugin: %s'), module)
             logger.log(dnf.logging.SUBDEBUG, '', exc_info=True)
 
+
 def _iter_py_files(paths, skips):
     for p in paths:
         for fn in glob.glob('%s/*.py' % p):
@@ -149,6 +154,7 @@ def _iter_py_files(paths, skips):
             if any(fnmatch.fnmatch(name, pattern) for pattern in skips):
                 continue
             yield fn
+
 
 def register_command(command_class):
     #:api
