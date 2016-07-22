@@ -210,5 +210,5 @@ class Transaction(object):
                 src_installs[0]
         return None
 
-    def total_package_count(self):
+    def _total_package_count(self):
         return len(self.install_set | self.remove_set)
