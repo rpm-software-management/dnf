@@ -79,7 +79,7 @@ class Option(object):
             # try to parse a string (from config file)
             try:
                 value = self._parse(value)
-            except ValueError as e:
+            except (ValueError, NotImplementedError) as e:
                 raise dnf.exceptions.ConfigError(_('Error parsing %r: %s')
                                                  % (value, str(e)))
         if not isinstance(value, Value):
@@ -376,15 +376,18 @@ class FloatOption(Option):
 class SelectionOption(Option):
     """Handles string values where only specific values are allowed."""
     def __init__(self, default=None, parent=None, runtimeonly=False,
-                 choices=(), mapper={}):
+                 choices=(), mapper={}, notimplemented=()):
         # pylint: disable=W0102
         self._choices = choices
         self._mapper = mapper
+        self._notimplemented = notimplemented
         super(SelectionOption, self).__init__(default, parent, runtimeonly)
 
     def _parse(self, s):
         if s in self._mapper:
             s = self._mapper[s]
+        if s in self._notimplemented:
+            raise NotImplementedError(_('%r value is not implemented') % s)
         if s not in self._choices:
             raise ValueError(_('%r is not an allowed value') % s)
         return s
@@ -915,6 +918,11 @@ class RepoConf(BaseConfig):
         self._add_option('deltarpm', inherit(parent._get_option('deltarpm')))
 
         self._add_option('skip_if_unavailable', BoolOption(True)) # :api
+
+        # yum compatibility options
+        self._add_option('failovermethod',
+                         SelectionOption('priority', choices=('priority',),
+                                         notimplemented=('roundrobin',)))
 
     def _configure_from_options(self, opts):
         """Configure repos from the opts. """
