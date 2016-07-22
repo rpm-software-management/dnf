@@ -160,7 +160,7 @@ class Transaction(object):
         tsi = TransactionItem(UPGRADE, upgrade, upgraded, obsoleted)
         self._tsis.append(tsi)
 
-    def get_items(self, op_type):
+    def _get_items(self, op_type):
         return [tsi for tsi in self._tsis if tsi.op_type == op_type]
 
     @property
