@@ -105,7 +105,7 @@ class Plugins(object):
         sys.modules[DYNAMIC_PACKAGE] = package = dnf.pycomp.ModuleType(DYNAMIC_PACKAGE)
         package.__path__ = []
 
-        files = iter_py_files(conf.pluginpath, skips)
+        files = _iter_py_files(conf.pluginpath, skips)
         import_modules(package, files)
         self.plugin_cls = plugin_classes()[:]
         self.check_enabled(conf)
@@ -142,7 +142,7 @@ def import_modules(package, py_files):
             logger.error(_('Failed loading plugin: %s'), module)
             logger.log(dnf.logging.SUBDEBUG, '', exc_info=True)
 
-def iter_py_files(paths, skips):
+def _iter_py_files(paths, skips):
     for p in paths:
         for fn in glob.glob('%s/*.py' % p):
             (name, _) = os.path.splitext(os.path.basename(fn))
