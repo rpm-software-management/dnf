@@ -200,7 +200,7 @@ class Transaction(object):
         fn = operator.methodcaller('removes')
         return self._items2set(fn)
 
-    def rpm_limitations(self):
+    def _rpm_limitations(self):
         """ Ensures all the members can be passed to rpm as they are to perform
             the transaction.
         """

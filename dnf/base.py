@@ -557,7 +557,7 @@ class Base(object):
         got_transaction = self._transaction is not None and \
             len(self._transaction) > 0
         if got_transaction:
-            msg = self._transaction.rpm_limitations()
+            msg = self._transaction._rpm_limitations()
             if msg:
                 exc = dnf.exceptions.Error(msg)
 
