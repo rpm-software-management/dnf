@@ -126,7 +126,7 @@ class Plugins(object):
     run_resolved = _caller('resolved')
     run_transaction = _caller('transaction')
 
-    def unload(self):
+    def _unload(self):
         del sys.modules[DYNAMIC_PACKAGE]
 
 

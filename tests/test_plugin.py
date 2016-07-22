@@ -37,7 +37,7 @@ class PluginTest(tests.support.TestCase):
         self.plugins.load(testconf(), ())
 
     def tearDown(self):
-        self.plugins.unload()
+        self.plugins._unload()
 
     def test_load(self):
         self.assertLength(self.plugins.plugin_cls, 1)
@@ -78,7 +78,7 @@ class PluginSkipsTest(tests.support.TestCase):
         self.assertLength(self.plugins.plugin_cls, 0)
 
     def tearDown(self):
-        self.plugins.unload()
+        self.plugins._unload()
 
 class PluginNonExistentTest(tests.support.TestCase):
 
