@@ -72,7 +72,8 @@ class RemoveCommand(commands.Command):
                 for pkg in dups:
                     self.base.package_remove(pkg)
             else:
-                raise dnf.exceptions.Error(_('No duplicated packages for removal.'))
+                raise dnf.exceptions.Error(
+                    _('No duplicated packages found for removal.'))
             return
         if self.opts.oldinstallonly:
             q = self.base.sack.query()
@@ -83,7 +84,8 @@ class RemoveCommand(commands.Command):
                 for pkg in instonly:
                     self.base.package_remove(pkg)
             else:
-                raise dnf.exceptions.Error(_('No old installonly packages for removal.'))
+                raise dnf.exceptions.Error(
+                    _('No old installonly packages found for removal.'))
             return
 
         # Remove groups.
