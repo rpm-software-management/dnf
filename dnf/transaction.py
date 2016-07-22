@@ -169,7 +169,7 @@ class Transaction(object):
         fn = operator.methodcaller('installs')
         return self._items2set(fn)
 
-    def populate_rpm_ts(self, ts):
+    def _populate_rpm_ts(self, ts):
         """Populate the RPM transaction set."""
 
         for tsi in self._tsis:

@@ -592,7 +592,7 @@ class Base(object):
             # save our ds_callback out
             dscb = self._ds_callback
             self._ds_callback = None
-            self.transaction.populate_rpm_ts(self._ts)
+            self.transaction._populate_rpm_ts(self._ts)
 
             msgs = self._run_rpm_check()
             if msgs:
