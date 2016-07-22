@@ -160,7 +160,7 @@ class TransactionTest(tests.support.TestCase):
              self.rpkg1, self.rpkg2, self.rpkg3])
 
     def test_total_package_count(self):
-        self.assertEqual(self.trans.total_package_count(), 11)
+        self.assertEqual(self.trans._total_package_count(), 11)
 
 class RPMLimitationsTest(tests.support.TestCase):
     def test_rpm_limitations(self):

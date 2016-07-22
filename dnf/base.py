@@ -782,7 +782,7 @@ class Base(object):
         # for any kind of install add from_repo to the yumdb, and the cmdline
         # and the install reason
 
-        total = self.transaction.total_package_count()
+        total = self.transaction._total_package_count()
 
         def display_banner(pkg, count):
             count += 1
