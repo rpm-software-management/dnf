@@ -117,7 +117,7 @@ class Plugins(object):
 
     _run_config = _caller('config')
 
-    def run_init(self, base, cli=None):
+    def _run_init(self, base, cli=None):
         for p_cls in self.plugin_cls:
             plugin = p_cls(base, cli)
             self.plugins.append(plugin)

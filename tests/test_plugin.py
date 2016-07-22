@@ -47,7 +47,7 @@ class PluginTest(tests.support.TestCase):
 
     def test_runs(self):
         self.assertLength(self.plugins.plugins, 0)
-        self.plugins.run_init(None, None)
+        self.plugins._run_init(None, None)
         self.assertLength(self.plugins.plugins, 1)
         self.plugins._run_config()
         lucky = self.plugins.plugins[0]
@@ -56,7 +56,7 @@ class PluginTest(tests.support.TestCase):
     def test_config(self):
         base = tests.support.MockBase()
         base.conf.pluginconfpath = ['/wrong', PLUGINS]
-        self.plugins.run_init(base, None)
+        self.plugins._run_init(base, None)
         lucky = self.plugins.plugins[0]
         conf = lucky.read_config(base.conf)
         self.assertTrue(conf.getboolean('main', 'enabled'))
@@ -65,7 +65,7 @@ class PluginTest(tests.support.TestCase):
     def test_disabled(self):
         base = tests.support.MockBase()
         base.conf.pluginconfpath = [PLUGINS]
-        self.plugins.run_init(base, None)
+        self.plugins._run_init(base, None)
         self.assertFalse(any([p.name == 'disabled-plugin'
                               for p in self.plugins.plugins]))
         self.assertLength(self.plugins.plugin_cls, 1)

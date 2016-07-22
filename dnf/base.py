@@ -223,7 +223,7 @@ class Base(object):
         """Load plugins and run their __init__()."""
         if self.conf.plugins:
             self._plugins.load(self.conf, disabled_glob)
-        self._plugins.run_init(self, cli)
+        self._plugins._run_init(self, cli)
 
     def configure_plugins(self):
         # :api
