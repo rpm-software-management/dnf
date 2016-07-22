@@ -109,7 +109,7 @@ class Plugins(object):
 
         files = _iter_py_files(conf.pluginpath, skips)
         _import_modules(package, files)
-        self.plugin_cls = plugin_classes()[:]
+        self.plugin_cls = _plugin_classes()[:]
         self.check_enabled(conf)
         if len(self.plugin_cls) > 0:
             names = sorted(plugin.name for plugin in self.plugin_cls)
@@ -130,7 +130,7 @@ class Plugins(object):
         del sys.modules[DYNAMIC_PACKAGE]
 
 
-def plugin_classes():
+def _plugin_classes():
     return Plugin.__subclasses__()
 
 
