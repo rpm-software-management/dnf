@@ -67,7 +67,7 @@ class SackTest(support.TestCase):
         self.assertLength(peppers, 1)
         self.assertEqual(str(peppers[0]), "librita-1-1.x86_64")
 
-    @mock.patch('dnf.sack.build_sack', lambda x: mock.Mock())
+    @mock.patch('dnf.sack._build_sack', lambda x: mock.Mock())
     @mock.patch('dnf.goal.Goal', lambda x: mock.Mock())
     def test_fill_sack(self):
         def raiser():
