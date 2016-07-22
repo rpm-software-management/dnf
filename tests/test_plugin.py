@@ -49,7 +49,7 @@ class PluginTest(tests.support.TestCase):
         self.assertLength(self.plugins.plugins, 0)
         self.plugins.run_init(None, None)
         self.assertLength(self.plugins.plugins, 1)
-        self.plugins.run_config()
+        self.plugins._run_config()
         lucky = self.plugins.plugins[0]
         self.assertTrue(lucky._config)
 

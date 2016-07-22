@@ -228,7 +228,7 @@ class Base(object):
     def configure_plugins(self):
         # :api
         """Run plugins configure() method."""
-        self._plugins.run_config()
+        self._plugins._run_config()
 
     def fill_sack(self, load_system_repo=True, load_available_repos=True):
         # :api
