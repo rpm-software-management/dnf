@@ -99,7 +99,7 @@ class Plugins(object):
             if disabled:
                 self.plugin_cls.remove(plug_cls)
 
-    def load(self, conf, skips):
+    def _load(self, conf, skips):
         """Dynamically load relevant plugin modules."""
 
         if DYNAMIC_PACKAGE in sys.modules:
