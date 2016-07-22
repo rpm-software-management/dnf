@@ -139,8 +139,8 @@ class TransactionTest(tests.support.TestCase):
         self.trans.add_downgrade(self.dpkg, self.rpkg3, [])
 
     def test_get_items(self):
-        self.assertLength(self.trans.get_items(dnf.transaction.ERASE), 0)
-        self.assertLength(self.trans.get_items(dnf.transaction.UPGRADE), 2)
+        self.assertLength(self.trans._get_items(dnf.transaction.ERASE), 0)
+        self.assertLength(self.trans._get_items(dnf.transaction.UPGRADE), 2)
 
     def test_iter(self):
         self.assertLength(list(self.trans), 4)

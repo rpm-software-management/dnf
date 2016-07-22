@@ -186,7 +186,7 @@ class InstallReasonTest(support.ResultTestCase):
     def test_reason(self):
         self.base.install("mrkite")
         self.base.resolve()
-        new_pkgs = self.base._transaction.get_items(dnf.transaction.INSTALL)
+        new_pkgs = self.base._transaction._get_items(dnf.transaction.INSTALL)
         pkg_reasons = [(tsi.installed.name, tsi.reason) for tsi in new_pkgs]
         self.assertCountEqual([("mrkite", "user"), ("trampoline", "dep")],
                               pkg_reasons)
