@@ -108,7 +108,7 @@ class Plugins(object):
         package.__path__ = []
 
         files = _iter_py_files(conf.pluginpath, skips)
-        import_modules(package, files)
+        _import_modules(package, files)
         self.plugin_cls = plugin_classes()[:]
         self.check_enabled(conf)
         if len(self.plugin_cls) > 0:
@@ -134,7 +134,7 @@ def plugin_classes():
     return Plugin.__subclasses__()
 
 
-def import_modules(package, py_files):
+def _import_modules(package, py_files):
     for fn in py_files:
         path, module = os.path.split(fn)
         package.__path__.append(path)
