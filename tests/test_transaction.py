@@ -182,7 +182,7 @@ class PopulateTSTest(tests.support.TestCase):
         old = tests.support.MockPackage("billy-1.1-1.x86_64.fc69", repo)
         ts.add_install(inst, [])
         ts.add_upgrade(upg, old, [])
-        rpm_ts = ts.populate_rpm_ts(mock.Mock())
+        rpm_ts = ts._populate_rpm_ts(mock.Mock())
         rpm_ts.assert_has_calls([mock.call.addInstall(None, ts._tsis[0], 'i'),
                                  mock.call.addInstall(None, ts._tsis[1], 'u')])
 
