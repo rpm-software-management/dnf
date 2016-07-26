@@ -235,7 +235,7 @@ class ConfigPreProcessor(object):
         fo = self._incstack.pop()
         fo.close()
         if len(self._incstack) > 0:
-            self.name = self._incstack[-1].geturl()
+            self.name = self._incstack[-1].name
         else:
             self.name = None
 
