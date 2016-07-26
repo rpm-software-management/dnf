@@ -1032,10 +1032,10 @@ class Output(object):
             return a_wid
 
         for (action, pkglist) in [(_('Installing'), list_bunch.installed),
-                                  (_('Installing weak dependencies'), list_bunch.installed_weak),
-                                  (_('Installing dependencies'), list_bunch.installed_dep),
                                   (_('Upgrading'), list_bunch.upgraded),
                                   (_('Reinstalling'), list_bunch.reinstalled),
+                                  (_('Installing dependencies'), list_bunch.installed_dep),
+                                  (_('Installing weak dependencies'), list_bunch.installed_weak),
                                   (_('Removing'), list_bunch.erased),
                                   (_('Removing unused dependencies'), list_bunch.erased_clean),
                                   (_('Downgrading'), list_bunch.downgraded)]:
