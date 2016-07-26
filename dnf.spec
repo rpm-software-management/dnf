@@ -97,7 +97,11 @@ BuildRequires:  python-iniparse
 BuildRequires:  python-libcomps >= %{libcomps_version}
 BuildRequires:  python-librepo >= %{librepo_version}
 BuildRequires:  python-nose
+%if 0%{?rhel} && 0%{?rhel} <= 7
 BuildRequires:  pygpgme
+%else
+BuildRequires:  python2-pygpgme
+%endif
 BuildRequires:  pyliblzma
 BuildRequires:  rpm-python >= %{rpm_version}
 Recommends:     bash-completion
@@ -108,7 +112,11 @@ Requires:       python-hawkey >= %{hawkey_version}
 Requires:       python-iniparse
 Requires:       python-libcomps >= %{libcomps_version}
 Requires:       python-librepo >= %{librepo_version}
+%if 0%{?rhel} && 0%{?rhel} <= 7
 Requires:       pygpgme
+%else
+Requires:       python2-pygpgme
+%endif
 Requires:       rpm-plugin-systemd-inhibit
 Requires:       rpm-python >= %{rpm_version}
 
