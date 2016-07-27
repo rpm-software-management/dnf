@@ -877,7 +877,6 @@ class Base(object):
             else:
                 self._yumdb.get_package(rpo).clean()
             count = display_banner(rpo, count)
-            
         if self._record_history():
             rpmdbv = rpmdb_sack.rpmdb_version(self._yumdb)
             self.history.end(rpmdbv, 0)
