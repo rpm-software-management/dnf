@@ -26,6 +26,9 @@ import os
 
 from .sqlutils import sqlite, executeSQL, sql_esc_glob
 from . import misc as misc
+import gi
+gi.require_version("Hif", "3.0")
+from gi.repository import Hif
 import dnf
 import dnf.exceptions
 import dnf.rpm.miscutils
@@ -738,6 +741,12 @@ class YumHistory(object):
         self.conf.readable = True
         self.yumdb = yumdb
 
+#SWDB BEGIN
+        self.swdb = Hif.Swdb()
+        if not self.swdb.exist():
+            self.swdb.create_db()
+#SWDB END
+
         self.releasever = releasever
 
         if not os.path.exists(self.conf.db_path):
@@ -841,6 +850,14 @@ class YumHistory(object):
 
         pkgtup = map(ucd, pkgtup)
         (n,a,e,v,r) = pkgtup
+
+#SWDB BEGIN
+        if checksum is None:
+            self.swdb.add_package_naevrcht(n,a,e,v,r,"","","rpm")
+        else:
+            self.swdb.add_package_naevrcht(n,a,str(e),str(v),str(r),checksum.split(':')[1],checksum.split(':')[0],"rpm")
+#SWDB END
+
         if checksum is not None:
             res = executeSQL(cur,
                              """INSERT INTO pkgtups
@@ -986,6 +1003,12 @@ class YumHistory(object):
                                                     str(rpmdb_version),
                                                     misc.getloginuid()))
         self._tid = cur.lastrowid
+#SWDB BEGIN
+        if cmdline:
+            self.swdb.trans_beg(str(int(time.time())),str(rpmdb_version),cmdline,str(misc.getloginuid()),self.releasever)
+        else:
+            self.swdb.trans_beg(str(int(time.time())),str(rpmdb_version),"",str(misc.getloginuid()),self.releasever)
+#SWDB END
 
         for pkg in using_pkgs:
             pid = self._ipkg2pid(pkg)
@@ -994,6 +1017,10 @@ class YumHistory(object):
         for tsi in tsis:
             for (pkg, state) in tsi._history_iterator():
                 pid   = self.pkg2pid(pkg)
+#SWDB BEGIN
+                yumdb_info = self.yumdb.get_package(pkg)
+                self.swdb.trans_data_beg(self._tid, pid,(yumdb_info.get("reason") or "unknown") ,state)
+#SWDB END
                 self.trans_data_pid_beg(pid, state)
 
         for pkg in skip_packages:
@@ -1017,6 +1044,9 @@ class YumHistory(object):
             executeSQL(cur,
                        """INSERT INTO trans_error
                           (tid, msg) VALUES (?, ?)""", (self._tid, error))
+#SWDB BEGIN
+        self.swdb.log_error(self._tid, error)
+#SWDB END
         self._commit()
 
     def log_scriptlet_output(self, msg):
@@ -1031,6 +1061,9 @@ class YumHistory(object):
             executeSQL(cur,
                        """INSERT INTO trans_script_stdout
                           (tid, line) VALUES (?, ?)""", (self._tid, error))
+#SWDB BEGIN
+        self.swdb.log_output(self._tid, error)
+#SWDB END
         self._commit()
 
     def _load_errors(self, tid):
@@ -1068,11 +1101,17 @@ class YumHistory(object):
                             VALUES (?, ?, ?, ?)""", (self._tid,int(time.time()),
                                                      str(rpmdb_version),
                                                      return_code))
+#SWBD BEGIN
+        self.swdb.trans_end(self._tid, str(int(time.time())), return_code)
+#SWDB END
         self._commit()
         if not return_code:
             #  Simple hack, if the transaction finished. Note that this
             # catches the erase cases (as we still don't get pkgtups for them),
             # Eg. Updated elements.
+#SWDB BEGIN
+            self.swdb.trans_data_end(self._tid)
+#SWDB END
             executeSQL(cur,
                        """UPDATE trans_data_pkgs SET done = ?
                           WHERE tid = ?""", ('TRUE', self._tid,))
@@ -1374,6 +1413,16 @@ class YumHistory(object):
         """ Save all the data for yumdb for this installed pkg, assumes
             there is no data currently. """
         yumdb_info = self.yumdb.get_package(ipkg)
+#SWDB BEGIN
+        pid = self.pkg2pid(ipkg, create=False)
+        if pid:
+            #FIXME: resolve installonly
+            tmp_instalonly = ""
+            self.swdb.log_package_data(pid, (yumdb_info.get("from_repo") or ''),
+                (yumdb_info.get("from_repo_revision") or ''),
+                (yumdb_info.get("from_repo_timestamp") or ''), (yumdb_info.get("installed_by") or ''),
+                (yumdb_info.get("changed_by") or ''), tmp_instalonly, "")
+#SWDB END
         for attr in _YumHistPackageYumDB._valid_yumdb_keys:
             val = yumdb_info.get(attr)
             if val is None:
