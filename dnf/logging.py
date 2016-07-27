@@ -50,7 +50,7 @@ def only_once(func):
         setattr(self, func.__name__, noop)
     return swan_song
 
-class MaxLevelFilter(object):
+class _MaxLevelFilter(object):
     def __init__(self, max_level):
         self.max_level = max_level
 
@@ -118,7 +118,7 @@ class Logging(object):
         # setup stdout
         stdout = logging.StreamHandler(sys.stdout)
         stdout.setLevel(INFO)
-        stdout.addFilter(MaxLevelFilter(logging.WARNING))
+        stdout.addFilter(_MaxLevelFilter(logging.WARNING))
         logger_dnf.addHandler(stdout)
         self.stdout_handler = stdout
 
