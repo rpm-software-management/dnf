@@ -100,9 +100,6 @@ def _create_filehandler(logfile):
 def _paint_mark(logger):
     logger.log(INFO, dnf.const.LOG_MARKER)
 
-def depr(msg):
-    warnings.warn(msg, dnf.exceptions.DeprecationWarning, 2)
-
 
 class Logging(object):
     def __init__(self):
