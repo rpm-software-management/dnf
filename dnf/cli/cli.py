@@ -920,7 +920,7 @@ class Cli(object):
         for opt in ('cachedir', 'logdir', 'persistdir'):
             conf.prepend_installroot(opt)
 
-        self.base._logging.setup_from_dnf_conf(conf)
+        self.base._logging._setup_from_dnf_conf(conf)
 
         timer()
         return conf
