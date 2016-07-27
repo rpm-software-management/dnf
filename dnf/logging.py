@@ -126,7 +126,7 @@ class Logging(object):
         self.stderr_handler = stderr
 
     @only_once
-    def setup(self, verbose_level, error_level, logdir):
+    def _setup(self, verbose_level, error_level, logdir):
         self._presetup()
         logger_dnf = logging.getLogger("dnf")
 
@@ -165,7 +165,7 @@ class Logging(object):
         verbose_level_r = _cfg_verbose_val2level(conf.debuglevel)
         error_level_r = _cfg_err_val2level(conf.errorlevel)
         logdir = conf.logdir
-        return self.setup(verbose_level_r, error_level_r, logdir)
+        return self._setup(verbose_level_r, error_level_r, logdir)
 
 
 class Timer(object):
