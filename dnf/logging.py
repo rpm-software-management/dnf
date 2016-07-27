@@ -106,7 +106,7 @@ class Logging(object):
         self.stdout_handler = self.stderr_handler = None
 
     @only_once
-    def presetup(self):
+    def _presetup(self):
         logging.addLevelName(DDEBUG, "DDEBUG")
         logging.addLevelName(SUBDEBUG, "SUBDEBUG")
         logger_dnf = logging.getLogger("dnf")
@@ -127,7 +127,7 @@ class Logging(object):
 
     @only_once
     def setup(self, verbose_level, error_level, logdir):
-        self.presetup()
+        self._presetup()
         logger_dnf = logging.getLogger("dnf")
 
         # setup file logger
