@@ -161,7 +161,7 @@ class Logging(object):
         logger_rpm.addHandler(handler)
         _paint_mark(logger_rpm)
 
-    def setup_from_dnf_conf(self, conf):
+    def _setup_from_dnf_conf(self, conf):
         verbose_level_r = _cfg_verbose_val2level(conf.debuglevel)
         error_level_r = _cfg_err_val2level(conf.errorlevel)
         logdir = conf.logdir

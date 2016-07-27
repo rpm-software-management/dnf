@@ -92,12 +92,12 @@ class TestLogging(support.TestCase):
     @mock.patch('dnf.logging.Logging._setup')
     def test_setup_from_dnf_conf(self, setup_m):
         conf = mock.Mock(debuglevel=2, errorlevel=2, logdir=self.logdir)
-        self.logging.setup_from_dnf_conf(conf)
+        self.logging._setup_from_dnf_conf(conf)
         self.assertEqual(setup_m.call_args, mock.call(dnf.logging.INFO,
                                                       dnf.logging.WARNING,
                                                       self.logdir))
         conf = mock.Mock(debuglevel=6, errorlevel=6, logdir=self.logdir)
-        self.logging.setup_from_dnf_conf(conf)
+        self.logging._setup_from_dnf_conf(conf)
         self.assertEqual(setup_m.call_args, mock.call(dnf.logging.DEBUG,
                                                       dnf.logging.WARNING,
                                                       self.logdir))
