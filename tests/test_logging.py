@@ -76,7 +76,7 @@ class TestLogging(support.TestCase):
     def test_setup(self):
         logger = logging.getLogger("dnf")
         with support.patch_std_streams() as (stdout, stderr):
-            self.logging.setup(logging.INFO, logging.ERROR, self.logdir)
+            self.logging._setup(logging.INFO, logging.ERROR, self.logdir)
             self._bench(logger)
         self.assertEqual("i\n", stdout.getvalue())
         self.assertEqual("e\n", stderr.getvalue())
@@ -84,12 +84,12 @@ class TestLogging(support.TestCase):
     def test_setup_verbose(self):
         logger = logging.getLogger("dnf")
         with support.patch_std_streams() as (stdout, stderr):
-            self.logging.setup(logging.DEBUG, logging.WARNING, self.logdir)
+            self.logging._setup(logging.DEBUG, logging.WARNING, self.logdir)
             self._bench(logger)
         self.assertEqual("d\ni\n", stdout.getvalue())
         self.assertEqual("w\ne\n", stderr.getvalue())
 
-    @mock.patch('dnf.logging.Logging.setup')
+    @mock.patch('dnf.logging.Logging._setup')
     def test_setup_from_dnf_conf(self, setup_m):
         conf = mock.Mock(debuglevel=2, errorlevel=2, logdir=self.logdir)
         self.logging.setup_from_dnf_conf(conf)
@@ -104,7 +104,7 @@ class TestLogging(support.TestCase):
 
     def test_file_logging(self):
         # log nothing to the console:
-        self.logging.setup(dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL,
+        self.logging._setup(dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL,
                           self.logdir)
         logger = logging.getLogger("dnf")
         with support.patch_std_streams() as (stdout, stderr):
@@ -122,7 +122,7 @@ class TestLogging(support.TestCase):
 
     def test_rpm_logging(self):
         # log everything to the console:
-        self.logging.setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
+        self.logging._setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
                           self.logdir)
         logger = logging.getLogger("dnf.rpm")
         with support.patch_std_streams() as (stdout, stderr):
@@ -141,11 +141,11 @@ class TestLogging(support.TestCase):
     def test_setup_only_once(self):
         logger = logging.getLogger("dnf")
         self.assertLength(logger.handlers, 0)
-        self.logging.setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
+        self.logging._setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
                            self.logdir)
         cnt = len(logger.handlers)
         self.assertGreater(cnt, 0)
-        self.logging.setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
+        self.logging._setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
                            self.logdir)
         # no new handlers
         self.assertEqual(cnt, len(logger.handlers))

@@ -185,7 +185,7 @@ class CliTest(TestCase):
         self.assertEqual(self.base.repos['one'].sync_strategy,
                          dnf.repo.SYNC_ONLY_CACHE)
 
-@mock.patch('dnf.logging.Logging.setup', new=mock.MagicMock)
+@mock.patch('dnf.logging.Logging._setup', new=mock.MagicMock)
 class ConfigureTest(TestCase):
     def setUp(self):
         self.base = support.MockBase("main")
