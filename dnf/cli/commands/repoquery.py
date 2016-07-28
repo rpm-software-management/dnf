@@ -300,7 +300,11 @@ class RepoQueryCommand(commands.Command):
         if self.opts.file:
             q = q.filter(file__glob=self.opts.file)
         if self.opts.whatprovides:
-            q = q.filter(provides__glob=[self.opts.whatprovides])
+            a = q.filter(provides__glob=[self.opts.whatprovides])
+            if a:
+                q = a
+            else:
+                q = q.filter(file__glob=self.opts.whatprovides)
         if self.opts.alldeps or self.opts.exactdeps:
             if not self.opts.whatrequires:
                 raise dnf.exceptions.Error(
