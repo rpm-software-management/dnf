@@ -36,7 +36,7 @@ def _open_no_umask(*args):
         up for user readable stuff. """
     oumask = os.umask(0o22)
     try:
-        ret = open(*args)
+        ret = open(*args, encoding='utf-8')
     finally:
         os.umask(oumask)
 
@@ -56,7 +56,7 @@ def _makedirs_no_umask(*args):
 def _iopen(*args):
     """ IOError wrapper BS for open, stupid exceptions. """
     try:
-        ret = open(*args)
+        ret = open(*args, encoding='utf-8')
     except IOError as e:
         return None, e
     return ret, None
