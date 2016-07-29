@@ -89,7 +89,7 @@
 
   .. method:: do_transaction([display])
 
-    Perform the resolved transaction. Use the optional `display` object(s) to report the progress. `display` can be either an instance of a subclass of :class:`dnf.callback.TransactionProgress` or a sequence of such instances.
+    Perform the resolved transaction. Use the optional `display` object(s) to report the progress. `display` can be either an instance of a subclass of :class:`dnf.callback.TransactionProgress` or a sequence of such instances. Raise :exc:`dnf.exceptions.Error` or dnf.exceptions.TransactionCheckError.
 
   .. method:: download_packages(pkglist, progress=None)
 
