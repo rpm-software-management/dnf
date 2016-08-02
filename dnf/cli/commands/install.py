@@ -93,5 +93,6 @@ class InstallCommand(commands.Command):
                             self.base.output.term.MODE['normal'])
                 errs.append(pkg_spec)
         if (len(errs) != 0 or len(err_pkgs) != 0) and self.base.conf.strict:
-            raise dnf.exceptions.PackagesNotAvailableError(_("Unable to find a match."),
-                                                           pkg_spec=errs, packages=err_pkgs)
+            raise dnf.exceptions.PackagesNotAvailableError(
+                _("Unable to find a match."), pkg_spec=' '.join(errs),
+                packages=err_pkgs)
