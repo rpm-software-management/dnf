@@ -963,12 +963,12 @@ class Base(object):
                 self._add_tempfiles([path])
             try:
                 pkgs.append(self.sack.add_cmdline_package(path))
-            except EnvironmentError as e:
+            except IOError as e:
                 logger.warning(e)
                 pkgs_error.append(path)
         self._setup_excludes_includes()
         if pkgs_error and strict:
-            raise EnvironmentError(_("Could not open {}").format(', '.join(pkgs_error)))
+            raise IOError(_("Could not open: {}").format(' '.join(pkgs_error)))
         return pkgs
 
     def _sig_check_pkg(self, po):
@@ -1488,7 +1488,7 @@ class Base(object):
         if not q:
             msg = _("Package %s not installed, cannot downgrade it.")
             logger.warning(msg, pkg.name)
-            return 0
+            raise dnf.exceptions.MarkingError(_('No match for argument: %s') % pkg.location, pkg.name)
         elif sorted(q)[0] > pkg:
             self._goal.downgrade_to(pkg)
             return 1
@@ -1501,9 +1501,11 @@ class Base(object):
     def package_install(self, pkg, strict=True):
         # :api
         q = self.sack.query()._nevra(pkg.name, pkg.evr, pkg.arch)
-        already_inst, _ = self._query_matches_installed(q)
+        already_inst, available = self._query_matches_installed(q)
         if pkg in already_inst:
             _msg_installed(pkg)
+        elif not pkg in available:
+            raise dnf.exceptions.PackageNotFoundError(_('No match for argument: %s'), pkg.location)
         else:
             self._goal.install(pkg, optional=(not strict))
         return 1
@@ -1514,7 +1516,7 @@ class Base(object):
             return 1
         msg = _("Package %s not installed, cannot reinstall it.")
         logger.warning(msg, str(pkg))
-        return 0
+        raise dnf.exceptions.MarkingError(_('No match for argument: %s') % pkg.location, pkg.name)
 
     def package_remove(self, pkg):
         self._goal.erase(pkg)
@@ -1530,7 +1532,7 @@ class Base(object):
         if not q:
             msg = _("Package %s not installed, cannot update it.")
             logger.warning(msg, pkg.name)
-            return 0
+            raise dnf.exceptions.MarkingError(_('No match for argument: %s') % pkg.location, pkg.name)
         elif sorted(q)[-1] < pkg:
             self._goal.upgrade_to(pkg)
             return 1
@@ -1547,6 +1549,7 @@ class Base(object):
         if any((s.matches() for s in sltrs)):
             prev_count = self._goal.req_length()
             installed = self.sack.query().installed()
+            available = self.sack.query().available()
             for sltr in sltrs:
                 if not sltr.matches():
                     continue
@@ -1554,8 +1557,12 @@ class Base(object):
                 if not installed.filter(name=pkg_name):
                     # wildcard shouldn't print not installed packages
                     if not wildcard:
-                        msg = _("Package %s not installed, cannot update it.")
-                        logger.warning(msg, pkg_name)
+                        if available.filter(name=pkg_name):
+                            msg = _('Package %s%s%s available, but not installed.')
+                            logger.warning(msg, '', pkg_name, '')
+                        else:
+                            msg = _("Package %s not installed, cannot update it.")
+                            logger.warning(msg, pkg_name)
                     continue
                 if reponame is not None:
                     sltr = sltr.set(reponame=reponame)
@@ -1564,7 +1571,7 @@ class Base(object):
             if self._goal.req_length() - prev_count:
                 return 1
 
-        raise dnf.exceptions.MarkingError('no package matched', pkg_spec)
+        raise dnf.exceptions.MarkingError(_('No match for argument: %s') % pkg_spec, pkg_spec)
 
     def upgrade_all(self, reponame=None):
         # :api

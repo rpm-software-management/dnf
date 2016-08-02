@@ -64,8 +64,9 @@ class ReinstallCommand(commands.Command):
         for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=False):
             try:
                 self.base.package_reinstall(pkg)
-            except dnf.exceptions.MarkingError as e:
-                logger.info(e)
+            except dnf.exceptions.MarkingError:
+                logger.info(_('No match for argument: %s%s%s'), self.base.output.term.MODE['bold'],
+                            pkg.location, self.base.output.term.MODE['normal'])
             else:
                 done = True
 
@@ -73,8 +74,13 @@ class ReinstallCommand(commands.Command):
         for pkg_spec in self.opts.pkg_specs + ['@' + x for x in self.opts.grp_specs]:
             try:
                 self.base.reinstall(pkg_spec)
-            except dnf.exceptions.PackagesNotInstalledError:
-                logger.info(_('No match for argument: %s'), pkg_spec)
+            except dnf.exceptions.PackagesNotInstalledError as err:
+                for pkg in err.packages:
+                    logger.info(_('Package %s%s%s available, but not installed.'), self.output.term.MODE['bold'],
+                                pkg.name, self.output.term.MODE['normal'])
+                    break
+                logger.info(_('No match for argument: %s%s%s'), self.base.output.term.MODE['bold'],
+                            pkg_spec, self.base.output.term.MODE['normal'])
             except dnf.exceptions.PackagesNotAvailableError as err:
                 for pkg in err.packages:
                     xmsg = ''

@@ -51,7 +51,7 @@
 
   .. method:: add_remote_rpms(path_list, strict=True)
 
-    Add RPM files at list `path_list` to the :attr:`sack` and return the list of respective :class:`dnf.package.Package` instances. Does the download to a temporary files for each path if `path` is a remote URL. Raises :exc:`EnvironmentError` if there are problems obtaining during reading files and `strict=True`.
+    Add RPM files at list `path_list` to the :attr:`sack` and return the list of respective :class:`dnf.package.Package` instances. Does the download to a temporary files for each path if `path` is a remote URL. Raises :exc:`IOError` if there are problems obtaining during reading files and `strict=True`.
 
   .. method:: close()
 

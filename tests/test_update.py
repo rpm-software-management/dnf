@@ -55,15 +55,17 @@ class Update(support.ResultTestCase):
         with self.assertRaises(dnf.exceptions.MarkingError) as context:
             base.upgrade("mrkite")
         self.assertEqual(logger.mock_calls, [
-            mock.call(u'Package %s not installed, cannot update it.',
-                      u'mrkite')])
+            mock.call(u'Package %s%s%s available, but not installed.', u'',
+                      u'mrkite', u'')])
         self.assertEqual(context.exception.pkg_spec, 'mrkite')
         self.assertEqual(goal.mock_calls, [])
 
     def test_package_upgrade_fail(self):
         base = support.MockBase("main")
         p = base.sack.query().available().filter(name="mrkite")[0]
-        self.assertEqual(0, base.package_upgrade(p))
+        with self.assertRaises(dnf.exceptions.MarkingError) as context:
+            base.package_upgrade(p)
+        self.assertEqual(context.exception.pkg_spec, 'mrkite')
         base.resolve()
         self.assertEmpty(base._goal.list_upgrades())
 

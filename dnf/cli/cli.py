@@ -338,7 +338,8 @@ class BaseCli(dnf.Base):
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
             except dnf.exceptions.MarkingError as e:
-                logger.info(e)
+                logger.info(_('No match for argument: %s%s%s'), self.output.term.MODE['bold'],
+                            pkg.location, self.output.term.MODE['normal'])
                 # it was something on disk and it ended in rpm
                 # no matter what we don't go looking at repos
 
@@ -354,7 +355,11 @@ class BaseCli(dnf.Base):
                 if not wildcard:
                 # glob pattern should not match not installed packages -> ignore error
                     for pkg in err.packages:
-                        logger.info(_('No match for available package: %s'), pkg)
+                        logger.info(_('Package %s%s%s available, but not installed.'), self.output.term.MODE['bold'],
+                                    pkg.name, self.output.term.MODE['normal'])
+                        break
+                    logger.info(_('No match for argument: %s%s%s'), self.output.term.MODE['bold'],
+                                err.pkg_spec, self.output.term.MODE['normal'])
             except dnf.exceptions.MarkingError:
                 assert False
         cnt = self._goal.req_length() - oldcount

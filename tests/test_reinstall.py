@@ -38,7 +38,9 @@ class Reinstall(support.ResultTestCase):
         base = support.MockBase('main', 'updates')
         base.conf.multilib_policy = 'all'
         p = base.sack.query().available().filter(nevra="hole-1-2.x86_64")[0]
-        self.assertEqual(0, base.package_reinstall(p))
+        with self.assertRaises(dnf.exceptions.MarkingError) as context:
+            base.package_reinstall(p)
+        self.assertEqual(context.exception.pkg_spec, 'hole')
         base.resolve()
         self.assertEmpty(base._goal.list_downgrades())
 
