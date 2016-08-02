@@ -1253,6 +1253,17 @@ class Base(object):
                 sltr.set(name=it)
                 fn(select=sltr)
                 cnt += 1
+
+        for (pkg, req) in trans.conditional:
+            inst = self.sack.query().installed().filter(name=req)
+            avail = self.sack.query().filter(name=pkg)
+            if inst and avail:
+                self._goal.group_members.add(pkg)
+                sltr = dnf.selector.Selector(self.sack)
+                sltr.set(name=pkg)
+                self._goal.install(select=sltr)
+                cnt += 1
+
         self._goal.group_members.update(trans.install)
         self._goal.group_members.update(trans.install_opt)
         return cnt
