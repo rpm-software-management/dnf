@@ -968,7 +968,7 @@ class Base(object):
                 pkgs_error.append(path)
         self._setup_excludes_includes()
         if pkgs_error and strict:
-            raise IOError(_("Could not open {}").format(', '.join(pkgs_error)))
+            raise IOError(_("Could not open: {}").format(' '.join(pkgs_error)))
         return pkgs
 
     def _sig_check_pkg(self, po):
