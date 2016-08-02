@@ -1243,16 +1243,18 @@ class Base(object):
 
         for (attr, fn) in attr_fn:
             for it in attr:
-                if not self.sack.query().filter(name=it):
+                if self.sack.query().filter(name=it):
+                    if (attr == trans.install or attr == trans.install_opt):
+                        self._goal.group_members.add(it)
+                    sltr = dnf.selector.Selector(self.sack)
+                    sltr.set(name=it)
+                    fn(select=sltr)
+                    cnt += 1
+                else:
                     # a comps item that doesn't refer to anything real
                     if (attr == trans.install):
                         self._group_persistor._rollback()
                         raise dnf.exceptions.MarkingError(it)
-                    continue
-                sltr = dnf.selector.Selector(self.sack)
-                sltr.set(name=it)
-                fn(select=sltr)
-                cnt += 1
 
         for (pkg, req) in trans.conditional:
             inst = self.sack.query().installed().filter(name=req)
@@ -1264,8 +1266,6 @@ class Base(object):
                 self._goal.install(select=sltr)
                 cnt += 1
 
-        self._goal.group_members.update(trans.install)
-        self._goal.group_members.update(trans.install_opt)
         return cnt
 
     def _build_comps_solver(self):
