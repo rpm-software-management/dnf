@@ -331,6 +331,11 @@ configuration.
 
     Determines how DNF resolves host names. Set this to '4'/'IPv4' or '6'/'IPv6' to resolve to IPv4 or IPv6 addresses only. By default, DNF resolves to either addresses.
 
+``localpkg_gpgcheck``
+    :ref:`boolean <boolean-label>`
+
+    Whether to perform a GPG signature check on local packages (packages in a file, not in a repositoy). The default is False.
+
 ``max_parallel_downloads``
     :ref:`integer <integer-label>`
 
