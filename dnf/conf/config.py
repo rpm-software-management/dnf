@@ -80,8 +80,9 @@ class Option(object):
             try:
                 value = self._parse(value)
             except (ValueError, NotImplementedError) as e:
-                raise dnf.exceptions.ConfigError(_('Error parsing %r: %s')
-                                                 % (value, str(e)))
+                raise dnf.exceptions.ConfigError(_("Error parsing '%s': %s")
+                                                 % (value, str(e)),
+                                                 raw_error=str(e))
         if not isinstance(value, Value):
             value = Value(value, priority)
         return value
@@ -518,7 +519,12 @@ class BaseConfig(object):
                 value = parser.get(section, name)
                 opt = self._get_option(name)
                 if opt and not opt._is_runtimeonly():
-                    opt._set(value, priority)
+                    try:
+                        opt._set(value, priority)
+                    except dnf.exceptions.ConfigError as e:
+                        logger.warning(_('Unknown configuration value: '
+                                         '%s=%s; %s'),
+                                       ucd(name), ucd(value), e.raw_error)
                 else:
                     logger.warning(_('Unknown configuration option: %s = %s'),
                                    ucd(name), ucd(value))

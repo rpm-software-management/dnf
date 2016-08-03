@@ -48,7 +48,9 @@ class CompsError(Error):
 
 
 class ConfigError(Error):
-    pass
+    def __init__(self, value=None, raw_error=None):
+        super(ConfigError, self).__init__(value)
+        self.raw_error = ucd(raw_error) if raw_error is not None else None
 
 
 class DepsolveError(Error):
