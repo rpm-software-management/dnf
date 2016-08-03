@@ -15,7 +15,6 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from . import misc
-from sys import version_info
 import dnf.pycomp
 import glob
 import logging
@@ -23,8 +22,6 @@ import os
 import rpm
 
 logger = logging.getLogger('dnf')
-
-PY3 = version_info.major >= 3
 
 # For returnPackages(patterns=)
 flags = {"GT": rpm.RPMSENSE_GREATER,
@@ -39,7 +36,7 @@ def _open_no_umask(*args):
         up for user readable stuff. """
     oumask = os.umask(0o22)
     try:
-        if PY3:
+        if dnf.pycomp.PY3:
             ret = open(*args, encoding='utf-8')
         else:
             ret = open(*args)
@@ -62,7 +59,7 @@ def _makedirs_no_umask(*args):
 def _iopen(*args):
     """ IOError wrapper BS for open, stupid exceptions. """
     try:
-        if PY3:
+        if dnf.pycomp.PY3:
             ret = open(*args, encoding='utf-8')
         else:
             ret = open(*args)
