@@ -58,13 +58,13 @@ class RepoReader(object):
         try:
             repo._populate(parser, id_, dnf.conf.PRIO_REPOCONFIG)
         except ValueError as e:
-            msg = _('Repository %r: Error parsing config: %s' % (id_, e))
+            msg = _("Repository '%s': Error parsing config: %s" % (id_, e))
             raise dnf.exceptions.ConfigError(msg)
 
         # Ensure that the repo name is set
         if not repo.name:
             repo.name = id_
-            msg = _('Repository %r is missing name in configuration, using id.')
+            msg = _("Repository '%s' is missing name in configuration, using id.")
             logger.warning(msg, id_)
         repo.name = ucd(repo.name)
         repo.substitutions.update(self.conf.substitutions)

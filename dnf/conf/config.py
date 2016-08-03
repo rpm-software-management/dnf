@@ -210,7 +210,8 @@ class UrlOption(Option):
         # Check that scheme is valid
         s = dnf.pycomp.urlparse.urlparse(url)[0]
         if s not in self._schemes:
-            raise ValueError(_('URL must be %s not %r') % (self._schemelist(), s))
+            raise ValueError(_("URL must be %s not '%s'")
+                             % (self._schemelist(), s))
 
         return url
 
@@ -251,9 +252,9 @@ class PathOption(Option):
         if val.startswith('file://'):
             val = val[7:]
         if self._abspath and val[0] != '/':
-            raise ValueError(_("given path %r is not absolute.") % val)
+            raise ValueError(_("given path '%s' is not absolute.") % val)
         if self._exists and not os.path.exists(val):
-            raise ValueError(_("given path %r does not exist.") % val)
+            raise ValueError(_("given path '%s' does not exist.") % val)
         return val
 
 
@@ -322,7 +323,7 @@ class SecondsOption(Option):
             unit = s[-1].lower()
             mult = self.MULTS.get(unit, None)
             if not mult:
-                raise ValueError(_("unknown unit %r") % unit)
+                raise ValueError(_("unknown unit '%s'") % unit)
         else:
             n = s
             mult = 1
@@ -330,10 +331,10 @@ class SecondsOption(Option):
         try:
             n = float(n)
         except (ValueError, TypeError):
-            raise ValueError(_('invalid value %r') % s)
+            raise ValueError(_("invalid value '%s'") % s)
 
         if n < 0:
-            raise ValueError(_("seconds value %r must not be negative") % s)
+            raise ValueError(_("seconds value '%s' must not be negative") % s)
 
         return int(n * mult)
 
@@ -356,7 +357,7 @@ class BoolOption(Option):
         elif s in self._true_names:
             return True
         else:
-            raise ValueError(_('invalid boolean value %r') % s)
+            raise ValueError(_("invalid boolean value '%s'") % s)
 
     def _tostring(self):
         val = ('' if self._is_default()
@@ -372,7 +373,7 @@ class FloatOption(Option):
         try:
             return float(s.strip())
         except (ValueError, TypeError):
-            raise ValueError(_('invalid float value %r') % s)
+            raise ValueError(_("invalid float value '%s'") % s)
 
 
 class SelectionOption(Option):
@@ -389,9 +390,9 @@ class SelectionOption(Option):
         if s in self._mapper:
             s = self._mapper[s]
         if s in self._notimplemented:
-            raise NotImplementedError(_('%r value is not implemented') % s)
+            raise NotImplementedError(_("'%s' value is not implemented") % s)
         if s not in self._choices:
-            raise ValueError(_('%r is not an allowed value') % s)
+            raise ValueError(_("'%s' is not an allowed value") % s)
         return s
 
 
@@ -431,7 +432,7 @@ class BytesOption(Option):
             unit = s[-1].lower()
             mult = self.MULTS.get(unit, None)
             if not mult:
-                raise ValueError(_("unknown unit %r") % unit)
+                raise ValueError(_("unknown unit '%s'") % unit)
         else:
             n = s
             mult = 1
@@ -439,10 +440,10 @@ class BytesOption(Option):
         try:
             n = float(n)
         except ValueError:
-            raise ValueError(_("couldn't convert %r to number") % s)
+            raise ValueError(_("couldn't convert '%s' to number") % s)
 
         if n < 0:
-            raise ValueError(_("bytes value %r must not be negative") % s)
+            raise ValueError(_("bytes value '%s' must not be negative") % s)
 
         return int(n * mult)
 
@@ -468,9 +469,9 @@ class ThrottleOption(BytesOption):
             try:
                 n = float(n)
             except ValueError:
-                raise ValueError(_("couldn't convert %r to number") % s)
+                raise ValueError(_("couldn't convert '%s' to number") % s)
             if n < 0 or n > 100:
-                raise ValueError(_("percentage %r is out of range") % s)
+                raise ValueError(_("percentage '%s' is out of range") % s)
             return n / 100.0
         else:
             return BytesOption._parse(self, s)
@@ -492,7 +493,7 @@ class BaseConfig(object):
         out = []
         out.append('[%s]' % self._section)
         for name, value in self._option.items():
-            out.append('%s: %r' % (name, value))
+            out.append('%s: %s' % (name, value))
         return '\n'.join(out)
 
     def _add_option(self, name, optionobj):
