@@ -31,6 +31,7 @@ flags = {"GT": rpm.RPMSENSE_GREATER,
          "EQ": rpm.RPMSENSE_EQUAL,
          None: 0 }
 
+
 def _open_no_umask(*args):
     """ Annoying people like to set umask's for root, which screws everything
         up for user readable stuff. """
@@ -45,6 +46,7 @@ def _open_no_umask(*args):
 
     return ret
 
+
 def _makedirs_no_umask(*args):
     """ Annoying people like to set umask's for root, which screws everything
         up for user readable stuff. """
@@ -55,6 +57,7 @@ def _makedirs_no_umask(*args):
         os.umask(oumask)
 
     return ret
+
 
 def _iopen(*args):
     """ IOError wrapper BS for open, stupid exceptions. """
@@ -67,8 +70,10 @@ def _iopen(*args):
         return None, e
     return ret, None
 
+
 def _sanitize(path):
     return path.replace('/', '').replace('~', '')
+
 
 class AdditionalPkgDB(object):
     """ Accesses additional package data rpmdb is unable to store.
@@ -124,6 +129,7 @@ class AdditionalPkgDB(object):
 
         return RPMDBAdditionalDataPackage(self.conf, thisdir,
                                           yumdb_cache=self.yumdb_cache)
+
 
 class RPMDBAdditionalDataPackage(object):
 
