@@ -472,6 +472,14 @@ class ThrottleOption(BytesOption):
             return BytesOption._parse(self, s)
 
 
+class UnusedOption(Option):
+    """ Option recognized in other management tools, e.g. gnome-software,
+        but unused in dnf.
+    """
+    def __init__(self, default=None, parent=None, runtimeonly=False):
+        super(UnusedOption, self).__init__(None, None, False)
+
+
 class BaseConfig(object):
     """Base class for storing configuration definitions.
 
@@ -917,6 +925,9 @@ class RepoConf(BaseConfig):
         self._add_option('deltarpm', inherit(parent._get_option('deltarpm')))
 
         self._add_option('skip_if_unavailable', BoolOption(True)) # :api
+
+        # options recognized by other tools, e.g. gnome-software, but unused in dnf
+        self._add_option('enabled_metadata', UnusedOption())
 
     def _configure_from_options(self, opts):
         """Configure repos from the opts. """
