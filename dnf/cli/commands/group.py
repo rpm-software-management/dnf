@@ -400,9 +400,8 @@ class GroupCommand(commands.Command):
                 return self.base.env_group_install(extcmds, types,
                                                    self.base.conf.strict)
             except dnf.exceptions.MarkingError as e:
-                msg = _('No package %s%s%s available.')
-                logger.info(msg, self.base.output.term.MODE['bold'], e,
-                            self.base.output.term.MODE['normal'])
+                msg = _('No package %s available.')
+                logger.info(msg, self.base.output.term.bold(e))
                 raise dnf.exceptions.PackagesNotAvailableError(
                     _("Unable to find a mandatory group package."))
         if cmd == 'upgrade':

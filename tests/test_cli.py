@@ -74,8 +74,8 @@ class BaseCliTest(support.ResultTestCase):
         self.assertEqual(self._base.downgrade_to.mock_calls,
                          [mock.call('non-existent')])
         self.assertEqual(logger.mock_calls,
-                         [mock.call.info('No package %s%s%s available.', '',
-                                         'non-existent', '')])
+                         [mock.call.info('No package %s available.',
+                                         'non-existent')])
 
     @mock.patch('dnf.cli.cli._', dnf.pycomp.NullTranslations().ugettext)
     def test_downgradePkgs_notinstalled(self, logger):
@@ -87,8 +87,8 @@ class BaseCliTest(support.ResultTestCase):
 
         self.assertEqual(self._base.downgrade_to.mock_calls, [mock.call('lotus')])
         self.assertEqual(logger.mock_calls, [
-            mock.call.info('Package %s%s%s available, but not installed.', u'', 'lotus', u''),
-            mock.call.info('No match for argument: %s%s%s', u'', 'lotus', u'')])
+            mock.call.info('Package %s available, but not installed.', 'lotus'),
+            mock.call.info('No match for argument: %s', 'lotus')])
 
     def test_transaction_id_or_offset_bad(self, _):
         """Test transaction_id_or_offset with a bad input."""

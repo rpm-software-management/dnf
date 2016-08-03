@@ -66,9 +66,8 @@ class InstallCommand(commands.Command):
             try:
                 self.base.package_install(pkg, strict=strict)
             except dnf.exceptions.MarkingError:
-                msg = _('No match for argument: %s%s%s')
-                logger.info(msg, self.base.output.term.MODE['bold'], pkg.location,
-                            self.base.output.term.MODE['normal'])
+                msg = _('No match for argument: %s')
+                logger.info(msg, self.base.output.term.bold(pkg.location))
                 err_pkgs.append(pkg)
 
         # Install groups.
@@ -88,9 +87,8 @@ class InstallCommand(commands.Command):
             try:
                 self.base.install(pkg_spec, strict=strict)
             except dnf.exceptions.MarkingError:
-                msg = _('No package %s%s%s available.')
-                logger.info(msg, self.base.output.term.MODE['bold'], pkg_spec,
-                            self.base.output.term.MODE['normal'])
+                msg = _('No package %s available.')
+                logger.info(msg, self.base.output.term.bold(pkg_spec))
                 errs.append(pkg_spec)
         if (len(errs) != 0 or len(err_pkgs) != 0) and self.base.conf.strict:
             raise dnf.exceptions.PackagesNotAvailableError(

@@ -408,6 +408,10 @@ class MockTerminal(object):
         self.columns = 80
         self.reinit = mock.Mock()
 
+    def bold(self, s):
+        return s
+
+
 class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
     def __init__(self, repo_dir, base):
         hawkey.test.TestSackMixin.__init__(self, repo_dir)

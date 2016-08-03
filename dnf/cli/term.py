@@ -231,6 +231,14 @@ class Term(object):
             cap = cap.decode()
         return re.sub(r'\$<\d+>[/*]?', '', cap)
 
+    def color(self, color, s):
+        """Colorize string with color"""
+        return (self.MODE[color] + s + self.MODE['normal'])
+
+    def bold(self, s):
+        """Make string bold."""
+        return self.color('bold', s)
+
     def sub(self, haystack, beg, end, needles, escape=None, ignore_case=False):
         """Search the string *haystack* for all occurrences of any
         string in the list *needles*.  Prefix each occurrence with

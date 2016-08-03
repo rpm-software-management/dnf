@@ -383,10 +383,8 @@ class RepoPkgsCommand(Command):
                     try:
                         self.base.install(pkg_spec, self.reponame)
                     except dnf.exceptions.MarkingError:
-                        msg = _('No package %s%s%s available.')
-                        logger.info(
-                            msg, self.output.term.MODE['bold'],
-                            pkg_spec, self.output.term.MODE['normal'])
+                        msg = _('No package %s available.')
+                        logger.info(msg, self.output.term.bold(pkg_spec))
                     else:
                         done = True
 
@@ -447,10 +445,8 @@ class RepoPkgsCommand(Command):
                             yumdb_info = self.base._yumdb.get_package(pkg)
                             if 'from_repo' in yumdb_info:
                                 xmsg = _(' (from %s)') % yumdb_info.from_repo
-                            msg = _('Installed package %s%s%s%s not available.')
-                            logger.info(
-                                msg, self.output.term.MODE['bold'], pkg,
-                                self.output.term.MODE['normal'], xmsg)
+                            msg = _('Installed package %s%s not available.')
+                            logger.info(msg, self.output.term.bold(pkg), xmsg)
                     except dnf.exceptions.MarkingError:
                         assert False, \
                                'Only the above marking errors are expected.'
@@ -506,10 +502,8 @@ class RepoPkgsCommand(Command):
                             yumdb_info = self.base._yumdb.get_package(pkg)
                             if 'from_repo' in yumdb_info:
                                 xmsg = _(' (from %s)') % yumdb_info.from_repo
-                            msg = _('Installed package %s%s%s%s not available.')
-                            logger.info(
-                                msg, self.output.term.MODE['bold'], pkg,
-                                self.output.term.MODE['normal'], xmsg)
+                            msg = _('Installed package %s%s not available.')
+                            logger.info(msg, self.output.term.bold(pkg), xmsg)
                     except dnf.exceptions.MarkingError:
                         assert False, \
                                'Only the above marking errors are expected.'
@@ -883,17 +877,15 @@ class HistoryCommand(Command):
         history = dnf.history.open_history(self.base.history)
         operations = history.transaction_nevra_ops(old.tid)
 
-        hibeg = self.output.term.MODE['bold']
-        hiend = self.output.term.MODE['normal']
         try:
             self.base.transaction = converter.convert(operations, 'history')
         except dnf.exceptions.PackagesNotInstalledError as err:
-            logger.info(_('No package %s%s%s installed.'),
-                        hibeg, ucd(err.pkg_spec), hiend)
+            logger.info(_('No package %s installed.'),
+                        self.output.term.bold(ucd(err.pkg_spec)))
             return 1, ['An operation cannot be redone']
         except dnf.exceptions.PackagesNotAvailableError as err:
-            logger.info(_('No package %s%s%s available.'),
-                        hibeg, ucd(err.pkg_spec), hiend)
+            logger.info(_('No package %s available.'),
+                        self.output.term.bold(ucd(err.pkg_spec)))
             return 1, ['An operation cannot be redone']
         else:
             return 2, ['Repeating transaction %u' % (old.tid,)]

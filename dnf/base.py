@@ -1558,11 +1558,10 @@ class Base(object):
                     # wildcard shouldn't print not installed packages
                     if not wildcard:
                         if available.filter(name=pkg_name):
-                            msg = _('Package %s%s%s available, but not installed.')
-                            logger.warning(msg, '', pkg_name, '')
+                            msg = _('Package %s available, but not installed.')
                         else:
                             msg = _("Package %s not installed, cannot update it.")
-                            logger.warning(msg, pkg_name)
+                        logger.warning(msg, pkg_name)
                     continue
                 if reponame is not None:
                     sltr = sltr.set(reponame=reponame)

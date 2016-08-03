@@ -118,8 +118,7 @@ def print_versions(pkgs, base, output):
         else:
             ver = '%s:%s-%s.%s' % (pkg.epoch,
                                    pkg.version, pkg.release, pkg.arch)
-        name = "%s%s%s" % (output.term.MODE['bold'], pkg.name,
-                           output.term.MODE['normal'])
+        name = output.term.bold(pkg.name)
         print(_("  Installed: %s-%s at %s") %(name, ver,
                                               sm_ui_time(pkg.installtime)))
         print(_("  Built    : %s at %s") % (pkg.packager if pkg.packager else "",
@@ -338,8 +337,8 @@ class BaseCli(dnf.Base):
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
             except dnf.exceptions.MarkingError as e:
-                logger.info(_('No match for argument: %s%s%s'), self.output.term.MODE['bold'],
-                            pkg.location, self.output.term.MODE['normal'])
+                logger.info(_('No match for argument: %s'),
+                            self.output.term.bold(pkg.location))
                 # it was something on disk and it ended in rpm
                 # no matter what we don't go looking at repos
 
@@ -348,18 +347,17 @@ class BaseCli(dnf.Base):
             try:
                 self.downgrade_to(arg)
             except dnf.exceptions.PackageNotFoundError as err:
-                msg = _('No package %s%s%s available.')
-                logger.info(msg, self.output.term.MODE['bold'], arg,
-                                 self.output.term.MODE['normal'])
+                msg = _('No package %s available.')
+                logger.info(msg, self.output.term.bold(arg))
             except dnf.exceptions.PackagesNotInstalledError as err:
                 if not wildcard:
                 # glob pattern should not match not installed packages -> ignore error
                     for pkg in err.packages:
-                        logger.info(_('Package %s%s%s available, but not installed.'), self.output.term.MODE['bold'],
-                                    pkg.name, self.output.term.MODE['normal'])
+                        logger.info(_('Package %s available, but not installed.'),
+                                    self.output.term.bold(pkg.name))
                         break
-                    logger.info(_('No match for argument: %s%s%s'), self.output.term.MODE['bold'],
-                                err.pkg_spec, self.output.term.MODE['normal'])
+                    logger.info(_('No match for argument: %s'),
+                                self.output.term.bold(err.pkg_spec))
             except dnf.exceptions.MarkingError:
                 assert False
         cnt = self._goal.req_length() - oldcount
@@ -642,17 +640,15 @@ class BaseCli(dnf.Base):
         for id_ in range(old.tid + 1, last.tid + 1):
             operations += history.transaction_nevra_ops(id_)
 
-        hibeg = self.output.term.MODE['bold']
-        hiend = self.output.term.MODE['normal']
         try:
             self._history_undo_operations(operations)
         except dnf.exceptions.PackagesNotInstalledError as err:
-            logger.info(_('No package %s%s%s installed.'),
-                             hibeg, ucd(err.pkg_spec), hiend)
+            logger.info(_('No package %s installed.'),
+                        self.output.term.bold(ucd(err.pkg_spec)))
             return 1, ['A transaction cannot be undone']
         except dnf.exceptions.PackagesNotAvailableError as err:
-            logger.info(_('No package %s%s%s available.'),
-                             hibeg, ucd(err.pkg_spec), hiend)
+            logger.info(_('No package %s available.'),
+                        self.output.term.bold(ucd(err.pkg_spec)))
             return 1, ['A transaction cannot be undone']
         except dnf.exceptions.MarkingError:
             assert False
@@ -671,17 +667,15 @@ class BaseCli(dnf.Base):
 
         history = dnf.history.open_history(self.history)  # :todo
 
-        hibeg = self.output.term.MODE['bold']
-        hiend = self.output.term.MODE['normal']
         try:
             self._history_undo_operations(history.transaction_nevra_ops(old.tid))
         except dnf.exceptions.PackagesNotInstalledError as err:
-            logger.info(_('No package %s%s%s installed.'),
-                             hibeg, ucd(err.pkg_spec), hiend)
+            logger.info(_('No package %s installed.'),
+                        self.output.term.bold(ucd(err.pkg_spec)))
             return 1, ['An operation cannot be undone']
         except dnf.exceptions.PackagesNotAvailableError as err:
-            logger.info(_('No package %s%s%s available.'),
-                             hibeg, ucd(err.pkg_spec), hiend)
+            logger.info(_('No package %s available.'),
+                        self.output.term.bold(ucd(err.pkg_spec)))
             return 1, ['An operation cannot be undone']
         except dnf.exceptions.MarkingError:
             assert False

@@ -55,8 +55,7 @@ class Update(support.ResultTestCase):
         with self.assertRaises(dnf.exceptions.MarkingError) as context:
             base.upgrade("mrkite")
         self.assertEqual(logger.mock_calls, [
-            mock.call(u'Package %s%s%s available, but not installed.', u'',
-                      u'mrkite', u'')])
+            mock.call(u'Package %s available, but not installed.', u'mrkite')])
         self.assertEqual(context.exception.pkg_spec, 'mrkite')
         self.assertEqual(goal.mock_calls, [])
 
