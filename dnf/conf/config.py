@@ -527,6 +527,8 @@ class BaseConfig(object):
         if parser.has_section(section):
             for name in parser.options(section):
                 value = parser.get(section, name)
+                if not value or value == 'None':
+                    value = None
                 opt = self._get_option(name)
                 if opt and not opt._is_runtimeonly():
                     try:

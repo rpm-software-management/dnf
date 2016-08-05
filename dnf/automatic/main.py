@@ -47,18 +47,20 @@ logger = logging.getLogger('dnf')
 def build_emitters(conf):
     emitters = dnf.util.MultiCallList([])
     system_name = conf.emitters.system_name
-    for name in conf.emitters.emit_via:
-        if name == 'email':
-            emitter = dnf.automatic.emitter.EmailEmitter(system_name, conf.email)
-            emitters.append(emitter)
-        elif name == 'stdio':
-            emitter = dnf.automatic.emitter.StdIoEmitter(system_name)
-            emitters.append(emitter)
-        elif name == 'motd':
-            emitter = dnf.automatic.emitter.MotdEmitter(system_name)
-            emitters.append(emitter)
-        else:
-            assert False
+    emit_via = conf.emitters.emit_via
+    if emit_via:
+        for name in emit_via:
+            if name == 'email':
+                emitter = dnf.automatic.emitter.EmailEmitter(system_name, conf.email)
+                emitters.append(emitter)
+            elif name == 'stdio':
+                emitter = dnf.automatic.emitter.StdIoEmitter(system_name)
+                emitters.append(emitter)
+            elif name == 'motd':
+                emitter = dnf.automatic.emitter.MotdEmitter(system_name)
+                emitters.append(emitter)
+            else:
+                raise dnf.exceptions.ConfigError("Unknowr emitter option: %s" % name)
     return emitters
 
 
