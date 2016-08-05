@@ -412,10 +412,11 @@ class TransactionBunch(object):
 
 
 class Solver(object):
-    def __init__(self, persistor, comps, reason_fn):
+    def __init__(self, persistor, comps, reason_fn, substitutions):
         self.comps = comps
         self.persistor = persistor
         self._reason_fn = reason_fn
+        self.substitutions = substitutions
 
     @staticmethod
     def _mandatory_group_set(env):
@@ -426,19 +427,19 @@ class Solver(object):
         return {pkg.name for pkg in grp.mandatory_packages +
                 grp.default_packages + grp.optional_packages}
 
-    @staticmethod
-    def _pkgs_of_type(group, pkg_types, exclude):
-        def pkgs_update(pkgs, group):
-            pkgs.update(pkg.name for pkg in group
+    def _pkgs_of_type(self, group, pkg_types, exclude):
+        def pkgs_update(pkgs, group, substitutions):
+            pkgs.update('.'.join([pkg.name, substitutions['basearch']])
+                        if pkg.basearchonly else pkg.name for pkg in group
                         if pkg.name not in exclude)
 
         pkgs = set()
         if pkg_types & MANDATORY:
-            pkgs_update(pkgs, group.mandatory_packages)
+            pkgs_update(pkgs, group.mandatory_packages, self.substitutions)
         if pkg_types & DEFAULT:
-            pkgs_update(pkgs, group.default_packages)
+            pkgs_update(pkgs, group.default_packages, self.substitutions)
         if pkg_types & OPTIONAL:
-            pkgs_update(pkgs, group.optional_packages)
+            pkgs_update(pkgs, group.optional_packages, self.substitutions)
         return pkgs
 
     def _removable_pkg(self, pkg_name):

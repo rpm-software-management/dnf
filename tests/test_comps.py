@@ -167,7 +167,7 @@ class SolverTestMixin(object):
         comps._add_from_xml_filename(support.COMPS_PATH)
         self.comps = comps
         self.persistor = support.MockGroupPersistor()
-        self.solver = dnf.comps.Solver(self.persistor, self.comps, support.REASONS.get)
+        self.solver = dnf.comps.Solver(self.persistor, self.comps, support.REASONS.get, 'x86_64')
 
 
 class SolverGroupTest(SolverTestMixin, support.TestCase):
