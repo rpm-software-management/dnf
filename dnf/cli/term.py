@@ -233,7 +233,7 @@ class Term(object):
 
     def color(self, color, s):
         """Colorize string with color"""
-        return '{}{!s}{}'.format(self.MODE[color], s, self.MODE['normal'])
+        return (self.MODE[color] + str(s) + self.MODE['normal'])
 
     def bold(self, s):
         """Make string bold."""
