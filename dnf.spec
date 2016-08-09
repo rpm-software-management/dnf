@@ -126,6 +126,7 @@ Python 2 interface to DNF.
 %if %{with python3}
 %package -n python3-%{name}
 Summary:        Python 3 interface to DNF.
+%{?system_python_abi}
 %{?python_provide:%python_provide python3-%{name}}
 BuildRequires:  python3-devel
 BuildRequires:  python3-hawkey >= %{hawkey_version}
