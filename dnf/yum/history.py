@@ -104,7 +104,7 @@ class _YumHistPackageYumDB(object):
         if attr not in self._valid_yumdb_keys:
             raise AttributeError("%s has no yum attribute %s" % (pkg, attr))
 
-        val = pkg._history._load_yumdb_key(pkg, attr)
+        val = pkg._history.swdb.get_pkg_attr(pkg, attr)
         if False and val is None:
             raise AttributeError("%s has no yum attribute %s" % (pkg, attr))
 
@@ -398,11 +398,11 @@ class YumHistoryTransaction(object):
 
     def _getErrors(self):
         if self._loaded_ER is None:
-            self._loaded_ER = self._history._load_errors(self.tid)
+            self._loaded_ER = self._history.swdb.load_error(self.tid)
         return self._loaded_ER
     def _getOutput(self):
         if self._loaded_OT is None:
-            self._loaded_OT = self._history._load_output(self.tid)
+            self._loaded_OT = self._history.swdb.load_output(self.tid)
         return self._loaded_OT
 
     errors     = property(fget=lambda self: self._getErrors())
@@ -830,60 +830,75 @@ class YumHistory(object):
             self._conn.close()
             self._conn = None
 
-    def _pkgtup2pid(self, pkgtup, checksum=None, create=True):
-        cur = self._get_cursor()
-        executeSQL(cur, """SELECT pkgtupid, checksum FROM pkgtups
-                           WHERE name=? AND arch=? AND
-                                 epoch=? AND version=? AND release=?""", pkgtup)
-        for sql_pkgtupid, sql_checksum in cur:
-            if checksum is None and sql_checksum is None:
-                return sql_pkgtupid
-            if checksum is None:
-                continue
-            if sql_checksum is None:
-                continue
-            if checksum == sql_checksum:
-                return sql_pkgtupid
-
-        if not create:
-            return None
-
+    def _pkgtup2pid(self, pkgtup, checksum="", checksum_type="", create=True):
         pkgtup = map(ucd, pkgtup)
         (n,a,e,v,r) = pkgtup
-
+        return self.swdb.get_pid_by_nevracht(n,str(e),str(v),str(r),a,checksum,checksum_type,"rpm",create)
+    # TODO: remove
+    #    cur = self._get_cursor()
+    #    executeSQL(cur, """SELECT pkgtupid, checksum FROM pkgtups
+    #                       WHERE name=? AND arch=? AND
+    #                             epoch=? AND version=? AND release=?""", pkgtup)
+    #    for sql_pkgtupid, sql_checksum in cur:
+    #        if checksum is None and sql_checksum is None:
+    #            return sql_pkgtupid
+    #        if checksum is None:
+    #            continue
+    #        if sql_checksum is None:
+    #            continue
+    #        if checksum == sql_checksum:
+    #            return sql_pkgtupid
+    #
+    #    if not create:
+    #        return None
+    #
+    #
+    #
 #SWDB BEGIN
-        if checksum is None:
-            self.swdb.add_package_naevrcht(n,a,e,v,r,"","","rpm")
-        else:
-            self.swdb.add_package_naevrcht(n,a,str(e),str(v),str(r),checksum.split(':')[1],checksum.split(':')[0],"rpm")
+    #    if checksum is None or checksum_type is None:
+    #        self.swdb.add_package_nevracht(n,e,v,r,a,"","","rpm")
+    #    else:
+    #        self.swdb.add_package_nevracht(n,str(e),str(v),str(r),a,checksum,checksum_type,"rpm")
+    #    return P_ID
 #SWDB END
+    #
+    #    if checksum is not None:
+    #        res = executeSQL(cur,
+    #                         """INSERT INTO pkgtups
+    #                            (name, arch, epoch, version, release, checksum)
+    #                            VALUES (?, ?, ?, ?, ?, ?)""", (n,a,e,v,r,
+    #                                                           checksum))
+    #    else:
+    #        res = executeSQL(cur,
+    #                         """INSERT INTO pkgtups
+    #                            (name, arch, epoch, version, release)
+    #                            VALUES (?, ?, ?, ?, ?)""", (n,a,e,v,r))
+    #    return cur.lastrowid
 
-        if checksum is not None:
-            res = executeSQL(cur,
-                             """INSERT INTO pkgtups
-                                (name, arch, epoch, version, release, checksum)
-                                VALUES (?, ?, ?, ?, ?, ?)""", (n,a,e,v,r,
-                                                               checksum))
-        else:
-            res = executeSQL(cur,
-                             """INSERT INTO pkgtups
-                                (name, arch, epoch, version, release)
-                                VALUES (?, ?, ?, ?, ?)""", (n,a,e,v,r))
-        return cur.lastrowid
+
     def _apkg2pid(self, po, create=True):
         csum = po.returnIdSum()
+        csum_type = None
         if csum is not None:
-            csum = "%s:%s" % (str(csum[0]), str(csum[1]))
-        return self._pkgtup2pid(po.pkgtup, csum, create)
+            csum_type = csum[0]
+            csum = csum[1]
+        else:
+            csum = ""
+            csum_type = ""
+        return self._pkgtup2pid(po.pkgtup, csum, csum_type, create)
     def _ipkg2pid(self, po, create=True):
         csum = None
+        csum_type = None
         yumdb = self.yumdb.get_package(po)
         if 'checksum_type' in yumdb and 'checksum_data' in yumdb:
-            csum = "%s:%s" % (yumdb.checksum_type, yumdb.checksum_data)
-        return self._pkgtup2pid(po.pkgtup, csum, create)
+            csum_type = yumdb.checksum_type
+            csum = yumdb.checksum_data
+        else:
+            csum = ""
+            csum_type = ""
+        return self._pkgtup2pid(po.pkgtup, csum, csum_type, create)
     def _hpkg2pid(self, po, create=False):
         return self._apkg2pid(po, create)
-
     def pkg2pid(self, po, create=True):
         if isinstance(po, YumHistoryPackage):
             return self._hpkg2pid(po, create)
@@ -1066,27 +1081,29 @@ class YumHistory(object):
 #SWDB END
         self._commit()
 
-    def _load_errors(self, tid):
-        cur = self._get_cursor()
-        executeSQL(cur,
-                   """SELECT msg FROM trans_error
-                      WHERE tid = ?
-                      ORDER BY mid ASC""", (tid,))
-        ret = []
-        for row in cur:
-            ret.append(row[0])
-        return ret
+    #def _load_errors(self, tid):
+        #TODO - remove: ORIGINAL CODE:
+        #cur = self._get_cursor()
+        #executeSQL(cur,
+        #           """SELECT msg FROM trans_error
+        #              WHERE tid = ?
+        #              ORDER BY mid ASC""", (tid,))
+        #ret = []
+        #for row in cur:
+        #    ret.append(row[0])
+        #return ret
 
-    def _load_output(self, tid):
-        cur = self._get_cursor()
-        executeSQL(cur,
-                   """SELECT line FROM trans_script_stdout
-                      WHERE tid = ?
-                      ORDER BY lid ASC""", (tid,))
-        ret = []
-        for row in cur:
-            ret.append(row[0])
-        return ret
+    #def _load_output(self, tid):
+    #    TODO: remove
+    #    cur = self._get_cursor()
+    #    executeSQL(cur,
+    #               """SELECT line FROM trans_script_stdout
+    #                  WHERE tid = ?
+    #                  ORDER BY lid ASC""", (tid,))
+    #    ret = []
+    #    for row in cur:
+    #        ret.append(row[0])
+    #    return ret
 
     def end(self, rpmdb_version, return_code, errors=None):
         assert return_code or not errors
@@ -1380,8 +1397,6 @@ class YumHistory(object):
 
     def _load_rpmdb_key(self, pkg, attr):
         return self._load_anydb_key(pkg, "rpm", attr)
-    def _load_yumdb_key(self, pkg, attr):
-        return self._load_anydb_key(pkg, "yum", attr)
 
     def _save_anydb_key(self, pkg, db, attr, val):
         cur = self._get_cursor()
