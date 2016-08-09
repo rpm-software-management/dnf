@@ -154,6 +154,7 @@ def resolving(cli, base):
     except dnf.exceptions.TransactionCheckError as err:
         for msg in cli.command.get_error_output(err):
             logger.critical(msg)
+        return 1
     except IOError as e:
         return ex_IOError(e)
     else:
