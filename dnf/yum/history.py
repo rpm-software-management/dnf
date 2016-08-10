@@ -740,13 +740,9 @@ class YumHistory(object):
         self.conf.writable = False
         self.conf.readable = True
         self.yumdb = yumdb
-
-#SWDB BEGIN
         self.swdb = Hif.Swdb()
         if not self.swdb.exist():
             self.swdb.create_db()
-#SWDB END
-
         self.releasever = releasever
 
         if not os.path.exists(self.conf.db_path):
@@ -834,47 +830,6 @@ class YumHistory(object):
         pkgtup = map(ucd, pkgtup)
         (n,a,e,v,r) = pkgtup
         return self.swdb.get_pid_by_nevracht(n,str(e),str(v),str(r),a,checksum,checksum_type,"rpm",create)
-    # TODO: remove
-    #    cur = self._get_cursor()
-    #    executeSQL(cur, """SELECT pkgtupid, checksum FROM pkgtups
-    #                       WHERE name=? AND arch=? AND
-    #                             epoch=? AND version=? AND release=?""", pkgtup)
-    #    for sql_pkgtupid, sql_checksum in cur:
-    #        if checksum is None and sql_checksum is None:
-    #            return sql_pkgtupid
-    #        if checksum is None:
-    #            continue
-    #        if sql_checksum is None:
-    #            continue
-    #        if checksum == sql_checksum:
-    #            return sql_pkgtupid
-    #
-    #    if not create:
-    #        return None
-    #
-    #
-    #
-#SWDB BEGIN
-    #    if checksum is None or checksum_type is None:
-    #        self.swdb.add_package_nevracht(n,e,v,r,a,"","","rpm")
-    #    else:
-    #        self.swdb.add_package_nevracht(n,str(e),str(v),str(r),a,checksum,checksum_type,"rpm")
-    #    return P_ID
-#SWDB END
-    #
-    #    if checksum is not None:
-    #        res = executeSQL(cur,
-    #                         """INSERT INTO pkgtups
-    #                            (name, arch, epoch, version, release, checksum)
-    #                            VALUES (?, ?, ?, ?, ?, ?)""", (n,a,e,v,r,
-    #                                                           checksum))
-    #    else:
-    #        res = executeSQL(cur,
-    #                         """INSERT INTO pkgtups
-    #                            (name, arch, epoch, version, release)
-    #                            VALUES (?, ?, ?, ?, ?)""", (n,a,e,v,r))
-    #    return cur.lastrowid
-
 
     def _apkg2pid(self, po, create=True):
         csum = po.returnIdSum()
@@ -906,52 +861,10 @@ class YumHistory(object):
             return self._ipkg2pid(po, create)
         return self._apkg2pid(po, create)
 
-    def trans_with_pid(self, pid):
-        cur = self._get_cursor()
-        if cur is None:
-            return None
-        res = executeSQL(cur,
-                         """INSERT INTO trans_with_pkgs
-                         (tid, pkgtupid)
-                         VALUES (?, ?)""", (self._tid, pid))
-        return cur.lastrowid
-
-    def trans_skip_pid(self, pid):
-        cur = self._get_cursor()
-        if cur is None or not self._update_db_file_2():
-            return None
-
-        res = executeSQL(cur,
-                         """INSERT INTO trans_skip_pkgs
-                         (tid, pkgtupid)
-                         VALUES (?, ?)""", (self._tid, pid))
-        return cur.lastrowid
-
-    def trans_data_pid_beg(self, pid, state):
-        assert state is not None
-        if not hasattr(self, '_tid') or state is None:
-            return # Not configured to run
-        cur = self._get_cursor()
-        if cur is None:
-            return # Should never happen, due to above
-        res = executeSQL(cur,
-                         """INSERT INTO trans_data_pkgs
-                         (tid, pkgtupid, state)
-                         VALUES (?, ?, ?)""", (self._tid, pid, state))
-        return cur.lastrowid
     def trans_data_pid_end(self, pid, state):
-        # State can be none here, Eg. TS_FAILED from rpmtrans
         if not hasattr(self, '_tid') or state is None:
-            return # Not configured to run
-
-        cur = self._get_cursor()
-        if cur is None:
-            return # Should never happen, due to above
-        res = executeSQL(cur,
-                         """UPDATE trans_data_pkgs SET done = ?
-                         WHERE tid = ? AND pkgtupid = ? AND state = ?
-                         """, ('TRUE', self._tid, pid, state))
-        self._commit()
+            return
+        self.swdb.trans_data_pid_end(pid, self._tid, state)
 
     def _trans_rpmdb_problem(self, problem):
         if not hasattr(self, '_tid'):
@@ -1008,39 +921,16 @@ class YumHistory(object):
 
     def beg(self, rpmdb_version, using_pkgs, tsis, skip_packages=[],
             rpmdb_problems=[], cmdline=None):
-        cur = self._get_cursor()
-        if cur is None:
-            return
-        res = executeSQL(cur,
-                         """INSERT INTO trans_beg
-                            (timestamp, rpmdb_version, loginuid)
-                            VALUES (?, ?, ?)""", (int(time.time()),
-                                                    str(rpmdb_version),
-                                                    misc.getloginuid()))
-        self._tid = cur.lastrowid
-#SWDB BEGIN
         if cmdline:
-            self.swdb.trans_beg(str(int(time.time())),str(rpmdb_version),cmdline,str(misc.getloginuid()),self.releasever)
+            self._tid = self.swdb.trans_beg(str(int(time.time())),str(rpmdb_version),cmdline,str(misc.getloginuid()),self.releasever)
         else:
-            self.swdb.trans_beg(str(int(time.time())),str(rpmdb_version),"",str(misc.getloginuid()),self.releasever)
-#SWDB END
-
-        for pkg in using_pkgs:
-            pid = self._ipkg2pid(pkg)
-            self.trans_with_pid(pid)
+            self._tid = self.swdb.trans_beg(str(int(time.time())),str(rpmdb_version),"",str(misc.getloginuid()),self.releasever)
 
         for tsi in tsis:
             for (pkg, state) in tsi._history_iterator():
                 pid   = self.pkg2pid(pkg)
-#SWDB BEGIN
                 yumdb_info = self.yumdb.get_package(pkg)
                 self.swdb.trans_data_beg(self._tid, pid,(yumdb_info.get("reason") or "unknown") ,state)
-#SWDB END
-                self.trans_data_pid_beg(pid, state)
-
-        for pkg in skip_packages:
-            pid   = self.pkg2pid(pkg)
-            self.trans_skip_pid(pid)
 
         for problem in rpmdb_problems:
             self._trans_rpmdb_problem(problem)
@@ -1051,88 +941,29 @@ class YumHistory(object):
         self._commit()
 
     def _log_errors(self, errors):
-        cur = self._get_cursor()
-        if cur is None:
-            return
         for error in errors:
             error = ucd(error)
-            executeSQL(cur,
-                       """INSERT INTO trans_error
-                          (tid, msg) VALUES (?, ?)""", (self._tid, error))
-#SWDB BEGIN
-        self.swdb.log_error(self._tid, error)
-#SWDB END
-        self._commit()
+            self.swdb.log_error(self._tid, error)
 
     def log_scriptlet_output(self, msg):
         if msg is None or not hasattr(self, '_tid'):
             return # Not configured to run
-
-        cur = self._get_cursor()
-        if cur is None:
-            return # Should never happen, due to above
         for error in msg.splitlines():
             error = ucd(error)
-            executeSQL(cur,
-                       """INSERT INTO trans_script_stdout
-                          (tid, line) VALUES (?, ?)""", (self._tid, error))
-#SWDB BEGIN
-        self.swdb.log_output(self._tid, error)
-#SWDB END
-        self._commit()
-
-    #def _load_errors(self, tid):
-        #TODO - remove: ORIGINAL CODE:
-        #cur = self._get_cursor()
-        #executeSQL(cur,
-        #           """SELECT msg FROM trans_error
-        #              WHERE tid = ?
-        #              ORDER BY mid ASC""", (tid,))
-        #ret = []
-        #for row in cur:
-        #    ret.append(row[0])
-        #return ret
-
-    #def _load_output(self, tid):
-    #    TODO: remove
-    #    cur = self._get_cursor()
-    #    executeSQL(cur,
-    #               """SELECT line FROM trans_script_stdout
-    #                  WHERE tid = ?
-    #                  ORDER BY lid ASC""", (tid,))
-    #    ret = []
-    #    for row in cur:
-    #        ret.append(row[0])
-    #    return ret
+            self.swdb.log_output(self._tid, error)
 
     def end(self, rpmdb_version, return_code, errors=None):
         assert return_code or not errors
         if not hasattr(self, '_tid'):
             return # Failed at beg() time
-        cur = self._get_cursor()
-        if cur is None:
-            return # Should never happen, due to above
-        res = executeSQL(cur,
-                         """INSERT INTO trans_end
-                            (tid, timestamp, rpmdb_version, return_code)
-                            VALUES (?, ?, ?, ?)""", (self._tid,int(time.time()),
-                                                     str(rpmdb_version),
-                                                     return_code))
-#SWBD BEGIN
         self.swdb.trans_end(self._tid, str(int(time.time())), return_code)
-#SWDB END
-        self._commit()
+        #self._commit()
         if not return_code:
             #  Simple hack, if the transaction finished. Note that this
             # catches the erase cases (as we still don't get pkgtups for them),
             # Eg. Updated elements.
-#SWDB BEGIN
+
             self.swdb.trans_data_end(self._tid)
-#SWDB END
-            executeSQL(cur,
-                       """UPDATE trans_data_pkgs SET done = ?
-                          WHERE tid = ?""", ('TRUE', self._tid,))
-            self._commit()
         if errors is not None:
             self._log_errors(errors)
         del self._tid
@@ -1378,7 +1209,7 @@ class YumHistory(object):
         assert len(ret) == 1
         return ret[0]
 
-    def _load_anydb_key(self, pkg, db, attr):
+    def _load_anydb_key(self, pkg, db, attr): # only used fror rpmdb nowadays
         cur = self._get_cursor()
         if cur is None or not self._update_db_file_3():
             return None
@@ -1572,220 +1403,6 @@ class YumHistory(object):
             tids.add(row[0])
         return tids
 
-    _update_ops_3 = ['''\
-\
- CREATE TABLE pkg_rpmdb (
-     pkgtupid INTEGER NOT NULL REFERENCES pkgtups,
-     rpmdb_key TEXT NOT NULL,
-     rpmdb_val TEXT NOT NULL);
-''', '''\
- CREATE INDEX i_pkgkey_rpmdb ON pkg_rpmdb (pkgtupid, rpmdb_key);
-''', '''\
- CREATE TABLE pkg_yumdb (
-     pkgtupid INTEGER NOT NULL REFERENCES pkgtups,
-     yumdb_key TEXT NOT NULL,
-     yumdb_val TEXT NOT NULL);
-''', '''\
- CREATE INDEX i_pkgkey_yumdb ON pkg_yumdb (pkgtupid, yumdb_key);
-''']
-
-# pylint: disable-msg=E0203
-    def _update_db_file_3(self):
-        """ Update to version 3 of history, rpmdb/yumdb data. """
-        if not self._update_db_file_2():
-            return False
-
-        if hasattr(self, '_cached_updated_3'):
-            return self._cached_updated_3
-
-        cur = self._get_cursor()
-        if cur is None:
-            return False
-
-        executeSQL(cur, "PRAGMA table_info(pkg_yumdb)")
-        #  If we get anything, we're fine. There might be a better way of
-        # saying "anything" but this works.
-        for ob in cur:
-            break
-        else:
-            for op in self._update_ops_3:
-                cur.execute(op)
-            self._commit()
-        self._cached_updated_3 = True
-        return True
-
-    _update_ops_2 = ['''\
-\
- CREATE TABLE trans_skip_pkgs (
-     tid INTEGER NOT NULL REFERENCES trans_beg,
-     pkgtupid INTEGER NOT NULL REFERENCES pkgtups);
-''', '''\
-\
- CREATE TABLE trans_cmdline (
-     tid INTEGER NOT NULL REFERENCES trans_beg,
-     cmdline TEXT NOT NULL);
-''', '''\
-\
- CREATE TABLE trans_rpmdb_problems (
-     rpid INTEGER PRIMARY KEY,
-     tid INTEGER NOT NULL REFERENCES trans_beg,
-     problem TEXT NOT NULL, msg TEXT NOT NULL);
-''', '''\
-\
- CREATE TABLE trans_prob_pkgs (
-     rpid INTEGER NOT NULL REFERENCES trans_rpmdb_problems,
-     pkgtupid INTEGER NOT NULL REFERENCES pkgtups,
-     main BOOL NOT NULL DEFAULT FALSE);
-''', '''\
-\
- CREATE VIEW vtrans_data_pkgs AS
-     SELECT tid,name,epoch,version,release,arch,pkgtupid,
-            state,done,
-            name || '-' || epoch || ':' ||
-            version || '-' || release || '.' || arch AS nevra
-     FROM trans_data_pkgs JOIN pkgtups USING(pkgtupid)
-     ORDER BY name;
-''', '''\
-\
- CREATE VIEW vtrans_with_pkgs AS
-     SELECT tid,name,epoch,version,release,arch,pkgtupid,
-            name || '-' || epoch || ':' ||
-            version || '-' || release || '.' || arch AS nevra
-     FROM trans_with_pkgs JOIN pkgtups USING(pkgtupid)
-     ORDER BY name;
-''', '''\
-\
- CREATE VIEW vtrans_skip_pkgs AS
-     SELECT tid,name,epoch,version,release,arch,pkgtupid,
-            name || '-' || epoch || ':' ||
-            version || '-' || release || '.' || arch AS nevra
-     FROM trans_skip_pkgs JOIN pkgtups USING(pkgtupid)
-     ORDER BY name;
-''', # NOTE: Old versions of sqlite don't like the normal way to do the next
-     #       view. So we do it with the select. It's for debugging only, so
-     #       no big deal.
-'''\
-\
- CREATE VIEW vtrans_prob_pkgs2 AS
-     SELECT tid,rpid,name,epoch,version,release,arch,pkgtups.pkgtupid,
-            main,problem,msg,
-            name || '-' || epoch || ':' ||
-            version || '-' || release || '.' || arch AS nevra
-     FROM (SELECT * FROM trans_prob_pkgs,trans_rpmdb_problems WHERE
-           trans_prob_pkgs.rpid=trans_rpmdb_problems.rpid)
-           JOIN pkgtups USING(pkgtupid)
-     ORDER BY name;
-''']
-
-    def _update_db_file_2(self):
-        """ Update to version 2 of history, includes trans_skip_pkgs. """
-        if not self.conf.writable:
-            return False
-
-        if hasattr(self, '_cached_updated_2'):
-            return self._cached_updated_2
-
-        cur = self._get_cursor()
-        if cur is None:
-            return False
-
-        executeSQL(cur, "PRAGMA table_info(trans_skip_pkgs)")
-        #  If we get anything, we're fine. There might be a better way of
-        # saying "anything" but this works.
-        for ob in cur:
-            break
-        else:
-            for op in self._update_ops_2:
-                cur.execute(op)
-            self._commit()
-        self._cached_updated_2 = True
-        return True
-
-# pylint: enable-msg=E0203
-
     def _create_db_file(self):
         """ Create a new history DB file, populating tables etc. """
-
-        self._db_date = time.strftime('%Y-%m-%d')
-        _db_file = '%s/%s-%s.%s' % (self.conf.db_path,
-                                    'history',
-                                    self._db_date,
-                                    'sqlite')
-        if self._db_file == _db_file:
-            os.rename(_db_file, _db_file + '.old')
-            # Just in case ... move the journal file too.
-            if os.path.exists(_db_file + '-journal'):
-                os.rename(_db_file  + '-journal', _db_file + '-journal.old')
-        self._db_file = _db_file
-
-        if self.conf.writable and not os.path.exists(self._db_file):
-            # make them default to 0600 - sysadmin can change it later
-            # if they want
-            fo = os.open(self._db_file, os.O_CREAT, 0o600)
-            os.close(fo)
-
-        cur = self._get_cursor()
-        if cur is None:
-            raise IOError(_("Can not create history database at '%s'.") % \
-                          self._db_file)
-
-        ops = ['''\
- CREATE TABLE trans_beg (
-     tid INTEGER PRIMARY KEY,
-     timestamp INTEGER NOT NULL, rpmdb_version TEXT NOT NULL,
-     loginuid INTEGER);
-''', '''\
- CREATE TABLE trans_end (
-     tid INTEGER PRIMARY KEY REFERENCES trans_beg,
-     timestamp INTEGER NOT NULL, rpmdb_version TEXT NOT NULL,
-     return_code INTEGER NOT NULL);
-''', '''\
-\
- CREATE TABLE trans_with_pkgs (
-     tid INTEGER NOT NULL REFERENCES trans_beg,
-     pkgtupid INTEGER NOT NULL REFERENCES pkgtups);
-''', '''\
-\
- CREATE TABLE trans_error (
-     mid INTEGER PRIMARY KEY,
-     tid INTEGER NOT NULL REFERENCES trans_beg,
-     msg TEXT NOT NULL);
-''', '''\
- CREATE TABLE trans_script_stdout (
-     lid INTEGER PRIMARY KEY,
-     tid INTEGER NOT NULL REFERENCES trans_beg,
-     line TEXT NOT NULL);
-''', '''\
-\
- CREATE TABLE trans_data_pkgs (
-     tid INTEGER NOT NULL REFERENCES trans_beg,
-     pkgtupid INTEGER NOT NULL REFERENCES pkgtups,
-     done BOOL NOT NULL DEFAULT FALSE, state TEXT NOT NULL);
-''', '''\
-\
- CREATE TABLE pkgtups (
-     pkgtupid INTEGER PRIMARY KEY,     name TEXT NOT NULL, arch TEXT NOT NULL,
-     epoch TEXT NOT NULL, version TEXT NOT NULL, release TEXT NOT NULL,
-     checksum TEXT);
-''', '''\
- CREATE INDEX i_pkgtup_naevr ON pkgtups (name, arch, epoch, version, release);
-''']
-        for op in ops:
-            cur.execute(op)
-        for op in self._update_ops_2:
-            cur.execute(op)
-        for op in self._update_ops_3:
-            cur.execute(op)
-        self._commit()
-
-_FULL_PARSE_QUERY_BEG = """
-SELECT pkgtupid,name,epoch,version,release,arch,
-  name || "." || arch AS sql_nameArch,
-  name || "-" || version || "-" || release || "." || arch AS sql_nameVerRelArch,
-  name || "-" || version AS sql_nameVer,
-  name || "-" || version || "-" || release AS sql_nameVerRel,
-  epoch || ":" || name || "-" || version || "-" || release || "." || arch AS sql_envra,
-  name || "-" || epoch || ":" || version || "-" || release || "." || arch AS sql_nevra
-  FROM pkgtups
-  WHERE
-"""
+        self.swdb.reset_db()
