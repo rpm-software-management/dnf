@@ -1528,6 +1528,11 @@ class Base(object):
             msg = 'upgrade_package() for an installed package.'
             raise NotImplementedError(msg)
 
+        if pkg.arch == 'src':
+            msg = _("Package %s is a source package and cannot be updated, ignoring.")
+            logger.info(msg, pkg.name)
+            return 0
+
         q = self.sack.query().installed().filter(name=pkg.name, arch=[pkg.arch, "noarch"])
         if not q:
             msg = _("Package %s not installed, cannot update it.")
