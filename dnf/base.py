@@ -1529,8 +1529,8 @@ class Base(object):
             raise NotImplementedError(msg)
 
         if pkg.arch == 'src':
-            msg = _("Package %s is a source package and cannot be updated, ignoring.")
-            logger.info(msg, pkg.name)
+            msg = _("File %s is a source package and cannot be updated, ignoring.")
+            logger.info(msg, pkg.location)
             return 0
 
         q = self.sack.query().installed().filter(name=pkg.name, arch=[pkg.arch, "noarch"])
