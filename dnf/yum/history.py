@@ -46,44 +46,6 @@ PATTERNS_MAX = 8
 # faster even at large numbers of patterns.
 PATTERNS_INDEXED_MAX = 128
 
-#def _setupHistorySearchSQL(patterns=None, ignore_case=False):
-#    """Setup need_full and patterns for _yieldSQLDataList, also see if
-#       we can get away with just using searchNames(). """
-#
-#    if patterns is None:
-#        patterns = []
-#
-#    fields = ['name', 'sql_nameArch', 'sql_nameVerRelArch',
-#              'sql_nameVer', 'sql_nameVerRel',
-#              'sql_envra', 'sql_nevra']
-#    need_full = False
-#    for pat in patterns:
-#        if misc.re_full_search_needed(pat):
-#            need_full = True
-#            break
-#
-#    pat_max = PATTERNS_MAX
-#    if not need_full:
-#        fields = ['name']
-#        pat_max = PATTERNS_INDEXED_MAX
-#    if len(patterns) > pat_max:
-#        patterns = []
-#    if ignore_case:
-#        patterns = sql_esc_glob(patterns)
-#    else:
-#        tmp = []
-#        need_glob = False
-#        for pat in patterns:
-#            if misc.re_glob(pat):
-#                tmp.append((pat, 'glob'))
-#                need_glob = True
-#            else:
-#                tmp.append((pat, '='))
-#        if not need_full and not need_glob and patterns:
-#            return (need_full, patterns, fields, True)
-#        patterns = tmp
-#    return (need_full, patterns, fields, False)
-
 class _YumHistPackageYumDB(object):
     """ Class to pretend to be yumdb_info for history packages. """
 
@@ -110,7 +72,6 @@ class _YumHistPackageYumDB(object):
 
         if val is None:
             return None
-
         val = str(val) or ""
         setattr(self, attr, val)
 
@@ -1304,95 +1265,7 @@ class YumHistory(object):
                 ret[key] = row[0]
         return ret
 
-#    def _yieldSQLDataList(self, patterns, fields, ignore_case):
-#        """Yields all the package data for the given params. """
-#
-#        cur = self._get_cursor()
-#        qsql = _FULL_PARSE_QUERY_BEG
-#
-#        pat_sqls = []
-#        pat_data = []
-#        for (pattern, rest) in patterns:
-#            for field in fields:
-#                if ignore_case:
-#                    pat_sqls.append("%s LIKE ?%s" % (field, rest))
-#                else:
-#                    pat_sqls.append("%s %s ?" % (field, rest))
-#                pat_data.append(pattern)
-#        assert pat_sqls
-#
-#        qsql += " OR ".join(pat_sqls)
-#        executeSQL(cur, qsql, pat_data)
-#        for x in cur:
-#            print(x)
-#            yield x
-
     def search(self, patterns, ignore_case=True):
         """ Search for history transactions which contain specified
-            packages al. la. "yum list". Returns transaction ids."""
-        tids = self.swdb.search(patterns, ignore_case)
-        print(tids)
-        return tids
-
-        # Search packages ... kind of sucks that it's search not list, pkglist?
-
-    #    print("Search called, patterns: "+str(patterns))
-    #    cur = self._get_cursor()
-    #    if cur is None:
-    #        return set()
-#
-#        data = _setupHistorySearchSQL(patterns, ignore_case)
-#        (need_full, npatterns, fields, names) = data
-#        print("data:"+str(data))
-#
-#        ret = []
-#        pkgtupids = set()
-#
-#        if npatterns:
-#            for row in self._yieldSQLDataList(npatterns, fields, ignore_case):
-#                pkgtupids.add(row[0])
-#        else:
-#            # Too many patterns, *sigh*
-#            pat_max = PATTERNS_MAX
-#            if not need_full:
-#                pat_max = PATTERNS_INDEXED_MAX
-#            for npatterns in misc.seq_max_split(patterns, pat_max):
-#                data = _setupHistorySearchSQL(npatterns, ignore_case)
-#                (need_full, nps, fields, names) = data
-#                print("data:"+str(data))
-#                assert nps
-#                for row in self._yieldSQLDataList(nps, fields, ignore_case):
-#                    pkgtupids.add(row[0])
-#
-#        sql =  """SELECT tid FROM trans_data_pkgs WHERE pkgtupid IN """
-#        sql += "(%s)" % ",".join(['?'] * len(pkgtupids))
-#        params = list(pkgtupids)
-#        tids = set()
-#        if len(params) > PATTERNS_INDEXED_MAX:
-#            executeSQL(cur, """SELECT tid FROM trans_data_pkgs""")
-#            for row in cur:
-#                if row[0] in params:
-#                    tids.add(row[0])
-#            return tids
-#        if not params:
-#            return tids
-#        executeSQL(cur, sql, params)
-#        for row in cur:
-#            tids.add(row[0])
-#        return tids
-
-    def _create_db_file(self):
-        """ Create a new history DB file, populating tables etc. """
-        self.swdb.reset_db()
-
-#_FULL_PARSE_QUERY_BEG = """
-#SELECT pkgtupid,name,epoch,version,release,arch,
-#  name || "." || arch AS sql_nameArch,
-#  name || "-" || version || "-" || release || "." || arch AS sql_nameVerRelArch,
-#  name || "-" || version AS sql_nameVer,
-#  name || "-" || version || "-" || release AS sql_nameVerRel,
-#  epoch || ":" || name || "-" || version || "-" || release || "." || arch AS sql_envra,
-#  name || "-" || epoch || ":" || version || "-" || release || "." || arch AS sql_nevra
-#  FROM pkgtups
-#  WHERE
-#"""
+            packages al. la. "yum list". Returns transaction ids. """
+        return self.swdb.search(patterns)
