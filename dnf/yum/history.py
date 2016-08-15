@@ -110,7 +110,7 @@ class YumHistoryPackage(object):
             chk = checksum.split(':')
             self._checksums = [(chk[0], chk[1], 1)] # (type, checksum, id(0,1))
         self.repoid = "<history>"
-
+        self.pid = 0
         self._history = history
         self.yumdb_info = _YumHistPackageYumDB(self)
 
@@ -170,8 +170,8 @@ class YumHistoryPackage(object):
 
         if attr not in self._valid_rpmdb_keys:
             raise AttributeError("%s has no attribute %s" % (self, attr))
-
-        val = self._history._load_rpmdb_key(self, attr)
+        pid = self._history.pkg2pid(self.pkgtup)
+        val = self._history.swdb.get_pkg_attr(pid, attr)
         if False and val is None:
             raise AttributeError("%s has no attribute %s" % (self, attr))
 
@@ -422,9 +422,9 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
         filt = set()
         for obj in self._merged_objs:
             for pkg in obj.trans_with:
-                if pkg.pkgtup in filt:
+                if pkg.pid in filt:
                     continue
-                filt.add(pkg.pkgtup)
+                filt.add(pkg.pid)
                 ret.append(pkg)
         return sorted(ret)
 
@@ -827,47 +827,6 @@ class YumHistory(object):
             return
         self.swdb.trans_data_pid_end(pid, self._tid, state)
 
-    def _trans_rpmdb_problem(self, problem):
-        if not hasattr(self, '_tid'):
-            return # Not configured to run
-        cur = self._get_cursor()
-        if cur is None:
-            return None
-        # str(problem) doesn't work if problem contains unicode(),
-        uproblem = ucd(problem)
-        res = executeSQL(cur,
-                         """INSERT INTO trans_rpmdb_problems
-                         (tid, problem, msg)
-                         VALUES (?, ?, ?)""", (self._tid,
-                                               problem.problem,
-                                               uproblem))
-        rpid = cur.lastrowid
-
-        if not rpid:
-            return rpid
-
-        pkgs = {}
-        pkg = problem.pkg
-        pkgs[pkg.pkgtup] = pkg
-        if problem.problem == 'conflicts':
-            for pkg in problem.conflicts:
-                pkgs[pkg.pkgtup] = pkg
-        if problem.problem == 'duplicates':
-            pkgs[problem.duplicate.pkgtup] = problem.duplicate
-
-        for pkg in pkgs.values():
-            pid = self.pkg2pid(pkg)
-            if pkg.pkgtup == problem.pkg.pkgtup:
-                main = 'TRUE'
-            else:
-                main = 'FALSE'
-            res = executeSQL(cur,
-                             """INSERT INTO trans_prob_pkgs
-                             (rpid, pkgtupid, main)
-                             VALUES (?, ?, ?)""", (rpid, pid, main))
-
-        return rpid
-
     def beg(self, rpmdb_version, using_pkgs, tsis, skip_packages=[],
             rpmdb_problems=[], cmdline=None):
         if cmdline:
@@ -880,9 +839,6 @@ class YumHistory(object):
                 pid   = self.pkg2pid(pkg)
                 yumdb_info = self.yumdb.get_package(pkg)
                 self.swdb.trans_data_beg(self._tid, pid,(yumdb_info.get("reason") or "unknown") ,state)
-
-        for problem in rpmdb_problems:
-            self._trans_rpmdb_problem(problem)
 
     def _log_errors(self, errors):
         for error in errors:
@@ -970,18 +926,19 @@ class YumHistory(object):
         return data
 
     def _old_with_pkgs(self, tid):
-        cur = self._get_cursor()
-        executeSQL(cur,
-                   """SELECT name, arch, epoch, version, release, checksum
-                      FROM trans_with_pkgs JOIN pkgtups USING(pkgtupid)
-                      WHERE tid = ?
-                      ORDER BY name ASC, epoch ASC""", (tid,))
-        ret = []
-        for row in cur:
-            obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5],
-                                    history=self)
-            ret.append(obj)
-        return ret
+        #cur = self._get_cursor()
+        #executeSQL(cur,
+        #           """SELECT name, arch, epoch, version, release, checksum
+        #              FROM trans_with_pkgs JOIN pkgtups USING(pkgtupid)
+        #              WHERE tid = ?
+        #              ORDER BY name ASC, epoch ASC""", (tid,))
+        #ret = []
+        #for row in cur:
+        #    obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5],
+        #                            history=self)
+        #    ret.append(obj)
+        return self.swdb.packages_by_tid(tid)
+
     def _old_data_pkgs(self, tid, sort=True):
         cur = self._get_cursor()
         sql = """SELECT name, arch, epoch, version, release,
@@ -1051,17 +1008,10 @@ class YumHistory(object):
         return ret
 
     def _old_cmdline(self, tid):
-        cur = self._get_cursor()
-        if cur is None:
-            return None
-        executeSQL(cur,
-                   """SELECT cmdline
-                      FROM trans_cmdline
-                      WHERE tid = ?""", (tid,))
-        ret = []
-        for row in cur:
-            return row[0]
-        return None
+        print(tid)
+        cmdline = self.swdb.trans_cmdline(tid)
+        print("cmdline is:"+ucd(cmdline))
+        return cmdline
 
     def old(self, tids=[], limit=None, complete_transactions_only=False):
         """ Return a list of the last transactions, note that this includes
@@ -1153,47 +1103,24 @@ class YumHistory(object):
         assert len(ret) == 1
         return ret[0]
 
-    def _load_rpmdb_key(self, pkg, attr):
-        cur = self._get_cursor()
-        if cur is None:
-            return None
-
-        pid = self.pkg2pid(pkg, create=False)
-        if pid is None:
-            return None
-
-        sql = """SELECT rpmdb_val FROM pkg_rpmdb
-                  WHERE pkgtupid=? and rpmdb_key=? """
-        executeSQL(cur, sql, (pid, attr))
-        for row in cur:
-            return row[0]
-        return None
-
-    def _save_rpmdb_key(self, pkg, attr, val):
-        cur = self._get_cursor()
-        if cur is None:
-            return None
-
-        pid = self.pkg2pid(pkg, create=False)
-        if pid is None:
-            return None
-
-        sql = """INSERT INTO pkg_rpmdb (pkgtupid, rpmdb_key, rpmdb_val)
-                        VALUES (?, ?, ?)"""
-        executeSQL(cur, sql, (pid, attr, ucd(val)))
-
-        return cur.lastrowid
-
     def _save_rpmdb(self, ipkg):
         """ Save all the data for rpmdb for this installed pkg, assumes
             there is no data currently. """
-        for attr in YumHistoryPackage._valid_rpmdb_keys:
-            val = getattr(ipkg, attr, None)
-            if val is None:
-                continue
-            if not self._save_rpmdb_key(ipkg, attr, val):
-                return False
-        return True
+        pid = self.pkg2pid(ipkg, create=False)
+        if pid:
+            if not self.swdb.log_rpm_data( pid, (getattr(ipkg, "buildtime" , None) or ''),
+                                                (getattr(ipkg, "buildhost" , None) or ''),
+                                                (getattr(ipkg, "license" , None) or ''),
+                                                (getattr(ipkg, "packager" , None) or ''),
+                                                (getattr(ipkg, "size" , None) or ''),
+                                                (getattr(ipkg, "sourcerpm" , None) or ''),
+                                                (getattr(ipkg, "url" , None) or ''),
+                                                (getattr(ipkg, "vendor" , None) or ''),
+                                                (getattr(ipkg, "committer" , None) or ''),
+                                                (getattr(ipkg, "committime" , None) or '')):
+                return True
+        print("PID problem in _save_yumdb, rollback!")
+        return False
 
     def _save_yumdb(self, ipkg):
         """ Save all the data for yumdb for this installed pkg, assumes
@@ -1207,27 +1134,13 @@ class YumHistory(object):
                 (yumdb_info.get("from_repo_revision") or ''),
                 (yumdb_info.get("from_repo_timestamp") or ''), (yumdb_info.get("installed_by") or ''),
                 (yumdb_info.get("changed_by") or ''), tmp_instalonly, "")
-
-
-    def _wipe_rpmdb(self, pkg):
-        """ Delete all the data for rpmdb for this installed pkg. """
-        cur = self._get_cursor()
-        if cur is None:
+            return True
+        else:
+            print("PID problem in _save_yumdb, rollback!")
             return False
-
-        pid = self.pkg2pid(pkg, create=False)
-        if pid is None:
-            return False
-
-        sql = """DELETE FROM pkg_rpmdb WHERE pkgtupid=?"""
-        executeSQL(cur, sql, (pid,))
-
-        return True
 
     def sync_alldb(self, ipkg):
         """ Sync. all the data for rpmdb/yumdb for this installed pkg. """
-        if not self._wipe_rpmdb(ipkg):
-            return False
         if not (self._save_rpmdb(ipkg) and
                 self._save_yumdb(ipkg)):
             self._rollback()
