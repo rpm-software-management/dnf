@@ -327,7 +327,7 @@ class YumHistoryTransaction(object):
 
     def _getTransWith(self):
         if self._loaded_TW is None:
-            self._loaded_TW = sorted(self._history._old_with_pkgs(self.tid))
+            self._loaded_TW = sorted(self._history.swdb.get_packages_by_tid(self.tid))
         return self._loaded_TW
     def _getTransData(self):
         if self._loaded_TD is None:
@@ -352,7 +352,7 @@ class YumHistoryTransaction(object):
     def _getCmdline(self):
         if not self._have_loaded_CMD:
             self._have_loaded_CMD = True
-            self._loaded_CMD = self._history._old_cmdline(self.tid)
+            self._loaded_CMD = ucd(self._history.swdb.trans_cmdline(self.tid))
         return self._loaded_CMD
 
     cmdline = property(fget=lambda self: self._getCmdline())
@@ -925,20 +925,6 @@ class YumHistory(object):
         fo.close()
         return data
 
-    def _old_with_pkgs(self, tid):
-        #cur = self._get_cursor()
-        #executeSQL(cur,
-        #           """SELECT name, arch, epoch, version, release, checksum
-        #              FROM trans_with_pkgs JOIN pkgtups USING(pkgtupid)
-        #              WHERE tid = ?
-        #              ORDER BY name ASC, epoch ASC""", (tid,))
-        #ret = []
-        #for row in cur:
-        #    obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5],
-        #                            history=self)
-        #    ret.append(obj)
-        return self.swdb.packages_by_tid(tid)
-
     def _old_data_pkgs(self, tid, sort=True):
         cur = self._get_cursor()
         sql = """SELECT name, arch, epoch, version, release,
@@ -1006,12 +992,6 @@ class YumHistory(object):
             obj = YumHistoryRpmdbProblem(self, row[0], row[1], row[2])
             ret.append(obj)
         return ret
-
-    def _old_cmdline(self, tid):
-        print(tid)
-        cmdline = self.swdb.trans_cmdline(tid)
-        print("cmdline is:"+ucd(cmdline))
-        return cmdline
 
     def old(self, tids=[], limit=None, complete_transactions_only=False):
         """ Return a list of the last transactions, note that this includes
@@ -1108,16 +1088,16 @@ class YumHistory(object):
             there is no data currently. """
         pid = self.pkg2pid(ipkg, create=False)
         if pid:
-            if not self.swdb.log_rpm_data( pid, (getattr(ipkg, "buildtime" , None) or ''),
-                                                (getattr(ipkg, "buildhost" , None) or ''),
-                                                (getattr(ipkg, "license" , None) or ''),
-                                                (getattr(ipkg, "packager" , None) or ''),
-                                                (getattr(ipkg, "size" , None) or ''),
-                                                (getattr(ipkg, "sourcerpm" , None) or ''),
-                                                (getattr(ipkg, "url" , None) or ''),
-                                                (getattr(ipkg, "vendor" , None) or ''),
-                                                (getattr(ipkg, "committer" , None) or ''),
-                                                (getattr(ipkg, "committime" , None) or '')):
+            if not self.swdb.log_rpm_data( pid, str((getattr(ipkg, "buildtime" , None) or '')),
+                                                str((getattr(ipkg, "buildhost" , None) or '')),
+                                                str((getattr(ipkg, "license" , None) or '')),
+                                                str((getattr(ipkg, "packager" , None) or '')),
+                                                str((getattr(ipkg, "size" , None) or '')),
+                                                str((getattr(ipkg, "sourcerpm" , None) or '')),
+                                                str((getattr(ipkg, "url" , None) or '')),
+                                                str((getattr(ipkg, "vendor" , None) or '')),
+                                                str((getattr(ipkg, "committer" , None) or '')),
+                                                str((getattr(ipkg, "committime" , None) or ''))):
                 return True
         print("PID problem in _save_yumdb, rollback!")
         return False
