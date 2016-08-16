@@ -66,6 +66,10 @@
 
      Configure plugins by runing their configure() method.
 
+  .. method:: setup_logging_from_conf(self, conf)
+
+     Setup :ref:`debuglevel <debuglevel-label>` , :ref:`errorlevel <errorlevel-label>` and :ref:`logdir <logdir-label>` for logging from base.conf object.
+
   .. method:: fill_sack([load_system_repo=True, load_available_repos=True])
 
     Setup the package sack. If `load_system_repo` is ``True``, load information about packages in the local RPMDB into the sack. Else no package is considered installed during dependency solving. If `load_available_repos` is ``True``, load information about packages from the available repositories into the sack.

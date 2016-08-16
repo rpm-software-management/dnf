@@ -230,6 +230,11 @@ class Base(object):
         """Run plugins configure() method."""
         self._plugins._run_config()
 
+    def setup_logging_from_conf(self):
+        # :api
+        """Setup debuglevel, errorlevel and logdir from base.conf object"""
+        return self._logging._setup_from_dnf_conf(self._conf)
+
     def fill_sack(self, load_system_repo=True, load_available_repos=True):
         # :api
         """Prepare the Sack and the Goal objects. """

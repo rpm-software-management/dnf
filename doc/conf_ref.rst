@@ -91,7 +91,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     :ref:`integer <integer-label>`
 
     Error messages output level, in the range 0 to 10. The higher the number the
-    more error output is put to stderr. Default is 2. This is deprecated in DNF.
+    more error output is put to stderr. Default is 2.
 
 ``install_weak_deps``
     :ref:`boolean <boolean-label>`
@@ -130,6 +130,11 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     Keeps downloaded packages in the cache when set to True. Even if it is set to False and packages have not been
     installed they will still persist until next successful transaction. The default
     is False.
+
+``logdir``
+    :ref:`string <string-label>`
+
+    Directory where the log files will be stored. Default is ``/var/log``.
 
 .. _metadata_timer_sync-label:
 
