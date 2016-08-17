@@ -255,7 +255,8 @@ class Base(object):
                         if r.metadata._age < age:
                             age = r.metadata._age
                         logger.debug(_("%s: using metadata from %s."), r.id,
-                                     time.ctime(r.metadata._md_timestamp))
+                                     dnf.util.normalize_time(
+                                         r.metadata._md_timestamp))
                     except dnf.exceptions.RepoError as e:
                         r._md_expire_cache()
                         if r.skip_if_unavailable is False:
@@ -266,7 +267,7 @@ class Base(object):
                     logger.info(_("Last metadata expiration check: "
                                   "%s ago on %s."),
                                 datetime.timedelta(seconds=int(age)),
-                                time.ctime(mts))
+                                dnf.util.normalize_time(mts))
                 for e in errors:
                     logger.warning(_("%s, disabling."), e)
         conf = self.conf
