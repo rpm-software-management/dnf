@@ -123,13 +123,7 @@ def show_lock_owner(pid):
 
     ago = seconds_to_ui_time(int(time.time()) - ps['start_time'])
     logger.critical(_('    Started: %s - %s ago'),
-                    time.ctime(ps['start_time']), ago)
+                    dnf.util.normalize_time(ps['start_time']), ago)
     logger.critical(_('    State  : %s'), ps['state'])
 
     return
-
-
-def normalize_time(timestamp):
-    """ Convert time into Timezone aware datetime string object"""
-    t = time.strftime("%a %b %d %H:%M:%S %Y %Z", time.localtime(timestamp))
-    return t
