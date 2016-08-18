@@ -22,7 +22,7 @@
 %global _docdir_fmt %{name}
 
 Name:           dnf
-Version:        1.1.9
+Version:        1.1.10
 Release:        1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -315,6 +315,9 @@ exit 0
 %endif
 
 %changelog
+* Thu Aug 18 2016 Igor Gnatenko <ignatenko@redhat.com> 1.1.10-1
+- Update to 1.1.10
+
 * Thu May 19 2016 Igor Gnatenko <ignatenko@redhat.com> 1.1.9-1
 - doc: release notes 1.1.9 (Igor Gnatenko)
 - spec: correctly set up requirements for python subpkg (Igor Gnatenko)
