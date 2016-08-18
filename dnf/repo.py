@@ -693,7 +693,7 @@ class Repo(dnf.conf.RepoConf):
         if handle.metalink:
             shutil.move(handle._metalink_path, self.metalink_path)
         elif handle.mirrorlist:
-            shutil.move(handle._mirrorlist_path, self.mirrorlist_path)
+            shutil.move(handle._mirrorlist_path, self._mirrorlist_path)
 
     def _reset_metadata_expired(self):
         if self._expired:
