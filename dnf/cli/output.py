@@ -1465,8 +1465,8 @@ Transaction Summary
                 else:
                     name = self._pwd_ui_username(old.loginuid, 24)
                 tm = time.strftime("%Y-%m-%d %H:%M",
-                                time.localtime(old.beg_timestamp))
-                num, uiacts = self._history_uiactions(old.trans_data)
+                                time.localtime(float(old.beg_timestamp)))
+                num, uiacts = self._history_uiactions(old.get_old_trans_data())
                 name = fill_exact_width(name, 24, 24)
                 uiacts = fill_exact_width(uiacts, 14, 14)
                 rmark = lmark = ' '

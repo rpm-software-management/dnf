@@ -1071,8 +1071,12 @@ class YumHistory(object):
                 obj.altered_lt_rpmdb = False
                 las.altered_gt_rpmdb = False
             las = obj
-
-        return ret
+        print("----------")
+        print(len(ret))
+        tid_list = list(tids)
+        print(len(self.swdb.trans_old(tid_list,(limit or 0),complete_transactions_only)))
+        print("----------")
+        return self.swdb.trans_old(list(tids),(limit or 0),complete_transactions_only)
 
     def last(self, complete_transactions_only=True):
         """ This is the last full transaction. So any incomplete transactions
