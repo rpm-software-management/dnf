@@ -21,6 +21,26 @@
 
 .. contents::
 
+====================
+1.1.10 Release Notes
+====================
+
+Fixed unicode handling and fixing other bugs.
+
+Bugs fixed in 1.1.10:
+
+* :rhbug:`1257965`
+* :rhbug:`1352130`
+* :rhbug:`1343764`
+* :rhbug:`1308994`
+* :rhbug:`1230183`
+* :rhbug:`1295090`
+* :rhbug:`1325869`
+* :rhbug:`1338046`
+* :rhbug:`1214768`
+* :rhbug:`1338504`
+* :rhbug:`1338564`
+
 ===================
 2.0.0 Release Notes
 ===================

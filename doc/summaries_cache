@@ -1546,5 +1546,49 @@
     [
         1245121, 
         "TypeError: unhashable type: 'YumHistoryPackageState'"
+    ], 
+    [
+        1257965, 
+        "DNF doesn't treat the \"xml:base\" attribute in the primary.xml location tag correctly"
+    ], 
+    [
+        1352130, 
+        "dnf should not report errors to stdout, it's mildly dangerous"
+    ], 
+    [
+        1343764, 
+        "dnf reinstall deletes yumdb entry"
+    ], 
+    [
+        1308994, 
+        "After installing a package from local unicode directory a traceback is shown (UnicodeEncodeError)"
+    ], 
+    [
+        1230183, 
+        "Package update does not work when package changes from noarch <-> arch"
+    ], 
+    [
+        1325869, 
+        "[abrt] dnf: config.py:91:__set__:ValueError: Error parsing \"baseurl = repodata\": URL must be http, ftp, file or https not \"\""
+    ], 
+    [
+        1338046, 
+        "dnf will consume 100% CPU when there is no space left on device"
+    ], 
+    [
+        1214768, 
+        "history userinstalled lists should print NEVRAs instead of names"
+    ], 
+    [
+        1338504, 
+        "dnf upgrade (to 1.1.9) broke bash completion"
+    ], 
+    [
+        1338564, 
+        "Update fails with \"AttributeError: 'Base' object has no attribute 'sigCheckPkg'  (36)\""
+    ], 
+    [
+        1295090, 
+        "[abrt] dnf: i18n.py:44:write:UnicodeEncodeError: 'ascii' codec can't encode character '\\xe6' in position 54: ordinal not in range(128)"
     ]
 ]
