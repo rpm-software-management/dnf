@@ -78,6 +78,12 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     The root of the filesystem for all packaging operations.
 
+  .. attribute:: keepcache
+
+    Keeps downloaded packages in the cache when this boolean option is set to
+    True. Even if it is set to False and packages have not been installed they
+    will still persist until next successful transaction. The default is False.
+
   .. attribute:: logdir
 
     Directory where the log files will be stored. Default is ``"/var/log"``.
