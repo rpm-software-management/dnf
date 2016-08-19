@@ -97,7 +97,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     Error messages output level, in the range 0 to 10. The higher the number the
     more error output is put to stderr. Default is 2. This is deprecated in DNF
-    and overwritten by \-\ :ref:`-verbose verbose_options-label` commandline
+    and overwritten by \-\ :ref:`-verbose <verbose_options-label>` commandline
     option.
 
 ``install_weak_deps``
@@ -166,15 +166,6 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     List of directories that are searched for plugins to load. Plugins found in *any of the directories* in this configuration option are used. The default contains a Python version-specific path.
 
-.. _reposdir-label:
-
-``reposdir``
-    :ref:`list <list-label>`
-
-    DNF searches for repository configuration files in the paths specified by
-    ``reposdir``. The behavior of ``reposdir`` could differ when it is used
-    along with \-\ :ref:`-installroot <installroot-label>` option.
-
 ``protected_packages``
     :ref:`list <list-label>`
 
@@ -184,9 +175,25 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     DNF will protect also the package corresponding to the running version of the kernel.
 
+.. _reposdir-label:
+
+``reposdir``
+    :ref:`list <list-label>`
+
+    DNF searches for repository configuration files in the paths specified by
+    ``reposdir``. The behavior of ``reposdir`` could differ when it is used
+    along with \-\ :ref:`-installroot <installroot-label>` option.
+
 ==============
  Repo Options
 ==============
+
+.. _baseurl-label:
+
+``baseurl``
+    :ref:`list <list-label>`
+
+    URLs for the repository.
 
 .. _repo_cost-label:
 
@@ -197,13 +204,6 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     value is compared when the priorities of two repositories are the same. The
     repository with *the lowest cost* is picked. It is useful to make the
     library prefer on-disk repositories to remote ones.
-
-.. _baseurl-label:
-
-``baseurl``
-    :ref:`list <list-label>`
-
-    URLs for the repository.
 
 ``enabled``
     :ref:`boolean <boolean-label>`
@@ -263,10 +263,6 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
 Right side of every repo option can be enriched by the following variables:
 
-``$releasever``
-
-    Refers to the release version of operating system which DNF derives from information available in RPMDB.
-
 ``$arch``
 
     Refers to the system’s CPU architecture e.g, aarch64, i586, i686 and x86_64.
@@ -275,6 +271,10 @@ Right side of every repo option can be enriched by the following variables:
 
     Refers to the base architecture of the system. For example, i686 and i586 machines
     both have a base architecture of i386, and AMD64 and Intel64 machines have a base architecture of x86_64.
+
+``$releasever``
+
+    Refers to the release version of operating system which DNF derives from information available in RPMDB.
 
 ==================================
  Options for both [main] and Repo
