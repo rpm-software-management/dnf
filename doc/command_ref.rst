@@ -233,6 +233,8 @@ Options
 ``--showduplicates``
     show duplicates, in repos, in list/search commands
 
+.. _verbose_options-label:
+
 ``-v, --verbose``
     verbose operation, show debug messages.
 
