@@ -73,6 +73,11 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     pulled in as a dependency. The default is True.
     (:ref:`installonlypkgs <installonlypkgs-label>` are never automatically removed.)
 
+``config_file_path``
+    :ref:`string <string-label>`
+
+    Path to the default main configuration file. Default is ``/etc/dnf/dnf.conf``.
+
 ``debuglevel``
     :ref:`integer <integer-label>`
 
