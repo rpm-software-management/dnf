@@ -56,6 +56,18 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     An integer to limit the number of installed installonly packages (packages that do not upgrade, instead few versions are installed in parallel). Defaults to ``0``, that is the limiting is disabled.
 
+  .. attribute:: installonlypkgs
+
+    List of provide names of packages that should only ever be installed, never
+    upgraded. Kernels in particular fall into this category.
+    These packages are never removed by ``dnf autoremove`` even if they were
+    installed as dependencies (see
+    :ref:`clean_requirements_on_remove <clean_requirements_on_remove-label>`
+    for auto removal details).
+    This option overrides the default installonlypkgs list used by DNF.
+    The number of kept package versions is regulated by
+    :ref:`installonly_limit <installonly-limit-label>`.
+
   .. attribute:: install_weak_deps
 
     When this boolean option is set to True and a new package is about to be
