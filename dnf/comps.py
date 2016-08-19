@@ -531,6 +531,8 @@ class Solver(object):
 
     def _group_install(self, group_id, pkg_types, exclude, strict=True):
         group = self.comps._group_by_id(group_id)
+        if not group:
+            raise ValueError(_("Group_id '%s' does not exist.") % ucd(group_id))
         p_grp = self.persistor.group(group_id)
         if p_grp.installed:
             raise CompsError(_("Group '%s' is already installed.") %
