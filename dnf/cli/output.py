@@ -1519,7 +1519,7 @@ Transaction Summary
         lastdbv = self.history.last()
         if lastdbv is not None:
             lasttid = lastdbv.tid
-            lastdbv = lastdbv.end_rpmdbversion
+            lastdbv = lastdbv.rpmdb_version
 
         done = False
         bmtid, emtid = -1, -1
@@ -1646,11 +1646,11 @@ Transaction Summary
             else:
                 diff = _("(%u days)") % (diff // (60 * 60 * 24))
             print(_("End time       :"), endtm, diff)
-        if old.end_rpmdbversion is not None:
+        if old.rpmdb_version is not None:
             if old.altered_gt_rpmdb:
-                print(_("End rpmdb      :"), old.end_rpmdbversion, "**")
+                print(_("End rpmdb      :"), old.rpmdb_version, "**")
             else:
-                print(_("End rpmdb      :"), old.end_rpmdbversion)
+                print(_("End rpmdb      :"), old.rpmdb_version)
         if isinstance(name, list):
             for name in name:
                 print(_("User           :"), name)

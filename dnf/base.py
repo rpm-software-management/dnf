@@ -767,7 +767,7 @@ class Base(object):
             rpmdbv = self.sack._rpmdb_version(self._yumdb)
             lastdbv = self.history.last()
             if lastdbv is not None:
-                lastdbv = lastdbv.end_rpmdbversion
+                lastdbv = lastdbv.rpmdb_version
 
             if lastdbv is None or rpmdbv != lastdbv:
                 logger.debug("RPMDB altered outside of DNF.")

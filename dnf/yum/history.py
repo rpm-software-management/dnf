@@ -776,8 +776,6 @@ class YumHistory(object):
             executeSQL(self._conn.cursor(), "PRAGMA locking_mode = EXCLUSIVE")
 
         return self._conn.cursor()
-    def _commit(self):
-        return self._conn.commit()
     def _rollback(self):
         return self._conn.rollback()
 
@@ -856,7 +854,6 @@ class YumHistory(object):
         if not hasattr(self, '_tid'):
             return # Failed at beg() time
         self.swdb.trans_end(self._tid, str(int(time.time())), return_code)
-        #self._commit()
         if not return_code:
             #  Simple hack, if the transaction finished. Note that this
             # catches the erase cases (as we still don't get pkgtups for them),
@@ -1048,8 +1045,6 @@ class YumHistory(object):
                 self._save_yumdb(ipkg)):
             self._rollback()
             return False
-
-        self._commit()
         return True
 
     def _pkg_stats(self):
