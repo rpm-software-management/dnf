@@ -247,7 +247,6 @@ class YumHistoryPackage(object):
         else:
             return self.nevra
 
-
 class YumHistoryPackageState(YumHistoryPackage):
     def __init__(self, name,arch, epoch,version,release, state, checksum=None,
                  history=None):
@@ -996,86 +995,6 @@ class YumHistory(object):
     def old(self, tids=[], limit=None, complete_transactions_only=False):
         """ Return a list of the last transactions, note that this includes
             partial transactions (ones without an end transaction). """
-        cur = self._get_cursor()
-        if cur is None:
-            return []
-        sql =  """SELECT tid,
-                         trans_beg.timestamp AS beg_ts,
-                         trans_beg.rpmdb_version AS beg_rv,
-                         trans_end.timestamp AS end_ts,
-                         trans_end.rpmdb_version AS end_rv,
-                         loginuid, return_code
-                  FROM trans_beg JOIN trans_end USING(tid)"""
-        # NOTE: sqlite doesn't do OUTER JOINs ... *sigh*. So we have to do it
-        #       ourself.
-        if not complete_transactions_only:
-            sql =  """SELECT tid,
-                             trans_beg.timestamp AS beg_ts,
-                             trans_beg.rpmdb_version AS beg_rv,
-                             NULL, NULL,
-                             loginuid, NULL
-                      FROM trans_beg"""
-        params = None
-        if tids and len(tids) <= PATTERNS_INDEXED_MAX:
-            params = tids = list(set(tids))
-            sql += " WHERE tid IN (%s)" % ", ".join(['?'] * len(tids))
-        #  This relies on the fact that the PRIMARY KEY in sqlite will always
-        # increase with each transaction. In theory we can use:
-        # ORDER BY beg_ts DESC ... except sometimes people do installs with a
-        # system clock that is very broken, and using that screws them forever.
-        sql += " ORDER BY tid DESC"
-        if limit is not None:
-            sql += " LIMIT " + str(limit)
-        executeSQL(cur, sql, params)
-        ret = []
-        tid2obj = {}
-        for row in cur:
-            if tids and len(tids) > PATTERNS_INDEXED_MAX:
-                if row[0] not in tids:
-                    continue
-            obj = YumHistoryTransaction(self, row)
-            tid2obj[row[0]] = obj
-            ret.append(obj)
-
-        sql =  """SELECT tid,
-                         trans_end.timestamp AS end_ts,
-                         trans_end.rpmdb_version AS end_rv,
-                         return_code
-                  FROM trans_end"""
-        params = list(tid2obj.keys())
-        if len(params) > PATTERNS_INDEXED_MAX:
-            executeSQL(cur, sql)
-        else:
-            sql += " WHERE tid IN (%s)" % ", ".join(['?'] * len(params))
-            executeSQL(cur, sql, params)
-        for row in cur:
-            if row[0] not in tid2obj:
-                continue
-            tid2obj[row[0]].end_timestamp    = row[1]
-            tid2obj[row[0]].end_rpmdbversion = row[2]
-            tid2obj[row[0]].return_code      = row[3]
-
-        # Go through backwards, and see if the rpmdb versions match
-        las = None
-        for obj in reversed(ret):
-            cur_rv = obj.beg_rpmdbversion
-            las_rv = None
-            if las is not None:
-                las_rv = las.end_rpmdbversion
-            if las_rv is None or cur_rv is None or (las.tid + 1) != obj.tid:
-                pass
-            elif las_rv != cur_rv:
-                obj.altered_lt_rpmdb = True
-                las.altered_gt_rpmdb = True
-            else:
-                obj.altered_lt_rpmdb = False
-                las.altered_gt_rpmdb = False
-            las = obj
-        print("----------")
-        print(len(ret))
-        tid_list = list(tids)
-        print(len(self.swdb.trans_old(tid_list,(limit or 0),complete_transactions_only)))
-        print("----------")
         return self.swdb.trans_old(list(tids),(limit or 0),complete_transactions_only)
 
     def last(self, complete_transactions_only=True):

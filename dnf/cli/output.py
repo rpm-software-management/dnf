@@ -1464,6 +1464,7 @@ Transaction Summary
                     name = old.cmdline or ''
                 else:
                     name = self._pwd_ui_username(old.loginuid, 24)
+                name = ucd(name)
                 tm = time.strftime("%Y-%m-%d %H:%M",
                                 time.localtime(float(old.beg_timestamp)))
                 num, uiacts = self._history_uiactions(old.get_old_trans_data())
@@ -1475,12 +1476,12 @@ Transaction Summary
                 elif old.return_code:
                     rmark = lmark = '#'
                     # We don't check .errors, because return_code will be non-0
-                elif old.output:
+                elif old.is_output:
                     rmark = lmark = 'E'
-                elif old.rpmdb_problems:
-                    rmark = lmark = 'P'
-                elif old.trans_skip:
-                    rmark = lmark = 's'
+                #elif old.rpmdb_problems:
+                #    rmark = lmark = 'P'
+                #elif old.trans_skip:
+                #    rmark = lmark = 's'
                 if old.altered_lt_rpmdb:
                     rmark = '<'
                 if old.altered_gt_rpmdb:
