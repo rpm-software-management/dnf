@@ -52,10 +52,6 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Returns the value of the first valid reposdir or if unavailable the value of created reposdir (string)
 
-  .. attribute:: installonly_limit
-
-    An integer to limit the number of installed installonly packages (packages that do not upgrade, instead few versions are installed in parallel). Defaults to ``0``, that is the limiting is disabled.
-
   .. attribute:: installonlypkgs
 
     List of provide names of packages that should only ever be installed, never
@@ -67,6 +63,10 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
     This option overrides the default installonlypkgs list used by DNF.
     The number of kept package versions is regulated by
     :ref:`installonly_limit <installonly-limit-label>`.
+
+  .. attribute:: installonly_limit
+
+    An integer to limit the number of installed installonly packages (packages that do not upgrade, instead few versions are installed in parallel). Defaults to ``0``, that is the limiting is disabled.
 
   .. attribute:: install_weak_deps
 
