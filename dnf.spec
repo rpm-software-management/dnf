@@ -70,6 +70,10 @@ Provides:       dnf-command(upgrade-to)
 Conflicts:      python2-dnf-plugins-core < %{min_plugins_core}
 Conflicts:      python3-dnf-plugins-core < %{min_plugins_core}
 
+# dnf-langpacks package is retired in F25
+# to have clean upgrade path for dnf-langpacks
+Obsoletes:      dnf-langpacks
+
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
 
