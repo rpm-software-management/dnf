@@ -138,6 +138,11 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     installed they will still persist until next successful transaction. The default
     is False.
 
+``logdir``
+    :ref:`string <string-label>`
+
+    Directory where the log files will be stored. Default is ``/var/log``.
+
 .. _metadata_timer_sync-label:
 
 ``metadata_timer_sync``
