@@ -691,7 +691,7 @@ class Repo(dnf.conf.RepoConf):
         dnf.util.rm_rf(self._mirrorlist_path)
         shutil.move(handle._metadata_dir, self._metadata_dir)
         if handle.metalink:
-            shutil.move(handle._metalink_path, self.metalink_path)
+            shutil.move(handle._metalink_path, self._metalink_path)
         elif handle.mirrorlist:
             shutil.move(handle._mirrorlist_path, self._mirrorlist_path)
 
