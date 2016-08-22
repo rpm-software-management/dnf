@@ -844,7 +844,7 @@ class Base(object):
                 if md and md._revision is not None:
                     yumdb_info.from_repo_revision = str(md._revision)
                 if md:
-                    yumdb_info.from_repo_timestamp = str(md.timestamp)
+                    yumdb_info.from_repo_timestamp = str(md._timestamp)
 
             loginuid = misc.getloginuid()
             if tsi.op_type in (dnf.transaction.DOWNGRADE,
