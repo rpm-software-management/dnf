@@ -841,8 +841,8 @@ class Base(object):
                     pass
             elif hasattr(rpo.repo, 'repoXML'):
                 md = rpo.repo.repoXML
-                if md and md.revision is not None:
-                    yumdb_info.from_repo_revision = str(md.revision)
+                if md and md._revision is not None:
+                    yumdb_info.from_repo_revision = str(md._revision)
                 if md:
                     yumdb_info.from_repo_timestamp = str(md.timestamp)
 
