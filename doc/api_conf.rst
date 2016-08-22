@@ -40,9 +40,18 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Path to the default main configuration file. Default is ``"/etc/dnf/dnf.conf"``.
 
+.. _debuglevel-label:
+
   .. attribute:: debuglevel
 
     Debug messages output level, in the range 0 to 10. Default is 2.
+
+.. _errorlevel-label:
+
+  .. attribute:: errorlevel
+
+    Error messages output level, in the range 0 to 10. The higher the number the
+    more error output is put to stderr. Default is 2.
 
   .. attribute:: get_reposdir
 
@@ -61,6 +70,8 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
   .. attribute:: installroot
 
     The root of the filesystem for all packaging operations.
+
+.. _logdir-label:
 
   .. attribute:: logdir
 
