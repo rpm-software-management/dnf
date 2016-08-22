@@ -747,7 +747,7 @@ class RepoPkgsCommand(Command):
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
             _checkGPGKey(self.base, self.cli)
-            self.base.upgrade_userlist_to(selt.opts.pkg_specs, selt.opts.reponame)
+            self.base.upgrade_userlist_to(self.opts.pkg_specs, self.opts.reponame)
 
     SUBCMDS = {CheckUpdateSubCommand, InfoSubCommand, InstallSubCommand,
                ListSubCommand, MoveToSubCommand, ReinstallOldSubCommand,
