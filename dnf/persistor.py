@@ -26,7 +26,9 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _
-
+import gi
+gi.require_version('Hif', '3.0')
+from gi.repository import Hif
 import collections
 import distutils.version
 import dnf.util
@@ -261,6 +263,7 @@ class GroupPersistor(object):
         self._original = None
         self._load()
         self._ensure_sanity()
+        self.swdb = Hif.Swdb()
 
     def _access(self, subdict, id_):
         subdict = self.db[subdict]
@@ -365,6 +368,14 @@ class GroupPersistor(object):
     def diff(self):
         return _GroupsDiff(self._original, self.db)
 
+    def new_group(self):
+        group = self.swdb.new_SwdbGroup()
+        return group
+
+    def new_env(self):
+        env = self.swdb.new_SwdbEnv()
+        return env
+
     def environment(self, id_):
         return self._access('ENVIRONMENTS', id_)
 
@@ -380,6 +391,7 @@ class GroupPersistor(object):
         """add to the persistor packages that are already installed or are
            being installed by group transaction"""
         ins = {p.name for p in set(goal.list_installs()).union(set(installed))}
+        print(self.diff())
         for g in self.diff().new_groups:
             all_pkgs = set(self.group(g).full_list)
             installed_in_group = list(all_pkgs.intersection(ins))

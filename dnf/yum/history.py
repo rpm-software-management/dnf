@@ -27,7 +27,7 @@ import os
 from .sqlutils import sqlite, executeSQL, sql_esc_glob
 from . import misc as misc
 import gi
-gi.require_version("Hif", "3.0")
+gi.require_version('Hif', '3.0')
 from gi.repository import Hif
 import dnf
 import dnf.exceptions
@@ -247,43 +247,6 @@ class YumHistoryPackage(object):
         else:
             return self.nevra
 
-class YumHistoryPackageState(YumHistoryPackage):
-    def __init__(self, name,arch, epoch,version,release, state, checksum=None,
-                 history=None):
-        YumHistoryPackage.__init__(self, name,arch, epoch,version,release,
-                                   checksum, history)
-        self.done  = None
-        self.state = state
-
-
-class YumHistoryRpmdbProblem(object):
-    """ Class representing an rpmdb problem that existed at the time of the
-        transaction. """
-
-    def __init__(self, history, rpid, problem, text):
-        self._history = history
-
-        self.rpid = rpid
-        self.problem = problem
-        self.text = text
-
-        self._loaded_P = None
-
-    def __lt__(self, other):
-        if other is None:
-            return False
-        if self.problem == other.problem:
-            return self.rpid < other.rpid
-        return self.problem > other.problem
-
-    def _getProbPkgs(self):
-        if self._loaded_P is None:
-            self._loaded_P = sorted(self._history._old_prob_pkgs(self.rpid))
-        return self._loaded_P
-
-    packages = property(fget=lambda self: self._getProbPkgs())
-
-
 class YumHistoryTransaction(object):
     """ Holder for a history transaction. """
 
@@ -324,29 +287,12 @@ class YumHistoryTransaction(object):
         else:
             return self.beg_timestamp > other.beg_timestamp
 
-    def _getTransWith(self):
-        if self._loaded_TW is None:
-            self._loaded_TW = sorted(self._history.swdb.get_packages_by_tid(self.tid))
-        return self._loaded_TW
     def _getTransData(self):
         if self._loaded_TD is None:
-            self._loaded_TD = sorted(self._history._old_data_pkgs(self.tid))
+            self._loaded_TD = sorted(self._history.swdb.get_packages_by_tid(self.tid))
         return self._loaded_TD
-    def _getTransSkip(self):
-        if self._loaded_TS is None:
-            self._loaded_TS = sorted(self._history._old_skip_pkgs(self.tid))
-        return self._loaded_TS
 
-    trans_with = property(fget=lambda self: self._getTransWith())
     trans_data = property(fget=lambda self: self._getTransData())
-    trans_skip = property(fget=lambda self: self._getTransSkip())
-
-    def _getProblems(self):
-        if self._loaded_PROB is None:
-            self._loaded_PROB = sorted(self._history._old_problems(self.tid))
-        return self._loaded_PROB
-
-    rpmdb_problems = property(fget=lambda self: self._getProblems())
 
     def _getCmdline(self):
         if not self._have_loaded_CMD:
@@ -420,7 +366,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
         ret = []
         filt = set()
         for obj in self._merged_objs:
-            for pkg in obj.trans_with:
+            for pkg in obj.trans_data:
                 if pkg.pid in filt:
                     continue
                 filt.add(pkg.pid)
@@ -458,16 +404,12 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
         return pkgtup2pkg, pkgstate2pkg
     @staticmethod
     def _conv_pkg_state(pkg, state):
-        npkg = YumHistoryPackageState(pkg.name, pkg.arch,
-                                      pkg.epoch,pkg.version,pkg.release, state,
-                                      history=pkg._history)
-        npkg._checksums = pkg._checksums
-        npkg.done = pkg.done
-        if npkg.state in dnf.history.INSTALLING_STATES:
-            npkg.state_installed = True
-        if npkg.state in dnf.history.REMOVING_STATES:
-            npkg.state_installed = False
-        return npkg
+        pkg.state = state
+        if pkg.state in dnf.history.INSTALLING_STATES:
+            pkg.state_installed = True
+        if pkg.state in dnf.history.REMOVING_STATES:
+            pkg.state_installed = False
+        return pkg
     @staticmethod
     def _get_pkg(sk, pkgstate2pkg):
         if type(sk) != type((0,1)):
@@ -921,74 +863,6 @@ class YumHistory(object):
         fo.close()
         return data
 
-    def _old_data_pkgs(self, tid, sort=True):
-        cur = self._get_cursor()
-        sql = """SELECT name, arch, epoch, version, release,
-                        checksum, done, state
-                 FROM trans_data_pkgs JOIN pkgtups USING(pkgtupid)
-                 WHERE tid = ?"""
-        if sort:
-            sql = " ".join((sql, "ORDER BY name ASC, epoch ASC, state DESC"))
-        executeSQL(cur, sql, (tid,))
-        ret = []
-        for row in cur:
-            obj = YumHistoryPackageState(row[0],row[1],row[2],row[3],row[4],
-                                         row[7], row[5], history=self)
-            obj.done     = row[6] == 'TRUE'
-            obj.state_installed = None
-            if obj.state in dnf.history.INSTALLING_STATES:
-                obj.state_installed = True
-            if obj.state in dnf.history.REMOVING_STATES:
-                obj.state_installed = False
-            ret.append(obj)
-        return ret
-    def _old_skip_pkgs(self, tid):
-        cur = self._get_cursor()
-        if cur is None:
-            return []
-        executeSQL(cur,
-                   """SELECT name, arch, epoch, version, release, checksum
-                      FROM trans_skip_pkgs JOIN pkgtups USING(pkgtupid)
-                      WHERE tid = ?
-                      ORDER BY name ASC, epoch ASC""", (tid,))
-        ret = []
-        for row in cur:
-            obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5],
-                                    history=self)
-            ret.append(obj)
-        return ret
-    def _old_prob_pkgs(self, rpid):
-        cur = self._get_cursor()
-        if cur is None:
-            return []
-        executeSQL(cur,
-                   """SELECT name, arch, epoch, version, release, checksum, main
-                      FROM trans_prob_pkgs JOIN pkgtups USING(pkgtupid)
-                      WHERE rpid = ?
-                      ORDER BY name ASC, epoch ASC""", (rpid,))
-        ret = []
-        for row in cur:
-            obj = YumHistoryPackage(row[0],row[1],row[2],row[3],row[4], row[5],
-                                    history=self)
-            obj.main = row[6] == 'TRUE'
-            ret.append(obj)
-        return ret
-
-    def _old_problems(self, tid):
-        cur = self._get_cursor()
-        if cur is None:
-            return []
-        executeSQL(cur,
-                   """SELECT rpid, problem, msg
-                      FROM trans_rpmdb_problems
-                      WHERE tid = ?
-                      ORDER BY problem ASC, rpid ASC""", (tid,))
-        ret = []
-        for row in cur:
-            obj = YumHistoryRpmdbProblem(self, row[0], row[1], row[2])
-            ret.append(obj)
-        return ret
-
     def old(self, tids=[], limit=None, complete_transactions_only=False):
         """ Return a list of the last transactions, note that this includes
             partial transactions (ones without an end transaction). """
@@ -1046,35 +920,6 @@ class YumHistory(object):
             self._rollback()
             return False
         return True
-
-    def _pkg_stats(self):
-        """ Some stats about packages in the DB. """
-
-        ret = {'nevrac' : 0,
-               'nevra'  : 0,
-               'nevr'   : 0,
-               'na'     : 0,
-               'rpmdb'  : 0,
-               'yumdb'  : 0,
-               }
-        cur = self._get_cursor()
-        if cur is None:
-            return False
-
-        data = (('nevrac', "COUNT(*)",                      "pkgtups"),
-                ('na',     "COUNT(DISTINCT(name || arch))", "pkgtups"),
-                ('nevra',"COUNT(DISTINCT(name||version||epoch||release||arch))",
-                 "pkgtups"),
-                ('nevr',   "COUNT(DISTINCT(name||version||epoch||release))",
-                 "pkgtups"),
-                ('rpmdb',  "COUNT(DISTINCT(pkgtupid))", "pkg_rpmdb"),
-                ('yumdb',  "COUNT(DISTINCT(pkgtupid))", "pkg_yumdb"))
-
-        for key, bsql, esql in data:
-            executeSQL(cur, "SELECT %s FROM %s" % (bsql, esql))
-            for row in cur:
-                ret[key] = row[0]
-        return ret
 
     def search(self, patterns, ignore_case=True):
         """ Search for history transactions which contain specified

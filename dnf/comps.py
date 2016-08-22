@@ -529,17 +529,24 @@ class Solver(object):
     def _environment_install(self, env_id, pkg_types, exclude, strict=True):
         env = self.comps._environment_by_id(env_id)
         p_env = self.persistor.environment(env_id)
-        if p_env.installed:
+        if not p_env:
+            p_env = self.persistor.new_env()
+        if p_env.installed():
             logger.warning(_("Environment '%s' is already installed.") %
-                           env.ui_name)
+                             env.ui_name)
+        #SWDB
 
         p_env.grp_types = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
         exclude = set() if exclude is None else set(exclude)
         p_env.name = env.name
         p_env.ui_name = env.ui_name
-        p_env.pkg_exclude.extend(exclude)
         p_env.pkg_types = pkg_types
-        p_env.full_list.extend(self._mandatory_group_set(env))
+        self.persistor.swdb.add_env(p_env)
+        p_env.add_exclude(exclude)
+        p_env.add_group(self._mandatory_group_set(env))
+
+        #p_env.pkg_exclude.extend(exclude)
+        #p_env.full_list.extend(self._mandatory_group_set(env))
 
         trans = TransactionBunch()
         for grp in env.mandatory_groups:
@@ -598,17 +605,31 @@ class Solver(object):
         group = self.comps._group_by_id(group_id)
         if not group:
             raise ValueError(_("Group_id '%s' does not exist.") % ucd(group_id))
-        p_grp = self.persistor.group(group_id)
-        if p_grp.installed:
+        p_grp = self.persistor.group(group_id) #this will return HifSwdbGroup object
+        #if not p_grp:
+        #    p_grp = self.persistor.new_group()
+        p_grp = self.persistor.new_group() #TODO
+        if p_grp.is_installed:
             logger.warning(_("Group '%s' is already installed.") %
-                           group.ui_name)
+                             group.ui_name)
 
         exclude = set() if exclude is None else set(exclude)
+
+        #SWDB
+
+        p_grp.name_id = group_id
         p_grp.name = group.name
         p_grp.ui_name = group.ui_name
-        p_grp.pkg_exclude.extend(exclude)
         p_grp.pkg_types = pkg_types
-        p_grp.full_list.extend(self._full_package_set(group))
+        p_grp.grp_types = 0
+
+        self.persistor.swdb.add_group(p_grp)
+
+        p_grp.add_exclude(exclude)
+        p_grp.add_package(self._full_package_set(group))
+
+        #p_grp.pkg_exclude.extend(exclude)
+        #p_grp.full_list.extend(self._full_package_set(group))
 
         trans = TransactionBunch()
         trans.install.update(self._pkgs_of_type(group, pkg_types, exclude))

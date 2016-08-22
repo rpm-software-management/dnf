@@ -1687,11 +1687,11 @@ Transaction Summary
                 print(_("Additional non-default information stored: %d") % \
                           len(non_default))
 
-        if old.trans_with:
+        if old.trans_data:
             # This is _possible_, but not common
             print(_("Transaction performed with:"))
-            pkg_max_len = max((len(str(hpkg)) for hpkg in old.trans_with))
-        for hpkg in old.trans_with:
+            pkg_max_len = max((len(str(hpkg)) for hpkg in old.trans_data))
+        for hpkg in old.trans_data:
             _simple_pkg(hpkg, 4, was_installed=True, pkg_max_len=pkg_max_len)
         print(_("Packages Altered:"))
         self.historyInfoCmdPkgsAltered(old, pats)
