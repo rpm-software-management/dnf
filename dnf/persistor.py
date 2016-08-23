@@ -392,7 +392,7 @@ class GroupPersistor(object):
            being installed by group transaction"""
         ins = {p.name for p in set(goal.list_installs()).union(set(installed))}
         for g in self.diff().new_groups:
-            all_pkgs = set(self.group(g).full_list)
+            all_pkgs = set(self.group(g).get_full_list())
             installed_in_group = list(all_pkgs.intersection(ins))
             self.group(g).param_dct['full_list'] = installed_in_group
 
