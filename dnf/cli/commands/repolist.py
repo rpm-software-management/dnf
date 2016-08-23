@@ -275,7 +275,7 @@ class RepoListCommand(commands.Command):
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
                 if arg == 'disabled': # Don't output a status column.
                     print("%s %s" % (fill_exact_width(rid, id_len),
-                                     fill_exact_width(rname, nm_len, -nm_len)))
+                                     fill_exact_width(rname, nm_len, nm_len)))
                     continue
 
                 if ui_num:
