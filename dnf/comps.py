@@ -513,7 +513,7 @@ class Solver(object):
             return False
         for id_ in prst.groups:
             p_grp = prst.group(id_)
-            count += sum(1 for pkg in p_grp.full_list if pkg == pkg_name)
+            count += sum(1 for pkg in p_grp.get_full_list() if pkg == pkg_name)
         return count < 2
 
     def _removable_grp(self, grp_name):
@@ -523,10 +523,10 @@ class Solver(object):
             return False
         for id_ in prst.environments:
             p_env = prst.environment(id_)
-            count += sum(1 for grp in p_env.full_list if grp == grp_name)
+            count += sum(1 for grp in p_env.get_grp_list() if grp == grp_name)
         return count < 2
 
-    def _environment_install(self, env_id, pkg_types, exclude, strict=True):
+    def _environment_install(self, env_id, pkg_types, exclude, strict=True): #TODO
         env = self.comps._environment_by_id(env_id)
         p_env = self.persistor.environment(env_id)
         if not p_env:
@@ -556,7 +556,7 @@ class Solver(object):
                 pass
         return trans
 
-    def _environment_remove(self, env_id):
+    def _environment_remove(self, env_id): #TODO
         p_env = self.persistor.environment(env_id)
         if not p_env.installed:
             raise CompsError(_("Environment '%s' is not installed.") %
@@ -576,7 +576,7 @@ class Solver(object):
         p_env.pkg_types = 0
         return trans
 
-    def _environment_upgrade(self, env_id):
+    def _environment_upgrade(self, env_id): #TODO
         env = self.comps._environment_by_id(env_id)
         p_env = self.persistor.environment(env.id)
         if not p_env.installed:
@@ -602,65 +602,55 @@ class Solver(object):
         return trans
 
     def _group_install(self, group_id, pkg_types, exclude, strict=True):
+        if type(group_id) == self.persistor.get_group_type():
+            group_id = group_id.name_id
         group = self.comps._group_by_id(group_id)
         if not group:
             raise ValueError(_("Group_id '%s' does not exist.") % ucd(group_id))
         p_grp = self.persistor.group(group_id) #this will return HifSwdbGroup object
-        #if not p_grp:
-        #    p_grp = self.persistor.new_group()
-        p_grp = self.persistor.new_group() #TODO
-        if p_grp.is_installed:
+        if p_grp and p_grp.is_installed:
             logger.warning(_("Group '%s' is already installed.") %
                              group.ui_name)
-
-        exclude = set() if exclude is None else set(exclude)
-
-        #SWDB
-
-        p_grp.name_id = group_id
-        p_grp.name = group.name
-        p_grp.ui_name = group.ui_name
-        p_grp.pkg_types = pkg_types
-        p_grp.grp_types = 0
-
-        self.persistor.swdb.add_group(p_grp)
-
-        p_grp.add_exclude(exclude)
-        p_grp.add_package(self._full_package_set(group))
-
-        #p_grp.pkg_exclude.extend(exclude)
-        #p_grp.full_list.extend(self._full_package_set(group))
+        exclude = list() if exclude is None else list(exclude)
+        if not p_grp:
+            p_grp = self.persistor.new_group(group_id,group.name,group.ui_name,1,pkg_types,0)
+            self.persistor.swdb.add_group(p_grp)
+            p_grp.add_exclude(exclude)
+            p_grp.add_package(list(self._full_package_set(group)))
 
         trans = TransactionBunch()
         trans.install.update(self._pkgs_of_type(group, pkg_types, exclude))
         return trans
 
     def _group_remove(self, group_id):
+        if type(group_id) == self.persistor.get_group_type():
+            group_id = group_id.name_id
         p_grp = self.persistor.group(group_id)
-        if not p_grp.installed:
+        if not p_grp.is_installed:
             raise CompsError(_("Group '%s' not installed.") %
                              p_grp.ui_name)
 
         trans = TransactionBunch()
-        exclude = p_grp.pkg_exclude
-        trans.remove = {pkg for pkg in p_grp.full_list
+        exclude = p_grp.get_exclude()
+        trans.remove = {pkg for pkg in p_grp.get_full_list()
                         if pkg not in exclude and self._removable_pkg(pkg)}
         p_grp.pkg_types = 0
-        del p_grp.full_list[:]
-        del p_grp.pkg_exclude[:]
+        p_grp.is_installed = 0
+        self.persistor.swdb.update_group(group_id)
         return trans
 
     def _group_upgrade(self, group_id):
+        if type(group_id) == self.persistor.get_group_type():
+            group_id = group_id.name_id
         group = self.comps._group_by_id(group_id)
         p_grp = self.persistor.group(group.id)
-        if not p_grp.installed:
+        if not p_grp.is_installed:
             raise CompsError(_("Group '%s' not installed.") %
                              group.ui_name)
-        exclude = set(p_grp.pkg_exclude)
-        old_set = set(p_grp.full_list)
+        exclude = set(p_grp.get_exclude())
+        old_set = set(p_grp.get_full_list())
         new_set = self._pkgs_of_type(group, p_grp.pkg_types, exclude)
-        del p_grp.full_list[:]
-        p_grp.full_list.extend(self._full_package_set(group))
+        p_grp.update_full_list(list(self._full_package_set(group)))
 
         trans = TransactionBunch()
         trans.install = {pkg for pkg in new_set if pkg.name not in old_set}

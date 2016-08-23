@@ -368,8 +368,8 @@ class GroupPersistor(object):
     def diff(self):
         return _GroupsDiff(self._original, self.db)
 
-    def new_group(self):
-        group = self.swdb.new_SwdbGroup()
+    def new_group(self,name_id, name, ui_name,is_installed,pkg_types,grp_types):
+        group = Hif.SwdbGroup.new(name_id,name,ui_name,is_installed,pkg_types,grp_types,self.swdb)
         return group
 
     def new_env(self):
@@ -391,22 +391,22 @@ class GroupPersistor(object):
         """add to the persistor packages that are already installed or are
            being installed by group transaction"""
         ins = {p.name for p in set(goal.list_installs()).union(set(installed))}
-        print(self.diff())
         for g in self.diff().new_groups:
             all_pkgs = set(self.group(g).full_list)
             installed_in_group = list(all_pkgs.intersection(ins))
             self.group(g).param_dct['full_list'] = installed_in_group
 
     def group(self, id_):
-        return self._access('GROUPS', id_)
+        return self.swdb.get_group(id_)
+    def get_group_type(self):
+        return Hif.SwdbGroup
 
     @property
     def groups(self):
         return self.db['GROUPS']
 
     def groups_by_pattern(self, pattern, case_sensitive=False):
-        return _by_pattern(pattern, self.groups,
-                           self.group, case_sensitive)
+        return self.swdb.groups_by_pattern(pattern)
 
     def save(self):
         if not self._commit:

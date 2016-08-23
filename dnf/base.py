@@ -652,7 +652,6 @@ class Base(object):
             raise exc
         if self._group_persistor:
             installed = self.sack.query().installed()
-            print(vars(installed))
             self._group_persistor.update_group_env_installed(installed, goal)
         self._plugins.run_resolved()
         return got_transaction
