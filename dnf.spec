@@ -1,4 +1,5 @@
 %global hawkey_version 0.6.1
+%global hawkey_conflict_version 0.7.0
 %global librepo_version 1.7.16
 %global libcomps_version 0.1.6
 %global rpm_version 4.12.0
@@ -87,6 +88,7 @@ As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 %package -n python2-%{name}
 Summary:        Python 2 interface to DNF
 %{?python_provide:%python_provide python2-%{name}}
+Conflicts:      python-hawkey >= %{hawkey_conflict_version}
 BuildRequires:  python2-devel
 BuildRequires:  python-hawkey >= %{hawkey_version}
 BuildRequires:  python-iniparse
@@ -123,6 +125,7 @@ Python 2 interface to DNF.
 %package -n python3-%{name}
 Summary:        Python 3 interface to DNF.
 %{?python_provide:%python_provide python3-%{name}}
+Conflicts:      python3-hawkey >= %{hawkey_conflict_version}
 BuildRequires:  python3-devel
 BuildRequires:  python3-hawkey >= %{hawkey_version}
 BuildRequires:  python3-iniparse
