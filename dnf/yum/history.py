@@ -766,8 +766,11 @@ class YumHistory(object):
             return
         self.swdb.trans_data_pid_end(pid, self._tid, state)
 
+    def _log_group_trans(self, tid,  groups_installed=[], groups_removed=[]):
+        self.swdb.log_group_trans(tid, groups_installed, groups_removed)
+
     def beg(self, rpmdb_version, using_pkgs, tsis, skip_packages=[],
-            rpmdb_problems=[], cmdline=None):
+            rpmdb_problems=[], cmdline=None, groups_installed=[], groups_removed=[]):
         if cmdline:
             self._tid = self.swdb.trans_beg(str(int(time.time())),str(rpmdb_version),cmdline,str(misc.getloginuid()),self.releasever)
         else:
@@ -778,6 +781,7 @@ class YumHistory(object):
                 pid   = self.pkg2pid(pkg)
                 yumdb_info = self.yumdb.get_package(pkg)
                 self.swdb.trans_data_beg(self._tid, pid,(yumdb_info.get("reason") or "unknown") ,state)
+        self._log_group_trans(self._tid, groups_installed, groups_removed)
 
     def _log_errors(self, errors):
         for error in errors:

@@ -172,9 +172,6 @@ class Base(object):
             self._repo_persistor.expired_to_add.update(expired)
             self._repo_persistor.save()
 
-        if self._group_persistor:
-            self._group_persistor.save()
-
         if self._tempfile_persistor:
             self._tempfile_persistor.save()
 
@@ -650,9 +647,9 @@ class Base(object):
             if self._group_persistor:
                 self._group_persistor._rollback()
             raise exc
-        if self._group_persistor:
-            installed = self.sack.query().installed()
-            self._group_persistor.update_group_env_installed(installed, goal)
+        #if self._group_persistor:
+        #    installed = self.sack.query().installed()
+        #    self._group_persistor.update_group_env_installed(installed, goal)
         self._plugins.run_resolved()
         return got_transaction
 
@@ -777,9 +774,10 @@ class Base(object):
                 cmdline = ' '.join(self.args)
             elif hasattr(self, 'cmds') and self.cmds:
                 cmdline = ' '.join(self.cmds)
-
+            _grp_i = self._group_persistor.groups_installed
+            _grp_r =  self._group_persistor.groups_removed
             self.history.beg(rpmdbv, using_pkgs, list(self.transaction),
-                             [], [], cmdline)
+                             [], [], cmdline, _grp_i, _grp_r)
             # write out our config and repo data to additional history info
             self._store_config_in_history()
 

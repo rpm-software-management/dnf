@@ -258,168 +258,49 @@ class GroupPersistor(object):
     def __init__(self, persistdir, comps=None):
         self._commit = False
         self._comps = comps
-        self._dbfile = os.path.join(persistdir, 'groups.json')
-        self.db = None
-        self._original = None
-        self._load()
-        self._ensure_sanity()
         self.swdb = Hif.Swdb()
-
-    def _access(self, subdict, id_):
-        subdict = self.db[subdict]
-        dct = subdict.get(id_)
-        if dct is None:
-            dct = _PersistMember.default()
-            subdict[id_] = dct
-
-        return _PersistMember(dct)
-
-    def _add_missing_entries(self):
-        for env_id in self.db['ENVIRONMENTS']:
-            env = self.environment(env_id)
-            for key in env.DEFAULTS.keys():
-                try:
-                    getattr(env, key)
-                except KeyError:
-                    if self._comps:
-                        try:
-                            comps_env = self._comps._environment_by_id(env_id)
-                            if comps_env:
-                                value = getattr(comps_env, key)
-                                setattr(env, key, value)
-                                continue
-                        except KeyError:
-                            # set default if env is not pressent in comps
-                            pass
-                    setattr(env, key, env.DEFAULTS[key])
-        for grp_id in self.db['GROUPS']:
-            grp = self.group(grp_id)
-            for key in grp.DEFAULTS.keys():
-                try:
-                    getattr(grp, key)
-                except KeyError:
-                    if self._comps:
-                        try:
-                            comps_grp = self._comps._group_by_id(grp_id)
-                            if comps_grp:
-                                value = getattr(comps_grp, key)
-                                setattr(grp, key, value)
-                                continue
-                        except KeyError:
-                            # set default if grp is not pressent in comps
-                            pass
-                    setattr(grp, key, grp.DEFAULTS[key])
-
-    def _ensure_sanity(self):
-        """Make sure the input db is valid."""
-        if 'GROUPS' in self.db and 'ENVIRONMENTS' in self.db:
-            return
-        logger.warning(_('Invalid groups database, clearing.'))
-        self.db = self._empty_db()
-
-    def _load(self):
-        self.db = self._empty_db()
-        try:
-            with open(self._dbfile) as db:
-                content = db.read()
-                self.db = ClonableDict.wrap_dict(json.loads(content))
-                self._migrate()
-        except IOError as e:
-            if e.errno != errno.ENOENT:
-                raise
-        self._original = self.db.clone()
-
-    def _migrate(self):
-        try:
-            version = self.db['meta']['version']
-        except KeyError:
-            msg = _('Unsupported installed groups database found, resetting.')
-            logger.warning(msg)
-            self.db = self._empty_db()
-            version = self.db['meta']['version']
-        else:
-            current = self._empty_db()['meta']['version']
-            dist = distutils.version.LooseVersion
-            if dist(version) < dist(current):
-                logger.debug('Migrating group persistor from %s to %s. ',
-                             version, current)
-                self._add_missing_entries()
-                self.db['meta']['version'] = current
-                self.commit()
-                self.save()
-
-        logger.debug('group persistor md version: %s', version)
-
-    def _prune_db(self):
-        for members_dct in (self.db['ENVIRONMENTS'], self.db['GROUPS']):
-            del_list = []
-            for (id_, memb) in members_dct.items():
-                if not _PersistMember(memb).installed:
-                    del_list.append(id_)
-            for id_ in del_list:
-                del members_dct[id_]
+        self.groups_installed = []
+        self.groups_removed = []
 
     def _rollback(self):
         self.db = self._original.clone()
 
     def commit(self):
-        self._commit = True
-
-    def diff(self):
-        return _GroupsDiff(self._original, self.db)
+        if self.groups_installed:
+            self.swdb.groups_commit(list(pkg.name_id for pkg in self.groups_installed))
+        for group in self.groups_removed:
+            self.swdb.uninstall_group(group)
 
     def new_group(self,name_id, name, ui_name,is_installed,pkg_types,grp_types):
         group = Hif.SwdbGroup.new(name_id,name,ui_name,is_installed,pkg_types,grp_types,self.swdb)
         return group
 
-    def new_env(self):
-        env = self.swdb.new_SwdbEnv()
+    def new_env(self,name_id, name, ui_name,pkg_types,grp_types):
+        env = Hif.SwdbEnv.new(name_id,name,ui_name,pkg_types,grp_types,self.swdb)
         return env
 
     def environment(self, id_):
-        return self._access('ENVIRONMENTS', id_)
+        return self.swdb.get_env(id_)
 
-    @property
     def environments(self):
-        return self.db['ENVIRONMENTS']
+        return self.swdb.env_by_pattern("%")
 
     def environments_by_pattern(self, pattern, case_sensitive=False):
-        return _by_pattern(pattern, self.environments,
-                           self.environment, case_sensitive)
-
-    def update_group_env_installed(self, installed, goal):
-        """add to the persistor packages that are already installed or are
-           being installed by group transaction"""
-        ins = {p.name for p in set(goal.list_installs()).union(set(installed))}
-        for g in self.diff().new_groups:
-            all_pkgs = set(self.group(g).get_full_list())
-            installed_in_group = list(all_pkgs.intersection(ins))
-            self.group(g).param_dct['full_list'] = installed_in_group
+        return self.swdb.env_by_pattern(pattern)
 
     def group(self, id_):
         return self.swdb.get_group(id_)
+
     def get_group_type(self):
         return Hif.SwdbGroup
+    def get_env_type(self):
+        return Hif.SwdbEnv
 
-    @property
     def groups(self):
-        return self.db['GROUPS']
+        return self.swdb.groups_by_pattern("%") #sqlite3 wildcard - will patch any pattern...
 
     def groups_by_pattern(self, pattern, case_sensitive=False):
         return self.swdb.groups_by_pattern(pattern)
-
-    def save(self):
-        if not self._commit:
-            return False
-        self._prune_db()
-        if self.db == self._original:
-            return False
-        logger.debug('group persistor: saving.')
-        with open(self._dbfile, 'w') as db:
-            json.dump(self.db.dct, db)
-        self._commit = False
-        return True
-
 
 class JSONDB(object):
 

@@ -73,7 +73,11 @@ class GroupCommand(commands.Command):
 
     def _environment_lists(self, patterns):
         def available_pred(env):
-            return not self.base._group_persistor.environment(env.id).installed
+            env_found = self.base._group_persistor.environment(env.id)
+            if env_found:
+                return env_found.is_installed()
+            else:
+                return False
 
         self._assert_comps()
         if patterns is None:
@@ -85,7 +89,11 @@ class GroupCommand(commands.Command):
 
     def _group_lists(self, uservisible, patterns):
         def installed_pred(group):
-            return self.base._group_persistor.group(group.id).installed
+            group_found = self.base._group_persistor.group(group.id)
+            if group_found:
+                return group_found.is_installed
+            else:
+                return False
         installed = []
         available = []
 
