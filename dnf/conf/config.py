@@ -501,7 +501,7 @@ class BaseConfig(object):
         out = []
         out.append('[%s]' % self._section)
         for name, value in self._option.items():
-            out.append('%s: %s' % (name, value))
+            out.append('%s: %s' % (name, value._get()))
         return '\n'.join(out)
 
     def _add_option(self, name, optionobj):
