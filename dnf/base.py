@@ -774,8 +774,11 @@ class Base(object):
                 cmdline = ' '.join(self.args)
             elif hasattr(self, 'cmds') and self.cmds:
                 cmdline = ' '.join(self.cmds)
-            _grp_i = self._group_persistor.groups_installed
-            _grp_r =  self._group_persistor.groups_removed
+            _grp_i = []
+            _grp_r = []
+            if self._group_persistor:
+                _grp_i = self._group_persistor.groups_installed
+                _grp_r = self._group_persistor.groups_removed
             self.history.beg(rpmdbv, using_pkgs, list(self.transaction),
                              [], [], cmdline, _grp_i, _grp_r)
             # write out our config and repo data to additional history info
