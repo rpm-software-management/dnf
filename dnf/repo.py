@@ -196,6 +196,7 @@ class _Handle(librepo.Handle):
         self.maxparalleldownloads = max_parallel_downloads
         self.yumdlist = [
             "primary", "filelists", "prestodelta", "group_gz", "updateinfo"]
+        self.yumslist = [('group_gz', 'group')]
 
     def __str__(self):
         return '_Handle: metalnk: %s, mlist: %s, urls %s.' % \
