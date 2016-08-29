@@ -606,7 +606,7 @@ class Repo(dnf.conf.RepoConf):
         return Metadata(result, handle)
 
     def _handle_load_with_pubring(self, handle):
-        with dnf.crypto.pubring_dir(self.pubring_dir):
+        with dnf.crypto.pubring_dir(self._pubring_dir):
             return self._handle_load_core(handle)
 
     def _handle_new_local(self, destdir):
