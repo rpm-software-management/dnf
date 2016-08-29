@@ -76,7 +76,8 @@ class Package(hawkey.Package):
         return self.reponame == hawkey.SYSTEM_REPO_NAME
 
     @property
-    def _from_repo(self):
+    def from_repo(self):
+        # :api
         yumdb_info = self.base._yumdb.get_package(self) if self._from_system else {}
         if 'from_repo' in yumdb_info:
             return '@'+yumdb_info.from_repo
