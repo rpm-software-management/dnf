@@ -68,7 +68,7 @@ Provides:       dnf-command(upgrade-to)
 
 # dnf-langpacks package is retired in F25
 # to have clean upgrade path for dnf-langpacks
-Obsoletes:      dnf-langpacks
+Obsoletes:      dnf-langpacks  <= 0.15.1-6
 
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
