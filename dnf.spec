@@ -77,6 +77,9 @@ Package manager forked from Yum, using libsolv as a dependency resolver.
 %package conf
 Summary:        Configuration files for DNF
 Requires:       libreport-filesystem
+# dnf-langpacks package is retired in F25
+# to have clean upgrade path for dnf-langpacks
+Obsoletes:      dnf-langpacks-conf <= 0.15.1-6
 
 %description conf
 Configuration files for DNF.
@@ -121,6 +124,9 @@ Requires:       python2-pygpgme
 %endif
 Requires:       rpm-plugin-systemd-inhibit
 Requires:       rpm-python >= %{rpm_version}
+# dnf-langpacks package is retired in F25
+# to have clean upgrade path for dnf-langpacks
+Obsoletes:      python-dnf-langpacks <= 0.15.1-6
 
 %description -n python2-%{name}
 Python 2 interface to DNF.
@@ -148,6 +154,9 @@ Requires:       python3-librepo >= %{librepo_version}
 Requires:       python3-pygpgme
 Requires:       rpm-plugin-systemd-inhibit
 Requires:       rpm-python3 >= %{rpm_version}
+# dnf-langpacks package is retired in F25
+# to have clean upgrade path for dnf-langpacks
+Obsoletes:      python3-dnf-langpacks <= 0.15.1-6
 
 %description -n python3-%{name}
 Python 3 interface to DNF.
