@@ -263,7 +263,7 @@ class Base(object):
                             raise
                         errors.append(e)
                         r.disable()
-                if age != 0:
+                if age != 0 and mts != 0:
                     logger.warning(_("Last metadata expiration check: "
                                      "%s ago on %s."),
                                    datetime.timedelta(seconds=int(age)),
