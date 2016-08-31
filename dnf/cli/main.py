@@ -127,7 +127,7 @@ def _main(base, args):
         if ret:
             return ret
 
-    cli.command._run_transaction()
+    cli.command.run_transaction()
     return cli.demands.success_exit_status
 
 
