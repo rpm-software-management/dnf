@@ -80,6 +80,9 @@ Package manager forked from Yum, using libsolv as a dependency resolver.
 %package conf
 Summary:        Configuration files for DNF
 Requires:       libreport-filesystem
+# dnf-langpacks package is retired in F25
+# to have clean upgrade path for dnf-langpacks
+Obsoletes:      dnf-langpacks-conf <= 0.15.1-6
 
 %description conf
 Configuration files for DNF.
