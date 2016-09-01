@@ -66,7 +66,7 @@ class InstallCommand(commands.Command):
         if self.opts.command == ['localinstall'] and nonfilenames:
             group_names = map(lambda g: '@' + g, self.opts.grp_specs)
             for pkg in chain(self.opts.pkg_specs, group_names):
-                msg = _('Not valid rpm file path: %s')
+                msg = _('Not a valid rpm file path: %s')
                 logger.info(msg, self.base.output.term.bold(pkg))
             if strict:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
