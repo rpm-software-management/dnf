@@ -33,6 +33,7 @@ Contents:
    release_notes
    cli_vs_yum
    api_vs_yum
+   dnf-1_vs_dnf-2
 
 DNF Plugins and components
 
