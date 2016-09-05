@@ -104,7 +104,7 @@ class GroupCommand(commands.Command):
         return installed, available
 
     def _grp_setup(self):
-        self.base.read_comps()
+        self.base.read_comps(arch_filter=True)
 
     def _info(self, userlist):
         for strng in userlist:

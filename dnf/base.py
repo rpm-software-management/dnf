@@ -401,7 +401,7 @@ class Base(object):
     def _activate_group_persistor(self):
         return dnf.persistor.GroupPersistor(self.conf.persistdir, self._comps)
 
-    def read_comps(self):
+    def read_comps(self, arch_filter=False):
         # :api
         """Create the groups object to access the comps metadata."""
         timer = dnf.logging.Timer('loading comps')
@@ -435,6 +435,9 @@ class Base(object):
                 logger.critical(msg, repo.id, e)
 
         self._group_persistor = self._activate_group_persistor()
+        if arch_filter:
+            self._comps._i.arch_filter(
+                [self._conf.substitutions['basearch']])
         timer()
         return self._comps
 

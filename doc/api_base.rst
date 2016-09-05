@@ -111,9 +111,9 @@
 
     Read repository configuration from the main configuration file specified by :attr:`dnf.conf.Conf.config_file_path` and any ``.repo`` files under :attr:`dnf.conf.Conf.reposdir`. All the repositories found this way are added to :attr:`~.Base.repos`.
 
-  .. method:: read_comps()
+  .. method:: read_comps(arch_filter=False)
 
-    Read comps data from all the enabled repositories and initialize the :attr:`comps` object.
+    Read comps data from all the enabled repositories and initialize the :attr:`comps` object. If arch_filter=True then result is limited to system basearch.
 
   .. method:: reset(**kwargs)
 

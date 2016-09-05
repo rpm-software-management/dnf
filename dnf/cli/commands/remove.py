@@ -89,7 +89,7 @@ class RemoveCommand(commands.Command):
 
         # Remove groups.
         if self.opts.grp_specs:
-            self.base.read_comps()
+            self.base.read_comps(arch_filter=True)
             if self.base.env_group_remove(self.opts.grp_specs):
                 done = True
 

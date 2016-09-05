@@ -48,7 +48,7 @@ if __name__ == '__main__':
             sys.exit(e)
         # Comps data reading initializes the base.comps attribute.
         if GRP_SPECS:
-            base.read_comps()
+            base.read_comps(arch_filter=True)
         # Group marking methods set the user request.
         for grp_spec in GRP_SPECS:
             group = base.comps.group_by_pattern(grp_spec)
