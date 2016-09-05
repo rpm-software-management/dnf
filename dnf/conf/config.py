@@ -693,6 +693,7 @@ class MainConf(BaseConfig):
         self._add_option('showdupesfromrepos', BoolOption(False))
         self._add_option('enabled', BoolOption(True))
         self._add_option('enablegroups', BoolOption(True))
+        self._add_option('exit_on_lock', BoolOption(False))
 
         self._add_option('bandwidth', BytesOption(0))
         self._add_option('minrate', BytesOption(1000))

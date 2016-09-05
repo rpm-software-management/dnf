@@ -43,18 +43,18 @@ def _fit_lock_dir(dir_):
         dir_ = os.path.join(misc.getCacheDir(), 'locks', hexdir)
     return dir_
 
-def build_download_lock(cachedir):
+def build_download_lock(cachedir, exit_on_lock):
     return ProcessLock(os.path.join(_fit_lock_dir(cachedir), 'download_lock.pid'),
-                       'cachedir', True)
+                       'cachedir', not exit_on_lock)
 
-def build_metadata_lock(cachedir):
+def build_metadata_lock(cachedir, exit_on_lock):
     return ProcessLock(os.path.join(_fit_lock_dir(cachedir), 'metadata_lock.pid'),
-                       'metadata', True)
+                       'metadata', not exit_on_lock)
 
 
-def build_rpmdb_lock(persistdir):
+def build_rpmdb_lock(persistdir, exit_on_lock):
     return ProcessLock(os.path.join(_fit_lock_dir(persistdir), 'rpmdb_lock.pid'),
-                       'RPMDB', True)
+                       'RPMDB', not exit_on_lock)
 
 
 class ProcessLock(object):
