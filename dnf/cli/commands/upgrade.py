@@ -83,7 +83,7 @@ class UpgradeCommand(commands.Command):
 
             # Update groups.
             if self.opts.grp_specs:
-                self.base.read_comps()
+                self.base.read_comps(arch_filter=True)
                 self.base.env_group_upgrade(self.opts.grp_specs)
                 done = True
         else:

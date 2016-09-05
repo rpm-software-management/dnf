@@ -61,8 +61,8 @@ class Command(dnf.cli.Command):
         except EnvironmentError as e:
             raise dnf.exceptions.Error(e)
         # Comps data reading initializes the base.comps attribute.
-        if grp_specs:
-            self.base.read_comps()
+        if self.opts.grp_specs:
+            self.base.read_comps(arch_filter=True)
         # Group marking methods set the user request.
         for grp_spec in self.opts.grp_specs:
             group = self.base.comps.group_by_pattern(grp_spec)

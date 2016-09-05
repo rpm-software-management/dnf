@@ -83,7 +83,7 @@ class InstallCommand(commands.Command):
 
         # Install groups.
         if self.opts.grp_specs and self.opts.command != ['localinstall']:
-            self.base.read_comps()
+            self.base.read_comps(arch_filter=True)
             try:
                 self.base.env_group_install(self.opts.grp_specs,
                                             self.base.conf.group_package_types,
