@@ -262,8 +262,8 @@ class GroupPersistor(object):
         self.groups_installed = []
         self.groups_removed = []
 
-    def _rollback(self):
-        self.db = self._original.clone()
+    #def _rollback(self):
+    #    self.db = self._original.clone()
 
     def commit(self):
         if self.groups_installed:

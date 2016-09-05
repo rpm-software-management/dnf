@@ -644,8 +644,8 @@ class Base(object):
                 exc = dnf.exceptions.Error(msg)
 
         if exc is not None:
-            if self._group_persistor:
-                self._group_persistor._rollback()
+        #if self._group_persistor:
+        #        self._group_persistor._rollback()
             raise exc
         #if self._group_persistor:
         #    installed = self.sack.query().installed()
@@ -1470,7 +1470,7 @@ class Base(object):
             for env_id in res.environments:
                 cnt += self.environment_install(env_id, types, strict=strict)
         if not done and strict:
-            self._group_persistor._rollback()
+            #self._group_persistor._rollback()
             raise dnf.exceptions.Error(_('Nothing to do.'))
         return cnt
 
