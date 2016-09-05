@@ -48,6 +48,10 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Debug messages output level, in the range 0 to 10. Default is 2.
 
+  .. attribute:: exit_on_lock
+
+    Boolean option, if set to ``True`` dnf client exits immediately when something else has the lock. Default is ``False``.
+
   .. attribute:: get_reposdir
 
     Returns the value of the first valid reposdir or if unavailable the value of created reposdir (string)

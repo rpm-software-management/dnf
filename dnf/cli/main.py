@@ -67,6 +67,9 @@ def main(args):
         return 1
     except dnf.exceptions.DepsolveError as e:
         return 1
+    except dnf.exceptions.ExitOnLock as e:
+        logger.info(ucd(e))
+        return 0
     except dnf.exceptions.Error as e:
         return ex_Error(e)
     except IOError as e:

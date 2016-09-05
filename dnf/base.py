@@ -235,7 +235,7 @@ class Base(object):
         """Prepare the Sack and the Goal objects. """
         timer = dnf.logging.Timer('sack setup')
         self._sack = dnf.sack._build_sack(self)
-        lock = dnf.lock.build_metadata_lock(self.conf.cachedir)
+        lock = dnf.lock.build_metadata_lock(self.conf.cachedir, self.conf.exit_on_lock)
         with lock:
             if load_system_repo is not False:
                 try:
@@ -600,7 +600,7 @@ class Base(object):
             return
 
         logger.info(_('Running transaction check'))
-        lock = dnf.lock.build_rpmdb_lock(self.conf.persistdir)
+        lock = dnf.lock.build_rpmdb_lock(self.conf.persistdir, self.conf.exit_on_lock)
         with lock:
             # save our ds_callback out
             dscb = self._ds_callback
@@ -909,7 +909,7 @@ class Base(object):
         if progress is None:
             progress = dnf.callback.NullDownloadProgress()
 
-        lock = dnf.lock.build_download_lock(self.conf.cachedir)
+        lock = dnf.lock.build_download_lock(self.conf.cachedir, self.conf.exit_on_lock)
         with lock:
             drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(), progress)
             remote_pkgs = [po for po in pkglist

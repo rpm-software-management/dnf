@@ -100,6 +100,11 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     and overwritten by \-\ :ref:`-verbose <verbose_options-label>` commandline
     option.
 
+``exit_on_lock``
+    :ref:`boolean <boolean-label>`
+
+    Should the dnf client exit immediately when something else has the lock. Default is False
+
 ``install_weak_deps``
     :ref:`boolean <boolean-label>`
 
