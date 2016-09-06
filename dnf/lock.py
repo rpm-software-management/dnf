@@ -45,26 +45,25 @@ def _fit_lock_dir(dir_):
 
 def build_download_lock(cachedir, exit_on_lock):
     return ProcessLock(os.path.join(_fit_lock_dir(cachedir), 'download_lock.pid'),
-                       'cachedir', True, exit_on_lock)
+                       'cachedir', not exit_on_lock)
 
 def build_metadata_lock(cachedir, exit_on_lock):
     return ProcessLock(os.path.join(_fit_lock_dir(cachedir), 'metadata_lock.pid'),
-                       'metadata', True, exit_on_lock)
+                       'metadata', not exit_on_lock)
 
 
 def build_rpmdb_lock(persistdir, exit_on_lock):
     return ProcessLock(os.path.join(_fit_lock_dir(persistdir), 'rpmdb_lock.pid'),
-                       'RPMDB', True, exit_on_lock)
+                       'RPMDB', not exit_on_lock)
 
 
 class ProcessLock(object):
-    def __init__(self, target, description, blocking=False, exit_on_lock=False):
+    def __init__(self, target, description, blocking=False):
         self.blocking = blocking
         self.count = 0
         self.description = description
         self.target = target
         self.thread_lock = threading.RLock()
-        self.exit_on_lock = exit_on_lock
 
     def _lock_thread(self):
         if not self.thread_lock.acquire(blocking=False):
@@ -137,9 +136,6 @@ class ProcessLock(object):
                 msg = '%s already locked by %d' % (self.description, pid)
                 raise ProcessLockError(msg, pid)
             if inform or prev_pid != pid:
-                if self.exit_on_lock:
-                    msg = _('Process with pid %d has a lock. Exiting.' % (pid))
-                    raise ExitOnLock(msg)
                 msg = _('Waiting for process with pid %d to finish.' % (pid))
                 logger.info(msg)
                 inform = False

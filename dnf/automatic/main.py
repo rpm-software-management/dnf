@@ -170,7 +170,7 @@ def main(args):
             emitters.commit()
     except dnf.exceptions.ExitOnLock as exc:
         logger.info(ucd(exc))
-        return 0
+        return 1
     except dnf.exceptions.Error as exc:
         logger.error(_('Error: %s'), ucd(exc))
         return 1
