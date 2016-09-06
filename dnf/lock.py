@@ -20,7 +20,7 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.exceptions import ProcessLockError, ThreadLockError, LockError, ExitOnLock
+from dnf.exceptions import ProcessLockError, ThreadLockError, LockError
 from dnf.i18n import _
 from dnf.yum import misc
 import dnf.logging

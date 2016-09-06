@@ -168,9 +168,6 @@ def main(args):
             base.do_transaction()
             emitters.notify_applied()
             emitters.commit()
-    except dnf.exceptions.ExitOnLock as exc:
-        logger.info(ucd(exc))
-        return 1
     except dnf.exceptions.Error as exc:
         logger.error(_('Error: %s'), ucd(exc))
         return 1
