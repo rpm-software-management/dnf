@@ -3,6 +3,7 @@
 # This file is part of dnf.
 #
 # Copyright 2015 (C) Igor Gnatenko <i.gnatenko.brain@gmail.com>
+# Copyright 2016 (C) Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -163,7 +164,7 @@ class HistoryCompletionCommand(dnf.cli.commands.HistoryCommand):
         super(HistoryCompletionCommand, self).__init__(args)
 
     def run(self, args):
-        subcmds = self.__class__.__base__.usage[1:-1].split("|")[1:]
+        subcmds = self.__class__.__base__.usage[1:-1].split("|")
         if args[0] not in subcmds:
             print("\n".join(filter_list_by_kw(self.opts.tid, subcmds)))
 
