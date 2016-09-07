@@ -35,17 +35,6 @@ import dnf.rpm.miscutils
 import dnf.i18n
 import functools
 
-
-#  Cut over for when we should just give up and load everything.
-#  The main problem here is not so much SQLite dying (although that happens
-# at large values: http://sqlite.org/limits.html#max_variable_number) but that
-# but SQLite going really slow when it gets medium sized values (much slower
-# than just loading everything and filtering it in python).
-PATTERNS_MAX = 8
-#  We have another value here because name is indexed and sqlite is _much_
-# faster even at large numbers of patterns.
-PATTERNS_INDEXED_MAX = 128
-
 class _YumHistPackageYumDB(object):
     """ Class to pretend to be yumdb_info for history packages. """
 
@@ -78,14 +67,11 @@ class _YumHistPackageYumDB(object):
         return val
 
     def __contains__(self, attr):
-        #  This is faster than __iter__ and it makes things fail in a much more
-        # obvious way in weird FS corruption cases like: BZ 593436
         x = self.get(attr)
         return x is not None
 
     def get(self, attr, default=None):
         """retrieve an add'l data obj"""
-
         try:
             res = getattr(self, attr)
         except AttributeError:
@@ -219,26 +205,6 @@ class YumHistoryPackage(object):
             return self.nvra
         else:
             return self.envra
-
-    def _ui_from_repo(self):
-        """ This reports the repo the package is from, we integrate YUMDB info.
-            for RPM packages so a package from "fedora" that is installed has a
-            ui_from_repo of "@fedora". Note that, esp. with the --releasever
-            option, "fedora" or "rawhide" isn't authoritative.
-            So we also check against the current releasever and if it is
-            different we also print the YUMDB releasever. This means that
-            installing from F12 fedora, while running F12, would report as
-            "@fedora/13". """
-        if 'from_repo' in self.yumdb_info:
-            self._history.releasever
-            end = ''
-            if (self._history.releasever is not None and
-                'releasever' in self.yumdb_info and
-                self.yumdb_info.releasever != self._history.releasever):
-                end = '/' + self.yumdb_info.releasever
-            return '@' + self.yumdb_info.from_repo + end
-        return self.repoid
-    ui_from_repo = property(fget=lambda self: self._ui_from_repo())
 
     @property
     def ui_nevra(self):
@@ -627,11 +593,87 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
             self.end_timestamp    = obj.end_timestamp
             self.end_rpmdbversion = obj.end_rpmdbversion
 
+class SwdbInterface(object):
+    def __init__(self, releasever):
+        self.swdb = Hif.Swdb.new(releasever)
+        self.releasever = releasever
+
+    def close(self):
+        self.swdb.close()
+
+    def get_path(self):
+        return self.swdb.get_path()
+
+    def last(self):
+        return self.swdb.last()
+
+    def old(self, tids=[], limit=0, complete_transactions_only=False):
+        return self.swdb.trans_old(list(tids), limit, complete_transactions_only)
+
+    def _log_group_trans(self, tid,  groups_installed=[], groups_removed=[]):
+        self.swdb.log_group_trans(tid, groups_installed, groups_removed)
+
+    def beg(self, rpmdb_version, using_pkgs, tsis, skip_packages=[],
+            rpmdb_problems=[], cmdline=None, groups_installed=[], groups_removed=[]):
+        if cmdline:
+            self._tid = self.swdb.trans_beg(str(int(time.time())),str(rpmdb_version),cmdline,str(misc.getloginuid()),self.releasever)
+        else:
+            self._tid = self.swdb.trans_beg(str(int(time.time())),str(rpmdb_version),"",str(misc.getloginuid()),self.releasever)
+
+        for tsi in tsis:
+            for (pkg, state) in tsi._history_iterator():
+                pid   = self.pkg2pid(pkg)
+                #yumdb_info = self.yumdb.get_package(pkg) #TODO get rid of this
+                self.swdb.trans_data_beg(self._tid, pid,"unknown",state)
+        self._log_group_trans(self._tid, groups_installed, groups_removed)
+
+    def _pkgtup2pid(self, pkgtup, checksum="", checksum_type="", create=True):
+        pkgtup = map(ucd, pkgtup)
+        (n,a,e,v,r) = pkgtup
+        return self.swdb.get_pid_by_nevracht(n,str(e),str(v),str(r),a,checksum,checksum_type,"rpm",create)
+
+    def _apkg2pid(self, po, create=True):
+        csum = po.returnIdSum()
+        csum_type = None
+        if csum is not None:
+            csum_type = csum[0]
+            csum = csum[1]
+        else:
+            csum = ""
+            csum_type = ""
+        return self._pkgtup2pid(po.pkgtup, csum, csum_type, create)
+    def _ipkg2pid(self, po, create=True):
+        csum = None
+        csum_type = None
+        yumdb = self.yumdb.get_package(po)
+        if 'checksum_type' in yumdb and 'checksum_data' in yumdb:
+            csum_type = yumdb.checksum_type
+            csum = yumdb.checksum_data
+        else:
+            csum = ""
+            csum_type = ""
+        return self._pkgtup2pid(po.pkgtup, csum, csum_type, create)
+    def _hpkg2pid(self, po, create=False):
+        return self._apkg2pid(po, create)
+    def pkg2pid(self, po, create=True):
+        if isinstance(po, YumHistoryPackage):
+            return self._hpkg2pid(po, create)
+        if po._from_system:
+            return self._ipkg2pid(po, create)
+        return self._apkg2pid(po, create)
+
+    def log_scriptlet_output(self, msg):
+        if msg is None or not hasattr(self, '_tid'):
+            return # Not configured to run
+        for error in msg.splitlines():
+            error = ucd(error)
+            self.swdb.log_output(self._tid, error)
+
 
 class YumHistory(object):
     """ API for accessing the history sqlite data. """
 
-    def __init__(self, db_path, yumdb, root='/', releasever=None):
+    def __init__(self, db_path, yumdb, root='/', releasever=""):
         self._conn = None
 
         self.conf = misc.GenericHolder()
@@ -642,7 +684,7 @@ class YumHistory(object):
         self.conf.writable = False
         self.conf.readable = True
         self.yumdb = yumdb
-        self.swdb = Hif.Swdb()
+        self.swdb = Hif.Swdb.new(releasever)
         if not self.swdb.exist():
             self.swdb.create_db()
         self.releasever = releasever
@@ -725,41 +767,6 @@ class YumHistory(object):
         if self._conn is not None:
             self._conn.close()
             self._conn = None
-
-    def _pkgtup2pid(self, pkgtup, checksum="", checksum_type="", create=True):
-        pkgtup = map(ucd, pkgtup)
-        (n,a,e,v,r) = pkgtup
-        return self.swdb.get_pid_by_nevracht(n,str(e),str(v),str(r),a,checksum,checksum_type,"rpm",create)
-
-    def _apkg2pid(self, po, create=True):
-        csum = po.returnIdSum()
-        csum_type = None
-        if csum is not None:
-            csum_type = csum[0]
-            csum = csum[1]
-        else:
-            csum = ""
-            csum_type = ""
-        return self._pkgtup2pid(po.pkgtup, csum, csum_type, create)
-    def _ipkg2pid(self, po, create=True):
-        csum = None
-        csum_type = None
-        yumdb = self.yumdb.get_package(po)
-        if 'checksum_type' in yumdb and 'checksum_data' in yumdb:
-            csum_type = yumdb.checksum_type
-            csum = yumdb.checksum_data
-        else:
-            csum = ""
-            csum_type = ""
-        return self._pkgtup2pid(po.pkgtup, csum, csum_type, create)
-    def _hpkg2pid(self, po, create=False):
-        return self._apkg2pid(po, create)
-    def pkg2pid(self, po, create=True):
-        if isinstance(po, YumHistoryPackage):
-            return self._hpkg2pid(po, create)
-        if po._from_system:
-            return self._ipkg2pid(po, create)
-        return self._apkg2pid(po, create)
 
     def trans_data_pid_end(self, pid, state):
         if not hasattr(self, '_tid') or state is None:

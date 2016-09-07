@@ -414,7 +414,7 @@ class Output(object):
             columns = (-63, -16) # Old default
         envra = '%s%s' % (indent, ucd(pkg))
         hi_cols = [highlight, 'normal', 'normal']
-        rid = pkg.ui_from_repo
+        rid = pkg.ui_from_repo()
         columns = zip((envra, rid), columns, hi_cols)
         print(self.fmtColumns(columns))
 
@@ -818,7 +818,7 @@ class Output(object):
         if not verbose:
             return
 
-        print(_("Repo        : %s") % po.ui_from_repo)
+        print(_("Repo        : %s") % po.ui_from_repo())
         done = False
         for item in set(values):
             if po.name == item or po.summary == item:
@@ -1565,10 +1565,8 @@ Transaction Summary
             self._historyInfoCmd(mobj)
 
     def _hpkg2from_repo(self, hpkg):
-        """ Given a pkg, find the ipkg.ui_from_repo."""
-        if 'from_repo' in hpkg.yumdb_info:
-            return hpkg.ui_from_repo
-        return "(unknown)"
+        """ Given a pkg, find the ipkg.ui_from_repo()."""
+        return hpkg.ui_from_repo()
 
     def _historyInfoCmd(self, old, pats=[]):
         name = self._pwd_ui_username(old.loginuid)

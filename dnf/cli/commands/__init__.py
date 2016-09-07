@@ -835,7 +835,7 @@ class HistoryCommand(Command):
         demands.available_repos = True
         demands.sack_activation = True
         demands.root_user = True
-        if not os.access(self.base.history._db_file, os.R_OK):
+        if not os.access(self.base.history.get_path(), os.R_OK):
             logger.critical(_("You don't have access to the history DB."))
             raise dnf.cli.CliError
 

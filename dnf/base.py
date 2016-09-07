@@ -503,9 +503,10 @@ class Base(object):
         if self._history is None:
             db_path = self.conf.persistdir + "/history"
             releasever = self.conf.releasever
-            self._history = history.YumHistory(db_path, self._yumdb,
-                                               root=self.conf.installroot,
-                                               releasever=releasever)
+            #self._history = history.YumHistory(db_path, self._yumdb,
+            #                                   root=self.conf.installroot,
+            #                                   releasever=releasever)
+            self._history = history.SwdbInterface(releasever)
         return self._history
 
     history = property(fget=lambda self: self._getHistory(),
@@ -779,6 +780,8 @@ class Base(object):
             if self._group_persistor:
                 _grp_i = self._group_persistor.groups_installed
                 _grp_r = self._group_persistor.groups_removed
+            print(self.transaction)
+            vars(self.transaction)
             self.history.beg(rpmdbv, using_pkgs, list(self.transaction),
                              [], [], cmdline, _grp_i, _grp_r)
             # write out our config and repo data to additional history info
@@ -2126,12 +2129,14 @@ class Base(object):
         return results
 
     def _store_config_in_history(self):
-        self.history.write_addon_data('config-main', self.conf.dump())
-        myrepos = ''
-        for repo in self.repos.iter_enabled():
-            myrepos += repo.dump()
-            myrepos += '\n'
-        self.history.write_addon_data('config-repos', myrepos)
+        #TODO
+        pass
+        #self.history.write_addon_data('config-main', self.conf.dump())
+        #myrepos = ''
+        #for repo in self.repos.iter_enabled():
+        #    myrepos += repo.dump()
+        #    myrepos += '\n'
+        #self.history.write_addon_data('config-repos', myrepos)
 
     def urlopen(self, url, repo=None, mode='w+b', **kwargs):
         # :api
