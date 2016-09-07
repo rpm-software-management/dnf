@@ -597,6 +597,7 @@ class Base(object):
         if not self.transaction:
             if self._group_persistor:
                 self._group_persistor.commit()
+                self._group_persistor.save()
             return
 
         logger.info(_('Running transaction check'))
@@ -654,6 +655,7 @@ class Base(object):
         self._plugins.run_transaction()
         if self._group_persistor and self._trans_success:
             self._group_persistor.commit()
+            self._group_persistor.save()
 
     def _trans_error_summary(self, errstring):
         """Parse the error string for 'interesting' errors which can
