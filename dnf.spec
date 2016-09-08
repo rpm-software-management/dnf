@@ -3,7 +3,7 @@
 %global libcomps_version 0.1.6
 %global rpm_version 4.13.0-0.rc1.29
 %global min_plugins_core 0.1.13
-%global dnf_langpacks_ver 0.15.1-6
+%global dnf_langpacks_ver 0.15.2
 
 %global confdir %{_sysconfdir}/%{name}
 
@@ -74,6 +74,7 @@ Conflicts:      python3-dnf-plugins-core < %{min_plugins_core}
 # dnf-langpacks package is retired in F25
 # to have clean upgrade path for dnf-langpacks
 Obsoletes:      dnf-langpacks < %{dnf_langpacks_ver}
+Provides:       dnf-langpacks  = %{dnf_langpacks_ver}
 
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
