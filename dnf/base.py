@@ -933,9 +933,13 @@ class Base(object):
             saving = dnf.repo._update_saving((0, 0), payloads,
                                             errors._recoverable)
 
-            if errors._recoverable:
-                msg = dnf.exceptions.DownloadError.errmap2str(
-                    errors._recoverable)
+            retries = self.conf.retries
+            forever = retries == 0
+            while errors._recoverable and (forever or retries > 0):
+                if retries > 0:
+                    retries -= 1
+
+                msg = _("Some packages were not downloaded. Retrying.")
                 logger.info(msg)
 
                 remaining_pkgs = [pkg for pkg in errors._recoverable]
@@ -947,13 +951,17 @@ class Base(object):
                 progress.start(len(payloads), est_remote_size)
                 errors = dnf.repo._download_payloads(payloads, drpm)
 
-                assert not errors._recoverable
                 if errors._irrecoverable:
                     raise dnf.exceptions.DownloadError(errors._irrecoverable)
 
                 remote_size += \
                     sum(errors._bandwidth_used(pload) for pload in payloads)
                 saving = dnf.repo._update_saving(saving, payloads, {})
+
+            if errors._recoverable:
+                msg = dnf.exceptions.DownloadError.errmap2str(
+                    errors._recoverable)
+                logger.info(msg)
 
         if callback_total is not None:
             callback_total(remote_size, beg_download)

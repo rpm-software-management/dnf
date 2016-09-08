@@ -184,6 +184,11 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     ``reposdir``. The behavior of ``reposdir`` could differ when it is used
     along with \-\ :ref:`-installroot <installroot-label>` option.
 
+``retries``
+    :ref:`integer <integer-label>`
+
+    Set the number of times any attempt to retrieve a file should retry before returning an error. Setting this to `0' makes dnf try forever. Default is `10'.
+
 ``upgrade_group_objects_upgrade``
     :ref:`boolean <boolean-label>`
 
@@ -247,6 +252,13 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     :ref:`integer <integer-label>`
 
     The priority value of this repository, default is 99. If there is more than one candidate package for a particular operation, the one from a repo with *the lowest priority value* is picked, possibly despite being less convenient otherwise (e.g. by being a lower version).
+
+..  _retries-label:
+
+``retries``
+    :ref:`integer <integer-label>`
+
+    Overrides the retries option from the [main] section for this repository.
 
 .. _skip_if_unavailable-label:
 

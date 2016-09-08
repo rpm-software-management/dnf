@@ -641,6 +641,7 @@ class MainConf(BaseConfig):
                          ListOption([dnf.const.PLUGINCONFPATH])) # :api
         self._add_option('persistdir', PathOption(dnf.const.PERSISTDIR)) # :api
         self._add_option('recent', IntOption(7, range_min=0))
+        self._add_option('retries', PositiveIntOption(10, names_of_0=["0"]))
         self._add_option('reset_nice', BoolOption(True))
 
         self._add_option('cachedir', PathOption(cachedir)) # :api
@@ -912,6 +913,7 @@ class RepoConf(BaseConfig):
                          inherit(parent._get_option('repo_gpgcheck')))
         self._add_option('enablegroups',
                          inherit(parent._get_option('enablegroups')))
+        self._add_option('retries', inherit(parent._get_option('retries')))
 
         self._add_option('bandwidth', inherit(parent._get_option('bandwidth')))
         self._add_option('minrate', inherit(parent._get_option('minrate')))

@@ -130,6 +130,10 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     List of directories to search for repo configuration files. Has a reasonable default commonly used on the given distribution.
 
+  .. attribute:: retries
+
+    Number of times any attempt to retrieve a file should retry before returning an error. Setting this to `0' makes it try forever. Defaults to `10'.
+
   .. attribute:: sslcacert
 
     Path to the directory or file containing the certificate authorities to verify SSL certificates.
