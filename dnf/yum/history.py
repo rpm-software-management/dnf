@@ -1,4 +1,4 @@
-# Copyright (C) 2009, 2012-2013  Red Hat, Inc.
+# Copyright (C) 2009, 2012-2016  Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -15,6 +15,9 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 # James Antill <james@fedoraproject.org>
+# Edited in 2016 - (SWDB) Eduard Cuba <xcubae00@stud.fit.vutbr.cz>
+
+#TODO: get rid of yum.get_package() replace with swdb.get_package_by_pattern()
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
@@ -34,184 +37,6 @@ import dnf.exceptions
 import dnf.rpm.miscutils
 import dnf.i18n
 import functools
-
-class _YumHistPackageYumDB(object):
-    """ Class to pretend to be yumdb_info for history packages. """
-
-    def __init__(self, pkg):
-        self._pkg = pkg
-
-    _valid_yumdb_keys = set(["command_line",
-                             "from_repo", "from_repo_revision",
-                             "from_repo_timestamp",
-                             "installed_by", "changed_by",
-                             "reason", "releasever"])
-    def __getattr__(self, attr):
-        """ Load yumdb attributes from the history sqlite. """
-        pkg = self._pkg
-        if attr.startswith('_'):
-            raise AttributeError("%s has no yum attribute %s" % (pkg, attr))
-
-        if attr not in self._valid_yumdb_keys:
-            raise AttributeError("%s has no yum attribute %s" % (pkg, attr))
-
-        val = pkg._history.swdb.get_pkg_attr(pkg, attr)
-        if False and val is None:
-            raise AttributeError("%s has no yum attribute %s" % (pkg, attr))
-
-        if val is None:
-            return None
-        val = str(val) or ""
-        setattr(self, attr, val)
-
-        return val
-
-    def __contains__(self, attr):
-        x = self.get(attr)
-        return x is not None
-
-    def get(self, attr, default=None):
-        """retrieve an add'l data obj"""
-        try:
-            res = getattr(self, attr)
-        except AttributeError:
-            return default
-        return res
-
-@functools.total_ordering
-class YumHistoryPackage(object):
-
-    def __init__(self, name, arch, epoch, version, release, checksum=None,
-                 history=None):
-        self.name    = name
-        self.version = version
-        self.release = release
-        self.epoch   = epoch
-        self.arch    = arch
-        self.pkgtup = (self.name, self.arch,
-                       self.epoch, self.version, self.release)
-        if checksum is None:
-            self._checksums = [] # (type, checksum, id(0,1)
-        else:
-            chk = checksum.split(':')
-            self._checksums = [(chk[0], chk[1], 1)] # (type, checksum, id(0,1))
-        self.repoid = "<history>"
-        self.pid = 0
-        self._history = history
-        self.yumdb_info = _YumHistPackageYumDB(self)
-
-    _valid_rpmdb_keys = set(["buildtime", "buildhost",
-                             "license", "packager",
-                             "size", "sourcerpm", "url", "vendor",
-                             # ?
-                             "committer", "committime"])
-
-    def to_nevra(self):
-        return hawkey.NEVRA(self.name, int(self.epoch), self.version,
-                            self.release, self.arch)
-
-    def __le__(self, other):
-        """Test whether the *self* is less than or equal to the *other*."""
-        s = self.to_nevra()
-        o = hawkey.NEVRA(other.name, int(other.epoch), other.version,
-                         other.release, other.arch)
-        if s != o:
-            return s < o
-
-        try:
-            self_repoid, other_repoid = self.repoid, other.repoid
-        except AttributeError:
-            return True  # equal
-
-        if self_repoid == other_repoid:
-            return True  # equal
-
-        # We want 'installed' to appear over 'abcd' and 'xyz', so boost that
-        if self_repoid == 'installed':
-            return False  # greater
-        if other_repoid == 'installed':
-            return True  # less
-
-        return self_repoid < other_repoid  # less or grater
-
-    def __hash__(self):
-        return hash(self.pkgtup)
-
-    def __eq__(self, other):
-        """ Compare packages for yes/no equality, includes everything in the
-            UI package comparison. """
-        if not other:
-            return False
-        if not hasattr(other, 'pkgtup') or self.pkgtup != other.pkgtup:
-            return False
-        if hasattr(self, 'repoid') and hasattr(other, 'repoid'):
-            if self.repoid != other.repoid:
-                return False
-        return True
-
-    def __getattr__(self, attr):
-        """ Load rpmdb attributes from the history sqlite. """
-        if attr.startswith('_'):
-            raise AttributeError("%s has no attribute %s" % (self, attr))
-
-        if attr not in self._valid_rpmdb_keys:
-            raise AttributeError("%s has no attribute %s" % (self, attr))
-        pid = self._history.pkg2pid(self.pkgtup)
-        val = self._history.swdb.get_pkg_attr(pid, attr)
-        if False and val is None:
-            raise AttributeError("%s has no attribute %s" % (self, attr))
-
-        if val is None:
-            return None
-
-        val = str(val) or ""
-        setattr(self, attr, val)
-
-        return val
-
-    def __ne__(self, other):
-        return not (self == other)
-
-    def __repr__(self):
-        return ("<%s : %s (%s)>" %
-                (self.__class__.__name__, str(self), hex(id(self))))
-
-    def __str__(self):
-        return self.ui_envra
-
-    @property
-    def envra(self):
-        return ('%s:%s-%s-%s.%s' %
-                (self.epoch, self.name, self.version, self.release, self.arch))
-
-    @property
-    def nevra(self):
-        return ('%s-%s:%s-%s.%s' %
-                (self.name, self.epoch, self.version, self.release, self.arch))
-
-    @property
-    def nvra(self):
-        return ('%s-%s-%s.%s' %
-                (self.name, self.version, self.release, self.arch))
-
-    def returnIdSum(self):
-        for (csumtype, csum, csumid) in self._checksums:
-            if csumid:
-                return (csumtype, csum)
-
-    @property
-    def ui_envra(self):
-        if self.epoch == '0':
-            return self.nvra
-        else:
-            return self.envra
-
-    @property
-    def ui_nevra(self):
-        if self.epoch == '0':
-            return self.nvra
-        else:
-            return self.nevra
 
 class YumHistoryTransaction(object):
     """ Holder for a history transaction. """
@@ -594,9 +419,10 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
             self.end_rpmdbversion = obj.end_rpmdbversion
 
 class SwdbInterface(object):
-    def __init__(self, releasever):
-        self.swdb = Hif.Swdb.new(releasever)
+    def __init__(self, db_path, root='/', releasever=""):
+        self.swdb = Hif.Swdb.new(db_path, releasever)
         self.releasever = releasever
+        self.addon_data = _addondata(db_path, root)
 
     def close(self):
         self.swdb.close()
@@ -607,11 +433,20 @@ class SwdbInterface(object):
     def last(self):
         return self.swdb.last()
 
+    def package_data(self):
+        return Hif.SwdbPkgData()
+
     def old(self, tids=[], limit=0, complete_transactions_only=False):
         return self.swdb.trans_old(list(tids), limit, complete_transactions_only)
 
     def _log_group_trans(self, tid,  groups_installed=[], groups_removed=[]):
         self.swdb.log_group_trans(tid, groups_installed, groups_removed)
+
+    def pkg_by_pattern(self, pattern):
+        return self.swdb.package_by_pattern(str(pattern))
+
+    def pkg_data_by_pattern(self, pattern):
+        return self.swdb.package_data_by_pattern(str(pattern))
 
     def beg(self, rpmdb_version, using_pkgs, tsis, skip_packages=[],
             rpmdb_problems=[], cmdline=None, groups_installed=[], groups_removed=[]):
@@ -623,8 +458,7 @@ class SwdbInterface(object):
         for tsi in tsis:
             for (pkg, state) in tsi._history_iterator():
                 pid   = self.pkg2pid(pkg)
-                #yumdb_info = self.yumdb.get_package(pkg) #TODO get rid of this
-                self.swdb.trans_data_beg(self._tid, pid,"unknown",state)
+                self.swdb.trans_data_beg(self._tid, pid,str(tsi.reason),state)
         self._log_group_trans(self._tid, groups_installed, groups_removed)
 
     def _pkgtup2pid(self, pkgtup, checksum="", checksum_type="", create=True):
@@ -643,20 +477,11 @@ class SwdbInterface(object):
             csum_type = ""
         return self._pkgtup2pid(po.pkgtup, csum, csum_type, create)
     def _ipkg2pid(self, po, create=True):
-        csum = None
-        csum_type = None
-        yumdb = self.yumdb.get_package(po)
-        if 'checksum_type' in yumdb and 'checksum_data' in yumdb:
-            csum_type = yumdb.checksum_type
-            csum = yumdb.checksum_data
-        else:
-            csum = ""
-            csum_type = ""
-        return self._pkgtup2pid(po.pkgtup, csum, csum_type, create)
+        return self._pkgtup2pid(po.pkgtup, "", "", create)
     def _hpkg2pid(self, po, create=False):
         return self._apkg2pid(po, create)
     def pkg2pid(self, po, create=True):
-        if isinstance(po, YumHistoryPackage):
+        if isinstance(po, Hif.SwdbPkg):
             return self._hpkg2pid(po, create)
         if po._from_system:
             return self._ipkg2pid(po, create)
@@ -669,138 +494,15 @@ class SwdbInterface(object):
             error = ucd(error)
             self.swdb.log_output(self._tid, error)
 
-
-class YumHistory(object):
-    """ API for accessing the history sqlite data. """
-
-    def __init__(self, db_path, yumdb, root='/', releasever=""):
-        self._conn = None
-
-        self.conf = misc.GenericHolder()
-        if not os.path.normpath(db_path).startswith(root):
-            self.conf.db_path  = os.path.normpath(root + '/' + db_path)
-        else:
-            self.conf.db_path = os.path.normpath('/' + db_path)
-        self.conf.writable = False
-        self.conf.readable = True
-        self.yumdb = yumdb
-        self.swdb = Hif.Swdb.new(releasever)
-        if not self.swdb.exist():
-            self.swdb.create_db()
-        self.releasever = releasever
-
-        if not os.path.exists(self.conf.db_path):
-            try:
-                os.makedirs(self.conf.db_path)
-            except (IOError, OSError) as e:
-                error = dnf.i18n.ucd(e)
-                msg = _("Unable to initialize DNF DB history: %s") % error
-                raise dnf.exceptions.Error(msg)
-            else:
-                self.conf.writable = True
-        else:
-            if os.access(self.conf.db_path, os.W_OK):
-                self.conf.writable = True
-
-        DBs = glob.glob('%s/history-*-*-*.sqlite' % self.conf.db_path)
-        self._db_file = None
-        for d in reversed(sorted(DBs)):
-            fname = os.path.basename(d)
-            fname = fname[len("history-"):-len(".sqlite")]
-            pieces = fname.split('-', 4)
-            if len(pieces) != 3:
-                continue
-            try:
-                for piece in pieces:
-                    int(piece)
-            except ValueError:
-                continue
-
-            self._db_date = '%s-%s-%s' % (pieces[0], pieces[1], pieces[2])
-            self._db_file = d
-            break
-
-        if self._db_file is None:
-            self._create_db_file()
-
-        # make an addon path for where we're going to stick
-        # random additional history info - probably from plugins and what-not
-        self.conf.addon_path = self.conf.db_path + '/' + self._db_date
-        if not os.path.exists(self.conf.addon_path):
-            try:
-                os.makedirs(self.conf.addon_path)
-            except (IOError, OSError) as e:
-                # some sort of useful thing here? A warning?
-                return
-        else:
-            if os.access(self.conf.addon_path, os.W_OK):
-                self.conf.writable = True
-
-
-    def __del__(self):
-        self.close()
-
-    def _get_cursor(self):
-        if self._conn is None:
-            if not self.conf.readable:
-                return None
-
-            try:
-                self._conn = sqlite.connect(self._db_file)
-            except (sqlite.OperationalError, sqlite.DatabaseError):
-                self.conf.readable = False
-                return None
-
-            #  Note that this is required due to changing the history DB in the
-            # callback for removed txmbrs ... which happens inside the chroot,
-            # as against all our other access which is outside the chroot. So
-            # we need sqlite to not open the journal.
-            #  In theory this sucks, as history could be shared. In reality
-            # it's deep yum stuff and there should only be one yum.
-            executeSQL(self._conn.cursor(), "PRAGMA locking_mode = EXCLUSIVE")
-
-        return self._conn.cursor()
-    def _rollback(self):
-        return self._conn.rollback()
-
-    def close(self):
-        if self._conn is not None:
-            self._conn.close()
-            self._conn = None
-
     def trans_data_pid_end(self, pid, state):
         if not hasattr(self, '_tid') or state is None:
             return
         self.swdb.trans_data_pid_end(pid, self._tid, state)
 
-    def _log_group_trans(self, tid,  groups_installed=[], groups_removed=[]):
-        self.swdb.log_group_trans(tid, groups_installed, groups_removed)
-
-    def beg(self, rpmdb_version, using_pkgs, tsis, skip_packages=[],
-            rpmdb_problems=[], cmdline=None, groups_installed=[], groups_removed=[]):
-        if cmdline:
-            self._tid = self.swdb.trans_beg(str(int(time.time())),str(rpmdb_version),cmdline,str(misc.getloginuid()),self.releasever)
-        else:
-            self._tid = self.swdb.trans_beg(str(int(time.time())),str(rpmdb_version),"",str(misc.getloginuid()),self.releasever)
-
-        for tsi in tsis:
-            for (pkg, state) in tsi._history_iterator():
-                pid   = self.pkg2pid(pkg)
-                yumdb_info = self.yumdb.get_package(pkg)
-                self.swdb.trans_data_beg(self._tid, pid,(yumdb_info.get("reason") or "unknown") ,state)
-        self._log_group_trans(self._tid, groups_installed, groups_removed)
-
     def _log_errors(self, errors):
         for error in errors:
             error = ucd(error)
             self.swdb.log_error(self._tid, error)
-
-    def log_scriptlet_output(self, msg):
-        if msg is None or not hasattr(self, '_tid'):
-            return # Not configured to run
-        for error in msg.splitlines():
-            error = ucd(error)
-            self.swdb.log_output(self._tid, error)
 
     def end(self, rpmdb_version, return_code, errors=None):
         assert return_code or not errors
@@ -817,7 +519,64 @@ class YumHistory(object):
             self._log_errors(errors)
         del self._tid
 
-    def write_addon_data(self, dataname, data):
+
+    def _save_rpmdb(self, ipkg):
+        """ Save all the data for rpmdb for this installed pkg, assumes
+            there is no data currently. """
+        pid = self.pkg2pid(ipkg, create=False)
+        if pid:
+            if not self.swdb.log_rpm_data( pid, str((getattr(ipkg, "buildtime" , None) or '')),
+                                                str((getattr(ipkg, "buildhost" , None) or '')),
+                                                str((getattr(ipkg, "license" , None) or '')),
+                                                str((getattr(ipkg, "packager" , None) or '')),
+                                                str((getattr(ipkg, "size" , None) or '')),
+                                                str((getattr(ipkg, "sourcerpm" , None) or '')),
+                                                str((getattr(ipkg, "url" , None) or '')),
+                                                str((getattr(ipkg, "vendor" , None) or '')),
+                                                str((getattr(ipkg, "committer" , None) or '')),
+                                                str((getattr(ipkg, "committime" , None) or ''))):
+                return True
+        print("PID problem in _save_yumdb, rollback!")
+        return False
+
+    def _save_yumdb(self, ipkg, pkg_data):
+        """ Save all the data for yumdb for this installed pkg, assumes
+            there is no data currently. """
+        pid = self.pkg2pid(ipkg, create=False)
+        if pid:
+            #FIXME: resolve installonly
+            self.swdb.log_package_data(pid, pkg_data)
+            return True
+        else:
+            print("PID problem in _save_yumdb, rollback!")
+            return False
+
+    def sync_alldb(self, ipkg, pkg_data):
+        """ Sync. all the data for rpmdb/yumdb for this installed pkg. """
+        if not (self._save_rpmdb(ipkg) and
+                self._save_yumdb(ipkg, pkg_data)):
+            self._rollback()
+            return False
+        return True
+
+    def search(self, patterns, ignore_case=True):
+        """ Search for history transactions which contain specified
+            packages al. la. "yum list". Returns transaction ids. """
+        return self.swdb.search(patterns)
+
+class _addondata(object):
+    def __init__(self, db_path, root='/'):
+        self.conf = misc.GenericHolder()
+        self.conf.writable = False
+        self._db_date = time.strftime("%Y-%m-%d")
+        if not os.path.normpath(db_path).startswith(root):
+            self.conf.db_path  = os.path.normpath(root + '/' + db_path)
+        else:
+            self.conf.db_path = os.path.normpath('/' + db_path)
+
+        self.conf.addon_path = self.conf.db_path + '/' + self._db_date
+
+    def write(self, dataname, data):
         """append data to an arbitrary-named file in the history
            addon_path/transaction id location,
            returns True if write succeeded, False if not"""
@@ -858,81 +617,16 @@ class YumHistory(object):
         # return
         return True
 
-    def return_addon_data(self, tid, item=None):
+    def read(self, tid, item=None):
         hist_and_tid = self.conf.addon_path + '/' + str(tid) + '/'
         addon_info = glob.glob(hist_and_tid + '*')
         addon_names = [ i.replace(hist_and_tid, '') for i in addon_info ]
         if not item:
             return addon_names
-
         if item not in addon_names:
             # XXX history needs SOME kind of exception, or warning, I think?
             return None
-
         fo = open(hist_and_tid + item, 'r')
         data = fo.read()
         fo.close()
         return data
-
-    def old(self, tids=[], limit=None, complete_transactions_only=False):
-        """ Return a list of the last transactions, note that this includes
-            partial transactions (ones without an end transaction). """
-        return self.swdb.trans_old(list(tids),(limit or 0),complete_transactions_only)
-
-    def last(self, complete_transactions_only=True):
-        """ This is the last full transaction. So any incomplete transactions
-            do not count, by default. """
-        ret = self.old([], 1, complete_transactions_only)
-        if not ret:
-            return None
-        assert len(ret) == 1
-        return ret[0]
-
-    def _save_rpmdb(self, ipkg):
-        """ Save all the data for rpmdb for this installed pkg, assumes
-            there is no data currently. """
-        pid = self.pkg2pid(ipkg, create=False)
-        if pid:
-            if not self.swdb.log_rpm_data( pid, str((getattr(ipkg, "buildtime" , None) or '')),
-                                                str((getattr(ipkg, "buildhost" , None) or '')),
-                                                str((getattr(ipkg, "license" , None) or '')),
-                                                str((getattr(ipkg, "packager" , None) or '')),
-                                                str((getattr(ipkg, "size" , None) or '')),
-                                                str((getattr(ipkg, "sourcerpm" , None) or '')),
-                                                str((getattr(ipkg, "url" , None) or '')),
-                                                str((getattr(ipkg, "vendor" , None) or '')),
-                                                str((getattr(ipkg, "committer" , None) or '')),
-                                                str((getattr(ipkg, "committime" , None) or ''))):
-                return True
-        print("PID problem in _save_yumdb, rollback!")
-        return False
-
-    def _save_yumdb(self, ipkg):
-        """ Save all the data for yumdb for this installed pkg, assumes
-            there is no data currently. """
-        yumdb_info = self.yumdb.get_package(ipkg)
-        pid = self.pkg2pid(ipkg, create=False)
-        if pid:
-            #FIXME: resolve installonly
-            tmp_instalonly = ""
-            self.swdb.log_package_data(pid, (yumdb_info.get("from_repo") or ''),
-                (yumdb_info.get("from_repo_revision") or ''),
-                (yumdb_info.get("from_repo_timestamp") or ''), (yumdb_info.get("installed_by") or ''),
-                (yumdb_info.get("changed_by") or ''), tmp_instalonly, "")
-            return True
-        else:
-            print("PID problem in _save_yumdb, rollback!")
-            return False
-
-    def sync_alldb(self, ipkg):
-        """ Sync. all the data for rpmdb/yumdb for this installed pkg. """
-        if not (self._save_rpmdb(ipkg) and
-                self._save_yumdb(ipkg)):
-            self._rollback()
-            return False
-        return True
-
-    def search(self, patterns, ignore_case=True):
-        """ Search for history transactions which contain specified
-            packages al. la. "yum list". Returns transaction ids. """
-        return self.swdb.search(patterns)

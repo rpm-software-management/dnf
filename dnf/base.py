@@ -506,7 +506,7 @@ class Base(object):
             #self._history = history.YumHistory(db_path, self._yumdb,
             #                                   root=self.conf.installroot,
             #                                   releasever=releasever)
-            self._history = history.SwdbInterface(releasever)
+            self._history = history.SwdbInterface(db_path, root=self.conf.installroot, releasever=releasever)
         return self._history
 
     history = property(fget=lambda self: self._getHistory(),
@@ -780,8 +780,6 @@ class Base(object):
             if self._group_persistor:
                 _grp_i = self._group_persistor.groups_installed
                 _grp_r = self._group_persistor.groups_removed
-            print(self.transaction)
-            vars(self.transaction)
             self.history.beg(rpmdbv, using_pkgs, list(self.transaction),
                              [], [], cmdline, _grp_i, _grp_r)
             # write out our config and repo data to additional history info
@@ -914,19 +912,21 @@ class Base(object):
                 continue
             po = installed[0]
             count = display_banner(rpo, count)
-            yumdb_info = self._yumdb.get_package(po)
+            yumdb_info = self.history.package_data()
             yumdb_info.from_repo = rpo.repoid
 
-            yumdb_info.reason = tsi._propagated_reason(self._yumdb, self._get_installonly_query())
-            yumdb_info.releasever = self.conf.releasever
-            if hasattr(self, 'args') and self.args:
-                yumdb_info.command_line = ' '.join(self.args)
-            elif hasattr(self, 'cmds') and self.cmds:
-                yumdb_info.command_line = ' '.join(self.cmds)
-            csum = rpo.returnIdSum()
-            if csum is not None:
-                yumdb_info.checksum_type = str(csum[0])
-                yumdb_info.checksum_data = csum[1]
+            #TODO - we can probably drop this
+            #yumdb_info.reason = tsi._propagated_reason(self._yumdb,
+            #                                          self.conf.installonlypkgs)
+            #yumdb_info.releasever = self.conf.releasever
+            #if hasattr(self, 'args') and self.args:
+            #    yumdb_info.command_line = ' '.join(self.args)
+            #elif hasattr(self, 'cmds') and self.cmds:
+            #    yumdb_info.command_line = ' '.join(self.cmds)
+            #csum = rpo.returnIdSum()
+            #if csum is not None:
+            #    yumdb_info.checksum_type = str(csum[0])
+            #    yumdb_info.checksum_data = csum[1]
 
             if rpo._from_cmdline:
                 try:
@@ -949,8 +949,8 @@ class Base(object):
                                dnf.transaction.REINSTALL,
                                dnf.transaction.UPGRADE):
                 opo = tsi.erased
-                opo_yumdb_info = self._yumdb.get_package(opo)
-                if 'installed_by' in opo_yumdb_info:
+                opo_yumdb_info = self.history.pkg_data_by_pattern(opo)
+                if opo_yumdb_info.installed_by:
                     yumdb_info.installed_by = opo_yumdb_info.installed_by
                 if loginuid is not None:
                     yumdb_info.changed_by = str(loginuid)
@@ -958,7 +958,7 @@ class Base(object):
                 yumdb_info.installed_by = str(loginuid)
 
             if self.conf.history_record:
-                self.history.sync_alldb(po)
+                self.history.sync_alldb(po, yumdb_info)
 
         just_installed = self.sack.query().\
             filter(pkg=self.transaction.install_set)
@@ -2129,14 +2129,12 @@ class Base(object):
         return results
 
     def _store_config_in_history(self):
-        #TODO
-        pass
-        #self.history.write_addon_data('config-main', self.conf.dump())
-        #myrepos = ''
-        #for repo in self.repos.iter_enabled():
-        #    myrepos += repo.dump()
-        #    myrepos += '\n'
-        #self.history.write_addon_data('config-repos', myrepos)
+        self.history.addon_data.write('config-main', self.conf.dump())
+        myrepos = ''
+        for repo in self.repos.iter_enabled():
+            myrepos += repo.dump()
+            myrepos += '\n'
+        self.history.addon_data.write('config-repos', myrepos)
 
     def urlopen(self, url, repo=None, mode='w+b', **kwargs):
         # :api
