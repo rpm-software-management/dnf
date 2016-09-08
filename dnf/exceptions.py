@@ -80,10 +80,6 @@ class DownloadError(Error):
         return ucd(self.__str__())
 
 
-class ExitOnLock(Error):
-    pass
-
-
 class LockError(Error):
     pass
 
