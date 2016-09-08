@@ -23,13 +23,6 @@
  CLI changes
 =============
 
-Changed DNF history command transaction specifier
-===============================================================================
-
-:ref:`A particular DNF transaction <\specifying_transactions-label>` can now be specified
-by the optional arguments ``--last`` or ``--last-<offset>`` instead of previously used subcommands
-``last`` and ``last-<offset>``.
-
 Reintroduction of YUM's configuration options ``includepkgs`` and ``excludepkgs``
 ===================================================================================
 
