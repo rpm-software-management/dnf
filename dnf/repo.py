@@ -726,12 +726,8 @@ class Repo(dnf.conf.RepoConf):
         self._reset_metadata_expired()
         return True
 
-    def _try_revive(self):
+    def _try_revive_by_metalink(self):
         """Use metalink to check whether our metadata are still current."""
-        if not self.metadata:
-            return False
-        if not self.metalink:
-            return False
         repomd_fn = self.metadata._repo_dct['repomd']
         with dnf.util.tmpdir() as tmpdir, open(repomd_fn) as repomd:
             handle = self._handle_new_remote(tmpdir)
@@ -758,8 +754,34 @@ class Repo(dnf.conf.RepoConf):
                     logger.debug("reviving: failed for '%s', mismatched %s sum.",
                                  self.id, algo)
                     return False
-        logger.debug("reviving: '%s' can be revived.", self.id)
+        logger.debug("reviving: '%s' can be revived - metalink checksums match.", self.id)
         return True
+
+    def _try_revive_by_repomd(self):
+        """Use repomd to check whether our metadata are still current."""
+        repomd_fn = self.metadata._repo_dct['repomd']
+        with dnf.util.tmpdir() as tmpdir, open(repomd_fn) as repomd:
+            handle = self._handle_new_remote(tmpdir)
+            handle.yumdlist = librepo.YUM_REPOMDONLY
+            result = handle._perform()
+            fresh_repomd_fn = result.rpmmd_repo['repomd']
+            with open(fresh_repomd_fn) as fresh_repomd:
+                if repomd.read() != fresh_repomd.read():
+                    logger.debug("reviving: failed for '%s', mismatched repomd.",
+                             self.id)
+                    return False
+        logger.debug("reviving: '%s' can be revived - repomd matches.", self.id)
+        return True
+
+    def _try_revive(self):
+        """Use metalink to check whether our metadata are still current."""
+        if not self.metadata:
+            return False
+
+        if self.metalink:
+            return self._try_revive_by_metalink()
+        else:
+            return self._try_revive_by_repomd()
 
     def _configure_from_options(self, opts):
         if getattr(opts, 'cacheonly', None):

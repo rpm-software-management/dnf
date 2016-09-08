@@ -412,6 +412,46 @@ class LocalRepoTest(support.TestCase):
         with mock.patch('dnf.repo.Repo._cachedir', REPOS + "/rpm"):
             self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
 
+    @mock.patch.object(dnf.repo.Metadata, '_reset_age')
+    @mock.patch('dnf.repo.Repo._handle_new_remote')
+    def test_reviving_baseurl(self, new_remote_m, reset_age_m):
+        self.repo._md_expire_cache()
+        self.repo.baseurl = 'http://meh'
+        remote_handle_m = new_remote_m()
+        remote_handle_m._perform().rpmmd_repo = \
+            { 'repomd': REPOS + '/rpm/repodata/repomd.xml'}
+        with mock.patch('dnf.repo.Repo._cachedir', REPOS + "/rpm"):
+            self.assertTrue(self.repo.load())
+        self.assertTrue(remote_handle_m.fetchmirrors)
+        self.assertFalse(self.repo._expired)
+        reset_age_m.assert_called_with()
+
+    @mock.patch.object(dnf.repo.Metadata, '_reset_age')
+    @mock.patch('dnf.repo.Repo._handle_new_remote')
+    def test_reviving_baseurl_mismatched(self, new_remote_m, _):
+        self.repo._md_expire_cache()
+        self.repo.baseurl = 'http://meh'
+        remote_handle_m = new_remote_m()
+        remote_handle_m._perform().rpmmd_repo = \
+            { 'repomd': '/dev/null'}
+        # can not do the entire load() here, it would run on after try_revive()
+        # failed.
+        with mock.patch('dnf.repo.Repo._cachedir', REPOS + "/rpm"):
+            self.repo._try_cache()
+            self.assertFalse(self.repo._try_revive())
+
+    @mock.patch('dnf.repo.Repo._handle_new_remote')
+    def test_reviving_baseurl_404(self, new_remote_m):
+        url = 'http://meh'
+        self.repo._md_expire_cache()
+        self.repo.baseurl = url
+        lr_exc = librepo.LibrepoException(
+            librepo.LRE_CURL, 'Error HTTP/FTP status code: 404', 'Curl error.')
+        exc = dnf.repo._DetailedLibrepoError(lr_exc, url)
+        new_remote_m()._perform = mock.Mock(side_effect=exc)
+        with mock.patch('dnf.repo.Repo._cachedir', REPOS + "/rpm"):
+            self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
+
 
 class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
 
