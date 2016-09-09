@@ -95,11 +95,6 @@ class Subject(object):
                   'icase': self.icase}
         if forms:
             kwargs['form'] = forms
-        nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
-        if nevra:
-            q = self._nevra_to_filters(sack.query(), nevra)
-            if q:
-                return q
 
         if with_provides:
             reldeps = self.subj.reldep_possibilities_real(sack, icase=self.icase)
@@ -108,6 +103,12 @@ class Subject(object):
                 q = sack.query().filter(provides=reldep)
                 if q:
                     return q
+
+        nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
+        if nevra:
+            q = self._nevra_to_filters(sack.query(), nevra)
+            if q:
+                return q
 
         if self._filename_pattern:
             return sack.query().filter(file__glob=pat)
@@ -120,18 +121,18 @@ class Subject(object):
         kwargs = {'allow_globs': True}
         if forms:
             kwargs['form'] = forms
-        nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
-        if nevra:
-            sltr = dnf.selector.Selector(sack)
-            s = self._nevra_to_selector(sltr, nevra)
-            if len(s.matches()) > 0:
-                return s
-
         reldep = first(self.subj.reldep_possibilities_real(sack))
         if reldep:
             sltr = dnf.selector.Selector(sack)
             dep = str(reldep)
             s = sltr.set(provides=dep)
+            if len(s.matches()) > 0:
+                return s
+
+        nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
+        if nevra:
+            sltr = dnf.selector.Selector(sack)
+            s = self._nevra_to_selector(sltr, nevra)
             if len(s.matches()) > 0:
                 return s
 
