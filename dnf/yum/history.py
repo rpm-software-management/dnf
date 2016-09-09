@@ -445,8 +445,14 @@ class SwdbInterface(object):
     def pkg_by_pattern(self, pattern):
         return self.swdb.package_by_pattern(str(pattern))
 
+    def repo_by_pattern(self, pattern):
+        return self.swdb.repo_by_pattern(str(pattern))
+
     def pkg_data_by_pattern(self, pattern):
         return self.swdb.package_data_by_pattern(str(pattern))
+
+    def attr_by_pattern(self, attr, pattern):
+        return self.swdb.attr_by_pattern(str(attr),str(pattern))
 
     def beg(self, rpmdb_version, using_pkgs, tsis, skip_packages=[],
             rpmdb_problems=[], cmdline=None, groups_installed=[], groups_removed=[]):
@@ -504,7 +510,7 @@ class SwdbInterface(object):
             error = ucd(error)
             self.swdb.log_error(self._tid, error)
 
-    def end(self, rpmdb_version, return_code, errors=None):
+    def end(self, return_code, errors=None):
         assert return_code or not errors
         if not hasattr(self, '_tid'):
             return # Failed at beg() time

@@ -77,9 +77,9 @@ class Package(hawkey.Package):
 
     @property
     def _from_repo(self):
-        yumdb_info = self.base._yumdb.get_package(self) if self._from_system else {}
-        if 'from_repo' in yumdb_info:
-            return '@'+yumdb_info.from_repo
+        pkgrepo = self.base.history.repo_by_pattern(self) if self._from_system else {}
+        if pkgrepo:
+            return '@'+pkgrepo
         return self.reponame
 
     @property

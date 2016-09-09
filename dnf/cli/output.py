@@ -485,7 +485,7 @@ class Output(object):
                   " : ", val or ""))
 
         (hibeg, hiend) = self._highlight(highlight)
-        yumdb_info = self.yumdb.get_package(pkg) if pkg._from_system else {}
+        pkg_data = self.history.pkg_data_by_pattern(pkg) if pkg._from_system else {}
         print_key_val(_("Name"), "%s%s%s" % (hibeg, pkg.name, hiend))
         if pkg.epoch:
             print_key_val(_("Epoch"), pkg.epoch)
@@ -495,8 +495,8 @@ class Output(object):
         print_key_val(_("Size"), format_number(float(pkg._size)))
         print_key_val(_("Source"), pkg.sourcerpm)
         print_key_val(_("Repo"), pkg.repoid)
-        if 'from_repo' in yumdb_info:
-            print_key_val(_("From repo"), yumdb_info.from_repo)
+        if pkg_data and pkg_data.from_repo:
+            print_key_val(_("From repo"), pkg_data.from_repo)
         if self.conf.verbose:
             # :hawkey does not support changelog information
             # print(_("Committer   : %s") % ucd(pkg.committer))
@@ -507,18 +507,18 @@ class Output(object):
             if pkg.installtime:
                 print_key_val(_("Install time"),
                               dnf.util.normalize_time(pkg.installtime))
-            if yumdb_info:
+            if pkg_data:
                 uid = None
-                if 'installed_by' in yumdb_info:
+                if pkg_data.installed_by:
                     try:
-                        uid = int(yumdb_info.installed_by)
+                        uid = int(pkg_data.installed_by)
                     except ValueError: # In case int() fails
                         uid = None
                 print_key_val(_("Installed by"), self._pwd_ui_username(uid))
                 uid = None
-                if 'changed_by' in yumdb_info:
+                if pkg_data.changed_by:
                     try:
-                        uid = int(yumdb_info.changed_by)
+                        uid = int(pkg_data.changed_by)
                     except ValueError: # In case int() fails
                         uid = None
                 print_key_val(_("Changed by"), self._pwd_ui_username(uid))
@@ -1530,7 +1530,7 @@ Transaction Summary
             if lastdbv is not None and tid.tid == lasttid:
                 #  If this is the last transaction, is good and it doesn't
                 # match the current rpmdb ... then mark it as bad.
-                rpmdbv = self.sack._rpmdb_version(self.yumdb)
+                rpmdbv = self.sack._rpmdb_version(self.history)
                 if lastdbv != rpmdbv:
                     tid.altered_gt_rpmdb = True
             lastdbv = None

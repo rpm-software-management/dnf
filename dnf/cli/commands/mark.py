@@ -42,6 +42,7 @@ class MarkCommand(commands.Command):
         parser.add_argument('package', nargs='+')
 
     def _mark_install(self, pkg):
+        #TODO - need to write some method to actualise reason in SWDB
         yumdb = self.base._yumdb
         yumdb.get_package(pkg).reason = 'user'
         logger.info(_('%s marked as user installed.'), str(pkg))

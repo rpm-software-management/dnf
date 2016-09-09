@@ -420,9 +420,8 @@ class GroupCommand(commands.Command):
         if not self._remark:
             return
         goal = self.base._goal
-        pkgdb = self.base._yumdb
+        history = self.base.history
         names = goal.group_members
         for pkg in self.base.sack.query().installed().filter(name=names):
-            db_pkg = pkgdb.get_package(pkg)
-            reason = db_pkg.get('reason') or 'unknown'
-            db_pkg.reason = goal.group_reason(pkg, reason)
+            reason = history.attr_by_pattern("reason", pkg) or "unknown"
+            goal.group_reason(pkg, reason) #TODO save new reason into swdb

@@ -450,9 +450,9 @@ class RepoPkgsCommand(Command):
                     except dnf.exceptions.PackagesNotAvailableError as err:
                         for pkg in err.packages:
                             xmsg = ''
-                            yumdb_info = self.base._yumdb.get_package(pkg)
-                            if 'from_repo' in yumdb_info:
-                                xmsg = _(' (from %s)') % yumdb_info.from_repo
+                            pkgrepo = self.base.history.repo_by_pattern(pkg)
+                            if pkgrepo:
+                                xmsg = _(' (from %s)') % pkgrepo
                             msg = _('Installed package %s%s not available.')
                             logger.info(msg, self.output.term.bold(pkg), xmsg)
                     except dnf.exceptions.MarkingError:
@@ -507,9 +507,9 @@ class RepoPkgsCommand(Command):
                     except dnf.exceptions.PackagesNotAvailableError as err:
                         for pkg in err.packages:
                             xmsg = ''
-                            yumdb_info = self.base._yumdb.get_package(pkg)
-                            if 'from_repo' in yumdb_info:
-                                xmsg = _(' (from %s)') % yumdb_info.from_repo
+                            pkgrepo = self.base.history.repo_by_pattern(pkg)
+                            if pkgrepo:
+                                xmsg = _(' (from %s)') % pkgrepo
                             msg = _('Installed package %s%s not available.')
                             logger.info(msg, self.output.term.bold(pkg), xmsg)
                     except dnf.exceptions.MarkingError:
@@ -570,10 +570,10 @@ class RepoPkgsCommand(Command):
 
             subject = dnf.subject.Subject(pkg_spec)
             matches = subject.get_best_query(self.cli.base.sack)
-            yumdb = self.cli.base._yumdb
+            history = self.cli.base.history
             installed = [
                 pkg for pkg in matches.installed()
-                if yumdb.get_package(pkg).get('from_repo') == reponame]
+                if history.repo_by_pattern(pkg) == reponame]
             if not installed:
                 raise dnf.exceptions.PackagesNotInstalledError(
                     'no package matched', pkg_spec)

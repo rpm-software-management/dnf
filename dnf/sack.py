@@ -81,13 +81,15 @@ class Sack(hawkey.Sack):
         excl = excl.difference(pkgq)
         self.add_excludes(excl)
 
-    def _rpmdb_version(self, yumdb):
+    def _rpmdb_version(self, history):
+        #FIXME TODO this is kinda slow, when it is calling swdb for every installed package
+        # It would be fine to do the whole thing in swdb or return all data at once
         pkgs = self.query().installed().run()
         main = SackVersion()
         for pkg in pkgs:
-            ydbi = yumdb.get_package(pkg)
+            ydbi = history.pkg_by_pattern(pkg)
             csum = None
-            if 'checksum_type' in ydbi and 'checksum_data' in ydbi:
+            if ydbi and ydbi.checksum_type and ydbi.checksum_data:
                 csum = (ydbi.checksum_type, ydbi.checksum_data)
             main._update(pkg, csum)
         return main
