@@ -911,7 +911,7 @@ class Base(object):
 
         lock = dnf.lock.build_download_lock(self.conf.cachedir, self.conf.exit_on_lock)
         with lock:
-            drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(), progress)
+            drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(), progress, self.conf.deltarpm_percentage)
             remote_pkgs = [po for po in pkglist
                            if not po._is_local_pkg()]
             self._add_tempfiles([pkg.localPkg() for pkg in remote_pkgs])

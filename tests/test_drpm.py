@@ -86,7 +86,9 @@ class DrpmTest(support.TestCase):
         # the testing drpm is about 150% of the target..
         self.pkg.repo.deltarpm = 1
         dnf.drpm.APPLYDELTA = '/bin/true'
-        with mock.patch('dnf.drpm.MAX_PERCENTAGE', 50):
-            self.assertEqual(self.download(), ['tour-5-1.noarch.rpm'])
-        with mock.patch('dnf.drpm.MAX_PERCENTAGE', 200):
-            self.assertEqual(self.download(), ['drpms/tour-5-1.noarch.drpm'])
+
+        self.base.conf.deltarpm_percentage = 50
+        self.assertEqual(self.download(), ['tour-5-1.noarch.rpm'])
+
+        self.base.conf.deltarpm_percentage = 200
+        self.assertEqual(self.download(), ['drpms/tour-5-1.noarch.drpm'])

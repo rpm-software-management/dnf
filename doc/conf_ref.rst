@@ -311,6 +311,13 @@ configuration.
     files, rebuilding them to RPM locally. However, this is quite CPU and I/O
     intensive. Default is True.
 
+``deltarpm_percentage``
+    :ref:`integer <integer-label>`
+
+    When the relative size of delta vs pkg is larger than this, delta is not used.  Default value is 75
+    (Deltas must be at least 25% smaller than the pkg).  Use `0' to turn off delta rpm processing. Local repositories (with
+    file:// baseurl) have delta rpms turned off by default.
+
 ``enablegroups``
     :ref:`boolean <boolean-label>`
 
