@@ -184,11 +184,6 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     ``reposdir``. The behavior of ``reposdir`` could differ when it is used
     along with \-\ :ref:`-installroot <installroot-label>` option.
 
-``retries``
-    :ref:`integer <integer-label>`
-
-    Set the number of times any attempt to retrieve a file should retry before returning an error. Setting this to `0' makes dnf try forever. Default is `10'.
-
 ``upgrade_group_objects_upgrade``
     :ref:`boolean <boolean-label>`
 
@@ -405,6 +400,11 @@ configuration.
     :ref:`boolean <boolean-label>`
 
     Whether to perform GPG signature check on this repository's metadata. The default is False.
+
+``retries``
+    :ref:`integer <integer-label>`
+
+    Set the number of times any attempt to retrieve a file should retry before returning an error. Setting this to `0' makes dnf try forever. Default is `10'.
 
 .. _sslcacert-label:
 
