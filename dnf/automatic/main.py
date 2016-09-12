@@ -57,9 +57,8 @@ def build_emitters(conf):
         elif name == 'motd':
             emitter = dnf.automatic.emitter.MotdEmitter(system_name)
             emitters.append(emitter)
-        else:
-            if name != 'None':
-                assert False
+        else: 
+            assert False
     return emitters
 
 
