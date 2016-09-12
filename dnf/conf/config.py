@@ -746,6 +746,8 @@ class MainConf(BaseConfig):
         self._add_option('sslclientcert', Option()) # :api
         self._add_option('sslclientkey', Option()) # :api
         self._add_option('deltarpm', BoolOption(True))
+        self._add_option('deltarpm_percentage',
+                         PositiveIntOption(75, names_of_0=["0", "<off>"]))
 
         self._add_option('history_record', BoolOption(True))
         self._add_option('history_record_packages', ListOption(['dnf', 'rpm']))
@@ -938,6 +940,8 @@ class RepoConf(BaseConfig):
         self._add_option('sslclientkey',
                          inherit(parent._get_option('sslclientkey'))) # :api
         self._add_option('deltarpm', inherit(parent._get_option('deltarpm')))
+        self._add_option('deltarpm_percentage',
+                         inherit(parent._get_option('deltarpm_percentage')))
 
         self._add_option('skip_if_unavailable', BoolOption(True)) # :api
 

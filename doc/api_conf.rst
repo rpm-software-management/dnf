@@ -48,6 +48,11 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Debug messages output level, in the range 0 to 10. Default is 2.
 
+  .. attribute:: deltarpm_percentage
+
+    Integer option. When the relative size of delta vs pkg is larger than this, delta is not used. Default value is 75 (%).
+    Use `0' to turn off delta rpm processing. Local repositories (with file:// baseurl) have delta rpms always turned off.
+
   .. attribute:: exit_on_lock
 
     Boolean option, if set to ``True`` dnf client exits immediately when something else has the lock. Default is ``False``.

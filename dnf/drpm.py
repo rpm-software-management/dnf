@@ -32,7 +32,6 @@ import librepo
 import logging
 import os
 
-MAX_PERCENTAGE = 50
 APPLYDELTA = '/usr/bin/applydeltarpm'
 
 logger = logging.getLogger("dnf")
@@ -84,7 +83,7 @@ class DeltaPayload(dnf.repo.PackagePayload):
 
 
 class DeltaInfo(object):
-    def __init__(self, query, progress):
+    def __init__(self, query, progress, deltarpm_percentage=None):
         '''A delta lookup and rebuild context
            query -- installed packages to use when looking up deltas
            progress -- progress obj to display finished delta rebuilds
@@ -96,6 +95,8 @@ class DeltaInfo(object):
             except:
                 deltarpm = 4
         self.deltarpm = deltarpm
+        self.deltarpm_percentage = \
+            deltarpm_percentage or dnf.conf.Conf().deltarpm_percentage
         self.query = query
         self.progress = progress
 
@@ -105,14 +106,18 @@ class DeltaInfo(object):
 
     def delta_factory(self, po, progress):
         '''Turn a po to Delta RPM po, if possible'''
-        if not po.repo.deltarpm or not self.deltarpm:
+        if (not po.repo.deltarpm or not self.deltarpm) \
+                and not self.deltarpm_percentage:
             # drpm disabled
+            return None
+        if po._is_local_pkg():
+            # drpm disabled for local
             return None
         if os.path.exists(po.localPkg()):
             # already there
             return None
 
-        best = po._size * MAX_PERCENTAGE / 100
+        best = po._size * self.deltarpm_percentage / 100
         best_delta = None
         for ipo in self.query.filter(name=po.name, arch=po.arch):
             delta = po.get_delta_from_evr(ipo.evr)
