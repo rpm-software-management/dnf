@@ -225,9 +225,6 @@ mv %{buildroot}%{_bindir}/dnf-automatic-2 %{buildroot}%{_bindir}/dnf-automatic
 %endif
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
-# This will eventually be the new default location for repo files
-mkdir %{buildroot}%{_sysconfdir}/distro.repos.d/
-
 %check
 pushd build
   ctest -VV
@@ -247,13 +244,6 @@ popd
 %postun
 %systemd_postun_with_restart dnf-makecache.timer
 
-%posttrans
-# cleanup pre-1.0.2 style cache
-for arch in %{ix86} x86_64 %{arm} aarch64 ppc %{sparc} %{alpha} s390 s390x %{power64} %{mips} ia64 ; do
-    rm -rf /var/cache/dnf/$arch
-done
-exit 0
-
 %post automatic
 %systemd_post dnf-automatic.timer
 
@@ -263,11 +253,9 @@ exit 0
 %postun automatic
 %systemd_postun_with_restart dnf-automatic.timer
 
-
 %files -f %{name}.lang
 %{_bindir}/%{name}
 %if 0%{?rhel} && 0%{?rhel} <= 7
-%dir %{_sysconfdir}/bash_completion.d
 %{_sysconfdir}/bash_completion.d/%{name}
 %else
 %dir %{_datadir}/bash-completion
@@ -279,7 +267,6 @@ exit 0
 %{_unitdir}/%{name}-makecache.service
 %{_unitdir}/%{name}-makecache.timer
 %{_var}/cache/%{name}/
-%ghost %{_sysconfdir}/distro.repos.d
 
 %files conf
 %license COPYING PACKAGE-LICENSING
