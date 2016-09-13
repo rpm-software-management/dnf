@@ -95,7 +95,8 @@ class DeltaInfo(object):
             except:
                 deltarpm = 4
         self.deltarpm = deltarpm
-        self.deltarpm_percentage = deltarpm_percentage or dnf.conf.Conf().deltarpm_percentage
+        self.deltarpm_percentage = \
+            deltarpm_percentage or dnf.conf.Conf().deltarpm_percentage
         self.query = query
         self.progress = progress
 
@@ -105,7 +106,8 @@ class DeltaInfo(object):
 
     def delta_factory(self, po, progress):
         '''Turn a po to Delta RPM po, if possible'''
-        if (not po.repo.deltarpm or not self.deltarpm) and not self.deltarpm_percentage:
+        if (not po.repo.deltarpm or not self.deltarpm) \
+                and not self.deltarpm_percentage:
             # drpm disabled
             return None
         if po._is_local_pkg():
