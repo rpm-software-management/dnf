@@ -672,6 +672,7 @@ class MainConf(BaseConfig):
         self._add_option('username', Option()) # :api
         self._add_option('password', Option()) # :api
         self._add_option('installonlypkgs', ListOption(dnf.const.INSTALLONLYPKGS))
+        self._add_option('group_package_types', ListOption(dnf.const.GROUP_PACKAGE_TYPES))
             # NOTE: If you set this to 2, then because it keeps the current
             # kernel it means if you ever install an "old" kernel it'll get rid
             # of the newest one so you probably want to use 3 as a minimum

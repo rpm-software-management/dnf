@@ -56,6 +56,11 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Returns the value of the first valid reposdir or if unavailable the value of created reposdir (string)
 
+  .. attribute:: group_package_types
+
+    List of the following: optional, default, mandatory. Tells dnf which type of packages in groups will
+    be installed when 'groupinstall' is called. Default is: default, mandatory
+
   .. attribute:: installonlypkgs
 
     List of provide names of packages that should only ever be installed, never
