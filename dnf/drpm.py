@@ -83,7 +83,7 @@ class DeltaPayload(dnf.repo.PackagePayload):
 
 
 class DeltaInfo(object):
-    def __init__(self, query, progress, deltarpm_percentage = None):
+    def __init__(self, query, progress, deltarpm_percentage=None):
         '''A delta lookup and rebuild context
            query -- installed packages to use when looking up deltas
            progress -- progress obj to display finished delta rebuilds
