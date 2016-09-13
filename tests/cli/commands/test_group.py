@@ -44,6 +44,7 @@ class GroupCommandStaticTest(support.TestCase):
 
     def test_split_extcmds(self):
         cmd = group.GroupCommand(support.mock.MagicMock())
+        cmd.base.conf = dnf.conf.Conf()
         support.command_run(cmd, ['install', '--with-optional', 'crack'])
         cmd.base.env_group_install.assert_called_with(
             ['crack'], ('mandatory', 'default', 'optional'),

@@ -105,6 +105,12 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     Should the dnf client exit immediately when something else has the lock. Default is False
 
+``group_package_types``
+    :ref:`list <list-label>`
+
+    List of the following: optional, default, mandatory. Tells dnf which type of packages in groups will
+    be installed when 'groupinstall' is called. Default is: default, mandatory
+
 ``install_weak_deps``
     :ref:`boolean <boolean-label>`
 
