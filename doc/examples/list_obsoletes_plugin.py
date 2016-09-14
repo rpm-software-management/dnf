@@ -21,6 +21,7 @@ import dnf.cli
 
 
 # The parent class allows registration to the CLI manager.
+@dnf.plugin.register_command
 class Command(dnf.cli.Command):
 
     """A command that lists packages installed on the system that are
@@ -70,17 +71,3 @@ class Command(dnf.cli.Command):
                   (new.name, new.arch, old.name, old.arch))
 
 
-# Every plugin must be a subclass of dnf.Plugin.
-class Plugin(dnf.Plugin):
-
-    """A plugin that registers our custom command."""
-
-    # Every plugin must provide its name.
-    name = 'foo'  # <-- SET YOUR NAME HERE.
-
-    # Every plugin must provide its own initialization function.
-    def __init__(self, base, cli):
-        """Initialize the plugin."""
-        super(Plugin, self).__init__(base, cli)
-        if cli:
-            cli.register_command(Command)

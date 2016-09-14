@@ -40,40 +40,31 @@ class Command(dnf.cli.Command):
         self.cli.demands.root_user = True  # <-- SET YOUR FLAG HERE.
 
     @staticmethod
-    def parse_args(args):
+    def set_argparser(parser):
         """Parse command line arguments."""
         # -- IMPLEMENT YOUR PARSER HERE. --
-        if not args:
-            raise dnf.cli.CliError('invalid command line arguments')
-        ftr_specs, rpm_specs, grp_specs = set(), set(), set()
-        for arg in args:
-            if arg.startswith('@'):
-                grp_specs.add(arg[1:])
-            elif arg.endswith('.rpm'):
-                rpm_specs.add(arg)
-            else:
-                ftr_specs.add(arg)
-        return ftr_specs, rpm_specs, grp_specs
+        parser.add_argument('package', nargs='+', metavar=_('PACKAGE'),
+                            action=OptionParser.ParseSpecGroupFileCallback,
+                            help=_('Package to install'))
 
     def run(self, args):
         """Run the command."""
-        ftr_specs, rpm_specs, grp_specs = self.parse_args(args)
         # Feature marking methods set the user request.
-        for ftr_spec in ftr_specs:
+        for ftr_spec in self.opts.pkg_specs:
             try:
                 self.base.install(ftr_spec)
             except dnf.exceptions.MarkingError:
                 raise dnf.exceptions.Error('feature(s) not found: ' + ftr_spec)
         # Package marking methods set the user request.
         try:
-            self.base.package_install(self.base.add_remote_rpms(rpm_specs, strict=False))
+            self.base.package_install(self.base.add_remote_rpms(self.opts.filenames, strict=False))
         except EnvironmentError as e:
             raise dnf.exceptions.Error(e)
         # Comps data reading initializes the base.comps attribute.
         if grp_specs:
             self.base.read_comps()
         # Group marking methods set the user request.
-        for grp_spec in grp_specs:
+        for grp_spec in self.opts.grp_specs:
             group = self.base.comps.group_by_pattern(grp_spec)
             if not group:
                 raise dnf.exceptions.Error('group not found: ' + grp_spec)
