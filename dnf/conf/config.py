@@ -532,11 +532,11 @@ class BaseConfig(object):
                     try:
                         opt._set(value, priority)
                     except dnf.exceptions.ConfigError as e:
-                        logger.warning(_('Unknown configuration value: '
+                        logger.debug(_('Unknown configuration value: '
                                          '%s=%s; %s'),
                                        ucd(name), ucd(value), e.raw_error)
                 else:
-                    logger.warning(_('Unknown configuration option: %s = %s'),
+                    logger.debug(_('Unknown configuration option: %s = %s'),
                                    ucd(name), ucd(value))
 
     def _config_items(self):
