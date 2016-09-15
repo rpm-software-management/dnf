@@ -455,9 +455,11 @@ class Repo(dnf.conf.RepoConf):
     # :api
     DEFAULT_SYNC = SYNC_TRY_CACHE
 
+
     def __init__(self, name=None, parent_conf=None):
         # :api
         super(Repo, self).__init__(section=name, parent=parent_conf)
+        self._repofile = None
         self._expired = False
         self._pkgdir = None
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
@@ -806,7 +808,7 @@ class Repo(dnf.conf.RepoConf):
             self._handle = self._handle_new_remote(None)
         return self._handle
 
-    def load(self):
+    def load(self, check_config_file_age=True):
         # :api
         """Load the metadata for this repo.
 
@@ -821,6 +823,9 @@ class Repo(dnf.conf.RepoConf):
 
         """
         if self.metadata or self._try_cache():
+            if check_config_file_age \
+                    and dnf.util.file_age(self._repofile) < self.metadata._age:
+                self._md_expire_cache()
             if self._sync_strategy in (SYNC_ONLY_CACHE, SYNC_LAZY) or \
                not self._expired:
                 logger.debug('repo: using cache for: %s', self.id)

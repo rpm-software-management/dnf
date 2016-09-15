@@ -105,7 +105,7 @@ class RepoReader(object):
                 logger.warning(e)
                 continue
             else:
-                thisrepo.repofile = repofn
+                thisrepo._repofile = repofn
 
             thisrepo._configure_from_options(self.opts)
 
