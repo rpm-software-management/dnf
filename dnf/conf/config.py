@@ -533,9 +533,8 @@ class BaseConfig(object):
                         opt._set(value, priority)
                     except dnf.exceptions.ConfigError as e:
                         logger.debug(_('Unknown configuration value: '
-                                         '%s=%s in %s; %s'),
-                                       ucd(name), ucd(value), ucd(filename),
-                                     e.raw_error)
+                                       '%s=%s in %s; %s'), ucd(name),
+                                     ucd(value), ucd(filename), e.raw_error)
                 else:
                     logger.debug(
                         _('Unknown configuration option: %s = %s in %s'),
