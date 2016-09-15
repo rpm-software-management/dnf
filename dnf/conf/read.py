@@ -51,12 +51,12 @@ class RepoReader(object):
                 logger.warning(_("Warning: failed loading '%s', skipping."),
                                repofn)
 
-    def _build_repo(self, parser, id_):
+    def _build_repo(self, parser, id_, repofn):
         """Build a repository using the parsed data."""
 
         repo = dnf.repo.Repo(id_, self.conf)
         try:
-            repo._populate(parser, id_, dnf.conf.PRIO_REPOCONFIG)
+            repo._populate(parser, id_, repofn, dnf.conf.PRIO_REPOCONFIG)
         except ValueError as e:
             msg = _("Repository '%s': Error parsing config: %s" % (id_, e))
             raise dnf.exceptions.ConfigError(msg)
@@ -100,7 +100,7 @@ class RepoReader(object):
                 continue
 
             try:
-                thisrepo = self._build_repo(parser, section)
+                thisrepo = self._build_repo(parser, section, repofn)
             except (dnf.exceptions.RepoError, dnf.exceptions.ConfigError) as e:
                 logger.warning(e)
                 continue
