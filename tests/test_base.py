@@ -198,7 +198,7 @@ class InstalledMatchingTest(support.ResultTestCase):
 
     def test_query_matching(self):
         subj = dnf.subject.Subject("pepper")
-        query = subj.get_best_query(self.sack)
+        query = subj.get_best_query(self.sack, with_provides=False)
         inst, avail = self.base._query_matches_installed(query)
         self.assertCountEqual(['pepper-20-0.x86_64'], map(str, inst))
         self.assertCountEqual(['pepper-20-0.src'], map(str, avail))
