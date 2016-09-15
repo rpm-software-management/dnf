@@ -62,6 +62,13 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     satisfiable. Enable this if you want to experience broken dependencies in
     the repositories firsthand. The default is False.
 
+``check_config_file_age``
+    :ref:`boolean <boolean-label>`
+
+    Specifies whether dnf should automatically expire metadata of repos, which are older than
+    their corresponding configuration file (usually the dnf.conf file and the foo.repo file).
+    Default is ``True`` (perform the check).
+
 .. _clean_requirements_on_remove-label:
 
 ``clean_requirements_on_remove``

@@ -686,6 +686,7 @@ class MainConf(BaseConfig):
 
         self._add_option('assumeyes', BoolOption(False)) # :api
         self._add_option('assumeno', BoolOption(False))
+        self._add_option('check_config_file_age', BoolOption(True))
         self._add_option('defaultyes', BoolOption(False))
         self._add_option('alwaysprompt', BoolOption(True))
         self._add_option('diskspacecheck', BoolOption(True))

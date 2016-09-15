@@ -82,6 +82,7 @@ class SackTest(support.TestCase):
         self.assertRaises(dnf.exceptions.RepoError,
                           base.fill_sack, load_system_repo=False)
         self.assertTrue(r.enabled)
+        self.assertTrue(r._check_config_file_age)
         r.skip_if_unavailable = True
         base.fill_sack(load_system_repo=False)
         self.assertFalse(r.enabled)

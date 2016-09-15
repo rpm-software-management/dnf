@@ -112,6 +112,10 @@ Repository Configuration
 
     The password to use for connecting to the proxy server. Defaults to ``None``.
 
+  .. attribute:: repofile
+
+    The path to configuration file of the class.
+
   .. attribute:: skip_if_unavailable
 
     If enabled, DNF will continue running and disable the repository that couldn't be contacted for any reason when downloading metadata. This option doesn't affect skipping of unavailable packages after dependency resolution. The default is ``True``.

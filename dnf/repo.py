@@ -455,9 +455,11 @@ class Repo(dnf.conf.RepoConf):
     # :api
     DEFAULT_SYNC = SYNC_TRY_CACHE
 
+
     def __init__(self, name=None, parent_conf=None):
         # :api
         super(Repo, self).__init__(section=name, parent=parent_conf)
+        self._repofile = None
         self._expired = False
         self._pkgdir = None
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
@@ -468,11 +470,22 @@ class Repo(dnf.conf.RepoConf):
         self._max_mirror_tries = 0  # try them all
         self._handle = None
         self._hawkey_repo = self._init_hawkey_repo()
+        self._check_config_file_age = parent_conf.check_config_file_age \
+            if parent_conf is not None else True
 
     @property
     def id(self):
         # :api
         return self._section
+
+    @property
+    def repofile(self):
+        # :api
+        return self._repofile
+
+    @repofile.setter
+    def repofile(self, value):
+        self._repofile = value
 
     @property
     def _cachedir(self):
@@ -821,6 +834,9 @@ class Repo(dnf.conf.RepoConf):
 
         """
         if self.metadata or self._try_cache():
+            if self._check_config_file_age and self.repofile \
+                    and dnf.util.file_age(self.repofile) < self.metadata._age:
+                self._md_expire_cache()
             if self._sync_strategy in (SYNC_ONLY_CACHE, SYNC_LAZY) or \
                not self._expired:
                 logger.debug('repo: using cache for: %s', self.id)

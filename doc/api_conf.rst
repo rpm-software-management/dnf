@@ -36,6 +36,12 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Path to a directory used by various DNF subsystems for storing cache data. Has a reasonable root-writable default depending on the distribution. It is up to the client to set this to a location where files and directories can be created under the running user. The directory can be safely deleted after the :class:`dnf.Base` object is destroyed
 
+  .. attribute:: check_config_file_age
+
+    Boolean option. Specifies whether dnf should automatically expire metadata of repos, which are older than
+    their corresponding configuration file (usually the dnf.conf file and the foo.repo file).
+    Default is ``True`` (perform the check).
+
   .. attribute:: clean_requirements_on_remove
 
     Boolean option. ``True`` removes dependencies that are no longer used during ``dnf remove``. A package only qualifies for removal via ``clean_requirements_on_remove`` if it was installed through DNF but not on explicit user request, i.e. it was pulled in as a dependency. The default is ``True``. (:ref:`installonlypkgs <installonlypkgs-label>` are never automatically removed.)
