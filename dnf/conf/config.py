@@ -522,7 +522,7 @@ class BaseConfig(object):
     def _set_value(self, name, value, priority=PRIO_RUNTIME):
         return self._option[name]._set(value, priority)
 
-    def _populate(self, parser, section, priority=PRIO_DEFAULT):
+    def _populate(self, parser, section, filename, priority=PRIO_DEFAULT):
         """Set option values from an INI file section."""
         if parser.has_section(section):
             for name in parser.options(section):
@@ -533,11 +533,12 @@ class BaseConfig(object):
                         opt._set(value, priority)
                     except dnf.exceptions.ConfigError as e:
                         logger.debug(_('Unknown configuration value: '
-                                         '%s=%s; %s'),
-                                       ucd(name), ucd(value), e.raw_error)
+                                       '%s=%s in %s; %s'), ucd(name),
+                                     ucd(value), ucd(filename), e.raw_error)
                 else:
-                    logger.debug(_('Unknown configuration option: %s = %s'),
-                                   ucd(name), ucd(value))
+                    logger.debug(
+                        _('Unknown configuration option: %s = %s in %s'),
+                        ucd(name), ucd(value), ucd(filename))
 
     def _config_items(self):
         """Yield (name, value) pairs for every option in the instance."""
@@ -870,7 +871,7 @@ class MainConf(BaseConfig):
             self._parser.readfp(config_pp)
         except ParsingError as e:
             raise dnf.exceptions.ConfigError("Parsing file failed: %s" % e)
-        self._populate(self._parser, self._section, priority)
+        self._populate(self._parser, self._section, filename, priority)
 
         # update to where we read the file from
         self._set_value('config_file_path', filename, priority)
