@@ -257,6 +257,12 @@ Contrary to Yum, when multiple downloads run simultaneously the total
 downloading speed is throttled. This was not possible in Yum since
 downloaders ran in different processes.
 
+===================================
+ ``installonlypkgs`` config option
+===================================
+
+Compared to Yum, DNF appends list values from the ``installonlypkgs`` config option to DNF defaults, where YUM overwrites the defaults by option values.
+
 ==============================
  The usage of Delta RPM files
 ==============================

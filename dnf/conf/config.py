@@ -176,13 +176,11 @@ class ListAppendOption(ListOption):
     """A list option which appends not sets values."""
 
     def _set(self, value, priority=PRIO_RUNTIME):
-        """Set option's value if priority is equal or higher
-           than curent priority."""
+        """Append option's value"""
+        new = self._make_value(value, priority)
         if self._is_default():
-            super(ListAppendOption, self)._set(value, priority)
+            self._actual = Value(self._default.value + new.value, priority)
         else:
-            # append
-            new = self._make_value(value, priority)
             self._actual = Value(self._actual.value + new.value, priority)
 
 
@@ -675,7 +673,7 @@ class MainConf(BaseConfig):
                                     "glob:/etc/dnf/protected.d/*.conf")) #:api
         self._add_option('username', Option()) # :api
         self._add_option('password', Option()) # :api
-        self._add_option('installonlypkgs', ListOption(dnf.const.INSTALLONLYPKGS))
+        self._add_option('installonlypkgs', ListAppendOption(dnf.const.INSTALLONLYPKGS))
         self._add_option('group_package_types', ListOption(dnf.const.GROUP_PACKAGE_TYPES))
             # NOTE: If you set this to 2, then because it keeps the current
             # kernel it means if you ever install an "old" kernel it'll get rid

@@ -25,10 +25,10 @@ CONF_FILENAME='/etc/dnf/dnf.conf' # :api
 CONF_AUTOMATIC_FILENAME='/etc/dnf/automatic.conf'
 DISTROVERPKG=('system-release(releasever)', 'redhat-release')
 GROUP_PACKAGE_TYPES = ('mandatory', 'default') # :api
-INSTALLONLYPKGS=('kernel', 'kernel-PAE',
+INSTALLONLYPKGS=['kernel', 'kernel-PAE',
                  'installonlypkg(kernel)',
                  'installonlypkg(kernel-module)',
-                 'installonlypkg(vm)')
+                 'installonlypkg(vm)']
 LOG='dnf.log'
 LOG_HAWKEY='hawkey.log'
 LOG_LIBREPO='dnf.librepo.log'
