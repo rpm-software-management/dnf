@@ -335,11 +335,11 @@ class Base(object):
         self._plugins.run_sack()
         return self._sack
 
-    @property
-    @dnf.util.lazyattr("_priv_yumdb")
-    def _yumdb(self):
-        db_path = os.path.normpath(self.conf.persistdir + '/yumdb')
-        return rpmsack.AdditionalPkgDB(db_path)
+    #@property #XXX Covered in swdb now
+    #@dnf.util.lazyattr("_priv_yumdb")
+    #def _yumdb(self):
+    #    db_path = os.path.normpath(self.conf.persistdir + '/yumdb')
+    #    return rpmsack.AdditionalPkgDB(db_path)
 
     def close(self):
         # :api

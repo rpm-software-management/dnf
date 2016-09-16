@@ -28,7 +28,6 @@ import hawkey
 import os
 from dnf.pycomp import basestring
 
-
 class SackVersion(object):
     def __init__(self):
         self._num = 0
@@ -82,18 +81,18 @@ class Sack(hawkey.Sack):
         self.add_excludes(excl)
 
     def _rpmdb_version(self, history):
-        #FIXME TODO this is kinda slow, when it is calling swdb for every installed package
-        # It would be fine to do the whole thing in swdb or return all data at once
         pkgs = self.query().installed().run()
         main = SackVersion()
+        pkgs_str = []
         for pkg in pkgs:
-            ydbi = history.pkg_by_pattern(pkg)
-            csum = None
-            if ydbi and ydbi.checksum_type and ydbi.checksum_data:
-                csum = (ydbi.checksum_type, ydbi.checksum_data)
+            pkgs_str.append(str(pkg))
+        chksums = history.checksums_by_patterns(pkgs_str) #This is slow!!! FIXME TODO XXX
+        i = 0
+        while i < len(chksums)-1:
+            csum = (chksums[i], chksums[i+1])
+            i+=2
             main._update(pkg, csum)
         return main
-
 
 def _build_sack(base):
     cachedir = base.conf.cachedir

@@ -75,6 +75,7 @@ def _sanitize(path):
     return path.replace('/', '').replace('~', '')
 
 
+#XXX Whole this thing should be covered in swdb now
 class AdditionalPkgDB(object):
     """ Accesses additional package data rpmdb is unable to store.
 
@@ -130,7 +131,7 @@ class AdditionalPkgDB(object):
         return RPMDBAdditionalDataPackage(self.conf, thisdir,
                                           yumdb_cache=self.yumdb_cache)
 
-
+#XXX Whole this thing should be covered in swdb now
 class RPMDBAdditionalDataPackage(object):
 
     # We do auto hardlink on these attributes

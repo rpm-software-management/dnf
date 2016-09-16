@@ -63,7 +63,7 @@ class Goal(hawkey.Goal):
         msg = _('--> Finding unneeded leftover dependencies')
         logger.debug(msg)
         for pkg in query.installed():
-            #FIXME TODO This is kinda slow when accessing swdb for every package - would be fine to do it at once
+            #TODO This may be kinda slow when accessing swdb in loop - would be fine to do it at once
             reason = history.attr_by_pattern("reason",pkg)
             if reason != 'dep':
                 self.userinstalled(pkg)

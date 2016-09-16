@@ -196,9 +196,9 @@ class Output(object):
     def sack(self):
         return self.base.sack
 
-    @property
-    def yumdb(self):
-        return self.base._yumdb
+    #@property #XXX Covered by swdb now
+    #def yumdb(self):
+    #    return self.base._yumdb
 
     def calcColumns(self, data, columns=None, remainder_column=0,
                     total_width=None, indent=''):

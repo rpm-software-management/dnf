@@ -436,6 +436,9 @@ class SwdbInterface(object):
     def package_data(self):
         return Hif.SwdbPkgData()
 
+    def checksums_by_patterns(self, patterns):
+        return self.swdb.checksums_by_patterns(patterns)
+
     def old(self, tids=[], limit=0, complete_transactions_only=False):
         return self.swdb.trans_old(list(tids), limit, complete_transactions_only)
 
@@ -525,6 +528,8 @@ class SwdbInterface(object):
             self._log_errors(errors)
         del self._tid
 
+    def mark_user_installed(self, pkg, mark):
+        self.swdb.mark_user_installed(str(pkg), mark)
 
     def _save_rpmdb(self, ipkg):
         """ Save all the data for rpmdb for this installed pkg, assumes
