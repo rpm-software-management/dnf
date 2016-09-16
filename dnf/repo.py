@@ -893,4 +893,7 @@ class Repo(dnf.conf.RepoConf):
     def _valid(self):
         if len(self.baseurl) == 0 and not self.metalink and not self.mirrorlist:
             return "Repository %s has no mirror or baseurl set." % self.id
+        if self.type and self.type != 'rpm-md':
+            return "Repository '{}' has unsupported type: 'type={}', " \
+                   "skipping.".format(self.id, self.type)
         return None

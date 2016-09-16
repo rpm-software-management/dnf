@@ -892,6 +892,7 @@ class RepoConf(BaseConfig):
         self._add_option('baseurl', UrlListOption()) # :api
         self._add_option('mirrorlist', UrlOption()) # :api
         self._add_option('metalink', UrlOption()) # :api
+        self._add_option('type', Option())
         self._add_option('mediaid', Option())
         self._add_option('gpgkey', UrlListOption())
         self._add_option('excludepkgs', ListAppendOption())
