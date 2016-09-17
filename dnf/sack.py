@@ -86,7 +86,7 @@ class Sack(hawkey.Sack):
         pkgs_str = []
         for pkg in pkgs:
             pkgs_str.append(str(pkg))
-        chksums = history.checksums_by_patterns(pkgs_str) #This is slow!!! FIXME TODO XXX
+        chksums = history.checksums_by_nvras(pkgs_str)
         i = 0
         while i < len(chksums)-1:
             csum = (chksums[i], chksums[i+1])

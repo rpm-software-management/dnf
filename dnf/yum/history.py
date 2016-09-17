@@ -436,14 +436,16 @@ class SwdbInterface(object):
     def package_data(self):
         return Hif.SwdbPkgData()
 
-    def checksums_by_patterns(self, patterns):
-        return self.swdb.checksums_by_patterns(patterns)
+    def checksums_by_nvras(self, nvras):
+        return self.swdb.checksums_by_nvras(nvras)
 
     def old(self, tids=[], limit=0, complete_transactions_only=False):
         return self.swdb.trans_old(list(tids), limit, complete_transactions_only)
 
     def _log_group_trans(self, tid,  groups_installed=[], groups_removed=[]):
         self.swdb.log_group_trans(tid, groups_installed, groups_removed)
+    def set_reason(self, nvra, reason):
+        self.swdb.set_reason(str(nvra), reason)
 
     def pkg_by_pattern(self, pattern):
         return self.swdb.package_by_pattern(str(pattern))
