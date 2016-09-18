@@ -556,10 +556,10 @@ class Solver(object):
         p_env = self.persistor.environment(env_id)
         if not p_env.is_installed():
             raise CompsError(_("Environment '%s' is not installed.") %
-                             p_env.ui_name)
+                             ucd(p_env.ui_name))
 
         trans = TransactionBunch()
-        group_ids = set(p_env.full_list)
+        group_ids = set(p_env.get_grp_list())
 
         for grp in group_ids:
             if not self._removable_grp(grp):

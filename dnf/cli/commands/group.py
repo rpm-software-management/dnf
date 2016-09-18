@@ -71,13 +71,14 @@ class GroupCommand(commands.Command):
         if not len(self.base.comps):
             raise dnf.exceptions.CompsError(msg)
 
+    #FIXME this is little bit buggy
     def _environment_lists(self, patterns):
         def available_pred(env):
             env_found = self.base._group_persistor.environment(env.id)
             if env_found:
-                return env_found.is_installed()
+                return not env_found.is_installed()
             else:
-                return False
+                return True
 
         self._assert_comps()
         if patterns is None:
