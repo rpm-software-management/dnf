@@ -92,3 +92,20 @@ class Goal(hawkey.Goal):
         installable_updates = set(self.list_upgrades())
         installs = set(self.list_installs())
         return (available_updates - installable_updates) - installs
+
+    def describe_solution(self, sol):
+        msg = {
+            hawkey.SOLUTION_ALLOW_INSTALL: _("Allow installation of {1}"),
+            hawkey.SOLUTION_ALLOW_REINSTALL: _("Allow reinstalation of {0}"),
+            hawkey.SOLUTION_ALLOW_UPGRADE: _("Allow upgrade of {0}"),
+            hawkey.SOLUTION_ALLOW_DOWNGRADE: _("Allow downgrade of {0"),
+            hawkey.SOLUTION_ALLOW_CHANGE: _("Allow change {0} for {1}"),
+            hawkey.SOLUTION_ALLOW_OBSOLETE: _("Allow obsolete {0}"),
+            hawkey.SOLUTION_ALLOW_REPLACEMENT: _("Allow replacement of {0} with {1}"),
+            hawkey.SOLUTION_ALLOW_REMOVE: _("Allow deinstalation of {0}"),
+            hawkey.SOLUTION_DO_NOT_INSTALL: _("Do not install {1}"),
+            hawkey.SOLUTION_DO_NOT_REMOVE: _("Keep {0} despite its architecture"),
+            hawkey.SOLUTION_DO_NOT_OBSOLETE: _("Keep obsoleted {0}"),
+            hawkey.SOLUTION_DO_NOT_UPGRADE: _("Keep old {0}"),
+        }
+        return msg.get(sol.action, "").format(sol.old, sol.new)
