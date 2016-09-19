@@ -70,7 +70,8 @@ class SackTest(support.TestCase):
     @mock.patch('dnf.sack._build_sack', lambda x: mock.Mock())
     @mock.patch('dnf.goal.Goal', lambda x: mock.Mock())
     def test_fill_sack(self):
-        def raiser():
+        def raiser(check_config_file_age):
+            self.assertTrue(check_config_file_age)
             raise dnf.exceptions.RepoError()
 
         base = support.MockBase()
