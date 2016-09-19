@@ -57,6 +57,9 @@ def build_emitters(conf):
         elif name == 'motd':
             emitter = dnf.automatic.emitter.MotdEmitter(system_name)
             emitters.append(emitter)
+        elif name == 'command_email':
+            emitter = dnf.automatic.emitter.CommandEmailEmitter(system_name, conf.command_email)
+            emitters.append(emitter)
         else:
             assert False
     return emitters
@@ -75,6 +78,7 @@ class AutomaticConfig(object):
         self.commands = CommandsConfig()
         self.email = EmailConfig()
         self.emitters = EmittersConfig()
+        self.command_email = CommandEmailConfig()
         self._parser = None
         self._load(filename)
         self.commands.imply()
@@ -119,6 +123,15 @@ class EmailConfig(dnf.conf.BaseConfig):
         self._add_option('email_from',  dnf.conf.Option("root"))
         self._add_option('email_host',  dnf.conf.Option("localhost"))
         self._add_option('email_port',  dnf.conf.IntOption(25))
+
+
+class CommandEmailConfig(dnf.conf.BaseConfig):
+    def __init__(self, section='command_email', parser=None):
+        super(CommandEmailConfig, self).__init__(section, parser)
+        self._add_option('command',  dnf.conf.Option("mail -s {subject} -r {email_from} {email_to}"))
+        self._add_option('email_to', dnf.conf.ListOption(["root"]))
+        self._add_option('email_from', dnf.conf.Option("root"))
+
 
 class EmittersConfig(dnf.conf.BaseConfig):
     def __init__(self, section='emiter', parser=None):

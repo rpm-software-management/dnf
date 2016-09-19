@@ -33,6 +33,7 @@ if PY3:
     from io import StringIO
     import queue
     import urllib.parse
+    import shlex
 
     # functions renamed in py3
     Queue = queue.Queue
@@ -46,6 +47,7 @@ if PY3:
     base64_decodebytes = base64.decodebytes
     urlparse = urllib.parse
     urllib_quote = urlparse.quote
+    shlex_quote = shlex.quote
 
     def gettext_setup(t):
         _ = t.gettext
@@ -67,7 +69,6 @@ if PY3:
         f.write(content)
     def email_mime(body):
         return email.mime.text.MIMEText(body)
-
 else:
     # functions renamed in py3
     from __builtin__ import unicode, basestring, long, xrange, raw_input
@@ -75,11 +76,13 @@ else:
     import Queue
     import urllib
     import urlparse
+    import pipes
 
     Queue = Queue.Queue
     filterfalse = itertools.ifilterfalse
     base64_decodebytes = base64.decodestring
     urllib_quote = urllib.quote
+    shlex_quote = pipes.quote
 
     def gettext_setup(t):
         _ = t.ugettext
