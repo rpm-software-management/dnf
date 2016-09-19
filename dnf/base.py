@@ -218,7 +218,7 @@ class Base(object):
     def _activate_persistor(self):
         self._repo_persistor = dnf.persistor.RepoPersistor(self.conf.cachedir)
 
-    def init_plugins(self, disabled_glob=None, cli=None):
+    def init_plugins(self, disabled_glob=(), cli=None):
         # :api
         """Load plugins and run their __init__()."""
         if self.conf.plugins:

@@ -137,6 +137,7 @@ def main(args):
             cli = dnf.cli.Cli(base)
             cli._read_conf_file()
             conf.update_baseconf(base.conf)
+            base.init_plugins(cli=cli)
             logger.debug('Started dnf-automatic.')
 
             if opts.timer:
