@@ -768,8 +768,9 @@ class RepoPkgsCommand(Command):
             alias: subcmd for subcmd in subcmd_objs for alias in subcmd.aliases}
 
     def set_argparser(self, parser):
-        super(OptionParser, parser).add_argument('reponame', nargs=1,
-                                                 metavar=_('REPO'))
+        super(OptionParser, parser).add_argument(
+            'reponame', nargs=1, action=OptionParser._RepoCallbackEnable,
+            metavar=_('REPO'))
         subparser = parser.add_subparsers(dest='subcmd',
                                           parser_class=argparse.ArgumentParser)
         for subcommand in self._subcmd_name2obj.keys():
