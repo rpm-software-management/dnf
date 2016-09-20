@@ -58,6 +58,13 @@ class OptionParser(argparse.ArgumentParser):
             l = getattr(namespace, self.dest)
             l.extend((x, operation) for x in re.split(r'\s*[,\s]\s*', values))
 
+    class _RepoCallbackEnable(argparse.Action):
+        def __call__(self, parser, namespace, values, opt_str):
+            operation = 'enable'
+            l = getattr(namespace, 'repos_ed')
+            l.append((values[0], operation))
+            setattr(namespace, 'reponame', values)
+
     class _SplitCallback(argparse._AppendAction):
         """ Split all strings in seq, at "," and whitespace.
         Returns a new list. """
