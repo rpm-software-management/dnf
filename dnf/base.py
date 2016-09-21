@@ -565,9 +565,9 @@ class Base(object):
                 goal.log_decisions()
             msg = ""
             count_problems = (goal.count_problems() > 1)
-            for i, rs in enumerate(goal.problem_rules):
+            for i, rs in enumerate(goal.problem_rules, start=1):
                 if count_problems:
-                    msg += "\n " + _("Problem") +  " %s: " % (i+1)
+                    msg += "\n " + _("Problem") +  " %d: " % i
                 msg += "\n  - ".join(rs)
             exc = dnf.exceptions.DepsolveError(msg)
         else:
