@@ -77,16 +77,16 @@ class RepoListCommand(commands.Command):
     @staticmethod
     def set_argparser(parser):
         repolimit = parser.add_mutually_exclusive_group()
-        repolimit.add_argument('--all', dest='_repo_action',
+        repolimit.add_argument('--all', dest='_repos_action',
                                action='store_const', const='all', default=None,
                                help=_("show all repos"))
-        repolimit.add_argument('--enabled', dest='_repo_action',
+        repolimit.add_argument('--enabled', dest='_repos_action',
                                action='store_const', const='enabled',
                                help=_("show enabled repos (default)"))
-        repolimit.add_argument('--disabled', dest='_repo_action',
+        repolimit.add_argument('--disabled', dest='_repos_action',
                                action='store_const', const='disabled',
                                help=_("show disabled repos"))
-        parser.add_argument('repo', nargs='*', default='enabled',
+        parser.add_argument('repos', nargs='*', default='enabled',
                             choices=['all', 'enabled', 'disabled'],
                             action=OptionParser.PkgNarrowCallback)
 
@@ -95,12 +95,12 @@ class RepoListCommand(commands.Command):
         demands.available_repos = True
         demands.fresh_metadata = False
         demands.sack_activation = True
-        if self.opts._repo_action:
-            self.opts.repo_action = self.opts._repo_action
+        if self.opts._repos_action:
+            self.opts.repos_action = self.opts._repos_action
 
     def run(self):
-        arg = self.opts.repo_action
-        extcmds = [x.lower() for x in self.opts.repo]
+        arg = self.opts.repos_action
+        extcmds = [x.lower() for x in self.opts.repos]
 
         verbose = self.base.conf.verbose
 
