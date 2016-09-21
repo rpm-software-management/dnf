@@ -71,7 +71,7 @@ class RepoListCommand(commands.Command):
     repolist command.
     """
 
-    aliases = ('repolist',)
+    aliases = ('repolist', 'repoinfo')
     summary = _('display the configured software repositories')
 
     @staticmethod
@@ -131,13 +131,13 @@ class RepoListCommand(commands.Command):
                     force_show = False
                 elif arg == 'disabled' and not force_show:
                     continue
-                if force_show or verbose:
+                if any((force_show, verbose, 'repoinfo' in self.opts.command)):
                     ui_enabled = ehibeg + _('enabled') + hiend
                     ui_endis_wid = exact_width(_('enabled'))
-                    if not verbose:
+                    if not any((verbose, 'repoinfo' in self.opts.command)):
                         ui_enabled += ": "
                         ui_endis_wid += 2
-                if verbose:
+                if verbose or ('repoinfo' in self.opts.command):
                     ui_size = _repo_size(self.base.sack, repo)
                 # We don't show status for list disabled
                 if arg != 'disabled' or verbose:
@@ -154,7 +154,7 @@ class RepoListCommand(commands.Command):
                 ui_enabled = dhibeg + _('disabled') + hiend
                 ui_endis_wid = exact_width(_('disabled'))
 
-            if not verbose:
+            if not any((verbose, ('repoinfo' in self.opts.command))):
                 rid = repo.id
                 if enabled and repo.metalink:
                     mdts = repo.metadata._timestamp
@@ -232,7 +232,7 @@ class RepoListCommand(commands.Command):
                     out += [self.output.fmtKeyValFill(_("Repo-filename: "),
                                                       repo.repofile)]
 
-                logger.log(dnf.logging.DEBUG, "%s\n", "\n".join(map(ucd, out)))
+                print("\n" + "\n".join(map(ucd, out)))
 
         if not verbose and cols:
             #  Work out the first (id) and last (enabled/disalbed/count),
