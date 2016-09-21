@@ -113,7 +113,7 @@
 
   .. method:: read_comps(arch_filter=False)
 
-    Read comps data from all the enabled repositories and initialize the :attr:`comps` object. If arch_filter=True then result is limited to system basearch.
+    Read comps data from all the enabled repositories and initialize the :attr:`comps` object. If `arch_filter` is set to ``True``, the result is limited to system basearch.
 
   .. method:: reset(**kwargs)
 
