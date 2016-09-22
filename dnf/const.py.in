@@ -25,7 +25,7 @@ CONF_FILENAME='/etc/dnf/dnf.conf' # :api
 CONF_AUTOMATIC_FILENAME='/etc/dnf/automatic.conf'
 DISTROVERPKG=('system-release(releasever)', 'redhat-release')
 GROUP_PACKAGE_TYPES = ('mandatory', 'default') # :api
-INSTALLONLYPKGS=('kernel',
+INSTALLONLYPKGS=('kernel', 'kernel-PAE',
                  'installonlypkg(kernel)',
                  'installonlypkg(kernel-module)',
                  'installonlypkg(vm)')
