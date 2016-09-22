@@ -54,7 +54,8 @@ class GroupCommand(commands.Command):
         direct = self.direct_commands.get(self.opts.command[0])
         if direct:
             # canonize subcmd and args
-            self.opts.args.insert(0, self.opts.subcmd)
+            if self.opts.subcmd is not None:
+                self.opts.args.insert(0, self.opts.subcmd)
             self.opts.subcmd = direct
         if self.opts.subcmd is None:
             self.opts.subcmd = 'summary'
