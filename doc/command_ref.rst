@@ -830,6 +830,11 @@ are displayed in the standard NEVRA notation.
     ``--whatrequires``, ``--requires``, ``--conflicts``, ``--enhances``, ``--suggests``, ``--provides``,
     ``--suplements``, ``--recommends``.
 
+``--deplist``
+    Produces a list of all dependencies and what packages provide those
+    dependencies for the given packages. The results only shows the newest
+    providers (which can be changed by using --verbose)
+
 .. _queryformat_repoquery-label:
 
 ``--qf <format>``, ``--queryformat <format>``

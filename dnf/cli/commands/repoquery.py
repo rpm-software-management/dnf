@@ -120,6 +120,8 @@ class RepoQueryCommand(commands.Command):
                                       help=_("check non-explicit dependencies (files and Provides); default"))
         whatrequiresform.add_argument("--exactdeps", action="store_true",
                                       help=_('check dependencies exactly as given, opposite of --alldeps'))
+        parser.add_argument('--deplist', action='store_true', help=_(
+            "list of all dependencies and what packages it provides"))
         parser.add_argument('--querytags', action='store_true',
                             help=_('show available tags to use with '
                                    '--queryformat'))
@@ -343,6 +345,24 @@ class RepoQueryCommand(commands.Command):
                 rels = getattr(pkg, OPTS_MAPPING[self.opts.packageatr])
                 for rel in rels:
                     pkgs.add(str(rel))
+        elif self.opts.deplist:
+            pkgs = []
+            for pkg in sorted(set(q.run())):
+                deplist_output = []
+                deplist_output.append('package: ' + str(pkg))
+                for req in sorted([str(req) for req in pkg.requires]):
+                    deplist_output.append('  dependency: ' + req)
+                    subject = dnf.subject.Subject(req)
+                    query = subject.get_best_query(self.base.sack)
+                    query = self.filter_repo_arch(
+                        self.opts, query.available())
+                    if not self.opts.verbose:
+                        query = query.latest()
+                    for provider in query.run():
+                        deplist_output.append('   provider: ' + str(provider))
+                pkgs.append('\n'.join(deplist_output))
+            print('\n\n'.join(pkgs))
+            return
         else:
             for pkg in q.run():
                 try:
@@ -364,6 +384,7 @@ class RepoQueryCommand(commands.Command):
                     # catch that the user has specified attributes
                     # there don't exist on the dnf Package object.
                     raise dnf.exceptions.Error(str(e))
+
         for pkg in sorted(pkgs):
             print(pkg)
 

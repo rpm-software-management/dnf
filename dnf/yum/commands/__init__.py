@@ -1,4 +1,7 @@
-# Copyright (C) 2016  Red Hat, Inc.
+# __init__.py
+# The legacy Yum subpackage.
+#
+# Copyright (C) 2013-2016  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -14,19 +17,3 @@
 # License and may only be used or replicated with the express permission of
 # Red Hat, Inc.
 #
-
-import dnf.cli.cli
-import dnf.yum.commands.deplist
-
-
-class YumCli(dnf.cli.Cli):
-    def __init__(self, base):
-        super(YumCli, self).__init__(base)
-        self.register_custom_commands()
-
-    def register_custom_commands(self):
-        """Register custom commands
-
-        example: self.register_command(dnf.cli.commands.Command)
-        """
-        self.register_command(dnf.yum.commands.deplist.DeplistCommand)

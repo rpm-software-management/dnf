@@ -1,4 +1,5 @@
-# Copyright (C) 2016  Red Hat, Inc.
+#
+# Copyright (C) 2016 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -15,18 +16,21 @@
 # Red Hat, Inc.
 #
 
-import dnf.cli.cli
-import dnf.yum.commands.deplist
+from __future__ import print_function
+from __future__ import absolute_import
+from __future__ import unicode_literals
+from dnf.i18n import _
+from dnf.cli.commands.repoquery import RepoQueryCommand
 
 
-class YumCli(dnf.cli.Cli):
-    def __init__(self, base):
-        super(YumCli, self).__init__(base)
-        self.register_custom_commands()
+class DeplistCommand(RepoQueryCommand):
+    """
+    some comment about command
+    """
 
-    def register_custom_commands(self):
-        """Register custom commands
+    aliases = ('deplist',)
+    summary = _("List a package's dependencies")
 
-        example: self.register_command(dnf.cli.commands.Command)
-        """
-        self.register_command(dnf.yum.commands.deplist.DeplistCommand)
+    def configure(self):
+        RepoQueryCommand.configure(self)
+        self.opts.deplist = True
