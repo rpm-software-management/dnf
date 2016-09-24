@@ -17,8 +17,6 @@
 # James Antill <james@fedoraproject.org>
 # Edited in 2016 - (SWDB) Eduard Cuba <xcubae00@stud.fit.vutbr.cz>
 
-#TODO: get rid of yum.get_package() replace with swdb.get_package_by_pattern()
-
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _, ucd
@@ -27,7 +25,6 @@ import time
 import glob
 import os
 
-from .sqlutils import sqlite, executeSQL, sql_esc_glob
 from . import misc as misc
 import gi
 gi.require_version('Hif', '3.0')
@@ -37,6 +34,7 @@ import dnf.exceptions
 import dnf.rpm.miscutils
 import dnf.i18n
 import functools
+from dnf.yum import swdb_transformer
 
 class YumHistoryTransaction(object):
     """ Holder for a history transaction. """
@@ -423,6 +421,9 @@ class SwdbInterface(object):
         self.swdb = Hif.Swdb.new(db_path, releasever)
         self.releasever = releasever
         self.addon_data = _addondata(db_path, root)
+        if not self.swdb.exist():
+            self.swdb.create_db()
+            swdb_transformer.run(output_file=self.swdb.get_path()) #does nothing when there is nothing to transform
 
     def close(self):
         self.swdb.close()
@@ -435,6 +436,9 @@ class SwdbInterface(object):
 
     def package_data(self):
         return Hif.SwdbPkgData()
+
+    def set_repo(self, nvra, repo):
+        self.swdb.set_repo(str(nvra), str(repo))
 
     def checksums_by_nvras(self, nvras):
         return self.swdb.checksums_by_nvras(nvras)
