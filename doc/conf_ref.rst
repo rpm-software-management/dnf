@@ -195,6 +195,12 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     ``reposdir``. The behavior of ``reposdir`` could differ when it is used
     along with \-\ :ref:`-installroot <installroot-label>` option.
 
+``rpmverbosity``
+    :ref:`string <string-label>`
+
+    RPM debug scriptlet output level. One of: ``critical``, ``emergency``,
+    ``error``, ``warn``, ``info`` or ``debug``. Default is ``info``.
+
 ``upgrade_group_objects_upgrade``
     :ref:`boolean <boolean-label>`
 
