@@ -125,13 +125,12 @@ class Subject(object):
             kwargs['form'] = forms
         nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
         if nevra:
+            sltr = dnf.selector.Selector(sack)
             if nevra._has_just_name():
-                sltr = dnf.selector.Selector(sack)
                 s = sltr.set(provides=nevra.name)
                 if len(s.matches()) > 0:
                     return s
             else:
-                sltr = dnf.selector.Selector(sack)
                 s = self._nevra_to_selector(sltr, nevra)
                 if len(s.matches()) > 0:
                     return s
