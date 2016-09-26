@@ -224,8 +224,9 @@ Options
     ``--disablerepo="*" --enablerepo=<repoid>`` and is mutually exclusive with
     ``--disablerepo`` option.
 
-``--rpmverbosity=<debug level name>``
-    debugging output level for rpm
+``--rpmverbosity=<name>``
+    RPM debug scriptlet output level. Sets the debug level to ``<name>`` for RPM scriptlets.
+    For available levels, see ``rpmverbosity`` configuration option.
 
 ``--setopt=<option>=<value>``
     override a config option from the config file. To override config options from repo files, use ``repoid.option`` for the ``<option>``.
