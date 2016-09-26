@@ -459,7 +459,7 @@ class Repo(dnf.conf.RepoConf):
     def __init__(self, name=None, parent_conf=None):
         # :api
         super(Repo, self).__init__(section=name, parent=parent_conf)
-        self._repofile = None
+        self.repofile = None
         self._expired = False
         self._pkgdir = None
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
@@ -823,8 +823,8 @@ class Repo(dnf.conf.RepoConf):
 
         """
         if self.metadata or self._try_cache():
-            if check_config_file_age and self._repofile \
-                    and dnf.util.file_age(self._repofile) < self.metadata._age:
+            if check_config_file_age and self.repofile \
+                    and dnf.util.file_age(self.repofile) < self.metadata._age:
                 self._md_expire_cache()
             if self._sync_strategy in (SYNC_ONLY_CACHE, SYNC_LAZY) or \
                not self._expired:
