@@ -60,9 +60,7 @@ class OptionParser(argparse.ArgumentParser):
 
     class _RepoCallbackEnable(argparse.Action):
         def __call__(self, parser, namespace, values, opt_str):
-            operation = 'enable'
-            l = getattr(namespace, 'repos_ed')
-            l.append((values[0], operation))
+            namespace.repos_ed.append((values[0], 'enable'))
             setattr(namespace, 'reponame', values)
 
     class _SplitCallback(argparse._AppendAction):
