@@ -59,6 +59,7 @@ Available commands:
 * :ref:`provides <provides_command-label>`
 * :ref:`reinstall <reinstall_command-label>`
 * :ref:`remove <remove_command-label>`
+* :ref:`repoinfo <repoinfo_command-label>`
 * :ref:`repolist <repolist_command-label>`
 * :ref:`repoquery <repoquery_command-label>`
 * :ref:`repository-packages <repository-packages_command-label>`
@@ -641,6 +642,15 @@ Remove Command
 
 ``dnf [options] remove --oldinstallonly``
     Removes old installonly packages keeping only ``installonly_limit`` latest versions.
+
+.. _repoinfo_command-label:
+
+----------------
+Repoinfo Command
+----------------
+
+    This command is alias for :ref:`repolist <repolist_command-label>` command
+    that provides more detailed information like ``dnf repolist -v``.
 
 .. _repolist_command-label:
 
