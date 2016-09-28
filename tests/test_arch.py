@@ -28,6 +28,7 @@ class ArchTest(tests.support.TestCase):
         fn = dnf.rpm.basearch
         self.assertEqual(fn('armv6hl'), 'armhfp')
         self.assertEqual(fn('armv7hl'), 'armhfp')
+        self.assertEqual(fn('armv8l'), 'armhfp')
         self.assertEqual(fn('i686'), 'i386')
         self.assertEqual(fn('noarch'), 'noarch')
         self.assertEqual(fn('ppc64iseries'), 'ppc64')

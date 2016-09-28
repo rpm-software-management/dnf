@@ -67,7 +67,7 @@ _BASEARCH_MAP = _invert({
     'alpha': ('alpha', 'alphaev4', 'alphaev45', 'alphaev5', 'alphaev56',
               'alphaev6', 'alphaev67', 'alphaev68', 'alphaev7', 'alphapca56'),
     'arm': ('armv5tejl', 'armv5tel', 'armv6l', 'armv7l'),
-    'armhfp': ('armv6hl', 'armv7hl', 'armv7hnl'),
+    'armhfp': ('armv6hl', 'armv7hl', 'armv7hnl', 'armv8l'),
     'i386': ('i386', 'athlon', 'geode', 'i386', 'i486', 'i586', 'i686'),
     'ia64': ('ia64',),
     'mips': ('mips',),
