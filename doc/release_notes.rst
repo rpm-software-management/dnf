@@ -21,6 +21,112 @@
 
 .. contents::
 
+===================
+2.0.0 Release Notes
+===================
+
+List of all incompatible changes can be found at: :doc:`dnf-1 vs dnf-2 <dnf-1_vs_dnf-2>`
+
+API changes in 2.0.0:
+
+* :meth:`dnf.Base.add_remote_rpms` now suppresses any error if :attr:`strict` equals to ``False``.
+* :meth:`dnf.Base.read_comps` now limits results to system basearch if :attr:`arch_filter` equals to ``True``.
+* :meth:`dnf.cli.Cli.configure` now doesn't take any additional arguments.
+* :meth:`dnf.cli.Cli.run` now doesn't take any additional arguments.
+* :meth:`dnf.Plugin.read_config` now doesn't take any name of config file.
+* :meth:`dnf.Repo.__init__` now takes `parent_conf` argument which is an instance of :class:`dnf.conf.Conf` holding main dnf configuration instead of `cachedir` path.
+* ``exclude`` and ``include`` configuration options change to ``excludepkgs`` and ``includepkgs``.
+
+API additions in 2.0.0:
+
+* :meth:`dnf.Base.init_plugins` initializes plugins. It is possible to disable some plugins by passing the list of their name patterns to :attr:`disabled_glob`.
+* :meth:`dnf.Base.configure_plugins` configures plugins by running their :meth:`configure` method.
+* :meth:`dnf.Base.urlopen` opens the specified absolute ``url`` and returns a file object which respects proxy setting even for non-repo downloads
+* Introduced new configuration options: ``clean_requirements_on_remove``, ``deltarpm_percentage``, ``exit_on_lock``, ``get_reposdir``, ``group_package_types``, ``, ``installonlypkgs``, ``keepcache``, ``protected_packages``, ``retries`` and ``upgrade_group_objects_upgrade``. For detailed description see: :doc:`DNF API <api_conf>`.
+* Introduced new configuration methods: :meth:`dump` and :meth:`write_raw_configfile`. For detailed description see: :doc:`DNF API <api_conf>`.
+* Introduced :class:`dnf.package.Package` attributes :attr:`debug_name`, :attr:`downloadsize`, :attr:`source_debug_name` and :attr:`source_name`. For detailed description see: :doc:`DNF Package API <api_package>`.
+* :meth:`dnf.Query.extras` returns a new query that limits the result to installed packages that are not present in any repo.
+* :meth:`dnf.Repo.enable_debug_repos` enables debug repos corresponding to already enabled binary repos.
+* :meth:`dnf.Repo.enable_source_repos` enables source repos corresponding to already enabled binary repos.
+* :meth:`dnf.Repo.dump` prints repository configuration, including inherited values.
+
+DNF command changes in 2.0.0:
+
+* ``dnf [options] group install [with-optional] <group-spec>...`` changes to ``dnf [options] group install [--with-optional] <group-spec>...``.
+* ``dnf [options] list command [<package-name-specs>...]`` changes to `dnf [options] list --command [<package-name-specs>...]``.
+* ``dnf [options] makecache timer`` changes to ``dnf [options] makecache --timer``.
+* ``dnf [options] repolist [enabled|disabled|all]`` changes to ``dnf [options] repolist [--enabled|--disabled|--all]``.
+* ``dnf [options] repository-packages <repoid> info command [<package-name-spec>...]`` changes to ``dnf [options] repository-packages <repoid> info --command [<package-name-spec>...]``.
+* ``dnf [options] search [all] <keywords>...`` changes to ``dnf [options] search [--all] <keywords>...``.
+* ``dnf [options] updateinfo [<availability>] [<spec>...]`` changes to ``dnf [options] updateinfo [--summary|--list|--info] [<availability>] [<spec>...]``.
+* ``--disablerepo`` :doc:`command line argument <command_ref>` is mutually exclusive with ``--repo``.
+* ``--enablerepo`` :doc:`command line argument <command_ref>` now appends repositories.
+* ``--installroot`` :doc:`command line argument <command_ref>`. For detailed description see: :doc:`DNF command API <command_ref>`.
+* ``--releasever`` :doc:`command line argument <command_ref>` now doesn't detect release number from running system.
+* ``--repofrompath`` :doc:`command line argument <command_ref>` can now be combined with ``--repo`` instead of ``--enablerepo``.
+
+DNF command additions in 2.0.0:
+
+* ``dnf [options] remove --duplicated`` removes older version of duplicated packages.
+* ``dnf [options] remove --oldinstallonly``removes old installonly packages keeping only ``installonly_limit`` latest versions.
+* ``dnf [options] repoquery [<select-options>] [<query-options>] [<pkg-spec>]`` searches the available DNF repositories for selected packages and displays the requested information about them. It is an equivalent of ``rpm -q`` for remote repositories.
+* ``dnf [options] repoquery --querytags`` provides list of recognized tags by repoquery option \-\ :ref:`-queryformat <queryformat_repoquery-label>`.
+* ``--repo`` :doc:`command line argument <command_ref>` enables just specific repositories by an id or a glob. Can be used multiple times with accumulative effect. It is basically shortcut for ``--disablerepo="*" --enablerepo=<repoid>`` and is mutually exclusive with ``--disablerepo`` option.
+
+Bugs fixed in 2.0.0:
+
+* :rhbug:`1348766`
+* :rhbug:`1337731`
+* :rhbug:`1333591`
+* :rhbug:`1314961`
+* :rhbug:`1372307`
+* :rhbug:`1373108`
+* :rhbug:`1148627`
+* :rhbug:`1267298`
+* :rhbug:`1373591`
+* :rhbug:`1230355`
+* :rhbug:`1366793`
+* :rhbug:`1369411`
+* :rhbug:`1366793`
+* :rhbug:`1369459`
+* :rhbug:`1306096`
+* :rhbug:`1368832`
+* :rhbug:`1366793`
+* :rhbug:`1359016`
+* :rhbug:`1365593`
+* :rhbug:`1297087`
+* :rhbug:`1227053`
+* :rhbug:`1356926`
+* :rhbug:`1055910`
+* :rhbug:`1219867`
+* :rhbug:`1226677`
+* :rhbug:`1350604`
+* :rhbug:`1253120`
+* :rhbug:`1158548`
+* :rhbug:`1262878`
+* :rhbug:`1318852`
+* :rhbug:`1327438`
+* :rhbug:`1343880`
+* :rhbug:`1338921`
+* :rhbug:`1284349`
+* :rhbug:`1338921`
+* :rhbug:`1284349`
+* :rhbug:`1306096`
+* :rhbug:`1218071`
+* :rhbug:`1193823`
+* :rhbug:`1246211`
+* :rhbug:`1193851`
+* :rhbug:`1158548`
+* :rhbug:`1215208`
+* :rhbug:`1212693`
+* :rhbug:`1212341`
+* :rhbug:`1306591`
+* :rhbug:`1227001`
+* :rhbug:`1163028`
+* :rhbug:`1279185`
+* :rhbug:`1289067`
+* :rhbug:`1328674`
+
 ====================
 1.1.10 Release Notes
 ====================
