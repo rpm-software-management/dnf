@@ -766,7 +766,7 @@ class Base(object):
             rpmdbv = self.sack._rpmdb_version(self.history)
             lastdbv = self.history.last()
             if lastdbv is not None:
-                lastdbv = lastdbv.rpmdb_version
+                lastdbv = lastdbv.end_rpmdb_version
 
             if lastdbv is None or rpmdbv != lastdbv:
                 logger.debug("RPMDB altered outside of DNF.")
@@ -973,11 +973,10 @@ class Base(object):
                     logger.critical(msg, rpo)
                     count = display_banner(rpo, count)
                     continue
-            #else:
-            #    self._yumdb.get_package(rpo).clean() #no need for cleening, we keep evidence in trasaction
             count = display_banner(rpo, count)
         if self._record_history():
-            self.history.end(0)
+            rpmdbv = rpmdb_sack._rpmdb_version(self.history)
+            self.history.end(rpmdbv, 0)
         timer()
         self._trans_success = True
 

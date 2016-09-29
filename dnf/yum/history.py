@@ -519,11 +519,11 @@ class SwdbInterface(object):
             error = ucd(error)
             self.swdb.log_error(self._tid, error)
 
-    def end(self, return_code, errors=None):
+    def end(self, end_rpmdb_version="", return_code=0, errors=None):
         assert return_code or not errors
         if not hasattr(self, '_tid'):
             return # Failed at beg() time
-        self.swdb.trans_end(self._tid, str(int(time.time())), return_code)
+        self.swdb.trans_end(self._tid, str(int(time.time())), str(end_rpmdb_version), return_code)
         if not return_code:
             #  Simple hack, if the transaction finished. Note that this
             # catches the erase cases (as we still don't get pkgtups for them),

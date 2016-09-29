@@ -37,7 +37,7 @@ def TRANS_DATA_INSERT(cursor,data):
     cursor.execute('INSERT INTO TRANS_DATA VALUES (null,?,?,?,?,?,?,?)', data)
 
 def TRANS_INSERT(cursor,data):
-    cursor.execute('INSERT INTO TRANS VALUES (?,?,?,?,?,?,?,?)', data)
+    cursor.execute('INSERT INTO TRANS VALUES (?,?,?,?,?,?,?,?,?)', data)
 
 #create binding with repo - returns R_ID
 def BIND_REPO(cursor,name):
@@ -225,7 +225,7 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
     PACKAGE = ['P_ID','name','epoch','version','release','arch','checksum_data','checksum_type','type']
     CHECKSUM_DATA = ['checksum_data']
     TRANS_DATA = ['T_ID','PD_ID','G_ID','done','ORIGINAL_TD_ID','reason','state']
-    TRANS = ['T_ID','beg_timestamp','end_timestamp','RPMDB_version','cmdline','loginuid','releasever','return_code']
+    TRANS = ['T_ID','beg_timestamp','end_timestamp','beg_RPMDB_version','end_RPMDB_version','cmdline','loginuid','releasever','return_code']
     GROUPS = ['name_id','name','ui_name','is_installed','pkg_types','grp_types']
     ENVIRONMENTS = ['name_id','name','ui_name','pkg_types','grp_types']
     RPM_DATA = ["P_ID","buildtime","buildhost","license","packager","size","sourcerpm","url","vendor","committer","committime"]
@@ -370,12 +370,12 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
         record_T = [''] * len(TRANS)
         record_T[TRANS.index('T_ID')] = row[0]
         record_T[TRANS.index('beg_timestamp')] = row[1]
-        record_T[TRANS.index('RPMDB_version')] = row[2]
+        record_T[TRANS.index('beg_RPMDB_version')] = row[2]
         record_T[TRANS.index('loginuid')] = row[3]
         TRANS_INSERT(cursor,record_T)
     h_cursor.execute('SELECT * FROM trans_end')
     for row in h_cursor:
-        cursor.execute('UPDATE TRANS SET end_timestamp=?,return_code=? WHERE T_ID = ?',(row[1],row[3],row[0]))
+        cursor.execute('UPDATE TRANS SET end_timestamp=?,end_RPMDB_version=?, return_code=? WHERE T_ID = ?',(row[1],row[2],row[3],row[0]))
     h_cursor.execute('SELECT * FROM trans_cmdline')
     for row in h_cursor:
         cursor.execute('UPDATE TRANS SET cmdline=? WHERE T_ID = ?',(row[1],row[0]))
