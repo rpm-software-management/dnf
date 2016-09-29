@@ -57,14 +57,6 @@ OPTS_MAPPING = {
 }
 
 
-def filelist_format(pkg):
-    return pkg.files
-
-
-def sourcerpm_format(pkg):
-    return pkg.sourcerpm
-
-
 def rpm2py_format(queryformat):
     """Convert a rpm like QUERYFMT to an python .format() string."""
     def fmt_repl(matchobj):
@@ -222,9 +214,9 @@ class RepoQueryCommand(commands.Command):
         if opts.queryinfo:
             return self.base.output.infoOutput(pkg)
         elif opts.queryfilelist:
-            return self.filelist_format(po)
+            return po.files
         elif opts.querysourcerpm:
-            return self.sourcerpm_format(po)
+            return po.sourcerpm
         else:
            return rpm2py_format(opts.queryformat).format(po)
 

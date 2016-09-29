@@ -99,14 +99,20 @@ class ArgParseTest(unittest.TestCase):
 
 class FilelistFormatTest(unittest.TestCase):
     def test_filelist(self):
+        self.cmd = dnf.cli.commands.repoquery.RepoQueryCommand(
+            support.CliStub(support.BaseCliStub()))
+        support.command_configure(self.cmd, ['-l'])
         pkg = dnf.cli.commands.repoquery.PackageWrapper(PkgStub())
-        self.assertEqual(dnf.cli.commands.repoquery.filelist_format(pkg),
+        self.assertEqual(self.cmd.build_format_fn(self.cmd.opts, pkg),
                          EXPECTED_FILELIST_FORMAT)
 
 class SourceRPMFormatTest(unittest.TestCase):
     def test_info(self):
+        self.cmd = dnf.cli.commands.repoquery.RepoQueryCommand(
+            support.CliStub(support.BaseCliStub()))
+        support.command_configure(self.cmd, ['--source'])
         pkg = dnf.cli.commands.repoquery.PackageWrapper(PkgStub())
-        self.assertEqual(dnf.cli.commands.repoquery.sourcerpm_format(pkg),
+        self.assertEqual(self.cmd.build_format_fn(self.cmd.opts, pkg),
                          EXPECTED_SOURCERPM_FORMAT)
 
 class OutputTest(unittest.TestCase):
