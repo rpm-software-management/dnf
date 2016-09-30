@@ -22,6 +22,16 @@
 .. contents::
 
 ===================
+2.0.1 Release Notes
+===================
+
+* Add new alias to ``rpm-md`` repository metadata type: ``rpm``.
+
+Bugs fixed in 2.0.1:
+
+* :rhbug:`1380580`
+
+===================
 2.0.0 Release Notes
 ===================
 
@@ -42,7 +52,7 @@ API additions in 2.0.0:
 * :meth:`dnf.Base.init_plugins` initializes plugins. It is possible to disable some plugins by passing the list of their name patterns to :attr:`disabled_glob`.
 * :meth:`dnf.Base.configure_plugins` configures plugins by running their :meth:`configure` method.
 * :meth:`dnf.Base.urlopen` opens the specified absolute ``url`` and returns a file object which respects proxy setting even for non-repo downloads
-* Introduced new configuration options: ``clean_requirements_on_remove``, ``deltarpm_percentage``, ``exit_on_lock``, ``get_reposdir``, ``group_package_types``, ``, ``installonlypkgs``, ``keepcache``, ``protected_packages``, ``retries`` and ``upgrade_group_objects_upgrade``. For detailed description see: :doc:`DNF API <api_conf>`.
+* Introduced new configuration options: ``clean_requirements_on_remove``, ``deltarpm_percentage``, ``exit_on_lock``, ``get_reposdir``, ``group_package_types``, ``installonlypkgs``, ``keepcache``, ``protected_packages``, ``retries`` and ``upgrade_group_objects_upgrade``. For detailed description see: :doc:`DNF API <api_conf>`.
 * Introduced new configuration methods: :meth:`dump` and :meth:`write_raw_configfile`. For detailed description see: :doc:`DNF API <api_conf>`.
 * Introduced :class:`dnf.package.Package` attributes :attr:`debug_name`, :attr:`downloadsize`, :attr:`source_debug_name` and :attr:`source_name`. For detailed description see: :doc:`DNF Package API <api_package>`.
 * :meth:`dnf.Query.extras` returns a new query that limits the result to installed packages that are not present in any repo.
