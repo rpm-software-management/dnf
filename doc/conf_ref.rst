@@ -287,6 +287,12 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     If disabled, all unavailable packages or packages with broken dependencies given to DNF command will be skipped without raising the error causing the whole operation to fail. Currently works for install command only. The default is True.
 
+``type``
+    :ref:`string <string-label>`
+
+    Type of repository metadata. Supported values are: ``rpm-md``.
+    Aliases for ``rpm-md``: ``rpm``, ``repomd``, ``rpmmd``, ``yum``, ``YUM``.
+
 ================
  Repo Variables
 ================
