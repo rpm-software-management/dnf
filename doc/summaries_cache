@@ -1762,5 +1762,9 @@
     [
         1289067,
         "[RFE][UX] visual separation of autoremoved packages"
+    ],
+    [
+        1380580,
+        "dnf 2.0 doesn't accept type=rpm in repo files"
     ]
 ]
