@@ -581,6 +581,12 @@ class SwdbInterface(object):
             packages al. la. "yum list". Returns transaction ids. """
         return self.swdb.search(patterns)
 
+    def user_installed(self, nvra): #boolean if user installed
+        return self.swdb.user_installed(str(nvra))
+
+    def select_user_installed(self, pkgs): #indexes of user installed packages from list
+        return self.swdb.select_user_installed(pkgs)
+
 class _addondata(object):
     def __init__(self, db_path, root='/'):
         self.conf = misc.GenericHolder()

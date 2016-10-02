@@ -62,11 +62,14 @@ class Goal(hawkey.Goal):
     def push_userinstalled(self, query, history):
         msg = _('--> Finding unneeded leftover dependencies')
         logger.debug(msg)
-        for pkg in query.installed():
-            #TODO FIXME This may be kinda slow when accessing swdb in loop - would be fine to do it at once
-            reason = history.attr_by_pattern("reason",pkg)
-            if reason != 'dep':
-                self.userinstalled(pkg)
+        pkgs = query.installed()
+        pkgs_str = []
+        for pkg in pkgs:
+            pkgs_str.append(str(pkg))
+        indexes = history.select_user_installed(pkgs_str)
+        for i, item in enumerate(pkgs):
+            if i in indexes:
+                self.userinstalled(item)
 
     def best_run_diff(self):
 

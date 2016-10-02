@@ -584,10 +584,8 @@ class Base(object):
 
     def iter_userinstalled(self):
         """Get iterator over the packages installed by the user."""
-        #TODO FIXME This can also be pretty slow
         return (pkg for pkg in self.sack.query().installed()
-                if self.history.attr_by_pattern('reason',pkg) == 'user' and
-                self.history.repo_by_pattern(pkg) != 'anakonda')
+                if self.history.user_installed(pkg))
 
     def _run_hawkey_goal(self, goal, allow_erasing):
         ret = goal.run(
