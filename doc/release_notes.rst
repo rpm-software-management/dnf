@@ -21,9 +21,9 @@
 
 .. contents::
 
-===================
-2.0.1 Release Notes
-===================
+====================================
+Release Notes for unreleased version
+====================================
 
 * Add new alias to ``rpm-md`` repository metadata type: ``rpm``.
 
