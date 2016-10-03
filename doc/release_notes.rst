@@ -21,19 +21,19 @@
 
 .. contents::
 
-====================================
-Release Notes for unreleased version
-====================================
+=======================
+2.0.0-rc2 Release Notes
+=======================
 
 * Add new alias to ``rpm-md`` repository metadata type: ``rpm``.
 
-Bugs fixed in 2.0.1:
+Bugs fixed in 2.0.0-rc2:
 
 * :rhbug:`1380580`
 
-===================
-2.0.0 Release Notes
-===================
+=======================
+2.0.0-rc1 Release Notes
+=======================
 
 List of all incompatible changes can be found at: :doc:`dnf-1 vs dnf-2 <dnf-1_vs_dnf-2>`
 
