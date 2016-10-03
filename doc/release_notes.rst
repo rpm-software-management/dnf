@@ -22,16 +22,6 @@
 .. contents::
 
 ===================
-2.0.1 Release Notes
-===================
-
-* Add new alias to ``rpm-md`` repository metadata type: ``rpm``.
-
-Bugs fixed in 2.0.1:
-
-* :rhbug:`1380580`
-
-===================
 2.0.0 Release Notes
 ===================
 
@@ -136,6 +126,7 @@ Bugs fixed in 2.0.0:
 * :rhbug:`1279185`
 * :rhbug:`1289067`
 * :rhbug:`1328674`
+* :rhbug:`1380580`
 
 ====================
 1.1.10 Release Notes
