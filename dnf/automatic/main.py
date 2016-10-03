@@ -135,7 +135,7 @@ def main(args):
 
     try:
         conf = AutomaticConfig(opts.conf_path)
-        with dnf.Base() as base:
+        with dnf.cli.cli.BaseCli() as base:
             cli = dnf.cli.Cli(base)
             cli._read_conf_file()
             conf.update_baseconf(base.conf)
@@ -166,6 +166,7 @@ def main(args):
             base.download_packages(trans.install_set)
             emitters.notify_downloaded()
             if not conf.commands.apply_updates:
+                base.conf.keepcache = True
                 emitters.commit()
                 return 0
 
