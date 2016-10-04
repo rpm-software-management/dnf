@@ -28,7 +28,7 @@ class Command(dnf.cli.Command):
     # An alias is needed to invoke the command from command line.
     aliases = ['foo']  # <-- SET YOUR ALIAS HERE.
 
-    def configure(self, args):
+    def configure(self):
         """Setup the demands."""
         # Repositories are needed if we want to install anything.
         self.cli.demands.available_repos = True
@@ -42,12 +42,11 @@ class Command(dnf.cli.Command):
     @staticmethod
     def set_argparser(parser):
         """Parse command line arguments."""
-        # -- IMPLEMENT YOUR PARSER HERE. --
         parser.add_argument('package', nargs='+', metavar=_('PACKAGE'),
                             action=OptionParser.ParseSpecGroupFileCallback,
                             help=_('Package to install'))
 
-    def run(self, args):
+    def run(self):
         """Run the command."""
         # Feature marking methods set the user request.
         for ftr_spec in self.opts.pkg_specs:

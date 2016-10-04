@@ -20,7 +20,10 @@ import dnf
 import dnf.cli
 
 
-# The parent class allows registration to the CLI manager.
+# If you only plan to create a new dnf subcommand in a plugin
+# you can use @dnf.plugin.register_command decorator instead of creating
+# a Plugin class which only registers the command
+# (for full-fledged Plugin class see examples/install_plugin.py)
 @dnf.plugin.register_command
 class Command(dnf.cli.Command):
 
