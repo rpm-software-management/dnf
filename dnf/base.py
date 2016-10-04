@@ -141,9 +141,9 @@ class Base(object):
         for r in self.repos.iter_enabled():
             if r.id in disabled:
                 continue
-            for incl in r.includepkgs:
+            if len(r.includepkgs) > 0:
                 pkgs = self.sack.query().filter(reponame=r.id).\
-                    filter(name__glob=incl)
+                    filter(name__glob=r.includepkgs)
                 self.sack.add_includes(pkgs, reponame=r.id)
             for excl in r.excludepkgs:
                 pkgs = self.sack.query().filter(reponame=r.id).\
