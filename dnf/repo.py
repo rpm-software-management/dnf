@@ -478,7 +478,7 @@ class Repo(dnf.conf.RepoConf):
 
     @property
     def repofile(self):
-        # api
+        # :api
         return self._repofile
 
     @property
