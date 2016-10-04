@@ -1,0 +1,5 @@
+You will need some environment variables to get things to work...
+examle:
+#!/bin/bash
+#run dnf
+GI_TYPELIB_PATH="/usr/local/lib64/girepository-1.0/" LD_LIBRARY_PATH="/usr/local/lib64/" PYTHONPATH="/home/edynox/devel/dnf/" /home/edynox/devel/dnf/bin/dnf-2 "$@"
