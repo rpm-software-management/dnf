@@ -459,7 +459,7 @@ class Repo(dnf.conf.RepoConf):
     def __init__(self, name=None, parent_conf=None):
         # :api
         super(Repo, self).__init__(section=name, parent=parent_conf)
-        self.repofile = None
+        self._repofile = None
         self._expired = False
         self._pkgdir = None
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
@@ -475,6 +475,11 @@ class Repo(dnf.conf.RepoConf):
     def id(self):
         # :api
         return self._section
+
+    @property
+    def repofile(self):
+        # api
+        return self._repofile
 
     @property
     def _cachedir(self):
