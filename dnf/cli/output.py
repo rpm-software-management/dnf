@@ -1324,7 +1324,7 @@ Transaction Summary
             return ret[0]
 
         try:
-            user = pwd.getpwuid(uid)
+            user = pwd.getpwuid(int(uid))
             fullname = _safe_split_0(ucd(user.pw_gecos), ';', 2)
             user_name = ucd(user.pw_name)
             name = "%s <%s>" % (fullname, user_name)
@@ -1564,9 +1564,14 @@ Transaction Summary
 
             self._historyInfoCmd(mobj)
 
-    def _hpkg2from_repo(self, hpkg):
+    def _hpkg2from_repo(self, pkg):
         """ Given a pkg, find the ipkg.ui_from_repo()."""
-        return hpkg.ui_from_repo()
+        if pkg.get_ui_from_repo: #package from swdb
+            return pkg.get_ui_from_repo()
+        elif pkg.ui_from_repo: #other package
+            return pkg.ui_from_repo()
+        else:
+            return "unknown"
 
     def _historyInfoCmd(self, old, pats=[]):
         name = self._pwd_ui_username(old.loginuid)
@@ -1587,13 +1592,13 @@ Transaction Summary
             else:
                 _pkg_states = _pkg_states_available
             state = _pkg_states['i']
-            ipkgs = self.sack.query().installed().filter(name=hpkg.name).run()
+            ipkgs = self.sack.query().installed().filter(name=pkg.name).run()
             ipkgs.sort()
             if not ipkgs:
                 state = _pkg_states['e']
-            elif hpkg.pkgtup in (ipkg.pkgtup for ipkg in ipkgs):
+            elif pkg.name in (ipkg.name for ipkg in ipkgs): #FIXME name is not enough
                 pass
-            elif ipkgs[-1] > hpkg:
+            elif ipkgs[-1] > pkg:
                 state = _pkg_states['o']
             elif ipkgs[0] < hpkg:
                 state = _pkg_states['n']
@@ -1606,23 +1611,23 @@ Transaction Summary
             state = fill_exact_width(state, _pkg_states['maxlen'])
             ui_repo = ''
             if show_repo:
-                ui_repo = self._hpkg2from_repo(hpkg)
+                ui_repo = self._hpkg2from_repo(pkg)
             print("%s%s%s%s %-*s %s" % (prefix, hibeg, state, hiend,
-                                        pkg_max_len, hpkg, ui_repo))
+                                        pkg_max_len, pkg.name, ui_repo))
 
         if isinstance(old.tid, list):
             print(_("Transaction ID :"), "%u..%u" % (old.tid[0], old.tid[-1]))
         else:
             print(_("Transaction ID :"), old.tid)
-        begtm = time.ctime(old.beg_timestamp)
+        begtm = time.ctime(float(old.beg_timestamp))
         print(_("Begin time     :"), begtm)
-        if old.beg_rpmdbversion is not None:
+        if old.beg_rpmdb_version is not None:
             if old.altered_lt_rpmdb:
-                print(_("Begin rpmdb    :"), old.beg_rpmdbversion, "**")
+                print(_("Begin rpmdb    :"), old.beg_rpmdb_version, "**")
             else:
-                print(_("Begin rpmdb    :"), old.beg_rpmdbversion)
+                print(_("Begin rpmdb    :"), old.beg_rpmdb_version)
         if old.end_timestamp is not None:
-            endtm = time.ctime(old.end_timestamp)
+            endtm = time.ctime(float(old.end_timestamp))
             endtms = endtm.split()
             if begtm.startswith(endtms[0]): # Chop uninteresting prefix
                 begtms = begtm.split()
@@ -1634,7 +1639,7 @@ Transaction Summary
                         break
                     sofar += len(begtms[i]) + 1
                 endtm = (' ' * sofar) + endtm[sofar:]
-            diff = old.end_timestamp - old.beg_timestamp
+            diff = float(old.end_timestamp) - float(old.beg_timestamp)
             if diff < 5 * 60:
                 diff = _("(%u seconds)") % diff
             elif diff < 5 * 60 * 60:
@@ -1684,45 +1689,30 @@ Transaction Summary
             if len(non_default) > 0:
                 print(_("Additional non-default information stored: %d") % \
                           len(non_default))
-
-        if old.trans_data:
+        packages = self.history.swdb.get_packages_by_tid(old.tid)
+        if packages:
             # This is _possible_, but not common
             print(_("Transaction performed with:"))
-            pkg_max_len = max((len(str(hpkg)) for hpkg in old.trans_data))
-        for hpkg in old.trans_data:
-            _simple_pkg(hpkg, 4, was_installed=True, pkg_max_len=pkg_max_len)
+        max_len = 0
+        for spkg in packages:
+            if len(spkg.name) > max_len:
+                max_len = len(spkg.name)
+        for spkg in packages:
+            _simple_pkg(spkg, 4, was_installed=True, pkg_max_len=max_len)
         print(_("Packages Altered:"))
         self.historyInfoCmdPkgsAltered(old, pats)
-
-        if old.trans_skip:
-            print(_("Packages Skipped:"))
-            pkg_max_len = max((len(str(hpkg)) for hpkg in old.trans_skip))
-        for hpkg in old.trans_skip:
-            #  Don't show the repo. here because we can't store it as they were,
-            # by definition, not installed.
-            _simple_pkg(hpkg, 4, pkg_max_len=pkg_max_len, show_repo=False)
-
-        if old.rpmdb_problems:
-            print(_("Rpmdb Problems:"))
-        for prob in old.rpmdb_problems:
-            key = "%s%s: " % (" " * 4, prob.problem)
-            print(self.fmtKeyValFill(key, prob.text))
-            if prob.packages:
-                pkg_max_len = max((len(str(hpkg)) for hpkg in prob.packages))
-            for hpkg in prob.packages:
-                _simple_pkg(hpkg, 8, was_installed=True, highlight=hpkg.main,
-                            pkg_max_len=pkg_max_len)
-
-        if old.output:
+        t_out = self.history.load_output(old.tid)
+        if t_out:
             print(_("Scriptlet output:"))
             num = 0
-            for line in old.output:
+            for line in t_out:
                 num += 1
                 print("%4d" % num, line)
-        if old.errors:
+        t_err = self.history.load_error(old.tid)
+        if t_err:
             print(_("Errors:"))
             num = 0
-            for line in old.errors:
+            for line in t_err:
                 num += 1
                 print("%4d" % num, line)
 
@@ -1753,14 +1743,14 @@ Transaction Summary
         all_uistates = self._history_state2uistate
         maxlen = 0
         pkg_max_len = 0
-        for hpkg in old.trans_data:
+        for hpkg in old.get_old_trans_data():
             uistate = all_uistates.get(hpkg.state, hpkg.state)
             if maxlen < len(uistate):
                 maxlen = len(uistate)
             if pkg_max_len < len(str(hpkg)):
                 pkg_max_len = len(str(hpkg))
 
-        for hpkg in old.trans_data:
+        for hpkg in self.history.get_packages_by_tid(old.tid):
             prefix = " " * 4
             if not hpkg.done:
                 prefix = " ** "
@@ -1772,15 +1762,10 @@ Transaction Summary
                     highlight = 'bold'
             (hibeg, hiend) = self._highlight(highlight)
 
-            # To chop the name off we need nevra strings, str(pkg) gives envra
-            # so we have to do it by hand ... *sigh*.
-            cn = hpkg.ui_nevra
-
             uistate = all_uistates.get(hpkg.state, hpkg.state)
             uistate = fill_exact_width(uistate, maxlen)
-            # Should probably use columns here...
-            if False: pass
-            elif (last is not None and
+
+            if (last is not None and
                   last.state == 'Updated' and last.name == hpkg.name and
                   hpkg.state == 'Update'):
                 ln = len(hpkg.name) + 1
@@ -1795,7 +1780,7 @@ Transaction Summary
                 if hpkg.state in ('Updated', 'Downgrade'):
                     last = hpkg
             print("%s%s%s%s %-*s %s" % (prefix, hibeg, uistate, hiend,
-                                        pkg_max_len, cn,
+                                        pkg_max_len, hpkg.name,
                                         self._hpkg2from_repo(hpkg)))
 
     def historyPackageListCmd(self, extcmds):
@@ -1804,7 +1789,7 @@ Transaction Summary
 
         :param extcmds: list of extra command line arguments
         """
-        tids = self.history.swdb.search(extcmds)
+        tids = self.history.search(extcmds)
         limit = None
         if extcmds and not tids:
             logger.critical(_('Bad transaction IDs, or package(s), given'))

@@ -78,7 +78,7 @@ class YumHistoryTransaction(object):
 
     def _getTransData(self):
         if self._loaded_TD is None:
-            self._loaded_TD = sorted(self._history.swdb.get_packages_by_tid(self.tid))
+            self._loaded_TD = sorted(self._history.get_packages_by_tid(self.tid))
         return self._loaded_TD
 
     trans_data = property(fget=lambda self: self._getTransData())
@@ -86,18 +86,18 @@ class YumHistoryTransaction(object):
     def _getCmdline(self):
         if not self._have_loaded_CMD:
             self._have_loaded_CMD = True
-            self._loaded_CMD = ucd(self._history.swdb.trans_cmdline(self.tid))
+            self._loaded_CMD = ucd(self._history.trans_cmdline(self.tid))
         return self._loaded_CMD
 
     cmdline = property(fget=lambda self: self._getCmdline())
 
     def _getErrors(self):
         if self._loaded_ER is None:
-            self._loaded_ER = self._history.swdb.load_error(self.tid)
+            self._loaded_ER = self._history.load_error(self.tid)
         return self._loaded_ER
     def _getOutput(self):
         if self._loaded_OT is None:
-            self._loaded_OT = self._history.swdb.load_output(self.tid)
+            self._loaded_OT = self._history.load_output(self.tid)
         return self._loaded_OT
 
     errors     = property(fget=lambda self: self._getErrors())
@@ -431,7 +431,7 @@ class SwdbInterface(object):
     def get_path(self):
         return self.swdb.get_path()
 
-    def last(self):
+    def last(self, complete_transactions_only=False):
         return self.swdb.last()
 
     def package_data(self):
@@ -586,6 +586,18 @@ class SwdbInterface(object):
 
     def select_user_installed(self, pkgs): #indexes of user installed packages from list
         return self.swdb.select_user_installed(pkgs)
+
+    def get_packages_by_tid(self, tid):
+        return self.swdb.get_packages_by_tid(tid)
+
+    def trans_cmdline(self, tid):
+        return self.swdb.trans_cmdline(tid)
+
+    def load_error(self, tid):
+        return self.swdb.load_error(tid)
+
+    def load_output(self, tid):
+        return self.swdb.load_output(tid)
 
 class _addondata(object):
     def __init__(self, db_path, root='/'):
