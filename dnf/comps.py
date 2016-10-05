@@ -600,7 +600,7 @@ class Solver(object):
         group = self.comps._group_by_id(group_id)
         if not group:
             raise ValueError(_("Group_id '%s' does not exist.") % ucd(group_id))
-        p_grp = self.persistor.group(group_id) #this will return HifSwdbGroup object
+        p_grp = self.persistor.group(group_id) #this will return DnfSwdbGroup object
         if p_grp and p_grp.is_installed:
             logger.warning(_("Group '%s' is already installed.") %
                              group.ui_name)

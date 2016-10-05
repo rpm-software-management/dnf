@@ -27,8 +27,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _
 import gi
-gi.require_version('Hif', '3.0')
-from gi.repository import Hif
+gi.require_version('Dnf', '1.0')
+from gi.repository import Dnf
 import collections
 import distutils.version
 import dnf.util
@@ -258,7 +258,7 @@ class GroupPersistor(object):
     def __init__(self, persistdir, comps=None):
         self._commit = False
         self._comps = comps
-        self.swdb = Hif.Swdb()
+        self.swdb = Dnf.Swdb()
         self.groups_installed = []
         self.groups_removed = []
 
@@ -272,11 +272,11 @@ class GroupPersistor(object):
             self.swdb.uninstall_group(group)
 
     def new_group(self,name_id, name, ui_name,is_installed,pkg_types,grp_types):
-        group = Hif.SwdbGroup.new(name_id,name,ui_name,is_installed,pkg_types,grp_types,self.swdb)
+        group = Dnf.SwdbGroup.new(name_id,name,ui_name,is_installed,pkg_types,grp_types,self.swdb)
         return group
 
     def new_env(self,name_id, name, ui_name,pkg_types,grp_types):
-        env = Hif.SwdbEnv.new(name_id,name,ui_name,pkg_types,grp_types,self.swdb)
+        env = Dnf.SwdbEnv.new(name_id,name,ui_name,pkg_types,grp_types,self.swdb)
         return env
 
     def environment(self, id_):
@@ -292,9 +292,9 @@ class GroupPersistor(object):
         return self.swdb.get_group(id_)
 
     def get_group_type(self):
-        return Hif.SwdbGroup
+        return Dnf.SwdbGroup
     def get_env_type(self):
-        return Hif.SwdbEnv
+        return Dnf.SwdbEnv
 
     def groups(self):
         return self.swdb.groups_by_pattern("%") #sqlite3 wildcard - will patch any pattern...

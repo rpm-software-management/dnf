@@ -27,8 +27,8 @@ import os
 
 from . import misc as misc
 import gi
-gi.require_version('Hif', '3.0')
-from gi.repository import Hif
+gi.require_version('Dnf', '1.0')
+from gi.repository import Dnf
 import dnf
 import dnf.exceptions
 import dnf.rpm.miscutils
@@ -418,7 +418,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
 
 class SwdbInterface(object):
     def __init__(self, db_path, root='/', releasever=""):
-        self.swdb = Hif.Swdb.new(db_path, releasever)
+        self.swdb = Dnf.Swdb.new(db_path, releasever)
         self.releasever = releasever
         self.addon_data = _addondata(db_path, root)
         if not self.swdb.exist():
@@ -435,7 +435,7 @@ class SwdbInterface(object):
         return self.swdb.last()
 
     def package_data(self):
-        return Hif.SwdbPkgData()
+        return Dnf.SwdbPkgData()
 
     def set_repo(self, nvra, repo):
         self.swdb.set_repo(str(nvra), str(repo))
@@ -496,7 +496,7 @@ class SwdbInterface(object):
     def _hpkg2pid(self, po, create=False):
         return self._apkg2pid(po, create)
     def pkg2pid(self, po, create=True):
-        if isinstance(po, Hif.SwdbPkg):
+        if isinstance(po, Dnf.SwdbPkg):
             return self._hpkg2pid(po, create)
         if po._from_system:
             return self._ipkg2pid(po, create)

@@ -1763,7 +1763,7 @@ Transaction Summary
             (hibeg, hiend) = self._highlight(highlight)
 
             uistate = all_uistates.get(hpkg.state, hpkg.state)
-            uistate = fill_exact_width(uistate, maxlen)
+            uistate = fill_exact_width(ucd(uistate), maxlen)
 
             if (last is not None and
                   last.state == 'Updated' and last.name == hpkg.name and
