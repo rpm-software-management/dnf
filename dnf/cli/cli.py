@@ -32,6 +32,7 @@ import collections
 import dnf
 import dnf.cli.commands
 import dnf.cli.commands.autoremove
+import dnf.cli.commands.check
 import dnf.cli.commands.clean
 import dnf.cli.commands.distrosync
 import dnf.cli.commands.downgrade
@@ -690,6 +691,7 @@ class Cli(object):
         self.demands = dnf.cli.demand.DemandSheet() #:cli
 
         self.register_command(dnf.cli.commands.autoremove.AutoremoveCommand)
+        self.register_command(dnf.cli.commands.check.CheckCommand)
         self.register_command(dnf.cli.commands.clean.CleanCommand)
         self.register_command(dnf.cli.commands.distrosync.DistroSyncCommand)
         self.register_command(dnf.cli.commands.downgrade.DowngradeCommand)
