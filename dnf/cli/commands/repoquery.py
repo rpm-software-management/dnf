@@ -264,8 +264,7 @@ class RepoQueryCommand(commands.Command):
 
         if self.opts.pkgfilter == "duplicated":
             installonly = self.base._get_installonly_query(q)
-            exclude = [pkg.name for pkg in installonly]
-            q = q.filter(name__neq=exclude).duplicated()
+            q = q.difference(installonly).duplicated()
         elif self.opts.pkgfilter == "installonly":
             q = self.base._get_installonly_query(q)
         elif self.opts.pkgfilter == "unsatisfied":
