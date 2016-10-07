@@ -235,11 +235,6 @@ class RepoQueryCommand(commands.Command):
         alldepsquery = query.filter(pkg=allpkgs)
         return alldepsquery
 
-    def installonly(self, q):
-            installonly = q.installed().filter(
-                provides__glob=self.base.conf.installonlypkgs)
-            return installonly
-
     def run(self):
         if self.opts.querytags:
             print(_('Available query-tags: use --queryformat ".. %{tag} .."'))
@@ -268,11 +263,11 @@ class RepoQueryCommand(commands.Command):
             q = getattr(q, self.opts.list)()
 
         if self.opts.pkgfilter == "duplicated":
-            installonly = self.installonly(q)
+            installonly = self.base._get_installonly_query(q)
             exclude = [pkg.name for pkg in installonly]
             q = q.filter(name__neq=exclude).duplicated()
         elif self.opts.pkgfilter == "installonly":
-            q = self.installonly(q)
+            q = self.base._get_installonly_query(q)
         elif self.opts.pkgfilter == "unsatisfied":
             rpmdb = dnf.sack.rpmdb_sack(self.base)
             goal = dnf.goal.Goal(rpmdb)

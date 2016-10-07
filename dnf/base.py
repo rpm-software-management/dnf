@@ -485,7 +485,7 @@ class Base(object):
                 group_fn, goal.obsoleted_by_package(pkg))
             cb = lambda pkg: self._ds_callback.pkg_added(pkg, 'od')
             dnf.util.mapall(cb, obs)
-            if pkg.name in self.conf.installonlypkgs:
+            if pkg in self._get_installonly_query():
                 ts.add_install(pkg, obs)
             else:
                 ts.add_upgrade(pkg, upgraded[0], obs)
@@ -1983,6 +1983,12 @@ class Base(object):
         which respects proxy setting even for non-repo downloads
         """
         return dnf.util._urlopen(url, self.conf, repo, mode, **kwargs)
+
+    def _get_installonly_query(self, q=None):
+        if q is None:
+            q = self._sack.query()
+        installonly = q.filter(provides=self.conf.installonlypkgs)
+        return installonly
 
 
 def _msg_installed(pkg):

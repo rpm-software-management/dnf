@@ -64,8 +64,7 @@ class RemoveCommand(commands.Command):
 
         if self.opts.duplicated:
             q = self.base.sack.query()
-            instonly = q.installed().filter(
-                provides__glob=self.base.conf.installonlypkgs)
+            instonly = self.base._get_installonly_query(q.installed())
             dups = q.duplicated().difference(instonly).latest(-1)
             if dups:
                 for pkg in dups:
@@ -76,8 +75,7 @@ class RemoveCommand(commands.Command):
             return
         if self.opts.oldinstallonly:
             q = self.base.sack.query()
-            instonly = q.installed().filter(
-                provides__glob=self.base.conf.installonlypkgs).latest(
+            instonly = self.base._get_installonly_query(q.installed()).latest(
                 - self.base.conf.installonly_limit)
             if instonly:
                 for pkg in instonly:
