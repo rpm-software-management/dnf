@@ -81,6 +81,7 @@ class Base(object):
         self._transaction = None
         self._priv_ts = None
         self._comps = None
+        self._comps_trans = dnf.comps.TransactionBunch()
         self._history = None
         self._tempfiles = set()
         self._trans_tempfiles = set()
@@ -547,6 +548,7 @@ class Base(object):
         # :api
         """Build the transaction set."""
         exc = None
+        self._finalize_comps_trans()
 
         timer = dnf.logging.Timer('depsolve')
         self._ds_callback.start()
@@ -1271,30 +1273,41 @@ class Base(object):
         return ygh
 
     def _add_comps_trans(self, trans):
-        cnt = 0
+        self._comps_trans += trans
+        return len(trans)
+
+    def _finalize_comps_trans(self):
+        trans = self._comps_trans
         clean_deps = self.conf.clean_requirements_on_remove
-        attr_fn = ((trans.install, self._goal.install),
-                   (trans.install_opt,
+        basearch = self.conf.substitutions['basearch']
+
+        def cond_check(pkg):
+            if not pkg.requires:
+                return True
+            installed = self.sack.query().installed().filter(name=pkg.requires).run()
+            return len(installed) > 0 or \
+                pkg.requires in (pkg.name for pkg in self._goal._installs) or \
+                pkg.requires in [pkg.name for pkg in trans.install]
+
+        attr_fn = ((trans.install,
                     functools.partial(self._goal.install, optional=True)),
                    (trans.upgrade, self._goal.upgrade),
                    (trans.remove,
                     functools.partial(self._goal.erase, clean_deps=clean_deps)))
 
         for (attr, fn) in attr_fn:
-            for it in attr:
-                if not self.sack.query().filter(name=it):
-                    # a comps item that doesn't refer to anything real
-                    if (attr == trans.install):
-                        self._group_persistor._rollback()
-                        raise dnf.exceptions.MarkingError(it)
+            for pkg in attr:
+                query_args = {'name': pkg.name}
+                if (pkg.basearchonly):
+                    query_args.update({'arch': basearch})
+                q = self.sack.query().filter(**query_args).run()
+                if not q or not cond_check(pkg):
+                    # a conditional package with unsatisfied requiremensts
                     continue
                 sltr = dnf.selector.Selector(self.sack)
-                sltr.set(name=it)
+                sltr.set(pkg=q)
                 fn(select=sltr)
-                cnt += 1
-        self._goal.group_members.update(trans.install)
-        self._goal.group_members.update(trans.install_opt)
-        return cnt
+                self._goal.group_members.add(pkg.name)
 
     def _build_comps_solver(self):
         def reason_fn(pkgname):
@@ -1326,7 +1339,8 @@ class Base(object):
     _COMPS_TRANSLATION = {
         'default': dnf.comps.DEFAULT,
         'mandatory': dnf.comps.MANDATORY,
-        'optional': dnf.comps.OPTIONAL
+        'optional': dnf.comps.OPTIONAL,
+        'conditional': dnf.comps.CONDITIONAL
     }
 
     @staticmethod
