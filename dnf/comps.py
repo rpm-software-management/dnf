@@ -395,20 +395,82 @@ class Comps(object):
         return (self._build_group(g) for g in self._i.groups)
 
 
+class CompsTransPkg(object):
+    def __init__(self, pkg_or_name):
+        if dnf.util.is_string_type(pkg_or_name):
+            self.basearchonly = False
+            self.name = pkg_or_name
+            self.optional = True
+            self.requires = None
+        else:
+            self.basearchonly = pkg_or_name.basearchonly
+            self.name = pkg_or_name.name
+            self.optional = pkg_or_name.type & libcomps.PACKAGE_TYPE_OPTIONAL
+            self.requires = pkg_or_name.requires
+
+    def __eq__(self, other):
+        return (self.name == other.name and
+                self.basearchonly == self.basearchonly and
+                self.optional == self.optional and
+                self.requires == self.requires)
+
+    def __str__(self):
+        return self.name
+
+    def __hash__(self):
+        return hash((self.name,
+                    self.basearchonly,
+                    self.optional,
+                    self.requires))
+
+
 class TransactionBunch(object):
     def __init__(self):
-        self.install = set()
-        self.install_opt = set()
-        self.remove = set()
-        self.upgrade = set()
+        self._install = set()
+        self._remove = set()
+        self._upgrade = set()
 
     def __iadd__(self, other):
-        self.install.update(other.install)
-        self.install_opt.update(other.install_opt)
-        self.upgrade.update(other.upgrade)
-        self.remove = (self.remove | other.remove) - \
-            self.install - self.install_opt - self.upgrade
+        self._install.update(other._install)
+        self._upgrade.update(other._upgrade)
+        self._remove = (self._remove | other._remove) - \
+            self._install - self._upgrade
         return self
+
+    def __len__(self):
+        return len(self.install) + len(self.upgrade) + len(self.remove)
+
+    @staticmethod
+    def _set_value(param, val):
+        for item in val:
+            if isinstance(item, CompsTransPkg):
+                param.add(item)
+            else:
+                param.add(CompsTransPkg(item))
+
+    @property
+    def install(self):
+        return self._install
+
+    @install.setter
+    def install(self, value):
+        self._set_value(self._install, value)
+
+    @property
+    def remove(self):
+        return self._remove
+
+    @remove.setter
+    def remove(self, value):
+        self._set_value(self._remove, value)
+
+    @property
+    def upgrade(self):
+        return self._upgrade
+
+    @upgrade.setter
+    def upgrade(self, value):
+        self._set_value(self._upgrade, value)
 
 
 class Solver(object):
@@ -427,18 +489,18 @@ class Solver(object):
                 grp.default_packages + grp.optional_packages}
 
     @staticmethod
-    def _pkgs_of_type(group, pkg_types, exclude):
-        def pkgs_update(pkgs, group):
-            pkgs.update(pkg.name for pkg in group
-                        if pkg.name not in exclude)
+    def _pkgs_of_type(group, pkg_types, exclude=[]):
+        def filter(pkgs):
+            return [pkg for pkg in pkgs
+                    if pkg.name not in exclude]
 
         pkgs = set()
         if pkg_types & MANDATORY:
-            pkgs_update(pkgs, group.mandatory_packages)
+            pkgs.update(filter(group.mandatory_packages))
         if pkg_types & DEFAULT:
-            pkgs_update(pkgs, group.default_packages)
+            pkgs.update(filter(group.default_packages))
         if pkg_types & OPTIONAL:
-            pkgs_update(pkgs, group.optional_packages)
+            pkgs.update(filter(group.optional_packages))
         return pkgs
 
     def _removable_pkg(self, pkg_name):
@@ -546,15 +608,7 @@ class Solver(object):
         p_grp.full_list.extend(self._full_package_set(group))
 
         trans = TransactionBunch()
-        types = pkg_types & MANDATORY
-        mandatory = self._pkgs_of_type(group, types, exclude)
-        types = pkg_types & (DEFAULT | OPTIONAL)
-        trans.install_opt = self._pkgs_of_type(group, types, exclude)
-
-        if strict:
-            trans.install = mandatory
-        else:
-            trans.install_opt.update(mandatory)
+        trans.install.update(self._pkgs_of_type(group, pkg_types, exclude))
         return trans
 
     def _group_remove(self, group_id):
