@@ -431,7 +431,7 @@ class SwdbInterface(object):
     def get_path(self):
         return self.swdb.get_path()
 
-    def last(self, complete_transactions_only=False):
+    def last(self):
         return self.swdb.last()
 
     def package_data(self):
@@ -451,17 +451,17 @@ class SwdbInterface(object):
     def set_reason(self, nvra, reason):
         self.swdb.set_reason(str(nvra), reason)
 
-    def pkg_by_pattern(self, pattern):
-        return self.swdb.package_by_pattern(str(pattern))
+    def pkg_by_nvra(self, nvra): #XXX not used
+        return self.swdb.package_by_nvra(str(nvra))
 
-    def repo_by_pattern(self, pattern):
-        return self.swdb.repo_by_pattern(str(pattern))
+    def repo_by_nvra(self, nvra):
+        return self.swdb.repo_by_nvra(str(nvra))
 
-    def pkg_data_by_pattern(self, pattern):
-        return self.swdb.package_data_by_pattern(str(pattern))
+    def pkg_data_by_nvra(self, nvra):
+        return self.swdb.package_data_by_nvra(str(nvra))
 
-    def attr_by_pattern(self, attr, pattern):
-        return self.swdb.attr_by_pattern(str(attr),str(pattern))
+    def attr_by_nvra(self, attr, nvra):
+        return self.swdb.attr_by_nvra(str(attr), str(nvra))
 
     def beg(self, rpmdb_version, using_pkgs, tsis, skip_packages=[],
             rpmdb_problems=[], cmdline=None, groups_installed=[], groups_removed=[]):

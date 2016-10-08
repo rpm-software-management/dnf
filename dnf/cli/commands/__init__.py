@@ -450,7 +450,7 @@ class RepoPkgsCommand(Command):
                     except dnf.exceptions.PackagesNotAvailableError as err:
                         for pkg in err.packages:
                             xmsg = ''
-                            pkgrepo = self.base.history.repo_by_pattern(pkg)
+                            pkgrepo = self.base.history.repo_by_nvra(pkg)
                             if pkgrepo:
                                 xmsg = _(' (from %s)') % pkgrepo
                             msg = _('Installed package %s%s not available.')
@@ -507,7 +507,7 @@ class RepoPkgsCommand(Command):
                     except dnf.exceptions.PackagesNotAvailableError as err:
                         for pkg in err.packages:
                             xmsg = ''
-                            pkgrepo = self.base.history.repo_by_pattern(pkg)
+                            pkgrepo = self.base.history.repo_by_nvra(pkg)
                             if pkgrepo:
                                 xmsg = _(' (from %s)') % pkgrepo
                             msg = _('Installed package %s%s not available.')
@@ -573,7 +573,7 @@ class RepoPkgsCommand(Command):
             history = self.cli.base.history
             installed = [
                 pkg for pkg in matches.installed()
-                if history.repo_by_pattern(pkg) == reponame]
+                if history.repo_by_nvra(pkg) == reponame]
             if not installed:
                 raise dnf.exceptions.PackagesNotInstalledError(
                     'no package matched', pkg_spec)

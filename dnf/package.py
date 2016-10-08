@@ -77,7 +77,7 @@ class Package(hawkey.Package):
 
     @property
     def _from_repo(self):
-        pkgrepo = self.base.history.repo_by_pattern(self) if self._from_system else {}
+        pkgrepo = self.base.history.repo_by_nvra(self) if self._from_system else {}
         if pkgrepo:
             return '@'+pkgrepo
         return self.reponame

@@ -424,5 +424,5 @@ class GroupCommand(commands.Command):
         history = self.base.history
         names = goal.group_members
         for pkg in self.base.sack.query().installed().filter(name=names):
-            reason = history.attr_by_pattern("reason", pkg) or "unknown"
+            reason = history.attr_by_nvra("reason", pkg) or "unknown"
             history.set_reason(pkg, goal.group_reason(pkg, reason))

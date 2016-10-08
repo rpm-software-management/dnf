@@ -485,7 +485,7 @@ class Output(object):
                   " : ", val or ""))
 
         (hibeg, hiend) = self._highlight(highlight)
-        pkg_data = self.history.pkg_data_by_pattern(pkg) if pkg._from_system else {}
+        pkg_data = self.history.pkg_data_by_nvra(pkg) if pkg._from_system else {}
         print_key_val(_("Name"), "%s%s%s" % (hibeg, pkg.name, hiend))
         if pkg.epoch:
             print_key_val(_("Epoch"), pkg.epoch)
@@ -1507,7 +1507,7 @@ Transaction Summary
             return 1, ['Failed history info']
 
         if not tids and len(extcmds) < 2:
-            old = self.history.last(complete_transactions_only=False)
+            old = self.history.last()
             if old is not None:
                 tids.add(old.tid)
                 utids.add(old.tid)
@@ -1592,18 +1592,24 @@ Transaction Summary
             else:
                 _pkg_states = _pkg_states_available
             state = _pkg_states['i']
-            ipkgs = self.sack.query().installed().filter(name=pkg.name).run()
-            ipkgs.sort()
-            if not ipkgs:
+            ipkg = self.sack.query().installed().filter(name=pkg.name).run()
+            if not ipkg:
                 state = _pkg_states['e']
-            elif pkg.name in (ipkg.name for ipkg in ipkgs): #FIXME name is not enough
-                pass
-            elif ipkgs[-1] > pkg:
-                state = _pkg_states['o']
-            elif ipkgs[0] < hpkg:
-                state = _pkg_states['n']
             else:
-                assert False, "Impossible, installed not newer and not older"
+                ipkg = ipkg[0]
+                if not ipkg.e and ipkg.v == pkg.version and ipkg.r == pkg.release:
+                    pass
+                elif ipkg.e and ipkg.e == int(pkg.epoch) and ipkg.v == pkg.version and ipkg.r == pkg.release:
+                    pass
+                elif ipkg.e and not pkg.epoch or ipkg.e and int(ipkg.e) > int(pkg.epoch):
+                    state = _pkg_states['o']
+                elif ipkg.v > pkg.version or ipkg.r > pkg.release or ipkg.a != pkg.arch:
+                    state = _pkg_states['o']
+                elif ipkg.v > pkg.version:
+                    state = _pkg_states['n']
+                else:
+                    state = "Unknown" #FIXME need for proper comparation of version strings
+
             if highlight:
                 (hibeg, hiend) = self._highlight('bold')
             else:
@@ -1613,7 +1619,7 @@ Transaction Summary
             if show_repo:
                 ui_repo = self._hpkg2from_repo(pkg)
             print("%s%s%s%s %-*s %s" % (prefix, hibeg, state, hiend,
-                                        pkg_max_len, pkg.name, ui_repo))
+                                        pkg_max_len, pkg.nvra, ui_repo))
 
         if isinstance(old.tid, list):
             print(_("Transaction ID :"), "%u..%u" % (old.tid[0], old.tid[-1]))
@@ -1695,8 +1701,8 @@ Transaction Summary
             print(_("Transaction performed with:"))
         max_len = 0
         for spkg in packages:
-            if len(spkg.name) > max_len:
-                max_len = len(spkg.name)
+            if len(spkg.nvra) > max_len:
+                max_len = len(spkg.nvra)
         for spkg in packages:
             _simple_pkg(spkg, 4, was_installed=True, pkg_max_len=max_len)
         print(_("Packages Altered:"))
@@ -1780,7 +1786,7 @@ Transaction Summary
                 if hpkg.state in ('Updated', 'Downgrade'):
                     last = hpkg
             print("%s%s%s%s %-*s %s" % (prefix, hibeg, uistate, hiend,
-                                        pkg_max_len, hpkg.name,
+                                        pkg_max_len, hpkg.nvra,
                                         self._hpkg2from_repo(hpkg)))
 
     def historyPackageListCmd(self, extcmds):

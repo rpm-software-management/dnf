@@ -80,7 +80,7 @@ class _HistoryWrapper(object):
 
     def last_transaction_id(self):
         """Get ID of the last stored transaction."""
-        last_tx = self._history.last(complete_transactions_only=False)
+        last_tx = self._history.last()
         return last_tx.tid if last_tx else None
 
     def transaction_nevra_ops(self, id_):

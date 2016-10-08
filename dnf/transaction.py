@@ -104,7 +104,7 @@ class TransactionItem(object):
         if installonlypkgs_query.filter(name=self.installed.name):
             return 'user'
         if self.op_type in [DOWNGRADE, REINSTALL, UPGRADE]:
-            previously = history.attr_by_pattern("reason",self.erased)
+            previously = history.attr_by_nvra("reason",self.erased)
             if previously:
                 return previously
         if self.obsoleted:

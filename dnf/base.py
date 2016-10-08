@@ -948,7 +948,7 @@ class Base(object):
                                dnf.transaction.REINSTALL,
                                dnf.transaction.UPGRADE):
                 opo = tsi.erased
-                opo_pkg_info = self.history.pkg_data_by_pattern(opo)
+                opo_pkg_info = self.history.pkg_data_by_nvra(opo)
                 if opo_pkg_info and opo_pkg_info.installed_by:
                     pkg_info.installed_by = opo_pkg_info.installed_by
                 if loginuid is not None:
@@ -1199,7 +1199,7 @@ class Base(object):
             """Test whether given package originates from the repository."""
             if reponame is None:
                 return True
-            return self.history.repo_by_pattern(package) == reponame
+            return self.history.repo_by_nvra(package) == reponame
 
         def pkgs_from_repo(packages):
             """Filter out the packages which do not originate from the repo."""
@@ -1387,7 +1387,7 @@ class Base(object):
             if not q:
                 return None
             try:
-                return self.history.attr_by_pattern("reason",q[0])
+                return self.history.attr_by_nvra("reason",q[0])
             except AttributeError:
                 return 'unknown'
 
@@ -1776,7 +1776,7 @@ class Base(object):
         installed = [
             pkg for pkg in matches.installed()
             if reponame is None or
-            self.history.repo_by_pattern(pkg) == reponame]
+            self.history.repo_by_nvra(pkg) == reponame]
         if not installed:
             raise dnf.exceptions.PackagesNotInstalledError(
                 'no package matched', pkg_spec)
@@ -1793,7 +1793,7 @@ class Base(object):
         installed_pkgs = [
             pkg for pkg in q.installed()
             if old_reponame is None or
-            self.history.repo_by_pattern(pkg) == old_reponame]
+            self.history.repo_by_nvra(pkg) == old_reponame]
 
         available_q = q.available()
         if new_reponame is not None:
