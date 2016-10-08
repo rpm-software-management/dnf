@@ -44,6 +44,7 @@ dependencies of packages that require a particular DNF command).
 Available commands:
 
 * :ref:`autoremove <autoremove_command-label>`
+* :ref:`check <check_command-label>`
 * :ref:`check-update <check_update_command-label>`
 * :ref:`clean <clean_command-label>`
 * :ref:`distro-sync <distro_sync_command-label>`
@@ -278,6 +279,19 @@ Packages listed in :ref:`installonlypkgs <installonlypkgs-label>` are never auto
 this command.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
+
+.. _check_command-label:
+
+--------------------
+Check Command
+--------------------
+
+``dnf [options] check [--dependencies] [--duplicates] [--obsoleted] [--provides]``
+
+    Checks the local packagedb and produces information on any problems it
+    finds. You can pass the check command the options "--dependencies",
+    "--duplicates", "--obsoletes" or "--provides", to limit the checking that is
+    performed (the default is "all" which does all).
 
 .. _check_update_command-label:
 
