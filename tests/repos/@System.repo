@@ -11,3 +11,6 @@
 =Pkg: dup 1 0 noarch
 =Pkg: dup 2 0 noarch
 =Pkg: dup 3 0 noarch
+=Pkg: test 1 0 noarch
+=Pkg: obs 3 0 noarch
+=Obs: test < 2
