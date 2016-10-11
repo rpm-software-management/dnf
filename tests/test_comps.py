@@ -155,8 +155,8 @@ class TestTransactionBunch(support.TestCase):
         t2.install = {'pepper'}
         t2.upgrade = {'right'}
         t1 += t2
-        self.assertCountEqual(t1.install, ('right', 'pepper'))
-        self.assertCountEqual(t1.upgrade, ('tour', 'right'))
+        self.assertTransEqual(t1.install, ('right', 'pepper'))
+        self.assertTransEqual(t1.upgrade, ('tour', 'right'))
         self.assertEmpty(t1.remove)
 
 
@@ -181,13 +181,6 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
         self.assertCountEqual(p_grp.pkg_exclude, ['right'])
         self.assertEqual(p_grp.pkg_types, dnf.comps.MANDATORY)
 
-    def test_install_opt(self):
-        grp = self.comps.group_by_pattern('somerset')
-        types = dnf.comps.DEFAULT | dnf.comps.OPTIONAL
-        trans = self.solver._group_install(grp.id, types, [])
-        self.assertLength(trans.install, 0)
-        self.assertLength(trans.install_opt, 1)
-
     def test_removable_pkg(self):
         p_grp1 = self.persistor.group('base')
         p_grp2 = self.persistor.group('tune')
@@ -211,7 +204,7 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
         for grp in grps:
             trans = self.solver._group_remove(grp)
             self.assertFalse(p_grp.installed)
-            self.assertCountEqual(trans.remove, ('tour',))
+            self.assertTransEqual(trans.remove, ('tour',))
 
     def test_upgrade(self):
         # setup of the "current state"
@@ -221,9 +214,9 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
 
         grp = self.comps.group_by_pattern('base')
         trans = self.solver._group_upgrade(grp.id)
-        self.assertCountEqual(trans.install, ('tour',))
-        self.assertCountEqual(trans.remove, ('handerson',))
-        self.assertCountEqual(trans.upgrade, ('pepper',))
+        self.assertTransEqual(trans.install, ('tour',))
+        self.assertTransEqual(trans.remove, ('handerson',))
+        self.assertTransEqual(trans.upgrade, ('pepper',))
         self.assertCountEqual(p_grp.full_list, ('tour', 'pepper'))
 
 
@@ -236,7 +229,8 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
     def test_install(self):
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
         trans = self._install(env)
-        self.assertCountEqual(trans.install, ('pepper', 'trampoline', 'hole'))
+        self.assertCountEqual([pkg.name for pkg in trans.install],
+                              ('pepper', 'trampoline', 'hole'))
         sugar = self.persistor.environment('sugar-desktop-environment')
         self.assertCountEqual(sugar.full_list, ('Peppers', 'somerset'))
         somerset = self.persistor.group('somerset')
@@ -252,7 +246,7 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
         trans = self.solver._environment_remove(env.id)
 
         p_env = self.persistor.environment('sugar-desktop-environment')
-        self.assertCountEqual(trans.remove, ('pepper', 'trampoline', 'hole'))
+        self.assertTransEqual(trans.remove, ('pepper', 'trampoline', 'hole'))
         self.assertFalse(p_env.grp_types)
         self.assertFalse(p_env.pkg_types)
 
@@ -265,5 +259,5 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
 
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
         trans = self.solver._environment_upgrade(env.id)
-        self.assertCountEqual(trans.install, ('hole', 'lotus'))
+        self.assertTransEqual(trans.install, ('hole', 'lotus'))
         self.assertEmpty(trans.upgrade)
