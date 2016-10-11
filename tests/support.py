@@ -617,6 +617,9 @@ class TestCase(unittest.TestCase):
         traces = (match.group() for match in TRACEBACK_RE.finditer(string))
         self.assertTrue(any(trace.endswith(end) for trace in traces))
 
+    def assertTransEqual(self, trans_pkgs, list):
+        return self.assertCountEqual([pkg.name for pkg in trans_pkgs], list)
+
 
 class ResultTestCase(TestCase):
 
