@@ -53,11 +53,19 @@ class Query(hawkey.Query):
 
     def duplicated(self):
         # :api
-        installed_na = self.installed()._na_dict()
+        installed_name = self.installed()._name_dict()
         duplicated = []
-        for (name, arch), pkgs in installed_na.items():
+        for name, pkgs in installed_name.items():
             if len(pkgs) > 1:
-                duplicated.extend(pkgs)
+                for x in range(0, len(pkgs)):
+                    dups = False
+                    for y in range(x+1, len(pkgs)):
+                        if not ((pkgs[x].evr_cmp(pkgs[y]) == 0)
+                                and (pkgs[x].arch != pkgs[y].arch)):
+                            duplicated.append(pkgs[y])
+                            dups = True
+                    if dups:
+                        duplicated.append(pkgs[x])
         return self.filter(pkg=duplicated)
 
     def extras(self):

@@ -40,10 +40,10 @@ class CheckCommand(commands.Command):
                             help=_('show all problems; default'))
         parser.add_argument('--dependencies', dest='check_types',
                             action='append_const', const='dependencies',
-                            help=_('show dependencies problems'))
+                            help=_('show dependency problems'))
         parser.add_argument('--duplicates', dest='check_types',
                             action='append_const', const='duplicates',
-                            help=_('show duplicates problems'))
+                            help=_('show duplicate problems'))
         parser.add_argument('--obsoleted', dest='check_types',
                             action='append_const', const='obsoleted',
                             help=_('show obsoleted packages'))

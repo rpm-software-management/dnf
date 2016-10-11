@@ -290,7 +290,7 @@ Check Command
 
     Checks the local packagedb and produces information on any problems it
     finds. You can pass the check command the options "--dependencies",
-    "--duplicates", "--obsoletes" or "--provides", to limit the checking that is
+    "--duplicates", "--obsoleted" or "--provides", to limit the checking that is
     performed (the default is "all" which does all).
 
 .. _check_update_command-label:

@@ -43,7 +43,8 @@ class CheckDuplicatesTest(unittest.TestCase):
         with support.patch_std_streams() as (stdout, _):
             with self.assertRaises(dnf.exceptions.Error) as ctx:
                 self.cmd.run()
-            self.assertEqual(str(ctx.exception), 'Check discovered 2 problem(s)')
+            self.assertEqual(str(ctx.exception),
+                             'Check discovered 2 problem(s)')
         self.assertEqual(stdout.getvalue(), EXPECTED_DUPLICATES_FORMAT)
 
     def test_obsoleted(self):
@@ -53,5 +54,6 @@ class CheckDuplicatesTest(unittest.TestCase):
         with support.patch_std_streams() as (stdout, _):
             with self.assertRaises(dnf.exceptions.Error) as ctx:
                 self.cmd.run()
-            self.assertEqual(str(ctx.exception), 'Check discovered 1 problem(s)')
+            self.assertEqual(str(ctx.exception),
+                             'Check discovered 1 problem(s)')
         self.assertEqual(stdout.getvalue(), EXPECTED_OBSOLETED_FORMAT)
