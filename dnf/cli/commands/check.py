@@ -78,13 +78,18 @@ class CheckCommand(commands.Command):
                         continue
                     if not len(q.filter(provides=[require])):
                         msg = _("{} has missing requires of {}")
-                        output_set.add(msg.format(pkg, require))
+                        output_set.add(msg.format(
+                            self.base.output.term.bold(pkg),
+                            self.base.output.term.bold(require)))
                 for conflict in pkg.conflicts:
                     conflicted = q.filter(provides=[conflict],
                                           name=str(conflict).split()[0])
                     for conflict_pkg in conflicted:
                         msg = '{} has installed conflict "{}": {}'
-                        output_set.add(msg.format(pkg, conflict, conflict_pkg))
+                        output_set.add(msg.format(
+                            self.base.output.term.bold(pkg),
+                            self.base.output.term.bold(conflict),
+                            self.base.output.term.bold(conflict_pkg)))
 
         if self.opts.check_types.intersection({'all', 'duplicates'}):
             installonly = self.base._get_installonly_query(q)
@@ -92,7 +97,9 @@ class CheckCommand(commands.Command):
             for name, pkgs in dups.items():
                 pkgs.sort()
                 for dup in pkgs[1:]:
-                    msg = _("{} is a duplicate with {}").format(pkgs[0], dup)
+                    msg = _("{} is a duplicate with {}").format(
+                        self.base.output.term.bold(pkgs[0]),
+                        self.base.output.term.bold(dup))
                     output_set.add(msg)
 
         if self.opts.check_types.intersection({'all', 'obsoleted'}):
@@ -101,8 +108,9 @@ class CheckCommand(commands.Command):
                     obsoleted = q.filter(provides=[obsolete],
                                          name=str(obsolete).split()[0])
                     if len(obsoleted):
-                        msg = _("{} is obsoleted by {}").format(obsoleted[0],
-                                                                pkg)
+                        msg = _("{} is obsoleted by {}").format(
+                            self.base.output.term.bold(obsoleted[0]),
+                            self.base.output.term.bold(pkg))
                         output_set.add(msg)
 
         if self.opts.check_types.intersection({'all', 'provides'}):
@@ -110,7 +118,9 @@ class CheckCommand(commands.Command):
                 for provide in pkg.provides:
                     if pkg not in q.filter(provides=[provide]):
                         msg = _("{} provides {} but it cannot be found")
-                        output_set.add(msg.format(pkg, provide))
+                        output_set.add(msg.format(
+                            self.base.output.term.bold(pkg),
+                            self.base.output.term.bold(provide)))
 
         for msg in sorted(output_set):
             print(msg)
