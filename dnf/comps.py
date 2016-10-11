@@ -642,9 +642,10 @@ class Solver(object):
         p_grp.full_list.extend(self._full_package_set(group))
 
         trans = TransactionBunch()
-        trans.install = new_set - old_set
-        trans.remove = old_set - new_set
-        trans.upgrade = old_set - trans.remove
+        trans.install = {pkg for pkg in new_set if pkg.name not in old_set}
+        trans.remove = {name for name in old_set
+                        if name not in [pkg.name for pkg in new_set]}
+        trans.upgrade = {pkg for pkg in new_set if pkg.name in old_set}
         return trans
 
     def _exclude_packages_from_installed_groups(self, base):
