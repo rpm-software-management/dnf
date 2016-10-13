@@ -72,9 +72,9 @@ class YumHistoryTransaction(object):
             if self.end_timestamp == other.end_timestamp:
                 return self.tid > other.tid
             else:
-                return self.end_timestamp < other.end_timestamp
+                return float(self.end_timestamp) < float(other.end_timestamp)
         else:
-            return self.beg_timestamp > other.beg_timestamp
+            return float(self.beg_timestamp) > float(other.beg_timestamp)
 
     def _getTransData(self):
         if self._loaded_TD is None:
@@ -409,10 +409,10 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
         # Oldest first...
         self._merged_objs.sort(reverse=True)
 
-        if self.beg_timestamp > obj.beg_timestamp:
+        if float(self.beg_timestamp) > float(obj.beg_timestamp):
             self.beg_timestamp    = obj.beg_timestamp
             self.beg_rpmdbversion = obj.beg_rpmdbversion
-        if obj.end_timestamp and self.end_timestamp < obj.end_timestamp:
+        if obj.end_timestamp and float(self.end_timestamp) < float(obj.end_timestamp):
             self.end_timestamp    = obj.end_timestamp
             self.end_rpmdbversion = obj.end_rpmdbversion
 
@@ -455,7 +455,7 @@ class SwdbInterface(object):
     def set_reason(self, nvra, reason):
         self.swdb.set_reason(str(nvra), reason)
 
-    def pkg_by_nvra(self, nvra): #XXX not used
+    def pkg_by_nvra(self, nvra):
         return self.swdb.package_by_nvra(str(nvra))
 
     def repo_by_nvra(self, nvra):

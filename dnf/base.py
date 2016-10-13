@@ -28,7 +28,6 @@ from dnf.i18n import _, P_, ucd
 from dnf.util import first
 from dnf.yum import history
 from dnf.yum import misc
-from dnf.yum import rpmsack
 from functools import reduce
 import collections
 import datetime
@@ -335,12 +334,6 @@ class Base(object):
         self._plugins.run_sack()
         return self._sack
 
-    #@property #XXX Covered in swdb now
-    #@dnf.util.lazyattr("_priv_yumdb")
-    #def _yumdb(self):
-    #    db_path = os.path.normpath(self.conf.persistdir + '/yumdb')
-    #    return rpmsack.AdditionalPkgDB(db_path)
-
     def close(self):
         # :api
         """Close all potential handles and clean cache.
@@ -503,9 +496,6 @@ class Base(object):
         if self._history is None:
             db_path = self.conf.persistdir + "/history"
             releasever = self.conf.releasever
-            #self._history = history.YumHistory(db_path, self._yumdb,
-            #                                   root=self.conf.installroot,
-            #                                   releasever=releasever)
             self._history = history.SwdbInterface(db_path, root=self.conf.installroot, releasever=releasever)
         return self._history
 
@@ -913,20 +903,6 @@ class Base(object):
             count = display_banner(rpo, count)
             pkg_info = self.history.package_data()
             pkg_info.from_repo = rpo.repoid
-
-            #TODO - we can probably drop this
-            #pkg_info.reason = tsi._propagated_reason(self._yumdb,
-            #                                          self.conf.installonlypkgs)
-            #pkg_info.releasever = self.conf.releasever
-            #if hasattr(self, 'args') and self.args:
-            #    pkg_info.command_line = ' '.join(self.args)
-            #elif hasattr(self, 'cmds') and self.cmds:
-            #    pkg_info.command_line = ' '.join(self.cmds)
-            #csum = rpo.returnIdSum()
-            #if csum is not None:
-            #    pkg_info.checksum_type = str(csum[0])
-            #    pkg_info.checksum_data = csum[1]
-
             if rpo._from_cmdline:
                 try:
                     st = os.stat(rpo.localPkg())

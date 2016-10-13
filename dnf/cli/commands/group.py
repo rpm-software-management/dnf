@@ -22,7 +22,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.comps import CompsQuery
 from dnf.cli import commands
-from dnf.i18n import _
+from dnf.i18n import _, ucd
 
 import dnf.cli
 import dnf.exceptions
@@ -250,11 +250,14 @@ class GroupCommand(commands.Command):
 
         if res.environments:
             logger.info(_('Environments marked installed: %s'),
-                        ','.join([prst.environment(g).ui_name
+                        ','.join([ucd(prst.environment(g).ui_name)
                                   for g in res.environments]))
         if res.groups:
             logger.info(_('Groups marked installed: %s'),
-                        ','.join([prst.group(g).ui_name for g in res.groups]))
+                        ','.join([ucd(prst.group(g).ui_name) for g in res.groups]))
+
+        #TODO save new status into swdb
+        
         prst.commit()
 
     def _mark_remove(self, patterns):
@@ -271,12 +274,15 @@ class GroupCommand(commands.Command):
 
         if res.environments:
             logger.info(_('Environments marked removed: %s'),
-                        ','.join([prst.environment(e_id).ui_name
+                        ','.join([ucd(prst.environment(e_id).ui_name)
                                   for e_id in res.environments]))
         if res.groups:
             logger.info(_('Groups marked removed: %s'),
-                        ','.join([prst.group(g_id).ui_name
+                        ','.join([ucd(prst.group(g_id).ui_name)
                                   for g_id in res.groups]))
+
+        #TODO save new status into swdb
+
         prst.commit()
 
     def _mark_subcmd(self, extcmds):
