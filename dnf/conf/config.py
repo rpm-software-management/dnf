@@ -959,7 +959,7 @@ class RepoConf(BaseConfig):
     def _configure_from_options(self, opts):
         """Configure repos from the opts. """
 
-        if getattr(opts, 'nogpgcheck', None):
+        if getattr(opts, 'gpgcheck', None) is False:
             for optname in ['gpgcheck', 'repo_gpgcheck']:
                 opt = self._get_option(optname)
                 opt._set(False, dnf.conf.PRIO_COMMANDLINE)
