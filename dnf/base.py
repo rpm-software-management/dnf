@@ -1492,23 +1492,6 @@ class Base(object):
             return 1
         return 0
 
-    def install_groupie(self, pkg_name, inst_set):
-        """Installs a group member package by name. """
-        forms = [hawkey.FORM_NAME]
-        subj = dnf.subject.Subject(pkg_name)
-        if self.conf.multilib_policy == "all":
-            q = subj.get_best_query(
-                self.sack, with_provides=False, forms=forms)
-            for pkg in q:
-                self._goal.install(pkg)
-            return len(q)
-        elif self.conf.multilib_policy == "best":
-            sltr = subj.get_best_selector(self.sack, forms=forms)
-            if sltr.matches():
-                self._goal.install(select=sltr)
-                return 1
-        return 0
-
     def package_downgrade(self, pkg):
         # :api
         if pkg._from_system:
