@@ -148,9 +148,13 @@ class RepoQueryCommand(commands.Command):
                              help=_('format for displaying found packages'))
 
         pkgfilter = parser.add_mutually_exclusive_group()
+        pkgfilter.add_argument("--duplicates", dest='pkgfilter',
+                               const='duplicated', action='store_const',
+                               help=_('limit the query to installed duplicate '
+                                      'packages'))
         pkgfilter.add_argument("--duplicated", dest='pkgfilter',
                                const='duplicated', action='store_const',
-                               help=_('limit the query to installed duplicated packages'))
+                               help=argparse.SUPPRESS)
         pkgfilter.add_argument("--installonly", dest='pkgfilter',
                                const='installonly', action='store_const',
                                help=_('limit the query to installed installonly packages'))

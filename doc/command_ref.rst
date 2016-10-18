@@ -652,7 +652,7 @@ Remove Command
 ``dnf [options] remove <package-specs>...``
     Removes the specified packages from the system along with any packages depending on the packages being removed. Each ``<spec>`` can be either a ``<package-spec>``, which specifies a package directly, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
-``dnf [options] remove --duplicated``
+``dnf [options] remove --duplicates``
     Removes older version of duplicated packages.
 
 ``dnf [options] remove --oldinstallonly``
@@ -706,7 +706,7 @@ resulting packages matching the specification. All packages are considered if no
 ``--arch <arch>[,<arch>...]``
     Limit the resulting set only to packages of selected architectures.
 
-``--duplicated``
+``--duplicates``
     Limit the resulting set to installed duplicated packages (i.e. more package versions
     for the same name and architecture). Installonly packages are excluded from this set.
 
@@ -879,11 +879,11 @@ Display all available packages providing "webserver" but only for "i686" archite
 
 Display duplicated packages::
 
-    dnf repoquery --duplicated
+    dnf repoquery --duplicates
 
 Remove older versions of duplicated packages (an equivalent of yum's `package-cleanup --cleandups`)::
 
-    dnf remove $(dnf repoquery --duplicated --latest-limit -1 -q)
+    dnf remove $(dnf repoquery --duplicates --latest-limit -1 -q)
 
 
 .. _repository-packages_command-label:
