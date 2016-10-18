@@ -825,6 +825,7 @@ class Cli(object):
 
         if opts.quiet:
             opts.debuglevel = 0
+            opts.errorlevel = 0
         if opts.verbose:
             opts.debuglevel = opts.errorlevel = dnf.const.VERBOSE_LEVEL
 
