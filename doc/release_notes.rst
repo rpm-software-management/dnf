@@ -67,7 +67,7 @@ DNF command changes in 2.0.0:
 
 DNF command additions in 2.0.0:
 
-* ``dnf [options] remove --duplicated`` removes older version of duplicated packages.
+* ``dnf [options] remove --duplicates`` removes older version of duplicated packages.
 * ``dnf [options] remove --oldinstallonly``removes old installonly packages keeping only ``installonly_limit`` latest versions.
 * ``dnf [options] repoquery [<select-options>] [<query-options>] [<pkg-spec>]`` searches the available DNF repositories for selected packages and displays the requested information about them. It is an equivalent of ``rpm -q`` for remote repositories.
 * ``dnf [options] repoquery --querytags`` provides list of recognized tags by repoquery option \-\ :ref:`-queryformat <queryformat_repoquery-label>`.

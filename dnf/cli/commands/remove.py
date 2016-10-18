@@ -24,6 +24,7 @@ from dnf.cli import commands
 from dnf.i18n import _
 from dnf.cli.option_parser import OptionParser
 
+import argparse
 import dnf.exceptions
 import logging
 
@@ -39,10 +40,14 @@ class RemoveCommand(commands.Command):
     @staticmethod
     def set_argparser(parser):
         mgroup = parser.add_mutually_exclusive_group()
-        mgroup.add_argument('--duplicated', action='store_true',
+        mgroup.add_argument('--duplicates', action='store_true',
+                            dest='duplicated',
                             help=_('remove duplicated packages'))
+        mgroup.add_argument('--duplicated', action='store_true',
+                            help=argparse.SUPPRESS)
         mgroup.add_argument('--oldinstallonly', action='store_true',
-                            help=_('remove installonly packages over the limit'))
+                            help=_(
+                                'remove installonly packages over the limit'))
         parser.add_argument('packages', nargs='*', help=_('Package to remove'),
                             action=OptionParser.ParseSpecGroupFileCallback,
                             metavar=_('PACKAGE'))
