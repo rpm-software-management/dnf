@@ -84,4 +84,5 @@ class ShellCommand(commands.Command):
         pass
 
     def _quit(self):
-        pass
+        logger.info(_('Leaving Shell'))
+        sys.exit(0)
