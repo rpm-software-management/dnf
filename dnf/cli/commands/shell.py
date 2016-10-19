@@ -43,7 +43,9 @@ class ShellCommand(commands.Command):
                'run': 'run_ts',
                'ts': 'transaction',
                'transaction': 'transaction',
-               'config': 'config'}
+               'config': 'config',
+               'resolvedep': 'resolve'
+               }
 
     @staticmethod
     def set_argparser(parser):
@@ -77,8 +79,12 @@ class ShellCommand(commands.Command):
     def _repo(self):
         pass
 
+    def _resolve(self):
+        if self.cli.base.transaction is None:
+            self.cli.base.resolve(self.cli.demands.allow_erasing)
+
     def _run_ts(self):
-        pass
+        self.cli.base.do_transaction()
 
     def _transaction(self):
         pass
