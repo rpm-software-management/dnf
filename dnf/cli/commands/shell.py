@@ -42,7 +42,25 @@ class ShellCommand(commands.Command):
                             help=_('Script to run in DNF shell'))
 
     def configure(self):
-        pass
+        demands = self.cli.demands
+        demands.sack_activation = True
+        demands.available_repos = True
+        demands.resolving = False
+        demands.root_user = True
+
+        self.shell_specific_commands = ['repo', 'repository', 'exit', 'quit',
+                                        'run', 'ts', 'transaction', 'config']
 
     def run(self):
-        pass
+        while True:
+            line = dnf.i18n.ucd_input('> ')
+            s_line = shlex.split(line)
+            opts = self.cli.optparser.parse_main_args(s_line)
+            if opts.command in self.shell_specific_commands:
+                pass
+            else:
+                cmd_cls = self.cli.cli_commands.get(opts.command)
+                if cmd_cls is not None:
+                    cmd = cmd_cls(self)
+                    opts = self.cli.optparser.parse_command_args(cmd, s_line)
+                    cmd.run()
