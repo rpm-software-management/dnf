@@ -481,6 +481,10 @@ class Repo(dnf.conf.RepoConf):
         # :api
         return self._repofile
 
+    @repofile.setter
+    def repofile(self, value):
+        self._repofile = value
+
     @property
     def _cachedir(self):
         s = self.metalink or self.mirrorlist or \
