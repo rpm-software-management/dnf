@@ -36,6 +36,15 @@ class ShellCommand(commands.Command):
     aliases = ('shell',)
     summary = _('')
 
+    MAPPING = {'repo': 'repo',
+               'repository': 'repo',
+               'exit': 'quit',
+               'quit': 'quit',
+               'run': 'run_ts',
+               'ts': 'transaction',
+               'transaction': 'transaction',
+               'config': 'config'}
+
     @staticmethod
     def set_argparser(parser):
         parser.add_argument('script', nargs='?', metavar=_('SCRIPT'),
@@ -48,19 +57,31 @@ class ShellCommand(commands.Command):
         demands.resolving = False
         demands.root_user = True
 
-        self.shell_specific_commands = ['repo', 'repository', 'exit', 'quit',
-                                        'run', 'ts', 'transaction', 'config']
-
     def run(self):
         while True:
             line = dnf.i18n.ucd_input('> ')
             s_line = shlex.split(line)
             opts = self.cli.optparser.parse_main_args(s_line)
-            if opts.command in self.shell_specific_commands:
-                pass
+            if opts.command in self.MAPPING:
+                getattr(self, '_' + self.MAPPING[opts.command])()
             else:
                 cmd_cls = self.cli.cli_commands.get(opts.command)
                 if cmd_cls is not None:
                     cmd = cmd_cls(self)
                     opts = self.cli.optparser.parse_command_args(cmd, s_line)
                     cmd.run()
+
+    def _config(self):
+        pass
+
+    def _repo(self):
+        pass
+
+    def _run_ts(self):
+        pass
+
+    def _transaction(self):
+        pass
+
+    def _quit(self):
+        pass
