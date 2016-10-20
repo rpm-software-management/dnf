@@ -1,2 +1,2 @@
-INSTALL (FILES "dnf.conf" "automatic.conf" DESTINATION ${SYSCONFDIR}/dnf)
+INSTALL (FILES "dnf.conf" "automatic.conf" "automatic-install.conf" DESTINATION ${SYSCONFDIR}/dnf)
 ADD_SUBDIRECTORY (protected.d)
