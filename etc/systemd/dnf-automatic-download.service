@@ -1,0 +1,10 @@
+[Unit]
+Description=dnf automatic download updates
+
+[Service]
+Type=oneshot
+Nice=19
+IOSchedulingClass=2
+IOSchedulingPriority=7
+Environment="ABRT_IGNORE_PYTHON=1"
+ExecStart=/usr/bin/dnf-automatic /etc/dnf/automatic.conf --timer --downloadupdates

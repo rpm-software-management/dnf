@@ -68,17 +68,28 @@ def parse_arguments(args):
     parser = argparse.ArgumentParser()
     parser.add_argument('conf_path', nargs='?', default=dnf.const.CONF_AUTOMATIC_FILENAME)
     parser.add_argument('--timer', action='store_true')
+    parser.add_argument('--installupdates', action='store_true')
+    parser.add_argument('--downloadupdates', action='store_true')
 
     return parser.parse_args(args), parser
 
 
 class AutomaticConfig(object):
-    def __init__(self, filename):
+    def __init__(self, filename=None, downloadupdates=False,
+                 installupdates=False):
+        if not filename:
+            filename = dnf.const.CONF_AUTOMATIC_FILENAME
         self.commands = CommandsConfig()
         self.email = EmailConfig()
         self.emitters = EmittersConfig()
         self._parser = None
         self._load(filename)
+
+        if downloadupdates:
+            self.commands.download_updates = True
+        if installupdates:
+            self.commands.apply_updates = True
+
         self.commands.imply()
         self.filename = filename
 
@@ -134,7 +145,8 @@ def main(args):
     (opts, parser) = parse_arguments(args)
 
     try:
-        conf = AutomaticConfig(opts.conf_path)
+        conf = AutomaticConfig(opts.conf_path, opts.downloadupdates,
+                               opts.installupdates)
         with dnf.Base() as base:
             cli = dnf.cli.Cli(base)
             cli._read_conf_file()

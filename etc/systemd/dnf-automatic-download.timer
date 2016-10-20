@@ -1,0 +1,9 @@
+[Unit]
+Description=dnf-automatic-download timer
+
+[Timer]
+OnBootSec=1h
+OnUnitInactiveSec=1d
+
+[Install]
+WantedBy=basic.target

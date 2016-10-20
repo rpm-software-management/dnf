@@ -1,5 +1,5 @@
 [Unit]
-Description=dnf-automatic timer
+Description=dnf-automatic-notifyonly timer
 
 [Timer]
 OnBootSec=1h
