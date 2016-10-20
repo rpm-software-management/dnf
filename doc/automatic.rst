@@ -35,6 +35,20 @@ The operation of the tool is completely controlled by the configuration file and
 
 The tool synchronizes package metadata as needed and then checks for updates available for the given system and then either exits, downloads the packages or downloads and applies the packages. The outcome of the operation is then reported by a selected mechanism, for instance via the standard output, email or motd messages.
 
+A few default systemd units are provided to enable some standard configurations:
+
+- dnf-automatic-notifyonly
+- dnf-automatic-download
+- dnf-automatic-install
+
+===================
+ Run dnf-automatic
+===================
+
+You can select on that most closely fits your needs, customize ``/etc/dnf/automatic.conf`` for any specific behaviors, and enable the timer unit.
+
+For example:``systemctl enable dnf-automatic-notifyonly.timer && systemctl start dnf-automatic-notifyonly.timer``
+
 ===========================
  Configuration File Format
 ===========================
@@ -114,8 +128,3 @@ The email emitter configuration.
 
 Can be used to override settings from DNF's main configuration file. See :doc:`conf_ref`.
 
-===================
- Run dnf-automatic
-===================
-
-Once you are finished with configuration, execute ``systemctl enable dnf-automatic.timer && systemctl start dnf-automatic.timer`` to enable and start the systemd timer.
