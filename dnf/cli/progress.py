@@ -22,6 +22,8 @@ from time import time
 
 import sys
 import dnf.callback
+import dnf.util
+
 
 class MultiFileProgressMeter(dnf.callback.DownloadProgress):
     """Multi-file download progress meter"""
@@ -46,8 +48,7 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         self.rate_average = rate_average
 
     def message(self, msg):
-        self.fo.write(msg)
-        self.fo.flush()
+        dnf.util._terminal_messenger('write_flush', msg, self.fo)
 
     def start(self, total_files, total_size):
         self.total_files = total_files
@@ -120,8 +121,7 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
             bar = '='*n + '-'*p
             msg = '%3d%% [%-*s]%s' % (pct, bl, bar, msg)
             left -= bl + 7
-        self.fo.write('%-*.*s%s' % (left, left, text, msg))
-        self.fo.flush()
+        self.message('%-*.*s%s' % (left, left, text, msg))
 
     def end(self, payload, status, err_msg):
         start = now = time()
@@ -158,8 +158,7 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
                 format_time(tm))
             left = _term_width() - len(msg)
             msg = '%-*.*s%s' % (left, left, text, msg)
-        self.fo.write(msg)
-        self.fo.flush()
+        self.message(msg)
 
         # now there's a blank line. fill it if possible.
         if self.active:

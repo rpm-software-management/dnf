@@ -23,6 +23,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from .pycomp import PY3, basestring
+from dnf.i18n import ucd
 from functools import reduce
 import dnf
 import dnf.const
@@ -34,6 +35,7 @@ import os
 import pwd
 import shutil
 import subprocess
+import sys
 import tempfile
 import time
 
@@ -269,6 +271,24 @@ def touch(path, no_create=False):
     if no_create or os.access(path, os.F_OK):
         return os.utime(path, None)
     with open(path, 'a'):
+        pass
+
+
+def _terminal_messenger(tp='write', msg="", out=sys.stdout):
+    try:
+        if tp == 'write':
+            out.write(msg)
+        elif tp == 'flush':
+            out.flush()
+        elif tp == 'write_flush':
+            out.write(msg)
+            out.flush()
+        elif tp == 'print':
+            print(msg, file=out)
+        else:
+            raise ValueError('Unsupported type: ' + tp)
+    except IOError as e:
+        logger.critical('{}: {}'.format(type(e).__name__, ucd(e)))
         pass
 
 
