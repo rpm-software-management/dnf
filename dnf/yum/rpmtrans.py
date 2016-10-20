@@ -19,6 +19,7 @@ from __future__ import unicode_literals
 from dnf.i18n import _, ucd
 from dnf.pycomp import basestring
 import dnf.transaction
+import dnf.util
 import rpm
 import os
 import fcntl
@@ -111,7 +112,7 @@ class ErrorTransactionDisplay(TransactionDisplay):
 
     def error(self, message):
         super(ErrorTransactionDisplay, self).error(message)
-        print(message, file=sys.stderr)
+        dnf.util._terminal_messenger('print', message, sys.stderr)
 
 
 class LoggingTransactionDisplay(ErrorTransactionDisplay):
