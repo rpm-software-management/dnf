@@ -423,10 +423,19 @@ class SwdbInterface(object):
         self.addon_data = _addondata(db_path, root)
         if not self.swdb.exist():
             self.swdb.create_db()
-            swdb_transformer.run(output_file=self.swdb.get_path()) #does nothing when there is nothing to transform
+            #does nothing when there is nothing to transform
+            swdb_transformer.run(output_file=self.swdb.get_path())
 
     def close(self):
         self.swdb.close()
+
+    # NOTE: add package
+    # for new package generation from pkgtup, DNF is using:
+    # swdb.get_pid_by_nevracht(n,e,v,r,a,checksum,checksum_type,"rpm",True)
+    # also make sure that nevra is str
+    # When possible, use add_package - with DnfSwdbPkg object
+    def add_package(self, pkg):
+        self.swdb.add_package(pkg)
 
     def get_path(self):
         return self.swdb.get_path()
