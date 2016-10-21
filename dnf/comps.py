@@ -530,8 +530,8 @@ class Solver(object):
         env = self.comps._environment_by_id(env_id)
         p_env = self.persistor.environment(env_id)
         if p_env.installed:
-            raise CompsError(_("Environment '%s' is already installed.") %
-                             env.ui_name)
+            logger.warning(_("Environment '%s' is already installed.") %
+                           env.ui_name)
 
         p_env.grp_types = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
         exclude = set() if exclude is None else set(exclude)
@@ -600,8 +600,8 @@ class Solver(object):
             raise ValueError(_("Group_id '%s' does not exist.") % ucd(group_id))
         p_grp = self.persistor.group(group_id)
         if p_grp.installed:
-            raise CompsError(_("Group '%s' is already installed.") %
-                             group.ui_name)
+            logger.warning(_("Group '%s' is already installed.") %
+                           group.ui_name)
 
         exclude = set() if exclude is None else set(exclude)
         p_grp.name = group.name

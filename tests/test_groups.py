@@ -178,7 +178,7 @@ class EnvironmentInstallTest(support.ResultTestCase):
         self.base.environment_install(env.id, ('mandatory',))
         installed, _ = self.installed_removed(self.base)
         self.assertCountEqual(map(operator.attrgetter('name'), installed),
-                              ('trampoline',))
+                              ('trampoline', 'lotus'))
 
         p_env = self.prst.environment('sugar-desktop-environment')
         self.assertCountEqual(p_env.full_list, ('somerset', 'Peppers'))
