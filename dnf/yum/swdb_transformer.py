@@ -190,39 +190,39 @@ def GET_YUMDB_PACKAGES(cursor, yumdb_path, PACKAGE_DATA):
                 cursor.execute('''UPDATE PACKAGE_DATA SET from_repo_revision=?
                                WHERE PD_ID=?''',
                                (record_PD[PACKAGE_DATA.index(
-                               'from_repo_revision')],
-                               actualPDID))
+                                          'from_repo_revision')],
+                                actualPDID))
 
             if record_PD[PACKAGE_DATA.index('from_repo_timestamp')]:
                 cursor.execute('''UPDATE PACKAGE_DATA SET from_repo_timestamp=?
                                WHERE PD_ID=?''',
                                (record_PD[PACKAGE_DATA.index(
-                               'from_repo_timestamp')],
-                               actualPDID))
+                                          'from_repo_timestamp')],
+                                actualPDID))
 
             if record_PD[PACKAGE_DATA.index('installed_by')]:
                 cursor.execute('''UPDATE PACKAGE_DATA SET installed_by=?
                                WHERE PD_ID=?''',
                                (record_PD[PACKAGE_DATA.index('installed_by')],
-                               actualPDID))
+                                actualPDID))
 
             if record_PD[PACKAGE_DATA.index('changed_by')]:
                 cursor.execute('''UPDATE PACKAGE_DATA SET changed_by=?
                                WHERE PD_ID=?''',
                                (record_PD[PACKAGE_DATA.index('changed_by')],
-                               actualPDID))
+                                actualPDID))
 
             if record_PD[PACKAGE_DATA.index('installonly')]:
                 cursor.execute('''UPDATE PACKAGE_DATA SET installonly=?
                                WHERE PD_ID=?''',
                                (record_PD[PACKAGE_DATA.index('installonly')],
-                               actualPDID))
+                                actualPDID))
 
             if record_PD[PACKAGE_DATA.index('origin_url')]:
                 cursor.execute('''UPDATE PACKAGE_DATA SET origin_url=?
                                WHERE PD_ID=?''',
                                (record_PD[PACKAGE_DATA.index('origin_url')],
-                               actualPDID))
+                                actualPDID))
 
             # other tables
             if tmp_reason:
@@ -292,8 +292,6 @@ def run(input_dir='/var/lib/dnf/',
 
     PACKAGE = ['P_ID', 'name', 'epoch', 'version', 'release', 'arch',
                'checksum_data', 'checksum_type', 'type']
-
-    CHECKSUM_DATA = ['checksum_data']
 
     TRANS_DATA = ['T_ID', 'PD_ID', 'G_ID', 'done', 'ORIGINAL_TD_ID', 'reason',
                   'state']
@@ -532,8 +530,7 @@ def run(input_dir='/var/lib/dnf/',
     h_cursor.execute('SELECT * FROM trans_script_stdout')
     for row in h_cursor:
         cursor.execute('INSERT INTO OUTPUT VALUES (null,?,?,?)',
-                       (row[1], row[2], BIND_OUTPUT(cursor, 'stdout'))
-    )
+                       (row[1], row[2], BIND_OUTPUT(cursor, 'stdout')))
 
     h_cursor.execute('SELECT * FROM trans_error')
     for row in h_cursor:
@@ -685,7 +682,7 @@ def run(input_dir='/var/lib/dnf/',
 
     if task_performed > 0:
         print("Database integrity " +
-            repr(((task_performed - task_failed) / task_performed)*100) + "%")
+              str(((task_performed - task_failed) / task_performed)*100) + "%")
         return True
     else:
         print("Database transformation NOT successfull")

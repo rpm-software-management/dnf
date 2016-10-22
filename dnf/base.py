@@ -661,7 +661,7 @@ class Base(object):
 
         logger.info(_('Running transaction check'))
         lock = dnf.lock.build_rpmdb_lock(self.conf.persistdir,
-            self.conf.exit_on_lock)
+                                         self.conf.exit_on_lock)
         with lock:
             # save our ds_callback out
             dscb = self._ds_callback

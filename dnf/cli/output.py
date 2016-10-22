@@ -1465,7 +1465,7 @@ Transaction Summary
                     name = self._pwd_ui_username(old.loginuid, 24)
                 name = ucd(name)
                 tm = time.strftime("%Y-%m-%d %H:%M",
-                                time.localtime(float(old.beg_timestamp)))
+                                   time.localtime(float(old.beg_timestamp)))
                 num, uiacts = self._history_uiactions(old.get_old_trans_data())
                 name = fill_exact_width(name, 24, 24)
                 uiacts = fill_exact_width(uiacts, 14, 14)
@@ -1477,9 +1477,9 @@ Transaction Summary
                     # We don't check .errors, because return_code will be non-0
                 elif old.is_output:
                     rmark = lmark = 'E'
-                #elif old.rpmdb_problems:
+                # elif old.rpmdb_problems:
                 #    rmark = lmark = 'P'
-                #elif old.trans_skip:
+                # elif old.trans_skip:
                 #    rmark = lmark = 's'
                 if old.altered_lt_rpmdb:
                     rmark = '<'
@@ -1565,9 +1565,9 @@ Transaction Summary
 
     def _hpkg2from_repo(self, pkg):
         """ Given a pkg, find the ipkg.ui_from_repo()."""
-        if pkg.get_ui_from_repo: #package from swdb
+        if pkg.get_ui_from_repo:  # package from swdb
             return pkg.get_ui_from_repo()
-        elif pkg.ui_from_repo: #other package
+        elif pkg.ui_from_repo:  # other package
             return pkg.ui_from_repo()
         else:
             return "unknown"
@@ -1596,19 +1596,23 @@ Transaction Summary
                 state = _pkg_states['e']
             else:
                 ipkg = ipkg[0]
-                if not ipkg.e and ipkg.v == pkg.version and ipkg.r == pkg.release:
+                if (not ipkg.e and ipkg.v == pkg.version
+                        and ipkg.r == pkg.release):
                     pass
-                elif ipkg.e and ipkg.e == int(pkg.epoch) and ipkg.v == pkg.version and ipkg.r == pkg.release:
+                elif (ipkg.e and ipkg.e == int(pkg.epoch) and
+                        ipkg.v == pkg.version and ipkg.r == pkg.release):
                     pass
-                elif ipkg.e and not pkg.epoch or ipkg.e and int(ipkg.e) > int(pkg.epoch):
+                elif (ipkg.e and not pkg.epoch or ipkg.e and
+                        int(ipkg.e) > int(pkg.epoch)):
                     state = _pkg_states['o']
-                elif ipkg.v > pkg.version or ipkg.r > pkg.release or ipkg.a != pkg.arch:
+                elif (ipkg.v > pkg.version or ipkg.r > pkg.release or
+                        ipkg.a != pkg.arch):
                     state = _pkg_states['o']
                 elif ipkg.v > pkg.version:
                     state = _pkg_states['n']
                 else:
-                    state = "Unknown" #FIXME need for proper comparation of version strings
-
+                    # FIXME need for proper comparation of version strings
+                    state = "Unknown"
             if highlight:
                 (hibeg, hiend) = self._highlight('bold')
             else:

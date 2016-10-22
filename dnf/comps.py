@@ -537,8 +537,8 @@ class Solver(object):
         grp_types = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
         exclude = list() if exclude is None else list(exclude)
         if not p_env:
-            p_env = self.persistor.new_env( env_id, env.name, env.ui_name,
-                                            pkg_types, grp_types)
+            p_env = self.persistor.new_env(env_id, env.name, env.ui_name,
+                                           pkg_types, grp_types)
             self.persistor.swdb.add_env(p_env)
             p_env.add_exclude(exclude)
             p_env.add_group(list(self._mandatory_group_set(env)))
