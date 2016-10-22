@@ -112,14 +112,20 @@ class _HistoryWrapper(object):
                 assert hpkg.state == 'Obsoleting'
                 obsoleting_nevra = hpkg.nevra
                 hpkg = next(reversed_it)
-            if hpkg.state in {'Reinstalled', 'Downgraded', 'Updated'}:  # Replaced.
+
+            # Replaced.
+            if hpkg.state in {'Reinstalled', 'Downgraded', 'Updated'}:
                 replaced_nevra, replaced_state = hpkg.nvra, hpkg.state
                 hpkg = next(reversed_it)
             assert is_exhausted(reversed_it)
             assert not obsoleting_nevra or obsoleting_nevra == hpkg.nevra
-            assert not replaced_state or replaced_state == STATE2COMPLEMENT[hpkg.state]
+            assert(not replaced_state
+                   or replaced_state == STATE2COMPLEMENT[hpkg.state])
 
-            operations.add(hpkg.state, hpkg.nvra, replaced_nevra, obsoleted_nevras)
+            operations.add(hpkg.state,
+                           hpkg.nvra,
+                           replaced_nevra,
+                           obsoleted_nevras)
         return operations
 
 class NEVRAOperations(Sized, Iterable, Container):

@@ -12,3 +12,5 @@ dnf/const.py
 bin/dnf*-2
 bin/dnf*-3
 bin/yum
+*.cmake
+*CMakeCache*

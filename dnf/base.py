@@ -496,7 +496,7 @@ class Base(object):
         if self._history is None:
             db_path = self.conf.persistdir + "/history"
             releasever = self.conf.releasever
-            self._history = history.SwdbInterface (
+            self._history = history.SwdbInterface(
                 db_path,
                 root=self.conf.installroot,
                 releasever=releasever
