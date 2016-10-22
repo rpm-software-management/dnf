@@ -24,17 +24,17 @@ import hawkey
 import time
 import glob
 import os
-
 from . import misc as misc
 import gi
-gi.require_version('Dnf', '1.0')
-from gi.repository import Dnf
 import dnf
 import dnf.exceptions
 import dnf.rpm.miscutils
 import dnf.i18n
 import functools
 from dnf.yum import swdb_transformer
+gi.require_version('Dnf', '1.0')
+from gi.repository import Dnf
+
 
 class YumHistoryTransaction(object):
     """ Holder for a history transaction. """
@@ -78,7 +78,9 @@ class YumHistoryTransaction(object):
 
     def _getTransData(self):
         if self._loaded_TD is None:
-            self._loaded_TD = sorted(self._history.get_packages_by_tid(self.tid))
+            self._loaded_TD = sorted(
+                self._history.get_packages_by_tid(self.tid)
+            )
         return self._loaded_TD
 
     trans_data = property(fget=lambda self: self._getTransData())
@@ -412,9 +414,11 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
         if float(self.beg_timestamp) > float(obj.beg_timestamp):
             self.beg_timestamp    = obj.beg_timestamp
             self.beg_rpmdbversion = obj.beg_rpmdbversion
-        if obj.end_timestamp and float(self.end_timestamp) < float(obj.end_timestamp):
+        if obj.end_timestamp and\
+            float(self.end_timestamp) < float(obj.end_timestamp):
             self.end_timestamp    = obj.end_timestamp
             self.end_rpmdbversion = obj.end_rpmdbversion
+
 
 class SwdbInterface(object):
     def __init__(self, db_path, root='/', releasever=""):
@@ -423,8 +427,8 @@ class SwdbInterface(object):
         self.addon_data = _addondata(db_path, root)
         if not self.swdb.exist():
             self.swdb.create_db()
-            #does nothing when there is nothing to transform
-            swdb_transformer.run(output_file=self.swdb.get_path())
+            # does nothing when there is nothing to transform
+            swdb_transformer.run(output_file = self.swdb.get_path())
 
     def close(self):
         self.swdb.close()
@@ -454,13 +458,14 @@ class SwdbInterface(object):
 
     def old(self, tids=[], limit=0, complete_transactions_only=False):
         tids = list(tids)
-        if tids and type(tids[0]) != type(1):
-            for i,value in enumerate(tids):
+        if tids and isinstance(tids[0], int):
+            for i, value in enumerate(tids):
                 tids[i] = int(value)
         return self.swdb.trans_old(tids, limit, complete_transactions_only)
 
     def _log_group_trans(self, tid,  groups_installed=[], groups_removed=[]):
         self.swdb.log_group_trans(tid, groups_installed, groups_removed)
+
     def set_reason(self, nvra, reason):
         self.swdb.set_reason(str(nvra), reason)
 
@@ -477,22 +482,50 @@ class SwdbInterface(object):
         return self.swdb.attr_by_nvra(str(attr), str(nvra))
 
     def beg(self, rpmdb_version, using_pkgs, tsis, skip_packages=[],
-            rpmdb_problems=[], cmdline=None, groups_installed=[], groups_removed=[]):
+            rpmdb_problems=[], cmdline=None, groups_installed=[],
+            groups_removed=[]):
         if cmdline:
-            self._tid = self.swdb.trans_beg(str(int(time.time())),str(rpmdb_version),cmdline,str(misc.getloginuid()),self.releasever)
+            self._tid = self.swdb.trans_beg(
+                str(int(time.time())),
+                str(rpmdb_version),
+                cmdline,
+                str(misc.getloginuid()),
+                self.releasever
+            )
         else:
-            self._tid = self.swdb.trans_beg(str(int(time.time())),str(rpmdb_version),"",str(misc.getloginuid()),self.releasever)
+            self._tid = self.swdb.trans_beg(
+                str(int(time.time())),
+                str(rpmdb_version),
+                "",
+                str(misc.getloginuid()),
+                self.releasever
+            )
 
         for tsi in tsis:
             for (pkg, state) in tsi._history_iterator():
-                pid   = self.pkg2pid(pkg)
-                self.swdb.trans_data_beg(self._tid, pid,str(tsi.reason),state)
+                pid = self.pkg2pid(pkg)
+                self.swdb.trans_data_beg(
+                    self._tid,
+                    pid,
+                    str(tsi.reason),
+                    state
+                )
         self._log_group_trans(self._tid, groups_installed, groups_removed)
 
     def _pkgtup2pid(self, pkgtup, checksum="", checksum_type="", create=True):
         pkgtup = map(ucd, pkgtup)
         (n,a,e,v,r) = pkgtup
-        return self.swdb.get_pid_by_nevracht(n,str(e),str(v),str(r),a,checksum,checksum_type,"rpm",create)
+        return self.swdb.get_pid_by_nevracht(
+            n,
+            str(e),
+            str(v),
+            str(r),
+            a,
+            checksum,
+            checksum_type,
+            "rpm",
+            create
+        )
 
     def _apkg2pid(self, po, create=True):
         csum = po.returnIdSum()
@@ -536,7 +569,12 @@ class SwdbInterface(object):
         assert return_code or not errors
         if not hasattr(self, '_tid'):
             return # Failed at beg() time
-        self.swdb.trans_end(self._tid, str(int(time.time())), str(end_rpmdb_version), return_code)
+        self.swdb.trans_end(
+            self._tid,
+            str(int(time.time())),
+            str(end_rpmdb_version),
+            return_code
+        )
         if not return_code:
             #  Simple hack, if the transaction finished. Note that this
             # catches the erase cases (as we still don't get pkgtups for them),
@@ -555,16 +593,19 @@ class SwdbInterface(object):
             there is no data currently. """
         pid = self.pkg2pid(ipkg, create=False)
         if pid:
-            if not self.swdb.log_rpm_data( pid, str((getattr(ipkg, "buildtime" , None) or '')),
-                                                str((getattr(ipkg, "buildhost" , None) or '')),
-                                                str((getattr(ipkg, "license" , None) or '')),
-                                                str((getattr(ipkg, "packager" , None) or '')),
-                                                str((getattr(ipkg, "size" , None) or '')),
-                                                str((getattr(ipkg, "sourcerpm" , None) or '')),
-                                                str((getattr(ipkg, "url" , None) or '')),
-                                                str((getattr(ipkg, "vendor" , None) or '')),
-                                                str((getattr(ipkg, "committer" , None) or '')),
-                                                str((getattr(ipkg, "committime" , None) or ''))):
+            if not self.swdb.log_rpm_data(
+                pid,
+                str((getattr(ipkg, "buildtime", None) or '')),
+                str((getattr(ipkg, "buildhost", None) or '')),
+                str((getattr(ipkg, "license", None) or '')),
+                str((getattr(ipkg, "packager", None) or '')),
+                str((getattr(ipkg, "size", None) or '')),
+                str((getattr(ipkg, "sourcerpm", None) or '')),
+                str((getattr(ipkg, "url", None) or '')),
+                str((getattr(ipkg, "vendor", None) or '')),
+                str((getattr(ipkg, "committer", None) or '')),
+                str((getattr(ipkg, "committime", None) or ''))
+            ):
                 return True
         print("PID problem in _save_yumdb, rollback!")
         return False
@@ -574,7 +615,7 @@ class SwdbInterface(object):
             there is no data currently. """
         pid = self.pkg2pid(ipkg, create=False)
         if pid:
-            #FIXME: resolve installonly
+            # FIXME: resolve installonly
             self.swdb.log_package_data(pid, pkg_data)
             return True
         else:
@@ -594,10 +635,11 @@ class SwdbInterface(object):
             packages al. la. "yum list". Returns transaction ids. """
         return self.swdb.search(patterns)
 
-    def user_installed(self, nvra): #boolean if user installed
+    def user_installed(self, nvra):  # boolean if user installed
         return self.swdb.user_installed(str(nvra))
 
-    def select_user_installed(self, pkgs): #indexes of user installed packages from list
+    # indexes of user installed packages from list
+    def select_user_installed(self, pkgs):
         return self.swdb.select_user_installed(pkgs)
 
     def get_packages_by_tid(self, tid):
@@ -612,13 +654,14 @@ class SwdbInterface(object):
     def load_output(self, tid):
         return self.swdb.load_output(tid)
 
+
 class _addondata(object):
     def __init__(self, db_path, root='/'):
         self.conf = misc.GenericHolder()
         self.conf.writable = False
         self._db_date = time.strftime("%Y-%m-%d")
         if not os.path.normpath(db_path).startswith(root):
-            self.conf.db_path  = os.path.normpath(root + '/' + db_path)
+            self.conf.db_path = os.path.normpath(root + '/' + db_path)
         else:
             self.conf.db_path = os.path.normpath('/' + db_path)
 

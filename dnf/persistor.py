@@ -27,8 +27,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _
 import gi
-gi.require_version('Dnf', '1.0')
-from gi.repository import Dnf
 import collections
 import distutils.version
 import dnf.util
@@ -38,6 +36,8 @@ import json
 import logging
 import os
 import re
+gi.require_version('Dnf', '1.0')
+from gi.repository import Dnf
 
 logger = logging.getLogger("dnf")
 
@@ -52,16 +52,22 @@ class GroupPersistor(object):
 
     def commit(self):
         if self.groups_installed:
-            self.swdb.groups_commit(list(pkg.name_id for pkg in self.groups_installed))
+            self.swdb.groups_commit(list(
+                pkg.name_id for pkg in self.groups_installed)
+            )
         for group in self.groups_removed:
             self.swdb.uninstall_group(group)
 
-    def new_group(self,name_id, name, ui_name,is_installed,pkg_types,grp_types):
-        group = Dnf.SwdbGroup.new(name_id,name,ui_name,is_installed,pkg_types,grp_types,self.swdb)
+    def new_group(self,name_id, name, ui_name, is_installed,
+            pkg_types, grp_types):
+        group = Dnf.SwdbGroup.new(name_id, name, ui_name, is_installed,
+            pkg_types, grp_types, self.swdb)
         return group
 
-    def new_env(self,name_id, name, ui_name,pkg_types,grp_types):
-        env = Dnf.SwdbEnv.new(name_id,name,ui_name,pkg_types,grp_types,self.swdb)
+    def new_env(self, name_id, name, ui_name, pkg_types, grp_types):
+        env = Dnf.SwdbEnv.new(name_id, name, ui_name, pkg_types, grp_types,
+            self.swdb
+        )
         return env
 
     def environment(self, name_id):
@@ -81,11 +87,12 @@ class GroupPersistor(object):
 
     def get_group_type(self):
         return Dnf.SwdbGroup
+
     def get_env_type(self):
         return Dnf.SwdbEnv
 
     def groups(self):
-        return self.swdb.groups_by_pattern("%") #sqlite3 wildcard - will patch any pattern...
+        return self.swdb.groups_by_pattern("%")  # sqlite3 wildcard
 
     def groups_by_pattern(self, pattern, case_sensitive=False):
         return self.swdb.groups_by_pattern(pattern)

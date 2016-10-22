@@ -496,7 +496,11 @@ class Base(object):
         if self._history is None:
             db_path = self.conf.persistdir + "/history"
             releasever = self.conf.releasever
-            self._history = history.SwdbInterface(db_path, root=self.conf.installroot, releasever=releasever)
+            self._history = history.SwdbInterface (
+                db_path,
+                root=self.conf.installroot,
+                releasever=releasever
+            )
         return self._history
 
     history = property(fget=lambda self: self._getHistory(),
@@ -595,7 +599,7 @@ class Base(object):
         self._ds_callback.start()
         goal = self._goal
         if goal.req_has_erase():
-            goal.push_userinstalled(self.sack.query().installed(), self.history)
+            goal.push_userinstalled(self.sack.query().installed(),self.history)
         elif not self.conf.upgrade_group_objects_upgrade:
             # exclude packages installed from groups
             # these packages will be marked to installation
@@ -634,10 +638,9 @@ class Base(object):
                 exc = dnf.exceptions.Error(msg)
 
         if exc is not None:
-        #if self._group_persistor:
-        #        self._group_persistor._rollback()
             raise exc
-        #if self._group_persistor:
+
+        # if self._group_persistor:
         #    installed = self.sack.query().installed()
         #    self._group_persistor.update_group_env_installed(installed, goal)
         self._plugins.run_resolved()
@@ -656,7 +659,8 @@ class Base(object):
             return
 
         logger.info(_('Running transaction check'))
-        lock = dnf.lock.build_rpmdb_lock(self.conf.persistdir, self.conf.exit_on_lock)
+        lock = dnf.lock.build_rpmdb_lock(self.conf.persistdir,
+            self.conf.exit_on_lock)
         with lock:
             # save our ds_callback out
             dscb = self._ds_callback
@@ -1359,11 +1363,11 @@ class Base(object):
 
     def _build_comps_solver(self):
         def reason_fn(pkgname):
-            q = self.sack.query().installed().filter(name=pkgname)
+            q = self.sack.query().installed().filter(name = pkgname)
             if not q:
                 return None
             try:
-                return self.history.attr_by_nvra("reason",q[0])
+                return self.history.attr_by_nvra("reason", q[0])
             except AttributeError:
                 return 'unknown'
 
@@ -1446,7 +1450,7 @@ class Base(object):
             for env_id in res.environments:
                 cnt += self.environment_install(env_id, types, strict=strict)
         if not done and strict:
-            #self._group_persistor._rollback()
+            # self._group_persistor._rollback()
             raise dnf.exceptions.Error(_('Nothing to do.'))
         return cnt
 
