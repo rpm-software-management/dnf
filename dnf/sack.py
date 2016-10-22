@@ -89,7 +89,7 @@ class Sack(hawkey.Sack):
         chksums = history.checksums_by_nvras(pkgs_str)
         i = 0
         while i < len(chksums)-1:
-            csum = (chksums[i], chksums[ i + 1 ])
+            csum = (chksums[i], chksums[i + 1])
             i += 2
             main._update(pkg, csum)
         return main

@@ -415,7 +415,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
             self.beg_timestamp    = obj.beg_timestamp
             self.beg_rpmdbversion = obj.beg_rpmdbversion
         if obj.end_timestamp and\
-            float(self.end_timestamp) < float(obj.end_timestamp):
+        float(self.end_timestamp) < float(obj.end_timestamp):
             self.end_timestamp    = obj.end_timestamp
             self.end_rpmdbversion = obj.end_rpmdbversion
 
@@ -428,7 +428,7 @@ class SwdbInterface(object):
         if not self.swdb.exist():
             self.swdb.create_db()
             # does nothing when there is nothing to transform
-            swdb_transformer.run(output_file = self.swdb.get_path())
+            swdb_transformer.run(output_file=self.swdb.get_path())
 
     def close(self):
         self.swdb.close()

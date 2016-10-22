@@ -481,7 +481,10 @@ class Output(object):
                   " : ", val or ""))
 
         (hibeg, hiend) = self._highlight(highlight)
-        pkg_data = self.history.pkg_data_by_nvra(pkg) if pkg._from_system else {}
+        pkg_data = {}
+        if pkg._from_system:
+            pkg_data = self.history.pkg_data_by_nvra(pkg)
+
         print_key_val(_("Name"), "%s%s%s" % (hibeg, pkg.name, hiend))
         if pkg.epoch:
             print_key_val(_("Epoch"), pkg.epoch)

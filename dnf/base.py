@@ -599,7 +599,8 @@ class Base(object):
         self._ds_callback.start()
         goal = self._goal
         if goal.req_has_erase():
-            goal.push_userinstalled(self.sack.query().installed(),self.history)
+            goal.push_userinstalled(self.sack.query().installed(),
+                                    self.history)
         elif not self.conf.upgrade_group_objects_upgrade:
             # exclude packages installed from groups
             # these packages will be marked to installation
@@ -1363,7 +1364,7 @@ class Base(object):
 
     def _build_comps_solver(self):
         def reason_fn(pkgname):
-            q = self.sack.query().installed().filter(name = pkgname)
+            q = self.sack.query().installed().filter(name=pkgname)
             if not q:
                 return None
             try:

@@ -140,7 +140,7 @@ class BaseCli(dnf.Base):
         super(BaseCli, self).__init__(conf=conf)
         self.output = output.Output(self, self.conf)
 
-    #def _groups_diff(self):
+    # def _groups_diff(self):
     #    if not self._group_persistor:
     #        return None
     #    return self._group_persistor.diff()

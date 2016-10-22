@@ -254,10 +254,10 @@ class GroupCommand(commands.Command):
                                   for g in res.environments]))
         if res.groups:
             logger.info(_('Groups marked installed: %s'),
-                        ','.join([ucd(prst.group(g).ui_name) for g in res.groups]))
+                        ','.join([ucd(prst.group(g).ui_name)
+                                  for g in res.groups]))
 
-        #TODO save new status into swdb
-        
+        # TODO save new status into swdb
         prst.commit()
 
     def _mark_remove(self, patterns):

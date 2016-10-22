@@ -537,8 +537,8 @@ class Solver(object):
         grp_types = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
         exclude = list() if exclude is None else list(exclude)
         if not p_env:
-            p_env = self.persistor.new_env(env_id, env.name, env.ui_name,
-                pkg_types, grp_types)
+            p_env = self.persistor.new_env( env_id, env.name, env.ui_name,
+                                            pkg_types, grp_types)
             self.persistor.swdb.add_env(p_env)
             p_env.add_exclude(exclude)
             p_env.add_group(list(self._mandatory_group_set(env)))
@@ -601,7 +601,7 @@ class Solver(object):
         group = self.comps._group_by_id(group_id)
         if not group:
             raise ValueError(_("Group_id '%s' does not exist.") %
-                            ucd(group_id))
+                             ucd(group_id))
         # this will return DnfSwdbGroup object
         p_grp = self.persistor.group(group_id)
         if p_grp and p_grp.is_installed:
@@ -610,7 +610,7 @@ class Solver(object):
         exclude = list() if exclude is None else list(exclude)
         if not p_grp:
             p_grp = self.persistor.new_group(group_id, group.name,
-                group.ui_name, 0, pkg_types, 0)
+                                             group.ui_name, 0, pkg_types, 0)
 
             self.persistor.swdb.add_group(p_grp)
             p_grp.add_exclude(exclude)

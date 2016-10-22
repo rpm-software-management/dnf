@@ -58,16 +58,15 @@ class GroupPersistor(object):
         for group in self.groups_removed:
             self.swdb.uninstall_group(group)
 
-    def new_group(self,name_id, name, ui_name, is_installed,
-            pkg_types, grp_types):
+    def new_group(self, name_id, name, ui_name, is_installed,
+                  pkg_types, grp_types):
         group = Dnf.SwdbGroup.new(name_id, name, ui_name, is_installed,
-            pkg_types, grp_types, self.swdb)
+                                  pkg_types, grp_types, self.swdb)
         return group
 
     def new_env(self, name_id, name, ui_name, pkg_types, grp_types):
         env = Dnf.SwdbEnv.new(name_id, name, ui_name, pkg_types, grp_types,
-            self.swdb
-        )
+                              self.swdb)
         return env
 
     def environment(self, name_id):
