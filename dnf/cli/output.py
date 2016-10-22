@@ -1596,8 +1596,8 @@ Transaction Summary
                 state = _pkg_states['e']
             else:
                 ipkg = ipkg[0]
-                if (not ipkg.e and ipkg.v == pkg.version and
-                        ipkg.r == pkg.release):
+                if (not ipkg.e and ipkg.v == pkg.version
+                        and ipkg.r == pkg.release):
                     pass
                 elif (ipkg.e and ipkg.e == int(pkg.epoch) and
                         ipkg.v == pkg.version and ipkg.r == pkg.release):
