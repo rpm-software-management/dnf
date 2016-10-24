@@ -807,13 +807,15 @@ class Cli(object):
         logger.log(dnf.logging.DDEBUG, 'Base command: %s', basecmd)
         logger.log(dnf.logging.DDEBUG, 'Extra commands: %s', args)
 
-    def configure(self, args):
+    def configure(self, args, option_parser=None):
         """Parse command line arguments, and set up :attr:`self.base.conf` and
         :attr:`self.cmds`, as well as logger objects in base instance.
 
         :param args: a list of command line arguments
+        :param option_parser: a class for parsing cli options
         """
-        self.optparser = dnf.cli.option_parser.OptionParser()
+        self.optparser = dnf.cli.option_parser.OptionParser() \
+            if option_parser is None else option_parser
         opts = self.optparser.parse_main_args(args)
 
         # Just print out the version if that's what the user wanted
