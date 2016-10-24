@@ -31,6 +31,7 @@ import dnf.i18n
 import dnf.logging
 import dnf.util
 import dnf.yum.config
+import dnf.yum.cli
 import logging
 import sys
 
@@ -67,7 +68,7 @@ def _main(base, args):
 
     # our core object for the cli
     base._logging._presetup()
-    cli = dnf.cli.cli.Cli(base)
+    cli = dnf.yum.cli.YumCli(base)
 
     # do our cli parsing and config file setup
     # also sanity check the things being passed on the cli
