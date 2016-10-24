@@ -28,6 +28,7 @@ from dnf.i18n import _
 
 import dnf.cli
 import dnf.cli.cli
+import dnf.cli.option_parser
 import dnf.exceptions
 import dnf.i18n
 import dnf.logging
@@ -74,7 +75,6 @@ def main(args):
     except KeyboardInterrupt as e:
         print(_("Terminated."), file=sys.stderr)
         return 1
-    return 0
 
 
 def _main(base, args):
@@ -96,6 +96,10 @@ def _main(base, args):
     except (IOError, OSError) as e:
         return ex_IOError(e)
 
+    return cli_run(cli, base)
+
+
+def cli_run(cli, base):
     # Try to open the current directory to see if we have
     # read and execute access. If not, chdir to /
     try:
