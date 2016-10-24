@@ -222,6 +222,9 @@ class BaseCli(dnf.Base):
         if trans:
             msg = self.output.post_transaction_output(trans)
             logger.info(msg)
+            for tsi in trans:
+                if tsi.op_type == dnf.transaction.FAIL:
+                    raise dnf.exceptions.Error(_('Transaction failed'))
 
     def gpgsigcheck(self, pkgs):
         """Perform GPG signature verification on the given packages,
