@@ -106,7 +106,7 @@ class Base(object):
             self._tempfiles.update(files)
 
     def _add_repo_to_sack(self, repo):
-        repo.load(self.conf.check_config_file_age)
+        repo.load()
         hrepo = repo._hawkey_repo
         hrepo.repomd_fn = repo._repomd_fn
         hrepo.primary_fn = repo._primary_fn

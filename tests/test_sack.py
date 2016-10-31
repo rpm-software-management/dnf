@@ -70,8 +70,7 @@ class SackTest(support.TestCase):
     @mock.patch('dnf.sack._build_sack', lambda x: mock.Mock())
     @mock.patch('dnf.goal.Goal', lambda x: mock.Mock())
     def test_fill_sack(self):
-        def raiser(check_config_file_age):
-            self.assertTrue(check_config_file_age)
+        def raiser():
             raise dnf.exceptions.RepoError()
 
         base = support.MockBase()
@@ -83,6 +82,7 @@ class SackTest(support.TestCase):
         self.assertRaises(dnf.exceptions.RepoError,
                           base.fill_sack, load_system_repo=False)
         self.assertTrue(r.enabled)
+        self.assertTrue(r._check_config_file_age)
         r.skip_if_unavailable = True
         base.fill_sack(load_system_repo=False)
         self.assertFalse(r.enabled)

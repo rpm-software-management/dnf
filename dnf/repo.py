@@ -470,6 +470,8 @@ class Repo(dnf.conf.RepoConf):
         self._max_mirror_tries = 0  # try them all
         self._handle = None
         self._hawkey_repo = self._init_hawkey_repo()
+        self._check_config_file_age = parent_conf.check_config_file_age \
+            if parent_conf is not None else True
 
     @property
     def id(self):
@@ -817,7 +819,7 @@ class Repo(dnf.conf.RepoConf):
             self._handle = self._handle_new_remote(None)
         return self._handle
 
-    def load(self, check_config_file_age=True):
+    def load(self):
         # :api
         """Load the metadata for this repo.
 
@@ -832,7 +834,7 @@ class Repo(dnf.conf.RepoConf):
 
         """
         if self.metadata or self._try_cache():
-            if check_config_file_age and self.repofile \
+            if self._check_config_file_age and self.repofile \
                     and dnf.util.file_age(self.repofile) < self.metadata._age:
                 self._md_expire_cache()
             if self._sync_strategy in (SYNC_ONLY_CACHE, SYNC_LAZY) or \
