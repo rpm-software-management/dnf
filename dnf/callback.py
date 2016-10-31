@@ -40,7 +40,7 @@ TRANS_POST = dnf.yum.rpmtrans.TransactionDisplay.TRANS_POST  # :api
 
 
 class KeyImport(object):
-    def confirm(self, _keyinfo):
+    def _confirm(self, _keyinfo):
         """Ask the user if the key should be imported."""
         return False
 

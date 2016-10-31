@@ -1957,7 +1957,7 @@ class CliKeyImport(dnf.callback.KeyImport):
         self.base = base
         self.output = output
 
-    def confirm(self, keyinfo):
+    def _confirm(self, keyinfo):
         dnf.crypto.log_key_import(keyinfo)
         if self.base.conf.assumeyes:
             return True
