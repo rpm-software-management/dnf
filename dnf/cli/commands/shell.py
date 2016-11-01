@@ -60,18 +60,24 @@ class ShellCommand(commands.Command):
         demands.root_user = True
 
     def run(self):
-        while True:
-            line = dnf.i18n.ucd_input('> ')
-            s_line = shlex.split(line)
-            opts = self.cli.optparser.parse_main_args(s_line)
-            if opts.command in self.MAPPING:
-                getattr(self, '_' + self.MAPPING[opts.command])(s_line[1::])
-            else:
-                cmd_cls = self.cli.cli_commands.get(opts.command)
-                if cmd_cls is not None:
-                    cmd = cmd_cls(self)
-                    opts = self.cli.optparser.parse_command_args(cmd, s_line)
-                    cmd.run()
+        if self.opts.script:
+            self._run_script(self.opts.script)
+        else:
+            while True:
+                line = dnf.i18n.ucd_input('> ')
+                self._command(line)
+
+    def _command(self, line):
+        s_line = shlex.split(line)
+        opts = self.cli.optparser.parse_main_args(s_line)
+        if opts.command in self.MAPPING:
+            getattr(self, '_' + self.MAPPING[opts.command])(s_line[1::])
+        else:
+            cmd_cls = self.cli.cli_commands.get(opts.command)
+            if cmd_cls is not None:
+                cmd = cmd_cls(self)
+                opts = self.cli.optparser.parse_command_args(cmd, s_line)
+                cmd.run()
 
     def _config(self, args):
         pass
@@ -93,6 +99,17 @@ class ShellCommand(commands.Command):
     def _resolve(self, args):
         if self.cli.base.transaction is None:
             self.cli.base.resolve(self.cli.demands.allow_erasing)
+
+    def _run_script(self, file):
+        try:
+            with open(file, 'r') as fd:
+                lines = fd.readlines()
+                for line in lines:
+                    if not line.startswith('#'):
+                        self._command(line)
+        except IOError:
+            logger.info(_('Error: Cannot open %s for reading'.format(file)))
+            sys.exit(1)
 
     def _run_ts(self, args):
         self.cli.base.do_transaction()
