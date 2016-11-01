@@ -65,7 +65,7 @@ class ShellCommand(commands.Command):
             s_line = shlex.split(line)
             opts = self.cli.optparser.parse_main_args(s_line)
             if opts.command in self.MAPPING:
-                getattr(self, '_' + self.MAPPING[opts.command])()
+                getattr(self, '_' + self.MAPPING[opts.command])(s_line[1::])
             else:
                 cmd_cls = self.cli.cli_commands.get(opts.command)
                 if cmd_cls is not None:
@@ -73,22 +73,33 @@ class ShellCommand(commands.Command):
                     opts = self.cli.optparser.parse_command_args(cmd, s_line)
                     cmd.run()
 
-    def _config(self):
+    def _config(self, args):
         pass
 
-    def _repo(self):
-        pass
+    def _repo(self, args):
+        cmd = args[0]
 
-    def _resolve(self):
+        if cmd in ['list', None]:
+            return
+
+        if cmd in ['enable', 'disable']:
+            repos = self.cli.base.repos
+            for repo in args[1::]:
+                r = repos.get_matching(repo)
+                if r:
+                    getattr(r, cmd)()
+        self.base.fill_sack()
+
+    def _resolve(self, args):
         if self.cli.base.transaction is None:
             self.cli.base.resolve(self.cli.demands.allow_erasing)
 
-    def _run_ts(self):
+    def _run_ts(self, args):
         self.cli.base.do_transaction()
 
-    def _transaction(self):
+    def _transaction(self, args):
         pass
 
-    def _quit(self):
+    def _quit(self, args):
         logger.info(_('Leaving Shell'))
         sys.exit(0)
