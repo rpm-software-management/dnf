@@ -263,6 +263,34 @@ class OptionParser(argparse.ArgumentParser):
         main_parser.add_argument("--downloadonly", dest="downloadonly",
                                  action="store_true", default=False,
                                  help=_("only download packages"))
+        # Updateinfo options...
+        main_parser.add_argument("--bugfix", action="store_true",
+                                 help=_("Include bugfix relevant packages, "
+                                        "in updates"))
+        main_parser.add_argument("--enhancement", action="store_true",
+                                 help=_("Include enhancement relevant packages,"
+                                        " in updates"))
+        main_parser.add_argument("--newpackage", action="store_true",
+                                 help=_("Include newpackage relevant packages,"
+                                        " in updates"))
+        main_parser.add_argument("--security", action="store_true",
+                                 help=_("Include security relevant packages, "
+                                        "in updates"))
+        main_parser.add_argument("--advisory", "--advisories", dest="advisory",
+                                 default=[], action="append",
+                                 help=_("Include packages needed to fix the "
+                                        "given advisory, in updates"))
+        main_parser.add_argument("--bzs", default=[], dest="bugzilla",
+                                 action="append", help=_(
+                "Include packages needed to fix the given BZ, in updates"))
+        main_parser.add_argument("--cves", default=[], action="append", help=_(
+            "Include packages needed to fix the given CVE, in updates"))
+        main_parser.add_argument(
+            "--sec-severity", "--secseverity",
+            choices=['Critical', 'Important', 'Moderate', 'Low'], default=[],
+            dest="severity", action="append", help=_(
+                "Include security relevant packages matching the severity, "
+                "in updates"))
         return main_parser
 
     def _command_parser(self, command):
