@@ -161,15 +161,18 @@ class Subject(object):
 
     def _get_best_selectors(self, sack, forms=None):
         if not self._filename_pattern and is_glob_pattern(self._pattern):
-            nevras = self.subj.nevra_possibilities_real(sack, allow_globs=True)
-            nevra = first(nevras)
-            if nevra and nevra.name:
-                sltrs = []
-                pkgs = self._nevra_to_filters(sack.query(), nevra)
-                for pkg_name in {pkg.name for pkg in pkgs}:
-                    exp_name = self._pattern.replace(nevra.name, pkg_name, 1)
-                    sltrs.append(
-                        Subject(exp_name).get_best_selector(sack, forms))
-                return sltrs
+            with_obsoletes = False
+            if self._has_nevra_just_name(sack, forms=forms):
+                with_obsoletes = True
+            q = self.get_best_query(sack, forms=forms)
+            sltrs = []
+            for name, pkgs_list in q._name_dict().items():
+                sltr = dnf.selector.Selector(sack)
+                if with_obsoletes:
+                    pkgs_list = pkgs_list + sack.query().filter(
+                        obsoletes=pkgs_list).run()
+                sltr.set(pkg=pkgs_list)
+                sltrs.append(sltr)
+            return sltrs
 
         return [self.get_best_selector(sack, forms)]
