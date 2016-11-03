@@ -56,8 +56,13 @@ class UpgradeCommand(commands.Command):
         demands.root_user = True
         commands._checkGPGKey(self.base, self.cli)
         commands._checkEnabledRepo(self.base, self.opts.pkg_specs)
+        self.upgrade_minimal = None
+        self.all_security = None
 
     def run(self):
+        self.cli._populate_update_security_filter(self.opts,
+                                                  minimal=self.upgrade_minimal,
+                                                  all=self.all_security)
         done = False
         if self.opts.filenames or self.opts.pkg_specs or self.opts.grp_specs:
             # Update files.
