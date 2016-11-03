@@ -76,8 +76,11 @@ class ShellCommand(commands.Command):
             cmd_cls = self.cli.cli_commands.get(opts.command)
             if cmd_cls is not None:
                 cmd = cmd_cls(self)
-                opts = self.cli.optparser.parse_command_args(cmd, s_line)
-                cmd.run()
+                try:
+                    opts = self.cli.optparser.parse_command_args(cmd, s_line)
+                    cmd.run()
+                except:
+                    pass
 
     def _config(self, args):
         pass
