@@ -928,6 +928,32 @@ class Cli(object):
         timer()
         return conf
 
+    def _populate_update_security_filter(self, opts, minimal=None, all=None):
+        if (opts is None) and (all is None):
+            return
+        q = self.base.sack.query().upgrades()
+        filters = []
+        if opts.bugfix or all:
+            filters.append(q.filter(advisory_type='bugfix'))
+        if opts.enhancement or all:
+            filters.append(q.filter(advisory_type='enhancement'))
+        if opts.newpackage or all:
+            filters.append(q.filter(advisory_type='newpackage'))
+        if opts.security or all:
+            filters.append(q.filter(advisory_type='security'))
+        if opts.advisory:
+            filters.append(q.filter(advisory=opts.advisory))
+        if opts.bugzilla:
+            filters.append(q.filter(advisory_bug=opts.bugzilla))
+        if opts.cves:
+            filters.append(q.filter(advisory_cve=opts.cves))
+        if opts.severity:
+            filters.append(q.filter(advisory_severity=opts.severity))
+        if len(filters):
+            key = 'upgrade' if minimal is None else 'minimal'
+            self.base._update_security_filters[key] = filters
+
+
     def register_command(self, command_cls):
         """Register a Command. :api"""
         for name in command_cls.aliases:

@@ -92,6 +92,7 @@ class Base(object):
         self._plugins = dnf.plugin.Plugins()
         self._trans_success = False
         self._tempfile_persistor = None
+        self._update_security_filters = {}
 
     def __enter__(self):
         return self
