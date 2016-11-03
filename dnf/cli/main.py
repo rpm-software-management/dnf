@@ -72,7 +72,7 @@ def main(args):
     except IOError as e:
         return ex_IOError(e)
     except KeyboardInterrupt as e:
-        print(_("Terminated."), file=sys.stderr)
+        logger.critical('{}: {}'.format(type(e).__name__, "Terminated."))
         return 1
     return 0
 
