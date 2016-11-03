@@ -114,11 +114,14 @@ class ShellCommand(commands.Command):
             logger.info(_('Error: Cannot open %s for reading'.format(file)))
             sys.exit(1)
 
-    def _run_ts(self, args):
-        self.cli.base.do_transaction()
-
     def _transaction(self, args):
-        pass
+        cmd = args[0]
+
+        if cmd in ['list', None]:
+            pass
+
+        if cmd == 'run':
+            self.cli.do_transaction()
 
     def _quit(self, args):
         logger.info(_('Leaving Shell'))
