@@ -1565,29 +1565,31 @@ class Base(object):
     def upgrade(self, pkg_spec, reponame=None):
         # :api
         wildcard = True if dnf.util.is_glob_pattern(pkg_spec) else False
-        sltrs = dnf.subject.Subject(pkg_spec)._get_best_selectors(self.sack)
-        if any((s.matches() for s in sltrs)):
-            prev_count = self._goal.req_length()
-            installed = self.sack.query().installed()
-            available = self.sack.query().available()
-            for sltr in sltrs:
-                if not sltr.matches():
-                    continue
-                pkg_name = sltr.matches()[0].name
-                if not installed.filter(name=pkg_name):
-                    # wildcard shouldn't print not installed packages
-                    if not wildcard:
-                        if available.filter(name=pkg_name):
-                            msg = _('Package %s available, but not installed.')
-                        else:
-                            msg = _("Package %s not installed, cannot update it.")
-                        logger.warning(msg, pkg_name)
-                    continue
-                if reponame is not None:
-                    sltr = sltr.set(reponame=reponame)
-                self._goal.upgrade(select=sltr)
+        q = dnf.subject.Subject(pkg_spec).get_best_query(self.sack)
 
-            if self._goal.req_length() - prev_count:
+        if q:
+            installed = self.sack.query().installed()
+            pkg_name = q[0].name
+            if not installed.filter(name=pkg_name):
+                # wildcard shouldn't print not installed packages
+                if not wildcard:
+                    if q.available():
+                        msg = _('Package %s available, but not installed.')
+                    else:
+                        msg = _("Package %s not installed, cannot update it.")
+                    logger.warning(msg, pkg_name)
+            else:
+                obsoletes = self.sack.query().filter(obsoletes=q.installed())
+                q = q.upgrades()
+                # add obsoletes into transaction
+                q = q.union(obsoletes)
+                if reponame is not None:
+                    q = q.filter(reponame=reponame)
+                q = self._merge_update_filters(q, pkg_spec=pkg_spec)
+                if q:
+                    sltr = dnf.selector.Selector(self.sack)
+                    sltr.set(pkg=q)
+                    self._goal.upgrade(select=sltr)
                 return 1
 
         raise dnf.exceptions.MarkingError(_('No match for argument: %s') % pkg_spec, pkg_spec)

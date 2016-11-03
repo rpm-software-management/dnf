@@ -136,10 +136,11 @@ class Update(support.ResultTestCase):
         """Test whether no packages are upgraded if bad repo is selected."""
         base = support.MockBase('updates', 'broken_deps')
 
-        with self.assertRaises(dnf.exceptions.MarkingError) as context:
-            base.upgrade('hole', 'broken_deps')
-
-        self.assertEqual(context.exception.pkg_spec, 'hole')
+        base.upgrade('hole', 'broken_deps')
+        # ensure that no package was upgraded
+        installed, removed = self.installed_removed(base)
+        self.assertLength(installed, 0)
+        self.assertLength(removed, 0)
         self.assertResult(base, base.sack.query().installed())
         assert dnf.subject.Subject('hole').get_best_query(base.sack).upgrades().filter(reponame__neq='broken_deps'), \
                ('in another repo, there must be an update matching the '
