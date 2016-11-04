@@ -352,7 +352,6 @@ class Base(object):
     def _closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""
         del self._ts
-        self._comps = None
 
     _TS_FLAGS_TO_RPM = {'noscripts': rpm.RPMTRANS_FLAG_NOSCRIPTS,
                         'notriggers': rpm.RPMTRANS_FLAG_NOTRIGGERS,
