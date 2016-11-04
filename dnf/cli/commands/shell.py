@@ -67,6 +67,11 @@ class ShellCommand(commands.Command):
                 line = dnf.i18n.ucd_input('> ')
                 self._command(line)
 
+    def _clean(self):
+        self.base.close()
+        self.base._transaction = None
+        self.base.fill_sack()
+
     def _command(self, line):
         s_line = shlex.split(line)
         opts = self.cli.optparser.parse_main_args(s_line)
@@ -97,7 +102,6 @@ class ShellCommand(commands.Command):
                 r = repos.get_matching(repo)
                 if r:
                     getattr(r, cmd)()
-        self.base.fill_sack()
 
     def _resolve(self, args):
         if self.cli.base.transaction is None:
@@ -121,7 +125,8 @@ class ShellCommand(commands.Command):
             pass
 
         if cmd == 'run':
-            self.cli.do_transaction()
+            self.base.do_transaction()
+            self._clean()
 
     def _quit(self, args):
         logger.info(_('Leaving Shell'))
