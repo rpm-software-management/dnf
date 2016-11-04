@@ -120,10 +120,12 @@ class ShellCommand(commands.Command):
             sys.exit(1)
 
     def _transaction(self, args):
-        cmd = args[0]
+        cmd = args[0] if args else None
 
         if cmd in ['list', None]:
-            pass
+            if self.base._transaction:
+                out = self.base.output.list_transaction(self.base._transaction)
+                logger.info(out)
 
         if cmd == 'run':
             self.base.do_transaction()
