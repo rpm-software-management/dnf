@@ -102,6 +102,7 @@ class ShellCommand(commands.Command):
                 r = repos.get_matching(repo)
                 if r:
                     getattr(r, cmd)()
+                    self.base.fill_sack()
 
     def _resolve(self, args):
         if self.cli.base.transaction is None:
