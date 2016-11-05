@@ -94,6 +94,10 @@ Options
 ``-6``
     Resolve to IPv6 addresses only.
 
+``--advisory=<advisory>, --advisories=<advisory>``
+    Includes packages corresponding to the advisory ID, Eg. FEDORA-2201-123.
+    Applicable for upgrade command.
+
 ``--allowerasing``
     Allow erasing of installed packages to resolve dependencies. This option could be used as an alternative to ``yum swap`` command where packages to remove are not explicitly defined.
 
@@ -103,6 +107,13 @@ Options
 ``-b, --best``
     Try the best available package versions in transactions. Specifically during :ref:`dnf upgrade <upgrade_command-label>`, which by default skips over updates that can not be installed for dependency reasons, the switch forces DNF to only consider the latest packages. When running into packages with broken dependencies, DNF will fail giving a reason why the latest version can not be installed.
 
+``--bugfix``
+    Includes packages that fix a bugfix issue. Applicable for upgrade command.
+
+``--bz=<bugzilla>``
+    Includes packages that fix a Bugzilla ID, Eg. 123123. Applicable for upgrade
+    command.
+
 ``-C, --cacheonly``
     Run entirely from system cache, don't update the cache and use it even in case it is expired.
 
@@ -110,6 +121,11 @@ Options
 
 ``-c <config file>, --config=<config file>``
     config file location
+
+``--cve=<cves>``
+    Includes packages that fix a CVE (Common Vulnerabilities and Exposures) ID
+    (http://cve.mitre.org/about/), Eg. CVE-2201-0123. Applicable for upgrade
+    command.
 
 ``-d <debug level>, --debuglevel=<debug level>``
     Debugging output level. This is an integer value between 0 (no additional information strings) and 10 (shows all debugging information, even that not understandable to the user), default is 2. Deprecated, use ``-v`` instead.
@@ -144,6 +160,9 @@ Options
 
 ``--enablerepo=<repoid>``
     Enable additional repositories by an id or a glob.
+
+``--enhancement``
+    Include enhancement relevant packages. Applicable for upgrade command.
 
 ``-x <package-spec>, --exclude=<package-spec>``
     Exclude packages specified by ``<package-spec>`` from the operation.
@@ -188,6 +207,9 @@ Options
      Upgrade packages inside of installroot from repository described by
      ``--setopt`` using configuration from ``/path/dnf.conf``
 
+``--newpackage``
+    Include newpackage relevant packages. Applicable for upgrade command.
+
 ``--nogpgcheck``
     skip checking GPG signatures on packages
 
@@ -229,6 +251,14 @@ Options
 ``--rpmverbosity=<name>``
     RPM debug scriptlet output level. Sets the debug level to ``<name>`` for RPM scriptlets.
     For available levels, see ``rpmverbosity`` configuration option.
+
+``--sec-severity=<severity>, --secseverity=<severity>``
+    Includes packages that provides a fix for issue of the specified severity.
+    Applicable for upgrade command.
+
+``--security``
+    Includes packages that provides a fix for security issue. Applicable for
+    upgrade command.
 
 ``--setopt=<option>=<value>``
     override a config option from the config file. To override config options from repo files, use ``repoid.option`` for the ``<option>``.
