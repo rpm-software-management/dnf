@@ -48,8 +48,7 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         self.rate_average = rate_average
 
     def message(self, msg):
-        dnf.util._terminal_messenger('write', msg, self.fo)
-        dnf.util._terminal_messenger('flush', out=self.fo)
+        dnf.util._terminal_messenger('write_flush', msg, self.fo)
 
     def start(self, total_files, total_size):
         self.total_files = total_files

@@ -2034,8 +2034,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
             msg = fmt % (fill_exact_width(process, wid1, wid1),
                          fill_exact_width(pkgname, wid2, wid2))
             if msg != self.lastmsg:
-                dnf.util._terminal_messenger('write', msg, sys.stdout)
-                dnf.util._terminal_messenger('flush', out=sys.stdout)
+                dnf.util._terminal_messenger('write_flush', msg, sys.stdout)
                 self.lastmsg = msg
             if ti_done == ti_total:
                 print(" ")
@@ -2049,8 +2048,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         :param msgs: the messages coming from the script
         """
         if msgs:
-            dnf.util._terminal_messenger('write', ucd(msgs), sys.stdout)
-            dnf.util._terminal_messenger('flush', out=sys.stdout)
+            dnf.util._terminal_messenger('write_flush', ucd(msgs), sys.stdout)
 
     def _makefmt(self, percent, ts_done, ts_total, progress=True,
                  pkgname=None, wid1=15):

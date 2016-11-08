@@ -280,6 +280,9 @@ def _terminal_messenger(tp='write', msg="", out=sys.stdout):
             out.write(msg)
         elif tp == 'flush':
             out.flush()
+        elif tp == 'write_flush':
+            out.write(msg)
+            out.flush()
         elif tp == 'print':
             print(msg, file=out)
         else:
