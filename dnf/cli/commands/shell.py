@@ -40,7 +40,7 @@ class ShellCommand(commands.Command):
                'repository': 'repo',
                'exit': 'quit',
                'quit': 'quit',
-               'run': 'run_ts',
+               'run': 'ts_run',
                'ts': 'transaction',
                'transaction': 'transaction',
                'config': 'config',
@@ -130,6 +130,9 @@ class ShellCommand(commands.Command):
         if cmd == 'run':
             self.base.do_transaction()
             self._clean()
+
+    def _ts_run(self, cmd):
+        self._transaction(['run'])
 
     def _quit(self, args):
         logger.info(_('Leaving Shell'))
