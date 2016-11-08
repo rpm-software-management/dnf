@@ -30,7 +30,8 @@ class YumConf(MainConf):
 
         self._add_inherited_option(super(YumConf, self), [
             'alwaysprompt', 'assumeno', 'assumeyes', 'bandwidth',
-            'bugtracker_url', 'color', 'color_list_available_downgrade',
+            'bugtracker_url', 'cachedir', 'color',
+            'color_list_available_downgrade',
             'color_list_available_install', 'color_list_available_reinstall',
             'color_list_available_upgrade', 'color_list_installed_extra',
             'color_list_installed_newer', 'color_list_installed_older',
@@ -58,7 +59,6 @@ class YumConf(MainConf):
             ["/usr/share/yum-plugins", "/usr/lib/yum-plugins"]))
         self._add_option('pluginconfpath', ListOption(["/etc/yum/pluginconf.d"]))
         self._add_option('persistdir', PathOption("/var/lib/yum"))
-        self._add_option('cachedir', PathOption("/var/lib/yum"))
         self._add_option('system_cachedir', PathOption("/var/lib/yum"))
         self._add_option('keepcache', BoolOption(True))
         self._add_option('installonly_limit',
