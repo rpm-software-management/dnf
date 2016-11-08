@@ -30,12 +30,14 @@ class YumConf(MainConf):
 
         self._add_inherited_option(super(YumConf, self), [
             'alwaysprompt', 'assumeno', 'assumeyes', 'bandwidth',
-            'bugtracker_url', 'color', 'color_list_available_downgrade',
+            'bugtracker_url', 'cachedir', 'color',
+            'color_list_available_downgrade',
             'color_list_available_install', 'color_list_available_reinstall',
             'color_list_available_upgrade', 'color_list_installed_extra',
             'color_list_installed_newer', 'color_list_installed_older',
             'color_list_installed_reinstall', 'color_search_match',
             'color_update_installed', 'color_update_local', 'color_update_remote',
+            'config_file_path',
             'debug_solver', 'debuglevel', 'defaultyes', 'deltarpm',
             'deltarpm_percentage', 'disable_excludes', 'diskspacecheck',
             'downloadonly', 'enabled', 'enablegroups', 'errorlevel',
@@ -44,7 +46,8 @@ class YumConf(MainConf):
             'history_record_packages', 'includepkgs', 'install_weak_deps',
             'installonlypkgs', 'installroot', 'ip_resolve', 'localpkg_gpgcheck',
             'logdir', 'max_parallel_downloads', 'metadata_timer_sync', 'minrate',
-            'multilib_policy', 'obsoletes', 'password', 'protected_packages',
+            'multilib_policy', 'obsoletes', 'password', 'plugins', 'pluginpath',
+            'pluginconfpath', 'protected_packages',
             'proxy', 'proxy_password', 'proxy_username', 'recent',
             'repo_gpgcheck', 'reposdir', 'reset_nice', 'retries', 'rpmverbosity',
             'showdupesfromrepos', 'sslcacert', 'sslclientcert', 'sslclientkey',
@@ -52,13 +55,7 @@ class YumConf(MainConf):
             'upgrade_group_objects_upgrade', 'username'])
 
         self._add_option('exclude', self._get_option('excludepkgs'))
-        self._add_option('config_file_path', PathOption("/etc/yum/yum.conf"))
-        self._add_option('plugins', BoolOption(False))
-        self._add_option('pluginpath', ListOption(
-            ["/usr/share/yum-plugins", "/usr/lib/yum-plugins"]))
-        self._add_option('pluginconfpath', ListOption(["/etc/yum/pluginconf.d"]))
         self._add_option('persistdir', PathOption("/var/lib/yum"))
-        self._add_option('cachedir', PathOption("/var/lib/yum"))
         self._add_option('system_cachedir', PathOption("/var/lib/yum"))
         self._add_option('keepcache', BoolOption(True))
         self._add_option('installonly_limit',
