@@ -45,7 +45,8 @@ class YumConf(MainConf):
             'history_record_packages', 'includepkgs', 'install_weak_deps',
             'installonlypkgs', 'installroot', 'ip_resolve', 'localpkg_gpgcheck',
             'logdir', 'max_parallel_downloads', 'metadata_timer_sync', 'minrate',
-            'multilib_policy', 'obsoletes', 'password', 'protected_packages',
+            'multilib_policy', 'obsoletes', 'password', 'pluginpath',
+            'pluginconfpath', 'protected_packages',
             'proxy', 'proxy_password', 'proxy_username', 'recent',
             'repo_gpgcheck', 'reposdir', 'reset_nice', 'retries', 'rpmverbosity',
             'showdupesfromrepos', 'sslcacert', 'sslclientcert', 'sslclientkey',
@@ -55,9 +56,6 @@ class YumConf(MainConf):
         self._add_option('exclude', self._get_option('excludepkgs'))
         self._add_option('config_file_path', PathOption("/etc/yum/yum.conf"))
         self._add_option('plugins', BoolOption(False))
-        self._add_option('pluginpath', ListOption(
-            ["/usr/share/yum-plugins", "/usr/lib/yum-plugins"]))
-        self._add_option('pluginconfpath', ListOption(["/etc/yum/pluginconf.d"]))
         self._add_option('persistdir', PathOption("/var/lib/yum"))
         self._add_option('system_cachedir', PathOption("/var/lib/yum"))
         self._add_option('keepcache', BoolOption(True))
