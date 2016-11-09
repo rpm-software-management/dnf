@@ -74,7 +74,12 @@ provide.
  No ``deplist`` command
 ===========================
 
-Alternative to Yum ``deplist`` command to find out dependencies of the package is ``dnf repoquery --requires`` using `repoquery plugin <http://rpm-software-management.github.io/dnf-plugins-core/repoquery.html>`_.
+Alternative to Yum ``deplist`` command to find out dependencies of the package
+is ``dnf repoquery --deplist`` using :ref:`repoquery command
+<repoquery_command-label>`.
+
+.. note::  Alternatively there is a YUM compatibility support where
+           ``yum deplist`` is alias for ``dnf repoquery --deplist`` command
 
 ====================================================
  Excludes and repo excludes apply to all operations
