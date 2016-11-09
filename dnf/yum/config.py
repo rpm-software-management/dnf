@@ -37,6 +37,7 @@ class YumConf(MainConf):
             'color_list_installed_newer', 'color_list_installed_older',
             'color_list_installed_reinstall', 'color_search_match',
             'color_update_installed', 'color_update_local', 'color_update_remote',
+            'config_file_path',
             'debug_solver', 'debuglevel', 'defaultyes', 'deltarpm',
             'deltarpm_percentage', 'disable_excludes', 'diskspacecheck',
             'downloadonly', 'enabled', 'enablegroups', 'errorlevel',
@@ -54,7 +55,6 @@ class YumConf(MainConf):
             'upgrade_group_objects_upgrade', 'username'])
 
         self._add_option('exclude', self._get_option('excludepkgs'))
-        self._add_option('config_file_path', PathOption("/etc/yum/yum.conf"))
         self._add_option('plugins', BoolOption(False))
         self._add_option('persistdir', PathOption("/var/lib/yum"))
         self._add_option('system_cachedir', PathOption("/var/lib/yum"))
