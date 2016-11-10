@@ -34,7 +34,7 @@ logger = logging.getLogger('dnf')
 class ShellCommand(commands.Command):
 
     aliases = ('shell',)
-    summary = _('')
+    summary = _('run an interactive DNF shell')
 
     MAPPING = {'repo': 'repo',
                'repository': 'repo',
@@ -44,7 +44,8 @@ class ShellCommand(commands.Command):
                'ts': 'transaction',
                'transaction': 'transaction',
                'config': 'config',
-               'resolvedep': 'resolve'
+               'resolvedep': 'resolve',
+               'help': 'help'
                }
 
     @staticmethod
@@ -86,9 +87,22 @@ class ShellCommand(commands.Command):
                     cmd.run()
                 except:
                     pass
+            else:
+                self._help()
 
     def _config(self, args=None):
         pass
+
+    def _help(self, args=None):
+        self.cli.optparser.print_help()
+        print('\n')
+        print(_('''Shell specific arguments:
+                   config                   set config options
+                   repository (or repo)     enable, disable or list repositories
+                   resolvedep               resolve the transaction set
+                   transaction (or ts)      list, reset or run the transaction set
+                   run                      resolve and run the transaction set
+                   exit (or quit)           exit the shell'''))
 
     def _repo(self, args=None):
         cmd = args[0] if args else None
