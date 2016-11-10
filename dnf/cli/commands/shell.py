@@ -87,11 +87,11 @@ class ShellCommand(commands.Command):
                 except:
                     pass
 
-    def _config(self, args):
+    def _config(self, args=None):
         pass
 
-    def _repo(self, args):
-        cmd = args[0]
+    def _repo(self, args=None):
+        cmd = args[0] if args else None
 
         if cmd in ['list', None]:
             return
@@ -104,7 +104,7 @@ class ShellCommand(commands.Command):
                     getattr(r, cmd)()
                     self.base.fill_sack()
 
-    def _resolve(self, args):
+    def _resolve(self, args=None):
         if self.cli.base.transaction is None:
             self.cli.base.resolve(self.cli.demands.allow_erasing)
 
@@ -119,7 +119,7 @@ class ShellCommand(commands.Command):
             logger.info(_('Error: Cannot open %s for reading'.format(file)))
             sys.exit(1)
 
-    def _transaction(self, args):
+    def _transaction(self, args=None):
         cmd = args[0] if args else None
 
         if cmd in ['list', None]:
@@ -131,9 +131,9 @@ class ShellCommand(commands.Command):
             self.base.do_transaction()
             self._clean()
 
-    def _ts_run(self, cmd):
+    def _ts_run(self, args=None):
         self._transaction(['run'])
 
-    def _quit(self, args):
+    def _quit(self, args=None):
         logger.info(_('Leaving Shell'))
         sys.exit(0)
