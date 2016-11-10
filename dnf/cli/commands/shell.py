@@ -94,7 +94,7 @@ class ShellCommand(commands.Command):
         cmd = args[0] if args else None
 
         if cmd in ['list', None]:
-            return
+            self._command('repolist')
 
         if cmd in ['enable', 'disable']:
             repos = self.cli.base.repos
