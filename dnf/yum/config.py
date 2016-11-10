@@ -46,7 +46,7 @@ class YumConf(MainConf):
             'history_record_packages', 'includepkgs', 'install_weak_deps',
             'installonlypkgs', 'installroot', 'ip_resolve', 'localpkg_gpgcheck',
             'logdir', 'max_parallel_downloads', 'metadata_timer_sync', 'minrate',
-            'multilib_policy', 'obsoletes', 'password', 'pluginpath',
+            'multilib_policy', 'obsoletes', 'password', 'plugins', 'pluginpath',
             'pluginconfpath', 'protected_packages',
             'proxy', 'proxy_password', 'proxy_username', 'recent',
             'repo_gpgcheck', 'reposdir', 'reset_nice', 'retries', 'rpmverbosity',
@@ -55,7 +55,6 @@ class YumConf(MainConf):
             'upgrade_group_objects_upgrade', 'username'])
 
         self._add_option('exclude', self._get_option('excludepkgs'))
-        self._add_option('plugins', BoolOption(False))
         self._add_option('persistdir', PathOption("/var/lib/yum"))
         self._add_option('system_cachedir', PathOption("/var/lib/yum"))
         self._add_option('keepcache', BoolOption(True))

@@ -53,7 +53,7 @@ class YumConfigTest(tests.support.TestCase):
     def test_different_options(self):
         self.assertNotEqual(self.conf, self.dnf_conf)
         _compare_options(self,
-                         ['exclude', 'plugins', 'persistdir',
+                         ['exclude', 'persistdir',
                           'system_cachedir', 'keepcache', 'installonly_limit',
                           'timeout', 'metadata_expire', 'best',
                           'clean_requirements_on_remove'])
