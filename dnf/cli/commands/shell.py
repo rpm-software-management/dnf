@@ -128,6 +128,7 @@ class ShellCommand(commands.Command):
                 logger.info(out)
 
         if cmd == 'run':
+            self._resolve()
             self.base.do_transaction()
             self._clean()
 
