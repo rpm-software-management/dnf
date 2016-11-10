@@ -129,7 +129,10 @@ class ShellCommand(commands.Command):
 
         if cmd == 'run':
             self._resolve()
-            self.base.do_transaction()
+            try:
+                self.base.do_transaction()
+            except:
+                pass
             self._clean()
 
     def _ts_run(self, args=None):
