@@ -134,14 +134,11 @@ class Subject(object):
         nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
         if nevra:
             sltr = dnf.selector.Selector(sack)
-            if nevra._has_just_name():
-                s = sltr.set(provides=nevra.name)
-                if len(s.matches()) > 0:
-                    return s
-            else:
-                s = self._nevra_to_selector(sltr, nevra)
-                if len(s.matches()) > 0:
-                    return s
+            q = self._nevra_to_filters(sack.query(), nevra)
+            if q:
+                if nevra._has_just_name():
+                    q = q.union(sack.query().filter(obsoletes=q))
+                return sltr.set(pkg=q)
 
         reldep = first(self.subj.reldep_possibilities_real(sack))
         if reldep:
