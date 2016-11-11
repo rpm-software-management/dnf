@@ -112,13 +112,9 @@ class Subject(object):
                 return q
 
         if with_provides:
-            reldeps = self.subj.reldep_possibilities_real(
-                sack, icase=self.icase)
-            reldep = first(reldeps)
-            if reldep:
-                q = sack.query().filter(provides=reldep)
-                if q:
-                    return q
+            q = sack.query()._filterm(provides__glob=self._pattern)
+            if q:
+                return q
 
         if self._filename_pattern:
             return sack.query().filter(file__glob=pat)
