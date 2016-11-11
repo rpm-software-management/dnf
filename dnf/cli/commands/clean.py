@@ -52,6 +52,13 @@ def _tree(dirpath):
             yield os.path.normpath(path)
 
 
+def _dir_tree(dirpath):
+    """Traverse dirpath recursively and yield relative directories."""
+    for root, dirs, files in os.walk(dirpath):
+        base = os.path.relpath(root, dirpath)
+        yield os.path.normpath(base)
+
+
 def _filter(files, patterns):
     """Yield those filenames that match any of the patterns."""
     return (f for f in files for p in patterns if re.match(p, f))
@@ -65,6 +72,23 @@ def _clean(dirpath, files):
         logger.log(dnf.logging.DDEBUG, 'Removing file %s', path)
         misc.unlink_f(path)
         count += 1
+    return count
+
+
+def _clean_dirs(dirpath, directories):
+    """Remove the given directories if they are empty"""
+    count = 0
+    directories = list(directories)
+    for root, dirs, files in os.walk(dirpath, topdown=False):
+        base = os.path.normpath(os.path.relpath(root, dirpath))
+        if base in directories:
+            try:
+                os.rmdir(root)
+            except OSError:
+                pass
+            else:
+                count += 1
+
     return count
 
 
@@ -102,4 +126,13 @@ class CleanCommand(commands.Command):
 
         patterns = [dnf.repo.CACHE_FILES[t] for t in types]
         count = _clean(cachedir, _filter(files, patterns))
+        counter = 0
+
+        if 'all' in self.opts.type:
+            dirs = list(_dir_tree(cachedir))
+            counter = _clean_dirs(cachedir, _filter(dirs, [
+                r'^%s\.*$' % dnf.repo._CACHEDIR_RE]))
+
         logger.info(P_('%d file removed', '%d files removed', count) % count)
+        logger.info(P_('%d directory removed', '%d directories removed',
+                       counter) % counter)

@@ -78,7 +78,7 @@ class CleanTest(tests.support.TestCase):
 
     def test_walk_once(self):
         _run(self.cli, ['all'])
-        assert len(self.walk.call_args_list) == 1
+        assert len(self.walk.call_args_list) == 3
 
     def test_clean_local_repo(self):
         cachedir = self.base.conf.cachedir
