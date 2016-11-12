@@ -50,23 +50,6 @@ class Subject(object):
 
         return query
 
-    @staticmethod
-    def _nevra_to_selector(sltr, nevra):
-        if nevra.name is not None:
-            sltr._set_autoglob(name=nevra.name)
-        if nevra.version is not None:
-            evr = nevra.version
-            if nevra.epoch is not None and nevra.epoch > 0:
-                evr = "%d:%s" % (nevra.epoch, evr)
-            if nevra.release is None:
-                sltr.set(version=evr)
-            else:
-                evr = "%s-%s" % (evr, nevra.release)
-                sltr.set(evr=evr)
-        if nevra.arch is not None:
-            sltr.set(arch=nevra.arch)
-        return sltr
-
     @property
     def _query_flags(self):
         flags = []
