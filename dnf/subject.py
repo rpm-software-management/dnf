@@ -128,28 +128,22 @@ class Subject(object):
         if forms:
             kwargs['form'] = forms
         nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
+        sltr = dnf.selector.Selector(sack)
         if nevra:
-            sltr = dnf.selector.Selector(sack)
             q = self._nevra_to_filters(sack.query(), nevra)
             if q:
                 if nevra._has_just_name():
                     q = q.union(sack.query().filter(obsoletes=q))
                 return sltr.set(pkg=q)
 
-        reldep = first(self.subj.reldep_possibilities_real(sack))
-        if reldep:
-            sltr = dnf.selector.Selector(sack)
-            dep = str(reldep)
-            s = sltr.set(provides=dep)
-            if len(s.matches()) > 0:
-                return s
+        q = sack.query()._filterm(provides__glob=self._pattern)
+        if q:
+            return sltr.set(pkg=q)
 
         if self._filename_pattern:
-            sltr = dnf.selector.Selector(sack)
             key = "file__glob" if is_glob_pattern(self._pattern) else "file"
             return sltr.set(**{key: self._pattern})
 
-        sltr = dnf.selector.Selector(sack)
         return sltr
 
     def _get_best_selectors(self, sack, forms=None):
