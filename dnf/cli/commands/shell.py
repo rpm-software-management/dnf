@@ -91,7 +91,32 @@ class ShellCommand(commands.Command):
                 self._help()
 
     def _config(self, args=None):
-        pass
+        def print_or_set(key, val, conf):
+            if val:
+                setattr(conf, key, val)
+            else:
+                try:
+                    print('{}: {}'.format(key, getattr(conf, str(key))))
+                except:
+                    logger.warning(_('Unsupported key value.'))
+
+        if not args or len(args) > 2:
+            logger.warning(_('Missing config or key value.'))
+
+        key = args[0]
+        val = args[1] if len(args) == 2 else None
+        period = key.find('.')
+        if period != -1:
+            repo_name = key[:period]
+            key = key[period+1:]
+            repos = self.base.repos.get_matching(repo_name)
+            for repo in repos:
+                print_or_set(key, val, repo)
+            if not repos:
+                logger.warning(_('Could not find repository: %s'),
+                               repo_name)
+        else:
+            print_or_set(key, val, self.base.conf)
 
     def _help(self, args=None):
         self.cli.optparser.print_help()
