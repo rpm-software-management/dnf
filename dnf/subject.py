@@ -124,8 +124,7 @@ class Subject(object):
             return sltr.set(pkg=q)
 
         if self._filename_pattern:
-            key = "file__glob" if is_glob_pattern(self._pattern) else "file"
-            return sltr.set(**{key: self._pattern})
+            return sltr.set(pkg=sack.query()._filterm(file__glob=self._pattern))
 
         return sltr
 
