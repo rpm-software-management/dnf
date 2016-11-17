@@ -119,8 +119,8 @@ class _HistoryWrapper(object):
                 hpkg = next(reversed_it)
             assert is_exhausted(reversed_it)
             assert not obsoleting_nevra or obsoleting_nevra == hpkg.nevra
-            assert(not replaced_state
-                   or replaced_state == STATE2COMPLEMENT[hpkg.state])
+            assert(not replaced_state or
+                   replaced_state == STATE2COMPLEMENT[hpkg.state])
 
             operations.add(hpkg.state,
                            hpkg.nvra,

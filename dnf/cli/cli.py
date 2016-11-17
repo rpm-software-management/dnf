@@ -190,7 +190,7 @@ class BaseCli(dnf.Base):
             else:
                 self.output.reportDownloadSize(install_pkgs, install_only)
 
-        if trans: # or (grp_diff and not grp_diff.empty()):
+        if trans:  # or (grp_diff and not grp_diff.empty()):
             # confirm with user
             if self._promptWanted():
                 if self.conf.assumeno or not self.output.userconfirm():

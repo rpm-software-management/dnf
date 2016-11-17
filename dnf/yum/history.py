@@ -568,7 +568,7 @@ class SwdbInterface(object):
     def end(self, end_rpmdb_version="", return_code=0, errors=None):
         assert return_code or not errors
         if not hasattr(self, '_tid'):
-            return # Failed at beg() time
+            return  # Failed at beg() time
         self.swdb.trans_end(
             self._tid,
             str(int(time.time())),
@@ -577,7 +577,7 @@ class SwdbInterface(object):
         )
         # if not return_code:
         #    #  Simple hack, if the transaction finished. Note that this
-        #    # catches the erase cases (as we still don't get pkgtups for them),
+        #    # catches the erase cases (as we still don't get pkgtups for them)
         #    # Eg. Updated elements. IDEA no need for that in swdb...
         #    self.swdb.trans_data_end(self._tid)
         if errors is not None:
