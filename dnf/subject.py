@@ -89,6 +89,14 @@ class Subject(object):
             return is_glob_pattern(nevra.arch)
         return False
 
+    def _has_nevra_just_name(self, sack, forms=None):
+        kwargs = {'allow_globs': True,
+                  'icase': self.icase}
+        if forms is not None:
+            kwargs['form'] = forms
+        nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
+        return nevra._has_just_name()
+
     def get_best_query(self, sack, with_provides=True, forms=None):
         # :api
 
