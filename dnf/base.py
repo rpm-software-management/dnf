@@ -1565,7 +1565,8 @@ class Base(object):
     def upgrade(self, pkg_spec, reponame=None):
         # :api
         wildcard = True if dnf.util.is_glob_pattern(pkg_spec) else False
-        q = dnf.subject.Subject(pkg_spec).get_best_query(self.sack)
+        subj = dnf.subject.Subject(pkg_spec)
+        q = subj.get_best_query(self.sack)
 
         if q:
             installed = self.sack.query().installed()
@@ -1579,10 +1580,13 @@ class Base(object):
                         msg = _("Package %s not installed, cannot update it.")
                     logger.warning(msg, pkg_name)
             else:
-                obsoletes = self.sack.query().filter(obsoletes=q.installed())
-                q = q.upgrades()
-                # add obsoletes into transaction
-                q = q.union(obsoletes)
+                if subj._has_nevra_just_name(self.sack):
+                    obsoletes = self.sack.query().filter(obsoletes=q.installed())
+                    q = q.upgrades()
+                    # add obsoletes into transaction
+                    q = q.union(obsoletes)
+                else:
+                    q = q.upgrades()
                 if reponame is not None:
                     q = q.filter(reponame=reponame)
                 q = self._merge_update_filters(q, pkg_spec=pkg_spec)
