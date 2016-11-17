@@ -33,7 +33,6 @@ import dnf.persistor
 import dnf.pycomp
 import dnf.repo
 import dnf.sack
-import dnf.yum.rpmsack
 import hawkey
 import hawkey.test
 import itertools
