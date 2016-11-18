@@ -67,6 +67,7 @@ Available commands:
 * :ref:`search <search_command-label>`
 * :ref:`updateinfo <updateinfo_command-label>`
 * :ref:`upgrade <upgrade_command-label>`
+* :ref:`upgrade-minimal <upgrade_minimal_command-label>`
 * :ref:`upgrade-to <upgrade_to_command-label>`
 
 Additional informations:
@@ -1063,6 +1064,21 @@ Upgrade Command
     dependencies as necessary.
 
 See also :ref:`\configuration_files_replacement_policy-label`.
+
+.. _upgrade_minimal_command-label:
+
+-----------------------
+Upgrade-minimal Command
+-----------------------
+
+``dnf [options] upgrade-minimal``
+    Updates each package to the latest version that provides bugfix, enhancement
+    or fix for security issue (security)
+
+``dnf [options] upgrade-minimal <package-installed-specs>...``
+    Updates each specified package to the latest available version that provides
+    bugfix, enhancement or fix for security issue (security). Updates
+    dependencies as necessary.
 
 -----------------
 Update-To Command
