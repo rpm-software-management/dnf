@@ -92,6 +92,7 @@ class Base(object):
         self._plugins = dnf.plugin.Plugins()
         self._trans_success = False
         self._tempfile_persistor = None
+        self._update_security_filters = {}
 
     def __enter__(self):
         return self
@@ -1564,40 +1565,53 @@ class Base(object):
     def upgrade(self, pkg_spec, reponame=None):
         # :api
         wildcard = True if dnf.util.is_glob_pattern(pkg_spec) else False
-        sltrs = dnf.subject.Subject(pkg_spec)._get_best_selectors(self.sack)
-        if any((s.matches() for s in sltrs)):
-            prev_count = self._goal.req_length()
-            installed = self.sack.query().installed()
-            available = self.sack.query().available()
-            for sltr in sltrs:
-                if not sltr.matches():
-                    continue
-                pkg_name = sltr.matches()[0].name
-                if not installed.filter(name=pkg_name):
-                    # wildcard shouldn't print not installed packages
-                    if not wildcard:
-                        if available.filter(name=pkg_name):
-                            msg = _('Package %s available, but not installed.')
-                        else:
-                            msg = _("Package %s not installed, cannot update it.")
-                        logger.warning(msg, pkg_name)
-                    continue
-                if reponame is not None:
-                    sltr = sltr.set(reponame=reponame)
-                self._goal.upgrade(select=sltr)
+        subj = dnf.subject.Subject(pkg_spec)
+        q = subj.get_best_query(self.sack)
 
-            if self._goal.req_length() - prev_count:
+        if q:
+            installed = self.sack.query().installed()
+            pkg_name = q[0].name
+            if not installed.filter(name=pkg_name):
+                # wildcard shouldn't print not installed packages
+                if not wildcard:
+                    if q.available():
+                        msg = _('Package %s available, but not installed.')
+                    else:
+                        msg = _("Package %s not installed, cannot update it.")
+                    logger.warning(msg, pkg_name)
+            else:
+                if subj._has_nevra_just_name(self.sack):
+                    obsoletes = self.sack.query().filter(obsoletes=q.installed())
+                    q = q.upgrades()
+                    # add obsoletes into transaction
+                    q = q.union(obsoletes)
+                else:
+                    q = q.upgrades()
+                if reponame is not None:
+                    q = q.filter(reponame=reponame)
+                q = self._merge_update_filters(q, pkg_spec=pkg_spec)
+                if q:
+                    sltr = dnf.selector.Selector(self.sack)
+                    sltr.set(pkg=q)
+                    self._goal.upgrade(select=sltr)
                 return 1
 
         raise dnf.exceptions.MarkingError(_('No match for argument: %s') % pkg_spec, pkg_spec)
 
     def upgrade_all(self, reponame=None):
         # :api
-        if reponame is None:
+        if reponame is None and not self._update_security_filters:
             self._goal.upgrade_all()
         else:
-            for pkg in self.sack.query().filter(reponame=reponame).upgrades():
-                self._goal.install(package=pkg, optional=True)
+            q = self.sack.query().upgrades()
+            # add obsoletes into transaction
+            q = q.union(self.sack.query().filter(obsoletes=self.sack.query().installed()))
+            if reponame is not None:
+                q = q.filter(reponame=reponame)
+            q = self._merge_update_filters(q)
+            sltr = dnf.selector.Selector(self.sack)
+            sltr.set(pkg=q)
+            self._goal.upgrade(select=sltr)
         return 1
 
     def upgrade_to(self, pkg_spec, reponame=None):
@@ -1849,6 +1863,44 @@ class Base(object):
                 handle_upgrade(nevra, replaced_nevra, obsoleted_nevras)
             else:
                 assert False
+
+    def _merge_update_filters(self, q, pkg_spec=None):
+        """
+        Merge Queries in _update_filters and return intersection with q Query
+        @param q: Query
+        @return: Query
+        """
+        if not self._update_security_filters:
+            return q
+        assert len(self._update_security_filters.keys()) == 1
+        for key, filters in self._update_security_filters.items():
+            assert len(filters) > 0
+            t = filters[0]
+            for query in filters[1:]:
+                t = t.union(query)
+            del self._update_security_filters[key]
+            self._update_security_filters['minimal'] = [t]
+            t = q.intersection(t)
+            if len(t) == 0:
+                count = len(q._name_dict().keys())
+                if pkg_spec is None:
+                    msg1 = _("No security updates needed, but {} update "
+                             "available").format(count)
+                    msg2 = _("No security updates needed, but {} updates "
+                             "available").format(count)
+                    logger.warning(P_(msg1, msg2, count))
+                else:
+                    msg1 = _('No security updates needed for "{}", but {} '
+                             'update available').format(pkg_spec, count)
+                    msg2 = _('No security updates needed for "{}", but {} '
+                             'updates available').format(pkg_spec, count)
+                    logger.warning(P_(msg1, msg2, count))
+                return t
+            if key == 'minimal':
+                return t
+            else:
+                pkg_names = [pkg_name for pkg_name in t._name_dict().keys()]
+                return q.filter(name=pkg_names)
 
     def _get_key_for_package(self, po, askcb=None, fullaskcb=None):
         """Retrieve a key for a package. If needed, use the given
