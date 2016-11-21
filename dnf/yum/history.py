@@ -481,6 +481,46 @@ class SwdbInterface(object):
     def attr_by_nvra(self, attr, nvra):
         return self.swdb.attr_by_nvra(str(attr), str(nvra))
 
+    def ipkg_to_rpmdata(self, ipkg):
+        pid = self.pkg2pid(ipkg, create=False)
+        rpmdata = Dnf.SwdbRpmData.new(
+            pid,
+            str((getattr(ipkg, "buildtime", None) or '')),
+            str((getattr(ipkg, "buildhost", None) or '')),
+            str((getattr(ipkg, "license", None) or '')),
+            str((getattr(ipkg, "packager", None) or '')),
+            str((getattr(ipkg, "size", None) or '')),
+            str((getattr(ipkg, "sourcerpm", None) or '')),
+            str((getattr(ipkg, "url", None) or '')),
+            str((getattr(ipkg, "vendor", None) or '')),
+            str((getattr(ipkg, "committer", None) or '')),
+            str((getattr(ipkg, "committime", None) or ''))
+        )
+        return rpmdata
+
+    def ipkg_to_pkg(self, ipkg):
+        csum = ipkg.returnIdSum()
+        csum_type = csum[0] or ''
+        csum = csum[1] or ''
+        pkgtup = map(ucd, ipkg.pkgtup)
+        (n, a, e, v, r) = pkgtup
+        pkg = Dnf.SwdbPkg.new(
+            n,
+            str(e),
+            v,
+            r,
+            a,
+            csum,
+            csum_type,
+            "rpm"
+        )
+        return pkg
+
+    '''
+    XXX TODO
+    There is no need to have states like Updated, Reinstalled... with
+    original TD_ID binding
+    '''
     def beg(self, rpmdb_version, using_pkgs, tsis, skip_packages=[],
             rpmdb_problems=[], cmdline=None, groups_installed=[],
             groups_removed=[]):
