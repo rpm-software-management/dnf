@@ -552,20 +552,13 @@ class SwdbInterface(object):
                 )
         self._log_group_trans(self._tid, groups_installed, groups_removed)
 
-    def _pkgtup2pid(self, pkgtup, checksum="", checksum_type="", create=True):
-        pkgtup = map(ucd, pkgtup)
-        (n,a,e,v,r) = pkgtup
-        return self.swdb.get_pid_by_nevracht(
-            n,
-            str(e),
-            str(v),
-            str(r),
-            a,
-            checksum,
-            checksum_type,
-            "rpm",
-            create
-        )
+    def pid_by_nvra(self, nvra):
+        return self.swdb.pid_by_nvra(nvra)
+
+    def ipkg_to_nvra(self, ipkg):
+        pkgtup = map(ucd, ipkg.pkgtup)
+        (n, a, e, v, r) = pkgtup
+        return n + "-" + v + "-" + r + "." + a
 
     def _apkg2pid(self, po, create=True):
         csum = po.returnIdSum()
