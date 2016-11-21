@@ -90,7 +90,7 @@ class Query(hawkey.Query):
                 # remove __glob when pattern is not glob
                 key = key[:-6]
             nargs[key] = value
-        return super(Query, self).filterm(*args, **nargs)
+        return super(Query, self)._filterm(*args, **nargs)
 
     def installed(self):
         # :api
