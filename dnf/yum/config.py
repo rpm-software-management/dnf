@@ -16,7 +16,7 @@
 #
 
 from dnf.conf.config import BoolOption
-from dnf.conf.config import ListOption
+from dnf.conf.config import ListOption  # nopep8
 from dnf.conf.config import MainConf
 from dnf.conf.config import PathOption
 from dnf.conf.config import PositiveIntOption
@@ -36,7 +36,8 @@ class YumConf(MainConf):
             'color_list_available_upgrade', 'color_list_installed_extra',
             'color_list_installed_newer', 'color_list_installed_older',
             'color_list_installed_reinstall', 'color_search_match',
-            'color_update_installed', 'color_update_local', 'color_update_remote',
+            'color_update_installed', 'color_update_local',
+            'color_update_remote',
             'config_file_path',
             'debug_solver', 'debuglevel', 'defaultyes', 'deltarpm',
             'deltarpm_percentage', 'disable_excludes', 'diskspacecheck',
@@ -44,12 +45,16 @@ class YumConf(MainConf):
             'excludepkgs', 'exit_on_lock', 'fastestmirror', 'gpgcheck',
             'group_package_types', 'history_list_view', 'history_record',
             'history_record_packages', 'includepkgs', 'install_weak_deps',
-            'installonlypkgs', 'installroot', 'ip_resolve', 'localpkg_gpgcheck',
-            'logdir', 'max_parallel_downloads', 'metadata_timer_sync', 'minrate',
-            'multilib_policy', 'obsoletes', 'password', 'plugins', 'pluginpath',
+            'installonlypkgs', 'installroot', 'ip_resolve',
+            'localpkg_gpgcheck',
+            'logdir', 'max_parallel_downloads', 'metadata_timer_sync',
+            'minrate',
+            'multilib_policy', 'obsoletes', 'password', 'plugins',
+            'pluginpath',
             'pluginconfpath', 'protected_packages',
             'proxy', 'proxy_password', 'proxy_username', 'recent',
-            'repo_gpgcheck', 'reposdir', 'reset_nice', 'retries', 'rpmverbosity',
+            'repo_gpgcheck', 'reposdir', 'reset_nice', 'retries',
+            'rpmverbosity',
             'showdupesfromrepos', 'sslcacert', 'sslclientcert', 'sslclientkey',
             'sslverify', 'strict', 'throttle', 'tsflags',
             'upgrade_group_objects_upgrade', 'username', 'skip_broken'])
@@ -62,7 +67,7 @@ class YumConf(MainConf):
                          PositiveIntOption(3, range_min=2,
                                            names_of_0=["0", "<off>"]))
         self._add_option('timeout', SecondsOption(30))
-        self._add_option('metadata_expire', SecondsOption(60 * 60 * 6))  # 6 hours
+        self._add_option('metadata_expire', SecondsOption(60 * 60 * 6))  # 6 h
         self._add_option('best', BoolOption(True))
         self._add_option('clean_requirements_on_remove', BoolOption(False))
 

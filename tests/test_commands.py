@@ -516,7 +516,7 @@ class RepoPkgsReinstallOldSubCommandTest(support.ResultTestCase):
         """Test whether all packages from the repository are reinstalled."""
         for pkg in self.cli.base.sack.query().installed():
             reponame = 'main' if pkg.name != 'pepper' else 'non-main'
-            self.cli.base.._history.set_repo(pkg, reponame)
+            self.cli.base._history.set_repo(pkg, reponame)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         support.command_run(cmd, ['main', 'reinstall-old'])

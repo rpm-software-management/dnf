@@ -24,6 +24,7 @@ from tests.support import mock
 import dnf.history
 import dnf.yum.history
 
+
 class TestedHistory(dnf.yum.history.SwdbInterface):
     @mock.patch("os.path.exists", return_value=True)
     def __init__(self, unused_exists):
@@ -33,11 +34,13 @@ class TestedHistory(dnf.yum.history.SwdbInterface):
     def _create_db_file(self):
         return None
 
+
 class History(TestCase):
     def setUp(self):
         self.base = support.MockBase("main")
         self.sack = self.base.sack
         self.history = TestedHistory()
+
 
 class HistoryWrapperTest(support.TestCase):
     """Unit tests of dnf.history._HistoryWrapper."""
@@ -56,9 +59,11 @@ class HistoryWrapperTest(support.TestCase):
 
     def test_last_transaction_id_notransaction(self):
         """Test last_transaction_id without any transaction."""
+        history = mock.create_autospec(dnf.yum.history.SwdbInterface)
         id_ = history.last()
 
         self.assertIsNone(id_)
+
 
 class NEVRAOperationsTest(support.TestCase):
     """Unit tests of dnf.history.NEVRAOperations."""

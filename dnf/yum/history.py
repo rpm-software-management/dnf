@@ -32,7 +32,7 @@ import dnf.rpm.miscutils
 import dnf.i18n
 import functools
 from dnf.yum import swdb_transformer
-gi.require_version('Dnf', '1.0')
+gi.require_version('Dnf', '1.0')  # nopep8
 from gi.repository import Dnf
 
 

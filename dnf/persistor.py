@@ -36,7 +36,7 @@ import json
 import logging
 import os
 import re
-gi.require_version('Dnf', '1.0')
+gi.require_version('Dnf', '1.0')  # nopep8
 from gi.repository import Dnf
 
 logger = logging.getLogger("dnf")

@@ -273,8 +273,10 @@ class BaseCliStub(_BaseStubMixin, dnf.cli.cli.BaseCli):
         super(BaseCliStub, self).__init__(*extra_repos)
         self.output.term = MockTerminal()
 
+
 class DemandsStub(object):
     pass
+
 
 class CliStub(object):
     """A class mocking `dnf.cli.Cli`."""
@@ -283,7 +285,7 @@ class CliStub(object):
         """Initialize the CLI."""
         self.base = base
         self.cli_commands = {}
-        self.demands =
+        self.demands = DemandsStub()
         self.logger = logging.getLogger()
         self.register_command(dnf.cli.commands.HelpCommand)
 
