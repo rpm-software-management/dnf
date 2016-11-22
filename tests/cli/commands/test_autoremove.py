@@ -28,9 +28,9 @@ class AutoRemoveCommandTest(support.ResultTestCase):
         base = support.MockBase()
         q = base.sack.query()
         pkgs = list(q.filter(name='librita')) + list(q.filter(name='pepper'))
-        yumdb = base._yumdb
+        history = base._history
         for pkg in pkgs:
-            yumdb.get_package(pkg).reason = 'dep'
+            history.mark_user_installed(pkg, True)
 
         cli = base.mock_cli()
         cmd = autoremove.AutoremoveCommand(cli)
@@ -40,5 +40,7 @@ class AutoRemoveCommandTest(support.ResultTestCase):
         cmd.run()
         inst, rem = self.installed_removed(base)
         self.assertEmpty(inst)
-        removed = ('librita-1-1.i686', 'librita-1-1.x86_64', 'pepper-20-0.x86_64')
+        removed = ('librita-1-1.i686',
+                   'librita-1-1.x86_64',
+                   'pepper-20-0.x86_64')
         self.assertCountEqual((map(str, rem)), removed)

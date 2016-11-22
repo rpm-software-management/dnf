@@ -273,6 +273,8 @@ class BaseCliStub(_BaseStubMixin, dnf.cli.cli.BaseCli):
         super(BaseCliStub, self).__init__(*extra_repos)
         self.output.term = MockTerminal()
 
+class DemandsStub(object):
+    pass
 
 class CliStub(object):
     """A class mocking `dnf.cli.Cli`."""
@@ -281,7 +283,7 @@ class CliStub(object):
         """Initialize the CLI."""
         self.base = base
         self.cli_commands = {}
-        self.demands = DemandsStub()
+        self.demands =
         self.logger = logging.getLogger()
         self.register_command(dnf.cli.commands.HelpCommand)
 
@@ -291,41 +293,6 @@ class CliStub(object):
     def register_command(self, command):
         """Register given *command*."""
         self.cli_commands.update({alias: command for alias in command.aliases})
-
-
-class DemandsStub(object):
-    pass
-
-
-class HistoryStub(dnf.yum.history.YumHistory):
-    """Stub of dnf.yum.history.YumHistory for easier testing."""
-
-    def __init__(self):
-        """Initialize a stub instance."""
-        self.old_data_pkgs = {}
-
-    def _old_data_pkgs(self, tid, sort=True):
-        """Get packages of a transaction."""
-        if sort:
-            raise NotImplementedError('sorting not implemented yet')
-        return self.old_data_pkgs.get(tid, ())[:]
-
-    def close(self):
-        """Close the history."""
-        pass
-
-    def old(self, tids=[], limit=None, *_args, **_kwargs):
-        """Get transactions with given IDs."""
-        create = lambda tid: dnf.yum.history.YumHistoryTransaction(self,
-            (int(tid), 0, '0:685cc4ac4ce31b9190df1604a96a3c62a3100c35',
-             1, '1:685cc4ac4ce31b9190df1604a96a3c62a3100c36', 0, 0))
-
-        sorted_all_tids = sorted(self.old_data_pkgs.keys(), reverse=True)
-
-        trxs = (create(tid) for tid in tids or sorted_all_tids
-                if tid in self.old_data_pkgs)
-        limited = trxs if limit is None else itertools.islice(trxs, limit)
-        return tuple(limited)
 
 class MockOutput(object):
     def __init__(self):
@@ -438,47 +405,6 @@ class MockYumDB(mock.Mock):
 
     def assertLength(self, length):
         assert len(self.db) == length
-
-class RPMDBAdditionalDataPackageStub(dnf.yum.rpmsack.RPMDBAdditionalDataPackage):
-
-    """A class mocking `dnf.yum.rpmsack.RPMDBAdditionalDataPackage`."""
-
-    def __init__(self):
-        """Initialize the data."""
-        super(RPMDBAdditionalDataPackageStub, self).__init__(None, None, None)
-
-    def __iter__(self, show_hidden=False):
-        """Return a new iterator over the data."""
-        for item in self._read_cached_data:
-            yield item
-
-    def _attr2fn(self, attribute):
-        """Convert given *attribute* to a filename."""
-        raise NotImplementedError('the method is not supported')
-
-    def _delete(self, attribute):
-        """Delete the *attribute* value."""
-        try:
-            del self._read_cached_data[attribute]
-        except KeyError:
-            raise AttributeError("Cannot delete attribute %s on %s " %
-                                 (attribute, self))
-
-    def _read(self, attribute):
-        """Read the *attribute* value."""
-        if attribute in self._read_cached_data:
-            return self._read_cached_data[attribute]
-        raise AttributeError("%s has no attribute %s" % (self, attribute))
-
-    def _write(self, attribute, value):
-        """Write the *attribute* value."""
-        self._auto_cache(attribute, value, None)
-
-    def clean(self):
-        """Purge out everything."""
-        for item in self.__iter__(show_hidden=True):
-            self._delete(item)
-
 
 class FakeConf(dnf.conf.Conf):
     def __init__(self, **kwargs):

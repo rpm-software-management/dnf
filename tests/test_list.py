@@ -46,7 +46,7 @@ class List(support.TestCase):
         expected = base.sack.query().installed().filter(name={'pepper',
                                                               'librita'})
         for pkg in expected:
-            base._yumdb.db[str(pkg)] = {'from_repo': 'main'}
+            base._history.set_repo(pkg, 'main')
 
         lists = base._do_package_lists('installed', reponame='main')
 

@@ -20,26 +20,13 @@ from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
 
-import dnf.yum.rpmsack
 import unittest
 
 
 @mock.patch('os.path.exists', return_value=True)
 class TestAdditionalPkgDB(unittest.TestCase):
     def _instantiate(self, base):
-        path = base.conf.persistdir + '/yumdb'
-        return dnf.yum.rpmsack.AdditionalPkgDB(path)
+        pass
 
     def test_get_dir(self, mock_exists):
-        base = support.MockBase()
-        pkgdb = self._instantiate(base)
-        pkg = base.sack.query().installed().filter(name="pepper")[0]
-        expected = '%s/yumdb/p/bad9-pepper-20-0-x86_64' % base.conf.persistdir
-
-        directory = pkgdb._get_dir_name(pkg.pkgtup, b'bad9')
-        self.assertEqual(expected, directory)
-        directory = pkgdb._get_dir_name(pkg.pkgtup, 'bad9')
-        self.assertEqual(expected, directory)
-        directory = pkgdb._get_dir_name(pkg.pkgtup, None)
-        self.assertEqual('%s/yumdb/p/<nopkgid>-pepper-20-0-x86_64' %
-                         base.conf.persistdir, directory)
+        pass

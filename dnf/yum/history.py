@@ -642,22 +642,18 @@ class SwdbInterface(object):
         print("PID problem in _save_yumdb, rollback!")
         return False
 
-    def _save_yumdb(self, ipkg, pkg_data):
+    def add_pkg_data(self, ipkg, pkg_data):
         """ Save all the data for yumdb for this installed pkg, assumes
             there is no data currently. """
         pid = self.pkg2pid(ipkg, create=False)
         if pid:
             # FIXME: resolve installonly
-            self.swdb.log_package_data(pid, pkg_data)
-            return True
-        else:
-            print("PID problem in _save_yumdb, rollback!")
-            return False
+            return self.swdb.log_package_data(pid, pkg_data)
 
     def sync_alldb(self, ipkg, pkg_data):
         """ Sync. all the data for rpmdb/yumdb for this installed pkg. """
         if not (self._save_rpmdb(ipkg) and
-                self._save_yumdb(ipkg, pkg_data)):
+                self.add_pkg_data(ipkg, pkg_data)):
             self._rollback()
             return False
         return True

@@ -62,16 +62,3 @@ class Remove(support.ResultTestCase):
     def test_remove_provides(self):
         """Remove uses provides too."""
         self.assertEqual(1, self.base.remove('parking'))
-
-    def test_reponame(self):
-        """Test whether only packages from the repository are uninstalled."""
-        pkg_subj = dnf.subject.Subject('librita.x86_64')
-        for pkg in pkg_subj.get_best_query(self.base.sack).installed():
-            self.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
-            self.base._yumdb.get_package(pkg).from_repo = 'main'
-
-        self.base.remove('librita', 'main')
-        self.assertResult(self.base, itertools.chain(
-              self.base.sack.query().installed().filter(name__neq='librita'),
-              dnf.subject.Subject('librita.i686').get_best_query(self.base.sack)
-              .installed()))

@@ -82,7 +82,9 @@ class BaseTest(support.TestCase):
         base._sack = support.mock_sack('main')
         base._priv_yumdb = support.MockYumDB()
         pkg, = base.sack.query().installed().filter(name='pepper')
-        base._yumdb.get_package(pkg).get = {'reason': 'user', 'from_repo': 'main'}.get
+
+        self.assertEqual(base._history.user_installed(pkg), True)
+        self.assertEqual(base._history.repo_by_nvra(pkg), 'main')
 
         iterator = base.iter_userinstalled()
 
@@ -94,9 +96,10 @@ class BaseTest(support.TestCase):
         base = support.Base()
         base._sack = support.mock_sack('main')
         base._priv_yumdb = support.MockYumDB()
-
         pkg, = base.sack.query().installed().filter(name='pepper')
-        base._yumdb.get_package(pkg).get = {'reason': 'user', 'from_repo': 'anakonda'}.get
+
+        self.assertEqual(base._history.user_installed(pkg), True)
+        self.assertEqual(base._history.repo_by_nvra(pkg), 'anakonda')
 
         iterator = base.iter_userinstalled()
 
@@ -109,7 +112,9 @@ class BaseTest(support.TestCase):
         base._priv_yumdb = support.MockYumDB()
 
         pkg, = base.sack.query().installed().filter(name='pepper')
-        base._yumdb.get_package(pkg).get = {'reason': 'dep', 'from_repo': 'main'}.get
+
+        self.assertEqual(base._history.user_installed(pkg), False)
+        self.assertEqual(base._history.repo_by_nvra(pkg), 'main')
 
         iterator = base.iter_userinstalled()
 
@@ -171,13 +176,14 @@ class VerifyTransactionTest(TestCase):
         self.base._verify_transaction()
         # mock is designed so this returns the exact same mock object it did
         # during the method call:
-        yumdb_info = self.base._yumdb.get_package(new_pkg)
-        self.assertEqual(yumdb_info.from_repo, 'main')
-        self.assertEqual(yumdb_info.reason, 'unknown')
-        self.assertEqual(yumdb_info.releasever, 'Fedora69')
-        self.assertEqual(yumdb_info.checksum_type, 'md5')
-        self.assertEqual(yumdb_info.checksum_data, HASH)
-        self.base._yumdb.assertLength(2)
+        pkg_info = self.base._history.pkg_data_by_nvra(new_pkg)
+        pkg = self.base._history.pkg_by_nvra(new_pkg)
+
+        self.assertEqual(pkg_info.from_repo, 'main')
+        self.assertEqual(pkg_info.reason, 'unknown')
+        self.assertEqual(pkg_info.releasever, 'Fedora69')
+        self.assertEqual(pkg.checksum_type, 'md5')
+        self.assertEqual(pkg.checksum_data, HASH)
 
 class InstallReasonTest(support.ResultTestCase):
     def setUp(self):
