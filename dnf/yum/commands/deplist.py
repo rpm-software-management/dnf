@@ -25,11 +25,11 @@ from dnf.cli.commands.repoquery import RepoQueryCommand
 
 class DeplistCommand(RepoQueryCommand):
     """
-    some comment about command
+    The command is alias for 'dnf repoquery --deplist'
     """
 
     aliases = ('deplist',)
-    summary = _("List a package's dependencies")
+    summary = _("List package's dependencies and what packages provide them")
 
     def configure(self):
         RepoQueryCommand.configure(self)

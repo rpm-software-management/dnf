@@ -121,7 +121,7 @@ class RepoQueryCommand(commands.Command):
         whatrequiresform.add_argument("--exactdeps", action="store_true",
                                       help=_('check dependencies exactly as given, opposite of --alldeps'))
         parser.add_argument('--deplist', action='store_true', help=_(
-            "list of all dependencies and what packages it provides"))
+            "show a list of all dependencies and what packages provide them"))
         parser.add_argument('--querytags', action='store_true',
                             help=_('show available tags to use with '
                                    '--queryformat'))
