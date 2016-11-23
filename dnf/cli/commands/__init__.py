@@ -200,6 +200,7 @@ class InfoCommand(Command):
             self.opts.packages_action = 'upgrades'
 
     def run(self):
+        self.cli._populate_update_security_filter(self.opts)
         return self.base.output_packages('info', self.opts.packages_action,
                                          self.opts.packages)
 
@@ -212,6 +213,7 @@ class ListCommand(InfoCommand):
     summary = _('list a package or groups of packages')
 
     def run(self):
+        self.cli._populate_update_security_filter(self.opts)
         return self.base.output_packages('list', self.opts.packages_action,
                                          self.opts.packages)
 
@@ -348,6 +350,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
+            self.cli._populate_update_security_filter(self.opts)
             self.base.output_packages('info', self.opts.pkg_specs_action,
                                       self.opts.pkg_specs, self.reponame)
 
@@ -398,6 +401,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
+            self.cli._populate_update_security_filter(self.opts)
             self.base.output_packages('list', self.opts.pkg_specs_action,
                                       self.opts.pkg_specs, self.reponame)
 
