@@ -936,7 +936,7 @@ class Cli(object):
     def _populate_update_security_filter(self, opts, minimal=None, all=None):
         if (opts is None) and (all is None):
             return
-        q = self.base.sack.query().upgrades()
+        q = self.base.sack.query()
         filters = []
         if opts.bugfix or all:
             filters.append(q.filter(advisory_type='bugfix'))
