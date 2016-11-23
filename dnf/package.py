@@ -83,7 +83,7 @@ class Package(hawkey.Package):
         else:
             pkgrepo = {}
         if pkgrepo:
-            return '@'+pkgrepo
+            return '@' + pkgrepo
         return self.reponame
 
     @property

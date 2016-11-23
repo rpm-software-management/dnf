@@ -594,7 +594,7 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
     def test_run_on_repo_spec_sync(self):
         """Test running with a package which can be synchronized."""
         for pkg in self.cli.base.sack.query().installed():
-            data = base._history.SwdbPkgData()
+            data = self.cli.base._history.SwdbPkgData()
             data.from_repo = 'non-distro' if pkg.name == 'pepper' else 'distro'
             self.cli.base._history.add_pkg_data(pkg, data)
 
@@ -609,7 +609,7 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
     def test_run_on_repo_spec_remove(self):
         """Test running with a package which must be removed."""
         for pkg in self.cli.base.sack.query().installed():
-            data = base._history.SwdbPkgData()
+            data = self.cli.base._history.SwdbPkgData()
             data.from_repo = 'non-distro' if pkg.name == 'hole' else 'distro'
             self.cli.base._history.add_pkg_data(pkg, data)
 
@@ -624,7 +624,7 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
         """Test running without a package specification."""
         nondist = {'pepper', 'hole'}
         for pkg in self.cli.base.sack.query().installed():
-            data = base._history.SwdbPkgData()
+            data = self.cli.base._history.SwdbPkgData()
             data.from_repo = 'non-distro' if pkg.name in nondist else 'distro'
             self.cli.base._history.add_pkg_data(pkg, data)
 

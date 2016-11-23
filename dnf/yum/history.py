@@ -463,7 +463,7 @@ class SwdbInterface(object):
                 tids[i] = int(value)
         return self.swdb.trans_old(tids, limit, complete_transactions_only)
 
-    def _log_group_trans(self, tid,  groups_installed=[], groups_removed=[]):
+    def _log_group_trans(self, tid, groups_installed=[], groups_removed=[]):
         self.swdb.log_group_trans(tid, groups_installed, groups_removed)
 
     def set_reason(self, nvra, reason):

@@ -400,7 +400,7 @@ def run(input_dir='/var/lib/dnf/',
     h_cursor.execute('SELECT * FROM trans_data_pkgs')
 
     for row in h_cursor:
-        record_TD = ['']*len(TRANS_DATA)
+        record_TD = [''] * len(TRANS_DATA)
         record_TD[TRANS_DATA.index('T_ID')] = row[0]  # T_ID
         if row[2] == 'TRUE':
             record_TD[TRANS_DATA.index('done')] = 1
@@ -682,7 +682,8 @@ def run(input_dir='/var/lib/dnf/',
 
     if task_performed > 0:
         print("Database integrity " +
-              str(((task_performed - task_failed) / task_performed)*100) + "%")
+              str(((task_performed - task_failed) / task_performed) * 100) +
+              "%")
         return True
     else:
         print("Database transformation NOT successfull")
