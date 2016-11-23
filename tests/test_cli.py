@@ -97,7 +97,7 @@ class BaseCliTest(support.ResultTestCase):
 
     def test_transaction_id_or_offset_last(self, _):
         """Test transaction_id_or_offset with the zero offset."""
-        id_or_offset = dnf.cli.cli.BaseCli.transaction_id_or_offset('--last')
+        id_or_offset = dnf.cli.cli.BaseCli.transaction_id_or_offset('last')
         self.assertEqual(id_or_offset, -1)
 
     def test_transaction_id_or_offset_negativeid(self, _):
@@ -107,7 +107,7 @@ class BaseCliTest(support.ResultTestCase):
 
     def test_transaction_id_or_offset_offset(self, _):
         """Test transaction_id_or_offset with an offset."""
-        id_or_offset = dnf.cli.cli.BaseCli.transaction_id_or_offset('--last-1')
+        id_or_offset = dnf.cli.cli.BaseCli.transaction_id_or_offset('last-1')
         self.assertEqual(id_or_offset, -2)
 
     def test_transaction_id_or_offset_positiveid(self, _):
