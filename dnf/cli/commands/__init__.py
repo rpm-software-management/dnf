@@ -906,9 +906,33 @@ class HistoryCommand(Command):
         pkgs = tuple(self.base.iter_userinstalled())
         return self.output.listPkgs(pkgs, 'Packages installed by user', 'nevra')
 
+    def _convert_tids(self):
+        """Convert commandline arguments to transaction ids"""
+        def str2tid(s):
+            if s.startswith('last'):
+                s = s[4:] if s != 'last' else '0'
+            tid = int(s)
+            if tid <= 0:
+                tid += self.output.history.last().tid
+            return tid
+
+        tids = set()
+        for t in self.opts.tid:
+            if '..' in t:
+                btid, etid = t.split('..', 2)
+                tids.update(range(str2tid(btid), str2tid(etid) + 1))
+            else:
+                try:
+                    tids.add(str2tid(t))
+                except ValueError:
+                    # not a transaction id, assume it's package name
+                    tids.update(self.output.history.search([t]))
+
+        return sorted(tids)
+
     def run(self):
         vcmd = self.opts.tid_action
-        extcmds = self.opts.tid
+        extcmds = self._convert_tids()
 
         if False: pass
         elif vcmd == 'list':
