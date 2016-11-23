@@ -1187,7 +1187,9 @@ class Base(object):
 
         # produce the updates list of tuples
         elif pkgnarrow == 'upgrades':
-            updates = query_for_repo(q).upgrades().run()
+            updates = query_for_repo(q).upgrades()
+            # reduce a query to security upgrades if they are specified
+            updates = self._merge_update_filters(updates).run()
 
         # installed only
         elif pkgnarrow == 'installed':
@@ -1236,6 +1238,8 @@ class Base(object):
             inst = q.installed()
             obsoletes = query_for_repo(
                 self.sack.query()).filter(obsoletes=inst)
+            # reduce a query to security upgrades if they are specified
+            obsoletes = self._merge_update_filters(obsoletes, warning=False)
             obsoletesTuples = []
             for new in obsoletes:
                 obsoleted_reldeps = new.obsoletes
@@ -1864,7 +1868,7 @@ class Base(object):
             else:
                 assert False
 
-    def _merge_update_filters(self, q, pkg_spec=None):
+    def _merge_update_filters(self, q, pkg_spec=None, warning=True):
         """
         Merge Queries in _update_filters and return intersection with q Query
         @param q: Query
@@ -1881,7 +1885,7 @@ class Base(object):
             del self._update_security_filters[key]
             self._update_security_filters['minimal'] = [t]
             t = q.intersection(t)
-            if len(t) == 0:
+            if len(t) == 0 and warning:
                 count = len(q._name_dict().keys())
                 if pkg_spec is None:
                     msg1 = _("No security updates needed, but {} update "

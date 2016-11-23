@@ -257,6 +257,8 @@ class CheckUpdateCommand(Command):
         _checkEnabledRepo(self.base)
 
     def run(self):
+        self.cli._populate_update_security_filter(self.opts)
+
         found = self.base.check_updates(self.opts.packages, print_=True)
         if found:
             self.cli.demands.success_exit_status = 100
