@@ -243,7 +243,7 @@ class CheckUpdateCommand(Command):
     check-update command.
     """
 
-    aliases = ('check-update',)
+    aliases = ('check-update', 'check-upgrade')
     summary = _('check for available package upgrades')
 
     @staticmethod
