@@ -242,6 +242,7 @@ class RepoQueryCommand(commands.Command):
         return alldepsquery
 
     def run(self):
+        self.cli._populate_update_security_filter(self.opts)
         if self.opts.querytags:
             print(_('Available query-tags: use --queryformat ".. %{tag} .."'))
             print(QUERY_TAGS)
@@ -318,6 +319,8 @@ class RepoQueryCommand(commands.Command):
             q = q.filter(suggests__glob=self.opts.whatsuggests)
         if self.opts.latest_limit:
             q = q.latest(self.opts.latest_limit)
+        # reduce a query to security upgrades if they are specified
+        q = self.base._merge_update_filters(q, warning=False)
         if self.opts.srpm:
             pkg_list = []
             for pkg in q:
