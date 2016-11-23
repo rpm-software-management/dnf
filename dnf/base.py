@@ -1903,8 +1903,18 @@ class Base(object):
             if key == 'minimal':
                 return t
             else:
-                pkg_names = [pkg_name for pkg_name in t._name_dict().keys()]
-                return q.filter(name=pkg_names)
+                # return all packages with eq or higher version
+                latest_pkgs = None
+                pkgs_dict = t._name_dict()
+                for pkg_list in pkgs_dict.values():
+                    pkg_list.sort()
+                    pkg = pkg_list[0]
+                    if latest_pkgs is None:
+                        latest_pkgs = q.filter(name=pkg.name, evr__gte=pkg.evr)
+                    else:
+                        latest_pkgs = latest_pkgs.union(q.filter(
+                            name=pkg.name, evr__gte=pkg.evr))
+                return latest_pkgs
 
     def _get_key_for_package(self, po, askcb=None, fullaskcb=None):
         """Retrieve a key for a package. If needed, use the given
