@@ -1931,9 +1931,8 @@ class Base(object):
             keys = dnf.crypto.retrieve(keyurl, repo)
 
             for info in keys:
-                ts = self._rpmconn.readonly_ts
                 # Check if key is already installed
-                if misc.keyInstalled(ts, info.rpm_id, info.timestamp) >= 0:
+                if misc.keyInstalled(self._ts, info.rpm_id, info.timestamp) >= 0:
                     msg = _('GPG key at %s (0x%s) is already installed')
                     logger.info(msg, keyurl, info.short_id)
                     continue
@@ -1966,7 +1965,7 @@ class Base(object):
                     continue
 
                 # Import the key
-                result = ts.pgpImportPubkey(misc.procgpgkey(info.raw_key))
+                result = self._ts.pgpImportPubkey(misc.procgpgkey(info.raw_key))
                 if result != 0:
                     msg = _('Key import failed (code %d)') % result
                     raise dnf.exceptions.Error(_prov_key_data(msg))
