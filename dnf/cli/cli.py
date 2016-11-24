@@ -554,50 +554,12 @@ class BaseCli(dnf.Base):
         # otherwise, don't prompt
         return False
 
-    @staticmethod
-    def transaction_id_or_offset(extcmd):
-        """Convert user input to a transaction ID or an offset from the end."""
-        try:
-            offset_str, = re.match('^--last(-\d+)?$', extcmd).groups()
-        except AttributeError:  # extcmd does not match the regex.
-            id_ = int(extcmd)
-            if id_ < 0:
-                # Negative return values are reserved for offsets.
-                raise ValueError('bad transaction ID given: %s' % extcmd)
-            return id_
-        else:
-            # Was extcmd '--last-N' or just '--last'?
-            offset = int(offset_str) if offset_str else 0
-            # Return offsets as negative numbers, where -1 means the last
-            # transaction as when indexing sequences.
-            return offset - 1
-
     def _history_get_transactions(self, extcmds):
         if not extcmds:
             logger.critical(_('No transaction ID given'))
             return None
 
-        tids = []
-        last = None
-        for extcmd in extcmds:
-            try:
-                id_or_offset = self.transaction_id_or_offset(extcmd)
-            except ValueError:
-                logger.critical(_('Bad transaction ID given'))
-                return None
-
-            if id_or_offset < 0:
-                if last is None:
-                    cto = False
-                    last = self.history.last(complete_transactions_only=cto)
-                    if last is None:
-                        logger.critical(_('Bad transaction ID given'))
-                        return None
-                tids.append(str(last.tid + id_or_offset + 1))
-            else:
-                tids.append(str(id_or_offset))
-
-        old = self.history.old(tids)
+        old = self.history.old(extcmds)
         if not old:
             logger.critical(_('Not found given transaction ID'))
             return None
