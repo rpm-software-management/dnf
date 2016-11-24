@@ -65,6 +65,16 @@ class CommandsCliTest(support.TestCase):
             ('Cannot undo transaction 1, doing so would result in an '
              'inconsistent package database.',))
 
+    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
+    def test_history_convert_tids(self):
+        """Test history _convert_tids()."""
+        cmd = dnf.cli.commands.HistoryCommand(self.cli)
+        cmd.cli.base.output = mock.MagicMock()
+        cmd.cli.base.output.history.last().tid = 123
+        cmd.cli.base.output.history.search = mock.MagicMock(return_value=[99])
+        support.command_configure(cmd, ['list', '1..5', 'last', 'last-10', 'kernel'])
+        self.assertEqual(cmd._convert_tids(), [1, 2, 3, 4, 5, 99, 113, 123])
+
 
 class CommandTest(support.TestCase):
     def test_canonical(self):

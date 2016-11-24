@@ -90,30 +90,6 @@ class BaseCliTest(support.ResultTestCase):
             mock.call.info('Package %s available, but not installed.', 'lotus'),
             mock.call.info('No match for argument: %s', 'lotus')])
 
-    def test_transaction_id_or_offset_bad(self, _):
-        """Test transaction_id_or_offset with a bad input."""
-        self.assertRaises(ValueError,
-                          dnf.cli.cli.BaseCli.transaction_id_or_offset, 'bad')
-
-    def test_transaction_id_or_offset_last(self, _):
-        """Test transaction_id_or_offset with the zero offset."""
-        id_or_offset = dnf.cli.cli.BaseCli.transaction_id_or_offset('--last')
-        self.assertEqual(id_or_offset, -1)
-
-    def test_transaction_id_or_offset_negativeid(self, _):
-        """Test transaction_id_or_offset with a negative ID."""
-        self.assertRaises(ValueError,
-                          dnf.cli.cli.BaseCli.transaction_id_or_offset, '-1')
-
-    def test_transaction_id_or_offset_offset(self, _):
-        """Test transaction_id_or_offset with an offset."""
-        id_or_offset = dnf.cli.cli.BaseCli.transaction_id_or_offset('--last-1')
-        self.assertEqual(id_or_offset, -2)
-
-    def test_transaction_id_or_offset_positiveid(self, _):
-        """Test transaction_id_or_offset with a positive ID."""
-        id_or_offset = dnf.cli.cli.BaseCli.transaction_id_or_offset('1')
-        self.assertEqual(id_or_offset, 1)
 
 
 @mock.patch('dnf.cli.cli.Cli._read_conf_file')
