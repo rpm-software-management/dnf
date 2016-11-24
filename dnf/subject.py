@@ -78,7 +78,9 @@ class Subject(object):
         if forms is not None:
             kwargs['form'] = forms
         nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
-        return nevra._has_just_name()
+        if nevra:
+            return nevra._has_just_name()
+        return False
 
     def get_best_query(self, sack, with_provides=True, forms=None):
         # :api
