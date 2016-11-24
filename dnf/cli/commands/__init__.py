@@ -938,7 +938,7 @@ class HistoryCommand(Command):
         elif vcmd == 'list':
             ret = self.output.historyListCmd(extcmds)
         elif vcmd == 'info':
-            ret = self.output.historyInfoCmd(extcmds)
+            ret = self.output.historyInfoCmd(extcmds, self.opts.tid)
         elif vcmd == 'undo':
             ret = self._hcmd_undo(extcmds)
         elif vcmd == 'redo':

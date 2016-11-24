@@ -1484,7 +1484,7 @@ Transaction Summary
                     lmark = '>'
                 print(fmt % (old.tid, name, tm, uiacts, num), "%s%s" % (lmark, rmark))
 
-    def historyInfoCmd(self, extcmds):
+    def historyInfoCmd(self, extcmds, pats=[]):
         """Output information about a transaction in history
 
         :param extcmds: list of extra command line arguments
@@ -1495,36 +1495,12 @@ Transaction Summary
             0 = we're done, exit
             1 = we've errored, exit with error string
         """
-        tids = set()
+        tids = extcmds
         mtids = set()
-        pats = []
         old = self.history.last()
         if old is None:
             logger.critical(_('No transactions'))
             return 1, ['Failed history info']
-
-        for tid in extcmds:
-            if self._historyRangeRTIDs(old, tid):
-                # Have a range ... do a "merged" transaction.
-                mtids.add(self._historyRangeRTIDs(old, tid))
-                continue
-
-            try:
-                id_or_offset = self.base.transaction_id_or_offset(tid)
-            except ValueError:
-                # A package pattern.
-                pats.append(tid)
-                continue
-
-            # A transaction ID or an offset from the last transaction ID.
-            tids.add(id_or_offset if id_or_offset >= 0 else
-                     old.tid + id_or_offset + 1)
-        if pats:
-            tids.update(self.history.search(pats))
-        utids = tids.copy()
-        if mtids:
-            mtids = sorted(mtids)
-            tids.update(self._historyRangeTIDs(mtids))
 
         if not tids and len(extcmds) < 2:
             old = self.history.last(complete_transactions_only=False)
@@ -1572,12 +1548,11 @@ Transaction Summary
                     if tid.tid >= bmtid and tid.tid <= emtid:
                         mobj = dnf.yum.history.YumMergedHistoryTransaction(tid)
 
-            if tid.tid in utids:
-                if done:
-                    print("-" * 79)
-                done = True
+            if done:
+                print("-" * 79)
+            done = True
 
-                self._historyInfoCmd(tid, pats)
+            self._historyInfoCmd(tid, pats)
 
         if mobj is not None:
             if done:
