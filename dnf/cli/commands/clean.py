@@ -25,11 +25,14 @@ from dnf.i18n import _, P_
 from dnf.yum import misc
 
 import dnf.cli
+import dnf.exceptions
+import dnf.lock
 import dnf.logging
 import dnf.repo
 import logging
 import os
 import re
+import time
 
 logger = logging.getLogger("dnf")
 
@@ -91,15 +94,29 @@ class CleanCommand(commands.Command):
 
     def run(self):
         cachedir = self.base.conf.cachedir
-        types = set(t for c in self.opts.type for t in _CACHE_TYPES[c])
-        files = list(_tree(cachedir))
-        logger.debug(_('Cleaning data: ' + ' '.join(types)))
+        md_lock = dnf.lock.build_metadata_lock(cachedir, True)
+        download_lock = dnf.lock.build_download_lock(cachedir, True)
+        rpmdb_lock = dnf.lock.build_rpmdb_lock(self.base.conf.persistdir, True)
+        while True:
+            try:
+                with md_lock and download_lock and rpmdb_lock:
+                    types = set(t for c in self.opts.type for t in _CACHE_TYPES[c])
+                    files = list(_tree(cachedir))
+                    logger.debug(_('Cleaning data: ' + ' '.join(types)))
 
-        if 'expire-cache' in types:
-            expired = _cached_repos(files)
-            self.base._repo_persistor.expired_to_add.update(expired)
-            types.remove('expire-cache')
+                    if 'expire-cache' in types:
+                        expired = _cached_repos(files)
+                        self.base._repo_persistor.expired_to_add.update(expired)
+                        types.remove('expire-cache')
 
-        patterns = [dnf.repo.CACHE_FILES[t] for t in types]
-        count = _clean(cachedir, _filter(files, patterns))
-        logger.info(P_('%d file removed', '%d files removed', count) % count)
+                    patterns = [dnf.repo.CACHE_FILES[t] for t in types]
+                    count = _clean(cachedir, _filter(files, patterns))
+                    logger.info(P_('%d file removed', '%d files removed', count) % count)
+                    return
+            except dnf.exceptions.LockError as e:
+                if not self.base.conf.exit_on_lock:
+                    msg = _('Waiting for process with pid %d to finish.' % (e.pid))
+                    logger.info(msg)
+                    time.sleep(3)
+                else:
+                    raise e
