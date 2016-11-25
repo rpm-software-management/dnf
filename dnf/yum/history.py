@@ -652,11 +652,7 @@ class SwdbInterface(object):
 
     def sync_alldb(self, ipkg, pkg_data):
         """ Sync. all the data for rpmdb/yumdb for this installed pkg. """
-        if not (self._save_rpmdb(ipkg) and
-                self.add_pkg_data(ipkg, pkg_data)):
-            self._rollback()
-            return False
-        return True
+        return self._save_rpmdb(ipkg) and self.add_pkg_data(ipkg, pkg_data)
 
     def search(self, patterns, ignore_case=True):
         """ Search for history transactions which contain specified
