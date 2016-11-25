@@ -46,7 +46,8 @@ class UpdateInfoCommand(commands.Command):
     TYPE2LABEL = {hawkey.ADVISORY_BUGFIX: _('bugfix'),
                   hawkey.ADVISORY_ENHANCEMENT: _('enhancement'),
                   hawkey.ADVISORY_SECURITY: _('security'),
-                  hawkey.ADVISORY_UNKNOWN: _('unknown')}
+                  hawkey.ADVISORY_UNKNOWN: _('unknown'),
+                  hawkey.ADVISORY_NEWPACKAGE: _('newpackage')}
 
     aliases = ['updateinfo']
     summary = _('display advisories about packages')
@@ -131,6 +132,8 @@ class UpdateInfoCommand(commands.Command):
             types.add(hawkey.ADVISORY_ENHANCEMENT)
         if {'security', 'sec'} & specs:
             types.add(hawkey.ADVISORY_SECURITY)
+        if 'newpackage' in specs:
+            types.add(hawkey.ADVISORY_NEWPACKAGE)
 
         return (any(fnmatch.fnmatchcase(advisory.id, pat) for pat in specs) or
                 advisory.type in types or
@@ -193,6 +196,7 @@ class UpdateInfoCommand(commands.Command):
         print(_('Updates Information Summary: ') + description)
         # Convert types to strings and order the entries.
         label_counts = [
+            (_('New Package notice(s)'), typ2cnt[hawkey.ADVISORY_NEWPACKAGE]),
             (_('Security notice(s)'), typ2cnt[hawkey.ADVISORY_SECURITY]),
             (_('Bugfix notice(s)'), typ2cnt[hawkey.ADVISORY_BUGFIX]),
             (_('Enhancement notice(s)'), typ2cnt[hawkey.ADVISORY_ENHANCEMENT]),
