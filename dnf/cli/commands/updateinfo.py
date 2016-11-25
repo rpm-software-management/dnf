@@ -330,12 +330,6 @@ class UpdateInfoCommand(commands.Command):
         self.cli._populate_update_security_filter(self.opts, minimal=True)
 
         args = self.opts.spec
-        if self.opts.bugfix:
-            args.append("bugfix")
-        if self.opts.enhancement:
-            args.append("enhancement")
-        if self.opts.security:
-            args.append("security")
         display = self.display_summary
         if self.opts.spec_action == 'list':
             display = self.display_list
