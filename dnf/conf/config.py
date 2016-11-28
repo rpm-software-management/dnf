@@ -757,6 +757,7 @@ class MainConf(BaseConfig):
 
         self._add_option('rpmverbosity', Option('info'))
         self._add_option('strict', BoolOption(True)) # :api
+        self._add_option('skip_broken', BoolOption(False))  # :yum-compatibility
         self._add_option('clean_requirements_on_remove', BoolOption(True))
         self._add_option('history_list_view',
                          SelectionOption('commands',
@@ -818,14 +819,14 @@ class MainConf(BaseConfig):
         return dnf.conf.parser.substitute(root_path, self.substitutions)
 
     def _configure_from_options(self, opts):
-        """Configure parts of CLI from the opts. """
+        """Configure parts of CLI from the opts """
 
         config_args = ['plugins', 'version', 'config_file_path',
                        'debuglevel', 'errorlevel', 'installroot',
                        'best', 'assumeyes', 'assumeno', 'gpgcheck',
                        'showdupesfromrepos', 'plugins', 'ip_resolve',
                        'rpmverbosity', 'disable_excludes',
-                       'color', 'downloadonly', 'exclude', 'excludepkgs']
+                       'color', 'downloadonly', 'exclude', 'excludepkgs', "skip_broken"]
 
         for name in config_args:
             value = getattr(opts, name, None)
@@ -847,6 +848,15 @@ class MainConf(BaseConfig):
                 else:
                     msg = "Main config did not have a %s attr. before setopt"
                     logger.warning(msg, name)
+
+    def _adjust_conf_options(self):
+        """Adjust conf options interactions"""
+
+        skip_broken = self._get_option('skip_broken')
+        skip_broken_val = skip_broken._get()
+        if skip_broken_val:
+            strict = self._get_option('strict')
+            strict._set(not skip_broken_val, skip_broken._get_priority())
 
     @property
     def releasever(self):

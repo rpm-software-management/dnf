@@ -181,6 +181,9 @@ class OptionParser(argparse.ArgumentParser):
         main_parser.add_argument("--setopt", dest="setopts", default=[],
                                  action=self._SetoptsCallback,
                                  help=_("set arbitrary config and repo options"))
+        main_parser.add_argument("--skip-broken", dest="skip_broken", action="store_true",
+                                 default=None,
+                                 help=_("resolve depsolve problems by skipping packages"))
         main_parser.add_argument('-h', '--help', '--help-cmd',
                                  action="store_true", dest='help',
                                  help=_("show command help"))
