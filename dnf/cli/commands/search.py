@@ -75,7 +75,7 @@ class SearchCommand(commands.Command):
         limit = None
         if not self.base.conf.showdupesfromrepos:
             limit = self.base.sack.query().filter(pkg=counter.keys()).latest()
-        for pkg in counter.sorted(reverse=True, limit_to=limit):
+        for pkg in counter.sorted(key=lambda x: x.name, limit_to=limit):
             if matched_needles != counter.matched_needles(pkg):
                 matched_needles = counter.matched_needles(pkg)
                 _print_match_section(section_text, matched_needles)
