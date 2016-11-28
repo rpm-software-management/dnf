@@ -51,6 +51,7 @@ class CheckCommand(commands.Command):
                             action='append_const', const='provides',
                             help=_('show problems with provides'))
         # Add compatibility with yum but invisible in help
+        # In choices [] allows to return empty list if no argument otherwise it fails
         parser.add_argument('check_yum_types', nargs='*', choices=[
             'all', 'dependencies', 'duplicates', 'obsoleted', 'provides', []],
                             help=argparse.SUPPRESS)
