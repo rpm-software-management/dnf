@@ -25,7 +25,7 @@ class UpgradeTo(support.ResultTestCase):
     def test_upgrade_to(self):
         base = support.MockBase("main", "updates")
         sack = base.sack
-        base.upgrade_to("pepper-20-1.x86_64")
+        base.upgrade("pepper-20-1.x86_64")
         new_set = support.installed_but(sack, "pepper").run()
         q = sack.query().available()._nevra("pepper-20-1.x86_64")
         new_set.extend(q)
@@ -36,7 +36,7 @@ class UpgradeTo(support.ResultTestCase):
         base = support.MockBase('updates', 'third_party')
         base.init_sack()
 
-        base.upgrade_to('hole-1-2.x86_64', 'updates')
+        base.upgrade('hole-1-2.x86_64', 'updates')
 
         self.assertResult(base, itertools.chain(
             base.sack.query().installed().filter(name__neq='hole'),
@@ -47,6 +47,6 @@ class UpgradeTo(support.ResultTestCase):
         base = support.MockBase('main', 'updates')
         base.init_sack()
 
-        base.upgrade_to('hole-1-2.x86_64', 'main')
+        base.upgrade('hole-1-2.x86_64', 'main')
 
         self.assertResult(base, base.sack.query().installed())
