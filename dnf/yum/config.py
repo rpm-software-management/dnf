@@ -52,7 +52,7 @@ class YumConf(MainConf):
             'repo_gpgcheck', 'reposdir', 'reset_nice', 'retries', 'rpmverbosity',
             'showdupesfromrepos', 'sslcacert', 'sslclientcert', 'sslclientkey',
             'sslverify', 'strict', 'throttle', 'tsflags',
-            'upgrade_group_objects_upgrade', 'username'])
+            'upgrade_group_objects_upgrade', 'username', 'skip_broken'])
 
         self._add_option('exclude', self._get_option('excludepkgs'))
         self._add_option('persistdir', PathOption("/var/lib/yum"))
@@ -64,10 +64,19 @@ class YumConf(MainConf):
         self._add_option('timeout', SecondsOption(30))
         self._add_option('metadata_expire', SecondsOption(60 * 60 * 6))  # 6 hours
         self._add_option('best', BoolOption(True))
-        self._add_option('skip_broken', not self._get_option("best"))
         self._add_option('clean_requirements_on_remove', BoolOption(False))
 
     def _add_inherited_option(self, parent, options):
         for option_name in options:
             self._add_option(option_name,
                              inherit(parent._get_option(option_name)))
+
+    def _adjust_conf_options(self):
+        """Adjust conf options interactions"""
+
+        MainConf._adjust_conf_options(self)
+        skip_broken = self._get_option('skip_broken')
+        skip_broken_val = skip_broken._get()
+        if skip_broken_val:
+            best = self._get_option('best')
+            best._set(not skip_broken_val, skip_broken._get_priority())

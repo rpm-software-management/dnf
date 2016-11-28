@@ -31,10 +31,13 @@ class YumOptionParser(OptionParser):
         self._yum_parser()
 
     def _yum_parser(self):
+        """Yum compatibility options
+        Example:
         self.main_parser.add_argument(
             "--skip-broken", dest="skip_broken",
             action="store_true", default=None,
-            help=_("resolve depsolve problems by skipping packages"))
+            help=_("resolve depsolve problems by skipping packages"))    """
+        pass
 
     @staticmethod
     def transform_yum_arg(args):
@@ -50,14 +53,6 @@ class YumOptionParser(OptionParser):
             transformed.append(provides)
 
         return transformed
-
-    def parse_main_args(self, args):
-        opts = super(YumOptionParser, self).parse_main_args(args)
-        opts.best = None
-        if opts.skip_broken is None:
-            opts.best = True
-
-        return opts
 
     def parse_command_args(self, command, args):
         opts = super(YumOptionParser, self).parse_command_args(command, args)
