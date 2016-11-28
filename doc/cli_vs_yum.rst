@@ -24,26 +24,22 @@
     .. contents::
 
 ======================
- No ``--skip-broken``
+ ``--skip-broken``
 ======================
-
-The ``--skip-broken`` command line switch is not recognized by DNF.
 
 For install command:
 
-Instead of ``--skip-broken``, the new option ``--setopt=strict=0`` could be used
-with DNF to skip all unavailable packages or packages with broken dependencies
-given to DNF command without raising the error causing the whole operation to
-fail. This behavior can be set as default in dnf.conf file. See :ref:`strict
-conf option <strict-label>`.
+The ``--skip-broken`` option is alias for ``--setopt=strict=0``. The both options could be used
+with DNF to skip all unavailable packages or packages with broken dependencies given to DNF command
+without raising the error causing the whole operation to fail. This behavior can be set as default
+in dnf.conf file. See :ref:`strict conf option <strict-label>`.
 
 For upgrade command:
 
-The semantics this was supposed to trigger in Yum is now the default for plain
-``dnf update``. There is no equivalent for ``yum --skip-broken update foo``, as
-silently skipping ``foo`` in this case only amounts to masking an error
-contradicting the user request. To try using the latest versions of packages in
-transactions there is the ``--best`` command line switch.
+The semantics that was supposed to trigger in Yum with ``--skip-broken`` is now set for plain
+``dnf update`` as a default. There is no needs to use ``--skip-broken`` with ``dnf upgrade``
+command. To try using the latest versions of packages in transactions there is the ``--best``
+command line switch.
 
 ========================================
 Update and Upgrade Commands are the Same
