@@ -1089,6 +1089,9 @@ Upgrade Command
     Updates each specified package to the latest available version. Updates
     dependencies as necessary.
 
+``dnf [options] upgrade <package-nevr-specs>...``
+    Upgrades packages to the specified versions.
+
 See also :ref:`\configuration_files_replacement_policy-label`.
 
 .. _upgrade_minimal_command-label:
@@ -1111,7 +1114,7 @@ Update-To Command
 -----------------
 
 ``dnf [options] update-to <package-nevr-specs>...``
-    Deprecated alias for the :ref:`\upgrade_to_command-label`.
+    Deprecated alias for the :ref:`\upgrade_command-label`.
 
 .. _upgrade_to_command-label:
 
@@ -1120,7 +1123,7 @@ Upgrade-To Command
 ------------------
 
 ``dnf [options] upgrade-to <package-nevr-specs>...``
-    Upgrades packages to the specified versions.
+    Deprecated alias for the :ref:`\upgrade_command-label`.
 
 .. _specifying_packages-label:
 

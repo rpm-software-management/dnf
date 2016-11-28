@@ -48,7 +48,6 @@ import dnf.cli.commands.search
 import dnf.cli.commands.updateinfo
 import dnf.cli.commands.upgrade
 import dnf.cli.commands.upgrademinimal
-import dnf.cli.commands.upgradeto
 import dnf.cli.demand
 import dnf.cli.option_parser
 import dnf.conf
@@ -673,7 +672,6 @@ class Cli(object):
         self.register_command(dnf.cli.commands.updateinfo.UpdateInfoCommand)
         self.register_command(dnf.cli.commands.upgrade.UpgradeCommand)
         self.register_command(dnf.cli.commands.upgrademinimal.UpgradeMinimalCommand)
-        self.register_command(dnf.cli.commands.upgradeto.UpgradeToCommand)
         self.register_command(dnf.cli.commands.InfoCommand)
         self.register_command(dnf.cli.commands.ListCommand)
         self.register_command(dnf.cli.commands.ProvidesCommand)
