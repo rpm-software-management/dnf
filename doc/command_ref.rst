@@ -264,6 +264,10 @@ Options
 ``--setopt=<option>=<value>``
     override a config option from the config file. To override config options from repo files, use ``repoid.option`` for the ``<option>``.
 
+``--skip-broken``
+    Resolve depsolve problems by removing packages that are causing problems from the transaction.
+    It is alias for configuration option :ref:`strict <strict-label>` with False value.
+
 ``--showduplicates``
     show duplicates, in repos, in list/search commands
 
