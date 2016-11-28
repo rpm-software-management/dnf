@@ -725,7 +725,7 @@ class Cli(object):
             sys.exit(1)
 
         for repo in notmatch:
-            logger.warning(_("No repository match: %s"), repo)
+            logger.warning(_("No repository matching: %s"), repo)
 
         if self.nogpgcheck:
             for repo in self.base.repos.values():
