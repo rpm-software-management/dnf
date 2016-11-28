@@ -1023,7 +1023,8 @@ The repository-packages command allows the user to run commands on top of all pa
     Update all packages to the highest resolvable version available in the repository.
 
 ``dnf [options] repository-packages <repoid> upgrade-to <package-nevr-specs>...``
-    Update packages to the specified versions that are available in the repository.
+    Update packages to the specified versions that are available in the repository. Upgrade-to is
+    deprecated alias for the upgrade subcommand.
 
 .. _search_command-label:
 
