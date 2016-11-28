@@ -294,14 +294,6 @@ class BaseCli(dnf.Base):
 
         return ypl.updates or ypl.obsoletes
 
-    def upgrade_userlist_to(self, userlist, reponame=None):
-        oldcount = self._goal.req_length()
-        for l in userlist:
-            self.upgrade_to(l, reponame)
-        cnt = self._goal.req_length() - oldcount
-        if cnt <= 0:
-            raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
-
     def distro_sync_userlist(self, userlist):
         """ Upgrade or downgrade packages to match the latest versions available
             in the enabled repositories.
