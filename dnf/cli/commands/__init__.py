@@ -696,7 +696,7 @@ class RepoPkgsCommand(Command):
     class UpgradeSubCommand(SubCommand):
         """Implementation of the upgrade sub-command."""
 
-        aliases = ('upgrade',)
+        aliases = ('upgrade', 'upgrade-to')
 
         def configure(self):
             demands = self.cli.demands
@@ -728,32 +728,11 @@ class RepoPkgsCommand(Command):
             if not done:
                 raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
 
-    class UpgradeToSubCommand(SubCommand):
-        """Implementation of the upgrade-to sub-command."""
-
-        aliases = ('upgrade-to',)
-
-        def configure(self):
-            demands = self.cli.demands
-            demands.sack_activation = True
-            demands.available_repos = True
-            demands.resolving = True
-            demands.root_user = True
-
-        @staticmethod
-        def set_argparser(parser):
-            parser.add_argument('pkg_specs', nargs='+', metavar=_('PACKAGE'))
-
-        def run_on_repo(self):
-            """Execute the command with respect to given arguments *cli_args*."""
-            _checkGPGKey(self.base, self.cli)
-            self.base.upgrade_userlist_to(self.opts.pkg_specs, self.reponame)
-
     SUBCMDS = {CheckUpdateSubCommand, InfoSubCommand, InstallSubCommand,
                ListSubCommand, MoveToSubCommand, ReinstallOldSubCommand,
                ReinstallSubCommand, RemoveOrDistroSyncSubCommand,
                RemoveOrReinstallSubCommand, RemoveSubCommand,
-               UpgradeSubCommand, UpgradeToSubCommand}
+               UpgradeSubCommand}
 
     aliases = ('repository-packages',
                'repo-pkgs', 'repo-packages', 'repository-pkgs')
