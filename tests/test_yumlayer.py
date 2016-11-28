@@ -69,11 +69,6 @@ class YumArgumentParserTest(tests.support.TestCase):
         self.assertEqual(command_opts.command, ['update'])
         self.assertIsNone(arg_opts.best)
 
-    def test_skip_broken_none(self):
-        arg_opts, command_opts = _parse(self.command, ['update'])
-        self.assertEqual(command_opts.command, ['update'])
-        self.assertTrue(arg_opts.best)
-
 
 class YumProvidesCommandTest(tests.support.TestCase):
     def setUp(self):
