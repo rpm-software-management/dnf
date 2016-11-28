@@ -727,11 +727,6 @@ class Cli(object):
         for repo in notmatch:
             logger.warning(_("No repository matching: %s"), repo)
 
-        if self.nogpgcheck:
-            for repo in self.base.repos.values():
-                repo.gpgcheck = False
-                repo.repo_gpgcheck = False
-
         for rid in self.base._repo_persistor.get_expired_repos():
             repo = self.base.repos.get(rid)
             if repo:
