@@ -1497,7 +1497,7 @@ class Base(object):
             return 1
         return 0
 
-    def package_downgrade(self, pkg):
+    def package_downgrade(self, pkg, strict=False):
         # :api
         if pkg._from_system:
             msg = 'downgrade_package() for an installed package.'
@@ -1509,7 +1509,9 @@ class Base(object):
             logger.warning(msg, pkg.name)
             raise dnf.exceptions.MarkingError(_('No match for argument: %s') % pkg.location, pkg.name)
         elif sorted(q)[0] > pkg:
-            self._goal.downgrade_to(pkg)
+            sltr = dnf.selector.Selector(self.sack)
+            sltr.set(pkg=[pkg])
+            self._goal.downgrade_to(select=sltr, optional=(not strict))
             return 1
         else:
             msg = _("Package %s of lower version already installed, "
