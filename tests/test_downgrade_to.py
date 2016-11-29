@@ -18,7 +18,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from tests import support
-
+import dnf
 
 class DowngradeTo(support.ResultTestCase):
 
@@ -27,8 +27,8 @@ class DowngradeTo(support.ResultTestCase):
 
     def test_downgrade_to_lowest(self):
         with support.mock.patch('logging.Logger.warning') as warn:
-            self.base.downgrade_to('hole')
-            self.assertEqual(0, self.base.downgrade_to('hole'))
+            with self.assertRaises(dnf.exceptions.PackagesNotInstalledError):
+                self.base.downgrade_to('hole')
         self.assertResult(self.base, self.base._sack.query().installed())
 
     def test_downgrade_to_name(self):
