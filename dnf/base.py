@@ -1528,7 +1528,9 @@ class Base(object):
         elif not pkg in available:
             raise dnf.exceptions.PackageNotFoundError(_('No match for argument: %s'), pkg.location)
         else:
-            self._goal.install(pkg, optional=(not strict))
+            sltr = dnf.selector.Selector(self.sack)
+            sltr.set(pkg=[pkg])
+            self._goal.install(select=sltr, optional=(not strict))
         return 1
 
     def package_reinstall(self, pkg):
