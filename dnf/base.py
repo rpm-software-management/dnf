@@ -1700,27 +1700,7 @@ class Base(object):
         and then installing an older version.
 
         """
-        subj = dnf.subject.Subject(pkg_spec)
-        q = subj.get_best_query(self.sack)
-        installed = sorted(q.installed())
-        installed_pkg = first(installed)
-        if installed_pkg is None:
-            available_pkgs = q.available()
-            if available_pkgs:
-                raise dnf.exceptions.PackagesNotInstalledError(
-                    'no package matched', pkg_spec, available_pkgs)
-            raise dnf.exceptions.PackageNotFoundError('no package matched',
-                                                      pkg_spec)
-
-        arch = installed_pkg.arch
-        q = self.sack.query().filter(name=installed_pkg.name, arch=arch)
-        avail = [pkg for pkg in q.downgrades() if pkg < installed_pkg]
-        avail_pkg = first(sorted(avail, reverse=True))
-        if avail_pkg is None:
-            return 0
-
-        self._goal.install(avail_pkg)
-        return 1
+        return self.downgrade_to(pkg_spec)
 
     def downgrade_to(self, pkg_spec, strict=False):
         """Downgrade to specific version if specified otherwise downgrades
