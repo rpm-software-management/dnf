@@ -46,9 +46,9 @@ def detect_releasever(installroot):
             raise dnf.exceptions.Error(msg)
         releasever = hdr['version']
         try:
-            off = hdr[getattr(rpm, 'RPMTAG_PROVIDENAME')].index(distroverpkg)
-            flag = hdr[getattr(rpm, 'RPMTAG_PROVIDEFLAGS')][off]
-            ver  = hdr[getattr(rpm, 'RPMTAG_PROVIDEVERSION')][off]
+            off = hdr[rpm.RPMTAG_PROVIDENAME].index(distroverpkg)
+            flag = hdr[rpm.RPMTAG_PROVIDEFLAGS][off]
+            ver = hdr[rpm.RPMTAG_PROVIDEVERSION][off]
             if flag == rpm.RPMSENSE_EQUAL and ver:
                 if hdr['name'] != distroverpkg:
                     # override the package version
