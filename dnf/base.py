@@ -1730,25 +1730,27 @@ class Base(object):
         poss = subj.subj.nevra_possibilities_real(self.sack, allow_globs=True)
         nevra = dnf.util.first(poss)
         if not nevra:
-            raise dnf.exceptions.PackageNotFoundError('no package matched',
-                                                      pkg_spec)
-
+            msg = _('No match for argument: %s') % pkg_spec
+            raise dnf.exceptions.PackageNotFoundError(msg, pkg_spec)
+        done = 0
         q = subj._nevra_to_filters(self.sack.query(), nevra)
         available_pkgs = q.available()
-        test_q = dnf.subject.Subject(nevra.name).get_best_query(self.sack)
-        if not test_q.installed():
-            raise dnf.exceptions.PackagesNotInstalledError(
-                'no package matched', pkg_spec, available_pkgs)
-        downgrade_pkgs = available_pkgs.downgrades().latest()
-        if not downgrade_pkgs:
-            msg = _("Package %s of lowest version already installed, "
-                    "cannot downgrade it.")
-            logger.warning(msg, nevra.name)
-            return 0
-        sltr = dnf.selector.Selector(self.sack)
-        sltr.set(pkg=downgrade_pkgs)
-        self._goal.downgrade_to(select=sltr, optional=(not strict))
-        return 1
+        available_pkg_names = list(available_pkgs._name_dict().keys())
+        q_installed = self.sack.query().installed().filter(name=available_pkg_names)
+        if len(q_installed) == 0:
+            msg = _('Packages for argument %s available, but not installed.') % pkg_spec
+            raise dnf.exceptions.PackagesNotInstalledError(msg, pkg_spec, available_pkgs)
+        for pkg_name in q_installed._name_dict().keys():
+            downgrade_pkgs = available_pkgs.downgrades().latest().filter(name=pkg_name)
+            if not downgrade_pkgs:
+                msg = _("Package %s of lowest version already installed, cannot downgrade it.")
+                logger.warning(msg, pkg_name)
+                continue
+            sltr = dnf.selector.Selector(self.sack)
+            sltr.set(pkg=downgrade_pkgs)
+            self._goal.downgrade_to(select=sltr, optional=(not strict))
+            done = 1
+        return done
 
     def provides(self, provides_spec):
         providers = dnf.query._by_provides(self.sack, provides_spec)

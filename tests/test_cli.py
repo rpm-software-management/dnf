@@ -86,9 +86,6 @@ class BaseCliTest(support.ResultTestCase):
         self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
         self.assertEqual(self._base.downgrade_to.mock_calls, [mock.call('lotus', strict=False)])
-        self.assertEqual(logger.mock_calls, [
-            mock.call.info('Package %s available, but not installed.', 'lotus'),
-            mock.call.info('No match for argument: %s', 'lotus')])
 
 
 

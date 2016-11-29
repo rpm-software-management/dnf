@@ -67,11 +67,8 @@ class DowngradeTest2(support.TestCase):
     def test_downgrade_pkgnevra(self):
         """ Downgrade should handle full NEVRAs. """
         pkg = support.ObjectMatcher(dnf.package.Package, {'name': 'tour'})
-
-        downgraded_count = self._base.downgrade('tour-0:5-0.noarch')
-
-        self.assertEqual(self._goal.mock_calls, [mock.call.install(pkg)])
-        self.assertEqual(downgraded_count, 1)
+        with self.assertRaises(dnf.exceptions.PackagesNotInstalledError):
+            self._base.downgrade('tour-0:5-0.noarch')
 
     def test_downgrade_notinstalled(self):
         pkg = support.ObjectMatcher(dnf.package.Package, {'name': 'lotus'})
