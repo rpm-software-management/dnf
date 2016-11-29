@@ -326,7 +326,7 @@ class BaseCli(dnf.Base):
             msg = _('No packages marked for distribution synchronization.')
             raise dnf.exceptions.Error(msg)
 
-    def downgradePkgs(self, specs=[], file_pkgs=[]):
+    def downgradePkgs(self, specs=[], file_pkgs=[], strict=False):
         """Attempt to take the user specified list of packages or
         wildcards and downgrade them. If a complete version number is
         specified, attempt to downgrade them to the specified version
@@ -350,7 +350,7 @@ class BaseCli(dnf.Base):
         for arg in specs:
             wildcard = True if dnf.util.is_glob_pattern(arg) else False
             try:
-                self.downgrade_to(arg)
+                self.downgrade_to(arg, strict=strict)
             except dnf.exceptions.PackageNotFoundError as err:
                 msg = _('No package %s available.')
                 logger.info(msg, self.output.term.bold(arg))
