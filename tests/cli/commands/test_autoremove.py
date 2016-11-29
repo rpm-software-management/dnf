@@ -28,7 +28,7 @@ class AutoRemoveCommandTest(support.ResultTestCase):
         base = support.MockBase()
         q = base.sack.query()
         pkgs = list(q.filter(name='librita')) + list(q.filter(name='pepper'))
-        history = base._history
+        history = base.history
         for pkg in pkgs:
             history.mark_user_installed(pkg, True)
 

@@ -155,6 +155,7 @@ class Base(dnf.Base):
     def __init__(self, *args, **kwargs):
         with mock.patch('dnf.rpm.detect_releasever', return_value=69):
             super(Base, self).__init__(*args, **kwargs)
+            self._getHistory()
 
 # mock objects
 
@@ -162,7 +163,7 @@ def mock_comps(seed_persistor):
     comps = dnf.comps.Comps()
     comps._add_from_xml_filename(COMPS_PATH)
 
-    persistor = MockGroupPersistor()
+    persistor = dnf.persistor.GroupPersistor("/should-not-exist-bad-test/persist")
     if seed_persistor:
         p_env = persistor.environment('sugar-desktop-environment')
         p_env.grp_types = dnf.comps.ALL_TYPES
@@ -217,7 +218,7 @@ class _BaseStubMixin(object):
         return self.init_sack()
 
     def _activate_group_persistor(self):
-        return MockGroupPersistor()
+        return dnf.persistor.GroupPersistor("/should-not-exist-bad-test/persist")
 
     def _build_comps_solver(self):
         return dnf.comps.Solver(self._group_persistor, self._comps,
@@ -466,13 +467,6 @@ class FakePersistor(object):
 
     def since_last_makecache(self):
         return None
-
-class MockGroupPersistor(dnf.persistor.GroupPersistor):
-    """Empty persistor that doesn't need any I/O."""
-    def __init__(self):
-        self.db = self._empty_db()
-        self._original = self._empty_db()
-
 
 # object matchers for asserts
 
