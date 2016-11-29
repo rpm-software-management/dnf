@@ -1722,7 +1722,7 @@ class Base(object):
         self._goal.install(avail_pkg)
         return 1
 
-    def downgrade_to(self, pkg_spec):
+    def downgrade_to(self, pkg_spec, strict=False):
         """Downgrade to specific version if specified otherwise downgrades
         to one version lower than the package installed.
         """
@@ -1745,7 +1745,9 @@ class Base(object):
                     "cannot downgrade it.")
             logger.warning(msg, nevra.name)
             return 0
-        dnf.util.mapall(self._goal.downgrade_to, downgrade_pkgs)
+        sltr = dnf.selector.Selector(self.sack)
+        sltr.set(pkg=downgrade_pkgs)
+        self._goal.downgrade_to(select=sltr, optional=(not strict))
         return 1
 
     def provides(self, provides_spec):
