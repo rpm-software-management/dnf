@@ -331,7 +331,7 @@ class BaseCli(dnf.Base):
         oldcount = self._goal.req_length()
         for pkg in file_pkgs:
             try:
-                self.package_downgrade(pkg)
+                self.package_downgrade(pkg, strict=strict)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
             except dnf.exceptions.MarkingError as e:
