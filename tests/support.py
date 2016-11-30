@@ -159,11 +159,11 @@ class Base(dnf.Base):
 
 # mock objects
 
-def mock_comps(seed_persistor):
+def mock_comps(history, seed_persistor):
     comps = dnf.comps.Comps()
     comps._add_from_xml_filename(COMPS_PATH)
 
-    persistor = dnf.persistor.GroupPersistor("/should-not-exist-bad-test/persist")
+    persistor = history.activate_group()
     if seed_persistor:
         p_env = persistor.environment('sugar-desktop-environment')
         p_env.grp_types = dnf.comps.ALL_TYPES
@@ -176,7 +176,7 @@ def mock_comps(seed_persistor):
         p_som.pkg_types = dnf.comps.MANDATORY
         p_som.full_list.extend(('pepper', 'trampoline', 'lotus'))
 
-    return comps, persistor
+    return comps
 
 
 def mock_logger():
@@ -255,7 +255,7 @@ class _BaseStubMixin(object):
                          demands=dnf.cli.demand.DemandSheet())
 
     def read_mock_comps(self, seed_persistor=True):
-        self._comps, self._group_persistor = mock_comps(seed_persistor)
+        self._comps = mock_comps(self.history, seed_persistor)
         return self._comps
 
     def read_all_repos(self, opts=None):

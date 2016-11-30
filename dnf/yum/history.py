@@ -422,13 +422,21 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
 
 class SwdbInterface(object):
     def __init__(self, db_path, root='/', releasever=""):
-        self.swdb = Dnf.Swdb.new(db_path, releasever)
-        self.releasever = releasever
+        self.path = os.path.join(root, db_path)
+        self.swdb = Dnf.Swdb.new(self.path, str(releasever))
+        self.releasever = str(releasever)
         self.addon_data = _addondata(db_path, root)
+        self.group = None
         if not self.swdb.exist():
+            if not os.path.exists(self.path):
+                os.makedirs(self.path)
             self.swdb.create_db()
             # does nothing when there is nothing to transform
             swdb_transformer.run(output_file=self.swdb.get_path())
+    
+    def activate_group(self):
+        self.group = GroupPersistor(self.swdb)
+        return self.group
 
     def close(self):
         self.swdb.close()
@@ -463,8 +471,10 @@ class SwdbInterface(object):
                 tids[i] = int(value)
         return self.swdb.trans_old(tids, limit, complete_transactions_only)
 
-    def _log_group_trans(self, tid, groups_installed=[], groups_removed=[]):
-        self.swdb.log_group_trans(tid, groups_installed, groups_removed)
+    def _log_group_trans(self, tid):
+        installed = self.group.groups_installed
+        removed = self.group.groups_removed
+        self.swdb.log_group_trans(tid, installed, removed)
 
     def set_reason(self, nvra, reason):
         self.swdb.set_reason(str(nvra), reason)
@@ -522,8 +532,7 @@ class SwdbInterface(object):
     original TD_ID binding
     '''
     def beg(self, rpmdb_version, using_pkgs, tsis, skip_packages=[],
-            rpmdb_problems=[], cmdline=None, groups_installed=[],
-            groups_removed=[]):
+            rpmdb_problems=[], cmdline=None):
         if cmdline:
             self._tid = self.swdb.trans_beg(
                 str(int(time.time())),
@@ -550,7 +559,8 @@ class SwdbInterface(object):
                     str(tsi.reason),
                     state
                 )
-        self._log_group_trans(self._tid, groups_installed, groups_removed)
+        if self.group:
+            self._log_group_trans(self._tid)
 
     def pid_by_nvra(self, nvra):
         return self.swdb.pid_by_nvra(nvra)
@@ -677,6 +687,63 @@ class SwdbInterface(object):
 
     def load_output(self, tid):
         return self.swdb.load_output(tid)
+
+
+class GroupPersistor(object):
+
+    def __init__(self, swdb):
+        self._commit = False
+        self.swdb = swdb
+        self.groups_installed = []
+        self.groups_removed = []
+
+    def commit(self):
+        if self.groups_installed:
+            self.swdb.groups_commit(list(
+                pkg.name_id for pkg in self.groups_installed)
+            )
+        for group in self.groups_removed:
+            self.swdb.uninstall_group(group)
+
+    def new_group(self, name_id, name, ui_name, is_installed,
+                  pkg_types, grp_types):
+        group = Dnf.SwdbGroup.new(name_id, name, ui_name, is_installed,
+                                  pkg_types, grp_types, self.swdb)
+        return group
+
+    def new_env(self, name_id, name, ui_name, pkg_types, grp_types):
+        env = Dnf.SwdbEnv.new(name_id, name, ui_name, pkg_types, grp_types,
+                              self.swdb)
+        return env
+
+    def environment(self, name_id):
+        if type(name_id) == Dnf.SwdbEnv:
+            return self.swdb.get_env(name_id.name_id)
+        else:
+            return self.swdb.get_env(name_id)
+
+    def environments(self):
+        return self.swdb.env_by_pattern("%")
+
+    def environments_by_pattern(self, pattern, case_sensitive=False):
+        return self.swdb.env_by_pattern(pattern)
+
+    def group(self, gid):
+        if isinstance(gid, Dnf.SwdbGroup):
+            gid = gid.name_id
+        return self.swdb.get_group(gid)
+
+    def get_group_type(self):
+        return Dnf.SwdbGroup
+
+    def get_env_type(self):
+        return Dnf.SwdbEnv
+
+    def groups(self):
+        return self.swdb.groups_by_pattern("%")  # sqlite3 wildcard
+
+    def groups_by_pattern(self, pattern, case_sensitive=False):
+        return self.swdb.groups_by_pattern(pattern)
 
 
 class _addondata(object):

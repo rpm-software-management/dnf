@@ -36,65 +36,9 @@ import json
 import logging
 import os
 import re
-gi.require_version('Dnf', '1.0')  # nopep8
-from gi.repository import Dnf
 
 logger = logging.getLogger("dnf")
 
-class GroupPersistor(object):
-
-    def __init__(self, persistdir, comps=None):
-        self._commit = False
-        self._comps = comps
-        self.swdb = Dnf.Swdb()
-        self.groups_installed = []
-        self.groups_removed = []
-
-    def commit(self):
-        if self.groups_installed:
-            self.swdb.groups_commit(list(
-                pkg.name_id for pkg in self.groups_installed)
-            )
-        for group in self.groups_removed:
-            self.swdb.uninstall_group(group)
-
-    def new_group(self, name_id, name, ui_name, is_installed,
-                  pkg_types, grp_types):
-        group = Dnf.SwdbGroup.new(name_id, name, ui_name, is_installed,
-                                  pkg_types, grp_types, self.swdb)
-        return group
-
-    def new_env(self, name_id, name, ui_name, pkg_types, grp_types):
-        env = Dnf.SwdbEnv.new(name_id, name, ui_name, pkg_types, grp_types,
-                              self.swdb)
-        return env
-
-    def environment(self, name_id):
-        if type(name_id) == Dnf.SwdbEnv:
-            return self.swdb.get_env(name_id.name_id)
-        else:
-            return self.swdb.get_env(name_id)
-
-    def environments(self):
-        return self.swdb.env_by_pattern("%")
-
-    def environments_by_pattern(self, pattern, case_sensitive=False):
-        return self.swdb.env_by_pattern(pattern)
-
-    def group(self, id_):
-        return self.swdb.get_group(id_)
-
-    def get_group_type(self):
-        return Dnf.SwdbGroup
-
-    def get_env_type(self):
-        return Dnf.SwdbEnv
-
-    def groups(self):
-        return self.swdb.groups_by_pattern("%")  # sqlite3 wildcard
-
-    def groups_by_pattern(self, pattern, case_sensitive=False):
-        return self.swdb.groups_by_pattern(pattern)
 
 class JSONDB(object):
 

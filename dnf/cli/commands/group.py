@@ -74,7 +74,7 @@ class GroupCommand(commands.Command):
     # FIXME this is little bit buggy
     def _environment_lists(self, patterns):
         def available_pred(env):
-            env_found = self.base._group_persistor.environment(env.id)
+            env_found = self.base.history.group.environment(env.id)
             if env_found:
                 return not env_found.is_installed()
             else:
@@ -90,7 +90,7 @@ class GroupCommand(commands.Command):
 
     def _group_lists(self, uservisible, patterns):
         def installed_pred(group):
-            group_found = self.base._group_persistor.group(group.id)
+            group_found = self.base.history.group.group(group.id)
             if group_found:
                 return group_found.is_installed
             else:
@@ -231,7 +231,7 @@ class GroupCommand(commands.Command):
         return 0, []
 
     def _mark_install(self, patterns):
-        prst = self.base._group_persistor
+        prst = self.base.history.group
         q = CompsQuery(self.base.comps, prst,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
@@ -261,7 +261,7 @@ class GroupCommand(commands.Command):
         prst.commit()
 
     def _mark_remove(self, patterns):
-        prst = self.base._group_persistor
+        prst = self.base.history.group
         q = CompsQuery(self.base.comps, prst,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.INSTALLED)

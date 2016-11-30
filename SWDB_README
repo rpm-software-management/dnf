@@ -1,5 +1,42 @@
-You will need some environment variables to get things to work...
-examle:
+#You will need some environment variables to get things to work...
+#examle:
 #!/bin/bash
 #run dnf
-GI_TYPELIB_PATH="/usr/local/lib64/girepository-1.0/" LD_LIBRARY_PATH="/usr/local/lib64/" PYTHONPATH="/home/edynox/devel/dnf/" /home/edynox/devel/dnf/bin/dnf-2 "$@"
+#export GI_TYPELIB_PATH="/usr/local/lib64/girepository-1.0/"
+#export LD_LIBRARY_PATH="/usr/local/lib64/"
+#export PYTHONPATH="/home/edynox/devel/dnf/"
+#/home/edynox/devel/dnf/bin/dnf-2 "$@"
+
+#Here is testing configuration for docker
+FROM fedora
+ENV LC_ALL C.UTF-8
+RUN dnf -y update
+RUN dnf install -y 'dnf-command(copr)'
+RUN dnf copr enable -y rpmsoftwaremanagement/dnf-nightly
+RUN dnf copr enable -y ignatenkobrain/rpm-gitoverlay
+RUN dnf install -y rpm-gitoverlay
+RUN dnf install -y vim jenkins fedpkg jq python3-copr python3-beautifulsoup4 python3-requests python python3 git
+RUN adduser test
+RUN dnf -y install bzip2-devel expat-devel gcc-c++ libdb-devel perl-devel ruby-devel swig xz-devel
+RUN dnf -y install doxygen gpgme-devel libattr-devel python-flask python3-flask python3-pyxattr python3-sphinx
+RUN dnf -y install drpm-devel file-devel libxml2-devel sqlite-devel
+RUN dnf -y update
+
+RUN cd /home/test && git clone https://github.com/edynox/libhif && git clone https://github.com/edynox/dnf
+RUN dnf builddep -y /home/test/libhif/libdnf.spec
+RUN dnf builddep -y /home/test/dnf/dnf.spec
+
+RUN dnf install -y python-gobject python3-gobject
+
+RUN cd /home/test/libhif && cmake . && make && make install
+
+RUN cd /home/test/dnf && cmake . && make
+
+ENV GI_TYPELIB_PATH "/usr/local/lib64/girepository-1.0/"
+ENV LD_LIBRARY_PATH "/usr/local/lib64/"
+ENV PYTHONPATH "/home/test/dnf/"
+RUN /home/test/dnf/bin/dnf-2 install -y cowsay
+RUN /home/test/dnf/bin/dnf-2 remove -y cowsay
+RUN /home/test/dnf/bin/dnf-2 history
+RUN /home/test/dnf/bin/dnf-2 history info
+

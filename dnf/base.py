@@ -84,7 +84,6 @@ class Base(object):
         self._tempfiles = set()
         self._trans_tempfiles = set()
         self._ds_callback = dnf.callback.Depsolve()
-        self._group_persistor = None
         self._logging = dnf.logging.Logging()
         self._repos = dnf.repodict.RepoDict()
         self._rpm_probfilter = set([rpm.RPMPROB_FILTER_OLDPACKAGE])
@@ -368,7 +367,7 @@ class Base(object):
                           "'%s'."), "dnf clean packages")
 
         # Do not trigger the lazy creation:
-        if self._history is not None:
+        if self.history is not None:
             self.history.close()
         self._store_persistent_data()
         self._closeRpmDB()
@@ -395,8 +394,8 @@ class Base(object):
             self._goal = None
             if self._sack is not None:
                 self._goal = dnf.goal.Goal(self._sack)
-            if self._group_persistor is not None:
-                self._group_persistor = self._activate_group_persistor()
+            if self.history.group is not None:
+                self.history.activate_group()
 
     def _closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""
@@ -447,9 +446,6 @@ class Base(object):
         del self._priv_ts
         self._priv_ts = None
 
-    def _activate_group_persistor(self):
-        return dnf.persistor.GroupPersistor(self.conf.persistdir, self._comps)
-
     def read_comps(self, arch_filter=False):
         # :api
         """Create the groups object to access the comps metadata."""
@@ -483,7 +479,7 @@ class Base(object):
                 msg = _('Failed to add groups file for repository: %s - %s')
                 logger.critical(msg, repo.id, e)
 
-        self._group_persistor = self._activate_group_persistor()
+        self.history.activate_group()
         if arch_filter:
             self._comps._i.arch_filter(
                 [self._conf.substitutions['basearch']])
@@ -507,7 +503,7 @@ class Base(object):
                        fset=lambda self, value: setattr(
                            self, "_history", value),
                        fdel=lambda self: setattr(self, "_history", None),
-                       doc="Yum History Object")
+                       doc="DNF SWDB Interface Object")
 
     def _goal2transaction(self, goal):
         ts = dnf.transaction.Transaction()
@@ -607,9 +603,9 @@ class Base(object):
             # which could prevent them from upgrade, downgrade
             # to prevent "conflicting job" error it's not applied
             # to "remove" and "reinstall" commands
+            if not self.history.group:
+                self.history.activate_group()
 
-            if not self._group_persistor:
-                self._group_persistor = self._activate_group_persistor()
             solver = self._build_comps_solver()
             solver._exclude_packages_from_installed_groups(self)
 
@@ -641,9 +637,6 @@ class Base(object):
         if exc is not None:
             raise exc
 
-        # if self._group_persistor:
-        #    installed = self.sack.query().installed()
-        #    self._group_persistor.update_group_env_installed(installed, goal)
         self._plugins.run_resolved()
         return got_transaction
 
@@ -653,11 +646,6 @@ class Base(object):
             display = [display]
         display = \
             [dnf.yum.rpmtrans.LoggingTransactionDisplay()] + list(display)
-
-        if not self.transaction:
-            if self._group_persistor:
-                self._group_persistor.commit()
-            return
 
         logger.info(_('Running transaction check'))
         lock = dnf.lock.build_rpmdb_lock(self.conf.persistdir,
@@ -713,8 +701,8 @@ class Base(object):
             self._run_transaction(cb=cb)
         timer()
         self._plugins.run_transaction()
-        if self._group_persistor and self._trans_success:
-            self._group_persistor.commit()
+        if self.history.group and self._trans_success:
+            self.history.group.commit()
 
     def _trans_error_summary(self, errstring):
         """Parse the error string for 'interesting' errors which can
@@ -771,11 +759,8 @@ class Base(object):
                 cmdline = ' '.join(self.cmds)
             _grp_i = []
             _grp_r = []
-            if self._group_persistor:
-                _grp_i = self._group_persistor.groups_installed
-                _grp_r = self._group_persistor.groups_removed
             self.history.beg(rpmdbv, using_pkgs, list(self.transaction),
-                             [], [], cmdline, _grp_i, _grp_r)
+                             [], [], cmdline)
             # write out our config and repo data to additional history info
             self._store_config_in_history()
 
@@ -1372,7 +1357,7 @@ class Base(object):
             except AttributeError:
                 return 'unknown'
 
-        return dnf.comps.Solver(self._group_persistor, self._comps, reason_fn)
+        return dnf.comps.Solver(self.history.group, self._comps, reason_fn)
 
     def environment_install(self, env_id, types, exclude=None, strict=True):
         solver = self._build_comps_solver()
@@ -1434,7 +1419,7 @@ class Base(object):
         return self._add_comps_trans(trans)
 
     def env_group_install(self, patterns, types, strict=True):
-        q = CompsQuery(self.comps, self._group_persistor,
+        q = CompsQuery(self.comps, self.history.group,
                        CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
                        CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
         cnt = 0
@@ -1451,7 +1436,6 @@ class Base(object):
             for env_id in res.environments:
                 cnt += self.environment_install(env_id, types, strict=strict)
         if not done and strict:
-            # self._group_persistor._rollback()
             raise dnf.exceptions.Error(_('Nothing to do.'))
         return cnt
 
@@ -1461,7 +1445,7 @@ class Base(object):
         return self._add_comps_trans(trans)
 
     def env_group_remove(self, patterns):
-        q = CompsQuery(self.comps, self._group_persistor,
+        q = CompsQuery(self.comps, self.history.group,
                        CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
                        CompsQuery.INSTALLED)
         try:
@@ -1477,7 +1461,7 @@ class Base(object):
         return cnt
 
     def env_group_upgrade(self, patterns):
-        q = CompsQuery(self.comps, self._group_persistor,
+        q = CompsQuery(self.comps, self.history.group,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.INSTALLED)
         res = q.get(*patterns)
