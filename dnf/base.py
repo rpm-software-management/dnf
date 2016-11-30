@@ -1565,7 +1565,9 @@ class Base(object):
             logger.warning(msg, pkg.name)
             raise dnf.exceptions.MarkingError(_('No match for argument: %s') % pkg.location, pkg.name)
         elif sorted(q)[-1] < pkg:
-            self._goal.upgrade_to(pkg)
+            sltr = dnf.selector.Selector(self.sack)
+            sltr.set(pkg=[pkg])
+            self._goal.upgrade(select=sltr)
             return 1
         else:
             msg = _("Package %s of higher version already installed, "
