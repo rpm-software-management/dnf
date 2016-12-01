@@ -1766,5 +1766,57 @@
     [
         1380580,
         "dnf 2.0 doesn't accept type=rpm in repo files"
+    ],
+    [
+        1229730,
+        "dnf.subject.Subject() does not honour epoch"
+    ],
+    [
+        1375277,
+        "releasever in baseurl translated to major.minor, not just major (7.3 instead of 7, yum incompatibility)"
+    ],
+    [
+        1384289,
+        "dnf repoquery --quiet outputs \"Last metadata expiration check:\""
+    ],
+    [
+        1398272,
+        "Dnf import of public keys causes stale rpmdb locks left behind"
+    ],
+    [
+        1382224,
+        "RFE: dnf transactions should run in a transient systemd service"
+    ],
+    [
+        1177785,
+        "add hawkey.Selector epoch support"
+    ],
+    [
+        1272109,
+        "Dnf very slow with wildcards."
+    ],
+    [
+        1234930,
+        "[RFE] Add yum-security functionality to DNF"
+    ],
+    [
+        1341086,
+        "dnf install exists with 0 even if it did not install all packages"
+    ],
+    [
+        1382247,
+        "installonlypkgs doesn't work by provides"
+    ],
+    [
+        1381216,
+        "--nogpgcheck doesn't work properly"
+    ],
+    [
+        1381432,
+        "L10N - update DNF 2.0 strings in Zanata so we can translate and fix tiny localization issues"
+    ],
+    [
+        1332830,
+        "DNF builddep is not consistently installing packages providing capabilities properly"
     ]
 ]
