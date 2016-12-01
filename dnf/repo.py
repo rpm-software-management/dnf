@@ -465,6 +465,7 @@ class Repo(dnf.conf.RepoConf):
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
         self._key_import = _NullKeyImport()
         self.metadata = None  # :api
+        self.name = name  # :api
         self._sync_strategy = self.DEFAULT_SYNC
         self._substitutions = dnf.conf.substitutions.Substitutions()
         self._max_mirror_tries = 0  # try them all
@@ -613,7 +614,7 @@ class Repo(dnf.conf.RepoConf):
 
     def _handle_load_core(self, handle):
         if handle.progresscb:
-            self._md_pload.start(self.name)
+            self._md_pload.start(self.name or self.id or 'unknown')
         result = handle._perform()
         if handle.progresscb:
             self._md_pload.end()
