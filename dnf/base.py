@@ -64,6 +64,7 @@ import os
 import operator
 import re
 import rpm
+import sys
 import time
 import shutil
 
@@ -112,7 +113,6 @@ class Base(object):
             self._tempfiles.update(files)
 
     def _add_repo_to_sack(self, repo):
-        repo.load()
         hrepo = repo._hawkey_repo
         hrepo.repomd_fn = repo._repomd_fn
         hrepo.primary_fn = repo._primary_fn
@@ -312,6 +312,18 @@ class Base(object):
                 errors = []
                 mts = 0
                 age = time.time()
+
+                repos_without_local_metadata = []
+                for r in self.repos.iter_enabled():
+                    try:
+                        r.load()
+                        if not r.metadata:
+                            repos_without_local_metadata.append(r)
+                    except dnf.exceptions.RepoError as e:
+                        self.handle_repo_error(r, errors, e)
+                self.download_metadata(repos_without_local_metadata)
+
+                dnf.util._terminal_messenger('print', _("Loading repositories."), sys.stdout)
                 for r in self.repos.iter_enabled():
                     try:
                         self._add_repo_to_sack(r)
@@ -323,11 +335,7 @@ class Base(object):
                                      dnf.util.normalize_time(
                                          r.metadata._md_timestamp))
                     except dnf.exceptions.RepoError as e:
-                        r._md_expire_cache()
-                        if r.skip_if_unavailable is False:
-                            raise
-                        errors.append(e)
-                        r.disable()
+                        self.handle_repo_error(r, errors, e)
                 for e in errors:
                     logger.warning(_("%s, disabling."), e)
                 if self.repos._any_enabled():
@@ -342,6 +350,14 @@ class Base(object):
         self._goal = dnf.goal.Goal(self._sack)
         self._plugins.run_sack()
         return self._sack
+
+    @staticmethod
+    def handle_repo_error(repo, errors, exception):
+        repo._md_expire_cache()
+        if repo.skip_if_unavailable is False:
+            raise exception
+        errors.append(exception)
+        repo.disable()
 
     @property
     @dnf.util.lazyattr("_priv_yumdb")
@@ -994,6 +1010,14 @@ class Base(object):
             self.history.end(rpmdbv, 0)
         timer()
         self._trans_success = True
+
+    def download_metadata(self, repos):
+        dnf.repo._download_metadata(repos)
+        for repo in repos:
+            if repo.metadata is None or not repo.metadata.fresh:
+                repo.disable()
+                msg = _("Failed to synchronize cache for repo '%s'") % (repo.id)
+                dnf.util._terminal_messenger('print', msg, sys.stderr)
 
     def download_packages(self, pkglist, progress=None, callback_total=None):
         # :api
