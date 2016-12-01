@@ -341,21 +341,14 @@ class BaseCli(dnf.Base):
                 # no matter what we don't go looking at repos
 
         for arg in specs:
-            wildcard = True if dnf.util.is_glob_pattern(arg) else False
             try:
                 self.downgrade_to(arg, strict=strict)
             except dnf.exceptions.PackageNotFoundError as err:
                 msg = _('No package %s available.')
                 logger.info(msg, self.output.term.bold(arg))
             except dnf.exceptions.PackagesNotInstalledError as err:
-                if not wildcard:
-                # glob pattern should not match not installed packages -> ignore error
-                    for pkg in err.packages:
-                        logger.info(_('Package %s available, but not installed.'),
-                                    self.output.term.bold(pkg.name))
-                        break
-                    logger.info(_('No match for argument: %s'),
-                                self.output.term.bold(err.pkg_spec))
+                logger.info(_('Packages for argument %s available, but not installed.'),
+                            self.output.term.bold(err.pkg_spec))
             except dnf.exceptions.MarkingError:
                 assert False
         cnt = self._goal.req_length() - oldcount
