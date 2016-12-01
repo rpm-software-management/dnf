@@ -42,7 +42,7 @@ API additions in 2.0.0:
 * :meth:`dnf.Base.init_plugins` initializes plugins. It is possible to disable some plugins by passing the list of their name patterns to :attr:`disabled_glob`.
 * :meth:`dnf.Base.configure_plugins` configures plugins by running their :meth:`configure` method.
 * :meth:`dnf.Base.urlopen` opens the specified absolute ``url`` and returns a file object which respects proxy setting even for non-repo downloads
-* Introduced new configuration options: ``clean_requirements_on_remove``, ``deltarpm_percentage``, ``exit_on_lock``, ``get_reposdir``, ``group_package_types``, ``installonlypkgs``, ``keepcache``, ``protected_packages``, ``retries`` and ``upgrade_group_objects_upgrade``. For detailed description see: :doc:`DNF API <api_conf>`.
+* Introduced new configuration options: ``check_config_file_age``, ``clean_requirements_on_remove``, ``deltarpm_percentage``, ``exit_on_lock``, ``get_reposdir``, ``group_package_types``, ``installonlypkgs``, ``keepcache``, ``protected_packages``, ``retries``, ``type``, and ``upgrade_group_objects_upgrade``. For detailed description see: :doc:`DNF API <api_conf>`.
 * Introduced new configuration methods: :meth:`dump` and :meth:`write_raw_configfile`. For detailed description see: :doc:`DNF API <api_conf>`.
 * Introduced :class:`dnf.package.Package` attributes :attr:`debug_name`, :attr:`downloadsize`, :attr:`source_debug_name` and :attr:`source_name`. For detailed description see: :doc:`DNF Package API <api_package>`.
 * :meth:`dnf.Query.extras` returns a new query that limits the result to installed packages that are not present in any repo.
@@ -57,6 +57,7 @@ DNF command changes in 2.0.0:
 * ``dnf [options] makecache timer`` changes to ``dnf [options] makecache --timer``.
 * ``dnf [options] repolist [enabled|disabled|all]`` changes to ``dnf [options] repolist [--enabled|--disabled|--all]``.
 * ``dnf [options] repository-packages <repoid> info command [<package-name-spec>...]`` changes to ``dnf [options] repository-packages <repoid> info --command [<package-name-spec>...]``.
+* ``dnf repoquery --duplicated`` changes to ``dnf repoquery --duplicates``.
 * ``dnf [options] search [all] <keywords>...`` changes to ``dnf [options] search [--all] <keywords>...``.
 * ``dnf [options] updateinfo [<availability>] [<spec>...]`` changes to ``dnf [options] updateinfo [--summary|--list|--info] [<availability>] [<spec>...]``.
 * ``--disablerepo`` :doc:`command line argument <command_ref>` is mutually exclusive with ``--repo``.
@@ -64,6 +65,7 @@ DNF command changes in 2.0.0:
 * ``--installroot`` :doc:`command line argument <command_ref>`. For detailed description see: :doc:`DNF command API <command_ref>`.
 * ``--releasever`` :doc:`command line argument <command_ref>` now doesn't detect release number from running system.
 * ``--repofrompath`` :doc:`command line argument <command_ref>` can now be combined with ``--repo`` instead of ``--enablerepo``.
+* Alternative of yum's ``deplist`` changes from ``dnf repoquery --requires`` to ``dnf repoquery --deplist``.
 
 DNF command additions in 2.0.0:
 
@@ -72,9 +74,24 @@ DNF command additions in 2.0.0:
 * ``dnf [options] repoquery [<select-options>] [<query-options>] [<pkg-spec>]`` searches the available DNF repositories for selected packages and displays the requested information about them. It is an equivalent of ``rpm -q`` for remote repositories.
 * ``dnf [options] repoquery --querytags`` provides list of recognized tags by repoquery option \-\ :ref:`-queryformat <queryformat_repoquery-label>`.
 * ``--repo`` :doc:`command line argument <command_ref>` enables just specific repositories by an id or a glob. Can be used multiple times with accumulative effect. It is basically shortcut for ``--disablerepo="*" --enablerepo=<repoid>`` and is mutually exclusive with ``--disablerepo`` option.
+* New commands have been introduced: ``check`` and ``upgrade-minimal``.
 
 Bugs fixed in 2.0.0:
 
+* :rhbug:`1229730`
+* :rhbug:`1375277`
+* :rhbug:`1384289`
+* :rhbug:`1398272`
+* :rhbug:`1382224`
+* :rhbug:`1177785`
+* :rhbug:`1272109`
+* :rhbug:`1234930`
+* :rhbug:`1341086`
+* :rhbug:`1382247`
+* :rhbug:`1381216`
+* :rhbug:`1381432`
+* :rhbug:`1096506`
+* :rhbug:`1332830`
 * :rhbug:`1348766`
 * :rhbug:`1337731`
 * :rhbug:`1333591`
