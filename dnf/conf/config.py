@@ -178,10 +178,11 @@ class ListAppendOption(ListOption):
     def _set(self, value, priority=PRIO_RUNTIME):
         """Append option's value"""
         new = self._make_value(value, priority)
-        if self._is_default():
-            self._actual = Value(self._default.value + new.value, priority)
-        else:
-            self._actual = Value(self._actual.value + new.value, priority)
+        if new.value is not None:
+            if self._is_default():
+                self._actual = Value(self._default.value + new.value, priority)
+            else:
+                self._actual = Value(self._actual.value + new.value, priority)
 
 
 class UrlOption(Option):
