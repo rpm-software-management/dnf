@@ -464,6 +464,7 @@ class Repo(dnf.conf.RepoConf):
         self._pkgdir = None
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
         self._key_import = _NullKeyImport()
+        self.name = name if name is not None else 'unknown'
         self.metadata = None  # :api
         self._sync_strategy = self.DEFAULT_SYNC
         self._substitutions = dnf.conf.substitutions.Substitutions()
