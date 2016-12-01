@@ -539,7 +539,7 @@ class Solver(object):
         if not p_env:
             p_env = self.persistor.new_env(env_id, env.name, env.ui_name,
                                            pkg_types, grp_types)
-            self.persistor.swdb.add_env(p_env)
+            self.persistor.add_env(p_env)
             p_env.add_exclude(exclude)
             p_env.add_group(list(self._mandatory_group_set(env)))
 
@@ -612,7 +612,7 @@ class Solver(object):
             p_grp = self.persistor.new_group(group_id, group.name,
                                              group.ui_name, 0, pkg_types, 0)
 
-            self.persistor.swdb.add_group(p_grp)
+            self.persistor.add_group(p_grp)
             p_grp.add_exclude(exclude)
             p_grp.add_package(list(self._full_package_set(group)))
 

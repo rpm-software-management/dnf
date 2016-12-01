@@ -433,7 +433,7 @@ class SwdbInterface(object):
             self.swdb.create_db()
             # does nothing when there is nothing to transform
             swdb_transformer.run(output_file=self.swdb.get_path())
-    
+
     def activate_group(self):
         self.group = GroupPersistor(self.swdb)
         return self.group
@@ -593,7 +593,7 @@ class SwdbInterface(object):
 
     def log_scriptlet_output(self, msg):
         if msg is None or not hasattr(self, '_tid'):
-            return # Not configured to run
+            return  # Not configured to run
         for error in msg.splitlines():
             error = ucd(error)
             self.swdb.log_output(self._tid, error)
@@ -744,6 +744,12 @@ class GroupPersistor(object):
 
     def groups_by_pattern(self, pattern, case_sensitive=False):
         return self.swdb.groups_by_pattern(pattern)
+
+    def add_group(self, group):
+        return self.swdb.add_group(group)
+
+    def add_env(self, env):
+        return self.swdb.add_env(env)
 
 
 class _addondata(object):

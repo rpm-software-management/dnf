@@ -75,7 +75,10 @@ class GroupCommandTest(support.TestCase):
 class CompsQueryTest(support.TestCase):
 
     def setUp(self):
-        (self.comps, self.prst) = support.mock_comps(True)
+        self.base = support.MockBase()
+        self.history = self.base.history
+        self.comps = support.mock_comps(self.history, True)
+        self.prst = self.history.group
 
     def test_all(self):
         status_all = CompsQuery.AVAILABLE | CompsQuery.INSTALLED
@@ -94,8 +97,9 @@ class CompsQueryTest(support.TestCase):
             q.get('*er*')
 
     def test_installed(self):
-        q = CompsQuery(self.comps, self.prst, CompsQuery.GROUPS,
-                       CompsQuery.INSTALLED)
-        res = q.get('somerset')
-        self.assertEmpty(res.environments)
-        self.assertCountEqual(res.groups, ('somerset',))
+        groups = self.prst.groups()
+        env = self.prst.environments_by_pattern('somerset')
+        self.assertEmpty(env)
+        self.assertLength(groups, 2)
+        self.assertEqual(groups[0].name, 'somerset')
+        self.assertEqual(groups[1].name, 'Peppers')

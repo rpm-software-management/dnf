@@ -223,7 +223,7 @@ class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
     def test(self):
         """Test whether only upgrades in the repository are listed."""
         for pkg in self.cli.base.sack.query().installed().filter(name='tour'):
-            self.cli.base._history.set_repo(pkg, 'updates')
+            self.cli.base.history.set_repo(pkg, 'updates')
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
@@ -319,7 +319,7 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
     def test_info_all(self):
         """Test whether only packages related to the repository are listed."""
         for pkg in self.cli.base.sack.query().installed().filter(name='pepper'):
-            self.cli.base._history.set_repo(pkg, 'main')
+            self.cli.base.history.set_repo(pkg, 'main')
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
@@ -371,7 +371,7 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
     def test_info_extras(self):
         """Test whether only extras installed from the repository are listed."""
         for pkg in self.cli.base.sack.query().installed().filter(name='tour'):
-            self.cli.base._history.set_repo(pkg, 'unknown')
+            self.cli.base.history.set_repo(pkg, 'unknown')
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
@@ -395,7 +395,7 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
     def test_info_installed(self):
         """Test whether only packages installed from the repository are listed."""
         for pkg in self.cli.base.sack.query().installed().filter(name='pepper'):
-            self.cli.base._history.set_repo(pkg, 'main')
+            self.cli.base.history.set_repo(pkg, 'main')
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
@@ -516,7 +516,7 @@ class RepoPkgsReinstallOldSubCommandTest(support.ResultTestCase):
         """Test whether all packages from the repository are reinstalled."""
         for pkg in self.cli.base.sack.query().installed():
             reponame = 'main' if pkg.name != 'pepper' else 'non-main'
-            self.cli.base._history.set_repo(pkg, reponame)
+            self.cli.base.history.set_repo(pkg, reponame)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         support.command_run(cmd, ['main', 'reinstall-old'])
@@ -594,9 +594,9 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
     def test_run_on_repo_spec_sync(self):
         """Test running with a package which can be synchronized."""
         for pkg in self.cli.base.sack.query().installed():
-            data = self.cli.base._history.SwdbPkgData()
+            data = self.cli.base.history.SwdbPkgData()
             data.from_repo = 'non-distro' if pkg.name == 'pepper' else 'distro'
-            self.cli.base._history.add_pkg_data(pkg, data)
+            self.cli.base.history.add_pkg_data(pkg, data)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         support.command_run(cmd, ['non-distro', 'remove-or-distro-sync', 'pepper'])
@@ -609,9 +609,9 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
     def test_run_on_repo_spec_remove(self):
         """Test running with a package which must be removed."""
         for pkg in self.cli.base.sack.query().installed():
-            data = self.cli.base._history.SwdbPkgData()
+            data = self.cli.base.history.SwdbPkgData()
             data.from_repo = 'non-distro' if pkg.name == 'hole' else 'distro'
-            self.cli.base._history.add_pkg_data(pkg, data)
+            self.cli.base.history.add_pkg_data(pkg, data)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         support.command_run(cmd, ['non-distro', 'remove-or-distro-sync', 'hole'])
@@ -624,9 +624,9 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(support.ResultTestCase):
         """Test running without a package specification."""
         nondist = {'pepper', 'hole'}
         for pkg in self.cli.base.sack.query().installed():
-            data = self.cli.base._history.SwdbPkgData()
+            data = self.cli.base.history.SwdbPkgData()
             data.from_repo = 'non-distro' if pkg.name in nondist else 'distro'
-            self.cli.base._history.add_pkg_data(pkg, data)
+            self.cli.base.history.add_pkg_data(pkg, data)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         support.command_run(cmd, ['non-distro', 'remove-or-distro-sync'])
@@ -689,7 +689,7 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(support.ResultTestCase):
         """Test whether all packages from the repository are reinstalled."""
         for pkg in self.cli.base.sack.query().installed():
             reponame = 'distro' if pkg.name != 'tour' else 'non-distro'
-            self.cli.base._history.set_repo(pkg, reponame)
+            self.cli.base.history.set_repo(pkg, reponame)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         support.command_run(cmd, ['non-distro', 'remove-or-reinstall'])
@@ -703,7 +703,7 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(support.ResultTestCase):
         """Test whether all packages from the repository are removed."""
         for pkg in self.cli.base.sack.query().installed():
             reponame = 'distro' if pkg.name != 'hole' else 'non-distro'
-            self.cli.base._history.set_repo(pkg, reponame)
+            self.cli.base.history.set_repo(pkg, reponame)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         support.command_run(cmd, ['non-distro', 'remove-or-reinstall'])
@@ -727,7 +727,7 @@ class RepoPkgsRemoveSubCommandTest(support.ResultTestCase):
         """Test whether only packages from the repository are removed."""
         for pkg in self.cli.base.sack.query().installed():
             reponame = 'main' if pkg.name == 'pepper' else 'non-main'
-            self.cli.base._history.set_repo(pkg, 'reponame')
+            self.cli.base.history.set_repo(pkg, 'reponame')
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         support.command_run(cmd, ['main', 'remove'])

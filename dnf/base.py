@@ -757,8 +757,6 @@ class Base(object):
                 cmdline = ' '.join(self.args)
             elif hasattr(self, 'cmds') and self.cmds:
                 cmdline = ' '.join(self.cmds)
-            _grp_i = []
-            _grp_r = []
             self.history.beg(rpmdbv, using_pkgs, list(self.transaction),
                              [], [], cmdline)
             # write out our config and repo data to additional history info

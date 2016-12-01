@@ -159,23 +159,29 @@ class Base(dnf.Base):
 
 # mock objects
 
+
 def mock_comps(history, seed_persistor):
     comps = dnf.comps.Comps()
     comps._add_from_xml_filename(COMPS_PATH)
 
     persistor = history.activate_group()
     if seed_persistor:
-        p_env = persistor.environment('sugar-desktop-environment')
-        p_env.grp_types = dnf.comps.ALL_TYPES
-        p_env.pkg_types = dnf.comps.ALL_TYPES
-        p_env.full_list.extend(('Peppers', 'somerset'))
-        p_pep = persistor.group('Peppers')
-        p_pep.pkg_types = dnf.comps.MANDATORY
-        p_pep.full_list.extend(('hole', 'lotus'))
-        p_som = persistor.group('somerset')
-        p_som.pkg_types = dnf.comps.MANDATORY
-        p_som.full_list.extend(('pepper', 'trampoline', 'lotus'))
-
+        name = 'Peppers'
+        pkg_types = dnf.comps.MANDATORY
+        p_pep = persistor.new_group(name, name, name, 0, pkg_types, 0)
+        persistor.add_group(p_pep)
+        p_pep.add_package(['hole', 'lotus'])
+        name = 'somerset'
+        pkg_types = dnf.comps.MANDATORY
+        p_som = persistor.new_group(name, name, name, 0, pkg_types, 0)
+        persistor.add_group(p_pep)
+        p_som.add_package(['pepper', 'trampoline', 'lotus'])
+        name = 'sugar-desktop-environment'
+        grp_types = dnf.comps.ALL_TYPES
+        pkg_types = dnf.comps.ALL_TYPES
+        p_env = persistor.new_env(name, name, name, pkg_types, grp_types)
+        persistor.add_env(p_env)
+        p_env.add_group(['Peppers', 'somerset'])
     return comps
 
 
