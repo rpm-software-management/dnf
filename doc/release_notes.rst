@@ -75,6 +75,7 @@ DNF command additions in 2.0.0:
 * ``dnf [options] repoquery --querytags`` provides list of recognized tags by repoquery option \-\ :ref:`-queryformat <queryformat_repoquery-label>`.
 * ``--repo`` :doc:`command line argument <command_ref>` enables just specific repositories by an id or a glob. Can be used multiple times with accumulative effect. It is basically shortcut for ``--disablerepo="*" --enablerepo=<repoid>`` and is mutually exclusive with ``--disablerepo`` option.
 * New commands have been introduced: ``check`` and ``upgrade-minimal``.
+* New security options introduced: ``bugfix``, ``enhancement``, ``newpackage``, ``security``, ``advisory``, ``bzs``, ``cves``, ``sec-severity`` and ``secseverity``. 
 
 Bugs fixed in 2.0.0:
 
