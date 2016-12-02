@@ -74,6 +74,8 @@
     reponame     string         match against packages repositories' names
     version      string         match against packages' versions
     obsoletes    Query          match packages that obsolete any package from query
+    pkg          Query          match against packages in query
+    pkg*         list           match against hawkey.Packages in list
     provides     string         match against packages' provides
     provides*    Hawkey.Reldep  match against packages' provides
     requires     string         match against packages' requirements
