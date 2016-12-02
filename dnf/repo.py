@@ -467,6 +467,7 @@ class Repo(dnf.yum.config.RepoConf):
         self.name = self.id
         self.key_import = _NullKeyImport()
         self.metadata = None # :api
+        self.repofile = None # :api
         self.sync_strategy = self.DEFAULT_SYNC
         self.substitutions = dnf.conf.substitutions.Substitutions()
         self.max_mirror_tries = 0 # try them all
