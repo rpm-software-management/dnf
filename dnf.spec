@@ -322,6 +322,9 @@ popd
 %endif
 
 %changelog
+* Fri Dec 02 2016 Martin Hatina <mhatina@redhat.com> 2.0.0-0.rc2.1
+- See http://dnf.readthedocs.io/en/latest/release_notes.html
+
 * Thu Sep 29 2016 Michal Luscon <mluscon@redhat.com> 2.0.0-0.rc1.1
 - See http://dnf.readthedocs.io/en/latest/release_notes.html
 
