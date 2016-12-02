@@ -217,6 +217,7 @@ class RepoListCommand(commands.Command):
                 out += [self.output.fmtKeyValFill(_("Repo-expire  : "), expire)]
 
                 if repo.excludepkgs:
+                    # TRANSLATORS: Packages that are excluded - their names like (dnf systemd)
                     out += [self.output.fmtKeyValFill(_("Repo-exclude : "),
                                                       ", ".join(repo.excludepkgs))]
 
@@ -225,6 +226,7 @@ class RepoListCommand(commands.Command):
                                                       ", ".join(repo.includepkgs))]
 
                 if ui_excludes_num:
+                    # TRANSLATORS: Number of packages that where excluded (5)
                     out += [self.output.fmtKeyValFill(_("Repo-excluded: "),
                                                       ui_excludes_num)]
 
