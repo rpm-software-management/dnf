@@ -42,29 +42,6 @@ class History(TestCase):
         self.history = TestedHistory()
 
 
-class HistoryWrapperTest(support.TestCase):
-    """Unit tests of dnf.history._HistoryWrapper."""
-
-    def test_close(self):
-        """Test close."""
-        history = mock.create_autospec(dnf.yum.history.SwdbInterface)
-        history.close()
-
-        self.assertEqual(history.close.mock_calls, [mock.call()])
-
-    def test_has_transaction_absent(self):
-        """Test has_transaction without any transaction."""
-        present = support._history.old(tids=[1])
-        self.assertFalse(present)
-
-    def test_last_transaction_id_notransaction(self):
-        """Test last_transaction_id without any transaction."""
-        history = mock.create_autospec(dnf.yum.history.SwdbInterface)
-        id_ = history.last()
-
-        self.assertIsNone(id_)
-
-
 class NEVRAOperationsTest(support.TestCase):
     """Unit tests of dnf.history.NEVRAOperations."""
 

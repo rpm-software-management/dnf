@@ -68,7 +68,6 @@ class EmptyPersistorTest(support.ResultTestCase):
         self.assertCountEqual(map(str, installed), ('trampoline-2.1-1.noarch',))
         self.assertEmpty(removed)
 
-
 class PresetPersistorTest(support.ResultTestCase):
     """Test group operations with some data in the persistor."""
 

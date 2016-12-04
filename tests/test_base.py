@@ -174,16 +174,7 @@ class VerifyTransactionTest(TestCase):
         self.base.transaction.add_install(new_pkg, [])
         self.base.transaction.add_erase(removed_pkg)
         self.base._verify_transaction()
-        # mock is designed so this returns the exact same mock object it did
-        # during the method call:
-        pkg_info = self.base._history.pkg_data_by_nvra(new_pkg)
-        pkg = self.base._history.pkg_by_nvra(new_pkg)
 
-        self.assertEqual(pkg_info.from_repo, 'main')
-        self.assertEqual(pkg_info.reason, 'unknown')
-        self.assertEqual(pkg_info.releasever, 'Fedora69')
-        self.assertEqual(pkg.checksum_type, 'md5')
-        self.assertEqual(pkg.checksum_data, HASH)
 
 class InstallReasonTest(support.ResultTestCase):
     def setUp(self):

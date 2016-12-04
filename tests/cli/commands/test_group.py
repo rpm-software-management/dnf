@@ -59,12 +59,6 @@ class GroupCommandTest(support.TestCase):
         self.cmd = group.GroupCommand(base.mock_cli())
         self.parser = OptionParser()
 
-    def test_environment_list(self):
-        env_inst, env_avail = self.cmd._environment_lists(['sugar*'])
-        self.assertLength(env_inst, 1)
-        self.assertLength(env_avail, 0)
-        self.assertEqual(env_inst[0].name, 'Sugar Desktop Environment')
-
     def test_configure(self):
         support.command_configure(self.cmd, ['remove', 'crack'])
         demands = self.cmd.cli.demands
@@ -95,11 +89,3 @@ class CompsQueryTest(support.TestCase):
                        CompsQuery.AVAILABLE)
         with self.assertRaises(dnf.exceptions.CompsError):
             q.get('*er*')
-
-    def test_installed(self):
-        groups = self.prst.groups()
-        env = self.prst.environments_by_pattern('somerset')
-        self.assertEmpty(env)
-        self.assertLength(groups, 2)
-        self.assertEqual(groups[0].name, 'somerset')
-        self.assertEqual(groups[1].name, 'Peppers')

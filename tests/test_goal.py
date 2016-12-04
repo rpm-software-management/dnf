@@ -64,7 +64,7 @@ class GoalTest(tests.support.TestCase):
         pkg1 = installed.filter(name="pepper")[0]
         base._history.mark_user_installed(pkg, True)
         pkg2 = installed.filter(name="hole")[0]
-        base.set_reason(pkg, 'unknown')
+        base.history.set_reason(pkg, 'unknown')
         pkgs = installed.filter(name__neq=["pepper", "hole", "librita"]
                                ).run()
 

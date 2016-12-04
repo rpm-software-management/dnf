@@ -435,7 +435,8 @@ class SwdbInterface(object):
             swdb_transformer.run(output_file=self.swdb.get_path())
 
     def activate_group(self):
-        self.group = GroupPersistor(self.swdb)
+        if self.group is None:
+            self.group = GroupPersistor(self.swdb)
         return self.group
 
     def close(self):

@@ -227,7 +227,8 @@ class _BaseStubMixin(object):
         return dnf.persistor.GroupPersistor("/should-not-exist-bad-test/persist")
 
     def _build_comps_solver(self):
-        return dnf.comps.Solver(self._group_persistor, self._comps,
+        self.history.activate_group()
+        return dnf.comps.Solver(self.history.group, self._comps,
                                 REASONS.get)
 
     def _activate_persistor(self):
