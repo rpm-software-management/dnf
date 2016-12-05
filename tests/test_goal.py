@@ -53,22 +53,3 @@ class GoalTest(tests.support.TestCase):
         goal.group_members.add('hole')
         self.assertEqual('group', goal.group_reason(hole, 'unknown'))
         self.assertEqual('dep', goal.group_reason(hole, 'dep'))
-
-    def test_push_userinstalled(self):
-        base = tests.support.MockBase('main')
-        base.conf.clean_requirements_on_remove = True
-        goal = self.goal
-        installed = base.sack.query().installed()
-        for pkg in installed:
-            base._history.mark_user_installed(pkg, False)
-        pkg1 = installed.filter(name="pepper")[0]
-        base._history.mark_user_installed(pkg, True)
-        pkg2 = installed.filter(name="hole")[0]
-        base.history.set_reason(pkg, 'unknown')
-        pkgs = installed.filter(name__neq=["pepper", "hole", "librita"]
-                               ).run()
-
-        # test:
-        goal.push_userinstalled(installed, base._history)
-        goal.run()
-        self.assertEqual(goal.list_unneeded(), pkgs)

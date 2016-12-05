@@ -440,7 +440,7 @@ class SwdbInterface(object):
         return self.group
 
     def close(self):
-        self.swdb.close()
+        return self.swdb.close()
 
     # NOTE: add package
     # for new package generation from pkgtup, DNF is using:
@@ -448,7 +448,10 @@ class SwdbInterface(object):
     # also make sure that nevra is str
     # When possible, use add_package - with DnfSwdbPkg object
     def add_package(self, pkg):
-        self.swdb.add_package(pkg)
+        return self.swdb.add_package(pkg)
+
+    def add_package_data(self, pid, package_data):
+        return self.swdb.log_package_data(pid, package_data)
 
     def get_path(self):
         return self.swdb.get_path()
@@ -456,11 +459,16 @@ class SwdbInterface(object):
     def last(self):
         return self.swdb.last()
 
-    def package_data(self):
+    @staticmethod 
+    def package():
+        return Dnf.SwdbPkg()
+        
+    @staticmethod
+    def package_data():
         return Dnf.SwdbPkgData()
 
     def set_repo(self, nvra, repo):
-        self.swdb.set_repo(str(nvra), str(repo))
+        return self.swdb.set_repo(str(nvra), str(repo))
 
     def checksums_by_nvras(self, nvras):
         return self.swdb.checksums_by_nvras(nvras)
@@ -478,7 +486,7 @@ class SwdbInterface(object):
         self.swdb.log_group_trans(tid, installed, removed)
 
     def set_reason(self, nvra, reason):
-        self.swdb.set_reason(str(nvra), reason)
+        return self.swdb.set_reason(str(nvra), reason)
 
     def pkg_by_nvra(self, nvra):
         return self.swdb.package_by_nvra(str(nvra))
@@ -629,7 +637,7 @@ class SwdbInterface(object):
         del self._tid
 
     def mark_user_installed(self, pkg, mark):
-        self.swdb.mark_user_installed(str(pkg), mark)
+        return self.swdb.mark_user_installed(str(pkg), mark)
 
     def _save_rpmdb(self, ipkg):
         """ Save all the data for rpmdb for this installed pkg, assumes

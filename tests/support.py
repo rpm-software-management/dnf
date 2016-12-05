@@ -156,6 +156,20 @@ class Base(dnf.Base):
         with mock.patch('dnf.rpm.detect_releasever', return_value=69):
             super(Base, self).__init__(*args, **kwargs)
             self._getHistory()
+            self.prepare_test_packages()
+
+    def prepare_test_packages(self):
+        pkg1 = self.history.package()
+        pkg1.name = "pepper"
+        pkg1.version = "20"
+        pkg1.release = "0"
+        pkg1.arch = "x86_64"
+        pkg1.checksum_type = "sha256"
+        pkg1.checksum_data = "0123456789abcd"
+        pkg_data1 = self.history.package_data()
+        pid = self.history.add_package(pkg1)
+        self.history.add_package_data(pid, pkg_data1)
+        self.history.swdb.trans_data_beg(0, pid, "user", "installed")
 
 # mock objects
 
@@ -207,7 +221,6 @@ class _BaseStubMixin(object):
             self._repos.add(repo)
 
         self._repo_persistor = FakePersistor()
-        self._priv_yumdb = MockYumDB()
         self._ds_callback = mock.Mock()
 
     def add_test_dir_repo(self, id_, cachedir):
@@ -405,16 +418,6 @@ class MockBase(_BaseStubMixin, Base):
 def mock_sack(*extra_repos):
     return MockBase(*extra_repos).sack
 
-class MockYumDB(mock.Mock):
-    def __init__(self):
-        super(mock.Mock, self).__init__()
-        self.db = {}
-
-    def get_package(self, pkg):
-        return self.db.setdefault(str(pkg), mock.Mock())
-
-    def assertLength(self, length):
-        assert len(self.db) == length
 
 class FakeConf(dnf.conf.Conf):
     def __init__(self, **kwargs):

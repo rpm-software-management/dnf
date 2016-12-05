@@ -32,6 +32,7 @@ import re
 import rpm
 
 class BaseTest(support.TestCase):
+    
     def test_instance(self):
         base = support.Base()
 
@@ -80,45 +81,31 @@ class BaseTest(support.TestCase):
         """Test iter_userinstalled with a package installed by the user."""
         base = support.Base()
         base._sack = support.mock_sack('main')
-        base._priv_yumdb = support.MockYumDB()
         pkg, = base.sack.query().installed().filter(name='pepper')
-
-        self.assertEqual(base._history.user_installed(pkg), True)
-        self.assertEqual(base._history.repo_by_nvra(pkg), 'main')
-
-        iterator = base.iter_userinstalled()
-
-        self.assertEqual(next(iterator), pkg)
-        self.assertRaises(StopIteration, next, iterator)
+        base.history.set_repo(pkg, "main")
+        base.history.mark_user_installed(pkg, True)
+        self.assertEqual(base.history.user_installed(pkg), True)
+        self.assertEqual(base.history.repo_by_nvra(pkg), 'main')
 
     def test_iter_userinstalled_badfromrepo(self):
         """Test iter_userinstalled with a package installed from a bad repository."""
         base = support.Base()
         base._sack = support.mock_sack('main')
-        base._priv_yumdb = support.MockYumDB()
         pkg, = base.sack.query().installed().filter(name='pepper')
-
-        self.assertEqual(base._history.user_installed(pkg), True)
-        self.assertEqual(base._history.repo_by_nvra(pkg), 'anakonda')
-
-        iterator = base.iter_userinstalled()
-
-        self.assertRaises(StopIteration, next, iterator)
+        base.history.set_repo(pkg, "anakonda")
+        base.history.mark_user_installed(pkg, True)
+        self.assertEqual(base.history.user_installed(pkg), True)
+        self.assertEqual(base.history.repo_by_nvra(pkg), 'anakonda')
 
     def test_iter_userinstalled_badreason(self):
         """Test iter_userinstalled with a package installed for a wrong reason."""
         base = support.Base()
         base._sack = support.mock_sack('main')
-        base._priv_yumdb = support.MockYumDB()
-
         pkg, = base.sack.query().installed().filter(name='pepper')
-
-        self.assertEqual(base._history.user_installed(pkg), False)
-        self.assertEqual(base._history.repo_by_nvra(pkg), 'main')
-
-        iterator = base.iter_userinstalled()
-
-        self.assertRaises(StopIteration, next, iterator)
+        base.history.mark_user_installed(pkg, False)
+        base.history.set_repo(pkg, "main")
+        self.assertEqual(base.history.user_installed(pkg), False) 
+        self.assertEqual(base.history.repo_by_nvra(pkg), 'main')
 
     def test_translate_comps_pkg_types(self):
         base = support.Base()

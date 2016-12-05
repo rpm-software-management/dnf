@@ -43,4 +43,4 @@ class AutoRemoveCommandTest(support.ResultTestCase):
         removed = ('librita-1-1.i686',
                    'librita-1-1.x86_64',
                    'pepper-20-0.x86_64')
-        self.assertCountEqual((map(str, rem)), removed)
+        self.assertCountEqual((map(str, pkgs)), removed)
