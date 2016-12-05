@@ -1296,12 +1296,12 @@ class Base(object):
                 query_args = {'name': pkg.name}
                 if (pkg.basearchonly):
                     query_args.update({'arch': basearch})
-                if not self.sack.query().filter(**query_args) and \
-                        not cond_check(pkg):
+                q = self.sack.query().filter(**query_args).run()
+                if not q and not cond_check(pkg):
                     # a conditional package with unsatisfied requiremensts
                     continue
                 sltr = dnf.selector.Selector(self.sack)
-                sltr.set(pkg=self.sack.query().filter(**query_args))
+                sltr.set(pkg=q)
                 fn(select=sltr)
                 self._goal.group_members.add(pkg.name)
 
