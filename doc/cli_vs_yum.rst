@@ -37,8 +37,8 @@ in dnf.conf file. See :ref:`strict conf option <strict-label>`.
 For upgrade command:
 
 The semantics that was supposed to trigger in Yum with ``--skip-broken`` is now set for plain
-``dnf update`` as a default. There is no needs to use ``--skip-broken`` with ``dnf upgrade``
-command. To try using the latest versions of packages in transactions there is the ``--best``
+``dnf update`` as a default. There is no need to use ``--skip-broken`` with ``dnf upgrade``
+command. To use only the latest versions of packages in transactions, there is the ``--best``
 command line switch.
 
 ========================================
