@@ -32,7 +32,7 @@ import re
 import rpm
 
 class BaseTest(support.TestCase):
-    
+ 
     def test_instance(self):
         base = support.Base()
 
@@ -104,7 +104,7 @@ class BaseTest(support.TestCase):
         pkg, = base.sack.query().installed().filter(name='pepper')
         base.history.mark_user_installed(pkg, False)
         base.history.set_repo(pkg, "main")
-        self.assertEqual(base.history.user_installed(pkg), False) 
+        self.assertEqual(base.history.user_installed(pkg), False)
         self.assertEqual(base.history.repo_by_nvra(pkg), 'main')
 
     def test_translate_comps_pkg_types(self):

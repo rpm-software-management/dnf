@@ -459,10 +459,10 @@ class SwdbInterface(object):
     def last(self):
         return self.swdb.last()
 
-    @staticmethod 
+    @staticmethod
     def package():
         return Dnf.SwdbPkg()
-        
+ 
     @staticmethod
     def package_data():
         return Dnf.SwdbPkgData()
