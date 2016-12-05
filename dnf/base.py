@@ -1335,7 +1335,8 @@ class Base(object):
     _COMPS_TRANSLATION = {
         'default': dnf.comps.DEFAULT,
         'mandatory': dnf.comps.MANDATORY,
-        'optional': dnf.comps.OPTIONAL
+        'optional': dnf.comps.OPTIONAL,
+        'conditional': dnf.comps.CONDITIONAL
     }
 
     @staticmethod
