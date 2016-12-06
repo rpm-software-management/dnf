@@ -96,13 +96,14 @@ class Subject(object):
             if q:
                 return q
 
-        if with_provides:
-            q = sack.query()._filterm(provides__glob=self._pattern)
-            if q:
-                return q
+        if not forms:
+            if with_provides:
+                q = sack.query()._filterm(provides__glob=self._pattern)
+                if q:
+                    return q
 
-        if self._filename_pattern:
-            return sack.query().filter(file__glob=pat)
+            if self._filename_pattern:
+                return sack.query().filter(file__glob=pat)
 
         return sack.query().filter(empty=True)
 
@@ -121,12 +122,13 @@ class Subject(object):
                     q = q.union(sack.query().filter(obsoletes=q))
                 return sltr.set(pkg=q)
 
-        q = sack.query()._filterm(provides__glob=self._pattern)
-        if q:
-            return sltr.set(pkg=q)
+        if not forms:
+            q = sack.query()._filterm(provides__glob=self._pattern)
+            if q:
+                return sltr.set(pkg=q)
 
-        if self._filename_pattern:
-            return sltr.set(pkg=sack.query()._filterm(file__glob=self._pattern))
+            if self._filename_pattern:
+                return sltr.set(pkg=sack.query()._filterm(file__glob=self._pattern))
 
         return sltr
 
