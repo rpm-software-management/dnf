@@ -77,7 +77,11 @@ class ShellCommand(commands.Command):
         self.base.fill_sack()
 
     def _command(self, line):
-        s_line = shlex.split(line)
+        try:
+            s_line = shlex.split(line)
+        except:
+            self._help()
+            return
         opts = self.cli.optparser.parse_main_args(s_line)
         if opts.command in self.MAPPING:
             getattr(self, '_' + self.MAPPING[opts.command])(s_line[1::])
