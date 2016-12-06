@@ -347,11 +347,16 @@ class GroupCommand(commands.Command):
             logger.critical(_('Invalid groups sub-command, use: %s.'),
                             ", ".join(cmds))
             raise dnf.cli.CliError
+        if cmd in ('install', 'remove', 'mark', 'info') and not args:
+            self.cli.optparser.print_help(self)
+            raise dnf.cli.CliError
 
         demands = self.cli.demands
         demands.sack_activation = True
         if cmd in ('install', 'mark', 'remove', 'upgrade'):
             demands.root_user = True
+        if cmd in ('install', 'remove', 'upgrade'):
+            demands.resolving = True
         if cmd == 'remove':
             demands.allow_erasing = True
             demands.available_repos = False
@@ -359,11 +364,6 @@ class GroupCommand(commands.Command):
             demands.available_repos = True
 
         commands._checkEnabledRepo(self.base)
-
-        if cmd in ('install', 'remove', 'mark', 'info'):
-            if not args:
-                self.cli.optparser.print_help(self)
-                raise dnf.cli.CliError
 
         if cmd in ('install', 'upgrade'):
             commands._checkGPGKey(self.base, self.cli)
@@ -388,7 +388,6 @@ class GroupCommand(commands.Command):
                 assert subcmd == 'install'
                 return self._mark_install(extcmds)
 
-        self.cli.demands.resolving = True
         if cmd == 'install':
             if self.opts.with_optional:
                 types = tuple(self.base.conf.group_package_types + ('optional',))
