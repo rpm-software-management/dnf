@@ -65,8 +65,11 @@ class ShellCommand(commands.Command):
             self._run_script(self.opts.script)
         else:
             while True:
-                line = dnf.i18n.ucd_input('> ')
-                self._command(line)
+                try:
+                    line = dnf.i18n.ucd_input('> ')
+                    self._command(line)
+                except EOFError:
+                    self._quit()
 
     def _clean(self):
         self.base.close()
