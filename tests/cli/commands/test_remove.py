@@ -35,6 +35,9 @@ class RemoveCommandTest(support.ResultTestCase):
         self.cmd = dnf.cli.commands.remove.RemoveCommand(base.mock_cli())
 
     def test_configure(self):
+        parser = OptionParser()
+        parser.parse_main_args(['autoremove', '-y'])
+        parser.parse_command_args(self.cmd, ['autoremove', '-y'])
         self.cmd.configure()
         self.assertTrue(self.cmd.cli.demands.allow_erasing)
 

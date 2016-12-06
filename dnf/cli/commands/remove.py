@@ -25,6 +25,7 @@ from dnf.i18n import _
 from dnf.cli.option_parser import OptionParser
 
 import argparse
+import hawkey
 import dnf.exceptions
 import logging
 
@@ -34,7 +35,14 @@ logger = logging.getLogger("dnf")
 class RemoveCommand(commands.Command):
     """Remove command."""
 
-    aliases = ('remove', 'erase')
+    nevra_forms = {'remove-n': hawkey.FORM_NAME,
+                   'remove-na': hawkey.FORM_NA,
+                   'remove-nevra': hawkey.FORM_NEVRA,
+                   'erase-n': hawkey.FORM_NAME,
+                   'erase-na': hawkey.FORM_NA,
+                   'erase-nevra': hawkey.FORM_NEVRA}
+
+    aliases = ('remove', 'erase') + tuple(nevra_forms.keys())
     summary = _('remove a package or packages from your system')
 
     @staticmethod
@@ -61,6 +69,8 @@ class RemoveCommand(commands.Command):
         demands.resolving = True
         demands.root_user = True
         demands.sack_activation = True
+        self.forms = [self.nevra_forms[command] for command in self.opts.command
+                      if command in list(self.nevra_forms.keys())]
 
     def run(self):
         # local pkgs not supported in erase command
@@ -91,14 +101,18 @@ class RemoveCommand(commands.Command):
             return
 
         # Remove groups.
-        if self.opts.grp_specs:
+        if self.opts.grp_specs and self.forms:
+            for grp_spec in self.opts.grp_specs:
+                msg = _('Not a valid form: %s')
+                logger.warning(msg, self.base.output.term.bold(grp_spec))
+        elif self.opts.grp_specs:
             self.base.read_comps(arch_filter=True)
             if self.base.env_group_remove(self.opts.grp_specs):
                 done = True
 
         for pkg_spec in self.opts.pkg_specs:
             try:
-                self.base.remove(pkg_spec)
+                self.base.remove(pkg_spec, forms=self.forms)
             except dnf.exceptions.MarkingError:
                 logger.info(_('No match for argument: %s'),
                                       pkg_spec)
