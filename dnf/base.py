@@ -1460,7 +1460,7 @@ class Base(object):
             del fo
             return 1
 
-    def install(self, pkg_spec, reponame=None, strict=True):
+    def install(self, pkg_spec, reponame=None, strict=True, forms=None):
         # :api
         """Mark package(s) given by pkg_spec and reponame for installation."""
 
@@ -1480,7 +1480,7 @@ class Base(object):
                 self._goal.install(a, optional=(not strict))
             return len(available)
         elif self.conf.multilib_policy == "best":
-            sltrs = subj._get_best_selectors(self.sack)
+            sltrs = subj._get_best_selectors(self.sack, forms=forms)
             if not any((s.matches() for s in sltrs)):
                 raise dnf.exceptions.MarkingError(
                     _('no package matched'), pkg_spec)
