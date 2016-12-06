@@ -1647,11 +1647,11 @@ class Base(object):
                 self._goal.distupgrade(select=sltr)
         return 1
 
-    def remove(self, pkg_spec, reponame=None):
+    def remove(self, pkg_spec, reponame=None, forms=None):
         # :api
         """Mark the specified package for removal."""
 
-        matches = dnf.subject.Subject(pkg_spec).get_best_query(self.sack)
+        matches = dnf.subject.Subject(pkg_spec).get_best_query(self.sack, forms=forms)
         installed = [
             pkg for pkg in matches.installed()
             if reponame is None or
