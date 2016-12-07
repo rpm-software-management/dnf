@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import
 from tests import support
+from dnf.cli.option_parser import OptionParser
 
 import dnf.cli.commands.autoremove as autoremove
 
@@ -33,6 +34,9 @@ class AutoRemoveCommandTest(support.ResultTestCase):
 
         cli = base.mock_cli()
         cmd = autoremove.AutoremoveCommand(cli)
+        parser = OptionParser()
+        parser.parse_main_args(['autoremove', '-y'])
+        parser.parse_command_args(cmd, ['autoremove', '-y'])
         cmd.run()
         inst, rem = self.installed_removed(base)
         self.assertEmpty(inst)
