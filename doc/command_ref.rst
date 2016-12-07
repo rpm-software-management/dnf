@@ -313,6 +313,17 @@ Auto Remove Command
 Packages listed in :ref:`installonlypkgs <installonlypkgs-label>` are never automatically removed by
 this command.
 
+``dnf [options] autoremove <spec>...``
+
+    This is alias for :ref:`\remove_command-label` command with clean_requirements_on_remove set to
+    True. It removes the specified packages from the system along with any packages depending on the
+    packages being removed. Each ``<spec>`` can be either a ``<package-spec>``, which specifies a
+    package directly, or a ``@<group-spec>``, which specifies an (environment) group which contains
+    it. It also removes any dependencies that are no longer needed.
+
+    There are also a few specific autoremove commands ``autoremove-n``, ``autoremove-na`` and
+    ``autoremove-nevra`` that allow to specify exact argument forms.
+
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
 .. _check_command-label:
@@ -539,6 +550,9 @@ Install Command
     version of the package is already installed. The former version of the package
     will be removed in the case of non-installonly package.
 
+    There are also a few specific install commands ``install-n``, ``install-na`` and
+    ``install-nevra`` that allow to specify exact argument forms.
+
     See also :ref:`\configuration_files_replacement_policy-label`.
 
 .. _install_examples-label:
@@ -692,6 +706,9 @@ Remove Command
 
 ``dnf [options] remove --oldinstallonly``
     Removes old installonly packages keeping only ``installonly_limit`` latest versions.
+
+    There are also a few specific remove commands ``remove-n``, ``remove-na`` and ``remove-nevra``
+    that allow to specify exact argument forms.
 
 .. _repoinfo_command-label:
 
