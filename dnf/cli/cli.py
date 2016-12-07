@@ -46,6 +46,7 @@ import dnf.cli.commands.repolist
 import dnf.cli.commands.repoquery
 import dnf.cli.commands.search
 import dnf.cli.commands.shell
+import dnf.cli.commands.swap
 import dnf.cli.commands.updateinfo
 import dnf.cli.commands.upgrade
 import dnf.cli.commands.upgrademinimal
@@ -663,6 +664,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.repoquery.RepoQueryCommand)
         self.register_command(dnf.cli.commands.search.SearchCommand)
         self.register_command(dnf.cli.commands.shell.ShellCommand)
+        self.register_command(dnf.cli.commands.swap.SwapCommand)
         self.register_command(dnf.cli.commands.updateinfo.UpdateInfoCommand)
         self.register_command(dnf.cli.commands.upgrade.UpgradeCommand)
         self.register_command(dnf.cli.commands.upgrademinimal.UpgradeMinimalCommand)
