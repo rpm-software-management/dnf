@@ -181,13 +181,13 @@ class ShellCommand(commands.Command):
     def _transaction(self, args=None):
         cmd = args[0] if args else None
 
+        self._resolve()
         if cmd in ['list', None]:
             if self.base._transaction:
                 out = self.base.output.list_transaction(self.base._transaction)
                 logger.info(out)
 
         if cmd == 'run':
-            self._resolve()
             try:
                 self.base.do_transaction()
             except:
