@@ -23,12 +23,26 @@ from dnf.i18n import _
 
 
 import dnf
+import copy
 import logging
 import shlex
 import sys
 
 
 logger = logging.getLogger('dnf')
+
+
+class ShellDemandSheet(object):
+    allow_erasing = False
+    available_repos = True
+    resolving = True
+    root_user = True
+    sack_activation = True
+    success_exit_status = 0
+    cacheonly = False
+    fresh_metadata = True
+    freshest_metadata = False
+    transaction_display = None
 
 
 class ShellCommand(commands.Command):
@@ -54,11 +68,7 @@ class ShellCommand(commands.Command):
                             help=_('Script to run in DNF shell'))
 
     def configure(self):
-        demands = self.cli.demands
-        demands.sack_activation = True
-        demands.available_repos = True
-        demands.resolving = False
-        demands.root_user = True
+        self.cli.demands = ShellDemandSheet()
 
     def run(self):
         if self.opts.script:
@@ -91,6 +101,9 @@ class ShellCommand(commands.Command):
                 cmd = cmd_cls(self)
                 try:
                     opts = self.cli.optparser.parse_command_args(cmd, s_line)
+                    cmd.cli = self.cli
+                    cmd.cli.demands = copy.deepcopy(self.cli.demands)
+                    cmd.configure()
                     cmd.run()
                 except:
                     pass
