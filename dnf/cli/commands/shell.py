@@ -181,6 +181,10 @@ class ShellCommand(commands.Command):
     def _transaction(self, args=None):
         cmd = args[0] if args else None
 
+        if cmd == 'reset':
+            self._clean()
+            return
+
         self._resolve()
         if cmd in ['list', None]:
             if self.base._transaction:
