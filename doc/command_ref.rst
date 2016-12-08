@@ -65,6 +65,7 @@ Available commands:
 * :ref:`repoquery <repoquery_command-label>`
 * :ref:`repository-packages <repository-packages_command-label>`
 * :ref:`search <search_command-label>`
+* :ref:`shell <shell_command-label>`
 * :ref:`updateinfo <updateinfo_command-label>`
 * :ref:`upgrade <upgrade_command-label>`
 * :ref:`upgrade-minimal <upgrade_minimal_command-label>`
@@ -1018,6 +1019,30 @@ Search Command
     Search package metadata for the keywords. Keywords are matched as case-insensitive substrings, globbing is supported. By default the command will only look at package names and summaries, failing that (or whenever ``all`` was given as an argument) it will match against package descriptions and URLs. The result is sorted from the most relevant results to the least.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
+
+.. _shell_command-label:
+
+-------------
+Shell Command
+-------------
+
+``dnf [options] shell [filename]``
+    Open an interactive shell for conducting multiple commands during a single execution of DNF. These commands can be issued manually
+    or passed to DNF from a file. The commands are much the same as the normal DNF command line options. There are a few additional
+    commands documented below.
+
+    ``config [conf-option] [value]``
+        * Set a config option to a requested value. If no value is given it prints the current value.
+
+    ``repo [list|enable|disable] [repo-id]``
+        * list: list repositories and their status
+        * enable: enable repository
+        * disable: disable repository
+
+    ``transaction [list|reset|solve|run]``
+        * list: resolve and list the content of the transaction
+        * reset: reset the transaction
+        * run: resolve and run the transaction
 
 .. _update_command-label:
 
