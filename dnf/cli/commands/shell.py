@@ -165,7 +165,10 @@ class ShellCommand(commands.Command):
 
     def _resolve(self, args=None):
         if self.cli.base.transaction is None:
-            self.cli.base.resolve(self.cli.demands.allow_erasing)
+            try:
+                self.cli.base.resolve(self.cli.demands.allow_erasing)
+            except dnf.exceptions.DepsolveError as e:
+                print(e)
 
     def _run_script(self, file):
         try:
