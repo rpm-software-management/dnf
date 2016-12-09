@@ -211,6 +211,8 @@ E.g. say you want to replace ``A`` (providing ``P``)  with B (also providing ``P
 
 This command is equal to ``yum swap A B``.
 
+DNF provides swap command but only ``dnf swap A B`` syntax is supported
+
 ========================================================
  Dependency processing details are not shown in the CLI
 ========================================================
