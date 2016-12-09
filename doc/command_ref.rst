@@ -66,6 +66,7 @@ Available commands:
 * :ref:`repository-packages <repository-packages_command-label>`
 * :ref:`search <search_command-label>`
 * :ref:`shell <shell_command-label>`
+* :ref:`swap <swap_command-label>`
 * :ref:`updateinfo <updateinfo_command-label>`
 * :ref:`upgrade <upgrade_command-label>`
 * :ref:`upgrade-minimal <upgrade_minimal_command-label>`
@@ -1061,6 +1062,20 @@ Shell Command
         * list: resolve and list the content of the transaction
         * reset: reset the transaction
         * run: resolve and run the transaction
+
+.. _swap_command-label:
+
+------------
+Swap Command
+------------
+
+``dnf [options] swap <remove-spec> <install-spec>``
+
+    Remove spec and install spec in one transaction. Each ``<spec>`` can be either a
+    :ref:`<package-spec> <specifying_packages-label>`, which specifies a package directly, or a
+    ``@<group-spec>``, which specifies an (environment) group which contains it. Automatic
+    conflict solving is provided in DNF by --allowerasing option that provides functionality of swap
+    command automatically.
 
 .. _update_command-label:
 
