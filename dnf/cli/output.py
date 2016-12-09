@@ -1598,10 +1598,10 @@ Transaction Summary
                 ipkg = ipkg[0]
                 if (not ipkg.e and ipkg.v == pkg.version and
                         ipkg.r == pkg.release):
-                    pass
+                    pass  # installed
                 elif (ipkg.e and ipkg.e == int(pkg.epoch) and
                         ipkg.v == pkg.version and ipkg.r == pkg.release):
-                    pass
+                    pass  # installed
                 elif (ipkg.e and not pkg.epoch or ipkg.e and
                         int(ipkg.e) > int(pkg.epoch)):
                     state = _pkg_states['o']

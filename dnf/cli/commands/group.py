@@ -257,7 +257,7 @@ class GroupCommand(commands.Command):
                         ','.join([ucd(prst.group(g).ui_name)
                                   for g in res.groups]))
 
-        # TODO save new status into swdb
+        # save new status into swdb
         prst.commit()
 
     def _mark_remove(self, patterns):
@@ -281,7 +281,7 @@ class GroupCommand(commands.Command):
                         ','.join([ucd(prst.group(g_id).ui_name)
                                   for g_id in res.groups]))
 
-        # TODO save new status into swdb
+        # save new status into swdb
 
         prst.commit()
 

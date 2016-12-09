@@ -442,11 +442,6 @@ class SwdbInterface(object):
     def close(self):
         return self.swdb.close()
 
-    # NOTE: add package
-    # for new package generation from pkgtup, DNF is using:
-    # swdb.get_pid_by_nevracht(n,e,v,r,a,checksum,checksum_type,"rpm",True)
-    # also make sure that nevra is str
-    # When possible, use add_package - with DnfSwdbPkg object
     def add_package(self, pkg):
         return self.swdb.add_package(pkg)
 
@@ -462,7 +457,7 @@ class SwdbInterface(object):
     @staticmethod
     def package():
         return Dnf.SwdbPkg()
- 
+
     @staticmethod
     def package_data():
         return Dnf.SwdbPkgData()
@@ -475,7 +470,7 @@ class SwdbInterface(object):
 
     def old(self, tids=[], limit=0, complete_transactions_only=False):
         tids = list(tids)
-        if tids and isinstance(tids[0], int):
+        if tids and not isinstance(tids[0], int):
             for i, value in enumerate(tids):
                 tids[i] = int(value)
         return self.swdb.trans_old(tids, limit, complete_transactions_only)
@@ -579,26 +574,17 @@ class SwdbInterface(object):
         (n, a, e, v, r) = pkgtup
         return n + "-" + v + "-" + r + "." + a
 
-    def _apkg2pid(self, po, create=True):
-        csum = po.returnIdSum()
-        csum_type = None
-        if csum is not None:
-            csum_type = csum[0]
-            csum = csum[1]
-        else:
-            csum = ""
-            csum_type = ""
-        return self._pkgtup2pid(po.pkgtup, csum, csum_type, create)
-    def _ipkg2pid(self, po, create=True):
-        return self._pkgtup2pid(po.pkgtup, "", "", create)
-    def _hpkg2pid(self, po, create=False):
-        return self._apkg2pid(po, create)
     def pkg2pid(self, po, create=True):
-        if isinstance(po, Dnf.SwdbPkg):
-            return self._hpkg2pid(po, create)
-        if po._from_system:
-            return self._ipkg2pid(po, create)
-        return self._apkg2pid(po, create)
+        if not isinstance(po, Dnf.SwdbPkg):
+            po.nvra = self.ipkg_to_nvra(po)
+        if not create:
+            return self.pid_by_nvra(po.nvra)
+        pid = self.pid_by_nvra(po.nvra)
+        if pid:
+            return pid
+        if not isinstance(po, Dnf.SwdbPkg):
+            po = self.ipkg_to_pkg(po)
+        return self.swdb.add_package(po)
 
     def log_scriptlet_output(self, msg):
         if msg is None or not hasattr(self, '_tid'):
@@ -627,11 +613,6 @@ class SwdbInterface(object):
             str(end_rpmdb_version),
             return_code
         )
-        # if not return_code:
-        #    #  Simple hack, if the transaction finished. Note that this
-        #    # catches the erase cases (as we still don't get pkgtups for them)
-        #    # Eg. Updated elements. IDEA no need for that in swdb...
-        #    self.swdb.trans_data_end(self._tid)
         if errors is not None:
             self._log_errors(errors)
         del self._tid
@@ -642,24 +623,7 @@ class SwdbInterface(object):
     def _save_rpmdb(self, ipkg):
         """ Save all the data for rpmdb for this installed pkg, assumes
             there is no data currently. """
-        pid = self.pkg2pid(ipkg, create=False)
-        if pid:
-            if not self.swdb.log_rpm_data(
-                pid,
-                str((getattr(ipkg, "buildtime", None) or '')),
-                str((getattr(ipkg, "buildhost", None) or '')),
-                str((getattr(ipkg, "license", None) or '')),
-                str((getattr(ipkg, "packager", None) or '')),
-                str((getattr(ipkg, "size", None) or '')),
-                str((getattr(ipkg, "sourcerpm", None) or '')),
-                str((getattr(ipkg, "url", None) or '')),
-                str((getattr(ipkg, "vendor", None) or '')),
-                str((getattr(ipkg, "committer", None) or '')),
-                str((getattr(ipkg, "committime", None) or ''))
-            ):
-                return True
-        print("PID problem in _save_yumdb, rollback!")
-        return False
+        return not self.swdb.add_rpm_data(self.ipkg_to_rpmdata(ipkg))
 
     def add_pkg_data(self, ipkg, pkg_data):
         """ Save all the data for yumdb for this installed pkg, assumes
