@@ -32,8 +32,7 @@ import dnf.exceptions
 import dnf.i18n
 import errno
 import glob
-import gpgme
-import gpgme.editutil
+import gpg
 import gzip
 import hashlib
 import io
@@ -279,18 +278,11 @@ def import_key_to_pubring(rawkey, keyid, gpgdir=None, make_ro_copy=True):
     if not os.path.exists(gpgdir):
         os.makedirs(gpgdir)
 
-    key_fo = io.BytesIO(rawkey)
-    with dnf.crypto.pubring_dir(gpgdir):
+    with dnf.crypto.pubring_dir(gpgdir), gpg.Context() as ctx:
         # import the key
-        ctx = gpgme.Context()
-        fp = open(os.path.join(gpgdir, 'gpg.conf'), 'wb')
-        fp.write(b'')
-        fp.close()
-        ctx.import_(key_fo)
-        key_fo.close()
-        # ultimately trust the key or pygpgme is definitionally stupid
-        k = ctx.get_key(keyid)
-        gpgme.editutil.edit_trust(ctx, k, gpgme.VALIDITY_ULTIMATE)
+        with open(os.path.join(gpgdir, 'gpg.conf'), 'wb') as fp:
+            fp.write(b'')
+        ctx.op_import(rawkey)
 
         if make_ro_copy:
 
@@ -302,7 +294,6 @@ def import_key_to_pubring(rawkey, keyid, gpgdir=None, make_ro_copy=True):
                     ro_f = rodir + '/' + basename
                     shutil.copy(f, ro_f)
                     os.chmod(ro_f, 0o755)
-                fp = open(rodir + '/gpg.conf', 'w', 0o755)
                 # yes it is this stupid, why do you ask?
                 opts = """lock-never
     no-auto-check-trustdb
@@ -311,8 +302,8 @@ def import_key_to_pubring(rawkey, keyid, gpgdir=None, make_ro_copy=True):
     no-permission-warning
     preserve-permissions
     """
-                fp.write(opts)
-                fp.close()
+                with open(os.path.join(rodir, 'gpg.conf'), 'w', 0o755) as fp:
+                    fp.write(opts)
 
 
         return True
