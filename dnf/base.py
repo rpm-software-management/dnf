@@ -486,16 +486,18 @@ class Base(object):
         timer()
         return self._comps
 
-    def _getHistory(self):
+    def _getHistory(self, db_path=None, transform=True):
         """auto create the history object that to access/append the transaction
            history information. """
         if self._history is None:
-            db_path = self.conf.persistdir + "/history"
+            if not db_path:
+                db_path = os.path.join(self.conf.persistdir, "/history")
             releasever = self.conf.releasever
             self._history = history.SwdbInterface(
                 db_path,
                 root=self.conf.installroot,
-                releasever=releasever
+                releasever=releasever,
+                transform=transform
             )
         return self._history
 

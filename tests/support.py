@@ -155,7 +155,7 @@ class Base(dnf.Base):
     def __init__(self, *args, **kwargs):
         with mock.patch('dnf.rpm.detect_releasever', return_value=69):
             super(Base, self).__init__(*args, **kwargs)
-            self._getHistory()
+            self._getHistory(db_path="/tmp/swdbtest/", transform=False)
             self.prepare_test_packages()
 
     def prepare_test_packages(self):
@@ -235,9 +235,6 @@ class _BaseStubMixin(object):
         if self._sack:
             return self._sack
         return self.init_sack()
-
-    def _activate_group_persistor(self):
-        return dnf.persistor.GroupPersistor("/should-not-exist-bad-test/persist")
 
     def _build_comps_solver(self):
         self.history.activate_group()
@@ -455,7 +452,7 @@ class FakeConf(dnf.conf.Conf):
                 ('ip_resolve', None),
                 ('multilib_policy', 'best'),
                 ('obsoletes', True),
-                ('persistdir', '/should-not-exist-bad-test/persist'),
+                ('persistdir', '/tmp/swdbtest/'),
                 ('protected_packages', ["dnf"]),
                 ('plugins', False),
                 ('showdupesfromrepos', False),

@@ -421,7 +421,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
 
 
 class SwdbInterface(object):
-    def __init__(self, db_path, root='/', releasever=""):
+    def __init__(self, db_path, root='/', releasever="", transform=True):
         self.path = os.path.join(root, db_path)
         self.swdb = Dnf.Swdb.new(self.path, str(releasever))
         self.releasever = str(releasever)
@@ -432,7 +432,8 @@ class SwdbInterface(object):
                 os.makedirs(self.path)
             self.swdb.create_db()
             # does nothing when there is nothing to transform
-            swdb_transformer.run(output_file=self.swdb.get_path())
+            if transform:
+                swdb_transformer.run(output_file=self.swdb.get_path())
 
     def activate_group(self):
         if self.group is None:
