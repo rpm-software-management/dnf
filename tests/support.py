@@ -155,7 +155,7 @@ class Base(dnf.Base):
     def __init__(self, *args, **kwargs):
         with mock.patch('dnf.rpm.detect_releasever', return_value=69):
             super(Base, self).__init__(*args, **kwargs)
-            self._getHistory(db_path="/tmp/swdbtest/", transform=False)
+            self._getHistory(db_path="/tmp/swdb/", transform=False)
             self.prepare_test_packages()
 
     def prepare_test_packages(self):
@@ -452,7 +452,7 @@ class FakeConf(dnf.conf.Conf):
                 ('ip_resolve', None),
                 ('multilib_policy', 'best'),
                 ('obsoletes', True),
-                ('persistdir', '/tmp/swdbtest/'),
+                ('persistdir', '/tmp/swdb/'),
                 ('protected_packages', ["dnf"]),
                 ('plugins', False),
                 ('showdupesfromrepos', False),

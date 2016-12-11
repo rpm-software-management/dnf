@@ -271,19 +271,24 @@ def run(input_dir='/var/lib/dnf/',
     historydb_file.sort()
     historydb_file = historydb_file[0]
 
-    print('Database transformation running...')
+    if not os.path.isfile(historydb_file):
+        sys.stderr.write('Error: history database file not valid\n')
+        return False
 
     # initialise variables
     task_performed = 0
     task_failed = 0
+    try:
+        # initialise historyDB
+        historyDB = sqlite3.connect(historydb_file)
+        h_cursor = historyDB.cursor()
+        # initialise output DB
+        database = sqlite3.connect(output_file)
+        cursor = database.cursor()
+    except:
+        sys.stderr.write('FAIL: aborting SWDB transformer\n')
+        return False
 
-    # initialise historyDB
-    historyDB = sqlite3.connect(historydb_file)
-    h_cursor = historyDB.cursor()
-
-    # initialise output DB
-    database = sqlite3.connect(output_file)
-    cursor = database.cursor()
 
     # value distribution in tables
     PACKAGE_DATA = ['P_ID', 'R_ID', 'from_repo_revision',

@@ -491,7 +491,10 @@ class Base(object):
            history information. """
         if self._history is None:
             if not db_path:
-                db_path = os.path.join(self.conf.persistdir, "/history")
+                db_path = os.path.join(self.conf.persistdir, "history")
+                if db_path == "/history":  # wrong conf in tests FIXME
+                    db_path = "/tmp/swdb/history/"
+                    transform = False
             releasever = self.conf.releasever
             self._history = history.SwdbInterface(
                 db_path,
