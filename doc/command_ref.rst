@@ -335,6 +335,7 @@ Groups are virtual collections of packages. DNF keeps track of groups that the u
     List all matching groups, either among installed or available groups. If
     nothing is specified list all known groups. Options ``installed`` and ``available`` narrows down the requested list.
     Records are ordered by `display_order` tag defined in comps.xml file.
+    Provides a list of all hidden groups by using option ``hidden``.
     Provides more detailed information when ``-v`` option is used.
 
 ``dnf [options] group remove <group-spec>...``
