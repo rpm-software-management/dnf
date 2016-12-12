@@ -113,6 +113,10 @@ class RepoListCommand(commands.Command):
         on_hiend = term.MODE['normal']
         tot_num = 0
         cols = []
+        if not repos:
+            logger.warn(_('No repositories available'))
+            return
+
         for repo in repos:
             if len(extcmds) and not _repo_match(repo, extcmds):
                 continue
