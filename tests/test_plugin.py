@@ -93,6 +93,6 @@ class PluginNonExistentTest(tests.support.TestCase):
         with tests.support.wiretap_logs('dnf', dnf.logging.SUBDEBUG, stream):
             dnf.plugin._import_modules(package, ('nonexistent.py',))
 
-        end = ('ImportError: No module named \'testpkg\'\n' if dnf.pycomp.PY3
-               else 'ImportError: No module named testpkg.nonexistent\n')
+        end = ('Error: No module named \'testpkg\'\n' if dnf.pycomp.PY3
+               else 'Error: No module named testpkg.nonexistent\n')
         self.assertTracebackIn(end, stream.getvalue())
