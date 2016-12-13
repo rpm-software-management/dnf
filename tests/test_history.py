@@ -532,9 +532,9 @@ class TransactionConverterTest(TestCase):
 
         expected = dnf.transaction.Transaction()
         expected.add_downgrade(
-            next(iter(sack.query().available().nevra('tour-4.6-1.noarch'))),
-            next(iter(sack.query().installed().nevra('tour-5-0.noarch'))),
-            [next(iter(sack.query().installed().nevra('hole-1-1.x86_64')))])
+            next(iter(sack.query().available()._nevra('tour-4.6-1.noarch'))),
+            next(iter(sack.query().installed()._nevra('tour-5-0.noarch'))),
+            [next(iter(sack.query().installed()._nevra('hole-1-1.x86_64')))])
         self.assert_transaction_equal(actual, expected)
 
     def test_convert_erase(self):
@@ -548,7 +548,7 @@ class TransactionConverterTest(TestCase):
 
         expected = dnf.transaction.Transaction()
         expected.add_erase(
-            next(iter(sack.query().installed().nevra('pepper-20-0.x86_64'))))
+            next(iter(sack.query().installed()._nevra('pepper-20-0.x86_64'))))
         self.assert_transaction_equal(actual, expected)
 
     def test_convert_install(self):
@@ -563,8 +563,8 @@ class TransactionConverterTest(TestCase):
 
         expected = dnf.transaction.Transaction()
         expected.add_install(
-            next(iter(sack.query().available().nevra('lotus-3-16.x86_64'))),
-            [next(iter(sack.query().installed().nevra('hole-1-1.x86_64')))],
+            next(iter(sack.query().available()._nevra('lotus-3-16.x86_64'))),
+            [next(iter(sack.query().installed()._nevra('hole-1-1.x86_64')))],
             'reason')
         self.assert_transaction_equal(actual, expected)
 
@@ -580,9 +580,9 @@ class TransactionConverterTest(TestCase):
 
         expected = dnf.transaction.Transaction()
         expected.add_reinstall(
-            next(iter(sack.query().available().nevra('pepper-20-0.x86_64'))),
-            next(iter(sack.query().installed().nevra('pepper-20-0.x86_64'))),
-            [next(iter(sack.query().installed().nevra('hole-1-1.x86_64')))])
+            next(iter(sack.query().available()._nevra('pepper-20-0.x86_64'))),
+            next(iter(sack.query().installed()._nevra('pepper-20-0.x86_64'))),
+            [next(iter(sack.query().installed()._nevra('hole-1-1.x86_64')))])
         self.assert_transaction_equal(actual, expected)
 
     def test_upgrade(self):
@@ -597,9 +597,9 @@ class TransactionConverterTest(TestCase):
 
         expected = dnf.transaction.Transaction()
         expected.add_upgrade(
-            next(iter(sack.query().available().nevra('pepper-20-1.x86_64'))),
-            next(iter(sack.query().installed().nevra('pepper-20-0.x86_64'))),
-            [next(iter(sack.query().installed().nevra('hole-1-1.x86_64')))])
+            next(iter(sack.query().available()._nevra('pepper-20-1.x86_64'))),
+            next(iter(sack.query().installed()._nevra('pepper-20-0.x86_64'))),
+            [next(iter(sack.query().installed()._nevra('hole-1-1.x86_64')))])
         self.assert_transaction_equal(actual, expected)
 
     @staticmethod

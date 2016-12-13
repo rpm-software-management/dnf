@@ -478,8 +478,8 @@ class Base(object):
             installed.
         """
         inst = q.installed()
-        inst_per_arch = inst.na_dict()
-        avail_per_arch = q.latest().available().na_dict()
+        inst_per_arch = inst._na_dict()
+        avail_per_arch = q.latest().available()._na_dict()
         avail_l = []
         inst_l = []
         for na in avail_per_arch:
@@ -769,7 +769,7 @@ class Base(object):
             if rpo is None:
                 continue
 
-            installed = rpmdb_sack.query().installed().nevra(
+            installed = rpmdb_sack.query().installed()._nevra(
                 rpo.name, rpo.evr, rpo.arch)
             if len(installed) < 1:
                 tsi.op_type = dnf.transaction.FAIL
@@ -829,7 +829,7 @@ class Base(object):
         just_installed = self.sack.query().\
             filter(pkg=self.transaction.install_set)
         for rpo in self.transaction.remove_set:
-            installed = rpmdb_sack.query().installed().nevra(
+            installed = rpmdb_sack.query().installed()._nevra(
                 rpo.name, rpo.evr, rpo.arch)
             if len(installed) > 0:
                 if not len(just_installed.filter(arch=rpo.arch, name=rpo.name,
@@ -1127,7 +1127,7 @@ class Base(object):
         elif pkgnarrow == 'available':
             if showdups:
                 avail = query_for_repo(q).available()
-                installed_dict = q.installed().na_dict()
+                installed_dict = q.installed()._na_dict()
                 for avail_pkg in avail:
                     key = (avail_pkg.name, avail_pkg.arch)
                     installed_pkgs = installed_dict.get(key, [])
@@ -1140,8 +1140,8 @@ class Base(object):
             else:
                 # we will only look at the latest versions of packages:
                 available_dict = query_for_repo(
-                    q).available().latest().na_dict()
-                installed_dict = q.installed().latest().na_dict()
+                    q).available().latest()._na_dict()
+                installed_dict = q.installed().latest()._na_dict()
                 for (name, arch) in available_dict:
                     avail_pkg = available_dict[(name, arch)][0]
                     inst_pkg = installed_dict.get((name, arch), [None])[0]
@@ -1178,7 +1178,7 @@ class Base(object):
             avail = q.available()
             if not showdups:
                 avail = avail.latest()
-            recent = query_for_repo(avail).recent(self.conf.recent)
+            recent = query_for_repo(avail)._recent(self.conf.recent)
 
         ygh.installed = installed
         ygh.available = available
@@ -1415,7 +1415,7 @@ class Base(object):
 
         subj = dnf.subject.Subject(pkg_spec)
         if self.conf.multilib_policy == "all" or \
-           subj.is_arch_specified(self.sack):
+           subj._is_arch_specified(self.sack):
             q = subj.get_best_query(self.sack).filter(arch__neq="src")
             if reponame is not None:
                 q = q.filter(reponame=reponame)
@@ -1429,7 +1429,7 @@ class Base(object):
                 self._goal.install(a, optional=(not strict))
             return len(available)
         elif self.conf.multilib_policy == "best":
-            sltrs = subj.get_best_selectors(self.sack)
+            sltrs = subj._get_best_selectors(self.sack)
             if not any((s.matches() for s in sltrs)):
                 raise dnf.exceptions.MarkingError(
                     _('no package matched'), pkg_spec)
@@ -1485,7 +1485,7 @@ class Base(object):
 
     def package_install(self, pkg, strict=True):
         # :api
-        q = self.sack.query().nevra(pkg.name, pkg.evr, pkg.arch)
+        q = self.sack.query()._nevra(pkg.name, pkg.evr, pkg.arch)
         already_inst, _ = self._query_matches_installed(q)
         if pkg in already_inst:
             _msg_installed(pkg)
@@ -1528,7 +1528,7 @@ class Base(object):
     def upgrade(self, pkg_spec, reponame=None):
         # :api
         wildcard = True if dnf.util.is_glob_pattern(pkg_spec) else False
-        sltrs = dnf.subject.Subject(pkg_spec).get_best_selectors(self.sack)
+        sltrs = dnf.subject.Subject(pkg_spec)._get_best_selectors(self.sack)
         if any((s.matches() for s in sltrs)):
             prev_count = self._goal.req_length()
             installed = self.sack.query().installed()
@@ -1579,7 +1579,7 @@ class Base(object):
         if pkg_spec is None:
             self._goal.distupgrade_all()
         else:
-            sltrs = dnf.subject.Subject(pkg_spec).get_best_selectors(self.sack)
+            sltrs = dnf.subject.Subject(pkg_spec)._get_best_selectors(self.sack)
             if not any((s.matches() for s in sltrs)):
                 logger.info(_('No package %s installed.'), pkg_spec)
                 return 0
@@ -1620,7 +1620,7 @@ class Base(object):
             available_q = available_q.filter(reponame=new_reponame)
         if new_reponame_neq is not None:
             available_q = available_q.filter(reponame__neq=new_reponame_neq)
-        available_nevra2pkg = dnf.query.per_nevra_dict(available_q)
+        available_nevra2pkg = dnf.query._per_nevra_dict(available_q)
 
         if not installed_pkgs:
             raise dnf.exceptions.PackagesNotInstalledError(
@@ -1701,7 +1701,7 @@ class Base(object):
         return 1
 
     def provides(self, provides_spec):
-        providers = dnf.query.by_provides(self.sack, provides_spec)
+        providers = dnf.query._by_provides(self.sack, provides_spec)
         if providers:
             return providers
         return self.sack.query().filter(file__glob=provides_spec)
@@ -1721,11 +1721,11 @@ class Base(object):
 
         def handle_downgrade(new_nevra, old_nevra, obsoleted_nevras):
             """Handle a downgraded package."""
-            news = self.sack.query().installed().nevra(new_nevra)
+            news = self.sack.query().installed()._nevra(new_nevra)
             if not news:
                 raise dnf.exceptions.PackagesNotInstalledError(
                     'no package matched', new_nevra)
-            olds = self.sack.query().available().nevra(old_nevra)
+            olds = self.sack.query().available()._nevra(old_nevra)
             if not olds:
                 raise dnf.exceptions.PackagesNotAvailableError(
                     'no package matched', old_nevra)
@@ -1736,7 +1736,7 @@ class Base(object):
 
         def handle_erase(old_nevra):
             """Handle an erased package."""
-            pkgs = self.sack.query().available().nevra(old_nevra)
+            pkgs = self.sack.query().available()._nevra(old_nevra)
             if not pkgs:
                 raise dnf.exceptions.PackagesNotAvailableError(
                     'no package matched', old_nevra)
@@ -1745,7 +1745,7 @@ class Base(object):
 
         def handle_install(new_nevra, obsoleted_nevras):
             """Handle an installed package."""
-            pkgs = self.sack.query().installed().nevra(new_nevra)
+            pkgs = self.sack.query().installed()._nevra(new_nevra)
             if not pkgs:
                 raise dnf.exceptions.PackagesNotInstalledError(
                     'no package matched', new_nevra)
@@ -1756,17 +1756,17 @@ class Base(object):
 
         def handle_reinstall(new_nevra, old_nevra, obsoleted_nevras):
             """Handle a reinstalled package."""
-            news = self.sack.query().installed().nevra(new_nevra)
+            news = self.sack.query().installed()._nevra(new_nevra)
             if not news:
                 raise dnf.exceptions.PackagesNotInstalledError(
                     'no package matched', new_nevra)
-            olds = self.sack.query().available().nevra(old_nevra)
+            olds = self.sack.query().available()._nevra(old_nevra)
             if not olds:
                 raise dnf.exceptions.PackagesNotAvailableError(
                     'no package matched', old_nevra)
             obsoleteds = []
             for nevra in obsoleted_nevras:
-                obsoleteds_ = self.sack.query().installed().nevra(nevra)
+                obsoleteds_ = self.sack.query().installed()._nevra(nevra)
                 if obsoleteds_:
                     assert len(obsoleteds_) == 1
                     obsoleteds.append(obsoleteds_[0])
@@ -1776,11 +1776,11 @@ class Base(object):
 
         def handle_upgrade(new_nevra, old_nevra, obsoleted_nevras):
             """Handle an upgraded package."""
-            news = self.sack.query().installed().nevra(new_nevra)
+            news = self.sack.query().installed()._nevra(new_nevra)
             if not news:
                 raise dnf.exceptions.PackagesNotInstalledError(
                     'no package matched', new_nevra)
-            olds = self.sack.query().available().nevra(old_nevra)
+            olds = self.sack.query().available()._nevra(old_nevra)
             if not olds:
                 raise dnf.exceptions.PackagesNotAvailableError(
                     'no package matched', old_nevra)

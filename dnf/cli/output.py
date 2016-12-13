@@ -660,8 +660,8 @@ class Output(object):
         return False
 
     def _pkgs2name_dict(self, sections):
-        installed = self.sack.query().installed().name_dict()
-        available = self.sack.query().available().name_dict()
+        installed = self.sack.query().installed()._name_dict()
+        available = self.sack.query().available()._name_dict()
 
         d = {}
         for pkg_name in itertools.chain(*list(zip(*sections))[1]):

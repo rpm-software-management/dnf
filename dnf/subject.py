@@ -21,12 +21,14 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
-from dnf.util import first, is_glob_pattern
+from dnf.util import first, is_glob_pattern, enforce_api
 
 import dnf.selector
 import hawkey
 import re
 
+
+@enforce_api
 class Subject(object):
     # :api
 
@@ -45,7 +47,7 @@ class Subject(object):
             if attr:
                 if add_flags:
                     flags = self._query_flags
-                query.filterm(*flags, **{name + '__glob': attr})
+                query._filterm(*flags, **{name + '__glob': attr})
 
         return query
 
@@ -74,14 +76,14 @@ class Subject(object):
         return flags
 
     @property
-    def filename_pattern(self):
+    def _filename_pattern(self):
         return re.search(r"^\*?/", self.subj.pattern)
 
     @property
-    def pattern(self):
+    def _pattern(self):
         return self.subj.pattern
 
-    def is_arch_specified(self, sack):
+    def _is_arch_specified(self, sack):
         nevra = first(self.subj.nevra_possibilities_real(sack, allow_globs=True))
         if nevra and nevra.arch:
             return is_glob_pattern(nevra.arch)
@@ -89,7 +91,7 @@ class Subject(object):
 
     def get_best_query(self, sack, with_provides=True, forms=None):
         # :api
-        pat = self.subj.pattern
+        pat = self._pattern
 
         kwargs = {'allow_globs': True,
                   'icase': self.icase}
@@ -109,7 +111,7 @@ class Subject(object):
                 if q:
                     return q
 
-        if self.filename_pattern:
+        if self._filename_pattern:
             return sack.query().filter(file__glob=pat)
 
         return sack.query().filter(empty=True)
@@ -135,23 +137,23 @@ class Subject(object):
             if len(s.matches()) > 0:
                 return s
 
-        if self.filename_pattern:
+        if self._filename_pattern:
             sltr = dnf.selector.Selector(sack)
-            key = "file__glob" if is_glob_pattern(self.pattern) else "file"
-            return sltr.set(**{key: self.pattern})
+            key = "file__glob" if is_glob_pattern(self._pattern) else "file"
+            return sltr.set(**{key: self._pattern})
 
         sltr = dnf.selector.Selector(sack)
         return sltr
 
-    def get_best_selectors(self, sack, forms=None):
-        if not self.filename_pattern and is_glob_pattern(self.pattern):
+    def _get_best_selectors(self, sack, forms=None):
+        if not self._filename_pattern and is_glob_pattern(self._pattern):
             nevras = self.subj.nevra_possibilities_real(sack, allow_globs=True)
             nevra = first(nevras)
             if nevra and nevra.name:
                 sltrs = []
                 pkgs = self._nevra_to_filters(sack.query(), nevra)
                 for pkg_name in {pkg.name for pkg in pkgs}:
-                    exp_name = self.pattern.replace(nevra.name, pkg_name, 1)
+                    exp_name = self._pattern.replace(nevra.name, pkg_name, 1)
                     sltrs.append(Subject(exp_name).get_best_selector(sack, forms))
                 return sltrs
 

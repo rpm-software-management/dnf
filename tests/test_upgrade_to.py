@@ -27,7 +27,7 @@ class UpgradeTo(support.ResultTestCase):
         sack = base.sack
         base.upgrade_to("pepper-20-1.x86_64")
         new_set = support.installed_but(sack, "pepper").run()
-        q = sack.query().available().nevra("pepper-20-1.x86_64")
+        q = sack.query().available()._nevra("pepper-20-1.x86_64")
         new_set.extend(q)
         self.assertResult(base, new_set)
 

@@ -71,11 +71,11 @@ class QueriesTest(support.TestCase):
 
     def test_installed_exact(self):
         sack = support.mock_sack()
-        pkgs = sack.query().installed().nevra("tour-4.9-0.noarch")
+        pkgs = sack.query().installed()._nevra("tour-4.9-0.noarch")
         self.assertEqual(len(pkgs), 0)
-        pkgs = sack.query().installed().nevra("tour-5-0.x86_64")
+        pkgs = sack.query().installed()._nevra("tour-5-0.x86_64")
         self.assertEqual(len(pkgs), 0)
-        pkgs = sack.query().installed().nevra("tour-5-0.noarch")
+        pkgs = sack.query().installed()._nevra("tour-5-0.noarch")
         self.assertEqual(len(pkgs), 1)
 
     def test_latest(self):
@@ -94,7 +94,7 @@ class QueriesTest(support.TestCase):
         now = time.time()
         installed = support.MockQuery(sack.query().installed())
         installed[0].buildtime = now - 86400/2
-        pkgs = installed.recent(1)
+        pkgs = installed._recent(1)
         self.assertEqual(len(pkgs), 1)
 
 class SubjectTest(support.TestCase):
@@ -139,7 +139,7 @@ class DictsTest(TestCase):
     def test_per_nevra_dict(self):
         sack = support.mock_sack("main")
         pkgs = sack.query().filter(name="lotus")
-        dct = dnf.query.per_nevra_dict(pkgs)
+        dct = dnf.query._per_nevra_dict(pkgs)
         self.assertCountEqual(dct.keys(),
                               ["lotus-3-16.x86_64", "lotus-3-16.i686"])
         self.assertCountEqual(dct.values(), pkgs)

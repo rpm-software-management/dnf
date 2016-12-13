@@ -36,6 +36,8 @@ def is_nevra(pattern):
         return False
     return True
 
+
+@dnf.util.enforce_api
 class Query(hawkey.Query):
     # :api
 
@@ -59,7 +61,7 @@ class Query(hawkey.Query):
 
     def duplicated(self):
         # :api
-        installed_na = self.installed().na_dict()
+        installed_na = self.installed()._na_dict()
         duplicated = []
         for (name, arch), pkgs in installed_na.items():
             if len(pkgs) > 1:
@@ -67,9 +69,10 @@ class Query(hawkey.Query):
         return self.filter(pkg=duplicated)
 
     def extras(self):
+        # :api
         # anything installed but not in a repo is an extra
-        avail_dict = self.available().pkgtup_dict()
-        inst_dict = self.installed().pkgtup_dict()
+        avail_dict = self.available()._pkgtup_dict()
+        inst_dict = self.installed()._pkgtup_dict()
         extras = []
         for pkgtup, pkgs in inst_dict.items():
             if pkgtup not in avail_dict:
@@ -80,7 +83,7 @@ class Query(hawkey.Query):
         # :api
         return super(Query, self).filter(*args, **kwargs)
 
-    def filterm(self, *args, **kwargs):
+    def _filterm(self, *args, **kwargs):
         nargs = {}
         for (key, value) in kwargs.items():
             if (key.endswith("__glob") and not dnf.util.is_glob_pattern(value)):
@@ -98,7 +101,7 @@ class Query(hawkey.Query):
         if limit == 1:
             return self.filter(latest_per_arch=True)
         else:
-            pkgs_na = self.na_dict()
+            pkgs_na = self._na_dict()
             latest_pkgs = []
             for pkg_list in pkgs_na.values():
                 pkg_list.sort(reverse=True)
@@ -112,29 +115,29 @@ class Query(hawkey.Query):
         # :api
         return self.filter(upgrades=True)
 
-    def name_dict(self):
+    def _name_dict(self):
         d = {}
         for pkg in self:
             d.setdefault(pkg.name, []).append(pkg)
         return d
 
-    def na_dict(self):
+    def _na_dict(self):
         d = {}
         for pkg in self.run():
             key = (pkg.name, pkg.arch)
             d.setdefault(key, []).append(pkg)
         return d
 
-    def pkgtup_dict(self):
-        return per_pkgtup_dict(self.run())
+    def _pkgtup_dict(self):
+        return _per_pkgtup_dict(self.run())
 
-    def recent(self, recent):
+    def _recent(self, recent):
         now = time.time()
         recentlimit = now - (recent*86400)
         recent = [po for po in self if int(po.buildtime) > recentlimit]
         return self.filter(pkg=recent)
 
-    def nevra(self, *args):
+    def _nevra(self, *args):
         args_len = len(args)
         if args_len == 3:
             return self.filter(name=args[0], evr=args[1], arch=args[2])
@@ -149,7 +152,7 @@ class Query(hawkey.Query):
             release=nevra.release, arch=nevra.arch)
 
 
-def by_provides(sack, patterns, ignore_case=False, get_query=False):
+def _by_provides(sack, patterns, ignore_case=False, get_query=False):
     if isinstance(patterns, basestring):
         patterns = [patterns]
 
@@ -158,20 +161,20 @@ def by_provides(sack, patterns, ignore_case=False, get_query=False):
     if ignore_case:
         flags.append(hawkey.ICASE)
 
-    q.filterm(*flags, provides__glob=patterns)
+    q._filterm(*flags, provides__glob=patterns)
     if get_query:
         return q
     return q.run()
 
 
-def per_pkgtup_dict(pkg_list):
+def _per_pkgtup_dict(pkg_list):
     d = {}
     for pkg in pkg_list:
         d.setdefault(pkg.pkgtup, []).append(pkg)
     return d
 
 
-def per_nevra_dict(pkg_list):
+def _per_nevra_dict(pkg_list):
     return {ucd(pkg):pkg for pkg in pkg_list}
 
 
@@ -210,4 +213,4 @@ def latest_limit_pkgs(query, limit):
 def recent_pkgs(query, recent):
     # compat: erase in 2.0.0
     # required by dnf-plugins-core =< 0.1.12-2
-    return query.recent(recent).run()
+    return query._recent(recent).run()
