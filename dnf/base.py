@@ -161,6 +161,11 @@ class Base(object):
                 subj = dnf.subject.Subject(excl)
                 pkgs = subj.get_best_query(self.sack)
                 self.sack.add_excludes(pkgs)
+            for incl in r.includepkgs:
+                pkgs = self.sack.query().filter(reponame=r.id).\
+                    filter_autoglob(name=incl)
+                self.sack.add_includepkgs(pkgs)
+	    self.sack.eval_includepkgs(self)
 
     def _store_persistent_data(self):
         if self._repo_persistor:

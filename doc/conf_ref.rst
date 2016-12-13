@@ -282,6 +282,13 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
 .. _skip_if_unavailable-label:
 
+``includepkgs``
+    list
+
+    Inverse of exclude for repositories. Dnf include only package in the repo,
+    that match this list. If there is exclude tag both of them are used.
+
+
 ``skip_if_unavailable``
     :ref:`boolean <boolean-label>`
 
