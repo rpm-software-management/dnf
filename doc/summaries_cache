@@ -1818,5 +1818,33 @@
     [
         1332830,
         "DNF builddep is not consistently installing packages providing capabilities properly"
+    ],
+    [
+        1327999,
+        "\"dnf upgrade-to\" requiring full NEVRA"
+    ],
+    [
+        1400081,
+        "Crash  with empty includepkgs list in repository configuration file"
+    ],
+    [
+        1293782,
+        "dnf clean all does not wait for current running upgrade"
+    ],
+    [
+        1386078,
+        "L10N - Explain repoquery strings"
+    ],
+    [
+        1358245,
+        "repoquery: valid use of stderr and stdout, use stdout only for requested data"
+    ],
+    [
+        1243393,
+        "Query.filter(pkgs=XXX) is not documented"
+    ],
+    [
+        1339739,
+        "Option --skip-broken is missing"
     ]
 ]

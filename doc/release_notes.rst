@@ -45,10 +45,11 @@ API additions in 2.0.0:
 * Introduced new configuration options: ``check_config_file_age``, ``clean_requirements_on_remove``, ``deltarpm_percentage``, ``exit_on_lock``, ``get_reposdir``, ``group_package_types``, ``installonlypkgs``, ``keepcache``, ``protected_packages``, ``retries``, ``type``, and ``upgrade_group_objects_upgrade``. For detailed description see: :doc:`DNF API <api_conf>`.
 * Introduced new configuration methods: :meth:`dump` and :meth:`write_raw_configfile`. For detailed description see: :doc:`DNF API <api_conf>`.
 * Introduced :class:`dnf.package.Package` attributes :attr:`debug_name`, :attr:`downloadsize`, :attr:`source_debug_name` and :attr:`source_name`. For detailed description see: :doc:`DNF Package API <api_package>`.
-* :meth:`dnf.Query.extras` returns a new query that limits the result to installed packages that are not present in any repo.
-* :meth:`dnf.Repo.enable_debug_repos` enables debug repos corresponding to already enabled binary repos.
-* :meth:`dnf.Repo.enable_source_repos` enables source repos corresponding to already enabled binary repos.
-* :meth:`dnf.Repo.dump` prints repository configuration, including inherited values.
+* :meth:`dnf.query.Query.extras` returns a new query that limits the result to installed packages that are not present in any repo.
+* :meth:`dnf.repo.Repo.enable_debug_repos` enables debug repos corresponding to already enabled binary repos.
+* :meth:`dnf.repo.Repo.enable_source_repos` enables source repos corresponding to already enabled binary repos.
+* :meth:`dnf.repo.Repo.dump` prints repository configuration, including inherited values.
+* :meth:`dnf.query.Query.filter` now accepts optional argument `pkg`.
 
 DNF command changes in 2.0.0:
 
@@ -66,6 +67,8 @@ DNF command changes in 2.0.0:
 * ``--releasever`` :doc:`command line argument <command_ref>` now doesn't detect release number from running system.
 * ``--repofrompath`` :doc:`command line argument <command_ref>` can now be combined with ``--repo`` instead of ``--enablerepo``.
 * Alternative of yum's ``deplist`` changes from ``dnf repoquery --requires`` to ``dnf repoquery --deplist``.
+* New systemd units `dnf-automatic-notifyonly`, `dnf-automatic-download`, `dnf-automatic-download`
+were added for a better customizability of :doc:`dnf-automatic <automatic>`.
 
 DNF command additions in 2.0.0:
 
@@ -75,7 +78,7 @@ DNF command additions in 2.0.0:
 * ``dnf [options] repoquery --querytags`` provides list of recognized tags by repoquery option \-\ :ref:`-queryformat <queryformat_repoquery-label>`.
 * ``--repo`` :doc:`command line argument <command_ref>` enables just specific repositories by an id or a glob. Can be used multiple times with accumulative effect. It is basically shortcut for ``--disablerepo="*" --enablerepo=<repoid>`` and is mutually exclusive with ``--disablerepo`` option.
 * New commands have been introduced: ``check`` and ``upgrade-minimal``.
-* New security options introduced: ``bugfix``, ``enhancement``, ``newpackage``, ``security``, ``advisory``, ``bzs``, ``cves``, ``sec-severity`` and ``secseverity``. 
+* New security options introduced: ``bugfix``, ``enhancement``, ``newpackage``, ``security``, ``advisory``, ``bzs``, ``cves``, ``sec-severity`` and ``secseverity``.
 
 Bugs fixed in 2.0.0:
 
@@ -145,6 +148,13 @@ Bugs fixed in 2.0.0:
 * :rhbug:`1289067`
 * :rhbug:`1328674`
 * :rhbug:`1380580`
+* :rhbug:`1327999`
+* :rhbug:`1400081`
+* :rhbug:`1293782`
+* :rhbug:`1386078`
+* :rhbug:`1358245`
+* :rhbug:`1243393`
+* :rhbug:`1339739`
 
 ====================
 1.1.10 Release Notes
