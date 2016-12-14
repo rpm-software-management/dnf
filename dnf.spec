@@ -330,6 +330,27 @@ popd
 %endif
 
 %changelog
+* Wed Dec 14 2016 Michal Luscon <mluscon@redhat.com> 2.0.0-1
+- tests: catch ModuleNotFoundError as well (Igor Gnatenko)
+- Switch out automatic service for automatic-download and automatic-install
+  (Pat Riehecky)
+- Make upgrade-to alias for upgrade (RhBug:1327999) (Jaroslav Mracek)
+- skip appending an empty option (RhBug: 1400081) (Michael Mraka)
+- Add description of nevra foems for commands and autoremove args (Jaroslav
+  Mracek)
+- Add support of arguments nevra forms for autoremove command (Jaroslav Mracek)
+- Add nevra forms for remove command (Jaroslav Mracek)
+- Add nevra forms for install command (Jaroslav Mracek)
+- add bin/yum into .gitignore (Michal Luscon)
+- clean: acquire all locks before cleaning (RhBug:1293782) (Michal Luscon)
+- Change hawkey version requirement (Jaroslav Mracek)
+- Add information for translators (RhBug:1386078) (Jaroslav Mracek)
+- Change info to warning for clean repoquery output (RhBug:1358245) (Jaroslav
+  Mracek)
+- Add description of pkg flag for Query (RhBug:1243393) (Jaroslav Mracek)
+- Add minor changes in documentation (Jaroslav Mracek)
+- Do not always overwrite the name with the repo ID (Neal Gompa)
+
 * Fri Dec 02 2016 Martin Hatina <mhatina@redhat.com> 2.0.0-0.rc2.1
 - See http://dnf.readthedocs.io/en/latest/release_notes.html
 
