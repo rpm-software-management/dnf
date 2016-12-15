@@ -69,10 +69,12 @@ class RemoveCommand(commands.Command):
         demands.resolving = True
         demands.root_user = True
         demands.sack_activation = True
-        self.forms = [self.nevra_forms[command] for command in self.opts.command
-                      if command in list(self.nevra_forms.keys())]
 
     def run(self):
+
+        forms = [self.nevra_forms[command] for command in self.opts.command
+                 if command in list(self.nevra_forms.keys())]
+
         # local pkgs not supported in erase command
         self.opts.pkg_specs += self.opts.filenames
         done = False
@@ -101,7 +103,7 @@ class RemoveCommand(commands.Command):
             return
 
         # Remove groups.
-        if self.opts.grp_specs and self.forms:
+        if self.opts.grp_specs and forms:
             for grp_spec in self.opts.grp_specs:
                 msg = _('Not a valid form: %s')
                 logger.warning(msg, self.base.output.term.bold(grp_spec))
@@ -112,7 +114,7 @@ class RemoveCommand(commands.Command):
 
         for pkg_spec in self.opts.pkg_specs:
             try:
-                self.base.remove(pkg_spec, forms=self.forms)
+                self.base.remove(pkg_spec, forms=forms)
             except dnf.exceptions.MarkingError:
                 logger.info(_('No match for argument: %s'),
                                       pkg_spec)
