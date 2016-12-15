@@ -1279,14 +1279,19 @@ class Base(object):
 
         for (attr, fn) in attr_fn:
             for it in attr:
-                if not self.sack.query().filter(name=it):
+                if '.' in it:
+                    name, arch = it.rsplit('.', 1)
+                    query_flags = {'name': name, 'arch': arch}
+                else:
+                    query_flags = {'name': it}
+                if not self.sack.query().filter(**query_flags):
                     # a comps item that doesn't refer to anything real
                     if (attr == trans.install):
                         self._group_persistor._rollback()
                         raise dnf.exceptions.MarkingError(it)
                     continue
                 sltr = dnf.selector.Selector(self.sack)
-                sltr.set(name=it)
+                sltr.set(**query_flags)
                 fn(select=sltr)
                 cnt += 1
         self._goal.group_members.update(trans.install)
@@ -1303,7 +1308,8 @@ class Base(object):
             except AttributeError:
                 return 'unknown'
 
-        return dnf.comps.Solver(self._group_persistor, self._comps, reason_fn)
+        return dnf.comps.Solver(self._group_persistor, self._comps, reason_fn,
+                                self._conf.substitutions)
 
     def environment_install(self, env_id, types, exclude=None, strict=True):
         solver = self._build_comps_solver()

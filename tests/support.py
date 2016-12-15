@@ -222,7 +222,7 @@ class _BaseStubMixin(object):
 
     def _build_comps_solver(self):
         return dnf.comps.Solver(self._group_persistor, self._comps,
-                                REASONS.get)
+                                REASONS.get, {'basearch': 'x86_64'})
 
     def _activate_persistor(self):
         pass
