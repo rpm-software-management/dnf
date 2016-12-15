@@ -61,11 +61,12 @@ class InstallCommand(commands.Command):
         demands.root_user = True
         commands._checkGPGKey(self.base, self.cli)
         commands._checkEnabledRepo(self.base, self.opts.filenames)
-        self.forms = [self.nevra_forms[command] for command in self.opts.command
-                      if command in list(self.nevra_forms.keys())]
 
     def run(self):
         strict = self.base.conf.strict
+
+        forms = [self.nevra_forms[command] for command in self.opts.command
+                 if command in list(self.nevra_forms.keys())]
 
         # localinstall valid arguments check
         nonfilenames = self.opts.grp_specs or self.opts.pkg_specs
@@ -79,7 +80,7 @@ class InstallCommand(commands.Command):
 
         # Install files.
         err_pkgs = []
-        if self.opts.filenames and self.forms:
+        if self.opts.filenames and forms:
             for filename in self.opts.filenames:
                 msg = _('Not a valid form: %s')
                 logger.warning(msg, self.base.output.term.bold(filename))
@@ -95,7 +96,7 @@ class InstallCommand(commands.Command):
                     err_pkgs.append(pkg)
 
         # Install groups.
-        if self.opts.grp_specs and self.forms:
+        if self.opts.grp_specs and forms:
             for grp_spec in self.opts.grp_specs:
                 msg = _('Not a valid form: %s')
                 logger.warning(msg, self.base.output.term.bold(grp_spec))
@@ -116,7 +117,7 @@ class InstallCommand(commands.Command):
         if self.opts.command != ['localinstall']:
             for pkg_spec in self.opts.pkg_specs:
                 try:
-                    self.base.install(pkg_spec, strict=strict, forms=self.forms)
+                    self.base.install(pkg_spec, strict=strict, forms=forms)
                 except dnf.exceptions.MarkingError:
                     msg = _('No package %s available.')
                     logger.info(msg, self.base.output.term.bold(pkg_spec))
