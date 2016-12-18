@@ -314,10 +314,6 @@ def run(input_dir='/var/lib/dnf/',
                 'size', 'sourcerpm', 'url', 'vendor', 'committer',
                 'committime']
 
-    # DB CONSTRUCTION
-
-    print('Transforming packages')
-
     # contruction of PACKAGE from pkgtups
     h_cursor.execute('SELECT * FROM pkgtups')
     for row in h_cursor:
@@ -400,7 +396,6 @@ def run(input_dir='/var/lib/dnf/',
     # save changes
     database.commit()
 
-    print('Transforming transactions')
     # trans_data construction
     h_cursor.execute('SELECT * FROM trans_data_pkgs')
 
@@ -542,13 +537,10 @@ def run(input_dir='/var/lib/dnf/',
         cursor.execute('INSERT INTO OUTPUT VALUES (null,?,?,?)',
                        (row[1], row[2], BIND_OUTPUT(cursor, 'stderr')))
 
-    print("Transforming yumdb")
     # fetch additional data from yumdb
     GET_YUMDB_PACKAGES(cursor, yumdb_path, PACKAGE_DATA)
 
-    print('Transforming groups')
     # construction of GROUPS
-
     if os.path.isfile(groups_path):
         with open(groups_path) as groups_file:
             data = json.load(groups_file)
@@ -685,11 +677,4 @@ def run(input_dir='/var/lib/dnf/',
     database.close()
     historyDB.close()
 
-    if task_performed > 0:
-        print("Database integrity " +
-              str(((task_performed - task_failed) / task_performed) * 100) +
-              "%")
-        return True
-    else:
-        print("Database transformation NOT successfull")
-        return False
+    return task_performed > 0
