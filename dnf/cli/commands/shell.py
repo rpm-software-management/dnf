@@ -22,8 +22,9 @@ from dnf.cli import commands
 from dnf.i18n import _
 
 
-import dnf
+import cmd
 import copy
+import dnf
 import logging
 import shlex
 import sys
@@ -45,7 +46,7 @@ class ShellDemandSheet(object):
     transaction_display = None
 
 
-class ShellCommand(commands.Command):
+class ShellCommand(commands.Command, cmd.Cmd):
 
     aliases = ('shell',)
     summary = _('run an interactive DNF shell')
@@ -62,6 +63,11 @@ class ShellCommand(commands.Command):
                'help': 'help'
                }
 
+    def __init__(self, cli):
+        commands.Command.__init__(self, cli)
+        cmd.Cmd.__init__(self)
+        self.prompt = '> '
+
     @staticmethod
     def set_argparser(parser):
         parser.add_argument('script', nargs='?', metavar=_('SCRIPT'),
@@ -74,19 +80,14 @@ class ShellCommand(commands.Command):
         if self.opts.script:
             self._run_script(self.opts.script)
         else:
-            while True:
-                try:
-                    line = dnf.i18n.ucd_input('> ')
-                    self._command(line)
-                except EOFError:
-                    self._quit()
+            self.cmdloop()
 
     def _clean(self):
         self.base.close()
         self.base._transaction = None
         self.base.fill_sack()
 
-    def _command(self, line):
+    def onecmd(self, line):
         try:
             s_line = shlex.split(line)
         except:
@@ -153,7 +154,7 @@ class ShellCommand(commands.Command):
         cmd = args[0] if args else None
 
         if cmd in ['list', None]:
-            self._command('repolist')
+            self.onecmd('repolist')
 
         if cmd in ['enable', 'disable']:
             repos = self.cli.base.repos
@@ -176,7 +177,7 @@ class ShellCommand(commands.Command):
                 lines = fd.readlines()
                 for line in lines:
                     if not line.startswith('#'):
-                        self._command(line)
+                        self.onecmd(line)
         except IOError:
             logger.info(_('Error: Cannot open %s for reading'.format(file)))
             sys.exit(1)
