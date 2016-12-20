@@ -401,6 +401,7 @@ class TransactionBunch(object):
         self.install_opt = set()
         self.remove = set()
         self.upgrade = set()
+        self.conditional = set()
 
     def __iadd__(self, other):
         self.install.update(other.install)
@@ -408,6 +409,7 @@ class TransactionBunch(object):
         self.upgrade.update(other.upgrade)
         self.remove = (self.remove | other.remove) - \
             self.install - self.install_opt - self.upgrade
+        self.conditional.update(other.conditional)
         return self
 
 
@@ -440,6 +442,11 @@ class Solver(object):
         if pkg_types & OPTIONAL:
             pkgs_update(pkgs, group.optional_packages)
         return pkgs
+
+    @staticmethod
+    def _pkgs_conditional_rel(group, exclude):
+        return [(pkg.name, pkg.requires) for pkg in group.conditional_packages
+                if pkg.name not in exclude]
 
     def _removable_pkg(self, pkg_name):
         prst = self.persistor
@@ -550,6 +557,7 @@ class Solver(object):
         mandatory = self._pkgs_of_type(group, types, exclude)
         types = pkg_types & (DEFAULT | OPTIONAL)
         trans.install_opt = self._pkgs_of_type(group, types, exclude)
+        trans.conditional = self._pkgs_conditional_rel(group, exclude)
 
         if strict:
             trans.install = mandatory
