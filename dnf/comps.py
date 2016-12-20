@@ -486,7 +486,8 @@ class Solver(object):
     @staticmethod
     def _full_package_set(grp):
         return {pkg.name for pkg in grp.mandatory_packages +
-                grp.default_packages + grp.optional_packages}
+                grp.default_packages + grp.optional_packages +
+                grp.conditional_packages}
 
     @staticmethod
     def _pkgs_of_type(group, pkg_types, exclude=[]):
@@ -501,6 +502,8 @@ class Solver(object):
             pkgs.update(filter(group.default_packages))
         if pkg_types & OPTIONAL:
             pkgs.update(filter(group.optional_packages))
+        if pkg_types & CONDITIONAL:
+            pkgs.update(filter(group.conditional_packages))
         return pkgs
 
     def _removable_pkg(self, pkg_name):

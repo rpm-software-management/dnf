@@ -1281,7 +1281,8 @@ class Base(object):
         def cond_check(pkg):
             if not pkg.requires:
                 return True
-            return self.sack.query().installed().filter(name=pkg.requires) or \
+            installed = self.sack.query().installed().filter(name=pkg.requires).run()
+            return len(installed) > 0 or \
                 pkg.requires in (pkg.name for pkg in self._goal._installs) or \
                 pkg.requires in [pkg.name for pkg in trans.install]
 
@@ -1297,7 +1298,7 @@ class Base(object):
                 if (pkg.basearchonly):
                     query_args.update({'arch': basearch})
                 q = self.sack.query().filter(**query_args).run()
-                if not q and not cond_check(pkg):
+                if not q or not cond_check(pkg):
                     # a conditional package with unsatisfied requiremensts
                     continue
                 sltr = dnf.selector.Selector(self.sack)
