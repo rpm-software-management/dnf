@@ -642,6 +642,7 @@ class MainConf(BaseConfig):
         self._add_option('pluginconfpath',
                          ListOption([dnf.const.PLUGINCONFPATH])) # :api
         self._add_option('persistdir', PathOption(dnf.const.PERSISTDIR)) # :api
+        self._add_option('transformdb', BoolOption(True))  # :api
         self._add_option('recent', IntOption(7, range_min=0))
         self._add_option('retries', PositiveIntOption(10, names_of_0=["0"]))
         self._add_option('reset_nice', BoolOption(True))

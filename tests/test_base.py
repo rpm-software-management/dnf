@@ -32,9 +32,10 @@ import re
 import rpm
 
 class BaseTest(support.TestCase):
- 
+
     def test_instance(self):
-        base = support.Base()
+        base = support.MockBase()
+        self.assertIsNotNone(base)
 
     @mock.patch('dnf.rpm.detect_releasever', lambda x: 'x')
     @mock.patch('dnf.util.am_i_root', lambda: True)
@@ -79,7 +80,7 @@ class BaseTest(support.TestCase):
 
     def test_iter_userinstalled(self):
         """Test iter_userinstalled with a package installed by the user."""
-        base = support.Base()
+        base = support.MockBase()
         base._sack = support.mock_sack('main')
         pkg, = base.sack.query().installed().filter(name='pepper')
         base.history.set_repo(pkg, "main")
@@ -89,7 +90,7 @@ class BaseTest(support.TestCase):
 
     def test_iter_userinstalled_badfromrepo(self):
         """Test iter_userinstalled with a package installed from a bad repository."""
-        base = support.Base()
+        base = support.MockBase()
         base._sack = support.mock_sack('main')
         pkg, = base.sack.query().installed().filter(name='pepper')
         base.history.set_repo(pkg, "anakonda")
@@ -99,7 +100,7 @@ class BaseTest(support.TestCase):
 
     def test_iter_userinstalled_badreason(self):
         """Test iter_userinstalled with a package installed for a wrong reason."""
-        base = support.Base()
+        base = support.MockBase()
         base._sack = support.mock_sack('main')
         pkg, = base.sack.query().installed().filter(name='pepper')
         base.history.mark_user_installed(pkg, False)
@@ -108,7 +109,7 @@ class BaseTest(support.TestCase):
         self.assertEqual(base.history.repo_by_nvra(pkg), 'main')
 
     def test_translate_comps_pkg_types(self):
-        base = support.Base()
+        base = support.MockBase()
         num = base._translate_comps_pkg_types(('mandatory', 'optional'))
         self.assertEqual(num, 12)
 

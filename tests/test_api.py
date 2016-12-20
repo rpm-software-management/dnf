@@ -25,7 +25,7 @@ class APITest(support.TestCase):
         self.assertIsInstance(dnf.Base, type)
 
     def test_conf(self):
-        base = support.Base()
+        base = support.MockBase()
         self.assertIsInstance(base.conf.installroot, unicode)
         # reasonable default
         self.assertEqual(base.conf.installroot, '/')

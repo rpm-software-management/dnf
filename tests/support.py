@@ -155,21 +155,6 @@ class Base(dnf.Base):
     def __init__(self, *args, **kwargs):
         with mock.patch('dnf.rpm.detect_releasever', return_value=69):
             super(Base, self).__init__(*args, **kwargs)
-            self._getHistory(db_path="/tmp/swdb/", transform=False)
-            self.prepare_test_packages()
-
-    def prepare_test_packages(self):
-        pkg1 = self.history.package()
-        pkg1.name = "pepper"
-        pkg1.version = "20"
-        pkg1.release = "0"
-        pkg1.arch = "x86_64"
-        pkg1.checksum_type = "sha256"
-        pkg1.checksum_data = "0123456789abcd"
-        pkg_data1 = self.history.package_data()
-        pid = self.history.add_package(pkg1)
-        self.history.add_package_data(pid, pkg_data1)
-        self.history.swdb.trans_data_beg(0, pid, "user", "installed")
 
 # mock objects
 
@@ -222,6 +207,20 @@ class _BaseStubMixin(object):
 
         self._repo_persistor = FakePersistor()
         self._ds_callback = mock.Mock()
+        self.prepare_test_packages()
+
+    def prepare_test_packages(self):
+        pkg1 = self.history.package()
+        pkg1.name = "pepper"
+        pkg1.version = "20"
+        pkg1.release = "0"
+        pkg1.arch = "x86_64"
+        pkg1.checksum_type = "sha256"
+        pkg1.checksum_data = "0123456789abcd"
+        pkg_data1 = self.history.package_data()
+        pid = self.history.add_package(pkg1)
+        self.history.add_package_data(pid, pkg_data1)
+        self.history.swdb.trans_data_beg(0, pid, "user", "installed")
 
     def add_test_dir_repo(self, id_, cachedir):
         """Add a repository located in a directory in the tests."""
@@ -453,6 +452,7 @@ class FakeConf(dnf.conf.Conf):
                 ('multilib_policy', 'best'),
                 ('obsoletes', True),
                 ('persistdir', '/tmp/swdb/'),
+                ('transformdb', False),
                 ('protected_packages', ["dnf"]),
                 ('plugins', False),
                 ('showdupesfromrepos', False),

@@ -486,7 +486,7 @@ class Base(object):
         timer()
         return self._comps
 
-    def _getHistory(self, db_path=None, transform=True):
+    def _getHistory(self, db_path=None):
         """auto create the history object that to access/append the transaction
            history information. """
         if self._history is None:
@@ -497,7 +497,7 @@ class Base(object):
                 db_path,
                 root=self.conf.installroot,
                 releasever=releasever,
-                transform=transform
+                transform=self.conf.transformdb
             )
         return self._history
 

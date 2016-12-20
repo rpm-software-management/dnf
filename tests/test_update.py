@@ -37,7 +37,7 @@ class Update(support.ResultTestCase):
         self.assertResult(base, expected)
 
     def test_update_not_found(self):
-        base = support.Base()
+        base = support.MockBase()
         base._sack = support.mock_sack('updates')
         base._goal = goal = mock.create_autospec(dnf.goal.Goal)
 
