@@ -17,6 +17,7 @@
 #
 
 from __future__ import absolute_import
+from __future__ import print_function
 from __future__ import unicode_literals
 from datetime import datetime
 from dnf.i18n import _
@@ -29,6 +30,7 @@ import dnf.exceptions
 import dnf.subject
 import logging
 import re
+import sys
 
 logger = logging.getLogger('dnf')
 
@@ -220,7 +222,10 @@ class RepoQueryCommand(commands.Command):
         if opts.queryinfo:
             return self.base.output.infoOutput(pkg)
         elif opts.queryfilelist:
-            return po.files
+            filelist = po.files
+            if not filelist:
+                print(_('Package {} contains no files').format(pkg), file=sys.stderr)
+            return filelist
         elif opts.querysourcerpm:
             return po.sourcerpm
         else:
