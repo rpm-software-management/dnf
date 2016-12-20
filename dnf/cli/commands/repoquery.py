@@ -101,7 +101,7 @@ class RepoQueryCommand(commands.Command):
                             help=_('the key to search for'))
         parser.add_argument('--arch', metavar='ARCH',
                             help=_('show only results from this ARCH'))
-        parser.add_argument('-f', '--file', metavar='FILE',
+        parser.add_argument('-f', '--file', metavar='FILE', nargs='+',
                             help=_('show only results that owns FILE'))
         parser.add_argument('--whatprovides', metavar='REQ',
                             help=_('show only results that provide REQ'))
