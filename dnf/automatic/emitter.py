@@ -25,6 +25,7 @@ from dnf.i18n import _
 import logging
 import dnf.pycomp
 import smtplib
+import email.utils
 
 APPLIED = _("The following updates have been applied on '%s':")
 AVAILABLE = _("The following updates are available on '%s':")
@@ -90,9 +91,11 @@ class EmailEmitter(Emitter):
         message.set_charset('utf-8')
         email_from = self._conf.email_from
         email_to = self._conf.email_to
-        message['Subject'] = subj
+        message['Date'] = email.utils.formatdate()
         message['From'] = email_from
+        message['Subject'] = subj
         message['To'] = ','.join(email_to)
+        message['Message-ID'] = email.utils.make_msgid()
 
         # Send the email
         try:
