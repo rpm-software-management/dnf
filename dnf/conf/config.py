@@ -898,7 +898,7 @@ class RepoConf(BaseConfig):
 
     def __init__(self, parent, section=None, parser=None):
         super(RepoConf, self).__init__(section, parser)
-        self._add_option('name', Option()) # :api
+        self._add_option('name', Option(default=self._section))  # :api
         self._add_option('enabled', inherit(parent._get_option('enabled')))
         self._add_option('basecachedir', inherit(parent._get_option('cachedir')))
         self._add_option('baseurl', UrlListOption()) # :api
