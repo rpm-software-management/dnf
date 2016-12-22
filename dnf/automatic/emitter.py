@@ -107,6 +107,7 @@ class EmailEmitter(Emitter):
                 self._conf.email_host, exc)
             logger.error(msg)
 
+
 class SendmailEmitter(EmailEmitter):
     def commit(self):
         # Send the email
@@ -116,10 +117,10 @@ class SendmailEmitter(EmailEmitter):
         cmd = ['/usr/sbin/sendmail', '-bm', '-t']
         try:
             proc = subprocess.Popen(cmd,
-                universal_newlines=True,
-                stdin=subprocess.PIPE,
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE)
+                                    universal_newlines=True,
+                                    stdin=subprocess.PIPE,
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE)
         except OSError as e:
             if e.errno == 2:
                 logger.error('%s, %s', cmd[0], e.strerror)
