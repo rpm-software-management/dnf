@@ -53,6 +53,9 @@ def build_emitters(conf):
             if name == 'email':
                 emitter = dnf.automatic.emitter.EmailEmitter(system_name, conf.email)
                 emitters.append(emitter)
+            elif name == 'sendmail':
+                emitter = dnf.automatic.emitter.SendmailEmitter(system_name, conf.email)
+                emitters.append(emitter)
             elif name == 'stdio':
                 emitter = dnf.automatic.emitter.StdIoEmitter(system_name)
                 emitters.append(emitter)

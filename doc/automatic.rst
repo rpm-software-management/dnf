@@ -94,7 +94,7 @@ Choosing how the results should be reported.
 ``emit_via``
     list, default: ``email, stdio, motd``
 
-    List of emitters to report the results through. Available emitters are ``stdio`` to print the result to standard output, ``email`` to send the report via email and ``motd`` sends the result to */etc/motd* file.
+    List of emitters to report the results through. Available emitters are ``stdio`` to print the result to standard output, ``email`` to send the report via email, ``sendmail`` to send the report via */usr/sbin/sendmail* and ``motd`` sends the result to */etc/motd* file.
 
 ``system_name``
     string, default: hostname of the given system
