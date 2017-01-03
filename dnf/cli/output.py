@@ -20,6 +20,7 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
+from copy import deepcopy
 from dnf.cli.format import format_number, format_time
 from dnf.i18n import _, P_, ucd, fill_exact_width, textwrap_fill, exact_width
 from dnf.pycomp import xrange, basestring, long, unicode
@@ -960,26 +961,25 @@ class Output(object):
             out[0:0] = self._banner(col_data, (_('Group'), _('Packages'), '', ''))
         return '\n'.join(out)
 
-    def _skipped_conflicts(self):
-        """returns set of packages that would be additionally installed
-           when --best and --allowerasing is set"""
-        def is_better_version(same_name_pkgs):
-            pkg1, pkg2 = same_name_pkgs
-            if not pkg2 or (pkg1 and pkg1 > pkg2):
-                return False
-            return True
-
-        return set(map(lambda t: t[1], filter(is_better_version,
-                   self.base._goal.best_run_diff())))
-
-    def _skipped_broken_deps(self, skipped_conflicts):
-        """returns set of packages that are available updates
-           but cannot be upgraded"""
-        goal_diff = self.base._goal.available_updates_diff(
-            self.base.sack.query())
-        if skipped_conflicts:
-            goal_diff -= skipped_conflicts
-        return goal_diff
+    def _skipped_packages(self):
+        """returns set of conflicting packages and set of packages with broken dependency that would
+        be additionally installed when --best and --allowerasing"""
+        ng = deepcopy(self.base._goal)
+        params = {"allow_uninstall": self.base._allow_erasing, "force_best": True}
+        ret = ng.run(**params)
+        if not ret:
+            msg = ""
+            count_problems = (ng.count_problems() > 1)
+            for i, rs in enumerate(ng.problem_rules(), start=1):
+                if count_problems:
+                    msg += "\n " + _("Problem") + " %d: " % i
+                else:
+                    msg += "\n " + _("Problem") + ": "
+                msg += "\n  - ".join(rs)
+            logger.warning(msg)
+        problem_conflicts = set(ng.problem_conflicts(available=True))
+        problem_dependency = set(ng.problem_broken_dependency(available=True)) - problem_conflicts
+        return problem_conflicts, problem_dependency
 
     def list_transaction(self, transaction):
         """Return a string representation of the transaction in an
@@ -994,8 +994,8 @@ class Output(object):
             hawkey.DOWNGRADE,
             hawkey.INSTALL
         }
-        skipped_conflicts = []
-        skipped_broken = []
+        skipped_conflicts = set()
+        skipped_broken = set()
 
         if transaction is None:
             return None
@@ -1048,7 +1048,7 @@ class Output(object):
         # show skipped conflicting packages
         if not self.conf.best and forward_actions & self.base._goal.actions:
             lines = []
-            skipped_conflicts = self._skipped_conflicts()
+            skipped_conflicts, skipped_broken = self._skipped_packages()
             for pkg in sorted(skipped_conflicts):
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
             skip_str = _("Skipping packages with conflicts:\n"
@@ -1056,10 +1056,7 @@ class Output(object):
                          "to force their upgrade)") % "--best --allowerasing"
             pkglist_lines.append((skip_str, lines))
 
-        # show skipped packages with broken dependencies
-        if hawkey.UPGRADE_ALL in self.base._goal.actions:
             lines = []
-            skipped_broken = self._skipped_broken_deps(skipped_conflicts)
             for pkg in sorted(skipped_broken):
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
             skip_str = _("Skipping packages with broken dependencies%s\n"

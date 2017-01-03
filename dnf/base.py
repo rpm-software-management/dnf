@@ -93,6 +93,7 @@ class Base(object):
         self._trans_success = False
         self._tempfile_persistor = None
         self._update_security_filters = {}
+        self._allow_erasing = False
 
     def __enter__(self):
         return self
@@ -632,7 +633,7 @@ class Base(object):
                 goal.log_decisions()
             msg = ""
             count_problems = (goal.count_problems() > 1)
-            for i, rs in enumerate(goal.problem_rules, start=1):
+            for i, rs in enumerate(goal.problem_rules(), start=1):
                 if count_problems:
                     msg += "\n " + _("Problem") +  " %d: " % i
                 msg += "\n  - ".join(rs)

@@ -842,6 +842,7 @@ class Cli(object):
 
         if opts.allowerasing:
             self.demands.allow_erasing = opts.allowerasing
+            self.base._allow_erasing = True
         if opts.freshest_metadata:
             self.demands.freshest_metadata = opts.freshest_metadata
         if opts.debugsolver:
