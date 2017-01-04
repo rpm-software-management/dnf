@@ -88,6 +88,10 @@ class ShellCommand(commands.Command, cmd.Cmd):
         self.base.fill_sack()
 
     def onecmd(self, line):
+        if not line:
+            return
+        if line == 'EOF':
+            line = 'quit'
         try:
             s_line = shlex.split(line)
         except:
