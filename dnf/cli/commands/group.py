@@ -165,22 +165,22 @@ class GroupCommand(commands.Command):
 
         def _out_grp(sect, group):
             if not done:
-                logger.info(sect)
+                print(sect)
             msg = '   %s' % group.ui_name
             if self.base.conf.verbose:
                 msg += ' (%s)' % group.id
             if group.lang_only:
                 msg += ' [%s]' % group.lang_only
-            logger.info('%s', msg)
+            print('{}'.format(msg))
 
         def _out_env(sect, envs):
             if envs:
-                logger.info(sect)
+                print(sect)
             for e in envs:
                 msg = '   %s' % e.ui_name
                 if self.base.conf.verbose:
                     msg += ' (%s)' % e.id
-                logger.info(msg)
+                print(msg)
 
         if not showinstalled:
             _out_env(_('Available environment groups:'), env_avail)
