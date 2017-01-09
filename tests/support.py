@@ -286,6 +286,9 @@ class CliStub(object):
         self.logger = logging.getLogger()
         self.register_command(dnf.cli.commands.HelpCommand)
 
+    def redirect_logger(self, stdout=None, stderr=None):
+        return
+
     def register_command(self, command):
         """Register given *command*."""
         self.cli_commands.update({alias: command for alias in command.aliases})

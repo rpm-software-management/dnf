@@ -206,6 +206,9 @@ class RepoQueryCommand(commands.Command):
     def configure(self):
         demands = self.cli.demands
 
+        if not self.opts.verbose and not self.opts.quiet:
+            self.cli.redirect_logger(stdout=logging.WARNING, stderr=logging.INFO)
+
         if self.opts.querytags:
             return
 
