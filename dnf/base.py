@@ -143,7 +143,7 @@ class Base(object):
             if r.id in disabled:
                 continue
             if len(r.includepkgs) > 0:
-                pkgs=self.sack.query().filter(empty=True)
+                pkgs = self.sack.query().filter(empty=True)
                 for incl in r.includepkgs:
                     subj = dnf.subject.Subject(incl)
                     pkgs = pkgs.union(subj.get_best_query(self.sack))
@@ -156,7 +156,7 @@ class Base(object):
         # repo specific settings
         if 'main' not in disabled:
             if len(self.conf.includepkgs) > 0:
-                pkgs=self.sack.query().filter(empty=True)
+                pkgs = self.sack.query().filter(empty=True)
                 for incl in self.conf.includepkgs:
                     subj = dnf.subject.Subject(incl)
                     pkgs = pkgs.union(subj.get_best_query(self.sack))
