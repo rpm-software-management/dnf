@@ -642,7 +642,10 @@ class Repo(dnf.conf.RepoConf):
         if mirrorlist:
             h.hmfcb = self._md_pload._mirror_failure_cb
             if mirror_setup:
-                h.setopt(librepo.LRO_MIRRORLIST, mirrorlist)
+                if self.metalink:
+                    h.setopt(librepo.LRO_METALINKURL, mirrorlist)
+                else:
+                    h.setopt(librepo.LRO_MIRRORLISTURL, mirrorlist)
                 h.setopt(librepo.LRO_FASTESTMIRROR, self.fastestmirror)
                 h.setopt(librepo.LRO_FASTESTMIRRORCACHE,
                          os.path.join(self.basecachedir, 'fastestmirror.cache'))
