@@ -95,6 +95,9 @@ class RepoListCommand(commands.Command):
         demands.available_repos = True
         demands.fresh_metadata = False
         demands.sack_activation = True
+        if not self.opts.verbose and not self.opts.quiet:
+            self.cli.redirect_logger(stdout=logging.WARNING, stderr=logging.INFO)
+
         if self.opts._repos_action:
             self.opts.repos_action = self.opts._repos_action
 
