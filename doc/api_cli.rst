@@ -109,3 +109,8 @@ When packaging your custom command, we recommend you to define a virtual provide
   .. method:: register_command(command_cls):
 
     Register new command. `command_cls` is a subclass of :class:`.Command`.
+
+  .. method:: redirect_logger(self, stdout=None, stderr=None):
+
+    Change minimal logger level for terminal output to stdout and stderr according to specific
+    command requirements. For stdout and stderr use logging.INFO, logging.WARNING, etc.

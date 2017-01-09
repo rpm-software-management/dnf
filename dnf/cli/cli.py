@@ -924,6 +924,18 @@ class Cli(object):
             key = 'upgrade' if minimal is None else 'minimal'
             self.base._update_security_filters[key] = filters
 
+    def redirect_logger(self, stdout=None, stderr=None):
+        """
+        Change minimal logger level for terminal output to stdout and stderr according to specific
+        command requirements
+        @param stdout: logging.INFO, logging.WARNING, ...
+        @param stderr:logging.INFO, logging.WARNING, ...
+        """
+        if stdout is not None:
+            self.base._logging.stdout_handler.setLevel(stdout)
+        if stderr is not None:
+            self.base._logging.stderr_handler.setLevel(stderr)
+
 
     def register_command(self, command_cls):
         """Register a Command. :api"""
