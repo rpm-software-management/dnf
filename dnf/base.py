@@ -143,19 +143,23 @@ class Base(object):
             if r.id in disabled:
                 continue
             if len(r.includepkgs) > 0:
-                pkgs = self.sack.query().filter(reponame=r.id).\
-                    filter(name__glob=r.includepkgs)
+                pkgs=self.sack.query().filter(empty=True)
+                for incl in r.includepkgs:
+                    subj = dnf.subject.Subject(incl)
+                    pkgs = pkgs.union(subj.get_best_query(self.sack))
                 self.sack.add_includes(pkgs, reponame=r.id)
             for excl in r.excludepkgs:
-                pkgs = self.sack.query().filter(reponame=r.id).\
-                    filter(name__glob=excl)
-                self.sack.add_excludes(pkgs)
+                subj = dnf.subject.Subject(excl)
+                pkgs = subj.get_best_query(self.sack)
+                self.sack.add_excludes(pkgs.filter(reponame=r.id))
         # then main (global) includes/excludes because they can mask
         # repo specific settings
         if 'main' not in disabled:
-            for incl in self.conf.includepkgs:
-                subj = dnf.subject.Subject(incl)
-                pkgs = subj.get_best_query(self.sack)
+            if len(self.conf.includepkgs) > 0:
+                pkgs=self.sack.query().filter(empty=True)
+                for incl in self.conf.includepkgs:
+                    subj = dnf.subject.Subject(incl)
+                    pkgs = pkgs.union(subj.get_best_query(self.sack))
                 self.sack.add_includes(pkgs)
             for excl in self.conf.excludepkgs:
                 subj = dnf.subject.Subject(excl)
