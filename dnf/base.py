@@ -149,6 +149,13 @@ class Base(object):
             for excl in r.excludepkgs:
                 pkgs = self.sack.query().filter(reponame=r.id).\
                     filter(name__glob=excl)
+                if len(pkgs) == 0:
+                    if "." in excl:
+                        pkgs = self.sack.query().filter(reponame=r.id).\
+                            filter(name__glob=excl.split(".")[0], arch__glob=excl.split(".")[-1])
+                    else:
+                        pkgs = self.sack.query().filter(reponame=r.id).\
+                            filter(arch__glob=excl)
                 self.sack.add_excludes(pkgs)
         # then main (global) includes/excludes because they can mask
         # repo specific settings
