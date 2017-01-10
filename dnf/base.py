@@ -1730,7 +1730,7 @@ class Base(object):
         if not nevra:
             msg = _('No match for argument: %s') % pkg_spec
             raise dnf.exceptions.PackageNotFoundError(msg, pkg_spec)
-        done = False
+        done = 0
         q = subj._nevra_to_filters(self.sack.query(), nevra)
         available_pkgs = q.available()
         available_pkg_names = list(available_pkgs._name_dict().keys())
@@ -1747,10 +1747,8 @@ class Base(object):
             sltr = dnf.selector.Selector(self.sack)
             sltr.set(pkg=downgrade_pkgs)
             self._goal.downgrade_to(select=sltr, optional=(not strict))
-            done = True
-        if done:
-            return 1
-        return 0
+            done = 1
+        return done
 
     def provides(self, provides_spec):
         providers = dnf.query._by_provides(self.sack, provides_spec)
