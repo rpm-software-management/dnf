@@ -905,7 +905,13 @@ class HistoryCommand(Command):
         for t in self.opts.tid:
             if '..' in t:
                 btid, etid = t.split('..', 2)
-                tids.update(range(str2tid(btid), str2tid(etid) + 1))
+                btid = str2tid(btid)
+                etid = str2tid(etid)
+                if btid > etid:
+                    tmp = btid
+                    btid = etid
+                    etid = tmp
+                tids.update(range(btid, etid + 1))
             else:
                 try:
                     tids.add(str2tid(t))
