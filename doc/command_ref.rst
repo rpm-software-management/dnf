@@ -41,6 +41,14 @@ virtual provide in the form of ``dnf-command(<alias>)`` where ``<alias>`` is the
 ``dnf install 'dnf-command(repoquery)'`` to install a ``repoquery`` plugin (the same applies to specifying
 dependencies of packages that require a particular DNF command).
 
+Return values:
+
+* ``0``  : Operation was successful.
+* ``1``  : An error occurred, which was handled by dnf.
+* ``3``  : An unknown unhandled error occurred during operation.
+* ``100``: See :ref:`check-update <check_update_command-label>`
+* ``200``: There was a problem with acquiring or releasing of locks.
+
 Available commands:
 
 * :ref:`autoremove <autoremove_command-label>`

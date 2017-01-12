@@ -79,9 +79,8 @@ def main(args, conf_class=Conf, cli_class=Cli, option_parser_class=OptionParser)
         logger.critical('{}: {}'.format(type(e).__name__, "Terminated."))
         return 1
     except Exception as e:
-        return_code = 3
         logger.critical('{}: {}'.format(type(e).__name__, e))
-        return return_code
+        return 3
 
 
 def _main(base, args, cli_class, option_parser):
