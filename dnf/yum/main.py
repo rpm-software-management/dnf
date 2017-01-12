@@ -45,10 +45,10 @@ def main(args):
     except dnf.exceptions.ProcessLockError as e:
         logger.critical(e.value)
         show_lock_owner(e.pid)
-        return 1
+        return 200
     except dnf.exceptions.LockError as e:
         logger.critical(e.value)
-        return 1
+        return 200
     except dnf.exceptions.DepsolveError as e:
         return 1
     except dnf.exceptions.Error as e:
@@ -58,6 +58,10 @@ def main(args):
     except KeyboardInterrupt as e:
         logger.critical('{}: {}'.format(type(e).__name__, "Terminated."))
         return 1
+    except Exception as e:
+        return_code = 3
+        logger.critical('{}: {}'.format(type(e).__name__, e))
+        return return_code
 
 
 def _main(base, args):

@@ -62,10 +62,10 @@ def main(args):
     except dnf.exceptions.ProcessLockError as e:
         logger.critical(e.value)
         show_lock_owner(e.pid)
-        return 1
+        return 200
     except dnf.exceptions.LockError as e:
         logger.critical(e.value)
-        return 1
+        return 200
     except dnf.exceptions.DepsolveError as e:
         return 1
     except dnf.exceptions.Error as e:
@@ -75,6 +75,9 @@ def main(args):
     except KeyboardInterrupt as e:
         logger.critical('{}: {}'.format(type(e).__name__, "Terminated."))
         return 1
+    except Exception as e:
+        logger.critical('{}: {}'.format(type(e).__name__, e))
+        return 3
 
 
 def _main(base, args):
@@ -91,8 +94,6 @@ def _main(base, args):
     # also sanity check the things being passed on the cli
     try:
         cli.configure(list(map(ucd, args)))
-    except dnf.exceptions.LockError:
-        raise
     except (IOError, OSError) as e:
         return ex_IOError(e)
 
