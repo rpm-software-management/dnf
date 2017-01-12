@@ -18,76 +18,20 @@
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.i18n import ucd
-from dnf.cli.utils import show_lock_owner
+from dnf.yum.cli import YumCli
 from dnf.yum.config import YumConf
 from dnf.yum.option_parser import YumOptionParser
 
-import dnf.cli
-import dnf.cli.cli
 import dnf.cli.main
-import dnf.exceptions
-import dnf.i18n
 import dnf.logging
-import dnf.util
-import dnf.yum.config
-import dnf.yum.cli
 import logging
 import sys
 
 logger = logging.getLogger("dnf")
 
 
-def main(args):
-    try:
-        with dnf.cli.cli.BaseCli(YumConf()) as base:
-            return _main(base, args)
-    except dnf.exceptions.ProcessLockError as e:
-        logger.critical(e.value)
-        show_lock_owner(e.pid)
-        return 200
-    except dnf.exceptions.LockError as e:
-        logger.critical(e.value)
-        return 200
-    except dnf.exceptions.DepsolveError as e:
-        return 1
-    except dnf.exceptions.Error as e:
-        return dnf.cli.main.ex_Error(e)
-    except IOError as e:
-        return dnf.cli.main.ex_IOError(e)
-    except KeyboardInterrupt as e:
-        logger.critical('{}: {}'.format(type(e).__name__, "Terminated."))
-        return 1
-    except Exception as e:
-        return_code = 3
-        logger.critical('{}: {}'.format(type(e).__name__, e))
-        return return_code
-
-
-def _main(base, args):
-    """Run the dnf program from a command line interface."""
-
-    dnf.i18n.setup_locale()
-    dnf.i18n.setup_stdout()
-
-    # our core object for the cli
-    base._logging._presetup()
-    cli = dnf.yum.cli.YumCli(base)
-
-    # do our cli parsing and config file setup
-    # also sanity check the things being passed on the cli
-    try:
-        cli.configure(list(map(ucd, args)), YumOptionParser())
-    except dnf.exceptions.LockError:
-        raise
-    except (IOError, OSError) as e:
-        return dnf.cli.main.ex_IOError(e)
-
-    return dnf.cli.main.cli_run(cli, base)
-
-
 def user_main(args, exit_code=False):
-    errcode = main(args)
+    errcode = dnf.cli.main.main(args, YumConf, YumCli, YumOptionParser)
     if exit_code:
         sys.exit(errcode)
     return errcode
