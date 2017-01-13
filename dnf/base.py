@@ -984,8 +984,12 @@ class Base(object):
 
         (real, full) = saving
         if real != full:
-            msg = _("Delta RPMs reduced %.1f MB of updates to %.1f MB "
-                    "(%d.1%% saved)")
+            if real < full:
+                msg = _("Delta RPMs reduced %.1f MB of updates to %.1f MB "
+                        "(%d.1%% saved)")
+            elif real > full:
+                msg = _("Failed Delta RPMs increased %.1f MB of updates to %.1f MB "
+                        "(%d.1%% wasted)")
             percent = 100 - real / full * 100
             logger.info(msg, full / 1024 ** 2, real / 1024 ** 2, percent)
 
