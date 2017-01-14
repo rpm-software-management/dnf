@@ -919,8 +919,7 @@ class HistoryCommand(Command):
         vcmd = self.opts.tid_action
         extcmds = self._convert_tids()
 
-        if False: pass
-        elif vcmd == 'list':
+        if vcmd == 'list':
             ret = self.output.historyListCmd(extcmds)
         elif vcmd == 'info':
             ret = self.output.historyInfoCmd(extcmds, self.opts.tid)
