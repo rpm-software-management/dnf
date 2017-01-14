@@ -1901,19 +1901,26 @@ class DepSolveProgressCallBack(dnf.callback.Depsolve):
            ud = the package will be updated
            od = the package will be obsoleted
         """
-        modedict = {'i': _('installed'),
-                    'u': _('an upgrade'),
-                    'e': _('erased'),
-                    'r': _('reinstalled'),
-                    'd': _('a downgrade'),
-                    'o': _('obsoleting'),
-                    'ud': _('upgraded'),
-                    'od': _('obsoleted'),
-                    'dd': _('downgraded')}
-        (n, a, evr) = (pkg.name, pkg.arch, pkg.evr)
-        modeterm = modedict[mode]
-        logger.debug(_('---> Package %s.%s %s will be %s'), n, a, evr,
-                          modeterm)
+        output = None
+        if mode == 'i':
+            output = _('---> Package %s.%s %s will be installed')
+        elif mode == 'u':
+            output = _('---> Package %s.%s %s will be an upgrade')
+        elif mode == 'e':
+            output = _('---> Package %s.%s %s will be erased')
+        elif mode == 'r':
+            output = _('---> Package %s.%s %s will be reinstalled')
+        elif mode == 'd':
+            output = _('---> Package %s.%s %s will be a downgrade')
+        elif mode == 'o':
+            output = _('---> Package %s.%s %s will be obsoleting')
+        elif mode == 'ud':
+            output = _('---> Package %s.%s %s will be upgraded')
+        elif mode == 'od':
+            output = _('---> Package %s.%s %s will be obsoleted')
+
+        if output:
+            logger.debug(output, pkg.name, pkg.arch, pkg.evr)
 
     def start(self):
         """Perform setup at the beginning of the dependency solving
