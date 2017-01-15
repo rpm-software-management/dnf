@@ -932,7 +932,7 @@ class Output(object):
                 logger.error(msg)
                 break
         if not error:
-            logger.info(_("Installed size: %s"), format_number(totsize))
+            logger.info(_("Freed space: %s"), format_number(totsize))
 
     def list_group_transaction(self, comps, prst, diff):
         if not diff:
