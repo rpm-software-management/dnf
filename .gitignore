@@ -11,4 +11,5 @@ package/dnf.spec
 dnf/const.py
 bin/dnf*-2
 bin/dnf*-3
-bin/yum
+bin/yum-2
+bin/yum-3
