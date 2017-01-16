@@ -214,9 +214,11 @@ touch %{buildroot}%{_localstatedir}/log/%{name}.log
 %if %{with python3}
 %{?system_python_abi:sed -i 's|#!%{__python3}|#!%{_libexecdir}/system-python|' %{buildroot}%{_bindir}/{dnf-3,yum}}
 ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf
+ln -sr %{buildroot}%{_bindir}/yum-3 %{buildroot}%{_bindir}/yum
 mv %{buildroot}%{_bindir}/dnf-automatic-3 %{buildroot}%{_bindir}/dnf-automatic
 %else
 ln -sr %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/dnf
+ln -sr %{buildroot}%{_bindir}/yum-2 %{buildroot}%{_bindir}/yum
 mv %{buildroot}%{_bindir}/dnf-automatic-2 %{buildroot}%{_bindir}/dnf-automatic
 %endif
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
