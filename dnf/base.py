@@ -245,7 +245,9 @@ class Base(object):
         with lock:
             if load_system_repo is not False:
                 try:
-                    self._sack.load_system_repo(build_cache=True)
+                    # FIXME: If build_cache=True, @System.solv is incorrectly updated in install-
+                    # remove loops
+                    self._sack.load_system_repo(build_cache=False)
                 except IOError:
                     if load_system_repo != 'auto':
                         raise
