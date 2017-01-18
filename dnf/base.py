@@ -1483,7 +1483,9 @@ class Base(object):
                 self._goal.install(a, optional=(not strict))
             return len(available)
         elif self.conf.multilib_policy == "best":
-            sltrs = subj._get_best_selectors(self.sack, forms=forms)
+            sltrs = subj._get_best_selectors(self.sack,
+                                             forms=forms,
+                                             obsoletes=self.conf.obsoletes)
             if not any((s.matches() for s in sltrs)):
                 raise dnf.exceptions.MarkingError(
                     _('no package matched'), pkg_spec)
@@ -1593,7 +1595,7 @@ class Base(object):
                         msg = _("Package %s not installed, cannot update it.")
                     logger.warning(msg, pkg_name)
             else:
-                if subj._has_nevra_just_name(self.sack):
+                if subj._has_nevra_just_name(self.sack) and self.conf.obsoletes:
                     obsoletes = self.sack.query().filter(obsoletes=q.installed())
                     q = q.upgrades()
                     # add obsoletes into transaction
@@ -1618,7 +1620,8 @@ class Base(object):
         else:
             q = self.sack.query().upgrades()
             # add obsoletes into transaction
-            q = q.union(self.sack.query().filter(obsoletes=self.sack.query().installed()))
+            if self.conf.obsoletes:
+                q = q.union(self.sack.query().filter(obsoletes=self.sack.query().installed()))
             if reponame is not None:
                 q = q.filter(reponame=reponame)
             q = self._merge_update_filters(q)
@@ -1631,7 +1634,8 @@ class Base(object):
         if pkg_spec is None:
             self._goal.distupgrade_all()
         else:
-            sltrs = dnf.subject.Subject(pkg_spec)._get_best_selectors(self.sack)
+            sltrs = dnf.subject.Subject(pkg_spec) \
+                ._get_best_selectors(self.sack, None, self.conf.obsoletes)
             if not any((s.matches() for s in sltrs)):
                 logger.info(_('No package %s installed.'), pkg_spec)
                 return 0

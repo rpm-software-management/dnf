@@ -213,6 +213,10 @@ class OptionParser(argparse.ArgumentParser):
                                         "in list/search commands"))
         main_parser.add_argument("-e", "--errorlevel", default=None, type=int,
                                  help=_("error output level"))
+        main_parser.add_argument("--obsoletes", default=None, dest="obsoletes",
+                                 action="store_true",
+                                 help=_("enables dnf's obsoletes processing logic for upgrade or "
+                                        "display capabilities that the package obsoletes for repoquery"))
         main_parser.add_argument("--rpmverbosity", default=None,
                                  help=_("debugging output level for rpm"),
                                  metavar='[debug level name]')

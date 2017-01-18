@@ -849,6 +849,8 @@ class Cli(object):
             self.base.conf.debug_solver = True
         if opts.cacheonly:
             self.demands.cacheonly = True
+        if opts.obsoletes:
+            self.base.conf.obsoletes = True
 
         # with cachedir in place we can configure stuff depending on it:
         self.base._activate_persistor()

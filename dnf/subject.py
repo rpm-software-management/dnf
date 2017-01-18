@@ -107,7 +107,7 @@ class Subject(object):
 
         return sack.query().filter(empty=True)
 
-    def get_best_selector(self, sack, forms=None):
+    def get_best_selector(self, sack, forms=None, obsoletes=True):
         # :api
 
         kwargs = {'allow_globs': True}
@@ -118,7 +118,7 @@ class Subject(object):
         if nevra:
             q = self._nevra_to_filters(sack.query(), nevra)
             if q:
-                if nevra._has_just_name():
+                if obsoletes and nevra._has_just_name():
                     q = q.union(sack.query().filter(obsoletes=q))
                 return sltr.set(pkg=q)
 
@@ -132,10 +132,10 @@ class Subject(object):
 
         return sltr
 
-    def _get_best_selectors(self, sack, forms=None):
+    def _get_best_selectors(self, sack, forms=None, obsoletes=True):
         if not self._filename_pattern and is_glob_pattern(self._pattern):
             with_obsoletes = False
-            if self._has_nevra_just_name(sack, forms=forms):
+            if obsoletes and self._has_nevra_just_name(sack, forms=forms):
                 with_obsoletes = True
             q = self.get_best_query(sack, forms=forms)
             sltrs = []
@@ -148,4 +148,4 @@ class Subject(object):
                 sltrs.append(sltr)
             return sltrs
 
-        return [self.get_best_selector(sack, forms)]
+        return [self.get_best_selector(sack, forms, obsoletes)]

@@ -173,6 +173,15 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     disable automatic metadata synchronizing. The default corresponds to three
     hours. The value is rounded to the next commenced hour.
 
+.. _obsoletes_conf_option-label:
+
+``obsoletes``
+    :ref:`boolean <boolean-label>`
+
+    This option only has affect during an update. It enables yum's obsoletes processing logic. Useful when doing distribution level upgrades. See also the yum upgrade command documentation for more details (yum(8)). Default is 'true'.
+
+    Command-line option: :ref:`--obsoletes <obsoletes_option-label>`
+
 ``pluginconfpath``
     :ref:`list <list-label>`
 

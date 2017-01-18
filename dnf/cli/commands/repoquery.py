@@ -49,7 +49,6 @@ description, summary, license, url
 OPTS_MAPPING = {
     'conflicts': 'conflicts',
     'enhances': 'enhances',
-    'obsoletes': 'obsoletes',
     'provides': 'provides',
     'recommends': 'recommends',
     'requires': 'requires',
@@ -170,7 +169,6 @@ class RepoQueryCommand(commands.Command):
         help_msgs = {
             'conflicts': _('Display capabilities that the package conflicts with.'),
             'enhances': _('Display capabilities that the package can enhance.'),
-            'obsoletes': _('Display capabilities that the package obsoletes.'),
             'provides': _('Display capabilities provided by the package.'),
             'recommends':  _('Display capabilities that the package recommends.'),
             'requires':  _('Display capabilities that the package depends on.'),
@@ -178,7 +176,7 @@ class RepoQueryCommand(commands.Command):
             'suggests':  _('Display capabilities that the package suggests.'),
             'supplements':  _('Display capabilities that the package can supplement.')
         }
-        for arg in ('conflicts', 'enhances', 'obsoletes', 'provides', 'recommends',
+        for arg in ('conflicts', 'enhances', 'provides', 'recommends',
                     'requires', 'requires-pre', 'suggests', 'supplements'):
             name = '--%s' % arg
             package_atribute.add_argument(name, dest='packageatr', action='store_const',
@@ -205,6 +203,11 @@ class RepoQueryCommand(commands.Command):
 
     def configure(self):
         demands = self.cli.demands
+
+        if self.opts.obsoletes and self.opts.packageatr:
+            print(self.cli.optparser.print_usage())
+            raise dnf.exceptions.Error(_("argument {}: not allowed with argument {}".format(
+                "--obsoletes", "--" + self.opts.packageatr)))
 
         if not self.opts.verbose and not self.opts.quiet:
             self.cli.redirect_logger(stdout=logging.WARNING, stderr=logging.INFO)
@@ -269,7 +272,7 @@ class RepoQueryCommand(commands.Command):
             q.recent(self.base.conf.recent)
         if self.opts.available:
             if self.opts.list and self.opts.list != "installed":
-                print(self.parser.format_help())
+                print(self.cli.optparser.print_usage())
                 raise dnf.exceptions.Error(_("argument {}: not allowed with argument {}".format(
                     "--available", "--" + self.opts.list)))
         elif self.opts.list == "unneeded":
