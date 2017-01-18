@@ -173,6 +173,19 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     disable automatic metadata synchronizing. The default corresponds to three
     hours. The value is rounded to the next commenced hour.
 
+.. _obsoletes_conf_option-label:
+
+``obsoletes``
+    :ref:`boolean <boolean-label>`
+
+    This option only has affect during an install/update. It enables
+    dnf's obsoletes processing logic, which means it makes dnf check whether
+    any dependencies of given package are no longer required and removes them.
+    Useful when doing distribution level upgrades.
+    Default is 'true'.
+
+    Command-line option: :ref:`--obsoletes <obsoletes_option-label>`
+
 ``pluginconfpath``
     :ref:`list <list-label>`
 

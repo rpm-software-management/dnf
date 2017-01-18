@@ -228,6 +228,18 @@ Options
 ``--noplugins``
     Disable all plugins.
 
+.. _obsoletes_option-label:
+
+``--obsoletes``
+    This option has an effect on an install/update, it enables
+    dnf's obsoletes processing logic. For more information see the
+    :ref:`obsoletes option <obsoletes_conf_option-label>`.
+
+    Option also affects :ref:`repoquery command <repoquery_command-label>`,
+    it display's capabilities that the package obsoletes.
+
+    Configuration Option: :ref:`obsoletes <obsoletes_conf_option-label>`
+
 ``-q, --quiet``
     In combination with a non-interactive command it shows just the relevant content. It suppresses messages notifying about current state or actions of DNF.
 
@@ -1142,6 +1154,10 @@ Upgrade Command
 
 ``dnf [options] upgrade <package-nevr-specs>...``
     Upgrades packages to the specified versions.
+
+If the main ``obsoletes`` configure option is true or the ``--obsoletes`` flag
+is present dnf will include package obsoletes in its calculations.
+For more information see :ref:`obsoletes <obsoletes_conf_option-label>`.
 
 See also :ref:`\configuration_files_replacement_policy-label`.
 
