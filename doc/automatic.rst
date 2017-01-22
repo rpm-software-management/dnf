@@ -94,12 +94,54 @@ Choosing how the results should be reported.
 ``emit_via``
     list, default: ``email, stdio, motd``
 
-    List of emitters to report the results through. Available emitters are ``stdio`` to print the result to standard output, ``email`` to send the report via email and ``motd`` sends the result to */etc/motd* file.
+    List of emitters to report the results through. Available emitters are ``stdio`` to print the result to standard output, ``command`` to send the result to a custom command, ``command_email`` to send an email using a command, and ``email`` to send the report via email and ``motd`` sends the result to */etc/motd* file.
 
 ``system_name``
     string, default: hostname of the given system
 
     How the system is called in the reports.
+
+---------------------
+``[command]`` section
+---------------------
+
+The command emitter configuration. Variables useable in format string arguments are ``body`` with the message body.
+
+``command_format``
+    format string, default: ``cat``
+
+    The shell command to execute.
+
+``stdin_format``
+    format string, default: ``{body}``
+
+    The data to pass to the command on stdin.
+
+---------------------------
+``[command_email]`` section
+---------------------------
+
+The command email emitter configuration. Variables useable in format string arguments are ``body`` with message body, ``subject`` with email subject, ``email_from`` with the "From:" address and ``email_to`` with a space-separated list of recipients.
+
+``command_format``
+    format string, default: ``mail -s {subject} -r {email_from} {email_to}``
+
+    The shell command to execute.
+
+``stdin_format``
+    format string, default: ``{body}``
+
+    The data to pass to the command on stdin.
+
+``email_from``
+    string, default: ``root``
+
+    Message's "From:" address.
+
+``email_to``
+    list, default: ``root``
+
+    List of recipients of the message.
 
 -------------------
 ``[email]`` section
