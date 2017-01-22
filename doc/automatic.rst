@@ -56,7 +56,7 @@ For example:``systemctl enable dnf-automatic-notifyonly.timer && systemctl start
 The configuration file is separated into topical sections.
 
 ---------------------
-``[command]`` section
+``[commands]`` section
 ---------------------
 
 Setting the mode of operation of the program.
