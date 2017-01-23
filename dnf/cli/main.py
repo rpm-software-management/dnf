@@ -22,6 +22,9 @@ Entrance point for the yum command line interface.
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from dnf.conf import Conf
+from dnf.cli.cli import Cli
+from dnf.cli.option_parser import OptionParser
 from dnf.i18n import ucd
 from dnf.cli.utils import show_lock_owner
 from dnf.i18n import _
@@ -55,17 +58,17 @@ def ex_Error(e):
     return 1
 
 
-def main(args):
+def main(args, conf_class=Conf, cli_class=Cli, option_parser_class=OptionParser):
     try:
-        with dnf.cli.cli.BaseCli() as base:
-            return _main(base, args)
+        with dnf.cli.cli.BaseCli(conf_class()) as base:
+            return _main(base, args, cli_class, option_parser_class)
     except dnf.exceptions.ProcessLockError as e:
         logger.critical(e.value)
         show_lock_owner(e.pid)
-        return 1
+        return 200
     except dnf.exceptions.LockError as e:
         logger.critical(e.value)
-        return 1
+        return 200
     except dnf.exceptions.DepsolveError as e:
         return 1
     except dnf.exceptions.Error as e:
@@ -75,9 +78,12 @@ def main(args):
     except KeyboardInterrupt as e:
         logger.critical('{}: {}'.format(type(e).__name__, "Terminated."))
         return 1
+    except Exception as e:
+        logger.critical('{}: {}'.format(type(e).__name__, e))
+        return 3
 
 
-def _main(base, args):
+def _main(base, args, cli_class, option_parser):
     """Run the dnf program from a command line interface."""
 
     dnf.i18n.setup_locale()
@@ -85,14 +91,12 @@ def _main(base, args):
 
     # our core object for the cli
     base._logging._presetup()
-    cli = dnf.cli.cli.Cli(base)
+    cli = cli_class(base)
 
     # do our cli parsing and config file setup
     # also sanity check the things being passed on the cli
     try:
-        cli.configure(list(map(ucd, args)))
-    except dnf.exceptions.LockError:
-        raise
+        cli.configure(list(map(ucd, args)), option_parser())
     except (IOError, OSError) as e:
         return ex_IOError(e)
 

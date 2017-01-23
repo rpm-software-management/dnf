@@ -52,8 +52,7 @@ class AutoremoveCommand(commands.Command):
         demands.resolving = True
         demands.root_user = True
         demands.sack_activation = True
-        self.forms = [self.nevra_forms[command] for command in self.opts.command
-                      if command in list(self.nevra_forms.keys())]
+
         if any([self.opts.grp_specs, self.opts.pkg_specs, self.opts.filenames]):
             self.base.conf.clean_requirements_on_remove = True
             demands.allow_erasing = True
@@ -66,10 +65,13 @@ class AutoremoveCommand(commands.Command):
 
     def run(self):
         if any([self.opts.grp_specs, self.opts.pkg_specs, self.opts.filenames]):
+            forms = [self.nevra_forms[command] for command in self.opts.command
+                     if command in list(self.nevra_forms.keys())]
+
             self.opts.pkg_specs += self.opts.filenames
             done = False
             # Remove groups.
-            if self.opts.grp_specs and self.forms:
+            if self.opts.grp_specs and forms:
                 for grp_spec in self.opts.grp_specs:
                     msg = _('Not a valid form: %s')
                     logger.warning(msg, self.base.output.term.bold(grp_spec))
@@ -80,7 +82,7 @@ class AutoremoveCommand(commands.Command):
 
             for pkg_spec in self.opts.pkg_specs:
                 try:
-                    self.base.remove(pkg_spec, forms=self.forms)
+                    self.base.remove(pkg_spec, forms=forms)
                 except dnf.exceptions.MarkingError:
                     logger.info(_('No match for argument: %s'),
                                 pkg_spec)

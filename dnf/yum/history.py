@@ -1496,9 +1496,9 @@ class YumHistory(object):
         params = list(pkgtupids)
         tids = set()
         if len(params) > PATTERNS_INDEXED_MAX:
-            executeSQL(cur, """SELECT tid FROM trans_data_pkgs""")
+            executeSQL(cur, """SELECT tid,pkgtupid FROM trans_data_pkgs""")
             for row in cur:
-                if row[0] in params:
+                if row[1] in params:
                     tids.add(row[0])
             return tids
         if not params:

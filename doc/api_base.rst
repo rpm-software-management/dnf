@@ -148,9 +148,9 @@
 
     Mark packages matching `pkg_spec` for installation.
 
-  .. method:: package_downgrade(pkg)
+  .. method:: package_downgrade(pkg, strict=False)
 
-    If `pkg` is a :class:`dnf.package.Package` in an available repository, mark the matching installed package for downgrade to `pkg`.
+    If `pkg` is a :class:`dnf.package.Package` in an available repository, mark the matching installed package for downgrade to `pkg`. If strict=False it ignores problems with dep-solving.
 
   .. method:: package_install(pkg)
 

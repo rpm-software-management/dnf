@@ -286,6 +286,9 @@ class CliStub(object):
         self.logger = logging.getLogger()
         self.register_command(dnf.cli.commands.HelpCommand)
 
+    def redirect_logger(self, stdout=None, stderr=None):
+        return
+
     def register_command(self, command):
         """Register given *command*."""
         self.cli_commands.update({alias: command for alias in command.aliases})
@@ -613,6 +616,9 @@ class TestCase(unittest.TestCase):
         """Test that a traceback ending with line *end* is in the *string*."""
         traces = (match.group() for match in TRACEBACK_RE.finditer(string))
         self.assertTrue(any(trace.endswith(end) for trace in traces))
+
+    def assertTransEqual(self, trans_pkgs, list):
+        return self.assertCountEqual([pkg.name for pkg in trans_pkgs], list)
 
 
 class ResultTestCase(TestCase):

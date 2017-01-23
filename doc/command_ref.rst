@@ -34,12 +34,21 @@ Description
 .. _command_provides-label:
 
 `DNF`_ is the next upcoming major version of `Yum`_, a package manager for RPM-based Linux distributions. It roughly
-maintains CLI compatibility with Yum and defines strict API for extensions and plugins. Plugins can modify or extend
-features of DNF or provide additional CLI commands on top of those mentioned below. If you know the name of such a
-command (including commands mentioned below), you may find/install the package which provides it using the appropriate
-virtual provide in the form of ``dnf-command(<alias>)`` where ``<alias>`` is the name of the command; e.g.
-``dnf install 'dnf-command(repoquery)'`` to install a ``repoquery`` plugin (the same applies to specifying
-dependencies of packages that require a particular DNF command).
+maintains CLI compatibility with Yum and defines a strict API for extensions and plugins.
+
+Plugins can modify or extend features of DNF or provide additional CLI commands on top of those mentioned below.
+If you know the name of such a command (including commands mentioned below), you may find/install the package which
+provides it using the appropriate virtual provide in the form of ``dnf-command(<alias>)``, where ``<alias>`` is the
+name of the command; e.g.``dnf install 'dnf-command(repoquery)'`` installs a ``repoquery`` plugin. This approach also
+applies to specifying dependencies of packages that require a particular DNF command.
+
+Return values:
+
+* ``0``  : Operation was successful.
+* ``1``  : An error occurred, which was handled by dnf.
+* ``3``  : An unknown unhandled error occurred during operation.
+* ``100``: See :ref:`check-update <check_update_command-label>`
+* ``200``: There was a problem with acquiring or releasing of locks.
 
 Available commands:
 
@@ -66,6 +75,7 @@ Available commands:
 * :ref:`repository-packages <repository-packages_command-label>`
 * :ref:`search <search_command-label>`
 * :ref:`shell <shell_command-label>`
+* :ref:`swap <swap_command-label>`
 * :ref:`updateinfo <updateinfo_command-label>`
 * :ref:`upgrade <upgrade_command-label>`
 * :ref:`upgrade-minimal <upgrade_minimal_command-label>`
@@ -283,7 +293,7 @@ Options
 ``-y, --assumeyes``
     Automatically answer yes for all questions
 
-List options are comma separated. Command-line options override respective settings from configuration files.
+List options are comma-separated. Command-line options override respective settings from configuration files.
 
 ========
 Commands
@@ -316,14 +326,14 @@ this command.
 
 ``dnf [options] autoremove <spec>...``
 
-    This is alias for :ref:`\remove_command-label` command with clean_requirements_on_remove set to
+    This is an alias for :ref:`\remove_command-label` command with clean_requirements_on_remove set to
     True. It removes the specified packages from the system along with any packages depending on the
     packages being removed. Each ``<spec>`` can be either a ``<package-spec>``, which specifies a
     package directly, or a ``@<group-spec>``, which specifies an (environment) group which contains
     it. It also removes any dependencies that are no longer needed.
 
     There are also a few specific autoremove commands ``autoremove-n``, ``autoremove-na`` and
-    ``autoremove-nevra`` that allow to specify exact argument forms.
+    ``autoremove-nevra`` that allow specification of exact argument forms.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
@@ -348,7 +358,7 @@ Check Update Command
 
 ``dnf [options] check-update [<package-specs>...]``
 
-    Non-interactively checks if updates of the specified packages are available. If no ``<package-specs>`` are given checks whether any updates at all are available for your system. DNF exit code will be 100 when there are updates available and a list of the updates will be printed, 0 if not and 1 if an error occurs.
+    Non-interactively checks if updates of the specified packages are available. If no ``<package-specs>`` are given, checks whether any updates at all are available for your system. DNF exit code will be 100 when there are updates available and a list of the updates will be printed, 0 if not and 1 if an error occurs.
 
     Please note that having a specific newer version available for an installed package (and reported by ``check-update``) does not imply that subsequent ``dnf upgrade`` will install it. The difference is that ``dnf upgrade`` must also ensure the satisfiability of all dependencies and other restrictions.
 
@@ -441,8 +451,9 @@ Groups are virtual collections of packages. DNF keeps track of groups that the u
 
 ``dnf [options] group list <group-spec>...``
     List all matching groups, either among installed or available groups. If
-    nothing is specified list all known groups. Options ``installed`` and ``available`` narrows down the requested list.
+    nothing is specified list all known groups. Options ``--installed`` and ``--available`` narrows down the requested list.
     Records are ordered by `display_order` tag defined in comps.xml file.
+    Provides a list of all hidden groups by using option ``--hidden``.
     Provides more detailed information when ``-v`` option is used.
 
 ``dnf [options] group remove <group-spec>...``
@@ -1061,6 +1072,20 @@ Shell Command
         * list: resolve and list the content of the transaction
         * reset: reset the transaction
         * run: resolve and run the transaction
+
+.. _swap_command-label:
+
+------------
+Swap Command
+------------
+
+``dnf [options] swap <remove-spec> <install-spec>``
+
+    Remove spec and install spec in one transaction. Each ``<spec>`` can be either a
+    :ref:`<package-spec> <specifying_packages-label>`, which specifies a package directly, or a
+    ``@<group-spec>``, which specifies an (environment) group which contains it. Automatic
+    conflict solving is provided in DNF by --allowerasing option that provides functionality of swap
+    command automatically.
 
 .. _update_command-label:
 

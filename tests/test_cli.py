@@ -63,7 +63,7 @@ class BaseCliTest(support.ResultTestCase):
     def test_downgradePkgs(self, logger):
         self._base.downgradePkgs(('tour',))
 
-        self.assertEqual(self._base.downgrade_to.mock_calls, [mock.call('tour')])
+        self.assertEqual(self._base.downgrade_to.mock_calls, [mock.call('tour', strict=False)])
         self.assertEqual(logger.mock_calls, [])
 
     def test_downgradePkgs_notfound(self, logger):
@@ -72,7 +72,7 @@ class BaseCliTest(support.ResultTestCase):
         self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
         self.assertEqual(self._base.downgrade_to.mock_calls,
-                         [mock.call('non-existent')])
+                         [mock.call('non-existent', strict=False)])
         self.assertEqual(logger.mock_calls,
                          [mock.call.info('No package %s available.',
                                          'non-existent')])
@@ -85,10 +85,7 @@ class BaseCliTest(support.ResultTestCase):
             self._base.downgradePkgs(('lotus',))
         self.assertEqual(str(ctx.exception), 'Nothing to do.')
 
-        self.assertEqual(self._base.downgrade_to.mock_calls, [mock.call('lotus')])
-        self.assertEqual(logger.mock_calls, [
-            mock.call.info('Package %s available, but not installed.', 'lotus'),
-            mock.call.info('No match for argument: %s', 'lotus')])
+        self.assertEqual(self._base.downgrade_to.mock_calls, [mock.call('lotus', strict=False)])
 
 
 

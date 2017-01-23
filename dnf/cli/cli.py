@@ -46,6 +46,7 @@ import dnf.cli.commands.repolist
 import dnf.cli.commands.repoquery
 import dnf.cli.commands.search
 import dnf.cli.commands.shell
+import dnf.cli.commands.swap
 import dnf.cli.commands.updateinfo
 import dnf.cli.commands.upgrade
 import dnf.cli.commands.upgrademinimal
@@ -318,7 +319,7 @@ class BaseCli(dnf.Base):
             msg = _('No packages marked for distribution synchronization.')
             raise dnf.exceptions.Error(msg)
 
-    def downgradePkgs(self, specs=[], file_pkgs=[]):
+    def downgradePkgs(self, specs=[], file_pkgs=[], strict=False):
         """Attempt to take the user specified list of packages or
         wildcards and downgrade them. If a complete version number is
         specified, attempt to downgrade them to the specified version
@@ -330,7 +331,7 @@ class BaseCli(dnf.Base):
         oldcount = self._goal.req_length()
         for pkg in file_pkgs:
             try:
-                self.package_downgrade(pkg)
+                self.package_downgrade(pkg, strict=strict)
                 continue # it was something on disk and it ended in rpm
                          # no matter what we don't go looking at repos
             except dnf.exceptions.MarkingError as e:
@@ -340,21 +341,14 @@ class BaseCli(dnf.Base):
                 # no matter what we don't go looking at repos
 
         for arg in specs:
-            wildcard = True if dnf.util.is_glob_pattern(arg) else False
             try:
-                self.downgrade_to(arg)
+                self.downgrade_to(arg, strict=strict)
             except dnf.exceptions.PackageNotFoundError as err:
                 msg = _('No package %s available.')
                 logger.info(msg, self.output.term.bold(arg))
             except dnf.exceptions.PackagesNotInstalledError as err:
-                if not wildcard:
-                # glob pattern should not match not installed packages -> ignore error
-                    for pkg in err.packages:
-                        logger.info(_('Package %s available, but not installed.'),
-                                    self.output.term.bold(pkg.name))
-                        break
-                    logger.info(_('No match for argument: %s'),
-                                self.output.term.bold(err.pkg_spec))
+                logger.info(_('Packages for argument %s available, but not installed.'),
+                            self.output.term.bold(err.pkg_spec))
             except dnf.exceptions.MarkingError:
                 assert False
         cnt = self._goal.req_length() - oldcount
@@ -663,6 +657,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.repoquery.RepoQueryCommand)
         self.register_command(dnf.cli.commands.search.SearchCommand)
         self.register_command(dnf.cli.commands.shell.ShellCommand)
+        self.register_command(dnf.cli.commands.swap.SwapCommand)
         self.register_command(dnf.cli.commands.updateinfo.UpdateInfoCommand)
         self.register_command(dnf.cli.commands.upgrade.UpgradeCommand)
         self.register_command(dnf.cli.commands.upgrademinimal.UpgradeMinimalCommand)
@@ -686,7 +681,7 @@ class Cli(object):
                 except ValueError as e:
                     raise dnf.exceptions.RepoError(e)
                 self.base.repos.add(repofp)
-                logger.warning(_("Added %s repo from %s"), label, path)
+                logger.info(_("Added %s repo from %s"), label, path)
 
                 # do not let this repo to be disabled
                 opts.repos_ed.append((label, "enable"))
@@ -695,13 +690,18 @@ class Cli(object):
             opts.repos_ed.insert(0, ("*", "disable"))
             opts.repos_ed.extend([(r, "enable") for r in opts.repo])
 
+        notmatch = set()
+
         # Process repo enables and disables in order
         try:
             for (repo, operation) in opts.repos_ed:
                 repolist = self.base.repos.get_matching(repo)
                 if not repolist:
-                    msg = _("Unknown repo: '%s'")
-                    raise dnf.exceptions.RepoError(msg % repo)
+                    if self.base.conf.strict and operation == "enable":
+                        msg = _("Unknown repo: '%s'")
+                        raise dnf.exceptions.RepoError(msg % repo)
+                    notmatch.add(repo)
+
                 if operation == "enable":
                     repolist.enable()
                 else:
@@ -710,6 +710,9 @@ class Cli(object):
             logger.critical(e)
             self.optparser.print_help()
             sys.exit(1)
+
+        for repo in notmatch:
+            logger.warning(_("No repository match: %s"), repo)
 
         for rid in self.base._repo_persistor.get_expired_repos():
             repo = self.base.repos.get(rid)
@@ -913,6 +916,18 @@ class Cli(object):
         if len(filters):
             key = 'upgrade' if minimal is None else 'minimal'
             self.base._update_security_filters[key] = filters
+
+    def redirect_logger(self, stdout=None, stderr=None):
+        """
+        Change minimal logger level for terminal output to stdout and stderr according to specific
+        command requirements
+        @param stdout: logging.INFO, logging.WARNING, ...
+        @param stderr:logging.INFO, logging.WARNING, ...
+        """
+        if stdout is not None:
+            self.base._logging.stdout_handler.setLevel(stdout)
+        if stderr is not None:
+            self.base._logging.stderr_handler.setLevel(stderr)
 
 
     def register_command(self, command_cls):

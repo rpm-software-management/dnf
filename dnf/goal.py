@@ -31,6 +31,7 @@ class Goal(hawkey.Goal):
     def __init__(self, sack):
         super(Goal, self).__init__(sack)
         self.group_members = set()
+        self._installs = []
 
     def get_reason(self, pkg):
         code = super(Goal, self).get_reason(pkg)
@@ -50,6 +51,13 @@ class Goal(hawkey.Goal):
         if current_reason == 'unknown' and pkg.name in self.group_members:
             return 'group'
         return current_reason
+
+    def install(self, *args, **kwargs):
+        if args:
+            self._installs.extend(args)
+        if 'select' in kwargs:
+            self._installs.extend(kwargs['select'].matches())
+        return super(Goal, self).install(*args, **kwargs)
 
     def push_userinstalled(self, query, yumdb):
         msg = _('--> Finding unneeded leftover dependencies')

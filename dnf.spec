@@ -1,4 +1,4 @@
-%global hawkey_version 0.7.0-0.1305
+%global hawkey_version 0.7.1
 %global librepo_version 1.7.19
 %global libcomps_version 0.1.8
 %global rpm_version 4.13.0-0.rc1.29
@@ -214,7 +214,7 @@ mkdir -p %{buildroot}%{_localstatedir}/log/
 mkdir -p %{buildroot}%{_var}/cache/dnf/
 touch %{buildroot}%{_localstatedir}/log/%{name}.log
 %if %{with python3}
-%{?system_python_abi:sed -i 's|#!%{__python3}|#!%{_libexecdir}/system-python|' %{buildroot}%{_bindir}/dnf-3}
+%{?system_python_abi:sed -i 's|#!%{__python3}|#!%{_libexecdir}/system-python|' %{buildroot}%{_bindir}/{dnf-3,yum}}
 ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf
 mv %{buildroot}%{_bindir}/dnf-automatic-3 %{buildroot}%{_bindir}/dnf-automatic
 %else

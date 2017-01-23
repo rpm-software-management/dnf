@@ -1,7 +1,5 @@
-# downgrade.py
-# Downgrade CLI command.
 #
-# Copyright (C) 2014-2016 Red Hat, Inc.
+# Copyright (C) 2016 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -20,23 +18,25 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.cli import commands
-from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _
+from dnf.cli import commands
+import logging
+
+logger = logging.getLogger("dnf")
 
 
-class DowngradeCommand(commands.Command):
-    """A class containing methods needed by the cli to execute the
-    downgrade command.
+class SwapCommand(commands.Command):
+    """A class containing methods needed by the cli to execute the swap command.
     """
 
-    aliases = ('downgrade',)
-    summary = _("Downgrade a package")
+    aliases = ('swap',)
+    summary = _('run an interactive dnf mod for remove and install one spec')
 
     @staticmethod
     def set_argparser(parser):
-        parser.add_argument('package', nargs='*', help=_('Package to downgrade'),
-                            action=OptionParser.ParseSpecGroupFileCallback)
+        parser.add_argument('remove_spec', action="store", help=_('The specs that will be removed'))
+        parser.add_argument('install_spec', action="store", help=_(
+            'The specs that will be installed'))
 
     def configure(self):
         demands = self.cli.demands
@@ -44,12 +44,16 @@ class DowngradeCommand(commands.Command):
         demands.available_repos = True
         demands.resolving = True
         demands.root_user = True
-
         commands._checkGPGKey(self.base, self.cli)
-        commands._checkEnabledRepo(self.base, self.opts.filenames)
+        commands._checkEnabledRepo(self.base, [self.opts.install_spec])
+
+    def _perform(self, cmd_str, spec):
+        cmd_cls = self.cli.cli_commands.get(cmd_str)
+        if cmd_cls is not None:
+            cmd = cmd_cls(self)
+            self.cli.optparser.parse_command_args(cmd, [cmd_str, spec])
+            cmd.run()
 
     def run(self):
-        return self.base.downgradePkgs(
-            specs=self.opts.pkg_specs + ['@' + x for x in self.opts.grp_specs],
-            file_pkgs=self.base.add_remote_rpms(self.opts.filenames, strict=False),
-            strict=self.base.conf.strict)
+        self._perform('remove', self.opts.remove_spec)
+        self._perform('install', self.opts.install_spec)

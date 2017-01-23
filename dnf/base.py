@@ -81,6 +81,7 @@ class Base(object):
         self._transaction = None
         self._priv_ts = None
         self._comps = None
+        self._comps_trans = dnf.comps.TransactionBunch()
         self._history = None
         self._tempfiles = set()
         self._trans_tempfiles = set()
@@ -143,19 +144,23 @@ class Base(object):
             if r.id in disabled:
                 continue
             if len(r.includepkgs) > 0:
-                pkgs = self.sack.query().filter(reponame=r.id).\
-                    filter(name__glob=r.includepkgs)
+                pkgs = self.sack.query().filter(empty=True)
+                for incl in r.includepkgs:
+                    subj = dnf.subject.Subject(incl)
+                    pkgs = pkgs.union(subj.get_best_query(self.sack))
                 self.sack.add_includes(pkgs, reponame=r.id)
             for excl in r.excludepkgs:
-                pkgs = self.sack.query().filter(reponame=r.id).\
-                    filter(name__glob=excl)
-                self.sack.add_excludes(pkgs)
+                subj = dnf.subject.Subject(excl)
+                pkgs = subj.get_best_query(self.sack)
+                self.sack.add_excludes(pkgs.filter(reponame=r.id))
         # then main (global) includes/excludes because they can mask
         # repo specific settings
         if 'main' not in disabled:
-            for incl in self.conf.includepkgs:
-                subj = dnf.subject.Subject(incl)
-                pkgs = subj.get_best_query(self.sack)
+            if len(self.conf.includepkgs) > 0:
+                pkgs = self.sack.query().filter(empty=True)
+                for incl in self.conf.includepkgs:
+                    subj = dnf.subject.Subject(incl)
+                    pkgs = pkgs.union(subj.get_best_query(self.sack))
                 self.sack.add_includes(pkgs)
             for excl in self.conf.excludepkgs:
                 subj = dnf.subject.Subject(excl)
@@ -265,7 +270,7 @@ class Base(object):
                         errors.append(e)
                         r.disable()
                 if age != 0 and mts != 0:
-                    logger.warning(_("Last metadata expiration check: "
+                    logger.info(_("Last metadata expiration check: "
                                      "%s ago on %s."),
                                    datetime.timedelta(seconds=int(age)),
                                    dnf.util.normalize_time(mts))
@@ -543,6 +548,7 @@ class Base(object):
         # :api
         """Build the transaction set."""
         exc = None
+        self._finalize_comps_trans()
 
         timer = dnf.logging.Timer('depsolve')
         self._ds_callback.start()
@@ -1267,30 +1273,41 @@ class Base(object):
         return ygh
 
     def _add_comps_trans(self, trans):
-        cnt = 0
+        self._comps_trans += trans
+        return len(trans)
+
+    def _finalize_comps_trans(self):
+        trans = self._comps_trans
         clean_deps = self.conf.clean_requirements_on_remove
-        attr_fn = ((trans.install, self._goal.install),
-                   (trans.install_opt,
+        basearch = self.conf.substitutions['basearch']
+
+        def cond_check(pkg):
+            if not pkg.requires:
+                return True
+            installed = self.sack.query().installed().filter(name=pkg.requires).run()
+            return len(installed) > 0 or \
+                pkg.requires in (pkg.name for pkg in self._goal._installs) or \
+                pkg.requires in [pkg.name for pkg in trans.install]
+
+        attr_fn = ((trans.install,
                     functools.partial(self._goal.install, optional=True)),
                    (trans.upgrade, self._goal.upgrade),
                    (trans.remove,
                     functools.partial(self._goal.erase, clean_deps=clean_deps)))
 
         for (attr, fn) in attr_fn:
-            for it in attr:
-                if not self.sack.query().filter(name=it):
-                    # a comps item that doesn't refer to anything real
-                    if (attr == trans.install):
-                        self._group_persistor._rollback()
-                        raise dnf.exceptions.MarkingError(it)
+            for pkg in attr:
+                query_args = {'name': pkg.name}
+                if (pkg.basearchonly):
+                    query_args.update({'arch': basearch})
+                q = self.sack.query().filter(**query_args).run()
+                if not q or not cond_check(pkg):
+                    # a conditional package with unsatisfied requiremensts
                     continue
                 sltr = dnf.selector.Selector(self.sack)
-                sltr.set(name=it)
+                sltr.set(pkg=q)
                 fn(select=sltr)
-                cnt += 1
-        self._goal.group_members.update(trans.install)
-        self._goal.group_members.update(trans.install_opt)
-        return cnt
+                self._goal.group_members.add(pkg.name)
 
     def _build_comps_solver(self):
         def reason_fn(pkgname):
@@ -1322,7 +1339,8 @@ class Base(object):
     _COMPS_TRANSLATION = {
         'default': dnf.comps.DEFAULT,
         'mandatory': dnf.comps.MANDATORY,
-        'optional': dnf.comps.OPTIONAL
+        'optional': dnf.comps.OPTIONAL,
+        'conditional': dnf.comps.CONDITIONAL
     }
 
     @staticmethod
@@ -1496,7 +1514,7 @@ class Base(object):
             return 1
         return 0
 
-    def package_downgrade(self, pkg):
+    def package_downgrade(self, pkg, strict=False):
         # :api
         if pkg._from_system:
             msg = 'downgrade_package() for an installed package.'
@@ -1508,7 +1526,9 @@ class Base(object):
             logger.warning(msg, pkg.name)
             raise dnf.exceptions.MarkingError(_('No match for argument: %s') % pkg.location, pkg.name)
         elif sorted(q)[0] > pkg:
-            self._goal.downgrade_to(pkg)
+            sltr = dnf.selector.Selector(self.sack)
+            sltr.set(pkg=[pkg])
+            self._goal.downgrade_to(select=sltr, optional=(not strict))
             return 1
         else:
             msg = _("Package %s of lower version already installed, "
@@ -1525,7 +1545,9 @@ class Base(object):
         elif not pkg in available:
             raise dnf.exceptions.PackageNotFoundError(_('No match for argument: %s'), pkg.location)
         else:
-            self._goal.install(pkg, optional=(not strict))
+            sltr = dnf.selector.Selector(self.sack)
+            sltr.set(pkg=[pkg])
+            self._goal.install(select=sltr, optional=(not strict))
         return 1
 
     def package_reinstall(self, pkg):
@@ -1557,7 +1579,9 @@ class Base(object):
             logger.warning(msg, pkg.name)
             raise dnf.exceptions.MarkingError(_('No match for argument: %s') % pkg.location, pkg.name)
         elif sorted(q)[-1] < pkg:
-            self._goal.upgrade_to(pkg)
+            sltr = dnf.selector.Selector(self.sack)
+            sltr.set(pkg=[pkg])
+            self._goal.upgrade(select=sltr)
             return 1
         else:
             msg = _("Package %s of higher version already installed, "
@@ -1696,29 +1720,9 @@ class Base(object):
         and then installing an older version.
 
         """
-        subj = dnf.subject.Subject(pkg_spec)
-        q = subj.get_best_query(self.sack)
-        installed = sorted(q.installed())
-        installed_pkg = first(installed)
-        if installed_pkg is None:
-            available_pkgs = q.available()
-            if available_pkgs:
-                raise dnf.exceptions.PackagesNotInstalledError(
-                    'no package matched', pkg_spec, available_pkgs)
-            raise dnf.exceptions.PackageNotFoundError('no package matched',
-                                                      pkg_spec)
+        return self.downgrade_to(pkg_spec)
 
-        arch = installed_pkg.arch
-        q = self.sack.query().filter(name=installed_pkg.name, arch=arch)
-        avail = [pkg for pkg in q.downgrades() if pkg < installed_pkg]
-        avail_pkg = first(sorted(avail, reverse=True))
-        if avail_pkg is None:
-            return 0
-
-        self._goal.install(avail_pkg)
-        return 1
-
-    def downgrade_to(self, pkg_spec):
+    def downgrade_to(self, pkg_spec, strict=False):
         """Downgrade to specific version if specified otherwise downgrades
         to one version lower than the package installed.
         """
@@ -1726,23 +1730,27 @@ class Base(object):
         poss = subj.subj.nevra_possibilities_real(self.sack, allow_globs=True)
         nevra = dnf.util.first(poss)
         if not nevra:
-            raise dnf.exceptions.PackageNotFoundError('no package matched',
-                                                      pkg_spec)
-
+            msg = _('No match for argument: %s') % pkg_spec
+            raise dnf.exceptions.PackageNotFoundError(msg, pkg_spec)
+        done = 0
         q = subj._nevra_to_filters(self.sack.query(), nevra)
         available_pkgs = q.available()
-        test_q = dnf.subject.Subject(nevra.name).get_best_query(self.sack)
-        if not test_q.installed():
-            raise dnf.exceptions.PackagesNotInstalledError(
-                'no package matched', pkg_spec, available_pkgs)
-        downgrade_pkgs = available_pkgs.downgrades().latest()
-        if not downgrade_pkgs:
-            msg = _("Package %s of lowest version already installed, "
-                    "cannot downgrade it.")
-            logger.warning(msg, nevra.name)
-            return 0
-        dnf.util.mapall(self._goal.downgrade_to, downgrade_pkgs)
-        return 1
+        available_pkg_names = list(available_pkgs._name_dict().keys())
+        q_installed = self.sack.query().installed().filter(name=available_pkg_names)
+        if len(q_installed) == 0:
+            msg = _('Packages for argument %s available, but not installed.') % pkg_spec
+            raise dnf.exceptions.PackagesNotInstalledError(msg, pkg_spec, available_pkgs)
+        for pkg_name in q_installed._name_dict().keys():
+            downgrade_pkgs = available_pkgs.downgrades().latest().filter(name=pkg_name)
+            if not downgrade_pkgs:
+                msg = _("Package %s of lowest version already installed, cannot downgrade it.")
+                logger.warning(msg, pkg_name)
+                continue
+            sltr = dnf.selector.Selector(self.sack)
+            sltr.set(pkg=downgrade_pkgs)
+            self._goal.downgrade_to(select=sltr, optional=(not strict))
+            done = 1
+        return done
 
     def provides(self, provides_spec):
         providers = dnf.query._by_provides(self.sack, provides_spec)

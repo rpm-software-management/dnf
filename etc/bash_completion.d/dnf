@@ -48,9 +48,13 @@ _modified_sack()
 _dnf()
 {
     if [[ "$( readlink /usr/bin/dnf )" == "dnf-2" ]]; then
-        local python_exec="python2"
+        local python_exec="/usr/bin/python2"
     else
-        local python_exec="python3"
+	if [ -x /usr/libexec/system-python ]; then
+	    local python_exec="/usr/libexec/system-python"
+	else
+	    local python_exec="/usr/bin/python3"
+	fi
     fi
 
     local cur prev words cword
