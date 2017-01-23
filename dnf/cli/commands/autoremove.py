@@ -64,37 +64,6 @@ class AutoremoveCommand(commands.Command):
             demands.fresh_metadata = False
 
     def run(self):
-        if any([self.opts.grp_specs, self.opts.pkg_specs, self.opts.filenames]):
-            forms = [self.nevra_forms[command] for command in self.opts.command
-                     if command in list(self.nevra_forms.keys())]
+        autoremove_spec = any([self.opts.grp_specs, self.opts.pkg_specs, self.opts.filenames])
 
-            self.opts.pkg_specs += self.opts.filenames
-            done = False
-            # Remove groups.
-            if self.opts.grp_specs and forms:
-                for grp_spec in self.opts.grp_specs:
-                    msg = _('Not a valid form: %s')
-                    logger.warning(msg, self.base.output.term.bold(grp_spec))
-            elif self.opts.grp_specs:
-                self.base.read_comps(arch_filter=True)
-                if self.base.env_group_remove(self.opts.grp_specs):
-                    done = True
-
-            for pkg_spec in self.opts.pkg_specs:
-                try:
-                    self.base.remove(pkg_spec, forms=forms)
-                except dnf.exceptions.MarkingError:
-                    logger.info(_('No match for argument: %s'),
-                                pkg_spec)
-                else:
-                    done = True
-
-            if not done:
-                raise dnf.exceptions.Error(_('No packages marked for removal.'))
-
-        else:
-            base = self.base
-            pkgs = base.sack.query()._unneeded(base.sack, base._yumdb,
-                                               debug_solver=base.conf.debug_solver)
-            for pkg in pkgs:
-                base.package_remove(pkg)
+        self.base.autoremove(self.opts if autoremove_spec else None)
