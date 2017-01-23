@@ -87,7 +87,7 @@ class ArgParseTest(unittest.TestCase):
         self.assertEqual(sysexit.exception.code, 1)
 
     def test_options(self):
-        for arg in ('conflicts', 'enhances', 'obsoletes', 'provides',
+        for arg in ('conflicts', 'enhances', 'provides',
                     'recommends', 'requires', 'suggests', 'supplements'):
             support.command_configure(self.cmd, ['--' + arg])
             self.assertEqual(self.cmd.opts.packageatr, arg)
