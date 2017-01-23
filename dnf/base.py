@@ -1661,6 +1661,43 @@ class Base(object):
                 self._goal.distupgrade(select=sltr)
         return 1
 
+    def autoremove(self, forms=None, pkg_specs=None, grp_specs=None, filenames=None):
+        # :api
+        """Removes all 'leaf' packages from the system that were originally
+        installed as dependencies of user-installed packages but which are
+        no longer required by any such package."""
+
+        if any([grp_specs, pkg_specs, filenames]):
+            pkg_specs += filenames
+            done = False
+            # Remove groups.
+            if grp_specs and forms:
+                for grp_spec in grp_specs:
+                    msg = _('Not a valid form: %s')
+                    logger.warning(msg, self.output.term.bold(grp_spec))
+            elif grp_specs:
+                self.read_comps(arch_filter=True)
+                if self.env_group_remove(grp_specs):
+                    done = True
+
+            for pkg_spec in pkg_specs:
+                try:
+                    self.remove(pkg_spec, forms=forms)
+                except dnf.exceptions.MarkingError:
+                    logger.info(_('No match for argument: %s'),
+                                pkg_spec)
+                else:
+                    done = True
+
+            if not done:
+                raise dnf.exceptions.Error(_('No packages marked for removal.'))
+
+        else:
+            pkgs = self.sack.query()._unneeded(self.sack, self._yumdb,
+                                               debug_solver=self.conf.debug_solver)
+            for pkg in pkgs:
+                self.package_remove(pkg)
+
     def remove(self, pkg_spec, reponame=None, forms=None):
         # :api
         """Mark the specified package for removal."""

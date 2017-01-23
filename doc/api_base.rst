@@ -160,6 +160,10 @@
 
     If `pkg` is a :class:`dnf.package.Package` in an available repository, mark the matching installed package for upgrade to `pkg`.
 
+  .. method:: autoremove()
+
+    Removes all 'leaf' packages from the system that were originally installed as dependencies of user-installed packages but which are no longer required by any such package.
+
   .. method:: remove(pkg_spec)
 
     Mark packages matching `pkg_spec` for removal.
