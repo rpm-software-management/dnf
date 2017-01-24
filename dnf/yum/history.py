@@ -449,6 +449,9 @@ class SwdbInterface(object):
     def add_package_data(self, pid, package_data):
         return self.swdb.log_package_data(pid, package_data)
 
+    def reset_db(self):
+        return self.swdb.reset_db()
+
     def get_path(self):
         return self.swdb.get_path()
 
