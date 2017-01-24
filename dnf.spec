@@ -113,6 +113,7 @@ BuildRequires:  python-librepo >= %{librepo_version}
 BuildRequires:  python-nose
 BuildRequires:  python2-gpg
 Requires:       python2-gpg
+BuildRequires:  python-gobject
 BuildRequires:  pyliblzma
 BuildRequires:  rpm-python >= %{rpm_version}
 Requires:       pyliblzma
@@ -149,6 +150,7 @@ BuildRequires:  python3-librepo >= %{librepo_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-gpg
 Requires:       python3-gpg
+BuildRequires:  python3-gobject
 BuildRequires:  rpm-python3 >= %{rpm_version}
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
