@@ -831,7 +831,6 @@ class MainConf(BaseConfig):
 
         for name in config_args:
             value = getattr(opts, name, None)
-
             if value is not None and value != []:
                 confopt = self._get_option(name)
                 if confopt:
