@@ -523,7 +523,7 @@ class Solver(object):
             return False
         for id_ in prst.environments():
             p_env = prst.environment(id_.name_id)
-            count += sum(1 for grp in p_env.get_grp_list() if grp == grp_name)
+            count += sum(1 for grp in p_env.get_group_list() if grp == grp_name)
         return count < 2
 
     def _environment_install(self, env_id, pkg_types, exclude, strict=True):
@@ -560,7 +560,7 @@ class Solver(object):
                              ucd(p_env.ui_name))
 
         trans = TransactionBunch()
-        group_ids = set(p_env.get_grp_list())
+        group_ids = set(p_env.get_group_list())
 
         for grp in group_ids:
             if not self._removable_grp(grp):
@@ -577,7 +577,7 @@ class Solver(object):
             raise CompsError(_("Environment '%s' is not installed.") %
                              env.ui_name)
 
-        old_set = set(p_env.get_grp_list())
+        old_set = set(p_env.get_group_list())
         pkg_types = p_env.pkg_types
         exclude = p_env.get_exclude()
 
@@ -608,13 +608,11 @@ class Solver(object):
             logger.warning(_("Group '%s' is already installed.") %
                              group.ui_name)
         exclude = list() if exclude is None else list(exclude)
-        if not p_grp:
-            p_grp = self.persistor.new_group(group_id, group.name,
-                                             group.ui_name, 0, pkg_types, 0)
-
-            self.persistor.add_group(p_grp)
-            p_grp.add_exclude(exclude)
-            p_grp.add_package(list(self._full_package_set(group)))
+        p_grp = self.persistor.new_group(group_id, group.name,
+                                         group.ui_name, 0, pkg_types, 0)
+        self.persistor.add_group(p_grp)
+        p_grp.add_exclude(exclude)
+        p_grp.add_package(list(self._full_package_set(group)))
 
         trans = TransactionBunch()
         trans.install.update(self._pkgs_of_type(group, pkg_types, exclude))

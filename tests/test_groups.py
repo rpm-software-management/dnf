@@ -30,6 +30,7 @@ class EmptyPersistorTest(support.ResultTestCase):
 
     def setUp(self):
         self.base = support.MockBase('main')
+        self.base.history.reset_db()
         self.base.read_mock_comps(False)
         self.base.init_sack()
 
@@ -113,9 +114,11 @@ class PresetPersistorTest(support.ResultTestCase):
         self.assertFalse(p_grp.is_installed)
 
         self.assertEqual(self.base.group_install(grp.id, ('mandatory',)), 2)
+        prst.commit()
         inst, removed = self.installed_removed(self.base)
         self.assertEmpty(inst)
         self.assertEmpty(removed)
+        p_grp = prst.group('base')
         self.assertTrue(p_grp.is_installed)
 
     """
@@ -147,12 +150,14 @@ class PresetPersistorTest(support.ResultTestCase):
         grp_ids = prst.groups_by_pattern('somerset')
         self.assertEqual(grp_ids[0].name_id, 'somerset')
         grp_id = dnf.util.first(grp_ids)
+        prst.groups_installed.append(grp_id)
+        prst.commit()
         p_grp = prst.group('somerset')
-
         self.assertGreater(self.base.group_remove(grp_id), 0)
         inst, removed = self.installed_removed(self.base)
         self.assertEmpty(inst)
         self.assertCountEqual([pkg.name for pkg in removed], ('pepper',))
+        p_grp = prst.group('somerset')
         self.assertFalse(p_grp.installed)
 
 
@@ -173,7 +178,7 @@ class EnvironmentInstallTest(support.ResultTestCase):
                               ('trampoline', 'lotus'))
 
         p_env = self.prst.environment('sugar-desktop-environment')
-        self.assertCountEqual(p_env.get_grp_list(), ('somerset', 'Peppers'))
+        self.assertCountEqual(p_env.get_group_list(), ('somerset', 'Peppers'))
         self.assertTrue(p_env.is_installed())
 
         peppers = self.prst.group('Peppers')
