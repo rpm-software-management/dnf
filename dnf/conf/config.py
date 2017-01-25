@@ -850,6 +850,18 @@ class MainConf(BaseConfig):
                     msg = "Main config did not have a %s attr. before setopt"
                     logger.warning(msg, name)
 
+    def exclude_pkgs(self, pkgs):
+        # :api
+        name = "excludepkgs"
+
+        if pkgs is not None and pkgs != []:
+            confopt = self._get_option(name)
+            if confopt:
+                confopt._set(pkgs, dnf.conf.PRIO_COMMANDLINE)
+            else:
+                logger.warning(_('Unknown configuration option: %s = %s'),
+                               ucd(name), ucd(pkgs))
+
     def _adjust_conf_options(self):
         """Adjust conf options interactions"""
 
