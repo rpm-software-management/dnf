@@ -235,10 +235,9 @@ class OptionParser(argparse.ArgumentParser):
         repo_group.add_argument("--disablerepo", action=self._RepoCallback,
                                 dest='repos_ed', default=[],
                                 metavar='[repo]')
-        repo_group.add_argument('--repo', metavar='[repo]',
+        repo_group.add_argument('--repo', '--repoid', metavar='[repo]', dest='repo',
                                 action=self._SplitCallback, default=[],
-                                help=_('enable just specific repositories '
-                                       'by an id or a glob, '
+                                help=_('enable just specific repositories by an id or a glob, '
                                        'can be specified multiple times'))
         main_parser.add_argument("-x", "--exclude", "--excludepkgs", default=[],
                                  dest='excludepkgs', action=self._SplitCallback,
