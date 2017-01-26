@@ -158,7 +158,7 @@ class ShellCommand(commands.Command, cmd.Cmd):
         cmd = args[0] if args else None
 
         if cmd in ['list', None]:
-            self.onecmd('repolist')
+            self.onecmd('repolist ' + ' '.join(args[1:]))
 
         if cmd in ['enable', 'disable']:
             repos = self.cli.base.repos
