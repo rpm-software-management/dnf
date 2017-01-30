@@ -136,6 +136,12 @@
 
     The exact operation of the solver further depends on the :attr:`dnf.conf.Conf.best` setting.
 
+  .. method:: update_cache(timer=False)
+
+    Downloads and caches in binary format metadata for all known repos. Tries to avoid downloading whenever possible (e.g. when the local metadata hasn’t expired yet or when the metadata timestamp hasn’t changed).
+
+    If 'timer' equals 'True', DNF becomes more resource-aware, meaning DNF will not do anything if running on battery power and will terminate immediately if it’s too soon after the last successful update_cache operation7.
+
   .. _package_marking-label:
 
   The :class:`.Base` class provides a number of methods to make packaging requests that can later be resolved and turned into a transaction. The `pkg_spec` argument some of them take must be a package specification recognized by :class:`dnf.subject.Subject`. If these methods fail to find suitable packages for the operation they raise a :exc:`~dnf.exceptions.MarkingError`. Note that successful completion of these methods does not necessarily imply that the desired transaction can be carried out (e.g. for dependency reasons).
