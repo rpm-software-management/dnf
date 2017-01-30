@@ -235,6 +235,50 @@ class Base(object):
         """Run plugins configure() method."""
         self._plugins._run_config()
 
+    def update_cache(self, timer=False):
+        # :api
+
+        period = self.conf.metadata_timer_sync
+        persistor = self._repo_persistor
+        if timer:
+            if dnf.util.on_ac_power() is False:
+                msg = _('Metadata timer caching disabled '
+                        'when running on a battery.')
+                logger.info(msg)
+                return False
+            if period <= 0:
+                msg = _('Metadata timer caching disabled.')
+                logger.info(msg)
+                return False
+            since_last_makecache = persistor.since_last_makecache()
+            if since_last_makecache is not None and since_last_makecache < period:
+                logger.info(_('Metadata cache refreshed recently.'))
+                return False
+            self.repos.all()._max_mirror_tries = 1
+
+        for r in self.repos.iter_enabled():
+            (is_cache, expires_in) = r._metadata_expire_in()
+            if expires_in is None:
+                logger.info('%s: will never be expired'
+                            ' and will not be refreshed.', r.id)
+            elif not is_cache or expires_in <= 0:
+                logger.debug('%s: has expired and will be refreshed.', r.id)
+                r._md_expire_cache()
+            elif timer and expires_in < period:
+                # expires within the checking period:
+                msg = "%s: metadata will expire after %d seconds " \
+                      "and will be refreshed now"
+                logger.debug(msg, r.id, expires_in)
+                r._md_expire_cache()
+            else:
+                logger.debug('%s: will expire after %d seconds.', r.id,
+                             expires_in)
+
+        if timer:
+            persistor.reset_last_makecache = True
+        self.fill_sack()  # performs the md sync
+        logger.info(_('Metadata cache created.'))
+
     def fill_sack(self, load_system_repo=True, load_available_repos=True):
         # :api
         """Prepare the Sack and the Goal objects. """
