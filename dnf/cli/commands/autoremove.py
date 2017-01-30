@@ -64,6 +64,13 @@ class AutoremoveCommand(commands.Command):
             demands.fresh_metadata = False
 
     def run(self):
-        autoremove_spec = any([self.opts.grp_specs, self.opts.pkg_specs, self.opts.filenames])
+        if any([self.opts.grp_specs, self.opts.pkg_specs, self.opts.filenames]):
+            forms = [self.nevra_forms[command] for command in self.opts.command
+                     if command in list(self.nevra_forms.keys())]
 
-        self.base.autoremove(self.opts if autoremove_spec else None)
+            self.base.autoremove(forms,
+                                 self.opts.pkg_specs,
+                                 self.opts.grp_specs,
+                                 self.opts.filenames)
+        else:
+            self.base.autoremove()

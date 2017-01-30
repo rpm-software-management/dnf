@@ -1641,30 +1641,26 @@ class Base(object):
                 self._goal.distupgrade(select=sltr)
         return 1
 
-    def autoremove(self, opts=None):
+    def autoremove(self, forms=None, pkg_specs=None, grp_specs=None, filenames=None):
         # :api
         """Removes all 'leaf' packages from the system that were originally
         installed as dependencies of user-installed packages but which are
         no longer required by any such package."""
 
-        if opts and any([opts.grp_specs, opts.pkg_specs, opts.filenames]):
-            nevra_forms = dnf.cli.commands.autoremove.AutoremoveCommand.nevra_forms
-            forms = [nevra_forms[command] for command in opts.command
-                     if command in list(nevra_forms.keys())]
-
-            opts.pkg_specs += opts.filenames
+        if any([grp_specs, pkg_specs, filenames]):
+            pkg_specs += filenames
             done = False
             # Remove groups.
-            if opts.grp_specs and forms:
-                for grp_spec in opts.grp_specs:
+            if grp_specs and forms:
+                for grp_spec in grp_specs:
                     msg = _('Not a valid form: %s')
                     logger.warning(msg, self.output.term.bold(grp_spec))
-            elif opts.grp_specs:
+            elif grp_specs:
                 self.read_comps(arch_filter=True)
-                if self.env_group_remove(opts.grp_specs):
+                if self.env_group_remove(grp_specs):
                     done = True
 
-            for pkg_spec in opts.pkg_specs:
+            for pkg_spec in pkg_specs:
                 try:
                     self.remove(pkg_spec, forms=forms)
                 except dnf.exceptions.MarkingError:
