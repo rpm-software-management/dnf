@@ -278,6 +278,7 @@ class Base(object):
             persistor.reset_last_makecache = True
         self.fill_sack()  # performs the md sync
         logger.info(_('Metadata cache created.'))
+        return True
 
     def fill_sack(self, load_system_repo=True, load_available_repos=True):
         # :api

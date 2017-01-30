@@ -38,7 +38,7 @@ class MakeCacheCommandTest(support.TestCase):
     def assert_last_info(self, logger, msg):
         self.assertEqual(logger.info.mock_calls[-1], mock.call(msg))
 
-    @mock.patch('dnf.cli.commands.makecache.logger',
+    @mock.patch('dnf.base.logger',
                 new_callable=support.mock_logger)
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.util.on_ac_power', return_value=True)
@@ -83,7 +83,7 @@ class MakeCacheCommandTest(support.TestCase):
         self.assert_last_info(logger, u'Metadata cache created.')
         self.assertTrue(r._expired)
 
-    @mock.patch('dnf.cli.commands.makecache.logger',
+    @mock.patch('dnf.base.logger',
                 new_callable=support.mock_logger)
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.util.on_ac_power', return_value=False)
