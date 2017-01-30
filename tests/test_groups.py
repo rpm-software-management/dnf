@@ -74,11 +74,19 @@ class PresetPersistorTest(support.ResultTestCase):
 
     def setUp(self):
         self.base = support.MockBase("main")
+        self.prst = self.base.history.activate_group()
         self.base.read_mock_comps()
         self.base.init_sack()
 
     def test_env_group_remove(self):
+        self.base.history.reset_db()
+        self.base.environment_install(
+            "sugar-desktop-environment",
+            ('mandatory',)
+        )
+        self.prst.commit()
         cnt = self.base.env_group_remove(["sugar-desktop-environment"])
+        self.prst.commit()
         self.assertEqual(3, cnt)
         with support.mock.patch('logging.Logger.error') as log:
             self.assertRaises(dnf.exceptions.Error,
@@ -86,39 +94,45 @@ class PresetPersistorTest(support.ResultTestCase):
                               ['nonexistent'])
 
     def test_environment_remove(self):
-        prst = self.base.history.activate_group()
-        env_ids = prst.environments_by_pattern("sugar-desktop-environment")
-        self.assertEqual(env_ids[0].name, 'sugar-desktop-environment')
-        env_id = dnf.util.first(env_ids)
+        self.base.environment_install(
+            "sugar-desktop-environment",
+            ('mandatory',)
+        )
+        self.prst.commit()
+        env_id = self.prst.environment("sugar-desktop-environment")
+        self.assertEqual(env_id.name_id, 'sugar-desktop-environment')
+        self.assertTrue(env_id.is_installed())
         self.assertGreater(self.base.environment_remove(env_id), 0)
-        p_env = prst.environment(env_id)
-        self.assertFalse(p_env.installed)
-        peppers = prst.group('Peppers')
-        somerset = prst.group('somerset')
-        self.assertFalse(peppers.installed)
-        self.assertFalse(somerset.installed)
+        self.prst.commit()
+        p_env = self.prst.environment(env_id)
+        self.assertFalse(p_env.is_installed())
+        peppers = self.prst.group('Peppers')
+        somerset = self.prst.group('somerset')
+        self.assertFalse(peppers.is_installed)
+        self.assertFalse(somerset.is_installed)
 
     def test_env_upgrade(self):
-        prst = self.base.history.activate_group()
+        self.base.history.reset_db()
+        self.base.environment_install("sugar-desktop-environment",
+                                      ('mandatory',))
+        self.prst.commit()
         cnt = self.base.environment_upgrade("sugar-desktop-environment")
         self.assertEqual(5, cnt)
-        peppers = prst.group('Peppers')
-        somerset = prst.group('somerset')
-        self.assertTrue(peppers.installed)
-        self.assertTrue(somerset.installed)
+        peppers = self.prst.group('Peppers')
+        somerset = self.prst.group('somerset')
+        self.assertTrue(peppers.is_installed)
+        self.assertTrue(somerset.is_installed)
 
     def test_group_install(self):
-        prst = self.base.history.activate_group()
+        self.base.history.reset_db()
         grp = self.base.comps.group_by_pattern('Base')
-        p_grp = prst.group('base')
-        self.assertFalse(p_grp.is_installed)
-
+        p_grp = self.prst.group('base')
         self.assertEqual(self.base.group_install(grp.id, ('mandatory',)), 2)
-        prst.commit()
+        self.prst.commit()
         inst, removed = self.installed_removed(self.base)
         self.assertEmpty(inst)
         self.assertEmpty(removed)
-        p_grp = prst.group('base')
+        p_grp = self.prst.group('base')
         self.assertTrue(p_grp.is_installed)
 
     """
@@ -146,19 +160,16 @@ class PresetPersistorTest(support.ResultTestCase):
     """
 
     def test_group_remove(self):
-        prst = self.base.history.activate_group()
-        grp_ids = prst.groups_by_pattern('somerset')
-        self.assertEqual(grp_ids[0].name_id, 'somerset')
-        grp_id = dnf.util.first(grp_ids)
-        prst.groups_installed.append(grp_id)
-        prst.commit()
-        p_grp = prst.group('somerset')
-        self.assertGreater(self.base.group_remove(grp_id), 0)
+        self.base.history.reset_db()
+        self.base.group_install("somerset", ("mandatory",))
+        self.prst.commit()
+        self.assertGreater(self.base.group_remove("somerset"), 0)
+        self.prst.commit()
         inst, removed = self.installed_removed(self.base)
         self.assertEmpty(inst)
         self.assertCountEqual([pkg.name for pkg in removed], ('pepper',))
-        p_grp = prst.group('somerset')
-        self.assertFalse(p_grp.installed)
+        p_grp = self.prst.group('somerset')
+        self.assertFalse(p_grp.is_installed)
 
 
 class EnvironmentInstallTest(support.ResultTestCase):
@@ -173,6 +184,7 @@ class EnvironmentInstallTest(support.ResultTestCase):
         comps = self.base.comps
         env = comps.environment_by_pattern("sugar-desktop-environment")
         self.base.environment_install(env.id, ('mandatory',))
+        self.prst.commit()
         installed, _ = self.installed_removed(self.base)
         self.assertCountEqual(map(operator.attrgetter('name'), installed),
                               ('trampoline', 'lotus'))
@@ -183,4 +195,4 @@ class EnvironmentInstallTest(support.ResultTestCase):
 
         peppers = self.prst.group('Peppers')
         somerset = self.prst.group('somerset')
-        self.assertTrue(all((peppers.installed, somerset.installed)))
+        self.assertTrue(all((peppers.is_installed, somerset.is_installed)))

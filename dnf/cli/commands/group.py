@@ -71,7 +71,6 @@ class GroupCommand(commands.Command):
         if not len(self.base.comps):
             raise dnf.exceptions.CompsError(msg)
 
-    # FIXME this is little bit buggy
     def _environment_lists(self, patterns):
         def available_pred(env):
             env_found = self.base.history.group.environment(env.id)
@@ -256,8 +255,6 @@ class GroupCommand(commands.Command):
             logger.info(_('Groups marked installed: %s'),
                         ','.join([ucd(prst.group(g).ui_name)
                                   for g in res.groups]))
-
-        # save new status into swdb
         prst.commit()
 
     def _mark_remove(self, patterns):
@@ -280,9 +277,6 @@ class GroupCommand(commands.Command):
             logger.info(_('Groups marked removed: %s'),
                         ','.join([ucd(prst.group(g_id).ui_name)
                                   for g_id in res.groups]))
-
-        # save new status into swdb
-
         prst.commit()
 
     def _mark_subcmd(self, extcmds):

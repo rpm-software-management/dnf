@@ -669,18 +669,26 @@ class SwdbInterface(object):
 class GroupPersistor(object):
 
     def __init__(self, swdb):
-        self._commit = False
         self.swdb = swdb
         self.groups_installed = []
         self.groups_removed = []
 
     def commit(self):
-        if self.groups_installed:
-            self.swdb.groups_commit(list(
-                pkg.name_id for pkg in self.groups_installed)
-            )
         for group in self.groups_removed:
             self.swdb.uninstall_group(group)
+        if self.groups_installed:
+            self.swdb.groups_commit(self.groups_installed)
+        self.groups_installed = []
+        self.groups_removed = []
+
+    def install_group(self, group):
+        if type(group) is Dnf.SwdbGroup:
+            self.groups_installed.append(group.name_id)
+        else:
+            self.groups_installed.append(str(group))
+
+    def remove_group(self, group):
+        self.groups_removed.append(group)
 
     def new_group(self, name_id, name, ui_name, is_installed,
                   pkg_types, grp_types):
@@ -722,8 +730,10 @@ class GroupPersistor(object):
     def groups_by_pattern(self, pattern, case_sensitive=False):
         return self.swdb.groups_by_pattern(pattern)
 
-    def add_group(self, group):
-        return self.swdb.add_group(group)
+    def add_group(self, group, commit=False):
+        self.swdb.add_group(group)
+        if commit:
+            self.commit()
 
     def add_env(self, env):
         return self.swdb.add_env(env)

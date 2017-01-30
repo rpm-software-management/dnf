@@ -536,12 +536,10 @@ class Solver(object):
                              env.ui_name)
         grp_types = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
         exclude = list() if exclude is None else list(exclude)
-        if not p_env:
-            p_env = self.persistor.new_env(env_id, env.name, env.ui_name,
-                                           pkg_types, grp_types)
-            self.persistor.add_env(p_env)
-            p_env.add_exclude(exclude)
-            p_env.add_group(list(self._mandatory_group_set(env)))
+        p_env = self.persistor.new_env(env_id, env.name, env.ui_name,
+                                       pkg_types, grp_types)
+        self.persistor.add_env(p_env)
+        p_env.add_exclude(exclude)
 
         trans = TransactionBunch()
         for grp in env.mandatory_groups:
@@ -549,13 +547,15 @@ class Solver(object):
                 trans += self._group_install(grp.id, pkg_types, exclude, strict)
             except dnf.exceptions.CompsError:
                 pass
+
+        p_env.add_group([grp.id for grp in env.mandatory_groups])
         return trans
 
     def _environment_remove(self, env_id):
         if type(env_id) == self.persistor.get_env_type():
             env_id = env_id.name_id
         p_env = self.persistor.environment(env_id)
-        if not p_env.is_installed():
+        if not p_env or not p_env.is_installed():
             raise CompsError(_("Environment '%s' is not installed.") %
                              ucd(p_env.ui_name))
 
@@ -573,7 +573,7 @@ class Solver(object):
             env_id = env_id.name_id
         env = self.comps._environment_by_id(env_id)
         p_env = self.persistor.environment(env.id)
-        if not p_env.is_installed():
+        if not p_env or not p_env.is_installed():
             raise CompsError(_("Environment '%s' is not installed.") %
                              env.ui_name)
 
@@ -616,13 +616,14 @@ class Solver(object):
 
         trans = TransactionBunch()
         trans.install.update(self._pkgs_of_type(group, pkg_types, exclude))
+        self.persistor.install_group(p_grp)
         return trans
 
     def _group_remove(self, group_id):
         if type(group_id) == self.persistor.get_group_type():
             group_id = group_id.name_id
         p_grp = self.persistor.group(group_id)
-        if not p_grp.is_installed:
+        if not p_grp or not p_grp.is_installed:
             raise CompsError(_("Group '%s' not installed.") %
                              ucd(p_grp.ui_name))
 
@@ -630,7 +631,7 @@ class Solver(object):
         exclude = p_grp.get_exclude()
         trans.remove = {pkg for pkg in p_grp.get_full_list()
                         if pkg not in exclude and self._removable_pkg(pkg)}
-        self.persistor.groups_removed.append(p_grp)
+        self.persistor.remove_group(p_grp)
         return trans
 
     def _group_upgrade(self, group_id):
@@ -638,7 +639,7 @@ class Solver(object):
             group_id = group_id.name_id
         group = self.comps._group_by_id(group_id)
         p_grp = self.persistor.group(group.id)
-        if not p_grp.is_installed:
+        if not p_grp or not p_grp.is_installed:
             raise CompsError(_("Group '%s' not installed.") %
                              group.ui_name)
         exclude = set(p_grp.get_exclude())

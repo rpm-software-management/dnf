@@ -109,9 +109,10 @@ class InstallCommandTest(support.ResultTestCase):
 
     def test_run_group(self):
         """Test whether a group is installed."""
+        base = self._cmd.cli.base
+        base.history.reset_db()
         support.command_run(self._cmd, ['@Solid Ground'])
 
-        base = self._cmd.cli.base
         self.assertResult(base, itertools.chain(
               base.sack.query().installed(),
               dnf.subject.Subject('trampoline').get_best_query(base.sack)))
