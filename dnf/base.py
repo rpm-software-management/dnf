@@ -1728,7 +1728,7 @@ class Base(object):
                 raise dnf.exceptions.Error(_('No packages marked for removal.'))
 
         else:
-            pkgs = self.sack.query()._unneeded(self.sack, self._yumdb,
+            pkgs = self.sack.query()._unneeded(self.sack, self.history,
                                                debug_solver=self.conf.debug_solver)
             for pkg in pkgs:
                 self.package_remove(pkg)
