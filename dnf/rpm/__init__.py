@@ -30,35 +30,38 @@ def detect_releasever(installroot):
     # :api
     """Calculate the release version for the system."""
 
-    ts = transaction.initReadOnlyTransaction(root=installroot)
-    ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES | rpm._RPMVSF_NODIGESTS))
-    for distroverpkg in dnf.const.DISTROVERPKG:
-        try:
-            idx = ts.dbMatch('provides', distroverpkg)
-        except (TypeError, rpm.error) as e:
-            raise dnf.exceptions.Error('Error: %s' % str(e))
-        if not len(idx):
-            continue
-        try:
-            hdr = next(idx)
-        except StopIteration:
-            msg = 'Error: rpmdb failed to list provides. Try: rpm --rebuilddb'
-            raise dnf.exceptions.Error(msg)
-        releasever = hdr['version']
-        try:
-            off = hdr[rpm.RPMTAG_PROVIDENAME].index(distroverpkg)
-            flag = hdr[rpm.RPMTAG_PROVIDEFLAGS][off]
-            ver = hdr[rpm.RPMTAG_PROVIDEVERSION][off]
-            if flag == rpm.RPMSENSE_EQUAL and ver:
-                if hdr['name'] != distroverpkg:
-                    # override the package version
-                    releasever = ver
-        except (ValueError, KeyError, IndexError):
-            pass
+    # if installroot is empty dir releasever is None,
+    # that's why releasever is checked from '/'
+    for root in [installroot, "/"]:
+        ts = transaction.initReadOnlyTransaction(root=root)
+        ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES | rpm._RPMVSF_NODIGESTS))
+        for distroverpkg in dnf.const.DISTROVERPKG:
+            try:
+                idx = ts.dbMatch('provides', distroverpkg)
+            except (TypeError, rpm.error) as e:
+                raise dnf.exceptions.Error('Error: %s' % str(e))
+            if not len(idx):
+                continue
+            try:
+                hdr = next(idx)
+            except StopIteration:
+                msg = 'Error: rpmdb failed to list provides. Try: rpm --rebuilddb'
+                raise dnf.exceptions.Error(msg)
+            releasever = hdr['version']
+            try:
+                off = hdr[rpm.RPMTAG_PROVIDENAME].index(distroverpkg)
+                flag = hdr[rpm.RPMTAG_PROVIDEFLAGS][off]
+                ver = hdr[rpm.RPMTAG_PROVIDEVERSION][off]
+                if flag == rpm.RPMSENSE_EQUAL and ver:
+                    if hdr['name'] != distroverpkg:
+                        # override the package version
+                        releasever = ver
+            except (ValueError, KeyError, IndexError):
+                pass
 
-        if is_py3bytes(releasever):
-            releasever = str(releasever, "utf-8")
-        return releasever
+            if is_py3bytes(releasever):
+                releasever = str(releasever, "utf-8")
+            return releasever
     return None
 
 
