@@ -1,5 +1,9 @@
 [Unit]
 Description=dnf makecache
+# On systems managed by either rpm-ostree/ostree, dnf is read-only;
+# while someone might theoretically want the cache updated, in practice
+# anyone who wants that could override this via a file in /etc.
+ConditionPathExists=!/run/ostree-booted
 
 [Service]
 Type=oneshot

@@ -1,5 +1,7 @@
 [Unit]
 Description=dnf-automatic-install timer
+# See comment in dnf-makecache.service
+ConditionPathExists=!/run/ostree-booted
 
 [Timer]
 OnBootSec=1h
