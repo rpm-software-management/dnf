@@ -15,7 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
 # James Antill <james@fedoraproject.org>
-# Edited in 2016 - (SWDB) Eduard Cuba <xcubae00@stud.fit.vutbr.cz>
+# Edited in 2016 - 2017 (SWDB) Eduard Cuba <xcubae00@stud.fit.vutbr.cz>
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
@@ -422,14 +422,15 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
 
 class SwdbInterface(object):
     def __init__(self, db_path, root='/', releasever="", transform=True):
-        self.path = os.path.join(root, db_path)
-        self.swdb = Dnf.Swdb.new(self.path, str(releasever))
+        self.path = os.path.join(root, db_path, "swdb.sqlite")
         self.releasever = str(releasever)
+        self.swdb = Dnf.Swdb.new(self.path, self.releasever)
         self.addon_data = _addondata(db_path, root)
         self.group = None
         if not self.swdb.exist():
-            if not os.path.exists(self.path):
-                os.makedirs(self.path)
+            dbdir = os.path.dirname(self.path)
+            if not os.path.exists(dbdir):
+                os.makedirs(dbdir)
             self.swdb.create_db()
             # does nothing when there is nothing to transform
             if transform:
