@@ -115,9 +115,12 @@ class Package(hawkey.Package):
         if self.sourcerpm is not None:
             # trim suffix first
             srcname = dnf.util.rtrim(self.sourcerpm, ".src.rpm")
-            # source package filenames may not contain epoch, handle both cases
-            srcname = dnf.util.rtrim(srcname, "-{}".format(self.evr))
-            srcname = dnf.util.rtrim(srcname, "-{0.version}-{0.release}".format(self))
+            # sourcerpm should be in form of name-version-release now, so we
+            # will strip the two rightmost parts separated by dash.
+            # Using rtrim with version and release of self is not sufficient
+            # because the package can have different version to the source
+            # package.
+            srcname = srcname.rsplit('-', 2)[0]
         else:
             srcname = None
         return srcname
