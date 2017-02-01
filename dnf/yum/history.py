@@ -683,10 +683,7 @@ class GroupPersistor(object):
         self.groups_removed = []
 
     def install_group(self, group):
-        if type(group) is Dnf.SwdbGroup:
-            self.groups_installed.append(group.name_id)
-        else:
-            self.groups_installed.append(str(group))
+        self.groups_installed.append(group)
 
     def remove_group(self, group):
         self.groups_removed.append(group)
@@ -703,7 +700,7 @@ class GroupPersistor(object):
         return env
 
     def environment(self, name_id):
-        if type(name_id) == Dnf.SwdbEnv:
+        if isinstance(name_id, Dnf.SwdbEnv):
             return self.swdb.get_env(name_id.name_id)
         else:
             return self.swdb.get_env(name_id)
