@@ -221,6 +221,7 @@ def on_ac_power():
     except OSError:
         return None
 
+
 def on_metered_connection():
     """Decide whether we are on metered connection.
 
