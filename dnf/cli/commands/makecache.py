@@ -56,7 +56,7 @@ class MakeCacheCommand(commands.Command):
         timer = self.opts.timer is not None
         persistor = self.base._repo_persistor
         if timer:
-            if dnf.on_metered_connection():
+            if dnf.util.on_metered_connection():
                 msg = _('Metadata timer caching disabled '
                         'when running on metered connection.')
                 logger.info(msg)
