@@ -221,6 +221,32 @@ def on_ac_power():
     except OSError:
         return None
 
+def on_metered_connection():
+    """Decide whether we are on metered connection.
+
+    Returns:
+      True: if on metered connection
+      False: if not
+      None: if it can not be decided
+    """
+    try:
+        import dbus
+    except ImportError:
+        return None
+    bus = dbus.SystemBus()
+    proxy = bus.get_object("org.freedesktop.NetworkManager",
+                           "/org/freedesktop/NetworkManager")
+    iface = dbus.Interface(proxy, "org.freedesktop.DBus.Properties")
+    metered = iface.Get("org.freedesktop.NetworkManager", "Metered")
+    if metered == 0: # NM_METERED_UNKNOWN
+        return None
+    elif metered in (1, 3): # NM_METERED_YES, NM_METERED_GUESS_YES
+        return True
+    elif metered in (2, 4): # NM_METERED_NO, NM_METERED_GUESS_NO
+        return False
+    else: # Something undocumented (at least at this moment)
+        raise ValueError("Unknown value for metered property: %r", metered)
+
 def partition(pred, iterable):
     """Use a predicate to partition entries into false entries and true entries.
 

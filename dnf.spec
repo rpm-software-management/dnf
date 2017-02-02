@@ -43,6 +43,7 @@ Requires:       python3-%{name} = %{version}-%{release}
 %else
 Requires:       python2-%{name} = %{version}-%{release}
 %endif
+Recommends:     (python%{?with_python3:3}-dbus if NetworkManager)
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
