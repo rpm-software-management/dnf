@@ -49,7 +49,15 @@ class UpdateInfoCommand(commands.Command):
                   hawkey.ADVISORY_UNKNOWN: _('unknown'),
                   hawkey.ADVISORY_NEWPACKAGE: _('newpackage')}
 
-    aliases = ['updateinfo']
+    direct_commands = {'list-updateinfo'    : 'list',
+                       'list-security'      : 'list',
+                       'list-sec'           : 'list',
+                       'info-updateinfo'    : 'info',
+                       'info-security'      : 'info',
+                       'info-sec'           : 'info',
+                       'summary-updateinfo' : 'summary'}
+
+    aliases = ['updateinfo'] + list(direct_commands.keys())
     summary = _('display advisories about packages')
 
     def __init__(self, cli):
@@ -105,6 +113,12 @@ class UpdateInfoCommand(commands.Command):
             return False
         return (apkg.name, apkg.arch) in self._ina2evr_cache
 
+    def _canonical(self):
+        # were we called with direct command?
+        direct = self.direct_commands.get(self.opts.command[0])
+        if direct:
+            self.opts.spec_action = direct
+
     @staticmethod
     def set_argparser(parser):
         cmds = ['summary', 'list', 'info']
@@ -116,6 +130,7 @@ class UpdateInfoCommand(commands.Command):
         """Do any command-specific configuration based on command arguments."""
         self.cli.demands.available_repos = True
         self.cli.demands.sack_activation = True
+        self._canonical()
 
     @staticmethod
     def _apackage_advisory_match(apackage, advisory, specs=()):
