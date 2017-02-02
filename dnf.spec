@@ -230,6 +230,8 @@ mv %{buildroot}%{_bindir}/dnf-automatic-2 %{buildroot}%{_bindir}/dnf-automatic
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
 %check
+export GI_TYPELIB_PATH="%{buildroot}%{_libdir}/girepository-1.0"
+export LD_LIBRARY_PATH="%{buildroot}%{_libdir}"
 pushd build
   ctest -VV
 popd
