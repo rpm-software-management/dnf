@@ -321,7 +321,8 @@ class UpdateInfoCommand(commands.Command):
         verbse = lambda value: value if self.base.conf.verbose else None
         info = (
             (tit, ([id_], [self.TYPE2LABEL[typ]], [unicode(upd)],
-                   (id_title[0] + ' - ' + id_title[1] for id_title in bzs),
+                   (id_title[0] + (' - ' + id_title[1] if id_title[1] else '')
+                    for id_title in bzs),
                    (id_title[0] for id_title in cvs), desc.splitlines(),
                    verbse(rigs.splitlines() if rigs else None), verbse(fils),
                    None if not mixed else [_('true') if ins else _('false')]))
