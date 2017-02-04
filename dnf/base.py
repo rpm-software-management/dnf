@@ -1353,7 +1353,7 @@ class Base(object):
             if not q:
                 return None
             try:
-                return self.history.attr_by_nvra("reason", q[0])
+                return self.history.reason_by_nvra(q[0])
             except AttributeError:
                 return 'unknown'
 

@@ -497,6 +497,9 @@ class SwdbInterface(object):
     def pkg_data_by_nvra(self, nvra):
         return self.swdb.package_data_by_nvra(str(nvra))
 
+    def reason_by_nvra(self, nvra):
+        return self.swdb.reason_by_nvra(str(nvra))
+
     def attr_by_nvra(self, attr, nvra):
         return self.swdb.attr_by_nvra(str(attr), str(nvra))
 
