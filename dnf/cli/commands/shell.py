@@ -98,6 +98,9 @@ class ShellCommand(commands.Command, cmd.Cmd):
             self._help()
             return
         opts = self.cli.optparser.parse_main_args(s_line)
+        # Disable shell recursion.
+        if opts.command == 'shell':
+            return
         if opts.command in self.MAPPING:
             getattr(self, '_' + self.MAPPING[opts.command])(s_line[1::])
         else:
