@@ -43,7 +43,9 @@ Requires:       python3-%{name} = %{version}-%{release}
 %else
 Requires:       python2-%{name} = %{version}-%{release}
 %endif
-Recommends:     (python%{?with_python3:3}-dbus if NetworkManager)
+# TODO: use rich deps once it is allowed in Fedora
+#Recommends:     (python%{?with_python3:3}-dbus if NetworkManager)
+Recommends:     python%{?with_python3:3}-dbus
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
