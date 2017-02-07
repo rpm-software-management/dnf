@@ -156,6 +156,7 @@ class OptionParser(argparse.ArgumentParser):
         # has set something or whether we are getting a default.
         main_parser = argparse.ArgumentParser(dnf.const.PROGRAM_NAME,
                                               add_help=False)
+        main_parser._optionals.title = _("Optional arguments")
         main_parser.add_argument("-c", "--config", dest="config_file_path",
                                  default=None, metavar='[config file]',
                                  help=_("config file location"))
@@ -332,8 +333,8 @@ class OptionParser(argparse.ArgumentParser):
 
     def get_usage(self):
         """ get the usage information to show the user. """
-        desc = {'main': _('List of Main Commands'),
-                'plugin': _('List of Plugin Commands')}
+        desc = {'main': _('List of Main Commands:'),
+                'plugin': _('List of Plugin Commands:')}
         name = dnf.const.PROGRAM_NAME
         usage = '%s [options] COMMAND\n' % name
         for grp in ['main', 'plugin']:

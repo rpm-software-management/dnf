@@ -113,8 +113,8 @@ class ShellCommand(commands.Command, cmd.Cmd):
                     cmd.cli.demands = copy.deepcopy(self.cli.demands)
                     cmd.configure()
                     cmd.run()
-                except:
-                    pass
+                except Exception as e:
+                    logger.error(_("Error:") + " " + e.value)
             else:
                 self._help()
 
@@ -170,6 +170,9 @@ class ShellCommand(commands.Command, cmd.Cmd):
                 if r:
                     getattr(r, cmd)()
                     self.base.fill_sack()
+                else:
+                    logger.critical(_("Error:") + " " + _("Unknown repo: '%s'"),
+                                    self.base.output.term.bold(repo))
 
     def _resolve(self, args=None):
         if self.cli.base.transaction is None:

@@ -118,11 +118,11 @@ class OptionParserAddCmdTest(support.TestCase):
         output = [
             u'dnf [options] COMMAND',
             u'',
-            u'List of Main Commands',
+            u'List of Main Commands:',
             u'',
             u'test-cmd                  summary',
             u'',
-            u'List of Plugin Commands',
+            u'List of Plugin Commands:',
             u'',
             u'test-cmd2                 summary2',
             u'']
