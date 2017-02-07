@@ -1771,6 +1771,8 @@ Transaction Summary
                     highlight = 'bold'
             (hibeg, hiend) = self._highlight(highlight)
 
+            cn = hpkg.nvra
+
             uistate = all_uistates.get(hpkg.state, hpkg.state)
             uistate = fill_exact_width(ucd(uistate), maxlen)
 
