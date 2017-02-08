@@ -178,7 +178,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 ``obsoletes``
     :ref:`boolean <boolean-label>`
 
-    This option only has affect during an update. It enables
+    This option only has affect during an install/update. It enables
     dnf's obsoletes processing logic, which means it makes dnf check whether
     any dependencies of given package are no longer required and removes them.
     Useful when doing distribution level upgrades.

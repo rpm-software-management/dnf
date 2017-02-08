@@ -222,7 +222,7 @@ Options
 .. _obsoletes_option-label:
 
 ``--obsoletes``
-    This option has an effect on an update, it enables
+    This option has an effect on an install/update, it enables
     dnf's obsoletes processing logic. For more information see the
     :ref:`obsoletes option <obsoletes_conf_option-label>`.
 
