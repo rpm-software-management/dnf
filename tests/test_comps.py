@@ -292,3 +292,4 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
         trans = self.solver._environment_upgrade(env.id)
         self.assertTransEqual(trans.install, ('hole', 'lotus'))
+        # self.assertEmpty(trans.upgrade) FIXME

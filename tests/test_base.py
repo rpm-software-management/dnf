@@ -163,6 +163,13 @@ class VerifyTransactionTest(TestCase):
         self.base.transaction.add_erase(removed_pkg)
         self.base._verify_transaction()
 
+        pkg = self.base.history.pkg_by_nvra(new_pkg)
+        self.assertEqual(pkg.get_ui_from_repo(), 'main')
+        # self.assertEqual(pkg.get_reason(), 'unknown')
+        # self.assertEqual(pkg.release, 'Fedora69')
+        # self.assertEqual(pkg.checksum_type, 'md5')
+        # self.assertEqual(pkg.checksum_data, HASH)
+
 
 class InstallReasonTest(support.ResultTestCase):
     def setUp(self):

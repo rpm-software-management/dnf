@@ -244,6 +244,15 @@ class GroupOutputTest(unittest.TestCase):
 
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.cli.term._term_width', return_value=80)
+    def test_group_verbose_info(self, _term_width):
+        group = self.base.comps.group_by_pattern('Peppers')
+        self.base.set_debuglevel(dnf.const.VERBOSE_LEVEL)
+        with support.patch_std_streams() as (stdout, stderr):
+            self.output.display_pkgs_in_groups(group)
+        self.assertEqual(stdout.getvalue(), PKGS_IN_GROUPS_VERBOSE_OUTPUT)
+
+    @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.cli.term._term_width', return_value=80)
     def test_environment_info(self, _term_width):
         env = self.base.comps.environments[0]
         with support.patch_std_streams() as (stdout, stderr):

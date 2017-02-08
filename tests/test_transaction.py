@@ -91,6 +91,30 @@ class TransactionItemTest(tests.support.TestCase):
              (self.newpkg, 'Obsoleting'), (self.obspkg1, 'Obsoleted'),
              (self.obspkg2, 'Obsoleted'), (self.obspkg3, 'Obsoleted')])
 
+    def test_propagated_reason(self):
+        base = tests.support.MockBase()
+        history = base.history
+        history.mark_user_installed(self.newpkg, False)
+        history.mark_user_installed(self.oldpkg, False)
+        history.mark_user_installed(self.obspkg1, False)
+        history.mark_user_installed(self.obspkg2, False)
+        history.mark_user_installed(self.obspkg3, False)
+
+        tsi = dnf.transaction.TransactionItem(
+            dnf.transaction.INSTALL, installed=self.newpkg, reason='user')
+        self.assertEqual(tsi._propagated_reason(history, []), 'user')
+        tsi = dnf.transaction.TransactionItem(
+            dnf.transaction.UPGRADE, installed=self.newpkg, erased=self.oldpkg)
+        self.assertEqual(tsi._propagated_reason(history, []), 'dep')
+        tsi = dnf.transaction.TransactionItem(
+            dnf.transaction.DOWNGRADE,
+            installed=self.newpkg, erased=self.oldpkg)
+        self.assertEqual(tsi._propagated_reason(history, []), 'dep')
+
+        # test the call can survive if no reason is known:
+        history.reset_db()
+        self.assertEqual(tsi._propagated_reason(history, []), 'unknown')
+
     def test_removes(self):
         tsi = dnf.transaction.TransactionItem(
             dnf.transaction.UPGRADE, self.newpkg, self.oldpkg,

@@ -553,23 +553,10 @@ class RPMTransaction(object):
 
         if state is not None:
             self._scriptout()
-
-            #  Note that we are currently inside the chroot, which makes
-            # sqlite panic when it tries to open it's journal file.
-            # So let's have some "fun" and workaround that:
-            _do_chroot = False
-            if _do_chroot and self.base.conf.installroot != '/':
-                os.chroot(".")
             pid   = self.base.history.pkg2pid(pkg)
             self.base.history.trans_data_pid_end(pid, state)
-            if _do_chroot and self.base.conf.installroot != '/':
-                os.chroot(self.base.conf.installroot)
-            # :dead
-            # self.ts_done(txmbr.po, txmbr.output_state)
         else:
             self._scriptout()
-            # :dead
-            # self.ts_done(name, action)
 
     def _cpioError(self, key):
         # In the case of a remove, we only have a name, not a tsi:
