@@ -178,7 +178,11 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 ``obsoletes``
     :ref:`boolean <boolean-label>`
 
-    This option only has affect during an update. It enables yum's obsoletes processing logic. Useful when doing distribution level upgrades. See also the yum upgrade command documentation for more details (yum(8)). Default is 'true'.
+    This option only has affect during an update. It enables
+    dnf's obsoletes processing logic, which means it makes dnf check whether
+    any dependencies of given package are no longer required and removes them.
+    Useful when doing distribution level upgrades.
+    Default is 'true'.
 
     Command-line option: :ref:`--obsoletes <obsoletes_option-label>`
 

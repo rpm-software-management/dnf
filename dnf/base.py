@@ -1635,7 +1635,7 @@ class Base(object):
             self._goal.distupgrade_all()
         else:
             sltrs = dnf.subject.Subject(pkg_spec) \
-                ._get_best_selectors(self.sack, None, self.conf.obsoletes)
+                       ._get_best_selectors(self.sack, obsoletes=self.conf.obsoletes)
             if not any((s.matches() for s in sltrs)):
                 logger.info(_('No package %s installed.'), pkg_spec)
                 return 0
