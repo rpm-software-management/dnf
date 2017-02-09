@@ -810,7 +810,7 @@ class Cli(object):
         # store the main commands & summaries, before plugins are loaded
         self.optparser.add_commands(self.cli_commands, 'main')
         # store the plugin commands & summaries
-        self.base.init_plugins(opts.disableplugin, self)
+        self.base.init_plugins(opts.disableplugin, opts.enableplugin, self)
         self.optparser.add_commands(self.cli_commands,'plugin')
 
         # show help if no command specified
