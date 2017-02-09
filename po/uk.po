@@ -7,18 +7,19 @@
 # Jan Silhan <jsilhan@redhat.com>, 2015. #zanata
 # Yuri Chornoivan <yurchor@ukr.net>, 2015. #zanata
 # Yuri Chornoivan <yurchor@ukr.net>, 2016. #zanata
+# Yuri Chornoivan <yurchor@ukr.net>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-01-24 12:44+0100\n"
-"PO-Revision-Date: 2016-12-16 09:08-0500\n"
+"PO-Revision-Date: 2017-01-26 12:12-0500\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/projects/p/dnf/language/uk/)\n"
+"Language: uk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: uk\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Zanata 3.9.6\n"
 
@@ -774,7 +775,7 @@ msgstr "показати вимкнені сховища"
 
 #: ../dnf/cli/commands/repolist.py:120
 msgid "No repositories available"
-msgstr ""
+msgstr "Немає доступних сховищ"
 
 #: ../dnf/cli/commands/repolist.py:142 ../dnf/cli/commands/repolist.py:143
 msgid "enabled"
@@ -1049,7 +1050,7 @@ msgstr "Показати лише пакунки, які нещодавно ре
 
 #: ../dnf/cli/commands/repoquery.py:230
 msgid "Package {} contains no files"
-msgstr ""
+msgstr "У пакунку {} не міститься файлів"
 
 #: ../dnf/cli/commands/repoquery.py:255
 #, python-brace-format
@@ -1080,28 +1081,28 @@ msgstr ""
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
-msgstr ""
+msgstr "запустити інтерактивну командну оболонку DNF"
 
 #: ../dnf/cli/commands/shell.py:73
 msgid "SCRIPT"
-msgstr ""
+msgstr "СКРИПТ"
 
 #: ../dnf/cli/commands/shell.py:74
 msgid "Script to run in DNF shell"
-msgstr ""
+msgstr "Скрипт, який слід запустити у командній оболонці DNF"
 
 #: ../dnf/cli/commands/shell.py:126
 msgid "Unsupported key value."
-msgstr ""
+msgstr "Непідтримуване значення ключа."
 
 #: ../dnf/cli/commands/shell.py:129
 msgid "Missing config or key value."
-msgstr ""
+msgstr "Пропущено значення налаштування або ключа."
 
 #: ../dnf/cli/commands/shell.py:141
 #, python-format
 msgid "Could not find repository: %s"
-msgstr ""
+msgstr "Не вдалося знайти сховище: %s"
 
 #: ../dnf/cli/commands/shell.py:149
 msgid ""
@@ -1113,27 +1114,36 @@ msgid ""
 "                   run                      resolve and run the transaction set\n"
 "                   exit (or quit)           exit the shell"
 msgstr ""
+"Специфічні для командної оболонки параметри:\n"
+"                   config                   встановити параметри налаштування\n"
+"                   repository (або repo)    увімкнути, вимкнути або показати список сховищ\n"
+"                   resolvedep               визначити набір дій\n"
+"                   transaction (або ts)     показати список, скинути або запустити набір дій\n"
+"                   run                      визначити і запустити набір дій\n"
+"                   exit (або quit)          вийти з оболонки"
 
 #: ../dnf/cli/commands/shell.py:186
 #, python-format
 msgid "Error: Cannot open %s for reading"
-msgstr ""
+msgstr "Помилка: не вдалося відкрити %s для читання"
 
 #: ../dnf/cli/commands/shell.py:213
 msgid "Leaving Shell"
-msgstr ""
+msgstr "Полишаємо командну оболонку"
 
 #: ../dnf/cli/commands/swap.py:33
 msgid "run an interactive dnf mod for remove and install one spec"
 msgstr ""
+"запустити інтерактивний dnf для вилучення або встановлення однієї "
+"специфікації"
 
 #: ../dnf/cli/commands/swap.py:37
 msgid "The specs that will be removed"
-msgstr ""
+msgstr "Специфікації, які буде вилучено"
 
 #: ../dnf/cli/commands/swap.py:39
 msgid "The specs that will be installed"
-msgstr ""
+msgstr "Специфікації, які буде встановлено"
 
 #: ../dnf/cli/commands/upgrade.py:38
 msgid "upgrade a package or packages on your system"
@@ -1426,7 +1436,7 @@ msgstr ""
 #: ../dnf/cli/cli.py:350 ../dnf/base.py:1747
 #, python-format
 msgid "Packages for argument %s available, but not installed."
-msgstr ""
+msgstr "Доступні пакунки для аргумента %s, але їх не встановлено."
 
 #: ../dnf/cli/cli.py:407
 msgid "Installed Packages"
@@ -1487,7 +1497,7 @@ msgstr "Невідоме сховище: «%s»"
 #: ../dnf/cli/cli.py:715
 #, python-format
 msgid "No repository match: %s"
-msgstr ""
+msgstr "Немає сховища, яке б відповідало цьому: %s"
 
 #: ../dnf/cli/cli.py:760
 #, python-format
@@ -1745,7 +1755,7 @@ msgstr "Під час обчислення обсягу після встано�
 #: ../dnf/cli/output.py:935
 #, python-format
 msgid "Freed space: %s"
-msgstr ""
+msgstr "Вивільнено місця: %s"
 
 #: ../dnf/cli/output.py:944
 msgid "Marking packages as installed by the group:"
@@ -2101,42 +2111,42 @@ msgstr "Перевстановлення"
 #: ../dnf/cli/output.py:1906
 #, python-format
 msgid "---> Package %s.%s %s will be installed"
-msgstr ""
+msgstr "---> Буде встановлено пакунок %s.%s %s"
 
 #: ../dnf/cli/output.py:1908
 #, python-format
 msgid "---> Package %s.%s %s will be an upgrade"
-msgstr ""
+msgstr "---> Пакунок %s.%s %s буде оновленням"
 
 #: ../dnf/cli/output.py:1910
 #, python-format
 msgid "---> Package %s.%s %s will be erased"
-msgstr ""
+msgstr "---> Буде вилучено пакунок %s.%s %s"
 
 #: ../dnf/cli/output.py:1912
 #, python-format
 msgid "---> Package %s.%s %s will be reinstalled"
-msgstr ""
+msgstr "---> Буде перевстановлено пакунок %s.%s %s"
 
 #: ../dnf/cli/output.py:1914
 #, python-format
 msgid "---> Package %s.%s %s will be a downgrade"
-msgstr ""
+msgstr "---> Пакунок %s.%s %s буде зниженням версії"
 
 #: ../dnf/cli/output.py:1916
 #, python-format
 msgid "---> Package %s.%s %s will be obsoleting"
-msgstr ""
+msgstr "---> Пакунок %s.%s %s зробить пакунок застарілим"
 
 #: ../dnf/cli/output.py:1918
 #, python-format
 msgid "---> Package %s.%s %s will be upgraded"
-msgstr ""
+msgstr "---> Пакунок %s.%s %s буде оновлено"
 
 #: ../dnf/cli/output.py:1920
 #, python-format
 msgid "---> Package %s.%s %s will be obsoleted"
-msgstr ""
+msgstr "---> Пакунок %s.%s %s стане застарілим"
 
 #: ../dnf/cli/output.py:1929
 msgid "--> Starting dependency resolution"
@@ -2502,9 +2512,9 @@ msgstr "Потреба у місці на диску:"
 #, python-format
 msgid "At least %dMB more space needed on the %s filesystem."
 msgid_plural "At least %dMB more space needed on the %s filesystem."
-msgstr[0] "  Потрібно ще %d МБ вільного місця на файловій системі %s."
-msgstr[1] "  Потрібно ще %d МБ вільного місця на файловій системі %s."
-msgstr[2] "  Потрібно ще %d МБ вільного місця на файловій системі %s."
+msgstr[0] "Потрібно ще %d МБ вільного місця на файловій системі %s."
+msgstr[1] "Потрібно ще %d МБ вільного місця на файловій системі %s."
+msgstr[2] "Потрібно ще %d МБ вільного місця на файловій системі %s."
 
 #: ../dnf/base.py:700
 msgid "Error Summary"
@@ -2562,6 +2572,8 @@ msgstr ""
 msgid ""
 "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
 msgstr ""
+"Помилкові RPM-різниці збільшать обсяг оновлень з %.1f МБ до %.1f МБ (буде "
+"втрачено %d.1%%)"
 
 #: ../dnf/base.py:1014
 msgid "Could not open: {}"

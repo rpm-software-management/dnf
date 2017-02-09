@@ -12,10 +12,10 @@ msgstr ""
 "PO-Revision-Date: 2015-06-16 12:07-0400\n"
 "Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
 "Language-Team: Malay (http://www.transifex.com/projects/p/dnf/language/ms/)\n"
+"Language: ms\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: ms\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Zanata 3.9.6\n"
 
@@ -1564,7 +1564,7 @@ msgstr "tidak"
 
 #: ../dnf/cli/output.py:656
 msgid "Is this ok [y/N]: "
-msgstr "Adakah ini ok [y/T]:"
+msgstr "Adakah ini ok [y/T]: "
 
 #: ../dnf/cli/output.py:659
 msgid "Is this ok [Y/n]: "

@@ -7,18 +7,19 @@
 # Jan Silhan <jsilhan@redhat.com>, 2015. #zanata
 # Piotr Drąg <piotrdrag@gmail.com>, 2015. #zanata
 # Piotr Drąg <piotrdrag@gmail.com>, 2016. #zanata
+# Piotr Drąg <piotrdrag@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-01-24 12:44+0100\n"
-"PO-Revision-Date: 2016-12-16 10:02-0500\n"
+"PO-Revision-Date: 2017-01-24 12:36-0500\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/dnf/language/pl/)\n"
+"Language: pl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: pl\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Zanata 3.9.6\n"
 
@@ -225,7 +226,7 @@ msgstr "Pakiet %s jest dostępny, ale nie jest zainstalowany."
 #: ../dnf/cli/commands/__init__.py:508
 #, python-format
 msgid " (from %s)"
-msgstr " (z %s)"
+msgstr " (z %s)"
 
 #: ../dnf/cli/commands/reinstall.py:90 ../dnf/cli/commands/__init__.py:452
 #: ../dnf/cli/commands/__init__.py:509
@@ -773,7 +774,7 @@ msgstr "wyświetla wyłączone repozytoria"
 
 #: ../dnf/cli/commands/repolist.py:120
 msgid "No repositories available"
-msgstr ""
+msgstr "Brak dostępnych repozytoriów"
 
 #: ../dnf/cli/commands/repolist.py:142 ../dnf/cli/commands/repolist.py:143
 msgid "enabled"
@@ -1053,7 +1054,7 @@ msgstr "Wyświetla tylko ostatnio modyfikowane pakiety"
 
 #: ../dnf/cli/commands/repoquery.py:230
 msgid "Package {} contains no files"
-msgstr ""
+msgstr "Pakiet {} nie zawiera plików"
 
 #: ../dnf/cli/commands/repoquery.py:255
 #, python-brace-format
@@ -1084,28 +1085,28 @@ msgstr ""
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
-msgstr ""
+msgstr "uruchamia interaktywną powłokę DNF"
 
 #: ../dnf/cli/commands/shell.py:73
 msgid "SCRIPT"
-msgstr ""
+msgstr "SKRYPT"
 
 #: ../dnf/cli/commands/shell.py:74
 msgid "Script to run in DNF shell"
-msgstr ""
+msgstr "Skrypt uruchamiany w powłoce DNF"
 
 #: ../dnf/cli/commands/shell.py:126
 msgid "Unsupported key value."
-msgstr ""
+msgstr "Nieobsługiwana wartość klucza."
 
 #: ../dnf/cli/commands/shell.py:129
 msgid "Missing config or key value."
-msgstr ""
+msgstr "Brak konfiguracji lub wartości klucza."
 
 #: ../dnf/cli/commands/shell.py:141
 #, python-format
 msgid "Could not find repository: %s"
-msgstr ""
+msgstr "Nie można odnaleźć repozytorium: %s"
 
 #: ../dnf/cli/commands/shell.py:149
 msgid ""
@@ -1117,27 +1118,36 @@ msgid ""
 "                   run                      resolve and run the transaction set\n"
 "                   exit (or quit)           exit the shell"
 msgstr ""
+"Parametry powłoki:\n"
+"                   config                   ustawia opcje konfiguracji\n"
+"                   repository (lub repo)    włącza, wyłącza lub wyświetla listę repozytoriów\n"
+"                   resolvedep               rozwiązuje zestaw transakcji\n"
+"                   transaction (lub ts)     wyświetla listę, przywraca lub wykonuje zestaw transakcji\n"
+"                   run                      rozwiązuje i wykonuje zestaw transakcji\n"
+"                   exit (lub quit)          wychodzi z powłoki"
 
 #: ../dnf/cli/commands/shell.py:186
 #, python-format
 msgid "Error: Cannot open %s for reading"
-msgstr ""
+msgstr "Błąd: nie można otworzyć %s do odczytu"
 
 #: ../dnf/cli/commands/shell.py:213
 msgid "Leaving Shell"
-msgstr ""
+msgstr "Opuszczanie powłoki"
 
 #: ../dnf/cli/commands/swap.py:33
 msgid "run an interactive dnf mod for remove and install one spec"
 msgstr ""
+"uruchamia interaktywny moduł DNF do usunięcia i zainstalowania jednej "
+"specyfikacji"
 
 #: ../dnf/cli/commands/swap.py:37
 msgid "The specs that will be removed"
-msgstr ""
+msgstr "Usuwane specyfikacje"
 
 #: ../dnf/cli/commands/swap.py:39
 msgid "The specs that will be installed"
-msgstr ""
+msgstr "Instalowane specyfikacje"
 
 #: ../dnf/cli/commands/upgrade.py:38
 msgid "upgrade a package or packages on your system"
@@ -1432,7 +1442,7 @@ msgstr "Brak pakietów oznaczonych do synchronizacji dystrybucji."
 #: ../dnf/cli/cli.py:350 ../dnf/base.py:1747
 #, python-format
 msgid "Packages for argument %s available, but not installed."
-msgstr ""
+msgstr "Pakiety dla parametru %s są dostępne, ale nie są zainstalowane."
 
 #: ../dnf/cli/cli.py:407
 msgid "Installed Packages"
@@ -1493,7 +1503,7 @@ msgstr "Nieznane repozytorium: „%s”"
 #: ../dnf/cli/cli.py:715
 #, python-format
 msgid "No repository match: %s"
-msgstr ""
+msgstr "Brak pasującego repozytorium: %s"
 
 #: ../dnf/cli/cli.py:760
 #, python-format
@@ -1750,7 +1760,7 @@ msgstr "Wystąpił błąd podczas obliczania rozmiaru po zainstalowaniu"
 #: ../dnf/cli/output.py:935
 #, python-format
 msgid "Freed space: %s"
-msgstr ""
+msgstr "Zwolnione miejsce: %s"
 
 #: ../dnf/cli/output.py:944
 msgid "Marking packages as installed by the group:"
@@ -2107,42 +2117,42 @@ msgstr "Ponowna instalacja"
 #: ../dnf/cli/output.py:1906
 #, python-format
 msgid "---> Package %s.%s %s will be installed"
-msgstr ""
+msgstr "---> Pakiet %s.%s %s zostanie zainstalowany"
 
 #: ../dnf/cli/output.py:1908
 #, python-format
 msgid "---> Package %s.%s %s will be an upgrade"
-msgstr ""
+msgstr "---> Pakiet %s.%s %s będzie aktualizacją"
 
 #: ../dnf/cli/output.py:1910
 #, python-format
 msgid "---> Package %s.%s %s will be erased"
-msgstr ""
+msgstr "---> Pakiet %s.%s %s zostanie usunięty"
 
 #: ../dnf/cli/output.py:1912
 #, python-format
 msgid "---> Package %s.%s %s will be reinstalled"
-msgstr ""
+msgstr "---> Pakiet %s.%s %s zostanie zainstalowany ponownie"
 
 #: ../dnf/cli/output.py:1914
 #, python-format
 msgid "---> Package %s.%s %s will be a downgrade"
-msgstr ""
+msgstr "---> Pakiet %s.%s %s będzie zainstalowaną poprzednią wersją"
 
 #: ../dnf/cli/output.py:1916
 #, python-format
 msgid "---> Package %s.%s %s will be obsoleting"
-msgstr ""
+msgstr "---> Pakiet %s.%s %s będzie zastępował"
 
 #: ../dnf/cli/output.py:1918
 #, python-format
 msgid "---> Package %s.%s %s will be upgraded"
-msgstr ""
+msgstr "---> Pakiet %s.%s %s zostanie zaktualizowany"
 
 #: ../dnf/cli/output.py:1920
 #, python-format
 msgid "---> Package %s.%s %s will be obsoleted"
-msgstr ""
+msgstr "---> Pakiet %s.%s %s zostanie zastąpiony"
 
 #: ../dnf/cli/output.py:1929
 msgid "--> Starting dependency resolution"
@@ -2570,6 +2580,8 @@ msgstr ""
 msgid ""
 "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
 msgstr ""
+"Niepowodzenie DeltaRPM zwiększyło %.1f MB aktualizacji do %.1f MB "
+"(zmarnowano %d.1%%)"
 
 #: ../dnf/base.py:1014
 msgid "Could not open: {}"

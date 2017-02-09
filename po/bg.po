@@ -8,10 +8,10 @@ msgstr ""
 "PO-Revision-Date: 2016-12-22 02:37-0500\n"
 "Last-Translator: Valentin Laskov <laskov@festa.bg>\n"
 "Language-Team: Bulgarian\n"
+"Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: bg\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Zanata 3.9.6\n"
 
@@ -105,7 +105,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "Почиствам данни:"
+msgstr "Почиствам данни:  "
 
 #: ../dnf/cli/commands/clean.py:114
 #, python-format
@@ -660,7 +660,7 @@ msgstr "Налични езикови групи:"
 
 #: ../dnf/cli/commands/group.py:328
 msgid "include optional packages from group"
-msgstr " включва незадължителни пакети от група"
+msgstr "включва незадължителни пакети от група"
 
 #: ../dnf/cli/commands/group.py:331
 msgid "show also hidden groups"
@@ -1191,7 +1191,7 @@ msgstr "работи изцяло от системния кеш, не обно�
 
 #: ../dnf/cli/option_parser.py:205
 msgid "debugging output level"
-msgstr " ниво на информация за откриване на грешки"
+msgstr "ниво на информация за откриване на грешки"
 
 #: ../dnf/cli/option_parser.py:208
 msgid "dumps detailed solving results into files"
@@ -1203,11 +1203,11 @@ msgstr "показва дублирания, в хранилища, в спис�
 
 #: ../dnf/cli/option_parser.py:215
 msgid "error output level"
-msgstr " ниво на информация грешки"
+msgstr "ниво на информация грешки"
 
 #: ../dnf/cli/option_parser.py:217
 msgid "debugging output level for rpm"
-msgstr " ниво на информация за откриване на грешки за rpm"
+msgstr "ниво на информация за откриване на грешки за rpm"
 
 #: ../dnf/cli/option_parser.py:220
 msgid "automatically answer yes for all questions"

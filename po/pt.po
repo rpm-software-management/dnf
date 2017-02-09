@@ -16,10 +16,10 @@ msgstr ""
 "PO-Revision-Date: 2017-01-14 09:13-0500\n"
 "Last-Translator: Joao Almeida <intjalmeida@gmail.com>\n"
 "Language-Team: Portuguese (http://www.transifex.com/projects/p/dnf/language/pt/)\n"
+"Language: pt\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: pt\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Zanata 3.9.6\n"
 
@@ -115,7 +115,7 @@ msgstr "Tipo de metadados para limpar"
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "A limpar dados: "
+msgstr "A limpar dados:  "
 
 #: ../dnf/cli/commands/clean.py:114
 #, python-format
@@ -273,7 +273,7 @@ msgstr "Correspondências não encontradas."
 
 #: ../dnf/cli/commands/search.py:105
 msgid "Searching Packages: "
-msgstr "A Procurar Pacotes:"
+msgstr "A Procurar Pacotes: "
 
 #: ../dnf/cli/commands/updateinfo.py:46
 msgid "bugfix"
@@ -302,7 +302,7 @@ msgstr "mostrar avisos sobre os pacotes"
 
 #: ../dnf/cli/commands/updateinfo.py:196
 msgid "Updates Information Summary: "
-msgstr "Resumo de Informação de Atualizações:"
+msgstr "Resumo de Informação de Atualizações: "
 
 #: ../dnf/cli/commands/updateinfo.py:199
 #, fuzzy
@@ -813,7 +813,7 @@ msgstr "Etiquetas-distri-repo: "
 
 #: ../dnf/cli/commands/repolist.py:200
 msgid "Repo-updated : "
-msgstr "Repo-actualizado :"
+msgstr "Repo-actualizado : "
 
 #: ../dnf/cli/commands/repolist.py:202
 msgid "Repo-pkgs    : "
@@ -1279,7 +1279,7 @@ msgstr "controlar se a cor é usada"
 
 #: ../dnf/cli/option_parser.py:258
 msgid "set metadata as expired before running the command"
-msgstr "definir os metadados como expirados antes de executar o comando "
+msgstr "definir os metadados como expirados antes de executar o comando"
 
 #: ../dnf/cli/option_parser.py:261
 msgid "resolve to IPv4 addresses only"
@@ -1634,11 +1634,11 @@ msgstr "não"
 
 #: ../dnf/cli/output.py:656
 msgid "Is this ok [y/N]: "
-msgstr "Isto está ok [s/N]:"
+msgstr "Isto está ok [s/N]: "
 
 #: ../dnf/cli/output.py:659
 msgid "Is this ok [Y/n]: "
-msgstr "Isto está ok [S/n]:"
+msgstr "Isto está ok [S/n]: "
 
 #: ../dnf/cli/output.py:737
 #, python-format
@@ -1662,19 +1662,19 @@ msgstr " Língua: %s"
 
 #: ../dnf/cli/output.py:748
 msgid " Mandatory Packages:"
-msgstr "Pacotes Obrigatórios:"
+msgstr " Pacotes Obrigatórios:"
 
 #: ../dnf/cli/output.py:749
 msgid " Default Packages:"
-msgstr "Pacotes Padrão:"
+msgstr " Pacotes Padrão:"
 
 #: ../dnf/cli/output.py:750
 msgid " Optional Packages:"
-msgstr "Pacotes Opcionais:"
+msgstr " Pacotes Opcionais:"
 
 #: ../dnf/cli/output.py:751
 msgid " Conditional Packages:"
-msgstr "Pacotes Condicionais:"
+msgstr " Pacotes Condicionais:"
 
 #: ../dnf/cli/output.py:776
 #, fuzzy, python-format
@@ -1688,11 +1688,11 @@ msgstr " ID Ambiente: %s"
 
 #: ../dnf/cli/output.py:785
 msgid " Mandatory Groups:"
-msgstr "Grupos Obrigatórios:"
+msgstr " Grupos Obrigatórios:"
 
 #: ../dnf/cli/output.py:786
 msgid " Optional Groups:"
-msgstr "Grupos Opcionais:"
+msgstr " Grupos Opcionais:"
 
 #: ../dnf/cli/output.py:821
 #, python-format
@@ -2635,8 +2635,7 @@ msgstr "Pacote %s não instalado, não se pode reinstalá-lo."
 #: ../dnf/base.py:1578
 #, python-format
 msgid "File %s is a source package and cannot be updated, ignoring."
-msgstr ""
-"O ficheiro %s é um pacote fonte e não pode ser atualizado, a ignorar. "
+msgstr "O ficheiro %s é um pacote fonte e não pode ser atualizado, a ignorar."
 
 #: ../dnf/base.py:1584 ../dnf/base.py:1613
 #, python-format

@@ -1,66 +1,67 @@
 # Anxhelo Lushka <an_xhelo@hotmail.com>, 2016. #zanata
+# Mariana Balla <marianaballa848@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-01-24 12:44+0100\n"
-"PO-Revision-Date: 2016-06-02 01:43-0400\n"
-"Last-Translator: Anxhelo Lushka <an_xhelo@hotmail.com>\n"
+"PO-Revision-Date: 2017-02-03 07:20-0500\n"
+"Last-Translator: Mariana Balla <marianaballa848@gmail.com>\n"
 "Language-Team: Albanian\n"
+"Language: sq\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: sq\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Zanata 3.9.6\n"
 
 #: ../dnf/automatic/emitter.py:30
 #, python-format
 msgid "The following updates have been applied on '%s':"
-msgstr ""
+msgstr "Përditësimet e mëposhtme janë aplikuar në '%s':"
 
 #: ../dnf/automatic/emitter.py:31
 #, python-format
 msgid "The following updates are available on '%s':"
-msgstr ""
+msgstr "Përditësimet e mëposhtme janë të disponueshme në '%s':"
 
 #: ../dnf/automatic/emitter.py:32
 #, python-format
 msgid "The following updates were downloaded on '%s':"
-msgstr ""
+msgstr "Përditësimet e mëposhtme janë shkarkuar në '%s':"
 
 #: ../dnf/automatic/emitter.py:79
 #, python-format
 msgid "Updates applied on '%s'."
-msgstr ""
+msgstr "Përditësimet janë aplikuar në '%s'."
 
 #: ../dnf/automatic/emitter.py:81
 #, python-format
 msgid "Updates downloaded on '%s'."
-msgstr ""
+msgstr "Përditësimet janë shkarkuar në '%s':"
 
 #: ../dnf/automatic/emitter.py:83
 #, python-format
 msgid "Updates available on '%s'."
-msgstr ""
+msgstr "Përditësimet janë të disponueshme në '%s':"
 
 #: ../dnf/automatic/emitter.py:106
 #, python-format
 msgid "Failed to send an email via '%s': %s"
-msgstr ""
+msgstr "Dështim në dërgimin e një email përmes '%s': %s"
 
 #: ../dnf/automatic/main.py:188 ../dnf/cli/main.py:57
 #, python-format
 msgid "Error: %s"
-msgstr ""
+msgstr "Gabim: %s"
 
 #: ../dnf/cli/commands/check.py:34
 msgid "check for problems in the packagedb"
-msgstr ""
+msgstr "kërko për probleme në packegedb"
 
 #: ../dnf/cli/commands/check.py:40
 msgid "show all problems; default"
-msgstr ""
+msgstr "shfaq të gjitha problemet;parazgjedhur"
 
 #: ../dnf/cli/commands/check.py:43
 msgid "show dependency problems"

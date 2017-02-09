@@ -1,18 +1,19 @@
 # Geert Warrink <geert.warrink@onsnet.nu>, 2016. #zanata
 # Richard E. van der Luit <nippur@fedoraproject.org>, 2016. #zanata
 # Corne van der Plas <vdplas@gmail.com>, 2017. #zanata
+# Richard E. van der Luit <nippur@fedoraproject.org>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-01-24 12:44+0100\n"
-"PO-Revision-Date: 2017-01-11 07:44-0500\n"
-"Last-Translator: Corne van der Plas <vdplas@gmail.com>\n"
+"PO-Revision-Date: 2017-02-04 06:35-0500\n"
+"Last-Translator: Richard E. van der Luit <nippur@fedoraproject.org>\n"
 "Language-Team: Dutch\n"
+"Language: nl\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: nl\n"
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Zanata 3.9.6\n"
 
@@ -58,27 +59,28 @@ msgstr "Fout: %s"
 
 #: ../dnf/cli/commands/check.py:34
 msgid "check for problems in the packagedb"
-msgstr ""
+msgstr "controleren op problemen met packagedb"
 
 #: ../dnf/cli/commands/check.py:40
 msgid "show all problems; default"
-msgstr ""
+msgstr "alle problemen tonen; default"
 
 #: ../dnf/cli/commands/check.py:43
 msgid "show dependency problems"
-msgstr ""
+msgstr "afhankelijkheidsproblemen tonen"
 
 #: ../dnf/cli/commands/check.py:46
 msgid "show duplicate problems"
-msgstr ""
+msgstr "doublureproblemen tonen"
 
 #: ../dnf/cli/commands/check.py:49
 msgid "show obsoleted packages"
 msgstr "toon in onbruik geraakte pakketten"
 
 #: ../dnf/cli/commands/check.py:52
+#, fuzzy
 msgid "show problems with provides"
-msgstr ""
+msgstr "leveringsproblemen tonen"
 
 #: ../dnf/cli/commands/check.py:82
 msgid "{} has missing requires of {}"
@@ -94,7 +96,7 @@ msgstr "{} is vervangen door {}"
 
 #: ../dnf/cli/commands/check.py:122
 msgid "{} provides {} but it cannot be found"
-msgstr ""
+msgstr "{} levert {} maar kan niet worden gevonden"
 
 #: ../dnf/cli/commands/clean.py:87
 msgid "remove cached data"
@@ -102,11 +104,11 @@ msgstr "cached data verwijderen"
 
 #: ../dnf/cli/commands/clean.py:93
 msgid "Metadata type to clean"
-msgstr ""
+msgstr "Metadatatype om te schonen"
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "Data opruimen: "
+msgstr "Data opruimen:  "
 
 #: ../dnf/cli/commands/clean.py:114
 #, python-format
@@ -127,7 +129,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/distrosync.py:36
 msgid "Package to synchronize"
-msgstr ""
+msgstr "Pakket om te synchroniseren"
 
 #: ../dnf/cli/commands/makecache.py:37
 msgid "generate the metadata cache"
@@ -222,7 +224,7 @@ msgstr " (van %s)"
 #: ../dnf/cli/commands/__init__.py:509
 #, python-format
 msgid "Installed package %s%s not available."
-msgstr ""
+msgstr "Geïnstalleerd pakket %s%s is niet beschikbaar."
 
 #: ../dnf/cli/commands/reinstall.py:99 ../dnf/cli/commands/__init__.py:395
 #: ../dnf/cli/commands/__init__.py:461 ../dnf/cli/commands/__init__.py:518
@@ -261,7 +263,7 @@ msgstr "Geen resultaten gevonden."
 
 #: ../dnf/cli/commands/search.py:105
 msgid "Searching Packages: "
-msgstr "Pakketten zoeken:"
+msgstr "Pakketten zoeken: "
 
 #: ../dnf/cli/commands/updateinfo.py:46
 msgid "bugfix"
@@ -280,8 +282,9 @@ msgid "unknown"
 msgstr "onbekend"
 
 #: ../dnf/cli/commands/updateinfo.py:50
+#, fuzzy
 msgid "newpackage"
-msgstr ""
+msgstr "newpackage"
 
 #: ../dnf/cli/commands/updateinfo.py:53
 msgid "display advisories about packages"
@@ -289,7 +292,7 @@ msgstr "advies over pakketten tonen"
 
 #: ../dnf/cli/commands/updateinfo.py:196
 msgid "Updates Information Summary: "
-msgstr "Samenvatting update-info"
+msgstr "Samenvatting update-info "
 
 #: ../dnf/cli/commands/updateinfo.py:199
 msgid "New Package notice(s)"
@@ -432,36 +435,36 @@ msgstr "Details van een pakket of groep pakketten tonen"
 
 #: ../dnf/cli/commands/__init__.py:163 ../dnf/cli/commands/__init__.py:322
 msgid "show all packages (default)"
-msgstr ""
+msgstr "alle pakketten tonen (default)"
 
 #: ../dnf/cli/commands/__init__.py:166 ../dnf/cli/commands/__init__.py:325
 msgid "show only available packages"
-msgstr ""
+msgstr "alleen beschikbare pakketten tonen"
 
 #: ../dnf/cli/commands/__init__.py:169 ../dnf/cli/commands/__init__.py:328
 msgid "show only installed packages"
-msgstr ""
+msgstr "alleen geïnstalleerde pakketten tonen"
 
 #: ../dnf/cli/commands/__init__.py:172 ../dnf/cli/commands/__init__.py:331
 msgid "show only extras packages"
-msgstr ""
+msgstr "alleen extra pakketten tonen"
 
 #: ../dnf/cli/commands/__init__.py:175 ../dnf/cli/commands/__init__.py:178
 #: ../dnf/cli/commands/__init__.py:334 ../dnf/cli/commands/__init__.py:337
 msgid "show only upgrades packages"
-msgstr ""
+msgstr "alleen upgrade-pakketten tonen"
 
 #: ../dnf/cli/commands/__init__.py:181 ../dnf/cli/commands/__init__.py:340
 msgid "show only autoremove packages"
-msgstr ""
+msgstr "alleen autoremove-pakketten tonen"
 
 #: ../dnf/cli/commands/__init__.py:184 ../dnf/cli/commands/__init__.py:343
 msgid "show only recently changed packages"
-msgstr ""
+msgstr "alleen onlangs veranderde pakketten tonen"
 
 #: ../dnf/cli/commands/__init__.py:187 ../dnf/cli/commands/__init__.py:346
 msgid "show only obsoletes packages"
-msgstr ""
+msgstr "alleen verouderde pakketten tonen"
 
 #: ../dnf/cli/commands/__init__.py:213
 msgid "list a package or groups of packages"
@@ -574,7 +577,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/autoremove.py:46 ../dnf/cli/commands/remove.py:59
 msgid "Package to remove"
-msgstr ""
+msgstr "Te verwijderen pakketten"
 
 #: ../dnf/cli/commands/autoremove.py:76 ../dnf/cli/commands/install.py:85
 #: ../dnf/cli/commands/install.py:101 ../dnf/cli/commands/remove.py:108
@@ -584,11 +587,11 @@ msgstr "Geen geldig formulier: %s"
 
 #: ../dnf/cli/commands/downgrade.py:34
 msgid "Downgrade a package"
-msgstr ""
+msgstr "Pakket downgraden"
 
 #: ../dnf/cli/commands/downgrade.py:38
 msgid "Package to downgrade"
-msgstr ""
+msgstr "Pakket om te downgraden"
 
 #: ../dnf/cli/commands/group.py:45
 msgid "display, or use, the groups information"
@@ -715,7 +718,7 @@ msgstr "verwijder een pakket of pakketten van je systeem"
 
 #: ../dnf/cli/commands/remove.py:53
 msgid "remove duplicated packages"
-msgstr ""
+msgstr "Verwijderen dubbele pakketten"
 
 #: ../dnf/cli/commands/remove.py:58
 msgid "remove installonly packages over the limit"
@@ -941,11 +944,11 @@ msgstr ""
 
 #: ../dnf/cli/commands/repoquery.py:146
 msgid "show list of files in the package"
-msgstr ""
+msgstr "bestandslijst in pakket tonen"
 
 #: ../dnf/cli/commands/repoquery.py:149
 msgid "show package source RPM name"
-msgstr ""
+msgstr "Source-RPM-naam van pakket tonen"
 
 #: ../dnf/cli/commands/repoquery.py:152
 msgid "format for displaying found packages"
@@ -1060,7 +1063,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/shell.py:73
 msgid "SCRIPT"
-msgstr ""
+msgstr "SCRIPT"
 
 #: ../dnf/cli/commands/shell.py:74
 msgid "Script to run in DNF shell"
@@ -1368,7 +1371,7 @@ msgstr "Downloaden pakketten:"
 
 #: ../dnf/cli/cli.py:209
 msgid "Error downloading packages:"
-msgstr "Fout bij downloaden pakketten: "
+msgstr "Fout bij downloaden pakketten:"
 
 #: ../dnf/cli/cli.py:229
 msgid "Transaction failed"
@@ -1594,11 +1597,11 @@ msgstr "nee"
 
 #: ../dnf/cli/output.py:656
 msgid "Is this ok [y/N]: "
-msgstr "Is dit goed [y/N]:"
+msgstr "Is dit goed [y/N]: "
 
 #: ../dnf/cli/output.py:659
 msgid "Is this ok [Y/n]: "
-msgstr "Is dit goed [Y/n]:"
+msgstr "Is dit goed [Y/n]: "
 
 #: ../dnf/cli/output.py:737
 #, python-format
@@ -1613,28 +1616,28 @@ msgstr " Groep-Id: %s"
 #: ../dnf/cli/output.py:743 ../dnf/cli/output.py:782
 #, python-format
 msgid " Description: %s"
-msgstr "Beschrijving: %s"
+msgstr " Beschrijving: %s"
 
 #: ../dnf/cli/output.py:745
 #, python-format
 msgid " Language: %s"
-msgstr "Taal:%s"
+msgstr " Taal:%s"
 
 #: ../dnf/cli/output.py:748
 msgid " Mandatory Packages:"
-msgstr "Verplichte pakketten:"
+msgstr " Verplichte pakketten:"
 
 #: ../dnf/cli/output.py:749
 msgid " Default Packages:"
-msgstr "Standaardpakketten:"
+msgstr " Standaardpakketten:"
 
 #: ../dnf/cli/output.py:750
 msgid " Optional Packages:"
-msgstr "Optionele pakketten:"
+msgstr " Optionele pakketten:"
 
 #: ../dnf/cli/output.py:751
 msgid " Conditional Packages:"
-msgstr "Voorwaardelijke pakketten:"
+msgstr " Voorwaardelijke pakketten:"
 
 #: ../dnf/cli/output.py:776
 #, fuzzy, python-format
@@ -1644,15 +1647,15 @@ msgstr "Omgevingsgroep: %s"
 #: ../dnf/cli/output.py:779
 #, python-format
 msgid " Environment-Id: %s"
-msgstr "Omgeving-ID: %s"
+msgstr " Omgeving-ID: %s"
 
 #: ../dnf/cli/output.py:785
 msgid " Mandatory Groups:"
-msgstr "Verplichte groepen:"
+msgstr " Verplichte groepen:"
 
 #: ../dnf/cli/output.py:786
 msgid " Optional Groups:"
-msgstr "Optionele groepen:"
+msgstr " Optionele groepen:"
 
 #: ../dnf/cli/output.py:821
 #, python-format
@@ -1665,7 +1668,7 @@ msgstr "Overeenkomend van:"
 
 #: ../dnf/cli/output.py:832
 msgid "Description : "
-msgstr "Beschrijving:"
+msgstr "Beschrijving: "
 
 #: ../dnf/cli/output.py:835
 #, python-format

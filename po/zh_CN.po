@@ -20,13 +20,13 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-01-24 12:44+0100\n"
-"PO-Revision-Date: 2017-01-21 06:22-0500\n"
+"PO-Revision-Date: 2017-01-24 09:05-0500\n"
 "Last-Translator: n0vad3v <jonasguo@fedoraproject.org>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/dnf/language/zh_CN/)\n"
+"Language: zh-CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: zh-CN\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Zanata 3.9.6\n"
 
@@ -80,7 +80,7 @@ msgstr "显示所有问题； 默认"
 
 #: ../dnf/cli/commands/check.py:43
 msgid "show dependency problems"
-msgstr ""
+msgstr "显示依赖关系的问题"
 
 #: ../dnf/cli/commands/check.py:46
 msgid "show duplicate problems"
@@ -88,7 +88,7 @@ msgstr "显示重复的问题"
 
 #: ../dnf/cli/commands/check.py:49
 msgid "show obsoleted packages"
-msgstr ""
+msgstr "显示被放弃的软件包"
 
 #: ../dnf/cli/commands/check.py:52
 msgid "show problems with provides"
@@ -120,7 +120,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "正在清理数据："
+msgstr "正在清理数据：  "
 
 #: ../dnf/cli/commands/clean.py:114
 #, python-format
@@ -139,7 +139,7 @@ msgstr "同步已经安装的软件包到最新可用版本"
 
 #: ../dnf/cli/commands/distrosync.py:36
 msgid "Package to synchronize"
-msgstr ""
+msgstr "需要同步的软件包"
 
 #: ../dnf/cli/commands/makecache.py:37
 msgid "generate the metadata cache"
@@ -195,7 +195,7 @@ msgstr "重装一个包"
 
 #: ../dnf/cli/commands/reinstall.py:42
 msgid "Package to reinstall"
-msgstr ""
+msgstr "需要重新安装的软件包"
 
 #: ../dnf/cli/commands/reinstall.py:44 ../dnf/cli/commands/__init__.py:188
 #: ../dnf/cli/commands/__init__.py:253 ../dnf/cli/commands/__init__.py:281
@@ -227,7 +227,7 @@ msgstr ""
 #: ../dnf/cli/commands/__init__.py:508
 #, python-format
 msgid " (from %s)"
-msgstr "（来自 %s）"
+msgstr " （来自 %s）"
 
 #: ../dnf/cli/commands/reinstall.py:90 ../dnf/cli/commands/__init__.py:452
 #: ../dnf/cli/commands/__init__.py:509
@@ -272,7 +272,7 @@ msgstr "未找到匹配项。"
 
 #: ../dnf/cli/commands/search.py:105
 msgid "Searching Packages: "
-msgstr "搜索软件包："
+msgstr "搜索软件包： "
 
 #: ../dnf/cli/commands/updateinfo.py:46
 msgid "bugfix"
@@ -300,7 +300,7 @@ msgstr "显示软件包的参考建议"
 
 #: ../dnf/cli/commands/updateinfo.py:196
 msgid "Updates Information Summary: "
-msgstr "更新信息概要"
+msgstr "更新信息概要 "
 
 #: ../dnf/cli/commands/updateinfo.py:199
 msgid "New Package notice(s)"
@@ -445,20 +445,20 @@ msgstr ""
 
 #: ../dnf/cli/commands/__init__.py:166 ../dnf/cli/commands/__init__.py:325
 msgid "show only available packages"
-msgstr ""
+msgstr "只显示可用的软件包"
 
 #: ../dnf/cli/commands/__init__.py:169 ../dnf/cli/commands/__init__.py:328
 msgid "show only installed packages"
-msgstr ""
+msgstr "只显示已安装的软件包"
 
 #: ../dnf/cli/commands/__init__.py:172 ../dnf/cli/commands/__init__.py:331
 msgid "show only extras packages"
-msgstr ""
+msgstr "只显示额外的软件包"
 
 #: ../dnf/cli/commands/__init__.py:175 ../dnf/cli/commands/__init__.py:178
 #: ../dnf/cli/commands/__init__.py:334 ../dnf/cli/commands/__init__.py:337
 msgid "show only upgrades packages"
-msgstr ""
+msgstr "只显示需要被升级的软件包"
 
 #: ../dnf/cli/commands/__init__.py:181 ../dnf/cli/commands/__init__.py:340
 msgid "show only autoremove packages"
@@ -466,7 +466,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/__init__.py:184 ../dnf/cli/commands/__init__.py:343
 msgid "show only recently changed packages"
-msgstr ""
+msgstr "限制最近被改变的软件包"
 
 #: ../dnf/cli/commands/__init__.py:187 ../dnf/cli/commands/__init__.py:346
 msgid "show only obsoletes packages"
@@ -498,7 +498,7 @@ msgstr "没有可用软件包。"
 #: ../dnf/cli/cli.py:347 ../dnf/cli/cli.py:603 ../dnf/cli/cli.py:630
 #, python-format
 msgid "No package %s available."
-msgstr ""
+msgstr "无可用软件包 %s。"
 
 #: ../dnf/cli/commands/__init__.py:431
 msgid "No package installed."
@@ -813,15 +813,15 @@ msgstr "仓库大小    ： "
 
 #: ../dnf/cli/commands/repolist.py:206
 msgid "Repo-metalink: "
-msgstr "仓库元链接："
+msgstr "仓库元链接： "
 
 #: ../dnf/cli/commands/repolist.py:211
 msgid "  Updated    : "
-msgstr "更新："
+msgstr "  更新： "
 
 #: ../dnf/cli/commands/repolist.py:213
 msgid "Repo-mirrors : "
-msgstr "仓库镜像："
+msgstr "仓库镜像： "
 
 #: ../dnf/cli/commands/repolist.py:217 ../dnf/cli/commands/repolist.py:221
 msgid "Repo-baseurl : "
@@ -829,25 +829,25 @@ msgstr "仓库基本地址： "
 
 #: ../dnf/cli/commands/repolist.py:224
 msgid "Repo-expire  : "
-msgstr "仓库到期："
+msgstr "仓库到期： "
 
 #. TRANSLATORS: Packages that are excluded - their names like (dnf systemd)
 #: ../dnf/cli/commands/repolist.py:228
 msgid "Repo-exclude : "
-msgstr "仓库排除："
+msgstr "仓库排除： "
 
 #: ../dnf/cli/commands/repolist.py:232
 msgid "Repo-include : "
-msgstr "仓库包括："
+msgstr "仓库包括： "
 
 #. TRANSLATORS: Number of packages that where excluded (5)
 #: ../dnf/cli/commands/repolist.py:237
 msgid "Repo-excluded: "
-msgstr "仓库排除："
+msgstr "仓库排除： "
 
 #: ../dnf/cli/commands/repolist.py:241
 msgid "Repo-filename: "
-msgstr "仓库文件名："
+msgstr "仓库文件名： "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
@@ -1331,7 +1331,7 @@ msgstr "无法找到关于锁定进程 (PID %d)的信息"
 #: ../dnf/cli/utils.py:117
 #, python-format
 msgid "  The application with PID %d is: %s"
-msgstr "PID 为 %d 的应用程序是：%s"
+msgstr "  PID 为 %d 的应用程序是：%s"
 
 #: ../dnf/cli/utils.py:120
 #, python-format
@@ -1588,11 +1588,11 @@ msgstr "否"
 
 #: ../dnf/cli/output.py:656
 msgid "Is this ok [y/N]: "
-msgstr "确定吗？[y/N]："
+msgstr "确定吗？[y/N]： "
 
 #: ../dnf/cli/output.py:659
 msgid "Is this ok [Y/n]: "
-msgstr "确定吗？[Y/n]："
+msgstr "确定吗？[Y/n]： "
 
 #: ../dnf/cli/output.py:737
 #, python-format
@@ -1718,7 +1718,7 @@ msgstr "标记软件包为遵循软件包组移除的："
 
 #: ../dnf/cli/output.py:961
 msgid "Group"
-msgstr " 组"
+msgstr "组"
 
 #: ../dnf/cli/output.py:961
 msgid "Packages"
@@ -2250,7 +2250,7 @@ msgstr "验证"
 #: ../dnf/yum/history.py:748
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
-msgstr "无法初始化 DNF 数据库历史：%s "
+msgstr "无法初始化 DNF 数据库历史：%s"
 
 #: ../dnf/yum/history.py:1665
 #, python-format
