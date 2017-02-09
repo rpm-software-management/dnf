@@ -538,29 +538,17 @@ class SwdbInterface(object):
         )
         return pkg
 
-    '''
-    XXX TODO
-    There is no need to have states like Updated, Reinstalled... with
-    original TD_ID binding
-    '''
-    def beg(self, rpmdb_version, using_pkgs, tsis, skip_packages=[],
-            rpmdb_problems=[], cmdline=None):
-        if cmdline:
-            self._tid = self.swdb.trans_beg(
-                str(int(time.time())),
-                str(rpmdb_version),
-                cmdline,
-                str(misc.getloginuid()),
-                self.releasever
-            )
-        else:
-            self._tid = self.swdb.trans_beg(
-                str(int(time.time())),
-                str(rpmdb_version),
-                "",
-                str(misc.getloginuid()),
-                self.releasever
-            )
+    def beg(self, rpmdb_version, using_pkgs, tsis, cmdline=None):
+        self._tid = self.swdb.trans_beg(
+            str(int(time.time())),
+            str(rpmdb_version),
+            cmdline or "",
+            str(misc.getloginuid()),
+            self.releasever
+        )
+
+        if self.group:
+            self._log_group_trans(self._tid)
 
         for tsi in tsis:
             for (pkg, state) in tsi._history_iterator():
@@ -571,8 +559,6 @@ class SwdbInterface(object):
                     str(tsi.reason),
                     state
                 )
-        if self.group:
-            self._log_group_trans(self._tid)
 
     def pid_by_nvra(self, nvra):
         return self.swdb.pid_by_nvra(nvra)
@@ -691,10 +677,9 @@ class GroupPersistor(object):
     def remove_group(self, group):
         self.groups_removed.append(group)
 
-    def new_group(self, name_id, name, ui_name, is_installed,
-                  pkg_types, grp_types):
+    def new_group(self, name_id, name, ui_name, is_installed, pkg_types):
         group = Dnf.SwdbGroup.new(name_id, name, ui_name, is_installed,
-                                  pkg_types, grp_types, self.swdb)
+                                  pkg_types, self.swdb)
         return group
 
     def new_env(self, name_id, name, ui_name, pkg_types, grp_types):
@@ -738,6 +723,9 @@ class GroupPersistor(object):
 
     def add_env(self, env):
         return self.swdb.add_env(env)
+
+    def removable_pkg(self, pkg_name):
+        return self.swdb.removable_pkg(pkg_name)
 
 
 class _addondata(object):

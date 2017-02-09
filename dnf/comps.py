@@ -507,14 +507,7 @@ class Solver(object):
         return pkgs
 
     def _removable_pkg(self, pkg_name):
-        prst = self.persistor
-        count = 0
-        if self._reason_fn(pkg_name) != 'group':
-            return False
-        for id_ in prst.groups():
-            p_grp = prst.group(id_.name_id)
-            count += sum(1 for pkg in p_grp.get_full_list() if pkg == pkg_name)
-        return count < 2
+        return self.persistor.removable_pkg(pkg_name)
 
     def _removable_grp(self, grp_name):
         prst = self.persistor
@@ -609,7 +602,7 @@ class Solver(object):
                              group.ui_name)
         exclude = list() if exclude is None else list(exclude)
         p_grp = self.persistor.new_group(group_id, group.name,
-                                         group.ui_name, 0, pkg_types, 0)
+                                         group.ui_name, 0, pkg_types)
         self.persistor.add_group(p_grp)
         p_grp.add_exclude(exclude)
         p_grp.add_package(list(self._full_package_set(group)))

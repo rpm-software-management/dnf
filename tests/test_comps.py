@@ -188,13 +188,11 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
                                           'tune',
                                           'tune',
                                           1,  # installed
-                                          dnf.comps.MANDATORY,
-                                          0)
+                                          dnf.comps.MANDATORY)
         self.persistor.add_group(p_grp2, True)
         p_grp1.add_package(['pepper', 'tour', 'right'])
         p_grp2.add_package(['tour'])
-        # FIXME there is currently no reason "group" in swdb
-        # self.assertTrue(self.solver._removable_pkg('pepper'))
+        self.assertTrue(self.solver._removable_pkg('pepper'))
         # right's reason is "dep"
         self.assertFalse(self.solver._removable_pkg('right'))
         # tour appears in more than one group
@@ -206,8 +204,7 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
                                          'Base',
                                          u'Kritická cesta (Základ)',
                                          1,  # installed
-                                         dnf.comps.MANDATORY,
-                                         0)
+                                         dnf.comps.MANDATORY)
         self.persistor.add_group(p_grp, True)
         p_grp.add_package(['pepper', 'tour'])
 
@@ -229,8 +226,7 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
                                          name,
                                          name,
                                          1,
-                                         dnf.comps.MANDATORY,
-                                         0)
+                                         dnf.comps.MANDATORY)
         self.persistor.add_group(p_grp)
         p_grp.add_package(['pepper', 'handerson'])
         grp = self.comps.group_by_pattern('base')

@@ -167,12 +167,12 @@ def mock_comps(history, seed_persistor):
     if seed_persistor:
         name = 'Peppers'
         pkg_types = dnf.comps.MANDATORY
-        p_pep = persistor.new_group(name, name, name, 0, pkg_types, 0)
+        p_pep = persistor.new_group(name, name, name, 0, pkg_types)
         persistor.add_group(p_pep)
         p_pep.add_package(['hole', 'lotus'])
         name = 'somerset'
         pkg_types = dnf.comps.MANDATORY
-        p_som = persistor.new_group(name, name, name, 0, pkg_types, 0)
+        p_som = persistor.new_group(name, name, name, 0, pkg_types)
         persistor.add_group(p_pep)
         p_som.add_package(['pepper', 'trampoline', 'lotus'])
         name = 'sugar-desktop-environment'

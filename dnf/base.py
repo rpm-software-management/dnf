@@ -760,7 +760,7 @@ class Base(object):
             elif hasattr(self, 'cmds') and self.cmds:
                 cmdline = ' '.join(self.cmds)
             self.history.beg(rpmdbv, using_pkgs, list(self.transaction),
-                             [], [], cmdline)
+                             cmdline)
             # write out our config and repo data to additional history info
             self._store_config_in_history()
 

@@ -298,15 +298,14 @@ def run(input_dir='/var/lib/dnf/',
     PACKAGE = ['P_ID', 'name', 'epoch', 'version', 'release', 'arch',
                'checksum_data', 'checksum_type', 'type']
 
-    TRANS_DATA = ['T_ID', 'PD_ID', 'G_ID', 'done', 'ORIGINAL_TD_ID', 'reason',
+    TRANS_DATA = ['T_ID', 'PD_ID', 'TG_ID', 'done', 'ORIGINAL_TD_ID', 'reason',
                   'state']
 
     TRANS = ['T_ID', 'beg_timestamp', 'end_timestamp', 'beg_RPMDB_version',
              'end_RPMDB_version', 'cmdline', 'loginuid', 'releasever',
              'return_code']
 
-    GROUPS = ['name_id', 'name', 'ui_name', 'is_installed', 'pkg_types',
-              'grp_types']
+    GROUPS = ['name_id', 'name', 'ui_name', 'is_installed', 'pkg_types']
 
     ENVIRONMENTS = ['name_id', 'name', 'ui_name', 'pkg_types', 'grp_types']
 
@@ -557,16 +556,13 @@ def run(input_dir='/var/lib/dnf/',
                         record_G[GROUPS.index('pkg_types')] =\
                             data[key][value]['pkg_types']
 
-                        record_G[GROUPS.index('grp_types')] =\
-                            data[key][value]['grp_types']
-
                         record_G[GROUPS.index('is_installed')] = 1
                         if 'ui_name' in data[key][value]:
                             record_G[GROUPS.index('ui_name')] =\
                                 data[key][value]['ui_name']
 
                         cursor.execute('''INSERT INTO GROUPS
-                                       VALUES (null,?,?,?,?,?,?)''',
+                                       VALUES (null,?,?,?,?,?)''',
                                        (record_G))
                         cursor.execute('SELECT last_insert_rowid()')
                         tmp_gid = cursor.fetchone()[0]
@@ -583,10 +579,10 @@ def run(input_dir='/var/lib/dnf/',
                         if 'name' in data[key][value]:
                             record_G[GROUPS.index('name')] =\
                                 data[key][value]['name']
-                        record_E[ENVIRONMENTS.index('pkg_types')] =\
-                            data[key][value]['pkg_types']
                         record_E[ENVIRONMENTS.index('grp_types')] =\
                             data[key][value]['grp_types']
+                        record_E[ENVIRONMENTS.index('pkg_types')] =\
+                            data[key][value]['pkg_types']
                         if 'ui_name' in data[key][value]:
                             record_E[ENVIRONMENTS.index('ui_name')] =\
                                 data[key][value]['ui_name']
@@ -626,9 +622,9 @@ def run(input_dir='/var/lib/dnf/',
         if tmp_trans:
             for single_trans in tmp_trans:
                 tmp_tuple = (single_trans[0], row[0], row[1], row[2], row[3],
-                             row[4], row[5], row[6])
+                             row[4], row[5])
                 cursor.execute('''INSERT INTO TRANS_GROUP_DATA
-                               VALUES(null,?,?,?,?,?,?,?,?)''',
+                               VALUES(null,?,?,?,?,?,?,?)''',
                                tmp_tuple)
 
     # construction of TRANS_GROUP_DATA from ENVIRONMENTS
@@ -665,9 +661,9 @@ def run(input_dir='/var/lib/dnf/',
                     tmp_tuple = (single_trans[0], tmp_group_data[0],
                                  tmp_group_data[1], tmp_group_data[2],
                                  tmp_group_data[3], tmp_group_data[4],
-                                 tmp_group_data[5], tmp_group_data[6])
+                                 tmp_group_data[5])
                     cursor.execute('''INSERT INTO TRANS_GROUP_DATA
-                                   VALUES(null,?,?,?,?,?,?,?,?)''',
+                                   VALUES(null,?,?,?,?,?,?,?)''',
                                    tmp_tuple)
 
     # save changes
