@@ -22,6 +22,49 @@
 .. contents::
 
 ===================
+2.0.1 Release Notes
+===================
+
+API changes in 2.0.1:
+
+* :meth:`dnf.Base.package_downgrade` now accept keyword strict to ignore problems with dep-solving
+
+API additions in 2.0.1:
+
+* :meth:`dnf.Base.autoremove` removes all 'leaf' packages from the system that were originally installed as dependencies
+* :meth:`dnf.cli.Cli.redirect_logger` changes minimal logger level for terminal output to stdout and stderr
+
+DNF command additions in 2.0.1:
+
+* ``dnf [options] shell [filename]`` opens an interactive shell for conducting multiple commands during a single execution of DNF
+* ``dnf [options] swap <remove-spec> <install-spec>`` removes spec and install spec in one transaction
+
+Bugs fixed in 2.0.1:
+
+* :rhbug:`1409361`
+* :rhbug:`1414512`
+* :rhbug:`1238808`
+* :rhbug:`1386085`
+* :rhbug:`1286553`
+* :rhbug:`1337731`
+* :rhbug:`1336879`
+* :rhbug:`1173349`
+* :rhbug:`1329617`
+* :rhbug:`1283255`
+* :rhbug:`1369411`
+* :rhbug:`1243393`
+* :rhbug:`1243393`
+* :rhbug:`1411349`
+* :rhbug:`1345976`
+* :rhbug:`1369212`
+* :rhbug:`1349247`
+* :rhbug:`1403930`
+* :rhbug:`1403465`
+* :rhbug:`1110780`
+* :rhbug:`1405333`
+* :rhbug:`1254879`
+
+===================
 2.0.0 Release Notes
 ===================
 
