@@ -34,7 +34,7 @@ def testconf():
 class PluginTest(tests.support.TestCase):
     def setUp(self):
         self.plugins = dnf.plugin.Plugins()
-        self.plugins._load(testconf(), ())
+        self.plugins._load(testconf(), (), ())
 
     def tearDown(self):
         self.plugins._unload()
@@ -74,7 +74,7 @@ class PluginTest(tests.support.TestCase):
 class PluginSkipsTest(tests.support.TestCase):
     def test_skip(self):
         self.plugins = dnf.plugin.Plugins()
-        self.plugins._load(testconf(), ('luck*',))
+        self.plugins._load(testconf(), ('luck*',), ())
         self.assertLength(self.plugins.plugin_cls, 0)
 
     def tearDown(self):
