@@ -170,6 +170,9 @@ Options
     Error output level. This is an integer value between 0 (no error output) and
     10 (shows all error messages), default is 2. Deprecated, use ``-v`` instead.
 
+``--enableplugin=<plugin names>``
+    Enable the listed plugins specified by names or globs.
+
 ``--enablerepo=<repoid>``
     Enable additional repositories by an id or a glob.
 
