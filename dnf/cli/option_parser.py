@@ -171,7 +171,7 @@ class OptionParser(argparse.ArgumentParser):
         main_parser.add_argument("--noplugins", action="store_false",
                                  default=None, dest='plugins',
                                  help=_("disable all plugins"))
-        main_parser.add_argument("--disableplugins", dest="disableplugins",
+        main_parser.add_argument("--disableplugin", dest="disableplugin",
                                  default=[], action=self._SplitCallback,
                                  help=_("disable plugins by name"),
                                  metavar='[plugin]')
