@@ -15,10 +15,10 @@ msgstr ""
 "PO-Revision-Date: 2016-12-19 03:08-0500\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/dnf/language/sv/)\n"
+"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: sv\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Zanata 3.9.6\n"
 
@@ -822,7 +822,7 @@ msgstr "Förrådsmetalänk : "
 
 #: ../dnf/cli/commands/repolist.py:211
 msgid "  Updated    : "
-msgstr "  Uppdaterat    :"
+msgstr "  Uppdaterat    : "
 
 #: ../dnf/cli/commands/repolist.py:213
 msgid "Repo-mirrors : "
@@ -1666,7 +1666,7 @@ msgstr "Miljögrupp: %s"
 #: ../dnf/cli/output.py:779
 #, python-format
 msgid " Environment-Id: %s"
-msgstr "Miljö-id: %s"
+msgstr " Miljö-id: %s"
 
 #: ../dnf/cli/output.py:785
 msgid " Mandatory Groups:"
@@ -1999,7 +1999,7 @@ msgstr "(%u dagar)"
 
 #: ../dnf/cli/output.py:1644
 msgid "End time       :"
-msgstr "Sluttid        : "
+msgstr "Sluttid        :"
 
 #: ../dnf/cli/output.py:1647 ../dnf/cli/output.py:1649
 msgid "End rpmdb      :"

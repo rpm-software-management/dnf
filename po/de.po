@@ -26,10 +26,10 @@ msgstr ""
 "PO-Revision-Date: 2016-11-14 02:55-0500\n"
 "Last-Translator: Tobias Weise <tobias.weise@web.de>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/dnf/language/de/)\n"
+"Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: de\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Zanata 3.9.6\n"
 
@@ -123,7 +123,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "Paketquellen werden aufgeräumt:"
+msgstr "Paketquellen werden aufgeräumt:  "
 
 #: ../dnf/cli/commands/clean.py:114
 #, python-format
@@ -280,7 +280,7 @@ msgstr "Keine Übereinstimmungen gefunden."
 
 #: ../dnf/cli/commands/search.py:105
 msgid "Searching Packages: "
-msgstr "Pakete suchen:"
+msgstr "Pakete suchen: "
 
 #: ../dnf/cli/commands/updateinfo.py:46
 msgid "bugfix"
@@ -308,7 +308,7 @@ msgstr "Erklärungen zu Paketen anzeigen"
 
 #: ../dnf/cli/commands/updateinfo.py:196
 msgid "Updates Information Summary: "
-msgstr "Zusammenfassung der Aktualisierungsinformationen:"
+msgstr "Zusammenfassung der Aktualisierungsinformationen: "
 
 #: ../dnf/cli/commands/updateinfo.py:199
 msgid "New Package notice(s)"
@@ -436,7 +436,7 @@ msgstr ""
 "DNF diesen Schlüssel für Sie installiert.\n"
 "\n"
 "Weitere Informationen erhalten Sie von Ihrer Distribution oder dem\n"
-"Anbieter des Pakets. "
+"Anbieter des Pakets."
 
 #: ../dnf/cli/commands/__init__.py:76
 #, python-format
@@ -1625,11 +1625,11 @@ msgstr "nein"
 
 #: ../dnf/cli/output.py:656
 msgid "Is this ok [y/N]: "
-msgstr "Ist dies in Ordnung? [j/N]:"
+msgstr "Ist dies in Ordnung? [j/N]: "
 
 #: ../dnf/cli/output.py:659
 msgid "Is this ok [Y/n]: "
-msgstr "Ist dies in Ordnung? [J/n]:"
+msgstr "Ist dies in Ordnung? [J/n]: "
 
 #: ../dnf/cli/output.py:737
 #, python-format
@@ -1649,7 +1649,7 @@ msgstr " Beschreibung: %s"
 #: ../dnf/cli/output.py:745
 #, python-format
 msgid " Language: %s"
-msgstr "Sprache: %s"
+msgstr " Sprache: %s"
 
 #: ../dnf/cli/output.py:748
 msgid " Mandatory Packages:"

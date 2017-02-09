@@ -23,13 +23,13 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-01-24 12:44+0100\n"
-"PO-Revision-Date: 2017-01-05 02:35-0500\n"
+"PO-Revision-Date: 2017-01-30 02:39-0500\n"
 "Last-Translator: Máximo Castañeda Riloba <mcrcctm@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/dnf/language/es/)\n"
+"Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Zanata 3.9.6\n"
 
@@ -95,19 +95,19 @@ msgstr "mostrar paquetes obsoletos"
 
 #: ../dnf/cli/commands/check.py:52
 msgid "show problems with provides"
-msgstr ""
+msgstr "mostrar problemas con funciones proporcionadas"
 
 #: ../dnf/cli/commands/check.py:82
 msgid "{} has missing requires of {}"
-msgstr ""
+msgstr "a {} le falta {}"
 
 #: ../dnf/cli/commands/check.py:102
 msgid "{} is a duplicate with {}"
-msgstr ""
+msgstr "{} es un duplicado de {}"
 
 #: ../dnf/cli/commands/check.py:113
 msgid "{} is obsoleted by {}"
-msgstr ""
+msgstr "{} es reemplazado por {}"
 
 #: ../dnf/cli/commands/check.py:122
 msgid "{} provides {} but it cannot be found"
@@ -280,7 +280,7 @@ msgstr "No se encontraron coincidencias."
 
 #: ../dnf/cli/commands/search.py:105
 msgid "Searching Packages: "
-msgstr "Buscando paquetes:"
+msgstr "Buscando paquetes: "
 
 #: ../dnf/cli/commands/updateinfo.py:46
 msgid "bugfix"
@@ -308,7 +308,7 @@ msgstr "muestra avisos acerca de paquetes"
 
 #: ../dnf/cli/commands/updateinfo.py:196
 msgid "Updates Information Summary: "
-msgstr "Resumen de la información de actualización:"
+msgstr "Resumen de la información de actualización: "
 
 #: ../dnf/cli/commands/updateinfo.py:199
 msgid "New Package notice(s)"
@@ -485,7 +485,7 @@ msgstr "mostrar sólo paquetes con cambios recientes"
 
 #: ../dnf/cli/commands/__init__.py:187 ../dnf/cli/commands/__init__.py:346
 msgid "show only obsoletes packages"
-msgstr "mostrar sólo paquetes que hacen a otros obsoletos"
+msgstr "mostrar sólo paquetes que reemplazan a otros"
 
 #: ../dnf/cli/commands/__init__.py:213
 msgid "list a package or groups of packages"
@@ -606,7 +606,7 @@ msgstr "Paquete a eliminar"
 #: ../dnf/cli/commands/install.py:101 ../dnf/cli/commands/remove.py:108
 #, python-format
 msgid "Not a valid form: %s"
-msgstr ""
+msgstr "Formato incorrecto: %s"
 
 #: ../dnf/cli/commands/downgrade.py:34
 msgid "Downgrade a package"
@@ -791,7 +791,7 @@ msgstr "mostrar los repositorios desactivados"
 
 #: ../dnf/cli/commands/repolist.py:120
 msgid "No repositories available"
-msgstr ""
+msgstr "No hay ningún repositorio disponible"
 
 #: ../dnf/cli/commands/repolist.py:142 ../dnf/cli/commands/repolist.py:143
 msgid "enabled"
@@ -869,7 +869,7 @@ msgstr "Repo-include : "
 #. TRANSLATORS: Number of packages that where excluded (5)
 #: ../dnf/cli/commands/repolist.py:237
 msgid "Repo-excluded: "
-msgstr "Repositorio excluído:"
+msgstr "Repositorio excluído: "
 
 #: ../dnf/cli/commands/repolist.py:241
 msgid "Repo-filename: "
@@ -894,7 +894,7 @@ msgstr "nombre del repositorio"
 # DocId: dnf-plugins-core
 #: ../dnf/cli/commands/repoquery.py:88
 msgid "search for packages matching keyword"
-msgstr "buscar paquetes que coincidan con la palabra clave "
+msgstr "buscar paquetes que coincidan con la palabra clave"
 
 # auto translated by TM merge from project: dnf-plugins-core, version: master,
 # DocId: dnf-plugins-core
@@ -1141,7 +1141,7 @@ msgstr "Mostrar sólo paquetes editados recientemente"
 
 #: ../dnf/cli/commands/repoquery.py:230
 msgid "Package {} contains no files"
-msgstr ""
+msgstr "El package {} no contiene archivos"
 
 # auto translated by TM merge from project: dnf-plugins-core, version: master,
 # DocId: dnf-plugins-core
@@ -1176,28 +1176,28 @@ msgstr ""
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
-msgstr ""
+msgstr "ejecutar una sesión interactiva de DNF"
 
 #: ../dnf/cli/commands/shell.py:73
 msgid "SCRIPT"
-msgstr ""
+msgstr "GUION"
 
 #: ../dnf/cli/commands/shell.py:74
 msgid "Script to run in DNF shell"
-msgstr ""
+msgstr "Guion a ejecutar en la sesión de DNF"
 
 #: ../dnf/cli/commands/shell.py:126
 msgid "Unsupported key value."
-msgstr ""
+msgstr "Clave desconocida."
 
 #: ../dnf/cli/commands/shell.py:129
 msgid "Missing config or key value."
-msgstr ""
+msgstr "Falta clave o valor."
 
 #: ../dnf/cli/commands/shell.py:141
 #, python-format
 msgid "Could not find repository: %s"
-msgstr ""
+msgstr "No se pudo encontrar el repositorio %s"
 
 #: ../dnf/cli/commands/shell.py:149
 msgid ""
@@ -1209,15 +1209,24 @@ msgid ""
 "                   run                      resolve and run the transaction set\n"
 "                   exit (or quit)           exit the shell"
 msgstr ""
+"Comandos específicos de shell:\n"
+"                   config                   realizar ajustes de configuración\n"
+"                   repository (o repo)      activar, desactivar o listar repos\n"
+"                                            (enable, disable, list)\n"
+"                   resolvedep               resolver la transacción\n"
+"                   transaction (o ts)       listar, reiniciar o ejecutar la\n"
+"                                            transacción (list, reset, run)\n"
+"                   run                      resolver y ejecutar la transacción\n"
+"                   exit (o quit)            salir de la sesión"
 
 #: ../dnf/cli/commands/shell.py:186
 #, python-format
 msgid "Error: Cannot open %s for reading"
-msgstr ""
+msgstr "Error: no se pudo abrir %s para lectura"
 
 #: ../dnf/cli/commands/shell.py:213
 msgid "Leaving Shell"
-msgstr ""
+msgstr "Saliendo de la sesión"
 
 #: ../dnf/cli/commands/swap.py:33
 msgid "run an interactive dnf mod for remove and install one spec"
@@ -1225,11 +1234,11 @@ msgstr ""
 
 #: ../dnf/cli/commands/swap.py:37
 msgid "The specs that will be removed"
-msgstr ""
+msgstr "Lo que se quiere eliminar"
 
 #: ../dnf/cli/commands/swap.py:39
 msgid "The specs that will be installed"
-msgstr ""
+msgstr "Lo que se quiere instalar"
 
 #: ../dnf/cli/commands/upgrade.py:38
 msgid "upgrade a package or packages on your system"
@@ -1510,7 +1519,7 @@ msgstr ""
 
 #: ../dnf/cli/cli.py:290 ../dnf/cli/cli.py:433 ../dnf/cli/cli.py:439
 msgid "Obsoleting Packages"
-msgstr "Convirtiendo paquetes en obsoletos"
+msgstr "Reemplazando paquetes"
 
 #: ../dnf/cli/cli.py:319
 msgid "No packages marked for distribution synchronization."
@@ -1519,7 +1528,7 @@ msgstr "No se han seleccionado paquetes para sincronización de distribución"
 #: ../dnf/cli/cli.py:350 ../dnf/base.py:1747
 #, python-format
 msgid "Packages for argument %s available, but not installed."
-msgstr ""
+msgstr "Hay paquetes para %s, pero no instalados."
 
 #: ../dnf/cli/cli.py:407
 msgid "Installed Packages"
@@ -1580,7 +1589,7 @@ msgstr "Repositorio desconocido: '%s'"
 #: ../dnf/cli/cli.py:715
 #, python-format
 msgid "No repository match: %s"
-msgstr ""
+msgstr "No hay repositorios coincidentes: %s"
 
 #: ../dnf/cli/cli.py:760
 #, python-format
@@ -1722,11 +1731,11 @@ msgstr "no"
 
 #: ../dnf/cli/output.py:656
 msgid "Is this ok [y/N]: "
-msgstr "¿Está de acuerdo [s/N]?:"
+msgstr "¿Está de acuerdo [s/N]?: "
 
 #: ../dnf/cli/output.py:659
 msgid "Is this ok [Y/n]: "
-msgstr "¿Está de acuerdo [S/n]?:"
+msgstr "¿Está de acuerdo [S/n]?: "
 
 #: ../dnf/cli/output.py:737
 #, python-format
@@ -1776,11 +1785,11 @@ msgstr " Environment-Id: %s"
 
 #: ../dnf/cli/output.py:785
 msgid " Mandatory Groups:"
-msgstr "Grupos obligatorios:"
+msgstr " Grupos obligatorios:"
 
 #: ../dnf/cli/output.py:786
 msgid " Optional Groups:"
-msgstr "Grupos opcionales"
+msgstr " Grupos opcionales"
 
 #: ../dnf/cli/output.py:821
 #, python-format
@@ -1793,7 +1802,7 @@ msgstr "Resultado de:"
 
 #: ../dnf/cli/output.py:832
 msgid "Description : "
-msgstr "Descripción :"
+msgstr "Descripción : "
 
 #: ../dnf/cli/output.py:835
 #, python-format
@@ -1840,7 +1849,7 @@ msgstr "Hubo un error mientras se calculaba el tamaño instalado"
 #: ../dnf/cli/output.py:935
 #, python-format
 msgid "Freed space: %s"
-msgstr ""
+msgstr "Espacio liberado: %s"
 
 #: ../dnf/cli/output.py:944
 msgid "Marking packages as installed by the group:"
@@ -2107,7 +2116,7 @@ msgstr "(%u dias)"
 
 #: ../dnf/cli/output.py:1644
 msgid "End time       :"
-msgstr "Hora final       : "
+msgstr "Hora final       :"
 
 #: ../dnf/cli/output.py:1647 ../dnf/cli/output.py:1649
 msgid "End rpmdb      :"
@@ -2163,7 +2172,7 @@ msgstr "Paquetes descartados:"
 
 #: ../dnf/cli/output.py:1704
 msgid "Rpmdb Problems:"
-msgstr "Problemas en la base de datos RPM: "
+msgstr "Problemas en la base de datos RPM:"
 
 #: ../dnf/cli/output.py:1715
 msgid "Scriptlet output:"
@@ -2179,11 +2188,11 @@ msgstr "Instalación de dependencias"
 
 #: ../dnf/cli/output.py:1730
 msgid "Obsoleted"
-msgstr "Obsoleto"
+msgstr "Reemplazado"
 
 #: ../dnf/cli/output.py:1731 ../dnf/yum/rpmtrans.py:128
 msgid "Obsoleting"
-msgstr "Convirtiendo en obsoleto"
+msgstr "Reemplazando"
 
 #: ../dnf/cli/output.py:1732
 msgid "Erase"
@@ -2196,42 +2205,42 @@ msgstr "Reinstalar"
 #: ../dnf/cli/output.py:1906
 #, python-format
 msgid "---> Package %s.%s %s will be installed"
-msgstr ""
+msgstr "---> Paquete %s.%s %s seleccionado para instalar"
 
 #: ../dnf/cli/output.py:1908
 #, python-format
 msgid "---> Package %s.%s %s will be an upgrade"
-msgstr ""
+msgstr "---> Paquete %s.%s %s seleccionado como actualización"
 
 #: ../dnf/cli/output.py:1910
 #, python-format
 msgid "---> Package %s.%s %s will be erased"
-msgstr ""
+msgstr "---> Paquete %s.%s %s seleccionado para eliminar"
 
 #: ../dnf/cli/output.py:1912
 #, python-format
 msgid "---> Package %s.%s %s will be reinstalled"
-msgstr ""
+msgstr "---> Paquete %s.%s %s seleccionado para reinstalar"
 
 #: ../dnf/cli/output.py:1914
 #, python-format
 msgid "---> Package %s.%s %s will be a downgrade"
-msgstr ""
+msgstr "---> Paquete %s.%s %s seleccionado para revertir"
 
 #: ../dnf/cli/output.py:1916
 #, python-format
 msgid "---> Package %s.%s %s will be obsoleting"
-msgstr ""
+msgstr "---> Paquete %s.%s %s seleccionado como reemplazo"
 
 #: ../dnf/cli/output.py:1918
 #, python-format
 msgid "---> Package %s.%s %s will be upgraded"
-msgstr ""
+msgstr "---> Paquete %s.%s %s seleccionado para actualizar"
 
 #: ../dnf/cli/output.py:1920
 #, python-format
 msgid "---> Package %s.%s %s will be obsoleted"
-msgstr ""
+msgstr "---> Paquete %s.%s %s seleccionado para ser reemplazado"
 
 #: ../dnf/cli/output.py:1929
 msgid "--> Starting dependency resolution"
@@ -2429,7 +2438,7 @@ msgstr "Base de datos de grupos inválida, limpiando."
 
 #: ../dnf/persistor.py:333
 msgid "Unsupported installed groups database found, resetting."
-msgstr "Base de datos de grupos no soportada, reestableciendo. "
+msgstr "Base de datos de grupos no soportada, reestableciendo."
 
 #. empty file is invalid json format
 #: ../dnf/persistor.py:425
@@ -2632,12 +2641,12 @@ msgstr "Falló al eliminar archivo de transacción %s"
 #: ../dnf/base.py:841
 #, python-format
 msgid "%s was supposed to be installed but is not!"
-msgstr "¡se suponía que %s estuviera instalado, pero no lo está! "
+msgstr "¡se suponía que %s estuviera instalado, pero no lo está!"
 
 #: ../dnf/base.py:902
 #, python-format
 msgid "%s was supposed to be removed but is not!"
-msgstr "¡se suponía que %s estuviera eliminado, pero no lo está! "
+msgstr "¡se suponía que %s estuviera eliminado, pero no lo está!"
 
 #: ../dnf/base.py:960
 msgid "Some packages were not downloaded. Retrying."
@@ -2654,6 +2663,8 @@ msgstr ""
 msgid ""
 "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
 msgstr ""
+"Los errores en Delta RPMs incrementaron %.1f MB de actualizaciones a %.1f MB"
+" (%d.1%% desperdiciado)"
 
 #: ../dnf/base.py:1014
 msgid "Could not open: {}"
@@ -2662,7 +2673,7 @@ msgstr "No se pudo abrir: {}"
 #: ../dnf/base.py:1052
 #, python-format
 msgid "Public key for %s is not installed"
-msgstr "No se ha instalado la llave pública de %s "
+msgstr "No se ha instalado la llave pública de %s"
 
 #: ../dnf/base.py:1056
 #, python-format

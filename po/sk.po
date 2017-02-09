@@ -9,10 +9,10 @@ msgstr ""
 "PO-Revision-Date: 2016-10-26 10:37-0400\n"
 "Last-Translator: feonsu <feonsu@gmail.com>\n"
 "Language-Team: Slovak\n"
+"Language: sk\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: sk\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2\n"
 "X-Generator: Zanata 3.9.6\n"
 
@@ -1579,7 +1579,7 @@ msgstr "Skupina: %s"
 #: ../dnf/cli/output.py:741
 #, python-format
 msgid " Group-Id: %s"
-msgstr "ID skupiny: %s"
+msgstr " ID skupiny: %s"
 
 #: ../dnf/cli/output.py:743 ../dnf/cli/output.py:782
 #, python-format

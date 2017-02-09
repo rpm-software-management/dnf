@@ -16,10 +16,10 @@ msgstr ""
 "PO-Revision-Date: 2016-12-26 05:22-0500\n"
 "Last-Translator: Meskó Balázs <meskobalazs@gmail.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/projects/p/dnf/language/hu/)\n"
+"Language: hu\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: hu\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Zanata 3.9.6\n"
 
@@ -113,7 +113,7 @@ msgstr "Tisztítandó metaadatok"
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "Adatok törlése: "
+msgstr "Adatok törlése:  "
 
 #: ../dnf/cli/commands/clean.py:114
 #, python-format
@@ -224,7 +224,7 @@ msgstr "A(z) %s csomag elérhető, de nincs telepítve."
 #: ../dnf/cli/commands/__init__.py:508
 #, python-format
 msgid " (from %s)"
-msgstr "(ebből: %s)"
+msgstr " (ebből: %s)"
 
 #: ../dnf/cli/commands/reinstall.py:90 ../dnf/cli/commands/__init__.py:452
 #: ../dnf/cli/commands/__init__.py:509
@@ -297,7 +297,7 @@ msgstr "csomagtájékoztatók megjelenítése"
 
 #: ../dnf/cli/commands/updateinfo.py:196
 msgid "Updates Information Summary: "
-msgstr "Információ a frissítésekkel kapcsolatban:"
+msgstr "Információ a frissítésekkel kapcsolatban: "
 
 #: ../dnf/cli/commands/updateinfo.py:199
 msgid "New Package notice(s)"
@@ -757,7 +757,7 @@ msgstr "%s másodperc (utoljára: %s)"
 
 #: ../dnf/cli/commands/repolist.py:75
 msgid "display the configured software repositories"
-msgstr " a beállított szoftvertárolók megjelenítése"
+msgstr "a beállított szoftvertárolók megjelenítése"
 
 #: ../dnf/cli/commands/repolist.py:82
 msgid "show all repos"
@@ -825,7 +825,7 @@ msgstr "Tároló metalink    : "
 
 #: ../dnf/cli/commands/repolist.py:211
 msgid "  Updated    : "
-msgstr "  Frissítve      :"
+msgstr "  Frissítve      : "
 
 #: ../dnf/cli/commands/repolist.py:213
 msgid "Repo-mirrors : "
@@ -1370,7 +1370,7 @@ msgstr ""
 #: ../dnf/cli/utils.py:117
 #, python-format
 msgid "  The application with PID %d is: %s"
-msgstr " A(z) %d PID-ű alkalmazás: %s"
+msgstr "  A(z) %d PID-ű alkalmazás: %s"
 
 #: ../dnf/cli/utils.py:120
 #, python-format
@@ -1633,7 +1633,7 @@ msgstr "nem"
 
 #: ../dnf/cli/output.py:656
 msgid "Is this ok [y/N]: "
-msgstr "Ez így jó? [y/N]"
+msgstr "Ez így jó? [y/N] "
 
 #: ../dnf/cli/output.py:659
 msgid "Is this ok [Y/n]: "
@@ -2277,7 +2277,7 @@ msgstr "Figyelmeztetés: nem sikerült betölteni: '%s', átugrás."
 #: ../dnf/conf/read.py:61
 #, python-format
 msgid "Repository '%s': Error parsing config: %s"
-msgstr "„%s” tároló: Hiba a konfiguráció feldolgozásakor: %s "
+msgstr "„%s” tároló: Hiba a konfiguráció feldolgozásakor: %s"
 
 #: ../dnf/conf/read.py:67
 #, fuzzy, python-format

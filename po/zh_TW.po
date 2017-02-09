@@ -8,10 +8,10 @@ msgstr ""
 "PO-Revision-Date: 2016-04-19 11:37-0400\n"
 "Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
 "Language-Team: Chinese (Taiwan)\n"
+"Language: zh-TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: zh-TW\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 "X-Generator: Zanata 3.9.6\n"
 
@@ -1560,11 +1560,11 @@ msgstr "否"
 
 #: ../dnf/cli/output.py:656
 msgid "Is this ok [y/N]: "
-msgstr "這樣可以嗎 [y/N]："
+msgstr "這樣可以嗎 [y/N]： "
 
 #: ../dnf/cli/output.py:659
 msgid "Is this ok [Y/n]: "
-msgstr "這樣可以嗎 [Y/n]："
+msgstr "這樣可以嗎 [Y/n]： "
 
 #: ../dnf/cli/output.py:737
 #, python-format
@@ -1631,7 +1631,7 @@ msgstr "符合之來源："
 
 #: ../dnf/cli/output.py:832
 msgid "Description : "
-msgstr "描述      ："
+msgstr "描述      ： "
 
 #: ../dnf/cli/output.py:835
 #, python-format
@@ -1650,7 +1650,7 @@ msgstr "檔案名稱  ：%s"
 
 #: ../dnf/cli/output.py:845
 msgid "Other       : "
-msgstr "其他      ："
+msgstr "其他      ： "
 
 #: ../dnf/cli/output.py:901
 msgid "There was an error calculating total download size"
