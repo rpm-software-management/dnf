@@ -167,15 +167,18 @@ class SolverTestMixin(object):
         comps._add_from_xml_filename(support.COMPS_PATH)
         self.comps = comps
         self.base = support.MockBase()
-        self.persistor = self.base.history.activate_group()
+        self.history = self.base.history
+        self.persistor = self.history.activate_group()
         self.solver = dnf.comps.Solver(self.persistor, self.comps, support.REASONS.get)
 
 
 class SolverGroupTest(SolverTestMixin, support.TestCase):
 
     def test_install(self):
+        self.history.reset_db()
         grp = self.comps.group_by_pattern('base')
         trans = self.solver._group_install(grp.id, dnf.comps.MANDATORY, ['right'])
+        self.persistor.commit()
         self.assertLength(trans.install, 2)
         p_grp = self.persistor.group('base')
         self.assertCountEqual(p_grp.get_full_list(), ['pepper', 'tour'])
@@ -183,30 +186,47 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
         self.assertEqual(p_grp.pkg_types, dnf.comps.MANDATORY)
 
     def test_removable_pkg(self):
-        p_grp1 = self.persistor.group('base')
-        p_grp2 = self.persistor.new_group('tune',
-                                          'tune',
-                                          'tune',
-                                          1,  # installed
-                                          dnf.comps.MANDATORY)
-        self.persistor.add_group(p_grp2, True)
-        p_grp1.add_package(['pepper', 'tour', 'right'])
-        p_grp2.add_package(['tour'])
+        self.history.reset_db()
+        grp = self.comps.group_by_pattern('base')
+        self.solver._group_install(grp.id, dnf.comps.MANDATORY, [])
+        self.persistor.commit()
+
+        pkg1 = self.history.package()
+        pkg1.name = "pepper"
+        pid = self.history.add_package(pkg1)
+        self.history.swdb.trans_data_beg(1, pid, "group", "Installed")
+
+        pkg2 = self.history.package()
+        pkg2.name = "right"
+        pid2 = self.history.add_package(pkg2)
+        self.history.swdb.trans_data_beg(1, pid2, "dep", "Installed")
+
+        n = "dupl"
+        p_grp = self.persistor.new_group(n, n, n, 1, 0)
+        self.persistor.add_group(p_grp)
+        p_grp.add_package(["tour"])
+
+        pkg3 = self.history.package()
+        pkg3.name = "tour"
+        pid3 = self.history.add_package(pkg3)
+        self.history.swdb.trans_data_beg(1, pid3, "group", "Installed")
+
+        # pepper is in single group with reason "group"
         self.assertTrue(self.solver._removable_pkg('pepper'))
         # right's reason is "dep"
         self.assertFalse(self.solver._removable_pkg('right'))
         # tour appears in more than one group
         self.assertFalse(self.solver._removable_pkg('tour'))
 
+        self.persistor.remove_group(p_grp, True)
+        # tour appears only in one group now
+        self.assertTrue(self.solver._removable_pkg('tour'))
+
     def test_remove(self):
-        # setup of the "current state"
-        p_grp = self.persistor.new_group('base',
-                                         'Base',
-                                         u'Kritická cesta (Základ)',
-                                         1,  # installed
-                                         dnf.comps.MANDATORY)
-        self.persistor.add_group(p_grp, True)
-        p_grp.add_package(['pepper', 'tour'])
+        self.history.reset_db()
+        grp = self.comps.group_by_pattern('base')
+        self.solver._group_install(grp.id, dnf.comps.MANDATORY, [])
+        self.persistor.commit()
 
         grps = self.persistor.groups_by_pattern('base')
         for grp in grps:
@@ -219,7 +239,7 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
                 self.assertFalse(grp.is_installed)
 
     def test_upgrade(self):
-        self.base.history.reset_db()
+        self.history.reset_db()
         # setup of the "current state"
         name = "base"
         p_grp = self.persistor.new_group(name,
@@ -240,16 +260,17 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
 
 class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
 
-    def _install(self, env):
+    def _install(self, env, ex=True):
+        exclude = ('lotus',) if ex else []
         trans = self.solver._environment_install(
             env.id,
             dnf.comps.MANDATORY,
-            ('lotus',))
+            exclude)
         self.persistor.commit()
         return trans
 
     def test_install(self):
-        self.base.history.reset_db()
+        self.history.reset_db()
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
         trans = self._install(env)
         self.assertCountEqual([pkg.name for pkg in trans.install],
@@ -264,28 +285,51 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
         self.assertTrue(base.is_installed)
 
     def test_remove(self):
-        self.base.history.reset_db()
+        # env is installed from previous transaction
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
-        self._install(env)
         trans = self.solver._environment_remove(env.id)
+        self.persistor.commit()
 
         p_env = self.persistor.environment('sugar-desktop-environment')
-        self.assertTransEqual(trans.remove, ('pepper', 'trampoline', 'hole'))
+        self.assertFalse(p_env.is_installed())
+        self.assertEqual(p_env.pkg_types, dnf.comps.MANDATORY)
+        self.assertEqual(p_env.grp_types, dnf.comps.ALL_TYPES)
+
+        grp_list = p_env.get_group_list()
+        self.assertTrue(len(grp_list))
+        for grp in grp_list:
+            _grp = self.persistor.group(grp)
+            self.assertEqual(_grp.pkg_types, dnf.comps.MANDATORY)
+            self.assertFalse(_grp.is_installed)
+
+        # install it again with different pkg_types
+        self.solver._environment_install(env.id, dnf.comps.OPTIONAL, [])
+        self.persistor.commit()
+        p_env = self.persistor.environment('sugar-desktop-environment')
+        self.assertTrue(p_env.is_installed())
+        self.assertEqual(p_env.pkg_types, dnf.comps.OPTIONAL)
+        self.assertEqual(p_env.grp_types, dnf.comps.ALL_TYPES)
+        grp_list = p_env.get_group_list()
+        self.assertTrue(len(grp_list))
+        for grp in grp_list:
+            _grp = self.persistor.group(grp)
+            self.assertEqual(_grp.pkg_types, dnf.comps.OPTIONAL)
 
     def test_upgrade(self):
         """Upgrade environment, the one group it knows is no longer installed."""
-        self.base.history.reset_db()
-        name = 'sugar-desktop-environment'
-        p_env = self.persistor.new_env(name,
-                                       name,
-                                       name,
-                                       dnf.comps.ALL_TYPES,
-                                       dnf.comps.ALL_TYPES)
-        self.solver._group_install("somerset", dnf.comps.MANDATORY, [])
-        self.persistor.commit()
-        self.persistor.add_env(p_env)
-        p_env.add_group(["somerset"])
+        self.history.reset_db()
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
-        trans = self.solver._environment_upgrade(env.id)
+        self.solver._environment_install(env.id, dnf.comps.MANDATORY, [])
+        self.persistor.commit()
+
+        p_env = self.persistor.environment('sugar-desktop-environment')
+        self.assertTrue(p_env.is_installed())
+
+        grp = self.comps.group_by_pattern('Peppers')
+
+        self.solver._group_remove(grp.id)
+        self.persistor.commit()
+
+        trans = self._install(env, False)
         self.assertTransEqual(trans.install, ('hole', 'lotus'))
-        # self.assertEmpty(trans.upgrade) FIXME
+        self.assertEmpty(trans.upgrade)

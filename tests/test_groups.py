@@ -78,13 +78,41 @@ class PresetPersistorTest(support.ResultTestCase):
         self.base.read_mock_comps()
         self.base.init_sack()
 
-    def test_env_group_remove(self):
-        self.base.history.reset_db()
+    def _install_test_env(self):
+        """Env installation itself does not handle packages. We need to handle
+           them manually for proper functionality of env remove"""
+        history = self.base.history
+        history.reset_db()
         self.base.environment_install(
-            "sugar-desktop-environment",
-            ('mandatory',)
-        )
+            'sugar-desktop-environment',
+            ('mandatory',))
         self.prst.commit()
+        env = self.prst.environment('sugar-desktop-environment')
+        groups = env.get_group_list()
+        for group in groups:
+            _group = self.prst.group(group)
+            for pkg in _group.get_full_list():
+                swdb_pkg = history.package()
+                swdb_pkg.name = pkg
+                pid = history.add_package(swdb_pkg)
+                history.swdb.trans_data_beg(1, pid, "group", "Installed")
+
+    def _install_test_group(self):
+        """Group installation itself does not handle packages. We need to
+           handle them manually for proper functionality of group remove"""
+        history = self.base.history
+        history.reset_db()
+        self.base.group_install('somerset', ('mandatory',))
+        self.prst.commit()
+        group = self.prst.group('somerset')
+        for pkg in group.get_full_list():
+            swdb_pkg = history.package()
+            swdb_pkg.name = pkg
+            pid = history.add_package(swdb_pkg)
+            history.swdb.trans_data_beg(1, pid, "group", "Installed")
+
+    def test_env_group_remove(self):
+        self._install_test_env()
         cnt = self.base.env_group_remove(["sugar-desktop-environment"])
         self.prst.commit()
         self.assertEqual(3, cnt)
@@ -94,12 +122,8 @@ class PresetPersistorTest(support.ResultTestCase):
                               ['nonexistent'])
 
     def test_environment_remove(self):
-        self.base.environment_install(
-            "sugar-desktop-environment",
-            ('mandatory',)
-        )
-        self.prst.commit()
-        env_id = self.prst.environment("sugar-desktop-environment")
+        self._install_test_env()
+        env_id = self.prst.environment('sugar-desktop-environment')
         self.assertEqual(env_id.name_id, 'sugar-desktop-environment')
         self.assertTrue(env_id.is_installed())
         self.assertGreater(self.base.environment_remove(env_id), 0)
@@ -112,10 +136,7 @@ class PresetPersistorTest(support.ResultTestCase):
         self.assertFalse(somerset.is_installed)
 
     def test_env_upgrade(self):
-        self.base.history.reset_db()
-        self.base.environment_install("sugar-desktop-environment",
-                                      ('mandatory',))
-        self.prst.commit()
+        self._install_test_env()
         cnt = self.base.environment_upgrade("sugar-desktop-environment")
         self.assertEqual(5, cnt)
         peppers = self.prst.group('Peppers')
@@ -160,9 +181,7 @@ class PresetPersistorTest(support.ResultTestCase):
     """
 
     def test_group_remove(self):
-        self.base.history.reset_db()
-        self.base.group_install("somerset", ("mandatory",))
-        self.prst.commit()
+        self._install_test_group()
         self.assertGreater(self.base.group_remove("somerset"), 0)
         self.prst.commit()
         inst, removed = self.installed_removed(self.base)

@@ -526,7 +526,7 @@ class Solver(object):
         p_env = self.persistor.environment(env_id)
         if p_env and p_env.is_installed():
             logger.warning(_("Environment '%s' is already installed.") %
-                             env.ui_name)
+                           env.ui_name)
         grp_types = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
         exclude = list() if exclude is None else list(exclude)
         p_env = self.persistor.new_env(env_id, env.name, env.ui_name,
@@ -599,7 +599,7 @@ class Solver(object):
         p_grp = self.persistor.group(group_id)
         if p_grp and p_grp.is_installed:
             logger.warning(_("Group '%s' is already installed.") %
-                             group.ui_name)
+                           group.ui_name)
         exclude = list() if exclude is None else list(exclude)
         p_grp = self.persistor.new_group(group_id, group.name,
                                          group.ui_name, 0, pkg_types)

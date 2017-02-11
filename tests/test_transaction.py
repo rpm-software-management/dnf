@@ -94,11 +94,15 @@ class TransactionItemTest(tests.support.TestCase):
     def test_propagated_reason(self):
         base = tests.support.MockBase()
         history = base.history
-        history.mark_user_installed(self.newpkg, False)
-        history.mark_user_installed(self.oldpkg, False)
-        history.mark_user_installed(self.obspkg1, False)
-        history.mark_user_installed(self.obspkg2, False)
-        history.mark_user_installed(self.obspkg3, False)
+        history.reset_db()
+
+        pkg1 = history.ipkg_to_pkg(self.newpkg)
+        pid = history.add_package(pkg1)
+        history.swdb.trans_data_beg(1, pid, "dep", "Installed")
+
+        pkg2 = history.ipkg_to_pkg(self.oldpkg)
+        pid = history.add_package(pkg2)
+        history.swdb.trans_data_beg(1, pid, "dep", "Installed")
 
         tsi = dnf.transaction.TransactionItem(
             dnf.transaction.INSTALL, installed=self.newpkg, reason='user')

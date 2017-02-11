@@ -410,7 +410,7 @@ class Output(object):
             columns = (-63, -16) # Old default
         envra = '%s%s' % (indent, ucd(pkg))
         hi_cols = [highlight, 'normal', 'normal']
-        rid = pkg.ui_from_repo()
+        rid = pkg.reponame
         columns = zip((envra, rid), columns, hi_cols)
         print(self.fmtColumns(columns))
 

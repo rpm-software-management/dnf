@@ -81,6 +81,7 @@ class BaseTest(support.TestCase):
     def test_iter_userinstalled(self):
         """Test iter_userinstalled with a package installed by the user."""
         base = support.MockBase()
+        base.history.reset_db()
         base._sack = support.mock_sack('main')
         pkg, = base.sack.query().installed().filter(name='pepper')
         base.history.set_repo(pkg, "main")
@@ -91,6 +92,7 @@ class BaseTest(support.TestCase):
     def test_iter_userinstalled_badfromrepo(self):
         """Test iter_userinstalled with a package installed from a bad repository."""
         base = support.MockBase()
+        base.history.reset_db()
         base._sack = support.mock_sack('main')
         pkg, = base.sack.query().installed().filter(name='pepper')
         base.history.set_repo(pkg, "anakonda")
@@ -153,11 +155,18 @@ class VerifyTransactionTest(TestCase):
     def test_verify_transaction(self, unused_build_sack):
         # we don't simulate the transaction itself here, just "install" what is
         # already there and "remove" what is not.
+        self.base.history.reset_db()
         new_pkg = self.base.sack.query().available().filter(name="pepper")[1]
         new_pkg._chksum = (hawkey.CHKSUM_MD5, binascii.unhexlify(HASH))
         new_pkg.repo = mock.Mock()
         removed_pkg = self.base.sack.query().available().filter(
             name="mrkite")[0]
+
+        pkg = self.base.history.ipkg_to_pkg(new_pkg)
+        pid = self.base.history.add_package(pkg)
+        pkg_data = self.base.history.package_data()
+        self.base.history.add_package_data(pid, pkg_data)
+        self.base.history.set_repo(new_pkg, 'main')
 
         self.base.transaction.add_install(new_pkg, [])
         self.base.transaction.add_erase(removed_pkg)
@@ -165,10 +174,9 @@ class VerifyTransactionTest(TestCase):
 
         pkg = self.base.history.pkg_by_nvra(new_pkg)
         self.assertEqual(pkg.get_ui_from_repo(), 'main')
-        # self.assertEqual(pkg.get_reason(), 'unknown')
-        # self.assertEqual(pkg.release, 'Fedora69')
-        # self.assertEqual(pkg.checksum_type, 'md5')
-        # self.assertEqual(pkg.checksum_data, HASH)
+        self.assertEqual(pkg.get_reason(), None)
+        self.assertEqual(pkg.checksum_type, 'md5')
+        self.assertEqual(pkg.checksum_data, HASH)
 
 
 class InstallReasonTest(support.ResultTestCase):

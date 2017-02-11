@@ -671,11 +671,15 @@ class GroupPersistor(object):
         self.groups_installed = []
         self.groups_removed = []
 
-    def install_group(self, group):
+    def install_group(self, group, commit=False):
         self.groups_installed.append(group)
+        if commit:
+            self.commit()
 
-    def remove_group(self, group):
+    def remove_group(self, group, commit=False):
         self.groups_removed.append(group)
+        if commit:
+            self.commit()
 
     def new_group(self, name_id, name, ui_name, is_installed, pkg_types):
         group = Dnf.SwdbGroup.new(name_id, name, ui_name, is_installed,
@@ -719,7 +723,7 @@ class GroupPersistor(object):
     def add_group(self, group, commit=False):
         self.swdb.add_group(group)
         if commit:
-            self.commit()
+            self.install_group(group, True)
 
     def add_env(self, env):
         return self.swdb.add_env(env)
