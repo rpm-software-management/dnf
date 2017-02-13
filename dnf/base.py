@@ -57,7 +57,6 @@ import dnf.transaction
 import dnf.util
 import dnf.yum.rpmtrans
 import functools
-import hawkey
 import itertools
 import logging
 import os
