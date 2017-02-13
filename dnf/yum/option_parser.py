@@ -38,25 +38,3 @@ class YumOptionParser(OptionParser):
             action="store_true", default=None,
             help=_("resolve depsolve problems by skipping packages"))    """
         pass
-
-    @staticmethod
-    def transform_yum_arg(args):
-        transformed = []
-        for arg in args:
-            provides = arg
-            if arg.startswith("*") is False:
-                provides = "*" + provides
-
-            if arg.endswith("*") is False:
-                provides += "*"
-
-            transformed.append(provides)
-
-        return transformed
-
-    def parse_command_args(self, command, args):
-        opts = super(YumOptionParser, self).parse_command_args(command, args)
-        if opts.command == ['provides']:
-            opts.dependency = self.transform_yum_arg(opts.dependency)
-
-        return opts
