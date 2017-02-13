@@ -1803,7 +1803,11 @@ class Base(object):
         providers = dnf.query._by_provides(self.sack, provides_spec)
         if providers:
             return providers
-        return self.sack.query().filter(file__glob=provides_spec)
+        providers = self.sack.query().filter(file__glob=provides_spec)
+        if providers:
+            return providers
+        binary_provides = [prefix + provides_spec for prefix in ['/usr/bin/', '/usr/sbin/']]
+        return self.sack.query().filter(file__glob=binary_provides)
 
     def _history_undo_operations(self, operations):
         """Undo the operations on packages by their NEVRAs.

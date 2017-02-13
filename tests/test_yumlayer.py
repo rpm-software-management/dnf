@@ -70,25 +70,6 @@ class YumArgumentParserTest(tests.support.TestCase):
         self.assertIsNone(arg_opts.best)
 
 
-class YumProvidesCommandTest(tests.support.TestCase):
-    def setUp(self):
-        self.cli = mock.Mock()
-        self.command = dnf.cli.commands.ProvidesCommand(self.cli)
-
-    def test_provides_command(self):
-        _parse(self.command, [u'provides', u'nf'])
-        self.assertEqual(self.command.opts.dependency, [u'*nf*'])
-
-        _parse(self.command, [u'provides', u'nf*'])
-        self.assertEqual(self.command.opts.dependency, [u'*nf*'])
-
-        _parse(self.command, [u'provides', u'*nf'])
-        self.assertEqual(self.command.opts.dependency, [u'*nf*'])
-
-        _parse(self.command, [u'provides', u'*nf*'])
-        self.assertEqual(self.command.opts.dependency, [u'*nf*'])
-
-
 class YumCustomCommandTest(tests.support.TestCase):
     def setUp(self):
         self.conf = dnf.yum.config.YumConf()
