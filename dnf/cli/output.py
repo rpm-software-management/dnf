@@ -1063,11 +1063,13 @@ class Output(object):
             skipped_broken = self._skipped_broken_deps(skipped_conflicts)
             for pkg in sorted(skipped_broken):
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
+            skip_str = _("Skipping packages with broken dependencies%s\n"
+                         "(add '--best' to command line "
+                         "to see why package dependency cannot be satisfied)")
             if self.base.conf.upgrade_group_objects_upgrade:
-                skip_str = _("Skipping packages with broken dependencies")
+                skip_str = skip_str % ""
             else:
-                skip_str = _("Skipping packages with broken dependencies"
-                             " or part of a group")
+                skip_str = skip_str % _(" or part of a group")
 
             pkglist_lines.append((skip_str, lines))
 
