@@ -440,7 +440,7 @@ Groups are virtual collections of packages. DNF keeps track of groups that the u
     include `optional` packages of the group if ``--with-optional`` is
     specified. All `mandatory` and `Default` packages will be installed whenever possible.
     Conditional packages are installed if they meet their requirement.
-    If group is installed, command installs uninstalled packages of the group.
+    If group is already (partially) installed, command installs missing packages from the group.
 
 .. _grouplist_command-label:
 
