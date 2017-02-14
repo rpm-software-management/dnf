@@ -931,6 +931,10 @@ class Cli(object):
         if stderr is not None:
             self.base._logging.stderr_handler.setLevel(stderr)
 
+    def _option_conflict(self, option_string_1, option_string_2):
+        print(self.optparser.print_usage())
+        raise dnf.exceptions.Error(_("argument {}: not allowed with argument {}".format(
+            option_string_1, option_string_2)))
 
     def register_command(self, command_cls):
         """Register a Command. :api"""

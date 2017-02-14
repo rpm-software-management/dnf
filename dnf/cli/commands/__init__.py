@@ -195,8 +195,7 @@ class InfoCommand(Command):
             self.opts.packages_action = self.opts._packages_action
         if self.opts.obsoletes:
             if self.opts._packages_action:
-                raise dnf.exceptions.Error(_("argument {}: not allowed with argument {}".format(
-                    "--obsoletes", "--" + self.opts._packages_action)))
+                self.cli._option_conflict("--obsoletes", "--" + self.opts._packages_action)
             else:
                 self.opts.packages_action = 'obsoletes'
         if self.opts.packages_action == 'updates':
@@ -313,8 +312,7 @@ class RepoPkgsCommand(Command):
                 self.opts.pkg_specs_action = self.opts._pkg_specs_action
             if self.opts.obsoletes:
                 if self.opts._pkg_specs_action:
-                    raise dnf.exceptions.Error(_("argument {}: not allowed with argument {}".format(
-                        "--obsoletes", "--" + self.opts._pkg_specs_action)))
+                    self.cli._option_conflict("--obsoletes", "--" + self.opts._pkg_specs_action)
                 else:
                     self.opts.pkg_specs_action = 'obsoletes'
 
