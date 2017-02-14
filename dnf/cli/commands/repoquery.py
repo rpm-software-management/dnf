@@ -205,9 +205,7 @@ class RepoQueryCommand(commands.Command):
         demands = self.cli.demands
 
         if self.opts.obsoletes and self.opts.packageatr:
-            print(self.cli.optparser.print_usage())
-            raise dnf.exceptions.Error(_("argument {}: not allowed with argument {}".format(
-                "--obsoletes", "--" + self.opts.packageatr)))
+            self.cli._option_conflict("--obsoletes", "--" + self.opts.packageatr)
 
         if not self.opts.verbose and not self.opts.quiet:
             self.cli.redirect_logger(stdout=logging.WARNING, stderr=logging.INFO)

@@ -182,9 +182,6 @@ class InfoCommand(Command):
         narrows.add_argument('--recent', dest='_packages_action',
                              action='store_const', const='recent',
                              help=_("show only recently changed packages"))
-        narrows.add_argument('--obsoletes', dest='_packages_action',
-                             action='store_const', const='obsoletes',
-                             help=_("show only obsoletes packages"))
         parser.add_argument('packages', nargs='*', metavar=_('PACKAGE'),
                             choices=cls.pkgnarrows, default=cls.DEFAULT_PKGNARROW,
                             action=OptionParser.PkgNarrowCallback)
@@ -196,6 +193,11 @@ class InfoCommand(Command):
         demands.sack_activation = True
         if self.opts._packages_action:
             self.opts.packages_action = self.opts._packages_action
+        if self.opts.obsoletes:
+            if self.opts._packages_action:
+                self.cli._option_conflict("--obsoletes", "--" + self.opts._packages_action)
+            else:
+                self.opts.packages_action = 'obsoletes'
         if self.opts.packages_action == 'updates':
             self.opts.packages_action = 'upgrades'
 
@@ -308,6 +310,11 @@ class RepoPkgsCommand(Command):
             demands.sack_activation = True
             if self.opts._pkg_specs_action:
                 self.opts.pkg_specs_action = self.opts._pkg_specs_action
+            if self.opts.obsoletes:
+                if self.opts._pkg_specs_action:
+                    self.cli._option_conflict("--obsoletes", "--" + self.opts._pkg_specs_action)
+                else:
+                    self.opts.pkg_specs_action = 'obsoletes'
 
         @staticmethod
         def set_argparser(parser):
@@ -341,9 +348,6 @@ class RepoPkgsCommand(Command):
             narrows.add_argument('--recent', dest='_pkg_specs_action',
                                  action='store_const', const='recent',
                                  help=_("show only recently changed packages"))
-            narrows.add_argument('--obsoletes', dest='_pkg_specs_action',
-                                 action='store_const', const='obsoletes',
-                                 help=_("show only obsoletes packages"))
             parser.add_argument('pkg_specs', nargs='*', metavar=_('PACKAGE'),
                                 choices=pkgnarrows, default=DEFAULT_PKGNARROW,
                                 action=OptionParser.PkgNarrowCallback)

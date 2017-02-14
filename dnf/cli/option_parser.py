@@ -218,7 +218,7 @@ class OptionParser(argparse.ArgumentParser):
                                  action="store_true",
                                  help=_("enables dnf's obsoletes processing logic "
                                         "for upgrade or display capabilities that "
-                                        "the package obsoletes for repoquery"))
+                                        "the package obsoletes for info, list and repoquery"))
         main_parser.add_argument("--rpmverbosity", default=None,
                                  help=_("debugging output level for rpm"),
                                  metavar='[debug level name]')
