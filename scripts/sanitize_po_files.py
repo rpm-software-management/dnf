@@ -28,7 +28,7 @@ def sanitize_po_file(po_file):
         msgstr_without_indents = entry.msgstr.strip()
         entry.msgstr = entry.msgid.replace(
             msgid_without_indents, msgstr_without_indents)
-        if re.match("^\s+$", entry.msgstr):
+        if re.match(r"^\s+$", entry.msgstr):
             entry.msgstr = ""
 
         if entry.msgid_plural:
@@ -38,7 +38,7 @@ def sanitize_po_file(po_file):
                 entry.msgstr_plural[i] = entry.msgid_plural.replace(
                     msgid_plural_without_indents,
                     msgstr_plural_without_indents)
-                if re.match("^\s+$", entry.msgstr_plural[i]):
+                if re.match(r"^\s+$", entry.msgstr_plural[i]):
                     entry.msgstr_plural[i] = ""
     po.save()
 

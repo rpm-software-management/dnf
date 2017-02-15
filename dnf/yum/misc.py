@@ -54,7 +54,7 @@ def re_glob(s):
     """ Tests if a string is a shell wildcard. """
     global _re_compiled_glob_match
     if _re_compiled_glob_match is None:
-        _re_compiled_glob_match = re.compile('[*?]|\[.+\]').search
+        _re_compiled_glob_match = re.compile(r'[*?]|\[.+\]').search
     return _re_compiled_glob_match(s)
 
 _re_compiled_full_match = None
@@ -63,7 +63,7 @@ def re_full_search_needed(s):
     global _re_compiled_full_match
     if _re_compiled_full_match is None:
         # A glob, or a "." or "-" separator, followed by something (the ".")
-        one = re.compile('.*([-.*?]|\[.+\]).').match
+        one = re.compile(r'.*([-.*?]|\[.+\]).').match
         # Any epoch, for envra
         two = re.compile('[0-9]+:').match
         _re_compiled_full_match = (one, two)
@@ -484,8 +484,8 @@ def repo_gen_decompress(filename, generated_name, cached=False):
     return decompress(filename, dest=dest, check_timestamps=True, fn_only=cached)
 
 def read_in_items_from_dot_dir(thisglob, line_as_list=True):
-    """ Takes a glob of a dir (like /etc/foo.d/\*.foo) returns a list of all the
-       lines in all the files matching that glob, ignores comments and blank
+    """ Takes a glob of a dir (like /etc/foo.d/\\*.foo) returns a list of all
+       the lines in all the files matching that glob, ignores comments and blank
        lines, optional paramater 'line_as_list tells whether to treat each line
        as a space or comma-separated list, defaults to True.
     """
@@ -493,7 +493,7 @@ def read_in_items_from_dot_dir(thisglob, line_as_list=True):
     for fname in glob.glob(thisglob):
         with open(fname) as f:
             for line in f:
-                if re.match('\s*(#|$)', line):
+                if re.match(r'\s*(#|$)', line):
                     continue
                 line = line.rstrip() # no more trailing \n's
                 line = line.lstrip() # be nice

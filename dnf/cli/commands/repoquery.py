@@ -413,7 +413,7 @@ class RepoQueryCommand(commands.Command):
         for reqirepkg in pkg.requires:
             requires.append(str(reqirepkg))
         reqstr = "[" + str(len(requires)) + ": " + ", ".join(requires) + "]"
-        print(spacing + "\_ " + str(pkg) + " " + reqstr)
+        print(spacing + r"\_ " + str(pkg) + " " + reqstr)
 
     def tree_seed(self, query, aquery, opts, level=-1, usedpkgs=None):
         for pkg in sorted(set(query.run()), key=lambda p: p.name):
