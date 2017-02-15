@@ -680,7 +680,7 @@ class Base(object):
         """
         summary = ''
         # do disk space report first
-        p = re.compile('needs (\d+)MB on the (\S+) filesystem')
+        p = re.compile(r'needs (\d+)MB on the (\S+) filesystem')
         disk = {}
         for m in p.finditer(errstring):
             if m.group(2) not in disk:
