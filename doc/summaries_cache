@@ -1914,5 +1914,17 @@
     [
         1254879, 
         "dnf repoquery -l should display '(contains no files)' if there are no files"
+    ], 
+    [
+        1421835, 
+        "dnf list command broken"
+    ], 
+    [
+        1415711, 
+        "DNF should not automatically download repodata over metered connections"
+    ], 
+    [
+        1417627, 
+        "RFE: show hint how to display why package was skipped"
     ]
 ]
