@@ -25,7 +25,7 @@
 2.1.0 Release Notes
 ===================
 
-API additions in 2.0.1:
+API additions in 2.1.0:
 
 * :meth:`dnf.Base.update_cache(timer=False)` downloads and caches in binary format metadata for all known repos.
 
