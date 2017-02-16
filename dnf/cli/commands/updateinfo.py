@@ -49,6 +49,12 @@ class UpdateInfoCommand(commands.Command):
                   hawkey.ADVISORY_UNKNOWN: _('unknown'),
                   hawkey.ADVISORY_NEWPACKAGE: _('newpackage')}
 
+    SECURITY2LABEL = {'Critical': _('Critical/Sec.'),
+                      'Important': _('Important/Sec.'),
+                      'Moderate': _('Moderate/Sec.'),
+                      'Low': _('Low/Sec.'),
+                      None: _('Unknown/Sec.')}
+
     direct_commands = {'list-updateinfo'    : 'list',
                        'list-security'      : 'list',
                        'list-sec'           : 'list',
@@ -245,7 +251,7 @@ class UpdateInfoCommand(commands.Command):
         # Get ((NEVRA, installed), advisory ID, advisory type)
         apkg2nevra = lambda apkg: apkg.name + '-' + apkg.evr + '.' + apkg.arch
         nevrains_id_types = (
-            ((apkg2nevra(apkg), inst), adv.id, adv.type)
+            ((apkg2nevra(apkg), inst), adv.id, (adv.type, adv.severity))
             for apkg, adv, inst in apkg_adv_insts)
         # Sort and group by (NEVRA, installed).
         nevrains_nits = itertools.groupby(
@@ -260,10 +266,14 @@ class UpdateInfoCommand(commands.Command):
         """Display the list of advisories."""
         # Sort IDs and convert types to labels.
         inst2mark = lambda inst: '' if not mixed else 'i ' if inst else '  '
+        type2label = lambda typ, sev: cls.SECURITY2LABEL[sev] \
+                                      if typ == hawkey.ADVISORY_SECURITY \
+                                      else cls.TYPE2LABEL[typ]
+
         nevramark2id2tlbl = OrderedDict(
             ((nevra, inst2mark(inst)),
-             OrderedDict(sorted(((id_, cls.TYPE2LABEL[typ])
-                                 for id_, typ in id2type.items()),
+             OrderedDict(sorted(((id_, type2label(typ, sev))
+                                 for id_, (typ, sev) in id2type.items()),
                                 key=itemgetter(0))))
             for (nevra, inst), id2type in cls._list(apkg_adv_insts))
         if not nevramark2id2tlbl:
