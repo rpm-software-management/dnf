@@ -311,6 +311,7 @@ class UpdateInfoCommand(commands.Command):
                     getrefs(apkg_adv_inst[1], hawkey.REFERENCE_BUGZILLA),
                     getrefs(apkg_adv_inst[1], hawkey.REFERENCE_CVE),
                     apkg_adv_inst[1].description,
+                    apkg_adv_inst[1].severity,
                     apkg_adv_inst[1].rights,
                     (pkg.filename for pkg in apkg_adv_inst[1].packages
                      if pkg.arch in self.base.sack.list_arches()),
@@ -318,8 +319,8 @@ class UpdateInfoCommand(commands.Command):
             else:
                 # If the stored advisory is marked as not installed and the
                 # current is marked as installed, mark the stored as installed.
-                if not tuple_[9] and inst:
-                    id2tuple[identity] = tuple_[:9] + (inst,)
+                if not tuple_[10] and inst:
+                    id2tuple[identity] = tuple_[:10] + (inst,)
         # Get mapping from title to (ID, type, time, BZs, CVEs, description,
         # rights, files, installed) => group by titles and merge values. We
         # assume that two advisories with the same title (e.g. from different
@@ -330,14 +331,14 @@ class UpdateInfoCommand(commands.Command):
         for tuple_ in id2tuple.values():
             title, new = tuple_[0], tuple_[1:]
             old = title2info.get(
-                title, (None, None, None, [], [], None, None, [], False))
+                title, (None, None, None, [], [], None, None, None, [], False))
             title2info[title] = (
                 new[:3] +
                 (merge(old[3], new[3]),
                  merge(old[4], new[4])) +
-                new[5:7] +
-                (merge(old[7], new[7]),
-                 old[8] or new[8]))
+                new[5:8] +
+                (merge(old[8], new[8]),
+                 old[9] or new[9]))
         return title2info
 
     def display_info(self, apkg_adv_insts, mixed, description):
@@ -349,13 +350,13 @@ class UpdateInfoCommand(commands.Command):
             (tit, ([id_], [self.TYPE2LABEL[typ]], [unicode(upd)],
                    (id_title[0] + (' - ' + id_title[1] if id_title[1] else '')
                     for id_title in bzs),
-                   (id_title[0] for id_title in cvs), desc.splitlines(),
+                   (id_title[0] for id_title in cvs), desc.splitlines(), sev,
                    verbse(rigs.splitlines() if rigs else None), verbse(fils),
                    None if not mixed else [_('true') if ins else _('false')]))
-            for tit, (id_, typ, upd, bzs, cvs, desc, rigs, fils, ins) in info)
+            for tit, (id_, typ, upd, bzs, cvs, desc, sev, rigs, fils, ins) in info)
         labels = (_('Update ID'), _('Type'), _('Updated'), _('Bugs'),
-                  _('CVEs'), _('Description'), _('Rights'), _('Files'),
-                  _('Installed'))
+                  _('CVEs'), _('Description'), _('Severity'), _('Rights'),
+                  _('Files'), _('Installed'))
         width = _maxlen(labels)
         for title, vallines in info:
             print('=' * 79)
