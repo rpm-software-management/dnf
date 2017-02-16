@@ -183,23 +183,23 @@ class GroupCommand(commands.Command):
                 print(msg)
 
         if not showinstalled:
-            _out_env(_('Available environment groups:'), env_avail)
+            _out_env(_('Available Environment Groups:'), env_avail)
         if not showavailable:
-            _out_env(_('Installed environment groups:'), env_inst)
+            _out_env(_('Installed Environment Groups:'), env_inst)
 
         if not showavailable:
             done = False
             for group in installed:
                 if group.lang_only:
                     continue
-                _out_grp(_('Installed groups:'), group)
+                _out_grp(_('Installed Groups:'), group)
                 done = True
 
             done = False
             for group in installed:
                 if not group.lang_only:
                     continue
-                _out_grp(_('Installed language groups:'), group)
+                _out_grp(_('Installed Language Groups:'), group)
                 done = True
 
         if showinstalled:
@@ -209,14 +209,14 @@ class GroupCommand(commands.Command):
         for group in available:
             if group.lang_only:
                 continue
-            _out_grp(_('Available groups:'), group)
+            _out_grp(_('Available Groups:'), group)
             done = True
 
         done = False
         for group in available:
             if not group.lang_only:
                 continue
-            _out_grp(_('Available language groups:'), group)
+            _out_grp(_('Available Language Groups:'), group)
             done = True
 
         return 0, []
