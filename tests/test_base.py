@@ -97,7 +97,7 @@ class BaseTest(support.TestCase):
         pkg, = base.sack.query().installed().filter(name='pepper')
         base.history.set_repo(pkg, "anakonda")
         base.history.mark_user_installed(pkg, True)
-        self.assertEqual(base.history.user_installed(pkg), True)
+        self.assertEqual(base.history.user_installed(pkg), False)
         self.assertEqual(base.history.repo_by_nvra(pkg), 'anakonda')
 
     def test_iter_userinstalled_badreason(self):

@@ -319,17 +319,16 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
         """Upgrade environment, the one group it knows is no longer installed."""
         self.history.reset_db()
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
-        self.solver._environment_install(env.id, dnf.comps.MANDATORY, [])
+        self.solver._environment_install(env.id, dnf.comps.ALL_TYPES, [])
         self.persistor.commit()
 
         p_env = self.persistor.environment('sugar-desktop-environment')
         self.assertTrue(p_env.is_installed())
 
-        grp = self.comps.group_by_pattern('Peppers')
+        grp = self.persistor.group('Peppers')
+        grp.update_full_list([])
 
-        self.solver._group_remove(grp.id)
-        self.persistor.commit()
-
-        trans = self._install(env, False)
+        trans = self.solver._environment_upgrade(env.id)
         self.assertTransEqual(trans.install, ('hole', 'lotus'))
-        self.assertEmpty(trans.upgrade)
+        self.assertTransEqual(trans.upgrade, ('pepper', 'trampoline', 'lotus'))
+        self.assertEmpty(trans.remove)

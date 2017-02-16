@@ -527,11 +527,13 @@ class Solver(object):
         if p_env and p_env.is_installed():
             logger.warning(_("Environment '%s' is already installed.") %
                            env.ui_name)
-        grp_types = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
+        else:
+            grp_types = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
+            p_env = self.persistor.new_env(env_id, env.name, env.ui_name,
+                                           pkg_types, grp_types)
+            self.persistor.add_env(p_env)
+
         exclude = list() if exclude is None else list(exclude)
-        p_env = self.persistor.new_env(env_id, env.name, env.ui_name,
-                                       pkg_types, grp_types)
-        self.persistor.add_env(p_env)
         p_env.add_exclude(exclude)
 
         trans = TransactionBunch()
@@ -600,16 +602,18 @@ class Solver(object):
         if p_grp and p_grp.is_installed:
             logger.warning(_("Group '%s' is already installed.") %
                            group.ui_name)
+        else:
+            p_grp = self.persistor.new_group(group_id, group.name,
+                                             group.ui_name, 0, pkg_types)
+            self.persistor.add_group(p_grp)
+            self.persistor.install_group(p_grp)
+
         exclude = list() if exclude is None else list(exclude)
-        p_grp = self.persistor.new_group(group_id, group.name,
-                                         group.ui_name, 0, pkg_types)
-        self.persistor.add_group(p_grp)
         p_grp.add_exclude(exclude)
         p_grp.add_package(list(self._full_package_set(group)))
 
         trans = TransactionBunch()
         trans.install.update(self._pkgs_of_type(group, pkg_types, exclude))
-        self.persistor.install_group(p_grp)
         return trans
 
     def _group_remove(self, group_id):
