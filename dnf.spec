@@ -336,6 +336,24 @@ popd
 %endif
 
 %changelog
+* Thu Feb 16 2017 Jaroslav Mracek <jmracek@redhat.com> 2.1.0-1
+- bump version to 2.1.0 + update release notes (Jaroslav Mracek)
+- Fix problem with --recent option in repoquery (Jaroslav Mracek)
+- Fix problem with duplicated --obsoletes (RhBug:1421835) (Jaroslav Mracek)
+- Python 3.6 invalid escape sequence deprecation fixes (Ville Skyttä)
+- Add --repoid as alias for --repo (Jaroslav Mracek)
+- introduce dnf.base.Base.update_cache() (Martin Hatina)
+- Try to install uninstalled packages if group installed (Jaroslav Mracek)
+- Enable search of provides in /usr/(s)bin (RgBug:1421618) (Jaroslav Mracek)
+- style: ignore E261 (Igor Gnatenko)
+- makecache: do not run on metered connections (RhBug:1415711) (Igor Gnatenko)
+- change '--disableplugins' to '--disableplugin' (Martin Hatina)
+- cosmetic: removed unused import (Jan Silhan)
+- show hint how to display why package was skipped (RhBug:1417627) (Jan Silhan)
+- spec: add information how to obtain archive (Igor Gnatenko)
+- fix messages (UX) (Jaroslav Rohel)
+- zanata update (Jan Silhan)
+
 * Thu Feb 09 2017 Jaroslav Mracek <jmracek@redhat.com> 2.0.1-1
 - bump version to 2.0.1 + update release notes (Jaroslav Mracek)
 - introduce cli 'obsoletes' option (Martin Hatina)
