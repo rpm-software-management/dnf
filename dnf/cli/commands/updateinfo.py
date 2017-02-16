@@ -199,7 +199,12 @@ class UpdateInfoCommand(commands.Command):
         # Remove duplicate advisory IDs. We assume that the ID is unique within
         # a repository and two advisories with the same IDs in different
         # repositories must have the same type.
-        id2type = {pkadin[1].id: pkadin[1].type for pkadin in apkg_adv_insts}
+        id2type = {}
+        for pkadin in apkg_adv_insts:
+            id2type[pkadin[1].id] = pkadin[1].type
+            if pkadin[1].type == hawkey.ADVISORY_SECURITY:
+                id2type[(pkadin[1].id, pkadin[1].severity)] = (pkadin[1].type,
+                                                               pkadin[1].severity)
         return collections.Counter(id2type.values())
 
     @classmethod
@@ -211,17 +216,28 @@ class UpdateInfoCommand(commands.Command):
         print(_('Updates Information Summary: ') + description)
         # Convert types to strings and order the entries.
         label_counts = [
-            (_('New Package notice(s)'), typ2cnt[hawkey.ADVISORY_NEWPACKAGE]),
-            (_('Security notice(s)'), typ2cnt[hawkey.ADVISORY_SECURITY]),
-            (_('Bugfix notice(s)'), typ2cnt[hawkey.ADVISORY_BUGFIX]),
-            (_('Enhancement notice(s)'), typ2cnt[hawkey.ADVISORY_ENHANCEMENT]),
-            (_('other notice(s)'), typ2cnt[hawkey.ADVISORY_UNKNOWN])]
+            (0, _('New Package notice(s)'), typ2cnt[hawkey.ADVISORY_NEWPACKAGE]),
+            (0, _('Security notice(s)'), typ2cnt[hawkey.ADVISORY_SECURITY]),
+            (1, _('Critical Security notice(s)'),
+             typ2cnt[(hawkey.ADVISORY_SECURITY, 'Critical')]),
+            (1, _('Important Security notice(s)'),
+             typ2cnt[(hawkey.ADVISORY_SECURITY, 'Important')]),
+            (1, _('Moderate Security notice(s)'),
+             typ2cnt[(hawkey.ADVISORY_SECURITY, 'Moderate')]),
+            (1, _('Low Security notice(s)'),
+             typ2cnt[(hawkey.ADVISORY_SECURITY, 'Low')]),
+            (1, _('Unknown Security notice(s)'),
+             typ2cnt[(hawkey.ADVISORY_SECURITY, None)]),
+            (0, _('Bugfix notice(s)'), typ2cnt[hawkey.ADVISORY_BUGFIX]),
+            (0, _('Enhancement notice(s)'), typ2cnt[hawkey.ADVISORY_ENHANCEMENT]),
+            (0, _('other notice(s)'), typ2cnt[hawkey.ADVISORY_UNKNOWN])]
         # Convert counts to strings and skip missing types.
-        label2value = OrderedDict(
-            (label, unicode(count)) for label, count in label_counts if count)
-        width = _maxlen(label2value.values())
-        for label, value in label2value.items():
-            print('    %*s %s' % (width, value, label))
+        label2value = OrderedDict((label, (indent, unicode(count)))
+                                  for indent, label, count in label_counts
+                                  if count)
+        width = _maxlen(v[1] for v in label2value.values())
+        for label, (indent, value) in label2value.items():
+            print('    %*s %s' % (width + 4 * indent, value, label))
 
     @staticmethod
     def _list(apkg_adv_insts):
