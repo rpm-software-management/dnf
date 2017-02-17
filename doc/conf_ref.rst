@@ -521,7 +521,7 @@ Types of Options
 ``boolean``
     This is a data type with only two possible values.
 
-    One of following options can be used: 1, 0, True, False, yes, no
+    One of the following values can be used (case insensitive): 1, 0, True, False, yes, no.
 
 .. _integer-label:
 
