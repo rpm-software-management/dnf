@@ -234,11 +234,14 @@ def on_metered_connection():
         import dbus
     except ImportError:
         return None
-    bus = dbus.SystemBus()
-    proxy = bus.get_object("org.freedesktop.NetworkManager",
-                           "/org/freedesktop/NetworkManager")
-    iface = dbus.Interface(proxy, "org.freedesktop.DBus.Properties")
-    metered = iface.Get("org.freedesktop.NetworkManager", "Metered")
+    try:
+        bus = dbus.SystemBus()
+        proxy = bus.get_object("org.freedesktop.NetworkManager",
+                               "/org/freedesktop/NetworkManager")
+        iface = dbus.Interface(proxy, "org.freedesktop.DBus.Properties")
+        metered = iface.Get("org.freedesktop.NetworkManager", "Metered")
+    except dbus.DBusException:
+        return None
     if metered == 0: # NM_METERED_UNKNOWN
         return None
     elif metered in (1, 3): # NM_METERED_YES, NM_METERED_GUESS_YES
