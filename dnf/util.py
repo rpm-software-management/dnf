@@ -240,7 +240,7 @@ def on_metered_connection():
                                "/org/freedesktop/NetworkManager")
         iface = dbus.Interface(proxy, "org.freedesktop.DBus.Properties")
         metered = iface.Get("org.freedesktop.NetworkManager", "Metered")
-    except DBusException:
+    except dbus.DBusException:
         return None
     if metered == 0: # NM_METERED_UNKNOWN
         return None
