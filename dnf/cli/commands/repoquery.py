@@ -28,6 +28,7 @@ import dnf
 import dnf.cli
 import dnf.exceptions
 import dnf.subject
+import hawkey
 import logging
 import re
 import sys
@@ -240,7 +241,10 @@ class RepoQueryCommand(commands.Command):
 
 
     def by_all_deps(self, name, query):
-        defaultquery = query.filter(name=name)
+        defaultquery = query.intersection(dnf.subject.Subject(name).get_best_query(
+            self.base.sack, with_provides=False, forms=[hawkey.FORM_NEVRA, hawkey.FORM_NEVR,
+                                                        hawkey.FORM_NEV, hawkey.FORM_NA,
+                                                        hawkey.FORM_NAME]))
         allpkgs = set()
         requiresquery = query.filter(requires__glob=name)
         for reqpkg in requiresquery.run():
