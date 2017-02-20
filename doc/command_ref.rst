@@ -783,6 +783,10 @@ resulting packages matching the specification. All packages are considered if no
     Package specification like: name[-[epoch:]version[-release]][.arch]. See :ref:`Specifying Packages
     <specifying_packages-label>`
 
+``-a``, ``--all``
+    Query all packages (for rpmquery compatibility / shorthand for repoquery '*' or repoquery
+    without argument)'
+
 ``--arch <arch>[,<arch>...]``
     Limit the resulting set only to packages of selected architectures.
 

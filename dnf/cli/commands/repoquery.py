@@ -100,6 +100,9 @@ class RepoQueryCommand(commands.Command):
     def set_argparser(parser):
         parser.add_argument('key', nargs='*',
                             help=_('the key to search for'))
+        parser.add_argument('-a', '--all', dest='queryall', action='store_true',
+                            help=_("Query all packages (shorthand for repoquery '*' "
+                                   "or repoquery without argument)"))
         parser.add_argument('--arch', metavar='ARCH',
                             help=_('show only results from this ARCH'))
         parser.add_argument('-f', '--file', metavar='FILE', nargs='+',
