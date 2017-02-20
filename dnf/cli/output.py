@@ -1449,7 +1449,8 @@ Transaction Summary
             if len(uids) == 1:
                 name = _("Command line")
             else:
-                name = _("Login user")
+                # TRANSLATORS: user names who executed transaction in history command output
+                name = _("User name")
             print(fmt % (fill_exact_width(_("ID"), 6, 6),
                         fill_exact_width(name, 24, 24),
                         fill_exact_width(_("Date and time"), 16, 16),
