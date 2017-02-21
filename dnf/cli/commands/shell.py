@@ -88,7 +88,7 @@ class ShellCommand(commands.Command, cmd.Cmd):
         self.base.fill_sack()
 
     def onecmd(self, line):
-        if not line:
+        if not line or line == '\n':
             return
         if line == 'EOF':
             line = 'quit'
