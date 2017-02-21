@@ -192,7 +192,7 @@ class ShellCommand(commands.Command, cmd.Cmd):
                     if not line.startswith('#'):
                         self.onecmd(line)
         except IOError:
-            logger.info(_('Error: Cannot open %s for reading'.format(file)))
+            logger.info(_('Error: Cannot open %s for reading'), self.base.output.term.bold(file))
             sys.exit(1)
 
     def _transaction(self, args=None):
