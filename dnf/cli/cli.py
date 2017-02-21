@@ -739,6 +739,10 @@ class Cli(object):
         demands = self.demands
         repos = self.base.repos
 
+        if demands.root_user:
+            if not os.getegid() == 0:
+                raise dnf.exceptions.Error(_('This command has to be run under the root user.'))
+
         if not demands.cacheonly:
             if demands.freshest_metadata:
                 for repo in repos.iter_enabled():
