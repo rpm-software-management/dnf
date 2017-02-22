@@ -465,6 +465,7 @@ class Repo(dnf.conf.RepoConf):
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
         self._key_import = _NullKeyImport()
         self.metadata = None  # :api
+        self.name = name  # :api
         self._sync_strategy = self.DEFAULT_SYNC
         self._substitutions = dnf.conf.substitutions.Substitutions()
         self._max_mirror_tries = 0  # try them all
