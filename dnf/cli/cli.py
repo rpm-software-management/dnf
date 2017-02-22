@@ -855,9 +855,9 @@ class Cli(object):
         # with cachedir in place we can configure stuff depending on it:
         self.base._activate_persistor()
 
-        self._configure_repos(opts)
-
         self.base.configure_plugins()
+
+        self._configure_repos(opts)
 
         self.base.conf._configure_from_options(opts)
 
