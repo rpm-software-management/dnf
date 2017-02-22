@@ -50,7 +50,7 @@ def _num2ui_num(num):
 
 def _repo_match(repo, patterns):
     rid = repo.id.lower()
-    rnm = repo.name.lower()
+    rnm = "" if repo.name is None else repo.name.lower()
     for pat in patterns:
         if fnmatch.fnmatch(rid, pat):
             return True
@@ -167,7 +167,7 @@ class RepoListCommand(commands.Command):
                     mdts = repo.metadata._timestamp
                     if mdts > repo.metadata._md_timestamp:
                         rid = '*' + rid
-                cols.append((rid, repo.name,
+                cols.append((rid, repo.name if repo.name is not None else "",
                              (ui_enabled, ui_endis_wid), ui_num))
             else:
                 if enabled:
