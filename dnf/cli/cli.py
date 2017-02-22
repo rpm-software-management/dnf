@@ -681,7 +681,7 @@ class Cli(object):
                 except ValueError as e:
                     raise dnf.exceptions.RepoError(e)
                 self.base.repos.add(repofp)
-                logger.info(_("Added %s repo from %s"), label, path)
+                logger.warning(_("Added %s repo from %s"), label, path)
 
                 # do not let this repo to be disabled
                 opts.repos_ed.append((label, "enable"))
