@@ -521,9 +521,10 @@ class SwdbInterface(object):
         return rpmdata
 
     def ipkg_to_pkg(self, ipkg):
-        csum = ipkg.returnIdSum()
-        csum_type = csum[0] or ''
-        csum = csum[1] or ''
+        try:
+            csum = ipkg.returnIdSum()
+        except AttributeError:
+            csum = ('', '')
         pkgtup = map(ucd, ipkg.pkgtup)
         (n, a, e, v, r) = pkgtup
         pkg = Dnf.SwdbPkg.new(
@@ -532,8 +533,8 @@ class SwdbInterface(object):
             v,
             r,
             a,
-            csum,
-            csum_type,
+            csum[1] or '',
+            csum[0] or '',
             "rpm"
         )
         return pkg
@@ -571,11 +572,15 @@ class SwdbInterface(object):
     def pkg2pid(self, po, create=True):
         if not isinstance(po, Dnf.SwdbPkg):
             po.nvra = self.ipkg_to_nvra(po)
+        elif po.pid:
+            return po.pid
+        # try to find package in DB by its nvra
         if not create:
             return self.pid_by_nvra(po.nvra)
         pid = self.pid_by_nvra(po.nvra)
         if pid:
             return pid
+        # pkg not found in db - create new object
         if not isinstance(po, Dnf.SwdbPkg):
             po = self.ipkg_to_pkg(po)
         return self.swdb.add_package(po)
