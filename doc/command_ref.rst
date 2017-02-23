@@ -222,6 +222,9 @@ Options
 ``--newpackage``
     Include newpackage relevant packages. Applicable for upgrade command.
 
+``--nodocs``
+    do not install documentations by using rpm flag 'RPMTRANS_FLAG_NODOCS'
+
 ``--nogpgcheck``
     skip checking GPG signatures on packages
 

@@ -683,7 +683,7 @@ class MainConf(BaseConfig):
         self._add_option('installonly_limit',
                          PositiveIntOption(0, range_min=2,
                                            names_of_0=["0", "<off>"])) # :api
-        self._add_option('tsflags', ListOption()) # :api
+        self._add_option('tsflags', ListAppendOption())  # :api
 
         self._add_option('assumeyes', BoolOption(False)) # :api
         self._add_option('assumeno', BoolOption(False))
@@ -827,7 +827,7 @@ class MainConf(BaseConfig):
                        'best', 'assumeyes', 'assumeno', 'gpgcheck',
                        'showdupesfromrepos', 'plugins', 'ip_resolve',
                        'rpmverbosity', 'disable_excludes',
-                       'color', 'downloadonly', 'exclude', 'excludepkgs', "skip_broken"]
+                       'color', 'downloadonly', 'exclude', 'excludepkgs', "skip_broken", 'tsflags']
 
         for name in config_args:
             value = getattr(opts, name, None)
