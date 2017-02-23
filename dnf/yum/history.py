@@ -44,9 +44,9 @@ class YumHistoryTransaction(object):
 
         self.tid              = row[0]
         self.beg_timestamp    = row[1]
-        self.beg_rpmdbversion = row[2]
+        self.beg_rpmdb_version = row[2]
         self.end_timestamp    = row[3]
-        self.end_rpmdbversion = row[4]
+        self.end_rpmdb_version = row[4]
         self.loginuid         = row[5]
         self.return_code      = row[6]
 
@@ -111,9 +111,9 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
         self._merged_objs = [obj]
 
         self.beg_timestamp    = obj.beg_timestamp
-        self.beg_rpmdbversion = obj.beg_rpmdbversion
+        self.beg_rpmdb_version = obj.beg_rpmdb_version
         self.end_timestamp    = obj.end_timestamp
-        self.end_rpmdbversion = obj.end_rpmdbversion
+        self.end_rpmdb_version = obj.end_rpmdb_version
 
         self._loaded_TW = None
         self._loaded_TD = None
@@ -413,11 +413,11 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
 
         if float(self.beg_timestamp) > float(obj.beg_timestamp):
             self.beg_timestamp    = obj.beg_timestamp
-            self.beg_rpmdbversion = obj.beg_rpmdbversion
+            self.beg_rpmdb_version = obj.beg_rpmdb_version
         if (obj.end_timestamp and
                 float(self.end_timestamp) < float(obj.end_timestamp)):
             self.end_timestamp    = obj.end_timestamp
-            self.end_rpmdbversion = obj.end_rpmdbversion
+            self.end_rpmdb_version = obj.end_rpmdb_version
 
 
 class SwdbInterface(object):
