@@ -165,14 +165,17 @@ class ShellCommand(commands.Command, cmd.Cmd):
 
         if cmd in ['enable', 'disable']:
             repos = self.cli.base.repos
+            fill_sack = False
             for repo in args[1::]:
                 r = repos.get_matching(repo)
                 if r:
                     getattr(r, cmd)()
-                    self.base.fill_sack()
+                    fill_sack = True
                 else:
                     logger.critical(_("Error:") + " " + _("Unknown repo: '%s'"),
                                     self.base.output.term.bold(repo))
+            if fill_sack:
+                self.base.fill_sack()
 
     def _resolve(self, args=None):
         if self.cli.base.transaction is None:
