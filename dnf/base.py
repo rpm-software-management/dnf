@@ -289,6 +289,9 @@ class Base(object):
         # :api
         """Prepare the Sack and the Goal objects. """
         timer = dnf.logging.Timer('sack setup')
+        if self._sack is not None and self._repos is not None:
+            for repo in self._repos.values():
+                repo._hawkey_repo = repo._init_hawkey_repo()
         self._sack = dnf.sack._build_sack(self)
         lock = dnf.lock.build_metadata_lock(self.conf.cachedir, self.conf.exit_on_lock)
         with lock:
