@@ -169,6 +169,8 @@ class OptionParser(argparse.ArgumentParser):
                                  help=_("show DNF version and exit"))
         main_parser.add_argument("--installroot", help=_("set install root"),
                                  metavar='[path]')
+        main_parser.add_argument("--nodocs", action="store_const", const=['nodocs'], dest='tsflags',
+                                 help=_("do not install documentations"))
         main_parser.add_argument("--noplugins", action="store_false",
                                  default=None, dest='plugins',
                                  help=_("disable all plugins"))
