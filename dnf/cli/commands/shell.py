@@ -165,7 +165,7 @@ class ShellCommand(commands.Command, cmd.Cmd):
 
         if cmd in ['enable', 'disable']:
             repos = self.cli.base.repos
-            fill_sack = None
+            fill_sack = False
             for repo in args[1::]:
                 r = repos.get_matching(repo)
                 if r:
