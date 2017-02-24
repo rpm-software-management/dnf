@@ -1466,7 +1466,7 @@ Transaction Summary
                 name = ucd(name)
                 tm = time.strftime("%Y-%m-%d %H:%M",
                                    time.localtime(float(old.beg_timestamp)))
-                num, uiacts = self._history_uiactions(old.get_old_trans_data())
+                num, uiacts = self._history_uiactions(old.get_trans_data())
                 name = fill_exact_width(name, 24, 24)
                 uiacts = fill_exact_width(uiacts, 14, 14)
                 rmark = lmark = ' '
@@ -1752,14 +1752,20 @@ Transaction Summary
         all_uistates = self._history_state2uistate
         maxlen = 0
         pkg_max_len = 0
-        for hpkg in old.get_old_trans_data():
+        packages = []
+        if isinstance(old, list):
+            for tid in old.tid:
+                packages += self.history.get_packages_by_tid(tid)
+        else:
+            packages = self.history.get_packages_by_tid(old.tid)
+        for hpkg in packages:
             uistate = all_uistates.get(hpkg.state, hpkg.state)
             if maxlen < len(uistate):
                 maxlen = len(uistate)
-            if pkg_max_len < len(str(hpkg)):
-                pkg_max_len = len(str(hpkg))
+            if pkg_max_len < len(str(hpkg.nvra)):
+                pkg_max_len = len(str(hpkg.nvra))
 
-        for hpkg in self.history.get_packages_by_tid(old.tid):
+        for hpkg in packages:
             prefix = " " * 4
             if not hpkg.done:
                 prefix = " ** "
@@ -1819,7 +1825,8 @@ Transaction Summary
         fmt = "%6u | %s | %-50s"
         num = 0
         for old in self.history.old(tids, limit=limit):
-            if limit is not None and num and (num +len(old.trans_data)) > limit:
+            packages = self.history.get_packages_by_tid(old.tid)
+            if limit and num and (num + len(packages)) > limit:
                 break
             last = None
 
@@ -1841,7 +1848,8 @@ Transaction Summary
             if old.altered_gt_rpmdb:
                 lmark = '>'
 
-            for hpkg in old.trans_data: # Find a pkg to go with each cmd...
+            # Find a pkg to go with each cmd...
+            for hpkg in packages:
                 if limit is None:
                     x, m, u = dnf.yum.packages.parsePackages([hpkg], extcmds)
                     if not x and not m:
