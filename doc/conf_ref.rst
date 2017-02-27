@@ -222,6 +222,19 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     RPM debug scriptlet output level. One of: ``critical``, ``emergency``,
     ``error``, ``warn``, ``info`` or ``debug``. Default is ``info``.
 
+.. _search_enabled_metadata-label:
+
+``search_enabled_metadata``
+    :ref:`boolean <boolean-label>`
+
+    The option is applied for install command if package cannot be found in enabled repositories.
+    Set this to ``True`` for possibility to temporarily enable disabled repositories with
+    :ref:`enabled_metadata=1 <enabled_metadata-label>`. Please be very careful with this option
+    because if dnf is executed with the ``--assumeyes`` or ``-y`` option, or if the ``assumeyes``
+    directive is enabled in ``/etc/dnf.conf``, it enables disabled repositories without prompting
+    for confirmation. This may lead to problems, for example, enabling repositories that you do not
+    want enabled.
+
 ``upgrade_group_objects_upgrade``
     :ref:`boolean <boolean-label>`
 
@@ -248,10 +261,22 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     repository with *the lowest cost* is picked. It is useful to make the
     library prefer on-disk repositories to remote ones.
 
+.. _enabled-label:
+
 ``enabled``
     :ref:`boolean <boolean-label>`
 
     Include this repository as a package source. The default is True.
+
+.. _enabled_metadata-label:
+
+``enabled_metadata``
+    :ref:`boolean <boolean-label>`
+
+    Set to ``True`` in case described in :ref:`search_enabled_metadata=1
+    <search_enabled_metadata-label>` conf option results in enable metadata download and using that
+    repo for install even if conf option :ref:`enabled <enabled-label>` is set to ``0`` (disabled
+    repository).
 
 .. _repo_gpgkey-label:
 
