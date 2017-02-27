@@ -643,7 +643,7 @@ class Output(object):
                 return 1, ['No packages to list']
             return 0, []
 
-    def userconfirm(self):
+    def userconfirm(self, msg=None, defaultyes_msg=None):
         """Get a yes or no from the user, and default to No
 
         :return: True if the user selects yes, and False if the user
@@ -653,10 +653,14 @@ class Output(object):
         nui = (ucd(_('n')), ucd(_('no')))
         aui = yui + nui
         while True:
-            msg = _('Is this ok [y/N]: ')
+            if msg is None:
+                msg = _('Is this ok [y/N]: ')
             choice = ''
             if self.conf.defaultyes:
-                msg = _('Is this ok [Y/n]: ')
+                if defaultyes_msg is None:
+                    msg = _('Is this ok [Y/n]: ')
+                else:
+                    msg = defaultyes_msg
             try:
                 choice = dnf.i18n.ucd_input(msg)
             except EOFError:

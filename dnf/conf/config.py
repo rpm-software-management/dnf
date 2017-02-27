@@ -718,6 +718,7 @@ class MainConf(BaseConfig):
         self._add_option('disable_excludes', ListOption())
         self._add_option('multilib_policy',
                          SelectionOption('best', choices=('best', 'all'))) # :api
+        self._add_option('search_enabled_metadata', BoolOption(False))  # :api
         self._add_option('best', BoolOption(False)) # :api
         self._add_option('install_weak_deps', BoolOption(True))
         self._add_option('bugtracker_url', Option(dnf.const.BUGTRACKER))
@@ -973,7 +974,7 @@ class RepoConf(BaseConfig):
         self._add_option('skip_if_unavailable', BoolOption(True)) # :api
 
         # options recognized by other tools, e.g. gnome-software, but unused in dnf
-        self._add_option('enabled_metadata', UnusedOption())
+        self._add_option('enabled_metadata', BoolOption(False))
 
         # yum compatibility options
         self._add_option('failovermethod',
