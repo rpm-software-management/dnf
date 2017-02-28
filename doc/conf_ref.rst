@@ -233,7 +233,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     because if dnf is executed with the ``--assumeyes`` or ``-y`` option, or if the ``assumeyes``
     directive is enabled in ``/etc/dnf.conf``, it enables disabled repositories without prompting
     for confirmation. This may lead to problems, for example, enabling repositories that you do not
-    want enabled.
+    want enabled. Default is ``False``.
 
 ``upgrade_group_objects_upgrade``
     :ref:`boolean <boolean-label>`
@@ -276,7 +276,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     Set to ``True`` in case described in :ref:`search_enabled_metadata=1
     <search_enabled_metadata-label>` conf option results in enable metadata download and using that
     repo for install even if conf option :ref:`enabled <enabled-label>` is set to ``0`` (disabled
-    repository).
+    repository). Default is ``False``
 
 .. _repo_gpgkey-label:
 
