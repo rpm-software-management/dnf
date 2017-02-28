@@ -49,6 +49,12 @@ class UpdateInfoCommand(commands.Command):
                   hawkey.ADVISORY_UNKNOWN: _('unknown'),
                   hawkey.ADVISORY_NEWPACKAGE: _('newpackage')}
 
+    SECURITY2LABEL = {'Critical': _('Critical/Sec.'),
+                      'Important': _('Important/Sec.'),
+                      'Moderate': _('Moderate/Sec.'),
+                      'Low': _('Low/Sec.'),
+                      None: _('Unknown/Sec.')}
+
     direct_commands = {'list-updateinfo'    : 'list',
                        'list-security'      : 'list',
                        'list-sec'           : 'list',
@@ -199,7 +205,12 @@ class UpdateInfoCommand(commands.Command):
         # Remove duplicate advisory IDs. We assume that the ID is unique within
         # a repository and two advisories with the same IDs in different
         # repositories must have the same type.
-        id2type = {pkadin[1].id: pkadin[1].type for pkadin in apkg_adv_insts}
+        id2type = {}
+        for pkadin in apkg_adv_insts:
+            id2type[pkadin[1].id] = pkadin[1].type
+            if pkadin[1].type == hawkey.ADVISORY_SECURITY:
+                id2type[(pkadin[1].id, pkadin[1].severity)] = (pkadin[1].type,
+                                                               pkadin[1].severity)
         return collections.Counter(id2type.values())
 
     @classmethod
@@ -211,17 +222,28 @@ class UpdateInfoCommand(commands.Command):
         print(_('Updates Information Summary: ') + description)
         # Convert types to strings and order the entries.
         label_counts = [
-            (_('New Package notice(s)'), typ2cnt[hawkey.ADVISORY_NEWPACKAGE]),
-            (_('Security notice(s)'), typ2cnt[hawkey.ADVISORY_SECURITY]),
-            (_('Bugfix notice(s)'), typ2cnt[hawkey.ADVISORY_BUGFIX]),
-            (_('Enhancement notice(s)'), typ2cnt[hawkey.ADVISORY_ENHANCEMENT]),
-            (_('other notice(s)'), typ2cnt[hawkey.ADVISORY_UNKNOWN])]
+            (0, _('New Package notice(s)'), typ2cnt[hawkey.ADVISORY_NEWPACKAGE]),
+            (0, _('Security notice(s)'), typ2cnt[hawkey.ADVISORY_SECURITY]),
+            (1, _('Critical Security notice(s)'),
+             typ2cnt[(hawkey.ADVISORY_SECURITY, 'Critical')]),
+            (1, _('Important Security notice(s)'),
+             typ2cnt[(hawkey.ADVISORY_SECURITY, 'Important')]),
+            (1, _('Moderate Security notice(s)'),
+             typ2cnt[(hawkey.ADVISORY_SECURITY, 'Moderate')]),
+            (1, _('Low Security notice(s)'),
+             typ2cnt[(hawkey.ADVISORY_SECURITY, 'Low')]),
+            (1, _('Unknown Security notice(s)'),
+             typ2cnt[(hawkey.ADVISORY_SECURITY, None)]),
+            (0, _('Bugfix notice(s)'), typ2cnt[hawkey.ADVISORY_BUGFIX]),
+            (0, _('Enhancement notice(s)'), typ2cnt[hawkey.ADVISORY_ENHANCEMENT]),
+            (0, _('other notice(s)'), typ2cnt[hawkey.ADVISORY_UNKNOWN])]
         # Convert counts to strings and skip missing types.
-        label2value = OrderedDict(
-            (label, unicode(count)) for label, count in label_counts if count)
-        width = _maxlen(label2value.values())
-        for label, value in label2value.items():
-            print('    %*s %s' % (width, value, label))
+        label2value = OrderedDict((label, (indent, unicode(count)))
+                                  for indent, label, count in label_counts
+                                  if count)
+        width = _maxlen(v[1] for v in label2value.values())
+        for label, (indent, value) in label2value.items():
+            print('    %*s %s' % (width + 4 * indent, value, label))
 
     @staticmethod
     def _list(apkg_adv_insts):
@@ -229,7 +251,7 @@ class UpdateInfoCommand(commands.Command):
         # Get ((NEVRA, installed), advisory ID, advisory type)
         apkg2nevra = lambda apkg: apkg.name + '-' + apkg.evr + '.' + apkg.arch
         nevrains_id_types = (
-            ((apkg2nevra(apkg), inst), adv.id, adv.type)
+            ((apkg2nevra(apkg), inst), adv.id, (adv.type, adv.severity))
             for apkg, adv, inst in apkg_adv_insts)
         # Sort and group by (NEVRA, installed).
         nevrains_nits = itertools.groupby(
@@ -242,12 +264,18 @@ class UpdateInfoCommand(commands.Command):
     @classmethod
     def display_list(cls, apkg_adv_insts, mixed, description):
         """Display the list of advisories."""
+        def inst2mark(inst):
+            return ('' if not mixed else 'i ' if inst else '  ')
+
+        def type2label(typ, sev):
+            return (cls.SECURITY2LABEL[sev] if typ == hawkey.ADVISORY_SECURITY
+                    else cls.TYPE2LABEL[typ])
+
         # Sort IDs and convert types to labels.
-        inst2mark = lambda inst: '' if not mixed else 'i ' if inst else '  '
         nevramark2id2tlbl = OrderedDict(
             ((nevra, inst2mark(inst)),
-             OrderedDict(sorted(((id_, cls.TYPE2LABEL[typ])
-                                 for id_, typ in id2type.items()),
+             OrderedDict(sorted(((id_, type2label(typ, sev))
+                                 for id_, (typ, sev) in id2type.items()),
                                 key=itemgetter(0))))
             for (nevra, inst), id2type in cls._list(apkg_adv_insts))
         if not nevramark2id2tlbl:
@@ -285,6 +313,7 @@ class UpdateInfoCommand(commands.Command):
                     getrefs(apkg_adv_inst[1], hawkey.REFERENCE_BUGZILLA),
                     getrefs(apkg_adv_inst[1], hawkey.REFERENCE_CVE),
                     apkg_adv_inst[1].description,
+                    apkg_adv_inst[1].severity,
                     apkg_adv_inst[1].rights,
                     (pkg.filename for pkg in apkg_adv_inst[1].packages
                      if pkg.arch in self.base.sack.list_arches()),
@@ -292,8 +321,8 @@ class UpdateInfoCommand(commands.Command):
             else:
                 # If the stored advisory is marked as not installed and the
                 # current is marked as installed, mark the stored as installed.
-                if not tuple_[9] and inst:
-                    id2tuple[identity] = tuple_[:9] + (inst,)
+                if not tuple_[10] and inst:
+                    id2tuple[identity] = tuple_[:10] + (inst,)
         # Get mapping from title to (ID, type, time, BZs, CVEs, description,
         # rights, files, installed) => group by titles and merge values. We
         # assume that two advisories with the same title (e.g. from different
@@ -304,14 +333,14 @@ class UpdateInfoCommand(commands.Command):
         for tuple_ in id2tuple.values():
             title, new = tuple_[0], tuple_[1:]
             old = title2info.get(
-                title, (None, None, None, [], [], None, None, [], False))
+                title, (None, None, None, [], [], None, None, None, [], False))
             title2info[title] = (
                 new[:3] +
                 (merge(old[3], new[3]),
                  merge(old[4], new[4])) +
-                new[5:7] +
-                (merge(old[7], new[7]),
-                 old[8] or new[8]))
+                new[5:8] +
+                (merge(old[8], new[8]),
+                 old[9] or new[9]))
         return title2info
 
     def display_info(self, apkg_adv_insts, mixed, description):
@@ -323,13 +352,13 @@ class UpdateInfoCommand(commands.Command):
             (tit, ([id_], [self.TYPE2LABEL[typ]], [unicode(upd)],
                    (id_title[0] + (' - ' + id_title[1] if id_title[1] else '')
                     for id_title in bzs),
-                   (id_title[0] for id_title in cvs), desc.splitlines(),
+                   (id_title[0] for id_title in cvs), desc.splitlines(), sev,
                    verbse(rigs.splitlines() if rigs else None), verbse(fils),
                    None if not mixed else [_('true') if ins else _('false')]))
-            for tit, (id_, typ, upd, bzs, cvs, desc, rigs, fils, ins) in info)
+            for tit, (id_, typ, upd, bzs, cvs, desc, sev, rigs, fils, ins) in info)
         labels = (_('Update ID'), _('Type'), _('Updated'), _('Bugs'),
-                  _('CVEs'), _('Description'), _('Rights'), _('Files'),
-                  _('Installed'))
+                  _('CVEs'), _('Description'), _('Severity'), _('Rights'),
+                  _('Files'), _('Installed'))
         width = _maxlen(labels)
         for title, vallines in info:
             print('=' * 79)

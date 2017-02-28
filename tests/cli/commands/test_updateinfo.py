@@ -180,9 +180,9 @@ class UpdateInfoCommandTest(tests.support.TestCase):
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.display_list(apkg_adv_insts, True, '')
         self.assertEqual(self._stdout.getvalue(),
-                         'i DNF-2014-1 bugfix      tour-4-4.noarch\n'
-                         'i DNF-2014-2 enhancement tour-5-0.noarch\n'
-                         '  DNF-2014-3 security    tour-5-1.noarch\n',
+                         'i DNF-2014-1 bugfix       tour-4-4.noarch\n'
+                         'i DNF-2014-2 enhancement  tour-5-0.noarch\n'
+                         '  DNF-2014-3 Unknown/Sec. tour-5-1.noarch\n',
                          'incorrect output')
 
     def test_display_info_verbose(self):
@@ -273,7 +273,8 @@ class UpdateInfoCommandTest(tests.support.TestCase):
         tests.support.command_run(cmd, [])
         self.assertEqual(self._stdout.getvalue(),
                          'Updates Information Summary: available\n'
-                         '    1 Security notice(s)\n',
+                         '    1 Security notice(s)\n'
+                         '        1 Unknown Security notice(s)\n',
                          'incorrect output')
 
     # This test also tests the display_list and available_apkg_adv_insts
@@ -283,7 +284,7 @@ class UpdateInfoCommandTest(tests.support.TestCase):
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         tests.support.command_run(cmd, ['list'])
         self.assertEqual(self._stdout.getvalue(),
-                         'DNF-2014-3 security tour-5-1.noarch\n',
+                         'DNF-2014-3 Unknown/Sec. tour-5-1.noarch\n',
                          'incorrect output')
 
     # This test also tests the display_info and available_apkg_adv_insts
