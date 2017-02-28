@@ -264,12 +264,14 @@ class UpdateInfoCommand(commands.Command):
     @classmethod
     def display_list(cls, apkg_adv_insts, mixed, description):
         """Display the list of advisories."""
-        # Sort IDs and convert types to labels.
-        inst2mark = lambda inst: '' if not mixed else 'i ' if inst else '  '
-        type2label = lambda typ, sev: cls.SECURITY2LABEL[sev] \
-                                      if typ == hawkey.ADVISORY_SECURITY \
-                                      else cls.TYPE2LABEL[typ]
+        def inst2mark(inst):
+            return ('' if not mixed else 'i ' if inst else '  ')
 
+        def type2label(typ, sev):
+            return (cls.SECURITY2LABEL[sev] if typ == hawkey.ADVISORY_SECURITY
+                    else cls.TYPE2LABEL[typ])
+
+        # Sort IDs and convert types to labels.
         nevramark2id2tlbl = OrderedDict(
             ((nevra, inst2mark(inst)),
              OrderedDict(sorted(((id_, type2label(typ, sev))
