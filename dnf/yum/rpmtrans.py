@@ -146,14 +146,21 @@ class LoggingTransactionDisplay(ErrorTransactionDisplay):
     def filelog(self, package, action):
         # If the action is not in the fileaction list then dump it as a string
         # hurky but, sadly, not much else
-        process = self.fileaction[action]
-        if process is None:
-            return
-        msg = '%s: %s' % (process, package)
+        if not dnf.util.is_string_type(action):
+            action = self.fileaction[action]
+            if action is None:
+                return
+        msg = '%s: %s' % (action, package)
         self.rpm_logger.info(msg)
 
 class RPMTransaction(object):
     def __init__(self, base, test=False, displays=()):
+        self.ts_action = {TransactionDisplay.PKG_DOWNGRADE: 'Downgrading',
+                          TransactionDisplay.PKG_ERASE: 'Erasing',
+                          TransactionDisplay.PKG_INSTALL: 'Installing',
+                          TransactionDisplay.PKG_REINSTALL: 'Reinstalling',
+                          TransactionDisplay.PKG_UPGRADE: 'Upgrading'}
+
         if not displays:
             displays = [ErrorTransactionDisplay()]
         self.displays = displays
@@ -410,7 +417,7 @@ class RPMTransaction(object):
             # This callback type is issued every time the next transaction
             # element is about to be processed by RPM, before any other
             # callbacks are issued.  "amount" carries the index of the element.
-            self._elemProgress(amount)
+            self._elemProgress(key, amount)
         elif what == rpm.RPMCALLBACK_INST_OPEN_FILE:
             return self._instOpenFile(key)
         elif what == rpm.RPMCALLBACK_INST_CLOSE_FILE:
@@ -428,7 +435,6 @@ class RPMTransaction(object):
         elif what == rpm.RPMCALLBACK_SCRIPT_STOP:
             self._scriptStop()
 
-
     def _transStart(self, total):
         self.total_actions = total
         if self.test: return
@@ -441,8 +447,13 @@ class RPMTransaction(object):
         if self._ts_done is not None:
             self._ts_done.close()
 
-    def _elemProgress(self, index):
+    def _elemProgress(self, key, index):
         self._te_index = index
+        if not self.test:
+            pkg, state, tsi = self._extract_cbkey(key)
+            action = TransactionDisplay.ACTION_FROM_OP_TYPE[tsi.op_type]
+            for display in self.displays:
+                display.filelog(pkg, self.ts_action[action])
 
     def _instOpenFile(self, key):
         self.lastmsg = None
