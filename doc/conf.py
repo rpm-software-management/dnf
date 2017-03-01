@@ -62,7 +62,7 @@ def version_readout():
     with open(fn) as f:
         lines = f.readlines()
 
-    pat = re.compile('\d+.\d+.\d+')
+    pat = re.compile(r'\d+.\d+.\d+')
     version = pat.findall(lines[0])[0]
 
     return version
