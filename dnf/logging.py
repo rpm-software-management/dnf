@@ -160,6 +160,7 @@ class Logging(object):
         handler = _create_filehandler(logfile)
         logger_rpm.addHandler(handler)
         _paint_mark(logger_rpm)
+        logging.raiseExceptions = False
 
     def _setup_from_dnf_conf(self, conf):
         verbose_level_r = _cfg_verbose_val2level(conf.debuglevel)
