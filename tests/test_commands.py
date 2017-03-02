@@ -110,7 +110,6 @@ class InstallCommandTest(support.ResultTestCase):
     def test_run_group(self):
         """Test whether a group is installed."""
         base = self._cmd.cli.base
-        base.history.reset_db()
         support.command_run(self._cmd, ['@Solid Ground'])
 
         self.assertResult(base, itertools.chain(

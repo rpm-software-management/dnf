@@ -30,7 +30,6 @@ class EmptyPersistorTest(support.ResultTestCase):
 
     def setUp(self):
         self.base = support.MockBase('main')
-        self.base.history.reset_db()
         self.base.read_mock_comps(False)
         self.base.init_sack()
 
@@ -82,7 +81,6 @@ class PresetPersistorTest(support.ResultTestCase):
         """Env installation itself does not handle packages. We need to handle
            them manually for proper functionality of env remove"""
         history = self.base.history
-        history.reset_db()
         self.base.environment_install(
             'sugar-desktop-environment',
             ('mandatory',))
@@ -101,7 +99,6 @@ class PresetPersistorTest(support.ResultTestCase):
         """Group installation itself does not handle packages. We need to
            handle them manually for proper functionality of group remove"""
         history = self.base.history
-        history.reset_db()
         self.base.group_install('somerset', ('mandatory',))
         self.prst.commit()
         group = self.prst.group('somerset')
@@ -145,7 +142,6 @@ class PresetPersistorTest(support.ResultTestCase):
         self.assertTrue(somerset.is_installed)
 
     def test_group_install(self):
-        self.base.history.reset_db()
         grp = self.base.comps.group_by_pattern('Base')
         p_grp = self.prst.group('base')
         self.assertEqual(self.base.group_install(grp.id, ('mandatory',)), 2)

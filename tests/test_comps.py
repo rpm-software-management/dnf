@@ -175,7 +175,6 @@ class SolverTestMixin(object):
 class SolverGroupTest(SolverTestMixin, support.TestCase):
 
     def test_install(self):
-        self.history.reset_db()
         grp = self.comps.group_by_pattern('base')
         trans = self.solver._group_install(grp.id, dnf.comps.MANDATORY, ['right'])
         self.persistor.commit()
@@ -186,7 +185,6 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
         self.assertEqual(p_grp.pkg_types, dnf.comps.MANDATORY)
 
     def test_removable_pkg(self):
-        self.history.reset_db()
         grp = self.comps.group_by_pattern('base')
         self.solver._group_install(grp.id, dnf.comps.MANDATORY, [])
         self.persistor.commit()
@@ -223,7 +221,6 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
         self.assertTrue(self.solver._removable_pkg('tour'))
 
     def test_remove(self):
-        self.history.reset_db()
         grp = self.comps.group_by_pattern('base')
         self.solver._group_install(grp.id, dnf.comps.MANDATORY, [])
         self.persistor.commit()
@@ -239,7 +236,6 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
                 self.assertFalse(grp.is_installed)
 
     def test_upgrade(self):
-        self.history.reset_db()
         # setup of the "current state"
         name = "base"
         p_grp = self.persistor.new_group(name,
@@ -270,7 +266,6 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
         return trans
 
     def test_install(self):
-        self.history.reset_db()
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
         trans = self._install(env)
         self.assertCountEqual([pkg.name for pkg in trans.install],
@@ -285,8 +280,8 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
         self.assertTrue(base.is_installed)
 
     def test_remove(self):
-        # env is installed from previous transaction
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
+        trans = self._install(env)
         trans = self.solver._environment_remove(env.id)
         self.persistor.commit()
 
@@ -317,7 +312,6 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
 
     def test_upgrade(self):
         """Upgrade environment, the one group it knows is no longer installed."""
-        self.history.reset_db()
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
         self.solver._environment_install(env.id, dnf.comps.ALL_TYPES, [])
         self.persistor.commit()

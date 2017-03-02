@@ -33,6 +33,20 @@ import rpm
 
 class BaseTest(support.TestCase):
 
+    @staticmethod
+    def _setup_packages(history):
+        pkg1 = history.package()
+        pkg1.name = "pepper"
+        pkg1.version = "20"
+        pkg1.release = "0"
+        pkg1.arch = "x86_64"
+        pkg1.checksum_type = "sha256"
+        pkg1.checksum_data = "0123456789abcd"
+        pkg_data1 = history.package_data()
+        pid = history.add_package(pkg1)
+        history.add_package_data(pid, pkg_data1)
+        history.swdb.trans_data_beg(0, pid, "user", "installed")
+
     def test_instance(self):
         base = support.MockBase()
         self.assertIsNotNone(base)
@@ -81,7 +95,7 @@ class BaseTest(support.TestCase):
     def test_iter_userinstalled(self):
         """Test iter_userinstalled with a package installed by the user."""
         base = support.MockBase()
-        base.history.reset_db()
+        self._setup_packages(base.history)
         base._sack = support.mock_sack('main')
         pkg, = base.sack.query().installed().filter(name='pepper')
         base.history.set_repo(pkg, "main")
@@ -92,8 +106,8 @@ class BaseTest(support.TestCase):
     def test_iter_userinstalled_badfromrepo(self):
         """Test iter_userinstalled with a package installed from a bad repository."""
         base = support.MockBase()
-        base.history.reset_db()
         base._sack = support.mock_sack('main')
+        self._setup_packages(base.history)
         pkg, = base.sack.query().installed().filter(name='pepper')
         base.history.set_repo(pkg, "anakonda")
         base.history.mark_user_installed(pkg, True)
@@ -104,6 +118,7 @@ class BaseTest(support.TestCase):
         """Test iter_userinstalled with a package installed for a wrong reason."""
         base = support.MockBase()
         base._sack = support.mock_sack('main')
+        self._setup_packages(base.history)
         pkg, = base.sack.query().installed().filter(name='pepper')
         base.history.mark_user_installed(pkg, False)
         base.history.set_repo(pkg, "main")
@@ -155,7 +170,6 @@ class VerifyTransactionTest(TestCase):
     def test_verify_transaction(self, unused_build_sack):
         # we don't simulate the transaction itself here, just "install" what is
         # already there and "remove" what is not.
-        self.base.history.reset_db()
         new_pkg = self.base.sack.query().available().filter(name="pepper")[1]
         new_pkg._chksum = (hawkey.CHKSUM_MD5, binascii.unhexlify(HASH))
         new_pkg.repo = mock.Mock()

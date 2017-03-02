@@ -94,7 +94,6 @@ class TransactionItemTest(tests.support.TestCase):
     def test_propagated_reason(self):
         base = tests.support.MockBase()
         history = base.history
-        history.reset_db()
 
         pkg1 = history.ipkg_to_pkg(self.newpkg)
         pid = history.add_package(pkg1)

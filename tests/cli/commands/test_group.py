@@ -99,7 +99,6 @@ class CompsQueryTest(support.TestCase):
     def test_installed(self):
         q = CompsQuery(self.comps, self.prst, CompsQuery.GROUPS,
                        CompsQuery.INSTALLED)
-        self.base.history.reset_db()
         self.base.read_mock_comps(False)
         grp = self.base.comps.group_by_pattern('somerset')
         self.base.group_install(grp.id, ('mandatory',))
