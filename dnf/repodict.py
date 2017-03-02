@@ -63,9 +63,8 @@ class RepoDict(dict):
         @param repoid: Repo ID - string
         @param conf: dnf Base().conf object
         @param baseurl: List of strings
-        @param mirrorlist: string
-        @param metalink: string
-        @return: repo object
+        @param kwargs: keys and values that will be used to setattr on dnf.repo.Repo() object
+        @return: dnf.repo.Repo() object
         """
         repo = dnf.repo.Repo(repoid, conf)
         for path in baseurl:
