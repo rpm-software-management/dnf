@@ -234,7 +234,7 @@ class _BaseStubMixin(object):
         self._sack.load_system_repo()
         for repo in self.repos.iter_enabled():
             if repo.__class__ is dnf.repo.Repo:
-                self._add_repo_to_sack([repo])
+                self._add_repos_to_sack([repo])
             else:
                 fn = "%s.repo" % repo.id
                 self._sack.load_test_repo(repo.id, fn)

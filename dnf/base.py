@@ -106,7 +106,10 @@ class Base(object):
         else:
             self._tempfiles.update(files)
 
-    def _add_repo_to_sack(self, repos_iterable):
+    def _add_repos_to_sack(self, repos_iterable):
+        """
+        @param repos_iterable: Sequence of repos in iterable form
+        """
         errors = []
         mts = 0
         age = time.time()
@@ -329,7 +332,7 @@ class Base(object):
                     if load_system_repo != 'auto':
                         raise
             if load_available_repos:
-                self._add_repo_to_sack(self.repos.iter_enabled())
+                self._add_repos_to_sack(self.repos.iter_enabled())
         conf = self.conf
         self._sack._configure(conf.installonlypkgs, conf.installonly_limit)
         self._setup_excludes_includes()

@@ -138,7 +138,7 @@ class InstallCommand(commands.Command):
                                 repos = list(self.base.repos._iter_disabled_with_enabled_metadata())
                                 for repo in repos:
                                     repo.enable()
-                                self.base._add_repo_to_sack(repos)
+                                self.base._add_repos_to_sack(repos)
                                 self.base._setup_excludes_includes()
                                 try:
                                     self.base.install(pkg_spec, strict=strict, forms=forms)
