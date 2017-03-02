@@ -54,6 +54,13 @@ Repository Configuration
 
     Return an iterator over all enabled repos from the dict.
 
+  .. method:: add_new_repo(repoid, conf, baseurl=(), **kwargs)
+
+    Initialize new :class:`.Repo` object and add it to the repodict. It requires ``repoid``
+    (string), and :class:`dnf.conf.Conf` object. Optionally it can be speciffied baseurl (list), and
+    additionally key/value pairs from `kwargs` to set additional attribute of the :class:`.Repo`
+    object. It returns the :class:`.Repo` object.
+
 .. module:: dnf.repo
 
 .. function:: repo_id_invalid(repo_id)
