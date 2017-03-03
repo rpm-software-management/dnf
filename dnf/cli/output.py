@@ -1498,63 +1498,51 @@ Transaction Summary
             0 = we're done, exit
             1 = we've errored, exit with error string
         """
-        tids = extcmds
-        mtids = set()
-        old = self.history.last()
-        if old is None:
+        tids = set(extcmds)
+        last = self.history.last()
+        if last is None:
             logger.critical(_('No transactions'))
             return 1, ['Failed history info']
 
+        lasttid = last.tid
+        lastdbv = last.end_rpmdb_version
+
         if not tids and len(extcmds) < 2:
-            old = self.history.last()
-            if old is not None:
-                tids.add(old.tid)
-                utids.add(old.tid)
+            transactions = [last]
+            tids.add(lasttid)
+        else:
+            transactions = self.history.old(tids)
 
         if not tids:
             logger.critical(_('No transaction ID, or package, given'))
             return 1, ['Failed history info']
 
-        lastdbv = self.history.last()
-        if lastdbv is not None:
-            lasttid = lastdbv.tid
-            lastdbv = lastdbv.end_rpmdb_version
-
         done = False
-        bmtid, emtid = -1, -1
         mobj = None
-        if mtids:
-            bmtid, emtid = mtids.pop(0)
-        for tid in self.history.old(tids):
+        for tid in transactions:
             if lastdbv is not None and tid.tid == lasttid:
                 #  If this is the last transaction, is good and it doesn't
                 # match the current rpmdb ... then mark it as bad.
                 rpmdbv = self.sack._rpmdb_version(self.history)
-                if lastdbv != rpmdbv:
-                    tid.altered_gt_rpmdb = True
+                tid.compare_rpmdbv(str(rpmdbv))
             lastdbv = None
 
-            if tid.tid >= bmtid and tid.tid <= emtid:
+            """ TODO Support merging transactions
                 if mobj is None:
                     mobj = dnf.yum.history.YumMergedHistoryTransaction(tid)
                 else:
                     mobj.merge(tid)
             elif mobj is not None:
+            """
+            if mobj is not None:
                 if done:
                     print("-" * 79)
                 done = True
-
                 self._historyInfoCmd(mobj)
                 mobj = None
-                if mtids:
-                    bmtid, emtid = mtids.pop(0)
-                    if tid.tid >= bmtid and tid.tid <= emtid:
-                        mobj = dnf.yum.history.YumMergedHistoryTransaction(tid)
-
             if done:
                 print("-" * 79)
             done = True
-
             self._historyInfoCmd(tid, pats)
 
         if mobj is not None:
@@ -1753,7 +1741,7 @@ Transaction Summary
         maxlen = 0
         pkg_max_len = 0
         packages = []
-        if isinstance(old, list):
+        if isinstance(old.tid, list):
             for tid in old.tid:
                 packages += self.history.get_packages_by_tid(tid)
         else:

@@ -37,7 +37,11 @@ def buildPkgRefDict(pkgs, casematch=True):
        """
     pkgdict = {}
     for pkg in pkgs:
-        (n, a, e, v, r) = pkg.pkgtup
+        try:
+            (n, a, e, v, r) = pkg.pkgtup
+        except AttributeError:
+            (n, a, e, v, r) = (pkg.name, pkg.arch, pkg.epoch, pkg.version,
+                               pkg.release)
         if not casematch:
             n = n.lower()
             a = a.lower()
