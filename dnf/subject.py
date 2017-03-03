@@ -116,7 +116,7 @@ class Subject(object):
         nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
         sltr = dnf.selector.Selector(sack)
         if nevra:
-            q = self._nevra_to_filters(sack.query(), nevra)
+            q = self._nevra_to_filters(sack.query(), nevra).filter(arch__neq="src")
             if q:
                 if obsoletes and nevra._has_just_name():
                     q = q.union(sack.query().filter(obsoletes=q))
@@ -137,7 +137,7 @@ class Subject(object):
             with_obsoletes = False
             if obsoletes and self._has_nevra_just_name(sack, forms=forms):
                 with_obsoletes = True
-            q = self.get_best_query(sack, forms=forms)
+            q = self.get_best_query(sack, forms=forms).filter(arch__neq="src")
             sltrs = []
             for name, pkgs_list in q._name_dict().items():
                 sltr = dnf.selector.Selector(sack)
