@@ -242,6 +242,8 @@ class RPMTransaction(object):
             # package:
             if tsi.erased is not None and str(tsi.erased) == te.NEVRA():
                 return tsi.erased, tsi._erased_history_state, tsi
+            if tsi.installed is not None and str(tsi.installed) == te.NEVRA():
+                return tsi.installed, tsi._installed_history_state, tsi
             for o in tsi.obsoleted:
                 if str(o) == te.NEVRA():
                     obsoleted = o
@@ -548,7 +550,12 @@ class RPMTransaction(object):
         scriptlet_name = rpm.tagnames.get(amount, "<unknown>")
 
         pkg, _, _ = self._extract_cbkey(key)
-        name = pkg.name
+        if pkg is not None:
+            name = pkg.name
+        elif dnf.util.is_string_type(key):
+            name = key
+        else:
+            name = 'None'
 
         if total:
             msg = ("Error in %s scriptlet in rpm package %s" %
