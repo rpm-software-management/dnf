@@ -1509,7 +1509,6 @@ Transaction Summary
             old = self.history.last(complete_transactions_only=False)
             if old is not None:
                 tids.add(old.tid)
-                utids.add(old.tid)
 
         if not tids:
             logger.critical(_('No transaction ID, or package, given'))
