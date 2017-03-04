@@ -28,6 +28,7 @@ import logging
 import sys
 from . import misc
 import tempfile
+import traceback
 
 
 # transaction set states
@@ -402,34 +403,37 @@ class RPMTransaction(object):
             self._ts_done = None
 
     def callback(self, what, amount, total, key, client_data):
-        if isinstance(key, str):
-            key = ucd(key)
-        if what == rpm.RPMCALLBACK_TRANS_START:
-            self._transStart(total)
-        elif what == rpm.RPMCALLBACK_TRANS_STOP:
-            self._transStop()
-        elif what == rpm.RPMCALLBACK_ELEM_PROGRESS:
-            # This callback type is issued every time the next transaction
-            # element is about to be processed by RPM, before any other
-            # callbacks are issued.  "amount" carries the index of the element.
-            self._elemProgress(amount)
-        elif what == rpm.RPMCALLBACK_INST_OPEN_FILE:
-            return self._instOpenFile(key)
-        elif what == rpm.RPMCALLBACK_INST_CLOSE_FILE:
-            self._instCloseFile(key)
-        elif what == rpm.RPMCALLBACK_INST_PROGRESS:
-            self._instProgress(amount, total, key)
-        elif what == rpm.RPMCALLBACK_UNINST_STOP:
-            self._unInstStop(key)
-        elif what == rpm.RPMCALLBACK_CPIO_ERROR:
-            self._cpioError(key)
-        elif what == rpm.RPMCALLBACK_UNPACK_ERROR:
-            self._unpackError(key)
-        elif what == rpm.RPMCALLBACK_SCRIPT_ERROR:
-            self._scriptError(amount, total, key)
-        elif what == rpm.RPMCALLBACK_SCRIPT_STOP:
-            self._scriptStop()
-
+        try:
+            if isinstance(key, str):
+                key = ucd(key)
+            if what == rpm.RPMCALLBACK_TRANS_START:
+                self._transStart(total)
+            elif what == rpm.RPMCALLBACK_TRANS_STOP:
+                self._transStop()
+            elif what == rpm.RPMCALLBACK_ELEM_PROGRESS:
+                # This callback type is issued every time the next transaction
+                # element is about to be processed by RPM, before any other
+                # callbacks are issued.  "amount" carries the index of the element.
+                self._elemProgress(amount)
+            elif what == rpm.RPMCALLBACK_INST_OPEN_FILE:
+                return self._instOpenFile(key)
+            elif what == rpm.RPMCALLBACK_INST_CLOSE_FILE:
+                self._instCloseFile(key)
+            elif what == rpm.RPMCALLBACK_INST_PROGRESS:
+                self._instProgress(amount, total, key)
+            elif what == rpm.RPMCALLBACK_UNINST_STOP:
+                self._unInstStop(key)
+            elif what == rpm.RPMCALLBACK_CPIO_ERROR:
+                self._cpioError(key)
+            elif what == rpm.RPMCALLBACK_UNPACK_ERROR:
+                self._unpackError(key)
+            elif what == rpm.RPMCALLBACK_SCRIPT_ERROR:
+                self._scriptError(amount, total, key)
+            elif what == rpm.RPMCALLBACK_SCRIPT_STOP:
+                self._scriptStop()
+        except Exception as e:
+            exept_list = traceback.format_exception(type(e), e, e.__traceback__)
+            logger.critical(''.join(exept_list))
 
     def _transStart(self, total):
         self.total_actions = total
