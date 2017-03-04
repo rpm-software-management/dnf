@@ -108,6 +108,7 @@ class CleanCommand(commands.Command):
                         expired = _cached_repos(files)
                         self.base._repo_persistor.expired_to_add.update(expired)
                         types.remove('expire-cache')
+                        logger.info(_('Cache was expired'))
 
                     patterns = [dnf.repo.CACHE_FILES[t] for t in types]
                     count = _clean(cachedir, _filter(files, patterns))
