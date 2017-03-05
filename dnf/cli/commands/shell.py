@@ -115,6 +115,8 @@ class ShellCommand(commands.Command, cmd.Cmd):
                     cmd.run()
                 except Exception as e:
                     logger.error(_("Error:") + " " + e.value)
+                except:
+                    return
             else:
                 self._help()
 
@@ -130,6 +132,7 @@ class ShellCommand(commands.Command, cmd.Cmd):
 
         if not args or len(args) > 2:
             logger.warning(_('Missing config or key value.'))
+            return
 
         key = args[0]
         val = args[1] if len(args) == 2 else None
