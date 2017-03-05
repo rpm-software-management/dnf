@@ -26,6 +26,7 @@ import logging
 import dnf.pycomp
 import smtplib
 import email.utils
+import subprocess
 
 APPLIED = _("The following updates have been applied on '%s':")
 AVAILABLE = _("The following updates are available on '%s':")
@@ -82,30 +83,59 @@ class EmailEmitter(Emitter):
         elif self._available_msg:
             subj = _("Updates available on '%s'.") % self._system_name
         else:
-            return None, None
-        return subj, super(EmailEmitter, self)._prepare_msg()
+            return None
+        msg = dnf.pycomp.email_mime(super(EmailEmitter, self)._prepare_msg())
+        msg.set_charset('utf-8')
+        msg['Date'] = email.utils.formatdate()
+        msg['From'] = self._conf.email_from
+        msg['Subject'] = subj
+        msg['To'] = ','.join(self._conf.email_to)
+        msg['Message-ID'] = email.utils.make_msgid()
+        return msg.as_string()
 
     def commit(self):
-        subj, body = self._prepare_msg()
-        message = dnf.pycomp.email_mime(body)
-        message.set_charset('utf-8')
-        email_from = self._conf.email_from
-        email_to = self._conf.email_to
-        message['Date'] = email.utils.formatdate()
-        message['From'] = email_from
-        message['Subject'] = subj
-        message['To'] = ','.join(email_to)
-        message['Message-ID'] = email.utils.make_msgid()
-
         # Send the email
+        msg = self._prepare_msg()
+        if msg is None:
+            return
         try:
             smtp = smtplib.SMTP(self._conf.email_host)
-            smtp.sendmail(email_from, email_to, message.as_string())
+            smtp.sendmail(self._conf.email_from, self._conf.email_to, msg)
             smtp.close()
         except smtplib.SMTPException as exc:
             msg = _("Failed to send an email via '%s': %s") % (
                 self._conf.email_host, exc)
             logger.error(msg)
+
+
+class SendmailEmitter(EmailEmitter):
+    def commit(self):
+        # Send the email
+        msg = self._prepare_msg()
+        if msg is None:
+            return
+        cmd = ['/usr/sbin/sendmail', '-bm', '-t']
+        try:
+            proc = subprocess.Popen(cmd,
+                                    universal_newlines=True,
+                                    stdin=subprocess.PIPE,
+                                    stdout=subprocess.PIPE,
+                                    stderr=subprocess.PIPE)
+        except OSError as e:
+            if e.errno == 2:
+                logger.error('%s, %s', cmd[0], e.strerror)
+            else:
+                logger.error('error %d, %s', e.errno, e.strerror)
+            return
+        out, err = proc.communicate(msg)
+        if proc.returncode == 0:
+            if out:
+                logger.info(out)
+            if err:
+                logger.error(err)
+        else:
+            logger.error('error %d, %s', proc.returncode, err)
+
 
 class StdIoEmitter(Emitter):
     def commit(self):
