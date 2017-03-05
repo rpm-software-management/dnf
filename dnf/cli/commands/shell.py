@@ -113,8 +113,10 @@ class ShellCommand(commands.Command, cmd.Cmd):
                     cmd.cli.demands = copy.deepcopy(self.cli.demands)
                     cmd.configure()
                     cmd.run()
-                except Exception as e:
+                except dnf.exceptions.Error as e:
                     logger.error(_("Error:") + " " + e.value)
+                except:
+                    return
             else:
                 self._help()
 
@@ -130,6 +132,7 @@ class ShellCommand(commands.Command, cmd.Cmd):
 
         if not args or len(args) > 2:
             logger.warning(_('Missing config or key value.'))
+            return
 
         key = args[0]
         val = args[1] if len(args) == 2 else None
