@@ -131,7 +131,7 @@ class ShellCommand(commands.Command, cmd.Cmd):
                     logger.warning(_('Unsupported key value.'))
 
         if not args or len(args) > 2:
-            logger.warning(_('Missing config or key value.'))
+            self._help('config')
             return
 
         key = args[0]
@@ -150,15 +150,63 @@ class ShellCommand(commands.Command, cmd.Cmd):
             print_or_set(key, val, self.base.conf)
 
     def _help(self, args=None):
-        self.cli.optparser.print_help()
-        print('\n')
-        print(_('''Shell specific arguments:
-                   config                   set config options
-                   repository (or repo)     enable, disable or list repositories
-                   resolvedep               resolve the transaction set
-                   transaction (or ts)      list, reset or run the transaction set
-                   run                      resolve and run the transaction set
-                   exit (or quit)           exit the shell'''))
+        """Output help information.
+
+        :param args: the command to output help information about. If
+           *args* is an empty, general help will be output.
+        """
+        arg = args[0] if isinstance(args, list) and len(args) > 0 else args
+        msg = None
+
+        if arg:
+            if arg == 'config':
+                msg = _("""{} arg [value]
+  arg: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,
+        repo_id.gpgcheck, repo_id.exclude
+    If no value is given it prints the current value.
+    If value is given it sets that value.""").format(arg)
+
+            elif arg == 'help':
+                msg = _("""{} [command]
+    print help""").format(arg)
+
+            elif arg in ['repo', 'repository']:
+                msg = _("""{} arg [option]
+  list: lists repositories and their status. option = [all | id | glob]
+  enable: enable repositories. option = repository id
+  disable: disable repositories. option = repository id""").format(arg)
+
+            elif arg == 'resolvedep':
+                msg = _("""{}
+    resolve the transaction set""").format(arg)
+
+            elif arg in ['transaction', 'ts']:
+                msg = _("""{} arg
+  list: lists the contents of the transaction
+  reset: reset (zero-out) the transaction
+  run: run the transaction""").format(arg)
+
+            elif arg == 'run':
+                msg = _("""{}
+    run the transaction""").format(arg)
+
+            elif arg in ['exit', 'quit']:
+                msg = _("""{}
+    exit the shell""").format(arg)
+
+        if not msg:
+            self.cli.optparser.print_help()
+            msg = _("""Shell specific arguments:
+
+config                   set config options
+help                     print help
+repository (or repo)     enable, disable or list repositories
+resolvedep               resolve the transaction set
+transaction (or ts)      list, reset or run the transaction set
+run                      resolve and run the transaction set
+exit (or quit)           exit the shell""")
+
+        print('\n' + msg)
 
     def _repo(self, args=None):
         cmd = args[0] if args else None
@@ -166,7 +214,7 @@ class ShellCommand(commands.Command, cmd.Cmd):
         if cmd in ['list', None]:
             self.onecmd('repolist ' + ' '.join(args[1:]))
 
-        if cmd in ['enable', 'disable']:
+        elif cmd in ['enable', 'disable']:
             repos = self.cli.base.repos
             fill_sack = False
             for repo in args[1::]:
@@ -179,6 +227,9 @@ class ShellCommand(commands.Command, cmd.Cmd):
                                     self.base.output.term.bold(repo))
             if fill_sack:
                 self.base.fill_sack()
+
+        else:
+            self._help('repo')
 
     def _resolve(self, args=None):
         if self.cli.base.transaction is None:
@@ -211,12 +262,15 @@ class ShellCommand(commands.Command, cmd.Cmd):
                 out = self.base.output.list_transaction(self.base._transaction)
                 logger.info(out)
 
-        if cmd == 'run':
+        elif cmd == 'run':
             try:
                 self.base.do_transaction()
             except:
                 pass
             self._clean()
+
+        else:
+            self._help('transaction')
 
     def _ts_run(self, args=None):
         self._transaction(['run'])
