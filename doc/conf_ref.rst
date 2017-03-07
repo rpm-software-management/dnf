@@ -62,6 +62,13 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     satisfiable. Enable this if you want to experience broken dependencies in
     the repositories firsthand. The default is False.
 
+``cached_rpm_only``
+    :ref:`boolean <boolean-label>`
+
+    Loads only cashed rpms for repo or local repositories. DNF will not load any information
+    from metadata from distant repositories, but only from cached rpms. It is handy for offline
+    transaction where it is impossible to download additional rpms.
+
 ``check_config_file_age``
     :ref:`boolean <boolean-label>`
 

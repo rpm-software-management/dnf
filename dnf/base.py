@@ -127,6 +127,8 @@ class Base(object):
                   'load_updateinfo': True}
         if not repo._local:
             kwargs['cache_dir'] = repo.pkgdir
+            if self.conf.cached_rpm_only:
+                kwargs['only_cached'] = True
         self._sack.load_repo(hrepo, **kwargs)
 
     @staticmethod
