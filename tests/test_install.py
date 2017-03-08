@@ -125,13 +125,6 @@ class CommonTest(support.ResultTestCase):
         new_set = self.base.sack.query().installed() + trampoline.run()
         self.assertResult(self.base, new_set)
 
-    def test_install_srpm(self):
-        """Test that the exception is raised if a source arch is specified."""
-        self.base.install("pepper-20-0.src")
-        re = 'Will not install a source rpm'
-        self.assertRaisesRegexp(dnf.exceptions.Error, re,
-                                self.base.resolve)
-
     def test_package_install_conflict(self):
         """Test that a conflicting package cannot be installed."""
         p = self.base.sack.query().available().filter(
