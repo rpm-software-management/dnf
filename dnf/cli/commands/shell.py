@@ -152,8 +152,8 @@ class ShellCommand(commands.Command, cmd.Cmd):
     def _help(self, args=None):
         """Output help information.
 
-        :param arg: the command to output help information about. If
-           *arg* is an empty, general help will be output.
+        :param args: the command to output help information about. If
+           *args* is an empty, general help will be output.
         """
         arg = args[0] if isinstance(args, list) and len(args) > 0 else args
         msg = None
