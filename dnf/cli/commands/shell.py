@@ -113,7 +113,7 @@ class ShellCommand(commands.Command, cmd.Cmd):
                     cmd.cli.demands = copy.deepcopy(self.cli.demands)
                     cmd.configure()
                     cmd.run()
-                except Exception as e:
+                except dnf.exceptions.Error as e:
                     logger.error(_("Error:") + " " + e.value)
                 except:
                     return
