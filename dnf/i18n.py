@@ -293,6 +293,7 @@ def translation(name):
     # :api, deprecated in 2.0.0, will be erased when python2 is abandoned
     """ Easy gettext translations setup based on given domain name """
 
+    setup_locale()
     def ucd_wrapper(fnc):
         return lambda *w: ucd(fnc(*w))
     t = dnf.pycomp.gettext.translation(name, fallback=True)

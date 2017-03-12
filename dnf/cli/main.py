@@ -86,7 +86,6 @@ def main(args, conf_class=Conf, cli_class=Cli, option_parser_class=OptionParser)
 def _main(base, args, cli_class, option_parser):
     """Run the dnf program from a command line interface."""
 
-    dnf.i18n.setup_locale()
     dnf.i18n.setup_stdout()
 
     # our core object for the cli
