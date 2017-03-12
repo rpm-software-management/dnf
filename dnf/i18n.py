@@ -298,5 +298,33 @@ def translation(name):
     t = dnf.pycomp.gettext.translation(name, fallback=True)
     return map(ucd_wrapper, dnf.pycomp.gettext_setup(t))
 
-# setup translations
-_, P_ = translation("dnf")
+
+def _gettext(message):
+    # Fallback code. Used until setup_translation() is called.
+    return message
+
+
+def _ngettext(singular, plural, n):
+    # Fallback code. Used until setup_translation() is called.
+    return singular if n == 1 else plural
+
+
+def setup_translation():
+    """ Setup translation according to current global domain, language, and locale directory """
+    global _gettext, _ngettext
+    _gettext, _ngettext = translation("dnf")
+
+
+def _(message):
+    """ Return the localized translation of message.
+        Call setup_translation() at first. """
+    return _gettext(message)
+
+
+def P_(singular, plural, n):
+    """ Return the localized translation of message like _(), but consider plural forms.
+        If a translation is found, apply the plural formula to n, and return the resulting message
+        (some languages have more than two plural forms).
+        If no translation is found, return singular if n is 1; return plural otherwise.
+        Call setup_translation() at first. """
+    return _ngettext(singular, plural, n)
