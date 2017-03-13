@@ -20,9 +20,13 @@
 
 from __future__ import unicode_literals
 from dnf.exceptions import ConfigError
+from dnf.i18n import _
+
 import dnf.util
 import fnmatch
+import os
 
+logger = dnf.util.logger
 
 class RepoDict(dict):
     # :api
@@ -43,6 +47,27 @@ class RepoDict(dict):
 
     def any_enabled(self):
         return not dnf.util.empty(self.iter_enabled())
+
+    def add_new_repo(self, repoid, conf, baseurl=(), **kwargs):
+        # :api
+        """
+        Creates new repo object and add it into RepoDict.
+        :param repoid: Repo ID - string
+        :param conf: dnf Base().conf object
+        :param baseurl: List of strings
+        :param kwargs: keys and values that will be used to setattr on dnf.repo.Repo() object
+        :return: dnf.repo.Repo() object
+        """
+        repo = dnf.repo.Repo(repoid, conf.cachedir)
+        for path in baseurl:
+            if '://' not in path:
+                path = 'file://{}'.format(os.path.abspath(path))
+            repo.baseurl.append(path)
+        for (key, value) in kwargs.items():
+            setattr(repo, key, value)
+        self.add(repo)
+        logger.info(_("Added %s repo from %s"), repoid, ', '.join(baseurl))
+        return repo
 
     def enabled(self):
         return [r for r in self.values() if r.enabled]
