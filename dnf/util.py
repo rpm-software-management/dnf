@@ -29,6 +29,7 @@ import dnf.const
 import dnf.pycomp
 import itertools
 import librepo
+import logging
 import os
 import pwd
 import shutil
@@ -36,6 +37,8 @@ import subprocess
 import sys
 import tempfile
 import time
+
+logger = logging.getLogger('dnf')
 
 """DNF Utilities.
 
