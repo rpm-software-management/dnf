@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-05 14:28+0100\n"
-"PO-Revision-Date: 2017-02-23 12:38-0500\n"
+"PO-Revision-Date: 2017-03-06 12:37-0500\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/projects/p/dnf/language/uk/)\n"
 "MIME-Version: 1.0\n"
@@ -766,6 +766,8 @@ msgid ""
 "Query all packages (shorthand for repoquery '*' or repoquery without "
 "argument)"
 msgstr ""
+"Опитати усі пакунки (скорочення для repoquery '*' або repoquery без "
+"аргумента)"
 
 #: ../dnf/cli/commands/repoquery.py:108
 msgid "show only results from this ARCH"
@@ -1035,23 +1037,23 @@ msgstr "новий пакунок"
 
 #: ../dnf/cli/commands/updateinfo.py:52
 msgid "Critical/Sec."
-msgstr ""
+msgstr "Критичний/Безп."
 
 #: ../dnf/cli/commands/updateinfo.py:53
 msgid "Important/Sec."
-msgstr ""
+msgstr "Високий/Безп."
 
 #: ../dnf/cli/commands/updateinfo.py:54
 msgid "Moderate/Sec."
-msgstr ""
+msgstr "Середній/Безп."
 
 #: ../dnf/cli/commands/updateinfo.py:55
 msgid "Low/Sec."
-msgstr ""
+msgstr "Низький/Безп."
 
 #: ../dnf/cli/commands/updateinfo.py:56
 msgid "Unknown/Sec."
-msgstr ""
+msgstr "Невідомий/Безп."
 
 #: ../dnf/cli/commands/updateinfo.py:67
 msgid "display advisories about packages"
@@ -1071,23 +1073,23 @@ msgstr "Зауваження щодо безпеки"
 
 #: ../dnf/cli/commands/updateinfo.py:227
 msgid "Critical Security notice(s)"
-msgstr ""
+msgstr "Критичний рівень зауваження щодо безпеки"
 
 #: ../dnf/cli/commands/updateinfo.py:229
 msgid "Important Security notice(s)"
-msgstr ""
+msgstr "Високий рівень зауваження щодо безпеки"
 
 #: ../dnf/cli/commands/updateinfo.py:231
 msgid "Moderate Security notice(s)"
-msgstr ""
+msgstr "Середній рівень зауваження щодо безпеки"
 
 #: ../dnf/cli/commands/updateinfo.py:233
 msgid "Low Security notice(s)"
-msgstr ""
+msgstr "Низький рівень зауваження щодо безпеки"
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "Unknown Security notice(s)"
-msgstr ""
+msgstr "Невідомий рівень зауваження щодо безпеки"
 
 #: ../dnf/cli/commands/updateinfo.py:237
 msgid "Bugfix notice(s)"
@@ -1135,7 +1137,7 @@ msgstr "Опис"
 
 #: ../dnf/cli/commands/updateinfo.py:360
 msgid "Severity"
-msgstr ""
+msgstr "Важливість"
 
 #: ../dnf/cli/commands/updateinfo.py:360
 msgid "Rights"
@@ -1271,7 +1273,7 @@ msgstr "встановити кореневий каталог встановл�
 
 #: ../dnf/cli/option_parser.py:173
 msgid "do not install documentations"
-msgstr ""
+msgstr "не встановлювати документацію"
 
 #: ../dnf/cli/option_parser.py:176
 msgid "disable all plugins"
@@ -1847,7 +1849,7 @@ msgstr "Командний рядок"
 #. TRANSLATORS: user names who executed transaction in history command output
 #: ../dnf/cli/output.py:1453
 msgid "User name"
-msgstr ""
+msgstr "Ім’я користувача"
 
 #. REALLY Needs to use columns!
 #: ../dnf/cli/output.py:1454 ../dnf/cli/output.py:1820
@@ -2160,7 +2162,7 @@ msgstr "Немає сховища, яке б відповідало цьому: 
 
 #: ../dnf/cli/cli.py:738
 msgid "This command has to be run under the root user."
-msgstr ""
+msgstr "Цю команду слід виконувати від імені користувача root."
 
 #: ../dnf/cli/cli.py:758
 #, python-format

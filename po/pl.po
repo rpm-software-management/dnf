@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-05 14:28+0100\n"
-"PO-Revision-Date: 2017-02-21 12:18-0500\n"
+"PO-Revision-Date: 2017-03-06 02:28-0500\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/dnf/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -215,7 +215,7 @@ msgstr "Zainstalowany pakiet %s%s jest niedostępny."
 #: ../dnf/cli/commands/__init__.py:615 ../dnf/cli/commands/__init__.py:664
 #: ../dnf/cli/cli.py:196 ../dnf/cli/cli.py:356 ../dnf/base.py:1460
 msgid "Nothing to do."
-msgstr "Nie ma niczego do zrobienia."
+msgstr "Nie ma nic do zrobienia."
 
 #: ../dnf/cli/commands/search.py:43
 msgid "search package details for the given string"
@@ -765,6 +765,8 @@ msgid ""
 "Query all packages (shorthand for repoquery '*' or repoquery without "
 "argument)"
 msgstr ""
+"Odpytuje wszystkie pakiety (skrót dla repoquery '*' lub repoquery bez "
+"parametru)"
 
 #: ../dnf/cli/commands/repoquery.py:108
 msgid "show only results from this ARCH"
@@ -1039,23 +1041,23 @@ msgstr "nowy-pakiet"
 
 #: ../dnf/cli/commands/updateinfo.py:52
 msgid "Critical/Sec."
-msgstr ""
+msgstr "Krytyczne/bezpieczeństwa"
 
 #: ../dnf/cli/commands/updateinfo.py:53
 msgid "Important/Sec."
-msgstr ""
+msgstr "Ważne/bezpieczeństwa"
 
 #: ../dnf/cli/commands/updateinfo.py:54
 msgid "Moderate/Sec."
-msgstr ""
+msgstr "Umiarkowanie ważne/bezpieczeństwa"
 
 #: ../dnf/cli/commands/updateinfo.py:55
 msgid "Low/Sec."
-msgstr ""
+msgstr "Mniej ważne/bezpieczeństwa"
 
 #: ../dnf/cli/commands/updateinfo.py:56
 msgid "Unknown/Sec."
-msgstr ""
+msgstr "Nieznane/bezpieczeństwa"
 
 #: ../dnf/cli/commands/updateinfo.py:67
 msgid "display advisories about packages"
@@ -1075,23 +1077,23 @@ msgstr "Uwagi o bezpieczeństwie"
 
 #: ../dnf/cli/commands/updateinfo.py:227
 msgid "Critical Security notice(s)"
-msgstr ""
+msgstr "Krytyczne uwagi o bezpieczeństwie"
 
 #: ../dnf/cli/commands/updateinfo.py:229
 msgid "Important Security notice(s)"
-msgstr ""
+msgstr "Ważne uwagi o bezpieczeństwie"
 
 #: ../dnf/cli/commands/updateinfo.py:231
 msgid "Moderate Security notice(s)"
-msgstr ""
+msgstr "Umiarkowanie ważne uwagi o bezpieczeństwie"
 
 #: ../dnf/cli/commands/updateinfo.py:233
 msgid "Low Security notice(s)"
-msgstr ""
+msgstr "Mniej ważne uwagi o bezpieczeństwie"
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "Unknown Security notice(s)"
-msgstr ""
+msgstr "Uwagi o bezpieczeństwie o nieznanej ważności"
 
 #: ../dnf/cli/commands/updateinfo.py:237
 msgid "Bugfix notice(s)"
@@ -1139,7 +1141,7 @@ msgstr "Opis"
 
 #: ../dnf/cli/commands/updateinfo.py:360
 msgid "Severity"
-msgstr ""
+msgstr "Ważność"
 
 #: ../dnf/cli/commands/updateinfo.py:360
 msgid "Rights"
@@ -1273,7 +1275,7 @@ msgstr "ustawia roota instalacji"
 
 #: ../dnf/cli/option_parser.py:173
 msgid "do not install documentations"
-msgstr ""
+msgstr "bez instalowania dokumentacji"
 
 #: ../dnf/cli/option_parser.py:176
 msgid "disable all plugins"
@@ -1852,7 +1854,7 @@ msgstr "Wiersz poleceń"
 #. TRANSLATORS: user names who executed transaction in history command output
 #: ../dnf/cli/output.py:1453
 msgid "User name"
-msgstr ""
+msgstr "Nazwa użytkownika"
 
 #. REALLY Needs to use columns!
 #: ../dnf/cli/output.py:1454 ../dnf/cli/output.py:1820
@@ -2164,7 +2166,7 @@ msgstr "Brak pasującego repozytorium: %s"
 
 #: ../dnf/cli/cli.py:738
 msgid "This command has to be run under the root user."
-msgstr ""
+msgstr "To polecenie może być wykonywane tylko przez użytkownika root."
 
 #: ../dnf/cli/cli.py:758
 #, python-format

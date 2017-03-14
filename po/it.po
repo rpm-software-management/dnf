@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-05 14:28+0100\n"
-"PO-Revision-Date: 2017-02-22 02:05-0500\n"
+"PO-Revision-Date: 2017-03-14 04:40-0400\n"
 "Last-Translator: Gregorio <devim@outlook.it>\n"
 "Language-Team: Italian (http://www.transifex.com/projects/p/dnf/language/it/)\n"
 "MIME-Version: 1.0\n"
@@ -137,7 +137,7 @@ msgstr "sincronizza i pacchetti installati con le ultime versioni disponibili"
 
 #: ../dnf/cli/commands/distrosync.py:36
 msgid "Package to synchronize"
-msgstr ""
+msgstr "Pacchetto da sincronizzare"
 
 #: ../dnf/cli/commands/mark.py:36
 msgid "mark or unmark installed packages as installed by user."
@@ -171,7 +171,7 @@ msgstr "Reinstalla un pacchetto"
 
 #: ../dnf/cli/commands/reinstall.py:42
 msgid "Package to reinstall"
-msgstr ""
+msgstr "Pacchetto da reinstallare"
 
 #: ../dnf/cli/commands/reinstall.py:44 ../dnf/cli/commands/autoremove.py:48
 #: ../dnf/cli/commands/install.py:48 ../dnf/cli/commands/remove.py:61
@@ -209,7 +209,7 @@ msgstr " (da %s)"
 #: ../dnf/cli/commands/__init__.py:513
 #, python-format
 msgid "Installed package %s%s not available."
-msgstr ""
+msgstr "Pacchetto installato %s%s non disponibile."
 
 #: ../dnf/cli/commands/reinstall.py:99 ../dnf/cli/commands/install.py:79
 #: ../dnf/cli/commands/install.py:88 ../dnf/cli/commands/install.py:104
@@ -226,7 +226,7 @@ msgstr "cerca il termine passato nei dettagli dei pacchetti"
 
 #: ../dnf/cli/commands/search.py:48
 msgid "search also package description and URL"
-msgstr ""
+msgstr "Cerca anche nell'URL e nella descrizione del pacchetto"
 
 #: ../dnf/cli/commands/search.py:49
 msgid "QUERY_STRING"
@@ -269,11 +269,11 @@ msgstr "Pacchetto da rimuovere"
 
 #: ../dnf/cli/commands/downgrade.py:34
 msgid "Downgrade a package"
-msgstr ""
+msgstr "Porta ad una versione precedente di un pacchetto"
 
 #: ../dnf/cli/commands/downgrade.py:38
 msgid "Package to downgrade"
-msgstr ""
+msgstr "Pacchetto da portare ad una versione precedente"
 
 #: ../dnf/cli/commands/install.py:44
 msgid "install a package or packages on your system"
@@ -299,7 +299,7 @@ msgstr ""
 #: ../dnf/cli/cli.py:347 ../dnf/cli/cli.py:603 ../dnf/cli/cli.py:630
 #, python-format
 msgid "No package %s available."
-msgstr ""
+msgstr "Nessun pacchetto %s disponibile."
 
 #: ../dnf/cli/commands/install.py:128
 msgid "Unable to find a match"
@@ -311,7 +311,7 @@ msgstr "rimuove uno o più pacchetti dal sistema"
 
 #: ../dnf/cli/commands/remove.py:53
 msgid "remove duplicated packages"
-msgstr ""
+msgstr "rimuovi pacchetti duplicati"
 
 #: ../dnf/cli/commands/remove.py:58
 msgid "remove installonly packages over the limit"
@@ -319,7 +319,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/remove.py:91
 msgid "No duplicated packages found for removal."
-msgstr ""
+msgstr "Nessun pacchetto duplicato è stato trovato per la rimozione."
 
 #: ../dnf/cli/commands/remove.py:102
 msgid "No old installonly packages found for removal."
@@ -355,15 +355,15 @@ msgstr "mostra i repository di software configurati"
 
 #: ../dnf/cli/commands/repolist.py:82
 msgid "show all repos"
-msgstr ""
+msgstr "mostra tutti i repo"
 
 #: ../dnf/cli/commands/repolist.py:85
 msgid "show enabled repos (default)"
-msgstr ""
+msgstr "mostra i repo abilitati (predefinita)"
 
 #: ../dnf/cli/commands/repolist.py:88
 msgid "show disabled repos"
-msgstr ""
+msgstr "mostra i repo disabilitati"
 
 #: ../dnf/cli/commands/repolist.py:120
 msgid "No repositories available"

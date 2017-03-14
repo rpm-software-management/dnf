@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-05 14:28+0100\n"
-"PO-Revision-Date: 2017-02-11 05:10-0500\n"
+"PO-Revision-Date: 2017-03-07 05:13-0500\n"
 "Last-Translator: Meskó Balázs <meskobalazs@gmail.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/projects/p/dnf/language/hu/)\n"
 "MIME-Version: 1.0\n"
@@ -684,11 +684,11 @@ msgstr "Figyelmeztetés: Nincs egyező csoport:"
 
 #: ../dnf/cli/commands/group.py:186
 msgid "Available Environment Groups:"
-msgstr ""
+msgstr "Elérhető környezeti csoportok:"
 
 #: ../dnf/cli/commands/group.py:188
 msgid "Installed Environment Groups:"
-msgstr ""
+msgstr "Telepített környezeti csoportok:"
 
 #: ../dnf/cli/commands/group.py:195 ../dnf/cli/commands/group.py:300
 msgid "Installed Groups:"
@@ -764,6 +764,8 @@ msgid ""
 "Query all packages (shorthand for repoquery '*' or repoquery without "
 "argument)"
 msgstr ""
+"Minden csomag lekérdezése (rövidítés a „*” argumentum nélküli tároló "
+"lekérdezésehez)"
 
 #: ../dnf/cli/commands/repoquery.py:108
 msgid "show only results from this ARCH"
@@ -1050,23 +1052,23 @@ msgstr "új csomag"
 
 #: ../dnf/cli/commands/updateinfo.py:52
 msgid "Critical/Sec."
-msgstr ""
+msgstr "Kritikus/bizt."
 
 #: ../dnf/cli/commands/updateinfo.py:53
 msgid "Important/Sec."
-msgstr ""
+msgstr "Fontos/bizt."
 
 #: ../dnf/cli/commands/updateinfo.py:54
 msgid "Moderate/Sec."
-msgstr ""
+msgstr "Közepes/bizt."
 
 #: ../dnf/cli/commands/updateinfo.py:55
 msgid "Low/Sec."
-msgstr ""
+msgstr "Alacsony/bizt."
 
 #: ../dnf/cli/commands/updateinfo.py:56
 msgid "Unknown/Sec."
-msgstr ""
+msgstr "Ismeretlen/bizt."
 
 #: ../dnf/cli/commands/updateinfo.py:67
 msgid "display advisories about packages"
@@ -1086,23 +1088,23 @@ msgstr "Biztonsági észrevétel(ek):"
 
 #: ../dnf/cli/commands/updateinfo.py:227
 msgid "Critical Security notice(s)"
-msgstr ""
+msgstr "Kritikus biztonsági észrevétel(ek):"
 
 #: ../dnf/cli/commands/updateinfo.py:229
 msgid "Important Security notice(s)"
-msgstr ""
+msgstr "Fontos biztonsági észrevétel(ek):"
 
 #: ../dnf/cli/commands/updateinfo.py:231
 msgid "Moderate Security notice(s)"
-msgstr ""
+msgstr "Közepes biztonsági észrevétel(ek):"
 
 #: ../dnf/cli/commands/updateinfo.py:233
 msgid "Low Security notice(s)"
-msgstr ""
+msgstr "Alacsony biztonsági észrevétel(ek):"
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "Unknown Security notice(s)"
-msgstr ""
+msgstr "Ismeretlen biztonsági észrevétel(ek):"
 
 #: ../dnf/cli/commands/updateinfo.py:237
 msgid "Bugfix notice(s)"
@@ -1150,7 +1152,7 @@ msgstr "Leírás"
 
 #: ../dnf/cli/commands/updateinfo.py:360
 msgid "Severity"
-msgstr ""
+msgstr "Súlyosság"
 
 #: ../dnf/cli/commands/updateinfo.py:360
 msgid "Rights"
@@ -1262,7 +1264,7 @@ msgstr "hibás formátum: %s"
 
 #: ../dnf/cli/option_parser.py:159
 msgid "Optional arguments"
-msgstr ""
+msgstr "Nem kötelező argumentumok"
 
 #: ../dnf/cli/option_parser.py:162
 msgid "config file location"
@@ -1286,7 +1288,7 @@ msgstr "telepítési gyökérkönyvtár beállítása"
 
 #: ../dnf/cli/option_parser.py:173
 msgid "do not install documentations"
-msgstr ""
+msgstr "ne telepítsen dokumentációkat"
 
 #: ../dnf/cli/option_parser.py:176
 msgid "disable all plugins"
@@ -1446,11 +1448,11 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:337
 msgid "List of Main Commands:"
-msgstr ""
+msgstr "Alapvető parancsok listája:"
 
 #: ../dnf/cli/option_parser.py:338
 msgid "List of Plugin Commands:"
-msgstr ""
+msgstr "Bővítmények parancsok listája:"
 
 #: ../dnf/cli/output.py:489
 msgid "Name"
@@ -1724,10 +1726,12 @@ msgid ""
 "Skipping packages with broken dependencies%s\n"
 "(add '--best' to command line to see why package dependency cannot be satisfied)"
 msgstr ""
+"Törött függőséggel rendelkező csomagok kihagyása%s\n"
+"(adja a „--best” kapcsolót a parancshoz, hogy lássa miért nem elégíthetőek ki a függőségek)"
 
 #: ../dnf/cli/output.py:1072
 msgid " or part of a group"
-msgstr ""
+msgstr "vagy része egy csoportnak"
 
 #: ../dnf/cli/output.py:1090 ../dnf/cli/output.py:1133
 #: ../dnf/cli/output.py:1149 ../dnf/cli/output.py:1822
@@ -1855,7 +1859,7 @@ msgstr "Parancssor"
 #. TRANSLATORS: user names who executed transaction in history command output
 #: ../dnf/cli/output.py:1453
 msgid "User name"
-msgstr ""
+msgstr "Felhasználónév"
 
 #. REALLY Needs to use columns!
 #: ../dnf/cli/output.py:1454 ../dnf/cli/output.py:1820
@@ -2167,7 +2171,7 @@ msgstr "Nincs illeszkedő tároló: %s"
 
 #: ../dnf/cli/cli.py:738
 msgid "This command has to be run under the root user."
-msgstr ""
+msgstr "Ezt a parancsot root felhasználóként kell futtatni."
 
 #: ../dnf/cli/cli.py:758
 #, python-format
@@ -2473,6 +2477,8 @@ msgstr ""
 #: ../dnf/base.py:245
 msgid "Metadata timer caching disabled when running on metered connection."
 msgstr ""
+"A metaadat időzítő gyorsítótár nem lesz használatban, ha mért kapcsolatot "
+"használ."
 
 #: ../dnf/base.py:250
 msgid "Metadata timer caching disabled when running on a battery."

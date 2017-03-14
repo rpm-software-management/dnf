@@ -25,7 +25,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-05 14:28+0100\n"
-"PO-Revision-Date: 2017-02-23 03:40-0500\n"
+"PO-Revision-Date: 2017-03-06 10:49-0500\n"
 "Last-Translator: Máximo Castañeda Riloba <mcrcctm@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/dnf/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -787,6 +787,8 @@ msgid ""
 "Query all packages (shorthand for repoquery '*' or repoquery without "
 "argument)"
 msgstr ""
+"Consultar todos los paquetes (atajo para repoquery '*' o repoquery sin "
+"parámetros)"
 
 # auto translated by TM merge from project: dnf-plugins-core, version: master,
 # DocId: dnf-plugins-core
@@ -1131,23 +1133,23 @@ msgstr "paquete nuevo"
 
 #: ../dnf/cli/commands/updateinfo.py:52
 msgid "Critical/Sec."
-msgstr ""
+msgstr "Crítico/Seg."
 
 #: ../dnf/cli/commands/updateinfo.py:53
 msgid "Important/Sec."
-msgstr ""
+msgstr "Importante/Seg."
 
 #: ../dnf/cli/commands/updateinfo.py:54
 msgid "Moderate/Sec."
-msgstr ""
+msgstr "Moderado/Seg."
 
 #: ../dnf/cli/commands/updateinfo.py:55
 msgid "Low/Sec."
-msgstr ""
+msgstr "Bajo/Seg."
 
 #: ../dnf/cli/commands/updateinfo.py:56
 msgid "Unknown/Sec."
-msgstr ""
+msgstr "Desconocido/Seg."
 
 #: ../dnf/cli/commands/updateinfo.py:67
 msgid "display advisories about packages"
@@ -1167,23 +1169,23 @@ msgstr "Aviso(s) de seguridad"
 
 #: ../dnf/cli/commands/updateinfo.py:227
 msgid "Critical Security notice(s)"
-msgstr ""
+msgstr "Avisos de seguridad críticos"
 
 #: ../dnf/cli/commands/updateinfo.py:229
 msgid "Important Security notice(s)"
-msgstr ""
+msgstr "Avisos de seguridad importantes"
 
 #: ../dnf/cli/commands/updateinfo.py:231
 msgid "Moderate Security notice(s)"
-msgstr ""
+msgstr "Avisos de seguridad moderados"
 
 #: ../dnf/cli/commands/updateinfo.py:233
 msgid "Low Security notice(s)"
-msgstr ""
+msgstr "Avisos de seguridad bajos"
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "Unknown Security notice(s)"
-msgstr ""
+msgstr "Avisos de seguridad desconocidos"
 
 #: ../dnf/cli/commands/updateinfo.py:237
 msgid "Bugfix notice(s)"
@@ -1231,7 +1233,7 @@ msgstr "Descripción"
 
 #: ../dnf/cli/commands/updateinfo.py:360
 msgid "Severity"
-msgstr ""
+msgstr "Severidad"
 
 #: ../dnf/cli/commands/updateinfo.py:360
 msgid "Rights"
@@ -1368,7 +1370,7 @@ msgstr "define la raíz de instalación"
 
 #: ../dnf/cli/option_parser.py:173
 msgid "do not install documentations"
-msgstr ""
+msgstr "no instalar documentación"
 
 #: ../dnf/cli/option_parser.py:176
 msgid "disable all plugins"
@@ -1940,7 +1942,7 @@ msgstr "Línea de comandos"
 #. TRANSLATORS: user names who executed transaction in history command output
 #: ../dnf/cli/output.py:1453
 msgid "User name"
-msgstr ""
+msgstr "Usuario"
 
 #. REALLY Needs to use columns!
 #: ../dnf/cli/output.py:1454 ../dnf/cli/output.py:1820
@@ -2252,7 +2254,7 @@ msgstr "No hay repositorios coincidentes: %s"
 
 #: ../dnf/cli/cli.py:738
 msgid "This command has to be run under the root user."
-msgstr ""
+msgstr "Este comando debe ejecutarse como usuario root."
 
 #: ../dnf/cli/cli.py:758
 #, python-format
