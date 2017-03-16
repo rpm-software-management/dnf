@@ -58,9 +58,9 @@ class TransactionDisplay(object):
     PKG_UPGRADE = 7
     PKG_VERIFY = 8
     TRANS_PREPARATION = 9
-
+    PKG_SCRIPTLET = 10
     # transaction-wide events
-    TRANS_POST = 10
+    TRANS_POST = 11
 
     ACTION_FROM_OP_TYPE = {
         dnf.transaction.DOWNGRADE : PKG_DOWNGRADE,
@@ -131,7 +131,8 @@ class LoggingTransactionDisplay(ErrorTransactionDisplay):
                        self.PKG_REINSTALL: _('Reinstalling'),
                        self.PKG_UPGRADE: _('Upgrading'),
                        self.PKG_VERIFY: _('Verifying'),
-                       self.TRANS_PREPARATION: _('Preparing Transaction')}
+                       self.TRANS_PREPARATION: _('Preparing'),
+                       self.PKG_SCRIPTLET: _('Running scriptlet')}
         self.fileaction = {self.PKG_CLEANUP: 'Cleanup',
                            self.PKG_DOWNGRADE: 'Downgraded',
                            self.PKG_ERASE: 'Erased',
@@ -140,7 +141,8 @@ class LoggingTransactionDisplay(ErrorTransactionDisplay):
                            self.PKG_REINSTALL: 'Reinstalled',
                            self.PKG_UPGRADE:  'Upgraded',
                            self.PKG_VERIFY: 'Verified',
-                           self.TRANS_PREPARATION: _('Preparing Transaction')}
+                           self.TRANS_PREPARATION: 'Preparing',
+                           self.PKG_SCRIPTLET: 'Running scriptlet'}
         self.rpm_logger = logging.getLogger('dnf.rpm')
 
     def error(self, message):
@@ -438,6 +440,8 @@ class RPMTransaction(object):
                 self._unpackError(key)
             elif what == rpm.RPMCALLBACK_SCRIPT_ERROR:
                 self._scriptError(amount, total, key)
+            elif what == rpm.RPMCALLBACK_SCRIPT_START:
+                self._script_start(key)
             elif what == rpm.RPMCALLBACK_SCRIPT_STOP:
                 self._scriptStop()
         except Exception as e:
@@ -463,6 +467,7 @@ class RPMTransaction(object):
 
     def _elemProgress(self, index):
         self._te_index = index
+        self.complete_actions += 1
 
     def _instOpenFile(self, key):
         self.lastmsg = None
@@ -476,7 +481,6 @@ class RPMTransaction(object):
         else:
             if self.trans_running:
                 self.total_installed += 1
-                self.complete_actions += 1
                 self.installed_pkg_names.add(pkg.name)
             return self.fd.fileno()
 
@@ -513,8 +517,6 @@ class RPMTransaction(object):
 
     def _uninst_start(self, key):
         self.total_removed += 1
-        self.complete_actions += 1
-
 
     def _uninst_progress(self, amount, total, key):
         pkg, state, _ = self._extract_cbkey(key)
@@ -597,6 +599,18 @@ class RPMTransaction(object):
                    (scriptlet_name, name))
         for display in self.displays:
             display.error(msg)
+
+    def _script_start(self, key):
+        action = TransactionDisplay.PKG_SCRIPTLET
+        if key is None and self._te_list == []:
+            pkg = 'None'
+        else:
+            pkg, _, _ = self._extract_cbkey(key)
+        complete = self.complete_actions if self.total_actions != 0 and self.complete_actions != 0 \
+            else 1
+        total = self.total_actions if self.total_actions != 0 and self.complete_actions != 0 else 1
+        for display in self.displays:
+            display.progress(pkg, action, 100, 100, complete, total)
 
     def _scriptStop(self):
         self._scriptout()

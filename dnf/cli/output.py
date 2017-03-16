@@ -2021,8 +2021,8 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
             if msg != self.lastmsg:
                 dnf.util._terminal_messenger('write_flush', msg, sys.stdout)
                 self.lastmsg = msg
-            if ti_done == ti_total:
-                print(" ")
+                if ti_done == ti_total:
+                    print(" ")
 
     def filelog(self, package, action):
         pass
