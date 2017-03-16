@@ -465,6 +465,10 @@ class Base(object):
                         'justdb': rpm.RPMTRANS_FLAG_JUSTDB,
                         'nocontexts': rpm.RPMTRANS_FLAG_NOCONTEXTS,
                         'nocrypto': rpm.RPMTRANS_FLAG_NOFILEDIGEST}
+    if hasattr(rpm, 'RPMTRANS_FLAG_NOCAPS'):
+        # Introduced in rpm-4.14
+        _TS_FLAGS_TO_RPM['nocaps'] = rpm.RPMTRANS_FLAG_NOCAPS
+
     _TS_VSFLAGS_TO_RPM = {'nocrypto': rpm._RPMVSF_NOSIGNATURES |
                           rpm._RPMVSF_NODIGESTS}
 

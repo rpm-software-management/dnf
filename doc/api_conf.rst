@@ -216,6 +216,7 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
     nodocs                  RPMTRANS_FLAG_NODOCS
     justdb                  RPMTRANS_FLAG_JUSTDB
     nocontexts              RPMTRANS_FLAG_NOCONTEXTS
+    nocaps                  RPMTRANS_FLAG_NOCAPS
     nocrypto                RPMTRANS_FLAG_NOFILEDIGEST
     ==========              ===========================
 
