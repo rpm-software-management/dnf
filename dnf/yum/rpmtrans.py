@@ -233,6 +233,12 @@ class RPMTransaction(object):
     def __del__(self):
         self._shutdownOutputLogging()
 
+    def _te_nevra(self, te):
+        nevra = te.N()
+        if te.E() is not None and te.E() != '0':
+            nevra += ':' + te.E()
+        return nevra + '-' + te.V() + '-' + te.R() + '.' + te.A()
+
     def _extract_cbkey(self, cbkey):
         """Obtain the package related to the calling callback."""
 
@@ -246,12 +252,12 @@ class RPMTransaction(object):
         for tsi in self.base.transaction:
             # only walk the tsis once. prefer finding an erase over an obsoleted
             # package:
-            if tsi.erased is not None and str(tsi.erased) == te.NEVRA():
+            if tsi.erased is not None and str(tsi.erased) == self._te_nevra(te):
                 return tsi.erased, tsi._erased_history_state, tsi
-            if tsi.installed is not None and str(tsi.installed) == te.NEVRA():
+            if tsi.installed is not None and str(tsi.installed) == self._te_nevra(te):
                 return tsi.installed, tsi._installed_history_state, tsi
             for o in tsi.obsoleted:
-                if str(o) == te.NEVRA():
+                if str(o) == self._te_nevra(te):
                     obsoleted = o
                     obsoleted_state = tsi._obsoleted_history_state
                     obsoleted_tsi = tsi
