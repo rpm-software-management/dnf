@@ -57,6 +57,7 @@ class TransactionDisplay(object):
     PKG_REINSTALL = 6
     PKG_UPGRADE = 7
     PKG_VERIFY = 8
+    TRANS_PREPARATION = 9
 
     # transaction-wide events
     TRANS_POST = 10
@@ -129,7 +130,8 @@ class LoggingTransactionDisplay(ErrorTransactionDisplay):
                        self.PKG_OBSOLETE: _('Obsoleting'),
                        self.PKG_REINSTALL: _('Reinstalling'),
                        self.PKG_UPGRADE: _('Upgrading'),
-                       self.PKG_VERIFY: _('Verifying')}
+                       self.PKG_VERIFY: _('Verifying'),
+                       self.TRANS_PREPARATION: _('Preparing Transaction')}
         self.fileaction = {self.PKG_CLEANUP: 'Cleanup',
                            self.PKG_DOWNGRADE: 'Downgraded',
                            self.PKG_ERASE: 'Erased',
@@ -137,7 +139,8 @@ class LoggingTransactionDisplay(ErrorTransactionDisplay):
                            self.PKG_OBSOLETE: 'Obsoleted',
                            self.PKG_REINSTALL: 'Reinstalled',
                            self.PKG_UPGRADE:  'Upgraded',
-                           self.PKG_VERIFY: 'Verified'}
+                           self.PKG_VERIFY: 'Verified',
+                           self.TRANS_PREPARATION: _('Preparing Transaction')}
         self.rpm_logger = logging.getLogger('dnf.rpm')
 
     def error(self, message):
@@ -410,6 +413,8 @@ class RPMTransaction(object):
                 self._transStart(total)
             elif what == rpm.RPMCALLBACK_TRANS_STOP:
                 self._transStop()
+            elif what == rpm.RPMCALLBACK_TRANS_PROGRESS:
+                self._trans_progress(amount, total)
             elif what == rpm.RPMCALLBACK_ELEM_PROGRESS:
                 # This callback type is issued every time the next transaction
                 # element is about to be processed by RPM, before any other
@@ -421,8 +426,12 @@ class RPMTransaction(object):
                 self._instCloseFile(key)
             elif what == rpm.RPMCALLBACK_INST_PROGRESS:
                 self._instProgress(amount, total, key)
+            elif what == rpm.RPMCALLBACK_UNINST_START:
+                self._uninst_start(key)
             elif what == rpm.RPMCALLBACK_UNINST_STOP:
                 self._unInstStop(key)
+            elif what == rpm.RPMCALLBACK_UNINST_PROGRESS:
+                self._uninst_progress(amount, total, key)
             elif what == rpm.RPMCALLBACK_CPIO_ERROR:
                 self._cpioError(key)
             elif what == rpm.RPMCALLBACK_UNPACK_ERROR:
@@ -446,6 +455,11 @@ class RPMTransaction(object):
     def _transStop(self):
         if self._ts_done is not None:
             self._ts_done.close()
+
+    def _trans_progress(self, amount, total):
+        action = TransactionDisplay.TRANS_PREPARATION
+        for display in self.displays:
+            display.progress('', action, amount + 1, total, 1, 1)
 
     def _elemProgress(self, index):
         self._te_index = index
@@ -497,10 +511,26 @@ class RPMTransaction(object):
                 pkg, action, amount, total, self.complete_actions,
                 self.total_actions)
 
-    def _unInstStop(self, key):
-        pkg, state, _ = self._extract_cbkey(key)
+    def _uninst_start(self, key):
         self.total_removed += 1
         self.complete_actions += 1
+
+
+    def _uninst_progress(self, amount, total, key):
+        pkg, state, _ = self._extract_cbkey(key)
+        if state == 'Obsoleted':
+            action = TransactionDisplay.PKG_OBSOLETE
+        elif state == 'Updated':
+            action = TransactionDisplay.PKG_CLEANUP
+        else:
+            action = TransactionDisplay.PKG_ERASE
+        for display in self.displays:
+            display.progress(
+                pkg, action, amount, total, self.complete_actions,
+                self.total_actions)
+
+    def _unInstStop(self, key):
+        pkg, state, _ = self._extract_cbkey(key)
         if state == 'Obsoleted':
             action = TransactionDisplay.PKG_OBSOLETE
         elif state == 'Updated':
@@ -509,8 +539,6 @@ class RPMTransaction(object):
             action = TransactionDisplay.PKG_ERASE
         for display in self.displays:
             display.filelog(pkg, action)
-            display.progress(pkg, action, 100, 100, self.complete_actions,
-                             self.total_actions)
 
         if self.test:
             return
