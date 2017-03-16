@@ -82,9 +82,7 @@
       conf = base.conf
       conf.cachedir = CACHEDIR
       conf.substitutions['releasever'] = 22
-      repo = dnf.repo.Repo('my-repo', CACHEDIR)
-      repo.baseurl = [MY_REPO_URL]
-      base.repos.add(repo)
+      base.repos.add_new_repo('my-repo', conf, baseurl=[MY_REPO_URL])
       base.fill_sack()
 
   .. method:: do_transaction([display])
