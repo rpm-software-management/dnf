@@ -29,6 +29,8 @@ PKG_REINSTALL = dnf.yum.rpmtrans.TransactionDisplay.PKG_REINSTALL  # :api
 PKG_REMOVE = dnf.yum.rpmtrans.TransactionDisplay.PKG_ERASE  # :api
 PKG_UPGRADE = dnf.yum.rpmtrans.TransactionDisplay.PKG_UPGRADE  # :api
 PKG_VERIFY = dnf.yum.rpmtrans.TransactionDisplay.PKG_VERIFY  # :api
+TRANS_PREPARATION = dnf.yum.rpmtrans.TransactionDisplay.TRANS_PREPARATION  # :api
+PKG_SCRIPTLET = dnf.yum.rpmtrans.TransactionDisplay.PKG_SCRIPTLET  # :api
 
 STATUS_OK = None # :api
 STATUS_FAILED = 1 # :api
