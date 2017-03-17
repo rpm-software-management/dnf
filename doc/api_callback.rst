@@ -74,18 +74,23 @@
 
     Report ongoing progress on the given transaction item. `package` is the :class:`dnf.package.Package` being processed and `action` is a constant with the following meaning:
 
-    ============== =================================================================================
-    `action` value meaning
-    ============== =================================================================================
-    PKG_CLEANUP    `package` cleanup is being performed.
-    PKG_DOWNGRADE  `package` is being downgraded.
-    PKG_INSTALL    `package` is being installed.
-    PKG_OBSOLETE   `package` is being obsoleted.
-    PKG_REINSTALL  `package` is being reinstalled.
-    PKG_REMOVE     `package` is being removed.
-    PKG_UPGRADE    `package` is being upgraded.
-    PKG_VERIFY     `package` is being verified.
-    TRANS_POST     The post-trans phase started. In this case, all the other arguments are ``None``.
-    ============== =================================================================================
+    ================== ================================================================================= ===========
+    `action` value     meaning                                                                           Appearance*
+    ================== ================================================================================= ===========
+    PKG_CLEANUP        `package` cleanup is being performed.                                             3
+    PKG_DOWNGRADE      `package` is being downgraded.                                                    2
+    PKG_INSTALL        `package` is being installed.                                                     2
+    PKG_OBSOLETE       `package` is being obsoleted.                                                     2
+    PKG_REINSTALL      `package` is being reinstalled.                                                   2
+    PKG_REMOVE         `package` is being removed.                                                       2
+    PKG_UPGRADE        `package` is being upgraded.                                                      2
+    PKG_VERIFY         `package` is being verified.                                                      5
+    PKG_SCRIPTLET      `package` scriplet is being performed.                                            Anytime
+    TRANS_PREPARATION  `transaction` is being prepared.                                                  1
+    TRANS_POST         The post-trans phase started. In this case, all the other arguments are ``None``. 4
+    ================== ================================================================================= ===========
+
+  \*\ This is order in which state of transaction which callback action can appear. Only PKG_SCRIPTLET
+  can appear anytime during transaction even before transaction starts.
 
   `ti_done` is the number of processed bytes of the transaction item, `ti_total` is the total number of bytes of the transaction item, `ts_done` is the number of actions processed in the whole transaction and `ts_total` is the total number of actions in the whole transaction.
