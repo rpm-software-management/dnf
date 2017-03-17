@@ -450,9 +450,10 @@ class RPMTransaction(object):
                 self._script_start(key)
             elif what == rpm.RPMCALLBACK_SCRIPT_STOP:
                 self._scriptStop()
-        except Exception as e:
-            exept_list = traceback.format_exception(type(e), e, e.__traceback__)
-            logger.critical(''.join(exept_list))
+        except Exception:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            except_list = traceback.format_exception(exc_type, exc_value, exc_traceback)
+            logger.critical(''.join(except_list))
 
     def _transStart(self, total):
         self.total_actions = total
