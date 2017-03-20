@@ -352,7 +352,7 @@ class UpdateInfoCommand(commands.Command):
             (tit, ([id_], [self.TYPE2LABEL[typ]], [unicode(upd)],
                    (id_title[0] + (' - ' + id_title[1] if id_title[1] else '')
                     for id_title in bzs),
-                   (id_title[0] for id_title in cvs), desc.splitlines(), sev,
+                   (id_title[0] for id_title in cvs), desc.splitlines(), [sev],
                    verbse(rigs.splitlines() if rigs else None), verbse(fils),
                    None if not mixed else [_('true') if ins else _('false')]))
             for tit, (id_, typ, upd, bzs, cvs, desc, sev, rigs, fils, ins) in info)
@@ -365,7 +365,7 @@ class UpdateInfoCommand(commands.Command):
             print('  ' + title)
             print('=' * 79)
             for label, lines in zip(labels, vallines):
-                if lines is None:
+                if lines is None or lines == [None]:
                     continue
                 # Use the label only for the first item. For the remaining
                 # items, use an empty label.
