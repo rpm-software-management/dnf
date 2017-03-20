@@ -258,11 +258,12 @@ class RepoQueryCommand(commands.Command):
         return alldepsquery
 
     def run(self):
-        self.cli._populate_update_security_filter(self.opts)
         if self.opts.querytags:
             print(_('Available query-tags: use --queryformat ".. %{tag} .."'))
             print(QUERY_TAGS)
             return
+
+        self.cli._populate_update_security_filter(self.opts)
 
         q = self.base.sack.query()
         if self.opts.key:
