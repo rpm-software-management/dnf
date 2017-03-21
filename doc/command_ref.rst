@@ -923,6 +923,19 @@ are displayed in the standard NEVRA notation.
     dependencies for the given packages. The results only shows the newest
     providers (which can be changed by using --verbose)
 
+``--nvr``
+    Show found packages in format name-version-release. Same as
+    ``--qf "%{name}-%{version}-%{release}"``
+
+``--nevra``
+
+    Show found packages in format name-epoch:version-release.architecture. Same as
+    ``--qf "%{name}-%{epoch}:%{version}-%{release}.%{arch}"`` (default)
+
+``--envra``
+    Show found packages in format epoch:name-version-release.architecture. Same as
+    ``--qf "%{epoch}:%{name}-%{version}-%{release}.%{arch}"``
+
 .. _queryformat_repoquery-label:
 
 ``--qf <format>``, ``--queryformat <format>``
