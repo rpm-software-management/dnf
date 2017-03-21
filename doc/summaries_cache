@@ -1926,5 +1926,41 @@
     [
         1417627, 
         "RFE: show hint how to display why package was skipped"
+    ], 
+    [
+        1417542, 
+        "Dnf won't synchronize cache"
+    ], 
+    [
+        1401446, 
+        "dnf does not report cleaning packages"
+    ], 
+    [
+        1416699, 
+        "Error: Will not install a source rpm package"
+    ], 
+    [
+        1427132, 
+        "create an API for initializing repos"
+    ], 
+    [
+        1397047, 
+        "[abrt] dnf: _scriptError(): rpmtrans.py:550:_scriptError:AttributeError: 'NoneType' object has no attribute 'name'"
+    ], 
+    [
+        1379628, 
+        "[RFE] Add \"--nodocs\" option for install"
+    ], 
+    [
+        1424939, 
+        "L10N - explain \"Login User\""
+    ], 
+    [
+        1396992, 
+        "dnf repoquery/whatrequires doesn't work correctly"
+    ], 
+    [
+        1412970, 
+        "[RFE] repoquery: Allow querying all packages"
     ]
 ]
