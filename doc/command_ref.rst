@@ -840,6 +840,9 @@ resulting packages matching the specification. All packages are considered if no
 ``--whatenhances <capability>``
     Limit the resulting set only to packages that enhance ``<capability>``.
 
+``--whatobsoletes <capability>``
+    Limit the resulting set only to packages that obsolete ``<capability>``.
+
 ``--whatprovides <capability>``
     Limit the resulting set only to packages that provide ``<capability>``.
 
