@@ -153,7 +153,19 @@ class RepoQueryCommand(commands.Command):
         outform.add_argument('--qf', "--queryformat", dest='queryformat',
                              default=QFORMAT_DEFAULT,
                              help=_('format for displaying found packages'))
-
+        outform.add_argument("--nevra", dest='queryformat', const=QFORMAT_DEFAULT,
+                             action='store_const',
+                             help=_('use name-epoch:version-release.architecture format for '
+                                    'displaying found packages (default)'))
+        outform.add_argument("--nvr", dest='queryformat', const='%{name}-%{version}-%{release}',
+                             action='store_const', help=_('use name-version-release format for '
+                                                          'displaying found packages '
+                                                          '(rpm query default)'))
+        outform.add_argument("--envra", dest='queryformat',
+                             const='%{epoch}:%{name}-%{version}-%{release}.%{arch}',
+                             action='store_const',
+                             help=_('use epoch:name-version-release.architecture format for '
+                                    'displaying found packages'))
         pkgfilter = parser.add_mutually_exclusive_group()
         pkgfilter.add_argument("--duplicates", dest='pkgfilter',
                                const='duplicated', action='store_const',
