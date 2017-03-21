@@ -104,10 +104,14 @@ class RepoQueryCommand(commands.Command):
         parser.add_argument('-a', '--all', dest='queryall', action='store_true',
                             help=_("Query all packages (shorthand for repoquery '*' "
                                    "or repoquery without argument)"))
-        parser.add_argument('--arch', metavar='ARCH',
+        parser.add_argument('--show-duplicates', action='store_true',
+                            help=_("Query all versions of packages (default)"))
+        parser.add_argument('--arch', '--archlist', metavar='ARCH', dest='arch',
                             help=_('show only results from this ARCH'))
         parser.add_argument('-f', '--file', metavar='FILE', nargs='+',
                             help=_('show only results that owns FILE'))
+        parser.add_argument('--whatobsoletes', metavar='REQ',
+                            help=_('show only results that obsolete REQ'))
         parser.add_argument('--whatprovides', metavar='REQ',
                             help=_('show only results that provide REQ'))
         parser.add_argument('--whatrequires', metavar='REQ',
@@ -321,6 +325,8 @@ class RepoQueryCommand(commands.Command):
 
         if self.opts.file:
             q = q.filter(file__glob=self.opts.file)
+        if self.opts.whatobsoletes:
+            q = q.filter(obsoletes=self.opts.whatobsoletes)
         if self.opts.whatprovides:
             a = q.filter(provides__glob=[self.opts.whatprovides])
             if a:
