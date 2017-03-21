@@ -837,6 +837,9 @@ resulting packages matching the specification. All packages are considered if no
 ``--upgrades``
     Limit the resulting set to packages that provide an upgrade for some already installed package.
 
+``--whatconflicts <capability>``
+    Limit the resulting set only to packages that conflict ``<capability>``.
+
 ``--whatenhances <capability>``
     Limit the resulting set only to packages that enhance ``<capability>``.
 
