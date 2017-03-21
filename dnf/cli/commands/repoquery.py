@@ -110,6 +110,8 @@ class RepoQueryCommand(commands.Command):
                             help=_('show only results from this ARCH'))
         parser.add_argument('-f', '--file', metavar='FILE', nargs='+',
                             help=_('show only results that owns FILE'))
+        parser.add_argument('--whatconflicts', metavar='REQ',
+                            help=_('show only results that conflict REQ'))
         parser.add_argument('--whatobsoletes', metavar='REQ',
                             help=_('show only results that obsolete REQ'))
         parser.add_argument('--whatprovides', metavar='REQ',
@@ -325,6 +327,8 @@ class RepoQueryCommand(commands.Command):
 
         if self.opts.file:
             q = q.filter(file__glob=self.opts.file)
+        if self.opts.whatconflicts:
+            q = q.filter(conflicts=self.opts.whatconflicts)
         if self.opts.whatobsoletes:
             q = q.filter(obsoletes=self.opts.whatobsoletes)
         if self.opts.whatprovides:
