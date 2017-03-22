@@ -18,7 +18,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-21 12:37+0100\n"
-"PO-Revision-Date: 2017-03-20 03:10-0400\n"
+"PO-Revision-Date: 2017-03-21 04:28-0400\n"
 "Last-Translator: Igor Gorbounov <igor.gorbounov@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/dnf/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -761,96 +761,103 @@ msgstr ""
 
 #: ../dnf/cli/commands/repoquery.py:146
 msgid "show detailed information about the package"
-msgstr ""
+msgstr "показывать подробную информацию о пакете"
 
 #: ../dnf/cli/commands/repoquery.py:149
 msgid "show list of files in the package"
-msgstr ""
+msgstr "показывать список файлов в пакете"
 
 #: ../dnf/cli/commands/repoquery.py:152
 msgid "show package source RPM name"
-msgstr ""
+msgstr "показывать имя исходного пакета RPM"
 
 #: ../dnf/cli/commands/repoquery.py:155
 msgid "format for displaying found packages"
-msgstr ""
+msgstr "формат отображения найденных пакетов"
 
 #: ../dnf/cli/commands/repoquery.py:160
 msgid "limit the query to installed duplicate packages"
-msgstr ""
+msgstr "ограничить запрос установленными повторяющимися пакетами"
 
 #: ../dnf/cli/commands/repoquery.py:167
 msgid "limit the query to installed installonly packages"
-msgstr ""
+msgstr "ограничить запрос установленными пакетами «только для установки»"
 
 #: ../dnf/cli/commands/repoquery.py:170
 msgid "limit the query to installed packages with unsatisfied dependencies"
 msgstr ""
+"ограничить запрос установленными пакетами с неудовлетворенными зависимостями"
 
 #: ../dnf/cli/commands/repoquery.py:174
 msgid "Display capabilities that the package conflicts with."
-msgstr ""
+msgstr "Показывать возможности, с которыми пакет конфликтует."
 
 #: ../dnf/cli/commands/repoquery.py:175
 msgid "Display capabilities that the package can enhance."
-msgstr ""
+msgstr "Показывать возможности, которые пакет может улучшить."
 
 #: ../dnf/cli/commands/repoquery.py:176
 msgid "Display capabilities provided by the package."
-msgstr ""
+msgstr "Показывать возможности, предоставляемые пакетом."
 
 #: ../dnf/cli/commands/repoquery.py:177
 msgid "Display capabilities that the package recommends."
-msgstr ""
+msgstr "Показывать возможности, рекомендуемые пакетом."
 
 #: ../dnf/cli/commands/repoquery.py:178
 msgid "Display capabilities that the package depends on."
-msgstr ""
+msgstr "Показывать возможности, от которых пакет зависит."
 
 #: ../dnf/cli/commands/repoquery.py:179
 #, python-format
 msgid ""
 "Display capabilities that the package depends on for running a %%pre script."
 msgstr ""
+"Показывать возможности, от которых пакет зависит для запуска скрипта %%pre."
 
 #: ../dnf/cli/commands/repoquery.py:180
 msgid "Display capabilities that the package suggests."
-msgstr ""
+msgstr "Показывать возможности, предлагаемые пакетом."
 
 #: ../dnf/cli/commands/repoquery.py:181
 msgid "Display capabilities that the package can supplement."
-msgstr ""
+msgstr "Показывать возможности, которые пакет может дополнить."
 
 #: ../dnf/cli/commands/repoquery.py:188
 msgid "Display only available packages."
-msgstr ""
+msgstr "Показывать только доступные пакеты."
 
 #: ../dnf/cli/commands/repoquery.py:191
 msgid "Display only installed packages."
-msgstr ""
+msgstr "Показывать только установленные пакеты."
 
 #: ../dnf/cli/commands/repoquery.py:192
 msgid ""
 "Display only packages that are not present in any of available repositories."
 msgstr ""
+"Показывать только пакеты, отсутствующие во всех доступных репозиториях."
 
 #: ../dnf/cli/commands/repoquery.py:193
 msgid ""
 "Display only packages that provide an upgrade for some already installed "
 "package."
 msgstr ""
+"Показывать только пакеты, которые предоставляют обновление для уже "
+"установленного пакета."
 
 #: ../dnf/cli/commands/repoquery.py:194
 msgid "Display only packages that can be removed by \"dnf autoremove\" command."
 msgstr ""
+"Показывать только пакеты, которые могут быть удалены командой «dnf "
+"autoremove»."
 
 #: ../dnf/cli/commands/repoquery.py:206
 msgid "Display only recently edited packages"
-msgstr ""
+msgstr "Показывать только недавно измененные пакеты"
 
 #: ../dnf/cli/commands/repoquery.py:235
 msgid "Package {} contains no files"
-msgstr ""
+msgstr "В пакете {} нет файлов"
 
 #: ../dnf/cli/commands/repoquery.py:263
 #, python-brace-format

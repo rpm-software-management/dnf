@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-21 12:37+0100\n"
-"PO-Revision-Date: 2017-03-06 12:37-0500\n"
+"PO-Revision-Date: 2017-03-22 01:38-0400\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/projects/p/dnf/language/uk/)\n"
 "MIME-Version: 1.0\n"
@@ -61,7 +61,7 @@ msgstr "Не вдалося надіслати електронну пошту �
 #: ../dnf/automatic/emitter.py:137
 #, python-format
 msgid "Failed to execute command '%s': returned %d"
-msgstr ""
+msgstr "Не вдалося виконати команду «%s»: повернуто стан %d"
 
 #: ../dnf/automatic/main.py:214 ../dnf/cli/main.py:57
 #, python-format
@@ -956,7 +956,7 @@ msgstr "Вилучаємо дані:  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
-msgstr ""
+msgstr "Кеш застарів"
 
 #: ../dnf/cli/commands/clean.py:115
 #, python-format
@@ -1000,12 +1000,19 @@ msgid ""
 "    If no value is given it prints the current value.\n"
 "    If value is given it sets that value."
 msgstr ""
+"{} аргумент [знаення]\n"
+"  аргумент: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,\n"
+"        repo_id.gpgcheck, repo_id.exclude\n"
+"    Якщо значення не надано, виводить поточне значення.\n"
+"    Якщо значення надано, встановлює це значення."
 
 #: ../dnf/cli/commands/shell.py:170
 msgid ""
 "{} [command]\n"
 "    print help"
 msgstr ""
+"{} [команда]\n"
+"    виводити довідкове повідомлення"
 
 #: ../dnf/cli/commands/shell.py:174
 msgid ""
@@ -1014,12 +1021,18 @@ msgid ""
 "  enable: enable repositories. option = repository id\n"
 "  disable: disable repositories. option = repository id"
 msgstr ""
+"{} аргумент [параметр]\n"
+"  list: вивести список усіх сховищ та дані щодо їхнього стану. параметр = [all | id | glob]\n"
+"  enable: увімкнути сховища. параметр = ідентифікатор сховища\n"
+"  disable: вимкнути сховища. параметр = ідентифікатор сховища"
 
 #: ../dnf/cli/commands/shell.py:180
 msgid ""
 "{}\n"
 "    resolve the transaction set"
 msgstr ""
+"{}\n"
+"    визначити набір операцій"
 
 #: ../dnf/cli/commands/shell.py:184
 msgid ""
@@ -1028,18 +1041,26 @@ msgid ""
 "  reset: reset (zero-out) the transaction\n"
 "  run: run the transaction"
 msgstr ""
+"{} аргумент\n"
+"  list: вивести список вмісту операції\n"
+"  reset: скинути (занулити) операцію\n"
+"  run: виконати операцію"
 
 #: ../dnf/cli/commands/shell.py:190
 msgid ""
 "{}\n"
 "    run the transaction"
 msgstr ""
+"{}\n"
+"    виконати операцію"
 
 #: ../dnf/cli/commands/shell.py:194
 msgid ""
 "{}\n"
 "    exit the shell"
 msgstr ""
+"{}\n"
+"    вийти з оболонки"
 
 #: ../dnf/cli/commands/shell.py:199
 msgid ""
@@ -1053,6 +1074,15 @@ msgid ""
 "run                      resolve and run the transaction set\n"
 "exit (or quit)           exit the shell"
 msgstr ""
+"Специфічні для командної оболонки параметри:\n"
+"\n"
+"config                   встановити параметри налаштування\n"
+"help                     вивести довідку\n"
+"repository (або repo)    увімкнути, вимкнути або показати список сховищ\n"
+"resolvedep               визначити набір дій\n"
+"transaction (або ts)     показати список, скинути або запустити набір дій\n"
+"run                      визначити і запустити набір дій\n"
+"exit (або quit)          вийти з оболонки"
 
 #: ../dnf/cli/commands/shell.py:226 ../dnf/cli/cli.py:692
 #, python-format

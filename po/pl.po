@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-21 12:37+0100\n"
-"PO-Revision-Date: 2017-03-06 02:28-0500\n"
+"PO-Revision-Date: 2017-03-21 09:55-0400\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/dnf/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -61,7 +61,7 @@ msgstr "Wysłanie wiadomości e-mail przez „%s” się nie powiodło: %s"
 #: ../dnf/automatic/emitter.py:137
 #, python-format
 msgid "Failed to execute command '%s': returned %d"
-msgstr ""
+msgstr "Wykonanie polecenia „%s” się nie powiodło: zwrócono %d"
 
 #: ../dnf/automatic/main.py:214 ../dnf/cli/main.py:57
 #, python-format
@@ -960,7 +960,7 @@ msgstr "Czyszczenie danych:  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
-msgstr ""
+msgstr "Unieważniono pamięć podręczną"
 
 #: ../dnf/cli/commands/clean.py:115
 #, python-format
@@ -1004,12 +1004,19 @@ msgid ""
 "    If no value is given it prints the current value.\n"
 "    If value is given it sets that value."
 msgstr ""
+"{} parametr [wartość]\n"
+"  parametr: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes,\n"
+"        exclude, repo_id.gpgcheck, repo_id.exclude\n"
+"    Jeśli nie podano wartości, to wyświetla obecną wartość.\n"
+"    Jeśli podano wartość, to ją ustawia."
 
 #: ../dnf/cli/commands/shell.py:170
 msgid ""
 "{} [command]\n"
 "    print help"
 msgstr ""
+"{} [polecenie]\n"
+"    wyświetla pomoc"
 
 #: ../dnf/cli/commands/shell.py:174
 msgid ""
@@ -1018,12 +1025,18 @@ msgid ""
 "  enable: enable repositories. option = repository id\n"
 "  disable: disable repositories. option = repository id"
 msgstr ""
+"{} parametr [opcja]\n"
+"  list: wyświetla listę repozytoriów i ich stan. opcja = [all | identyfikator | wyrażenie regularne]\n"
+"  enable: włącza repozytoria. opcja = identyfikator repozytorium\n"
+"  disable: wyłącza repozytoria. opcja = identyfikator repozytorium"
 
 #: ../dnf/cli/commands/shell.py:180
 msgid ""
 "{}\n"
 "    resolve the transaction set"
 msgstr ""
+"{}\n"
+"    rozwiązuje zestaw transakcji"
 
 #: ../dnf/cli/commands/shell.py:184
 msgid ""
@@ -1032,18 +1045,26 @@ msgid ""
 "  reset: reset (zero-out) the transaction\n"
 "  run: run the transaction"
 msgstr ""
+"{} parametr\n"
+"  list: wyświetla listę zawartości transakcji\n"
+"  reset: przywraca (zeruje) transakcję\n"
+"  run: wykonuje transakcję"
 
 #: ../dnf/cli/commands/shell.py:190
 msgid ""
 "{}\n"
 "    run the transaction"
 msgstr ""
+"{}\n"
+"    wykonuje transakcję"
 
 #: ../dnf/cli/commands/shell.py:194
 msgid ""
 "{}\n"
 "    exit the shell"
 msgstr ""
+"{}\n"
+"    wychodzi z powłoki"
 
 #: ../dnf/cli/commands/shell.py:199
 msgid ""
@@ -1057,6 +1078,16 @@ msgid ""
 "run                      resolve and run the transaction set\n"
 "exit (or quit)           exit the shell"
 msgstr ""
+"Parametry powłoki:\n"
+"\n"
+"config                   ustawia opcje konfiguracji\n"
+"help                     wyświetla pomoc\n"
+"repository (lub repo)    włącza, wyłącza lub wyświetla listę repozytoriów\n"
+"resolvedep               rozwiązuje zestaw transakcji\n"
+"transaction (lub ts)     wyświetla listę, przywraca lub wykonuje zestaw\n"
+"                         transakcji\n"
+"run                      rozwiązuje i wykonuje zestaw transakcji\n"
+"exit (lub quit)          wychodzi z powłoki"
 
 #: ../dnf/cli/commands/shell.py:226 ../dnf/cli/cli.py:692
 #, python-format
