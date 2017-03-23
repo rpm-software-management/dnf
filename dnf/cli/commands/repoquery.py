@@ -131,6 +131,8 @@ class RepoQueryCommand(commands.Command):
                                       help=_("check non-explicit dependencies (files and Provides); default"))
         whatrequiresform.add_argument("--exactdeps", action="store_true",
                                       help=_('check dependencies exactly as given, opposite of --alldeps'))
+        parser.add_argument("--recursive", action="store_true", help=_(
+            'used with --whatrequires, and --requires --resolve, query packages recursively.'))
         parser.add_argument('--deplist', action='store_true', help=_(
             "show a list of all dependencies and what packages provide them"))
         parser.add_argument('--querytags', action='store_true',
@@ -257,23 +259,30 @@ class RepoQueryCommand(commands.Command):
         else:
            return rpm2py_format(opts.queryformat).format(po)
 
+    def _get_recursive_deps_query(self, query_in, query_select, done=None, recursive=False):
+        done = done if done else self.base.sack.query().filter(empty=True)
+        t = self.base.sack.query().filter(empty=True)
+        for pkg in query_select.run():
+            t = t.union(query_in.filter(requires=pkg.provides))
+            t = t.union(query_in.filter(requires=pkg.files))
+        if recursive:
+            query_select = t.difference(done)
+            if query_select:
+                done = self._get_recursive_deps_query(query_in, query_select, done=t.union(done),
+                                                      recursive=recursive)
+        return t.union(done)
 
     def by_all_deps(self, name, query):
         defaultquery = query.intersection(dnf.subject.Subject(name).get_best_query(
             self.base.sack, with_provides=False, forms=[hawkey.FORM_NEVRA, hawkey.FORM_NEVR,
                                                         hawkey.FORM_NEV, hawkey.FORM_NA,
                                                         hawkey.FORM_NAME]))
-        allpkgs = set()
         requiresquery = query.filter(requires__glob=name)
-        for reqpkg in requiresquery.run():
-            allpkgs.add(reqpkg)
-        for pkg in defaultquery.run():
-            for provide in pkg.provides:
-                providequery = query.filter(requires=provide)
-                for needsprovidepkg in providequery.run():
-                    allpkgs.add(needsprovidepkg)
-        alldepsquery = query.filter(pkg=allpkgs)
-        return alldepsquery
+
+        done = requiresquery.union(self._get_recursive_deps_query(query, defaultquery))
+        if self.opts.recursive:
+            done = done.union(self._get_recursive_deps_query(query, done, recursive=self.opts.recursive))
+        return done
 
     def run(self):
         if self.opts.querytags:
