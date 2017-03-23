@@ -281,8 +281,19 @@ class RepoQueryCommand(commands.Command):
 
         done = requiresquery.union(self._get_recursive_deps_query(query, defaultquery))
         if self.opts.recursive:
-            done = done.union(self._get_recursive_deps_query(query, done, recursive=self.opts.recursive))
+            done = done.union(self._get_recursive_deps_query(query, done,
+                                                             recursive=self.opts.recursive))
         return done
+
+    def _get_recursive_providers_query(self, query_in, providers, done=None):
+        done = done if done else self.base.sack.query().filter(empty=True)
+        t = self.base.sack.query().filter(empty=True)
+        for pkg in providers.run():
+            t = t.union(query_in.filter(provides=pkg.requires))
+        query_select = t.difference(done)
+        if query_select:
+            done = self._get_recursive_providers_query(query_in, query_select, done=t.union(done))
+        return t.union(done)
 
     def run(self):
         if self.opts.querytags:
@@ -427,6 +438,8 @@ class RepoQueryCommand(commands.Command):
             query = self.filter_repo_arch(
                 self.opts, self.base.sack.query().available())
             providers = query.filter(provides__glob=list(pkgs))
+            if self.opts.recursive:
+                providers = providers.union(self._get_recursive_providers_query(query, providers))
             pkgs = set()
             for pkg in providers.latest().run():
                 try:
