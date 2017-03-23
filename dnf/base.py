@@ -106,24 +106,52 @@ class Base(object):
         else:
             self._tempfiles.update(files)
 
-    def _add_repo_to_sack(self, repo):
-        repo.load()
-        hrepo = repo._hawkey_repo
-        hrepo.repomd_fn = repo._repomd_fn
-        hrepo.primary_fn = repo._primary_fn
-        hrepo.filelists_fn = repo._filelists_fn
-        hrepo.cost = repo.cost
-        if repo._presto_fn:
-            hrepo.presto_fn = repo._presto_fn
-        else:
-            logger.debug("not found deltainfo for: %s", repo.name)
-        if repo._updateinfo_fn:
-            hrepo.updateinfo_fn = repo._updateinfo_fn
-        else:
-            logger.debug("not found updateinfo for: %s", repo.name)
-        self._sack.load_repo(hrepo, build_cache=True, load_filelists=True,
-                             load_presto=repo.deltarpm,
-                             load_updateinfo=True)
+    def _add_repos_to_sack(self, repos_iterable):
+        """
+        @param repos_iterable: Sequence of repos in iterable form
+        """
+        errors = []
+        mts = 0
+        age = time.time()
+        for repo in repos_iterable:
+            try:
+                repo.load()
+                hrepo = repo._hawkey_repo
+                hrepo.repomd_fn = repo._repomd_fn
+                hrepo.primary_fn = repo._primary_fn
+                hrepo.filelists_fn = repo._filelists_fn
+                hrepo.cost = repo.cost
+                if repo._presto_fn:
+                    hrepo.presto_fn = repo._presto_fn
+                else:
+                    logger.debug("not found deltainfo for: %s", repo.name)
+                if repo._updateinfo_fn:
+                    hrepo.updateinfo_fn = repo._updateinfo_fn
+                else:
+                    logger.debug("not found updateinfo for: %s", repo.name)
+                self._sack.load_repo(hrepo, build_cache=True, load_filelists=True,
+                                     load_presto=repo.deltarpm,
+                                     load_updateinfo=True)
+                if repo.metadata._timestamp > mts:
+                    mts = repo.metadata._timestamp
+                if repo.metadata._age < age:
+                    age = repo.metadata._age
+                logger.debug(_("%s: using metadata from %s."), repo.id,
+                             dnf.util.normalize_time(
+                                 repo.metadata._md_timestamp))
+            except dnf.exceptions.RepoError as e:
+                repo._md_expire_cache()
+                if repo.skip_if_unavailable is False:
+                    raise
+                errors.append(e)
+                repo.disable()
+        if age != 0 and mts != 0:
+            logger.info(_("Last metadata expiration check: %s ago on %s."),
+                        datetime.timedelta(seconds=int(age)),
+                        dnf.util.normalize_time(mts))
+        for e in errors:
+            logger.warning(_("%s, disabling."), e)
+
 
     @staticmethod
     def _setup_default_conf():
@@ -304,32 +332,7 @@ class Base(object):
                     if load_system_repo != 'auto':
                         raise
             if load_available_repos:
-                errors = []
-                mts = 0
-                age = time.time()
-                for r in self.repos.iter_enabled():
-                    try:
-                        self._add_repo_to_sack(r)
-                        if r.metadata._timestamp > mts:
-                            mts = r.metadata._timestamp
-                        if r.metadata._age < age:
-                            age = r.metadata._age
-                        logger.debug(_("%s: using metadata from %s."), r.id,
-                                     dnf.util.normalize_time(
-                                         r.metadata._md_timestamp))
-                    except dnf.exceptions.RepoError as e:
-                        r._md_expire_cache()
-                        if r.skip_if_unavailable is False:
-                            raise
-                        errors.append(e)
-                        r.disable()
-                if age != 0 and mts != 0:
-                    logger.info(_("Last metadata expiration check: "
-                                     "%s ago on %s."),
-                                   datetime.timedelta(seconds=int(age)),
-                                   dnf.util.normalize_time(mts))
-                for e in errors:
-                    logger.warning(_("%s, disabling."), e)
+                self._add_repos_to_sack(self.repos.iter_enabled())
         conf = self.conf
         self._sack._configure(conf.installonlypkgs, conf.installonly_limit)
         self._setup_excludes_includes()

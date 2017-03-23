@@ -121,7 +121,32 @@ class InstallCommand(commands.Command):
                 except dnf.exceptions.MarkingError:
                     msg = _('No package %s available.')
                     logger.info(msg, self.base.output.term.bold(pkg_spec))
-                    errs.append(pkg_spec)
+                    if self.base.conf.search_enabled_metadata:
+                        if self.base._promptWanted():
+                            message = 'Package {} does not exist in enabled repositories but ' \
+                                      'can be searched in disabled repositories with ' \
+                                      'enabled_metadata.\n Do you want to temporary enable those ' \
+                                      'repositories'
+                            msg = _('{} [y/N]: '.format(message)).format(
+                                self.base.output.term.bold(pkg_spec))
+                            defaultyes_msg = _('{} [Y/n]: '.format(message)).format(
+                                self.base.output.term.bold(pkg_spec))
+                            if self.base.conf.assumeno or not self.base.output.userconfirm(
+                                    msg=msg, defaultyes_msg=defaultyes_msg):
+                                pass
+                            else:
+                                repos = list(self.base.repos._iter_disabled_with_enabled_metadata())
+                                for repo in repos:
+                                    repo.enable()
+                                self.base._add_repos_to_sack(repos)
+                                self.base._setup_excludes_includes()
+                                try:
+                                    self.base.install(pkg_spec, strict=strict, forms=forms)
+                                except dnf.exceptions.MarkingError:
+                                    logger.info(msg, self.base.output.term.bold(pkg_spec))
+                                    errs.append(pkg_spec)
+                    else:
+                        errs.append(pkg_spec)
 
         if (len(errs) != 0 or len(err_pkgs) != 0) and self.base.conf.strict:
             raise dnf.exceptions.PackagesNotAvailableError(

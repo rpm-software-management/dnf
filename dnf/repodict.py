@@ -111,6 +111,9 @@ class RepoDict(dict):
         # :api
         return (r for r in self.values() if r.enabled)
 
+    def _iter_disabled_with_enabled_metadata(self):
+        return (r for r in self.values() if not r.enabled and r.enabled_metadata)
+
     # return items ordered by priority
     def items(self):
        """return repos sorted by priority"""
