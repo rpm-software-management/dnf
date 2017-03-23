@@ -323,13 +323,13 @@ class Base(object):
                             raise
                         errors.append(e)
                         r.disable()
-                if age != 0 and mts != 0:
-                    logger.info(_("Last metadata expiration check: "
-                                     "%s ago on %s."),
-                                   datetime.timedelta(seconds=int(age)),
-                                   dnf.util.normalize_time(mts))
                 for e in errors:
                     logger.warning(_("%s, disabling."), e)
+                if self.repos._any_enabled():
+                    if age != 0 and mts != 0:
+                        logger.info(_("Last metadata expiration check: %s ago on %s."),
+                                    datetime.timedelta(seconds=int(age)),
+                                    dnf.util.normalize_time(mts))
         conf = self.conf
         self._sack._configure(conf.installonlypkgs, conf.installonly_limit)
         self._setup_excludes_includes()
