@@ -330,6 +330,8 @@ popd
 %changelog
 * Tue Mar 21 2017 Jaroslav Mracek <jmracek@redhat.com> 2.1.1-1
 - bump version to 2.1.1 + update release notes (Jaroslav Mracek)
+- Sync the translation with locale (Jaroslav Rohel)
+- Disable exceptions in logging (Jaroslav Rohel)
 - Fix severity info in "updateinfo info" (Jaroslav Mracek)
 - Add help for shell commands (Jaroslav Rohel)
 - shell: no crash if missing args (Jaroslav Rohel)
