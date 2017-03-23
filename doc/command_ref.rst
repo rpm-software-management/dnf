@@ -934,7 +934,6 @@ are displayed in the standard NEVRA notation.
     ``--qf "%{name}-%{version}-%{release}"``
 
 ``--nevra``
-
     Show found packages in format name-epoch:version-release.architecture. Same as
     ``--qf "%{name}-%{epoch}:%{version}-%{release}.%{arch}"`` (default)
 
@@ -949,6 +948,10 @@ are displayed in the standard NEVRA notation.
     ``%{<tag>}`` within is replaced by corresponding attribute of the package. List of recognized tags can be displayed
     by running ``dnf repoquery --querytags``.
 
+``--recursive``
+    Query packages recursively. Can be used with ``--whatrequires <REQ>``
+    (optionaly with --alldeps, but it has no effect with --exactdeps), or with
+    ``--requires <REQ> --resolve``.
 
 ``--resolve``
     resolve capabilities to originating package(s).
