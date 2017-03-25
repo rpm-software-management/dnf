@@ -683,6 +683,13 @@ class Cli(object):
 
         notmatch = set()
 
+                if label in self.repo_setopts:
+                    for opt in self.repo_setopts[label].items:
+                        if not hasattr(repofp, opt):
+                            msg = "Repo %s did not have a %s attr. before setopt"
+                            logger.warning(msg, label, opt)
+                        setattr(repofp, opt, getattr(self.repo_setopts[label], opt))
+
         # Process repo enables and disables in order
         try:
             for (repo, operation) in opts.repos_ed:
