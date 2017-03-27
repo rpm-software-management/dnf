@@ -328,6 +328,23 @@ popd
 %endif
 
 %changelog
+* Mon Mar 27 2017 Jaroslav Mracek <jmracek@redhat.com> 2.2.0-1
+- bump version to 2.2.0 + update release notes (Jaroslav Mracek)
+- Add documentation of new API callback actions (RhBug:1411432) (Jaroslav
+  Mracek)
+- Fix python2 doesn't have e.__traceback__ attribute (Jaroslav Mracek)
+- Do not report erasing package as None. (Jaroslav Mracek)
+- Display scriplet for transaction (RhBug:1411423) (RhBug:1406130) (Jaroslav
+  Mracek)
+- Add support for rpmcallbacks (Jaroslav Mracek)
+- AUTHORS: updated (Jaroslav Rohel)
+- Not show expiration check if no repo enabled (RhBug:1369212) (Jaroslav
+  Mracek)
+- Fix changelog in dnf spec file (Jaroslav Mracek)
+- po: update translations (Igor Gnatenko)
+- Add myself (mhatina) to AUTHORS (Martin Hatina)
+- po: Update translations (Igor Gnatenko)
+
 * Tue Mar 21 2017 Jaroslav Mracek <jmracek@redhat.com> 2.1.1-1
 - bump version to 2.1.1 + update release notes (Jaroslav Mracek)
 - Sync the translation with locale (Jaroslav Rohel)
