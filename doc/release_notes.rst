@@ -22,6 +22,21 @@
 .. contents::
 
 ===================
+2.2.0 Release Notes
+===================
+
+API additions in 2.2.0:
+
+* :meth:`dnf.callback.TransactionProgress.progress` has new actions: TRANS_PREPARATION, TRANS_POST, and PKG_SCRIPTLET.
+
+Bugs fixed in 2.2.0:
+
+* :rhbug:`1411432`
+* :rhbug:`1406130`
+* :rhbug:`1411423`
+* :rhbug:`1369212`
+
+===================
 2.1.1 Release Notes
 ===================
 

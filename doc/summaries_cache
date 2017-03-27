@@ -1962,5 +1962,17 @@
     [
         1412970, 
         "[RFE] repoquery: Allow querying all packages"
+    ], 
+    [
+        1411432, 
+        "doc: Expected order of actions not documented for dnf.callback.TransactionProgress"
+    ], 
+    [
+        1406130, 
+        "Upgrade does not show progress between Cleanup and Verify"
+    ], 
+    [
+        1411423, 
+        "RFE: Add package scriptlet action to dnf.callback.TransactionProgress"
     ]
 ]
