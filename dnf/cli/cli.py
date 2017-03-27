@@ -69,6 +69,7 @@ import hawkey
 import logging
 import operator
 import os
+import random
 import re
 import sys
 import time
@@ -802,6 +803,11 @@ class Cli(object):
             e = '%s: %s' % (ucd(e.args[1]), repr(e.filename))
             logger.critical(_('Config error: %s'), e)
             sys.exit(1)
+
+        if opts.sleeptime is not None:
+            time.sleep(random.randrange(opts.sleeptime * 60))
+        else:
+            pass
 
         # store the main commands & summaries, before plugins are loaded
         self.optparser.add_commands(self.cli_commands, 'main')

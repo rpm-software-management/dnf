@@ -203,6 +203,9 @@ class OptionParser(argparse.ArgumentParser):
                                  action="store_true", default=None,
                                  help=_("run entirely from system cache, "
                                         "don't update cache"))
+        main_parser.add_argument("-R", "--randomwait", dest="sleeptime", type=int,
+                                 default=None, metavar='[minutes]',
+                                 help=_("maximum command wait time"))
         main_parser.add_argument("-d", "--debuglevel", dest="debuglevel",
                                  metavar='[debug level]', default=None,
                                  help=_("debugging output level"), type=int)
