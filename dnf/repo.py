@@ -101,7 +101,7 @@ def _pkg2payload(pkg, progress, *factories):
         pload = fn(pkg, progress)
         if pload is not None:
             return pload
-    raise ValueError('no matching payload factory for %s' % pkg)
+    raise ValueError(_('no matching payload factory for %s') % pkg)
 
 
 def _download_payloads(payloads, drpm):
@@ -127,7 +127,7 @@ def _download_payloads(payloads, drpm):
             continue
         payload = tgt.cbdata
         pkg = payload.pkg
-        if err == 'Already downloaded':
+        if err == _('Already downloaded'):
             errs._skipped.add(pkg)
             continue
         pkg.repo._md_expire_cache()
@@ -406,7 +406,7 @@ class MDPayload(dnf.callback.Payload):
     def _fastestmirror_cb(self, cbdata, stage, data):
         if stage == librepo.FMSTAGE_DETECTION:
             # pinging mirrors, this might take a while
-            msg = 'determining the fastest mirror (%d hosts).. ' % data
+            msg = _('determining the fastest mirror (%d hosts).. ') % data
             self.fm_running = True
         elif stage == librepo.FMSTAGE_STATUS and self.fm_running:
             # done.. report but ignore any errors
@@ -655,7 +655,7 @@ class Repo(dnf.conf.RepoConf):
         elif self.baseurl:
             h.setopt(librepo.LRO_URLS, self.baseurl)
         else:
-            msg = 'Cannot find a valid baseurl for repo: %s' % self.id
+            msg = _('Cannot find a valid baseurl for repo: %s') % self.id
             raise dnf.exceptions.RepoError(msg)
 
         # setup username/password if needed
@@ -751,13 +751,13 @@ class Repo(dnf.conf.RepoConf):
             handle.fetchmirrors = True
             handle._perform()
             if handle.metalink is None:
-                logger.debug("reviving: repo '%s' skipped, no metalink.", self.id)
+                logger.debug(_("reviving: repo '%s' skipped, no metalink."), self.id)
                 return False
             hashes = handle.metalink['hashes']
             hashes = [hsh_val for hsh_val in hashes
                       if hsh_val[0] in _RECOGNIZED_CHKSUMS]
             if len(hashes) < 1:
-                logger.debug("reviving: repo '%s' skipped, no usable hash.",
+                logger.debug(_("reviving: repo '%s' skipped, no usable hash."),
                              self.id)
                 return False
             algos = list(map(operator.itemgetter(0), hashes))
@@ -768,10 +768,10 @@ class Repo(dnf.conf.RepoConf):
             digests = chksums.hexdigests()
             for (algo, digest) in hashes:
                 if digests[algo] != digest:
-                    logger.debug("reviving: failed for '%s', mismatched %s sum.",
+                    logger.debug(_("reviving: failed for '%s', mismatched %s sum."),
                                  self.id, algo)
                     return False
-        logger.debug("reviving: '%s' can be revived - metalink checksums match.", self.id)
+        logger.debug(_("reviving: '%s' can be revived - metalink checksums match."), self.id)
         return True
 
     def _try_revive_by_repomd(self):
@@ -784,10 +784,9 @@ class Repo(dnf.conf.RepoConf):
             fresh_repomd_fn = result.rpmmd_repo['repomd']
             with open(fresh_repomd_fn) as fresh_repomd:
                 if repomd.read() != fresh_repomd.read():
-                    logger.debug("reviving: failed for '%s', mismatched repomd.",
-                             self.id)
+                    logger.debug(_("reviving: failed for '%s', mismatched repomd."), self.id)
                     return False
-        logger.debug("reviving: '%s' can be revived - repomd matches.", self.id)
+        logger.debug(_("reviving: '%s' can be revived - repomd matches."), self.id)
         return True
 
     def _try_revive(self):
@@ -842,10 +841,10 @@ class Repo(dnf.conf.RepoConf):
                 self._md_expire_cache()
             if self._sync_strategy in (SYNC_ONLY_CACHE, SYNC_LAZY) or \
                not self._expired:
-                logger.debug('repo: using cache for: %s', self.id)
+                logger.debug(_('repo: using cache for: %s'), self.id)
                 return False
         if self._sync_strategy == SYNC_ONLY_CACHE:
-            msg = "Cache-only enabled but no cache for '%s'" % self.id
+            msg = _("Cache-only enabled but no cache for '%s'") % self.id
             raise dnf.exceptions.RepoError(msg)
         try:
             if self._try_revive():
@@ -856,7 +855,7 @@ class Repo(dnf.conf.RepoConf):
 
             with dnf.util.tmpdir() as tmpdir:
                 handle = self._handle_new_remote(tmpdir)
-                msg = 'repo: downloading from remote: %s, %s'
+                msg = _('repo: downloading from remote: %s, %s')
                 logger.log(dnf.logging.DDEBUG, msg, self.id, handle)
                 self._handle_load(handle)
                 # override old md with the new ones:
@@ -911,9 +910,9 @@ class Repo(dnf.conf.RepoConf):
 
     def _valid(self):
         if len(self.baseurl) == 0 and not self.metalink and not self.mirrorlist:
-            return "Repository %s has no mirror or baseurl set." % self.id
+            return _("Repository %s has no mirror or baseurl set.") % self.id
         supported_types = ['rpm-md', 'rpm', 'repomd', 'rpmmd', 'yum', 'YUM']
         if self.type and self.type not in supported_types:
-            return "Repository '{}' has unsupported type: 'type={}', " \
-                   "skipping.".format(self.id, self.type)
+            return _("Repository '{}' has unsupported type: 'type={}', skipping.").format(
+                self.id, self.type)
         return None
