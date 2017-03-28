@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-21 12:37+0100\n"
+"POT-Creation-Date: 2017-03-28 09:47+0200\n"
 "PO-Revision-Date: 2017-03-14 04:40-0400\n"
 "Last-Translator: Gregorio <devim@outlook.it>\n"
 "Language-Team: Italian (http://www.transifex.com/projects/p/dnf/language/it/)\n"
@@ -1531,6 +1531,76 @@ msgstr ""
 msgid "List of Plugin Commands:"
 msgstr ""
 
+#: ../dnf/cli/utils.py:98
+msgid "Running"
+msgstr "In esecuzione"
+
+#: ../dnf/cli/utils.py:99
+msgid "Sleeping"
+msgstr "In attesa"
+
+#: ../dnf/cli/utils.py:100
+msgid "Uninterruptible"
+msgstr "Non interrompibile"
+
+#: ../dnf/cli/utils.py:101
+msgid "Zombie"
+msgstr "Zombi"
+
+#: ../dnf/cli/utils.py:102
+msgid "Traced/Stopped"
+msgstr "Traced/Fermato"
+
+#: ../dnf/cli/utils.py:103
+msgid "Unknown"
+msgstr "Sconosciuto"
+
+#: ../dnf/cli/utils.py:113
+#, fuzzy, python-format
+msgid "Unable to find information about the locking process (PID %d)"
+msgstr "Impossibile trovare informazioni sul processo che blocca (PID %d)"
+
+#: ../dnf/cli/utils.py:117
+#, python-format
+msgid "  The application with PID %d is: %s"
+msgstr "L'applicazione con PID %d è: %s"
+
+#: ../dnf/cli/utils.py:120
+#, python-format
+msgid "    Memory : %5s RSS (%5sB VSZ)"
+msgstr "    Memoria : %5s RSS (%5sB VSZ)"
+
+#: ../dnf/cli/utils.py:125
+#, python-format
+msgid "    Started: %s - %s ago"
+msgstr "    Avviato: %s - %s fa"
+
+#: ../dnf/cli/utils.py:127
+#, python-format
+msgid "    State  : %s"
+msgstr "    Stato  : %s"
+
+#: ../dnf/cli/main.py:112
+msgid "No read/execute access in current directory, moving to /"
+msgstr ""
+"Non si hanno i diritti di read/execute nella directory corrente, viene usata"
+" /"
+
+#: ../dnf/cli/main.py:130
+#, python-format
+msgid "(try to add '%s' to command line to replace conflicting packages)"
+msgstr ""
+"(provare ad aggiungere '%s' alla linea di comando per sostituire i pacchetti"
+" in conflitto)"
+
+#: ../dnf/cli/main.py:146
+msgid "Dependencies resolved."
+msgstr "Dipendenze risolte."
+
+#: ../dnf/cli/main.py:164
+msgid "Complete!"
+msgstr "Completo!"
+
 #: ../dnf/cli/output.py:489
 msgid "Name"
 msgstr "Nome"
@@ -1760,15 +1830,15 @@ msgstr "Gruppo"
 msgid "Packages"
 msgstr "Pacchetti"
 
-#: ../dnf/cli/output.py:1034 ../dnf/yum/rpmtrans.py:128
+#: ../dnf/cli/output.py:1034 ../dnf/yum/rpmtrans.py:129
 msgid "Installing"
 msgstr "Installazione in corso"
 
-#: ../dnf/cli/output.py:1035 ../dnf/yum/rpmtrans.py:131
+#: ../dnf/cli/output.py:1035 ../dnf/yum/rpmtrans.py:132
 msgid "Upgrading"
 msgstr "Aggiornamento in corso"
 
-#: ../dnf/cli/output.py:1036 ../dnf/yum/rpmtrans.py:130
+#: ../dnf/cli/output.py:1036 ../dnf/yum/rpmtrans.py:131
 msgid "Reinstalling"
 msgstr "Reinstallazione"
 
@@ -1788,7 +1858,7 @@ msgstr "Rimozione in corso"
 msgid "Removing unused dependencies"
 msgstr ""
 
-#: ../dnf/cli/output.py:1041 ../dnf/yum/rpmtrans.py:126
+#: ../dnf/cli/output.py:1041 ../dnf/yum/rpmtrans.py:127
 msgid "Downgrading"
 msgstr "Ritorno ad una versione precedente in corso"
 
@@ -2085,7 +2155,7 @@ msgstr "Dipendenza"
 msgid "Obsoleted"
 msgstr "Reso obsoleto"
 
-#: ../dnf/cli/output.py:1734 ../dnf/yum/rpmtrans.py:129
+#: ../dnf/cli/output.py:1734 ../dnf/yum/rpmtrans.py:130
 msgid "Obsoleting"
 msgstr "Obsoleto"
 
@@ -2144,76 +2214,6 @@ msgstr "--> Inizio risoluzione dipendenze"
 #: ../dnf/cli/output.py:1937
 msgid "--> Finished dependency resolution"
 msgstr "--> Risoluzione delle dipendenze completata"
-
-#: ../dnf/cli/utils.py:98
-msgid "Running"
-msgstr "In esecuzione"
-
-#: ../dnf/cli/utils.py:99
-msgid "Sleeping"
-msgstr "In attesa"
-
-#: ../dnf/cli/utils.py:100
-msgid "Uninterruptible"
-msgstr "Non interrompibile"
-
-#: ../dnf/cli/utils.py:101
-msgid "Zombie"
-msgstr "Zombi"
-
-#: ../dnf/cli/utils.py:102
-msgid "Traced/Stopped"
-msgstr "Traced/Fermato"
-
-#: ../dnf/cli/utils.py:103
-msgid "Unknown"
-msgstr "Sconosciuto"
-
-#: ../dnf/cli/utils.py:113
-#, fuzzy, python-format
-msgid "Unable to find information about the locking process (PID %d)"
-msgstr "Impossibile trovare informazioni sul processo che blocca (PID %d)"
-
-#: ../dnf/cli/utils.py:117
-#, python-format
-msgid "  The application with PID %d is: %s"
-msgstr "L'applicazione con PID %d è: %s"
-
-#: ../dnf/cli/utils.py:120
-#, python-format
-msgid "    Memory : %5s RSS (%5sB VSZ)"
-msgstr "    Memoria : %5s RSS (%5sB VSZ)"
-
-#: ../dnf/cli/utils.py:125
-#, python-format
-msgid "    Started: %s - %s ago"
-msgstr "    Avviato: %s - %s fa"
-
-#: ../dnf/cli/utils.py:127
-#, python-format
-msgid "    State  : %s"
-msgstr "    Stato  : %s"
-
-#: ../dnf/cli/main.py:112
-msgid "No read/execute access in current directory, moving to /"
-msgstr ""
-"Non si hanno i diritti di read/execute nella directory corrente, viene usata"
-" /"
-
-#: ../dnf/cli/main.py:130
-#, python-format
-msgid "(try to add '%s' to command line to replace conflicting packages)"
-msgstr ""
-"(provare ad aggiungere '%s' alla linea di comando per sostituire i pacchetti"
-" in conflitto)"
-
-#: ../dnf/cli/main.py:146
-msgid "Dependencies resolved."
-msgstr "Dipendenze risolte."
-
-#: ../dnf/cli/main.py:164
-msgid "Complete!"
-msgstr "Completo!"
 
 #: ../dnf/conf/config.py:83
 #, python-format
@@ -2357,17 +2357,25 @@ msgstr "Impossibile inizializzare lo storico di DNF DB: %s"
 msgid "Can not create history database at '%s'."
 msgstr "Impossibile creare lo storico del database su '%s'."
 
-#: ../dnf/yum/rpmtrans.py:125
+#: ../dnf/yum/rpmtrans.py:126
 msgid "Cleanup"
 msgstr "Pulizia"
 
-#: ../dnf/yum/rpmtrans.py:127
+#: ../dnf/yum/rpmtrans.py:128
 msgid "Erasing"
 msgstr "Eliminazione in corso"
 
-#: ../dnf/yum/rpmtrans.py:132
+#: ../dnf/yum/rpmtrans.py:133
 msgid "Verifying"
 msgstr "Verifica in corso"
+
+#: ../dnf/yum/rpmtrans.py:134
+msgid "Preparing"
+msgstr ""
+
+#: ../dnf/yum/rpmtrans.py:135
+msgid "Running scriptlet"
+msgstr ""
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -2458,16 +2466,6 @@ msgstr "%s è un file vuoto"
 msgid "Failed loading plugin: %s"
 msgstr "Caricamento non riuscito del plugin: %s"
 
-#: ../dnf/repo.py:870
-#, python-format
-msgid "Cannot download '%s': %s."
-msgstr "Impossibile scaricare '%s': %s."
-
-#: ../dnf/repo.py:872
-#, python-format
-msgid "Failed to synchronize cache for repo '%s'"
-msgstr "Sincronizzazione cache non riuscita per il repo '%s'"
-
 #: ../dnf/repodict.py:56
 #, python-format
 msgid "enabling %s repository"
@@ -2526,13 +2524,13 @@ msgstr "%s: usando metadati di %s."
 
 #: ../dnf/base.py:327
 #, python-format
-msgid "Last metadata expiration check: %s ago on %s."
-msgstr "Ultima verifica della scadenza dei metadati: %s fa il %s."
-
-#: ../dnf/base.py:332
-#, python-format
 msgid "%s, disabling."
 msgstr "%s, disabilitazione in corso."
+
+#: ../dnf/base.py:330
+#, python-format
+msgid "Last metadata expiration check: %s ago on %s."
+msgstr "Ultima verifica della scadenza dei metadati: %s fa il %s."
 
 #: ../dnf/base.py:375
 msgid ""
@@ -2809,3 +2807,87 @@ msgstr "Importazione delle chiave/i non sufficiente, chiave sbagliata?"
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr "Il pacchetto %s è già installato, viene ignorato."
+
+#: ../dnf/repo.py:104
+#, python-format
+msgid "no matching payload factory for %s"
+msgstr ""
+
+#: ../dnf/repo.py:130
+msgid "Already downloaded"
+msgstr ""
+
+#. pinging mirrors, this might take a while
+#: ../dnf/repo.py:409
+#, python-format
+msgid "determining the fastest mirror (%d hosts).. "
+msgstr ""
+
+#: ../dnf/repo.py:658
+#, python-format
+msgid "Cannot find a valid baseurl for repo: %s"
+msgstr ""
+
+#: ../dnf/repo.py:754
+#, python-format
+msgid "reviving: repo '%s' skipped, no metalink."
+msgstr ""
+
+#: ../dnf/repo.py:760
+#, python-format
+msgid "reviving: repo '%s' skipped, no usable hash."
+msgstr ""
+
+#: ../dnf/repo.py:771
+#, python-format
+msgid "reviving: failed for '%s', mismatched %s sum."
+msgstr ""
+
+#: ../dnf/repo.py:774
+#, python-format
+msgid "reviving: '%s' can be revived - metalink checksums match."
+msgstr ""
+
+#: ../dnf/repo.py:787
+#, python-format
+msgid "reviving: failed for '%s', mismatched repomd."
+msgstr ""
+
+#: ../dnf/repo.py:789
+#, python-format
+msgid "reviving: '%s' can be revived - repomd matches."
+msgstr ""
+
+#: ../dnf/repo.py:844
+#, python-format
+msgid "repo: using cache for: %s"
+msgstr ""
+
+#: ../dnf/repo.py:847
+#, python-format
+msgid "Cache-only enabled but no cache for '%s'"
+msgstr ""
+
+#: ../dnf/repo.py:858
+#, python-format
+msgid "repo: downloading from remote: %s, %s"
+msgstr ""
+
+#: ../dnf/repo.py:869
+#, python-format
+msgid "Cannot download '%s': %s."
+msgstr "Impossibile scaricare '%s': %s."
+
+#: ../dnf/repo.py:871
+#, python-format
+msgid "Failed to synchronize cache for repo '%s'"
+msgstr "Sincronizzazione cache non riuscita per il repo '%s'"
+
+#: ../dnf/repo.py:913
+#, python-format
+msgid "Repository %s has no mirror or baseurl set."
+msgstr ""
+
+#: ../dnf/repo.py:916
+msgid "Repository '{}' has unsupported type: 'type={}', skipping."
+msgstr ""

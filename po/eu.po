@@ -8,12 +8,13 @@
 # Asier Sarasua Garmendia <asier.sarasua@gmail.com>, 2015. #zanata
 # Jan Silhan <jsilhan@redhat.com>, 2015. #zanata
 # Asier Sarasua Garmendia <asier.sarasua@gmail.com>, 2016. #zanata
+# Asier Sarasua Garmendia <asier.sarasua@gmail.com>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-21 12:37+0100\n"
-"PO-Revision-Date: 2016-06-17 10:41-0400\n"
+"POT-Creation-Date: 2017-03-28 09:47+0200\n"
+"PO-Revision-Date: 2017-03-25 04:18-0400\n"
 "Last-Translator: Asier Sarasua Garmendia <asier.sarasua@gmail.com>\n"
 "Language-Team: Basque (http://www.transifex.com/projects/p/dnf/language/eu/)\n"
 "MIME-Version: 1.0\n"
@@ -110,19 +111,19 @@ msgstr ""
 
 #: ../dnf/cli/commands/__init__.py:163 ../dnf/cli/commands/__init__.py:329
 msgid "show all packages (default)"
-msgstr ""
+msgstr "erakutsi pakete guztiak (lehenetsia)"
 
 #: ../dnf/cli/commands/__init__.py:166 ../dnf/cli/commands/__init__.py:332
 msgid "show only available packages"
-msgstr ""
+msgstr "erakutsi eskuragarri dauden paketeak soilik"
 
 #: ../dnf/cli/commands/__init__.py:169 ../dnf/cli/commands/__init__.py:335
 msgid "show only installed packages"
-msgstr ""
+msgstr "erakutsi instalatutako paketeak soilik"
 
 #: ../dnf/cli/commands/__init__.py:172 ../dnf/cli/commands/__init__.py:338
 msgid "show only extras packages"
-msgstr ""
+msgstr "erakutsi pakete gehigarriak soilik"
 
 #: ../dnf/cli/commands/__init__.py:175 ../dnf/cli/commands/__init__.py:178
 #: ../dnf/cli/commands/__init__.py:341 ../dnf/cli/commands/__init__.py:344
@@ -147,11 +148,11 @@ msgstr "PAKETEA"
 
 #: ../dnf/cli/commands/__init__.py:215
 msgid "list a package or groups of packages"
-msgstr ""
+msgstr "zerrendatu pakete bat edo pakete multzo bat"
 
 #: ../dnf/cli/commands/__init__.py:229
 msgid "find what package provides the given value"
-msgstr ""
+msgstr "aurkitu zein paketek hornitzen duen emandako balioa"
 
 #: ../dnf/cli/commands/__init__.py:233
 msgid "SOME_STRING"
@@ -1504,6 +1505,73 @@ msgstr ""
 msgid "List of Plugin Commands:"
 msgstr ""
 
+#: ../dnf/cli/utils.py:98
+msgid "Running"
+msgstr "Exekutatzen"
+
+#: ../dnf/cli/utils.py:99
+msgid "Sleeping"
+msgstr "Lotan"
+
+#: ../dnf/cli/utils.py:100
+msgid "Uninterruptible"
+msgstr "Ezin da eten"
+
+#: ../dnf/cli/utils.py:101
+msgid "Zombie"
+msgstr "Zonbia"
+
+#: ../dnf/cli/utils.py:102
+msgid "Traced/Stopped"
+msgstr "Aztarnatua/Gelditua"
+
+#: ../dnf/cli/utils.py:103
+msgid "Unknown"
+msgstr "Ezezaguna"
+
+#: ../dnf/cli/utils.py:113
+#, fuzzy, python-format
+msgid "Unable to find information about the locking process (PID %d)"
+msgstr "Ez da aurkitu blokeo-prozesuari buruzko informazioa (%d PIDa)"
+
+#: ../dnf/cli/utils.py:117
+#, python-format
+msgid "  The application with PID %d is: %s"
+msgstr "%d PIDa duen aplikazioa hau da: %s"
+
+#: ../dnf/cli/utils.py:120
+#, python-format
+msgid "    Memory : %5s RSS (%5sB VSZ)"
+msgstr "    Memoria: %5s RSS (%5sB VSZ)"
+
+#: ../dnf/cli/utils.py:125
+#, python-format
+msgid "    Started: %s - %s ago"
+msgstr "    Hasiera: %s - duela %s"
+
+#: ../dnf/cli/utils.py:127
+#, python-format
+msgid "    State  : %s"
+msgstr " Egoera : %s"
+
+#: ../dnf/cli/main.py:112
+msgid "No read/execute access in current directory, moving to /"
+msgstr ""
+"Ez dago irakurri/exekutatu baimenik uneko direktorioan, errora mugitzen"
+
+#: ../dnf/cli/main.py:130
+#, python-format
+msgid "(try to add '%s' to command line to replace conflicting packages)"
+msgstr ""
+
+#: ../dnf/cli/main.py:146
+msgid "Dependencies resolved."
+msgstr "Mendekotasunak ebatzi dira."
+
+#: ../dnf/cli/main.py:164
+msgid "Complete!"
+msgstr "Osatua!"
+
 #: ../dnf/cli/output.py:489
 msgid "Name"
 msgstr "Izena"
@@ -1729,15 +1797,15 @@ msgstr "Taldea"
 msgid "Packages"
 msgstr "Paketeak"
 
-#: ../dnf/cli/output.py:1034 ../dnf/yum/rpmtrans.py:128
+#: ../dnf/cli/output.py:1034 ../dnf/yum/rpmtrans.py:129
 msgid "Installing"
 msgstr "Instalatzen"
 
-#: ../dnf/cli/output.py:1035 ../dnf/yum/rpmtrans.py:131
+#: ../dnf/cli/output.py:1035 ../dnf/yum/rpmtrans.py:132
 msgid "Upgrading"
 msgstr "Eguneratzen"
 
-#: ../dnf/cli/output.py:1036 ../dnf/yum/rpmtrans.py:130
+#: ../dnf/cli/output.py:1036 ../dnf/yum/rpmtrans.py:131
 msgid "Reinstalling"
 msgstr "Berrinstalatzen"
 
@@ -1757,7 +1825,7 @@ msgstr "Kentzen"
 msgid "Removing unused dependencies"
 msgstr ""
 
-#: ../dnf/cli/output.py:1041 ../dnf/yum/rpmtrans.py:126
+#: ../dnf/cli/output.py:1041 ../dnf/yum/rpmtrans.py:127
 msgid "Downgrading"
 msgstr "Bertsio zaharra instalatzen"
 
@@ -2054,7 +2122,7 @@ msgstr "Mendekotasunak instalatu"
 msgid "Obsoleted"
 msgstr "Zaharkitua"
 
-#: ../dnf/cli/output.py:1734 ../dnf/yum/rpmtrans.py:129
+#: ../dnf/cli/output.py:1734 ../dnf/yum/rpmtrans.py:130
 msgid "Obsoleting"
 msgstr "Zaharkitutzat hartzen"
 
@@ -2113,73 +2181,6 @@ msgstr "--> Mendekotasunen ebazpena hasten"
 #: ../dnf/cli/output.py:1937
 msgid "--> Finished dependency resolution"
 msgstr "--> Mendekotasunen ebazpena amaitu da"
-
-#: ../dnf/cli/utils.py:98
-msgid "Running"
-msgstr "Exekutatzen"
-
-#: ../dnf/cli/utils.py:99
-msgid "Sleeping"
-msgstr "Lotan"
-
-#: ../dnf/cli/utils.py:100
-msgid "Uninterruptible"
-msgstr "Ezin da eten"
-
-#: ../dnf/cli/utils.py:101
-msgid "Zombie"
-msgstr "Zonbia"
-
-#: ../dnf/cli/utils.py:102
-msgid "Traced/Stopped"
-msgstr "Aztarnatua/Gelditua"
-
-#: ../dnf/cli/utils.py:103
-msgid "Unknown"
-msgstr "Ezezaguna"
-
-#: ../dnf/cli/utils.py:113
-#, fuzzy, python-format
-msgid "Unable to find information about the locking process (PID %d)"
-msgstr "Ez da aurkitu blokeo-prozesuari buruzko informazioa (%d PIDa)"
-
-#: ../dnf/cli/utils.py:117
-#, python-format
-msgid "  The application with PID %d is: %s"
-msgstr "%d PIDa duen aplikazioa hau da: %s"
-
-#: ../dnf/cli/utils.py:120
-#, python-format
-msgid "    Memory : %5s RSS (%5sB VSZ)"
-msgstr "    Memoria: %5s RSS (%5sB VSZ)"
-
-#: ../dnf/cli/utils.py:125
-#, python-format
-msgid "    Started: %s - %s ago"
-msgstr "    Hasiera: %s - duela %s"
-
-#: ../dnf/cli/utils.py:127
-#, python-format
-msgid "    State  : %s"
-msgstr " Egoera : %s"
-
-#: ../dnf/cli/main.py:112
-msgid "No read/execute access in current directory, moving to /"
-msgstr ""
-"Ez dago irakurri/exekutatu baimenik uneko direktorioan, errora mugitzen"
-
-#: ../dnf/cli/main.py:130
-#, python-format
-msgid "(try to add '%s' to command line to replace conflicting packages)"
-msgstr ""
-
-#: ../dnf/cli/main.py:146
-msgid "Dependencies resolved."
-msgstr "Mendekotasunak ebatzi dira."
-
-#: ../dnf/cli/main.py:164
-msgid "Complete!"
-msgstr "Osatua!"
 
 #: ../dnf/conf/config.py:83
 #, python-format
@@ -2323,17 +2324,25 @@ msgstr "Ezin da DNF DB historia hasieratu: %s"
 msgid "Can not create history database at '%s'."
 msgstr "Ezin izan da historiaren datu-basea sortu '%s'(e)n."
 
-#: ../dnf/yum/rpmtrans.py:125
+#: ../dnf/yum/rpmtrans.py:126
 msgid "Cleanup"
 msgstr "Garbitzen"
 
-#: ../dnf/yum/rpmtrans.py:127
+#: ../dnf/yum/rpmtrans.py:128
 msgid "Erasing"
 msgstr "Ezabatzen"
 
-#: ../dnf/yum/rpmtrans.py:132
+#: ../dnf/yum/rpmtrans.py:133
 msgid "Verifying"
 msgstr "Egiaztatzen"
+
+#: ../dnf/yum/rpmtrans.py:134
+msgid "Preparing"
+msgstr ""
+
+#: ../dnf/yum/rpmtrans.py:135
+msgid "Running scriptlet"
+msgstr ""
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -2422,16 +2431,6 @@ msgstr "%s fitxategi hutsa da"
 msgid "Failed loading plugin: %s"
 msgstr "Plugina kargatzeak huts egin du: %s"
 
-#: ../dnf/repo.py:870
-#, python-format
-msgid "Cannot download '%s': %s."
-msgstr "Ezin da '%s' deskargatu: %s."
-
-#: ../dnf/repo.py:872
-#, python-format
-msgid "Failed to synchronize cache for repo '%s'"
-msgstr ""
-
 #: ../dnf/repodict.py:56
 #, python-format
 msgid "enabling %s repository"
@@ -2489,13 +2488,13 @@ msgstr "%s: %s(e)ko metadatuak erabiltzen."
 
 #: ../dnf/base.py:327
 #, python-format
-msgid "Last metadata expiration check: %s ago on %s."
-msgstr ""
-
-#: ../dnf/base.py:332
-#, python-format
 msgid "%s, disabling."
 msgstr "%s, desgaitzen."
+
+#: ../dnf/base.py:330
+#, python-format
+msgid "Last metadata expiration check: %s ago on %s."
+msgstr ""
 
 #: ../dnf/base.py:375
 msgid ""
@@ -2763,3 +2762,87 @@ msgstr "Gako(ar)en inportazioak ez du balio izan, gako okerra(k)?"
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr "%s dagoeneko instalatuta dago, saltatzen."
+
+#: ../dnf/repo.py:104
+#, python-format
+msgid "no matching payload factory for %s"
+msgstr ""
+
+#: ../dnf/repo.py:130
+msgid "Already downloaded"
+msgstr ""
+
+#. pinging mirrors, this might take a while
+#: ../dnf/repo.py:409
+#, python-format
+msgid "determining the fastest mirror (%d hosts).. "
+msgstr ""
+
+#: ../dnf/repo.py:658
+#, python-format
+msgid "Cannot find a valid baseurl for repo: %s"
+msgstr ""
+
+#: ../dnf/repo.py:754
+#, python-format
+msgid "reviving: repo '%s' skipped, no metalink."
+msgstr ""
+
+#: ../dnf/repo.py:760
+#, python-format
+msgid "reviving: repo '%s' skipped, no usable hash."
+msgstr ""
+
+#: ../dnf/repo.py:771
+#, python-format
+msgid "reviving: failed for '%s', mismatched %s sum."
+msgstr ""
+
+#: ../dnf/repo.py:774
+#, python-format
+msgid "reviving: '%s' can be revived - metalink checksums match."
+msgstr ""
+
+#: ../dnf/repo.py:787
+#, python-format
+msgid "reviving: failed for '%s', mismatched repomd."
+msgstr ""
+
+#: ../dnf/repo.py:789
+#, python-format
+msgid "reviving: '%s' can be revived - repomd matches."
+msgstr ""
+
+#: ../dnf/repo.py:844
+#, python-format
+msgid "repo: using cache for: %s"
+msgstr ""
+
+#: ../dnf/repo.py:847
+#, python-format
+msgid "Cache-only enabled but no cache for '%s'"
+msgstr ""
+
+#: ../dnf/repo.py:858
+#, python-format
+msgid "repo: downloading from remote: %s, %s"
+msgstr ""
+
+#: ../dnf/repo.py:869
+#, python-format
+msgid "Cannot download '%s': %s."
+msgstr "Ezin da '%s' deskargatu: %s."
+
+#: ../dnf/repo.py:871
+#, python-format
+msgid "Failed to synchronize cache for repo '%s'"
+msgstr ""
+
+#: ../dnf/repo.py:913
+#, python-format
+msgid "Repository %s has no mirror or baseurl set."
+msgstr ""
+
+#: ../dnf/repo.py:916
+msgid "Repository '{}' has unsupported type: 'type={}', skipping."
+msgstr ""

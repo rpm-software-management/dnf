@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-21 12:37+0100\n"
-"PO-Revision-Date: 2017-03-14 05:46-0400\n"
+"POT-Creation-Date: 2017-03-28 09:47+0200\n"
+"PO-Revision-Date: 2017-03-22 06:21-0400\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/dnf/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -61,7 +61,7 @@ msgstr "Misslyckades att skicka e-post via ”%s”: %s"
 #: ../dnf/automatic/emitter.py:137
 #, python-format
 msgid "Failed to execute command '%s': returned %d"
-msgstr ""
+msgstr "Misslyckades att köra kommandot ”%s”: returnerade %d"
 
 #: ../dnf/automatic/main.py:214 ../dnf/cli/main.py:57
 #, python-format
@@ -952,7 +952,7 @@ msgstr "Rensar data:  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
-msgstr ""
+msgstr "Cachen gick ut"
 
 #: ../dnf/cli/commands/clean.py:115
 #, python-format
@@ -995,12 +995,19 @@ msgid ""
 "    If no value is given it prints the current value.\n"
 "    If value is given it sets that value."
 msgstr ""
+"{} arg [värde]\n"
+"  arg: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,\n"
+"        repo_id.gpgcheck, repo_id.exclude\n"
+"    Om inget värde anges skrivs det nuvarande värdet.\n"
+"    Om ät värde anges sätts detta värde."
 
 #: ../dnf/cli/commands/shell.py:170
 msgid ""
 "{} [command]\n"
 "    print help"
 msgstr ""
+"{} [kommando]\n"
+"    skriv ut hjälp"
 
 #: ../dnf/cli/commands/shell.py:174
 msgid ""
@@ -1009,12 +1016,18 @@ msgid ""
 "  enable: enable repositories. option = repository id\n"
 "  disable: disable repositories. option = repository id"
 msgstr ""
+"{} arg [flagga]\n"
+"  list: listar förråd och deras status. flagga = [all | id | glob]\n"
+"  enable: aktivera förråd. flagga = förråds-id\n"
+"  disable: avaktivera förröd. flagga = förråds-id"
 
 #: ../dnf/cli/commands/shell.py:180
 msgid ""
 "{}\n"
 "    resolve the transaction set"
 msgstr ""
+"{}\n"
+"    lös upp transaktionsuppsättningen"
 
 #: ../dnf/cli/commands/shell.py:184
 msgid ""
@@ -1023,18 +1036,26 @@ msgid ""
 "  reset: reset (zero-out) the transaction\n"
 "  run: run the transaction"
 msgstr ""
+"{} arg\n"
+"  list: listar innehållet i transaktionen\n"
+"  reset: återställ (nollställ) transaktionen\n"
+"  run: kör transaktionen"
 
 #: ../dnf/cli/commands/shell.py:190
 msgid ""
 "{}\n"
 "    run the transaction"
 msgstr ""
+"{}\n"
+"    kör transaktionen"
 
 #: ../dnf/cli/commands/shell.py:194
 msgid ""
 "{}\n"
 "    exit the shell"
 msgstr ""
+"{}\n"
+"    avsluta skalet"
 
 #: ../dnf/cli/commands/shell.py:199
 msgid ""
@@ -1048,6 +1069,15 @@ msgid ""
 "run                      resolve and run the transaction set\n"
 "exit (or quit)           exit the shell"
 msgstr ""
+"Skalspecifika argument:\n"
+"\n"
+"config                   ställ in konfigurationsflaggor\n"
+"help                     skriv ut hjälp\n"
+"repository (eller repo)  aktivera, avaktivera eller lista förråd\n"
+"resolvedep               lös upp transaktionsmängden\n"
+"transaction (eller ts)   lista, återställ eller kör transaktionsmängden\n"
+"run                      lös upp och kör transaktionsmängden\n"
+"exit (eller quit)        avsluta skalet"
 
 #: ../dnf/cli/commands/shell.py:226 ../dnf/cli/cli.py:692
 #, python-format
@@ -1544,6 +1574,74 @@ msgstr "Lista över huvudkommandon:"
 msgid "List of Plugin Commands:"
 msgstr "Lista över instickskommandon:"
 
+#: ../dnf/cli/utils.py:98
+msgid "Running"
+msgstr "Kör"
+
+#: ../dnf/cli/utils.py:99
+msgid "Sleeping"
+msgstr "Sover"
+
+#: ../dnf/cli/utils.py:100
+msgid "Uninterruptible"
+msgstr "Oavbrytbar"
+
+#: ../dnf/cli/utils.py:101
+msgid "Zombie"
+msgstr "Zombie"
+
+#: ../dnf/cli/utils.py:102
+msgid "Traced/Stopped"
+msgstr "Spårad/Stoppad"
+
+#: ../dnf/cli/utils.py:103
+msgid "Unknown"
+msgstr "Okänd"
+
+#: ../dnf/cli/utils.py:113
+#, fuzzy, python-format
+msgid "Unable to find information about the locking process (PID %d)"
+msgstr "Kan inte hitta information om den låsande processen (PID %d)"
+
+#: ../dnf/cli/utils.py:117
+#, python-format
+msgid "  The application with PID %d is: %s"
+msgstr "  Programmet med PID %d är: %s"
+
+#: ../dnf/cli/utils.py:120
+#, python-format
+msgid "    Memory : %5s RSS (%5sB VSZ)"
+msgstr "    Minne   : %5s RSS (%5s B VSZ)"
+
+#: ../dnf/cli/utils.py:125
+#, python-format
+msgid "    Started: %s - %s ago"
+msgstr "    Startade: %s - för %s sedan"
+
+#: ../dnf/cli/utils.py:127
+#, python-format
+msgid "    State  : %s"
+msgstr "    Tillstånd: %s"
+
+#: ../dnf/cli/main.py:112
+msgid "No read/execute access in current directory, moving to /"
+msgstr "Inga läs-/körrättigheter i aktuell katalog, flyttar till /"
+
+#: ../dnf/cli/main.py:130
+#, python-format
+msgid "(try to add '%s' to command line to replace conflicting packages)"
+msgstr ""
+"(försök med att lägga till ”%s” på kommandoraden för att ersätta paket som "
+"står i konflikt)"
+
+#: ../dnf/cli/main.py:146
+msgid "Dependencies resolved."
+msgstr "Beroenden upplösta."
+
+#: ../dnf/cli/main.py:164
+msgid "Complete!"
+msgstr "Klart!"
+
 #: ../dnf/cli/output.py:489
 msgid "Name"
 msgstr "Namn"
@@ -1769,15 +1867,15 @@ msgstr "Grupp"
 msgid "Packages"
 msgstr "Paket"
 
-#: ../dnf/cli/output.py:1034 ../dnf/yum/rpmtrans.py:128
+#: ../dnf/cli/output.py:1034 ../dnf/yum/rpmtrans.py:129
 msgid "Installing"
 msgstr "Installerar"
 
-#: ../dnf/cli/output.py:1035 ../dnf/yum/rpmtrans.py:131
+#: ../dnf/cli/output.py:1035 ../dnf/yum/rpmtrans.py:132
 msgid "Upgrading"
 msgstr "Uppgraderar"
 
-#: ../dnf/cli/output.py:1036 ../dnf/yum/rpmtrans.py:130
+#: ../dnf/cli/output.py:1036 ../dnf/yum/rpmtrans.py:131
 msgid "Reinstalling"
 msgstr "Ominstallerar"
 
@@ -1797,7 +1895,7 @@ msgstr "Tar bort"
 msgid "Removing unused dependencies"
 msgstr "Tar bort oanvända beroenden"
 
-#: ../dnf/cli/output.py:1041 ../dnf/yum/rpmtrans.py:126
+#: ../dnf/cli/output.py:1041 ../dnf/yum/rpmtrans.py:127
 msgid "Downgrading"
 msgstr "Nedgraderar"
 
@@ -2096,7 +2194,7 @@ msgstr "Ber-inst"
 msgid "Obsoleted"
 msgstr "Utfasad"
 
-#: ../dnf/cli/output.py:1734 ../dnf/yum/rpmtrans.py:129
+#: ../dnf/cli/output.py:1734 ../dnf/yum/rpmtrans.py:130
 msgid "Obsoleting"
 msgstr "Fasar ut"
 
@@ -2155,74 +2253,6 @@ msgstr "--> Börjar beroendeupplösning"
 #: ../dnf/cli/output.py:1937
 msgid "--> Finished dependency resolution"
 msgstr "--> Avslutade beroendeupplösning"
-
-#: ../dnf/cli/utils.py:98
-msgid "Running"
-msgstr "Kör"
-
-#: ../dnf/cli/utils.py:99
-msgid "Sleeping"
-msgstr "Sover"
-
-#: ../dnf/cli/utils.py:100
-msgid "Uninterruptible"
-msgstr "Oavbrytbar"
-
-#: ../dnf/cli/utils.py:101
-msgid "Zombie"
-msgstr "Zombie"
-
-#: ../dnf/cli/utils.py:102
-msgid "Traced/Stopped"
-msgstr "Spårad/Stoppad"
-
-#: ../dnf/cli/utils.py:103
-msgid "Unknown"
-msgstr "Okänd"
-
-#: ../dnf/cli/utils.py:113
-#, fuzzy, python-format
-msgid "Unable to find information about the locking process (PID %d)"
-msgstr "Kan inte hitta information om den låsande processen (PID %d)"
-
-#: ../dnf/cli/utils.py:117
-#, python-format
-msgid "  The application with PID %d is: %s"
-msgstr "  Programmet med PID %d är: %s"
-
-#: ../dnf/cli/utils.py:120
-#, python-format
-msgid "    Memory : %5s RSS (%5sB VSZ)"
-msgstr "    Minne   : %5s RSS (%5s B VSZ)"
-
-#: ../dnf/cli/utils.py:125
-#, python-format
-msgid "    Started: %s - %s ago"
-msgstr "    Startade: %s - för %s sedan"
-
-#: ../dnf/cli/utils.py:127
-#, python-format
-msgid "    State  : %s"
-msgstr "    Tillstånd: %s"
-
-#: ../dnf/cli/main.py:112
-msgid "No read/execute access in current directory, moving to /"
-msgstr "Inga läs-/körrättigheter i aktuell katalog, flyttar till /"
-
-#: ../dnf/cli/main.py:130
-#, python-format
-msgid "(try to add '%s' to command line to replace conflicting packages)"
-msgstr ""
-"(försök med att lägga till ”%s” på kommandoraden för att ersätta paket som "
-"står i konflikt)"
-
-#: ../dnf/cli/main.py:146
-msgid "Dependencies resolved."
-msgstr "Beroenden upplösta."
-
-#: ../dnf/cli/main.py:164
-msgid "Complete!"
-msgstr "Klart!"
 
 #: ../dnf/conf/config.py:83
 #, python-format
@@ -2368,17 +2398,25 @@ msgstr "Kan inte initiera DNF DB-historiken: %s"
 msgid "Can not create history database at '%s'."
 msgstr "Kan inte skapa en historikdatabas i ”%s”."
 
-#: ../dnf/yum/rpmtrans.py:125
+#: ../dnf/yum/rpmtrans.py:126
 msgid "Cleanup"
 msgstr "Rensar upp"
 
-#: ../dnf/yum/rpmtrans.py:127
+#: ../dnf/yum/rpmtrans.py:128
 msgid "Erasing"
 msgstr "Raderar"
 
-#: ../dnf/yum/rpmtrans.py:132
+#: ../dnf/yum/rpmtrans.py:133
 msgid "Verifying"
 msgstr "Verifierar"
+
+#: ../dnf/yum/rpmtrans.py:134
+msgid "Preparing"
+msgstr ""
+
+#: ../dnf/yum/rpmtrans.py:135
+msgid "Running scriptlet"
+msgstr ""
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -2468,16 +2506,6 @@ msgstr "%s är en tom fil"
 msgid "Failed loading plugin: %s"
 msgstr "Misslyckades att ladda en insticksmodul: %s"
 
-#: ../dnf/repo.py:870
-#, python-format
-msgid "Cannot download '%s': %s."
-msgstr "Kan inte hämta ”%s”: %s."
-
-#: ../dnf/repo.py:872
-#, python-format
-msgid "Failed to synchronize cache for repo '%s'"
-msgstr "Misslyckades att synkronisera cachen för förrådet ”%s”"
-
 #: ../dnf/repodict.py:56
 #, python-format
 msgid "enabling %s repository"
@@ -2536,13 +2564,13 @@ msgstr "%s: använder metadata från %s."
 
 #: ../dnf/base.py:327
 #, python-format
-msgid "Last metadata expiration check: %s ago on %s."
-msgstr "Senaste kontroll av utgång av metadata: för %s sedan den %s."
-
-#: ../dnf/base.py:332
-#, python-format
 msgid "%s, disabling."
 msgstr "%s, avaktiverar."
+
+#: ../dnf/base.py:330
+#, python-format
+msgid "Last metadata expiration check: %s ago on %s."
+msgstr "Senaste kontroll av utgång av metadata: för %s sedan den %s."
 
 #: ../dnf/base.py:375
 msgid ""
@@ -2820,3 +2848,87 @@ msgstr "Import av nycklar hjälpte inte, fel nycklar?"
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr "Paketet %s är redan installerat, hoppar över."
+
+#: ../dnf/repo.py:104
+#, python-format
+msgid "no matching payload factory for %s"
+msgstr ""
+
+#: ../dnf/repo.py:130
+msgid "Already downloaded"
+msgstr ""
+
+#. pinging mirrors, this might take a while
+#: ../dnf/repo.py:409
+#, python-format
+msgid "determining the fastest mirror (%d hosts).. "
+msgstr ""
+
+#: ../dnf/repo.py:658
+#, python-format
+msgid "Cannot find a valid baseurl for repo: %s"
+msgstr ""
+
+#: ../dnf/repo.py:754
+#, python-format
+msgid "reviving: repo '%s' skipped, no metalink."
+msgstr ""
+
+#: ../dnf/repo.py:760
+#, python-format
+msgid "reviving: repo '%s' skipped, no usable hash."
+msgstr ""
+
+#: ../dnf/repo.py:771
+#, python-format
+msgid "reviving: failed for '%s', mismatched %s sum."
+msgstr ""
+
+#: ../dnf/repo.py:774
+#, python-format
+msgid "reviving: '%s' can be revived - metalink checksums match."
+msgstr ""
+
+#: ../dnf/repo.py:787
+#, python-format
+msgid "reviving: failed for '%s', mismatched repomd."
+msgstr ""
+
+#: ../dnf/repo.py:789
+#, python-format
+msgid "reviving: '%s' can be revived - repomd matches."
+msgstr ""
+
+#: ../dnf/repo.py:844
+#, python-format
+msgid "repo: using cache for: %s"
+msgstr ""
+
+#: ../dnf/repo.py:847
+#, python-format
+msgid "Cache-only enabled but no cache for '%s'"
+msgstr ""
+
+#: ../dnf/repo.py:858
+#, python-format
+msgid "repo: downloading from remote: %s, %s"
+msgstr ""
+
+#: ../dnf/repo.py:869
+#, python-format
+msgid "Cannot download '%s': %s."
+msgstr "Kan inte hämta ”%s”: %s."
+
+#: ../dnf/repo.py:871
+#, python-format
+msgid "Failed to synchronize cache for repo '%s'"
+msgstr "Misslyckades att synkronisera cachen för förrådet ”%s”"
+
+#: ../dnf/repo.py:913
+#, python-format
+msgid "Repository %s has no mirror or baseurl set."
+msgstr ""
+
+#: ../dnf/repo.py:916
+msgid "Repository '{}' has unsupported type: 'type={}', skipping."
+msgstr ""

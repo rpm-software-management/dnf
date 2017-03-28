@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-21 12:37+0100\n"
+"POT-Creation-Date: 2017-03-28 09:47+0200\n"
 "PO-Revision-Date: 2017-02-04 06:35-0500\n"
 "Last-Translator: Richard E. van der Luit <nippur@fedoraproject.org>\n"
 "Language-Team: Dutch\n"
@@ -1518,6 +1518,75 @@ msgstr ""
 msgid "List of Plugin Commands:"
 msgstr ""
 
+#: ../dnf/cli/utils.py:98
+msgid "Running"
+msgstr "Draaiend"
+
+#: ../dnf/cli/utils.py:99
+msgid "Sleeping"
+msgstr "In slaap"
+
+#: ../dnf/cli/utils.py:100
+msgid "Uninterruptible"
+msgstr "Niet af te breken"
+
+#: ../dnf/cli/utils.py:101
+msgid "Zombie"
+msgstr "Zombie"
+
+#: ../dnf/cli/utils.py:102
+msgid "Traced/Stopped"
+msgstr "Traced/Gestopt"
+
+#: ../dnf/cli/utils.py:103
+msgid "Unknown"
+msgstr "Onbekend"
+
+#: ../dnf/cli/utils.py:113
+#, fuzzy, python-format
+msgid "Unable to find information about the locking process (PID %d)"
+msgstr ""
+"Kan geen informatie verkrijgen over het proces (PID %d) dat lock heeft gezet"
+
+#: ../dnf/cli/utils.py:117
+#, python-format
+msgid "  The application with PID %d is: %s"
+msgstr "  De applicatie met PID %d is: %s"
+
+#: ../dnf/cli/utils.py:120
+#, python-format
+msgid "    Memory : %5s RSS (%5sB VSZ)"
+msgstr "    Geheugen : %5s RSS (%5sB VSZ)"
+
+#: ../dnf/cli/utils.py:125
+#, python-format
+msgid "    Started: %s - %s ago"
+msgstr "    Gestart: %s - %s geleden"
+
+#: ../dnf/cli/utils.py:127
+#, python-format
+msgid "    State  : %s"
+msgstr "    Status  : %s"
+
+#: ../dnf/cli/main.py:112
+msgid "No read/execute access in current directory, moving to /"
+msgstr "Geen lezen/uitvoeren-toegang in huidige map, terugvallen op /"
+
+#: ../dnf/cli/main.py:130
+#, python-format
+msgid "(try to add '%s' to command line to replace conflicting packages)"
+msgstr ""
+"(probeer '%s' toe te voegen aan opdrachtregel om conflicterende pakketten te"
+" vervangen)"
+
+#: ../dnf/cli/main.py:146
+msgid "Dependencies resolved."
+msgstr "Afhankelijkheden opgelost."
+
+#: ../dnf/cli/main.py:164
+msgid "Complete!"
+msgstr "Klaar."
+
 #: ../dnf/cli/output.py:489
 msgid "Name"
 msgstr "Naam"
@@ -1743,15 +1812,15 @@ msgstr "Groep"
 msgid "Packages"
 msgstr "Pakketten"
 
-#: ../dnf/cli/output.py:1034 ../dnf/yum/rpmtrans.py:128
+#: ../dnf/cli/output.py:1034 ../dnf/yum/rpmtrans.py:129
 msgid "Installing"
 msgstr "Installeren"
 
-#: ../dnf/cli/output.py:1035 ../dnf/yum/rpmtrans.py:131
+#: ../dnf/cli/output.py:1035 ../dnf/yum/rpmtrans.py:132
 msgid "Upgrading"
 msgstr "Upgraden"
 
-#: ../dnf/cli/output.py:1036 ../dnf/yum/rpmtrans.py:130
+#: ../dnf/cli/output.py:1036 ../dnf/yum/rpmtrans.py:131
 msgid "Reinstalling"
 msgstr "Herinstalleren"
 
@@ -1771,7 +1840,7 @@ msgstr "Verwijderen"
 msgid "Removing unused dependencies"
 msgstr "Verwijderen ongebruikte afhankelijkheden"
 
-#: ../dnf/cli/output.py:1041 ../dnf/yum/rpmtrans.py:126
+#: ../dnf/cli/output.py:1041 ../dnf/yum/rpmtrans.py:127
 msgid "Downgrading"
 msgstr "Downgraden"
 
@@ -2068,7 +2137,7 @@ msgstr "Dep-Installaties"
 msgid "Obsoleted"
 msgstr "Als verouderd aangemerkt"
 
-#: ../dnf/cli/output.py:1734 ../dnf/yum/rpmtrans.py:129
+#: ../dnf/cli/output.py:1734 ../dnf/yum/rpmtrans.py:130
 msgid "Obsoleting"
 msgstr "Als verouderd aanmerken"
 
@@ -2127,75 +2196,6 @@ msgstr "--> Beginnen oplossen afhankelijkheden"
 #: ../dnf/cli/output.py:1937
 msgid "--> Finished dependency resolution"
 msgstr "--> Oplossen afhankelijkheden beeindigd"
-
-#: ../dnf/cli/utils.py:98
-msgid "Running"
-msgstr "Draaiend"
-
-#: ../dnf/cli/utils.py:99
-msgid "Sleeping"
-msgstr "In slaap"
-
-#: ../dnf/cli/utils.py:100
-msgid "Uninterruptible"
-msgstr "Niet af te breken"
-
-#: ../dnf/cli/utils.py:101
-msgid "Zombie"
-msgstr "Zombie"
-
-#: ../dnf/cli/utils.py:102
-msgid "Traced/Stopped"
-msgstr "Traced/Gestopt"
-
-#: ../dnf/cli/utils.py:103
-msgid "Unknown"
-msgstr "Onbekend"
-
-#: ../dnf/cli/utils.py:113
-#, fuzzy, python-format
-msgid "Unable to find information about the locking process (PID %d)"
-msgstr ""
-"Kan geen informatie verkrijgen over het proces (PID %d) dat lock heeft gezet"
-
-#: ../dnf/cli/utils.py:117
-#, python-format
-msgid "  The application with PID %d is: %s"
-msgstr "  De applicatie met PID %d is: %s"
-
-#: ../dnf/cli/utils.py:120
-#, python-format
-msgid "    Memory : %5s RSS (%5sB VSZ)"
-msgstr "    Geheugen : %5s RSS (%5sB VSZ)"
-
-#: ../dnf/cli/utils.py:125
-#, python-format
-msgid "    Started: %s - %s ago"
-msgstr "    Gestart: %s - %s geleden"
-
-#: ../dnf/cli/utils.py:127
-#, python-format
-msgid "    State  : %s"
-msgstr "    Status  : %s"
-
-#: ../dnf/cli/main.py:112
-msgid "No read/execute access in current directory, moving to /"
-msgstr "Geen lezen/uitvoeren-toegang in huidige map, terugvallen op /"
-
-#: ../dnf/cli/main.py:130
-#, python-format
-msgid "(try to add '%s' to command line to replace conflicting packages)"
-msgstr ""
-"(probeer '%s' toe te voegen aan opdrachtregel om conflicterende pakketten te"
-" vervangen)"
-
-#: ../dnf/cli/main.py:146
-msgid "Dependencies resolved."
-msgstr "Afhankelijkheden opgelost."
-
-#: ../dnf/cli/main.py:164
-msgid "Complete!"
-msgstr "Klaar."
 
 #: ../dnf/conf/config.py:83
 #, python-format
@@ -2339,17 +2339,25 @@ msgstr "Kan DNF-DBgeschiedenis niet initialiseren: %s"
 msgid "Can not create history database at '%s'."
 msgstr "Kan geen geschiedenisdatabase aanmaken op '%s'."
 
-#: ../dnf/yum/rpmtrans.py:125
+#: ../dnf/yum/rpmtrans.py:126
 msgid "Cleanup"
 msgstr "Opschonen"
 
-#: ../dnf/yum/rpmtrans.py:127
+#: ../dnf/yum/rpmtrans.py:128
 msgid "Erasing"
 msgstr "Wissen"
 
-#: ../dnf/yum/rpmtrans.py:132
+#: ../dnf/yum/rpmtrans.py:133
 msgid "Verifying"
 msgstr "Verifiëren"
+
+#: ../dnf/yum/rpmtrans.py:134
+msgid "Preparing"
+msgstr ""
+
+#: ../dnf/yum/rpmtrans.py:135
+msgid "Running scriptlet"
+msgstr ""
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -2440,16 +2448,6 @@ msgstr "%s is een leeg bestand"
 msgid "Failed loading plugin: %s"
 msgstr "Fout bij laden plugin: %s"
 
-#: ../dnf/repo.py:870
-#, python-format
-msgid "Cannot download '%s': %s."
-msgstr "Kan '%s' niet downloaden: %s."
-
-#: ../dnf/repo.py:872
-#, python-format
-msgid "Failed to synchronize cache for repo '%s'"
-msgstr "Synchroniseren van cache voor repo '%s' is niet gelukt"
-
 #: ../dnf/repodict.py:56
 #, python-format
 msgid "enabling %s repository"
@@ -2506,13 +2504,13 @@ msgstr "%s: metadata gebruikend van %s."
 
 #: ../dnf/base.py:327
 #, python-format
-msgid "Last metadata expiration check: %s ago on %s."
-msgstr "Laatste metadata-expiratie-check: %s geleden op %s."
-
-#: ../dnf/base.py:332
-#, python-format
 msgid "%s, disabling."
 msgstr "%s, uitschakelen."
+
+#: ../dnf/base.py:330
+#, python-format
+msgid "Last metadata expiration check: %s ago on %s."
+msgstr "Laatste metadata-expiratie-check: %s geleden op %s."
 
 #: ../dnf/base.py:375
 msgid ""
@@ -2783,3 +2781,87 @@ msgstr "Importen van sleutel(s) hielp niet; verkeerde sleutel(s)?"
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr "Pakket %s is al geïnstalleerd, overslaan."
+
+#: ../dnf/repo.py:104
+#, python-format
+msgid "no matching payload factory for %s"
+msgstr ""
+
+#: ../dnf/repo.py:130
+msgid "Already downloaded"
+msgstr ""
+
+#. pinging mirrors, this might take a while
+#: ../dnf/repo.py:409
+#, python-format
+msgid "determining the fastest mirror (%d hosts).. "
+msgstr ""
+
+#: ../dnf/repo.py:658
+#, python-format
+msgid "Cannot find a valid baseurl for repo: %s"
+msgstr ""
+
+#: ../dnf/repo.py:754
+#, python-format
+msgid "reviving: repo '%s' skipped, no metalink."
+msgstr ""
+
+#: ../dnf/repo.py:760
+#, python-format
+msgid "reviving: repo '%s' skipped, no usable hash."
+msgstr ""
+
+#: ../dnf/repo.py:771
+#, python-format
+msgid "reviving: failed for '%s', mismatched %s sum."
+msgstr ""
+
+#: ../dnf/repo.py:774
+#, python-format
+msgid "reviving: '%s' can be revived - metalink checksums match."
+msgstr ""
+
+#: ../dnf/repo.py:787
+#, python-format
+msgid "reviving: failed for '%s', mismatched repomd."
+msgstr ""
+
+#: ../dnf/repo.py:789
+#, python-format
+msgid "reviving: '%s' can be revived - repomd matches."
+msgstr ""
+
+#: ../dnf/repo.py:844
+#, python-format
+msgid "repo: using cache for: %s"
+msgstr ""
+
+#: ../dnf/repo.py:847
+#, python-format
+msgid "Cache-only enabled but no cache for '%s'"
+msgstr ""
+
+#: ../dnf/repo.py:858
+#, python-format
+msgid "repo: downloading from remote: %s, %s"
+msgstr ""
+
+#: ../dnf/repo.py:869
+#, python-format
+msgid "Cannot download '%s': %s."
+msgstr "Kan '%s' niet downloaden: %s."
+
+#: ../dnf/repo.py:871
+#, python-format
+msgid "Failed to synchronize cache for repo '%s'"
+msgstr "Synchroniseren van cache voor repo '%s' is niet gelukt"
+
+#: ../dnf/repo.py:913
+#, python-format
+msgid "Repository %s has no mirror or baseurl set."
+msgstr ""
+
+#: ../dnf/repo.py:916
+msgid "Repository '{}' has unsupported type: 'type={}', skipping."
+msgstr ""
