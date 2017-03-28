@@ -897,6 +897,9 @@ are displayed in the standard NEVRA notation.
 ``--enhances``
     Display capabilities enhanced by the package. Same as ``--qf "%{enhances}""``.
 
+``--location``
+    Show a location where the package could be downloaded from.
+
 ``--obsoletes``
     Display capabilities that the package obsoletes. Same as ``--qf "%{obsoletes}"``.
 

@@ -212,6 +212,25 @@ class Package(hawkey.Package):
             return os.path.join(self.baseurl, loc)[7:]
         return os.path.join(self.repo.pkgdir, loc)
 
+    def remote_location(self, schemes=('http', 'ftp', 'file', 'https')):
+        if not self.location:
+            return None
+
+        if self.repo.metadata._mirrors:
+            for url in self.repo.metadata._mirrors:
+                if schemes:
+                    s = dnf.pycomp.urlparse.urlparse(url)[0]
+                    if s in schemes:
+                        return url + self.location
+                else:
+                    return url + self.location
+        elif self.repo.baseurl:
+            if isinstance(self.repo.baseurl, list):
+                return self.repo.baseurl[0] + self.location
+            else:
+                return self.repo.baseurl + self.location
+        return None
+
     def _is_local_pkg(self):
         return self._from_cmdline or \
             (self.repo._local and (not self.baseurl or self.baseurl.startswith('file://')))
