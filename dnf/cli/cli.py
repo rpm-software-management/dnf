@@ -806,8 +806,6 @@ class Cli(object):
 
         if opts.sleeptime is not None:
             time.sleep(random.randrange(opts.sleeptime * 60))
-        else:
-            pass
 
         # store the main commands & summaries, before plugins are loaded
         self.optparser.add_commands(self.cli_commands, 'main')
