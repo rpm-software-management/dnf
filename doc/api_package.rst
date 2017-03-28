@@ -55,6 +55,11 @@
 
     Space in bytes the package takes on the system after installation (integer).
 
+  .. method:: remote_location(schemes=('http', 'ftp', 'file', 'https'))
+
+    The location from where the package can be downloaded from (string). If information unavailable
+    it returns ``None``. ``schemes`` limits result to list of protocols.
+
   .. attribute:: name
 
     The name of the package (string).

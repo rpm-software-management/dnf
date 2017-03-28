@@ -188,7 +188,8 @@ class RepoQueryCommand(commands.Command):
         pkgfilter.add_argument("--unsatisfied", dest='pkgfilter',
                                const='unsatisfied', action='store_const',
                                help=_('limit the query to installed packages with unsatisfied dependencies'))
-
+        parser.add_argument('--location', action='store_true',
+                            help=_('show a location from where packages can be downloaded'))
         package_atribute = parser.add_mutually_exclusive_group()
         help_msgs = {
             'conflicts': _('Display capabilities that the package conflicts with.'),
@@ -407,6 +408,11 @@ class RepoQueryCommand(commands.Command):
                 rels = getattr(pkg, OPTS_MAPPING[self.opts.packageatr])
                 for rel in rels:
                     pkgs.add(str(rel))
+        elif self.opts.location:
+            for pkg in q.run():
+                location = pkg.remote_location()
+                if location is not None:
+                    pkgs.add(location)
         elif self.opts.deplist:
             pkgs = []
             for pkg in sorted(set(q.run())):
