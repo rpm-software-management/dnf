@@ -131,12 +131,21 @@ class UpdateInfoCommand(commands.Command):
         parser.add_argument('spec', nargs='*', metavar='SPEC',
                             choices=cmds, default=cmds[0],
                             action=OptionParser.PkgNarrowCallback)
+        output_format = parser.add_mutually_exclusive_group()
+        output_format.add_argument("--summary", dest='output_format', const='summary',
+                                   action='store_const', help=_('show summmary of advisories'))
+        output_format.add_argument("--list", dest='output_format', const='list',
+                                   action='store_const', help=_('show list of advisories'))
+        output_format.add_argument("--info", dest='output_format', const='info',
+                                   action='store_const', help=_('show info of advisories'))
 
     def configure(self):
         """Do any command-specific configuration based on command arguments."""
         self.cli.demands.available_repos = True
         self.cli.demands.sack_activation = True
         self._canonical()
+        if self.opts.output_format:
+            self.opts.spec_action = self.opts.output_format
 
     @staticmethod
     def _apackage_advisory_match(apackage, advisory, specs=()):
