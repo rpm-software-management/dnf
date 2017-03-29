@@ -25,7 +25,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-28 09:47+0200\n"
-"PO-Revision-Date: 2017-03-28 03:46-0400\n"
+"PO-Revision-Date: 2017-03-28 06:09-0400\n"
 "Last-Translator: Zdenek <chmelarz@gmail.com>\n"
 "Language-Team: Czech (http://www.transifex.com/projects/p/dnf/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -964,7 +964,7 @@ msgstr "Vyčištění dat:"
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
-msgstr ""
+msgstr "Mezipaměť vypršela"
 
 #: ../dnf/cli/commands/clean.py:115
 #, python-format
@@ -1008,12 +1008,19 @@ msgid ""
 "    If no value is given it prints the current value.\n"
 "    If value is given it sets that value."
 msgstr ""
+"{} arg [hodnota]\n"
+"  arg: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,\n"
+"        repo_id.gpgcheck, repo_id.exclude\n"
+"    Není-li uvedena žádná hodnota, vypíše aktuální hodnotu.\n"
+"    Je-li daná hodnota uvedena, nastaví tuto hodnotu."
 
 #: ../dnf/cli/commands/shell.py:170
 msgid ""
 "{} [command]\n"
 "    print help"
 msgstr ""
+"{} [příkaz]\n"
+"    zobrazit nápovědu"
 
 #: ../dnf/cli/commands/shell.py:174
 msgid ""
@@ -1022,12 +1029,18 @@ msgid ""
 "  enable: enable repositories. option = repository id\n"
 "  disable: disable repositories. option = repository id"
 msgstr ""
+"{} arg [volby]\n"
+"  list: zobrazí repozitáře a jejich stav. volba = [all | id | glob]\n"
+"  enable: povolit úložiště. volba = repository id\n"
+"  disable: zakázat úložiště. volba = repository id"
 
 #: ../dnf/cli/commands/shell.py:180
 msgid ""
 "{}\n"
 "    resolve the transaction set"
 msgstr ""
+"{}\n"
+"    vyřešit transakční sadu"
 
 #: ../dnf/cli/commands/shell.py:184
 msgid ""
@@ -1036,18 +1049,26 @@ msgid ""
 "  reset: reset (zero-out) the transaction\n"
 "  run: run the transaction"
 msgstr ""
+"{} arg\n"
+"  list: vypíše obsah transakce\n"
+"  reset: vynuluje transakci (zero-out)\n"
+"  run: spustí transakci"
 
 #: ../dnf/cli/commands/shell.py:190
 msgid ""
 "{}\n"
 "    run the transaction"
 msgstr ""
+"{}\n"
+"    spustit transakci"
 
 #: ../dnf/cli/commands/shell.py:194
 msgid ""
 "{}\n"
 "    exit the shell"
 msgstr ""
+"{}\n"
+"    ukončit shell"
 
 #: ../dnf/cli/commands/shell.py:199
 msgid ""
@@ -1061,6 +1082,15 @@ msgid ""
 "run                      resolve and run the transaction set\n"
 "exit (or quit)           exit the shell"
 msgstr ""
+"Konkrétní argumenty shellu:\n"
+"\n"
+"config                   nastavení konfiguračních možností\n"
+"help                     zobrazit nápovědu\n"
+"repository (or repo)     povolit, zakázat nebo zobrazit repozitáře\n"
+"resolvedep               vyřešit transakční set\n"
+"transaction (or ts)      zobrazit, obnovit nebo spustit transakční set\n"
+"run                      vyřešit a spustit transakční set\n"
+"exit (or quit)           ukončit shell"
 
 #: ../dnf/cli/commands/shell.py:226 ../dnf/cli/cli.py:692
 #, python-format
@@ -2393,11 +2423,11 @@ msgstr "Ověřuji"
 
 #: ../dnf/yum/rpmtrans.py:134
 msgid "Preparing"
-msgstr ""
+msgstr "Příprava"
 
 #: ../dnf/yum/rpmtrans.py:135
 msgid "Running scriptlet"
-msgstr ""
+msgstr "Běžící skriptlet"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -2834,63 +2864,64 @@ msgstr ""
 
 #: ../dnf/repo.py:130
 msgid "Already downloaded"
-msgstr ""
+msgstr "Již stažen"
 
 #. pinging mirrors, this might take a while
 #: ../dnf/repo.py:409
 #, python-format
 msgid "determining the fastest mirror (%d hosts).. "
-msgstr ""
+msgstr "určení nejrychlejšího zrcadla (%d hostů)..."
 
 #: ../dnf/repo.py:658
 #, python-format
 msgid "Cannot find a valid baseurl for repo: %s"
-msgstr ""
+msgstr "Nelze najít platný baseURL pro repo: %s"
 
 #: ../dnf/repo.py:754
 #, python-format
 msgid "reviving: repo '%s' skipped, no metalink."
-msgstr ""
+msgstr "oživení: repozitář '%s' přeskočen, žádný MetaLink."
 
 #: ../dnf/repo.py:760
 #, python-format
 msgid "reviving: repo '%s' skipped, no usable hash."
-msgstr ""
+msgstr "oživení: repozitář '%s' přeskočen, žádný použitelný hash."
 
 #: ../dnf/repo.py:771
 #, python-format
 msgid "reviving: failed for '%s', mismatched %s sum."
-msgstr ""
+msgstr "oživení: selhalo pro '%s', neshodující se součet %s."
 
 #: ../dnf/repo.py:774
 #, python-format
 msgid "reviving: '%s' can be revived - metalink checksums match."
 msgstr ""
+"oživení: '%s' může být oživen - kontrolní součty MetaLinku odpovídají."
 
 #: ../dnf/repo.py:787
 #, python-format
 msgid "reviving: failed for '%s', mismatched repomd."
-msgstr ""
+msgstr "oživení: selhalo pro '%s', neshodující se repomd."
 
 #: ../dnf/repo.py:789
 #, python-format
 msgid "reviving: '%s' can be revived - repomd matches."
-msgstr ""
+msgstr "oživení: '%s' může být oživen - repomd se shoduje."
 
 #: ../dnf/repo.py:844
 #, python-format
 msgid "repo: using cache for: %s"
-msgstr ""
+msgstr "repozitář: použití mezipaměti pro: %s"
 
 #: ../dnf/repo.py:847
 #, python-format
 msgid "Cache-only enabled but no cache for '%s'"
-msgstr ""
+msgstr "Povoleno použítí jen mezipaměti, ale žádná vyrovnávací paměť pro '%s'"
 
 #: ../dnf/repo.py:858
 #, python-format
 msgid "repo: downloading from remote: %s, %s"
-msgstr ""
+msgstr "repozitář: vzdálené stahování dat: %s, %s"
 
 #: ../dnf/repo.py:869
 #, python-format
@@ -2905,8 +2936,8 @@ msgstr "Chyba synchronizace mezipaměti pro repositář '%s'"
 #: ../dnf/repo.py:913
 #, python-format
 msgid "Repository %s has no mirror or baseurl set."
-msgstr ""
+msgstr "Repozitář %s nemá nastaveno žádné zrcadlo nebo baseurl."
 
 #: ../dnf/repo.py:916
 msgid "Repository '{}' has unsupported type: 'type={}', skipping."
-msgstr ""
+msgstr "Repozitář '{}' obsahuje nepodporovaný typ: 'type={}', přeskakuji."

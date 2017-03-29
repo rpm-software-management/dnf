@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-28 09:47+0200\n"
-"PO-Revision-Date: 2017-03-27 07:58-0400\n"
+"PO-Revision-Date: 2017-03-28 08:20-0400\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/dnf/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -2430,11 +2430,11 @@ msgstr "Sprawdzanie"
 
 #: ../dnf/yum/rpmtrans.py:134
 msgid "Preparing"
-msgstr ""
+msgstr "Przygotowywanie"
 
 #: ../dnf/yum/rpmtrans.py:135
 msgid "Running scriptlet"
-msgstr ""
+msgstr "Wykonywanie skryptu"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -2658,7 +2658,7 @@ msgstr "Wymagane miejsce na dysku:"
 msgid "At least %dMB more space needed on the %s filesystem."
 msgid_plural "At least %dMB more space needed on the %s filesystem."
 msgstr[0] ""
-"Wymagany jest co najmniej %d MB więcej miejsca w systemie plików %s."
+"Wymagany jest co najmniej %d MB więcej miejsca w systemie plików %s."
 msgstr[1] "Wymagane są co najmniej %d MB więcej miejsca w systemie plików %s."
 msgstr[2] ""
 "Wymaganych jest co najmniej %d MB więcej miejsca w systemie plików %s."
@@ -2884,67 +2884,71 @@ msgstr "Pakiet %s jest już zainstalowany, pomijanie."
 #: ../dnf/repo.py:104
 #, python-format
 msgid "no matching payload factory for %s"
-msgstr ""
+msgstr "brak pasującego generatora danych dla %s"
 
 #: ../dnf/repo.py:130
 msgid "Already downloaded"
-msgstr ""
+msgstr "Już pobrano"
 
 #. pinging mirrors, this might take a while
 #: ../dnf/repo.py:409
 #, python-format
 msgid "determining the fastest mirror (%d hosts).. "
-msgstr ""
+msgstr "ustalanie najszybszego serwera lustrzanego (serwery: %d)… "
 
 #: ../dnf/repo.py:658
 #, python-format
 msgid "Cannot find a valid baseurl for repo: %s"
 msgstr ""
+"Nie można odnaleźć prawidłowego podstawowego adresu URL dla repozytorium: %s"
 
 #: ../dnf/repo.py:754
 #, python-format
 msgid "reviving: repo '%s' skipped, no metalink."
-msgstr ""
+msgstr "odnawianie: pominięto repozytorium „%s”, brak metaodnośnika."
 
 #: ../dnf/repo.py:760
 #, python-format
 msgid "reviving: repo '%s' skipped, no usable hash."
 msgstr ""
+"odnawianie: pominięto repozytorium „%s”, brak sumy kontrolnej możliwej do "
+"użycia."
 
 #: ../dnf/repo.py:771
 #, python-format
 msgid "reviving: failed for '%s', mismatched %s sum."
-msgstr ""
+msgstr "odnawianie: niepowodzenie dla „%s”, suma kontrolna %s się nie zgadza."
 
 #: ../dnf/repo.py:774
 #, python-format
 msgid "reviving: '%s' can be revived - metalink checksums match."
 msgstr ""
+"odnawianie: można odnowić „%s” — sumy kontrolne metaodnośnika się zgadzają."
 
 #: ../dnf/repo.py:787
 #, python-format
 msgid "reviving: failed for '%s', mismatched repomd."
-msgstr ""
+msgstr "odnawianie: niepowodzenie dla „%s”, repomd się nie zgadza."
 
 #: ../dnf/repo.py:789
 #, python-format
 msgid "reviving: '%s' can be revived - repomd matches."
-msgstr ""
+msgstr "odnawianie: można odnowić „%s” — repomd się zgadza."
 
 #: ../dnf/repo.py:844
 #, python-format
 msgid "repo: using cache for: %s"
-msgstr ""
+msgstr "repozytorium: używanie pamięci podręcznej dla: %s"
 
 #: ../dnf/repo.py:847
 #, python-format
 msgid "Cache-only enabled but no cache for '%s'"
-msgstr ""
+msgstr "Włączono tylko pamięć podręczną, ale brak pamięci podręcznej dla „%s”"
 
 #: ../dnf/repo.py:858
 #, python-format
 msgid "repo: downloading from remote: %s, %s"
-msgstr ""
+msgstr "repozytorium: pobieranie z serwera: %s, %s"
 
 #: ../dnf/repo.py:869
 #, python-format
@@ -2961,7 +2965,9 @@ msgstr ""
 #, python-format
 msgid "Repository %s has no mirror or baseurl set."
 msgstr ""
+"Repozytorium %s nie ma ustawionego serwera lustrzanego ani podstawowego "
+"adresu URL."
 
 #: ../dnf/repo.py:916
 msgid "Repository '{}' has unsupported type: 'type={}', skipping."
-msgstr ""
+msgstr "Repozytorium „{}” ma nieobsługiwany typ: „type={}”, pomijanie."

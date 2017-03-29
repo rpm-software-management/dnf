@@ -18,7 +18,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-28 09:47+0200\n"
-"PO-Revision-Date: 2017-03-21 04:28-0400\n"
+"PO-Revision-Date: 2017-03-28 07:50-0400\n"
 "Last-Translator: Igor Gorbounov <igor.gorbounov@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/dnf/language/ru/)\n"
 "MIME-Version: 1.0\n"
@@ -862,15 +862,15 @@ msgstr "В пакете {} нет файлов"
 #: ../dnf/cli/commands/repoquery.py:263
 #, python-brace-format
 msgid "Available query-tags: use --queryformat \".. %{tag} ..\""
-msgstr ""
+msgstr "Доступные тэги запросов: формат --queryformat «.. %{tag} ..»"
 
 #: ../dnf/cli/commands/repoquery.py:281 ../dnf/cli/cli.py:931
 msgid "argument {}: not allowed with argument {}"
-msgstr ""
+msgstr "аргумент {}: не допускается с аргументом {}"
 
 #: ../dnf/cli/commands/repoquery.py:320
 msgid "argument {} requires --whatrequires option"
-msgstr ""
+msgstr "аргумент {} требует параметр --whatrequires"
 
 #: ../dnf/cli/commands/repoquery.py:354
 msgid ""
@@ -880,6 +880,11 @@ msgid ""
 "description:\n"
 "  For the given packages print a tree of the packages."
 msgstr ""
+"Параметр не задан\n"
+"формат: dnf repoquery [--whatrequires|--requires|--conflicts|--obsoletes|--enhances|--suggest|--provides|--suplements|--recommends] [key] [--tree]\n"
+"\n"
+"описание:\n"
+"  Для данных пакетов выводится дерево пакетов."
 
 #: ../dnf/cli/commands/search.py:43
 msgid "search package details for the given string"
@@ -914,6 +919,8 @@ msgstr "Поиск пакетов:"
 #: ../dnf/cli/commands/swap.py:33
 msgid "run an interactive dnf mod for remove and install one spec"
 msgstr ""
+"запустить интерактивный вариант dnf для удаления и установки одной "
+"спецификации"
 
 #: ../dnf/cli/commands/swap.py:37
 msgid "The specs that will be removed"
@@ -953,7 +960,7 @@ msgstr "Очистка данных:"
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
-msgstr ""
+msgstr "Неактуальный кеш"
 
 #: ../dnf/cli/commands/clean.py:115
 #, python-format
@@ -970,24 +977,24 @@ msgstr "Ожидание завершения процесса с PID %d."
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
-msgstr ""
+msgstr "запустить интерактивную оболочку DNF"
 
 #: ../dnf/cli/commands/shell.py:73
 msgid "SCRIPT"
-msgstr ""
+msgstr "СКРИПТ"
 
 #: ../dnf/cli/commands/shell.py:74
 msgid "Script to run in DNF shell"
-msgstr ""
+msgstr "Скрипт для запуска в оболочке DNF"
 
 #: ../dnf/cli/commands/shell.py:131
 msgid "Unsupported key value."
-msgstr ""
+msgstr "Неподдерживаемое значение ключа."
 
 #: ../dnf/cli/commands/shell.py:147
 #, python-format
 msgid "Could not find repository: %s"
-msgstr ""
+msgstr "Не удалось найти репозиторий: %s"
 
 #: ../dnf/cli/commands/shell.py:163
 msgid ""
@@ -997,12 +1004,19 @@ msgid ""
 "    If no value is given it prints the current value.\n"
 "    If value is given it sets that value."
 msgstr ""
+"{} arg [value]\n"
+"  arg: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,\n"
+"        repo_id.gpgcheck, repo_id.exclude\n"
+"    Если значение не задано, выводится текущее значение.\n"
+"    Если значение задано, то устанавливается это значение."
 
 #: ../dnf/cli/commands/shell.py:170
 msgid ""
 "{} [command]\n"
 "    print help"
 msgstr ""
+"{} [command]\n"
+"    печать справки"
 
 #: ../dnf/cli/commands/shell.py:174
 msgid ""
@@ -1011,12 +1025,18 @@ msgid ""
 "  enable: enable repositories. option = repository id\n"
 "  disable: disable repositories. option = repository id"
 msgstr ""
+"{} arg [option]\n"
+"  list: выдать список репозиториев и их состояние. option = [all | id | glob]\n"
+"  enable: включить репозитории. option = repository id\n"
+"  disable: отключить репозитории. option = repository id"
 
 #: ../dnf/cli/commands/shell.py:180
 msgid ""
 "{}\n"
 "    resolve the transaction set"
 msgstr ""
+"{}\n"
+"   разрешить набор транзакций"
 
 #: ../dnf/cli/commands/shell.py:184
 msgid ""
@@ -1025,18 +1045,26 @@ msgid ""
 "  reset: reset (zero-out) the transaction\n"
 "  run: run the transaction"
 msgstr ""
+"{} arg\n"
+"  list: выдает список содержимого транзакции\n"
+"  reset: сброс (обнуление) транзакции\n"
+"  run: запуск транзакции"
 
 #: ../dnf/cli/commands/shell.py:190
 msgid ""
 "{}\n"
 "    run the transaction"
 msgstr ""
+"{}\n"
+"    запустить транзакцию"
 
 #: ../dnf/cli/commands/shell.py:194
 msgid ""
 "{}\n"
 "    exit the shell"
 msgstr ""
+"{}\n"
+"    выйти из оболочки"
 
 #: ../dnf/cli/commands/shell.py:199
 msgid ""
@@ -1050,6 +1078,15 @@ msgid ""
 "run                      resolve and run the transaction set\n"
 "exit (or quit)           exit the shell"
 msgstr ""
+"Аргументы оболочки:\n"
+"\n"
+"config                   установить параметры настроек\n"
+"help                     вывести справку\n"
+"repository (или repo)     выключить, выключить или перечислить репозитории\n"
+"resolvedep               разрешить набор транзакций\n"
+"transaction (or ts)      список, сброс или запуск набора транзакций\n"
+"run                      разрешить и запустить набор транзакций\n"
+"exit (or quit)           выйти из оболочки"
 
 #: ../dnf/cli/commands/shell.py:226 ../dnf/cli/cli.py:692
 #, python-format
@@ -1059,11 +1096,11 @@ msgstr "Неизвестный репозиторий: «%s»"
 #: ../dnf/cli/commands/shell.py:249
 #, python-format
 msgid "Error: Cannot open %s for reading"
-msgstr ""
+msgstr "Ошибка: не удалось открыть %s для чтения"
 
 #: ../dnf/cli/commands/shell.py:279
 msgid "Leaving Shell"
-msgstr ""
+msgstr "Выход из оболлочки"
 
 #: ../dnf/cli/commands/updateinfo.py:46
 msgid "bugfix"
@@ -1083,23 +1120,23 @@ msgstr ""
 
 #: ../dnf/cli/commands/updateinfo.py:52
 msgid "Critical/Sec."
-msgstr ""
+msgstr "Критические/Безоп."
 
 #: ../dnf/cli/commands/updateinfo.py:53
 msgid "Important/Sec."
-msgstr ""
+msgstr "Важные/Безоп."
 
 #: ../dnf/cli/commands/updateinfo.py:54
 msgid "Moderate/Sec."
-msgstr ""
+msgstr "Умеренные/Безоп."
 
 #: ../dnf/cli/commands/updateinfo.py:55
 msgid "Low/Sec."
-msgstr ""
+msgstr "Низкие/Безоп."
 
 #: ../dnf/cli/commands/updateinfo.py:56
 msgid "Unknown/Sec."
-msgstr ""
+msgstr "Неизвестные/Безоп."
 
 #: ../dnf/cli/commands/updateinfo.py:67
 msgid "display advisories about packages"
@@ -1111,31 +1148,31 @@ msgstr "Информационная сводка по обновлениям:"
 
 #: ../dnf/cli/commands/updateinfo.py:225
 msgid "New Package notice(s)"
-msgstr ""
+msgstr "Уведомления о новом пакете"
 
 #: ../dnf/cli/commands/updateinfo.py:226
 msgid "Security notice(s)"
-msgstr "Сведения о безопасности"
+msgstr "Уведомления о безопасности"
 
 #: ../dnf/cli/commands/updateinfo.py:227
 msgid "Critical Security notice(s)"
-msgstr ""
+msgstr "Критические уведомления о безопасности"
 
 #: ../dnf/cli/commands/updateinfo.py:229
 msgid "Important Security notice(s)"
-msgstr ""
+msgstr "Важные уведомления о безопасности"
 
 #: ../dnf/cli/commands/updateinfo.py:231
 msgid "Moderate Security notice(s)"
-msgstr ""
+msgstr "Уведомления о безопасности (умеренная степень)"
 
 #: ../dnf/cli/commands/updateinfo.py:233
 msgid "Low Security notice(s)"
-msgstr ""
+msgstr "Уведомления о безопасности (низкий уровень)"
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "Unknown Security notice(s)"
-msgstr ""
+msgstr "Уведомления о безопасности (неизвестный уровень)"
 
 #: ../dnf/cli/commands/updateinfo.py:237
 msgid "Bugfix notice(s)"
@@ -1183,7 +1220,7 @@ msgstr "Описание"
 
 #: ../dnf/cli/commands/updateinfo.py:360
 msgid "Severity"
-msgstr ""
+msgstr "Опасность"
 
 #: ../dnf/cli/commands/updateinfo.py:360
 msgid "Rights"
@@ -1238,7 +1275,7 @@ msgstr "Ошибка при загрузке пакетов:"
 
 #: ../dnf/cli/cli.py:229
 msgid "Transaction failed"
-msgstr ""
+msgstr "Сбой транзакции"
 
 #: ../dnf/cli/cli.py:250
 msgid ""
@@ -1259,7 +1296,7 @@ msgstr "Отсутствуют пакеты, помеченные для син�
 #: ../dnf/cli/cli.py:350 ../dnf/base.py:1840
 #, python-format
 msgid "Packages for argument %s available, but not installed."
-msgstr ""
+msgstr "Пакеты для аргумента %s доступны, но не установлены."
 
 #: ../dnf/cli/cli.py:407
 msgid "Installed Packages"
@@ -1310,11 +1347,11 @@ msgstr "Неполная история транзакций, после %u."
 #: ../dnf/cli/cli.py:706
 #, python-format
 msgid "No repository match: %s"
-msgstr ""
+msgstr "Нет соответствующих репозиториев: %s"
 
 #: ../dnf/cli/cli.py:735
 msgid "This command has to be run under the root user."
-msgstr ""
+msgstr "Эта команда должны быть выполнена от имени пользователя root."
 
 #: ../dnf/cli/cli.py:755
 #, python-format
@@ -1357,7 +1394,7 @@ msgstr "плохой формат: %s"
 
 #: ../dnf/cli/option_parser.py:159
 msgid "Optional arguments"
-msgstr ""
+msgstr "Дополнительные параметры"
 
 #: ../dnf/cli/option_parser.py:162
 msgid "config file location"
@@ -1381,7 +1418,7 @@ msgstr "настройка корневого каталога установк�
 
 #: ../dnf/cli/option_parser.py:173
 msgid "do not install documentations"
-msgstr ""
+msgstr "не устанавливать документацию"
 
 #: ../dnf/cli/option_parser.py:176
 msgid "disable all plugins"
@@ -1401,11 +1438,11 @@ msgstr "установить произвольные настройки и па
 
 #: ../dnf/cli/option_parser.py:189
 msgid "resolve depsolve problems by skipping packages"
-msgstr ""
+msgstr "разрешить проблемы зависимостей, пропустив пакеты "
 
 #: ../dnf/cli/option_parser.py:192
 msgid "show command help"
-msgstr ""
+msgstr "показать справку по команде"
 
 #: ../dnf/cli/option_parser.py:196
 msgid "allow erasing of installed packages to resolve dependencies"

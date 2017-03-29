@@ -25,7 +25,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-28 09:47+0200\n"
-"PO-Revision-Date: 2017-03-22 12:26-0400\n"
+"PO-Revision-Date: 2017-03-28 08:44-0400\n"
 "Last-Translator: Máximo Castañeda Riloba <mcrcctm@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/dnf/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -2515,11 +2515,11 @@ msgstr "Verificando"
 
 #: ../dnf/yum/rpmtrans.py:134
 msgid "Preparing"
-msgstr ""
+msgstr "Preparando"
 
 #: ../dnf/yum/rpmtrans.py:135
 msgid "Running scriptlet"
-msgstr ""
+msgstr "Ejecutando scriptlet"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -2962,67 +2962,68 @@ msgstr "El paquete %s ya se encuentra instalado, omitiendo."
 #: ../dnf/repo.py:104
 #, python-format
 msgid "no matching payload factory for %s"
-msgstr ""
+msgstr "no se ha encontrado gestor de datos para %s"
 
 #: ../dnf/repo.py:130
 msgid "Already downloaded"
-msgstr ""
+msgstr "Ya descargado"
 
 #. pinging mirrors, this might take a while
 #: ../dnf/repo.py:409
 #, python-format
 msgid "determining the fastest mirror (%d hosts).. "
-msgstr ""
+msgstr "buscando el servidor más adecuado (%d servidores)..."
 
 #: ../dnf/repo.py:658
 #, python-format
 msgid "Cannot find a valid baseurl for repo: %s"
-msgstr ""
+msgstr "No se encuentra URL válida para el repositorio: %s"
 
 #: ../dnf/repo.py:754
 #, python-format
 msgid "reviving: repo '%s' skipped, no metalink."
-msgstr ""
+msgstr "reviving: omitido el repositorio '%s', no hay metalink."
 
 #: ../dnf/repo.py:760
 #, python-format
 msgid "reviving: repo '%s' skipped, no usable hash."
-msgstr ""
+msgstr "reviving: omitido el repositorio '%s', no se puede usar el hash."
 
 #: ../dnf/repo.py:771
 #, python-format
 msgid "reviving: failed for '%s', mismatched %s sum."
-msgstr ""
+msgstr "reviving: error para '%s', no coincide la suma %s."
 
 #: ../dnf/repo.py:774
 #, python-format
 msgid "reviving: '%s' can be revived - metalink checksums match."
 msgstr ""
+"reviving: '%s' se puede reutilizar, las comprobaciones del metalink cuadran."
 
 #: ../dnf/repo.py:787
 #, python-format
 msgid "reviving: failed for '%s', mismatched repomd."
-msgstr ""
+msgstr "reviving: no se puede con '%s', los metadatos no coinciden."
 
 #: ../dnf/repo.py:789
 #, python-format
 msgid "reviving: '%s' can be revived - repomd matches."
-msgstr ""
+msgstr "reviving: '%s' se puede reutilizar, los metadatos coinciden."
 
 #: ../dnf/repo.py:844
 #, python-format
 msgid "repo: using cache for: %s"
-msgstr ""
+msgstr "repo: se usa caché para %s"
 
 #: ../dnf/repo.py:847
 #, python-format
 msgid "Cache-only enabled but no cache for '%s'"
-msgstr ""
+msgstr "Se ha activado cache-only, pero no hay caché para '%s'."
 
 #: ../dnf/repo.py:858
 #, python-format
 msgid "repo: downloading from remote: %s, %s"
-msgstr ""
+msgstr "repo: descargando desde remoto: %s, %s"
 
 #: ../dnf/repo.py:869
 #, python-format
@@ -3037,8 +3038,8 @@ msgstr "No se pudo sincronizar la caché para el repositorio '%s'"
 #: ../dnf/repo.py:913
 #, python-format
 msgid "Repository %s has no mirror or baseurl set."
-msgstr ""
+msgstr "El repositorio %s no tiene espejos ni URL base."
 
 #: ../dnf/repo.py:916
 msgid "Repository '{}' has unsupported type: 'type={}', skipping."
-msgstr ""
+msgstr "El repository '{}' es de un tipo no admitido: 'type={}', se omite."
