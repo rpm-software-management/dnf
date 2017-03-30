@@ -234,10 +234,10 @@ class RPMTransaction(object):
         self._shutdownOutputLogging()
 
     def _te_nevra(self, te):
-        nevra = te.N()
+        nevra = te.N() + '-'
         if te.E() is not None and te.E() != '0':
-            nevra += ':' + te.E()
-        return nevra + '-' + te.V() + '-' + te.R() + '.' + te.A()
+            nevra += te.E() + ':'
+        return nevra + te.V() + '-' + te.R() + '.' + te.A()
 
     def _extract_cbkey(self, cbkey):
         """Obtain the package related to the calling callback."""
