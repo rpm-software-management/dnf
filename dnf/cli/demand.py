@@ -50,7 +50,7 @@ class DemandSheet(object):
     root_user = _BoolDefault(False)
     sack_activation = _BoolDefault(False)
     success_exit_status = 0
-
+    honor_weak_deps = _BoolDefault(False)
     cacheonly = _BoolDefault(False)
     fresh_metadata = _BoolDefault(True)
     freshest_metadata = _BoolDefault(False)

@@ -61,6 +61,11 @@ When packaging your custom command, we recommend you to define a virtual provide
 
       The return status of the DNF command on success. Defaults to ``0``.
 
+    .. attribute:: honor_weak_deps
+
+      If ``False``, it automatically reset conf.install_weak_deps to ``False``. Use weak setting and
+      set this demand to ``True`` is important only for install commands. Defaults to ``False``.
+
     .. attribute:: transaction_display
 
       An additional instance of a subclass of :class:`dnf.callback.TransactionProgress` used to report information about an ongoing transaction.

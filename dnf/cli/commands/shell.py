@@ -40,6 +40,7 @@ class ShellDemandSheet(object):
     root_user = True
     sack_activation = True
     success_exit_status = 0
+    honor_weak_deps = False
     cacheonly = False
     fresh_metadata = True
     freshest_metadata = False
