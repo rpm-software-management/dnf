@@ -94,22 +94,27 @@ class TransactionItemTest(tests.support.TestCase):
     def test_propagated_reason(self):
         yumdb = mock.Mock()
         yumdb.get_package().get = lambda s: 'dep'
-
+        self.base = tests.support.BaseCliStub()
+        self.base._sack = tests.support.mock_sack('main', 'search')
         tsi = dnf.transaction.TransactionItem(
             dnf.transaction.INSTALL, installed=self.newpkg, reason='user')
-        self.assertEqual(tsi._propagated_reason(yumdb, []), 'user')
+        self.assertEqual(tsi._propagated_reason(yumdb, self.base._sack.query().filter(empty=True)),
+                         'user')
         tsi = dnf.transaction.TransactionItem(
             dnf.transaction.UPGRADE, installed=self.newpkg, erased=self.oldpkg)
-        self.assertEqual(tsi._propagated_reason(yumdb, []), 'dep')
+        self.assertEqual(tsi._propagated_reason(yumdb, self.base._sack.query().filter(empty=True)),
+                         'dep')
         tsi = dnf.transaction.TransactionItem(
             dnf.transaction.DOWNGRADE,
             installed=self.newpkg, erased=self.oldpkg)
-        self.assertEqual(tsi._propagated_reason(yumdb, []), 'dep')
+        self.assertEqual(tsi._propagated_reason(yumdb, self.base._sack.query().filter(empty=True)),
+                         'dep')
 
         # test the call can survive if no reason is known:
         yumdb = mock.Mock()
         yumdb.get_package().get = lambda s: None
-        self.assertEqual(tsi._propagated_reason(yumdb, []), 'unknown')
+        self.assertEqual(tsi._propagated_reason(yumdb, self.base._sack.query().filter(empty=True)),
+                         'unknown')
 
     def test_removes(self):
         tsi = dnf.transaction.TransactionItem(

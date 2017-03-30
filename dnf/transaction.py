@@ -98,10 +98,10 @@ class TransactionItem(object):
     def _obsoleting_history_state(self):
         return 'Obsoleting'
 
-    def _propagated_reason(self, yumdb, installonlypkgs):
+    def _propagated_reason(self, yumdb, installonlypkgs_query):
         if self.reason == 'user':
             return self.reason
-        if self.installed.name in installonlypkgs:
+        if installonlypkgs_query.filter(name=self.installed.name):
             return 'user'
         if self.op_type in [DOWNGRADE, REINSTALL, UPGRADE]:
             previously = yumdb.get_package(self.erased).get('reason')
