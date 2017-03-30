@@ -247,20 +247,24 @@ class RPMTransaction(object):
             return cbkey._active, cbkey._active_history_state, cbkey
 
         # We don't have the tsi, let's look it up (only happens on erasures)
-        te = self._te_list[self._te_index]
         obsoleted = obsoleted_state = obsoleted_tsi = None
-        for tsi in self.base.transaction:
-            # only walk the tsis once. prefer finding an erase over an obsoleted
-            # package:
-            if tsi.erased is not None and str(tsi.erased) == self._te_nevra(te):
-                return tsi.erased, tsi._erased_history_state, tsi
-            if tsi.installed is not None and str(tsi.installed) == self._te_nevra(te):
-                return tsi.installed, tsi._installed_history_state, tsi
-            for o in tsi.obsoleted:
-                if str(o) == self._te_nevra(te):
-                    obsoleted = o
-                    obsoleted_state = tsi._obsoleted_history_state
-                    obsoleted_tsi = tsi
+        if self._te_list == []:
+            if isinstance(cbkey, str):
+                obsoleted = cbkey
+        else:
+            te = self._te_list[self._te_index]
+            for tsi in self.base.transaction:
+                # only walk the tsis once. prefer finding an erase over an obsoleted
+                # package:
+                if tsi.erased is not None and str(tsi.erased) == self._te_nevra(te):
+                    return tsi.erased, tsi._erased_history_state, tsi
+                if tsi.installed is not None and str(tsi.installed) == self._te_nevra(te):
+                    return tsi.installed, tsi._installed_history_state, tsi
+                for o in tsi.obsoleted:
+                    if str(o) == self._te_nevra(te):
+                        obsoleted = o
+                        obsoleted_state = tsi._obsoleted_history_state
+                        obsoleted_tsi = tsi
         return obsoleted, obsoleted_state, obsoleted_tsi
 
     def _fn_rm_installroot(self, filename):
