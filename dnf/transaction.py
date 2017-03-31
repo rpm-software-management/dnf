@@ -107,6 +107,19 @@ class TransactionItem(object):
             previously = yumdb.get_package(self.erased).get('reason')
             if previously:
                 return previously
+        if self.obsoleted:
+            reasons = set()
+            for obs in self.obsoleted:
+                reasons.add(yumdb.get_package(obs).get('reason'))
+            if reasons:
+                if 'user' in reasons:
+                    return 'user'
+                if 'group' in reasons:
+                    return 'group'
+                if 'dep' in reasons:
+                    return 'dep'
+                if 'weak' in reasons:
+                    return 'weak'
         return self.reason
 
     def removes(self):
