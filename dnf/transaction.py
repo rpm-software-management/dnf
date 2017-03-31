@@ -72,6 +72,8 @@ class TransactionItem(object):
         UPGRADE   : 'Updated'
         }
 
+    _HISTORY_ERASE = [DOWNGRADE, ERASE, REINSTALL, UPGRADE]
+
     def _history_iterator(self):
         if self.installed is not None:
             yield(self.installed, self._installed_history_state)
@@ -101,9 +103,9 @@ class TransactionItem(object):
     def _propagated_reason(self, history, installonlypkgs):
         if self.reason == 'user':
             return self.reason
-        if installonlypkgs_query.filter(name=self.installed.name):
+        if self.installed and installonlypkgs_query.filter(name=self.installed.name):
             return 'user'
-        if self.op_type in [DOWNGRADE, REINSTALL, UPGRADE]:
+        if self.op_type in self._HISTORY_ERASE and self.erased:
             previously = history.reason_by_nvra(self.erased)
             if previously:
                 return previously
@@ -121,6 +123,11 @@ class TransactionItem(object):
                 if 'weak' in reasons:
                     return 'weak'
         return self.reason
+
+    def _propagate_reason(self, history, installonlypkgs):
+        reason = self._propagated_reason(history, installonlypkgs)
+        if reason:
+            self.reason = reason
 
     def removes(self):
         # :api

@@ -759,8 +759,12 @@ class Base(object):
                 cmdline = ' '.join(self.args)
             elif hasattr(self, 'cmds') and self.cmds:
                 cmdline = ' '.join(self.cmds)
-            self.history.beg(rpmdbv, using_pkgs, list(self.transaction),
-                             cmdline)
+
+            tsis = list(self.transaction)
+            for tsi in tsis:
+                tsi._propagate_reason(self.history, self.conf.installonlypkgs)
+
+            self.history.beg(rpmdbv, using_pkgs, tsis, cmdline)
             # write out our config and repo data to additional history info
             self._store_config_in_history()
 
