@@ -57,8 +57,8 @@
 
   .. method:: remote_location(schemes=('http', 'ftp', 'file', 'https'))
 
-    The location from where packages can be downloaded from (string). If information unavailable it
-    returns ``None``. ``schemes`` limits result to list of protocols.
+    The location from where the package can be downloaded from (string). If information unavailable
+    it returns ``None``. ``schemes`` limits result to list of protocols.
 
   .. attribute:: name
 

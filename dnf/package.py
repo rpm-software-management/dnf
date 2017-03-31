@@ -213,6 +213,13 @@ class Package(hawkey.Package):
         return os.path.join(self.repo.pkgdir, loc)
 
     def remote_location(self, schemes=('http', 'ftp', 'file', 'https')):
+        # :api
+        """
+        The location from where the package can be downloaded from
+
+        :param schemes: list of allowed protocols. Default is ('http', 'ftp', 'file', 'https')
+        :return: location (string) or None
+        """
         if not self.location:
             return None
 
