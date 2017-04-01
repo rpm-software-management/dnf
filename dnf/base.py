@@ -1083,7 +1083,7 @@ class Base(object):
         for path in path_list:
             if not os.path.exists(path) and '://' in path:
                 # download remote rpm to a tempfile
-                path = self.urlopen(path, suffix='.rpm', delete=False).name
+                path = dnf.util._urlopen_progress(path, self.conf, suffix='.rpm')
                 self._add_tempfiles([path])
             try:
                 pkgs.append(self.sack.add_cmdline_package(path))

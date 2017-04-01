@@ -398,6 +398,44 @@ class RPMPayload(PackagePayload):
         return self.pkg.downloadsize
 
 
+class RemoteRPMPayload(PackagePayload):
+
+    def __init__(self, remote_location, handle, progress):
+        super(RemoteRPMPayload, self).__init__("unused_object", progress)
+        self.remote_location = remote_location
+        self.remote_size = 0
+        self.handle = handle
+
+    def __str__(self):
+        return os.path.basename(self.remote_location)
+
+    def _progress_cb(self, cbdata, total, done):
+        self.remote_size = total
+        self.progress.progress(self, done)
+
+    def _librepo_target(self):
+        pkgdir = "/tmp/commandlines/packages"
+        dnf.util.ensure_dir(pkgdir)
+        self.local_path = os.path.join(pkgdir, self.__str__())
+        target_dct = {
+            'handle': self.handle,
+            'relative_url': self.remote_location,
+            'dest': pkgdir,
+            'resume': True,
+            'cbdata': self,
+            'progresscb': self._progress_cb,
+            'endcb': self._end_cb,
+            'mirrorfailurecb': self._mirrorfail_cb,
+        }
+
+        return librepo.PackageTarget(**target_dct)
+
+    @property
+    def download_size(self):
+        """Total size of the download."""
+        return self.remote_size
+
+
 class MDPayload(dnf.callback.Payload):
 
     def __str__(self):

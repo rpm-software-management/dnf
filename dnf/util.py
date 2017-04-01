@@ -58,6 +58,17 @@ def _non_repo_handle(conf=None):
     return handle
 
 
+def _urlopen_progress(url, conf, **kwargs):
+    handle = _non_repo_handle(conf)
+    handle.repotype = librepo.LR_YUMREPO
+    progress = dnf.cli.progress.MultiFileProgressMeter(fo=sys.stdout)
+    pload = dnf.repo.RemoteRPMPayload(url, handle, progress)
+    est_remote_size = sum([pload.download_size])
+    progress.start(1, est_remote_size)
+    targets = [pload._librepo_target()]
+    librepo.download_packages(targets, failfast=True)
+    return pload.local_path
+
 def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
     """
     Open the specified absolute url, return a file object
@@ -76,7 +87,6 @@ def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
         raise IOError(e.args[1])
     fo.seek(0)
     return fo
-
 
 def rtrim(s, r):
     if s.endswith(r):
