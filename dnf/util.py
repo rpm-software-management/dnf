@@ -58,15 +58,22 @@ def _non_repo_handle(conf=None):
     return handle
 
 
-def _urlopen_progress(url, conf, **kwargs):
+def _urlopen_progress(url, conf):
     handle = _non_repo_handle(conf)
     handle.repotype = librepo.LR_YUMREPO
     progress = dnf.cli.progress.MultiFileProgressMeter(fo=sys.stdout)
-    pload = dnf.repo.RemoteRPMPayload(url, handle, progress)
+    pload = dnf.repo.RemoteRPMPayload(url, conf, handle, progress)
+    if os.path.exists(pload.local_path):
+        return pload.local_path
     est_remote_size = sum([pload.download_size])
     progress.start(1, est_remote_size)
     targets = [pload._librepo_target()]
-    librepo.download_packages(targets, failfast=True)
+    try:
+        librepo.download_packages(targets, failfast=True)
+    except librepo.LibrepoException as e:
+        if conf.strict:
+            raise IOError(e.args[1])
+        logger.error(e.args[1])
     return pload.local_path
 
 def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
