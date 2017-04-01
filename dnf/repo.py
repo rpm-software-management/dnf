@@ -52,7 +52,9 @@ import os
 import re
 import shutil
 import string
+import sys
 import time
+import traceback
 import types
 
 _METADATA_RELATIVE_DIR = "repodata"
@@ -347,7 +349,12 @@ class PackagePayload(dnf.callback.Payload):
         self.progress.end(self, dnf.callback.STATUS_MIRROR, err)
 
     def _progress_cb(self, cbdata, total, done):
-        self.progress.progress(self, done)
+        try:
+            self.progress.progress(self, done)
+        except Exception:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            except_list = traceback.format_exception(exc_type, exc_value, exc_traceback)
+            logger.critical(''.join(except_list))
 
     @property
     def _full_size(self):
@@ -400,27 +407,33 @@ class RPMPayload(PackagePayload):
 
 class RemoteRPMPayload(PackagePayload):
 
-    def __init__(self, remote_location, handle, progress):
+    def __init__(self, remote_location, conf, handle, progress):
         super(RemoteRPMPayload, self).__init__("unused_object", progress)
         self.remote_location = remote_location
         self.remote_size = 0
         self.handle = handle
+        self.conf = conf
+        self.pkgdir = os.path.join(self.conf.cachedir, "commandlines/packages")
+        dnf.util.ensure_dir(self.pkgdir)
+        self.local_path = os.path.join(self.pkgdir, self.__str__())
 
     def __str__(self):
         return os.path.basename(self.remote_location)
 
     def _progress_cb(self, cbdata, total, done):
         self.remote_size = total
-        self.progress.progress(self, done)
+        try:
+            self.progress.progress(self, done)
+        except Exception:
+            exc_type, exc_value, exc_traceback = sys.exc_info()
+            except_list = traceback.format_exception(exc_type, exc_value, exc_traceback)
+            logger.critical(''.join(except_list))
 
     def _librepo_target(self):
-        pkgdir = "/tmp/commandlines/packages"
-        dnf.util.ensure_dir(pkgdir)
-        self.local_path = os.path.join(pkgdir, self.__str__())
         target_dct = {
             'handle': self.handle,
             'relative_url': self.remote_location,
-            'dest': pkgdir,
+            'dest': self.pkgdir,
             'resume': True,
             'cbdata': self,
             'progresscb': self._progress_cb,
