@@ -403,7 +403,10 @@ class RemoteRPMPayload(PackagePayload):
         self.remote_size = 0
         self.handle = handle
         self.conf = conf
-        self.pkgdir = os.path.join(self.conf.cachedir, "commandlines/packages")
+        s = self.conf.releasever + self.conf.substitutions.get('basearch')
+        digest = hashlib.sha256(s.encode('utf8')).hexdigest()[:16]
+        repodir = "commandline-" + digest
+        self.pkgdir = os.path.join(self.conf.cachedir, repodir, "packages")
         dnf.util.ensure_dir(self.pkgdir)
         self.local_path = os.path.join(self.pkgdir, self.__str__())
 
