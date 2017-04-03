@@ -46,6 +46,7 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         self.update_period = update_period
         self.tick_period = tick_period
         self.rate_average = rate_average
+        self.unknown_progres = 0
 
     def message(self, msg):
         dnf.util._terminal_messenger('write_flush', msg, self.fo)
@@ -108,19 +109,34 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
             text = '(%s/%d): %s' % (n, self.total_files, text)
 
         # average rate, total done size, estimated remaining time
+        if self.rate and self.total_size:
+            time_eta = format_time((self.total_size - self.done_size) / self.rate)
+        else:
+            time_eta = '--:--'
         msg = ' %5sB/s | %5sB %9s ETA\r' % (
             format_number(self.rate) if self.rate else '---  ',
             format_number(self.done_size),
-            format_time((self.total_size - self.done_size) / self.rate) if self.rate else '--:--')
+            time_eta)
         left = _term_width() - len(msg)
         bl = (left - 7)//2
         if bl > 8:
             # use part of the remaining space for progress bar
-            pct = self.done_size*100 // self.total_size
-            n, p = divmod(self.done_size*bl*2 // self.total_size, 2)
-            bar = '='*n + '-'*p
-            msg = '%3d%% [%-*s]%s' % (pct, bl, bar, msg)
-            left -= bl + 7
+            if self.total_size:
+                pct = self.done_size * 100 // self.total_size
+                n, p = divmod(self.done_size * bl * 2 // self.total_size, 2)
+                bar = '=' * n + '-' * p
+                msg = '%3d%% [%-*s]%s' % (pct, bl, bar, msg)
+                left -= bl + 7
+            else:
+                n = self.unknown_progres - 3
+                p = 3
+                n = 0 if n < 0 else n
+                bar = ' ' * n + '=' * p
+                msg = '%3s%% [%-*s]%s' % ('???', bl, bar, msg)
+                left -= bl + 7
+                self.unknown_progres = self.unknown_progres + 3 if self.unknown_progres + 3 < bl \
+                    else 0
+
         self.message('%-*.*s%s' % (left, left, text, msg))
 
     def end(self, payload, status, err_msg):
