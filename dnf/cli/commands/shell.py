@@ -106,10 +106,9 @@ class ShellCommand(commands.Command, cmd.Cmd):
         else:
             cmd_cls = self.cli.cli_commands.get(opts.command)
             if cmd_cls is not None:
-                cmd = cmd_cls(self)
+                cmd = cmd_cls(self.cli)
                 try:
                     opts = self.cli.optparser.parse_command_args(cmd, s_line)
-                    cmd.cli = self.cli
                     cmd.cli.demands = copy.deepcopy(self.cli.demands)
                     cmd.configure()
                     cmd.run()
