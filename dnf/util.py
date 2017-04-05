@@ -325,6 +325,13 @@ def _terminal_messenger(tp='write', msg="", out=sys.stdout):
         pass
 
 
+def _te_nevra(te):
+    nevra = te.N() + '-'
+    if te.E() is not None and te.E() != '0':
+        nevra += te.E() + ':'
+    return nevra + te.V() + '-' + te.R() + '.' + te.A()
+
+
 class tmpdir(object):
     def __init__(self):
         prefix = '%s-' % dnf.const.PREFIX

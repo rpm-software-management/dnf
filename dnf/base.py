@@ -826,9 +826,23 @@ class Base(object):
             # to obtain the transaction lock. We can only try to see if a
             # particular element failed and if not, decide that is the
             # case.
-            if len([el for el in self._ts if el.Failed()]) > 0:
-                errstring = _('Warning: scriptlet or other non-fatal errors '
-                              'occurred during transaction.')
+            failed = [el for el in self._ts if el.Failed()]
+            if len(failed) > 0:
+                for te in failed:
+                    te_nevra = dnf.util._te_nevra(te)
+                    for tsi in self._transaction:
+                        if tsi.erased is not None and str(tsi.erased) == te_nevra:
+                            tsi.op_type = dnf.transaction.FAIL
+                            break
+                        if tsi.installed is not None and str(tsi.installed) == te_nevra:
+                            tsi.op_type = dnf.transaction.FAIL
+                            break
+                        for o in tsi.obsoleted:
+                            if str(o) == te_nevra:
+                                tsi.op_type = dnf.transaction.FAIL
+                                break
+
+                errstring = _('Errors occurred during transaction.')
                 logger.debug(errstring)
             else:
                 login = dnf.util.get_effective_login()
