@@ -21,8 +21,6 @@ import sqlite3
 import glob
 import json
 
-# FUNCTIONS
-
 
 def CONSTRUCT_NAME(row):
     _NAME = row[1] + '-' + row[3] + '-' + row[4] + '-' + row[5]
@@ -60,7 +58,7 @@ def BIND_REPO(cursor, name):
 
 # create binding with STATE_TYPE - returns ID
 def BIND_STATE(cursor, desc):
-    cursor.execute('SELECT ID FROM STATE_TYPE WHERE description=?', (desc, ))
+    cursor.execute('SELECT state FROM STATE_TYPE WHERE description=?', (desc, ))
     STATE_ID = cursor.fetchone()
     if STATE_ID is None:
         cursor.execute('INSERT INTO STATE_TYPE VALUES(null,?)', (desc, ))
@@ -71,7 +69,7 @@ def BIND_STATE(cursor, desc):
 
 # create binding with REASON_TYPE - returns ID
 def BIND_REASON(cursor, desc):
-    cursor.execute('SELECT ID FROM REASON_TYPE WHERE description=?', (desc, ))
+    cursor.execute('SELECT reason FROM REASON_TYPE WHERE description=?', (desc, ))
     REASON_ID = cursor.fetchone()
     if REASON_ID is None:
         cursor.execute('INSERT INTO REASON_TYPE VALUES(null,?)', (desc, ))
@@ -82,7 +80,7 @@ def BIND_REASON(cursor, desc):
 
 # create binding with OUTPUT_TYPE - returns ID
 def BIND_OUTPUT(cursor, desc):
-    cursor.execute('SELECT ID FROM OUTPUT_TYPE WHERE description=?', (desc, ))
+    cursor.execute('SELECT type FROM OUTPUT_TYPE WHERE description=?', (desc, ))
     OUTPUT_ID = cursor.fetchone()
     if OUTPUT_ID is None:
         cursor.execute('INSERT INTO OUTPUT_TYPE VALUES(null,?)', (desc, ))
@@ -93,7 +91,7 @@ def BIND_OUTPUT(cursor, desc):
 
 # package type binding
 def BIND_PACKAGE(cursor, desc):
-    cursor.execute('SELECT ID FROM PACKAGE_TYPE WHERE description=?', (desc, ))
+    cursor.execute('SELECT type FROM PACKAGE_TYPE WHERE description=?', (desc, ))
     PACKAGE_ID = cursor.fetchone()
     if PACKAGE_ID is None:
         cursor.execute('INSERT INTO PACKAGE_TYPE VALUES(null,?)', (desc, ))
