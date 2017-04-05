@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-28 09:47+0200\n"
-"PO-Revision-Date: 2017-03-17 04:18-0400\n"
+"PO-Revision-Date: 2017-04-03 09:09-0400\n"
 "Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
 "Language-Team: Catalan (https://fedora.zanata.org/language/view/ca) <fedora@llistes.softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -62,7 +62,7 @@ msgstr "No s'ha pogut enviar un correu electrònic a través de «%s»: %s"
 #: ../dnf/automatic/emitter.py:137
 #, python-format
 msgid "Failed to execute command '%s': returned %d"
-msgstr ""
+msgstr "Ha fallat l'execució de l'ordre «%s»: ha tornat %d"
 
 #: ../dnf/automatic/main.py:214 ../dnf/cli/main.py:57
 #, python-format
@@ -325,7 +325,7 @@ msgstr "mostra els problemes de duplicats"
 
 #: ../dnf/cli/commands/check.py:49
 msgid "show obsoleted packages"
-msgstr "mostra els paquets obsolets"
+msgstr "mostra els paquets devaluats"
 
 #: ../dnf/cli/commands/check.py:52
 msgid "show problems with provides"
@@ -341,7 +341,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/check.py:113
 msgid "{} is obsoleted by {}"
-msgstr ""
+msgstr "{} queda devaluat per {}"
 
 #: ../dnf/cli/commands/check.py:122
 msgid "{} provides {} but it cannot be found"
@@ -972,7 +972,7 @@ msgstr[1] "%d fitxers suprimits"
 #: ../dnf/cli/commands/clean.py:119 ../dnf/lock.py:139
 #, python-format
 msgid "Waiting for process with pid %d to finish."
-msgstr "S'espera que acabi el procés amb el pid %d."
+msgstr "Es maté a l'espera fins que acabi el procés amb el pid %d."
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
@@ -1009,6 +1009,8 @@ msgid ""
 "{} [command]\n"
 "    print help"
 msgstr ""
+"{} [command]\n"
+"    imprimeix l'ajuda"
 
 #: ../dnf/cli/commands/shell.py:174
 msgid ""
@@ -1037,12 +1039,16 @@ msgid ""
 "{}\n"
 "    run the transaction"
 msgstr ""
+"{}\n"
+"    executa la transacció"
 
 #: ../dnf/cli/commands/shell.py:194
 msgid ""
 "{}\n"
 "    exit the shell"
 msgstr ""
+"{}\n"
+"    surt del shell"
 
 #: ../dnf/cli/commands/shell.py:199
 msgid ""
@@ -1902,7 +1908,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1072
 msgid " or part of a group"
-msgstr ""
+msgstr " o part d'un grup"
 
 #: ../dnf/cli/output.py:1090 ../dnf/cli/output.py:1133
 #: ../dnf/cli/output.py:1149 ../dnf/cli/output.py:1822
@@ -2192,42 +2198,42 @@ msgstr "Reinstal·la"
 #: ../dnf/cli/output.py:1909
 #, python-format
 msgid "---> Package %s.%s %s will be installed"
-msgstr ""
+msgstr "---> Paquet %s.%s %s serà instal·lat"
 
 #: ../dnf/cli/output.py:1911
 #, python-format
 msgid "---> Package %s.%s %s will be an upgrade"
-msgstr ""
+msgstr "---> Paquet %s.%s %s serà una actualització"
 
 #: ../dnf/cli/output.py:1913
 #, python-format
 msgid "---> Package %s.%s %s will be erased"
-msgstr ""
+msgstr "---> Paquet %s.%s %s serà eliminat"
 
 #: ../dnf/cli/output.py:1915
 #, python-format
 msgid "---> Package %s.%s %s will be reinstalled"
-msgstr ""
+msgstr "---> Paquet %s.%s %s serà reinstal·lat"
 
 #: ../dnf/cli/output.py:1917
 #, python-format
 msgid "---> Package %s.%s %s will be a downgrade"
-msgstr ""
+msgstr "---> Paquet %s.%s %s serà una reversió"
 
 #: ../dnf/cli/output.py:1919
 #, python-format
 msgid "---> Package %s.%s %s will be obsoleting"
-msgstr ""
+msgstr "---> Paquet %s.%s %s serà devaluat"
 
 #: ../dnf/cli/output.py:1921
 #, python-format
 msgid "---> Package %s.%s %s will be upgraded"
-msgstr ""
+msgstr "---> Paquet %s.%s %s serà actualitzat"
 
 #: ../dnf/cli/output.py:1923
 #, python-format
 msgid "---> Package %s.%s %s will be obsoleted"
-msgstr ""
+msgstr "---> Paquet %s.%s %s estarà devaluat"
 
 #: ../dnf/cli/output.py:1932
 msgid "--> Starting dependency resolution"
@@ -2397,11 +2403,11 @@ msgstr "Verificar"
 
 #: ../dnf/yum/rpmtrans.py:134
 msgid "Preparing"
-msgstr ""
+msgstr "Preparar"
 
 #: ../dnf/yum/rpmtrans.py:135
 msgid "Running scriptlet"
-msgstr ""
+msgstr "Executar l'scriptlet"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -2688,6 +2694,8 @@ msgstr ""
 msgid ""
 "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
 msgstr ""
+"Han fallat les deltes dels RPM, les quals han incrementat %.1f MB "
+"d'actualitzacions a %.1f MB (s'ha gastat un %d.1%%)"
 
 #: ../dnf/base.py:1066
 msgid "Could not open: {}"
@@ -2777,18 +2785,26 @@ msgstr ""
 #: ../dnf/base.py:1986
 msgid "No security updates needed, but {} update available"
 msgstr ""
+"No es requereix cap actualització de seguretat, però hi ha {} actualització "
+"disponible"
 
 #: ../dnf/base.py:1988
 msgid "No security updates needed, but {} updates available"
 msgstr ""
+"No es requereix cap actualització de seguretat, però hi ha {} "
+"actualitzacions disponibles"
 
 #: ../dnf/base.py:1992
 msgid "No security updates needed for \"{}\", but {} update available"
 msgstr ""
+"No es requereix cap actualització de seguretat per «{}», però hi ha {} "
+"actualització disponible"
 
 #: ../dnf/base.py:1994
 msgid "No security updates needed for \"{}\", but {} updates available"
 msgstr ""
+"No es requereix cap actualització de seguretat per «{}», però hi ha {} "
+"actualitzacions disponibles"
 
 #: ../dnf/base.py:2033
 #, python-format
@@ -2843,18 +2859,18 @@ msgstr ""
 
 #: ../dnf/repo.py:130
 msgid "Already downloaded"
-msgstr ""
+msgstr "Ja s'ha baixat"
 
 #. pinging mirrors, this might take a while
 #: ../dnf/repo.py:409
 #, python-format
 msgid "determining the fastest mirror (%d hosts).. "
-msgstr ""
+msgstr "s'està determinant la rèplica més ràpida (%d amfitrions).. "
 
 #: ../dnf/repo.py:658
 #, python-format
 msgid "Cannot find a valid baseurl for repo: %s"
-msgstr ""
+msgstr "No es pot trobar un url base vàlid per al dipòsit: %s"
 
 #: ../dnf/repo.py:754
 #, python-format
@@ -2889,7 +2905,7 @@ msgstr ""
 #: ../dnf/repo.py:844
 #, python-format
 msgid "repo: using cache for: %s"
-msgstr ""
+msgstr "dipòsit: s'utilitza la memòria cau per: %s"
 
 #: ../dnf/repo.py:847
 #, python-format
@@ -2899,7 +2915,7 @@ msgstr ""
 #: ../dnf/repo.py:858
 #, python-format
 msgid "repo: downloading from remote: %s, %s"
-msgstr ""
+msgstr "dipòsit: es baixen del remot: %s, %s"
 
 #: ../dnf/repo.py:869
 #, python-format
@@ -2914,8 +2930,8 @@ msgstr "No s'ha pogut sincronitzar la memòria cau per al dipòsit «%s»"
 #: ../dnf/repo.py:913
 #, python-format
 msgid "Repository %s has no mirror or baseurl set."
-msgstr ""
+msgstr "El dipòsit %s no té establerta cap rèplica o url base."
 
 #: ../dnf/repo.py:916
 msgid "Repository '{}' has unsupported type: 'type={}', skipping."
-msgstr ""
+msgstr "El dipòsit '{}' té un tipus no admés: 'type={}', s'ignora."

@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-28 09:47+0200\n"
-"PO-Revision-Date: 2017-03-22 06:21-0400\n"
+"PO-Revision-Date: 2017-03-30 04:07-0400\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/dnf/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -2412,11 +2412,11 @@ msgstr "Verifierar"
 
 #: ../dnf/yum/rpmtrans.py:134
 msgid "Preparing"
-msgstr ""
+msgstr "Förbereder"
 
 #: ../dnf/yum/rpmtrans.py:135
 msgid "Running scriptlet"
-msgstr ""
+msgstr "Kör skript"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -2852,67 +2852,68 @@ msgstr "Paketet %s är redan installerat, hoppar över."
 #: ../dnf/repo.py:104
 #, python-format
 msgid "no matching payload factory for %s"
-msgstr ""
+msgstr "ingen matchande lastfabrik för %s"
 
 #: ../dnf/repo.py:130
 msgid "Already downloaded"
-msgstr ""
+msgstr "Redan hämtat"
 
 #. pinging mirrors, this might take a while
 #: ../dnf/repo.py:409
 #, python-format
 msgid "determining the fastest mirror (%d hosts).. "
-msgstr ""
+msgstr "bestämmer den snabbaste spegeln (%d värdar) …"
 
 #: ../dnf/repo.py:658
 #, python-format
 msgid "Cannot find a valid baseurl for repo: %s"
-msgstr ""
+msgstr "Kan inte hitta en giltig bas-url för förrådet: %s"
 
 #: ../dnf/repo.py:754
 #, python-format
 msgid "reviving: repo '%s' skipped, no metalink."
-msgstr ""
+msgstr "återupplivar: förrådet ”%s” överhoppat, ingen metalink."
 
 #: ../dnf/repo.py:760
 #, python-format
 msgid "reviving: repo '%s' skipped, no usable hash."
-msgstr ""
+msgstr "återupplivar: förrådet ”%s” överhoppat, ingen användbar hash."
 
 #: ../dnf/repo.py:771
 #, python-format
 msgid "reviving: failed for '%s', mismatched %s sum."
-msgstr ""
+msgstr "återupplivar: misslyckades med ”%s”, %s-summor stämmer inte."
 
 #: ../dnf/repo.py:774
 #, python-format
 msgid "reviving: '%s' can be revived - metalink checksums match."
 msgstr ""
+"återupplivar: ”%s” kan återupplivas – metalänkens kontrollsummor stämmer."
 
 #: ../dnf/repo.py:787
 #, python-format
 msgid "reviving: failed for '%s', mismatched repomd."
-msgstr ""
+msgstr "återupplivar: misslyckades med ”%s”, repomd stämmer inte."
 
 #: ../dnf/repo.py:789
 #, python-format
 msgid "reviving: '%s' can be revived - repomd matches."
-msgstr ""
+msgstr "återupplivar: ”%s” kan återupplivas – repomd stämmer."
 
 #: ../dnf/repo.py:844
 #, python-format
 msgid "repo: using cache for: %s"
-msgstr ""
+msgstr "förråd: använder cache för: %s"
 
 #: ../dnf/repo.py:847
 #, python-format
 msgid "Cache-only enabled but no cache for '%s'"
-msgstr ""
+msgstr "Enbart-cache aktiverat men ingen cache för ”%s”"
 
 #: ../dnf/repo.py:858
 #, python-format
 msgid "repo: downloading from remote: %s, %s"
-msgstr ""
+msgstr "förråd: hämtar från fjärrförråd: %s, %s"
 
 #: ../dnf/repo.py:869
 #, python-format
@@ -2927,8 +2928,8 @@ msgstr "Misslyckades att synkronisera cachen för förrådet ”%s”"
 #: ../dnf/repo.py:913
 #, python-format
 msgid "Repository %s has no mirror or baseurl set."
-msgstr ""
+msgstr "Förrådet %s har ingen spegel eller bas-url satt."
 
 #: ../dnf/repo.py:916
 msgid "Repository '{}' has unsupported type: 'type={}', skipping."
-msgstr ""
+msgstr "Förrådet ”{}” har en typ som inte stödjs: ”type={}”, hoppar över."
