@@ -762,6 +762,7 @@ class RepoPkgsCommand(Command):
             metavar=_('REPO'))
         subparser = parser.add_subparsers(dest='subcmd',
                                           parser_class=argparse.ArgumentParser)
+        subparser.required = True
         for subcommand in self._subcmd_name2obj.keys():
             p = subparser.add_parser(subcommand)
             self._subcmd_name2obj[subcommand].set_argparser(p)
