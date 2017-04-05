@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-28 09:47+0200\n"
-"PO-Revision-Date: 2017-03-22 01:38-0400\n"
+"PO-Revision-Date: 2017-03-29 12:43-0400\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/projects/p/dnf/language/uk/)\n"
 "MIME-Version: 1.0\n"
@@ -2425,11 +2425,11 @@ msgstr "Перевіряємо"
 
 #: ../dnf/yum/rpmtrans.py:134
 msgid "Preparing"
-msgstr ""
+msgstr "Готуємося"
 
 #: ../dnf/yum/rpmtrans.py:135
 msgid "Running scriptlet"
-msgstr ""
+msgstr "Запускаємо дієсценарій"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -2867,67 +2867,68 @@ msgstr "Пакунок %s вже встановлено, пропускаємо.
 #: ../dnf/repo.py:104
 #, python-format
 msgid "no matching payload factory for %s"
-msgstr ""
+msgstr "немає відповідного обробника вмісту для %s"
 
 #: ../dnf/repo.py:130
 msgid "Already downloaded"
-msgstr ""
+msgstr "Вже отримано"
 
 #. pinging mirrors, this might take a while
 #: ../dnf/repo.py:409
 #, python-format
 msgid "determining the fastest mirror (%d hosts).. "
-msgstr ""
+msgstr "визначаємо найшвидше дзеркало (%d вузлів)… "
 
 #: ../dnf/repo.py:658
 #, python-format
 msgid "Cannot find a valid baseurl for repo: %s"
-msgstr ""
+msgstr "Не вдалося знайти коректну базову адресу для сховища: %s"
 
 #: ../dnf/repo.py:754
 #, python-format
 msgid "reviving: repo '%s' skipped, no metalink."
-msgstr ""
+msgstr "відновлюємо: сховище «%s» пропущено, немає метапосилання."
 
 #: ../dnf/repo.py:760
 #, python-format
 msgid "reviving: repo '%s' skipped, no usable hash."
-msgstr ""
+msgstr "відновлюємо: сховище «%s» пропущено, немає придатного хешу."
 
 #: ../dnf/repo.py:771
 #, python-format
 msgid "reviving: failed for '%s', mismatched %s sum."
-msgstr ""
+msgstr "відновлюємо: помилка обробки «%s», невідповідна контрольна сума %s."
 
 #: ../dnf/repo.py:774
 #, python-format
 msgid "reviving: '%s' can be revived - metalink checksums match."
 msgstr ""
+"відновлюємо: «%s» можна відновити — контрольні суми метапосилань збігаються."
 
 #: ../dnf/repo.py:787
 #, python-format
 msgid "reviving: failed for '%s', mismatched repomd."
-msgstr ""
+msgstr "відновлюємо: помилка обробки «%s», невідповідність repomd."
 
 #: ../dnf/repo.py:789
 #, python-format
 msgid "reviving: '%s' can be revived - repomd matches."
-msgstr ""
+msgstr "відновлюємо: «%s» можна відновити — значення repomd збігаються."
 
 #: ../dnf/repo.py:844
 #, python-format
 msgid "repo: using cache for: %s"
-msgstr ""
+msgstr "сховище: використовуємо кеш для %s"
 
 #: ../dnf/repo.py:847
 #, python-format
 msgid "Cache-only enabled but no cache for '%s'"
-msgstr ""
+msgstr "Увімкнено отримання даних лише з кешу, але немає кешу для «%s»"
 
 #: ../dnf/repo.py:858
 #, python-format
 msgid "repo: downloading from remote: %s, %s"
-msgstr ""
+msgstr "сховище: отримуємо дані з віддаленого сховища: %s, %s"
 
 #: ../dnf/repo.py:869
 #, python-format
@@ -2942,8 +2943,9 @@ msgstr "Не вдалося синхронізувати кеш для схов�
 #: ../dnf/repo.py:913
 #, python-format
 msgid "Repository %s has no mirror or baseurl set."
-msgstr ""
+msgstr "Для сховища %s не встановлено дзеркала або базової адреси."
 
 #: ../dnf/repo.py:916
 msgid "Repository '{}' has unsupported type: 'type={}', skipping."
 msgstr ""
+"Сховище «{}» належить до непідтримуваного типу: 'type={}', пропускаємо."

@@ -1,14 +1,15 @@
 # Geert Warrink <geert.warrink@onsnet.nu>, 2016. #zanata
 # Richard E. van der Luit <nippur@fedoraproject.org>, 2016. #zanata
 # Corne van der Plas <vdplas@gmail.com>, 2017. #zanata
+# Geert Warrink <geert.warrink@onsnet.nu>, 2017. #zanata
 # Richard E. van der Luit <nippur@fedoraproject.org>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-03-28 09:47+0200\n"
-"PO-Revision-Date: 2017-02-04 06:35-0500\n"
-"Last-Translator: Richard E. van der Luit <nippur@fedoraproject.org>\n"
+"PO-Revision-Date: 2017-03-31 01:37-0400\n"
+"Last-Translator: Geert Warrink <geert.warrink@onsnet.nu>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -55,7 +56,7 @@ msgstr "Verzenden email via '%s' mislukte: %s"
 #: ../dnf/automatic/emitter.py:137
 #, python-format
 msgid "Failed to execute command '%s': returned %d"
-msgstr ""
+msgstr "Het uitvoeren van commando '%s' is mislukt: %d werd teruggemeld"
 
 #: ../dnf/automatic/main.py:214 ../dnf/cli/main.py:57
 #, python-format
@@ -319,9 +320,8 @@ msgid "show obsoleted packages"
 msgstr "toon in onbruik geraakte pakketten"
 
 #: ../dnf/cli/commands/check.py:52
-#, fuzzy
 msgid "show problems with provides"
-msgstr "leveringsproblemen tonen"
+msgstr "toon leveringsproblemen"
 
 #: ../dnf/cli/commands/check.py:82
 msgid "{} has missing requires of {}"
@@ -375,11 +375,11 @@ msgstr "Waarschuwing: Geen groep komt overeen:"
 
 #: ../dnf/cli/commands/group.py:186
 msgid "Available Environment Groups:"
-msgstr ""
+msgstr "Beschikbare omgevingsgroepen:"
 
 #: ../dnf/cli/commands/group.py:188
 msgid "Installed Environment Groups:"
-msgstr ""
+msgstr "Geïnstalleerde omgevingsgroepen:"
 
 #: ../dnf/cli/commands/group.py:195 ../dnf/cli/commands/group.py:300
 msgid "Installed Groups:"
@@ -521,15 +521,15 @@ msgstr "Verwijderen dubbele pakketten"
 
 #: ../dnf/cli/commands/remove.py:58
 msgid "remove installonly packages over the limit"
-msgstr ""
+msgstr "verwijderen van installonly pakketten is over de limiet"
 
 #: ../dnf/cli/commands/remove.py:91
 msgid "No duplicated packages found for removal."
-msgstr ""
+msgstr "Er zijn geen gedupliceerde pakketten gevonden om te verwijderen."
 
 #: ../dnf/cli/commands/remove.py:102
 msgid "No old installonly packages found for removal."
-msgstr ""
+msgstr "Er zijn geen installonly pakketten gevonden om te verwijderen."
 
 #: ../dnf/cli/commands/repolist.py:37 ../dnf/cli/commands/updateinfo.py:49
 msgid "unknown"
@@ -556,19 +556,19 @@ msgstr "geconfigureerde softwarerepositories tonen"
 
 #: ../dnf/cli/commands/repolist.py:82
 msgid "show all repos"
-msgstr ""
+msgstr "toon alle repositories"
 
 #: ../dnf/cli/commands/repolist.py:85
 msgid "show enabled repos (default)"
-msgstr ""
+msgstr "toon alle ingeschakelde repositories (standaard)"
 
 #: ../dnf/cli/commands/repolist.py:88
 msgid "show disabled repos"
-msgstr ""
+msgstr "toon alle uitgeschakelde repositories"
 
 #: ../dnf/cli/commands/repolist.py:120
 msgid "No repositories available"
-msgstr ""
+msgstr "Er zijn geen repositories beschikbaar"
 
 #: ../dnf/cli/commands/repolist.py:142 ../dnf/cli/commands/repolist.py:143
 msgid "enabled"
@@ -680,6 +680,8 @@ msgid ""
 "Query all packages (shorthand for repoquery '*' or repoquery without "
 "argument)"
 msgstr ""
+"Bevraag alle pakketten (afkorting van repoquery '*' of repoquery zonder "
+"argument)"
 
 #: ../dnf/cli/commands/repoquery.py:108
 msgid "show only results from this ARCH"
