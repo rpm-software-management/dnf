@@ -100,10 +100,10 @@ class TransactionItem(object):
     def _obsoleting_history_state(self):
         return 'Obsoleting'
 
-    def _propagated_reason(self, history, installonlypkgs):
+    def _propagated_reason(self, history, installonly):
         if self.reason == 'user':
             return self.reason
-        if self.installed and installonlypkgs_query.filter(name=self.installed.name):
+        if self.installed and installonly.filter(name=self.installed.name):
             return 'user'
         if self.op_type in self._HISTORY_ERASE and self.erased:
             previously = history.reason_by_nvra(self.erased)
@@ -112,7 +112,7 @@ class TransactionItem(object):
         if self.obsoleted:
             reasons = set()
             for obs in self.obsoleted:
-                reasons.add(yumdb.get_package(obs).get('reason'))
+                reasons.add(history.reason_by_nvra(obs))
             if reasons:
                 if 'user' in reasons:
                     return 'user'

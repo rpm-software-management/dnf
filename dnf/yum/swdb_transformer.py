@@ -287,7 +287,6 @@ def run(input_dir='/var/lib/dnf/',
         sys.stderr.write('FAIL: aborting SWDB transformer\n')
         return False
 
-
     # value distribution in tables
     PACKAGE_DATA = ['P_ID', 'R_ID', 'from_repo_revision',
                     'from_repo_timestamp', 'installed_by', 'changed_by',
