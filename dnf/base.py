@@ -818,16 +818,16 @@ class Base(object):
                         if tsi.erased is not None and str(tsi.erased) == te_nevra:
                             tsi.op_type = dnf.transaction.FAIL
                             break
-                        if tsi.installed is not None and str(tsi.installed) == self._te_nevra(te):
+                        if tsi.installed is not None and str(tsi.installed) == te_nevra:
                             tsi.op_type = dnf.transaction.FAIL
                             break
                         for o in tsi.obsoleted:
-                            if str(o) == self._te_nevra(te):
+                            if str(o) == te_nevra:
                                 tsi.op_type = dnf.transaction.FAIL
                                 break
 
-                    errstring = _('Warning: scriptlet or other errors occurred during transaction.')
-                    logger.critical(errstring)
+                errstring = _('Errors occurred during transaction.')
+                logger.debug(errstring)
             else:
                 login = dnf.util.get_effective_login()
                 msg = _("Failed to obtain the transaction lock "
