@@ -133,7 +133,7 @@ class UpdateInfoCommand(commands.Command):
                             action=OptionParser.PkgNarrowCallback)
         output_format = parser.add_mutually_exclusive_group()
         output_format.add_argument("--summary", dest='output_format', const='summary',
-                                   action='store_const', help=_('show summmary of advisories'))
+                                   action='store_const', help=_('show summary of advisories'))
         output_format.add_argument("--list", dest='output_format', const='list',
                                    action='store_const', help=_('show list of advisories'))
         output_format.add_argument("--info", dest='output_format', const='info',
