@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-03-28 09:47+0200\n"
+"POT-Creation-Date: 2017-04-07 14:36+0200\n"
 "PO-Revision-Date: 2017-03-20 05:24-0400\n"
 "Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
 "Language-Team: Turkish\n"
@@ -62,232 +62,6 @@ msgstr ""
 msgid "Error: %s"
 msgstr "Hata: %s"
 
-#: ../dnf/cli/commands/__init__.py:43
-#, python-format
-msgid "To diagnose the problem, try running: '%s'."
-msgstr "Sorunu tanılamak için şu komutu çalıştırın: '%s'."
-
-#: ../dnf/cli/commands/__init__.py:45
-#, python-format
-msgid "You probably have corrupted RPMDB, running '%s' might fix the issue."
-msgstr ""
-"Büyük olasılıkla RPMDB'yi bozdunuz, '%s' komutunu çalıştırmak sorunu "
-"çözebilir."
-
-#: ../dnf/cli/commands/__init__.py:49
-#, fuzzy
-msgid ""
-"You have enabled checking of packages via GPG keys. This is a good thing.\n"
-"However, you do not have any GPG public keys installed. You need to download\n"
-"the keys for packages you wish to install and install them.\n"
-"You can do that by running the command:\n"
-"    rpm --import public.gpg.key\n"
-"\n"
-"\n"
-"Alternatively you can specify the url to the key you would like to use\n"
-"for a repository in the 'gpgkey' option in a repository section and DNF\n"
-"will install it for you.\n"
-"\n"
-"For more information contact your distribution or package provider."
-msgstr ""
-"Paketleri GPG aracılığıyla denetlemeyi etkinleştirdiniz. Bu güzel.\n"
-"Fakat, herhangi bir GPG genel anahtarı kurmadınız. Kurmak istediğiniz\n"
-"paketler için anahtar indirmeniz ve kurmanız gerekmektedir.\n"
-"Bunu, şu komutu çalıştırarak yapabilirsiniz:\n"
-"    rpm --import public.gpg.key\n"
-"\n"
-"\n"
-"Bunun yerine, depo bölümündeki 'gpgkey' seçeneğinde depo için kullanmak istediğin anahtara url belirtebilirsin ve DNF bunu senin için kuracaktır.\n"
-"\n"
-"Daha çok ayrıntı için dağıtım ya da paket sağlayıcınız ile görüşün."
-
-#: ../dnf/cli/commands/__init__.py:76
-#, python-format
-msgid "Problem repository: %s"
-msgstr "Depo sorunu: %s"
-
-#: ../dnf/cli/commands/__init__.py:95
-msgid "There are no enabled repos."
-msgstr "Burada etkinleştirilmiş depo yok."
-
-#: ../dnf/cli/commands/__init__.py:153
-msgid "display details about a package or group of packages"
-msgstr "bir paket ya da paketler kümesiyle ilgili ayrıntıları göster"
-
-#: ../dnf/cli/commands/__init__.py:163 ../dnf/cli/commands/__init__.py:329
-msgid "show all packages (default)"
-msgstr "tüm paketleri göster (öntanımlı)"
-
-#: ../dnf/cli/commands/__init__.py:166 ../dnf/cli/commands/__init__.py:332
-msgid "show only available packages"
-msgstr "yalnızca mevcut paketleri göster"
-
-#: ../dnf/cli/commands/__init__.py:169 ../dnf/cli/commands/__init__.py:335
-msgid "show only installed packages"
-msgstr "yalnızca kurulu paketleri göster"
-
-#: ../dnf/cli/commands/__init__.py:172 ../dnf/cli/commands/__init__.py:338
-msgid "show only extras packages"
-msgstr "yalnızca ek paketleri göster"
-
-#: ../dnf/cli/commands/__init__.py:175 ../dnf/cli/commands/__init__.py:178
-#: ../dnf/cli/commands/__init__.py:341 ../dnf/cli/commands/__init__.py:344
-msgid "show only upgrades packages"
-msgstr ""
-
-#: ../dnf/cli/commands/__init__.py:181 ../dnf/cli/commands/__init__.py:347
-msgid "show only autoremove packages"
-msgstr ""
-
-#: ../dnf/cli/commands/__init__.py:184 ../dnf/cli/commands/__init__.py:350
-msgid "show only recently changed packages"
-msgstr "yalnızca yakın zamanda değiştirilen paketleri göster"
-
-#: ../dnf/cli/commands/__init__.py:185 ../dnf/cli/commands/__init__.py:255
-#: ../dnf/cli/commands/__init__.py:283 ../dnf/cli/commands/__init__.py:351
-#: ../dnf/cli/commands/autoremove.py:48 ../dnf/cli/commands/install.py:48
-#: ../dnf/cli/commands/reinstall.py:44 ../dnf/cli/commands/remove.py:61
-#: ../dnf/cli/commands/upgrade.py:44
-msgid "PACKAGE"
-msgstr "PAKET"
-
-#: ../dnf/cli/commands/__init__.py:215
-msgid "list a package or groups of packages"
-msgstr "bir paket ya da paketler kümesini listele"
-
-#: ../dnf/cli/commands/__init__.py:229
-msgid "find what package provides the given value"
-msgstr "verilen değerdekini hangi paketin sağladığını bul"
-
-#: ../dnf/cli/commands/__init__.py:233
-#, fuzzy
-msgid "SOME_STRING"
-msgstr "BİR_DİZGE"
-
-#: ../dnf/cli/commands/__init__.py:251
-msgid "check for available package upgrades"
-msgstr "uygun paket yükseltmeleri için denetle"
-
-#: ../dnf/cli/commands/__init__.py:384 ../dnf/cli/commands/__init__.py:437
-#: ../dnf/cli/commands/__init__.py:493
-msgid "No package available."
-msgstr "Paket mevcut değil."
-
-#: ../dnf/cli/commands/__init__.py:393 ../dnf/cli/commands/__init__.py:875
-#: ../dnf/cli/commands/group.py:402 ../dnf/cli/commands/install.py:122
-#: ../dnf/cli/cli.py:347 ../dnf/cli/cli.py:603 ../dnf/cli/cli.py:630
-#, python-format
-msgid "No package %s available."
-msgstr "%s paketi mevcut değil."
-
-#: ../dnf/cli/commands/__init__.py:399 ../dnf/cli/commands/__init__.py:465
-#: ../dnf/cli/commands/__init__.py:522 ../dnf/cli/commands/__init__.py:553
-#: ../dnf/cli/commands/__init__.py:615 ../dnf/cli/commands/__init__.py:664
-#: ../dnf/cli/commands/install.py:79 ../dnf/cli/commands/install.py:88
-#: ../dnf/cli/commands/install.py:104 ../dnf/cli/commands/reinstall.py:99
-#: ../dnf/cli/cli.py:196 ../dnf/cli/cli.py:356 ../dnf/base.py:1460
-msgid "Nothing to do."
-msgstr "Yapılacak bir şey yok."
-
-#: ../dnf/cli/commands/__init__.py:435
-msgid "No package installed."
-msgstr "Hiç paket kurulmadı."
-
-#: ../dnf/cli/commands/__init__.py:448 ../dnf/cli/commands/__init__.py:505
-#: ../dnf/cli/commands/__init__.py:609 ../dnf/cli/commands/__init__.py:656
-#: ../dnf/cli/commands/__init__.py:699 ../dnf/cli/commands/__init__.py:734
-#: ../dnf/cli/commands/install.py:94 ../dnf/cli/commands/reinstall.py:68
-#: ../dnf/cli/commands/reinstall.py:82 ../dnf/cli/commands/remove.py:119
-#: ../dnf/cli/commands/upgrade.py:74 ../dnf/cli/commands/upgrade.py:84
-#: ../dnf/cli/cli.py:338 ../dnf/base.py:1587 ../dnf/base.py:1606
-#: ../dnf/base.py:1619 ../dnf/base.py:1640 ../dnf/base.py:1686
-#: ../dnf/base.py:1743 ../dnf/base.py:1832
-#, python-format
-msgid "No match for argument: %s"
-msgstr "Şu argüman için eşleşme yok: %s"
-
-#: ../dnf/cli/commands/__init__.py:455 ../dnf/cli/commands/__init__.py:512
-#: ../dnf/cli/commands/reinstall.py:89
-#, python-format
-msgid " (from %s)"
-msgstr "(şuradan: %s)"
-
-#: ../dnf/cli/commands/__init__.py:456 ../dnf/cli/commands/__init__.py:513
-#: ../dnf/cli/commands/reinstall.py:90
-#, python-format
-msgid "Installed package %s%s not available."
-msgstr "Yüklenen paket %s%s mevcut değil."
-
-#: ../dnf/cli/commands/__init__.py:490 ../dnf/cli/commands/__init__.py:599
-#: ../dnf/cli/commands/__init__.py:642 ../dnf/cli/commands/__init__.py:689
-msgid "No package installed from the repository."
-msgstr "Depodan hiç paket kurulmadı."
-
-#: ../dnf/cli/commands/__init__.py:704 ../dnf/cli/commands/remove.py:125
-#: ../dnf/base.py:1749
-msgid "No packages marked for removal."
-msgstr "Kaldırılması için işaretlenen paket yok."
-
-#: ../dnf/cli/commands/__init__.py:739 ../dnf/cli/commands/upgrade.py:99
-msgid "No packages marked for upgrade."
-msgstr "Yükseltme için imlenmiş paket yok."
-
-#: ../dnf/cli/commands/__init__.py:749
-msgid "run commands on top of all packages in given repository"
-msgstr ""
-
-#: ../dnf/cli/commands/__init__.py:762
-msgid "REPO"
-msgstr "DEPO"
-
-#: ../dnf/cli/commands/__init__.py:791
-msgid "display a helpful usage message"
-msgstr "yardımcı olan kullanım iletisi göster"
-
-#: ../dnf/cli/commands/__init__.py:795
-msgid "COMMAND"
-msgstr "KOMUT"
-
-#: ../dnf/cli/commands/__init__.py:811
-msgid "display, or use, the transaction history"
-msgstr "işlem geçmişini göster ya da kullan"
-
-#: ../dnf/cli/commands/__init__.py:825 ../dnf/cli/cli.py:545
-msgid "No transaction ID given"
-msgstr "İşlem ID'si verilmedi"
-
-#: ../dnf/cli/commands/__init__.py:828 ../dnf/cli/cli.py:559
-msgid "Found more than one transaction ID!"
-msgstr "Birden çok işlem ID'si bulundu!"
-
-#: ../dnf/cli/commands/__init__.py:838
-msgid "You don't have access to the history DB."
-msgstr "Geçmiş veritabanına erişim hakkınız yok."
-
-#: ../dnf/cli/commands/__init__.py:846
-#, python-format
-msgid ""
-"Cannot undo transaction %s, doing so would result in an inconsistent package"
-" database."
-msgstr ""
-"%s işlemi geri alınamaz, bunu yapmak tutarsız bir paket veri tabanına neden "
-"olur."
-
-#: ../dnf/cli/commands/__init__.py:851
-#, python-format
-msgid ""
-"Cannot rollback transaction %s, doing so would result in an inconsistent "
-"package database."
-msgstr ""
-"%s işlemine geri dönülemez, bunu yapmak tutarsız bir paket veri tabanına "
-"neden olur."
-
-#: ../dnf/cli/commands/__init__.py:871 ../dnf/cli/cli.py:599
-#: ../dnf/cli/cli.py:626 ../dnf/base.py:1712
-#, python-format
-msgid "No package %s installed."
-msgstr "%s paketi kurulu değil."
-
 #: ../dnf/cli/commands/autoremove.py:41
 msgid ""
 "remove all unneeded packages that were originally installed as dependencies"
@@ -298,6 +72,14 @@ msgstr ""
 #: ../dnf/cli/commands/autoremove.py:46 ../dnf/cli/commands/remove.py:59
 msgid "Package to remove"
 msgstr "Kaldırılacak paket"
+
+#: ../dnf/cli/commands/autoremove.py:48 ../dnf/cli/commands/install.py:48
+#: ../dnf/cli/commands/reinstall.py:44 ../dnf/cli/commands/remove.py:61
+#: ../dnf/cli/commands/upgrade.py:44 ../dnf/cli/commands/__init__.py:185
+#: ../dnf/cli/commands/__init__.py:255 ../dnf/cli/commands/__init__.py:283
+#: ../dnf/cli/commands/__init__.py:351
+msgid "PACKAGE"
+msgstr "PAKET"
 
 #: ../dnf/cli/commands/check.py:34
 msgid "check for problems in the packagedb"
@@ -439,6 +221,13 @@ msgstr "yalnızca mevcut kümeleri göster"
 msgid "Invalid groups sub-command, use: %s."
 msgstr "Geçersiz küme alt-komutu, şunları kullan: %s"
 
+#: ../dnf/cli/commands/group.py:402 ../dnf/cli/commands/install.py:122
+#: ../dnf/cli/commands/__init__.py:393 ../dnf/cli/commands/__init__.py:876
+#: ../dnf/cli/cli.py:348 ../dnf/cli/cli.py:604 ../dnf/cli/cli.py:631
+#, python-format
+msgid "No package %s available."
+msgstr "%s paketi mevcut değil."
+
 #: ../dnf/cli/commands/group.py:405
 msgid "Unable to find a mandatory group package."
 msgstr ""
@@ -456,11 +245,33 @@ msgstr "Yüklenecek paket"
 msgid "Not a valid rpm file path: %s"
 msgstr "Geçerli bir rpm dosya yolu değil: %s"
 
+#: ../dnf/cli/commands/install.py:79 ../dnf/cli/commands/install.py:88
+#: ../dnf/cli/commands/install.py:104 ../dnf/cli/commands/reinstall.py:99
+#: ../dnf/cli/commands/__init__.py:399 ../dnf/cli/commands/__init__.py:465
+#: ../dnf/cli/commands/__init__.py:522 ../dnf/cli/commands/__init__.py:553
+#: ../dnf/cli/commands/__init__.py:615 ../dnf/cli/commands/__init__.py:664
+#: ../dnf/cli/cli.py:197 ../dnf/cli/cli.py:357 ../dnf/base.py:1459
+msgid "Nothing to do."
+msgstr "Yapılacak bir şey yok."
+
 #: ../dnf/cli/commands/install.py:85 ../dnf/cli/commands/install.py:101
-#: ../dnf/cli/commands/remove.py:108 ../dnf/base.py:1732
+#: ../dnf/cli/commands/remove.py:108 ../dnf/base.py:1731
 #, python-format
 msgid "Not a valid form: %s"
 msgstr "Geçerli bir biçim değil: %s"
+
+#: ../dnf/cli/commands/install.py:94 ../dnf/cli/commands/reinstall.py:68
+#: ../dnf/cli/commands/reinstall.py:82 ../dnf/cli/commands/remove.py:119
+#: ../dnf/cli/commands/upgrade.py:74 ../dnf/cli/commands/upgrade.py:84
+#: ../dnf/cli/commands/__init__.py:448 ../dnf/cli/commands/__init__.py:505
+#: ../dnf/cli/commands/__init__.py:609 ../dnf/cli/commands/__init__.py:656
+#: ../dnf/cli/commands/__init__.py:699 ../dnf/cli/commands/__init__.py:734
+#: ../dnf/cli/cli.py:339 ../dnf/base.py:1586 ../dnf/base.py:1605
+#: ../dnf/base.py:1618 ../dnf/base.py:1639 ../dnf/base.py:1685
+#: ../dnf/base.py:1742 ../dnf/base.py:1831
+#, python-format
+msgid "No match for argument: %s"
+msgstr "Şu argüman için eşleşme yok: %s"
 
 #: ../dnf/cli/commands/install.py:128
 msgid "Unable to find a match"
@@ -490,8 +301,8 @@ msgstr "%s kullanıcı tarafından yüklendi olarak imlendi"
 msgid "%s unmarked as user installed."
 msgstr "%s kullanıcı tarafından yüklendi olarak imlenmedi"
 
-#: ../dnf/cli/commands/mark.py:77 ../dnf/cli/commands/shell.py:117
-#: ../dnf/cli/commands/shell.py:226
+#: ../dnf/cli/commands/mark.py:77 ../dnf/cli/commands/shell.py:116
+#: ../dnf/cli/commands/shell.py:225
 msgid "Error:"
 msgstr "Hata:"
 
@@ -508,10 +319,22 @@ msgstr "paketi yeniden yükle"
 msgid "Package to reinstall"
 msgstr "Yeniden yüklenecek paket"
 
-#: ../dnf/cli/commands/reinstall.py:79 ../dnf/base.py:1665
+#: ../dnf/cli/commands/reinstall.py:79 ../dnf/base.py:1664
 #, python-format
 msgid "Package %s available, but not installed."
 msgstr "%s paketi mevcut, ama yüklü değil."
+
+#: ../dnf/cli/commands/reinstall.py:89 ../dnf/cli/commands/__init__.py:455
+#: ../dnf/cli/commands/__init__.py:512
+#, python-format
+msgid " (from %s)"
+msgstr "(şuradan: %s)"
+
+#: ../dnf/cli/commands/reinstall.py:90 ../dnf/cli/commands/__init__.py:456
+#: ../dnf/cli/commands/__init__.py:513
+#, python-format
+msgid "Installed package %s%s not available."
+msgstr "Yüklenen paket %s%s mevcut değil."
 
 #: ../dnf/cli/commands/remove.py:46
 msgid "remove a package or packages from your system"
@@ -532,6 +355,11 @@ msgstr "Kaldırmak için yinelenen paket bulunamadı."
 #: ../dnf/cli/commands/remove.py:102
 msgid "No old installonly packages found for removal."
 msgstr ""
+
+#: ../dnf/cli/commands/remove.py:125 ../dnf/cli/commands/__init__.py:704
+#: ../dnf/base.py:1748
+msgid "No packages marked for removal."
+msgstr "Kaldırılması için işaretlenen paket yok."
 
 #: ../dnf/cli/commands/repolist.py:37 ../dnf/cli/commands/updateinfo.py:49
 msgid "unknown"
@@ -669,206 +497,6 @@ msgstr "durum"
 msgid "repo name"
 msgstr "depo ismi"
 
-#: ../dnf/cli/commands/repoquery.py:88
-msgid "search for packages matching keyword"
-msgstr "anahtar kelimeyle eşleşen paketler için ara"
-
-#: ../dnf/cli/commands/repoquery.py:103
-msgid "the key to search for"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:105
-msgid ""
-"Query all packages (shorthand for repoquery '*' or repoquery without "
-"argument)"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:108
-msgid "show only results from this ARCH"
-msgstr "yalnızca bu MİMARİDEN sonuçları göster"
-
-#: ../dnf/cli/commands/repoquery.py:110
-#, fuzzy
-msgid "show only results that owns FILE"
-msgstr "yalnızca DOSYAYA sahip sonuçları göster"
-
-#: ../dnf/cli/commands/repoquery.py:112
-msgid "show only results that provide REQ"
-msgstr "yalnızca bu İSTEĞİ sağlayan sonuçları göster"
-
-#: ../dnf/cli/commands/repoquery.py:114
-msgid "shows results that requires package provides and files REQ"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:116
-msgid "show only results that recommend REQ"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:118
-msgid "show only results that enhance REQ"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:120
-msgid "show only results that suggest REQ"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:122
-msgid "show only results that supplement REQ"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:125
-msgid "check non-explicit dependencies (files and Provides); default"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:127
-msgid "check dependencies exactly as given, opposite of --alldeps"
-msgstr "bağımlılıkları tam olarak verildiği gibi denetle, --alldeps'in zıttı"
-
-#: ../dnf/cli/commands/repoquery.py:129
-msgid "show a list of all dependencies and what packages provide them"
-msgstr ""
-"tüm bağımlılıkların listesini göster ve hangi paketlerin sağladığını göster"
-
-#: ../dnf/cli/commands/repoquery.py:131
-msgid "show available tags to use with --queryformat"
-msgstr "--queryformat ile kullanılacak uygun etiketleri göster"
-
-#: ../dnf/cli/commands/repoquery.py:134
-msgid "resolve capabilities to originating package(s)"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:136
-msgid "show recursive tree for package(s)"
-msgstr "paket(ler) için özyineleme ağacını göster"
-
-#: ../dnf/cli/commands/repoquery.py:138
-msgid "operate on corresponding source RPM"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:140
-msgid ""
-"show N latest packages for a given name.arch (or latest but N if N is "
-"negative)"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:146
-msgid "show detailed information about the package"
-msgstr "paketle ilgili ayrıntılı bilgiyi göster"
-
-#: ../dnf/cli/commands/repoquery.py:149
-msgid "show list of files in the package"
-msgstr "paket içindeki dosyaların listesini göster"
-
-#: ../dnf/cli/commands/repoquery.py:152
-msgid "show package source RPM name"
-msgstr "paket kaynak RPM adını göster"
-
-#: ../dnf/cli/commands/repoquery.py:155
-msgid "format for displaying found packages"
-msgstr "bulunan paketlerin görüntülenme biçimi"
-
-#: ../dnf/cli/commands/repoquery.py:160
-msgid "limit the query to installed duplicate packages"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:167
-msgid "limit the query to installed installonly packages"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:170
-msgid "limit the query to installed packages with unsatisfied dependencies"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:174
-msgid "Display capabilities that the package conflicts with."
-msgstr "Paketin çakıştığı yetenekleri göster."
-
-#: ../dnf/cli/commands/repoquery.py:175
-msgid "Display capabilities that the package can enhance."
-msgstr "Paketin geliştirebileceği yetenekleri göster."
-
-#: ../dnf/cli/commands/repoquery.py:176
-msgid "Display capabilities provided by the package."
-msgstr "Paket tarafından sağlanan yetenekleri göster."
-
-#: ../dnf/cli/commands/repoquery.py:177
-msgid "Display capabilities that the package recommends."
-msgstr "Paketin önerdiği yetenekleri göster."
-
-#: ../dnf/cli/commands/repoquery.py:178
-msgid "Display capabilities that the package depends on."
-msgstr "Paketin bağımlı olduğu yetenekleri göster."
-
-#: ../dnf/cli/commands/repoquery.py:179
-#, python-format
-msgid ""
-"Display capabilities that the package depends on for running a %%pre script."
-msgstr ""
-"%%pre betiğini çalıştırmak için paketin bağımlı olduğu yetenekleri göster."
-
-#: ../dnf/cli/commands/repoquery.py:180
-msgid "Display capabilities that the package suggests."
-msgstr "Paketin önerdiği yetenekleri göster."
-
-#: ../dnf/cli/commands/repoquery.py:181
-msgid "Display capabilities that the package can supplement."
-msgstr "Paketin ekleyebileceği yetenekleri göster."
-
-#: ../dnf/cli/commands/repoquery.py:188
-msgid "Display only available packages."
-msgstr "Yalnızca mevcut paketleri göster."
-
-#: ../dnf/cli/commands/repoquery.py:191
-msgid "Display only installed packages."
-msgstr "Yalnızca yüklü paketleri göster."
-
-#: ../dnf/cli/commands/repoquery.py:192
-msgid ""
-"Display only packages that are not present in any of available repositories."
-msgstr "Yalnızca mevcut depoların herhangi birinde olmayan paketleri göster."
-
-#: ../dnf/cli/commands/repoquery.py:193
-msgid ""
-"Display only packages that provide an upgrade for some already installed "
-"package."
-msgstr ""
-"Yalnızca önceden kurulmuş bazı paketler için yükseltme sağlayan paketleri "
-"göster."
-
-#: ../dnf/cli/commands/repoquery.py:194
-msgid "Display only packages that can be removed by \"dnf autoremove\" command."
-msgstr "Yalnızca \"dnf autoremove\" komutuyla kaldırılabilen paketleri göster."
-
-#: ../dnf/cli/commands/repoquery.py:206
-msgid "Display only recently edited packages"
-msgstr "Yalnızca yakın zamanda düzenlenen paketleri göster"
-
-#: ../dnf/cli/commands/repoquery.py:235
-msgid "Package {} contains no files"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:263
-#, python-brace-format
-msgid "Available query-tags: use --queryformat \".. %{tag} ..\""
-msgstr "Kullanılabilir sorgu etiketleri: --queryformat \".. %{tag} ..\" kullan"
-
-#: ../dnf/cli/commands/repoquery.py:281 ../dnf/cli/cli.py:931
-msgid "argument {}: not allowed with argument {}"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:320
-msgid "argument {} requires --whatrequires option"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:354
-msgid ""
-"No switch specified\n"
-"usage: dnf repoquery [--whatrequires|--requires|--conflicts|--obsoletes|--enhances|--suggest|--provides|--suplements|--recommends] [key] [--tree]\n"
-"\n"
-"description:\n"
-"  For the given packages print a tree of the packages."
-msgstr ""
-
 #: ../dnf/cli/commands/search.py:43
 msgid "search package details for the given string"
 msgstr "verilen dizgedeki için paket ayrıntılarını ara"
@@ -919,6 +547,10 @@ msgstr "sisteminizdeki bir paketi ya da paketleri yükseltin"
 msgid "Package to upgrade"
 msgstr "Yükseltilecek paket"
 
+#: ../dnf/cli/commands/upgrade.py:99 ../dnf/cli/commands/__init__.py:739
+msgid "No packages marked for upgrade."
+msgstr "Yükseltme için imlenmiş paket yok."
+
 #: ../dnf/cli/commands/upgrademinimal.py:31
 msgid ""
 "upgrade, but only 'newest' package match which fixes a problem that affects "
@@ -953,102 +585,245 @@ msgstr[1] "%d dosya kaldırıldı"
 msgid "Waiting for process with pid %d to finish."
 msgstr "%d pid numaralı işlemin bitmesi için bekleniyor."
 
-#: ../dnf/cli/commands/shell.py:52
-msgid "run an interactive DNF shell"
+#: ../dnf/cli/commands/repoquery.py:88
+msgid "search for packages matching keyword"
+msgstr "anahtar kelimeyle eşleşen paketler için ara"
+
+#: ../dnf/cli/commands/repoquery.py:103
+msgid "the key to search for"
 msgstr ""
 
-#: ../dnf/cli/commands/shell.py:73
-msgid "SCRIPT"
-msgstr "BETİK"
+#: ../dnf/cli/commands/repoquery.py:105
+msgid ""
+"Query all packages (shorthand for repoquery '*' or repoquery without "
+"argument)"
+msgstr ""
 
-#: ../dnf/cli/commands/shell.py:74
-msgid "Script to run in DNF shell"
-msgstr "DNF kabuğunda çalışacak betik"
+#: ../dnf/cli/commands/repoquery.py:108
+msgid "Query all versions of packages (default)"
+msgstr ""
 
-#: ../dnf/cli/commands/shell.py:131
-msgid "Unsupported key value."
-msgstr "Desteklenmeyen anahtar değeri."
+#: ../dnf/cli/commands/repoquery.py:110
+msgid "show only results from this ARCH"
+msgstr "yalnızca bu MİMARİDEN sonuçları göster"
 
-#: ../dnf/cli/commands/shell.py:147
+#: ../dnf/cli/commands/repoquery.py:112
+#, fuzzy
+msgid "show only results that owns FILE"
+msgstr "yalnızca DOSYAYA sahip sonuçları göster"
+
+#: ../dnf/cli/commands/repoquery.py:114
+msgid "show only results that conflict REQ"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:116
+msgid "show only results that obsolete REQ"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:118
+msgid "show only results that provide REQ"
+msgstr "yalnızca bu İSTEĞİ sağlayan sonuçları göster"
+
+#: ../dnf/cli/commands/repoquery.py:120
+msgid "shows results that requires package provides and files REQ"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:122
+msgid "show only results that recommend REQ"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:124
+msgid "show only results that enhance REQ"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:126
+msgid "show only results that suggest REQ"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:128
+msgid "show only results that supplement REQ"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:131
+msgid "check non-explicit dependencies (files and Provides); default"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:133
+msgid "check dependencies exactly as given, opposite of --alldeps"
+msgstr "bağımlılıkları tam olarak verildiği gibi denetle, --alldeps'in zıttı"
+
+#: ../dnf/cli/commands/repoquery.py:135
+msgid ""
+"used with --whatrequires, and --requires --resolve, query packages "
+"recursively."
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:137
+msgid "show a list of all dependencies and what packages provide them"
+msgstr ""
+"tüm bağımlılıkların listesini göster ve hangi paketlerin sağladığını göster"
+
+#: ../dnf/cli/commands/repoquery.py:139
+msgid "show available tags to use with --queryformat"
+msgstr "--queryformat ile kullanılacak uygun etiketleri göster"
+
+#: ../dnf/cli/commands/repoquery.py:142
+msgid "resolve capabilities to originating package(s)"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:144
+msgid "show recursive tree for package(s)"
+msgstr "paket(ler) için özyineleme ağacını göster"
+
+#: ../dnf/cli/commands/repoquery.py:146
+msgid "operate on corresponding source RPM"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:148
+msgid ""
+"show N latest packages for a given name.arch (or latest but N if N is "
+"negative)"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:154
+msgid "show detailed information about the package"
+msgstr "paketle ilgili ayrıntılı bilgiyi göster"
+
+#: ../dnf/cli/commands/repoquery.py:157
+msgid "show list of files in the package"
+msgstr "paket içindeki dosyaların listesini göster"
+
+#: ../dnf/cli/commands/repoquery.py:160
+msgid "show package source RPM name"
+msgstr "paket kaynak RPM adını göster"
+
+#: ../dnf/cli/commands/repoquery.py:163
+msgid "format for displaying found packages"
+msgstr "bulunan paketlerin görüntülenme biçimi"
+
+#: ../dnf/cli/commands/repoquery.py:166
+msgid ""
+"use name-epoch:version-release.architecture format for displaying found "
+"packages (default)"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:169
+msgid ""
+"use name-version-release format for displaying found packages (rpm query "
+"default)"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:175
+msgid ""
+"use epoch:name-version-release.architecture format for displaying found "
+"packages"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:180
+msgid "limit the query to installed duplicate packages"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:187
+msgid "limit the query to installed installonly packages"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:190
+msgid "limit the query to installed packages with unsatisfied dependencies"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:192
+msgid "show a location from where packages can be downloaded"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:195
+msgid "Display capabilities that the package conflicts with."
+msgstr "Paketin çakıştığı yetenekleri göster."
+
+#: ../dnf/cli/commands/repoquery.py:196
+msgid "Display capabilities that the package can enhance."
+msgstr "Paketin geliştirebileceği yetenekleri göster."
+
+#: ../dnf/cli/commands/repoquery.py:197
+msgid "Display capabilities provided by the package."
+msgstr "Paket tarafından sağlanan yetenekleri göster."
+
+#: ../dnf/cli/commands/repoquery.py:198
+msgid "Display capabilities that the package recommends."
+msgstr "Paketin önerdiği yetenekleri göster."
+
+#: ../dnf/cli/commands/repoquery.py:199
+msgid "Display capabilities that the package depends on."
+msgstr "Paketin bağımlı olduğu yetenekleri göster."
+
+#: ../dnf/cli/commands/repoquery.py:200
 #, python-format
-msgid "Could not find repository: %s"
-msgstr "Depo bulunamadı: %s"
-
-#: ../dnf/cli/commands/shell.py:163
 msgid ""
-"{} arg [value]\n"
-"  arg: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,\n"
-"        repo_id.gpgcheck, repo_id.exclude\n"
-"    If no value is given it prints the current value.\n"
-"    If value is given it sets that value."
+"Display capabilities that the package depends on for running a %%pre script."
+msgstr ""
+"%%pre betiğini çalıştırmak için paketin bağımlı olduğu yetenekleri göster."
+
+#: ../dnf/cli/commands/repoquery.py:201
+msgid "Display capabilities that the package suggests."
+msgstr "Paketin önerdiği yetenekleri göster."
+
+#: ../dnf/cli/commands/repoquery.py:202
+msgid "Display capabilities that the package can supplement."
+msgstr "Paketin ekleyebileceği yetenekleri göster."
+
+#: ../dnf/cli/commands/repoquery.py:209
+msgid "Display only available packages."
+msgstr "Yalnızca mevcut paketleri göster."
+
+#: ../dnf/cli/commands/repoquery.py:212
+msgid "Display only installed packages."
+msgstr "Yalnızca yüklü paketleri göster."
+
+#: ../dnf/cli/commands/repoquery.py:213
+msgid ""
+"Display only packages that are not present in any of available repositories."
+msgstr "Yalnızca mevcut depoların herhangi birinde olmayan paketleri göster."
+
+#: ../dnf/cli/commands/repoquery.py:214
+msgid ""
+"Display only packages that provide an upgrade for some already installed "
+"package."
+msgstr ""
+"Yalnızca önceden kurulmuş bazı paketler için yükseltme sağlayan paketleri "
+"göster."
+
+#: ../dnf/cli/commands/repoquery.py:215
+msgid "Display only packages that can be removed by \"dnf autoremove\" command."
+msgstr "Yalnızca \"dnf autoremove\" komutuyla kaldırılabilen paketleri göster."
+
+#: ../dnf/cli/commands/repoquery.py:227
+msgid "Display only recently edited packages"
+msgstr "Yalnızca yakın zamanda düzenlenen paketleri göster"
+
+#: ../dnf/cli/commands/repoquery.py:256
+msgid "Package {} contains no files"
 msgstr ""
 
-#: ../dnf/cli/commands/shell.py:170
-msgid ""
-"{} [command]\n"
-"    print help"
+#: ../dnf/cli/commands/repoquery.py:301
+#, python-brace-format
+msgid "Available query-tags: use --queryformat \".. %{tag} ..\""
+msgstr "Kullanılabilir sorgu etiketleri: --queryformat \".. %{tag} ..\" kullan"
+
+#: ../dnf/cli/commands/repoquery.py:321 ../dnf/cli/cli.py:935
+msgid "argument {}: not allowed with argument {}"
 msgstr ""
 
-#: ../dnf/cli/commands/shell.py:174
-msgid ""
-"{} arg [option]\n"
-"  list: lists repositories and their status. option = [all | id | glob]\n"
-"  enable: enable repositories. option = repository id\n"
-"  disable: disable repositories. option = repository id"
+#: ../dnf/cli/commands/repoquery.py:364
+msgid "argument {} requires --whatrequires option"
 msgstr ""
 
-#: ../dnf/cli/commands/shell.py:180
+#: ../dnf/cli/commands/repoquery.py:398
 msgid ""
-"{}\n"
-"    resolve the transaction set"
-msgstr ""
-
-#: ../dnf/cli/commands/shell.py:184
-msgid ""
-"{} arg\n"
-"  list: lists the contents of the transaction\n"
-"  reset: reset (zero-out) the transaction\n"
-"  run: run the transaction"
-msgstr ""
-
-#: ../dnf/cli/commands/shell.py:190
-msgid ""
-"{}\n"
-"    run the transaction"
-msgstr ""
-
-#: ../dnf/cli/commands/shell.py:194
-msgid ""
-"{}\n"
-"    exit the shell"
-msgstr ""
-
-#: ../dnf/cli/commands/shell.py:199
-msgid ""
-"Shell specific arguments:\n"
+"No switch specified\n"
+"usage: dnf repoquery [--whatrequires|--requires|--conflicts|--obsoletes|--enhances|--suggest|--provides|--suplements|--recommends] [key] [--tree]\n"
 "\n"
-"config                   set config options\n"
-"help                     print help\n"
-"repository (or repo)     enable, disable or list repositories\n"
-"resolvedep               resolve the transaction set\n"
-"transaction (or ts)      list, reset or run the transaction set\n"
-"run                      resolve and run the transaction set\n"
-"exit (or quit)           exit the shell"
+"description:\n"
+"  For the given packages print a tree of the packages."
 msgstr ""
-
-#: ../dnf/cli/commands/shell.py:226 ../dnf/cli/cli.py:692
-#, python-format
-msgid "Unknown repo: '%s'"
-msgstr "Bilinmeyen depo: '%s'"
-
-#: ../dnf/cli/commands/shell.py:249
-#, python-format
-msgid "Error: Cannot open %s for reading"
-msgstr "Hata: Okumak için %s açılamıyor"
-
-#: ../dnf/cli/commands/shell.py:279
-msgid "Leaving Shell"
-msgstr "Kabuktan Çıkılıyor"
 
 #: ../dnf/cli/commands/updateinfo.py:46
 msgid "bugfix"
@@ -1090,438 +865,391 @@ msgstr "Bilinmeyen/Güv."
 msgid "display advisories about packages"
 msgstr "paketlerle ilgili önerileri göster"
 
-#: ../dnf/cli/commands/updateinfo.py:222
+#: ../dnf/cli/commands/updateinfo.py:136
+msgid "show summmary of advisories"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:138
+msgid "show list of advisories"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:140
+msgid "show info of advisories"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:231
 msgid "Updates Information Summary: "
 msgstr "Güncelleme Bilgisi Özeti:"
 
-#: ../dnf/cli/commands/updateinfo.py:225
+#: ../dnf/cli/commands/updateinfo.py:234
 msgid "New Package notice(s)"
 msgstr "Yeni Paket bildirileri"
 
-#: ../dnf/cli/commands/updateinfo.py:226
+#: ../dnf/cli/commands/updateinfo.py:235
 msgid "Security notice(s)"
 msgstr "Güvenlik notları"
 
-#: ../dnf/cli/commands/updateinfo.py:227
+#: ../dnf/cli/commands/updateinfo.py:236
 msgid "Critical Security notice(s)"
 msgstr "Ciddi Güvenlik bildirileri"
 
-#: ../dnf/cli/commands/updateinfo.py:229
+#: ../dnf/cli/commands/updateinfo.py:238
 msgid "Important Security notice(s)"
 msgstr "Önemli Güvenlik bildirileri"
 
-#: ../dnf/cli/commands/updateinfo.py:231
+#: ../dnf/cli/commands/updateinfo.py:240
 msgid "Moderate Security notice(s)"
 msgstr "Ortayollu Güvenlik bildirileri"
 
-#: ../dnf/cli/commands/updateinfo.py:233
+#: ../dnf/cli/commands/updateinfo.py:242
 msgid "Low Security notice(s)"
 msgstr "Düşük Güvenlik bildirileri"
 
-#: ../dnf/cli/commands/updateinfo.py:235
+#: ../dnf/cli/commands/updateinfo.py:244
 msgid "Unknown Security notice(s)"
 msgstr "Bilinmeyen Güvenlik bildirileri"
 
-#: ../dnf/cli/commands/updateinfo.py:237
+#: ../dnf/cli/commands/updateinfo.py:246
 msgid "Bugfix notice(s)"
 msgstr "Hata düzeltmesi bildirisi"
 
-#: ../dnf/cli/commands/updateinfo.py:238
+#: ../dnf/cli/commands/updateinfo.py:247
 msgid "Enhancement notice(s)"
 msgstr "Geliştirme bildirisi"
 
-#: ../dnf/cli/commands/updateinfo.py:239
+#: ../dnf/cli/commands/updateinfo.py:248
 msgid "other notice(s)"
 msgstr "diğer bildiriler"
 
-#: ../dnf/cli/commands/updateinfo.py:357
+#: ../dnf/cli/commands/updateinfo.py:366
 msgid "true"
 msgstr "doğru"
 
-#: ../dnf/cli/commands/updateinfo.py:357
+#: ../dnf/cli/commands/updateinfo.py:366
 msgid "false"
 msgstr "yanlış"
 
-#: ../dnf/cli/commands/updateinfo.py:359
+#: ../dnf/cli/commands/updateinfo.py:368
 msgid "Update ID"
 msgstr "Güncelleme ID'leri"
 
-#: ../dnf/cli/commands/updateinfo.py:359
+#: ../dnf/cli/commands/updateinfo.py:368
 msgid "Type"
 msgstr "Tip"
 
-#: ../dnf/cli/commands/updateinfo.py:359
+#: ../dnf/cli/commands/updateinfo.py:368
 msgid "Updated"
 msgstr "Güncellendi"
 
-#: ../dnf/cli/commands/updateinfo.py:359
+#: ../dnf/cli/commands/updateinfo.py:368
 msgid "Bugs"
 msgstr "Hatalar"
 
-#: ../dnf/cli/commands/updateinfo.py:360
+#: ../dnf/cli/commands/updateinfo.py:369
 msgid "CVEs"
 msgstr "CVE'ler"
 
-#: ../dnf/cli/commands/updateinfo.py:360 ../dnf/cli/output.py:529
+#: ../dnf/cli/commands/updateinfo.py:369 ../dnf/cli/output.py:529
 msgid "Description"
 msgstr "Tanım"
 
-#: ../dnf/cli/commands/updateinfo.py:360
+#: ../dnf/cli/commands/updateinfo.py:369
 msgid "Severity"
 msgstr "Ciddiyet"
 
-#: ../dnf/cli/commands/updateinfo.py:360
+#: ../dnf/cli/commands/updateinfo.py:369
 msgid "Rights"
 msgstr "Haklar"
 
-#: ../dnf/cli/commands/updateinfo.py:361
+#: ../dnf/cli/commands/updateinfo.py:370
 msgid "Files"
 msgstr "Dosyalar"
 
-#: ../dnf/cli/commands/updateinfo.py:361 ../dnf/cli/output.py:1213
+#: ../dnf/cli/commands/updateinfo.py:370 ../dnf/cli/output.py:1213
 #: ../dnf/cli/output.py:1575 ../dnf/cli/output.py:1577
 msgid "Installed"
 msgstr "Yüklendi"
 
-#: ../dnf/cli/commands/updateinfo.py:392
+#: ../dnf/cli/commands/updateinfo.py:401
 msgid "installed"
 msgstr "Yüklendi"
 
-#: ../dnf/cli/commands/updateinfo.py:395
+#: ../dnf/cli/commands/updateinfo.py:404
 msgid "updates"
 msgstr "güncellemeler"
 
-#: ../dnf/cli/commands/updateinfo.py:398
+#: ../dnf/cli/commands/updateinfo.py:407
 msgid "all"
 msgstr "tümü"
 
-#: ../dnf/cli/commands/updateinfo.py:403
+#: ../dnf/cli/commands/updateinfo.py:412
 msgid "available"
 msgstr "uygun"
 
-#: ../dnf/cli/cli.py:125
+#: ../dnf/cli/commands/__init__.py:43
 #, python-format
-msgid "  Installed: %s-%s at %s"
+msgid "To diagnose the problem, try running: '%s'."
+msgstr "Sorunu tanılamak için şu komutu çalıştırın: '%s'."
+
+#: ../dnf/cli/commands/__init__.py:45
+#, python-format
+msgid "You probably have corrupted RPMDB, running '%s' might fix the issue."
 msgstr ""
+"Büyük olasılıkla RPMDB'yi bozdunuz, '%s' komutunu çalıştırmak sorunu "
+"çözebilir."
 
-#: ../dnf/cli/cli.py:127
-#, fuzzy, python-format
-msgid "  Built    : %s at %s"
-msgstr "  İnşa edildi    : %s %s"
-
-#: ../dnf/cli/cli.py:194
-msgid "Operation aborted."
-msgstr "Süreç durduruldu."
-
-#: ../dnf/cli/cli.py:202
-msgid "Downloading Packages:"
-msgstr "Paketler İndiriliyor:"
-
-#: ../dnf/cli/cli.py:209
-msgid "Error downloading packages:"
-msgstr "Paketler indirilirken hata:"
-
-#: ../dnf/cli/cli.py:229
-msgid "Transaction failed"
-msgstr "İşlem başarısız"
-
-#: ../dnf/cli/cli.py:250
-msgid ""
-"Refusing to automatically import keys when running unattended.\n"
-"Use \"-y\" to override."
-msgstr ""
-
-#: ../dnf/cli/cli.py:290 ../dnf/cli/cli.py:433 ../dnf/cli/cli.py:439
+#: ../dnf/cli/commands/__init__.py:49
 #, fuzzy
-msgid "Obsoleting Packages"
-msgstr "Kullanılmaz Hale Gelen Paketler"
-
-#: ../dnf/cli/cli.py:319
-msgid "No packages marked for distribution synchronization."
-msgstr "Dağıtım eşzamanlaması için imlenmiş paket yok."
-
-#: ../dnf/cli/cli.py:350 ../dnf/base.py:1840
-#, python-format
-msgid "Packages for argument %s available, but not installed."
-msgstr ""
-
-#: ../dnf/cli/cli.py:407
-msgid "Installed Packages"
-msgstr "Yüklü Paketler"
-
-#: ../dnf/cli/cli.py:415
-msgid "Available Packages"
-msgstr "Uygun Paketler"
-
-#: ../dnf/cli/cli.py:419
-msgid "Autoremove Packages"
-msgstr "Otomatik Kaldırılacak Paketler"
-
-#: ../dnf/cli/cli.py:421
-msgid "Extra Packages"
-msgstr "Ek Paketler"
-
-#: ../dnf/cli/cli.py:425
-msgid "Upgraded Packages"
-msgstr "Yükseltilen Paketler"
-
-#: ../dnf/cli/cli.py:441
-msgid "Recently Added Packages"
-msgstr "Yakın Zamanda Eklenen Paketler"
-
-#: ../dnf/cli/cli.py:446
-msgid "No matching Packages to list"
-msgstr ""
-
-#: ../dnf/cli/cli.py:522
-msgid "No Matches found"
-msgstr "Eşleşme Bulunamadı"
-
-#: ../dnf/cli/cli.py:550
-msgid "Not found given transaction ID"
-msgstr "Verilen işlem ID'si bulunamadı"
-
-#: ../dnf/cli/cli.py:576
-#, python-format
-msgid "Transaction history is incomplete, before %u."
-msgstr "İşlem geçmişi %u'dan önce tam değil."
-
-#: ../dnf/cli/cli.py:578
-#, python-format
-msgid "Transaction history is incomplete, after %u."
-msgstr "İşlem geçmişi %u'dan sonra tam değil."
-
-#: ../dnf/cli/cli.py:706
-#, python-format
-msgid "No repository match: %s"
-msgstr "Depo eşleşmesi yok: %s"
-
-#: ../dnf/cli/cli.py:735
-msgid "This command has to be run under the root user."
-msgstr ""
-
-#: ../dnf/cli/cli.py:755
-#, python-format
-msgid "No such command: %s. Please use %s --help"
-msgstr "%s diye bir komut yok. Lütfen yardım için %s -- help kullanın"
-
-#: ../dnf/cli/cli.py:758
-#, python-format
-msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
-msgstr ""
-"Bu bir DNF eklentisi komutu olabilir. Deneyin: \"dnf install 'dnf-"
-"command(%s)'\""
-
-#: ../dnf/cli/cli.py:761
 msgid ""
-"It could be a DNF plugin command, but loading of plugins is currently "
-"disabled."
+"You have enabled checking of packages via GPG keys. This is a good thing.\n"
+"However, you do not have any GPG public keys installed. You need to download\n"
+"the keys for packages you wish to install and install them.\n"
+"You can do that by running the command:\n"
+"    rpm --import public.gpg.key\n"
+"\n"
+"\n"
+"Alternatively you can specify the url to the key you would like to use\n"
+"for a repository in the 'gpgkey' option in a repository section and DNF\n"
+"will install it for you.\n"
+"\n"
+"For more information contact your distribution or package provider."
 msgstr ""
-"Bu bir DNF eklenti komutu olmalıydı, ancak eklentilerin yüklenmesi şimdilik "
-"devre dışı bırakıldı."
+"Paketleri GPG aracılığıyla denetlemeyi etkinleştirdiniz. Bu güzel.\n"
+"Fakat, herhangi bir GPG genel anahtarı kurmadınız. Kurmak istediğiniz\n"
+"paketler için anahtar indirmeniz ve kurmanız gerekmektedir.\n"
+"Bunu, şu komutu çalıştırarak yapabilirsiniz:\n"
+"    rpm --import public.gpg.key\n"
+"\n"
+"\n"
+"Bunun yerine, depo bölümündeki 'gpgkey' seçeneğinde depo için kullanmak istediğin anahtara url belirtebilirsin ve DNF bunu senin için kuracaktır.\n"
+"\n"
+"Daha çok ayrıntı için dağıtım ya da paket sağlayıcınız ile görüşün."
 
-#: ../dnf/cli/cli.py:799 ../dnf/cli/cli.py:803
+#: ../dnf/cli/commands/__init__.py:76
 #, python-format
-msgid "Config error: %s"
-msgstr "Ayar hatası: %s"
+msgid "Problem repository: %s"
+msgstr "Depo sorunu: %s"
 
-#: ../dnf/cli/cli.py:938
-#, python-format
-msgid "Command \"%s\" already defined"
-msgstr "\"%s\" komutu zaten tanımlandı"
+#: ../dnf/cli/commands/__init__.py:95
+msgid "There are no enabled repos."
+msgstr "Burada etkinleştirilmiş depo yok."
 
-#: ../dnf/cli/option_parser.py:52
-#, python-format
-msgid "Command line error: %s"
-msgstr "Komut satırı hatası: %s"
+#: ../dnf/cli/commands/__init__.py:153
+msgid "display details about a package or group of packages"
+msgstr "bir paket ya da paketler kümesiyle ilgili ayrıntıları göster"
 
-#: ../dnf/cli/option_parser.py:83
-#, python-format
-msgid "bad format: %s"
-msgstr "kötü biçim: %s"
+#: ../dnf/cli/commands/__init__.py:163 ../dnf/cli/commands/__init__.py:329
+msgid "show all packages (default)"
+msgstr "tüm paketleri göster (öntanımlı)"
 
-#: ../dnf/cli/option_parser.py:159
-msgid "Optional arguments"
-msgstr ""
+#: ../dnf/cli/commands/__init__.py:166 ../dnf/cli/commands/__init__.py:332
+msgid "show only available packages"
+msgstr "yalnızca mevcut paketleri göster"
 
-#: ../dnf/cli/option_parser.py:162
-msgid "config file location"
-msgstr "ayar dosyası konumu"
+#: ../dnf/cli/commands/__init__.py:169 ../dnf/cli/commands/__init__.py:335
+msgid "show only installed packages"
+msgstr "yalnızca kurulu paketleri göster"
 
-#: ../dnf/cli/option_parser.py:165
-msgid "quiet operation"
-msgstr "sessiz süreç"
+#: ../dnf/cli/commands/__init__.py:172 ../dnf/cli/commands/__init__.py:338
+msgid "show only extras packages"
+msgstr "yalnızca ek paketleri göster"
 
-#: ../dnf/cli/option_parser.py:167
-msgid "verbose operation"
-msgstr "ayrıntılı süreç"
-
-#: ../dnf/cli/option_parser.py:169
-msgid "show DNF version and exit"
-msgstr "DNF sürümünü göster ve çık"
-
-#: ../dnf/cli/option_parser.py:170
-msgid "set install root"
-msgstr "yükleme kökünü ayarla"
-
-#: ../dnf/cli/option_parser.py:173
-msgid "do not install documentations"
-msgstr "belgelendirmeleri yükleme"
-
-#: ../dnf/cli/option_parser.py:176
-msgid "disable all plugins"
-msgstr "tüm eklentileri devre dışı bırak"
-
-#: ../dnf/cli/option_parser.py:179
-msgid "disable plugins by name"
-msgstr "isme göre eklentileri devre dışı bırak"
-
-#: ../dnf/cli/option_parser.py:182
-msgid "override the value of $releasever in config and repo files"
-msgstr ""
-"yapılandırmadaki ve depo dosyalarındaki $releasever değerinin üstüne yaz"
-
-#: ../dnf/cli/option_parser.py:186
-msgid "set arbitrary config and repo options"
+#: ../dnf/cli/commands/__init__.py:175 ../dnf/cli/commands/__init__.py:178
+#: ../dnf/cli/commands/__init__.py:341 ../dnf/cli/commands/__init__.py:344
+msgid "show only upgrades packages"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:189
-msgid "resolve depsolve problems by skipping packages"
-msgstr "Bağımlılık çözümleme sorunlarını paketleri es geçerek çöz"
+#: ../dnf/cli/commands/__init__.py:181 ../dnf/cli/commands/__init__.py:347
+msgid "show only autoremove packages"
+msgstr ""
 
-#: ../dnf/cli/option_parser.py:192
+#: ../dnf/cli/commands/__init__.py:184 ../dnf/cli/commands/__init__.py:350
+msgid "show only recently changed packages"
+msgstr "yalnızca yakın zamanda değiştirilen paketleri göster"
+
+#: ../dnf/cli/commands/__init__.py:215
+msgid "list a package or groups of packages"
+msgstr "bir paket ya da paketler kümesini listele"
+
+#: ../dnf/cli/commands/__init__.py:229
+msgid "find what package provides the given value"
+msgstr "verilen değerdekini hangi paketin sağladığını bul"
+
+#: ../dnf/cli/commands/__init__.py:233
 #, fuzzy
-msgid "show command help"
-msgstr "komut yardımını göster"
+msgid "SOME_STRING"
+msgstr "BİR_DİZGE"
 
-#: ../dnf/cli/option_parser.py:196
-msgid "allow erasing of installed packages to resolve dependencies"
-msgstr "bağımlılıkları çözmek için yüklenmiş paketlerin silimine izin ver"
+#: ../dnf/cli/commands/__init__.py:251
+msgid "check for available package upgrades"
+msgstr "uygun paket yükseltmeleri için denetle"
 
-#: ../dnf/cli/option_parser.py:200
-msgid "try the best available package versions in transactions."
-msgstr "işlemlerde en iyi mevcut paket sürümünü dene."
+#: ../dnf/cli/commands/__init__.py:384 ../dnf/cli/commands/__init__.py:437
+#: ../dnf/cli/commands/__init__.py:493
+msgid "No package available."
+msgstr "Paket mevcut değil."
 
-#: ../dnf/cli/option_parser.py:204
-msgid "run entirely from system cache, don't update cache"
-msgstr "tümüyle sistem önbelleğinden çalıştır, önbelleği güncelleme"
+#: ../dnf/cli/commands/__init__.py:435
+msgid "No package installed."
+msgstr "Hiç paket kurulmadı."
 
-#: ../dnf/cli/option_parser.py:208
-msgid "debugging output level"
-msgstr "hata ayıklama çıktı düzeyi"
+#: ../dnf/cli/commands/__init__.py:490 ../dnf/cli/commands/__init__.py:599
+#: ../dnf/cli/commands/__init__.py:642 ../dnf/cli/commands/__init__.py:689
+msgid "No package installed from the repository."
+msgstr "Depodan hiç paket kurulmadı."
 
-#: ../dnf/cli/option_parser.py:211
-msgid "dumps detailed solving results into files"
-msgstr "ayrıntılı çözüm sonuçlarını dosyalara yığar"
-
-#: ../dnf/cli/option_parser.py:215
-msgid "show duplicates, in repos, in list/search commands"
+#: ../dnf/cli/commands/__init__.py:749
+msgid "run commands on top of all packages in given repository"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:218
-msgid "error output level"
-msgstr "hata çıktı düzeyi"
+#: ../dnf/cli/commands/__init__.py:762
+msgid "REPO"
+msgstr "DEPO"
 
-#: ../dnf/cli/option_parser.py:221
+#: ../dnf/cli/commands/__init__.py:792
+msgid "display a helpful usage message"
+msgstr "yardımcı olan kullanım iletisi göster"
+
+#: ../dnf/cli/commands/__init__.py:796
+msgid "COMMAND"
+msgstr "KOMUT"
+
+#: ../dnf/cli/commands/__init__.py:812
+msgid "display, or use, the transaction history"
+msgstr "işlem geçmişini göster ya da kullan"
+
+#: ../dnf/cli/commands/__init__.py:826 ../dnf/cli/cli.py:546
+msgid "No transaction ID given"
+msgstr "İşlem ID'si verilmedi"
+
+#: ../dnf/cli/commands/__init__.py:829 ../dnf/cli/cli.py:560
+msgid "Found more than one transaction ID!"
+msgstr "Birden çok işlem ID'si bulundu!"
+
+#: ../dnf/cli/commands/__init__.py:839
+msgid "You don't have access to the history DB."
+msgstr "Geçmiş veritabanına erişim hakkınız yok."
+
+#: ../dnf/cli/commands/__init__.py:847
+#, python-format
 msgid ""
-"enables dnf's obsoletes processing logic for upgrade or display capabilities"
-" that the package obsoletes for info, list and repoquery"
+"Cannot undo transaction %s, doing so would result in an inconsistent package"
+" database."
 msgstr ""
+"%s işlemi geri alınamaz, bunu yapmak tutarsız bir paket veri tabanına neden "
+"olur."
 
-#: ../dnf/cli/option_parser.py:225
-msgid "debugging output level for rpm"
-msgstr "rpm için hata ayıklama çıktı düzeyi"
-
-#: ../dnf/cli/option_parser.py:228
-msgid "automatically answer yes for all questions"
-msgstr "tüm soruları kendiliğinden evet olarak yanıtla"
-
-#: ../dnf/cli/option_parser.py:231
-msgid "automatically answer no for all questions"
-msgstr "tüm soruları kendiliğinden hayır olarak yanıtla"
-
-#: ../dnf/cli/option_parser.py:242
+#: ../dnf/cli/commands/__init__.py:852
+#, python-format
 msgid ""
-"enable just specific repositories by an id or a glob, can be specified "
-"multiple times"
+"Cannot rollback transaction %s, doing so would result in an inconsistent "
+"package database."
+msgstr ""
+"%s işlemine geri dönülemez, bunu yapmak tutarsız bir paket veri tabanına "
+"neden olur."
+
+#: ../dnf/cli/commands/__init__.py:872 ../dnf/cli/cli.py:600
+#: ../dnf/cli/cli.py:627 ../dnf/base.py:1711
+#, python-format
+msgid "No package %s installed."
+msgstr "%s paketi kurulu değil."
+
+#: ../dnf/cli/commands/shell.py:52
+msgid "run an interactive DNF shell"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:246
-msgid "exclude packages by name or glob"
-msgstr ""
+#: ../dnf/cli/commands/shell.py:73
+msgid "SCRIPT"
+msgstr "BETİK"
 
-#: ../dnf/cli/option_parser.py:251
-msgid "disable excludepkgs"
-msgstr ""
+#: ../dnf/cli/commands/shell.py:74
+msgid "Script to run in DNF shell"
+msgstr "DNF kabuğunda çalışacak betik"
 
-#: ../dnf/cli/option_parser.py:256
+#: ../dnf/cli/commands/shell.py:130
+msgid "Unsupported key value."
+msgstr "Desteklenmeyen anahtar değeri."
+
+#: ../dnf/cli/commands/shell.py:146
+#, python-format
+msgid "Could not find repository: %s"
+msgstr "Depo bulunamadı: %s"
+
+#: ../dnf/cli/commands/shell.py:162
 msgid ""
-"label and path to additional repository, can be specified multiple times."
-msgstr "ek depo için etiket ve yol, birden fazla kez belirlenebilir."
-
-#: ../dnf/cli/option_parser.py:260
-msgid "disable gpg signature checking"
-msgstr " gpg imzalama denetimini devre dışı bırak"
-
-#: ../dnf/cli/option_parser.py:262
-msgid "control whether color is used"
+"{} arg [value]\n"
+"  arg: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,\n"
+"        repo_id.gpgcheck, repo_id.exclude\n"
+"    If no value is given it prints the current value.\n"
+"    If value is given it sets that value."
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:265
-msgid "set metadata as expired before running the command"
-msgstr "komutu çalıştırmadan önce üstveriyi süresi bitmiş olarak belirle"
-
-#: ../dnf/cli/option_parser.py:268
-msgid "resolve to IPv4 addresses only"
-msgstr "yalnızca IPv4 adresleri çöz"
-
-#: ../dnf/cli/option_parser.py:271
-msgid "resolve to IPv6 addresses only"
-msgstr "yalnızca IPv6 adresleri çöz"
-
-#: ../dnf/cli/option_parser.py:275
-msgid "only download packages"
-msgstr "yalnızca paketleri indir"
-
-#: ../dnf/cli/option_parser.py:278
-msgid "Include bugfix relevant packages, in updates"
-msgstr "Güncellemelerde, hata giderimiyle ilgili paketleri içer"
-
-#: ../dnf/cli/option_parser.py:281
-msgid "Include enhancement relevant packages, in updates"
-msgstr "Güncellemelerde, iyileştirmeyle ilgili paketleri içer"
-
-#: ../dnf/cli/option_parser.py:284
-msgid "Include newpackage relevant packages, in updates"
+#: ../dnf/cli/commands/shell.py:169
+msgid ""
+"{} [command]\n"
+"    print help"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:287
-msgid "Include security relevant packages, in updates"
-msgstr "Güncellemelerde güvenlikle ilgili paketleri içer"
-
-#: ../dnf/cli/option_parser.py:291
-msgid "Include packages needed to fix the given advisory, in updates"
+#: ../dnf/cli/commands/shell.py:173
+msgid ""
+"{} arg [option]\n"
+"  list: lists repositories and their status. option = [all | id | glob]\n"
+"  enable: enable repositories. option = repository id\n"
+"  disable: disable repositories. option = repository id"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:295
-msgid "Include packages needed to fix the given BZ, in updates"
+#: ../dnf/cli/commands/shell.py:179
+msgid ""
+"{}\n"
+"    resolve the transaction set"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:297
-msgid "Include packages needed to fix the given CVE, in updates"
+#: ../dnf/cli/commands/shell.py:183
+msgid ""
+"{} arg\n"
+"  list: lists the contents of the transaction\n"
+"  reset: reset (zero-out) the transaction\n"
+"  run: run the transaction"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:302
-msgid "Include security relevant packages matching the severity, in updates"
+#: ../dnf/cli/commands/shell.py:189
+msgid ""
+"{}\n"
+"    run the transaction"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:337
-msgid "List of Main Commands:"
-msgstr "Ana Komutların Listesi:"
+#: ../dnf/cli/commands/shell.py:193
+msgid ""
+"{}\n"
+"    exit the shell"
+msgstr ""
 
-#: ../dnf/cli/option_parser.py:338
-msgid "List of Plugin Commands:"
-msgstr "Eklenti Komutlarının Listesi:"
+#: ../dnf/cli/commands/shell.py:198
+msgid ""
+"Shell specific arguments:\n"
+"\n"
+"config                   set config options\n"
+"help                     print help\n"
+"repository (or repo)     enable, disable or list repositories\n"
+"resolvedep               resolve the transaction set\n"
+"transaction (or ts)      list, reset or run the transaction set\n"
+"run                      resolve and run the transaction set\n"
+"exit (or quit)           exit the shell"
+msgstr ""
+
+#: ../dnf/cli/commands/shell.py:225 ../dnf/cli/cli.py:693
+#, python-format
+msgid "Unknown repo: '%s'"
+msgstr "Bilinmeyen depo: '%s'"
+
+#: ../dnf/cli/commands/shell.py:248
+#, python-format
+msgid "Error: Cannot open %s for reading"
+msgstr "Hata: Okumak için %s açılamıyor"
+
+#: ../dnf/cli/commands/shell.py:278
+msgid "Leaving Shell"
+msgstr "Kabuktan Çıkılıyor"
 
 #: ../dnf/cli/utils.py:98
 msgid "Running"
@@ -2203,6 +1931,334 @@ msgstr "--> Bağımlılık çözümü başlıyor"
 msgid "--> Finished dependency resolution"
 msgstr "-->Bağımlılık çözümü bitiyor"
 
+#: ../dnf/cli/cli.py:126
+#, python-format
+msgid "  Installed: %s-%s at %s"
+msgstr ""
+
+#: ../dnf/cli/cli.py:128
+#, fuzzy, python-format
+msgid "  Built    : %s at %s"
+msgstr "  İnşa edildi    : %s %s"
+
+#: ../dnf/cli/cli.py:195
+msgid "Operation aborted."
+msgstr "Süreç durduruldu."
+
+#: ../dnf/cli/cli.py:203
+msgid "Downloading Packages:"
+msgstr "Paketler İndiriliyor:"
+
+#: ../dnf/cli/cli.py:210
+msgid "Error downloading packages:"
+msgstr "Paketler indirilirken hata:"
+
+#: ../dnf/cli/cli.py:230
+msgid "Transaction failed"
+msgstr "İşlem başarısız"
+
+#: ../dnf/cli/cli.py:251
+msgid ""
+"Refusing to automatically import keys when running unattended.\n"
+"Use \"-y\" to override."
+msgstr ""
+
+#: ../dnf/cli/cli.py:291 ../dnf/cli/cli.py:434 ../dnf/cli/cli.py:440
+#, fuzzy
+msgid "Obsoleting Packages"
+msgstr "Kullanılmaz Hale Gelen Paketler"
+
+#: ../dnf/cli/cli.py:320
+msgid "No packages marked for distribution synchronization."
+msgstr "Dağıtım eşzamanlaması için imlenmiş paket yok."
+
+#: ../dnf/cli/cli.py:351 ../dnf/base.py:1839
+#, python-format
+msgid "Packages for argument %s available, but not installed."
+msgstr ""
+
+#: ../dnf/cli/cli.py:408
+msgid "Installed Packages"
+msgstr "Yüklü Paketler"
+
+#: ../dnf/cli/cli.py:416
+msgid "Available Packages"
+msgstr "Uygun Paketler"
+
+#: ../dnf/cli/cli.py:420
+msgid "Autoremove Packages"
+msgstr "Otomatik Kaldırılacak Paketler"
+
+#: ../dnf/cli/cli.py:422
+msgid "Extra Packages"
+msgstr "Ek Paketler"
+
+#: ../dnf/cli/cli.py:426
+msgid "Upgraded Packages"
+msgstr "Yükseltilen Paketler"
+
+#: ../dnf/cli/cli.py:442
+msgid "Recently Added Packages"
+msgstr "Yakın Zamanda Eklenen Paketler"
+
+#: ../dnf/cli/cli.py:447
+msgid "No matching Packages to list"
+msgstr ""
+
+#: ../dnf/cli/cli.py:523
+msgid "No Matches found"
+msgstr "Eşleşme Bulunamadı"
+
+#: ../dnf/cli/cli.py:551
+msgid "Not found given transaction ID"
+msgstr "Verilen işlem ID'si bulunamadı"
+
+#: ../dnf/cli/cli.py:577
+#, python-format
+msgid "Transaction history is incomplete, before %u."
+msgstr "İşlem geçmişi %u'dan önce tam değil."
+
+#: ../dnf/cli/cli.py:579
+#, python-format
+msgid "Transaction history is incomplete, after %u."
+msgstr "İşlem geçmişi %u'dan sonra tam değil."
+
+#: ../dnf/cli/cli.py:707
+#, python-format
+msgid "No repository match: %s"
+msgstr "Depo eşleşmesi yok: %s"
+
+#: ../dnf/cli/cli.py:736
+msgid "This command has to be run under the root user."
+msgstr ""
+
+#: ../dnf/cli/cli.py:756
+#, python-format
+msgid "No such command: %s. Please use %s --help"
+msgstr "%s diye bir komut yok. Lütfen yardım için %s -- help kullanın"
+
+#: ../dnf/cli/cli.py:759
+#, python-format
+msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
+msgstr ""
+"Bu bir DNF eklentisi komutu olabilir. Deneyin: \"dnf install 'dnf-"
+"command(%s)'\""
+
+#: ../dnf/cli/cli.py:762
+msgid ""
+"It could be a DNF plugin command, but loading of plugins is currently "
+"disabled."
+msgstr ""
+"Bu bir DNF eklenti komutu olmalıydı, ancak eklentilerin yüklenmesi şimdilik "
+"devre dışı bırakıldı."
+
+#: ../dnf/cli/cli.py:800 ../dnf/cli/cli.py:804
+#, python-format
+msgid "Config error: %s"
+msgstr "Ayar hatası: %s"
+
+#: ../dnf/cli/cli.py:942
+#, python-format
+msgid "Command \"%s\" already defined"
+msgstr "\"%s\" komutu zaten tanımlandı"
+
+#: ../dnf/cli/option_parser.py:52
+#, python-format
+msgid "Command line error: %s"
+msgstr "Komut satırı hatası: %s"
+
+#: ../dnf/cli/option_parser.py:83
+#, python-format
+msgid "bad format: %s"
+msgstr "kötü biçim: %s"
+
+#: ../dnf/cli/option_parser.py:159
+msgid "Optional arguments"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:162
+msgid "config file location"
+msgstr "ayar dosyası konumu"
+
+#: ../dnf/cli/option_parser.py:165
+msgid "quiet operation"
+msgstr "sessiz süreç"
+
+#: ../dnf/cli/option_parser.py:167
+msgid "verbose operation"
+msgstr "ayrıntılı süreç"
+
+#: ../dnf/cli/option_parser.py:169
+msgid "show DNF version and exit"
+msgstr "DNF sürümünü göster ve çık"
+
+#: ../dnf/cli/option_parser.py:170
+msgid "set install root"
+msgstr "yükleme kökünü ayarla"
+
+#: ../dnf/cli/option_parser.py:173
+msgid "do not install documentations"
+msgstr "belgelendirmeleri yükleme"
+
+#: ../dnf/cli/option_parser.py:176
+msgid "disable all plugins"
+msgstr "tüm eklentileri devre dışı bırak"
+
+#: ../dnf/cli/option_parser.py:179
+msgid "disable plugins by name"
+msgstr "isme göre eklentileri devre dışı bırak"
+
+#: ../dnf/cli/option_parser.py:182
+msgid "override the value of $releasever in config and repo files"
+msgstr ""
+"yapılandırmadaki ve depo dosyalarındaki $releasever değerinin üstüne yaz"
+
+#: ../dnf/cli/option_parser.py:186
+msgid "set arbitrary config and repo options"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:189
+msgid "resolve depsolve problems by skipping packages"
+msgstr "Bağımlılık çözümleme sorunlarını paketleri es geçerek çöz"
+
+#: ../dnf/cli/option_parser.py:192
+#, fuzzy
+msgid "show command help"
+msgstr "komut yardımını göster"
+
+#: ../dnf/cli/option_parser.py:196
+msgid "allow erasing of installed packages to resolve dependencies"
+msgstr "bağımlılıkları çözmek için yüklenmiş paketlerin silimine izin ver"
+
+#: ../dnf/cli/option_parser.py:200
+msgid "try the best available package versions in transactions."
+msgstr "işlemlerde en iyi mevcut paket sürümünü dene."
+
+#: ../dnf/cli/option_parser.py:204
+msgid "run entirely from system cache, don't update cache"
+msgstr "tümüyle sistem önbelleğinden çalıştır, önbelleği güncelleme"
+
+#: ../dnf/cli/option_parser.py:208
+msgid "maximum command wait time"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:211
+msgid "debugging output level"
+msgstr "hata ayıklama çıktı düzeyi"
+
+#: ../dnf/cli/option_parser.py:214
+msgid "dumps detailed solving results into files"
+msgstr "ayrıntılı çözüm sonuçlarını dosyalara yığar"
+
+#: ../dnf/cli/option_parser.py:218
+msgid "show duplicates, in repos, in list/search commands"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:221
+msgid "error output level"
+msgstr "hata çıktı düzeyi"
+
+#: ../dnf/cli/option_parser.py:224
+msgid ""
+"enables dnf's obsoletes processing logic for upgrade or display capabilities"
+" that the package obsoletes for info, list and repoquery"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:228
+msgid "debugging output level for rpm"
+msgstr "rpm için hata ayıklama çıktı düzeyi"
+
+#: ../dnf/cli/option_parser.py:231
+msgid "automatically answer yes for all questions"
+msgstr "tüm soruları kendiliğinden evet olarak yanıtla"
+
+#: ../dnf/cli/option_parser.py:234
+msgid "automatically answer no for all questions"
+msgstr "tüm soruları kendiliğinden hayır olarak yanıtla"
+
+#: ../dnf/cli/option_parser.py:245
+msgid ""
+"enable just specific repositories by an id or a glob, can be specified "
+"multiple times"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:249
+msgid "exclude packages by name or glob"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:254
+msgid "disable excludepkgs"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:259
+msgid ""
+"label and path to additional repository, can be specified multiple times."
+msgstr "ek depo için etiket ve yol, birden fazla kez belirlenebilir."
+
+#: ../dnf/cli/option_parser.py:263
+msgid "disable gpg signature checking"
+msgstr " gpg imzalama denetimini devre dışı bırak"
+
+#: ../dnf/cli/option_parser.py:265
+msgid "control whether color is used"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:268
+msgid "set metadata as expired before running the command"
+msgstr "komutu çalıştırmadan önce üstveriyi süresi bitmiş olarak belirle"
+
+#: ../dnf/cli/option_parser.py:271
+msgid "resolve to IPv4 addresses only"
+msgstr "yalnızca IPv4 adresleri çöz"
+
+#: ../dnf/cli/option_parser.py:274
+msgid "resolve to IPv6 addresses only"
+msgstr "yalnızca IPv6 adresleri çöz"
+
+#: ../dnf/cli/option_parser.py:278
+msgid "only download packages"
+msgstr "yalnızca paketleri indir"
+
+#: ../dnf/cli/option_parser.py:281
+msgid "Include bugfix relevant packages, in updates"
+msgstr "Güncellemelerde, hata giderimiyle ilgili paketleri içer"
+
+#: ../dnf/cli/option_parser.py:284
+msgid "Include enhancement relevant packages, in updates"
+msgstr "Güncellemelerde, iyileştirmeyle ilgili paketleri içer"
+
+#: ../dnf/cli/option_parser.py:287
+msgid "Include newpackage relevant packages, in updates"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:290
+msgid "Include security relevant packages, in updates"
+msgstr "Güncellemelerde güvenlikle ilgili paketleri içer"
+
+#: ../dnf/cli/option_parser.py:294
+msgid "Include packages needed to fix the given advisory, in updates"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:298
+msgid "Include packages needed to fix the given BZ, in updates"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:300
+msgid "Include packages needed to fix the given CVE, in updates"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:305
+msgid "Include security relevant packages matching the severity, in updates"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:340
+msgid "List of Main Commands:"
+msgstr "Ana Komutların Listesi:"
+
+#: ../dnf/cli/option_parser.py:341
+msgid "List of Plugin Commands:"
+msgstr "Eklenti Komutlarının Listesi:"
+
 #: ../dnf/conf/config.py:83
 #, python-format
 msgid "Error parsing '%s': %s"
@@ -2463,11 +2519,6 @@ msgstr "%s deposu etkinleştiriliyor"
 msgid "Added %s repo from %s"
 msgstr "%s deposu %s kaynağından eklendi"
 
-#: ../dnf/transaction.py:209
-#, python-format
-msgid "Will not install a source rpm package (%s)."
-msgstr ""
-
 #: ../dnf/crypto.py:80
 #, fuzzy, python-format
 msgid ""
@@ -2480,6 +2531,90 @@ msgstr ""
 " Kullanıcı kimliği: \"%s\"\n"
 " Parmak izi             : %s\n"
 " Kimden                   : %s"
+
+#: ../dnf/repo.py:104
+#, python-format
+msgid "no matching payload factory for %s"
+msgstr ""
+
+#: ../dnf/repo.py:130
+msgid "Already downloaded"
+msgstr ""
+
+#. pinging mirrors, this might take a while
+#: ../dnf/repo.py:409
+#, python-format
+msgid "determining the fastest mirror (%d hosts).. "
+msgstr ""
+
+#: ../dnf/repo.py:658
+#, python-format
+msgid "Cannot find a valid baseurl for repo: %s"
+msgstr ""
+
+#: ../dnf/repo.py:754
+#, python-format
+msgid "reviving: repo '%s' skipped, no metalink."
+msgstr ""
+
+#: ../dnf/repo.py:760
+#, python-format
+msgid "reviving: repo '%s' skipped, no usable hash."
+msgstr ""
+
+#: ../dnf/repo.py:771
+#, python-format
+msgid "reviving: failed for '%s', mismatched %s sum."
+msgstr ""
+
+#: ../dnf/repo.py:774
+#, python-format
+msgid "reviving: '%s' can be revived - metalink checksums match."
+msgstr ""
+
+#: ../dnf/repo.py:787
+#, python-format
+msgid "reviving: failed for '%s', mismatched repomd."
+msgstr ""
+
+#: ../dnf/repo.py:789
+#, python-format
+msgid "reviving: '%s' can be revived - repomd matches."
+msgstr ""
+
+#: ../dnf/repo.py:844
+#, python-format
+msgid "repo: using cache for: %s"
+msgstr ""
+
+#: ../dnf/repo.py:847
+#, python-format
+msgid "Cache-only enabled but no cache for '%s'"
+msgstr ""
+
+#: ../dnf/repo.py:858
+#, python-format
+msgid "repo: downloading from remote: %s, %s"
+msgstr ""
+
+#: ../dnf/repo.py:869
+#, python-format
+msgid "Cannot download '%s': %s."
+msgstr "'%s' indirilemiyor: %s."
+
+#: ../dnf/repo.py:871
+#, python-format
+msgid "Failed to synchronize cache for repo '%s'"
+msgstr "'%s' deposu için önbellek eşzamanlanamıyor"
+
+#: ../dnf/repo.py:913
+#, python-format
+msgid "Repository %s has no mirror or baseurl set."
+msgstr ""
+
+#: ../dnf/repo.py:916
+msgid "Repository '{}' has unsupported type: 'type={}', skipping."
+msgstr ""
 
 #: ../dnf/base.py:245
 msgid "Metadata timer caching disabled when running on metered connection."
@@ -2617,23 +2752,23 @@ msgstr "%s işlem dosyası kaldırılamadı"
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s yüklemiş olması gerekiyor ama değil!"
 
-#: ../dnf/base.py:954
+#: ../dnf/base.py:953
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s kaldırılmış olması gerekiyor ama değil!"
 
-#: ../dnf/base.py:1012
+#: ../dnf/base.py:1011
 msgid "Some packages were not downloaded. Retrying."
 msgstr "Bazı paketler indirilmedi. Yeniden deniyor."
 
-#: ../dnf/base.py:1042
+#: ../dnf/base.py:1041
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
 msgstr ""
 "Delta RPM'ler güncellemelerin %.1f MB'sini azaltarak %.1f MB yaptı (%%%d.1 "
 "kurtarıldı)"
 
-#: ../dnf/base.py:1045
+#: ../dnf/base.py:1044
 #, python-format
 msgid ""
 "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
@@ -2641,132 +2776,132 @@ msgstr ""
 "Başarısız Delta RPM'ler güncellemeleri %.1f MB'den %.1f MB'ye yükseltti "
 "(%%%d.1 israf)"
 
-#: ../dnf/base.py:1066
+#: ../dnf/base.py:1065
 msgid "Could not open: {}"
 msgstr "Açılamıyor: {}"
 
-#: ../dnf/base.py:1104
+#: ../dnf/base.py:1103
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "%s için genel anahtar yüklü değil"
 
-#: ../dnf/base.py:1108
+#: ../dnf/base.py:1107
 #, python-format
 msgid "Problem opening package %s"
 msgstr "%s paketinin açılmasında sorun"
 
-#: ../dnf/base.py:1116
+#: ../dnf/base.py:1115
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "%s için genel anahtar güvenilir değil"
 
-#: ../dnf/base.py:1120
+#: ../dnf/base.py:1119
 #, python-format
 msgid "Package %s is not signed"
 msgstr "%s paketi imzalanmamış"
 
-#: ../dnf/base.py:1135
+#: ../dnf/base.py:1134
 #, python-format
 msgid "Cannot remove %s"
 msgstr "%s silinemiyor"
 
-#: ../dnf/base.py:1139
+#: ../dnf/base.py:1138
 #, python-format
 msgid "%s removed"
 msgstr "%s kaldırıldı"
 
-#: ../dnf/base.py:1476
+#: ../dnf/base.py:1475
 msgid "No groups marked for removal."
 msgstr "Kaldırma için imlenen küme yok."
 
-#: ../dnf/base.py:1495
+#: ../dnf/base.py:1494
 msgid "No group marked for upgrade."
 msgstr "Yükseltme için imlenen küme yok."
 
-#: ../dnf/base.py:1550 ../dnf/base.py:1563
+#: ../dnf/base.py:1549 ../dnf/base.py:1562
 msgid "no package matched"
 msgstr "eşleşen paket yok"
 
-#: ../dnf/base.py:1585
+#: ../dnf/base.py:1584
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
 msgstr "%s paketi yüklü değil, eski sürüme döndürülemez."
 
-#: ../dnf/base.py:1594
+#: ../dnf/base.py:1593
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
 msgstr "%s paketinin zaten en düşük sürümü yüklenmiş, güncellenemez."
 
-#: ../dnf/base.py:1617
+#: ../dnf/base.py:1616
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
 msgstr "%s paketi yüklü değil, yeniden yüklenemez."
 
-#: ../dnf/base.py:1632
+#: ../dnf/base.py:1631
 #, python-format
 msgid "File %s is a source package and cannot be updated, ignoring."
 msgstr "%s dosyası bir kaynak pakettir ve yükseltilemez, dikkate alınmıyor."
 
-#: ../dnf/base.py:1638 ../dnf/base.py:1667
+#: ../dnf/base.py:1637 ../dnf/base.py:1666
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr "%s paketi kurulu değil, güncellenemez."
 
-#: ../dnf/base.py:1647
+#: ../dnf/base.py:1646
 #, python-format
 msgid "Package %s of higher version already installed, cannot update it."
 msgstr "%s paketinin zaten en yüksek sürümü yüklenmiş, güncellenemez."
 
-#: ../dnf/base.py:1845
+#: ../dnf/base.py:1844
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr "%s paketinin zaten en düşük sürümü yüklü, eski sürüme döndürülemez."
 
-#: ../dnf/base.py:1986
+#: ../dnf/base.py:1985
 msgid "No security updates needed, but {} update available"
 msgstr "Güvenlik güncellemelerine gerek yok, ama {} güncelleme mevcut"
 
-#: ../dnf/base.py:1988
+#: ../dnf/base.py:1987
 msgid "No security updates needed, but {} updates available"
 msgstr "Güvenlik güncellemelerine gerek yok, ama {} güncelleme mevcut"
 
-#: ../dnf/base.py:1992
+#: ../dnf/base.py:1991
 msgid "No security updates needed for \"{}\", but {} update available"
 msgstr "\"{}\" için güvenlik güncellemesine gerek yok, ama {} güncelleme mevcut"
 
-#: ../dnf/base.py:1994
+#: ../dnf/base.py:1993
 msgid "No security updates needed for \"{}\", but {} updates available"
 msgstr "\"{}\" için güvenlik güncellemesine gerek yok, ama {} güncelleme mevcut"
 
-#: ../dnf/base.py:2033
+#: ../dnf/base.py:2032
 #, python-format
 msgid "Failing package is: %s"
 msgstr "Sorunlu paket şu: %s"
 
-#: ../dnf/base.py:2034
+#: ../dnf/base.py:2033
 #, python-format
 msgid "GPG Keys are configured as: %s"
 msgstr "GPG Anahtarları şöyle yapılandırıldı: %s"
 
-#: ../dnf/base.py:2045
+#: ../dnf/base.py:2044
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "%s'deki GPG anahtarı (0x%s) zaten yüklendi"
 
-#: ../dnf/base.py:2079
+#: ../dnf/base.py:2078
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Anahtar içe aktarma başarısız (kod %d)"
 
-#: ../dnf/base.py:2081
+#: ../dnf/base.py:2080
 msgid "Key imported successfully"
 msgstr "Anahtar başarıyla içeri aktarıldı"
 
-#: ../dnf/base.py:2085
+#: ../dnf/base.py:2084
 msgid "Didn't install any keys"
 msgstr "Hiç anahtar yüklenmedi"
 
-#: ../dnf/base.py:2088
+#: ../dnf/base.py:2087
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
@@ -2775,95 +2910,16 @@ msgstr ""
 "\"%s\" deposu için listelenen GPG anahtarları zaten kuruldu ama bu paket için doğru değiller.\n"
 "Bu depo için doğru anahtar URL'lerinin yapılandırıldığını denetle."
 
-#: ../dnf/base.py:2098
+#: ../dnf/base.py:2097
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Anahtar(lar)ın içe aktarılması yardımcı olmadı, yanlış anahtar(lar)?"
 
-#: ../dnf/base.py:2139
+#: ../dnf/base.py:2138
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr "%s paketi zaten yüklenmiş, es geçiliyor."
 
-#: ../dnf/repo.py:104
+#: ../dnf/transaction.py:222
 #, python-format
-msgid "no matching payload factory for %s"
-msgstr ""
-
-#: ../dnf/repo.py:130
-msgid "Already downloaded"
-msgstr ""
-
-#. pinging mirrors, this might take a while
-#: ../dnf/repo.py:409
-#, python-format
-msgid "determining the fastest mirror (%d hosts).. "
-msgstr ""
-
-#: ../dnf/repo.py:658
-#, python-format
-msgid "Cannot find a valid baseurl for repo: %s"
-msgstr ""
-
-#: ../dnf/repo.py:754
-#, python-format
-msgid "reviving: repo '%s' skipped, no metalink."
-msgstr ""
-
-#: ../dnf/repo.py:760
-#, python-format
-msgid "reviving: repo '%s' skipped, no usable hash."
-msgstr ""
-
-#: ../dnf/repo.py:771
-#, python-format
-msgid "reviving: failed for '%s', mismatched %s sum."
-msgstr ""
-
-#: ../dnf/repo.py:774
-#, python-format
-msgid "reviving: '%s' can be revived - metalink checksums match."
-msgstr ""
-
-#: ../dnf/repo.py:787
-#, python-format
-msgid "reviving: failed for '%s', mismatched repomd."
-msgstr ""
-
-#: ../dnf/repo.py:789
-#, python-format
-msgid "reviving: '%s' can be revived - repomd matches."
-msgstr ""
-
-#: ../dnf/repo.py:844
-#, python-format
-msgid "repo: using cache for: %s"
-msgstr ""
-
-#: ../dnf/repo.py:847
-#, python-format
-msgid "Cache-only enabled but no cache for '%s'"
-msgstr ""
-
-#: ../dnf/repo.py:858
-#, python-format
-msgid "repo: downloading from remote: %s, %s"
-msgstr ""
-
-#: ../dnf/repo.py:869
-#, python-format
-msgid "Cannot download '%s': %s."
-msgstr "'%s' indirilemiyor: %s."
-
-#: ../dnf/repo.py:871
-#, python-format
-msgid "Failed to synchronize cache for repo '%s'"
-msgstr "'%s' deposu için önbellek eşzamanlanamıyor"
-
-#: ../dnf/repo.py:913
-#, python-format
-msgid "Repository %s has no mirror or baseurl set."
-msgstr ""
-
-#: ../dnf/repo.py:916
-msgid "Repository '{}' has unsupported type: 'type={}', skipping."
+msgid "Will not install a source rpm package (%s)."
 msgstr ""
