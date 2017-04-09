@@ -23,7 +23,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from .pycomp import PY3, basestring
-from dnf.i18n import ucd
+from dnf.i18n import _, ucd
 from functools import reduce
 import dnf
 import dnf.const
@@ -341,6 +341,24 @@ def _terminal_messenger(tp='write', msg="", out=sys.stdout):
     except IOError as e:
         logger.critical('{}: {}'.format(type(e).__name__, ucd(e)))
         pass
+
+
+def _format_resolve_problems(resolve_problems):
+    """
+    Format string about problems in resolve
+
+    :param resolve_problems: list with list of strings (output of goal.problem_rules())
+    :return: string
+    """
+    msg = ""
+    count_problems = (len(resolve_problems) > 1)
+    for i, rs in enumerate(resolve_problems, start=1):
+        if count_problems:
+            msg += "\n " + _("Problem") + " %d: " % i
+        else:
+            msg += "\n " + _("Problem") + ": "
+        msg += "\n  - ".join(rs)
+    return msg
 
 
 def _te_nevra(te):
