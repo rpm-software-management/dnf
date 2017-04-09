@@ -968,14 +968,7 @@ class Output(object):
         params = {"allow_uninstall": self.base._allow_erasing, "force_best": True}
         ret = ng.run(**params)
         if not ret:
-            msg = ""
-            count_problems = (ng.count_problems() > 1)
-            for i, rs in enumerate(ng.problem_rules(), start=1):
-                if count_problems:
-                    msg += "\n " + _("Problem") + " %d: " % i
-                else:
-                    msg += "\n " + _("Problem") + ": "
-                msg += "\n  - ".join(rs)
+            msg = dnf.util._format_resolve_problems(ng.problem_rules())
             logger.warning(msg)
         problem_conflicts = set(ng.problem_conflicts(available=True))
         problem_dependency = set(ng.problem_broken_dependency(available=True)) - problem_conflicts
