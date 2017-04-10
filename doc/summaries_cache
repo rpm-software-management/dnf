@@ -1974,5 +1974,21 @@
     [
         1411423, 
         "RFE: Add package scriptlet action to dnf.callback.TransactionProgress"
+    ], 
+    [
+        1290137, 
+        "RFE: dnf repoquery list not all available tags and there no full support of repoquery --location"
+    ], 
+    [
+        1349314, 
+        "Dnf autoremove removes  kernel-modules-extra but dnf update reinstalls those kernel modules again."
+    ], 
+    [
+        1247122, 
+        "implement --randomwait option"
+    ], 
+    [
+        1298717, 
+        "Translation missing, when package already  downloaded."
     ]
 ]

@@ -22,6 +22,31 @@
 .. contents::
 
 ===================
+2.3.0 Release Notes
+===================
+
+API additions in 2.3.0:
+
+* :meth:`dnf.package.Package.remote_location` returns location from where the package can be downloaded from.
+
+DNF command additions in 2.3.0:
+
+* ``dnf [options] repoquery --whatconflicts <capability>`` limit the resulting set only to packages that conflict ``<capability>``.
+* ``dnf [options] repoquery --whatobsoletes <capability>`` limit the resulting set only to packages that obsolete ``<capability>``.
+* ``dnf [options] repoquery --location`` show a location where the package could be downloaded from.
+* ``dnf [options] repoquery --nvr`` show found packages in format name-version-release.
+* ``dnf [options] repoquery --nevra`` show found packages in format name-epoch:version-release.architecture (default).
+* ``dnf [options] repoquery --envra`` show found packages in format epoch:name-version-release.architecture.
+* ``dnf [options] repoquery --recursive`` query packages recursively. Can be used with ``--whatrequires <REQ>`` (optionaly with --alldeps, but it has no effect with --exactdeps), or with ``--requires <REQ> --resolve``.
+
+Bugs fixed in 2.3.0:
+
+* :rhbug:`1290137`
+* :rhbug:`1349314`
+* :rhbug:`1247122`
+* :rhbug:`1298717`
+
+===================
 2.2.0 Release Notes
 ===================
 
