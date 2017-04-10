@@ -807,6 +807,9 @@ class Cli(object):
         if opts.sleeptime is not None:
             time.sleep(random.randrange(opts.sleeptime * 60))
 
+        if opts.downloaddir is not None:
+            self.base.conf.downloaddir = opts.downloaddir
+
         # store the main commands & summaries, before plugins are loaded
         self.optparser.add_commands(self.cli_commands, 'main')
         # store the plugin commands & summaries
