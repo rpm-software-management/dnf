@@ -1048,17 +1048,18 @@ class Output(object):
             skipped_conflicts, skipped_broken = self._skipped_packages(upgrade_type=upgrade_type)
             for pkg in sorted(skipped_conflicts):
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
+            recommendations = ["--best"]
+            if not self.base._allow_erasing:
+                recommendations.append("--allowerasing")
             skip_str = _("Skipping packages with conflicts:\n"
                          "(add '%s' to command line "
-                         "to force their upgrade)") % "--best --allowerasing"
+                         "to force their upgrade)") % " ".join(recommendations)
             pkglist_lines.append((skip_str, lines))
 
             lines = []
             for pkg in sorted(skipped_broken):
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
-            skip_str = _("Skipping packages with broken dependencies%s\n"
-                         "(add '--best' to command line "
-                         "to see why package dependency cannot be satisfied)")
+            skip_str = _("Skipping packages with broken dependencies%s")
             if self.base.conf.upgrade_group_objects_upgrade:
                 skip_str = skip_str % ""
             else:
