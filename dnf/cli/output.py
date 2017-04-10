@@ -961,11 +961,13 @@ class Output(object):
             out[0:0] = self._banner(col_data, (_('Group'), _('Packages'), '', ''))
         return '\n'.join(out)
 
-    def _skipped_packages(self):
+    def _skipped_packages(self, upgrade_type=False):
         """returns set of conflicting packages and set of packages with broken dependency that would
         be additionally installed when --best and --allowerasing"""
         ng = deepcopy(self.base._goal)
-        params = {"allow_uninstall": self.base._allow_erasing, "force_best": True}
+        params = {"allow_uninstall": self.base._allow_erasing,
+                  "force_best": upgrade_type,
+                  "ignore_weak": not upgrade_type}
         ret = ng.run(**params)
         if not ret:
             msg = dnf.util._format_resolve_problems(ng.problem_rules())
@@ -1041,7 +1043,9 @@ class Output(object):
         # show skipped conflicting packages
         if not self.conf.best and forward_actions & self.base._goal.actions:
             lines = []
-            skipped_conflicts, skipped_broken = self._skipped_packages()
+            upgrade_type = True if {hawkey.UPGRADE, hawkey.UPGRADE_ALL} & self.base._goal.actions \
+                else False
+            skipped_conflicts, skipped_broken = self._skipped_packages(upgrade_type=upgrade_type)
             for pkg in sorted(skipped_conflicts):
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
             skip_str = _("Skipping packages with conflicts:\n"
