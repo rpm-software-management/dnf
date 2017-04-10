@@ -126,10 +126,14 @@ def cli_run(cli, base):
             ret = resolving(cli, base)
         except dnf.exceptions.DepsolveError as e:
             ex_Error(e)
-            if not cli.demands.allow_erasing:
-                logger.info(_("(try to add '%s' to command line to"
-                              " replace conflicting packages)"),
-                            "--allowerasing")
+            if not cli.demands.allow_erasing and base._goal.problem_conflicts(available=True):
+                msg = _("(try to add '%s' to command line to replace conflicting "
+                        "packages") % "--allowerasing"
+                if cli.base.conf.strict:
+                    msg += _(" or '%s' to skip uninstalable packages)") % "--skip-broken"
+                else:
+                    msg += ")"
+                logger.info(msg)
             raise
         if ret:
             return ret
