@@ -330,6 +330,31 @@ popd
 %endif
 
 %changelog
+* Mon Apr 10 2017 Jaroslav Mracek <jmracek@redhat.com> 2.3.0-1
+- update release notes (Jaroslav Mracek)
+- po: Update translations (Igor Gnatenko)
+- Add require of subcommand for repo-pkgs command (Jaroslav Rohel)
+- shell: Fix commands initialization (Jaroslav Rohel)
+- po: Update translations (Igor Gnatenko)
+- Add support for --location for repoquery command (RhBug:1290137) (Jaroslav
+  Mracek)
+- Add support of --recursive with --resolve in repoquery (Jaroslav Mracek)
+- Add --recursive option for repoquery (Jaroslav Mracek)
+- Add --whatconflicts for repoquery (Jaroslav Mracek)
+- Add support for multiple options for repoquery (Jaroslav Mracek)
+- Add multiple format option for repoquery (Jaroslav Mracek)
+- Fix problem with "dnf repoquery --querytags" (Jaroslav Mracek)
+- Add support of 3 options into updateinfo command (Jaroslav Mracek)
+- Add inheritance of reason for obsoleting packages (Jaroslav Mracek)
+- Mark installonlypkgs correctly as user installed (RhBug:1349314) (Jaroslav
+  Mracek)
+- Solve a problem with None names in callbacks (Jaroslav Mracek)
+- Solve a problem for callbacks (Jaroslav Mracek)
+- Revert "remove: CLI: --randomwait" (RhBug:1247122) (Ondřej Sojka)
+- po: update translations (Igor Gnatenko)
+- po: update translations (Igor Gnatenko)
+- Set strings for translations (RhBug:1298717) (Jaroslav Mracek)
+
 * Mon Mar 27 2017 Jaroslav Mracek <jmracek@redhat.com> 2.2.0-1
 - bump version to 2.2.0 + update release notes (Jaroslav Mracek)
 - Add documentation of new API callback actions (RhBug:1411432) (Jaroslav
