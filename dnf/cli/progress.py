@@ -29,10 +29,10 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
     """Multi-file download progress meter"""
 
     STATUS_2_STR = {
-        dnf.callback.STATUS_FAILED : 'FAILED',
-        dnf.callback.STATUS_ALREADY_EXISTS : 'SKIPPED',
-        dnf.callback.STATUS_MIRROR : 'MIRROR',
-        dnf.callback.STATUS_DRPM : 'DRPM',
+        dnf.callback.STATUS_FAILED: 'FAILED',
+        dnf.callback.STATUS_ALREADY_EXISTS: 'SKIPPED',
+        dnf.callback.STATUS_MIRROR: 'MIRROR',
+        dnf.callback.STATUS_DRPM: 'DRPM',
     }
 
     def __init__(self, fo=sys.stderr, update_period=0.3, tick_period=1.0, rate_average=5.0):
