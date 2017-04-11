@@ -45,7 +45,6 @@ import string
 import sys
 import time
 import traceback
-import types
 
 _METADATA_RELATIVE_DIR = "repodata"
 _PACKAGES_RELATIVE_DIR = "packages"
@@ -261,7 +260,7 @@ class Metadata(object):
     @property
     def _distro_tags(self):
         pairs = self._repomd_dct.get('distro_tags', [])
-        return {k:v for (k, v) in pairs}
+        return {k: v for (k, v) in pairs}
 
     def _file_age(self, what):
         return time.time() - self._file_timestamp(what)
@@ -356,13 +355,13 @@ class PackagePayload(dnf.callback.Payload):
         dnf.util.ensure_dir(pkgdir)
 
         target_dct = {
-            'handle' : pkg.repo._get_handle(),
-            'dest' : pkgdir,
-            'resume' : True,
-            'cbdata' : self,
-            'progresscb' : self._progress_cb,
-            'endcb' : self._end_cb,
-            'mirrorfailurecb' : self._mirrorfail_cb,
+            'handle': pkg.repo._get_handle(),
+            'dest': pkgdir,
+            'resume': True,
+            'cbdata': self,
+            'progresscb': self._progress_cb,
+            'endcb': self._end_cb,
+            'mirrorfailurecb': self._mirrorfail_cb,
         }
         target_dct.update(self._target_params())
 
@@ -382,11 +381,11 @@ class RPMPayload(PackagePayload):
             logger.warning(_("unsupported checksum type: %s"), ctype)
 
         return {
-            'relative_url' : pkg.location,
-            'checksum_type' : ctype_code,
-            'checksum' : csum,
-            'expectedsize' : pkg.downloadsize,
-            'base_url' : pkg.baseurl,
+            'relative_url': pkg.location,
+            'checksum_type': ctype_code,
+            'checksum': csum,
+            'expectedsize': pkg.downloadsize,
+            'base_url': pkg.baseurl,
         }
 
     @property
@@ -508,7 +507,6 @@ SYNC_TRY_CACHE = 3
 class Repo(dnf.conf.RepoConf):
     # :api
     DEFAULT_SYNC = SYNC_TRY_CACHE
-
 
     def __init__(self, name=None, parent_conf=None):
         # :api
@@ -679,7 +677,7 @@ class Repo(dnf.conf.RepoConf):
 
     def _handle_new_local(self, destdir):
         return _Handle._new_local(self._substitutions, self.repo_gpgcheck,
-                                 self._max_mirror_tries, destdir)
+                                  self._max_mirror_tries, destdir)
 
     def _handle_new_pkg_download(self):
         return self._handle_new_remote(self.pkgdir, mirror_setup=False)
