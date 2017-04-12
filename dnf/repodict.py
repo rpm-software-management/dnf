@@ -23,13 +23,14 @@ from dnf.exceptions import ConfigError
 from dnf.i18n import _
 
 import dnf.util
+import collections
 import fnmatch
 import os
 
 logger = dnf.util.logger
 
 
-class RepoDict(dict):
+class RepoDict(collections.OrderedDict):
     # :api
     def add(self, repo):
         # :api
