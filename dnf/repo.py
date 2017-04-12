@@ -712,10 +712,7 @@ class Repo(dnf.conf.RepoConf):
 
         # setup username/password if needed
         if self.username:
-            userpwd = self.username
-            if self.password:
-                userpwd += ":" + self.password
-            h.setopt(librepo.LRO_USERPWD, userpwd)
+            h.setopt(librepo.LRO_USERPWD, _user_pass_str(self.username, self.password))
 
         # setup ssl stuff
         if self.sslcacert:
