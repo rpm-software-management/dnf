@@ -61,6 +61,7 @@ def _non_repo_handle(conf=None):
 def _urlopen_progress(url, conf):
     handle = _non_repo_handle(conf)
     handle.repotype = librepo.LR_YUMREPO
+    handle.setopt(librepo.LRO_URLS, os.path.dirname(url))
     progress = dnf.cli.progress.MultiFileProgressMeter(fo=sys.stdout)
     pload = dnf.repo.RemoteRPMPayload(url, conf, handle, progress)
     if os.path.exists(pload.local_path):
