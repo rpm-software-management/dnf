@@ -94,6 +94,17 @@ Here's the most direct way to get your work merged into the project.
 Please, do not create the pull requests with translation (.po) files improvements. Fix the translation on `Zanata <https://fedora.zanata.org/iteration/view/dnf/master>`_ instead.
 
 ===============
+ Running tests
+===============
+
+From the DNF git checkout directory::
+
+    mkdir build;
+    cd build;
+    cmake .. && CTEST_OUTPUT_ON_FAILURE=TRUE make test;
+    popd;
+
+===============
  Documentation
 ===============
 
