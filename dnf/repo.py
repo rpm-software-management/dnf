@@ -424,13 +424,14 @@ class RemoteRPMPayload(PackagePayload):
     def _librepo_target(self):
         target_dct = {
             'handle': self.handle,
-            'relative_url': self.remote_location,
+            'relative_url': os.path.basename(self.remote_location),
             'dest': self.pkgdir,
             'resume': True,
             'cbdata': self,
             'progresscb': self._progress_cb,
             'endcb': self._end_cb,
             'mirrorfailurecb': self._mirrorfail_cb,
+            'base_url': os.path.dirname(self.remote_location),
         }
 
         return librepo.PackageTarget(**target_dct)
