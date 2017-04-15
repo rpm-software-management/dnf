@@ -19,6 +19,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
+from dnf.db.types import SwdbReason
 
 import dnf.cli.output
 import dnf.const
@@ -59,7 +60,7 @@ class OutputFunctionsTest(support.TestCase):
     def test_make_lists(self):
         TSI = dnf.transaction.TransactionItem
 
-        goal = mock.Mock(get_reason=lambda x: 'user')
+        goal = mock.Mock(get_reason=lambda x: SwdbReason.USER)
         ts = dnf.transaction.Transaction()
         ts.add_install('pepper-3', [])
         ts.add_install('pepper-2', [])

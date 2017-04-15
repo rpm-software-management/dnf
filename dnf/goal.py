@@ -24,6 +24,7 @@ from copy import deepcopy
 from dnf.i18n import _
 import logging
 import hawkey
+from dnf.db.types import SwdbReason
 
 logger = logging.getLogger('dnf')
 
@@ -35,21 +36,13 @@ class Goal(hawkey.Goal):
 
     def get_reason(self, pkg):
         code = super(Goal, self).get_reason(pkg)
-        if code == hawkey.REASON_DEP:
-            return 'dep'
-        if code == hawkey.REASON_USER:
-            if pkg.name in self.group_members:
-                return 'group'
-            return 'user'
-        if code == hawkey.REASON_CLEAN:
-            return 'clean'
-        if code == hawkey.REASON_WEAKDEP:
-            return 'weak'
-        assert False, 'Unknown reason: %d' % code
+        if code == hawkey.REASON_USER and pkg.name in self.group_members:
+            return SwdbReason.GROUP
+        return SwdbReason(code)
 
     def group_reason(self, pkg, current_reason):
-        if current_reason == 'unknown' and pkg.name in self.group_members:
-            return 'group'
+        if current_reason == SwdbReason.UNKNOWN and pkg.name in self.group_members:
+            return SwdbReason.GROUP
         return current_reason
 
     def install(self, *args, **kwargs):
@@ -59,14 +52,16 @@ class Goal(hawkey.Goal):
             self._installs.extend(kwargs['select'].matches())
         return super(Goal, self).install(*args, **kwargs)
 
-    def push_userinstalled(self, query, yumdb):
+    def push_userinstalled(self, query, history):
         msg = _('--> Finding unneeded leftover dependencies')
         logger.debug(msg)
-        for pkg in query.installed():
-            yumdb_info = yumdb.get_package(pkg)
-            reason = getattr(yumdb_info, 'reason', 'user')
-            if reason not in ('dep', 'weak'):
-                self.userinstalled(pkg)
+        pkgs = query.installed()
+
+        # get only user installed packages
+        user_installed = history.select_user_installed(pkgs)
+
+        for pkg in user_installed:
+            self.userinstalled(pkg)
 
     def available_updates_diff(self, query):
         available_updates = set(query.upgrades().filter(arch__neq="src")

@@ -124,6 +124,7 @@ BuildRequires:  python-librepo >= %{librepo_version}
 BuildRequires:  python-nose
 BuildRequires:  python2-gpg
 Requires:       python2-gpg
+BuildRequires:  python-gobject
 BuildRequires:  pyliblzma
 Requires:       pyliblzma
 Requires:       %{name}-conf = %{version}-%{release}
@@ -139,6 +140,7 @@ Requires:       rpm-plugin-systemd-inhibit
 %else
 BuildRequires:  python2-rpm >= %{rpm_version}
 Requires:       python2-rpm >= %{rpm_version}
+Requires:       python-gobject
 Recommends:     rpm-plugin-systemd-inhibit
 %endif
 # dnf-langpacks package is retired in F25
@@ -161,8 +163,10 @@ BuildRequires:  python3-librepo >= %{librepo_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-gpg
 Requires:       python3-gpg
+BuildRequires:  python3-gobject
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
+Requires:       python3-gobject
 Requires:       python3-hawkey >= %{hawkey_version}
 Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
@@ -253,6 +257,9 @@ ln -sr  %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/yum
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
 %check
+# for SWDB testing
+export GI_TYPELIB_PATH=/usr/local/lib64/girepository-1.0
+export LD_LIBRARY_PATH=/usr/local/lib64
 pushd build
   ctest -VV
 popd

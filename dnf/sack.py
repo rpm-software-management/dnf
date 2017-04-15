@@ -28,7 +28,6 @@ import hawkey
 import os
 from dnf.pycomp import basestring
 
-
 class SackVersion(object):
     def __init__(self):
         self._num = 0
@@ -51,12 +50,12 @@ class SackVersion(object):
     def __ne__(self, other):
         return not (self == other)
 
-    def _update(self, pkg, csum):
+    def _update(self, pkg, csum_type, csum_data):
         self._num += 1
-        self._chksum.update(str(pkg))
-        if csum is not None:
-            self._chksum.update(csum[0])
-            self._chksum.update(csum[1])
+        self._chksum.update(pkg)
+        if csum_type and csum_data:
+            self._chksum.update(csum_type)
+            self._chksum.update(csum_data)
 
 
 class Sack(hawkey.Sack):
@@ -73,17 +72,18 @@ class Sack(hawkey.Sack):
         """Factory function returning a DNF Query."""
         return dnf.query.Query(self)
 
-    def _rpmdb_version(self, yumdb):
+    def _rpmdb_version(self, history):
         pkgs = self.query().installed().run()
         main = SackVersion()
-        for pkg in pkgs:
-            ydbi = yumdb.get_package(pkg)
-            csum = None
-            if 'checksum_type' in ydbi and 'checksum_data' in ydbi:
-                csum = (ydbi.checksum_type, ydbi.checksum_data)
-            main._update(pkg, csum)
-        return main
 
+        # [nevra, type, checksum, nevra, type, checksum...]
+        data = history.checksums(pkgs)
+        i = 0
+
+        while i < len(data) - 2:
+            main._update(data[i], data[i + 1], data[i + 2])
+            i += 3
+        return main
 
 def _build_sack(base):
     cachedir = base.conf.cachedir

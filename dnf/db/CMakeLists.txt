@@ -1,0 +1,2 @@
+FILE(GLOB db_srcs *.py)
+INSTALL (FILES ${db_srcs} DESTINATION ${PYTHON_INSTALL_DIR}/dnf/db)
