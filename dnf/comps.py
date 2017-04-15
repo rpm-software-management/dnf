@@ -507,39 +507,34 @@ class Solver(object):
         return pkgs
 
     def _removable_pkg(self, pkg_name):
-        prst = self.persistor
-        count = 0
-        if self._reason_fn(pkg_name) != 'group':
-            return False
-        for id_ in prst.groups:
-            p_grp = prst.group(id_)
-            count += sum(1 for pkg in p_grp.full_list if pkg == pkg_name)
-        return count < 2
+        return self.persistor.removable_pkg(pkg_name)
 
     def _removable_grp(self, grp_name):
         prst = self.persistor
         count = 0
-        if not prst.group(grp_name).installed:
+        if not prst.group(grp_name).is_installed:
             return False
-        for id_ in prst.environments:
-            p_env = prst.environment(id_)
-            count += sum(1 for grp in p_env.full_list if grp == grp_name)
+        for id_ in prst.environments():
+            p_env = prst.environment(id_.name_id)
+            count += sum(1 for grp in p_env.get_group_list() if grp == grp_name)
         return count < 2
 
     def _environment_install(self, env_id, pkg_types, exclude, strict=True):
+        if type(env_id) == self.persistor.get_env_type():
+            env_id = env_id.name_id
         env = self.comps._environment_by_id(env_id)
         p_env = self.persistor.environment(env_id)
-        if p_env.installed:
+        if p_env and p_env.is_installed():
             logger.warning(_("Environment '%s' is already installed.") %
                            env.ui_name)
+        else:
+            grp_types = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
+            p_env = self.persistor.new_env(env_id, env.name, env.ui_name,
+                                           pkg_types, grp_types)
+            self.persistor.add_env(p_env)
 
-        p_env.grp_types = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
-        exclude = set() if exclude is None else set(exclude)
-        p_env.name = env.name
-        p_env.ui_name = env.ui_name
-        p_env.pkg_exclude.extend(exclude)
-        p_env.pkg_types = pkg_types
-        p_env.full_list.extend(self._mandatory_group_set(env))
+        exclude = list() if exclude is None else list(exclude)
+        p_env.add_exclude(exclude)
 
         trans = TransactionBunch()
         for grp in env.mandatory_groups:
@@ -547,38 +542,39 @@ class Solver(object):
                 trans += self._group_install(grp.id, pkg_types, exclude, strict)
             except dnf.exceptions.CompsError:
                 pass
+
+        p_env.add_group([grp.id for grp in env.mandatory_groups])
         return trans
 
     def _environment_remove(self, env_id):
+        if type(env_id) == self.persistor.get_env_type():
+            env_id = env_id.name_id
         p_env = self.persistor.environment(env_id)
-        if not p_env.installed:
+        if not p_env or not p_env.is_installed():
             raise CompsError(_("Environment '%s' is not installed.") %
-                             p_env.ui_name)
+                             ucd(p_env.ui_name))
 
         trans = TransactionBunch()
-        group_ids = set(p_env.full_list)
+        group_ids = set(p_env.get_group_list())
 
         for grp in group_ids:
             if not self._removable_grp(grp):
                 continue
             trans += self._group_remove(grp)
-
-        del p_env.full_list[:]
-        del p_env.pkg_exclude[:]
-        p_env.grp_types = 0
-        p_env.pkg_types = 0
         return trans
 
     def _environment_upgrade(self, env_id):
+        if type(env_id) == self.persistor.get_env_type():
+            env_id = env_id.name_id
         env = self.comps._environment_by_id(env_id)
         p_env = self.persistor.environment(env.id)
-        if not p_env.installed:
+        if not p_env or not p_env.is_installed():
             raise CompsError(_("Environment '%s' is not installed.") %
                              env.ui_name)
 
-        old_set = set(p_env.full_list)
+        old_set = set(p_env.get_group_list())
         pkg_types = p_env.pkg_types
-        exclude = p_env.pkg_exclude
+        exclude = p_env.get_exclude()
 
         trans = TransactionBunch()
         for grp in env.mandatory_groups:
@@ -595,51 +591,58 @@ class Solver(object):
         return trans
 
     def _group_install(self, group_id, pkg_types, exclude, strict=True):
+        if type(group_id) == self.persistor.get_group_type():
+            group_id = group_id.name_id
         group = self.comps._group_by_id(group_id)
         if not group:
-            raise ValueError(_("Group_id '%s' does not exist.") % ucd(group_id))
+            raise ValueError(_("Group_id '%s' does not exist.") %
+                             ucd(group_id))
+        # this will return DnfSwdbGroup object
         p_grp = self.persistor.group(group_id)
-        if p_grp.installed:
+        if p_grp and p_grp.is_installed:
             logger.warning(_("Group '%s' is already installed.") %
                            group.ui_name)
+        else:
+            p_grp = self.persistor.new_group(group_id, group.name,
+                                             group.ui_name, 0, pkg_types)
+            self.persistor.add_group(p_grp)
+            self.persistor.install_group(p_grp)
 
-        exclude = set() if exclude is None else set(exclude)
-        p_grp.name = group.name
-        p_grp.ui_name = group.ui_name
-        p_grp.pkg_exclude.extend(exclude)
-        p_grp.pkg_types = pkg_types
-        p_grp.full_list.extend(self._full_package_set(group))
+        exclude = list() if exclude is None else list(exclude)
+        p_grp.add_exclude(exclude)
+        p_grp.add_package(list(self._full_package_set(group)))
 
         trans = TransactionBunch()
         trans.install.update(self._pkgs_of_type(group, pkg_types, exclude))
         return trans
 
     def _group_remove(self, group_id):
+        if type(group_id) == self.persistor.get_group_type():
+            group_id = group_id.name_id
         p_grp = self.persistor.group(group_id)
-        if not p_grp.installed:
+        if not p_grp or not p_grp.is_installed:
             raise CompsError(_("Group '%s' not installed.") %
-                             p_grp.ui_name)
+                             ucd(p_grp.ui_name))
 
         trans = TransactionBunch()
-        exclude = p_grp.pkg_exclude
-        trans.remove = {pkg for pkg in p_grp.full_list
+        exclude = p_grp.get_exclude()
+        trans.remove = {pkg for pkg in p_grp.get_full_list()
                         if pkg not in exclude and self._removable_pkg(pkg)}
-        p_grp.pkg_types = 0
-        del p_grp.full_list[:]
-        del p_grp.pkg_exclude[:]
+        self.persistor.remove_group(p_grp)
         return trans
 
     def _group_upgrade(self, group_id):
+        if type(group_id) == self.persistor.get_group_type():
+            group_id = group_id.name_id
         group = self.comps._group_by_id(group_id)
         p_grp = self.persistor.group(group.id)
-        if not p_grp.installed:
+        if not p_grp or not p_grp.is_installed:
             raise CompsError(_("Group '%s' not installed.") %
                              group.ui_name)
-        exclude = set(p_grp.pkg_exclude)
-        old_set = set(p_grp.full_list)
+        exclude = set(p_grp.get_exclude())
+        old_set = set(p_grp.get_full_list())
         new_set = self._pkgs_of_type(group, p_grp.pkg_types, exclude)
-        del p_grp.full_list[:]
-        p_grp.full_list.extend(self._full_package_set(group))
+        p_grp.update_full_list(list(self._full_package_set(group)))
 
         trans = TransactionBunch()
         trans.install = {pkg for pkg in new_set if pkg.name not in old_set}

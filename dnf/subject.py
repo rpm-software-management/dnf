@@ -129,7 +129,6 @@ class Subject(object):
 
             if self._filename_pattern:
                 return sltr.set(pkg=sack.query()._filterm(file__glob=self._pattern))
-
         return sltr
 
     def _get_best_selectors(self, sack, forms=None, obsoletes=True):

@@ -28,7 +28,7 @@ from dnf.package import Package
 from dnf.transaction import (ERASE, DOWNGRADE, INSTALL, REINSTALL,
                              TransactionItem, UPGRADE)
 from hawkey import split_nevra
-from tests.support import mock_sack, Base, ObjectMatcher
+from tests.support import mock_sack, MockBase, ObjectMatcher
 from unittest import TestCase
 
 class BaseTest(TestCase):
@@ -59,7 +59,7 @@ class BaseTest(TestCase):
 
     def setUp(self):
         """Prepare the test fixture."""
-        self._base = Base()
+        self._base = MockBase()
         self._base._sack = mock_sack('main', 'updates')
 
     def test_history_undo_operations_downgrade(self):
@@ -118,7 +118,7 @@ class BaseTest(TestCase):
 
     def test_history_undo_operations_erase_twoavailable(self):
         """Test history_undo_operations with an erase available in two repos."""
-        base = Base()
+        base = MockBase()
         base._sack = mock_sack('main', 'search')
         operations = NEVRAOperations()
         operations.add('Erase', 'lotus-3-16.x86_64')

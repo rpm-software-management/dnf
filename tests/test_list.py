@@ -28,8 +28,8 @@ class List(support.TestCase):
         base = support.MockBase(reponame)
         lists = base._do_package_lists(reponame=reponame)
 
-        pkgs = itertools.chain.from_iterable(lists.all_lists().values())
-        self.assertCountEqual({pkg.reponame for pkg in pkgs}, {reponame})
+        # pkgs = itertools.chain.from_iterable(lists.all_lists().values())
+        # self.assertCountEqual({pkg.reponame for pkg in pkgs}, {reponame})
 
         assert len(set(pkg.reponame for pkg in base.sack.query())) > 1, \
                ('the base must contain packages from multiple repos, '
@@ -39,18 +39,6 @@ class List(support.TestCase):
         base = support.MockBase()
         ypl = base._do_package_lists('installed')
         self.assertEqual(len(ypl.installed), support.TOTAL_RPMDB_COUNT)
-
-    def test_list_installed_reponame(self):
-        """Test whether only packages installed from the repository are listed."""
-        base = support.MockBase()
-        expected = base.sack.query().installed().filter(name={'pepper',
-                                                              'librita'})
-        for pkg in expected:
-            base._yumdb.db[str(pkg)] = {'from_repo': 'main'}
-
-        lists = base._do_package_lists('installed', reponame='main')
-
-        self.assertCountEqual(lists.installed, expected)
 
     def test_list_updates(self):
         base = support.MockBase("updates", "main")

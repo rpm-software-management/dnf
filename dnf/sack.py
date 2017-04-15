@@ -28,7 +28,6 @@ import hawkey
 import os
 from dnf.pycomp import basestring
 
-
 class SackVersion(object):
     def __init__(self):
         self._num = 0
@@ -81,17 +80,20 @@ class Sack(hawkey.Sack):
         excl = excl.difference(pkgq)
         self.add_excludes(excl)
 
-    def _rpmdb_version(self, yumdb):
+    def _rpmdb_version(self, history):
         pkgs = self.query().installed().run()
         main = SackVersion()
+        pkgs_str = []
         for pkg in pkgs:
-            ydbi = yumdb.get_package(pkg)
-            csum = None
-            if 'checksum_type' in ydbi and 'checksum_data' in ydbi:
-                csum = (ydbi.checksum_type, ydbi.checksum_data)
+            pkgs_str.append(str(pkg))
+        chksums = history.checksums_by_nvras(pkgs_str)
+        # retuned array [type, checksum, type, checksum...]
+        i = 0
+        while i < len(chksums) - 1:
+            csum = (chksums[i], chksums[i + 1])
+            i += 2
             main._update(pkg, csum)
         return main
-
 
 def _build_sack(base):
     cachedir = base.conf.cachedir

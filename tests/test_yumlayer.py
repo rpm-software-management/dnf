@@ -32,10 +32,10 @@ import dnf.yum.option_parser
 import tests.support
 
 
-
 def _parse(command, args):
     parser = dnf.yum.option_parser.YumOptionParser()
-    return parser.parse_main_args(args), parser.parse_command_args(command, args)
+    return (parser.parse_main_args(args),
+            parser.parse_command_args(command, args))
 
 
 def _compare_options(test, options):
@@ -65,7 +65,8 @@ class YumArgumentParserTest(tests.support.TestCase):
         self.command = TestCommand(self.cli)
 
     def test_skip_broken(self):
-        arg_opts, command_opts = _parse(self.command, ['update', '--skip-broken'])
+        arg_opts, command_opts = _parse(self.command,
+                                        ['update', '--skip-broken'])
         self.assertEqual(command_opts.command, ['update'])
         self.assertIsNone(arg_opts.best)
 

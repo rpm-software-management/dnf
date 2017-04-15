@@ -34,17 +34,6 @@ class QueriesTest(support.TestCase):
         res_set = set(res)
         self.assertEqual(len(res), len(res_set))
 
-    def test_autoremove(self):
-        sack = support.mock_sack("main")
-        base = support.MockBase("main")
-        installed = sack.query().installed()
-        for pkg in installed:
-            base._yumdb.get_package(pkg).reason = "dep"
-        hole = installed.filter(name="hole")[0]
-        base._yumdb.get_package(hole).reason = "user"
-        pkgs = installed._unneeded(sack, base._yumdb)
-        self.assertEqual(len(pkgs), support.TOTAL_RPMDB_COUNT-1)
-
     def test_by_file(self):
         # check sanity first:
         sack = support.mock_sack()

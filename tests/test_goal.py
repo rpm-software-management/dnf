@@ -53,22 +53,3 @@ class GoalTest(tests.support.TestCase):
         goal.group_members.add('hole')
         self.assertEqual('group', goal.group_reason(hole, 'unknown'))
         self.assertEqual('dep', goal.group_reason(hole, 'dep'))
-
-    def test_push_userinstalled(self):
-        base = tests.support.MockBase('main')
-        base.conf.clean_requirements_on_remove = True
-        goal = self.goal
-        installed = base.sack.query().installed()
-        for pkg in installed:
-            base._yumdb.get_package(pkg).reason = 'dep'
-        pkg1 = installed.filter(name="pepper")[0]
-        base._yumdb.get_package(pkg1).reason = "user"
-        pkg2 = installed.filter(name="hole")[0]
-        base._yumdb.get_package(pkg2).reason = "unknown"
-        pkgs = installed.filter(name__neq=["pepper", "hole", "librita"]
-                               ).run()
-
-        # test:
-        goal.push_userinstalled(installed, base._yumdb)
-        goal.run()
-        self.assertEqual(goal.list_unneeded(), pkgs)

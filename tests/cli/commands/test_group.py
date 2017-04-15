@@ -61,9 +61,9 @@ class GroupCommandTest(support.TestCase):
 
     def test_environment_list(self):
         env_inst, env_avail = self.cmd._environment_lists(['sugar*'])
-        self.assertLength(env_inst, 1)
-        self.assertLength(env_avail, 0)
-        self.assertEqual(env_inst[0].name, 'Sugar Desktop Environment')
+        self.assertLength(env_inst, 0)
+        self.assertLength(env_avail, 1)
+        self.assertEqual(env_avail[0].name, 'Sugar Desktop Environment')
 
     def test_configure(self):
         support.command_configure(self.cmd, ['remove', 'crack'])
@@ -75,7 +75,10 @@ class GroupCommandTest(support.TestCase):
 class CompsQueryTest(support.TestCase):
 
     def setUp(self):
-        (self.comps, self.prst) = support.mock_comps(True)
+        self.base = support.MockBase()
+        self.history = self.base.history
+        self.comps = support.mock_comps(self.history, True)
+        self.prst = self.history.group
 
     def test_all(self):
         status_all = CompsQuery.AVAILABLE | CompsQuery.INSTALLED
@@ -96,6 +99,10 @@ class CompsQueryTest(support.TestCase):
     def test_installed(self):
         q = CompsQuery(self.comps, self.prst, CompsQuery.GROUPS,
                        CompsQuery.INSTALLED)
+        self.base.read_mock_comps(False)
+        grp = self.base.comps.group_by_pattern('somerset')
+        self.base.group_install(grp.id, ('mandatory',))
         res = q.get('somerset')
         self.assertEmpty(res.environments)
-        self.assertCountEqual(res.groups, ('somerset',))
+        grp_ids = [grp.name_id for grp in res.groups]
+        self.assertCountEqual(grp_ids, ('somerset',))

@@ -113,6 +113,7 @@ BuildRequires:  python-librepo >= %{librepo_version}
 BuildRequires:  python-nose
 BuildRequires:  python2-gpg
 Requires:       python2-gpg
+BuildRequires:  python-gobject
 BuildRequires:  pyliblzma
 BuildRequires:  rpm-python >= %{rpm_version}
 Requires:       pyliblzma
@@ -122,6 +123,11 @@ Requires:       python-hawkey >= %{hawkey_version}
 Requires:       python-iniparse
 Requires:       python-libcomps >= %{libcomps_version}
 Requires:       python-librepo >= %{librepo_version}
+%if 0%{?rhel} && 0%{?rhel} <= 7
+Requires:       pygobject3
+%else
+Requires:       python-gobject
+%endif
 Requires:       rpm-plugin-systemd-inhibit
 Requires:       rpm-python >= %{rpm_version}
 # dnf-langpacks package is retired in F25
@@ -144,9 +150,11 @@ BuildRequires:  python3-librepo >= %{librepo_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-gpg
 Requires:       python3-gpg
+BuildRequires:  python3-gobject
 BuildRequires:  rpm-python3 >= %{rpm_version}
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
+Requires:       python3-gobject
 Requires:       python3-hawkey >= %{hawkey_version}
 Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
@@ -222,6 +230,8 @@ mv %{buildroot}%{_bindir}/dnf-automatic-2 %{buildroot}%{_bindir}/dnf-automatic
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
 %check
+export GI_TYPELIB_PATH=%{buildroot}%{_libdir}/girepository-1.0:%{_libdir}/girepository-1.0
+export LD_LIBRARY_PATH=%{buildroot}%{_libdir}:%{_libdir}
 pushd build
   ctest -VV
 popd

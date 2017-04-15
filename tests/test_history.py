@@ -24,7 +24,8 @@ from tests.support import mock
 import dnf.history
 import dnf.yum.history
 
-class TestedHistory(dnf.yum.history.YumHistory):
+
+class TestedHistory(dnf.yum.history.SwdbInterface):
     @mock.patch("os.path.exists", return_value=True)
     def __init__(self, unused_exists):
         self._db_date = "1962-07-12"
@@ -33,130 +34,13 @@ class TestedHistory(dnf.yum.history.YumHistory):
     def _create_db_file(self):
         return None
 
+
 class History(TestCase):
     def setUp(self):
         self.base = support.MockBase("main")
         self.sack = self.base.sack
         self.history = TestedHistory()
 
-    def pkgtup2pid_test(self):
-        """ Check pkg2pid() correctly delegates to _*2pid()s. """
-        hpkg = dnf.yum.history.YumHistoryPackage("n", "a", "e", "v", "r")
-        with mock.patch.object(self.history, "_hpkg2pid") as hpkg2pid:
-            self.history.pkg2pid(hpkg)
-            hpkg2pid.assert_called_with(hpkg, True)
-
-        ipkg = self.sack.query().installed().filter(name="pepper")[0]
-        with mock.patch.object(self.history, "_ipkg2pid") as ipkg2pid:
-            self.history.pkg2pid(ipkg)
-            ipkg2pid.assert_called_with(ipkg, True)
-
-        apkg = self.sack.query().available().filter(name="lotus")[0]
-        with mock.patch.object(self.history, "_apkg2pid") as apkg2pid:
-            self.history.pkg2pid(apkg)
-            apkg2pid.assert_called_with(apkg, True)
-
-class HistoryWrapperTest(support.TestCase):
-    """Unit tests of dnf.history._HistoryWrapper."""
-
-    def _create_wrapper(self, yum_history):
-        """Create new instance of _HistoryWrapper."""
-        wrapper = dnf.history.open_history(yum_history)
-        assert isinstance(wrapper, dnf.history._HistoryWrapper)
-        return wrapper
-
-    def test_context_manager(self):
-        """Test whether _HistoryWrapper can be used as a context manager."""
-        yum_history = mock.create_autospec(dnf.yum.history.YumHistory)
-        history = self._create_wrapper(yum_history)
-
-        with history as instance:
-            pass
-
-        self.assertIs(instance, history)
-        self.assertEqual(yum_history.close.mock_calls, [mock.call()])
-
-    def test_close(self):
-        """Test close."""
-        yum_history = mock.create_autospec(dnf.yum.history.YumHistory)
-        history = self._create_wrapper(yum_history)
-
-        history.close()
-
-        self.assertEqual(yum_history.close.mock_calls, [mock.call()])
-
-    def test_has_transaction_absent(self):
-        """Test has_transaction without any transaction."""
-        with self._create_wrapper(support.HistoryStub()) as history:
-            present = history.has_transaction(1)
-
-        self.assertFalse(present)
-
-    def test_has_transaction_present(self):
-        """Test has_transaction with a transaction present."""
-        yum_history = support.HistoryStub()
-        yum_history.old_data_pkgs['1'] = (
-            dnf.yum.history.YumHistoryPackageState(
-                'lotus', 'x86_64', '0', '3', '16', 'Erase',
-                history=yum_history),)
-
-        with self._create_wrapper(yum_history) as history:
-            present = history.has_transaction(1)
-
-        self.assertTrue(present)
-
-    def test_last_transaction_id(self):
-        """Test last_transaction_id with some transactions."""
-        yum_history = support.HistoryStub()
-        yum_history.old_data_pkgs['1'] = (
-            dnf.yum.history.YumHistoryPackageState(
-                'lotus', 'x86_64', '0', '3', '16', 'Erase',
-                history=yum_history),)
-        yum_history.old_data_pkgs['2'] = (
-            dnf.yum.history.YumHistoryPackageState(
-                'pepper', 'x86_64', '0', '20', '0', 'Install',
-                history=yum_history),)
-
-        with self._create_wrapper(yum_history) as history:
-            id_ = history.last_transaction_id()
-
-        self.assertEqual(id_, 2)
-
-    def test_last_transaction_id_notransaction(self):
-        """Test last_transaction_id without any transaction."""
-        with self._create_wrapper(support.HistoryStub()) as history:
-            id_ = history.last_transaction_id()
-
-        self.assertIsNone(id_)
-
-    def test_transaction_nevra_ops_notransaction(self):
-        """Test transaction_nevra_ops without any transaction."""
-        with self._create_wrapper(support.HistoryStub()) as history:
-            self.assertRaises(ValueError, history.transaction_nevra_ops, 0)
-
-    def test_transaction_nevra_ops_update(self):
-        """Test transaction_nevra_ops with a downgrade operation."""
-        yum_history = support.HistoryStub()
-        yum_history.old_data_pkgs['1'] = (
-            dnf.yum.history.YumHistoryPackageState(
-                'tour', 'noarch', '0', '4.8', '1', 'Update',
-                history=yum_history),
-            dnf.yum.history.YumHistoryPackageState(
-                'tour', 'noarch', '0', '4.6', '1', 'Updated',
-                history=yum_history),
-            dnf.yum.history.YumHistoryPackageState(
-                'tour', 'noarch', '0', '4.8', '1', 'Obsoleting',
-                history=yum_history),
-            dnf.yum.history.YumHistoryPackageState(
-                'lotus', 'x86_64', '0', '3', '16', 'Obsoleted',
-                history=yum_history))
-        expected_ops = dnf.history.NEVRAOperations()
-        expected_ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch', ('lotus-0:3-16.x86_64',))
-
-        with self._create_wrapper(yum_history) as history:
-            result_ops = history.transaction_nevra_ops(1)
-
-        self.assertCountEqual(result_ops, expected_ops)
 
 class NEVRAOperationsTest(support.TestCase):
     """Unit tests of dnf.history.NEVRAOperations."""
@@ -609,7 +493,6 @@ class TransactionConverterTest(TestCase):
             yield (item.op_type, item.installed, item.erased, item.obsoleted,
                    item.reason)
 
-
 class ComparisonTests(TestCase):
 
     def test_transaction(self):
@@ -620,16 +503,5 @@ class ComparisonTests(TestCase):
 
         a2 = dnf.yum.history.YumHistoryTransaction(None, [0, 1, 0, 0, 0, 0, 0])
         b2 = dnf.yum.history.YumHistoryTransaction(None, [0, 9, 0, 0, 0, 0, 0])
-        self.assertGreater(a2, b2)
-        self.assertLess(b2, a2)
-
-    def test_rpmdb_problem(self):
-        a = dnf.yum.history.YumHistoryRpmdbProblem(None, 1, 5, None)
-        b = dnf.yum.history.YumHistoryRpmdbProblem(None, 9, 5, None)
-        self.assertLess(a, b)
-        self.assertGreater(b, a)
-
-        a2 = dnf.yum.history.YumHistoryRpmdbProblem(None, 5, 1, None)
-        b2 = dnf.yum.history.YumHistoryRpmdbProblem(None, 5, 9, None)
         self.assertGreater(a2, b2)
         self.assertLess(b2, a2)

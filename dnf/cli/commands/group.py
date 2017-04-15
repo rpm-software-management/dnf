@@ -22,7 +22,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.comps import CompsQuery
 from dnf.cli import commands
-from dnf.i18n import _
+from dnf.i18n import _, ucd
 
 import dnf.cli
 import dnf.exceptions
@@ -73,7 +73,11 @@ class GroupCommand(commands.Command):
 
     def _environment_lists(self, patterns):
         def available_pred(env):
-            return not self.base._group_persistor.environment(env.id).installed
+            env_found = self.base.history.group.environment(env.id)
+            if env_found:
+                return not env_found.is_installed()
+            else:
+                return True
 
         self._assert_comps()
         if patterns is None:
@@ -85,7 +89,11 @@ class GroupCommand(commands.Command):
 
     def _group_lists(self, uservisible, patterns):
         def installed_pred(group):
-            return self.base._group_persistor.group(group.id).installed
+            group_found = self.base.history.group.group(group.id)
+            if group_found:
+                return group_found.is_installed
+            else:
+                return False
         installed = []
         available = []
 
@@ -222,7 +230,7 @@ class GroupCommand(commands.Command):
         return 0, []
 
     def _mark_install(self, patterns):
-        prst = self.base._group_persistor
+        prst = self.base.history.group
         q = CompsQuery(self.base.comps, prst,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
@@ -241,15 +249,16 @@ class GroupCommand(commands.Command):
 
         if res.environments:
             logger.info(_('Environments marked installed: %s'),
-                        ','.join([prst.environment(g).ui_name
+                        ','.join([ucd(prst.environment(g).ui_name)
                                   for g in res.environments]))
         if res.groups:
             logger.info(_('Groups marked installed: %s'),
-                        ','.join([prst.group(g).ui_name for g in res.groups]))
+                        ','.join([ucd(prst.group(g).ui_name)
+                                  for g in res.groups]))
         prst.commit()
 
     def _mark_remove(self, patterns):
-        prst = self.base._group_persistor
+        prst = self.base.history.group
         q = CompsQuery(self.base.comps, prst,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.INSTALLED)
@@ -262,11 +271,11 @@ class GroupCommand(commands.Command):
 
         if res.environments:
             logger.info(_('Environments marked removed: %s'),
-                        ','.join([prst.environment(e_id).ui_name
+                        ','.join([ucd(prst.environment(e_id).ui_name)
                                   for e_id in res.environments]))
         if res.groups:
             logger.info(_('Groups marked removed: %s'),
-                        ','.join([prst.group(g_id).ui_name
+                        ','.join([ucd(prst.group(g_id).ui_name)
                                   for g_id in res.groups]))
         prst.commit()
 
@@ -412,9 +421,8 @@ class GroupCommand(commands.Command):
         if not self._remark:
             return
         goal = self.base._goal
-        pkgdb = self.base._yumdb
+        history = self.base.history
         names = goal.group_members
         for pkg in self.base.sack.query().installed().filter(name=names):
-            db_pkg = pkgdb.get_package(pkg)
-            reason = db_pkg.get('reason') or 'unknown'
-            db_pkg.reason = goal.group_reason(pkg, reason)
+            reason = history.reason_by_nvra(pkg) or "unknown"
+            history.set_reason(pkg, goal.group_reason(pkg, reason))

@@ -92,29 +92,34 @@ class TransactionItemTest(tests.support.TestCase):
              (self.obspkg2, 'Obsoleted'), (self.obspkg3, 'Obsoleted')])
 
     def test_propagated_reason(self):
-        yumdb = mock.Mock()
-        yumdb.get_package().get = lambda s: 'dep'
-        self.base = tests.support.BaseCliStub()
-        self.base._sack = tests.support.mock_sack('main', 'search')
+        base = tests.support.MockBase()
+        history = base.history
+        base._sack = tests.support.mock_sack('main', 'search')
+
+        pkg1 = history.ipkg_to_pkg(self.newpkg)
+        pid = history.add_package(pkg1)
+        history.swdb.trans_data_beg(1, pid, "dep", "Installed")
+
+        pkg2 = history.ipkg_to_pkg(self.oldpkg)
+        pid = history.add_package(pkg2)
+        history.swdb.trans_data_beg(1, pid, "dep", "Installed")
+
+        ionly = base._sack.query().filter(empty=True)  # installonly_query
+
         tsi = dnf.transaction.TransactionItem(
             dnf.transaction.INSTALL, installed=self.newpkg, reason='user')
-        self.assertEqual(tsi._propagated_reason(yumdb, self.base._sack.query().filter(empty=True)),
-                         'user')
+        self.assertEqual(tsi._propagated_reason(history, ionly), 'user')
         tsi = dnf.transaction.TransactionItem(
             dnf.transaction.UPGRADE, installed=self.newpkg, erased=self.oldpkg)
-        self.assertEqual(tsi._propagated_reason(yumdb, self.base._sack.query().filter(empty=True)),
-                         'dep')
+        self.assertEqual(tsi._propagated_reason(history, ionly), 'dep')
         tsi = dnf.transaction.TransactionItem(
             dnf.transaction.DOWNGRADE,
             installed=self.newpkg, erased=self.oldpkg)
-        self.assertEqual(tsi._propagated_reason(yumdb, self.base._sack.query().filter(empty=True)),
-                         'dep')
+        self.assertEqual(tsi._propagated_reason(history, ionly), 'dep')
 
         # test the call can survive if no reason is known:
-        yumdb = mock.Mock()
-        yumdb.get_package().get = lambda s: None
-        self.assertEqual(tsi._propagated_reason(yumdb, self.base._sack.query().filter(empty=True)),
-                         'unknown')
+        history.reset_db()
+        self.assertEqual(tsi._propagated_reason(history, ionly), 'unknown')
 
     def test_removes(self):
         tsi = dnf.transaction.TransactionItem(

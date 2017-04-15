@@ -121,20 +121,6 @@ class Reinstall(support.ResultTestCase):
             dnf.subject.Subject('librita.i686').get_best_query(self.sack).installed(),
             dnf.subject.Subject('librita').get_best_query(self.sack).available()))
 
-    def test_reinstall_old_reponame_installed(self):
-        """Test whether it reinstalls packages only from the repository."""
-        for pkg in self.sack.query().installed().filter(name='librita'):
-            self.base._yumdb.db[str(pkg)] = support.RPMDBAdditionalDataPackageStub()
-            self.base._yumdb.get_package(pkg).from_repo = 'main'
-
-        reinstalled_count = self.base.reinstall('librita', old_reponame='main')
-
-        self.assertEqual(reinstalled_count, 1)
-        self.assertResult(self.base, itertools.chain(
-            self.sack.query().installed().filter(name__neq='librita'),
-            dnf.subject.Subject('librita.i686').get_best_query(self.sack).installed(),
-            dnf.subject.Subject('librita').get_best_query(self.sack).available()))
-
     def test_reinstall_old_reponame_notinstalled(self):
         """Test whether it reinstalls packages only from the repository."""
         self.assertRaises(
