@@ -42,18 +42,15 @@ class MarkCommand(commands.Command):
         parser.add_argument('package', nargs='+')
 
     def _mark_install(self, pkg):
-        yumdb = self.base._yumdb
-        yumdb.get_package(pkg).reason = 'user'
+        self.base.history.mark_user_installed(pkg, True)
         logger.info(_('%s marked as user installed.'), str(pkg))
 
     def _mark_remove(self, pkg):
-        yumdb = self.base._yumdb
-        yumdb.get_package(pkg).reason = 'dep'
+        self.base.history.mark_user_installed(pkg, False)
         logger.info(_('%s unmarked as user installed.'), str(pkg))
 
     def _mark_group(self, pkg):
-        yumdb = self.base._yumdb
-        yumdb.get_package(pkg).reason = 'group'
+        self.base.history.set_reason(pkg, 'group')
         logger.info(_('%s marked as group installed.'), str(pkg))
 
     def configure(self):

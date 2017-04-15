@@ -24,7 +24,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from collections import defaultdict, Container, Iterable, Sized
 from dnf.util import is_exhausted, split_by
-from dnf.yum.history import YumHistory
+from dnf.db.types import SwdbReason
 
 import dnf.exceptions
 
@@ -49,18 +49,15 @@ STATE2COMPLEMENT = {'Reinstall': 'Reinstalled',
 
 def open_history(database):
     """Open a history of transactions."""
-    if isinstance(database, YumHistory):
-        return _HistoryWrapper(database)
-    else:
-        raise TypeError("unsupported database type: %s" % type(database))
+    return _HistoryWrapper(database)
 
 class _HistoryWrapper(object):
     """Transactions history interface on top of an YumHistory."""
 
-    def __init__(self, yum_history):
+    def __init__(self, history):
         """Initialize a wrapper instance."""
         object.__init__(self)
-        self._history = yum_history
+        self._history = history
 
     def __enter__(self):
         """Enter the runtime context."""
@@ -81,7 +78,7 @@ class _HistoryWrapper(object):
 
     def last_transaction_id(self):
         """Get ID of the last stored transaction."""
-        last_tx = self._history.last(complete_transactions_only=False)
+        last_tx = self._history.last()
         return last_tx.tid if last_tx else None
 
     def transaction_nevra_ops(self, id_):
@@ -89,7 +86,7 @@ class _HistoryWrapper(object):
         if not self.has_transaction(id_):
             raise ValueError('no transaction with given ID: %d' % id_)
 
-        hpkgs = self._history._old_data_pkgs(str(id_), sort=False)
+        hpkgs = self._history.get_packages_by_tid(id_)
 
         # Split history to history packages representing transaction items.
         items_hpkgs = split_by(hpkgs, lambda hpkg: hpkg.state in PRIMARY_STATES)
@@ -116,7 +113,9 @@ class _HistoryWrapper(object):
                 assert hpkg.state == 'Obsoleting'
                 obsoleting_nevra = hpkg.nevra
                 hpkg = next(reversed_it)
-            if hpkg.state in {'Reinstalled', 'Downgraded', 'Updated'}:  # Replaced.
+
+            # Replaced.
+            if hpkg.state in {'Reinstalled', 'Downgraded', 'Updated'}:
                 replaced_nevra, replaced_state = hpkg.nevra, hpkg.state
                 hpkg = next(reversed_it)
             assert is_exhausted(reversed_it)
@@ -414,7 +413,7 @@ class TransactionConverter(object):
         assert len(packages) == 1
         return packages[0]
 
-    def convert(self, operations, reason='unknown'):
+    def convert(self, operations, reason=SwdbReason.UNKNOWN):
         """Convert operations to a transaction."""
         transaction = dnf.transaction.Transaction()
         for state, nevra, rnevra, onevras in operations:

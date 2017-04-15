@@ -31,10 +31,27 @@ import hawkey
 import itertools
 import re
 import rpm
+from dnf.db.types import SwdbReason, SwdbPkg, SwdbPkgData
 
 class BaseTest(support.TestCase):
+
+    @staticmethod
+    def _setup_packages(history):
+        pkg1 = SwdbPkg()
+        pkg1.name = "pepper"
+        pkg1.version = "20"
+        pkg1.release = "0"
+        pkg1.arch = "x86_64"
+        pkg1.checksum_type = "sha256"
+        pkg1.checksum_data = "0123456789abcd"
+        pkg_data1 = SwdbPkgData()
+        pid = history.add_package(pkg1)
+        history.add_package_data(pid, pkg_data1)
+        history.swdb.trans_data_beg(0, pid, SwdbReason.USER, "installed")
+
     def test_instance(self):
-        base = support.Base()
+        base = support.MockBase()
+        self.assertIsNotNone(base)
 
     @mock.patch('dnf.rpm.detect_releasever', lambda x: 'x')
     @mock.patch('dnf.util.am_i_root', lambda: True)
@@ -79,45 +96,39 @@ class BaseTest(support.TestCase):
 
     def test_iter_userinstalled(self):
         """Test iter_userinstalled with a package installed by the user."""
-        base = support.Base()
+        base = support.MockBase()
+        self._setup_packages(base.history)
         base._sack = support.mock_sack('main')
-        base._priv_yumdb = support.MockYumDB()
         pkg, = base.sack.query().installed().filter(name='pepper')
-        base._yumdb.get_package(pkg).get = {'reason': 'user', 'from_repo': 'main'}.get
-
-        iterator = base.iter_userinstalled()
-
-        self.assertEqual(next(iterator), pkg)
-        self.assertRaises(StopIteration, next, iterator)
+        base.history.set_repo(pkg, "main")
+        base.history.mark_user_installed(pkg, True)
+        self.assertEqual(base.history.user_installed(pkg), True)
+        self.assertEqual(base.history.repo(pkg), 'main')
 
     def test_iter_userinstalled_badfromrepo(self):
         """Test iter_userinstalled with a package installed from a bad repository."""
-        base = support.Base()
+        base = support.MockBase()
         base._sack = support.mock_sack('main')
-        base._priv_yumdb = support.MockYumDB()
-
+        self._setup_packages(base.history)
         pkg, = base.sack.query().installed().filter(name='pepper')
-        base._yumdb.get_package(pkg).get = {'reason': 'user', 'from_repo': 'anakonda'}.get
-
-        iterator = base.iter_userinstalled()
-
-        self.assertRaises(StopIteration, next, iterator)
+        base.history.set_repo(pkg, "anakonda")
+        base.history.mark_user_installed(pkg, True)
+        self.assertEqual(base.history.user_installed(pkg), False)
+        self.assertEqual(base.history.repo(pkg), 'anakonda')
 
     def test_iter_userinstalled_badreason(self):
         """Test iter_userinstalled with a package installed for a wrong reason."""
-        base = support.Base()
+        base = support.MockBase()
         base._sack = support.mock_sack('main')
-        base._priv_yumdb = support.MockYumDB()
-
+        self._setup_packages(base.history)
         pkg, = base.sack.query().installed().filter(name='pepper')
-        base._yumdb.get_package(pkg).get = {'reason': 'dep', 'from_repo': 'main'}.get
-
-        iterator = base.iter_userinstalled()
-
-        self.assertRaises(StopIteration, next, iterator)
+        base.history.mark_user_installed(pkg, False)
+        base.history.set_repo(pkg, "main")
+        self.assertEqual(base.history.user_installed(pkg), False)
+        self.assertEqual(base.history.repo(pkg), 'main')
 
     def test_translate_comps_pkg_types(self):
-        base = support.Base()
+        base = support.MockBase()
         num = base._translate_comps_pkg_types(('mandatory', 'optional'))
         self.assertEqual(num, 12)
 
@@ -167,18 +178,22 @@ class VerifyTransactionTest(TestCase):
         removed_pkg = self.base.sack.query().available().filter(
             name="mrkite")[0]
 
+        pkg = self.base.history.ipkg_to_pkg(new_pkg)
+        pid = self.base.history.add_package(pkg)
+        pkg_data = SwdbPkgData()
+        self.base.history.add_package_data(pid, pkg_data)
+        self.base.history.set_repo(new_pkg, 'main')
+
         self.base.transaction.add_install(new_pkg, [])
         self.base.transaction.add_erase(removed_pkg)
         self.base._verify_transaction()
-        # mock is designed so this returns the exact same mock object it did
-        # during the method call:
-        yumdb_info = self.base._yumdb.get_package(new_pkg)
-        self.assertEqual(yumdb_info.from_repo, 'main')
-        self.assertEqual(yumdb_info.reason, 'unknown')
-        self.assertEqual(yumdb_info.releasever, 'Fedora69')
-        self.assertEqual(yumdb_info.checksum_type, 'md5')
-        self.assertEqual(yumdb_info.checksum_data, HASH)
-        self.base._yumdb.assertLength(2)
+
+        pkg = self.base.history.package(new_pkg)
+        self.assertEqual(pkg.ui_from_repo(), '@main')
+        self.assertEqual(pkg.get_reason(), SwdbReason.UNKNOWN)
+        self.assertEqual(pkg.checksum_type, 'md5')
+        self.assertEqual(pkg.checksum_data, HASH)
+
 
 class InstallReasonTest(support.ResultTestCase):
     def setUp(self):
@@ -189,7 +204,7 @@ class InstallReasonTest(support.ResultTestCase):
         self.base.resolve()
         new_pkgs = self.base._transaction._get_items(dnf.transaction.INSTALL)
         pkg_reasons = [(tsi.installed.name, tsi.reason) for tsi in new_pkgs]
-        self.assertCountEqual([("mrkite", "user"), ("trampoline", "dep")],
+        self.assertCountEqual([("mrkite", SwdbReason.USER), ("trampoline", SwdbReason.DEP)],
                               pkg_reasons)
 
 class InstalledMatchingTest(support.ResultTestCase):

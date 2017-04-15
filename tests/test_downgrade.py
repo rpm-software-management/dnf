@@ -60,7 +60,7 @@ class DowngradeTest(support.ResultTestCase):
 class DowngradeTest2(support.TestCase):
 
     def setUp(self):
-        self._base = support.Base()
+        self._base = support.MockBase()
         self._base._sack = support.mock_sack('main')
         self._base._goal = self._goal = mock.create_autospec(dnf.goal.Goal)
 

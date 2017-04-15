@@ -28,14 +28,15 @@ from dnf.package import Package
 from dnf.transaction import (ERASE, DOWNGRADE, INSTALL, REINSTALL,
                              TransactionItem, UPGRADE)
 from hawkey import split_nevra
-from tests.support import mock_sack, Base, ObjectMatcher
+from dnf.db.types import SwdbReason
+from tests.support import mock_sack, MockBase, ObjectMatcher
 from unittest import TestCase
 
 class BaseTest(TestCase):
     """Unit tests of dnf.Base."""
 
     def _create_item_matcher(self, op_type, installed=None, erased=None,
-                             obsoleted=[], reason='unknown'):
+                             obsoleted=[], reason=SwdbReason.UNKNOWN):
         """Create a new instance of dnf.transaction.TransactionItem matcher."""
         attrs = {'op_type': op_type,
                  'installed': self._create_package_matcher(installed)
@@ -59,7 +60,7 @@ class BaseTest(TestCase):
 
     def setUp(self):
         """Prepare the test fixture."""
-        self._base = Base()
+        self._base = MockBase()
         self._base._sack = mock_sack('main', 'updates')
 
     def test_history_undo_operations_downgrade(self):
@@ -74,7 +75,7 @@ class BaseTest(TestCase):
             self.assertEqual(next(transaction_it), self._create_item_matcher(
                 UPGRADE, installed='pepper-20-1.x86_64', erased='pepper-20-0.x86_64'))
             self.assertEqual(next(transaction_it), self._create_item_matcher(
-                INSTALL, installed='lotus-3-16.x86_64', reason='user'))
+                INSTALL, installed='lotus-3-16.x86_64', reason=SwdbReason.USER))
             self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_downgrade_notavailable(self):
@@ -107,12 +108,12 @@ class BaseTest(TestCase):
 
             transaction_it = iter(self._base.transaction)
             self.assertEqual(next(transaction_it), self._create_item_matcher(
-                INSTALL, installed='lotus-3-16.x86_64', reason='user'))
+                INSTALL, installed='lotus-3-16.x86_64', reason=SwdbReason.USER))
             self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_erase_twoavailable(self):
         """Test history_undo_operations with an erase available in two repos."""
-        base = Base()
+        base = MockBase()
         base._sack = mock_sack('main', 'search')
         operations = NEVRAOperations()
         operations.add('Erase', 'lotus-3-16.x86_64')
@@ -122,7 +123,7 @@ class BaseTest(TestCase):
 
             transaction_it = iter(base.transaction)
             self.assertEqual(next(transaction_it), self._create_item_matcher(
-                INSTALL, installed='lotus-3-16.x86_64', reason='user'))
+                INSTALL, installed='lotus-3-16.x86_64', reason=SwdbReason.USER))
             self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_erase_notavailable(self):
@@ -147,7 +148,7 @@ class BaseTest(TestCase):
             self.assertEqual(next(transaction_it), self._create_item_matcher(
                 ERASE, erased='pepper-20-0.x86_64'))
             self.assertEqual(next(transaction_it), self._create_item_matcher(
-                INSTALL, installed='lotus-3-16.x86_64', reason='user'))
+                INSTALL, installed='lotus-3-16.x86_64', reason=SwdbReason.USER))
             self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_install_notinstalled(self):
@@ -220,7 +221,7 @@ class BaseTest(TestCase):
             self.assertEqual(next(transaction_it), self._create_item_matcher(
                 DOWNGRADE, installed='tour-4.6-1.noarch', erased='tour-5-0.noarch'))
             self.assertEqual(next(transaction_it), self._create_item_matcher(
-                INSTALL, installed='lotus-3-16.x86_64', reason='user'))
+                INSTALL, installed='lotus-3-16.x86_64', reason=SwdbReason.USER))
             self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_update_notavailable(self):

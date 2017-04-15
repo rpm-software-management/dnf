@@ -13,3 +13,5 @@ bin/dnf*-2
 bin/dnf*-3
 bin/yum-2
 bin/yum-3
+*.cmake
+*CMakeCache*

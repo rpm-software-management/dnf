@@ -1,6 +1,5 @@
 All files in DNF are distributed as GPLv2+ with the exceptions below:
 
-yum/sqlutils.py : GPLv2
 rpm/transaction.py : GPL
 
 Licensing conditions of the following files were disputed when DNF was forked
