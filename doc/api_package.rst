@@ -47,6 +47,11 @@
 
     Files the package provides (list of strings)
 
+  .. attribute:: from_repo
+
+    Returns '@' + reponame (string) if from_repo information in yum_db.
+    Otherwise it returns reponame (string).
+
   .. attribute:: installtime
 
     Seconds since the epoch when the package was installed (integer).

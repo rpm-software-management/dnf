@@ -82,7 +82,7 @@ def _add_pkg_simple_list_lens(data, pkg, indent=''):
         This "knows" about simpleList and printVer. """
     na = len(pkg.name) + 1 + len(pkg.arch) + len(indent)
     ver = len(pkg.evr)
-    rid = len(pkg._from_repo)
+    rid = len(pkg.from_repo)
     for (d, v) in (('na', na), ('ver', ver), ('rid', rid)):
         data[d].setdefault(v, 0)
         data[d][v] += 1
