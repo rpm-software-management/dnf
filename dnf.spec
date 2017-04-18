@@ -222,6 +222,7 @@ mv %{buildroot}%{_bindir}/dnf-automatic-2 %{buildroot}%{_bindir}/dnf-automatic
 mv %{buildroot}%{_bindir}/yum-2 %{buildroot}%{_bindir}/yum
 %endif
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
+rm -vf %{buildroot}%{_bindir}/yum-*
 
 %check
 pushd build
