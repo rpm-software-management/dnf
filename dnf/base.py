@@ -285,14 +285,14 @@ class Base(object):
         logger.info(_('Metadata cache created.'))
         return True
 
-    def fill_sack(self, load_system_repo=True, load_available_repos=True):
+    def fill_sack(self, load_system_repo=True, load_available_repos=True, all_arch=False):
         # :api
         """Prepare the Sack and the Goal objects. """
         timer = dnf.logging.Timer('sack setup')
         if self._sack is not None and self._repos is not None:
             for repo in self._repos.values():
                 repo._hawkey_repo = repo._init_hawkey_repo()
-        self._sack = dnf.sack._build_sack(self)
+        self._sack = dnf.sack._build_sack(self, all_arch=all_arch)
         lock = dnf.lock.build_metadata_lock(self.conf.cachedir, self.conf.exit_on_lock)
         with lock:
             if load_system_repo is not False:

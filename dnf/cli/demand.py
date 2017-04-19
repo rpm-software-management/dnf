@@ -49,6 +49,7 @@ class DemandSheet(object):
     resolving = _BoolDefault(False)
     root_user = _BoolDefault(False)
     sack_activation = _BoolDefault(False)
+    all_arch = _BoolDefault(False)
     success_exit_status = 0
 
     cacheonly = _BoolDefault(False)
