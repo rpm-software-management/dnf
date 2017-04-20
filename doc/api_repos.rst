@@ -83,9 +83,27 @@ Repository Configuration
 
      List of URLs for this repository. Defaults to ``[]``.
 
+  .. attribute:: cost
+
+    The relative cost of accessing this repository, defaulting to 1000. This value is compared
+    when the priorities of two repositories are the same. The repository with *the lowest cost* is
+    picked. It is useful to make the library prefer on-disk repositories to remote ones.
+
+  .. attribute:: excludepkgs
+
+    List of packages specified by a name or a glob. DNF will exclude every package in the repository
+    that does match this list from all operations. Defaults to ``[]``.
+
   .. attribute:: id
 
     ID of this repo.
+
+  .. attribute:: includepkgs
+
+    List of packages specified by a name or a glob. DNF will exclude any package in the repository
+    that doesn't match this list. This works in conjunction with exclude and doesn't override it, so
+    if you 'excludepkgs=*.i386' and 'includepkgs=python*' then only packages starting with python
+    that do not have an i386 arch will be seen by DNF in this repo. Defaults to ``[]``.
 
   .. attribute:: metadata
 
