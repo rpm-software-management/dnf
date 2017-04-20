@@ -20,6 +20,7 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
 from dnf.i18n import ucd, _
 
 import dnf.callback
@@ -196,7 +197,7 @@ class _Handle(librepo.Handle):
         self.useragent = dnf.const.USER_AGENT
         self.maxparalleldownloads = max_parallel_downloads
         self.yumdlist = [
-            "primary", "filelists", "prestodelta", "group_gz", "updateinfo"]
+            "primary", "filelists", "prestodelta", "group_gz", "updateinfo", "modules"]
         self.yumslist = [('group_gz', 'group')]
 
     def __str__(self):

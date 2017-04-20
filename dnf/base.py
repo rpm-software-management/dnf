@@ -25,6 +25,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
+from dnf.modules import RepoModuleDict, RepoModuleVersion, ModuleMetadataLoader
 from dnf.util import first
 from dnf.yum import history
 from dnf.yum import misc
@@ -99,6 +100,7 @@ class Base(object):
         self._allow_erasing = False
         self._revert_reason = []
         self._repo_set_imported_gpg_keys = set()
+        self.repo_module_dict = RepoModuleDict(self)
 
     def __enter__(self):
         return self
@@ -200,6 +202,14 @@ class Base(object):
         if repo_excludes:
             for query, repoid in repo_excludes:
                 self.sack.add_excludes(query)
+
+    def _setup_modules(self):
+        for repo in self.repos.iter_module():
+            module_metadata = ModuleMetadataLoader(repo).load()
+            for data in module_metadata:
+                self.repo_module_dict.add(RepoModuleVersion(data, base=self, repo=repo))
+
+        self.repo_module_dict.read_all_modules()
 
     def _store_persistent_data(self):
         if self._repo_persistor and not self.conf.cacheonly:
@@ -376,6 +386,7 @@ class Base(object):
         conf = self.conf
         self._sack._configure(conf.installonlypkgs, conf.installonly_limit)
         self._setup_excludes_includes()
+        self._setup_modules()
         timer()
         self._goal = dnf.goal.Goal(self._sack)
         self._plugins.run_sack()

@@ -125,6 +125,9 @@ class RepoDict(dict):
         # :api
         return (r for r in self.values() if r.enabled)
 
+    def iter_module(self):
+        return (r for r in self.values() if r.modules and r.enabled)
+
     # return items ordered by priority
     def items(self):
        """return repos sorted by priority"""
