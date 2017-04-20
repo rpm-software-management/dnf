@@ -1009,7 +1009,9 @@ class Base(object):
 
             beg_download = time.time()
             est_remote_size = sum(pload.download_size for pload in payloads)
-            progress.start(len(payloads), est_remote_size)
+            total_drpm = len(
+                [payload for payload in payloads if isinstance(payload, dnf.drpm.DeltaPayload)])
+            progress.start(len(payloads), est_remote_size, total_drpms=total_drpm)
             errors = dnf.repo._download_payloads(payloads, drpm)
 
             if errors._irrecoverable:

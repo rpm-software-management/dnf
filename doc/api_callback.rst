@@ -58,9 +58,11 @@
 
     Report ongoing progress on the given `payload`. `done` is the number of bytes already downloaded from `payload`.
 
-  .. method:: start(total_files, total_size)
+  .. method:: start(total_files, total_size, total_drpms=0)
 
-    Report start of a download batch. `total_files` is the total number of payloads in the batch. `total_size` is the total number of bytes to be downloaded.
+    Report start of a download batch. `total_files` is the total number of payloads in the batch.
+    `total_size` is the total number of bytes to be downloaded. `total_drpms` is the total number
+    of drpms payloads in the batch.
 
 .. class:: TransactionProgress
 
