@@ -1,3 +1,5 @@
+# supplies the 'module' command.
+#
 # Copyright (C) 2014-2017  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
