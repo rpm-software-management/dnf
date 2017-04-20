@@ -31,6 +31,7 @@ PY3 = version_info.major >= 3
 
 if PY3:
     from io import StringIO
+    from configparser import ConfigParser
     import queue
     import urllib.parse
     import shlex
@@ -48,6 +49,7 @@ if PY3:
     urlparse = urllib.parse
     urllib_quote = urlparse.quote
     shlex_quote = shlex.quote
+
 
     def gettext_setup(t):
         _ = t.gettext
@@ -73,6 +75,7 @@ else:
     # functions renamed in py3
     from __builtin__ import unicode, basestring, long, xrange, raw_input
     from StringIO import StringIO
+    from ConfigParser import ConfigParser
     import Queue
     import urllib
     import urlparse
