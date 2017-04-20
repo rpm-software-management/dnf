@@ -1,6 +1,6 @@
 # dnf configuration classes.
 #
-# Copyright (C) 2016  Red Hat, Inc.
+# Copyright (C) 2016-2017 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -1023,6 +1023,9 @@ class RepoConf(BaseConfig):
         self._add_option('failovermethod',
                          SelectionOption('priority', choices=('priority',),
                                          notimplemented=('roundrobin',)))
+
+        # modules options
+        self._add_option('modules', BoolOption(False))
 
     def _configure_from_options(self, opts):
         """Configure repos from the opts. """
