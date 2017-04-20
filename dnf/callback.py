@@ -88,7 +88,7 @@ class DownloadProgress(object):
 
         pass
 
-    def start(self, total_files, total_size):
+    def start(self, total_files, total_size, total_drpms=0):
         """Start new progress metering. :api
 
         `total_files` the number of files that will be downloaded,
