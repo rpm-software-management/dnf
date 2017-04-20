@@ -25,6 +25,8 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
+from dnf.modules.metadata_loader import ModuleMetadataLoader
+from dnf.modules.modules import RepoModuleDict, RepoModuleVersion
 from dnf.util import first
 from dnf.yum import history
 from dnf.yum import misc
@@ -165,6 +167,19 @@ class Base(object):
                 subj = dnf.subject.Subject(excl)
                 pkgs = subj.get_best_query(self.sack)
                 self.sack.add_excludes(pkgs)
+
+    def _setup_modules(self):
+        # TODO change iter_module to iter enabled repos + config option for module support
+        self.repo_module_dict = RepoModuleDict(self)
+        for repo in self.repos.iter_module():
+            loader = ModuleMetadataLoader(repo)
+            module_metadata = loader.load()
+            for data in module_metadata:
+                module_version = RepoModuleVersion(data, repo)
+                self.repo_module_dict.add(module_version)
+
+        self.repo_module_dict.read_all_modules(self.conf)
+
 
     def _store_persistent_data(self):
         if self._repo_persistor:
@@ -333,6 +348,7 @@ class Base(object):
         conf = self.conf
         self._sack._configure(conf.installonlypkgs, conf.installonly_limit)
         self._setup_excludes_includes()
+        self._setup_modules()
         timer()
         self._goal = dnf.goal.Goal(self._sack)
         self._plugins.run_sack()
