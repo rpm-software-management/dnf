@@ -1087,10 +1087,10 @@ class Output(object):
 %s
 %s
 """ % ('=' * self.term.columns,
-       self.fmtColumns(((_('Package'), -n_wid), (_('Arch'), -a_wid),
-                        (_('Version'), -v_wid), (_('Repository'), -r_wid),
-                        (_('Size'), s_wid)), u" "),
-       '=' * self.term.columns)]
+                self.fmtColumns(((P_('Package', 'Package', 1), -n_wid), (_('Arch'), -a_wid),
+                                 (_('Version'), -v_wid), (_('Repository'), -r_wid),
+                                 (_('Size'), s_wid)), u" "),
+                '=' * self.term.columns)]
 
         for (action, lines) in pkglist_lines:
             if lines:
@@ -1819,7 +1819,7 @@ Transaction Summary
         # REALLY Needs to use columns!
         print(fmt % (fill_exact_width(_("ID"), 6, 6),
                      fill_exact_width(_("Action(s)"), 14, 14),
-                     fill_exact_width(_("Package"), 53, 53)))
+                     fill_exact_width(P_("Package", "Package", 1), 53, 53)))
         print("-" * 79)
         fmt = "%6u | %s | %-50s"
         num = 0
