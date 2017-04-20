@@ -141,6 +141,10 @@ BuildRequires:  python2-rpm >= %{rpm_version}
 Requires:       python2-rpm >= %{rpm_version}
 Recommends:     rpm-plugin-systemd-inhibit
 %endif
+BuildRequires:  python2-modulemd
+Requires:       python2-modulemd
+BuildRequires:  python2-smartcols
+Requires:       python2-smartcols
 # dnf-langpacks package is retired in F25
 # to have clean upgrade path for dnf-langpacks
 Obsoletes:      python-dnf-langpacks < %{dnf_langpacks_ver}
@@ -176,6 +180,10 @@ BuildRequires:  python3-rpm >= %{rpm_version}
 Requires:       python3-rpm >= %{rpm_version}
 Recommends:     rpm-plugin-systemd-inhibit
 %endif
+BuildRequires:  python3-modulemd
+Requires:       python3-modulemd
+BuildRequires:  python3-smartcols
+Requires:       python3-smartcols
 # dnf-langpacks package is retired in F25
 # to have clean upgrade path for dnf-langpacks
 Obsoletes:      python3-dnf-langpacks < %{dnf_langpacks_ver}
