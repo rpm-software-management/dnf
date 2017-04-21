@@ -67,7 +67,7 @@ class SearchTest(support.TestCase):
                 dnf.pycomp.NullTranslations().ugettext)
     def test_search_caseness(self):
         (stdout, pkgs) = self.patched_search(['LOTUS'])
-        self.assertEqual(stdout, 'N/S Matched: LOTUS\n')
+        self.assertEqual(stdout, 'Name Matched: LOTUS\n')
         pkg_names = map(str, pkgs)
         self.assertIn('lotus-3-16.i686', pkg_names)
         self.assertIn('lotus-3-16.x86_64', pkg_names)
