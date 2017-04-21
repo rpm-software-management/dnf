@@ -53,16 +53,30 @@ class SearchCommand(commands.Command):
     def _search(self, args):
         """Search for simple text tags in a package object."""
 
+        TRANS_TBL = {'name': _('Name'),
+                     'summary': _('Summary'),
+                     'description': _('Description'),
+                     'url': _('URL')
+                     }
+
+        def _translate_attr(attr):
+            try:
+                return TRANS_TBL[attr]
+            except:
+                return attr
+
         def _print_section_header(exact_match, attrs, keys):
-            section_text = ' or '.join(attrs) if exact_match else ' & '.join(attrs)
-            section_text = section_text.replace('name', _('Name'))
-            section_text = section_text.replace('summary', _('Summary'))
-            section_text = section_text.replace('description', _('Description'))
-            section_text = section_text.replace('url', _('URL'))
+            trans_attrs = map(_translate_attr, attrs)
+            # TRANSLATORS: separator used between package attributes (eg. Name & Summary & URL)
+            trans_attrs_str = _(' & ').join(trans_attrs)
             if exact_match:
-                section_text = _('%s Exactly Matched: %%s') % section_text
+                # TRANSLATORS: %s  - translated package attributes,
+                #              %%s - found keys (in listed attributes)
+                section_text = _('%s Exactly Matched: %%s') % trans_attrs_str
             else:
-                section_text = _('%s Matched: %%s') % section_text
+                # TRANSLATORS: %s  - translated package attributes,
+                #              %%s - found keys (in listed attributes)
+                section_text = _('%s Matched: %%s') % trans_attrs_str
             formatted = self.base.output.fmtSection(section_text % ", ".join(keys))
             print(ucd(formatted))
 
@@ -78,6 +92,7 @@ class SearchCommand(commands.Command):
 
         used_attrs = None
         matched_needles = None
+        exact_match = False
         print_section_header = False
         limit = None
         if not self.base.conf.showdupesfromrepos:
@@ -89,12 +104,13 @@ class SearchCommand(commands.Command):
             if matched_needles != counter.matched_needles(pkg):
                 matched_needles = counter.matched_needles(pkg)
                 print_section_header = True
+            if exact_match != (counter.matched_haystacks(pkg) == matched_needles):
+                exact_match = counter.matched_haystacks(pkg) == matched_needles
+                print_section_header = True
             if print_section_header:
-                _print_section_header(counter.matched_haystacks(pkg) == matched_needles,
-                                      used_attrs, matched_needles)
+                _print_section_header(exact_match, used_attrs, matched_needles)
                 print_section_header = False
-            self.base.output.matchcallback(pkg, counter.matched_haystacks(pkg),
-                                           args)
+            self.base.output.matchcallback(pkg, counter.matched_haystacks(pkg), args)
 
         if len(counter) == 0:
             raise dnf.exceptions.Error(_('No matches found.'))
