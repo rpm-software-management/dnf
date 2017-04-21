@@ -205,10 +205,9 @@ Options
  Note: You may also want to use the command-line option
  ``--releasever=<release>`` when creating the installroot otherwise the
  *$releasever* value is taken from the rpmdb within the installroot (and thus
- it is empty at time of creation and *$releasever* is taken from rpmdb using
- installroot=/).
- The new installroot path at time of creation do not contain *repository*,
- *releasever*, and *dnf.conf* file.
+ it is empty at time of creation, the transaction will fail). If ``--releasever=/`` is used, the
+ releasever will be detected from host (``/``) system. The new installroot path at time of creation
+ does not contain *repository*, *releasever*, and *dnf.conf* file.
 
  Installroot examples:
 

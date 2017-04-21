@@ -881,6 +881,8 @@ class Cli(object):
         # cachedir, logs, releasever, and gpgkey are taken from or stored in installroot
         if releasever is None:
             releasever = dnf.rpm.detect_releasever(conf.installroot)
+        elif releasever == '/':
+            releasever = dnf.rpm.detect_releasever(releasever)
         conf.releasever = releasever
         subst = conf.substitutions
         subst.update_from_etc(conf.installroot)
