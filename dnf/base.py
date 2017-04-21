@@ -281,7 +281,7 @@ class Base(object):
 
         if timer:
             persistor.reset_last_makecache = True
-        self.fill_sack()  # performs the md sync
+        self.fill_sack(load_system_repo=False, load_available_repos=True)  # performs the md sync
         logger.info(_('Metadata cache created.'))
         return True
 
