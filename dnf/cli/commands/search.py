@@ -53,10 +53,17 @@ class SearchCommand(commands.Command):
     def _search(self, args):
         """Search for simple text tags in a package object."""
 
-        def _print_match_section(text, keys):
-            # Print them in the order they were passed
-            used_keys = [arg for arg in args if arg in keys]
-            formatted = self.base.output.fmtSection(text % ", ".join(used_keys))
+        def _print_section_header(exact_match, attrs, keys):
+            section_text = ' or '.join(attrs) if exact_match else ' & '.join(attrs)
+            section_text = section_text.replace('name', _('Name'))
+            section_text = section_text.replace('summary', _('Summary'))
+            section_text = section_text.replace('description', _('Description'))
+            section_text = section_text.replace('url', _('URL'))
+            if exact_match:
+                section_text = _('%s Exactly Matched: %%s') % section_text
+            else:
+                section_text = _('%s Matched: %%s') % section_text
+            formatted = self.base.output.fmtSection(section_text % ", ".join(keys))
             print(ucd(formatted))
 
         counter = dnf.match_counter.MatchCounter()
@@ -64,21 +71,28 @@ class SearchCommand(commands.Command):
             self._search_counted(counter, 'name', arg)
             self._search_counted(counter, 'summary', arg)
 
-        section_text = _('N/S Matched: %s')
         if self.opts.all or counter.total() == 0:
-            section_text = _('Matched: %s')
             for arg in args:
                 self._search_counted(counter, 'description', arg)
                 self._search_counted(counter, 'url', arg)
 
+        used_attrs = None
         matched_needles = None
+        print_section_header = False
         limit = None
         if not self.base.conf.showdupesfromrepos:
             limit = self.base.sack.query().filter(pkg=counter.keys()).latest()
         for pkg in counter.sorted(reverse=True, limit_to=limit):
+            if used_attrs != counter.matched_keys(pkg):
+                used_attrs = counter.matched_keys(pkg)
+                print_section_header = True
             if matched_needles != counter.matched_needles(pkg):
                 matched_needles = counter.matched_needles(pkg)
-                _print_match_section(section_text, matched_needles)
+                print_section_header = True
+            if print_section_header:
+                _print_section_header(counter.matched_haystacks(pkg) == matched_needles,
+                                      used_attrs, matched_needles)
+                print_section_header = False
             self.base.output.matchcallback(pkg, counter.matched_haystacks(pkg),
                                            args)
 
