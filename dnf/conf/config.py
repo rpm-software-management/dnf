@@ -758,6 +758,7 @@ class MainConf(BaseConfig):
         self._add_option('rpmverbosity', Option('info'))
         self._add_option('strict', BoolOption(True)) # :api
         self._add_option('skip_broken', BoolOption(False))  # :yum-compatibility
+        self._add_option('autocheck_running_kernel', BoolOption(True))  # :yum-compatibility
         self._add_option('clean_requirements_on_remove', BoolOption(True))
         self._add_option('history_list_view',
                          SelectionOption('commands',

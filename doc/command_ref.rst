@@ -382,6 +382,8 @@ Check Update Command
 
     Please note that having a specific newer version available for an installed package (and reported by ``check-update``) does not imply that subsequent ``dnf upgrade`` will install it. The difference is that ``dnf upgrade`` must also ensure the satisfiability of all dependencies and other restrictions.
 
+    Output is affected by config option :ref:`autocheck_running_kernel <autocheck_running_kernel-label>`
+
 .. _clean_command-label:
 
 -------------
@@ -1187,6 +1189,8 @@ Updateinfo Command
     ``<spec>``, the advisory is not taken into account. The matching is
     case-sensitive and in the case of advisory IDs and package names, globbing
     is supported.
+
+    Output of option ``--summary`` is affected by config option :ref:`autocheck_running_kernel <autocheck_running_kernel-label>`
 
 .. _upgrade_command-label:
 

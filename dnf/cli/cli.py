@@ -934,6 +934,24 @@ class Cli(object):
         if stderr is not None:
             self.base._logging.stderr_handler.setLevel(stderr)
 
+    def _check_running_kernel(self):
+        kernel = self.base.sack.get_running_kernel()
+        if kernel is None:
+            return
+
+        q = self.base.sack.query().filter(provides=kernel.name)
+        q = q.installed()
+        q = q.filter(advisory_type='security')
+
+        ikpkg = kernel
+        for pkg in q:
+            if pkg > ikpkg:
+                ikpkg = pkg
+
+        if ikpkg > kernel:
+            print('Security: %s is an installed security update' % ikpkg)
+            print('Security: %s is the currently running version' % kernel)
+
     def _option_conflict(self, option_string_1, option_string_2):
         print(self.optparser.print_usage())
         raise dnf.exceptions.Error(_("argument {}: not allowed with argument {}".format(
