@@ -99,7 +99,7 @@ class Plugins(object):
             if disabled:
                 self.plugin_cls.remove(plug_cls)
 
-    def _load(self, conf, skips, enable_plugin):
+    def _load(self, conf, skips, enable_plugins):
         """Dynamically load relevant plugin modules."""
 
         if DYNAMIC_PACKAGE in sys.modules:
@@ -110,7 +110,7 @@ class Plugins(object):
         def list_a_difference_list_b(list_a, list_b):
             return filter(lambda element: element not in list_b, list_a)
 
-        difference = list_a_difference_list_b(skips, enable_plugin)
+        difference = list_a_difference_list_b(skips, enable_plugins)
         files = _iter_py_files(conf.pluginpath, difference)
         _import_modules(package, files)
         self.plugin_cls = _plugin_classes()[:]
