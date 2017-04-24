@@ -222,11 +222,12 @@ class UpdateInfoCommand(commands.Command):
                                                                pkadin[1].severity)
         return collections.Counter(id2type.values())
 
-    @classmethod
-    def display_summary(cls, apkg_adv_insts, mixed, description):
+    def display_summary(self, apkg_adv_instssl, mixed, description):
         """Display the summary of advisories."""
-        typ2cnt = cls._summary(apkg_adv_insts)
+        typ2cnt = self._summary(apkg_adv_insts)
         if not typ2cnt:
+            if self.base.conf.autocheck_running_kernel:
+                self.cli._check_running_kernel()
             return
         print(_('Updates Information Summary: ') + description)
         # Convert types to strings and order the entries.
@@ -253,6 +254,8 @@ class UpdateInfoCommand(commands.Command):
         width = _maxlen(v[1] for v in label2value.values())
         for label, (indent, value) in label2value.items():
             print('    %*s %s' % (width + 4 * indent, value, label))
+        if self.base.conf.autocheck_running_kernel:
+            self.cli._check_running_kernel()
 
     @staticmethod
     def _list(apkg_adv_insts):

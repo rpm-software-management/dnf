@@ -54,6 +54,13 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     If enabled dnf will assume ``Yes`` where it would normally prompt for
     confirmation from user input (see also :ref:`defaultyes <defaultyes-label>`). Default is False.
 
+.. _autocheck_running_kernel-label:
+
+``autocheck_running_kernel``
+    :ref:`boolean <boolean-label>`
+
+    Automatic check whether there is installed newer kernel module with security update than currently running kernel. Default is True.
+
 ``best``
     :ref:`boolean <boolean-label>`
 

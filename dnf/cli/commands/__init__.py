@@ -267,6 +267,9 @@ class CheckUpdateCommand(Command):
         if found:
             self.cli.demands.success_exit_status = 100
 
+        if self.base.conf.autocheck_running_kernel:
+            self.cli._check_running_kernel()
+
 
 class RepoPkgsCommand(Command):
     """Implementation of the repository-packages command."""
