@@ -222,7 +222,7 @@ class UpdateInfoCommand(commands.Command):
                                                                pkadin[1].severity)
         return collections.Counter(id2type.values())
 
-    def display_summary(self, apkg_adv_instssl, mixed, description):
+    def display_summary(self, apkg_adv_insts, mixed, description):
         """Display the summary of advisories."""
         typ2cnt = self._summary(apkg_adv_insts)
         if not typ2cnt:
