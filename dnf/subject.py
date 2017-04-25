@@ -82,19 +82,21 @@ class Subject(object):
             return nevra._has_just_name()
         return False
 
-    def get_best_query(self, sack, with_provides=True, forms=None):
+    def get_best_query(self, sack, with_nevra=True, with_provides=True, with_filenames=True,
+                       forms=None):
         # :api
 
         pat = self._pattern
         kwargs = {}
-        if forms:
-            kwargs['form'] = forms
+        if with_nevra:
+            if forms:
+                kwargs['form'] = forms
 
-        for nevra in self.subj.nevra_possibilities(**kwargs):
-            if nevra:
-                q = self._nevra_to_filters(sack.query(), nevra)
-                if q:
-                    return q
+            for nevra in self.subj.nevra_possibilities(**kwargs):
+                if nevra:
+                    q = self._nevra_to_filters(sack.query(), nevra)
+                    if q:
+                        return q
 
         if not forms:
             if with_provides:
@@ -102,8 +104,9 @@ class Subject(object):
                 if q:
                     return q
 
-            if self._filename_pattern:
-                return sack.query().filter(file__glob=pat)
+            if with_filenames:
+                if self._filename_pattern:
+                    return sack.query().filter(file__glob=pat)
 
         return sack.query().filter(empty=True)
 
