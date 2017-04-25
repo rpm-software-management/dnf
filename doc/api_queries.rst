@@ -130,9 +130,15 @@
 
     Initialize the :class:`Subject` with `pkg_spec` input string with following :ref:`semantic <specifying_packages-label>`. If `ignore_case` is ``True`` ignore the case of characters in `pkg_spec`.
 
-  .. method:: get_best_query(sack, with_provides=True, forms=None)
+  .. method:: get_best_query(sack, with_nevra=True, with_provides=True, with_filenames=True, forms=None)
 
-    Return a :class:`~Query` yielding packages matching the given input. The result of the returned query can be an empty set if no package matches. `sack` is the :class:`~dnf.sack.Sack` that the returned query will search. `with_provides` indicates whether besides package names also packages' provides are searched for a match. `forms` is a list of pattern forms from `hawkey`_. Leaving the parameter to ``None`` results in using a reasonable default list of forms.
+    Return a :class:`~Query` yielding packages matching the given input. The result of the returned
+    query can be an empty set if no package matches. `sack` is the :class:`~dnf.sack.Sack` that the
+    returned query will search. `with_nevra` enable search by nevra, `with_provides` indicates
+    whether besides package names also packages' provides are searched for a match, and
+    `with_filenames` indicates whether besides package provides also packages' file provides are
+    searched for a match. `forms` is a list of pattern forms from `hawkey`_. Leaving the parameter
+    to ``None`` results in using a reasonable default list of forms.
 
   .. method:: get_best_selector(sack, forms=None)
 
