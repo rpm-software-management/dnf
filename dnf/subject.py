@@ -74,44 +74,49 @@ class Subject(object):
                         return is_glob_pattern(nevra.arch)
         return False
 
-    def _has_nevra_just_name(self, sack, forms=None):
+    def _get_nevra_solution(self, sack, with_nevra=True, with_provides=True, with_filenames=True,
+                            forms=None):
+        """
+        Try to find first real solution for subject if it is NEVRA
+        @param sack:
+        @param forms:
+        @return: dict with keys nevra and query
+        """
         kwargs = {}
-        if forms is not None:
-            kwargs['form'] = forms
-        for nevra in self.subj.nevra_possibilities(**kwargs):
-            if nevra:
-                q = self._nevra_to_filters(sack.query(), nevra)
-                if q:
-                    return nevra._has_just_name()
-        return False
-
-    def get_best_query(self, sack, with_nevra=True, with_provides=True, with_filenames=True,
-                       forms=None):
-        # :api
-
-        pat = self._pattern
-        kwargs = {}
+        solution = {'nevra': None, 'query': sack.query().filter(empty=True)}
         if with_nevra:
             if forms:
                 kwargs['form'] = forms
-
             for nevra in self.subj.nevra_possibilities(**kwargs):
                 if nevra:
                     q = self._nevra_to_filters(sack.query(), nevra)
                     if q:
-                        return q
+                        solution['nevra'] = nevra
+                        solution['query'] = q
+                        return solution
 
         if not forms:
             if with_provides:
                 q = sack.query()._filterm(provides__glob=self._pattern)
                 if q:
-                    return q
+                    solution['query'] = q
+                    return solution
 
             if with_filenames:
                 if self._filename_pattern:
-                    return sack.query().filter(file__glob=pat)
+                    solution['query'] = sack.query().filter(file__glob=self._pattern)
+                    return solution
+        return solution
 
-        return sack.query().filter(empty=True)
+    def get_best_query(self, sack, with_nevra=True, with_provides=True, with_filenames=True,
+                       forms=None):
+        # :api
+
+        solution = self._get_nevra_solution(sack, with_nevra=with_nevra,
+                                            with_provides=with_provides,
+                                            with_filenames=with_filenames,
+                                            forms=forms)
+        return solution['query']
 
     def get_best_selector(self, sack, forms=None, obsoletes=True):
         # :api
@@ -120,30 +125,23 @@ class Subject(object):
         if forms:
             kwargs['form'] = forms
         sltr = dnf.selector.Selector(sack)
-        for nevra in self.subj.nevra_possibilities(**kwargs):
-            if nevra:
-                q = self._nevra_to_filters(sack.query(), nevra).filter(arch__neq="src")
-                if q:
-                    if obsoletes and nevra._has_just_name():
-                        q = q.union(sack.query().filter(obsoletes=q))
-                    return sltr.set(pkg=q)
-
-        if not forms:
-            q = sack.query()._filterm(provides__glob=self._pattern)
-            if q:
-                return sltr.set(pkg=q)
-
-            if self._filename_pattern:
-                return sltr.set(pkg=sack.query()._filterm(file__glob=self._pattern))
+        solution = self._get_nevra_solution(sack, forms=forms)
+        if solution['query']:
+            q = solution['query']
+            if obsoletes and solution['nevra'] and solution['nevra']._has_just_name():
+                q = q.union(sack.query().filter(obsoletes=q))
+            return sltr.set(pkg=q)
 
         return sltr
 
     def _get_best_selectors(self, sack, forms=None, obsoletes=True):
         if not self._filename_pattern and is_glob_pattern(self._pattern):
             with_obsoletes = False
-            if obsoletes and self._has_nevra_just_name(sack, forms=forms):
+            solution = self._get_nevra_solution(sack, forms=forms)
+            q = solution['query']
+            if obsoletes and solution['nevra'] and solution['nevra']._has_just_name():
                 with_obsoletes = True
-            q = self.get_best_query(sack, forms=forms).filter(arch__neq="src")
+            q = q.filter(arch__neq="src")
             sltrs = []
             for name, pkgs_list in q._name_dict().items():
                 sltr = dnf.selector.Selector(sack)
