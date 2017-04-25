@@ -836,6 +836,11 @@ resulting packages matching the specification. All packages are considered if no
 ``--upgrades``
     Limit the resulting set to packages that provide an upgrade for some already installed package.
 
+``--userinstalled``
+    Limit the resulting set to packages instaled by user. The :ref:`exclude <exclude-label>` option
+    in configuration file (.conf) might influence the result, but if the command line option  \-\
+    :ref:`-disableexcludes <disableexcludes-label>` is used, it ensures that all installed packages will be listed.
+
 ``--whatconflicts <capability>``
     Limit the resulting set only to packages that conflict ``<capability>``.
 
