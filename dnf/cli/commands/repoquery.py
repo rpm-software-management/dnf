@@ -213,9 +213,10 @@ class RepoQueryCommand(commands.Command):
             'extras': _('Display only packages that are not present in any of available repositories.'),
             'upgrades': _('Display only packages that provide an upgrade for some already installed package.'),
             'unneeded': _('Display only packages that can be removed by "dnf autoremove" command.'),
+            'userinstalled': _('Display only packages that were installed by user.')
         }
         list_group = parser.add_mutually_exclusive_group()
-        for list_arg in ('installed', 'extras', 'upgrades', 'unneeded'):
+        for list_arg in ('installed', 'extras', 'upgrades', 'unneeded', 'userinstalled'):
             switch = '--%s' % list_arg
             list_group.add_argument(switch, dest='list', action='store_const',
                                     const=list_arg, help=help_list[list_arg])
@@ -241,7 +242,8 @@ class RepoQueryCommand(commands.Command):
         if self.opts.srpm:
             self.base.repos.enable_source_repos()
 
-        if (self.opts.pkgfilter != "installonly" and self.opts.list != "installed") or self.opts.available:
+        if (self.opts.list not in ["installed", "userinstalled"] and
+           self.opts.pkgfilter != "installonly") or self.opts.available:
             demands.available_repos = True
 
         demands.sack_activation = True
@@ -322,7 +324,7 @@ class RepoQueryCommand(commands.Command):
                     "--available", "--" + self.opts.list)))
         elif self.opts.list == "unneeded":
             q = q._unneeded(self.base.sack, self.base._yumdb)
-        elif self.opts.list:
+        elif self.opts.list and self.opts.list != 'userinstalled':
             q = getattr(q, self.opts.list)()
 
         if self.opts.pkgfilter == "duplicated":
@@ -405,9 +407,10 @@ class RepoQueryCommand(commands.Command):
         pkgs = set()
         if self.opts.packageatr:
             for pkg in q.run():
-                rels = getattr(pkg, OPTS_MAPPING[self.opts.packageatr])
-                for rel in rels:
-                    pkgs.add(str(rel))
+                if self.opts.list != 'userinstalled' or self.base._is_userinstalled(pkg):
+                    rels = getattr(pkg, OPTS_MAPPING[self.opts.packageatr])
+                    for rel in rels:
+                        pkgs.add(str(rel))
         elif self.opts.location:
             for pkg in q.run():
                 location = pkg.remote_location()
@@ -416,29 +419,31 @@ class RepoQueryCommand(commands.Command):
         elif self.opts.deplist:
             pkgs = []
             for pkg in sorted(set(q.run())):
-                deplist_output = []
-                deplist_output.append('package: ' + str(pkg))
-                for req in sorted([str(req) for req in pkg.requires]):
-                    deplist_output.append('  dependency: ' + req)
-                    subject = dnf.subject.Subject(req)
-                    query = subject.get_best_query(self.base.sack)
-                    query = self.filter_repo_arch(
-                        self.opts, query.available())
-                    if not self.opts.verbose:
-                        query = query.latest()
-                    for provider in query.run():
-                        deplist_output.append('   provider: ' + str(provider))
-                pkgs.append('\n'.join(deplist_output))
+                if self.opts.list != 'userinstalled' or self.base._is_userinstalled(pkg):
+                    deplist_output = []
+                    deplist_output.append('package: ' + str(pkg))
+                    for req in sorted([str(req) for req in pkg.requires]):
+                        deplist_output.append('  dependency: ' + req)
+                        subject = dnf.subject.Subject(req)
+                        query = subject.get_best_query(self.base.sack)
+                        query = self.filter_repo_arch(
+                            self.opts, query.available())
+                        if not self.opts.verbose:
+                            query = query.latest()
+                        for provider in query.run():
+                            deplist_output.append('   provider: ' + str(provider))
+                    pkgs.append('\n'.join(deplist_output))
             print('\n\n'.join(pkgs))
             return
         else:
             for pkg in q.run():
-                try:
-                    pkgs.add(self.build_format_fn(self.opts, pkg))
-                except AttributeError as e:
-                    # catch that the user has specified attributes
-                    # there don't exist on the dnf Package object.
-                    raise dnf.exceptions.Error(str(e))
+                if self.opts.list != 'userinstalled' or self.base._is_userinstalled(pkg):
+                    try:
+                        pkgs.add(self.build_format_fn(self.opts, pkg))
+                    except AttributeError as e:
+                        # catch that the user has specified attributes
+                        # there don't exist on the dnf Package object.
+                        raise dnf.exceptions.Error(str(e))
         if self.opts.resolve:
             # find the providing packages and show them
             query = self.filter_repo_arch(
