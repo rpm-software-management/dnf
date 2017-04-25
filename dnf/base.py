@@ -1666,8 +1666,8 @@ class Base(object):
         # :api
         wildcard = True if dnf.util.is_glob_pattern(pkg_spec) else False
         subj = dnf.subject.Subject(pkg_spec)
-        q = subj.get_best_query(self.sack)
-
+        solution = subj._get_nevra_solution(self.sack)
+        q = solution["query"]
         if q:
             installed = self.sack.query().installed()
             pkg_name = q[0].name
@@ -1680,7 +1680,7 @@ class Base(object):
                         msg = _("Package %s not installed, cannot update it.")
                     logger.warning(msg, pkg_name)
             else:
-                if subj._has_nevra_just_name(self.sack) and self.conf.obsoletes:
+                if solution['nevra'] and solution['nevra']._has_just_name() and self.conf.obsoletes:
                     obsoletes = self.sack.query().filter(obsoletes=q.installed())
                     q = q.upgrades()
                     # add obsoletes into transaction
