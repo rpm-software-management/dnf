@@ -1855,13 +1855,12 @@ class Base(object):
         to one version lower than the package installed.
         """
         subj = dnf.subject.Subject(pkg_spec)
-        poss = subj.subj.nevra_possibilities_real(self.sack, allow_globs=True)
-        nevra = dnf.util.first(poss)
-        if not nevra:
+        q = subj.get_best_query(self.sack, with_nevra=True, with_provides=False,
+                                with_filenames=False)
+        if not q:
             msg = _('No match for argument: %s') % pkg_spec
             raise dnf.exceptions.PackageNotFoundError(msg, pkg_spec)
         done = 0
-        q = subj._nevra_to_filters(self.sack.query(), nevra)
         available_pkgs = q.available()
         available_pkg_names = list(available_pkgs._name_dict().keys())
         q_installed = self.sack.query().installed().filter(name=available_pkg_names)
