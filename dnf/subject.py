@@ -110,17 +110,17 @@ class Subject(object):
     def get_best_selector(self, sack, forms=None, obsoletes=True):
         # :api
 
-        kwargs = {'allow_globs': True}
+        kwargs = {}
         if forms:
             kwargs['form'] = forms
-        nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
         sltr = dnf.selector.Selector(sack)
-        if nevra:
-            q = self._nevra_to_filters(sack.query(), nevra).filter(arch__neq="src")
-            if q:
-                if obsoletes and nevra._has_just_name():
-                    q = q.union(sack.query().filter(obsoletes=q))
-                return sltr.set(pkg=q)
+        for nevra in self.subj.nevra_possibilities(**kwargs):
+            if nevra:
+                q = self._nevra_to_filters(sack.query(), nevra).filter(arch__neq="src")
+                if q:
+                    if obsoletes and nevra._has_just_name():
+                        q = q.union(sack.query().filter(obsoletes=q))
+                    return sltr.set(pkg=q)
 
         if not forms:
             q = sack.query()._filterm(provides__glob=self._pattern)
