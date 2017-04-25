@@ -600,11 +600,14 @@ class Base(object):
         inst = inst.filter(pkg=sltr.matches())
         return list(inst)
 
+    def _is_userinstalled(self, pkg):
+        """Returns true if the package is installed by user."""
+        return self._yumdb.get_package(pkg).get('reason') == 'user' and \
+            self._yumdb.get_package(pkg).get('from_repo') != 'anakonda'
+
     def iter_userinstalled(self):
         """Get iterator over the packages installed by the user."""
-        return (pkg for pkg in self.sack.query().installed()
-                if self._yumdb.get_package(pkg).get('reason') == 'user' and
-                self._yumdb.get_package(pkg).get('from_repo') != 'anakonda')
+        return (pkg for pkg in self.sack.query().installed() if self._is_userinstalled(pkg))
 
     def _run_hawkey_goal(self, goal, allow_erasing):
         ret = goal.run(

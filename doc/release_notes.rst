@@ -19,7 +19,11 @@
  DNF Release Notes
 ###################
 
-.. contents::
+API additions in :
+
+DNF command additions in :
+
+* ``dnf [options] repoquery --userinstalled`` limit the resulting set only to packages installed by user.
 
 ===================
 2.4.0 Release Notes
