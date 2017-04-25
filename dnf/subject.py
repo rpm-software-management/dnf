@@ -86,15 +86,15 @@ class Subject(object):
         # :api
 
         pat = self._pattern
-        kwargs = {'allow_globs': True,
-                  'icase': self.icase}
+        kwargs = {}
         if forms:
             kwargs['form'] = forms
-        nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
-        if nevra:
-            q = self._nevra_to_filters(sack.query(), nevra)
-            if q:
-                return q
+
+        for nevra in self.subj.nevra_possibilities(**kwargs):
+            if nevra:
+                q = self._nevra_to_filters(sack.query(), nevra)
+                if q:
+                    return q
 
         if not forms:
             if with_provides:
