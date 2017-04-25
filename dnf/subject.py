@@ -43,7 +43,7 @@ class Subject(object):
         for (name, add_flags) in nevra_attrs:
             attr = getattr(nevra, name)
             flags = []
-            if attr is not None:
+            if attr is not None and attr != '*':
                 if add_flags:
                     flags = self._query_flags
                 query._filterm(*flags, **{name + '__glob': attr})
