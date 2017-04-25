@@ -66,20 +66,23 @@ class Subject(object):
         return self.subj.pattern
 
     def _is_arch_specified(self, sack):
-        nevra = first(
-            self.subj.nevra_possibilities_real(sack, allow_globs=True))
-        if nevra and nevra.arch:
-            return is_glob_pattern(nevra.arch)
+        for nevra in self.subj.nevra_possibilities():
+            if nevra:
+                q = self._nevra_to_filters(sack.query(), nevra)
+                if q:
+                    if nevra.arch:
+                        return is_glob_pattern(nevra.arch)
         return False
 
     def _has_nevra_just_name(self, sack, forms=None):
-        kwargs = {'allow_globs': True,
-                  'icase': self.icase}
+        kwargs = {}
         if forms is not None:
             kwargs['form'] = forms
-        nevra = first(self.subj.nevra_possibilities_real(sack, **kwargs))
-        if nevra:
-            return nevra._has_just_name()
+        for nevra in self.subj.nevra_possibilities(**kwargs):
+            if nevra:
+                q = self._nevra_to_filters(sack.query(), nevra)
+                if q:
+                    return nevra._has_just_name()
         return False
 
     def get_best_query(self, sack, with_nevra=True, with_provides=True, with_filenames=True,
