@@ -59,7 +59,7 @@ class Subject(object):
 
     @property
     def _filename_pattern(self):
-        return re.search(r"^\*?/", self.subj.pattern)
+        return self.subj.pattern.startswith('/') or self.subj.pattern.startswith('*/')
 
     @property
     def _pattern(self):
