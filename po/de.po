@@ -14,18 +14,22 @@
 # Jan Silhan <jsilhan@redhat.com>, 2015. #zanata
 # Mario Blättermann <mario.blaettermann@gmail.com>, 2015. #zanata
 # Nils-C. Fiedler <ncfiedler@gnome.org>, 2015. #zanata
-# FloH. <postfuerflo@gmail.com>, 2016. #zanata
+# Florian H. <postfuerflo@gmail.com>, 2016. #zanata
 # Lisa Stemmler <lstemmle@redhat.com>, 2016. #zanata
 # Mario Blättermann <mario.blaettermann@gmail.com>, 2016. #zanata
 # Tobias Weise <tobias.weise@web.de>, 2016. #zanata
+# Florian H. <postfuerflo@gmail.com>, 2017. #zanata
+# Robert Scheck <robert@fedoraproject.org>, 2017. #zanata
 # Roman Spirgi <rspirgi@gmail.com>, 2017. #zanata
+# Till Maas <opensource@till.name>, 2017. #zanata
+# Tobias Weise <tobias.weise@web.de>, 2017. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-04-07 14:36+0200\n"
-"PO-Revision-Date: 2017-04-05 06:05-0400\n"
-"Last-Translator: Roman Spirgi <rspirgi@gmail.com>\n"
+"POT-Creation-Date: 2017-04-28 12:19+0200\n"
+"PO-Revision-Date: 2017-04-18 05:15-0400\n"
+"Last-Translator: Till Maas <opensource@till.name>\n"
 "Language-Team: German (http://www.transifex.com/projects/p/dnf/language/de/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -72,7 +76,7 @@ msgstr "E-Mail konnte nicht an »%s« gesendet werden: %s"
 #: ../dnf/automatic/emitter.py:137
 #, python-format
 msgid "Failed to execute command '%s': returned %d"
-msgstr ""
+msgstr "Ausführung des Befehls '%s' fehlgeschlagen. Fehlermeldung: %d"
 
 #: ../dnf/automatic/main.py:214 ../dnf/cli/main.py:57
 #, python-format
@@ -88,7 +92,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/autoremove.py:46 ../dnf/cli/commands/remove.py:59
 msgid "Package to remove"
-msgstr ""
+msgstr "Zu entfernendes Paket"
 
 #: ../dnf/cli/commands/autoremove.py:48 ../dnf/cli/commands/install.py:48
 #: ../dnf/cli/commands/reinstall.py:44 ../dnf/cli/commands/remove.py:61
@@ -100,43 +104,43 @@ msgstr "PAKET"
 
 #: ../dnf/cli/commands/check.py:34
 msgid "check for problems in the packagedb"
-msgstr ""
+msgstr "Paketdatenbank auf Probleme prüfen"
 
 #: ../dnf/cli/commands/check.py:40
 msgid "show all problems; default"
-msgstr ""
+msgstr "Alle Probleme anzeigen; Standard"
 
 #: ../dnf/cli/commands/check.py:43
 msgid "show dependency problems"
-msgstr ""
+msgstr "Ungelöste Abhängigkeiten anzeigen"
 
 #: ../dnf/cli/commands/check.py:46
 msgid "show duplicate problems"
-msgstr ""
+msgstr "Probleme mit Duplikaten anzeigen"
 
 #: ../dnf/cli/commands/check.py:49
 msgid "show obsoleted packages"
-msgstr ""
+msgstr "überflüssige Pakete anzeigen"
 
 #: ../dnf/cli/commands/check.py:52
 msgid "show problems with provides"
-msgstr ""
+msgstr "Zeige Probleme mit Bereitstellungen"
 
 #: ../dnf/cli/commands/check.py:82
 msgid "{} has missing requires of {}"
-msgstr ""
+msgstr "{} hat fehlende Abhängigkeiten von {}"
 
 #: ../dnf/cli/commands/check.py:102
 msgid "{} is a duplicate with {}"
-msgstr ""
+msgstr "{} ist ein Duplikat von {}"
 
 #: ../dnf/cli/commands/check.py:113
 msgid "{} is obsoleted by {}"
-msgstr ""
+msgstr "{} ist hinfällig wegen {}"
 
 #: ../dnf/cli/commands/check.py:122
 msgid "{} provides {} but it cannot be found"
-msgstr ""
+msgstr "{} bietet {} an, aber es kann nicht gefunden werden"
 
 #: ../dnf/cli/commands/distrosync.py:32
 msgid "synchronize installed packages to the latest available versions"
@@ -146,15 +150,15 @@ msgstr ""
 
 #: ../dnf/cli/commands/distrosync.py:36
 msgid "Package to synchronize"
-msgstr ""
+msgstr "Zu synchronisierende Pakete"
 
 #: ../dnf/cli/commands/downgrade.py:34
 msgid "Downgrade a package"
-msgstr ""
+msgstr "Ein Paket zurücksetzen"
 
 #: ../dnf/cli/commands/downgrade.py:38
 msgid "Package to downgrade"
-msgstr ""
+msgstr "Paket das zurückgesetzt wird"
 
 #: ../dnf/cli/commands/group.py:45
 msgid "display, or use, the groups information"
@@ -175,11 +179,11 @@ msgstr "Warnung: Keine passenden Gruppen:"
 
 #: ../dnf/cli/commands/group.py:186
 msgid "Available Environment Groups:"
-msgstr ""
+msgstr "Verfügbare Arbeitsumgebungs-Gruppen:"
 
 #: ../dnf/cli/commands/group.py:188
 msgid "Installed Environment Groups:"
-msgstr ""
+msgstr "Installierte Arbeitsumgebungs-Gruppen:"
 
 #: ../dnf/cli/commands/group.py:195 ../dnf/cli/commands/group.py:300
 msgid "Installed Groups:"
@@ -219,19 +223,19 @@ msgstr "Markierte Gruppen wurden entfernt: %s"
 
 #: ../dnf/cli/commands/group.py:328
 msgid "include optional packages from group"
-msgstr ""
+msgstr "Alle optionalen Pakete einschließen"
 
 #: ../dnf/cli/commands/group.py:331
 msgid "show also hidden groups"
-msgstr ""
+msgstr "Verstecke Gruppen anzeigen"
 
 #: ../dnf/cli/commands/group.py:333
 msgid "show only installed groups"
-msgstr ""
+msgstr "Nur installierte Gruppen anzeigen"
 
 #: ../dnf/cli/commands/group.py:335
 msgid "show only available groups"
-msgstr ""
+msgstr "Nur verfügbare Gruppen anzeigen"
 
 #: ../dnf/cli/commands/group.py:347
 #, python-format
@@ -243,7 +247,7 @@ msgstr "Ungültiger groups-Unterbefehl, verwenden Sie: %s."
 #: ../dnf/cli/cli.py:348 ../dnf/cli/cli.py:604 ../dnf/cli/cli.py:631
 #, python-format
 msgid "No package %s available."
-msgstr ""
+msgstr "Kein Paket %s verfügbar."
 
 #: ../dnf/cli/commands/group.py:405
 msgid "Unable to find a mandatory group package."
@@ -255,27 +259,27 @@ msgstr "Ein Paket oder Pakete auf Ihrem System installieren"
 
 #: ../dnf/cli/commands/install.py:50
 msgid "Package to install"
-msgstr ""
+msgstr "Zu installierendes Paket"
 
 #: ../dnf/cli/commands/install.py:76
 #, python-format
 msgid "Not a valid rpm file path: %s"
-msgstr ""
+msgstr "Ungültiger rpm Dateipfad: %s"
 
 #: ../dnf/cli/commands/install.py:79 ../dnf/cli/commands/install.py:88
 #: ../dnf/cli/commands/install.py:104 ../dnf/cli/commands/reinstall.py:99
 #: ../dnf/cli/commands/__init__.py:399 ../dnf/cli/commands/__init__.py:465
 #: ../dnf/cli/commands/__init__.py:522 ../dnf/cli/commands/__init__.py:553
 #: ../dnf/cli/commands/__init__.py:615 ../dnf/cli/commands/__init__.py:664
-#: ../dnf/cli/cli.py:197 ../dnf/cli/cli.py:357 ../dnf/base.py:1459
+#: ../dnf/cli/cli.py:197 ../dnf/cli/cli.py:357 ../dnf/base.py:1473
 msgid "Nothing to do."
 msgstr "Nichts zu tun."
 
 #: ../dnf/cli/commands/install.py:85 ../dnf/cli/commands/install.py:101
-#: ../dnf/cli/commands/remove.py:108 ../dnf/base.py:1731
+#: ../dnf/cli/commands/remove.py:108 ../dnf/base.py:1745
 #, python-format
 msgid "Not a valid form: %s"
-msgstr ""
+msgstr "Kein gültiges Formular: %s"
 
 #: ../dnf/cli/commands/install.py:94 ../dnf/cli/commands/reinstall.py:68
 #: ../dnf/cli/commands/reinstall.py:82 ../dnf/cli/commands/remove.py:119
@@ -283,16 +287,16 @@ msgstr ""
 #: ../dnf/cli/commands/__init__.py:448 ../dnf/cli/commands/__init__.py:505
 #: ../dnf/cli/commands/__init__.py:609 ../dnf/cli/commands/__init__.py:656
 #: ../dnf/cli/commands/__init__.py:699 ../dnf/cli/commands/__init__.py:734
-#: ../dnf/cli/cli.py:339 ../dnf/base.py:1586 ../dnf/base.py:1605
-#: ../dnf/base.py:1618 ../dnf/base.py:1639 ../dnf/base.py:1685
-#: ../dnf/base.py:1742 ../dnf/base.py:1831
+#: ../dnf/cli/cli.py:339 ../dnf/base.py:1600 ../dnf/base.py:1619
+#: ../dnf/base.py:1632 ../dnf/base.py:1653 ../dnf/base.py:1699
+#: ../dnf/base.py:1756 ../dnf/base.py:1845
 #, python-format
 msgid "No match for argument: %s"
 msgstr "Kein Treffer für Argument: %s"
 
 #: ../dnf/cli/commands/install.py:128
 msgid "Unable to find a match"
-msgstr ""
+msgstr "Es konnte kein Treffer gefunden werden."
 
 #: ../dnf/cli/commands/makecache.py:37
 msgid "generate the metadata cache"
@@ -334,12 +338,12 @@ msgstr "Paket neu installieren"
 
 #: ../dnf/cli/commands/reinstall.py:42
 msgid "Package to reinstall"
-msgstr ""
+msgstr "Erneut zu installierendes Paket"
 
-#: ../dnf/cli/commands/reinstall.py:79 ../dnf/base.py:1664
+#: ../dnf/cli/commands/reinstall.py:79 ../dnf/base.py:1678
 #, python-format
 msgid "Package %s available, but not installed."
-msgstr ""
+msgstr "Paket %s ist verfügbar aber nicht installiert."
 
 #: ../dnf/cli/commands/reinstall.py:89 ../dnf/cli/commands/__init__.py:455
 #: ../dnf/cli/commands/__init__.py:512
@@ -351,7 +355,7 @@ msgstr " (von %s)"
 #: ../dnf/cli/commands/__init__.py:513
 #, python-format
 msgid "Installed package %s%s not available."
-msgstr ""
+msgstr "Installiertes Paket %s%s nicht verfügbar."
 
 #: ../dnf/cli/commands/remove.py:46
 msgid "remove a package or packages from your system"
@@ -359,22 +363,22 @@ msgstr "Ein Paket oder Pakete auf Ihrem System entfernen"
 
 #: ../dnf/cli/commands/remove.py:53
 msgid "remove duplicated packages"
-msgstr ""
+msgstr "Doppelte Pakete entfernen"
 
 #: ../dnf/cli/commands/remove.py:58
 msgid "remove installonly packages over the limit"
-msgstr ""
+msgstr "Entfernen von Nur-Installationspaketen über der Begrenzung"
 
 #: ../dnf/cli/commands/remove.py:91
 msgid "No duplicated packages found for removal."
-msgstr ""
+msgstr "Keine doppelten Pakete zum Entfernen gefunden."
 
 #: ../dnf/cli/commands/remove.py:102
 msgid "No old installonly packages found for removal."
-msgstr ""
+msgstr "Keine alten Nur-Installationspakete zum Löschen gefunden."
 
 #: ../dnf/cli/commands/remove.py:125 ../dnf/cli/commands/__init__.py:704
-#: ../dnf/base.py:1748
+#: ../dnf/base.py:1762
 msgid "No packages marked for removal."
 msgstr "Keine Pakete zum Entfernen markiert."
 
@@ -403,19 +407,19 @@ msgstr "Die eingerichteten Paketquellen anzeigen"
 
 #: ../dnf/cli/commands/repolist.py:82
 msgid "show all repos"
-msgstr ""
+msgstr "Alle Paketquellen anzeigen"
 
 #: ../dnf/cli/commands/repolist.py:85
 msgid "show enabled repos (default)"
-msgstr ""
+msgstr "Alle aktiven Paketquellen anzeigen (Standard)"
 
 #: ../dnf/cli/commands/repolist.py:88
 msgid "show disabled repos"
-msgstr ""
+msgstr "Akke deaktivierten Paketquellen anzeigen"
 
 #: ../dnf/cli/commands/repolist.py:120
 msgid "No repositories available"
-msgstr ""
+msgstr "Keine Paketquellen verfügbar"
 
 #: ../dnf/cli/commands/repolist.py:142 ../dnf/cli/commands/repolist.py:143
 msgid "enabled"
@@ -547,14 +551,16 @@ msgstr "Pakete suchen:"
 #: ../dnf/cli/commands/swap.py:33
 msgid "run an interactive dnf mod for remove and install one spec"
 msgstr ""
+"Ausführen eines interaktiven DNF Mod um einen Spec zu Installieren oder zu "
+"entfernen"
 
 #: ../dnf/cli/commands/swap.py:37
 msgid "The specs that will be removed"
-msgstr ""
+msgstr "Die zu entfernenden Specs"
 
 #: ../dnf/cli/commands/swap.py:39
 msgid "The specs that will be installed"
-msgstr ""
+msgstr "Die zu installierenden Specs"
 
 #: ../dnf/cli/commands/upgrade.py:38
 msgid "upgrade a package or packages on your system"
@@ -562,7 +568,7 @@ msgstr "Ein Paket oder Pakete auf Ihrem System aktualisieren"
 
 #: ../dnf/cli/commands/upgrade.py:42
 msgid "Package to upgrade"
-msgstr ""
+msgstr "Zu aktualisierendes Paket"
 
 #: ../dnf/cli/commands/upgrade.py:99 ../dnf/cli/commands/__init__.py:739
 msgid "No packages marked for upgrade."
@@ -573,6 +579,8 @@ msgid ""
 "upgrade, but only 'newest' package match which fixes a problem that affects "
 "your system"
 msgstr ""
+"upgraden, aber nur das 'neuste' passende Paket das ein Problem auf ihrem "
+"System behebt"
 
 #: ../dnf/cli/commands/clean.py:87
 msgid "remove cached data"
@@ -580,7 +588,7 @@ msgstr "Gespeicherte Daten entfernen"
 
 #: ../dnf/cli/commands/clean.py:93
 msgid "Metadata type to clean"
-msgstr ""
+msgstr "zu bereinigender Metadaten-Typ "
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
@@ -588,7 +596,7 @@ msgstr "Paketquellen werden aufgeräumt:"
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
-msgstr ""
+msgstr "Zwischenspeicher veraltet"
 
 #: ../dnf/cli/commands/clean.py:115
 #, python-format
@@ -601,402 +609,6 @@ msgstr[1] "%d Dateien entfernt"
 #, python-format
 msgid "Waiting for process with pid %d to finish."
 msgstr "Es wird auf das Beenden des Prozesses mit der Prozess-ID %d gewartet."
-
-#: ../dnf/cli/commands/repoquery.py:88
-msgid "search for packages matching keyword"
-msgstr "Nach Paketen anhand des Schlüsselworts suchen"
-
-#: ../dnf/cli/commands/repoquery.py:103
-msgid "the key to search for"
-msgstr "Schlüssel, nach dem gesucht werden soll"
-
-#: ../dnf/cli/commands/repoquery.py:105
-msgid ""
-"Query all packages (shorthand for repoquery '*' or repoquery without "
-"argument)"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:108
-msgid "Query all versions of packages (default)"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:110
-msgid "show only results from this ARCH"
-msgstr "Nur Ergebnisse für diese Architektur anzeigen"
-
-#: ../dnf/cli/commands/repoquery.py:112
-msgid "show only results that owns FILE"
-msgstr "Nur Ergebnisse anzeigen, die die angegebene Datei beinhalten"
-
-#: ../dnf/cli/commands/repoquery.py:114
-msgid "show only results that conflict REQ"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:116
-msgid "show only results that obsolete REQ"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:118
-msgid "show only results that provide REQ"
-msgstr "Nur Ergebnisse anzeigen, welche die Abhängigkeit bereitstellen"
-
-#: ../dnf/cli/commands/repoquery.py:120
-msgid "shows results that requires package provides and files REQ"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:122
-msgid "show only results that recommend REQ"
-msgstr "Nur Ergebnisse anzeigen, die Abhängigkeiten vorschlagen."
-
-#: ../dnf/cli/commands/repoquery.py:124
-msgid "show only results that enhance REQ"
-msgstr "Nur Ergebnisse anzeigen, welche Abhängigkeiten verbessern"
-
-#: ../dnf/cli/commands/repoquery.py:126
-msgid "show only results that suggest REQ"
-msgstr "Nur Ergebnisse anzeigen, welche Abhängigkeiten vorschlagen"
-
-#: ../dnf/cli/commands/repoquery.py:128
-msgid "show only results that supplement REQ"
-msgstr "Nur Ergebnisse anzeigen, welche Abhängigkeiten ergänzen"
-
-#: ../dnf/cli/commands/repoquery.py:131
-msgid "check non-explicit dependencies (files and Provides); default"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:133
-msgid "check dependencies exactly as given, opposite of --alldeps"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:135
-msgid ""
-"used with --whatrequires, and --requires --resolve, query packages "
-"recursively."
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:137
-msgid "show a list of all dependencies and what packages provide them"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:139
-msgid "show available tags to use with --queryformat"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:142
-msgid "resolve capabilities to originating package(s)"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:144
-msgid "show recursive tree for package(s)"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:146
-msgid "operate on corresponding source RPM"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:148
-msgid ""
-"show N latest packages for a given name.arch (or latest but N if N is "
-"negative)"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:154
-msgid "show detailed information about the package"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:157
-msgid "show list of files in the package"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:160
-msgid "show package source RPM name"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:163
-msgid "format for displaying found packages"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:166
-msgid ""
-"use name-epoch:version-release.architecture format for displaying found "
-"packages (default)"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:169
-msgid ""
-"use name-version-release format for displaying found packages (rpm query "
-"default)"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:175
-msgid ""
-"use epoch:name-version-release.architecture format for displaying found "
-"packages"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:180
-msgid "limit the query to installed duplicate packages"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:187
-msgid "limit the query to installed installonly packages"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:190
-msgid "limit the query to installed packages with unsatisfied dependencies"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:192
-msgid "show a location from where packages can be downloaded"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:195
-msgid "Display capabilities that the package conflicts with."
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:196
-msgid "Display capabilities that the package can enhance."
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:197
-msgid "Display capabilities provided by the package."
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:198
-msgid "Display capabilities that the package recommends."
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:199
-msgid "Display capabilities that the package depends on."
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:200
-#, python-format
-msgid ""
-"Display capabilities that the package depends on for running a %%pre script."
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:201
-msgid "Display capabilities that the package suggests."
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:202
-msgid "Display capabilities that the package can supplement."
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:209
-msgid "Display only available packages."
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:212
-msgid "Display only installed packages."
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:213
-msgid ""
-"Display only packages that are not present in any of available repositories."
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:214
-msgid ""
-"Display only packages that provide an upgrade for some already installed "
-"package."
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:215
-msgid "Display only packages that can be removed by \"dnf autoremove\" command."
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:227
-msgid "Display only recently edited packages"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:256
-msgid "Package {} contains no files"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:301
-#, python-brace-format
-msgid "Available query-tags: use --queryformat \".. %{tag} ..\""
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:321 ../dnf/cli/cli.py:935
-msgid "argument {}: not allowed with argument {}"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:364
-msgid "argument {} requires --whatrequires option"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:398
-msgid ""
-"No switch specified\n"
-"usage: dnf repoquery [--whatrequires|--requires|--conflicts|--obsoletes|--enhances|--suggest|--provides|--suplements|--recommends] [key] [--tree]\n"
-"\n"
-"description:\n"
-"  For the given packages print a tree of the packages."
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:46
-msgid "bugfix"
-msgstr "Fehlerkorrektur"
-
-#: ../dnf/cli/commands/updateinfo.py:47
-msgid "enhancement"
-msgstr "Verbesserung"
-
-#: ../dnf/cli/commands/updateinfo.py:48
-msgid "security"
-msgstr "Sicherheit"
-
-#: ../dnf/cli/commands/updateinfo.py:50
-msgid "newpackage"
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:52
-msgid "Critical/Sec."
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:53
-msgid "Important/Sec."
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:54
-msgid "Moderate/Sec."
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:55
-msgid "Low/Sec."
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:56
-msgid "Unknown/Sec."
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:67
-msgid "display advisories about packages"
-msgstr "Erklärungen zu Paketen anzeigen"
-
-#: ../dnf/cli/commands/updateinfo.py:136
-msgid "show summmary of advisories"
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:138
-msgid "show list of advisories"
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:140
-msgid "show info of advisories"
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:231
-msgid "Updates Information Summary: "
-msgstr "Zusammenfassung der Aktualisierungsinformationen:"
-
-#: ../dnf/cli/commands/updateinfo.py:234
-msgid "New Package notice(s)"
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:235
-msgid "Security notice(s)"
-msgstr "Hinweis(e) zu Sicherheitsaktualisierungen"
-
-#: ../dnf/cli/commands/updateinfo.py:236
-msgid "Critical Security notice(s)"
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:238
-msgid "Important Security notice(s)"
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:240
-msgid "Moderate Security notice(s)"
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:242
-msgid "Low Security notice(s)"
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:244
-msgid "Unknown Security notice(s)"
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:246
-msgid "Bugfix notice(s)"
-msgstr "Hinweis(e) zu Fehlerkorrekturen"
-
-#: ../dnf/cli/commands/updateinfo.py:247
-msgid "Enhancement notice(s)"
-msgstr "Hinweis(e) zu Verbesserungen"
-
-#: ../dnf/cli/commands/updateinfo.py:248
-msgid "other notice(s)"
-msgstr "Andere(r) Hinweis(e)"
-
-#: ../dnf/cli/commands/updateinfo.py:366
-msgid "true"
-msgstr "wahr"
-
-#: ../dnf/cli/commands/updateinfo.py:366
-msgid "false"
-msgstr "falsch"
-
-#: ../dnf/cli/commands/updateinfo.py:368
-msgid "Update ID"
-msgstr "Aktualisierungs-ID"
-
-#: ../dnf/cli/commands/updateinfo.py:368
-msgid "Type"
-msgstr "Typ"
-
-#: ../dnf/cli/commands/updateinfo.py:368
-msgid "Updated"
-msgstr "Aktualisiert"
-
-#: ../dnf/cli/commands/updateinfo.py:368
-msgid "Bugs"
-msgstr "Fehler"
-
-#: ../dnf/cli/commands/updateinfo.py:369
-msgid "CVEs"
-msgstr "CVEs"
-
-#: ../dnf/cli/commands/updateinfo.py:369 ../dnf/cli/output.py:529
-msgid "Description"
-msgstr "Beschreibung"
-
-#: ../dnf/cli/commands/updateinfo.py:369
-msgid "Severity"
-msgstr ""
-
-#: ../dnf/cli/commands/updateinfo.py:369
-msgid "Rights"
-msgstr "Rechte"
-
-#: ../dnf/cli/commands/updateinfo.py:370
-msgid "Files"
-msgstr "Datei"
-
-#: ../dnf/cli/commands/updateinfo.py:370 ../dnf/cli/output.py:1213
-#: ../dnf/cli/output.py:1575 ../dnf/cli/output.py:1577
-msgid "Installed"
-msgstr "Installiert"
-
-#: ../dnf/cli/commands/updateinfo.py:401
-msgid "installed"
-msgstr "installiert"
-
-#: ../dnf/cli/commands/updateinfo.py:404
-msgid "updates"
-msgstr "Aktualisierungen"
-
-#: ../dnf/cli/commands/updateinfo.py:407
-msgid "all"
-msgstr "Alle"
-
-#: ../dnf/cli/commands/updateinfo.py:412
-msgid "available"
-msgstr "Verfügbar"
 
 #: ../dnf/cli/commands/__init__.py:43
 #, python-format
@@ -1054,32 +666,32 @@ msgstr "Details zu einem Paket oder einer Gruppe von Paketen anzeigen"
 
 #: ../dnf/cli/commands/__init__.py:163 ../dnf/cli/commands/__init__.py:329
 msgid "show all packages (default)"
-msgstr ""
+msgstr "Alle Pakete anzeigen (Standard)"
 
 #: ../dnf/cli/commands/__init__.py:166 ../dnf/cli/commands/__init__.py:332
 msgid "show only available packages"
-msgstr ""
+msgstr "Nur verfügbare Pakete anzeigen"
 
 #: ../dnf/cli/commands/__init__.py:169 ../dnf/cli/commands/__init__.py:335
 msgid "show only installed packages"
-msgstr ""
+msgstr "Nur installierte Pakete anzeigen"
 
 #: ../dnf/cli/commands/__init__.py:172 ../dnf/cli/commands/__init__.py:338
 msgid "show only extras packages"
-msgstr ""
+msgstr "Nur zusätzliche Pakete anzeigen"
 
 #: ../dnf/cli/commands/__init__.py:175 ../dnf/cli/commands/__init__.py:178
 #: ../dnf/cli/commands/__init__.py:341 ../dnf/cli/commands/__init__.py:344
 msgid "show only upgrades packages"
-msgstr ""
+msgstr "Nur aktualisierte Pakete anzeigen"
 
 #: ../dnf/cli/commands/__init__.py:181 ../dnf/cli/commands/__init__.py:347
 msgid "show only autoremove packages"
-msgstr ""
+msgstr "Nur autoremove Pakete anzeigen"
 
 #: ../dnf/cli/commands/__init__.py:184 ../dnf/cli/commands/__init__.py:350
 msgid "show only recently changed packages"
-msgstr ""
+msgstr "Nur kürzlich geänderte Pakete anzeigen"
 
 #: ../dnf/cli/commands/__init__.py:215
 msgid "list a package or groups of packages"
@@ -1129,7 +741,7 @@ msgstr "BEFEHL"
 
 #: ../dnf/cli/commands/__init__.py:812
 msgid "display, or use, the transaction history"
-msgstr "Übertragungschronik anzeigen oder verwenden"
+msgstr "Vorherige Transaktionen anzeigen oder verwenden"
 
 #: ../dnf/cli/commands/__init__.py:826 ../dnf/cli/cli.py:546
 msgid "No transaction ID given"
@@ -1158,35 +770,35 @@ msgid ""
 "Cannot rollback transaction %s, doing so would result in an inconsistent "
 "package database."
 msgstr ""
-"Auf den Zustand von Transaktion %s kann nicht zurückgesetzt werden, dies "
-"würde eine inkonsistente Paketdatenbank hinterlassen."
+"Transaktion %s kann nicht abgebrochen werden, dies würde eine inkonsistente "
+"Paketdatenbank hinterlassen."
 
 #: ../dnf/cli/commands/__init__.py:872 ../dnf/cli/cli.py:600
-#: ../dnf/cli/cli.py:627 ../dnf/base.py:1711
+#: ../dnf/cli/cli.py:627 ../dnf/base.py:1725
 #, python-format
 msgid "No package %s installed."
 msgstr "Kein Paket %s installiert."
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
-msgstr ""
+msgstr "Starte interaktive DNF-Konsole"
 
 #: ../dnf/cli/commands/shell.py:73
 msgid "SCRIPT"
-msgstr ""
+msgstr "Skript"
 
 #: ../dnf/cli/commands/shell.py:74
 msgid "Script to run in DNF shell"
-msgstr ""
+msgstr "Skript zum Ausführen in der DNF-Konsole"
 
 #: ../dnf/cli/commands/shell.py:130
 msgid "Unsupported key value."
-msgstr ""
+msgstr "Nicht unterstützter Schlüsselwert"
 
 #: ../dnf/cli/commands/shell.py:146
 #, python-format
 msgid "Could not find repository: %s"
-msgstr ""
+msgstr "Paketquelle konnte nicht gefunden werden: %s "
 
 #: ../dnf/cli/commands/shell.py:162
 msgid ""
@@ -1196,12 +808,19 @@ msgid ""
 "    If no value is given it prints the current value.\n"
 "    If value is given it sets that value."
 msgstr ""
+"{} arg [value]\n"
+"  arg: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,\n"
+"        repo_id.gpgcheck, repo_id.exclude\n"
+"    Wenn kein value gesetzt wird, wird der aktuelle value ausgegeben.\n"
+"    Wenn ein value gegeben wird, wird dieser eingesetzt"
 
 #: ../dnf/cli/commands/shell.py:169
 msgid ""
 "{} [command]\n"
 "    print help"
 msgstr ""
+"{} [command]\n"
+"    Hilfe ausgeben"
 
 #: ../dnf/cli/commands/shell.py:173
 msgid ""
@@ -1210,12 +829,18 @@ msgid ""
 "  enable: enable repositories. option = repository id\n"
 "  disable: disable repositories. option = repository id"
 msgstr ""
+"{} arg [option]\n"
+"  list: Zeige Repositories und ihren Status. option = [all | id | glob]\n"
+"  enable: Aktiviere Repository. option = repository id\n"
+"  disable: Deaktiviere Repository. option = repository id"
 
 #: ../dnf/cli/commands/shell.py:179
 msgid ""
 "{}\n"
 "    resolve the transaction set"
 msgstr ""
+"{}\n"
+"Abhängigkeiten für Transaktion bestimmen"
 
 #: ../dnf/cli/commands/shell.py:183
 msgid ""
@@ -1230,12 +855,16 @@ msgid ""
 "{}\n"
 "    run the transaction"
 msgstr ""
+"{}\n"
+"Transaktion durchführen"
 
 #: ../dnf/cli/commands/shell.py:193
 msgid ""
 "{}\n"
 "    exit the shell"
 msgstr ""
+"{}\n"
+"DNF-Konsole schließen"
 
 #: ../dnf/cli/commands/shell.py:198
 msgid ""
@@ -1249,6 +878,15 @@ msgid ""
 "run                      resolve and run the transaction set\n"
 "exit (or quit)           exit the shell"
 msgstr ""
+"Argumente für DNF-Konsole\n"
+"\n"
+"config                   Konfigurationsoptionen setzen\n"
+"help                     Hilfe ausgeben\n"
+"repository (or repo)     Repositories (de)aktivieren oder anzeigen\n"
+"resolvedep               Abhängigkeiten für Transaktion bestimmen\n"
+"transaction (or ts)      Transaktion anzeigen, zurücksetzen oder durchführen\n"
+"run                      Abhängigkeiten für Transaktion bestimmen und Transaktion durchführen\n"
+"exit (or quit)           DNF-Konsole beenden"
 
 #: ../dnf/cli/commands/shell.py:225 ../dnf/cli/cli.py:693
 #, python-format
@@ -1258,11 +896,436 @@ msgstr "Unbekannte Paketquelle: »%s«"
 #: ../dnf/cli/commands/shell.py:248
 #, python-format
 msgid "Error: Cannot open %s for reading"
-msgstr ""
+msgstr "Fehler: Öffnen von %s zu Lesezwecken schlug fehl"
 
 #: ../dnf/cli/commands/shell.py:278
 msgid "Leaving Shell"
+msgstr "Schließe DNF-Konsole"
+
+#: ../dnf/cli/commands/repoquery.py:88
+msgid "search for packages matching keyword"
+msgstr "Nach Paketen anhand des Schlüsselworts suchen"
+
+#: ../dnf/cli/commands/repoquery.py:103
+msgid "the key to search for"
+msgstr "Schlüssel, nach dem gesucht werden soll"
+
+#: ../dnf/cli/commands/repoquery.py:105
+msgid ""
+"Query all packages (shorthand for repoquery '*' or repoquery without "
+"argument)"
 msgstr ""
+"Abfrage aller Pakete (enspricht repoquery '*' oder repoquery ohne Argument)"
+
+#: ../dnf/cli/commands/repoquery.py:108
+msgid "Query all versions of packages (default)"
+msgstr "Alle Versionen der Pakete abfragen (Standard)"
+
+#: ../dnf/cli/commands/repoquery.py:110
+msgid "show only results from this ARCH"
+msgstr "Nur Ergebnisse für diese Architektur anzeigen"
+
+#: ../dnf/cli/commands/repoquery.py:112
+msgid "show only results that owns FILE"
+msgstr "Nur Ergebnisse anzeigen, die die angegebene Datei beinhalten"
+
+#: ../dnf/cli/commands/repoquery.py:114
+msgid "show only results that conflict REQ"
+msgstr ""
+"Nur Ergebnisse anzeigen, welche Konflikte mit Abhängigkeiten verursachen"
+
+#: ../dnf/cli/commands/repoquery.py:116
+msgid "show only results that obsolete REQ"
+msgstr "Nur Ergebnisse anzeigen, welche Abhängigkeiten obsolet machen"
+
+#: ../dnf/cli/commands/repoquery.py:118
+msgid "show only results that provide REQ"
+msgstr "Nur Ergebnisse anzeigen, welche die Abhängigkeit bereitstellen"
+
+#: ../dnf/cli/commands/repoquery.py:120
+msgid "shows results that requires package provides and files REQ"
+msgstr ""
+"Nur Ergebnisse anzeigen, welche Bereitstellungen und Dateien benötigen"
+
+#: ../dnf/cli/commands/repoquery.py:122
+msgid "show only results that recommend REQ"
+msgstr "Nur Ergebnisse anzeigen, die Abhängigkeiten vorschlagen."
+
+#: ../dnf/cli/commands/repoquery.py:124
+msgid "show only results that enhance REQ"
+msgstr "Nur Ergebnisse anzeigen, welche Abhängigkeiten verbessern"
+
+#: ../dnf/cli/commands/repoquery.py:126
+msgid "show only results that suggest REQ"
+msgstr "Nur Ergebnisse anzeigen, welche Abhängigkeiten vorschlagen"
+
+#: ../dnf/cli/commands/repoquery.py:128
+msgid "show only results that supplement REQ"
+msgstr "Nur Ergebnisse anzeigen, welche Abhängigkeiten ergänzen"
+
+#: ../dnf/cli/commands/repoquery.py:131
+msgid "check non-explicit dependencies (files and Provides); default"
+msgstr ""
+"Überprüfen von nicht-expliziten Abhängigkeiten (Dateien und "
+"Bereitstellungen); standard"
+
+#: ../dnf/cli/commands/repoquery.py:133
+msgid "check dependencies exactly as given, opposite of --alldeps"
+msgstr "Abhängigkeiten exakt wie vorgegeben prüfen, Gegenteil von --alldeps"
+
+#: ../dnf/cli/commands/repoquery.py:135
+msgid ""
+"used with --whatrequires, and --requires --resolve, query packages "
+"recursively."
+msgstr ""
+"zusammen mit --whatrequires und --requires --resolve, rekursive Abfrage der "
+"Pakete"
+
+#: ../dnf/cli/commands/repoquery.py:137
+msgid "show a list of all dependencies and what packages provide them"
+msgstr ""
+"Eine Liste aller Abhängigkeiten und Pakete die diese auflösen anzeigen"
+
+#: ../dnf/cli/commands/repoquery.py:139
+msgid "show available tags to use with --queryformat"
+msgstr "Mit --queryformat verwendbare Tags anzeigen"
+
+#: ../dnf/cli/commands/repoquery.py:142
+msgid "resolve capabilities to originating package(s)"
+msgstr "Fähigkeiten hin zu ursprünglichen Paketen auflösen"
+
+#: ../dnf/cli/commands/repoquery.py:144
+msgid "show recursive tree for package(s)"
+msgstr "rekursiven Baum für Paket(e) anzeigen"
+
+#: ../dnf/cli/commands/repoquery.py:146
+msgid "operate on corresponding source RPM"
+msgstr "Mit dem entsprechenden Source-RPM arbeiten"
+
+#: ../dnf/cli/commands/repoquery.py:148
+msgid ""
+"show N latest packages for a given name.arch (or latest but N if N is "
+"negative)"
+msgstr ""
+"Die N letzten Pakete für Name.Architektur anzeigen (oder die letzten N "
+"nicht, falls N negativ ist)"
+
+#: ../dnf/cli/commands/repoquery.py:154
+msgid "show detailed information about the package"
+msgstr "Detaillierte Informationen zum Paket anzeigen"
+
+#: ../dnf/cli/commands/repoquery.py:157
+msgid "show list of files in the package"
+msgstr "Liste der im Paket enthaltenen Dateien anzeigen"
+
+#: ../dnf/cli/commands/repoquery.py:160
+msgid "show package source RPM name"
+msgstr "Name des Source-RPMs des Pakets anzeigen"
+
+#: ../dnf/cli/commands/repoquery.py:163
+msgid "format for displaying found packages"
+msgstr "Format zur Anzeige der gefundenen Pakete"
+
+#: ../dnf/cli/commands/repoquery.py:166
+msgid ""
+"use name-epoch:version-release.architecture format for displaying found "
+"packages (default)"
+msgstr ""
+"Benuzte das Format »name-epoch:version-release.architecture« zum Anzeigen "
+"von gefundenen Paketen (Standard)"
+
+#: ../dnf/cli/commands/repoquery.py:169
+msgid ""
+"use name-version-release format for displaying found packages (rpm query "
+"default)"
+msgstr ""
+"Benuzte das Format name-version-release zum Anzeigen von gefundenen Paketen "
+"(Standard rpm Abfrage)"
+
+#: ../dnf/cli/commands/repoquery.py:175
+msgid ""
+"use epoch:name-version-release.architecture format for displaying found "
+"packages"
+msgstr ""
+"Benuzte das Format  epoch:name-version-release.architecture  zum Anzeigen "
+"von gefundenen Paketen"
+
+#: ../dnf/cli/commands/repoquery.py:180
+msgid "limit the query to installed duplicate packages"
+msgstr "Abfrage auf installierte Paketduplikate begrenzen"
+
+#: ../dnf/cli/commands/repoquery.py:187
+msgid "limit the query to installed installonly packages"
+msgstr "Abfrage auf installierte Nur-Installationspakete begrenzen"
+
+#: ../dnf/cli/commands/repoquery.py:190
+msgid "limit the query to installed packages with unsatisfied dependencies"
+msgstr ""
+"Abfrage auf installierte Pakete mit unaufgelösten Abhängigkeiten begrenzen"
+
+#: ../dnf/cli/commands/repoquery.py:192
+msgid "show a location from where packages can be downloaded"
+msgstr "Quelle anzeigen von der die Pakete heruntergeladen werden können"
+
+#: ../dnf/cli/commands/repoquery.py:195
+msgid "Display capabilities that the package conflicts with."
+msgstr "Fähigkeiten anzeigen, zu denen das Paket im Konflikt steht"
+
+#: ../dnf/cli/commands/repoquery.py:196
+msgid "Display capabilities that the package can enhance."
+msgstr "Fähigkeiten anzeigen, die das Paket verbessert."
+
+#: ../dnf/cli/commands/repoquery.py:197
+msgid "Display capabilities provided by the package."
+msgstr "Fähigkeiten anzeigen, die das Paket bereitstellt"
+
+#: ../dnf/cli/commands/repoquery.py:198
+msgid "Display capabilities that the package recommends."
+msgstr "Fähigkeiten anzeigen, die das Paket empfiehlt"
+
+#: ../dnf/cli/commands/repoquery.py:199
+msgid "Display capabilities that the package depends on."
+msgstr "Fähigkeiten anzeigen, von denen das Paket abhängt"
+
+#: ../dnf/cli/commands/repoquery.py:200
+#, python-format
+msgid ""
+"Display capabilities that the package depends on for running a %%pre script."
+msgstr ""
+"Fähigkeiten anzeigen, von denen das Paket abhängt um ein %%pre Skript "
+"auszuführen"
+
+#: ../dnf/cli/commands/repoquery.py:201
+msgid "Display capabilities that the package suggests."
+msgstr "Fähigkeiten anzeigen, die das Paket vorschlägt"
+
+#: ../dnf/cli/commands/repoquery.py:202
+msgid "Display capabilities that the package can supplement."
+msgstr "Fähigkeiten anzeigen, die das Paket ergänzt."
+
+#: ../dnf/cli/commands/repoquery.py:209
+msgid "Display only available packages."
+msgstr "Nur verfügbare Pakete anzeigen."
+
+#: ../dnf/cli/commands/repoquery.py:212
+msgid "Display only installed packages."
+msgstr "Nur installierte Pakete anzeigen."
+
+#: ../dnf/cli/commands/repoquery.py:213
+msgid ""
+"Display only packages that are not present in any of available repositories."
+msgstr ""
+"Nur Pakete anzeigen, die aus keiner der verfügbaren Paketquellen stammen."
+
+#: ../dnf/cli/commands/repoquery.py:214
+msgid ""
+"Display only packages that provide an upgrade for some already installed "
+"package."
+msgstr ""
+"Nur Pakete anzeigen, die eine Aktualisierung für ein installiertes Paket "
+"bereitstellen."
+
+#: ../dnf/cli/commands/repoquery.py:215
+msgid "Display only packages that can be removed by \"dnf autoremove\" command."
+msgstr ""
+"Nur Pakete anzeigen, die mit dem Befehl \"dnf autoremove\" entfernt werden "
+"können."
+
+#: ../dnf/cli/commands/repoquery.py:227
+msgid "Display only recently edited packages"
+msgstr "Nur kürzlich hinzugefügte Pakete anzeigen"
+
+#: ../dnf/cli/commands/repoquery.py:256
+msgid "Package {} contains no files"
+msgstr "Paket {} enthält keine Dateien"
+
+#: ../dnf/cli/commands/repoquery.py:301
+#, python-brace-format
+msgid "Available query-tags: use --queryformat \".. %{tag} ..\""
+msgstr "Verfügbare Abfrage-Tags: verwenden Sie --queryformat \".. %{tag} ..\""
+
+#: ../dnf/cli/commands/repoquery.py:321 ../dnf/cli/cli.py:940
+msgid "argument {}: not allowed with argument {}"
+msgstr "Argument {}: Unzulässig zusammen mit Argument {}"
+
+#: ../dnf/cli/commands/repoquery.py:364
+msgid "argument {} requires --whatrequires option"
+msgstr "Argument {} benötigt die --whatrequires Option"
+
+#: ../dnf/cli/commands/repoquery.py:398
+msgid ""
+"No switch specified\n"
+"usage: dnf repoquery [--whatrequires|--requires|--conflicts|--obsoletes|--enhances|--suggest|--provides|--suplements|--recommends] [key] [--tree]\n"
+"\n"
+"description:\n"
+"  For the given packages print a tree of the packages."
+msgstr ""
+"Kein Schalter angegeben\n"
+"Aufruf: dnf repoquery [--whatrequires|--requires|--conflicts|--obsoletes|--enhances|--suggest|--provides|--suplements|--recommends] [Schlüssel] [--tree]\n"
+"\n"
+"Beschreibung:\n"
+"  Für die angegebenen Pakete eine Baumansicht ausgeben."
+
+#: ../dnf/cli/commands/updateinfo.py:46
+msgid "bugfix"
+msgstr "Fehlerkorrektur"
+
+#: ../dnf/cli/commands/updateinfo.py:47
+msgid "enhancement"
+msgstr "Verbesserung"
+
+#: ../dnf/cli/commands/updateinfo.py:48
+msgid "security"
+msgstr "Sicherheit"
+
+#: ../dnf/cli/commands/updateinfo.py:50
+msgid "newpackage"
+msgstr "Neues Paket"
+
+#: ../dnf/cli/commands/updateinfo.py:52
+msgid "Critical/Sec."
+msgstr "Kritisch/Sicherheit"
+
+#: ../dnf/cli/commands/updateinfo.py:53
+msgid "Important/Sec."
+msgstr "Wichtig/Sicherheit"
+
+#: ../dnf/cli/commands/updateinfo.py:54
+msgid "Moderate/Sec."
+msgstr "Mäßig/Sicherheit"
+
+#: ../dnf/cli/commands/updateinfo.py:55
+msgid "Low/Sec."
+msgstr "Niedrig/Sicherheit"
+
+#: ../dnf/cli/commands/updateinfo.py:56
+msgid "Unknown/Sec."
+msgstr "Unbekannt/Sicherheit"
+
+#: ../dnf/cli/commands/updateinfo.py:67
+msgid "display advisories about packages"
+msgstr "Erklärungen zu Paketen anzeigen"
+
+#: ../dnf/cli/commands/updateinfo.py:136
+msgid "show summary of advisories"
+msgstr ""
+
+#: ../dnf/cli/commands/updateinfo.py:138
+msgid "show list of advisories"
+msgstr "Liste mit Hinweisen anzeigen"
+
+#: ../dnf/cli/commands/updateinfo.py:140
+msgid "show info of advisories"
+msgstr "Informationen zu Hinweisen anzeigen"
+
+#: ../dnf/cli/commands/updateinfo.py:231
+msgid "Updates Information Summary: "
+msgstr "Zusammenfassung der Aktualisierungsinformationen:"
+
+#: ../dnf/cli/commands/updateinfo.py:234
+msgid "New Package notice(s)"
+msgstr "Hinweise zum neuen Paket"
+
+#: ../dnf/cli/commands/updateinfo.py:235
+msgid "Security notice(s)"
+msgstr "Hinweis(e) zu Sicherheitsaktualisierungen"
+
+#: ../dnf/cli/commands/updateinfo.py:236
+msgid "Critical Security notice(s)"
+msgstr "Kritische(r) Sicherheitshinweis(e)"
+
+#: ../dnf/cli/commands/updateinfo.py:238
+msgid "Important Security notice(s)"
+msgstr "Wichtige(r) Sicherheitshinweis(e)"
+
+#: ../dnf/cli/commands/updateinfo.py:240
+msgid "Moderate Security notice(s)"
+msgstr "Moderate(r) Sicherheitshinweis(e)"
+
+#: ../dnf/cli/commands/updateinfo.py:242
+msgid "Low Security notice(s)"
+msgstr "Schwache(r) Sicherheitshinweis(e)"
+
+#: ../dnf/cli/commands/updateinfo.py:244
+msgid "Unknown Security notice(s)"
+msgstr "Unbekannte(r) Sicherheitshinweis(e)"
+
+#: ../dnf/cli/commands/updateinfo.py:246
+msgid "Bugfix notice(s)"
+msgstr "Hinweis(e) zu Fehlerkorrekturen"
+
+#: ../dnf/cli/commands/updateinfo.py:247
+msgid "Enhancement notice(s)"
+msgstr "Hinweis(e) zu Verbesserungen"
+
+#: ../dnf/cli/commands/updateinfo.py:248
+msgid "other notice(s)"
+msgstr "Andere(r) Hinweis(e)"
+
+#: ../dnf/cli/commands/updateinfo.py:366
+msgid "true"
+msgstr "wahr"
+
+#: ../dnf/cli/commands/updateinfo.py:366
+msgid "false"
+msgstr "falsch"
+
+#: ../dnf/cli/commands/updateinfo.py:368
+msgid "Update ID"
+msgstr "Aktualisierungs-ID"
+
+#: ../dnf/cli/commands/updateinfo.py:368
+msgid "Type"
+msgstr "Typ"
+
+#: ../dnf/cli/commands/updateinfo.py:368
+msgid "Updated"
+msgstr "Aktualisiert"
+
+#: ../dnf/cli/commands/updateinfo.py:368
+msgid "Bugs"
+msgstr "Fehler"
+
+#: ../dnf/cli/commands/updateinfo.py:369
+msgid "CVEs"
+msgstr "CVEs"
+
+#: ../dnf/cli/commands/updateinfo.py:369 ../dnf/cli/output.py:529
+msgid "Description"
+msgstr "Beschreibung"
+
+#: ../dnf/cli/commands/updateinfo.py:369
+msgid "Severity"
+msgstr "Schweregrad"
+
+#: ../dnf/cli/commands/updateinfo.py:369
+msgid "Rights"
+msgstr "Rechte"
+
+#: ../dnf/cli/commands/updateinfo.py:370
+msgid "Files"
+msgstr "Datei"
+
+#: ../dnf/cli/commands/updateinfo.py:370 ../dnf/cli/output.py:1211
+#: ../dnf/cli/output.py:1573 ../dnf/cli/output.py:1575
+msgid "Installed"
+msgstr "Installiert"
+
+#: ../dnf/cli/commands/updateinfo.py:401
+msgid "installed"
+msgstr "installiert"
+
+#: ../dnf/cli/commands/updateinfo.py:404
+msgid "updates"
+msgstr "Aktualisierungen"
+
+#: ../dnf/cli/commands/updateinfo.py:407
+msgid "all"
+msgstr "Alle"
+
+#: ../dnf/cli/commands/updateinfo.py:412
+msgid "available"
+msgstr "Verfügbar"
 
 #: ../dnf/cli/utils.py:98
 msgid "Running"
@@ -1336,6 +1399,358 @@ msgstr "Abhängigkeiten sind aufgelöst."
 msgid "Complete!"
 msgstr "Fertig."
 
+#: ../dnf/cli/cli.py:126
+#, python-format
+msgid "  Installed: %s-%s at %s"
+msgstr "  Installiert: %s-%s am %s"
+
+#: ../dnf/cli/cli.py:128
+#, fuzzy, python-format
+msgid "  Built    : %s at %s"
+msgstr "  Erstellt   : %s am %s"
+
+#: ../dnf/cli/cli.py:195
+msgid "Operation aborted."
+msgstr "Vorgang abgebrochen."
+
+#: ../dnf/cli/cli.py:203
+msgid "Downloading Packages:"
+msgstr "Pakete werden heruntergeladen:"
+
+#: ../dnf/cli/cli.py:210
+msgid "Error downloading packages:"
+msgstr "Fehler beim Herunterladen der Pakete:"
+
+#: ../dnf/cli/cli.py:230
+msgid "Transaction failed"
+msgstr "Transaktions fehlgeschlagen"
+
+#: ../dnf/cli/cli.py:251
+msgid ""
+"Refusing to automatically import keys when running unattended.\n"
+"Use \"-y\" to override."
+msgstr ""
+"Automatischer Import der Schlüssel wird verweigert, wenn unbeaufsichtigt ausgeführt.\n"
+"Benutzen Sie »-y« zum Überschreiben."
+
+#: ../dnf/cli/cli.py:291 ../dnf/cli/cli.py:434 ../dnf/cli/cli.py:440
+msgid "Obsoleting Packages"
+msgstr "Veraltete Pakete"
+
+#: ../dnf/cli/cli.py:320
+msgid "No packages marked for distribution synchronization."
+msgstr "Keine Pakete zur Distributionsaktualisierung markiert"
+
+#: ../dnf/cli/cli.py:351 ../dnf/base.py:1852
+#, python-format
+msgid "Packages for argument %s available, but not installed."
+msgstr ""
+
+#: ../dnf/cli/cli.py:408
+msgid "Installed Packages"
+msgstr "Installierte Pakete"
+
+#: ../dnf/cli/cli.py:416
+msgid "Available Packages"
+msgstr "Verfügbare Pakete"
+
+#: ../dnf/cli/cli.py:420
+msgid "Autoremove Packages"
+msgstr "Pakete automatisch entfernen"
+
+#: ../dnf/cli/cli.py:422
+msgid "Extra Packages"
+msgstr "Extra-Pakete"
+
+#: ../dnf/cli/cli.py:426
+msgid "Upgraded Packages"
+msgstr "Aktualisierte Pakete"
+
+#: ../dnf/cli/cli.py:442
+msgid "Recently Added Packages"
+msgstr "Kürzlich hinzugefügte Pakete"
+
+#: ../dnf/cli/cli.py:447
+msgid "No matching Packages to list"
+msgstr "Keine übereinstimmenden Pakete zum Auflisten"
+
+#: ../dnf/cli/cli.py:523
+msgid "No Matches found"
+msgstr "Keine Übereinstimmungen gefunden"
+
+#: ../dnf/cli/cli.py:551
+msgid "Not found given transaction ID"
+msgstr "Angebene Transaktions-ID nicht gefunden"
+
+#: ../dnf/cli/cli.py:577
+#, python-format
+msgid "Transaction history is incomplete, before %u."
+msgstr "Die Transaktionschronik ist unvollständig, vor %u."
+
+#: ../dnf/cli/cli.py:579
+#, python-format
+msgid "Transaction history is incomplete, after %u."
+msgstr "Die Transaktionschronik ist unvollständig, nach %u."
+
+#: ../dnf/cli/cli.py:707
+#, python-format
+msgid "No repository match: %s"
+msgstr "Keine passende Quelle gefunden: %s"
+
+#: ../dnf/cli/cli.py:736
+msgid "This command has to be run under the root user."
+msgstr "Dieser Befehl muss mit Root-Rechten ausgeführt werden."
+
+#: ../dnf/cli/cli.py:756
+#, python-format
+msgid "No such command: %s. Please use %s --help"
+msgstr "Kein solcher Befehl: %s. Bitte %s --help verwenden."
+
+#: ../dnf/cli/cli.py:759
+#, python-format
+msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
+msgstr ""
+"Es könnte ein DNF-Plugin-Befehl sein, versuchen Sie »dnf install 'dnf-"
+"command(%s)'«"
+
+#: ../dnf/cli/cli.py:762
+msgid ""
+"It could be a DNF plugin command, but loading of plugins is currently "
+"disabled."
+msgstr ""
+"Es könnte ein DNF-Plugin-Befehl sein, aber das Laden von Plugins ist derzeit"
+" deaktiviert."
+
+#: ../dnf/cli/cli.py:800 ../dnf/cli/cli.py:804
+#, python-format
+msgid "Config error: %s"
+msgstr "Konfigurationsfehler: %s"
+
+#: ../dnf/cli/cli.py:887
+msgid ""
+"Unable to detect release version (use '--releasever' to specify release "
+"version)"
+msgstr ""
+
+#: ../dnf/cli/cli.py:947
+#, python-format
+msgid "Command \"%s\" already defined"
+msgstr "Befehl »%s« ist bereits definiert"
+
+#: ../dnf/cli/option_parser.py:52
+#, python-format
+msgid "Command line error: %s"
+msgstr "Befehlszeilenfehler: %s"
+
+#: ../dnf/cli/option_parser.py:83
+#, python-format
+msgid "bad format: %s"
+msgstr "unzulässiges Format: %s"
+
+#: ../dnf/cli/option_parser.py:159
+msgid "Optional arguments"
+msgstr "Optionale Parameter"
+
+#: ../dnf/cli/option_parser.py:162
+msgid "config file location"
+msgstr "Ort der Konfigurationsdatei"
+
+#: ../dnf/cli/option_parser.py:165
+msgid "quiet operation"
+msgstr "Stiller Betrieb"
+
+#: ../dnf/cli/option_parser.py:167
+msgid "verbose operation"
+msgstr "Detaillierte Ausgaben"
+
+#: ../dnf/cli/option_parser.py:169
+msgid "show DNF version and exit"
+msgstr "DNF-Version anzeigen und beenden"
+
+#: ../dnf/cli/option_parser.py:170
+msgid "set install root"
+msgstr "Wurzel-Installationsverzeichnis festlegen"
+
+#: ../dnf/cli/option_parser.py:173
+msgid "do not install documentations"
+msgstr "Keine Dokumentation installieren"
+
+#: ../dnf/cli/option_parser.py:176
+msgid "disable all plugins"
+msgstr "Alle Plugins deaktivieren"
+
+#: ../dnf/cli/option_parser.py:179
+msgid "enable plugins by name"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:183
+msgid "disable plugins by name"
+msgstr "Plugins nach Namen deaktivieren"
+
+#: ../dnf/cli/option_parser.py:186
+msgid "override the value of $releasever in config and repo files"
+msgstr ""
+"Wert für $releasever in Konfiguration und Paketquellen-Daten außer Kraft "
+"setzen"
+
+#: ../dnf/cli/option_parser.py:190
+msgid "set arbitrary config and repo options"
+msgstr ""
+"Benutzerdefinierte Optionen für Konfiguration und Paketquelle festlegen"
+
+#: ../dnf/cli/option_parser.py:193
+msgid "resolve depsolve problems by skipping packages"
+msgstr "Abhängigkeitsprobleme durch Weglassen von Paketen auflösen"
+
+#: ../dnf/cli/option_parser.py:196
+msgid "show command help"
+msgstr "Hilfe zu diesem Befehl anzeigen"
+
+#: ../dnf/cli/option_parser.py:200
+msgid "allow erasing of installed packages to resolve dependencies"
+msgstr "Löschen installierter Pakete erlauben, um Abhängigkeiten aufzulösen"
+
+#: ../dnf/cli/option_parser.py:204
+msgid "try the best available package versions in transactions."
+msgstr ""
+"Die bestmöglich verfügbaren Paketversionen in Transaktionen verwenden."
+
+#: ../dnf/cli/option_parser.py:208
+msgid "run entirely from system cache, don't update cache"
+msgstr ""
+"komplett aus dem Zwischenspeicher laufen, Zwischenspeicher nicht "
+"aktualisieren"
+
+#: ../dnf/cli/option_parser.py:212
+msgid "maximum command wait time"
+msgstr "Maximale Befehlswartezeit"
+
+#: ../dnf/cli/option_parser.py:215
+msgid "debugging output level"
+msgstr "Debugging-Ausgabestufe"
+
+#: ../dnf/cli/option_parser.py:218
+msgid "dumps detailed solving results into files"
+msgstr ""
+"speichert detaillierte Ergebnisse der Abhängigkeitsauflösung in Dateien"
+
+#: ../dnf/cli/option_parser.py:222
+msgid "show duplicates, in repos, in list/search commands"
+msgstr "Duplikate in Paketquellen und in Listen/Suchen-Befehlen anzeigen"
+
+#: ../dnf/cli/option_parser.py:225
+msgid "error output level"
+msgstr "Fehler-Ausgabestufe"
+
+#: ../dnf/cli/option_parser.py:228
+msgid ""
+"enables dnf's obsoletes processing logic for upgrade or display capabilities"
+" that the package obsoletes for info, list and repoquery"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:232
+msgid "debugging output level for rpm"
+msgstr "Stufe der Debugging-Ausgabe für rpm"
+
+#: ../dnf/cli/option_parser.py:235
+msgid "automatically answer yes for all questions"
+msgstr "Alle Fragen bejahen"
+
+#: ../dnf/cli/option_parser.py:238
+msgid "automatically answer no for all questions"
+msgstr "Alle Fragen verneinen"
+
+#: ../dnf/cli/option_parser.py:249
+msgid ""
+"enable just specific repositories by an id or a glob, can be specified "
+"multiple times"
+msgstr ""
+"Nur die per ID oder Muster spezifizierten Repositories aktivieren (darf "
+"mehrfach angeben werden)"
+
+#: ../dnf/cli/option_parser.py:253
+msgid "exclude packages by name or glob"
+msgstr "Pakete nach Namen oder Muster ausschließen"
+
+#: ../dnf/cli/option_parser.py:258
+msgid "disable excludepkgs"
+msgstr "»excludepkgs« deaktivieren"
+
+#: ../dnf/cli/option_parser.py:263
+msgid ""
+"label and path to additional repository, can be specified multiple times."
+msgstr ""
+"Bezeichnung und Pfad zur zusätzlichen Paketquelle, darf mehrfach angegeben "
+"werden."
+
+#: ../dnf/cli/option_parser.py:267
+msgid "disable gpg signature checking"
+msgstr "GPG-Signatur-Prüfung deaktivieren"
+
+#: ../dnf/cli/option_parser.py:269
+msgid "control whether color is used"
+msgstr "kontrolliert, ob Farbe benutzt wird"
+
+#: ../dnf/cli/option_parser.py:272
+msgid "set metadata as expired before running the command"
+msgstr "Vor der Ausführung des Befehls die Metadaten auf »abgelaufen« setzen"
+
+#: ../dnf/cli/option_parser.py:275
+msgid "resolve to IPv4 addresses only"
+msgstr "nur IPv4-Adressen auflösen"
+
+#: ../dnf/cli/option_parser.py:278
+msgid "resolve to IPv6 addresses only"
+msgstr "nur IPv6-Adressen auflösen"
+
+#: ../dnf/cli/option_parser.py:282
+msgid "only download packages"
+msgstr "Nur Pakete herunterladen"
+
+#: ../dnf/cli/option_parser.py:285
+msgid "Include bugfix relevant packages, in updates"
+msgstr "Aktualisierungen mit Fehlerbehebungen einschließen"
+
+#: ../dnf/cli/option_parser.py:288
+msgid "Include enhancement relevant packages, in updates"
+msgstr "Aktualisierungen mit Verbesserungen einschließen"
+
+#: ../dnf/cli/option_parser.py:291
+msgid "Include newpackage relevant packages, in updates"
+msgstr "Aktualisierungen mit neu hinzugekommenen Paketen einschließen"
+
+#: ../dnf/cli/option_parser.py:294
+msgid "Include security relevant packages, in updates"
+msgstr "Sicherheitsrelevante Aktualisierungen einschließen"
+
+#: ../dnf/cli/option_parser.py:298
+msgid "Include packages needed to fix the given advisory, in updates"
+msgstr "Aktualisierungen zur Behebung des angegebenen Advisorys einschließen"
+
+#: ../dnf/cli/option_parser.py:302
+msgid "Include packages needed to fix the given BZ, in updates"
+msgstr ""
+"Aktualisierungen zur Behebung des Bugzilla-Fehlerberichts mit der "
+"übergebenen Nummer einschließen"
+
+#: ../dnf/cli/option_parser.py:304
+msgid "Include packages needed to fix the given CVE, in updates"
+msgstr "Aktualisierungen für die übergebene CVE-Nummer einschließen"
+
+#: ../dnf/cli/option_parser.py:309
+msgid "Include security relevant packages matching the severity, in updates"
+msgstr ""
+"Sicherheitsrelevante Aktualisierungen mit der übergebenen Kritikalität "
+"einschließen"
+
+#: ../dnf/cli/option_parser.py:344
+msgid "List of Main Commands:"
+msgstr "Hauptbefehle"
+
+#: ../dnf/cli/option_parser.py:345
+msgid "List of Plugin Commands:"
+msgstr "Plugin-Befehle"
+
 #: ../dnf/cli/output.py:489
 msgid "Name"
 msgstr "Name"
@@ -1344,7 +1759,7 @@ msgstr "Name"
 msgid "Epoch"
 msgstr "Epoch"
 
-#: ../dnf/cli/output.py:492 ../dnf/cli/output.py:1091
+#: ../dnf/cli/output.py:492 ../dnf/cli/output.py:1088
 msgid "Version"
 msgstr "Version"
 
@@ -1352,17 +1767,17 @@ msgstr "Version"
 msgid "Release"
 msgstr "Release"
 
-#: ../dnf/cli/output.py:494 ../dnf/cli/output.py:1090
+#: ../dnf/cli/output.py:494 ../dnf/cli/output.py:1087
 msgid "Arch"
 msgstr "Arch"
 
-#: ../dnf/cli/output.py:495 ../dnf/cli/output.py:1092
+#: ../dnf/cli/output.py:495 ../dnf/cli/output.py:1090
 msgid "Size"
 msgstr "Größe"
 
 #: ../dnf/cli/output.py:496
 msgid "Source"
-msgstr ""
+msgstr "Quelle"
 
 #: ../dnf/cli/output.py:497
 msgid "Repo"
@@ -1377,7 +1792,7 @@ msgstr "Aus Paketquelle"
 #. print(_("Committime  : %s") % time.ctime(pkg.committime))
 #: ../dnf/cli/output.py:504
 msgid "Packager"
-msgstr ""
+msgstr "Paketierer"
 
 #: ../dnf/cli/output.py:505
 msgid "Buildtime"
@@ -1543,57 +1958,57 @@ msgstr "Fehler beim Berechnen der Installationsgröße"
 #: ../dnf/cli/output.py:935
 #, python-format
 msgid "Freed space: %s"
-msgstr ""
+msgstr "Freigegebener Speicherplatz: %s"
 
 #: ../dnf/cli/output.py:944
 msgid "Marking packages as installed by the group:"
 msgstr "Pakete als den der Gruppe installiert markieren:"
 
-#: ../dnf/cli/output.py:951
+#: ../dnf/cli/output.py:950
 msgid "Marking packages as removed by the group:"
 msgstr "Pakete als den der Gruppe entfernt markieren:"
 
-#: ../dnf/cli/output.py:961
+#: ../dnf/cli/output.py:960
 msgid "Group"
 msgstr "Gruppe"
 
-#: ../dnf/cli/output.py:961
+#: ../dnf/cli/output.py:960
 msgid "Packages"
 msgstr "Pakete"
 
-#: ../dnf/cli/output.py:1034 ../dnf/yum/rpmtrans.py:129
+#: ../dnf/cli/output.py:1033 ../dnf/yum/rpmtrans.py:129
 msgid "Installing"
 msgstr "Installieren"
 
-#: ../dnf/cli/output.py:1035 ../dnf/yum/rpmtrans.py:132
+#: ../dnf/cli/output.py:1034 ../dnf/yum/rpmtrans.py:132
 msgid "Upgrading"
 msgstr "Aktualisieren"
 
-#: ../dnf/cli/output.py:1036 ../dnf/yum/rpmtrans.py:131
+#: ../dnf/cli/output.py:1035 ../dnf/yum/rpmtrans.py:131
 msgid "Reinstalling"
 msgstr "Neuinstallieren"
 
-#: ../dnf/cli/output.py:1037
+#: ../dnf/cli/output.py:1036
 msgid "Installing dependencies"
-msgstr ""
+msgstr "Installiere Abhängigkeiten"
+
+#: ../dnf/cli/output.py:1037
+msgid "Installing weak dependencies"
+msgstr "Installiere schwache Abhängigkeiten"
 
 #: ../dnf/cli/output.py:1038
-msgid "Installing weak dependencies"
-msgstr ""
-
-#: ../dnf/cli/output.py:1039
 msgid "Removing"
 msgstr "Entfernen"
 
-#: ../dnf/cli/output.py:1040
+#: ../dnf/cli/output.py:1039
 msgid "Removing unused dependencies"
-msgstr ""
+msgstr "Entferne ungültige Abhängigkeiten"
 
-#: ../dnf/cli/output.py:1041 ../dnf/yum/rpmtrans.py:127
+#: ../dnf/cli/output.py:1040 ../dnf/yum/rpmtrans.py:127
 msgid "Downgrading"
 msgstr "Downgrading"
 
-#: ../dnf/cli/output.py:1055
+#: ../dnf/cli/output.py:1054
 #, python-format
 msgid ""
 "Skipping packages with conflicts:\n"
@@ -1602,33 +2017,33 @@ msgstr ""
 "Pakete mit Konflikten werden übersprungen:\n"
 "(fügen Sie »%s« zur Befehlszeile hinzu, um die Aktualisierung zu erzwingen)"
 
-#: ../dnf/cli/output.py:1066
+#: ../dnf/cli/output.py:1065
 #, python-format
 msgid ""
 "Skipping packages with broken dependencies%s\n"
 "(add '--best' to command line to see why package dependency cannot be satisfied)"
 msgstr ""
 
-#: ../dnf/cli/output.py:1072
+#: ../dnf/cli/output.py:1071
 msgid " or part of a group"
-msgstr ""
+msgstr "oder Teil einer Gruppe"
 
-#: ../dnf/cli/output.py:1090 ../dnf/cli/output.py:1133
-#: ../dnf/cli/output.py:1149 ../dnf/cli/output.py:1822
+#: ../dnf/cli/output.py:1086 ../dnf/cli/output.py:1131
+#: ../dnf/cli/output.py:1147 ../dnf/cli/output.py:1820
 msgid "Package"
 msgid_plural "Packages"
 msgstr[0] "Paket"
 msgstr[1] "Pakete"
 
-#: ../dnf/cli/output.py:1091
+#: ../dnf/cli/output.py:1089
 msgid "Repository"
 msgstr "Paketquelle"
 
-#: ../dnf/cli/output.py:1104
+#: ../dnf/cli/output.py:1102
 msgid "replacing"
 msgstr "Ersetzen"
 
-#: ../dnf/cli/output.py:1112
+#: ../dnf/cli/output.py:1110
 #, python-format
 msgid ""
 "\n"
@@ -1639,751 +2054,416 @@ msgstr ""
 "Transaktionsübersicht\n"
 "%s\n"
 
-#: ../dnf/cli/output.py:1117 ../dnf/cli/output.py:1730
-#: ../dnf/cli/output.py:1731
+#: ../dnf/cli/output.py:1115 ../dnf/cli/output.py:1728
+#: ../dnf/cli/output.py:1729
 msgid "Install"
 msgstr "Installieren"
 
-#: ../dnf/cli/output.py:1120 ../dnf/cli/output.py:1739
+#: ../dnf/cli/output.py:1118 ../dnf/cli/output.py:1737
 msgid "Upgrade"
 msgstr "Aktualisieren"
 
-#: ../dnf/cli/output.py:1121
+#: ../dnf/cli/output.py:1119
 msgid "Remove"
 msgstr "Entfernen"
 
-#: ../dnf/cli/output.py:1123 ../dnf/cli/output.py:1737
+#: ../dnf/cli/output.py:1121 ../dnf/cli/output.py:1735
 msgid "Downgrade"
 msgstr "Zurücksetzen"
 
-#: ../dnf/cli/output.py:1124
+#: ../dnf/cli/output.py:1122
 msgid "Skip"
 msgstr "Überspringen"
 
-#: ../dnf/cli/output.py:1151
+#: ../dnf/cli/output.py:1149
 msgid "Dependent package"
 msgid_plural "Dependent packages"
 msgstr[0] "Abhängiges Paket"
 msgstr[1] "Abhängige Pakete"
 
-#: ../dnf/cli/output.py:1210
+#: ../dnf/cli/output.py:1208
 msgid "Reinstalled"
 msgstr "Reinstalliert"
 
-#: ../dnf/cli/output.py:1211
+#: ../dnf/cli/output.py:1209
 msgid "Removed"
 msgstr "Entfernt"
 
-#: ../dnf/cli/output.py:1216 ../dnf/cli/output.py:1576
-#: ../dnf/cli/output.py:1740
+#: ../dnf/cli/output.py:1214 ../dnf/cli/output.py:1574
+#: ../dnf/cli/output.py:1738
 msgid "Upgraded"
 msgstr "Aktualisiert"
 
-#: ../dnf/cli/output.py:1217 ../dnf/cli/output.py:1576
-#: ../dnf/cli/output.py:1738
+#: ../dnf/cli/output.py:1215 ../dnf/cli/output.py:1574
+#: ../dnf/cli/output.py:1736
 msgid "Downgraded"
 msgstr "Zurückgesetzt"
 
-#: ../dnf/cli/output.py:1218
+#: ../dnf/cli/output.py:1216
 msgid "Failed"
 msgstr "Fehlgeschlagen"
 
-#: ../dnf/cli/output.py:1272
+#: ../dnf/cli/output.py:1270
 msgid "Total"
 msgstr "Gesamt"
 
-#: ../dnf/cli/output.py:1293
+#: ../dnf/cli/output.py:1291
 msgid "I"
 msgstr "I"
 
-#: ../dnf/cli/output.py:1294
+#: ../dnf/cli/output.py:1292
 msgid "O"
 msgstr "O"
 
-#: ../dnf/cli/output.py:1295
+#: ../dnf/cli/output.py:1293
 msgid "E"
 msgstr "E"
 
-#: ../dnf/cli/output.py:1296
+#: ../dnf/cli/output.py:1294
 msgid "R"
 msgstr "R"
 
-#: ../dnf/cli/output.py:1297
+#: ../dnf/cli/output.py:1295
 msgid "D"
 msgstr "D"
 
-#: ../dnf/cli/output.py:1298
+#: ../dnf/cli/output.py:1296
 msgid "U"
 msgstr "U"
 
-#: ../dnf/cli/output.py:1312
+#: ../dnf/cli/output.py:1310
 msgid "<unset>"
 msgstr "<nicht gesetzt>"
 
-#: ../dnf/cli/output.py:1313
+#: ../dnf/cli/output.py:1311
 msgid "System"
 msgstr "System"
 
-#: ../dnf/cli/output.py:1394 ../dnf/cli/output.py:1505
+#: ../dnf/cli/output.py:1392 ../dnf/cli/output.py:1503
 msgid "No transactions"
 msgstr "Keine Transaktionen"
 
-#: ../dnf/cli/output.py:1414 ../dnf/cli/output.py:1811
+#: ../dnf/cli/output.py:1412 ../dnf/cli/output.py:1809
 msgid "Bad transaction IDs, or package(s), given"
 msgstr "Schlechte Transaktions-IDs oder Paket(e) angegeben"
 
-#: ../dnf/cli/output.py:1450
+#: ../dnf/cli/output.py:1448
 msgid "Command line"
 msgstr "Befehlszeile"
 
 #. TRANSLATORS: user names who executed transaction in history command output
-#: ../dnf/cli/output.py:1453
+#: ../dnf/cli/output.py:1451
 msgid "User name"
-msgstr ""
+msgstr "Benutzername"
 
 #. REALLY Needs to use columns!
-#: ../dnf/cli/output.py:1454 ../dnf/cli/output.py:1820
+#: ../dnf/cli/output.py:1452 ../dnf/cli/output.py:1818
 msgid "ID"
 msgstr "ID"
 
-#: ../dnf/cli/output.py:1456
+#: ../dnf/cli/output.py:1454
 msgid "Date and time"
 msgstr "Datum und Zeit"
 
-#: ../dnf/cli/output.py:1457 ../dnf/cli/output.py:1821
+#: ../dnf/cli/output.py:1455 ../dnf/cli/output.py:1819
 msgid "Action(s)"
 msgstr "Aktion(en)"
 
-#: ../dnf/cli/output.py:1458
+#: ../dnf/cli/output.py:1456
 msgid "Altered"
 msgstr "Verändert"
 
-#: ../dnf/cli/output.py:1515
+#: ../dnf/cli/output.py:1513
 msgid "No transaction ID, or package, given"
 msgstr "Keine Transaktions-ID oder Paket angegeben"
 
-#: ../dnf/cli/output.py:1575
+#: ../dnf/cli/output.py:1573
 msgid "Erased"
 msgstr "Gelöscht"
 
-#: ../dnf/cli/output.py:1577
+#: ../dnf/cli/output.py:1575
 msgid "Not installed"
 msgstr "Nicht installiert"
 
-#: ../dnf/cli/output.py:1578
+#: ../dnf/cli/output.py:1576
 msgid "Older"
 msgstr "Älter"
 
-#: ../dnf/cli/output.py:1578
+#: ../dnf/cli/output.py:1576
 msgid "Newer"
 msgstr "Neuer"
 
-#: ../dnf/cli/output.py:1615 ../dnf/cli/output.py:1617
+#: ../dnf/cli/output.py:1613 ../dnf/cli/output.py:1615
 msgid "Transaction ID :"
 msgstr "Transaktions-ID :"
 
-#: ../dnf/cli/output.py:1619
+#: ../dnf/cli/output.py:1617
 msgid "Begin time     :"
 msgstr "Anfangszeit :"
 
-#: ../dnf/cli/output.py:1622 ../dnf/cli/output.py:1624
+#: ../dnf/cli/output.py:1620 ../dnf/cli/output.py:1622
 msgid "Begin rpmdb    :"
 msgstr "Anfang rpmdb    :"
 
-#: ../dnf/cli/output.py:1640
+#: ../dnf/cli/output.py:1638
 #, python-format
 msgid "(%u seconds)"
 msgstr "(%u Sekunden)"
 
-#: ../dnf/cli/output.py:1642
+#: ../dnf/cli/output.py:1640
 #, python-format
 msgid "(%u minutes)"
 msgstr "(%u Minuten)"
 
-#: ../dnf/cli/output.py:1644
+#: ../dnf/cli/output.py:1642
 #, python-format
 msgid "(%u hours)"
 msgstr "(%u Stunden)"
 
-#: ../dnf/cli/output.py:1646
+#: ../dnf/cli/output.py:1644
 #, python-format
 msgid "(%u days)"
 msgstr "(%u Tage)"
 
-#: ../dnf/cli/output.py:1647
+#: ../dnf/cli/output.py:1645
 msgid "End time       :"
 msgstr "Endzeit :"
 
-#: ../dnf/cli/output.py:1650 ../dnf/cli/output.py:1652
+#: ../dnf/cli/output.py:1648 ../dnf/cli/output.py:1650
 msgid "End rpmdb      :"
 msgstr "Ende rpmdb      :"
 
-#: ../dnf/cli/output.py:1655 ../dnf/cli/output.py:1657
+#: ../dnf/cli/output.py:1653 ../dnf/cli/output.py:1655
 msgid "User           :"
 msgstr "Benutzer :"
 
-#: ../dnf/cli/output.py:1661 ../dnf/cli/output.py:1664
-#: ../dnf/cli/output.py:1666 ../dnf/cli/output.py:1668
-#: ../dnf/cli/output.py:1670
+#: ../dnf/cli/output.py:1659 ../dnf/cli/output.py:1662
+#: ../dnf/cli/output.py:1664 ../dnf/cli/output.py:1666
+#: ../dnf/cli/output.py:1668
 msgid "Return-Code    :"
 msgstr "Rückgabe-Code    :"
 
-#: ../dnf/cli/output.py:1661 ../dnf/cli/output.py:1666
+#: ../dnf/cli/output.py:1659 ../dnf/cli/output.py:1664
 msgid "Aborted"
 msgstr "Abgebrochen"
 
-#: ../dnf/cli/output.py:1664
+#: ../dnf/cli/output.py:1662
 msgid "Failures:"
 msgstr "Fehlschläge:"
 
-#: ../dnf/cli/output.py:1668
+#: ../dnf/cli/output.py:1666
 msgid "Failure:"
 msgstr "Fehlschlag:"
 
-#: ../dnf/cli/output.py:1670
+#: ../dnf/cli/output.py:1668
 msgid "Success"
 msgstr "Erfolg"
 
-#: ../dnf/cli/output.py:1675 ../dnf/cli/output.py:1677
+#: ../dnf/cli/output.py:1673 ../dnf/cli/output.py:1675
 msgid "Command Line   :"
 msgstr "Befehlszeile   :"
 
-#: ../dnf/cli/output.py:1686
+#: ../dnf/cli/output.py:1684
 #, python-format
 msgid "Additional non-default information stored: %d"
 msgstr "Zusätzliche Nicht-Standardinformation gespeichert: %d"
 
 #. This is _possible_, but not common
-#: ../dnf/cli/output.py:1691
+#: ../dnf/cli/output.py:1689
 msgid "Transaction performed with:"
 msgstr "Transaktion ausgeführt mit:"
 
-#: ../dnf/cli/output.py:1695
+#: ../dnf/cli/output.py:1693
 msgid "Packages Altered:"
 msgstr "Veränderte Pakete:"
 
-#: ../dnf/cli/output.py:1699
+#: ../dnf/cli/output.py:1697
 msgid "Packages Skipped:"
 msgstr "Übersprungene Pakete:"
 
-#: ../dnf/cli/output.py:1707
+#: ../dnf/cli/output.py:1705
 msgid "Rpmdb Problems:"
 msgstr "Rpmdb-Probleme:"
 
-#: ../dnf/cli/output.py:1718
+#: ../dnf/cli/output.py:1716
 msgid "Scriptlet output:"
 msgstr "Ausgabe des Skriptlets:"
 
-#: ../dnf/cli/output.py:1724
+#: ../dnf/cli/output.py:1722
 msgid "Errors:"
 msgstr "Fehler:"
 
-#: ../dnf/cli/output.py:1732
+#: ../dnf/cli/output.py:1730
 msgid "Dep-Install"
 msgstr "Abhängigkeiteninstallation"
 
-#: ../dnf/cli/output.py:1733
+#: ../dnf/cli/output.py:1731
 msgid "Obsoleted"
 msgstr "Veraltet"
 
-#: ../dnf/cli/output.py:1734 ../dnf/yum/rpmtrans.py:130
+#: ../dnf/cli/output.py:1732 ../dnf/yum/rpmtrans.py:130
 msgid "Obsoleting"
 msgstr "Veraltet"
 
-#: ../dnf/cli/output.py:1735
+#: ../dnf/cli/output.py:1733
 msgid "Erase"
 msgstr "Löschen"
 
-#: ../dnf/cli/output.py:1736
+#: ../dnf/cli/output.py:1734
 msgid "Reinstall"
 msgstr "Neu installieren"
 
-#: ../dnf/cli/output.py:1909
+#: ../dnf/cli/output.py:1907
 #, python-format
 msgid "---> Package %s.%s %s will be installed"
-msgstr ""
+msgstr "---> Paket %s.%s %s wird installiert"
+
+#: ../dnf/cli/output.py:1909
+#, python-format
+msgid "---> Package %s.%s %s will be an upgrade"
+msgstr "---> Paket %s.%s %s würde aktualisiert"
 
 #: ../dnf/cli/output.py:1911
 #, python-format
-msgid "---> Package %s.%s %s will be an upgrade"
-msgstr ""
+msgid "---> Package %s.%s %s will be erased"
+msgstr "---> Paket %s.%s %s wird entfernt"
 
 #: ../dnf/cli/output.py:1913
 #, python-format
-msgid "---> Package %s.%s %s will be erased"
-msgstr ""
+msgid "---> Package %s.%s %s will be reinstalled"
+msgstr "---> Paket %s.%s %s wird erneut installiert"
 
 #: ../dnf/cli/output.py:1915
 #, python-format
-msgid "---> Package %s.%s %s will be reinstalled"
-msgstr ""
+msgid "---> Package %s.%s %s will be a downgrade"
+msgstr "---> Paket %s.%s %s wird zurück gestuft"
 
 #: ../dnf/cli/output.py:1917
 #, python-format
-msgid "---> Package %s.%s %s will be a downgrade"
-msgstr ""
+msgid "---> Package %s.%s %s will be obsoleting"
+msgstr "---> Paket %s.%s %s wird ein anderes Paket als überholt markieren"
 
 #: ../dnf/cli/output.py:1919
 #, python-format
-msgid "---> Package %s.%s %s will be obsoleting"
-msgstr ""
+msgid "---> Package %s.%s %s will be upgraded"
+msgstr "---> Package %s.%s %s wird aktualiert"
 
 #: ../dnf/cli/output.py:1921
 #, python-format
-msgid "---> Package %s.%s %s will be upgraded"
-msgstr ""
-
-#: ../dnf/cli/output.py:1923
-#, python-format
 msgid "---> Package %s.%s %s will be obsoleted"
-msgstr ""
+msgstr "---> Paket %s.%s %s wird obsolet sein"
 
-#: ../dnf/cli/output.py:1932
+#: ../dnf/cli/output.py:1930
 msgid "--> Starting dependency resolution"
 msgstr "--> Abhängigkeitsauflösung wird gestartet"
 
-#: ../dnf/cli/output.py:1937
+#: ../dnf/cli/output.py:1935
 msgid "--> Finished dependency resolution"
 msgstr "--> Abhängigkeitsauflösung wurde abgeschlossen"
-
-#: ../dnf/cli/cli.py:126
-#, python-format
-msgid "  Installed: %s-%s at %s"
-msgstr "  Installiert: %s-%s am %s"
-
-#: ../dnf/cli/cli.py:128
-#, fuzzy, python-format
-msgid "  Built    : %s at %s"
-msgstr "  Erstellt   : %s am %s"
-
-#: ../dnf/cli/cli.py:195
-msgid "Operation aborted."
-msgstr "Vorgang abgebrochen."
-
-#: ../dnf/cli/cli.py:203
-msgid "Downloading Packages:"
-msgstr "Pakete werden heruntergeladen:"
-
-#: ../dnf/cli/cli.py:210
-msgid "Error downloading packages:"
-msgstr "Fehler beim Herunterladen der Pakete:"
-
-#: ../dnf/cli/cli.py:230
-msgid "Transaction failed"
-msgstr ""
-
-#: ../dnf/cli/cli.py:251
-msgid ""
-"Refusing to automatically import keys when running unattended.\n"
-"Use \"-y\" to override."
-msgstr ""
-"Automatischer Import der Schlüssel wird verweigert, wenn unbeaufsichtigt ausgeführt.\n"
-"Benutzen Sie »-y« zum Überschreiben."
-
-#: ../dnf/cli/cli.py:291 ../dnf/cli/cli.py:434 ../dnf/cli/cli.py:440
-msgid "Obsoleting Packages"
-msgstr "Veraltete Pakete"
-
-#: ../dnf/cli/cli.py:320
-msgid "No packages marked for distribution synchronization."
-msgstr "Keine Pakete zur Distributionsaktualisierung markiert"
-
-#: ../dnf/cli/cli.py:351 ../dnf/base.py:1839
-#, python-format
-msgid "Packages for argument %s available, but not installed."
-msgstr ""
-
-#: ../dnf/cli/cli.py:408
-msgid "Installed Packages"
-msgstr "Installierte Pakete"
-
-#: ../dnf/cli/cli.py:416
-msgid "Available Packages"
-msgstr "Verfügbare Pakete"
-
-#: ../dnf/cli/cli.py:420
-msgid "Autoremove Packages"
-msgstr "Pakete automatisch entfernen"
-
-#: ../dnf/cli/cli.py:422
-msgid "Extra Packages"
-msgstr "Extra-Pakete"
-
-#: ../dnf/cli/cli.py:426
-msgid "Upgraded Packages"
-msgstr "Aktualisierte Pakete"
-
-#: ../dnf/cli/cli.py:442
-msgid "Recently Added Packages"
-msgstr "Kürzlich hinzugefügte Pakete"
-
-#: ../dnf/cli/cli.py:447
-msgid "No matching Packages to list"
-msgstr "Keine übereinstimmenden Pakete zum Auflisten"
-
-#: ../dnf/cli/cli.py:523
-msgid "No Matches found"
-msgstr "Keine Übereinstimmungen gefunden"
-
-#: ../dnf/cli/cli.py:551
-msgid "Not found given transaction ID"
-msgstr "Angebene Transaktions-ID nicht gefunden"
-
-#: ../dnf/cli/cli.py:577
-#, python-format
-msgid "Transaction history is incomplete, before %u."
-msgstr "Die Transaktionschronik ist unvollständig, vor %u."
-
-#: ../dnf/cli/cli.py:579
-#, python-format
-msgid "Transaction history is incomplete, after %u."
-msgstr "Die Transaktionschronik ist unvollständig, nach %u."
-
-#: ../dnf/cli/cli.py:707
-#, python-format
-msgid "No repository match: %s"
-msgstr ""
-
-#: ../dnf/cli/cli.py:736
-msgid "This command has to be run under the root user."
-msgstr ""
-
-#: ../dnf/cli/cli.py:756
-#, python-format
-msgid "No such command: %s. Please use %s --help"
-msgstr "Kein solcher Befehl: %s. Bitte %s --help verwenden."
-
-#: ../dnf/cli/cli.py:759
-#, python-format
-msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
-msgstr ""
-"Es könnte ein DNF-Plugin-Befehl sein, versuchen Sie »dnf install 'dnf-"
-"command(%s)'«"
-
-#: ../dnf/cli/cli.py:762
-msgid ""
-"It could be a DNF plugin command, but loading of plugins is currently "
-"disabled."
-msgstr ""
-"Es könnte ein DNF-Plugin-Befehl sein, aber das Laden von Plugins ist derzeit"
-" deaktiviert."
-
-#: ../dnf/cli/cli.py:800 ../dnf/cli/cli.py:804
-#, python-format
-msgid "Config error: %s"
-msgstr "Konfigurationsfehler: %s"
-
-#: ../dnf/cli/cli.py:942
-#, python-format
-msgid "Command \"%s\" already defined"
-msgstr "Befehl »%s« ist bereits definiert"
-
-#: ../dnf/cli/option_parser.py:52
-#, python-format
-msgid "Command line error: %s"
-msgstr "Befehlszeilenfehler: %s"
-
-#: ../dnf/cli/option_parser.py:83
-#, python-format
-msgid "bad format: %s"
-msgstr "unzulässiges Format: %s"
-
-#: ../dnf/cli/option_parser.py:159
-msgid "Optional arguments"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:162
-msgid "config file location"
-msgstr "Ort der Konfigurationsdatei"
-
-#: ../dnf/cli/option_parser.py:165
-msgid "quiet operation"
-msgstr "Stiller Betrieb"
-
-#: ../dnf/cli/option_parser.py:167
-msgid "verbose operation"
-msgstr "Wortreicher Betrieb"
-
-#: ../dnf/cli/option_parser.py:169
-msgid "show DNF version and exit"
-msgstr "DNF-Version anzeigen und beenden"
-
-#: ../dnf/cli/option_parser.py:170
-msgid "set install root"
-msgstr "Wurzel-Installationsverzeichnis festlegen"
-
-#: ../dnf/cli/option_parser.py:173
-msgid "do not install documentations"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:176
-msgid "disable all plugins"
-msgstr "Alle Plugins deaktivieren"
-
-#: ../dnf/cli/option_parser.py:179
-msgid "disable plugins by name"
-msgstr "Plugins nach Namen deaktivieren"
-
-#: ../dnf/cli/option_parser.py:182
-msgid "override the value of $releasever in config and repo files"
-msgstr ""
-"Wert für $releasever in Konfiguration und Paketquellen-Daten außer Kraft "
-"setzen"
-
-#: ../dnf/cli/option_parser.py:186
-msgid "set arbitrary config and repo options"
-msgstr ""
-"Benutzerdefinierte Optionen für Konfiguration und Paketquelle festlegen"
-
-#: ../dnf/cli/option_parser.py:189
-msgid "resolve depsolve problems by skipping packages"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:192
-msgid "show command help"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:196
-msgid "allow erasing of installed packages to resolve dependencies"
-msgstr "Löschen installierter Pakete erlauben, um Abhängigkeiten aufzulösen"
-
-#: ../dnf/cli/option_parser.py:200
-msgid "try the best available package versions in transactions."
-msgstr ""
-"Die bestmöglich verfügbaren Paketversionen in Transaktionen verwenden."
-
-#: ../dnf/cli/option_parser.py:204
-msgid "run entirely from system cache, don't update cache"
-msgstr ""
-"komplett aus dem Zwischenspeicher laufen, Zwischenspeicher nicht "
-"aktualisieren"
-
-#: ../dnf/cli/option_parser.py:208
-msgid "maximum command wait time"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:211
-msgid "debugging output level"
-msgstr "Debugging-Ausgabestufe"
-
-#: ../dnf/cli/option_parser.py:214
-msgid "dumps detailed solving results into files"
-msgstr ""
-"speichert detaillierte Ergebnisse der Abhängigkeitsauflösung in Dateien"
-
-#: ../dnf/cli/option_parser.py:218
-msgid "show duplicates, in repos, in list/search commands"
-msgstr "Duplikate in Paketquellen und in Listen/Suchen-Befehlen anzeigen"
-
-#: ../dnf/cli/option_parser.py:221
-msgid "error output level"
-msgstr "Fehler-Ausgabestufe"
-
-#: ../dnf/cli/option_parser.py:224
-msgid ""
-"enables dnf's obsoletes processing logic for upgrade or display capabilities"
-" that the package obsoletes for info, list and repoquery"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:228
-msgid "debugging output level for rpm"
-msgstr "Stufe der Debugging-Ausgabe für rpm"
-
-#: ../dnf/cli/option_parser.py:231
-msgid "automatically answer yes for all questions"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:234
-msgid "automatically answer no for all questions"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:245
-msgid ""
-"enable just specific repositories by an id or a glob, can be specified "
-"multiple times"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:249
-msgid "exclude packages by name or glob"
-msgstr "Paket(e) nach Namen oder global ausschließen"
-
-#: ../dnf/cli/option_parser.py:254
-msgid "disable excludepkgs"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:259
-msgid ""
-"label and path to additional repository, can be specified multiple times."
-msgstr ""
-"Bezeichnung und Pfad zur zusätzlichen Paketquelle, darf mehrfach angegeben "
-"werden."
-
-#: ../dnf/cli/option_parser.py:263
-msgid "disable gpg signature checking"
-msgstr "GPG-Signatur-Prüfung deaktivieren"
-
-#: ../dnf/cli/option_parser.py:265
-msgid "control whether color is used"
-msgstr "kontrolliert, ob Farbe benutzt wird"
-
-#: ../dnf/cli/option_parser.py:268
-msgid "set metadata as expired before running the command"
-msgstr "Vor der Ausführung des Befehls die Metadaten auf »abgelaufen« setzen"
-
-#: ../dnf/cli/option_parser.py:271
-msgid "resolve to IPv4 addresses only"
-msgstr "nur IPv4-Adressen auflösen"
-
-#: ../dnf/cli/option_parser.py:274
-msgid "resolve to IPv6 addresses only"
-msgstr "nur IPv6-Adressen auflösen"
-
-#: ../dnf/cli/option_parser.py:278
-msgid "only download packages"
-msgstr "Nur Pakete herunterladen"
-
-#: ../dnf/cli/option_parser.py:281
-msgid "Include bugfix relevant packages, in updates"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:284
-msgid "Include enhancement relevant packages, in updates"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:287
-msgid "Include newpackage relevant packages, in updates"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:290
-msgid "Include security relevant packages, in updates"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:294
-msgid "Include packages needed to fix the given advisory, in updates"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:298
-msgid "Include packages needed to fix the given BZ, in updates"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:300
-msgid "Include packages needed to fix the given CVE, in updates"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:305
-msgid "Include security relevant packages matching the severity, in updates"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:340
-msgid "List of Main Commands:"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:341
-msgid "List of Plugin Commands:"
-msgstr ""
 
 #: ../dnf/conf/config.py:83
 #, python-format
 msgid "Error parsing '%s': %s"
-msgstr ""
+msgstr "Verarbeitungsfehler '%s': %s"
 
 #: ../dnf/conf/config.py:207
 msgid "\"_none_\" is not a valid value"
-msgstr ""
+msgstr "\"_none_\" ist kein gültiger Wert"
 
 #: ../dnf/conf/config.py:212
 #, python-format
 msgid "URL must be %s not '%s'"
-msgstr ""
+msgstr "URL muss %s sein, nicht '%s'"
 
 #: ../dnf/conf/config.py:254
 #, python-format
 msgid "given path '%s' is not absolute."
-msgstr ""
+msgstr "Der eingegebene Pfad '%s' ist nicht absolut."
 
 #: ../dnf/conf/config.py:256
 #, python-format
 msgid "given path '%s' does not exist."
-msgstr ""
+msgstr "Der eingegebene Pfad '%s' existiert nicht."
 
 #: ../dnf/conf/config.py:273
 msgid "invalid integer value"
-msgstr ""
+msgstr "Ungültige Zahlenwert"
 
 #: ../dnf/conf/config.py:276
 #, python-format
 msgid "given value [%d] should be less than allowed value [%d]."
 msgstr ""
+"Eingegebener Wer [%d] sollte kleiner sein als der zulässige Wert [%d]."
 
 #: ../dnf/conf/config.py:279
 #, python-format
 msgid "given value [%d] should be greater than allowed value [%d]."
-msgstr ""
+msgstr "Eingegebener Wer [%d] sollte größer sein als der zulässige Wert [%d]."
 
 #: ../dnf/conf/config.py:316 ../dnf/conf/config.py:427
 #: ../dnf/conf/config.py:464
 msgid "no value specified"
-msgstr ""
+msgstr "Kein Wert angegeben"
 
 #: ../dnf/conf/config.py:325 ../dnf/conf/config.py:434
 #, python-format
 msgid "unknown unit '%s'"
-msgstr ""
+msgstr "Unbekannte Einheit '%s'"
 
 #: ../dnf/conf/config.py:333
 #, python-format
 msgid "invalid value '%s'"
-msgstr ""
+msgstr "Ungültiger Wert '%s'"
 
 #: ../dnf/conf/config.py:336
 #, python-format
 msgid "seconds value '%s' must not be negative"
-msgstr ""
+msgstr "Der Wert für Sekunden '%s' darf nicht negativ sein"
 
 #: ../dnf/conf/config.py:359
 #, python-format
 msgid "invalid boolean value '%s'"
-msgstr ""
+msgstr "Ungültige Boolesche Variable »%s«"
 
 #: ../dnf/conf/config.py:375
 #, fuzzy, python-format
 msgid "invalid float value '%s'"
-msgstr ""
+msgstr "Ungültige Fließkommazahl »%s«"
 
 #: ../dnf/conf/config.py:392
 #, python-format
 msgid "'%s' value is not implemented"
-msgstr ""
+msgstr "Wert '%s' ist nicht implementiert"
 
 #: ../dnf/conf/config.py:394
 #, python-format
 msgid "'%s' is not an allowed value"
-msgstr ""
+msgstr "'%s' ist kein zulässiger Wert"
 
 #: ../dnf/conf/config.py:442 ../dnf/conf/config.py:471
 #, fuzzy, python-format
 msgid "couldn't convert '%s' to number"
-msgstr ""
+msgstr "Konnte '%s' nicht in Zahl umwandeln"
 
 #: ../dnf/conf/config.py:445
 #, python-format
 msgid "bytes value '%s' must not be negative"
-msgstr ""
+msgstr "Wert für Bytes '%s' darf nicht negativ sein"
 
 #: ../dnf/conf/config.py:473
 #, python-format
 msgid "percentage '%s' is out of range"
-msgstr ""
+msgstr "Prozentsatz '%s' liegt außerhalb des zulässigen Bereichs"
 
 #: ../dnf/conf/config.py:536
 #, python-format
 msgid "Unknown configuration value: %s=%s in %s; %s"
-msgstr ""
+msgstr "Unbekannter Konfigurationswert: %s=%s in %s; %s"
 
 #: ../dnf/conf/config.py:541
 #, python-format
 msgid "Unknown configuration option: %s = %s in %s"
-msgstr ""
+msgstr "Unbekannte Konfigurationsoption: %s = %s in %s"
 
 #: ../dnf/conf/config.py:631
 #, python-format
@@ -2393,7 +2473,7 @@ msgstr "Ordner für Zwischenspeicher konnte nicht festgelegt werden: %s"
 #: ../dnf/conf/config.py:839 ../dnf/conf/config.py:862
 #, python-format
 msgid "Unknown configuration option: %s = %s"
-msgstr ""
+msgstr "Unbekannte Konfigurationsoption: %s = %s"
 
 #: ../dnf/conf/read.py:51
 #, python-format
@@ -2403,16 +2483,18 @@ msgstr "Warnung: »%s« konnte nicht geladen werden, wird übersprungen."
 #: ../dnf/conf/read.py:61
 #, python-format
 msgid "Repository '%s': Error parsing config: %s"
-msgstr ""
+msgstr "Paketquelle »%s«: Fehler beim Einlesen der Konfiguration: %s"
 
 #: ../dnf/conf/read.py:67
 #, fuzzy, python-format
 msgid "Repository '%s' is missing name in configuration, using id."
 msgstr ""
+"Der Paketquelle »%s« fehlt der Name in der Konfiguration, ID wird verwendet."
 
 #: ../dnf/yum/commands/deplist.py:32
 msgid "List package's dependencies and what packages provide them"
 msgstr ""
+"Eine Liste aller Abhängigkeiten und Pakete die diese auflösen anzeigen"
 
 #: ../dnf/yum/history.py:748
 #, python-format
@@ -2438,11 +2520,11 @@ msgstr "Überprüfung läuft"
 
 #: ../dnf/yum/rpmtrans.py:134
 msgid "Preparing"
-msgstr ""
+msgstr "Vorbereitung läuft"
 
 #: ../dnf/yum/rpmtrans.py:135
 msgid "Running scriptlet"
-msgstr ""
+msgstr "Laufendes Scriptlet"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -2471,7 +2553,7 @@ msgstr "Arbeitsumgebung »%s« ist nicht installiert."
 #: ../dnf/comps.py:600
 #, python-format
 msgid "Group_id '%s' does not exist."
-msgstr ""
+msgstr "Gruppenkennung »%s« existiert nicht."
 
 #: ../dnf/comps.py:603
 #, python-format
@@ -2483,7 +2565,7 @@ msgstr "Gruppe »%s« ist bereits installiert."
 msgid "Group '%s' not installed."
 msgstr "Gruppe »%s« ist nicht installiert."
 
-#: ../dnf/drpm.py:62 ../dnf/repo.py:375
+#: ../dnf/drpm.py:62 ../dnf/repo.py:381
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr "Nicht unterstützter Prüfsummentyp: %s"
@@ -2529,11 +2611,6 @@ msgstr ""
 msgid "%s is empty file"
 msgstr "%s ist eine leere Datei."
 
-#: ../dnf/plugin.py:146
-#, python-format
-msgid "Failed loading plugin: %s"
-msgstr "Fehler beim Laden des Plugins: %s"
-
 #: ../dnf/repodict.py:56
 #, python-format
 msgid "enabling %s repository"
@@ -2557,89 +2634,10 @@ msgstr ""
 " Fingerabdruck: %s\n"
 " Von          : %s"
 
-#: ../dnf/repo.py:104
+#: ../dnf/transaction.py:222
 #, python-format
-msgid "no matching payload factory for %s"
-msgstr ""
-
-#: ../dnf/repo.py:130
-msgid "Already downloaded"
-msgstr ""
-
-#. pinging mirrors, this might take a while
-#: ../dnf/repo.py:409
-#, python-format
-msgid "determining the fastest mirror (%d hosts).. "
-msgstr ""
-
-#: ../dnf/repo.py:658
-#, python-format
-msgid "Cannot find a valid baseurl for repo: %s"
-msgstr ""
-
-#: ../dnf/repo.py:754
-#, python-format
-msgid "reviving: repo '%s' skipped, no metalink."
-msgstr ""
-
-#: ../dnf/repo.py:760
-#, python-format
-msgid "reviving: repo '%s' skipped, no usable hash."
-msgstr ""
-
-#: ../dnf/repo.py:771
-#, python-format
-msgid "reviving: failed for '%s', mismatched %s sum."
-msgstr ""
-
-#: ../dnf/repo.py:774
-#, python-format
-msgid "reviving: '%s' can be revived - metalink checksums match."
-msgstr ""
-
-#: ../dnf/repo.py:787
-#, python-format
-msgid "reviving: failed for '%s', mismatched repomd."
-msgstr ""
-
-#: ../dnf/repo.py:789
-#, python-format
-msgid "reviving: '%s' can be revived - repomd matches."
-msgstr ""
-
-#: ../dnf/repo.py:844
-#, python-format
-msgid "repo: using cache for: %s"
-msgstr ""
-
-#: ../dnf/repo.py:847
-#, python-format
-msgid "Cache-only enabled but no cache for '%s'"
-msgstr ""
-
-#: ../dnf/repo.py:858
-#, python-format
-msgid "repo: downloading from remote: %s, %s"
-msgstr ""
-
-#: ../dnf/repo.py:869
-#, python-format
-msgid "Cannot download '%s': %s."
-msgstr "Kann nicht herunterladen '%s': %s."
-
-#: ../dnf/repo.py:871
-#, python-format
-msgid "Failed to synchronize cache for repo '%s'"
-msgstr "Zwischenspeicher für Paketquelle '%s'"
-
-#: ../dnf/repo.py:913
-#, python-format
-msgid "Repository %s has no mirror or baseurl set."
-msgstr ""
-
-#: ../dnf/repo.py:916
-msgid "Repository '{}' has unsupported type: 'type={}', skipping."
-msgstr ""
+msgid "Will not install a source rpm package (%s)."
+msgstr "Ein Source-RPM-Paket wird nicht installiert (%s)."
 
 #: ../dnf/base.py:245
 msgid "Metadata timer caching disabled when running on metered connection."
@@ -2702,7 +2700,7 @@ msgstr "Hinzufügen von Gruppen-Datei für Paketquelle fehlgeschlagen: %s - %s"
 
 #: ../dnf/base.py:633
 msgid "Problem"
-msgstr ""
+msgstr "Problem"
 
 #: ../dnf/base.py:671
 msgid "Running transaction check"
@@ -2751,193 +2749,202 @@ msgstr[1] ""
 msgid "Error Summary"
 msgstr "Fehler-Zusammenfassung"
 
-#: ../dnf/base.py:814
-msgid ""
-"Warning: scriptlet or other non-fatal errors occurred during transaction."
+#: ../dnf/base.py:829
+msgid "Errors occurred during transaction."
 msgstr ""
-"Warnung: Es sind Scriptlet- oder andere nicht schwerwiegende Fehler bei der "
-"Verarbeitung aufgetreten."
 
-#: ../dnf/base.py:819
+#: ../dnf/base.py:833
 #, python-format
 msgid "Failed to obtain the transaction lock (logged in as: %s)."
 msgstr "Transaktionssperre kann nicht erhalten werden (angemeldet als: %s)."
 
 #. should this be 'to_unicoded'?
-#: ../dnf/base.py:822 ../dnf/base.py:832
+#: ../dnf/base.py:836 ../dnf/base.py:846
 msgid "Could not run transaction."
 msgstr "Transaktion konnte nicht durchgeführt werden."
 
-#: ../dnf/base.py:829
+#: ../dnf/base.py:843
 msgid "Transaction couldn't start:"
 msgstr "Transaktion konnte nicht starten:"
 
-#: ../dnf/base.py:841
+#: ../dnf/base.py:855
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Entfernen der Transaktionsdatei %s fehlgeschlagen"
 
-#: ../dnf/base.py:893
+#: ../dnf/base.py:907
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s hätte installiert werden sollen, wurde aber nicht!"
 
-#: ../dnf/base.py:953
+#: ../dnf/base.py:967
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s hätte entfernt werden sollen, wurde aber nicht!"
 
-#: ../dnf/base.py:1011
+#: ../dnf/base.py:1025
 msgid "Some packages were not downloaded. Retrying."
-msgstr ""
+msgstr "Einige Pakete konnten nicht heruntergeladen werden. Erneut versuchen."
 
-#: ../dnf/base.py:1041
+#: ../dnf/base.py:1055
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
 msgstr ""
 "Delta RPMs reduziert %.1f MB Aktualisierungen auf %.1f MB (%d.1%% gespart)"
 
-#: ../dnf/base.py:1044
+#: ../dnf/base.py:1058
 #, python-format
 msgid ""
 "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
 msgstr ""
+"Fehlgeschlagen: Delta-RPMs erhöhten die Größe für Updates von %.1f MB auf "
+"%.1f MB (%d.1%% verschwendet)"
 
-#: ../dnf/base.py:1065
+#: ../dnf/base.py:1079
 msgid "Could not open: {}"
-msgstr ""
+msgstr "{} konnte nicht geöffnet werden"
 
-#: ../dnf/base.py:1103
+#: ../dnf/base.py:1117
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "Öffentlicher Schlüssel für %s ist nicht installiert"
 
-#: ../dnf/base.py:1107
+#: ../dnf/base.py:1121
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Problem beim Öffnen des Paketes %s"
 
-#: ../dnf/base.py:1115
+#: ../dnf/base.py:1129
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "Öffentlicher Schlüssel für %s ist nicht vertrauenswürdig"
 
-#: ../dnf/base.py:1119
+#: ../dnf/base.py:1133
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Paket %s ist nicht signiert"
 
-#: ../dnf/base.py:1134
+#: ../dnf/base.py:1148
 #, python-format
 msgid "Cannot remove %s"
 msgstr "%s kann nicht entfernt werden"
 
-#: ../dnf/base.py:1138
+#: ../dnf/base.py:1152
 #, python-format
 msgid "%s removed"
 msgstr "%s entfernt"
 
-#: ../dnf/base.py:1475
+#: ../dnf/base.py:1489
 msgid "No groups marked for removal."
 msgstr "Keine Gruppe zum Entfernen markiert."
 
-#: ../dnf/base.py:1494
+#: ../dnf/base.py:1508
 msgid "No group marked for upgrade."
 msgstr "Keine Gruppe zur Aktualisierung markiert."
 
-#: ../dnf/base.py:1549 ../dnf/base.py:1562
+#: ../dnf/base.py:1563 ../dnf/base.py:1576
 msgid "no package matched"
 msgstr "kein passendes Paket"
 
-#: ../dnf/base.py:1584
+#: ../dnf/base.py:1598
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
 msgstr ""
 "Das Paket %s ist nicht installiert, es kann nicht in einer niedrigeren "
 "Version installiert werden."
 
-#: ../dnf/base.py:1593
+#: ../dnf/base.py:1607
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
 msgstr ""
 "Das Paket %s ist bereits in einer niedrigeren Version installiert, es kann "
 "nicht in einer niedrigeren Version installiert werden."
 
-#: ../dnf/base.py:1616
+#: ../dnf/base.py:1630
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
 msgstr ""
 "Das Paket %s ist nicht installiert, es kann nicht erneut installiert werden."
 
-#: ../dnf/base.py:1631
+#: ../dnf/base.py:1645
 #, python-format
 msgid "File %s is a source package and cannot be updated, ignoring."
 msgstr ""
+"Ignore Datei »%s«, die Datei ist ein Quellpaket und kann nicht aktualisiert "
+"werden"
 
-#: ../dnf/base.py:1637 ../dnf/base.py:1666
+#: ../dnf/base.py:1651 ../dnf/base.py:1680
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr "Paket %s ist nicht installiert, es kann nicht aktualisiert werden."
 
-#: ../dnf/base.py:1646
+#: ../dnf/base.py:1660
 #, python-format
 msgid "Package %s of higher version already installed, cannot update it."
 msgstr ""
 "Das Paket %s ist bereits in einer höheren Version installiert, es kann nicht"
 " aktualisiert werden."
 
-#: ../dnf/base.py:1844
+#: ../dnf/base.py:1857
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr ""
 "Paket %s ist bereits in der niedrigsten Version installiert, Downgrade ist "
 "daher nicht möglich."
 
-#: ../dnf/base.py:1985
+#: ../dnf/base.py:1998
 msgid "No security updates needed, but {} update available"
 msgstr ""
+"Keine sicherheitsrelevanten Aktualisierungen verfügbar, aber {} "
+"Aktualisierung verfügbar"
 
-#: ../dnf/base.py:1987
+#: ../dnf/base.py:2000
 msgid "No security updates needed, but {} updates available"
 msgstr ""
+"Keine sicherheitsrelevanten Aktualisierungen verfügbar, aber {} "
+"Aktualisierungen verfügbar"
 
-#: ../dnf/base.py:1991
+#: ../dnf/base.py:2004
 msgid "No security updates needed for \"{}\", but {} update available"
 msgstr ""
+"Keine sicherheitsrelevanten Aktualisierungen verfügbar für »{}«, aber {} "
+"Aktualisierung verfügbar"
 
-#: ../dnf/base.py:1993
+#: ../dnf/base.py:2006
 msgid "No security updates needed for \"{}\", but {} updates available"
 msgstr ""
+"Keine sicherheitsrelevanten Aktualisierungen verfügbar für »{}«, aber {} "
+"Aktualisierungen verfügbar"
 
-#: ../dnf/base.py:2032
+#: ../dnf/base.py:2045
 #, python-format
 msgid "Failing package is: %s"
 msgstr "Fehlgeschlagenes Paket ist: %s"
 
-#: ../dnf/base.py:2033
+#: ../dnf/base.py:2046
 #, python-format
 msgid "GPG Keys are configured as: %s"
 msgstr "GPG-Schlüssel sind eingerichtet als: %s"
 
-#: ../dnf/base.py:2044
+#: ../dnf/base.py:2057
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "GPG-Schlüssel unter %s (0x%s) ist bereits installiert"
 
-#: ../dnf/base.py:2078
+#: ../dnf/base.py:2091
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Schlüssel-Import fehlgeschlagen (Code %d)"
 
-#: ../dnf/base.py:2080
+#: ../dnf/base.py:2093
 msgid "Key imported successfully"
 msgstr "Schlüssel erfolgreich importiert"
 
-#: ../dnf/base.py:2084
+#: ../dnf/base.py:2097
 msgid "Didn't install any keys"
 msgstr "Es wurden keine Schlüssel installiert"
 
-#: ../dnf/base.py:2087
+#: ../dnf/base.py:2100
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
@@ -2946,16 +2953,101 @@ msgstr ""
 "Die aufgelisteten GPG-Schlüssel für die »%s«-Paketquelle sind bereits installiert, aber sie sind nicht korrekt für dieses Paket.\n"
 "Stellen Sie sicher, dass die korrekten Schlüssel-URLs für diese Paketquelle konfiguriert sind."
 
-#: ../dnf/base.py:2097
+#: ../dnf/base.py:2110
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Importieren der Schlüssel hat nicht geholfen, falsche Schlüssel?"
 
-#: ../dnf/base.py:2138
+#: ../dnf/base.py:2151
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr "Paket %s ist bereits installiert, wird übersprungen."
 
-#: ../dnf/transaction.py:222
+#: ../dnf/plugin.py:150
 #, python-format
-msgid "Will not install a source rpm package (%s)."
-msgstr "Ein Source-RPM-Paket wird nicht installiert (%s)."
+msgid "Failed loading plugin: %s"
+msgstr "Fehler beim Laden des Plugins: %s"
+
+#: ../dnf/repo.py:105
+#, python-format
+msgid "no matching payload factory for %s"
+msgstr "Kein passender Payload-Faktor für %s"
+
+#: ../dnf/repo.py:131
+msgid "Already downloaded"
+msgstr "Bereits heruntergeladen"
+
+#. pinging mirrors, this might take a while
+#: ../dnf/repo.py:463
+#, python-format
+msgid "determining the fastest mirror (%d hosts).. "
+msgstr "Den schnellsten Spiegel-Server bestimmen (%d Hosts)"
+
+#: ../dnf/repo.py:711
+#, python-format
+msgid "Cannot find a valid baseurl for repo: %s"
+msgstr "Keine gültige baseurl gefunden für Paketquelle: %s"
+
+#: ../dnf/repo.py:804
+#, python-format
+msgid "reviving: repo '%s' skipped, no metalink."
+msgstr "Widerbeleben: Paketquelle '%s' übersprungen, kein Metalink"
+
+#: ../dnf/repo.py:810
+#, python-format
+msgid "reviving: repo '%s' skipped, no usable hash."
+msgstr ""
+
+#: ../dnf/repo.py:821
+#, python-format
+msgid "reviving: failed for '%s', mismatched %s sum."
+msgstr "Wiederbeleben: Fehler bei '%s', nicht passende %s Summe."
+
+#: ../dnf/repo.py:824
+#, python-format
+msgid "reviving: '%s' can be revived - metalink checksums match."
+msgstr ""
+"Wiederbeleben: '%s' kann wiederbelebt werden - Metalink Prüfsumme gefunden."
+
+#: ../dnf/repo.py:837
+#, python-format
+msgid "reviving: failed for '%s', mismatched repomd."
+msgstr "Wiederbeleben: Fehler bei '%s', nicht übereinstimmende repomd"
+
+#: ../dnf/repo.py:839
+#, python-format
+msgid "reviving: '%s' can be revived - repomd matches."
+msgstr ""
+
+#: ../dnf/repo.py:894
+#, python-format
+msgid "repo: using cache for: %s"
+msgstr ""
+
+#: ../dnf/repo.py:897
+#, python-format
+msgid "Cache-only enabled but no cache for '%s'"
+msgstr ""
+
+#: ../dnf/repo.py:908
+#, python-format
+msgid "repo: downloading from remote: %s, %s"
+msgstr ""
+
+#: ../dnf/repo.py:919
+#, python-format
+msgid "Cannot download '%s': %s."
+msgstr "Kann nicht herunterladen '%s': %s."
+
+#: ../dnf/repo.py:921
+#, python-format
+msgid "Failed to synchronize cache for repo '%s'"
+msgstr "Zwischenspeicher für Paketquelle '%s'"
+
+#: ../dnf/repo.py:963
+#, python-format
+msgid "Repository %s has no mirror or baseurl set."
+msgstr ""
+
+#: ../dnf/repo.py:966
+msgid "Repository '{}' has unsupported type: 'type={}', skipping."
+msgstr ""
