@@ -1990,5 +1990,33 @@
     [
         1298717, 
         "Translation missing, when package already  downloaded."
+    ], 
+    [
+        1302935, 
+        "Untranslatable element in the header"
+    ], 
+    [
+        1248684, 
+        "RFE: add exclude and cost properties to dnf.repo.Repo API"
+    ], 
+    [
+        1441636, 
+        "--installroot against non-existent rpm database no longer works"
+    ], 
+    [
+        1438438, 
+        "AssertionError from DNF"
+    ], 
+    [
+        1256313, 
+        "DNF should download packages specified by URL into the cache directory"
+    ], 
+    [
+        1161950, 
+        "[visual] output and progress bar not visible during package downloads specified by remote url"
+    ], 
+    [
+        1421244, 
+        "DNF keeps packages with broken scriptlets installed, although it claims they were removed."
     ]
 ]
