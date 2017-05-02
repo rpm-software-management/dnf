@@ -331,6 +331,43 @@ popd
 %endif
 
 %changelog
+* Tue May 02 2017 Jaroslav Mracek <jmracek@redhat.com> 2.4.0-1
+- po: Update translations (Igor Gnatenko)
+- po: Update translations (Igor Gnatenko)
+- introduce '--enableplugin' option (Martin Hatina)
+- Improve detection of file patterns (Jaroslav Mracek)
+- Add method _get_nevra_solution() for subject (Jaroslav Mracek)
+- Do not add "*" into query filter in _nevra_to_filters() (Jaroslav Mracek)
+- Remove usage of nevra_possibilities_real() (Jaroslav Mracek)
+- Increase performance for downgrade_to() (Jaroslav Mracek)
+- Add additional keys for get_best_query() (Jaroslav Mracek)
+- Increase performance for get_best_selector() (Jaroslav Mracek)
+- Increase performance for get_best_query() (Jaroslav Mracek)
+- Fix "Package" text translation (RhBug:1302935) (Jaroslav Rohel)
+- Create a warning if releasever is None (Jaroslav Mracek)
+- Adds cost, excludepkgs, and includepkgs to Doc (RhBug:1248684) (Jaroslav
+  Mracek)
+- Change auto-detection of releasever in empty installroot (Jaroslav Mracek)
+- Do not load system repo for makecache command (RhBug:1441636) (Jaroslav
+  Mracek)
+- Do not raise assertion if group inst and rmv pkgs (RhBug:1438438) (Jaroslav
+  Mracek)
+- yum layer using python3 (Martin Hatina)
+- Filter url protocols for baseurl in Package.remote_location (Jaroslav Mracek)
+- Add armv5tl to arm basearch (Neal Gompa)
+- Setup additional parameters for handler for remote packages (Jaroslav Mracek)
+- Use same method for user/password setting of every librepo.handle (Jaroslav
+  Mracek)
+- Fix PEP8 violations and remove unused import (Jaroslav Mracek)
+- Handle unknown file size in download progress (Jaroslav Mracek)
+- Allow to delete cashed files from command line by clean command (Jaroslav
+  Mracek)
+- Save command line packages into chachedir (RhBug:1256313) (Jaroslav Mracek)
+- Add progress bar for download of commandline pkgs (RhBug:1161950) (Jaroslav
+  Mracek)
+- Fix minor typo Closes: #781 Approved by: ignatenkobrain (Yuri Chornoivan)
+- Mark unremoved packages as failed (RhBug:1421244) (Jaroslav Mracek)
+
 * Mon Apr 10 2017 Jaroslav Mracek <jmracek@redhat.com> 2.3.0-1
 - update release notes (Jaroslav Mracek)
 - po: Update translations (Igor Gnatenko)
