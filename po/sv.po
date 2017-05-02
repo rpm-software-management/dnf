@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-04-28 12:19+0200\n"
-"PO-Revision-Date: 2017-04-10 03:21-0400\n"
+"PO-Revision-Date: 2017-04-28 04:21-0400\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/dnf/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -117,7 +117,7 @@ msgstr "{} har ett saknat beroende på {}"
 
 #: ../dnf/cli/commands/check.py:102
 msgid "{} is a duplicate with {}"
-msgstr "{} är en dublett av {}"
+msgstr "{} är en dubblett av {}"
 
 #: ../dnf/cli/commands/check.py:113
 msgid "{} is obsoleted by {}"
@@ -298,7 +298,7 @@ msgstr ""
 #: ../dnf/cli/commands/mark.py:47
 #, python-format
 msgid "%s marked as user installed."
-msgstr "%s markerade som användarinstallerad."
+msgstr "%s markerad som användarinstallerad."
 
 #: ../dnf/cli/commands/mark.py:52
 #, python-format
@@ -454,7 +454,7 @@ msgstr "Förrådsmetalänk : "
 
 #: ../dnf/cli/commands/repolist.py:211
 msgid "  Updated    : "
-msgstr "  Uppdaterat    :"
+msgstr "  Uppdaterat    : "
 
 #: ../dnf/cli/commands/repolist.py:213
 msgid "Repo-mirrors : "
@@ -546,7 +546,7 @@ msgstr "Specifikationen kommer att installeras"
 
 #: ../dnf/cli/commands/upgrade.py:38
 msgid "upgrade a package or packages on your system"
-msgstr "uppgrader ett eller flera paket på ditt system"
+msgstr "uppgradera ett eller flera paket på ditt system"
 
 #: ../dnf/cli/commands/upgrade.py:42
 msgid "Package to upgrade"
@@ -687,7 +687,7 @@ msgstr "NÅGON_STRÄNG"
 
 #: ../dnf/cli/commands/__init__.py:251
 msgid "check for available package upgrades"
-msgstr "undersökt tillgängliga paketuppgraderingar"
+msgstr "undersök tillgängliga paketuppgraderingar"
 
 #: ../dnf/cli/commands/__init__.py:384 ../dnf/cli/commands/__init__.py:437
 #: ../dnf/cli/commands/__init__.py:493
@@ -773,7 +773,7 @@ msgstr "Skript att köra i ett DNF-skal"
 
 #: ../dnf/cli/commands/shell.py:130
 msgid "Unsupported key value."
-msgstr "Ej stött nyckelvärde"
+msgstr "Ej stött nyckelvärde."
 
 #: ../dnf/cli/commands/shell.py:146
 #, python-format
@@ -792,7 +792,7 @@ msgstr ""
 "  arg: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,\n"
 "        repo_id.gpgcheck, repo_id.exclude\n"
 "    Om inget värde anges skrivs det nuvarande värdet.\n"
-"    Om ät värde anges sätts detta värde."
+"    Om ett värde anges sätts detta värde."
 
 #: ../dnf/cli/commands/shell.py:169
 msgid ""
@@ -812,7 +812,7 @@ msgstr ""
 "{} arg [flagga]\n"
 "  list: listar förråd och deras status. flagga = [all | id | glob]\n"
 "  enable: aktivera förråd. flagga = förråds-id\n"
-"  disable: avaktivera förröd. flagga = förråds-id"
+"  disable: avaktivera förråd. flagga = förråds-id"
 
 #: ../dnf/cli/commands/shell.py:179
 msgid ""
@@ -904,7 +904,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/repoquery.py:108
 msgid "Query all versions of packages (default)"
-msgstr "Fråga alla verisoner av paket (standard)"
+msgstr "Fråga alla versioner av paket (standard)"
 
 #: ../dnf/cli/commands/repoquery.py:110
 msgid "show only results from this ARCH"
@@ -1135,7 +1135,7 @@ msgid ""
 "  For the given packages print a tree of the packages."
 msgstr ""
 "Ingen flagga angiven\n"
-"användning: dnf repoquery [--whatrequires|--requires|--conflicts|--obsoletes|--enhances|--suggest|--provides|--suplements|--recommends] [nyckel] [--tree]\n"
+"användning: dnf repoquery [--whatrequires|--requires|--conflicts|--obsoletes|--enhances|--suggest|--provides|--supplements|--recommends] [nyckel] [--tree]\n"
 "\n"
 "beskrivning:\n"
 "  För det angivna paketen, skriv ett träd över paketen."
@@ -1166,7 +1166,7 @@ msgstr "Viktig/säk."
 
 #: ../dnf/cli/commands/updateinfo.py:54
 msgid "Moderate/Sec."
-msgstr "MedelMo/säk."
+msgstr "Medel/säk."
 
 #: ../dnf/cli/commands/updateinfo.py:55
 msgid "Low/Sec."
@@ -1182,7 +1182,7 @@ msgstr "visa bulletiner om paket"
 
 #: ../dnf/cli/commands/updateinfo.py:136
 msgid "show summary of advisories"
-msgstr ""
+msgstr "visa en sammanfattning av bulletiner"
 
 #: ../dnf/cli/commands/updateinfo.py:138
 msgid "show list of advisories"
@@ -1501,6 +1501,8 @@ msgid ""
 "Unable to detect release version (use '--releasever' to specify release "
 "version)"
 msgstr ""
+"Kan inte avgöra utgåveversionen (använd ”--releasever” för att ange "
+"utgåveversion)"
 
 #: ../dnf/cli/cli.py:947
 #, python-format
@@ -1551,7 +1553,7 @@ msgstr "inaktivera alla insticksmoduler"
 
 #: ../dnf/cli/option_parser.py:179
 msgid "enable plugins by name"
-msgstr ""
+msgstr "aktivera insticksmoduler efter namn"
 
 #: ../dnf/cli/option_parser.py:183
 msgid "disable plugins by name"
@@ -1599,7 +1601,7 @@ msgstr "skriver detaljerade upplösningsresultat i filer"
 
 #: ../dnf/cli/option_parser.py:222
 msgid "show duplicates, in repos, in list/search commands"
-msgstr "visa dubletter, i förråd, i list-/search-kommandon"
+msgstr "visa dubbletter, i förråd, i list-/search-kommandon"
 
 #: ../dnf/cli/option_parser.py:225
 msgid "error output level"
@@ -1704,7 +1706,7 @@ msgstr ""
 #: ../dnf/cli/option_parser.py:309
 msgid "Include security relevant packages matching the severity, in updates"
 msgstr ""
-"Inkludera paket relevanta för säkerhet som matshar allvarlighetsgraden, i "
+"Inkludera paket relevanta för säkerhet som matchar allvarlighetsgraden, i "
 "uppdateringar"
 
 #: ../dnf/cli/option_parser.py:344
@@ -1737,7 +1739,7 @@ msgstr "Arkitektur"
 
 #: ../dnf/cli/output.py:495 ../dnf/cli/output.py:1090
 msgid "Size"
-msgstr "Storlek"
+msgstr "Storlk"
 
 #: ../dnf/cli/output.py:496
 msgid "Source"
@@ -2193,7 +2195,7 @@ msgstr "(%u dagar)"
 
 #: ../dnf/cli/output.py:1645
 msgid "End time       :"
-msgstr "Sluttid        : "
+msgstr "Sluttid        :"
 
 #: ../dnf/cli/output.py:1648 ../dnf/cli/output.py:1650
 msgid "End rpmdb      :"
@@ -2292,7 +2294,7 @@ msgstr "---> Paketet %s.%s %s kommer vara en uppgradering"
 #: ../dnf/cli/output.py:1911
 #, python-format
 msgid "---> Package %s.%s %s will be erased"
-msgstr "---> Paketet %s.%s %s kommer at tas bortwill be erased"
+msgstr "---> Paketet %s.%s %s kommer att tas bort"
 
 #: ../dnf/cli/output.py:1913
 #, python-format
@@ -2710,7 +2712,7 @@ msgstr "Felsammanfattning"
 
 #: ../dnf/base.py:829
 msgid "Errors occurred during transaction."
-msgstr ""
+msgstr "Fel inträffade under transaktionen."
 
 #: ../dnf/base.py:833
 #, python-format
