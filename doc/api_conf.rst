@@ -57,7 +57,7 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
   .. attribute:: deltarpm_percentage
 
     Integer option. When the relative size of delta vs pkg is larger than this, delta is not used. Default value is 75 (%).
-    Use `0' to turn off delta rpm processing. Local repositories (with file:// baseurl) have delta rpms always turned off.
+    Use `0` to turn off delta rpm processing. Local repositories (with file:// baseurl) have delta rpms always turned off.
 
   .. method:: exclude(pkgs)
 
@@ -156,7 +156,7 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
   .. attribute:: retries
 
-    Number of times any attempt to retrieve a file should retry before returning an error. Setting this to `0' makes it try forever. Defaults to `10'.
+    Number of times any attempt to retrieve a file should retry before returning an error. Setting this to `0` makes it try forever. Defaults to `10`.
 
   .. attribute:: sslcacert
 
