@@ -25,7 +25,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-04-28 12:19+0200\n"
-"PO-Revision-Date: 2017-04-08 07:18-0400\n"
+"PO-Revision-Date: 2017-04-28 04:04-0400\n"
 "Last-Translator: Máximo Castañeda Riloba <mcrcctm@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/dnf/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -1280,7 +1280,7 @@ msgstr "muestra avisos acerca de paquetes"
 
 #: ../dnf/cli/commands/updateinfo.py:136
 msgid "show summary of advisories"
-msgstr ""
+msgstr "muestra resumen de avisos"
 
 #: ../dnf/cli/commands/updateinfo.py:138
 msgid "show list of advisories"
@@ -1600,6 +1600,8 @@ msgid ""
 "Unable to detect release version (use '--releasever' to specify release "
 "version)"
 msgstr ""
+"No se pudo detectar la versión de lanzamiento (use '--releasever' para "
+"especificarla)"
 
 #: ../dnf/cli/cli.py:947
 #, python-format
@@ -1646,15 +1648,15 @@ msgstr "no instalar documentación"
 
 #: ../dnf/cli/option_parser.py:176
 msgid "disable all plugins"
-msgstr "deshabilitar todos los complementos"
+msgstr "desactivar todos los complementos"
 
 #: ../dnf/cli/option_parser.py:179
 msgid "enable plugins by name"
-msgstr ""
+msgstr "activar complementos por nombre"
 
 #: ../dnf/cli/option_parser.py:183
 msgid "disable plugins by name"
-msgstr "deshabilitar complementos de acuerdo a su nombre"
+msgstr "desactivar complementos de acuerdo a su nombre"
 
 #: ../dnf/cli/option_parser.py:186
 msgid "override the value of $releasever in config and repo files"
@@ -1753,7 +1755,7 @@ msgstr "nombre y ruta a un repositorio adicional, se puede usar varias veces"
 
 #: ../dnf/cli/option_parser.py:267
 msgid "disable gpg signature checking"
-msgstr "deshabilitar la verificación de firmas GPG"
+msgstr "desactivar la verificación de firmas GPG"
 
 #: ../dnf/cli/option_parser.py:269
 msgid "control whether color is used"
@@ -2737,7 +2739,7 @@ msgstr "%s: usando metadatos de %s."
 #: ../dnf/base.py:327
 #, python-format
 msgid "%s, disabling."
-msgstr "%s, deshabilitando."
+msgstr "%s, inhabilitando."
 
 #: ../dnf/base.py:330
 #, python-format
@@ -2816,7 +2818,7 @@ msgstr "Resumen de errores"
 
 #: ../dnf/base.py:829
 msgid "Errors occurred during transaction."
-msgstr ""
+msgstr "Se produjo algún error durante la transacción."
 
 #: ../dnf/base.py:833
 #, python-format

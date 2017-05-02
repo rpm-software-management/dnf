@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-04-28 12:19+0200\n"
-"PO-Revision-Date: 2017-04-07 01:39-0400\n"
+"PO-Revision-Date: 2017-04-28 07:37-0400\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/dnf/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -1193,7 +1193,7 @@ msgstr "wyświetla doradcze informacje o pakietach"
 
 #: ../dnf/cli/commands/updateinfo.py:136
 msgid "show summary of advisories"
-msgstr ""
+msgstr "wyświetla podsumowanie informacji doradczych"
 
 #: ../dnf/cli/commands/updateinfo.py:138
 msgid "show list of advisories"
@@ -1511,6 +1511,8 @@ msgid ""
 "Unable to detect release version (use '--releasever' to specify release "
 "version)"
 msgstr ""
+"Nie można wykryć wersji wydania (należy użyć „--releasever”, aby podać "
+"wersję wydania)"
 
 #: ../dnf/cli/cli.py:947
 #, python-format
@@ -1561,7 +1563,7 @@ msgstr "wyłącza wszystkie wtyczki"
 
 #: ../dnf/cli/option_parser.py:179
 msgid "enable plugins by name"
-msgstr ""
+msgstr "włącza wtyczki po nazwie"
 
 #: ../dnf/cli/option_parser.py:183
 msgid "disable plugins by name"
@@ -2738,7 +2740,7 @@ msgstr "Podsumowanie błędów"
 
 #: ../dnf/base.py:829
 msgid "Errors occurred during transaction."
-msgstr ""
+msgstr "Wystąpiły błędy podczas transakcji."
 
 #: ../dnf/base.py:833
 #, python-format
