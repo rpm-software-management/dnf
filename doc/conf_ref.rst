@@ -361,7 +361,7 @@ configuration.
     :ref:`integer <integer-label>`
 
     When the relative size of delta vs pkg is larger than this, delta is not used.  Default value is 75
-    (Deltas must be at least 25% smaller than the pkg).  Use `0' to turn off delta rpm processing. Local repositories (with
+    (Deltas must be at least 25% smaller than the pkg).  Use `0` to turn off delta rpm processing. Local repositories (with
     file:// baseurl) have delta rpms turned off by default.
 
 ``enablegroups``
@@ -455,7 +455,7 @@ configuration.
 ``retries``
     :ref:`integer <integer-label>`
 
-    Set the number of times any attempt to retrieve a file should retry before returning an error. Setting this to `0' makes dnf try forever. Default is `10'.
+    Set the number of times any attempt to retrieve a file should retry before returning an error. Setting this to `0` makes dnf try forever. Default is `10`.
 
 .. _sslcacert-label:
 

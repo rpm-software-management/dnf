@@ -88,7 +88,7 @@ When packaging your custom command, we recommend you to define a virtual provide
 
     Command constructor which can be overriden. The constructor is called during
     CLI configure phase when one of the command's aliases is parsed from `dnf`
-    commandline. `cli` is an instance of :class:`dnf.cli.Cli.
+    commandline. `cli` is an instance of :class:`dnf.cli.Cli`.
 
   .. method:: configure()
 
