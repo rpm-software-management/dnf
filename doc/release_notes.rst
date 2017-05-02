@@ -22,6 +22,32 @@
 .. contents::
 
 ===================
+2.4.0 Release Notes
+===================
+
+API additions in 2.4.0:
+
+* :meth:`dnf.subject.Subject.get_best_query` can use two additional key words: ``with_nevra``, and ``with_filenames``.
+* Added description of :attr:`dnf.repo.Repo.cost`
+* Added description of :attr:`dnf.repo.Repo.excludepkgs`
+* Added description of :attr:`dnf.repo.Repo.includepkgs`
+
+DNF command additions in 2.4.0:
+
+* ``--enableplugin=<plugin names>`` :doc:`command line argument <command_ref>` enable the listed plugins specified by names or globs.
+* ``--releasever=<release>`` :doc:`command line argument <command_ref>` now autodetect releasever in installroot from host if ``/`` value is used as ``<release>``.
+
+Bugs fixed in 2.4.0:
+
+* :rhbug:`1302935`
+* :rhbug:`1248684`
+* :rhbug:`1441636`
+* :rhbug:`1438438`
+* :rhbug:`1256313`
+* :rhbug:`1161950`
+* :rhbug:`1421244`
+
+===================
 2.3.0 Release Notes
 ===================
 
