@@ -823,7 +823,8 @@ resulting packages matching the specification. All packages are considered if no
 
 ``--latest-limit <number>``
     Limit the resulting set to <number> of latest packages for every package name and architecture.
-    If <number> is negative skip <number> of latest packages.
+    If <number> is negative skip <number> of latest packages. If negative number is used use syntax
+    ``--latest-limit=<number>``.
 
 ``--recent``
     Limit the resulting set to packages that were recently edited.
