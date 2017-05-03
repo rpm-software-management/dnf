@@ -927,7 +927,7 @@ are displayed in the standard NEVRA notation.
 ``--tree``
     Display a recursive tree of packages with capabilities specified by one of the following supplementary options:
     ``--whatrequires``, ``--requires``, ``--conflicts``, ``--enhances``, ``--suggests``, ``--provides``,
-    ``--suplements``, ``--recommends``.
+    ``--supplements``, ``--recommends``.
 
 ``--deplist``
     Produces a list of all dependencies and what packages provide those
