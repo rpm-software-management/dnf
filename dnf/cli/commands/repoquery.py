@@ -398,7 +398,7 @@ class RepoQueryCommand(commands.Command):
                 raise dnf.exceptions.Error(
                     _("No switch specified\nusage: dnf repoquery [--whatrequires|"
                         "--requires|--conflicts|--obsoletes|--enhances|--suggest|"
-                        "--provides|--suplements|--recommends] [key] [--tree]\n\n"
+                        "--provides|--supplements|--recommends] [key] [--tree]\n\n"
                         "description:\n  For the given packages print a tree of the packages."))
             self.tree_seed(q, orquery, self.opts)
             return
