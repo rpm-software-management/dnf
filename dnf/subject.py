@@ -128,9 +128,11 @@ class Subject(object):
         solution = self._get_nevra_solution(sack, forms=forms)
         if solution['query']:
             q = solution['query']
+            q = q.filter(arch__neq="src")
             if obsoletes and solution['nevra'] and solution['nevra']._has_just_name():
                 q = q.union(sack.query().filter(obsoletes=q))
-            return sltr.set(pkg=q)
+            if q:
+                return sltr.set(pkg=q)
 
         return sltr
 
