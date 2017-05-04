@@ -201,11 +201,10 @@ class RepoQueryCommand(commands.Command):
             'suggests':  _('Display capabilities that the package suggests.'),
             'supplements':  _('Display capabilities that the package can supplement.')
         }
-        for arg in ('conflicts', 'enhances', 'provides', 'recommends',
-                    'requires', 'requires-pre', 'suggests', 'supplements'):
+        for arg, help_msg in help_msgs.items():
             name = '--%s' % arg
             package_atribute.add_argument(name, dest='packageatr', action='store_const',
-                                          const=arg, help=help_msgs[arg])
+                                          const=arg, help=help_msg)
         parser.add_argument('--available', action="store_true", help=_('Display only available packages.'))
 
         help_list = {
@@ -216,10 +215,10 @@ class RepoQueryCommand(commands.Command):
             'userinstalled': _('Display only packages that were installed by user.')
         }
         list_group = parser.add_mutually_exclusive_group()
-        for list_arg in ('installed', 'extras', 'upgrades', 'unneeded', 'userinstalled'):
+        for list_arg, help_arg in help_list.items():
             switch = '--%s' % list_arg
             list_group.add_argument(switch, dest='list', action='store_const',
-                                    const=list_arg, help=help_list[list_arg])
+                                    const=list_arg, help=help_arg)
 
         # make --autoremove hidden compatibility alias for --unneeded
         list_group.add_argument(
