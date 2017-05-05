@@ -1,7 +1,7 @@
 # read.py
 # Reading configuration from files.
 #
-# Copyright (C) 2014-2016 Red Hat, Inc.
+# Copyright (C) 2014-2017 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -110,3 +110,61 @@ class RepoReader(object):
             thisrepo._configure_from_options(self.opts)
 
             yield thisrepo
+
+
+class ModuleReader(object):
+    def __init__(self, module_dir):
+        self.module_dir = module_dir
+
+    def __iter__(self):
+        # read .module files from directories specified by conf.modulesdir
+        for module_path in sorted(glob.glob('%s/*.module' % self.module_dir)):
+            try:
+                for module_conf in self._get_module_configs(module_path):
+                    yield module_conf
+            except dnf.exceptions.ConfigError:
+                # TODO: handle properly; broken module conf must be considered as an error
+                raise
+                # logger.warning(_("Warning: failed loading '%s', skipping."), module_path)
+
+    def _build_module(self, parser, id_, module_path):
+        """Build a module using the parsed data."""
+
+        module = dnf.conf.ModuleConf(section=id_, parser=parser)
+        try:
+            module._populate(parser, id_, module_path)
+        except ValueError as e:
+            msg = _("Module '%s': Error parsing config: %s" % (id_, e))
+            raise dnf.exceptions.ConfigError(msg)
+
+        # TODO: unset module.name?
+        module._cfg = parser
+
+        return module
+
+    def _get_module_configs(self, module_path):
+        """Parse and yield all module configs from a config file."""
+
+        parser = dnf.conf.ConfigParser()
+        try:
+            confpp_obj = dnf.conf.parser.ConfigPreProcessor(module_path)
+            parser.readfp(confpp_obj)
+        except dnf.conf.ParsingError as e:
+            msg = str(e)
+            raise dnf.exceptions.ConfigError(msg)
+
+        # Check sections in the .module file that was just slurped up
+        for section in parser.sections():
+
+            if section == 'main':
+                continue
+
+            try:
+                module = self._build_module(parser, section, module_path)
+            except (dnf.exceptions.RepoError, dnf.exceptions.ConfigError) as e:
+                logger.warning(e)
+                continue
+            else:
+                module.config_file = module_path
+
+            yield module
