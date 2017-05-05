@@ -529,10 +529,12 @@ class BaseConfig(object):
                 value = parser.get(section, name)
                 if not value or value == 'None':
                     value = None
+
                 opt = self._get_option(name)
                 if opt and not opt._is_runtimeonly():
                     try:
-                        opt._set(value, priority)
+                        if value is not None:
+                            opt._set(value, priority)
                     except dnf.exceptions.ConfigError as e:
                         logger.debug(_('Unknown configuration value: '
                                        '%s=%s in %s; %s'), ucd(name),
@@ -659,6 +661,7 @@ class MainConf(BaseConfig):
         self._add_option('reposdir', ListOption(['/etc/yum.repos.d',
                                                  '/etc/yum/repos.d',
                                                  '/etc/distro.repos.d'])) # :api
+        self._add_option('modulesdir', PathOption('/etc/dnf/modules.d', abspath=True))
 
         self._add_option('debug_solver', BoolOption(False))
 
@@ -1046,3 +1049,26 @@ class RepoConf(BaseConfig):
                 else:
                     msg = "Repo %s did not have a %s attr. before setopt"
                     logger.warning(msg, self._section, name)
+
+
+class ModuleConf(BaseConfig):
+    """Option definitions for module INI file sections."""
+
+    def __init__(self, section=None, parser=None):
+        super(ModuleConf, self).__init__(section, parser)
+        # module name, stream and installed version
+        self._add_option('name', Option(default=self._section))
+        self._add_option('stream', Option())
+        self._add_option('version', IntOption())
+        # installed profiles
+        self._add_option('profiles', ListOption([]))
+        # enable/disable a module
+        self._add_option('enabled', BoolOption(True))
+        # lock module on installed version, don't upgrade or downgrade
+        self._add_option('locked', BoolOption(False))
+
+    def _write(self, fileobj):
+        if not self._parser.has_section(self._section):
+            self._parser.add_section(self._section)
+        super(ModuleConf, self)._write(fileobj, always=["stream", "version", "profiles",
+                                                        "enabled", "locked"])

@@ -48,7 +48,7 @@ from dnf.conf.config import SecondsOption, BoolOption, FloatOption
 from dnf.conf.config import SelectionOption, CaselessSelectionOption
 from dnf.conf.config import BytesOption, ThrottleOption
 
-from dnf.conf.config import BaseConfig, MainConf, RepoConf
+from dnf.conf.config import BaseConfig, MainConf, RepoConf, ModuleConf
 
 from dnf.conf.config import ParsingError, ConfigParser
 
