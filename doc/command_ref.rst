@@ -1009,7 +1009,7 @@ Display duplicated packages::
 
 Remove older versions of duplicated packages (an equivalent of yum's `package-cleanup --cleandups`)::
 
-    dnf remove $(dnf repoquery --duplicates --latest-limit -1 -q)
+    dnf remove --duplicates
 
 
 .. _repository-packages_command-label:
