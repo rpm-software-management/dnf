@@ -1485,7 +1485,7 @@ Transaction Summary
                     lmark = '>'
                 print(fmt % (old.tid, name, tm, uiacts, num), "%s%s" % (lmark, rmark))
 
-    def historyInfoCmd(self, extcmds, pats=[]):
+    def historyInfoCmd(self, extcmds, pats=[], mtids=set()):
         """Output information about a transaction in history
 
         :param extcmds: list of extra command line arguments
@@ -1496,33 +1496,32 @@ Transaction Summary
             0 = we're done, exit
             1 = we've errored, exit with error string
         """
-        tids = extcmds
-        mtids = set()
+        tids = set(extcmds)
         old = self.history.last()
         if old is None:
             logger.critical(_('No transactions'))
             return 1, ['Failed history info']
 
+        lasttid = old.tid
+        lastdbv = old.end_rpmdbversion
+
         if not tids and len(extcmds) < 2:
             old = self.history.last(complete_transactions_only=False)
             if old is not None:
                 tids.add(old.tid)
-                utids.add(old.tid)
 
         if not tids:
             logger.critical(_('No transaction ID, or package, given'))
             return 1, ['Failed history info']
 
-        lastdbv = self.history.last()
-        if lastdbv is not None:
-            lasttid = lastdbv.tid
-            lastdbv = lastdbv.end_rpmdbversion
-
-        done = False
         bmtid, emtid = -1, -1
         mobj = None
+        done = False
+
         if mtids:
-            bmtid, emtid = mtids.pop(0)
+            mtids = sorted(mtids)
+            bmtid, emtid = mtids.pop()
+
         for tid in self.history.old(tids):
             if lastdbv is not None and tid.tid == lasttid:
                 #  If this is the last transaction, is good and it doesn't
@@ -1532,11 +1531,14 @@ Transaction Summary
                     tid.altered_gt_rpmdb = True
             lastdbv = None
 
+            merged = False
+
             if tid.tid >= bmtid and tid.tid <= emtid:
                 if mobj is None:
                     mobj = dnf.yum.history.YumMergedHistoryTransaction(tid)
                 else:
                     mobj.merge(tid)
+                merged = True
             elif mobj is not None:
                 if done:
                     print("-" * 79)
@@ -1545,20 +1547,20 @@ Transaction Summary
                 self._historyInfoCmd(mobj)
                 mobj = None
                 if mtids:
-                    bmtid, emtid = mtids.pop(0)
+                    bmtid, emtid = mtids.pop()
                     if tid.tid >= bmtid and tid.tid <= emtid:
                         mobj = dnf.yum.history.YumMergedHistoryTransaction(tid)
+                        merged = True
 
-            if done:
-                print("-" * 79)
-            done = True
-
-            self._historyInfoCmd(tid, pats)
+            if not merged:
+                if done:
+                    print("-" * 79)
+                done = True
+                self._historyInfoCmd(tid, pats)
 
         if mobj is not None:
             if done:
                 print("-" * 79)
-
             self._historyInfoCmd(mobj)
 
     def _hpkg2from_repo(self, hpkg):
