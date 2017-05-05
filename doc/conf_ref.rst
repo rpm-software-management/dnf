@@ -146,7 +146,8 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     :ref:`integer <integer-label>`
 
     Number of :ref:`installonly packages <installonlypkgs-label>` allowed to be installed
-    concurrently. Defaults to 3.
+    concurrently. Defaults to 3. The minimal number of installonly packages is 2. Value 0 or 1 means
+    unlimited number of installonly packages.
 
 .. _keepcache-label:
 
