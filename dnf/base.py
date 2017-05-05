@@ -423,6 +423,7 @@ class Base(object):
                 self._goal = dnf.goal.Goal(self._sack)
             if self._group_persistor is not None:
                 self._group_persistor = self._activate_group_persistor()
+            self._comps_trans = dnf.comps.TransactionBunch()
 
     def _closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""
