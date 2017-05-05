@@ -896,7 +896,7 @@ class HistoryCommand(Command):
         pkgs = tuple(self.base.iter_userinstalled())
         return self.output.listPkgs(pkgs, 'Packages installed by user', 'nevra')
 
-    def _convert_tids(self):
+    def _convert_tids(self, merged=set()):
         """Convert commandline arguments to transaction ids"""
         def str2tid(s):
             if s.startswith('last'):
@@ -916,6 +916,7 @@ class HistoryCommand(Command):
                     tmp = btid
                     btid = etid
                     etid = tmp
+                merged.add((btid, etid))
                 tids.update(range(btid, etid + 1))
             else:
                 try:
@@ -928,12 +929,13 @@ class HistoryCommand(Command):
 
     def run(self):
         vcmd = self.opts.tid_action
-        extcmds = self._convert_tids()
+        merged = set()
+        extcmds = self._convert_tids(merged)
 
         if vcmd == 'list':
             ret = self.output.historyListCmd(extcmds)
         elif vcmd == 'info':
-            ret = self.output.historyInfoCmd(extcmds, self.opts.tid)
+            ret = self.output.historyInfoCmd(extcmds, self.opts.tid, merged)
         elif vcmd == 'undo':
             ret = self._hcmd_undo(extcmds)
         elif vcmd == 'redo':
