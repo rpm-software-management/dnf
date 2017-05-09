@@ -1,0 +1,26 @@
+data:
+  artifacts:
+    rpms: [kernel-3.10.0-514.src, glibc-2.17-157.src, filesystem-3.2-21.src, basesystem-10.0-7.src,
+      bash-4.2.46-21.src, systemd-219-30.src]
+  components:
+    rpms:
+      basesystem: {rationale: ''}
+      bash: {rationale: ''}
+      filesystem: {rationale: ''}
+      glibc: {rationale: ''}
+      kernel: {rationale: ''}
+      systemd: {rationale: ''}
+  description: Fake module
+  license:
+    module: [LGPLv2]
+  name: base-runtime
+  profiles:
+    default:
+      rpms: [kernel, glibc, systemd, bash]
+    minimal:
+      rpms: [glibc]
+  stream: rhel73
+  summary: Fake module
+  version: 1
+document: modulemd
+version: 1
