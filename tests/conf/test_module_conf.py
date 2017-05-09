@@ -32,7 +32,7 @@ class ModuleConfTest(unittest.TestCase):
 
     def setUp(self):
         self.dnf_conf = dnf.conf.Conf()
-        self.dnf_conf.modulesdir=[os.path.join(DIR, "etc/dnf/modules.d")]
+        self.dnf_conf.modulesdir=[os.path.join(DIR, "modules/etc/dnf/modules.d")]
         parser = dnf.conf.ConfigParser()
         self.conf = dnf.conf.ModuleConf(self.dnf_conf, section="base-runtime", parser=parser)
 
