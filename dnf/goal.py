@@ -65,7 +65,7 @@ class Goal(hawkey.Goal):
         for pkg in query.installed():
             yumdb_info = yumdb.get_package(pkg)
             reason = getattr(yumdb_info, 'reason', 'user')
-            if reason != 'dep':
+            if reason not in ('dep', 'weak'):
                 self.userinstalled(pkg)
 
     def best_run_diff(self):
