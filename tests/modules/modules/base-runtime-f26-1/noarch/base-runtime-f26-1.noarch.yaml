@@ -1,0 +1,22 @@
+data:
+  artifacts:
+    rpms: [basesystem-11-3.noarch, bash-doc-4.4.12-2.noarch, kernel-doc-4.11.0-1.noarch]
+  components:
+    rpms:
+      basesystem: {rationale: ''}
+      bash-doc: {rationale: ''}
+      kernel-doc: {rationale: ''}
+  description: Fake module
+  license:
+    module: [LGPLv2]
+  name: base-runtime
+  profiles:
+    default:
+      rpms: [kernel, glibc, systemd, bash]
+    minimal:
+      rpms: [glibc]
+  stream: f26
+  summary: Fake module
+  version: 1
+document: modulemd
+version: 1
