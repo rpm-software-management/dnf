@@ -1,0 +1,19 @@
+data:
+  artifacts:
+    rpms: [httpd-2.4.25-7.src, libnghttp2-1.21.1-1.src]
+  components:
+    rpms:
+      httpd: {rationale: ''}
+      libnghttp2: {rationale: ''}
+  description: Fake module
+  license:
+    module: [LGPLv2]
+  name: httpd
+  profiles:
+    default:
+      rpms: [httpd]
+  stream: '2.4'
+  summary: Fake module
+  version: 1
+document: modulemd
+version: 1

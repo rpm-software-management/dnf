@@ -1,0 +1,37 @@
+data:
+  artifacts:
+    rpms: [glibc-debuginfo-common-2.17-157.i686, basesystem-10.0-7.noarch, glibc-debuginfo-2.17-157.i686,
+      kernel-3.10.0-514.i686, systemd-219-30.i686, filesystem-3.2-21.i686, glibc-2.17-157.i686,
+      dummy-nscd-2.17-157.i686, bash-debuginfo-4.2.46-21.i686, bash-doc-4.2.46-21.noarch,
+      glibc-common-2.17-157.i686, bash-4.2.46-21.i686, kernel-headers-3.10.0-514.i686,
+      kernel-doc-3.10.0-514.noarch]
+  components:
+    rpms:
+      basesystem: {rationale: ''}
+      bash: {rationale: ''}
+      bash-debuginfo: {rationale: ''}
+      bash-doc: {rationale: ''}
+      dummy-nscd: {rationale: ''}
+      filesystem: {rationale: ''}
+      glibc: {rationale: ''}
+      glibc-common: {rationale: ''}
+      glibc-debuginfo: {rationale: ''}
+      glibc-debuginfo-common: {rationale: ''}
+      kernel: {rationale: ''}
+      kernel-doc: {rationale: ''}
+      kernel-headers: {rationale: ''}
+      systemd: {rationale: ''}
+  description: Fake module
+  license:
+    module: [LGPLv2]
+  name: base-runtime
+  profiles:
+    default:
+      rpms: [kernel, glibc, systemd, bash]
+    minimal:
+      rpms: [glibc]
+  stream: rhel73
+  summary: Fake module
+  version: 1
+document: modulemd
+version: 1
