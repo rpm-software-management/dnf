@@ -1,0 +1,1 @@
+../base-runtime-f26-1/basesystem.spec
