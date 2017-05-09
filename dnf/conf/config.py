@@ -1008,7 +1008,7 @@ class RepoConf(BaseConfig):
 class ModuleConf(BaseConfig):
     """Option definitions for module INI file sections."""
 
-    def __init__(self, parent, section=None, parser=None):
+    def __init__(self, section=None, parser=None):
         super(ModuleConf, self).__init__(section, parser)
         # module name, stream and installed version
         self._add_option('name', Option(default=self._section))
