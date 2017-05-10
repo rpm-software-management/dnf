@@ -886,7 +886,7 @@ class Repo(dnf.conf.RepoConf):
 
         """
         if self.metadata or self._try_cache():
-            if self.metadata_expire != -1 \
+            if self.metadata_expire < 0 \
                     and self._check_config_file_age \
                     and self.repofile \
                     and dnf.util.file_age(self.repofile) < self.metadata._age:
