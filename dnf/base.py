@@ -724,6 +724,7 @@ class Base(object):
             logger.info(_('Running transaction'))
             self._run_transaction(cb=cb)
         timer()
+        self._plugins.unload_removed_plugins(self.transaction)
         self._plugins.run_transaction()
         if self._group_persistor and self._trans_success:
             self._group_persistor.commit()
