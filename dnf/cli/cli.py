@@ -843,6 +843,11 @@ class Cli(object):
             e = '%s: %s' % (ucd(e.args[1]), repr(e.filename))
             logger.critical(_('Config error: %s'), e)
             sys.exit(1)
+        if opts.destdir is not None:
+            self.base.conf.destdir = opts.destdir
+            if not self.base.conf.downloadonly:
+                logger.critical(_('--destdir cannot be used without --downloadonly. Exiting.'))
+                sys.exit(1)
 
         if opts.sleeptime is not None:
             time.sleep(random.randrange(opts.sleeptime * 60))
