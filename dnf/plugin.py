@@ -30,6 +30,7 @@ import fnmatch
 import glob
 import importlib
 import iniparse.compat
+import inspect
 import logging
 import operator
 import os
@@ -129,6 +130,21 @@ class Plugins(object):
     def _unload(self):
         del sys.modules[DYNAMIC_PACKAGE]
 
+    def unload_removed_plugins(self, transaction):
+        erased = set([package.name for package in transaction.remove_set])
+        if not erased:
+            return
+        installed = set([package.name for package in transaction.install_set])
+        transaction_diff = erased - installed
+        if not transaction_diff:
+            return
+        files_erased = set()
+        for pkg in transaction.remove_set:
+            if pkg.name in transaction_diff:
+                files_erased.update(pkg.files)
+        for plugin in self.plugins[:]:
+            if inspect.getfile(plugin.__class__) in files_erased:
+                self.plugins.remove(plugin)
 
 def _plugin_classes():
     return Plugin.__subclasses__()
