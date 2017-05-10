@@ -277,6 +277,8 @@ class OptionParser(argparse.ArgumentParser):
         main_parser.add_argument("-6", dest="ip_resolve", default=None,
                                  help=_("resolve to IPv6 addresses only"),
                                  action="store_const", const='ipv6')
+        main_parser.add_argument("--destdir", dest="destdir", default=None,
+                                 help=_("set directory to copy packages to"))
         main_parser.add_argument("--downloadonly", dest="downloadonly",
                                  action="store_true", default=False,
                                  help=_("only download packages"))

@@ -768,7 +768,7 @@ class MainConf(BaseConfig):
                                                  'default': 'commands'}))
         self._add_option('upgrade_group_objects_upgrade',
                          BoolOption(True))  # :api
-
+        self._add_option('destdir', PathOption(None))
         # runtime only options
         self._add_option('downloadonly', BoolOption(False, runtimeonly=True))
 

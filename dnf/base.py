@@ -64,6 +64,7 @@ import operator
 import re
 import rpm
 import time
+import shutil
 
 logger = logging.getLogger("dnf")
 
@@ -1073,6 +1074,11 @@ class Base(object):
                         "(%d.1%% wasted)")
             percent = 100 - real / full * 100
             logger.info(msg, full / 1024 ** 2, real / 1024 ** 2, percent)
+
+        if self.conf.destdir:
+            dnf.util.ensure_dir(self.conf.destdir)
+            for pload in payloads:
+                shutil.copy2(pload.pkg.repo.pkgdir + "/" + os.path.basename(pload.pkg.location), self.conf.destdir)
 
     def add_remote_rpms(self, path_list, strict=True):
         # :api
