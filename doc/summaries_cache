@@ -2018,5 +2018,25 @@
     [
         1421244, 
         "DNF keeps packages with broken scriptlets installed, although it claims they were removed."
+    ], 
+    [
+        1446756, 
+        "Msgid bug, the flag \"supplements\" is misspelled in a help text"
+    ], 
+    [
+        1446432, 
+        "Minimal install option install full gnome desktop"
+    ], 
+    [
+        1446641, 
+        "dnf repoquery --duplicates --latest-limit -1 -q does not work"
+    ], 
+    [
+        1278124, 
+        "RFE: Add new option to repoquery - user-installed"
+    ], 
+    [
+        1301868, 
+        "dnf search with multiple matches shows repeated grouping"
     ]
 ]

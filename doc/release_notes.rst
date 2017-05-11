@@ -19,11 +19,21 @@
  DNF Release Notes
 ###################
 
-API additions in :
+===================
+2.4.1 Release Notes
+===================
 
-DNF command additions in :
+DNF command additions in 2.4.1:
 
 * ``dnf [options] repoquery --userinstalled`` limit the resulting set only to packages installed by user.
+
+Bugs fixed in 2.4.1:
+
+* :rhbug:`1446756`
+* :rhbug:`1446432`
+* :rhbug:`1446641`
+* :rhbug:`1278124`
+* :rhbug:`1301868`
 
 ===================
 2.4.0 Release Notes
