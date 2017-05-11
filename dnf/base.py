@@ -169,9 +169,15 @@ class Base(object):
                 self.sack.add_excludes(pkgs)
 
     def _setup_modules(self):
-        # TODO change iter_module to iter enabled repos + config option for module support
+        includes = {}
+
         self.repo_module_dict = RepoModuleDict(self)
         for repo in self.repos.iter_module():
+            includes.setdefault(repo.id, set())
+
+            if not repo.enabled:
+                continue
+
             loader = ModuleMetadataLoader(repo)
             module_metadata = loader.load()
             for data in module_metadata:
@@ -179,6 +185,31 @@ class Base(object):
                 self.repo_module_dict.add(module_version)
 
         self.repo_module_dict.read_all_modules()
+
+        for module in self.repo_module_dict.values():
+            try:
+                active_stream = self.repo_module_dict.active_stream(module.name)
+            except:
+                print("inactive, skipping: %s" % module.name)
+                # module available in repo, but not enabled (no local conf)
+                continue
+
+            for module_stream in module.values():
+                for module_version in module_stream.values():
+                    if module_stream.stream == active_stream:
+                        q = module_version.query(module_version.nevra())
+                        includes[module_version.repo.id].update(list(q))
+
+        for repo_id, pkgs in includes.items():
+            if pkgs:
+                # include only packages listed in modules
+                pkgs = self.sack.query().filter(pkg=pkgs)
+                self.sack.add_includes(pkgs, reponame=repo_id)
+            else:
+                # exclude all packages in a repo with enabled modules
+                # because the include list is empty
+                pkgs = self.sack.query().filter(reponame=repo_id)
+                self.sack.add_excludes(pkgs)
 
     def _store_persistent_data(self):
         if self._repo_persistor:

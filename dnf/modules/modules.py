@@ -41,7 +41,10 @@ class RepoModuleVersion(object):
         return self.module_metadata.version < other.module_metadata.version
 
     def nevra(self):
-        return self.module_metadata.artifacts.rpms
+        result = self.module_metadata.artifacts.rpms
+        # HACK: remove epoch to make filter(nevra=...) work
+        result = [i.replace("0:", "") for i in result]
+        return result
 
     def profile_rpms(self, profile):
         return self.module_metadata.profiles[profile].rpms
@@ -50,7 +53,7 @@ class RepoModuleVersion(object):
         base = self.parent.parent.parent.base
         query = base.sack.query()
         query = query.filter(nevra=nevra)
-        return query.run()
+        return query.apply()
 
     def profile_selectors(self, profile):
         sack = self.parent.parent.parent.base.sack
