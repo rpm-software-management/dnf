@@ -331,6 +331,22 @@ popd
 %endif
 
 %changelog
+* Thu May 11 2017 Jaroslav Mracek <jmracek@redhat.com> 2.4.1-1
+- bump version to 2.4.1 + update release notes (Jaroslav Mracek)
+- goal: do not mark weak dependencies as userinstalled (Igor Gnatenko)
+- fix typo in supplements (RhBug:1446756) (Igor Gnatenko)
+- Describe present behavior of installonly_limit conf option (Jaroslav Mracek)
+- Reset all transaction for groups if Base.reset() (RhBug:1446432) (Jaroslav
+  Mracek)
+- Explain how add negative num for --latest-limit (RhBug:1446641) (Jaroslav
+  Mracek)
+- trivial: don't duplicate option names (Igor Gnatenko)
+- Add support for --userinstalled for repoquery command (RhBug:1278124)
+  (Jaroslav Rohel)
+- Fix header of search result sections (RhBug:1301868) (Jaroslav Rohel)
+- Filter out src for get_best_selector (Jaroslav Mracek)
+- Add minor changes in formating of documentation (Jaroslav Mracek)
+
 * Tue May 02 2017 Jaroslav Mracek <jmracek@redhat.com> 2.4.0-1
 - po: Update translations (Igor Gnatenko)
 - po: Update translations (Igor Gnatenko)
