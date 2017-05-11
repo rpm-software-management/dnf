@@ -113,12 +113,12 @@ class RepoReader(object):
 
 
 class ModuleReader(object):
-    def __init__(self, base_conf):
-        self.base_conf = base_conf
+    def __init__(self, module_dir):
+        self.module_dir = module_dir
 
     def __iter__(self):
         # read .module files from directories specified by conf.modulesdir
-        for module_dir in self.base_conf.modulesdir:
+        for module_dir in self.module_dir:
             for module_path in sorted(glob.glob('%s/*.module' % module_dir)):
                 try:
                     for module_conf in self._get_module_configs(module_path):

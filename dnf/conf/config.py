@@ -655,7 +655,7 @@ class MainConf(BaseConfig):
         self._add_option('reposdir', ListOption(['/etc/yum.repos.d',
                                                  '/etc/yum/repos.d',
                                                  '/etc/distro.repos.d'])) # :api
-        self._add_option('modulesdir', ListOption(['/etc/dnf/modules.d']))
+        self._add_option('modulesdir', PathOption('/etc/dnf/modules.d', abspath=True))
 
         self._add_option('debug_solver', BoolOption(False))
 
