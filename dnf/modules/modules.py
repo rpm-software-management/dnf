@@ -147,7 +147,7 @@ class RepoModule(OrderedDict):
 
         self.conf.stream = stream
         self.conf.enabled = True
-        self._write_conf_to_file()
+        self.write_conf_to_file()
 
     def disable(self):
         if self.conf is None:
@@ -155,9 +155,9 @@ class RepoModule(OrderedDict):
             self.conf.name = self.name
 
         self.conf.enabled = False
-        self._write_conf_to_file()
+        self.write_conf_to_file()
 
-    def _write_conf_to_file(self):
+    def write_conf_to_file(self):
         modules_dir = self.parent.base.conf.modulesdir[0]
         installroot = self.parent.base.conf.installroot
         # TODO installroot
