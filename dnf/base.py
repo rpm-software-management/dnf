@@ -178,8 +178,7 @@ class Base(object):
                 module_version = RepoModuleVersion(data, repo)
                 self.repo_module_dict.add(module_version)
 
-        self.repo_module_dict.read_all_modules(self.conf)
-
+        self.repo_module_dict.read_all_modules()
 
     def _store_persistent_data(self):
         if self._repo_persistor:
