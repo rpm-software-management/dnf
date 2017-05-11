@@ -39,21 +39,11 @@ def parse_module_profile(user_input):
     return name, profile
 
 
-def install_profiles(base, repo_module_version, profile):
+def perform_on_profiles(perform_fn, repo_module_version, profile):
     try:
         selectors = repo_module_version.profile_selectors(profile)
         for single_selector in selectors:
-            base._goal.install(select=single_selector, optional=True)
-    except KeyError:
-        raise dnf.exceptions.Error(_("No such module or profile: {} or {}"
-                                     .format(repo_module_version.name, profile)))
-
-
-def upgrade_profiles(base, repo_module_version, profile):
-    try:
-        selectors = repo_module_version.profile_selectors(profile)
-        for single_selector in selectors:
-            base._goal.install(select=single_selector, optional=True)
+            perform_fn(select=single_selector, optional=False)
     except KeyError:
         raise dnf.exceptions.Error(_("No such module or profile: {} or {}"
                                      .format(repo_module_version.name, profile)))
@@ -69,8 +59,9 @@ class ModuleTransactionProgress(TransactionProgress):
         if action is TRANS_POST and self.repo_module is not None:
             conf = self.repo_module.conf
             conf.enabled = True
-            self.profiles.extend(conf.profiles)
-            conf.profiles = self.profiles
+            if self.profiles not in conf.profiles:
+                self.profiles.extend(conf.profiles)
+                conf.profiles = self.profiles
             conf.version = self.repo_module.parent.latest().version
             self.repo_module.write_conf_to_file()
 
@@ -165,7 +156,7 @@ class ModuleCommand(commands.Command):
             except dnf.exceptions.Error as e:
                 logger.info(e)
                 if not self.opts.assumeno and self.base.output.userconfirm():
-                    self.base.repo_module_dict[name].enable(stream, self.opts.assumeyes)
+                    self.base.repo_module_dict[name].enable(stream, True)
                 else:
                     raise dnf.cli.CliError(_("Operation aborted."))
 
@@ -216,7 +207,7 @@ class ModuleCommand(commands.Command):
             transaction_display.repo_module = repo_module_version.parent.parent
             transaction_display.profiles.append(profile)
 
-            install_profiles(self.base, repo_module_version, profile)
+            perform_on_profiles(self.base._goal.install, repo_module_version, profile)
 
     class UpdateSubCommand(SubCommand):
 
@@ -228,40 +219,22 @@ class ModuleCommand(commands.Command):
             demands.sack_activation = True
             demands.resolving = True
             demands.root_user = True
+            demands.transaction_display = ModuleTransactionProgress()
 
         @staticmethod
         def set_argparser(parser):
-            parser.add_argument('module_ns', nargs='+')
+            parser.add_argument('module_n', nargs='+')
 
         def run_on_module(self):
-            try:
-                name, stream = self.opts.module_nsp[0].rsplit("-", 1)
-                modulemd = self._get_module(name, stream)
-            except ValueError:
-                raise ValueError(_("You need to specify MODULE-STREAM"))
+            name = self.opts.module_n[0]
+            repo_module_version = self.base.repo_module_dict.latest(name)
+            repo_module = repo_module_version.parent.parent
 
-            # TODO change, use exact nevra from metadata
-            self._enable_only_to_be_installed_module(modulemd.repo)
+            transaction_display = self.cli.demands.transaction_display
+            transaction_display.repo_module = repo_module
 
-            profiles = self.get_all_modules()[name].config.profiles
-
-            self._update_profiles(modulemd, profiles)
-
-        def _enable_only_to_be_installed_module(self, module_metadata):
-            for repo in self.base.repos.iter_enabled():
-                repo.disable()
-            module_metadata.enable()
-
-        def _update_profiles(self, modulemd, profiles):
-            for profile in profiles:
-                if profile not in modulemd.profiles:
-                    raise dnf.exceptions.Error(_("No such profile: {}".format(profile)))
-
-                self._update_packages(modulemd.profiles[profile])
-
-        def _update_packages(self, profile):
-            for package in profile.rpms:
-                self.base.upgrade(package)
+            for profile in repo_module.conf.profiles:
+                perform_on_profiles(self.base._goal.upgrade, repo_module_version, profile)
 
     SUBCMDS = {ListSubCommand, InfoSubCommand, EnableSubCommand,
                DisableSubCommand, InstallSubCommand, UpdateSubCommand}
