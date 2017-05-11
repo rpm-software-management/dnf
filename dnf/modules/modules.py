@@ -19,6 +19,8 @@ from __future__ import print_function
 
 import os
 
+import errno
+
 import dnf
 from dnf.conf import ModuleConf
 from dnf.i18n import _
@@ -48,8 +50,6 @@ class RepoModuleVersion(object):
         base = self.parent.parent.parent.base
         query = base.sack.query()
         query = query.filter(nevra=nevra)
-        # TODO use later
-        # base.sack.add_includes(query, reponame=self.repo.name)
         return query.run()
 
     def profile_selectors(self, profile):
@@ -158,10 +158,8 @@ class RepoModule(OrderedDict):
         self.write_conf_to_file()
 
     def write_conf_to_file(self):
-        modules_dir = self.parent.base.conf.modulesdir[0]
-        installroot = self.parent.base.conf.installroot
-        # TODO installroot
-        output_file = os.path.join(modules_dir, "%s.module" % self.conf.name)
+        output_file = os.path.join(self.parent.get_modules_dir(), "%s.module" % self.conf.name)
+
         with open(output_file, "w") as config_file:
             self.conf._write(config_file)
 
@@ -196,13 +194,34 @@ class RepoModuleDict(OrderedDict):
 
             self.add(module_version)
 
-    def read_all_modules(self, base_conf):
-        module_reader = dnf.conf.read.ModuleReader(base_conf)
+    def read_all_modules(self):
+        module_reader = dnf.conf.read.ModuleReader(self.get_modules_dir())
         for conf in module_reader:
             repo_module = self.setdefault(conf.name, RepoModule())
             repo_module.conf = conf
             repo_module.name = conf.name
             repo_module.parent = self
+
+    def get_modules_dir(self):
+        modules_dir = self.base.conf.installroot
+        for dir in self.base.conf.modulesdir.split("/"):
+            modules_dir = os.path.join(modules_dir, dir)
+
+        if not os.path.exists(modules_dir):
+            self.create_dir(modules_dir)
+
+        return modules_dir
+
+    @staticmethod
+    def create_dir(output_file):
+        oumask = os.umask(0o22)
+        try:
+            os.makedirs(output_file)
+        except OSError as e:
+            if e.errno != errno.EEXIST:
+                raise
+        finally:
+            os.umask(oumask)
 
     def get_modules_by_name_stream_version(self, name, stream=None, version=None):
         if name not in self:
