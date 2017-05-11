@@ -118,15 +118,14 @@ class ModuleReader(object):
 
     def __iter__(self):
         # read .module files from directories specified by conf.modulesdir
-        for module_dir in self.module_dir:
-            for module_path in sorted(glob.glob('%s/*.module' % module_dir)):
-                try:
-                    for module_conf in self._get_module_configs(module_path):
-                        yield module_conf
-                except dnf.exceptions.ConfigError:
-                    # TODO: handle properly; broken module conf must be considered as an error
-                    raise
-                    # logger.warning(_("Warning: failed loading '%s', skipping."), module_path)
+        for module_path in sorted(glob.glob('%s/*.module' % self.module_dir)):
+            try:
+                for module_conf in self._get_module_configs(module_path):
+                    yield module_conf
+            except dnf.exceptions.ConfigError:
+                # TODO: handle properly; broken module conf must be considered as an error
+                raise
+                # logger.warning(_("Warning: failed loading '%s', skipping."), module_path)
 
     def _build_module(self, parser, id_, module_path):
         """Build a module using the parsed data."""
