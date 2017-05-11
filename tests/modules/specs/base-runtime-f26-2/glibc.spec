@@ -63,9 +63,9 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %if %__isa_bits == 32
-%ghost /lib/libc.so.6
+%ghost /usr/lib/libc.so.6
 %else
-%ghost /lib64/libc.so.6
+%ghost /usr/lib64/libc.so.6
 %endif
 
 %files common

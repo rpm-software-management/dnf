@@ -31,6 +31,20 @@ for module in $DIR/specs/*; do
 done
 
 
+# include noarch RPMs into arch dirs to get them included in module metadata
+for module in $DIR/specs/*; do
+    module_name=$(basename $module)
+    repo_path_noarch=$DIR/modules/$module_name/noarch
+
+    for target in $ARCHES; do
+        repo_path=$DIR/modules/$module_name/$target
+        if [ -d $repo_path_noarch ]; then
+            cp -a $repo_path_noarch/* $repo_path/
+        fi
+    done
+done
+
+
 ./_create_modulemd.py
 
 
