@@ -14,6 +14,11 @@ data:
   license:
     module: [LGPLv2]
   name: base-runtime
+  profiles:
+    default:
+      rpms: [kernel, glibc, systemd, bash]
+    minimal:
+      rpms: [glibc]
   stream: f26
   summary: Fake module
   version: 1

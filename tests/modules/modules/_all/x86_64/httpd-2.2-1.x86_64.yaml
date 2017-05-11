@@ -9,6 +9,9 @@ data:
   license:
     module: [LGPLv2]
   name: httpd
+  profiles:
+    default:
+      rpms: [httpd]
   stream: '2.2'
   summary: Fake module
   version: 1
