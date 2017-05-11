@@ -49,6 +49,16 @@ def install_profiles(base, repo_module_version, profile):
                                      .format(repo_module_version.name, profile)))
 
 
+def upgrade_profiles(base, repo_module_version, profile):
+    try:
+        selectors = repo_module_version.profile_selectors(profile)
+        for single_selector in selectors:
+            base._goal.install(select=single_selector, optional=True)
+    except KeyError:
+        raise dnf.exceptions.Error(_("No such module or profile: {} or {}"
+                                     .format(repo_module_version.name, profile)))
+
+
 class ModuleTransactionProgress(TransactionProgress):
 
     def __init__(self):
@@ -61,6 +71,7 @@ class ModuleTransactionProgress(TransactionProgress):
             conf.enabled = True
             self.profiles.extend(conf.profiles)
             conf.profiles = self.profiles
+            conf.version = self.repo_module.parent.latest().version
             self.repo_module.write_conf_to_file()
 
 
