@@ -27,7 +27,6 @@ from dnf.i18n import _
 
 from dnf.callback import TransactionProgress, TRANS_POST
 from dnf.cli import commands
-from modulemd import ModuleMetadata
 
 
 def parse_module_profile(user_input):
@@ -40,42 +39,29 @@ def parse_module_profile(user_input):
     return name, profile
 
 
-def get_latest_stream_selectors(base, name, profile):
-    repo_module_version = base.repo_module_dict.latest(name)
-    return repo_module_version.profile_selectors(profile)
-
-
-def install_profiles(base, name, profile):
+def install_profiles(base, repo_module_version, profile):
     try:
-        selectors = get_latest_stream_selectors(base, name, profile)
+        selectors = repo_module_version.profile_selectors(profile)
         for single_selector in selectors:
             base._goal.install(select=single_selector, optional=True)
     except KeyError:
         raise dnf.exceptions.Error(_("No such module or profile: {} or {}"
-                                     .format(name, profile)))
+                                     .format(repo_module_version.name, profile)))
 
 
 class ModuleTransactionProgress(TransactionProgress):
 
     def __init__(self):
-        self._module_metadata = None
-
-    @property
-    def module_metadata(self):
-        return self._module_metadata
-
-    @module_metadata.setter
-    def module_metadata(self, value):
-        if not isinstance(value, ModuleMetadata):
-            raise ValueError(_("Incorrect metadata of module"))
-        self._module_metadata = value
+        self.repo_module = None
+        self.profiles = []
 
     def progress(self, package, action, ti_done, ti_total, ts_done, ts_total):
-        print (package)
-        print ("action {}".format(action))
-        if action is TRANS_POST:
-            print ("trans_post")
-            # TODO write to file
+        if action is TRANS_POST and self.repo_module is not None:
+            conf = self.repo_module.conf
+            conf.enabled = True
+            self.profiles.extend(conf.profiles)
+            conf.profiles = self.profiles
+            self.repo_module.write_conf_to_file()
 
 
 class ModuleCommand(commands.Command):
@@ -213,8 +199,13 @@ class ModuleCommand(commands.Command):
 
         def run_on_module(self):
             name, profile = parse_module_profile(self.opts.module_nsp[0])
+            repo_module_version = self.base.repo_module_dict.latest(name)
 
-            install_profiles(self.base, name, profile)
+            transaction_display = self.cli.demands.transaction_display
+            transaction_display.repo_module = repo_module_version.parent.parent
+            transaction_display.profiles.append(profile)
+
+            install_profiles(self.base, repo_module_version, profile)
 
     class UpdateSubCommand(SubCommand):
 
