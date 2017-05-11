@@ -52,18 +52,22 @@ def perform_on_profiles(perform_fn, repo_module_version, profile):
 class ModuleTransactionProgress(TransactionProgress):
 
     def __init__(self):
-        self.repo_module = None
-        self.profiles = []
+        self.repo_modules = []
 
     def progress(self, package, action, ti_done, ti_total, ts_done, ts_total):
-        if action is TRANS_POST and self.repo_module is not None:
-            conf = self.repo_module.conf
-            conf.enabled = True
-            if self.profiles not in conf.profiles:
-                self.profiles.extend(conf.profiles)
-                conf.profiles = self.profiles
-            conf.version = self.repo_module.parent.latest().version
-            self.repo_module.write_conf_to_file()
+        if action is TRANS_POST:
+            for repo_module in self.repo_modules:
+                conf = repo_module.conf
+                conf.enabled = True
+                conf.version = repo_module.parent.latest(repo_module.name).version
+
+                profiles = repo_module.installed_profiles
+                profiles.extend(conf.profiles)
+                print (profiles)
+                print (sorted(set(profiles)))
+                conf.profiles = sorted(set(profiles))
+
+                repo_module.write_conf_to_file()
 
 
 class ModuleCommand(commands.Command):
@@ -200,14 +204,16 @@ class ModuleCommand(commands.Command):
             parser.add_argument('module_nsp', nargs='+')
 
         def run_on_module(self):
-            name, profile = parse_module_profile(self.opts.module_nsp[0])
-            repo_module_version = self.base.repo_module_dict.latest(name)
+            for module in self.opts.module_nsp:
+                name, profile = parse_module_profile(module)
+                repo_module_version = self.base.repo_module_dict.latest(name)
 
-            transaction_display = self.cli.demands.transaction_display
-            transaction_display.repo_module = repo_module_version.parent.parent
-            transaction_display.profiles.append(profile)
+                repo_module = repo_module_version.parent.parent
+                transaction_display = self.cli.demands.transaction_display
+                transaction_display.repo_modules.append(repo_module)
+                repo_module.installed_profiles.append(profile)
 
-            perform_on_profiles(self.base._goal.install, repo_module_version, profile)
+                perform_on_profiles(self.base._goal.install, repo_module_version, profile)
 
     class UpdateSubCommand(SubCommand):
 
@@ -226,15 +232,15 @@ class ModuleCommand(commands.Command):
             parser.add_argument('module_n', nargs='+')
 
         def run_on_module(self):
-            name = self.opts.module_n[0]
-            repo_module_version = self.base.repo_module_dict.latest(name)
-            repo_module = repo_module_version.parent.parent
+            for name in self.opts.module_n:
+                repo_module_version = self.base.repo_module_dict.latest(name)
+                repo_module = repo_module_version.parent.parent
 
-            transaction_display = self.cli.demands.transaction_display
-            transaction_display.repo_module = repo_module
+                transaction_display = self.cli.demands.transaction_display
+                transaction_display.repo_modules.append(repo_module)
 
-            for profile in repo_module.conf.profiles:
-                perform_on_profiles(self.base._goal.upgrade, repo_module_version, profile)
+                for profile in repo_module.conf.profiles:
+                    perform_on_profiles(self.base._goal.upgrade, repo_module_version, profile)
 
     SUBCMDS = {ListSubCommand, InfoSubCommand, EnableSubCommand,
                DisableSubCommand, InstallSubCommand, UpdateSubCommand}
