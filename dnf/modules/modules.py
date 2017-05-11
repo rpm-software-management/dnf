@@ -132,6 +132,7 @@ class RepoModule(OrderedDict):
         self.conf = None
         self.name = None
         self.parent = None
+        self.installed_profiles = []
 
     def add(self, repo_module_version):
         module_stream = self.setdefault(repo_module_version.stream, RepoModuleStream())
