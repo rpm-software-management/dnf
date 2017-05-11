@@ -110,7 +110,10 @@ class RepoModuleVersion(object):
                 self.base.upgrade(single_nevra, reponame=self.repo.id)
 
     def nevra(self):
-        return self.module_metadata.artifacts.rpms
+        result = self.module_metadata.artifacts.rpms
+        # HACK: remove epoch to make filter(nevra=...) work
+        result = [i.replace("0:", "") for i in result]
+        return result
 
     def rpms(self, profile):
         return self.module_metadata.profiles[profile].rpms
