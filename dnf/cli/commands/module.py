@@ -273,7 +273,7 @@ class ModuleCommand(commands.Command):
 
     def run(self):
         if self.opts.help:
-            print(self.cli.optparser.print_usage())
+            print(self.cli.optparser.print_help())
             return 0
 
         self.subcmd.run_on_module()
