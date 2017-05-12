@@ -93,7 +93,8 @@ def _create_filehandler(logfile):
         os.chmod(logfile, 0o644)
     handler = logging.FileHandler(logfile)
     formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s",
-                                  "%b %d %H:%M:%S")
+                                  "%Y-%m-%dT%H:%M:%SZ")
+    formatter.converter = time.gmtime
     handler.setFormatter(formatter)
     return handler
 
