@@ -146,8 +146,9 @@ class RepoModule(OrderedDict):
             self.conf = ModuleConf(section=self.name, parser=dnf.conf.ConfigParser())
             self.conf.name = self.name
 
-        if not assumeyes and self.conf.stream is not None and self.conf.stream is not stream:
-            raise dnf.exceptions.Error(_("Enabling different stream"))
+        if self.conf.stream is not None and str(self.conf.stream) != str(stream):
+            if not assumeyes:
+                raise dnf.exceptions.Error(_("Enabling different stream"))
 
         self.conf.stream = stream
         self.conf.enabled = True
@@ -294,12 +295,14 @@ class RepoModuleDict(OrderedDict):
         ret = "name".ljust(max_name_width)
         ret += "stream".ljust(max_stream_width)
         ret += "version".ljust(max_vr_width)
+        ret += "info".ljust(space_between_columns)
         ret += "\n"
 
         for data in module_metadata:
             ret += data.name.ljust(max_name_width)
             ret += data.stream.ljust(max_stream_width)
             ret += str(data.version).ljust(max_vr_width)
+            ret += "{}-{}-{}".format(data.name, data.stream, data.version)
             ret += "\n"
 
         return ret[:-1]
