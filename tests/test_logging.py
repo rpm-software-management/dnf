@@ -32,10 +32,11 @@ LogfileEntry = collections.namedtuple('LogfileEntry', ('date', 'time', 'message'
 
 def _split_logfile_entry(entry):
     record = entry.split(' ')
+    datetime = record[0].split('T')
     # strip the trailing '\n' from the message:
-    message = ' '.join(record[4:])[:-1]
-    return LogfileEntry(date=' '.join(record[0:2]),
-                        time=record[2], message=message)
+    message = ' '.join(record[2:])[:-1]
+    return LogfileEntry(date=datetime[0],
+                        time=datetime[1], message=message)
 
 def drop_all_handlers():
     for logger_name in ('dnf', 'dnf.rpm'):
