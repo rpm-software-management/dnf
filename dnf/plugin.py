@@ -107,11 +107,7 @@ class Plugins(object):
         sys.modules[DYNAMIC_PACKAGE] = package = dnf.pycomp.ModuleType(DYNAMIC_PACKAGE)
         package.__path__ = []
 
-        def list_a_difference_list_b(list_a, list_b):
-            return filter(lambda element: element not in list_b, list_a)
-
-        difference = list_a_difference_list_b(skips, enable_plugins)
-        files = _iter_py_files(conf.pluginpath, difference)
+        files = _iter_py_files(conf.pluginpath, skips, enable_plugins)
         _import_modules(package, files)
         self.plugin_cls = _plugin_classes()[:]
         self._check_enabled(conf)
@@ -151,12 +147,13 @@ def _import_modules(package, py_files):
             logger.log(dnf.logging.SUBDEBUG, '', exc_info=True)
 
 
-def _iter_py_files(paths, skips):
+def _iter_py_files(paths, skips, enable_plugins):
     for p in paths:
         for fn in glob.glob('%s/*.py' % p):
             (name, _) = os.path.splitext(os.path.basename(fn))
             if any(fnmatch.fnmatch(name, pattern) for pattern in skips):
-                continue
+                if not any(fnmatch.fnmatch(name, pattern) for pattern in enable_plugins):
+                    continue
             yield fn
 
 
