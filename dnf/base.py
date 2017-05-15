@@ -1078,7 +1078,15 @@ class Base(object):
         if self.conf.destdir:
             dnf.util.ensure_dir(self.conf.destdir)
             for pload in payloads:
-                shutil.copy2(pload.pkg.repo.pkgdir + "/" + os.path.basename(pload.pkg.location), self.conf.destdir)
+                payloadlocation = os.path.join(
+                    pload.pkg.repo.pkgdir,
+                    os.path.basename(pload.pkg.location)
+                )
+                shutil.copy(payloadlocation, self.conf.destdir)
+                os.chmod(
+                    os.path.join(self.conf.destdir, os.path.basename(pload.pkg.location)),
+                    0o755
+                )
 
     def add_remote_rpms(self, path_list, strict=True):
         # :api

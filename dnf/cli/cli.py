@@ -839,8 +839,10 @@ class Cli(object):
             sys.exit(1)
         if opts.destdir is not None:
             self.base.conf.destdir = opts.destdir
-            if not self.base.conf.downloadonly:
-                logger.critical(_('--destdir cannot be used without --downloadonly. Exiting.'))
+            if not self.base.conf.downloadonly and opts.command != 'download':
+                logger.critical(
+                    _('--destdir must be used with --downloadonly or download command.')
+                )
                 sys.exit(1)
 
         if opts.sleeptime is not None:
