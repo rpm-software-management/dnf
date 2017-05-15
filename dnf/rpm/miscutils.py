@@ -44,13 +44,14 @@ def checkSig(ts, package):
         if str(e) == "error reading package header":
             value = 2
     else:
-        error, siginfo = getSigInfo(hdr)
-        if error == 101:
-            os.close(fdno)
-            del hdr
+        # checks signature from an hdr
+        string = '%|DSAHEADER?{%{DSAHEADER:pgpsig}}:{%|RSAHEADER?{%{RSAHEADER:pgpsig}}:' \
+                 '{%|SIGGPG?{%{SIGGPG:pgpsig}}:{%|SIGPGP?{%{SIGPGP:pgpsig}}:{(none)}|}|}|}|'
+        siginfo = hdr.sprintf(string)
+        if siginfo == '(none)':
             value = 4
-        else:
-            del hdr
+
+        del hdr
 
     try:
         os.close(fdno)
@@ -59,22 +60,3 @@ def checkSig(ts, package):
 
     ts.setVSFlags(currentflags)  # put things back like they were before
     return value
-
-
-def getSigInfo(hdr):
-    """checks signature from an hdr hand back signature information and/or
-       an error code"""
-
-    string = '%|DSAHEADER?{%{DSAHEADER:pgpsig}}:{%|RSAHEADER?{%{RSAHEADER:pgpsig}}:{%|SIGGPG?{%{SIGGPG:pgpsig}}:{%|SIGPGP?{%{SIGPGP:pgpsig}}:{(none)}|}|}|}|'
-    siginfo = hdr.sprintf(string)
-    if siginfo != '(none)':
-        error = 0
-        sigtype, sigdate, sigid = siginfo.split(',')
-    else:
-        error = 101
-        sigtype = 'MD5'
-        sigdate = 'None'
-        sigid = 'None'
-
-    infotuple = (sigtype, sigdate, sigid)
-    return error, infotuple
