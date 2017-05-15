@@ -20,14 +20,16 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
+import logging
+from itertools import chain
+
+import hawkey
+
+import dnf.exceptions
 from dnf.cli import commands
 from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _
-from itertools import chain
-
-import dnf.exceptions
-import hawkey
-import logging
 
 logger = logging.getLogger('dnf')
 
@@ -63,6 +65,10 @@ class InstallCommand(commands.Command):
         commands._checkEnabledRepo(self.base, self.opts.filenames)
 
     def run(self):
+        if not self.opts.legacy:
+            self.install_module_profiles()
+            return
+
         nevra_forms = self._get_nevra_forms_from_command()
 
         self.cli._populate_update_security_filter(self.opts, minimal=True)
@@ -71,6 +77,12 @@ class InstallCommand(commands.Command):
         self._decide_to_install_groups(nevra_forms)
         errs = self._install_packages_if_not_locallinstall(nevra_forms)
         self._raise_no_match_if_any_error_and_strict(err_pkgs, errs)
+
+    def install_module_profiles(self):
+        self.cli.demands.transaction_display = self.base.repo_module_dict.transaction_callback
+
+        self.base.repo_module_dict.install(self.opts.pkg_specs, True)
+        self.base.repo_module_dict.install(self.opts.grp_specs, True)
 
     def _get_nevra_forms_from_command(self):
         return [self.nevra_forms[command]
