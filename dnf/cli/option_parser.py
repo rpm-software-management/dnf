@@ -280,6 +280,8 @@ class OptionParser(argparse.ArgumentParser):
         main_parser.add_argument("--downloadonly", dest="downloadonly",
                                  action="store_true", default=False,
                                  help=_("only download packages"))
+        main_parser.add_argument("--downloaddir", dest="downloaddir", default=None,
+                                 help=_("download packages to directory"))
         # Updateinfo options...
         main_parser.add_argument("--bugfix", action="store_true",
                                  help=_("Include bugfix relevant packages, "

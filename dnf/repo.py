@@ -319,6 +319,7 @@ class PackagePayload(dnf.callback.Payload):
     def __init__(self, pkg, progress):
         super(PackagePayload, self).__init__(progress)
         self.pkg = pkg
+        self._downloaddir = None
 
     @dnf.util.log_method_call(functools.partial(logger.log, dnf.logging.SUBDEBUG))
     def _end_cb(self, cbdata, lr_status, msg):
@@ -348,6 +349,15 @@ class PackagePayload(dnf.callback.Payload):
     @property
     def _full_size(self):
         return self.download_size
+
+    @property
+    def downloaddir(self):
+        return self._downloaddir
+
+    @downloaddir.setter
+    def downloaddir(self, value):
+        self._downloaddir = value
+        self.pkg.repo.pkgdir = value
 
     def _librepo_target(self):
         pkg = self.pkg

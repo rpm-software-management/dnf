@@ -1010,6 +1010,9 @@ class Base(object):
             beg_download = time.time()
             est_remote_size = sum(pload.download_size for pload in payloads)
             progress.start(len(payloads), est_remote_size)
+            if self.conf.downloaddir is not None:
+                for pload in payloads:
+                    pload.downloaddir = self.conf.downloaddir
             errors = dnf.repo._download_payloads(payloads, drpm)
 
             if errors._irrecoverable:
