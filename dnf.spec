@@ -2,7 +2,7 @@
 %global librepo_version 1.7.19
 %global libcomps_version 0.1.8
 %global rpm_version 4.13.0-0.rc1.29
-%global min_plugins_core 0.1.13
+%global min_plugins_core 2.1.3
 %global dnf_langpacks_ver 0.15.1-6
 
 %global confdir %{_sysconfdir}/%{name}
@@ -24,7 +24,7 @@
 %global _docdir_fmt %{name}
 
 Name:           dnf
-Version:        2.6.0
+Version:        2.6.1
 Release:        1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
