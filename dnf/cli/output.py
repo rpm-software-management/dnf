@@ -1610,7 +1610,7 @@ Transaction Summary
             print(_("Transaction ID :"), "%u..%u" % (old.tid[0], old.tid[-1]))
         else:
             print(_("Transaction ID :"), old.tid)
-        begtm = time.ctime(old.beg_timestamp)
+        begtm = time.strftime("%c", time.localtime(old.beg_timestamp))
         print(_("Begin time     :"), begtm)
         if old.beg_rpmdbversion is not None:
             if old.altered_lt_rpmdb:
@@ -1618,7 +1618,7 @@ Transaction Summary
             else:
                 print(_("Begin rpmdb    :"), old.beg_rpmdbversion)
         if old.end_timestamp is not None:
-            endtm = time.ctime(old.end_timestamp)
+            endtm = time.strftime("%c", time.localtime(old.end_timestamp))
             endtms = endtm.split()
             if begtm.startswith(endtms[0]): # Chop uninteresting prefix
                 begtms = begtm.split()
