@@ -94,6 +94,7 @@ class Base(object):
         self._tempfile_persistor = None
         self._update_security_filters = {}
         self._allow_erasing = False
+        self._revert_reason = []
 
     def __enter__(self):
         return self
@@ -357,6 +358,9 @@ class Base(object):
             return
         logger.log(dnf.logging.DDEBUG, 'Cleaning up.')
         self._closed = True
+        if not self._trans_success:
+            for pkg, reason in self._revert_reason:
+                self._yumdb.get_package(pkg).reason = reason
         self._tempfile_persistor = dnf.persistor.TempfilePersistor(
             self.conf.cachedir)
 
@@ -665,6 +669,7 @@ class Base(object):
 
         if not self.transaction:
             if self._group_persistor:
+                self._trans_success = True
                 self._group_persistor.commit()
             return
 
@@ -1356,9 +1361,29 @@ class Base(object):
         self._comps_trans += trans
         return len(trans)
 
+    def _remove_if_unneeded(self, query):
+        """
+        Mark to remove packages that are not required by any user installed package (reason group
+        or user)
+        :param query: dnf.query.Query() object
+        """
+        query = query.installed()
+        if not query:
+            return
+
+        for pkg in query:
+            reason = self._yumdb.get_package(pkg).reason
+            self._yumdb.get_package(pkg).reason = 'dep'
+            self._revert_reason.append((pkg, reason))
+        unneeded_pkgs = self.sack.query()._unneeded(self.sack, self._yumdb, debug_solver=False)
+        remove_packages = query.intersection(unneeded_pkgs)
+        if remove_packages:
+            sltr = dnf.selector.Selector(self.sack)
+            sltr.set(pkg=remove_packages)
+            self._goal.erase(select=sltr, clean_deps=self.conf.clean_requirements_on_remove)
+
     def _finalize_comps_trans(self):
         trans = self._comps_trans
-        clean_deps = self.conf.clean_requirements_on_remove
         basearch = self.conf.substitutions['basearch']
 
         def cond_check(pkg):
@@ -1369,11 +1394,29 @@ class Base(object):
                 pkg.requires in (pkg.name for pkg in self._goal._installs) or \
                 pkg.requires in [pkg.name for pkg in trans.install]
 
-        attr_fn = ((trans.install,
-                    functools.partial(self._goal.install, optional=True)),
-                   (trans.upgrade, self._goal.upgrade),
-                   (trans.remove,
-                    functools.partial(self._goal.erase, clean_deps=clean_deps)))
+        def trans_upgrade(query, remove_query):
+            sltr = dnf.selector.Selector(self.sack)
+            sltr.set(pkg=query)
+            self._goal.upgrade(select=sltr)
+            return remove_query
+
+        def trans_install(query, remove_query):
+            if self.conf.multilib_policy == "all":
+                self._install_multiarch(query, strict=False)
+            else:
+                sltr = dnf.selector.Selector(self.sack)
+                sltr.set(pkg=query)
+                self._goal.install(select=sltr, optional=True)
+            return remove_query
+
+        def trans_remove(query, remove_query):
+            remove_query = remove_query.union(query)
+            return remove_query
+
+        remove_query = self.sack.query().filter(empty=True)
+        attr_fn = ((trans.install, trans_install),
+                   (trans.upgrade, trans_upgrade),
+                   (trans.remove, trans_remove))
 
         for (attr, fn) in attr_fn:
             for pkg in attr:
@@ -1385,13 +1428,10 @@ class Base(object):
                     # a conditional package with unsatisfied requiremensts
                     continue
                 q = q.filter(arch__neq="src")
-                if self.conf.multilib_policy == "all":
-                    self._install_multiarch(q, strict=False)
-                else:
-                    sltr = dnf.selector.Selector(self.sack)
-                    sltr.set(pkg=q)
-                    fn(select=sltr)
-                    self._goal.group_members.add(pkg.name)
+                remove_query = fn(q, remove_query)
+                self._goal.group_members.add(pkg.name)
+
+        self._remove_if_unneeded(remove_query)
 
     def _build_comps_solver(self):
         def reason_fn(pkgname):
