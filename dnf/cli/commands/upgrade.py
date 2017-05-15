@@ -64,41 +64,45 @@ class UpgradeCommand(commands.Command):
         self.cli._populate_update_security_filter(self.opts,
                                                   minimal=self.upgrade_minimal,
                                                   all=self.all_security)
-        done = False
+
         if self.opts.filenames or self.opts.pkg_specs or self.opts.grp_specs:
-            # Update files.
-            if self.opts.filenames:
-                for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=False):
-                    try:
-                        self.base.package_upgrade(pkg)
-                    except dnf.exceptions.MarkingError as e:
-                        logger.info(_('No match for argument: %s'),
-                                    self.base.output.term.bold(pkg.location))
-                    else:
-                        done = True
-
-            # Update packages.
-            for pkg_spec in self.opts.pkg_specs:
-                try:
-                    self.base.upgrade(pkg_spec)
-                except dnf.exceptions.PackagesNotInstalledError:
-                    logger.info(_('No match for argument: %s'),
-                                self.base.output.term.bold(pkg_spec))
-                except dnf.exceptions.MarkingError as e:
-                    logger.info(_('No match for argument: %s'),
-                                 self.base.output.term.bold(pkg_spec))
-                    self.base._report_icase_hint(pkg_spec)
-                else:
-                    done = True
-
-            # Update groups.
-            if self.opts.grp_specs:
-                self.base.read_comps(arch_filter=True)
-                self.base.env_group_upgrade(self.opts.grp_specs)
-                done = True
+            if any([fn() for fn in [self._update_files,
+                                    self._update_packages,
+                                    self._update_groups]]):
+                return
         else:
-            # Update all packages.
             self.base.upgrade_all()
-            done = True
-        if not done:
-            raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
+            return
+
+        raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
+
+    def _update_files(self):
+        success = False
+        if self.opts.filenames:
+            for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=False):
+                try:
+                    self.base.package_upgrade(pkg)
+                    success = True
+                except dnf.exceptions.MarkingError as e:
+                    self.base._report_icase_hint(pkg_spec)
+                    logger.info(_('No match for argument: %s'),
+                                self.base.output.term.bold(pkg.location))
+        return success
+
+    def _update_packages(self):
+        success = False
+        for pkg_spec in self.opts.pkg_specs:
+            try:
+                self.base.upgrade(pkg_spec)
+                success = True
+            except dnf.exceptions.MarkingError as e:
+                logger.info(_('No match for argument: %s'),
+                            self.base.output.term.bold(pkg_spec))
+        return success
+
+    def _update_groups(self):
+        if self.opts.grp_specs:
+            self.base.read_comps(arch_filter=True)
+            self.base.env_group_upgrade(self.opts.grp_specs)
+            return True
+        return False
