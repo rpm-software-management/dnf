@@ -36,7 +36,7 @@ STR_TEXT_OSERROR = 'Soubor již existuje'
 class TestLocale(TestCase):
     def test_setup_locale(self, mock_setlocale):
         dnf.i18n.setup_locale()
-        self.assertTrue(2 <= mock_setlocale.call_count <= 3)
+        self.assertTrue(1 <= mock_setlocale.call_count <= 2)
 
 class TestStdout(TestCase):
     def test_setup_stdout(self):

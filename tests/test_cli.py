@@ -31,11 +31,11 @@ import os
 import re
 
 VERSIONS_OUTPUT = """\
-  Installed: pepper-0:20-0.x86_64 at 1970-01-01 00:00
-  Built    :  at 1970-01-01 00:00
+  Installed: pepper-0:20-0.x86_64 at Thu Jan  1 00:00:00 1970
+  Built    :  at Thu Jan  1 00:00:00 1970
 
-  Installed: tour-0:5-0.noarch at 1970-01-01 00:00
-  Built    :  at 1970-01-01 00:00
+  Installed: tour-0:5-0.noarch at Thu Jan  1 00:00:00 1970
+  Built    :  at Thu Jan  1 00:00:00 1970
 """
 
 

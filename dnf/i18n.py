@@ -80,8 +80,6 @@ def _guess_encoding():
 def setup_locale():
     try:
         dnf.pycomp.setlocale(locale.LC_ALL, '')
-        # set time to C so that we output sane things in the logs (#433091)
-        dnf.pycomp.setlocale(locale.LC_TIME, 'C')
     except locale.Error as e:
         # default to C locale if we get a failure.
         print('Failed to set locale, defaulting to C', file=sys.stderr)

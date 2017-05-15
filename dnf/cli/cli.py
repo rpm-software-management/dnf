@@ -107,9 +107,7 @@ def _list_cmd_calc_columns(output, ypl):
 
 def print_versions(pkgs, base, output):
     def sm_ui_time(x):
-        return time.strftime("%Y-%m-%d %H:%M", time.gmtime(x))
-    def sm_ui_date(x): # For changelogs, there is no time
-        return time.strftime("%Y-%m-%d", time.gmtime(x))
+        return time.strftime("%c", time.gmtime(x))
 
     rpmdb_sack = dnf.sack._rpmdb_sack(base)
     done = False

@@ -222,8 +222,8 @@ def mapall(fn, *seq):
     return list(map(fn, *seq))
 
 def normalize_time(timestamp):
-    """ Convert time into Timezone aware datetime string object"""
-    t = time.strftime("%a %b %d %H:%M:%S %Y %Z", time.localtime(timestamp))
+    """Convert time into locale aware datetime string object."""
+    t = time.strftime("%c", time.localtime(timestamp))
     return t
 
 def on_ac_power():
