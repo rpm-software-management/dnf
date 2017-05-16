@@ -1619,17 +1619,6 @@ Transaction Summary
                 print(_("Begin rpmdb    :"), old.beg_rpmdbversion)
         if old.end_timestamp is not None:
             endtm = time.strftime("%c", time.localtime(old.end_timestamp))
-            endtms = endtm.split()
-            if begtm.startswith(endtms[0]): # Chop uninteresting prefix
-                begtms = begtm.split()
-                sofar = 0
-                for i in range(len(endtms)):
-                    if i > len(begtms):
-                        break
-                    if begtms[i] != endtms[i]:
-                        break
-                    sofar += len(begtms[i]) + 1
-                endtm = (' ' * sofar) + endtm[sofar:]
             diff = old.end_timestamp - old.beg_timestamp
             if diff < 5 * 60:
                 diff = _("(%u seconds)") % diff
