@@ -113,7 +113,7 @@ class SearchCommand(commands.Command):
             self.base.output.matchcallback(pkg, counter.matched_haystacks(pkg), args)
 
         if len(counter) == 0:
-            raise dnf.exceptions.Error(_('No matches found.'))
+            logger.info(_('No matches found.'))
 
     def _search_counted(self, counter, attr, needle):
         fdict = {'%s__substr' % attr : needle}
