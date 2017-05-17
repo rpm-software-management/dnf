@@ -154,7 +154,22 @@ class BaseCli(dnf.Base):
            errors.  A negative return code indicates that errors
            occurred in the pre-transaction checks
         """
-
+        exclude_include_reports = []
+        if self.conf.excludepkgs:
+            exclude_include_reports.append(
+                'Excludes in dnf.conf: ' + ", ".join(sorted(set(self.conf.excludepkgs))))
+        if self.conf.includepkgs:
+            exclude_include_reports.append(
+                'Includes in dnf.conf: ' + ", ".join(sorted(set(self.conf.includepkgs))))
+        for repo in self.repos.iter_enabled():
+            if repo.excludepkgs:
+                exclude_include_reports.append(
+                    'Excludes in repo ' + repo.id + ": " + ", ".join(sorted(set(repo.excludepkgs))))
+            if repo.includepkgs:
+                exclude_include_reports.append(
+                    'Includes in repo ' + repo.id + ": " + ", ".join(sorted(set(repo.includepkgs))))
+        for exclude_include_report in exclude_include_reports:
+            logger.debug(exclude_include_report)
         grp_diff = self._groups_diff()
         grp_str = self.output.list_group_transaction(self.comps, self._group_persistor, grp_diff)
         if grp_str:
