@@ -935,7 +935,7 @@ class Cli(object):
         if kernel is None:
             return
 
-        q = self.base.sack.query().filter(provides='kernel-core')
+        q = self.base.sack.query().filter(provides=kernel.name)
         q = q.installed()
         q = q.filter(advisory_type='security')
 
@@ -945,8 +945,8 @@ class Cli(object):
                 ikpkg = pkg
 
         if ikpkg > kernel:
-            print(('Security: %s is an installed security update') % ikpkg)
-            print(('Security: %s is the currently running version') % kernel)
+            print('Security: %s is an installed security update' % ikpkg)
+            print('Security: %s is the currently running version' % kernel)
 
     def _option_conflict(self, option_string_1, option_string_2):
         print(self.optparser.print_usage())
