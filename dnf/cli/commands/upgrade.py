@@ -20,12 +20,13 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.cli import commands
-from dnf.i18n import _
-from dnf.cli.option_parser import OptionParser
+
+import logging
 
 import dnf.exceptions
-import logging
+from dnf.cli import commands
+from dnf.cli.option_parser import OptionParser
+from dnf.i18n import _
 
 logger = logging.getLogger('dnf')
 
@@ -65,15 +66,42 @@ class UpgradeCommand(commands.Command):
                                                   all=self.all_security)
 
         if self.opts.filenames or self.opts.pkg_specs or self.opts.grp_specs:
-            if any([fn() for fn in [self._update_files,
+            if any([fn() for fn in [self._update_modules,
+                                    self._update_files,
                                     self._update_packages,
                                     self._update_groups]]):
                 return
         else:
+            self._update_modules_all()
             self.base.upgrade_all()
             return
 
         raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
+
+    def _update_modules_all(self):
+        self.cli.demands.transaction_display = self.base.repo_module_dict.transaction_callback
+        self.base.repo_module_dict.upgrade(list(self.base.repo_module_dict.keys()))
+
+    def _update_modules(self):
+        self.cli.demands.transaction_display = self.base.repo_module_dict.transaction_callback
+
+        modules = self.get_modules_from_spec(self.opts.pkg_specs)
+        modules.extend(self.get_modules_from_spec(self.opts.grp_specs))
+
+        self.base.repo_module_dict.upgrade(modules)
+        return len(modules) != 0
+
+    def get_modules_from_spec(self, specs):
+        modules = list()
+        for spec in specs:
+            try:
+                if spec in self.base.repo_module_dict:
+                    specs.remove(spec)
+                    modules.append(spec)
+            except KeyError:
+                logger.debug("Not a valid module: {}".format(spec))
+
+        return modules
 
     def _update_files(self):
         success = False
