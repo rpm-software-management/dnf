@@ -9,3 +9,4 @@ OnUnitInactiveSec=1d
 
 [Install]
 WantedBy=basic.target
+WantedBy=network-online.target
