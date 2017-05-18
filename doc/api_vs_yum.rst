@@ -39,7 +39,7 @@ Hook Number  Yum hook           DNF hook
 ``8``        ``exclude``        ``resolved``
 ``9``        ``preresolve``              
 ``10``       ``postresolve``    ``resolved but no re-resolve``
-``11``       ``pretrans``              
+``11``       ``pretrans``       ``pre_transaction``
 ``12``       ``postrans``       ``transaction``
 ``13``       ``close``          ``transaction``
 ``14``       ``clean``                   

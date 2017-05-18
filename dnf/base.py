@@ -717,6 +717,8 @@ class Base(object):
                 for display_ in cb.displays:
                     display_.output = False
 
+            self._plugins.run_pre_transaction()
+
             logger.info(_('Running transaction'))
             self._run_transaction(cb=cb)
         timer()
