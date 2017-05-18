@@ -549,9 +549,12 @@ transactions and act according to this information (assuming the
     the current state of RPMDB, do not undo any operation.
 
 ``dnf history userinstalled``
-    List names of all packages installed by a user. The output can be used as
-    the %packages section in a `kickstart <http://fedoraproject.org/wiki/
-    Anaconda/Kickstart>`_ file. It will show all installonly packages, packages installed outside of DNF and packages not installed as dependency. I.e. it lists packages that will stay on the system when :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with `clean_requirements_on_remove` configuration option set to True is executed.
+    It will show all installonly packages, packages installed outside of DNF and packages not
+    installed as dependency. I.e. it lists packages that will stay on the system when
+    :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with
+    `clean_requirements_on_remove` configuration option set to True is executed. Same results can be
+    accomplished with "dnf repoquery --userinstalled" but repoquery command is much more powerful in
+    formatting of an output.
 
 This command by default does not force a sync of expired metadata.
 See also :ref:`\metadata_synchronization-label`
