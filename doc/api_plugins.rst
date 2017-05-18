@@ -55,6 +55,10 @@ When DNF CLI runs it loads the plugins found in the paths during the CLI's initi
 
     Plugin can override this. This hook is called immediately after :attr:`.Base.sack` is initialized with data from all the enabled repos.
 
+  .. method:: pre_transaction
+
+    Plugin can override this. This hook is called just before transaction execution. This means after a successful transaction test. RPMDB is locked during that time.
+
   .. method:: transaction
 
     Plugin can override this. This hook is called immediately after a successful transaction.

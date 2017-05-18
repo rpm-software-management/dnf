@@ -73,6 +73,10 @@ class Plugin(object):
         # :api
         pass
 
+    def pre_transaction(self):
+        # :api
+        pass
+
     def transaction(self):
         # :api
         pass
@@ -125,6 +129,7 @@ class Plugins(object):
 
     run_sack = _caller('sack')
     run_resolved = _caller('resolved')
+    run_pre_transaction = _caller('pre_transaction')
     run_transaction = _caller('transaction')
 
     def _unload(self):
