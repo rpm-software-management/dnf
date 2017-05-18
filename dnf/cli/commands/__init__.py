@@ -188,11 +188,12 @@ class InfoCommand(Command):
 
     def configure(self):
         demands = self.cli.demands
-        demands.available_repos = True
         demands.fresh_metadata = False
         demands.sack_activation = True
         if self.opts._packages_action:
             self.opts.packages_action = self.opts._packages_action
+        if self.opts.packages_action != 'installed':
+            demands.available_repos = True
         if self.opts.obsoletes:
             if self.opts._packages_action:
                 self.cli._option_conflict("--obsoletes", "--" + self.opts._packages_action)
