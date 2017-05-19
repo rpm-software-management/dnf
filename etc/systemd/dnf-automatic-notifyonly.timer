@@ -2,6 +2,8 @@
 Description=dnf-automatic-notifyonly timer
 # See comment in dnf-makecache.service
 ConditionPathExists=!/run/ostree-booted
+Wants=network-online.target
+After=network-online.target
 
 [Timer]
 OnBootSec=1h
@@ -9,4 +11,3 @@ OnUnitInactiveSec=1d
 
 [Install]
 WantedBy=basic.target
-After=network-online.target
