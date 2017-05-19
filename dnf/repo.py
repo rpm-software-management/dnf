@@ -729,11 +729,15 @@ class Repo(dnf.conf.RepoConf):
         h.fastestmirrorcb = self._md_pload._fastestmirror_cb
 
         # apply repo options
-        h.maxspeed = self.throttle if type(self.throttle) is int \
-                     else int(self.bandwidth * self.throttle)
+        h.lowspeedlimit = self.minrate
+        maxspeed = self.throttle if isinstance(self.throttle, int) \
+            else int(self.bandwidth * self.throttle)
+        if maxspeed != 0 and self.minrate > maxspeed:
+            raise dnf.exceptions.Error(_("Maximum download speed is lower than minimum. "
+                                         "Please change configuration of minrate or throttle"))
+        h.maxspeed = maxspeed
         h.setopt(librepo.LRO_PROXYAUTH, True)
         h.proxy = self.proxy
-        h.lowspeedlimit = self.minrate
         if self.timeout > 0:
             h.connecttimeout = self.timeout
             h.lowspeedtime = self.timeout
