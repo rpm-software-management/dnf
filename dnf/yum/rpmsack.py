@@ -15,6 +15,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from . import misc
+import dnf.i18n
 import dnf.pycomp
 import glob
 import logging
@@ -275,11 +276,22 @@ class RPMDBAdditionalDataPackage(object):
                 return self._read_cached_data[attr]
 
         fo, e = _iopen(fn)
-        if fo is None: # This really sucks, don't do that.
-            return '<E:%d>' % e.errno
-        value = fo.read()
-        fo.close()
-        del fo
+        if fo is None:
+            msg = '{}: {}'.format(type(e).__name__, dnf.i18n.ucd(e))
+            msg = "For {} cannot open attribute {} due to {}".format(self, attr, msg)
+            logger.debug(msg)
+            raise AttributeError(msg)
+
+        try:
+            value = fo.read()
+        except Exception as e:
+            msg = '{}: {}'.format(type(e).__name__, dnf.i18n.ucd(e))
+            msg = "For {} cannot open attribute {} due to {}".format(self, attr, msg)
+            logger.debug(msg)
+            raise AttributeError(msg)
+        finally:
+            fo.close()
+            del fo
 
         if info.st_nlink > 1 and self._yumdb_cache is not None:
             self._yumdb_cache[key] = value
@@ -302,7 +314,11 @@ class RPMDBAdditionalDataPackage(object):
                 logger.error("Cannot delete attribute %s on %s at %s due to: %s" % (attr, self, fn, e.strerror))
 
     def __getattr__(self, attr):
-        return self._read(attr)
+        try:
+            res = self._read(attr)
+        except AttributeError:
+            return None
+        return res
 
     def __setattr__(self, attr, value):
         if not attr.startswith('_'):
