@@ -15,6 +15,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from . import misc
+import dnf.i18n
 import dnf.pycomp
 import glob
 import logging
@@ -275,9 +276,19 @@ class RPMDBAdditionalDataPackage(object):
                 return self._read_cached_data[attr]
 
         fo, e = _iopen(fn)
-        if fo is None: # This really sucks, don't do that.
-            return '<E:%d>' % e.errno
-        value = fo.read()
+        if fo is None:
+            msg = '{}: {}'.format(type(e).__name__, dnf.i18n.ucd(e))
+            msg = "For %s cannot open attribute %s due to %s" % (self, attr, msg)
+            logger.debug(msg)
+            raise AttributeError(msg)
+
+        try:
+            value = fo.read()
+        except Exception as e:
+            msg = '{}: {}'.format(type(e).__name__, dnf.i18n.ucd(e))
+            msg = "For %s cannot open attribute %s due to %s" % (self, attr, msg)
+            logger.debug(msg)
+            raise AttributeError(msg)
         fo.close()
         del fo
 
