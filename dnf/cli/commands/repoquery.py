@@ -248,18 +248,23 @@ class RepoQueryCommand(commands.Command):
         demands.sack_activation = True
 
     def build_format_fn(self, opts, pkg):
-        po = PackageWrapper(pkg)
-        if opts.queryinfo:
-            return self.base.output.infoOutput(pkg)
-        elif opts.queryfilelist:
-            filelist = po.files
-            if not filelist:
-                print(_('Package {} contains no files').format(pkg), file=sys.stderr)
-            return filelist
-        elif opts.querysourcerpm:
-            return po.sourcerpm
-        else:
-           return rpm2py_format(opts.queryformat).format(po)
+        try:
+            po = PackageWrapper(pkg)
+            if opts.queryinfo:
+                return self.base.output.infoOutput(pkg)
+            elif opts.queryfilelist:
+                filelist = po.files
+                if not filelist:
+                    print(_('Package {} contains no files').format(pkg), file=sys.stderr)
+                return filelist
+            elif opts.querysourcerpm:
+                return po.sourcerpm
+            else:
+                return rpm2py_format(opts.queryformat).format(po)
+        except AttributeError as e:
+            # catch that the user has specified attributes
+            # there don't exist on the dnf Package object.
+            raise dnf.exceptions.Error(str(e))
 
     def _get_recursive_deps_query(self, query_in, query_select, done=None, recursive=False):
         done = done if done else self.base.sack.query().filter(empty=True)
@@ -437,12 +442,8 @@ class RepoQueryCommand(commands.Command):
         else:
             for pkg in q.run():
                 if self.opts.list != 'userinstalled' or self.base._is_userinstalled(pkg):
-                    try:
-                        pkgs.add(self.build_format_fn(self.opts, pkg))
-                    except AttributeError as e:
-                        # catch that the user has specified attributes
-                        # there don't exist on the dnf Package object.
-                        raise dnf.exceptions.Error(str(e))
+                    pkgs.add(self.build_format_fn(self.opts, pkg))
+
         if self.opts.resolve:
             # find the providing packages and show them
             query = self.filter_repo_arch(
@@ -452,19 +453,15 @@ class RepoQueryCommand(commands.Command):
                 providers = providers.union(self._get_recursive_providers_query(query, providers))
             pkgs = set()
             for pkg in providers.latest().run():
-                try:
-                    pkgs.add(self.build_format_fn(self.opts, pkg))
-                except AttributeError as e:
-                    # catch that the user has specified attributes
-                    # there don't exist on the dnf Package object.
-                    raise dnf.exceptions.Error(str(e))
+                pkgs.add(self.build_format_fn(self.opts, pkg))
 
         for pkg in sorted(pkgs):
             print(pkg)
 
-    def grow_tree(self, level, pkg):
+    def grow_tree(self, level, pkg, opts):
+        pkg_string = self.build_format_fn(opts, pkg)
         if level == -1:
-            print(pkg)
+            print(pkg_string)
             return
         spacing = " "
         for x in range(0, level):
@@ -473,14 +470,14 @@ class RepoQueryCommand(commands.Command):
         for reqirepkg in pkg.requires:
             requires.append(str(reqirepkg))
         reqstr = "[" + str(len(requires)) + ": " + ", ".join(requires) + "]"
-        print(spacing + r"\_ " + str(pkg) + " " + reqstr)
+        print(spacing + r"\_ " + pkg_string + " " + reqstr)
 
     def tree_seed(self, query, aquery, opts, level=-1, usedpkgs=None):
         for pkg in sorted(set(query.run()), key=lambda p: p.name):
             usedpkgs = set() if usedpkgs is None or level is -1 else usedpkgs
             if pkg.name.startswith("rpmlib") or pkg.name.startswith("solvable"):
                 return
-            self.grow_tree(level, pkg)
+            self.grow_tree(level, pkg, opts)
             if pkg not in usedpkgs:
                 usedpkgs.add(pkg)
                 if opts.packageatr:
