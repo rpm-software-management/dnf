@@ -331,6 +331,26 @@ popd
 %endif
 
 %changelog
+* Mon May 22 2017 Jaroslav Mracek <jmracek@redhat.com> 2.5.0-1
+- Update release notes (Jaroslav Mracek)
+- Change documentation for history --userinstalled (RhBug:1370062) (Jaroslav
+  Mracek)
+- Change example to install plugin using versionlock (Jaroslav Mracek)
+- Remove unused method Goal.best_run_diff() (Jaroslav Mracek)
+- Change recommendations if some problems appear (RhBug:1293067) (Jaroslav
+  Mracek)
+- Report problems for goals with optional=True (Jaroslav Mracek)
+- Format resolve problem messages in method in dnf.util (Jaroslav Mracek)
+- Enhance reports about broken dep (RhBug:1398040)(RhBug:1393814) (Jaroslav
+  Mracek)
+- search: do not generate error if not match anything (RhBug:1342157) (Jaroslav
+  Rohel)
+- Check if any plugin is removed in transaction (RhBug:1379906) (Jaroslav
+  Mracek)
+- Show progress for DRPM (RhBug:1198975) (Jaroslav Mracek)
+- Fix disabledplugin option (Iavael)
+- [history]: fixed info command merged output (Eduard Čuba)
+
 * Thu May 11 2017 Jaroslav Mracek <jmracek@redhat.com> 2.4.1-1
 - bump version to 2.4.1 + update release notes (Jaroslav Mracek)
 - goal: do not mark weak dependencies as userinstalled (Igor Gnatenko)
