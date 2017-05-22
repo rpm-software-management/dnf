@@ -74,6 +74,7 @@ class SackTest(support.TestCase):
             raise dnf.exceptions.RepoError()
 
         base = support.MockBase()
+        base.conf.installroot = "/tmp/dnf-test-fill-sack"
         r = support.MockRepo('bag', base.conf)
         r.enable()
         base._repos.add(r)
