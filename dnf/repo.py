@@ -509,6 +509,7 @@ class Repo(dnf.conf.RepoConf):
     # :api
     DEFAULT_SYNC = SYNC_TRY_CACHE
 
+
     def __init__(self, name=None, parent_conf=None):
         # :api
         super(Repo, self).__init__(section=name, parent=parent_conf)
