@@ -20,6 +20,30 @@
 ###################
 
 ===================
+2.5.0 Release Notes
+===================
+
+API additions in 2.5.0:
+
+:meth:`dnf.callback.DownloadProgress.start` can use one additional key word ``total_drpms``.
+
+Bugs fixed in 2.5.0:
+
+* :rhbug:`1350546`
+* :rhbug:`1449618`
+* :rhbug:`1270451`
+* :rhbug:`1254966`
+* :rhbug:`1426787`
+* :rhbug:`1293983`
+* :rhbug:`1370062`
+* :rhbug:`1293067`
+* :rhbug:`1393814`
+* :rhbug:`1398040`
+* :rhbug:`1342157`
+* :rhbug:`1379906`
+* :rhbug:`1198975`
+
+===================
 2.4.1 Release Notes
 ===================
 

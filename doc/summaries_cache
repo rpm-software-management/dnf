@@ -2038,5 +2038,57 @@
     [
         1301868, 
         "dnf search with multiple matches shows repeated grouping"
+    ], 
+    [
+        1350546, 
+        "print more useful info when package can not be installed"
+    ], 
+    [
+        1449618, 
+        "dnf won't explain conflicts even with --best"
+    ], 
+    [
+        1270451, 
+        "Don't show packages from lower priority repos which are masked/blocked by higher prority repo packages"
+    ], 
+    [
+        1254966, 
+        "[UX] dnf install tries to update the installed dependencies to newer version (at least message says that)"
+    ], 
+    [
+        1426787, 
+        "\"add '--best' to command line to see why package dependency cannot be satisfied\" doesn't help"
+    ], 
+    [
+        1293983, 
+        "[UX] show skipped packages during upgrade with pkg param"
+    ], 
+    [
+        1370062, 
+        "history userinstalled should not show NEVRA"
+    ], 
+    [
+        1293067, 
+        "RFE: dnf suggests --allowerasing even when it cannot help"
+    ], 
+    [
+        1393814, 
+        "dnf reports a lot of conflicting packages where there are no conflicts"
+    ], 
+    [
+        1398040, 
+        "dnf calls weak dependencies \"Skipping packages with broken dependencies\""
+    ], 
+    [
+        1342157, 
+        "Search that does not match anything has odd \"error\" message"
+    ], 
+    [
+        1379906, 
+        "Traceback when dependency of plugin is removed and plugin calls the dependency"
+    ], 
+    [
+        1198975, 
+        "[UX] show progress for DRPM"
     ]
 ]
