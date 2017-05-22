@@ -34,7 +34,7 @@ class ModuleConfTest(unittest.TestCase):
         self.dnf_conf = dnf.conf.Conf()
         self.dnf_conf.modulesdir = [os.path.join(DIR, "modules/etc/dnf/modules.d")]
         parser = dnf.conf.ConfigParser()
-        self.conf = dnf.conf.ModuleConf(self.dnf_conf, section="base-runtime", parser=parser)
+        self.conf = dnf.conf.ModuleConf(section="base-runtime", parser=parser)
 
         # name - equal to section name
         self.conf.stream = "f26"
