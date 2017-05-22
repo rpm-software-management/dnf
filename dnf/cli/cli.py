@@ -198,7 +198,25 @@ class BaseCli(dnf.Base):
             return
 
         if trans:
-            remote_pkgs = [pkg for pkg in install_pkgs if not pkg._is_local_pkg()]
+            remote_pkgs = []
+            local_repository_pkgs = []
+            for pkg in install_pkgs:
+                if pkg._is_local_pkg():
+                    if pkg.reponame != hawkey.CMDLINE_REPO_NAME:
+                        local_repository_pkgs.append(pkg)
+                else:
+                    remote_pkgs.append(pkg)
+            error = False
+            for pkg in local_repository_pkgs:
+                if not pkg.verifyLocalPkg():
+                    msg = _("Package {} from local repository {} has incorrect checksum").format(
+                        str(pkg), pkg.reponame)
+                    logger.critical(msg)
+                    error = True
+            if error:
+                raise dnf.exceptions.Error(
+                    _("Some packages from local repository have incorrect checksum"))
+
             if remote_pkgs:
                 logger.info(_('Downloading Packages:'))
                 try:
