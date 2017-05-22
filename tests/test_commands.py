@@ -17,6 +17,7 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
 from tests import support
 from tests.support import mock
 
@@ -109,7 +110,7 @@ class InstallCommandTest(support.ResultTestCase):
 
     def test_run_group(self):
         """Test whether a group is installed."""
-        support.command_run(self._cmd, ['@Solid Ground'])
+        support.command_run(self._cmd, ['@Solid Ground', '--rpm'])
 
         base = self._cmd.cli.base
         self.assertResult(base, itertools.chain(
@@ -124,7 +125,7 @@ class InstallCommandTest(support.ResultTestCase):
 
         with support.wiretap_logs('dnf', logging.INFO, stdout):
             self.assertRaises(dnf.exceptions.Error,
-                              support.command_run, self._cmd, ['@non-existent'])
+                              support.command_run, self._cmd, ['@non-existent', '--rpm'])
 
         self.assertEqual(stdout.getvalue(),
                          "Warning: Group 'non-existent' does not exist.\n")
@@ -133,7 +134,7 @@ class InstallCommandTest(support.ResultTestCase):
 
     def test_run_package(self):
         """Test whether a package is installed."""
-        support.command_run(self._cmd, ['lotus'])
+        support.command_run(self._cmd, ['lotus', '--rpm'])
 
         base = self._cmd.cli.base
         self.assertResult(base, itertools.chain(
@@ -148,7 +149,7 @@ class InstallCommandTest(support.ResultTestCase):
 
         with support.wiretap_logs('dnf', logging.INFO, stdout):
             self.assertRaises(dnf.exceptions.Error,
-                              support.command_run, self._cmd, ['non-existent', 'lotus'])
+                              support.command_run, self._cmd, ['non-existent', 'lotus', '--rpm'])
 
         self.assertEqual(stdout.getvalue(),
                          'No match for argument: non-existent\n')
