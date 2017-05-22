@@ -63,6 +63,10 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Exclude packages specified by <pkgs> from the operation.
 
+  .. method:: exclude(pkgs)
+
+    Exclude packages specified by <pkgs> from the operation.
+
   .. attribute:: exit_on_lock
 
     Boolean option, if set to ``True`` dnf client exits immediately when something else has the lock. Default is ``False``.
