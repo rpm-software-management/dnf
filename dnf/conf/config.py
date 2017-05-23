@@ -708,7 +708,7 @@ class MainConf(BaseConfig):
                                                  mapper={'4': 'ipv4',
                                                          '6': 'ipv6'}))
         self._add_option('throttle', ThrottleOption(0))
-        self._add_option('timeout', SecondsOption(120))
+        self._add_option('timeout', SecondsOption(30))
         self._add_option('max_parallel_downloads', IntOption(None, range_min=1))
 
         self._add_option('metadata_expire',

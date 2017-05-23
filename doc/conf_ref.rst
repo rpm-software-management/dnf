@@ -501,7 +501,7 @@ configuration.
 ``timeout``
     time in seconds
 
-    Number of seconds to wait for a connection before timing out. Used in combination with :ref:`minrate option <minrate-label>` option. Defaults to 120 seconds.
+    Number of seconds to wait for a connection before timing out. Used in combination with :ref:`minrate option <minrate-label>` option. Defaults to 30 seconds.
 
 ``username``
     :ref:`string <string-label>`
