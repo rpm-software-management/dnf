@@ -834,7 +834,6 @@ class HistoryCommand(Command):
             _checkGPGKey(self.base, self.cli)
         else:
             demands.fresh_metadata = False
-        demands.available_repos = True
         demands.sack_activation = True
         demands.root_user = True
         if not os.access(self.base.history._db_file, os.R_OK):
