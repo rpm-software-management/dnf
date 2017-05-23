@@ -307,10 +307,11 @@ class RepoPkgsCommand(Command):
 
         def configure(self):
             demands = self.cli.demands
-            demands.available_repos = True
             demands.sack_activation = True
             if self.opts._pkg_specs_action:
                 self.opts.pkg_specs_action = self.opts._pkg_specs_action
+            if self.opts.pkg_specs_action != 'installed':
+                demands.available_repos = True
             if self.opts.obsoletes:
                 if self.opts._pkg_specs_action:
                     self.cli._option_conflict("--obsoletes", "--" + self.opts._pkg_specs_action)
