@@ -143,3 +143,19 @@
   .. method:: get_best_selector(sack, forms=None)
 
     Return a :class:`~dnf.selector.Selector` that will select a single best-matching package when used in a transaction operation. `sack` and `forms` have the same meaning as in :meth:`get_best_query`.
+
+  .. method:: get_nevra_possibilities(self, forms=None)
+
+    Return generator for every possible nevra. Each possible nevra is represented by NEVRA class
+    (libdnf) that has attributes name, epoch, version, release, arch. `forms` have the same
+    meaning as in :meth:`get_best_query`.
+
+    Example how to use it when it is known that string could be full NEVRA or NEVR::
+
+      subject = dnf.subjet.Subject("my_nevra_string")
+      possible_nevra = subject.get_nevra_possibilities(forms=[hawkey.FORM_NEVRA, hawkey.FORM_NEVR])
+
+    To print all possible names use::
+
+      for nevra in possible_nevra:
+          print(nevra.name)
