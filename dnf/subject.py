@@ -66,13 +66,26 @@ class Subject(object):
         return self.subj.pattern
 
     def _is_arch_specified(self, sack):
-        for nevra in self.subj.nevra_possibilities():
+        for nevra in self.get_nevra_possibilities():
             if nevra:
                 q = self._nevra_to_filters(sack.query(), nevra)
                 if q:
                     if nevra.arch:
                         return is_glob_pattern(nevra.arch)
         return False
+
+    def get_nevra_possibilities(self, forms=None):
+        # :api
+        """
+        :param forms:
+        :return: generator for every possible nevra. Each possible nevra is represented by Class
+        NEVRA object (libdnf) that have attributes name, epoch, version, release, arch
+        """
+
+        kwargs = {}
+        if forms:
+            kwargs['form'] = forms
+        return self.subj.nevra_possibilities(**kwargs)
 
     def _get_nevra_solution(self, sack, with_nevra=True, with_provides=True, with_filenames=True,
                             forms=None):
@@ -87,7 +100,7 @@ class Subject(object):
         if with_nevra:
             if forms:
                 kwargs['form'] = forms
-            for nevra in self.subj.nevra_possibilities(**kwargs):
+            for nevra in self.get_nevra_possibilities(forms=forms):
                 if nevra:
                     q = self._nevra_to_filters(sack.query(), nevra)
                     if q:
