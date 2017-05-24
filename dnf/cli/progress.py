@@ -47,6 +47,7 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         self.tick_period = tick_period
         self.rate_average = rate_average
         self.unknown_progres = 0
+        self.total_drpm = 0
 
     def message(self, msg):
         dnf.util._terminal_messenger('write_flush', msg, self.fo)
@@ -55,9 +56,9 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         self.total_files = total_files
         self.total_size = total_size
         self.total_drpm = total_drpms
-        self.done_drpm = 0
 
         # download state
+        self.done_drpm = 0
         self.done_files = 0
         self.done_size = 0
         self.state = {}

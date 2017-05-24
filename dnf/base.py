@@ -1010,7 +1010,11 @@ class Base(object):
             est_remote_size = sum(pload.download_size for pload in payloads)
             total_drpm = len(
                 [payload for payload in payloads if isinstance(payload, dnf.drpm.DeltaPayload)])
-            progress.start(len(payloads), est_remote_size, total_drpms=total_drpm)
+            # compatibility part for tools that do not accept total_drpms keyword
+            if progress.start.__code__.co_argcount == 4:
+                progress.start(len(payloads), est_remote_size, total_drpms=total_drpm)
+            else:
+                progress.start(len(payloads), est_remote_size)
             errors = dnf.repo._download_payloads(payloads, drpm)
 
             if errors._irrecoverable:
