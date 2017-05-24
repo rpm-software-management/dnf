@@ -51,11 +51,9 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
     def message(self, msg):
         dnf.util._terminal_messenger('write_flush', msg, self.fo)
 
-    def start(self, total_files, total_size, total_drpms=0):
+    def start(self, total_files, total_size):
         self.total_files = total_files
         self.total_size = total_size
-        self.total_drpm = total_drpms
-        self.done_drpm = 0
 
         # download state
         self.done_files = 0
@@ -147,10 +145,8 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         size = int(payload.download_size)
 
         # update state
-        if status == dnf.callback.STATUS_MIRROR:
+        if status in (dnf.callback.STATUS_MIRROR, dnf.callback.STATUS_DRPM):
             pass
-        elif status == dnf.callback.STATUS_DRPM:
-            self.done_drpm += 1
         elif text in self.state:
             start, done = self.state.pop(text)
             self.active.remove(text)
@@ -163,11 +159,7 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
 
         if status:
             # the error message, no trimming
-            if status is dnf.callback.STATUS_DRPM and self.total_drpm > 1:
-                msg = '[%s %d/%d] %s: ' % (self.STATUS_2_STR[status], self.done_drpm,
-                                           self.total_drpm, text)
-            else:
-                msg = '[%s] %s: ' % (self.STATUS_2_STR[status], text)
+            msg = '[%s] %s: ' % (self.STATUS_2_STR[status], text)
             left = _term_width() - len(msg) - 1
             msg = '%s%-*s\n' % (msg, left, err_msg)
         else:
