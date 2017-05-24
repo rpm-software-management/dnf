@@ -447,8 +447,10 @@ class RepoQueryCommand(commands.Command):
 
         if self.opts.resolve:
             # find the providing packages and show them
-            query = self.filter_repo_arch(
-                self.opts, self.base.sack.query().available())
+            if self.opts.list == "installed":
+                query = self.filter_repo_arch(self.opts, self.base.sack.query())
+            else:
+                query = self.filter_repo_arch(self.opts, self.base.sack.query().available())
             providers = query.filter(provides__glob=list(pkgs))
             if self.opts.recursive:
                 providers = providers.union(self._get_recursive_providers_query(query, providers))
