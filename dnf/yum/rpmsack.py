@@ -278,7 +278,7 @@ class RPMDBAdditionalDataPackage(object):
         fo, e = _iopen(fn)
         if fo is None:
             msg = '{}: {}'.format(type(e).__name__, dnf.i18n.ucd(e))
-            msg = "For %s cannot open attribute %s due to %s" % (self, attr, msg)
+            msg = "For {} cannot open attribute {} due to {}".format(self, attr, msg)
             logger.debug(msg)
             raise AttributeError(msg)
 
@@ -286,7 +286,7 @@ class RPMDBAdditionalDataPackage(object):
             value = fo.read()
         except Exception as e:
             msg = '{}: {}'.format(type(e).__name__, dnf.i18n.ucd(e))
-            msg = "For %s cannot open attribute %s due to %s" % (self, attr, msg)
+            msg = "For {} cannot open attribute {} due to {}".format(self, attr, msg)
             logger.debug(msg)
             raise AttributeError(msg)
         finally:
