@@ -156,6 +156,27 @@ class RepoTest(RepoTestMixin, support.TestCase):
 
     """
 
+    def load_repo(self):
+        repo = self.repo
+        repo.load()
+        if not repo._try_revive():
+            try:
+                with dnf.util.tmpdir() as tmpdir:
+                    handle = repo._handle_new_remote(tmpdir)
+                    repo._handle_load(handle)
+                    # override old md with the new ones:
+                    repo._replace_metadata(handle)
+
+                # get md from the cache now:
+                handle = repo._handle_new_local(repo._cachedir)
+                repo.metadata = repo._handle_load(handle)
+                repo.metadata.fresh = True
+                repo._expired = False
+            except Exception:
+                self._expired = True
+                raise dnf.exceptions.RepoError()
+        return True
+
     def setUp(self):
         self.repo = self.build_repo('r', 'r for riot')
 
@@ -193,7 +214,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.assertEqual(r._hawkey_repo.priority, 9)
 
     def test_expire_cache(self):
-        self.repo.load()
+        self.load_repo()
         # the second time we only hit the cache:
         del self.repo
         self.repo = dnf.repo.Repo("r", self.conf)
@@ -203,7 +224,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
 
     def test_gpgcheck(self):
         self.repo.gpgcheck = True
-        self.assertTrue(self.repo.load())
+        self.assertTrue(self.load_repo())
 
     @mock.patch('dnf.repo.Repo._local', False)
     def test_keep_old_pgks(self):
@@ -211,11 +232,11 @@ class RepoTest(RepoTestMixin, support.TestCase):
         survivor = os.path.join(self.repo.pkgdir, "survivor")
         dnf.util.touch(survivor)
         # syncing a repo shouldn't clear the pkgdir
-        self.repo.load()
+        self.load_repo()
         self.assertFile(survivor)
 
     def test_load_twice(self):
-        self.assertTrue(self.repo.load())
+        self.assertTrue(self.load_repo())
         # the second time we only hit the cache:
         del self.repo
         self.repo = dnf.repo.Repo("r", self.conf)
@@ -226,7 +247,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
     def test_load(self):
         repo = self.repo
         self.assertIsNone(repo.metadata)
-        self.assertTrue(repo.load())
+        self.assertTrue(self.load_repo())
         self.assertIsNotNone(repo.metadata)
         repomd = os.path.join(self.repo._cachedir, "repodata/repomd.xml")
         self.assertTrue(os.path.isfile(repomd))
@@ -234,10 +255,10 @@ class RepoTest(RepoTestMixin, support.TestCase):
 
     def test_load_badconf(self):
         self.repo.baseurl = []
-        self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
+        self.assertRaises(dnf.exceptions.RepoError, self.load_repo)
 
     def test_md_lazy(self):
-        self.repo.load()
+        self.load_repo()
         self.setUp()
         repo = self.repo
         repo._md_expire_cache()
@@ -247,7 +268,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
     def test_metadata_expire_in(self):
         repo = self.repo
         self.assertEqual(repo._metadata_expire_in(), (False, 0))
-        repo.load()
+        self.load_repo()
         (has, time) = repo._metadata_expire_in()
         self.assertTrue(has)
         self.assertGreater(time, 0)
@@ -259,7 +280,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.repo._md_only_cached = True
         self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
         self.repo._sync_strategy = 3
-        self.repo.load()
+        self.load_repo()
         del self.repo
         self.setUp() # get a new repo
         self.repo._md_only_cached = True
@@ -281,7 +302,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
     def test_progress_cb(self):
         m = mock.Mock()
         self.repo.set_progress_bar(m)
-        self.repo.load()
+        self.load_repo()
         self.assertTrue(m.start.called)
         self.assertTrue(m.progress.called)
         self.assertTrue(m.end.called)
@@ -304,7 +325,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
 
     def test_reset_metadata_expired(self):
         repo = self.repo
-        repo.load()
+        self.load_repo()
         repo.metadata_expire = 0
         repo._reset_metadata_expired()
         self.assertTrue(repo._expired)

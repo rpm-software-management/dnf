@@ -232,6 +232,10 @@ class _BaseStubMixin(object):
         # class and a Base reference.
         self._sack = TestSack(REPO_DIR, self)
         self._sack.load_system_repo()
+
+        self.download_metadata([r for r in self.repos.iter_enabled()
+                                if r.__class__ is dnf.repo.Repo and not r.load()])
+
         for repo in self.repos.iter_enabled():
             if repo.__class__ is dnf.repo.Repo:
                 self._add_repo_to_sack(repo)

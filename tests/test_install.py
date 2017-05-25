@@ -115,7 +115,6 @@ class CommonTest(support.ResultTestCase):
         self.assertCountEqual(map(str, installed),
                               ('trampoline-2.1-1.noarch',))
 
-
     def test_install_provide_version(self):
         """Test that the pkg to be installed can be spec. by provide ver."""
         self.base.install('splendid > 2.0')
