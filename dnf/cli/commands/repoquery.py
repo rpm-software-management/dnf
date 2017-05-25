@@ -238,6 +238,16 @@ class RepoQueryCommand(commands.Command):
         if self.opts.querytags:
             return
 
+        if self.opts.recursive:
+            if self.opts.exactdeps:
+                self.cli._option_conflict("--recursive", "--exactdeps")
+            if not any([self.opts.whatrequires,
+                        (self.opts.packageatr == "requires" and self.opts.resolve)]):
+                raise dnf.exceptions.Error(
+                    _("Option '--recursive' has to be used with '--whatrequires <REQ>' "
+                      "(optionaly with '--alldeps', but not with '--exactdeps'), or with "
+                      "'--requires <REQ> --resolve'"))
+
         if self.opts.srpm:
             self.base.repos.enable_source_repos()
 

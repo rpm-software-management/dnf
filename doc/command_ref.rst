@@ -965,8 +965,8 @@ are displayed in the standard NEVRA notation.
     by running ``dnf repoquery --querytags``.
 
 ``--recursive``
-    Query packages recursively. Can be used with ``--whatrequires <REQ>``
-    (optionaly with --alldeps, but it has no effect with --exactdeps), or with
+    Query packages recursively. Has to be used with ``--whatrequires <REQ>``
+    (optionaly with ``--alldeps``, but not with ``--exactdeps``), or with
     ``--requires <REQ> --resolve``.
 
 ``--resolve``
