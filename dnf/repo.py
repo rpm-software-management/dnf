@@ -730,10 +730,10 @@ class Repo(dnf.conf.RepoConf):
 
         # apply repo options
         h.lowspeedlimit = self.minrate
-        maxspeed = self.throttle if type(self.throttle) is int \
-                     else int(self.bandwidth * self.throttle)
+        maxspeed = self.throttle if isinstance(self.throttle, int) \
+            else int(self.bandwidth * self.throttle)
         if maxspeed != 0 and self.minrate > maxspeed:
-            raise dnf.exceptions.Error(_("Maximal download speed is lover than minimal. "
+            raise dnf.exceptions.Error(_("Maximum download speed is lower than minimum. "
                                          "Please change configuration of minrate or throttle"))
         h.maxspeed = maxspeed
         h.setopt(librepo.LRO_PROXYAUTH, True)
