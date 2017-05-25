@@ -78,9 +78,6 @@ def main(args, conf_class=Conf, cli_class=Cli, option_parser_class=OptionParser)
     except KeyboardInterrupt as e:
         logger.critical('{}: {}'.format(type(e).__name__, "Terminated."))
         return 1
-    except Exception as e:
-        logger.critical('{}: {}'.format(type(e).__name__, e))
-        return 3
 
 
 def _main(base, args, cli_class, option_parser):
