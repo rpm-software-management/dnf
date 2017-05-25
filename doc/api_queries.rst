@@ -146,16 +146,16 @@
 
   .. method:: get_nevra_possibilities(self, forms=None)
 
-    Return generator for every possible nevra. Each possible nevra is represented by Class NEVRA
-    object (libdnf) that have attributes name, epoch, version, release, arch. `forms` have the same
+    Return generator for every possible nevra. Each possible nevra is represented by NEVRA class
+    (libdnf) that has attributes name, epoch, version, release, arch. `forms` have the same
     meaning as in :meth:`get_best_query`.
 
-    Example how to use it if I know that string could be full NEVRA or NEVR::
+    Example how to use it when it is known that string could be full NEVRA or NEVR::
 
       subject = dnf.subjet.Subject("my_nevra_string")
       possible_nevra = subject.get_nevra_possibilities(forms=[hawkey.FORM_NEVRA, hawkey.FORM_NEVR])
 
-    If I want to print all possible names just use::
+    To print all possible names use::
 
       for nevra in possible_nevra:
           print(nevra.name)

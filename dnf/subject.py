@@ -77,7 +77,7 @@ class Subject(object):
     def get_nevra_possibilities(self, forms=None):
         # :api
         """
-        :param forms:
+        :param forms: list of hawkey NEVRA forms like [hawkey.FORM_NEVRA, hawkey.FORM_NEVR]
         :return: generator for every possible nevra. Each possible nevra is represented by Class
         NEVRA object (libdnf) that have attributes name, epoch, version, release, arch
         """
