@@ -1376,14 +1376,18 @@ class Base(object):
                 query_args = {'name': pkg.name}
                 if (pkg.basearchonly):
                     query_args.update({'arch': basearch})
-                q = self.sack.query().filter(**query_args).run()
+                q = self.sack.query().filter(**query_args).apply()
                 if not q or not cond_check(pkg):
                     # a conditional package with unsatisfied requiremensts
                     continue
-                sltr = dnf.selector.Selector(self.sack)
-                sltr.set(pkg=q)
-                fn(select=sltr)
-                self._goal.group_members.add(pkg.name)
+                q = q.filter(arch__neq="src")
+                if self.conf.multilib_policy == "all":
+                    self._install_multiarch(q, strict=False)
+                else:
+                    sltr = dnf.selector.Selector(self.sack)
+                    sltr.set(pkg=q)
+                    fn(select=sltr)
+                    self._goal.group_members.add(pkg.name)
 
     def _build_comps_solver(self):
         def reason_fn(pkgname):
@@ -1553,6 +1557,18 @@ class Base(object):
             del fo
             return 1
 
+    def _install_multiarch(self, query, reponame=None, strict=True):
+        already_inst, available = self._query_matches_installed(query)
+        for i in already_inst:
+            _msg_installed(i)
+        for a in available:
+            sltr = dnf.selector.Selector(self.sack)
+            sltr = sltr.set(pkg=a)
+            if reponame is not None:
+                sltr = sltr.set(reponame=reponame)
+            self._goal.install(select=sltr, optional=(not strict))
+        return len(available)
+
     def install(self, pkg_spec, reponame=None, strict=True, forms=None):
         # :api
         """Mark package(s) given by pkg_spec and reponame for installation."""
@@ -1566,16 +1582,8 @@ class Base(object):
             if not q:
                 raise dnf.exceptions.PackageNotFoundError(
                     _('no package matched'), pkg_spec)
-            already_inst, available = self._query_matches_installed(q)
-            for i in already_inst:
-                _msg_installed(i)
-            for a in available:
-                sltr = dnf.selector.Selector(self.sack)
-                sltr = sltr.set(pkg=a)
-                if reponame is not None:
-                    sltr = sltr.set(reponame=reponame)
-                self._goal.install(select=sltr, optional=(not strict))
-            return len(available)
+            return self._install_multiarch(q, reponame=reponame, strict=strict)
+
         elif self.conf.multilib_policy == "best":
             sltrs = subj._get_best_selectors(self.sack,
                                              forms=forms,
@@ -1624,7 +1632,7 @@ class Base(object):
         already_inst, available = self._query_matches_installed(q)
         if pkg in already_inst:
             _msg_installed(pkg)
-        elif not pkg in itertools.chain.from_iterable(available):
+        elif pkg not in itertools.chain.from_iterable(available):
             raise dnf.exceptions.PackageNotFoundError(_('No match for argument: %s'), pkg.location)
         else:
             sltr = dnf.selector.Selector(self.sack)
