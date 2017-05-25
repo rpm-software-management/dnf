@@ -568,14 +568,14 @@ class Base(object):
         """
         inst = q.installed()
         inst_per_arch = inst._na_dict()
-        avail_per_arch = q.latest().available()._na_dict()
+        avail_per_arch = q.available()._na_dict()
         avail_l = []
         inst_l = []
         for na in avail_per_arch:
             if na in inst_per_arch:
                 inst_l.append(inst_per_arch[na][0])
             else:
-                avail_l.extend(avail_per_arch[na])
+                avail_l.append(avail_per_arch[na])
         return inst_l, avail_l
 
     def _sltr_matches_installed(self, sltr):
@@ -1570,7 +1570,11 @@ class Base(object):
             for i in already_inst:
                 _msg_installed(i)
             for a in available:
-                self._goal.install(a, optional=(not strict))
+                sltr = dnf.selector.Selector(self.sack)
+                sltr = sltr.set(pkg=a)
+                if reponame is not None:
+                    sltr = sltr.set(reponame=reponame)
+                self._goal.install(select=sltr, optional=(not strict))
             return len(available)
         elif self.conf.multilib_policy == "best":
             sltrs = subj._get_best_selectors(self.sack,
@@ -1620,7 +1624,7 @@ class Base(object):
         already_inst, available = self._query_matches_installed(q)
         if pkg in already_inst:
             _msg_installed(pkg)
-        elif not pkg in available:
+        elif not pkg in itertools.chain.from_iterable(available):
             raise dnf.exceptions.PackageNotFoundError(_('No match for argument: %s'), pkg.location)
         else:
             sltr = dnf.selector.Selector(self.sack)
