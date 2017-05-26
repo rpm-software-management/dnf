@@ -29,7 +29,7 @@ class YumConf(MainConf):
         super(YumConf, self).__init__()
 
         self._add_inherited_option(super(YumConf, self), [
-            'alwaysprompt', 'assumeno', 'assumeyes', 'bandwidth',
+            'assumeno', 'assumeyes', 'bandwidth',
             'bugtracker_url', 'cachedir', 'color',
             'color_list_available_downgrade',
             'color_list_available_install', 'color_list_available_reinstall',

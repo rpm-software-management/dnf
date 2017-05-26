@@ -167,6 +167,12 @@ The relevant repository configuration files have been fixed to respect this, see
 the related `Fedora bug 948788
 <https://bugzilla.redhat.com/show_bug.cgi?id=948788>`_.
 
+=================================
+ ``alwaysprompt`` dropped
+=================================
+
+Unsupported to simplify the configuration.
+
 .. _group_package_types_dropped:
 
 =================================
