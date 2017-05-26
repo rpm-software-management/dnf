@@ -526,20 +526,7 @@ class BaseCli(dnf.Base):
         # shortcut for the always-off/always-on options
         if self.conf.assumeyes and not self.conf.assumeno:
             return False
-        if self.conf.alwaysprompt:
-            return True
-
-        # prompt if:
-        #  package was added to fill a dependency
-        #  package is being removed
-        #  package wasn't explicitly given on the command line
-        for txmbr in self.tsInfo.getMembers():
-            if txmbr.isDep or \
-                   txmbr.name not in self.extcmds:
-                return True
-
-        # otherwise, don't prompt
-        return False
+        return True
 
     def _history_get_transactions(self, extcmds):
         if not extcmds:
