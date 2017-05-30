@@ -28,32 +28,6 @@ class YumConf(MainConf):
     def __init__(self):
         super(YumConf, self).__init__()
 
-        self._add_inherited_option(super(YumConf, self), [
-            'assumeno', 'assumeyes', 'bandwidth',
-            'bugtracker_url', 'cachedir', 'color',
-            'color_list_available_downgrade',
-            'color_list_available_install', 'color_list_available_reinstall',
-            'color_list_available_upgrade', 'color_list_installed_extra',
-            'color_list_installed_newer', 'color_list_installed_older',
-            'color_list_installed_reinstall', 'color_search_match',
-            'color_update_installed', 'color_update_local', 'color_update_remote',
-            'config_file_path',
-            'debug_solver', 'debuglevel', 'defaultyes', 'deltarpm',
-            'deltarpm_percentage', 'disable_excludes', 'diskspacecheck',
-            'downloadonly', 'enabled', 'enablegroups', 'errorlevel',
-            'excludepkgs', 'exit_on_lock', 'fastestmirror', 'gpgcheck',
-            'group_package_types', 'history_list_view', 'history_record',
-            'history_record_packages', 'includepkgs', 'install_weak_deps',
-            'installonlypkgs', 'installroot', 'ip_resolve', 'localpkg_gpgcheck',
-            'logdir', 'max_parallel_downloads', 'metadata_timer_sync', 'minrate',
-            'multilib_policy', 'obsoletes', 'password', 'plugins', 'pluginpath',
-            'pluginconfpath', 'protected_packages',
-            'proxy', 'proxy_password', 'proxy_username', 'recent',
-            'repo_gpgcheck', 'reposdir', 'reset_nice', 'retries', 'rpmverbosity',
-            'showdupesfromrepos', 'sslcacert', 'sslclientcert', 'sslclientkey',
-            'sslverify', 'strict', 'throttle', 'tsflags',
-            'upgrade_group_objects_upgrade', 'username', 'skip_broken'])
-
         self._add_option('exclude', self._get_option('excludepkgs'))
         self._add_option('persistdir', PathOption("/var/lib/yum"))
         self._add_option('system_cachedir', PathOption("/var/lib/yum"))
@@ -65,11 +39,6 @@ class YumConf(MainConf):
         self._add_option('metadata_expire', SecondsOption(60 * 60 * 6))  # 6 hours
         self._add_option('best', BoolOption(True))
         self._add_option('clean_requirements_on_remove', BoolOption(False))
-
-    def _add_inherited_option(self, parent, options):
-        for option_name in options:
-            self._add_option(option_name,
-                             inherit(parent._get_option(option_name)))
 
     def _adjust_conf_options(self):
         """Adjust conf options interactions"""
