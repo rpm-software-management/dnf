@@ -834,7 +834,8 @@ class Repo(dnf.conf.RepoConf):
         with dnf.util.tmpdir() as tmpdir, open(repomd_fn) as repomd:
             handle = self._handle_new_remote(tmpdir)
             handle.yumdlist = librepo.YUM_REPOMDONLY
-            result = handle._perform()
+            with dnf.crypto.pubring_dir(self._pubring_dir):
+                result = handle._perform()
             fresh_repomd_fn = result.rpmmd_repo['repomd']
             with open(fresh_repomd_fn) as fresh_repomd:
                 if repomd.read() != fresh_repomd.read():
