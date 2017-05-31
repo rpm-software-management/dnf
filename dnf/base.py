@@ -95,6 +95,7 @@ class Base(object):
         self._update_security_filters = {}
         self._allow_erasing = False
         self._revert_reason = []
+        self._repo_set_imported_gpg_keys = set()
 
     def __enter__(self):
         return self
@@ -2107,8 +2108,8 @@ class Base(object):
            retrieving the keys
         """
         repo = self.repos[po.repoid]
-        keyurls = repo.gpgkey
-        key_installed = False
+        key_installed = repo.id in self._repo_set_imported_gpg_keys
+        keyurls = [] if key_installed else repo.gpgkey
 
         def _prov_key_data(msg):
             msg += _('Failing package is: %s') % (po) + '\n '
@@ -2161,6 +2162,7 @@ class Base(object):
                     raise dnf.exceptions.Error(_prov_key_data(msg))
                 logger.info(_('Key imported successfully'))
                 key_installed = True
+                self._repo_set_imported_gpg_keys.add(repo.id)
 
         if not key_installed and user_cb_fail:
             raise dnf.exceptions.Error(_("Didn't install any keys"))

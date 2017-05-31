@@ -246,9 +246,9 @@ class BaseCli(dnf.Base):
 
         :param pkgs: a list of package objects to verify the GPG
            signatures of
-        :return: non-zero if execution should stop due to an error
         :raises: Will raise :class:`Error` if there's a problem
         """
+        error_messages = []
         for po in pkgs:
             result, errmsg = self._sig_check_pkg(po)
 
@@ -265,13 +265,19 @@ class BaseCli(dnf.Base):
                 # the callback here expects to be able to take options which
                 # userconfirm really doesn't... so fake it
                 fn = lambda x, y, z: self.output.userconfirm()
-                self._get_key_for_package(po, fn)
+                try:
+                    self._get_key_for_package(po, fn)
+                except dnf.exceptions.Error as e:
+                    error_messages.append(str(e))
 
             else:
                 # Fatal error
-                raise dnf.exceptions.Error(errmsg)
+                error_messages.append(errmsg)
 
-        return 0
+        if error_messages:
+            for msg in error_messages:
+                logger.critical(msg)
+            raise dnf.exceptions.Error(_("GPG check FAILED"))
 
     def check_updates(self, patterns=(), reponame=None, print_=True):
         """Check updates matching given *patterns* in selected repository."""
