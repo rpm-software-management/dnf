@@ -54,13 +54,13 @@ class ProgressTest(tests.support.TestCase):
              mock.patch('dnf.cli.progress.time', lambda: now):
 
             p = dnf.cli.progress.MultiFileProgressMeter(fo)
+            p.isatty = True
             pload = FakePayload('dummy-text', 5)
             p.start(1, 1)
             for i in range(6):
                 now += 1.0
                 p.progress(pload, i)
             p.end(pload, None, None)
-
         self.assertEqual(fo.lines(), [
             'dummy-text  0% [          ] ---  B/s |   0  B     --:-- ETA\r',
             'dummy-text 20% [==        ] 1.0  B/s |   1  B     00:04 ETA\r',
@@ -73,6 +73,7 @@ class ProgressTest(tests.support.TestCase):
     def test_mirror(self):
         fo = MockStdout()
         p = dnf.cli.progress.MultiFileProgressMeter(fo, update_period=-1)
+        p.isatty = True
         p.start(1, 5)
         pload = FakePayload('foo', 5.0)
         now = 1379406823.9
@@ -107,6 +108,7 @@ class ProgressTest(tests.support.TestCase):
              mock.patch('dnf.cli.progress.time', lambda: now):
 
             p = dnf.cli.progress.MultiFileProgressMeter(fo)
+            p.isatty = True
             p.start(2, 30)
             pload1 = FakePayload('foo', 10.0)
             pload2 = FakePayload('bar', 20.0)

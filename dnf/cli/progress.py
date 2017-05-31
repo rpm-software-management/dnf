@@ -48,6 +48,7 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         self.rate_average = rate_average
         self.unknown_progres = 0
         self.total_drpm = 0
+        self.isatty = sys.stdout.isatty()
 
     def message(self, msg):
         dnf.util._terminal_messenger('write_flush', msg, self.fo)
@@ -102,7 +103,8 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
                 self.rate = rate
         self.last_time = now
         self.last_size = self.done_size
-
+        if not self.isatty:
+            return
         # pick one of the active downloads
         text = self.active[int(now/self.tick_period) % len(self.active)]
         if self.total_files > 1:
