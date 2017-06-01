@@ -61,6 +61,7 @@ class InstallCommand(commands.Command):
         demands.root_user = True
         commands._checkGPGKey(self.base, self.cli)
         commands._checkEnabledRepo(self.base, self.opts.filenames)
+        demands.honor_weak_deps = True
 
     def run(self):
         strict = self.base.conf.strict

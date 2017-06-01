@@ -371,6 +371,7 @@ class RepoPkgsCommand(Command):
             demands.sack_activation = True
             demands.resolving = True
             demands.root_user = True
+            demands.honor_weak_deps = True
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""

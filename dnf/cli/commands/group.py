@@ -362,7 +362,8 @@ class GroupCommand(commands.Command):
             demands.available_repos = False
         else:
             demands.available_repos = True
-
+        if cmd == 'install':
+            demands.honor_weak_deps = True
         commands._checkEnabledRepo(self.base)
 
         if cmd in ('install', 'upgrade'):

@@ -747,6 +747,9 @@ class Cli(object):
             self.base.fill_sack(load_system_repo='auto',
                                 load_available_repos=self.demands.available_repos)
 
+        if not demands.honor_weak_deps:
+            self.base.conf.install_weak_deps = False
+
     def _parse_commands(self, opts, args):
         """Check that the requested CLI command exists."""
 
