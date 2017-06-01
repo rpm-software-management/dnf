@@ -28,6 +28,44 @@ import tempfile
 
 PACKAGE = 'tour-5-1.noarch'
 
+
+class Proggress_2(dnf.cli.progress.MultiFileProgressMeter):
+    def start(self, total_files, total_size):
+        self.total_files = total_files
+        self.total_size = total_size
+
+        # download state
+        self.done_drpm = 0
+        self.done_files = 0
+        self.done_size = 0
+        self.state = {}
+        self.active = []
+
+        # rate averaging
+        self.last_time = 0
+        self.last_size = 0
+        self.rate = None
+
+
+class Proggress_3(dnf.cli.progress.MultiFileProgressMeter):
+    def start(self, total_files, total_size, total_drpms=0):
+        self.total_files = total_files
+        self.total_size = total_size
+        self.total_drpm = total_drpms
+
+        # download state
+        self.done_drpm = 0
+        self.done_files = 0
+        self.done_size = 0
+        self.state = {}
+        self.active = []
+
+        # rate averaging
+        self.last_time = 0
+        self.last_size = 0
+        self.rate = None
+
+
 class DrpmTest(support.TestCase):
     def setUp(self):
         cachedir = tempfile.mkdtemp()
@@ -92,3 +130,17 @@ class DrpmTest(support.TestCase):
 
         self.base.conf.deltarpm_percentage = 200
         self.assertEqual(self.download(), ['drpms/tour-5-1.noarch.drpm'])
+
+    def test_progress_start_2_args(self):
+        p = Proggress_2()
+        try:
+            self.base.download_packages([self.pkg], progress=p)
+        except dnf.exceptions.DownloadError as e:
+            pass
+
+    def test_progress_start_3_args(self):
+        p = Proggress_3()
+        try:
+            self.base.download_packages([self.pkg], progress=p)
+        except dnf.exceptions.DownloadError as e:
+            pass
