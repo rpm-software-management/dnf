@@ -116,7 +116,16 @@ class RepoListCommand(commands.Command):
         on_hiend = term.MODE['normal']
         tot_num = 0
         cols = []
-        if not repos:
+
+        if repos:
+            if arg not in ('disabled', 'all') and not enabled_repos:
+                logger.warn(_('No repositories enabled'))
+                return
+            elif arg == 'disabled' and \
+                    not any(drepo.enabled is False for drepo in repos):
+                logger.warn(_('No repositories disabled'))
+                return
+        elif not repos:
             logger.warn(_('No repositories available'))
             return
 
