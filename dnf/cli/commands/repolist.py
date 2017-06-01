@@ -194,6 +194,13 @@ class RepoListCommand(commands.Command):
                             _("Repo-distro-tags: "),
                             "[%s]: %s" % (distro, ", ".join(sorted(tags))))]
 
+# fffffffffffffffffffffffffffffffffffffffffffffffffffff testing 78 char width
+# fffffffffffffffffffffffffffffffffffffffffffffffffffffff testing 80 char width
+# ffffffffffffffffffffffffffffffffffffffffffffffffffffffff testing 81 char width
+# fffffffffffffffffffffffffffffffffffffffffffffffffffffffff testing 82 char width
+# ffffffffffffffffffffffffffffffffffffffffffffffffffffffffff testing 83 char width
+
+
                 if md:
                     out += [
                         self.output.fmtKeyValFill(
