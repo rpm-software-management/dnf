@@ -122,9 +122,15 @@ class Base(object):
             hrepo.updateinfo_fn = repo._updateinfo_fn
         else:
             logger.debug("not found updateinfo for: %s", repo.name)
-        self._sack.load_repo(hrepo, build_cache=True, load_filelists=True,
-                             load_presto=repo.deltarpm,
-                             load_updateinfo=True)
+        kwargs = {'build_cache': True,
+                  'load_filelists': True,
+                  'load_presto': repo.deltarpm,
+                  'load_updateinfo': True}
+        if not repo._local:
+            kwargs['cache_dir'] = repo.pkgdir
+            if self.conf.cached_rpm_only:
+                kwargs['only_cached'] = True
+        self._sack.load_repo(hrepo, **kwargs)
 
     @staticmethod
     def _setup_default_conf():
