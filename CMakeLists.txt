@@ -8,7 +8,9 @@ if (NOT PYTHON_DESIRED)
 endif()
 
 SET( SYSCONFDIR /etc)
-SET( SYSTEMD_DIR /usr/lib/systemd/system)
+if (NOT SYSTEMD_DIR)
+	SET(SYSTEMD_DIR /usr/lib/systemd/system)
+endif()
 
 if (${PYTHON_DESIRED} STREQUAL "2")
 	FIND_PACKAGE (PythonInterp REQUIRED)
