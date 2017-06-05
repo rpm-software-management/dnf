@@ -32,7 +32,6 @@ import dnf.exceptions
 import dnf.i18n
 import errno
 import glob
-import gpg
 import gzip
 import hashlib
 import io
@@ -278,7 +277,7 @@ def import_key_to_pubring(rawkey, keyid, gpgdir=None, make_ro_copy=True):
     if not os.path.exists(gpgdir):
         os.makedirs(gpgdir)
 
-    with dnf.crypto.pubring_dir(gpgdir), gpg.Context() as ctx:
+    with dnf.crypto.pubring_dir(gpgdir), dnf.crypto.Context() as ctx:
         # import the key
         with open(os.path.join(gpgdir, 'gpg.conf'), 'wb') as fp:
             fp.write(b'')
