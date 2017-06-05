@@ -55,7 +55,7 @@ class List(support.TestCase):
     def test_list_updates(self):
         base = support.MockBase("updates", "main")
         ypl = base._do_package_lists('upgrades')
-        self.assertEqual(len(ypl.updates), support.UPDATES_NSOLVABLES - 1)
+        self.assertEqual(len(ypl.updates), support.UPDATES_NSOLVABLES - 2)
         pkg = ypl.updates[0]
         self.assertEqual(pkg.name, "hole")
         ypl = base._do_package_lists('upgrades', ["pepper"])
@@ -64,12 +64,12 @@ class List(support.TestCase):
         self.assertEqual(len(ypl.updates), 0)
 
         ypl = base._do_package_lists('upgrades', ["hole"])
-        self.assertEqual(len(ypl.updates), 2)
+        self.assertEqual(len(ypl.updates), 1)
 
     def test_lists_multiple(self):
         base = support.MockBase('updates', "main")
         ypl = base._do_package_lists('upgrades', ['pepper', 'hole'])
-        self.assertLength(ypl.updates, 3)
+        self.assertLength(ypl.updates, 2)
 
 class TestListAllRepos(support.TestCase):
     def setUp(self):
