@@ -434,7 +434,7 @@ class BaseCli(dnf.Base):
                                 columns=columns)
             cul = self.conf.color_update_local
             cur = self.conf.color_update_remote
-            rup = self.output.listPkgs(ypl.updates, _('Upgraded Packages'), basecmd,
+            rup = self.output.listPkgs(ypl.updates, _('Available Upgrades'), basecmd,
                                 highlight_na=local_pkgs, columns=columns,
                                 highlight_modes={'=' : cul, 'not in' : cur})
 

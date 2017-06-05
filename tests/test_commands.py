@@ -252,8 +252,6 @@ class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
         self.assertEqual(
             stdout.getvalue(),
             u'\n'
-            u'hole.x86_64                              1-2'
-            u'                            updates \n'
             u'hole.x86_64                              2-1'
             u'                            updates \n'
             u'pepper.x86_64                            20-1'
@@ -461,24 +459,8 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with support.patch_std_streams() as (stdout, _):
             support.command_run(cmd, ['updates', 'info', 'upgrades'])
-
-        self.assertEqual(
-            stdout.getvalue(),
-            ''.join((
-                u'Upgraded Packages\n'
-                u'Name         : hole\n'
-                u'Version      : 1\n'
-                u'Release      : 2\n'
-                u'Arch         : x86_64\n'
-                u'Size         : 0.0  \n'
-                u'Source       : None\n'
-                u'Repo         : updates\n'
-                u'Summary      : \n'
-                u'License      : \n'
-                u'Description  : \n'
-                u'\n',
-                self.HOLE_X86_64_INFO,
-                self.PEPPER_UPDATES_INFO)))
+        self.assertEqual(stdout.getvalue(), ''.join((
+            u'Available Upgrades\n', self.HOLE_X86_64_INFO, self.PEPPER_UPDATES_INFO)))
 
 class RepoPkgsInstallSubCommandTest(support.ResultTestCase):
 

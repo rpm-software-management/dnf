@@ -1279,7 +1279,9 @@ class Base(object):
         elif pkgnarrow == 'upgrades':
             updates = query_for_repo(q).upgrades()
             # reduce a query to security upgrades if they are specified
-            updates = self._merge_update_filters(updates).run()
+            updates = self._merge_update_filters(updates)
+            # reduce a query to latest packages
+            updates = updates.latest().run()
 
         # installed only
         elif pkgnarrow == 'installed':
