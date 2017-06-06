@@ -219,13 +219,13 @@ def main(args):
 
 
 def upgrade(base, upgrade_type):
-    if upgrade_type == 'default':
+    if upgrade_type == 'security':
+        base._update_security_filters['upgrade'] = [base.sack.query().filter(
+            advisory_type='security')]
         base.upgrade_all()
-    elif upgrade_type == 'security':
-        for pkg in base.sack.query().installed():
-            for advisory in pkg.get_advisories(hawkey.GT):
-                if advisory.type != hawkey.ADVISORY_SECURITY:
-                    continue
-                base.upgrade(pkg.name)
+    elif upgrade_type == 'default':
+        base.upgrade_all()
     else:
-        assert False
+        raise dnf.exceptions.Error(
+            'Unsupported upgrade_type "{}", only "default" and "security" supported'.format(
+                upgrade_type))
