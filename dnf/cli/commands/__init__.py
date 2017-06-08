@@ -217,8 +217,26 @@ class ListCommand(InfoCommand):
 
     def run(self):
         self.cli._populate_update_security_filter(self.opts)
-        return self.base.output_packages('list', self.opts.packages_action,
-                                         self.opts.packages)
+        try:
+            self.base.output_packages('list', self.opts.packages_action,
+                                      self.opts.packages)
+        except dnf.exceptions.Error as e:
+            logger.warning(e)
+
+        print("Modules")
+        if self.opts.packages_action == "installed":
+            # show *enabled* modules
+            if self.opts.packages:
+                for pkg in self.opts.packages:
+                    print(self.base.repo_module_dict.get_brief_description_enabled(pkg))
+            else:
+                print(self.base.repo_module_dict.get_brief_description_enabled(None))
+        else:
+            if self.opts.packages:
+                for pkg in self.opts.packages:
+                    print(self.base.repo_module_dict.get_brief_description_all(pkg))
+            else:
+                print(self.base.repo_module_dict.get_brief_description_all(None))
 
 
 class ProvidesCommand(Command):
