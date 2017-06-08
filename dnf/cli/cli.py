@@ -531,7 +531,7 @@ class BaseCli(dnf.Base):
         self.conf.showdupesfromrepos = old_sdup
 
         if not matches:
-            raise dnf.exceptions.Error(_('No Matches found'))
+            logger.info(_('No matches found'))
 
     def _promptWanted(self):
         # shortcut for the always-off/always-on options
