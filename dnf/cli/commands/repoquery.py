@@ -84,8 +84,11 @@ def rpm2py_format(queryformat):
 class RepoQueryCommand(commands.Command):
     """A class containing methods needed by the cli to execute the repoquery command.
     """
+    nevra_forms = {'repoquery-n': hawkey.FORM_NAME,
+                   'repoquery-na': hawkey.FORM_NA,
+                   'repoquery-nevra': hawkey.FORM_NEVRA}
 
-    aliases = ('repoquery',)
+    aliases = ('repoquery',) + tuple(nevra_forms.keys())
     summary = _('search for packages matching keyword')
 
     @staticmethod
@@ -323,10 +326,15 @@ class RepoQueryCommand(commands.Command):
 
         q = self.base.sack.query()
         if self.opts.key:
+            kwark = {}
+            forms = [self.nevra_forms[command] for command in self.opts.command
+                     if command in list(self.nevra_forms.keys())]
+            if forms:
+                kwark["forms"] = forms
             pkgs = []
             for key in self.opts.key:
                 q = dnf.subject.Subject(key, ignore_case=True).get_best_query(
-                    self.base.sack, with_provides=False)
+                    self.base.sack, with_provides=False, **kwark)
                 pkgs += q.run()
             q = self.base.sack.query().filter(pkg=pkgs)
 

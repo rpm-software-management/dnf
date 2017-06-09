@@ -784,6 +784,9 @@ Repoquery Command
 ``dnf [options] repoquery --querytags``
     Provides list of recognized tags by repoquery option \-\ :ref:`-queryformat <queryformat_repoquery-label>`
 
+    There are also a few specific repoquery commands ``repoquery-n``, ``repoquery-na`` and ``repoquery-nevra``
+    that allow to specify exact argument forms.
+
 Select Options
 --------------
 
@@ -979,6 +982,10 @@ Examples
 Display NEVRAS of all available packages matching ``light*``::
 
     dnf repoquery 'light*'
+
+Display NEVRAS of all available packages matching name ``light*`` and architecture ``noarch``::
+
+    dnf repoquery-na 'light*.noarch'
 
 Display requires of all ligttpd packages::
 
