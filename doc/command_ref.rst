@@ -357,7 +357,7 @@ this command.
     it. It also removes any dependencies that are no longer needed.
 
     There are also a few specific autoremove commands ``autoremove-n``, ``autoremove-na`` and
-    ``autoremove-nevra`` that allow specification of exact argument forms.
+    ``autoremove-nevra`` that allow specification of exact argument NEVRA format.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
@@ -596,7 +596,7 @@ Install Command
     will be removed in the case of non-installonly package.
 
     There are also a few specific install commands ``install-n``, ``install-na`` and
-    ``install-nevra`` that allow to specify exact argument forms.
+    ``install-nevra`` that allow to specify exact argument NEVRA format.
 
     See also :ref:`\configuration_files_replacement_policy-label`.
 
@@ -763,7 +763,7 @@ Remove Command
     Removes old installonly packages keeping only ``installonly_limit`` latest versions.
 
     There are also a few specific remove commands ``remove-n``, ``remove-na`` and ``remove-nevra``
-    that allow to specify exact argument forms.
+    that allow to specify exact argument NEVRA format.
 
 .. _repoinfo_command-label:
 
@@ -799,6 +799,9 @@ Repoquery Command
 
 ``dnf [options] repoquery --querytags``
     Provides list of recognized tags by repoquery option \-\ :ref:`-queryformat <queryformat_repoquery-label>`
+
+    There are also a few specific repoquery commands ``repoquery-n``, ``repoquery-na`` and ``repoquery-nevra``
+    that allow to specify exact argument NEVRA format (does not affect arguments of options like --whatprovides <arg>, ...).
 
 Select Options
 --------------
@@ -992,9 +995,13 @@ are displayed in the standard NEVRA notation.
 Examples
 --------
 
-Display NEVRAS of all available packages matching ``light*``::
+Display NEVRAs of all available packages matching ``light*``::
 
     dnf repoquery 'light*'
+
+Display NEVRAs of all available packages matching name ``light*`` and architecture ``noarch`` (accepts only arguments in format "<name>.<arch>")::
+
+    dnf repoquery-na 'light*.noarch'
 
 Display requires of all ligttpd packages::
 
