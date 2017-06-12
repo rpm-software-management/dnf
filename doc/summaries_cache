@@ -2090,5 +2090,45 @@
     [
         1198975, 
         "[UX] show progress for DRPM"
+    ], 
+    [
+        1456419, 
+        "dnf update --refresh fails for repo_gpgcheck=1"
+    ], 
+    [
+        1445021, 
+        "Unlocalized date format"
+    ], 
+    [
+        1400714, 
+        "implement alwaysprompt=no option"
+    ], 
+    [
+        1250702, 
+        "dnf.Base.group_install does not honor multilib_policy=all"
+    ], 
+    [
+        1381988, 
+        "[RFE] output excluded packages during update"
+    ], 
+    [
+        1397848, 
+        "UnicodeDecodeError: 'utf-8' codec can't decode byte 0xf3 in position 1: invalid continuation byte"
+    ], 
+    [
+        1321407, 
+        "ValueError: (2, 'LRO_MAXSPEED (400) is lower than LRO_LOWSPEEDLIMIT (1000)', 'Bad argument of a handle option')"
+    ], 
+    [
+        1291867, 
+        "[conn] show progress when repo has metalink"
+    ], 
+    [
+        1372895, 
+        "don't access network/load latest repo metadata when doing \"list installed\""
+    ], 
+    [
+        1444751, 
+        "dnf repoquery allow --qf use with --tree"
     ]
 ]

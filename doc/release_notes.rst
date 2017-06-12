@@ -20,6 +20,28 @@
 ###################
 
 ===================
+2.5.1 Release Notes
+===================
+
+API additions in 2.5.1:
+
+* :meth:`dnf.Plugin.pre_transaction` is a hook that is called just before transaction execution.
+* :meth:`dnf.subject.Subject.get_nevra_possibilities` returns generator for every possible nevra.
+
+Bugs fixed in 2.5.1:
+
+* :rhbug:`1456419`
+* :rhbug:`1445021`
+* :rhbug:`1400714`
+* :rhbug:`1250702`
+* :rhbug:`1381988`
+* :rhbug:`1397848`
+* :rhbug:`1321407`
+* :rhbug:`1291867`
+* :rhbug:`1372895`
+* :rhbug:`1444751`
+
+===================
 2.5.0 Release Notes
 ===================
 
