@@ -1381,8 +1381,15 @@ class Base(object):
                 if (pkg.basearchonly):
                     query_args.update({'arch': basearch})
                 q = self.sack.query().filter(**query_args).apply()
-                if not q or not cond_check(pkg):
-                    # a conditional package with unsatisfied requiremensts
+                if not q:
+                    package_string = pkg.name
+                    if pkg.basearchonly:
+                        package_string = package_string + '.' + basearch
+                    msg = _('No match for group package "{}"')
+                    logger.warning(msg.format(package_string))
+                    continue
+                # a conditional package with unsatisfied requiremensts
+                if not cond_check(pkg):
                     continue
                 q = q.filter(arch__neq="src")
                 if self.conf.multilib_policy == "all":
