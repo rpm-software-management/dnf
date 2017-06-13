@@ -51,6 +51,7 @@ description, summary, license, url
 OPTS_MAPPING = {
     'conflicts': 'conflicts',
     'enhances': 'enhances',
+    'obsoletes': 'obsoletes',
     'provides': 'provides',
     'recommends': 'recommends',
     'requires': 'requires',
@@ -230,8 +231,11 @@ class RepoQueryCommand(commands.Command):
     def configure(self):
         demands = self.cli.demands
 
-        if self.opts.obsoletes and self.opts.packageatr:
-            self.cli._option_conflict("--obsoletes", "--" + self.opts.packageatr)
+        if self.opts.obsoletes:
+            if self.opts.packageatr:
+                self.cli._option_conflict("--obsoletes", "--" + self.opts.packageatr)
+            else:
+                self.opts.packageatr = "obsoletes"
 
         if not self.opts.verbose and not self.opts.quiet:
             self.cli.redirect_logger(stdout=logging.WARNING, stderr=logging.INFO)
