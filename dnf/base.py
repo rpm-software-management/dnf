@@ -1384,9 +1384,8 @@ class Base(object):
                 if not q:
                     package_string = pkg.name
                     if pkg.basearchonly:
-                        package_string = package_string + '.' + basearch
-                    msg = _('No match for group package "{}"')
-                    logger.warning(msg.format(package_string))
+                        package_string += '.' + basearch
+                    logger.warning(_('No match for group package "{}"').format(package_string))
                     continue
                 # a conditional package with unsatisfied requiremensts
                 if not cond_check(pkg):
