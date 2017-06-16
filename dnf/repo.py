@@ -699,6 +699,10 @@ class Repo(dnf.conf.RepoConf):
                     h.setopt(librepo.LRO_METALINKURL, mirrorlist)
                 else:
                     h.setopt(librepo.LRO_MIRRORLISTURL, mirrorlist)
+                    # YUM-DNF compatibility hack. YUM guessed by content of keyword "metalink" if
+                    # mirrorlist is really mirrorlist or metalink)
+                    if 'metalink' in mirrorlist:
+                        h.setopt(librepo.LRO_METALINKURL, mirrorlist)
                 h.setopt(librepo.LRO_FASTESTMIRROR, self.fastestmirror)
                 h.setopt(librepo.LRO_FASTESTMIRRORCACHE,
                          os.path.join(self.basecachedir, 'fastestmirror.cache'))
