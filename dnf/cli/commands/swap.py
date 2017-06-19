@@ -50,7 +50,7 @@ class SwapCommand(commands.Command):
     def _perform(self, cmd_str, spec):
         cmd_cls = self.cli.cli_commands.get(cmd_str)
         if cmd_cls is not None:
-            cmd = cmd_cls(self)
+            cmd = cmd_cls(self.cli)
             self.cli.optparser.parse_command_args(cmd, [cmd_str, spec])
             cmd.run()
 

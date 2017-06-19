@@ -99,7 +99,8 @@ class QueriesTest(support.TestCase):
 
 class SubjectTest(support.TestCase):
     def setUp(self):
-        self.sack = support.mock_sack("main", "updates")
+        self.base = support.MockBase("main", "updates")
+        self.sack = self.base.sack
 
     def test_wrong_name(self):
         subj = dnf.subject.Subject("call-his-wife-in")
@@ -116,23 +117,22 @@ class SubjectTest(support.TestCase):
         self.assertLength(q, 4)
 
     def test_get_best_selector(self):
-        s = dnf.subject.Subject("pepper-20-0.x86_64").get_best_selector(self.sack)
+        s = dnf.subject.Subject("pepper-20-0.x86_64").get_best_selector(self.sack, base=self.base)
         self.assertIsNotNone(s)
 
     def test_get_best_selector_for_provides_glob(self):
-        s = dnf.subject.Subject("*otus.so*").get_best_selector(self.sack)
+        s = dnf.subject.Subject("*otus.so*").get_best_selector(self.sack, base=self.base)
         self.assertIsNotNone(s)
 
     def test_best_selector_for_version(self):
-        sltr = dnf.subject.Subject("hole-2").get_best_selector(self.sack)
+        sltr = dnf.subject.Subject("hole-2").get_best_selector(self.sack, base=self.base)
         self.assertCountEqual(map(str, sltr.matches()),
                               ['hole-2-1.x86_64', 'hole-2-1.i686'])
 
     def test_with_confusing_dashes(self):
-        sltr = dnf.subject.Subject("mrkite-k-h").get_best_selector(self.sack)
+        sltr = dnf.subject.Subject("mrkite-k-h").get_best_selector(self.sack, base=self.base)
         self.assertLength(sltr.matches(), 1)
-        sltr = dnf.subject.Subject("mrkite-k-h.x86_64").\
-            get_best_selector(self.sack)
+        sltr = dnf.subject.Subject("mrkite-k-h.x86_64").get_best_selector(self.sack, base=self.base)
         self.assertLength(sltr.matches(), 1)
 
 class DictsTest(TestCase):

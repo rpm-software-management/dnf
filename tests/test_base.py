@@ -206,7 +206,7 @@ class InstalledMatchingTest(support.ResultTestCase):
 
     def test_selector_matching(self):
         subj = dnf.subject.Subject("pepper")
-        sltr = subj.get_best_selector(self.sack)
+        sltr = subj.get_best_selector(self.sack, base=self.base)
         inst = self.base._sltr_matches_installed(sltr)
         self.assertCountEqual(['pepper-20-0.x86_64'], map(str, inst))
 
