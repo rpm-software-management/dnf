@@ -136,6 +136,9 @@ class Subject(object):
         if solution['query']:
             q = solution['query']
             q = q.filter(arch__neq="src")
+            q = base._merge_update_filters(q, warning=False)
+            if len(q) == 0:
+                return sltr
             if obsoletes and solution['nevra'] and solution['nevra']._has_just_name():
                 q = q.union(sack.query().filter(obsoletes=q))
             installed_query = q.installed()
@@ -152,7 +155,7 @@ class Subject(object):
     def _get_best_selectors(self, sack, forms=None, obsoletes=True, reponame=None, reports=False):
         if not self._filename_pattern and is_glob_pattern(self._pattern):
             with_obsoletes = False
-            solution = self._get_nevra_solution(sack, forms=forms)
+            solution = self._get_nevra_solution(base.sack, forms=forms)
             q = solution['query']
             q = q.filter(arch__neq="src")
             if obsoletes and solution['nevra'] and solution['nevra']._has_just_name():
@@ -169,9 +172,9 @@ class Subject(object):
             q = available_query.union(installed_relevant_query)
             sltrs = []
             for name, pkgs_list in q._name_dict().items():
-                sltr = dnf.selector.Selector(sack)
+                sltr = dnf.selector.Selector(base.sack)
                 if with_obsoletes:
-                    pkgs_list = pkgs_list + sack.query().filter(
+                    pkgs_list = pkgs_list + base.sack.query().filter(
                         obsoletes=pkgs_list).run()
                 sltr.set(pkg=pkgs_list)
                 sltrs.append(sltr)
