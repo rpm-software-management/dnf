@@ -91,11 +91,13 @@ def log_key_import(keyinfo):
 def pubring_dir(pubring_dir):
     orig = os.environ.get(GPG_HOME_ENV, None)
     os.environ[GPG_HOME_ENV] = pubring_dir
-    yield
-    if orig is None:
-        del os.environ[GPG_HOME_ENV]
-    else:
-        os.environ[GPG_HOME_ENV] = orig
+    try:
+        yield
+    finally:
+        if orig is None:
+            del os.environ[GPG_HOME_ENV]
+        else:
+            os.environ[GPG_HOME_ENV] = orig
 
 
 def rawkey2infos(key_fo):
