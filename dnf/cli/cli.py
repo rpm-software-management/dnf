@@ -358,6 +358,7 @@ class BaseCli(dnf.Base):
             except dnf.exceptions.PackageNotFoundError as err:
                 msg = _('No package %s available.')
                 logger.info(msg, self.output.term.bold(arg))
+                self._report_icase_hint(arg)
             except dnf.exceptions.PackagesNotInstalledError as err:
                 logger.info(_('Packages for argument %s available, but not installed.'),
                             self.output.term.bold(err.pkg_spec))
@@ -366,6 +367,13 @@ class BaseCli(dnf.Base):
         cnt = self._goal.req_length() - oldcount
         if cnt <= 0:
             raise dnf.exceptions.Error(_('Nothing to do.'))
+
+    def _report_icase_hint(self, pkg_spec):
+        subj = dnf.subject.Subject(pkg_spec, ignore_case=True)
+        q = subj.get_best_query(self.sack, with_nevra=True, with_provides=False,
+                                with_filenames=False)
+        if q:
+            logger.info(_("  * Maybe you meant: {}").format(q[0].name))
 
     def output_packages(self, basecmd, pkgnarrow='all', patterns=(), reponame=None):
         """Output selection *pkgnarrow* of packages matching *patterns* and *repoid*."""

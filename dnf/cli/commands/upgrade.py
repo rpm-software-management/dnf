@@ -83,6 +83,7 @@ class UpgradeCommand(commands.Command):
                 except dnf.exceptions.MarkingError as e:
                     logger.info(_('No match for argument: %s'),
                                  self.base.output.term.bold(pkg_spec))
+                    self.base._report_icase_hint(pkg_spec)
                 else:
                     done = True
 

@@ -121,6 +121,7 @@ class InstallCommand(commands.Command):
                 except dnf.exceptions.MarkingError:
                     msg = _('No package %s available.')
                     logger.info(msg, self.base.output.term.bold(pkg_spec))
+                    self.base._report_icase_hint(pkg_spec)
                     errs.append(pkg_spec)
 
         if (len(errs) != 0 or len(err_pkgs) != 0) and self.base.conf.strict:
