@@ -110,7 +110,7 @@ Options
 
 ``--advisory=<advisory>, --advisories=<advisory>``
     Includes packages corresponding to the advisory ID, Eg. FEDORA-2201-123.
-    Applicable for upgrade command.
+    Applicable for install and upgrade command.
 
 ``--allowerasing``
     Allow erasing of installed packages to resolve dependencies. This option could be used as an alternative to ``yum swap`` command where packages to remove are not explicitly defined.
@@ -122,10 +122,10 @@ Options
     Try the best available package versions in transactions. Specifically during :ref:`dnf upgrade <upgrade_command-label>`, which by default skips over updates that can not be installed for dependency reasons, the switch forces DNF to only consider the latest packages. When running into packages with broken dependencies, DNF will fail giving a reason why the latest version can not be installed.
 
 ``--bugfix``
-    Includes packages that fix a bugfix issue. Applicable for upgrade command.
+    Includes packages that fix a bugfix issue. Applicable for install and upgrade command.
 
 ``--bz=<bugzilla>``
-    Includes packages that fix a Bugzilla ID, Eg. 123123. Applicable for upgrade
+    Includes packages that fix a Bugzilla ID, Eg. 123123. Applicable for install and upgrade
     command.
 
 ``-C, --cacheonly``
@@ -138,7 +138,7 @@ Options
 
 ``--cve=<cves>``
     Includes packages that fix a CVE (Common Vulnerabilities and Exposures) ID
-    (http://cve.mitre.org/about/), Eg. CVE-2201-0123. Applicable for upgrade
+    (http://cve.mitre.org/about/), Eg. CVE-2201-0123. Applicable for install and upgrade
     command.
 
 ``-d <debug level>, --debuglevel=<debug level>``
@@ -184,7 +184,7 @@ Options
     Enable additional repositories by an id or a glob.
 
 ``--enhancement``
-    Include enhancement relevant packages. Applicable for upgrade command.
+    Include enhancement relevant packages. Applicable for install and upgrade command.
 
 ``-x <package-spec>, --exclude=<package-spec>``
     Exclude packages specified by ``<package-spec>`` from the operation.
@@ -235,7 +235,7 @@ Options
      ``--setopt`` using configuration from ``/path/dnf.conf``
 
 ``--newpackage``
-    Include newpackage relevant packages. Applicable for upgrade command.
+    Include newpackage relevant packages. Applicable for install and upgrade command.
 
 ``--noautoremove``
     disable removal of dependencies that are no longer used. It sets
@@ -300,7 +300,7 @@ Options
 
 ``--sec-severity=<severity>, --secseverity=<severity>``
     Includes packages that provides a fix for issue of the specified severity.
-    Applicable for upgrade command.
+    Applicable for install and upgrade command.
 
 ``--security``
     Includes packages that provides a fix for security issue. Applicable for
