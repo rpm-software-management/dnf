@@ -931,12 +931,12 @@ class Cli(object):
             releasever = dnf.rpm.detect_releasever(conf.installroot)
         elif releasever == '/':
             releasever = dnf.rpm.detect_releasever(releasever)
-        if releasever is None:
-            logger.warning(_("Unable to detect release version (use '--releasever' to specify "
-                             "release version)"))
         conf.releasever = releasever
         subst = conf.substitutions
         subst.update_from_etc(conf.installroot)
+        if releasever is None:
+            logger.warning(_("Unable to detect release version (use '--releasever' to specify "
+                             "release version)"))
 
         for opt in ('cachedir', 'logdir', 'persistdir'):
             conf.prepend_installroot(opt)
