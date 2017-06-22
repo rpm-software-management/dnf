@@ -59,7 +59,9 @@ Repository Configuration
     Initialize new :class:`.Repo` object and add it to the repodict. It requires ``repoid``
     (string), and :class:`dnf.conf.Conf` object. Optionally it can be speciffied baseurl (list), and
     additionally key/value pairs from `kwargs` to set additional attribute of the :class:`.Repo`
-    object. It returns the :class:`.Repo` object.
+    object. Variables in provided values (``baseurl`` or ``kwargs``) will be automatically
+    substituted using conf.substitutions (like ``$releasever``, ...). It returns the :class:`.Repo`
+    object.
 
 .. module:: dnf.repo
 
