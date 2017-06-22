@@ -59,20 +59,34 @@ class RepoDict(dict):
     def add_new_repo(self, repoid, conf, baseurl=(), **kwargs):
         # :api
         """
-        Creates new repo object and add it into RepoDict.
+        Creates new repo object and add it into RepoDict. Variables in provided values will be
+        automatically substituted using conf.substitutions (like $releasever, ...)
+
         @param repoid: Repo ID - string
         @param conf: dnf Base().conf object
         @param baseurl: List of strings
         @param kwargs: keys and values that will be used to setattr on dnf.repo.Repo() object
         @return: dnf.repo.Repo() object
         """
+        def substitute(values):
+            if isinstance(values, str):
+                return dnf.conf.parser.substitute(values, conf.substitutions)
+            elif isinstance(values, list) or isinstance(values, tuple):
+                substituted = []
+                for value in values:
+                    if isinstance(value, str):
+                        substituted.append(dnf.conf.parser.substitute(value, conf.substitutions))
+                    if substituted:
+                        return substituted
+            return values
+
         repo = dnf.repo.Repo(repoid, conf)
         for path in baseurl:
             if '://' not in path:
                 path = 'file://{}'.format(os.path.abspath(path))
-            repo.baseurl.append(path)
+            repo.baseurl.append(substitute(path))
         for (key, value) in kwargs.items():
-            setattr(repo, key, value)
+            setattr(repo, key, substitute(value))
         self.add(repo)
         logger.info(_("Added %s repo from %s"), repoid, ', '.join(baseurl))
         return repo
