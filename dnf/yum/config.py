@@ -28,7 +28,6 @@ class YumConf(MainConf):
     def __init__(self):
         super(YumConf, self).__init__()
 
-        self._add_option('keepcache', BoolOption(True))
         self._add_option('metadata_expire', SecondsOption(60 * 60 * 6))  # 6 hours
         self._add_option('best', BoolOption(True))
         self._add_option('clean_requirements_on_remove', BoolOption(False))
