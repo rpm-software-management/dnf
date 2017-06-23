@@ -23,10 +23,8 @@ import dnf.cli
 import dnf.conf.config
 import dnf.yum.option_parser
 import dnf.yum.config
-import dnf.yum.cli
 import dnf.logging
 import dnf.pycomp
-import dnf.yum.cli
 import dnf.yum.config
 import dnf.yum.option_parser
 import tests.support
@@ -74,7 +72,7 @@ class YumCustomCommandTest(tests.support.TestCase):
     def setUp(self):
         self.conf = dnf.yum.config.YumConf()
         self.base = dnf.cli.cli.BaseCli(self.conf)
-        self.cli = dnf.yum.cli.YumCli(self.base)
+        self.cli = dnf.cli.cli.Cli(self.base)
         self.command = TestCommand(self.cli)
 
         self.cli.register_command(TestCommand)
