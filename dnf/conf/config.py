@@ -684,8 +684,7 @@ class MainConf(BaseConfig):
             # of the newest one so you probably want to use 3 as a minimum
             # ... if you turn it on.
         self._add_option('installonly_limit',
-                         PositiveIntOption(0, range_min=2,
-                                           names_of_0=["0", "<off>"])) # :api
+                         PositiveIntOption(3, range_min=2, names_of_0=["0", "<off>"]))  # :api
         self._add_option('tsflags', ListAppendOption())  # :api
 
         self._add_option('assumeyes', BoolOption(False)) # :api

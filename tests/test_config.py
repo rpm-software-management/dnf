@@ -79,7 +79,7 @@ class ConfTest(TestCase):
         conf = Conf()
         # defaults
         self.assertFalse(conf.gpgcheck)
-        self.assertEqual(conf.installonly_limit, 0)
+        self.assertEqual(conf.installonly_limit, 3)
         self.assertTrue(conf.clean_requirements_on_remove)
         conf.config_file_path = '%s/etc/dnf/dnf.conf' % support.dnf_toplevel()
         conf.read(priority=dnf.conf.PRIO_MAINCONFIG)

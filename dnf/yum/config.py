@@ -28,14 +28,7 @@ class YumConf(MainConf):
     def __init__(self):
         super(YumConf, self).__init__()
 
-        self._add_option('exclude', self._get_option('excludepkgs'))
-        self._add_option('persistdir', PathOption("/var/lib/yum"))
-        self._add_option('system_cachedir', PathOption("/var/lib/yum"))
         self._add_option('keepcache', BoolOption(True))
-        self._add_option('installonly_limit',
-                         PositiveIntOption(3, range_min=2,
-                                           names_of_0=["0", "<off>"]))
-        self._add_option('timeout', SecondsOption(30))
         self._add_option('metadata_expire', SecondsOption(60 * 60 * 6))  # 6 hours
         self._add_option('best', BoolOption(True))
         self._add_option('clean_requirements_on_remove', BoolOption(False))
