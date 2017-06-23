@@ -16,7 +16,6 @@
 #
 
 import dnf.cli.cli
-import dnf.yum.commands.deplist
 
 
 class YumCli(dnf.cli.Cli):
@@ -29,4 +28,3 @@ class YumCli(dnf.cli.Cli):
 
         example: self.register_command(dnf.cli.commands.Command)
         """
-        self.register_command(dnf.yum.commands.deplist.DeplistCommand)

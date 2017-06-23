@@ -34,6 +34,7 @@ import dnf.cli.commands
 import dnf.cli.commands.autoremove
 import dnf.cli.commands.check
 import dnf.cli.commands.clean
+import dnf.cli.commands.deplist
 import dnf.cli.commands.distrosync
 import dnf.cli.commands.downgrade
 import dnf.cli.commands.remove
@@ -663,6 +664,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.check.CheckCommand)
         self.register_command(dnf.cli.commands.clean.CleanCommand)
         self.register_command(dnf.cli.commands.distrosync.DistroSyncCommand)
+        self.register_command(dnf.cli.commands.deplist.DeplistCommand)
         self.register_command(dnf.cli.commands.downgrade.DowngradeCommand)
         self.register_command(dnf.cli.commands.group.GroupCommand)
         self.register_command(dnf.cli.commands.install.InstallCommand)
