@@ -18,7 +18,6 @@
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.yum.cli import YumCli
 from dnf.yum.config import YumConf
 from dnf.yum.option_parser import YumOptionParser
 
@@ -31,7 +30,7 @@ logger = logging.getLogger("dnf")
 
 
 def user_main(args, exit_code=False):
-    errcode = dnf.cli.main.main(args, YumConf, YumCli, YumOptionParser)
+    errcode = dnf.cli.main.main(args, conf_class=YumConf, option_parser_class=YumOptionParser)
     if exit_code:
         sys.exit(errcode)
     return errcode
