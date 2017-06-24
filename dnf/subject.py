@@ -46,7 +46,7 @@ class Subject(object):
             if attr is not None and attr != '*':
                 if add_flags:
                     flags = self._query_flags
-                query._filterm(*flags, **{name + '__glob': attr})
+                query.filterm(*flags, **{name + '__glob': attr})
 
         return query
 
@@ -107,7 +107,7 @@ class Subject(object):
 
         if not forms:
             if with_provides:
-                q = sack.query()._filterm(provides__glob=self._pattern)
+                q = sack.query().filterm(provides__glob=self._pattern)
                 if q:
                     solution['query'] = q
                     return solution

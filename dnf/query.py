@@ -83,15 +83,6 @@ class Query(hawkey.Query):
         # :api
         return super(Query, self).filter(*args, **kwargs)
 
-    def _filterm(self, *args, **kwargs):
-        nargs = {}
-        for (key, value) in kwargs.items():
-            if (key.endswith("__glob") and not dnf.util.is_glob_pattern(value)):
-                # remove __glob when pattern is not glob
-                key = key[:-6]
-            nargs[key] = value
-        return super(Query, self)._filterm(*args, **nargs)
-
     def installed(self):
         # :api
         return self.filter(reponame=hawkey.SYSTEM_REPO_NAME)
@@ -161,7 +152,7 @@ def _by_provides(sack, patterns, ignore_case=False, get_query=False):
     if ignore_case:
         flags.append(hawkey.ICASE)
 
-    q._filterm(*flags, provides__glob=patterns)
+    q.filterm(*flags, provides__glob=patterns)
     if get_query:
         return q
     return q.run()
