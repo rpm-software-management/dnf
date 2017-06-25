@@ -30,7 +30,7 @@ sources.
 
 All commands should be run from the DNF git checkout directory.
 
-To install the build dependancies::
+To install the build dependencies::
 
     sudo dnf builddep dnf.spec
 

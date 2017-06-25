@@ -192,7 +192,7 @@ class RepoQueryCommand(commands.Command):
                                help=_('limit the query to installed packages with unsatisfied dependencies'))
         parser.add_argument('--location', action='store_true',
                             help=_('show a location from where packages can be downloaded'))
-        package_atribute = parser.add_mutually_exclusive_group()
+        package_attribute = parser.add_mutually_exclusive_group()
         help_msgs = {
             'conflicts': _('Display capabilities that the package conflicts with.'),
             'enhances': _('Display capabilities that the package can enhance.'),
@@ -205,8 +205,8 @@ class RepoQueryCommand(commands.Command):
         }
         for arg, help_msg in help_msgs.items():
             name = '--%s' % arg
-            package_atribute.add_argument(name, dest='packageatr', action='store_const',
-                                          const=arg, help=help_msg)
+            package_attribute.add_argument(name, dest='packageatr', action='store_const',
+                                           const=arg, help=help_msg)
         parser.add_argument('--available', action="store_true", help=_('Display only available packages.'))
 
         help_list = {

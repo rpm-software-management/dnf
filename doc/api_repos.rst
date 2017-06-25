@@ -123,7 +123,7 @@ Repository Configuration
 
   .. attribute:: pkgdir
 
-    Directory where packages of a remote repo will be downloaded to. By default it is derived from `cachedir` in :meth:`.__init__` but can be overriden by assigning to this attribute.
+    Directory where packages of a remote repo will be downloaded to. By default it is derived from `cachedir` in :meth:`.__init__` but can be overridden by assigning to this attribute.
 
   .. attribute:: proxy
 

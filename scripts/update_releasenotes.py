@@ -1033,7 +1033,7 @@ class TestCase(unittest.TestCase):
             'managing mechanisms have changed\ndrastically, bringing code '
             'simplification, better maintainability and better\ntestability.\n'
             '\nIn Fedora, there is a change in the spec file effectively '
-            'preventing the\nmakecache timer from running *immediatelly after '
+            'preventing the\nmakecache timer from running *immediately after '
             'installation*. The timer\nservice is still enabled by default, '
             'but unless the user starts it manually with\n``systemctl start '
             'dnf-makecache.timer`` it will not run until after the first\n'
