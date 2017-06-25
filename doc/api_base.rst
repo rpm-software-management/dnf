@@ -64,7 +64,7 @@
 
   .. method:: configure_plugins()
 
-     Configure plugins by runing their configure() method.
+     Configure plugins by running their configure() method.
 
   .. method:: fill_sack([load_system_repo=True, load_available_repos=True])
 

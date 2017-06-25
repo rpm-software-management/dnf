@@ -1602,7 +1602,7 @@ drastically, bringing code simplification, better maintainability and better
 testability.
 
 In Fedora, there is a change in the spec file effectively preventing the
-makecache timer from running *immediatelly after installation*. The timer
+makecache timer from running *immediately after installation*. The timer
 service is still enabled by default, but unless the user starts it manually with
 ``systemctl start dnf-makecache.timer`` it will not run until after the first
 reboot. This is in alignment with Fedora packaging best practices.

@@ -103,7 +103,7 @@ class TransactionWrapper(object):
 
         origflags = self.getTsFlags()
         self.addTsFlag(rpm.RPMTRANS_FLAG_TEST)
-        # FIXME GARBAGE - remove once this is reimplemented elsehwere
+        # FIXME GARBAGE - remove once this is reimplemented elsewhere
         # KEEPING FOR API COMPLIANCE ONLY
         if conf.get('diskspacecheck') == 0:
             self.ts.setProbFilter(rpm.RPMPROB_FILTER_DISKSPACE)
