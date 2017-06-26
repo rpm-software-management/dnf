@@ -376,9 +376,9 @@ class RepoQueryCommand(commands.Command):
         if self.opts.whatobsoletes:
             q = q.filter(obsoletes=self.opts.whatobsoletes)
         if self.opts.whatprovides:
-            a = q.filter(provides__glob=[self.opts.whatprovides])
-            if a:
-                q = a
+            query_for_provide = q.filter(provides__glob=[self.opts.whatprovides])
+            if query_for_provide:
+                q = query_for_provide
             else:
                 q = q.filter(file__glob=self.opts.whatprovides)
         if self.opts.alldeps or self.opts.exactdeps:
