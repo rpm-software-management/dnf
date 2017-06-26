@@ -457,29 +457,7 @@ class RepoQueryCommand(commands.Command):
             print('\n\n'.join(pkgs))
             return
         elif self.opts.groupmember:
-            self.base.read_comps(arch_filter=True)
-            package_conf_dict = {}
-            for group in self.base.comps.groups:
-
-                package_conf_dict[group.id] = set([pkg.name for pkg in group.packages_iter()])
-            group_package_dict = {}
-            pkg_not_in_group = []
-            for pkg in q.run():
-                group_id_list = []
-                for group_id, package_name_set in package_conf_dict.items():
-                    if pkg.name in package_name_set:
-                        group_id_list.append(group_id)
-                if group_id_list:
-                    group_package_dict.setdefault(
-                        '$'.join(sorted(group_id_list)), []).append(str(pkg))
-                else:
-                    pkg_not_in_group.append(str(pkg))
-            output = []
-            for key, package_list in sorted(group_package_dict.items()):
-                output.append(
-                    '\n'.join(sorted(package_list) + sorted(['  @' + id for id in key.split('$')])))
-            output.append('\n'.join(sorted(pkg_not_in_group)))
-            print('\n'.join(output))
+            self._group_member_report(q)
             return
 
         else:
@@ -502,6 +480,30 @@ class RepoQueryCommand(commands.Command):
 
         for pkg in sorted(pkgs):
             print(pkg)
+
+    def _group_member_report(self, query):
+        self.base.read_comps(arch_filter=True)
+        package_conf_dict = {}
+        for group in self.base.comps.groups:
+            package_conf_dict[group.id] = set([pkg.name for pkg in group.packages_iter()])
+        group_package_dict = {}
+        pkg_not_in_group = []
+        for pkg in query.run():
+            group_id_list = []
+            for group_id, package_name_set in package_conf_dict.items():
+                if pkg.name in package_name_set:
+                    group_id_list.append(group_id)
+            if group_id_list:
+                group_package_dict.setdefault(
+                    '$'.join(sorted(group_id_list)), []).append(str(pkg))
+            else:
+                pkg_not_in_group.append(str(pkg))
+        output = []
+        for key, package_list in sorted(group_package_dict.items()):
+            output.append(
+                '\n'.join(sorted(package_list) + sorted(['  @' + id for id in key.split('$')])))
+        output.append('\n'.join(sorted(pkg_not_in_group)))
+        print('\n'.join(output))
 
     def grow_tree(self, level, pkg, opts):
         pkg_string = self.build_format_fn(opts, pkg)
