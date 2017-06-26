@@ -176,6 +176,8 @@ class RepoQueryCommand(commands.Command):
                              action='store_const',
                              help=_('use epoch:name-version-release.architecture format for '
                                     'displaying found packages'))
+        outform.add_argument('--groupmember', action="store_true", help=_(
+            'Display in which comps groups are presented selected packages'))
         pkgfilter = parser.add_mutually_exclusive_group()
         pkgfilter.add_argument("--duplicates", dest='pkgfilter',
                                const='duplicated', action='store_const',
@@ -374,9 +376,9 @@ class RepoQueryCommand(commands.Command):
         if self.opts.whatobsoletes:
             q = q.filter(obsoletes=self.opts.whatobsoletes)
         if self.opts.whatprovides:
-            a = q.filter(provides__glob=[self.opts.whatprovides])
-            if a:
-                q = a
+            query_for_provide = q.filter(provides__glob=[self.opts.whatprovides])
+            if query_for_provide:
+                q = query_for_provide
             else:
                 q = q.filter(file__glob=self.opts.whatprovides)
         if self.opts.alldeps or self.opts.exactdeps:
@@ -454,6 +456,10 @@ class RepoQueryCommand(commands.Command):
                     pkgs.append('\n'.join(deplist_output))
             print('\n\n'.join(pkgs))
             return
+        elif self.opts.groupmember:
+            self._group_member_report(q)
+            return
+
         else:
             for pkg in q.run():
                 if self.opts.list != 'userinstalled' or self.base._is_userinstalled(pkg):
@@ -474,6 +480,30 @@ class RepoQueryCommand(commands.Command):
 
         for pkg in sorted(pkgs):
             print(pkg)
+
+    def _group_member_report(self, query):
+        self.base.read_comps(arch_filter=True)
+        package_conf_dict = {}
+        for group in self.base.comps.groups:
+            package_conf_dict[group.id] = set([pkg.name for pkg in group.packages_iter()])
+        group_package_dict = {}
+        pkg_not_in_group = []
+        for pkg in query.run():
+            group_id_list = []
+            for group_id, package_name_set in package_conf_dict.items():
+                if pkg.name in package_name_set:
+                    group_id_list.append(group_id)
+            if group_id_list:
+                group_package_dict.setdefault(
+                    '$'.join(sorted(group_id_list)), []).append(str(pkg))
+            else:
+                pkg_not_in_group.append(str(pkg))
+        output = []
+        for key, package_list in sorted(group_package_dict.items()):
+            output.append(
+                '\n'.join(sorted(package_list) + sorted(['  @' + id for id in key.split('$')])))
+        output.append('\n'.join(sorted(pkg_not_in_group)))
+        print('\n'.join(output))
 
     def grow_tree(self, level, pkg, opts):
         pkg_string = self.build_format_fn(opts, pkg)
