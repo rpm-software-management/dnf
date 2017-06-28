@@ -481,9 +481,9 @@ class RepoPkgsInstallSubCommandTest(support.ResultTestCase):
         support.command_run(cmd, ['third_party', 'install'])
 
         self.assertResult(self.cli.base, itertools.chain(
-            self.cli.base.sack.query().installed().filter(name__neq='hole'),
+            self.cli.base.sack.query().installed(),
             self.cli.base.sack.query().available().filter(reponame='third_party',
-                                                          arch='x86_64')))
+                                                          arch='x86_64', name__neq='hole')))
 
 class RepoPkgsMoveToSubCommandTest(support.ResultTestCase):
 

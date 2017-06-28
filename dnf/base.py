@@ -1639,19 +1639,15 @@ class Base(object):
         elif self.conf.multilib_policy == "best":
             sltrs = subj._get_best_selectors(self.sack,
                                              forms=forms,
-                                             obsoletes=self.conf.obsoletes)
+                                             obsoletes=self.conf.obsoletes,
+                                             reponame=reponame,
+                                             reports=True)
             if not any((s.matches() for s in sltrs)):
                 raise dnf.exceptions.MarkingError(
                     _('no package matched'), pkg_spec)
             for sltr in sltrs:
                 if not sltr.matches():
                     continue
-                if reponame is not None:
-                    sltr = sltr.set(reponame=reponame)
-                already_inst = self._sltr_matches_installed(sltr)
-                if already_inst:
-                    for package in already_inst:
-                        _msg_installed(package)
                 self._goal.install(select=sltr, optional=(not strict))
             return 1
         return 0

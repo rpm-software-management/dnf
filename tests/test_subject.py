@@ -49,8 +49,6 @@ class SubjectTest(support.TestCase):
     def test_best_selectors_ver(self):
         subj = dnf.subject.Subject('*-1-1')
         sltrs = subj._get_best_selectors(self.base.sack)
-        q = self.base.sack.query().filter(evr__eq='1-1')
-        self.assertEqual(len(sltrs), len(set(map(lambda p: p.name, q))))
         for sltr in sltrs:
             for pkg in sltr.matches():
                 self.assertEqual(pkg.evr, '1-1')
