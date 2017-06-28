@@ -67,7 +67,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     Specifies whether dnf should automatically expire metadata of repos, which are older than
     their corresponding configuration file (usually the dnf.conf file and the foo.repo file).
-    Default is ``True`` (perform the check).
+    Default is ``True`` (perform the check). See also :ref:`metadata_expire <metadata_expire-label>`
 
 .. _clean_requirements_on_remove-label:
 
