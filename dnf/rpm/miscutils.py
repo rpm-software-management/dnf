@@ -47,9 +47,12 @@ def checkSig(ts, package):
         # checks signature from an hdr
         string = '%|DSAHEADER?{%{DSAHEADER:pgpsig}}:{%|RSAHEADER?{%{RSAHEADER:pgpsig}}:' \
                  '{%|SIGGPG?{%{SIGGPG:pgpsig}}:{%|SIGPGP?{%{SIGPGP:pgpsig}}:{(none)}|}|}|}|'
-        siginfo = hdr.sprintf(string)
-        if siginfo == '(none)':
-            value = 4
+        try:
+            siginfo = hdr.sprintf(string)
+            if siginfo == '(none)':
+                value = 4
+        except UnicodeDecodeError:
+            pass
 
         del hdr
 
