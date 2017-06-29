@@ -632,6 +632,11 @@ Install Examples
 ``dnf install /usr/bin/rpmsign``
     Install a package that provides /usr/bin/rpmsign file.
 
+``dnf -y install tito --setopt=install_weak_deps=False``
+    Install package tito (tito is package name) without weak deps. Weak deps are not required for
+    core functionality of the package, but they enhance the original package (like extended
+    documentation, plugins, additional functions, ...).
+
 .. _list_command-label:
 
 ------------
