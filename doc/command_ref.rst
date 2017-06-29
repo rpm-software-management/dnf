@@ -709,6 +709,11 @@ Mark Command
 ``dnf mark remove <package-specs>...``
     Unmarks the specified packages as installed by user. Whenever you as a user don't need a specific package you can mark it for removal. The package stays installed on the system but will be removed when :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with `clean_requirements_on_remove` configuration option set to True is executed. You should use this operation instead of :ref:`\remove_command-label` if you're not sure whether the package is a requirement of other user installed packages on the system.
 
+``dnf mark group <package-specs>...``
+    Marks the specified packages as installed by group. This can be useful if any package was
+    installed as a dependency or a user and is desired to be protected and handled as a group
+    member like during group remove.
+
 .. _provides_command-label:
 
 ----------------

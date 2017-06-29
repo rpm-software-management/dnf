@@ -37,8 +37,8 @@ class MarkCommand(commands.Command):
 
     @staticmethod
     def set_argparser(parser):
-        parser.add_argument('mark', nargs=1, choices=['install', 'remove'],
-                             metavar='[ install | remove ]')
+        parser.add_argument('mark', nargs=1, choices=['install', 'remove', 'group'],
+                            metavar='[ install | remove | group ]')
         parser.add_argument('package', nargs='+')
 
     def _mark_install(self, pkg):
@@ -50,6 +50,11 @@ class MarkCommand(commands.Command):
         yumdb = self.base._yumdb
         yumdb.get_package(pkg).reason = 'dep'
         logger.info(_('%s unmarked as user installed.'), str(pkg))
+
+    def _mark_group(self, pkg):
+        yumdb = self.base._yumdb
+        yumdb.get_package(pkg).reason = 'group'
+        logger.info(_('%s marked as group installed.'), str(pkg))
 
     def configure(self):
         demands = self.cli.demands
