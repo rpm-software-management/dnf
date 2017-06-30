@@ -95,11 +95,8 @@ class Subject(object):
         @param forms:
         @return: dict with keys nevra and query
         """
-        kwargs = {}
         solution = {'nevra': None, 'query': sack.query().filter(empty=True)}
         if with_nevra:
-            if forms:
-                kwargs['form'] = forms
             for nevra in self.get_nevra_possibilities(forms=forms):
                 if nevra:
                     q = self._nevra_to_filters(sack.query(), nevra)
@@ -134,9 +131,6 @@ class Subject(object):
     def get_best_selector(self, sack, forms=None, obsoletes=True, reponame=None, reports=False):
         # :api
 
-        kwargs = {}
-        if forms:
-            kwargs['form'] = forms
         sltr = dnf.selector.Selector(sack)
         solution = self._get_nevra_solution(sack, forms=forms)
         if solution['query']:
