@@ -106,7 +106,7 @@ As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 Summary:        Python 2 interface to DNF
 %{?python_provide:%python_provide python2-%{name}}
 BuildRequires:  python2-devel
-BuildRequires:  python-hawkey >= %{hawkey_version}
+BuildRequires:  python2-hawkey >= %{hawkey_version}
 BuildRequires:  python-iniparse
 BuildRequires:  python-libcomps >= %{libcomps_version}
 BuildRequires:  python-librepo >= %{librepo_version}
@@ -118,7 +118,7 @@ BuildRequires:  rpm-python >= %{rpm_version}
 Requires:       pyliblzma
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
-Requires:       python-hawkey >= %{hawkey_version}
+Requires:       python2-hawkey >= %{hawkey_version}
 Requires:       python-iniparse
 Requires:       python-libcomps >= %{libcomps_version}
 Requires:       python-librepo >= %{librepo_version}
