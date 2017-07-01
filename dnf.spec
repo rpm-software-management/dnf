@@ -37,7 +37,8 @@ Source0:        %{name}-%{version}.tar.gz
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
-BuildRequires:  python-sphinx
+# Documentation
+BuildRequires:  %{_bindir}/sphinx-build
 BuildRequires:  systemd
 BuildRequires:  bash-completion
 %if %{with python3}
