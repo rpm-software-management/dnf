@@ -37,7 +37,6 @@ Source0:        %{name}-%{version}.tar.gz
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
-BuildRequires:  python-bugzilla
 BuildRequires:  python-sphinx
 BuildRequires:  systemd
 BuildRequires:  bash-completion
