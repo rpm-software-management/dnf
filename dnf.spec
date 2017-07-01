@@ -32,7 +32,7 @@ License:        GPLv2+ and GPLv2 and GPL
 URL:            https://github.com/rpm-software-management/dnf
 # git clone https://github.com/rpm-software-management/dnf
 # cd dnf
-# tito build --tgz --tag=dnf-2.0.1-1
+# tito build --tgz --tag=dnf-2.5.1-1
 Source0:        %{name}-%{version}.tar.gz
 BuildArch:      noarch
 BuildRequires:  cmake
