@@ -122,7 +122,11 @@ Requires:       python2-hawkey >= %{hawkey_version}
 Requires:       python-iniparse
 Requires:       python-libcomps >= %{libcomps_version}
 Requires:       python-librepo >= %{librepo_version}
+%if 0%{?rhel} && %{?rhel} <= 7
 Requires:       rpm-plugin-systemd-inhibit
+%else
+Recommends:     rpm-plugin-systemd-inhibit
+%endif
 Requires:       rpm-python >= %{rpm_version}
 # dnf-langpacks package is retired in F25
 # to have clean upgrade path for dnf-langpacks
@@ -151,7 +155,11 @@ Requires:       python3-hawkey >= %{hawkey_version}
 Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
 Requires:       python3-librepo >= %{librepo_version}
+%if 0%{?rhel} && %{?rhel} <= 7
 Requires:       rpm-plugin-systemd-inhibit
+%else
+Recommends:     rpm-plugin-systemd-inhibit
+%endif
 Requires:       rpm-python3 >= %{rpm_version}
 # dnf-langpacks package is retired in F25
 # to have clean upgrade path for dnf-langpacks
