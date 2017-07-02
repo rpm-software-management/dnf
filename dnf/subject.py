@@ -21,11 +21,11 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
-from dnf.util import first, is_glob_pattern
+from dnf.util import is_glob_pattern
 
+import dnf.base
 import dnf.selector
 import hawkey
-import re
 
 
 class Subject(object):
@@ -95,11 +95,8 @@ class Subject(object):
         @param forms:
         @return: dict with keys nevra and query
         """
-        kwargs = {}
         solution = {'nevra': None, 'query': sack.query().filter(empty=True)}
         if with_nevra:
-            if forms:
-                kwargs['form'] = forms
             for nevra in self.get_nevra_possibilities(forms=forms):
                 if nevra:
                     q = self._nevra_to_filters(sack.query(), nevra)
@@ -131,12 +128,9 @@ class Subject(object):
                                             forms=forms)
         return solution['query']
 
-    def get_best_selector(self, sack, forms=None, obsoletes=True):
+    def get_best_selector(self, sack, forms=None, obsoletes=True, reponame=None, reports=False):
         # :api
 
-        kwargs = {}
-        if forms:
-            kwargs['form'] = forms
         sltr = dnf.selector.Selector(sack)
         solution = self._get_nevra_solution(sack, forms=forms)
         if solution['query']:
@@ -144,19 +138,35 @@ class Subject(object):
             q = q.filter(arch__neq="src")
             if obsoletes and solution['nevra'] and solution['nevra']._has_just_name():
                 q = q.union(sack.query().filter(obsoletes=q))
+            installed_query = q.installed()
+            if reports:
+                for pkg in installed_query:
+                    dnf.base._msg_installed(pkg)
+            if reponame:
+                q = q.filter(reponame=reponame).union(installed_query)
             if q:
                 return sltr.set(pkg=q)
 
         return sltr
 
-    def _get_best_selectors(self, sack, forms=None, obsoletes=True):
+    def _get_best_selectors(self, sack, forms=None, obsoletes=True, reponame=None, reports=False):
         if not self._filename_pattern and is_glob_pattern(self._pattern):
             with_obsoletes = False
             solution = self._get_nevra_solution(sack, forms=forms)
             q = solution['query']
+            q = q.filter(arch__neq="src")
             if obsoletes and solution['nevra'] and solution['nevra']._has_just_name():
                 with_obsoletes = True
-            q = q.filter(arch__neq="src")
+            installed_query = q.installed()
+            if reponame:
+                q = q.filter(reponame=reponame)
+            available_query = q.available()
+            installed_relevant_query = installed_query.filter(
+                name=[pkg.name for pkg in available_query])
+            if reports:
+                for pkg in installed_relevant_query:
+                    dnf.base._msg_installed(pkg)
+            q = available_query.union(installed_relevant_query)
             sltrs = []
             for name, pkgs_list in q._name_dict().items():
                 sltr = dnf.selector.Selector(sack)
@@ -167,4 +177,4 @@ class Subject(object):
                 sltrs.append(sltr)
             return sltrs
 
-        return [self.get_best_selector(sack, forms, obsoletes)]
+        return [self.get_best_selector(sack, forms, obsoletes, reponame=reponame, reports=reports)]
