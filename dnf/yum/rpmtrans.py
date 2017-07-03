@@ -604,7 +604,7 @@ class RPMTransaction(object):
             msg = ("Non-fatal %s scriptlet failure in rpm package %s" %
                    (scriptlet_name, name))
         for display in self.displays:
-            display.error(msg)
+            display.error(dnf.cli.term.Term().bold(msg))
 
     def _script_start(self, key):
         action = TransactionDisplay.PKG_SCRIPTLET

@@ -138,35 +138,35 @@ class Term(object):
 
         # Output modes:
         self.MODE = {
-            'bold' : '',
-            'blink' : '',
-            'dim' : '',
-            'reverse' : '',
-            'underline' : '',
-            'normal' : ''
+            'bold' : '\033[1m',
+            'blink' : '\033[5m',
+            'dim' : '\033[2m',
+            'reverse' : '\033[7m',
+            'underline' : '\033[4m',
+            'normal' : '\033[0m'
             }
 
         # Colours
         self.FG_COLOR = {
-            'black' : '',
-            'blue' : '',
-            'green' : '',
-            'cyan' : '',
-            'red' : '',
-            'magenta' : '',
-            'yellow' : '',
-            'white' : ''
+            'black' : '\033[30m',
+            'blue' : '\033[94m',
+            'green' : '\033[92m',
+            'cyan' : '\033[96m',
+            'red' : '\033[91m',
+            'magenta' : '\033[35m',
+            'yellow' : '\033[93m',
+            'white' : '\033[97m'
             }
 
         self.BG_COLOR = {
-            'black' : '',
-            'blue' : '',
-            'green' : '',
-            'cyan' : '',
-            'red' : '',
-            'magenta' : '',
-            'yellow' : '',
-            'white' : ''
+            'black' : '\033[40m',
+            'blue' : '\033[44m',
+            'green' : '\033[42m',
+            'cyan' : '\033[46m',
+            'red' : '\033[41m',
+            'magenta' : '\033[45m',
+            'yellow' : '\033[43m',
+            'white' : '\033[107m'
             }
 
         if color == 'never':
@@ -233,11 +233,11 @@ class Term(object):
 
     def color(self, color, s):
         """Colorize string with color"""
-        return (self.MODE[color] + str(s) + self.MODE['normal'])
+        return (self.FG_COLOR[color] + str(s) + self.MODE['normal'])
 
     def bold(self, s):
         """Make string bold."""
-        return self.color('bold', s)
+        return (self.MODE['bold'] + str(s) + self.MODE['normal'])
 
     def sub(self, haystack, beg, end, needles, escape=None, ignore_case=False):
         """Search the string *haystack* for all occurrences of any
