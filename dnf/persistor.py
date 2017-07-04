@@ -425,7 +425,10 @@ class JSONDB(object):
             logger.warning(_("%s is empty file"), json_path)
             self._write_json_db(json_path, default)
         else:
-            default = json.loads(content)
+            try:
+                default = json.loads(content)
+            except ValueError as e:
+                logger.warning(e)
         return default
 
     @staticmethod
