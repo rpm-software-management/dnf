@@ -50,6 +50,7 @@ import dnf.cli.commands.swap
 import dnf.cli.commands.updateinfo
 import dnf.cli.commands.upgrade
 import dnf.cli.commands.upgrademinimal
+import dnf.cli.commands.eol
 import dnf.cli.demand
 import dnf.cli.option_parser
 import dnf.conf
@@ -703,6 +704,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.RepoPkgsCommand)
         self.register_command(dnf.cli.commands.HelpCommand)
         self.register_command(dnf.cli.commands.HistoryCommand)
+        self.register_command(dnf.cli.commands.eol.EolCommand)
 
     def _configure_repos(self, opts):
         self.base.read_all_repos(opts)
