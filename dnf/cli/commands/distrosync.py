@@ -28,7 +28,7 @@ class DistroSyncCommand(commands.Command):
     distro-synch command.
     """
 
-    aliases = ('distro-sync', 'distrosync', 'distribution-synchronization', 'ds')
+    aliases = ('distro-sync', 'distrosync', 'distribution-synchronization', 'dup')
     summary = _('synchronize installed packages to the latest available versions')
 
     @staticmethod
