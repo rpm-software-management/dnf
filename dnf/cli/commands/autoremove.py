@@ -37,7 +37,7 @@ class AutoremoveCommand(commands.Command):
                    'autoremove-na': hawkey.FORM_NA,
                    'autoremove-nevra': hawkey.FORM_NEVRA}
 
-    aliases = ('autoremove',) + tuple(nevra_forms.keys())
+    aliases = ('autoremove', 'ar') + tuple(nevra_forms.keys())
     summary = _('remove all unneeded packages that were originally installed '
                 'as dependencies')
 

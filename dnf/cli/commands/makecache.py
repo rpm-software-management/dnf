@@ -33,7 +33,7 @@ logger = logging.getLogger("dnf")
 
 
 class MakeCacheCommand(commands.Command):
-    aliases = ('makecache',)
+    aliases = ('makecache', 'mc')
     summary = _('generate the metadata cache')
 
     @staticmethod
