@@ -338,6 +338,20 @@ class Base(object):
         timer()
         self._goal = dnf.goal.Goal(self._sack)
         self._plugins.run_sack()
+
+        # if metadata have just been updated
+        if datetime.timedelta(seconds=int(age)).total_seconds() < 1:
+            logger.debug("Fetching EOL status from the pkgdb API")
+            fetchEolFromApi = True
+        else:
+            fetchEolFromApi = False
+        try:
+            if dnf.util.getEolStatus(self.conf.eol_url, fetchEolFromApi):
+                logger.info(_("\033[1mThis version of your system has reached its End of Life! " +
+                            "You are not receiving any new updates.\033[0m"))
+        except Exception:
+            logger.error(_("Unable to get End of Life status of your system."))
+
         return self._sack
 
     @property

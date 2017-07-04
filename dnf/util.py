@@ -38,6 +38,11 @@ import subprocess
 import sys
 import tempfile
 import time
+import json
+try:
+    import urllib.request as urllib2  # for Python 3
+except ImportError:
+    import urllib2  # for Python 2
 
 logger = logging.getLogger('dnf')
 
@@ -412,3 +417,52 @@ class MultiCallList(list):
         def setter(item):
             setattr(item, what, val)
         return list(map(setter, self))
+
+
+def getVersionId():
+    """Get version ID of installed system as an integer."""
+    with open('/etc/os-release') as fp:
+        for line in fp:
+            if line.startswith("VERSION_ID="):
+                return int(line.split("VERSION_ID=")[1])
+
+
+def _fetchEolStatus(versionid, apiurl):
+    """Get EOL status of given version ID from a given pkgdb API"""
+    jsonresponse = urllib2.urlopen(apiurl, timeout=1).read()
+    try:  # required to support both Python 2 and 3
+        response = json.loads(jsonresponse.decode('utf-8'))
+    except TypeError:
+        response = json.loads(jsonresponse)
+    for collection in response["collections"]:
+        if collection["version"] == str(versionid):
+            return collection["status"]
+
+
+def getEolStatus(apiurl, fetchFromApi, statusAsString=False):
+    """Get EOL status of current system.
+    apiurl -- URL from where to GET lifecycle information.
+        Example: https://admin.fedoraproject.org/pkgdb/api/collections/
+    fetchFromApi -- if true, EOL cache will be refreshed from the Internet.
+    statusAsString -- return EOL status of current system as string, not boolean.
+
+    Returns true if system is at EOL, false otherwise."""
+
+    versionid = dnf.util.getVersionId()
+    cachefile = os.path.join(dnf.const.SYSTEM_CACHEDIR, "eol" + str(versionid))
+    if os.path.isfile(cachefile):
+        if statusAsString:
+            return "EOL"
+        else:
+            return True
+    eolStatus = dnf.util._fetchEolStatus(versionid, apiurl)
+
+    if eolStatus == "EOL":
+        open(cachefile, 'a')
+        if not statusAsString:
+            return True
+
+    if statusAsString:
+        return eolStatus
+
+    return False

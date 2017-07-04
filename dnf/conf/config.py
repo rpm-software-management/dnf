@@ -720,7 +720,8 @@ class MainConf(BaseConfig):
         self._add_option('best', BoolOption(False)) # :api
         self._add_option('install_weak_deps', BoolOption(True))
         self._add_option('bugtracker_url', Option(dnf.const.BUGTRACKER))
-
+        self._add_option('eol_url', 
+                         UrlOption('https://admin.fedoraproject.org/pkgdb/api/collections/'))
         self._add_option('color',
                          SelectionOption('auto',
                                          choices=('auto', 'never', 'always'),
