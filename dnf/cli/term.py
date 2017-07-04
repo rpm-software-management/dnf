@@ -138,35 +138,35 @@ class Term(object):
 
         # Output modes:
         self.MODE = {
-            'bold' : '\033[1m',
-            'blink' : '\033[5m',
-            'dim' : '\033[2m',
-            'reverse' : '\033[7m',
-            'underline' : '\033[4m',
-            'normal' : '\033[0m'
+            'bold': '\033[1m',
+            'blink': '\033[5m',
+            'dim': '\033[2m',
+            'reverse': '\033[7m',
+            'underline': '\033[4m',
+            'normal': '\033[0m'
             }
 
         # Colours
         self.FG_COLOR = {
-            'black' : '\033[30m',
-            'blue' : '\033[94m',
-            'green' : '\033[92m',
-            'cyan' : '\033[96m',
-            'red' : '\033[91m',
-            'magenta' : '\033[35m',
-            'yellow' : '\033[93m',
-            'white' : '\033[97m'
+            'black': '\033[30m',
+            'blue': '\033[94m',
+            'green': '\033[92m',
+            'cyan': '\033[96m',
+            'red': '\033[91m',
+            'magenta': '\033[35m',
+            'yellow': '\033[93m',
+            'white': '\033[97m'
             }
 
         self.BG_COLOR = {
-            'black' : '\033[40m',
-            'blue' : '\033[44m',
-            'green' : '\033[42m',
-            'cyan' : '\033[46m',
-            'red' : '\033[41m',
-            'magenta' : '\033[45m',
-            'yellow' : '\033[43m',
-            'white' : '\033[107m'
+            'black': '\033[40m',
+            'blue': '\033[44m',
+            'green': '\033[42m',
+            'cyan': '\033[46m',
+            'red': '\033[41m',
+            'magenta': '\033[45m',
+            'yellow': '\033[43m',
+            'white': '\033[107m'
             }
 
         if color == 'never':
