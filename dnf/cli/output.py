@@ -1243,7 +1243,7 @@ Transaction Summary
            output bars based on debug level.
         """
         progressbar = None
-        if self.conf.debuglevel >= 2 and sys.stdout.isatty():
+        if self.conf.debuglevel >= 2:
             progressbar = dnf.cli.progress.MultiFileProgressMeter(fo=sys.stdout)
             self.progress = dnf.cli.progress.MultiFileProgressMeter(fo=sys.stdout)
 
