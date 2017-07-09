@@ -33,7 +33,7 @@ Alternative CLI to ``dnf upgrade`` with specific facilities to make it suitable 
 
 The operation of the tool is completely controlled by the configuration file and the command only accepts single optional argument pointing to it. If no configuration file is passed from the command line, ``/etc/dnf/automatic.conf`` is used.
 
-The tool synchronizes package metadata as needed and then checks for updates available for the given system and then either exits, downloads the packages or downloads and applies the packages. The outcome of the operation is then reported by a selected mechanism, for instance via the standard output, email or motd messages.
+The tool synchronizes package metadata as needed and then checks for updates available for the given system and then either exits, downloads the packages or downloads and applies the packages. The outcome of the operation is then reported by a selected mechanism, for instance via the standard output, email or MOTD messages.
 
 A few default systemd units are provided to enable some standard configurations:
 
@@ -45,9 +45,9 @@ A few default systemd units are provided to enable some standard configurations:
  Run dnf-automatic
 ===================
 
-You can select on that most closely fits your needs, customize ``/etc/dnf/automatic.conf`` for any specific behaviors, and enable the timer unit.
+You can select one that most closely fits your needs, customize ``/etc/dnf/automatic.conf`` for any specific behaviors, and enable the timer unit.
 
-For example:``systemctl enable dnf-automatic-notifyonly.timer && systemctl start dnf-automatic-notifyonly.timer``
+For example: ``systemctl enable dnf-automatic-notifyonly.timer && systemctl start dnf-automatic-notifyonly.timer``
 
 ===========================
  Configuration File Format
@@ -64,19 +64,19 @@ Setting the mode of operation of the program.
 ``apply_updates``
     boolean, default: False
 
-    Whether packages comprising the available should be applied (i.e. installed via RPM). Implies ``download_updates``. Note that if this is set to ``False``, downloaded packages will be left in the cache to the next successful DNF transaction.
+    Whether packages comprising the available updates should be applied, i.e. installed via RPM. Implies ``download_updates``. Note that if this is set to ``False``, downloaded packages will be left in the cache till the next successful DNF transaction.
 
 ``download_updates``
     boolean, default: False
 
-    Whether packages comprising the available should be downloaded.
+    Whether packages comprising the available updates should be downloaded.
 
 .. _upgrade_type_automatic-label:
 
 ``upgrade_type``
     either one of ``default``, ``security``, default: ``default``
 
-    What kind of upgrades to look at. ``default`` signals looking for all available updates, ``security`` only those with an  issued security advisory.
+    What kind of upgrades to look at. ``default`` signals looking for all available updates, ``security`` only those with an issued security advisory.
 
 ``random_sleep``
     time in seconds, default: 300
@@ -105,7 +105,7 @@ Choosing how the results should be reported.
 ``[command]`` section
 ---------------------
 
-The command emitter configuration. Variables useable in format string arguments are ``body`` with the message body.
+The command emitter configuration. Variables usable in format string arguments are ``body`` with the message body.
 
 ``command_format``
     format string, default: ``cat``
@@ -121,7 +121,7 @@ The command emitter configuration. Variables useable in format string arguments 
 ``[command_email]`` section
 ---------------------------
 
-The command email emitter configuration. Variables useable in format string arguments are ``body`` with message body, ``subject`` with email subject, ``email_from`` with the "From:" address and ``email_to`` with a space-separated list of recipients.
+The command email emitter configuration. Variables usable in format string arguments are ``body`` with message body, ``subject`` with email subject, ``email_from`` with the "From:" address and ``email_to`` with a space-separated list of recipients.
 
 ``command_format``
     format string, default: ``mail -s {subject} -r {email_from} {email_to}``
