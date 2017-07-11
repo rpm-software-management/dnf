@@ -1938,10 +1938,12 @@ class Base(object):
         binary_provides = [prefix + provides_spec for prefix in ['/usr/bin/', '/usr/sbin/']]
         return self.sack.query().filter(file__glob=binary_provides)
 
-    def _history_undo_operations(self, operations):
+    def _history_undo_operations(self, operations, first_trans, rollback=False):
         """Undo the operations on packages by their NEVRAs.
 
         :param operations: a NEVRAOperations to be undone
+        :param first_trans: first transaction id being undone
+        :param rollback: True if transaction is performing a rollback
         :return: (exit_code, [ errors ])
 
         exit_code is::
@@ -1972,8 +1974,9 @@ class Base(object):
             if not pkgs:
                 raise dnf.exceptions.PackagesNotAvailableError(
                     'no package matched', old_nevra)
-            self._transaction.add_install(
-                first(pkgs), None, 'history')
+            new_pkg = first(pkgs)
+            old_reason = self.history.get_erased_reason(new_pkg, first_trans, rollback)
+            self._transaction.add_install(new_pkg, None, old_reason)
 
         def handle_install(new_nevra, obsoleted_nevras):
             """Handle an installed package."""

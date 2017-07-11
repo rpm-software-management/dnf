@@ -1461,6 +1461,57 @@ class YumHistory(object):
         for x in cur:
             yield x
 
+    def get_erased_reason(self, pkg, first_trans, rollback):
+        """Get reason of package before transaction being undone. If package
+        is already installed in the system, keep his reason.
+
+        :param pkg: package being installed
+        :param first_trans: id of first transaction being undone
+        :param rollback: True if transaction is performing a rollback
+        """
+
+        # get transactions of package
+        pkg_trans = self.search([pkg.name])
+
+        if not pkg_trans:
+            # can't find any transaction with pkg, consider it user installed
+            return 'user'
+
+        # check if the transaction was modified since transaction being undone
+        if not rollback and max(pkg_trans) > first_trans:
+            # modified - if installed, keep its reason
+            p = self.yumdb.get_package(pkg)
+            if p and p.reason:
+                # package installed
+                return p.reason
+
+        # package not modified (and assumably not installed)
+        # get latest transaction before first one before undone
+        latest = 0
+        for t in pkg_trans:
+            if t > latest and t < first_trans:
+                latest = t
+
+        if latest == 0:
+            # can't trace origin of package, consider it user installed
+            return 'user'
+
+        # latest transaction should install or update the package
+        # it was installed before first_trans - thats why we are doing this
+        trans_data = self._old_data_pkgs(latest)
+
+        # get installed package from that transaction
+        trans_pkg = [p for p in trans_data if p.state_installed and p.name == pkg.name]
+
+        if not trans_pkg:
+            # can't find the package, consider it user installed
+            return 'user'
+
+        # get yumdb info
+        yum_dbinfo = trans_pkg[0].yumdb_info
+
+        return yum_dbinfo.reason or 'user'
+
     def search(self, patterns, ignore_case=True):
         """ Search for history transactions which contain specified
             packages al. la. "yum list". Returns transaction ids. """
