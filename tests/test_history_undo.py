@@ -68,7 +68,7 @@ class BaseTest(TestCase):
         operations.add('Downgrade', 'pepper-20-0.x86_64', 'pepper-20-1.x86_64', ('lotus-3-16.x86_64',))
 
         with self._base:
-            self._base._history_undo_operations(operations)
+            self._base._history_undo_operations(operations, 0)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -78,7 +78,7 @@ class BaseTest(TestCase):
         self.assertEqual(next(transaction_it),
                          self._create_item_matcher(
                             INSTALL, installed='lotus-3-16.x86_64',
-                            reason='history'))
+                            reason='user'))
         self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_downgrade_notavailable(self):
@@ -87,7 +87,7 @@ class BaseTest(TestCase):
         operations.add('Downgrade', 'pepper-20-0.x86_64', 'pepper-20-2.x86_64')
 
         with self._base, self.assertRaises(PackagesNotAvailableError) as context:
-            self._base._history_undo_operations(operations)
+            self._base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'pepper-20-2.x86_64')
 
@@ -97,7 +97,7 @@ class BaseTest(TestCase):
         operations.add('Downgrade', 'lotus-3-0.x86_64', 'lotus-3-16.x86_64')
 
         with self._base, self.assertRaises(PackagesNotInstalledError) as context:
-            self._base._history_undo_operations(operations)
+            self._base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'lotus-3-0.x86_64')
 
@@ -107,13 +107,13 @@ class BaseTest(TestCase):
         operations.add('Erase', 'lotus-3-16.x86_64')
 
         with self._base:
-            self._base._history_undo_operations(operations)
+            self._base._history_undo_operations(operations, 0)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
                          self._create_item_matcher(
                              INSTALL, installed='lotus-3-16.x86_64',
-                             reason='history'))
+                             reason='user'))
         self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_erase_twoavailable(self):
@@ -124,13 +124,13 @@ class BaseTest(TestCase):
         operations.add('Erase', 'lotus-3-16.x86_64')
 
         with base:
-            base._history_undo_operations(operations)
+            base._history_undo_operations(operations, 0)
 
         transaction_it = iter(base.transaction)
         self.assertEqual(next(transaction_it),
                          self._create_item_matcher(
                              INSTALL, installed='lotus-3-16.x86_64',
-                             reason='history'))
+                             reason='user'))
         self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_erase_notavailable(self):
@@ -139,7 +139,7 @@ class BaseTest(TestCase):
         operations.add('Erase', 'hole-1-1.x86_64')
 
         with self._base, self.assertRaises(PackagesNotAvailableError) as context:
-            self._base._history_undo_operations(operations)
+            self._base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'hole-1-1.x86_64')
 
@@ -149,7 +149,7 @@ class BaseTest(TestCase):
         operations.add('Install', 'pepper-20-0.x86_64', obsoleted_nevras=('lotus-3-16.x86_64',))
 
         with self._base:
-            self._base._history_undo_operations(operations)
+            self._base._history_undo_operations(operations, 0)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -158,7 +158,7 @@ class BaseTest(TestCase):
         self.assertEqual(next(transaction_it),
                          self._create_item_matcher(
                              INSTALL, installed='lotus-3-16.x86_64',
-                             reason='history'))
+                             reason='user'))
         self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_install_notinstalled(self):
@@ -167,7 +167,7 @@ class BaseTest(TestCase):
         operations.add('Install', 'mrkite-2-0.x86_64')
 
         with self._base, self.assertRaises(PackagesNotInstalledError) as context:
-            self._base._history_undo_operations(operations)
+            self._base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'mrkite-2-0.x86_64')
 
@@ -177,7 +177,7 @@ class BaseTest(TestCase):
         operations.add('Reinstall', 'pepper-20-0.x86_64', 'pepper-20-0.x86_64', ('hole-1-1.x86_64',))
 
         with self._base:
-            self._base._history_undo_operations(operations)
+            self._base._history_undo_operations(operations, 0)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -193,7 +193,7 @@ class BaseTest(TestCase):
         operations.add('Reinstall', 'mrkite-2-0.x86_64', 'mrkite-2-0.x86_64')
 
         with self._base, self.assertRaises(PackagesNotInstalledError) as context:
-            self._base._history_undo_operations(operations)
+            self._base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'mrkite-2-0.x86_64')
 
@@ -203,7 +203,7 @@ class BaseTest(TestCase):
         operations.add('Reinstall', 'hole-1-1.x86_64', 'hole-1-1.x86_64')
 
         with self._base, self.assertRaises(PackagesNotAvailableError) as context:
-            self._base._history_undo_operations(operations)
+            self._base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'hole-1-1.x86_64')
 
@@ -213,7 +213,7 @@ class BaseTest(TestCase):
         operations.add('Reinstall', 'pepper-20-0.x86_64', 'pepper-20-0.x86_64', ('lotus-3-16.x86_64',))
 
         with self._base:
-            self._base._history_undo_operations(operations)
+            self._base._history_undo_operations(operations, 0)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -228,7 +228,7 @@ class BaseTest(TestCase):
         operations.add('Update', 'tour-5-0.noarch', 'tour-4.6-1.noarch', ('lotus-3-16.x86_64',))
 
         with self._base:
-            self._base._history_undo_operations(operations)
+            self._base._history_undo_operations(operations, 0)
 
         transaction_it = iter(self._base.transaction)
         self.assertEqual(next(transaction_it),
@@ -238,7 +238,7 @@ class BaseTest(TestCase):
         self.assertEqual(next(transaction_it),
                          self._create_item_matcher(
                              INSTALL, installed='lotus-3-16.x86_64',
-                             reason='history'))
+                             reason='user'))
         self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_update_notavailable(self):
@@ -247,7 +247,7 @@ class BaseTest(TestCase):
         operations.add('Update', 'tour-5-0.noarch', 'tour-4.6-2.noarch')
 
         with self._base, self.assertRaises(PackagesNotAvailableError) as context:
-            self._base._history_undo_operations(operations)
+            self._base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'tour-4.6-2.noarch')
 
@@ -257,6 +257,6 @@ class BaseTest(TestCase):
         operations.add('Update', 'lotus-4-0.x86_64', 'lotus-3-16.x86_64')
 
         with self._base, self.assertRaises(PackagesNotInstalledError) as context:
-            self._base._history_undo_operations(operations)
+            self._base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'lotus-4-0.x86_64')

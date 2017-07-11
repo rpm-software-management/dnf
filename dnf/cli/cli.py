@@ -640,7 +640,7 @@ class BaseCli(dnf.Base):
             operations += history.transaction_nevra_ops(id_)
 
         try:
-            self._history_undo_operations(operations)
+            self._history_undo_operations(operations, old.tid + 1, True)
         except dnf.exceptions.PackagesNotInstalledError as err:
             logger.info(_('No package %s installed.'),
                         self.output.term.bold(ucd(err.pkg_spec)))
@@ -667,7 +667,9 @@ class BaseCli(dnf.Base):
         history = dnf.history.open_history(self.history)  # :todo
 
         try:
-            self._history_undo_operations(history.transaction_nevra_ops(old.tid))
+            self._history_undo_operations(
+                history.transaction_nevra_ops(old.tid),
+                old.tid)
         except dnf.exceptions.PackagesNotInstalledError as err:
             logger.info(_('No package %s installed.'),
                         self.output.term.bold(ucd(err.pkg_spec)))
