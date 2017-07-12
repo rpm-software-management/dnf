@@ -32,6 +32,7 @@ import dnf.const
 import dnf.exceptions
 import dnf.pycomp
 import dnf.util
+import hawkey
 import iniparse
 import logging
 import os
@@ -620,6 +621,8 @@ class MainConf(BaseConfig):
         # pylint: disable=R0915
         super(MainConf, self).__init__(section, parser)
         self.substitutions = dnf.conf.substitutions.Substitutions()
+        self.arch = hawkey.detect_arch()
+
         # setup different cache and log for non-priviledged users
         if dnf.util.am_i_root():
             cachedir = dnf.const.SYSTEM_CACHEDIR
@@ -821,13 +824,13 @@ class MainConf(BaseConfig):
 
     def _configure_from_options(self, opts):
         """Configure parts of CLI from the opts """
-
         config_args = ['plugins', 'version', 'config_file_path',
                        'debuglevel', 'errorlevel', 'installroot',
                        'best', 'assumeyes', 'assumeno', 'clean_requirements_on_remove', 'gpgcheck',
                        'showdupesfromrepos', 'plugins', 'ip_resolve',
-                       'rpmverbosity', 'disable_excludes',
-                       'color', 'downloadonly', 'exclude', 'excludepkgs', "skip_broken", 'tsflags']
+                       'rpmverbosity', 'disable_excludes', 'color',
+                       'downloadonly', 'exclude', 'excludepkgs', 'skip_broken',
+                       'tsflags', 'arch', 'basearch']
 
         for name in config_args:
             value = getattr(opts, name, None)
@@ -835,6 +838,8 @@ class MainConf(BaseConfig):
                 confopt = self._get_option(name)
                 if confopt:
                     confopt._set(value, dnf.conf.PRIO_COMMANDLINE)
+                elif hasattr(self, name):
+                    setattr(self, name, value)
                 else:
                     logger.warning(_('Unknown configuration option: %s = %s'),
                                    ucd(name), ucd(value))
@@ -846,6 +851,8 @@ class MainConf(BaseConfig):
                 opt = self._get_option(name)
                 if opt:
                     opt._set(val, dnf.conf.PRIO_COMMANDLINE)
+                elif hasattr(self, name):
+                    setattr(self, name, val)
                 else:
                     msg = "Main config did not have a %s attr. before setopt"
                     logger.warning(msg, name)
@@ -884,6 +891,38 @@ class MainConf(BaseConfig):
             return
         self.substitutions['releasever'] = val
 
+    @property
+    def arch(self):
+        # :api
+        return self.substitutions.get('arch')
+
+    @arch.setter
+    def arch(self, val):
+        # :api
+
+        if val is None:
+            self.substitutions.pop('arch', None)
+            return
+
+        assert(val in dnf.rpm._BASEARCH_MAP.keys())
+        self.substitutions['arch'] = val
+        self.basearch = dnf.rpm.basearch(val)
+
+    @property
+    def basearch(self):
+        # :api
+        return self.substitutions.get('basearch')
+
+    @basearch.setter
+    def basearch(self, val):
+        # :api
+
+        if val is None:
+            self.substitutions.pop('basearch', None)
+            return
+
+        assert(val in dnf.rpm._BASEARCH_MAP.values())
+        self.substitutions['basearch'] = val
 
     def read(self, filename=None, priority=PRIO_DEFAULT):
         # :api
