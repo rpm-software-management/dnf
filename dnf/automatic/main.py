@@ -108,6 +108,8 @@ class AutomaticConfig(object):
         self.commands._populate(parser, 'commands', filename, dnf.conf.PRIO_AUTOMATICCONFIG)
         self.email._populate(parser, 'email', filename, dnf.conf.PRIO_AUTOMATICCONFIG)
         self.emitters._populate(parser, 'emitters', filename, dnf.conf.PRIO_AUTOMATICCONFIG)
+        self.command_email._populate(parser, 'command_email', filename,
+                                     dnf.conf.PRIO_AUTOMATICCONFIG)
         self._parser = parser
 
     def update_baseconf(self, baseconf):
