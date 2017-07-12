@@ -233,6 +233,14 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     The password to use for connecting to repo with basic HTTP authentication. Defaults to ``None``.
 
+  .. attribute:: basearch
+
+    The base architecture used for installing packages. By default this is auto-detected.
+
+  .. attribute:: arch
+
+    The architecture used for installing packages. By default this is auto-detected.
+
   .. method:: prepend_installroot(option)
 
     Prefix config option named `option` with :attr:`installroot`.
