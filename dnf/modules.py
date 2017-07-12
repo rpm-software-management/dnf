@@ -274,6 +274,40 @@ class RepoModuleDict(OrderedDict):
         module.add(repo_module_version)
         module.parent = self
 
+    def find_module_version(self, name, stream=None, version=None, arch=None):
+        try:
+            repo_module = self[name]
+
+            # if stream is not specified:
+            # - use the enabled stream
+            # - pick the default from system profile
+            # - return None if no suitable stream is found
+            if not stream:
+                if repo_module.conf and repo_module.conf.enabled:
+                    stream = repo_module.conf.stream
+
+            if not stream:
+                # TODO: read default stream from system profile
+                stream = "f26"
+
+            if not stream:
+                return None
+
+            repo_module_stream = repo_module[stream]
+
+            if version:
+                repo_module_version = repo_module_stream[version]
+            else:
+                # if version is not specified, pick the latest
+                repo_module_version = repo_module_stream.latest()
+
+            # TODO: arch
+
+            return repo_module_version
+        except KeyError:
+            pass
+        return None
+
     def enable(self, module_ns, assumeyes, assumeno=False):
         name, stream, version, _ = self.parse_module_nsvp(module_ns)
         try:
@@ -585,3 +619,92 @@ class ModuleTransactionProgress(TransactionProgress):
                 conf.profiles = sorted(set(profiles))
 
                 repo_module.write_conf_to_file()
+
+
+NSVAP_FIELDS = ["name", "stream", "version", "arch", "profile"]
+
+
+class NSVAP(object):
+    """
+    Represents module name, stream, version, arch, profile.
+    Returned by ModuleSubject.
+    """
+
+    def __init__(self, name, stream, version, arch, profile):
+        self.name = name
+        self.stream = stream
+        self.version = version is not None and int(version) or None
+        self.arch = arch
+        self.profile = profile
+
+    def __repr__(self):
+        values = [getattr(self, i) for i in NSVAP_FIELDS]
+        items = [(field, value) for field, value in zip(NSVAP_FIELDS, values) if value is not None]
+        items_str = ", ".join(["{}={}".format(field, value) for field, value in items])
+        return "<NSVAP: {}>".format(items_str)
+
+    def __eq__(self, other):
+        result = True
+        for field in NSVAP_FIELDS:
+            value_self = getattr(self, field)
+            value_other = getattr(other, field)
+            result &= value_self == value_other
+        return result
+
+
+class ModuleSubject(object):
+    """
+    Find matching modules for given user input (pkg_spec).
+    """
+
+    def __init__(self, pkg_spec):
+        self.pkg_spec = pkg_spec
+
+    def get_nsvap_possibilities(self, forms=None):
+        # split profile and then parse module NSVA as it was rpm NVRA
+
+        if "/" in self.pkg_spec:
+            nsva, profile = self.pkg_spec.rsplit("/", 1)
+            if not profile.strip():
+                profile = None
+        else:
+            nsva, profile = self.pkg_spec, None
+
+        subj = hawkey.Subject(nsva)
+        kwargs = {}
+        if forms:
+            kwargs["form"] = forms
+        possibilities = subj.nevra_possibilities(**kwargs)
+
+        result = []
+        for i in possibilities:
+            try:
+                if i.release is not None:
+                    i.release = str(int(i.release))
+            except ValueError:
+                # module version has to be integer
+                # if it is not -> invalid possibility -> skip
+                continue
+            args = {
+                "name": i.name,
+                "stream": i.version,
+                "version": i.release and int(i.release) or None,
+                "arch": i.arch,
+                "profile": profile
+            }
+            result.append(NSVAP(**args))
+        return result
+
+    def find_module_version(self, repo_module_dict):
+        """
+        Find module that matches self.pkg_spec in given repo_module_dict.
+        Return (RepoModuleVersion, NSVAP).
+        """
+
+        result = (None, None)
+        for nsvap in self.get_nsvap_possibilities():
+            module_version = repo_module_dict.find_module_version(nsvap.name, nsvap.stream, nsvap.version, nsvap.arch)
+            if module_version:
+                result = (module_version, nsvap)
+                break
+        return result
