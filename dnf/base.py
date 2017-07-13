@@ -450,6 +450,9 @@ class Base(object):
         if not self.conf.diskspacecheck:
             self._rpm_probfilter.add(rpm.RPMPROB_FILTER_DISKSPACE)
 
+        if self.conf.ignorearch:
+            self._rpm_probfilter.add(rpm.RPMPROB_FILTER_IGNOREARCH)
+
         probfilter = reduce(operator.or_, self._rpm_probfilter, 0)
         self._priv_ts.setProbFilter(probfilter)
         return self._priv_ts
