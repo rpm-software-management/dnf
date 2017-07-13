@@ -317,6 +317,11 @@ Options
 ``-y, --assumeyes``
     Automatically answer yes for all questions
 
+``--forcearch=<arch>``
+    Force the use of an architecture. Any architecture can be specified.
+    However, use of an architecture not supported natively by your CPU will
+    require emulation of some kind. This is usually through QEMU.
+
 List options are comma-separated. Command-line options override respective settings from configuration files.
 
 ========

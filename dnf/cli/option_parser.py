@@ -23,6 +23,7 @@ from dnf.i18n import _
 
 import argparse
 import dnf.exceptions
+import dnf.rpm
 import dnf.yum.misc
 import logging
 import os.path
@@ -149,6 +150,11 @@ class OptionParser(argparse.ArgumentParser):
                 narrow = values.pop(0)
             setattr(namespace, dest_action, narrow)
             setattr(namespace, self.dest, values)
+
+    class ForceArchAction(argparse.Action):
+        def __call__(self, parser, namespace, values, opt_str):
+            namespace.ignorearch = True
+            namespace.arch = values
 
     def _main_parser(self):
         """ Standard options known to all dnf subcommands. """
@@ -311,6 +317,11 @@ class OptionParser(argparse.ArgumentParser):
             dest="severity", action="append", help=_(
                 "Include security relevant packages matching the severity, "
                 "in updates"))
+        main_parser.add_argument("--forcearch", metavar="ARCH",
+                                 dest=argparse.SUPPRESS,
+                                 action=self.ForceArchAction,
+                                 choices=sorted(dnf.rpm._BASEARCH_MAP.keys()),
+                                 help=_("Force the use of an architecture"))
         return main_parser
 
     def _command_parser(self, command):
