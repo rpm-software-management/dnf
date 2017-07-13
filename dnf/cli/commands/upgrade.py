@@ -80,7 +80,7 @@ class UpgradeCommand(commands.Command):
 
     def _update_modules_all(self):
         self.cli.demands.transaction_display = self.base.repo_module_dict.transaction_callback
-        self.base.repo_module_dict.upgrade(list(self.base.repo_module_dict.keys()))
+        self.base.repo_module_dict.upgrade_all()
 
     def _update_modules(self):
         self.cli.demands.transaction_display = self.base.repo_module_dict.transaction_callback
