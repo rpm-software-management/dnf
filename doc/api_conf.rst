@@ -241,6 +241,10 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     The architecture used for installing packages. By default this is auto-detected.
 
+  .. attribute:: ignorearch
+
+    If set to ``True``, RPM will allow attempts to install packages incompatible with the CPU's architecture. Defaults to ``False``.
+
   .. method:: prepend_installroot(option)
 
     Prefix config option named `option` with :attr:`installroot`.
