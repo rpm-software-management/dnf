@@ -2118,6 +2118,7 @@ class Base(object):
             return '\n\n\n' + msg
 
         user_cb_fail = False
+        self._repo_set_imported_gpg_keys.add(repo.id)
         for keyurl in keyurls:
             keys = dnf.crypto.retrieve(keyurl, repo)
 
@@ -2162,7 +2163,6 @@ class Base(object):
                     raise dnf.exceptions.Error(_prov_key_data(msg))
                 logger.info(_('Key imported successfully'))
                 key_installed = True
-                self._repo_set_imported_gpg_keys.add(repo.id)
 
         if not key_installed and user_cb_fail:
             raise dnf.exceptions.Error(_("Didn't install any keys"))
