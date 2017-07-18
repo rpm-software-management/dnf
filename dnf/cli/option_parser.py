@@ -262,6 +262,9 @@ class OptionParser(argparse.ArgumentParser):
                                  metavar='[repo,path]',
                                  help=_("label and path to additional repository,"
                                         " can be specified multiple times."))
+        main_parser.add_argument("--noautoremove", action="store_false",
+                                 default=None, dest='clean_requirements_on_remove',
+                                 help=_("disable removal of dependencies that are no longer used"))
         main_parser.add_argument("--nogpgcheck", action="store_false",
                                  default=None, dest='gpgcheck',
                                  help=_("disable gpg signature checking"))

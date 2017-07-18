@@ -227,6 +227,10 @@ Options
 ``--newpackage``
     Include newpackage relevant packages. Applicable for upgrade command.
 
+``--noautoremove``
+    disable removal of dependencies that are no longer used. It sets
+    :ref:`clean_requirements_on_remove <clean_requirements_on_remove-label>` conf option to ``False``.
+
 ``--nodocs``
     do not install documentations by using rpm flag 'RPMTRANS_FLAG_NODOCS'
 
