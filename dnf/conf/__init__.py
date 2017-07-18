@@ -47,6 +47,6 @@ from dnf.conf.config import IntOption
 from dnf.conf.config import SecondsOption, BoolOption
 from dnf.conf.config import SelectionOption
 
-from dnf.conf.config import BaseConfig, MainConf, RepoConf, ModuleConf
+from dnf.conf.config import BaseConfig, MainConf, RepoConf, ModuleConf, ModuleDefaultsConf
 
 Conf = MainConf

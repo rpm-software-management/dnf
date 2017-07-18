@@ -1,0 +1,4 @@
+[httpd]
+name=httpd
+stream=2.4
+profiles=default
