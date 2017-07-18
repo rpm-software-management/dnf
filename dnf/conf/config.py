@@ -824,7 +824,7 @@ class MainConf(BaseConfig):
 
         config_args = ['plugins', 'version', 'config_file_path',
                        'debuglevel', 'errorlevel', 'installroot',
-                       'best', 'assumeyes', 'assumeno', 'gpgcheck',
+                       'best', 'assumeyes', 'assumeno', 'clean_requirements_on_remove', 'gpgcheck',
                        'showdupesfromrepos', 'plugins', 'ip_resolve',
                        'rpmverbosity', 'disable_excludes',
                        'color', 'downloadonly', 'exclude', 'excludepkgs', "skip_broken", 'tsflags']
