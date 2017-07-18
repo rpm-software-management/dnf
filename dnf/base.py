@@ -180,6 +180,7 @@ class Base(object):
                 self.repo_module_dict.add(RepoModuleVersion(data, base=self, repo=repo))
 
         self.repo_module_dict.read_all_modules()
+        self.repo_module_dict.read_all_module_defaults()
 
     def _store_persistent_data(self):
         if self._repo_persistor and not self.conf.cacheonly:

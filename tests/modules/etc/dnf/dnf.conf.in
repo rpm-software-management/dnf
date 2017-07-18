@@ -1,0 +1,8 @@
+[main]
+gpgcheck=0
+installonly_limit=3
+clean_requirements_on_remove=True
+install_weak_deps=0
+modulesdir=etc/dnf/modules.d
+reposdir=@CMAKE_CURRENT_SOURCE_DIR@/tests/modules/etc/dnf/repos.d
+moduledefaultsdir=@CMAKE_CURRENT_SOURCE_DIR@/tests/modules/etc/dnf/modules.defaults.d
