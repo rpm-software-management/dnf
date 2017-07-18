@@ -29,7 +29,7 @@ import smartcols
 
 from dnf.callback import TransactionProgress, TRANS_POST, PKG_VERIFY
 from dnf.conf import ModuleConf
-from dnf.conf.read import ModuleReader
+from dnf.conf.read import ModuleReader, ModuleDefaultsReader
 from dnf.exceptions import Error
 from dnf.i18n import _
 from dnf.pycomp import ConfigParser
@@ -200,6 +200,7 @@ class RepoModule(OrderedDict):
         super(RepoModule, self).__init__()
 
         self.conf = None
+        self.defaults = None
         self.name = None
         self.parent = None
         self.installed_profiles = []
@@ -326,6 +327,14 @@ class RepoModuleDict(OrderedDict):
             repo_module.name = conf.name
             repo_module.parent = self
 
+    def read_all_module_defaults(self):
+        defaults_reader = ModuleDefaultsReader(self.base.conf.moduledefaultsdir)
+        for conf in defaults_reader:
+            try:
+                self[conf.name].defaults = conf
+            except KeyError:
+                logger.debug("No module named {}, skipping.".format(conf.name))
+
     def get_modules_dir(self):
         modules_dir = os.path.join(self.base.conf.installroot, self.base.conf.modulesdir.lstrip("/"))
 
@@ -333,6 +342,9 @@ class RepoModuleDict(OrderedDict):
             self.create_dir(modules_dir)
 
         return modules_dir
+
+    def get_module_defaults_dir(self):
+        return self.base.conf.moduledefaultsdir
 
     @staticmethod
     def create_dir(output_file):
