@@ -114,11 +114,10 @@ class RepoReader(object):
 
 class ModuleReader(object):
     def __init__(self, module_dir):
-        self.module_dir = module_dir
+        self.conf_dir = module_dir
 
     def __iter__(self):
-        # read .module files from directories specified by conf.modulesdir
-        for module_path in sorted(glob.glob('%s/*.module' % self.module_dir)):
+        for module_path in sorted(glob.glob('%s/*.module' % self.conf_dir)):
             try:
                 for module_conf in self._get_module_configs(module_path):
                     yield module_conf
@@ -168,3 +167,32 @@ class ModuleReader(object):
                 module.config_file = module_path
 
             yield module
+
+
+class ModuleDefaultsReader(ModuleReader):
+    def __init__(self, module_defaults_dir):
+        super(ModuleDefaultsReader, self).__init__(module_defaults_dir)
+
+    def __iter__(self):
+        for module_path in sorted(glob.glob('%s/*.defaults' % self.conf_dir)):
+            try:
+                for module_conf in self._get_module_configs(module_path):
+                    yield module_conf
+            except dnf.exceptions.ConfigError:
+                logger.debug(_("Warning: failed loading '%s', defaults unavailable."),
+                             module_path)
+                raise
+
+    def _build_module(self, parser, id_, defaults_path):
+        """Build a module using the parsed data."""
+
+        defaults = dnf.conf.ModuleDefaultsConf(section=id_, parser=parser)
+        try:
+            defaults._populate(parser, id_, defaults_path)
+        except ValueError as e:
+            msg = _("Module defaults '%s': Error parsing config: %s" % (id_, e))
+            raise dnf.exceptions.ConfigError(msg)
+
+        defaults._cfg = parser
+
+        return defaults

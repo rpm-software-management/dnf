@@ -662,6 +662,8 @@ class MainConf(BaseConfig):
                                                  '/etc/yum/repos.d',
                                                  '/etc/distro.repos.d'])) # :api
         self._add_option('modulesdir', PathOption('/etc/dnf/modules.d', abspath=True))
+        self._add_option('moduledefaultsdir',
+                         PathOption('/etc/dnf/modules.defaults.d', abspath=False))
 
         self._add_option('debug_solver', BoolOption(False))
 
@@ -1072,3 +1074,14 @@ class ModuleConf(BaseConfig):
             self._parser.add_section(self._section)
         super(ModuleConf, self)._write(fileobj, always=["stream", "version", "profiles",
                                                         "enabled", "locked"])
+
+
+class ModuleDefaultsConf(BaseConfig):
+    """Option definitions for module INI file sections."""
+
+    def __init__(self, section=None, parser=None):
+        super(ModuleDefaultsConf, self).__init__(section, parser)
+        # module name, stream and installed version
+        self._add_option('name', Option(default=self._section))
+        self._add_option('stream', Option())
+        self._add_option('profiles', ListOption())
