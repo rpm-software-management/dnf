@@ -289,10 +289,12 @@ class Base(object):
         logger.info(_('Metadata cache created.'))
         return True
 
-    def fill_sack(self, load_system_repo=True, load_available_repos=True):
+    def fill_sack(self, load_system_repo=True, load_available_repos=True, display=None):
         # :api
         """Prepare the Sack and the Goal objects. """
         timer = dnf.logging.Timer('sack setup')
+        progress = MetadataLoadProgressWrapper(display, len(list(self.repos.iter_enabled())))
+        progress.display.start(progress.repos_total)
         if self._sack is not None and self._repos is not None:
             for repo in self._repos.values():
                 repo._hawkey_repo = repo._init_hawkey_repo()
@@ -313,6 +315,7 @@ class Base(object):
                 age = time.time()
                 for r in self.repos.iter_enabled():
                     try:
+                        r.set_progress_bar(progress)
                         self._add_repo_to_sack(r)
                         if r.metadata._timestamp > mts:
                             mts = r.metadata._timestamp
@@ -340,6 +343,7 @@ class Base(object):
         timer()
         self._goal = dnf.goal.Goal(self._sack)
         self._plugins.run_sack()
+        progress.display.end()
         return self._sack
 
     @property
@@ -2228,6 +2232,67 @@ class Base(object):
             q = self._sack.query()
         installonly = q.filter(provides=self.conf.installonlypkgs)
         return installonly
+
+
+class MetadataLoadProgress(object):
+    def __init__(self):
+        pass
+
+    def progress(self, r_name, rb_done, rb_total, re_done, re_total):
+        """Update the progress display. :api
+
+        :param r_name: name of the repo being processed
+        :param rb_done: number of processed bytes of the repo metadata being
+           processed
+        :param rb_total: number of bytes of the repo metadata being processed
+        :param re_done: number of processed repos in the whole operation
+        :param re_total: total number of repos being processed in the whole
+           operation
+
+        """
+        pass
+
+    def message(self, msg):
+        """Report an error that occurred during the transaction. :api
+
+        :param msg: error message string
+        """
+        pass
+
+    def start(self, re_total):
+        """Signalize start of transaction.
+
+        :param re_total: the number of repositories that will be processed
+        """
+        pass
+
+    def end(self):
+        """Signalize end of transaction.
+        """
+        pass
+
+
+class MetadataLoadProgressWrapper(dnf.callback.DownloadProgress):
+    def __init__(self, display, repos_total):
+        if display is None:
+            self.display = MetadataLoadProgress()
+        else:
+            self.display = display
+        self.repos_total = repos_total
+        self.repos_done = 1
+
+    def progress(self, payload, done):
+        self.display.progress(str(payload), done, payload.download_size,
+                              self.repos_done, self.repos_total)
+
+    def start(self, total_files, total_size, total_drpms=0):
+        pass
+
+    def end(self, payload, status, msg):
+        self.repos_done += 1
+
+    def message(self, msg):
+        self.display.message(msg)
 
 
 def _msg_installed(pkg):
