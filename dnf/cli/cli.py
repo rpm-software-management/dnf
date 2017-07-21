@@ -201,6 +201,11 @@ class BaseCli(dnf.Base):
 
         if trans or (grp_diff and not grp_diff.empty()):
             # confirm with user
+            if self.conf.downloadonly:
+                logger.info(_("DNF will only download packages for the transaction."))
+            elif 'test' in self.conf.tsflags:
+                logger.info(_("DNF will only download packages, install gpg keys, and check the "
+                              "transaction."))
             if self._promptWanted():
                 if self.conf.assumeno or not self.output.userconfirm():
                     raise CliError(_("Operation aborted."))
