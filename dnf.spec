@@ -331,6 +331,57 @@ popd
 %endif
 
 %changelog
+* Mon Jul 24 2017 Jaroslav Mracek <jmracek@redhat.com> 2.6.2-1
+- Remove autodeglob optimization (Jaroslav Rohel)
+- Integrate --destdir with --destdir from download plugin (Ondřej Sojka)
+- Add CLI option --destdir (RhBug:1279001) (Ondřej Sojka)
+- Add myself to the AUTHORS file (Nathaniel McCallum)
+- Add the --forcearch CLI flag (Nathaniel McCallum)
+- Add 'ignorearch' option (Nathaniel McCallum)
+- Provide an API for setting 'arch' and 'basearch' (Nathaniel McCallum)
+- Add nevra forms for repoquery command (Jaroslav Rohel)
+- Fix UnicodeDecodeError during checkSig() on non UTF-8 locale (RhBug:1397848)
+  (Jaroslav Rohel)
+- Add dnf option --noautoremove (RhBug:1361424) (Jaroslav Mracek)
+- Add group argument for mark command (Jaroslav Mracek)
+- Report problems for each pkg during gpgcheck (RhBug:1387925) (Jaroslav
+  Mracek)
+- fix minor spelling mistakes (René Genz)
+- Print warning when wrong delimiter in cache (RhBug:1332099) (Vítek Hoch)
+- Fix the loading of config for dnf-automatic command_email (RhBug:1470116)
+  (Jaroslav Rohel)
+- Enable download progress bar if redirected output (RhBug:1161950) (Jaroslav
+  Mracek)
+- Support short abbrevations of commands (RhBug:1320254) (Vítek Hoch)
+- Remove unused variables kwargs (Jaroslav Mracek)
+- Not reinstall packages if install from repository-pkgs used (Jaroslav Mracek)
+- bump dnf version to 2.6.0 (Igor Gnatenko)
+- spec: use python2- prefix for hawkey (Igor Gnatenko)
+- spec: use sphinx-build binary rather than package name (Igor Gnatenko)
+- spec: python-bugzilla is not needed for building (Igor Gnatenko)
+- spec: fix instructions about generating tarball (Igor Gnatenko)
+- po: Update translations (Igor Gnatenko)
+- Add an example of installation without weak-deps  (RhBug:1424723) (Jaroslav
+  Mracek)
+- Add detection if mirrorlist is used for metalink (Jaroslav Mracek)
+- Rename variable (Jaroslav Mracek)
+- Add --groupmember option to repoquery (RhBug:1462486) (Jaroslav Mracek)
+- Check checksum for local repositories (RhBug:1314405) (Jaroslav Mracek)
+- Spelling fixes (Ville Skyttä)
+- repoquery --obsoletes prints obsoletes (RhBug:1457368) (Matěj Cepl)
+- Provide pkg name hint for icase (RhBug:1339280) (RhBug:1138978) (Jaroslav
+  Mracek)
+- Return only latest pkgs for "dnf list upgrades" (RhBug:1423472) (Jaroslav
+  Mracek)
+- cleanup code not executed in case of exception (Marek Blaha)
+- Allow to modify message for user confirmation (Jaroslav Mracek)
+- Add autocheck_running_kernel config option (Štěpán Smetana)
+- Inform about skipped packages for group install (RhBug:1427365) (Jaroslav
+  Mracek)
+- Remove group remove unneeded pkgs (RhBug:1398871) (RhBug:1432312) (Jaroslav
+  Mracek)
+- po: update translations (Igor Gnatenko)
+
 * Mon Jun 12 2017 Jaroslav Mracek <jmracek@redhat.com> 2.5.1-1
 - bump version to 2.5.1 + update release notes (Jaroslav Mracek)
 - Fix: dnf update --refresh fails for repo_gpgcheck=1 (RhBug:1456419) (Daniel
