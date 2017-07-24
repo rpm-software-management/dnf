@@ -31,11 +31,9 @@ from dnf.callback import TransactionProgress, TRANS_POST, PKG_VERIFY
 from dnf.conf import ModuleConf
 from dnf.conf.read import ModuleReader, ModuleDefaultsReader
 from dnf.exceptions import Error
-from dnf.i18n import _
 from dnf.pycomp import ConfigParser
 from dnf.subject import Subject
-from dnf.util import logger
-
+from dnf.util import logger, first_not_none
 
 LOAD_CACHE_ERR = 1
 MISSING_YAML_ERR = 2
@@ -84,6 +82,9 @@ class RepoModuleVersion(object):
         # for finding latest
         assert self.full_stream == other.full_stream
         return self.module_metadata.version < other.module_metadata.version
+
+    def __repr__(self):
+        return self.full_version
 
     def install(self, profile):
         if profile not in self.profiles:
@@ -238,29 +239,28 @@ class RepoModuleDict(OrderedDict):
         module.parent = self
 
     def find_module_version(self, name, stream=None, version=None, arch=None):
+        def use_enabled_stream(repo_module):
+            if repo_module.conf and repo_module.conf.enabled:
+                return repo_module.conf.stream
+            return None
+
+        def use_default_stream(repo_module):
+            if repo_module.defaults:
+                return repo_module.defaults.stream
+            return None
+
         try:
             repo_module = self[name]
 
-            # if stream is not specified:
-            # - use the enabled stream
-            # - pick the default from system profile
-            # - return None if no suitable stream is found
-            if not stream:
-                if repo_module.conf and repo_module.conf.enabled:
-                    stream = repo_module.conf.stream
-
-            if not stream:
-                # TODO: read default stream from system profile
-                stream = "f26"
-                if name == "httpd":
-                    stream = "2.4"
-
-            if not stream:
-                return None
+            stream = first_not_none([stream,
+                                     use_enabled_stream(repo_module),
+                                     use_default_stream(repo_module)])
 
             repo_module_stream = repo_module[stream]
 
-            if repo_module.conf and repo_module.conf.locked and repo_module.conf.version is not None:
+            if repo_module.conf and \
+                    repo_module.conf.locked and \
+                    repo_module.conf.version is not None:
                 # if module version is locked, ignore user input
                 # TODO: print warning if locked version != latest or provided
                 repo_module_version = repo_module_stream[repo_module.conf.version]
@@ -273,18 +273,16 @@ class RepoModuleDict(OrderedDict):
             # TODO: arch
             # TODO: platform module
 
-            return repo_module_version
         except KeyError:
-            pass
-        return None
+            raise Error(module_errors[NO_MODULE_OR_STREAM_ERR].format(name))
+        return repo_module_version
 
     def enable(self, pkg_spec, assumeyes, assumeno=False):
         subj = ModuleSubject(pkg_spec)
         module_version, nsvap = subj.find_module_version(self)
 
         if not module_version:
-            logger.error(module_errors[NO_MODULE_ERR].format(pkg_spec))
-            return
+            raise Error(module_errors[NO_MODULE_ERR].format(pkg_spec))
 
         self[module_version.name].enable(module_version.stream, assumeyes, assumeno)
 
@@ -301,7 +299,7 @@ class RepoModuleDict(OrderedDict):
         try:
             self[pkg_spec].disable()
         except KeyError:
-            logger.warning(module_errors[NO_MODULE_ERR].format(pkg_spec))
+            raise Error(module_errors[NO_MODULE_ERR].format(pkg_spec))
 
     def install(self, pkg_specs, autoenable=False):
         for pkg_spec in pkg_specs:
@@ -313,8 +311,7 @@ class RepoModuleDict(OrderedDict):
                 continue
 
             if autoenable:
-                # TODO: nsvap depends on enabled module :(
-                self.enable(nsvap.name, True)
+                self.enable("{}-{}".format(nsvap.name, nsvap.stream), True)
 
             module_version.install(nsvap.profile)
 
@@ -377,7 +374,8 @@ class RepoModuleDict(OrderedDict):
                 logger.debug("No module named {}, skipping.".format(conf.name))
 
     def get_modules_dir(self):
-        modules_dir = os.path.join(self.base.conf.installroot, self.base.conf.modulesdir.lstrip("/"))
+        modules_dir = os.path.join(self.base.conf.installroot,
+                                   self.base.conf.modulesdir.lstrip("/"))
 
         if not os.path.exists(modules_dir):
             self.create_dir(modules_dir)
@@ -403,32 +401,69 @@ class RepoModuleDict(OrderedDict):
         module_version, nsvap = subj.find_module_version(self)
         return module_version.module_metadata.dumps().rstrip("\n")
 
+    def list_module_version_latest(self):
+        versions = []
+
+        for module in self.values():
+            for stream in module.values():
+                versions.append(stream.latest())
+
+        return versions
+
+    def list_module_version_all(self):
+        versions = []
+
+        for module in self.values():
+            for stream in module.values():
+                for version in stream.values():
+                    versions.append(version)
+
+        return versions
+
+    def list_module_version_enabled(self):
+        versions = []
+
+        for version in self.list_module_version_all():
+            conf = version.parent.parent.conf
+            if conf is not None and conf.enabled and conf.stream == version.parent.stream:
+                versions.append(version)
+
+        return versions
+
+    def list_module_version_disabled(self):
+        versions = []
+
+        for version in self.list_module_version_all():
+            conf = version.parent.parent.conf
+            if conf is None or not conf.enabled:
+                versions.append(version)
+
+        return versions
+
+    def list_module_version_installed(self):
+        versions = []
+
+        for version in self.list_module_version_all():
+            conf = version.parent.parent.conf
+            if conf is not None and conf.enabled and conf.version:
+                versions.append(version)
+
+        return versions
+
+    def get_brief_description_latest(self, module_n):
+        return self.get_brief_description_by_name(module_n, self.list_module_version_latest())
+
     def get_brief_description_all(self, module_n):
-        return self.get_brief_description_by_name(module_n, [stream for module in self.values()
-                                                             for stream in module.values()])
+        return self.get_brief_description_by_name(module_n, self.list_module_version_all())
 
     def get_brief_description_enabled(self, module_n):
-        return self.get_brief_description_by_name(module_n,
-                                                  [stream for module in self.values()
-                                                   for stream in module.values()
-                                                   if module.conf is not None and
-                                                   module.conf.enabled and
-                                                   module.conf.stream == stream.stream])
+        return self.get_brief_description_by_name(module_n, self.list_module_version_enabled())
 
     def get_brief_description_disabled(self, module_n):
-        return self.get_brief_description_by_name(module_n,
-                                                  [stream for module in self.values()
-                                                   for stream in module.values()
-                                                   if module.conf is None or
-                                                   not module.conf.enabled])
+        return self.get_brief_description_by_name(module_n, self.list_module_version_disabled())
 
     def get_brief_description_installed(self, module_n):
-        return self.get_brief_description_by_name(module_n,
-                                                  [stream for module in self.values()
-                                                   for stream in module.values()
-                                                   if module.conf is not None and
-                                                   module.conf.enabled and
-                                                   module.conf.version],
+        return self.get_brief_description_by_name(module_n, self.list_module_version_installed(),
                                                   True)
 
     def get_brief_description_by_name(self, module_n, repo_module_streams, only_installed=False):
@@ -441,11 +476,7 @@ class RepoModuleDict(OrderedDict):
                                                only_installed)
 
     @staticmethod
-    def _get_brief_description(repo_module_streams, only_installed=False):
-        repo_module_versions = [repo_module_version
-                                for repo_module_stream in repo_module_streams
-                                for repo_module_version in repo_module_stream.values()]
-
+    def _get_brief_description(repo_module_versions, only_installed=False):
         if only_installed:
             only_installed_versions = []
             for i in repo_module_versions:
@@ -608,7 +639,8 @@ class ModuleSubject(object):
 
         result = (None, None)
         for nsvap in self.get_nsvap_possibilities():
-            module_version = repo_module_dict.find_module_version(nsvap.name, nsvap.stream, nsvap.version, nsvap.arch)
+            module_version = repo_module_dict.find_module_version(nsvap.name, nsvap.stream,
+                                                                  nsvap.version, nsvap.arch)
             if module_version:
                 result = (module_version, nsvap)
                 break

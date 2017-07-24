@@ -145,6 +145,15 @@ def first(iterable):
     except StopIteration:
         return None
 
+
+def first_not_none(iterable):
+    it = iter(iterable)
+    try:
+        return next(item for item in it if item is not None)
+    except StopIteration:
+        return None
+
+
 def file_age(fn):
     return time.time() - file_timestamp(fn)
 
