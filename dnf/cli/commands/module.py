@@ -41,14 +41,16 @@ class ModuleCommand(commands.Command):
         def run_on_module(self):
             mods = self.base.repo_module_dict
 
-            if self.opts.enabled:
+            if self.opts.all:
+                print(mods.get_brief_description_all(self.opts.module_nsvp))
+            elif self.opts.enabled:
                 print(mods.get_brief_description_enabled(self.opts.module_nsvp))
             elif self.opts.disabled:
                 print(mods.get_brief_description_disabled(self.opts.module_nsvp))
             elif self.opts.installed:
                 print(mods.get_brief_description_installed(self.opts.module_nsvp))
             else:
-                print(mods.get_brief_description_all(self.opts.module_nsvp))
+                print(mods.get_brief_description_latest(self.opts.module_nsvp))
             return 0
 
     class InfoSubCommand(SubCommand):
@@ -136,10 +138,14 @@ class ModuleCommand(commands.Command):
             alias: subcmd for subcmd in subcmd_objs for alias in subcmd.aliases}
 
     def set_argparser(self, parser):
-        parser.add_argument('subcmd', nargs=1, metavar='COMMAND')
+        subcommand_help = [subcmd.aliases[0] for subcmd in self.SUBCMDS]
+        parser.add_argument('subcmd', nargs=1, choices=subcommand_help)
         parser.add_argument('module_nsvp', nargs='*')
 
         narrows = parser.add_mutually_exclusive_group()
+        narrows.add_argument('--all', dest='all',
+                             action='store_true',
+                             help=_("show all modules"))
         narrows.add_argument('--enabled', dest='enabled',
                              action='store_true',
                              help=_("show only enabled modules"))
@@ -163,8 +169,4 @@ class ModuleCommand(commands.Command):
         self.subcmd.configure()
 
     def run(self):
-        if self.opts.help:
-            print(self.cli.optparser.print_help())
-            return 0
-
         self.subcmd.run_on_module()
