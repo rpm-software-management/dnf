@@ -220,6 +220,9 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
     ==========              ===========================
 
     The ``"nocrypto"`` option will also set the ``_RPMVSF_NOSIGNATURES`` and ``_RPMVSF_NODIGESTS`` VS flags.
+    The ``test`` option provides a transaction check without performing the transaction. It includes
+    download of packages, gpg keys check (including permanent import of additional keys if
+    necessary), and rpm check to prevent file conflicts.
 
   .. attribute:: username
 
