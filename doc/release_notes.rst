@@ -20,6 +20,40 @@
 ###################
 
 ===================
+2.6.2 Release Notes
+===================
+
+API additions in 2.6.2:
+
+* :attr:`dnf.conf.Conf.basearch`
+* :attr:`dnf.conf.Conf.arch`
+* :attr:`dnf.conf.Conf.ignorearch`
+* Introduced new configuration option ``autocheck_running_kernel``
+* :meth:`dnf.subject.Subject.get_best_selector` can use three additional key words: ``obsoletes``, ``reports``, and ``reponame``.
+From commandline it is possible to use new option ``--noautoremove`` to disable removal of dependencies that are no longer used.
+
+Bugs fixed in 2.6.2:
+
+* :rhbug:`1279001`
+* :rhbug:`1397848`
+* :rhbug:`1361424`
+* :rhbug:`1387925`
+* :rhbug:`1332099`
+* :rhbug:`1470116`
+* :rhbug:`1161950`
+* :rhbug:`1320254`
+* :rhbug:`1424723`
+* :rhbug:`1462486`
+* :rhbug:`1314405`
+* :rhbug:`1457368`
+* :rhbug:`1339280`
+* :rhbug:`1138978`
+* :rhbug:`1423472`
+* :rhbug:`1427365`
+* :rhbug:`1398871`
+* :rhbug:`1432312`
+
+===================
 2.5.1 Release Notes
 ===================
 

@@ -2130,5 +2130,69 @@
     [
         1444751, 
         "dnf repoquery allow --qf use with --tree"
+    ], 
+    [
+        1279001, 
+        "[RFE] Missing dnf --downloaddir option"
+    ], 
+    [
+        1361424, 
+        "[RFE] add cli option for clean_requirements_on_remove=no"
+    ], 
+    [
+        1387925, 
+        "RFE: Display all unsigned package errors instead of only one"
+    ], 
+    [
+        1332099, 
+        "Installing packages produces a backtrace, installation goes ok"
+    ], 
+    [
+        1470116, 
+        "/etc/dnf/automatic.conf configuration for command_email is ignored"
+    ], 
+    [
+        1320254, 
+        "[RFE] Support short abbrevations of commands like install in DNF"
+    ], 
+    [
+        1424723, 
+        "doc: Hard to find documentation for weak dependencies"
+    ], 
+    [
+        1462486, 
+        "RFE: Add support for groupmember on repoquery"
+    ], 
+    [
+        1314405, 
+        "No checksum check"
+    ], 
+    [
+        1457368, 
+        "dnf repoquery --obsoletes does not work"
+    ], 
+    [
+        1339280, 
+        "[rfe] Case insensitive match hint"
+    ], 
+    [
+        1138978, 
+        "[rfe]  maybe you meant?"
+    ], 
+    [
+        1423472, 
+        "dnf list updates  should only print newest version"
+    ], 
+    [
+        1427365, 
+        "DNF (and thus anaconda, livemedia-creator...) skips packages that are missing or cannot be installed due to conflicts or dependency issues with no warning, error or information"
+    ], 
+    [
+        1398871, 
+        "dnf group remove removes packages from other groups, and explicitly installed packages"
+    ], 
+    [
+        1432312, 
+        "removing MATE Desktop would remove dnf and systemd"
     ]
 ]
