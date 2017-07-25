@@ -64,7 +64,8 @@ class ModuleCommand(commands.Command):
             demands.sack_activation = True
 
         def run_on_module(self):
-            print(self.base.repo_module_dict.get_full_description(self.opts.module_nsvp[0]))
+            for spec in self.opts.module_nsvp:
+                print(self.base.repo_module_dict.get_full_description(spec))
 
     class EnableSubCommand(SubCommand):
 
