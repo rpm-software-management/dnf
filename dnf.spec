@@ -224,17 +224,16 @@ mkdir -p %{buildroot}%{_localstatedir}/log/
 mkdir -p %{buildroot}%{_var}/cache/dnf/
 touch %{buildroot}%{_localstatedir}/log/%{name}.log
 %if %{with python3}
-%{?system_python_abi:sed -i 's|#!%{__python3}|#!%{_libexecdir}/system-python|' %{buildroot}%{_bindir}/{dnf-3,yum-3}}
+%{?system_python_abi:sed -i 's|#!%{__python3}|#!%{_libexecdir}/system-python|' %{buildroot}%{_bindir}/dnf-3}
 ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf
 mv %{buildroot}%{_bindir}/dnf-automatic-3 %{buildroot}%{_bindir}/dnf-automatic
-mv %{buildroot}%{_bindir}/yum-3 %{buildroot}%{_bindir}/yum
+ln -sr  %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/yum
 %else
 ln -sr %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/dnf
 mv %{buildroot}%{_bindir}/dnf-automatic-2 %{buildroot}%{_bindir}/dnf-automatic
-mv %{buildroot}%{_bindir}/yum-2 %{buildroot}%{_bindir}/yum
+ln -sr  %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/yum
 %endif
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
-rm -vf %{buildroot}%{_bindir}/yum-*
 
 %check
 pushd build
