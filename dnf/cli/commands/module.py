@@ -147,6 +147,9 @@ class ModuleCommand(commands.Command):
                DisableSubCommand, InstallSubCommand, UpdateSubCommand,
                RemoveSubCommand}
 
+    SUBCMDS_REQUIRED_ARG = {InfoSubCommand, EnableSubCommand, DisableSubCommand,
+                            InstallSubCommand, UpdateSubCommand, RemoveSubCommand}
+
     aliases = ("module",)
     summary = _("Interact with Modules.")
 
@@ -189,4 +192,15 @@ class ModuleCommand(commands.Command):
         self.subcmd.configure()
 
     def run(self):
+        self.check_required_argument()
         self.subcmd.run_on_module()
+
+    def check_required_argument(self):
+        required_argument = [alias
+                             for subcmd in self.SUBCMDS_REQUIRED_ARG
+                             for alias in subcmd.aliases]
+        if self.opts.subcmd[0] in required_argument:
+            if not self.opts.module_nsvp:
+                raise CliError(
+                    "dnf {} {}: too few arguments".format(self.opts.command[0],
+                                                          self.opts.subcmd[0]))
