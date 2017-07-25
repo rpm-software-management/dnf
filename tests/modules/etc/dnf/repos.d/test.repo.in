@@ -1,0 +1,7 @@
+[test]
+name=Test
+baseurl=file://@CMAKE_CURRENT_SOURCE_DIR@/tests/modules/modules/_all/x86_64/
+enabled=1
+gpgcheck=0
+metadata_expire=0
+modules=1
