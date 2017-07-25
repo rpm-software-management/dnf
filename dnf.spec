@@ -94,6 +94,15 @@ Obsoletes:      dnf-langpacks-conf < %{dnf_langpacks_ver}
 %description conf
 Configuration files for DNF.
 
+%if 0%{?rhel} && 0%{?rhel} <= 7
+%package -n yum4
+Requires:       %{name} = %{version}-%{release}
+Summary:        As a Yum CLI compatibility layer, supplies /usr/bin/yum4 redirecting to DNF
+
+%description -n yum4
+As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
+
+%else
 %package yum
 Conflicts:      yum < 3.4.3-505
 Requires:       %{name} = %{version}-%{release}
@@ -101,6 +110,7 @@ Summary:        As a Yum CLI compatibility layer, supplies /usr/bin/yum redirect
 
 %description yum
 As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
+%endif
 
 %package -n python2-%{name}
 Summary:        Python 2 interface to DNF
@@ -219,7 +229,13 @@ ln -sr  %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/yum
 %else
 ln -sr %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/dnf
 mv %{buildroot}%{_bindir}/dnf-automatic-2 %{buildroot}%{_bindir}/dnf-automatic
+%if 0%{?rhel} && 0%{?rhel} <= 7
+ln -sr  %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/yum4
+ln -sr  %{buildroot}%{_mandir}/man8/dnf.8.gz %{buildroot}%{_mandir}/man8/yum4.8.gz
+rm -f %{buildroot}%{_mandir}/man8/yum.8.gz
+%else
 ln -sr  %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/yum
+%endif
 %endif
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
@@ -294,9 +310,17 @@ popd
 %{_tmpfilesdir}/%{name}.conf
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 
+%if 0%{?rhel} && 0%{?rhel} <= 7
+%files -n yum4
+%{_bindir}/yum4
+%{_mandir}/man8/yum4.8.gz
+%exclude %{_mandir}/man8/yum.8.gz
+
+%else
 %files yum
 %{_bindir}/yum
 %{_mandir}/man8/yum.8.gz
+%endif
 
 %files -n python2-%{name}
 %{_bindir}/%{name}-2
