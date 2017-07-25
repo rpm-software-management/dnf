@@ -17,12 +17,12 @@
 
 from __future__ import print_function
 
-import errno
 import fnmatch
 import gzip
 import os
 from collections import OrderedDict
 
+import dnf
 import hawkey
 import modulemd
 import smartcols
@@ -33,7 +33,7 @@ from dnf.conf.read import ModuleReader, ModuleDefaultsReader
 from dnf.exceptions import Error
 from dnf.pycomp import ConfigParser
 from dnf.subject import Subject
-from dnf.util import logger, first_not_none
+from dnf.util import logger, first_not_none, ensure_dir
 
 LOAD_CACHE_ERR = 1
 MISSING_YAML_ERR = 2
@@ -77,6 +77,7 @@ class RepoModuleVersion(object):
         self.repo = repo
         self.base = base
         self.parent = None
+        self.repo_module = None
 
     def __lt__(self, other):
         # for finding latest
@@ -90,17 +91,16 @@ class RepoModuleVersion(object):
         if profile not in self.profiles:
             raise Error(module_errors[NO_PROFILE_ERR].format(profile, self.profiles))
 
-        self.parent.parent.installed_repo_module_version = self
-        self.parent.parent.installed_profiles.append(profile)
+        self.repo_module.installed_repo_module_version = self
+        self.repo_module.installed_profiles.append(profile)
+        self.repo_module.parent.transaction_callback.repo_modules.append(self.repo_module)
 
         for single_nevra in self.profile_nevra(profile):
             self.base.install(single_nevra, reponame=self.repo.id, forms=hawkey.FORM_NEVR)
 
-        repo_module = self.parent.parent
-        repo_module.parent.transaction_callback.repo_modules.append(repo_module)
-
     def upgrade(self, profiles):
-        self.parent.parent.installed_repo_module_version = self
+        self.repo_module.installed_repo_module_version = self
+        self.repo_module.parent.transaction_callback.repo_modules.append(self.repo_module)
         for profile in profiles:
             if profile not in self.profiles:
                 raise Error(module_errors[NO_PROFILE_ERR].format(profile, self.profiles))
@@ -108,8 +108,18 @@ class RepoModuleVersion(object):
             for single_nevra in self.profile_nevra(profile):
                 self.base.upgrade(single_nevra, reponame=self.repo.id)
 
-        repo_module = self.parent.parent
-        repo_module.parent.transaction_callback.repo_modules.append(repo_module)
+    def remove(self, profiles):
+        for profile in profiles:
+            self.parent.parent.removed_repo_module_version = self
+            self.parent.parent.removed_profiles.append(profile)
+
+            if profile not in self.profiles:
+                raise Error(module_errors[NO_PROFILE_ERR].format(profile, self.profiles))
+
+            for single_nevra in self.profile_nevra(profile):
+                remove_query = dnf.subject.Subject(single_nevra) \
+                    .get_best_query(self.base.sack, forms=hawkey.FORM_NEVR)
+                self.base._remove_if_unneeded(remove_query)
 
     def nevra(self):
         result = self.module_metadata.artifacts.rpms
@@ -178,12 +188,28 @@ class RepoModule(OrderedDict):
     def __init__(self):
         super(RepoModule, self).__init__()
 
-        self.conf = None
+        self._conf = None
         self.defaults = None
         self.name = None
         self.parent = None
         self.installed_profiles = []
-        self.installed_version = None
+        self.installed_repo_module_version = None
+        self.removed_profiles = []
+        self.removed_repo_module_version = None
+
+    @property
+    def conf(self):
+        if self._conf is None:
+            self._conf = ModuleConf(section=self.name, parser=ConfigParser())
+            self._conf.name = self.name
+            self._conf.enabled = False
+            self._conf.locked = False
+
+        return self._conf
+
+    @conf.setter
+    def conf(self, value):
+        self._conf = value
 
     def add(self, repo_module_version):
         module_stream = self.setdefault(repo_module_version.stream, RepoModuleStream())
@@ -191,14 +217,11 @@ class RepoModule(OrderedDict):
         module_stream.parent = self
 
         self.name = repo_module_version.name
+        repo_module_version.repo_module = self
 
     def enable(self, stream, assumeyes, assumeno):
         if stream not in self:
             raise Error(module_errors[NO_STREAM_ERR].format(stream, self.name))
-
-        if self.conf is None:
-            self.conf = ModuleConf(section=self.name, parser=ConfigParser())
-            self.conf.name = self.name
 
         if self.conf.stream is not None and str(self.conf.stream) != str(stream) and not assumeyes:
             logger.info(module_errors[DIFFERENT_STREAM_INFO].format(self.name))
@@ -212,15 +235,12 @@ class RepoModule(OrderedDict):
         self.write_conf_to_file()
 
     def disable(self):
-        if self.conf is None:
-            self.conf = ModuleConf(section=self.name, parser=ConfigParser())
-            self.conf.name = self.name
-
         self.conf.enabled = False
         self.write_conf_to_file()
 
     def write_conf_to_file(self):
         output_file = os.path.join(self.parent.get_modules_dir(), "%s.module" % self.conf.name)
+        ensure_dir(self.parent.get_modules_dir())
 
         with open(output_file, "w") as config_file:
             self.conf._write(config_file)
@@ -311,7 +331,10 @@ class RepoModuleDict(OrderedDict):
                 continue
 
             if autoenable:
-                self.enable("{}-{}".format(nsvap.name, nsvap.stream), True)
+                self.enable("{}-{}".format(module_version.name, module_version.stream), True)
+            elif not self[nsvap.name].conf.enabled:
+                logger.error(module_errors[NO_ACTIVE_STREAM_ERR].format(pkg_spec))
+                continue
 
             module_version.install(nsvap.profile)
 
@@ -350,6 +373,31 @@ class RepoModuleDict(OrderedDict):
         modules.sort()
         self.upgrade(modules)
 
+    def remove(self, pkg_specs):
+        for pkg_spec in pkg_specs:
+            subj = ModuleSubject(pkg_spec)
+            module_version, nsvap = subj.find_module_version(self)
+
+            if not module_version:
+                logger.error(module_errors[NO_MODULE_ERR].format(pkg_spec))
+                continue
+
+            conf = self[nsvap.name].conf
+            if conf:
+                installed_profiles = conf.profiles
+            else:
+                installed_profiles = []
+            if nsvap.profile:
+                if nsvap.profile not in installed_profiles:
+                    logger.error(module_errors[PROFILE_NOT_INSTALLED].format(pkg_spec))
+                    continue
+                profiles = [nsvap.profile]
+            else:
+                profiles = installed_profiles
+
+            self.transaction_callback.repo_modules.append(self[nsvap.name])
+            module_version.remove(profiles)
+
     def load_modules(self, repo):
         loader = ModuleMetadataLoader(repo)
         for module_metadata in loader.load():
@@ -377,24 +425,11 @@ class RepoModuleDict(OrderedDict):
         modules_dir = os.path.join(self.base.conf.installroot,
                                    self.base.conf.modulesdir.lstrip("/"))
 
-        if not os.path.exists(modules_dir):
-            self.create_dir(modules_dir)
-
+        ensure_dir(modules_dir)
         return modules_dir
 
     def get_module_defaults_dir(self):
         return self.base.conf.moduledefaultsdir
-
-    @staticmethod
-    def create_dir(output_file):
-        oumask = os.umask(0o22)
-        try:
-            os.makedirs(output_file)
-        except OSError as e:
-            if e.errno != errno.EEXIST:
-                raise
-        finally:
-            os.umask(oumask)
 
     def get_full_description(self, pkg_spec):
         subj = ModuleSubject(pkg_spec)
@@ -546,15 +581,33 @@ class ModuleTransactionProgress(TransactionProgress):
         if not self.saved and (action == TRANS_POST or action == PKG_VERIFY):
             self.saved = True
             for repo_module in self.repo_modules:
-                conf = repo_module.conf
-                conf.enabled = True
-                conf.version = repo_module.installed_repo_module_version.version
 
-                profiles = repo_module.installed_profiles
-                profiles.extend(conf.profiles)
-                conf.profiles = sorted(set(profiles))
+                if repo_module.removed_repo_module_version:
+                    self.remove(repo_module)
+
+                if repo_module.installed_repo_module_version:
+                    self.add(repo_module)
 
                 repo_module.write_conf_to_file()
+
+    @staticmethod
+    def add(repo_module):
+        conf = repo_module.conf
+        conf.version = repo_module.installed_repo_module_version.version
+
+        profiles = repo_module.installed_profiles
+        profiles.extend(conf.profiles)
+        conf.profiles = sorted(set(profiles))
+
+        repo_module.write_conf_to_file()
+
+    @staticmethod
+    def remove(repo_module):
+        conf = repo_module.conf
+        conf.profiles = [x for x in conf.profiles if x not in repo_module.removed_profiles]
+
+        if len(conf.profiles) == 0:
+            conf.version = -1
 
 
 NSVAP_FIELDS = ["name", "stream", "version", "arch", "profile"]
