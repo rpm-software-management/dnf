@@ -21,18 +21,14 @@ from __future__ import unicode_literals
 from tests.support import mock
 import dnf.cli
 import dnf.conf.config
-import dnf.yum.option_parser
-import dnf.yum.config
 import dnf.logging
 import dnf.pycomp
-import dnf.yum.config
-import dnf.yum.option_parser
 import tests.support
 
 
 
 def _parse(command, args):
-    parser = dnf.yum.option_parser.YumOptionParser()
+    parser = dnf.cli.option_parser.OptionParser()
     return parser.parse_main_args(args), parser.parse_command_args(command, args)
 
 
@@ -41,20 +37,6 @@ def _compare_options(test, options):
         test.assertNotEqual(test.conf._get_option(option),
                             test.dnf_conf._get_option(option),
                             option + " is equal in yum and dnf config")
-
-
-class YumConfigTest(tests.support.TestCase):
-    def setUp(self):
-        self.conf = dnf.yum.config.YumConf()
-        self.dnf_conf = dnf.conf.config.MainConf()
-
-    def test_different_options(self):
-        self.assertNotEqual(self.conf, self.dnf_conf)
-        _compare_options(self,
-                         ['exclude', 'persistdir',
-                          'system_cachedir', 'keepcache', 'installonly_limit',
-                          'timeout', 'metadata_expire', 'best',
-                          'clean_requirements_on_remove'])
 
 
 class YumArgumentParserTest(tests.support.TestCase):
@@ -70,7 +52,7 @@ class YumArgumentParserTest(tests.support.TestCase):
 
 class YumCustomCommandTest(tests.support.TestCase):
     def setUp(self):
-        self.conf = dnf.yum.config.YumConf()
+        self.conf = dnf.conf.config.MainConf()
         self.base = dnf.cli.cli.BaseCli(self.conf)
         self.cli = dnf.cli.cli.Cli(self.base)
         self.command = TestCommand(self.cli)
