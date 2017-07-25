@@ -124,8 +124,25 @@ class ModuleCommand(commands.Command):
         def run_on_module(self):
             self.base.repo_module_dict.upgrade(self.opts.module_nsvp)
 
+    class RemoveSubCommand(SubCommand):
+
+        aliases = ('remove', 'erase',)
+
+        def configure(self):
+            demands = self.cli.demands
+            demands.allow_erasing = True
+            demands.available_repos = False
+            demands.resolving = True
+            demands.root_user = True
+            demands.sack_activation = True
+            demands.transaction_display = self.base.repo_module_dict.transaction_callback
+
+        def run_on_module(self):
+            self.base.repo_module_dict.remove(self.opts.module_nsvp)
+
     SUBCMDS = {ListSubCommand, InfoSubCommand, EnableSubCommand,
-               DisableSubCommand, InstallSubCommand, UpdateSubCommand}
+               DisableSubCommand, InstallSubCommand, UpdateSubCommand,
+               RemoveSubCommand}
 
     aliases = ("module",)
     summary = _("Interact with Modules.")
