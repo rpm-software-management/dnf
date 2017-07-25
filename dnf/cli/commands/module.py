@@ -21,6 +21,7 @@ from __future__ import print_function
 
 from dnf.cli import commands, CliError
 from dnf.i18n import _
+from dnf.util import logger
 
 
 class ModuleCommand(commands.Command):
@@ -79,6 +80,7 @@ class ModuleCommand(commands.Command):
             for module_ns in self.opts.module_nsvp:
                 self.base.repo_module_dict.enable(module_ns, self.opts.assumeyes,
                                                   self.opts.assumeno)
+                logger.info("'{}' is enabled".format(module_ns))
 
     class DisableSubCommand(SubCommand):
 
@@ -93,6 +95,7 @@ class ModuleCommand(commands.Command):
         def run_on_module(self):
             for module_n in self.opts.module_nsvp:
                 self.base.repo_module_dict.disable(module_n)
+                logger.info("'{}' is disabled".format(module_n))
 
     class InstallSubCommand(SubCommand):
 
