@@ -54,6 +54,7 @@ def _make_lists(transaction, goal):
     TYPES = ('downgraded',
              'erased',
              'erased_clean',
+             'erased_dep',
              'installed',
              'installed_dep',
              'installed_weak',
@@ -69,6 +70,8 @@ def _make_lists(transaction, goal):
         elif tsi.op_type == dnf.transaction.ERASE:
             if tsi.erased and goal.get_reason(tsi.erased) == 'clean':
                 b.erased_clean.append(tsi)
+            elif tsi.erased and goal.get_reason(tsi.erased) == 'dep':
+                b.erased_dep.append(tsi)
             else:
                 b.erased.append(tsi)
         elif tsi.op_type == dnf.transaction.INSTALL:
@@ -1037,6 +1040,7 @@ class Output(object):
                                   (_('Installing dependencies'), list_bunch.installed_dep),
                                   (_('Installing weak dependencies'), list_bunch.installed_weak),
                                   (_('Removing'), list_bunch.erased),
+                                  (_('Removing depended packages'), list_bunch.erased_dep),
                                   (_('Removing unused dependencies'), list_bunch.erased_clean),
                                   (_('Downgrading'), list_bunch.downgraded)]:
             lines = []
@@ -1207,8 +1211,8 @@ Transaction Summary
         list_bunch = _make_lists(transaction, self.base._goal)
 
         for (action, tsis) in [(_('Reinstalled'), list_bunch.reinstalled),
-                               (_('Removed'), list_bunch.erased +
-                                list_bunch.erased_clean),
+                               (_('Removed'), list_bunch.erased + list_bunch.erased_dep
+                                + list_bunch.erased_clean),
                                (_('Installed'), list_bunch.installed +
                                 list_bunch.installed_weak +
                                 list_bunch.installed_dep),
