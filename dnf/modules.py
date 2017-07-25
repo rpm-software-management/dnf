@@ -470,7 +470,7 @@ class RepoModuleDict(OrderedDict):
 
         for version in self.list_module_version_all():
             conf = version.parent.parent.conf
-            if conf is None or not conf.enabled:
+            if conf is None or not conf.enabled or version.stream != conf.stream:
                 versions.append(version)
 
         return versions
