@@ -501,14 +501,17 @@ class RepoModuleDict(OrderedDict):
         return self.get_brief_description_by_name(module_n, self.list_module_version_installed(),
                                                   True)
 
-    def get_brief_description_by_name(self, module_n, repo_module_streams, only_installed=False):
+    def get_brief_description_by_name(self, module_n, repo_module_versions, only_installed=False):
         if module_n is None or not module_n:
-            return self._get_brief_description(repo_module_streams, only_installed)
+            return self._get_brief_description(repo_module_versions, only_installed)
         else:
-            return self._get_brief_description([stream for stream in repo_module_streams
-                                                if fnmatch.fnmatch(stream.parent.name,
-                                                                   module_n[0])],
-                                               only_installed)
+            filtered_versions_by_name = set()
+            for name in module_n:
+                for version in repo_module_versions:
+                    if fnmatch.fnmatch(version.name, name):
+                        filtered_versions_by_name.add(version)
+
+            return self._get_brief_description(list(filtered_versions_by_name), only_installed)
 
     @staticmethod
     def _get_brief_description(repo_module_versions, only_installed=False):
