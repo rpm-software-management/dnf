@@ -770,6 +770,16 @@ Remove Command
     There are also a few specific remove commands ``remove-n``, ``remove-na`` and ``remove-nevra``
     that allow to specify exact argument NEVRA format.
 
+Remove Examples
+---------------
+
+``dnf remove acpi tito``
+    Remove packages ``acpi`` and ``tito``
+
+``dnf remove $(dnf repoquery --extras --exclude=tito,acpi)``
+    Remove packages not present in any repository but it does't remove packages ``tito``
+    and ``acpi`` (they still might be removed if they require some of removed packages).
+
 .. _repoinfo_command-label:
 
 ----------------
