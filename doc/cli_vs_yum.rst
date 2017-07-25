@@ -383,12 +383,12 @@ Original Yum tool          New DNF command                                  Pack
 Detailed table for ``package-cleanup`` replacement:
 
 ==================================       =====================================
-``package-cleanup --dupes``              ``dnf repoquery --duplicates``
+``package-cleanup --dupes``              ``dnf repoquery --duplicate``
 ``package-cleanup --leaves``             ``dnf repoquery --unneeded``
 ``package-cleanup --orphans``            ``dnf repoquery --extras``
 ``package-cleanup --oldkernels``         ``dnf repoquery --installonly``
 ``package-cleanup --problems``           ``dnf repoquery --unsatisfied``
-``package-cleanup --cleandupes``         ``dnf remove --duplicates``
+``package-cleanup --cleandupes``         ``dnf remove --duplicated``
 ``package-cleanup --oldkernels``         ``dnf remove --oldinstallonly``
 ==================================       =====================================
 
