@@ -56,6 +56,7 @@ def _make_lists(transaction, goal):
              'erased_clean',
              'erased_dep',
              'installed',
+             'installed_group',
              'installed_dep',
              'installed_weak',
              'reinstalled',
@@ -79,6 +80,9 @@ def _make_lists(transaction, goal):
                 reason = goal.get_reason(tsi.installed)
                 if reason == 'user':
                     b.installed.append(tsi)
+                    continue
+                elif reason == 'group':
+                    b.installed_group.append(tsi)
                     continue
                 elif reason == 'weak':
                     b.installed_weak.append(tsi)
@@ -1037,6 +1041,7 @@ class Output(object):
         for (action, pkglist) in [(_('Installing'), list_bunch.installed),
                                   (_('Upgrading'), list_bunch.upgraded),
                                   (_('Reinstalling'), list_bunch.reinstalled),
+                                  (_('Installing group packages'), list_bunch.installed_group),
                                   (_('Installing dependencies'), list_bunch.installed_dep),
                                   (_('Installing weak dependencies'), list_bunch.installed_weak),
                                   (_('Removing'), list_bunch.erased),
@@ -1211,8 +1216,9 @@ Transaction Summary
         list_bunch = _make_lists(transaction, self.base._goal)
 
         for (action, tsis) in [(_('Reinstalled'), list_bunch.reinstalled),
-                               (_('Removed'), list_bunch.erased + list_bunch.erased_dep
-                                + list_bunch.erased_clean),
+                               (_('Removed'), list_bunch.erased +
+                                   list_bunch.erased_dep +
+                                   list_bunch.erased_clean),
                                (_('Installed'), list_bunch.installed +
                                 list_bunch.installed_weak +
                                 list_bunch.installed_dep),
