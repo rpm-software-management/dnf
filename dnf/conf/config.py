@@ -558,9 +558,6 @@ class RepoConf(BaseConfig):
         super(RepoConf, self).__init__(cfg.ConfigRepo(parent._config), section, parser)
         self._masterConfig = parent._config
 
-        # modules options
-        self._add_option('modules', BoolOption(False))
-
     def _configure_from_options(self, opts):
         """Configure repos from the opts. """
 
