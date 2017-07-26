@@ -234,15 +234,6 @@ pushd build-py3
 popd
 %endif
 
-%post
-%systemd_post dnf-makecache.timer
-
-%preun
-%systemd_preun dnf-makecache.timer
-
-%postun
-%systemd_postun_with_restart dnf-makecache.timer
-
 %post automatic
 %systemd_post dnf-automatic-notifyonly.timer
 %systemd_post dnf-automatic-download.timer
