@@ -174,10 +174,13 @@ class Base(object):
                 self.sack.add_excludes(pkgs)
 
     def _setup_modules(self):
-        for repo in self.repos.iter_module():
-            module_metadata = ModuleMetadataLoader(repo).load()
-            for data in module_metadata:
-                self.repo_module_dict.add(RepoModuleVersion(data, base=self, repo=repo))
+        for repo in self.repos.iter_enabled():
+            try:
+                module_metadata = ModuleMetadataLoader(repo).load()
+                for data in module_metadata:
+                    self.repo_module_dict.add(RepoModuleVersion(data, base=self, repo=repo))
+            except dnf.exceptions.Error:
+                continue
 
         self.repo_module_dict.read_all_modules()
         self.repo_module_dict.read_all_module_defaults()
