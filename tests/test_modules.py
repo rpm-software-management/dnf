@@ -39,6 +39,7 @@ DEFAULTS_DIR = os.path.join(os.path.dirname(__file__), "modules/etc/dnf/modules.
 # with profile
 MODULE_NSVAP = "module-name-stream-1.x86_64/profile"
 MODULE_NSVP = "module-name-stream-1/profile"
+MODULE_NSAP = "module-name-stream.x86_64/profile"
 MODULE_NSP = "module-name-stream/profile"
 MODULE_NP = "module-name/profile"
 MODULE_NAP = "module-name.x86_64/profile"
@@ -46,6 +47,7 @@ MODULE_NAP = "module-name.x86_64/profile"
 # without profile
 MODULE_NSVA = "module-name-stream-1.x86_64"
 MODULE_NSV = "module-name-stream-1"
+MODULE_NSA = "module-name-stream.x86_64"
 MODULE_NS = "module-name-stream"
 MODULE_N = "module-name"
 MODULE_NA = "module-name.x86_64"
@@ -91,6 +93,18 @@ class ModuleSubjectTest(unittest.TestCase):
         result = list(subj.get_nsvap_possibilities(forms=hawkey.FORM_NEVR))
         self.assertEqual(len(result), 0)
         # module version "1.x86_64" is not valid (while it is a valid RPM release)
+
+    def test_nsap(self):
+        subj = ModuleSubject(MODULE_NSAP)
+        result = list(subj.get_nsvap_possibilities(forms=hawkey.FORM_NEVRA))
+        self.assertEqual(len(result), 0)
+        # TODO: implement "N-V.A" form and fix this test
+
+    def test_nsa(self):
+        subj = ModuleSubject(MODULE_NSA)
+        result = list(subj.get_nsvap_possibilities(forms=hawkey.FORM_NEVRA))
+        self.assertEqual(len(result), 0)
+        # TODO: implement "N-V.A" form and fix this test
 
     def test_nsp(self):
         subj = ModuleSubject(MODULE_NSVAP)
@@ -173,17 +187,17 @@ class ModuleSubjectTest(unittest.TestCase):
         self.assertEqual(actual, expected)
 
         actual = result[1]
-        expected = NSVAP(name="module-name-stream", stream="1.x86_64", version=None,
-                         arch=None, profile="profile")
-        self.assertEqual(actual, expected)
-
-        actual = result[2]
         expected = NSVAP(name="module-name-stream-1", stream=None, version=None,
                          arch="x86_64", profile="profile")
         self.assertEqual(actual, expected)
 
-        actual = result[3]
+        actual = result[2]
         expected = NSVAP(name="module-name-stream-1.x86_64", stream=None, version=None,
+                         arch=None, profile="profile")
+        self.assertEqual(actual, expected)
+
+        actual = result[3]
+        expected = NSVAP(name="module-name-stream", stream="1.x86_64", version=None,
                          arch=None, profile="profile")
         self.assertEqual(actual, expected)
 
@@ -486,7 +500,7 @@ class ModuleTest(unittest.TestCase):
         self.assertNotIn(rmv, installed)
 
         # install
-        rmd.install("base-runtime", True)
+        rmd.install(["base-runtime"], True)
 
         # check installed
         installed = rmd.list_module_version_disabled()
