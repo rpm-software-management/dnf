@@ -431,7 +431,35 @@ class RepoModuleDict(OrderedDict):
     def get_module_defaults_dir(self):
         return self.base.conf.moduledefaultsdir
 
-    def get_full_description(self, pkg_spec):
+    def get_info(self, pkg_spec):
+        subj = ModuleSubject(pkg_spec)
+        module_version, nsvap = subj.find_module_version(self)
+
+        lines = {"Name": module_version.name,
+                 "Stream": module_version.stream,
+                 "Version": module_version.version,
+                 "Profiles": ", ".join(module_version.profiles),
+                 "Summary": module_version.module_metadata.summary,
+                 "Description": module_version.module_metadata.description,
+                 "Artifacts": ", ".join(module_version.module_metadata.artifacts.rpms)}
+
+        table = smartcols.Table()
+        table.noheadings = True
+        table.column_separator = " : "
+
+        column_name = table.new_column("Name")
+        column_value = table.new_column("Value")
+        column_value.wrap = True
+
+        for line_name, value in lines.items():
+            line = table.new_line()
+            if value:
+                line[column_name] = line_name
+                line[column_value] = str(value)
+
+        return table
+
+    def get_full_info(self, pkg_spec):
         subj = ModuleSubject(pkg_spec)
         module_version, nsvap = subj.find_module_version(self)
         return module_version.module_metadata.dumps().rstrip("\n")
@@ -535,7 +563,6 @@ class RepoModuleDict(OrderedDict):
         column_repo = table.new_column("Repo")
         column_installed = table.new_column("Installed")
         column_info = table.new_column("Info")
-        column_info.right = True
 
         for i in sorted(repo_module_versions, key=lambda data: data.name):
             line = table.new_line()
