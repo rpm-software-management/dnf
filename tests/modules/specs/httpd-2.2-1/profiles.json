@@ -1,5 +1,8 @@
 {
     "default": {
         "rpms": ["httpd"]
+    },
+    "doc": {
+        "rpms": ["httpd-doc"]
     }
 }
