@@ -1,1 +1,8 @@
-../httpd-2.2-1/profiles.json
+{
+    "default": {
+        "rpms": ["httpd"]
+    },
+    "doc": {
+        "rpms": ["httpd-doc"]
+    }
+}
