@@ -189,6 +189,7 @@ class ModuleSubjectTest(unittest.TestCase):
         actual = result[1]
         expected = NSVAP(name="module-name-stream-1", stream=None, version=None,
                          arch="x86_64", profile="profile")
+
         self.assertEqual(actual, expected)
 
         actual = result[2]
@@ -209,11 +210,11 @@ class RepoModuleDictTest(unittest.TestCase):
         profiles = profiles or {}  # profile_name: {pkg_format: [pkg_names]}
 
         mmd = modulemd.ModuleMetadata()
-        mmd.name = name
-        mmd.stream = stream
-        mmd.version = version
-        mmd.add_module_license("LGPLv2")
-        mmd.summary = "Fake module"
+        mmd.name = str(name)
+        mmd.stream = str(stream)
+        mmd.version = int(version)
+        mmd.add_module_license(str("LGPLv2"))
+        mmd.summary = str("Fake module")
         mmd.description = mmd.summary
         for rpm in rpms:
             mmd.components.add_rpm(rpm.rsplit("-", 2)[0], "")
@@ -328,12 +329,8 @@ class ModuleTest(unittest.TestCase):
         pass
 
     def test_enable_invalid(self):
-        try:
+        with self.assertRaises(dnf.exceptions.Error):
             self.base.repo_module_dict.enable("httpd-invalid", assumeyes=True)
-        except dnf.exceptions.Error:
-            pass
-        else:
-            self.fail("No exception thrown, dnf.exceptions.Error expected")
 
     def test_enable_different_stream(self):
         repo_module = self.base.repo_module_dict["httpd"]
@@ -390,12 +387,8 @@ class ModuleTest(unittest.TestCase):
         self.assertEqual(repo_module.conf.name, "httpd")
         self.assertEqual(repo_module.conf.stream, "2.4")
 
-        try:
+        with self.assertRaises(dnf.exceptions.Error):
             self.base.repo_module_dict.disable("httpd-invalid")
-        except dnf.exceptions.Error:
-            pass
-        else:
-            self.fail("No exception thrown, dnf.exceptions.Error expected")
 
     # dnf module lock
 
