@@ -10,6 +10,12 @@ Requires:       libnghttp2
 %description
 Fake package
 
+%package doc
+Summary:        Fake package
+
+%description doc
+Fake package
+
 %package debuginfo
 Summary:        Fake package
 Group:          Development/Debug
@@ -36,6 +42,7 @@ rm -rf $RPM_BUILD_ROOT
 
 
 %files
+%files doc
 %files debuginfo
 
 

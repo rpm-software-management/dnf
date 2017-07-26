@@ -17,6 +17,12 @@ Group:          Development/Debug
 Fake package
 
 
+%package doc
+Summary:        Fake package
+
+%description doc
+Fake package
+
 #%prep
 #%setup -q
 
@@ -36,6 +42,7 @@ rm -rf $RPM_BUILD_ROOT
 
 %files
 %files debuginfo
+%files doc
 
 
 %changelog
