@@ -1029,9 +1029,6 @@ class RepoConf(BaseConfig):
                          SelectionOption('priority', choices=('priority',),
                                          notimplemented=('roundrobin',)))
 
-        # modules options
-        self._add_option('modules', BoolOption(False))
-
     def _configure_from_options(self, opts):
         """Configure repos from the opts. """
 
