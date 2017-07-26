@@ -294,7 +294,7 @@ class RepoModuleDict(OrderedDict):
             # TODO: platform module
 
         except KeyError:
-            raise Error(module_errors[NO_MODULE_OR_STREAM_ERR].format(name))
+            return None
         return repo_module_version
 
     def enable(self, pkg_spec, assumeyes, assumeno=False):
@@ -699,7 +699,7 @@ class ModuleSubject(object):
         for i in possibilities:
             try:
                 if i.release is not None:
-                    i.release = str(int(i.release))
+                    int(i.release)
             except ValueError:
                 # module version has to be integer
                 # if it is not -> invalid possibility -> skip
