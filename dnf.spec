@@ -46,9 +46,13 @@ Requires:       python3-%{name} = %{version}-%{release}
 %else
 Requires:       python2-%{name} = %{version}-%{release}
 %endif
-# TODO: use rich deps once it is allowed in Fedora
+%if 0%{?rhel} && %{?rhel} <= 7
+Requires:       python-dbus
+%else
+# TODO: use rich deps once it is allowed
 #Recommends:     (python%{?with_python3:3}-dbus if NetworkManager)
 Recommends:     python%{?with_python3:3}-dbus
+%endif
 Requires(post):     systemd
 Requires(preun):    systemd
 Requires(postun):   systemd
