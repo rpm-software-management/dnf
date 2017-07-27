@@ -326,7 +326,11 @@ class ModuleTest(unittest.TestCase):
         self.assertEqual(repo_module.conf.stream, "2.4")
 
     def test_enable_pkgspec(self):
-        pass
+        self.base.repo_module_dict.enable("httpd-2.4-1/foo", assumeyes=True)
+        repo_module = self.base.repo_module_dict["httpd"]
+        self.assertTrue(repo_module.conf.enabled)
+        self.assertEqual(repo_module.conf.name, "httpd")
+        self.assertEqual(repo_module.conf.stream, "2.4")
 
     def test_enable_invalid(self):
         with self.assertRaises(dnf.exceptions.Error):
@@ -377,7 +381,17 @@ class ModuleTest(unittest.TestCase):
         self.assertEqual(repo_module.conf.stream, "2.4")
 
     def test_disable_pkgspec(self):
-        pass
+        repo_module = self.base.repo_module_dict["httpd"]
+
+        self.base.repo_module_dict.enable("httpd-2.4", assumeyes=True)
+        self.assertTrue(repo_module.conf.enabled)
+        self.assertEqual(repo_module.conf.name, "httpd")
+        self.assertEqual(repo_module.conf.stream, "2.4")
+
+        self.base.repo_module_dict.disable("httpd-2.4-1/foo")
+        self.assertFalse(repo_module.conf.enabled)
+        self.assertEqual(repo_module.conf.name, "httpd")
+        self.assertEqual(repo_module.conf.stream, "2.4")
 
     def test_disable_invalid(self):
         repo_module = self.base.repo_module_dict["httpd"]
@@ -493,10 +507,20 @@ class ModuleTest(unittest.TestCase):
         self.assertNotIn(rmv, installed)
 
         # install
-        rmd.install(["base-runtime"], True)
+        rmd.install(["base-runtime"], autoenable=True)
+        self.base.resolve()
+        # TODO: this is not a good API, consider replacing with a persistor
+        self.base.do_transaction(display=[self.base.repo_module_dict.transaction_callback])
+
+        # check module conf
+        repo_module = rmd["base-runtime"]
+        self.assertTrue(repo_module.conf.enabled)
+        self.assertEqual(repo_module.conf.name, "base-runtime")
+        self.assertEqual(repo_module.conf.stream, "f26")
+        self.assertEqual(repo_module.conf.profiles, ["minimal"])
 
         # check installed
-        installed = rmd.list_module_version_disabled()
+        installed = rmd.list_module_version_installed()
         rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=2)
         self.assertIn(rmv, installed)
 
@@ -547,15 +571,15 @@ class ModuleTest(unittest.TestCase):
 
     def test_install_two_profiles_different_versions(self):
         self.test_enable_name_stream()
-        self.base.repo_module_dict.install(["httpd-2.4-1/default", "httpd-2.4-2/doc"])
+        self.base.repo_module_dict.install(["httpd-2.4-2/default", "httpd-2.4-1/doc"])
         self.base._goal.run()
         expected = [
             "basesystem-11-3.noarch",
             "filesystem-3.2-40.x86_64",
             "glibc-2.25.90-2.x86_64",
             "glibc-common-2.25.90-2.x86_64",
-            "httpd-2.4.25-7.x86_64",
-            "httpd-doc-2.4.25-8.x86_64",
+            "httpd-2.4.25-8.x86_64",
+            "httpd-doc-2.4.25-7.x86_64",
             "libnghttp2-1.21.1-1.x86_64",
         ]
         self.assertInstalls(expected)
