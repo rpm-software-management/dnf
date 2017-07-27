@@ -206,6 +206,7 @@ class RepoModule(OrderedDict):
             self._conf.name = self.name
             self._conf.enabled = False
             self._conf.locked = False
+            self._conf.version = -1
 
         return self._conf
 
@@ -339,9 +340,15 @@ class RepoModuleDict(OrderedDict):
                 continue
 
             if nsvap.profile:
-                module_version.install([nsvap.profile])
+                profiles = [nsvap.profile]
             else:
-                module_version.install(module_version.repo_module.defaults.profiles)
+                profiles = module_version.repo_module.defaults.profiles
+
+            if module_version.version > module_version.repo_module.conf.version:
+                profiles.extend(module_version.repo_module.conf.profiles)
+                profiles = set(profiles)
+
+            module_version.install(profiles)
 
     def upgrade(self, pkg_specs):
         for pkg_spec in pkg_specs:
