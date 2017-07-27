@@ -902,6 +902,7 @@ class Cli(object):
         if opts.debugsolver:
             self.base.conf.debug_solver = True
         if opts.cacheonly:
+            self.base.conf.cachedir = self.base.conf.system_cachedir
             self.demands.cacheonly = True
         if opts.obsoletes:
             self.base.conf.obsoletes = True
