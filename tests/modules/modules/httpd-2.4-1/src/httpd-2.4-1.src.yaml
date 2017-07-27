@@ -12,6 +12,8 @@ data:
   profiles:
     default:
       rpms: [httpd]
+    doc:
+      rpms: [httpd-doc]
   stream: '2.4'
   summary: Fake module
   version: 1
