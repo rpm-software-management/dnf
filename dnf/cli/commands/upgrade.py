@@ -85,8 +85,7 @@ class UpgradeCommand(commands.Command):
     def _update_modules(self):
         self.cli.demands.transaction_display = self.base.repo_module_dict.transaction_callback
 
-        modules = self.get_modules_from_spec(self.opts.pkg_specs)
-        modules.extend(self.get_modules_from_spec(self.opts.grp_specs))
+        modules = self.get_modules_from_spec(self.opts.grp_specs)
 
         self.base.repo_module_dict.upgrade(modules)
         return len(modules) != 0

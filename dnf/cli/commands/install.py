@@ -81,7 +81,6 @@ class InstallCommand(commands.Command):
     def install_module_profiles(self):
         self.cli.demands.transaction_display = self.base.repo_module_dict.transaction_callback
 
-        self.base.repo_module_dict.install(self.opts.pkg_specs, True)
         self.base.repo_module_dict.install(self.opts.grp_specs, True)
 
     def _get_nevra_forms_from_command(self):
