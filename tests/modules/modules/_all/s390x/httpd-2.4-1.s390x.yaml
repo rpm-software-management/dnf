@@ -1,11 +1,12 @@
 data:
   artifacts:
-    rpms: [libnghttp2-debuginfo-1.21.1-1.s390x, httpd-debuginfo-2.4.25-7.s390x, httpd-2.4.25-7.s390x,
-      libnghttp2-1.21.1-1.s390x]
+    rpms: [libnghttp2-1.21.1-1.s390x, httpd-debuginfo-2.4.25-7.s390x, httpd-doc-2.4.25-7.s390x,
+      libnghttp2-debuginfo-1.21.1-1.s390x, httpd-2.4.25-7.s390x]
   components:
     rpms:
       httpd: {rationale: ''}
       httpd-debuginfo: {rationale: ''}
+      httpd-doc: {rationale: ''}
       libnghttp2: {rationale: ''}
       libnghttp2-debuginfo: {rationale: ''}
   description: Fake module
@@ -15,6 +16,8 @@ data:
   profiles:
     default:
       rpms: [httpd]
+    doc:
+      rpms: [httpd-doc]
   stream: '2.4'
   summary: Fake module
   version: 1

@@ -1,10 +1,11 @@
 data:
   artifacts:
-    rpms: [httpd-debuginfo-2.2.15-59.i686, httpd-2.2.15-59.i686]
+    rpms: [httpd-doc-2.2.15-59.i686, httpd-debuginfo-2.2.15-59.i686, httpd-2.2.15-59.i686]
   components:
     rpms:
       httpd: {rationale: ''}
       httpd-debuginfo: {rationale: ''}
+      httpd-doc: {rationale: ''}
   description: Fake module
   license:
     module: [LGPLv2]
@@ -12,6 +13,8 @@ data:
   profiles:
     default:
       rpms: [httpd]
+    doc:
+      rpms: [httpd-doc]
   stream: '2.2'
   summary: Fake module
   version: 1

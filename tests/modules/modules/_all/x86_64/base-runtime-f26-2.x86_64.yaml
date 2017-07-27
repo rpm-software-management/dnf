@@ -1,9 +1,9 @@
 data:
   artifacts:
-    rpms: [glibc-common-2.25.90-2.x86_64, glibc-debuginfo-2.25.90-2.x86_64, dummy-nscd-2.25.90-2.x86_64,
-      bash-debuginfo-4.4.12-2.x86_64, filesystem-3.2-40.x86_64, kernel-4.11.0-1.x86_64,
+    rpms: [glibc-common-2.25.90-2.x86_64, glibc-2.25.90-2.x86_64, filesystem-3.2-40.x86_64,
+      bash-debuginfo-4.4.12-2.x86_64, dummy-nscd-2.25.90-2.x86_64, kernel-4.11.0-1.x86_64,
       glibc-debuginfo-common-2.25.90-2.x86_64, kernel-doc-4.11.0-1.noarch, basesystem-11-3.noarch,
-      glibc-2.25.90-2.x86_64, kernel-headers-4.11.0-1.x86_64, bash-doc-4.4.12-2.noarch,
+      glibc-debuginfo-2.25.90-2.x86_64, kernel-headers-4.11.0-1.x86_64, bash-doc-4.4.12-2.noarch,
       bash-4.4.12-2.x86_64, systemd-233-3.x86_64]
   components:
     rpms:
