@@ -1,10 +1,10 @@
 data:
   artifacts:
-    rpms: [dummy-nscd-2.25-4.s390x, kernel-headers-4.11.0-1.s390x, glibc-common-2.25-4.s390x,
-      systemd-233-3.s390x, bash-4.4.12-2.s390x, filesystem-3.2-40.s390x, kernel-4.11.0-1.s390x,
-      glibc-debuginfo-2.25-4.s390x, kernel-doc-4.11.0-1.noarch, basesystem-11-3.noarch,
-      bash-doc-4.4.12-2.noarch, glibc-debuginfo-common-2.25-4.s390x, bash-debuginfo-4.4.12-2.s390x,
-      glibc-2.25-4.s390x]
+    rpms: [dummy-nscd-2.25-4.s390x, glibc-2.25-4.s390x, glibc-common-2.25-4.s390x,
+      kernel-headers-4.11.0-1.s390x, bash-4.4.12-2.s390x, systemd-233-3.s390x, filesystem-3.2-40.s390x,
+      glibc-debuginfo-2.25-4.s390x, kernel-doc-4.11.0-1.noarch, kernel-4.11.0-1.s390x,
+      basesystem-11-3.noarch, bash-doc-4.4.12-2.noarch, glibc-debuginfo-common-2.25-4.s390x,
+      bash-debuginfo-4.4.12-2.s390x]
   components:
     rpms:
       basesystem: {rationale: ''}

@@ -1,10 +1,10 @@
 data:
   artifacts:
-    rpms: [glibc-debuginfo-common-2.25-4.i686, systemd-233-3.i686, bash-4.4.12-2.i686,
-      glibc-debuginfo-2.25-4.i686, kernel-headers-4.11.0-1.i686, glibc-common-2.25-4.i686,
-      glibc-2.25-4.i686, bash-debuginfo-4.4.12-2.i686, kernel-doc-4.11.0-1.noarch,
-      basesystem-11-3.noarch, kernel-4.11.0-1.i686, bash-doc-4.4.12-2.noarch, dummy-nscd-2.25-4.i686,
-      filesystem-3.2-40.i686]
+    rpms: [glibc-debuginfo-common-2.25-4.i686, filesystem-3.2-40.i686, bash-4.4.12-2.i686,
+      glibc-2.25-4.i686, kernel-headers-4.11.0-1.i686, glibc-debuginfo-2.25-4.i686,
+      bash-debuginfo-4.4.12-2.i686, kernel-doc-4.11.0-1.noarch, basesystem-11-3.noarch,
+      kernel-4.11.0-1.i686, bash-doc-4.4.12-2.noarch, dummy-nscd-2.25-4.i686, systemd-233-3.i686,
+      glibc-common-2.25-4.i686]
   components:
     rpms:
       basesystem: {rationale: ''}
