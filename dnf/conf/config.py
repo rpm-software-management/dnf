@@ -652,6 +652,7 @@ class MainConf(BaseConfig):
         self._add_option('cachedir', PathOption(cachedir)) # :api
         self._add_option('system_cachedir',
                          PathOption(dnf.const.SYSTEM_CACHEDIR)) # :api
+        self._add_option('cacheonly', BoolOption(False))
 
         self._add_option('keepcache', BoolOption(False))
         self._add_option('logdir', Option(logdir)) # :api
@@ -830,7 +831,7 @@ class MainConf(BaseConfig):
                        'showdupesfromrepos', 'plugins', 'ip_resolve',
                        'rpmverbosity', 'disable_excludes', 'color',
                        'downloadonly', 'exclude', 'excludepkgs', 'skip_broken',
-                       'tsflags', 'arch', 'basearch', 'ignorearch']
+                       'tsflags', 'arch', 'basearch', 'ignorearch', 'cacheonly']
 
         for name in config_args:
             value = getattr(opts, name, None)
