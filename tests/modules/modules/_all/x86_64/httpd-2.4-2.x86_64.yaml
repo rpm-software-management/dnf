@@ -1,11 +1,12 @@
 data:
   artifacts:
-    rpms: [httpd-2.4.25-8.x86_64, httpd-debuginfo-2.4.25-8.x86_64, libnghttp2-1.21.1-1.x86_64,
-      libnghttp2-debuginfo-1.21.1-1.x86_64]
+    rpms: [httpd-2.4.25-8.x86_64, libnghttp2-1.21.1-1.x86_64, httpd-doc-2.4.25-8.x86_64,
+      libnghttp2-debuginfo-1.21.1-1.x86_64, httpd-debuginfo-2.4.25-8.x86_64]
   components:
     rpms:
       httpd: {rationale: ''}
       httpd-debuginfo: {rationale: ''}
+      httpd-doc: {rationale: ''}
       libnghttp2: {rationale: ''}
       libnghttp2-debuginfo: {rationale: ''}
   description: Fake module
@@ -15,6 +16,8 @@ data:
   profiles:
     default:
       rpms: [httpd]
+    doc:
+      rpms: [httpd-doc]
   stream: '2.4'
   summary: Fake module
   version: 2
