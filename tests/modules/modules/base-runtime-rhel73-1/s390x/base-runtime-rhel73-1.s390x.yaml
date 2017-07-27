@@ -1,9 +1,9 @@
 data:
   artifacts:
-    rpms: [kernel-3.10.0-514.s390x, glibc-debuginfo-2.17-157.s390x, glibc-common-2.17-157.s390x,
-      basesystem-10.0-7.noarch, systemd-219-30.s390x, glibc-debuginfo-common-2.17-157.s390x,
+    rpms: [kernel-3.10.0-514.s390x, filesystem-3.2-21.s390x, glibc-common-2.17-157.s390x,
+      systemd-219-30.s390x, glibc-debuginfo-common-2.17-157.s390x, glibc-debuginfo-2.17-157.s390x,
       bash-4.2.46-21.s390x, dummy-nscd-2.17-157.s390x, kernel-headers-3.10.0-514.s390x,
-      bash-doc-4.2.46-21.noarch, bash-debuginfo-4.2.46-21.s390x, filesystem-3.2-21.s390x,
+      bash-doc-4.2.46-21.noarch, bash-debuginfo-4.2.46-21.s390x, basesystem-10.0-7.noarch,
       kernel-doc-3.10.0-514.noarch, glibc-2.17-157.s390x]
   components:
     rpms:

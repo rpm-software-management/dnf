@@ -1,14 +1,17 @@
 data:
   artifacts:
     rpms: [glibc-2.25.90-2.src, basesystem-11-3.src, bash-4.4.12-2.src, systemd-233-3.src,
-      filesystem-3.2-40.src, kernel-4.11.0-1.src]
+      filesystem-3.2-40.src, kernel-doc-4.11.0-1.noarch, kernel-4.11.0-1.src, basesystem-11-3.noarch,
+      bash-doc-4.4.12-2.noarch]
   components:
     rpms:
       basesystem: {rationale: ''}
       bash: {rationale: ''}
+      bash-doc: {rationale: ''}
       filesystem: {rationale: ''}
       glibc: {rationale: ''}
       kernel: {rationale: ''}
+      kernel-doc: {rationale: ''}
       systemd: {rationale: ''}
   description: Fake module
   license:
