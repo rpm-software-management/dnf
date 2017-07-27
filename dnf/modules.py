@@ -87,16 +87,18 @@ class RepoModuleVersion(object):
     def __repr__(self):
         return self.full_version
 
-    def install(self, profile):
-        if profile not in self.profiles:
-            raise Error(module_errors[NO_PROFILE_ERR].format(profile, self.profiles))
-
+    def install(self, profiles):
         self.repo_module.installed_repo_module_version = self
-        self.repo_module.installed_profiles.append(profile)
         self.repo_module.parent.transaction_callback.repo_modules.append(self.repo_module)
 
-        for single_nevra in self.profile_nevra(profile):
-            self.base.install(single_nevra, reponame=self.repo.id, forms=hawkey.FORM_NEVR)
+        for profile in profiles:
+            if profile not in self.profiles:
+                raise Error(module_errors[NO_PROFILE_ERR].format(profile, self.profiles))
+
+            self.repo_module.installed_profiles.append(profile)
+
+            for single_nevra in self.profile_nevra(profile):
+                self.base.install(single_nevra, reponame=self.repo.id, forms=hawkey.FORM_NEVR)
 
     def upgrade(self, profiles):
         self.repo_module.installed_repo_module_version = self
@@ -336,7 +338,10 @@ class RepoModuleDict(OrderedDict):
                 logger.error(module_errors[NO_ACTIVE_STREAM_ERR].format(pkg_spec))
                 continue
 
-            module_version.install(nsvap.profile)
+            if nsvap.profile:
+                module_version.install([nsvap.profile])
+            else:
+                module_version.install(module_version.repo_module.defaults.profiles)
 
     def upgrade(self, pkg_specs):
         for pkg_spec in pkg_specs:
