@@ -1,10 +1,9 @@
 data:
   artifacts:
     rpms: [glibc-debuginfo-common-2.17-157.i686, basesystem-10.0-7.noarch, glibc-debuginfo-2.17-157.i686,
-      kernel-3.10.0-514.i686, systemd-219-30.i686, filesystem-3.2-21.i686, glibc-2.17-157.i686,
+      glibc-common-2.17-157.i686, kernel-3.10.0-514.i686, systemd-219-30.i686, filesystem-3.2-21.i686,
       dummy-nscd-2.17-157.i686, bash-debuginfo-4.2.46-21.i686, bash-doc-4.2.46-21.noarch,
-      glibc-common-2.17-157.i686, bash-4.2.46-21.i686, kernel-headers-3.10.0-514.i686,
-      kernel-doc-3.10.0-514.noarch]
+      glibc-2.17-157.i686, bash-4.2.46-21.i686, kernel-headers-3.10.0-514.i686, kernel-doc-3.10.0-514.noarch]
   components:
     rpms:
       basesystem: {rationale: ''}
