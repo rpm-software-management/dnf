@@ -163,6 +163,11 @@ Options
 ``--disablerepo=<repoid>``
     Disable specific repositories by an id or a glob. This option is mutually exclusive with ``--repo``.
 
+``--downloaddir=<path>``
+    Redirect downloaded packages to provided directory. The option has to by used together with \-\
+    :ref:`-downloadonly <downloadonly-label>` command line option or with ``download`` command
+    (dnf-plugins-core).
+
 .. _downloadonly-label:
 
 ``--downloadonly``
