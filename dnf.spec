@@ -46,7 +46,7 @@ Requires:       python3-%{name} = %{version}-%{release}
 %else
 Requires:       python2-%{name} = %{version}-%{release}
 %endif
-%if 0%{?rhel} && %{?rhel} <= 7
+%if 0%{?rhel} && 0%{?rhel} <= 7
 Requires:       python-dbus
 %else
 # TODO: use rich deps once it is allowed
@@ -126,7 +126,7 @@ Requires:       python2-hawkey >= %{hawkey_version}
 Requires:       python-iniparse
 Requires:       python-libcomps >= %{libcomps_version}
 Requires:       python-librepo >= %{librepo_version}
-%if 0%{?rhel} && %{?rhel} <= 7
+%if 0%{?rhel} && 0%{?rhel} <= 7
 Requires:       rpm-plugin-systemd-inhibit
 %else
 Recommends:     rpm-plugin-systemd-inhibit
@@ -159,7 +159,7 @@ Requires:       python3-hawkey >= %{hawkey_version}
 Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
 Requires:       python3-librepo >= %{librepo_version}
-%if 0%{?rhel} && %{?rhel} <= 7
+%if 0%{?rhel} && 0%{?rhel} <= 7
 Requires:       rpm-plugin-systemd-inhibit
 %else
 Recommends:     rpm-plugin-systemd-inhibit
