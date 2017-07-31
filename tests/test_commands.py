@@ -151,7 +151,7 @@ class InstallCommandTest(support.ResultTestCase):
                               support.command_run, self._cmd, ['non-existent', 'lotus'])
 
         self.assertEqual(stdout.getvalue(),
-                         'No package non-existent available.\n')
+                         'No match for argument: non-existent\n')
         base = self._cmd.cli.base
         self.assertResult(base, itertools.chain(
               base.sack.query().installed(),
