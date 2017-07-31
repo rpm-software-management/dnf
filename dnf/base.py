@@ -1644,6 +1644,7 @@ class Base(object):
         """Mark package(s) given by pkg_spec and reponame for installation."""
 
         subj = dnf.subject.Subject(pkg_spec)
+
         if self.conf.multilib_policy == "all" or \
            subj._is_arch_specified(self.sack):
             q = subj.get_best_query(self.sack).filter(arch__neq="src")
@@ -1655,14 +1656,19 @@ class Base(object):
             return self._install_multiarch(q, reponame=reponame, strict=strict)
 
         elif self.conf.multilib_policy == "best":
-            sltrs = subj._get_best_selectors(self.sack,
+            sltrs = subj._get_best_selectors(self,
                                              forms=forms,
                                              obsoletes=self.conf.obsoletes,
                                              reponame=reponame,
                                              reports=True)
             if not any((s.matches() for s in sltrs)):
-                raise dnf.exceptions.MarkingError(
-                    _('no package matched'), pkg_spec)
+                if not self._update_security_filters:
+                    raise dnf.exceptions.MarkingError(
+                        _('no package matched'), pkg_spec)
+
+                raise dnf.exceptions.Error(_('No security updates for "{}" to install'
+                                             .format(subj._pattern)))
+
             for sltr in sltrs:
                 if not sltr.matches():
                     continue
@@ -1803,7 +1809,7 @@ class Base(object):
             self._goal.distupgrade_all()
         else:
             sltrs = dnf.subject.Subject(pkg_spec) \
-                       ._get_best_selectors(self.sack, obsoletes=self.conf.obsoletes)
+                       ._get_best_selectors(self, obsoletes=self.conf.obsoletes)
             if not any((s.matches() for s in sltrs)):
                 logger.info(_('No package %s installed.'), pkg_spec)
                 return 0
@@ -2067,7 +2073,7 @@ class Base(object):
         @param q: Query
         @return: Query
         """
-        if not self._update_security_filters:
+        if not self._update_security_filters or len(q) == 0:
             return q
         assert len(self._update_security_filters.keys()) == 1
         for key, filters in self._update_security_filters.items():

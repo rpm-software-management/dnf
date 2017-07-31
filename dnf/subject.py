@@ -128,7 +128,8 @@ class Subject(object):
                                             forms=forms)
         return solution['query']
 
-    def get_best_selector(self, sack, forms=None, obsoletes=True, reponame=None, reports=False):
+    def get_best_selector(self, sack, forms=None, obsoletes=True, reponame=None, reports=False,
+                          base=None):
         # :api
 
         sltr = dnf.selector.Selector(sack)
@@ -136,6 +137,9 @@ class Subject(object):
         if solution['query']:
             q = solution['query']
             q = q.filter(arch__neq="src")
+            q = base._merge_update_filters(q, warning=False)
+            if len(q) == 0:
+                return sltr
             if obsoletes and solution['nevra'] and solution['nevra']._has_just_name():
                 q = q.union(sack.query().filter(obsoletes=q))
             installed_query = q.installed()
@@ -149,12 +153,15 @@ class Subject(object):
 
         return sltr
 
-    def _get_best_selectors(self, sack, forms=None, obsoletes=True, reponame=None, reports=False):
+    def _get_best_selectors(self, base, forms=None, obsoletes=True, reponame=None, reports=False):
         if not self._filename_pattern and is_glob_pattern(self._pattern):
             with_obsoletes = False
-            solution = self._get_nevra_solution(sack, forms=forms)
+            solution = self._get_nevra_solution(base.sack, forms=forms)
             q = solution['query']
             q = q.filter(arch__neq="src")
+            q = base._merge_update_filters(q, warning=False)
+            if len(q) == 0:
+                return []
             if obsoletes and solution['nevra'] and solution['nevra']._has_just_name():
                 with_obsoletes = True
             installed_query = q.installed()
@@ -169,12 +176,13 @@ class Subject(object):
             q = available_query.union(installed_relevant_query)
             sltrs = []
             for name, pkgs_list in q._name_dict().items():
-                sltr = dnf.selector.Selector(sack)
+                sltr = dnf.selector.Selector(base.sack)
                 if with_obsoletes:
-                    pkgs_list = pkgs_list + sack.query().filter(
+                    pkgs_list = pkgs_list + base.sack.query().filter(
                         obsoletes=pkgs_list).run()
                 sltr.set(pkg=pkgs_list)
                 sltrs.append(sltr)
             return sltrs
 
-        return [self.get_best_selector(sack, forms, obsoletes, reponame=reponame, reports=reports)]
+        return [self.get_best_selector(base.sack, forms, obsoletes, reponame=reponame,
+                                       reports=reports, base=base)]
