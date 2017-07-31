@@ -1252,26 +1252,23 @@ Transaction Summary
         out = ''
         list_bunch = _make_lists(transaction, self.base._goal)
 
-        for (action, tsis) in [(_('Reinstalled'), list_bunch.reinstalled),
-                               (_('Removed'), list_bunch.erased +
-                                   list_bunch.erased_dep +
-                                   list_bunch.erased_clean),
+        for (action, tsis) in [(_('Upgraded'), list_bunch.upgraded),
+                               (_('Downgraded'), list_bunch.downgraded),
                                (_('Installed'), list_bunch.installed +
                                 list_bunch.installed_group +
                                 list_bunch.installed_weak +
                                 list_bunch.installed_dep),
-                               (_('Upgraded'), list_bunch.upgraded),
-                               (_('Downgraded'), list_bunch.downgraded),
+                               (_('Reinstalled'), list_bunch.reinstalled),
+                               (_('Removed'), list_bunch.erased +
+                                   list_bunch.erased_dep +
+                                   list_bunch.erased_clean),
                                (_('Failed'), list_bunch.failed)]:
             if not tsis:
                 continue
             msgs = []
             out += '\n%s:\n' % action
             for pkg in [tsi._active for tsi in tsis]:
-                (n, a, e, v, r) = pkg.pkgtup
-                evr = pkg.evr
-                msg = "%s.%s %s" % (n, a, evr)
-                msgs.append(msg)
+                msgs.append(str(pkg))
             for num in (8, 7, 6, 5, 4, 3, 2):
                 cols = _fits_in_cols(msgs, num)
                 if cols:
