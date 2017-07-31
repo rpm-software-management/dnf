@@ -1654,12 +1654,10 @@ class Base(object):
                                              obsoletes=self.conf.obsoletes,
                                              reponame=reponame,
                                              reports=True)
-            if not any((s.matches() for s in sltrs)):
+            if not sltrs:
                 raise dnf.exceptions.MarkingError(_('no package matched'), pkg_spec)
 
             for sltr in sltrs:
-                if not sltr.matches():
-                    continue
                 self._goal.install(select=sltr, optional=(not strict))
             return 1
         return 0
@@ -1798,12 +1796,10 @@ class Base(object):
         else:
             sltrs = dnf.subject.Subject(pkg_spec) \
                        ._get_best_selectors(self, obsoletes=self.conf.obsoletes, reports=True)
-            if not any((s.matches() for s in sltrs)):
+            if not sltrs:
                 logger.info(_('No package %s installed.'), pkg_spec)
                 return 0
             for sltr in sltrs:
-                if not sltr.matches():
-                    continue
                 self._goal.distupgrade(select=sltr)
         return 1
 
