@@ -1797,7 +1797,7 @@ class Base(object):
             self._goal.distupgrade_all()
         else:
             sltrs = dnf.subject.Subject(pkg_spec) \
-                       ._get_best_selectors(self, obsoletes=self.conf.obsoletes)
+                       ._get_best_selectors(self, obsoletes=self.conf.obsoletes, reports=True)
             if not any((s.matches() for s in sltrs)):
                 logger.info(_('No package %s installed.'), pkg_spec)
                 return 0
@@ -2228,6 +2228,13 @@ class Base(object):
             q = self._sack.query()
         installonly = q.filter(provides=self.conf.installonlypkgs)
         return installonly
+
+    def _report_icase_hint(self, pkg_spec):
+        subj = dnf.subject.Subject(pkg_spec, ignore_case=True)
+        q = subj.get_best_query(self.sack, with_nevra=True, with_provides=False,
+                                with_filenames=False)
+        if q:
+            logger.info(_("  * Maybe you meant: {}").format(q[0].name))
 
     def _select_remote_pkgs(self, install_pkgs):
         """ Check checksum of packages from local repositories and returns list packages from remote

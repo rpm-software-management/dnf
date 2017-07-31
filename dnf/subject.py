@@ -153,6 +153,8 @@ class Subject(object):
         q = solution['query']
         q = q.filter(arch__neq="src")
         if len(q) == 0:
+            if reports and not self.icase:
+                base._report_icase_hint(self._pattern)
             return []
         q = self._apply_security_filters(q, base)
         if not q:

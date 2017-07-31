@@ -377,13 +377,6 @@ class BaseCli(dnf.Base):
         if cnt <= 0:
             raise dnf.exceptions.Error(_('Nothing to do.'))
 
-    def _report_icase_hint(self, pkg_spec):
-        subj = dnf.subject.Subject(pkg_spec, ignore_case=True)
-        q = subj.get_best_query(self.sack, with_nevra=True, with_provides=False,
-                                with_filenames=False)
-        if q:
-            logger.info(_("  * Maybe you meant: {}").format(q[0].name))
-
     def output_packages(self, basecmd, pkgnarrow='all', patterns=(), reponame=None):
         """Output selection *pkgnarrow* of packages matching *patterns* and *repoid*."""
         try:
