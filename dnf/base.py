@@ -1655,12 +1655,7 @@ class Base(object):
                                              reponame=reponame,
                                              reports=True)
             if not any((s.matches() for s in sltrs)):
-                if not self._update_security_filters:
-                    raise dnf.exceptions.MarkingError(
-                        _('no package matched'), pkg_spec)
-
-                raise dnf.exceptions.Error(_('No security updates for "{}" to install'
-                                             .format(subj._pattern)))
+                raise dnf.exceptions.MarkingError(_('no package matched'), pkg_spec)
 
             for sltr in sltrs:
                 if not sltr.matches():
