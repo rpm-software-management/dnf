@@ -48,7 +48,7 @@ class SubjectTest(support.TestCase):
 
     def test_best_selectors_ver(self):
         subj = dnf.subject.Subject('*-1-1')
-        sltrs = subj._get_best_selectors(self.base.sack)
+        sltrs = subj._get_best_selectors(self.base)
         for sltr in sltrs:
             for pkg in sltr.matches():
                 self.assertEqual(pkg.evr, '1-1')

@@ -128,8 +128,7 @@ class Subject(object):
                                             forms=forms)
         return solution['query']
 
-    def get_best_selector(self, sack, forms=None, obsoletes=True, reponame=None, reports=False,
-                          base=None):
+    def get_best_selector(self, sack, forms=None, obsoletes=True, reponame=None, reports=False):
         # :api
 
         sltr = dnf.selector.Selector(sack)
@@ -137,9 +136,6 @@ class Subject(object):
         if solution['query']:
             q = solution['query']
             q = q.filter(arch__neq="src")
-            q = base._merge_update_filters(q, warning=False)
-            if len(q) == 0:
-                return sltr
             if obsoletes and solution['nevra'] and solution['nevra']._has_just_name():
                 q = q.union(sack.query().filter(obsoletes=q))
             installed_query = q.installed()
@@ -185,4 +181,4 @@ class Subject(object):
             return sltrs
 
         return [self.get_best_selector(base.sack, forms, obsoletes, reponame=reponame,
-                                       reports=reports, base=base)]
+                                       reports=reports)]
