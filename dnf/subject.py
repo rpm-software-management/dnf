@@ -73,6 +73,7 @@ class Subject(object):
                 if q:
                     if nevra.arch:
                         return is_glob_pattern(nevra.arch)
+                    return False
         return False
 
     def get_nevra_possibilities(self, forms=None):
