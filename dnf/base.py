@@ -2066,7 +2066,7 @@ class Base(object):
         @param q: Query
         @return: Query
         """
-        if not self._update_security_filters or len(q) == 0:
+        if not self._update_security_filters or not q:
             return q
         assert len(self._update_security_filters.keys()) == 1
         for key, filters in self._update_security_filters.items():
