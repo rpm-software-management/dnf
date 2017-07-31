@@ -120,7 +120,7 @@ class InstallCommand(commands.Command):
                 try:
                     self.base.install(pkg_spec, strict=strict, forms=forms)
                 except dnf.exceptions.MarkingError:
-                    msg = _('No package %s available.')
+                    msg = _('No match for argument: %s')
                     logger.info(msg, self.base.output.term.bold(pkg_spec))
                     errs.append(pkg_spec)
 
