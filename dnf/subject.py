@@ -132,7 +132,6 @@ class Subject(object):
     def get_best_selector(self, sack, forms=None, obsoletes=True, reponame=None, reports=False):
         # :api
 
-        sltr = dnf.selector.Selector(sack)
         solution = self._get_nevra_solution(sack, forms=forms)
         if solution['query']:
             q = solution['query']
@@ -145,9 +144,9 @@ class Subject(object):
             if reponame:
                 q = q.filter(reponame=reponame).union(installed_query)
             if q:
-                return sltr.set(pkg=q)
+                return self._list_or_query_to_selector(sack, q)
 
-        return sltr
+        return dnf.selector.Selector(sack)
 
     def _get_best_selectors(self, base, forms=None, obsoletes=True, reponame=None, reports=False):
         solution = self._get_nevra_solution(base.sack, forms=forms)
@@ -176,12 +175,10 @@ class Subject(object):
             q = available_query.union(installed_relevant_query)
             sltrs = []
             for name, pkgs_list in q._name_dict().items():
-                sltr = dnf.selector.Selector(base.sack)
                 if with_obsoletes:
                     pkgs_list = pkgs_list + base.sack.query().filter(
                         obsoletes=pkgs_list).run()
-                sltr.set(pkg=pkgs_list)
-                sltrs.append(sltr)
+                sltrs.append(self._list_or_query_to_selector(base.sack, pkgs_list))
             return sltrs
         else:
             if obsoletes and solution['nevra'] and solution['nevra']._has_just_name():
@@ -195,8 +192,7 @@ class Subject(object):
             if not q:
                 return []
 
-            sltr = dnf.selector.Selector(base.sack)
-            return [sltr.set(pkg=q)]
+            return [self._list_or_query_to_selector(base.sack, q)]
 
     def _apply_security_filters(self, query, base):
         query = base._merge_update_filters(query, warning=False)
@@ -208,3 +204,8 @@ class Subject(object):
     def _report_installed(iterable_packages):
         for pkg in iterable_packages:
             dnf.base._msg_installed(pkg)
+
+    @staticmethod
+    def _list_or_query_to_selector(sack, list_or_query):
+        sltr = dnf.selector.Selector(sack)
+        return sltr.set(pkg=list_or_query)
