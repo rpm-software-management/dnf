@@ -70,7 +70,6 @@ import logging
 import operator
 import os
 import random
-import re
 import sys
 import time
 
@@ -214,14 +213,11 @@ class BaseCli(dnf.Base):
             return
 
         if trans:
-            remote_pkgs = self.select_remote_pkgs(install_pkgs)
-
-            if remote_pkgs:
+            if install_pkgs:
                 logger.info(_('Downloading Packages:'))
                 try:
                     total_cb = self.output.download_callback_total_cb
-                    self.download_packages(remote_pkgs, self.output.progress,
-                                           total_cb)
+                    self.download_packages(install_pkgs, self.output.progress, total_cb)
                 except dnf.exceptions.DownloadError as e:
                     specific = dnf.cli.format.indent_block(ucd(e))
                     errstr = _('Error downloading packages:') + '\n%s' % specific
@@ -245,33 +241,6 @@ class BaseCli(dnf.Base):
             for tsi in trans:
                 if tsi.op_type == dnf.transaction.FAIL:
                     raise dnf.exceptions.Error(_('Transaction failed'))
-
-    def select_remote_pkgs(self, install_pkgs):
-        """ Check checksum of packages from local repositories and returns list packages from remote
-        repositories that will be downloaded. Packages from commandline are skipped.
-
-        :param install_pkgs: list of packages
-        :return: list of remote pkgs
-        """
-        remote_pkgs = []
-        local_repository_pkgs = []
-        for pkg in install_pkgs:
-            if pkg._is_local_pkg():
-                if pkg.reponame != hawkey.CMDLINE_REPO_NAME:
-                    local_repository_pkgs.append(pkg)
-            else:
-                remote_pkgs.append(pkg)
-        error = False
-        for pkg in local_repository_pkgs:
-            if not pkg.verifyLocalPkg():
-                msg = _("Package {} from local repository {} has incorrect checksum").format(
-                    str(pkg), pkg.reponame)
-                logger.critical(msg)
-                error = True
-        if error:
-            raise dnf.exceptions.Error(
-                _("Some packages from local repository have incorrect checksum"))
-        return remote_pkgs
 
     def gpgsigcheck(self, pkgs):
         """Perform GPG signature verification on the given packages,

@@ -57,6 +57,7 @@ import dnf.transaction
 import dnf.util
 import dnf.yum.rpmtrans
 import functools
+import hawkey
 import itertools
 import logging
 import os
@@ -1008,8 +1009,7 @@ class Base(object):
         with lock:
             drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(),
                                       progress, self.conf.deltarpm_percentage)
-            remote_pkgs = [po for po in pkglist
-                           if not po._is_local_pkg()]
+            remote_pkgs = self._select_remote_pkgs(pkglist)
             self._add_tempfiles([pkg.localPkg() for pkg in remote_pkgs])
 
             payloads = [dnf.repo._pkg2payload(pkg, progress, drpm.delta_factory,
@@ -1081,16 +1081,9 @@ class Base(object):
 
         if self.conf.destdir:
             dnf.util.ensure_dir(self.conf.destdir)
-            for pload in payloads:
-                payloadlocation = os.path.join(
-                    pload.pkg.repo.pkgdir,
-                    os.path.basename(pload.pkg.location)
-                )
-                shutil.copy(payloadlocation, self.conf.destdir)
-                os.chmod(
-                    os.path.join(self.conf.destdir, os.path.basename(pload.pkg.location)),
-                    0o755
-                )
+            for pkg in pkglist:
+                location = os.path.join(pkg.repo.pkgdir, os.path.basename(pkg.location))
+                shutil.copy(location, self.conf.destdir)
 
     def add_remote_rpms(self, path_list, strict=True):
         # :api
@@ -2234,6 +2227,33 @@ class Base(object):
             q = self._sack.query()
         installonly = q.filter(provides=self.conf.installonlypkgs)
         return installonly
+
+    def _select_remote_pkgs(self, install_pkgs):
+        """ Check checksum of packages from local repositories and returns list packages from remote
+        repositories that will be downloaded. Packages from commandline are skipped.
+
+        :param install_pkgs: list of packages
+        :return: list of remote pkgs
+        """
+        remote_pkgs = []
+        local_repository_pkgs = []
+        for pkg in install_pkgs:
+            if pkg._is_local_pkg():
+                if pkg.reponame != hawkey.CMDLINE_REPO_NAME:
+                    local_repository_pkgs.append(pkg)
+            else:
+                remote_pkgs.append(pkg)
+        error = False
+        for pkg in local_repository_pkgs:
+            if not pkg.verifyLocalPkg():
+                msg = _("Package {} from local repository {} has incorrect checksum").format(
+                    pkg, pkg.reponame)
+                logger.critical(msg)
+                error = True
+        if error:
+            raise dnf.exceptions.Error(
+                _("Some packages from local repository have incorrect checksum"))
+        return remote_pkgs
 
 
 def _msg_installed(pkg):
