@@ -306,20 +306,20 @@ popd
 %ghost %{_sharedstatedir}/%{name}/groups.json
 %ghost %{_sharedstatedir}/%{name}/yumdb
 %ghost %{_sharedstatedir}/%{name}/history
-%{_mandir}/man5/%{name}.conf.5.gz
+%{_mandir}/man5/%{name}.conf.5*
 %{_tmpfilesdir}/%{name}.conf
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %files -n yum4
 %{_bindir}/yum4
-%{_mandir}/man8/yum4.8.gz
-%exclude %{_mandir}/man8/yum.8.gz
+%{_mandir}/man8/yum4.8*
+%exclude %{_mandir}/man8/yum.8*
 
 %else
 %files yum
 %{_bindir}/yum
-%{_mandir}/man8/yum.8.gz
+%{_mandir}/man8/yum.8*
 %endif
 
 %files -n python2-%{name}
@@ -340,7 +340,7 @@ popd
 %files automatic
 %{_bindir}/%{name}-automatic
 %config(noreplace) %{confdir}/automatic.conf
-%{_mandir}/man8/%{name}.automatic.8.gz
+%{_mandir}/man8/%{name}.automatic.8*
 %{_unitdir}/%{name}-automatic-notifyonly.service
 %{_unitdir}/%{name}-automatic-notifyonly.timer
 %{_unitdir}/%{name}-automatic-download.service
