@@ -148,12 +148,42 @@ class ModuleCommand(commands.Command):
         def run_on_module(self):
             self.base.repo_module_dict.remove(self.opts.module_nsvp)
 
+    class LockSubCommand(SubCommand):
+
+        aliases = ("lock",)
+
+        def configure(self):
+            demands = self.cli.demands
+            demands.available_repos = True
+            demands.sack_activation = True
+            demands.root_user = True
+
+        def run_on_module(self):
+            for module_n in self.opts.module_nsvp:
+                stream, version = self.base.repo_module_dict.lock(module_n)
+                logger.info("'{}' is locked (stream: {}, version: {})"
+                            .format(module_n, stream, version))
+
+    class UnlockSubCommand(SubCommand):
+
+        aliases = ("unlock",)
+
+        def configure(self):
+            demands = self.cli.demands
+            demands.available_repos = True
+            demands.sack_activation = True
+            demands.root_user = True
+
+        def run_on_module(self):
+            for module_n in self.opts.module_nsvp:
+                self.base.repo_module_dict.unlock(module_n)
+                logger.info("'{}' is unlocked".format(module_n))
+
     SUBCMDS = {ListSubCommand, InfoSubCommand, EnableSubCommand,
                DisableSubCommand, InstallSubCommand, UpdateSubCommand,
-               RemoveSubCommand}
+               RemoveSubCommand, LockSubCommand, UnlockSubCommand}
 
-    SUBCMDS_REQUIRED_ARG = {InfoSubCommand, EnableSubCommand, DisableSubCommand,
-                            InstallSubCommand, UpdateSubCommand, RemoveSubCommand}
+    SUBCMDS_NOT_REQUIRED_ARG = {ListSubCommand}
 
     aliases = ("module",)
     summary = _("Interact with Modules.")
@@ -201,10 +231,10 @@ class ModuleCommand(commands.Command):
         self.subcmd.run_on_module()
 
     def check_required_argument(self):
-        required_argument = [alias
-                             for subcmd in self.SUBCMDS_REQUIRED_ARG
-                             for alias in subcmd.aliases]
-        if self.opts.subcmd[0] in required_argument:
+        not_required_argument = [alias
+                                 for subcmd in self.SUBCMDS_NOT_REQUIRED_ARG
+                                 for alias in subcmd.aliases]
+        if self.opts.subcmd[0] not in not_required_argument:
             if not self.opts.module_nsvp:
                 raise CliError(
                     "dnf {} {}: too few arguments".format(self.opts.command[0],

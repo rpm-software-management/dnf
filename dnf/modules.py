@@ -50,6 +50,7 @@ LOWER_VERSION_INFO = 12
 NOTHING_TO_SHOW = 13
 PARSING_ERR = 14
 PROFILE_NOT_INSTALLED = 15
+VERSION_LOCKED = 16
 
 
 module_errors = {
@@ -68,6 +69,7 @@ module_errors = {
     NOTHING_TO_SHOW: "Nothing to show",
     PARSING_ERR: "Probable parsing problem of {}, try specifying MODULE-STREAM-VERSION",
     PROFILE_NOT_INSTALLED: "Profile not installed: {}",
+    VERSION_LOCKED: "'{}' is locked to version: {}",
 }
 
 
@@ -241,6 +243,15 @@ class RepoModule(OrderedDict):
         self.conf.enabled = False
         self.write_conf_to_file()
 
+    def lock(self, version):
+        self.conf.locked = True
+        self.conf.version = version
+        self.write_conf_to_file()
+
+    def unlock(self):
+        self.conf.locked = False
+        self.write_conf_to_file()
+
     def write_conf_to_file(self):
         output_file = os.path.join(self.parent.get_modules_dir(), "%s.module" % self.conf.name)
         ensure_dir(self.parent.get_modules_dir())
@@ -284,8 +295,11 @@ class RepoModuleDict(OrderedDict):
             if repo_module.conf and \
                     repo_module.conf.locked and \
                     repo_module.conf.version is not None:
-                # if module version is locked, ignore user input
-                # TODO: print warning if locked version != latest or provided
+                if repo_module_stream.latest().version != repo_module.conf.version:
+                    logger.info(module_errors[VERSION_LOCKED]
+                                .format("{}-{}".format(repo_module.name, stream),
+                                        repo_module.conf.version))
+
                 repo_module_version = repo_module_stream[repo_module.conf.version]
             elif version:
                 repo_module_version = repo_module_stream[version]
@@ -314,7 +328,7 @@ class RepoModuleDict(OrderedDict):
         module_version, nsvap = subj.find_module_version(self)
 
         if module_version:
-            repo_module = module_version.parent.parent
+            repo_module = module_version.repo_module
             repo_module.disable()
             return
 
@@ -324,20 +338,50 @@ class RepoModuleDict(OrderedDict):
         except KeyError:
             raise Error(module_errors[NO_MODULE_ERR].format(pkg_spec))
 
+    def lock(self, pkg_spec):
+        subj = ModuleSubject(pkg_spec)
+        module_version, nsvap = subj.find_module_version(self)
+
+        if module_version:
+            repo_module = module_version.repo_module
+
+            if not repo_module.conf.enabled:
+                raise Error(module_errors[STREAM_NOT_ENABLED_ERR].format(pkg_spec))
+
+            repo_module.lock(module_version.version)
+            return repo_module.conf.stream, repo_module.conf.version
+
+        raise Error(module_errors[NO_MODULE_ERR].format(pkg_spec))
+
+    def unlock(self, pkg_spec):
+        subj = ModuleSubject(pkg_spec)
+        module_version, nsvap = subj.find_module_version(self)
+
+        if module_version:
+            repo_module = module_version.repo_module
+
+            if not repo_module.conf.enabled:
+                raise Error(module_errors[STREAM_NOT_ENABLED_ERR].format(pkg_spec))
+
+            repo_module.unlock()
+            return
+
+        raise Error(module_errors[NO_MODULE_ERR].format(pkg_spec))
+
     def install(self, pkg_specs, autoenable=False):
         for pkg_spec in pkg_specs:
             subj = ModuleSubject(pkg_spec)
             module_version, nsvap = subj.find_module_version(self)
 
             if not module_version:
-                logger.error(module_errors[NO_MODULE_ERR].format(pkg_spec))
+                raise Error(module_errors[NO_MODULE_ERR].format(pkg_spec))
+            elif module_version.repo_module.conf.locked:
                 continue
 
             if autoenable:
                 self.enable("{}-{}".format(module_version.name, module_version.stream), True)
             elif not self[nsvap.name].conf.enabled:
-                logger.error(module_errors[NO_ACTIVE_STREAM_ERR].format(pkg_spec))
-                continue
+                raise Error(module_errors[NO_ACTIVE_STREAM_ERR].format(pkg_spec))
 
             if nsvap.profile:
                 profiles = [nsvap.profile]
@@ -356,7 +400,8 @@ class RepoModuleDict(OrderedDict):
             module_version, nsvap = subj.find_module_version(self)
 
             if not module_version:
-                logger.error(module_errors[NO_MODULE_ERR].format(pkg_spec))
+                raise Error(module_errors[NO_MODULE_ERR].format(pkg_spec))
+            elif module_version.repo_module.conf.locked:
                 continue
 
             conf = self[nsvap.name].conf
@@ -366,8 +411,7 @@ class RepoModuleDict(OrderedDict):
                 installed_profiles = []
             if nsvap.profile:
                 if nsvap.profile not in installed_profiles:
-                    logger.error(module_errors[PROFILE_NOT_INSTALLED].format(pkg_spec))
-                    continue
+                    raise Error(module_errors[PROFILE_NOT_INSTALLED].format(pkg_spec))
                 profiles = [nsvap.profile]
             else:
                 profiles = installed_profiles
@@ -391,8 +435,7 @@ class RepoModuleDict(OrderedDict):
             module_version, nsvap = subj.find_module_version(self)
 
             if not module_version:
-                logger.error(module_errors[NO_MODULE_ERR].format(pkg_spec))
-                continue
+                raise Error(module_errors[NO_MODULE_ERR].format(pkg_spec))
 
             conf = self[nsvap.name].conf
             if conf:
@@ -401,8 +444,7 @@ class RepoModuleDict(OrderedDict):
                 installed_profiles = []
             if nsvap.profile:
                 if nsvap.profile not in installed_profiles:
-                    logger.error(module_errors[PROFILE_NOT_INSTALLED].format(pkg_spec))
-                    continue
+                    raise Error(module_errors[PROFILE_NOT_INSTALLED].format(pkg_spec))
                 profiles = [nsvap.profile]
             else:
                 profiles = installed_profiles
