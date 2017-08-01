@@ -225,9 +225,9 @@ class Package(hawkey.Package):
                 if schemes:
                     s = dnf.pycomp.urlparse.urlparse(url)[0]
                     if s in schemes:
-                        return url + self.location
+                        return os.path.join(url, self.location.lstrip('/'))
                 else:
-                    return url + self.location
+                    return os.path.join(url, self.location.lstrip('/'))
             return None
 
         if not self.location:
