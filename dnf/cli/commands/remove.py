@@ -62,13 +62,16 @@ class RemoveCommand(commands.Command):
 
     def configure(self):
         demands = self.cli.demands
-        demands.allow_erasing = True
         # disable all available repos to delete whole dependency tree
         # instead of replacing removable package with available packages
-        demands.available_repos = False
         demands.resolving = True
         demands.root_user = True
         demands.sack_activation = True
+        if self.opts.duplicated:
+            demands.available_repos = True
+        else:
+            demands.allow_erasing = True
+            demands.available_repos = False
 
     def run(self):
 
@@ -82,14 +85,25 @@ class RemoveCommand(commands.Command):
         if self.opts.duplicated:
             q = self.base.sack.query()
             instonly = self.base._get_installonly_query(q.installed())
-            dups = q.duplicated().difference(instonly).latest(-1)
-            if dups:
-                for pkg in dups:
+            dups = q.duplicated().difference(instonly)
+            if not dups:
+                raise dnf.exceptions.Error(_('No duplicated packages found for removal.'))
+
+            for (name, arch), pkgs_list in dups._na_dict().items():
+                if len(pkgs_list) < 2:
+                    continue
+                pkgs_list.sort(reverse=True)
+                try:
+                    self.base.reinstall(str(pkgs_list[0]))
+                except dnf.exceptions.PackagesNotAvailableError:
+                    xmsg = ''
+                    msg = _('Installed package %s%s not available.')
+                    logger.warning(msg, self.base.output.term.bold(str(pkgs_list[0])), xmsg)
+
+                for pkg in pkgs_list[1:]:
                     self.base.package_remove(pkg)
-            else:
-                raise dnf.exceptions.Error(
-                    _('No duplicated packages found for removal.'))
             return
+
         if self.opts.oldinstallonly:
             q = self.base.sack.query()
             instonly = self.base._get_installonly_query(q.installed()).latest(
