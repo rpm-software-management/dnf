@@ -66,14 +66,9 @@ class Subject(object):
     def _pattern(self):
         return self.subj.pattern
 
-    def _is_arch_specified(self, sack):
-        for nevra in self.get_nevra_possibilities():
-            if nevra:
-                q = self._nevra_to_filters(sack.query(), nevra)
-                if q:
-                    if nevra.arch:
-                        return is_glob_pattern(nevra.arch)
-                    return False
+    def _is_arch_specified(self, solution):
+        if solution['nevra'] and solution['nevra'].arch:
+            return is_glob_pattern(solution['nevra'].arch)
         return False
 
     def get_nevra_possibilities(self, forms=None):
@@ -149,8 +144,10 @@ class Subject(object):
 
         return dnf.selector.Selector(sack)
 
-    def _get_best_selectors(self, base, forms=None, obsoletes=True, reponame=None, reports=False):
-        solution = self._get_nevra_solution(base.sack, forms=forms)
+    def _get_best_selectors(self, base, forms=None, obsoletes=True, reponame=None, reports=False,
+                            solution=None):
+        if solution is None:
+            solution = self._get_nevra_solution(base.sack, forms=forms)
         q = solution['query']
         q = q.filter(arch__neq="src")
         if len(q) == 0:

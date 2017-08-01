@@ -1637,10 +1637,10 @@ class Base(object):
         """Mark package(s) given by pkg_spec and reponame for installation."""
 
         subj = dnf.subject.Subject(pkg_spec)
+        solution = subj._get_nevra_solution(self.sack, forms=forms)
 
-        if self.conf.multilib_policy == "all" or \
-           subj._is_arch_specified(self.sack):
-            q = subj.get_best_query(self.sack).filter(arch__neq="src")
+        if self.conf.multilib_policy == "all" or subj._is_arch_specified(solution):
+            q = solution['query'].filter(arch__neq="src")
             if reponame is not None:
                 q = q.filter(reponame=reponame)
             if not q:
@@ -1653,7 +1653,8 @@ class Base(object):
                                              forms=forms,
                                              obsoletes=self.conf.obsoletes,
                                              reponame=reponame,
-                                             reports=True)
+                                             reports=True,
+                                             solution=solution)
             if not sltrs:
                 raise dnf.exceptions.MarkingError(_('no package matched'), pkg_spec)
 
