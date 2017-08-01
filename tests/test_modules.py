@@ -317,6 +317,10 @@ class ModuleTest(unittest.TestCase):
     def test_enable_name(self):
         # use default stream
         self.base.repo_module_dict.enable("httpd", assumeyes=True)
+        repo_module = self.base.repo_module_dict["httpd"]
+        self.assertTrue(repo_module.conf.enabled)
+        self.assertEqual(repo_module.conf.name, "httpd")
+        self.assertEqual(repo_module.conf.stream, "2.4")
 
     def test_enable_name_stream(self):
         self.base.repo_module_dict.enable("httpd-2.4", assumeyes=True)
@@ -407,30 +411,71 @@ class ModuleTest(unittest.TestCase):
     # dnf module lock
 
     def test_lock_name(self):
-        pass
+        self.base.repo_module_dict.enable("httpd", assumeyes=True)
+        self.base.repo_module_dict.lock("httpd")
+        repo_module = self.base.repo_module_dict["httpd"]
+        self.assertTrue(repo_module.conf.locked)
+        self.assertEqual(repo_module.conf.name, "httpd")
+        self.assertEqual(repo_module.conf.stream, "2.4")
 
     def test_lock_name_stream(self):
-        pass
+        self.base.repo_module_dict.enable("httpd-2.4", assumeyes=True)
+        self.base.repo_module_dict.lock("httpd-2.4")
+        repo_module = self.base.repo_module_dict["httpd"]
+        self.assertTrue(repo_module.conf.locked)
+        self.assertEqual(repo_module.conf.name, "httpd")
+        self.assertEqual(repo_module.conf.stream, "2.4")
 
     def test_lock_pkgspec(self):
-        pass
+        self.base.repo_module_dict.enable("httpd-2.4-1/foo", assumeyes=True)
+        self.base.repo_module_dict.lock("httpd-2.4-1/foo")
+        repo_module = self.base.repo_module_dict["httpd"]
+        self.assertTrue(repo_module.conf.locked)
+        self.assertEqual(repo_module.conf.name, "httpd")
+        self.assertEqual(repo_module.conf.stream, "2.4")
 
     def test_lock_invalid(self):
-        pass
+        with self.assertRaises(dnf.exceptions.Error):
+            self.base.repo_module_dict.lock("httpd-invalid")
 
     # dnf module unlock
 
     def test_unlock_name(self):
-        pass
+        self.base.repo_module_dict.enable("httpd", assumeyes=True)
+        self.base.repo_module_dict.lock("httpd")
+
+        self.base.repo_module_dict.unlock("httpd")
+        repo_module = self.base.repo_module_dict["httpd"]
+        self.assertFalse(repo_module.conf.locked)
+        self.assertEqual(repo_module.conf.name, "httpd")
+        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertEqual(repo_module.conf.version, 2)
 
     def test_unlock_name_stream(self):
-        pass
+        self.base.repo_module_dict.enable("httpd-2.4", assumeyes=True)
+        self.base.repo_module_dict.lock("httpd-2.4")
+
+        self.base.repo_module_dict.unlock("httpd-2.4")
+        repo_module = self.base.repo_module_dict["httpd"]
+        self.assertFalse(repo_module.conf.locked)
+        self.assertEqual(repo_module.conf.name, "httpd")
+        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertEqual(repo_module.conf.version, 2)
 
     def test_unlock_pkgspec(self):
-        pass
+        self.base.repo_module_dict.enable("httpd-2.4-1/foo", assumeyes=True)
+        self.base.repo_module_dict.lock("httpd-2.4-1/foo")
+
+        self.base.repo_module_dict.unlock("httpd-2.4-1/foo")
+        repo_module = self.base.repo_module_dict["httpd"]
+        self.assertFalse(repo_module.conf.locked)
+        self.assertEqual(repo_module.conf.name, "httpd")
+        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertEqual(repo_module.conf.version, 1)
 
     def test_unlock_invalid(self):
-        pass
+        with self.assertRaises(dnf.exceptions.Error):
+            self.base.repo_module_dict.unlock("httpd-invalid")
 
     # dnf module info
 

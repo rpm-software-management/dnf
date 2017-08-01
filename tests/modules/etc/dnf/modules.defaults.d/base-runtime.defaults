@@ -1,4 +1,4 @@
 [base-runtime]
 name=base-runtime
-stream=f26
+stream=rhel73
 profiles=minimal
