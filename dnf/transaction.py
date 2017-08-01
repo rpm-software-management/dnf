@@ -202,6 +202,9 @@ class Transaction(object):
                 # note: in rpm 4.12 there should not be set
                 # rpm.RPMPROB_FILTER_REPLACEPKG to work
                 ts.addReinstall(tsi.installed._header, tsi)
+                if tsi.obsoleted:
+                    for pkg in tsi.obsoleted:
+                        ts.addErase(pkg.idx)
             elif tsi.op_type == UPGRADE:
                 hdr = tsi.installed._header
                 ts.addInstall(hdr, tsi, 'u')
