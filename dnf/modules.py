@@ -50,6 +50,7 @@ NOTHING_TO_SHOW = 13
 PARSING_ERR = 14
 PROFILE_NOT_INSTALLED = 15
 VERSION_LOCKED = 16
+INSTALLING_NEWER_VERSION = 17
 
 
 module_errors = {
@@ -69,6 +70,7 @@ module_errors = {
     PARSING_ERR: "Probable parsing problem of {}, try specifying MODULE-STREAM-VERSION",
     PROFILE_NOT_INSTALLED: "Profile not installed: {}",
     VERSION_LOCKED: "'{}' is locked to version: {}",
+    INSTALLING_NEWER_VERSION: "Installing newer version of '{}' than specified. Reason: {}",
 }
 
 
@@ -263,6 +265,7 @@ class RepoModule(OrderedDict):
 
 
 class RepoModuleDict(OrderedDict):
+
     def __init__(self, base):
         super(RepoModuleDict, self).__init__()
 
@@ -370,30 +373,55 @@ class RepoModuleDict(OrderedDict):
         raise Error(module_errors[NO_MODULE_ERR].format(pkg_spec))
 
     def install(self, pkg_specs, autoenable=False):
+        preferred_versions = self.get_preferred_versions(pkg_specs)
+
+        for version in preferred_versions.values():
+            for module_version, nsvap, pkg_spec in version.moduleversion_nsvap_pkgspec:
+                module_version = self.decide_newer_version(module_version, pkg_spec,
+                                                           version.preferred_version,
+                                                           version.reason)
+
+                if not module_version:
+                    raise Error(module_errors[NO_MODULE_ERR].format(pkg_spec))
+                elif module_version.repo_module.conf.locked:
+                    continue
+
+                if autoenable:
+                    self.enable("{}-{}".format(module_version.name, module_version.stream), True)
+                elif not self[nsvap.name].conf.enabled:
+                    raise Error(module_errors[NO_ACTIVE_STREAM_ERR].format(module_version.name))
+
+                if nsvap.profile:
+                    profiles = [nsvap.profile]
+                else:
+                    profiles = module_version.repo_module.defaults.profiles
+
+                if module_version.version > module_version.repo_module.conf.version:
+                    profiles.extend(module_version.repo_module.conf.profiles)
+                    profiles = list(set(profiles))
+
+                module_version.install(profiles)
+
+    def decide_newer_version(self, module_version, pkg_spec, preferred_version, reason):
+        if preferred_version != module_version.version:
+            logger.info(module_errors[INSTALLING_NEWER_VERSION].format(pkg_spec, reason))
+            module_version = self.find_module_version(module_version.name, module_version.stream,
+                                                      preferred_version)
+        return module_version
+
+    def get_preferred_versions(self, pkg_specs):
+        preferred_versions = {}
         for pkg_spec in pkg_specs:
             subj = ModuleSubject(pkg_spec)
             module_version, nsvap = subj.find_module_version(self)
 
-            if not module_version:
-                raise Error(module_errors[NO_MODULE_ERR].format(pkg_spec))
-            elif module_version.repo_module.conf.locked:
-                continue
-
-            if autoenable:
-                self.enable("{}-{}".format(module_version.name, module_version.stream), True)
-            elif not self[nsvap.name].conf.enabled:
-                raise Error(module_errors[NO_ACTIVE_STREAM_ERR].format(pkg_spec))
-
-            if nsvap.profile:
-                profiles = [nsvap.profile]
-            else:
-                profiles = module_version.repo_module.defaults.profiles
-
-            if module_version.version > module_version.repo_module.conf.version:
-                profiles.extend(module_version.repo_module.conf.profiles)
-                profiles = list(set(profiles))
-
-            module_version.install(profiles)
+            key = "{}-{}".format(module_version.name, module_version.stream)
+            versions = preferred_versions.setdefault(key, PreferredModuleVersion())
+            versions.moduleversion_nsvap_pkgspec.append([module_version, nsvap, pkg_spec])
+            if versions.preferred_version < module_version.version:
+                versions.preferred_version = module_version.version
+                versions.reason = pkg_spec
+        return preferred_versions
 
     def upgrade(self, pkg_specs):
         for pkg_spec in pkg_specs:
@@ -631,6 +659,14 @@ class RepoModuleDict(OrderedDict):
             line[column_info] = data.summary
 
         return table
+
+
+class PreferredModuleVersion(object):
+
+    def __init__(self):
+        self.moduleversion_nsvap_pkgspec = []
+        self.preferred_version = -1
+        self.reason = None
 
 
 class ModuleMetadataLoader(object):
