@@ -71,7 +71,7 @@ class RepoListCommand(commands.Command):
     repolist command.
     """
 
-    aliases = ('repolist', 'repoinfo')
+    aliases = ('repolist', 'repoinfo', 'rlist',)
     summary = _('display the configured software repositories')
 
     @staticmethod

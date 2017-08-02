@@ -41,7 +41,7 @@ class GroupCommand(commands.Command):
                        'groupremove'  : 'remove',
                        'grouperase'   : 'remove',
                        'groupinfo'    : 'info'}
-    aliases = ('group', 'groups') + tuple(direct_commands.keys())
+    aliases = ('group', 'groups', 'grp',) + tuple(direct_commands.keys())
     summary = _('display, or use, the groups information')
 
     _CMD_ALIASES = {'update'     : 'upgrade',

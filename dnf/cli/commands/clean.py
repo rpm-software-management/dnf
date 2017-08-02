@@ -83,7 +83,7 @@ class CleanCommand(commands.Command):
     clean command.
     """
 
-    aliases = ('clean',)
+    aliases = ('clean', 'cl',)
     summary = _('remove cached data')
 
     @staticmethod

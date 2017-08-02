@@ -63,7 +63,7 @@ class UpdateInfoCommand(commands.Command):
                        'info-sec'           : 'info',
                        'summary-updateinfo' : 'summary'}
 
-    aliases = ['updateinfo'] + list(direct_commands.keys())
+    aliases = ['updateinfo', 'upinfo'] + list(direct_commands.keys())
     summary = _('display advisories about packages')
 
     def __init__(self, cli):
