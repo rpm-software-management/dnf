@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 from datetime import datetime
 from dnf.i18n import _
 from dnf.cli import commands
+from dnf.cli.option_parser import OptionParser
 
 import argparse
 import dnf
@@ -97,9 +98,8 @@ class RepoQueryCommand(commands.Command):
         """Filter query by repoid and arch options"""
         if opts.repo:
             query = query.filter(reponame=opts.repo)
-        if opts.arch:
-            archs = [arch.strip() for arch in opts.arch.split(",")]
-            query = query.filter(arch=archs)
+        if opts.arches:
+            query = query.filter(arch=opts.arches)
         return query
 
     @staticmethod
@@ -111,7 +111,8 @@ class RepoQueryCommand(commands.Command):
                                    "or repoquery without argument)"))
         parser.add_argument('--show-duplicates', action='store_true',
                             help=_("Query all versions of packages (default)"))
-        parser.add_argument('--arch', '--archlist', metavar='ARCH', dest='arch',
+        parser.add_argument('--arch', '--archlist', dest='arches', default=[],
+                            action=OptionParser._SplitCallback, metavar='[arch]',
                             help=_('show only results from this ARCH'))
         parser.add_argument('-f', '--file', metavar='FILE', nargs='+',
                             help=_('show only results that owns FILE'))

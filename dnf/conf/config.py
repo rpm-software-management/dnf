@@ -904,8 +904,9 @@ class MainConf(BaseConfig):
         if val is None:
             self.substitutions.pop('arch', None)
             return
-
-        assert(val in dnf.rpm._BASEARCH_MAP.keys())
+        if val not in dnf.rpm._BASEARCH_MAP.keys():
+            msg = _('Incorrect or unknown "{}": {}')
+            raise dnf.exceptions.Error(msg.format("arch", val))
         self.substitutions['arch'] = val
         self.basearch = dnf.rpm.basearch(val)
 
@@ -921,8 +922,9 @@ class MainConf(BaseConfig):
         if val is None:
             self.substitutions.pop('basearch', None)
             return
-
-        assert(val in dnf.rpm._BASEARCH_MAP.values())
+        if val not in dnf.rpm._BASEARCH_MAP.values():
+            msg = _('Incorrect or unknown "{}": {}')
+            raise dnf.exceptions.Error(msg.format("basearch", val))
         self.substitutions['basearch'] = val
 
     def read(self, filename=None, priority=PRIO_DEFAULT):
