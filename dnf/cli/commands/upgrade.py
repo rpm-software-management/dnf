@@ -79,12 +79,9 @@ class UpgradeCommand(commands.Command):
         raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
 
     def _update_modules_all(self):
-        self.cli.demands.transaction_display = self.base.repo_module_dict.transaction_callback
         self.base.repo_module_dict.upgrade_all()
 
     def _update_modules(self):
-        self.cli.demands.transaction_display = self.base.repo_module_dict.transaction_callback
-
         modules = self.get_modules_from_spec(self.opts.grp_specs)
 
         self.base.repo_module_dict.upgrade(modules)

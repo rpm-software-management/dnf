@@ -79,8 +79,6 @@ class InstallCommand(commands.Command):
         self._raise_no_match_if_any_error_and_strict(err_pkgs, errs)
 
     def install_module_profiles(self):
-        self.cli.demands.transaction_display = self.base.repo_module_dict.transaction_callback
-
         self.base.repo_module_dict.install(self.opts.grp_specs, True)
 
     def _get_nevra_forms_from_command(self):

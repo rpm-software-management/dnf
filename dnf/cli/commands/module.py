@@ -112,7 +112,6 @@ class ModuleCommand(commands.Command):
             demands.sack_activation = True
             demands.resolving = True
             demands.root_user = True
-            demands.transaction_display = self.base.repo_module_dict.transaction_callback
 
         def run_on_module(self):
             self.base.repo_module_dict.install(self.opts.module_nsvp, self.opts.autoenable)
@@ -127,7 +126,6 @@ class ModuleCommand(commands.Command):
             demands.sack_activation = True
             demands.resolving = True
             demands.root_user = True
-            demands.transaction_display = self.base.repo_module_dict.transaction_callback
 
         def run_on_module(self):
             self.base.repo_module_dict.upgrade(self.opts.module_nsvp)
@@ -139,11 +137,10 @@ class ModuleCommand(commands.Command):
         def configure(self):
             demands = self.cli.demands
             demands.allow_erasing = True
-            demands.available_repos = False
+            demands.available_repos = True
             demands.resolving = True
             demands.root_user = True
             demands.sack_activation = True
-            demands.transaction_display = self.base.repo_module_dict.transaction_callback
 
         def run_on_module(self):
             self.base.repo_module_dict.remove(self.opts.module_nsvp)
