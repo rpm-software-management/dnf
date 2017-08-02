@@ -621,7 +621,7 @@ class ModuleTest(unittest.TestCase):
             "glibc-2.25.90-2.x86_64",
             "glibc-common-2.25.90-2.x86_64",
             "httpd-2.4.25-8.x86_64",
-            "httpd-doc-2.4.25-7.x86_64",
+            "httpd-doc-2.4.25-8.x86_64",
             "libnghttp2-1.21.1-1.x86_64",
         ]
         self.assertInstalls(expected)
