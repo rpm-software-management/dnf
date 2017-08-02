@@ -631,7 +631,8 @@ class BaseCli(dnf.Base):
             return 1, ['Failed history undo']
 
         tm = dnf.util.normalize_time(old.beg_timestamp)
-        print("Undoing transaction %u, from %s" % (old.tid, tm))
+        msg = _("Undoing transaction {}, from {}").format(old.tid, ucd(tm))
+        logger.info(msg)
         self.output.historyInfoCmdPkgsAltered(old)  # :todo
 
         history = dnf.history.open_history(self.history)  # :todo
