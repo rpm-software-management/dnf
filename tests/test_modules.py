@@ -553,9 +553,6 @@ class ModuleTest(unittest.TestCase):
 
         # install
         rmd.install(["base-runtime"], autoenable=True)
-        self.base.resolve()
-        # TODO: this is not a good API, consider replacing with a persistor
-        self.base.do_transaction(display=[self.base.repo_module_dict.transaction_callback])
 
         # check module conf
         repo_module = rmd["base-runtime"]

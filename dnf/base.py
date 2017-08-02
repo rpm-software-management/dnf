@@ -28,7 +28,7 @@ import libdnf.transaction
 
 from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
-from dnf.modules import RepoModuleDict, RepoModuleVersion, ModuleMetadataLoader
+from dnf.modules import RepoModuleDict, RepoModuleVersion, ModuleMetadataLoader, ModulePersistor
 from dnf.util import first
 from dnf.db.history import SwdbInterface
 from dnf.yum import misc
@@ -92,6 +92,7 @@ class Base(object):
         self._tempfiles = set()
         self._trans_tempfiles = set()
         self._ds_callback = dnf.callback.Depsolve()
+        self._module_persistor = None
         self._logging = dnf.logging.Logging()
         self._repos = dnf.repodict.RepoDict()
         self._rpm_probfilter = set([rpm.RPMPROB_FILTER_OLDPACKAGE])
@@ -225,6 +226,7 @@ class Base(object):
 
         self.repo_module_dict.read_all_modules()
         self.repo_module_dict.read_all_module_defaults()
+        self._module_persistor = ModulePersistor()
 
     def _store_persistent_data(self):
         if self._repo_persistor and not self.conf.cacheonly:
@@ -234,6 +236,9 @@ class Base(object):
 
         if self._tempfile_persistor:
             self._tempfile_persistor.save()
+
+        if self._module_persistor:
+            self._module_persistor.save()
 
     @property
     def comps(self):
