@@ -774,6 +774,7 @@ class MainConf(BaseConfig):
         # runtime only options
         self._add_option('downloadonly', BoolOption(False, runtimeonly=True))
         self._add_option('ignorearch', BoolOption(False))
+        self._add_option('cacheonly', BoolOption(False))
 
     @property
     def get_reposdir(self):
@@ -830,7 +831,7 @@ class MainConf(BaseConfig):
                        'showdupesfromrepos', 'plugins', 'ip_resolve',
                        'rpmverbosity', 'disable_excludes', 'color',
                        'downloadonly', 'exclude', 'excludepkgs', 'skip_broken',
-                       'tsflags', 'arch', 'basearch', 'ignorearch']
+                       'tsflags', 'arch', 'basearch', 'ignorearch', 'cacheonly']
 
         for name in config_args:
             value = getattr(opts, name, None)

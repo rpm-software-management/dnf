@@ -2235,6 +2235,13 @@ class Base(object):
         :param install_pkgs: list of packages
         :return: list of remote pkgs
         """
+        def _verification_of_packages(pkg_list, logger_msg):
+            for pkg in pkg_list:
+                if not pkg.verifyLocalPkg():
+                    logger.critical(logger_msg)
+                    return False
+            return True
+
         remote_pkgs = []
         local_repository_pkgs = []
         for pkg in install_pkgs:
@@ -2244,15 +2251,36 @@ class Base(object):
             else:
                 remote_pkgs.append(pkg)
         error = False
-        for pkg in local_repository_pkgs:
-            if not pkg.verifyLocalPkg():
-                msg = _("Package {} from local repository {} has incorrect checksum").format(
-                    pkg, pkg.reponame)
-                logger.critical(msg)
+
+        try:
+            msg = _('Package "{}" from local repository "{}" has incorrect checksum')
+            if not _verification_of_packages(local_repository_pkgs, msg.format(pkg, pkg.reponame)):
                 error = True
+        except Exception as e:
+            logger.critical(str(e))
+            error = True
+
         if error:
             raise dnf.exceptions.Error(
                 _("Some packages from local repository have incorrect checksum"))
+
+        if self.conf.cacheonly:
+            try:
+                msg = _('Package "{}" from repository "{}" has incorrect checksum')
+                if not _verification_of_packages(remote_pkgs, msg.format(pkg, pkg.reponame)):
+                    error = True
+            except Exception as e:
+                logger.debug(str(e))
+                msg = _('Package "{}" from repository "{}" has invalid cache')
+                logger.critical(msg.format(pkg, pkg.reponame))
+                error = True
+
+            if error:
+                raise dnf.exceptions.Error(
+                    _('Some packages have invalid cache, but cannot be downloaded due to '
+                      '"--cacheonly" option'))
+            remote_pkgs = []
+
         return remote_pkgs
 
 
