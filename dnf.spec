@@ -366,6 +366,42 @@ popd
 %endif
 
 %changelog
+* Mon Aug 07 2017 Jaroslav Mracek <jmracek@redhat.com> 2.6.3-1
+- Fix problem with dnf.Package().remote_location() (RhBug:1476215) (Jaroslav
+  Mracek)
+- Change behavior of -C according to documentation (RhBug:1473964) (Jaroslav
+  Mracek)
+- It should prevent to ask attribute of None (RhBug:1359482) (Jaroslav Mracek)
+- Solve a problems with --arch options (RhBug:1476834) (Jaroslav Mracek)
+- Use security plugin code for dnf-automatic (Jaroslav Mracek)
+- Fix unicode error for python2 (Jaroslav Mracek)
+- Inform about packages installed for group (Jaroslav Mracek)
+- Provide info if pkg is removed due to dependency (RhBug:1244755) (Jaroslav
+  Mracek)
+- Unify format of %%{_mandir} paths in dnf.spec (Jaroslav Mracek)
+- Remove test_yumlayer.py as unneeded test (Jaroslav Mracek)
+- Provide yum4 package for rhel7 build (Jaroslav Mracek)
+- Make yum compatible layer very minimal (RhBug:1476748) (Jaroslav Mracek)
+- Remove metadata_expire from yum compatible layer (Jaroslav Mracek)
+- Remove keepcache from yum compatibility layer (Jaroslav Mracek)
+- Remove options from yum conf (Jaroslav Mracek)
+- Remove unused functionality from  yum compatible layer (Jaroslav Mracek)
+- Add deplist command for dnf (Jaroslav Mracek)
+- Fix problems with --downloaddir options (RhBug:1476464) (Jaroslav Mracek)
+- Move description of --forcearch into proper place (Jaroslav Mracek)
+- Provide description of --downloaddir option (Jaroslav Mracek)
+- Fix if in spec file (Jaroslav Mracek)
+- Add description of "test" tsflags (Jaroslav Mracek)
+- Enable import gpg_keys with tsflag test (RhBug:1464192) (Jaroslav Mracek)
+- Keep old reason when undoing erase (RhBug:1463107) (Eduard Čuba)
+- spec: eliminate other weak dependencies for el<=7 (Igor Gnatenko)
+- spec: do not strongly require inhibit plugin (Igor Gnatenko)
+- Inform that packages are only downloaded (RhBug:1426196) (Jaroslav Mracek)
+- Move releasever check after the etc/dnf/vars substitutions. (Alexander
+  Kanavin)
+- Provide substitution for Repodict.add_new_repo() (RhBug:1457507) (Jaroslav
+  Mracek)
+
 * Mon Jul 24 2017 Jaroslav Mracek <jmracek@redhat.com> 2.6.2-1
 - Remove autodeglob optimization (Jaroslav Rohel)
 - Integrate --destdir with --destdir from download plugin (Ondřej Sojka)
