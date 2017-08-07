@@ -2194,5 +2194,49 @@
     [
         1432312, 
         "removing MATE Desktop would remove dnf and systemd"
+    ], 
+    [
+        1476215, 
+        "repoquery --location sometimes prints invalid URL"
+    ], 
+    [
+        1473964, 
+        "dnf -C (or dnf --cacheonly) does not work as documented for a regular user"
+    ], 
+    [
+        1359482, 
+        "Trying to remove 'KDE Plasma Workspaces' group using dnf tries to remove systemd and dnf"
+    ], 
+    [
+        1476834, 
+        "[abrt] dnf: arch(): config.py:908:arch:TypeError: unhashable type: 'list'"
+    ], 
+    [
+        1244755, 
+        "[UX] additional dependencies to be installed or removed are not listed separately"
+    ], 
+    [
+        1476748, 
+        "Boltron: yum-dnf wrapper breaks installation of modules"
+    ], 
+    [
+        1476464, 
+        "dnf download broken if repository is file:/// (ie. local)"
+    ], 
+    [
+        1464192, 
+        "rpm.RPMTRANS_FLAG_TEST prevents to save newly imported gpg key"
+    ], 
+    [
+        1463107, 
+        "Undoing a remove transaction marks packages as user installed"
+    ], 
+    [
+        1426196, 
+        "RFE: Change \"upgraded X packages\" to \"download X packages\" when dnf download is used"
+    ], 
+    [
+        1457507, 
+        "[api] Explicitly set metalink is not substituted"
     ]
 ]

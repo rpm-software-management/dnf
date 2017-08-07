@@ -20,6 +20,29 @@
 ###################
 
 ===================
+2.6.3 Release Notes
+===================
+
+API additions in 2.6.3:
+
+* Added auto substitution for all variables used for repo creation by :meth:`dnf.repodict.RepoDict.add_new_repo`
+* Added description of ``--downloaddir=<path>`` dnf option
+
+Bugs fixed in 2.6.3:
+
+* :rhbug:`1476215`
+* :rhbug:`1473964`
+* :rhbug:`1359482`
+* :rhbug:`1476834`
+* :rhbug:`1244755`
+* :rhbug:`1476748`
+* :rhbug:`1476464`
+* :rhbug:`1464192`
+* :rhbug:`1463107`
+* :rhbug:`1426196`
+* :rhbug:`1457507`
+
+===================
 2.6.2 Release Notes
 ===================
 
