@@ -96,7 +96,11 @@ class RepoModuleVersion(object):
                 raise Error(module_errors[NO_PROFILE_ERR].format(profile, self.profiles))
 
             for single_nevra in self.profile_nevra(profile):
+                subject = Subject(single_nevra)
+                nevra_obj = list(subject.get_nevra_possibilities(hawkey.FORM_NEVR))[0]
+
                 self.base.install(single_nevra, reponame=self.repo.id, forms=hawkey.FORM_NEVR)
+                self.base._goal.group_members.add(nevra_obj.name)
 
         profiles.extend(self.repo_module.conf.profiles)
         self.base._module_persistor.set_data(self.repo_module, stream=self.stream,
@@ -121,6 +125,10 @@ class RepoModuleVersion(object):
             for single_nevra in self.profile_nevra(profile):
                 remove_query = dnf.subject.Subject(single_nevra) \
                     .get_best_query(self.base.sack, forms=hawkey.FORM_NEVR)
+
+                if self.base._yumdb.get_package(remove_query[0]).reason == 'user':
+                    continue
+
                 self.base._remove_if_unneeded(remove_query)
 
         conf = self.repo_module.conf
