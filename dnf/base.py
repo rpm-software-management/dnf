@@ -2121,10 +2121,10 @@ class Base(object):
         keyurls = [] if key_installed else repo.gpgkey
 
         def _prov_key_data(msg):
-            msg += _('Failing package is: %s') % (po) + '\n '
+            msg += _('. Failing package is: %s') % (po) + '\n '
             msg += _('GPG Keys are configured as: %s') % \
-                    (', '.join(repo.gpgkey) + '\n')
-            return '\n\n\n' + msg
+                    (', '.join(repo.gpgkey))
+            return msg
 
         user_cb_fail = False
         self._repo_set_imported_gpg_keys.add(repo.id)
@@ -2190,8 +2190,9 @@ class Base(object):
         # Check if the newly installed keys helped
         result, errmsg = self._sig_check_pkg(po)
         if result != 0:
-            msg = _("Import of key(s) didn't help, wrong key(s)?")
-            logger.info(msg)
+            if keyurls:
+                msg = _("Import of key(s) didn't help, wrong key(s)?")
+                logger.info(msg)
             errmsg = ucd(errmsg)
             raise dnf.exceptions.Error(_prov_key_data(errmsg))
 
