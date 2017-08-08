@@ -42,6 +42,7 @@ PRIO_AUTOMATICCONFIG = libdnf.conf.Option.Priority_AUTOMATICCONFIG
 PRIO_REPOCONFIG = libdnf.conf.Option.Priority_REPOCONFIG
 PRIO_PLUGINDEFAULT = libdnf.conf.Option.Priority_PLUGINDEFAULT
 PRIO_PLUGINCONFIG = libdnf.conf.Option.Priority_PLUGINCONFIG
+PRIO_DROPINCONFIG = libdnf.conf.Option.Priority_DROPINCONFIG
 PRIO_COMMANDLINE = libdnf.conf.Option.Priority_COMMANDLINE
 PRIO_RUNTIME = libdnf.conf.Option.Priority_RUNTIME
 
@@ -416,6 +417,10 @@ class MainConf(BaseConfig):
 
         # update to where we read the file from
         self._set_value('config_file_path', filename, priority)
+
+    def read_dropin_dir(self, dirname=dnf.const.CONF_DROPIN_DIR, priority=PRIO_DROPINCONFIG):
+        for filename in sorted(os.listdir(dirname)):
+            self.read(os.path.join(dirname, filename), priority)
 
     @property
     def verbose(self):
