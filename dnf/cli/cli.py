@@ -883,6 +883,10 @@ class Cli(object):
 
         self.command.configure()
 
+        if self.base.conf.destdir:
+            dnf.util.ensure_dir(self.base.conf.destdir)
+            self.base.repos.all().pkgdir = self.base.conf.destdir
+
         if self.base.conf.color != 'auto':
             self.base.output.term.reinit(color=self.base.conf.color)
 
