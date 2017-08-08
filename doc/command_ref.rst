@@ -553,18 +553,21 @@ transactions and act according to this information (assuming the
 
 .. _history_redo_command-label:
 
-``dnf history redo <transaction-spec>``
-    Repeat the specified transaction. If it is not possible to redo any
-    operation due to the current state of RPMDB, do not redo any operation.
+``dnf history redo <transaction-spec>|<package-name-spec>``
+    Repeat the specified transaction. Uses the last transaction (with highest ID)
+    if more than one transactions for giver <package-name-spec> is found. If it is not possible
+    to redo any operation due to the current state of RPMDB, do not redo any operation.
 
-``dnf history rollback <transaction-spec>``
-    Undo all transactions performed after the specified transaction. If it is
-    not possible to undo any transaction due to the current state of RPMDB,
-    do not undo any transaction.
+``dnf history rollback <transaction-spec>|<package-name-spec>``
+    Undo all transactions performed after the specified transaction. Uses the last transaction
+    (with highest ID) if more than one transactions for giver <package-name-spec> is found.
+    If it is not possible to undo any transaction due to the current state of RPMDB, do not undo
+    any transaction.
 
-``dnf history undo <transaction-spec>``
-    Perform the opposite operation to all operations performed in the
-    specified transaction. If it is not possible to undo any operation due to
+``dnf history undo <transaction-spec>|<package-name-spec>``
+    Perform the opposite operation to all operations performed in the specified transaction.
+    Uses the last transaction (with highest ID) if more than one transactions for giver
+    <package-name-spec> is found. If it is not possible to undo any operation due to
     the current state of RPMDB, do not undo any operation.
 
 ``dnf history userinstalled``

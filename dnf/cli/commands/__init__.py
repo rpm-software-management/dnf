@@ -970,7 +970,7 @@ class HistoryCommand(Command):
                         else:
                             logger.info(msg)
 
-        return sorted(tids)
+        return sorted(tids, reverse=True)
 
     def run(self):
         vcmd = self.opts.tid_action
