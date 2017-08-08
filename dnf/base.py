@@ -1020,7 +1020,7 @@ class Base(object):
         with lock:
             drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(),
                                       progress, self.conf.deltarpm_percentage)
-            remote_pkgs = self._select_remote_pkgs(pkglist)
+            remote_pkgs, local_repository_pkgs = self._select_remote_pkgs(pkglist)
             self._add_tempfiles([pkg.localPkg() for pkg in remote_pkgs])
 
             payloads = [dnf.repo._pkg2payload(pkg, progress, drpm.delta_factory,
@@ -1091,8 +1091,7 @@ class Base(object):
             logger.info(msg, full / 1024 ** 2, real / 1024 ** 2, percent)
 
         if self.conf.destdir:
-            dnf.util.ensure_dir(self.conf.destdir)
-            for pkg in pkglist:
+            for pkg in local_repository_pkgs:
                 location = os.path.join(pkg.repo.pkgdir, os.path.basename(pkg.location))
                 shutil.copy(location, self.conf.destdir)
 
@@ -2306,7 +2305,7 @@ class Base(object):
                       '"--cacheonly" option'))
             remote_pkgs = []
 
-        return remote_pkgs
+        return remote_pkgs, local_repository_pkgs
 
 
 def _msg_installed(pkg):
