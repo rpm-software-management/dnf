@@ -173,7 +173,7 @@ def main(args):
     base = dnf.cli.cli.BaseCli()
     cli = dnf.cli.Cli(base)
     if args[0] == "_cmds":
-        base.init_plugins([], cli)
+        base.init_plugins([], [], cli)
         print("\n".join(filter_list_by_kw(args[1], cli.cli_commands)))
         return
     cli.cli_commands.clear()
