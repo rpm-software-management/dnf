@@ -1124,10 +1124,11 @@ Transaction Summary
 """) % ('=' * self.term.columns))
         summary_data = (
             (_('Install'), len(list_bunch.installed) +
+             len(list_bunch.installed_group) +
              len(list_bunch.installed_weak) +
              len(list_bunch.installed_dep), 0),
             (_('Upgrade'), len(list_bunch.upgraded), 0),
-            (_('Remove'), len(list_bunch.erased) +
+            (_('Remove'), len(list_bunch.erased) + len(list_bunch.erased_dep) +
              len(list_bunch.erased_clean), 0),
             (_('Downgrade'), len(list_bunch.downgraded), 0),
             (_('Skip'), len(skipped_conflicts) + len(skipped_broken), 0))
@@ -1221,6 +1222,7 @@ Transaction Summary
                                    list_bunch.erased_dep +
                                    list_bunch.erased_clean),
                                (_('Installed'), list_bunch.installed +
+                                list_bunch.installed_group +
                                 list_bunch.installed_weak +
                                 list_bunch.installed_dep),
                                (_('Upgraded'), list_bunch.upgraded),
