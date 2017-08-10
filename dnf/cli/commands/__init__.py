@@ -973,7 +973,7 @@ class HistoryCommand(Command):
                         else:
                             logger.info(msg)
 
-        return sorted(transaction_ids)
+        return sorted(transaction_ids, reverse=True)
 
     def run(self):
         vcmd = self.opts.transactions_action
