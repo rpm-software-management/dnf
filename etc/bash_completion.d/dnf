@@ -20,12 +20,60 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301  USA
 
-_dnf_helper()
+__dnf_main_options="
+    -4 -6 -b -c -C -d -e -h -q -R -v -x -y
+    --advisory --advisories
+    --allowerasing --assumeno
+    --assumeyes
+    --best --bugfix
+    --bz
+    --cacheonly --config
+    --color --cve
+    --debuglevel --debugsolver
+    --disableexcludes --disableplugin
+    --disableexcludepkgs --disablerepo
+    --downloadonly --destdir
+    --downloaddir
+    --errorlevel --enableplugin
+    --enablerepo --enhancement
+    --exclude --excludepkgs
+    --help --help-cmd
+    --installroot
+    --newpackage --nodocs
+    --nogpgcheck --noplugins
+    --noautoremove
+    --obsoletes
+    --quiet
+    --randomwait --refresh
+    --releasever --repofrompath
+    --repo --repoid
+    --rpmverbosity
+    --sec-severity --secseverity
+    --security --setopt
+    --skip-broken --showduplicates
+    --verbose --version
+"
+
+__dnf_python_exec=
+_dnf_set_python_exec()
 {
-    COMPREPLY+=( $( ${python_exec} -c "import sys; from dnf.cli import completion_helper as ch; ch.main(sys.argv[1:])" "$@" -d 0 -q -C 2>/dev/null ) )
+    if [[ "$( readlink /usr/bin/dnf )" == "dnf-2" ]]; then
+        __dnf_python_exec="/usr/bin/python2"
+    else
+        if [ -x /usr/libexec/system-python ]; then
+            __dnf_python_exec="/usr/libexec/system-python"
+        else
+            __dnf_python_exec="/usr/bin/python3"
+        fi
+    fi
 }
 
-_is_path()
+_dnf_commands_helper()
+{
+    echo "$( ${__dnf_python_exec} -c "import sys; from dnf.cli import completion_helper as ch; ch.main(sys.argv[1:])" "$@" -d 0 -q -C 2>/dev/null )"
+}
+
+_dnf_is_path()
 {
     if [[ "$1" == \.* ]] || [[ "$1" == \/* ]] || [[ "$1" == ~* ]]; then
         return 0
@@ -34,7 +82,7 @@ _is_path()
     fi
 }
 
-_modified_sack()
+_dnf_modified_sack()
 {
     local arr=( "${!1}" )
     for i in "${arr[@]}"; do
@@ -45,36 +93,30 @@ _modified_sack()
     return 1
 }
 
-_dnf()
+_dnf_get_first_command()
 {
-    if [[ "$( readlink /usr/bin/dnf )" == "dnf-2" ]]; then
-        local python_exec="/usr/bin/python2"
-    else
-	if [ -x /usr/libexec/system-python ]; then
-	    local python_exec="/usr/libexec/system-python"
-	else
-	    local python_exec="/usr/bin/python3"
-	fi
-    fi
+    local cmd i
 
-    local cur prev words cword
-    _init_completion -s || return
-
-    local commandix command
-    for (( commandix=1; commandix < cword; commandix++ )); do
-        if [[ ${words[commandix]} != -* ]]; then
-            if [[ ${words[commandix-1]} != -* ]]; then
-                command=${words[commandix]}
-            fi
+    for (( i=1; i < ${#COMP_WORDS[@]}; i++ )); do
+        if [[ "$1"  == *${COMP_WORDS[i]}* ]]; then
+            cmd=${COMP_WORDS[i]}
             break
         fi
     done
 
-    # How many'th non-option arg (1-based) for $command are we completing?
-    local i nth=1
-    for (( i=commandix+1; i < cword; i++ )); do
-        [[ ${words[i]} == -* ]] || (( nth++ ))
-    done
+    echo "$cmd"
+}
+
+_dnf()
+{
+    _dnf_set_python_exec
+
+    local complete_commands complete_options extra_options command cmd_list
+    local cur prev words cword split
+    _init_completion -s || return
+
+    cmd_list="$( _dnf_commands_helper "_cmds" "" )"
+    command="$( _dnf_get_first_command "$cmd_list" )"
 
     case $prev in
         -h|--help|--version)
@@ -82,15 +124,19 @@ _dnf()
             ;;
         -d|--debuglevel|-e|--errorlevel)
             COMPREPLY=( $( compgen -W '0 1 2 3 4 5 6 7 8 9 10' -- "$cur" ) )
+            return
             ;;
         --installroot)
             COMPREPLY=( $( compgen -d -- "$cur" ) )
+            return
             ;;
         --enablerepo)
-            _dnf_helper repolist disabled "$cur"
+            COMPREPLY=( $( compgen -W "$( _dnf_commands_helper repolist disabled "$cur" )" -- "$cur" ) )
+            return
             ;;
         --disablerepo)
-            _dnf_helper repolist enabled "$cur"
+            COMPREPLY=( $( compgen -W "$( _dnf_commands_helper repolist enabled "$cur" )" -- "$cur" ) )
+            return
             ;;
         *)
             ;;
@@ -98,62 +144,68 @@ _dnf()
 
     $split && return
 
-    local comp
     local cache_file="/var/cache/dnf/packages.db"
     local sqlite3="sqlite3 -batch -init /dev/null"
-    if [[ $command ]]; then
 
-        case $command in
-            install|update|upgrade|reinstall|info)
-                if ! _is_path "$cur"; then
-                    if [ -r $cache_file ] && ! _modified_sack words[@]; then
-                        COMPREPLY=( $( compgen -W '$( $sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" 2>/dev/null )' ) )
-                    else
-                        _dnf_helper $command "$cur"
-                    fi
+    case $command in
+        install|update|upgrade|reinstall|info)
+            if ! _dnf_is_path "$cur"; then
+                if [ -r $cache_file ] && ! $( _dnf_modified_sack words[@] ); then
+                    COMPREPLY=( $( compgen -W '$( $sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" 2>/dev/null )' ) )
+                else
+                    COMPREPLY=( $( compgen -W "$( _dnf_commands_helper $command "$cur" )" -- "$cur" ) )
                 fi
-                ext='@(rpm)'
-                ;;
-            erase|remove|downgrade)
-                if ! _is_path "$cur"; then
-                    if [ -r $cache_file ] && ! _modified_sack words[@]; then
-                        COMPREPLY=( $( compgen -W '$( $sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" 2>/dev/null )' ) )
-                    else
-                        _dnf_helper $command "$cur"
-                    fi
-                fi
-                [[ "$command" == downgrade ]] && ext='@(rpm)' || ext='NULL'
-                ;;
-            list|clean|history)
-                _dnf_helper $command "$prev" "$cur"
-                ext='NULL'
-                ;;
-            help)
-                case $nth in
-                    1)
-                        _dnf_helper _cmds "$cur"
-                        ;;
-                esac
-                ext='NULL'
-                ;;
-            *)
-                ext='NULL'
-                ;;
-        esac
-        if [[ ${#COMPREPLY[@]} -eq 0 ]]; then
-            if [[ "$ext" != "NULL" ]]; then
-                _filedir $ext
             fi
+            ext='@(rpm)'
+            ;;
+        erase|remove|downgrade)
+            if ! _dnf_is_path "$cur"; then
+                if [ -r $cache_file ] && ! $( _dnf_modified_sack words[@] ); then
+                    COMPREPLY=( $( compgen -W '$( $sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" 2>/dev/null )' ) )
+                else
+                    COMPREPLY=( $( compgen -W "$( _dnf_commands_helper $command "$cur" )" -- "$cur" ) )
+                fi
+            fi
+            [[ "$command" == downgrade ]] && ext='@(rpm)' || ext='NULL'
+            ;;
+        list|clean|history)
+            complete_commands="$( _dnf_commands_helper $command "$prev" "$cur" )"
+            ext='NULL'
+            ;;
+        help)
+            [[ $cword -eq 3 ]] && return
+            complete_commands="$( _dnf_commands_helper _cmds "$cur" )"
+            ext='NULL'
+            ;;
+        *)
+            ext='NULL'
+            ;;
+    esac
+
+    if [[ ${#COMPREPLY[@]} -eq 0 ]]; then
+        if [[ "$ext" != "NULL" ]]; then
+            _filedir $ext
+            return
         fi
-        return
-
     fi
 
-    if [[ $cur == -* ]]; then
-        COMPREPLY=( $( compgen -W '$( _parse_help "$1" )' -- "$cur" ) )
-        [[ $COMPREPLY == *= ]] && compopt -o nospace
-    elif [[ ! $command ]]; then
-        [[ $prev != -* ]] && _dnf_helper _cmds "$cur"
-    fi
-} &&
+    case $cur in
+    -*)
+        complete_options="$__dnf_main_options $extra_options"
+        COMPREPLY=( $(compgen -W "$complete_options" -- "$cur" ))
+        ;;
+    *)
+        if [[ $cur == $command ]]; then
+            complete_commands="$cmd_list"
+        fi
+
+        if [[ "$complete_commands" ]]; then
+            COMPREPLY=( $(compgen -W "$complete_commands" -- "$cur" ))
+        fi
+    esac
+
+    [[ $COMPREPLY == *= ]] && compopt -o nospace
+    return 0
+}
+
 complete -F _dnf -o filenames dnf dnf-2 dnf-3
