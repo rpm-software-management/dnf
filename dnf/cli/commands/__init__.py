@@ -816,30 +816,30 @@ class HistoryCommand(Command):
     aliases = ('history',)
     summary = _('display, or use, the transaction history')
 
-    tids = set()
-    merged_tids = set()
+    transact_ids = set()
+    merged_transact_ids = set()
 
     @staticmethod
     def set_argparser(parser):
         cmds = ['list', 'info', 'redo', 'undo', 'rollback', 'userinstalled']
-        parser.add_argument('tid', nargs='*',
+        parser.add_argument('transactions', nargs='*',
                             choices=cmds, default=cmds[0],
                             action=OptionParser.PkgNarrowCallback,
                             metavar="[%s]" % "|".join(cmds))
 
     def configure(self):
-        require_one = False
-        require_one_msg = _("Found more than one transaction ID.\n"
-                            "'{}' requires one transaction ID or package name."
-                            ).format(self.opts.tid_action)
+        require_one_transact_id = False
+        require_one_transact_id_msg = _("Found more than one transaction ID.\n"
+                                        "'{}' requires one transaction ID or package name."
+                                        ).format(self.opts.transactions_action)
         demands = self.cli.demands
-        if self.opts.tid_action in ['redo', 'undo', 'rollback']:
-            require_one = True
-            if not self.opts.tid:
+        if self.opts.transactions_action in ['redo', 'undo', 'rollback']:
+            require_one_transact_id = True
+            if not self.opts.transactions:
                 logger.critical(_('No transaction ID or package name given.'))
                 raise dnf.cli.CliError
-            elif len(self.opts.tid) > 1:
-                logger.critical(require_one_msg)
+            elif len(self.opts.transactions) > 1:
+                logger.critical(require_one_transact_id_msg)
                 raise dnf.cli.CliError
             demands.available_repos = True
             _checkGPGKey(self.base, self.cli)
@@ -850,18 +850,20 @@ class HistoryCommand(Command):
         if not os.access(self.base.history._db_file, os.R_OK):
             logger.critical(_("You don't have access to the history DB."))
             raise dnf.cli.CliError
-        self.tids = self._convert_tids(self.merged_tids, require_one, require_one_msg)
+        self.transact_ids = self._args2transact_ids(self.merged_transact_ids,
+                                                    require_one_transact_id,
+                                                    require_one_transact_id_msg)
 
     def get_error_output(self, error):
         """Get suggestions for resolving the given error."""
         if isinstance(error, dnf.exceptions.TransactionCheckError):
-            if self.opts.tid_action == 'undo':
-                id_, = self.opts.tid
+            if self.opts.transactions_action == 'undo':
+                id_, = self.opts.transactions
                 return (_('Cannot undo transaction %s, doing so would result '
                           'in an inconsistent package database.') % id_,)
-            elif self.opts.tid_action == 'rollback':
-                id_, = (self.opts.tid if self.opts.tid[0] != 'force'
-                        else self.opts.tid[1:])
+            elif self.opts.transactions_action == 'rollback':
+                id_, = (self.opts.transactions if self.opts.transactions[0] != 'force'
+                        else self.opts.transactions[1:])
                 return (_('Cannot rollback transaction %s, doing so would '
                           'result in an inconsistent package database.') % id_,)
 
@@ -909,24 +911,25 @@ class HistoryCommand(Command):
         pkgs = tuple(self.base.iter_userinstalled())
         return self.output.listPkgs(pkgs, 'Packages installed by user', 'nevra')
 
-    def _convert_tids(self, merged=set(), require_one=False, require_one_msg=''):
+    def _args2transact_ids(self, merged_ids=set(),
+                           require_one_transact_id=False, require_one_transact_id_msg=''):
         """Convert commandline arguments to transaction ids"""
 
-        def str2tid(s):
+        def str2trans_id(s):
             if s == 'last':
                 s = '0'
             elif s.startswith('last-'):
                 s = s[4:]
-            tid = int(s)
-            if tid <= 0:
-                tid += self.output.history.last().tid
-            return tid
+            trans_id = int(s)
+            if trans_id <= 0:
+                trans_id += self.output.history.last().tid
+            return trans_id
 
-        tids = set()
-        for t in self.opts.tid:
+        trans_ids = set()
+        for t in self.opts.transactions:
             if '..' in t:
                 try:
-                    btid, etid = t.split('..', 2)
+                    begin_trans_id, end_trans_id = t.split('..', 2)
                 except ValueError:
                     logger.critical(
                         _("Invalid transaction ID range definition '{}'.\n"
@@ -934,57 +937,57 @@ class HistoryCommand(Command):
                           ).format(t))
                     raise dnf.cli.CliError
                 cant_convert_msg = "Can't convert '{}' to transaction ID.\n" \
-                                   "Use '<integer>' or 'last' or 'last-<positive-integer>'."
+                                   "Use '<integer>', 'last', 'last-<positive-integer>'."
                 try:
-                    btid = str2tid(btid)
+                    begin_trans_id = str2trans_id(begin_trans_id)
                 except ValueError:
-                    logger.critical(_(cant_convert_msg).format(btid))
+                    logger.critical(_(cant_convert_msg).format(begin_trans_id))
                     raise dnf.cli.CliError
                 try:
-                    etid = str2tid(etid)
+                    end_trans_id = str2trans_id(end_trans_id)
                 except ValueError:
-                    logger.critical(_(cant_convert_msg).format(etid))
+                    logger.critical(_(cant_convert_msg).format(end_trans_id))
                     raise dnf.cli.CliError
-                if require_one:
-                    if btid != etid:
-                        logger.critical(require_one_msg)
+                if require_one_transact_id and begin_trans_id != end_trans_id:
+                        logger.critical(require_one_transact_id_msg)
                         raise dnf.cli.CliError
-                if btid > etid:
-                    btid, etid = etid, btid
-                merged.add((btid, etid))
-                tids.update(range(btid, etid + 1))
+                if begin_trans_id > end_trans_id:
+                    begin_trans_id, end_trans_id = end_trans_id, begin_trans_id
+                merged_ids.add((begin_trans_id, end_trans_id))
+                trans_ids.update(range(begin_trans_id, end_trans_id + 1))
             else:
                 try:
-                    tids.add(str2tid(t))
+                    trans_ids.add(str2trans_id(t))
                 except ValueError:
                     # not a transaction id, assume it's package name
-                    tids_from_pkgname = self.output.history.search([t])
-                    if tids_from_pkgname:
-                        tids.update(tids_from_pkgname)
+                    transact_ids_from_pkgname = self.output.history.search([t])
+                    if transact_ids_from_pkgname:
+                        trans_ids.update(transact_ids_from_pkgname)
                     else:
                         msg = _("No transaction which manipulates package '{}' was found."
                                 ).format(t)
-                        if require_one:
+                        if require_one_transact_id:
                             logger.critical(msg)
                             raise dnf.cli.CliError
                         else:
                             logger.info(msg)
 
-        return sorted(tids, reverse=True)
+        return sorted(trans_ids)
 
     def run(self):
-        vcmd = self.opts.tid_action
+        vcmd = self.opts.transactions_action
 
         if vcmd == 'list':
-            ret = self.output.historyListCmd(self.tids)
+            ret = self.output.historyListCmd(self.transact_ids)
         elif vcmd == 'info':
-            ret = self.output.historyInfoCmd(self.tids, self.opts.tid, self.merged_tids)
+            ret = self.output.historyInfoCmd(self.transact_ids, self.opts.transactions,
+                                             self.merged_transact_ids)
         elif vcmd == 'undo':
-            ret = self._hcmd_undo(self.tids)
+            ret = self._hcmd_undo(self.transact_ids)
         elif vcmd == 'redo':
-            ret = self._hcmd_redo(self.tids)
+            ret = self._hcmd_redo(self.transact_ids)
         elif vcmd == 'rollback':
-            ret = self._hcmd_rollback(self.tids)
+            ret = self._hcmd_rollback(self.transact_ids)
         elif vcmd == 'userinstalled':
             ret = self._hcmd_userinstalled()
 
