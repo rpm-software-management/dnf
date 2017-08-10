@@ -148,7 +148,7 @@ _dnf()
     local sqlite3="sqlite3 -batch -init /dev/null"
 
     case $command in
-        install|update|upgrade|reinstall|info)
+        install|update|upgrade|info)
             if ! _dnf_is_path "$cur"; then
                 if [ -r $cache_file ] && ! $( _dnf_modified_sack words[@] ); then
                     COMPREPLY=( $( compgen -W '$( $sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" 2>/dev/null )' ) )
@@ -158,7 +158,7 @@ _dnf()
             fi
             ext='@(rpm)'
             ;;
-        erase|remove|downgrade)
+        erase|reinstall|remove|downgrade)
             if ! _dnf_is_path "$cur"; then
                 if [ -r $cache_file ] && ! $( _dnf_modified_sack words[@] ); then
                     COMPREPLY=( $( compgen -W '$( $sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" 2>/dev/null )' ) )

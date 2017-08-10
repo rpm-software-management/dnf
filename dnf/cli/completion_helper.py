@@ -71,8 +71,8 @@ class ReinstallCompletionCommand(dnf.cli.commands.reinstall.ReinstallCommand):
         self.cli.demands.sack_activation = True
 
     def run(self):
-        installed =  listpkg_to_setstr(ListCompletionCommand.installed(self.base, self.opts.packages))
-        available = listpkg_to_setstr(ListCompletionCommand.available(self.base, self.opts.packages))
+        installed =  listpkg_to_setstr(ListCompletionCommand.installed(self.base, self.opts.pkg_specs))
+        available = listpkg_to_setstr(ListCompletionCommand.available(self.base, self.opts.pkg_specs))
         for pkg in (installed & available):
             print(str(pkg))
 
@@ -83,15 +83,16 @@ class ListCompletionCommand(dnf.cli.commands.ListCommand):
     def run(self):
         subcmds = self.pkgnarrows
         args = self.opts.packages
-        if args[0] not in subcmds:
+        action = self.opts.packages_action
+        if len(args) > 1 and args[1] not in subcmds:
             print("\n".join(filter_list_by_kw(args[1], subcmds)))
         else:
-            if args[0] == "installed":
-                pkgs = self.installed(self.base, args[1])
-            elif args[0] == "available":
-                pkgs = self.available(self.base, args[1])
-            elif args[0] == "updates":
-                pkgs = self.updates(self.base, args[1])
+            if action == "installed":
+                pkgs = self.installed(self.base, args)
+            elif action == "available":
+                pkgs = self.available(self.base, args)
+            elif action == "updates":
+                pkgs = self.updates(self.base, args)
             else:
                 return
             for pkg in pkgs:
@@ -99,15 +100,15 @@ class ListCompletionCommand(dnf.cli.commands.ListCommand):
 
     @staticmethod
     def installed(base, arg):
-        return base.sack.query().installed().filterm(name__glob="{}*".format(arg))
+        return base.sack.query().installed().filterm(name__glob="{}*".format(arg[0]))
 
     @staticmethod
     def available(base, arg):
-        return base.sack.query().available().filterm(name__glob="{}*".format(arg))
+        return base.sack.query().available().filterm(name__glob="{}*".format(arg[0]))
 
     @staticmethod
     def updates(base, arg):
-        return base.check_updates(["{}*".format(arg)], print_=False)
+        return base.check_updates(["{}*".format(arg[0])], print_=False)
 
 
 class RepoListCompletionCommand(dnf.cli.commands.repolist.RepoListCommand):
@@ -146,7 +147,7 @@ class DowngradeCompletionCommand(dnf.cli.commands.downgrade.DowngradeCommand):
         self.cli.demands.sack_activation = True
 
     def run(self):
-        for pkg in ListCompletionCommand.available(self.base, self.opts.package).downgrades():
+        for pkg in ListCompletionCommand.available(self.base, self.opts.pkg_specs).downgrades():
             print(str(pkg))
 
 
