@@ -54,6 +54,8 @@ __dnf_main_options="
     --verbose --version
 "
 
+__dnf_history_subcmds="list info redo undo rollback userinstalled"
+
 __dnf_python_exec=
 _dnf_set_python_exec()
 {
@@ -168,8 +170,12 @@ _dnf()
             fi
             [[ "$command" == downgrade ]] && ext='@(rpm)' || ext='NULL'
             ;;
-        list|clean|history)
+        list|clean)
             complete_commands="$( _dnf_commands_helper $command "$prev" "$cur" )"
+            ext='NULL'
+           ;;
+        history)
+            complete_commands="$__dnf_history_subcmds"
             ext='NULL'
             ;;
         help)
