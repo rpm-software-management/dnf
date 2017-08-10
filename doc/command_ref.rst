@@ -555,20 +555,20 @@ transactions and act according to this information (assuming the
 
 ``dnf history redo <transaction-spec>|<package-name-spec>``
     Repeat the specified transaction. Uses the last transaction (with highest ID)
-    if more than one transactions for giver <package-name-spec> is found. If it is not possible
-    to redo any operation due to the current state of RPMDB, do not redo any operation.
+    if more than one transaction for given <package-name-spec> is found. If it is not possible
+    to redo some operation due to the current state of RPMDB, it will not redo the transaction.
 
 ``dnf history rollback <transaction-spec>|<package-name-spec>``
     Undo all transactions performed after the specified transaction. Uses the last transaction
-    (with highest ID) if more than one transactions for giver <package-name-spec> is found.
-    If it is not possible to undo any transaction due to the current state of RPMDB, do not undo
+    (with highest ID) if more than one transaction for given <package-name-spec> is found.
+    If it is not possible to undo some transaction due to the current state of RPMDB, it will not undo
     any transaction.
 
 ``dnf history undo <transaction-spec>|<package-name-spec>``
     Perform the opposite operation to all operations performed in the specified transaction.
-    Uses the last transaction (with highest ID) if more than one transactions for giver
-    <package-name-spec> is found. If it is not possible to undo any operation due to
-    the current state of RPMDB, do not undo any operation.
+    Uses the last transaction (with highest ID) if more than one transaction for given
+    <package-name-spec> is found. If it is not possible to undo some operation due to
+    the current state of RPMDB, it will not undo the transaction.
 
 ``dnf history userinstalled``
     It will show all installonly packages, packages installed outside of DNF and packages not
