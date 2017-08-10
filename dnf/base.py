@@ -1494,6 +1494,20 @@ class Base(object):
                 ret |= enum
         return ret
 
+    def group_installed(self, grp_id):
+        # :api
+        """Find out whether a group is installed by its identifier
+        :param grp_id: group identifier
+        :return: True if group is installed
+        """
+        if not self._group_persistor:
+            self._group_persistor = self._activate_group_persistor()
+
+        p_group = self._group_persistor.group(grp_id)
+        if p_group:
+            return p_group.installed
+        return False
+
     def group_install(self, grp_id, pkg_types, exclude=None, strict=True):
         # :api
         """Installs packages of selected group
