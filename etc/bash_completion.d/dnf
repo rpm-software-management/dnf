@@ -54,7 +54,55 @@ __dnf_main_options="
     --verbose --version
 "
 
-__dnf_history_subcmds="list info redo undo rollback userinstalled"
+__dnf_history_subcmds="info list redo rollback undo userinstalled"
+
+__dnf_secseverity_subcmds='Critical Important Low Moderate'
+
+__dnf_clean_subcmds="all dbcache expire-cache metadata packages"
+
+__dnf_repoquery_subcmds="
+    -a -f -i -l -s
+    --all --arch
+    --archlist --available
+    --alldeps
+    --conflicts
+    --deplist --duplicates
+    --exactdeps --extras
+    --envra --enhances
+    --file
+    --groupmember
+    --installed --installonly
+    --info
+    --latest-limit --list
+    --location
+    --nevra  --nvr
+    --provides
+    --qf --queryformat
+    --querytags
+    --recent --requires-pre
+    --recommends --requires
+    --recursive --resolve
+    --source --suggests
+    --supplements --show-duplicates
+    --srpm
+    --tree
+    --upgrades --unneeded
+    --unsatisfied --userinstalled
+    --whatconflicts --whatobsoletes
+    --whatprovides --whatrequires
+    --whatrecommends --whatenhances
+    --whatsuggests --whatsupplements
+"
+
+__dnf_repopkgs_subcmds="
+    check-update
+    info install
+    list
+    move-to
+    remove-or-reinstall remove-or-distro-sync
+    reinstall reinstall-old
+    upgrade upgrade-to
+"
 
 __dnf_python_exec=
 _dnf_set_python_exec()
@@ -84,15 +132,27 @@ _dnf_is_path()
     fi
 }
 
-_dnf_modified_sack()
+_dnf_show_packages()
 {
-    local arr=( "${!1}" )
-    for i in "${arr[@]}"; do
-        if [[ "$i" == --installroot* ]] || [[ "$i" == --enablerepo* ]] || [[ "$i" == --disablerepo* ]]; then
-            return 0
-        fi
-    done
-    return 1
+    local args cmd=$1
+    _count_args
+    # do not print packages if command wasnt chosen yet
+    # eg.: dnf inTAB
+    [[ "$args" -eq 1 ]] && return
+
+    # return when "-" follows command
+    # eg.: dnf up -
+    [[ "$cur" == -* ]] && return
+
+    shift
+
+    if ! _dnf_is_path "$cur"; then
+        COMPREPLY+=( $( _dnf_commands_helper $cmd "$@" "$cur" ) )
+    fi
+
+    [[ $COMPREPLY ]] && return
+
+    COMPREPLY+=( $(compgen -o default -f -X "!*.@(rpm)" -- "$cur" ) )
 }
 
 _dnf_get_first_command()
@@ -121,79 +181,184 @@ _dnf()
     command="$( _dnf_get_first_command "$cmd_list" )"
 
     case $prev in
-        -h|--help|--version)
-            return
+    --version)
+       return ;;
+
+    -h|--help|--help-cmd)
+        [[ $cword -eq 3 ]] && return ;;
+
+    -d|--debuglevel|-e|--errorlevel)
+        COMPREPLY=( $( compgen -W '0 1 2 3 4 5 6 7 8 9 10' -- "$cur" ) )
+        return
+        ;;
+
+    --installroot)
+        _filedir -d
+        return ;;
+
+    --enablerepo)
+        COMPREPLY=( $(compgen -W "$( _dnf_commands_helper repolist disabled "$cur" )" -- "$cur") )
+        return ;;
+
+    --disablerepo)
+        COMPREPLY=( $(compgen -W "$( _dnf_commands_helper repolist enabled "$cur" )" -- "$cur") )
+        return ;;
+
+    --color)
+        COMPREPLY=( $(compgen -W "yes no true false 0 1" -- "$cur" ) )
+        return ;;
+
+    --destdir|--downloaddir)
+        _filedir -d
+        return ;;
+
+    --sec*severity)
+        COMPREPLY=( $( compgen -W "$__dnf_secseverity_subcmds" -- "$cur" ) )
+        return ;;
+    *)
+        ;;
+    esac
+
+    complete_commands=
+
+    case "$command" in
+    autoremove|autoremove-n*)
+        _dnf_show_packages list installed
+        ;;
+
+    check)
+        extra_options="--all --dependencies --duplicates --obsoleted --provides"
+        complete_commands="all dependencies duplicates obsoleted provides"
+        ;;
+
+    check-update|check-upgrade)
+        _dnf_show_packages list updates
+        ;;
+
+    clean)
+        complete_commands="$__dnf_clean_subcmds"
+        ;;
+
+    dup|dist-upgrade|dsync|distro*sync|distribution-synchronization)
+        _dnf_show_packages list installed
+        ;;
+
+    dg|downgrade)
+        _dnf_show_packages $command
+        ;;
+
+    group|groups|grouperase|groupinfo|groupinstall|grouplist|groupremove|groupupdate)
+        extra_options="--with-optional --hidden --installed --available"
+        ;;
+
+    help)
+        [[ $cword -eq 3 ]] && return 0
+        complete_commands="$cmd_list"
+        ;;
+
+    history)
+        complete_commands="$__dnf_history_subcmds"
+        ;;
+
+    info|list)
+        case "$prev" in
+            --installed|installed)
+            _dnf_show_packages list installed ;;
+
+            --available|available)
+            _dnf_show_packages list available ;;
+
+            --updates|--upgrades|updates|upgrades)
+            _dnf_show_packages list upgrades ;;
+
+            *)
+            complete_commands="all available installed extras updates
+                               upgrades autoremove recent"
+        esac
+
+        extra_options="--all --available --installed --extras --updates
+                           --upgrades --autoremove --recent"
+        ;;
+
+    info-*|list-*|updateinfo|summary-updateinfo)
+        extra_options="--summary --list --info"
+        complete_commands="summary list info"
+        ;;
+
+    in|install*|localinstall)
+        _dnf_show_packages $command
+        ;;
+
+    mark)
+        _dnf_show_packages list installed
+        ;;
+
+    mc|ref|makecache|refresh)
+        [[ "$prev" == *"timer" ]] && return
+        extra_options="--timer"
+        complete_commands="timer"
+        ;;
+
+    provides)
+        ;;
+
+    ri|rei|reinstall)
+        _dnf_show_packages $command
+        ;;
+
+    rm|remove*|erase*)
+        _dnf_show_packages $command
+        extra_options="--oldinstallonly --duplicates --duplicated"
+        ;;
+
+    repoinfo|repolist)
+        extra_options="--all --enabled --disabled"
+        case $prev in
+        enabled|--enabled)
+            complete_commands="$( _dnf_commands_helper $command enabled "$cur" )"
             ;;
-        -d|--debuglevel|-e|--errorlevel)
-            COMPREPLY=( $( compgen -W '0 1 2 3 4 5 6 7 8 9 10' -- "$cur" ) )
-            return
+        disabled|--disabled)
+            complete_commands="$( _dnf_commands_helper $command disabled "$cur" )"
             ;;
-        --installroot)
-            COMPREPLY=( $( compgen -d -- "$cur" ) )
-            return
-            ;;
-        --enablerepo)
-            COMPREPLY=( $( compgen -W "$( _dnf_commands_helper repolist disabled "$cur" )" -- "$cur" ) )
-            return
-            ;;
-        --disablerepo)
-            COMPREPLY=( $( compgen -W "$( _dnf_commands_helper repolist enabled "$cur" )" -- "$cur" ) )
-            return
-            ;;
-        *)
-            ;;
+        all|--all|*)
+            complete_commands="$( _dnf_commands_helper $command all "$cur" )"
+        esac
+        ;;
+
+    repoquery*)
+        extra_options="$__dnf_repoquery_subcmds"
+        ;;
+
+    repo*-pkgs|repo*-packages)
+        complete_commands="$__dnf_repopkgs_subcmds"
+        ;;
+
+    se|search)
+        [[ "$prev" == *"all" ]] && return
+        extra_options="--all"
+        complete_commands="all"
+        ;;
+
+    sh|shell) ;;
+
+    swap) ;;
+
+    um|u-m|upgrade|upgrade-n*)
+        _dnf_show_packages $command
+        ;;
+
+    up|up-min|update|update-n*)
+        _dnf_show_packages $command
+        ;;
+
+    whatprovides) ;;
+
+    *)
+        complete_commands="$cmd_list"
+        ;;
     esac
 
     $split && return
-
-    local cache_file="/var/cache/dnf/packages.db"
-    local sqlite3="sqlite3 -batch -init /dev/null"
-
-    case $command in
-        install|update|upgrade|info)
-            if ! _dnf_is_path "$cur"; then
-                if [ -r $cache_file ] && ! $( _dnf_modified_sack words[@] ); then
-                    COMPREPLY=( $( compgen -W '$( $sqlite3 $cache_file "select pkg from available WHERE pkg LIKE \"$cur%\"" 2>/dev/null )' ) )
-                else
-                    COMPREPLY=( $( compgen -W "$( _dnf_commands_helper $command "$cur" )" -- "$cur" ) )
-                fi
-            fi
-            ext='@(rpm)'
-            ;;
-        erase|reinstall|remove|downgrade)
-            if ! _dnf_is_path "$cur"; then
-                if [ -r $cache_file ] && ! $( _dnf_modified_sack words[@] ); then
-                    COMPREPLY=( $( compgen -W '$( $sqlite3 $cache_file "select pkg from installed WHERE pkg LIKE \"$cur%\"" 2>/dev/null )' ) )
-                else
-                    COMPREPLY=( $( compgen -W "$( _dnf_commands_helper $command "$cur" )" -- "$cur" ) )
-                fi
-            fi
-            [[ "$command" == downgrade ]] && ext='@(rpm)' || ext='NULL'
-            ;;
-        list|clean)
-            complete_commands="$( _dnf_commands_helper $command "$prev" "$cur" )"
-            ext='NULL'
-           ;;
-        history)
-            complete_commands="$__dnf_history_subcmds"
-            ext='NULL'
-            ;;
-        help)
-            [[ $cword -eq 3 ]] && return
-            complete_commands="$( _dnf_commands_helper _cmds "$cur" )"
-            ext='NULL'
-            ;;
-        *)
-            ext='NULL'
-            ;;
-    esac
-
-    if [[ ${#COMPREPLY[@]} -eq 0 ]]; then
-        if [[ "$ext" != "NULL" ]]; then
-            _filedir $ext
-            return
-        fi
-    fi
 
     case $cur in
     -*)
@@ -214,4 +379,4 @@ _dnf()
     return 0
 }
 
-complete -F _dnf -o filenames dnf dnf-2 dnf-3
+complete -F _dnf dnf dnf-2 dnf-3
