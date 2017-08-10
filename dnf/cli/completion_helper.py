@@ -116,11 +116,13 @@ class RepoListCompletionCommand(dnf.cli.commands.repolist.RepoListCommand):
         super(RepoListCompletionCommand, self).__init__(args)
 
     def run(self):
-        args = self.opts.extcmds
-        if args[0] == "enabled":
-            print("\n".join(filter_list_by_kw(args[1], [r.id for r in self.base.repos.iter_enabled()])))
-        elif args[0] == "disabled":
-            print("\n".join(filter_list_by_kw(args[1], [r.id for r in self.base.repos.all() if not r.enabled])))
+        args = self.opts
+        if args.repos_action == "enabled":
+            print("\n".join(filter_list_by_kw(args.repos[0], [r.id for r in self.base.repos.iter_enabled()])))
+        elif args.repos_action == "disabled":
+            print("\n".join(filter_list_by_kw(args.repos[0], [r.id for r in self.base.repos.all() if not r.enabled])))
+        elif args.repos_action == "all":
+            print("\n".join(filter_list_by_kw(args.repos[0], [r.id for r in self.base.repos.all()])))
 
 
 class UpgradeCompletionCommand(dnf.cli.commands.upgrade.UpgradeCommand):
