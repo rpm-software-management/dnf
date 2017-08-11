@@ -1744,37 +1744,42 @@ class Base(object):
 
     def upgrade(self, pkg_spec, reponame=None):
         # :api
-        wildcard = True if dnf.util.is_glob_pattern(pkg_spec) else False
         subj = dnf.subject.Subject(pkg_spec)
         solution = subj._get_nevra_solution(self.sack)
         q = solution["query"]
         if q:
-            installed = self.sack.query().installed()
-            pkg_name = q[0].name
-            if not installed.filter(name=pkg_name):
-                # wildcard shouldn't print not installed packages
-                if not wildcard:
-                    if q.available():
-                        msg = _('Package %s available, but not installed.')
-                    else:
-                        msg = _("Package %s not installed, cannot update it.")
+            wildcard = dnf.util.is_glob_pattern(pkg_spec)
+            # wildcard shouldn't print not installed packages
+            # only solution with nevra.name provide packages with same name
+            if not wildcard and solution['nevra'] and solution['nevra'].name:
+                installed = self.sack.query().installed()
+                pkg_name = q[0].name
+                installed = installed.filter(name=pkg_name).apply()
+                if not installed:
+                    msg = _('Package %s available, but not installed.')
                     logger.warning(msg, pkg_name)
+                    raise dnf.exceptions.PackagesNotInstalledError(
+                        _('No match for argument: %s') % pkg_spec, pkg_spec)
+                if solution['nevra'].arch and not dnf.util.is_glob_pattern(solution['nevra'].arch):
+                    if not installed.filter(arch=solution['nevra'].arch):
+                        msg = _('Package %s available, but installed for different architecture.')
+                        logger.warning(msg, "{}.{}".format(pkg_name, solution['nevra'].arch))
+
+            if solution['nevra'] and solution['nevra']._has_just_name() and self.conf.obsoletes:
+                obsoletes = self.sack.query().filter(obsoletes=q.installed())
+                q = q.upgrades()
+                # add obsoletes into transaction
+                q = q.union(obsoletes)
             else:
-                if solution['nevra'] and solution['nevra']._has_just_name() and self.conf.obsoletes:
-                    obsoletes = self.sack.query().filter(obsoletes=q.installed())
-                    q = q.upgrades()
-                    # add obsoletes into transaction
-                    q = q.union(obsoletes)
-                else:
-                    q = q.upgrades()
-                if reponame is not None:
-                    q = q.filter(reponame=reponame)
-                q = self._merge_update_filters(q, pkg_spec=pkg_spec)
-                if q:
-                    sltr = dnf.selector.Selector(self.sack)
-                    sltr.set(pkg=q)
-                    self._goal.upgrade(select=sltr)
-                return 1
+                q = q.upgrades()
+            if reponame is not None:
+                q = q.filter(reponame=reponame)
+            q = self._merge_update_filters(q, pkg_spec=pkg_spec)
+            if q:
+                sltr = dnf.selector.Selector(self.sack)
+                sltr.set(pkg=q)
+                self._goal.upgrade(select=sltr)
+            return 1
 
         raise dnf.exceptions.MarkingError(_('No match for argument: %s') % pkg_spec, pkg_spec)
 
@@ -2236,10 +2241,10 @@ class Base(object):
 
     def _report_icase_hint(self, pkg_spec):
         subj = dnf.subject.Subject(pkg_spec, ignore_case=True)
-        q = subj.get_best_query(self.sack, with_nevra=True, with_provides=False,
-                                with_filenames=False)
-        if q:
-            logger.info(_("  * Maybe you meant: {}").format(q[0].name))
+        solution = subj._get_nevra_solution(self.sack, with_nevra=True, with_provides=False,
+                                            with_filenames=False)
+        if solution['query'] and solution['nevra'] and solution['nevra'].name:
+            logger.info(_("  * Maybe you meant: {}").format(solution['query'][0].name))
 
     def _select_remote_pkgs(self, install_pkgs):
         """ Check checksum of packages from local repositories and returns list packages from remote
