@@ -97,5 +97,9 @@ def _build_sack(base):
 
 def _rpmdb_sack(base):
     sack = _build_sack(base)
-    sack.load_system_repo()
+    try:
+        # It can fail if rpmDB is not present
+        sack.load_system_repo(build_cache=False)
+    except IOError:
+        pass
     return sack
