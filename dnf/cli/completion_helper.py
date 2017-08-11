@@ -55,8 +55,10 @@ class InstallCompletionCommand(dnf.cli.commands.install.InstallCommand):
         self.cli.demands.sack_activation = True
 
     def run(self):
-        installed =  listpkg_to_setstr(ListCompletionCommand.installed(self.base, self.opts.pkg_specs))
-        available = listpkg_to_setstr(ListCompletionCommand.available(self.base, self.opts.pkg_specs))
+        installed = listpkg_to_setstr(ListCompletionCommand.installed(self.base,
+                                                                      self.opts.pkg_specs))
+        available = listpkg_to_setstr(ListCompletionCommand.available(self.base,
+                                                                      self.opts.pkg_specs))
         for pkg in (available - installed):
             print(str(pkg))
 
@@ -71,8 +73,10 @@ class ReinstallCompletionCommand(dnf.cli.commands.reinstall.ReinstallCommand):
         self.cli.demands.sack_activation = True
 
     def run(self):
-        installed =  listpkg_to_setstr(ListCompletionCommand.installed(self.base, self.opts.pkg_specs))
-        available = listpkg_to_setstr(ListCompletionCommand.available(self.base, self.opts.pkg_specs))
+        installed = listpkg_to_setstr(ListCompletionCommand.installed(self.base,
+                                                                      self.opts.pkg_specs))
+        available = listpkg_to_setstr(ListCompletionCommand.available(self.base,
+                                                                      self.opts.pkg_specs))
         for pkg in (installed & available):
             print(str(pkg))
 
@@ -118,11 +122,14 @@ class RepoListCompletionCommand(dnf.cli.commands.repolist.RepoListCommand):
     def run(self):
         args = self.opts
         if args.repos_action == "enabled":
-            print("\n".join(filter_list_by_kw(args.repos[0], [r.id for r in self.base.repos.iter_enabled()])))
+            print("\n".join(filter_list_by_kw(args.repos[0],
+                            [r.id for r in self.base.repos.iter_enabled()])))
         elif args.repos_action == "disabled":
-            print("\n".join(filter_list_by_kw(args.repos[0], [r.id for r in self.base.repos.all() if not r.enabled])))
+            print("\n".join(filter_list_by_kw(args.repos[0],
+                            [r.id for r in self.base.repos.all() if not r.enabled])))
         elif args.repos_action == "all":
-            print("\n".join(filter_list_by_kw(args.repos[0], [r.id for r in self.base.repos.all()])))
+            print("\n".join(filter_list_by_kw(args.repos[0],
+                            [r.id for r in self.base.repos.all()])))
 
 
 class UpgradeCompletionCommand(dnf.cli.commands.upgrade.UpgradeCommand):
