@@ -375,6 +375,19 @@ _dnf()
         _filedir "$fext"
         ;;
 
+    config-manager)
+        extra_options="--save --set-enabled --set-disabled --add-repo --dump --dump-variables"
+
+        case "$( _dnf_get_first_command "--set-enabled --set-disabled" )" in
+        --set-enabled)
+            complete_commands="$( _dnf_commands_helper repolist disabled "$cur" )"
+            ;;
+        --set-disabled)
+            complete_commands="$( _dnf_commands_helper repolist enabled "$cur" )"
+        esac
+        ;;
+
+
     *)
         complete_commands="$cmd_list"
         ;;
