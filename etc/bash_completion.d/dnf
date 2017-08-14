@@ -387,6 +387,9 @@ _dnf()
         esac
         ;;
 
+    copr)
+        complete_commands="help enable disable remove list search"
+        ;;
 
     *)
         complete_commands="$cmd_list"
