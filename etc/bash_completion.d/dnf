@@ -391,6 +391,11 @@ _dnf()
         complete_commands="help enable disable remove list search"
         ;;
 
+    debug-dump)
+        extra_options="--norepos"
+        _filedir
+        ;;
+
     *)
         complete_commands="$cmd_list"
         ;;
