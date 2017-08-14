@@ -360,6 +360,21 @@ _dnf()
 
     whatprovides) ;;
 
+    build*dep)
+        extra_options="-D --define --spec --srpm"
+
+        local fext="@(src.rpm|spec)"
+        case "$( _dnf_get_first_command "--spec --srpm" )" in
+        --spec)
+            fext="@(spec)"
+            ;;
+        --srpm)
+            fext="@(src.rpm)"
+        esac
+
+        _filedir "$fext"
+        ;;
+
     *)
         complete_commands="$cmd_list"
         ;;
