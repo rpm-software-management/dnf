@@ -872,6 +872,8 @@ class Cli(object):
         if opts.obsoletes:
             self.base.conf.obsoletes = True
 
+        self.base.pre_configure_plugins()
+
         # with cachedir in place we can configure stuff depending on it:
         self.base._activate_persistor()
 
