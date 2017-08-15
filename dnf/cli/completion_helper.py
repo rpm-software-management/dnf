@@ -98,7 +98,12 @@ class ListCompletionCommand(dnf.cli.commands.ListCommand):
             elif action == "updates":
                 pkgs = self.updates(self.base, args)
             else:
-                return
+                available = listpkg_to_setstr(self.available(self.base, args))
+                installed = listpkg_to_setstr(self.installed(self.base, args))
+                pkgs = (available | installed)
+                if not pkgs:
+                    print("\n".join(filter_list_by_kw(args[0], subcmds)))
+                    return
             for pkg in pkgs:
                 print(str(pkg))
 

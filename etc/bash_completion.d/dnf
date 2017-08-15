@@ -261,23 +261,26 @@ _dnf()
         ;;
 
     info|list)
-        case "$prev" in
+        local subcmd="available installed updates upgrades
+                      --available --installed --updates --upgrades"
+        case "$( _dnf_get_first_command "$subcmd" )" in
             --installed|installed)
-            _dnf_show_packages list installed ;;
+                _dnf_show_packages list installed ;;
 
             --available|available)
-            _dnf_show_packages list available ;;
+                _dnf_show_packages list available ;;
 
             --updates|--upgrades|updates|upgrades)
-            _dnf_show_packages list upgrades ;;
+                _dnf_show_packages list updates ;;
 
             *)
-            complete_commands="all available installed extras updates
-                               upgrades autoremove recent"
+                _dnf_show_packages list
+            ;;
+
         esac
 
         extra_options="--all --available --installed --extras --updates
-                           --upgrades --autoremove --recent"
+                       --upgrades --autoremove --recent"
         ;;
 
     info-*|list-*|updateinfo|summary-updateinfo)
