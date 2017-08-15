@@ -1683,11 +1683,15 @@ Transaction Summary
             addon_info = self.history.return_addon_data(old.tid)
 
             # for the ones we create by default - don't display them as there
-            default_addons = set(['config-main', 'config-repos'])
+            default_addons = set(['config-main', 'config-repos', 'transaction-comment'])
             non_default = set(addon_info).difference(default_addons)
             if len(non_default) > 0:
                 print(_("Additional non-default information stored: %d") % \
                           len(non_default))
+
+            comment = self.history.return_addon_data(old.tid, item='transaction-comment')
+            if comment:
+                print(_("Comment        :"), comment)
 
         if old.trans_with:
             # This is _possible_, but not common

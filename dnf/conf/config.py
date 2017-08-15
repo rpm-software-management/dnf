@@ -772,6 +772,7 @@ class MainConf(BaseConfig):
         self._add_option('upgrade_group_objects_upgrade',
                          BoolOption(True))  # :api
         self._add_option('destdir', PathOption(None))
+        self._add_option('comment', Option())
         # runtime only options
         self._add_option('downloadonly', BoolOption(False, runtimeonly=True))
         self._add_option('ignorearch', BoolOption(False))
@@ -831,7 +832,7 @@ class MainConf(BaseConfig):
                        'showdupesfromrepos', 'plugins', 'ip_resolve',
                        'rpmverbosity', 'disable_excludes', 'color',
                        'downloadonly', 'exclude', 'excludepkgs', 'skip_broken',
-                       'tsflags', 'arch', 'basearch', 'ignorearch', 'cacheonly']
+                       'tsflags', 'arch', 'basearch', 'ignorearch', 'cacheonly', 'comment']
 
         for name in config_args:
             value = getattr(opts, name, None)

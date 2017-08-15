@@ -134,6 +134,9 @@ Options
 
     DNF uses a separate cache for each user under which it executes. The cache for the root user is called the system cache. This switch allows a regular user read-only access to the system cache which usually is more fresh than the user's and thus he does not have to wait for metadata sync.
 
+``--comment=<comment>``
+    add a comment to transaction history
+
 ``-c <config file>, --config=<config file>``
     config file location
 
