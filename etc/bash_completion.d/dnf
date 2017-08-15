@@ -422,6 +422,10 @@ _dnf()
         extra_options="-u --useronly"
         ;;
 
+    playground)
+        complete_commands="enable disable upgrade"
+        ;;
+
     *)
         complete_commands="$cmd_list"
         ;;
