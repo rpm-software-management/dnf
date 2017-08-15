@@ -291,6 +291,8 @@ class OptionParser(argparse.ArgumentParser):
         main_parser.add_argument("--downloadonly", dest="downloadonly",
                                  action="store_true", default=False,
                                  help=_("only download packages"))
+        main_parser.add_argument("--comment", dest="comment", default=None,
+                                 help=_("add a comment to transaction"))
         # Updateinfo options...
         main_parser.add_argument("--bugfix", action="store_true",
                                  help=_("Include bugfix relevant packages, "

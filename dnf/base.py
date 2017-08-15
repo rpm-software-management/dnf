@@ -797,6 +797,10 @@ class Base(object):
             # write out our config and repo data to additional history info
             self._store_config_in_history()
 
+            if self.conf.comment:
+                # write out user provided comment to history info
+                self._store_comment_in_history(self.conf.comment)
+
         if self.conf.reset_nice:
             onice = os.nice(0)
             if onice:
@@ -2212,6 +2216,9 @@ class Base(object):
             myrepos += repo.dump()
             myrepos += '\n'
         self.history.write_addon_data('config-repos', myrepos)
+
+    def _store_comment_in_history(self, comment):
+        self.history.write_addon_data('transaction-comment', comment)
 
     def urlopen(self, url, repo=None, mode='w+b', **kwargs):
         # :api
