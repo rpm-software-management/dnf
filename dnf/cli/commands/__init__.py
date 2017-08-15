@@ -77,12 +77,11 @@ def _checkGPGKey(base, cli):
                 raise dnf.cli.CliError
 
 
-def _checkEnabledRepo(base, possible_local_files=[]):
+def _checkEnabledRepo(base, possible_local_files=()):
     """Verify that there is at least one enabled repo.
 
     :param base: a :class:`dnf.Base` object.
-    :param basecmd: the name of the command being checked for
-    :param extcmds: a list of arguments passed to *basecmd*
+    :param possible_local_files: the list of strings that could be a local rpms
     :raises: :class:`cli.CliError`:
     """
     if base.repos._any_enabled():
@@ -90,6 +89,9 @@ def _checkEnabledRepo(base, possible_local_files=[]):
 
     for lfile in possible_local_files:
         if lfile.endswith(".rpm") and os.path.exists(lfile):
+            return
+        scheme = dnf.pycomp.urlparse.urlparse(lfile)[0]
+        if scheme in ('http', 'ftp', 'file', 'https'):
             return
 
     msg = _('There are no enabled repos.')

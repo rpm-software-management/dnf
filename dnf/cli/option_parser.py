@@ -122,7 +122,10 @@ class OptionParser(argparse.ArgumentParser):
             setattr(namespace, "grp_specs", [])
             setattr(namespace, "pkg_specs", [])
             for value in values:
+                schemes = dnf.pycomp.urlparse.urlparse(value)[0]
                 if value.endswith('.rpm'):
+                    namespace.filenames.append(value)
+                elif schemes and schemes in ('http', 'ftp', 'file', 'https'):
                     namespace.filenames.append(value)
                 elif value.startswith('@'):
                     namespace.grp_specs.append(value[1:])
