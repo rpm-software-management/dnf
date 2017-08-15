@@ -435,6 +435,17 @@ _dnf()
             _dnf_show_packages list available ;;
         esac
         ;;
+
+    repo*graph) ;;
+
+    repomanage)
+        extra_options="-o --old -n --new -s --space -k --keep"
+        ;;
+
+    reposync)
+        extra_options="-p --download-path"
+        ;;
+
     *)
         complete_commands="$cmd_list"
         ;;
