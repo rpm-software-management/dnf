@@ -409,6 +409,15 @@ _dnf()
         _dnf_show_packages list available
         ;;
 
+    download)
+        extra_options="--source --debuginfo --arch --resolve --url --urlprotocols"
+        case $prev in
+        --urlprotocols)
+            complete_commands="http https rsync ftp"
+            ;;
+        esac
+        ;;
+
     *)
         complete_commands="$cmd_list"
         ;;
