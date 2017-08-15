@@ -426,6 +426,15 @@ _dnf()
         complete_commands="enable disable upgrade"
         ;;
 
+    repoclosure)
+        extra_options="--arch --check -n --newest --pkg"
+        case $prev in
+        --check)
+            _dnf_show_packages repolist all ;;
+        --pkg)
+            _dnf_show_packages list available ;;
+        esac
+        ;;
     *)
         complete_commands="$cmd_list"
         ;;
