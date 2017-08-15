@@ -418,6 +418,10 @@ _dnf()
         esac
         ;;
 
+    needs-restarting)
+        extra_options="-u --useronly"
+        ;;
+
     *)
         complete_commands="$cmd_list"
         ;;
