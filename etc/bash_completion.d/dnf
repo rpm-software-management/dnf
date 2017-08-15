@@ -405,6 +405,10 @@ _dnf()
         esac
         ;;
 
+    debuginfo-install)
+        _dnf_show_packages list available
+        ;;
+
     *)
         complete_commands="$cmd_list"
         ;;
