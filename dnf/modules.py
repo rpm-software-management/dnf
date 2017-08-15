@@ -167,7 +167,7 @@ class RepoModuleVersion(object):
 
     @property
     def full_version(self):
-        return "%s-%s-%s" % (
+        return "%s:%s:%s" % (
             self.module_metadata.name, self.module_metadata.stream, self.module_metadata.version)
 
     @property
@@ -284,7 +284,7 @@ class RepoModuleDict(OrderedDict):
         module.add(repo_module_version)
         module.parent = self
 
-    def find_module_version(self, name, stream=None, version=None, arch=None):
+    def find_module_version(self, name, stream=None, version=None, context=None, arch=None):
         def use_enabled_stream(repo_module):
             if repo_module.conf and repo_module.conf.enabled:
                 return repo_module.conf.stream
@@ -309,7 +309,7 @@ class RepoModuleDict(OrderedDict):
                     repo_module.conf.version is not None:
                 if repo_module_stream.latest().version != repo_module.conf.version:
                     logger.info(module_errors[VERSION_LOCKED]
-                                .format("{}-{}".format(repo_module.name, stream),
+                                .format("{}:{}".format(repo_module.name, stream),
                                         repo_module.conf.version))
 
                 repo_module_version = repo_module_stream[repo_module.conf.version]
@@ -328,7 +328,7 @@ class RepoModuleDict(OrderedDict):
 
     def enable(self, pkg_spec, assumeyes, assumeno=False):
         subj = ModuleSubject(pkg_spec)
-        module_version, nsvap = subj.find_module_version(self)
+        module_version, nsvcap = subj.find_module_version(self)
 
         if not module_version:
             raise Error(module_errors[NO_MODULE_ERR].format(pkg_spec))
@@ -337,7 +337,7 @@ class RepoModuleDict(OrderedDict):
 
     def disable(self, pkg_spec):
         subj = ModuleSubject(pkg_spec)
-        module_version, nsvap = subj.find_module_version(self)
+        module_version, nsvcap = subj.find_module_version(self)
 
         if module_version:
             repo_module = module_version.repo_module
@@ -352,7 +352,7 @@ class RepoModuleDict(OrderedDict):
 
     def lock(self, pkg_spec):
         subj = ModuleSubject(pkg_spec)
-        module_version, nsvap = subj.find_module_version(self)
+        module_version, nsvcap = subj.find_module_version(self)
 
         if module_version:
             repo_module = module_version.repo_module
@@ -367,7 +367,7 @@ class RepoModuleDict(OrderedDict):
 
     def unlock(self, pkg_spec):
         subj = ModuleSubject(pkg_spec)
-        module_version, nsvap = subj.find_module_version(self)
+        module_version, nsvcap = subj.find_module_version(self)
 
         if module_version:
             repo_module = module_version.repo_module
@@ -384,7 +384,7 @@ class RepoModuleDict(OrderedDict):
         preferred_versions = self.get_preferred_versions(pkg_specs)
 
         for version in preferred_versions.values():
-            for module_version, nsvap, pkg_spec in version.moduleversion_nsvap_pkgspec:
+            for module_version, nsvcap, pkg_spec in version.moduleversion_nsvcap_pkgspec:
                 module_version = self.decide_newer_version(module_version, pkg_spec,
                                                            version.preferred_version,
                                                            version.reason)
@@ -395,12 +395,12 @@ class RepoModuleDict(OrderedDict):
                     continue
 
                 if autoenable:
-                    self.enable("{}-{}".format(module_version.name, module_version.stream), True)
-                elif not self[nsvap.name].conf.enabled:
+                    self.enable("{}:{}".format(module_version.name, module_version.stream), True)
+                elif not self[nsvcap.name].conf.enabled:
                     raise Error(module_errors[NO_ACTIVE_STREAM_ERR].format(module_version.name))
 
-                if nsvap.profile:
-                    profiles = [nsvap.profile]
+                if nsvcap.profile:
+                    profiles = [nsvcap.profile]
                 else:
                     profiles = module_version.repo_module.defaults.profiles
 
@@ -411,7 +411,7 @@ class RepoModuleDict(OrderedDict):
                 module_version.install(profiles)
 
     def decide_newer_version(self, module_version, pkg_spec, preferred_version, reason):
-        if preferred_version != module_version.version:
+        if int(preferred_version) != module_version.version:
             logger.info(module_errors[INSTALLING_NEWER_VERSION].format(pkg_spec, reason))
             module_version = self.find_module_version(module_version.name, module_version.stream,
                                                       preferred_version)
@@ -421,35 +421,36 @@ class RepoModuleDict(OrderedDict):
         preferred_versions = {}
         for pkg_spec in pkg_specs:
             subj = ModuleSubject(pkg_spec)
-            module_version, nsvap = subj.find_module_version(self)
+            module_version, nsvcap = subj.find_module_version(self)
 
-            key = "{}-{}".format(module_version.name, module_version.stream)
+            key = "{}:{}".format(module_version.name, module_version.stream)
             versions = preferred_versions.setdefault(key, PreferredModuleVersion())
-            versions.moduleversion_nsvap_pkgspec.append([module_version, nsvap, pkg_spec])
+            versions.moduleversion_nsvcap_pkgspec.append([module_version, nsvcap, pkg_spec])
             if versions.preferred_version < module_version.version:
                 versions.preferred_version = module_version.version
                 versions.reason = pkg_spec
+
         return preferred_versions
 
     def upgrade(self, pkg_specs):
         for pkg_spec in pkg_specs:
             subj = ModuleSubject(pkg_spec)
-            module_version, nsvap = subj.find_module_version(self)
+            module_version, nsvcap = subj.find_module_version(self)
 
             if not module_version:
                 raise Error(module_errors[NO_MODULE_ERR].format(pkg_spec))
             elif module_version.repo_module.conf.locked:
                 continue
 
-            conf = self[nsvap.name].conf
+            conf = self[nsvcap.name].conf
             if conf:
                 installed_profiles = conf.profiles
             else:
                 installed_profiles = []
-            if nsvap.profile:
-                if nsvap.profile not in installed_profiles:
+            if nsvcap.profile:
+                if nsvcap.profile not in installed_profiles:
                     raise Error(module_errors[PROFILE_NOT_INSTALLED].format(pkg_spec))
-                profiles = [nsvap.profile]
+                profiles = [nsvcap.profile]
             else:
                 profiles = installed_profiles
 
@@ -469,20 +470,20 @@ class RepoModuleDict(OrderedDict):
     def remove(self, pkg_specs):
         for pkg_spec in pkg_specs:
             subj = ModuleSubject(pkg_spec)
-            module_version, nsvap = subj.find_module_version(self)
+            module_version, nsvcap = subj.find_module_version(self)
 
             if not module_version:
                 raise Error(module_errors[NO_MODULE_ERR].format(pkg_spec))
 
-            conf = self[nsvap.name].conf
+            conf = self[nsvcap.name].conf
             if conf:
                 installed_profiles = conf.profiles
             else:
                 installed_profiles = []
-            if nsvap.profile:
-                if nsvap.profile not in installed_profiles:
+            if nsvcap.profile:
+                if nsvcap.profile not in installed_profiles:
                     raise Error(module_errors[PROFILE_NOT_INSTALLED].format(pkg_spec))
-                profiles = [nsvap.profile]
+                profiles = [nsvcap.profile]
             else:
                 profiles = installed_profiles
 
@@ -523,7 +524,7 @@ class RepoModuleDict(OrderedDict):
 
     def get_info(self, pkg_spec):
         subj = ModuleSubject(pkg_spec)
-        module_version, nsvap = subj.find_module_version(self)
+        module_version, nsvcap = subj.find_module_version(self)
 
         lines = {"Name": module_version.name,
                  "Stream": module_version.stream,
@@ -551,7 +552,7 @@ class RepoModuleDict(OrderedDict):
 
     def get_full_info(self, pkg_spec):
         subj = ModuleSubject(pkg_spec)
-        module_version, nsvap = subj.find_module_version(self)
+        module_version, nsvcap = subj.find_module_version(self)
         return module_version.module_metadata.dumps().rstrip("\n")
 
     def list_module_version_latest(self):
@@ -672,7 +673,7 @@ class RepoModuleDict(OrderedDict):
 class PreferredModuleVersion(object):
 
     def __init__(self):
-        self.moduleversion_nsvap_pkgspec = []
+        self.moduleversion_nsvcap_pkgspec = []
         self.preferred_version = -1
         self.reason = None
 
@@ -699,37 +700,6 @@ class ModuleMetadataLoader(object):
         return modulemd.loads_all(modules_yaml)
 
 
-NSVAP_FIELDS = ["name", "stream", "version", "arch", "profile"]
-
-
-class NSVAP(object):
-    """
-    Represents module name, stream, version, arch, profile.
-    Returned by ModuleSubject.
-    """
-
-    def __init__(self, name, stream, version, arch, profile):
-        self.name = name
-        self.stream = stream
-        self.version = version is not None and int(version) or None
-        self.arch = arch
-        self.profile = profile
-
-    def __repr__(self):
-        values = [getattr(self, i) for i in NSVAP_FIELDS]
-        items = [(field, value) for field, value in zip(NSVAP_FIELDS, values) if value is not None]
-        items_str = ", ".join(["{}={}".format(field, value) for field, value in items])
-        return "<NSVAP: {}>".format(items_str)
-
-    def __eq__(self, other):
-        result = True
-        for field in NSVAP_FIELDS:
-            value_self = getattr(self, field)
-            value_other = getattr(other, field)
-            result &= value_self == value_other
-        return result
-
-
 class ModuleSubject(object):
     """
     Find matching modules for given user input (pkg_spec).
@@ -738,53 +708,26 @@ class ModuleSubject(object):
     def __init__(self, pkg_spec):
         self.pkg_spec = pkg_spec
 
-    def get_nsvap_possibilities(self, forms=None):
-        # split profile and then parse module NSVA as it was rpm NVRA
-
-        if "/" in self.pkg_spec:
-            nsva, profile = self.pkg_spec.rsplit("/", 1)
-            if not profile.strip():
-                profile = None
-        else:
-            nsva, profile = self.pkg_spec, None
-
-        subj = hawkey.Subject(nsva)
+    def get_nsvcap_possibilities(self, forms=None):
+        subj = hawkey.Subject(self.pkg_spec)
         kwargs = {}
         if forms:
             kwargs["form"] = forms
-        possibilities = subj.nevra_possibilities(**kwargs)
-
-        result = []
-        for i in possibilities:
-            try:
-                if i.release is not None:
-                    int(i.release)
-            except ValueError:
-                # module version has to be integer
-                # if it is not -> invalid possibility -> skip
-                continue
-            args = {
-                "name": i.name,
-                "stream": i.version,
-                "version": i.release and int(i.release) or None,
-                "arch": i.arch,
-                "profile": profile
-            }
-            result.append(NSVAP(**args))
-        return result
+        return subj.nsvcap_possibilities(**kwargs)
 
     def find_module_version(self, repo_module_dict):
         """
         Find module that matches self.pkg_spec in given repo_module_dict.
-        Return (RepoModuleVersion, NSVAP).
+        Return (RepoModuleVersion, NSVCAP).
         """
 
         result = (None, None)
-        for nsvap in self.get_nsvap_possibilities():
-            module_version = repo_module_dict.find_module_version(nsvap.name, nsvap.stream,
-                                                                  nsvap.version, nsvap.arch)
+        for nsvcap in self.get_nsvcap_possibilities():
+            module_version = repo_module_dict.find_module_version(nsvcap.name, nsvcap.stream,
+                                                                  nsvcap.version, nsvcap.context,
+                                                                  nsvcap.arch)
             if module_version:
-                result = (module_version, nsvap)
+                result = (module_version, nsvcap)
                 break
         return result
 
