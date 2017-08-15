@@ -195,6 +195,7 @@ def main(args):
                 logger.debug('Sleep for %s seconds', sleeper)
                 time.sleep(sleeper)
 
+            base.pre_configure_plugins()
             base.read_all_repos()
             base.configure_plugins()
             base.fill_sack()

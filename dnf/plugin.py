@@ -61,6 +61,10 @@ class Plugin(object):
         self.base = base
         self.cli = cli
 
+    def pre_config(self):
+        # :api
+        pass
+
     def config(self):
         # :api
         pass
@@ -119,6 +123,8 @@ class Plugins(object):
         if len(self.plugin_cls) > 0:
             names = sorted(plugin.name for plugin in self.plugin_cls)
             logger.debug('Loaded plugins: %s', ', '.join(names))
+
+    _run_pre_config = _caller('pre_config')
 
     _run_config = _caller('config')
 

@@ -237,6 +237,11 @@ class Base(object):
             self._plugins._load(self.conf, disabled_glob, enable_plugins)
         self._plugins._run_init(self, cli)
 
+    def pre_configure_plugins(self):
+        # :api
+        """Run plugins pre_configure() method."""
+        self._plugins._run_pre_config()
+
     def configure_plugins(self):
         # :api
         """Run plugins configure() method."""

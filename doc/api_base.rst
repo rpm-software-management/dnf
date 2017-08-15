@@ -62,6 +62,12 @@
      Initialize plugins. If you want to disable some plugins pass the list of their name patterns to
      `disabled_glob`. When run from interactive script then also pass your :class:`dnf.cli.Cli` instance.
 
+  .. method:: pre_configure_plugins()
+
+     Configure plugins by running their pre_configure() method. It makes possible to change
+     variables before repo files and rpmDB are loaded. It also makes possible to create internal
+     repositories that will be affected by ``--disablerepo`` and ``--enablerepo``.
+
   .. method:: configure_plugins()
 
      Configure plugins by running their configure() method.
