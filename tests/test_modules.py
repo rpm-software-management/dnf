@@ -29,8 +29,9 @@ from hawkey import NSVCAP
 
 import dnf.conf
 from dnf.conf import ModuleDefaultsConf
-from dnf.modules import ModuleSubject
-from dnf.modules import RepoModuleDict, RepoModuleVersion
+from dnf.module.subject import ModuleSubject
+from dnf.module.repo_module_dict import RepoModuleDict
+from dnf.module.repo_module_version import RepoModuleVersion
 
 TOP_DIR = os.path.abspath(os.path.dirname(__file__))
 MODULES_DIR = os.path.join(TOP_DIR, "modules/etc/dnf/modules.d")
