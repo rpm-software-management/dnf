@@ -38,12 +38,12 @@ import logging
 import os
 
 PRIO_DEFAULT = 10
-PRIO_DROPINCONF = 15
 PRIO_MAINCONFIG = 20
 PRIO_AUTOMATICCONFIG = 30
 PRIO_REPOCONFIG = 40
 PRIO_PLUGINDEFAULT = 50
 PRIO_PLUGINCONFIG = 60
+PRIO_DROPINCONF = 65
 PRIO_COMMANDLINE = 70
 PRIO_RUNTIME = 80
 
@@ -941,7 +941,7 @@ class MainConf(BaseConfig):
         # update to where we read the file from
         self._set_value('config_file_path', filename, priority)
 
-    def read_dropin(self, dirname=dnf.const.CONF_DROPIN_DIR, priority=PRIO_DROPINCONF):
+    def read_dropin_dir(self, dirname=dnf.const.CONF_DROPIN_DIR, priority=PRIO_DROPINCONF):
         for filename in sorted(os.listdir(dirname)):
             self.read(os.path.join(dirname, filename), priority)
 
