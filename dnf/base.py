@@ -1683,6 +1683,16 @@ class Base(object):
             self._goal.install(select=sltr, optional=(not strict))
         return len(available)
 
+    def install_module(self, specs, assumeyes):
+        # TODO test
+        skipped_specs = specs
+        try:
+            skipped_specs = self.repo_module_dict.install(specs, assumeyes)
+        except dnf.exceptions.Error:
+            self.repo_module_dict.install(specs[1:])
+
+        return skipped_specs
+
     def install(self, pkg_spec, reponame=None, strict=True, forms=None):
         # :api
         """Mark package(s) given by pkg_spec and reponame for installation."""
@@ -1832,10 +1842,21 @@ class Base(object):
 
     def upgrade_all(self, reponame=None):
         # :api
-        if reponame is None and not self._update_security_filters:
+        if reponame is None and not self._update_security_filters and \
+                not self.repo_module_dict.list_module_version_installed():
             self._goal.upgrade_all()
         else:
+            self.repo_module_dict.upgrade_all()
+
             q = self.sack.query().upgrades()
+
+            filtered_rpms_name = []
+            for repo_module_version in self.repo_module_dict.list_module_version_installed():
+                for profile in repo_module_version.repo_module.conf.profiles:
+                    filtered_rpms_name.append(repo_module_version.rpms(profile))
+
+            q = q.filter(name__neq=filtered_rpms_name)
+
             # add obsoletes into transaction
             if self.conf.obsoletes:
                 q = q.union(self.sack.query().filter(obsoletes=self.sack.query().installed()))
