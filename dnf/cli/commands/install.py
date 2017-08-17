@@ -66,21 +66,42 @@ class InstallCommand(commands.Command):
             commands._checkEnabledRepo(self.base)
 
     def run(self):
-        if not self.opts.legacy:
-            self.install_module_profiles()
-            return
+        err_pkgs = []
+        errs = []
 
         nevra_forms = self._get_nevra_forms_from_command()
 
         self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
-        self._check_arguments_validity_for_localinstall()
-        err_pkgs = self._decide_to_install_files(nevra_forms)
-        self._decide_to_install_groups(nevra_forms)
-        errs = self._install_packages_if_not_locallinstall(nevra_forms)
-        self._raise_no_match_if_any_error_and_strict(err_pkgs, errs)
+        if self.opts.command == ['localinstall'] and (self.opts.grp_specs or self.opts.pkg_specs):
+            self._log_not_valid_rpm_file_paths(self.opts.grp_specs)
+            if self.base.conf.strict:
+                raise dnf.exceptions.Error(_('Nothing to do.'))
 
-    def install_module_profiles(self):
-        self.base.repo_module_dict.install(self.opts.grp_specs, True)
+        skipped_grp_specs = self.opts.grp_specs
+        if self.opts.grp_specs and self.opts.command != ['localinstall']:
+            skipped_grp_specs = self.base.install_module(self.opts.grp_specs, self.opts.assumeyes)
+
+        if self.opts.filenames and nevra_forms:
+            self._inform_not_a_valid_combination(self.opts.filenames)
+            if self.base.conf.strict:
+                raise dnf.exceptions.Error(_('Nothing to do.'))
+        else:
+            err_pkgs = self._install_files()
+
+        if skipped_grp_specs and nevra_forms:
+            self._inform_not_a_valid_combination(skipped_grp_specs)
+            if self.base.conf.strict:
+                raise dnf.exceptions.Error(_('Nothing to do.'))
+        elif skipped_grp_specs and self.opts.command != ['localinstall']:
+            self._install_groups(skipped_grp_specs)
+
+        if self.opts.command != ['localinstall']:
+            errs = self._install_packages(nevra_forms)
+
+        if (len(errs) != 0 or len(err_pkgs) != 0) and self.base.conf.strict:
+            raise dnf.exceptions.PackagesNotAvailableError(_("Unable to find a match"),
+                                                           pkg_spec=' '.join(errs),
+                                                           packages = err_pkgs)
 
     def _get_nevra_forms_from_command(self):
         return [self.nevra_forms[command]
@@ -88,40 +109,16 @@ class InstallCommand(commands.Command):
                 if command in list(self.nevra_forms.keys())
                 ]
 
-    def _check_arguments_validity_for_localinstall(self):
-        nonfilenames = self.opts.grp_specs or self.opts.pkg_specs
-
-        if self._is_localinstall_command() and nonfilenames:
-            self._log_not_valid_rpm_file_paths()
-            if self.base.conf.strict:
-                raise dnf.exceptions.Error(_('Nothing to do.'))
-
-    def _is_localinstall_command(self):
-        return self.opts.command == ['localinstall']
-
-    def _log_not_valid_rpm_file_paths(self):
-        group_names = map(lambda g: '@' + g, self.opts.grp_specs)
+    def _log_not_valid_rpm_file_paths(self, grp_specs):
+        group_names = map(lambda g: '@' + g, grp_specs)
         for pkg in chain(self.opts.pkg_specs, group_names):
             msg = _('Not a valid rpm file path: %s')
             logger.info(msg, self.base.output.term.bold(pkg))
 
-    def _decide_to_install_files(self, nevra_forms):
-        if self.opts.filenames and nevra_forms:
-            self._inform_not_a_valid_form(self.opts.filenames)
-        else:
-            return self._install_files()
-
-        return []
-
-    def _inform_not_a_valid_form(self, forms):
+    def _inform_not_a_valid_combination(self, forms):
         for form in forms:
             msg = _('Not a valid form: %s')
             logger.warning(msg, self.base.output.term.bold(form))
-        self._raise_nothing_to_do_if_strict()
-
-    def _raise_nothing_to_do_if_strict(self):
-        if self.base.conf.strict:
-            raise dnf.exceptions.Error(_('Nothing to do.'))
 
     def _install_files(self):
         err_pkgs = []
@@ -137,13 +134,7 @@ class InstallCommand(commands.Command):
 
         return err_pkgs
 
-    def _decide_to_install_groups(self, nevra_forms):
-        if self.opts.grp_specs and nevra_forms:
-            self._inform_not_a_valid_form(self.opts.grp_specs)
-        elif self.opts.grp_specs and self.opts.command != ['localinstall']:
-            self._install_groups()
-
-    def _install_groups(self):
+    def _install_groups(self, grp_specs):
         self.base.read_comps(arch_filter=True)
         try:
             self.base.env_group_install(self.opts.grp_specs,
@@ -152,10 +143,6 @@ class InstallCommand(commands.Command):
         except dnf.exceptions.Error:
             if self.base.conf.strict:
                 raise
-
-    def _install_packages_if_not_locallinstall(self, nevra_forms):
-        if self.opts.command != ['localinstall']:
-            return self._install_packages(nevra_forms)
 
     def _install_packages(self, nevra_forms):
         errs = []
@@ -170,9 +157,3 @@ class InstallCommand(commands.Command):
                 errs.append(pkg_spec)
 
         return errs
-
-    def _raise_no_match_if_any_error_and_strict(self, err_pkgs, errs):
-        if (len(errs) != 0 or len(err_pkgs) != 0) and self.base.conf.strict:
-            raise dnf.exceptions.PackagesNotAvailableError(
-                _("Unable to find a match"), pkg_spec=' '.join(errs),
-                packages=err_pkgs)
