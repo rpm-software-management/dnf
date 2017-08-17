@@ -59,6 +59,7 @@ class UpgradeCommand(commands.Command):
         commands._checkEnabledRepo(self.base, self.opts.filenames)
         self.upgrade_minimal = None
         self.all_security = None
+        self.skipped_grp_specs = None
 
     def run(self):
         self.cli._populate_update_security_filter(self.opts,
@@ -66,38 +67,26 @@ class UpgradeCommand(commands.Command):
                                                   all=self.all_security)
 
         if self.opts.filenames or self.opts.pkg_specs or self.opts.grp_specs:
-            if any([fn() for fn in [self._update_modules,
-                                    self._update_files,
-                                    self._update_packages,
-                                    self._update_groups]]):
+            result = False
+            result |= self._update_modules()
+            result |= self._update_files()
+            result |= self._update_packages()
+            result |= self._update_groups()
+
+            if result:
                 return
         else:
-            self._update_modules_all()
             self.base.upgrade_all()
             return
 
         raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
 
-    def _update_modules_all(self):
-        self.base.repo_module_dict.upgrade_all()
-
     def _update_modules(self):
-        modules = self.get_modules_from_spec(self.opts.grp_specs)
+        group_specs_num = len(self.opts.grp_specs)
 
-        self.base.repo_module_dict.upgrade(modules)
-        return len(modules) != 0
+        self.skipped_grp_specs = self.base.repo_module_dict.upgrade(self.opts.grp_specs)
 
-    def get_modules_from_spec(self, specs):
-        modules = list()
-        for spec in specs:
-            try:
-                if spec in self.base.repo_module_dict:
-                    specs.remove(spec)
-                    modules.append(spec)
-            except KeyError:
-                logger.debug("Not a valid module: {}".format(spec))
-
-        return modules
+        return len(self.skipped_grp_specs) != group_specs_num
 
     def _update_files(self):
         success = False
@@ -107,7 +96,7 @@ class UpgradeCommand(commands.Command):
                     self.base.package_upgrade(pkg)
                     success = True
                 except dnf.exceptions.MarkingError as e:
-                    self.base._report_icase_hint(pkg_spec)
+                    self.base._report_icase_hint(pkg)
                     logger.info(_('No match for argument: %s'),
                                 self.base.output.term.bold(pkg.location))
         return success
@@ -124,8 +113,8 @@ class UpgradeCommand(commands.Command):
         return success
 
     def _update_groups(self):
-        if self.opts.grp_specs:
+        if self.skipped_grp_specs:
             self.base.read_comps(arch_filter=True)
-            self.base.env_group_upgrade(self.opts.grp_specs)
+            self.base.env_group_upgrade(self.skipped_grp_specs)
             return True
         return False

@@ -69,6 +69,10 @@ class RepoModuleDict(OrderedDict):
                                      use_enabled_stream(repo_module),
                                      use_default_stream(repo_module)])
 
+            if not stream:
+                # TODO change to NoDefaultStreamException
+                raise Error(module_errors[NO_DEFAULT_STREAM_ERR].format(name))
+
             repo_module_stream = repo_module[stream]
 
             if repo_module.conf and \
@@ -92,6 +96,41 @@ class RepoModuleDict(OrderedDict):
         except KeyError:
             return None
         return repo_module_version
+
+    def get_includes_latest(self, name, stream):
+        includes = set()
+        try:
+            repo_module = self[name]
+            repo_module_stream = repo_module[stream]
+            repo_module_version = repo_module_stream.latest()
+
+            artifacts = repo_module_version.module_metadata.artifacts.rpms
+            includes.update(artifacts)
+
+            for requires_name, requires_stream in \
+                    repo_module_version.module_metadata.requires.items():
+                includes.update(self.get_includes_latest(requires_name, requires_stream))
+        except KeyError as e:
+            logger.debug(e)
+
+        return includes
+
+    def get_includes(self, name, stream):
+        includes = set()
+        try:
+            repo_module = self[name]
+            repo_module_stream = repo_module[stream]
+            for repo_module_version in repo_module_stream.values():
+                artifacts = repo_module_version.module_metadata.artifacts.rpms
+                includes.update(artifacts)
+
+                for requires_name, requires_stream in \
+                        repo_module_version.module_metadata.requires.items():
+                    includes.update(self.get_includes_latest(requires_name, requires_stream))
+        except KeyError as e:
+            logger.debug(e)
+
+        return includes
 
     def enable(self, pkg_spec, assumeyes, assumeno=False):
         subj = ModuleSubject(pkg_spec)
@@ -145,9 +184,7 @@ class RepoModuleDict(OrderedDict):
             repo_module.unlock()
             return
 
-        raise Error(module_errors[NO_MODULE_ERR].format(pkg_spec))
-
-    def install(self, pkg_specs, autoenable=False):
+    def install(self, pkg_specs, assumeyes=False):
         preferred_versions = self.get_preferred_versions(pkg_specs)
 
         for version in preferred_versions.values():
