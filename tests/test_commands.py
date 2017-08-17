@@ -73,7 +73,7 @@ class CommandsCliTest(support.TestCase):
         cmd.cli.base.output.history.last().tid = 123
         cmd.cli.base.output.history.search = mock.MagicMock(return_value=[99])
         support.command_configure(cmd, ['list', '1..5', 'last', 'last-10', 'kernel'])
-        self.assertEqual(cmd._convert_tids(), [1, 2, 3, 4, 5, 99, 113, 123])
+        self.assertEqual(cmd._args2transaction_ids(), [123, 113, 99, 5, 4, 3, 2, 1])
 
 
 class CommandTest(support.TestCase):
