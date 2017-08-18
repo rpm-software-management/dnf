@@ -148,11 +148,11 @@ class Base(object):
             if r.id in disabled:
                 continue
             if len(r.includepkgs) > 0:
-                pkgs = self.sack.query().filter(empty=True)
                 for incl in r.includepkgs:
                     subj = dnf.subject.Subject(incl)
-                    pkgs = pkgs.union(subj.get_best_query(self.sack))
-                self.sack.add_includes(pkgs, reponame=r.id)
+                    pkgs = subj.get_best_query(self.sack)
+                    self.sack.add_includes(pkgs.filter(reponame=r.id))
+                self.sack.set_use_includes(True, r.id)
             for excl in r.excludepkgs:
                 subj = dnf.subject.Subject(excl)
                 pkgs = subj.get_best_query(self.sack)
@@ -161,11 +161,11 @@ class Base(object):
         # repo specific settings
         if 'main' not in disabled:
             if len(self.conf.includepkgs) > 0:
-                pkgs = self.sack.query().filter(empty=True)
                 for incl in self.conf.includepkgs:
                     subj = dnf.subject.Subject(incl)
-                    pkgs = pkgs.union(subj.get_best_query(self.sack))
-                self.sack.add_includes(pkgs)
+                    pkgs = subj.get_best_query(self.sack)
+                    self.sack.add_includes(pkgs)
+                self.sack.set_use_includes(True)
             for excl in self.conf.excludepkgs:
                 subj = dnf.subject.Subject(excl)
                 pkgs = subj.get_best_query(self.sack)
