@@ -907,7 +907,7 @@ class Cli(object):
         conf.releasever = releasever
         subst = conf.substitutions
         subst.update_from_etc(conf.installroot)
-        if releasever is None:
+        if conf.releasever is None:
             logger.warning(_("Unable to detect release version (use '--releasever' to specify "
                              "release version)"))
 
