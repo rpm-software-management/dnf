@@ -16,17 +16,20 @@
 
 import hawkey
 
+from dnf.exceptions import Error
+from dnf.module import module_errors, NO_MODULE_ERR
+
 
 class ModuleSubject(object):
     """
-    Find matching modules for given user input (pkg_spec).
+    Find matching modules for given user input (module_spec).
     """
 
-    def __init__(self, pkg_spec):
-        self.pkg_spec = pkg_spec
+    def __init__(self, module_spec):
+        self.module_spec = module_spec
 
     def get_nsvcap_possibilities(self, forms=None):
-        subj = hawkey.Subject(self.pkg_spec)
+        subj = hawkey.Subject(self.module_spec)
         kwargs = {}
         if forms:
             kwargs["form"] = forms
@@ -34,16 +37,28 @@ class ModuleSubject(object):
 
     def find_module_version(self, repo_module_dict):
         """
-        Find module that matches self.pkg_spec in given repo_module_dict.
+        Find module that matches self.module_spec in given repo_module_dict.
         Return (RepoModuleVersion, NSVCAP).
         """
 
         result = (None, None)
+        stream_err = None
         for nsvcap in self.get_nsvcap_possibilities():
-            module_version = repo_module_dict.find_module_version(nsvcap.name, nsvcap.stream,
-                                                                  nsvcap.version, nsvcap.context,
-                                                                  nsvcap.arch)
-            if module_version:
-                result = (module_version, nsvcap)
-                break
+            try:
+                module_version = repo_module_dict.find_module_version(nsvcap.name,
+                                                                      nsvcap.stream,
+                                                                      nsvcap.version,
+                                                                      nsvcap.context,
+                                                                      nsvcap.arch)
+                if module_version:
+                    result = (module_version, nsvcap)
+                    break
+            except Error as e:
+                stream_err = e
+
+        if stream_err:
+            raise stream_err
+        elif not result[0]:
+            raise Error(module_errors[NO_MODULE_ERR].format(self.module_spec))
+
         return result

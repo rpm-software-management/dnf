@@ -16,7 +16,7 @@
 
 import os
 
-from ConfigParser import ConfigParser
+from dnf.pycomp import ConfigParser
 from collections import OrderedDict
 
 from dnf.conf import ModuleConf
@@ -58,14 +58,18 @@ class RepoModule(OrderedDict):
         self.name = repo_module_version.name
         repo_module_version.repo_module = self
 
-    def enable(self, stream, assumeyes, assumeno):
+    def enable(self, stream, assumeyes=False):
         if stream not in self:
             raise Error(module_errors[NO_STREAM_ERR].format(stream, self.name))
 
-        if self.conf.stream is not None and str(self.conf.stream) != str(stream) and not assumeyes:
+        if self.conf.stream is not None and \
+                str(self.conf.stream) != str(stream) and \
+                not assumeyes:
             logger.info(module_errors[DIFFERENT_STREAM_INFO].format(self.name))
-            if not assumeno and self.parent.base.output.userconfirm():
-                self.enable(stream, True, assumeno)
+
+            if not self.parent.base.conf.assumeno and \
+                    self.parent.base.output.userconfirm():
+                self.enable(stream, True)
             else:
                 logger.info(module_errors[STREAM_NOT_ENABLED_ERR].format(stream))
 
