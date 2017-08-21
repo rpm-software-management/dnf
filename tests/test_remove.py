@@ -40,7 +40,7 @@ class Remove(support.ResultTestCase):
         self.assertResult(self.base,
                           support.installed_but(self.base.sack, "pepper"))
 
-    def test_remove_depended(self):
+    def test_remove_dependent(self):
         """ Remove a lib that some other package depends on. """
         ret = self.base.remove("librita")
         # we should end up with nothing in this case:

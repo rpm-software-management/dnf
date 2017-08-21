@@ -1046,7 +1046,7 @@ class Output(object):
                                   (_('Installing dependencies'), list_bunch.installed_dep),
                                   (_('Installing weak dependencies'), list_bunch.installed_weak),
                                   (_('Removing'), list_bunch.erased),
-                                  (_('Removing depended packages'), list_bunch.erased_dep),
+                                  (_('Removing dependent packages'), list_bunch.erased_dep),
                                   (_('Removing unused dependencies'), list_bunch.erased_clean),
                                   (_('Downgrading'), list_bunch.downgraded)]:
             lines = []
