@@ -113,11 +113,12 @@ class RepoReader(object):
 
 
 class ModuleReader(object):
-    def __init__(self, module_dir):
+    def __init__(self, module_dir, conf_suffix="module"):
         self.conf_dir = module_dir
+        self.conf_suffix = conf_suffix
 
     def __iter__(self):
-        for module_path in sorted(glob.glob('%s/*.module' % self.conf_dir)):
+        for module_path in sorted(glob.glob('{}/*.{}'.format(self.conf_dir, self.conf_suffix))):
             try:
                 for module_conf in self._get_module_configs(module_path):
                     yield module_conf
@@ -171,17 +172,7 @@ class ModuleReader(object):
 
 class ModuleDefaultsReader(ModuleReader):
     def __init__(self, module_defaults_dir):
-        super(ModuleDefaultsReader, self).__init__(module_defaults_dir)
-
-    def __iter__(self):
-        for module_path in sorted(glob.glob('%s/*.defaults' % self.conf_dir)):
-            try:
-                for module_conf in self._get_module_configs(module_path):
-                    yield module_conf
-            except dnf.exceptions.ConfigError:
-                logger.debug(_("Warning: failed loading '%s', defaults unavailable."),
-                             module_path)
-                raise
+        super(ModuleDefaultsReader, self).__init__(module_defaults_dir, "defaults")
 
     def _build_module(self, parser, id_, defaults_path):
         """Build a module using the parsed data."""

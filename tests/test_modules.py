@@ -278,6 +278,7 @@ class ModuleTest(unittest.TestCase):
         self.conf.moduledefaultsdir = DEFAULTS_DIR
         self.conf.substitutions["arch"] = "x86_64"
         self.conf.substitutions["basearch"] = dnf.rpm.basearch(self.conf.substitutions["arch"])
+        self.conf.assumeyes = True
         self.base = dnf.Base(conf=self.conf)
 
         self._add_module_repo("_all")
@@ -295,21 +296,21 @@ class ModuleTest(unittest.TestCase):
 
     def test_enable_name(self):
         # use default stream
-        self.base.repo_module_dict.enable("httpd", assumeyes=True)
+        self.base.repo_module_dict.enable("httpd")
         repo_module = self.base.repo_module_dict["httpd"]
         self.assertTrue(repo_module.conf.enabled)
         self.assertEqual(repo_module.conf.name, "httpd")
         self.assertEqual(repo_module.conf.stream, "2.4")
 
     def test_enable_name_stream(self):
-        self.base.repo_module_dict.enable("httpd:2.4", assumeyes=True)
+        self.base.repo_module_dict.enable("httpd:2.4")
         repo_module = self.base.repo_module_dict["httpd"]
         self.assertTrue(repo_module.conf.enabled)
         self.assertEqual(repo_module.conf.name, "httpd")
         self.assertEqual(repo_module.conf.stream, "2.4")
 
     def test_enable_pkgspec(self):
-        self.base.repo_module_dict.enable("httpd:2.4:1/foo", assumeyes=True)
+        self.base.repo_module_dict.enable("httpd:2.4:1/foo")
         repo_module = self.base.repo_module_dict["httpd"]
         self.assertTrue(repo_module.conf.enabled)
         self.assertEqual(repo_module.conf.name, "httpd")
@@ -317,17 +318,17 @@ class ModuleTest(unittest.TestCase):
 
     def test_enable_invalid(self):
         with self.assertRaises(dnf.exceptions.Error):
-            self.base.repo_module_dict.enable("httpd:invalid", assumeyes=True)
+            self.base.repo_module_dict.enable("httpd:invalid")
 
     def test_enable_different_stream(self):
         repo_module = self.base.repo_module_dict["httpd"]
 
-        self.base.repo_module_dict.enable("httpd:2.4", assumeyes=True)
+        self.base.repo_module_dict.enable("httpd:2.4")
         self.assertTrue(repo_module.conf.enabled)
         self.assertEqual(repo_module.conf.name, "httpd")
         self.assertEqual(repo_module.conf.stream, "2.4")
 
-        self.base.repo_module_dict.enable("httpd:2.2", assumeyes=True)
+        self.base.repo_module_dict.enable("httpd:2.2")
         self.assertTrue(repo_module.conf.enabled)
         self.assertEqual(repo_module.conf.name, "httpd")
         self.assertEqual(repo_module.conf.stream, "2.2")
@@ -340,7 +341,7 @@ class ModuleTest(unittest.TestCase):
     def test_disable_name(self):
         repo_module = self.base.repo_module_dict["httpd"]
 
-        self.base.repo_module_dict.enable("httpd", assumeyes=True)
+        self.base.repo_module_dict.enable("httpd")
         self.assertTrue(repo_module.conf.enabled)
         self.assertEqual(repo_module.conf.name, "httpd")
         self.assertEqual(repo_module.conf.stream, "2.4")
@@ -353,7 +354,7 @@ class ModuleTest(unittest.TestCase):
     def test_disable_name_stream(self):
         repo_module = self.base.repo_module_dict["httpd"]
 
-        self.base.repo_module_dict.enable("httpd:2.4", assumeyes=True)
+        self.base.repo_module_dict.enable("httpd:2.4")
         self.assertTrue(repo_module.conf.enabled)
         self.assertEqual(repo_module.conf.name, "httpd")
         self.assertEqual(repo_module.conf.stream, "2.4")
@@ -366,7 +367,7 @@ class ModuleTest(unittest.TestCase):
     def test_disable_pkgspec(self):
         repo_module = self.base.repo_module_dict["httpd"]
 
-        self.base.repo_module_dict.enable("httpd:2.4", assumeyes=True)
+        self.base.repo_module_dict.enable("httpd:2.4")
         self.assertTrue(repo_module.conf.enabled)
         self.assertEqual(repo_module.conf.name, "httpd")
         self.assertEqual(repo_module.conf.stream, "2.4")
@@ -379,7 +380,7 @@ class ModuleTest(unittest.TestCase):
     def test_disable_invalid(self):
         repo_module = self.base.repo_module_dict["httpd"]
 
-        self.base.repo_module_dict.enable("httpd:2.4", assumeyes=True)
+        self.base.repo_module_dict.enable("httpd:2.4")
         self.assertTrue(repo_module.conf.enabled)
         self.assertEqual(repo_module.conf.name, "httpd")
         self.assertEqual(repo_module.conf.stream, "2.4")
@@ -390,7 +391,7 @@ class ModuleTest(unittest.TestCase):
     # dnf module lock
 
     def test_lock_name(self):
-        self.base.repo_module_dict.enable("httpd", assumeyes=True)
+        self.base.repo_module_dict.enable("httpd")
         self.base.repo_module_dict.lock("httpd")
         repo_module = self.base.repo_module_dict["httpd"]
         self.assertTrue(repo_module.conf.locked)
@@ -398,7 +399,7 @@ class ModuleTest(unittest.TestCase):
         self.assertEqual(repo_module.conf.stream, "2.4")
 
     def test_lock_name_stream(self):
-        self.base.repo_module_dict.enable("httpd:2.4", assumeyes=True)
+        self.base.repo_module_dict.enable("httpd:2.4")
         self.base.repo_module_dict.lock("httpd:2.4")
         repo_module = self.base.repo_module_dict["httpd"]
         self.assertTrue(repo_module.conf.locked)
@@ -406,7 +407,7 @@ class ModuleTest(unittest.TestCase):
         self.assertEqual(repo_module.conf.stream, "2.4")
 
     def test_lock_pkgspec(self):
-        self.base.repo_module_dict.enable("httpd:2.4:1/foo", assumeyes=True)
+        self.base.repo_module_dict.enable("httpd:2.4:1/foo")
         self.base.repo_module_dict.lock("httpd:2.4:1/foo")
         repo_module = self.base.repo_module_dict["httpd"]
         self.assertTrue(repo_module.conf.locked)
@@ -420,7 +421,7 @@ class ModuleTest(unittest.TestCase):
     # dnf module unlock
 
     def test_unlock_name(self):
-        self.base.repo_module_dict.enable("httpd", assumeyes=True)
+        self.base.repo_module_dict.enable("httpd")
         self.base.repo_module_dict.lock("httpd")
 
         self.base.repo_module_dict.unlock("httpd")
@@ -431,7 +432,7 @@ class ModuleTest(unittest.TestCase):
         self.assertEqual(repo_module.conf.version, 2)
 
     def test_unlock_name_stream(self):
-        self.base.repo_module_dict.enable("httpd:2.4", assumeyes=True)
+        self.base.repo_module_dict.enable("httpd:2.4")
         self.base.repo_module_dict.lock("httpd:2.4")
 
         self.base.repo_module_dict.unlock("httpd:2.4")
@@ -442,7 +443,7 @@ class ModuleTest(unittest.TestCase):
         self.assertEqual(repo_module.conf.version, 2)
 
     def test_unlock_pkgspec(self):
-        self.base.repo_module_dict.enable("httpd:2.4:1/foo", assumeyes=True)
+        self.base.repo_module_dict.enable("httpd:2.4:1/foo")
         self.base.repo_module_dict.lock("httpd:2.4:1/foo")
 
         self.base.repo_module_dict.unlock("httpd:2.4:1/foo")
@@ -497,7 +498,7 @@ class ModuleTest(unittest.TestCase):
         rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=2)
         self.assertNotIn(rmv, enabled)
 
-        rmd.enable("base-runtime:f26", True)
+        rmd.enable("base-runtime:f26")
 
         enabled = rmd.list_module_version_enabled()
         rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=2)
@@ -507,7 +508,7 @@ class ModuleTest(unittest.TestCase):
         rmd = self.base.repo_module_dict
 
         # enable
-        rmd.enable("base-runtime:f26", True)
+        rmd.enable("base-runtime:f26")
 
         # check not in disabled
         disabled = rmd.list_module_version_disabled()
@@ -531,7 +532,7 @@ class ModuleTest(unittest.TestCase):
         self.assertNotIn(rmv, installed)
 
         # install
-        rmd.install(["base-runtime"], autoenable=True)
+        rmd.install(["base-runtime"])
 
         # check module conf
         repo_module = rmd["base-runtime"]
