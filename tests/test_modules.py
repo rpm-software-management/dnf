@@ -25,7 +25,7 @@ import unittest
 
 import hawkey
 import modulemd
-from hawkey import NSVCAP
+from hawkey import ModuleForm
 
 import dnf.conf
 from dnf.conf import ModuleDefaultsConf
@@ -58,134 +58,135 @@ MODULE_NA = "module-name::x86_64"
 class ModuleSubjectTest(unittest.TestCase):
     def test_nsvap(self):
         subj = ModuleSubject(MODULE_NSVAP)
-        result = list(subj.get_nsvcap_possibilities(forms=hawkey.MOD_FORM_NSVAP))
+        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSVAP))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=1,
-                          arch="x86_64", profile="profile")
+        expected = ModuleForm(name="module-name", stream="stream", version=1,
+                              arch="x86_64", profile="profile")
         self.assertEqual(actual, expected)
 
     def test_nsva(self):
         subj = ModuleSubject(MODULE_NSVA)
-        result = list(subj.get_nsvcap_possibilities(forms=hawkey.MOD_FORM_NSVA))
+        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSVA))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=1,
-                          arch="x86_64", profile=None)
+        expected = ModuleForm(name="module-name", stream="stream", version=1,
+                              arch="x86_64", profile=None)
         self.assertEqual(actual, expected)
 
         # empty profile spec -> no profile
         subj = ModuleSubject(MODULE_NSVA + "/")
-        result = list(subj.get_nsvcap_possibilities(forms=hawkey.MOD_FORM_NSVA))
+        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSVA))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=1,
-                          arch="x86_64", profile=None)
+        expected = ModuleForm(name="module-name", stream="stream", version=1,
+                              arch="x86_64", profile=None)
         self.assertEqual(actual, expected)
 
     def test_nsvp(self):
         subj = ModuleSubject(MODULE_NSVAP)
-        result = list(subj.get_nsvcap_possibilities(forms=hawkey.MOD_FORM_NSVAP))
+        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSVAP))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=1,
-                          arch="x86_64", profile="profile")
+        expected = ModuleForm(name="module-name", stream="stream", version=1,
+                              arch="x86_64", profile="profile")
         self.assertEqual(actual, expected)
 
     def test_nsv(self):
         subj = ModuleSubject(MODULE_NSV)
-        result = list(subj.get_nsvcap_possibilities(forms=hawkey.MOD_FORM_NSV))
+        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSV))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=1,
-                          arch=None, profile=None)
+        expected = ModuleForm(name="module-name", stream="stream", version=1,
+                              arch=None, profile=None)
         self.assertEqual(actual, expected)
 
     def test_nsap(self):
         subj = ModuleSubject(MODULE_NSAP)
-        result = list(subj.get_nsvcap_possibilities(forms=hawkey.MOD_FORM_NSAP))
+        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSAP))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=None,
-                          arch="x86_64", profile="profile")
+        expected = ModuleForm(name="module-name", stream="stream", version=None,
+                              arch="x86_64", profile="profile")
         self.assertEqual(actual, expected)
 
     def test_nsa(self):
         subj = ModuleSubject(MODULE_NSA)
-        result = list(subj.get_nsvcap_possibilities(forms=hawkey.MOD_FORM_NSA))
+        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSA))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=None,
-                          arch="x86_64", profile=None)
+        expected = ModuleForm(name="module-name", stream="stream", version=None,
+                              arch="x86_64", profile=None)
         self.assertEqual(actual, expected)
 
     def test_nsp(self):
         subj = ModuleSubject(MODULE_NSP)
-        result = list(subj.get_nsvcap_possibilities(forms=hawkey.MOD_FORM_NSP))
+        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSP))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=None,
-                          arch=None, profile="profile")
+        expected = ModuleForm(name="module-name", stream="stream", version=None,
+                              arch=None, profile="profile")
         self.assertEqual(actual, expected)
 
     def test_ns(self):
         subj = ModuleSubject(MODULE_NS)
-        result = list(subj.get_nsvcap_possibilities(forms=hawkey.MOD_FORM_NS))
+        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NS))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=None,
-                          arch=None, profile=None)
+        expected = ModuleForm(name="module-name", stream="stream", version=None,
+                              arch=None, profile=None)
         self.assertEqual(actual, expected)
 
     def test_nap(self):
         subj = ModuleSubject(MODULE_NAP)
-        result = list(subj.get_nsvcap_possibilities(forms=hawkey.MOD_FORM_NAP))
+        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NAP))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = NSVCAP(name="module-name", stream=None, version=None,
-                          arch="x86_64", profile="profile")
+        expected = ModuleForm(name="module-name", stream=None, version=None,
+                              arch="x86_64", profile="profile")
         self.assertEqual(actual, expected)
 
     def test_na(self):
         subj = ModuleSubject(MODULE_NA)
-        result = list(subj.get_nsvcap_possibilities(forms=hawkey.MOD_FORM_NA))
+        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NA))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = NSVCAP(name="module-name", stream=None, version=None,
-                          arch="x86_64", profile=None)
+        expected = ModuleForm(name="module-name", stream=None, version=None,
+                              arch="x86_64", profile=None)
         self.assertEqual(actual, expected)
 
     def test_np(self):
         subj = ModuleSubject(MODULE_NP)
-        result = list(subj.get_nsvcap_possibilities(forms=hawkey.MOD_FORM_NP))
+        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NP))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = NSVCAP(name="module-name", stream=None, version=None,
-                          arch=None, profile="profile")
+        expected = ModuleForm(name="module-name", stream=None, version=None,
+                              arch=None, profile="profile")
         self.assertEqual(actual, expected)
 
     def test_n(self):
         subj = ModuleSubject(MODULE_N)
-        result = list(subj.get_nsvcap_possibilities(forms=hawkey.MOD_FORM_N))
+        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_N))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = NSVCAP(name="module-name", stream=None, version=None,
-                          arch=None, profile=None)
+        expected = ModuleForm(name="module-name", stream=None, version=None,
+                              arch=None, profile=None)
         self.assertEqual(actual, expected)
 
     def test_all(self):
         subj = ModuleSubject(MODULE_NSVAP)
-        result = list(subj.get_nsvcap_possibilities())
+        result = list(subj.get_module_form_possibilities())
         self.assertEqual(len(result), 1)
 
         actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=1,
-                          arch="x86_64", profile="profile")
+        expected = ModuleForm(name="module-name", stream="stream", version=1,
+                              arch="x86_64", profile="profile")
         self.assertEqual(actual, expected)
 
 
 class RepoModuleDictTest(unittest.TestCase):
-    def _create_mmd(self, name, stream, version, rpms=None, profiles=None):
+    @staticmethod
+    def _create_mmd(name, stream, version, rpms=None, profiles=None):
         rpms = rpms or []
         profiles = profiles or {}  # profile_name: {pkg_format: [pkg_names]}
 
@@ -282,7 +283,7 @@ class ModuleTest(unittest.TestCase):
         self.base = dnf.Base(conf=self.conf)
 
         self._add_module_repo("_all")
-        self.base.fill_sack(load_system_repo=False, load_available_repos=True)
+        self.base.fill_sack(load_system_repo=False)
 
     def tearDown(self):
         shutil.rmtree(self.tmpdir)
