@@ -28,30 +28,30 @@ class ModuleSubject(object):
     def __init__(self, module_spec):
         self.module_spec = module_spec
 
-    def get_nsvcap_possibilities(self, forms=None):
+    def get_module_form_possibilities(self, forms=None):
         subj = hawkey.Subject(self.module_spec)
         kwargs = {}
         if forms:
             kwargs["form"] = forms
-        return subj.nsvcap_possibilities(**kwargs)
+        return subj.module_form_possibilities(**kwargs)
 
     def find_module_version(self, repo_module_dict):
         """
         Find module that matches self.module_spec in given repo_module_dict.
-        Return (RepoModuleVersion, NSVCAP).
+        Return (RepoModuleVersion, ModuleForm).
         """
 
         result = (None, None)
         stream_err = None
-        for nsvcap in self.get_nsvcap_possibilities():
+        for module_form in self.get_module_form_possibilities():
             try:
-                module_version = repo_module_dict.find_module_version(nsvcap.name,
-                                                                      nsvcap.stream,
-                                                                      nsvcap.version,
-                                                                      nsvcap.context,
-                                                                      nsvcap.arch)
+                module_version = repo_module_dict.find_module_version(module_form.name,
+                                                                      module_form.stream,
+                                                                      module_form.version,
+                                                                      module_form.context,
+                                                                      module_form.arch)
                 if module_version:
-                    result = (module_version, nsvcap)
+                    result = (module_version, module_form)
                     break
             except Error as e:
                 stream_err = e
