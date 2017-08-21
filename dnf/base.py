@@ -190,7 +190,7 @@ class Base(object):
             except dnf.exceptions.Error:
                 continue
 
-        self.repo_module_dict.read_all_modules()
+        self.repo_module_dict.read_all_module_confs()
         self.repo_module_dict.read_all_module_defaults()
         self._module_persistor = ModulePersistor()
 
@@ -1676,11 +1676,10 @@ class Base(object):
             self._goal.install(select=sltr, optional=(not strict))
         return len(available)
 
-    def install_module(self, specs, assumeyes):
-        # TODO test
+    def install_module(self, specs):
         skipped_specs = specs
         try:
-            skipped_specs = self.repo_module_dict.install(specs, assumeyes)
+            skipped_specs = self.repo_module_dict.install(specs)
         except dnf.exceptions.Error:
             self.repo_module_dict.install(specs[1:])
 
@@ -1848,7 +1847,8 @@ class Base(object):
                 for profile in repo_module_version.repo_module.conf.profiles:
                     filtered_rpms_name.append(repo_module_version.rpms(profile))
 
-            q = q.filter(name__neq=filtered_rpms_name)
+            for name in filtered_rpms_name:
+                q = q.filter(name__neq=name)
 
             # add obsoletes into transaction
             if self.conf.obsoletes:

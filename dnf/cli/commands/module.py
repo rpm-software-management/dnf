@@ -83,8 +83,7 @@ class ModuleCommand(commands.Command):
 
         def run_on_module(self):
             for module_ns in self.opts.module_nsvp:
-                self.base.repo_module_dict.enable(module_ns, self.opts.assumeyes,
-                                                  self.opts.assumeno)
+                self.base.repo_module_dict.enable(module_ns)
                 logger.info("'{}' is enabled".format(module_ns))
 
     class DisableSubCommand(SubCommand):
@@ -114,7 +113,7 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            self.base.repo_module_dict.install(self.opts.module_nsvp, self.opts.autoenable)
+            self.base.repo_module_dict.install(self.opts.module_nsvp)
 
     class UpdateSubCommand(SubCommand):
 
