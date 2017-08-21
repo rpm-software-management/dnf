@@ -18,7 +18,8 @@ import dnf
 import hawkey
 
 from dnf.exceptions import Error
-from dnf.module import module_errors, NO_PROFILE_ERR
+from dnf.module import module_errors, NO_PROFILE_ERR, NO_PROFILES_AVAILABLE, POSSIBLE_PROFILES, \
+    NO_PROFILE_SPECIFIED
 from dnf.subject import Subject
 
 
@@ -38,10 +39,31 @@ class RepoModuleVersion(object):
     def __repr__(self):
         return self.full_version
 
-    def install(self, profiles):
+    def report_profile_error(self, profile, default_profiles_used=False):
+        if default_profiles_used:
+            msg = module_errors[NO_PROFILE_SPECIFIED].format(self.name)
+        else:
+            msg = module_errors[NO_PROFILE_ERR].format(profile)
+            if self.profiles:
+                msg += " " + module_errors[POSSIBLE_PROFILES].format(self.profiles)
+            else:
+                msg += " " + module_errors[NO_PROFILES_AVAILABLE]
+
+        raise Error(msg)
+
+    def install(self, profiles, default_profiles):
+        self._install_profiles(profiles, False)
+        self._install_profiles(default_profiles, True)
+
+        profiles.extend(self.repo_module.conf.profiles)
+        profiles.extend(default_profiles)
+        self.base._module_persistor.set_data(self.repo_module, stream=self.stream,
+                                             version=self.version, profiles=sorted(set(profiles)))
+
+    def _install_profiles(self, profiles, defaults_used):
         for profile in profiles:
             if profile not in self.profiles:
-                raise Error(module_errors[NO_PROFILE_ERR].format(profile, self.profiles))
+                self.report_profile_error(profile, defaults_used)
 
             for single_nevra in self.profile_nevra(profile):
                 subject = Subject(single_nevra)
@@ -49,10 +71,6 @@ class RepoModuleVersion(object):
 
                 self.base.install(single_nevra, reponame=self.repo.id, forms=hawkey.FORM_NEVR)
                 self.base._goal.group_members.add(nevra_obj.name)
-
-        profiles.extend(self.repo_module.conf.profiles)
-        self.base._module_persistor.set_data(self.repo_module, stream=self.stream,
-                                             version=self.version, profiles=sorted(set(profiles)))
 
     def upgrade(self, profiles):
         for profile in profiles:

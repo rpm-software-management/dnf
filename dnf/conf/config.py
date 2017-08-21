@@ -663,7 +663,7 @@ class MainConf(BaseConfig):
                                                  '/etc/distro.repos.d'])) # :api
         self._add_option('modulesdir', PathOption('/etc/dnf/modules.d', abspath=True))
         self._add_option('moduledefaultsdir',
-                         PathOption('/etc/dnf/modules.defaults.d', abspath=False))
+                         PathOption('/etc/dnf/modules.defaults.d', abspath=True))
 
         self._add_option('debug_solver', BoolOption(False))
 
