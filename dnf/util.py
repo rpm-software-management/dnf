@@ -30,6 +30,7 @@ import dnf.const
 import dnf.pycomp
 import itertools
 import librepo
+import locale
 import logging
 import os
 import pwd
@@ -224,6 +225,8 @@ def mapall(fn, *seq):
 def normalize_time(timestamp):
     """Convert time into locale aware datetime string object."""
     t = time.strftime("%c", time.localtime(timestamp))
+    if not dnf.pycomp.PY3:
+        t = t.decode(locale.getlocale()[1])
     return t
 
 def on_ac_power():
