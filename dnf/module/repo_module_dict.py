@@ -90,38 +90,48 @@ class RepoModuleDict(OrderedDict):
 
     def get_includes_latest(self, name, stream):
         includes = set()
+        repos = set()
         try:
             repo_module = self[name]
             repo_module_stream = repo_module[stream]
             repo_module_version = repo_module_stream.latest()
 
             artifacts = repo_module_version.module_metadata.artifacts.rpms
+            repos.add(repo_module_version.repo)
             includes.update(artifacts)
 
             for requires_name, requires_stream in \
                     repo_module_version.module_metadata.requires.items():
-                includes.update(self.get_includes_latest(requires_name, requires_stream))
+                requires_includes, requires_repos = self.get_includes_latest(requires_name,
+                                                                             requires_stream)
+                repos.update(requires_repos)
+                includes.update(requires_includes)
         except KeyError as e:
             logger.debug(e)
 
-        return includes
+        return includes, repos
 
     def get_includes(self, name, stream):
         includes = set()
+        repos = set()
         try:
             repo_module = self[name]
             repo_module_stream = repo_module[stream]
             for repo_module_version in repo_module_stream.values():
                 artifacts = repo_module_version.module_metadata.artifacts.rpms
+                repos.add(repo_module_version.repo)
                 includes.update(artifacts)
 
                 for requires_name, requires_stream in \
                         repo_module_version.module_metadata.requires.items():
-                    includes.update(self.get_includes(requires_name, requires_stream))
+                    requires_includes, requires_repos = self.get_includes(requires_name,
+                                                                          requires_stream)
+                    repos.update(requires_repos)
+                    includes.update(requires_includes)
         except KeyError as e:
             logger.debug(e)
 
-        return includes
+        return includes, repos
 
     def enable(self, module_spec):
         subj = ModuleSubject(module_spec)
