@@ -226,7 +226,9 @@ def normalize_time(timestamp):
     """Convert time into locale aware datetime string object."""
     t = time.strftime("%c", time.localtime(timestamp))
     if not dnf.pycomp.PY3:
-        t = t.decode(locale.getlocale()[1])
+        current_locale_setting = locale.getlocale()[1]
+        if current_locale_setting:
+            t = t.decode(current_locale_setting)
     return t
 
 def on_ac_power():
