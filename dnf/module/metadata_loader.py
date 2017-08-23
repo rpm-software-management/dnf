@@ -27,7 +27,8 @@ class ModuleMetadataLoader(object):
 
     @property
     def _metadata_fn(self):
-        return self.repo.metadata._repo_dct.get("modules")
+        if self.repo.metadata:
+            return self.repo.metadata._repo_dct.get("modules")
 
     def load(self):
         if self.repo is None:
