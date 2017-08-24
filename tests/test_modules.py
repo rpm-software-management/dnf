@@ -310,6 +310,9 @@ class ModuleTest(unittest.TestCase):
         self.assertEqual(repo_module.conf.name, "httpd")
         self.assertEqual(repo_module.conf.stream, "2.4")
 
+        # also enable base-runtime; it's a dependency that's used in other tests
+        self.base.repo_module_dict.enable("base-runtime:f26")
+
     def test_enable_pkgspec(self):
         self.base.repo_module_dict.enable("httpd:2.4:1/foo")
         repo_module = self.base.repo_module_dict["httpd"]
@@ -552,7 +555,7 @@ class ModuleTest(unittest.TestCase):
     def test_install_profile_latest(self):
         self.test_enable_name_stream()
         self.base.repo_module_dict.install(["httpd/default"])
-        self.base._goal.run()
+        self.base.resolve()
         expected = [
             "basesystem-11-3.noarch",
             "filesystem-3.2-40.x86_64",
@@ -566,7 +569,7 @@ class ModuleTest(unittest.TestCase):
     def test_install_profile(self):
         self.test_enable_name_stream()
         self.base.repo_module_dict.install(["httpd:2.4:1/default"])
-        self.base._goal.run()
+        self.base.resolve()
         expected = [
             "basesystem-11-3.noarch",
             "filesystem-3.2-40.x86_64",
@@ -579,8 +582,9 @@ class ModuleTest(unittest.TestCase):
 
     def test_install_two_profiles(self):
         self.test_enable_name_stream()
+
         self.base.repo_module_dict.install(["httpd:2.4:1/default", "httpd:2.4:1/doc"])
-        self.base._goal.run()
+        self.base.resolve()
         expected = [
             "basesystem-11-3.noarch",
             "filesystem-3.2-40.x86_64",
@@ -595,7 +599,8 @@ class ModuleTest(unittest.TestCase):
     def test_install_two_profiles_different_versions(self):
         self.test_enable_name_stream()
         self.base.repo_module_dict.install(["httpd:2.4:2/default", "httpd:2.4:1/doc"])
-        self.base._goal.run()
+        #self.base.resolve()
+        self.base.resolve()
         expected = [
             "basesystem-11-3.noarch",
             "filesystem-3.2-40.x86_64",
@@ -617,7 +622,7 @@ class ModuleTest(unittest.TestCase):
 
         self.test_install_profile()
         self.base.repo_module_dict.install(["httpd:2.4:2/doc"])
-        self.base._goal.run()
+        self.base.resolve()
         expected = [
             "basesystem-11-3.noarch",
             "filesystem-3.2-40.x86_64",
