@@ -1,6 +1,6 @@
 [boltron]
 name=Boltron
-baseurl=https://kojipkgs.fedoraproject.org/compose/latest-Fedora-Modular-26/compose/Server/x86_64/os/
+baseurl=https://download.fedoraproject.org/pub/alt/unofficial/releases/26/Server/$basearch/os/
 enabled=1
 gpgcheck=0
 metadata_expire=0
