@@ -473,6 +473,9 @@ class MDPayload(dnf.callback.Payload):
         msg = 'error: %s (%s).' % (msg, url)
         logger.debug(msg)
 
+    def _start_transfer_cb(self, cbdata, total_mirrors, tried_mirrors):
+        self.progress.start_transfer(self, total_mirrors, tried_mirrors)
+
     @property
     def download_size(self):
         return self._download_size
@@ -665,10 +668,10 @@ class Repo(dnf.conf.RepoConf):
             return self._handle_load_with_pubring(handle)
 
     def _handle_load_core(self, handle):
-        if handle.progresscb:
+        if handle.progresscb or handle.starttransfercb:
             self._md_pload.start(self.name or self.id or 'unknown')
         result = handle._perform()
-        if handle.progresscb:
+        if handle.progresscb or handle.starttransfercb:
             self._md_pload.end()
         return Metadata(result, handle)
 
@@ -731,6 +734,7 @@ class Repo(dnf.conf.RepoConf):
         h.progresscb = self._md_pload._progress_cb
         self._md_pload.fm_running = False
         h.fastestmirrorcb = self._md_pload._fastestmirror_cb
+        h.starttransfercb = self._md_pload._start_transfer_cb
 
         # apply repo options
         h.lowspeedlimit = self.minrate

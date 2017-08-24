@@ -88,6 +88,19 @@ class DownloadProgress(object):
 
         pass
 
+    def start_transfer(self, payload, total_mirrors, tried_mirrors):
+        """Start of a single new transfer. Since internally data may be
+        downloaded from several mirrors, this provides detailed overview about
+        start of single transfers together with information about related mirrors.
+
+        :api, `payload` is the payload related to this call, `total_mirrors` is
+        maximal amount of mirrors that will be tried to connect,
+        `tried_mirrors` is count of mirrors which already failed to connect.
+
+        """
+
+        pass
+
     def start(self, total_files, total_size, total_drpms=0):
         """Start new progress metering. :api
 
