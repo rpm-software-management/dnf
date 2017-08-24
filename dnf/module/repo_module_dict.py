@@ -96,7 +96,7 @@ class RepoModuleDict(OrderedDict):
             repo_module_stream = repo_module[stream]
             repo_module_version = repo_module_stream.latest()
 
-            artifacts = repo_module_version.module_metadata.artifacts.rpms
+            artifacts = repo_module_version.nevra()
             repos.add(repo_module_version.repo)
             includes.update(artifacts)
 
@@ -118,7 +118,7 @@ class RepoModuleDict(OrderedDict):
             repo_module = self[name]
             repo_module_stream = repo_module[stream]
             for repo_module_version in repo_module_stream.values():
-                artifacts = repo_module_version.module_metadata.artifacts.rpms
+                artifacts = repo_module_version.nevra()
                 repos.add(repo_module_version.repo)
                 includes.update(artifacts)
 

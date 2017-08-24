@@ -219,20 +219,29 @@ class Base(object):
         self.repo_module_dict.read_all_module_confs()
         self.repo_module_dict.read_all_module_defaults()
         self._module_persistor = ModulePersistor()
+        self.use_module_includes()
 
     def use_module_includes(self):
         self.sack.reset_includes()
+        include_repos = set()
+        include_pkgs = set()
         for repo_module in self.repo_module_dict.values():
             if repo_module.conf and repo_module.conf.enabled:
                 includes, repos = self.repo_module_dict.get_includes_latest(repo_module.name,
                                                                             repo_module.conf.stream)
+
+                include_repos.update(repos)
+
                 for nevra in includes:
                     subj = dnf.subject.Subject(nevra)
-                    pkgs = subj.get_best_query(self.sack)
-                    self.sack.add_includes(pkgs)
+                    pkgs = subj.get_best_query(self.sack, forms=[hawkey.FORM_NEVRA])
+                    include_pkgs.add(pkgs)
 
-                for repo in repos:
-                    self.sack.set_use_includes(True, repo.id)
+        for pkg in include_pkgs:
+            self.sack.add_includes(pkg)
+
+        for repo in include_repos:
+            self.sack.set_use_includes(True, repo.id)
 
     def _store_persistent_data(self):
         if self._repo_persistor and not self.conf.cacheonly:
