@@ -824,6 +824,9 @@ class Base(object):
         self._plugins.run_transaction()
 #        if self.history.group_active() and self._trans_success:
 #            self.history.group.commit()
+        if self._trans_success:
+            if self._module_persistor:
+                self._module_persistor.commit()
 
     def _trans_error_summary(self, errstring):
         """Parse the error string for 'interesting' errors which can
