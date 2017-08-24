@@ -201,8 +201,8 @@ class Base(object):
         include_pkgs = set()
         for repo_module in self.repo_module_dict.values():
             if repo_module.conf and repo_module.conf.enabled:
-                includes, repos = self.repo_module_dict.get_includes_latest(repo_module.name,
-                                                                            repo_module.conf.stream)
+                includes, repos = self.repo_module_dict.get_includes(repo_module.name,
+                                                                     repo_module.conf.stream)
 
                 include_repos.update(repos)
 
