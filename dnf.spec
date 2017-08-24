@@ -2,6 +2,15 @@
 %global librepo_version 1.8.0
 %global libcomps_version 0.1.8
 %global rpm_version 4.14.0
+%if 0%{?rhel} == 7
+%global rpm_version 4.11.3-27
+%endif
+%if 0%{?fedora} == 26
+%global rpm_version 4.13.0.1-7
+%endif
+%if 0%{?fedora} > 26
+%global rpm_version 4.13.90
+%endif
 %global min_plugins_core 2.1.3
 %global dnf_langpacks_ver 0.15.1-6
 
