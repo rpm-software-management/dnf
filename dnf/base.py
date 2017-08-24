@@ -788,8 +788,11 @@ class Base(object):
         timer()
         self._plugins.unload_removed_plugins(self.transaction)
         self._plugins.run_transaction()
-        if self._group_persistor and self._trans_success:
-            self._group_persistor.commit()
+        if self._trans_success:
+            if self._group_persistor:
+                self._group_persistor.commit()
+            if self._module_persistor:
+                self._module_persistor.commit()
 
     def _trans_error_summary(self, errstring):
         """Parse the error string for 'interesting' errors which can
