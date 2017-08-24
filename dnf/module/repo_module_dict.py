@@ -102,6 +102,13 @@ class RepoModuleDict(OrderedDict):
 
             for requires_name, requires_stream in \
                     repo_module_version.module_metadata.requires.items():
+
+                # HACK: temporary fix for data issues in F26 Boltron repo
+                if requires_name == "bootstrap" and requires_stream == "master":
+                    requires_name = "base-runtime"
+                    requires_stream = "f26"
+                    includes.update(["hostname-0:3.18-2.module_329fd369.x86_64"])
+
                 requires_includes, requires_repos = self.get_includes_latest(requires_name,
                                                                              requires_stream)
                 repos.update(requires_repos)
@@ -124,6 +131,13 @@ class RepoModuleDict(OrderedDict):
 
                 for requires_name, requires_stream in \
                         repo_module_version.module_metadata.requires.items():
+
+                    # HACK: temporary fix for data issues in F26 Boltron repo
+                    if requires_name == "bootstrap" and requires_stream == "master":
+                        requires_name = "base-runtime"
+                        requires_stream = "f26"
+                        includes.update(["hostname-0:3.18-2.module_329fd369.x86_64"])
+
                     requires_includes, requires_repos = self.get_includes(requires_name,
                                                                           requires_stream)
                     repos.update(requires_repos)
