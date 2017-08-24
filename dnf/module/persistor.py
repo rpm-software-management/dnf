@@ -19,18 +19,27 @@ class ModulePersistor(object):
 
     def __init__(self):
         self.repo_modules = []
+        self._commit = False
 
     def set_data(self, repo_module, **kwargs):
         self.repo_modules.append(repo_module)
         for name, value in kwargs.items():
             setattr(repo_module.conf, name, value)
 
+    def commit(self):
+        self._commit = True
+
     def save(self):
+        if not self._commit:
+            return
+
+        self._commit = False
+
         for repo_module in self.repo_modules:
             repo_module.write_conf_to_file()
 
         return True
 
     def reset(self):
-        # read configs from disk
-        pass
+        self.repo_modules = []
+        self._commit = False
