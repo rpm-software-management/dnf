@@ -62,6 +62,9 @@ class RepoModule(OrderedDict):
         if stream not in self:
             raise Error(module_errors[NO_STREAM_ERR].format(stream, self.name))
 
+        if self.conf.enabled and self.conf.stream == stream:
+            return
+
         if self.conf.stream is not None and \
                 str(self.conf.stream) != str(stream) and \
                 not assumeyes:
@@ -76,6 +79,8 @@ class RepoModule(OrderedDict):
         self.conf.stream = stream
         self.conf.enabled = True
         self.write_conf_to_file()
+
+        self.parent.base.use_module_includes()
 
     def disable(self):
         self.conf.enabled = False
