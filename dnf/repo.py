@@ -447,7 +447,7 @@ class RemoteRPMPayload(PackagePayload):
         self.remote_size = 0
         self.handle = handle
         self.conf = conf
-        s = self.conf.releasever or "" + self.conf.substitutions.get('basearch')
+        s = (self.conf.releasever or "") + self.conf.substitutions.get('basearch')
         digest = hashlib.sha256(s.encode('utf8')).hexdigest()[:16]
         repodir = "commandline-" + digest
         self.pkgdir = os.path.join(self.conf.cachedir, repodir, "packages")
