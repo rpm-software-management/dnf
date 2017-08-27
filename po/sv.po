@@ -12,8 +12,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-07-01 13:33+0200\n"
-"PO-Revision-Date: 2017-06-15 04:58-0400\n"
+"POT-Creation-Date: 2017-08-27 15:23+0200\n"
+"PO-Revision-Date: 2017-08-07 02:07-0400\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/dnf/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -63,7 +63,7 @@ msgstr "Misslyckades att skicka e-post via ”%s”: %s"
 msgid "Failed to execute command '%s': returned %d"
 msgstr "Misslyckades att köra kommandot ”%s”: returnerade %d"
 
-#: ../dnf/automatic/main.py:214 ../dnf/cli/main.py:57
+#: ../dnf/automatic/main.py:216 ../dnf/cli/main.py:57
 #, python-format
 msgid "Error: %s"
 msgstr "Fel: %s"
@@ -127,22 +127,33 @@ msgstr "{} fasas ut av {}"
 msgid "{} provides {} but it cannot be found"
 msgstr "{} tillhandahåller {} men kan inte hittas"
 
-#: ../dnf/cli/commands/distrosync.py:32
-msgid "synchronize installed packages to the latest available versions"
-msgstr ""
-"synkronisera installerade paket med de senast tillgängliga versionerna"
+#: ../dnf/cli/commands/clean.py:87
+msgid "remove cached data"
+msgstr "ta bort cachade data"
 
-#: ../dnf/cli/commands/distrosync.py:36
-msgid "Package to synchronize"
-msgstr "Paket att synkronisera"
+#: ../dnf/cli/commands/clean.py:93
+msgid "Metadata type to clean"
+msgstr "Metadatatyp att rensa"
 
-#: ../dnf/cli/commands/downgrade.py:34
-msgid "Downgrade a package"
-msgstr "Nedgradera ett paket"
+#: ../dnf/cli/commands/clean.py:105
+msgid "Cleaning data:  "
+msgstr "Rensar data:  "
 
-#: ../dnf/cli/commands/downgrade.py:38
-msgid "Package to downgrade"
-msgstr "Paket att nedgradera"
+#: ../dnf/cli/commands/clean.py:111
+msgid "Cache was expired"
+msgstr "Cachen gick ut"
+
+#: ../dnf/cli/commands/clean.py:115
+#, python-format
+msgid "%d file removed"
+msgid_plural "%d files removed"
+msgstr[0] "%d fil borttagen"
+msgstr[1] "%d filer borttagna"
+
+#: ../dnf/cli/commands/clean.py:119 ../dnf/lock.py:139
+#, python-format
+msgid "Waiting for process with pid %d to finish."
+msgstr "Väntar på att processen med pid %d skall avsluta."
 
 #: ../dnf/cli/commands/group.py:45
 msgid "display, or use, the groups information"
@@ -227,8 +238,8 @@ msgid "Invalid groups sub-command, use: %s."
 msgstr "Ogiltigt underkommando till groups, använd: %s."
 
 #: ../dnf/cli/commands/group.py:402 ../dnf/cli/commands/__init__.py:398
-#: ../dnf/cli/commands/__init__.py:880 ../dnf/cli/commands/install.py:122
-#: ../dnf/cli/cli.py:387 ../dnf/cli/cli.py:638 ../dnf/cli/cli.py:665
+#: ../dnf/cli/commands/__init__.py:891 ../dnf/cli/cli.py:368
+#: ../dnf/cli/cli.py:612 ../dnf/cli/cli.py:642
 #, python-format
 msgid "No package %s available."
 msgstr "Inget paket %s tillgängligt."
@@ -236,117 +247,6 @@ msgstr "Inget paket %s tillgängligt."
 #: ../dnf/cli/commands/group.py:405
 msgid "Unable to find a mandatory group package."
 msgstr "Kan inte hitta ett nödvändigt gruppaket."
-
-#: ../dnf/cli/commands/makecache.py:37
-msgid "generate the metadata cache"
-msgstr "generera metadatacachen"
-
-#: ../dnf/cli/commands/makecache.py:53
-msgid "Making cache files for all metadata files."
-msgstr "Skapar cache-filer för alla metadatafiler."
-
-#: ../dnf/cli/commands/mark.py:36
-msgid "mark or unmark installed packages as installed by user."
-msgstr ""
-"markera eller avmarkera installerade paket som installerade av en användare."
-
-#: ../dnf/cli/commands/mark.py:47
-#, python-format
-msgid "%s marked as user installed."
-msgstr "%s markerad som användarinstallerad."
-
-#: ../dnf/cli/commands/mark.py:52
-#, python-format
-msgid "%s unmarked as user installed."
-msgstr "%s avmarkerad som användarinstallerad."
-
-#: ../dnf/cli/commands/mark.py:77 ../dnf/cli/commands/shell.py:116
-#: ../dnf/cli/commands/shell.py:225
-msgid "Error:"
-msgstr "Fel:"
-
-#: ../dnf/cli/commands/mark.py:79
-#, python-format
-msgid "Package %s is not installed."
-msgstr "Paketet %s är inte installerat."
-
-#: ../dnf/cli/commands/reinstall.py:38
-msgid "reinstall a package"
-msgstr "ominstallera ett paket"
-
-#: ../dnf/cli/commands/reinstall.py:42
-msgid "Package to reinstall"
-msgstr "Paket att ominstallera"
-
-#: ../dnf/cli/commands/reinstall.py:68 ../dnf/cli/commands/reinstall.py:82
-#: ../dnf/cli/commands/remove.py:119 ../dnf/cli/commands/__init__.py:453
-#: ../dnf/cli/commands/__init__.py:510 ../dnf/cli/commands/__init__.py:614
-#: ../dnf/cli/commands/__init__.py:661 ../dnf/cli/commands/__init__.py:704
-#: ../dnf/cli/commands/__init__.py:739 ../dnf/cli/commands/install.py:94
-#: ../dnf/cli/commands/upgrade.py:74 ../dnf/cli/commands/upgrade.py:84
-#: ../dnf/cli/cli.py:378 ../dnf/base.py:1669 ../dnf/base.py:1688
-#: ../dnf/base.py:1701 ../dnf/base.py:1722 ../dnf/base.py:1768
-#: ../dnf/base.py:1825 ../dnf/base.py:1914
-#, python-format
-msgid "No match for argument: %s"
-msgstr "Ingen matchning för argumentet: %s"
-
-#: ../dnf/cli/commands/reinstall.py:79 ../dnf/base.py:1747
-#, python-format
-msgid "Package %s available, but not installed."
-msgstr "Paketet %s är tillgängligt, men inte installerat."
-
-#: ../dnf/cli/commands/reinstall.py:89 ../dnf/cli/commands/__init__.py:460
-#: ../dnf/cli/commands/__init__.py:517
-#, python-format
-msgid " (from %s)"
-msgstr " (från %s)"
-
-#: ../dnf/cli/commands/reinstall.py:90 ../dnf/cli/commands/__init__.py:461
-#: ../dnf/cli/commands/__init__.py:518
-#, python-format
-msgid "Installed package %s%s not available."
-msgstr "Installerat paket %s%s är inte tillgängligt."
-
-#: ../dnf/cli/commands/reinstall.py:99 ../dnf/cli/commands/__init__.py:404
-#: ../dnf/cli/commands/__init__.py:470 ../dnf/cli/commands/__init__.py:527
-#: ../dnf/cli/commands/__init__.py:558 ../dnf/cli/commands/__init__.py:620
-#: ../dnf/cli/commands/__init__.py:669 ../dnf/cli/commands/install.py:79
-#: ../dnf/cli/commands/install.py:88 ../dnf/cli/commands/install.py:104
-#: ../dnf/cli/cli.py:208 ../dnf/cli/cli.py:397 ../dnf/base.py:1534
-msgid "Nothing to do."
-msgstr "Inget att göra."
-
-#: ../dnf/cli/commands/remove.py:46
-msgid "remove a package or packages from your system"
-msgstr "ta bort ett eller flera paket från ditt system"
-
-#: ../dnf/cli/commands/remove.py:53
-msgid "remove duplicated packages"
-msgstr "ta bort dubblerade paket"
-
-#: ../dnf/cli/commands/remove.py:58
-msgid "remove installonly packages over the limit"
-msgstr "ta bort installonly-paket över gränsen"
-
-#: ../dnf/cli/commands/remove.py:91
-msgid "No duplicated packages found for removal."
-msgstr "Inga dubblerade paket att ta bort hittades."
-
-#: ../dnf/cli/commands/remove.py:102
-msgid "No old installonly packages found for removal."
-msgstr "Inga gamla installonly-paket att ta bort hittades."
-
-#: ../dnf/cli/commands/remove.py:108 ../dnf/cli/commands/install.py:85
-#: ../dnf/cli/commands/install.py:101 ../dnf/base.py:1814
-#, python-format
-msgid "Not a valid form: %s"
-msgstr "Inte en giltig form: %s"
-
-#: ../dnf/cli/commands/remove.py:125 ../dnf/cli/commands/__init__.py:709
-#: ../dnf/base.py:1831
-msgid "No packages marked for removal."
-msgstr "Inga paket markerade att tas bort."
 
 #: ../dnf/cli/commands/repolist.py:37 ../dnf/cli/commands/updateinfo.py:49
 msgid "unknown"
@@ -484,699 +384,6 @@ msgstr "status"
 msgid "repo name"
 msgstr "förrådsnamn"
 
-#: ../dnf/cli/commands/swap.py:33
-msgid "run an interactive dnf mod for remove and install one spec"
-msgstr ""
-"kör ett interaktivt dnf-läge för att ta bort och installera en specifikation"
-
-#: ../dnf/cli/commands/swap.py:37
-msgid "The specs that will be removed"
-msgstr "Specifikationen kommer att tas bort"
-
-#: ../dnf/cli/commands/swap.py:39
-msgid "The specs that will be installed"
-msgstr "Specifikationen kommer att installeras"
-
-#: ../dnf/cli/commands/upgrademinimal.py:31
-msgid ""
-"upgrade, but only 'newest' package match which fixes a problem that affects "
-"your system"
-msgstr ""
-"uppgradera, men bara ”nyaste” paketmatchning som löser ett problem som "
-"påverkar ditt system"
-
-#: ../dnf/cli/commands/clean.py:87
-msgid "remove cached data"
-msgstr "ta bort cachade data"
-
-#: ../dnf/cli/commands/clean.py:93
-msgid "Metadata type to clean"
-msgstr "Metadatatyp att rensa"
-
-#: ../dnf/cli/commands/clean.py:105
-msgid "Cleaning data:  "
-msgstr "Rensar data:  "
-
-#: ../dnf/cli/commands/clean.py:111
-msgid "Cache was expired"
-msgstr "Cachen gick ut"
-
-#: ../dnf/cli/commands/clean.py:115
-#, python-format
-msgid "%d file removed"
-msgid_plural "%d files removed"
-msgstr[0] "%d fil borttagen"
-msgstr[1] "%d filer borttagna"
-
-#: ../dnf/cli/commands/clean.py:119 ../dnf/lock.py:139
-#, python-format
-msgid "Waiting for process with pid %d to finish."
-msgstr "Väntar på att processen med pid %d skall avsluta."
-
-#: ../dnf/cli/commands/shell.py:52
-msgid "run an interactive DNF shell"
-msgstr "kör ett interaktivt DNF-skal"
-
-#: ../dnf/cli/commands/shell.py:73
-msgid "SCRIPT"
-msgstr "SKRIPT"
-
-#: ../dnf/cli/commands/shell.py:74
-msgid "Script to run in DNF shell"
-msgstr "Skript att köra i ett DNF-skal"
-
-#: ../dnf/cli/commands/shell.py:130
-msgid "Unsupported key value."
-msgstr "Ej stött nyckelvärde."
-
-#: ../dnf/cli/commands/shell.py:146
-#, python-format
-msgid "Could not find repository: %s"
-msgstr "Kunde inte hitta förrådet: %s"
-
-#: ../dnf/cli/commands/shell.py:162
-msgid ""
-"{} arg [value]\n"
-"  arg: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,\n"
-"        repo_id.gpgcheck, repo_id.exclude\n"
-"    If no value is given it prints the current value.\n"
-"    If value is given it sets that value."
-msgstr ""
-"{} arg [värde]\n"
-"  arg: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,\n"
-"        repo_id.gpgcheck, repo_id.exclude\n"
-"    Om inget värde anges skrivs det nuvarande värdet.\n"
-"    Om ett värde anges sätts detta värde."
-
-#: ../dnf/cli/commands/shell.py:169
-msgid ""
-"{} [command]\n"
-"    print help"
-msgstr ""
-"{} [kommando]\n"
-"    skriv ut hjälp"
-
-#: ../dnf/cli/commands/shell.py:173
-msgid ""
-"{} arg [option]\n"
-"  list: lists repositories and their status. option = [all | id | glob]\n"
-"  enable: enable repositories. option = repository id\n"
-"  disable: disable repositories. option = repository id"
-msgstr ""
-"{} arg [flagga]\n"
-"  list: listar förråd och deras status. flagga = [all | id | glob]\n"
-"  enable: aktivera förråd. flagga = förråds-id\n"
-"  disable: avaktivera förråd. flagga = förråds-id"
-
-#: ../dnf/cli/commands/shell.py:179
-msgid ""
-"{}\n"
-"    resolve the transaction set"
-msgstr ""
-"{}\n"
-"    lös upp transaktionsuppsättningen"
-
-#: ../dnf/cli/commands/shell.py:183
-msgid ""
-"{} arg\n"
-"  list: lists the contents of the transaction\n"
-"  reset: reset (zero-out) the transaction\n"
-"  run: run the transaction"
-msgstr ""
-"{} arg\n"
-"  list: listar innehållet i transaktionen\n"
-"  reset: återställ (nollställ) transaktionen\n"
-"  run: kör transaktionen"
-
-#: ../dnf/cli/commands/shell.py:189
-msgid ""
-"{}\n"
-"    run the transaction"
-msgstr ""
-"{}\n"
-"    kör transaktionen"
-
-#: ../dnf/cli/commands/shell.py:193
-msgid ""
-"{}\n"
-"    exit the shell"
-msgstr ""
-"{}\n"
-"    avsluta skalet"
-
-#: ../dnf/cli/commands/shell.py:198
-msgid ""
-"Shell specific arguments:\n"
-"\n"
-"config                   set config options\n"
-"help                     print help\n"
-"repository (or repo)     enable, disable or list repositories\n"
-"resolvedep               resolve the transaction set\n"
-"transaction (or ts)      list, reset or run the transaction set\n"
-"run                      resolve and run the transaction set\n"
-"exit (or quit)           exit the shell"
-msgstr ""
-"Skalspecifika argument:\n"
-"\n"
-"config                   ställ in konfigurationsflaggor\n"
-"help                     skriv ut hjälp\n"
-"repository (eller repo)  aktivera, avaktivera eller lista förråd\n"
-"resolvedep               lös upp transaktionsmängden\n"
-"transaction (eller ts)   lista, återställ eller kör transaktionsmängden\n"
-"run                      lös upp och kör transaktionsmängden\n"
-"exit (eller quit)        avsluta skalet"
-
-#: ../dnf/cli/commands/shell.py:225 ../dnf/cli/cli.py:727
-#, python-format
-msgid "Unknown repo: '%s'"
-msgstr "Okänt förråd: ”%s”"
-
-#: ../dnf/cli/commands/shell.py:248
-#, python-format
-msgid "Error: Cannot open %s for reading"
-msgstr "Fel: kan inte öppna %s för läsning"
-
-#: ../dnf/cli/commands/shell.py:278
-msgid "Leaving Shell"
-msgstr "Lämnar skalet"
-
-#: ../dnf/cli/commands/search.py:43
-msgid "search package details for the given string"
-msgstr "sök i paketdetaljer efter den angivna strängen"
-
-#: ../dnf/cli/commands/search.py:48
-msgid "search also package description and URL"
-msgstr "sök även i paketbeskrivningar och URL:en"
-
-#: ../dnf/cli/commands/search.py:49
-msgid "QUERY_STRING"
-msgstr "FRÅGESTRÄNG"
-
-#: ../dnf/cli/commands/search.py:56 ../dnf/cli/output.py:490
-msgid "Name"
-msgstr "Namn"
-
-#: ../dnf/cli/commands/search.py:57 ../dnf/cli/output.py:526
-msgid "Summary"
-msgstr "Sammanfattning"
-
-#: ../dnf/cli/commands/search.py:58 ../dnf/cli/commands/updateinfo.py:372
-#: ../dnf/cli/output.py:530
-msgid "Description"
-msgstr "Beskrivning"
-
-#: ../dnf/cli/commands/search.py:59 ../dnf/cli/output.py:528
-msgid "URL"
-msgstr "URL"
-
-#. TRANSLATORS: separator used between package attributes (eg. Name & Summary
-#. & URL)
-#: ../dnf/cli/commands/search.py:71
-msgid " & "
-msgstr " & "
-
-#. TRANSLATORS: %s  - translated package attributes,
-#. %%s - found keys (in listed attributes)
-#: ../dnf/cli/commands/search.py:75
-#, python-format
-msgid "%s Exactly Matched: %%s"
-msgstr "%s Exakt matchad: %%s"
-
-#. TRANSLATORS: %s  - translated package attributes,
-#. %%s - found keys (in listed attributes)
-#: ../dnf/cli/commands/search.py:79
-#, python-format
-msgid "%s Matched: %%s"
-msgstr "%s Matchad: %%s"
-
-#: ../dnf/cli/commands/search.py:116
-msgid "No matches found."
-msgstr "Inget som matchar hittat."
-
-#: ../dnf/cli/commands/search.py:135
-msgid "Searching Packages: "
-msgstr "Söker paket: "
-
-#: ../dnf/cli/commands/__init__.py:43
-#, python-format
-msgid "To diagnose the problem, try running: '%s'."
-msgstr "För att diagnostisera problemet, försök köra: ”%s”."
-
-#: ../dnf/cli/commands/__init__.py:45
-#, python-format
-msgid "You probably have corrupted RPMDB, running '%s' might fix the issue."
-msgstr ""
-"Du har förmodligen en trasig RPMDB, att köra ”%s” kan kanske lösa problemet."
-
-#: ../dnf/cli/commands/__init__.py:49
-msgid ""
-"You have enabled checking of packages via GPG keys. This is a good thing.\n"
-"However, you do not have any GPG public keys installed. You need to download\n"
-"the keys for packages you wish to install and install them.\n"
-"You can do that by running the command:\n"
-"    rpm --import public.gpg.key\n"
-"\n"
-"\n"
-"Alternatively you can specify the url to the key you would like to use\n"
-"for a repository in the 'gpgkey' option in a repository section and DNF\n"
-"will install it for you.\n"
-"\n"
-"For more information contact your distribution or package provider."
-msgstr ""
-"Du har aktiverat kontroll av paket med GPG-nycklar.  Det är en bra sak.\n"
-"Dock har du inte några publika GPG-nycklar installerade.  Du måste hämta\n"
-"nycklarna för paket som du vill installera och installera dem.  Du kan\n"
-"göra det genom att köra kommandot:\n"
-"    rpm --import public.gpg.key\n"
-"\n"
-"\n"
-"Alternativt kan du ange url:en till nyckeln du vill använda för ett förråd\n"
-"med alternativet ”gpgkey” i en förrådssektion och DNF kommer installera\n"
-"den åt dig.\n"
-"\n"
-"För mer information, kontakta din distribution eller paketleverantör."
-
-#: ../dnf/cli/commands/__init__.py:76
-#, python-format
-msgid "Problem repository: %s"
-msgstr "Problemförråd     : %s"
-
-#: ../dnf/cli/commands/__init__.py:95
-msgid "There are no enabled repos."
-msgstr "Det finns inga aktiva förråd."
-
-#: ../dnf/cli/commands/__init__.py:153
-msgid "display details about a package or group of packages"
-msgstr "visa detaljer om ett paket eller en grupp av paket"
-
-#: ../dnf/cli/commands/__init__.py:163 ../dnf/cli/commands/__init__.py:334
-msgid "show all packages (default)"
-msgstr "visa alla paket (standard)"
-
-#: ../dnf/cli/commands/__init__.py:166 ../dnf/cli/commands/__init__.py:337
-msgid "show only available packages"
-msgstr "visa endast tillgängliga paket"
-
-#: ../dnf/cli/commands/__init__.py:169 ../dnf/cli/commands/__init__.py:340
-msgid "show only installed packages"
-msgstr "visa endast installerade paket"
-
-#: ../dnf/cli/commands/__init__.py:172 ../dnf/cli/commands/__init__.py:343
-msgid "show only extras packages"
-msgstr "visa endast extrapaket"
-
-#: ../dnf/cli/commands/__init__.py:175 ../dnf/cli/commands/__init__.py:178
-#: ../dnf/cli/commands/__init__.py:346 ../dnf/cli/commands/__init__.py:349
-msgid "show only upgrades packages"
-msgstr "visa endast uppgraderingspaket"
-
-#: ../dnf/cli/commands/__init__.py:181 ../dnf/cli/commands/__init__.py:352
-msgid "show only autoremove packages"
-msgstr "visa endast autoremove-paket"
-
-#: ../dnf/cli/commands/__init__.py:184 ../dnf/cli/commands/__init__.py:355
-msgid "show only recently changed packages"
-msgstr "visa endast nyligen ändrade paket"
-
-#: ../dnf/cli/commands/__init__.py:216
-msgid "list a package or groups of packages"
-msgstr "lista ett paket eller grupper av paket"
-
-#: ../dnf/cli/commands/__init__.py:230
-msgid "find what package provides the given value"
-msgstr "ta reda på vilka paket som tillhandahåller det angivna värdet"
-
-#: ../dnf/cli/commands/__init__.py:234
-msgid "SOME_STRING"
-msgstr "NÅGON_STRÄNG"
-
-#: ../dnf/cli/commands/__init__.py:252
-msgid "check for available package upgrades"
-msgstr "undersök tillgängliga paketuppgraderingar"
-
-#: ../dnf/cli/commands/__init__.py:389 ../dnf/cli/commands/__init__.py:442
-#: ../dnf/cli/commands/__init__.py:498
-msgid "No package available."
-msgstr "Inget paket tillgängligt."
-
-#: ../dnf/cli/commands/__init__.py:440
-msgid "No package installed."
-msgstr "Inget paket installerat."
-
-#: ../dnf/cli/commands/__init__.py:495 ../dnf/cli/commands/__init__.py:604
-#: ../dnf/cli/commands/__init__.py:647 ../dnf/cli/commands/__init__.py:694
-msgid "No package installed from the repository."
-msgstr "Inget paket installerat från förrådet."
-
-#: ../dnf/cli/commands/__init__.py:744 ../dnf/cli/commands/upgrade.py:100
-msgid "No packages marked for upgrade."
-msgstr "Inga paket markerade att uppgraderas."
-
-#: ../dnf/cli/commands/__init__.py:754
-msgid "run commands on top of all packages in given repository"
-msgstr "kör kommandon ovanpå alla paket i ett angivet förråd"
-
-#: ../dnf/cli/commands/__init__.py:767
-msgid "REPO"
-msgstr "FÖRRÅD"
-
-#: ../dnf/cli/commands/__init__.py:797
-msgid "display a helpful usage message"
-msgstr "visa ett hjälpsamt användningsmeddelande"
-
-#: ../dnf/cli/commands/__init__.py:801
-msgid "COMMAND"
-msgstr "KOMMANDO"
-
-#: ../dnf/cli/commands/__init__.py:817
-msgid "display, or use, the transaction history"
-msgstr "visa, eller använd, transaktionshistoriken"
-
-#: ../dnf/cli/commands/__init__.py:831 ../dnf/cli/cli.py:580
-msgid "No transaction ID given"
-msgstr "Inget transaktions-ID angivet"
-
-#: ../dnf/cli/commands/__init__.py:834 ../dnf/cli/cli.py:594
-msgid "Found more than one transaction ID!"
-msgstr "Hittade mer än ett transaktions-ID!"
-
-#: ../dnf/cli/commands/__init__.py:843
-msgid "You don't have access to the history DB."
-msgstr "Du har inte tillgång till historie-DB:n."
-
-#: ../dnf/cli/commands/__init__.py:851
-#, python-format
-msgid ""
-"Cannot undo transaction %s, doing so would result in an inconsistent package"
-" database."
-msgstr ""
-"Kan inte göra transaktion %s ogjord, att göra det skulle resultera i en "
-"inkonsistent paketdatabas."
-
-#: ../dnf/cli/commands/__init__.py:856
-#, python-format
-msgid ""
-"Cannot rollback transaction %s, doing so would result in an inconsistent "
-"package database."
-msgstr ""
-"Kan inte rulla tillbaka transaktion %s, att göra det skulle resultera i en "
-"inkonsistent paketdatabas."
-
-#: ../dnf/cli/commands/__init__.py:876 ../dnf/cli/cli.py:634
-#: ../dnf/cli/cli.py:661 ../dnf/base.py:1794
-#, python-format
-msgid "No package %s installed."
-msgstr "Inget paket %s är installerat."
-
-#: ../dnf/cli/commands/install.py:44
-msgid "install a package or packages on your system"
-msgstr "installera ett paket eller flera paket på ditt system"
-
-#: ../dnf/cli/commands/install.py:50
-msgid "Package to install"
-msgstr "Paket att installera"
-
-#: ../dnf/cli/commands/install.py:76
-#, python-format
-msgid "Not a valid rpm file path: %s"
-msgstr "Inte en giltig sökväg till en rpm: %s"
-
-#: ../dnf/cli/commands/install.py:129
-msgid "Unable to find a match"
-msgstr "Kan inte hitta en matchning"
-
-#: ../dnf/cli/commands/repoquery.py:90
-msgid "search for packages matching keyword"
-msgstr "sök efter paket som matchar ett nyckelord"
-
-#: ../dnf/cli/commands/repoquery.py:105
-msgid "the key to search for"
-msgstr "nyckelordet att söka efter"
-
-#: ../dnf/cli/commands/repoquery.py:107
-msgid ""
-"Query all packages (shorthand for repoquery '*' or repoquery without "
-"argument)"
-msgstr ""
-"Fråga om alla paket (kortform för repoquery '*' eller repoquery utan "
-"argument)"
-
-#: ../dnf/cli/commands/repoquery.py:110
-msgid "Query all versions of packages (default)"
-msgstr "Fråga alla versioner av paket (standard)"
-
-#: ../dnf/cli/commands/repoquery.py:112
-msgid "show only results from this ARCH"
-msgstr "visa endast resultat för denna ARKITEKTUR"
-
-#: ../dnf/cli/commands/repoquery.py:114
-msgid "show only results that owns FILE"
-msgstr "visa endast resultat som äger FIL"
-
-#: ../dnf/cli/commands/repoquery.py:116
-msgid "show only results that conflict REQ"
-msgstr "visa endast resultat som står i konflikt med KRAV"
-
-#: ../dnf/cli/commands/repoquery.py:118
-msgid "show only results that obsolete REQ"
-msgstr "visa endast resultat som fasar ut KRAV"
-
-#: ../dnf/cli/commands/repoquery.py:120
-msgid "show only results that provide REQ"
-msgstr "visa endast resultat som tillhandahåller KRAV"
-
-#: ../dnf/cli/commands/repoquery.py:122
-msgid "shows results that requires package provides and files REQ"
-msgstr "visa resultat som behöver paket tillhandahållande och filer KRAV"
-
-#: ../dnf/cli/commands/repoquery.py:124
-msgid "show only results that recommend REQ"
-msgstr "visa endast resultat som rekommenderar KRAV"
-
-#: ../dnf/cli/commands/repoquery.py:126
-msgid "show only results that enhance REQ"
-msgstr "visa endast resultat som förbättrar KRAV"
-
-#: ../dnf/cli/commands/repoquery.py:128
-msgid "show only results that suggest REQ"
-msgstr "visa endast resultat som föreslår KRAV"
-
-#: ../dnf/cli/commands/repoquery.py:130
-msgid "show only results that supplement REQ"
-msgstr "visa endast resultat som kompletterar KRAV"
-
-#: ../dnf/cli/commands/repoquery.py:133
-msgid "check non-explicit dependencies (files and Provides); default"
-msgstr "kontrollera icke-explicita beroenden (filer och Provides); standard"
-
-#: ../dnf/cli/commands/repoquery.py:135
-msgid "check dependencies exactly as given, opposite of --alldeps"
-msgstr "kontrollera beroenden precis som angivet, motsatsen till --alldeps"
-
-#: ../dnf/cli/commands/repoquery.py:137
-msgid ""
-"used with --whatrequires, and --requires --resolve, query packages "
-"recursively."
-msgstr ""
-"använt tillsammans med --whatrequires och --requires --resolve, fråga paket "
-"rekursivt."
-
-#: ../dnf/cli/commands/repoquery.py:139
-msgid "show a list of all dependencies and what packages provide them"
-msgstr ""
-"visa en lista över alla beroenden och vilka paket som tillhandahåller dem"
-
-#: ../dnf/cli/commands/repoquery.py:141
-msgid "show available tags to use with --queryformat"
-msgstr "visa tillgängliga taggar att använda med --queryformat"
-
-#: ../dnf/cli/commands/repoquery.py:144
-msgid "resolve capabilities to originating package(s)"
-msgstr "lös upp förmågor till ursprungliga paket"
-
-#: ../dnf/cli/commands/repoquery.py:146
-msgid "show recursive tree for package(s)"
-msgstr "visa rekursivt träd för paket"
-
-#: ../dnf/cli/commands/repoquery.py:148
-msgid "operate on corresponding source RPM"
-msgstr "arbeta på motsvarande käll-RPM"
-
-#: ../dnf/cli/commands/repoquery.py:150
-msgid ""
-"show N latest packages for a given name.arch (or latest but N if N is "
-"negative)"
-msgstr ""
-"visa de N senaste paketen för ett givet namn.arkitektur (eller alla utom de "
-"N senaste om N är negativt)"
-
-#: ../dnf/cli/commands/repoquery.py:156
-msgid "show detailed information about the package"
-msgstr "visa detaljerad information om paketet"
-
-#: ../dnf/cli/commands/repoquery.py:159
-msgid "show list of files in the package"
-msgstr "visa en lista av filer i paketet"
-
-#: ../dnf/cli/commands/repoquery.py:162
-msgid "show package source RPM name"
-msgstr "visa paketets käll-RPM-namn"
-
-#: ../dnf/cli/commands/repoquery.py:165
-msgid "format for displaying found packages"
-msgstr "formatera för att visa funna paket"
-
-#: ../dnf/cli/commands/repoquery.py:168
-msgid ""
-"use name-epoch:version-release.architecture format for displaying found "
-"packages (default)"
-msgstr ""
-"använd formatet namn-epok:version-utgåva.arkitektur för att visa funna paket"
-" (standard)"
-
-#: ../dnf/cli/commands/repoquery.py:171
-msgid ""
-"use name-version-release format for displaying found packages (rpm query "
-"default)"
-msgstr ""
-"använd formatet namn-version-utgåva för att visa funna paket (rpm-"
-"frågestandard)"
-
-#: ../dnf/cli/commands/repoquery.py:177
-msgid ""
-"use epoch:name-version-release.architecture format for displaying found "
-"packages"
-msgstr ""
-"använd formatet epok:namn-version-utgåva.arkitektur för att visa funna paket"
-
-#: ../dnf/cli/commands/repoquery.py:180
-msgid "Display in which comps groups are presented selected packages"
-msgstr ""
-
-#: ../dnf/cli/commands/repoquery.py:184
-msgid "limit the query to installed duplicate packages"
-msgstr "begränsa frågan till installerade dubblettpaket"
-
-#: ../dnf/cli/commands/repoquery.py:191
-msgid "limit the query to installed installonly packages"
-msgstr "begränsa frågan till installerade installonly-paket"
-
-#: ../dnf/cli/commands/repoquery.py:194
-msgid "limit the query to installed packages with unsatisfied dependencies"
-msgstr "begränsa frågan till installerade paket med ouppfyllda beroenden"
-
-#: ../dnf/cli/commands/repoquery.py:196
-msgid "show a location from where packages can be downloaded"
-msgstr "visa en plats som paket kan hämtas ifrån"
-
-#: ../dnf/cli/commands/repoquery.py:199
-msgid "Display capabilities that the package conflicts with."
-msgstr "Visa förmågor som paketet står i konflikt med."
-
-#: ../dnf/cli/commands/repoquery.py:200
-msgid "Display capabilities that the package can enhance."
-msgstr "Visa förmågor som paketet kan förbättra."
-
-#: ../dnf/cli/commands/repoquery.py:201
-msgid "Display capabilities provided by the package."
-msgstr "Visa förmågor som tillhandahålls av paketet."
-
-#: ../dnf/cli/commands/repoquery.py:202
-msgid "Display capabilities that the package recommends."
-msgstr "Visa förmågor som paketet rekommenderar."
-
-#: ../dnf/cli/commands/repoquery.py:203
-msgid "Display capabilities that the package depends on."
-msgstr "Visa förmågor som paketet beror på."
-
-#: ../dnf/cli/commands/repoquery.py:204
-#, python-format
-msgid ""
-"Display capabilities that the package depends on for running a %%pre script."
-msgstr "Visa förmågor som paketet beror på för att köra ett %%pre-skript."
-
-#: ../dnf/cli/commands/repoquery.py:205
-msgid "Display capabilities that the package suggests."
-msgstr "Visa förmågor som paketet föreslår."
-
-#: ../dnf/cli/commands/repoquery.py:206
-msgid "Display capabilities that the package can supplement."
-msgstr "Visa förmågor som paketet kan komplettera."
-
-#: ../dnf/cli/commands/repoquery.py:212
-msgid "Display only available packages."
-msgstr "Visa endast tillgängliga paket."
-
-#: ../dnf/cli/commands/repoquery.py:215
-msgid "Display only installed packages."
-msgstr "Visa endast installerade paket."
-
-#: ../dnf/cli/commands/repoquery.py:216
-msgid ""
-"Display only packages that are not present in any of available repositories."
-msgstr "Visa endast paket som inte finns i något av de tillgängliga förråden."
-
-#: ../dnf/cli/commands/repoquery.py:217
-msgid ""
-"Display only packages that provide an upgrade for some already installed "
-"package."
-msgstr ""
-"Visa endast paket som tillhandahåller en uppgradering för några redan "
-"installerade paket."
-
-#: ../dnf/cli/commands/repoquery.py:218
-msgid "Display only packages that can be removed by \"dnf autoremove\" command."
-msgstr "Visa endast paket som kan tas bort med kommandot ”dnf autoremove”."
-
-#: ../dnf/cli/commands/repoquery.py:219
-msgid "Display only packages that were installed by user."
-msgstr "Visa endast paket som installerades av användaren."
-
-#: ../dnf/cli/commands/repoquery.py:231
-msgid "Display only recently edited packages"
-msgstr "Visa endast nyligen redigerade paket"
-
-#: ../dnf/cli/commands/repoquery.py:254
-msgid ""
-"Option '--recursive' has to be used with '--whatrequires <REQ>' (optionaly "
-"with '--alldeps', but not with '--exactdeps'), or with '--requires <REQ> "
-"--resolve'"
-msgstr ""
-"Flaggan ”--recursive” måste användas med ”--whatrequires <KRAV>” (eventuellt"
-" med ”--alldeps”, men inte med ”--exactdeps”), eller med ”--requires <KRAV> "
-"--resolve”"
-
-#: ../dnf/cli/commands/repoquery.py:275
-msgid "Package {} contains no files"
-msgstr "Paketet {} innehåller inga filer"
-
-#: ../dnf/cli/commands/repoquery.py:324
-#, python-brace-format
-msgid "Available query-tags: use --queryformat \".. %{tag} ..\""
-msgstr "Tillgängliga frågetaggar: använd --queryformat \".. %{tag} ..\""
-
-#: ../dnf/cli/commands/repoquery.py:344 ../dnf/cli/cli.py:993
-msgid "argument {}: not allowed with argument {}"
-msgstr "argument {}: inte tillåtet med argumentet {}"
-
-#: ../dnf/cli/commands/repoquery.py:387
-msgid "argument {} requires --whatrequires option"
-msgstr "argumentet {} behöver flaggan --whatrequires"
-
-#: ../dnf/cli/commands/repoquery.py:421
-msgid ""
-"No switch specified\n"
-"usage: dnf repoquery [--whatrequires|--requires|--conflicts|--obsoletes|--enhances|--suggest|--provides|--supplements|--recommends] [key] [--tree]\n"
-"\n"
-"description:\n"
-"  For the given packages print a tree of the packages."
-msgstr ""
-"Ingen flagga angiven\n"
-"användning: dnf repoquery [--whatrequires|--requires|--conflicts|--obsoletes|--enhances|--suggest|--provides|--supplements|--recommends] [nyckel] [--tree]\n"
-"\n"
-"beskrivning:\n"
-"  För det angivna paketen, skriv ett träd över paketen."
-
 #: ../dnf/cli/commands/updateinfo.py:46
 msgid "bugfix"
 msgstr "felrättning"
@@ -1301,6 +508,11 @@ msgstr "Fel"
 msgid "CVEs"
 msgstr "CVE:er"
 
+#: ../dnf/cli/commands/updateinfo.py:372 ../dnf/cli/commands/search.py:58
+#: ../dnf/cli/output.py:537
+msgid "Description"
+msgstr "Beskrivning"
+
 #: ../dnf/cli/commands/updateinfo.py:372
 msgid "Severity"
 msgstr "Allvarsgrad"
@@ -1313,8 +525,8 @@ msgstr "Rättigheter"
 msgid "Files"
 msgstr "Filer"
 
-#: ../dnf/cli/commands/updateinfo.py:373 ../dnf/cli/output.py:1212
-#: ../dnf/cli/output.py:1576 ../dnf/cli/output.py:1578
+#: ../dnf/cli/commands/updateinfo.py:373 ../dnf/cli/output.py:1224
+#: ../dnf/cli/output.py:1589 ../dnf/cli/output.py:1591
 msgid "Installed"
 msgstr "Installerade"
 
@@ -1334,6 +546,816 @@ msgstr "alla"
 msgid "available"
 msgstr "tillgängliga"
 
+#: ../dnf/cli/commands/deplist.py:32
+msgid "List package's dependencies and what packages provide them"
+msgstr "Lista pakets beroenden och vilka paket som tillhandahåller dem"
+
+#: ../dnf/cli/commands/distrosync.py:33
+msgid "synchronize installed packages to the latest available versions"
+msgstr ""
+"synkronisera installerade paket med de senast tillgängliga versionerna"
+
+#: ../dnf/cli/commands/distrosync.py:37
+msgid "Package to synchronize"
+msgstr "Paket att synkronisera"
+
+#: ../dnf/cli/commands/downgrade.py:34
+msgid "Downgrade a package"
+msgstr "Nedgradera ett paket"
+
+#: ../dnf/cli/commands/downgrade.py:38
+msgid "Package to downgrade"
+msgstr "Paket att nedgradera"
+
+#: ../dnf/cli/commands/makecache.py:37
+msgid "generate the metadata cache"
+msgstr "generera metadatacachen"
+
+#: ../dnf/cli/commands/makecache.py:53
+msgid "Making cache files for all metadata files."
+msgstr "Skapar cache-filer för alla metadatafiler."
+
+#: ../dnf/cli/commands/mark.py:36
+msgid "mark or unmark installed packages as installed by user."
+msgstr ""
+"markera eller avmarkera installerade paket som installerade av en användare."
+
+#: ../dnf/cli/commands/mark.py:47
+#, python-format
+msgid "%s marked as user installed."
+msgstr "%s markerad som användarinstallerad."
+
+#: ../dnf/cli/commands/mark.py:52
+#, python-format
+msgid "%s unmarked as user installed."
+msgstr "%s avmarkerad som användarinstallerad."
+
+#: ../dnf/cli/commands/mark.py:57
+#, python-format
+msgid "%s marked as group installed."
+msgstr ""
+
+#: ../dnf/cli/commands/mark.py:82 ../dnf/cli/commands/shell.py:116
+#: ../dnf/cli/commands/shell.py:225
+msgid "Error:"
+msgstr "Fel:"
+
+#: ../dnf/cli/commands/mark.py:84
+#, python-format
+msgid "Package %s is not installed."
+msgstr "Paketet %s är inte installerat."
+
+#: ../dnf/cli/commands/reinstall.py:38
+msgid "reinstall a package"
+msgstr "ominstallera ett paket"
+
+#: ../dnf/cli/commands/reinstall.py:42
+msgid "Package to reinstall"
+msgstr "Paket att ominstallera"
+
+#: ../dnf/cli/commands/reinstall.py:68 ../dnf/cli/commands/reinstall.py:82
+#: ../dnf/cli/commands/remove.py:119 ../dnf/cli/commands/__init__.py:453
+#: ../dnf/cli/commands/__init__.py:510 ../dnf/cli/commands/__init__.py:614
+#: ../dnf/cli/commands/__init__.py:661 ../dnf/cli/commands/__init__.py:704
+#: ../dnf/cli/commands/__init__.py:739 ../dnf/cli/commands/install.py:95
+#: ../dnf/cli/commands/install.py:123 ../dnf/cli/commands/upgrade.py:74
+#: ../dnf/cli/commands/upgrade.py:84 ../dnf/cli/commands/upgrade.py:87
+#: ../dnf/cli/cli.py:359 ../dnf/base.py:1704 ../dnf/base.py:1723
+#: ../dnf/base.py:1736 ../dnf/base.py:1757 ../dnf/base.py:1786
+#: ../dnf/base.py:1808 ../dnf/base.py:1863 ../dnf/base.py:1952
+#, python-format
+msgid "No match for argument: %s"
+msgstr "Ingen matchning för argumentet: %s"
+
+#: ../dnf/cli/commands/reinstall.py:79 ../dnf/base.py:1783
+#, python-format
+msgid "Package %s available, but not installed."
+msgstr "Paketet %s är tillgängligt, men inte installerat."
+
+#: ../dnf/cli/commands/reinstall.py:89 ../dnf/cli/commands/__init__.py:460
+#: ../dnf/cli/commands/__init__.py:517
+#, python-format
+msgid " (from %s)"
+msgstr " (från %s)"
+
+#: ../dnf/cli/commands/reinstall.py:90 ../dnf/cli/commands/__init__.py:461
+#: ../dnf/cli/commands/__init__.py:518
+#, python-format
+msgid "Installed package %s%s not available."
+msgstr "Installerat paket %s%s är inte tillgängligt."
+
+#: ../dnf/cli/commands/reinstall.py:99 ../dnf/cli/commands/__init__.py:404
+#: ../dnf/cli/commands/__init__.py:470 ../dnf/cli/commands/__init__.py:527
+#: ../dnf/cli/commands/__init__.py:558 ../dnf/cli/commands/__init__.py:620
+#: ../dnf/cli/commands/__init__.py:669 ../dnf/cli/commands/install.py:80
+#: ../dnf/cli/commands/install.py:89 ../dnf/cli/commands/install.py:105
+#: ../dnf/cli/cli.py:213 ../dnf/cli/cli.py:378 ../dnf/base.py:1573
+msgid "Nothing to do."
+msgstr "Inget att göra."
+
+#: ../dnf/cli/commands/remove.py:46
+msgid "remove a package or packages from your system"
+msgstr "ta bort ett eller flera paket från ditt system"
+
+#: ../dnf/cli/commands/remove.py:53
+msgid "remove duplicated packages"
+msgstr "ta bort dubblerade paket"
+
+#: ../dnf/cli/commands/remove.py:58
+msgid "remove installonly packages over the limit"
+msgstr "ta bort installonly-paket över gränsen"
+
+#: ../dnf/cli/commands/remove.py:91
+msgid "No duplicated packages found for removal."
+msgstr "Inga dubblerade paket att ta bort hittades."
+
+#: ../dnf/cli/commands/remove.py:102
+msgid "No old installonly packages found for removal."
+msgstr "Inga gamla installonly-paket att ta bort hittades."
+
+#: ../dnf/cli/commands/remove.py:108 ../dnf/cli/commands/install.py:86
+#: ../dnf/cli/commands/install.py:102 ../dnf/base.py:1852
+#, python-format
+msgid "Not a valid form: %s"
+msgstr "Inte en giltig form: %s"
+
+#: ../dnf/cli/commands/remove.py:125 ../dnf/cli/commands/__init__.py:709
+#: ../dnf/base.py:1869
+msgid "No packages marked for removal."
+msgstr "Inga paket markerade att tas bort."
+
+#: ../dnf/cli/commands/repoquery.py:94
+msgid "search for packages matching keyword"
+msgstr "sök efter paket som matchar ett nyckelord"
+
+#: ../dnf/cli/commands/repoquery.py:108
+msgid "the key to search for"
+msgstr "nyckelordet att söka efter"
+
+#: ../dnf/cli/commands/repoquery.py:110
+msgid ""
+"Query all packages (shorthand for repoquery '*' or repoquery without "
+"argument)"
+msgstr ""
+"Fråga om alla paket (kortform för repoquery '*' eller repoquery utan "
+"argument)"
+
+#: ../dnf/cli/commands/repoquery.py:113
+msgid "Query all versions of packages (default)"
+msgstr "Fråga alla versioner av paket (standard)"
+
+#: ../dnf/cli/commands/repoquery.py:116
+msgid "show only results from this ARCH"
+msgstr "visa endast resultat för denna ARKITEKTUR"
+
+#: ../dnf/cli/commands/repoquery.py:118
+msgid "show only results that owns FILE"
+msgstr "visa endast resultat som äger FIL"
+
+#: ../dnf/cli/commands/repoquery.py:120
+msgid "show only results that conflict REQ"
+msgstr "visa endast resultat som står i konflikt med KRAV"
+
+#: ../dnf/cli/commands/repoquery.py:122
+msgid "show only results that obsolete REQ"
+msgstr "visa endast resultat som fasar ut KRAV"
+
+#: ../dnf/cli/commands/repoquery.py:124
+msgid "show only results that provide REQ"
+msgstr "visa endast resultat som tillhandahåller KRAV"
+
+#: ../dnf/cli/commands/repoquery.py:126
+msgid "shows results that requires package provides and files REQ"
+msgstr "visa resultat som behöver paket tillhandahållande och filer KRAV"
+
+#: ../dnf/cli/commands/repoquery.py:128
+msgid "show only results that recommend REQ"
+msgstr "visa endast resultat som rekommenderar KRAV"
+
+#: ../dnf/cli/commands/repoquery.py:130
+msgid "show only results that enhance REQ"
+msgstr "visa endast resultat som förbättrar KRAV"
+
+#: ../dnf/cli/commands/repoquery.py:132
+msgid "show only results that suggest REQ"
+msgstr "visa endast resultat som föreslår KRAV"
+
+#: ../dnf/cli/commands/repoquery.py:134
+msgid "show only results that supplement REQ"
+msgstr "visa endast resultat som kompletterar KRAV"
+
+#: ../dnf/cli/commands/repoquery.py:137
+msgid "check non-explicit dependencies (files and Provides); default"
+msgstr "kontrollera icke-explicita beroenden (filer och Provides); standard"
+
+#: ../dnf/cli/commands/repoquery.py:139
+msgid "check dependencies exactly as given, opposite of --alldeps"
+msgstr "kontrollera beroenden precis som angivet, motsatsen till --alldeps"
+
+#: ../dnf/cli/commands/repoquery.py:141
+msgid ""
+"used with --whatrequires, and --requires --resolve, query packages "
+"recursively."
+msgstr ""
+"använt tillsammans med --whatrequires och --requires --resolve, fråga paket "
+"rekursivt."
+
+#: ../dnf/cli/commands/repoquery.py:143
+msgid "show a list of all dependencies and what packages provide them"
+msgstr ""
+"visa en lista över alla beroenden och vilka paket som tillhandahåller dem"
+
+#: ../dnf/cli/commands/repoquery.py:145
+msgid "show available tags to use with --queryformat"
+msgstr "visa tillgängliga taggar att använda med --queryformat"
+
+#: ../dnf/cli/commands/repoquery.py:148
+msgid "resolve capabilities to originating package(s)"
+msgstr "lös upp förmågor till ursprungliga paket"
+
+#: ../dnf/cli/commands/repoquery.py:150
+msgid "show recursive tree for package(s)"
+msgstr "visa rekursivt träd för paket"
+
+#: ../dnf/cli/commands/repoquery.py:152
+msgid "operate on corresponding source RPM"
+msgstr "arbeta på motsvarande käll-RPM"
+
+#: ../dnf/cli/commands/repoquery.py:154
+msgid ""
+"show N latest packages for a given name.arch (or latest but N if N is "
+"negative)"
+msgstr ""
+"visa de N senaste paketen för ett givet namn.arkitektur (eller alla utom de "
+"N senaste om N är negativt)"
+
+#: ../dnf/cli/commands/repoquery.py:160
+msgid "show detailed information about the package"
+msgstr "visa detaljerad information om paketet"
+
+#: ../dnf/cli/commands/repoquery.py:163
+msgid "show list of files in the package"
+msgstr "visa en lista av filer i paketet"
+
+#: ../dnf/cli/commands/repoquery.py:166
+msgid "show package source RPM name"
+msgstr "visa paketets käll-RPM-namn"
+
+#: ../dnf/cli/commands/repoquery.py:169
+msgid "format for displaying found packages"
+msgstr "formatera för att visa funna paket"
+
+#: ../dnf/cli/commands/repoquery.py:172
+msgid ""
+"use name-epoch:version-release.architecture format for displaying found "
+"packages (default)"
+msgstr ""
+"använd formatet namn-epok:version-utgåva.arkitektur för att visa funna paket"
+" (standard)"
+
+#: ../dnf/cli/commands/repoquery.py:175
+msgid ""
+"use name-version-release format for displaying found packages (rpm query "
+"default)"
+msgstr ""
+"använd formatet namn-version-utgåva för att visa funna paket (rpm-"
+"frågestandard)"
+
+#: ../dnf/cli/commands/repoquery.py:181
+msgid ""
+"use epoch:name-version-release.architecture format for displaying found "
+"packages"
+msgstr ""
+"använd formatet epok:namn-version-utgåva.arkitektur för att visa funna paket"
+
+#: ../dnf/cli/commands/repoquery.py:184
+msgid "Display in which comps groups are presented selected packages"
+msgstr "Visa i vilka comps-grupper valda paket presenteras"
+
+#: ../dnf/cli/commands/repoquery.py:188
+msgid "limit the query to installed duplicate packages"
+msgstr "begränsa frågan till installerade dubblettpaket"
+
+#: ../dnf/cli/commands/repoquery.py:195
+msgid "limit the query to installed installonly packages"
+msgstr "begränsa frågan till installerade installonly-paket"
+
+#: ../dnf/cli/commands/repoquery.py:198
+msgid "limit the query to installed packages with unsatisfied dependencies"
+msgstr "begränsa frågan till installerade paket med ouppfyllda beroenden"
+
+#: ../dnf/cli/commands/repoquery.py:200
+msgid "show a location from where packages can be downloaded"
+msgstr "visa en plats som paket kan hämtas ifrån"
+
+#: ../dnf/cli/commands/repoquery.py:203
+msgid "Display capabilities that the package conflicts with."
+msgstr "Visa förmågor som paketet står i konflikt med."
+
+#: ../dnf/cli/commands/repoquery.py:204
+msgid "Display capabilities that the package can enhance."
+msgstr "Visa förmågor som paketet kan förbättra."
+
+#: ../dnf/cli/commands/repoquery.py:205
+msgid "Display capabilities provided by the package."
+msgstr "Visa förmågor som tillhandahålls av paketet."
+
+#: ../dnf/cli/commands/repoquery.py:206
+msgid "Display capabilities that the package recommends."
+msgstr "Visa förmågor som paketet rekommenderar."
+
+#: ../dnf/cli/commands/repoquery.py:207
+msgid "Display capabilities that the package depends on."
+msgstr "Visa förmågor som paketet beror på."
+
+#: ../dnf/cli/commands/repoquery.py:208
+#, python-format
+msgid ""
+"Display capabilities that the package depends on for running a %%pre script."
+msgstr "Visa förmågor som paketet beror på för att köra ett %%pre-skript."
+
+#: ../dnf/cli/commands/repoquery.py:209
+msgid "Display capabilities that the package suggests."
+msgstr "Visa förmågor som paketet föreslår."
+
+#: ../dnf/cli/commands/repoquery.py:210
+msgid "Display capabilities that the package can supplement."
+msgstr "Visa förmågor som paketet kan komplettera."
+
+#: ../dnf/cli/commands/repoquery.py:216
+msgid "Display only available packages."
+msgstr "Visa endast tillgängliga paket."
+
+#: ../dnf/cli/commands/repoquery.py:219
+msgid "Display only installed packages."
+msgstr "Visa endast installerade paket."
+
+#: ../dnf/cli/commands/repoquery.py:220
+msgid ""
+"Display only packages that are not present in any of available repositories."
+msgstr "Visa endast paket som inte finns i något av de tillgängliga förråden."
+
+#: ../dnf/cli/commands/repoquery.py:221
+msgid ""
+"Display only packages that provide an upgrade for some already installed "
+"package."
+msgstr ""
+"Visa endast paket som tillhandahåller en uppgradering för några redan "
+"installerade paket."
+
+#: ../dnf/cli/commands/repoquery.py:222
+msgid "Display only packages that can be removed by \"dnf autoremove\" command."
+msgstr "Visa endast paket som kan tas bort med kommandot ”dnf autoremove”."
+
+#: ../dnf/cli/commands/repoquery.py:223
+msgid "Display only packages that were installed by user."
+msgstr "Visa endast paket som installerades av användaren."
+
+#: ../dnf/cli/commands/repoquery.py:235
+msgid "Display only recently edited packages"
+msgstr "Visa endast nyligen redigerade paket"
+
+#: ../dnf/cli/commands/repoquery.py:258
+msgid ""
+"Option '--recursive' has to be used with '--whatrequires <REQ>' (optionaly "
+"with '--alldeps', but not with '--exactdeps'), or with '--requires <REQ> "
+"--resolve'"
+msgstr ""
+"Flaggan ”--recursive” måste användas med ”--whatrequires <KRAV>” (eventuellt"
+" med ”--alldeps”, men inte med ”--exactdeps”), eller med ”--requires <KRAV> "
+"--resolve”"
+
+#: ../dnf/cli/commands/repoquery.py:279
+msgid "Package {} contains no files"
+msgstr "Paketet {} innehåller inga filer"
+
+#: ../dnf/cli/commands/repoquery.py:328
+#, python-brace-format
+msgid "Available query-tags: use --queryformat \".. %{tag} ..\""
+msgstr "Tillgängliga frågetaggar: använd --queryformat \".. %{tag} ..\""
+
+#: ../dnf/cli/commands/repoquery.py:353 ../dnf/cli/cli.py:979
+msgid "argument {}: not allowed with argument {}"
+msgstr "argument {}: inte tillåtet med argumentet {}"
+
+#: ../dnf/cli/commands/repoquery.py:396
+msgid "argument {} requires --whatrequires option"
+msgstr "argumentet {} behöver flaggan --whatrequires"
+
+#: ../dnf/cli/commands/repoquery.py:430
+msgid ""
+"No switch specified\n"
+"usage: dnf repoquery [--whatrequires|--requires|--conflicts|--obsoletes|--enhances|--suggest|--provides|--supplements|--recommends] [key] [--tree]\n"
+"\n"
+"description:\n"
+"  For the given packages print a tree of the packages."
+msgstr ""
+"Ingen flagga angiven\n"
+"användning: dnf repoquery [--whatrequires|--requires|--conflicts|--obsoletes|--enhances|--suggest|--provides|--supplements|--recommends] [nyckel] [--tree]\n"
+"\n"
+"beskrivning:\n"
+"  För det angivna paketen, skriv ett träd över paketen."
+
+#: ../dnf/cli/commands/search.py:43
+msgid "search package details for the given string"
+msgstr "sök i paketdetaljer efter den angivna strängen"
+
+#: ../dnf/cli/commands/search.py:48
+msgid "search also package description and URL"
+msgstr "sök även i paketbeskrivningar och URL:en"
+
+#: ../dnf/cli/commands/search.py:49
+msgid "QUERY_STRING"
+msgstr "FRÅGESTRÄNG"
+
+#: ../dnf/cli/commands/search.py:56 ../dnf/cli/output.py:497
+msgid "Name"
+msgstr "Namn"
+
+#: ../dnf/cli/commands/search.py:57 ../dnf/cli/output.py:533
+msgid "Summary"
+msgstr "Sammanfattning"
+
+#: ../dnf/cli/commands/search.py:59 ../dnf/cli/output.py:535
+msgid "URL"
+msgstr "URL"
+
+#. TRANSLATORS: separator used between package attributes (eg. Name & Summary
+#. & URL)
+#: ../dnf/cli/commands/search.py:71
+msgid " & "
+msgstr " & "
+
+#. TRANSLATORS: %s  - translated package attributes,
+#. %%s - found keys (in listed attributes)
+#: ../dnf/cli/commands/search.py:75
+#, python-format
+msgid "%s Exactly Matched: %%s"
+msgstr "%s Exakt matchad: %%s"
+
+#. TRANSLATORS: %s  - translated package attributes,
+#. %%s - found keys (in listed attributes)
+#: ../dnf/cli/commands/search.py:79
+#, python-format
+msgid "%s Matched: %%s"
+msgstr "%s Matchad: %%s"
+
+#: ../dnf/cli/commands/search.py:116
+msgid "No matches found."
+msgstr "Inget som matchar hittat."
+
+#: ../dnf/cli/commands/search.py:135
+msgid "Searching Packages: "
+msgstr "Söker paket: "
+
+#: ../dnf/cli/commands/shell.py:52
+msgid "run an interactive DNF shell"
+msgstr "kör ett interaktivt DNF-skal"
+
+#: ../dnf/cli/commands/shell.py:73
+msgid "SCRIPT"
+msgstr "SKRIPT"
+
+#: ../dnf/cli/commands/shell.py:74
+msgid "Script to run in DNF shell"
+msgstr "Skript att köra i ett DNF-skal"
+
+#: ../dnf/cli/commands/shell.py:130
+msgid "Unsupported key value."
+msgstr "Ej stött nyckelvärde."
+
+#: ../dnf/cli/commands/shell.py:146
+#, python-format
+msgid "Could not find repository: %s"
+msgstr "Kunde inte hitta förrådet: %s"
+
+#: ../dnf/cli/commands/shell.py:162
+msgid ""
+"{} arg [value]\n"
+"  arg: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,\n"
+"        repo_id.gpgcheck, repo_id.exclude\n"
+"    If no value is given it prints the current value.\n"
+"    If value is given it sets that value."
+msgstr ""
+"{} arg [värde]\n"
+"  arg: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,\n"
+"        repo_id.gpgcheck, repo_id.exclude\n"
+"    Om inget värde anges skrivs det nuvarande värdet.\n"
+"    Om ett värde anges sätts detta värde."
+
+#: ../dnf/cli/commands/shell.py:169
+msgid ""
+"{} [command]\n"
+"    print help"
+msgstr ""
+"{} [kommando]\n"
+"    skriv ut hjälp"
+
+#: ../dnf/cli/commands/shell.py:173
+msgid ""
+"{} arg [option]\n"
+"  list: lists repositories and their status. option = [all | id | glob]\n"
+"  enable: enable repositories. option = repository id\n"
+"  disable: disable repositories. option = repository id"
+msgstr ""
+"{} arg [flagga]\n"
+"  list: listar förråd och deras status. flagga = [all | id | glob]\n"
+"  enable: aktivera förråd. flagga = förråds-id\n"
+"  disable: avaktivera förråd. flagga = förråds-id"
+
+#: ../dnf/cli/commands/shell.py:179
+msgid ""
+"{}\n"
+"    resolve the transaction set"
+msgstr ""
+"{}\n"
+"    lös upp transaktionsuppsättningen"
+
+#: ../dnf/cli/commands/shell.py:183
+msgid ""
+"{} arg\n"
+"  list: lists the contents of the transaction\n"
+"  reset: reset (zero-out) the transaction\n"
+"  run: run the transaction"
+msgstr ""
+"{} arg\n"
+"  list: listar innehållet i transaktionen\n"
+"  reset: återställ (nollställ) transaktionen\n"
+"  run: kör transaktionen"
+
+#: ../dnf/cli/commands/shell.py:189
+msgid ""
+"{}\n"
+"    run the transaction"
+msgstr ""
+"{}\n"
+"    kör transaktionen"
+
+#: ../dnf/cli/commands/shell.py:193
+msgid ""
+"{}\n"
+"    exit the shell"
+msgstr ""
+"{}\n"
+"    avsluta skalet"
+
+#: ../dnf/cli/commands/shell.py:198
+msgid ""
+"Shell specific arguments:\n"
+"\n"
+"config                   set config options\n"
+"help                     print help\n"
+"repository (or repo)     enable, disable or list repositories\n"
+"resolvedep               resolve the transaction set\n"
+"transaction (or ts)      list, reset or run the transaction set\n"
+"run                      resolve and run the transaction set\n"
+"exit (or quit)           exit the shell"
+msgstr ""
+"Skalspecifika argument:\n"
+"\n"
+"config                   ställ in konfigurationsflaggor\n"
+"help                     skriv ut hjälp\n"
+"repository (eller repo)  aktivera, avaktivera eller lista förråd\n"
+"resolvedep               lös upp transaktionsmängden\n"
+"transaction (eller ts)   lista, återställ eller kör transaktionsmängden\n"
+"run                      lös upp och kör transaktionsmängden\n"
+"exit (eller quit)        avsluta skalet"
+
+#: ../dnf/cli/commands/shell.py:225 ../dnf/cli/cli.py:705
+#, python-format
+msgid "Unknown repo: '%s'"
+msgstr "Okänt förråd: ”%s”"
+
+#: ../dnf/cli/commands/shell.py:248
+#, python-format
+msgid "Error: Cannot open %s for reading"
+msgstr "Fel: kan inte öppna %s för läsning"
+
+#: ../dnf/cli/commands/shell.py:278
+msgid "Leaving Shell"
+msgstr "Lämnar skalet"
+
+#: ../dnf/cli/commands/upgrademinimal.py:31
+msgid ""
+"upgrade, but only 'newest' package match which fixes a problem that affects "
+"your system"
+msgstr ""
+"uppgradera, men bara ”nyaste” paketmatchning som löser ett problem som "
+"påverkar ditt system"
+
+#: ../dnf/cli/commands/__init__.py:43
+#, python-format
+msgid "To diagnose the problem, try running: '%s'."
+msgstr "För att diagnostisera problemet, försök köra: ”%s”."
+
+#: ../dnf/cli/commands/__init__.py:45
+#, python-format
+msgid "You probably have corrupted RPMDB, running '%s' might fix the issue."
+msgstr ""
+"Du har förmodligen en trasig RPMDB, att köra ”%s” kan kanske lösa problemet."
+
+#: ../dnf/cli/commands/__init__.py:49
+msgid ""
+"You have enabled checking of packages via GPG keys. This is a good thing.\n"
+"However, you do not have any GPG public keys installed. You need to download\n"
+"the keys for packages you wish to install and install them.\n"
+"You can do that by running the command:\n"
+"    rpm --import public.gpg.key\n"
+"\n"
+"\n"
+"Alternatively you can specify the url to the key you would like to use\n"
+"for a repository in the 'gpgkey' option in a repository section and DNF\n"
+"will install it for you.\n"
+"\n"
+"For more information contact your distribution or package provider."
+msgstr ""
+"Du har aktiverat kontroll av paket med GPG-nycklar.  Det är en bra sak.\n"
+"Dock har du inte några publika GPG-nycklar installerade.  Du måste hämta\n"
+"nycklarna för paket som du vill installera och installera dem.  Du kan\n"
+"göra det genom att köra kommandot:\n"
+"    rpm --import public.gpg.key\n"
+"\n"
+"\n"
+"Alternativt kan du ange url:en till nyckeln du vill använda för ett förråd\n"
+"med alternativet ”gpgkey” i en förrådssektion och DNF kommer installera\n"
+"den åt dig.\n"
+"\n"
+"För mer information, kontakta din distribution eller paketleverantör."
+
+#: ../dnf/cli/commands/__init__.py:76
+#, python-format
+msgid "Problem repository: %s"
+msgstr "Problemförråd     : %s"
+
+#: ../dnf/cli/commands/__init__.py:95
+msgid "There are no enabled repos."
+msgstr "Det finns inga aktiva förråd."
+
+#: ../dnf/cli/commands/__init__.py:153
+msgid "display details about a package or group of packages"
+msgstr "visa detaljer om ett paket eller en grupp av paket"
+
+#: ../dnf/cli/commands/__init__.py:163 ../dnf/cli/commands/__init__.py:334
+msgid "show all packages (default)"
+msgstr "visa alla paket (standard)"
+
+#: ../dnf/cli/commands/__init__.py:166 ../dnf/cli/commands/__init__.py:337
+msgid "show only available packages"
+msgstr "visa endast tillgängliga paket"
+
+#: ../dnf/cli/commands/__init__.py:169 ../dnf/cli/commands/__init__.py:340
+msgid "show only installed packages"
+msgstr "visa endast installerade paket"
+
+#: ../dnf/cli/commands/__init__.py:172 ../dnf/cli/commands/__init__.py:343
+msgid "show only extras packages"
+msgstr "visa endast extrapaket"
+
+#: ../dnf/cli/commands/__init__.py:175 ../dnf/cli/commands/__init__.py:178
+#: ../dnf/cli/commands/__init__.py:346 ../dnf/cli/commands/__init__.py:349
+msgid "show only upgrades packages"
+msgstr "visa endast uppgraderingspaket"
+
+#: ../dnf/cli/commands/__init__.py:181 ../dnf/cli/commands/__init__.py:352
+msgid "show only autoremove packages"
+msgstr "visa endast autoremove-paket"
+
+#: ../dnf/cli/commands/__init__.py:184 ../dnf/cli/commands/__init__.py:355
+msgid "show only recently changed packages"
+msgstr "visa endast nyligen ändrade paket"
+
+#: ../dnf/cli/commands/__init__.py:216
+msgid "list a package or groups of packages"
+msgstr "lista ett paket eller grupper av paket"
+
+#: ../dnf/cli/commands/__init__.py:230
+msgid "find what package provides the given value"
+msgstr "ta reda på vilka paket som tillhandahåller det angivna värdet"
+
+#: ../dnf/cli/commands/__init__.py:234
+msgid "SOME_STRING"
+msgstr "NÅGON_STRÄNG"
+
+#: ../dnf/cli/commands/__init__.py:252
+msgid "check for available package upgrades"
+msgstr "undersök tillgängliga paketuppgraderingar"
+
+#: ../dnf/cli/commands/__init__.py:389 ../dnf/cli/commands/__init__.py:442
+#: ../dnf/cli/commands/__init__.py:498
+msgid "No package available."
+msgstr "Inget paket tillgängligt."
+
+#: ../dnf/cli/commands/__init__.py:440
+msgid "No package installed."
+msgstr "Inget paket installerat."
+
+#: ../dnf/cli/commands/__init__.py:495 ../dnf/cli/commands/__init__.py:604
+#: ../dnf/cli/commands/__init__.py:647 ../dnf/cli/commands/__init__.py:694
+msgid "No package installed from the repository."
+msgstr "Inget paket installerat från förrådet."
+
+#: ../dnf/cli/commands/__init__.py:744 ../dnf/cli/commands/upgrade.py:103
+msgid "No packages marked for upgrade."
+msgstr "Inga paket markerade att uppgraderas."
+
+#: ../dnf/cli/commands/__init__.py:754
+msgid "run commands on top of all packages in given repository"
+msgstr "kör kommandon ovanpå alla paket i ett angivet förråd"
+
+#: ../dnf/cli/commands/__init__.py:767
+msgid "REPO"
+msgstr "FÖRRÅD"
+
+#: ../dnf/cli/commands/__init__.py:797
+msgid "display a helpful usage message"
+msgstr "visa ett hjälpsamt användningsmeddelande"
+
+#: ../dnf/cli/commands/__init__.py:801
+msgid "COMMAND"
+msgstr "KOMMANDO"
+
+#: ../dnf/cli/commands/__init__.py:817
+msgid "display, or use, the transaction history"
+msgstr "visa, eller använd, transaktionshistoriken"
+
+#: ../dnf/cli/commands/__init__.py:832
+msgid ""
+"Found more than one transaction ID.\n"
+"'{}' requires one transaction ID or package name."
+msgstr ""
+
+#: ../dnf/cli/commands/__init__.py:839
+msgid "No transaction ID or package name given."
+msgstr ""
+
+#: ../dnf/cli/commands/__init__.py:851
+msgid "You don't have access to the history DB."
+msgstr "Du har inte tillgång till historie-DB:n."
+
+#: ../dnf/cli/commands/__init__.py:862
+#, python-format
+msgid ""
+"Cannot undo transaction %s, doing so would result in an inconsistent package"
+" database."
+msgstr ""
+"Kan inte göra transaktion %s ogjord, att göra det skulle resultera i en "
+"inkonsistent paketdatabas."
+
+#: ../dnf/cli/commands/__init__.py:867
+#, python-format
+msgid ""
+"Cannot rollback transaction %s, doing so would result in an inconsistent "
+"package database."
+msgstr ""
+"Kan inte rulla tillbaka transaktion %s, att göra det skulle resultera i en "
+"inkonsistent paketdatabas."
+
+#: ../dnf/cli/commands/__init__.py:887 ../dnf/cli/cli.py:608
+#: ../dnf/cli/cli.py:638 ../dnf/base.py:1834
+#, python-format
+msgid "No package %s installed."
+msgstr "Inget paket %s är installerat."
+
+#: ../dnf/cli/commands/__init__.py:935
+msgid ""
+"Invalid transaction ID range definition '{}'.\n"
+"Use '<transaction-id>..<transaction-id>'."
+msgstr ""
+
+#: ../dnf/cli/commands/__init__.py:968
+msgid "No transaction which manipulates package '{}' was found."
+msgstr ""
+
+#: ../dnf/cli/commands/install.py:44
+msgid "install a package or packages on your system"
+msgstr "installera ett paket eller flera paket på ditt system"
+
+#: ../dnf/cli/commands/install.py:50
+msgid "Package to install"
+msgstr "Paket att installera"
+
+#: ../dnf/cli/commands/install.py:77
+#, python-format
+msgid "Not a valid rpm file path: %s"
+msgstr "Inte en giltig sökväg till en rpm: %s"
+
+#: ../dnf/cli/commands/install.py:129
+msgid "Unable to find a match"
+msgstr "Kan inte hitta en matchning"
+
+#: ../dnf/cli/commands/swap.py:33
+msgid "run an interactive dnf mod for remove and install one spec"
+msgstr ""
+"kör ett interaktivt dnf-läge för att ta bort och installera en specifikation"
+
+#: ../dnf/cli/commands/swap.py:37
+msgid "The specs that will be removed"
+msgstr "Specifikationen kommer att tas bort"
+
+#: ../dnf/cli/commands/swap.py:39
+msgid "The specs that will be installed"
+msgstr "Specifikationen kommer att installeras"
+
 #: ../dnf/cli/commands/upgrade.py:38
 msgid "upgrade a package or packages on your system"
 msgstr "uppgradera ett eller flera paket på ditt system"
@@ -1341,6 +1363,30 @@ msgstr "uppgradera ett eller flera paket på ditt system"
 #: ../dnf/cli/commands/upgrade.py:42
 msgid "Package to upgrade"
 msgstr "Paket att uppgradera"
+
+#: ../dnf/cli/main.py:109
+msgid "No read/execute access in current directory, moving to /"
+msgstr "Inga läs-/körrättigheter i aktuell katalog, flyttar till /"
+
+#: ../dnf/cli/main.py:127
+#, python-format
+msgid "(try to add '%s' to command line to replace conflicting packages"
+msgstr ""
+"(försök med att lägga till ”%s” på kommandoraden för att ersätta paket som "
+"står i konflikt"
+
+#: ../dnf/cli/main.py:130
+#, python-format
+msgid " or '%s' to skip uninstalable packages)"
+msgstr " eller ”%s” för att hoppa över oinstallerbara paket)"
+
+#: ../dnf/cli/main.py:147
+msgid "Dependencies resolved."
+msgstr "Beroenden upplösta."
+
+#: ../dnf/cli/main.py:165
+msgid "Complete!"
+msgstr "Klart!"
 
 #: ../dnf/cli/utils.py:98
 msgid "Running"
@@ -1391,238 +1437,6 @@ msgstr "    Startade: %s - för %s sedan"
 msgid "    State  : %s"
 msgstr "    Tillstånd: %s"
 
-#: ../dnf/cli/option_parser.py:52
-#, python-format
-msgid "Command line error: %s"
-msgstr "Kommandoradsfel: %s"
-
-#: ../dnf/cli/option_parser.py:83
-#, python-format
-msgid "bad format: %s"
-msgstr "felaktigt format: %s"
-
-#: ../dnf/cli/option_parser.py:159
-msgid "Optional arguments"
-msgstr "Valfria argument"
-
-#: ../dnf/cli/option_parser.py:162
-msgid "config file location"
-msgstr "konfigurationsfilens plats"
-
-#: ../dnf/cli/option_parser.py:165
-msgid "quiet operation"
-msgstr "tyst arbete"
-
-#: ../dnf/cli/option_parser.py:167
-msgid "verbose operation"
-msgstr "utförligt arbete"
-
-#: ../dnf/cli/option_parser.py:169
-msgid "show DNF version and exit"
-msgstr "visa DNF-version och avsluta"
-
-#: ../dnf/cli/option_parser.py:170
-msgid "set install root"
-msgstr "ange installationsrot"
-
-#: ../dnf/cli/option_parser.py:173
-msgid "do not install documentations"
-msgstr "installera inte dokumentation"
-
-#: ../dnf/cli/option_parser.py:176
-msgid "disable all plugins"
-msgstr "inaktivera alla insticksmoduler"
-
-#: ../dnf/cli/option_parser.py:179
-msgid "enable plugins by name"
-msgstr "aktivera insticksmoduler efter namn"
-
-#: ../dnf/cli/option_parser.py:183
-msgid "disable plugins by name"
-msgstr "inaktivera insticksmoduler efter namn"
-
-#: ../dnf/cli/option_parser.py:186
-msgid "override the value of $releasever in config and repo files"
-msgstr "åsidosätt värdet på $releasever i config- och repo-filer"
-
-#: ../dnf/cli/option_parser.py:190
-msgid "set arbitrary config and repo options"
-msgstr "sätt godtyckliga konfigurations- och förrådsalternativ"
-
-#: ../dnf/cli/option_parser.py:193
-msgid "resolve depsolve problems by skipping packages"
-msgstr "lös depsolve-problem genom att hoppa över paket"
-
-#: ../dnf/cli/option_parser.py:196
-msgid "show command help"
-msgstr "visa kommandohjälp"
-
-#: ../dnf/cli/option_parser.py:200
-msgid "allow erasing of installed packages to resolve dependencies"
-msgstr "tillåt radering av installerade paket för att lösa upp beroenden"
-
-#: ../dnf/cli/option_parser.py:204
-msgid "try the best available package versions in transactions."
-msgstr "prova de bästa tillgängliga paketversionerna i transaktioner."
-
-#: ../dnf/cli/option_parser.py:208
-msgid "run entirely from system cache, don't update cache"
-msgstr "kör helt från systemets cache, uppdatera inte cachen"
-
-#: ../dnf/cli/option_parser.py:212
-msgid "maximum command wait time"
-msgstr "maximal väntetid på kommandon"
-
-#: ../dnf/cli/option_parser.py:215
-msgid "debugging output level"
-msgstr "nivå på felsökningsutskrifter"
-
-#: ../dnf/cli/option_parser.py:218
-msgid "dumps detailed solving results into files"
-msgstr "skriver detaljerade upplösningsresultat i filer"
-
-#: ../dnf/cli/option_parser.py:222
-msgid "show duplicates, in repos, in list/search commands"
-msgstr "visa dubbletter, i förråd, i list-/search-kommandon"
-
-#: ../dnf/cli/option_parser.py:225
-msgid "error output level"
-msgstr "nivå på felutskrifter"
-
-#: ../dnf/cli/option_parser.py:228
-msgid ""
-"enables dnf's obsoletes processing logic for upgrade or display capabilities"
-" that the package obsoletes for info, list and repoquery"
-msgstr ""
-"aktiverar dnf:s beräkningslogik för utfasning vid uppgraderingar eller visa "
-"förmågor som paketet fasar ut för info, list och repoquery"
-
-#: ../dnf/cli/option_parser.py:232
-msgid "debugging output level for rpm"
-msgstr "nivå på felsökningsutskrifter för rpm"
-
-#: ../dnf/cli/option_parser.py:235
-msgid "automatically answer yes for all questions"
-msgstr "svara automatiskt ja på alla frågor"
-
-#: ../dnf/cli/option_parser.py:238
-msgid "automatically answer no for all questions"
-msgstr "svara automatiskt nej på alla frågor"
-
-#: ../dnf/cli/option_parser.py:249
-msgid ""
-"enable just specific repositories by an id or a glob, can be specified "
-"multiple times"
-msgstr ""
-"aktivera endast specifika förråd med ett id eller en glob, kan anges flera "
-"gånger"
-
-#: ../dnf/cli/option_parser.py:253
-msgid "exclude packages by name or glob"
-msgstr "uteslut paket via namn eller glob"
-
-#: ../dnf/cli/option_parser.py:258
-msgid "disable excludepkgs"
-msgstr "avaktivera excludepkgs"
-
-#: ../dnf/cli/option_parser.py:263
-msgid ""
-"label and path to additional repository, can be specified multiple times."
-msgstr "etikett och sökväg till ytterligare förråd, kan anges flera gånger."
-
-#: ../dnf/cli/option_parser.py:267
-msgid "disable gpg signature checking"
-msgstr "inaktivera kontroll av gpg-signatur"
-
-#: ../dnf/cli/option_parser.py:269
-msgid "control whether color is used"
-msgstr "styr om färg skall användas"
-
-#: ../dnf/cli/option_parser.py:272
-msgid "set metadata as expired before running the command"
-msgstr "markera metadata som utgånget före kommandot körs"
-
-#: ../dnf/cli/option_parser.py:275
-msgid "resolve to IPv4 addresses only"
-msgstr "lös endast upp till IPv4-adresser"
-
-#: ../dnf/cli/option_parser.py:278
-msgid "resolve to IPv6 addresses only"
-msgstr "lös endast upp till IPv6-adresser"
-
-#: ../dnf/cli/option_parser.py:282
-msgid "only download packages"
-msgstr "hämta endast paket"
-
-#: ../dnf/cli/option_parser.py:285
-msgid "Include bugfix relevant packages, in updates"
-msgstr "Inkludera paket relevanta för felrättningar, i uppdateringar"
-
-#: ../dnf/cli/option_parser.py:288
-msgid "Include enhancement relevant packages, in updates"
-msgstr "Inkludera paket relevanta för förbättringar, i uppdateringar"
-
-#: ../dnf/cli/option_parser.py:291
-msgid "Include newpackage relevant packages, in updates"
-msgstr "Inkludera relevanta nya paket, i uppdateringar"
-
-#: ../dnf/cli/option_parser.py:294
-msgid "Include security relevant packages, in updates"
-msgstr "Inkludera paket relevanta för säkerhet, i uppdateringar"
-
-#: ../dnf/cli/option_parser.py:298
-msgid "Include packages needed to fix the given advisory, in updates"
-msgstr ""
-"Inkludera paket som behövs för att lösa den angivna rådet, i uppdateringar"
-
-#: ../dnf/cli/option_parser.py:302
-msgid "Include packages needed to fix the given BZ, in updates"
-msgstr ""
-"Inkludera paket som behövs för att lösa den angivna BZ:n, i uppdateringar"
-
-#: ../dnf/cli/option_parser.py:304
-msgid "Include packages needed to fix the given CVE, in updates"
-msgstr ""
-"Inkludera paket som behövs för att lösa den angivna CVE:n, i uppdateringar"
-
-#: ../dnf/cli/option_parser.py:309
-msgid "Include security relevant packages matching the severity, in updates"
-msgstr ""
-"Inkludera paket relevanta för säkerhet som matchar allvarlighetsgraden, i "
-"uppdateringar"
-
-#: ../dnf/cli/option_parser.py:344
-msgid "List of Main Commands:"
-msgstr "Lista över huvudkommandon:"
-
-#: ../dnf/cli/option_parser.py:345
-msgid "List of Plugin Commands:"
-msgstr "Lista över instickskommandon:"
-
-#: ../dnf/cli/main.py:109
-msgid "No read/execute access in current directory, moving to /"
-msgstr "Inga läs-/körrättigheter i aktuell katalog, flyttar till /"
-
-#: ../dnf/cli/main.py:127
-#, python-format
-msgid "(try to add '%s' to command line to replace conflicting packages"
-msgstr ""
-"(försök med att lägga till ”%s” på kommandoraden för att ersätta paket som "
-"står i konflikt"
-
-#: ../dnf/cli/main.py:130
-#, python-format
-msgid " or '%s' to skip uninstalable packages)"
-msgstr " eller ”%s” för att hoppa över oinstallerbara paket)"
-
-#: ../dnf/cli/main.py:147
-msgid "Dependencies resolved."
-msgstr "Beroenden upplösta."
-
-#: ../dnf/cli/main.py:165
-msgid "Complete!"
-msgstr "Klart!"
-
 #: ../dnf/cli/cli.py:124
 #, fuzzy, python-format
 msgid "  Installed: %s-%s at %s"
@@ -1633,31 +1447,33 @@ msgstr "  Installerade: %s-%s %s"
 msgid "  Built    : %s at %s"
 msgstr "  Byggde      : %s %s"
 
-#: ../dnf/cli/cli.py:206
+#: ../dnf/cli/cli.py:205
+msgid "DNF will only download packages for the transaction."
+msgstr ""
+
+#: ../dnf/cli/cli.py:207
+msgid ""
+"DNF will only download packages, install gpg keys, and check the "
+"transaction."
+msgstr ""
+
+#: ../dnf/cli/cli.py:211
 msgid "Operation aborted."
 msgstr "Åtgärden avbruten."
 
-#: ../dnf/cli/cli.py:215
+#: ../dnf/cli/cli.py:218
 msgid "Downloading Packages:"
 msgstr "Hämtar paket:"
 
-#: ../dnf/cli/cli.py:222
+#: ../dnf/cli/cli.py:224
 msgid "Error downloading packages:"
 msgstr "Fel när paket hämtades:"
 
-#: ../dnf/cli/cli.py:242
+#: ../dnf/cli/cli.py:244
 msgid "Transaction failed"
 msgstr "Transaktionen misslyckades"
 
-#: ../dnf/cli/cli.py:262
-msgid "Package {} from local repository {} has incorrect checksum"
-msgstr ""
-
-#: ../dnf/cli/cli.py:268
-msgid "Some packages from local repository have incorrect checksum"
-msgstr ""
-
-#: ../dnf/cli/cli.py:290
+#: ../dnf/cli/cli.py:265
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
@@ -1665,91 +1481,103 @@ msgstr ""
 "Vägrar att automatiskt importera nycklar vid oövervakad körning.\n"
 "Använd ”-y” för att åsidosätta."
 
-#: ../dnf/cli/cli.py:330 ../dnf/cli/cli.py:481 ../dnf/cli/cli.py:487
+#: ../dnf/cli/cli.py:283
+msgid "GPG check FAILED"
+msgstr ""
+
+#: ../dnf/cli/cli.py:311 ../dnf/cli/cli.py:455 ../dnf/cli/cli.py:461
 msgid "Obsoleting Packages"
 msgstr "Fasar ut paket"
 
-#: ../dnf/cli/cli.py:359
+#: ../dnf/cli/cli.py:340
 msgid "No packages marked for distribution synchronization."
 msgstr "Inga paket markerade för distributionssynkronisering."
 
-#: ../dnf/cli/cli.py:391 ../dnf/base.py:1921
+#: ../dnf/cli/cli.py:372 ../dnf/base.py:1959
 #, python-format
 msgid "Packages for argument %s available, but not installed."
 msgstr "Paket för argumentet %s tillgängliga, men inte installerade."
 
-#: ../dnf/cli/cli.py:404
-msgid "  * Maybe you meant: {}"
-msgstr ""
-
-#: ../dnf/cli/cli.py:455
+#: ../dnf/cli/cli.py:429
 msgid "Installed Packages"
 msgstr "Installerade paket"
 
-#: ../dnf/cli/cli.py:463
+#: ../dnf/cli/cli.py:437
 msgid "Available Packages"
 msgstr "Tillgängliga paket"
 
-#: ../dnf/cli/cli.py:467
+#: ../dnf/cli/cli.py:441
 msgid "Autoremove Packages"
 msgstr "Ta automatiskt bort paket"
 
-#: ../dnf/cli/cli.py:469
+#: ../dnf/cli/cli.py:443
 msgid "Extra Packages"
 msgstr "Extra paket"
 
-#: ../dnf/cli/cli.py:473
+#: ../dnf/cli/cli.py:447
 msgid "Available Upgrades"
-msgstr ""
+msgstr "Tillgängliga uppgraderingar"
 
-#: ../dnf/cli/cli.py:489
+#: ../dnf/cli/cli.py:463
 msgid "Recently Added Packages"
 msgstr "Nyligen tillagda paket"
 
-#: ../dnf/cli/cli.py:494
+#: ../dnf/cli/cli.py:468
 msgid "No matching Packages to list"
 msgstr "Inga matchande paket att lista"
 
-#: ../dnf/cli/cli.py:570
+#: ../dnf/cli/cli.py:544
 msgid "No Matches found"
 msgstr "Inga matchningar hittades"
 
-#: ../dnf/cli/cli.py:585
+#: ../dnf/cli/cli.py:554
+msgid "No transaction ID given"
+msgstr "Inget transaktions-ID angivet"
+
+#: ../dnf/cli/cli.py:559
 msgid "Not found given transaction ID"
 msgstr "Hittade inte angivet transaktions-ID"
 
-#: ../dnf/cli/cli.py:611
+#: ../dnf/cli/cli.py:568
+msgid "Found more than one transaction ID!"
+msgstr "Hittade mer än ett transaktions-ID!"
+
+#: ../dnf/cli/cli.py:585
 #, python-format
 msgid "Transaction history is incomplete, before %u."
 msgstr "Transaktionshistoriken är ofullständig, före %u."
 
-#: ../dnf/cli/cli.py:613
+#: ../dnf/cli/cli.py:587
 #, python-format
 msgid "Transaction history is incomplete, after %u."
 msgstr "Transaktionshistoriken är ofullständig, efter %u."
 
-#: ../dnf/cli/cli.py:741
+#: ../dnf/cli/cli.py:627
+msgid "Undoing transaction {}, from {}"
+msgstr ""
+
+#: ../dnf/cli/cli.py:719
 #, python-format
 msgid "No repository match: %s"
 msgstr "Inget förråd matchar: %s"
 
-#: ../dnf/cli/cli.py:770
+#: ../dnf/cli/cli.py:748
 msgid "This command has to be run under the root user."
 msgstr "Detta kommando måste köras av root-användaren."
 
-#: ../dnf/cli/cli.py:790
+#: ../dnf/cli/cli.py:768
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "Inget sådant kommando: %s.  Använd %s --help"
 
-#: ../dnf/cli/cli.py:793
+#: ../dnf/cli/cli.py:771
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
 "Det kan vara ett DNF-insticksmodulskommando, prova ”dnf install 'dnf-"
 "command(%s)'”"
 
-#: ../dnf/cli/cli.py:796
+#: ../dnf/cli/cli.py:774
 msgid ""
 "It could be a DNF plugin command, but loading of plugins is currently "
 "disabled."
@@ -1757,12 +1585,16 @@ msgstr ""
 "Det kan vara ett kommando till en DNF-insticksmodul, men att läsa in "
 "insticksmoduler är för närvarande avaktiverat."
 
-#: ../dnf/cli/cli.py:834 ../dnf/cli/cli.py:838
+#: ../dnf/cli/cli.py:815 ../dnf/cli/cli.py:819
 #, python-format
 msgid "Config error: %s"
 msgstr "Konfigurationsfel: %s"
 
-#: ../dnf/cli/cli.py:922
+#: ../dnf/cli/cli.py:825
+msgid "--destdir must be used with --downloadonly or download command."
+msgstr ""
+
+#: ../dnf/cli/cli.py:911
 msgid ""
 "Unable to detect release version (use '--releasever' to specify release "
 "version)"
@@ -1770,257 +1602,489 @@ msgstr ""
 "Kan inte avgöra utgåveversionen (använd ”--releasever” för att ange "
 "utgåveversion)"
 
-#: ../dnf/cli/cli.py:1000
+#: ../dnf/cli/cli.py:986
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Kommando \"%s\" redan definierat"
 
-#: ../dnf/cli/output.py:492
+#: ../dnf/cli/option_parser.py:53
+#, python-format
+msgid "Command line error: %s"
+msgstr "Kommandoradsfel: %s"
+
+#: ../dnf/cli/option_parser.py:84
+#, python-format
+msgid "bad format: %s"
+msgstr "felaktigt format: %s"
+
+#: ../dnf/cli/option_parser.py:165
+msgid "Optional arguments"
+msgstr "Valfria argument"
+
+#: ../dnf/cli/option_parser.py:168
+msgid "config file location"
+msgstr "konfigurationsfilens plats"
+
+#: ../dnf/cli/option_parser.py:171
+msgid "quiet operation"
+msgstr "tyst arbete"
+
+#: ../dnf/cli/option_parser.py:173
+msgid "verbose operation"
+msgstr "utförligt arbete"
+
+#: ../dnf/cli/option_parser.py:175
+msgid "show DNF version and exit"
+msgstr "visa DNF-version och avsluta"
+
+#: ../dnf/cli/option_parser.py:176
+msgid "set install root"
+msgstr "ange installationsrot"
+
+#: ../dnf/cli/option_parser.py:179
+msgid "do not install documentations"
+msgstr "installera inte dokumentation"
+
+#: ../dnf/cli/option_parser.py:182
+msgid "disable all plugins"
+msgstr "inaktivera alla insticksmoduler"
+
+#: ../dnf/cli/option_parser.py:185
+msgid "enable plugins by name"
+msgstr "aktivera insticksmoduler efter namn"
+
+#: ../dnf/cli/option_parser.py:189
+msgid "disable plugins by name"
+msgstr "inaktivera insticksmoduler efter namn"
+
+#: ../dnf/cli/option_parser.py:192
+msgid "override the value of $releasever in config and repo files"
+msgstr "åsidosätt värdet på $releasever i config- och repo-filer"
+
+#: ../dnf/cli/option_parser.py:196
+msgid "set arbitrary config and repo options"
+msgstr "sätt godtyckliga konfigurations- och förrådsalternativ"
+
+#: ../dnf/cli/option_parser.py:199
+msgid "resolve depsolve problems by skipping packages"
+msgstr "lös depsolve-problem genom att hoppa över paket"
+
+#: ../dnf/cli/option_parser.py:202
+msgid "show command help"
+msgstr "visa kommandohjälp"
+
+#: ../dnf/cli/option_parser.py:206
+msgid "allow erasing of installed packages to resolve dependencies"
+msgstr "tillåt radering av installerade paket för att lösa upp beroenden"
+
+#: ../dnf/cli/option_parser.py:210
+msgid "try the best available package versions in transactions."
+msgstr "prova de bästa tillgängliga paketversionerna i transaktioner."
+
+#: ../dnf/cli/option_parser.py:214
+msgid "run entirely from system cache, don't update cache"
+msgstr "kör helt från systemets cache, uppdatera inte cachen"
+
+#: ../dnf/cli/option_parser.py:218
+msgid "maximum command wait time"
+msgstr "maximal väntetid på kommandon"
+
+#: ../dnf/cli/option_parser.py:221
+msgid "debugging output level"
+msgstr "nivå på felsökningsutskrifter"
+
+#: ../dnf/cli/option_parser.py:224
+msgid "dumps detailed solving results into files"
+msgstr "skriver detaljerade upplösningsresultat i filer"
+
+#: ../dnf/cli/option_parser.py:228
+msgid "show duplicates, in repos, in list/search commands"
+msgstr "visa dubbletter, i förråd, i list-/search-kommandon"
+
+#: ../dnf/cli/option_parser.py:231
+msgid "error output level"
+msgstr "nivå på felutskrifter"
+
+#: ../dnf/cli/option_parser.py:234
+msgid ""
+"enables dnf's obsoletes processing logic for upgrade or display capabilities"
+" that the package obsoletes for info, list and repoquery"
+msgstr ""
+"aktiverar dnf:s beräkningslogik för utfasning vid uppgraderingar eller visa "
+"förmågor som paketet fasar ut för info, list och repoquery"
+
+#: ../dnf/cli/option_parser.py:238
+msgid "debugging output level for rpm"
+msgstr "nivå på felsökningsutskrifter för rpm"
+
+#: ../dnf/cli/option_parser.py:241
+msgid "automatically answer yes for all questions"
+msgstr "svara automatiskt ja på alla frågor"
+
+#: ../dnf/cli/option_parser.py:244
+msgid "automatically answer no for all questions"
+msgstr "svara automatiskt nej på alla frågor"
+
+#: ../dnf/cli/option_parser.py:255
+msgid ""
+"enable just specific repositories by an id or a glob, can be specified "
+"multiple times"
+msgstr ""
+"aktivera endast specifika förråd med ett id eller en glob, kan anges flera "
+"gånger"
+
+#: ../dnf/cli/option_parser.py:259
+msgid "exclude packages by name or glob"
+msgstr "uteslut paket via namn eller glob"
+
+#: ../dnf/cli/option_parser.py:264
+msgid "disable excludepkgs"
+msgstr "avaktivera excludepkgs"
+
+#: ../dnf/cli/option_parser.py:269
+msgid ""
+"label and path to additional repository, can be specified multiple times."
+msgstr "etikett och sökväg till ytterligare förråd, kan anges flera gånger."
+
+#: ../dnf/cli/option_parser.py:273
+msgid "disable removal of dependencies that are no longer used"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:276
+msgid "disable gpg signature checking"
+msgstr "inaktivera kontroll av gpg-signatur"
+
+#: ../dnf/cli/option_parser.py:278
+msgid "control whether color is used"
+msgstr "styr om färg skall användas"
+
+#: ../dnf/cli/option_parser.py:281
+msgid "set metadata as expired before running the command"
+msgstr "markera metadata som utgånget före kommandot körs"
+
+#: ../dnf/cli/option_parser.py:284
+msgid "resolve to IPv4 addresses only"
+msgstr "lös endast upp till IPv4-adresser"
+
+#: ../dnf/cli/option_parser.py:287
+msgid "resolve to IPv6 addresses only"
+msgstr "lös endast upp till IPv6-adresser"
+
+#: ../dnf/cli/option_parser.py:290
+msgid "set directory to copy packages to"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:293
+msgid "only download packages"
+msgstr "hämta endast paket"
+
+#: ../dnf/cli/option_parser.py:295
+msgid "add a comment to transaction"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:298
+msgid "Include bugfix relevant packages, in updates"
+msgstr "Inkludera paket relevanta för felrättningar, i uppdateringar"
+
+#: ../dnf/cli/option_parser.py:301
+msgid "Include enhancement relevant packages, in updates"
+msgstr "Inkludera paket relevanta för förbättringar, i uppdateringar"
+
+#: ../dnf/cli/option_parser.py:304
+msgid "Include newpackage relevant packages, in updates"
+msgstr "Inkludera relevanta nya paket, i uppdateringar"
+
+#: ../dnf/cli/option_parser.py:307
+msgid "Include security relevant packages, in updates"
+msgstr "Inkludera paket relevanta för säkerhet, i uppdateringar"
+
+#: ../dnf/cli/option_parser.py:311
+msgid "Include packages needed to fix the given advisory, in updates"
+msgstr ""
+"Inkludera paket som behövs för att lösa den angivna rådet, i uppdateringar"
+
+#: ../dnf/cli/option_parser.py:315
+msgid "Include packages needed to fix the given BZ, in updates"
+msgstr ""
+"Inkludera paket som behövs för att lösa den angivna BZ:n, i uppdateringar"
+
+#: ../dnf/cli/option_parser.py:317
+msgid "Include packages needed to fix the given CVE, in updates"
+msgstr ""
+"Inkludera paket som behövs för att lösa den angivna CVE:n, i uppdateringar"
+
+#: ../dnf/cli/option_parser.py:322
+msgid "Include security relevant packages matching the severity, in updates"
+msgstr ""
+"Inkludera paket relevanta för säkerhet som matchar allvarlighetsgraden, i "
+"uppdateringar"
+
+#: ../dnf/cli/option_parser.py:328
+msgid "Force the use of an architecture"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:362
+msgid "List of Main Commands:"
+msgstr "Lista över huvudkommandon:"
+
+#: ../dnf/cli/option_parser.py:363
+msgid "List of Plugin Commands:"
+msgstr "Lista över instickskommandon:"
+
+#: ../dnf/cli/output.py:499
 msgid "Epoch"
 msgstr "Epok"
 
-#: ../dnf/cli/output.py:493 ../dnf/cli/output.py:1089
+#: ../dnf/cli/output.py:500 ../dnf/cli/output.py:1099
 msgid "Version"
 msgstr "Version"
 
-#: ../dnf/cli/output.py:494
+#: ../dnf/cli/output.py:501
 msgid "Release"
 msgstr "Utgåva"
 
-#: ../dnf/cli/output.py:495 ../dnf/cli/output.py:1088
+#: ../dnf/cli/output.py:502 ../dnf/cli/output.py:1098
 msgid "Arch"
 msgstr "Arkitektur"
 
-#: ../dnf/cli/output.py:496 ../dnf/cli/output.py:1091
+#: ../dnf/cli/output.py:503 ../dnf/cli/output.py:1101
 msgid "Size"
 msgstr "Storlk"
 
-#: ../dnf/cli/output.py:497
+#: ../dnf/cli/output.py:504
 msgid "Source"
 msgstr "Källa"
 
-#: ../dnf/cli/output.py:498
+#: ../dnf/cli/output.py:505
 msgid "Repo"
 msgstr "Förråd"
 
-#: ../dnf/cli/output.py:500
+#: ../dnf/cli/output.py:507
 msgid "From repo"
 msgstr "Från förråd"
 
 #. :hawkey does not support changelog information
 #. print(_("Committer   : %s") % ucd(pkg.committer))
 #. print(_("Committime  : %s") % time.ctime(pkg.committime))
-#: ../dnf/cli/output.py:505
+#: ../dnf/cli/output.py:512
 msgid "Packager"
 msgstr "Paketerare"
 
-#: ../dnf/cli/output.py:506
+#: ../dnf/cli/output.py:513
 msgid "Buildtime"
 msgstr "Byggtidpunkt"
 
-#: ../dnf/cli/output.py:509
+#: ../dnf/cli/output.py:516
 msgid "Install time"
 msgstr "Installationstidpunkt"
 
-#: ../dnf/cli/output.py:518
+#: ../dnf/cli/output.py:525
 msgid "Installed by"
 msgstr "Installerad av"
 
-#: ../dnf/cli/output.py:525
+#: ../dnf/cli/output.py:532
 msgid "Changed by"
 msgstr "Ändrad av"
 
-#: ../dnf/cli/output.py:529
+#: ../dnf/cli/output.py:536
 msgid "License"
 msgstr "Licens"
 
-#: ../dnf/cli/output.py:655
+#: ../dnf/cli/output.py:662
 msgid "y"
 msgstr "j"
 
-#: ../dnf/cli/output.py:655
+#: ../dnf/cli/output.py:662
 msgid "yes"
 msgstr "ja"
 
-#: ../dnf/cli/output.py:656
+#: ../dnf/cli/output.py:663
 msgid "n"
 msgstr "n"
 
-#: ../dnf/cli/output.py:656
+#: ../dnf/cli/output.py:663
 msgid "no"
 msgstr "nej"
 
-#: ../dnf/cli/output.py:660
+#: ../dnf/cli/output.py:667
 msgid "Is this ok [y/N]: "
 msgstr "Är detta ok [j/N]: "
 
-#: ../dnf/cli/output.py:664
+#: ../dnf/cli/output.py:671
 msgid "Is this ok [Y/n]: "
 msgstr "Är detta ok [J/n]: "
 
-#: ../dnf/cli/output.py:744
+#: ../dnf/cli/output.py:751
 #, python-format
 msgid "Group: %s"
 msgstr "Grupp: %s"
 
-#: ../dnf/cli/output.py:748
+#: ../dnf/cli/output.py:755
 #, python-format
 msgid " Group-Id: %s"
 msgstr " Grupp-id: %s"
 
-#: ../dnf/cli/output.py:750 ../dnf/cli/output.py:789
+#: ../dnf/cli/output.py:757 ../dnf/cli/output.py:796
 #, python-format
 msgid " Description: %s"
 msgstr " Beskrivning: %s"
 
-#: ../dnf/cli/output.py:752
+#: ../dnf/cli/output.py:759
 #, python-format
 msgid " Language: %s"
 msgstr " Språk: %s"
 
-#: ../dnf/cli/output.py:755
+#: ../dnf/cli/output.py:762
 msgid " Mandatory Packages:"
 msgstr " Obligatoriska paket:"
 
-#: ../dnf/cli/output.py:756
+#: ../dnf/cli/output.py:763
 msgid " Default Packages:"
 msgstr " Standardpaket:"
 
-#: ../dnf/cli/output.py:757
+#: ../dnf/cli/output.py:764
 msgid " Optional Packages:"
 msgstr " Valfria paket:"
 
-#: ../dnf/cli/output.py:758
+#: ../dnf/cli/output.py:765
 msgid " Conditional Packages:"
 msgstr " Villkorliga paket:"
 
-#: ../dnf/cli/output.py:783
+#: ../dnf/cli/output.py:790
 #, fuzzy, python-format
 msgid "Environment Group: %s"
 msgstr "Miljögrupp: %s"
 
-#: ../dnf/cli/output.py:786
+#: ../dnf/cli/output.py:793
 #, python-format
 msgid " Environment-Id: %s"
 msgstr "Miljö-id: %s"
 
-#: ../dnf/cli/output.py:792
+#: ../dnf/cli/output.py:799
 msgid " Mandatory Groups:"
 msgstr " Obligatoriska grupper:"
 
-#: ../dnf/cli/output.py:793
+#: ../dnf/cli/output.py:800
 msgid " Optional Groups:"
 msgstr " Valfria grupper:"
 
-#: ../dnf/cli/output.py:828
+#: ../dnf/cli/output.py:835
 #, python-format
 msgid "Repo        : %s"
 msgstr "Förråd      : %s"
 
-#: ../dnf/cli/output.py:835
+#: ../dnf/cli/output.py:842
 msgid "Matched from:"
 msgstr "Matchat från:"
 
-#: ../dnf/cli/output.py:839
+#: ../dnf/cli/output.py:846
 msgid "Description : "
 msgstr "Beskrivning : "
 
-#: ../dnf/cli/output.py:842
+#: ../dnf/cli/output.py:849
 #, python-format
 msgid "URL         : %s"
 msgstr "URL         : %s"
 
-#: ../dnf/cli/output.py:845
+#: ../dnf/cli/output.py:852
 #, python-format
 msgid "License     : %s"
 msgstr "Licens      : %s"
 
-#: ../dnf/cli/output.py:848
+#: ../dnf/cli/output.py:855
 #, python-format
 msgid "Filename    : %s"
 msgstr "Filnamn     : %s"
 
-#: ../dnf/cli/output.py:852
+#: ../dnf/cli/output.py:859
 msgid "Other       : "
 msgstr "Övrigt      : "
 
-#: ../dnf/cli/output.py:908
+#: ../dnf/cli/output.py:915
 msgid "There was an error calculating total download size"
 msgstr "Ett fel uppstod vid beräkningen av total storlek att hämta"
 
-#: ../dnf/cli/output.py:914
+#: ../dnf/cli/output.py:921
 #, python-format
 msgid "Total size: %s"
 msgstr "Total storlek: %s"
 
-#: ../dnf/cli/output.py:917
+#: ../dnf/cli/output.py:924
 #, python-format
 msgid "Total download size: %s"
 msgstr "Total storlek att hämta: %s"
 
-#: ../dnf/cli/output.py:920
+#: ../dnf/cli/output.py:927
 #, python-format
 msgid "Installed size: %s"
 msgstr "Installerad storlek: %s"
 
-#: ../dnf/cli/output.py:938
+#: ../dnf/cli/output.py:945
 msgid "There was an error calculating installed size"
 msgstr "Ett fel uppstod vid beräkningen av installerad storlek"
 
-#: ../dnf/cli/output.py:942
+#: ../dnf/cli/output.py:949
 #, python-format
 msgid "Freed space: %s"
 msgstr "Frigjort utrymme:  %s"
 
-#: ../dnf/cli/output.py:951
+#: ../dnf/cli/output.py:958
 msgid "Marking packages as installed by the group:"
 msgstr "Markerar paket som installerade av gruppen:"
 
-#: ../dnf/cli/output.py:957
+#: ../dnf/cli/output.py:965
 msgid "Marking packages as removed by the group:"
 msgstr "Markerar paket som borttagna av gruppen:"
 
-#: ../dnf/cli/output.py:967
+#: ../dnf/cli/output.py:975
 msgid "Group"
 msgstr "Grupp"
 
-#: ../dnf/cli/output.py:967
+#: ../dnf/cli/output.py:975
 msgid "Packages"
 msgstr "Paket"
 
-#: ../dnf/cli/output.py:1034 ../dnf/yum/rpmtrans.py:129
+#: ../dnf/cli/output.py:1042 ../dnf/yum/rpmtrans.py:129
 msgid "Installing"
 msgstr "Installerar"
 
-#: ../dnf/cli/output.py:1035 ../dnf/yum/rpmtrans.py:132
+#: ../dnf/cli/output.py:1043 ../dnf/yum/rpmtrans.py:132
 msgid "Upgrading"
 msgstr "Uppgraderar"
 
-#: ../dnf/cli/output.py:1036 ../dnf/yum/rpmtrans.py:131
+#: ../dnf/cli/output.py:1044 ../dnf/yum/rpmtrans.py:131
 msgid "Reinstalling"
 msgstr "Ominstallerar"
 
-#: ../dnf/cli/output.py:1037
+#: ../dnf/cli/output.py:1045
+msgid "Installing group packages"
+msgstr ""
+
+#: ../dnf/cli/output.py:1046
 msgid "Installing dependencies"
 msgstr "Installerar beroenden"
 
-#: ../dnf/cli/output.py:1038
+#: ../dnf/cli/output.py:1047
 msgid "Installing weak dependencies"
 msgstr "Installerar svaga beroenden"
 
-#: ../dnf/cli/output.py:1039
+#: ../dnf/cli/output.py:1048
 msgid "Removing"
 msgstr "Tar bort"
 
-#: ../dnf/cli/output.py:1040
+#: ../dnf/cli/output.py:1049
+msgid "Removing depended packages"
+msgstr ""
+
+#: ../dnf/cli/output.py:1050
 msgid "Removing unused dependencies"
 msgstr "Tar bort oanvända beroenden"
 
-#: ../dnf/cli/output.py:1041 ../dnf/yum/rpmtrans.py:127
+#: ../dnf/cli/output.py:1051 ../dnf/yum/rpmtrans.py:127
 msgid "Downgrading"
 msgstr "Nedgraderar"
 
-#: ../dnf/cli/output.py:1060
+#: ../dnf/cli/output.py:1070
 #, python-format
 msgid ""
 "Skipping packages with conflicts:\n"
@@ -2029,31 +2093,31 @@ msgstr ""
 "Hoppar över paket med konflikter:\n"
 "(lägg till ”%s” på kommandoraden för att framtvinga deras uppgradering)"
 
-#: ../dnf/cli/output.py:1068
+#: ../dnf/cli/output.py:1078
 #, fuzzy, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr "Hoppar över paket med trasiga  beroenden%s"
 
-#: ../dnf/cli/output.py:1072
+#: ../dnf/cli/output.py:1082
 msgid " or part of a group"
 msgstr "eller del av en grupp"
 
-#: ../dnf/cli/output.py:1087 ../dnf/cli/output.py:1132
-#: ../dnf/cli/output.py:1148 ../dnf/cli/output.py:1812
+#: ../dnf/cli/output.py:1097 ../dnf/cli/output.py:1143
+#: ../dnf/cli/output.py:1159 ../dnf/cli/output.py:1829
 msgid "Package"
 msgid_plural "Packages"
 msgstr[0] "Paket"
 msgstr[1] "Paket"
 
-#: ../dnf/cli/output.py:1090
+#: ../dnf/cli/output.py:1100
 msgid "Repository"
 msgstr "Förråd"
 
-#: ../dnf/cli/output.py:1103
+#: ../dnf/cli/output.py:1113
 msgid "replacing"
 msgstr "ersätter"
 
-#: ../dnf/cli/output.py:1111
+#: ../dnf/cli/output.py:1121
 #, python-format
 msgid ""
 "\n"
@@ -2064,476 +2128,316 @@ msgstr ""
 "Transaktionssammanfattning\n"
 "%s\n"
 
-#: ../dnf/cli/output.py:1116 ../dnf/cli/output.py:1720
-#: ../dnf/cli/output.py:1721
+#: ../dnf/cli/output.py:1126 ../dnf/cli/output.py:1737
+#: ../dnf/cli/output.py:1738
 msgid "Install"
 msgstr "Installera"
 
-#: ../dnf/cli/output.py:1119 ../dnf/cli/output.py:1729
+#: ../dnf/cli/output.py:1130 ../dnf/cli/output.py:1746
 msgid "Upgrade"
 msgstr "Uppgradera"
 
-#: ../dnf/cli/output.py:1120
+#: ../dnf/cli/output.py:1131
 msgid "Remove"
 msgstr "Ta bort"
 
-#: ../dnf/cli/output.py:1122 ../dnf/cli/output.py:1727
+#: ../dnf/cli/output.py:1133 ../dnf/cli/output.py:1744
 msgid "Downgrade"
 msgstr "Nedgradera"
 
-#: ../dnf/cli/output.py:1123
+#: ../dnf/cli/output.py:1134
 msgid "Skip"
 msgstr "Hoppa över"
 
-#: ../dnf/cli/output.py:1150
+#: ../dnf/cli/output.py:1161
 msgid "Dependent package"
 msgid_plural "Dependent packages"
 msgstr[0] "Beroende paket"
 msgstr[1] "Beroende paket"
 
-#: ../dnf/cli/output.py:1209
+#: ../dnf/cli/output.py:1220
 msgid "Reinstalled"
 msgstr "Ominstallerade"
 
-#: ../dnf/cli/output.py:1210
+#: ../dnf/cli/output.py:1221
 msgid "Removed"
 msgstr "Borttagna"
 
-#: ../dnf/cli/output.py:1215 ../dnf/cli/output.py:1577
-#: ../dnf/cli/output.py:1730
+#: ../dnf/cli/output.py:1228 ../dnf/cli/output.py:1590
+#: ../dnf/cli/output.py:1747
 msgid "Upgraded"
 msgstr "Uppgraderade"
 
-#: ../dnf/cli/output.py:1216 ../dnf/cli/output.py:1577
-#: ../dnf/cli/output.py:1728
+#: ../dnf/cli/output.py:1229 ../dnf/cli/output.py:1590
+#: ../dnf/cli/output.py:1745
 msgid "Downgraded"
 msgstr "Nedgraderade"
 
-#: ../dnf/cli/output.py:1217
+#: ../dnf/cli/output.py:1230
 msgid "Failed"
 msgstr "Misslyckades"
 
-#: ../dnf/cli/output.py:1271
+#: ../dnf/cli/output.py:1284
 msgid "Total"
 msgstr "Totalt"
 
-#: ../dnf/cli/output.py:1292
+#: ../dnf/cli/output.py:1305
 msgid "I"
 msgstr "I"
 
-#: ../dnf/cli/output.py:1293
+#: ../dnf/cli/output.py:1306
 msgid "O"
 msgstr "F"
 
-#: ../dnf/cli/output.py:1294
+#: ../dnf/cli/output.py:1307
 msgid "E"
 msgstr "R"
 
-#: ../dnf/cli/output.py:1295
+#: ../dnf/cli/output.py:1308
 msgid "R"
 msgstr "O"
 
-#: ../dnf/cli/output.py:1296
+#: ../dnf/cli/output.py:1309
 msgid "D"
 msgstr "N"
 
-#: ../dnf/cli/output.py:1297
+#: ../dnf/cli/output.py:1310
 msgid "U"
 msgstr "U"
 
-#: ../dnf/cli/output.py:1311
+#: ../dnf/cli/output.py:1324
 msgid "<unset>"
 msgstr "<ej satt>"
 
-#: ../dnf/cli/output.py:1312
+#: ../dnf/cli/output.py:1325
 msgid "System"
 msgstr "System"
 
-#: ../dnf/cli/output.py:1393 ../dnf/cli/output.py:1503
+#: ../dnf/cli/output.py:1406 ../dnf/cli/output.py:1516
 msgid "No transactions"
 msgstr "Inga transaktioner"
 
-#: ../dnf/cli/output.py:1413 ../dnf/cli/output.py:1801
+#: ../dnf/cli/output.py:1426 ../dnf/cli/output.py:1818
 msgid "Bad transaction IDs, or package(s), given"
 msgstr "Felaktiga transaktions-ID:n, eller paket, angivna"
 
-#: ../dnf/cli/output.py:1449
+#: ../dnf/cli/output.py:1462
 msgid "Command line"
 msgstr "Kommandorad"
 
 #. TRANSLATORS: user names who executed transaction in history command output
-#: ../dnf/cli/output.py:1452
+#: ../dnf/cli/output.py:1465
 msgid "User name"
 msgstr "Användarnamn"
 
 #. REALLY Needs to use columns!
-#: ../dnf/cli/output.py:1453 ../dnf/cli/output.py:1810
+#: ../dnf/cli/output.py:1466 ../dnf/cli/output.py:1827
 msgid "ID"
 msgstr "ID"
 
-#: ../dnf/cli/output.py:1455
+#: ../dnf/cli/output.py:1468
 msgid "Date and time"
 msgstr "Datum och tid"
 
-#: ../dnf/cli/output.py:1456 ../dnf/cli/output.py:1811
+#: ../dnf/cli/output.py:1469 ../dnf/cli/output.py:1828
 msgid "Action(s)"
 msgstr "Åtgärd(er)"
 
-#: ../dnf/cli/output.py:1457
+#: ../dnf/cli/output.py:1470
 msgid "Altered"
 msgstr "Ändrade"
 
-#: ../dnf/cli/output.py:1515
+#: ../dnf/cli/output.py:1528
 msgid "No transaction ID, or package, given"
 msgstr "Inget transaktions-ID, eller paket, angivet"
 
-#: ../dnf/cli/output.py:1576
+#: ../dnf/cli/output.py:1589
 msgid "Erased"
 msgstr "Raderade"
 
-#: ../dnf/cli/output.py:1578
+#: ../dnf/cli/output.py:1591
 msgid "Not installed"
 msgstr "Inte installerat"
 
-#: ../dnf/cli/output.py:1579
+#: ../dnf/cli/output.py:1592
 msgid "Older"
 msgstr "Äldre"
 
-#: ../dnf/cli/output.py:1579
+#: ../dnf/cli/output.py:1592
 msgid "Newer"
 msgstr "Nyare"
 
-#: ../dnf/cli/output.py:1616 ../dnf/cli/output.py:1618
+#: ../dnf/cli/output.py:1629 ../dnf/cli/output.py:1631
 msgid "Transaction ID :"
 msgstr "Transaktions-ID:"
 
-#: ../dnf/cli/output.py:1620
+#: ../dnf/cli/output.py:1633
 msgid "Begin time     :"
 msgstr "Starttid       :"
 
-#: ../dnf/cli/output.py:1623 ../dnf/cli/output.py:1625
+#: ../dnf/cli/output.py:1636 ../dnf/cli/output.py:1638
 msgid "Begin rpmdb    :"
 msgstr "Start-rpmdb    :"
 
-#: ../dnf/cli/output.py:1630
+#: ../dnf/cli/output.py:1643
 #, python-format
 msgid "(%u seconds)"
 msgstr "(%u sekunder)"
 
-#: ../dnf/cli/output.py:1632
+#: ../dnf/cli/output.py:1645
 #, python-format
 msgid "(%u minutes)"
 msgstr "(%u minuter)"
 
-#: ../dnf/cli/output.py:1634
+#: ../dnf/cli/output.py:1647
 #, python-format
 msgid "(%u hours)"
 msgstr "(%u timmar)"
 
-#: ../dnf/cli/output.py:1636
+#: ../dnf/cli/output.py:1649
 #, python-format
 msgid "(%u days)"
 msgstr "(%u dagar)"
 
-#: ../dnf/cli/output.py:1637
+#: ../dnf/cli/output.py:1650
 msgid "End time       :"
 msgstr "Sluttid        :"
 
-#: ../dnf/cli/output.py:1640 ../dnf/cli/output.py:1642
+#: ../dnf/cli/output.py:1653 ../dnf/cli/output.py:1655
 msgid "End rpmdb      :"
 msgstr "Slut-rpmdb     :"
 
-#: ../dnf/cli/output.py:1645 ../dnf/cli/output.py:1647
+#: ../dnf/cli/output.py:1658 ../dnf/cli/output.py:1660
 msgid "User           :"
 msgstr "Användare      :"
 
-#: ../dnf/cli/output.py:1651 ../dnf/cli/output.py:1654
-#: ../dnf/cli/output.py:1656 ../dnf/cli/output.py:1658
-#: ../dnf/cli/output.py:1660
+#: ../dnf/cli/output.py:1664 ../dnf/cli/output.py:1667
+#: ../dnf/cli/output.py:1669 ../dnf/cli/output.py:1671
+#: ../dnf/cli/output.py:1673
 msgid "Return-Code    :"
 msgstr "Returkod       :"
 
-#: ../dnf/cli/output.py:1651 ../dnf/cli/output.py:1656
+#: ../dnf/cli/output.py:1664 ../dnf/cli/output.py:1669
 msgid "Aborted"
 msgstr "Avbruten"
 
-#: ../dnf/cli/output.py:1654
+#: ../dnf/cli/output.py:1667
 msgid "Failures:"
 msgstr "Misslyckanden:"
 
-#: ../dnf/cli/output.py:1658
+#: ../dnf/cli/output.py:1671
 msgid "Failure:"
 msgstr "Misslyckades:"
 
-#: ../dnf/cli/output.py:1660
+#: ../dnf/cli/output.py:1673
 msgid "Success"
 msgstr "Lyckades"
 
-#: ../dnf/cli/output.py:1665 ../dnf/cli/output.py:1667
+#: ../dnf/cli/output.py:1678 ../dnf/cli/output.py:1680
 msgid "Command Line   :"
 msgstr "Kommandoradsfel:"
 
-#: ../dnf/cli/output.py:1676
+#: ../dnf/cli/output.py:1689
 #, python-format
 msgid "Additional non-default information stored: %d"
 msgstr "Ytterligare icke-standardinformation lagrad: %d"
 
+#: ../dnf/cli/output.py:1694
+msgid "Comment        :"
+msgstr ""
+
 #. This is _possible_, but not common
-#: ../dnf/cli/output.py:1681
+#: ../dnf/cli/output.py:1698
 msgid "Transaction performed with:"
 msgstr "Transaktionen utförd med:"
 
-#: ../dnf/cli/output.py:1685
+#: ../dnf/cli/output.py:1702
 msgid "Packages Altered:"
 msgstr "Ändrade paket:"
 
-#: ../dnf/cli/output.py:1689
+#: ../dnf/cli/output.py:1706
 msgid "Packages Skipped:"
 msgstr "Överhoppade paket:"
 
-#: ../dnf/cli/output.py:1697
+#: ../dnf/cli/output.py:1714
 msgid "Rpmdb Problems:"
 msgstr "Rpmdb-problem:"
 
-#: ../dnf/cli/output.py:1708
+#: ../dnf/cli/output.py:1725
 msgid "Scriptlet output:"
 msgstr "Skriptutdata:"
 
-#: ../dnf/cli/output.py:1714
+#: ../dnf/cli/output.py:1731
 msgid "Errors:"
 msgstr "Fel:"
 
-#: ../dnf/cli/output.py:1722
+#: ../dnf/cli/output.py:1739
 msgid "Dep-Install"
 msgstr "Ber-inst"
 
-#: ../dnf/cli/output.py:1723
+#: ../dnf/cli/output.py:1740
 msgid "Obsoleted"
 msgstr "Utfasad"
 
-#: ../dnf/cli/output.py:1724 ../dnf/yum/rpmtrans.py:130
+#: ../dnf/cli/output.py:1741 ../dnf/yum/rpmtrans.py:130
 msgid "Obsoleting"
 msgstr "Fasar ut"
 
-#: ../dnf/cli/output.py:1725
+#: ../dnf/cli/output.py:1742
 msgid "Erase"
 msgstr "Radering"
 
-#: ../dnf/cli/output.py:1726
+#: ../dnf/cli/output.py:1743
 msgid "Reinstall"
 msgstr "Ominstallation"
 
-#: ../dnf/cli/output.py:1899
+#: ../dnf/cli/output.py:1916
 #, python-format
 msgid "---> Package %s.%s %s will be installed"
 msgstr "---> Paketet %s.%s %s kommer att installeras"
 
-#: ../dnf/cli/output.py:1901
+#: ../dnf/cli/output.py:1918
 #, python-format
 msgid "---> Package %s.%s %s will be an upgrade"
 msgstr "---> Paketet %s.%s %s kommer vara en uppgradering"
 
-#: ../dnf/cli/output.py:1903
+#: ../dnf/cli/output.py:1920
 #, python-format
 msgid "---> Package %s.%s %s will be erased"
 msgstr "---> Paketet %s.%s %s kommer att tas bort"
 
-#: ../dnf/cli/output.py:1905
+#: ../dnf/cli/output.py:1922
 #, python-format
 msgid "---> Package %s.%s %s will be reinstalled"
 msgstr "---> Paketet %s.%s %s kommer att installeras om"
 
-#: ../dnf/cli/output.py:1907
+#: ../dnf/cli/output.py:1924
 #, python-format
 msgid "---> Package %s.%s %s will be a downgrade"
 msgstr "---> Paketet %s.%s %s kommer att vara en nedgradering"
 
-#: ../dnf/cli/output.py:1909
+#: ../dnf/cli/output.py:1926
 #, python-format
 msgid "---> Package %s.%s %s will be obsoleting"
 msgstr "---> Paketet %s.%s %s kommer att fasa ut"
 
-#: ../dnf/cli/output.py:1911
+#: ../dnf/cli/output.py:1928
 #, python-format
 msgid "---> Package %s.%s %s will be upgraded"
 msgstr "---> Paketet %s.%s %s kommer att uppgraderas"
 
-#: ../dnf/cli/output.py:1913
+#: ../dnf/cli/output.py:1930
 #, python-format
 msgid "---> Package %s.%s %s will be obsoleted"
 msgstr "---> Paketet %s.%s %s kommer att fasas ut"
 
-#: ../dnf/cli/output.py:1922
+#: ../dnf/cli/output.py:1939
 msgid "--> Starting dependency resolution"
 msgstr "--> Börjar beroendeupplösning"
 
-#: ../dnf/cli/output.py:1927
+#: ../dnf/cli/output.py:1944
 msgid "--> Finished dependency resolution"
 msgstr "--> Avslutade beroendeupplösning"
-
-#: ../dnf/conf/read.py:51
-#, python-format
-msgid "Warning: failed loading '%s', skipping."
-msgstr "Varning: misslyckades att ladda ”%s”, hoppar över."
-
-#: ../dnf/conf/read.py:61
-#, python-format
-msgid "Repository '%s': Error parsing config: %s"
-msgstr "Förrådet ”%s”: Fel vid tolkning av konfigurationen: %s"
-
-#: ../dnf/conf/read.py:67
-#, fuzzy, python-format
-msgid "Repository '%s' is missing name in configuration, using id."
-msgstr "Förrådet ”%s” saknar namn i konfigurationen, använder id."
-
-#: ../dnf/conf/config.py:83
-#, python-format
-msgid "Error parsing '%s': %s"
-msgstr "Fel vid tolkning av ”%s”: %s"
-
-#: ../dnf/conf/config.py:207
-msgid "\"_none_\" is not a valid value"
-msgstr "”_none_” är inte ett giltigt värde"
-
-#: ../dnf/conf/config.py:212
-#, python-format
-msgid "URL must be %s not '%s'"
-msgstr "URL måste vara %s inte ”%s”"
-
-#: ../dnf/conf/config.py:254
-#, python-format
-msgid "given path '%s' is not absolute."
-msgstr "den angivna sökvägen ”%s” är inte absolut."
-
-#: ../dnf/conf/config.py:256
-#, python-format
-msgid "given path '%s' does not exist."
-msgstr "den angivna sökvägen ”%s” finns inte."
-
-#: ../dnf/conf/config.py:273
-msgid "invalid integer value"
-msgstr "felaktigt heltalsvärde"
-
-#: ../dnf/conf/config.py:276
-#, python-format
-msgid "given value [%d] should be less than allowed value [%d]."
-msgstr ""
-"det angivna värdet [%d] skall vara mindre än det tillåtna värdet [%d]."
-
-#: ../dnf/conf/config.py:279
-#, python-format
-msgid "given value [%d] should be greater than allowed value [%d]."
-msgstr ""
-"det angivna värdet [%d] skall vara större än det tillåtna värdet [%d]."
-
-#: ../dnf/conf/config.py:316 ../dnf/conf/config.py:427
-#: ../dnf/conf/config.py:464
-msgid "no value specified"
-msgstr "inget värde angivet"
-
-#: ../dnf/conf/config.py:325 ../dnf/conf/config.py:434
-#, python-format
-msgid "unknown unit '%s'"
-msgstr "okänd enhet ”%s”"
-
-#: ../dnf/conf/config.py:333
-#, python-format
-msgid "invalid value '%s'"
-msgstr "felaktigt värde ”%s”"
-
-#: ../dnf/conf/config.py:336
-#, python-format
-msgid "seconds value '%s' must not be negative"
-msgstr "sekundvärdet ”%s” får inte vara negativt"
-
-#: ../dnf/conf/config.py:359
-#, python-format
-msgid "invalid boolean value '%s'"
-msgstr "felaktigt booleskt värde ”%s”"
-
-#: ../dnf/conf/config.py:375
-#, fuzzy, python-format
-msgid "invalid float value '%s'"
-msgstr "felaktigt flyttalsvärde ”%s”"
-
-#: ../dnf/conf/config.py:392
-#, python-format
-msgid "'%s' value is not implemented"
-msgstr "värdet ”%s” är inte implementerat"
-
-#: ../dnf/conf/config.py:394
-#, python-format
-msgid "'%s' is not an allowed value"
-msgstr "”%s” är inte ett tillåtet värde"
-
-#: ../dnf/conf/config.py:442 ../dnf/conf/config.py:471
-#, fuzzy, python-format
-msgid "couldn't convert '%s' to number"
-msgstr "kunde inte konvertera ”%s” till ett tal"
-
-#: ../dnf/conf/config.py:445
-#, python-format
-msgid "bytes value '%s' must not be negative"
-msgstr "bytevärdet ”%s” får inte vara negativt"
-
-#: ../dnf/conf/config.py:473
-#, python-format
-msgid "percentage '%s' is out of range"
-msgstr "procentsatsen ”%s” är utanför intervallet"
-
-#: ../dnf/conf/config.py:536
-#, python-format
-msgid "Unknown configuration value: %s=%s in %s; %s"
-msgstr "Okänt konfigurationsvärde: %s=%s i %s; %s"
-
-#: ../dnf/conf/config.py:541
-#, python-format
-msgid "Unknown configuration option: %s = %s in %s"
-msgstr "Okänt konfigurationsalternativ: %s = %s i %s"
-
-#: ../dnf/conf/config.py:631
-#, python-format
-msgid "Could not set cachedir: %s"
-msgstr "Kunde inte sätta cache-katalog: %s"
-
-#: ../dnf/conf/config.py:839 ../dnf/conf/config.py:862
-#, python-format
-msgid "Unknown configuration option: %s = %s"
-msgstr "Okänt konfigurationsalternativ: %s = %s"
-
-#: ../dnf/yum/commands/deplist.py:32
-msgid "List package's dependencies and what packages provide them"
-msgstr "Lista pakets beroenden och vilka paket som tillhandahåller dem"
-
-#: ../dnf/yum/history.py:748
-#, python-format
-msgid "Unable to initialize DNF DB history: %s"
-msgstr "Kan inte initiera DNF DB-historiken: %s"
-
-#: ../dnf/yum/history.py:1665
-#, python-format
-msgid "Can not create history database at '%s'."
-msgstr "Kan inte skapa en historikdatabas i ”%s”."
-
-#: ../dnf/yum/rpmtrans.py:126
-msgid "Cleanup"
-msgstr "Rensar upp"
-
-#: ../dnf/yum/rpmtrans.py:128
-msgid "Erasing"
-msgstr "Raderar"
-
-#: ../dnf/yum/rpmtrans.py:133
-msgid "Verifying"
-msgstr "Verifierar"
-
-#: ../dnf/yum/rpmtrans.py:134
-msgid "Preparing"
-msgstr "Förbereder"
-
-#: ../dnf/yum/rpmtrans.py:135
-msgid "Running scriptlet"
-msgstr "Kör skript"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -2574,7 +2478,154 @@ msgstr "Gruppen ”%s” är redan installerad."
 msgid "Group '%s' not installed."
 msgstr "Gruppen ”%s” är inte installerad."
 
-#: ../dnf/drpm.py:62 ../dnf/repo.py:381
+#: ../dnf/conf/read.py:51
+#, python-format
+msgid "Warning: failed loading '%s', skipping."
+msgstr "Varning: misslyckades att ladda ”%s”, hoppar över."
+
+#: ../dnf/conf/read.py:61
+#, python-format
+msgid "Repository '%s': Error parsing config: %s"
+msgstr "Förrådet ”%s”: Fel vid tolkning av konfigurationen: %s"
+
+#: ../dnf/conf/read.py:67
+#, fuzzy, python-format
+msgid "Repository '%s' is missing name in configuration, using id."
+msgstr "Förrådet ”%s” saknar namn i konfigurationen, använder id."
+
+#: ../dnf/conf/config.py:84
+#, python-format
+msgid "Error parsing '%s': %s"
+msgstr "Fel vid tolkning av ”%s”: %s"
+
+#: ../dnf/conf/config.py:208
+msgid "\"_none_\" is not a valid value"
+msgstr "”_none_” är inte ett giltigt värde"
+
+#: ../dnf/conf/config.py:213
+#, python-format
+msgid "URL must be %s not '%s'"
+msgstr "URL måste vara %s inte ”%s”"
+
+#: ../dnf/conf/config.py:255
+#, python-format
+msgid "given path '%s' is not absolute."
+msgstr "den angivna sökvägen ”%s” är inte absolut."
+
+#: ../dnf/conf/config.py:257
+#, python-format
+msgid "given path '%s' does not exist."
+msgstr "den angivna sökvägen ”%s” finns inte."
+
+#: ../dnf/conf/config.py:274
+msgid "invalid integer value"
+msgstr "felaktigt heltalsvärde"
+
+#: ../dnf/conf/config.py:277
+#, python-format
+msgid "given value [%d] should be less than allowed value [%d]."
+msgstr ""
+"det angivna värdet [%d] skall vara mindre än det tillåtna värdet [%d]."
+
+#: ../dnf/conf/config.py:280
+#, python-format
+msgid "given value [%d] should be greater than allowed value [%d]."
+msgstr ""
+"det angivna värdet [%d] skall vara större än det tillåtna värdet [%d]."
+
+#: ../dnf/conf/config.py:317 ../dnf/conf/config.py:428
+#: ../dnf/conf/config.py:465
+msgid "no value specified"
+msgstr "inget värde angivet"
+
+#: ../dnf/conf/config.py:326 ../dnf/conf/config.py:435
+#, python-format
+msgid "unknown unit '%s'"
+msgstr "okänd enhet ”%s”"
+
+#: ../dnf/conf/config.py:334
+#, python-format
+msgid "invalid value '%s'"
+msgstr "felaktigt värde ”%s”"
+
+#: ../dnf/conf/config.py:337
+#, python-format
+msgid "seconds value '%s' must not be negative"
+msgstr "sekundvärdet ”%s” får inte vara negativt"
+
+#: ../dnf/conf/config.py:360
+#, python-format
+msgid "invalid boolean value '%s'"
+msgstr "felaktigt booleskt värde ”%s”"
+
+#: ../dnf/conf/config.py:376
+#, fuzzy, python-format
+msgid "invalid float value '%s'"
+msgstr "felaktigt flyttalsvärde ”%s”"
+
+#: ../dnf/conf/config.py:393
+#, python-format
+msgid "'%s' value is not implemented"
+msgstr "värdet ”%s” är inte implementerat"
+
+#: ../dnf/conf/config.py:395
+#, python-format
+msgid "'%s' is not an allowed value"
+msgstr "”%s” är inte ett tillåtet värde"
+
+#: ../dnf/conf/config.py:443 ../dnf/conf/config.py:472
+#, fuzzy, python-format
+msgid "couldn't convert '%s' to number"
+msgstr "kunde inte konvertera ”%s” till ett tal"
+
+#: ../dnf/conf/config.py:446
+#, python-format
+msgid "bytes value '%s' must not be negative"
+msgstr "bytevärdet ”%s” får inte vara negativt"
+
+#: ../dnf/conf/config.py:474
+#, python-format
+msgid "percentage '%s' is out of range"
+msgstr "procentsatsen ”%s” är utanför intervallet"
+
+#: ../dnf/conf/config.py:537
+#, python-format
+msgid "Unknown configuration value: %s=%s in %s; %s"
+msgstr "Okänt konfigurationsvärde: %s=%s i %s; %s"
+
+#: ../dnf/conf/config.py:542
+#, fuzzy, python-format
+msgid "Unknown configuration option: %s = %s in %s"
+msgstr "Okänt konfigurationsalternativ: %s = %s i %s"
+
+#: ../dnf/conf/config.py:634
+#, python-format
+msgid "Could not set cachedir: %s"
+msgstr "Kunde inte sätta cache-katalog: %s"
+
+#: ../dnf/conf/config.py:847 ../dnf/conf/config.py:872
+#, python-format
+msgid "Unknown configuration option: %s = %s"
+msgstr "Okänt konfigurationsalternativ: %s = %s"
+
+#: ../dnf/conf/config.py:910 ../dnf/conf/config.py:928
+msgid "Incorrect or unknown \"{}\": {}"
+msgstr ""
+
+#: ../dnf/crypto.py:80
+#, fuzzy, python-format
+msgid ""
+"Importing GPG key 0x%s:\n"
+" Userid     : \"%s\"\n"
+" Fingerprint: %s\n"
+" From       : %s"
+msgstr ""
+"Importerar GPG-nyckel 0x%s:\n"
+" Användarid   : ”%s”\n"
+" Fingeravtryck: %s\n"
+" Från         : %s"
+
+#: ../dnf/drpm.py:62 ../dnf/repo.py:426
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr "ej stödd typ av kontrollsumma: %s"
@@ -2591,6 +2642,10 @@ msgstr "Kontrollsumma av den deltaombyggda RPM:en misslyckades"
 msgid "done"
 msgstr "klar"
 
+#: ../dnf/goal.py:63
+msgid "--> Finding unneeded leftover dependencies"
+msgstr "--> Letar efter överblivna beroenden som inte behövs"
+
 #: ../dnf/lock.py:100
 #, fuzzy, fuzzy, python-format
 msgid ""
@@ -2599,6 +2654,46 @@ msgid ""
 msgstr ""
 "Felformaterad låsfil funnen: %s.\n"
 "Se till att ingen annan dnf-process kör och ta bort låsfilen manuellt eller kör systemd-tmpfiles --remove dnf.conf."
+
+#: ../dnf/plugin.py:167
+#, python-format
+msgid "Failed loading plugin: %s"
+msgstr "Misslyckades att ladda en insticksmodul: %s"
+
+#: ../dnf/transaction.py:222
+#, python-format
+msgid "Will not install a source rpm package (%s)."
+msgstr "Kommer inte installera ett käll-rpm-paket (%s)."
+
+#: ../dnf/yum/history.py:748
+#, python-format
+msgid "Unable to initialize DNF DB history: %s"
+msgstr "Kan inte initiera DNF DB-historiken: %s"
+
+#: ../dnf/yum/history.py:1716
+#, python-format
+msgid "Can not create history database at '%s'."
+msgstr "Kan inte skapa en historikdatabas i ”%s”."
+
+#: ../dnf/yum/rpmtrans.py:126
+msgid "Cleanup"
+msgstr "Rensar upp"
+
+#: ../dnf/yum/rpmtrans.py:128
+msgid "Erasing"
+msgstr "Raderar"
+
+#: ../dnf/yum/rpmtrans.py:133
+msgid "Verifying"
+msgstr "Verifierar"
+
+#: ../dnf/yum/rpmtrans.py:134
+msgid "Preparing"
+msgstr "Förbereder"
+
+#: ../dnf/yum/rpmtrans.py:135
+msgid "Running scriptlet"
+msgstr "Kör skript"
 
 #: ../dnf/persistor.py:314
 msgid "Invalid groups database, clearing."
@@ -2619,176 +2714,175 @@ msgstr "%s är en tom fil"
 msgid "enabling %s repository"
 msgstr "aktiverar förrådet %s"
 
-#: ../dnf/repodict.py:77
+#: ../dnf/repodict.py:91
 #, python-format
 msgid "Added %s repo from %s"
 msgstr "Lade till %s-förrådet från %s"
 
-#: ../dnf/transaction.py:222
-#, python-format
-msgid "Will not install a source rpm package (%s)."
-msgstr "Kommer inte installera ett käll-rpm-paket (%s)."
+#: ../dnf/subject.py:200
+msgid "No security updates for argument \"{}\""
+msgstr ""
 
-#: ../dnf/goal.py:63
-msgid "--> Finding unneeded leftover dependencies"
-msgstr "--> Letar efter överblivna beroenden som inte behövs"
-
-#: ../dnf/plugin.py:167
-#, python-format
-msgid "Failed loading plugin: %s"
-msgstr "Misslyckades att ladda en insticksmodul: %s"
-
-#: ../dnf/util.py:357 ../dnf/util.py:359
+#: ../dnf/util.py:362 ../dnf/util.py:364
 msgid "Problem"
 msgstr "Problem"
 
-#: ../dnf/base.py:247
+#: ../dnf/base.py:250
 msgid "Metadata timer caching disabled when running on metered connection."
 msgstr ""
 "Cachning av metadata med timer är avaktiverad vid körning över en uppmätt "
 "anslutning."
 
-#: ../dnf/base.py:252
+#: ../dnf/base.py:255
 msgid "Metadata timer caching disabled when running on a battery."
 msgstr "Timer för cachning av metadata inaktiverad vid batteridrift."
 
-#: ../dnf/base.py:257
+#: ../dnf/base.py:260
 msgid "Metadata timer caching disabled."
 msgstr "Timer för cachning av metadata inaktiverad."
 
-#: ../dnf/base.py:262
+#: ../dnf/base.py:265
 msgid "Metadata cache refreshed recently."
 msgstr "Cachen med metadata uppdaterades nyligen."
 
 #. performs the md sync
-#: ../dnf/base.py:287
+#: ../dnf/base.py:290
 msgid "Metadata cache created."
 msgstr "Cache med metadata skapad."
 
-#: ../dnf/base.py:319
+#: ../dnf/base.py:326
+msgid "Loading repositories."
+msgstr ""
+
+#: ../dnf/base.py:334
 #, python-format
 msgid "%s: using metadata from %s."
 msgstr "%s: använder metadata från %s."
 
-#: ../dnf/base.py:329
+#: ../dnf/base.py:340
 #, python-format
 msgid "%s, disabling."
 msgstr "%s, avaktiverar."
 
-#: ../dnf/base.py:332
+#: ../dnf/base.py:343
 #, python-format
 msgid "Last metadata expiration check: %s ago on %s."
 msgstr "Senaste kontroll av utgång av metadata: för %s sedan den %s."
 
-#: ../dnf/base.py:380
+#: ../dnf/base.py:399
 msgid ""
 "The downloaded packages were saved in cache until the next successful "
 "transaction."
 msgstr "De hämtade paketen sparas i cachen till nästa lyckade transaktion."
 
-#: ../dnf/base.py:382
+#: ../dnf/base.py:401
 #, python-format
 msgid "You can remove cached packages by executing '%s'."
 msgstr "Du kan ta bort cache:ade paket genom att köra ”%s”."
 
-#: ../dnf/base.py:443
+#: ../dnf/base.py:462
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "Ogiltig tsflag i konfigurationsfil: %s"
 
-#: ../dnf/base.py:499
+#: ../dnf/base.py:521
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Kunde inte lägga till gruppfil för förrådet: %s - %s"
 
-#: ../dnf/base.py:676
+#: ../dnf/base.py:698
 msgid "Running transaction check"
 msgstr "Kör transaktionskontroll"
 
-#: ../dnf/base.py:686
+#: ../dnf/base.py:708
 msgid "Error: transaction check vs depsolve:"
 msgstr "Fel: transaktionskontroll mot depsolve:"
 
-#: ../dnf/base.py:692
+#: ../dnf/base.py:714
 msgid "Transaction check succeeded."
 msgstr "Transaktionskontrollen lyckades."
 
-#: ../dnf/base.py:695
+#: ../dnf/base.py:717
 msgid "Running transaction test"
 msgstr "Kör transaktionstest"
 
-#: ../dnf/base.py:705
+#: ../dnf/base.py:727
 msgid "Transaction check error:"
 msgstr "Transaktionskontrollfel:"
 
-#: ../dnf/base.py:712
+#: ../dnf/base.py:734
 msgid "Transaction test succeeded."
 msgstr "Transaktionstesten lyckades."
 
-#: ../dnf/base.py:727
+#: ../dnf/base.py:749
 msgid "Running transaction"
 msgstr "Kör transaktionen"
 
-#: ../dnf/base.py:753
+#: ../dnf/base.py:775
 msgid "Disk Requirements:"
 msgstr "Diskbehov:"
 
-#: ../dnf/base.py:756
+#: ../dnf/base.py:778
 #, python-format
 msgid "At least %dMB more space needed on the %s filesystem."
 msgid_plural "At least %dMB more space needed on the %s filesystem."
 msgstr[0] "Åtminstone %d MB mer utrymme behövs på filsystemet %s."
 msgstr[1] "Åtminstone %d MB mer utrymme behövs på filsystemet %s."
 
-#: ../dnf/base.py:760
+#: ../dnf/base.py:782
 msgid "Error Summary"
 msgstr "Felsammanfattning"
 
-#: ../dnf/base.py:837
+#: ../dnf/base.py:863
 msgid "Errors occurred during transaction."
 msgstr "Fel inträffade under transaktionen."
 
-#: ../dnf/base.py:841
+#: ../dnf/base.py:867
 #, python-format
 msgid "Failed to obtain the transaction lock (logged in as: %s)."
 msgstr "Misslyckades att ta ett transaktionslås (inloggad som: %s)."
 
 #. should this be 'to_unicoded'?
-#: ../dnf/base.py:844 ../dnf/base.py:854
+#: ../dnf/base.py:870 ../dnf/base.py:880
 msgid "Could not run transaction."
 msgstr "Kunde inte köra transaktionen."
 
-#: ../dnf/base.py:851
+#: ../dnf/base.py:877
 msgid "Transaction couldn't start:"
 msgstr "Transaktionen kunde inte starta:"
 
-#: ../dnf/base.py:863
+#: ../dnf/base.py:889
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Kunde inte ta bort transaktionsfilen %s"
 
-#: ../dnf/base.py:915
+#: ../dnf/base.py:941
 #, python-format
 msgid "%s was supposed to be installed but is not!"
 msgstr "%s skulle ha installerats men installerades inte!"
 
-#: ../dnf/base.py:975
+#: ../dnf/base.py:1001
 #, python-format
 msgid "%s was supposed to be removed but is not!"
 msgstr "%s skulle ha tagits bort men togs inte bort!"
 
-#: ../dnf/base.py:1039
+#: ../dnf/base.py:1019 ../dnf/repo.py:543 ../dnf/repo.py:1015
+#, python-format
+msgid "Failed to synchronize cache for repo '%s'"
+msgstr "Misslyckades att synkronisera cachen för förrådet ”%s”"
+
+#: ../dnf/base.py:1072
 msgid "Some packages were not downloaded. Retrying."
 msgstr "Några paket hämtades inte.  Försöker igen."
 
-#: ../dnf/base.py:1069
+#: ../dnf/base.py:1102
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
 msgstr ""
 "Delta-RPM:er reducerade %.1f MB av uppdateringar till %.1f MB (%d.1 %% "
 "sparat)"
 
-#: ../dnf/base.py:1072
+#: ../dnf/base.py:1105
 #, python-format
 msgid ""
 "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
@@ -2796,147 +2890,152 @@ msgstr ""
 "Misslyckade delta-RPM:er ökade %.1f MB av uppdateringar till %.1f MB (%d.1 "
 "%% bortslösat)"
 
-#: ../dnf/base.py:1093
+#: ../dnf/base.py:1132
 msgid "Could not open: {}"
 msgstr "Kunde inte öppna: {}"
 
-#: ../dnf/base.py:1131
+#: ../dnf/base.py:1170
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "Den publika nyckeln för %s är inte installerad"
 
-#: ../dnf/base.py:1135
+#: ../dnf/base.py:1174
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Problem att öppna paketet %s"
 
-#: ../dnf/base.py:1143
+#: ../dnf/base.py:1182
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "Den publika nyckeln för %s är inte betrodd"
 
-#: ../dnf/base.py:1147
+#: ../dnf/base.py:1186
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Paketet %s är inte signerat"
 
-#: ../dnf/base.py:1162
+#: ../dnf/base.py:1201
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Det går inte att ta bort %s"
 
-#: ../dnf/base.py:1166
+#: ../dnf/base.py:1205
 #, python-format
 msgid "%s removed"
 msgstr "%s borttaget"
 
-#: ../dnf/base.py:1433
+#: ../dnf/base.py:1472
 msgid "No match for group package \"{}\""
-msgstr ""
+msgstr "Ingen matchning för gruppaket ”{}”"
 
-#: ../dnf/base.py:1550
+#: ../dnf/base.py:1589
 msgid "No groups marked for removal."
 msgstr "Inga grupper markerade att tas bort."
 
-#: ../dnf/base.py:1569
+#: ../dnf/base.py:1608
 msgid "No group marked for upgrade."
 msgstr "Ingen grupp markerad att uppgraderas."
 
-#: ../dnf/base.py:1636 ../dnf/base.py:1645
+#: ../dnf/base.py:1676 ../dnf/base.py:1687
 msgid "no package matched"
 msgstr "inget paket matchade"
 
-#: ../dnf/base.py:1667
+#: ../dnf/base.py:1702
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
 msgstr "Paketet %s är inte installerat, kan inte nedgradera det."
 
-#: ../dnf/base.py:1676
+#: ../dnf/base.py:1711
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
 msgstr ""
 "Paketet %s med en lägre version är redan installerat, kan inte nedgradera "
 "det."
 
-#: ../dnf/base.py:1699
+#: ../dnf/base.py:1734
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
 msgstr "Paketet %s är inte installerat, kan inte ominstallera det."
 
-#: ../dnf/base.py:1714
+#: ../dnf/base.py:1749
 #, python-format
 msgid "File %s is a source package and cannot be updated, ignoring."
 msgstr "Filen %s är ett källpaket och kan inte uppdateras, ignorerar."
 
-#: ../dnf/base.py:1720 ../dnf/base.py:1749
+#: ../dnf/base.py:1755
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr "Paketet %s är inte installerat, kan inte uppdatera det."
 
-#: ../dnf/base.py:1729
+#: ../dnf/base.py:1764
 #, python-format
 msgid "Package %s of higher version already installed, cannot update it."
 msgstr ""
 "Paketet %s med en högre version är redan installerat, kan inte uppdatera "
 "det."
 
-#: ../dnf/base.py:1926
+#: ../dnf/base.py:1789
+#, python-format
+msgid "Package %s available, but installed for different architecture."
+msgstr ""
+
+#: ../dnf/base.py:1964
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr ""
 "Paketet %s med lägsta version är redan installerat, kan inte nedgradera det."
 
-#: ../dnf/base.py:2067
+#: ../dnf/base.py:2108
 msgid "No security updates needed, but {} update available"
 msgstr ""
 "Inga säkerhetsuppdateringar behövs, men {} uppdatering finns tillgänglig"
 
-#: ../dnf/base.py:2069
+#: ../dnf/base.py:2110
 msgid "No security updates needed, but {} updates available"
 msgstr ""
 "Inga säkerhetsuppdateringar behövs, men {} uppdateringar finns tillgängliga"
 
-#: ../dnf/base.py:2073
+#: ../dnf/base.py:2114
 msgid "No security updates needed for \"{}\", but {} update available"
 msgstr ""
 "Inga säkerhetsuppdateringar behövs för ”{}”, men {} uppdatering finns "
 "tillgänglig"
 
-#: ../dnf/base.py:2075
+#: ../dnf/base.py:2116
 msgid "No security updates needed for \"{}\", but {} updates available"
 msgstr ""
 "Inga säkerhetsuppdateringar behövs för ”{}”, men {} uppdateringar finns "
 "tillgängliga"
 
-#: ../dnf/base.py:2114
+#: ../dnf/base.py:2155
 #, python-format
-msgid "Failing package is: %s"
-msgstr "Paketet som misslyckas är: %s"
+msgid ". Failing package is: %s"
+msgstr ""
 
-#: ../dnf/base.py:2115
+#: ../dnf/base.py:2156
 #, python-format
 msgid "GPG Keys are configured as: %s"
 msgstr "GPG-nycklar är konfigurerade som: %s"
 
-#: ../dnf/base.py:2126
+#: ../dnf/base.py:2168
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "GPG-nyckel vid %s (0x%s) är redan installerad"
 
-#: ../dnf/base.py:2160
+#: ../dnf/base.py:2205
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Nyckelimport misslyckades (kod %d)"
 
-#: ../dnf/base.py:2162
+#: ../dnf/base.py:2207
 msgid "Key imported successfully"
 msgstr "Nyckelimport lyckades"
 
-#: ../dnf/base.py:2166
+#: ../dnf/base.py:2211
 msgid "Didn't install any keys"
 msgstr "Installerade inte några nycklar"
 
-#: ../dnf/base.py:2169
+#: ../dnf/base.py:2214
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
@@ -2945,49 +3044,62 @@ msgstr ""
 "GPG-nycklarna uppräknade för förrådet \"%s\" är redan installerade men de är inte korrekta för detta paket.\n"
 "Kontrollera att de rätta nyckel-URL:erna är konfigurerade för detta förråd."
 
-#: ../dnf/base.py:2179
+#: ../dnf/base.py:2225
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Import av nycklar hjälpte inte, fel nycklar?"
 
-#: ../dnf/base.py:2220
+#: ../dnf/base.py:2271
+msgid "  * Maybe you meant: {}"
+msgstr "  * Kanske du menade: {}"
+
+#: ../dnf/base.py:2298
+msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
+msgstr ""
+
+#: ../dnf/base.py:2307
+msgid "Some packages from local repository have incorrect checksum"
+msgstr "Några paket från ett lokalt förråd har felaktig kontrollsumma"
+
+#: ../dnf/base.py:2311
+msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
+msgstr ""
+
+#: ../dnf/base.py:2316
+msgid "Package \"{}\" from repository \"{}\" has invalid cache"
+msgstr ""
+
+#: ../dnf/base.py:2322
+msgid ""
+"Some packages have invalid cache, but cannot be downloaded due to \"--"
+"cacheonly\" option"
+msgstr ""
+
+#: ../dnf/base.py:2331
 #, python-format
 msgid "Package %s is already installed, skipping."
 msgstr "Paketet %s är redan installerat, hoppar över."
-
-#: ../dnf/crypto.py:80
-#, fuzzy, python-format
-msgid ""
-"Importing GPG key 0x%s:\n"
-" Userid     : \"%s\"\n"
-" Fingerprint: %s\n"
-" From       : %s"
-msgstr ""
-"Importerar GPG-nyckel 0x%s:\n"
-" Användarid   : ”%s”\n"
-" Fingeravtryck: %s\n"
-" Från         : %s"
 
 #: ../dnf/repo.py:105
 #, python-format
 msgid "no matching payload factory for %s"
 msgstr "ingen matchande lastfabrik för %s"
 
-#: ../dnf/repo.py:131
+#: ../dnf/repo.py:176
 msgid "Already downloaded"
 msgstr "Redan hämtat"
 
 #. pinging mirrors, this might take a while
-#: ../dnf/repo.py:463
+#: ../dnf/repo.py:508
 #, python-format
 msgid "determining the fastest mirror (%d hosts).. "
 msgstr "bestämmer den snabbaste spegeln (%d värdar) …"
 
-#: ../dnf/repo.py:715
+#: ../dnf/repo.py:790
 #, python-format
 msgid "Cannot find a valid baseurl for repo: %s"
 msgstr "Kan inte hitta en giltig bas-url för förrådet: %s"
 
-#: ../dnf/repo.py:740
+#: ../dnf/repo.py:815
 msgid ""
 "Maximum download speed is lower than minimum. Please change configuration of"
 " minrate or throttle"
@@ -2995,67 +3107,57 @@ msgstr ""
 "Maximal hämtningshastighet är mindre än minimum.  Ändra konfigurationen av "
 "minrate eller throttle"
 
-#: ../dnf/repo.py:812
+#: ../dnf/repo.py:905
 #, fuzzy, python-format
 msgid "reviving: repo '%s' skipped, no metalink."
 msgstr "återupplivar: förrådet ”%s” överhoppat, ingen metalink."
 
-#: ../dnf/repo.py:818
+#: ../dnf/repo.py:911
 #, fuzzy, python-format
 msgid "reviving: repo '%s' skipped, no usable hash."
 msgstr "återupplivar: förrådet ”%s” överhoppat, ingen användbar hash."
 
-#: ../dnf/repo.py:829
+#: ../dnf/repo.py:922
 #, fuzzy, python-format
 msgid "reviving: failed for '%s', mismatched %s sum."
 msgstr "återupplivar: misslyckades med ”%s”, %s-summor stämmer inte."
 
-#: ../dnf/repo.py:832
+#: ../dnf/repo.py:925
 #, fuzzy, python-format
 msgid "reviving: '%s' can be revived - metalink checksums match."
 msgstr ""
 "återupplivar: ”%s” kan återupplivas – metalänkens kontrollsummor stämmer."
 
-#: ../dnf/repo.py:846
+#: ../dnf/repo.py:939
 #, fuzzy, python-format
 msgid "reviving: failed for '%s', mismatched repomd."
 msgstr "återupplivar: misslyckades med ”%s”, repomd stämmer inte."
 
-#: ../dnf/repo.py:848
+#: ../dnf/repo.py:941
 #, fuzzy, python-format
 msgid "reviving: '%s' can be revived - repomd matches."
 msgstr "återupplivar: ”%s” kan återupplivas – repomd stämmer."
 
-#: ../dnf/repo.py:903
+#: ../dnf/repo.py:996
 #, python-format
 msgid "repo: using cache for: %s"
 msgstr "förråd: använder cache för: %s"
 
-#: ../dnf/repo.py:906
+#: ../dnf/repo.py:999
 #, python-format
 msgid "Cache-only enabled but no cache for '%s'"
 msgstr "Enbart-cache aktiverat men ingen cache för ”%s”"
 
-#: ../dnf/repo.py:917
-#, python-format
-msgid "repo: downloading from remote: %s, %s"
-msgstr "förråd: hämtar från fjärrförråd: %s, %s"
-
-#: ../dnf/repo.py:928
+#: ../dnf/repo.py:1013
 #, python-format
 msgid "Cannot download '%s': %s."
 msgstr "Kan inte hämta ”%s”: %s."
 
-#: ../dnf/repo.py:930
-#, python-format
-msgid "Failed to synchronize cache for repo '%s'"
-msgstr "Misslyckades att synkronisera cachen för förrådet ”%s”"
-
-#: ../dnf/repo.py:972
+#: ../dnf/repo.py:1055
 #, python-format
 msgid "Repository %s has no mirror or baseurl set."
 msgstr "Förrådet %s har ingen spegel eller bas-url satt."
 
-#: ../dnf/repo.py:975
+#: ../dnf/repo.py:1058
 msgid "Repository '{}' has unsupported type: 'type={}', skipping."
 msgstr "Förrådet ”{}” har en typ som inte stödjs: ”type={}”, hoppar över."
