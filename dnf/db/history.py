@@ -22,33 +22,48 @@ import time
 import os
 from dnf.yum import misc
 from .swdb_transformer import run as transformdb
-from .addondata import _addondata
+from .addondata import AddonData
 from .group import GroupPersistor
 from .types import Swdb, SwdbRpmData, SwdbPkg, SwdbItem, convert_reason
 
 
 class SwdbInterface(object):
 
-    def __init__(self, db_path, root='/', releasever="", transform=True):
-        self.path = os.path.join(root, db_path, "swdb.sqlite")
+    def __init__(self, db_dir, root='/', releasever="", transform=True):
+        self.path = os.path.join(root, db_dir, "swdb.sqlite")
         self.releasever = str(releasever)
-        self.swdb = Swdb.new(self.path, self.releasever)
-        self.addon_data = _addondata(db_path, root)
         self._group = None
-        if not self.swdb.exist():
-            dbdir = os.path.dirname(self.path)
-            if not os.path.exists(dbdir):
-                os.makedirs(dbdir)
-            self.swdb.create_db()
-            # does nothing when there is nothing to transform
-            if transform:
-                transformdb(output_file=self.swdb.get_path())
+        self._addon_data = None
+        self._swdb = None
+        self._db_dir = db_dir
+        self._root = root
+        self._transform = transform
 
     @property
     def group(self):
-        if self._group is None:
+        if not self._group:
             self._group = GroupPersistor(self.swdb)
         return self._group
+
+    @property
+    def addon_data(self):
+        if not self._addon_data:
+            self._addon_data = AddonData(self._db_dir, self._root)
+        return self._addon_data
+
+    @property
+    def swdb(self):
+        if not self._swdb:
+            self._swdb = Swdb.new(self.path, self.releasever)
+            if not self._swdb.exist():
+                dbdir = os.path.dirname(self.path)
+                if not os.path.exists(dbdir):
+                    os.makedirs(dbdir)
+                self._swdb.create_db()
+                # does nothing when there is nothing to transform
+                if self._transform:
+                    transformdb(output_file=self._swdb.get_path())
+        return self._swdb
 
     def group_active(self):
         return self._group is not None
