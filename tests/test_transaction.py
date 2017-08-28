@@ -217,5 +217,5 @@ class RPMProbFilters(tests.support.TestCase):
         self.base._sack = tests.support.mock_sack('main')
         self.base._goal = dnf.goal.Goal(self.base.sack)
         self.base.reinstall("librita")
-        expected = rpm.rpm.RPMPROB_FILTER_OLDPACKAGE
+        expected = rpm.RPMPROB_FILTER_OLDPACKAGE
         self.base._ts.setProbFilter.assert_called_with(expected)
