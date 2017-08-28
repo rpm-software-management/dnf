@@ -191,8 +191,8 @@ class SwdbInterface(object):
                     tid,
                     pid,
                     convert_reason(tsi.reason),
-                    state
-                )
+                    state)
+        return tid
 
     def pkg2pid(self, po, create=True):
         if hasattr(po, 'pid') and po.pid:
