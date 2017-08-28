@@ -827,13 +827,13 @@ class Base(object):
             for tsi in tsis:
                 tsi._propagate_reason(self.history, installonly)
 
-            self.history.beg(rpmdbv, using_pkgs, tsis, cmdline)
+            tid = self.history.beg(rpmdbv, using_pkgs, tsis, cmdline)
             # write out our config and repo data to additional history info
-            self._store_config_in_history()
+            self._store_config_in_history(tid)
 
             if self.conf.comment:
                 # write out user provided comment to history info
-                self._store_comment_in_history(self.conf.comment)
+                self._store_comment_in_history(tid, self.conf.comment)
 
         if self.conf.reset_nice:
             onice = os.nice(0)
@@ -2245,16 +2245,16 @@ class Base(object):
 
         return results
 
-    def _store_config_in_history(self):
-        self.history.addon_data.write('config-main', self.conf.dump())
+    def _store_config_in_history(self, tid):
+        self.history.addon_data.write(tid, 'config-main', self.conf.dump())
         myrepos = ''
         for repo in self.repos.iter_enabled():
             myrepos += repo.dump()
             myrepos += '\n'
-        self.history.addon_data.write('config-repos', myrepos)
+        self.history.addon_data.write(tid, 'config-repos', myrepos)
 
-    def _store_comment_in_history(self, comment):
-        self.history.addon_data.write('transaction-comment', comment)
+    def _store_comment_in_history(self, tid, comment):
+        self.history.addon_data.write(tid, 'transaction-comment', comment)
 
     def urlopen(self, url, repo=None, mode='w+b', **kwargs):
         # :api

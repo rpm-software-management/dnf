@@ -25,7 +25,6 @@ from dnf.yum import misc
 class AddonData(object):
     def __init__(self, db_path, root='/'):
         self.conf = misc.GenericHolder()
-        self.conf.writable = False
         self._db_date = time.strftime("%Y-%m-%d")
         if not os.path.normpath(db_path).startswith(root):
             self.conf.db_path = os.path.normpath(root + '/' + db_path)
@@ -34,14 +33,10 @@ class AddonData(object):
 
         self.conf.addon_path = self.conf.db_path + '/' + self._db_date
 
-    def write(self, dataname, data):
+    def write(self, tid, dataname, data):
         """append data to an arbitrary-named file in the history
            addon_path/transaction id location,
            returns True if write succeeded, False if not"""
-
-        if not hasattr(self, '_tid'):
-            # maybe we should raise an exception or a warning here?
-            return False
 
         if not dataname:
             return False
@@ -50,9 +45,9 @@ class AddonData(object):
             return False
 
         # make sure the tid dir exists
-        tid_dir = self.conf.addon_path + '/' + str(self._tid)
+        tid_dir = self.conf.addon_path + '/' + str(tid)
 
-        if self.conf.writable and not os.path.exists(tid_dir):
+        if not os.path.exists(tid_dir):
             try:
                 os.makedirs(tid_dir, mode=0o700)
             except (IOError, OSError) as e:
