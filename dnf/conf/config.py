@@ -594,7 +594,8 @@ class BaseConfig(object):
         substitutions - instance of base.conf.substitutions
         modify     - dict of modified options
         """
-        ini = iniparse.INIConfig(open(filename))
+        with open(filename) as fp:
+            ini = iniparse.INIConfig(fp)
 
         # b/c repoids can have $values in them we need to map both ways to figure
         # out which one is which
@@ -608,9 +609,8 @@ class BaseConfig(object):
                 value = ' '.join(value)
             ini[section_id][name] = value
 
-        fp = open(filename, "w")
-        fp.write(str(ini))
-        fp.close()
+        with open(filename, "w") as fp:
+            fp.write(str(ini))
 
 
 class MainConf(BaseConfig):
