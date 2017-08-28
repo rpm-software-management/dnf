@@ -22,7 +22,7 @@ import time
 from dnf.yum import misc
 
 
-class _addondata(object):
+class AddonData(object):
     def __init__(self, db_path, root='/'):
         self.conf = misc.GenericHolder()
         self.conf.writable = False
