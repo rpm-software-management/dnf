@@ -47,7 +47,8 @@ class Substitutions(dict):
             if os.path.islink(dir_fsvars + fsvar):
                 continue
             try:
-                val = open(dir_fsvars + fsvar).readline()
+                with open(dir_fsvars + fsvar) as fp:
+                    val = fp.readline()
                 if val and val[-1] == '\n':
                     val = val[:-1]
             except (OSError, IOError):
