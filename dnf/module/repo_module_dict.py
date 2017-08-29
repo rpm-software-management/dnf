@@ -309,6 +309,29 @@ class RepoModuleDict(OrderedDict):
     def get_module_defaults_dir(self):
         return self.base.conf.moduledefaultsdir
 
+    def get_info_profiles(self, module_spec):
+        subj = ModuleSubject(module_spec)
+        module_version, module_form = subj.find_module_version(self)
+
+        table = smartcols.Table()
+        table.noheadings = True
+        table.column_separator = " : "
+
+        column_name = table.new_column("Name")
+        column_value = table.new_column("Value")
+        column_value.wrap = True
+
+        line = table.new_line()
+        line[column_name] = "Name"
+        line[column_value] = module_version.full_version
+
+        for profile in module_version.profiles:
+            line = table.new_line()
+            line[column_name] = profile
+            line[column_value] = ", ".join(module_version.profile_nevra(profile))
+
+        return table
+
     def get_info(self, module_spec):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
