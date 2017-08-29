@@ -188,6 +188,7 @@ def main(args):
                 time.sleep(sleeper)
 
             base.read_all_repos()
+            base.configure_plugins()
             base.fill_sack()
             upgrade(base, conf.commands.upgrade_type)
             base.resolve()
