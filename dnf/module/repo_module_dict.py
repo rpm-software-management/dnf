@@ -314,10 +314,19 @@ class RepoModuleDict(OrderedDict):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
 
+        default_str = ""
+        default_profiles = []
+        if module_version.repo_module.defaults:
+            default_stream = module_version.repo_module.defaults.stream
+            default_str = " (default)" if module_version.stream == default_stream else ""
+
+            default_profiles = module_version.repo_module.defaults.profiles
+
         lines = {"Name": module_version.name,
-                 "Stream": module_version.stream,
+                 "Stream": module_version.stream + default_str,
                  "Version": module_version.version,
                  "Profiles": ", ".join(module_version.profiles),
+                 "Default profiles": ", ".join(default_profiles),
                  "Summary": module_version.module_metadata.summary,
                  "Description": module_version.module_metadata.description,
                  "Artifacts": ", ".join(module_version.module_metadata.artifacts.rpms)}
@@ -447,10 +456,14 @@ class RepoModuleDict(OrderedDict):
 
         for i in sorted(repo_module_versions, key=lambda data: data.name):
             line = table.new_line()
-            conf = i.parent.parent.conf
+            conf = i.repo_module.conf
+            defaults_conf = i.repo_module.defaults
             data = i.module_metadata
             line[column_name] = data.name
-            line[column_stream] = data.stream
+            default_str = ""
+            if defaults_conf and i.stream == defaults_conf.stream:
+                default_str = " (default)"
+            line[column_stream] = data.stream + default_str
             line[column_version] = str(data.version)
             line[column_repo] = i.repo.id
             if conf and conf.version == i.version and conf.stream == i.stream:
