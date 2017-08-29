@@ -67,6 +67,8 @@ class ModuleCommand(commands.Command):
             for spec in self.opts.module_nsvp:
                 if self.opts.verbose:
                     logger.info(self.base.repo_module_dict.get_full_info(spec))
+                elif self.opts.profile:
+                    logger.info(self.base.repo_module_dict.get_info_profiles(spec))
                 else:
                     logger.info(self.base.repo_module_dict.get_info(spec))
                 print()
@@ -209,6 +211,9 @@ class ModuleCommand(commands.Command):
         narrows.add_argument('--installed', dest='installed',
                              action='store_true',
                              help=_("show only installed modules"))
+        narrows.add_argument('--profile', dest='profile',
+                             action='store_true',
+                             help=_("show profile content"))
         narrows.add_argument('--autoenable', dest='autoenable',
                              action='store_true',
                              help=_("auto enable stream"))
