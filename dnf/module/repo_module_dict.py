@@ -327,6 +327,7 @@ class RepoModuleDict(OrderedDict):
                  "Version": module_version.version,
                  "Profiles": ", ".join(module_version.profiles),
                  "Default profiles": ", ".join(default_profiles),
+                 "Repo": module_version.repo.id,
                  "Summary": module_version.module_metadata.summary,
                  "Description": module_version.module_metadata.description,
                  "Artifacts": ", ".join(module_version.module_metadata.artifacts.rpms)}
@@ -450,9 +451,12 @@ class RepoModuleDict(OrderedDict):
         column_name = table.new_column("Name")
         column_stream = table.new_column("Stream")
         column_version = table.new_column("Version")
-        column_repo = table.new_column("Repo")
+        column_profiles = table.new_column("Profiles")
+        column_profiles.wrap = True
         column_installed = table.new_column("Installed")
+        column_installed.wrap = True
         column_info = table.new_column("Info")
+        column_info.wrap = True
 
         for i in sorted(repo_module_versions, key=lambda data: data.name):
             line = table.new_line()
@@ -465,9 +469,15 @@ class RepoModuleDict(OrderedDict):
                 default_str = " (default)"
             line[column_stream] = data.stream + default_str
             line[column_version] = str(data.version)
-            line[column_repo] = i.repo.id
+
+            available_profiles = i.profiles
+            installed_profiles = []
             if conf and conf.version == i.version and conf.stream == i.stream:
-                line[column_installed] = ", ".join(conf.profiles)
+                installed_profiles = conf.profiles
+                available_profiles = [x for x in available_profiles if x not in installed_profiles]
+
+            line[column_profiles] = ", ".join(available_profiles)
+            line[column_installed] = ", ".join(installed_profiles)
             line[column_info] = data.summary
 
         return table
