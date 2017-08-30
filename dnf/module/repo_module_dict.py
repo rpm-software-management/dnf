@@ -512,8 +512,21 @@ class RepoModuleDict(OrderedDict):
                 installed_profiles = conf.profiles
                 available_profiles = [x for x in available_profiles if x not in installed_profiles]
 
-            line[column_profiles] = ", ".join(available_profiles)
-            line[column_installed] = ", ".join(installed_profiles)
+            number_of_available_profiles = len(available_profiles)
+            number_of_installed_profiles = len(installed_profiles)
+
+            trunc_available = ""
+            trunc_installed = ""
+
+            if number_of_available_profiles > 2:
+                trunc_available = ", ... ({}/{})".format(number_of_available_profiles - 2,
+                                                         number_of_available_profiles)
+            if number_of_installed_profiles > 2:
+                trunc_installed = ", ... ({}/{})".format(number_of_installed_profiles - 2,
+                                                         number_of_installed_profiles)
+
+            line[column_profiles] = ", ".join(available_profiles[:2]) + trunc_available
+            line[column_installed] = ", ".join(installed_profiles[:2]) + trunc_installed
             line[column_info] = data.summary
 
         return table
