@@ -177,9 +177,24 @@ class ModuleCommand(commands.Command):
                 self.base.repo_module_dict.unlock(module_n)
                 logger.info("'{}' is unlocked".format(module_n))
 
+    class ProfileInfoSubCommand(SubCommand):
+
+        aliases = ("profile", "profile-info")
+
+        def configure(self):
+            demands = self.cli.demands
+            demands.available_repos = True
+            demands.sack_activation = True
+
+        def run_on_module(self):
+            for spec in self.opts.module_nsvp:
+                print()
+                logger.info(self.base.repo_module_dict.get_info_profiles(spec))
+
     SUBCMDS = {ListSubCommand, InfoSubCommand, EnableSubCommand,
                DisableSubCommand, InstallSubCommand, UpdateSubCommand,
-               RemoveSubCommand, LockSubCommand, UnlockSubCommand}
+               RemoveSubCommand, LockSubCommand, UnlockSubCommand,
+               ProfileInfoSubCommand}
 
     SUBCMDS_NOT_REQUIRED_ARG = {ListSubCommand}
 
