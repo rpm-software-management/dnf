@@ -65,13 +65,13 @@ class ModuleCommand(commands.Command):
 
         def run_on_module(self):
             for spec in self.opts.module_nsvp:
+                print()
                 if self.opts.verbose:
                     logger.info(self.base.repo_module_dict.get_full_info(spec))
                 elif self.opts.profile:
                     logger.info(self.base.repo_module_dict.get_info_profiles(spec))
                 else:
                     logger.info(self.base.repo_module_dict.get_info(spec))
-                print()
 
     class EnableSubCommand(SubCommand):
 
