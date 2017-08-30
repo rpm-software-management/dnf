@@ -88,7 +88,7 @@ class RepoModuleDict(OrderedDict):
             return None
         return repo_module_version
 
-    def get_includes_latest(self, name, stream):
+    def get_includes_latest(self, name, stream, visited=None):
         includes = set()
         repos = set()
         try:
@@ -100,6 +100,10 @@ class RepoModuleDict(OrderedDict):
             repos.add(repo_module_version.repo)
             includes.update(artifacts)
 
+            if not visited:
+                required_modules_visited = set()
+            else:
+                required_modules_visited = visited
             for requires_name, requires_stream in \
                     repo_module_version.module_metadata.requires.items():
                 requires_includes, requires_repos = self.get_includes_latest(requires_name,
@@ -111,7 +115,7 @@ class RepoModuleDict(OrderedDict):
 
         return includes, repos
 
-    def get_includes(self, name, stream):
+    def get_includes(self, name, stream, visited=None):
         includes = set()
         repos = set()
         try:
@@ -123,6 +127,10 @@ class RepoModuleDict(OrderedDict):
                 repos.add(repo_module_version.repo)
                 includes.update(artifacts)
 
+                if not visited:
+                    required_modules_visited = set()
+                else:
+                    required_modules_visited = visited
                 for requires_name, requires_stream in \
                         repo_module_version.module_metadata.requires.items():
                     requires_includes, requires_repos = self.get_includes(requires_name,
@@ -157,6 +165,7 @@ class RepoModuleDict(OrderedDict):
             raise Error(module_errors[STREAM_NOT_ENABLED_ERR].format(module_spec))
 
         repo_module.lock(module_version.version)
+        return module_version.stream, module_version.version
 
     def unlock(self, module_spec):
         subj = ModuleSubject(module_spec)
@@ -168,6 +177,7 @@ class RepoModuleDict(OrderedDict):
             raise Error(module_errors[STREAM_NOT_ENABLED_ERR].format(module_spec))
 
         repo_module.unlock()
+        return module_version.stream, module_version.version
 
     def install(self, module_specs):
         versions, module_specs = self.get_best_versions(module_specs)
@@ -329,7 +339,7 @@ class RepoModuleDict(OrderedDict):
         for profile in module_version.profiles:
             line = table.new_line()
             line[column_name] = profile
-            line[column_value] = ", ".join(module_version.profile_nevra(profile))
+            line[column_value] = " ".join(module_version.profile_nevra(profile))
 
         return table
 
@@ -348,12 +358,12 @@ class RepoModuleDict(OrderedDict):
         lines = {"Name": module_version.name,
                  "Stream": module_version.stream + default_str,
                  "Version": module_version.version,
-                 "Profiles": ", ".join(module_version.profiles),
-                 "Default profiles": ", ".join(default_profiles),
+                 "Profiles": " ".join(module_version.profiles),
+                 "Default profiles": " ".join(default_profiles),
                  "Repo": module_version.repo.id,
                  "Summary": module_version.module_metadata.summary,
                  "Description": module_version.module_metadata.description,
-                 "Artifacts": ", ".join(module_version.module_metadata.artifacts.rpms)}
+                 "Artifacts": " ".join(sorted(module_version.module_metadata.artifacts.rpms))}
 
         table = smartcols.Table()
         table.noheadings = True
@@ -455,8 +465,7 @@ class RepoModuleDict(OrderedDict):
 
             return self._get_brief_description(list(filtered_versions_by_name), only_installed)
 
-    @staticmethod
-    def _get_brief_description(repo_module_versions, only_installed=False):
+    def _get_brief_description(self, repo_module_versions, only_installed=False):
         if only_installed:
             only_installed_versions = []
             for i in repo_module_versions:
@@ -467,6 +476,11 @@ class RepoModuleDict(OrderedDict):
 
         if not repo_module_versions:
             return module_errors[NOTHING_TO_SHOW]
+
+        versions_by_repo = OrderedDict()
+        for version in repo_module_versions:
+            default_list = versions_by_repo.setdefault(version.repo.name, [])
+            default_list.append(version)
 
         table = smartcols.Table()
         table.maxout = True
@@ -481,26 +495,54 @@ class RepoModuleDict(OrderedDict):
         column_info = table.new_column("Info")
         column_info.wrap = True
 
-        for i in sorted(repo_module_versions, key=lambda data: data.name):
-            line = table.new_line()
-            conf = i.repo_module.conf
-            defaults_conf = i.repo_module.defaults
-            data = i.module_metadata
-            line[column_name] = data.name
-            default_str = ""
-            if defaults_conf and i.stream == defaults_conf.stream:
-                default_str = " (default)"
-            line[column_stream] = data.stream + default_str
-            line[column_version] = str(data.version)
+        for repo_id, versions in sorted(versions_by_repo.items(), key=lambda key: key[0]):
+            for i in sorted(versions, key=lambda data: data.name):
+                line = table.new_line()
+                conf = i.repo_module.conf
+                defaults_conf = i.repo_module.defaults
+                data = i.module_metadata
 
-            available_profiles = i.profiles
-            installed_profiles = []
-            if conf and conf.version == i.version and conf.stream == i.stream:
-                installed_profiles = conf.profiles
-                available_profiles = [x for x in available_profiles if x not in installed_profiles]
+                default_str = ""
+                if defaults_conf and i.stream == defaults_conf.stream:
+                    default_str = " (default)"
 
-            line[column_profiles] = ", ".join(available_profiles)
-            line[column_installed] = ", ".join(installed_profiles)
-            line[column_info] = data.summary
+                locked_str = ""
+                if conf and conf.locked and i.version == conf.version:
+                    locked_str = " (locked)"
 
-        return table
+                available_profiles = i.profiles
+                installed_profiles = []
+                if conf and conf.version == i.version and conf.stream == i.stream:
+                    installed_profiles = conf.profiles
+
+                number_of_available_profiles = len(available_profiles)
+                number_of_installed_profiles = len(installed_profiles)
+
+                trunc_available = ""
+                trunc_installed = ""
+
+                if number_of_available_profiles > 2:
+                    trunc_available = ", ..."
+                if number_of_installed_profiles > 2:
+                    trunc_installed = ", ..."
+
+                line[column_name] = data.name
+                line[column_stream] = data.stream + default_str
+                line[column_version] = str(data.version) + locked_str
+                line[column_profiles] = ", ".join(available_profiles[:2]) + trunc_available
+                line[column_installed] = ", ".join(installed_profiles[:2]) + trunc_installed
+                line[column_info] = data.summary
+
+        str_table = ""
+        start_line_index = 0
+        header = str(table).split('\n', 1)[0]
+        for repo_id, versions in versions_by_repo.items():
+            end_line_index = len(versions)
+            lines = table.lines()
+            str_table += "{}\n".format(self.base.output.term.bold(repo_id))
+            str_table += "{}\n".format(header)
+            str_table += table.str_line(lines[start_line_index], lines[end_line_index - 1])
+            start_line_index += end_line_index
+            str_table += "\n\n"
+
+        return str_table[:-2]
