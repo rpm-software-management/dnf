@@ -19,8 +19,10 @@
 
 from __future__ import print_function
 
+import dnf
 from dnf.cli import commands, CliError
 from dnf.i18n import _
+from dnf.module import module_errors, NO_MODULE_ERR
 from dnf.util import logger
 
 
@@ -115,7 +117,10 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            self.base.repo_module_dict.install(self.opts.module_nsvp)
+            module_specs = self.base.repo_module_dict.install(self.opts.module_nsvp)
+            if module_specs:
+                raise dnf.exceptions.Error(module_errors[NO_MODULE_ERR]
+                                           .format(", ".join(module_specs)))
 
     class UpdateSubCommand(SubCommand):
 
@@ -129,7 +134,10 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            self.base.repo_module_dict.upgrade(self.opts.module_nsvp)
+            module_specs = self.base.repo_module_dict.upgrade(self.opts.module_nsvp)
+            if module_specs:
+                raise dnf.exceptions.Error(module_errors[NO_MODULE_ERR]
+                                           .format(", ".join(module_specs)))
 
     class RemoveSubCommand(SubCommand):
 
