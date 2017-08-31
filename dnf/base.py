@@ -1972,10 +1972,10 @@ class Base(object):
         return done
 
     def provides(self, provides_spec):
-        providers = dnf.query._by_provides(self.sack, provides_spec)
+        providers = self.sack.query().filter(file__glob=provides_spec)
         if providers:
             return providers
-        providers = self.sack.query().filter(file__glob=provides_spec)
+        providers = dnf.query._by_provides(self.sack, provides_spec)
         if providers:
             return providers
         binary_provides = [prefix + provides_spec for prefix in ['/usr/bin/', '/usr/sbin/']]
