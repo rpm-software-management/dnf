@@ -36,6 +36,7 @@ import dnf.util
 import dnf.yum.history
 import dnf.yum.misc
 import dnf.yum.packages
+import fnmatch
 import hawkey
 import itertools
 import logging
@@ -816,6 +817,30 @@ class Output(object):
         :param verbose: whether to output extra verbose information
         :param highlight: highlighting options for the highlighted matches
         """
+        def print_highlighted_key_item(key, item, printed_headline, can_overflow=False):
+            if not printed_headline:
+                print(_('Matched from:'))
+            item = ucd(item) or ""
+            if item == "":
+                return
+            if matchfor:
+                item = self._sub_highlight(item, highlight, matchfor, ignore_case=True)
+            if can_overflow:
+                print(self.fmtKeyValFill(key, item))
+            else:
+                print(key % item)
+
+        def print_file_provides(item, printed_match):
+            if not any([item.startswith("/"), item.startswith('*/')]):
+                return False
+            key = _("Filename    : %s")
+            file_match = False
+            for filename in po.files:
+                if fnmatch.fnmatch(filename, item):
+                    file_match = True
+                    print_highlighted_key_item(key, filename, printed_match, can_overflow=False)
+            return file_match
+
         if self.conf.showdupesfromrepos:
             msg = '%s : ' % po
         else:
@@ -833,38 +858,50 @@ class Output(object):
             return
 
         print(_("Repo        : %s") % po.ui_from_repo)
-        done = False
+        printed_match = False
+        name_match = False
         for item in set(values):
-            if po.name == item or po.summary == item:
+            if po.summary == item:
+                name_match = True
                 continue # Skip double name/summary printing
 
-            if not done:
-                print(_('Matched from:'))
-                done = True
-            can_overflow = True
             if po.description == item:
                 key = _("Description : ")
-                item = ucd(item)
+                print_highlighted_key_item(key, item, printed_match, can_overflow=True)
+                printed_match = True
             elif po.url == item:
                 key = _("URL         : %s")
-                can_overflow = False
+                print_highlighted_key_item(key, item, printed_match, can_overflow=False)
+                printed_match = True
             elif po.license == item:
                 key = _("License     : %s")
-                can_overflow = False
-            elif item.startswith("/"):
-                key = _("Filename    : %s")
-                item = ucd(item) or ""
-                can_overflow = False
+                print_highlighted_key_item(key, item, printed_match, can_overflow=False)
+                printed_match = True
+            elif print_file_provides(item, printed_match):
+                printed_match = True
             else:
-                key = _("Other       : ")
+                key = _("Provide    : %s")
+                for provide in po.provides:
+                    provide = str(provide)
+                    if fnmatch.fnmatch(provide, item):
+                        print_highlighted_key_item(key, provide, printed_match, can_overflow=False)
+                        printed_match = True
+                    else:
+                        first_provide = provide.split()[0]
+                        possible = set('=<>')
+                        if any((char in possible) for char in item):
+                            item_new = item.split()[0]
+                        else:
+                            item_new = item
+                        if fnmatch.fnmatch(first_provide, item_new):
+                            print_highlighted_key_item(
+                                key, provide, printed_match, can_overflow=False)
+                            printed_match = True
 
-            if matchfor:
-                item = self._sub_highlight(item, highlight, matchfor,
-                                           ignore_case=True)
-            if can_overflow:
-                print(self.fmtKeyValFill(key, ucd(item)))
-            else:
-                print(key % item)
+        if not any([printed_match, name_match]):
+            for item in set(values):
+                key = _("Other       : %s")
+                print_highlighted_key_item(key, item, printed_match, can_overflow=False)
         print()
 
     def matchcallback_verbose(self, po, values, matchfor=None):

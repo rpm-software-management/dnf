@@ -537,7 +537,7 @@ class BaseCli(dnf.Base):
         for spec in args:
             matches.extend(super(BaseCli, self). provides(spec))
         for pkg in matches:
-            self.output.matchcallback_verbose(pkg, [], args)
+            self.output.matchcallback_verbose(pkg, args, args)
         self.conf.showdupesfromrepos = old_sdup
 
         if not matches:
