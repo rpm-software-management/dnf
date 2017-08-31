@@ -72,6 +72,8 @@ class RepoModule(OrderedDict):
 
             if not self.parent.base.conf.assumeno and \
                     self.parent.base.output.userconfirm():
+                self.conf.profiles = []
+                self.conf.version = -1
                 self.enable(stream, True)
             else:
                 logger.info(module_errors[STREAM_NOT_ENABLED_ERR].format(stream))
