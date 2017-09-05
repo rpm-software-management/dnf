@@ -534,10 +534,13 @@ class BaseCli(dnf.Base):
         self.conf.showdupesfromrepos = True
 
         matches = []
+        used_search_strings = []
         for spec in args:
-            matches.extend(super(BaseCli, self). provides(spec))
+            query, used_search_string = super(BaseCli, self).provides(spec)
+            matches.extend(query)
+            used_search_strings.extend(used_search_string)
         for pkg in matches:
-            self.output.matchcallback_verbose(pkg, args, args)
+            self.output.matchcallback_verbose(pkg, used_search_strings, args)
         self.conf.showdupesfromrepos = old_sdup
 
         if not matches:

@@ -24,14 +24,14 @@ class ProvidesTest(support.TestCase):
         self.base = support.MockBase("main")
 
     def test_file(self):
-        self.assertLength(self.base.provides("*ais*smile"), 1)
-        self.assertLength(self.base.provides("/raised/smile"), 1)
+        self.assertLength(self.base.provides("*ais*smile")[0], 1)
+        self.assertLength(self.base.provides("/raised/smile")[0], 1)
 
     def test_name(self):
-        self.assertLength(self.base.provides("henry(the_horse)"), 1)
-        self.assertLength(self.base.provides("lotus"), 2)
+        self.assertLength(self.base.provides("henry(the_horse)")[0], 1)
+        self.assertLength(self.base.provides("lotus")[0], 2)
 
     def test_glob(self):
-        self.assertLength(self.base.provides("henry(*)"), 1)
-        self.assertEqual(set(self.base.provides("dup*")), set(self.base.provides('dup')))
-        self.assertEqual(set(self.base.provides(["dup*"])), set(self.base.provides('dup')))
+        self.assertLength(self.base.provides("henry(*)")[0], 1)
+        self.assertEqual(set(self.base.provides("dup*")[0]), set(self.base.provides('dup')[0]))
+        self.assertEqual(set(self.base.provides(["dup*"])[0]), set(self.base.provides('dup')[0]))
