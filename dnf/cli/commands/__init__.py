@@ -361,7 +361,7 @@ class RepoPkgsCommand(Command):
                         done = True
 
             if not done:
-                raise dnf.exceptions.Error(_('Nothing to do.'))
+                raise dnf.exceptions.Error(_('No packages marked for install.'))
 
     class ListSubCommand(InfoSubCommand):
         """Implementation of the list sub-command."""
@@ -515,7 +515,7 @@ class RepoPkgsCommand(Command):
                 else:
                     break
             else:
-                raise dnf.exceptions.Error(_('Nothing to do.'))
+                raise dnf.exceptions.Error(_('No packages marked for reinstall.'))
 
     class RemoveOrDistroSyncSubCommand(Command):
         """Implementation of the remove-or-distro-sync sub-command."""

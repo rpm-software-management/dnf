@@ -375,7 +375,7 @@ class BaseCli(dnf.Base):
                 assert False
         cnt = self._goal.req_length() - oldcount
         if cnt <= 0:
-            raise dnf.exceptions.Error(_('Nothing to do.'))
+            raise dnf.exceptions.Error(_('No packages marked for downgrade.'))
 
     def output_packages(self, basecmd, pkgnarrow='all', patterns=(), reponame=None):
         """Output selection *pkgnarrow* of packages matching *patterns* and *repoid*."""
