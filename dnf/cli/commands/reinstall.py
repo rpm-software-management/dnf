@@ -97,4 +97,4 @@ class ReinstallCommand(commands.Command):
                 done = True
 
         if not done:
-            raise dnf.exceptions.Error(_('Nothing to do.'))
+            raise dnf.exceptions.Error(_('No packages marked for reinstall.'))

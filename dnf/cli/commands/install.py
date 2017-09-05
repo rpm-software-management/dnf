@@ -78,7 +78,7 @@ class InstallCommand(commands.Command):
                 msg = _('Not a valid rpm file path: %s')
                 logger.info(msg, self.base.output.term.bold(pkg))
             if strict:
-                raise dnf.exceptions.Error(_('Nothing to do.'))
+                raise dnf.exceptions.Error(_('No packages marked for install.'))
 
         # Install files.
         err_pkgs = []
@@ -87,7 +87,7 @@ class InstallCommand(commands.Command):
                 msg = _('Not a valid form: %s')
                 logger.warning(msg, self.base.output.term.bold(filename))
             if strict:
-                raise dnf.exceptions.Error(_('Nothing to do.'))
+                raise dnf.exceptions.Error(_('No packages marked for install.'))
         else:
             for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=strict):
                 try:
@@ -103,7 +103,7 @@ class InstallCommand(commands.Command):
                 msg = _('Not a valid form: %s')
                 logger.warning(msg, self.base.output.term.bold(grp_spec))
             if strict:
-                raise dnf.exceptions.Error(_('Nothing to do.'))
+                raise dnf.exceptions.Error(_('No packages marked for install.'))
         elif self.opts.grp_specs and self.opts.command != ['localinstall']:
             self.base.read_comps(arch_filter=True)
             try:

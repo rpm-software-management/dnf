@@ -69,7 +69,7 @@ class BaseCliTest(support.ResultTestCase):
     def test_downgradePkgs_notfound(self, logger):
         with self.assertRaises(dnf.exceptions.Error) as ctx:
             self._base.downgradePkgs(('non-existent',))
-        self.assertEqual(str(ctx.exception), 'Nothing to do.')
+        self.assertEqual(str(ctx.exception), 'No packages marked for downgrade.')
 
         self.assertEqual(self._base.downgrade_to.mock_calls,
                          [mock.call('non-existent', strict=False)])
@@ -83,7 +83,7 @@ class BaseCliTest(support.ResultTestCase):
 
         with self.assertRaises(dnf.exceptions.Error) as ctx:
             self._base.downgradePkgs(('lotus',))
-        self.assertEqual(str(ctx.exception), 'Nothing to do.')
+        self.assertEqual(str(ctx.exception), 'No packages marked for downgrade.')
 
         self.assertEqual(self._base.downgrade_to.mock_calls, [mock.call('lotus', strict=False)])
 
