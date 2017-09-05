@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-27 15:23+0200\n"
-"PO-Revision-Date: 2017-08-23 02:50-0400\n"
+"POT-Creation-Date: 2017-09-05 09:21+0200\n"
+"PO-Revision-Date: 2017-09-01 03:44-0400\n"
 "Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
 "Language-Team: Catalan (https://fedora.zanata.org/language/view/ca) <fedora@llistes.softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -64,7 +64,7 @@ msgstr "No s'ha pogut enviar un correu electrònic a través de «%s»: %s"
 msgid "Failed to execute command '%s': returned %d"
 msgstr "Ha fallat l'execució de l'ordre «%s»: ha tornat %d"
 
-#: ../dnf/automatic/main.py:216 ../dnf/cli/main.py:57
+#: ../dnf/automatic/main.py:217 ../dnf/cli/main.py:57
 #, python-format
 msgid "Error: %s"
 msgstr "Error: %s"
@@ -427,15 +427,15 @@ msgstr "mostra els avisos quant als paquets"
 
 #: ../dnf/cli/commands/updateinfo.py:136
 msgid "show summary of advisories"
-msgstr ""
+msgstr "Mostra el resum els avisos"
 
 #: ../dnf/cli/commands/updateinfo.py:138
 msgid "show list of advisories"
-msgstr ""
+msgstr "mostra la llisa dels avisos"
 
 #: ../dnf/cli/commands/updateinfo.py:140
 msgid "show info of advisories"
-msgstr ""
+msgstr "mostra la informació dels avisos"
 
 #: ../dnf/cli/commands/updateinfo.py:232
 msgid "Updates Information Summary: "
@@ -596,7 +596,7 @@ msgstr "%s està desmarcat com a instal·lat per l'usuari."
 #: ../dnf/cli/commands/mark.py:57
 #, python-format
 msgid "%s marked as group installed."
-msgstr ""
+msgstr "%s marcat com a grup instal·lat."
 
 #: ../dnf/cli/commands/mark.py:82 ../dnf/cli/commands/shell.py:116
 #: ../dnf/cli/commands/shell.py:225
@@ -623,14 +623,14 @@ msgstr "Paquet a reinstal·lar"
 #: ../dnf/cli/commands/__init__.py:739 ../dnf/cli/commands/install.py:95
 #: ../dnf/cli/commands/install.py:123 ../dnf/cli/commands/upgrade.py:74
 #: ../dnf/cli/commands/upgrade.py:84 ../dnf/cli/commands/upgrade.py:87
-#: ../dnf/cli/cli.py:359 ../dnf/base.py:1704 ../dnf/base.py:1723
-#: ../dnf/base.py:1736 ../dnf/base.py:1757 ../dnf/base.py:1786
-#: ../dnf/base.py:1808 ../dnf/base.py:1863 ../dnf/base.py:1952
+#: ../dnf/cli/cli.py:359 ../dnf/base.py:1705 ../dnf/base.py:1724
+#: ../dnf/base.py:1737 ../dnf/base.py:1758 ../dnf/base.py:1787
+#: ../dnf/base.py:1809 ../dnf/base.py:1864 ../dnf/base.py:1953
 #, python-format
 msgid "No match for argument: %s"
 msgstr "No hi ha cap coincidència per a l'argument: %s"
 
-#: ../dnf/cli/commands/reinstall.py:79 ../dnf/base.py:1783
+#: ../dnf/cli/commands/reinstall.py:79 ../dnf/base.py:1784
 #, python-format
 msgid "Package %s available, but not installed."
 msgstr "El paquet %s està disponible, però no està instal·lat."
@@ -652,7 +652,7 @@ msgstr "El paquet instal·lat %s%s no està disponible."
 #: ../dnf/cli/commands/__init__.py:558 ../dnf/cli/commands/__init__.py:620
 #: ../dnf/cli/commands/__init__.py:669 ../dnf/cli/commands/install.py:80
 #: ../dnf/cli/commands/install.py:89 ../dnf/cli/commands/install.py:105
-#: ../dnf/cli/cli.py:213 ../dnf/cli/cli.py:378 ../dnf/base.py:1573
+#: ../dnf/cli/cli.py:213 ../dnf/cli/cli.py:378 ../dnf/base.py:1574
 msgid "Nothing to do."
 msgstr "No s'ha de fer res."
 
@@ -677,13 +677,13 @@ msgid "No old installonly packages found for removal."
 msgstr ""
 
 #: ../dnf/cli/commands/remove.py:108 ../dnf/cli/commands/install.py:86
-#: ../dnf/cli/commands/install.py:102 ../dnf/base.py:1852
+#: ../dnf/cli/commands/install.py:102 ../dnf/base.py:1853
 #, python-format
 msgid "Not a valid form: %s"
 msgstr "No és una forma vàlida: %s"
 
 #: ../dnf/cli/commands/remove.py:125 ../dnf/cli/commands/__init__.py:709
-#: ../dnf/base.py:1869
+#: ../dnf/base.py:1870
 msgid "No packages marked for removal."
 msgstr "No s'ha marcat cap paquet per treure."
 
@@ -703,7 +703,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/repoquery.py:113
 msgid "Query all versions of packages (default)"
-msgstr ""
+msgstr "Consulta totes les versions dels paquets (predeterminat)"
 
 #: ../dnf/cli/commands/repoquery.py:116
 msgid "show only results from this ARCH"
@@ -711,15 +711,15 @@ msgstr "mostra únicament els resultats d'aquesta ARCH"
 
 #: ../dnf/cli/commands/repoquery.py:118
 msgid "show only results that owns FILE"
-msgstr "mostra únicament els resultats que posseeixin el FITXER "
+msgstr "mostra únicament els resultats que siguin propietaris del FITXER "
 
 #: ../dnf/cli/commands/repoquery.py:120
 msgid "show only results that conflict REQ"
-msgstr ""
+msgstr "mostra únicament els resultats que entrin en conflicte amb el REQ"
 
 #: ../dnf/cli/commands/repoquery.py:122
 msgid "show only results that obsolete REQ"
-msgstr ""
+msgstr "mostra només si hi ha resultats que devaluïn el REQ"
 
 #: ../dnf/cli/commands/repoquery.py:124
 msgid "show only results that provide REQ"
@@ -809,22 +809,29 @@ msgid ""
 "use name-epoch:version-release.architecture format for displaying found "
 "packages (default)"
 msgstr ""
+"utilitza el format nom-època:versió-llançament.arquitectura per a la "
+"visualització dels paquets trobats (predeterminat)"
 
 #: ../dnf/cli/commands/repoquery.py:175
 msgid ""
 "use name-version-release format for displaying found packages (rpm query "
 "default)"
 msgstr ""
+"utilitza el format nom-versió-llançament per a la visualització dels paquets"
+" trobats (predeterminat de la consulta rpm)"
 
 #: ../dnf/cli/commands/repoquery.py:181
 msgid ""
 "use epoch:name-version-release.architecture format for displaying found "
 "packages"
 msgstr ""
+"utilitza el format època:nom-versió-llançament.arquitectura per a la "
+"visualització dels paquets trobats"
 
 #: ../dnf/cli/commands/repoquery.py:184
 msgid "Display in which comps groups are presented selected packages"
 msgstr ""
+"Mostra en quins grups de components s'introdueixen els paquets seleccionats"
 
 #: ../dnf/cli/commands/repoquery.py:188
 msgid "limit the query to installed duplicate packages"
@@ -841,7 +848,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/repoquery.py:200
 msgid "show a location from where packages can be downloaded"
-msgstr ""
+msgstr "mostra una ubicació des d'on es poden baixar els paquets"
 
 #: ../dnf/cli/commands/repoquery.py:203
 msgid "Display capabilities that the package conflicts with."
@@ -908,7 +915,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/repoquery.py:223
 msgid "Display only packages that were installed by user."
-msgstr ""
+msgstr "Mostra únicament els paquets que han estat instal·lats per l'usuari."
 
 #: ../dnf/cli/commands/repoquery.py:235
 msgid "Display only recently edited packages"
@@ -1088,6 +1095,14 @@ msgid ""
 "run                      resolve and run the transaction set\n"
 "exit (or quit)           exit the shell"
 msgstr ""
+"Arguments específics del shell:\n"
+"config                   estableix les opcions de configuració\n"
+"help                     imprimeix l'ajuda\n"
+"repository (o repo)      habilita, inhabilita o llista els dipòsits\n"
+"resolvedep               resol el conjunt de la transacció\n"
+"transaction (o ts)       llista, restableix executa el conjunt de la transacció\n"
+"run                      resol i executa el conjunt de la transacció\n"
+"exit (o quit)            surt del shell"
 
 #: ../dnf/cli/commands/shell.py:225 ../dnf/cli/cli.py:705
 #, python-format
@@ -1253,10 +1268,12 @@ msgid ""
 "Found more than one transaction ID.\n"
 "'{}' requires one transaction ID or package name."
 msgstr ""
+"S'ha trobat més d'un id. de transacció!\n"
+"'{}' requereix un id. de transacció o nom de paquet."
 
 #: ../dnf/cli/commands/__init__.py:839
 msgid "No transaction ID or package name given."
-msgstr ""
+msgstr "No s'ha donat cap id. de transacció o nom de paquet."
 
 #: ../dnf/cli/commands/__init__.py:851
 msgid "You don't have access to the history DB."
@@ -1281,7 +1298,7 @@ msgstr ""
 "dades de paquets inconsistent."
 
 #: ../dnf/cli/commands/__init__.py:887 ../dnf/cli/cli.py:608
-#: ../dnf/cli/cli.py:638 ../dnf/base.py:1834
+#: ../dnf/cli/cli.py:638 ../dnf/base.py:1835
 #, python-format
 msgid "No package %s installed."
 msgstr "Cap paquet %s instal·lat."
@@ -1291,10 +1308,12 @@ msgid ""
 "Invalid transaction ID range definition '{}'.\n"
 "Use '<transaction-id>..<transaction-id>'."
 msgstr ""
+"Definició no vàlida de l'interval dels id. de les transaccions '{}'.\n"
+"Utilitzeu '<transaction-id>..<transaction-id>'."
 
 #: ../dnf/cli/commands/__init__.py:968
 msgid "No transaction which manipulates package '{}' was found."
-msgstr ""
+msgstr "No s'ha trobat cap transacció que manipuli el paquet '{}'."
 
 #: ../dnf/cli/commands/install.py:44
 msgid "install a package or packages on your system"
@@ -1332,30 +1351,6 @@ msgstr "actualitza un o més paquets al vostre sistema"
 #: ../dnf/cli/commands/upgrade.py:42
 msgid "Package to upgrade"
 msgstr "Paquet a actualitzar"
-
-#: ../dnf/cli/main.py:109
-msgid "No read/execute access in current directory, moving to /"
-msgstr "Sense accés de lectura/execució al directori actual, es mou a /"
-
-#: ../dnf/cli/main.py:127
-#, python-format
-msgid "(try to add '%s' to command line to replace conflicting packages"
-msgstr ""
-"(proveu d'afegir '%s' a la línia d'ordres per substituir els paquets "
-"conflictius"
-
-#: ../dnf/cli/main.py:130
-#, python-format
-msgid " or '%s' to skip uninstalable packages)"
-msgstr " o '%s' per ometre els paquets inestables)"
-
-#: ../dnf/cli/main.py:147
-msgid "Dependencies resolved."
-msgstr "S'han resolt les dependències."
-
-#: ../dnf/cli/main.py:165
-msgid "Complete!"
-msgstr "S'ha completat!"
 
 #: ../dnf/cli/utils.py:98
 msgid "Running"
@@ -1418,13 +1413,15 @@ msgstr "  Construït: %s a %s"
 
 #: ../dnf/cli/cli.py:205
 msgid "DNF will only download packages for the transaction."
-msgstr ""
+msgstr "DNF únicament baixarà els paquets per a la transacció."
 
 #: ../dnf/cli/cli.py:207
 msgid ""
 "DNF will only download packages, install gpg keys, and check the "
 "transaction."
 msgstr ""
+"DNF únicament baixarà els paquets, instal·larà les claus gpg i comprovarà la"
+" transacció."
 
 #: ../dnf/cli/cli.py:211
 msgid "Operation aborted."
@@ -1452,7 +1449,7 @@ msgstr ""
 
 #: ../dnf/cli/cli.py:283
 msgid "GPG check FAILED"
-msgstr ""
+msgstr "Ha FALLAT la comprovació GPG"
 
 #: ../dnf/cli/cli.py:311 ../dnf/cli/cli.py:455 ../dnf/cli/cli.py:461
 msgid "Obsoleting Packages"
@@ -1462,7 +1459,7 @@ msgstr "Es devaluen els paquets"
 msgid "No packages marked for distribution synchronization."
 msgstr "No s'ha marcat cap paquet per a la sincronització de la distribució."
 
-#: ../dnf/cli/cli.py:372 ../dnf/base.py:1959
+#: ../dnf/cli/cli.py:372 ../dnf/base.py:1960
 #, python-format
 msgid "Packages for argument %s available, but not installed."
 msgstr ""
@@ -1485,7 +1482,7 @@ msgstr "Paquets extres"
 
 #: ../dnf/cli/cli.py:447
 msgid "Available Upgrades"
-msgstr ""
+msgstr "Actualitzacions disponibles"
 
 #: ../dnf/cli/cli.py:463
 msgid "Recently Added Packages"
@@ -1528,7 +1525,7 @@ msgstr ""
 #: ../dnf/cli/cli.py:719
 #, python-format
 msgid "No repository match: %s"
-msgstr ""
+msgstr "Dipòsit sense coincidència: %s"
 
 #: ../dnf/cli/cli.py:748
 msgid "This command has to be run under the root user."
@@ -1561,13 +1558,15 @@ msgstr "Error de configuració: %s"
 
 #: ../dnf/cli/cli.py:825
 msgid "--destdir must be used with --downloadonly or download command."
-msgstr ""
+msgstr "--destdir ha d'utilitzar-se amb --downloadonly o l'ordre download."
 
 #: ../dnf/cli/cli.py:911
 msgid ""
 "Unable to detect release version (use '--releasever' to specify release "
 "version)"
 msgstr ""
+"No es pot determinar la versió del llançament (utilitzeu '--releasever' per "
+"especificar la versió del llançament)"
 
 #: ../dnf/cli/cli.py:986
 #, python-format
@@ -1635,6 +1634,7 @@ msgstr "estableix opcions arbitràries «config» i «repo»"
 #: ../dnf/cli/option_parser.py:199
 msgid "resolve depsolve problems by skipping packages"
 msgstr ""
+"resol els problemes de resolució de dependències amb l'omissió dels paquets"
 
 #: ../dnf/cli/option_parser.py:202
 msgid "show command help"
@@ -1717,7 +1717,7 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:273
 msgid "disable removal of dependencies that are no longer used"
-msgstr ""
+msgstr "inhabilita l'eliminació de les dependències que ja no es necessiten"
 
 #: ../dnf/cli/option_parser.py:276
 msgid "disable gpg signature checking"
@@ -1741,7 +1741,7 @@ msgstr "resol només adreces IPv6"
 
 #: ../dnf/cli/option_parser.py:290
 msgid "set directory to copy packages to"
-msgstr ""
+msgstr "estableix el directori on copiar-hi els paquets"
 
 #: ../dnf/cli/option_parser.py:293
 msgid "only download packages"
@@ -1749,7 +1749,7 @@ msgstr "baixa només els paquets"
 
 #: ../dnf/cli/option_parser.py:295
 msgid "add a comment to transaction"
-msgstr ""
+msgstr "afegeix un comentari a la transacció"
 
 #: ../dnf/cli/option_parser.py:298
 msgid "Include bugfix relevant packages, in updates"
@@ -1795,7 +1795,7 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:328
 msgid "Force the use of an architecture"
-msgstr ""
+msgstr "Força l'ús d'una arquitectura"
 
 #: ../dnf/cli/option_parser.py:362
 msgid "List of Main Commands:"
@@ -2000,7 +2000,7 @@ msgstr "S'ha produït un error en calcular la mida un cop instal·lat"
 #: ../dnf/cli/output.py:949
 #, python-format
 msgid "Freed space: %s"
-msgstr ""
+msgstr "Espai alliberat: %s"
 
 #: ../dnf/cli/output.py:958
 msgid "Marking packages as installed by the group:"
@@ -2018,15 +2018,15 @@ msgstr "Grup"
 msgid "Packages"
 msgstr "Paquets"
 
-#: ../dnf/cli/output.py:1042 ../dnf/yum/rpmtrans.py:129
+#: ../dnf/cli/output.py:1042 ../dnf/yum/rpmtrans.py:125
 msgid "Installing"
 msgstr "Instal·lar"
 
-#: ../dnf/cli/output.py:1043 ../dnf/yum/rpmtrans.py:132
+#: ../dnf/cli/output.py:1043 ../dnf/yum/rpmtrans.py:128
 msgid "Upgrading"
 msgstr "Actualitzar"
 
-#: ../dnf/cli/output.py:1044 ../dnf/yum/rpmtrans.py:131
+#: ../dnf/cli/output.py:1044 ../dnf/yum/rpmtrans.py:127
 msgid "Reinstalling"
 msgstr "Reinstal·lar"
 
@@ -2047,14 +2047,14 @@ msgid "Removing"
 msgstr "Treure"
 
 #: ../dnf/cli/output.py:1049
-msgid "Removing depended packages"
+msgid "Removing dependent packages"
 msgstr ""
 
 #: ../dnf/cli/output.py:1050
 msgid "Removing unused dependencies"
 msgstr "Suprimir les dependències no utilitzades"
 
-#: ../dnf/cli/output.py:1051 ../dnf/yum/rpmtrans.py:127
+#: ../dnf/cli/output.py:1051 ../dnf/yum/rpmtrans.py:123
 msgid "Downgrading"
 msgstr "Revertir"
 
@@ -2318,7 +2318,7 @@ msgstr "Informació no predeterminada que addicionalment s'ha emmagatzemat: %d"
 
 #: ../dnf/cli/output.py:1694
 msgid "Comment        :"
-msgstr ""
+msgstr "Comentari      :"
 
 #. This is _possible_, but not common
 #: ../dnf/cli/output.py:1698
@@ -2353,7 +2353,7 @@ msgstr "Instal·lar-Dep"
 msgid "Obsoleted"
 msgstr "Devaluat"
 
-#: ../dnf/cli/output.py:1741 ../dnf/yum/rpmtrans.py:130
+#: ../dnf/cli/output.py:1741 ../dnf/yum/rpmtrans.py:126
 msgid "Obsoleting"
 msgstr "Devaluar"
 
@@ -2412,6 +2412,30 @@ msgstr "--> S'inicia la resolució de dependències"
 #: ../dnf/cli/output.py:1944
 msgid "--> Finished dependency resolution"
 msgstr "--> La resolució de dependències ha finalitzat"
+
+#: ../dnf/cli/main.py:109
+msgid "No read/execute access in current directory, moving to /"
+msgstr "Sense accés de lectura/execució al directori actual, es mou a /"
+
+#: ../dnf/cli/main.py:127
+#, python-format
+msgid "(try to add '%s' to command line to replace conflicting packages"
+msgstr ""
+"(proveu d'afegir '%s' a la línia d'ordres per substituir els paquets "
+"conflictius"
+
+#: ../dnf/cli/main.py:130
+#, python-format
+msgid " or '%s' to skip uninstallable packages)"
+msgstr ""
+
+#: ../dnf/cli/main.py:147
+msgid "Dependencies resolved."
+msgstr "S'han resolt les dependències."
+
+#: ../dnf/cli/main.py:165
+msgid "Complete!"
+msgstr "S'ha completat!"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -2586,7 +2610,7 @@ msgstr "Opció de configuració desconeguda: %s = %s"
 
 #: ../dnf/conf/config.py:910 ../dnf/conf/config.py:928
 msgid "Incorrect or unknown \"{}\": {}"
-msgstr ""
+msgstr "Incorrecte o desconegut \"{}\": {}"
 
 #: ../dnf/crypto.py:80
 #, python-format
@@ -2604,7 +2628,7 @@ msgstr ""
 #: ../dnf/drpm.py:62 ../dnf/repo.py:426
 #, python-format
 msgid "unsupported checksum type: %s"
-msgstr "tipus no admès de suma de verificació: %s"
+msgstr "tipus no admès de suma de comprovació: %s"
 
 #: ../dnf/drpm.py:140
 msgid "Delta RPM rebuild failed"
@@ -2612,7 +2636,7 @@ msgstr "Ha fallat la reconstrucció delta RPM"
 
 #: ../dnf/drpm.py:142
 msgid "Checksum of the delta-rebuilt RPM failed"
-msgstr "Ha fallat la suma de verificació de la reconstrucció delta RPM"
+msgstr "Ha fallat la suma de comprovació de la reconstrucció delta RPM"
 
 #: ../dnf/drpm.py:145
 msgid "done"
@@ -2651,23 +2675,23 @@ msgstr "No s'ha pogut inicialitzar l'històric de la base de dades de DNF: %s"
 msgid "Can not create history database at '%s'."
 msgstr "No s'ha pogut crear la base de dades de l'històric a «%s»."
 
-#: ../dnf/yum/rpmtrans.py:126
+#: ../dnf/yum/rpmtrans.py:122
 msgid "Cleanup"
 msgstr "Netejar"
 
-#: ../dnf/yum/rpmtrans.py:128
+#: ../dnf/yum/rpmtrans.py:124
 msgid "Erasing"
 msgstr "Eliminar"
 
-#: ../dnf/yum/rpmtrans.py:133
+#: ../dnf/yum/rpmtrans.py:129
 msgid "Verifying"
 msgstr "Verificar"
 
-#: ../dnf/yum/rpmtrans.py:134
+#: ../dnf/yum/rpmtrans.py:130
 msgid "Preparing"
 msgstr "Preparar"
 
-#: ../dnf/yum/rpmtrans.py:135
+#: ../dnf/yum/rpmtrans.py:131
 msgid "Running scriptlet"
 msgstr "Executar l'scriptlet"
 
@@ -2699,373 +2723,11 @@ msgstr "Es va afegir el dipòsit %s de %s"
 
 #: ../dnf/subject.py:200
 msgid "No security updates for argument \"{}\""
-msgstr ""
+msgstr "No hi ha actualitzacions de seguretat per a l'argument \"{}\""
 
 #: ../dnf/util.py:362 ../dnf/util.py:364
 msgid "Problem"
 msgstr "Problema"
-
-#: ../dnf/base.py:250
-msgid "Metadata timer caching disabled when running on metered connection."
-msgstr ""
-
-#: ../dnf/base.py:255
-msgid "Metadata timer caching disabled when running on a battery."
-msgstr ""
-"El temporitzador de l'emmagatzematge en memòria cau de les metadades està "
-"inhabilitat quan s'executa amb bateria."
-
-#: ../dnf/base.py:260
-msgid "Metadata timer caching disabled."
-msgstr ""
-"El temporitzador de l'emmagatzematge en memòria cau de les metadades està "
-"inhabilitat."
-
-#: ../dnf/base.py:265
-msgid "Metadata cache refreshed recently."
-msgstr "Recentment s'ha refrescat la memòria cau de les metadades."
-
-#. performs the md sync
-#: ../dnf/base.py:290
-msgid "Metadata cache created."
-msgstr "S'ha creat la memòria cau de les metadades."
-
-#: ../dnf/base.py:326
-msgid "Loading repositories."
-msgstr ""
-
-#: ../dnf/base.py:334
-#, python-format
-msgid "%s: using metadata from %s."
-msgstr "%s: s'utilitzen les metadades del %s."
-
-#: ../dnf/base.py:340
-#, python-format
-msgid "%s, disabling."
-msgstr "%s i s'inhabilita."
-
-#: ../dnf/base.py:343
-#, python-format
-msgid "Last metadata expiration check: %s ago on %s."
-msgstr "Última comprovació del venciment de les metadades: fa %s el %s."
-
-#: ../dnf/base.py:399
-msgid ""
-"The downloaded packages were saved in cache until the next successful "
-"transaction."
-msgstr ""
-"Els paquets baixats es desen a la memòria cau fins a la propera transacció "
-"reeixida."
-
-#: ../dnf/base.py:401
-#, python-format
-msgid "You can remove cached packages by executing '%s'."
-msgstr "Podeu treure els paquets capturats amb l'execució de «%s»."
-
-#: ../dnf/base.py:462
-#, python-format
-msgid "Invalid tsflag in config file: %s"
-msgstr "tsflag invàlid en el fitxer de configuració: %s"
-
-#: ../dnf/base.py:521
-#, python-format
-msgid "Failed to add groups file for repository: %s - %s"
-msgstr "No s'ha pogut afegir el fitxer dels grups per al dipòsit: %s - %s"
-
-#: ../dnf/base.py:698
-msgid "Running transaction check"
-msgstr "S'executa la comprovació de la transacció"
-
-#: ../dnf/base.py:708
-msgid "Error: transaction check vs depsolve:"
-msgstr "Error: transacció check vs. depsolve:"
-
-#: ../dnf/base.py:714
-msgid "Transaction check succeeded."
-msgstr "La comprovació de la transacció ha tingut èxit."
-
-#: ../dnf/base.py:717
-msgid "Running transaction test"
-msgstr "S'executa la prova de la transacció"
-
-#: ../dnf/base.py:727
-msgid "Transaction check error:"
-msgstr "Error en la comprovació de la transacció:"
-
-#: ../dnf/base.py:734
-msgid "Transaction test succeeded."
-msgstr "La prova de la transacció ha tingut èxit."
-
-#: ../dnf/base.py:749
-msgid "Running transaction"
-msgstr "S'executa la transacció"
-
-#: ../dnf/base.py:775
-msgid "Disk Requirements:"
-msgstr "Requeriments de disc:"
-
-#: ../dnf/base.py:778
-#, python-format
-msgid "At least %dMB more space needed on the %s filesystem."
-msgid_plural "At least %dMB more space needed on the %s filesystem."
-msgstr[0] ""
-"Com a mínim es requereix %d MB més d'espai lliure al sistema de fitxers %s."
-msgstr[1] ""
-"Com a mínim es requereixen %d MB més d'espai lliure al sistema de fitxers "
-"%s."
-
-#: ../dnf/base.py:782
-msgid "Error Summary"
-msgstr "Resum de l'error"
-
-#: ../dnf/base.py:863
-msgid "Errors occurred during transaction."
-msgstr ""
-
-#: ../dnf/base.py:867
-#, python-format
-msgid "Failed to obtain the transaction lock (logged in as: %s)."
-msgstr ""
-"No s'ha pogut obtenir el bloqueig de la transacció (inici de sessió com a "
-"%s)."
-
-#. should this be 'to_unicoded'?
-#: ../dnf/base.py:870 ../dnf/base.py:880
-msgid "Could not run transaction."
-msgstr "No es pot executar la transacció."
-
-#: ../dnf/base.py:877
-msgid "Transaction couldn't start:"
-msgstr "No es pot iniciar la transacció:"
-
-#: ../dnf/base.py:889
-#, python-format
-msgid "Failed to remove transaction file %s"
-msgstr "No s'ha pogut treure el fitxer de transaccions %s"
-
-#: ../dnf/base.py:941
-#, python-format
-msgid "%s was supposed to be installed but is not!"
-msgstr "S'havia d'instal·lar %s però no s'ha fet!"
-
-#: ../dnf/base.py:1001
-#, python-format
-msgid "%s was supposed to be removed but is not!"
-msgstr "S'havia de treure %s però no s'ha fet!"
-
-#: ../dnf/base.py:1019 ../dnf/repo.py:543 ../dnf/repo.py:1015
-#, python-format
-msgid "Failed to synchronize cache for repo '%s'"
-msgstr "No s'ha pogut sincronitzar la memòria cau per al dipòsit «%s»"
-
-#: ../dnf/base.py:1072
-msgid "Some packages were not downloaded. Retrying."
-msgstr "No s'han pogut trobar alguns paquets i es torna a intentar."
-
-#: ../dnf/base.py:1102
-#, python-format
-msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
-msgstr ""
-"Les deltes dels RPM han reduït %.1f MB d'actualitzacions a %.1f MB (s'ha "
-"estalviat un %d.1%%)"
-
-#: ../dnf/base.py:1105
-#, python-format
-msgid ""
-"Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
-msgstr ""
-"Han fallat les deltes dels RPM, les quals han incrementat %.1f MB "
-"d'actualitzacions a %.1f MB (s'ha gastat un %d.1%%)"
-
-#: ../dnf/base.py:1132
-msgid "Could not open: {}"
-msgstr "No s'ha pogut obrir: {}"
-
-#: ../dnf/base.py:1170
-#, python-format
-msgid "Public key for %s is not installed"
-msgstr "La clau pública per a %s no està instal·lada"
-
-#: ../dnf/base.py:1174
-#, python-format
-msgid "Problem opening package %s"
-msgstr "Hi ha hagut un problema obrint el paquet %s"
-
-#: ../dnf/base.py:1182
-#, python-format
-msgid "Public key for %s is not trusted"
-msgstr "La clau pública per a %s no és de confiança"
-
-#: ../dnf/base.py:1186
-#, python-format
-msgid "Package %s is not signed"
-msgstr "El paquet %s no està signat"
-
-#: ../dnf/base.py:1201
-#, python-format
-msgid "Cannot remove %s"
-msgstr "No es pot treure %s"
-
-#: ../dnf/base.py:1205
-#, python-format
-msgid "%s removed"
-msgstr "S'ha tret %s"
-
-#: ../dnf/base.py:1472
-msgid "No match for group package \"{}\""
-msgstr ""
-
-#: ../dnf/base.py:1589
-msgid "No groups marked for removal."
-msgstr "No s'ha marcat cap grup per treure."
-
-#: ../dnf/base.py:1608
-msgid "No group marked for upgrade."
-msgstr "No s'ha marcat cap grup per actualitzar."
-
-#: ../dnf/base.py:1676 ../dnf/base.py:1687
-msgid "no package matched"
-msgstr "No hi ha cap paquet que hi coincideixi."
-
-#: ../dnf/base.py:1702
-#, python-format
-msgid "Package %s not installed, cannot downgrade it."
-msgstr "El paquet %s no està instal·lat, no es pot revertir."
-
-#: ../dnf/base.py:1711
-#, python-format
-msgid "Package %s of lower version already installed, cannot downgrade it."
-msgstr ""
-"Ja s'ha instal·lat una versió més baixa del paquet %s, no es pot revertir."
-
-#: ../dnf/base.py:1734
-#, python-format
-msgid "Package %s not installed, cannot reinstall it."
-msgstr "El paquet %s no està instal·lat, no es pot reinstal·lar."
-
-#: ../dnf/base.py:1749
-#, python-format
-msgid "File %s is a source package and cannot be updated, ignoring."
-msgstr "El fitxer %s és un paquet de fonts i no es pot actualitzar, s'ignora."
-
-#: ../dnf/base.py:1755
-#, python-format
-msgid "Package %s not installed, cannot update it."
-msgstr "El paquet %s no està instal·lat, no es pot actualitzar."
-
-#: ../dnf/base.py:1764
-#, python-format
-msgid "Package %s of higher version already installed, cannot update it."
-msgstr ""
-"Un paquet %s d'una versió superior ja està instal·lat, no es pot "
-"actualitzar."
-
-#: ../dnf/base.py:1789
-#, python-format
-msgid "Package %s available, but installed for different architecture."
-msgstr ""
-
-#: ../dnf/base.py:1964
-#, python-format
-msgid "Package %s of lowest version already installed, cannot downgrade it."
-msgstr ""
-"Ja hi ha instal·lada la versió més baixa del paquet %s, no es pot revertir."
-
-#: ../dnf/base.py:2108
-msgid "No security updates needed, but {} update available"
-msgstr ""
-"No es requereix cap actualització de seguretat, però hi ha {} actualització "
-"disponible"
-
-#: ../dnf/base.py:2110
-msgid "No security updates needed, but {} updates available"
-msgstr ""
-"No es requereix cap actualització de seguretat, però hi ha {} "
-"actualitzacions disponibles"
-
-#: ../dnf/base.py:2114
-msgid "No security updates needed for \"{}\", but {} update available"
-msgstr ""
-"No es requereix cap actualització de seguretat per «{}», però hi ha {} "
-"actualització disponible"
-
-#: ../dnf/base.py:2116
-msgid "No security updates needed for \"{}\", but {} updates available"
-msgstr ""
-"No es requereix cap actualització de seguretat per «{}», però hi ha {} "
-"actualitzacions disponibles"
-
-#: ../dnf/base.py:2155
-#, python-format
-msgid ". Failing package is: %s"
-msgstr ""
-
-#: ../dnf/base.py:2156
-#, python-format
-msgid "GPG Keys are configured as: %s"
-msgstr "Les claus GPG estan configurades com a: %s"
-
-#: ../dnf/base.py:2168
-#, python-format
-msgid "GPG key at %s (0x%s) is already installed"
-msgstr "La clau GPG de %s (0x%s) ja està instal·lada"
-
-#: ../dnf/base.py:2205
-#, python-format
-msgid "Key import failed (code %d)"
-msgstr "La importació de la clau ha fallat (codi %d)"
-
-#: ../dnf/base.py:2207
-msgid "Key imported successfully"
-msgstr "La clau s'ha importat amb èxit"
-
-#: ../dnf/base.py:2211
-msgid "Didn't install any keys"
-msgstr "No s'ha instal·lat cap clau"
-
-#: ../dnf/base.py:2214
-#, python-format
-msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
-"Check that the correct key URLs are configured for this repository."
-msgstr ""
-"Les claus GPG llistades per al dipòsit «%s» ja estan instal·lades però no són correctes per a aquest paquet.\n"
-"Comproveu que aquest dipòsit tingui configurats els URL amb la clau correcta."
-
-#: ../dnf/base.py:2225
-msgid "Import of key(s) didn't help, wrong key(s)?"
-msgstr "La importació de claus no ha ajudat, eren claus incorrectes?"
-
-#: ../dnf/base.py:2271
-msgid "  * Maybe you meant: {}"
-msgstr ""
-
-#: ../dnf/base.py:2298
-msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
-msgstr ""
-
-#: ../dnf/base.py:2307
-msgid "Some packages from local repository have incorrect checksum"
-msgstr ""
-
-#: ../dnf/base.py:2311
-msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
-msgstr ""
-
-#: ../dnf/base.py:2316
-msgid "Package \"{}\" from repository \"{}\" has invalid cache"
-msgstr ""
-
-#: ../dnf/base.py:2322
-msgid ""
-"Some packages have invalid cache, but cannot be downloaded due to \"--"
-"cacheonly\" option"
-msgstr ""
-
-#: ../dnf/base.py:2331
-#, python-format
-msgid "Package %s is already installed, skipping."
-msgstr "El paquet %s ja està instal·lat i s'ignora."
 
 #: ../dnf/repo.py:105
 #, python-format
@@ -3082,6 +2744,11 @@ msgstr "Ja s'ha baixat"
 msgid "determining the fastest mirror (%d hosts).. "
 msgstr "s'està determinant la rèplica més ràpida (%d amfitrions).. "
 
+#: ../dnf/repo.py:543 ../dnf/repo.py:1015 ../dnf/base.py:1020
+#, python-format
+msgid "Failed to synchronize cache for repo '%s'"
+msgstr "No s'ha pogut sincronitzar la memòria cau per al dipòsit «%s»"
+
 #: ../dnf/repo.py:790
 #, python-format
 msgid "Cannot find a valid baseurl for repo: %s"
@@ -3092,6 +2759,8 @@ msgid ""
 "Maximum download speed is lower than minimum. Please change configuration of"
 " minrate or throttle"
 msgstr ""
+"La velocitat màxima de baixada és inferior que la mínima. Canvieu la "
+"configuració de minrate o throttle"
 
 #: ../dnf/repo.py:905
 #, python-format
@@ -3145,4 +2814,366 @@ msgstr "El dipòsit %s no té establerta cap rèplica o url base."
 
 #: ../dnf/repo.py:1058
 msgid "Repository '{}' has unsupported type: 'type={}', skipping."
-msgstr "El dipòsit '{}' té un tipus no admés: 'type={}', s'ignora."
+msgstr "El dipòsit '{}' té un tipus no admès: 'type={}', s'ignora."
+
+#: ../dnf/base.py:251
+msgid "Metadata timer caching disabled when running on metered connection."
+msgstr ""
+
+#: ../dnf/base.py:256
+msgid "Metadata timer caching disabled when running on a battery."
+msgstr ""
+"El temporitzador de l'emmagatzematge en memòria cau de les metadades està "
+"inhabilitat quan s'executa amb bateria."
+
+#: ../dnf/base.py:261
+msgid "Metadata timer caching disabled."
+msgstr ""
+"El temporitzador de l'emmagatzematge en memòria cau de les metadades està "
+"inhabilitat."
+
+#: ../dnf/base.py:266
+msgid "Metadata cache refreshed recently."
+msgstr "Recentment s'ha refrescat la memòria cau de les metadades."
+
+#. performs the md sync
+#: ../dnf/base.py:291
+msgid "Metadata cache created."
+msgstr "S'ha creat la memòria cau de les metadades."
+
+#: ../dnf/base.py:327
+msgid "Loading repositories."
+msgstr ""
+
+#: ../dnf/base.py:335
+#, python-format
+msgid "%s: using metadata from %s."
+msgstr "%s: s'utilitzen les metadades del %s."
+
+#: ../dnf/base.py:341
+#, python-format
+msgid "%s, disabling."
+msgstr "%s i s'inhabilita."
+
+#: ../dnf/base.py:344
+#, python-format
+msgid "Last metadata expiration check: %s ago on %s."
+msgstr "Última comprovació del venciment de les metadades: fa %s el %s."
+
+#: ../dnf/base.py:400
+msgid ""
+"The downloaded packages were saved in cache until the next successful "
+"transaction."
+msgstr ""
+"Els paquets baixats es desen a la memòria cau fins a la propera transacció "
+"reeixida."
+
+#: ../dnf/base.py:402
+#, python-format
+msgid "You can remove cached packages by executing '%s'."
+msgstr "Podeu treure els paquets capturats amb l'execució de «%s»."
+
+#: ../dnf/base.py:463
+#, python-format
+msgid "Invalid tsflag in config file: %s"
+msgstr "tsflag invàlid en el fitxer de configuració: %s"
+
+#: ../dnf/base.py:522
+#, python-format
+msgid "Failed to add groups file for repository: %s - %s"
+msgstr "No s'ha pogut afegir el fitxer dels grups per al dipòsit: %s - %s"
+
+#: ../dnf/base.py:699
+msgid "Running transaction check"
+msgstr "S'executa la comprovació de la transacció"
+
+#: ../dnf/base.py:709
+msgid "Error: transaction check vs depsolve:"
+msgstr "Error: comprovació de la transacció vs. resolució de dependències:"
+
+#: ../dnf/base.py:715
+msgid "Transaction check succeeded."
+msgstr "La comprovació de la transacció ha tingut èxit."
+
+#: ../dnf/base.py:718
+msgid "Running transaction test"
+msgstr "S'executa la prova de la transacció"
+
+#: ../dnf/base.py:728
+msgid "Transaction check error:"
+msgstr "Error en la comprovació de la transacció:"
+
+#: ../dnf/base.py:735
+msgid "Transaction test succeeded."
+msgstr "La prova de la transacció ha tingut èxit."
+
+#: ../dnf/base.py:750
+msgid "Running transaction"
+msgstr "S'executa la transacció"
+
+#: ../dnf/base.py:776
+msgid "Disk Requirements:"
+msgstr "Requeriments de disc:"
+
+#: ../dnf/base.py:779
+#, python-format
+msgid "At least %dMB more space needed on the %s filesystem."
+msgid_plural "At least %dMB more space needed on the %s filesystem."
+msgstr[0] ""
+"Com a mínim es requereix %d MB més d'espai lliure al sistema de fitxers %s."
+msgstr[1] ""
+"Com a mínim es requereixen %d MB més d'espai lliure al sistema de fitxers "
+"%s."
+
+#: ../dnf/base.py:783
+msgid "Error Summary"
+msgstr "Resum de l'error"
+
+#: ../dnf/base.py:864
+msgid "Errors occurred during transaction."
+msgstr "S'han produït errors durant la transacció."
+
+#: ../dnf/base.py:868
+#, python-format
+msgid "Failed to obtain the transaction lock (logged in as: %s)."
+msgstr ""
+"No s'ha pogut obtenir el bloqueig de la transacció (inici de sessió com a "
+"%s)."
+
+#. should this be 'to_unicoded'?
+#: ../dnf/base.py:871 ../dnf/base.py:881
+msgid "Could not run transaction."
+msgstr "No es pot executar la transacció."
+
+#: ../dnf/base.py:878
+msgid "Transaction couldn't start:"
+msgstr "No es pot iniciar la transacció:"
+
+#: ../dnf/base.py:890
+#, python-format
+msgid "Failed to remove transaction file %s"
+msgstr "No s'ha pogut treure el fitxer de transaccions %s"
+
+#: ../dnf/base.py:942
+#, python-format
+msgid "%s was supposed to be installed but is not!"
+msgstr "S'havia d'instal·lar %s però no s'ha fet!"
+
+#: ../dnf/base.py:1002
+#, python-format
+msgid "%s was supposed to be removed but is not!"
+msgstr "S'havia de treure %s però no s'ha fet!"
+
+#: ../dnf/base.py:1073
+msgid "Some packages were not downloaded. Retrying."
+msgstr "No s'han pogut trobar alguns paquets i es torna a intentar."
+
+#: ../dnf/base.py:1103
+#, python-format
+msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
+msgstr ""
+"Les deltes dels RPM han reduït %.1f MB d'actualitzacions a %.1f MB (s'ha "
+"estalviat un %d.1%%)"
+
+#: ../dnf/base.py:1106
+#, python-format
+msgid ""
+"Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
+msgstr ""
+"Han fallat les deltes dels RPM, les quals han incrementat %.1f MB "
+"d'actualitzacions a %.1f MB (s'ha gastat un %d.1%%)"
+
+#: ../dnf/base.py:1133
+msgid "Could not open: {}"
+msgstr "No s'ha pogut obrir: {}"
+
+#: ../dnf/base.py:1171
+#, python-format
+msgid "Public key for %s is not installed"
+msgstr "La clau pública per a %s no està instal·lada"
+
+#: ../dnf/base.py:1175
+#, python-format
+msgid "Problem opening package %s"
+msgstr "Hi ha hagut un problema obrint el paquet %s"
+
+#: ../dnf/base.py:1183
+#, python-format
+msgid "Public key for %s is not trusted"
+msgstr "La clau pública per a %s no és de confiança"
+
+#: ../dnf/base.py:1187
+#, python-format
+msgid "Package %s is not signed"
+msgstr "El paquet %s no està signat"
+
+#: ../dnf/base.py:1202
+#, python-format
+msgid "Cannot remove %s"
+msgstr "No es pot treure %s"
+
+#: ../dnf/base.py:1206
+#, python-format
+msgid "%s removed"
+msgstr "S'ha tret %s"
+
+#: ../dnf/base.py:1473
+msgid "No match for group package \"{}\""
+msgstr "No hi ha cap coincidència per al grup de paquets \"{}\""
+
+#: ../dnf/base.py:1590
+msgid "No groups marked for removal."
+msgstr "No s'ha marcat cap grup per treure."
+
+#: ../dnf/base.py:1609
+msgid "No group marked for upgrade."
+msgstr "No s'ha marcat cap grup per actualitzar."
+
+#: ../dnf/base.py:1677 ../dnf/base.py:1688
+msgid "no package matched"
+msgstr "No hi ha cap paquet que hi coincideixi."
+
+#: ../dnf/base.py:1703
+#, python-format
+msgid "Package %s not installed, cannot downgrade it."
+msgstr "El paquet %s no està instal·lat, no es pot revertir."
+
+#: ../dnf/base.py:1712
+#, python-format
+msgid "Package %s of lower version already installed, cannot downgrade it."
+msgstr ""
+"Ja s'ha instal·lat una versió més baixa del paquet %s, no es pot revertir."
+
+#: ../dnf/base.py:1735
+#, python-format
+msgid "Package %s not installed, cannot reinstall it."
+msgstr "El paquet %s no està instal·lat, no es pot reinstal·lar."
+
+#: ../dnf/base.py:1750
+#, python-format
+msgid "File %s is a source package and cannot be updated, ignoring."
+msgstr "El fitxer %s és un paquet de fonts i no es pot actualitzar, s'ignora."
+
+#: ../dnf/base.py:1756
+#, python-format
+msgid "Package %s not installed, cannot update it."
+msgstr "El paquet %s no està instal·lat, no es pot actualitzar."
+
+#: ../dnf/base.py:1765
+#, python-format
+msgid "Package %s of higher version already installed, cannot update it."
+msgstr ""
+"Un paquet %s d'una versió superior ja està instal·lat, no es pot "
+"actualitzar."
+
+#: ../dnf/base.py:1790
+#, python-format
+msgid "Package %s available, but installed for different architecture."
+msgstr ""
+"El paquet %s està disponible, però està instal·lat per a una arquitectura "
+"diferent."
+
+#: ../dnf/base.py:1965
+#, python-format
+msgid "Package %s of lowest version already installed, cannot downgrade it."
+msgstr ""
+"Ja hi ha instal·lada la versió més baixa del paquet %s, no es pot revertir."
+
+#: ../dnf/base.py:2109
+msgid "No security updates needed, but {} update available"
+msgstr ""
+"No es requereix cap actualització de seguretat, però hi ha {} actualització "
+"disponible"
+
+#: ../dnf/base.py:2111
+msgid "No security updates needed, but {} updates available"
+msgstr ""
+"No es requereix cap actualització de seguretat, però hi ha {} "
+"actualitzacions disponibles"
+
+#: ../dnf/base.py:2115
+msgid "No security updates needed for \"{}\", but {} update available"
+msgstr ""
+"No es requereix cap actualització de seguretat per «{}», però hi ha {} "
+"actualització disponible"
+
+#: ../dnf/base.py:2117
+msgid "No security updates needed for \"{}\", but {} updates available"
+msgstr ""
+"No es requereix cap actualització de seguretat per «{}», però hi ha {} "
+"actualitzacions disponibles"
+
+#: ../dnf/base.py:2156
+#, python-format
+msgid ". Failing package is: %s"
+msgstr ". El paquet que falla és: %s"
+
+#: ../dnf/base.py:2157
+#, python-format
+msgid "GPG Keys are configured as: %s"
+msgstr "Les claus GPG estan configurades com a: %s"
+
+#: ../dnf/base.py:2169
+#, python-format
+msgid "GPG key at %s (0x%s) is already installed"
+msgstr "La clau GPG de %s (0x%s) ja està instal·lada"
+
+#: ../dnf/base.py:2206
+#, python-format
+msgid "Key import failed (code %d)"
+msgstr "La importació de la clau ha fallat (codi %d)"
+
+#: ../dnf/base.py:2208
+msgid "Key imported successfully"
+msgstr "La clau s'ha importat amb èxit"
+
+#: ../dnf/base.py:2212
+msgid "Didn't install any keys"
+msgstr "No s'ha instal·lat cap clau"
+
+#: ../dnf/base.py:2215
+#, python-format
+msgid ""
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
+"Check that the correct key URLs are configured for this repository."
+msgstr ""
+"Les claus GPG llistades per al dipòsit «%s» ja estan instal·lades però no són correctes per a aquest paquet.\n"
+"Comproveu que aquest dipòsit tingui configurats els URL amb la clau correcta."
+
+#: ../dnf/base.py:2226
+msgid "Import of key(s) didn't help, wrong key(s)?"
+msgstr "La importació de claus no ha ajudat, eren claus incorrectes?"
+
+#: ../dnf/base.py:2272
+msgid "  * Maybe you meant: {}"
+msgstr "  * Pot ser voleu dir: {}"
+
+#: ../dnf/base.py:2299
+msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
+msgstr ""
+"El paquet \"{}\" del dipòsit local \"{}\" té una suma de comprovació "
+"incorrecta"
+
+#: ../dnf/base.py:2308
+msgid "Some packages from local repository have incorrect checksum"
+msgstr ""
+"Alguns paquets del dipòsit local tenen una suma de comprovació incorrecta"
+
+#: ../dnf/base.py:2312
+msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
+msgstr "El paquet \"{}\" del dipòsit \"{}\" té una suma de comprovació incorrecta"
+
+#: ../dnf/base.py:2317
+msgid "Package \"{}\" from repository \"{}\" has invalid cache"
+msgstr "El paquet \"{}\" del dipòsit \"{}\" té una memòria cau incorrecta"
+
+#: ../dnf/base.py:2323
+msgid ""
+"Some packages have invalid cache, but cannot be downloaded due to \"--"
+"cacheonly\" option"
+msgstr ""
+
+#: ../dnf/base.py:2332
+#, python-format
+msgid "Package %s is already installed, skipping."
+msgstr "El paquet %s ja està instal·lat i s'ignora."

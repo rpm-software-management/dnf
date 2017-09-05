@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-27 15:23+0200\n"
+"POT-Creation-Date: 2017-09-05 09:21+0200\n"
 "PO-Revision-Date: 2017-07-14 05:38-0400\n"
 "Last-Translator: Emin Tufan Çetin <etcetin@gmail.com>\n"
 "Language-Team: Turkish\n"
@@ -57,7 +57,7 @@ msgstr "'%s' ile e-posta gönderimi başarısız: %s"
 msgid "Failed to execute command '%s': returned %d"
 msgstr "'%s' komutu çalıştırılamadı: %d yanıtı döndürüldü"
 
-#: ../dnf/automatic/main.py:216 ../dnf/cli/main.py:57
+#: ../dnf/automatic/main.py:217 ../dnf/cli/main.py:57
 #, python-format
 msgid "Error: %s"
 msgstr "Hata: %s"
@@ -616,14 +616,14 @@ msgstr "Yeniden yüklenecek paket"
 #: ../dnf/cli/commands/__init__.py:739 ../dnf/cli/commands/install.py:95
 #: ../dnf/cli/commands/install.py:123 ../dnf/cli/commands/upgrade.py:74
 #: ../dnf/cli/commands/upgrade.py:84 ../dnf/cli/commands/upgrade.py:87
-#: ../dnf/cli/cli.py:359 ../dnf/base.py:1704 ../dnf/base.py:1723
-#: ../dnf/base.py:1736 ../dnf/base.py:1757 ../dnf/base.py:1786
-#: ../dnf/base.py:1808 ../dnf/base.py:1863 ../dnf/base.py:1952
+#: ../dnf/cli/cli.py:359 ../dnf/base.py:1705 ../dnf/base.py:1724
+#: ../dnf/base.py:1737 ../dnf/base.py:1758 ../dnf/base.py:1787
+#: ../dnf/base.py:1809 ../dnf/base.py:1864 ../dnf/base.py:1953
 #, python-format
 msgid "No match for argument: %s"
 msgstr "Şu argüman için eşleşme yok: %s"
 
-#: ../dnf/cli/commands/reinstall.py:79 ../dnf/base.py:1783
+#: ../dnf/cli/commands/reinstall.py:79 ../dnf/base.py:1784
 #, python-format
 msgid "Package %s available, but not installed."
 msgstr "%s paketi mevcut, ama yüklü değil."
@@ -645,7 +645,7 @@ msgstr "Yüklenen paket %s%s mevcut değil."
 #: ../dnf/cli/commands/__init__.py:558 ../dnf/cli/commands/__init__.py:620
 #: ../dnf/cli/commands/__init__.py:669 ../dnf/cli/commands/install.py:80
 #: ../dnf/cli/commands/install.py:89 ../dnf/cli/commands/install.py:105
-#: ../dnf/cli/cli.py:213 ../dnf/cli/cli.py:378 ../dnf/base.py:1573
+#: ../dnf/cli/cli.py:213 ../dnf/cli/cli.py:378 ../dnf/base.py:1574
 msgid "Nothing to do."
 msgstr "Yapılacak bir şey yok."
 
@@ -670,13 +670,13 @@ msgid "No old installonly packages found for removal."
 msgstr ""
 
 #: ../dnf/cli/commands/remove.py:108 ../dnf/cli/commands/install.py:86
-#: ../dnf/cli/commands/install.py:102 ../dnf/base.py:1852
+#: ../dnf/cli/commands/install.py:102 ../dnf/base.py:1853
 #, python-format
 msgid "Not a valid form: %s"
 msgstr "Geçerli bir biçim değil: %s"
 
 #: ../dnf/cli/commands/remove.py:125 ../dnf/cli/commands/__init__.py:709
-#: ../dnf/base.py:1869
+#: ../dnf/base.py:1870
 msgid "No packages marked for removal."
 msgstr "Kaldırılması için işaretlenen paket yok."
 
@@ -1258,7 +1258,7 @@ msgstr ""
 "neden olur."
 
 #: ../dnf/cli/commands/__init__.py:887 ../dnf/cli/cli.py:608
-#: ../dnf/cli/cli.py:638 ../dnf/base.py:1834
+#: ../dnf/cli/cli.py:638 ../dnf/base.py:1835
 #, python-format
 msgid "No package %s installed."
 msgstr "%s paketi kurulu değil."
@@ -1309,28 +1309,6 @@ msgstr "sisteminizdeki bir paketi ya da paketleri yükseltin"
 #: ../dnf/cli/commands/upgrade.py:42
 msgid "Package to upgrade"
 msgstr "Yükseltilecek paket"
-
-#: ../dnf/cli/main.py:109
-msgid "No read/execute access in current directory, moving to /"
-msgstr "Geçerli dizinde okuma/çalıştırma izni yok, /'a taşınıyor"
-
-#: ../dnf/cli/main.py:127
-#, python-format
-msgid "(try to add '%s' to command line to replace conflicting packages"
-msgstr ""
-
-#: ../dnf/cli/main.py:130
-#, python-format
-msgid " or '%s' to skip uninstalable packages)"
-msgstr ""
-
-#: ../dnf/cli/main.py:147
-msgid "Dependencies resolved."
-msgstr "Bağımlılıklar çözüldü."
-
-#: ../dnf/cli/main.py:165
-msgid "Complete!"
-msgstr "Tamamlandı!"
 
 #: ../dnf/cli/utils.py:98
 msgid "Running"
@@ -1436,7 +1414,7 @@ msgstr "Kullanılmaz Hale Gelen Paketler"
 msgid "No packages marked for distribution synchronization."
 msgstr "Dağıtım eşzamanlaması için imlenmiş paket yok."
 
-#: ../dnf/cli/cli.py:372 ../dnf/base.py:1959
+#: ../dnf/cli/cli.py:372 ../dnf/base.py:1960
 #, python-format
 msgid "Packages for argument %s available, but not installed."
 msgstr ""
@@ -1980,15 +1958,15 @@ msgstr "Küme"
 msgid "Packages"
 msgstr "Paketler"
 
-#: ../dnf/cli/output.py:1042 ../dnf/yum/rpmtrans.py:129
+#: ../dnf/cli/output.py:1042 ../dnf/yum/rpmtrans.py:125
 msgid "Installing"
 msgstr "Yükleniyor"
 
-#: ../dnf/cli/output.py:1043 ../dnf/yum/rpmtrans.py:132
+#: ../dnf/cli/output.py:1043 ../dnf/yum/rpmtrans.py:128
 msgid "Upgrading"
 msgstr "Yükseltiliyor"
 
-#: ../dnf/cli/output.py:1044 ../dnf/yum/rpmtrans.py:131
+#: ../dnf/cli/output.py:1044 ../dnf/yum/rpmtrans.py:127
 msgid "Reinstalling"
 msgstr "Yeniden Yükleniyor"
 
@@ -2009,14 +1987,14 @@ msgid "Removing"
 msgstr "Kaldırılıyor"
 
 #: ../dnf/cli/output.py:1049
-msgid "Removing depended packages"
+msgid "Removing dependent packages"
 msgstr ""
 
 #: ../dnf/cli/output.py:1050
 msgid "Removing unused dependencies"
 msgstr "Kullanılmayan bağımlılıklar kaldırılıyor"
 
-#: ../dnf/cli/output.py:1051 ../dnf/yum/rpmtrans.py:127
+#: ../dnf/cli/output.py:1051 ../dnf/yum/rpmtrans.py:123
 msgid "Downgrading"
 msgstr "Eski Sürüme Dönülüyor"
 
@@ -2318,7 +2296,7 @@ msgstr "Bağımlılık Yüklemesi"
 msgid "Obsoleted"
 msgstr "Kullanılmaz Hale Geldi"
 
-#: ../dnf/cli/output.py:1741 ../dnf/yum/rpmtrans.py:130
+#: ../dnf/cli/output.py:1741 ../dnf/yum/rpmtrans.py:126
 msgid "Obsoleting"
 msgstr "Kullanılmaz Hale Geliyor"
 
@@ -2377,6 +2355,28 @@ msgstr "--> Bağımlılık çözümü başlıyor"
 #: ../dnf/cli/output.py:1944
 msgid "--> Finished dependency resolution"
 msgstr "-->Bağımlılık çözümü bitiyor"
+
+#: ../dnf/cli/main.py:109
+msgid "No read/execute access in current directory, moving to /"
+msgstr "Geçerli dizinde okuma/çalıştırma izni yok, /'a taşınıyor"
+
+#: ../dnf/cli/main.py:127
+#, python-format
+msgid "(try to add '%s' to command line to replace conflicting packages"
+msgstr ""
+
+#: ../dnf/cli/main.py:130
+#, python-format
+msgid " or '%s' to skip uninstallable packages)"
+msgstr ""
+
+#: ../dnf/cli/main.py:147
+msgid "Dependencies resolved."
+msgstr "Bağımlılıklar çözüldü."
+
+#: ../dnf/cli/main.py:165
+msgid "Complete!"
+msgstr "Tamamlandı!"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -2612,23 +2612,23 @@ msgstr "DNF DB geçmişi başlatılamıyor: %s"
 msgid "Can not create history database at '%s'."
 msgstr "'%s'de geçmiş veri tabanı oluşturulamıyor."
 
-#: ../dnf/yum/rpmtrans.py:126
+#: ../dnf/yum/rpmtrans.py:122
 msgid "Cleanup"
 msgstr "Temizleniyor"
 
-#: ../dnf/yum/rpmtrans.py:128
+#: ../dnf/yum/rpmtrans.py:124
 msgid "Erasing"
 msgstr "Siliniyor"
 
-#: ../dnf/yum/rpmtrans.py:133
+#: ../dnf/yum/rpmtrans.py:129
 msgid "Verifying"
 msgstr "Doğrulanıyor"
 
-#: ../dnf/yum/rpmtrans.py:134
+#: ../dnf/yum/rpmtrans.py:130
 msgid "Preparing"
 msgstr "Hazırlanıyor"
 
-#: ../dnf/yum/rpmtrans.py:135
+#: ../dnf/yum/rpmtrans.py:131
 msgid "Running scriptlet"
 msgstr "Betik yürütülüyor"
 
@@ -2664,347 +2664,6 @@ msgstr ""
 msgid "Problem"
 msgstr "Sorun"
 
-#: ../dnf/base.py:250
-msgid "Metadata timer caching disabled when running on metered connection."
-msgstr ""
-
-#: ../dnf/base.py:255
-msgid "Metadata timer caching disabled when running on a battery."
-msgstr ""
-"Pilde çalışırken üstveri zamanlayıcı önbelleklemesi devre dışı bırakıldı."
-
-#: ../dnf/base.py:260
-msgid "Metadata timer caching disabled."
-msgstr "Üstveri zamanlayıcı önbellekleme devre dışı bırakıldı."
-
-#: ../dnf/base.py:265
-msgid "Metadata cache refreshed recently."
-msgstr "Üstveri önbelleği yakın zamanda yenilendi."
-
-#. performs the md sync
-#: ../dnf/base.py:290
-msgid "Metadata cache created."
-msgstr "Üstveri önbelleği oluşturuldu."
-
-#: ../dnf/base.py:326
-msgid "Loading repositories."
-msgstr ""
-
-#: ../dnf/base.py:334
-#, python-format
-msgid "%s: using metadata from %s."
-msgstr "%s: %s'den üstveri kullanılıyor."
-
-#: ../dnf/base.py:340
-#, python-format
-msgid "%s, disabling."
-msgstr "%s, devre dışı bırakılıyor."
-
-#: ../dnf/base.py:343
-#, python-format
-msgid "Last metadata expiration check: %s ago on %s."
-msgstr "Son üstveri süre bitiş denetimi: %s önce %s tarihinde."
-
-#: ../dnf/base.py:399
-msgid ""
-"The downloaded packages were saved in cache until the next successful "
-"transaction."
-msgstr ""
-"İndirilen paketlerler bir sonraki başarılı işleme dek önbellekte kaydedildi."
-
-#: ../dnf/base.py:401
-#, python-format
-msgid "You can remove cached packages by executing '%s'."
-msgstr "Önbelleğe alınan paketleri '%s' komutuyla kaldırabilirsiniz."
-
-#: ../dnf/base.py:462
-#, python-format
-msgid "Invalid tsflag in config file: %s"
-msgstr "Yapılandırma dosyasında geçersiz tsflag: %s"
-
-#: ../dnf/base.py:521
-#, python-format
-msgid "Failed to add groups file for repository: %s - %s"
-msgstr "Depo için küme dosyasının eklenmesi başarısız: %s -%s"
-
-#: ../dnf/base.py:698
-msgid "Running transaction check"
-msgstr "İşlem denetimi çalıştırılıyor"
-
-#: ../dnf/base.py:708
-msgid "Error: transaction check vs depsolve:"
-msgstr ""
-
-#: ../dnf/base.py:714
-msgid "Transaction check succeeded."
-msgstr "İşlem denetimi başarılı."
-
-#: ../dnf/base.py:717
-msgid "Running transaction test"
-msgstr "İşlem sınama çalıştırılıyor"
-
-#: ../dnf/base.py:727
-msgid "Transaction check error:"
-msgstr "İşlem denetim hatası:"
-
-#: ../dnf/base.py:734
-msgid "Transaction test succeeded."
-msgstr "İşlem sınaması başarılı."
-
-#: ../dnf/base.py:749
-msgid "Running transaction"
-msgstr "İşlem çalıştırılıyor"
-
-#: ../dnf/base.py:775
-msgid "Disk Requirements:"
-msgstr "Disk Gereksinimleri:"
-
-#: ../dnf/base.py:778
-#, python-format
-msgid "At least %dMB more space needed on the %s filesystem."
-msgid_plural "At least %dMB more space needed on the %s filesystem."
-msgstr[0] " %s dosya düzeninde en az %dMB boşluğa daha gereksinim var."
-msgstr[1] " %s dosya düzeninde en az %dMB boşluğa daha gereksinim var."
-
-#: ../dnf/base.py:782
-msgid "Error Summary"
-msgstr "Hata Özeti"
-
-#: ../dnf/base.py:863
-msgid "Errors occurred during transaction."
-msgstr "İşlem sırasında hatalar oluştu."
-
-#: ../dnf/base.py:867
-#, python-format
-msgid "Failed to obtain the transaction lock (logged in as: %s)."
-msgstr "İşlem kilidi edinme başarısız (%s olarak giriş yapıldı)."
-
-#. should this be 'to_unicoded'?
-#: ../dnf/base.py:870 ../dnf/base.py:880
-msgid "Could not run transaction."
-msgstr "İşlem çalıştırılamıyor."
-
-#: ../dnf/base.py:877
-msgid "Transaction couldn't start:"
-msgstr "İşlem çalışamıyor:"
-
-#: ../dnf/base.py:889
-#, python-format
-msgid "Failed to remove transaction file %s"
-msgstr "%s işlem dosyası kaldırılamadı"
-
-#: ../dnf/base.py:941
-#, python-format
-msgid "%s was supposed to be installed but is not!"
-msgstr "%s yüklemiş olması gerekiyor ama değil!"
-
-#: ../dnf/base.py:1001
-#, python-format
-msgid "%s was supposed to be removed but is not!"
-msgstr "%s kaldırılmış olması gerekiyor ama değil!"
-
-#: ../dnf/base.py:1019 ../dnf/repo.py:543 ../dnf/repo.py:1015
-#, python-format
-msgid "Failed to synchronize cache for repo '%s'"
-msgstr "'%s' deposu için önbellek eşzamanlanamıyor"
-
-#: ../dnf/base.py:1072
-msgid "Some packages were not downloaded. Retrying."
-msgstr "Bazı paketler indirilmedi. Yeniden deniyor."
-
-#: ../dnf/base.py:1102
-#, python-format
-msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
-msgstr ""
-"Delta RPM'ler %.1f MB boyutundaki güncellemeyi azaltarak %.1f MB yaptı "
-"(%%%d.1 kurtarıldı)"
-
-#: ../dnf/base.py:1105
-#, python-format
-msgid ""
-"Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
-msgstr ""
-"Başarısız Delta RPM'ler güncellemeleri %.1f MB'den %.1f MB'ye yükseltti "
-"(%%%d.1 israf)"
-
-#: ../dnf/base.py:1132
-msgid "Could not open: {}"
-msgstr "Açılamıyor: {}"
-
-#: ../dnf/base.py:1170
-#, python-format
-msgid "Public key for %s is not installed"
-msgstr "%s için genel anahtar yüklü değil"
-
-#: ../dnf/base.py:1174
-#, python-format
-msgid "Problem opening package %s"
-msgstr "%s paketinin açılmasında sorun"
-
-#: ../dnf/base.py:1182
-#, python-format
-msgid "Public key for %s is not trusted"
-msgstr "%s için genel anahtar güvenilir değil"
-
-#: ../dnf/base.py:1186
-#, python-format
-msgid "Package %s is not signed"
-msgstr "%s paketi imzalanmamış"
-
-#: ../dnf/base.py:1201
-#, python-format
-msgid "Cannot remove %s"
-msgstr "%s silinemiyor"
-
-#: ../dnf/base.py:1205
-#, python-format
-msgid "%s removed"
-msgstr "%s kaldırıldı"
-
-#: ../dnf/base.py:1472
-msgid "No match for group package \"{}\""
-msgstr "\"{}\" küme paketi için eşleşme yok"
-
-#: ../dnf/base.py:1589
-msgid "No groups marked for removal."
-msgstr "Kaldırma için imlenen küme yok."
-
-#: ../dnf/base.py:1608
-msgid "No group marked for upgrade."
-msgstr "Yükseltme için imlenen küme yok."
-
-#: ../dnf/base.py:1676 ../dnf/base.py:1687
-msgid "no package matched"
-msgstr "eşleşen paket yok"
-
-#: ../dnf/base.py:1702
-#, python-format
-msgid "Package %s not installed, cannot downgrade it."
-msgstr "%s paketi yüklü değil, eski sürüme döndürülemez."
-
-#: ../dnf/base.py:1711
-#, python-format
-msgid "Package %s of lower version already installed, cannot downgrade it."
-msgstr "%s paketinin zaten en düşük sürümü yüklenmiş, güncellenemez."
-
-#: ../dnf/base.py:1734
-#, python-format
-msgid "Package %s not installed, cannot reinstall it."
-msgstr "%s paketi yüklü değil, yeniden yüklenemez."
-
-#: ../dnf/base.py:1749
-#, python-format
-msgid "File %s is a source package and cannot be updated, ignoring."
-msgstr "%s dosyası bir kaynak pakettir ve yükseltilemez, dikkate alınmıyor."
-
-#: ../dnf/base.py:1755
-#, python-format
-msgid "Package %s not installed, cannot update it."
-msgstr "%s paketi kurulu değil, güncellenemez."
-
-#: ../dnf/base.py:1764
-#, python-format
-msgid "Package %s of higher version already installed, cannot update it."
-msgstr "%s paketinin zaten en yüksek sürümü yüklenmiş, güncellenemez."
-
-#: ../dnf/base.py:1789
-#, python-format
-msgid "Package %s available, but installed for different architecture."
-msgstr ""
-
-#: ../dnf/base.py:1964
-#, python-format
-msgid "Package %s of lowest version already installed, cannot downgrade it."
-msgstr "%s paketinin zaten en düşük sürümü yüklü, eski sürüme döndürülemez."
-
-#: ../dnf/base.py:2108
-msgid "No security updates needed, but {} update available"
-msgstr "Güvenlik güncellemelerine gerek yok, ama {} güncelleme mevcut"
-
-#: ../dnf/base.py:2110
-msgid "No security updates needed, but {} updates available"
-msgstr "Güvenlik güncellemelerine gerek yok, ama {} güncelleme mevcut"
-
-#: ../dnf/base.py:2114
-msgid "No security updates needed for \"{}\", but {} update available"
-msgstr "\"{}\" için güvenlik güncellemesine gerek yok, ama {} güncelleme mevcut"
-
-#: ../dnf/base.py:2116
-msgid "No security updates needed for \"{}\", but {} updates available"
-msgstr "\"{}\" için güvenlik güncellemesine gerek yok, ama {} güncelleme mevcut"
-
-#: ../dnf/base.py:2155
-#, python-format
-msgid ". Failing package is: %s"
-msgstr ""
-
-#: ../dnf/base.py:2156
-#, python-format
-msgid "GPG Keys are configured as: %s"
-msgstr "GPG Anahtarları şöyle yapılandırıldı: %s"
-
-#: ../dnf/base.py:2168
-#, python-format
-msgid "GPG key at %s (0x%s) is already installed"
-msgstr "%s'deki GPG anahtarı (0x%s) zaten yüklendi"
-
-#: ../dnf/base.py:2205
-#, python-format
-msgid "Key import failed (code %d)"
-msgstr "Anahtar içe aktarma başarısız (kod %d)"
-
-#: ../dnf/base.py:2207
-msgid "Key imported successfully"
-msgstr "Anahtar başarıyla içeri aktarıldı"
-
-#: ../dnf/base.py:2211
-msgid "Didn't install any keys"
-msgstr "Hiç anahtar yüklenmedi"
-
-#: ../dnf/base.py:2214
-#, python-format
-msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
-"Check that the correct key URLs are configured for this repository."
-msgstr ""
-"\"%s\" deposu için listelenen GPG anahtarları zaten kuruldu ama bu paket için doğru değiller.\n"
-"Bu depo için doğru anahtar URL'lerinin yapılandırıldığını denetle."
-
-#: ../dnf/base.py:2225
-msgid "Import of key(s) didn't help, wrong key(s)?"
-msgstr "Anahtar(lar)ın içe aktarılması yardımcı olmadı, yanlış anahtar(lar)?"
-
-#: ../dnf/base.py:2271
-msgid "  * Maybe you meant: {}"
-msgstr ""
-
-#: ../dnf/base.py:2298
-msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
-msgstr ""
-
-#: ../dnf/base.py:2307
-msgid "Some packages from local repository have incorrect checksum"
-msgstr ""
-
-#: ../dnf/base.py:2311
-msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
-msgstr ""
-
-#: ../dnf/base.py:2316
-msgid "Package \"{}\" from repository \"{}\" has invalid cache"
-msgstr ""
-
-#: ../dnf/base.py:2322
-msgid ""
-"Some packages have invalid cache, but cannot be downloaded due to \"--"
-"cacheonly\" option"
-msgstr ""
-
-#: ../dnf/base.py:2331
-#, python-format
-msgid "Package %s is already installed, skipping."
-msgstr "%s paketi zaten yüklenmiş, es geçiliyor."
-
 #: ../dnf/repo.py:105
 #, python-format
 msgid "no matching payload factory for %s"
@@ -3019,6 +2678,11 @@ msgstr "Zaten indirildi"
 #, python-format
 msgid "determining the fastest mirror (%d hosts).. "
 msgstr "en hızlı yansı belirleniyor (%d ana makine).. "
+
+#: ../dnf/repo.py:543 ../dnf/repo.py:1015 ../dnf/base.py:1020
+#, python-format
+msgid "Failed to synchronize cache for repo '%s'"
+msgstr "'%s' deposu için önbellek eşzamanlanamıyor"
 
 #: ../dnf/repo.py:790
 #, python-format
@@ -3085,3 +2749,339 @@ msgstr ""
 #, fuzzy
 msgid "Repository '{}' has unsupported type: 'type={}', skipping."
 msgstr "'{}' deposu desteklenmeyen türde: 'type={}', es geçiliyor."
+
+#: ../dnf/base.py:251
+msgid "Metadata timer caching disabled when running on metered connection."
+msgstr ""
+
+#: ../dnf/base.py:256
+msgid "Metadata timer caching disabled when running on a battery."
+msgstr ""
+"Pilde çalışırken üstveri zamanlayıcı önbelleklemesi devre dışı bırakıldı."
+
+#: ../dnf/base.py:261
+msgid "Metadata timer caching disabled."
+msgstr "Üstveri zamanlayıcı önbellekleme devre dışı bırakıldı."
+
+#: ../dnf/base.py:266
+msgid "Metadata cache refreshed recently."
+msgstr "Üstveri önbelleği yakın zamanda yenilendi."
+
+#. performs the md sync
+#: ../dnf/base.py:291
+msgid "Metadata cache created."
+msgstr "Üstveri önbelleği oluşturuldu."
+
+#: ../dnf/base.py:327
+msgid "Loading repositories."
+msgstr ""
+
+#: ../dnf/base.py:335
+#, python-format
+msgid "%s: using metadata from %s."
+msgstr "%s: %s'den üstveri kullanılıyor."
+
+#: ../dnf/base.py:341
+#, python-format
+msgid "%s, disabling."
+msgstr "%s, devre dışı bırakılıyor."
+
+#: ../dnf/base.py:344
+#, python-format
+msgid "Last metadata expiration check: %s ago on %s."
+msgstr "Son üstveri süre bitiş denetimi: %s önce %s tarihinde."
+
+#: ../dnf/base.py:400
+msgid ""
+"The downloaded packages were saved in cache until the next successful "
+"transaction."
+msgstr ""
+"İndirilen paketlerler bir sonraki başarılı işleme dek önbellekte kaydedildi."
+
+#: ../dnf/base.py:402
+#, python-format
+msgid "You can remove cached packages by executing '%s'."
+msgstr "Önbelleğe alınan paketleri '%s' komutuyla kaldırabilirsiniz."
+
+#: ../dnf/base.py:463
+#, python-format
+msgid "Invalid tsflag in config file: %s"
+msgstr "Yapılandırma dosyasında geçersiz tsflag: %s"
+
+#: ../dnf/base.py:522
+#, python-format
+msgid "Failed to add groups file for repository: %s - %s"
+msgstr "Depo için küme dosyasının eklenmesi başarısız: %s -%s"
+
+#: ../dnf/base.py:699
+msgid "Running transaction check"
+msgstr "İşlem denetimi çalıştırılıyor"
+
+#: ../dnf/base.py:709
+msgid "Error: transaction check vs depsolve:"
+msgstr ""
+
+#: ../dnf/base.py:715
+msgid "Transaction check succeeded."
+msgstr "İşlem denetimi başarılı."
+
+#: ../dnf/base.py:718
+msgid "Running transaction test"
+msgstr "İşlem sınama çalıştırılıyor"
+
+#: ../dnf/base.py:728
+msgid "Transaction check error:"
+msgstr "İşlem denetim hatası:"
+
+#: ../dnf/base.py:735
+msgid "Transaction test succeeded."
+msgstr "İşlem sınaması başarılı."
+
+#: ../dnf/base.py:750
+msgid "Running transaction"
+msgstr "İşlem çalıştırılıyor"
+
+#: ../dnf/base.py:776
+msgid "Disk Requirements:"
+msgstr "Disk Gereksinimleri:"
+
+#: ../dnf/base.py:779
+#, python-format
+msgid "At least %dMB more space needed on the %s filesystem."
+msgid_plural "At least %dMB more space needed on the %s filesystem."
+msgstr[0] " %s dosya düzeninde en az %dMB boşluğa daha gereksinim var."
+msgstr[1] " %s dosya düzeninde en az %dMB boşluğa daha gereksinim var."
+
+#: ../dnf/base.py:783
+msgid "Error Summary"
+msgstr "Hata Özeti"
+
+#: ../dnf/base.py:864
+msgid "Errors occurred during transaction."
+msgstr "İşlem sırasında hatalar oluştu."
+
+#: ../dnf/base.py:868
+#, python-format
+msgid "Failed to obtain the transaction lock (logged in as: %s)."
+msgstr "İşlem kilidi edinme başarısız (%s olarak giriş yapıldı)."
+
+#. should this be 'to_unicoded'?
+#: ../dnf/base.py:871 ../dnf/base.py:881
+msgid "Could not run transaction."
+msgstr "İşlem çalıştırılamıyor."
+
+#: ../dnf/base.py:878
+msgid "Transaction couldn't start:"
+msgstr "İşlem çalışamıyor:"
+
+#: ../dnf/base.py:890
+#, python-format
+msgid "Failed to remove transaction file %s"
+msgstr "%s işlem dosyası kaldırılamadı"
+
+#: ../dnf/base.py:942
+#, python-format
+msgid "%s was supposed to be installed but is not!"
+msgstr "%s yüklemiş olması gerekiyor ama değil!"
+
+#: ../dnf/base.py:1002
+#, python-format
+msgid "%s was supposed to be removed but is not!"
+msgstr "%s kaldırılmış olması gerekiyor ama değil!"
+
+#: ../dnf/base.py:1073
+msgid "Some packages were not downloaded. Retrying."
+msgstr "Bazı paketler indirilmedi. Yeniden deniyor."
+
+#: ../dnf/base.py:1103
+#, python-format
+msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
+msgstr ""
+"Delta RPM'ler %.1f MB boyutundaki güncellemeyi azaltarak %.1f MB yaptı "
+"(%%%d.1 kurtarıldı)"
+
+#: ../dnf/base.py:1106
+#, python-format
+msgid ""
+"Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
+msgstr ""
+"Başarısız Delta RPM'ler güncellemeleri %.1f MB'den %.1f MB'ye yükseltti "
+"(%%%d.1 israf)"
+
+#: ../dnf/base.py:1133
+msgid "Could not open: {}"
+msgstr "Açılamıyor: {}"
+
+#: ../dnf/base.py:1171
+#, python-format
+msgid "Public key for %s is not installed"
+msgstr "%s için genel anahtar yüklü değil"
+
+#: ../dnf/base.py:1175
+#, python-format
+msgid "Problem opening package %s"
+msgstr "%s paketinin açılmasında sorun"
+
+#: ../dnf/base.py:1183
+#, python-format
+msgid "Public key for %s is not trusted"
+msgstr "%s için genel anahtar güvenilir değil"
+
+#: ../dnf/base.py:1187
+#, python-format
+msgid "Package %s is not signed"
+msgstr "%s paketi imzalanmamış"
+
+#: ../dnf/base.py:1202
+#, python-format
+msgid "Cannot remove %s"
+msgstr "%s silinemiyor"
+
+#: ../dnf/base.py:1206
+#, python-format
+msgid "%s removed"
+msgstr "%s kaldırıldı"
+
+#: ../dnf/base.py:1473
+msgid "No match for group package \"{}\""
+msgstr "\"{}\" küme paketi için eşleşme yok"
+
+#: ../dnf/base.py:1590
+msgid "No groups marked for removal."
+msgstr "Kaldırma için imlenen küme yok."
+
+#: ../dnf/base.py:1609
+msgid "No group marked for upgrade."
+msgstr "Yükseltme için imlenen küme yok."
+
+#: ../dnf/base.py:1677 ../dnf/base.py:1688
+msgid "no package matched"
+msgstr "eşleşen paket yok"
+
+#: ../dnf/base.py:1703
+#, python-format
+msgid "Package %s not installed, cannot downgrade it."
+msgstr "%s paketi yüklü değil, eski sürüme döndürülemez."
+
+#: ../dnf/base.py:1712
+#, python-format
+msgid "Package %s of lower version already installed, cannot downgrade it."
+msgstr "%s paketinin zaten en düşük sürümü yüklenmiş, güncellenemez."
+
+#: ../dnf/base.py:1735
+#, python-format
+msgid "Package %s not installed, cannot reinstall it."
+msgstr "%s paketi yüklü değil, yeniden yüklenemez."
+
+#: ../dnf/base.py:1750
+#, python-format
+msgid "File %s is a source package and cannot be updated, ignoring."
+msgstr "%s dosyası bir kaynak pakettir ve yükseltilemez, dikkate alınmıyor."
+
+#: ../dnf/base.py:1756
+#, python-format
+msgid "Package %s not installed, cannot update it."
+msgstr "%s paketi kurulu değil, güncellenemez."
+
+#: ../dnf/base.py:1765
+#, python-format
+msgid "Package %s of higher version already installed, cannot update it."
+msgstr "%s paketinin zaten en yüksek sürümü yüklenmiş, güncellenemez."
+
+#: ../dnf/base.py:1790
+#, python-format
+msgid "Package %s available, but installed for different architecture."
+msgstr ""
+
+#: ../dnf/base.py:1965
+#, python-format
+msgid "Package %s of lowest version already installed, cannot downgrade it."
+msgstr "%s paketinin zaten en düşük sürümü yüklü, eski sürüme döndürülemez."
+
+#: ../dnf/base.py:2109
+msgid "No security updates needed, but {} update available"
+msgstr "Güvenlik güncellemelerine gerek yok, ama {} güncelleme mevcut"
+
+#: ../dnf/base.py:2111
+msgid "No security updates needed, but {} updates available"
+msgstr "Güvenlik güncellemelerine gerek yok, ama {} güncelleme mevcut"
+
+#: ../dnf/base.py:2115
+msgid "No security updates needed for \"{}\", but {} update available"
+msgstr "\"{}\" için güvenlik güncellemesine gerek yok, ama {} güncelleme mevcut"
+
+#: ../dnf/base.py:2117
+msgid "No security updates needed for \"{}\", but {} updates available"
+msgstr "\"{}\" için güvenlik güncellemesine gerek yok, ama {} güncelleme mevcut"
+
+#: ../dnf/base.py:2156
+#, python-format
+msgid ". Failing package is: %s"
+msgstr ""
+
+#: ../dnf/base.py:2157
+#, python-format
+msgid "GPG Keys are configured as: %s"
+msgstr "GPG Anahtarları şöyle yapılandırıldı: %s"
+
+#: ../dnf/base.py:2169
+#, python-format
+msgid "GPG key at %s (0x%s) is already installed"
+msgstr "%s'deki GPG anahtarı (0x%s) zaten yüklendi"
+
+#: ../dnf/base.py:2206
+#, python-format
+msgid "Key import failed (code %d)"
+msgstr "Anahtar içe aktarma başarısız (kod %d)"
+
+#: ../dnf/base.py:2208
+msgid "Key imported successfully"
+msgstr "Anahtar başarıyla içeri aktarıldı"
+
+#: ../dnf/base.py:2212
+msgid "Didn't install any keys"
+msgstr "Hiç anahtar yüklenmedi"
+
+#: ../dnf/base.py:2215
+#, python-format
+msgid ""
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
+"Check that the correct key URLs are configured for this repository."
+msgstr ""
+"\"%s\" deposu için listelenen GPG anahtarları zaten kuruldu ama bu paket için doğru değiller.\n"
+"Bu depo için doğru anahtar URL'lerinin yapılandırıldığını denetle."
+
+#: ../dnf/base.py:2226
+msgid "Import of key(s) didn't help, wrong key(s)?"
+msgstr "Anahtar(lar)ın içe aktarılması yardımcı olmadı, yanlış anahtar(lar)?"
+
+#: ../dnf/base.py:2272
+msgid "  * Maybe you meant: {}"
+msgstr ""
+
+#: ../dnf/base.py:2299
+msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
+msgstr ""
+
+#: ../dnf/base.py:2308
+msgid "Some packages from local repository have incorrect checksum"
+msgstr ""
+
+#: ../dnf/base.py:2312
+msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
+msgstr ""
+
+#: ../dnf/base.py:2317
+msgid "Package \"{}\" from repository \"{}\" has invalid cache"
+msgstr ""
+
+#: ../dnf/base.py:2323
+msgid ""
+"Some packages have invalid cache, but cannot be downloaded due to \"--"
+"cacheonly\" option"
+msgstr ""
+
+#: ../dnf/base.py:2332
+#, python-format
+msgid "Package %s is already installed, skipping."
+msgstr "%s paketi zaten yüklenmiş, es geçiliyor."

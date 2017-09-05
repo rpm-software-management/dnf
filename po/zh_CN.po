@@ -24,7 +24,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2017-08-27 15:23+0200\n"
+"POT-Creation-Date: 2017-09-05 09:21+0200\n"
 "PO-Revision-Date: 2017-07-13 11:23-0400\n"
 "Last-Translator: cheng ye <18969068329@163.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/dnf/language/zh_CN/)\n"
@@ -75,7 +75,7 @@ msgstr "使用 '%s' 发送邮件失败: %s"
 msgid "Failed to execute command '%s': returned %d"
 msgstr "无法执行命令  '%s' ：返回 %d"
 
-#: ../dnf/automatic/main.py:216 ../dnf/cli/main.py:57
+#: ../dnf/automatic/main.py:217 ../dnf/cli/main.py:57
 #, python-format
 msgid "Error: %s"
 msgstr "错误：%s"
@@ -598,7 +598,7 @@ msgid "%s unmarked as user installed."
 msgstr "%s 取消标记为用户安装的。"
 
 #: ../dnf/cli/commands/mark.py:57
-#, python-format
+#, fuzzy, python-format
 msgid "%s marked as group installed."
 msgstr ""
 
@@ -627,14 +627,14 @@ msgstr "需要重新安装的软件包"
 #: ../dnf/cli/commands/__init__.py:739 ../dnf/cli/commands/install.py:95
 #: ../dnf/cli/commands/install.py:123 ../dnf/cli/commands/upgrade.py:74
 #: ../dnf/cli/commands/upgrade.py:84 ../dnf/cli/commands/upgrade.py:87
-#: ../dnf/cli/cli.py:359 ../dnf/base.py:1704 ../dnf/base.py:1723
-#: ../dnf/base.py:1736 ../dnf/base.py:1757 ../dnf/base.py:1786
-#: ../dnf/base.py:1808 ../dnf/base.py:1863 ../dnf/base.py:1952
+#: ../dnf/cli/cli.py:359 ../dnf/base.py:1705 ../dnf/base.py:1724
+#: ../dnf/base.py:1737 ../dnf/base.py:1758 ../dnf/base.py:1787
+#: ../dnf/base.py:1809 ../dnf/base.py:1864 ../dnf/base.py:1953
 #, python-format
 msgid "No match for argument: %s"
 msgstr "未找到匹配的参数： %s"
 
-#: ../dnf/cli/commands/reinstall.py:79 ../dnf/base.py:1783
+#: ../dnf/cli/commands/reinstall.py:79 ../dnf/base.py:1784
 #, python-format
 msgid "Package %s available, but not installed."
 msgstr "软件包 %s 可用，但不会被安装"
@@ -656,7 +656,7 @@ msgstr "已安装的软件包%s%s已不可用。"
 #: ../dnf/cli/commands/__init__.py:558 ../dnf/cli/commands/__init__.py:620
 #: ../dnf/cli/commands/__init__.py:669 ../dnf/cli/commands/install.py:80
 #: ../dnf/cli/commands/install.py:89 ../dnf/cli/commands/install.py:105
-#: ../dnf/cli/cli.py:213 ../dnf/cli/cli.py:378 ../dnf/base.py:1573
+#: ../dnf/cli/cli.py:213 ../dnf/cli/cli.py:378 ../dnf/base.py:1574
 msgid "Nothing to do."
 msgstr "无需任何处理。"
 
@@ -681,13 +681,13 @@ msgid "No old installonly packages found for removal."
 msgstr "没有已过时且已安装的软件包需要删除"
 
 #: ../dnf/cli/commands/remove.py:108 ../dnf/cli/commands/install.py:86
-#: ../dnf/cli/commands/install.py:102 ../dnf/base.py:1852
+#: ../dnf/cli/commands/install.py:102 ../dnf/base.py:1853
 #, python-format
 msgid "Not a valid form: %s"
 msgstr "无效: %s"
 
 #: ../dnf/cli/commands/remove.py:125 ../dnf/cli/commands/__init__.py:709
-#: ../dnf/base.py:1869
+#: ../dnf/base.py:1870
 msgid "No packages marked for removal."
 msgstr "没有软件包需要移除。"
 
@@ -1279,7 +1279,7 @@ msgid ""
 msgstr "无法回滚事务 %s，这样做将可能导致不一致的软件包数据库。"
 
 #: ../dnf/cli/commands/__init__.py:887 ../dnf/cli/cli.py:608
-#: ../dnf/cli/cli.py:638 ../dnf/base.py:1834
+#: ../dnf/cli/cli.py:638 ../dnf/base.py:1835
 #, python-format
 msgid "No package %s installed."
 msgstr "没有软件包 %s 安装。"
@@ -1330,28 +1330,6 @@ msgstr "升级系统中的一个或多个软件包"
 #: ../dnf/cli/commands/upgrade.py:42
 msgid "Package to upgrade"
 msgstr "需要升级的软件包"
-
-#: ../dnf/cli/main.py:109
-msgid "No read/execute access in current directory, moving to /"
-msgstr "没有当前目录的读取/执行权限，移动至 /"
-
-#: ../dnf/cli/main.py:127
-#, python-format
-msgid "(try to add '%s' to command line to replace conflicting packages"
-msgstr "(尝试在命令中添加 '%s' 来代替冲突的软件包)"
-
-#: ../dnf/cli/main.py:130
-#, python-format
-msgid " or '%s' to skip uninstalable packages)"
-msgstr "（或者 '%s' 来跳过无法安装的软件包）"
-
-#: ../dnf/cli/main.py:147
-msgid "Dependencies resolved."
-msgstr "依赖关系解决。"
-
-#: ../dnf/cli/main.py:165
-msgid "Complete!"
-msgstr "完毕！"
 
 #: ../dnf/cli/utils.py:98
 msgid "Running"
@@ -1458,7 +1436,7 @@ msgstr "取代的软件包"
 msgid "No packages marked for distribution synchronization."
 msgstr "没有软件包需要发行版同步。"
 
-#: ../dnf/cli/cli.py:372 ../dnf/base.py:1959
+#: ../dnf/cli/cli.py:372 ../dnf/base.py:1960
 #, python-format
 msgid "Packages for argument %s available, but not installed."
 msgstr "针对于参数 %s 的软件包可用， 但是目前没有安装。"
@@ -1995,15 +1973,15 @@ msgstr " 组"
 msgid "Packages"
 msgstr "软件包"
 
-#: ../dnf/cli/output.py:1042 ../dnf/yum/rpmtrans.py:129
+#: ../dnf/cli/output.py:1042 ../dnf/yum/rpmtrans.py:125
 msgid "Installing"
 msgstr "安装"
 
-#: ../dnf/cli/output.py:1043 ../dnf/yum/rpmtrans.py:132
+#: ../dnf/cli/output.py:1043 ../dnf/yum/rpmtrans.py:128
 msgid "Upgrading"
 msgstr "升级"
 
-#: ../dnf/cli/output.py:1044 ../dnf/yum/rpmtrans.py:131
+#: ../dnf/cli/output.py:1044 ../dnf/yum/rpmtrans.py:127
 msgid "Reinstalling"
 msgstr "重装"
 
@@ -2024,14 +2002,14 @@ msgid "Removing"
 msgstr "移除"
 
 #: ../dnf/cli/output.py:1049
-msgid "Removing depended packages"
+msgid "Removing dependent packages"
 msgstr ""
 
 #: ../dnf/cli/output.py:1050
 msgid "Removing unused dependencies"
 msgstr "正在清除未被使用的依赖关系"
 
-#: ../dnf/cli/output.py:1051 ../dnf/yum/rpmtrans.py:127
+#: ../dnf/cli/output.py:1051 ../dnf/yum/rpmtrans.py:123
 msgid "Downgrading"
 msgstr "降级"
 
@@ -2328,7 +2306,7 @@ msgstr "依赖安装"
 msgid "Obsoleted"
 msgstr "已废弃"
 
-#: ../dnf/cli/output.py:1741 ../dnf/yum/rpmtrans.py:130
+#: ../dnf/cli/output.py:1741 ../dnf/yum/rpmtrans.py:126
 msgid "Obsoleting"
 msgstr "废弃"
 
@@ -2387,6 +2365,28 @@ msgstr "--> 开始解决依赖关系"
 #: ../dnf/cli/output.py:1944
 msgid "--> Finished dependency resolution"
 msgstr "--> 依赖关系解决完成"
+
+#: ../dnf/cli/main.py:109
+msgid "No read/execute access in current directory, moving to /"
+msgstr "没有当前目录的读取/执行权限，移动至 /"
+
+#: ../dnf/cli/main.py:127
+#, python-format
+msgid "(try to add '%s' to command line to replace conflicting packages"
+msgstr "(尝试在命令中添加 '%s' 来代替冲突的软件包)"
+
+#: ../dnf/cli/main.py:130
+#, python-format
+msgid " or '%s' to skip uninstallable packages)"
+msgstr ""
+
+#: ../dnf/cli/main.py:147
+msgid "Dependencies resolved."
+msgstr "依赖关系解决。"
+
+#: ../dnf/cli/main.py:165
+msgid "Complete!"
+msgstr "完毕！"
 
 #: ../dnf/comps.py:92
 msgid "skipping."
@@ -2622,23 +2622,23 @@ msgstr "无法初始化 DNF 数据库历史：%s "
 msgid "Can not create history database at '%s'."
 msgstr "无法在 '%s' 创建历史数据库。"
 
-#: ../dnf/yum/rpmtrans.py:126
+#: ../dnf/yum/rpmtrans.py:122
 msgid "Cleanup"
 msgstr "清理"
 
-#: ../dnf/yum/rpmtrans.py:128
+#: ../dnf/yum/rpmtrans.py:124
 msgid "Erasing"
 msgstr "删除"
 
-#: ../dnf/yum/rpmtrans.py:133
+#: ../dnf/yum/rpmtrans.py:129
 msgid "Verifying"
 msgstr "验证"
 
-#: ../dnf/yum/rpmtrans.py:134
+#: ../dnf/yum/rpmtrans.py:130
 msgid "Preparing"
 msgstr "准备中"
 
-#: ../dnf/yum/rpmtrans.py:135
+#: ../dnf/yum/rpmtrans.py:131
 msgid "Running scriptlet"
 msgstr "运行脚本"
 
@@ -2674,338 +2674,6 @@ msgstr ""
 msgid "Problem"
 msgstr "问题"
 
-#: ../dnf/base.py:250
-msgid "Metadata timer caching disabled when running on metered connection."
-msgstr "在使用按流量计费的连接时禁用元数据计时缓存。"
-
-#: ../dnf/base.py:255
-msgid "Metadata timer caching disabled when running on a battery."
-msgstr "在使用电池时禁用元数据计时缓存。"
-
-#: ../dnf/base.py:260
-msgid "Metadata timer caching disabled."
-msgstr "元数据计时缓存已禁用。"
-
-#: ../dnf/base.py:265
-msgid "Metadata cache refreshed recently."
-msgstr "元数据缓存近期已刷新。"
-
-#. performs the md sync
-#: ../dnf/base.py:290
-msgid "Metadata cache created."
-msgstr "元数据缓存已建立。"
-
-#: ../dnf/base.py:326
-msgid "Loading repositories."
-msgstr ""
-
-#: ../dnf/base.py:334
-#, python-format
-msgid "%s: using metadata from %s."
-msgstr "%s：正在使用截止于 %s 的元数据。"
-
-#: ../dnf/base.py:340
-#, python-format
-msgid "%s, disabling."
-msgstr "%s，禁用。"
-
-#: ../dnf/base.py:343
-#, python-format
-msgid "Last metadata expiration check: %s ago on %s."
-msgstr "上次元数据过期检查：%s 前，执行于 %s。"
-
-#: ../dnf/base.py:399
-msgid ""
-"The downloaded packages were saved in cache until the next successful "
-"transaction."
-msgstr "下载的软件包保存在缓存中，直到下次成功执行事务。"
-
-#: ../dnf/base.py:401
-#, python-format
-msgid "You can remove cached packages by executing '%s'."
-msgstr "您可以通过执行 '%s' 删除软件包缓存。"
-
-#: ../dnf/base.py:462
-#, python-format
-msgid "Invalid tsflag in config file: %s"
-msgstr "配置文件 %s 中使用 tsflag 是错误的"
-
-#: ../dnf/base.py:521
-#, python-format
-msgid "Failed to add groups file for repository: %s - %s"
-msgstr "为仓库 %s 添加组文件时失败：%s"
-
-#: ../dnf/base.py:698
-msgid "Running transaction check"
-msgstr "运行事务检查"
-
-#: ../dnf/base.py:708
-msgid "Error: transaction check vs depsolve:"
-msgstr "错误：事务检查与依赖解决错误："
-
-#: ../dnf/base.py:714
-msgid "Transaction check succeeded."
-msgstr "事务检查成功。"
-
-#: ../dnf/base.py:717
-msgid "Running transaction test"
-msgstr "运行事务测试"
-
-#: ../dnf/base.py:727
-msgid "Transaction check error:"
-msgstr "事务检查错误："
-
-#: ../dnf/base.py:734
-msgid "Transaction test succeeded."
-msgstr "事务测试成功。"
-
-#: ../dnf/base.py:749
-msgid "Running transaction"
-msgstr "运行事务"
-
-#: ../dnf/base.py:775
-msgid "Disk Requirements:"
-msgstr "磁盘需求："
-
-#: ../dnf/base.py:778
-#, python-format
-msgid "At least %dMB more space needed on the %s filesystem."
-msgid_plural "At least %dMB more space needed on the %s filesystem."
-msgstr[0] "至少需要 %dMB 空间，在文件系统 %s。"
-
-#: ../dnf/base.py:782
-msgid "Error Summary"
-msgstr "错误汇总"
-
-#: ../dnf/base.py:863
-msgid "Errors occurred during transaction."
-msgstr "事物过程中出现错误。"
-
-#: ../dnf/base.py:867
-#, python-format
-msgid "Failed to obtain the transaction lock (logged in as: %s)."
-msgstr "获取事务锁失败（记录为：%s）。"
-
-#. should this be 'to_unicoded'?
-#: ../dnf/base.py:870 ../dnf/base.py:880
-msgid "Could not run transaction."
-msgstr "不能执行事务。"
-
-#: ../dnf/base.py:877
-msgid "Transaction couldn't start:"
-msgstr "事务无法启动："
-
-#: ../dnf/base.py:889
-#, python-format
-msgid "Failed to remove transaction file %s"
-msgstr "移除事务文件 %s 失败"
-
-#: ../dnf/base.py:941
-#, python-format
-msgid "%s was supposed to be installed but is not!"
-msgstr "%s 假定被安装但并非这样！"
-
-#: ../dnf/base.py:1001
-#, python-format
-msgid "%s was supposed to be removed but is not!"
-msgstr "%s 假定被移除但并非这样！"
-
-#: ../dnf/base.py:1019 ../dnf/repo.py:543 ../dnf/repo.py:1015
-#, python-format
-msgid "Failed to synchronize cache for repo '%s'"
-msgstr "同步仓库 '%s' 缓存失败"
-
-#: ../dnf/base.py:1072
-msgid "Some packages were not downloaded. Retrying."
-msgstr "某些软件包没有被下载。正在重试。"
-
-#: ../dnf/base.py:1102
-#, python-format
-msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
-msgstr "增量 RPM 将 %.1f MB 的更新减少至 %.1f MB（已节省 %d.1%% ）"
-
-#: ../dnf/base.py:1105
-#, python-format
-msgid ""
-"Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
-msgstr "增量 RPM 未能将 %.1f MB 的更新减少至 %.1f MB（已浪费 %d.1%% ）"
-
-#: ../dnf/base.py:1132
-msgid "Could not open: {}"
-msgstr "无法打开： {}"
-
-#: ../dnf/base.py:1170
-#, python-format
-msgid "Public key for %s is not installed"
-msgstr "%s 的公钥没有安装"
-
-#: ../dnf/base.py:1174
-#, python-format
-msgid "Problem opening package %s"
-msgstr "打开软件包 %s 出现问题"
-
-#: ../dnf/base.py:1182
-#, python-format
-msgid "Public key for %s is not trusted"
-msgstr "%s 的公钥不可信任"
-
-#: ../dnf/base.py:1186
-#, python-format
-msgid "Package %s is not signed"
-msgstr "软件包 %s 没有签名"
-
-#: ../dnf/base.py:1201
-#, python-format
-msgid "Cannot remove %s"
-msgstr "无法删除 %s"
-
-#: ../dnf/base.py:1205
-#, python-format
-msgid "%s removed"
-msgstr "%s 已删除"
-
-#: ../dnf/base.py:1472
-msgid "No match for group package \"{}\""
-msgstr ""
-
-#: ../dnf/base.py:1589
-msgid "No groups marked for removal."
-msgstr "没有软件包组需要移除。"
-
-#: ../dnf/base.py:1608
-msgid "No group marked for upgrade."
-msgstr "没有标记为要升级的组。"
-
-#: ../dnf/base.py:1676 ../dnf/base.py:1687
-msgid "no package matched"
-msgstr "没有能够与之匹配的软件包"
-
-#: ../dnf/base.py:1702
-#, python-format
-msgid "Package %s not installed, cannot downgrade it."
-msgstr "软件包 %s 并没有能够安装，无法进行降级操作。"
-
-#: ../dnf/base.py:1711
-#, python-format
-msgid "Package %s of lower version already installed, cannot downgrade it."
-msgstr "软件包 %s 的低版本已经安装，无法进行降级。"
-
-#: ../dnf/base.py:1734
-#, python-format
-msgid "Package %s not installed, cannot reinstall it."
-msgstr "软件包 %s 未能够安装成功，无法进行重新安装。"
-
-#: ../dnf/base.py:1749
-#, python-format
-msgid "File %s is a source package and cannot be updated, ignoring."
-msgstr "%s 文件无法被升级，已忽略。"
-
-#: ../dnf/base.py:1755
-#, python-format
-msgid "Package %s not installed, cannot update it."
-msgstr "软件包 %s 未安装，无法更新。"
-
-#: ../dnf/base.py:1764
-#, python-format
-msgid "Package %s of higher version already installed, cannot update it."
-msgstr "软件包 %s 的高版本已经安装，无法进行升级操作。"
-
-#: ../dnf/base.py:1789
-#, python-format
-msgid "Package %s available, but installed for different architecture."
-msgstr ""
-
-#: ../dnf/base.py:1964
-#, python-format
-msgid "Package %s of lowest version already installed, cannot downgrade it."
-msgstr "软件包 %s 的最低版本已经安装，无法再进行降级。"
-
-#: ../dnf/base.py:2108
-msgid "No security updates needed, but {} update available"
-msgstr "没有必须的安全更新， 但是 {} 的更新可用"
-
-#: ../dnf/base.py:2110
-msgid "No security updates needed, but {} updates available"
-msgstr "没有必须的安全更新， 但是 {} 的更新可用"
-
-#: ../dnf/base.py:2114
-msgid "No security updates needed for \"{}\", but {} update available"
-msgstr "没有针对于\"{}\" 所必须的安全更新， 但是 {} 的更新可用"
-
-#: ../dnf/base.py:2116
-msgid "No security updates needed for \"{}\", but {} updates available"
-msgstr "没有针对于\"{}\" 所必须的安全更新， 但是 {} 的更新可用"
-
-#: ../dnf/base.py:2155
-#, python-format
-msgid ". Failing package is: %s"
-msgstr ""
-
-#: ../dnf/base.py:2156
-#, python-format
-msgid "GPG Keys are configured as: %s"
-msgstr "GPG密钥配置为：%s"
-
-#: ../dnf/base.py:2168
-#, python-format
-msgid "GPG key at %s (0x%s) is already installed"
-msgstr "%s 的 GPG 公钥(0x%s)已安装"
-
-#: ../dnf/base.py:2205
-#, python-format
-msgid "Key import failed (code %d)"
-msgstr "导入公钥失败(代码 %d)"
-
-#: ../dnf/base.py:2207
-msgid "Key imported successfully"
-msgstr "导入公钥成功"
-
-#: ../dnf/base.py:2211
-msgid "Didn't install any keys"
-msgstr "没有安装任何公钥"
-
-#: ../dnf/base.py:2214
-#, python-format
-msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
-"Check that the correct key URLs are configured for this repository."
-msgstr "仓库 \"%s\" 的 GPG 公钥已安装，但是不适用于此软件包。请检查仓库的公钥 URL 是否配置正确。"
-
-#: ../dnf/base.py:2225
-msgid "Import of key(s) didn't help, wrong key(s)?"
-msgstr "导入的密钥没有公钥，错误的公钥？"
-
-#: ../dnf/base.py:2271
-msgid "  * Maybe you meant: {}"
-msgstr ""
-
-#: ../dnf/base.py:2298
-msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
-msgstr ""
-
-#: ../dnf/base.py:2307
-msgid "Some packages from local repository have incorrect checksum"
-msgstr "本地仓库的一些软件包校验值(checksum)不正确，无法确定软件包完整"
-
-#: ../dnf/base.py:2311
-msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
-msgstr ""
-
-#: ../dnf/base.py:2316
-msgid "Package \"{}\" from repository \"{}\" has invalid cache"
-msgstr ""
-
-#: ../dnf/base.py:2322
-msgid ""
-"Some packages have invalid cache, but cannot be downloaded due to \"--"
-"cacheonly\" option"
-msgstr ""
-
-#: ../dnf/base.py:2331
-#, python-format
-msgid "Package %s is already installed, skipping."
-msgstr "软件包 %s 已安装，跳过"
-
 #: ../dnf/repo.py:105
 #, python-format
 msgid "no matching payload factory for %s"
@@ -3020,6 +2688,11 @@ msgstr "已下载"
 #, python-format
 msgid "determining the fastest mirror (%d hosts).. "
 msgstr "正在查找最快的镜像（%d 个主机）"
+
+#: ../dnf/repo.py:543 ../dnf/repo.py:1015 ../dnf/base.py:1020
+#, python-format
+msgid "Failed to synchronize cache for repo '%s'"
+msgstr "同步仓库 '%s' 缓存失败"
 
 #: ../dnf/repo.py:790
 #, python-format
@@ -3085,3 +2758,330 @@ msgstr "软件仓库 %s 没有设置镜像或者 baseurl。"
 #: ../dnf/repo.py:1058
 msgid "Repository '{}' has unsupported type: 'type={}', skipping."
 msgstr "软件仓库 '{}' 拥有不被支持的类型： 'type={}'，跳过。"
+
+#: ../dnf/base.py:251
+msgid "Metadata timer caching disabled when running on metered connection."
+msgstr "在使用按流量计费的连接时禁用元数据计时缓存。"
+
+#: ../dnf/base.py:256
+msgid "Metadata timer caching disabled when running on a battery."
+msgstr "在使用电池时禁用元数据计时缓存。"
+
+#: ../dnf/base.py:261
+msgid "Metadata timer caching disabled."
+msgstr "元数据计时缓存已禁用。"
+
+#: ../dnf/base.py:266
+msgid "Metadata cache refreshed recently."
+msgstr "元数据缓存近期已刷新。"
+
+#. performs the md sync
+#: ../dnf/base.py:291
+msgid "Metadata cache created."
+msgstr "元数据缓存已建立。"
+
+#: ../dnf/base.py:327
+msgid "Loading repositories."
+msgstr ""
+
+#: ../dnf/base.py:335
+#, python-format
+msgid "%s: using metadata from %s."
+msgstr "%s：正在使用截止于 %s 的元数据。"
+
+#: ../dnf/base.py:341
+#, python-format
+msgid "%s, disabling."
+msgstr "%s，禁用。"
+
+#: ../dnf/base.py:344
+#, python-format
+msgid "Last metadata expiration check: %s ago on %s."
+msgstr "上次元数据过期检查：%s 前，执行于 %s。"
+
+#: ../dnf/base.py:400
+msgid ""
+"The downloaded packages were saved in cache until the next successful "
+"transaction."
+msgstr "下载的软件包保存在缓存中，直到下次成功执行事务。"
+
+#: ../dnf/base.py:402
+#, python-format
+msgid "You can remove cached packages by executing '%s'."
+msgstr "您可以通过执行 '%s' 删除软件包缓存。"
+
+#: ../dnf/base.py:463
+#, python-format
+msgid "Invalid tsflag in config file: %s"
+msgstr "配置文件 %s 中使用 tsflag 是错误的"
+
+#: ../dnf/base.py:522
+#, python-format
+msgid "Failed to add groups file for repository: %s - %s"
+msgstr "为仓库 %s 添加组文件时失败：%s"
+
+#: ../dnf/base.py:699
+msgid "Running transaction check"
+msgstr "运行事务检查"
+
+#: ../dnf/base.py:709
+msgid "Error: transaction check vs depsolve:"
+msgstr "错误：事务检查与依赖解决错误："
+
+#: ../dnf/base.py:715
+msgid "Transaction check succeeded."
+msgstr "事务检查成功。"
+
+#: ../dnf/base.py:718
+msgid "Running transaction test"
+msgstr "运行事务测试"
+
+#: ../dnf/base.py:728
+msgid "Transaction check error:"
+msgstr "事务检查错误："
+
+#: ../dnf/base.py:735
+msgid "Transaction test succeeded."
+msgstr "事务测试成功。"
+
+#: ../dnf/base.py:750
+msgid "Running transaction"
+msgstr "运行事务"
+
+#: ../dnf/base.py:776
+msgid "Disk Requirements:"
+msgstr "磁盘需求："
+
+#: ../dnf/base.py:779
+#, python-format
+msgid "At least %dMB more space needed on the %s filesystem."
+msgid_plural "At least %dMB more space needed on the %s filesystem."
+msgstr[0] "至少需要 %dMB 空间，在文件系统 %s。"
+
+#: ../dnf/base.py:783
+msgid "Error Summary"
+msgstr "错误汇总"
+
+#: ../dnf/base.py:864
+msgid "Errors occurred during transaction."
+msgstr "事物过程中出现错误。"
+
+#: ../dnf/base.py:868
+#, python-format
+msgid "Failed to obtain the transaction lock (logged in as: %s)."
+msgstr "获取事务锁失败（记录为：%s）。"
+
+#. should this be 'to_unicoded'?
+#: ../dnf/base.py:871 ../dnf/base.py:881
+msgid "Could not run transaction."
+msgstr "不能执行事务。"
+
+#: ../dnf/base.py:878
+msgid "Transaction couldn't start:"
+msgstr "事务无法启动："
+
+#: ../dnf/base.py:890
+#, python-format
+msgid "Failed to remove transaction file %s"
+msgstr "移除事务文件 %s 失败"
+
+#: ../dnf/base.py:942
+#, python-format
+msgid "%s was supposed to be installed but is not!"
+msgstr "%s 假定被安装但并非这样！"
+
+#: ../dnf/base.py:1002
+#, python-format
+msgid "%s was supposed to be removed but is not!"
+msgstr "%s 假定被移除但并非这样！"
+
+#: ../dnf/base.py:1073
+msgid "Some packages were not downloaded. Retrying."
+msgstr "某些软件包没有被下载。正在重试。"
+
+#: ../dnf/base.py:1103
+#, python-format
+msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
+msgstr "增量 RPM 将 %.1f MB 的更新减少至 %.1f MB（已节省 %d.1%% ）"
+
+#: ../dnf/base.py:1106
+#, python-format
+msgid ""
+"Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
+msgstr "增量 RPM 未能将 %.1f MB 的更新减少至 %.1f MB（已浪费 %d.1%% ）"
+
+#: ../dnf/base.py:1133
+msgid "Could not open: {}"
+msgstr "无法打开： {}"
+
+#: ../dnf/base.py:1171
+#, python-format
+msgid "Public key for %s is not installed"
+msgstr "%s 的公钥没有安装"
+
+#: ../dnf/base.py:1175
+#, python-format
+msgid "Problem opening package %s"
+msgstr "打开软件包 %s 出现问题"
+
+#: ../dnf/base.py:1183
+#, python-format
+msgid "Public key for %s is not trusted"
+msgstr "%s 的公钥不可信任"
+
+#: ../dnf/base.py:1187
+#, python-format
+msgid "Package %s is not signed"
+msgstr "软件包 %s 没有签名"
+
+#: ../dnf/base.py:1202
+#, python-format
+msgid "Cannot remove %s"
+msgstr "无法删除 %s"
+
+#: ../dnf/base.py:1206
+#, python-format
+msgid "%s removed"
+msgstr "%s 已删除"
+
+#: ../dnf/base.py:1473
+msgid "No match for group package \"{}\""
+msgstr ""
+
+#: ../dnf/base.py:1590
+msgid "No groups marked for removal."
+msgstr "没有软件包组需要移除。"
+
+#: ../dnf/base.py:1609
+msgid "No group marked for upgrade."
+msgstr "没有标记为要升级的组。"
+
+#: ../dnf/base.py:1677 ../dnf/base.py:1688
+msgid "no package matched"
+msgstr "没有能够与之匹配的软件包"
+
+#: ../dnf/base.py:1703
+#, python-format
+msgid "Package %s not installed, cannot downgrade it."
+msgstr "软件包 %s 并没有能够安装，无法进行降级操作。"
+
+#: ../dnf/base.py:1712
+#, python-format
+msgid "Package %s of lower version already installed, cannot downgrade it."
+msgstr "软件包 %s 的低版本已经安装，无法进行降级。"
+
+#: ../dnf/base.py:1735
+#, python-format
+msgid "Package %s not installed, cannot reinstall it."
+msgstr "软件包 %s 未能够安装成功，无法进行重新安装。"
+
+#: ../dnf/base.py:1750
+#, python-format
+msgid "File %s is a source package and cannot be updated, ignoring."
+msgstr "%s 文件无法被升级，已忽略。"
+
+#: ../dnf/base.py:1756
+#, python-format
+msgid "Package %s not installed, cannot update it."
+msgstr "软件包 %s 未安装，无法更新。"
+
+#: ../dnf/base.py:1765
+#, python-format
+msgid "Package %s of higher version already installed, cannot update it."
+msgstr "软件包 %s 的高版本已经安装，无法进行升级操作。"
+
+#: ../dnf/base.py:1790
+#, python-format
+msgid "Package %s available, but installed for different architecture."
+msgstr ""
+
+#: ../dnf/base.py:1965
+#, python-format
+msgid "Package %s of lowest version already installed, cannot downgrade it."
+msgstr "软件包 %s 的最低版本已经安装，无法再进行降级。"
+
+#: ../dnf/base.py:2109
+msgid "No security updates needed, but {} update available"
+msgstr "没有必须的安全更新， 但是 {} 的更新可用"
+
+#: ../dnf/base.py:2111
+msgid "No security updates needed, but {} updates available"
+msgstr "没有必须的安全更新， 但是 {} 的更新可用"
+
+#: ../dnf/base.py:2115
+msgid "No security updates needed for \"{}\", but {} update available"
+msgstr "没有针对于\"{}\" 所必须的安全更新， 但是 {} 的更新可用"
+
+#: ../dnf/base.py:2117
+msgid "No security updates needed for \"{}\", but {} updates available"
+msgstr "没有针对于\"{}\" 所必须的安全更新， 但是 {} 的更新可用"
+
+#: ../dnf/base.py:2156
+#, python-format
+msgid ". Failing package is: %s"
+msgstr ""
+
+#: ../dnf/base.py:2157
+#, python-format
+msgid "GPG Keys are configured as: %s"
+msgstr "GPG密钥配置为：%s"
+
+#: ../dnf/base.py:2169
+#, python-format
+msgid "GPG key at %s (0x%s) is already installed"
+msgstr "%s 的 GPG 公钥(0x%s)已安装"
+
+#: ../dnf/base.py:2206
+#, python-format
+msgid "Key import failed (code %d)"
+msgstr "导入公钥失败(代码 %d)"
+
+#: ../dnf/base.py:2208
+msgid "Key imported successfully"
+msgstr "导入公钥成功"
+
+#: ../dnf/base.py:2212
+msgid "Didn't install any keys"
+msgstr "没有安装任何公钥"
+
+#: ../dnf/base.py:2215
+#, python-format
+msgid ""
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
+"Check that the correct key URLs are configured for this repository."
+msgstr "仓库 \"%s\" 的 GPG 公钥已安装，但是不适用于此软件包。请检查仓库的公钥 URL 是否配置正确。"
+
+#: ../dnf/base.py:2226
+msgid "Import of key(s) didn't help, wrong key(s)?"
+msgstr "导入的密钥没有公钥，错误的公钥？"
+
+#: ../dnf/base.py:2272
+msgid "  * Maybe you meant: {}"
+msgstr ""
+
+#: ../dnf/base.py:2299
+msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
+msgstr ""
+
+#: ../dnf/base.py:2308
+msgid "Some packages from local repository have incorrect checksum"
+msgstr "本地仓库的一些软件包校验值(checksum)不正确，无法确定软件包完整"
+
+#: ../dnf/base.py:2312
+msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
+msgstr ""
+
+#: ../dnf/base.py:2317
+msgid "Package \"{}\" from repository \"{}\" has invalid cache"
+msgstr ""
+
+#: ../dnf/base.py:2323
+msgid ""
+"Some packages have invalid cache, but cannot be downloaded due to \"--"
+"cacheonly\" option"
+msgstr ""
+
+#: ../dnf/base.py:2332
+#, python-format
+msgid "Package %s is already installed, skipping."
+msgstr "软件包 %s 已安装，跳过"
