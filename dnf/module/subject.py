@@ -16,8 +16,7 @@
 
 import hawkey
 
-from dnf.exceptions import Error
-from dnf.module import module_errors, NO_MODULE_ERR
+from dnf.module.exceptions import NoModuleException
 
 
 class ModuleSubject(object):
@@ -42,23 +41,17 @@ class ModuleSubject(object):
         """
 
         result = (None, None)
-        stream_err = None
         for module_form in self.get_module_form_possibilities():
-            try:
-                module_version = repo_module_dict.find_module_version(module_form.name,
-                                                                      module_form.stream,
-                                                                      module_form.version,
-                                                                      module_form.context,
-                                                                      module_form.arch)
-                if module_version:
-                    result = (module_version, module_form)
-                    break
-            except Error as e:
-                stream_err = e
+            module_version = repo_module_dict.find_module_version(module_form.name,
+                                                                  module_form.stream,
+                                                                  module_form.version,
+                                                                  module_form.context,
+                                                                  module_form.arch)
+            if module_version:
+                result = (module_version, module_form)
+                break
 
-        if stream_err:
-            raise stream_err
-        elif not result[0]:
-            raise Error(module_errors[NO_MODULE_ERR].format(self.module_spec))
+        if not result[0]:
+            raise NoModuleException(self.module_spec)
 
         return result

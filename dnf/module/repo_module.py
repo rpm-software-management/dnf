@@ -15,14 +15,13 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import os
-
-from dnf.pycomp import ConfigParser
 from collections import OrderedDict
 
 from dnf.conf import ModuleConf
-from dnf.exceptions import Error
-from dnf.module import module_errors, NO_STREAM_ERR, DIFFERENT_STREAM_INFO, STREAM_NOT_ENABLED_ERR
+from dnf.module import module_messages, DIFFERENT_STREAM_INFO
+from dnf.module.exceptions import NoStreamException, EnabledStreamException
 from dnf.module.repo_module_stream import RepoModuleStream
+from dnf.pycomp import ConfigParser
 from dnf.util import logger, ensure_dir
 
 
@@ -60,7 +59,7 @@ class RepoModule(OrderedDict):
 
     def enable(self, stream, assumeyes=False):
         if stream not in self:
-            raise Error(module_errors[NO_STREAM_ERR].format(stream, self.name))
+            raise NoStreamException("{}:{}".format(self.name, stream))
 
         if self.conf.enabled and self.conf.stream == stream:
             return
@@ -68,7 +67,7 @@ class RepoModule(OrderedDict):
         if self.conf.stream is not None and \
                 str(self.conf.stream) != str(stream) and \
                 not assumeyes:
-            logger.info(module_errors[DIFFERENT_STREAM_INFO].format(self.name))
+            logger.info(module_messages[DIFFERENT_STREAM_INFO].format(self.name))
 
             if not self.parent.base.conf.assumeno and \
                     self.parent.base.output.userconfirm():
@@ -76,7 +75,7 @@ class RepoModule(OrderedDict):
                 self.conf.version = -1
                 self.enable(stream, True)
             else:
-                logger.info(module_errors[STREAM_NOT_ENABLED_ERR].format(stream))
+                raise EnabledStreamException("{}:{}".format(self.name, stream))
 
         self.conf.stream = stream
         self.conf.enabled = True
