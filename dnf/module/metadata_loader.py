@@ -15,10 +15,10 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import gzip
+
 import modulemd
 
-from dnf.exceptions import Error
-from dnf.module import module_errors, LOAD_CACHE_ERR, MISSING_YAML_ERR
+from dnf.module.exceptions import LoadCacheException, MissingYamlException
 
 
 class ModuleMetadataLoader(object):
@@ -32,10 +32,10 @@ class ModuleMetadataLoader(object):
 
     def load(self):
         if self.repo is None:
-            raise Error(module_errors[LOAD_CACHE_ERR].format(self.repo))
+            raise LoadCacheException(self.repo)
 
         if not self._metadata_fn:
-            raise Error(module_errors[MISSING_YAML_ERR].format(self.repo._cachedir))
+            raise MissingYamlException(self.repo._cachedir)
 
         with gzip.open(self._metadata_fn, "r") as modules_yaml_gz:
             modules_yaml = modules_yaml_gz.read()
