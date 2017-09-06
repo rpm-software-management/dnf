@@ -483,7 +483,6 @@ class RepoModuleDict(OrderedDict):
 
         table = smartcols.Table()
         table.maxout = True
-
         column_name = table.new_column("Name")
         column_stream = table.new_column("Stream")
         column_version = table.new_column("Version")
