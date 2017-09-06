@@ -200,12 +200,25 @@ class ModuleCommand(commands.Command):
                 print()
                 logger.info(self.base.repo_module_dict.get_info_profiles(spec))
 
+    class StreamsSubCommand(SubCommand):
+
+        aliases = ("streams", "enabled", "enabled-streams")
+
+        def configure(self):
+            demands = self.cli.demands
+            demands.available_repos = True
+            demands.sack_activation = True
+
+        def run_on_module(self):
+            logger.info(self.base.repo_module_dict
+                        .get_brief_description_enabled(self.opts.module_nsvp))
+
     SUBCMDS = {ListSubCommand, InfoSubCommand, EnableSubCommand,
                DisableSubCommand, InstallSubCommand, UpdateSubCommand,
                RemoveSubCommand, LockSubCommand, UnlockSubCommand,
-               ProfileInfoSubCommand}
+               ProfileInfoSubCommand, StreamsSubCommand}
 
-    SUBCMDS_NOT_REQUIRED_ARG = {ListSubCommand}
+    SUBCMDS_NOT_REQUIRED_ARG = {ListSubCommand, StreamsSubCommand}
 
     aliases = ("module",)
     summary = _("Interact with Modules.")
