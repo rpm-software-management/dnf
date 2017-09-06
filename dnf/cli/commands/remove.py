@@ -122,8 +122,10 @@ class RemoveCommand(commands.Command):
                 msg = _('Not a valid form: %s')
                 logger.warning(msg, self.base.output.term.bold(grp_spec))
         elif self.opts.grp_specs:
+            skipped_grps = self.base.repo_module_dict.remove(self.opts.grp_specs)
+
             self.base.read_comps(arch_filter=True)
-            if self.base.env_group_remove(self.opts.grp_specs):
+            if self.base.env_group_remove(skipped_grps):
                 done = True
 
         for pkg_spec in self.opts.pkg_specs:
