@@ -21,10 +21,10 @@ from collections import OrderedDict
 import smartcols
 
 from dnf.conf.read import ModuleReader, ModuleDefaultsReader
-from dnf.exceptions import Error
-from dnf.module import module_errors, VERSION_LOCKED, STREAM_NOT_ENABLED_ERR, \
-    PROFILE_NOT_INSTALLED, NOTHING_TO_SHOW, \
-    NO_DEFAULT_STREAM_ERR, NO_PROFILE_SPECIFIED, INSTALLING_NEWER_VERSION
+from dnf.module import module_messages, VERSION_LOCKED, NOTHING_TO_SHOW, \
+    INSTALLING_NEWER_VERSION
+from dnf.module.exceptions import NoStreamSpecifiedException, NoModuleException, \
+    EnabledStreamException, ProfileNotInstalledException, NoProfileSpecifiedException
 from dnf.module.repo_module import RepoModule
 from dnf.module.subject import ModuleSubject
 from dnf.util import first_not_none, logger, ensure_dir
@@ -61,8 +61,7 @@ class RepoModuleDict(OrderedDict):
                                      use_default_stream(repo_module)])
 
             if not stream:
-                # TODO change to NoDefaultStreamException
-                raise Error(module_errors[NO_DEFAULT_STREAM_ERR].format(name))
+                raise NoStreamSpecifiedException(name)
 
             repo_module_stream = repo_module[stream]
 
@@ -70,7 +69,7 @@ class RepoModuleDict(OrderedDict):
                     repo_module.conf.locked and \
                     repo_module.conf.version is not None:
                 if repo_module_stream.latest().version != repo_module.conf.version:
-                    logger.info(module_errors[VERSION_LOCKED]
+                    logger.info(module_messages[VERSION_LOCKED]
                                 .format("{}:{}".format(repo_module.name, stream),
                                         repo_module.conf.version))
 
@@ -88,7 +87,7 @@ class RepoModuleDict(OrderedDict):
             return None
         return repo_module_version
 
-    def get_includes_latest(self, name, stream, visited=None):
+    def get_includes_latest(self, name, stream, visited=set()):
         includes = set()
         repos = set()
         try:
@@ -100,14 +99,12 @@ class RepoModuleDict(OrderedDict):
             repos.add(repo_module_version.repo)
             includes.update(artifacts)
 
-            if not visited:
-                required_modules_visited = set()
-            else:
-                required_modules_visited = visited
             for requires_name, requires_stream in \
                     repo_module_version.module_metadata.requires.items():
+                visited.add("{}:{}".format(requires_name, requires_stream))
                 requires_includes, requires_repos = self.get_includes_latest(requires_name,
-                                                                             requires_stream)
+                                                                             requires_stream,
+                                                                             visited)
                 repos.update(requires_repos)
                 includes.update(requires_includes)
         except KeyError as e:
@@ -115,7 +112,7 @@ class RepoModuleDict(OrderedDict):
 
         return includes, repos
 
-    def get_includes(self, name, stream, visited=None):
+    def get_includes(self, name, stream, visited=set()):
         includes = set()
         repos = set()
         try:
@@ -127,14 +124,12 @@ class RepoModuleDict(OrderedDict):
                 repos.add(repo_module_version.repo)
                 includes.update(artifacts)
 
-                if not visited:
-                    required_modules_visited = set()
-                else:
-                    required_modules_visited = visited
                 for requires_name, requires_stream in \
                         repo_module_version.module_metadata.requires.items():
+                    visited.add("{}:{}".format(requires_name, requires_stream))
                     requires_includes, requires_repos = self.get_includes(requires_name,
-                                                                          requires_stream)
+                                                                          requires_stream,
+                                                                          visited)
                     repos.update(requires_repos)
                     includes.update(requires_includes)
         except KeyError as e:
@@ -162,7 +157,7 @@ class RepoModuleDict(OrderedDict):
         repo_module = module_version.repo_module
 
         if not repo_module.conf.enabled:
-            raise Error(module_errors[STREAM_NOT_ENABLED_ERR].format(module_spec))
+            raise EnabledStreamException(module_spec)
 
         repo_module.lock(module_version.version)
         return module_version.stream, module_version.version
@@ -174,7 +169,7 @@ class RepoModuleDict(OrderedDict):
         repo_module = module_version.repo_module
 
         if not repo_module.conf.enabled:
-            raise Error(module_errors[STREAM_NOT_ENABLED_ERR].format(module_spec))
+            raise EnabledStreamException(module_spec)
 
         repo_module.unlock()
         return module_version.stream, module_version.version
@@ -184,7 +179,7 @@ class RepoModuleDict(OrderedDict):
 
         for module_version, profiles, default_profiles in versions.values():
             if module_version.repo_module.conf.locked:
-                logger.warning(module_errors[VERSION_LOCKED]
+                logger.warning(module_messages[VERSION_LOCKED]
                                .format(module_version.name,
                                        module_version.repo_module.conf.version))
                 continue
@@ -207,7 +202,7 @@ class RepoModuleDict(OrderedDict):
 
             try:
                 module_version, module_form = subj.find_module_version(self)
-            except Error:
+            except NoModuleException:
                 skipped.append(module_spec)
                 continue
 
@@ -221,8 +216,8 @@ class RepoModuleDict(OrderedDict):
                     default_profiles.extend(module_version.repo_module.defaults.profiles)
 
                 if best_version < module_version:
-                    logger.info(module_errors[INSTALLING_NEWER_VERSION].format(best_version,
-                                                                               module_version))
+                    logger.info(module_messages[INSTALLING_NEWER_VERSION].format(best_version,
+                                                                                 module_version))
                     best_versions[key] = [module_version, profiles, default_profiles]
                 else:
                     best_versions[key] = [best_version, profiles, default_profiles]
@@ -231,7 +226,7 @@ class RepoModuleDict(OrderedDict):
                 profiles = [module_form.profile]
                 if not module_form.profile:
                     if not module_version.repo_module.defaults:
-                        raise Error(module_errors[NO_PROFILE_SPECIFIED].format(key))
+                        raise NoProfileSpecifiedException(key)
                     default_profiles = module_version.repo_module.defaults.profiles
                     profiles = []
 
@@ -240,9 +235,14 @@ class RepoModuleDict(OrderedDict):
         return best_versions, skipped
 
     def upgrade(self, module_specs):
+        skipped = []
         for module_spec in module_specs:
             subj = ModuleSubject(module_spec)
-            module_version, module_form = subj.find_module_version(self)
+            try:
+                module_version, module_form = subj.find_module_version(self)
+            except NoModuleException:
+                skipped.append(module_spec)
+                continue
 
             if module_version.repo_module.conf.locked:
                 continue
@@ -254,15 +254,14 @@ class RepoModuleDict(OrderedDict):
                 installed_profiles = []
             if module_form.profile:
                 if module_form.profile not in installed_profiles:
-                    raise Error(module_errors[PROFILE_NOT_INSTALLED].format(module_spec))
+                    raise ProfileNotInstalledException(module_spec)
                 profiles = [module_form.profile]
             else:
                 profiles = installed_profiles
 
-            module_specs.remove(module_spec)
             module_version.upgrade(profiles)
 
-        return module_specs
+        return skipped
 
     def upgrade_all(self):
         modules = []
@@ -276,9 +275,15 @@ class RepoModuleDict(OrderedDict):
         self.upgrade(modules)
 
     def remove(self, module_specs):
+        skipped = []
         for module_spec in module_specs:
             subj = ModuleSubject(module_spec)
-            module_version, module_form = subj.find_module_version(self)
+
+            try:
+                module_version, module_form = subj.find_module_version(self)
+            except NoModuleException:
+                skipped.append(module_spec)
+                continue
 
             conf = self[module_form.name].conf
             if conf:
@@ -287,12 +292,13 @@ class RepoModuleDict(OrderedDict):
                 installed_profiles = []
             if module_form.profile:
                 if module_form.profile not in installed_profiles:
-                    raise Error(module_errors[PROFILE_NOT_INSTALLED].format(module_spec))
+                    raise ProfileNotInstalledException(module_spec)
                 profiles = [module_form.profile]
             else:
                 profiles = installed_profiles
 
             module_version.remove(profiles)
+        return skipped
 
     def read_all_module_confs(self):
         module_reader = ModuleReader(self.get_modules_dir())
@@ -475,7 +481,7 @@ class RepoModuleDict(OrderedDict):
             repo_module_versions = only_installed_versions
 
         if not repo_module_versions:
-            return module_errors[NOTHING_TO_SHOW]
+            return module_messages[NOTHING_TO_SHOW]
 
         versions_by_repo = OrderedDict()
         for version in repo_module_versions:
