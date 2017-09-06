@@ -210,10 +210,22 @@ class ModuleCommand(commands.Command):
             logger.info(self.base.repo_module_dict
                         .get_brief_description_enabled(self.opts.module_nsvp))
 
+    class ProvidesSubCommand(SubCommand):
+
+        aliases = ("provides", )
+
+        def configure(self):
+            demands = self.cli.demands
+            demands.available_repos = True
+            demands.sack_activation = True
+
+        def run_on_module(self):
+            self.base.repo_module_dict.print_what_provides(self.opts.module_nsvp)
+
     SUBCMDS = {ListSubCommand, InfoSubCommand, EnableSubCommand,
                DisableSubCommand, InstallSubCommand, UpdateSubCommand,
                RemoveSubCommand, LockSubCommand, UnlockSubCommand,
-               ProfileInfoSubCommand, StreamsSubCommand}
+               ProfileInfoSubCommand, StreamsSubCommand, ProvidesSubCommand}
 
     SUBCMDS_NOT_REQUIRED_ARG = {ListSubCommand, StreamsSubCommand}
 
