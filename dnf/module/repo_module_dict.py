@@ -18,6 +18,7 @@ import fnmatch
 import os
 from collections import OrderedDict
 
+import hawkey
 import smartcols
 
 from dnf.conf.read import ModuleReader, ModuleDefaultsReader
@@ -27,6 +28,7 @@ from dnf.module.exceptions import NoStreamSpecifiedException, NoModuleException,
     EnabledStreamException, ProfileNotInstalledException, NoProfileSpecifiedException
 from dnf.module.repo_module import RepoModule
 from dnf.module.subject import ModuleSubject
+from dnf.subject import Subject
 from dnf.util import first_not_none, logger, ensure_dir
 
 
@@ -370,6 +372,12 @@ class RepoModuleDict(OrderedDict):
                  "Description": module_version.module_metadata.description,
                  "Artifacts": " ".join(sorted(module_version.module_metadata.artifacts.rpms))}
 
+        table = self.create_simple_table(lines)
+
+        return table
+
+    @staticmethod
+    def create_simple_table(lines):
         table = smartcols.Table()
         table.noheadings = True
         table.column_separator = " : "
@@ -441,6 +449,34 @@ class RepoModuleDict(OrderedDict):
                 versions.append(version)
 
         return versions
+
+    def print_what_provides(self, rpms):
+        output = ""
+        versions = self.list_module_version_all()
+        for version in versions:
+            nevras = version.nevra()
+            for nevra in nevras:
+                subj = Subject(nevra)
+                nevra_obj = list(subj.get_nevra_possibilities(hawkey.FORM_NEVRA))[0]
+                if nevra_obj.name not in rpms:
+                    continue
+
+                profiles = []
+                for profile in version.profiles:
+                    if nevra_obj.name in version.rpms(profile):
+                        profiles.append(profile)
+
+                lines = {"Module": version.full_version,
+                         "Profiles": " ".join(profiles),
+                         "Repo": version.repo.id,
+                         "Summary": version.module_metadata.summary}
+
+                table = self.create_simple_table(lines)
+
+                output += "{}\n".format(self.base.output.term.bold(nevra))
+                output += "{}\n\n".format(table)
+
+        logger.info(output[:-2])
 
     def get_brief_description_latest(self, module_n):
         return self.get_brief_description_by_name(module_n, self.list_module_version_latest())
