@@ -324,7 +324,8 @@ class Base(object):
                         self.handle_repo_error(r, errors, e)
                 self.download_metadata(repos_without_local_metadata)
 
-                logger.info(_("Loading repositories."))
+                if self.repos._any_enabled():
+                    logger.info(_("Loading repositories."))
                 for r in self.repos.iter_enabled():
                     try:
                         self._add_repo_to_sack(r)
