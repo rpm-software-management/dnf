@@ -14,12 +14,11 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
-import dnf
 import hawkey
 
-from dnf.exceptions import Error
-from dnf.module import module_errors, NO_PROFILE_ERR, NO_PROFILES_AVAILABLE, POSSIBLE_PROFILES, \
-    NO_PROFILE_SPECIFIED
+import dnf
+from dnf.module.exceptions import NoProfileException, PossibleProfilesExceptions, \
+    NoProfilesException
 from dnf.subject import Subject
 
 
@@ -41,15 +40,12 @@ class RepoModuleVersion(object):
 
     def report_profile_error(self, profile, default_profiles_used=False):
         if default_profiles_used:
-            msg = module_errors[NO_PROFILE_SPECIFIED].format(self.name)
+            raise NoProfileException(self.full_version)
+        elif self.profiles:
+            raise PossibleProfilesExceptions("{}/{}".format(self.full_version, profile),
+                                             self.profiles)
         else:
-            msg = module_errors[NO_PROFILE_ERR].format(profile)
-            if self.profiles:
-                msg += " " + module_errors[POSSIBLE_PROFILES].format(self.profiles)
-            else:
-                msg += " " + module_errors[NO_PROFILES_AVAILABLE]
-
-        raise Error(msg)
+            raise NoProfilesException("{}/{}".format(self.full_version, profile))
 
     def install(self, profiles, default_profiles):
         self._install_profiles(profiles, False)
@@ -75,7 +71,7 @@ class RepoModuleVersion(object):
     def upgrade(self, profiles):
         for profile in profiles:
             if profile not in self.profiles:
-                raise Error(module_errors[NO_PROFILE_ERR].format(profile, self.profiles))
+                raise NoProfileException(profile)
 
             for single_nevra in self.profile_nevra(profile):
                 self.base.upgrade(single_nevra, reponame=self.repo.id)
@@ -86,7 +82,7 @@ class RepoModuleVersion(object):
     def remove(self, profiles):
         for profile in profiles:
             if profile not in self.profiles:
-                raise Error(module_errors[NO_PROFILE_ERR].format(profile, self.profiles))
+                raise NoProfileException(profile)
 
             for single_nevra in self.profile_nevra(profile):
                 remove_query = dnf.subject.Subject(single_nevra) \
