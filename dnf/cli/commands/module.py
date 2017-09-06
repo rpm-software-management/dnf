@@ -54,6 +54,7 @@ class ModuleCommand(commands.Command):
                 print(mods.get_brief_description_installed(self.opts.module_nsvp))
             else:
                 print(mods.get_brief_description_latest(self.opts.module_nsvp))
+
             return 0
 
     class InfoSubCommand(SubCommand):
@@ -69,11 +70,11 @@ class ModuleCommand(commands.Command):
             for spec in self.opts.module_nsvp:
                 print()
                 if self.opts.verbose:
-                    logger.info(self.base.repo_module_dict.get_full_info(spec))
+                    print(self.base.repo_module_dict.get_full_info(spec))
                 elif self.opts.profile:
-                    logger.info(self.base.repo_module_dict.get_info_profiles(spec))
+                    print(self.base.repo_module_dict.get_info_profiles(spec))
                 else:
-                    logger.info(self.base.repo_module_dict.get_info(spec))
+                    print(self.base.repo_module_dict.get_info(spec))
 
     class EnableSubCommand(SubCommand):
 
