@@ -71,15 +71,19 @@ def parse_arguments(args):
     parser = argparse.ArgumentParser()
     parser.add_argument('conf_path', nargs='?', default=dnf.const.CONF_AUTOMATIC_FILENAME)
     parser.add_argument('--timer', action='store_true')
-    parser.add_argument('--installupdates', action='store_true')
-    parser.add_argument('--downloadupdates', action='store_true')
+    parser.add_argument('--installupdates', dest='installupdates', action='store_true')
+    parser.add_argument('--downloadupdates', dest='downloadupdates', action='store_true')
+    parser.add_argument('--no-installupdates', dest='installupdates', action='store_false')
+    parser.add_argument('--no-downloadupdates', dest='downloadupdates', action='store_false')
+    parser.set_defaults(installupdates=None)
+    parser.set_defaults(downloadupdates=None)
 
     return parser.parse_args(args), parser
 
 
 class AutomaticConfig(object):
-    def __init__(self, filename=None, downloadupdates=False,
-                 installupdates=False):
+    def __init__(self, filename=None, downloadupdates=None,
+                 installupdates=None):
         if not filename:
             filename = dnf.const.CONF_AUTOMATIC_FILENAME
         self.commands = CommandsConfig()
@@ -91,8 +95,12 @@ class AutomaticConfig(object):
 
         if downloadupdates:
             self.commands.download_updates = True
+        elif downloadupdates is False:
+            self.commands.download_updates = False
         if installupdates:
             self.commands.apply_updates = True
+        elif installupdates is False:
+            self.commands.apply_updates = False
 
         self.commands.imply()
         self.filename = filename

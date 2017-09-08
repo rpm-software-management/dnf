@@ -1,4 +1,6 @@
 SET (systemd_FILES
+     dnf-automatic.service
+     dnf-automatic.timer
      dnf-automatic-notifyonly.service
      dnf-automatic-notifyonly.timer
      dnf-automatic-install.service

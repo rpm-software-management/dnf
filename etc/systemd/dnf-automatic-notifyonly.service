@@ -9,4 +9,4 @@ Nice=19
 IOSchedulingClass=2
 IOSchedulingPriority=7
 Environment="ABRT_IGNORE_PYTHON=1"
-ExecStart=/usr/bin/dnf-automatic /etc/dnf/automatic.conf --timer
+ExecStart=/usr/bin/dnf-automatic /etc/dnf/automatic.conf --timer --no-installupdates --no-downloadupdates

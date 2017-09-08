@@ -31,15 +31,17 @@
 
 Alternative CLI to ``dnf upgrade`` with specific facilities to make it suitable to be executed automatically and regularly from systemd timers, cron jobs and similar.
 
-The operation of the tool is completely controlled by the configuration file and the command only accepts single optional argument pointing to it. If no configuration file is passed from the command line, ``/etc/dnf/automatic.conf`` is used.
+The operation of the tool is usually controlled by the configuration file or the function-specific timer units (see below). The command only accepts a single optional argument pointing to the config file, and some control arguments intended for use by the services that back the timer units. If no configuration file is passed from the command line, ``/etc/dnf/automatic.conf`` is used.
 
 The tool synchronizes package metadata as needed and then checks for updates available for the given system and then either exits, downloads the packages or downloads and applies the packages. The outcome of the operation is then reported by a selected mechanism, for instance via the standard output, email or MOTD messages.
 
-A few default systemd units are provided to enable some standard configurations:
+The systemd timer unit ``dnf-automatic.timer`` will behave as the configuration file specifies (see below) with regard to whether to download and apply updates. Some other timer units are provided which override the configuration file with some standard behaviours:
 
 - dnf-automatic-notifyonly
 - dnf-automatic-download
 - dnf-automatic-install
+
+Regardless of the configuration file settings, the first will only notify of available updates. The second will download, but not install them. The third will download and install them.
 
 ===================
  Run dnf-automatic
@@ -64,12 +66,12 @@ Setting the mode of operation of the program.
 ``apply_updates``
     boolean, default: False
 
-    Whether packages comprising the available updates should be applied, i.e. installed via RPM. Implies ``download_updates``. Note that if this is set to ``False``, downloaded packages will be left in the cache till the next successful DNF transaction.
+    Whether packages comprising the available updates should be applied by ``dnf-automatic.timer``, i.e. installed via RPM. Implies ``download_updates``. Note that if this is set to ``False``, downloaded packages will be left in the cache till the next successful DNF transaction. Note that the other timer units override this setting.
 
 ``download_updates``
     boolean, default: False
 
-    Whether packages comprising the available updates should be downloaded.
+    Whether packages comprising the available updates should be downloaded by ``dnf-automatic.timer``. Note that the other timer units override this setting.
 
 .. _upgrade_type_automatic-label:
 

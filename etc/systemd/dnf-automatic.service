@@ -1,5 +1,5 @@
 [Unit]
-Description=dnf automatic download updates
+Description=dnf automatic
 # See comment in dnf-makecache.service
 ConditionPathExists=!/run/ostree-booted
 
@@ -9,4 +9,4 @@ Nice=19
 IOSchedulingClass=2
 IOSchedulingPriority=7
 Environment="ABRT_IGNORE_PYTHON=1"
-ExecStart=/usr/bin/dnf-automatic /etc/dnf/automatic.conf --timer --downloadupdates --no-installupdates
+ExecStart=/usr/bin/dnf-automatic /etc/dnf/automatic.conf --timer
