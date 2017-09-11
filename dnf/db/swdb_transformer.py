@@ -16,16 +16,14 @@
 # Red Hat, Inc.
 
 import os
-import sys
+
 import sqlite3
 import glob
 import json
 from .types import SwdbItem, convert_reason
+import logging
 
-
-def CONSTRUCT_NAME(row):
-    _NAME = row[1] + '-' + row[3] + '-' + row[4] + '-' + row[5]
-    return _NAME
+logger = logging.getLogger('dnf')
 
 
 def PACKAGE_DATA_INSERT(cursor, data):
@@ -34,36 +32,6 @@ def PACKAGE_DATA_INSERT(cursor, data):
 
 def RPM_DATA_INSERT(cursor, data):
     cursor.execute('INSERT INTO RPM_DATA VALUES (null,?,?,?,?,?,?,?,?,?,?,?)', data)
-
-
-def TRANS_DATA_INSERT(cursor, data):
-    cursor.execute('INSERT INTO TRANS_DATA VALUES (null,?,?,?,?,?,?,?)', data)
-
-
-def TRANS_INSERT(cursor, data):
-    cursor.execute('INSERT INTO TRANS VALUES (?,?,?,?,?,?,?,?,?)', data)
-
-
-# create binding with repo - returns R_ID
-def BIND_REPO(cursor, name):
-    cursor.execute('SELECT R_ID FROM REPO WHERE name=?', (name, ))
-    R_ID = cursor.fetchone()
-    if R_ID is None:
-        cursor.execute('INSERT INTO REPO VALUES(null,?,0,0)', (name, ))
-        cursor.execute('SELECT last_insert_rowid()')
-        R_ID = cursor.fetchone()
-    return R_ID[0]
-
-
-# create binding with STATE_TYPE - returns ID
-def BIND_STATE(cursor, desc):
-    cursor.execute('SELECT state FROM STATE_TYPE WHERE description=?', (desc, ))
-    STATE_ID = cursor.fetchone()
-    if STATE_ID is None:
-        cursor.execute('INSERT INTO STATE_TYPE VALUES(null,?)', (desc, ))
-        cursor.execute('SELECT last_insert_rowid()')
-        STATE_ID = cursor.fetchone()
-    return STATE_ID[0]
 
 
 # create binding with OUTPUT_TYPE - returns ID
@@ -101,119 +69,87 @@ def BIND_ENV_GROUP(cursor, eid, name_id):
                        (eid, tmp_bind_gid[0]))
 
 
-# integrity optimalization
-def BIND_PID_PDID(cursor, pid):
-    cursor.execute('SELECT PD_ID FROM PACKAGE_DATA WHERE P_ID=?', (pid, ))
-    PPD_ID = cursor.fetchone()
-    if PPD_ID is None:
-        cursor.execute('INSERT INTO PACKAGE_DATA VALUES(null,?,?,?,?,?,?,?)',
-                       (pid, '', '', '', '', '', ''))
-        cursor.execute('SELECT last_insert_rowid()')
-        PPD_ID = cursor.fetchone()
-    return PPD_ID[0]
-
-
 # YUMDB
-def GET_YUMDB_PACKAGES(cursor, yumdb_path, PACKAGE_DATA):
-    pkglist = {}
-    # get package list of yumdb
-    for dir in os.listdir(yumdb_path):
-        for subdir in os.listdir(os.path.join(yumdb_path, dir)):
-            pkglist[subdir.partition('-')[2]] = os.path.join(dir, subdir)
+def get_yumdb_packages(cursor, yumdb_path, pid_to_pdid, repo_fn):
+    """ Insert additional data from yumdb info SWDB """
 
-    # fetching aditional values from directory yumdb
-    cursor.execute('SELECT * FROM PACKAGE')
+    # load whole yumdb into dictionary structure
+    pkgs = {}
+    for path, dirs, files in os.walk(yumdb_path):
+        if dirs:
+            continue
+        nvra = path.split('/')[-1].partition('-')[2]
+        yumdata = {}
+        for yumfile in files:
+            with open(os.path.join(path, yumfile)) as f:
+                yumdata[yumfile] = f.read()
+        pkgs[nvra] = yumdata
+
+    PDSTRINGS = ['from_repo_timestamp',
+                 'from_repo_revision',
+                 'changed_by',
+                 'installonly',
+                 'installed_by']
+
+    # crate PD_ID to T_ID dictionary for further use
+    pdid_to_tid = {}
+    cursor.execute('SELECT PD_ID, T_ID FROM TRANS_DATA')
+    for row in cursor:
+        pdid_to_tid[row[0]] = row[1]
+
+    # get all packages from swdb
+    cursor.execute('SELECT P_ID, name, version, release, arch FROM PACKAGE')
     allrows = cursor.fetchall()
 
+    # insert data into rows
     for row in allrows:
-        name = CONSTRUCT_NAME(row)
-        if name in pkglist:
-            record_PD = [None] * len(PACKAGE_DATA)
-            path = os.path.join(yumdb_path, pkglist[name])
-            tmp_reason = ''
-            tmp_releasever = ''
-            tmp_cmdline = ''
-            for file in os.listdir(path):
-                if file in PACKAGE_DATA:
-                    with open(os.path.join(path, file)) as f:
-                        record_PD[PACKAGE_DATA.index(file)] = f.read()
-                elif file == "from_repo":
-                    # create binding with REPO table
-                    with open(os.path.join(path, file)) as f:
-                        record_PD[PACKAGE_DATA.index("R_ID")] = BIND_REPO(
-                            cursor,
-                            f.read())
-                # some additional data
-                elif file == "reason":
-                    with open(os.path.join(path, file)) as f:
-                        tmp_reason = convert_reason(f.read())
-                elif file == "releasever":
-                    with open(os.path.join(path, file)) as f:
-                        tmp_releasever = f.read()
-                elif file == "command_line":
-                    with open(os.path.join(path, file)) as f:
-                        tmp_cmdline = f.read()
+        name = '-'.join(row[1:])
+        if name in pkgs.keys():
+            command = []
+            vals = pkgs[name]
 
-            actualPDID = BIND_PID_PDID(cursor, row[0])
+            # insert data into PACKAGE_DATA table
+            for key in PDSTRINGS:
+                temp = vals.get(key)
+                if temp:
+                    command.append("{}='{}'".format(key, temp))
 
-            if record_PD[PACKAGE_DATA.index('R_ID')]:
-                cursor.execute('UPDATE PACKAGE_DATA SET R_ID=? WHERE PD_ID=?',
-                               (record_PD[PACKAGE_DATA.index('R_ID')],
-                                actualPDID))
+            # get repository
+            temp = vals.get('from_repo')
+            if temp:
+                repo = repo_fn(cursor, temp)
+                command.append("R_ID='{}'".format(repo))
 
-            if record_PD[PACKAGE_DATA.index('from_repo_revision')]:
-                cursor.execute('''UPDATE PACKAGE_DATA SET from_repo_revision=?
-                               WHERE PD_ID=?''',
-                               (record_PD[PACKAGE_DATA.index(
-                                          'from_repo_revision')],
-                                actualPDID))
+            # get PDID of the package
+            pdid = pid_to_pdid.get(row[0])
 
-            if record_PD[PACKAGE_DATA.index('from_repo_timestamp')]:
-                cursor.execute('''UPDATE PACKAGE_DATA SET from_repo_timestamp=?
-                               WHERE PD_ID=?''',
-                               (record_PD[PACKAGE_DATA.index(
-                                          'from_repo_timestamp')],
-                                actualPDID))
+            # Update PACKAGE_DATA row
+            if command:
+                cmd = "UPDATE PACKAGE_DATA SET {} WHERE PD_ID={}".format(','.join(command), pdid)
+                cursor.execute(cmd)
 
-            if record_PD[PACKAGE_DATA.index('installed_by')]:
-                cursor.execute('''UPDATE PACKAGE_DATA SET installed_by=?
-                               WHERE PD_ID=?''',
-                               (record_PD[PACKAGE_DATA.index('installed_by')],
-                                actualPDID))
+            # resolve reason
+            temp = vals.get('reason')
+            if temp:
+                reason = convert_reason(temp)
+                cursor.execute('UPDATE TRANS_DATA SET reason=? WHERE PD_ID=?', (reason, pdid))
 
-            if record_PD[PACKAGE_DATA.index('changed_by')]:
-                cursor.execute('''UPDATE PACKAGE_DATA SET changed_by=?
-                               WHERE PD_ID=?''',
-                               (record_PD[PACKAGE_DATA.index('changed_by')],
-                                actualPDID))
-
-            if record_PD[PACKAGE_DATA.index('installonly')]:
-                cursor.execute('''UPDATE PACKAGE_DATA SET installonly=?
-                               WHERE PD_ID=?''',
-                               (record_PD[PACKAGE_DATA.index('installonly')],
-                                actualPDID))
-
-            # other tables
-            if tmp_reason:
-                cursor.execute('UPDATE TRANS_DATA SET reason=? WHERE PD_ID=?',
-                               (tmp_reason, actualPDID))
-            if tmp_releasever:
-                cursor.execute('SELECT T_ID FROM TRANS_DATA WHERE PD_ID=?',
-                               (actualPDID,))
-                tmp_tid = cursor.fetchone()
-                if tmp_tid:
-                    cursor.execute('''UPDATE TRANS SET releasever=?
-                                   WHERE T_ID=?''',
-                                   (tmp_releasever, tmp_tid[0]))
-
-            if tmp_cmdline:
-                cursor.execute('SELECT T_ID FROM TRANS_DATA WHERE PD_ID=?',
-                               (actualPDID,))
-
-                tmp_tid = cursor.fetchone()
-                if tmp_tid:
-                    cursor.execute('UPDATE TRANS SET cmdline=? WHERE T_ID=?',
-                                   (tmp_cmdline, tmp_tid[0]))
+            # resolve releasever and command_line
+            releasever = vals.get('releasever')
+            command_line = vals.get('command_line')
+            if releasever or command_line:
+                tid = pdid_to_tid.get(pdid)
+                # deciding in Python is faster than running both sqlite statements
+                if tid:
+                    if releasever and command_line:
+                        cursor.execute('UPDATE TRANS SET cmdline=?, releasever=? WHERE T_ID=?',
+                                       (command_line, releasever, tid))
+                    elif releasever:
+                        cursor.execute('UPDATE TRANS SET releasever=? WHERE T_ID=?',
+                                       (releasever, tid))
+                    else:
+                        cursor.execute('UPDATE TRANS SET cmdline=? WHERE T_ID=?',
+                                       (command_line, tid))
 
 
 def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite'):
@@ -221,40 +157,75 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
     history_path = os.path.join(input_dir, 'history')
     groups_path = os.path.join(input_dir, 'groups.json')
 
+    state_dict = {}
+    repo_dict = {}
+
+    # create binding with STATE_TYPE - returns ID
+    def bind_state(cursor, desc):
+        code = state_dict.get(desc)
+        if code:
+            return code
+        cursor.execute('SELECT state FROM STATE_TYPE WHERE description=?', (desc, ))
+        state_id = cursor.fetchone()
+        if state_id is None:
+            cursor.execute('INSERT INTO STATE_TYPE VALUES(null,?)', (desc, ))
+            cursor.execute('SELECT last_insert_rowid()')
+            state_id = cursor.fetchone()
+        state_dict[desc] = state_id[0]
+        return state_id[0]
+
+    # create binding with repo - returns R_ID
+    def bind_repo(cursor, name):
+        code = repo_dict.get(name)
+        if code:
+            return code
+        cursor.execute('SELECT R_ID FROM REPO WHERE name=?', (name, ))
+        rid = cursor.fetchone()
+        if rid is None:
+            cursor.execute('INSERT INTO REPO VALUES(null,?,0,0)', (name, ))
+            cursor.execute('SELECT last_insert_rowid()')
+            rid = cursor.fetchone()
+        repo_dict[name] = rid[0]
+        return rid[0]
+
     # check path to yumdb dir
     if not os.path.isdir(yumdb_path):
-        sys.stderr.write('Error: yumdb directory not valid\n')
+        logger.error('Error: yumdb directory not valid')
         return False
 
     # check path to history dir
     if not os.path.isdir(history_path):
-        sys.stderr.write('Error: history directory not valid\n')
+        logger.write('Error: history directory not valid')
         return False
 
     # check historyDB file and pick newest one
     historydb_file = glob.glob(os.path.join(history_path, "history*"))
     if len(historydb_file) < 1:
-        sys.stderr.write('Error: history database file not valid\n')
+        logger.write('Error: history database file not valid')
         return False
     historydb_file.sort()
     historydb_file = historydb_file[0]
 
     if not os.path.isfile(historydb_file):
-        sys.stderr.write('Error: history database file not valid\n')
+        logger.error('Error: history database file not valid')
         return False
 
-    # initialise variables
-    task_performed = 0
-    task_failed = 0
+    tmp_output_file = output_file + '.transform'
     try:
         # initialise historyDB
         historyDB = sqlite3.connect(historydb_file)
         h_cursor = historyDB.cursor()
+    except:
+        logger.error("ERROR: unable to open database '{}'".format(historydb_file))
+        return False
+
+    try:
         # initialise output DB
-        database = sqlite3.connect(output_file)
+        os.rename(output_file, tmp_output_file)
+        database = sqlite3.connect(tmp_output_file)
         cursor = database.cursor()
     except:
-        sys.stderr.write('FAIL: aborting SWDB transformer\n')
+        logger.error("ERROR: unable to create database '{}'".format(tmp_output_file))
         return False
 
     # value distribution in tables
@@ -262,15 +233,8 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
                     'from_repo_timestamp', 'installed_by', 'changed_by',
                     'installonly']
 
-    PACKAGE = ['P_ID', 'name', 'epoch', 'version', 'release', 'arch',
-               'checksum_data', 'checksum_type', 'type']
-
     TRANS_DATA = ['T_ID', 'PD_ID', 'TG_ID', 'done', 'ORIGINAL_TD_ID', 'reason',
                   'state']
-
-    TRANS = ['T_ID', 'beg_timestamp', 'end_timestamp', 'beg_RPMDB_version',
-             'end_RPMDB_version', 'cmdline', 'loginuid', 'releasever',
-             'return_code']
 
     GROUPS = ['name_id', 'name', 'ui_name', 'installed', 'pkg_types']
 
@@ -280,22 +244,27 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
                 'size', 'sourcerpm', 'url', 'vendor', 'committer',
                 'committime']
 
+    logger.info("Transforming database. It may take a while...")
+
     # contruction of PACKAGE from pkgtups
     h_cursor.execute('SELECT * FROM pkgtups')
     for row in h_cursor:
-        record_P = [''] * len(PACKAGE)  # init
-        record_P[0] = row[0]  # P_ID
-        record_P[1] = row[1]  # name
-        record_P[2] = row[3]  # epoch
-        record_P[3] = row[4]  # version
-        record_P[4] = row[5]  # release
-        record_P[5] = row[2]  # arch
+        record_P = [
+            row[0],  # P_ID
+            row[1],  # name
+            row[3],  # epoch
+            row[4],  # version
+            row[5],  # release
+            row[2]  # arch
+        ]
         if row[6]:
-            record_P[6] = row[6].split(":", 2)[1]  # checksum_data
-            record_P[7] = row[6].split(":", 2)[0]  # checksum_type
-        record_P[8] = SwdbItem.RPM  # type
-        cursor.execute('INSERT INTO PACKAGE VALUES (?,?,?,?,?,?,?,?,?)',
-                       record_P)
+            checksum_type, checksum_data = row[6].split(":", 2)
+            record_P.append(checksum_data)
+            record_P.append(checksum_type)
+        else:
+            record_P += ['', '']
+        record_P.append(SwdbItem.RPM)  # type
+        cursor.execute('INSERT INTO PACKAGE VALUES (?,?,?,?,?,?,?,?,?)', record_P)
 
     # save changes
     database.commit()
@@ -304,13 +273,13 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
     actualPID = 0
     record_PD = [''] * len(PACKAGE_DATA)
     h_cursor.execute('SELECT * FROM pkg_yumdb')
+
     # for each row in pkg_yumdb
     for row in h_cursor:
         newPID = row[0]
-
         if actualPID != newPID:
             if actualPID != 0:
-                record_PD[PACKAGE_DATA.index('P_ID')] = actualPID
+                record_PD[0] = actualPID
                 # insert new record into PACKAGE_DATA
                 PACKAGE_DATA_INSERT(cursor, record_PD)
 
@@ -323,16 +292,16 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
 
         elif row[1] == "from_repo":
             # create binding with REPO table
-            record_PD[PACKAGE_DATA.index("R_ID")] = BIND_REPO(cursor, row[2])
+            record_PD[1] = bind_repo(cursor, row[2])
 
-    record_PD[PACKAGE_DATA.index('P_ID')] = actualPID
+    record_PD[0] = actualPID
     PACKAGE_DATA_INSERT(cursor, record_PD)  # insert last record
 
     # integrity optimalization
-    cursor.execute('SELECT P_ID FROM PACKAGE')
+    cursor.execute('SELECT P_ID FROM PACKAGE WHERE P_ID NOT IN (SELECT P_ID FROM PACKAGE_DATA)')
     tmp_row = cursor.fetchall()
     for row in tmp_row:
-        BIND_PID_PDID(cursor, int(row[0]))
+        cursor.execute("INSERT INTO PACKAGE_DATA VALUES(null,?,'','','','','','')", (row[0],))
 
     # save changes
     database.commit()
@@ -347,7 +316,7 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
         newPID = row[0]
         if actualPID != newPID:
             if actualPID != 0:
-                record_RPM[RPM_DATA.index('P_ID')] = actualPID
+                record_RPM[0] = actualPID
                 # insert new record into PACKAGE_DATA
                 RPM_DATA_INSERT(cursor, record_RPM)
             actualPID = newPID
@@ -356,36 +325,27 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
         if row[1] in RPM_DATA:
             # collect data for record from pkg_yumdb
             record_RPM[RPM_DATA.index(row[1])] = row[2]
-    record_RPM[RPM_DATA.index('P_ID')] = actualPID
+    record_RPM[0] = actualPID
     RPM_DATA_INSERT(cursor, record_RPM)  # insert last record
 
     # save changes
     database.commit()
 
+    # prepare pid to pdid dictionary
+    cursor.execute("SELECT PD_ID, P_ID FROM PACKAGE_DATA")
+    pid_to_pdid = {}
+    for row in cursor:
+        pid_to_pdid[row[1]] = row[0]
+
     # trans_data construction
-    h_cursor.execute('SELECT * FROM trans_data_pkgs')
-
+    h_cursor.execute('SELECT tid, pkgtupid, done, state FROM trans_data_pkgs')
     for row in h_cursor:
-        record_TD = [''] * len(TRANS_DATA)
-        record_TD[TRANS_DATA.index('T_ID')] = row[0]  # T_ID
-        if row[2] == 'TRUE':
-            record_TD[TRANS_DATA.index('done')] = 1
-        else:
-            record_TD[TRANS_DATA.index('done')] = 0
-
-        record_TD[TRANS_DATA.index('state')] = BIND_STATE(cursor, row[3])
-        pkgtups_tmp = int(row[1])
-
-        cursor.execute('SELECT PD_ID FROM PACKAGE_DATA WHERE P_ID=?',
-                       (pkgtups_tmp,))
-
-        pkgtups_tmp = cursor.fetchone()
-        if pkgtups_tmp:
-            record_TD[TRANS_DATA.index('PD_ID')] = pkgtups_tmp[0]
-        else:
-            task_failed += 1
-        task_performed += 1
-        TRANS_DATA_INSERT(cursor, record_TD)
+        data = [''] * len(TRANS_DATA)
+        data[TRANS_DATA.index('done')] = 1 if row[2] == 'TRUE' else 0
+        data[TRANS_DATA.index('state')] = bind_state(cursor, row[3])
+        data[TRANS_DATA.index('PD_ID')] = pid_to_pdid.get(int(row[1]), 0)
+        data[0] = row[0]
+        cursor.execute('INSERT INTO TRANS_DATA VALUES (null,?,?,?,?,?,?,?)', data)
 
     # save changes
     database.commit()
@@ -397,13 +357,14 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
     obsoleting_t = 0
     update_t = 0
     downgrade_t = 0
-    for a in range(len(state_types)):
-        if state_types[a][1] == 'Obsoleting':
-            obsoleting_t = a + 1
-        elif state_types[a][1] == 'Update':
-            update_t = a + 1
-        elif state_types[a][1] == 'Downgrade':
-            downgrade_t = a + 1
+    # get state enum
+    for i, item in enumerate(state_types):
+        if item[1] == 'Obsoleting':
+            obsoleting_t = i + 1
+        elif item[1] == 'Update':
+            update_t = i + 1
+        elif item[1] == 'Downgrade':
+            downgrade_t = i + 1
 
     # find ORIGINAL_TD_ID for Obsoleting and upgraded - via FSM
     previous_TD_ID = 0
@@ -419,78 +380,52 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
                 fsm_state = 1
             previous_TD_ID = row[0]
         elif fsm_state == 1:
-            cursor.execute('''UPDATE TRANS_DATA SET ORIGINAL_TD_ID = ?
-                           WHERE TD_ID = ?''',
-                           (row[0], previous_TD_ID))
+            cursor.execute("""UPDATE TRANS_DATA SET ORIGINAL_TD_ID = ?
+                           WHERE TD_ID = ?""", (row[0], previous_TD_ID))
             fsm_state = 0
 
     # save changes
     database.commit()
 
+    trans_cmd = """SELECT tid, trans_beg.timestamp, trans_end.timestamp, trans_beg.rpmdb_version,
+                trans_end.rpmdb_version, cmdline, loginuid, null, return_code
+                FROM trans_beg join trans_end using(tid) join trans_cmdline using(tid)"""
+
     # Construction of TRANS
-    h_cursor.execute('SELECT * FROM trans_beg')
+    h_cursor.execute(trans_cmd)
     for row in h_cursor:
-        record_T = [''] * len(TRANS)
-        record_T[TRANS.index('T_ID')] = row[0]
-        record_T[TRANS.index('beg_timestamp')] = row[1]
-        record_T[TRANS.index('beg_RPMDB_version')] = row[2]
-        record_T[TRANS.index('loginuid')] = row[3]
-        TRANS_INSERT(cursor, record_T)
+        cursor.execute('INSERT INTO TRANS VALUES (?,?,?,?,?,?,?,?,?)', row)
 
-    h_cursor.execute('SELECT * FROM trans_end')
-
-    for row in h_cursor:
-        cursor.execute('''UPDATE TRANS SET end_timestamp=?,end_RPMDB_version=?,
-                       return_code=? WHERE T_ID = ?''',
-                       (row[1], row[2], row[3], row[0]))
-
-    h_cursor.execute('SELECT * FROM trans_cmdline')
-    for row in h_cursor:
-        cursor.execute('UPDATE TRANS SET cmdline=? WHERE T_ID = ?',
-                       (row[1], row[0]))
-
-    # fetch releasever
+    # get releasever for transactions
     cursor.execute('SELECT T_ID FROM TRANS WHERE releasever=?', ('', ))
     missing = cursor.fetchall()
     for row in missing:
-        cursor.execute('SELECT PD_ID FROM TRANS_DATA WHERE T_ID=?', (row[0], ))
-        PDID = cursor.fetchall()
-        if PDID:
-            for actualPDID in PDID:
-                cursor.execute('''SELECT P_ID FROM PACKAGE_DATA
-                               WHERE PD_ID=? LIMIT 1''',
-                               (actualPDID[0], ))
-                actualPID = cursor.fetchone()
-                if actualPID:
-                    h_cursor.execute('''SELECT yumdb_val FROM pkg_yumdb WHERE
-                                     pkgtupid=? AND yumdb_key=? LIMIT 1''',
-                                     (actualPID[0], 'releasever'))
+        tid = row[0]
+        cmd = "SELECT P_ID FROM TRANS_DATA join PACKAGE_DATA using (PD_ID) WHERE T_ID=? LIMIT 1"
+        cursor.execute(cmd)
+        pids = cursor.fetchall()
+        for pid in pids:
+            h_cursor.execute("""SELECT yumdb_val FROM pkg_yumdb WHERE pkgtupid=? AND
+                             yumdb_key='releasever' LIMIT 1""", (pid,))
+            rlsver = h_cursor.fetchone()
+            if rlsver:
+                cursor.execute("UPDATE TRANS SET releasever=? WHERE T_ID=?", (rlsver[0], tid))
+                break
 
-                    releasever = h_cursor.fetchone()
-                    if releasever:
-                        cursor.execute('''UPDATE TRANS SET releasever=? WHERE
-                                       T_ID=?''',
-                                       (releasever[0], row[0]))
-                        break
-
-    # fetch reason
-    cursor.execute('SELECT TD_ID,PD_ID FROM TRANS_DATA')
+    # collect reasons
+    cursor.execute("""SELECT TD_ID, P_ID FROM TRANS_DATA join PACKAGE_DATA using(PD_ID)
+                   join PACKAGE using(P_ID)""")
     missing = cursor.fetchall()
     for row in missing:
-        cursor.execute('SELECT P_ID FROM PACKAGE_DATA WHERE PD_ID=? LIMIT 1',
-                       (row[1], ))
-        actualPID = cursor.fetchone()
+        h_cursor.execute("""SELECT yumdb_val FROM pkg_yumdb WHERE pkgtupid=? AND yumdb_key='reason'
+                         LIMIT 1""", (row[1],))
+        reason = h_cursor.fetchone()
+        if reason:
+            t_reason = convert_reason(reason[0])
+            cursor.execute('UPDATE TRANS_DATA SET reason=? WHERE TD_ID=?', (t_reason, row[0]))
 
-        if actualPID:
-            h_cursor.execute('''SELECT yumdb_val FROM pkg_yumdb
-                             WHERE pkgtupid=? AND yumdb_key=? LIMIT 1''',
-                             (actualPID[0], 'reason'))
-
-            reason = h_cursor.fetchone()
-            if reason:
-                t_reason = convert_reason(reason[0])
-                cursor.execute('UPDATE TRANS_DATA SET reason=? WHERE TD_ID=?',
-                               (t_reason, row[0]))
+    # fetch additional data from yumdb
+    get_yumdb_packages(cursor, yumdb_path, pid_to_pdid, bind_repo)
 
     # contruction of OUTPUT
     h_cursor.execute('SELECT * FROM trans_script_stdout')
@@ -503,9 +438,6 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
         cursor.execute('INSERT INTO OUTPUT VALUES (null,?,?,?)',
                        (row[1], row[2], BIND_OUTPUT(cursor, 'stderr')))
 
-    # fetch additional data from yumdb
-    GET_YUMDB_PACKAGES(cursor, yumdb_path, PACKAGE_DATA)
-
     # construction of GROUPS
     if os.path.isfile(groups_path):
         with open(groups_path) as groups_file:
@@ -517,16 +449,13 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
                         record_G[GROUPS.index('name_id')] = value
 
                         if 'name' in data[key][value]:
-                            record_G[GROUPS.index('name')] =\
-                                data[key][value]['name']
+                            record_G[GROUPS.index('name')] = data[key][value]['name']
 
-                        record_G[GROUPS.index('pkg_types')] =\
-                            data[key][value]['pkg_types']
+                        record_G[GROUPS.index('pkg_types')] = data[key][value]['pkg_types']
 
                         record_G[GROUPS.index('installed')] = True
                         if 'ui_name' in data[key][value]:
-                            record_G[GROUPS.index('ui_name')] =\
-                                data[key][value]['ui_name']
+                            record_G[GROUPS.index('ui_name')] = data[key][value]['ui_name']
 
                         cursor.execute('''INSERT INTO GROUPS
                                        VALUES (null,?,?,?,?,?)''',
@@ -544,15 +473,11 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
                         record_E = [''] * len(ENVIRONMENTS)
                         record_E[GROUPS.index('name_id')] = value
                         if 'name' in data[key][value]:
-                            record_G[GROUPS.index('name')] =\
-                                data[key][value]['name']
-                        record_E[ENVIRONMENTS.index('grp_types')] =\
-                            data[key][value]['grp_types']
-                        record_E[ENVIRONMENTS.index('pkg_types')] =\
-                            data[key][value]['pkg_types']
+                            record_G[GROUPS.index('name')] = data[key][value]['name']
+                        record_E[ENVIRONMENTS.index('grp_types')] = data[key][value]['grp_types']
+                        record_E[ENVIRONMENTS.index('pkg_types')] = data[key][value]['pkg_types']
                         if 'ui_name' in data[key][value]:
-                            record_E[ENVIRONMENTS.index('ui_name')] =\
-                                data[key][value]['ui_name']
+                            record_E[ENVIRONMENTS.index('ui_name')] = data[key][value]['ui_name']
 
                         cursor.execute('''INSERT INTO ENVIRONMENTS
                                        VALUES (null,?,?,?,?,?)''',
@@ -569,75 +494,44 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
     cursor.execute('SELECT * FROM GROUPS')
     tmp_groups = cursor.fetchall()
     for row in tmp_groups:
-        tmp_ui_name = ''
-        tmp_trans = ''
-        if row[3]:
-            tmp_ui_name = "%" + row[3] + "%"
-            cursor.execute('SELECT T_ID FROM TRANS WHERE cmdline LIKE ?',
-                           (tmp_ui_name, ))
+        command = []
+        for pattern in row[1:4]:
+            if pattern:
+                command.append("cmdline LIKE '%{}%'".format(pattern))
+        if command:
+            cursor.execute("SELECT T_ID FROM TRANS WHERE " + " or ".join(command))
             tmp_trans = cursor.fetchall()
-        if not tmp_trans and row[2]:
-            tmp_ui_name = "%" + row[2] + "%"
-            cursor.execute('SELECT T_ID FROM TRANS WHERE cmdline LIKE ?',
-                           (tmp_ui_name,))
-            tmp_trans = cursor.fetchall()
-        if not tmp_trans and row[1]:
-            tmp_ui_name = "%" + row[1] + "%"
-            cursor.execute('SELECT T_ID FROM TRANS WHERE cmdline LIKE ?',
-                           (tmp_ui_name,))
-            tmp_trans = cursor.fetchall()
-        if tmp_trans:
-            for single_trans in tmp_trans:
-                tmp_tuple = (single_trans[0], row[0], row[1], row[2], row[3],
-                             row[4], row[5])
-                cursor.execute('''INSERT INTO TRANS_GROUP_DATA
-                               VALUES(null,?,?,?,?,?,?,?)''',
-                               tmp_tuple)
+            if tmp_trans:
+                for single_trans in tmp_trans:
+                    data = (single_trans[0], row[0], row[1], row[2], row[3], row[4], row[5])
+                    cursor.execute("INSERT INTO TRANS_GROUP_DATA VALUES(null,?,?,?,?,?,?,?)", data)
 
     # construction of TRANS_GROUP_DATA from ENVIRONMENTS
     cursor.execute('SELECT * FROM ENVIRONMENTS WHERE ui_name!=?', ('', ))
     tmp_env = cursor.fetchall()
     for row in tmp_env:
-        tmp_ui_name = ''
-        tmp_trans = ''
-        if row[3]:
-            tmp_ui_name = "%" + row[3] + "%"
-            cursor.execute('SELECT T_ID FROM TRANS WHERE cmdline LIKE ?',
-                           (tmp_ui_name,))
+        command = []
+        for pattern in row[1:4]:
+            if pattern:
+                command.append("cmdline LIKE '%{}%'".format(pattern))
+        if command:
+            cursor.execute("SELECT T_ID FROM TRANS WHERE " + " or ".join(command))
             tmp_trans = cursor.fetchall()
-        if not tmp_trans and row[2]:
-            tmp_ui_name = "%" + row[2] + "%"
-            cursor.execute('SELECT T_ID FROM TRANS WHERE cmdline LIKE ?',
-                           (tmp_ui_name,))
-            tmp_trans = cursor.fetchall()
-        if not tmp_trans and row[1]:
-            tmp_ui_name = "%" + row[1] + "%"
-            cursor.execute('SELECT T_ID FROM TRANS WHERE cmdline LIKE ?',
-                           (tmp_ui_name,))
-            tmp_trans = cursor.fetchall()
-        if tmp_trans:
-            for single_trans in tmp_trans:
-                cursor.execute('''SELECT G_ID FROM ENVIRONMENTS_GROUPS
-                               WHERE E_ID = ?''',
-                               (row[0],))
-                tmp_groups = cursor.fetchall()
-                for gid in tmp_groups:
-                    cursor.execute('SELECT * FROM GROUPS WHERE G_ID = ?',
-                                   (gid[0],))
-                    tmp_group_data = cursor.fetchone()
-                    tmp_tuple = (single_trans[0], tmp_group_data[0],
-                                 tmp_group_data[1], tmp_group_data[2],
-                                 tmp_group_data[3], tmp_group_data[4],
-                                 tmp_group_data[5])
-                    cursor.execute('''INSERT INTO TRANS_GROUP_DATA
-                                   VALUES(null,?,?,?,?,?,?,?)''',
-                                   tmp_tuple)
+            if tmp_trans:
+                for trans in tmp_trans:
+                    cursor.execute("SELECT G_ID FROM ENVIRONMENTS_GROUPS WHERE E_ID=?", (row[0],))
+                    tmp_groups = cursor.fetchall()
+                    for gid in tmp_groups:
+                        cursor.execute("SELECT * FROM GROUPS WHERE G_ID=?", (gid[0],))
+                        data = cursor.fetchone()
+                        tgdata = (trans[0], data[0], data[1], data[2], data[3], data[4], data[5])
+                        cursor.execute("INSERT INTO TRANS_GROUP_DATA VALUES(null,?,?,?,?,?,?,?)",
+                                       tgdata)
 
-    h_cursor.execute('SELECT * FROM trans_with_pkgs')
+    # create Transaction performed with package
+    h_cursor.execute('SELECT tid, pkgtupid FROM trans_with_pkgs')
     for row in h_cursor:
-        tid = row[0]
-        pid = row[1]
-        cursor.execute('INSERT INTO TRANS_WITH VALUES (null,?,?)', (tid, pid))
+        cursor.execute('INSERT INTO TRANS_WITH VALUES (null,?,?)', row)
 
     # save changes
     database.commit()
@@ -646,4 +540,7 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
     database.close()
     historyDB.close()
 
-    return task_performed > 0
+    # successful
+    os.rename(tmp_output_file, output_file)
+
+    return True
