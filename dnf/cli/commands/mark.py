@@ -22,6 +22,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.i18n import _
 from dnf.cli import commands
+from dnf.db.types import SwdbReason
 
 import dnf
 import functools
@@ -50,7 +51,7 @@ class MarkCommand(commands.Command):
         logger.info(_('%s unmarked as user installed.'), str(pkg))
 
     def _mark_group(self, pkg):
-        self.base.history.set_reason(pkg, 'group')
+        self.base.history.set_reason(pkg, SwdbReason.GROUP)
         logger.info(_('%s marked as group installed.'), str(pkg))
 
     def configure(self):

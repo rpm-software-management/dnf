@@ -27,7 +27,7 @@ from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
 from dnf.util import first
 from dnf.db import history
-from dnf.db.types import SwdbPkgData
+from dnf.db.types import SwdbPkgData, SwdbReason
 from dnf.yum import misc
 from functools import reduce
 import collections
@@ -1496,7 +1496,7 @@ class Base(object):
             try:
                 return self.history.reason(q[0])
             except AttributeError:
-                return 'unknown'
+                return SwdbReason.UNKNOWN
 
         return dnf.comps.Solver(self.history.group, self._comps, reason_fn)
 
