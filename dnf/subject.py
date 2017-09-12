@@ -36,28 +36,6 @@ class Subject(object):
         self.subj = hawkey.Subject(pkg_spec)  # internal subject
         self.icase = ignore_case
 
-    def _nevra_to_filters(self, query, nevra):
-        nevra_attrs = [("name", True), ("epoch", False),
-                       ("version", False), ("release", False),
-                       ("arch", False)]
-
-        for (name, add_flags) in nevra_attrs:
-            attr = getattr(nevra, name)
-            flags = []
-            if attr is not None and attr != '*':
-                if add_flags:
-                    flags = self._query_flags
-                query.filterm(*flags, **{name + '__glob': attr})
-
-        return query
-
-    @property
-    def _query_flags(self):
-        flags = []
-        if self.icase:
-            flags.append(hawkey.ICASE)
-        return flags
-
     @property
     def _filename_pattern(self):
         return self.subj.pattern.startswith('/') or self.subj.pattern.startswith('*/')
@@ -96,7 +74,7 @@ class Subject(object):
         if with_nevra:
             for nevra in self.get_nevra_possibilities(forms=forms):
                 if nevra:
-                    q = self._nevra_to_filters(sack.query(), nevra)
+                    q = dnf.query.Query(query=nevra.to_query(sack, icase=self.icase))
                     if q:
                         solution['nevra'] = nevra
                         solution['query'] = q
