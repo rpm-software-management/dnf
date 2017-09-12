@@ -133,7 +133,7 @@ def _download_metadata(repos):
         end()
     except librepo.LibrepoException as e:
         errs._fatal = e.args[1] or '<unspecified librepo error>'
-        logger.debug(e)
+        logger.debug(e.args[1])
 
     for tgt in targets:
         if tgt.err is None or tgt.err.startswith('Not finished'):
@@ -998,6 +998,10 @@ class Repo(dnf.conf.RepoConf):
         if self._sync_strategy == SYNC_ONLY_CACHE:
             msg = _("Cache-only enabled but no cache for '%s'") % self.id
             raise dnf.exceptions.RepoError(msg)
+
+        if self.metadata or not self._expired:
+            return True
+
         try:
             if self._try_revive():
                 # the expired metadata still reflect the origin:

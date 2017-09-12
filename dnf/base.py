@@ -1015,11 +1015,12 @@ class Base(object):
 
     def download_metadata(self, repos):
         dnf.repo._download_metadata(repos)
+
         for repo in repos:
             if repo.metadata is None or not repo.metadata.fresh:
                 repo.disable()
                 msg = _("Failed to synchronize cache for repo '%s'") % (repo.id)
-                dnf.util._terminal_messenger('print', msg, sys.stderr)
+                logger.warning(msg)
 
     def download_packages(self, pkglist, progress=None, callback_total=None):
         # :api
