@@ -173,7 +173,6 @@ class CostUpdate(tests.test_repo.RepoTestMixin, support.ResultTestCase):
         base.init_sack()
         base.repos.add(r1)
         base.repos.add(r2)
-        base.download_metadata([r1, r2])
         base._add_repo_to_sack(r1)
         base._add_repo_to_sack(r2)
         base.upgrade("tour")

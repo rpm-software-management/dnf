@@ -105,51 +105,6 @@ def _pkg2payload(pkg, progress, *factories):
     raise ValueError(_('no matching payload factory for %s') % pkg)
 
 
-def _download_metadata(repos):
-    def start():
-        for repo in repos:
-            if repo.repo_gpgcheck:
-                dnf.crypto.import_repo_keys(repo)
-            repo._md_pload._text = repo.name
-            repo._md_pload._download_size = 0.0
-            targets.append(repo._librepo_metadata_target())
-
-        progress = repos[0]._md_pload.progress
-        progress.multi_download_id = "metadata_parallel"
-        progress.start(len(repos), 1)
-
-    def end():
-        progress = repos[0]._md_pload.progress
-        progress.multi_download_id = None
-
-    if len(repos) == 0:
-        return None
-
-    targets = []
-    errs = _DownloadErrors()
-    try:
-        start()
-        librepo.download_metadata(targets)
-        end()
-    except librepo.LibrepoException as e:
-        errs._fatal = e.args[1] or '<unspecified librepo error>'
-        logger.debug(e)
-
-    for tgt in targets:
-        if tgt.err is None or tgt.err.startswith('Not finished'):
-            continue
-        if tgt.err == 'Already downloaded':
-            errs._skipped.add(tgt.cbdata._md_pload)
-            continue
-        err = tgt.err
-        repo = tgt.cbdata
-
-        repo._md_expire_cache()
-        errs._irrecoverable[repo] = [err]
-
-    return errs
-
-
 def _download_payloads(payloads, drpm):
     # download packages
     def _download_sort_key(payload):
@@ -514,35 +469,6 @@ class MDPayload(dnf.callback.Payload):
             return
         self.progress.message(msg)
 
-    @dnf.util.log_method_call(functools.partial(logger.log, dnf.logging.SUBDEBUG))
-    def _download_end_cb(self, cbdata, lr_status, msg):
-        """End callback to librepo operation."""
-
-        repo = cbdata
-        status = dnf.callback.STATUS_FAILED
-        if msg is None:
-            status = dnf.callback.STATUS_OK
-        elif msg.startswith('Not finished'):
-            return
-        elif lr_status == librepo.TRANSFER_ALREADYEXISTS:
-            status = dnf.callback.STATUS_ALREADY_EXISTS
-
-        self.progress.end(self, status, msg)
-
-        try:
-            handle = repo._get_handle()
-            repo._replace_metadata(handle)
-
-            # get md from the cache now:
-            repo.metadata = None
-            repo._try_cache()
-            repo.metadata.fresh = True
-        except (dnf.repo._DetailedLibrepoError, shutil.Error):
-            repo._expired = True
-            if not repo.skip_if_unavailable:
-                msg = _("Failed to synchronize cache for repo '%s'") % (repo.id)
-                raise dnf.exceptions.RepoError(msg)
-
     def _mirror_failure_cb(self, cbdata, msg, url, metadata):
         msg = 'error: %s (%s).' % (msg, url)
         logger.debug(msg)
@@ -825,7 +751,6 @@ class Repo(dnf.conf.RepoConf):
             h.lowspeedtime = None
         h.proxyuserpwd = _user_pass_str(self.proxy_username, self.proxy_password)
         h.sslverifypeer = h.sslverifyhost = self.sslverify
-
         return h
 
     def _init_hawkey_repo(self):
@@ -833,24 +758,6 @@ class Repo(dnf.conf.RepoConf):
         hrepo.cost = self.cost
         hrepo.priority = self.priority
         return hrepo
-
-    def _librepo_metadata_target(self):
-        tmpdir = dnf.util.tmpdir()
-
-        self._handle = self._handle_new_remote(tmpdir.path)
-        msg = 'repo: downloading from remote: %s, %s'
-        logger.log(dnf.logging.DDEBUG, msg, self.id, self._handle)
-
-        target_dct = {
-            'handle': self._handle,
-            'cbdata': self,
-            'progresscb': self._md_pload._progress_cb,
-            'mirrorfailurecb': self._md_pload._mirror_failure_cb,
-            'endcb': self._md_pload._download_end_cb,
-            'gnupghomedir': self._pubring_dir
-        }
-
-        return librepo.MetadataTarget(**target_dct)
 
     def _replace_metadata(self, handle):
         dnf.util.ensure_dir(self._cachedir)
@@ -1004,16 +911,26 @@ class Repo(dnf.conf.RepoConf):
                 self.metadata._reset_age()
                 self._expired = False
                 return True
-            else:
-                self._expired = True
-                return False
 
+            with dnf.util.tmpdir() as tmpdir:
+                handle = self._handle_new_remote(tmpdir)
+                msg = _('repo: downloading from remote: %s, %s')
+                logger.log(dnf.logging.DDEBUG, msg, self.id, handle)
+                self._handle_load(handle)
+                # override old md with the new ones:
+                self._replace_metadata(handle)
+
+            # get md from the cache now:
+            handle = self._handle_new_local(self._cachedir)
+            self.metadata = self._handle_load(handle)
+            self.metadata.fresh = True
         except _DetailedLibrepoError as e:
-            self._expired = True
             dmsg = _("Cannot download '%s': %s.")
             logger.log(dnf.logging.DEBUG, dmsg, e.source_url, e.librepo_msg)
             msg = _("Failed to synchronize cache for repo '%s'") % (self.id)
             raise dnf.exceptions.RepoError(msg)
+        self._expired = False
+        return True
 
     def _md_expire_cache(self):
         """Mark whatever is in the current cache expired.
