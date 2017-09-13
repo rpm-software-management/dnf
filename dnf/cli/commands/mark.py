@@ -43,11 +43,11 @@ class MarkCommand(commands.Command):
         parser.add_argument('package', nargs='+')
 
     def _mark_install(self, pkg):
-        self.base.history.mark_user_installed(pkg, True)
+        self.base.history.set_reason(pkg, SwdbReason.USER)
         logger.info(_('%s marked as user installed.'), str(pkg))
 
     def _mark_remove(self, pkg):
-        self.base.history.mark_user_installed(pkg, False)
+        self.base.history.set_reason(pkg, SwdbReason.DEP)
         logger.info(_('%s unmarked as user installed.'), str(pkg))
 
     def _mark_group(self, pkg):

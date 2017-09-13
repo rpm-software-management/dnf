@@ -237,10 +237,6 @@ class SwdbInterface(object):
             self._log_errors(errors)
         del self._tid
 
-    def mark_user_installed(self, pkg, mark):
-        """(Un)mark package as user installed"""
-        return self.swdb.mark_user_installed(str(pkg), mark)
-
     def _save_rpmdb(self, ipkg):
         """ Save all the data for rpmdb for this installed pkg, assumes
             there is no data currently. """

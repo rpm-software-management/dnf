@@ -1410,7 +1410,7 @@ class Base(object):
 
         for pkg in query:
             reason = self.history.reason(pkg)
-            self.history.mark_user_installed(pkg, False)
+            self.history.set_reason(pkg, SwdbReason.DEP)
             self._revert_reason.append((pkg, reason))
         unneeded_pkgs = self.sack.query()._unneeded(self.sack,
                                                     self.history,

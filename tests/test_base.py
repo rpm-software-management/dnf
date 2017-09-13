@@ -101,7 +101,7 @@ class BaseTest(support.TestCase):
         base._sack = support.mock_sack('main')
         pkg, = base.sack.query().installed().filter(name='pepper')
         base.history.set_repo(pkg, "main")
-        base.history.mark_user_installed(pkg, True)
+        base.history.set_reason(pkg, SwdbReason.USER)
         self.assertEqual(base.history.user_installed(pkg), True)
         self.assertEqual(base.history.repo(pkg), 'main')
 
@@ -112,7 +112,7 @@ class BaseTest(support.TestCase):
         self._setup_packages(base.history)
         pkg, = base.sack.query().installed().filter(name='pepper')
         base.history.set_repo(pkg, "anakonda")
-        base.history.mark_user_installed(pkg, True)
+        base.history.set_reason(pkg, SwdbReason.USER)
         self.assertEqual(base.history.user_installed(pkg), False)
         self.assertEqual(base.history.repo(pkg), 'anakonda')
 
@@ -122,7 +122,7 @@ class BaseTest(support.TestCase):
         base._sack = support.mock_sack('main')
         self._setup_packages(base.history)
         pkg, = base.sack.query().installed().filter(name='pepper')
-        base.history.mark_user_installed(pkg, False)
+        base.history.set_reason(pkg, SwdbReason.DEP)
         base.history.set_repo(pkg, "main")
         self.assertEqual(base.history.user_installed(pkg), False)
         self.assertEqual(base.history.repo(pkg), 'main')
