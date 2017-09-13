@@ -18,6 +18,7 @@
 from __future__ import absolute_import
 from tests import support
 from dnf.cli.option_parser import OptionParser
+from dnf.db.types import SwdbReason
 
 import dnf.cli.commands.autoremove as autoremove
 
@@ -30,7 +31,7 @@ class AutoRemoveCommandTest(support.ResultTestCase):
         pkgs = list(q.filter(name='librita')) + list(q.filter(name='pepper'))
         history = base.history
         for pkg in pkgs:
-            history.mark_user_installed(pkg, True)
+            history.set_reason(pkg, SwdbReason.USER)
 
         cli = base.mock_cli()
         cmd = autoremove.AutoremoveCommand(cli)
