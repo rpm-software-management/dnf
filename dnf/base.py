@@ -1411,7 +1411,12 @@ class Base(object):
         trans = self._comps_trans
         basearch = self.conf.substitutions['basearch']
 
-        def cond_check(pkg):
+        def conditional_pkg_check(pkg):
+            """
+            If package is conditional it checks if transaction fulfills condition
+            :param pkg:
+            :return: True if the package should be installed
+            """
             if not pkg.requires:
                 return True
             installed = self.sack.query().installed().filter(name=pkg.requires).run()
@@ -1419,22 +1424,29 @@ class Base(object):
                 pkg.requires in (pkg.name for pkg in self._goal._installs) or \
                 pkg.requires in [pkg.name for pkg in trans.install]
 
-        def trans_upgrade(query, remove_query):
+        def trans_upgrade(query, remove_query, pkg):
             sltr = dnf.selector.Selector(self.sack)
             sltr.set(pkg=query)
             self._goal.upgrade(select=sltr)
             return remove_query
 
-        def trans_install(query, remove_query):
+        def trans_install(query, remove_query, pkg):
             if self.conf.multilib_policy == "all":
-                self._install_multiarch(query, strict=False)
+                # can provide different suggestion for conditional package in comparison to
+                # "best" policy
+                if conditional_pkg_check(pkg):
+                    self._install_multiarch(query, strict=False)
+
             else:
                 sltr = dnf.selector.Selector(self.sack)
-                sltr.set(pkg=query)
+                if pkg.requires:
+                    sltr.set(provides="({} if {})".format(pkg.name, pkg.requires))
+                else:
+                    sltr.set(pkg=query)
                 self._goal.install(select=sltr, optional=True)
             return remove_query
 
-        def trans_remove(query, remove_query):
+        def trans_remove(query, remove_query, pkg):
             remove_query = remove_query.union(query)
             return remove_query
 
@@ -1455,11 +1467,8 @@ class Base(object):
                         package_string += '.' + basearch
                     logger.warning(_('No match for group package "{}"').format(package_string))
                     continue
-                # a conditional package with unsatisfied requiremensts
-                if not cond_check(pkg):
-                    continue
                 q = q.filter(arch__neq="src")
-                remove_query = fn(q, remove_query)
+                remove_query = fn(q, remove_query, pkg)
                 self._goal.group_members.add(pkg.name)
 
         self._remove_if_unneeded(remove_query)
