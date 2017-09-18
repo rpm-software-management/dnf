@@ -32,8 +32,6 @@ SwdbGroup = Dnf.SwdbGroup
 SwdbEnv = Dnf.SwdbEnv
 SwdbRpmData = Dnf.SwdbRpmData
 
-convert_id = Dnf.convert_id_to_reason
-
 
 def convert_reason(reason):
     if isinstance(reason, Dnf.SwdbReason):
