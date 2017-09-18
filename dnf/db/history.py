@@ -77,8 +77,11 @@ class SwdbInterface(object):
     def add_package(self, pkg):
         return self.swdb.add_package(pkg)
 
-    def add_package_data(self, pid, package_data):
-        return self.swdb.log_package_data(pid, package_data)
+    def update_package_data(self, pid, tid, package_data):
+        """ Update Swdb.PkgData for package with pid identifier in transaction tid
+            This method must be called after package data initialization using method `beg`
+        """
+        return self.swdb.update_package_data(pid, tid, package_data)
 
     def reset_db(self):
         return self.swdb.reset_db()
@@ -242,17 +245,18 @@ class SwdbInterface(object):
             there is no data currently. """
         return not self.swdb.add_rpm_data(self.ipkg_to_rpmdata(ipkg))
 
-    def add_pkg_data(self, ipkg, pkg_data):
+    def _update_ipkg_data(self, ipkg, pkg_data):
         """ Save all the data for yumdb for this installed pkg, assumes
             there is no data currently. """
-        pid = self.pkg2pid(ipkg, create=False)
-        if pid:
+        pid = self.pkg2pid(ipkg)
+        if pid and self._tid:
             # FIXME: resolve installonly
-            return self.swdb.log_package_data(pid, pkg_data)
+            return self.update_package_data(pid, self._tid, pkg_data)
+        return False
 
     def sync_alldb(self, ipkg, pkg_data):
         """ Sync. all the data for rpmdb/yumdb for this installed pkg. """
-        return self._save_rpmdb(ipkg) and self.add_pkg_data(ipkg, pkg_data)
+        return self._save_rpmdb(ipkg) and self._update_ipkg_data(ipkg, pkg_data)
 
     def search(self, patterns, ignore_case=True):
         """ Search for history transactions which contain specified

@@ -46,8 +46,8 @@ class BaseTest(support.TestCase):
         pkg1.checksum_data = "0123456789abcd"
         pkg_data1 = SwdbPkgData()
         pid = history.add_package(pkg1)
-        history.add_package_data(pid, pkg_data1)
-        history.swdb.trans_data_beg(0, pid, SwdbReason.USER, "installed")
+        history.swdb.trans_data_beg(0, pid, SwdbReason.USER, "Installed")
+        history.update_package_data(pid, 0, pkg_data1)
 
     def test_instance(self):
         base = support.MockBase()
@@ -181,7 +181,8 @@ class VerifyTransactionTest(TestCase):
         pkg = self.base.history.ipkg_to_pkg(new_pkg)
         pid = self.base.history.add_package(pkg)
         pkg_data = SwdbPkgData()
-        self.base.history.add_package_data(pid, pkg_data)
+        self.base.history.swdb.trans_data_beg(0, pid, SwdbReason.USER, "Installed")
+        self.base.history.update_package_data(pid, 0, pkg_data)
         self.base.history.set_repo(new_pkg, 'main')
 
         self.base.transaction.add_install(new_pkg, [])
@@ -190,7 +191,7 @@ class VerifyTransactionTest(TestCase):
 
         pkg = self.base.history.package(new_pkg)
         self.assertEqual(pkg.ui_from_repo(), '@main')
-        self.assertEqual(pkg.get_reason(), SwdbReason.UNKNOWN)
+        self.assertEqual(pkg.get_reason(), SwdbReason.USER)
         self.assertEqual(pkg.checksum_type, 'md5')
         self.assertEqual(pkg.checksum_data, HASH)
 
