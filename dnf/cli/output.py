@@ -1515,7 +1515,7 @@ Transaction Summary
                     name = self._pwd_ui_username(old.loginuid, 24)
                 name = ucd(name)
                 tm = time.strftime("%Y-%m-%d %H:%M",
-                                   time.localtime(float(old.beg_timestamp)))
+                                   time.localtime(old.beg_timestamp))
                 num, uiacts = self._history_uiactions(old.data())
                 name = fill_exact_width(name, 24, 24)
                 uiacts = fill_exact_width(uiacts, 14, 14)
@@ -1682,7 +1682,7 @@ Transaction Summary
             else:
                 print(_("Begin rpmdb    :"), old.beg_rpmdb_version)
         if old.end_timestamp is not None:
-            endt = float(float(old.end_timestamp))
+            endt = old.end_timestamp
             endtm = time.strftime("%c", time.localtime(endt))
             diff = endt - begt
             if diff < 5 * 60:

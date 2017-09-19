@@ -585,7 +585,7 @@ class BaseCli(dnf.Base):
             else:
                 mobj.merge(trans)
 
-        tm = dnf.util.normalize_time(float(old.beg_timestamp))
+        tm = dnf.util.normalize_time(old.beg_timestamp)
         print("Rollback to transaction %u, from %s" % (old.tid, tm))
         print(self.output.fmtKeyValFill("  Undoing the following transactions: ",
                                       ", ".join((str(x) for x in mobj.tid))))
@@ -617,7 +617,7 @@ class BaseCli(dnf.Base):
         if old is None:
             return 1, ['Failed history undo']
 
-        tm = dnf.util.normalize_time(float(old.beg_timestamp))
+        tm = dnf.util.normalize_time(old.beg_timestamp)
         msg = _("Undoing transaction {}, from {}").format(old.tid, ucd(tm))
         logger.info(msg)
         self.output.historyInfoCmdPkgsAltered(old)  # :todo

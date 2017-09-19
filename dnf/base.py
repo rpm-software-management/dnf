@@ -967,7 +967,7 @@ class Base(object):
                 try:
                     st = os.stat(rpo.localPkg())
                     lp_ctime = str(int(st.st_ctime))
-                    lp_mtime = str(int(st.st_mtime))
+                    lp_mtime = int(st.st_mtime)
                     pkg_info.from_repo_revision = lp_ctime
                     pkg_info.from_repo_timestamp = lp_mtime
                 except Exception:
@@ -977,7 +977,10 @@ class Base(object):
                 if md and md._revision is not None:
                     pkg_info.from_repo_revision = str(md._revision)
                 if md:
-                    pkg_info.from_repo_timestamp = str(md._timestamp)
+                    try:
+                        pkg_info.from_repo_timestamp = int(md._timestamp)
+                    except Exception:
+                        pass
 
             loginuid = misc.getloginuid()
             if tsi.op_type in (dnf.transaction.DOWNGRADE,

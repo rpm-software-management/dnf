@@ -480,20 +480,20 @@ class ComparisonTests(TestCase):
 
     def test_transaction(self):
         t = SwdbTrans
-        a = t.new(1, '5', '5', '', '', '', '', '9', 0)
-        b = t.new(9, '5', '5', '', '', '', '', '9', 0)
+        a = t.new(1, 5, 5, '', '', '', '', '9', 0)
+        b = t.new(9, 5, 5, '', '', '', '', '9', 0)
 
         self.assertGreater(a, b)
         self.assertLess(b, a)
 
-        a2 = t.new(1, '5', '', '', '', '', '', '9', 0)
-        b2 = t.new(1, '9', '', '', '', '', '', '9', 0)
+        a2 = t.new(1, 5, 0, '', '', '', '', '9', 0)
+        b2 = t.new(1, 9, 0, '', '', '', '', '9', 0)
 
         self.assertGreater(a2, b2)
         self.assertLess(b2, a2)
 
-        a3 = t.new(1, '1', '2', '', '', '', '', '9', 0)
-        b3 = t.new(2, '3', '4', '', '', '', '', '9', 0)
+        a3 = t.new(1, 1, 2, '', '', '', '', '9', 0)
+        b3 = t.new(2, 3, 4, '', '', '', '', '9', 0)
 
         self.assertGreater(a3, b3)
         self.assertLess(b3, a3)
