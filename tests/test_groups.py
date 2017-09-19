@@ -93,7 +93,7 @@ class PresetPersistorTest(support.ResultTestCase):
                 swdb_pkg = SwdbPkg()
                 swdb_pkg.name = pkg
                 pid = history.add_package(swdb_pkg)
-                history.swdb.trans_data_beg(1, pid, SwdbReason.GROUP, "Installed")
+                history.swdb.trans_data_beg(1, pid, SwdbReason.GROUP, "Installed", False)
 
     def _install_test_group(self):
         """Group installation itself does not handle packages. We need to
@@ -113,7 +113,7 @@ class PresetPersistorTest(support.ResultTestCase):
             swdb_pkg.release = '0'
             swdb_pkg.arch = 'x86_64'
             pid = history.add_package(swdb_pkg)
-            history.swdb.trans_data_beg(1, pid, SwdbReason.GROUP, "Installed")
+            history.swdb.trans_data_beg(1, pid, SwdbReason.GROUP, "Installed", False)
 
         self.base.reset(goal=True)
 

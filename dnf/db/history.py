@@ -188,13 +188,14 @@ class SwdbInterface(object):
             self._log_group_trans(tid)
 
         for tsi in tsis:
-            for (pkg, state) in tsi._history_iterator():
+            for (pkg, state, obsoleting) in tsi._history_iterator():
                 pid = self.pkg2pid(pkg)
                 self.swdb.trans_data_beg(
                     tid,
                     pid,
                     convert_reason(tsi.reason),
-                    state)
+                    state,
+                    obsoleting)
         return tid
 
     def pkg2pid(self, po, create=True):

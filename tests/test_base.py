@@ -46,7 +46,7 @@ class BaseTest(support.TestCase):
         pkg1.checksum_data = "0123456789abcd"
         pkg_data1 = SwdbPkgData()
         pid = history.add_package(pkg1)
-        history.swdb.trans_data_beg(0, pid, SwdbReason.USER, "Installed")
+        history.swdb.trans_data_beg(0, pid, SwdbReason.USER, "Installed", False)
         history.update_package_data(pid, 0, pkg_data1)
 
     def test_instance(self):
@@ -181,7 +181,7 @@ class VerifyTransactionTest(TestCase):
         pkg = self.base.history.ipkg_to_pkg(new_pkg)
         pid = self.base.history.add_package(pkg)
         pkg_data = SwdbPkgData()
-        self.base.history.swdb.trans_data_beg(0, pid, SwdbReason.USER, "Installed")
+        self.base.history.swdb.trans_data_beg(0, pid, SwdbReason.USER, "Installed", False)
         self.base.history.update_package_data(pid, 0, pkg_data)
         self.base.history.set_repo(new_pkg, 'main')
 

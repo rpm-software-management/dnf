@@ -110,7 +110,7 @@ class _HistoryWrapper(object):
                 obsoleted_nevras.append(hpkg.nevra)
                 hpkg = next(reversed_it)
             if obsoleted_nevras:  # Read obsoleting package.
-                assert hpkg.state == 'Obsoleting'
+                assert hpkg.obsoleting
                 obsoleting_nevra = hpkg.nevra
                 hpkg = next(reversed_it)
 

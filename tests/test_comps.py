@@ -193,12 +193,12 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
         pkg1 = SwdbPkg()
         pkg1.name = "pepper"
         pid = self.history.add_package(pkg1)
-        self.history.swdb.trans_data_beg(1, pid, SwdbReason.GROUP, "Installed")
+        self.history.swdb.trans_data_beg(1, pid, SwdbReason.GROUP, "Installed", False)
 
         pkg2 = SwdbPkg()
         pkg2.name = "right"
         pid2 = self.history.add_package(pkg2)
-        self.history.swdb.trans_data_beg(1, pid2, SwdbReason.DEP, "Installed")
+        self.history.swdb.trans_data_beg(1, pid2, SwdbReason.DEP, "Installed", False)
 
         n = "dupl"
         p_grp = self.persistor.new_group(n, n, n, True, 0)
@@ -208,7 +208,7 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
         pkg3 = SwdbPkg()
         pkg3.name = "tour"
         pid3 = self.history.add_package(pkg3)
-        self.history.swdb.trans_data_beg(1, pid3, SwdbReason.GROUP, "Installed")
+        self.history.swdb.trans_data_beg(1, pid3, SwdbReason.GROUP, "Installed", False)
 
         # pepper is in single group with reason "group"
         self.assertTrue(self.solver._removable_pkg('pepper'))
