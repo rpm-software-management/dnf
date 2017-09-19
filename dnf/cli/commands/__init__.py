@@ -862,7 +862,7 @@ class HistoryCommand(Command):
         old = self.base.history_get_transaction(extcmds)
         if old is None:
             return 1, ['Failed history redo']
-        tm = dnf.util.normalize_time(float(old.beg_timestamp))
+        tm = dnf.util.normalize_time(old.beg_timestamp)
         print('Repeating transaction %u, from %s' % (old.tid, tm))
         self.output.historyInfoCmdPkgsAltered(old)
 

@@ -139,16 +139,16 @@ class SwdbInterface(object):
         pid = self.pkg2pid(ipkg, create=False)
         rpmdata = SwdbRpmData.new(
             pid,
-            str((getattr(ipkg, "buildtime", None) or '')),
-            str((getattr(ipkg, "buildhost", None) or '')),
-            str((getattr(ipkg, "license", None) or '')),
-            str((getattr(ipkg, "packager", None) or '')),
-            str((getattr(ipkg, "size", None) or '')),
-            str((getattr(ipkg, "sourcerpm", None) or '')),
-            str((getattr(ipkg, "url", None) or '')),
-            str((getattr(ipkg, "vendor", None) or '')),
-            str((getattr(ipkg, "committer", None) or '')),
-            str((getattr(ipkg, "committime", None) or ''))
+            getattr(ipkg, "buildtime", 0),
+            getattr(ipkg, "buildhost", ''),
+            getattr(ipkg, "license", ''),
+            getattr(ipkg, "packager", ''),
+            getattr(ipkg, "size", ''),
+            getattr(ipkg, "sourcerpm", ''),
+            getattr(ipkg, "url", ''),
+            getattr(ipkg, "vendor", ''),
+            getattr(ipkg, "committer", ''),
+            getattr(ipkg, "committime", 0)
         )
         return rpmdata
 
@@ -172,7 +172,7 @@ class SwdbInterface(object):
 
     def beg(self, rpmdb_version, using_pkgs, tsis, cmdline=None):
         tid = self.swdb.trans_beg(
-            str(int(time.time())),
+            int(time.time()),
             str(rpmdb_version),
             cmdline or "",
             str(misc.getloginuid()),
@@ -233,7 +233,7 @@ class SwdbInterface(object):
             return  # Failed at beg() time
         self.swdb.trans_end(
             self._tid,
-            str(int(time.time())),
+            int(time.time()),
             str(end_rpmdb_version),
             return_code
         )
