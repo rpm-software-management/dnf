@@ -1,0 +1,18 @@
+#!/bin/sh
+
+
+export LC_ALL=C
+
+
+if [ ! -f ../../bin/dnf-2 ]; then
+echo
+echo 'DNF is not configured.'
+echo 'Go to the project top directory and run following commands first:'
+echo '$ cmake .'
+echo '$ make'
+echo
+exit 1
+fi
+
+
+../../bin/dnf-2 --installroot=/tmp/dnf-test --config=etc/dnf/dnf.conf "$@"

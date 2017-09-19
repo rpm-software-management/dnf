@@ -163,6 +163,8 @@ class OptionParser(argparse.ArgumentParser):
         main_parser = argparse.ArgumentParser(dnf.const.PROGRAM_NAME,
                                               add_help=False)
         main_parser._optionals.title = _("Optional arguments")
+        main_parser.add_argument("--legacy", "--rpm", dest="legacy",
+                                 action="store_true", help="use legacy functionality of dnf")
         main_parser.add_argument("-c", "--config", dest="config_file_path",
                                  default=None, metavar='[config file]',
                                  help=_("config file location"))

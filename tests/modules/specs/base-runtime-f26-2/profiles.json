@@ -1,0 +1,8 @@
+{
+    "minimal": {
+        "rpms": ["glibc"]
+    },
+    "default": {
+        "rpms": ["glibc", "bash", "systemd", "kernel"]
+    }
+}

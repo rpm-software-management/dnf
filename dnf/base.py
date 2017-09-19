@@ -25,6 +25,10 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
+from dnf.module.persistor import ModulePersistor
+from dnf.module.metadata_loader import ModuleMetadataLoader
+from dnf.module.repo_module_dict import RepoModuleDict
+from dnf.module.repo_module_version import RepoModuleVersion
 from dnf.util import first
 from dnf.yum import history
 from dnf.yum import misc
@@ -89,6 +93,7 @@ class Base(object):
         self._trans_tempfiles = set()
         self._ds_callback = dnf.callback.Depsolve()
         self._group_persistor = None
+        self._module_persistor = None
         self._logging = dnf.logging.Logging()
         self._repos = dnf.repodict.RepoDict()
         self._rpm_probfilter = set([rpm.RPMPROB_FILTER_OLDPACKAGE])
@@ -99,6 +104,7 @@ class Base(object):
         self._allow_erasing = False
         self._revert_reason = []
         self._repo_set_imported_gpg_keys = set()
+        self.repo_module_dict = RepoModuleDict(self)
 
     def __enter__(self):
         return self
@@ -173,6 +179,42 @@ class Base(object):
                 pkgs = subj.get_best_query(self.sack)
                 self.sack.add_excludes(pkgs)
 
+    def _setup_modules(self):
+        for repo in self.repos.iter_enabled():
+            try:
+                module_metadata = ModuleMetadataLoader(repo).load()
+                for data in module_metadata:
+                    self.repo_module_dict.add(RepoModuleVersion(data, base=self, repo=repo))
+            except dnf.exceptions.Error:
+                continue
+
+        self.repo_module_dict.read_all_module_confs()
+        self.repo_module_dict.read_all_module_defaults()
+        self._module_persistor = ModulePersistor()
+        self.use_module_includes()
+
+    def use_module_includes(self):
+        self.sack.reset_includes()
+        include_repos = set()
+        include_pkgs = set()
+        for repo_module in self.repo_module_dict.values():
+            if repo_module.conf and repo_module.conf.enabled:
+                includes, repos = self.repo_module_dict.get_includes(repo_module.name,
+                                                                     repo_module.conf.stream)
+
+                include_repos.update(repos)
+
+                for nevra in includes:
+                    subj = dnf.subject.Subject(nevra)
+                    pkgs = subj.get_best_query(self.sack, forms=[hawkey.FORM_NEVRA])
+                    include_pkgs.add(pkgs)
+
+        for pkg in include_pkgs:
+            self.sack.add_includes(pkg)
+
+        for repo in include_repos:
+            self.sack.set_use_includes(True, repo.id)
+
     def _store_persistent_data(self):
         if self._repo_persistor and not self.conf.cacheonly:
             expired = [r.id for r in self.repos.iter_enabled() if r._md_expired]
@@ -184,6 +226,9 @@ class Base(object):
 
         if self._tempfile_persistor:
             self._tempfile_persistor.save()
+
+        if self._module_persistor:
+            self._module_persistor.save()
 
     @property
     def comps(self):
@@ -340,6 +385,7 @@ class Base(object):
         conf = self.conf
         self._sack._configure(conf.installonlypkgs, conf.installonly_limit)
         self._setup_excludes_includes()
+        self._setup_modules()
         timer()
         self._goal = dnf.goal.Goal(self._sack)
         self._plugins.run_sack()
@@ -737,8 +783,11 @@ class Base(object):
         timer()
         self._plugins.unload_removed_plugins(self.transaction)
         self._plugins.run_transaction()
-        if self._group_persistor and self._trans_success:
-            self._group_persistor.commit()
+        if self._trans_success:
+            if self._group_persistor:
+                self._group_persistor.commit()
+            if self._module_persistor:
+                self._module_persistor.commit()
 
     def _trans_error_summary(self, errstring):
         """Parse the error string for 'interesting' errors which can
@@ -1638,6 +1687,15 @@ class Base(object):
             self._goal.install(select=sltr, optional=(not strict))
         return len(available)
 
+    def install_module(self, specs):
+        skipped_specs = specs
+        try:
+            skipped_specs = self.repo_module_dict.install(specs)
+        except dnf.exceptions.Error:
+            self.repo_module_dict.install(specs[1:])
+
+        return skipped_specs
+
     def install(self, pkg_spec, reponame=None, strict=True, forms=None):
         # :api
         """Mark package(s) given by pkg_spec and reponame for installation."""
@@ -1787,10 +1845,22 @@ class Base(object):
 
     def upgrade_all(self, reponame=None):
         # :api
-        if reponame is None and not self._update_security_filters:
+        if reponame is None and not self._update_security_filters and \
+                not self.repo_module_dict.list_module_version_installed():
             self._goal.upgrade_all()
         else:
+            self.repo_module_dict.upgrade_all()
+
             q = self.sack.query().upgrades()
+
+            filtered_rpms_name = []
+            for repo_module_version in self.repo_module_dict.list_module_version_installed():
+                for profile in repo_module_version.repo_module.conf.profiles:
+                    filtered_rpms_name.append(repo_module_version.rpms(profile))
+
+            for name in filtered_rpms_name:
+                q = q.filter(name__neq=name)
+
             # add obsoletes into transaction
             if self.conf.obsoletes:
                 q = q.union(self.sack.query().filter(obsoletes=self.sack.query().installed()))
