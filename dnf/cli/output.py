@@ -1326,10 +1326,12 @@ Transaction Summary
             st = pkg.state
             if st == 'True-Install':
                 st = 'Install'
-            if st == 'Dep-Install': # Mask these at the higher levels
+            elif st == 'Dep-Install':
+                # Mask these at the higher levels
                 st = 'Install'
-            if st == 'Obsoleted': #  This is just a UI tweak, as we can't have
-                                  # just one but we need to count them all.
+            elif st == 'Obsoleted' or pkg.obsoleting:
+                #  This is just a UI tweak, as we can't have
+                # just one but we need to count them all.
                 st = 'Obsoleting'
             if st in ('Install', 'Update', 'Erase', 'Reinstall', 'Downgrade',
                       'Obsoleting'):

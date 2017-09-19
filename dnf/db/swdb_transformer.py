@@ -233,7 +233,7 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
                     'from_repo_timestamp', 'installed_by', 'changed_by',
                     'installonly']
 
-    TRANS_DATA = ['T_ID', 'PD_ID', 'TG_ID', 'done', 'ORIGINAL_TD_ID', 'reason',
+    TRANS_DATA = ['T_ID', 'PD_ID', 'TG_ID', 'done', 'obsoleting', 'reason',
                   'state']
 
     GROUPS = ['name_id', 'name', 'ui_name', 'installed', 'pkg_types']
@@ -337,52 +337,34 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
     for row in cursor:
         pid_to_pdid[row[1]] = row[0]
 
+    obsoleting_pdids = []
+
     # trans_data construction
     h_cursor.execute('SELECT tid, pkgtupid, done, state FROM trans_data_pkgs')
     for row in h_cursor:
         data = [''] * len(TRANS_DATA)
+        state = row[3]
+        pdid = pid_to_pdid.get(int(row[1]), 0)
+
+        # skip empty rows
+        if not pdid:
+            continue
+
+        # handle Obsoleting packages - save it as separate attribute
+        if state == 'Obsoleting':
+            obsoleting_pdids.append(pdid)
+            continue
+
+        # insert trans_data record
+        data[TRANS_DATA.index('state')] = bind_state(cursor, state)
+        data[TRANS_DATA.index('PD_ID')] = pdid
         data[TRANS_DATA.index('done')] = 1 if row[2] == 'TRUE' else 0
-        data[TRANS_DATA.index('state')] = bind_state(cursor, row[3])
-        data[TRANS_DATA.index('PD_ID')] = pid_to_pdid.get(int(row[1]), 0)
         data[0] = row[0]
         cursor.execute('INSERT INTO TRANS_DATA VALUES (null,?,?,?,?,?,?,?)', data)
 
-    # save changes
-    database.commit()
-
-    # resolve STATE_TYPE
-    cursor.execute('SELECT * FROM STATE_TYPE')
-    state_types = cursor.fetchall()
-    fsm_state = 0
-    obsoleting_t = 0
-    update_t = 0
-    downgrade_t = 0
-    # get state enum
-    for i, item in enumerate(state_types):
-        if item[1] == 'Obsoleting':
-            obsoleting_t = i + 1
-        elif item[1] == 'Update':
-            update_t = i + 1
-        elif item[1] == 'Downgrade':
-            downgrade_t = i + 1
-
-    # find ORIGINAL_TD_ID for Obsoleting and upgraded - via FSM
-    previous_TD_ID = 0
-    cursor.execute('SELECT * FROM TRANS_DATA')
-    tmp_row = cursor.fetchall()
-    for row in tmp_row:
-        if fsm_state == 0:
-            if row[7] == obsoleting_t:
-                fsm_state = 1
-            elif row[7] == update_t:
-                fsm_state = 1
-            elif row[7] == downgrade_t:
-                fsm_state = 1
-            previous_TD_ID = row[0]
-        elif fsm_state == 1:
-            cursor.execute("""UPDATE TRANS_DATA SET ORIGINAL_TD_ID = ?
-                           WHERE TD_ID = ?""", (row[0], previous_TD_ID))
-            fsm_state = 0
+    # set flag for Obsoleting PD_IDs
+    for pdid in obsoleting_pdids:
+        cursor.execute('UPDATE TRANS_DATA SET obsoleting=1 WHERE PD_ID=?', (pdid,))
 
     # save changes
     database.commit()

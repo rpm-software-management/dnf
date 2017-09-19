@@ -76,14 +76,13 @@ class TransactionItem(object):
     _HISTORY_ERASE = [DOWNGRADE, ERASE, REINSTALL, UPGRADE]
 
     def _history_iterator(self):
+        obsoleting = True if self.obsoleted else False
         if self.installed is not None:
-            yield(self.installed, self._installed_history_state)
+            yield (self.installed, self._installed_history_state, obsoleting)
         if self.erased is not None:
-            yield(self.erased, self._erased_history_state)
-        if self.obsoleted:
-            yield(self.installed, self._obsoleting_history_state)
+            yield (self.erased, self._erased_history_state, False)
         for obs in self.obsoleted:
-            yield(obs, self._obsoleted_history_state)
+            yield (obs, self._obsoleted_history_state, False)
 
     @property
     def _installed_history_state(self):

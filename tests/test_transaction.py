@@ -77,9 +77,9 @@ class TransactionItemTest(tests.support.TestCase):
             [self.obspkg1, self.obspkg2, self.obspkg3])
         self.assertCountEqual(
             tsi._history_iterator(),
-            [(self.newpkg, 'Reinstall'), (self.oldpkg, 'Reinstalled'),
-             (self.newpkg, 'Obsoleting'), (self.obspkg1, 'Obsoleted'),
-             (self.obspkg2, 'Obsoleted'), (self.obspkg3, 'Obsoleted')])
+            [(self.newpkg, 'Reinstall', True), (self.oldpkg, 'Reinstalled', False),
+             (self.obspkg1, 'Obsoleted', False), (self.obspkg2, 'Obsoleted', False),
+             (self.obspkg3, 'Obsoleted', False)])
 
     def test_history_iterator_upgrade(self):
         """Test history_iterator with the upgrade op_type."""
@@ -88,9 +88,9 @@ class TransactionItemTest(tests.support.TestCase):
             [self.obspkg1, self.obspkg2, self.obspkg3])
         self.assertCountEqual(
             tsi._history_iterator(),
-            [(self.newpkg, 'Update'), (self.oldpkg, 'Updated'),
-             (self.newpkg, 'Obsoleting'), (self.obspkg1, 'Obsoleted'),
-             (self.obspkg2, 'Obsoleted'), (self.obspkg3, 'Obsoleted')])
+            [(self.newpkg, 'Update', True), (self.oldpkg, 'Updated', False),
+             (self.obspkg1, 'Obsoleted', False), (self.obspkg2, 'Obsoleted', False),
+             (self.obspkg3, 'Obsoleted', False)])
 
     def test_propagated_reason(self):
         base = tests.support.MockBase()
@@ -99,11 +99,11 @@ class TransactionItemTest(tests.support.TestCase):
 
         pkg1 = history.ipkg_to_pkg(self.newpkg)
         pid = history.add_package(pkg1)
-        history.swdb.trans_data_beg(1, pid, SwdbReason.DEP, "Installed")
+        history.swdb.trans_data_beg(1, pid, SwdbReason.DEP, "Installed", False)
 
         pkg2 = history.ipkg_to_pkg(self.oldpkg)
         pid = history.add_package(pkg2)
-        history.swdb.trans_data_beg(1, pid, SwdbReason.DEP, "Installed")
+        history.swdb.trans_data_beg(1, pid, SwdbReason.DEP, "Installed", False)
 
         ionly = base._sack.query().filter(empty=True)  # installonly_query
 
