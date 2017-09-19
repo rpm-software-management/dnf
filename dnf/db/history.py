@@ -136,20 +136,20 @@ class SwdbInterface(object):
         return self.swdb.reason(str(pkg))
 
     def ipkg_to_rpmdata(self, ipkg):
+        """ Extract RPMDB data from Dnf.Package """
         pid = self.pkg2pid(ipkg, create=False)
         rpmdata = SwdbRpmData.new(
             pid,
-            getattr(ipkg, "buildtime", 0),
-            getattr(ipkg, "buildhost", ''),
-            getattr(ipkg, "license", ''),
-            getattr(ipkg, "packager", ''),
-            getattr(ipkg, "size", ''),
-            getattr(ipkg, "sourcerpm", ''),
-            getattr(ipkg, "url", ''),
-            getattr(ipkg, "vendor", ''),
-            getattr(ipkg, "committer", ''),
-            getattr(ipkg, "committime", 0)
-        )
+            int((getattr(ipkg, "buildtime", None) or 0)),
+            str((getattr(ipkg, "buildhost", None) or '')),
+            str((getattr(ipkg, "license", None) or '')),
+            str((getattr(ipkg, "packager", None) or '')),
+            str((getattr(ipkg, "size", None) or '')),
+            str((getattr(ipkg, "sourcerpm", None) or '')),
+            str((getattr(ipkg, "url", None) or '')),
+            str((getattr(ipkg, "vendor", None) or '')),
+            str((getattr(ipkg, "committer", None) or '')),
+            int((getattr(ipkg, "committime", None) or 0)))
         return rpmdata
 
     def ipkg_to_pkg(self, ipkg):

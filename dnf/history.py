@@ -112,7 +112,6 @@ class _HistoryWrapper(object):
             if obsoleted_nevras:  # Read obsoleting package.
                 assert hpkg.obsoleting
                 obsoleting_nevra = hpkg.nevra
-                hpkg = next(reversed_it)
 
             # Replaced.
             if hpkg.state in {'Reinstalled', 'Downgraded', 'Updated'}:
