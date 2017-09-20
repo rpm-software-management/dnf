@@ -275,18 +275,7 @@ class CheckUpdateCommand(Command):
 class RepoPkgsCommand(Command):
     """Implementation of the repository-packages command."""
 
-    class SubCommand(Command):
-        """Base class for repository-packages sub-commands.
-
-        The main purpose of the inheritance is to get the same default values
-        of unset attributes.
-
-        """
-        @staticmethod
-        def set_argparser(parser):
-            parser.add_argument('pkg_specs', nargs='*', metavar=_('PACKAGE'))
-
-    class CheckUpdateSubCommand(SubCommand):
+    class CheckUpdateSubCommand(Command):
         """Implementation of the info sub-command."""
 
         aliases = ('check-update',)
@@ -303,7 +292,7 @@ class RepoPkgsCommand(Command):
             if found:
                 self.cli.demands.success_exit_status = 100
 
-    class InfoSubCommand(SubCommand):
+    class InfoSubCommand(Command):
         """Implementation of the info sub-command."""
 
         aliases = ('info',)
@@ -321,49 +310,13 @@ class RepoPkgsCommand(Command):
                 else:
                     self.opts.pkg_specs_action = 'obsoletes'
 
-        @staticmethod
-        def set_argparser(parser):
-            DEFAULT_PKGNARROW = 'all'
-            pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available',
-                          'autoremove', 'extras', 'obsoletes', 'recent',
-                          'upgrades'}
-
-            narrows = parser.add_mutually_exclusive_group()
-            narrows.add_argument('--all', dest='_pkg_specs_action',
-                                 action='store_const', const='all', default=None,
-                                 help=_("show all packages (default)"))
-            narrows.add_argument('--available', dest='_pkg_specs_action',
-                                 action='store_const', const='available',
-                                 help=_("show only available packages"))
-            narrows.add_argument('--installed', dest='_pkg_specs_action',
-                                 action='store_const', const='installed',
-                                 help=_("show only installed packages"))
-            narrows.add_argument('--extras', dest='_pkg_specs_action',
-                                 action='store_const', const='extras',
-                                 help=_("show only extras packages"))
-            narrows.add_argument('--updates', dest='_pkg_specs_action',
-                                 action='store_const', const='upgrades',
-                                 help=_("show only upgrades packages"))
-            narrows.add_argument('--upgrades', dest='_pkg_specs_action',
-                                 action='store_const', const='upgrades',
-                                 help=_("show only upgrades packages"))
-            narrows.add_argument('--autoremove', dest='_pkg_specs_action',
-                                 action='store_const', const='autoremove',
-                                 help=_("show only autoremove packages"))
-            narrows.add_argument('--recent', dest='_pkg_specs_action',
-                                 action='store_const', const='recent',
-                                 help=_("show only recently changed packages"))
-            parser.add_argument('pkg_specs', nargs='*', metavar=_('PACKAGE'),
-                                choices=pkgnarrows, default=DEFAULT_PKGNARROW,
-                                action=OptionParser.PkgNarrowCallback)
-
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
             self.cli._populate_update_security_filter(self.opts)
             self.base.output_packages('info', self.opts.pkg_specs_action,
                                       self.opts.pkg_specs, self.reponame)
 
-    class InstallSubCommand(SubCommand):
+    class InstallSubCommand(Command):
         """Implementation of the install sub-command."""
 
         aliases = ('install',)
@@ -414,7 +367,7 @@ class RepoPkgsCommand(Command):
             self.base.output_packages('list', self.opts.pkg_specs_action,
                                       self.opts.pkg_specs, self.reponame)
 
-    class MoveToSubCommand(SubCommand):
+    class MoveToSubCommand(Command):
         """Implementation of the move-to sub-command."""
 
         aliases = ('move-to',)
@@ -469,7 +422,7 @@ class RepoPkgsCommand(Command):
             if not done:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
 
-    class ReinstallOldSubCommand(SubCommand):
+    class ReinstallOldSubCommand(Command):
         """Implementation of the reinstall-old sub-command."""
 
         aliases = ('reinstall-old',)
@@ -526,7 +479,7 @@ class RepoPkgsCommand(Command):
             if not done:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
 
-    class ReinstallSubCommand(SubCommand):
+    class ReinstallSubCommand(Command):
         """Implementation of the reinstall sub-command."""
 
         aliases = ('reinstall',)
@@ -557,7 +510,7 @@ class RepoPkgsCommand(Command):
             else:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
 
-    class RemoveOrDistroSyncSubCommand(SubCommand):
+    class RemoveOrDistroSyncSubCommand(Command):
         """Implementation of the remove-or-distro-sync sub-command."""
 
         aliases = ('remove-or-distro-sync',)
@@ -619,7 +572,7 @@ class RepoPkgsCommand(Command):
             if not done:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
 
-    class RemoveOrReinstallSubCommand(SubCommand):
+    class RemoveOrReinstallSubCommand(Command):
         """Implementation of the remove-or-reinstall sub-command."""
 
         aliases = ('remove-or-reinstall',)
@@ -668,7 +621,7 @@ class RepoPkgsCommand(Command):
             if not done:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
 
-    class RemoveSubCommand(SubCommand):
+    class RemoveSubCommand(Command):
         """Implementation of the remove sub-command."""
 
         aliases = ('remove',)
@@ -708,7 +661,7 @@ class RepoPkgsCommand(Command):
             if not done:
                 raise dnf.exceptions.Error(_('No packages marked for removal.'))
 
-    class UpgradeSubCommand(SubCommand):
+    class UpgradeSubCommand(Command):
         """Implementation of the upgrade sub-command."""
 
         aliases = ('upgrade', 'upgrade-to')
@@ -762,21 +715,50 @@ class RepoPkgsCommand(Command):
             alias: subcmd for subcmd in subcmd_objs for alias in subcmd.aliases}
 
     def set_argparser(self, parser):
+        subcommand_choices = [subcmd.aliases[0] for subcmd in self.SUBCMDS]
         super(OptionParser, parser).add_argument(
             'reponame', nargs=1, action=OptionParser._RepoCallbackEnable,
             metavar=_('REPO'))
-        subparser = parser.add_subparsers(dest='subcmd',
-                                          parser_class=argparse.ArgumentParser)
-        subparser.required = True
-        for subcommand in self._subcmd_name2obj.keys():
-            p = subparser.add_parser(subcommand)
-            self._subcmd_name2obj[subcommand].set_argparser(p)
+        parser.add_argument('subcmd', nargs=1, choices=subcommand_choices)
+        DEFAULT_PKGNARROW = 'all'
+        pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available',
+                      'autoremove', 'extras', 'obsoletes', 'recent',
+                      'upgrades'}
+
+        narrows = parser.add_mutually_exclusive_group()
+        narrows.add_argument('--all', dest='_pkg_specs_action',
+                             action='store_const', const='all', default=None,
+                             help=_("show all packages (default)"))
+        narrows.add_argument('--available', dest='_pkg_specs_action',
+                             action='store_const', const='available',
+                             help=_("show only available packages"))
+        narrows.add_argument('--installed', dest='_pkg_specs_action',
+                             action='store_const', const='installed',
+                             help=_("show only installed packages"))
+        narrows.add_argument('--extras', dest='_pkg_specs_action',
+                             action='store_const', const='extras',
+                             help=_("show only extras packages"))
+        narrows.add_argument('--updates', dest='_pkg_specs_action',
+                             action='store_const', const='upgrades',
+                             help=_("show only upgrades packages"))
+        narrows.add_argument('--upgrades', dest='_pkg_specs_action',
+                             action='store_const', const='upgrades',
+                             help=_("show only upgrades packages"))
+        narrows.add_argument('--autoremove', dest='_pkg_specs_action',
+                             action='store_const', const='autoremove',
+                             help=_("show only autoremove packages"))
+        narrows.add_argument('--recent', dest='_pkg_specs_action',
+                             action='store_const', const='recent',
+                             help=_("show only recently changed packages"))
+        parser.add_argument('pkg_specs', nargs='*', metavar=_('PACKAGE'),
+                            choices=pkgnarrows, default=DEFAULT_PKGNARROW,
+                            action=OptionParser.PkgNarrowCallback)
 
     def configure(self):
         """Verify whether the command can run with given arguments."""
         # Check sub-command.
         try:
-            self.subcmd = self._subcmd_name2obj[self.opts.subcmd]
+            self.subcmd = self._subcmd_name2obj[self.opts.subcmd[0]]
         except (dnf.cli.CliError, KeyError) as e:
             self.cli.optparser.print_usage()
             raise dnf.cli.CliError
