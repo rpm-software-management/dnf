@@ -1771,7 +1771,7 @@ class Base(object):
                         msg = _('Package %s available, but installed for different architecture.')
                         logger.warning(msg, "{}.{}".format(pkg_name, solution['nevra'].arch))
 
-            if solution['nevra'] and solution['nevra']._has_just_name() and self.conf.obsoletes:
+            if solution['nevra'] and solution['nevra'].has_just_name() and self.conf.obsoletes:
                 obsoletes = self.sack.query().filter(obsoletes=q.installed())
                 q = q.upgrades()
                 # add obsoletes into transaction
