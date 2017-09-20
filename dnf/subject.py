@@ -70,27 +70,13 @@ class Subject(object):
         @param forms:
         @return: dict with keys nevra and query
         """
-        solution = {'nevra': None, 'query': sack.query().filter(empty=True)}
-        if with_nevra:
-            for nevra in self.get_nevra_possibilities(forms=forms):
-                if nevra:
-                    q = dnf.query.Query(query=nevra.to_query(sack, icase=self.icase))
-                    if q:
-                        solution['nevra'] = nevra
-                        solution['query'] = q
-                        return solution
-
-        if not forms:
-            if with_provides:
-                q = sack.query().filterm(provides__glob=self._pattern)
-                if q:
-                    solution['query'] = q
-                    return solution
-
-            if with_filenames:
-                if self._filename_pattern:
-                    solution['query'] = sack.query().filter(file__glob=self._pattern)
-                    return solution
+        kwargs = {}
+        if forms:
+            kwargs['form'] = forms
+        solution = self.subj.get_best_solution(sack, icase=self.icase, with_nevra=with_nevra,
+                                               with_provides=with_provides,
+                                               with_filenames=with_filenames, **kwargs)
+        solution['query'] = dnf.query.Query(query=solution['query'])
         return solution
 
     def get_best_query(self, sack, with_nevra=True, with_provides=True, with_filenames=True,
@@ -110,7 +96,7 @@ class Subject(object):
         if solution['query']:
             q = solution['query']
             q = q.filter(arch__neq="src")
-            if obsoletes and solution['nevra'] and solution['nevra']._has_just_name():
+            if obsoletes and solution['nevra'] and solution['nevra'].has_just_name():
                 q = q.union(sack.query().filter(obsoletes=q))
             installed_query = q.installed()
             if reports:
@@ -140,7 +126,7 @@ class Subject(object):
                 or solution['nevra'] and solution['nevra'].name is None:
             with_obsoletes = False
 
-            if obsoletes and solution['nevra'] and solution['nevra']._has_just_name():
+            if obsoletes and solution['nevra'] and solution['nevra'].has_just_name():
                 with_obsoletes = True
             installed_query = q.installed()
             if reponame:
@@ -159,7 +145,7 @@ class Subject(object):
                 sltrs.append(self._list_or_query_to_selector(base.sack, pkgs_list))
             return sltrs
         else:
-            if obsoletes and solution['nevra'] and solution['nevra']._has_just_name():
+            if obsoletes and solution['nevra'] and solution['nevra'].has_just_name():
                 q = q.union(base.sack.query().filter(obsoletes=q))
             installed_query = q.installed()
 
