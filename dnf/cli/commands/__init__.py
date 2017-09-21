@@ -124,6 +124,11 @@ class Command(object):
         """Define command specific options and arguments. #:api"""
         pass
 
+    def pre_configure(self):
+        # :api
+        """Do any command-specific pre-configuration."""
+        pass
+
     def configure(self):
         # :api
         """Do any command-specific configuration."""

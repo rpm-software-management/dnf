@@ -90,6 +90,12 @@ When packaging your custom command, we recommend you to define a virtual provide
     CLI configure phase when one of the command's aliases is parsed from `dnf`
     commandline. `cli` is an instance of :class:`dnf.cli.Cli`.
 
+  .. method:: pre_configure()
+
+    Perform any pre-configuration on the command itself and on the CLI. Typically, the command
+    implements this call to set up releasever or enable/disable repository. This method is called
+    before configuration of repos.
+
   .. method:: configure()
 
     Perform any configuration on the command itself and on the CLI. Typically, the command implements this call to set up any :class:`demands <.DemandSheet>`, tweak the global configuration or the repository configuration. This method is called immediately after the CLI/extension is finished configuring DNF.
