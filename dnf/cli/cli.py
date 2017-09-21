@@ -874,7 +874,7 @@ class Cli(object):
             self.base.conf.debug_solver = True
         if opts.obsoletes:
             self.base.conf.obsoletes = True
-
+        self.command.pre_configure()
         self.base.pre_configure_plugins()
 
         # with cachedir in place we can configure stuff depending on it:
