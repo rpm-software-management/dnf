@@ -376,7 +376,10 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
     # Construction of TRANS
     h_cursor.execute(trans_cmd)
     for row in h_cursor:
-        cursor.execute('INSERT INTO TRANS VALUES (?,?,?,?,?,?,?,?,?)', row)
+        # override empty releasever
+        r = list(row)
+        del r[7]
+        cursor.execute("INSERT INTO TRANS VALUES (?,?,?,?,?,?,?,'',?)", r)
 
     # get releasever for transactions
     cursor.execute('SELECT T_ID FROM TRANS WHERE releasever=?', ('', ))
@@ -384,11 +387,11 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
     for row in missing:
         tid = row[0]
         cmd = "SELECT P_ID FROM TRANS_DATA join PACKAGE_DATA using (PD_ID) WHERE T_ID=? LIMIT 1"
-        cursor.execute(cmd)
+        cursor.execute(cmd, (tid,))
         pids = cursor.fetchall()
         for pid in pids:
             h_cursor.execute("""SELECT yumdb_val FROM pkg_yumdb WHERE pkgtupid=? AND
-                             yumdb_key='releasever' LIMIT 1""", (pid,))
+                             yumdb_key='releasever' LIMIT 1""", pid)
             rlsver = h_cursor.fetchone()
             if rlsver:
                 cursor.execute("UPDATE TRANS SET releasever=? WHERE T_ID=?", (rlsver[0], tid))
