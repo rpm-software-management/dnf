@@ -49,6 +49,7 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         self.unknown_progres = 0
         self.total_drpm = 0
         self.isatty = sys.stdout.isatty()
+        self.multi_download_id = None
 
     def message(self, msg):
         dnf.util._terminal_messenger('write_flush', msg, self.fo)
@@ -76,18 +77,24 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         total = int(payload.download_size)
         done = int(done)
 
+        if text not in self.active:
+            self.active.append(text)
+
+        if self.multi_download_id is not None:
+            text = self.multi_download_id
+
         # update done_size
         if text not in self.state:
             self.state[text] = now, 0
-            self.active.append(text)
         start, old = self.state[text]
         self.state[text] = start, done
         self.done_size += done - old
 
+        if total > self.total_size:
+            self.total_size = total
+
         # update screen if enough time has elapsed
         if now - self.last_time > self.update_period:
-            if total > self.total_size:
-                self.total_size = total
             self._update(now)
 
     def _update(self, now):
@@ -149,20 +156,30 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         text = unicode(payload)
         size = int(payload.download_size)
 
+        if self.multi_download_id is not None:
+            text = self.multi_download_id
+
         # update state
         if status == dnf.callback.STATUS_MIRROR:
             pass
         elif status == dnf.callback.STATUS_DRPM:
             self.done_drpm += 1
         elif text in self.state:
-            start, done = self.state.pop(text)
-            self.active.remove(text)
-            size -= done
+            if self.multi_download_id is not None:
+                start, done = self.state[text]
+                size = 0
+            else:
+                start, done = self.state.pop(text)
+                size -= done
+            if unicode(payload) in self.active:
+                self.active.remove(unicode(payload))
             self.done_files += 1
             self.done_size += size
         elif status == dnf.callback.STATUS_ALREADY_EXISTS:
             self.done_files += 1
             self.done_size += size
+
+        text = unicode(payload)
 
         if status:
             # the error message, no trimming

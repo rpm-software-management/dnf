@@ -1,5 +1,5 @@
 %global hawkey_version 0.10.0
-%global librepo_version 1.7.19
+%global librepo_version 1.8.0
 %global libcomps_version 0.1.8
 %global rpm_version 4.13.0-0.rc1.29
 %global min_plugins_core 2.1.3
@@ -271,19 +271,16 @@ popd
 %systemd_postun_with_restart dnf-makecache.timer
 
 %post automatic
-%systemd_post dnf-automatic.timer
 %systemd_post dnf-automatic-notifyonly.timer
 %systemd_post dnf-automatic-download.timer
 %systemd_post dnf-automatic-install.timer
 
 %preun automatic
-%systemd_preun dnf-automatic.timer
 %systemd_preun dnf-automatic-notifyonly.timer
 %systemd_preun dnf-automatic-download.timer
 %systemd_preun dnf-automatic-install.timer
 
 %postun automatic
-%systemd_postun_with_restart dnf-automatic.timer
 %systemd_postun_with_restart dnf-automatic-notifyonly.timer
 %systemd_postun_with_restart dnf-automatic-download.timer
 %systemd_postun_with_restart dnf-automatic-install.timer
@@ -356,8 +353,6 @@ popd
 %{_bindir}/%{name}-automatic
 %config(noreplace) %{confdir}/automatic.conf
 %{_mandir}/man8/%{name}.automatic.8*
-%{_unitdir}/%{name}-automatic.service
-%{_unitdir}/%{name}-automatic.timer
 %{_unitdir}/%{name}-automatic-notifyonly.service
 %{_unitdir}/%{name}-automatic-notifyonly.timer
 %{_unitdir}/%{name}-automatic-download.service
