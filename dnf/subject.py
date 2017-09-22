@@ -79,6 +79,10 @@ class Subject(object):
                         solution['nevra'] = nevra
                         solution['query'] = q
                         return solution
+            q = sack.query().filterm(nevra__glob=self._pattern)
+            if q:
+                solution['query'] = q
+                return solution
 
         if not forms:
             if with_provides:
