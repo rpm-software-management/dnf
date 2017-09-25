@@ -18,7 +18,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from tests import support
-from dnf.db.types import SwdbReason, SwdbPkg
+from dnf.db.types import SwdbReason, SwdbPkg, SwdbItem
 
 import dnf.comps
 import dnf.util
@@ -90,8 +90,7 @@ class PresetPersistorTest(support.ResultTestCase):
         for group in groups:
             _group = prst.group(group)
             for pkg in _group.get_full_list():
-                swdb_pkg = SwdbPkg()
-                swdb_pkg.name = pkg
+                swdb_pkg = SwdbPkg.new(pkg, 0, "0", "0", "x86_64", "", "", SwdbItem.RPM)
                 pid = history.add_package(swdb_pkg)
                 history.swdb.trans_data_beg(1, pid, SwdbReason.GROUP, "Installed", False)
 
@@ -107,11 +106,7 @@ class PresetPersistorTest(support.ResultTestCase):
         prst.commit()
 
         for pkg in group.get_full_list():
-            swdb_pkg = SwdbPkg()
-            swdb_pkg.name = pkg
-            swdb_pkg.version = '20'
-            swdb_pkg.release = '0'
-            swdb_pkg.arch = 'x86_64'
+            swdb_pkg = SwdbPkg.new(pkg, 0, "20", "0", "x86_64", "", "", SwdbItem.RPM)
             pid = history.add_package(swdb_pkg)
             history.swdb.trans_data_beg(1, pid, SwdbReason.GROUP, "Installed", False)
 

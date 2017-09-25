@@ -31,19 +31,13 @@ import hawkey
 import itertools
 import re
 import rpm
-from dnf.db.types import SwdbReason, SwdbPkg, SwdbPkgData
+from dnf.db.types import SwdbReason, SwdbPkg, SwdbPkgData, SwdbItem
 
 class BaseTest(support.TestCase):
 
     @staticmethod
     def _setup_packages(history):
-        pkg1 = SwdbPkg()
-        pkg1.name = "pepper"
-        pkg1.version = "20"
-        pkg1.release = "0"
-        pkg1.arch = "x86_64"
-        pkg1.checksum_type = "sha256"
-        pkg1.checksum_data = "0123456789abcd"
+        pkg1 = SwdbPkg.new("pepper", 0, "20", "0", "x86_64", "987abc", "sha256", SwdbItem.RPM)
         pkg_data1 = SwdbPkgData()
         pid = history.add_package(pkg1)
         history.swdb.trans_data_beg(0, pid, SwdbReason.USER, "Installed", False)

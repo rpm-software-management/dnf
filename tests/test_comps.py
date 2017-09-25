@@ -22,7 +22,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
-from dnf.db.types import SwdbReason, SwdbPkg
+from dnf.db.types import SwdbReason, SwdbPkg, SwdbItem
 
 import dnf.comps
 import dnf.exceptions
@@ -190,13 +190,11 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
         self.solver._group_install(grp.id, dnf.comps.MANDATORY, [])
         self.persistor.commit()
 
-        pkg1 = SwdbPkg()
-        pkg1.name = "pepper"
+        pkg1 = SwdbPkg.new("pepper", 0, "20", "0", "x86_64", "987abc", "sha256", SwdbItem.RPM)
         pid = self.history.add_package(pkg1)
         self.history.swdb.trans_data_beg(1, pid, SwdbReason.GROUP, "Installed", False)
 
-        pkg2 = SwdbPkg()
-        pkg2.name = "right"
+        pkg2 = SwdbPkg.new("right", 1, "22", "0", "x86_64", "321abcd", "sha256", SwdbItem.RPM)
         pid2 = self.history.add_package(pkg2)
         self.history.swdb.trans_data_beg(1, pid2, SwdbReason.DEP, "Installed", False)
 
@@ -205,8 +203,7 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
         self.persistor.add_group(p_grp)
         p_grp.add_package(["tour"])
 
-        pkg3 = SwdbPkg()
-        pkg3.name = "tour"
+        pkg3 = SwdbPkg.new("tour", 0, "20", "0", "x86_64", "132abcd", "sha256", SwdbItem.RPM)
         pid3 = self.history.add_package(pkg3)
         self.history.swdb.trans_data_beg(1, pid3, SwdbReason.GROUP, "Installed", False)
 
