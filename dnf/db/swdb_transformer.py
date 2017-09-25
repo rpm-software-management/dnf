@@ -30,10 +30,6 @@ def PACKAGE_DATA_INSERT(cursor, data):
     cursor.execute('INSERT INTO PACKAGE_DATA VALUES (null,?,?,?,?,?,?,?)', data)
 
 
-def RPM_DATA_INSERT(cursor, data):
-    cursor.execute('INSERT INTO RPM_DATA VALUES (null,?,?,?,?,?,?,?,?,?,?,?)', data)
-
-
 # create binding with OUTPUT_TYPE - returns ID
 def BIND_OUTPUT(cursor, desc):
     cursor.execute('SELECT type FROM OUTPUT_TYPE WHERE description=?', (desc, ))
@@ -240,10 +236,6 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
 
     ENVIRONMENTS = ['name_id', 'name', 'ui_name', 'pkg_types', 'grp_types']
 
-    RPM_DATA = ['P_ID', 'buildtime', 'buildhost', 'license', 'packager',
-                'size', 'sourcerpm', 'url', 'vendor', 'committer',
-                'committime']
-
     logger.info("Transforming database. It may take a while...")
 
     # contruction of PACKAGE from pkgtups
@@ -302,31 +294,6 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
     tmp_row = cursor.fetchall()
     for row in tmp_row:
         cursor.execute("INSERT INTO PACKAGE_DATA VALUES(null,?,'','','','','','')", (row[0],))
-
-    # save changes
-    database.commit()
-
-    # construction of RPM_DATA according to pkg_rpmdb
-    actualPID = 0
-    record_RPM = [''] * len(RPM_DATA)
-    h_cursor.execute('SELECT * FROM pkg_rpmdb')
-
-    # for each row in pkg_rpmdb
-    for row in h_cursor:
-        newPID = row[0]
-        if actualPID != newPID:
-            if actualPID != 0:
-                record_RPM[0] = actualPID
-                # insert new record into PACKAGE_DATA
-                RPM_DATA_INSERT(cursor, record_RPM)
-            actualPID = newPID
-            record_RPM = [''] * len(RPM_DATA)
-
-        if row[1] in RPM_DATA:
-            # collect data for record from pkg_yumdb
-            record_RPM[RPM_DATA.index(row[1])] = row[2]
-    record_RPM[0] = actualPID
-    RPM_DATA_INSERT(cursor, record_RPM)  # insert last record
 
     # save changes
     database.commit()

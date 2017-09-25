@@ -30,7 +30,6 @@ SwdbPkgData = Dnf.SwdbPkgData
 SwdbTrans = Dnf.SwdbTrans
 SwdbGroup = Dnf.SwdbGroup
 SwdbEnv = Dnf.SwdbEnv
-SwdbRpmData = Dnf.SwdbRpmData
 
 
 def convert_reason(reason):

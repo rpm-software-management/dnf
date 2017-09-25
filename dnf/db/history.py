@@ -24,7 +24,7 @@ from dnf.yum import misc
 from .swdb_transformer import run as transformdb
 from .addondata import AddonData
 from .group import GroupPersistor
-from .types import Swdb, SwdbRpmData, SwdbPkg, SwdbItem, convert_reason
+from .types import Swdb, SwdbPkg, SwdbItem, convert_reason
 
 
 class SwdbInterface(object):
@@ -135,23 +135,6 @@ class SwdbInterface(object):
         """Get reason for package"""
         return self.swdb.reason(str(pkg))
 
-    def ipkg_to_rpmdata(self, ipkg):
-        """ Extract RPMDB data from Dnf.Package """
-        pid = self.pkg2pid(ipkg, create=False)
-        rpmdata = SwdbRpmData.new(
-            pid,
-            int((getattr(ipkg, "buildtime", None) or 0)),
-            str((getattr(ipkg, "buildhost", None) or '')),
-            str((getattr(ipkg, "license", None) or '')),
-            str((getattr(ipkg, "packager", None) or '')),
-            str((getattr(ipkg, "size", None) or '')),
-            str((getattr(ipkg, "sourcerpm", None) or '')),
-            str((getattr(ipkg, "url", None) or '')),
-            str((getattr(ipkg, "vendor", None) or '')),
-            str((getattr(ipkg, "committer", None) or '')),
-            int((getattr(ipkg, "committime", None) or 0)))
-        return rpmdata
-
     def ipkg_to_pkg(self, ipkg):
         try:
             csum = ipkg.returnIdSum()
@@ -241,11 +224,6 @@ class SwdbInterface(object):
             self._log_errors(errors)
         del self._tid
 
-    def _save_rpmdb(self, ipkg):
-        """ Save all the data for rpmdb for this installed pkg, assumes
-            there is no data currently. """
-        return not self.swdb.add_rpm_data(self.ipkg_to_rpmdata(ipkg))
-
     def _update_ipkg_data(self, ipkg, pkg_data):
         """ Save all the data for yumdb for this installed pkg, assumes
             there is no data currently. """
@@ -256,8 +234,8 @@ class SwdbInterface(object):
         return False
 
     def sync_alldb(self, ipkg, pkg_data):
-        """ Sync. all the data for rpmdb/yumdb for this installed pkg. """
-        return self._save_rpmdb(ipkg) and self._update_ipkg_data(ipkg, pkg_data)
+        """ Sync. yumdb for this installed pkg. """
+        return self._update_ipkg_data(ipkg, pkg_data)
 
     def search(self, patterns, ignore_case=True):
         """ Search for history transactions which contain specified
