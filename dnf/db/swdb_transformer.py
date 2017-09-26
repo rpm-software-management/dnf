@@ -178,7 +178,7 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
         cursor.execute('SELECT R_ID FROM REPO WHERE name=?', (name, ))
         rid = cursor.fetchone()
         if rid is None:
-            cursor.execute('INSERT INTO REPO VALUES(null,?,0,0)', (name, ))
+            cursor.execute('INSERT INTO REPO VALUES(null,?)', (name, ))
             cursor.execute('SELECT last_insert_rowid()')
             rid = cursor.fetchone()
         repo_dict[name] = rid[0]
