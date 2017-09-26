@@ -1,8 +1,1 @@
-{
-    "minimal": {
-        "rpms": ["glibc"]
-    },
-    "default": {
-        "rpms": ["glibc", "bash", "systemd", "kernel"]
-    }
-}
+../base-runtime-f26-1/profiles.json
