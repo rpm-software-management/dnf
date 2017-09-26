@@ -1643,19 +1643,18 @@ Transaction Summary
             else:
                 # get latest installed package from software database
                 inst_pkg = self.history.package(ipkgs[0])
-
-                # result is:
-                # 0 if inst_pkg == pkg
-                # > 0 when inst_pkg > pkg
-                # < 0 when inst_pkg < pkg
-                res = pkg.compare(inst_pkg)
-
-                if res == 0:
-                    pass  # installed
-                elif res > 0:
-                    state = _pkg_states['o']  # updated
-                else:
-                    state = _pkg_states['n']  # downgraded
+                if inst_pkg:
+                    res = pkg.compare(inst_pkg)
+                    # res is:
+                    # 0 if inst_pkg == pkg
+                    # > 0 when inst_pkg > pkg
+                    # < 0 when inst_pkg < pkg
+                    if res == 0:
+                        pass  # installed
+                    elif res > 0:
+                        state = _pkg_states['o']  # updated
+                    else:
+                        state = _pkg_states['n']  # downgraded
 
             if highlight:
                 (hibeg, hiend) = self._highlight('bold')
