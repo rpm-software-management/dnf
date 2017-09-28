@@ -317,11 +317,11 @@ def getCacheDir():
     try:
         usertup = pwd.getpwuid(uid)
         username = dnf.i18n.ucd(usertup[0])
+        prefix = '%s-%s-' % (dnf.const.PREFIX, username)
     except KeyError:
-        return None # if it returns None then, well, it's bollocksed
+        prefix = '%s-%s-' % (dnf.const.PREFIX, uid)
 
-    # check for /var/tmp/dnf-username-* -
-    prefix = '%s-%s-' % (dnf.const.PREFIX, username)
+    # check for /var/tmp/prefix-* -
     dirpath = '%s/%s*' % (dnf.const.TMPDIR, prefix)
     cachedirs = sorted(glob.glob(dirpath))
     for thisdir in cachedirs:
