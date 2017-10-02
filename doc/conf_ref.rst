@@ -559,6 +559,11 @@ Files
 ``Repository``
     /etc/yum.repos.d/
 
+``Variables``
+    Any properly named file in /etc/dnf/vars is turned into a variable named after the filename (or
+    overrides any of the above variables but those set from commandline). Filenames may contain only
+    alphanumeric characters and underscores and be in lowercase.
+
 ==========
  See Also
 ==========

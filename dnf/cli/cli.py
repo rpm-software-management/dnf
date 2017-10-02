@@ -804,6 +804,8 @@ class Cli(object):
                 self.base.conf.cachedir = self.base.conf.system_cachedir
                 self.demands.cacheonly = True
             self._read_conf_file(opts.releasever)
+            if 'arch' in opts:
+                self.base.conf.arch = opts.arch
             self.base.conf._adjust_conf_options()
         except (dnf.exceptions.ConfigError, ValueError) as e:
             logger.critical(_('Config error: %s'), e)
@@ -900,13 +902,14 @@ class Cli(object):
         conf._search_inside_installroot('reposdir')
 
         # cachedir, logs, releasever, and gpgkey are taken from or stored in installroot
-        if releasever is None:
+        subst = conf.substitutions
+        subst.update_from_etc(conf.installroot)
+        if releasever is None and conf.releasever is None:
             releasever = dnf.rpm.detect_releasever(conf.installroot)
         elif releasever == '/':
             releasever = dnf.rpm.detect_releasever(releasever)
-        conf.releasever = releasever
-        subst = conf.substitutions
-        subst.update_from_etc(conf.installroot)
+        if releasever is not None:
+            conf.releasever = releasever
         if conf.releasever is None:
             logger.warning(_("Unable to detect release version (use '--releasever' to specify "
                              "release version)"))

@@ -236,7 +236,7 @@ pushd build-py3
 popd
 %endif
 %find_lang %{name}
-
+mkdir -p %{buildroot}/etc/dnf/vars
 mkdir -p %{buildroot}%{pluginconfpath}/
 mkdir -p %{buildroot}%{py2pluginpath}/
 %if %{with python3}
@@ -321,6 +321,7 @@ popd
 %dir %{confdir}
 %dir %{pluginconfpath}
 %dir %{confdir}/protected.d
+%dir %{confdir}/vars
 %config(noreplace) %{confdir}/%{name}.conf
 %config(noreplace) %{confdir}/protected.d/%{name}.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
