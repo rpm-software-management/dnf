@@ -371,6 +371,29 @@ popd
 %endif
 
 %changelog
+* Mon Oct 02 2017 Jaroslav Mracek <jmracek@redhat.com> - 2.7.2-1
+- Update to 2.7.2-1
+- Added new option ``--comment=<comment>`` that adds a comment to transaction in history
+- :meth:`dnf.Base.pre_configure_plugin` configure plugins by running their pre_configure() method
+- Added pre_configure() methotd for plugins and commands to configure dnf before repos are loaded
+- Resolves: rhbz#1421478 - dnf repository-packages: error: unrecognized arguments: -x rust-rpm-macros
+- Resolves: rhbz#1491560 - 'dnf check' reports spurious "has missing requires of" errors
+- Resolves: rhbz#1465292 - DNF remove protected duplicate package
+- Resolves: rhbz#1279001 - [RFE] Missing dnf --downloaddir option
+- Resolves: rhbz#1212341 - [RFE] Allow plugins to override the core configuration
+- Resolves: rhbz#1299482 - mock --init fails with message "Failed calculating RPMDB checksum"
+- Resolves: rhbz#1488398 - dnf upstream tests failures on f26
+- Resolves: rhbz#1192811 - dnf whatprovides should show which provides matched a pattern
+- Resolves: rhbz#1288845 - "dnf provides" wildcard matching is unreliable (not all packages with matches listed)
+- Resolves: rhbz#1473933 - [abrt] dnf-automatic: resolved(): rpm_conf.py:58:resolved:AttributeError: 'Rpmconf' object has no attribute '_interactive'
+- Resolves: rhbz#1237349 - dnf autoremove not removing what dnf list extras shows
+- Resolves: rhbz#1470050 - the 'priority=' option in /etc/yum.repos.d/*.repo is not respected
+- Resolves: rhbz#1347927 - dnf --cacheonly downloads packages
+- Resolves: rhbz#1478115 - [abrt] dnf: _hcmd_undo(): __init__.py:888:_hcmd_undo:IndexError: list index out of range
+- Resolves: rhbz#1461171 -  RFE: support --advisory= with install
+- Resolves: rhbz#1448874 - "dnf needs-restarting" vanished from bash completion
+- Resolves: rhbz#1495116 - Dnf version fails with traceback in container
+
 * Mon Aug 07 2017 Jaroslav Mracek <jmracek@redhat.com> 2.6.3-1
 - Fix problem with dnf.Package().remote_location() (RhBug:1476215) (Jaroslav
   Mracek)
