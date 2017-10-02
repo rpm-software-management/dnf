@@ -89,7 +89,8 @@ class RepoModuleDict(OrderedDict):
             return None
         return repo_module_version
 
-    def get_includes_latest(self, name, stream, visited=set()):
+    def get_includes_latest(self, name, stream, visited=None):
+        visited = visited or set()
         includes = set()
         repos = set()
         try:
@@ -103,7 +104,10 @@ class RepoModuleDict(OrderedDict):
 
             for requires_name, requires_stream in \
                     repo_module_version.module_metadata.requires.items():
-                visited.add("{}:{}".format(requires_name, requires_stream))
+                requires_ns = "{}:{}".format(requires_name, requires_stream)
+                if requires_ns in visited:
+                    continue
+                visited.add(requires_ns)
                 requires_includes, requires_repos = self.get_includes_latest(requires_name,
                                                                              requires_stream,
                                                                              visited)
@@ -114,7 +118,8 @@ class RepoModuleDict(OrderedDict):
 
         return includes, repos
 
-    def get_includes(self, name, stream, visited=set()):
+    def get_includes(self, name, stream, visited=None):
+        visited = visited or set()
         includes = set()
         repos = set()
         try:
@@ -128,7 +133,10 @@ class RepoModuleDict(OrderedDict):
 
                 for requires_name, requires_stream in \
                         repo_module_version.module_metadata.requires.items():
-                    visited.add("{}:{}".format(requires_name, requires_stream))
+                    requires_ns = "{}:{}".format(requires_name, requires_stream)
+                    if requires_ns in visited:
+                        continue
+                    visited.add(requires_ns)
                     requires_includes, requires_repos = self.get_includes(requires_name,
                                                                           requires_stream,
                                                                           visited)
