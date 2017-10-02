@@ -344,7 +344,8 @@ class RepoModuleDict(OrderedDict):
 
         for profile in module_version.profiles:
             nevra_objects = module_version.profile_nevra_objects(profile)
-            lines[profile] = "\n".join(["{}-{}".format(nevra.name, nevra.evr()) for nevra in nevra_objects])
+            lines[profile] = "\n".join(["{}-{}".format(nevra.name, nevra.evr())
+                                        for nevra in nevra_objects])
 
         return self.create_simple_table(lines)
 
@@ -497,7 +498,7 @@ class RepoModuleDict(OrderedDict):
 
     def get_brief_description_by_name(self, module_n, repo_module_versions, only_installed=False):
         if module_n is None or not module_n:
-            return self._get_brief_description(repo_module_versions, only_installed)
+            return self._get_brief_description(repo_module_versions, only_installed=only_installed)
         else:
             filtered_versions_by_name = set()
             for name in module_n:
@@ -505,7 +506,8 @@ class RepoModuleDict(OrderedDict):
                     if fnmatch.fnmatch(version.name, name):
                         filtered_versions_by_name.add(version)
 
-            return self._get_brief_description(list(filtered_versions_by_name), only_installed)
+            return self._get_brief_description(list(filtered_versions_by_name),
+                                               only_installed=only_installed)
 
     def _get_brief_description(self, repo_module_versions, only_installed=False):
         if only_installed:
