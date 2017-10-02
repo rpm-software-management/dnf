@@ -58,6 +58,7 @@ def _make_lists(transaction, goal):
              'erased_dep',
              'installed',
              'installed_group',
+             'installing_module',
              'installed_dep',
              'installed_weak',
              'reinstalled',
@@ -83,7 +84,10 @@ def _make_lists(transaction, goal):
                     b.installed.append(tsi)
                     continue
                 elif reason == 'group':
-                    b.installed_group.append(tsi)
+                    if str(tsi.installed) in goal.module_members:
+                        b.installing_module.append(tsi)
+                    else:
+                        b.installed_group.append(tsi)
                     continue
                 elif reason == 'weak':
                     b.installed_weak.append(tsi)
@@ -1080,6 +1084,7 @@ class Output(object):
                                   (_('Upgrading'), list_bunch.upgraded),
                                   (_('Reinstalling'), list_bunch.reinstalled),
                                   (_('Installing group packages'), list_bunch.installed_group),
+                                  (_('Installing module packages'), list_bunch.installing_module),
                                   (_('Installing dependencies'), list_bunch.installed_dep),
                                   (_('Installing weak dependencies'), list_bunch.installed_weak),
                                   (_('Removing'), list_bunch.erased),

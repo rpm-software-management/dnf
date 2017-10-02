@@ -339,24 +339,14 @@ class RepoModuleDict(OrderedDict):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
 
-        table = smartcols.Table()
-        table.noheadings = True
-        table.column_separator = " : "
-
-        column_name = table.new_column("Name")
-        column_value = table.new_column("Value")
-        column_value.wrap = True
-
-        line = table.new_line()
-        line[column_name] = "Name"
-        line[column_value] = module_version.full_version
+        lines = OrderedDict()
+        lines["Name"] = module_version.full_version
 
         for profile in module_version.profiles:
-            line = table.new_line()
-            line[column_name] = profile
-            line[column_value] = " ".join(module_version.profile_nevra(profile))
+            nevra_objects = module_version.profile_nevra_objects(profile)
+            lines[profile] = "\n".join(["{}-{}".format(nevra.name, nevra.evr()) for nevra in nevra_objects])
 
-        return table
+        return self.create_simple_table(lines)
 
     def get_info(self, module_spec):
         subj = ModuleSubject(module_spec)
@@ -378,7 +368,7 @@ class RepoModuleDict(OrderedDict):
                  "Repo": module_version.repo.id,
                  "Summary": module_version.module_metadata.summary,
                  "Description": module_version.module_metadata.description,
-                 "Artifacts": " ".join(sorted(module_version.module_metadata.artifacts.rpms))}
+                 "Artifacts": "\n".join(sorted(module_version.module_metadata.artifacts.rpms))}
 
         table = self.create_simple_table(lines)
 
@@ -393,6 +383,9 @@ class RepoModuleDict(OrderedDict):
         column_name = table.new_column("Name")
         column_value = table.new_column("Value")
         column_value.wrap = True
+        column_value.safechars = "\n"
+        column_value.set_wrapfunc(smartcols.wrapnl_chunksize,
+                                  smartcols.wrapnl_nextchunk)
 
         for line_name, value in lines.items():
             line = table.new_line()
