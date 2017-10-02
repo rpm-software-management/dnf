@@ -61,20 +61,21 @@ class RepoModuleVersion(object):
             if profile not in self.profiles:
                 self.report_profile_error(profile, defaults_used)
 
-            for single_nevra in self.profile_nevra(profile):
-                subject = Subject(single_nevra)
-                nevra_obj = list(subject.get_nevra_possibilities(hawkey.FORM_NEVR))[0]
-
-                self.base.install(single_nevra, reponame=self.repo.id, forms=hawkey.FORM_NEVR)
-                self.base._goal.group_members.add(nevra_obj.name)
+            for nevra_object in self.profile_nevra_objects(profile):
+                nevr = self.nevra_object_to_nevr_str(nevra_object)
+                nevra = "{}.{}".format(nevr, nevra_object.arch)
+                self.base.install(nevr, reponame=self.repo.id, forms=hawkey.FORM_NEVR)
+                self.base._goal.group_members.add(nevra_object.name)
+                self.base._goal.module_members.add(nevra)
 
     def upgrade(self, profiles):
         for profile in profiles:
             if profile not in self.profiles:
                 raise NoProfileException(profile)
 
-            for single_nevra in self.profile_nevra(profile):
-                self.base.upgrade(single_nevra, reponame=self.repo.id)
+            for nevra_object in self.profile_nevra_objects(profile):
+                nevr = self.nevra_object_to_nevr_str(nevra_object)
+                self.base.upgrade(nevr, reponame=self.repo.id)
 
         self.base._module_persistor.set_data(self.repo_module, stream=self.stream,
                                              version=self.version)
@@ -84,8 +85,9 @@ class RepoModuleVersion(object):
             if profile not in self.profiles:
                 raise NoProfileException(profile)
 
-            for single_nevra in self.profile_nevra(profile):
-                remove_query = dnf.subject.Subject(single_nevra) \
+            for nevra_object in self.profile_nevra_objects(profile):
+                nevr = self.nevra_object_to_nevr_str(nevra_object)
+                remove_query = dnf.subject.Subject(nevr) \
                     .get_best_query(self.base.sack, forms=hawkey.FORM_NEVR)
 
                 if self.base._yumdb.get_package(remove_query[0]).reason == 'user':
@@ -109,18 +111,22 @@ class RepoModuleVersion(object):
         result = [i.replace("0:", "") for i in result]
         return result
 
+    @staticmethod
+    def nevra_object_to_nevr_str(nevra_object):
+        return "{}-{}".format(nevra_object.name, nevra_object.evr())
+
     def rpms(self, profile):
         return self.module_metadata.profiles[profile].rpms
 
-    def profile_nevra(self, profile):
-        result = set()
+    def profile_nevra_objects(self, profile):
+        result = []
         rpms = set(self.rpms(profile))
         for nevra in self.nevra():
             subj = Subject(nevra)
             nevra_obj = list(subj.get_nevra_possibilities(hawkey.FORM_NEVRA))[0]
             if nevra_obj.name not in rpms:
                 continue
-            result.add("{}-{}".format(nevra_obj.name, nevra_obj.evr()))
+            result.append(nevra_obj)
         return result
 
     @property

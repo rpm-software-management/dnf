@@ -31,6 +31,7 @@ class Goal(hawkey.Goal):
     def __init__(self, sack):
         super(Goal, self).__init__(sack)
         self.group_members = set()
+        self.module_members = set()
         self._installs = []
 
     def get_reason(self, pkg):
