@@ -119,7 +119,7 @@ Summary:        As a Yum CLI compatibility layer, supplies /usr/bin/yum4 redirec
 
 %else
 %package yum
-Conflicts:      yum < 3.4.3-505
+Conflicts:      yum
 Requires:       %{name} = %{version}-%{release}
 Summary:        As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF
 
@@ -251,6 +251,8 @@ mkdir -p %{buildroot}%{py2pluginpath}/
 %if %{with python3}
 mkdir -p %{buildroot}%{py3pluginpath}/__pycache__/
 %endif
+ln -sr  %{buildroot}%{confdir}/%{name}.conf %{buildroot}%{_sysconfdir}/yum.conf
+ln -sr  %{buildroot}%{confdir} %{buildroot}%{_sysconfdir}/yum
 mkdir -p %{buildroot}%{_localstatedir}/log/
 mkdir -p %{buildroot}%{_var}/cache/dnf/
 touch %{buildroot}%{_localstatedir}/log/%{name}.log
@@ -281,6 +283,14 @@ pushd build-py3
   ctest -VV
 popd
 %endif
+
+%pretrans yum
+if [ -d /etc/yum ]; then
+  if [ ! -L /etc/yum ]; then
+    cp -r /etc/yum/* /etc/dnf
+    rm -rf /etc/yum
+  fi
+fi
 
 %post
 %systemd_post dnf-makecache.timer
@@ -355,7 +365,10 @@ popd
 
 %else
 %files yum
+%{_sysconfdir}/yum.conf
+%{_sysconfdir}/yum
 %{_bindir}/yum
+%{_mandir}/man5/yum.conf.5*
 %{_mandir}/man8/yum.8*
 %endif
 

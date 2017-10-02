@@ -18,5 +18,6 @@ if (NOT WITH_MAN EQUAL 0)
 		      ${CMAKE_CURRENT_BINARY_DIR}/yum.8
 		      DESTINATION share/man/man8)
 	INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/dnf.conf.5
+	          ${CMAKE_CURRENT_BINARY_DIR}/yum.conf.5
 		      DESTINATION share/man/man5)
 endif()
