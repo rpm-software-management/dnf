@@ -55,7 +55,8 @@ class UpgradeCommand(commands.Command):
         demands.resolving = True
         demands.root_user = True
         commands._checkGPGKey(self.base, self.cli)
-        commands._checkEnabledRepo(self.base, self.opts.filenames)
+        if not self.opts.filenames:
+            commands._checkEnabledRepo(self.base)
         self.upgrade_minimal = None
         self.all_security = None
 
