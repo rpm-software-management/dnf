@@ -16,17 +16,18 @@
 
 import fnmatch
 import os
+import sys
 from collections import OrderedDict
 
 import hawkey
 import smartcols
-import sys
 
 from dnf.conf.read import ModuleReader, ModuleDefaultsReader
-from dnf.module import module_messages, VERSION_LOCKED, NOTHING_TO_SHOW, \
-    INSTALLING_NEWER_VERSION, NOTHING_TO_INSTALL
+from dnf.module import module_messages, NOTHING_TO_SHOW, \
+    INSTALLING_NEWER_VERSION, NOTHING_TO_INSTALL, VERSION_LOCKED
 from dnf.module.exceptions import NoStreamSpecifiedException, NoModuleException, \
-    EnabledStreamException, ProfileNotInstalledException, NoProfileSpecifiedException
+    EnabledStreamException, ProfileNotInstalledException, NoProfileSpecifiedException, \
+    NoProfileToRemoveException
 from dnf.module.repo_module import RepoModule
 from dnf.module.subject import ModuleSubject
 from dnf.subject import Subject
@@ -309,10 +310,10 @@ class RepoModuleDict(OrderedDict):
                 continue
 
             conf = self[module_form.name].conf
-            if conf:
+            if conf and conf.profiles:
                 installed_profiles = conf.profiles
             else:
-                installed_profiles = []
+                raise NoProfileToRemoveException(module_spec)
             if module_form.profile:
                 if module_form.profile not in installed_profiles:
                     raise ProfileNotInstalledException(module_spec)
@@ -462,7 +463,7 @@ class RepoModuleDict(OrderedDict):
         for version in self.list_module_version_all():
             conf = version.parent.parent.conf
             if conf is not None and conf.enabled and conf.version == version.version and \
-                    conf.stream == version.stream:
+                    conf.stream == version.stream and conf.profiles:
                 versions.append(version)
 
         return versions
