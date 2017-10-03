@@ -847,7 +847,10 @@ resulting packages matching the specification. All packages are considered if no
     without argument)'
 
 ``--arch <arch>[,<arch>...]``
-    Limit the resulting set only to packages of selected architectures.
+    Limit the resulting set only to packages of selected architectures. Default is all
+    architectures). In some cases the result is affected by basearch of running system, therefore
+    to run repoquery for arch incompatible with your system can by used ``--forcearch=<arch>``
+    option to change basearch.
 
 ``--duplicates``
     Limit the resulting set to installed duplicated packages (i.e. more package versions
