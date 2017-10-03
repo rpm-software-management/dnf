@@ -90,3 +90,9 @@ class NoProfilesException(dnf.exceptions.Error):
     def __init__(self, module_spec):
         value = "No such profile: {}. No profiles available".format(module_spec)
         super(NoProfilesException, self).__init__(value)
+
+
+class NoProfileToRemoveException(dnf.exceptions.Error):
+    def __init__(self, module_spec):
+        value = "No profile to remove for '{}'".format(module_spec)
+        super(NoProfileToRemoveException, self).__init__(value)
