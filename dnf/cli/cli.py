@@ -760,7 +760,8 @@ class Cli(object):
 
         if demands.sack_activation:
             self.base.fill_sack(load_system_repo='auto',
-                                load_available_repos=self.demands.available_repos)
+                                load_available_repos=self.demands.available_repos,
+                                all_arch=demands.all_arch)
 
     def _parse_commands(self, opts, args):
         """Check that the requested CLI command exists."""

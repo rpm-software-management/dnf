@@ -85,14 +85,19 @@ class Sack(hawkey.Sack):
         return main
 
 
-def _build_sack(base):
+def _build_sack(base, all_arch=False):
     cachedir = base.conf.cachedir
     # create the dir ourselves so we have the permissions under control:
     dnf.util.ensure_dir(cachedir)
+    kwargs = {}
+    if all_arch:
+        kwargs["all_arch"] = True
+    else:
+        kwargs["arch"] = base.conf.substitutions["arch"]
     return Sack(pkgcls=dnf.package.Package, pkginitval=base,
-                arch=base.conf.substitutions["arch"],
                 cachedir=cachedir, rootdir=base.conf.installroot,
-                logfile=os.path.join(base.conf.logdir, dnf.const.LOG_HAWKEY))
+                logfile=os.path.join(base.conf.logdir, dnf.const.LOG_HAWKEY),
+                **kwargs)
 
 
 def _rpmdb_sack(base):

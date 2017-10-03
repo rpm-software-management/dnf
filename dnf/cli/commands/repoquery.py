@@ -267,6 +267,7 @@ class RepoQueryCommand(commands.Command):
             demands.available_repos = True
 
         demands.sack_activation = True
+        demands.all_arch = True
 
     def build_format_fn(self, opts, pkg):
         try:
