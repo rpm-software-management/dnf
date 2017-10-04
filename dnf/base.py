@@ -28,6 +28,7 @@ import libdnf.transaction
 
 from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
+from dnf.module.exceptions import NoModuleException
 from dnf.module.persistor import ModulePersistor
 from dnf.module.metadata_loader import ModuleMetadataLoader
 from dnf.module.repo_module_dict import RepoModuleDict
@@ -1560,7 +1561,7 @@ class Base(object):
             try:
                 res = q.get(pattern)
             except dnf.exceptions.CompsError as err:
-                logger.error("Warning: %s", ucd(err))
+                logger.error("Warning: Module or %s", ucd(err))
                 done = False
                 continue
             for group_id in res.groups:
@@ -1665,7 +1666,7 @@ class Base(object):
         skipped_specs = specs
         try:
             skipped_specs = self.repo_module_dict.install(specs)
-        except dnf.exceptions.Error:
+        except NoModuleException:
             self.repo_module_dict.install(specs[1:])
 
         return skipped_specs
