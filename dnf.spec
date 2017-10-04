@@ -1,3 +1,6 @@
+%global commit 3fb9e5cfe3f1f441192006c6ddc8cf186894dc0c
+%global shortcommit %(c=%{commit}; echo ${c:0:7})
+
 %global hawkey_version 0.10.1
 %global librepo_version 1.7.19
 %global libcomps_version 0.1.8
@@ -25,12 +28,12 @@
 
 Name:           dnf
 Version:        2.7.5
-Release:        1%{?dist}
+Release:        1%{?dist}.modularity.1.%{shortcommit}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
 URL:            https://github.com/rpm-software-management/dnf
-Source0:        %{url}/archive/%{version}/%{name}-%{version}.tar.gz
+Source0:        %{url}/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -204,7 +207,7 @@ Requires(postun): systemd
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
 %prep
-%autosetup
+%autosetup -n %{name}-%{commit}
 mkdir build
 %if %{with python3}
 mkdir build-py3
@@ -380,21 +383,6 @@ popd
 %endif
 
 %changelog
-* Wed Oct 18 2017 Igor Gnatenko <ignatenko@redhat.com> - 2.7.5-1
-- Improve performance for excludes and includes handling (RHBZ #1500361)
-- Fixed problem of handling checksums for local repositories (RHBZ #1502106)
-- Fix traceback when using dnf.Base.close() (RHBZ #1503575)
-
-* Mon Oct 16 2017 Jaroslav Mracek <jmracek@redhat.com> - 2.7.4-1
-- Update to 2.7.4-1
-- Enhanced performance for excludes and includes handling
-- Solved memory leaks at time of closing of dnf.Base()
-- Resolves: rhbz#1480979 - I thought it abnormal that dnf crashed.
-- Resolves: rhbz#1461423 - Memory leak in python-dnf
-- Resolves: rhbz#1499564 - dnf list installed crashes
-- Resolves: rhbz#1499534 - dnf-2 is much slower than dnf-1 when handling groups
-- Resolves: rhbz#1499623 - Mishandling stderr vs stdout (dnf search, dnf repoquery)
-
 * Fri Oct 06 2017 Igor Gnatenko <ignatenko@redhat.com> - 2.7.3-1
 - Fix URL detection (RHBZ #1472847)
 - Do not remove downloaded files with --destdir option (RHBZ #1498426)
