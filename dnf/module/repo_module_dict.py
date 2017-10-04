@@ -362,15 +362,16 @@ class RepoModuleDict(OrderedDict):
 
             default_profiles = module_version.repo_module.defaults.profiles
 
-        lines = {"Name": module_version.name,
-                 "Stream": module_version.stream + default_str,
-                 "Version": module_version.version,
-                 "Profiles": " ".join(module_version.profiles),
-                 "Default profiles": " ".join(default_profiles),
-                 "Repo": module_version.repo.id,
-                 "Summary": module_version.module_metadata.summary,
-                 "Description": module_version.module_metadata.description,
-                 "Artifacts": "\n".join(sorted(module_version.module_metadata.artifacts.rpms))}
+        lines = OrderedDict()
+        lines["Name"] = module_version.name
+        lines["Stream"] = module_version.stream + default_str
+        lines["Version"] = module_version.version
+        lines["Profiles"] = " ".join(module_version.profiles)
+        lines["Default profiles"] = " ".join(default_profiles)
+        lines["Repo"] = module_version.repo.id
+        lines["Summary"] = module_version.module_metadata.summary
+        lines["Description"] = module_version.module_metadata.description
+        lines["Artifacts"] = "\n".join(sorted(module_version.module_metadata.artifacts.rpms))
 
         table = self.create_simple_table(lines)
 
@@ -390,8 +391,8 @@ class RepoModuleDict(OrderedDict):
                                   smartcols.wrapnl_nextchunk)
 
         for line_name, value in lines.items():
-            line = table.new_line()
             if value:
+                line = table.new_line()
                 line[column_name] = line_name
                 line[column_value] = str(value)
 
