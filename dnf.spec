@@ -76,7 +76,7 @@ Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
 URL:            https://github.com/rpm-software-management/dnf
-Source0:        %{url}/archive/%{version}/%{name}-%{version}.tar.gz
+Source0:        %{url}/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -457,21 +457,6 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %endif
 
 %changelog
-* Wed Oct 18 2017 Igor Gnatenko <ignatenko@redhat.com> - 2.7.5-1
-- Improve performance for excludes and includes handling (RHBZ #1500361)
-- Fixed problem of handling checksums for local repositories (RHBZ #1502106)
-- Fix traceback when using dnf.Base.close() (RHBZ #1503575)
-
-* Mon Oct 16 2017 Jaroslav Mracek <jmracek@redhat.com> - 2.7.4-1
-- Update to 2.7.4-1
-- Enhanced performance for excludes and includes handling
-- Solved memory leaks at time of closing of dnf.Base()
-- Resolves: rhbz#1480979 - I thought it abnormal that dnf crashed.
-- Resolves: rhbz#1461423 - Memory leak in python-dnf
-- Resolves: rhbz#1499564 - dnf list installed crashes
-- Resolves: rhbz#1499534 - dnf-2 is much slower than dnf-1 when handling groups
-- Resolves: rhbz#1499623 - Mishandling stderr vs stdout (dnf search, dnf repoquery)
-
 * Fri Oct 06 2017 Igor Gnatenko <ignatenko@redhat.com> - 2.7.3-1
 - Fix URL detection (RHBZ #1472847)
 - Do not remove downloaded files with --destdir option (RHBZ #1498426)
