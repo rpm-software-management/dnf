@@ -20,16 +20,22 @@ from collections import OrderedDict
 
 import hawkey
 import smartcols
+import sys
 
 from dnf.conf.read import ModuleReader, ModuleDefaultsReader
 from dnf.module import module_messages, VERSION_LOCKED, NOTHING_TO_SHOW, \
-    INSTALLING_NEWER_VERSION
+    INSTALLING_NEWER_VERSION, NOTHING_TO_INSTALL
 from dnf.module.exceptions import NoStreamSpecifiedException, NoModuleException, \
     EnabledStreamException, ProfileNotInstalledException, NoProfileSpecifiedException
 from dnf.module.repo_module import RepoModule
 from dnf.module.subject import ModuleSubject
 from dnf.subject import Subject
 from dnf.util import first_not_none, logger, ensure_dir
+
+
+def exit_dnf(message):
+    logger.info(message)
+    sys.exit(0)
 
 
 class RepoModuleDict(OrderedDict):
@@ -186,6 +192,7 @@ class RepoModuleDict(OrderedDict):
     def install(self, module_specs):
         versions, module_specs = self.get_best_versions(module_specs)
 
+        result = False
         for module_version, profiles, default_profiles in versions.values():
             if module_version.repo_module.conf.locked:
                 logger.warning(module_messages[VERSION_LOCKED]
@@ -199,7 +206,14 @@ class RepoModuleDict(OrderedDict):
                 profiles.extend(module_version.repo_module.conf.profiles)
                 profiles = list(set(profiles))
 
-            module_version.install(profiles, default_profiles)
+            result |= module_version.install(profiles, default_profiles)
+
+        if not result:
+            module_versions = ["{}:{}".format(module_version.name, module_version.stream)
+                               for module_version, profiles, default_profiles in versions.values()]
+            self.base._module_persistor.commit()
+            self.base._module_persistor.save()
+            exit_dnf(module_messages[NOTHING_TO_INSTALL].format(", ".join(module_versions)))
 
         return module_specs
 
