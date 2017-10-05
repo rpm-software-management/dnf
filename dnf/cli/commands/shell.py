@@ -83,7 +83,7 @@ class ShellCommand(commands.Command, cmd.Cmd):
             self.cmdloop()
 
     def _clean(self):
-        self.base.close()
+        self.base._finalize_base()
         self.base._transaction = None
         self.base.fill_sack()
 

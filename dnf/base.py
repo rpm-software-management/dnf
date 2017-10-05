@@ -303,7 +303,8 @@ class Base(object):
         # :api
         """Prepare the Sack and the Goal objects. """
         timer = dnf.logging.Timer('sack setup')
-        if self._sack is not None and self._repos is not None:
+        self.reset(sack=True, goal=True)
+        if self._repos is not None:
             for repo in self._repos.values():
                 repo._hawkey_repo = repo._init_hawkey_repo()
         self._sack = dnf.sack._build_sack(self)
@@ -358,18 +359,7 @@ class Base(object):
         db_path = os.path.normpath(self.conf.persistdir + '/yumdb')
         return rpmsack.AdditionalPkgDB(db_path)
 
-    def close(self):
-        # :api
-        """Close all potential handles and clean cache.
-
-        Typically the handles are to data sources and sinks.
-
-        """
-
-        if self._closed:
-            return
-        logger.log(dnf.logging.DDEBUG, 'Cleaning up.')
-        self._closed = True
+    def _finalize_base(self):
         if not self._trans_success:
             for pkg, reason in self._revert_reason:
                 self._yumdb.get_package(pkg).reason = reason
@@ -399,6 +389,22 @@ class Base(object):
             self.history.close()
         self._store_persistent_data()
         self._closeRpmDB()
+        self._trans_success = False
+
+    def close(self):
+        # :api
+        """Close all potential handles and clean cache.
+
+        Typically the handles are to data sources and sinks.
+
+        """
+
+        if self._closed:
+            return
+        logger.log(dnf.logging.DDEBUG, 'Cleaning up.')
+        self._closed = True
+        self._finalize_base()
+        self.reset(sack=True, repos=True, goal=True)
 
     def read_all_repos(self, opts=None):
         # :api
@@ -416,6 +422,9 @@ class Base(object):
         """Make the Base object forget about various things."""
         if sack:
             self._sack = None
+            if self._repos is not None:
+                for repo in self._repos.values():
+                    repo._hawkey_repo = None
         if repos:
             self._repos = dnf.repodict.RepoDict()
         if goal:
@@ -425,6 +434,7 @@ class Base(object):
             if self._group_persistor is not None:
                 self._group_persistor = self._activate_group_persistor()
             self._comps_trans = dnf.comps.TransactionBunch()
+            self._transaction = None
 
     def _closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""

@@ -70,16 +70,12 @@ class BaseTest(TestCase):
         with self._base:
             self._base._history_undo_operations(operations, 0)
 
-        transaction_it = iter(self._base.transaction)
-        self.assertEqual(next(transaction_it),
-                         self._create_item_matcher(
-                             UPGRADE, installed='pepper-20-1.x86_64',
-                             erased='pepper-20-0.x86_64'))
-        self.assertEqual(next(transaction_it),
-                         self._create_item_matcher(
-                            INSTALL, installed='lotus-3-16.x86_64',
-                            reason='user'))
-        self.assertRaises(StopIteration, next, transaction_it)
+            transaction_it = iter(self._base.transaction)
+            self.assertEqual(next(transaction_it), self._create_item_matcher(
+                UPGRADE, installed='pepper-20-1.x86_64', erased='pepper-20-0.x86_64'))
+            self.assertEqual(next(transaction_it), self._create_item_matcher(
+                INSTALL, installed='lotus-3-16.x86_64', reason='user'))
+            self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_downgrade_notavailable(self):
         """Test history_undo_operations with an unavailable downgrade."""
@@ -109,12 +105,10 @@ class BaseTest(TestCase):
         with self._base:
             self._base._history_undo_operations(operations, 0)
 
-        transaction_it = iter(self._base.transaction)
-        self.assertEqual(next(transaction_it),
-                         self._create_item_matcher(
-                             INSTALL, installed='lotus-3-16.x86_64',
-                             reason='user'))
-        self.assertRaises(StopIteration, next, transaction_it)
+            transaction_it = iter(self._base.transaction)
+            self.assertEqual(next(transaction_it), self._create_item_matcher(
+                INSTALL, installed='lotus-3-16.x86_64', reason='user'))
+            self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_erase_twoavailable(self):
         """Test history_undo_operations with an erase available in two repos."""
@@ -126,12 +120,10 @@ class BaseTest(TestCase):
         with base:
             base._history_undo_operations(operations, 0)
 
-        transaction_it = iter(base.transaction)
-        self.assertEqual(next(transaction_it),
-                         self._create_item_matcher(
-                             INSTALL, installed='lotus-3-16.x86_64',
-                             reason='user'))
-        self.assertRaises(StopIteration, next, transaction_it)
+            transaction_it = iter(base.transaction)
+            self.assertEqual(next(transaction_it), self._create_item_matcher(
+                INSTALL, installed='lotus-3-16.x86_64', reason='user'))
+            self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_erase_notavailable(self):
         """Test history_undo_operations with an unavailable erase."""
@@ -151,15 +143,12 @@ class BaseTest(TestCase):
         with self._base:
             self._base._history_undo_operations(operations, 0)
 
-        transaction_it = iter(self._base.transaction)
-        self.assertEqual(next(transaction_it),
-                         self._create_item_matcher(
-                             ERASE, erased='pepper-20-0.x86_64'))
-        self.assertEqual(next(transaction_it),
-                         self._create_item_matcher(
-                             INSTALL, installed='lotus-3-16.x86_64',
-                             reason='user'))
-        self.assertRaises(StopIteration, next, transaction_it)
+            transaction_it = iter(self._base.transaction)
+            self.assertEqual(next(transaction_it), self._create_item_matcher(
+                ERASE, erased='pepper-20-0.x86_64'))
+            self.assertEqual(next(transaction_it), self._create_item_matcher(
+                INSTALL, installed='lotus-3-16.x86_64', reason='user'))
+            self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_install_notinstalled(self):
         """Test history_undo_operations with a not installed install."""
@@ -179,13 +168,11 @@ class BaseTest(TestCase):
         with self._base:
             self._base._history_undo_operations(operations, 0)
 
-        transaction_it = iter(self._base.transaction)
-        self.assertEqual(next(transaction_it),
-                         self._create_item_matcher(
-                             REINSTALL, installed='pepper-20-0.x86_64',
-                             erased='pepper-20-0.x86_64',
-                             obsoleted=('hole-1-1.x86_64',)))
-        self.assertRaises(StopIteration, next, transaction_it)
+            transaction_it = iter(self._base.transaction)
+            self.assertEqual(next(transaction_it), self._create_item_matcher(
+                REINSTALL, installed='pepper-20-0.x86_64', erased='pepper-20-0.x86_64',
+                obsoleted=('hole-1-1.x86_64',)))
+            self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_reinstall_notavailable(self):
         """Test history_undo_operations with an unvailable reinstall."""
@@ -215,12 +202,11 @@ class BaseTest(TestCase):
         with self._base:
             self._base._history_undo_operations(operations, 0)
 
-        transaction_it = iter(self._base.transaction)
-        self.assertEqual(next(transaction_it),
-                         self._create_item_matcher(
-                             REINSTALL, installed='pepper-20-0.x86_64',
-                             erased='pepper-20-0.x86_64', obsoleted=()))
-        self.assertRaises(StopIteration, next, transaction_it)
+            transaction_it = iter(self._base.transaction)
+            self.assertEqual(next(transaction_it), self._create_item_matcher(
+                REINSTALL, installed='pepper-20-0.x86_64', erased='pepper-20-0.x86_64',
+                obsoleted=()))
+            self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_update(self):
         """Test history_undo_operations with an update."""
@@ -230,16 +216,12 @@ class BaseTest(TestCase):
         with self._base:
             self._base._history_undo_operations(operations, 0)
 
-        transaction_it = iter(self._base.transaction)
-        self.assertEqual(next(transaction_it),
-                         self._create_item_matcher(
-                             DOWNGRADE, installed='tour-4.6-1.noarch',
-                             erased='tour-5-0.noarch'))
-        self.assertEqual(next(transaction_it),
-                         self._create_item_matcher(
-                             INSTALL, installed='lotus-3-16.x86_64',
-                             reason='user'))
-        self.assertRaises(StopIteration, next, transaction_it)
+            transaction_it = iter(self._base.transaction)
+            self.assertEqual(next(transaction_it), self._create_item_matcher(
+                DOWNGRADE, installed='tour-4.6-1.noarch', erased='tour-5-0.noarch'))
+            self.assertEqual(next(transaction_it), self._create_item_matcher(
+                INSTALL, installed='lotus-3-16.x86_64', reason='user'))
+            self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_update_notavailable(self):
         """Test history_undo_operations with an unavailable update."""
