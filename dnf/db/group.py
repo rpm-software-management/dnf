@@ -58,9 +58,9 @@ class GroupPersistor(object):
         return self.swdb.get_env(name_id)
 
     def environments(self):
-        return self.swdb.env_by_pattern("%")
+        return self.swdb.environments()
 
-    def environments_by_pattern(self, pattern, case_sensitive=False):
+    def environments_by_pattern(self, pattern):
         return self.swdb.env_by_pattern(pattern)
 
     def group(self, gid):
@@ -81,9 +81,9 @@ class GroupPersistor(object):
         return env.installed if env else False
 
     def groups(self):
-        return self.swdb.groups_by_pattern("%")  # sqlite3 wildcard
+        return self.swdb.groups()
 
-    def groups_by_pattern(self, pattern, case_sensitive=False):
+    def groups_by_pattern(self, pattern):
         return self.swdb.groups_by_pattern(pattern)
 
     def add_group(self, group, commit=False):
