@@ -48,15 +48,21 @@ class RepoModuleVersion(object):
             raise NoProfilesException("{}/{}".format(self.full_version, profile))
 
     def install(self, profiles, default_profiles):
-        self._install_profiles(profiles, False)
-        self._install_profiles(default_profiles, True)
+        result = self._install_profiles(profiles, False)
+        result |= self._install_profiles(default_profiles, True)
 
         profiles.extend(self.repo_module.conf.profiles)
         profiles.extend(default_profiles)
         self.base._module_persistor.set_data(self.repo_module, stream=self.stream,
                                              version=self.version, profiles=sorted(set(profiles)))
 
+        return result
+
     def _install_profiles(self, profiles, defaults_used):
+        installed = self.base.sack.query().installed().run()
+        installed_nevras = [str(pkg) for pkg in installed]
+
+        result = False
         for profile in profiles:
             if profile not in self.profiles:
                 self.report_profile_error(profile, defaults_used)
@@ -64,9 +70,14 @@ class RepoModuleVersion(object):
             for nevra_object in self.profile_nevra_objects(profile):
                 nevr = self.nevra_object_to_nevr_str(nevra_object)
                 nevra = "{}.{}".format(nevr, nevra_object.arch)
-                self.base.install(nevr, reponame=self.repo.id, forms=hawkey.FORM_NEVR)
-                self.base._goal.group_members.add(nevra_object.name)
-                self.base._goal.module_members.add(nevra)
+
+                if nevra not in installed_nevras:
+                    self.base.install(nevr, reponame=self.repo.id, forms=hawkey.FORM_NEVR)
+                    self.base._goal.group_members.add(nevra_object.name)
+                    self.base._goal.module_members.add(nevra)
+                    result = True
+
+        return result
 
     def upgrade(self, profiles):
         for profile in profiles:

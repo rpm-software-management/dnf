@@ -20,10 +20,12 @@ DIFFERENT_STREAM_INFO = 1
 NOTHING_TO_SHOW = 2
 VERSION_LOCKED = 3
 INSTALLING_NEWER_VERSION = 4
+NOTHING_TO_INSTALL = 5
 
 module_messages = {
     DIFFERENT_STREAM_INFO: _("Enabling different stream for '{}'"),
     NOTHING_TO_SHOW: _("Nothing to show"),
     VERSION_LOCKED: _("'{}' is locked to version: {}"),
     INSTALLING_NEWER_VERSION: _("Installing newer version of '{}' than specified. Reason: {}"),
+    NOTHING_TO_INSTALL: _("Nothing to install. Enabled modules: {}"),
 }
