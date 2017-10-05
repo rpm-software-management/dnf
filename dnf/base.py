@@ -109,6 +109,8 @@ class Base(object):
     def _add_tempfiles(self, files):
         if self._transaction:
             self._trans_tempfiles.update(files)
+        elif self.conf.destdir:
+            pass
         else:
             self._tempfiles.update(files)
 
