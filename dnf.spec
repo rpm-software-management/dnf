@@ -125,7 +125,6 @@ BuildRequires:  python-nose
 BuildRequires:  python2-gpg
 Requires:       python2-gpg
 BuildRequires:  pyliblzma
-BuildRequires:  rpm-python >= %{rpm_version}
 Requires:       pyliblzma
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
@@ -134,11 +133,14 @@ Requires:       python-iniparse
 Requires:       python-libcomps >= %{libcomps_version}
 Requires:       python-librepo >= %{librepo_version}
 %if 0%{?rhel} && 0%{?rhel} <= 7
+BuildRequires:  rpm-python >= %{rpm_version}
+Requires:       rpm-python >= %{rpm_version}
 Requires:       rpm-plugin-systemd-inhibit
 %else
+BuildRequires:  python2-rpm >= %{rpm_version}
+Requires:       python2-rpm >= %{rpm_version}
 Recommends:     rpm-plugin-systemd-inhibit
 %endif
-Requires:       rpm-python >= %{rpm_version}
 # dnf-langpacks package is retired in F25
 # to have clean upgrade path for dnf-langpacks
 Obsoletes:      python-dnf-langpacks < %{dnf_langpacks_ver}
@@ -159,7 +161,6 @@ BuildRequires:  python3-librepo >= %{librepo_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-gpg
 Requires:       python3-gpg
-BuildRequires:  rpm-python3 >= %{rpm_version}
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
 Requires:       python3-hawkey >= %{hawkey_version}
@@ -167,8 +168,12 @@ Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
 Requires:       python3-librepo >= %{librepo_version}
 %if 0%{?rhel} && 0%{?rhel} <= 7
+BuildRequires:  rpm-python3 >= %{rpm_version}
+Requires:       rpm-python3 >= %{rpm_version}
 Requires:       rpm-plugin-systemd-inhibit
 %else
+BuildRequires:  python3-rpm >= %{rpm_version}
+Requires:       python3-rpm >= %{rpm_version}
 Recommends:     rpm-plugin-systemd-inhibit
 %endif
 Requires:       rpm-python3 >= %{rpm_version}
