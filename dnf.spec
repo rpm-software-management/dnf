@@ -30,10 +30,7 @@ Summary:        Package manager forked from Yum, using libsolv as a dependency r
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
 URL:            https://github.com/rpm-software-management/dnf
-# git clone https://github.com/rpm-software-management/dnf
-# cd dnf
-# tito build --tgz --tag=dnf-2.5.1-1
-Source0:        %{name}-%{version}.tar.gz
+Source0:        %{url}/archive/%{version}/%{name}-%{version}.tar.gz
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
