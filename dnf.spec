@@ -24,7 +24,7 @@
 %global _docdir_fmt %{name}
 
 Name:           dnf
-Version:        2.7.2
+Version:        2.7.3
 Release:        1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -373,6 +373,11 @@ popd
 %endif
 
 %changelog
+* Fri Oct 06 2017 Igor Gnatenko <ignatenko@redhat.com> - 2.7.3-1
+- Fix URL detection (RHBZ #1472847)
+- Do not remove downloaded files with --destdir option (RHBZ #1498426)
+- Fix handling of conditional packages in comps (RHBZ #1427144)
+
 * Mon Oct 02 2017 Jaroslav Mracek <jmracek@redhat.com> - 2.7.2-1
 - Update to 2.7.2-1
 - Added new option ``--comment=<comment>`` that adds a comment to transaction in history
