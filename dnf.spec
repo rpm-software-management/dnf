@@ -1,8 +1,8 @@
 %global commit 22c5c220bdbe1811b2ae5a3837fdcbb8e30df391
 %global shortcommit %(c=%{commit}; echo ${c:0:7})
 
-%global hawkey_version 0.9.4
-%global librepo_version 1.8.0
+%global hawkey_version 0.10.1
+%global librepo_version 1.7.19
 %global libcomps_version 0.1.8
 %global rpm_version 4.13.0-0.rc1.29
 %global min_plugins_core 2.1.3
@@ -27,8 +27,8 @@
 %global _docdir_fmt %{name}
 
 Name:           dnf
-Version:        2.6.3
-Release:        13%{?dist}.modularity.1.%{shortcommit}
+Version:        2.7.2
+Release:        1%{?dist}.modularity.1.%{shortcommit}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -37,7 +37,6 @@ URL:            https://github.com/rpm-software-management/dnf
 # cd dnf
 # tito build --tgz --tag=dnf-2.5.1-1
 Source0:        %{name}-%{version}.tar.gz
-
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -207,7 +206,7 @@ Requires(postun): systemd
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
 %prep
-%autosetup -n %{name}-%{commit} -p1
+%autosetup -n %{name}-%{commit}
 mkdir build
 %if %{with python3}
 mkdir build-py3
