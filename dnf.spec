@@ -176,7 +176,6 @@ BuildRequires:  python3-rpm >= %{rpm_version}
 Requires:       python3-rpm >= %{rpm_version}
 Recommends:     rpm-plugin-systemd-inhibit
 %endif
-Requires:       rpm-python3 >= %{rpm_version}
 # dnf-langpacks package is retired in F25
 # to have clean upgrade path for dnf-langpacks
 Obsoletes:      python3-dnf-langpacks < %{dnf_langpacks_ver}
