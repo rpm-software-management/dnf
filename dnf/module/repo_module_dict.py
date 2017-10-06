@@ -209,7 +209,7 @@ class RepoModuleDict(OrderedDict):
 
             result |= module_version.install(profiles, default_profiles)
 
-        if not result:
+        if not result and self.base._module_persistor:
             module_versions = ["{}:{}".format(module_version.name, module_version.stream)
                                for module_version, profiles, default_profiles in versions.values()]
             self.base._module_persistor.commit()
