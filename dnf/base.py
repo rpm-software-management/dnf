@@ -2279,6 +2279,7 @@ class Base(object):
 
         remote_pkgs = []
         local_repository_pkgs = []
+        pkg = None
         for pkg in install_pkgs:
             if pkg._is_local_pkg():
                 if pkg.reponame != hawkey.CMDLINE_REPO_NAME:
@@ -2289,7 +2290,7 @@ class Base(object):
 
         try:
             msg = _('Package "{}" from local repository "{}" has incorrect checksum')
-            if not _verification_of_packages(local_repository_pkgs, msg.format(pkg, pkg.reponame)):
+            if pkg is not None and not _verification_of_packages(local_repository_pkgs, msg.format(pkg, pkg.reponame)):
                 error = True
         except Exception as e:
             logger.critical(str(e))
