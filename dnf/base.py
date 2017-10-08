@@ -2290,7 +2290,8 @@ class Base(object):
 
         try:
             msg = _('Package "{}" from local repository "{}" has incorrect checksum')
-            if pkg is not None and not _verification_of_packages(local_repository_pkgs, msg.format(pkg, pkg.reponame)):
+            if pkg is not None and not _verification_of_packages(local_repository_pkgs,
+                                                                 msg.format(pkg, pkg.reponame)):
                 error = True
         except Exception as e:
             logger.critical(str(e))
