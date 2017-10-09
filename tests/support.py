@@ -18,6 +18,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from functools import reduce
+from dnf.db.types import SwdbReason, SwdbPkgData
 import contextlib
 import dnf
 import dnf.conf
@@ -150,6 +151,17 @@ def command_configure(cmd, args):
 def command_run(cmd, args):
     command_configure(cmd, args)
     return cmd.run()
+
+
+def mockSwdbPkg(history, pkg, state="Installed", repo="unknown", reason=SwdbReason.USER):
+    """ Add DnfPackage into database """
+    hpkg = history.ipkg_to_pkg(pkg)
+    pid = history.add_package(hpkg)
+    pkg_data = SwdbPkgData()
+    history.swdb.trans_data_beg(0, pid, reason, state, False)
+    history.update_package_data(pid, 0, pkg_data)
+    history.set_repo(hpkg, repo)
+
 
 class Base(dnf.Base):
     def __init__(self, *args, **kwargs):

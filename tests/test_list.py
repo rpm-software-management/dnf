@@ -40,6 +40,19 @@ class List(support.TestCase):
         ypl = base._do_package_lists('installed')
         self.assertEqual(len(ypl.installed), support.TOTAL_RPMDB_COUNT)
 
+    def test_list_installed_reponame(self):
+        """Test whether only packages installed from the repository are listed."""
+        base = support.MockBase()
+        expected = base.sack.query().installed().filter(name={'pepper',
+                                                              'librita'})
+        history = base.history
+        for pkg in expected:
+            support.mockSwdbPkg(history, pkg, repo='main')
+
+        lists = base._do_package_lists('installed', reponame='main')
+
+        self.assertCountEqual(lists.installed, expected)
+
     def test_list_updates(self):
         base = support.MockBase("updates", "main")
         ypl = base._do_package_lists('upgrades')

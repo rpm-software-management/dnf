@@ -6,10 +6,7 @@ What will not be tested:
 * rpm transactions themselves (tested in RPM)
 * depsolving (the core depsolving algorithms are tested in libsolv, correctly
   setting up libsolv is hawkey's job)
-* Swdb functions - tested in libdnf
-
-Missing
-* SwdbInterface tests
+* SWDB functions (tested in libdnf)
 
 == The repos/ directory ==
 
