@@ -353,13 +353,7 @@ class YumHistoryTransaction(object):
     def __lt__(self, other):
         if other is None:
             return False
-        if self.beg_timestamp == other.beg_timestamp:
-            if self.end_timestamp == other.end_timestamp:
-                return self.tid > other.tid
-            else:
-                return self.end_timestamp < other.end_timestamp
-        else:
-            return self.beg_timestamp > other.beg_timestamp
+        return self.tid < other.tid
 
     def _getTransWith(self):
         if self._loaded_TW is None:
@@ -713,7 +707,7 @@ class YumMergedHistoryTransaction(YumHistoryTransaction):
         self._merged_tids.add(obj.tid)
         self._merged_objs.append(obj)
         # Oldest first...
-        self._merged_objs.sort(reverse=True)
+        self._merged_objs.sort()
 
         if self.beg_timestamp > obj.beg_timestamp:
             self.beg_timestamp    = obj.beg_timestamp
