@@ -153,6 +153,42 @@ class RepoModuleDict(OrderedDict):
 
         return includes, repos
 
+    def enable_based_on_rpms(self):
+        not_in_enabled = set(self.base._goal.list_installs())
+
+        for version in self.base.repo_module_dict.list_module_version_enabled():
+            for pkg in self.base._goal.list_installs():
+                if version.repo.id != pkg.reponame:
+                    continue
+
+                nevra = "{}-{}.{}".format(pkg.name, pkg.evr, pkg.arch)
+                if nevra in version.module_metadata.artifacts.rpms and \
+                        pkg in not_in_enabled:
+                    not_in_enabled.remove(pkg)
+                else:
+                    not_in_enabled.add(pkg)
+
+        defaults = []
+        for version in self.base.repo_module_dict.list_module_version_latest():
+            if not version.repo_module.defaults:
+                continue
+
+            if version.stream == version.repo_module.defaults.stream:
+                defaults.append(version)
+
+        for version in defaults:
+            for pkg in not_in_enabled:
+                evr = pkg.evr
+
+                # for some reason there is no epoch in pkg.evr
+                if ":" in evr:
+                    nevra = "{}-{}.{}".format(pkg.name, pkg.evr, pkg.arch)
+                else:
+                    nevra = "{}-{}:{}.{}".format(pkg.name, pkg.epoch, pkg.evr, pkg.arch)
+
+                if nevra in version.module_metadata.artifacts.rpms:
+                    version.repo_module.enable(version.stream, True)
+
     def enable(self, module_spec):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
