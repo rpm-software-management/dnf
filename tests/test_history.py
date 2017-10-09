@@ -615,13 +615,8 @@ class ComparisonTests(TestCase):
     def test_transaction(self):
         a = dnf.yum.history.YumHistoryTransaction(None, [1, 5, 0, 5, 0, 0, 0])
         b = dnf.yum.history.YumHistoryTransaction(None, [9, 5, 0, 5, 0, 0, 0])
-        self.assertGreater(a, b)
-        self.assertLess(b, a)
-
-        a2 = dnf.yum.history.YumHistoryTransaction(None, [0, 1, 0, 0, 0, 0, 0])
-        b2 = dnf.yum.history.YumHistoryTransaction(None, [0, 9, 0, 0, 0, 0, 0])
-        self.assertGreater(a2, b2)
-        self.assertLess(b2, a2)
+        self.assertLess(a, b)
+        self.assertGreater(b, a)
 
     def test_rpmdb_problem(self):
         a = dnf.yum.history.YumHistoryRpmdbProblem(None, 1, 5, None)
