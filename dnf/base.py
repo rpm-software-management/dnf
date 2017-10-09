@@ -220,7 +220,6 @@ class Base(object):
         self.repo_module_dict.read_all_module_confs()
         self.repo_module_dict.read_all_module_defaults()
         self._module_persistor = ModulePersistor()
-        self.use_module_includes()
 
     def use_module_includes(self):
         self.sack.reset_includes()
@@ -758,6 +757,7 @@ class Base(object):
             installed = self.sack.query().installed()
             self._group_persistor.update_group_env_installed(installed, goal)
         self._plugins.run_resolved()
+        self.repo_module_dict.enable_based_on_rpms()
         return got_transaction
 
     def do_transaction(self, display=()):
