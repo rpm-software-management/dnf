@@ -27,7 +27,7 @@ logger = logging.getLogger('dnf')
 
 
 def PACKAGE_DATA_INSERT(cursor, data):
-    cursor.execute('INSERT INTO PACKAGE_DATA VALUES (null,?,?,?,?,?,?,?)', data)
+    cursor.execute('INSERT INTO PACKAGE_DATA VALUES (null,?,?,?,?,?,?)', data)
 
 
 # create binding with OUTPUT_TYPE - returns ID
@@ -81,11 +81,10 @@ def get_yumdb_packages(cursor, yumdb_path, pid_to_pdid, repo_fn):
                 yumdata[yumfile] = f.read()
         pkgs[nvra] = yumdata
 
-    PDSTRINGS = ['from_repo_timestamp',
+    PDSTRINGS = ('from_repo_timestamp',
                  'from_repo_revision',
                  'changed_by',
-                 'installonly',
-                 'installed_by']
+                 'installed_by')
 
     # crate PD_ID to T_ID dictionary for further use
     pdid_to_tid = {}
@@ -225,12 +224,10 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
         return False
 
     # value distribution in tables
-    PACKAGE_DATA = ['P_ID', 'R_ID', 'from_repo_revision',
-                    'from_repo_timestamp', 'installed_by', 'changed_by',
-                    'installonly']
+    PACKAGE_DATA = ['P_ID', 'R_ID', 'from_repo_revision', 'from_repo_timestamp',
+                    'installed_by', 'changed_by']
 
-    TRANS_DATA = ['T_ID', 'PD_ID', 'TG_ID', 'done', 'obsoleting', 'reason',
-                  'state']
+    TRANS_DATA = ['T_ID', 'PD_ID', 'TG_ID', 'done', 'obsoleting', 'reason', 'state']
 
     GROUPS = ['name_id', 'name', 'ui_name', 'installed', 'pkg_types']
 
@@ -293,7 +290,7 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
     cursor.execute('SELECT P_ID FROM PACKAGE WHERE P_ID NOT IN (SELECT P_ID FROM PACKAGE_DATA)')
     tmp_row = cursor.fetchall()
     for row in tmp_row:
-        cursor.execute("INSERT INTO PACKAGE_DATA VALUES(null,?,'','','','','','')", (row[0],))
+        cursor.execute("INSERT INTO PACKAGE_DATA VALUES(null,?,'','','','','')", (row[0],))
 
     # save changes
     database.commit()
