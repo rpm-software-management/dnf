@@ -1100,6 +1100,8 @@ class Base(object):
     def add_remote_rpms(self, path_list, strict=True):
         # :api
         pkgs = []
+        if not path_list:
+            return pkgs
         pkgs_error = []
         for path in path_list:
             if not os.path.exists(path) and '://' in path:
