@@ -588,7 +588,7 @@ class BaseCli(dnf.Base):
         tm = dnf.util.normalize_time(old.beg_timestamp)
         print("Rollback to transaction %u, from %s" % (old.tid, tm))
         print(self.output.fmtKeyValFill("  Undoing the following transactions: ",
-                                      ", ".join((str(x) for x in mobj.tid))))
+                                        ", ".join((str(x) for x in mobj.tids()))))
         self.output.historyInfoCmdPkgsAltered(mobj)  # :todo
 
         history = dnf.history.open_history(self.history)  # :todo
