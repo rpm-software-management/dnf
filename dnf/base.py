@@ -344,6 +344,8 @@ class Base(object):
                         logger.info(_("Last metadata expiration check: %s ago on %s."),
                                     datetime.timedelta(seconds=int(age)),
                                     dnf.util.normalize_time(mts))
+            else:
+                self.repos.all().disable()
         conf = self.conf
         self._sack._configure(conf.installonlypkgs, conf.installonly_limit)
         self._setup_excludes_includes()
