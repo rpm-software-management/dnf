@@ -509,12 +509,11 @@ class RepoModuleDict(OrderedDict):
         return self.get_brief_description_by_name(module_n, self.list_module_version_disabled())
 
     def get_brief_description_installed(self, module_n):
-        return self.get_brief_description_by_name(module_n, self.list_module_version_installed(),
-                                                  True)
+        return self.get_brief_description_by_name(module_n, self.list_module_version_installed())
 
-    def get_brief_description_by_name(self, module_n, repo_module_versions, only_installed=False):
+    def get_brief_description_by_name(self, module_n, repo_module_versions):
         if module_n is None or not module_n:
-            return self._get_brief_description(repo_module_versions, only_installed=only_installed)
+            return self._get_brief_description(repo_module_versions)
         else:
             filtered_versions_by_name = set()
             for name in module_n:
@@ -522,27 +521,47 @@ class RepoModuleDict(OrderedDict):
                     if fnmatch.fnmatch(version.name, name):
                         filtered_versions_by_name.add(version)
 
-            return self._get_brief_description(list(filtered_versions_by_name),
-                                               only_installed=only_installed)
+            return self._get_brief_description(list(filtered_versions_by_name))
 
-    def _get_brief_description(self, repo_module_versions, only_installed=False):
-        if only_installed:
-            only_installed_versions = []
-            for i in repo_module_versions:
-                conf = i.parent.parent.conf
-                if int(conf.version) == int(i.version) and conf.stream == i.stream:
-                    only_installed_versions.append(i)
-            repo_module_versions = only_installed_versions
-
+    def _get_brief_description(self, repo_module_versions):
         if not repo_module_versions:
             return module_messages[NOTHING_TO_SHOW]
 
         versions_by_repo = OrderedDict()
-        for version in repo_module_versions:
+        for version in sorted(repo_module_versions, key=lambda version: version.repo.name):
             default_list = versions_by_repo.setdefault(version.repo.name, [])
             default_list.append(version)
 
+        table = self.create_and_fill_table(versions_by_repo)
+        lines = table.lines()
+
+        current_repo_id_index = 0
+        already_printed_lines = 0
+        items = list(versions_by_repo.items())
+        repo_id, versions = items[current_repo_id_index]
+        str_table = self.print_header(table, repo_id)
+        for i in range(0, len(lines)):
+            if len(versions) + already_printed_lines <= i:
+                already_printed_lines += len(versions)
+                current_repo_id_index += 1
+
+                repo_id, versions = items[current_repo_id_index]
+                str_table += "\n"
+                str_table += self.print_header(table, repo_id)
+
+            str_table += table.str_line(lines[i], lines[i])
+
+        return str_table[:-2]
+
+    def print_header(self, table, repo_id):
+        header = str(table).split('\n', 1)[0]
+        out_str = "{}\n".format(self.base.output.term.bold(repo_id))
+        out_str += "{}\n".format(header)
+        return out_str
+
+    def create_and_fill_table(self, versions_by_repo):
         table = smartcols.Table()
+        table.termforce = 'always'
         table.maxout = True
         column_name = table.new_column("Name")
         column_stream = table.new_column("Stream")
@@ -592,16 +611,4 @@ class RepoModuleDict(OrderedDict):
                 line[column_installed] = ", ".join(installed_profiles[:2]) + trunc_installed
                 line[column_info] = data.summary
 
-        str_table = ""
-        start_line_index = 0
-        header = str(table).split('\n', 1)[0]
-        for repo_id, versions in versions_by_repo.items():
-            end_line_index = len(versions)
-            lines = table.lines()
-            str_table += "{}\n".format(self.base.output.term.bold(repo_id))
-            str_table += "{}\n".format(header)
-            str_table += table.str_line(lines[start_line_index], lines[end_line_index - 1])
-            start_line_index += end_line_index
-            str_table += "\n\n"
-
-        return str_table[:-2]
+        return table
