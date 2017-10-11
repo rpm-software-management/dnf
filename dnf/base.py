@@ -143,24 +143,27 @@ class Base(object):
                 dnf.rpm.detect_releasever(conf.installroot)
         return conf
 
-    def _setup_excludes_includes(self):
+    def _setup_excludes_includes(self, only_main=False):
         disabled = set(self.conf.disable_excludes)
         if 'all' in disabled:
             return
+
         # first evaluate repo specific includes/excludes
-        for r in self.repos.iter_enabled():
-            if r.id in disabled:
-                continue
-            if len(r.includepkgs) > 0:
-                for incl in set(r.includepkgs):
-                    subj = dnf.subject.Subject(incl)
+        if not only_main:
+            for r in self.repos.iter_enabled():
+                if r.id in disabled:
+                    continue
+                if len(r.includepkgs) > 0:
+                    for incl in set(r.includepkgs):
+                        subj = dnf.subject.Subject(incl)
+                        pkgs = subj.get_best_query(self.sack)
+                        self.sack.add_includes(pkgs.filter(reponame=r.id))
+                    self.sack.set_use_includes(True, r.id)
+                for excl in set(r.excludepkgs):
+                    subj = dnf.subject.Subject(excl)
                     pkgs = subj.get_best_query(self.sack)
-                    self.sack.add_includes(pkgs.filter(reponame=r.id))
-                self.sack.set_use_includes(True, r.id)
-            for excl in set(r.excludepkgs):
-                subj = dnf.subject.Subject(excl)
-                pkgs = subj.get_best_query(self.sack)
-                self.sack.add_excludes(pkgs.filter(reponame=r.id))
+                    self.sack.add_excludes(pkgs.filter(reponame=r.id))
+
         # then main (global) includes/excludes because they can mask
         # repo specific settings
         if 'main' not in disabled:
@@ -1125,7 +1128,7 @@ class Base(object):
             except IOError as e:
                 logger.warning(e)
                 pkgs_error.append(path)
-        self._setup_excludes_includes()
+        self._setup_excludes_includes(only_main=True)
         if pkgs_error and strict:
             raise IOError(_("Could not open: {}").format(' '.join(pkgs_error)))
         return pkgs
