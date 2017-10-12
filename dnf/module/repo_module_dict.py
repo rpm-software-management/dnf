@@ -24,7 +24,7 @@ import smartcols
 
 from dnf.conf.read import ModuleReader, ModuleDefaultsReader
 from dnf.module import module_messages, NOTHING_TO_SHOW, \
-    INSTALLING_NEWER_VERSION, NOTHING_TO_INSTALL, VERSION_LOCKED
+    INSTALLING_NEWER_VERSION, NOTHING_TO_INSTALL, VERSION_LOCKED, NO_PROFILE_SPECIFIED
 from dnf.module.exceptions import NoStreamSpecifiedException, NoModuleException, \
     EnabledStreamException, ProfileNotInstalledException, NoProfileSpecifiedException, \
     NoProfileToRemoveException
@@ -272,7 +272,8 @@ class RepoModuleDict(OrderedDict):
                 profiles.extend(module_version.repo_module.conf.profiles)
                 profiles = list(set(profiles))
 
-            result |= module_version.install(profiles, default_profiles)
+            if profiles or default_profiles:
+                result |= module_version.install(profiles, default_profiles)
 
         if not result and versions and self.base._module_persistor:
             module_versions = ["{}:{}".format(module_version.name, module_version.stream)
@@ -312,12 +313,17 @@ class RepoModuleDict(OrderedDict):
                     best_versions[key] = [best_version, profiles, default_profiles]
             else:
                 default_profiles = []
-                profiles = [module_form.profile]
-                if not module_form.profile:
-                    if not module_version.repo_module.defaults:
-                        raise NoProfileSpecifiedException(key)
+                profiles = []
+
+                if module_form.profile:
+                    profiles = [module_form.profile]
+                elif module_version.repo_module.defaults and \
+                        module_version.repo_module.defaults.stream == module_version.stream and \
+                        module_version.repo_module.defaults.profiles:
                     default_profiles = module_version.repo_module.defaults.profiles
                     profiles = []
+                else:
+                    logger.info(module_messages[NO_PROFILE_SPECIFIED].format(key))
 
                 best_versions[key] = [module_version, profiles, default_profiles]
 
