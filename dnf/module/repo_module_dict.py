@@ -190,20 +190,28 @@ class RepoModuleDict(OrderedDict):
                 if nevra in version.module_metadata.artifacts.rpms:
                     version.repo_module.enable(version.stream, True)
 
-    def enable(self, module_spec):
+    def enable(self, module_spec, save_immediately=False):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
 
         self[module_version.name].enable(module_version.stream, self.base.conf.assumeyes)
 
-    def disable(self, module_spec):
+        if save_immediately:
+            self.base._module_persistor.commit()
+            self.base._module_persistor.save()
+
+    def disable(self, module_spec, save_immediately=False):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
 
         repo_module = module_version.repo_module
         repo_module.disable()
 
-    def lock(self, module_spec):
+        if save_immediately:
+            self.base._module_persistor.commit()
+            self.base._module_persistor.save()
+
+    def lock(self, module_spec, save_immediately=False):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
 
@@ -213,9 +221,14 @@ class RepoModuleDict(OrderedDict):
             raise EnabledStreamException(module_spec)
 
         repo_module.lock(module_version.version)
+
+        if save_immediately:
+            self.base._module_persistor.commit()
+            self.base._module_persistor.save()
+
         return module_version.stream, module_version.version
 
-    def unlock(self, module_spec):
+    def unlock(self, module_spec, save_immediately=False):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
 
@@ -225,6 +238,11 @@ class RepoModuleDict(OrderedDict):
             raise EnabledStreamException(module_spec)
 
         repo_module.unlock()
+
+        if save_immediately:
+            self.base._module_persistor.commit()
+            self.base._module_persistor.save()
+
         return module_version.stream, module_version.version
 
     def install(self, module_specs):
@@ -246,7 +264,7 @@ class RepoModuleDict(OrderedDict):
 
             result |= module_version.install(profiles, default_profiles)
 
-        if not result and self.base._module_persistor:
+        if not result and versions and self.base._module_persistor:
             module_versions = ["{}:{}".format(module_version.name, module_version.stream)
                                for module_version, profiles, default_profiles in versions.values()]
             self.base._module_persistor.commit()
