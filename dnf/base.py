@@ -156,12 +156,14 @@ class Base(object):
                 if len(r.includepkgs) > 0:
                     for incl in set(r.includepkgs):
                         subj = dnf.subject.Subject(incl)
-                        pkgs = subj.get_best_query(self.sack)
+                        pkgs = subj.get_best_query(self.sack, with_nevra=True, with_provides=False,
+                                                   with_filenames=False)
                         self.sack.add_includes(pkgs.filter(reponame=r.id))
                     self.sack.set_use_includes(True, r.id)
                 for excl in set(r.excludepkgs):
                     subj = dnf.subject.Subject(excl)
-                    pkgs = subj.get_best_query(self.sack)
+                    pkgs = subj.get_best_query(self.sack, with_nevra=True, with_provides=False,
+                                               with_filenames=False)
                     self.sack.add_excludes(pkgs.filter(reponame=r.id))
 
         # then main (global) includes/excludes because they can mask
@@ -170,12 +172,14 @@ class Base(object):
             if len(self.conf.includepkgs) > 0:
                 for incl in set(self.conf.includepkgs):
                     subj = dnf.subject.Subject(incl)
-                    pkgs = subj.get_best_query(self.sack)
+                    pkgs = subj.get_best_query(self.sack, with_nevra=True, with_provides=False,
+                                               with_filenames=False)
                     self.sack.add_includes(pkgs)
                 self.sack.set_use_includes(True)
             for excl in set(self.conf.excludepkgs):
                 subj = dnf.subject.Subject(excl)
-                pkgs = subj.get_best_query(self.sack)
+                pkgs = subj.get_best_query(self.sack, with_nevra=True, with_provides=False,
+                                           with_filenames=False)
                 self.sack.add_excludes(pkgs)
 
     def _store_persistent_data(self):
