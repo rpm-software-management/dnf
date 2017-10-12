@@ -96,18 +96,15 @@ class RepoModuleDict(OrderedDict):
             return None
         return repo_module_version
 
-    def get_includes_latest(self, name, stream, visited=None):
+    def get_module_dependency_latest(self, name, stream, visited=None):
         visited = visited or set()
-        includes = set()
-        repos = set()
+        version_dependencies = set()
+
         try:
             repo_module = self[name]
             repo_module_stream = repo_module[stream]
             repo_module_version = repo_module_stream.latest()
-
-            artifacts = repo_module_version.nevra()
-            repos.add(repo_module_version.repo)
-            includes.update(artifacts)
+            version_dependencies.add(repo_module_version)
 
             for requires_name, requires_stream in \
                     repo_module_version.module_metadata.requires.items():
@@ -115,27 +112,24 @@ class RepoModuleDict(OrderedDict):
                 if requires_ns in visited:
                     continue
                 visited.add(requires_ns)
-                requires_includes, requires_repos = self.get_includes_latest(requires_name,
-                                                                             requires_stream,
-                                                                             visited)
-                repos.update(requires_repos)
-                includes.update(requires_includes)
+                version_dependencies.update(self.get_module_dependency_latest(requires_name,
+                                                                              requires_stream,
+                                                                              visited))
         except KeyError as e:
             logger.debug(e)
 
-        return includes, repos
+        return version_dependencies
 
-    def get_includes(self, name, stream, visited=None):
+    def get_module_dependency(self, name, stream, visited=None):
         visited = visited or set()
-        includes = set()
-        repos = set()
+        version_dependencies = set()
+
         try:
             repo_module = self[name]
             repo_module_stream = repo_module[stream]
+
             for repo_module_version in repo_module_stream.values():
-                artifacts = repo_module_version.nevra()
-                repos.add(repo_module_version.repo)
-                includes.update(artifacts)
+                version_dependencies.add(repo_module_version)
 
                 for requires_name, requires_stream in \
                         repo_module_version.module_metadata.requires.items():
@@ -143,13 +137,26 @@ class RepoModuleDict(OrderedDict):
                     if requires_ns in visited:
                         continue
                     visited.add(requires_ns)
-                    requires_includes, requires_repos = self.get_includes(requires_name,
-                                                                          requires_stream,
-                                                                          visited)
-                    repos.update(requires_repos)
-                    includes.update(requires_includes)
+                    version_dependencies.update(self.get_module_dependency_latest(requires_name,
+                                                                                  requires_stream,
+                                                                                  visited))
         except KeyError as e:
             logger.debug(e)
+
+        return version_dependencies
+
+    def get_includes(self, name, stream, latest=False):
+        includes = set()
+        repos = set()
+
+        if latest:
+            version_dependencies = self.get_module_dependency_latest(name, stream)
+        else:
+            version_dependencies = self.get_module_dependency(name, stream)
+
+        for dependency in version_dependencies:
+            repos.update(dependency.repo)
+            includes.update(dependency.nevra())
 
         return includes, repos
 
@@ -193,7 +200,11 @@ class RepoModuleDict(OrderedDict):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
 
-        self[module_version.name].enable(module_version.stream, self.base.conf.assumeyes)
+        version_dependencies = self.get_module_dependency_latest(module_version.name,
+                                                                 module_version.stream)
+
+        for dependency in version_dependencies:
+            self[dependency.name].enable(dependency.stream, self.base.conf.assumeyes)
 
         if save_immediately:
             self.base._module_persistor.commit()
