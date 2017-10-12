@@ -18,6 +18,7 @@
 #
 
 import dnf
+from dnf.module import module_messages, NO_PROFILE_SPECIFIED
 
 
 class LoadCacheException(dnf.exceptions.Error):
@@ -76,7 +77,7 @@ class NoStreamSpecifiedException(dnf.exceptions.Error):
 
 class NoProfileSpecifiedException(dnf.exceptions.Error):
     def __init__(self, module_spec):
-        value = "No profile specified for '{}', please specify profile".format(module_spec)
+        value = module_messages[NO_PROFILE_SPECIFIED].format(module_spec)
         super(NoProfileSpecifiedException, self).__init__(value)
 
 
