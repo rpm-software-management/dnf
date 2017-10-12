@@ -71,30 +71,21 @@ class RepoModule(OrderedDict):
 
             if not self.parent.base.conf.assumeno and \
                     self.parent.base.output.userconfirm():
-                self.conf.profiles = []
-                self.conf.version = -1
+                self.parent.base._module_persistor.set_data(self, version=-1, profiles=set())
                 self.enable(stream, True)
             else:
                 raise EnabledStreamException("{}:{}".format(self.name, stream))
 
-        self.conf.stream = stream
-        self.conf.enabled = True
-        self.write_conf_to_file()
-
-        self.parent.base.use_module_includes()
+        self.parent.base._module_persistor.set_data(self, stream=stream, enabled=True)
 
     def disable(self):
-        self.conf.enabled = False
-        self.write_conf_to_file()
+        self.parent.base._module_persistor.set_data(self, enabled=False)
 
     def lock(self, version):
-        self.conf.locked = True
-        self.conf.version = version
-        self.write_conf_to_file()
+        self.parent.base._module_persistor.set_data(self, locked=True, version=version)
 
     def unlock(self):
-        self.conf.locked = False
-        self.write_conf_to_file()
+        self.parent.base._module_persistor.set_data(self, locked=False)
 
     def write_conf_to_file(self):
         output_file = os.path.join(self.parent.get_modules_dir(), "%s.module" % self.conf.name)
