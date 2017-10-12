@@ -536,7 +536,17 @@ class ModuleTest(unittest.TestCase):
         self.assertNotIn(rmv, installed)
 
         # install
-        rmd.install(["base-runtime"])
+        try:
+            rmd.install(["base-runtime"])
+        except SystemExit:
+            # module profile wasn't, module was just enabled
+
+            repo_module = rmd["base-runtime"]
+            self.assertTrue(repo_module.conf.enabled)
+            self.assertEqual(repo_module.conf.name, "base-runtime")
+            self.assertEqual(repo_module.conf.stream, "f26")
+            self.assertEqual(repo_module.conf.profiles, [])
+            return
 
         # check module conf
         repo_module = rmd["base-runtime"]
