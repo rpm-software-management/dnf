@@ -87,7 +87,7 @@ class ModuleCommand(commands.Command):
 
         def run_on_module(self):
             for module_ns in self.opts.module_nsvp:
-                self.base.repo_module_dict.enable(module_ns)
+                self.base.repo_module_dict.enable(module_ns, True)
                 logger.info("'{}' is enabled".format(module_ns))
 
     class DisableSubCommand(SubCommand):
@@ -102,7 +102,7 @@ class ModuleCommand(commands.Command):
 
         def run_on_module(self):
             for module_n in self.opts.module_nsvp:
-                self.base.repo_module_dict.disable(module_n)
+                self.base.repo_module_dict.disable(module_n, True)
                 logger.info("'{}' is disabled".format(module_n))
 
     class InstallSubCommand(SubCommand):
@@ -164,7 +164,7 @@ class ModuleCommand(commands.Command):
 
         def run_on_module(self):
             for module_n in self.opts.module_nsvp:
-                stream, version = self.base.repo_module_dict.lock(module_n)
+                stream, version = self.base.repo_module_dict.lock(module_n, True)
                 logger.info("'{}' is locked (stream: {}, version: {})"
                             .format(module_n, stream, version))
 
@@ -180,7 +180,7 @@ class ModuleCommand(commands.Command):
 
         def run_on_module(self):
             for module_n in self.opts.module_nsvp:
-                self.base.repo_module_dict.unlock(module_n)
+                self.base.repo_module_dict.unlock(module_n, True)
                 logger.info("'{}' is unlocked".format(module_n))
 
     class ProfileInfoSubCommand(SubCommand):
