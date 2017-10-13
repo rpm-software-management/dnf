@@ -90,13 +90,15 @@ class RepoListCommand(commands.Command):
                             choices=['all', 'enabled', 'disabled'],
                             action=OptionParser.PkgNarrowCallback)
 
+    def pre_configure(self):
+        if not self.opts.verbose and not self.opts.quiet:
+            self.cli.redirect_logger(stdout=logging.WARNING, stderr=logging.INFO)
+
     def configure(self):
         demands = self.cli.demands
         demands.available_repos = True
         demands.fresh_metadata = False
         demands.sack_activation = True
-        if not self.opts.verbose and not self.opts.quiet:
-            self.cli.redirect_logger(stdout=logging.WARNING, stderr=logging.INFO)
 
         if self.opts._repos_action:
             self.opts.repos_action = self.opts._repos_action

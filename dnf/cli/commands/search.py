@@ -124,6 +124,10 @@ class SearchCommand(commands.Command):
             counter.add(pkg, attr, needle)
         return counter
 
+    def pre_configure(self):
+        if not self.opts.verbose and not self.opts.quiet:
+            self.cli.redirect_logger(stdout=logging.WARNING, stderr=logging.INFO)
+
     def configure(self):
         demands = self.cli.demands
         demands.available_repos = True

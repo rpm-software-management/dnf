@@ -234,6 +234,10 @@ class RepoQueryCommand(commands.Command):
             const="unneeded", help=argparse.SUPPRESS)
         parser.add_argument('--recent', action="store_true", help=_('Display only recently edited packages'))
 
+    def pre_configure(self):
+        if not self.opts.verbose and not self.opts.quiet:
+            self.cli.redirect_logger(stdout=logging.WARNING, stderr=logging.INFO)
+
     def configure(self):
         demands = self.cli.demands
 
@@ -242,9 +246,6 @@ class RepoQueryCommand(commands.Command):
                 self.cli._option_conflict("--obsoletes", "--" + self.opts.packageatr)
             else:
                 self.opts.packageatr = "obsoletes"
-
-        if not self.opts.verbose and not self.opts.quiet:
-            self.cli.redirect_logger(stdout=logging.WARNING, stderr=logging.INFO)
 
         if self.opts.querytags:
             return
