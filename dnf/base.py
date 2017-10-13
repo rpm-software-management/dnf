@@ -52,6 +52,7 @@ import dnf.rpm.connection
 import dnf.rpm.miscutils
 import dnf.rpm.transaction
 import dnf.sack
+import dnf.selector
 import dnf.subject
 import dnf.transaction
 import dnf.util
