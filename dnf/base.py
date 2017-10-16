@@ -377,7 +377,7 @@ class Base(object):
         self._plugins.run_sack()
         return self._sack
 
-    def _finalize_base(self): 
+    def _finalize_base(self):
         if not self._trans_success:
             for pkg, reason in self._revert_reason:
                 self.history.set_reason(pkg, reason)

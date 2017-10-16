@@ -66,8 +66,14 @@ def BIND_ENV_GROUP(cursor, eid, name_id):
 
 
 # YUMDB
-def get_yumdb_packages(cursor, yumdb_path, pid_to_pdid, repo_fn):
+def get_yumdb_packages(cursor, yumdb_path, repo_fn):
     """ Insert additional data from yumdb info SWDB """
+
+    # prepare pid to pdid dictionary
+    cursor.execute("SELECT PD_ID, P_ID FROM PACKAGE_DATA")
+    pid_to_pdid = {}
+    for row in cursor:
+        pid_to_pdid[row[1]] = row[0]
 
     # load whole yumdb into dictionary structure
     pkgs = {}
@@ -286,12 +292,6 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
     record_PD[0] = actualPID
     PACKAGE_DATA_INSERT(cursor, record_PD)  # insert last record
 
-    # integrity optimalization
-    cursor.execute('SELECT P_ID FROM PACKAGE WHERE P_ID NOT IN (SELECT P_ID FROM PACKAGE_DATA)')
-    tmp_row = cursor.fetchall()
-    for row in tmp_row:
-        cursor.execute("INSERT INTO PACKAGE_DATA VALUES(null,?,'','','','','')", (row[0],))
-
     # save changes
     database.commit()
 
@@ -301,23 +301,31 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
     for row in cursor:
         pid_to_pdid[row[1]] = row[0]
 
-    obsoleting_pdids = []
+    obsoleting_pkgs = []
 
     # trans_data construction
     h_cursor.execute('SELECT tid, pkgtupid, done, state FROM trans_data_pkgs')
     for row in h_cursor:
-        data = [''] * len(TRANS_DATA)
         state = row[3]
-        pdid = pid_to_pdid.get(int(row[1]), 0)
-
-        # skip empty rows
-        if not pdid:
-            continue
+        pid = int(row[1])
+        tid = int(row[0])
 
         # handle Obsoleting packages - save it as separate attribute
         if state == 'Obsoleting':
-            obsoleting_pdids.append(pdid)
+            obsoleting_pkgs.append((tid, pid))
             continue
+
+        data = [''] * len(TRANS_DATA)
+        pdid = pid_to_pdid.get(pid, 0)
+
+        if not pdid:
+            # create new entry
+            cursor.execute("INSERT INTO PACKAGE_DATA VALUES (null,?,'','','','','')", (pid,))
+            cursor.execute('SELECT last_insert_rowid()')
+            pdid = cursor.fetchone()[0]
+        else:
+            # use this entry and delete it from the DB
+            del pid_to_pdid[pid]
 
         # insert trans_data record
         data[TRANS_DATA.index('state')] = bind_state(cursor, state)
@@ -326,9 +334,13 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
         data[0] = row[0]
         cursor.execute('INSERT INTO TRANS_DATA VALUES (null,?,?,?,?,?,?,?)', data)
 
+    update_cmd = """UPDATE TRANS_DATA SET obsoleting=1 WHERE TD_ID IN (
+                        SELECT TD_ID FROM PACKAGE_DATA JOIN TRANS_DATA using (PD_ID)
+                            WHERE T_ID=? and P_ID=?)"""
+
     # set flag for Obsoleting PD_IDs
-    for pdid in obsoleting_pdids:
-        cursor.execute('UPDATE TRANS_DATA SET obsoleting=1 WHERE PD_ID=?', (pdid,))
+    for keys in obsoleting_pkgs:
+        cursor.execute(update_cmd, keys)
 
     # save changes
     database.commit()
@@ -374,7 +386,7 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
             cursor.execute('UPDATE TRANS_DATA SET reason=? WHERE TD_ID=?', (t_reason, row[0]))
 
     # fetch additional data from yumdb
-    get_yumdb_packages(cursor, yumdb_path, pid_to_pdid, bind_repo)
+    get_yumdb_packages(cursor, yumdb_path, bind_repo)
 
     # contruction of OUTPUT
     h_cursor.execute('SELECT * FROM trans_script_stdout')
