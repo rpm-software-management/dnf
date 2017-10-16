@@ -147,40 +147,59 @@ class Base(object):
         disabled = set(self.conf.disable_excludes)
         if 'all' in disabled:
             return
-
+        repo_includes = []
+        repo_excludes = []
         # first evaluate repo specific includes/excludes
         if not only_main:
             for r in self.repos.iter_enabled():
                 if r.id in disabled:
                     continue
                 if len(r.includepkgs) > 0:
+                    incl_query = self.sack.query().filter(empty=True)
                     for incl in set(r.includepkgs):
                         subj = dnf.subject.Subject(incl)
-                        pkgs = subj.get_best_query(self.sack, with_nevra=True, with_provides=False,
-                                                   with_filenames=False)
-                        self.sack.add_includes(pkgs.filter(reponame=r.id))
-                    self.sack.set_use_includes(True, r.id)
+                        incl_query = incl_query.union(subj.get_best_query(
+                            self.sack, with_nevra=True, with_provides=False, with_filenames=False))
+                    incl_query = incl_query.filter(reponame=r.id)
+                    if incl_query:
+                        repo_includes.append((incl_query, r.id))
+                excl_query = self.sack.query().filter(empty=True)
                 for excl in set(r.excludepkgs):
                     subj = dnf.subject.Subject(excl)
-                    pkgs = subj.get_best_query(self.sack, with_nevra=True, with_provides=False,
-                                               with_filenames=False)
-                    self.sack.add_excludes(pkgs.filter(reponame=r.id))
+                    excl_query = excl_query.union(subj.get_best_query(
+                        self.sack, with_nevra=True, with_provides=False, with_filenames=False))
+                excl_query = excl_query.filter(reponame=r.id)
+                if excl_query:
+                    repo_excludes.append((excl_query, r.id))
 
         # then main (global) includes/excludes because they can mask
         # repo specific settings
         if 'main' not in disabled:
+            include_query = self.sack.query().filter(empty=True)
             if len(self.conf.includepkgs) > 0:
                 for incl in set(self.conf.includepkgs):
                     subj = dnf.subject.Subject(incl)
-                    pkgs = subj.get_best_query(self.sack, with_nevra=True, with_provides=False,
-                                               with_filenames=False)
-                    self.sack.add_includes(pkgs)
-                self.sack.set_use_includes(True)
+                    include_query = include_query.union(subj.get_best_query(
+                        self.sack, with_nevra=True, with_provides=False, with_filenames=False))
+            exclude_query = self.sack.query().filter(empty=True)
             for excl in set(self.conf.excludepkgs):
                 subj = dnf.subject.Subject(excl)
-                pkgs = subj.get_best_query(self.sack, with_nevra=True, with_provides=False,
-                                           with_filenames=False)
-                self.sack.add_excludes(pkgs)
+                exclude_query = exclude_query.union(subj.get_best_query(
+                    self.sack, with_nevra=True, with_provides=False, with_filenames=False))
+            if include_query:
+                self.sack.add_includes(include_query)
+                self.sack.set_use_includes(True)
+            if exclude_query:
+                self.sack.add_excludes(exclude_query)
+
+        if repo_includes:
+            for query, repoid in repo_includes:
+                self.sack.add_includes(query)
+                self.sack.set_use_includes(True, repoid)
+
+        if repo_excludes:
+            for query, repoid in repo_excludes:
+                self.sack.add_excludes(query)
 
     def _store_persistent_data(self):
         if self._repo_persistor and not self.conf.cacheonly:
