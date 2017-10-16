@@ -20,6 +20,21 @@
 ###################
 
 ===================
+2.7.4 Release Notes
+===================
+
+* Enhanced performance for excludes and includes handling
+* Solved memory leaks at time of closing of dnf.Base()
+
+Bugs fixed in 2.7.4:
+
+* :rhbug:`1480979`
+* :rhbug:`1461423`
+* :rhbug:`1499564`
+* :rhbug:`1499534`
+* :rhbug:`1499623`
+
+===================
 2.7.3 Release Notes
 ===================
 
