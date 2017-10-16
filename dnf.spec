@@ -372,6 +372,16 @@ popd
 %endif
 
 %changelog
+* Mon Oct 16 2017 Jaroslav Mracek <jmracek@redhat.com> - 2.7.4-1
+- Update to 2.7.4-1
+- Enhanced performance for excludes and includes handling
+- Solved memory leaks at time of closing of dnf.Base()
+- Resolves: rhbz#1480979 - I thought it abnormal that dnf crashed.
+- Resolves: rhbz#1461423 - Memory leak in python-dnf
+- Resolves: rhbz#1499564 - dnf list installed crashes
+- Resolves: rhbz#1499534 - dnf-2 is much slower than dnf-1 when handling groups
+- Resolves: rhbz#1499623 - Mishandling stderr vs stdout (dnf search, dnf repoquery)
+
 * Fri Oct 06 2017 Igor Gnatenko <ignatenko@redhat.com> - 2.7.3-1
 - Fix URL detection (RHBZ #1472847)
 - Do not remove downloaded files with --destdir option (RHBZ #1498426)
