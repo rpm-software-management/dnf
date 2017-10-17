@@ -22,6 +22,7 @@ import glob
 import json
 from .types import SwdbItem, convert_reason
 import logging
+from dnf.i18n import _
 
 logger = logging.getLogger('dnf')
 
@@ -104,7 +105,15 @@ def get_yumdb_packages(cursor, yumdb_path, repo_fn):
 
     # insert data into rows
     for row in allrows:
+
+        # get PDID of the package
+        pdid = pid_to_pdid.get(row[0])
+        if not pdid:
+            continue
+
+        # get package key
         name = '-'.join(row[1:])
+
         if name in pkgs.keys():
             command = []
             vals = pkgs[name]
@@ -120,9 +129,6 @@ def get_yumdb_packages(cursor, yumdb_path, repo_fn):
             if temp:
                 repo = repo_fn(cursor, temp)
                 command.append("R_ID='{}'".format(repo))
-
-            # get PDID of the package
-            pdid = pid_to_pdid.get(row[0])
 
             # Update PACKAGE_DATA row
             if command:
@@ -140,17 +146,18 @@ def get_yumdb_packages(cursor, yumdb_path, repo_fn):
             command_line = vals.get('command_line')
             if releasever or command_line:
                 tid = pdid_to_tid.get(pdid)
+                if not tid:
+                    continue
                 # deciding in Python is faster than running both sqlite statements
-                if tid:
-                    if releasever and command_line:
-                        cursor.execute('UPDATE TRANS SET cmdline=?, releasever=? WHERE T_ID=?',
-                                       (command_line, releasever, tid))
-                    elif releasever:
-                        cursor.execute('UPDATE TRANS SET releasever=? WHERE T_ID=?',
-                                       (releasever, tid))
-                    else:
-                        cursor.execute('UPDATE TRANS SET cmdline=? WHERE T_ID=?',
-                                       (command_line, tid))
+                if releasever and command_line:
+                    cursor.execute('UPDATE TRANS SET cmdline=?, releasever=? WHERE T_ID=?',
+                                   (command_line, releasever, tid))
+                elif releasever:
+                    cursor.execute('UPDATE TRANS SET releasever=? WHERE T_ID=?',
+                                   (releasever, tid))
+                else:
+                    cursor.execute('UPDATE TRANS SET cmdline=? WHERE T_ID=?',
+                                   (command_line, tid))
 
 
 def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite'):
@@ -191,24 +198,24 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
 
     # check path to yumdb dir
     if not os.path.isdir(yumdb_path):
-        logger.error('Error: yumdb directory not valid')
+        logger.error(_('Error: yumdb directory not valid'))
         return False
 
     # check path to history dir
     if not os.path.isdir(history_path):
-        logger.write('Error: history directory not valid')
+        logger.write(_('Error: history directory not valid'))
         return False
 
     # check historyDB file and pick newest one
     historydb_file = glob.glob(os.path.join(history_path, "history*"))
     if len(historydb_file) < 1:
-        logger.write('Error: history database file not valid')
+        logger.write(_('Error: history database file not valid'))
         return False
     historydb_file.sort()
     historydb_file = historydb_file[0]
 
     if not os.path.isfile(historydb_file):
-        logger.error('Error: history database file not valid')
+        logger.error(_('Error: history database file not valid'))
         return False
 
     tmp_output_file = output_file + '.transform'
@@ -217,7 +224,7 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
         historyDB = sqlite3.connect(historydb_file)
         h_cursor = historyDB.cursor()
     except:
-        logger.error("ERROR: unable to open database '{}'".format(historydb_file))
+        logger.error(_("ERROR: unable to open the database '{}'").format(historydb_file))
         return False
 
     try:
@@ -226,7 +233,7 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
         database = sqlite3.connect(tmp_output_file)
         cursor = database.cursor()
     except:
-        logger.error("ERROR: unable to create database '{}'".format(tmp_output_file))
+        logger.error(_("ERROR: unable to create the database '{}'").format(tmp_output_file))
         return False
 
     # value distribution in tables
@@ -239,7 +246,7 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
 
     ENVIRONMENTS = ['name_id', 'name', 'ui_name', 'pkg_types', 'grp_types']
 
-    logger.info("Transforming database. It may take a while...")
+    logger.info(_("Transforming the software database. It may take some time."))
 
     # contruction of PACKAGE from pkgtups
     h_cursor.execute('SELECT * FROM pkgtups')
