@@ -2292,48 +2292,36 @@ class Base(object):
         :return: list of remote pkgs
         """
         def _verification_of_packages(pkg_list, logger_msg):
+            all_packages_verified = True
             for pkg in pkg_list:
-                if not pkg.verifyLocalPkg():
-                    logger.critical(logger_msg)
-                    return False
-            return True
+                pkg_successfully_verified = False
+                try:
+                    pkg_successfully_verified = pkg.verifyLocalPkg()
+                except Exception as e:
+                    logger.critical(str(e))
+                if pkg_successfully_verified is not True:
+                    logger.critical(logger_msg.format(pkg, pkg.reponame))
+                    all_packages_verified = False
+
+            return all_packages_verified
 
         remote_pkgs = []
         local_repository_pkgs = []
-        pkg = None
         for pkg in install_pkgs:
             if pkg._is_local_pkg():
                 if pkg.reponame != hawkey.CMDLINE_REPO_NAME:
                     local_repository_pkgs.append(pkg)
             else:
                 remote_pkgs.append(pkg)
-        error = False
 
-        try:
-            msg = _('Package "{}" from local repository "{}" has incorrect checksum')
-            if pkg is not None and not _verification_of_packages(local_repository_pkgs,
-                                                                 msg.format(pkg, pkg.reponame)):
-                error = True
-        except Exception as e:
-            logger.critical(str(e))
-            error = True
-
-        if error:
+        msg = _('Package "{}" from local repository "{}" has incorrect checksum')
+        if not _verification_of_packages(local_repository_pkgs, msg):
             raise dnf.exceptions.Error(
                 _("Some packages from local repository have incorrect checksum"))
 
         if self.conf.cacheonly:
-            try:
-                msg = _('Package "{}" from repository "{}" has incorrect checksum')
-                if not _verification_of_packages(remote_pkgs, msg.format(pkg, pkg.reponame)):
-                    error = True
-            except Exception as e:
-                logger.debug(str(e))
-                msg = _('Package "{}" from repository "{}" has invalid cache')
-                logger.critical(msg.format(pkg, pkg.reponame))
-                error = True
-
-            if error:
+            msg = _('Package "{}" from repository "{}" has incorrect checksum')
+            if not _verification_of_packages(remote_pkgs, msg):
                 raise dnf.exceptions.Error(
                     _('Some packages have invalid cache, but cannot be downloaded due to '
                       '"--cacheonly" option'))
