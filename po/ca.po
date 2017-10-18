@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-10-12 09:39+0200\n"
-"PO-Revision-Date: 2017-10-10 06:02-0400\n"
+"PO-Revision-Date: 2017-10-18 02:23-0400\n"
 "Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
 "Language-Team: Catalan (https://fedora.zanata.org/language/view/ca) <fedora@llistes.softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -1764,7 +1764,7 @@ msgstr "resol només adreces IPv6"
 
 #: ../dnf/cli/option_parser.py:293
 msgid "set directory to copy packages to"
-msgstr "estableix el directori on copiar-hi els paquets"
+msgstr "estableix el directori on copiar els paquets"
 
 #: ../dnf/cli/option_parser.py:296
 msgid "only download packages"
@@ -2077,11 +2077,11 @@ msgstr "Treure"
 
 #: ../dnf/cli/output.py:1086
 msgid "Removing dependent packages"
-msgstr ""
+msgstr "Treure paquets dependents"
 
 #: ../dnf/cli/output.py:1087
 msgid "Removing unused dependencies"
-msgstr "Suprimir les dependències no utilitzades"
+msgstr "Treure dependències no utilitzades"
 
 #: ../dnf/cli/output.py:1088 ../dnf/yum/rpmtrans.py:123
 msgid "Downgrading"
@@ -3152,7 +3152,7 @@ msgstr "La importació de claus no ha ajudat, eren claus incorrectes?"
 
 #: ../dnf/base.py:2268
 msgid "  * Maybe you meant: {}"
-msgstr "  * Pot ser voleu dir: {}"
+msgstr "  * Potser voleu dir: {}"
 
 #: ../dnf/base.py:2295
 msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
