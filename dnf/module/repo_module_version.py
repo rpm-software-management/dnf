@@ -82,13 +82,21 @@ class RepoModuleVersion(object):
         return result
 
     def upgrade(self, profiles):
+        installed = self.base.sack.query().installed().run()
+        installed_nevras = [str(pkg) for pkg in installed]
+
         for profile in profiles:
             if profile not in self.profiles:
                 raise NoProfileException(profile)
 
             for nevra_object in self.profile_nevra_objects(profile):
                 nevr = self.nevra_object_to_nevr_str(nevra_object)
-                self.base.upgrade(nevr, reponame=self.repo.id)
+                nevra = "{}.{}".format(nevr, nevra_object.arch)
+
+                if nevra not in installed_nevras:
+                    self.base.install(nevr, reponame=self.repo.id, forms=hawkey.FORM_NEVR)
+                else:
+                    self.base.upgrade(nevr, reponame=self.repo.id)
 
         self.base._module_persistor.set_data(self.repo_module, stream=self.stream,
                                              version=self.version)
