@@ -17,7 +17,7 @@
 import os
 from collections import OrderedDict
 
-from dnf.conf import ModuleConf
+from dnf.conf import ModuleConf, ModuleDefaultsConf
 from dnf.module import module_messages, DIFFERENT_STREAM_INFO
 from dnf.module.exceptions import NoStreamException, EnabledStreamException
 from dnf.module.repo_module_stream import RepoModuleStream
@@ -30,7 +30,7 @@ class RepoModule(OrderedDict):
         super(RepoModule, self).__init__()
 
         self._conf = None
-        self.defaults = None
+        self._defaults = None
         self.name = None
         self.parent = None
 
@@ -48,6 +48,20 @@ class RepoModule(OrderedDict):
     @conf.setter
     def conf(self, value):
         self._conf = value
+
+    @property
+    def defaults(self):
+        if self._defaults is None:
+            self._defaults = ModuleDefaultsConf(section=self.name, parser=ConfigParser())
+            self._defaults.name = self.name
+            self._defaults.stream = None
+            self._defaults.profiles = None
+
+        return self._defaults
+
+    @defaults.setter
+    def defaults(self, value):
+        self._defaults = value
 
     def add(self, repo_module_version):
         module_stream = self.setdefault(repo_module_version.stream, RepoModuleStream())
