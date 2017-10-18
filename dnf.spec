@@ -24,7 +24,7 @@
 %global _docdir_fmt %{name}
 
 Name:           dnf
-Version:        2.7.4
+Version:        2.7.5
 Release:        1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -372,6 +372,11 @@ popd
 %endif
 
 %changelog
+* Wed Oct 18 2017 Igor Gnatenko <ignatenko@redhat.com> - 2.7.5-1
+- Improve performance for excludes and includes handling (RHBZ #1500361)
+- Fixed problem of handling checksums for local repositories (RHBZ #1502106)
+- Fix traceback when using dnf.Base.close() (RHBZ #1503575)
+
 * Mon Oct 16 2017 Jaroslav Mracek <jmracek@redhat.com> - 2.7.4-1
 - Update to 2.7.4-1
 - Enhanced performance for excludes and includes handling
