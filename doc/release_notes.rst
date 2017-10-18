@@ -20,6 +20,20 @@
 ###################
 
 ===================
+2.7.5 Release Notes
+===================
+
+* Improved performance for excludes and includes handling
+* Fixed problem of handling checksums for local repositories
+* Fix traceback when using dnf.Base.close()
+
+Bugs fixed in 2.7.5:
+
+* :rhbug:`1502106`
+* :rhbug:`1500361`
+* :rhbug:`1503575`
+
+===================
 2.7.4 Release Notes
 ===================
 
