@@ -400,7 +400,7 @@ class Base(object):
                 self._trans_tempfiles.update(
                     self._tempfile_persistor.get_saved_tempfiles())
                 self._tempfile_persistor.empty()
-                if self._transaction.install_set:
+                if self._transaction and self._transaction.install_set:
                     self._clean_packages(self._trans_tempfiles)
             else:
                 self._tempfile_persistor.tempfiles_to_add.update(
