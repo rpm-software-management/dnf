@@ -855,7 +855,7 @@ class Output(object):
         if not verbose:
             return
 
-        print(_("Repo        : %s") % po.ui_from_repo())
+        print(_("Repo        : %s") % po.ui_from_repo)
         printed_match = False
         name_match = False
         for item in set(values):
