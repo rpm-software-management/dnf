@@ -58,9 +58,7 @@ class RepoModuleDict(OrderedDict):
             return None
 
         def use_default_stream(repo_module):
-            if repo_module.defaults:
-                return repo_module.defaults.stream
-            return None
+            return repo_module.defaults.stream
 
         try:
             repo_module = self[name]
@@ -177,9 +175,6 @@ class RepoModuleDict(OrderedDict):
 
         defaults = []
         for version in self.base.repo_module_dict.list_module_version_latest():
-            if not version.repo_module.defaults:
-                continue
-
             if version.stream == version.repo_module.defaults.stream:
                 defaults.append(version)
 
@@ -317,8 +312,7 @@ class RepoModuleDict(OrderedDict):
 
                 if module_form.profile:
                     profiles = [module_form.profile]
-                elif module_version.repo_module.defaults and \
-                        module_version.repo_module.defaults.stream == module_version.stream and \
+                elif module_version.repo_module.defaults.stream == module_version.stream and \
                         module_version.repo_module.defaults.profiles:
                     default_profiles = module_version.repo_module.defaults.profiles
                     profiles = []
@@ -439,12 +433,11 @@ class RepoModuleDict(OrderedDict):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
 
-        default_str = ""
-        default_profiles = []
-        if module_version.repo_module.defaults:
-            default_stream = module_version.repo_module.defaults.stream
-            default_str = " (default)" if module_version.stream == default_stream else ""
+        default_stream = module_version.repo_module.defaults.stream
+        default_str = " (default)" if module_version.stream == default_stream else ""
 
+        default_profiles = []
+        if module_version.repo_module.defaults.profiles:
             default_profiles = module_version.repo_module.defaults.profiles
 
         lines = OrderedDict()
@@ -622,7 +615,7 @@ class RepoModuleDict(OrderedDict):
 
             str_table += table.str_line(lines[i], lines[i])
 
-        return str_table[:-2]
+        return str_table + "\n\nHint: [d]efault, [i]nstalled, [l]ocked"
 
     def print_header(self, table, repo_id):
         header = str(table).split('\n', 1)[0]
@@ -639,10 +632,11 @@ class RepoModuleDict(OrderedDict):
         column_version = table.new_column("Version")
         column_profiles = table.new_column("Profiles")
         column_profiles.wrap = True
-        column_installed = table.new_column("Installed")
-        column_installed.wrap = True
         column_info = table.new_column("Info")
         column_info.wrap = True
+
+        if not self.base.conf.verbose:
+            column_info.hidden = True
 
         for repo_id, versions in sorted(versions_by_repo.items(), key=lambda key: key[0]):
             for i in sorted(versions, key=lambda data: data.name):
@@ -650,36 +644,31 @@ class RepoModuleDict(OrderedDict):
                 conf = i.repo_module.conf
                 defaults_conf = i.repo_module.defaults
                 data = i.module_metadata
-
                 default_str = ""
-                if defaults_conf and i.stream == defaults_conf.stream:
-                    default_str = " (default)"
-
                 locked_str = ""
-                if conf and conf.locked and i.version == conf.version:
-                    locked_str = " (locked)"
-
+                profiles_str = ""
                 available_profiles = i.profiles
                 installed_profiles = []
-                if conf and conf.version == i.version and conf.stream == i.stream:
+
+                if i.stream == defaults_conf.stream:
+                    default_str = " [d]"
+
+                if i.stream == conf.stream and i.version == conf.version:
+                    if conf.locked:
+                        locked_str = " [l]"
                     installed_profiles = conf.profiles
 
-                number_of_available_profiles = len(available_profiles)
-                number_of_installed_profiles = len(installed_profiles)
+                for profile in available_profiles[:2]:
+                    profiles_str += "{}{}, ".format(profile,
+                                                    " [i]" if profile in installed_profiles else "")
 
-                trunc_available = ""
-                trunc_installed = ""
-
-                if number_of_available_profiles > 2:
-                    trunc_available = ", ..."
-                if number_of_installed_profiles > 2:
-                    trunc_installed = ", ..."
+                profiles_str = profiles_str[:-2]
+                profiles_str += ", ..." if len(available_profiles) > 2 else ""
 
                 line[column_name] = data.name
                 line[column_stream] = data.stream + default_str
                 line[column_version] = str(data.version) + locked_str
-                line[column_profiles] = ", ".join(available_profiles[:2]) + trunc_available
-                line[column_installed] = ", ".join(installed_profiles[:2]) + trunc_installed
+                line[column_profiles] = profiles_str
                 line[column_info] = data.summary
 
         return table
