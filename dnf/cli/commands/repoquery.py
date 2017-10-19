@@ -201,6 +201,8 @@ class RepoQueryCommand(commands.Command):
         package_attribute = parser.add_mutually_exclusive_group()
         help_msgs = {
             'conflicts': _('Display capabilities that the package conflicts with.'),
+            'depends': _('Display capabilities that the package can depend on, enhance, recommend,'
+                         ' suggest, and supplement.'),
             'enhances': _('Display capabilities that the package can enhance.'),
             'provides': _('Display capabilities provided by the package.'),
             'recommends':  _('Display capabilities that the package recommends.'),
@@ -440,7 +442,11 @@ class RepoQueryCommand(commands.Command):
         if self.opts.packageatr:
             for pkg in q.run():
                 if self.opts.list != 'userinstalled' or self.base._is_userinstalled(pkg):
-                    rels = getattr(pkg, OPTS_MAPPING[self.opts.packageatr])
+                    if self.opts.packageatr == 'depends':
+                        rels = pkg.requires + pkg.enhances + pkg.suggests + pkg.supplements + \
+                               pkg.recommends
+                    else:
+                        rels = getattr(pkg, OPTS_MAPPING[self.opts.packageatr])
                     for rel in rels:
                         pkgs.add(str(rel))
         elif self.opts.location:
