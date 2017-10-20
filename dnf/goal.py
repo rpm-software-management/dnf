@@ -20,52 +20,5 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from copy import deepcopy
-from dnf.i18n import _
-import logging
-import hawkey
-from dnf.db.types import SwdbReason
 
-logger = logging.getLogger('dnf')
-
-class Goal(hawkey.Goal):
-    def __init__(self, sack):
-        super(Goal, self).__init__(sack)
-        self.group_members = set()
-        self._installs = []
-
-    def get_reason(self, pkg):
-        code = super(Goal, self).get_reason(pkg)
-        if code == hawkey.REASON_USER and pkg.name in self.group_members:
-            return SwdbReason.GROUP
-        return SwdbReason(code)
-
-    def group_reason(self, pkg, current_reason):
-        if current_reason == SwdbReason.UNKNOWN and pkg.name in self.group_members:
-            return SwdbReason.GROUP
-        return current_reason
-
-    def install(self, *args, **kwargs):
-        if args:
-            self._installs.extend(args)
-        if 'select' in kwargs:
-            self._installs.extend(kwargs['select'].matches())
-        return super(Goal, self).install(*args, **kwargs)
-
-    def push_userinstalled(self, query, history):
-        msg = _('--> Finding unneeded leftover dependencies')
-        logger.debug(msg)
-        pkgs = query.installed()
-
-        # get only user installed packages
-        user_installed = history.select_user_installed(pkgs)
-
-        for pkg in user_installed:
-            self.userinstalled(pkg)
-
-    def available_updates_diff(self, query):
-        available_updates = set(query.upgrades().filter(arch__neq="src")
-                                .latest().run())
-        installable_updates = set(self.list_upgrades())
-        installs = set(self.list_installs())
-        return (available_updates - installable_updates) - installs
+from hawkey import Goal
