@@ -21,16 +21,4 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import hawkey
-import dnf.util
-
-class Selector(hawkey.Selector):
-    # :api
-    def _set_autoglob(self, **kwargs):
-        nargs = {}
-        for (key, value) in kwargs.items():
-            if dnf.util.is_glob_pattern(value):
-                nargs[key + "__glob"] = value
-            else:
-                nargs[key] = value
-        return self.set(**nargs)
+from hawkey import Selector
