@@ -257,9 +257,6 @@ ln -sr  %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/yum
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
 %check
-# for SWDB testing
-export GI_TYPELIB_PATH=/usr/local/lib64/girepository-1.0
-export LD_LIBRARY_PATH=/usr/local/lib64
 pushd build
   ctest -VV
 popd
