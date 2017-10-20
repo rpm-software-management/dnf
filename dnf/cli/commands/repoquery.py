@@ -360,11 +360,12 @@ class RepoQueryCommand(commands.Command):
             if forms:
                 kwark["forms"] = forms
             pkgs = []
+            query_results = q.filter(empty=True)
             for key in self.opts.key:
-                q = dnf.subject.Subject(key, ignore_case=True).get_best_query(
-                    self.base.sack, with_provides=False, **kwark)
-                pkgs += q.run()
-            q = self.base.sack.query().filter(pkg=pkgs)
+                query_results = query_results.union(
+                    dnf.subject.Subject(key, ignore_case=True).get_best_query(
+                        self.base.sack, with_provides=False, **kwark))
+            q = query_results
 
         if self.opts.recent:
             q._recent(self.base.conf.recent)
