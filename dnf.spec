@@ -118,6 +118,7 @@ Summary:        Python 2 interface to DNF
 %{?python_provide:%python_provide python2-%{name}}
 BuildRequires:  python2-devel
 BuildRequires:  python2-hawkey >= %{hawkey_version}
+BuildRequires:  libdnf.so.1
 BuildRequires:  python-iniparse
 BuildRequires:  python-libcomps >= %{libcomps_version}
 BuildRequires:  python-librepo >= %{librepo_version}
@@ -130,6 +131,7 @@ Requires:       pyliblzma
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
 Requires:       python2-hawkey >= %{hawkey_version}
+Requires:       libdnf.so.1
 Requires:       python-iniparse
 Requires:       python-libcomps >= %{libcomps_version}
 Requires:       python-librepo >= %{librepo_version}
@@ -157,6 +159,7 @@ Summary:        Python 3 interface to DNF.
 %{?python_provide:%python_provide python3-%{name}}
 BuildRequires:  python3-devel
 BuildRequires:  python3-hawkey >= %{hawkey_version}
+BuildRequires:  libdnf.so.1
 BuildRequires:  python3-iniparse
 BuildRequires:  python3-libcomps >= %{libcomps_version}
 BuildRequires:  python3-librepo >= %{librepo_version}
@@ -168,6 +171,7 @@ Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
 Requires:       python3-gobject
 Requires:       python3-hawkey >= %{hawkey_version}
+Requires:       libdnf.so.1
 Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
 Requires:       python3-librepo >= %{librepo_version}
