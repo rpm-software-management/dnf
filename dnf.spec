@@ -139,8 +139,13 @@ BuildRequires:  rpm-python >= %{rpm_version}
 Requires:       rpm-python >= %{rpm_version}
 Requires:       rpm-plugin-systemd-inhibit
 %else
+%if 0%{?fedora} && 0%{?fedora} <= 26
+BuildRequires:  python-gobject-base
+Requires:       python-gobject-base
+%else
 BuildRequires:  python2-gobject-base
 Requires:       python2-gobject-base
+%endif
 BuildRequires:  python2-rpm >= %{rpm_version}
 Requires:       python2-rpm >= %{rpm_version}
 Recommends:     rpm-plugin-systemd-inhibit
