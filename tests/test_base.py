@@ -17,10 +17,10 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from hawkey import SwdbReason, SwdbPkg, SwdbPkgData, SwdbItem
 from tests import support
 from tests.support import mock
 from tests.support import TestCase
-
 import binascii
 import dnf
 import dnf.exceptions
@@ -31,7 +31,6 @@ import hawkey
 import itertools
 import re
 import rpm
-from dnf.db.types import SwdbReason, SwdbPkg, SwdbPkgData, SwdbItem
 
 class BaseTest(support.TestCase):
 

@@ -21,10 +21,10 @@ from dnf.i18n import ucd
 import time
 import os
 from dnf.yum import misc
+from hawkey import Swdb, SwdbPkg, SwdbItem, convert_reason
 from .swdb_transformer import run as transformdb
 from .addondata import AddonData
 from .group import GroupPersistor
-from .types import Swdb, SwdbPkg, SwdbItem, convert_reason
 
 
 class SwdbInterface(object):

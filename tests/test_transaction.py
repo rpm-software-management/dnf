@@ -18,7 +18,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from tests.support import mock, FakeConf
-from dnf.db.types import SwdbReason
+from hawkey import SwdbReason
 
 import dnf.goal
 import dnf.repo

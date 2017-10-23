@@ -24,7 +24,7 @@ from __future__ import unicode_literals
 from dnf.exceptions import CompsError
 from dnf.i18n import _, ucd
 from functools import reduce
-from dnf.db.types import SwdbEnv, SwdbGroup
+from hawkey import SwdbEnv, SwdbGroup
 
 import dnf.i18n
 import dnf.util

@@ -18,7 +18,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from functools import reduce
-from dnf.db.types import SwdbReason, SwdbPkgData
+from hawkey import SwdbReason, SwdbPkgData
 import contextlib
 import dnf
 import dnf.conf
@@ -36,7 +36,6 @@ import dnf.repo
 import dnf.sack
 import hawkey
 import hawkey.test
-import itertools
 import logging
 import os
 import re

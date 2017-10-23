@@ -19,7 +19,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
-from dnf.db.types import SwdbReason
+from hawkey import SwdbReason
 
 import dnf.cli.output
 import dnf.const

@@ -20,7 +20,7 @@ from __future__ import unicode_literals
 import dnf.goal
 import dnf.selector
 import tests.support
-from dnf.db.types import SwdbReason
+from hawkey import SwdbReason
 
 
 class GoalTest(tests.support.TestCase):

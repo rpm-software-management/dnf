@@ -20,9 +20,9 @@ from __future__ import unicode_literals
 from tests import support
 from tests.support import TestCase
 from tests.support import mock
+from hawkey import SwdbReason, SwdbTrans
 
 import dnf.history
-from dnf.db.types import SwdbReason, SwdbTrans
 
 
 class NEVRAOperationsTest(support.TestCase):
