@@ -17,22 +17,6 @@
 #
 # Eduard Cuba <ecuba@redhat.com>
 
-import gi
-gi.require_version('Dnf', '1.0')
-from gi.repository import Dnf  # noqa
+from hawkey import Swdb, SwdbItem, SwdbReason, SwdbPkg, SwdbPkgData,\
+    SwdbTrans, SwdbGroup, SwdbEnv, convert_reason
 
-
-Swdb = Dnf.Swdb
-SwdbItem = Dnf.SwdbItem
-SwdbReason = Dnf.SwdbReason
-SwdbPkg = Dnf.SwdbPkg
-SwdbPkgData = Dnf.SwdbPkgData
-SwdbTrans = Dnf.SwdbTrans
-SwdbGroup = Dnf.SwdbGroup
-SwdbEnv = Dnf.SwdbEnv
-
-
-def convert_reason(reason):
-    if isinstance(reason, Dnf.SwdbReason):
-        return reason
-    return Dnf.convert_reason_to_id(reason)
