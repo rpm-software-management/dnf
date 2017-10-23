@@ -173,13 +173,11 @@ Requires:       python3-hawkey >= %{hawkey_version}
 Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
 Requires:       python3-librepo >= %{librepo_version}
-%if 0%{?rhel} && 0%{?rhel} <= 7
-BuildRequires:  rpm-python3 >= %{rpm_version}
-Requires:       rpm-python3 >= %{rpm_version}
-Requires:       rpm-plugin-systemd-inhibit
-%else
 BuildRequires:  python3-rpm >= %{rpm_version}
 Requires:       python3-rpm >= %{rpm_version}
+%if 0%{?rhel} && 0%{?rhel} <= 7
+Requires:       rpm-plugin-systemd-inhibit
+%else
 Recommends:     rpm-plugin-systemd-inhibit
 %endif
 # dnf-langpacks package is retired in F25
