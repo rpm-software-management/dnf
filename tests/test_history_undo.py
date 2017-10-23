@@ -27,8 +27,7 @@ from dnf.history import NEVRAOperations
 from dnf.package import Package
 from dnf.transaction import (ERASE, DOWNGRADE, INSTALL, REINSTALL,
                              TransactionItem, UPGRADE)
-from hawkey import split_nevra
-from dnf.db.types import SwdbReason
+from hawkey import split_nevra, SwdbReason
 from tests.support import mock_sack, MockBase, ObjectMatcher
 from unittest import TestCase
 

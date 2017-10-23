@@ -15,14 +15,14 @@
 # License and may only be used or replicated with the express permission of
 # Red Hat, Inc.
 
-import os
-
-import sqlite3
 import glob
 import json
-from .types import SwdbItem, convert_reason
 import logging
+import os
+import sqlite3
+
 from dnf.i18n import _
+from hawkey import SwdbItem, convert_reason
 
 logger = logging.getLogger('dnf')
 

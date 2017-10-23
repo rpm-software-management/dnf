@@ -18,7 +18,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from tests import support
-from dnf.db.types import SwdbReason, SwdbPkg, SwdbItem
+from hawkey import SwdbReason, SwdbPkg, SwdbItem
 
 import dnf.comps
 import dnf.util

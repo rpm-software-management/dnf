@@ -27,9 +27,9 @@ from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
 from dnf.util import first
 from dnf.db.history import SwdbInterface
-from dnf.db.types import SwdbPkgData, SwdbReason
 from dnf.yum import misc
 from functools import reduce
+from hawkey import SwdbPkgData, SwdbReason
 import collections
 import datetime
 import dnf.callback

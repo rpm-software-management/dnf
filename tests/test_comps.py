@@ -22,7 +22,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from tests import support
 from tests.support import mock
-from dnf.db.types import SwdbReason, SwdbPkg, SwdbItem
+from hawkey import SwdbReason, SwdbPkg, SwdbItem
 
 import dnf.comps
 import dnf.exceptions

@@ -24,7 +24,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from collections import defaultdict, Container, Iterable, Sized
 from dnf.util import is_exhausted, split_by
-from dnf.db.types import SwdbReason
+from hawkey import SwdbReason
 
 import dnf.exceptions
 

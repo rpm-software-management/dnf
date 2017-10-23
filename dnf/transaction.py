@@ -20,7 +20,7 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.db.types import SwdbReason, convert_reason
+from hawkey import SwdbReason, convert_reason
 from dnf.i18n import _
 from functools import reduce
 import operator

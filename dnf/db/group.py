@@ -16,7 +16,7 @@
 #
 # Eduard Cuba <ecuba@redhat.com>
 
-from dnf.db.types import SwdbGroup, SwdbEnv
+from hawkey import SwdbGroup, SwdbEnv
 
 
 class GroupPersistor(object):

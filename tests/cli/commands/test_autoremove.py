@@ -18,7 +18,7 @@
 from __future__ import absolute_import
 from tests import support
 from dnf.cli.option_parser import OptionParser
-from dnf.db.types import SwdbReason
+from hawkey import SwdbReason
 
 import dnf.cli.commands.autoremove as autoremove
 

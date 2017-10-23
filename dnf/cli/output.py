@@ -25,6 +25,7 @@ from dnf.cli.format import format_number, format_time
 from dnf.i18n import _, P_, ucd, fill_exact_width, textwrap_fill, exact_width
 from dnf.pycomp import xrange, basestring, long, unicode
 from dnf.yum.rpmtrans import LoggingTransactionDisplay
+from hawkey import SwdbReason
 import dnf.callback
 import dnf.cli.progress
 import dnf.cli.term
@@ -42,7 +43,6 @@ import operator
 import pwd
 import sys
 import time
-from dnf.db.types import SwdbReason
 
 logger = logging.getLogger('dnf')
 
