@@ -26,7 +26,7 @@ from __future__ import unicode_literals
 from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
 from dnf.util import first
-from dnf.db import history
+from dnf.db.history import SwdbInterface
 from dnf.db.types import SwdbPkgData, SwdbReason
 from dnf.yum import misc
 from functools import reduce
@@ -552,7 +552,7 @@ class Base(object):
             if not db_path:
                 db_path = os.path.join(self.conf.persistdir, "history")
             releasever = self.conf.releasever
-            self._history = history.SwdbInterface(
+            self._history = SwdbInterface(
                 db_path,
                 root=self.conf.installroot,
                 releasever=releasever,
