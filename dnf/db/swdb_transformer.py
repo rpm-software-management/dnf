@@ -17,14 +17,11 @@
 
 import glob
 import json
-import logging
 import os
 import sqlite3
-
+from dnf.util import logger
 from dnf.i18n import _
 from hawkey import SwdbItem, convert_reason
-
-logger = logging.getLogger('dnf')
 
 
 def PACKAGE_DATA_INSERT(cursor, data):
@@ -160,7 +157,7 @@ def get_yumdb_packages(cursor, yumdb_path, repo_fn):
                                    (command_line, tid))
 
 
-def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite'):
+def transformSwdb(input_dir, output_file):
     yumdb_path = os.path.join(input_dir, 'yumdb')
     history_path = os.path.join(input_dir, 'history')
     groups_path = os.path.join(input_dir, 'groups.json')
@@ -203,13 +200,13 @@ def run(input_dir='/var/lib/dnf/', output_file='/var/lib/dnf/history/swdb.sqlite
 
     # check path to history dir
     if not os.path.isdir(history_path):
-        logger.write(_('Error: history directory not valid'))
+        logger.error(_('Error: history directory not valid'))
         return False
 
     # check historyDB file and pick newest one
     historydb_file = glob.glob(os.path.join(history_path, "history*"))
     if len(historydb_file) < 1:
-        logger.write(_('Error: history database file not valid'))
+        logger.error(_('Error: history database file not valid'))
         return False
     historydb_file.sort()
     historydb_file = historydb_file[0]

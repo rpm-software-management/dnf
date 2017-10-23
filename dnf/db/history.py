@@ -17,14 +17,15 @@
 # James Antill <james@fedoraproject.org>
 # Eduard Cuba <ecuba@redhat.com>
 
-from dnf.i18n import ucd
+from dnf.i18n import ucd, _
 import time
 import os
 from dnf.yum import misc
 from hawkey import Swdb, SwdbPkg, SwdbItem, convert_reason
-from .swdb_transformer import run as transformdb
+from .swdb_transformer import transformSwdb
 from .addondata import AddonData
 from .group import GroupPersistor
+from dnf.util import logger
 
 
 class SwdbInterface(object):
@@ -51,19 +52,35 @@ class SwdbInterface(object):
             self._addon_data = AddonData(self._db_dir, self._root)
         return self._addon_data
 
+    def _createdb(self, input_dir):
+        """ Create SWDB database if necessary and perform transformation """
+        if not self._swdb.exist():
+            dbdir = os.path.dirname(self.path)
+            if not os.path.exists(dbdir):
+                os.makedirs(dbdir)
+            self._swdb.create_db()
+            # transformation may only run on empty database
+            output_file = self._swdb.get_path()
+            transformSwdb(input_dir, output_file)
+
+    def _initSwdb(self, input_dir='/var/lib/dnf/'):
+        """ Create SWDB object and create database if necessary """
+        self._swdb = Swdb.new(self.path, self.releasever)
+        self._createdb(input_dir)
+
     @property
     def swdb(self):
+        """ Lazy initialize Swdb object """
         if not self._swdb:
-            self._swdb = Swdb.new(self.path, self.releasever)
-            if not self._swdb.exist():
-                dbdir = os.path.dirname(self.path)
-                if not os.path.exists(dbdir):
-                    os.makedirs(dbdir)
-                self._swdb.create_db()
-                # does nothing when there is nothing to transform
-                if self._transform:
-                    transformdb(output_file=self._swdb.get_path())
+            self._initSwdb()
         return self._swdb
+
+    def transform(self, input_dir):
+        """ Interface for database transformation """
+        if not self._swdb:
+            self._initSwdb(input_dir)
+        else:
+            logger.error(_('Error: database is already initialized'))
 
     def group_active(self):
         return self._group is not None
