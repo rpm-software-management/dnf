@@ -160,8 +160,7 @@ class Base(object):
                         incl_query = incl_query.union(subj.get_best_query(
                             self.sack, with_nevra=True, with_provides=False, with_filenames=False))
                     incl_query = incl_query.filter(reponame=r.id)
-                    if incl_query:
-                        repo_includes.append((incl_query, r.id))
+                    repo_includes.append((incl_query.apply(), r.id))
                 excl_query = self.sack.query().filter(empty=True)
                 for excl in set(r.excludepkgs):
                     subj = dnf.subject.Subject(excl)
