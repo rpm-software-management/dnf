@@ -142,19 +142,10 @@ Requires:       python-iniparse
 Requires:       python-libcomps >= %{libcomps_version}
 Requires:       python-librepo >= %{librepo_version}
 %if 0%{?rhel} && 0%{?rhel} <= 7
-BuildRequires:  python-gobject
-Requires:       python-gobject
 BuildRequires:  rpm-python >= %{rpm_version}
 Requires:       rpm-python >= %{rpm_version}
 Requires:       rpm-plugin-systemd-inhibit
 %else
-%if 0%{?fedora} && 0%{?fedora} <= 26
-BuildRequires:  python-gobject-base
-Requires:       python-gobject-base
-%else
-BuildRequires:  python2-gobject-base
-Requires:       python2-gobject-base
-%endif
 BuildRequires:  python2-rpm >= %{rpm_version}
 Requires:       python2-rpm >= %{rpm_version}
 Recommends:     rpm-plugin-systemd-inhibit
@@ -179,8 +170,6 @@ BuildRequires:  python3-librepo >= %{librepo_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-gpg
 Requires:       python3-gpg
-BuildRequires:  python3-gobject-base
-Requires:       python3-gobject-base
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
 Requires:       python3-hawkey >= %{hawkey_version}
