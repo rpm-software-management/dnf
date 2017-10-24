@@ -27,7 +27,7 @@ from dnf.module import module_messages, NOTHING_TO_SHOW, \
     INSTALLING_NEWER_VERSION, NOTHING_TO_INSTALL, VERSION_LOCKED, NO_PROFILE_SPECIFIED
 from dnf.module.exceptions import NoStreamSpecifiedException, NoModuleException, \
     EnabledStreamException, ProfileNotInstalledException, NoProfileSpecifiedException, \
-    NoProfileToRemoveException
+    NoProfileToRemoveException, VersionLockedException
 from dnf.module.repo_module import RepoModule
 from dnf.module.subject import ModuleSubject
 from dnf.subject import Subject
@@ -210,6 +210,10 @@ class RepoModuleDict(OrderedDict):
         module_version, module_form = subj.find_module_version(self)
 
         repo_module = module_version.repo_module
+
+        if repo_module.conf.locked:
+            raise VersionLockedException(module_spec, module_version.version)
+
         repo_module.disable()
 
         if save_immediately:
