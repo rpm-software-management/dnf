@@ -258,7 +258,8 @@ class RepoModuleDict(OrderedDict):
 
         result = False
         for module_version, profiles, default_profiles in versions.values():
-            if module_version.repo_module.conf.locked:
+            conf = module_version.repo_module.conf
+            if conf.locked and conf.version != module_version.version:
                 logger.warning(module_messages[VERSION_LOCKED]
                                .format(module_version.name,
                                        module_version.repo_module.conf.version))
