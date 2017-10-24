@@ -225,7 +225,10 @@ class RepoModuleDict(OrderedDict):
         if not repo_module.conf.enabled:
             raise EnabledStreamException(module_spec)
 
-        repo_module.lock(module_version.version)
+        version_to_lock = module_version.version
+        if module_version.repo_module.conf.profiles:
+            version_to_lock = module_version.repo_module.conf.version
+        repo_module.lock(version_to_lock)
 
         if save_immediately:
             self.base._module_persistor.commit()
