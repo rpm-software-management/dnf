@@ -17,6 +17,7 @@
 import gzip
 
 import modulemd
+import os
 
 from dnf.module.exceptions import LoadCacheException, MissingYamlException
 
@@ -34,10 +35,19 @@ class ModuleMetadataLoader(object):
         if self.repo is None:
             raise LoadCacheException(self.repo)
 
+        yaml_file_path = None
         if not self._metadata_fn:
+            repodata_dir = self.repo._cachedir + "/repodata/"
+            files = os.listdir(repodata_dir)
+            for file in files:
+                if "modules.yaml" in file:
+                    yaml_file_path = repodata_dir + file
+                    break
+
+        if not self._metadata_fn and not yaml_file_path:
             raise MissingYamlException(self.repo._cachedir)
 
-        with gzip.open(self._metadata_fn, "r") as modules_yaml_gz:
+        with gzip.open(self._metadata_fn or yaml_file_path, "r") as modules_yaml_gz:
             modules_yaml = modules_yaml_gz.read()
 
         return modulemd.loads_all(modules_yaml)
