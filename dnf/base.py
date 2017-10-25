@@ -225,7 +225,8 @@ class Base(object):
                 module_metadata = ModuleMetadataLoader(repo).load()
                 for data in module_metadata:
                     self.repo_module_dict.add(RepoModuleVersion(data, base=self, repo=repo))
-            except dnf.exceptions.Error:
+            except dnf.exceptions.Error as e:
+                logger.debug(e)
                 continue
 
         self.repo_module_dict.read_all_module_confs()
