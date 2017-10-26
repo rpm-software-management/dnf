@@ -644,7 +644,7 @@ class RepoModuleDict(OrderedDict):
             column_info.hidden = True
 
         for repo_id, versions in sorted(versions_by_repo.items(), key=lambda key: key[0]):
-            for i in sorted(versions, key=lambda data: data.name):
+            for i in sorted(versions, key=lambda data: (data.name, data.stream, data.version)):
                 line = table.new_line()
                 conf = i.repo_module.conf
                 defaults_conf = i.repo_module.defaults
