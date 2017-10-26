@@ -409,12 +409,12 @@ class Output(object):
         installed_module_versions = self.base.repo_module_dict.list_module_version_installed()
         repo_and_module = ""
         for installed in installed_module_versions:
-            if ":" in pkg.evr:
-                nevra = "{}-{}.{}".format(pkg.name, pkg.evr, pkg.arch)
-            else:
-                nevra = "{}-{}:{}.{}".format(pkg.name, pkg.epoch, pkg.evr, pkg.arch)
+            nevra = "{}-{}.{}".format(pkg.name, pkg.evr, pkg.arch)
+            nevra_epoch_ensured = "{}-{}:{}-{}.{}".format(pkg.name, pkg.epoch, pkg.version,
+                                                          pkg.release, pkg.arch)
 
-            if nevra in installed.module_metadata.artifacts.rpms:
+            if nevra in installed.module_metadata.artifacts.rpms or \
+                    nevra_epoch_ensured in installed.module_metadata.artifacts.rpms:
                 repo_and_module = installed.full_version + "|" + pkg._from_repo
                 last_column_indentation = columns[1] + (len(repo_and_module) - len(pkg._from_repo))
                 columns = (columns[0], last_column_indentation, 0)
