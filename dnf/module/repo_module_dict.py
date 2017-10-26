@@ -180,15 +180,12 @@ class RepoModuleDict(OrderedDict):
 
         for version in defaults:
             for pkg in not_in_enabled:
-                evr = pkg.evr
+                nevra = "{}-{}.{}".format(pkg.name, pkg.evr, pkg.arch)
+                nevra_epoch_ensured = "{}-{}:{}-{}.{}".format(pkg.name, pkg.epoch, pkg.version,
+                                                              pkg.release, pkg.arch)
 
-                # for some reason there is no epoch in pkg.evr
-                if ":" in evr:
-                    nevra = "{}-{}.{}".format(pkg.name, pkg.evr, pkg.arch)
-                else:
-                    nevra = "{}-{}:{}.{}".format(pkg.name, pkg.epoch, pkg.evr, pkg.arch)
-
-                if nevra in version.module_metadata.artifacts.rpms:
+                if nevra in version.module_metadata.artifacts.rpms or \
+                        nevra_epoch_ensured in version.module_metadata.artifacts.rpms:
                     version.repo_module.enable(version.stream, True)
 
     def enable(self, module_spec, save_immediately=False):
