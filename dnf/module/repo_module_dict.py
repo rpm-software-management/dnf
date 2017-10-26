@@ -153,7 +153,7 @@ class RepoModuleDict(OrderedDict):
             version_dependencies = self.get_module_dependency(name, stream)
 
         for dependency in version_dependencies:
-            repos.update(dependency.repo)
+            repos.add(dependency.repo)
             includes.update(dependency.nevra())
 
         return includes, repos
@@ -201,6 +201,8 @@ class RepoModuleDict(OrderedDict):
         if save_immediately:
             self.base._module_persistor.commit()
             self.base._module_persistor.save()
+
+        self.base.use_module_includes()
 
     def disable(self, module_spec, save_immediately=False):
         subj = ModuleSubject(module_spec)
