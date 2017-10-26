@@ -319,8 +319,7 @@ class RepoModuleDict(OrderedDict):
 
                 if module_form.profile:
                     profiles = [module_form.profile]
-                elif module_version.repo_module.defaults.stream == module_version.stream and \
-                        module_version.repo_module.defaults.profiles:
+                elif module_version.repo_module.defaults.profiles:
                     default_profiles = module_version.repo_module.defaults.profiles
                     profiles = []
                 else:
