@@ -227,9 +227,13 @@ class RepoModuleDict(OrderedDict):
 
         if not repo_module.conf.enabled:
             raise EnabledStreamException(module_spec)
+        elif repo_module.conf.locked and \
+                (repo_module.conf.stream != module_version.stream or
+                 repo_module.conf.version != module_version.version):
+            raise VersionLockedException(module_spec, module_version.version)
 
         version_to_lock = module_version.version
-        if module_version.repo_module.conf.profiles:
+        if repo_module.conf.profiles:
             version_to_lock = module_version.repo_module.conf.version
         repo_module.lock(version_to_lock)
 
@@ -237,7 +241,7 @@ class RepoModuleDict(OrderedDict):
             self.base._module_persistor.commit()
             self.base._module_persistor.save()
 
-        return module_version.stream, module_version.version
+        return module_version.stream, version_to_lock
 
     def unlock(self, module_spec, save_immediately=False):
         subj = ModuleSubject(module_spec)
