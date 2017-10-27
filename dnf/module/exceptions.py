@@ -57,6 +57,14 @@ class VersionLockedException(dnf.exceptions.Error):
         super(VersionLockedException, self).__init__(value)
 
 
+class CannotLockVersionException(dnf.exceptions.Error):
+    def __init__(self, module_spec, version, reason=None):
+        value = "Cannot lock '{}' to version: {}".format(module_spec, version)
+        if reason:
+            value = "{}. {}".format(value, reason)
+        super(CannotLockVersionException, self).__init__(value)
+
+
 class NoProfileException(dnf.exceptions.Error):
     def __init__(self, profile):
         value = "No such profile: {}".format(profile)
