@@ -27,7 +27,7 @@ from dnf.module import module_messages, NOTHING_TO_SHOW, \
     INSTALLING_NEWER_VERSION, NOTHING_TO_INSTALL, VERSION_LOCKED, NO_PROFILE_SPECIFIED
 from dnf.module.exceptions import NoStreamSpecifiedException, NoModuleException, \
     EnabledStreamException, ProfileNotInstalledException, NoProfileSpecifiedException, \
-    NoProfileToRemoveException, VersionLockedException
+    NoProfileToRemoveException, VersionLockedException, CannotLockVersionException
 from dnf.module.repo_module import RepoModule
 from dnf.module.subject import ModuleSubject
 from dnf.subject import Subject
@@ -236,6 +236,10 @@ class RepoModuleDict(OrderedDict):
         if repo_module.conf.profiles:
             version_to_lock = module_version.repo_module.conf.version
         repo_module.lock(version_to_lock)
+
+        if module_form.version and version_to_lock != module_form.version:
+            raise CannotLockVersionException(module_spec, module_form.version,
+                                             "Different version installed.")
 
         if save_immediately:
             self.base._module_persistor.commit()
