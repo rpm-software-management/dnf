@@ -55,9 +55,11 @@ Requires:       python2-%{name} = %{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} <= 7
 Requires:       python-dbus
 %else
-# TODO: use rich deps once it is allowed
-#Recommends:     (python%{?with_python3:3}-dbus if NetworkManager)
-Recommends:     python%{?with_python3:3}-dbus
+%if %{with python3}
+Recommends:     (python3-dbus if NetworkManager)
+%else
+Recommends:     (python2-dbus if NetworkManager)
+%endif
 %endif
 Requires(post):     systemd
 Requires(preun):    systemd
