@@ -84,6 +84,7 @@ class RepoModuleVersion(object):
     def upgrade(self, profiles):
         installed = self.base.sack.query().installed().run()
         installed_nevras = [str(pkg) for pkg in installed]
+        query_to_return = None
 
         for profile in profiles:
             if profile not in self.profiles:
@@ -96,10 +97,18 @@ class RepoModuleVersion(object):
                 if nevra not in installed_nevras:
                     self.base.install(nevr, reponame=self.repo.id, forms=hawkey.FORM_NEVR)
                 else:
-                    self.base.upgrade(nevr, reponame=self.repo.id)
+                    # TODO: verify that filter(nevra) really works correctly
+                    # (possibly breaks multilib)
+                    query = self.base.sack.query().filter(nevra=nevra)
+                    if query_to_return is None:
+                        query_to_return = query
+                    else:
+                        query_to_return = query_to_return.union(query)
 
         self.base._module_persistor.set_data(self.repo_module, stream=self.stream,
                                              version=self.version)
+
+        return query_to_return
 
     def remove(self, profiles):
         for profile in profiles:
