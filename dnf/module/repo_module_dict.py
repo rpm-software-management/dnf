@@ -30,6 +30,7 @@ from dnf.module.exceptions import NoStreamSpecifiedException, NoModuleException,
     NoProfileToRemoveException, VersionLockedException, CannotLockVersionException
 from dnf.module.repo_module import RepoModule
 from dnf.module.subject import ModuleSubject
+from dnf.selector import Selector
 from dnf.subject import Subject
 from dnf.util import first_not_none, logger, ensure_dir
 
@@ -337,8 +338,9 @@ class RepoModuleDict(OrderedDict):
 
         return best_versions, skipped
 
-    def upgrade(self, module_specs):
+    def upgrade(self, module_specs, create_goal=False):
         skipped = []
+        query = None
         for module_spec in module_specs:
             subj = ModuleSubject(module_spec)
             try:
@@ -362,9 +364,18 @@ class RepoModuleDict(OrderedDict):
             else:
                 profiles = installed_profiles
 
-            module_version.upgrade(profiles)
+            returned_query = module_version.upgrade(profiles)
+            if query is None:
+                query = returned_query
+            else:
+                query = query.union(returned_query)
 
-        return skipped
+        if create_goal:
+            sltr = Selector(self.base.sack)
+            sltr.set(pkg=query)
+            self.base._goal.upgrade(select=sltr)
+
+        return skipped, query
 
     def upgrade_all(self):
         modules = []
@@ -375,7 +386,8 @@ class RepoModuleDict(OrderedDict):
                 continue
             modules.append(module_name)
         modules.sort()
-        self.upgrade(modules)
+        _, query = self.upgrade(modules)
+        return query
 
     def remove(self, module_specs):
         skipped = []
