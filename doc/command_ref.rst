@@ -636,6 +636,9 @@ Install Command
 
     See also :ref:`\configuration_files_replacement_policy-label`.
 
+``dnf [options] install @<spec>...``
+    Alias for `dnf module install` command.
+
 .. _install_examples-label:
 
 Install Examples
@@ -1352,6 +1355,9 @@ Upgrade Command
 
 ``dnf [options] upgrade <package-nevr-specs>...``
     Upgrades packages to the specified versions.
+
+``dnf [options] upgrade @<spec>...``
+    Alias for `dnf module update` command.
 
 If the main ``obsoletes`` configure option is true or the ``--obsoletes`` flag
 is present dnf will include package obsoletes in its calculations.
