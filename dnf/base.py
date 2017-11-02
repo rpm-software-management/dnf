@@ -1916,8 +1916,8 @@ class Base(object):
             module_query = self.repo_module_dict.upgrade_all()
 
             q = self.sack.query().upgrades()
-            # HACK: self.repo_module_dict.upgrade_all() should return a query
-            q = q.union(module_query)
+            if module_query:
+                q = q.union(module_query)
 
             # add obsoletes into transaction
             if self.conf.obsoletes:
