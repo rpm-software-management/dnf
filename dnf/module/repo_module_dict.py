@@ -365,12 +365,12 @@ class RepoModuleDict(OrderedDict):
                 profiles = installed_profiles
 
             returned_query = module_version.upgrade(profiles)
-            if query is None:
+            if query is None and returned_query:
                 query = returned_query
-            else:
+            elif returned_query:
                 query = query.union(returned_query)
 
-        if create_goal:
+        if create_goal and query:
             sltr = Selector(self.base.sack)
             sltr.set(pkg=query)
             self.base._goal.upgrade(select=sltr)
