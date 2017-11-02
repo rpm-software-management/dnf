@@ -641,7 +641,7 @@ class RepoModuleDict(OrderedDict):
 
             str_table += table.str_line(lines[i], lines[i])
 
-        return str_table + "\n\nHint: [d]efault, [i]nstalled, [l]ocked"
+        return str_table + "\n\nHint: [d]efault, [e]nabled, [i]nstalled, [l]ocked"
 
     def print_header(self, table, repo_id):
         header = str(table).split('\n', 1)[0]
@@ -671,6 +671,7 @@ class RepoModuleDict(OrderedDict):
                 defaults_conf = i.repo_module.defaults
                 data = i.module_metadata
                 default_str = ""
+                enabled_str = ""
                 locked_str = ""
                 profiles_str = ""
                 available_profiles = i.profiles
@@ -678,6 +679,11 @@ class RepoModuleDict(OrderedDict):
 
                 if i.stream == defaults_conf.stream:
                     default_str = " [d]"
+
+                if i.stream == conf.stream and conf.enabled:
+                    if not default_str:
+                        enabled_str = " "
+                    enabled_str += "[e]"
 
                 if i.stream == conf.stream and i.version == conf.version:
                     if conf.locked:
@@ -692,7 +698,7 @@ class RepoModuleDict(OrderedDict):
                 profiles_str += ", ..." if len(available_profiles) > 2 else ""
 
                 line[column_name] = data.name
-                line[column_stream] = data.stream + default_str
+                line[column_stream] = data.stream + default_str + enabled_str
                 line[column_version] = str(data.version) + locked_str
                 line[column_profiles] = profiles_str
                 line[column_info] = data.summary
