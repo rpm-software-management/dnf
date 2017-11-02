@@ -68,6 +68,7 @@ Available commands:
 * :ref:`list <list_command-label>`
 * :ref:`makecache <makecache_command-label>`
 * :ref:`mark <mark_command-label>`
+* :ref:`module <module_command-label>`
 * :ref:`provides <provides_command-label>`
 * :ref:`reinstall <reinstall_command-label>`
 * :ref:`remove <remove_command-label>`
@@ -757,6 +758,68 @@ Mark Command
     Marks the specified packages as installed by group. This can be useful if any package was
     installed as a dependency or a user and is desired to be protected and handled as a group
     member like during group remove.
+
+.. _module_command-label:
+
+---------------
+Module Command
+---------------
+
+Module subcommands take module_spec in form NAME:STREAM:VERSION:CONTEXT:ARCH/PROFILE from which only name is mandatory.
+In case stream is not specified dnf takes enabled or default stream, in this order.
+
+.. _module_install_command-label:
+
+``dnf [options] module install <module_spec>...``
+    Dnf will make sure that RPMs from specified module profile or, in case no profile was provided, default module profile are installed.
+    Dnf will also make sure module stream is enabled after.
+
+``dnf [options] module update <module_spec>...``
+    Dnf will make sure that RPMs from all installed module profiles are updated to latest version within enabled module streams.
+
+``dnf [options] module remove <module_spec>...``
+    Dnf will remove all RPMs from all installed module profiles and marks specified profiles as not installed.
+
+``dnf [options] module enable <module_spec>...``
+    Dnf will make sure that given module stream is marked as enabled. This operation will affect available package set.
+    All RPMs from the given module stream are included into package set.
+
+``dnf [options] module disable <module_spec>...``
+    Dnf will make sure that given module stream is marked as disabled.
+
+``dnf [options] module lock <module_spec>...``
+    Dnf will make sure that given module version is locked on latest or installed, in case version was installed before.
+    This means module version is not possible to update.
+
+``dnf [options] module unlock <module_spec>...``
+    Dnf will make sure that given version is marked as unlocked allowing possibility to update it.
+
+``dnf [options] module list [module_spec...]``
+    Lists latest module versions and their profiles and basic information about default, enabled, installed and locked state of module.
+
+``dnf [options] module list [--all] [module_spec...]``
+    Lists all module versions.
+
+``dnf [options] module list [--enabled] [module_spec...]``
+    Lists only enabled module streams.
+
+``dnf [options] module list [--disabled] [module_spec...]``
+    Lists only disabled module streams.
+
+``dnf [options] module list [--installed] [module_spec...]``
+    Lists only installed module versions.
+
+``dnf [options] module info <module_spec>...``
+    Dnf prints out detailed information about given module stream.
+
+``dnf [options] module provides <spec>...``
+    Dnf prints out to which module streams the given RPM belongs to.
+
+``dnf [options] module profile <module_spec>...``
+    Dnf prints out content of each profile from given module stream.
+
+``dnf [options] module streams [module_spec...]``
+    Alias for `dnf module list --enabled`.
 
 .. _provides_command-label:
 
