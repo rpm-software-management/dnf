@@ -78,13 +78,6 @@ class QueriesTest(support.TestCase):
         pkgs = tours.latest(-2).run()
         self.assertEqual(pkgs, tail2)
 
-    def test_recent(self):
-        sack = support.mock_sack("main")
-        now = time.time()
-        installed = support.MockQuery(sack.query().installed())
-        installed[0].buildtime = now - 86400/2
-        pkgs = installed._recent(1)
-        self.assertEqual(len(pkgs), 1)
 
 class SubjectTest(support.TestCase):
     def setUp(self):
