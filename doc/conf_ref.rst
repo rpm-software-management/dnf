@@ -29,6 +29,10 @@
 all \*.repo files found under ``/etc/yum.repos.d``. The latter is typically used
 for repository configuration and takes precedence over global configuration.
 
+It is also possible to drop configuration snippets into ``/etc/dnf/conf.d/``.
+They are read in alphabetical order and can override all configuration. Every option must be part of a section to be read correctly, so 
+start every dropped-in configuration file with ``[main]`` or ``[repo]``.
+
 The configuration file has INI format consisting of section declaration and
 ``name=value`` options below each on separate line. There are two types of sections
 in the configuration files: main and repository. Main section defines all global

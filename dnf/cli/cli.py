@@ -804,6 +804,7 @@ class Cli(object):
                 self.base.conf.cachedir = self.base.conf.system_cachedir
                 self.demands.cacheonly = True
             self._read_conf_file(opts.releasever)
+            self.base.conf.read_dropin_dir()
             self.base.conf._adjust_conf_options()
         except (dnf.exceptions.ConfigError, ValueError) as e:
             logger.critical(_('Config error: %s'), e)

@@ -23,6 +23,7 @@ import distutils.sysconfig
 
 CONF_FILENAME='/etc/dnf/dnf.conf' # :api
 CONF_AUTOMATIC_FILENAME='/etc/dnf/automatic.conf'
+CONF_DROPIN_DIR='/etc/dnf/conf.d/'
 DISTROVERPKG=('system-release(releasever)', 'redhat-release')
 GROUP_PACKAGE_TYPES = ('mandatory', 'default', 'conditional') # :api
 INSTALLONLYPKGS=['kernel', 'kernel-PAE',
