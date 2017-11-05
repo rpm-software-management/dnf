@@ -47,6 +47,8 @@ BuildRequires:  gettext
 BuildRequires:  %{_bindir}/sphinx-build
 BuildRequires:  systemd
 BuildRequires:  bash-completion
+# %{_bindir}/sqlite3 is needed for bash-completion script
+Recommends: (%{_bindir}/sqlite3 if bash-completion)
 %if %{with python3}
 Requires:       python3-%{name} = %{version}-%{release}
 %else
