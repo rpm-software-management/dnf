@@ -54,12 +54,14 @@ Requires:       python2-%{name} = %{version}-%{release}
 %endif
 %if 0%{?rhel} && 0%{?rhel} <= 7
 Requires:       python-dbus
+Requires:       %{_bindir}/sqlite3
 %else
 %if %{with python3}
 Recommends:     (python3-dbus if NetworkManager)
 %else
 Recommends:     (python2-dbus if NetworkManager)
 %endif
+Recommends:     (%{_bindir}/sqlite3 if bash-completion)
 %endif
 Requires(post):     systemd
 Requires(preun):    systemd
