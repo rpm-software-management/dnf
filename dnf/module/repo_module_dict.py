@@ -127,7 +127,11 @@ class RepoModuleDict(OrderedDict):
             repo_module = self[name]
             repo_module_stream = repo_module[stream]
 
-            for repo_module_version in repo_module_stream.values():
+            versions = repo_module_stream.values()
+            if repo_module.conf.locked:
+                versions = [repo_module_stream[repo_module.conf.version]]
+
+            for repo_module_version in versions:
                 version_dependencies.add(repo_module_version)
 
                 for requires_name, requires_stream in \
