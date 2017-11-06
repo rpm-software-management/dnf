@@ -347,7 +347,7 @@ class RepoQueryCommand(commands.Command):
             q = self.base.sack.query().filter(pkg=pkgs)
 
         if self.opts.recent:
-            q._recent(self.base.conf.recent)
+            q = q._recent(self.base.conf.recent)
         if self.opts.available:
             if self.opts.list and self.opts.list != "installed":
                 print(self.cli.optparser.print_usage())
