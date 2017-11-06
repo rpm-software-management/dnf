@@ -440,21 +440,6 @@ class RepoPkgsInfoSubCommandTest(unittest.TestCase):
                 self.HOLE_I686_INFO,
                 self.HOLE_X86_64_INFO)))
 
-    def test_info_recent(self):
-        """Test whether only packages in the repository are listed."""
-        cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
-        with mock.patch('time.time', return_value=0), \
-                support.patch_std_streams() as (stdout, _):
-            support.command_run(cmd, ['updates', 'info', 'recent'])
-
-        self.assertEqual(
-            stdout.getvalue(),
-            ''.join((
-                u'Recently Added Packages\n',
-                self.HOLE_I686_INFO,
-                self.HOLE_X86_64_INFO,
-                self.PEPPER_UPDATES_INFO)))
-
     def test_info_upgrades(self):
         """Test whether only upgrades in the repository are listed."""
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
