@@ -39,7 +39,7 @@ class QueriesTest(support.TestCase):
         sack = support.mock_sack()
         q = sack.query().filter(file__eq="/raised/smile")
         self.assertEqual(len(q.run()), 1)
-        pkg = q.result[0]
+        pkg = q[0]
 
     def test_by_repo(self):
         sack = support.mock_sack("updates", "main")
