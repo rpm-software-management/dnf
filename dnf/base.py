@@ -1356,7 +1356,7 @@ class Base(object):
 
         # packages to be removed by autoremove
         elif pkgnarrow == 'autoremove':
-            autoremove_q = query_for_repo(q)._unneeded(self.sack, self.history)
+            autoremove_q = query_for_repo(q)._unneeded(self.history.swdb)
             autoremove = autoremove_q.run()
 
         # not in a repo but installed
@@ -1415,9 +1415,7 @@ class Base(object):
             reason = self.history.reason(pkg)
             self.history.set_reason(pkg, SwdbReason.DEP)
             self._revert_reason.append((pkg, reason))
-        unneeded_pkgs = self.sack.query()._unneeded(self.sack,
-                                                    self.history,
-                                                    debug_solver=False)
+        unneeded_pkgs = self.sack.query()._unneeded(self.history.swdb, debug_solver=False)
 
         remove_packages = query.intersection(unneeded_pkgs)
         if remove_packages:
@@ -1879,7 +1877,7 @@ class Base(object):
                 raise dnf.exceptions.Error(_('No packages marked for removal.'))
 
         else:
-            pkgs = self.sack.query()._unneeded(self.sack, self.history,
+            pkgs = self.sack.query()._unneeded(self.history.swdb,
                                                debug_solver=self.conf.debug_solver)
             for pkg in pkgs:
                 self.package_remove(pkg)
