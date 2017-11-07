@@ -236,7 +236,7 @@ pushd build-py3
 popd
 %endif
 %find_lang %{name}
-mkdir -p %{buildroot}/etc/dnf/vars
+mkdir -p %{buildroot}%{confdir}/vars
 mkdir -p %{buildroot}%{pluginconfpath}/
 mkdir -p %{buildroot}%{py2pluginpath}/
 %if %{with python3}

@@ -39,7 +39,7 @@ class Substitutions(dict):
     def update_from_etc(self, installroot):
         fsvars = []
         try:
-            dir_fsvars = os.path.join(installroot, "etc/yum/vars/")
+            dir_fsvars = os.path.join(installroot, "etc/dnf/vars/")
             fsvars = os.listdir(dir_fsvars)
         except OSError:
             pass
