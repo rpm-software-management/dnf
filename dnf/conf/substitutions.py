@@ -39,18 +39,18 @@ class Substitutions(dict):
     def update_from_etc(self, installroot):
         fsvars = []
         try:
-            dir_fsvars = installroot + "/etc/dnf/vars/"
+            dir_fsvars = os.path.join(installroot, "etc/dnf/vars/")
             fsvars = os.listdir(dir_fsvars)
         except OSError:
             pass
         for fsvar in fsvars:
-            if os.path.islink(dir_fsvars + fsvar):
-                continue
-            try:
-                with open(dir_fsvars + fsvar) as fp:
-                    val = fp.readline()
-                if val and val[-1] == '\n':
-                    val = val[:-1]
-            except (OSError, IOError):
-                continue
+            filepath = os.path.join(dir_fsvars, fsvar)
+            if os.path.isfile(filepath):
+                try:
+                    with open(filepath) as fp:
+                        val = fp.readline()
+                    if val and val[-1] == '\n':
+                        val = val[:-1]
+                except (OSError, IOError):
+                    continue
             self[fsvar] = val
