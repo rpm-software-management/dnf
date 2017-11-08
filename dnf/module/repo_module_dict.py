@@ -345,6 +345,7 @@ class RepoModuleDict(OrderedDict):
     def upgrade(self, module_specs, create_goal=False):
         skipped = []
         query = None
+        query_exclude = None
         for module_spec in module_specs:
             subj = ModuleSubject(module_spec)
             try:
@@ -352,8 +353,18 @@ class RepoModuleDict(OrderedDict):
             except NoModuleException:
                 skipped.append(module_spec)
                 continue
+            except NoStreamSpecifiedException:
+                continue
 
             if module_version.repo_module.conf.locked:
+                continue
+            if not module_version.repo_module.conf.enabled:
+                for rpm in module_version.module_metadata.artifacts.rpms:
+                    query_for_rpm = self.base.sack.query().filter(nevra=rpm)
+                    if query_exclude is None:
+                        query_exclude = query_for_rpm
+                    else:
+                        query_exclude = query_exclude.union(query_for_rpm)
                 continue
 
             conf = self[module_form.name].conf
@@ -368,6 +379,9 @@ class RepoModuleDict(OrderedDict):
             else:
                 profiles = installed_profiles
 
+            if not profiles:
+                continue
+
             returned_query = module_version.upgrade(profiles)
             if query is None and returned_query:
                 query = returned_query
@@ -379,19 +393,17 @@ class RepoModuleDict(OrderedDict):
             sltr.set(pkg=query)
             self.base._goal.upgrade(select=sltr)
 
-        return skipped, query
+        return skipped, query, query_exclude
 
     def upgrade_all(self):
         modules = []
         for module_name, repo_module in self.items():
             if not repo_module.conf:
                 continue
-            if not repo_module.conf.enabled:
-                continue
             modules.append(module_name)
         modules.sort()
-        _, query = self.upgrade(modules)
-        return query
+        _, query, query_exclude = self.upgrade(modules)
+        return query, query_exclude
 
     def remove(self, module_specs):
         skipped = []

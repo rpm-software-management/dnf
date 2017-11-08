@@ -93,7 +93,7 @@ class RepoModule(OrderedDict):
         self.parent.base._module_persistor.set_data(self, stream=stream, enabled=True)
 
     def disable(self):
-        self.parent.base._module_persistor.set_data(self, enabled=False)
+        self.parent.base._module_persistor.set_data(self, enabled=False, profiles=[])
 
     def lock(self, version):
         self.parent.base._module_persistor.set_data(self, locked=True, version=version)
