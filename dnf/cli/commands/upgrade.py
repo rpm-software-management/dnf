@@ -85,7 +85,7 @@ class UpgradeCommand(commands.Command):
     def _update_modules(self):
         group_specs_num = len(self.opts.grp_specs)
 
-        self.skipped_grp_specs, _ = self.base.repo_module_dict.upgrade(self.opts.grp_specs, True)
+        self.skipped_grp_specs, _, _ = self.base.repo_module_dict.upgrade(self.opts.grp_specs, True)
 
         return len(self.skipped_grp_specs) != group_specs_num
 
