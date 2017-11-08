@@ -133,7 +133,7 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            module_specs, _ = self.base.repo_module_dict.upgrade(self.opts.module_nsvp, True)
+            module_specs, _, _ = self.base.repo_module_dict.upgrade(self.opts.module_nsvp, True)
             if module_specs:
                 raise NoModuleException(", ".join(module_specs))
 
