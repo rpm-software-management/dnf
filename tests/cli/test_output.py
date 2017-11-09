@@ -39,7 +39,6 @@ Summary      : A summary of the package.
 URL          : http://example.com
 License      : GPL+
 Description  : 
-
 """
 
 LIST_TRANSACTION_OUTPUT=u"""\
@@ -193,7 +192,7 @@ class OutputTest(support.TestCase):
         pkg.description = None
 
         with mock.patch('sys.stdout') as stdout:
-            self.output.infoOutput(pkg)
+            print(self.output.infoOutput(pkg))
         written = ''.join([mc[1][0] for mc in stdout.method_calls
                           if mc[0] == 'write'])
         self.assertEqual(written, INFOOUTPUT_OUTPUT)
