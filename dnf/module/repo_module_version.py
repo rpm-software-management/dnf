@@ -42,7 +42,7 @@ class RepoModuleVersion(object):
 
     def report_profile_error(self, profile, default_profiles_used=False):
         if default_profiles_used:
-            raise NoProfileException(self.full_version)
+            raise NoProfileException("{}/{}".format(self.full_version, profile))
         elif self.profiles:
             raise PossibleProfilesExceptions("{}/{}".format(self.full_version, profile),
                                              self.profiles)
@@ -88,7 +88,7 @@ class RepoModuleVersion(object):
 
         for profile in profiles:
             if profile not in self.profiles:
-                raise NoProfileException(profile)
+                raise NoProfileException("{}/{}".format(self.full_version, profile))
 
             for nevra_object in self.profile_nevra_objects(profile):
                 nevr = self.nevra_object_to_nevr_str(nevra_object)
@@ -113,7 +113,7 @@ class RepoModuleVersion(object):
     def remove(self, profiles):
         for profile in profiles:
             if profile not in self.profiles:
-                raise NoProfileException(profile)
+                raise NoProfileException("{}/{}".format(self.full_version, profile))
 
             for nevra_object in self.profile_nevra_objects(profile):
                 nevr = self.nevra_object_to_nevr_str(nevra_object)
