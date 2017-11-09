@@ -481,39 +481,39 @@ class Output(object):
         :param hightlight: highlighting options for the name of the
            package
         """
-        def print_key_val(key, val):
-            print(fill_exact_width(key, 12, 12), ":", val)
+        def format_key_val(key, val):
+            return " ".join([fill_exact_width(key, 12, 12), ":", str(val)])
 
-        def print_key_val_fill(key, val):
-            print(self.fmtKeyValFill(fill_exact_width(key, 12, 12) +
-                  " : ", val or ""))
+        def format_key_val_fill(key, val):
+            return self.fmtKeyValFill(fill_exact_width(key, 12, 12) + " : ", val or "")
 
+        output_list = []
         (hibeg, hiend) = self._highlight(highlight)
         pkg_data = {}
         if pkg._from_system:
             pkg_data = self.history.package_data(pkg)
 
-        print_key_val(_("Name"), "%s%s%s" % (hibeg, pkg.name, hiend))
+        output_list.append(format_key_val(_("Name"), "%s%s%s" % (hibeg, pkg.name, hiend)))
         if pkg.epoch:
-            print_key_val(_("Epoch"), pkg.epoch)
-        print_key_val(_("Version"), pkg.version)
-        print_key_val(_("Release"), pkg.release)
-        print_key_val(_("Arch"), pkg.arch)
-        print_key_val(_("Size"), format_number(float(pkg._size)))
-        print_key_val(_("Source"), pkg.sourcerpm)
-        print_key_val(_("Repo"), pkg.repoid)
+            output_list.append(format_key_val(_("Epoch"), pkg.epoch))
+        output_list.append(format_key_val(_("Version"), pkg.version))
+        output_list.append(format_key_val(_("Release"), pkg.release))
+        output_list.append(format_key_val(_("Arch"), pkg.arch))
+        output_list.append(format_key_val(_("Size"), format_number(float(pkg._size))))
+        output_list.append(format_key_val(_("Source"), pkg.sourcerpm))
+        output_list.append(format_key_val(_("Repo"), pkg.repoid))
         if pkg_data and pkg_data.from_repo:
-            print_key_val(_("From repo"), pkg_data.from_repo)
+            output_list.append(format_key_val(_("From repo"), pkg_data.from_repo))
         if self.conf.verbose:
             # :hawkey does not support changelog information
             # print(_("Committer   : %s") % ucd(pkg.committer))
             # print(_("Committime  : %s") % time.ctime(pkg.committime))
-            print_key_val(_("Packager"), pkg.packager)
-            print_key_val(_("Buildtime"),
-                          dnf.util.normalize_time(pkg.buildtime))
+            output_list.append(format_key_val(_("Packager"), pkg.packager))
+            output_list.append(format_key_val(_("Buildtime"),
+                                              dnf.util.normalize_time(pkg.buildtime)))
             if pkg.installtime:
-                print_key_val(_("Install time"),
-                              dnf.util.normalize_time(pkg.installtime))
+                output_list.append(format_key_val(_("Install time"),
+                                                  dnf.util.normalize_time(pkg.installtime)))
             if pkg_data:
                 uid = None
                 if pkg_data.installed_by:
@@ -521,20 +521,20 @@ class Output(object):
                         uid = int(pkg_data.installed_by)
                     except ValueError: # In case int() fails
                         uid = None
-                print_key_val(_("Installed by"), self._pwd_ui_username(uid))
+                output_list.append(format_key_val(_("Installed by"), self._pwd_ui_username(uid)))
                 uid = None
                 if pkg_data.changed_by:
                     try:
                         uid = int(pkg_data.changed_by)
                     except ValueError: # In case int() fails
                         uid = None
-                print_key_val(_("Changed by"), self._pwd_ui_username(uid))
-        print_key_val_fill(_("Summary"), pkg.summary)
+                output_list.append(format_key_val(_("Changed by"), self._pwd_ui_username(uid)))
+        output_list.append(format_key_val_fill(_("Summary"), pkg.summary))
         if pkg.url:
-            print_key_val(_("URL"), ucd(pkg.url))
-        print_key_val_fill(_("License"), pkg.license)
-        print_key_val_fill(_("Description"), pkg.description)
-        print("")
+            output_list.append(format_key_val(_("URL"), ucd(pkg.url)))
+        output_list.append(format_key_val_fill(_("License"), pkg.license))
+        output_list.append(format_key_val_fill(_("Description"), pkg.description))
+        return "\n".join(output_list)
 
     def updatesObsoletesList(self, uotup, changetype, columns=None):
         """Print a simple string that explains the relationship
@@ -638,7 +638,7 @@ class Output(object):
                         self.simpleList(pkg, ui_overflow=True,
                                         highlight=highlight, columns=columns)
                     elif outputType == 'info':
-                        self.infoOutput(pkg, highlight=highlight)
+                        print(self.infoOutput(pkg, highlight=highlight) + "\n")
                     elif outputType == 'name':
                         self.simple_name_list(pkg)
                     elif outputType == 'nevra':

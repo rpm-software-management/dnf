@@ -489,8 +489,10 @@ class RepoQueryCommand(commands.Command):
             for pkg in providers.latest().run():
                 pkgs.add(self.build_format_fn(self.opts, pkg))
 
-        for pkg in sorted(pkgs):
-            print(pkg)
+        if self.opts.queryinfo:
+            print("\n\n".join(sorted(pkgs)))
+        else:
+            print("\n".join(sorted(pkgs)))
 
     def _group_member_report(self, query):
         self.base.read_comps(arch_filter=True)
