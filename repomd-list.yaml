@@ -1,0 +1,31 @@
+REPOMD-LIST-1:
+  Desc: I can list repomd repositories
+  Then:
+  - Repository 'ID' MUST be displayed
+  - Repository 'Name' MUST be displayed
+  TODO:
+  - status? (doesn't make sense; it's number of RPMs; latest update instead?)
+  - enabled/disabled flag?
+REPOMD-LIST-2:
+  Desc: I can filter repomd repositories by $pattern
+  Where:
+    REPOMD-LIST-2.1: $pattern is repo ID
+    REPOMD-LIST-2.2: $pattern contains wildcards
+  Then:
+  - Repository 'ID' MUST be displayed
+  - Repository 'Name' MUST be displayed
+  TODO:
+  - status? (doesn't make sense; it's number of RPMs; latest update instead?)
+  - enabled/disabled flag?
+REPOMD-LIST-3:
+  Desc: I can list enabled repomd repositories
+  Then:
+  - All enabled repomd repositories MUST be displayed [REPOMD-LIST-1]
+REPOMD-LIST-4:
+  Desc: I can list disabled repomd repositories
+  Then:
+  - All disabled repomd repositories MUST be displayed [REPOMD-LIST-1]
+REPOMD-LIST-5:
+  Desc: I can list all repomd repositories
+  Then:
+  - All (enabled and disabled) repomd repositories MUST be displayed [REPOMD-LIST-1]

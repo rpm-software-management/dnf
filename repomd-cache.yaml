@@ -1,0 +1,9 @@
+REPOMD-CACHE-UPDATE-1:
+  Desc: I can update repomd repository cache
+  Then:
+  - Repomd repository cache MUST be generated
+  - Repomd repository cache MUST be fresh
+  Examples:
+  - yum makecache
+  TODO:
+  - proposed commands: yum cache update; yum repo update-cache

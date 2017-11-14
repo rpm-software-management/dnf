@@ -1,0 +1,58 @@
+CACHE-CLEAN-1:
+  Desc: I can clean the whole cache
+  Then:
+  - Metadata cache MUST be cleaned [CACHE-CLEAN-2]
+  - Packages cache MUST be cleaned [CACHE-CLEAN-4]
+  - Headers cache MUST be cleaned [CACHE-CLEAN-5]
+  - Database cache MUST be cleaned [CACHE-CLEAN-6]
+  - Plugins cache MUST be cleaned [CACHE-CLEAN-7]
+  Examples:
+  - yum clean all
+CACHE-CLEAN-2:
+  Desc: I can clean cache for repository metadata
+  Then:
+  - Cache for repomd metadata MUST be cleaned
+  Examples:
+  - yum clean metadata
+  TODO:
+  - explain details in the 'Then' section
+CACHE-CLEAN-3:
+  Desc: I can expire repomd repository cache
+  Then:
+  - Cache for downloaded RPM packages MUST be cleaned
+  Examples:
+  - yum clean expire-cache
+  TODO:
+  - explain details in the 'Then' section
+CACHE-CLEAN-4:
+  Desc: I can clean cache for downloaded packages
+  Then:
+  - Cache for downloaded RPM packages MUST be cleaned
+  Examples:
+  - yum clean packages
+  TODO:
+  - explain details in the 'Then' section
+CACHE-CLEAN-5:
+  Desc: I can clean cache for downloaded package headers
+  Then:
+  - Cache for downloaded RPM headers MUST be cleaned
+  Examples:
+  - yum clean headers
+  TODO:
+  - explain details in the 'Then' section
+CACHE-CLEAN-6:
+  Desc: I can clean database cache
+  Then:
+  - Cache for plugins MUST be cleaned
+  Examples:
+  - yum clean dbcache
+  TODO:
+  - explain details in the 'Then' section
+CACHE-CLEAN-7:
+  Desc: I can clean cache for plugins
+  Then:
+  - Cache for plugins MUST be cleaned
+  Examples:
+  - yum clean plugins
+  TODO:
+  - explain details in the 'Then' section

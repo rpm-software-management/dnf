@@ -1,0 +1,69 @@
+RPM-UPGRADE-1:
+  Desc: I can upgrade an RPM
+  Then:
+  - The RPM MUST be upgraded on disk
+  - The RPM MUST be upgraded in the RPM Database
+  - The RPM MUST be upgraded in the DNF Software Database
+  - If there is no newer RPM, notify user about that (success)
+RPM-UPGRADE-2:
+  Desc: I can upgrade an RPM by $pkgspec
+  Where:
+    RPM-UPGRADE-2.1: $pkgspec is name
+    RPM-UPGRADE-2.2: $pkgspec is name-version
+    RPM-UPGRADE-2.3: $pkgspec is name-version-release
+    RPM-UPGRADE-2.4: $pkgspec is name-version-release.arch
+    RPM-UPGRADE-2.5: $pkgspec is name.arch
+    RPM-UPGRADE-2.6: $pkgspec contains name with dashes
+    RPM-UPGRADE-2.7: $pkgspec contains wildcards
+  Then:
+  - An RPM that matches $pkgspec and is older than the currently installed RPM MUST
+    be upgraded [RPM-UPGRADE-1]
+RPM-UPGRADE-3:
+  Desc: I can upgrade an RPM by $provide
+  Where:
+    RPM-UPGRADE-3.1: $provide is key
+    RPM-UPGRADE-3.2: $provide is key = value
+    RPM-UPGRADE-3.3: $provide is key > value
+    RPM-UPGRADE-3.4: $provide is key >= value
+    RPM-UPGRADE-3.5: $provide is key <= value
+    RPM-UPGRADE-3.6: $provide is key < value
+  Then:
+  - An RPM that matches $provide and is older than the currently installed RPM MUST
+    be upgraded [RPM-UPGRADE-1]
+RPM-UPGRADE-4:
+  Desc: I can upgrade an RPM by $file_provide
+  Where:
+    RPM-UPGRADE-4.1: $file_provide is a file
+    RPM-UPGRADE-4.2: $file_provide is a directory
+    RPM-UPGRADE-4.3: $file_provide contains wildcards
+  Then:
+  - An RPM that matches $file_provide and is older than the currently installed RPM
+    MUST be upgraded [RPM-UPGRADE-1]
+RPM-UPGRADE-5:
+  Desc: I can upgrade an RPM from $path on disk
+  Where:
+    RPM-UPGRADE-5.1: $path is an absolute path to an RPM
+    RPM-UPGRADE-5.2: $path is a relative path to an RPM
+    RPM-UPGRADE-5.3: $path contains wildcards
+  Then:
+  - If the provided RPM is newer than the currently installed RPM, it MUST be upgraded
+    [RPM-UPGRADE-1]
+RPM-UPGRADE-6:
+  Desc: I can upgrade an RPM from $url
+  Where:
+    RPM-UPGRADE-6.1: $url is a http address
+    RPM-UPGRADE-6.2: $url is a ftp address
+    RPM-UPGRADE-6.3: $url is a ftp address with wildcards
+    RPM-UPGRADE-6.4: $url is a local path
+    RPM-UPGRADE-6.5: $url is a local path with wildcards
+  Then:
+  - If the provided RPM is newer than the currently installed RPM, it MUST be upgraded
+    [RPM-UPGRADE-1]
+RPM-UPGRADE-7:
+  Desc: I can upgrade all RPMs
+  Then:
+  - If there are newer RPM versions in repos than installed, they MUST be upgraded
+    [RPM-UPGRADE-1]
+  Examples:
+  - dnf upgrade
+  - dnf update

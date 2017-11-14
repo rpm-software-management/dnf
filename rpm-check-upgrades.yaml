@@ -1,0 +1,13 @@
+RPM-CHECK-UPGRADES-1:
+  Desc: I can check for available updates
+  Then:
+  - List of RPM
+  - Exit code 100 MUST be returned when there are available updates
+  - Exit code 0 MUST be returned when there are no available updates
+  Examples:
+  - yum check-upgrade
+  - yum check-upgrades
+  - yum check-update
+  - yum check-updates
+  TODO:
+  - print identical transaction table to 'dnf update'?
