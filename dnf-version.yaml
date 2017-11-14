@@ -1,0 +1,13 @@
+VERSION-1:
+  Desc: I can display version of software used to perform the transaction.
+  Then:
+  - NEVRA of YUM/DNF MUST be displayed
+  - NEVRA of RPM MUST be displayed
+  - NEVRA of libdnf MUST be displayed
+  - NEVRA of libsolv MUST be displayed
+  - NEVRA of libmodulemd MUST be displayed
+  - NEVRA of librepo MUST be displayed
+  - NEVRA of libcomps MUST be displayed
+  - NEVRAs of installed YUM/DNF plugins MUST be displayed
+  TODO:
+  - Make sure the same info is stored in the software database

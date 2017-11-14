@@ -1,0 +1,54 @@
+RPM-INFO-1:
+  Desc: I can display details about an RPM
+  Then:
+  - Fields are displayed: Name, Version, Release, Arch, Size, RepoID + releasever
+      + basearch + (vars?), summary, url, license, description
+RPM-INFO-2:
+  Desc: I can display details about an RPM by $pkgspec
+  Where:
+    RPM-INFO-2.1: $pkgspec is name
+    RPM-INFO-2.2: $pkgspec is name-version
+    RPM-INFO-2.3: $pkgspec is name-version-release
+    RPM-INFO-2.4: $pkgspec is name-version-release.arch
+    RPM-INFO-2.5: $pkgspec is name.arch
+    RPM-INFO-2.6: $pkgspec contains name with dashes
+    RPM-INFO-2.7: $pkgspec contains wildcards
+  Then:
+  - The RPM details MUST be displayed [RPM-INFO-1]
+RPM-INFO-3:
+  Desc: I can display details about an RPM by $provide
+  Where:
+    RPM-INFO-3.1: $provide is key
+    RPM-INFO-3.2: $provide is key = value
+    RPM-INFO-3.3: $provide is key > value
+    RPM-INFO-3.4: $provide is key >= value
+    RPM-INFO-3.5: $provide is key <= value
+    RPM-INFO-3.6: $provide is key < value
+  Then:
+  - The RPM details MUST be displayed [RPM-INFO-1]
+  TODO:
+  - doesn't work in YUM3, doesn't work in DNF
+RPM-INFO-4:
+  Desc: I can display details about an RPM by $file_provide
+  Where:
+    RPM-INFO-4.1: $file_provide is a file
+    RPM-INFO-4.2: $file_provide contains wildcards
+  Then:
+  - The RPM details MUST be displayed [RPM-INFO-1]
+  TODO:
+  - doesn't work in YUM3; works in DNF
+RPM-INFO-5:
+  Desc: I can display details about all (available and installed) RPMs
+  Then:
+  - The RPM details about all RPMs MUST be displayed [RPM-INFO-1]
+RPM-INFO-6:
+  Desc: I can display details about available RPMs
+  Then:
+  - The RPM details about available RPMs MUST be displayed [RPM-INFO-1]
+RPM-INFO-7:
+  Desc: I can display details about RPMs available as updates
+  Then:
+  - The RPM details about RPMs available as updates MUST be displayed [RPM-INFO-1]
+RPM-INFO-TODO:
+  TODO:
+  - ignoring distro-extras|extras|obsoletes|recent

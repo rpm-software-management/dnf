@@ -1,0 +1,24 @@
+PLUGINS-1:
+  Desc: I can use a plugin
+  Then:
+  - The plugin is loaded
+  - The plugin is executed
+PLUGINS-2:
+  Desc: I can disable a plugin by $pattern
+  Where:
+    PLUGINS-2.1: $pattern is a name
+    PLUGINS-2.2: $pattern contains a wildcard
+  Then:
+  - The plugin MUST NOT be used [PLUGINS-1]
+PLUGINS-3:
+  Desc: I can enable a plugin by $pattern
+  Where:
+    PLUGINS-3.1: $pattern is a name
+    PLUGINS-3.2: $pattern contains a wildcard
+  Then:
+  - The plugin MUST be used [PLUGINS-1]
+PLUGINS-TODO:
+  TODO:
+  - duplicity: noplugins == --disableplugin='*'
+  - what if a plugin doesn't exit? -> silent / warn / error?
+  - create new sub-commands? plugin enable|disable|list?

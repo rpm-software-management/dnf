@@ -1,0 +1,15 @@
+RPMDB-CHECK-1:
+  Desc: I can check RPMDB format consistency
+  TODO:
+  - proper error message, yum/dnf fails now - Error: rpmdb open failed
+RPMDB-CHECK-2:
+  Desc: I can check RPMDB for missing dependencies
+RPMDB-CHECK-3:
+  Desc: I can check RPMDB for duplicate packages
+RPMDB-CHECK-4:
+  Desc: I can check RPMDB for duplicate packages
+RPMDB-CHECK-TODO:
+  TODO:
+  - new subcommands: rpmdb check|rebuild
+  - check form inconsistent RPM versions across arches
+  - rm /var/lib/rpm/__db.* && rpm --rebuilddb

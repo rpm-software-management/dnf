@@ -1,0 +1,43 @@
+RPM-SWAP-1:
+  Desc: I can replace an RPM with another in one transaction
+  Then:
+  - The currently installed RPM is removed [RPM-REMOVE-1]
+  - The new RPM is installed [RPM-INSTALL-1]
+  - The transaction succeeds even if the 2 transactions (remove, install) would fail
+RPM-SWAP-2:
+  Desc: I can swap RPMs by $pkgspec
+  Where:
+    RPM-SWAP-2.1: $pkgspec is name
+    RPM-SWAP-2.2: $pkgspec is name-version
+    RPM-SWAP-2.3: $pkgspec is name-version-release
+    RPM-SWAP-2.4: $pkgspec is name-version-release.arch
+    RPM-SWAP-2.5: $pkgspec is name.arch
+    RPM-SWAP-2.6: $pkgspec contains name with dashes
+    RPM-SWAP-2.7: $pkgspec contains wildcards
+  Then:
+  - The RPMs are replaced (swapped) [RPM-SWAP-1]
+RPM-SWAP-3:
+  Desc: I can swap RPMs by $provide
+  Where:
+    RPM-SWAP-3.1: $provide is key
+    RPM-SWAP-3.2: $provide is key = value
+    RPM-SWAP-3.3: $provide is key > value
+    RPM-SWAP-3.4: $provide is key >= value
+    RPM-SWAP-3.5: $provide is key <= value
+    RPM-SWAP-3.6: $provide is key < value
+  Then:
+  - The RPMs are replaced (swapped) [RPM-SWAP-1]
+RPM-SWAP-4:
+  Desc: I can downgrade an RPM by $file_provide
+  Where:
+    RPM-SWAP-4.1: $file_provide is a file
+    RPM-SWAP-4.2: $file_provide is a directory
+    RPM-SWAP-4.3: $file_provide contains wildcards
+  Then:
+  - The RPMs are replaced (swapped) [RPM-SWAP-1]
+RPM-SWAP-XXX:
+  Desc: I can replace multiple RPMs with another multiple RPMs in one transaction
+  Then:
+  - The RPMs are replaced (swapped) [RPM-SWAP-1]
+  TODO:
+  - This doesn't work in YUM3

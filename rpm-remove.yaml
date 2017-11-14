@@ -1,0 +1,37 @@
+RPM-REMOVE-1:
+  Desc: I can remove an RPM
+  Then:
+  - The RPM MUST be removed from disk
+  - The RPM MUST be removed from the RPM Database
+  - The RPM MUST be removed from the DNF Software Database
+RPM-REMOVE-2:
+  Desc: I can remove an RPM by $pkgspec
+  Where:
+    RPM-REMOVE-2.1: $pkgspec is name
+    RPM-REMOVE-2.2: $pkgspec is name-version
+    RPM-REMOVE-2.3: $pkgspec is name-version-release
+    RPM-REMOVE-2.4: $pkgspec is name-version-release.arch
+    RPM-REMOVE-2.5: $pkgspec is name.arch
+    RPM-REMOVE-2.6: $pkgspec contains name with dashes
+    RPM-REMOVE-2.7: $pkgspec contains wildcards
+  Then:
+  - An RPM that matches $pkgspec and is installed gets removed [RPM-REMOVE-1]
+RPM-REMOVE-3:
+  Desc: I can remove an RPM by $provide
+  Where:
+    RPM-REMOVE-3.1: $provide is key
+    RPM-REMOVE-3.2: $provide is key = value
+    RPM-REMOVE-3.3: $provide is key > value
+    RPM-REMOVE-3.4: $provide is key >= value
+    RPM-REMOVE-3.5: $provide is key <= value
+    RPM-REMOVE-3.6: $provide is key < value
+  Then:
+  - An RPM that matches $pkgspec and is installed gets removed [RPM-REMOVE-1]
+RPM-REMOVE-4:
+  Desc: I can downgrade an RPM by $file_provide
+  Where:
+    RPM-REMOVE-4.1: $file_provide is a file
+    RPM-REMOVE-4.2: $file_provide is a directory
+    RPM-REMOVE-4.3: $file_provide contains wildcards
+  Then:
+  - An RPM that matches $pkgspec and is installed gets removed [RPM-REMOVE-1]

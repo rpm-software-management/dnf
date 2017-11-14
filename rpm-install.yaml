@@ -1,0 +1,55 @@
+RPM-INSTALL-1:
+  Desc: I can install an RPM
+  Then:
+  - The RPM MUST be installed on disk
+  - The RPM MUST appear in the RPM Database
+  - The RPM MUST appear in the DNF Software Database
+RPM-INSTALL-2:
+  Desc: I can install an RPM by $pkgspec
+  Where:
+    RPM-INSTALL-2.1: $pkgspec is name
+    RPM-INSTALL-2.2: $pkgspec is name-version
+    RPM-INSTALL-2.3: $pkgspec is name-version-release
+    RPM-INSTALL-2.4: $pkgspec is name-version-release.arch
+    RPM-INSTALL-2.5: $pkgspec is name.arch
+    RPM-INSTALL-2.6: $pkgspec contains name with dashes
+    RPM-INSTALL-2.7: $pkgspec contains wildcards
+  Then:
+  - The RPM MUST be installed [RPM-INSTALL-1]
+RPM-INSTALL-3:
+  Desc: I can install an RPM by $provide
+  Where:
+    RPM-INSTALL-3.1: $provide is key
+    RPM-INSTALL-3.2: $provide is key = value
+    RPM-INSTALL-3.3: $provide is key > value
+    RPM-INSTALL-3.4: $provide is key >= value
+    RPM-INSTALL-3.5: $provide is key <= value
+    RPM-INSTALL-3.6: $provide is key < value
+  Then:
+  - The RPM MUST be installed [RPM-INSTALL-1]
+RPM-INSTALL-4:
+  Desc: I can install an RPM by $file_provide
+  Where:
+    RPM-INSTALL-4.1: $file_provide is a file
+    RPM-INSTALL-4.2: $file_provide is a directory
+    RPM-INSTALL-4.3: $file_provide contains wildcards
+  Then:
+  - The RPM MUST be installed [RPM-INSTALL-1]
+RPM-INSTALL-5:
+  Desc: I can install an RPM from $path on disk
+  Where:
+    RPM-INSTALL-5.1: $path is an absolute path to an RPM
+    RPM-INSTALL-5.2: $path is a relative path to an RPM
+    RPM-INSTALL-5.3: $path contains wildcards
+  Then:
+  - The RPM MUST be installed [RPM-INSTALL-1]
+RPM-INSTALL-6:
+  Desc: I can install an RPM from $url
+  Where:
+    RPM-INSTALL-6.1: $url is a http address
+    RPM-INSTALL-6.2: $url is a ftp address
+    RPM-INSTALL-6.3: $url is a ftp address with wildcards
+    RPM-INSTALL-6.4: $url is a local path
+    RPM-INSTALL-6.5: $url is a local path with wildcards
+  Then:
+  - The RPM MUST be installed [RPM-INSTALL-1]

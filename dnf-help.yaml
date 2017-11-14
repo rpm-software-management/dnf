@@ -1,0 +1,16 @@
+HELP-1:
+  Desc: I can display generic help
+  Then:
+  - Usage MUST be displayed
+  - List of available sub-commands MUST be displayed
+  - List of loaded plugins MUST be displayed
+  - List of available generic options MUST be displayed
+  - List of available plugin options MUST be displayed
+  - The options SHOULD be grouped into functional groups
+HELP-2:
+  Desc: I can display help for a command
+  Then:
+  - Display [HELP-1]
+  TODO:
+  - Fail if command doesn't exist
+  - Suggest similar commands as git does?

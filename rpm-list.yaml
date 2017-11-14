@@ -1,0 +1,54 @@
+RPM-LIST-1:
+  Desc: I can display brief information about an RPM
+  Then:
+  - Fields are displayed: Name.Arch, Version-Release, RepoID
+RPM-LIST-2:
+  Desc: I can display brief information about an RPM by $pkgspec
+  Where:
+    RPM-LIST-2.1: $pkgspec is name
+    RPM-LIST-2.2: $pkgspec is name-version
+    RPM-LIST-2.3: $pkgspec is name-version-release
+    RPM-LIST-2.4: $pkgspec is name-version-release.arch
+    RPM-LIST-2.5: $pkgspec is name.arch
+    RPM-LIST-2.6: $pkgspec contains name with dashes
+    RPM-LIST-2.7: $pkgspec contains wildcards
+  Then:
+  - The RPM brief information MUST be displayed [RPM-LIST-1]
+RPM-LIST-3:
+  Desc: I can display brief information about an RPM by $provide
+  Where:
+    RPM-LIST-3.1: $provide is key
+    RPM-LIST-3.2: $provide is key = value
+    RPM-LIST-3.3: $provide is key > value
+    RPM-LIST-3.4: $provide is key >= value
+    RPM-LIST-3.5: $provide is key <= value
+    RPM-LIST-3.6: $provide is key < value
+  Then:
+  - The RPM brief information MUST be displayed [RPM-LIST-1]
+  TODO:
+  - doesn't work in YUM3, doesn't work in DNF
+RPM-LIST-4:
+  Desc: I can display brief information about an RPM by $file_provide
+  Where:
+    RPM-LIST-4.1: $file_provide is a file
+    RPM-LIST-4.2: $file_provide is a directory
+    RPM-LIST-4.3: $file_provide contains wildcards
+  Then:
+  - The RPM brief information MUST be displayed [RPM-LIST-1]
+  TODO:
+  - doesn't work in YUM3; works in DNF
+RPM-LIST-5:
+  Desc: I can display details about all (available and installed) RPMs
+  Then:
+  - The RPM brief information about all RPMs MUST be displayed [RPM-LIST-1]
+RPM-LIST-6:
+  Desc: I can display details about available RPMs
+  Then:
+  - The RPM brief information about available RPMs MUST be displayed [RPM-LIST-1]
+RPM-LIST-7:
+  Desc: I can display details about RPMs available as updates
+  Then:
+  - The RPM brief information about RPMs available as updates MUST be displayed [RPM-LIST-1]
+RPM-LIST-TODO:
+  TODO:
+  - ignoring distro-extras|extras|obsoletes|recent

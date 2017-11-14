@@ -1,0 +1,18 @@
+RPM-SEARCH-1:
+  Desc: I can search for an RPM
+  Then:
+  - All matching RPMs and their descriptions MUST be displayed
+  - Information about matched fields MUST be displayed
+  - Information about exact/partial match SHOULD be displayed
+  - The list SHOULD be sorted with most relevant items first
+RPM-SEARCH-2:
+  Desc: I can search for an RPM by $pattern
+  Where:
+    RPM-SEARCH-2.1: $pattern is name
+    RPM-SEARCH-2.2: $pattern is summary
+    RPM-SEARCH-2.3: $pattern contains wildcards
+  Then:
+  - Found RPMs MUST be displayed [RPM-SEARCH-1]
+RPM-SEARCH-TODO:
+  TODO:
+  - yum search all - what does it do? drop?

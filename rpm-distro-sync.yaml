@@ -1,0 +1,20 @@
+RPM-DISTRO-SYNC-1:
+  Desc: I can sync an installed RPM to the latest available version
+  Then:
+  - The installed RPM is at the latest available version in the repos
+  - If there's no newer version or if the RPM is not available at all, it stays installed
+    at current version
+  TODO:
+  - what if a package is not available in a repo? keep/remove?
+RPM-DISTRO-SYNC-2:
+  Desc: I can distro-sync an RPM by $pattern
+  Where:
+    RPM-DISTRO-SYNC-2.1: $pattern is name
+    RPM-DISTRO-SYNC-2.2: $pattern is name.arch
+    RPM-DISTRO-SYNC-2.3: $pattern contains wildcards
+  Then:
+  - The RPMs are distro-synced [RPM-DISTRO-SYNC-1]
+RPM-DISTRO-SYNC-3:
+  Desc: I can distro-sync all RPMs
+  Then:
+  - All installed RPMs are distro-synced [RPM-DISTRO-SYNC-1]
