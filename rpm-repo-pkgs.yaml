@@ -1,0 +1,89 @@
+RPM-REPO-PKGS-LIST-1:
+  Desc: I can display brief information about RPMs in a repo
+  Then:
+  - For given repo, [RPM-LIST-2] MUST work
+  - For given repo, [RPM-LIST-3] MUST work
+  - For given repo, [RPM-LIST-4] MUST work
+  - For given repo, [RPM-LIST-5] MUST work
+  - For given repo, [RPM-LIST-6] MUST work
+  - For given repo, [RPM-LIST-7] MUST work
+  Examples:
+  - yum repo-pkgs $repoid list [$pkg]
+  - yum repo-pkgs $repoid list all [$pkg]
+  - yum repo-pkgs $repoid list installed [$pkg]
+  - yum repo-pkgs $repoid list available [$pkg]
+  - yum repo-pkgs $repoid list updates [$pkg]
+  TODO:
+  - replace with yum list --repoid
+RPM-REPO-PKGS-INFO-1:
+  Desc: I can display details about RPMs in a repo
+  Where:
+  - For given repo, [RPM-INFO-2] MUST work
+  - For given repo, [RPM-INFO-3] MUST work
+  - For given repo, [RPM-INFO-4] MUST work
+  - For given repo, [RPM-INFO-5] MUST work
+  - For given repo, [RPM-INFO-6] MUST work
+  - For given repo, [RPM-INFO-7] MUST work
+  Examples:
+  - yum repo-pkgs $repoid info [$pkg]
+  - yum repo-pkgs $repoid info all [$pkg]
+  - yum repo-pkgs $repoid info installed [$pkg]
+  - yum repo-pkgs $repoid info available [$pkg]
+  - yum repo-pkgs $repoid info updates [$pkg]
+  TODO:
+  - replace with yum info --repoid
+RPM-REPO-PKGS-INSTALL-1:
+  Desc: I can install RPMs from a repo
+  Where:
+  - For given repo, [RPM-INSTALL-2] MUST work
+  - For given repo, [RPM-INSTALL-3] MUST work
+  - For given repo, [RPM-INSTALL-4] MUST work
+  Examples:
+  - yum repo-pkgs $repoid install $pkgspec
+  - yum repo-pkgs $repoid install $provide
+  - yum repo-pkgs $repoid install $file_provide
+  TODO:
+  - replace with yum install --repoid
+RPM-REPO-PKGS-REMOVE-1:
+  Desc: I can remove RPMs installed from a repo
+  Where:
+  - For given repo, [RPM-REMOVE-2] MUST work
+  - For given repo, [RPM-REMOVE-3] MUST work
+  - For given repo, [RPM-REMOVE-4] MUST work
+  - The provided repo MAY NOT be available, repoid is matched with software db
+  Examples:
+  - yum repo-pkgs $repoid remove $pkgspec
+  - yum repo-pkgs $repoid remove $provide
+  - yum repo-pkgs $repoid remove $file_provide
+  TODO:
+  - replace with yum remove --repoid (+ consider repos from software db)
+RPM-REPO-PKGS-UPGRADE-1:
+  Desc: I can upgrade RPMs from a repo
+  Where:
+  - For given repo, [RPM-UPGRADE-2] MUST work
+  - For given repo, [RPM-UPGRADE-3] MUST work
+  - For given repo, [RPM-UPGRADE-4] MUST work
+  - For given repo, [RPM-UPGRADE-7] MUST work
+  Examples:
+  - yum repo-pkgs $repoid upgrade
+  - yum repo-pkgs $repoid upgrade $pkgspec
+  - yum repo-pkgs $repoid upgrade $provide
+  - yum repo-pkgs $repoid upgrade $file_provide
+  TODO:
+  - replace with yum upgrade --repoid
+RPM-REPO-PKGS-REINSTALL-1:
+  Desc: I can reinstall RPMs from a repo
+  Where:
+  - For given repo, [RPM-REINSTALL-2] MUST work
+  - For given repo, [RPM-REINSTALL-3] MUST work
+  - For given repo, [RPM-REINSTALL-4] MUST work
+  Examples:
+  - yum repo-pkgs $repoid reinstall $pkgspec
+  - yum repo-pkgs $repoid reinstall $provide
+  - yum repo-pkgs $repoid reinstall $file_provide
+  TODO:
+  - replace with yum reinstall --repoid
+  - clarify if repoid refers to remote repo or repoid of installed packages
+RPM-REPO-PKGS-TODO:
+  TODO:
+  - not sure what yum repo-pkgs $repoid remove-or-* means

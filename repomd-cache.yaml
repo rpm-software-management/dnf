@@ -7,3 +7,4 @@ REPOMD-CACHE-UPDATE-1:
   - yum makecache
   TODO:
   - proposed commands: yum cache update; yum repo update-cache
+  - the -C/--cacheonly option MUST conflict with this command

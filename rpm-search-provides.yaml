@@ -1,0 +1,42 @@
+RPM-SEARCH-PROVIDES-1:
+  Desc: I can search for RPMs by their provides
+  Then:
+  - Field 'NEVRA' MUST be displayed
+  - Field 'Summary' MUST be displayed
+  - Field 'Repo' (repoid) MUST be displayed
+  Examples:
+  - yum provides $pattern
+  - yum whatprovides $pattern
+  TODO:
+  - YUM3 highlights matched strings
+  - YUM3 does not match everything (name, provides, files) at once, it tries them
+    in this order
+RPM-SEARCH-PROVIDES-2:
+  Desc: I can search for RPMs that provide a $pkgspec
+  Where:
+    RPM-SEARCH-PROVIDES-2.1: $pkgspec is name
+    RPM-SEARCH-PROVIDES-2.6: $pkgspec contains name with dashes
+    RPM-SEARCH-PROVIDES-2.7: $pkgspec contains wildcards
+  Then:
+  - RPMs that provide matching $pkgspec MUST be searched and displayed [RPM-SEARCH-PROVIDES-1]
+  TODO:
+  - other matches than just $name? (re-number 'Where' items in that case)
+RPM-SEARCH-PROVIDES-3:
+  Desc: I can search for RPMs that provide a $provide
+  Where:
+    RPM-SEARCH-PROVIDES-3.1: $provide is key
+    RPM-SEARCH-PROVIDES-3.2: $provide is key = value
+    RPM-SEARCH-PROVIDES-3.3: $provide is key > value
+    RPM-SEARCH-PROVIDES-3.4: $provide is key >= value
+    RPM-SEARCH-PROVIDES-3.5: $provide is key <= value
+    RPM-SEARCH-PROVIDES-3.6: $provide is key < value
+  Then:
+  - RPMs that provide matching $pkgspec MUST be searched and displayed [RPM-SEARCH-PROVIDES-1]
+RPM-SEARCH-PROVIDES-4:
+  Desc: I can search for RPMs that provide a $file_provide
+  Where:
+    RPM-SEARCH-PROVIDES-4.1: $file_provide is a file
+    RPM-SEARCH-PROVIDES-4.2: $file_provide is a directory
+    RPM-SEARCH-PROVIDES-4.3: $file_provide contains wildcards
+  Then:
+  - RPMs that provide matching $pkgspec MUST be searched and displayed [RPM-SEARCH-PROVIDES-1]

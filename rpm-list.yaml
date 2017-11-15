@@ -36,7 +36,7 @@ RPM-LIST-4:
   Then:
   - The RPM brief information MUST be displayed [RPM-LIST-1]
   TODO:
-  - doesn't work in YUM3; works in DNF
+  - does not work in YUM3; works in DNF
 RPM-LIST-5:
   Desc: I can display details about all (available and installed) RPMs
   Then:

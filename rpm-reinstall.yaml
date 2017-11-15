@@ -1,0 +1,57 @@
+RPM-REINSTALL-1:
+  Desc: I can reinstall an RPM
+  Then:
+  - The RPM MUST be reinstalled on disk (missing files restored)
+  - The RPM MUST stay at the same version in the RPM Database
+  - The RPM MUST stay at the same version in the DNF Software Database
+  - The RPM MUST appear in a new transaction in the DNF Software Database
+  - The RPM SHOULD be reinstalled from the original repo if possible
+RPM-REINSTALL-2:
+  Desc: I can reinstall an RPM by $pkgspec
+  Where:
+    RPM-REINSTALL-2.1: $pkgspec is name
+    RPM-REINSTALL-2.2: $pkgspec is name-version
+    RPM-REINSTALL-2.3: $pkgspec is name-version-release
+    RPM-REINSTALL-2.4: $pkgspec is name-version-release.arch
+    RPM-REINSTALL-2.5: $pkgspec is name.arch
+    RPM-REINSTALL-2.6: $pkgspec contains name with dashes
+    RPM-REINSTALL-2.7: $pkgspec contains wildcards
+  Then:
+  - An RPM that matches $pkgspec and is installed gets reinstalled [RPM-REINSTALL-1]
+RPM-REINSTALL-3:
+  Desc: I can reinstall an RPM by $provide
+  Where:
+    RPM-REINSTALL-3.1: $provide is key
+    RPM-REINSTALL-3.2: $provide is key = value
+    RPM-REINSTALL-3.3: $provide is key > value
+    RPM-REINSTALL-3.4: $provide is key >= value
+    RPM-REINSTALL-3.5: $provide is key <= value
+    RPM-REINSTALL-3.6: $provide is key < value
+  Then:
+  - An RPM that matches $pkgspec and is installed gets reinstalled [RPM-REINSTALL-1]
+RPM-REINSTALL-4:
+  Desc: I can downgrade an RPM by $file_provide
+  Where:
+    RPM-REINSTALL-4.1: $file_provide is a file
+    RPM-REINSTALL-4.2: $file_provide is a directory
+    RPM-REINSTALL-4.3: $file_provide contains wildcards
+  Then:
+  - An RPM that matches $pkgspec and is installed gets reinstalled [RPM-REINSTALL-1]
+RPM-REINSTALL-5:
+  Desc: I can reinstall an RPM from $path on disk
+  Where:
+    RPM-REINSTALL-5.1: $path is an absolute path to an RPM
+    RPM-REINSTALL-5.2: $path is a relative path to an RPM
+    RPM-REINSTALL-5.3: $path contains wildcards
+  Then:
+  - The RPM MUST be reinstalled [RPM-REINSTALL-1]
+RPM-REINSTALL-6:
+  Desc: I can reinstall an RPM from $url
+  Where:
+    RPM-REINSTALL-6.1: $url is a http address
+    RPM-REINSTALL-6.2: $url is a ftp address
+    RPM-REINSTALL-6.3: $url is a ftp address with wildcards
+    RPM-REINSTALL-6.4: $url is a local path
+    RPM-REINSTALL-6.5: $url is a local path with wildcards
+  Then:
+  - The RPM MUST be reinstalled [RPM-REINSTALL-1]
