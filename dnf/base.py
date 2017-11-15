@@ -1797,7 +1797,11 @@ class Base(object):
             if not wildcard and solution['nevra'] and solution['nevra'].name:
                 installed = self.sack.query().installed()
                 pkg_name = solution['nevra'].name
+<<<<<<< HEAD
                 installed.filterm(name=pkg_name).apply()
+=======
+                installed = installed.filter(name=pkg_name).apply()
+>>>>>>> Allow to apply repo priority setting for dnf upgrade
                 if not installed:
                     msg = _('Package %s available, but not installed.')
                     logger.warning(msg, pkg_name)
@@ -1809,7 +1813,11 @@ class Base(object):
                         logger.warning(msg, "{}.{}".format(pkg_name, solution['nevra'].arch))
 
             if self.conf.obsoletes and solution['nevra'] and solution['nevra'].has_just_name():
+<<<<<<< HEAD
                 obsoletes = self.sack.query().filterm(obsoletes=q.installed())
+=======
+                obsoletes = self.sack.query().filter(obsoletes=q.installed())
+>>>>>>> Allow to apply repo priority setting for dnf upgrade
                 # provide only available packages to solver otherwise selection of available
                 # possibilities will be ignored
                 q = q.available()
