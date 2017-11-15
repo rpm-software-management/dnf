@@ -1787,7 +1787,7 @@ class Base(object):
             # only solution with nevra.name provide packages with same name
             if not wildcard and solution['nevra'] and solution['nevra'].name:
                 installed = self.sack.query().installed()
-                pkg_name = q[0].name
+                pkg_name = solution['nevra'].name
                 installed = installed.filter(name=pkg_name).apply()
                 if not installed:
                     msg = _('Package %s available, but not installed.')
@@ -1799,13 +1799,15 @@ class Base(object):
                         msg = _('Package %s available, but installed for different architecture.')
                         logger.warning(msg, "{}.{}".format(pkg_name, solution['nevra'].arch))
 
-            if solution['nevra'] and solution['nevra'].has_just_name() and self.conf.obsoletes:
+            if self.conf.obsoletes and solution['nevra'] and solution['nevra'].has_just_name():
                 obsoletes = self.sack.query().filter(obsoletes=q.installed())
-                q = q.upgrades()
+                # provide only available packages to solver otherwise selection of available
+                # possibilities will be ignored
+                q = q.available()
                 # add obsoletes into transaction
                 q = q.union(obsoletes)
             else:
-                q = q.upgrades()
+                q = q.available()
             if reponame is not None:
                 q = q.filter(reponame=reponame)
             q = self._merge_update_filters(q, pkg_spec=pkg_spec)
@@ -1822,7 +1824,9 @@ class Base(object):
         if reponame is None and not self._update_security_filters:
             self._goal.upgrade_all()
         else:
-            q = self.sack.query().upgrades()
+            # provide only available packages to solver otherwise selection of available
+            # possibilities will be ignored
+            q = self.sack.query().available()
             # add obsoletes into transaction
             if self.conf.obsoletes:
                 q = q.union(self.sack.query().filter(obsoletes=self.sack.query().installed()))
