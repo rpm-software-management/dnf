@@ -34,7 +34,7 @@ class UpgradeCommand(commands.Command):
     """A class containing methods needed by the cli to execute the
     update command.
     """
-    aliases = ('upgrade', 'update', 'upgrade-to', 'update-to', 'up')
+    aliases = ('upgrade', 'update', 'upgrade-to', 'update-to')
     summary = _('upgrade a package or packages on your system')
 
     @staticmethod

@@ -48,7 +48,7 @@ class ShellDemandSheet(object):
 
 class ShellCommand(commands.Command, cmd.Cmd):
 
-    aliases = ('shell', 'sh')
+    aliases = ('shell',)
     summary = _('run an interactive DNF shell')
 
     MAPPING = {'repo': 'repo',
