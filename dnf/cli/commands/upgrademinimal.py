@@ -27,7 +27,7 @@ class UpgradeMinimalCommand(UpgradeCommand):
     command.
     """
 
-    aliases = ('upgrade-minimal', 'update-minimal', 'up-min', 'u-m', 'um')
+    aliases = ('upgrade-minimal', 'update-minimal')
     summary = _("upgrade, but only 'newest' package match which fixes a problem"
                 " that affects your system")
 

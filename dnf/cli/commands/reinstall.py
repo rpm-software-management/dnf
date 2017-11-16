@@ -34,7 +34,7 @@ class ReinstallCommand(commands.Command):
     """A class containing methods needed by the cli to execute the reinstall command.
     """
 
-    aliases = ('reinstall', 'rei', 'ri')
+    aliases = ('reinstall',)
     summary = _('reinstall a package')
 
     @staticmethod
