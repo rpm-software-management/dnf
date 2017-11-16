@@ -118,6 +118,9 @@ class RepoQueryCommand(commands.Command):
                             help=_('show only results that owns FILE'))
         parser.add_argument('--whatconflicts', metavar='REQ',
                             help=_('show only results that conflict REQ'))
+        parser.add_argument('--whatdepends', metavar='REQ',
+                            help=_('shows results that requires, suggests, supplements, enhances,'
+                                   'or recommends package provides and files REQ'))
         parser.add_argument('--whatobsoletes', metavar='REQ',
                             help=_('show only results that obsolete REQ'))
         parser.add_argument('--whatprovides', metavar='REQ',
@@ -201,6 +204,8 @@ class RepoQueryCommand(commands.Command):
         package_attribute = parser.add_mutually_exclusive_group()
         help_msgs = {
             'conflicts': _('Display capabilities that the package conflicts with.'),
+            'depends': _('Display capabilities that the package can depend on, enhance, recommend,'
+                         ' suggest, and supplement.'),
             'enhances': _('Display capabilities that the package can enhance.'),
             'provides': _('Display capabilities provided by the package.'),
             'recommends':  _('Display capabilities that the package recommends.'),
@@ -288,30 +293,45 @@ class RepoQueryCommand(commands.Command):
             # there don't exist on the dnf Package object.
             raise dnf.exceptions.Error(str(e))
 
-    def _get_recursive_deps_query(self, query_in, query_select, done=None, recursive=False):
+    def _get_recursive_deps_query(self, query_in, query_select, done=None, recursive=False,
+                                  all_deps=False):
         done = done if done else self.base.sack.query().filter(empty=True)
         t = self.base.sack.query().filter(empty=True)
         for pkg in query_select.run():
+            pkg_provides = pkg.provides
             t = t.union(query_in.filter(requires=pkg.provides))
             t = t.union(query_in.filter(requires=pkg.files))
+            if all_deps:
+                t = t.union(query_in.filter(recommends=pkg_provides))
+                t = t.union(query_in.filter(enhances=pkg_provides))
+                t = t.union(query_in.filter(supplements=pkg_provides))
+                t = t.union(query_in.filter(suggests=pkg_provides))
         if recursive:
             query_select = t.difference(done)
             if query_select:
                 done = self._get_recursive_deps_query(query_in, query_select, done=t.union(done),
-                                                      recursive=recursive)
+                                                      recursive=recursive, all_deps=all_deps)
         return t.union(done)
 
-    def by_all_deps(self, name, query):
+    def by_all_deps(self, requires_name, depends_name, query):
+        name = requires_name or depends_name
         defaultquery = query.intersection(dnf.subject.Subject(name).get_best_query(
             self.base.sack, with_provides=False, forms=[hawkey.FORM_NEVRA, hawkey.FORM_NEVR,
                                                         hawkey.FORM_NEV, hawkey.FORM_NA,
                                                         hawkey.FORM_NAME]))
         requiresquery = query.filter(requires__glob=name)
+        if depends_name:
+            requiresquery = requiresquery.union(query.filter(recommends__glob=depends_name))
+            requiresquery = requiresquery.union(query.filter(enhances__glob=depends_name))
+            requiresquery = requiresquery.union(query.filter(supplements__glob=depends_name))
+            requiresquery = requiresquery.union(query.filter(suggests__glob=depends_name))
 
-        done = requiresquery.union(self._get_recursive_deps_query(query, defaultquery))
+        done = requiresquery.union(self._get_recursive_deps_query(query, defaultquery,
+                                                                  all_deps=depends_name))
         if self.opts.recursive:
             done = done.union(self._get_recursive_deps_query(query, done,
-                                                             recursive=self.opts.recursive))
+                                                             recursive=self.opts.recursive,
+                                                             all_deps=depends_name))
         return done
 
     def _get_recursive_providers_query(self, query_in, providers, done=None):
@@ -340,11 +360,12 @@ class RepoQueryCommand(commands.Command):
             if forms:
                 kwark["forms"] = forms
             pkgs = []
+            query_results = q.filter(empty=True)
             for key in self.opts.key:
-                q = dnf.subject.Subject(key, ignore_case=True).get_best_query(
-                    self.base.sack, with_provides=False, **kwark)
-                pkgs += q.run()
-            q = self.base.sack.query().filter(pkg=pkgs)
+                query_results = query_results.union(
+                    dnf.subject.Subject(key, ignore_case=True).get_best_query(
+                        self.base.sack, with_provides=False, **kwark))
+            q = query_results
 
         if self.opts.recent:
             q = q._recent(self.base.conf.recent)
@@ -393,16 +414,27 @@ class RepoQueryCommand(commands.Command):
             else:
                 q = q.filter(file__glob=self.opts.whatprovides)
         if self.opts.alldeps or self.opts.exactdeps:
-            if not self.opts.whatrequires:
+            if not (self.opts.whatrequires or self.opts.whatdepends):
                 raise dnf.exceptions.Error(
-                    _("argument {} requires --whatrequires option".format(
+                    _("argument {} requires --whatrequires or --whatdepends option".format(
                         '--alldeps' if self.opts.alldeps else '--exactdeps')))
             if self.opts.alldeps:
-                q = self.by_all_deps(self.opts.whatrequires, q)
+                q = self.by_all_deps(self.opts.whatrequires, self.opts.whatdepends, q)
             else:
-                q = q.filter(requires__glob=self.opts.whatrequires)
-        elif self.opts.whatrequires:
-            q = self.by_all_deps(self.opts.whatrequires, q)
+                if self.opts.whatrequires:
+                    q = q.filter(requires__glob=self.opts.whatrequires)
+                else:
+                    dependsquery = q.filter(requires__glob=self.opts.whatdepends)
+                    dependsquery = dependsquery.union(
+                        q.filter(recommends__glob=self.opts.whatdepends))
+                    dependsquery = dependsquery.union(
+                        q.filter(enhances__glob=self.opts.whatdepends))
+                    dependsquery = dependsquery.union(
+                        q.filter(supplements__glob=self.opts.whatdepends))
+                    q = dependsquery.union(q.filter(suggests__glob=self.opts.whatdepends))
+
+        elif self.opts.whatrequires or self.opts.whatdepends:
+            q = self.by_all_deps(self.opts.whatrequires, self.opts.whatdepends, q)
         if self.opts.whatrecommends:
             q = q.filter(recommends__glob=self.opts.whatrecommends)
         if self.opts.whatenhances:
@@ -440,7 +472,11 @@ class RepoQueryCommand(commands.Command):
         if self.opts.packageatr:
             for pkg in q.run():
                 if self.opts.list != 'userinstalled' or self.base._is_userinstalled(pkg):
-                    rels = getattr(pkg, OPTS_MAPPING[self.opts.packageatr])
+                    if self.opts.packageatr == 'depends':
+                        rels = pkg.requires + pkg.enhances + pkg.suggests + pkg.supplements + \
+                               pkg.recommends
+                    else:
+                        rels = getattr(pkg, OPTS_MAPPING[self.opts.packageatr])
                     for rel in rels:
                         pkgs.add(str(rel))
         elif self.opts.location:
@@ -550,8 +586,8 @@ class RepoQueryCommand(commands.Command):
                     pkgquery = self.base.sack.query().filter(
                         pkg=list(ar.values()))
                 else:
-                    pkgquery = self.by_all_deps(pkg.name, aquery) if opts.alldeps else aquery.filter(
-                        requires__glob=pkg.name)
+                    pkgquery = self.by_all_deps(pkg.name, None, aquery) if opts.alldeps \
+                        else aquery.filter(requires__glob=pkg.name)
                 self.tree_seed(pkgquery, aquery, opts, level + 1, usedpkgs)
 
 
