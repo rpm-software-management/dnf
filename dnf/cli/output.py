@@ -223,21 +223,34 @@ class Output(object):
            extra spaces that may remain after other allocation has
            taken place
         :param total_width: the total width of the output.
-           self.term.columns is used by default
+           self.term.real_columns is used by default
         :param indent: string that will be prefixed to a line of
            output to create e.g. an indent
         :return: a list of the widths of the columns that the fields
            in data should be placed into for output
         """
-        if total_width is None:
-            total_width = self.term.columns
-
         cols = len(data)
         # Convert the data to ascending list of tuples, (field_length, pkgs)
         pdata = data
         data = [None] * cols # Don't modify the passed in data
         for d in range(0, cols):
             data[d] = sorted(pdata[d].items())
+
+        if total_width is None:
+            total_width = self.term.real_columns
+
+        # i'm not able to get real terminal width so i'm probably
+        # running in non interactive terminal (pipe to grep, redirect to file...)
+        # just return maximal lengths of each data column.
+        if not total_width:
+            full_columns = []
+            for col in data:
+                if col:
+                    full_columns.append(col[-1][0])
+                else:
+                    full_columns.append(0)
+            full_columns[0] += len(indent)
+            return full_columns
 
         #  We start allocating 1 char to everything but the last column, and a
         # space between each (again, except for the last column). Because
@@ -1306,7 +1319,7 @@ Transaction Summary
         if remote_size <= 0:
             return
 
-        width = dnf.cli.term._term_width()
+        width = self.term.columns
         logger.info("-" * width)
         dl_time = max(0.01, time.time() - download_start_timestamp)
         msg = ' %5sB/s | %5sB %9s     ' % (

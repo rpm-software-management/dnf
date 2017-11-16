@@ -27,20 +27,26 @@ import sys
 import termios
 
 
-def _term_width(fd=1):
+def _real_term_width(fd=1):
     """ Get the real terminal width """
-    # Code from http://mail.python.org/pipermail/python-list/2000-May/033365.html
     try:
         buf = 'abcdefgh'
         buf = fcntl.ioctl(fd, termios.TIOCGWINSZ, buf)
         ret = struct.unpack(b'hhhh', buf)[1]
-        if ret == 0:
-            return 80
-        if ret < 20:
-            return 20
         return ret
     except IOError:
+        return None
+
+
+def _term_width(fd=1):
+    """ Compute terminal width falling to default 80 in case of trouble"""
+    tw = _real_term_width(fd=1)
+    if not tw:
         return 80
+    elif tw < 20:
+        return 20
+    else:
+        return tw
 
 
 class Term(object):
@@ -55,6 +61,7 @@ class Term(object):
 
     __enabled = True
 
+    real_columns = property(lambda self: _real_term_width())
     columns = property(lambda self: _term_width())
 
     __cap_names = {

@@ -234,7 +234,8 @@ class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.CheckUpdateSubCommand`` class."""
 
-    def test(self):
+    @mock.patch('dnf.cli.term._real_term_width', return_value=80)
+    def test(self, _real_term_width):
         """ Test whether only upgrades in the repository are listed. """
         history = self.cli.base.history
         for pkg in self.cli.base.sack.query().installed().filter(name='tour'):
