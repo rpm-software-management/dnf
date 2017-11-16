@@ -401,6 +401,7 @@ class MockTerminal(object):
     def __init__(self):
         self.MODE = {'bold'   : '', 'normal' : ''}
         self.columns = 80
+        self.real_columns = 80
         self.reinit = mock.Mock()
 
     def bold(self, s):

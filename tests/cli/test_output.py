@@ -90,16 +90,16 @@ class OutputTest(support.TestCase):
         self.base = support.MockBase('updates')
         self.output = dnf.cli.output.Output(self.base, self.base.conf)
 
-    @mock.patch('dnf.cli.term._term_width', return_value=80)
-    def test_col_widths(self, _term_width):
+    @mock.patch('dnf.cli.term._real_term_width', return_value=80)
+    def test_col_widths(self, _real_term_width):
         rows = (('pep', 'per', 'row',
                  '', 'lon', 'e'))
         self.assertCountEqual(self.output._col_widths(rows), (-38, -37, -1))
 
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.cli.output.P_', dnf.pycomp.NullTranslations().ungettext)
-    @mock.patch('dnf.cli.term._term_width', return_value=80)
-    def test_list_transaction(self, _term_width):
+    @mock.patch('dnf.cli.term._real_term_width', return_value=80)
+    def test_list_transaction(self, _real_term_width):
         sack = self.base.sack
         q = sack.query().filter(name='pepper')
         i = q.installed()[0]
@@ -175,8 +175,8 @@ class OutputTest(support.TestCase):
         self.assertEqual(input_fnc.called, 3)
 
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
-    @mock.patch('dnf.cli.term._term_width', lambda: 80)
-    def test_infoOutput_with_none_description(self):
+    @mock.patch('dnf.cli.term._real_term_width', return_value=80)
+    def test_infoOutput_with_none_description(self, _real_term_width):
         pkg = support.MockPackage('tour-5-0.noarch')
         pkg._from_system = False
         pkg._size = 0
@@ -235,16 +235,16 @@ class GroupOutputTest(unittest.TestCase):
         self.output = output
 
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
-    @mock.patch('dnf.cli.term._term_width', return_value=80)
-    def test_group_info(self, _term_width):
+    @mock.patch('dnf.cli.term._real_term_width', return_value=80)
+    def test_group_info(self, _real_term_width):
         group = self.base.comps.group_by_pattern('Peppers')
         with support.patch_std_streams() as (stdout, stderr):
             self.output.display_pkgs_in_groups(group)
         self.assertEqual(stdout.getvalue(), PKGS_IN_GROUPS_OUTPUT)
 
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
-    @mock.patch('dnf.cli.term._term_width', return_value=80)
-    def test_group_verbose_info(self, _term_width):
+    @mock.patch('dnf.cli.term._real_term_width', return_value=80)
+    def test_group_verbose_info(self, _real_term_width):
         group = self.base.comps.group_by_pattern('Peppers')
         self.base.set_debuglevel(dnf.const.VERBOSE_LEVEL)
         with support.patch_std_streams() as (stdout, stderr):
@@ -252,8 +252,8 @@ class GroupOutputTest(unittest.TestCase):
         self.assertEqual(stdout.getvalue(), PKGS_IN_GROUPS_VERBOSE_OUTPUT)
 
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
-    @mock.patch('dnf.cli.term._term_width', return_value=80)
-    def test_environment_info(self, _term_width):
+    @mock.patch('dnf.cli.term._real_term_width', return_value=80)
+    def test_environment_info(self, _real_term_width):
         env = self.base.comps.environments[0]
         with support.patch_std_streams() as (stdout, stderr):
             self.output.display_groups_in_environment(env)
