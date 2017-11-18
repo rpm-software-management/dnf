@@ -39,7 +39,7 @@ class QueriesTest(support.TestCase):
         sack = support.mock_sack()
         q = sack.query().filter(file__eq="/raised/smile")
         self.assertEqual(len(q.run()), 1)
-        pkg = q.result[0]
+        pkg = q[0]
 
     def test_by_repo(self):
         sack = support.mock_sack("updates", "main")
@@ -78,13 +78,6 @@ class QueriesTest(support.TestCase):
         pkgs = tours.latest(-2).run()
         self.assertEqual(pkgs, tail2)
 
-    def test_recent(self):
-        sack = support.mock_sack("main")
-        now = time.time()
-        installed = support.MockQuery(sack.query().installed())
-        installed[0].buildtime = now - 86400/2
-        pkgs = installed._recent(1)
-        self.assertEqual(len(pkgs), 1)
 
 class SubjectTest(support.TestCase):
     def setUp(self):

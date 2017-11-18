@@ -577,9 +577,9 @@ transactions and act according to this information (assuming the
     It will show all installonly packages, packages installed outside of DNF and packages not
     installed as dependency. I.e. it lists packages that will stay on the system when
     :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with
-    `clean_requirements_on_remove` configuration option set to True is executed. Same results can be
-    accomplished with "dnf repoquery --userinstalled" but repoquery command is much more powerful in
-    formatting of an output.
+    `clean_requirements_on_remove` configuration option set to True is executed. Note the same
+    results can be accomplished with ``dnf repoquery --userinstalled``, and the repoquery
+    command is more powerful in formatting of the output.
 
 This command by default does not force a sync of expired metadata.
 See also :ref:`\metadata_synchronization-label`
@@ -901,6 +901,10 @@ resulting packages matching the specification. All packages are considered if no
     in configuration file (.conf) might influence the result, but if the command line option  \-\
     :ref:`-disableexcludes <disableexcludes-label>` is used, it ensures that all installed packages will be listed.
 
+``--whatdepends <capability>``
+    Limit the resulting set only to packages that require, enhance, recommend,  suggest, or
+    supplement ``<capability>``.
+
 ``--whatconflicts <capability>``
     Limit the resulting set only to packages that conflict ``<capability>``.
 
@@ -926,12 +930,12 @@ resulting packages matching the specification. All packages are considered if no
     Limit the resulting set only to packages that supplement ``<capability>``.
 
 ``--alldeps``
-    This option is stackable with ``--whatrequires`` only. Additionally it adds to the result set all packages requiring
-    the package features (used as default).
+    This option is stackable with ``--whatrequires``  or ``--whatdepends`` only. Additionally it
+    adds to the result set all packages requiring the package features (used as default).
 
 ``--exactdeps``
-    This option is stackable with ``--whatrequires`` only. Limit the resulting set only to packages that require
-    ``<capability>`` specified by --whatrequires.
+    This option is stackable with ``--whatrequires`` or ``--whatdepends`` only. Limit the resulting
+    set only to packages that require ``<capability>`` specified by --whatrequires.
 
 ``--srpm``
     Operate on corresponding source RPM.
@@ -957,6 +961,10 @@ are displayed in the standard NEVRA notation.
 
 ``--conflicts``
     Display capabilities that the package conflicts with. Same as ``--qf "%{conflicts}``.
+
+``--depends``
+    Display capabilities that the package depends on, enhances, recommends, suggests, or
+    supplements.
 
 ``--enhances``
     Display capabilities enhanced by the package. Same as ``--qf "%{enhances}""``.

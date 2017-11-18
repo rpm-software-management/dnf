@@ -1356,7 +1356,7 @@ class Base(object):
 
         # packages to be removed by autoremove
         elif pkgnarrow == 'autoremove':
-            autoremove_q = query_for_repo(q)._unneeded(self.sack, self.history)
+            autoremove_q = query_for_repo(q)._unneeded(self.history.swdb)
             autoremove = autoremove_q.run()
 
         # not in a repo but installed
@@ -1415,9 +1415,7 @@ class Base(object):
             reason = self.history.reason(pkg)
             self.history.set_reason(pkg, SwdbReason.DEP)
             self._revert_reason.append((pkg, reason))
-        unneeded_pkgs = self.sack.query()._unneeded(self.sack,
-                                                    self.history,
-                                                    debug_solver=False)
+        unneeded_pkgs = self.sack.query()._unneeded(self.history.swdb, debug_solver=False)
 
         remove_packages = query.intersection(unneeded_pkgs)
         if remove_packages:
@@ -1787,7 +1785,7 @@ class Base(object):
             # only solution with nevra.name provide packages with same name
             if not wildcard and solution['nevra'] and solution['nevra'].name:
                 installed = self.sack.query().installed()
-                pkg_name = q[0].name
+                pkg_name = solution['nevra'].name
                 installed = installed.filter(name=pkg_name).apply()
                 if not installed:
                     msg = _('Package %s available, but not installed.')
@@ -1799,13 +1797,15 @@ class Base(object):
                         msg = _('Package %s available, but installed for different architecture.')
                         logger.warning(msg, "{}.{}".format(pkg_name, solution['nevra'].arch))
 
-            if solution['nevra'] and solution['nevra'].has_just_name() and self.conf.obsoletes:
+            if self.conf.obsoletes and solution['nevra'] and solution['nevra'].has_just_name():
                 obsoletes = self.sack.query().filter(obsoletes=q.installed())
-                q = q.upgrades()
+                # provide only available packages to solver otherwise selection of available
+                # possibilities will be ignored
+                q = q.available()
                 # add obsoletes into transaction
                 q = q.union(obsoletes)
             else:
-                q = q.upgrades()
+                q = q.available()
             if reponame is not None:
                 q = q.filter(reponame=reponame)
             q = self._merge_update_filters(q, pkg_spec=pkg_spec)
@@ -1822,7 +1822,9 @@ class Base(object):
         if reponame is None and not self._update_security_filters:
             self._goal.upgrade_all()
         else:
-            q = self.sack.query().upgrades()
+            # provide only available packages to solver otherwise selection of available
+            # possibilities will be ignored
+            q = self.sack.query().available()
             # add obsoletes into transaction
             if self.conf.obsoletes:
                 q = q.union(self.sack.query().filter(obsoletes=self.sack.query().installed()))
@@ -1879,7 +1881,7 @@ class Base(object):
                 raise dnf.exceptions.Error(_('No packages marked for removal.'))
 
         else:
-            pkgs = self.sack.query()._unneeded(self.sack, self.history,
+            pkgs = self.sack.query()._unneeded(self.history.swdb,
                                                debug_solver=self.conf.debug_solver)
             for pkg in pkgs:
                 self.package_remove(pkg)

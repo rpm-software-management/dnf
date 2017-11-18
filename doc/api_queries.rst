@@ -110,7 +110,9 @@
 
   .. method:: latest(limit=1)
 
-    Return a new query that limits the result to ``limit`` highest version of packages per package name and per architecture.
+    Return a new query that limits the result to ``limit`` highest version of packages per package
+    name and per architecture. In case the limit is negative number, it excludes the number of
+    latest versions according to limit.
 
   .. method:: run
 
