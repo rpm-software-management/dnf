@@ -83,7 +83,7 @@ Available commands:
 * :ref:`upgrade-minimal <upgrade_minimal_command-label>`
 * :ref:`upgrade-to <upgrade_to_command-label>`
 
-Additional informations:
+Additional information:
 
 * :ref:`Options <options-label>`
 * :ref:`Specifying Packages <specifying_packages-label>`
@@ -248,7 +248,7 @@ Options
     :ref:`clean_requirements_on_remove <clean_requirements_on_remove-label>` conf option to ``False``.
 
 ``--nodocs``
-    do not install documentations by using rpm flag 'RPMTRANS_FLAG_NODOCS'
+    do not install documentation by using rpm flag 'RPMTRANS_FLAG_NODOCS'
 
 ``--nogpgcheck``
     skip checking GPG signatures on packages
@@ -263,8 +263,8 @@ Options
     dnf's obsoletes processing logic. For more information see the
     :ref:`obsoletes option <obsoletes_conf_option-label>`.
 
-    Option also affects :ref:`repoquery command <repoquery_command-label>`,
-    it display's capabilities that the package obsoletes.
+    This option also affects the :ref:`repoquery command <repoquery_command-label>`,
+    it displays capabilities that the package obsoletes.
 
     Configuration Option: :ref:`obsoletes <obsoletes_conf_option-label>`
 
@@ -373,7 +373,7 @@ this command.
     it. It also removes any dependencies that are no longer needed.
 
     There are also a few specific autoremove commands ``autoremove-n``, ``autoremove-na`` and
-    ``autoremove-nevra`` that allow specification of exact argument NEVRA format.
+    ``autoremove-nevra`` that allow the specification of an exact argument in NEVRA format.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
@@ -615,7 +615,7 @@ Install Command
     will be removed in the case of non-installonly package.
 
     There are also a few specific install commands ``install-n``, ``install-na`` and
-    ``install-nevra`` that allow to specify exact argument NEVRA format.
+    ``install-nevra`` that allow the specification of an exact argument in NEVRA format.
 
     See also :ref:`\configuration_files_replacement_policy-label`.
 
@@ -782,7 +782,7 @@ Remove Command
     Removes old installonly packages keeping only ``installonly_limit`` latest versions.
 
     There are also a few specific remove commands ``remove-n``, ``remove-na`` and ``remove-nevra``
-    that allow to specify exact argument NEVRA format.
+    that allow the specification of an exact argument in NEVRA format.
 
 Remove Examples
 ---------------
@@ -791,8 +791,8 @@ Remove Examples
     Remove packages ``acpi`` and ``tito``
 
 ``dnf remove $(dnf repoquery --extras --exclude=tito,acpi)``
-    Remove packages not present in any repository but it does't remove packages ``tito``
-    and ``acpi`` (they still might be removed if they require some of removed packages).
+    Remove packages not present in any repository, but it doesn't remove packages ``tito``
+    and ``acpi`` (they still might be removed if they require some of the removed packages).
 
 .. _repoinfo_command-label:
 
@@ -800,7 +800,7 @@ Remove Examples
 Repoinfo Command
 ----------------
 
-    This command is alias for :ref:`repolist <repolist_command-label>` command
+    This command is an alias for the :ref:`repolist <repolist_command-label>` command
     that provides more detailed information like ``dnf repolist -v``.
 
 .. _repolist_command-label:
@@ -830,7 +830,7 @@ Repoquery Command
     Provides list of recognized tags by repoquery option \-\ :ref:`-queryformat <queryformat_repoquery-label>`
 
     There are also a few specific repoquery commands ``repoquery-n``, ``repoquery-na`` and ``repoquery-nevra``
-    that allow to specify exact argument NEVRA format (does not affect arguments of options like --whatprovides <arg>, ...).
+    that allow the specification of an exact argument in NEVRA format (does not affect arguments of options like --whatprovides <arg>, ...).
 
 Select Options
 --------------
@@ -840,17 +840,17 @@ resulting packages matching the specification. All packages are considered if no
 
 ``<pkg-spec>``
     Package specification like: name[-[epoch:]version[-release]][.arch]. See :ref:`Specifying Packages
-    <specifying_packages-label>`
+    <specifying_packages-label>`.
 
 ``-a``, ``--all``
     Query all packages (for rpmquery compatibility / shorthand for repoquery '*' or repoquery
-    without argument)'
+    without arguments).
 
 ``--arch <arch>[,<arch>...]``
-    Limit the resulting set only to packages of selected architectures. Default is all
-    architectures). In some cases the result is affected by basearch of running system, therefore
-    to run repoquery for arch incompatible with your system can by used ``--forcearch=<arch>``
-    option to change basearch.
+    Limit the resulting set only to packages of selected architectures. (The default is all
+    architectures.) In some cases the result is affected by basearch of running system, therefore
+    to run repoquery for an arch incompatible with your system use the ``--forcearch=<arch>``
+    option to change the basearch.
 
 ``--duplicates``
     Limit the resulting set to installed duplicated packages (i.e. more package versions
@@ -879,7 +879,7 @@ resulting packages matching the specification. All packages are considered if no
 
 ``--latest-limit <number>``
     Limit the resulting set to <number> of latest packages for every package name and architecture.
-    If <number> is negative skip <number> of latest packages. If negative number is used use syntax
+    If <number> is negative skip <number> of latest packages. If negative number is supplied use syntax
     ``--latest-limit=<number>``.
 
 ``--recent``
