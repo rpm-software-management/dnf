@@ -40,7 +40,7 @@ class InstallCommand(commands.Command):
                    'install-na': hawkey.FORM_NA,
                    'install-nevra': hawkey.FORM_NEVRA}
 
-    aliases = ('install', 'localinstall', 'in') + tuple(nevra_forms.keys())
+    aliases = ('install', 'localinstall') + tuple(nevra_forms.keys())
     summary = _('install a package or packages on your system')
 
     @staticmethod

@@ -39,7 +39,7 @@ class SearchCommand(commands.Command):
     search command.
     """
 
-    aliases = ('search', 'se')
+    aliases = ('search',)
     summary = _('search package details for the given string')
 
     @staticmethod

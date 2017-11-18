@@ -42,7 +42,7 @@ class RemoveCommand(commands.Command):
                    'erase-na': hawkey.FORM_NA,
                    'erase-nevra': hawkey.FORM_NEVRA}
 
-    aliases = ('remove', 'erase', 'rm') + tuple(nevra_forms.keys())
+    aliases = ('remove', 'erase',) + tuple(nevra_forms.keys())
     summary = _('remove a package or packages from your system')
 
     @staticmethod
