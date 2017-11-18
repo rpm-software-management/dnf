@@ -844,7 +844,7 @@ resulting packages matching the specification. All packages are considered if no
 
 ``-a``, ``--all``
     Query all packages (for rpmquery compatibility / shorthand for repoquery '*' or repoquery
-    without argument).
+    without arguments).
 
 ``--arch <arch>[,<arch>...]``
     Limit the resulting set only to packages of selected architectures. (The default is all
