@@ -1,0 +1,78 @@
+ADVISORY-LIST-1:
+  Desc: I can display brief information about an Advisory
+  Then:
+  - Field MUST be displayed: Advisory ID
+  - Field MUST be displayed: Advisory Type
+  - Field MUST be displayed: Advisory Severity (only if available)
+  - Field MUST be displayed: Advisory RPMs (Artifacts/Items)
+ADVISORY-LIST-2:
+  Desc: I can display brief information about an Advisory filtered by $pkgspec
+  Where:
+    ADVISORY-LIST-2.1: $pkgspec is name
+    ADVISORY-LIST-2.2: $pkgspec is name-version
+    ADVISORY-LIST-2.3: $pkgspec is name-version-release
+    ADVISORY-LIST-2.4: $pkgspec is name-version-release.arch
+    ADVISORY-LIST-2.5: $pkgspec is name.arch
+    ADVISORY-LIST-2.6: $pkgspec contains name with dashes
+    ADVISORY-LIST-2.7: $pkgspec contains wildcards
+  Then:
+  - The Advisory brief information MUST be displayed [ADVISORY-LIST-1]
+  Examples:
+  - yum updateinfo list vim-minimal
+  - yum updateinfo list available vim-*
+  TODO:
+  - only .1, 6. and .7 work in YUM3
+ADVISORY-LIST-3:
+  Desc: I can display brief information about an Advisory by $advisory_id
+  Where:
+    ADVISORY-LIST-3.1: $advisory_id is a full Advisory ID
+    ADVISORY-LIST-3.2: $advisory_id contains wildcards
+  Then:
+  - The Advisory brief information MUST be displayed [ADVISORY-LIST-1]
+  Examples:
+  - yum updateinfo list RHSA-2016:2972
+  - yum updateinfo list available RH*A-2016:*
+ADVISORY-LIST-4:
+  Desc: I can display brief information about an Advisory by $cve_id
+  Where:
+    ADVISORY-LIST-4.1: $cve is a full CVE ID
+    ADVISORY-LIST-4.2: $cve contains wildcards
+  Then:
+  - The Advisory brief information MUST be displayed [ADVISORY-LIST-1]
+  Examples:
+  - yum updateinfo list CVE-2016-1248
+  - yum updateinfo list available CVE-2016-*
+ADVISORY-LIST-5:
+  Desc: I can display details about all (available and installed) Advisories
+  Then:
+  - The Advisory brief information about all Advisoriess MUST be displayed [ADVISORY-LIST-1]
+  Examples:
+  - yum updateinfo list all
+ADVISORY-LIST-6:
+  Desc: I can display details about available Advisories
+  Then:
+  - The Advisory brief information about available Advisories MUST be displayed [ADVISORY-LIST-1]
+  Examples:
+  - yum updateinfo list available
+ADVISORY-LIST-7:
+  Desc: I can display details about Advisories available as updates
+  Then:
+  - The Advisory brief information about Advisories available as updates MUST be displayed
+    [ADVISORY-LIST-1]
+  Examples:
+  - yum updateinfo list
+ADVISORY-LIST-8:
+  Desc: I can display details about Advisories installed on a local system
+  Then:
+  - The Advisory brief information about Advisories installed on a local system MUST
+    be displayed [ADVISORY-LIST-1]
+  Examples:
+  - yum updateinfo installed
+ADVISORY-LIST-9:
+  Desc: I can display details about Advisories with "security" type
+  Then:
+  - The Advisory brief information about Advisories with "security" type MUST be displayed
+    [ADVISORY-LIST-1]
+  Examples:
+  - yum updateinfo security
+  - yum updateinfo security installed
