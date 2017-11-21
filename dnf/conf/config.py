@@ -631,7 +631,8 @@ class MainConf(BaseConfig):
             try:
                 cachedir = logdir = misc.getCacheDir()
             except (IOError, OSError) as e:
-                logger.critical(_('Could not set cachedir: %s'), ucd(e))
+                msg = _('Could not set cachedir: {}').format(ucd(e))
+                raise dnf.exceptions.Error(msg)
 
         self._add_option('debuglevel',
                          IntOption(2, range_min=0, range_max=10)) # :api
