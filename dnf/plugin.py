@@ -117,7 +117,7 @@ class Plugins(object):
         package.__path__ = []
 
         files = _iter_py_files(conf.pluginpath, skips, enable_plugins)
-        _import_modules(package, files)
+        _import_modules(package, files, skips, enable_plugins)
         self.plugin_cls = _plugin_classes()[:]
         self._check_enabled(conf)
         if len(self.plugin_cls) > 0:
@@ -161,17 +161,23 @@ def _plugin_classes():
     return Plugin.__subclasses__()
 
 
-def _import_modules(package, py_files):
+def _import_modules(package, py_files, disabled_plugins=None, enabled_plugins=None):
+    plugin_names = []
     for fn in py_files:
         path, module = os.path.split(fn)
         package.__path__.append(path)
         (module, ext) = os.path.splitext(module)
         name = '%s.%s' % (package.__name__, module)
+        plugin_names.append(module)
         try:
             module = importlib.import_module(name)
         except Exception as e:
             logger.error(_('Failed loading plugin: %s'), module)
             logger.log(dnf.logging.SUBDEBUG, '', exc_info=True)
+
+    for plugin in disabled_plugins + enabled_plugins:
+        if plugin not in plugin_names:
+            logger.error(_("Plugin '{}' does not exist").format(plugin))
 
 
 def _iter_py_files(paths, skips, enable_plugins):
