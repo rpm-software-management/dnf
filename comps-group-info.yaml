@@ -1,0 +1,20 @@
+COMPS-GROUP-INFO-1:
+  Desc: I can display verbose information about a comps group
+  Then:
+  - Field MUST be displayed: Translated group name
+  - Field MUST be displayed: Group ID
+  - Field MUST be displayed: Translated group description
+  - Field MUST be displayed: List of mandatory packages
+  - Field MUST be displayed: List of default packages
+  - Field MUST be displayed: List of optional packages
+  - Package list MUST contain RPM names in normal mode
+  - Package list MUST contain RPM NEVRAs in verbose mode
+COMPS-GROUP-INFO-2:
+  Desc: I can display verbose information about a comps group by $grpspec
+  Where:
+    COMPS-GROUP-INFO-2.1: $grpspec is group ID
+    COMPS-GROUP-INFO-2.2: $grpspec is group Name
+    COMPS-GROUP-INFO-2.3: $grpspec is translated group Name
+    COMPS-GROUP-INFO-2.4: $pkgspec contains wildcards
+  Then:
+  - The comps group verbose information MUST be displayed [COMPS-GROUP-INFO-1]

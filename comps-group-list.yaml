@@ -1,0 +1,14 @@
+COMPS-GROUP-LIST-1:
+  Desc: I can display brief information about a comps group
+  Then:
+  - Field MUST be displayed: Translated group name
+  - Field MUST be displayed: Group ID (in verbose mode only)
+COMPS-GROUP-LIST-2:
+  Desc: I can display brief information about a comps group by $grpspec
+  Where:
+    COMPS-GROUP-LIST-2.1: $grpspec is group ID
+    COMPS-GROUP-LIST-2.2: $grpspec is group Name
+    COMPS-GROUP-LIST-2.3: $grpspec is translated group Name
+    COMPS-GROUP-LIST-2.4: $pkgspec contains wildcards
+  Then:
+  - The comps group brief information MUST be displayed [COMPS-GROUP-LIST-1]

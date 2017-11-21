@@ -1,0 +1,5 @@
+COMPS-GROUP-SUMMARY-1:
+  Desc: I can display summary about comps groups
+  Then:
+  - Number of available comps groups MUST be displayed
+  - Number of installed comps groups MUST be displayed

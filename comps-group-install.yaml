@@ -1,0 +1,14 @@
+COMPS-GROUP-INSTALL-1:
+  Desc: I can install RPMs from a comps group
+  Then:
+  - RPMs listed in the group that are available in repos MUST be installed [RPM-INSTALL-1]
+  - Group MUST be marked as installed in the Software Database.
+COMPS-GROUP-INFO-2:
+  Desc: I can install RPMs from a comps group by $grpspec
+  Where:
+    COMPS-GROUP-INSTALL-2.1: $grpspec is group ID
+    COMPS-GROUP-INSTALL-2.2: $grpspec is group Name
+    COMPS-GROUP-INSTALL-2.3: $grpspec is translated group Name
+    COMPS-GROUP-INSTALL-2.4: $pkgspec contains wildcards
+  Then:
+  - Group MUST be installed [COMPS-GROUP-INSTALL-1]

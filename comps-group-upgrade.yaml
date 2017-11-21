@@ -1,0 +1,13 @@
+COMPS-GROUP-UPGRADE-1:
+  Desc: I can upgrade RPMs from a comps group
+  Then:
+  - RPMs listed in the group that are available in repos MUST be upgraded [RPM-UPGRADE-1]
+COMPS-GROUP-INFO-2:
+  Desc: I can upgrade RPMs from a comps group by $grpspec
+  Where:
+    COMPS-GROUP-UPGRADE-2.1: $grpspec is group ID
+    COMPS-GROUP-UPGRADE-2.2: $grpspec is group Name
+    COMPS-GROUP-UPGRADE-2.3: $grpspec is translated group Name
+    COMPS-GROUP-UPGRADE-2.4: $pkgspec contains wildcards
+  Then:
+  - Group MUST be upgraded [COMPS-GROUP-UPGRADE-1]
