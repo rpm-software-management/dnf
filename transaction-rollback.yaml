@@ -1,0 +1,8 @@
+TRANSACTION-ROLLBACK-1:
+  Desc: I can rollback system to a state that was after a transaction
+  Then:
+  - All changes between system state and given transaction are undone [TRANSACTION-UNDO-1]
+TRANSACTION-UNDO-2:
+  Desc: I can rollback a transaction by $transaction_id
+  Then:
+  - Transaction MUST be rolled back [TRANSACTION-ROLLBACK-1]

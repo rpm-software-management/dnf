@@ -1,0 +1,20 @@
+TRANSACTION-SUMMARY-1:
+  Desc: I can display transaction summary
+  Then:
+  - Field MUST be displayed: Login
+  - Field MUST be displayed: Time period
+  - Field MUST be displayed: List of actions on altered transaction items
+  - Field MUST be displayed: Number of altered transaction items
+  - Data MUST be grouped by user login
+  - Data MUST be grouped by time period: 1d, 1w, 2w, 3m, 6m, 1y, >1y
+TRANSACTION-SUMMARY-2:
+  Desc: I can display transaction summary by $transaction_id
+  Then:
+  - Transaction summary MUST be displayed [TRANSACTION-SUMMARY-1]
+TRANSACTION-SUMMARY-3:
+  Desc: I can display transaction summary info by $pkgspec
+  Where:
+    TRANSACTION-LIST-2.1: $pkgspec is a name
+    TRANSACTION-LIST-2.2: $pkgspec is a name with wildcards
+  Then:
+  - Brief transaction info MUST be displayed [TRANSACTION-SUMMARY-1]

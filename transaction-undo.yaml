@@ -1,0 +1,12 @@
+TRANSACTION-UNDO-1:
+  Desc: I can undo (revert) an existing transaction
+  Then:
+  - Packages installed in the transaction MUST be removed
+  - Packages removed in the transaction MUST be installed
+  - Packages upgraded in the transaction MUST be downgraded to previous version
+  - Packages downgraded in the transaction MUST be upgraded to previous version
+  - Packages that are common between the transaction and the system MUST be kept
+TRANSACTION-UNDO-2:
+  Desc: I can undo a transaction by $transaction_id
+  Then:
+  - Transaction MUST be undone [TRANSACTION-UNDO-1]

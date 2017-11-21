@@ -1,0 +1,5 @@
+TRANSACTION-NEW-1:
+  Desc: I can create a new transaction database
+  Then:
+  - New transaction database MUST be created
+  - All existing transaction data MUST be lost

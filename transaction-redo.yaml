@@ -1,0 +1,12 @@
+TRANSACTION-REDO-1:
+  Desc: I can redo (repeat) an existing transaction
+  Then:
+  - Packages installed in the transaction MUST be installed
+  - Packages removed in the transaction MUST be removed
+  - Packages upgraded in the transaction MUST be kept
+  - Packages downgraded in the transaction MUST be kept
+  - Packages that are common between the transaction and the system MUST be kept
+TRANSACTION-REDO-2:
+  Desc: I can redo a transaction by $transaction_id
+  Then:
+  - Transaction MUST be redone [TRANSACTION-REDO-1]

@@ -1,0 +1,36 @@
+TRANSACTION-INFO-1:
+  Desc: I can display transaction details
+  Then:
+  - Field MUST be displayed: Transaction ID
+  - Field MUST be displayed: Command line
+  - Field MUST be displayed: Date and time of transaction start
+  - Field SHOULD be displayed: Transaction duration in seconds
+  - Field MUST be displayed: Date and time of transaction end
+  - Field MUST be displayed: RPMDB hash at transaction start
+  - Field MUST be displayed: RPMDB hash at transaction end
+  - Field MUST be displayed: User login
+  - Field MUST be displayed: Return-Code
+  - Altered transaction items MUST be displayed: Action, NEVRA (item ID), repoid
+  TODO:
+  - what is the number before RPMDB hash?
+  - user: posix UID is stored; display that as well + resolve to login?
+  - display RPMs in a similar fashion as `dnf install` transaction table summary?
+  - store package size?
+  - Return-Code == exit code? Display number?
+TRANSACTION-INFO-2:
+  Desc: I can display transaction details by $transaction_id
+  Then:
+  - Transaction details MUST be displayed [TRANSACTION-INFO-1]
+  TODO:
+  - how to display last, last-1 transactions? Negative numbers -4 and -6 are for IPv4
+    and IPv6
+TRANSACTION-INFO-3:
+  Desc: I can display transaction details by $pkgspec
+  Where:
+    TRANSACTION-INFO-2.1: $pkgspec is a name
+    TRANSACTION-INFO-2.2: $pkgspec is a name with wildcards
+  Then:
+  - Transaction details MUST be displayed [TRANSACTION-INFO-1]
+  TODO:
+  - how to display last, last-1 transactions? Negative numbers -4 and -6 are for IPv4
+    and IPv6
