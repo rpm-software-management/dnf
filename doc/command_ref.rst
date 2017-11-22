@@ -781,19 +781,19 @@ In case stream is not specified dnf takes enabled or default stream, in this ord
 ``dnf [options] module unlock <module_spec>...``
     Dnf will make sure that given version is marked as unlocked allowing possibility to update it.
 
-``dnf [options] module list [module_spec...]``
+``dnf [options] module list [module_name...]``
     Lists latest module versions and their profiles and basic information about default, enabled, installed and locked state of module.
 
-``dnf [options] module list [--all] [module_spec...]``
+``dnf [options] module list [--all] [module_name...]``
     Lists all module versions.
 
-``dnf [options] module list [--enabled] [module_spec...]``
+``dnf [options] module list [--enabled] [module_name...]``
     Lists only enabled module streams.
 
-``dnf [options] module list [--disabled] [module_spec...]``
+``dnf [options] module list [--disabled] [module_name...]``
     Lists only disabled module streams.
 
-``dnf [options] module list [--installed] [module_spec...]``
+``dnf [options] module list [--installed] [module_name...]``
     Lists only installed module versions.
 
 ``dnf [options] module info <module_spec>...``
