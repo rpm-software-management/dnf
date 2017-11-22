@@ -1,0 +1,14 @@
+COMPS-ENVIRONMENT-REMOVE-1:
+  Desc: I can remove a comps environment
+  Then:
+  - The environment MUST be removed from Software Database
+  - Environment groups MUST be removed [COMPS-GROUP-REMOVE-1]
+COMPS-ENVIRONMENT-INFO-2:
+  Desc: I can remove a comps environment by $grpspec
+  Where:
+    COMPS-ENVIRONMENT-REMOVE-2.1: $grpspec is environment ID
+    COMPS-ENVIRONMENT-REMOVE-2.2: $grpspec is environment Name
+    COMPS-ENVIRONMENT-REMOVE-2.3: $grpspec is translated environment Name
+    COMPS-ENVIRONMENT-REMOVE-2.4: $pkgspec contains wildcards
+  Then:
+  - The environment MUST be upgraded [COMPS-ENVIRONMENT-REMOVE-1]

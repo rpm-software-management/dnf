@@ -1,0 +1,17 @@
+COMPS-ENVIRONMENT-INFO-1:
+  Desc: I can display verbose information about a comps environment group
+  Then:
+  - Field MUST be displayed: Translated environment group name
+  - Field MUST be displayed: Environment group ID
+  - Field MUST be displayed: Translated environment group description
+  - Field MUST be displayed: List of mandatory groups
+  - Field MUST be displayed: List of optional groups
+COMPS-ENVIRONMENT-INFO-2:
+  Desc: I can display verbose information about a environment comps group by $grpspec
+  Where:
+    COMPS-ENVIRONMENT-INFO-2.1: $grpspec is group ID
+    COMPS-ENVIRONMENT-INFO-2.2: $grpspec is group Name
+    COMPS-ENVIRONMENT-INFO-2.3: $grpspec is translated group Name
+    COMPS-ENVIRONMENT-INFO-2.4: $pkgspec contains wildcards
+  Then:
+  - The comps group verbose information MUST be displayed [COMPS-ENVIRONMENT-INFO-1]

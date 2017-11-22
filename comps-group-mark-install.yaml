@@ -1,0 +1,16 @@
+COMPS-GROUP-MARK-INSTALL-1:
+  Desc: I can mark a comps group as installed
+  Then:
+  - The group MUST be marked as installed in the Software Database.
+COMPS-GROUP-MARK-INSTALL-2:
+  Desc: I can mark a comps group as installed by $grpspec
+  Where:
+    COMPS-GROUP-MARK-INSTALL-2.1: $grpspec is group ID
+    COMPS-GROUP-MARK-INSTALL-2.2: $grpspec is group Name
+    COMPS-GROUP-MARK-INSTALL-2.3: $grpspec is translated group Name
+    COMPS-GROUP-MARK-INSTALL-2.4: $pkgspec contains wildcards
+  Then:
+  - The group MUST be marked as installed [COMPS-GROUP-MARK-INSTALL-1]
+  Examples:
+  - yum group mark install minimal
+  - yum group mark install 'Minimal Install'

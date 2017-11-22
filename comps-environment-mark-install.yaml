@@ -1,0 +1,16 @@
+COMPS-ENVIRONMENT-MARK-INSTALL-1:
+  Desc: I can mark a comps environment as installed
+  Then:
+  - The environment MUST be marked as installed in the Software Database.
+COMPS-ENVIRONMENT-MARK-INSTALL-2:
+  Desc: I can mark a comps environment as installed by $grpspec
+  Where:
+    COMPS-ENVIRONMENT-MARK-INSTALL-2.1: $grpspec is environment ID
+    COMPS-ENVIRONMENT-MARK-INSTALL-2.2: $grpspec is environment Name
+    COMPS-ENVIRONMENT-MARK-INSTALL-2.3: $grpspec is translated environment Name
+    COMPS-ENVIRONMENT-MARK-INSTALL-2.4: $pkgspec contains wildcards
+  Then:
+  - The environment MUST be marked as installed [COMPS-ENVIRONMENT-MARK-INSTALL-1]
+  Examples:
+  - yum group mark install developer-workstation-environment
+  - yum group mark install 'Development and Creative Workstation'

@@ -1,0 +1,14 @@
+COMPS-ENVIRONMENT-LIST-1:
+  Desc: I can display brief information about a comps environment group
+  Then:
+  - Field MUST be displayed: Translated environment group name
+  - Field MUST be displayed: Environment group ID (in verbose mode only)
+COMPS-ENVIRONMENT-LIST-2:
+  Desc: I can display brief information about a comps environment group by $grpspec
+  Where:
+    COMPS-ENVIRONMENT-LIST-2.1: $grpspec is environment group ID
+    COMPS-ENVIRONMENT-LIST-2.2: $grpspec is environment group Name
+    COMPS-ENVIRONMENT-LIST-2.3: $grpspec is translated environment group Name
+    COMPS-ENVIRONMENT-LIST-2.4: $pkgspec contains wildcards
+  Then:
+  - The comps environment group brief information MUST be displayed [COMPS-ENVIRONMENT-LIST-1]

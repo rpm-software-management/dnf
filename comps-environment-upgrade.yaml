@@ -1,0 +1,13 @@
+COMPS-ENVIRONMENT-UPGRADE-1:
+  Desc: I can upgrade RPMs from a comps environment
+  Then:
+  - Groups listed in the environment that are installed MUST be upgraded [COMPS-GROUP-UPDATE-1]
+COMPS-ENVIRONMENT-INFO-2:
+  Desc: I can upgrade RPMs from a comps environment by $grpspec
+  Where:
+    COMPS-ENVIRONMENT-UPGRADE-2.1: $grpspec is environment ID
+    COMPS-ENVIRONMENT-UPGRADE-2.2: $grpspec is environment Name
+    COMPS-ENVIRONMENT-UPGRADE-2.3: $grpspec is translated environment Name
+    COMPS-ENVIRONMENT-UPGRADE-2.4: $pkgspec contains wildcards
+  Then:
+  - The group MUST be upgraded [COMPS-ENVIRONMENT-UPGRADE-1]

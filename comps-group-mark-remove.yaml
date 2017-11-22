@@ -1,0 +1,16 @@
+COMPS-GROUP-MARK-REMOVE-1:
+  Desc: I can mark a comps group as removed
+  Then:
+  - The group MUST be marked as removed in the Software Database.
+COMPS-GROUP-MARK-REMOVE-2:
+  Desc: I can mark a comps group as installed by $grpspec
+  Where:
+    COMPS-GROUP-MARK-REMOVE-2.1: $grpspec is group ID
+    COMPS-GROUP-MARK-REMOVE-2.2: $grpspec is group Name
+    COMPS-GROUP-MARK-REMOVE-2.3: $grpspec is translated group Name
+    COMPS-GROUP-MARK-REMOVE-2.4: $pkgspec contains wildcards
+  Then:
+  - The group MUST be marked as removed [COMPS-GROUP-MARK-REMOVE-1]
+  Examples:
+  - yum group mark remove minimal
+  - yum group mark remove 'Minimal Install'

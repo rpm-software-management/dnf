@@ -1,0 +1,16 @@
+COMPS-GROUP-REMOVE-1:
+  Desc: I can remove a comps group
+  Then:
+  - The group MUST be removed from Software Database
+  - Group RPMs MUST be removed [RPM-REMOVE-1]
+  - User-installed RPMs must remain on the system
+  - RPMs required by another installed group MUST remain on the system
+COMPS-GROUP-INFO-2:
+  Desc: I can remove a comps group by $grpspec
+  Where:
+    COMPS-GROUP-REMOVE-2.1: $grpspec is group ID
+    COMPS-GROUP-REMOVE-2.2: $grpspec is group Name
+    COMPS-GROUP-REMOVE-2.3: $grpspec is translated group Name
+    COMPS-GROUP-REMOVE-2.4: $pkgspec contains wildcards
+  Then:
+  - Group MUST be removed [COMPS-GROUP-REMOVE-1]

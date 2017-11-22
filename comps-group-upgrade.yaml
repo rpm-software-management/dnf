@@ -10,4 +10,4 @@ COMPS-GROUP-INFO-2:
     COMPS-GROUP-UPGRADE-2.3: $grpspec is translated group Name
     COMPS-GROUP-UPGRADE-2.4: $pkgspec contains wildcards
   Then:
-  - Group MUST be upgraded [COMPS-GROUP-UPGRADE-1]
+  - The group MUST be upgraded [COMPS-GROUP-UPGRADE-1]
