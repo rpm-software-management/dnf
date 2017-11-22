@@ -1673,7 +1673,7 @@ class Base(object):
         """Mark package(s) given by pkg_spec and reponame for installation."""
 
         subj = dnf.subject.Subject(pkg_spec)
-        solution = subj._get_nevra_solution(self.sack, forms=forms)
+        solution = subj.get_best_solution(self.sack, forms=forms)
 
         if self.conf.multilib_policy == "all" or subj._is_arch_specified(solution):
             q = solution['query'].filter(arch__neq="src")
@@ -1777,7 +1777,7 @@ class Base(object):
     def upgrade(self, pkg_spec, reponame=None):
         # :api
         subj = dnf.subject.Subject(pkg_spec)
-        solution = subj._get_nevra_solution(self.sack)
+        solution = subj.get_best_solution(self.sack)
         q = solution["query"]
         if q:
             wildcard = dnf.util.is_glob_pattern(pkg_spec)
@@ -2277,8 +2277,8 @@ class Base(object):
 
     def _report_icase_hint(self, pkg_spec):
         subj = dnf.subject.Subject(pkg_spec, ignore_case=True)
-        solution = subj._get_nevra_solution(self.sack, with_nevra=True, with_provides=False,
-                                            with_filenames=False)
+        solution = subj.get_best_solution(self.sack, with_nevra=True, with_provides=False,
+                                          with_filenames=False)
         if solution['query'] and solution['nevra'] and solution['nevra'].name:
             logger.info(_("  * Maybe you meant: {}").format(solution['query'][0].name))
 
