@@ -186,6 +186,7 @@ def _iter_py_files(paths, skips, enable_plugins):
             (name, _) = os.path.splitext(os.path.basename(fn))
             if any(fnmatch.fnmatch(name, pattern) for pattern in skips):
                 if not any(fnmatch.fnmatch(name, pattern) for pattern in enable_plugins):
+                    skips.remove(name)
                     continue
             yield fn
 
