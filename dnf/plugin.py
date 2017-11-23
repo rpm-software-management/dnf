@@ -161,7 +161,7 @@ def _plugin_classes():
     return Plugin.__subclasses__()
 
 
-def _import_modules(package, py_files, disabled_plugins=None, enabled_plugins=None):
+def _import_modules(package, py_files, disabled_plugins, enabled_plugins):
     plugin_names = []
     for fn in py_files:
         path, module = os.path.split(fn)
