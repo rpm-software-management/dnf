@@ -15,10 +15,11 @@
 
 from __future__ import print_function, absolute_import
 from __future__ import unicode_literals
-import dnf.pycomp
+
 import rpm
 import os
-import locale
+
+from dnf.i18n import ucd
 
 
 def checkSig(ts, package):
@@ -49,6 +50,7 @@ def checkSig(ts, package):
                  '{%|SIGGPG?{%{SIGGPG:pgpsig}}:{%|SIGPGP?{%{SIGPGP:pgpsig}}:{(none)}|}|}|}|'
         try:
             siginfo = hdr.sprintf(string)
+            siginfo = ucd(siginfo)
             if siginfo == '(none)':
                 value = 4
         except UnicodeDecodeError:
