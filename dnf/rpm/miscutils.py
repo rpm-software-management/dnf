@@ -19,6 +19,8 @@ from __future__ import unicode_literals
 import rpm
 import os
 
+from dnf.i18n import ucd
+
 
 def checkSig(ts, package):
     """Takes a transaction set and a package, check it's sigs,
@@ -48,6 +50,7 @@ def checkSig(ts, package):
                  '{%|SIGGPG?{%{SIGGPG:pgpsig}}:{%|SIGPGP?{%{SIGPGP:pgpsig}}:{(none)}|}|}|}|'
         try:
             siginfo = hdr.sprintf(string)
+            siginfo = ucd(siginfo)
             if siginfo == '(none)':
                 value = 4
         except UnicodeDecodeError:
