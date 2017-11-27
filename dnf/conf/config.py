@@ -778,7 +778,6 @@ class MainConf(BaseConfig):
         # runtime only options
         self._add_option('downloadonly', BoolOption(False, runtimeonly=True))
         self._add_option('ignorearch', BoolOption(False))
-        self._add_option('cacheonly', BoolOption(False))
 
     @property
     def get_reposdir(self):
