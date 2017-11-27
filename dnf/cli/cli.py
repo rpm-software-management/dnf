@@ -741,7 +741,10 @@ class Cli(object):
             if not os.getegid() == 0:
                 raise dnf.exceptions.Error(_('This command has to be run under the root user.'))
 
-        if not demands.cacheonly:
+        if demands.cacheonly or self.base.conf.cacheonly:
+            self.base.conf.cacheonly = True
+            repos.all()._md_only_cached = True
+        else:
             if demands.freshest_metadata:
                 for repo in repos.iter_enabled():
                     repo._md_expire_cache()
