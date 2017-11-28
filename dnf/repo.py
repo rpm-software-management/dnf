@@ -858,11 +858,6 @@ class Repo(dnf.conf.RepoConf):
         else:
             return self._try_revive_by_repomd()
 
-    def _configure_from_options(self, opts):
-        if getattr(opts, 'cacheonly', None):
-            self._md_only_cached = True
-        super(Repo, self)._configure_from_options(opts)
-
     def disable(self):
         # :api
         self.enabled = False
