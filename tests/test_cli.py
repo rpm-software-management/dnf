@@ -136,8 +136,6 @@ class CliTest(TestCase):
         self.assertTrue(self.base.repos['comb'].enabled)
         self.assertFalse(self.base.repos["comb"].gpgcheck)
         self.assertFalse(self.base.repos["comb"].repo_gpgcheck)
-        self.assertEqual(self.base.repos["comb"]._sync_strategy,
-                         dnf.repo.SYNC_ONLY_CACHE)
 
     def test_configure_repos_expired(self, _):
         """Ensure that --cacheonly beats the expired status."""
