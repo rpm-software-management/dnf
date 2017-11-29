@@ -184,10 +184,11 @@ def _iter_py_files(paths, skips, enable_plugins):
     for p in paths:
         for fn in glob.glob('%s/*.py' % p):
             (name, _) = os.path.splitext(os.path.basename(fn))
-            if any(fnmatch.fnmatch(name, pattern) for pattern in skips):
-                if not any(fnmatch.fnmatch(name, pattern) for pattern in enable_plugins):
+            if any(fnmatch.fnmatch(name, pattern) for pattern in skips) and \
+                    not any(fnmatch.fnmatch(name, pattern) for pattern in enable_plugins):
+                if name in skips:
                     skips.remove(name)
-                    continue
+                continue
             yield fn
 
 
