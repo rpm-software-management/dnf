@@ -58,7 +58,7 @@ class InstallCommand(commands.Command):
         demands.sack_activation = True
         demands.available_repos = True
         demands.resolving = True
-        demands.root_user = True
+        demands.root_writable = True
         commands._checkGPGKey(self.base, self.cli)
         if not self.opts.filenames:
             commands._checkEnabledRepo(self.base)

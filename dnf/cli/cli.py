@@ -737,9 +737,13 @@ class Cli(object):
         demands = self.demands
         repos = self.base.repos
 
-        if demands.root_user:
+        if demands.root_user or demands.root_writable:
             if not os.getegid() == 0:
                 raise dnf.exceptions.Error(_('This command has to be run under the root user.'))
+        # Are we processing a write command but without /usr writable?
+        if demands.root_writable and self.base.conf.installroot == '/':
+            if not os.access('/usr', os.W_OK):
+                raise dnf.exceptions.Error(_('/usr is not writable'))
 
         if not demands.cacheonly:
             if demands.freshest_metadata:

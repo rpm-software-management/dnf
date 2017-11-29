@@ -48,6 +48,7 @@ class DemandSheet(object):
     available_repos = _BoolDefault(False)
     resolving = _BoolDefault(False)
     root_user = _BoolDefault(False)
+    root_writable = _BoolDefault(False)  # Like root_user, but will mutate
     sack_activation = _BoolDefault(False)
     success_exit_status = 0
 
