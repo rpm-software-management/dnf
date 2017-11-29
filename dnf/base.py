@@ -1971,7 +1971,7 @@ class Base(object):
             msg = _('Packages for argument %s available, but not installed.') % pkg_spec
             raise dnf.exceptions.PackagesNotInstalledError(msg, pkg_spec, available_pkgs)
         for pkg_name in q_installed._name_dict().keys():
-            downgrade_pkgs = available_pkgs.downgrades().latest().filter(name=pkg_name)
+            downgrade_pkgs = available_pkgs.downgrades().filter(name=pkg_name)
             if not downgrade_pkgs:
                 msg = _("Package %s of lowest version already installed, cannot downgrade it.")
                 logger.warning(msg, pkg_name)
