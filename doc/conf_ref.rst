@@ -69,12 +69,15 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     satisfiable. Enable this if you want to experience broken dependencies in
     the repositories firsthand. The default is False.
 
+.. _check_config_file_age-label:
+
 ``check_config_file_age``
     :ref:`boolean <boolean-label>`
 
     Specifies whether dnf should automatically expire metadata of repos, which are older than
     their corresponding configuration file (usually the dnf.conf file and the foo.repo file).
-    Default is ``True`` (perform the check).
+    Default is ``True`` (perform the check). Expire of metadata is also affected by metadata age.
+    See also :ref:`metadata_expire <metadata_expire-label>`.
 
 .. _clean_requirements_on_remove-label:
 
@@ -429,7 +432,11 @@ configuration.
 ``metadata_expire``
     time in seconds
 
-    The period after which the remote repository is checked for metadata update and in the positive case the local metadata cache is updated. The default corresponds to 48 hours. Set this to ``-1`` or ``never`` to make the repo never considered expired.
+    The period after which the remote repository is checked for metadata update and in the positive
+    case the local metadata cache is updated. The default corresponds to 48 hours. Set this to
+    ``-1`` or ``never`` to make the repo never considered expired. Expire of metadata can bee also
+    triggered by change of timestamp of configuration files (``dnf.conf``, ``<repo>.repo``). See
+    also :ref:`check_config_file_age <check_config_file_age-label>`.
 
 .. _minrate-label:
 
