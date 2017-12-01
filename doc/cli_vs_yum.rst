@@ -29,15 +29,15 @@
 
 For install command:
 
-The ``--skip-broken`` option is alias for ``--setopt=strict=0``. The both options could be used
-with DNF to skip all unavailable packages or packages with broken dependencies given to DNF command
-without raising the error causing the whole operation to fail. This behavior can be set as default
+The ``--skip-broken`` option is an alias for ``--setopt=strict=0``. Both options could be used
+with DNF to skip all unavailable packages or packages with broken dependencies given to DNF
+without raising an error causing the whole operation to fail. This behavior can be set as default
 in dnf.conf file. See :ref:`strict conf option <strict-label>`.
 
 For upgrade command:
 
-The semantics that was supposed to trigger in Yum with ``--skip-broken`` is now set for plain
-``dnf update`` as a default. There is no need to use ``--skip-broken`` with ``dnf upgrade``
+The semantics that were supposed to trigger in Yum with ``--skip-broken`` are now set for plain
+``dnf update`` as a default. There is no need to use ``--skip-broken`` with the ``dnf upgrade``
 command. To use only the latest versions of packages in transactions, there is the ``--best``
 command line switch.
 
@@ -63,14 +63,13 @@ more packages.
 ===========================
 
 The Yum version of this command is maintained for legacy reasons only. The user
-can just do ``dnf provides`` to find out what package gives a particular
-provide.
+can just use ``dnf provides`` to find out what package provides a particular file.
 
 ===========================
  No ``deplist`` command
 ===========================
 
-Alternative to Yum ``deplist`` command to find out dependencies of the package
+An alternative to the Yum ``deplist`` command to find out dependencies of a package
 is ``dnf repoquery --deplist`` using :ref:`repoquery command
 <repoquery_command-label>`.
 
@@ -92,7 +91,7 @@ following will work::
  Yum's conf directive ``includepkgs`` is just ``include``
 ==========================================================
 
-``include`` directive name of [main] and Repo configuration is more logical and better named counterpart of ``exclude`` in DNF.
+``include`` directive name of [main] and Repo configuration is a more logical and better named counterpart of ``exclude`` in DNF.
 
 =============================================================
  ``dnf remove kernel`` deletes all packages called ``kernel``
@@ -111,13 +110,13 @@ After `UsrMove <https://fedoraproject.org/wiki/Features/UsrMove>`_ there's no
 directory ``/bin`` on Fedora systems and no files get installed there,
 ``/bin`` is only a symlink created by the ``filesystem`` package to point to
 ``/usr/bin``. Resolving the symlinks to their real path would only give the
-user false sense that this works while in fact provides requests using globs
+user a false sense that this works, while in fact provides requests using globs
 such as::
 
     dnf provides /b*/<file>
 
-will fail still (as it does in Yum now). To find what provides a particular
-binary use the actual path for binaries on Fedora::
+will fail still (as they do in Yum now). To find what provides a particular
+binary, use the actual path for binaries on Fedora::
 
     dnf provides /usr/bin/<file>
 
@@ -125,14 +124,13 @@ Also see related Fedora bugzillas `982947
 <https://bugzilla.redhat.com/show_bug.cgi?id=982947>`_ and `982664
 <https://bugzilla.redhat.com/show_bug.cgi?id=982664>`_.
 
-
 .. _skip_if_unavailable_default:
 
 ============================================
  ``skip_if_unavailable`` enabled by default
 ============================================
 
-The important system repos should never be down and we see the third party repos
+The important system repos should never be down and we see the third-party repos
 down often enough to warrant this change. Note that without this setting and
 without an explicit ``skip_if_unavailable=True`` in the relevant repo .ini file
 Yum immediately stops on a repo error, confusing and bothering the user.
@@ -144,7 +142,7 @@ See the related `Fedora bug 984483 <https://bugzilla.redhat.com/show_bug.cgi?id=
 ============================================================================
 
 This config option has been dropped. When DNF sees several groups with the same
-group id it merges the groups' contents together.
+group ID it merges the groups' contents together.
 
 ===============================
  ``mirrorlist_expire`` dropped
@@ -160,7 +158,7 @@ metadata and the mirrorlist file (which is a kind of metadata itself).
 The following part of ``yum.conf(5)`` no longer applies for the ``mirrorlist``
 option:
 
-    As a special hack is the mirrorlist URL contains the word "metalink" then
+    As a special hack if the mirrorlist URL contains the word "metalink" then
     the value of mirrorlist is copied to metalink (if metalink is not set).
 
 The relevant repository configuration files have been fixed to respect this, see
@@ -179,7 +177,7 @@ Unsupported to simplify the configuration.
  ``group_package_types`` dropped
 =================================
 
-Done to simplify the configuration. User will typically want to decide what
+Done to simplify the configuration. Users will typically want to decide what
 packages to install per-group and not via a global setting::
 
     dnf group install with-optional Editors
@@ -198,8 +196,8 @@ upgrade everything to the latest version she'd simply use ``dnf upgrade``.
  ``dnf history rollback`` check dropped
 ========================================
 
-DNF tolerates the use of other package managers. Then it is possible that not
-all changes to RPMDB are stored in the history of transactions. Therefore, DNF
+Since DNF tolerates the use of other package managers, it is possible that not
+all changes to the RPMDB are stored in the history of transactions. Therefore, DNF
 does not fail if such a situation is encountered and thus the ``force`` option
 is not needed anymore.
 
@@ -209,7 +207,7 @@ is not needed anymore.
  Packages replacement without ``yum swap``
 ============================================================
 
-Time after time one needs to remove an installed package and replace it with a different one, providing the same capabilities while other packages depending on these capabilities stay installed. Without (transiently) breaking consistency of the package database this can be done by performing the remove and the install in one transaction. The common way to setup such transaction in DNF is to use ``dnf shell`` or use ``--allowerasing`` switch.
+Time after time one needs to remove an installed package and replace it with a different one, providing the same capabilities while other packages depending on these capabilities stay installed. Without (transiently) breaking consistency of the package database this can be done by performing the remove and the install in one transaction. The common way to set up such a transaction in DNF is to use ``dnf shell`` or use the ``--allowerasing`` switch.
 
 E.g. say you want to replace ``A`` (providing ``P``)  with B (also providing ``P``, conflicting with ``A``) without deleting ``C`` (which requires ``P``) in the process. Use::
 
@@ -255,7 +253,7 @@ to obtain similar results.
 ``--enableplugin`` not recognized
 =================================
 
-This switch has been dropped. It is not documented for Yum and of a questionable use (all plugins are enabled by default).
+This switch has been dropped. It is not documented for Yum and of questionable use (all plugins are enabled by default).
 
 ==================
 Bandwidth limiting
@@ -287,9 +285,9 @@ DNF will terminate early with an error if a command is executed requesting an in
   $ dnf install fdn-0.4.17-1.fc20.src.rpm tour-4-6.noarch.rpm
   Error: Will not install a source rpm package (fdn-0.4.17-1.fc20.src).
 
-The same applies for package specifications that does not match any available package.
+The same applies for package specifications that do not match any available package.
 
-Yum will only issue warning in this case and continue installing the "tour" package. The rationale behind the result in DNF is that a program should terminate with an error if it can not fulfill the CLI command in its entirety.
+Yum will only issue a warning in this case and continue installing the "tour" package. The rationale behind the result in DNF is that a program should terminate with an error if it can not fulfill the CLI command in its entirety.
 
 =============================================================
  Promoting package to install to a package that obsoletes it
@@ -304,12 +302,12 @@ See the the related `Fedora bug 1096506
 Behavior of ``--installroot`` option
 ====================================
 
-DNF offer more predictable behavior of installroot. DNF differently handles path
-from ``--config`` command-line option, where this path is always related to host
-system (Yum combines this path with installroot). Reposdir is also slightly
-differently handled, if one path of reposdirs exists inside of installroot, than
+DNF offers more predictable behavior of installroot. DNF handles the path differently
+from the ``--config`` command-line option, where this path is always related to the host
+system (Yum combines this path with installroot). Reposdir is also handled slightly
+differently, if one path of the reposdirs exists inside of installroot, then
 repos are strictly taken from installroot (Yum tests each path from reposdir
-separately and use installroot path if existed). See detailed description for
+separately and use installroot path if existed). See the detailed description for
 \-\ :ref:`-installroot <installroot-label>` option.
 
 ###############################################
@@ -325,12 +323,12 @@ Original Yum tool                       DNF command/option                      
 ``yum-plugin-copr``                     `dnf copr`_                                                       ``dnf-plugins-core``
 ``yum-plugin-fastestmirror``            ``fastestmirror`` option in `dnf.conf`_                           ``dnf``
 ``yum-plugin-fs-snapshot``                                                                                ``dnf-plugins-extras-snapper``
-``yum-plugin-local``                                                                                      ``dnf-plugins-extras-local``
+``yum-plugin-local``                                                                                      ``dnf-plugins-core``
 ``yum-plugin-merge-conf``                                                                                 ``dnf-plugins-extras-rpmconf``
 ``yum-plugin-priorities``               ``priority`` option in `dnf.conf`_                                ``dnf``
 ``yum-plugin-remove-with-leaves``       ``dnf autoremove``                                                ``dnf``
-``yum-plugin-show-leaves``                                                                                ``dnf-plugins-extras-show-leaves``
-``yum-plugin-versionlock``                                                                                ``dnf-plugins-extras-versionlock``
+``yum-plugin-show-leaves``                                                                                ``dnf-plugins-core``
+``yum-plugin-versionlock``                                                                                ``dnf-plugins-core``
 ======================================  ================================================================  ===================================
 
 Plugins that have not been ported yet:
@@ -351,13 +349,13 @@ Plugins that have not been ported yet:
 ``yum-plugin-upgrade-helper``,
 ``yum-plugin-verify``
 
-Feel free to file a RFE_ for missing functionality if you need it.
+Feel free to file an RFE_ for missing functionality if you need it.
 
 #################################################
  Changes in DNF plugins compared to Yum utilities
 #################################################
 
-All ported yum tools are now implemented as DNF plugins.
+All ported Yum tools are now implemented as DNF plugins.
 
 =========================  ================================================ =================================
 Original Yum tool          New DNF command                                  Package
@@ -401,7 +399,7 @@ Utilities that have not been ported yet:
 ``verifytree``,
 ``yum-groups-manager``
 
-Take a look at FAQ_ about yum to DNF migration. Feel free to file a RFE_ for missing functionality if you need it.
+Take a look at the FAQ_ about Yum to DNF migration. Feel free to file an RFE_ for missing functionality if you need it.
 
 .. _dnf debuginfo-install: http://dnf-plugins-core.readthedocs.org/en/latest/debuginfo-install.html
 .. _dnf list installed: http://dnf.readthedocs.org/en/latest/command_ref.html
