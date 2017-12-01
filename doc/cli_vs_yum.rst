@@ -325,12 +325,12 @@ Original Yum tool                       DNF command/option                      
 ``yum-plugin-copr``                     `dnf copr`_                                                       ``dnf-plugins-core``
 ``yum-plugin-fastestmirror``            ``fastestmirror`` option in `dnf.conf`_                           ``dnf``
 ``yum-plugin-fs-snapshot``                                                                                ``dnf-plugins-extras-snapper``
-``yum-plugin-local``                                                                                      ``dnf-plugins-extras-local``
+``yum-plugin-local``                                                                                      ``dnf-plugins-core``
 ``yum-plugin-merge-conf``                                                                                 ``dnf-plugins-extras-rpmconf``
 ``yum-plugin-priorities``               ``priority`` option in `dnf.conf`_                                ``dnf``
 ``yum-plugin-remove-with-leaves``       ``dnf autoremove``                                                ``dnf``
-``yum-plugin-show-leaves``                                                                                ``dnf-plugins-extras-show-leaves``
-``yum-plugin-versionlock``                                                                                ``dnf-plugins-extras-versionlock``
+``yum-plugin-show-leaves``                                                                                ``dnf-plugins-core``
+``yum-plugin-versionlock``                                                                                ``dnf-plugins-core``
 ======================================  ================================================================  ===================================
 
 Plugins that have not been ported yet:
