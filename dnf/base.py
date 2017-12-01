@@ -2279,7 +2279,8 @@ class Base(object):
         subj = dnf.subject.Subject(pkg_spec, ignore_case=True)
         solution = subj.get_best_solution(self.sack, with_nevra=True, with_provides=False,
                                           with_filenames=False)
-        if solution['query'] and solution['nevra'] and solution['nevra'].name:
+        if solution['query'] and solution['nevra'] and solution['nevra'].name and \
+                pkg_spec != solution['nevra'].name:
             logger.info(_("  * Maybe you meant: {}").format(solution['query'][0].name))
 
     def _select_remote_pkgs(self, install_pkgs):
