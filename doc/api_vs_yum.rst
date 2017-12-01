@@ -16,7 +16,7 @@
   Red Hat, Inc.
 
 #########################################
- Changes in DNF hook api compared to Yum
+ Changes in the DNF hook API compared to Yum
 #########################################
 
 
@@ -45,7 +45,7 @@ Hook Number  Yum hook           DNF hook
 ``14``       ``clean``                   
 ===========  =================  ==============================
 
-Feel free to file a RFE_ for missing functionality if you need it.
+Feel free to file an RFE_ for missing functionality if you need it.
 
 .. _RFE: https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting#new-feature-request
 
