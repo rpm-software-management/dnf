@@ -1713,7 +1713,7 @@ class Base(object):
         elif sorted(q)[0] > pkg:
             sltr = dnf.selector.Selector(self.sack)
             sltr.set(pkg=[pkg])
-            self._goal.downgrade_to(select=sltr, optional=(not strict))
+            self._goal.install(select=sltr, optional=(not strict))
             return 1
         else:
             msg = _("Package %s of lower version already installed, "
@@ -1978,7 +1978,7 @@ class Base(object):
                 continue
             sltr = dnf.selector.Selector(self.sack)
             sltr.set(pkg=downgrade_pkgs)
-            self._goal.downgrade_to(select=sltr, optional=(not strict))
+            self._goal.install(select=sltr, optional=(not strict))
             done = 1
         return done
 
