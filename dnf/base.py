@@ -2114,20 +2114,21 @@ class Base(object):
             del self._update_security_filters[key]
             self._update_security_filters['minimal'] = [t]
             t = q.intersection(t)
-            if len(t) == 0 and warning:
-                count = len(q._name_dict().keys())
-                if pkg_spec is None:
-                    msg1 = _("No security updates needed, but {} update "
-                             "available").format(count)
-                    msg2 = _("No security updates needed, but {} updates "
-                             "available").format(count)
-                    logger.warning(P_(msg1, msg2, count))
-                else:
-                    msg1 = _('No security updates needed for "{}", but {} '
-                             'update available').format(pkg_spec, count)
-                    msg2 = _('No security updates needed for "{}", but {} '
-                             'updates available').format(pkg_spec, count)
-                    logger.warning(P_(msg1, msg2, count))
+            if not t:
+                if warning:
+                    count = len(q._name_dict().keys())
+                    if pkg_spec is None:
+                        msg1 = _("No security updates needed, but {} update "
+                                 "available").format(count)
+                        msg2 = _("No security updates needed, but {} updates "
+                                 "available").format(count)
+                        logger.warning(P_(msg1, msg2, count))
+                    else:
+                        msg1 = _('No security updates needed for "{}", but {} '
+                                 'update available').format(pkg_spec, count)
+                        msg2 = _('No security updates needed for "{}", but {} '
+                                 'updates available').format(pkg_spec, count)
+                        logger.warning(P_(msg1, msg2, count))
                 return t
             if key == 'minimal':
                 return t
