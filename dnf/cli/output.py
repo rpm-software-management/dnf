@@ -1139,7 +1139,6 @@ class Output(object):
             columns = self.calcColumns(data, indent="  ", columns=columns,
                                        remainder_column=2)
             (n_wid, a_wid, v_wid, r_wid, s_wid) = columns
-            assert s_wid == 5
 
             out = [u"%s\n%s\n%s\n" % ('=' * self.term.columns,
                                       self.fmtColumns(((P_('Package', 'Packages', 1), -n_wid),
