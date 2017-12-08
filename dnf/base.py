@@ -224,29 +224,29 @@ class Base(object):
         self.use_module_includes()
 
     def use_module_includes(self):
-        def update_future_package_set(includes, repos):
-            include_repos.update(repos)
-
-            for nevra in includes:
-                subj = dnf.subject.Subject(nevra)
-                pkgs = subj.get_best_query(self.sack, forms=[hawkey.FORM_NEVRA])
-                include_pkgs.add(pkgs)
-
         self.sack.reset_includes()
         include_repos = set()
-        include_pkgs = set()
+        include_nevras = set()
+        include_query_list = []
         for repo_module in self.repo_module_dict.values():
             if repo_module.conf.enabled:
-                includes, repos = self.repo_module_dict.get_includes(repo_module.name,
+                include_set, repos = self.repo_module_dict.get_includes(repo_module.name,
                                                                      repo_module.conf.stream)
-                update_future_package_set(includes, repos)
+                include_repos.update(repos)
+                include_nevras.update(include_set)
             elif repo_module.defaults.stream:
-                includes, repos = self.repo_module_dict.get_includes(repo_module.name,
+                include_set, repos = self.repo_module_dict.get_includes(repo_module.name,
                                                                      repo_module.defaults.stream)
-                update_future_package_set(includes, repos)
+                include_repos.update(repos)
+                include_nevras.update(include_set)
+        for nevra in include_nevras:
+            subj = dnf.subject.Subject(nevra)
+            nevra_query = subj.get_best_query(self.sack, forms=[hawkey.FORM_NEVRA], with_nevra=True,
+                                              with_provides=False, with_filenames=False).apply()
+            include_query_list.append(nevra_query)
 
-        for pkg in include_pkgs:
-            self.sack.add_includes(pkg)
+        for include_query in include_query_list:
+            self.sack.add_includes(include_query)
 
         for repo in include_repos:
             self.sack.set_use_includes(True, repo.id)
