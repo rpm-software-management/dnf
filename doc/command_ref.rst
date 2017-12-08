@@ -313,7 +313,11 @@ Options
     upgrade command.
 
 ``--setopt=<option>=<value>``
-    override a config option from the config file. To override config options from repo files, use ``repoid.option`` for the ``<option>``.
+    override a config option from the config file. To override config options from repo files, use
+    ``repoid.option`` for the ``<option>``. Conf options like ``excludepkgs``, ``includepkgs``,
+    ``installonlypkgs``, and ``tsflags`` work as append option, therefore they are not overridden
+    but the value is appended. If there is no value like ``--setopt=tsflags=`` it remove all values
+    in append options.
 
 ``--skip-broken``
     Resolve depsolve problems by removing packages that are causing problems from the transaction.
