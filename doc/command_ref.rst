@@ -169,8 +169,9 @@ Options
 
 ``--downloaddir=<path>``
     Redirect downloaded packages to provided directory. The option has to by used together with \-\
-    :ref:`-downloadonly <downloadonly-label>` command line option or with ``download`` command
-    (dnf-plugins-core).
+    :ref:`-downloadonly <downloadonly-label>` command line option or with
+    ``download`` command (dnf-plugins-core) or with ``system-upgrade`` command
+    (dnf-plugins-extras).
 
 .. _downloadonly-label:
 
