@@ -178,6 +178,9 @@ class ListAppendOption(ListOption):
 
     def _set(self, value, priority=PRIO_RUNTIME):
         """Append option's value"""
+        if value == '':
+            return super(ListAppendOption, self)._set(Value([], priority), priority)
+
         new = self._make_value(value, priority)
         if new.value is not None:
             if self._is_default():
