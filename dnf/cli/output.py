@@ -241,7 +241,7 @@ class Output(object):
 
         # i'm not able to get real terminal width so i'm probably
         # running in non interactive terminal (pipe to grep, redirect to file...)
-        # just return maximal lengths of each data column.
+        # avoid splitting lines to enable filtering output
         if not total_width:
             full_columns = []
             for col in data:
@@ -250,7 +250,11 @@ class Output(object):
                 else:
                     full_columns.append(0)
             full_columns[0] += len(indent)
-            return full_columns
+            # if possible, try to keep default width (usually 80 columns)
+            default_width = self.term.columns
+            if sum(full_columns) > default_width:
+                return full_columns
+            total_width = default_width
 
         #  We start allocating 1 char to everything but the last column, and a
         # space between each (again, except for the last column). Because
