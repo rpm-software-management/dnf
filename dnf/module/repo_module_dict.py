@@ -207,7 +207,9 @@ class RepoModuleDict(OrderedDict):
             self.base._module_persistor.commit()
             self.base._module_persistor.save()
 
-        self.base.use_module_includes()
+        self.base.sack.reset_includes()
+        self.base.sack.reset_excludes()
+        self.base._setup_excludes_includes()
 
     def disable(self, module_spec, save_immediately=False):
         subj = ModuleSubject(module_spec)
