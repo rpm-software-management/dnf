@@ -119,7 +119,10 @@ class Base(object):
         hrepo = repo._hawkey_repo
         hrepo.repomd_fn = repo._repomd_fn
         hrepo.primary_fn = repo._primary_fn
-        hrepo.filelists_fn = repo._filelists_fn
+        if repo._filelists_fn is not None:
+            hrepo.filelists_fn = repo._filelists_fn
+        else:
+            logger.debug("not found filelists for: %s", repo.name)
         hrepo.cost = repo.cost
         hrepo.priority = repo.priority
         if repo._presto_fn:
