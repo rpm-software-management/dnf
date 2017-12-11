@@ -193,11 +193,14 @@ class Base(object):
                 subj = dnf.subject.Subject(excl)
                 exclude_query = exclude_query.union(subj.get_best_query(
                     self.sack, with_nevra=True, with_provides=False, with_filenames=False))
+            self.use_module_includes()
             if include_query:
                 self.sack.add_includes(include_query)
                 self.sack.set_use_includes(True)
             if exclude_query:
                 self.sack.add_excludes(exclude_query)
+        else:
+            self.use_module_includes()
 
         if repo_includes:
             for query, repoid in repo_includes:
@@ -221,10 +224,8 @@ class Base(object):
         self.repo_module_dict.read_all_module_confs()
         self.repo_module_dict.read_all_module_defaults()
         self._module_persistor = ModulePersistor()
-        self.use_module_includes()
 
     def use_module_includes(self):
-        self.sack.reset_includes()
         include_repos = set()
         include_nevras = set()
         include_query_list = []
@@ -428,8 +429,8 @@ class Base(object):
                 self.repos.all().disable()
         conf = self.conf
         self._sack._configure(conf.installonlypkgs, conf.installonly_limit)
-        self._setup_excludes_includes()
         self._setup_modules()
+        self._setup_excludes_includes()
         timer()
         self._goal = dnf.goal.Goal(self._sack)
         self._plugins.run_sack()
