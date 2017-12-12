@@ -63,7 +63,7 @@ class SwdbInterface(object):
             output_file = self._swdb.get_path()
             transformSwdb(input_dir, output_file)
 
-    def _initSwdb(self, input_dir='/var/lib/dnf/'):
+    def _initSwdb(self, input_dir):
         """ Create SWDB object and create database if necessary """
         self._swdb = Swdb.new(self.path, self.releasever)
         self._createdb(input_dir)
@@ -72,7 +72,8 @@ class SwdbInterface(object):
     def swdb(self):
         """ Lazy initialize Swdb object """
         if not self._swdb:
-            self._initSwdb()
+            dbdir = os.path.join(self._root, self._db_dir)
+            self._initSwdb(dbdir)
         return self._swdb
 
     def transform(self, input_dir):
