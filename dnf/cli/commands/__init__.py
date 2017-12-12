@@ -25,6 +25,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _, ucd
+from hawkey import SwdbReason
 
 import argparse
 import dnf.cli
@@ -870,8 +871,13 @@ class HistoryCommand(Command):
         history = dnf.history.open_history(self.base.history)
         operations = history.transaction_nevra_ops(old.tid)
 
+        # FIXME this is wrong. Will be fixed in new swdb design.
+        #   Reason of a package installed in the original transaction is lost in the
+        #   operation above and replaced by reason USER (in the operation below).
+        #   (dependencies are promoted to user installed packages)
+
         try:
-            self.base.transaction = converter.convert(operations, 'history')
+            self.base.transaction = converter.convert(operations, SwdbReason.USER)
         except dnf.exceptions.PackagesNotInstalledError as err:
             logger.info(_('No package %s installed.'),
                         self.output.term.bold(ucd(err.pkg_spec)))
