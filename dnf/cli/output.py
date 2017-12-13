@@ -1047,14 +1047,8 @@ class Output(object):
         easy-to-read format.
         """
 
-        forward_actions = {
-            hawkey.UPGRADE,
-            hawkey.UPGRADE_ALL,
-            hawkey.DISTUPGRADE,
-            hawkey.DISTUPGRADE_ALL,
-            hawkey.DOWNGRADE,
-            hawkey.INSTALL
-        }
+        forward_actions = hawkey.UPGRADE | hawkey.UPGRADE_ALL | hawkey.DISTUPGRADE | \
+            hawkey.DISTUPGRADE_ALL | hawkey.DOWNGRADE | hawkey.INSTALL
         skipped_conflicts = set()
         skipped_broken = set()
 
@@ -1109,9 +1103,9 @@ class Output(object):
             pkglist_lines.append((action, lines))
 
         # show skipped conflicting packages
-        if not self.conf.best and forward_actions & self.base._goal.actions:
+        if not self.conf.best and self.base._goal.actions & forward_actions:
             lines = []
-            upgrade_type = True if {hawkey.UPGRADE, hawkey.UPGRADE_ALL} & self.base._goal.actions \
+            upgrade_type = True if self.base._goal.actions & hawkey.UPGRADE | hawkey.UPGRADE_ALL \
                 else False
             skipped_conflicts, skipped_broken = self._skipped_packages(upgrade_type=upgrade_type)
             for pkg in sorted(skipped_conflicts):
