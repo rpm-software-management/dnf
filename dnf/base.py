@@ -1430,42 +1430,36 @@ class Base(object):
         trans = self._comps_trans
         basearch = self.conf.substitutions['basearch']
 
-        def conditional_pkg_check(pkg):
-            """
-            If package is conditional it checks if transaction fulfills condition
-            :param pkg:
-            :return: True if the package should be installed
-            """
-            if not pkg.requires:
-                return True
-            installed = self.sack.query().installed().filter(name=pkg.requires).run()
-            return len(installed) > 0 or \
-                pkg.requires in (pkg.name for pkg in self._goal._installs) or \
-                pkg.requires in [pkg.name for pkg in trans.install]
-
-        def trans_upgrade(query, remove_query, pkg):
+        def trans_upgrade(query, remove_query, comps_pkg):
             sltr = dnf.selector.Selector(self.sack)
             sltr.set(pkg=query)
             self._goal.upgrade(select=sltr)
             return remove_query
 
-        def trans_install(query, remove_query, pkg):
+        def trans_install(query, remove_query, comps_pkg):
             if self.conf.multilib_policy == "all":
-                # can provide different suggestion for conditional package in comparison to
-                # "best" policy
-                if conditional_pkg_check(pkg):
+                if not comps_pkg.requires:
                     self._install_multiarch(query, strict=False)
+                else:
+                    # it installs only one arch for conditional packages
+                    installed_query = query.installed().apply()
+                    if installed_query:
+                        for pkg in installed_query:
+                            _msg_installed(pkg)
+                    sltr = dnf.selector.Selector(self.sack)
+                    sltr.set(provides="({} if {})".format(comps_pkg.name, comps_pkg.requires))
+                    self._goal.install(select=sltr, optional=True)
 
             else:
                 sltr = dnf.selector.Selector(self.sack)
-                if pkg.requires:
-                    sltr.set(provides="({} if {})".format(pkg.name, pkg.requires))
+                if comps_pkg.requires:
+                    sltr.set(provides="({} if {})".format(comps_pkg.name, comps_pkg.requires))
                 else:
                     sltr.set(pkg=query)
                 self._goal.install(select=sltr, optional=True)
             return remove_query
 
-        def trans_remove(query, remove_query, pkg):
+        def trans_remove(query, remove_query, comps_pkg):
             remove_query = remove_query.union(query)
             return remove_query
 
@@ -1475,20 +1469,20 @@ class Base(object):
                    (trans.remove, trans_remove))
 
         for (attr, fn) in attr_fn:
-            for pkg in attr:
-                query_args = {'name': pkg.name}
-                if (pkg.basearchonly):
+            for comps_pkg in attr:
+                query_args = {'name': comps_pkg.name}
+                if (comps_pkg.basearchonly):
                     query_args.update({'arch': basearch})
                 q = self.sack.query().filter(**query_args).apply()
                 if not q:
-                    package_string = pkg.name
-                    if pkg.basearchonly:
+                    package_string = comps_pkg.name
+                    if comps_pkg.basearchonly:
                         package_string += '.' + basearch
                     logger.warning(_('No match for group package "{}"').format(package_string))
                     continue
                 q = q.filter(arch__neq="src")
-                remove_query = fn(q, remove_query, pkg)
-                self._goal.group_members.add(pkg.name)
+                remove_query = fn(q, remove_query, comps_pkg)
+                self._goal.group_members.add(comps_pkg.name)
 
         self._remove_if_unneeded(remove_query)
 
