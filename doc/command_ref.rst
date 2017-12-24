@@ -377,7 +377,8 @@ this command.
     it. It also removes any dependencies that are no longer needed.
 
     There are also a few specific autoremove commands ``autoremove-n``, ``autoremove-na`` and
-    ``autoremove-nevra`` that allow the specification of an exact argument in NEVRA format.
+    ``autoremove-nevra`` that allow the specification of an exact argument in NEVRA
+    (name-epoch:version-release.architecture) format.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
