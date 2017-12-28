@@ -599,7 +599,7 @@ and :ref:`\configuration_files_replacement_policy-label`.
 Info Command
 ------------
 
-``dnf [options] info [<package-spec>...]``
+``dnf [options] info [<package-name-spec>...]``
     Is used to list description and summary information about installed and available packages.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
