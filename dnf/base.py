@@ -251,12 +251,13 @@ class Base(object):
                 update_include_nevras_dict(repo_module.name, repo_module.conf.stream)
             elif repo_module.defaults.stream:
                 update_include_nevras_dict(repo_module.name, repo_module.defaults.stream)
-
+        repos_query_dic = {}
         for nevra, repos in include_nevras_dic.items():
-            subj = dnf.subject.Subject(nevra)
-            nevra_query = subj.get_best_query(self.sack, forms=[hawkey.FORM_NEVRA], with_nevra=True,
-                                              with_provides=False, with_filenames=False).apply()
-            include_query_list.append(nevra_query.filter(reponame=repos).apply())
+            nevra_query = repos_query_dic.setdefault(
+                ','.join(repos), self.sack.query().filter(reponame=repos))
+            nevra_query.apply()
+            nevra_query = nevra_query._nevra(nevra).apply()
+            include_query_list.append(nevra_query)
 
         for include_query in include_query_list:
             self.sack.add_includes(include_query)
