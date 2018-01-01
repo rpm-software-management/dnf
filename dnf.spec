@@ -131,10 +131,9 @@ Summary:        Python 2 interface to DNF
 %{?python_provide:%python_provide python2-%{name}}
 BuildRequires:  python2-devel
 BuildRequires:  python2-hawkey >= %{hawkey_version}
-BuildRequires:  python-iniparse
-BuildRequires:  python-libcomps >= %{libcomps_version}
-BuildRequires:  python-librepo >= %{librepo_version}
-BuildRequires:  python-nose
+BuildRequires:  python2-libcomps >= %{libcomps_version}
+BuildRequires:  python2-librepo >= %{librepo_version}
+BuildRequires:  python2-nose
 BuildRequires:  python2-gpg
 Requires:       python2-gpg
 BuildRequires:  pyliblzma
@@ -142,14 +141,17 @@ Requires:       pyliblzma
 Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
 Requires:       python2-hawkey >= %{hawkey_version}
-Requires:       python-iniparse
-Requires:       python-libcomps >= %{libcomps_version}
-Requires:       python-librepo >= %{librepo_version}
+Requires:       python2-libcomps >= %{libcomps_version}
+Requires:       python2-librepo >= %{librepo_version}
 %if 0%{?rhel} && 0%{?rhel} <= 7
+BuildRequires:  python-iniparse
+Requires:       python-iniparse
 BuildRequires:  rpm-python >= %{rpm_version}
 Requires:       rpm-python >= %{rpm_version}
 Requires:       rpm-plugin-systemd-inhibit
 %else
+BuildRequires:  python2-iniparse
+Requires:       python2-iniparse
 BuildRequires:  python2-rpm >= %{rpm_version}
 Requires:       python2-rpm >= %{rpm_version}
 Recommends:     rpm-plugin-systemd-inhibit
