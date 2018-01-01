@@ -63,9 +63,7 @@ Recommends:     (python2-dbus if NetworkManager)
 %endif
 Recommends:     (%{_bindir}/sqlite3 if bash-completion)
 %endif
-Requires(post):     systemd
-Requires(preun):    systemd
-Requires(postun):   systemd
+%{?systemd_requires}
 Provides:       dnf-command(autoremove)
 Provides:       dnf-command(check-update)
 Provides:       dnf-command(clean)
@@ -201,9 +199,7 @@ Python 3 interface to DNF.
 Summary:        Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 BuildRequires:  systemd
 Requires:       %{name} = %{version}-%{release}
-Requires(post):   systemd
-Requires(preun):  systemd
-Requires(postun): systemd
+%{?systemd_requires}
 
 %description automatic
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
