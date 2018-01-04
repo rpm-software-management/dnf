@@ -23,12 +23,15 @@ import distutils.sysconfig
 
 CONF_FILENAME='/etc/dnf/dnf.conf' # :api
 CONF_AUTOMATIC_FILENAME='/etc/dnf/automatic.conf'
-DISTROVERPKG=('system-release(releasever)', 'redhat-release')
+DISTROVERPKG=('system-release(releasever)', 'system-release',
+              'distribution-release(releasever)', 'distribution-release',
+              'redhat-release', 'suse-release')
 GROUP_PACKAGE_TYPES = ('mandatory', 'default', 'conditional') # :api
 INSTALLONLYPKGS=['kernel', 'kernel-PAE',
                  'installonlypkg(kernel)',
                  'installonlypkg(kernel-module)',
-                 'installonlypkg(vm)']
+                 'installonlypkg(vm)',
+                 'multiversion(kernel)']
 LOG='dnf.log'
 LOG_HAWKEY='hawkey.log'
 LOG_LIBREPO='dnf.librepo.log'
