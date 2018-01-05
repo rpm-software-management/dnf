@@ -21,6 +21,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.pycomp import unicode
 
+from argparse import ArgumentTypeError
 import dnf
 import locale
 import os
@@ -115,6 +116,21 @@ def ucd_input(ucstring):
     """
     print(ucstring, end='')
     return dnf.pycomp.raw_input()
+
+
+def unicode_argument(val):
+    """
+    Type checking for ArgumentParser to ensure that command line
+    argument can be converted to unicode with utf-8 encoding.
+    """
+    if dnf.pycomp.PY3:
+        try:
+            val.encode('utf-8')
+        except UnicodeEncodeError:
+            raise ArgumentTypeError(str(sys.exc_info()[1]))
+        return val
+    else:
+        return val.decode(sys.getfilesystemencoding())
 
 
 def ucd(obj):

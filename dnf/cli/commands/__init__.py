@@ -191,7 +191,8 @@ class InfoCommand(Command):
                              help=_("show only recently changed packages"))
         parser.add_argument('packages', nargs='*', metavar=_('PACKAGE'),
                             choices=cls.pkgnarrows, default=cls.DEFAULT_PKGNARROW,
-                            action=OptionParser.PkgNarrowCallback)
+                            action=OptionParser.PkgNarrowCallback,
+                            type=dnf.i18n.unicode_argument)
 
     def configure(self):
         demands = self.cli.demands
@@ -260,7 +261,8 @@ class CheckUpdateCommand(Command):
 
     @staticmethod
     def set_argparser(parser):
-        parser.add_argument('packages', nargs='*', metavar=_('PACKAGE'))
+        parser.add_argument('packages', nargs='*', metavar=_('PACKAGE'),
+                            type=dnf.i18n.unicode_argument)
 
     def configure(self):
         demands = self.cli.demands
@@ -759,7 +761,8 @@ class RepoPkgsCommand(Command):
                              help=_("show only recently changed packages"))
         parser.add_argument('pkg_specs', nargs='*', metavar=_('PACKAGE'),
                             choices=pkgnarrows, default=DEFAULT_PKGNARROW,
-                            action=OptionParser.PkgNarrowCallback)
+                            action=OptionParser.PkgNarrowCallback,
+                            type=dnf.i18n.unicode_argument)
 
     def configure(self):
         """Verify whether the command can run with given arguments."""

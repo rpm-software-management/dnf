@@ -22,7 +22,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.cli import commands
 from dnf.cli.option_parser import OptionParser
-from dnf.i18n import _
+from dnf.i18n import _, unicode_argument
 
 
 class DowngradeCommand(commands.Command):
@@ -36,7 +36,8 @@ class DowngradeCommand(commands.Command):
     @staticmethod
     def set_argparser(parser):
         parser.add_argument('package', nargs='*', help=_('Package to downgrade'),
-                            action=OptionParser.ParseSpecGroupFileCallback)
+                            action=OptionParser.ParseSpecGroupFileCallback,
+                            type=unicode_argument)
 
     def configure(self):
         demands = self.cli.demands

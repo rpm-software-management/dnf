@@ -22,7 +22,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.cli import commands
 from dnf.cli.option_parser import OptionParser
-from dnf.i18n import _
+from dnf.i18n import _, unicode_argument
 
 import dnf.exceptions
 import logging
@@ -41,7 +41,8 @@ class ReinstallCommand(commands.Command):
     def set_argparser(parser):
         parser.add_argument('packages', nargs='+', help=_('Package to reinstall'),
                             action=OptionParser.ParseSpecGroupFileCallback,
-                            metavar=_('PACKAGE'))
+                            metavar=_('PACKAGE'),
+                            type=unicode_argument)
 
     def configure(self):
         """Verify that conditions are met so that this command can

@@ -20,7 +20,7 @@
 
 from __future__ import absolute_import
 from dnf.cli import commands
-from dnf.i18n import _
+from dnf.i18n import _, unicode_argument
 
 
 class DistroSyncCommand(commands.Command):
@@ -33,7 +33,8 @@ class DistroSyncCommand(commands.Command):
 
     @staticmethod
     def set_argparser(parser):
-        parser.add_argument('package', nargs='*', help=_('Package to synchronize'))
+        parser.add_argument('package', nargs='*', help=_('Package to synchronize'),
+                            type=unicode_argument)
 
     def configure(self):
         demands = self.cli.demands
