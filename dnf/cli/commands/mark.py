@@ -20,7 +20,7 @@
 
 from __future__ import print_function
 from __future__ import unicode_literals
-from dnf.i18n import _
+from dnf.i18n import _, unicode_argument
 from dnf.cli import commands
 from hawkey import SwdbReason
 
@@ -40,7 +40,7 @@ class MarkCommand(commands.Command):
     def set_argparser(parser):
         parser.add_argument('mark', nargs=1, choices=['install', 'remove', 'group'],
                             metavar='[ install | remove | group ]')
-        parser.add_argument('package', nargs='+')
+        parser.add_argument('package', nargs='+', type=unicode_argument)
 
     def _mark_install(self, pkg):
         self.base.history.set_reason(pkg, SwdbReason.USER)
