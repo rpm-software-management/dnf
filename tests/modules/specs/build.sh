@@ -45,10 +45,28 @@ for module in $DIR/*-*-*; do
 done
 
 
+for spec in _non-modular/*.spec; do
+    echo
+    echo "Building NON-MODULAR $spec..."
+    for target in $ARCHES; do
+        rpmbuild --quiet --target=$target -ba --nodeps --define "_srcrpmdir $DIR/../modules/_non-modular/src" --define "_rpmdir $DIR/../modules/_non-modular/" $spec
+    done
+done
+
+
+repo_path_noarch=$DIR/../modules/_non-modular/noarch
+for target in $ARCHES; do
+    repo_path=$DIR/../modules/_non-modular/$target
+    if [ -d $repo_path_noarch ]; then
+        cp -a $repo_path_noarch/* $repo_path/
+    fi
+done
+
+
 ./_create_modulemd.py
 
 
-for module in $DIR/*-*-*; do
+for module in $DIR/*-*-* $DIR/_non-modular; do
     module_name=$(basename $module)
     for target in $ARCHES; do
         repo_path=$DIR/../modules/$module_name/$target
