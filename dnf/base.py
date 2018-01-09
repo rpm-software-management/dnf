@@ -237,33 +237,36 @@ class Base(object):
         self._module_persistor = ModulePersistor()
 
     def use_module_includes(self):
-        def update_include_nevras_dict(name, stream):
-            include_set, repos = self.repo_module_dict.get_includes(name, stream)
-            include_repos.update(repos)
-            for nevra in include_set:
-                include_nevras_dic.setdefault(nevra, set()).update([repo.id for repo in repos])
+        def update_include_nevras(name, stream):
+            include_set, _ = self.repo_module_dict.get_includes(name, stream)
+            include_nevras_set.update(include_set)
 
-        include_repos = set()
-        include_nevras_dic = {}
-        include_query_list = []
+        exclude_nevras_dict = {}
+        exclude_query_list = []
+        include_nevras_set = set()
         for repo_module in self.repo_module_dict.values():
             if repo_module.conf.enabled:
-                update_include_nevras_dict(repo_module.name, repo_module.conf.stream)
+                update_include_nevras(repo_module.name, repo_module.conf.stream)
             elif repo_module.defaults.stream:
-                update_include_nevras_dict(repo_module.name, repo_module.defaults.stream)
-        repos_query_dic = {}
-        for nevra, repos in include_nevras_dic.items():
-            nevra_query = repos_query_dic.setdefault(
-                ','.join(repos), self.sack.query().filter(reponame=repos))
+                update_include_nevras(repo_module.name, repo_module.defaults.stream)
+
+            exclude_set, repos = self.repo_module_dict.get_excludes(repo_module.name)
+            for nevra in exclude_set:
+                exclude_nevras_dict.setdefault(nevra, set()).update([repo.id for repo in repos])
+
+        exclude_nevras_dict = {key: value for key, value in exclude_nevras_dict.items()
+                               if key not in include_nevras_set}
+
+        repos_query_dict = {}
+        for nevra, repos in exclude_nevras_dict.items():
+            nevra_query = repos_query_dict.setdefault(
+                ','.join(sorted(repos)), self.sack.query().filter(reponame=repos))
             nevra_query.apply()
             nevra_query = nevra_query._nevra(nevra).apply()
-            include_query_list.append(nevra_query)
+            exclude_query_list.append(nevra_query)
 
-        for include_query in include_query_list:
-            self.sack.add_includes(include_query)
-
-        for repo in include_repos:
-            self.sack.set_use_includes(True, repo.id)
+        for exclude_query in exclude_query_list:
+            self.sack.add_excludes(exclude_query)
 
     def _store_persistent_data(self):
         if self._repo_persistor and not self.conf.cacheonly:
