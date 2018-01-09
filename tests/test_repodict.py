@@ -1,4 +1,6 @@
-# Copyright (C) 2013-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2013-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -16,18 +18,20 @@
 #
 
 from __future__ import unicode_literals
-from tests import support
-from tests.support import TestCase
+
 import dnf.repodict
+
+import tests.support
+from tests.support import TestCase
 
 
 class TestRepoDict(TestCase):
     def setUp(self):
-        conf = support.FakeConf()
-        self.x  = support.MockRepo('x', conf)
-        self.xx = support.MockRepo('xx', conf)
-        self.y  = support.MockRepo('y', conf)
-        self.z  = support.MockRepo('z', conf)
+        conf = tests.support.FakeConf()
+        self.x = tests.support.MockRepo('x', conf)
+        self.xx = tests.support.MockRepo('xx', conf)
+        self.y = tests.support.MockRepo('y', conf)
+        self.z = tests.support.MockRepo('z', conf)
 
         self.repos = dnf.repodict.RepoDict()
         self.repos.add(self.x)

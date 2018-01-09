@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,20 +19,23 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests import support
+
+import operator
+
 from hawkey import SwdbReason, SwdbPkg, SwdbItem
 
 import dnf.comps
 import dnf.util
-import operator
-import warnings
+
+import tests.support
+from tests.support import mock
 
 
-class EmptyPersistorTest(support.ResultTestCase):
+class EmptyPersistorTest(tests.support.ResultTestCase):
     """Test group operations with empty persistor."""
 
     def setUp(self):
-        self.base = support.MockBase('main')
+        self.base = tests.support.MockBase('main')
         self.base.read_mock_comps(False)
         self.base.init_sack()
 
@@ -40,7 +45,7 @@ class EmptyPersistorTest(support.ResultTestCase):
         cnt = self.base.group_install(grp.id, ('optional',), exclude=('lotus',))
         self.assertEqual(cnt, 0)
 
-    @support.mock.patch('locale.getlocale', return_value=('cs_CZ', 'UTF-8'))
+    @mock.patch('locale.getlocale', return_value=('cs_CZ', 'UTF-8'))
     def test_group_install_locale(self, _unused):
         comps = self.base.comps
         grp = comps.group_by_pattern('Kritick\xe1 cesta (Z\xe1klad)')
@@ -69,11 +74,12 @@ class EmptyPersistorTest(support.ResultTestCase):
         self.assertCountEqual(map(str, installed), ('trampoline-2.1-1.noarch',))
         self.assertEmpty(removed)
 
-class PresetPersistorTest(support.ResultTestCase):
+
+class PresetPersistorTest(tests.support.ResultTestCase):
     """Test group operations with some data in the persistor."""
 
     def setUp(self):
-        self.base = support.MockBase("main")
+        self.base = tests.support.MockBase("main")
         self.base.read_mock_comps()
         self.base.init_sack()
 
@@ -118,7 +124,7 @@ class PresetPersistorTest(support.ResultTestCase):
         cnt = self.base.env_group_remove(["sugar-desktop-environment"])
         prst.commit()
         self.assertEqual(3, cnt)
-        with support.mock.patch('logging.Logger.error') as log:
+        with tests.support.mock.patch('logging.Logger.error'):
             self.assertRaises(dnf.exceptions.Error,
                               self.base.env_group_remove,
                               ['nonexistent'])
@@ -199,10 +205,10 @@ class PresetPersistorTest(support.ResultTestCase):
         self.assertFalse(p_grp.installed)
 
 
-class EnvironmentInstallTest(support.ResultTestCase):
+class EnvironmentInstallTest(tests.support.ResultTestCase):
     def setUp(self):
         """Set up a test where sugar is considered not installed."""
-        self.base = support.MockBase("main")
+        self.base = tests.support.MockBase("main")
         self.base.init_sack()
         self.base.read_mock_comps()
 

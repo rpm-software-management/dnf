@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,12 +19,14 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests import support
-from tests.support import mock
 
 import dnf.match_counter
 
-class PackageStub(support.MockPackage):
+import tests.support
+from tests.support import mock
+
+
+class PackageStub(tests.support.MockPackage):
     @classmethod
     def several(cls, count):
         for _ in range(count):
@@ -35,7 +39,7 @@ class PackageStub(support.MockPackage):
         self.description = ''
 
 
-class MatchCounterTest(support.TestCase):
+class MatchCounterTest(tests.support.TestCase):
     def test_canonize_string_set(self):
         a = ['f', 'p']
         b = ['p']
@@ -43,7 +47,7 @@ class MatchCounterTest(support.TestCase):
                         dnf.match_counter._canonize_string_set(a, 2))
 
     def test_matched(self):
-        pkg = support.MockPackage("humbert-1-1.noarch")
+        pkg = tests.support.MockPackage("humbert-1-1.noarch")
         pkg.url = url = "http://humbert.com"
         pkg.summary = summary = "Glimpses of an incomparably more poignant bliss."
         counter = dnf.match_counter.MatchCounter()
@@ -122,8 +126,8 @@ class MatchCounterTest(support.TestCase):
         self.assertEqual(counter.total(), 3)
 
     def test_distance(self):
-        pkg2 = support.MockPackage('rust-and-stardust-1-2.x86_64')
-        pkg1 = support.MockPackage('rust-1-3.x86_64')
+        pkg2 = tests.support.MockPackage('rust-and-stardust-1-2.x86_64')
+        pkg1 = tests.support.MockPackage('rust-1-3.x86_64')
         counter = dnf.match_counter.MatchCounter()
         counter.add(pkg1, 'name', 'rust')
         counter.add(pkg2, 'name', 'rust')

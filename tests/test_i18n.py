@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-#
-# Copyright (C) 2012-2016 Red Hat, Inc.
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -19,26 +19,31 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.pycomp import PY3
-from dnf.i18n import fill_exact_width, textwrap_fill
-from tests.support import TestCase
-from tests.support import mock
 
 import unittest
-import dnf.i18n
 import sys
 
-UC_TEXT          = 'Šířka' # means 'Width' in Czech
-UC_TEXT_OSERROR  = 'Soubor již existuje' # 'File already exists'
+import dnf.i18n
+from dnf.pycomp import PY3
+from dnf.i18n import fill_exact_width, textwrap_fill
+
+import tests.support
+from tests.support import mock
+
+
+UC_TEXT          = 'Šířka'  # means 'Width' in Czech
+UC_TEXT_OSERROR  = 'Soubor již existuje'  # 'File already exists'
 STR_TEXT_OSERROR = 'Soubor již existuje'
 
+
 @mock.patch('locale.setlocale')
-class TestLocale(TestCase):
+class TestLocale(tests.support.TestCase):
     def test_setup_locale(self, mock_setlocale):
         dnf.i18n.setup_locale()
         self.assertTrue(1 <= mock_setlocale.call_count <= 2)
 
-class TestStdout(TestCase):
+
+class TestStdout(tests.support.TestCase):
     def test_setup_stdout(self):
         # No stdout output can be seen when sys.stdout is patched, debug msgs,
         # etc. included.
@@ -66,7 +71,8 @@ class TestStdout(TestCase):
         self.assertEqual(output, u'\u0160\xed\u0159ka' if PY3 else b'\xa9\xed\xf8ka')
         self.assertEqual(len(output), len(UC_TEXT))
 
-class TestInput(TestCase):
+
+class TestInput(tests.support.TestCase):
     @unittest.skipIf(PY3, "builtin input accepts unicode and bytes")
     def test_assumption(self):
         """ Test that raw_input() always fails on a unicode string with accented
@@ -79,7 +85,7 @@ class TestInput(TestCase):
             self.assertRaises(UnicodeEncodeError, raw_input, UC_TEXT)
 
 
-class TestConversion(TestCase):
+class TestConversion(tests.support.TestCase):
     @mock.patch('dnf.i18n._guess_encoding', return_value='utf-8')
     def test_ucd(self, _unused):
         s = UC_TEXT.encode('utf8')
@@ -116,7 +122,7 @@ class TestConversion(TestCase):
         self.assertEqual(u, "ka")
 
 
-class TestFormatedOutput(TestCase):
+class TestFormatedOutput(tests.support.TestCase):
     def test_fill_exact_width(self):
         msg = "message"
         pre = "<"

@@ -1,4 +1,6 @@
-# Copyright (C) 2013-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2013-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,14 +19,17 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests.support import mock, FakeConf
+
+import rpm
 from hawkey import SwdbReason
 
 import dnf.goal
 import dnf.repo
 import dnf.transaction
-import rpm
+
 import tests.support
+from tests.support import mock
+
 
 class TransactionItemTest(tests.support.TestCase):
     @classmethod
@@ -130,6 +135,7 @@ class TransactionItemTest(tests.support.TestCase):
             tsi.removes(),
             [self.oldpkg, self.obspkg1, self.obspkg2, self.obspkg3])
 
+
 class TransactionTest(tests.support.TestCase):
     def setUp(self):
         self.ipkg = tests.support.MockPackage('inst-1.0-1.x86_64')
@@ -173,6 +179,7 @@ class TransactionTest(tests.support.TestCase):
     def test_total_package_count(self):
         self.assertEqual(self.trans._total_package_count(), 11)
 
+
 class RPMLimitationsTest(tests.support.TestCase):
     def test_rpm_limitations(self):
         ts = dnf.transaction.Transaction()
@@ -181,11 +188,12 @@ class RPMLimitationsTest(tests.support.TestCase):
         msg = ts._rpm_limitations()
         self.assertIsNot(msg, None)
 
+
 class PopulateTSTest(tests.support.TestCase):
     @staticmethod
     def test_populate_rpm_ts():
         ts = dnf.transaction.Transaction()
-        conf = FakeConf(cachedir='/tmp')
+        conf = tests.support.FakeConf(cachedir='/tmp')
         repo = dnf.repo.Repo('r', conf)
 
         inst = tests.support.MockPackage("ago-20.0-1.x86_64.fc69", repo)
@@ -196,6 +204,7 @@ class PopulateTSTest(tests.support.TestCase):
         rpm_ts = ts._populate_rpm_ts(mock.Mock())
         rpm_ts.assert_has_calls([mock.call.addInstall(None, ts._tsis[0], 'i'),
                                  mock.call.addInstall(None, ts._tsis[1], 'u')])
+
 
 class RPMProbFilters(tests.support.TestCase):
 

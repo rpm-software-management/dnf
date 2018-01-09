@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,12 +19,16 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests import support
-import dnf.exceptions
+
 import itertools
 import logging
 
-class CommonTest(support.ResultTestCase):
+import dnf.exceptions
+
+import tests.support
+
+
+class CommonTest(tests.support.ResultTestCase):
 
     """Tests common to any 'multilib_policy' and 'best'.
 
@@ -48,7 +54,7 @@ class CommonTest(support.ResultTestCase):
     """
 
     def setUp(self):
-        self.base = support.MockBase('main', 'third_party', 'broken_deps')
+        self.base = tests.support.MockBase('main', 'third_party', 'broken_deps')
 
     def test_install_arch_glob(self):
         """Test that the pkg specification can contain an architecture glob."""
@@ -104,8 +110,7 @@ class CommonTest(support.ResultTestCase):
     def test_install_nevra(self):
         """Test that the package to be installed can be specified by NEVRA."""
         self.base.install("lotus-3-17.i686")
-        lotus, = dnf.subject.Subject('lotus-3-17.i686') \
-                     .get_best_query(self.base.sack)
+        lotus, = dnf.subject.Subject('lotus-3-17.i686').get_best_query(self.base.sack)
         new_set = self.base.sack.query().installed() + [lotus]
         self.assertResult(self.base, new_set)
 
@@ -135,7 +140,7 @@ class CommonTest(support.ResultTestCase):
     def test_package_install_installed(self):
         """Test that nothing changes if an installed package matches."""
         p = self.base.sack.query().available()._nevra("librita-1-1.x86_64")[0]
-        with support.mock.patch('logging.Logger.warning') as warn:
+        with tests.support.mock.patch('logging.Logger.warning'):
             self.base.package_install(p)
         self.base.resolve()
         self.assertEmpty(self.base._goal.list_reinstalls())
@@ -175,7 +180,8 @@ class CommonTest(support.ResultTestCase):
             set(removed) &
             set(self.base.sack.query().installed().filter(name='hole')))
 
-class MultilibAllTest(support.ResultTestCase):
+
+class MultilibAllTest(tests.support.ResultTestCase):
 
     """Tests for multilib_policy='all'.
 
@@ -206,9 +212,9 @@ class MultilibAllTest(support.ResultTestCase):
     """
 
     def setUp(self):
-        self.base = support.MockBase('main', 'third_party', 'broken_deps')
+        self.base = tests.support.MockBase('main', 'third_party', 'broken_deps')
         self.base.conf.multilib_policy = "all"
-        assert self.base.conf.best == False
+        assert self.base.conf.best is False
 
     def test_install_conflict(self):
         """Test that the exception is raised if the package conflicts."""
@@ -226,7 +232,7 @@ class MultilibAllTest(support.ResultTestCase):
     def test_install_installed(self):
         """Test that nothing changes if an installed package matches."""
         stdout = dnf.pycomp.StringIO()
-        with support.wiretap_logs('dnf', logging.WARNING, stdout):
+        with tests.support.wiretap_logs('dnf', logging.WARNING, stdout):
             self.base.install('librita')
         self.assertEqual(self.base._goal.req_length(), 0)
         self.assertIn(
@@ -259,7 +265,7 @@ class MultilibAllTest(support.ResultTestCase):
             dnf.subject.Subject('pepper.src').get_best_query(self.base.sack))
 
         stdout = dnf.pycomp.StringIO()
-        with support.wiretap_logs('dnf', logging.WARNING, stdout):
+        with tests.support.wiretap_logs('dnf', logging.WARNING, stdout):
             self.base.install('pepper')
         self.assertEqual(self.base._goal.req_length(), 0)
         self.assertIn(
@@ -289,9 +295,9 @@ class MultilibAllTest(support.ResultTestCase):
         self.assertResult(self.base, result)
 
         assert dnf.subject.Subject('lotus-3-17').get_best_query(self.base.sack), \
-               ('the base must contain packages a package in another repo '
-                'which matches the pattern but is preferred, otherwise the '
-                'test makes no sense')
+            ('the base must contain packages a package in another repo '
+             'which matches the pattern but is preferred, otherwise the '
+             'test makes no sense')
 
     def test_install_upgrade(self):
         """Test that the pkg to be installed can be an upgrade."""
@@ -304,7 +310,8 @@ class MultilibAllTest(support.ResultTestCase):
             removed,
             set(self.base.sack.query().installed().filter(name='hole')))
 
-class MultilibBestTest(support.ResultTestCase):
+
+class MultilibBestTest(tests.support.ResultTestCase):
 
     """Tests for multilib_policy='best'.
 
@@ -338,10 +345,10 @@ class MultilibBestTest(support.ResultTestCase):
     """
 
     def setUp(self):
-        self.base = support.MockBase('main', 'third_party', 'broken_deps')
+        self.base = tests.support.MockBase('main', 'third_party', 'broken_deps')
         self.installed = self.base.sack.query().installed().run()
         self.assertEqual(self.base.conf.multilib_policy, "best")
-        assert self.base.conf.best == False
+        assert self.base.conf.best is False
 
     def test_install_conflict(self):
         """Test that the exception is raised if the package conflicts."""
@@ -361,7 +368,7 @@ class MultilibBestTest(support.ResultTestCase):
     def test_install_installed(self):
         """Test that nothing changes if an installed package matches."""
         stdout = dnf.pycomp.StringIO()
-        with support.wiretap_logs('dnf', logging.WARNING, stdout):
+        with tests.support.wiretap_logs('dnf', logging.WARNING, stdout):
             self.base.install('librita')
         installed, removed = self.installed_removed(self.base)
         self.assertEmpty(installed)
@@ -385,8 +392,7 @@ class MultilibBestTest(support.ResultTestCase):
         cnt = self.base.install("lotus")
         self.assertEqual(cnt, 1)
 
-        new_package, = dnf.subject.Subject('lotus-3-17.x86_64') \
-                           .get_best_query(self.base.sack)
+        new_package, = dnf.subject.Subject('lotus-3-17.x86_64').get_best_query(self.base.sack)
         new_set = self.installed + [new_package]
         self.assertResult(self.base, new_set)
 
@@ -397,7 +403,7 @@ class MultilibBestTest(support.ResultTestCase):
             dnf.subject.Subject('pepper.src').get_best_query(self.base.sack))
 
         stdout = dnf.pycomp.StringIO()
-        with support.wiretap_logs('dnf', logging.WARNING, stdout):
+        with tests.support.wiretap_logs('dnf', logging.WARNING, stdout):
             self.base.install('pepper')
         installed, removed = self.installed_removed(self.base)
         self.assertEmpty(installed | removed)
@@ -432,16 +438,15 @@ class MultilibBestTest(support.ResultTestCase):
         self.base.install('lotus', reponame='main')
         self.assertResult(self.base, result)
 
-        assert dnf.subject.Subject('lotus-3-17.x86_64') \
-               .get_best_query(self.base.sack), \
-               ('the base must contain packages a package in another repo '
-                'which matches the pattern but is preferred, otherwise the '
-                'test makes no sense')
+        assert dnf.subject.Subject('lotus-3-17.x86_64').get_best_query(self.base.sack), \
+            ('the base must contain packages a package in another repo '
+             'which matches the pattern but is preferred, otherwise the '
+             'test makes no sense')
 
     def test_install_unavailable(self):
         """Test that nothing changes if an unavailable package matches."""
         stdout = dnf.pycomp.StringIO()
-        with support.wiretap_logs('dnf', logging.WARNING, stdout):
+        with tests.support.wiretap_logs('dnf', logging.WARNING, stdout):
             cnt = self.base.install('hole')
         self.assertEqual(cnt, 1)
         installed_pkgs = self.base.sack.query().installed().run()
@@ -461,7 +466,8 @@ class MultilibBestTest(support.ResultTestCase):
             removed,
             set(self.base.sack.query().installed().filter(name='hole')))
 
-class BestTrueTest(support.ResultTestCase):
+
+class BestTrueTest(tests.support.ResultTestCase):
 
     """Tests for best=True.
 
@@ -473,12 +479,12 @@ class BestTrueTest(support.ResultTestCase):
     """
 
     def setUp(self):
-        self.base = support.MockBase('broken_deps')
+        self.base = tests.support.MockBase('broken_deps')
         self.base.conf.best = True
 
     def test_install_name_choice(self):
         """Test that the latest version of the matching pkg is installed."""
-        with support.mock.patch('logging.Logger.warning') as warn:
+        with tests.support.mock.patch('logging.Logger.warning'):
             self.base.install('pepper')
         with self.assertRaises(dnf.exceptions.DepsolveError):
             self.base.resolve()

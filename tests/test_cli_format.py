@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -16,18 +18,20 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.cli.format import format_time, format_number
 
 import dnf.cli.format
+from dnf.cli.format import format_time, format_number
+
 import tests.support
+
 
 class FormatTest(tests.support.TestCase):
     def test_format_time(self):
         self.assertEqual(format_time(None), '--:--')
         self.assertEqual(format_time(-1), '--:--')
-        self.assertEqual(format_time(12*60+34), '12:34')
-        self.assertEqual(format_time(12*3600+34*60+56), '754:56')
-        self.assertEqual(format_time(12*3600+34*60+56, use_hours=True), '12:34:56')
+        self.assertEqual(format_time(12 * 60 + 34), '12:34')
+        self.assertEqual(format_time(12 * 3600 + 34 * 60 + 56), '754:56')
+        self.assertEqual(format_time(12 * 3600 + 34 * 60 + 56, use_hours=True), '12:34:56')
 
     def test_format_number(self):
         self.assertEqual(format_number(None), '0.0  ')

@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,10 +19,14 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests import support
-from tests.support import mock
-import dnf.util
+
 import operator
+
+import dnf.util
+
+import tests.support
+from tests.support import mock
+
 
 class Slow(object):
     def __init__(self, val):
@@ -43,7 +49,8 @@ class Slow(object):
         self.computed += 1
         return self._val * self._val
 
-class Util(support.TestCase):
+
+class Util(tests.support.TestCase):
     def test_am_i_root(self):
         with mock.patch('os.geteuid', return_value=1001):
             self.assertFalse(dnf.util.am_i_root())
@@ -60,7 +67,7 @@ class Util(support.TestCase):
 
     def test_empty(self):
         self.assertTrue(dnf.util.empty(()))
-        self.assertFalse(dnf.util.empty([1,2,3]))
+        self.assertFalse(dnf.util.empty([1, 2, 3]))
         self.assertTrue(dnf.util.empty((x for x in [])))
         self.assertTrue(dnf.util.empty(iter([])))
         self.assertFalse(dnf.util.empty((x for x in [2, 3])))
@@ -101,7 +108,9 @@ class Util(support.TestCase):
         """Test insert_if with sometimes fulfilled condition."""
         item = object()
         iterable = range(4)
-        condition = lambda item: item % 2 == 0
+
+        def condition(item):
+            return item % 2 == 0
 
         iterator = dnf.util.insert_if(item, iterable, condition)
 
@@ -169,7 +178,9 @@ class Util(support.TestCase):
     def test_split_by(self):
         """Test split_by with sometimes fulfilled condition."""
         iterable = range(7)
-        condition = lambda item: item % 3 == 0
+
+        def condition(item):
+            return item % 3 == 0
 
         iterator = dnf.util.split_by(iterable, condition)
 
@@ -182,7 +193,9 @@ class Util(support.TestCase):
     def test_split_by_empty(self):
         """Test split with empty iterable."""
         iterable = []
-        condition = lambda item: item % 3 == 0
+
+        def condition(item):
+            return item % 3 == 0
 
         iterator = dnf.util.split_by(iterable, condition)
 
@@ -195,10 +208,10 @@ class Util(support.TestCase):
 
     def test_touch(self):
         self.assertRaises(OSError, dnf.util.touch,
-                          support.NONEXISTENT_FILE, no_create=True)
+                          tests.support.NONEXISTENT_FILE, no_create=True)
 
 
-class TestMultiCall(support.TestCase):
+class TestMultiCall(tests.support.TestCase):
     def test_multi_call(self):
         l = dnf.util.MultiCallList(["one", "two", "three"])
         self.assertEqual(l.upper(), ["ONE", "TWO", "THREE"])

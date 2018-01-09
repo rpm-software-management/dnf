@@ -1,4 +1,6 @@
-# Copyright (C) 2013-2014  Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2013-2018  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,18 +19,22 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests import support
-from tests.support import mock
 
-import dnf.const
-import dnf.logging
 import logging
 import collections
 import operator
 import os
 import tempfile
 
+import dnf.const
+import dnf.logging
+
+import tests.support
+from tests.support import mock
+
+
 LogfileEntry = collections.namedtuple('LogfileEntry', ('date', 'time', 'message'))
+
 
 def _split_logfile_entry(entry):
     record = entry.split(' ')
@@ -38,13 +44,15 @@ def _split_logfile_entry(entry):
     return LogfileEntry(date=datetime[0],
                         time=datetime[1], message=message)
 
+
 def drop_all_handlers():
     for logger_name in ('dnf', 'dnf.rpm'):
         logger = logging.getLogger(logger_name)
         for handler in logger.handlers[:]:
             logger.removeHandler(handler)
 
-class TestLogging(support.TestCase):
+
+class TestLogging(tests.support.TestCase):
     """Tests the logging mechanisms in DNF.
 
     If it causes a problem in the future that loggers are singletons that don't
@@ -76,7 +84,7 @@ class TestLogging(support.TestCase):
 
     def test_setup(self):
         logger = logging.getLogger("dnf")
-        with support.patch_std_streams() as (stdout, stderr):
+        with tests.support.patch_std_streams() as (stdout, stderr):
             self.logging._setup(logging.INFO, logging.ERROR, self.logdir)
             self._bench(logger)
         self.assertEqual("i\n", stdout.getvalue())
@@ -84,7 +92,7 @@ class TestLogging(support.TestCase):
 
     def test_setup_verbose(self):
         logger = logging.getLogger("dnf")
-        with support.patch_std_streams() as (stdout, stderr):
+        with tests.support.patch_std_streams() as (stdout, stderr):
             self.logging._setup(logging.DEBUG, logging.WARNING, self.logdir)
             self._bench(logger)
         self.assertEqual("d\ni\n", stdout.getvalue())
@@ -105,10 +113,9 @@ class TestLogging(support.TestCase):
 
     def test_file_logging(self):
         # log nothing to the console:
-        self.logging._setup(dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL,
-                          self.logdir)
+        self.logging._setup(dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL, self.logdir)
         logger = logging.getLogger("dnf")
-        with support.patch_std_streams() as (stdout, stderr):
+        with tests.support.patch_std_streams() as (stdout, stderr):
             logger.info("i")
             logger.critical("c")
         self.assertEqual(stdout.getvalue(), '')
@@ -117,16 +124,15 @@ class TestLogging(support.TestCase):
         logfile = os.path.join(self.logdir, "dnf.log")
         self.assertFile(logfile)
         with open(logfile) as f:
-            msgs =  map(operator.attrgetter("message"),
-                        map(_split_logfile_entry, f.readlines()))
+            msgs = map(operator.attrgetter("message"),
+                       map(_split_logfile_entry, f.readlines()))
         self.assertSequenceEqual(list(msgs), [dnf.const.LOG_MARKER, 'i', 'c'])
 
     def test_rpm_logging(self):
         # log everything to the console:
-        self.logging._setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
-                          self.logdir)
+        self.logging._setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG, self.logdir)
         logger = logging.getLogger("dnf.rpm")
-        with support.patch_std_streams() as (stdout, stderr):
+        with tests.support.patch_std_streams() as (stdout, stderr):
             logger.info('rpm transaction happens.')
         # rpm logger never outputs to the console:
         self.assertEqual(stdout.getvalue(), "")
@@ -134,19 +140,19 @@ class TestLogging(support.TestCase):
         logfile = os.path.join(self.logdir, "dnf.rpm.log")
         self.assertFile(logfile)
         with open(logfile) as f:
-            msgs =  map(operator.attrgetter("message"),
-                        map(_split_logfile_entry, f.readlines()))
-        self.assertSequenceEqual(list(msgs), [dnf.const.LOG_MARKER,
-                                        'rpm transaction happens.'])
+            msgs = map(operator.attrgetter("message"),
+                       map(_split_logfile_entry, f.readlines()))
+        self.assertSequenceEqual(
+            list(msgs),
+            [dnf.const.LOG_MARKER, 'rpm transaction happens.']
+        )
 
     def test_setup_only_once(self):
         logger = logging.getLogger("dnf")
         self.assertLength(logger.handlers, 0)
-        self.logging._setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
-                           self.logdir)
+        self.logging._setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG, self.logdir)
         cnt = len(logger.handlers)
         self.assertGreater(cnt, 0)
-        self.logging._setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
-                           self.logdir)
+        self.logging._setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG, self.logdir)
         # no new handlers
         self.assertEqual(cnt, len(logger.handlers))

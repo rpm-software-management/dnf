@@ -1,4 +1,6 @@
-# Copyright (C) 2014 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -15,15 +17,18 @@
 # Red Hat, Inc.
 #
 
-
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
-from tests import support
+
+import unittest
 
 import dnf.cli.commands.repoquery
 import dnf.exceptions
-import unittest
+
+import tests.support
+from tests.support import mock
+
 
 EXPECTED_INFO_FORMAT = """\
 Name        : foobar
@@ -48,6 +53,7 @@ EXPECTED_FILELIST_FORMAT = """\
 EXPECTED_SOURCERPM_FORMAT = """\
 foo-1.0.1-1.f20.src.rpm"""
 
+
 class PkgStub(object):
     def __init__(self):
         self.arch = 'x86_64'
@@ -69,51 +75,52 @@ class PkgStub(object):
 class ArgParseTest(unittest.TestCase):
     def setUp(self):
         self.cmd = dnf.cli.commands.repoquery.RepoQueryCommand(
-            support.CliStub(support.BaseCliStub()))
+            tests.support.CliStub(tests.support.BaseCliStub()))
 
     def test_parse(self):
-        support.command_configure(self.cmd, ['--whatrequires', 'prudence'])
+        tests.support.command_configure(self.cmd, ['--whatrequires', 'prudence'])
         self.assertIsNone(self.cmd.opts.whatprovides)
         self.assertEqual(self.cmd.opts.whatrequires, 'prudence')
         self.assertEqual(self.cmd.opts.queryformat,
                          dnf.cli.commands.repoquery.QFORMAT_DEFAULT)
 
-    @support.mock.patch('argparse.ArgumentParser.print_help', lambda x: x)
+    @mock.patch('argparse.ArgumentParser.print_help', lambda x: x)
     def test_conflict(self):
         with self.assertRaises(SystemExit) as sysexit, \
-            support.patch_std_streams() as (stdout, stderr):
-            support.command_configure(self.cmd,
-                                      ['--conflicts', '%{name}', '--provides'])
+                tests.support.patch_std_streams() as (stdout, stderr):
+                tests.support.command_configure(self.cmd, ['--conflicts', '%{name}', '--provides'])
         self.assertEqual(sysexit.exception.code, 1)
 
     def test_options(self):
         for arg in ('conflicts', 'enhances', 'provides',
                     'recommends', 'requires', 'suggests', 'supplements'):
-            support.command_configure(self.cmd, ['--' + arg])
+            tests.support.command_configure(self.cmd, ['--' + arg])
             self.assertEqual(self.cmd.opts.packageatr, arg)
 
     def test_file(self):
-        support.command_configure(self.cmd, ['/var/foobar'])
+        tests.support.command_configure(self.cmd, ['/var/foobar'])
         self.assertIsNone(self.cmd.opts.file)
 
 
 class FilelistFormatTest(unittest.TestCase):
     def test_filelist(self):
         self.cmd = dnf.cli.commands.repoquery.RepoQueryCommand(
-            support.CliStub(support.BaseCliStub()))
-        support.command_configure(self.cmd, ['-l'])
+            tests.support.CliStub(tests.support.BaseCliStub()))
+        tests.support.command_configure(self.cmd, ['-l'])
         pkg = dnf.cli.commands.repoquery.PackageWrapper(PkgStub())
         self.assertEqual(self.cmd.build_format_fn(self.cmd.opts, pkg),
                          EXPECTED_FILELIST_FORMAT)
 
+
 class SourceRPMFormatTest(unittest.TestCase):
     def test_info(self):
         self.cmd = dnf.cli.commands.repoquery.RepoQueryCommand(
-            support.CliStub(support.BaseCliStub()))
-        support.command_configure(self.cmd, ['--source'])
+            tests.support.CliStub(tests.support.BaseCliStub()))
+        tests.support.command_configure(self.cmd, ['--source'])
         pkg = dnf.cli.commands.repoquery.PackageWrapper(PkgStub())
         self.assertEqual(self.cmd.build_format_fn(self.cmd.opts, pkg),
                          EXPECTED_SOURCERPM_FORMAT)
+
 
 class OutputTest(unittest.TestCase):
     def test_output(self):

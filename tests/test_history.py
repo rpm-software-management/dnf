@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,15 +19,15 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests import support
-from tests.support import TestCase
-from tests.support import mock
+
 from hawkey import SwdbReason, SwdbTrans
 
 import dnf.history
 
+import tests.support
 
-class NEVRAOperationsTest(support.TestCase):
+
+class NEVRAOperationsTest(tests.support.TestCase):
     """Unit tests of dnf.history.NEVRAOperations."""
 
     def test_add_erase_installed(self):
@@ -361,7 +363,7 @@ class NEVRAOperationsTest(support.TestCase):
         self.assertFalse(is_in)
 
 
-class TransactionConverterTest(TestCase):
+class TransactionConverterTest(tests.support.TestCase):
     """Unit tests of dnf.history.TransactionConverter."""
 
     def assert_transaction_equal(self, actual, expected):
@@ -371,7 +373,7 @@ class TransactionConverterTest(TestCase):
 
     def test_find_available_na(self):
         """Test finding with an unavailable NEVRA."""
-        sack = support.mock_sack('main')
+        sack = tests.support.mock_sack('main')
         converter = dnf.history.TransactionConverter(sack)
         with self.assertRaises(dnf.exceptions.PackagesNotAvailableError) as ctx:
             converter._find_available('none-1-0.noarch')
@@ -380,7 +382,7 @@ class TransactionConverterTest(TestCase):
 
     def test_find_installed_ni(self):
         """Test finding with an unistalled NEVRA."""
-        sack = support.mock_sack('main')
+        sack = tests.support.mock_sack('main')
         converter = dnf.history.TransactionConverter(sack)
         with self.assertRaises(dnf.exceptions.PackagesNotInstalledError) as ctx:
             converter._find_installed('none-1-0.noarch')
@@ -393,7 +395,7 @@ class TransactionConverterTest(TestCase):
         operations.add('Downgrade', 'tour-4.6-1.noarch', 'tour-5-0.noarch',
                        ['hole-1-1.x86_64'])
 
-        sack = support.mock_sack('main')
+        sack = tests.support.mock_sack('main')
         converter = dnf.history.TransactionConverter(sack)
         actual = converter.convert(operations)
 
@@ -409,7 +411,7 @@ class TransactionConverterTest(TestCase):
         operations = dnf.history.NEVRAOperations()
         operations.add('Erase', 'pepper-20-0.x86_64')
 
-        sack = support.mock_sack()
+        sack = tests.support.mock_sack()
         converter = dnf.history.TransactionConverter(sack)
         actual = converter.convert(operations)
 
@@ -424,7 +426,7 @@ class TransactionConverterTest(TestCase):
         operations.add('Install', 'lotus-3-16.x86_64',
                        obsoleted_nevras=['hole-1-1.x86_64'])
 
-        sack = support.mock_sack('main')
+        sack = tests.support.mock_sack('main')
         converter = dnf.history.TransactionConverter(sack)
         actual = converter.convert(operations, SwdbReason.USER)
 
@@ -441,7 +443,7 @@ class TransactionConverterTest(TestCase):
         operations.add('Reinstall', 'pepper-20-0.x86_64', 'pepper-20-0.x86_64',
                        ['hole-1-1.x86_64'])
 
-        sack = support.mock_sack('main')
+        sack = tests.support.mock_sack('main')
         converter = dnf.history.TransactionConverter(sack)
         actual = converter.convert(operations)
 
@@ -458,7 +460,7 @@ class TransactionConverterTest(TestCase):
         operations.add('Update', 'pepper-20-1.x86_64', 'pepper-20-0.x86_64',
                        ['hole-1-1.x86_64'])
 
-        sack = support.mock_sack('updates')
+        sack = tests.support.mock_sack('updates')
         converter = dnf.history.TransactionConverter(sack)
         actual = converter.convert(operations)
 
@@ -476,7 +478,8 @@ class TransactionConverterTest(TestCase):
             yield (item.op_type, item.installed, item.erased, item.obsoleted,
                    item.reason)
 
-class ComparisonTests(TestCase):
+
+class ComparisonTests(tests.support.TestCase):
 
     def test_transaction(self):
         t = SwdbTrans

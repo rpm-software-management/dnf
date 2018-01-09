@@ -1,4 +1,6 @@
-# Copyright (C) 2014  Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018  Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,12 +19,16 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
+import os
+import tempfile
+
 import dnf.crypto
 import dnf.util
 import dnf.yum.misc
-import os
+
 import tests.support
-import tempfile
+
 
 FINGERPRINT = '0BE49FAF9C955F4F1A98D14B24362A8492530C8E'
 KEYFILE = tests.support.resource_path('keys/key.pub')

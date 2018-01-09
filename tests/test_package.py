@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,28 +19,32 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.pycomp import long
-from tests import support
-from tests.support import mock
 
 import binascii
 import hawkey
 import rpm
+
+from dnf.pycomp import long
+
+import tests.support
+from tests.support import mock
+
 
 TOUR_MD5 = binascii.unhexlify("68e9ded8ea25137c964a638f12e9987c")
 TOUR_SHA256 = binascii.unhexlify("ce77c1e5694b037b6687cf0ab812ca60431ec0b65116abbb7b82684f0b092d62")
 TOUR_WRONG_MD5 = binascii.unhexlify("ffe9ded8ea25137c964a638f12e9987c")
 TOUR_SIZE = 2317
 
-class PackageTest(support.TestCase):
+
+class PackageTest(tests.support.TestCase):
     def setUp(self):
-        base = support.MockBase("main")
+        base = tests.support.MockBase("main")
         self.sack = base.sack
         self.pkg = self.sack.query().available().filter(name="pepper")[1]
 
     def test_from_cmdline(self):
         self.sack.create_cmdline_repo()
-        local_pkg = self.sack.add_cmdline_package(support.TOUR_44_PKG_PATH)
+        local_pkg = self.sack.add_cmdline_package(tests.support.TOUR_44_PKG_PATH)
         self.assertTrue(local_pkg._from_cmdline)
         self.assertFalse(self.pkg._from_cmdline)
 
@@ -49,10 +55,13 @@ class PackageTest(support.TestCase):
 
     def test_header(self):
         self.sack.create_cmdline_repo()
-        pkg = self.sack.add_cmdline_package(support.TOUR_44_PKG_PATH)
+        pkg = self.sack.add_cmdline_package(tests.support.TOUR_44_PKG_PATH)
         header = pkg._header
         self.assertIsInstance(header, rpm.hdr)
-        fn_getter = lambda: support.NONEXISTENT_FILE
+
+        def fn_getter():
+            return tests.support.NONEXISTENT_FILE
+
         with mock.patch.object(pkg, 'localPkg', fn_getter):
             with self.assertRaises(IOError):
                 pkg._header
@@ -79,7 +88,7 @@ class PackageTest(support.TestCase):
 
     def test_verify(self):
         with mock.patch.object(self.pkg, 'localPkg',
-                               return_value=support.TOUR_44_PKG_PATH):
+                               return_value=tests.support.TOUR_44_PKG_PATH):
             self.pkg._chksum = (hawkey.CHKSUM_MD5, TOUR_MD5)
             self.pkg._size = TOUR_SIZE
             self.assertTrue(self.pkg.verifyLocalPkg())
@@ -93,13 +102,13 @@ class PackageTest(support.TestCase):
 
     def test_verify_local(self):
         self.sack.create_cmdline_repo()
-        local_pkg = self.sack.add_cmdline_package(support.TOUR_44_PKG_PATH)
+        local_pkg = self.sack.add_cmdline_package(tests.support.TOUR_44_PKG_PATH)
         self.assertEqual(local_pkg.reponame, hawkey.CMDLINE_REPO_NAME)
         self.assertTrue(local_pkg.verifyLocalPkg())
 
     def test_chksum_local(self):
         self.sack.create_cmdline_repo()
-        local_pkg = self.sack.add_cmdline_package(support.TOUR_44_PKG_PATH)
+        local_pkg = self.sack.add_cmdline_package(tests.support.TOUR_44_PKG_PATH)
         chksum = local_pkg._chksum
         self.assertEqual(chksum[0], hawkey.CHKSUM_SHA256)
         self.assertEqual(chksum[1], TOUR_SHA256)

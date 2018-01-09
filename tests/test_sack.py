@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,50 +19,52 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests import support
-from tests.support import mock
 
 import dnf.exceptions
 import dnf.repo
 import dnf.sack
 
-class SackTest(support.TestCase):
+import tests.support
+from tests.support import mock
+
+
+class SackTest(tests.support.TestCase):
 
     def test_rpmdb_version(self):
-        base = support.MockBase()
+        base = tests.support.MockBase()
         sack = base.sack
         version = sack._rpmdb_version(base.history)
         self.assertIsNotNone(version)
-        # self.assertEqual(version._num, support.TOTAL_RPMDB_COUNT)
-        # self.assertEqual(version._chksum.hexdigest(), support.RPMDB_CHECKSUM)
+        # self.assertEqual(version._num, tests.support.TOTAL_RPMDB_COUNT)
+        # self.assertEqual(version._chksum.hexdigest(), tests.support.RPMDB_CHECKSUM)
 
     def test_setup_excludes_includes(self):
-        base = support.MockBase()
-        base.conf.excludepkgs=['pepper']
+        base = tests.support.MockBase()
+        base.conf.excludepkgs = ['pepper']
         base._setup_excludes_includes()
         peppers = base.sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 0)
 
-        base = support.MockBase()
-        base.conf.exclude=['pepper']
+        base = tests.support.MockBase()
+        base.conf.exclude = ['pepper']
         base._setup_excludes_includes()
         peppers = base.sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 0)
 
-        base = support.MockBase()
+        base = tests.support.MockBase()
         base.conf.disable_excludes = ['all']
-        base.conf.excludepkgs=['pepper']
+        base.conf.excludepkgs = ['pepper']
         base._setup_excludes_includes()
         peppers = base.sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 1)
 
-        base = support.MockBase('main')
-        base.repos['main'].excludepkgs=['pepp*']
+        base = tests.support.MockBase('main')
+        base.repos['main'].excludepkgs = ['pepp*']
         base._setup_excludes_includes()
         peppers = base.sack.query().filter(name='pepper', reponame='main')
         self.assertLength(peppers, 0)
 
-        base = support.MockBase()
+        base = tests.support.MockBase()
         base.conf.excludepkgs = ['*.i?86']
         base.conf.includepkgs = ['lib*']
         base._setup_excludes_includes()
@@ -74,8 +78,8 @@ class SackTest(support.TestCase):
         def raiser():
             raise dnf.exceptions.RepoError()
 
-        base = support.MockBase()
-        r = support.MockRepo('bag', base.conf)
+        base = tests.support.MockBase()
+        r = tests.support.MockRepo('bag', base.conf)
         r.enable()
         base._repos.add(r)
         r.load = mock.Mock(side_effect=raiser)

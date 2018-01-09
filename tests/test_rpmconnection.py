@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -16,11 +18,15 @@
 #
 
 from __future__ import unicode_literals
-from dnf.rpm.connection import RpmConnection
-import inspect
-from tests.support import TestCase
 
-class TestConnection(TestCase):
+import inspect
+
+from dnf.rpm.connection import RpmConnection
+
+import tests.support
+
+
+class TestConnection(tests.support.TestCase):
     def test_sanity(self):
         rpm = RpmConnection('/')
         ts = rpm.readonly_ts

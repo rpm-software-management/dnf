@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,13 +19,17 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests import support
-import dnf.cli.commands
+
 import itertools
 
-class Remove(support.ResultTestCase):
+import dnf.cli.commands
+
+import tests.support
+
+
+class Remove(tests.support.ResultTestCase):
     def setUp(self):
-        self.base = support.MockBase()
+        self.base = tests.support.MockBase()
         self.allow_erasing = True
 
     def test_not_installed(self):
@@ -36,19 +42,19 @@ class Remove(support.ResultTestCase):
 
     def test_remove(self):
         """ Simple remove. """
-        ret = self.base.remove("pepper")
+        self.base.remove("pepper")
         self.assertResult(self.base,
-                          support.installed_but(self.base.sack, "pepper"))
+                          tests.support.installed_but(self.base.sack, "pepper"))
 
     def test_remove_dependent(self):
         """ Remove a lib that some other package depends on. """
-        ret = self.base.remove("librita")
+        self.base.remove("librita")
         # we should end up with nothing in this case:
-        new_set = support.installed_but(self.base.sack, "librita", "pepper")
+        new_set = tests.support.installed_but(self.base.sack, "librita", "pepper")
         self.assertResult(self.base, new_set)
 
     def test_remove_nevra(self):
-        ret = self.base.remove("pepper-20-0.x86_64")
+        self.base.remove("pepper-20-0.x86_64")
         pepper = self.base.sack.query().installed().filter(name="pepper")
         (installed, removed) = self.installed_removed(self.base)
         self.assertLength(installed, 0)
@@ -68,10 +74,10 @@ class Remove(support.ResultTestCase):
         pkg_subj = dnf.subject.Subject('librita.x86_64')
         history = self.base.history
         for pkg in pkg_subj.get_best_query(self.base.sack).installed():
-            support.mockSwdbPkg(history, pkg, repo='main')
+            tests.support.mockSwdbPkg(history, pkg, repo='main')
 
         self.base.remove('librita', 'main')
         self.assertResult(self.base, itertools.chain(
-              self.base.sack.query().installed().filter(name__neq='librita'),
-              dnf.subject.Subject('librita.i686').get_best_query(self.base.sack)
-              .installed()))
+            self.base.sack.query().installed().filter(name__neq='librita'),
+            dnf.subject.Subject('librita.i686').get_best_query(self.base.sack).installed())
+        )

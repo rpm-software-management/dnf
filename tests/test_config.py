@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -16,16 +18,17 @@
 #
 
 from __future__ import unicode_literals
-from dnf.conf import Option, BaseConfig, Conf, RepoConf
-from tests.support import TestCase
-from tests.support import mock
-from tests import support
 
 import argparse
+import unittest
+
 import dnf.conf
 import dnf.conf.read
 import dnf.exceptions
-import unittest
+from dnf.conf import Option, BaseConfig, Conf, RepoConf
+
+import tests.support
+from tests.support import mock
 
 
 class OptionTest(unittest.TestCase):
@@ -47,7 +50,7 @@ class OptionTest(unittest.TestCase):
         self.assertEqual(cfg.a_setting, "turn left")
 
 
-class CacheTest(TestCase):
+class CacheTest(unittest.TestCase):
 
     @mock.patch('dnf.util.am_i_root', return_value=True)
     @mock.patch('dnf.const.SYSTEM_CACHEDIR', '/var/lib/spinning')
@@ -67,7 +70,7 @@ class CacheTest(TestCase):
         self.assertEqual(fn_getcachedir.call_count, 1)
 
 
-class ConfTest(TestCase):
+class ConfTest(unittest.TestCase):
 
     def test_bugtracker(self):
         conf = Conf()
@@ -81,7 +84,7 @@ class ConfTest(TestCase):
         self.assertFalse(conf.gpgcheck)
         self.assertEqual(conf.installonly_limit, 3)
         self.assertTrue(conf.clean_requirements_on_remove)
-        conf.config_file_path = '%s/etc/dnf/dnf.conf' % support.dnf_toplevel()
+        conf.config_file_path = '%s/etc/dnf/dnf.conf' % tests.support.dnf_toplevel()
         conf.read(priority=dnf.conf.PRIO_MAINCONFIG)
         self.assertTrue(conf.gpgcheck)
         self.assertEqual(conf.installonly_limit, 3)
@@ -101,9 +104,11 @@ class ConfTest(TestCase):
 
     def test_order_insensitive(self):
         conf = Conf()
-        conf.config_file_path = '%s/etc/dnf/dnf.conf' % support.dnf_toplevel()
-        opts = argparse.Namespace(gpgcheck=False,
-                        main_setopts=argparse.Namespace(installonly_limit=5))
+        conf.config_file_path = '%s/etc/dnf/dnf.conf' % tests.support.dnf_toplevel()
+        opts = argparse.Namespace(
+            gpgcheck=False,
+            main_setopts=argparse.Namespace(installonly_limit=5)
+        )
         # read config
         conf.read(priority=dnf.conf.PRIO_MAINCONFIG)
         # update from commandline
@@ -137,8 +142,8 @@ class ConfTest(TestCase):
         conf = Conf()
 
         # if repoconf reads value from config it no more inherits changes from conf
-        conf.config_file_path = support.resource_path('etc/repos.conf')
-        with mock.patch('logging.Logger.warning') as warn:
+        conf.config_file_path = tests.support.resource_path('etc/repos.conf')
+        with mock.patch('logging.Logger.warning'):
             reader = dnf.conf.read.RepoReader(conf, {})
             repo = list(reader)[0]
 
