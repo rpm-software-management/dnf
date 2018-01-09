@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,13 +19,17 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests import support
-import dnf
+
 import itertools
 
-class Reinstall(support.ResultTestCase):
+import dnf
+
+import tests.support
+
+
+class Reinstall(tests.support.ResultTestCase):
     def setUp(self):
-        self.base = support.MockBase('main')
+        self.base = tests.support.MockBase('main')
         self.base.conf.multilib_policy = 'all'
         self.sack = self.base.sack
 
@@ -35,7 +41,7 @@ class Reinstall(support.ResultTestCase):
         self.assertEqual(1, len(self.base._goal.list_reinstalls()))
 
     def test_package_reinstall_fail(self):
-        base = support.MockBase('main', 'updates')
+        base = tests.support.MockBase('main', 'updates')
         base.conf.multilib_policy = 'all'
         p = base.sack.query().available().filter(nevra="hole-1-2.x86_64")[0]
         with self.assertRaises(dnf.exceptions.MarkingError) as context:
@@ -47,7 +53,7 @@ class Reinstall(support.ResultTestCase):
     def test_reinstall(self):
         cnt = self.base.reinstall('pepper')
         self.assertEqual(cnt, 1)
-        new_set = support.installed_but(self.sack, "pepper")
+        new_set = tests.support.installed_but(self.sack, "pepper")
         available_query = self.sack.query().available()
         new_set += list(available_query._nevra("pepper-20-0.x86_64"))
         self.assertResult(self.base, new_set)
@@ -125,7 +131,7 @@ class Reinstall(support.ResultTestCase):
         """Test whether it reinstalls packages only from the repository."""
         history = self.base.history
         for pkg in self.sack.query().installed().filter(name='librita'):
-            support.mockSwdbPkg(history, pkg, repo='main')
+            tests.support.mockSwdbPkg(history, pkg, repo='main')
 
         reinstalled_count = self.base.reinstall('librita', old_reponame='main')
 

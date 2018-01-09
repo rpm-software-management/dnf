@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,9 +19,18 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from functools import reduce
-from hawkey import SwdbReason, SwdbPkgData
+
 import contextlib
+import logging
+import os
+import re
+import unittest
+from functools import reduce
+
+import hawkey
+import hawkey.test
+from hawkey import SwdbReason, SwdbPkgData
+
 import dnf
 import dnf.conf
 import dnf.cli.cli
@@ -34,12 +45,7 @@ import dnf.persistor
 import dnf.pycomp
 import dnf.repo
 import dnf.sack
-import hawkey
-import hawkey.test
-import logging
-import os
-import re
-import unittest
+
 
 if dnf.pycomp.PY3:
     from unittest import mock
@@ -86,17 +92,22 @@ AVAILABLE_NSOLVABLES = MAIN_NSOLVABLES + UPDATES_NSOLVABLES
 TOTAL_GROUPS = 4
 TOTAL_NSOLVABLES = SYSTEM_NSOLVABLES + AVAILABLE_NSOLVABLES
 
+
 # testing infrastructure
+
 
 def dnf_toplevel():
     return os.path.normpath(os.path.join(__file__, '../../'))
 
+
 def repo(reponame):
     return os.path.join(REPO_DIR, reponame)
+
 
 def resource_path(path):
     this_dir = os.path.dirname(__file__)
     return os.path.join(this_dir, path)
+
 
 REPO_DIR = resource_path('repos')
 COMPS_PATH = os.path.join(REPO_DIR, 'main_comps.xml')
@@ -106,19 +117,24 @@ TOUR_50_PKG_PATH = resource_path('repos/rpm/tour-5-0.noarch.rpm')
 TOUR_51_PKG_PATH = resource_path('repos/rpm/tour-5-1.noarch.rpm')
 USER_RUNDIR = '/tmp/dnf-user-rundir'
 
+
 # often used query
+
 
 def installed_but(sack, *args):
     q = sack.query().filter(reponame__eq=hawkey.SYSTEM_REPO_NAME)
     return reduce(lambda query, name: query.filter(name__neq=name), args, q)
 
+
 # patching the stdout
+
 
 @contextlib.contextmanager
 def patch_std_streams():
     with mock.patch('sys.stdout', new_callable=dnf.pycomp.StringIO) as stdout, \
             mock.patch('sys.stderr', new_callable=dnf.pycomp.StringIO) as stderr:
         yield (stdout, stderr)
+
 
 @contextlib.contextmanager
 def wiretap_logs(logger_name, level, stream):
@@ -140,12 +156,14 @@ def wiretap_logs(logger_name, level, stream):
         logger.setLevel(orig_level)
         logger.handlers = orig_handlers
 
+
 def command_configure(cmd, args):
     parser = dnf.cli.option_parser.OptionParser()
     args = [cmd._basecmd] + args
     parser.parse_main_args(args)
     parser.parse_command_args(cmd, args)
     return cmd.configure()
+
 
 def command_run(cmd, args):
     command_configure(cmd, args)
@@ -286,9 +304,9 @@ class _BaseStubMixin(object):
         for repo in self.repos.values():
             repo._configure_from_options(opts)
 
-
     def set_debuglevel(self, level):
         self.conf._set_value('debuglevel', level, dnf.conf.PRIO_RUNTIME)
+
 
 class BaseCliStub(_BaseStubMixin, dnf.cli.cli.BaseCli):
     """A class mocking `dnf.cli.cli.BaseCli`."""
@@ -321,12 +339,14 @@ class CliStub(object):
         """Register given *command*."""
         self.cli_commands.update({alias: command for alias in command.aliases})
 
+
 class MockOutput(object):
     def __init__(self):
         self.term = MockTerminal()
 
     def setup_progress_callbacks(self):
         return (None, None)
+
 
 class MockPackage(object):
     def __init__(self, nevra, repo=None):
@@ -353,6 +373,7 @@ class MockPackage(object):
 
     def returnIdSum(self):
         return self._chksum
+
 
 class MockRepo(dnf.repo.Repo):
     def _valid(self):
@@ -397,6 +418,7 @@ class MockQuery(dnf.query.Query):
     def run(self):
         return self.pkgs
 
+
 class MockTerminal(object):
     def __init__(self):
         self.MODE = {'bold'   : '', 'normal' : ''}
@@ -417,8 +439,10 @@ class TestSack(hawkey.test.TestSackMixin, dnf.sack.Sack):
                                pkginitval=base,
                                make_cache_dir=True)
 
+
 class MockBase(_BaseStubMixin, Base):
     """A class mocking `dnf.Base`."""
+
 
 def mock_sack(*extra_repos):
     return MockBase(*extra_repos).sack
@@ -474,6 +498,7 @@ class FakeConf(dnf.conf.Conf):
     def releasever(self):
         return self.substitutions['releasever']
 
+
 class FakePersistor(object):
     reset_last_makecache = False
     expired_to_add = set()
@@ -484,7 +509,9 @@ class FakePersistor(object):
     def since_last_makecache(self):
         return None
 
+
 # object matchers for asserts
+
 
 class ObjectMatcher(object):
     """Class allowing partial matching of objects."""

@@ -1,4 +1,6 @@
-# Copyright (C) 2014  Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -18,10 +20,13 @@
 """Tests of the CLI entry point."""
 
 from __future__ import unicode_literals
+
 import dnf.cli.main
 import dnf.logging
 import dnf.pycomp
+
 import tests.support
+
 
 class MainTest(tests.support.TestCase):
     """Tests the ``dnf.cli.main`` module."""

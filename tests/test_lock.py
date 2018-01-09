@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -24,17 +26,21 @@ just a sanity check.
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.exceptions import ProcessLockError, ThreadLockError
-from tests.support import mock
+
+import multiprocessing
+import os
+import re
+import threading
+
 
 import dnf.lock
 import dnf.pycomp
 import dnf.util
-import multiprocessing
-import os
-import re
+from dnf.exceptions import ProcessLockError, ThreadLockError
+
 import tests.support
-import threading
+from tests.support import mock
+
 
 class ConcurrencyMixin(object):
     def __init__(self, lock):
@@ -47,17 +53,20 @@ class ConcurrencyMixin(object):
         except (ProcessLockError, ThreadLockError) as e:
             self.queue.put(e)
 
+
 class OtherThread(ConcurrencyMixin, threading.Thread):
     def __init__(self, lock):
         ConcurrencyMixin.__init__(self, lock)
         threading.Thread.__init__(self)
         self.queue = dnf.pycomp.Queue(1)
 
+
 class OtherProcess(ConcurrencyMixin, multiprocessing.Process):
     def __init__(self, lock):
         ConcurrencyMixin.__init__(self, lock)
         multiprocessing.Process.__init__(self)
         self.queue = multiprocessing.Queue(1)
+
 
 TARGET = os.path.join(tests.support.USER_RUNDIR, 'unit-test.pid')
 

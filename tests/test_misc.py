@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -16,10 +18,13 @@
 #
 
 from __future__ import unicode_literals
-import dnf.yum.misc
-from tests.support import TestCase
 
-class TestGenericHolder(TestCase):
+import dnf.yum.misc
+
+import tests.support
+
+
+class TestGenericHolder(tests.support.TestCase):
     def test_merge_lists(self):
         gh = dnf.yum.misc.GenericHolder()
         gh2 = dnf.yum.misc.GenericHolder()

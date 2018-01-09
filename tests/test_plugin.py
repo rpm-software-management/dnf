@@ -1,4 +1,6 @@
-# Copyright (C) 2013-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2013-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -21,15 +23,19 @@ from __future__ import unicode_literals
 import dnf.logging
 import dnf.plugin
 import dnf.pycomp
+
 import tests.support
 
+
 PLUGINS = "%s/tests/plugins" % tests.support.dnf_toplevel()
+
 
 def testconf():
     conf = tests.support.FakeConf()
     conf.pluginpath = [PLUGINS]
     conf.pluginconfpath = [PLUGINS]
     return conf
+
 
 class PluginTest(tests.support.TestCase):
     def setUp(self):
@@ -71,6 +77,7 @@ class PluginTest(tests.support.TestCase):
         self.assertLength(self.plugins.plugin_cls, 1)
         self.assertEqual(self.plugins.plugin_cls[0].name, 'lucky')
 
+
 class PluginSkipsTest(tests.support.TestCase):
     def test_skip(self):
         self.plugins = dnf.plugin.Plugins()
@@ -79,6 +86,7 @@ class PluginSkipsTest(tests.support.TestCase):
 
     def tearDown(self):
         self.plugins._unload()
+
 
 class PluginNonExistentTest(tests.support.TestCase):
 

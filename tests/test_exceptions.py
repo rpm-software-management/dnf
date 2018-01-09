@@ -1,6 +1,6 @@
-# test_exceptions.py
-#
-# Copyright (C) 2014  Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -21,16 +21,19 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import dnf.exceptions
+
 import tests.support
 
+
 JAY_ERR = """jay-3.x86_64: Can not download."""
+
 
 class DownloadErrorTest(tests.support.TestCase):
 
     def test_str(self):
         exc = dnf.exceptions.DownloadError(errmap={
-            'jay-3.x86_64'  : ['Can not download.']})
+            'jay-3.x86_64': ['Can not download.']})
         self.assertEqual(str(exc), JAY_ERR)
 
-        exc = dnf.exceptions.DownloadError(errmap={'' : ['Epic fatal.']})
+        exc = dnf.exceptions.DownloadError(errmap={'': ['Epic fatal.']})
         self.assertEqual(str(exc), 'Epic fatal.')

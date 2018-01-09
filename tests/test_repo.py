@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,24 +19,28 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.i18n import ucd
-from tests import support
-from tests.support import mock
+
+import iniparse.compat
+import io
+import os
+import re
+import tempfile
+import unittest
+
+import librepo
 
 import dnf.callback
 import dnf.drpm
 import dnf.repo
 import dnf.util
 import dnf.exceptions
-import iniparse.compat
-import io
-import librepo
-import os
-import re
-import tempfile
-import unittest
+from dnf.i18n import ucd
 
-REPOS = "%s/tests/repos" % support.dnf_toplevel()
+import tests.support
+from tests.support import mock
+
+
+REPOS = "%s/tests/repos" % tests.support.dnf_toplevel()
 BASEURL = "file://%s/rpm" % REPOS
 TOUR_CHKSUM = """\
 ce77c1e5694b037b6687cf0ab812ca60431ec0b65116abbb7b82684f0b092d62"""
@@ -88,7 +94,7 @@ class RepoTestMixin(object):
     @classmethod
     def setUpClass(cls):
         cls.TMP_CACHEDIR = tempfile.mkdtemp(prefix='dnf-repotest-')
-        cls.conf = support.FakeConf(cachedir=cls.TMP_CACHEDIR)
+        cls.conf = tests.support.FakeConf(cachedir=cls.TMP_CACHEDIR)
 
     @classmethod
     def tearDownClass(cls):
@@ -105,12 +111,12 @@ class RepoTestMixin(object):
         dnf.util.rm_rf(repo_path)
 
 
-class DownloadErrorsTest(support.TestCase):
+class DownloadErrorsTest(tests.support.TestCase):
     def test_bandwidth_used(self):
         errors = dnf.repo._DownloadErrors()
-        pkg1 = support.MockPackage('penny-1-1.noarch')
+        pkg1 = tests.support.MockPackage('penny-1-1.noarch')
         pkg1.downloadsize = 10
-        pkg2 = support.MockPackage('lane-2-1.noarch')
+        pkg2 = tests.support.MockPackage('lane-2-1.noarch')
         pkg2.downloadsize = 1
         pl1 = dnf.repo.RPMPayload(pkg1, None)
         pl2 = dnf.repo.RPMPayload(pkg2, None)
@@ -120,7 +126,7 @@ class DownloadErrorsTest(support.TestCase):
         self.assertEqual(errors._bandwidth_used(pl2), 0)
 
 
-class HandleTest(support.TestCase):
+class HandleTest(tests.support.TestCase):
     def test_useragent(self):
         h = dnf.repo._Handle(False, 0)
         self.assertTrue(h.useragent.startswith("dnf/"))
@@ -129,13 +135,13 @@ class HandleTest(support.TestCase):
     def test_substs(self):
         subst_dct = {'version': '69'}
         h = dnf.repo._Handle._new_local(subst_dct, False, 1, '/')
-        self.assertCountEqual(h.varsub, [('version', '69'),])
+        self.assertCountEqual(h.varsub, [('version', '69'), ])
 
 
-class MetadataTest(support.TestCase):
+class MetadataTest(tests.support.TestCase):
     def setUp(self):
         result = mock.Mock(spec=['yum_repo', 'yum_repomd'])
-        result.yum_repo = {'primary': support.NONEXISTENT_FILE}
+        result.yum_repo = {'primary': tests.support.NONEXISTENT_FILE}
         handle = mock.Mock(spec=['mirrors'])
         handle.mirrors = []
         self.metadata = dnf.repo.Metadata(result, handle)
@@ -145,7 +151,7 @@ class MetadataTest(support.TestCase):
                           self.metadata._file_timestamp, 'primary')
 
 
-class RepoTest(RepoTestMixin, support.TestCase):
+class RepoTest(RepoTestMixin, tests.support.TestCase):
     """Test the logic of dnf.repo.Repo.
 
     There is one cache directory for the entire TestCase, but each individual
@@ -261,7 +267,7 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.repo._sync_strategy = 3
         self.repo.load()
         del self.repo
-        self.setUp() # get a new repo
+        self.setUp()  # get a new repo
         self.repo._md_only_cached = True
         self.assertFalse(self.repo.load())
         self.assertFalse(self.repo.metadata.fresh)
@@ -343,10 +349,10 @@ class RepoTest(RepoTestMixin, support.TestCase):
         self.assertEqual(opts[librepo.LRO_MAXSPEED], 5 << 20)
 
 
-class LocalRepoTest(support.TestCase):
+class LocalRepoTest(tests.support.TestCase):
     def setUp(self):
         # directly loads the repo as created by createrepo
-        self.conf = support.FakeConf(cachedir=REPOS)
+        self.conf = tests.support.FakeConf(cachedir=REPOS)
         self.repo = dnf.repo.Repo("rpm", self.conf)
         self.repo.name = "r for riot"
 
@@ -419,7 +425,7 @@ class LocalRepoTest(support.TestCase):
         self.repo.baseurl = 'http://meh'
         remote_handle_m = new_remote_m()
         remote_handle_m._perform().rpmmd_repo = \
-            { 'repomd': REPOS + '/rpm/repodata/repomd.xml'}
+            {'repomd': REPOS + '/rpm/repodata/repomd.xml'}
         with mock.patch('dnf.repo.Repo._cachedir', REPOS + "/rpm"):
             self.assertTrue(self.repo.load())
         self.assertTrue(remote_handle_m.fetchmirrors)
@@ -433,7 +439,7 @@ class LocalRepoTest(support.TestCase):
         self.repo.baseurl = 'http://meh'
         remote_handle_m = new_remote_m()
         remote_handle_m._perform().rpmmd_repo = \
-            { 'repomd': '/dev/null'}
+            {'repomd': '/dev/null'}
         # can not do the entire load() here, it would run on after try_revive()
         # failed.
         with mock.patch('dnf.repo.Repo._cachedir', REPOS + "/rpm"):
@@ -453,7 +459,7 @@ class LocalRepoTest(support.TestCase):
             self.assertRaises(dnf.exceptions.RepoError, self.repo.load)
 
 
-class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
+class DownloadPayloadsTest(RepoTestMixin, tests.support.TestCase):
 
     def test_drpm_error(self):
         def wait(self):
@@ -462,7 +468,7 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
         drpm = dnf.drpm.DeltaInfo(None, None)
         with mock.patch('dnf.drpm.DeltaInfo.wait', wait):
             errs = dnf.repo._download_payloads([], drpm)
-        self.assertEqual(errs._recoverable, {'step' : ['right']})
+        self.assertEqual(errs._recoverable, {'step': ['right']})
         self.assertEmpty(errs._irrecoverable)
 
     def test_empty_transaction(self):
@@ -478,7 +484,7 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
         drpm = dnf.drpm.DeltaInfo(None, None)
         with mock.patch('librepo.download_packages', side_effect=raiser):
             errs = dnf.repo._download_payloads([], drpm)
-        self.assertEqual(errs._irrecoverable, {'' : ['hit']})
+        self.assertEqual(errs._irrecoverable, {'': ['hit']})
         self.assertEmpty(errs._recoverable)
 
     # twist Repo to think it's remote:
@@ -486,7 +492,7 @@ class DownloadPayloadsTest(RepoTestMixin, support.TestCase):
     def test_remote_download(self):
         progress = dnf.callback.NullDownloadProgress()
         repo = self.build_repo('r', 'r for riot')
-        pkg = support.MockPackage("tour-4-4.noarch", repo=repo)
+        pkg = tests.support.MockPackage("tour-4-4.noarch", repo=repo)
         pkg.downloadsize = 2317
         pkg._chksum = ('sha256', TOUR_CHKSUM)
 
@@ -511,10 +517,10 @@ class SavingTest(unittest.TestCase):
     def test_update_saving(self):
         progress = dnf.callback.NullDownloadProgress()
 
-        pkg = support.MockPackage("tour-4-4.noarch")
+        pkg = tests.support.MockPackage("tour-4-4.noarch")
         pkg.downloadsize = 5
         pload1 = dnf.repo.RPMPayload(pkg, progress)
-        pkg = support.MockPackage("magical-4-4.noarch")
+        pkg = tests.support.MockPackage("magical-4-4.noarch")
         pkg.downloadsize = 8
         pload2 = dnf.drpm.DeltaPayload(None, mock.Mock(downloadsize=5), pkg,
                                        progress)
@@ -525,10 +531,10 @@ class SavingTest(unittest.TestCase):
     def test_update_saving_with_err(self):
         progress = dnf.callback.NullDownloadProgress()
 
-        pkg = support.MockPackage("magical-4-4.noarch")
+        pkg = tests.support.MockPackage("magical-4-4.noarch")
         pkg.downloadsize = 8
         pload = dnf.drpm.DeltaPayload(None, mock.Mock(downloadsize=5), pkg,
                                       progress)
         saving = (5, 10)
-        saving = dnf.repo._update_saving(saving, (pload,), {pkg:'failed'})
+        saving = dnf.repo._update_saving(saving, (pload,), {pkg: 'failed'})
         self.assertEqual(saving, (10, 10))

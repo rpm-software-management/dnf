@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -16,12 +18,13 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests.support import mock
 
 import dnf.callback
 import dnf.cli.progress
 import dnf.pycomp
+
 import tests.support
+from tests.support import mock
 
 
 class MockStdout(dnf.pycomp.StringIO):
@@ -33,6 +36,7 @@ class MockStdout(dnf.pycomp.StringIO):
 
     def lines(self):
         return self.getvalue().splitlines(True)
+
 
 class FakePayload(object):
     def __init__(self, string, size):
@@ -46,12 +50,13 @@ class FakePayload(object):
     def download_size(self):
         return self._size
 
+
 class ProgressTest(tests.support.TestCase):
     def test_single(self):
         now = 1379406823.9
         fo = MockStdout()
         with mock.patch('dnf.cli.progress._term_width', return_value=60), \
-             mock.patch('dnf.cli.progress.time', lambda: now):
+                mock.patch('dnf.cli.progress.time', lambda: now):
 
             p = dnf.cli.progress.MultiFileProgressMeter(fo)
             p.isatty = True
@@ -79,7 +84,7 @@ class ProgressTest(tests.support.TestCase):
         now = 1379406823.9
 
         with mock.patch('dnf.cli.progress._term_width', return_value=60), \
-             mock.patch('dnf.cli.progress.time', lambda: now):
+                mock.patch('dnf.cli.progress.time', lambda: now):
             p.progress(pload, 3)
             p.end(pload, dnf.callback.STATUS_MIRROR, 'Timeout.')
             p.progress(pload, 4)
@@ -105,7 +110,7 @@ class ProgressTest(tests.support.TestCase):
         now = 1379406823.9
         fo = MockStdout()
         with mock.patch('dnf.cli.progress._term_width', return_value=60), \
-             mock.patch('dnf.cli.progress.time', lambda: now):
+                mock.patch('dnf.cli.progress.time', lambda: now):
 
             p = dnf.cli.progress.MultiFileProgressMeter(fo)
             p.isatty = True
@@ -118,7 +123,7 @@ class ProgressTest(tests.support.TestCase):
                     p.end(pload1, None, None)
                 now += 0.5
 
-                p.progress(pload2, float(i*2))
+                p.progress(pload2, float(i * 2))
                 self.assertEqual(self._REFERENCE_TAB[i], fo.visible_lines())
                 if i == 10:
                     p.end(pload2, dnf.callback.STATUS_FAILED, 'some error')

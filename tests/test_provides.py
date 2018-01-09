@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,11 +19,13 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests import support
 
-class ProvidesTest(support.TestCase):
+import tests.support
+
+
+class ProvidesTest(tests.support.TestCase):
     def setUp(self):
-        self.base = support.MockBase("main")
+        self.base = tests.support.MockBase("main")
 
     def test_file(self):
         self.assertLength(self.base.provides("*ais*smile")[0], 1)

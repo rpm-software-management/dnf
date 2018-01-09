@@ -1,4 +1,6 @@
-# Copyright (C) 2014-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,14 +19,18 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests import support, mock
-from dnf.yum.misc import unlink_f
-from dnf.util import Bunch
 
-import dnf.exceptions
 import os
 import shutil
 import tempfile
+
+import dnf.exceptions
+from dnf.yum.misc import unlink_f
+from dnf.util import Bunch
+
+import tests.support
+from tests import mock
+
 
 PACKAGE = 'tour-5-1.noarch'
 
@@ -66,12 +72,12 @@ class Proggress_3(dnf.cli.progress.MultiFileProgressMeter):
         self.rate = None
 
 
-class DrpmTest(support.TestCase):
+class DrpmTest(tests.support.TestCase):
     def setUp(self):
         cachedir = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, cachedir)
-        self.base = support.MockBase()
-        self.base.conf.cachedir = support.USER_RUNDIR
+        self.base = tests.support.MockBase()
+        self.base.conf.cachedir = tests.support.USER_RUNDIR
 
         # load the testing repo
         repo = self.base.add_test_dir_repo('drpm', self.base.conf)
@@ -107,7 +113,7 @@ class DrpmTest(support.TestCase):
                 targets[0] = Bunch(cbdata=target.cbdata, err=err)
 
         def lock_dir(_dir):
-            return os.path.join(support.USER_RUNDIR, dnf.const.PROGRAM_NAME)
+            return os.path.join(tests.support.USER_RUNDIR, dnf.const.PROGRAM_NAME)
 
         with mock.patch('librepo.download_packages', dlp),\
                 mock.patch('dnf.lock._fit_lock_dir', lock_dir):
@@ -118,7 +124,7 @@ class DrpmTest(support.TestCase):
         return urls
 
     def test_simple_download(self):
-        self.assertEqual(self.download(), [PACKAGE +'.rpm'])
+        self.assertEqual(self.download(), [PACKAGE + '.rpm'])
 
     def test_drpm_download(self):
         # the testing drpm is about 150% of the target..

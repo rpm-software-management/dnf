@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-#
-# Copyright (C) 2014  Red Hat, Inc.
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -18,11 +18,13 @@
 #
 
 from __future__ import absolute_import
-from tests import support
 
 import libcomps
 
-class LibcompsTest(support.TestCase):
+import tests.support
+
+
+class LibcompsTest(tests.support.TestCase):
 
     """Sanity tests of the Libcomps library."""
 
@@ -61,15 +63,15 @@ class LibcompsTest(support.TestCase):
     def test_segv(self):
         c1 = libcomps.Comps()
         c2 = libcomps.Comps()
-        c2.fromxml_f(support.COMPS_PATH)
-        c = c1 + c2 # sigsegved here
+        c2.fromxml_f(tests.support.COMPS_PATH)
+        c1 + c2  # sigsegved here
 
     def test_segv2(self):
         c1 = libcomps.Comps()
-        c1.fromxml_f(support.COMPS_PATH)
+        c1.fromxml_f(tests.support.COMPS_PATH)
 
         c2 = libcomps.Comps()
-        c2.fromxml_f(support.COMPS_PATH)
+        c2.fromxml_f(tests.support.COMPS_PATH)
 
         c = c1 + c2
-        x = c.groups[0].packages[0].name
+        c.groups[0].packages[0].name

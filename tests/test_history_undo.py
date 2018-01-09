@@ -1,7 +1,6 @@
-# test_history_undo.py
-# Tests of the history undo command.
-#
-# Copyright (C) 2013-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2013-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -22,30 +21,32 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
+from hawkey import split_nevra, SwdbReason
+
 from dnf.exceptions import PackagesNotAvailableError, PackagesNotInstalledError
 from dnf.history import NEVRAOperations
 from dnf.package import Package
-from dnf.transaction import (ERASE, DOWNGRADE, INSTALL, REINSTALL,
-                             TransactionItem, UPGRADE)
-from hawkey import split_nevra, SwdbReason
-from tests.support import mock_sack, MockBase, ObjectMatcher
-from unittest import TestCase
+from dnf.transaction import ERASE, DOWNGRADE, INSTALL, REINSTALL, UPGRADE
+from dnf.transaction import TransactionItem
 
-class BaseTest(TestCase):
+import tests.support
+
+
+class BaseTest(tests.support.TestCase):
     """Unit tests of dnf.Base."""
 
     def _create_item_matcher(self, op_type, installed=None, erased=None,
                              obsoleted=[], reason=SwdbReason.UNKNOWN):
         """Create a new instance of dnf.transaction.TransactionItem matcher."""
-        attrs = {'op_type': op_type,
-                 'installed': self._create_package_matcher(installed)
-                              if installed else installed,
-                 'erased': self._create_package_matcher(erased)
-                           if erased else erased,
-                 'obsoleted': [self._create_package_matcher(nevra)
-                               for nevra in obsoleted],
-                 'reason': reason}
-        return ObjectMatcher(TransactionItem, attrs)
+        attrs = {
+            'op_type': op_type,
+            'installed': self._create_package_matcher(installed) if installed else installed,
+            'erased': self._create_package_matcher(erased) if erased else erased,
+            'obsoleted': [self._create_package_matcher(nevra) for nevra in obsoleted],
+            'reason': reason
+        }
+        return tests.support.ObjectMatcher(TransactionItem, attrs)
 
     def _create_package_matcher(self, nevra_str):
         """Create a new instance of dnf.package.Package matcher."""
@@ -55,12 +56,12 @@ class BaseTest(TestCase):
                  'version': nevra.version,
                  'release': nevra.release,
                  'arch': nevra.arch}
-        return ObjectMatcher(Package, attrs)
+        return tests.support.ObjectMatcher(Package, attrs)
 
     def setUp(self):
         """Prepare the test fixture."""
-        self._base = MockBase()
-        self._base._sack = mock_sack('main', 'updates')
+        self._base = tests.support.MockBase()
+        self._base._sack = tests.support.mock_sack('main', 'updates')
 
     def test_history_undo_operations_downgrade(self):
         """Test history_undo_operations with a downgrade."""
@@ -112,8 +113,8 @@ class BaseTest(TestCase):
 
     def test_history_undo_operations_erase_twoavailable(self):
         """Test history_undo_operations with an erase available in two repos."""
-        base = MockBase()
-        base._sack = mock_sack('main', 'search')
+        base = tests.support.MockBase()
+        base._sack = tests.support.mock_sack('main', 'search')
         operations = NEVRAOperations()
         operations.add('Erase', 'lotus-3-16.x86_64')
 

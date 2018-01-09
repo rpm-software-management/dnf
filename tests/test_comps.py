@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-#
-# Copyright (C) 2013-2016 Red Hat, Inc.
+
+# Copyright (C) 2013-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -20,35 +20,41 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
-from tests import support
-from tests.support import mock
+
+import operator
+
+import libcomps
 from hawkey import SwdbReason, SwdbPkg, SwdbItem
 
 import dnf.comps
 import dnf.exceptions
 import dnf.persistor
 import dnf.util
-import libcomps
-import operator
 
-TRANSLATION=u"""Tato skupina zahrnuje nejmenší možnou množinu balíčků. Je vhodná například na instalace malých routerů nebo firewallů."""
+import tests.support
+from tests.support import mock
 
-class LangsTest(support.TestCase):
+
+TRANSLATION = u"""Tato skupina zahrnuje nejmenší možnou množinu balíčků. Je vhodná například na instalace malých routerů nebo firewallů."""
+
+
+class LangsTest(tests.support.TestCase):
     @mock.patch('locale.getlocale', return_value=('cs_CZ', 'UTF-8'))
     def test_get(self, _unused):
         langs = dnf.comps._Langs().get()
         self.assertEqual(langs, ['cs_CZ.UTF-8', 'cs_CZ', 'cs.UTF-8', 'cs', 'C'])
 
-class CompsTest(support.TestCase):
+
+class CompsTest(tests.support.TestCase):
     def setUp(self):
         comps = dnf.comps.Comps()
-        comps._add_from_xml_filename(support.COMPS_PATH)
+        comps._add_from_xml_filename(tests.support.COMPS_PATH)
         self.comps = comps
 
     def test_by_pattern(self):
         comps = self.comps
         self.assertLength(comps.groups_by_pattern('Base'), 1)
-        self.assertLength(comps.groups_by_pattern('*'), support.TOTAL_GROUPS)
+        self.assertLength(comps.groups_by_pattern('*'), tests.support.TOTAL_GROUPS)
         self.assertLength(comps.groups_by_pattern('Solid*'), 1)
 
         group = dnf.util.first(comps.groups_by_pattern('Base'))
@@ -122,7 +128,7 @@ class CompsTest(support.TestCase):
     def test_size(self):
         comps = self.comps
         self.assertLength(comps, 6)
-        self.assertLength(comps.groups, support.TOTAL_GROUPS)
+        self.assertLength(comps.groups, tests.support.TOTAL_GROUPS)
         self.assertLength(comps.categories, 1)
         self.assertLength(comps.environments, 1)
 
@@ -138,14 +144,16 @@ class CompsTest(support.TestCase):
         env = dnf.util.first(comps.environments_by_pattern('sugar-*'))
         self.assertEqual(env.ui_description, u'Software pro výuku o vyučování.')
 
-class PackageTest(support.TestCase):
+
+class PackageTest(tests.support.TestCase):
     def test_instance(self):
         lc_pkg = libcomps.Package('weather', libcomps.PACKAGE_TYPE_OPTIONAL)
         pkg = dnf.comps.Package(lc_pkg)
         self.assertEqual(pkg.name, 'weather')
         self.assertEqual(pkg.option_type, dnf.comps.OPTIONAL)
 
-class TestTransactionBunch(support.TestCase):
+
+class TestTransactionBunch(tests.support.TestCase):
 
     def test_adding(self):
         t1 = dnf.comps.TransactionBunch()
@@ -165,15 +173,15 @@ class SolverTestMixin(object):
 
     def setUp(self):
         comps = dnf.comps.Comps()
-        comps._add_from_xml_filename(support.COMPS_PATH)
+        comps._add_from_xml_filename(tests.support.COMPS_PATH)
         self.comps = comps
-        self.base = support.MockBase()
+        self.base = tests.support.MockBase()
         self.history = self.base.history
         self.persistor = self.history.group
-        self.solver = dnf.comps.Solver(self.persistor, self.comps, support.REASONS.get)
+        self.solver = dnf.comps.Solver(self.persistor, self.comps, tests.support.REASONS.get)
 
 
-class SolverGroupTest(SolverTestMixin, support.TestCase):
+class SolverGroupTest(SolverTestMixin, tests.support.TestCase):
 
     def test_install(self):
         grp = self.comps.group_by_pattern('base')
@@ -225,7 +233,7 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
 
         grps = self.persistor.groups_by_pattern('base')
         for grp in grps:
-            trans = self.solver._group_remove(grp)
+            self.solver._group_remove(grp)
         self.persistor.commit()
 
         # need to load groups again - loaded object is stays the same
@@ -252,7 +260,7 @@ class SolverGroupTest(SolverTestMixin, support.TestCase):
         self.assertCountEqual(p_grp.get_full_list(), ('tour', 'pepper'))
 
 
-class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
+class SolverEnvironmentTest(SolverTestMixin, tests.support.TestCase):
 
     def _install(self, env, ex=True):
         exclude = ('lotus',) if ex else []
@@ -279,8 +287,8 @@ class SolverEnvironmentTest(SolverTestMixin, support.TestCase):
 
     def test_remove(self):
         env = self.comps.environment_by_pattern('sugar-desktop-environment')
-        trans = self._install(env)
-        trans = self.solver._environment_remove(env.id)
+        self._install(env)
+        self.solver._environment_remove(env.id)
         self.persistor.commit()
 
         p_env = self.persistor.environment('sugar-desktop-environment')

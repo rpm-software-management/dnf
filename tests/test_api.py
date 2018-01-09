@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -16,16 +18,19 @@
 #
 
 from __future__ import unicode_literals
-from dnf.pycomp import unicode
-from tests import support
-import dnf
 
-class APITest(support.TestCase):
+import dnf
+from dnf.pycomp import unicode
+
+import tests.support
+
+
+class APITest(tests.support.TestCase):
     def test_base(self):
         self.assertIsInstance(dnf.Base, type)
 
     def test_conf(self):
-        base = support.MockBase()
+        base = tests.support.MockBase()
         self.assertIsInstance(base.conf.installroot, unicode)
         # reasonable default
         self.assertEqual(base.conf.installroot, '/')

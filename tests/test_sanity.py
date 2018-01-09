@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,20 +19,22 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests import support
-import os.path
+
+import os
 import sys
-from tests.support import TestCase
 
-class Sanity(TestCase):
+import tests.support
+
+
+class Sanity(tests.support.TestCase):
     def test_sanity(self):
-        assert(os.access(support.repo("@System.repo"), os.R_OK))
-        sack = support.mock_sack()
+        assert(os.access(tests.support.repo("@System.repo"), os.R_OK))
+        sack = tests.support.mock_sack()
         assert(sack)
-        self.assertEqual(len(sack), support.SYSTEM_NSOLVABLES)
+        self.assertEqual(len(sack), tests.support.SYSTEM_NSOLVABLES)
 
-        sack2 = support.MockBase("main", "updates").sack
-        self.assertEqual(len(sack2), support.TOTAL_NSOLVABLES)
+        sack2 = tests.support.MockBase("main", "updates").sack
+        self.assertEqual(len(sack2), tests.support.TOTAL_NSOLVABLES)
 
     def test_toplevel(self):
-        self.assertIn(support.dnf_toplevel(), sys.path)
+        self.assertIn(tests.support.dnf_toplevel(), sys.path)
