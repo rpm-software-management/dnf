@@ -79,9 +79,9 @@ class TermTest(unittest.TestCase):
         term = dnf.cli.term.Term(nontty)
 
         self.assertEqual(term.MODE,
-                         {u'blink': u'',
-                          u'bold': u'',
-                          u'dim': u'',
-                          u'normal': u'',
-                          u'reverse': u'',
-                          u'underline': u''})
+                         {u'bold': '\033[1m',
+                          u'blink': u'\033[5m',
+                          u'dim': u'\033[2m',
+                          u'reverse': u'\033[7m',
+                          u'underline': u'\033[4m',
+                          u'normal': u'\033[0m'})
