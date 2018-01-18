@@ -158,32 +158,32 @@ class Base(object):
                 if r.id in disabled:
                     continue
                 if len(r.includepkgs) > 0:
-                    incl_query = self.sack.query().filter(empty=True)
+                    incl_query = self.sack.query().filterm(empty=True)
                     for incl in set(r.includepkgs):
                         subj = dnf.subject.Subject(incl)
                         incl_query = incl_query.union(subj.get_best_query(
                             self.sack, with_nevra=True, with_provides=False, with_filenames=False))
-                    incl_query = incl_query.filter(reponame=r.id)
+                    incl_query.filterm(reponame=r.id)
                     repo_includes.append((incl_query.apply(), r.id))
-                excl_query = self.sack.query().filter(empty=True)
+                excl_query = self.sack.query().filterm(empty=True)
                 for excl in set(r.excludepkgs):
                     subj = dnf.subject.Subject(excl)
                     excl_query = excl_query.union(subj.get_best_query(
                         self.sack, with_nevra=True, with_provides=False, with_filenames=False))
-                excl_query = excl_query.filter(reponame=r.id)
+                excl_query.filterm(reponame=r.id)
                 if excl_query:
                     repo_excludes.append((excl_query, r.id))
 
         # then main (global) includes/excludes because they can mask
         # repo specific settings
         if 'main' not in disabled:
-            include_query = self.sack.query().filter(empty=True)
+            include_query = self.sack.query().filterm(empty=True)
             if len(self.conf.includepkgs) > 0:
                 for incl in set(self.conf.includepkgs):
                     subj = dnf.subject.Subject(incl)
                     include_query = include_query.union(subj.get_best_query(
                         self.sack, with_nevra=True, with_provides=False, with_filenames=False))
-            exclude_query = self.sack.query().filter(empty=True)
+            exclude_query = self.sack.query().filterm(empty=True)
             for excl in set(self.conf.excludepkgs):
                 subj = dnf.subject.Subject(excl)
                 exclude_query = exclude_query.union(subj.get_best_query(
@@ -632,8 +632,7 @@ class Base(object):
         """ See if sltr matches a patches that is (in older version or different
             architecture perhaps) already installed.
         """
-        inst = self.sack.query().installed()
-        inst = inst.filter(pkg=sltr.matches())
+        inst = self.sack.query().installed().filterm(pkg=sltr.matches())
         return list(inst)
 
     def iter_userinstalled(self):
@@ -671,7 +670,7 @@ class Base(object):
             solver = self._build_comps_solver()
             solver._exclude_packages_from_installed_groups(self)
 
-        goal.add_protected(self.sack.query().filter(
+        goal.add_protected(self.sack.query().filterm(
             name=self.conf.protected_packages))
         if not self._run_hawkey_goal(goal, allow_erasing):
             if self.conf.debuglevel >= 6:
@@ -1001,8 +1000,7 @@ class Base(object):
             if self.conf.history_record:
                 self.history.sync_alldb(po, pkg_info)
 
-        just_installed = self.sack.query().\
-            filter(pkg=self.transaction.install_set)
+        just_installed = self.sack.query().filterm(pkg=self.transaction.install_set)
         for rpo in self.transaction.remove_set:
             installed = rpmdb_sack.query().installed()._nevra(
                 rpo.name, rpo.evr, rpo.arch)
@@ -1463,7 +1461,7 @@ class Base(object):
             remove_query = remove_query.union(query)
             return remove_query
 
-        remove_query = self.sack.query().filter(empty=True)
+        remove_query = self.sack.query().filterm(empty=True)
         attr_fn = ((trans.install, trans_install),
                    (trans.upgrade, trans_upgrade),
                    (trans.remove, trans_remove))
@@ -1473,14 +1471,14 @@ class Base(object):
                 query_args = {'name': comps_pkg.name}
                 if (comps_pkg.basearchonly):
                     query_args.update({'arch': basearch})
-                q = self.sack.query().filter(**query_args).apply()
+                q = self.sack.query().filterm(**query_args).apply()
                 if not q:
                     package_string = comps_pkg.name
                     if comps_pkg.basearchonly:
                         package_string += '.' + basearch
                     logger.warning(_('No match for group package "{}"').format(package_string))
                     continue
-                q = q.filter(arch__neq="src")
+                q.filterm(arch__neq="src")
                 remove_query = fn(q, remove_query, comps_pkg)
                 self._goal.group_members.add(comps_pkg.name)
 
@@ -1488,7 +1486,7 @@ class Base(object):
 
     def _build_comps_solver(self):
         def reason_fn(pkgname):
-            q = self.sack.query().installed().filter(name=pkgname)
+            q = self.sack.query().installed().filterm(name=pkgname)
             if not q:
                 return None
             try:
@@ -1536,7 +1534,7 @@ class Base(object):
         """
         def _pattern_to_pkgname(pattern):
             if dnf.util.is_glob_pattern(pattern):
-                q = self.sack.query().filter(name__glob=pattern)
+                q = self.sack.query().filterm(name__glob=pattern)
                 return map(lambda p: p.name, q)
             else:
                 return (pattern,)
@@ -1673,9 +1671,9 @@ class Base(object):
         solution = subj.get_best_solution(self.sack, forms=forms)
 
         if self.conf.multilib_policy == "all" or subj._is_arch_specified(solution):
-            q = solution['query'].filter(arch__neq="src")
+            q = solution['query'].filterm(arch__neq="src")
             if reponame is not None:
-                q = q.filter(reponame=reponame)
+                q.filterm(reponame=reponame)
             if not q:
                 raise dnf.exceptions.PackageNotFoundError(
                     _('no package matched'), pkg_spec)
@@ -1702,7 +1700,7 @@ class Base(object):
             msg = 'downgrade_package() for an installed package.'
             raise NotImplementedError(msg)
 
-        q = self.sack.query().installed().filter(name=pkg.name, arch=[pkg.arch, "noarch"])
+        q = self.sack.query().installed().filterm(name=pkg.name, arch=[pkg.arch, "noarch"])
         if not q:
             msg = _("Package %s not installed, cannot downgrade it.")
             logger.warning(msg, pkg.name)
@@ -1733,7 +1731,7 @@ class Base(object):
         return 1
 
     def package_reinstall(self, pkg):
-        if self.sack.query().installed().filter(nevra=str(pkg)):
+        if self.sack.query().installed().filterm(name=pkg.name, evr=pkg.evr, arch=pkg.arch):
             self._goal.install(pkg)
             return 1
         msg = _("Package %s not installed, cannot reinstall it.")
@@ -1755,7 +1753,7 @@ class Base(object):
             logger.info(msg, pkg.location)
             return 0
 
-        q = self.sack.query().installed().filter(name=pkg.name, arch=[pkg.arch, "noarch"])
+        q = self.sack.query().installed().filterm(name=pkg.name, arch=[pkg.arch, "noarch"])
         if not q:
             msg = _("Package %s not installed, cannot update it.")
             logger.warning(msg, pkg.name)
@@ -1783,7 +1781,7 @@ class Base(object):
             if not wildcard and solution['nevra'] and solution['nevra'].name:
                 installed = self.sack.query().installed()
                 pkg_name = solution['nevra'].name
-                installed = installed.filter(name=pkg_name).apply()
+                installed.filterm(name=pkg_name).apply()
                 if not installed:
                     msg = _('Package %s available, but not installed.')
                     logger.warning(msg, pkg_name)
@@ -1795,7 +1793,7 @@ class Base(object):
                         logger.warning(msg, "{}.{}".format(pkg_name, solution['nevra'].arch))
 
             if self.conf.obsoletes and solution['nevra'] and solution['nevra'].has_just_name():
-                obsoletes = self.sack.query().filter(obsoletes=q.installed())
+                obsoletes = self.sack.query().filterm(obsoletes=q.installed())
                 # provide only available packages to solver otherwise selection of available
                 # possibilities will be ignored
                 q = q.available()
@@ -1804,7 +1802,7 @@ class Base(object):
             else:
                 q = q.available()
             if reponame is not None:
-                q = q.filter(reponame=reponame)
+                q.filterm(reponame=reponame)
             q = self._merge_update_filters(q, pkg_spec=pkg_spec)
             if q:
                 sltr = dnf.selector.Selector(self.sack)
@@ -1824,9 +1822,9 @@ class Base(object):
             q = self.sack.query().available()
             # add obsoletes into transaction
             if self.conf.obsoletes:
-                q = q.union(self.sack.query().filter(obsoletes=self.sack.query().installed()))
+                q = q.union(self.sack.query().filterm(obsoletes=self.sack.query().installed()))
             if reponame is not None:
-                q = q.filter(reponame=reponame)
+                q.filterm(reponame=reponame)
             q = self._merge_update_filters(q)
             sltr = dnf.selector.Selector(self.sack)
             sltr.set(pkg=q)
@@ -1912,9 +1910,9 @@ class Base(object):
 
         available_q = q.available()
         if new_reponame is not None:
-            available_q = available_q.filter(reponame=new_reponame)
+            available_q.filterm(reponame=new_reponame)
         if new_reponame_neq is not None:
-            available_q = available_q.filter(reponame__neq=new_reponame_neq)
+            available_q.filterm(reponame__neq=new_reponame_neq)
         available_nevra2pkg = dnf.query._per_nevra_dict(available_q)
 
         if not installed_pkgs:
@@ -1963,7 +1961,7 @@ class Base(object):
         done = 0
         available_pkgs = q.available()
         available_pkg_names = list(available_pkgs._name_dict().keys())
-        q_installed = self.sack.query().installed().filter(name=available_pkg_names)
+        q_installed = self.sack.query().installed().filterm(name=available_pkg_names)
         if len(q_installed) == 0:
             msg = _('Packages for argument %s available, but not installed.') % pkg_spec
             raise dnf.exceptions.PackagesNotInstalledError(msg, pkg_spec, available_pkgs)
@@ -1980,14 +1978,14 @@ class Base(object):
         return done
 
     def provides(self, provides_spec):
-        providers = self.sack.query().filter(file__glob=provides_spec)
+        providers = self.sack.query().filterm(file__glob=provides_spec)
         if providers:
             return providers, [provides_spec]
         providers = dnf.query._by_provides(self.sack, provides_spec)
         if providers:
             return providers, [provides_spec]
         binary_provides = [prefix + provides_spec for prefix in ['/usr/bin/', '/usr/sbin/']]
-        return self.sack.query().filter(file__glob=binary_provides), binary_provides
+        return self.sack.query().filterm(file__glob=binary_provides), binary_provides
 
     def _history_undo_operations(self, operations, first_trans, rollback=False):
         """Undo the operations on packages by their NEVRAs.

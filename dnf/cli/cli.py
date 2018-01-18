@@ -111,7 +111,7 @@ def print_versions(pkgs, base, output):
 
     rpmdb_sack = dnf.sack._rpmdb_sack(base)
     done = False
-    for pkg in rpmdb_sack.query().installed().filter(name=pkgs):
+    for pkg in rpmdb_sack.query().installed().filterm(name=pkgs):
         if done:
             print("")
         done = True
@@ -967,9 +967,9 @@ class Cli(object):
         if kernel is None:
             return
 
-        q = self.base.sack.query().filter(provides=kernel.name)
+        q = self.base.sack.query().filterm(provides=kernel.name)
         q = q.installed()
-        q = q.filter(advisory_type='security')
+        q.filterm(advisory_type='security')
 
         ikpkg = kernel
         for pkg in q:

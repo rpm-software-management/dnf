@@ -1643,7 +1643,7 @@ Transaction Summary
             state = _pkg_states['i']
 
             # get installed packages with name = pkg.name
-            ipkgs = self.sack.query().installed().filter(name=pkg.name).run()
+            ipkgs = self.sack.query().installed().filterm(name=pkg.name).run()
 
             if not ipkgs:
                 state = _pkg_states['e']
