@@ -422,6 +422,6 @@ class GroupCommand(commands.Command):
         goal = self.base._goal
         history = self.base.history
         names = goal.group_members
-        for pkg in self.base.sack.query().installed().filter(name=names):
+        for pkg in self.base.sack.query().installed().filterm(name=names):
             reason = history.reason(pkg)
             history.set_reason(pkg, goal.group_reason(pkg, reason))

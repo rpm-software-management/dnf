@@ -90,7 +90,7 @@ class UpdateInfoCommand(commands.Command):
             ievr = self._ina2evr_cache[(apackage.name, apackage.arch)]
         except KeyError:
             return False
-        q = self.base.sack.query().filter(name=apackage.name, evr=apackage.evr)
+        q = self.base.sack.query().filterm(name=apackage.name, evr=apackage.evr)
         if len(self.base._merge_update_filters(q, warning=False)) == 0:
             return False
         return self.base.sack.evr_cmp(ievr, apackage.evr) < 0
@@ -104,7 +104,7 @@ class UpdateInfoCommand(commands.Command):
             ievr = self._ina2evr_cache[(apkg.name, apkg.arch)]
         except KeyError:
             return False
-        q = self.base.sack.query().filter(name=apkg.name, evr=apkg.evr)
+        q = self.base.sack.query().filterm(name=apkg.name, evr=apkg.evr)
         if len(self.base._merge_update_filters(q, warning=False)) == 0:
             return False
         return self.base.sack.evr_cmp(ievr, apkg.evr) >= 0
@@ -114,7 +114,7 @@ class UpdateInfoCommand(commands.Command):
         # Non-cached lookup not implemented. Fill the cache or implement the
         # functionality via the slow sack query.
         assert self._ina2evr_cache is not None
-        q = self.base.sack.query().filter(name=apkg.name, evr=apkg.evr)
+        q = self.base.sack.query().filterm(name=apkg.name, evr=apkg.evr)
         if len(self.base._merge_update_filters(q, warning=False)) == 0:
             return False
         return (apkg.name, apkg.arch) in self._ina2evr_cache
@@ -196,7 +196,7 @@ class UpdateInfoCommand(commands.Command):
     def updating_apkg_adv_insts(self, specs=()):
         """Return updating (adv. package, adv., inst.) triplets and a flag."""
         return False, self._apackage_advisory_installeds(
-            self.base.sack.query().filter(upgradable=True), hawkey.GT,
+            self.base.sack.query().filterm(upgradable=True), hawkey.GT,
             self._older_installed, specs)
 
     def all_apkg_adv_insts(self, specs=()):

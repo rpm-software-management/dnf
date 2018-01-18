@@ -96,7 +96,7 @@ class SearchCommand(commands.Command):
         print_section_header = False
         limit = None
         if not self.base.conf.showdupesfromrepos:
-            limit = self.base.sack.query().filter(pkg=counter.keys()).latest()
+            limit = self.base.sack.query().filterm(pkg=counter.keys()).latest()
         for pkg in counter.sorted(reverse=True, limit_to=limit):
             if used_attrs != counter.matched_keys(pkg):
                 used_attrs = counter.matched_keys(pkg)
@@ -119,7 +119,7 @@ class SearchCommand(commands.Command):
         fdict = {'%s__substr' % attr : needle}
         if dnf.util.is_glob_pattern(needle):
             fdict = {'%s__glob' % attr : needle}
-        q = self.base.sack.query().filter(hawkey.ICASE, **fdict)
+        q = self.base.sack.query().filterm(hawkey.ICASE, **fdict)
         for pkg in q.run():
             counter.add(pkg, attr, needle)
         return counter
