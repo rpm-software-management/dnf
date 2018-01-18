@@ -657,7 +657,6 @@ class Solver(object):
             if p_grp.installed:
                 installed_pkg_names = \
                     set(p_grp.full_list) - set(p_grp.pkg_exclude)
-                installed_pkgs = base.sack.query().installed().filter(
-                    name=installed_pkg_names)
+                installed_pkgs = base.sack.query().installed().filterm(name=installed_pkg_names)
                 for pkg in installed_pkgs:
                     base._goal.install(pkg)

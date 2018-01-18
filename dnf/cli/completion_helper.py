@@ -99,11 +99,11 @@ class ListCompletionCommand(dnf.cli.commands.ListCommand):
 
     @staticmethod
     def installed(base, arg):
-        return base.sack.query().installed().filter(name__glob="{}*".format(arg))
+        return base.sack.query().installed().filterm(name__glob="{}*".format(arg))
 
     @staticmethod
     def available(base, arg):
-        return base.sack.query().available().filter(name__glob="{}*".format(arg))
+        return base.sack.query().available().filterm(name__glob="{}*".format(arg))
 
     @staticmethod
     def updates(base, arg):
