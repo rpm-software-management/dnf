@@ -147,7 +147,9 @@ _dnf_show_packages()
     shift
 
     if ! _dnf_is_path "$cur"; then
-        COMPREPLY+=( $( _dnf_commands_helper $cmd "$@" "$cur" ) )
+        COMPREPLY+=( $(compgen -W '$( ${__dnf_python_exec} -c \
+            "import sys; from dnf.cli import completion_helper as ch;ch.main(sys.argv[1:])" \
+            $cmd "$@" "$cur" -d 0 -q -C 2>/dev/null )') )
     fi
 
     [[ $COMPREPLY ]] && return
