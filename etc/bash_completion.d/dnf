@@ -20,6 +20,21 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301  USA
 
+__dnf_commands="
+autoremove autoremove-n autoremove-na autoremove-nevra builddep build-dep check
+check-update check-upgrade clean config-manager copr debug-dump debuginfo-install
+debug-restore deplist distribution-synchronization distrosync distro-sync downgrade
+download erase erase-n erase-na erase-nevra fedup group grouperase groupinfo groupinstall
+grouplist groupremove groups groupupdate help history info info-sec info-security
+info-updateinfo install install-n install-na install-nevra leaves list list-sec
+list-security list-updateinfo localinstall makecache mark needs-restarting playground
+provides reinstall remove remove-n remove-na remove-nevra repoclosure repograph
+repo-graph repoinfo repolist repomanage repo-packages repo-pkgs repoquery repoquery-n
+repoquery-na repoquery-nevra repository-packages repository-pkgs reposync search shell
+summary-updateinfo swap system-upgrade update updateinfo update-minimal update-to
+upgrade upgrade-minimal upgrade-to versionlock whatprovides
+"
+
 __dnf_main_options="
     -4 -6 -b -c -C -d -e -h -q -R -v -x -y
     --advisory --advisories
@@ -127,34 +142,47 @@ _dnf_commands_helper()
 
 _dnf_is_path()
 {
-    if [[ "$1" == \.* ]] || [[ "$1" == \/* ]] || [[ "$1" == ~* ]]; then
+    if [[ "$1" == \.* ]] || [[ "$1" == *\/* ]] || [[ "$1" == ~* ]]; then
         return 0
     else
         return 1
     fi
 }
 
+# executes SQL query and appends resulting records to COMPREPLY
+# @param $1 sql query
+_dnf_completion_cache()
+{
+    [[ -z $1 ]] && return 1
+    local cache_file="/var/cache/dnf/packages.db"
+    local sqlite3="sqlite3 -batch -init /dev/null"
+    local result
+    if result=( $( $sqlite3 $cache_file "$1" 2>/dev/null ) ); then
+        COMPREPLY+=( $( compgen -W '${result[@]}' ) )
+        return 0
+    else
+        return 1
+    fi
+}
+
+
+# @param $1 sql query for generating results from cache
+# @param $2 command
 _dnf_show_packages()
 {
-    local args cmd=$1
-    _count_args
-    # do not print packages if command wasnt chosen yet
-    # eg.: dnf inTAB
-    [[ "$args" -eq 1 ]] && return
+    local query="$1" cmd=$2
 
     # return when "-" follows command
     # eg.: dnf up -
     [[ "$cur" == -* ]] && return
 
-    shift
+    shift 2
 
     if ! _dnf_is_path "$cur"; then
-        COMPREPLY+=( $(compgen -W "$( _dnf_commands_helper $cmd "$@" "$cur" )") )
+        if ! _dnf_completion_cache "$query"; then
+            COMPREPLY+=( $(compgen -W "$( _dnf_commands_helper $cmd "$@" "$cur" )") )
+        fi
     fi
-
-    [[ $COMPREPLY ]] && return
-
-    COMPREPLY+=( $(compgen -o default -f -X "!*.@(rpm)" -- "$cur" ) )
 }
 
 _dnf_get_first_command()
@@ -179,7 +207,12 @@ _dnf()
     local cur prev words cword split
     _init_completion -s || return
 
-    cmd_list="$( _dnf_commands_helper "_cmds" "" )"
+    local query
+    local query_installed="SELECT pkg FROM installed WHERE pkg LIKE \"$cur%\""
+    local query_available="SELECT pkg FROM available WHERE pkg LIKE \"$cur%\""
+
+    #cmd_list="$( _dnf_commands_helper "_cmds" "" )"
+    cmd_list="$__dnf_commands"
     command="$( _dnf_get_first_command "$cmd_list" )"
 
     case $prev in
@@ -225,7 +258,7 @@ _dnf()
 
     case "$command" in
     autoremove|autoremove-n*)
-        _dnf_show_packages list installed
+        _dnf_show_packages "$query_installed" list installed
         ;;
 
     check)
@@ -234,7 +267,7 @@ _dnf()
         ;;
 
     check-update|check-upgrade)
-        _dnf_show_packages list updates
+        _dnf_show_packages "" list updates
         ;;
 
     clean)
@@ -242,11 +275,11 @@ _dnf()
         ;;
 
     dup|dist-upgrade|dsync|distro*sync|distribution-synchronization)
-        _dnf_show_packages list installed
+        _dnf_show_packages "$query_installed" list installed
         ;;
 
     dg|downgrade)
-        _dnf_show_packages $command
+        _dnf_show_packages "$query_installed" $command
         ;;
 
     group|groups|grouperase|groupinfo|groupinstall|grouplist|groupremove|groupupdate)
@@ -267,16 +300,16 @@ _dnf()
                       --available --installed --updates --upgrades"
         case "$( _dnf_get_first_command "$subcmd" )" in
             --installed|installed)
-                _dnf_show_packages list installed ;;
+                _dnf_show_packages "$query_installed" list installed ;;
 
             --available|available)
-                _dnf_show_packages list available ;;
+                _dnf_show_packages "$query_available" list available ;;
 
             --updates|--upgrades|updates|upgrades)
-                _dnf_show_packages list updates ;;
+                _dnf_show_packages "" list updates ;;
 
             *)
-                _dnf_show_packages list
+                _dnf_show_packages "$query_available" list
             ;;
 
         esac
@@ -291,11 +324,13 @@ _dnf()
         ;;
 
     in|install*|localinstall)
-        _dnf_show_packages $command
+        COMPREPLY=( $(compgen -o default -f -X "!*.@(rpm)" -- "$cur" ) )
+        query="SELECT available.pkg FROM available LEFT JOIN installed USING(pkg) WHERE available.pkg LIKE \"$cur%\" AND installed.pkg IS NULL"
+        _dnf_show_packages "$query" $command
         ;;
 
     mark)
-        _dnf_show_packages list installed
+        _dnf_show_packages "$query_installed" list installed
         ;;
 
     mc|ref|makecache|refresh)
@@ -308,11 +343,11 @@ _dnf()
         ;;
 
     ri|rei|reinstall)
-        _dnf_show_packages $command
+        _dnf_show_packages "$query_installed" $command
         ;;
 
     rm|remove*|erase*)
-        _dnf_show_packages $command
+        _dnf_show_packages "$query_installed" $command
         extra_options="--oldinstallonly --duplicates --duplicated"
         ;;
 
@@ -349,11 +384,11 @@ _dnf()
     swap) ;;
 
     um|u-m|upgrade|upgrade-n*)
-        _dnf_show_packages $command
+        _dnf_show_packages "$query_available" $command
         ;;
 
     up|up-min|update|update-n*)
-        _dnf_show_packages $command
+        _dnf_show_packages "$query_available" $command
         ;;
 
     whatprovides) ;;
@@ -382,6 +417,5 @@ _dnf()
 
     [[ $COMPREPLY == *= ]] && compopt -o nospace
     return 0
-}
-
+} &&
 complete -F _dnf dnf dnf-2 dnf-3
