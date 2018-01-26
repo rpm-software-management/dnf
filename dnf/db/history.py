@@ -90,6 +90,8 @@ class SwdbInterface(object):
         self._group = GroupPersistor(self.swdb)
 
     def close(self):
+        if not self._swdb:
+            return
         return self.swdb.close()
 
     def add_package(self, pkg):
