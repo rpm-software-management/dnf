@@ -44,9 +44,11 @@ class UpgradeTo(tests.support.ResultTestCase):
 
         base.upgrade('hole-1-2.x86_64', 'updates')
 
+        subject = dnf.subject.Subject('hole-1-2.x86_64')
         self.assertResult(base, itertools.chain(
             base.sack.query().installed().filter(name__neq='hole'),
-            dnf.subject.Subject('hole-1-2.x86_64').get_best_query(base.sack).filter(reponame='updates')))
+            subject.get_best_query(base.sack).filter(reponame='updates'))
+        )
 
     def test_upgrade_to_reponame_not_in_repo(self):
         """Test whether no packages are upgraded if bad repo is selected."""

@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,14 +19,16 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.cli.option_parser import OptionParser
-from tests import support
-from tests.support import mock
 
-import argparse
+from dnf.cli.option_parser import OptionParser
+
 import dnf.cli.commands
 import dnf.pycomp
 import dnf.util
+
+import tests.support
+from tests.support import mock
+
 
 def _parse(command, args):
     parser = OptionParser()
@@ -32,7 +36,8 @@ def _parse(command, args):
     opts = parser.parse_command_args(command, args)
     return parser, opts
 
-class OptionParserTest(support.TestCase):
+
+class OptionParserTest(tests.support.TestCase):
     def setUp(self):
         self.cli = mock.Mock()
         self.command = MyTestCommand(self.cli)
@@ -62,7 +67,7 @@ class MyTestCommand2(dnf.cli.commands.Command):
         dnf.cli.commands.Command.__init__(self, cli)
 
 
-class OptionParserAddCmdTest(support.TestCase):
+class OptionParserAddCmdTest(tests.support.TestCase):
 
     def setUp(self):
         self.cli_commands = {}

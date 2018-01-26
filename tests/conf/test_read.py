@@ -1,4 +1,6 @@
-# Copyright (C) 2014  Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -18,11 +20,14 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import tests.support
 import dnf.conf
 import dnf.conf.read
 
+import tests.support
+
+
 FN = tests.support.resource_path('etc/repos.conf')
+
 
 class RepoReaderTest(tests.support.TestCase):
     def test_read(self):

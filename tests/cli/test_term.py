@@ -1,4 +1,6 @@
-# Copyright (C) 2014  Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -13,16 +15,21 @@
 # source code or documentation are not subject to the GNU General Public
 # License and may only be used or replicated with the express permission of
 # Red Hat, Inc.
+#
+
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests.support import mock
-import dnf.cli.term
+
 import io
-import unittest
+
+import dnf.cli.term
+
+import tests.support
+from tests.support import mock
 
 
-class TermTest(unittest.TestCase):
+class TermTest(tests.support.TestCase):
 
     """Tests of ```dnf.cli.term.Term``` class."""
 
@@ -35,7 +42,9 @@ class TermTest(unittest.TestCase):
         tty = mock.create_autospec(io.IOBase)
         tty.isatty.return_value = True
 
-        tigetstr = lambda name: '<cap_%(name)s>' % locals()
+        def tigetstr(name):
+            return '<cap_%(name)s>' % locals()
+
         with mock.patch('curses.tigetstr', autospec=True, side_effect=tigetstr):
             term = dnf.cli.term.Term(tty)
 

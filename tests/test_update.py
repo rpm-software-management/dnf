@@ -133,9 +133,11 @@ class Update(tests.support.ResultTestCase):
         self.assertCountEqual(
             removed,
             base.sack.query().installed().filter(name='pepper'))
-        assert dnf.subject.Subject('*e*').get_best_query(base.sack).upgrades().filter(name__neq='pepper', reponame__neq='broken_deps'), \
-            ('in another repo, there must be another update matching the '
-             'pattern, otherwise the test makes no sense')
+
+        q = dnf.subject.Subject('*e*').get_best_query(base.sack).upgrades()
+        q = q.filter(name__neq='pepper', reponame__neq='broken_deps')
+        assert q, 'in another repo, there must be another update matching the ' \
+            'pattern, otherwise the test makes no sense'
 
     def test_upgrade_reponame_not_in_repo(self):
         """Test whether no packages are upgraded if bad repo is selected."""
@@ -147,9 +149,10 @@ class Update(tests.support.ResultTestCase):
         self.assertLength(installed, 0)
         self.assertLength(removed, 0)
         self.assertResult(base, base.sack.query().installed())
-        assert dnf.subject.Subject('hole').get_best_query(base.sack).upgrades().filter(reponame__neq='broken_deps'), \
-            ('in another repo, there must be an update matching the '
-             'pattern, otherwise the test makes no sense')
+        q = dnf.subject.Subject('hole').get_best_query(base.sack).upgrades()
+        q = q.filter(reponame__neq='broken_deps')
+        assert q, 'in another repo, there must be an update matching the ' \
+            'pattern, otherwise the test makes no sense'
 
 
 class SkipBroken(tests.support.ResultTestCase):

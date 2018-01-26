@@ -1,4 +1,6 @@
-# Copyright (C) 2014-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -16,17 +18,19 @@
 #
 
 from __future__ import absolute_import
-from tests import support
-from dnf.cli.option_parser import OptionParser
+
 from hawkey import SwdbReason
 
 import dnf.cli.commands.autoremove as autoremove
+from dnf.cli.option_parser import OptionParser
+
+import tests.support
 
 
-class AutoRemoveCommandTest(support.ResultTestCase):
+class AutoRemoveCommandTest(tests.support.ResultTestCase):
 
     def test_run(self):
-        base = support.MockBase()
+        base = tests.support.MockBase()
         q = base.sack.query()
         pkgs = list(q.filter(name='librita')) + list(q.filter(name='pepper'))
         history = base.history

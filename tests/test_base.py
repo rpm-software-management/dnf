@@ -149,9 +149,11 @@ class BuildTransactionTest(tests.support.TestCase):
         base = tests.support.MockBase("updates")
         base.upgrade("pepper")
         self.assertTrue(base.resolve())
-        base._ds_callback.assert_has_calls([mock.call.start(),
-                                            mock.call.pkg_added(mock.ANY, 'ud'),
-                                            mock.call.pkg_added(mock.ANY, 'u')])
+        base._ds_callback.assert_has_calls([
+            mock.call.start(),
+            mock.call.pkg_added(mock.ANY, 'ud'),
+            mock.call.pkg_added(mock.ANY, 'u')
+        ])
         self.assertLength(base.transaction, 1)
 
 

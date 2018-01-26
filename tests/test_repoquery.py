@@ -21,7 +21,6 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import unittest
 
 import dnf.cli.commands.repoquery
 import dnf.exceptions
@@ -72,7 +71,7 @@ class PkgStub(object):
         self.files = ['/tmp/foobar', '/var/foobar']
 
 
-class ArgParseTest(unittest.TestCase):
+class ArgParseTest(tests.support.TestCase):
     def setUp(self):
         self.cmd = dnf.cli.commands.repoquery.RepoQueryCommand(
             tests.support.CliStub(tests.support.BaseCliStub()))
@@ -102,7 +101,7 @@ class ArgParseTest(unittest.TestCase):
         self.assertIsNone(self.cmd.opts.file)
 
 
-class FilelistFormatTest(unittest.TestCase):
+class FilelistFormatTest(tests.support.TestCase):
     def test_filelist(self):
         self.cmd = dnf.cli.commands.repoquery.RepoQueryCommand(
             tests.support.CliStub(tests.support.BaseCliStub()))
@@ -112,7 +111,7 @@ class FilelistFormatTest(unittest.TestCase):
                          EXPECTED_FILELIST_FORMAT)
 
 
-class SourceRPMFormatTest(unittest.TestCase):
+class SourceRPMFormatTest(tests.support.TestCase):
     def test_info(self):
         self.cmd = dnf.cli.commands.repoquery.RepoQueryCommand(
             tests.support.CliStub(tests.support.BaseCliStub()))
@@ -122,7 +121,7 @@ class SourceRPMFormatTest(unittest.TestCase):
                          EXPECTED_SOURCERPM_FORMAT)
 
 
-class OutputTest(unittest.TestCase):
+class OutputTest(tests.support.TestCase):
     def test_output(self):
         pkg = PkgStub()
         fmt = dnf.cli.commands.repoquery.rpm2py_format(
@@ -137,7 +136,7 @@ class OutputTest(unittest.TestCase):
                          "'PkgStub' object has no attribute 'notfound'")
 
 
-class Rpm2PyFormatTest(unittest.TestCase):
+class Rpm2PyFormatTest(tests.support.TestCase):
     def test_rpm2py_format(self):
         fmt = dnf.cli.commands.repoquery.rpm2py_format('%{name}')
         self.assertEqual(fmt, '{0.name}')

@@ -81,13 +81,34 @@ class NEVRAOperationsTest(tests.support.TestCase):
     def test_add_obsoleted_obsoleted(self):
         """Test add with an obsoleted NEVRA which was obsoleted before."""
         ops = dnf.history.NEVRAOperations()
-        ops.add('Install', 'tour-0:4.6-1.noarch', obsoleted_nevras=('lotus-0:3-16.x86_64', 'mrkite-0:2-0.x86_64'))
-        ops.add('Install', 'pepper-0:20-0.x86_64', obsoleted_nevras=('lotus-0:3-16.x86_64', 'librita-0:1-1.x86_64'))
+        ops.add(
+            'Install',
+            'tour-0:4.6-1.noarch',
+            obsoleted_nevras=('lotus-0:3-16.x86_64', 'mrkite-0:2-0.x86_64')
+        )
+        ops.add(
+            'Install',
+            'pepper-0:20-0.x86_64',
+            obsoleted_nevras=('lotus-0:3-16.x86_64', 'librita-0:1-1.x86_64')
+        )
 
         self.assertCountEqual(
             ops,
-            (('Install', 'tour-0:4.6-1.noarch', None, {'lotus-0:3-16.x86_64', 'mrkite-0:2-0.x86_64'}),
-             ('Install', 'pepper-0:20-0.x86_64', None, {'lotus-0:3-16.x86_64', 'librita-0:1-1.x86_64'})))
+            (
+                (
+                    'Install',
+                    'tour-0:4.6-1.noarch',
+                    None,
+                    {'lotus-0:3-16.x86_64', 'mrkite-0:2-0.x86_64'}
+                ),
+                (
+                    'Install',
+                    'pepper-0:20-0.x86_64',
+                    None,
+                    {'lotus-0:3-16.x86_64', 'librita-0:1-1.x86_64'}
+                )
+            )
+        )
 
     def test_add_obsoleted_removed(self):
         """Test add with an obsoleted NEVRA which was removed before."""
@@ -150,7 +171,9 @@ class NEVRAOperationsTest(tests.support.TestCase):
              ('Erase', 'tour-0:4.6-1.noarch', None, set())))
 
     def test_add_replaced_opposite(self):
-        """Test add with a replaced NEVRA which replaced a NEVRA before in the opposite direction."""
+        """
+        Test add with a replaced NEVRA which replaced a NEVRA before in the opposite direction.
+        """
         ops = dnf.history.NEVRAOperations()
         ops.add('Downgrade', 'tour-0:4.6-1.noarch', 'tour-0:4.9-1.noarch')
         ops.add('Update', 'tour-0:4.8-1.noarch', 'tour-0:4.6-1.noarch')
@@ -330,10 +353,13 @@ class NEVRAOperationsTest(tests.support.TestCase):
         """Test membership of an operation with different obsoleted NEVRAs."""
         ops = dnf.history.NEVRAOperations()
         ops.add('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.8-1.noarch')
-
-        is_in = ('Update', 'tour-0:4.9-1.noarch', 'tour-0:4.8-1.noarch', ('pepper-0:20-0.x86_64',)) in ops
-
-        self.assertFalse(is_in)
+        op = (
+            'Update',
+            'tour-0:4.9-1.noarch',
+            'tour-0:4.8-1.noarch',
+            ('pepper-0:20-0.x86_64',)
+        )
+        self.assertFalse(op in ops)
 
     def test_membership_differentreplaced(self):
         """Test membership of an operation with different replaced NEVRA."""

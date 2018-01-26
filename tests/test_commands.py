@@ -23,7 +23,6 @@ from __future__ import unicode_literals
 import itertools
 import logging
 import tempfile
-import unittest
 
 import dnf.cli.commands
 import dnf.cli.commands.group
@@ -222,7 +221,7 @@ class ReinstallCommandTest(tests.support.ResultTestCase):
         self.assertResult(base, base.sack.query().installed())
 
 
-class RepoPkgsCommandTest(unittest.TestCase):
+class RepoPkgsCommandTest(tests.support.TestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand`` class."""
 
@@ -241,7 +240,7 @@ class RepoPkgsCommandTest(unittest.TestCase):
         self.assertEqual(exit.exception.code, 1)
 
 
-class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
+class RepoPkgsCheckUpdateSubCommandTest(tests.support.TestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.CheckUpdateSubCommand`` class."""
 
@@ -287,7 +286,7 @@ class RepoPkgsCheckUpdateSubCommandTest(unittest.TestCase):
         self.assertNotEqual(self.cli.demands.success_exit_status, 100)
 
 
-class RepoPkgsInfoSubCommandTest(unittest.TestCase):
+class RepoPkgsInfoSubCommandTest(tests.support.TestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.InfoSubCommand`` class."""
 
@@ -480,10 +479,11 @@ class RepoPkgsInstallSubCommandTest(tests.support.ResultTestCase):
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['third_party', 'install'])
 
+        q = self.cli.base.sack.query()
         self.assertResult(self.cli.base, itertools.chain(
-            self.cli.base.sack.query().installed(),
-            self.cli.base.sack.query().available().filter(reponame='third_party',
-                                                          arch='x86_64', name__neq='hole')))
+            q.installed(),
+            q.available().filter(reponame='third_party', arch='x86_64', name__neq='hole'))
+        )
 
 
 class RepoPkgsMoveToSubCommandTest(tests.support.ResultTestCase):
@@ -536,7 +536,7 @@ class RepoPkgsReinstallOldSubCommandTest(tests.support.ResultTestCase):
         )
 
 
-class RepoPkgsReinstallSubCommandTest(unittest.TestCase):
+class RepoPkgsReinstallSubCommandTest(tests.support.TestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.ReinstallSubCommand`` class."""
 
@@ -773,10 +773,11 @@ class RepoPkgsUpgradeSubCommandTest(tests.support.ResultTestCase):
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['third_party', 'upgrade'])
 
-        self.assertResult(self.cli.base, itertools.chain(
-            self.cli.base.sack.query().installed().filter(name__neq='hole'),
-            self.cli.base.sack.query().upgrades().filter(reponame='third_party',
-                                                         arch='x86_64')))
+        q = self.base.sack.query()
+        self.assertResult(self.base, itertools.chain(
+            q.installed().filter(name__neq='hole'),
+            q.upgrades().filter(reponame='third_party', arch='x86_64'))
+        )
 
 
 class UpgradeCommandTest(tests.support.ResultTestCase):

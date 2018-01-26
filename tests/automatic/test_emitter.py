@@ -1,4 +1,6 @@
-# Copyright (C) 2014 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,9 +19,12 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests.support import mock, mock_open
+
 import dnf.automatic.emitter
+
 import tests.support
+from tests.support import mock, mock_open
+
 
 MSG = """\
 downloaded on myhost:
@@ -46,4 +51,3 @@ class TestMotdEmitter(tests.support.TestCase):
                 emitter.commit()
             handle = m()
             handle.write.assert_called_once_with(MSG)
-
