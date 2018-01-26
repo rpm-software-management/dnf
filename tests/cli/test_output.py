@@ -1,4 +1,6 @@
-# Copyright (C) 2012-2016  Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2012-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,16 +19,18 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests import support
-from tests.support import mock
+
 from hawkey import SwdbReason
 
 import dnf.cli.output
 import dnf.const
 import dnf.transaction
-import unittest
 
-INFOOUTPUT_OUTPUT="""\
+import tests.support
+from tests.support import mock
+
+
+INFOOUTPUT_OUTPUT = """\
 Name         : tour
 Epoch        : 1
 Version      : 5
@@ -41,7 +45,7 @@ License      : GPL+
 Description  : 
 """
 
-LIST_TRANSACTION_OUTPUT=u"""\
+LIST_TRANSACTION_OUTPUT = u"""\
 ================================================================================
  Package           Arch              Version           Repository          Size
 ================================================================================
@@ -55,10 +59,8 @@ Upgrade  1 Package
 """
 
 
-class OutputFunctionsTest(support.TestCase):
+class OutputFunctionsTest(tests.support.TestCase):
     def test_make_lists(self):
-        TSI = dnf.transaction.TransactionItem
-
         goal = mock.Mock(get_reason=lambda x: SwdbReason.USER)
         ts = dnf.transaction.Transaction()
         ts.add_install('pepper-3', [])
@@ -77,7 +79,7 @@ class OutputFunctionsTest(support.TestCase):
                          [('tour', 0, 1, 2, 3), ('', 4, 5, 6, 7)])
 
 
-class OutputTest(support.TestCase):
+class OutputTest(tests.support.TestCase):
     @staticmethod
     def _keyboard_interrupt(*ignored):
         raise KeyboardInterrupt
@@ -87,7 +89,7 @@ class OutputTest(support.TestCase):
         raise EOFError
 
     def setUp(self):
-        self.base = support.MockBase('updates')
+        self.base = tests.support.MockBase('updates')
         self.output = dnf.cli.output.Output(self.base, self.base.conf)
 
     @mock.patch('dnf.cli.term._real_term_width', return_value=80)
@@ -158,7 +160,7 @@ class OutputTest(support.TestCase):
         self.assertTrue(self.output.userconfirm())
 
     class _InputGenerator(object):
-        INPUT=['haha', 'dada', 'n']
+        INPUT = ['haha', 'dada', 'n']
 
         def __init__(self):
             self.called = 0
@@ -177,7 +179,7 @@ class OutputTest(support.TestCase):
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.cli.term._real_term_width', return_value=80)
     def test_infoOutput_with_none_description(self, _real_term_width):
-        pkg = support.MockPackage('tour-5-0.noarch')
+        pkg = tests.support.MockPackage('tour-5-0.noarch')
         pkg._from_system = False
         pkg._size = 0
         pkg._pkgid = None
@@ -225,9 +227,10 @@ Environment Group: Sugar Desktop Environment
    Base
 """
 
-class GroupOutputTest(unittest.TestCase):
+
+class GroupOutputTest(tests.support.TestCase):
     def setUp(self):
-        base = support.MockBase('main')
+        base = tests.support.MockBase('main')
         base.read_mock_comps()
         output = dnf.cli.output.Output(base, base.conf)
 
@@ -238,7 +241,7 @@ class GroupOutputTest(unittest.TestCase):
     @mock.patch('dnf.cli.term._real_term_width', return_value=80)
     def test_group_info(self, _real_term_width):
         group = self.base.comps.group_by_pattern('Peppers')
-        with support.patch_std_streams() as (stdout, stderr):
+        with tests.support.patch_std_streams() as (stdout, stderr):
             self.output.display_pkgs_in_groups(group)
         self.assertEqual(stdout.getvalue(), PKGS_IN_GROUPS_OUTPUT)
 
@@ -247,7 +250,7 @@ class GroupOutputTest(unittest.TestCase):
     def test_group_verbose_info(self, _real_term_width):
         group = self.base.comps.group_by_pattern('Peppers')
         self.base.set_debuglevel(dnf.const.VERBOSE_LEVEL)
-        with support.patch_std_streams() as (stdout, stderr):
+        with tests.support.patch_std_streams() as (stdout, stderr):
             self.output.display_pkgs_in_groups(group)
         self.assertEqual(stdout.getvalue(), PKGS_IN_GROUPS_VERBOSE_OUTPUT)
 
@@ -255,6 +258,6 @@ class GroupOutputTest(unittest.TestCase):
     @mock.patch('dnf.cli.term._real_term_width', return_value=80)
     def test_environment_info(self, _real_term_width):
         env = self.base.comps.environments[0]
-        with support.patch_std_streams() as (stdout, stderr):
+        with tests.support.patch_std_streams() as (stdout, stderr):
             self.output.display_groups_in_environment(env)
         self.assertEqual(stdout.getvalue(), GROUPS_IN_ENVIRONMENT_OUTPUT)

@@ -1,4 +1,6 @@
-# Copyright (C) 2014-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -16,19 +18,20 @@
 #
 
 from __future__ import absolute_import
-from tests import support
-from dnf.comps import CompsQuery
-from dnf.cli.option_parser import OptionParser
 
 import dnf.cli.commands.group as group
 import dnf.comps
 import dnf.exceptions
+from dnf.comps import CompsQuery
+from dnf.cli.option_parser import OptionParser
+
+import tests.support
 
 
-class GroupCommandStaticTest(support.TestCase):
+class GroupCommandStaticTest(tests.support.TestCase):
 
     def test_canonical(self):
-        cmd = group.GroupCommand(support.mock.MagicMock())
+        cmd = group.GroupCommand(tests.support.mock.MagicMock())
 
         for args, out in [
                 (['grouplist', 'crack'], ['list', 'crack']),
@@ -43,17 +46,17 @@ class GroupCommandStaticTest(support.TestCase):
             self.assertEqual(cmd.opts.args, out[1:])
 
     def test_split_extcmds(self):
-        cmd = group.GroupCommand(support.mock.MagicMock())
+        cmd = group.GroupCommand(tests.support.mock.MagicMock())
         cmd.base.conf = dnf.conf.Conf()
-        support.command_run(cmd, ['install', 'crack'])
+        tests.support.command_run(cmd, ['install', 'crack'])
         cmd.base.env_group_install.assert_called_with(
             ['crack'], ('mandatory', 'default', 'conditional'),
             cmd.base.conf.strict)
 
 
-class GroupCommandTest(support.TestCase):
+class GroupCommandTest(tests.support.TestCase):
     def setUp(self):
-        base = support.MockBase("main")
+        base = tests.support.MockBase("main")
         base.read_mock_comps()
         base.init_sack()
         self.cmd = group.GroupCommand(base.mock_cli())
@@ -66,18 +69,18 @@ class GroupCommandTest(support.TestCase):
         self.assertEqual(env_avail[0].name, 'Sugar Desktop Environment')
 
     def test_configure(self):
-        support.command_configure(self.cmd, ['remove', 'crack'])
+        tests.support.command_configure(self.cmd, ['remove', 'crack'])
         demands = self.cmd.cli.demands
         self.assertTrue(demands.allow_erasing)
         self.assertFalse(demands.freshest_metadata)
 
 
-class CompsQueryTest(support.TestCase):
+class CompsQueryTest(tests.support.TestCase):
 
     def setUp(self):
-        self.base = support.MockBase()
+        self.base = tests.support.MockBase()
         self.history = self.base.history
-        self.comps = support.mock_comps(self.history, True)
+        self.comps = tests.support.mock_comps(self.history, True)
         self.prst = self.history.group
 
     def test_all(self):

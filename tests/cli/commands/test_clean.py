@@ -1,4 +1,6 @@
-# Copyright (C) 2014-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,30 +19,31 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
+import os
 from io import StringIO
-from tests import support
-from tests.support import mock
 
 import dnf.cli.cli
-import dnf.cli.commands.clean as clean
-import os
+
 import tests.support
+from tests.support import mock
 
 
 def _run(cli, args):
-    with mock.patch('sys.stdout', new_callable=StringIO) as stdout, \
-         mock.patch('dnf.rpm.detect_releasever', return_value=69):
+    with mock.patch('sys.stdout', new_callable=StringIO), \
+            mock.patch('dnf.rpm.detect_releasever', return_value=69):
         cli.configure(['clean', '--config', '/dev/null'] + args)
         cli.run()
+
 
 class CleanTest(tests.support.TestCase):
     def setUp(self):
         conf = dnf.conf.Conf()
-        base = support.Base(conf)
-        base.repos.add(support.MockRepo('main', conf))
+        base = tests.support.Base(conf)
+        base.repos.add(tests.support.MockRepo('main', conf))
         base.conf.reposdir = '/dev/null'
         base.conf.plugins = False
-        base.output = support.MockOutput()
+        base.output = tests.support.MockOutput()
 
         repo = base.repos['main']
         repo.baseurl = ['http:///dnf-test']

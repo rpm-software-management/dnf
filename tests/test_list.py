@@ -47,8 +47,7 @@ class List(tests.support.TestCase):
     def test_list_installed_reponame(self):
         """Test whether only packages installed from the repository are listed."""
         base = tests.support.MockBase()
-        expected = base.sack.query().installed().filter(name={'pepper',
-                                                              'librita'})
+        expected = self.base.sack.query().installed().filter(name={'pepper', 'librita'})
         history = base.history
         for pkg in expected:
             tests.support.mockSwdbPkg(history, pkg, repo='main')

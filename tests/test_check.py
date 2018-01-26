@@ -21,8 +21,6 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import unittest
-
 import dnf.cli.commands.check
 import dnf.pycomp
 
@@ -39,7 +37,7 @@ test-1-0.noarch is obsoleted by obs-3-0.noarch
 """
 
 
-class CheckDuplicatesTest(unittest.TestCase):
+class CheckDuplicatesTest(tests.support.TestCase):
     def test_duplicates(self):
         self.cmd = dnf.cli.commands.check.CheckCommand(
             tests.support.CliStub(tests.support.BaseCliStub()))

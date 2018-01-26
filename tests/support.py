@@ -77,10 +77,10 @@ TRACEBACK_RE = re.compile(
     r'(?:    .+\n)?)+'
     r'\S.*\n)')
 REASONS = {
-    'hole'      : 'group',
-    'pepper'    : 'group',
-    'right'     : 'dep',
-    'tour'      : 'group',
+    'hole': 'group',
+    'pepper': 'group',
+    'right': 'dep',
+    'tour': 'group',
     'trampoline': 'group',
 }
 RPMDB_CHECKSUM = '47655615e9eae2d339443fa00065d41900f99baf'
@@ -421,7 +421,7 @@ class MockQuery(dnf.query.Query):
 
 class MockTerminal(object):
     def __init__(self):
-        self.MODE = {'bold'   : '', 'normal' : ''}
+        self.MODE = {'bold': '', 'normal': ''}
         self.columns = 80
         self.real_columns = 80
         self.reinit = mock.Mock()
@@ -452,46 +452,48 @@ class FakeConf(dnf.conf.Conf):
     def __init__(self, **kwargs):
         super(FakeConf, self).__init__()
         self.substitutions['releasever'] = 'Fedora69'
-        for optname, val in [
-                ('assumeyes', None),
-                ('best', False),
-                ('cachedir', dnf.const.TMPDIR),
-                ('clean_requirements_on_remove', False),
-                ('color', 'never'),
-                ('color_update_installed', 'normal'),
-                ('color_update_remote', 'normal'),
-                ('color_list_available_downgrade', 'dim'),
-                ('color_list_available_install', 'normal'),
-                ('color_list_available_reinstall', 'bold'),
-                ('color_list_available_upgrade', 'bold'),
-                ('color_list_installed_extra', 'bold'),
-                ('color_list_installed_newer', 'bold'),
-                ('color_list_installed_older', 'bold'),
-                ('color_list_installed_reinstall', 'normal'),
-                ('color_update_local', 'bold'),
-                ('debug_solver', False),
-                ('debuglevel', 2),
-                ('defaultyes', False),
-                ('disable_excludes', []),
-                ('diskspacecheck', True),
-                ('exclude', []),
-                ('include', []),
-                ('install_weak_deps', True),
-                ('history_record', False),
-                ('installonly_limit', 0),
-                ('installonlypkgs', ['kernel']),
-                ('installroot', '/'),
-                ('ip_resolve', None),
-                ('multilib_policy', 'best'),
-                ('obsoletes', True),
-                ('persistdir', '/tmp/swdb/'),
-                ('transformdb', False),
-                ('protected_packages', ["dnf"]),
-                ('plugins', False),
-                ('showdupesfromrepos', False),
-                ('tsflags', []),
-                ('strict', True),
-                ] + list(kwargs.items()):
+        options = [
+            ('assumeyes', None),
+            ('best', False),
+            ('cachedir', dnf.const.TMPDIR),
+            ('clean_requirements_on_remove', False),
+            ('color', 'never'),
+            ('color_update_installed', 'normal'),
+            ('color_update_remote', 'normal'),
+            ('color_list_available_downgrade', 'dim'),
+            ('color_list_available_install', 'normal'),
+            ('color_list_available_reinstall', 'bold'),
+            ('color_list_available_upgrade', 'bold'),
+            ('color_list_installed_extra', 'bold'),
+            ('color_list_installed_newer', 'bold'),
+            ('color_list_installed_older', 'bold'),
+            ('color_list_installed_reinstall', 'normal'),
+            ('color_update_local', 'bold'),
+            ('debug_solver', False),
+            ('debuglevel', 2),
+            ('defaultyes', False),
+            ('disable_excludes', []),
+            ('diskspacecheck', True),
+            ('exclude', []),
+            ('include', []),
+            ('install_weak_deps', True),
+            ('history_record', False),
+            ('installonly_limit', 0),
+            ('installonlypkgs', ['kernel']),
+            ('installroot', '/'),
+            ('ip_resolve', None),
+            ('multilib_policy', 'best'),
+            ('obsoletes', True),
+            ('persistdir', '/tmp/swdb/'),
+            ('transformdb', False),
+            ('protected_packages', ["dnf"]),
+            ('plugins', False),
+            ('showdupesfromrepos', False),
+            ('tsflags', []),
+            ('strict', True),
+        ] + list(kwargs.items())
+
+        for optname, val in options:
             setattr(self, optname, dnf.conf.Value(val, dnf.conf.PRIO_DEFAULT))
 
     @property

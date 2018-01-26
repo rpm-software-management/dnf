@@ -20,8 +20,8 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import unittest
 import sys
+import unittest
 
 import dnf.i18n
 from dnf.pycomp import PY3
@@ -31,8 +31,8 @@ import tests.support
 from tests.support import mock
 
 
-UC_TEXT          = 'Šířka'  # means 'Width' in Czech
-UC_TEXT_OSERROR  = 'Soubor již existuje'  # 'File already exists'
+UC_TEXT = 'Šířka'  # means 'Width' in Czech
+UC_TEXT_OSERROR = 'Soubor již existuje'  # 'File already exists'
 STR_TEXT_OSERROR = 'Soubor již existuje'
 
 

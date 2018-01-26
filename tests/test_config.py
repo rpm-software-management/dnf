@@ -20,7 +20,6 @@
 from __future__ import unicode_literals
 
 import argparse
-import unittest
 
 import dnf.conf
 import dnf.conf.read
@@ -31,7 +30,7 @@ import tests.support
 from tests.support import mock
 
 
-class OptionTest(unittest.TestCase):
+class OptionTest(tests.support.TestCase):
 
     class Cfg(BaseConfig):
         def __init__(self):
@@ -50,7 +49,7 @@ class OptionTest(unittest.TestCase):
         self.assertEqual(cfg.a_setting, "turn left")
 
 
-class CacheTest(unittest.TestCase):
+class CacheTest(tests.support.TestCase):
 
     @mock.patch('dnf.util.am_i_root', return_value=True)
     @mock.patch('dnf.const.SYSTEM_CACHEDIR', '/var/lib/spinning')
@@ -70,7 +69,7 @@ class CacheTest(unittest.TestCase):
         self.assertEqual(fn_getcachedir.call_count, 1)
 
 
-class ConfTest(unittest.TestCase):
+class ConfTest(tests.support.TestCase):
 
     def test_bugtracker(self):
         conf = Conf()

@@ -1,4 +1,6 @@
-# Copyright (C) 2014-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -16,16 +18,17 @@
 #
 
 from __future__ import absolute_import
-from tests import support
-from tests.support import mock
+
 import dnf.cli.commands.makecache as makecache
 import dnf.pycomp
-import tempfile
+
+import tests.support
+from tests.support import mock
 
 
-class MakeCacheCommandTest(support.TestCase):
+class MakeCacheCommandTest(tests.support.TestCase):
     def setUp(self):
-        self.base = support.MockBase('main')
+        self.base = tests.support.MockBase('main')
         self.cli = self.base.mock_cli()
         for r in self.base.repos.values():
             r.basecachedir = self.base.conf.cachedir
@@ -33,13 +36,13 @@ class MakeCacheCommandTest(support.TestCase):
     @staticmethod
     @mock.patch('dnf.Base.fill_sack', new=mock.MagicMock())
     def _do_makecache(cmd):
-        return support.command_run(cmd, ['timer'])
+        return tests.support.command_run(cmd, ['timer'])
 
     def assert_last_info(self, logger, msg):
         self.assertEqual(logger.info.mock_calls[-1], mock.call(msg))
 
     @mock.patch('dnf.base.logger',
-                new_callable=support.mock_logger)
+                new_callable=tests.support.mock_logger)
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.util.on_ac_power', return_value=True)
     def test_makecache_timer(self, _on_ac_power, logger):
@@ -49,14 +52,14 @@ class MakeCacheCommandTest(support.TestCase):
         self.assertFalse(self._do_makecache(cmd))
         self.assert_last_info(logger, u'Metadata timer caching disabled.')
 
-        self.base.conf.metadata_timer_sync = 5 # resync after 5 seconds
+        self.base.conf.metadata_timer_sync = 5  # resync after 5 seconds
         self.base._repo_persistor.since_last_makecache = mock.Mock(return_value=3)
         self.assertFalse(self._do_makecache(cmd))
         self.assert_last_info(logger, u'Metadata cache refreshed recently.')
 
         self.base._repo_persistor.since_last_makecache = mock.Mock(return_value=10)
         self.base._sack = 'nonempty'
-        r = support.MockRepo("glimpse", self.base.conf)
+        r = tests.support.MockRepo("glimpse", self.base.conf)
         self.base.repos.add(r)
 
         # regular case 1: metadata is already expired:
@@ -84,7 +87,7 @@ class MakeCacheCommandTest(support.TestCase):
         self.assertTrue(r._expired)
 
     @mock.patch('dnf.base.logger',
-                new_callable=support.mock_logger)
+                new_callable=tests.support.mock_logger)
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.util.on_ac_power', return_value=False)
     def test_makecache_timer_battery(self, _on_ac_power, logger):

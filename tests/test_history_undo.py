@@ -66,7 +66,12 @@ class BaseTest(tests.support.TestCase):
     def test_history_undo_operations_downgrade(self):
         """Test history_undo_operations with a downgrade."""
         operations = NEVRAOperations()
-        operations.add('Downgrade', 'pepper-20-0.x86_64', 'pepper-20-1.x86_64', ('lotus-3-16.x86_64',))
+        operations.add(
+            'Downgrade',
+            'pepper-20-0.x86_64',
+            'pepper-20-1.x86_64',
+            ('lotus-3-16.x86_64',)
+        )
 
         with self._base:
             self._base._history_undo_operations(operations, 0)
@@ -164,7 +169,12 @@ class BaseTest(tests.support.TestCase):
     def test_history_undo_operations_reinstall(self):
         """Test history_undo_operations with a reinstall."""
         operations = NEVRAOperations()
-        operations.add('Reinstall', 'pepper-20-0.x86_64', 'pepper-20-0.x86_64', ('hole-1-1.x86_64',))
+        operations.add(
+            'Reinstall',
+            'pepper-20-0.x86_64',
+            'pepper-20-0.x86_64',
+            ('hole-1-1.x86_64',)
+        )
 
         with self._base:
             self._base._history_undo_operations(operations, 0)
@@ -198,7 +208,12 @@ class BaseTest(tests.support.TestCase):
     def test_history_undo_operations_reinstall_notinstalled_obsoleted(self):
         """Test history_undo_operations with a not installed obsoleted of a reinstall."""
         operations = NEVRAOperations()
-        operations.add('Reinstall', 'pepper-20-0.x86_64', 'pepper-20-0.x86_64', ('lotus-3-16.x86_64',))
+        operations.add(
+            'Reinstall',
+            'pepper-20-0.x86_64',
+            'pepper-20-0.x86_64',
+            ('lotus-3-16.x86_64',)
+        )
 
         with self._base:
             self._base._history_undo_operations(operations, 0)

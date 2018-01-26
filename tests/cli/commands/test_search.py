@@ -1,4 +1,6 @@
-# Copyright (C) 2014  Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -16,16 +18,18 @@
 #
 
 from __future__ import absolute_import
-from tests import support
-from tests import mock
 
 import dnf.cli.commands.search as search
 import dnf.match_counter
 import dnf.pycomp
 
-class SearchCountedTest(support.TestCase):
+import tests.support
+from tests import mock
+
+
+class SearchCountedTest(tests.support.TestCase):
     def setUp(self):
-        base = support.MockBase("main")
+        base = tests.support.MockBase("main")
         self.cmd = search.SearchCommand(base.mock_cli())
 
     def test_search_counted(self):
@@ -43,16 +47,17 @@ class SearchCountedTest(support.TestCase):
         self.cmd._search_counted(counter, 'summary', '*invit*')
         self.assertEqual(len(counter), 1)
 
-class SearchTest(support.TestCase):
+
+class SearchTest(tests.support.TestCase):
     def setUp(self):
-        self.base = support.MockBase("search")
+        self.base = tests.support.MockBase("search")
         self.base.output = mock.MagicMock()
         self.base.output.fmtSection = lambda str: str
         self.cmd = search.SearchCommand(self.base.mock_cli())
 
     def patched_search(self, *args):
-        with support.patch_std_streams() as (stdout, _):
-            support.command_run(self.cmd, *args)
+        with tests.support.patch_std_streams() as (stdout, _):
+            tests.support.command_run(self.cmd, *args)
             call_args = self.base.output.matchcallback.call_args_list
             pkgs = [c[0][0] for c in call_args]
             return (stdout.getvalue(), pkgs)

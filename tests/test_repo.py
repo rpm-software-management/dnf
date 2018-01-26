@@ -25,7 +25,6 @@ import io
 import os
 import re
 import tempfile
-import unittest
 
 import librepo
 
@@ -46,7 +45,7 @@ TOUR_CHKSUM = """\
 ce77c1e5694b037b6687cf0ab812ca60431ec0b65116abbb7b82684f0b092d62"""
 
 
-class RepoFunctionsTest(unittest.TestCase):
+class RepoFunctionsTest(tests.support.TestCase):
     def test_cachedir_re(self):
         pairs = [
             ('fedora-fe3d2f0c91e9b65c', 'fedora'),
@@ -505,7 +504,7 @@ class DownloadPayloadsTest(RepoTestMixin, tests.support.TestCase):
         self.assertFile(path)
 
 
-class MDPayloadTest(unittest.TestCase):
+class MDPayloadTest(tests.support.TestCase):
     def test_null_progress(self):
         """MDPayload always has some progress attribute."""
         pload = dnf.repo.MDPayload(None)
@@ -513,7 +512,7 @@ class MDPayloadTest(unittest.TestCase):
         self.assertIsNotNone(pload.progress)
 
 
-class SavingTest(unittest.TestCase):
+class SavingTest(tests.support.TestCase):
     def test_update_saving(self):
         progress = dnf.callback.NullDownloadProgress()
 

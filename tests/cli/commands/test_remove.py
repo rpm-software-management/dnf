@@ -1,4 +1,6 @@
-# Copyright (C) 2014-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,20 +19,23 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from tests import support
-from tests.support import mock
-from dnf.cli.option_parser import OptionParser
 
-import dnf.cli.commands.remove
 import logging
 
-class RemoveCommandTest(support.ResultTestCase):
+import dnf.cli.commands.remove
+from dnf.cli.option_parser import OptionParser
+
+import tests.support
+from tests.support import mock
+
+
+class RemoveCommandTest(tests.support.ResultTestCase):
     """Tests of ``dnf.cli.commands.EraseCommand`` class."""
 
     def setUp(self):
         """Prepare the test fixture."""
         super(RemoveCommandTest, self).setUp()
-        base = support.BaseCliStub()
+        base = tests.support.BaseCliStub()
         base.init_sack()
         self.cmd = dnf.cli.commands.remove.RemoveCommand(base.mock_cli())
 
@@ -47,8 +52,8 @@ class RemoveCommandTest(support.ResultTestCase):
         """Test whether it fails if the package cannot be found."""
         stdout = dnf.pycomp.StringIO()
 
-        with support.wiretap_logs('dnf', logging.INFO, stdout):
-            self.assertRaises(dnf.exceptions.Error, support.command_run, self.cmd,
+        with tests.support.wiretap_logs('dnf', logging.INFO, stdout):
+            self.assertRaises(dnf.exceptions.Error, tests.support.command_run, self.cmd,
                               ['non-existent'])
 
         self.assertEqual(stdout.getvalue(),

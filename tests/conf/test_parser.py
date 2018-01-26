@@ -1,4 +1,6 @@
-# Copyright (C) 2014  Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -17,13 +19,15 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
 from dnf.conf.parser import substitute
 
 import tests.support
 
+
 class SubstituteTest(tests.support.TestCase):
     def test_read(self):
-        substs = {'lies' : 'fact'}
+        substs = {'lies': 'fact'}
         # Test a single word without braces
         rawstr = '$Substitute some $lies.'
         result = '$Substitute some fact.'

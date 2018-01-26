@@ -1,4 +1,6 @@
-# Copyright (C) 2014-2016 Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2014-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -20,14 +22,17 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import datetime
-import dnf.pycomp
-import dnf.cli.commands.updateinfo
-import hawkey
 import itertools
 import shutil
 import tempfile
-import tests.mock
+
+import hawkey
+
+import dnf.pycomp
+import dnf.cli.commands.updateinfo
+
 import tests.support
+from tests.support import mock
 
 
 class UpdateInfoCommandTest(tests.support.TestCase):
@@ -43,11 +48,11 @@ class UpdateInfoCommandTest(tests.support.TestCase):
         self.cli.base.conf.cachedir = cachedir
         self.cli.base.add_test_dir_repo('rpm', self.cli.base.conf)
         self._stdout = dnf.pycomp.StringIO()
-        self.addCleanup(tests.mock.patch.stopall)
-        tests.support.mock.patch(
+        self.addCleanup(mock.patch.stopall)
+        mock.patch(
             'dnf.cli.commands.updateinfo._',
             dnf.pycomp.NullTranslations().ugettext).start()
-        tests.support.mock.patch(
+        mock.patch(
             'dnf.cli.commands.updateinfo.print',
             self._stub_print, create=True).start()
 
@@ -179,18 +184,21 @@ class UpdateInfoCommandTest(tests.support.TestCase):
              for apkg in adv.packages))
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.display_list(apkg_adv_insts, True, '')
-        self.assertEqual(self._stdout.getvalue(),
-                         'i DNF-2014-1 bugfix       tour-4-4.noarch\n'
-                         'i DNF-2014-2 enhancement  tour-5-0.noarch\n'
-                         '  DNF-2014-3 Unknown/Sec. tour-5-1.noarch\n',
-                         'incorrect output')
+        self.assertEqual(
+            self._stdout.getvalue(),
+            'i DNF-2014-1 bugfix       tour-4-4.noarch\n'
+            'i DNF-2014-2 enhancement  tour-5-0.noarch\n'
+            '  DNF-2014-3 Unknown/Sec. tour-5-1.noarch\n',
+            'incorrect output'
+        )
 
     def test_display_info_verbose(self):
         """Test verbose displaying."""
-        apkg_adv_insts = ((apkg, adv, False)
-                     for pkg in self.cli.base.sack.query().installed()
-                     for adv in pkg.get_advisories(hawkey.GT)
-                     for apkg in adv.packages)
+        apkg_adv_insts = (
+            (apkg, adv, False) for pkg in self.cli.base.sack.query().installed()
+            for adv in pkg.get_advisories(hawkey.GT)
+            for apkg in adv.packages
+        )
         self.cli.base.set_debuglevel(dnf.const.VERBOSE_LEVEL)
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.display_info(apkg_adv_insts, False, '')
