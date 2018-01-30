@@ -47,7 +47,11 @@ class ModuleMetadataLoader(object):
         if not self._metadata_fn and not yaml_file_path:
             raise MissingYamlException(self.repo._cachedir)
 
-        with gzip.open(self._metadata_fn or yaml_file_path, "r") as modules_yaml_gz:
-            modules_yaml = modules_yaml_gz.read()
+        openfunc = open
+        if (self._metadata_fn and self._metadata_fn.endswith('.gz')) \
+                or (yaml_file_path and yaml_file_path.endswith('.gz')):
+            openfunc = gzip.open
+        with openfunc(self._metadata_fn or yaml_file_path, "r") as modules_yaml_fd:
+            modules_yaml = modules_yaml_fd.read()
 
         return modulemd.loads_all(modules_yaml)
