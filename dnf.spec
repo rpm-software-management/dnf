@@ -32,6 +32,9 @@
 # Use the same directory of the main package for subpackage licence and docs
 %global _docdir_fmt %{name}
 
+%global yum_package_description \
+As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
+
 Name:           dnf
 Version:        2.8.5
 Release:        1%{?dist}
@@ -112,7 +115,7 @@ Requires:       %{name} = %{version}-%{release}
 Summary:        As a Yum CLI compatibility layer, supplies /usr/bin/yum4 redirecting to DNF
 
 %description -n yum4
-As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
+%{yum_package_description}
 
 %else
 %package yum
@@ -121,7 +124,7 @@ Requires:       %{name} = %{version}-%{release}
 Summary:        As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF
 
 %description yum
-As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
+%{yum_package_description}
 %endif
 
 %package -n python2-%{name}
