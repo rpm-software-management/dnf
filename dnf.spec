@@ -137,7 +137,9 @@ Requires:       python2-gpg
 BuildRequires:  pyliblzma
 Requires:       pyliblzma
 Requires:       %{name}-conf = %{version}-%{release}
+%if 0%{?fedora} || 0%{?centos}
 Requires:       deltarpm
+%endif
 Requires:       python2-hawkey >= %{hawkey_version}
 Requires:       python2-libcomps >= %{libcomps_version}
 Requires:       python2-librepo >= %{librepo_version}
@@ -175,7 +177,9 @@ BuildRequires:  python3-nose
 BuildRequires:  python3-gpg
 Requires:       python3-gpg
 Requires:       %{name}-conf = %{version}-%{release}
+%if 0%{?fedora} || 0%{?centos}
 Requires:       deltarpm
+%endif
 Requires:       python3-hawkey >= %{hawkey_version}
 Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
