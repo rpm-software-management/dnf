@@ -145,7 +145,10 @@ def file_timestamp(fn):
     return os.stat(fn).st_mtime
 
 def get_effective_login():
-    return pwd.getpwuid(os.geteuid())[0]
+    try:
+        return pwd.getpwuid(os.geteuid())[0]
+    except KeyError:
+        return "UID: %s" % os.geteuid()
 
 def get_in(dct, keys, not_found):
     """Like dict.get() for nested dicts."""
