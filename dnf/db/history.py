@@ -23,7 +23,6 @@ import os
 from dnf.yum import misc
 from hawkey import Swdb, SwdbPkg, SwdbItem, convert_reason
 from .swdb_transformer import transformSwdb
-from .addondata import AddonData
 from .group import GroupPersistor
 from dnf.util import logger
 
@@ -34,7 +33,6 @@ class SwdbInterface(object):
         self.path = os.path.join(root, db_dir, "swdb.sqlite")
         self.releasever = str(releasever)
         self._group = None
-        self._addon_data = None
         self._swdb = None
         self._db_dir = db_dir
         self._root = root
@@ -45,12 +43,6 @@ class SwdbInterface(object):
         if not self._group:
             self._group = GroupPersistor(self.swdb)
         return self._group
-
-    @property
-    def addon_data(self):
-        if not self._addon_data:
-            self._addon_data = AddonData(self._db_dir, self._root)
-        return self._addon_data
 
     def _createdb(self, input_dir):
         """ Create SWDB database if necessary and perform transformation """

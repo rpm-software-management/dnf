@@ -1731,17 +1731,9 @@ Transaction Summary
             else:
                 print(_("Command Line   :"), old.cmdline)
 
-        if len(tids) == 1:
-            addon_info = self.history.addon_data.read(tids[0])
-
-            # for the ones we create by default - don't display them as there
-            default_addons = set(['config-main', 'config-repos', 'transaction-comment'])
-            non_default = set(addon_info).difference(default_addons)
-            if len(non_default) > 0:
-                print(_("Additional non-default information stored: %d") % \
-                          len(non_default))
-
-        comment = self.history.addon_data.read(old.tid, item='transaction-comment')
+        # TODO:
+        # comment = self.history.addon_data.read(old.tid, item='transaction-comment')
+        comment = ""
         if comment:
             print(_("Comment        :"), comment)
 
