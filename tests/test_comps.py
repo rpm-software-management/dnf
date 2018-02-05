@@ -169,19 +169,11 @@ class TestTransactionBunch(tests.support.TestCase):
         self.assertEmpty(t1.remove)
 
 
-class SolverTestMixin(object):
+class SolverGroupTest(tests.support.DnfBaseTestCase):
 
-    def setUp(self):
-        comps = dnf.comps.Comps()
-        comps._add_from_xml_filename(tests.support.COMPS_PATH)
-        self.comps = comps
-        self.base = tests.support.MockBase()
-        self.history = self.base.history
-        self.persistor = self.history.group
-        self.solver = dnf.comps.Solver(self.persistor, self.comps, tests.support.REASONS.get)
-
-
-class SolverGroupTest(SolverTestMixin, tests.support.TestCase):
+    REPOS = []
+    COMPS = True
+    COMPS_SOLVER = True
 
     def test_install(self):
         grp = self.comps.group_by_pattern('base')
@@ -260,7 +252,11 @@ class SolverGroupTest(SolverTestMixin, tests.support.TestCase):
         self.assertCountEqual(p_grp.get_full_list(), ('tour', 'pepper'))
 
 
-class SolverEnvironmentTest(SolverTestMixin, tests.support.TestCase):
+class SolverEnvironmentTest(tests.support.DnfBaseTestCase):
+
+    REPOS = []
+    COMPS = True
+    COMPS_SOLVER = True
 
     def _install(self, env, ex=True):
         exclude = ('lotus',) if ex else []

@@ -27,10 +27,14 @@ import tests.support
 from tests import mock
 
 
-class SearchCountedTest(tests.support.TestCase):
+class SearchCountedTest(tests.support.DnfBaseTestCase):
+
+    REPOS = ["main"]
+    CLI = "mock"
+
     def setUp(self):
-        base = tests.support.MockBase("main")
-        self.cmd = search.SearchCommand(base.mock_cli())
+        super(SearchCountedTest, self).setUp()
+        self.cmd = search.SearchCommand(self.cli)
 
     def test_search_counted(self):
         counter = dnf.match_counter.MatchCounter()
@@ -48,12 +52,16 @@ class SearchCountedTest(tests.support.TestCase):
         self.assertEqual(len(counter), 1)
 
 
-class SearchTest(tests.support.TestCase):
+class SearchTest(tests.support.DnfBaseTestCase):
+
+    REPOS = ["search"]
+    CLI = "mock"
+
     def setUp(self):
-        self.base = tests.support.MockBase("search")
+        super(SearchTest, self).setUp()
         self.base.output = mock.MagicMock()
         self.base.output.fmtSection = lambda str: str
-        self.cmd = search.SearchCommand(self.base.mock_cli())
+        self.cmd = search.SearchCommand(self.cli)
 
     def patched_search(self, *args):
         with tests.support.patch_std_streams() as (stdout, _):

@@ -28,10 +28,12 @@ import tests.support
 
 
 class Reinstall(tests.support.ResultTestCase):
+
+    REPOS = ['main', 'updates']
+
     def setUp(self):
-        self.base = tests.support.MockBase('main')
+        super(Reinstall, self).setUp()
         self.base.conf.multilib_policy = 'all'
-        self.sack = self.base.sack
 
     def test_package_reinstall(self):
         p = self.base.sack.query().available().filter(
@@ -41,14 +43,12 @@ class Reinstall(tests.support.ResultTestCase):
         self.assertEqual(1, len(self.base._goal.list_reinstalls()))
 
     def test_package_reinstall_fail(self):
-        base = tests.support.MockBase('main', 'updates')
-        base.conf.multilib_policy = 'all'
-        p = base.sack.query().available().filter(nevra="hole-1-2.x86_64")[0]
+        p = self.base.sack.query().available().filter(nevra="hole-1-2.x86_64")[0]
         with self.assertRaises(dnf.exceptions.MarkingError) as context:
-            base.package_reinstall(p)
+            self.base.package_reinstall(p)
         self.assertEqual(context.exception.pkg_spec, 'hole')
-        base.resolve()
-        self.assertEmpty(base._goal.list_downgrades())
+        self.base.resolve()
+        self.assertEmpty(self.base._goal.list_downgrades())
 
     def test_reinstall(self):
         cnt = self.base.reinstall('pepper')
@@ -129,9 +129,8 @@ class Reinstall(tests.support.ResultTestCase):
 
     def test_reinstall_old_reponame_installed(self):
         """Test whether it reinstalls packages only from the repository."""
-        history = self.base.history
         for pkg in self.sack.query().installed().filter(name='librita'):
-            tests.support.mockSwdbPkg(history, pkg, repo='main')
+            tests.support.mockSwdbPkg(self.history, pkg, repo='main')
 
         reinstalled_count = self.base.reinstall('librita', old_reponame='main')
 

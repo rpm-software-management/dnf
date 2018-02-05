@@ -34,33 +34,28 @@ from tests.support import mock
 class EmptyPersistorTest(tests.support.ResultTestCase):
     """Test group operations with empty persistor."""
 
-    def setUp(self):
-        self.base = tests.support.MockBase('main')
-        self.base.read_mock_comps(False)
-        self.base.init_sack()
+    REPOS = ['main']
+    COMPS = True
+    COMPS_SEED_PERSISTOR = False
 
     def test_group_install_exclude(self):
-        comps = self.base.comps
-        grp = comps.group_by_pattern('somerset')
+        grp = self.comps.group_by_pattern('somerset')
         cnt = self.base.group_install(grp.id, ('optional',), exclude=('lotus',))
         self.assertEqual(cnt, 0)
 
     @mock.patch('locale.getlocale', return_value=('cs_CZ', 'UTF-8'))
     def test_group_install_locale(self, _unused):
-        comps = self.base.comps
-        grp = comps.group_by_pattern('Kritick\xe1 cesta (Z\xe1klad)')
+        grp = self.comps.group_by_pattern('Kritick\xe1 cesta (Z\xe1klad)')
         cnt = self.base.group_install(grp.id, ('mandatory',))
         self.assertEqual(cnt, 2)
 
     def test_group_install_exclude_glob(self):
-        comps = self.base.comps
-        grp = comps.group_by_pattern('somerset')
+        grp = self.comps.group_by_pattern('somerset')
         cnt = self.base.group_install(grp.id, ('optional',), exclude=('lo*',))
         self.assertEqual(cnt, 0)
 
     def test_group_install_exclude_notexist(self):
-        comps = self.base.comps
-        grp = comps.group_by_pattern('somerset')
+        grp = self.comps.group_by_pattern('somerset')
         cnt = self.base.group_install(grp.id, ('optional',), exclude=('x*',))
         self.assertEqual(cnt, 1)
 
@@ -78,51 +73,45 @@ class EmptyPersistorTest(tests.support.ResultTestCase):
 class PresetPersistorTest(tests.support.ResultTestCase):
     """Test group operations with some data in the persistor."""
 
-    def setUp(self):
-        self.base = tests.support.MockBase("main")
-        self.base.read_mock_comps()
-        self.base.init_sack()
+    REPOS = ['main']
+    COMPS = True
+    COMPS_SEED_PERSISTOR = True
 
     def _install_test_env(self):
         """Env installation itself does not handle packages. We need to handle
            them manually for proper functionality of env remove"""
-        history = self.base.history
-        prst = history.group
 
-        env = prst.environment('sugar-desktop-environment')
+        env = self.persistor.environment('sugar-desktop-environment')
         self.base.environment_install(env.name_id, ('mandatory',))
-        prst.commit()
+        self.persistor.commit()
         groups = env.get_group_list()
         for group in groups:
-            _group = prst.group(group)
+            _group = self.persistor.group(group)
             for pkg in _group.get_full_list():
                 swdb_pkg = SwdbPkg.new(pkg, 0, "0", "0", "x86_64", "", "", SwdbItem.RPM)
-                pid = history.add_package(swdb_pkg)
-                history.swdb.trans_data_beg(1, pid, SwdbReason.GROUP, "Installed", False)
+                pid = self.history.add_package(swdb_pkg)
+                self.history.swdb.trans_data_beg(1, pid, SwdbReason.GROUP, "Installed", False)
 
     def _install_test_group(self):
         """Group installation itself does not handle packages. We need to
            handle them manually for proper functionality of group remove"""
-        history = self.base.history
-        prst = history.group
 
-        group = prst.group('somerset')
+        group = self.persistor.group('somerset')
 
         self.base.group_install(group.name_id, ('mandatory',))
-        prst.commit()
+        self.persistor.commit()
 
         for pkg in group.get_full_list():
             swdb_pkg = SwdbPkg.new(pkg, 0, "20", "0", "x86_64", "", "", SwdbItem.RPM)
-            pid = history.add_package(swdb_pkg)
-            history.swdb.trans_data_beg(1, pid, SwdbReason.GROUP, "Installed", False)
+            pid = self.history.add_package(swdb_pkg)
+            self.history.swdb.trans_data_beg(1, pid, SwdbReason.GROUP, "Installed", False)
 
         self.base.reset(goal=True)
 
     def test_env_group_remove(self):
-        prst = self.base.history.group
         self._install_test_env()
         cnt = self.base.env_group_remove(["sugar-desktop-environment"])
-        prst.commit()
+        self.persistor.commit()
         self.assertEqual(3, cnt)
         with tests.support.mock.patch('logging.Logger.error'):
             self.assertRaises(dnf.exceptions.Error,
@@ -130,53 +119,49 @@ class PresetPersistorTest(tests.support.ResultTestCase):
                               ['nonexistent'])
 
     def test_environment_remove(self):
-        prst = self.base.history.group
         self._install_test_env()
-        env_id = prst.environment('sugar-desktop-environment')
+        env_id = self.persistor.environment('sugar-desktop-environment')
         self.assertEqual(env_id.name_id, 'sugar-desktop-environment')
         self.assertTrue(env_id.installed)
         self.assertGreater(self.base.environment_remove(env_id), 0)
-        prst.commit()
-        p_env = prst.environment(env_id)
+        self.persistor.commit()
+        p_env = self.persistor.environment(env_id)
         self.assertFalse(p_env.installed)
-        peppers = prst.group('Peppers')
-        somerset = prst.group('somerset')
+        peppers = self.persistor.group('Peppers')
+        somerset = self.persistor.group('somerset')
         self.assertFalse(peppers.installed)
         self.assertFalse(somerset.installed)
 
     def test_env_upgrade(self):
-        prst = self.base.history.group
         self._install_test_env()
         cnt = self.base.environment_upgrade("sugar-desktop-environment")
         self.assertEqual(5, cnt)
-        peppers = prst.group('Peppers')
-        somerset = prst.group('somerset')
+        peppers = self.persistor.group('Peppers')
+        somerset = self.persistor.group('somerset')
         self.assertTrue(peppers.installed)
         self.assertTrue(somerset.installed)
 
     def test_group_install(self):
-        prst = self.base.history.group
         grp = self.base.comps.group_by_pattern('Base')
         self.assertEqual(self.base.group_install(grp.id, ('mandatory',)), 2)
-        prst.commit()
+        self.persistor.commit()
         inst, removed = self.installed_removed(self.base)
         self.assertEmpty(inst)
         self.assertEmpty(removed)
-        p_grp = prst.group('base')
+        p_grp = self.persistor.group('base')
         self.assertTrue(p_grp.installed)
 
     """
     this should be reconsidered once relengs document comps
     def test_group_install_broken(self):
-        prst = self.base._group_persistor
         grp = self.base.comps.group_by_pattern('Broken Group')
-        p_grp = prst.group('broken-group')
+        p_grp = self.persistor.group('broken-group')
         self.assertFalse(p_grp.installed)
 
         self.assertRaises(dnf.exceptions.MarkingError,
                           self.base.group_install, grp.id,
                           ('mandatory', 'default'))
-        p_grp = prst.group('broken-group')
+        p_grp = self.persistor.group('broken-group')
         self.assertFalse(p_grp.installed)
 
         self.assertEqual(self.base.group_install(grp.id,
@@ -185,47 +170,44 @@ class PresetPersistorTest(tests.support.ResultTestCase):
         inst, removed = self.installed_removed(self.base)
         self.assertLength(inst, 1)
         self.assertEmpty(removed)
-        p_grp = prst.group('broken-group')
+        p_grp = self.persistor.group('broken-group')
         self.assertTrue(p_grp.installed)
     """
 
     def test_group_remove(self):
         self._install_test_group()
-        prst = self.base.history.group
 
-        p_grp = prst.group('somerset')
+        p_grp = self.persistor.group('somerset')
         self.assertGreater(self.base.group_remove(p_grp.name_id), 0)
-        prst.commit()
+        self.persistor.commit()
 
         inst, removed = self.installed_removed(self.base)
         self.assertEmpty(inst)
         self.assertCountEqual([pkg.name for pkg in removed], ('pepper',))
 
-        p_grp = prst.group(p_grp.name_id)
+        p_grp = self.persistor.group(p_grp.name_id)
         self.assertFalse(p_grp.installed)
 
 
 class EnvironmentInstallTest(tests.support.ResultTestCase):
-    def setUp(self):
-        """Set up a test where sugar is considered not installed."""
-        self.base = tests.support.MockBase("main")
-        self.base.init_sack()
-        self.base.read_mock_comps()
+    """Set up a test where sugar is considered not installed."""
+
+    REPOS = ['main']
+    COMPS = True
+    COMPS_SEED_PERSISTOR = True
 
     def test_environment_install(self):
-        prst = self.base.history.group
-        comps = self.base.comps
-        env = comps.environment_by_pattern("sugar-desktop-environment")
+        env = self.comps.environment_by_pattern("sugar-desktop-environment")
         self.base.environment_install(env.id, ('mandatory',))
-        prst.commit()
+        self.persistor.commit()
         installed, _ = self.installed_removed(self.base)
         self.assertCountEqual(map(operator.attrgetter('name'), installed),
                               ('trampoline', 'lotus'))
 
-        p_env = prst.environment('sugar-desktop-environment')
+        p_env = self.persistor.environment('sugar-desktop-environment')
         self.assertCountEqual(p_env.get_group_list(), ('somerset', 'Peppers'))
         self.assertTrue(p_env.installed)
 
-        peppers = prst.group('Peppers')
-        somerset = prst.group('somerset')
+        peppers = self.persistor.group('Peppers')
+        somerset = self.persistor.group('somerset')
         self.assertTrue(all((peppers.installed, somerset.installed)))

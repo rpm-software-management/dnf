@@ -54,12 +54,15 @@ class GroupCommandStaticTest(tests.support.TestCase):
             cmd.base.conf.strict)
 
 
-class GroupCommandTest(tests.support.TestCase):
+class GroupCommandTest(tests.support.DnfBaseTestCase):
+
+    REPOS = ["main"]
+    COMPS = True
+    INIT_SACK = True
+
     def setUp(self):
-        base = tests.support.MockBase("main")
-        base.read_mock_comps()
-        base.init_sack()
-        self.cmd = group.GroupCommand(base.mock_cli())
+        super(GroupCommandTest, self).setUp()
+        self.cmd = group.GroupCommand(self.base.mock_cli())
         self.parser = OptionParser()
 
     def test_environment_list(self):
@@ -75,18 +78,15 @@ class GroupCommandTest(tests.support.TestCase):
         self.assertFalse(demands.freshest_metadata)
 
 
-class CompsQueryTest(tests.support.TestCase):
+class CompsQueryTest(tests.support.DnfBaseTestCase):
 
-    def setUp(self):
-        self.base = tests.support.MockBase()
-        self.history = self.base.history
-        self.comps = tests.support.mock_comps(self.history, True)
-        self.prst = self.history.group
+    REPOS = []
+    COMPS = True
 
     def test_all(self):
         status_all = CompsQuery.AVAILABLE | CompsQuery.INSTALLED
         kinds_all = CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS
-        q = CompsQuery(self.comps, self.prst, kinds_all, status_all)
+        q = CompsQuery(self.comps, self.persistor, kinds_all, status_all)
 
         res = q.get('sugar*', '*er*')
         self.assertCountEqual(res.environments,
@@ -94,17 +94,18 @@ class CompsQueryTest(tests.support.TestCase):
         self.assertCountEqual(res.groups, ("Peppers", 'somerset'))
 
     def test_err(self):
-        q = CompsQuery(self.comps, self.prst, CompsQuery.ENVIRONMENTS,
+        q = CompsQuery(self.comps, self.persistor, CompsQuery.ENVIRONMENTS,
                        CompsQuery.AVAILABLE)
         with self.assertRaises(dnf.exceptions.CompsError):
             q.get('*er*')
 
     def test_installed(self):
-        q = CompsQuery(self.comps, self.prst, CompsQuery.GROUPS,
+        q = CompsQuery(self.comps, self.persistor, CompsQuery.GROUPS,
                        CompsQuery.INSTALLED)
         self.base.read_mock_comps(False)
         grp = self.base.comps.group_by_pattern('somerset')
         self.base.group_install(grp.id, ('mandatory',))
+
         res = q.get('somerset')
         self.assertEmpty(res.environments)
         grp_ids = [grp.name_id for grp in res.groups]

@@ -36,10 +36,12 @@ TOUR_WRONG_MD5 = binascii.unhexlify("ffe9ded8ea25137c964a638f12e9987c")
 TOUR_SIZE = 2317
 
 
-class PackageTest(tests.support.TestCase):
+class PackageTest(tests.support.DnfBaseTestCase):
+
+    REPOS = ['main']
+
     def setUp(self):
-        base = tests.support.MockBase("main")
-        self.sack = base.sack
+        super(PackageTest, self).setUp()
         self.pkg = self.sack.query().available().filter(name="pepper")[1]
 
     def test_from_cmdline(self):

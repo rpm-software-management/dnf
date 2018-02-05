@@ -23,9 +23,9 @@ from __future__ import unicode_literals
 import tests.support
 
 
-class ProvidesTest(tests.support.TestCase):
-    def setUp(self):
-        self.base = tests.support.MockBase("main")
+class ProvidesTest(tests.support.DnfBaseTestCase):
+
+    REPOS = ['main']
 
     def test_file(self):
         self.assertLength(self.base.provides("*ais*smile")[0], 1)

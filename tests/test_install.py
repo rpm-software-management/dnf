@@ -53,8 +53,7 @@ class CommonTest(tests.support.ResultTestCase):
 
     """
 
-    def setUp(self):
-        self.base = tests.support.MockBase('main', 'third_party', 'broken_deps')
+    REPOS = ['main', 'third_party', 'broken_deps']
 
     def test_install_arch_glob(self):
         """Test that the pkg specification can contain an architecture glob."""
@@ -211,8 +210,10 @@ class MultilibAllTest(tests.support.ResultTestCase):
 
     """
 
+    REPOS = ['main', 'third_party', 'broken_deps']
+
     def setUp(self):
-        self.base = tests.support.MockBase('main', 'third_party', 'broken_deps')
+        super(MultilibAllTest, self).setUp()
         self.base.conf.multilib_policy = "all"
         assert self.base.conf.best is False
 
@@ -344,8 +345,10 @@ class MultilibBestTest(tests.support.ResultTestCase):
 
     """
 
+    REPOS = ['main', 'third_party', 'broken_deps']
+
     def setUp(self):
-        self.base = tests.support.MockBase('main', 'third_party', 'broken_deps')
+        super(MultilibBestTest, self).setUp()
         self.installed = self.base.sack.query().installed().run()
         self.assertEqual(self.base.conf.multilib_policy, "best")
         assert self.base.conf.best is False
@@ -478,8 +481,10 @@ class BestTrueTest(tests.support.ResultTestCase):
 
     """
 
+    REPOS = ['broken_deps']
+
     def setUp(self):
-        self.base = tests.support.MockBase('broken_deps')
+        super(BestTrueTest, self).setUp()
         self.base.conf.best = True
 
     def test_install_name_choice(self):

@@ -35,16 +35,18 @@ import tests.support
 from tests.support import mock
 
 
-class UpdateInfoCommandTest(tests.support.TestCase):
+class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
 
     """Test case validating updateinfo commands."""
+
+    REPOS = []
+    CLI = "mock"
 
     def setUp(self):
         """Prepare the test fixture."""
         super(UpdateInfoCommandTest, self).setUp()
         cachedir = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, cachedir)
-        self.cli = tests.support.MockBase().mock_cli()
         self.cli.base.conf.cachedir = cachedir
         self.cli.base.add_test_dir_repo('rpm', self.cli.base.conf)
         self._stdout = dnf.pycomp.StringIO()

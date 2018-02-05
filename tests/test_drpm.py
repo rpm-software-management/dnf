@@ -72,11 +72,15 @@ class Proggress_3(dnf.cli.progress.MultiFileProgressMeter):
         self.rate = None
 
 
-class DrpmTest(tests.support.TestCase):
+class DrpmTest(tests.support.DnfBaseTestCase):
+
+    REPOS = []
+
     def setUp(self):
+        super(DrpmTest, self).setUp()
+
         cachedir = tempfile.mkdtemp()
         self.addCleanup(shutil.rmtree, cachedir)
-        self.base = tests.support.MockBase()
         self.base.conf.cachedir = tests.support.USER_RUNDIR
 
         # load the testing repo

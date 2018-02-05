@@ -28,47 +28,48 @@ import tests.support
 from tests.support import mock
 
 
-class SackTest(tests.support.TestCase):
+class SackTest(tests.support.DnfBaseTestCase):
+
+    REPOS = []
 
     def test_rpmdb_version(self):
-        base = tests.support.MockBase()
-        sack = base.sack
-        version = sack._rpmdb_version(base.history)
+        version = self.sack._rpmdb_version(self.history)
         self.assertIsNotNone(version)
         # self.assertEqual(version._num, tests.support.TOTAL_RPMDB_COUNT)
         # self.assertEqual(version._chksum.hexdigest(), tests.support.RPMDB_CHECKSUM)
 
-    def test_setup_excludes_includes(self):
-        base = tests.support.MockBase()
-        base.conf.excludepkgs = ['pepper']
-        base._setup_excludes_includes()
-        peppers = base.sack.query().filter(name='pepper').run()
+    def test_excludepkgs(self):
+        self.base.conf.excludepkgs = ['pepper']
+        self.base._setup_excludes_includes()
+        peppers = self.base.sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 0)
 
-        base = tests.support.MockBase()
-        base.conf.exclude = ['pepper']
-        base._setup_excludes_includes()
-        peppers = base.sack.query().filter(name='pepper').run()
+    def test_exclude(self):
+        self.base.conf.exclude = ['pepper']
+        self.base._setup_excludes_includes()
+        peppers = self.base.sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 0)
 
-        base = tests.support.MockBase()
-        base.conf.disable_excludes = ['all']
-        base.conf.excludepkgs = ['pepper']
-        base._setup_excludes_includes()
-        peppers = base.sack.query().filter(name='pepper').run()
+    def test_disable_excludes(self):
+        self.base.conf.disable_excludes = ['all']
+        self.base.conf.excludepkgs = ['pepper']
+        self.base._setup_excludes_includes()
+        peppers = self.base.sack.query().filter(name='pepper').run()
         self.assertLength(peppers, 1)
 
-        base = tests.support.MockBase('main')
-        base.repos['main'].excludepkgs = ['pepp*']
-        base._setup_excludes_includes()
-        peppers = base.sack.query().filter(name='pepper', reponame='main')
+    def test_excludepkgs_glob(self):
+        # override base with custom repos
+        self.base = tests.support.MockBase('main')
+        self.base.repos['main'].excludepkgs = ['pepp*']
+        self.base._setup_excludes_includes()
+        peppers = self.base.sack.query().filter(name='pepper', reponame='main')
         self.assertLength(peppers, 0)
 
-        base = tests.support.MockBase()
-        base.conf.excludepkgs = ['*.i?86']
-        base.conf.includepkgs = ['lib*']
-        base._setup_excludes_includes()
-        peppers = base.sack.query().filter().run()
+    def test_excludepkgs_includepkgs(self):
+        self.base.conf.excludepkgs = ['*.i?86']
+        self.base.conf.includepkgs = ['lib*']
+        self.base._setup_excludes_includes()
+        peppers = self.base.sack.query().filter().run()
         self.assertLength(peppers, 1)
         self.assertEqual(str(peppers[0]), "librita-1-1.x86_64")
 
@@ -78,16 +79,15 @@ class SackTest(tests.support.TestCase):
         def raiser():
             raise dnf.exceptions.RepoError()
 
-        base = tests.support.MockBase()
-        r = tests.support.MockRepo('bag', base.conf)
+        r = tests.support.MockRepo('bag', self.base.conf)
         r.enable()
-        base._repos.add(r)
+        self.base._repos.add(r)
         r.load = mock.Mock(side_effect=raiser)
         r.skip_if_unavailable = False
         self.assertRaises(dnf.exceptions.RepoError,
-                          base.fill_sack, load_system_repo=False)
+                          self.base.fill_sack, load_system_repo=False)
         self.assertTrue(r.enabled)
         self.assertTrue(r._check_config_file_age)
         r.skip_if_unavailable = True
-        base.fill_sack(load_system_repo=False)
+        self.base.fill_sack(load_system_repo=False)
         self.assertFalse(r.enabled)

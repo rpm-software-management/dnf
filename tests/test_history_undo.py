@@ -33,8 +33,10 @@ from dnf.transaction import TransactionItem
 import tests.support
 
 
-class BaseTest(tests.support.TestCase):
+class BaseTest(tests.support.DnfBaseTestCase):
     """Unit tests of dnf.Base."""
+
+    REPOS = ['main', 'updates']
 
     def _create_item_matcher(self, op_type, installed=None, erased=None,
                              obsoleted=[], reason=SwdbReason.UNKNOWN):
@@ -58,11 +60,6 @@ class BaseTest(tests.support.TestCase):
                  'arch': nevra.arch}
         return tests.support.ObjectMatcher(Package, attrs)
 
-    def setUp(self):
-        """Prepare the test fixture."""
-        self._base = tests.support.MockBase()
-        self._base._sack = tests.support.mock_sack('main', 'updates')
-
     def test_history_undo_operations_downgrade(self):
         """Test history_undo_operations with a downgrade."""
         operations = NEVRAOperations()
@@ -73,10 +70,10 @@ class BaseTest(tests.support.TestCase):
             ('lotus-3-16.x86_64',)
         )
 
-        with self._base:
-            self._base._history_undo_operations(operations, 0)
+        with self.base:
+            self.base._history_undo_operations(operations, 0)
 
-            transaction_it = iter(self._base.transaction)
+            transaction_it = iter(self.base.transaction)
             self.assertEqual(next(transaction_it), self._create_item_matcher(
                 UPGRADE, installed='pepper-20-1.x86_64', erased='pepper-20-0.x86_64'))
             self.assertEqual(next(transaction_it), self._create_item_matcher(
@@ -88,8 +85,8 @@ class BaseTest(tests.support.TestCase):
         operations = NEVRAOperations()
         operations.add('Downgrade', 'pepper-20-0.x86_64', 'pepper-20-2.x86_64')
 
-        with self._base, self.assertRaises(PackagesNotAvailableError) as context:
-            self._base._history_undo_operations(operations, 0)
+        with self.base, self.assertRaises(PackagesNotAvailableError) as context:
+            self.base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'pepper-20-2.x86_64')
 
@@ -98,8 +95,8 @@ class BaseTest(tests.support.TestCase):
         operations = NEVRAOperations()
         operations.add('Downgrade', 'lotus-3-0.x86_64', 'lotus-3-16.x86_64')
 
-        with self._base, self.assertRaises(PackagesNotInstalledError) as context:
-            self._base._history_undo_operations(operations, 0)
+        with self.base, self.assertRaises(PackagesNotInstalledError) as context:
+            self.base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'lotus-3-0.x86_64')
 
@@ -108,25 +105,23 @@ class BaseTest(tests.support.TestCase):
         operations = NEVRAOperations()
         operations.add('Erase', 'lotus-3-16.x86_64')
 
-        with self._base:
-            self._base._history_undo_operations(operations, 0)
+        with self.base:
+            self.base._history_undo_operations(operations, 0)
 
-            transaction_it = iter(self._base.transaction)
+            transaction_it = iter(self.base.transaction)
             self.assertEqual(next(transaction_it), self._create_item_matcher(
                 INSTALL, installed='lotus-3-16.x86_64', reason=SwdbReason.USER))
             self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_erase_twoavailable(self):
         """Test history_undo_operations with an erase available in two repos."""
-        base = tests.support.MockBase()
-        base._sack = tests.support.mock_sack('main', 'search')
         operations = NEVRAOperations()
         operations.add('Erase', 'lotus-3-16.x86_64')
 
-        with base:
-            base._history_undo_operations(operations, 0)
+        with self.base:
+            self.base._history_undo_operations(operations, 0)
 
-            transaction_it = iter(base.transaction)
+            transaction_it = iter(self.base.transaction)
             self.assertEqual(next(transaction_it), self._create_item_matcher(
                 INSTALL, installed='lotus-3-16.x86_64', reason=SwdbReason.USER))
             self.assertRaises(StopIteration, next, transaction_it)
@@ -136,8 +131,8 @@ class BaseTest(tests.support.TestCase):
         operations = NEVRAOperations()
         operations.add('Erase', 'hole-1-1.x86_64')
 
-        with self._base, self.assertRaises(PackagesNotAvailableError) as context:
-            self._base._history_undo_operations(operations, 0)
+        with self.base, self.assertRaises(PackagesNotAvailableError) as context:
+            self.base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'hole-1-1.x86_64')
 
@@ -146,10 +141,10 @@ class BaseTest(tests.support.TestCase):
         operations = NEVRAOperations()
         operations.add('Install', 'pepper-20-0.x86_64', obsoleted_nevras=('lotus-3-16.x86_64',))
 
-        with self._base:
-            self._base._history_undo_operations(operations, 0)
+        with self.base:
+            self.base._history_undo_operations(operations, 0)
 
-            transaction_it = iter(self._base.transaction)
+            transaction_it = iter(self.base.transaction)
             self.assertEqual(next(transaction_it), self._create_item_matcher(
                 ERASE, erased='pepper-20-0.x86_64'))
             self.assertEqual(next(transaction_it), self._create_item_matcher(
@@ -161,8 +156,8 @@ class BaseTest(tests.support.TestCase):
         operations = NEVRAOperations()
         operations.add('Install', 'mrkite-2-0.x86_64')
 
-        with self._base, self.assertRaises(PackagesNotInstalledError) as context:
-            self._base._history_undo_operations(operations, 0)
+        with self.base, self.assertRaises(PackagesNotInstalledError) as context:
+            self.base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'mrkite-2-0.x86_64')
 
@@ -176,10 +171,10 @@ class BaseTest(tests.support.TestCase):
             ('hole-1-1.x86_64',)
         )
 
-        with self._base:
-            self._base._history_undo_operations(operations, 0)
+        with self.base:
+            self.base._history_undo_operations(operations, 0)
 
-            transaction_it = iter(self._base.transaction)
+            transaction_it = iter(self.base.transaction)
             self.assertEqual(next(transaction_it), self._create_item_matcher(
                 REINSTALL, installed='pepper-20-0.x86_64', erased='pepper-20-0.x86_64',
                 obsoleted=('hole-1-1.x86_64',)))
@@ -190,8 +185,8 @@ class BaseTest(tests.support.TestCase):
         operations = NEVRAOperations()
         operations.add('Reinstall', 'mrkite-2-0.x86_64', 'mrkite-2-0.x86_64')
 
-        with self._base, self.assertRaises(PackagesNotInstalledError) as context:
-            self._base._history_undo_operations(operations, 0)
+        with self.base, self.assertRaises(PackagesNotInstalledError) as context:
+            self.base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'mrkite-2-0.x86_64')
 
@@ -200,8 +195,8 @@ class BaseTest(tests.support.TestCase):
         operations = NEVRAOperations()
         operations.add('Reinstall', 'hole-1-1.x86_64', 'hole-1-1.x86_64')
 
-        with self._base, self.assertRaises(PackagesNotAvailableError) as context:
-            self._base._history_undo_operations(operations, 0)
+        with self.base, self.assertRaises(PackagesNotAvailableError) as context:
+            self.base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'hole-1-1.x86_64')
 
@@ -215,10 +210,10 @@ class BaseTest(tests.support.TestCase):
             ('lotus-3-16.x86_64',)
         )
 
-        with self._base:
-            self._base._history_undo_operations(operations, 0)
+        with self.base:
+            self.base._history_undo_operations(operations, 0)
 
-            transaction_it = iter(self._base.transaction)
+            transaction_it = iter(self.base.transaction)
             self.assertEqual(next(transaction_it), self._create_item_matcher(
                 REINSTALL, installed='pepper-20-0.x86_64', erased='pepper-20-0.x86_64',
                 obsoleted=()))
@@ -229,10 +224,10 @@ class BaseTest(tests.support.TestCase):
         operations = NEVRAOperations()
         operations.add('Update', 'tour-5-0.noarch', 'tour-4.6-1.noarch', ('lotus-3-16.x86_64',))
 
-        with self._base:
-            self._base._history_undo_operations(operations, 0)
+        with self.base:
+            self.base._history_undo_operations(operations, 0)
 
-            transaction_it = iter(self._base.transaction)
+            transaction_it = iter(self.base.transaction)
             self.assertEqual(next(transaction_it), self._create_item_matcher(
                 DOWNGRADE, installed='tour-4.6-1.noarch', erased='tour-5-0.noarch'))
             self.assertEqual(next(transaction_it), self._create_item_matcher(
@@ -244,8 +239,8 @@ class BaseTest(tests.support.TestCase):
         operations = NEVRAOperations()
         operations.add('Update', 'tour-5-0.noarch', 'tour-4.6-2.noarch')
 
-        with self._base, self.assertRaises(PackagesNotAvailableError) as context:
-            self._base._history_undo_operations(operations, 0)
+        with self.base, self.assertRaises(PackagesNotAvailableError) as context:
+            self.base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'tour-4.6-2.noarch')
 
@@ -254,7 +249,7 @@ class BaseTest(tests.support.TestCase):
         operations = NEVRAOperations()
         operations.add('Update', 'lotus-4-0.x86_64', 'lotus-3-16.x86_64')
 
-        with self._base, self.assertRaises(PackagesNotInstalledError) as context:
-            self._base._history_undo_operations(operations, 0)
+        with self.base, self.assertRaises(PackagesNotInstalledError) as context:
+            self.base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'lotus-4-0.x86_64')

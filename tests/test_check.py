@@ -37,10 +37,14 @@ test-1-0.noarch is obsoleted by obs-3-0.noarch
 """
 
 
-class CheckDuplicatesTest(tests.support.TestCase):
+class CheckDuplicatesTest(tests.support.DnfBaseTestCase):
+
+    REPOS = []
+    BASE_CLI = True
+    CLI = "stub"
+
     def test_duplicates(self):
-        self.cmd = dnf.cli.commands.check.CheckCommand(
-            tests.support.CliStub(tests.support.BaseCliStub()))
+        self.cmd = dnf.cli.commands.check.CheckCommand(self.cli)
         tests.support.command_configure(self.cmd, ['--duplicates'])
         with tests.support.patch_std_streams() as (stdout, _):
             with self.assertRaises(dnf.exceptions.Error) as ctx:
@@ -50,8 +54,7 @@ class CheckDuplicatesTest(tests.support.TestCase):
         self.assertEqual(stdout.getvalue(), EXPECTED_DUPLICATES_FORMAT)
 
     def test_obsoleted(self):
-        self.cmd = dnf.cli.commands.check.CheckCommand(
-            tests.support.CliStub(tests.support.BaseCliStub()))
+        self.cmd = dnf.cli.commands.check.CheckCommand(self.cli)
         tests.support.command_configure(self.cmd, ['--obsoleted'])
         with tests.support.patch_std_streams() as (stdout, _):
             with self.assertRaises(dnf.exceptions.Error) as ctx:

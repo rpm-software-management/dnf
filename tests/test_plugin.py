@@ -67,6 +67,7 @@ class PluginTest(tests.support.TestCase):
         conf = lucky.read_config(base.conf)
         self.assertTrue(conf.getboolean('main', 'enabled'))
         self.assertEqual(conf.get('main', 'wanted'), '/to/be/haunted')
+        base.close()
 
     def test_disabled(self):
         base = tests.support.MockBase()
@@ -76,6 +77,7 @@ class PluginTest(tests.support.TestCase):
                               for p in self.plugins.plugins]))
         self.assertLength(self.plugins.plugin_cls, 1)
         self.assertEqual(self.plugins.plugin_cls[0].name, 'lucky')
+        base.close()
 
 
 class PluginSkipsTest(tests.support.TestCase):
