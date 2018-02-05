@@ -239,6 +239,7 @@ class _BaseStubMixin(object):
         self._repo_persistor = FakePersistor()
         self._ds_callback = mock.Mock()
         self._history = None
+        self._closing = False
 
     def add_test_dir_repo(self, id_, cachedir):
         """Add a repository located in a directory in the tests."""
@@ -247,13 +248,19 @@ class _BaseStubMixin(object):
         self.repos.add(repo)
         return repo
 
+    def close(self):
+        self._closing = True
+        super(_BaseStubMixin, self).close()
+
     @property
     def history(self):
         if self._history:
             return self._history
         else:
             self._history = super(_BaseStubMixin, self).history
-            self._history.reset_db()
+            if not self._closing:
+                # don't reset db on close, it causes several tests to fail
+                self._history.reset_db()
             return self._history
 
     @property
@@ -284,9 +291,6 @@ class _BaseStubMixin(object):
         self._sack._configure(self.conf.installonlypkgs)
         self._goal = dnf.goal.Goal(self._sack)
         return self._sack
-
-    def close(self):
-        pass
 
     def mock_cli(self):
         stream = dnf.pycomp.StringIO()
@@ -511,6 +515,9 @@ class FakePersistor(object):
     def since_last_makecache(self):
         return None
 
+    def save(self):
+        pass
+
 
 # object matchers for asserts
 
@@ -587,7 +594,92 @@ class TestCase(unittest.TestCase):
         return self.assertCountEqual([pkg.name for pkg in trans_pkgs], list)
 
 
-class ResultTestCase(TestCase):
+class DnfBaseTestCase(TestCase):
+
+    # create base with specified test repos
+    REPOS = []
+
+    # initialize mock sack
+    INIT_SACK = False
+
+    # initialize self.base._transaction
+    INIT_TRANSACTION = False
+
+    # False: self.base = MockBase()
+    # True: self.base = BaseCliStub()
+    BASE_CLI = False
+
+    # None: self.cli = None
+    # "init": self.cli = dnf.cli.cli.Cli(self.base)
+    # "mock": self.cli = self.base.mock_cli()
+    # "stub": self.cli = StubCli(self.base)
+    CLI = None
+
+    # read test comps data
+    COMPS = False
+
+    # pass as seed_persistor option to reading test comps data
+    COMPS_SEED_PERSISTOR = False
+
+    # initialize self.solver = dnf.comps.Solver()
+    COMPS_SOLVER = False
+
+    def setUp(self):
+        if self.BASE_CLI:
+            self.base = BaseCliStub(*self.REPOS)
+        else:
+            self.base = MockBase(*self.REPOS)
+
+        if self.CLI is None:
+            self.cli = None
+        elif self.CLI == "init":
+            self.cli = dnf.cli.cli.Cli(self.base)
+        elif self.CLI == "mock":
+            self.cli = self.base.mock_cli()
+        elif self.CLI == "stub":
+            self.cli = CliStub(self.base)
+        else:
+            raise ValueError("Invalid CLI value: {}".format(self.CLI))
+
+        if self.COMPS:
+            self.base.read_mock_comps(seed_persistor=self.COMPS_SEED_PERSISTOR)
+
+        if self.INIT_SACK:
+            self.base.init_sack()
+
+        if self.INIT_TRANSACTION:
+            self.base._transaction = dnf.transaction.Transaction()
+
+        if self.COMPS_SOLVER:
+            self.solver = dnf.comps.Solver(self.persistor, self.comps, REASONS.get)
+        else:
+            self.solver = None
+
+    def tearDown(self):
+        self.base.close()
+
+    @property
+    def comps(self):
+        return self.base.comps
+
+    @property
+    def goal(self):
+        return self.base._goal
+
+    @property
+    def history(self):
+        return self.base.history
+
+    @property
+    def persistor(self):
+        return self.base.history.group
+
+    @property
+    def sack(self):
+        return self.base.sack
+
+
+class ResultTestCase(DnfBaseTestCase):
 
     allow_erasing = False
 

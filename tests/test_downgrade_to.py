@@ -27,8 +27,7 @@ import tests.support
 
 class DowngradeTo(tests.support.ResultTestCase):
 
-    def setUp(self):
-        self.base = tests.support.MockBase('main', 'old_versions')
+    REPOS = ['main', 'old_versions']
 
     def test_downgrade_to_lowest(self):
         with tests.support.mock.patch('logging.Logger.warning'):

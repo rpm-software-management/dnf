@@ -36,10 +36,13 @@ import tests.support
 from tests.support import mock, mockSwdbPkg
 
 
-class CommandsCliTest(tests.support.TestCase):
+class CommandsCliTest(tests.support.DnfBaseTestCase):
+
+    REPOS = []
+    CLI = "mock"
+
     def setUp(self):
-        self.base = tests.support.MockBase()
-        self.cli = self.base.mock_cli()
+        super(CommandsCliTest, self).setUp()
         self.base.conf.persistdir = tempfile.mkdtemp()
 
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
@@ -79,11 +82,13 @@ class CommandsCliTest(tests.support.TestCase):
         self.assertEqual(cmd._args2transaction_ids(), [123, 113, 99, 5, 4, 3, 2, 1])
 
 
-class CommandTest(tests.support.TestCase):
+class CommandTest(tests.support.DnfBaseTestCase):
+
+    REPOS = ["main"]
+    BASE_CLI = True
+
     def test_canonical(self):
-        cmd = dnf.cli.commands.upgrade.UpgradeCommand(
-            tests.support.BaseCliStub('main').mock_cli()
-        )
+        cmd = dnf.cli.commands.upgrade.UpgradeCommand(self.base.mock_cli())
 
         try:
             tests.support.command_run(cmd, ['cracker', 'filling'])
@@ -98,28 +103,28 @@ class InstallCommandTest(tests.support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.install.InstallCommand`` class."""
 
+    REPOS = ["main"]
+    BASE_CLI = True
+    CLI = "mock"
+
     def setUp(self):
         """Prepare the test fixture."""
         super(InstallCommandTest, self).setUp()
-        base = tests.support.BaseCliStub('main')
-        base.repos['main'].metadata = mock.Mock(_comps_fn=tests.support.COMPS_PATH)
-        base.init_sack()
-        self._cmd = dnf.cli.commands.install.InstallCommand(base.mock_cli())
+        self.base.repos['main'].metadata = mock.Mock(_comps_fn=tests.support.COMPS_PATH, _age=0)
+        self._cmd = dnf.cli.commands.install.InstallCommand(self.cli)
 
     def test_configure(self):
-        cli = self._cmd.cli
         tests.support.command_configure(self._cmd, ['pkg'])
-        self.assertFalse(cli.demands.allow_erasing)
-        self.assertTrue(cli.demands.sack_activation)
+        self.assertFalse(self.cli.demands.allow_erasing)
+        self.assertTrue(self.cli.demands.sack_activation)
 
     def test_run_group(self):
         """Test whether a group is installed."""
-        base = self._cmd.cli.base
         tests.support.command_run(self._cmd, ['@Solid Ground'])
 
-        self.assertResult(base, itertools.chain(
-            base.sack.query().installed(),
-            dnf.subject.Subject('trampoline').get_best_query(base.sack))
+        self.assertResult(self.base, itertools.chain(
+            self.base.sack.query().installed(),
+            dnf.subject.Subject('trampoline').get_best_query(self.base.sack))
         )
 
     @mock.patch('dnf.cli.commands.install._',
@@ -141,10 +146,9 @@ class InstallCommandTest(tests.support.ResultTestCase):
         """Test whether a package is installed."""
         tests.support.command_run(self._cmd, ['lotus'])
 
-        base = self._cmd.cli.base
-        self.assertResult(base, itertools.chain(
-            base.sack.query().installed(),
-            dnf.subject.Subject('lotus.x86_64').get_best_query(base.sack))
+        self.assertResult(self.base, itertools.chain(
+            self.base.sack.query().installed(),
+            dnf.subject.Subject('lotus.x86_64').get_best_query(self.base.sack))
         )
 
     @mock.patch('dnf.cli.commands.install._',
@@ -159,10 +163,9 @@ class InstallCommandTest(tests.support.ResultTestCase):
 
         self.assertEqual(stdout.getvalue(),
                          'No match for argument: non-existent\n')
-        base = self._cmd.cli.base
-        self.assertResult(base, itertools.chain(
-            base.sack.query().installed(),
-            dnf.subject.Subject('lotus.x86_64').get_best_query(base.sack))
+        self.assertResult(self.base, itertools.chain(
+            self.base.sack.query().installed(),
+            dnf.subject.Subject('lotus.x86_64').get_best_query(self.base.sack))
         )
 
 
@@ -170,21 +173,22 @@ class ReinstallCommandTest(tests.support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.ReinstallCommand`` class."""
 
+    REPOS = ["main"]
+    BASE_CLI = True
+    CLI = "mock"
+
     def setUp(self):
         """Prepare the test fixture."""
         super(ReinstallCommandTest, self).setUp()
-        base = tests.support.BaseCliStub('main')
-        base.init_sack()
-        self._cmd = dnf.cli.commands.reinstall.ReinstallCommand(base.mock_cli())
+        self._cmd = dnf.cli.commands.reinstall.ReinstallCommand(self.cli)
 
     def test_run(self):
         """Test whether the package is installed."""
         tests.support.command_run(self._cmd, ['pepper'])
 
-        base = self._cmd.cli.base
-        self.assertResult(base, itertools.chain(
-            base.sack.query().installed().filter(name__neq='pepper'),
-            dnf.subject.Subject('pepper.x86_64').get_best_query(base.sack)
+        self.assertResult(self.base, itertools.chain(
+            self.base.sack.query().installed().filter(name__neq='pepper'),
+            dnf.subject.Subject('pepper.x86_64').get_best_query(self.base.sack)
             .available()))
 
     @mock.patch('dnf.cli.commands.reinstall._',
@@ -204,11 +208,9 @@ class ReinstallCommandTest(tests.support.ResultTestCase):
     @mock.patch('dnf.cli.commands.reinstall._', dnf.pycomp.NullTranslations().ugettext)
     def test_run_notavailable(self):
         """ Test whether it fails if the package is not available. """
-        base = self._cmd.cli.base
-        holes_query = dnf.subject.Subject('hole').get_best_query(base.sack)
-        history = self._cmd.base.history
+        holes_query = dnf.subject.Subject('hole').get_best_query(self.base.sack)
         for pkg in holes_query.installed():
-            mockSwdbPkg(history, pkg)
+            mockSwdbPkg(self.history, pkg)
 
         stdout = dnf.pycomp.StringIO()
 
@@ -218,18 +220,21 @@ class ReinstallCommandTest(tests.support.ResultTestCase):
         self.assertEqual(
             stdout.getvalue(),
             'Installed package hole-1-1.x86_64 (from unknown) not available.\n')
-        self.assertResult(base, base.sack.query().installed())
+        self.assertResult(self.base, self.base.sack.query().installed())
 
 
-class RepoPkgsCommandTest(tests.support.TestCase):
+class RepoPkgsCommandTest(tests.support.DnfBaseTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand`` class."""
+
+    REPOS = []
+    BASE_CLI = True
+    CLI = "mock"
 
     def setUp(self):
         """Prepare the test fixture."""
         super(RepoPkgsCommandTest, self).setUp()
-        cli = tests.support.BaseCliStub().mock_cli()
-        self.cmd = dnf.cli.commands.RepoPkgsCommand(cli)
+        self.cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
 
     def test_configure_badargs(self):
         """Test whether the command fail in case of wrong args."""
@@ -240,16 +245,19 @@ class RepoPkgsCommandTest(tests.support.TestCase):
         self.assertEqual(exit.exception.code, 1)
 
 
-class RepoPkgsCheckUpdateSubCommandTest(tests.support.TestCase):
+class RepoPkgsCheckUpdateSubCommandTest(tests.support.DnfBaseTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.CheckUpdateSubCommand`` class."""
+
+    REPOS = ['main', 'updates', 'third_party']
+    BASE_CLI = True
+    CLI = "mock"
 
     @mock.patch('dnf.cli.term._real_term_width', return_value=80)
     def test(self, _real_term_width):
         """ Test whether only upgrades in the repository are listed. """
-        history = self.cli.base.history
-        for pkg in self.cli.base.sack.query().installed().filter(name='tour'):
-            mockSwdbPkg(history, pkg, repo='updates')
+        for pkg in self.base.sack.query().installed().filter(name='tour'):
+            mockSwdbPkg(self.history, pkg, repo='updates')
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with tests.support.patch_std_streams() as (stdout, _):
@@ -273,12 +281,6 @@ class RepoPkgsCheckUpdateSubCommandTest(tests.support.TestCase):
             u'                            @updates\n')
         self.assertEqual(self.cli.demands.success_exit_status, 100)
 
-    def setUp(self):
-        """Prepare the test fixture."""
-        super(RepoPkgsCheckUpdateSubCommandTest, self).setUp()
-        base = tests.support.BaseCliStub('main', 'updates', 'third_party')
-        self.cli = base.mock_cli()
-
     def test_not_found(self):
         """Test whether exit code differs if updates are not found."""
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
@@ -286,7 +288,7 @@ class RepoPkgsCheckUpdateSubCommandTest(tests.support.TestCase):
         self.assertNotEqual(self.cli.demands.success_exit_status, 100)
 
 
-class RepoPkgsInfoSubCommandTest(tests.support.TestCase):
+class RepoPkgsInfoSubCommandTest(tests.support.DnfBaseTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.InfoSubCommand`` class."""
 
@@ -340,18 +342,19 @@ class RepoPkgsInfoSubCommandTest(tests.support.TestCase):
                            u'License      : \n'
                            u'Description  : \n\n')
 
+    REPOS = ['main', 'updates', 'third_party']
+    BASE_CLI = True
+    CLI = "mock"
+
     def setUp(self):
         """Prepare the test fixture."""
         super(RepoPkgsInfoSubCommandTest, self).setUp()
-        base = tests.support.BaseCliStub('main', 'updates', 'third_party')
-        base.conf.recent = 7
-        self.cli = base.mock_cli()
+        self.base.conf.recent = 7
 
     def test_info_all(self):
         """Test whether only packages related to the repository are listed."""
-        history = self.cli.base.history
-        for pkg in self.cli.base.sack.query().installed().filter(name='pepper'):
-            mockSwdbPkg(history, pkg, repo='main')
+        for pkg in self.base.sack.query().installed().filter(name='pepper'):
+            mockSwdbPkg(self.history, pkg, repo='main')
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with tests.support.patch_std_streams() as (stdout, _):
@@ -402,9 +405,8 @@ class RepoPkgsInfoSubCommandTest(tests.support.TestCase):
 
     def test_info_extras(self):
         """Test whether only extras installed from the repository are listed."""
-        history = self.cli.base.history
-        for pkg in self.cli.base.sack.query().installed().filter(name='tour'):
-            mockSwdbPkg(history, pkg, repo='main')
+        for pkg in self.base.sack.query().installed().filter(name='tour'):
+            mockSwdbPkg(self.history, pkg, repo='main')
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with tests.support.patch_std_streams() as (stdout, _):
@@ -427,9 +429,8 @@ class RepoPkgsInfoSubCommandTest(tests.support.TestCase):
 
     def test_info_installed(self):
         """Test whether only packages installed from the repository are listed."""
-        history = self.cli.base.history
-        for pkg in self.cli.base.sack.query().installed().filter(name='pepper'):
-            mockSwdbPkg(history, pkg, repo='main')
+        for pkg in self.base.sack.query().installed().filter(name='pepper'):
+            mockSwdbPkg(self.history, pkg, repo='main')
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with tests.support.patch_std_streams() as (stdout, _):
@@ -465,22 +466,17 @@ class RepoPkgsInstallSubCommandTest(tests.support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.InstallSubCommand`` class."""
 
-    def setUp(self):
-        """Prepare the test fixture."""
-        super(RepoPkgsInstallSubCommandTest, self).setUp()
-        base = tests.support.BaseCliStub('main', 'third_party')
-        base.repos['main'].metadata = mock.Mock(_comps_fn=tests.support.COMPS_PATH)
-        base.repos['third_party'].enablegroups = False
-        base.init_sack()
-        self.cli = base.mock_cli()
+    REPOS = ['main', 'third_party']
+    BASE_CLI = True
+    CLI = "mock"
 
     def test_all(self):
         """Test whether all packages from the repository are installed."""
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['third_party', 'install'])
 
-        q = self.cli.base.sack.query()
-        self.assertResult(self.cli.base, itertools.chain(
+        q = self.base.sack.query()
+        self.assertResult(self.base, itertools.chain(
             q.installed(),
             q.available().filter(reponame='third_party', arch='x86_64', name__neq='hole'))
         )
@@ -490,21 +486,18 @@ class RepoPkgsMoveToSubCommandTest(tests.support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.MoveToSubCommand`` class."""
 
-    def setUp(self):
-        """Prepare the test fixture."""
-        super(RepoPkgsMoveToSubCommandTest, self).setUp()
-        base = tests.support.BaseCliStub('distro', 'main')
-        base.init_sack()
-        self.cli = base.mock_cli()
+    REPOS = ['distro', 'main']
+    BASE_CLI = True
+    CLI = "mock"
 
     def test_all(self):
         """Test whether only packages in the repository are installed."""
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['distro', 'move-to'])
 
-        self.assertResult(self.cli.base, itertools.chain(
-            self.cli.base.sack.query().installed().filter(name__neq='tour'),
-            dnf.subject.Subject('tour-5-0').get_best_query(self.cli.base.sack)
+        self.assertResult(self.base, itertools.chain(
+            self.base.sack.query().installed().filter(name__neq='tour'),
+            dnf.subject.Subject('tour-5-0').get_best_query(self.base.sack)
             .available()))
 
 
@@ -512,38 +505,37 @@ class RepoPkgsReinstallOldSubCommandTest(tests.support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.ReinstallOldSubCommand`` class."""
 
-    def setUp(self):
-        """Prepare the test fixture."""
-        super(RepoPkgsReinstallOldSubCommandTest, self).setUp()
-        base = tests.support.BaseCliStub('main')
-        base.init_sack()
-        self.cli = base.mock_cli()
+    REPOS = ["main"]
+    BASE_CLI = True
+    CLI = "mock"
 
     def test_all(self):
         """Test whether all packages from the repository are reinstalled."""
-        history = self.cli.base.history
-        for pkg in self.cli.base.sack.query().installed():
+        for pkg in self.base.sack.query().installed():
             reponame = 'main' if pkg.name != 'pepper' else 'non-main'
-            mockSwdbPkg(history, pkg, repo=reponame)
+            mockSwdbPkg(self.history, pkg, repo=reponame)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['main', 'reinstall-old'])
 
-        self.assertResult(self.cli.base, itertools.chain(
-            self.cli.base.sack.query().installed().filter(name__neq='librita'),
-            dnf.subject.Subject('librita.i686').get_best_query(self.cli.base.sack).installed(),
-            dnf.subject.Subject('librita').get_best_query(self.cli.base.sack).available())
+        self.assertResult(self.base, itertools.chain(
+            self.base.sack.query().installed().filter(name__neq='librita'),
+            dnf.subject.Subject('librita.i686').get_best_query(self.base.sack).installed(),
+            dnf.subject.Subject('librita').get_best_query(self.base.sack).available())
         )
 
 
-class RepoPkgsReinstallSubCommandTest(tests.support.TestCase):
+class RepoPkgsReinstallSubCommandTest(tests.support.DnfBaseTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.ReinstallSubCommand`` class."""
+
+    REPOS = ["main"]
+    BASE_CLI = True
+    CLI = "mock"
 
     def setUp(self):
         """Prepare the test fixture."""
         super(RepoPkgsReinstallSubCommandTest, self).setUp()
-        self.cli = tests.support.BaseCliStub('main').mock_cli()
 
         self.mock = mock.Mock()
         old_run_patcher = mock.patch(
@@ -599,56 +591,51 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(tests.support.ResultTestCase):
 
     """Tests of ``RemoveOrDistroSyncSubCommand`` class."""
 
-    def setUp(self):
-        """Prepare the test fixture."""
-        super(RepoPkgsRemoveOrDistroSyncSubCommandTest, self).setUp()
-        self.cli = tests.support.BaseCliStub('distro').mock_cli()
-        self.cli.base.init_sack()
+    REPOS = ["distro"]
+    BASE_CLI = True
+    CLI = "mock"
 
     def test_run_on_repo_spec_sync(self):
         """Test running with a package which can be synchronized."""
-        history = self.cli.base.history
-        for pkg in self.cli.base.sack.query().installed():
+        for pkg in self.base.sack.query().installed():
             reponame = 'non-distro' if pkg.name == 'pepper' else 'distro'
-            mockSwdbPkg(history, pkg, repo=reponame)
+            mockSwdbPkg(self.history, pkg, repo=reponame)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['non-distro', 'remove-or-distro-sync', 'pepper'])
 
-        self.assertResult(self.cli.base, itertools.chain(
-            self.cli.base.sack.query().installed().filter(name__neq='pepper'),
-            dnf.subject.Subject('pepper').get_best_query(self.cli.base.sack)
+        self.assertResult(self.base, itertools.chain(
+            self.base.sack.query().installed().filter(name__neq='pepper'),
+            dnf.subject.Subject('pepper').get_best_query(self.base.sack)
             .available()))
 
     def test_run_on_repo_spec_remove(self):
         """Test running with a package which must be removed."""
-        history = self.cli.base.history
-        for pkg in self.cli.base.sack.query().installed():
+        for pkg in self.base.sack.query().installed():
             reponame = 'non-distro' if pkg.name == 'hole' else 'distro'
-            mockSwdbPkg(history, pkg, repo=reponame)
+            mockSwdbPkg(self.history, pkg, repo=reponame)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['non-distro', 'remove-or-distro-sync', 'hole'])
 
         self.assertResult(
-            self.cli.base,
-            self.cli.base.sack.query().installed().filter(name__neq='hole'))
+            self.base,
+            self.base.sack.query().installed().filter(name__neq='hole'))
 
     def test_run_on_repo_all(self):
         """Test running without a package specification."""
         nondist = {'pepper', 'hole'}
-        history = self.cli.base.history
-        for pkg in self.cli.base.sack.query().installed():
+        for pkg in self.base.sack.query().installed():
             reponame = 'non-distro' if pkg.name in nondist else 'distro'
-            mockSwdbPkg(history, pkg, repo=reponame)
+            mockSwdbPkg(self.history, pkg, repo=reponame)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['non-distro', 'remove-or-distro-sync'])
 
-        self.assertResult(self.cli.base, itertools.chain(
-            self.cli.base.sack.query().installed().filter(name__neq='pepper')
+        self.assertResult(self.base, itertools.chain(
+            self.base.sack.query().installed().filter(name__neq='pepper')
             .filter(name__neq='hole'),
-            dnf.subject.Subject('pepper').get_best_query(self.cli.base.sack)
+            dnf.subject.Subject('pepper').get_best_query(self.base.sack)
             .available()))
 
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
@@ -684,12 +671,9 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(tests.support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.RemoveOrReinstallSubCommand`` class."""
 
-    def setUp(self):
-        """Prepare the test fixture."""
-        super(RepoPkgsRemoveOrReinstallSubCommandTest, self).setUp()
-        base = tests.support.BaseCliStub('distro')
-        base.init_sack()
-        self.cli = base.mock_cli()
+    REPOS = ["distro"]
+    BASE_CLI = True
+    CLI = "mock"
 
     def test_all_not_installed(self):
         """Test whether it fails if no package is installed from the repository."""
@@ -698,62 +682,56 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(tests.support.ResultTestCase):
                           tests.support.command_run, cmd,
                           ['non-distro', 'remove-or-distro-sync'])
 
-        self.assertResult(self.cli.base, self.cli.base.sack.query().installed())
+        self.assertResult(self.base, self.base.sack.query().installed())
 
     def test_all_reinstall(self):
         """Test whether all packages from the repository are reinstalled."""
-        history = self.cli.base.history
-        for pkg in self.cli.base.sack.query().installed():
+        for pkg in self.base.sack.query().installed():
             reponame = 'distro' if pkg.name != 'tour' else 'non-distro'
-            mockSwdbPkg(history, pkg, repo=reponame)
+            mockSwdbPkg(self.history, pkg, repo=reponame)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['non-distro', 'remove-or-reinstall'])
 
-        self.assertResult(self.cli.base, itertools.chain(
-            self.cli.base.sack.query().installed().filter(name__neq='tour'),
-            dnf.subject.Subject('tour').get_best_query(self.cli.base.sack).available())
+        self.assertResult(self.base, itertools.chain(
+            self.base.sack.query().installed().filter(name__neq='tour'),
+            dnf.subject.Subject('tour').get_best_query(self.base.sack).available())
         )
 
     def test_all_remove(self):
         """Test whether all packages from the repository are removed."""
-        history = self.cli.base.history
-        for pkg in self.cli.base.sack.query().installed():
+        for pkg in self.base.sack.query().installed():
             reponame = 'distro' if pkg.name != 'hole' else 'non-distro'
-            mockSwdbPkg(history, pkg, repo=reponame)
+            mockSwdbPkg(self.history, pkg, repo=reponame)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['non-distro', 'remove-or-reinstall'])
 
         self.assertResult(
-            self.cli.base,
-            self.cli.base.sack.query().installed().filter(name__neq='hole'))
+            self.base,
+            self.base.sack.query().installed().filter(name__neq='hole'))
 
 
 class RepoPkgsRemoveSubCommandTest(tests.support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.RemoveSubCommand`` class."""
 
-    def setUp(self):
-        """Prepare the test fixture."""
-        super(RepoPkgsRemoveSubCommandTest, self).setUp()
-        base = tests.support.BaseCliStub('main')
-        base.init_sack()
-        self.cli = base.mock_cli()
+    REPOS = ["main"]
+    BASE_CLI = True
+    CLI = "mock"
 
     def test_all(self):
         """Test whether only packages from the repository are removed."""
-        history = self.cli.base.history
-        for pkg in self.cli.base.sack.query().installed():
+        for pkg in self.base.sack.query().installed():
             reponame = 'main' if pkg.name == 'pepper' else 'non-main'
-            mockSwdbPkg(history, pkg, repo=reponame)
+            mockSwdbPkg(self.history, pkg, repo=reponame)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['main', 'remove'])
 
         self.assertResult(
-            self.cli.base,
-            self.cli.base.sack.query().installed().filter(name__neq='pepper')
+            self.base,
+            self.base.sack.query().installed().filter(name__neq='pepper')
         )
 
 
@@ -761,12 +739,9 @@ class RepoPkgsUpgradeSubCommandTest(tests.support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.RepoPkgsCommand.UpgradeSubCommand`` class."""
 
-    def setUp(self):
-        """Prepare the test fixture."""
-        super(RepoPkgsUpgradeSubCommandTest, self).setUp()
-        base = tests.support.BaseCliStub('updates', 'third_party')
-        base.init_sack()
-        self.cli = base.mock_cli()
+    REPOS = ["updates", "third_party"]
+    BASE_CLI = True
+    CLI = "mock"
 
     def test_all(self):
         """Test whether all packages from the repository are installed."""
@@ -784,12 +759,13 @@ class UpgradeCommandTest(tests.support.ResultTestCase):
 
     """Tests of ``dnf.cli.commands.upgrade.UpgradeCommand`` class."""
 
+    REPOS = ["updates"]
+    BASE_CLI = True
+    CLI = "mock"
+
     def setUp(self):
-        """Prepare the test fixture."""
         super(UpgradeCommandTest, self).setUp()
-        base = tests.support.BaseCliStub('updates')
-        base.init_sack()
-        self.cmd = dnf.cli.commands.upgrade.UpgradeCommand(base.mock_cli())
+        self.cmd = dnf.cli.commands.upgrade.UpgradeCommand(self.cli)
 
     def test_run(self):
         """Test whether a package is updated."""

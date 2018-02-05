@@ -26,10 +26,13 @@ import tests.support
 from tests.support import mock
 
 
-class MakeCacheCommandTest(tests.support.TestCase):
+class MakeCacheCommandTest(tests.support.DnfBaseTestCase):
+
+    REPOS = ['main']
+    CLI = "mock"
+
     def setUp(self):
-        self.base = tests.support.MockBase('main')
-        self.cli = self.base.mock_cli()
+        super(MakeCacheCommandTest, self).setUp()
         for r in self.base.repos.values():
             r.basecachedir = self.base.conf.cachedir
 

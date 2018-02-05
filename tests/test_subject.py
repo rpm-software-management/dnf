@@ -25,9 +25,12 @@ import dnf.exceptions
 import tests.support
 
 
-class SubjectTest(tests.support.TestCase):
+class SubjectTest(tests.support.DnfBaseTestCase):
+
+    REPOS = ['main', 'third_party']
+
     def setUp(self):
-        self.base = tests.support.MockBase('main', 'third_party')
+        super(SubjectTest, self).setUp()
         pkg = self.base.sack.query().filter(name='lotus', arch='x86_64')[0]
         self.base.sack.add_excludes([pkg])
 

@@ -25,60 +25,60 @@ import itertools
 import tests.support
 
 
-class List(tests.support.TestCase):
+class List(tests.support.DnfBaseTestCase):
+
+    REPOS = ["main", "updates"]
+
     def test_doPackageLists_reponame(self):
         """Test whether packages are filtered by the reponame."""
         reponame = 'main'
-        base = tests.support.MockBase(reponame)
-        lists = base._do_package_lists(reponame=reponame)
+        lists = self.base._do_package_lists(reponame=reponame)
 
         pkgs = itertools.chain.from_iterable(lists.all_lists().values())
         self.assertCountEqual({pkg.reponame for pkg in pkgs}, {reponame})
 
-        assert len(set(pkg.reponame for pkg in base.sack.query())) > 1, \
+        assert len(set(pkg.reponame for pkg in self.base.sack.query())) > 1, \
             ('the base must contain packages from multiple repos, '
              'otherwise the test makes no sense')
 
     def test_list_installed(self):
-        base = tests.support.MockBase()
-        ypl = base._do_package_lists('installed')
+        ypl = self.base._do_package_lists('installed')
         self.assertEqual(len(ypl.installed), tests.support.TOTAL_RPMDB_COUNT)
 
     def test_list_installed_reponame(self):
         """Test whether only packages installed from the repository are listed."""
-        base = tests.support.MockBase()
         expected = self.base.sack.query().installed().filter(name={'pepper', 'librita'})
-        history = base.history
         for pkg in expected:
-            tests.support.mockSwdbPkg(history, pkg, repo='main')
+            tests.support.mockSwdbPkg(self.history, pkg, repo='main')
 
-        lists = base._do_package_lists('installed', reponame='main')
+        lists = self.base._do_package_lists('installed', reponame='main')
 
         self.assertCountEqual(lists.installed, expected)
 
     def test_list_updates(self):
-        base = tests.support.MockBase("updates", "main")
-        ypl = base._do_package_lists('upgrades')
+        ypl = self.base._do_package_lists('upgrades')
         self.assertEqual(len(ypl.updates), tests.support.UPDATES_NSOLVABLES - 2)
         pkg = ypl.updates[0]
         self.assertEqual(pkg.name, "hole")
-        ypl = base._do_package_lists('upgrades', ["pepper"])
+        ypl = self.base._do_package_lists('upgrades', ["pepper"])
         self.assertEqual(len(ypl.updates), 1)
-        ypl = base._do_package_lists('upgrades', ["mrkite"])
+        ypl = self.base._do_package_lists('upgrades', ["mrkite"])
         self.assertEqual(len(ypl.updates), 0)
 
-        ypl = base._do_package_lists('upgrades', ["hole"])
+        ypl = self.base._do_package_lists('upgrades', ["hole"])
         self.assertEqual(len(ypl.updates), 1)
 
     def test_lists_multiple(self):
-        base = tests.support.MockBase('updates', "main")
-        ypl = base._do_package_lists('upgrades', ['pepper', 'hole'])
+        ypl = self.base._do_package_lists('upgrades', ['pepper', 'hole'])
         self.assertLength(ypl.updates, 2)
 
 
-class TestListAllRepos(tests.support.TestCase):
+class TestListAllRepos(tests.support.DnfBaseTestCase):
+
+    REPOS = ["main", "updates"]
+
     def setUp(self):
-        self.base = tests.support.MockBase("main", "updates")
+        super(TestListAllRepos, self).setUp()
         self.base.conf.multilib_policy = "all"
 
     def test_list_pattern(self):

@@ -28,11 +28,10 @@ import dnf.selector
 import tests.support
 
 
-class GoalTest(tests.support.TestCase):
-    def setUp(self):
-        base = tests.support.MockBase('main')
-        self.sack = base.sack
-        self.goal = dnf.goal.Goal(self.sack)
+class GoalTest(tests.support.DnfBaseTestCase):
+
+    REPOS = ['main']
+    INIT_SACK = True
 
     def test_get_reason(self):
         sltr = dnf.selector.Selector(self.sack)
@@ -40,22 +39,20 @@ class GoalTest(tests.support.TestCase):
         grp_sltr = dnf.selector.Selector(self.sack)
         grp_sltr.set(name='lotus')
 
-        goal = self.goal
-        goal.install(select=sltr)
-        goal.install(select=grp_sltr)
-        goal.group_members.add('lotus')
-        goal.run()
-        installs = goal.list_installs()
+        self.goal.install(select=sltr)
+        self.goal.install(select=grp_sltr)
+        self.goal.group_members.add('lotus')
+        self.goal.run()
+        installs = self.goal.list_installs()
         mrkite = [pkg for pkg in installs if pkg.name == 'mrkite'][0]
         lotus = [pkg for pkg in installs if pkg.name == 'lotus'][0]
         trampoline = [pkg for pkg in installs if pkg.name == 'trampoline'][0]
-        self.assertEqual(goal.get_reason(lotus), SwdbReason.GROUP)
-        self.assertEqual(goal.get_reason(mrkite), SwdbReason.USER)
-        self.assertEqual(goal.get_reason(trampoline), SwdbReason.DEP)
+        self.assertEqual(self.goal.get_reason(lotus), SwdbReason.GROUP)
+        self.assertEqual(self.goal.get_reason(mrkite), SwdbReason.USER)
+        self.assertEqual(self.goal.get_reason(trampoline), SwdbReason.DEP)
 
     def test_group_reason(self):
-        goal = self.goal
         hole = self.sack.query().filter(name='hole')[0]
-        goal.group_members.add('hole')
-        self.assertEqual(SwdbReason.GROUP, goal.group_reason(hole, SwdbReason.GROUP))
-        self.assertEqual(SwdbReason.DEP, goal.group_reason(hole, SwdbReason.DEP))
+        self.goal.group_members.add('hole')
+        self.assertEqual(SwdbReason.GROUP, self.goal.group_reason(hole, SwdbReason.GROUP))
+        self.assertEqual(SwdbReason.DEP, self.goal.group_reason(hole, SwdbReason.DEP))

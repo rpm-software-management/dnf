@@ -29,21 +29,22 @@ import tests.support
 
 class AutoRemoveCommandTest(tests.support.ResultTestCase):
 
-    def test_run(self):
-        base = tests.support.MockBase()
-        q = base.sack.query()
-        pkgs = list(q.filter(name='librita')) + list(q.filter(name='pepper'))
-        history = base.history
-        for pkg in pkgs:
-            history.set_reason(pkg, SwdbReason.USER)
+    REPOS = []
+    CLI = "mock"
 
-        cli = base.mock_cli()
-        cmd = autoremove.AutoremoveCommand(cli)
+    def test_run(self):
+        q = self.base.sack.query()
+        pkgs = list(q.filter(name='librita')) + list(q.filter(name='pepper'))
+        for pkg in pkgs:
+            self.history.set_reason(pkg, SwdbReason.USER)
+
+        cmd = autoremove.AutoremoveCommand(self.cli)
         parser = OptionParser()
         parser.parse_main_args(['autoremove', '-y'])
         parser.parse_command_args(cmd, ['autoremove', '-y'])
         cmd.run()
-        inst, rem = self.installed_removed(base)
+
+        inst, rem = self.installed_removed(self.base)
         self.assertEmpty(inst)
         removed = ('librita-1-1.i686',
                    'librita-1-1.x86_64',

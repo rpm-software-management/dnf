@@ -28,8 +28,11 @@ import tests.support
 
 
 class Remove(tests.support.ResultTestCase):
+
+    REPOS = []
+
     def setUp(self):
-        self.base = tests.support.MockBase()
+        super(Remove, self).setUp()
         self.allow_erasing = True
 
     def test_not_installed(self):
@@ -72,9 +75,8 @@ class Remove(tests.support.ResultTestCase):
     def test_reponame(self):
         """Test whether only packages from the repository are uninstalled."""
         pkg_subj = dnf.subject.Subject('librita.x86_64')
-        history = self.base.history
         for pkg in pkg_subj.get_best_query(self.base.sack).installed():
-            tests.support.mockSwdbPkg(history, pkg, repo='main')
+            tests.support.mockSwdbPkg(self.history, pkg, repo='main')
 
         self.base.remove('librita', 'main')
         self.assertResult(self.base, itertools.chain(

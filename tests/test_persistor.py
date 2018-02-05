@@ -34,17 +34,17 @@ IDS = set(['one', 'two', 'three'])
 
 class RepoPersistorTest(tests.support.TestCase):
     def setUp(self):
-        self.persistdir = tempfile.mkdtemp(prefix="dnf-repoprst-test-")
-        self.prst = dnf.persistor.RepoPersistor(self.persistdir)
+        self.persistdir = tempfile.mkdtemp(prefix="dnf-persistor-test-")
+        self.persistor = dnf.persistor.RepoPersistor(self.persistdir)
 
     def tearDown(self):
         dnf.util.rm_rf(self.persistdir)
 
     def test_expired_repos(self):
-        self.assertLength(self.prst.get_expired_repos(), 0)
-        self.prst.expired_to_add = IDS
-        self.prst.save()
-        self.assertEqual(self.prst.get_expired_repos(), IDS)
+        self.assertLength(self.persistor.get_expired_repos(), 0)
+        self.persistor.expired_to_add = IDS
+        self.persistor.save()
+        self.assertEqual(self.persistor.get_expired_repos(), IDS)
 
-        prst = dnf.persistor.RepoPersistor(self.persistdir)
-        self.assertEqual(prst.get_expired_repos(), IDS)
+        persistor = dnf.persistor.RepoPersistor(self.persistdir)
+        self.assertEqual(persistor.get_expired_repos(), IDS)

@@ -79,7 +79,10 @@ class OutputFunctionsTest(tests.support.TestCase):
                          [('tour', 0, 1, 2, 3), ('', 4, 5, 6, 7)])
 
 
-class OutputTest(tests.support.TestCase):
+class OutputTest(tests.support.DnfBaseTestCase):
+
+    REPOS = ['updates']
+
     @staticmethod
     def _keyboard_interrupt(*ignored):
         raise KeyboardInterrupt
@@ -89,7 +92,7 @@ class OutputTest(tests.support.TestCase):
         raise EOFError
 
     def setUp(self):
-        self.base = tests.support.MockBase('updates')
+        super(OutputTest, self).setUp()
         self.output = dnf.cli.output.Output(self.base, self.base.conf)
 
     @mock.patch('dnf.cli.term._real_term_width', return_value=80)
@@ -228,14 +231,14 @@ Environment Group: Sugar Desktop Environment
 """
 
 
-class GroupOutputTest(tests.support.TestCase):
-    def setUp(self):
-        base = tests.support.MockBase('main')
-        base.read_mock_comps()
-        output = dnf.cli.output.Output(base, base.conf)
+class GroupOutputTest(tests.support.DnfBaseTestCase):
 
-        self.base = base
-        self.output = output
+    REPOS = ['main']
+    COMPS = True
+
+    def setUp(self):
+        super(GroupOutputTest, self).setUp()
+        self.output = dnf.cli.output.Output(self.base, self.base.conf)
 
     @mock.patch('dnf.cli.output._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.cli.term._real_term_width', return_value=80)

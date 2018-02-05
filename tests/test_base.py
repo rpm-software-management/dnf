@@ -51,6 +51,7 @@ class BaseTest(tests.support.TestCase):
     def test_instance(self):
         base = tests.support.MockBase()
         self.assertIsNotNone(base)
+        base.close()
 
     @mock.patch('dnf.rpm.detect_releasever', lambda x: 'x')
     @mock.patch('dnf.util.am_i_root', lambda: True)
@@ -75,6 +76,7 @@ class BaseTest(tests.support.TestCase):
         base.reset(sack=True, repos=False)
         self.assertIsNone(base._sack)
         self.assertLength(base.repos, 1)
+        base.close()
 
     @mock.patch('dnf.rpm.transaction.TransactionWrapper')
     def test_ts(self, mock_ts):
@@ -103,6 +105,7 @@ class BaseTest(tests.support.TestCase):
         base.history.set_reason(pkg, SwdbReason.USER)
         self.assertEqual(base.history.user_installed(pkg), True)
         self.assertEqual(base.history.repo(pkg), 'main')
+        base.close()
 
     def test_iter_userinstalled_badfromrepo(self):
         """Test iter_userinstalled with a package installed from a bad repository."""
@@ -114,6 +117,7 @@ class BaseTest(tests.support.TestCase):
         base.history.set_reason(pkg, SwdbReason.USER)
         self.assertEqual(base.history.user_installed(pkg), False)
         self.assertEqual(base.history.repo(pkg), 'anakonda')
+        base.close()
 
     def test_iter_userinstalled_badreason(self):
         """Test iter_userinstalled with a package installed for a wrong reason."""
@@ -125,18 +129,19 @@ class BaseTest(tests.support.TestCase):
         base.history.set_repo(pkg, "main")
         self.assertEqual(base.history.user_installed(pkg), False)
         self.assertEqual(base.history.repo(pkg), 'main')
+        base.close()
 
     def test_translate_comps_pkg_types(self):
         base = tests.support.MockBase()
         num = base._translate_comps_pkg_types(('mandatory', 'optional'))
         self.assertEqual(num, 12)
+        base.close()
 
 
-class MockBaseTest(tests.support.TestCase):
+class MockBaseTest(tests.support.DnfBaseTestCase):
     """Test the Base methods that need a Sack."""
 
-    def setUp(self):
-        self.base = tests.support.MockBase("main")
+    REPOS = ["main"]
 
     def test_add_remote_rpms(self):
         pkgs = self.base.add_remote_rpms([tests.support.TOUR_50_PKG_PATH])
@@ -144,17 +149,19 @@ class MockBaseTest(tests.support.TestCase):
         self.assertEqual(pkgs[0].name, 'tour')
 
 
-class BuildTransactionTest(tests.support.TestCase):
+class BuildTransactionTest(tests.support.DnfBaseTestCase):
+
+    REPOS = ["updates"]
+
     def test_resolve(self):
-        base = tests.support.MockBase("updates")
-        base.upgrade("pepper")
-        self.assertTrue(base.resolve())
-        base._ds_callback.assert_has_calls([
+        self.base.upgrade("pepper")
+        self.assertTrue(self.base.resolve())
+        self.base._ds_callback.assert_has_calls([
             mock.call.start(),
             mock.call.pkg_added(mock.ANY, 'ud'),
             mock.call.pkg_added(mock.ANY, 'u')
         ])
-        self.assertLength(base.transaction, 1)
+        self.assertLength(self.base.transaction, 1)
 
 
 # verify transaction test helpers
@@ -170,10 +177,10 @@ def ret_pkgid(self):
     return self.name
 
 
-class VerifyTransactionTest(tests.support.TestCase):
-    def setUp(self):
-        self.base = tests.support.MockBase("main")
-        self.base._transaction = dnf.transaction.Transaction()
+class VerifyTransactionTest(tests.support.DnfBaseTestCase):
+
+    REPOS = ["main"]
+    INIT_TRANSACTION = True
 
     @mock.patch('dnf.sack._build_sack', new_callable=mock_sack_fn)
     @mock.patch('dnf.package.Package._pkgid', ret_pkgid)  # neutralize @property
@@ -205,8 +212,8 @@ class VerifyTransactionTest(tests.support.TestCase):
 
 
 class InstallReasonTest(tests.support.ResultTestCase):
-    def setUp(self):
-        self.base = tests.support.MockBase("main")
+
+    REPOS = ["main"]
 
     def test_reason(self):
         self.base.install("mrkite")
@@ -218,9 +225,8 @@ class InstallReasonTest(tests.support.ResultTestCase):
 
 
 class InstalledMatchingTest(tests.support.ResultTestCase):
-    def setUp(self):
-        self.base = tests.support.MockBase("main")
-        self.sack = self.base.sack
+
+    REPOS = ["main"]
 
     def test_query_matching(self):
         subj = dnf.subject.Subject("pepper")
@@ -236,31 +242,30 @@ class InstalledMatchingTest(tests.support.ResultTestCase):
         self.assertCountEqual(['pepper-20-0.x86_64'], map(str, inst))
 
 
-class CompsTest(tests.support.TestCase):
+class CompsTest(tests.support.DnfBaseTestCase):
     # Also see test_comps.py
+
+    REPOS = ["main"]
+    COMPS = True
 
     # prevent creating the gen/ directory:
     @mock.patch('dnf.yum.misc.repo_gen_decompress', lambda x, y: x)
     def test_read_comps(self):
-        base = tests.support.MockBase("main")
-        base.repos['main'].metadata = mock.Mock(_comps_fn=tests.support.COMPS_PATH)
-        base.read_comps()
-        groups = base.comps.groups
-        self.assertLength(groups, tests.support.TOTAL_GROUPS)
+        self.assertLength(self.base.comps.groups, tests.support.TOTAL_GROUPS)
 
     def test_read_comps_disabled(self):
-        base = tests.support.MockBase("main")
-        base.repos['main'].enablegroups = False
-        self.assertEmpty(base.read_comps())
+        self.base.repos['main'].enablegroups = False
+        self.assertEmpty(self.base.read_comps())
 
 
-class Goal2TransactionTest(tests.support.TestCase):
+class Goal2TransactionTest(tests.support.DnfBaseTestCase):
+
+    REPOS = ["main", "updates"]
+
     def test_upgrade(self):
-        base = tests.support.MockBase("main", "updates")
-        base.upgrade("hole")
-        goal = base._goal
-        self.assertTrue(base._run_hawkey_goal(goal, allow_erasing=False))
-        ts = base._goal2transaction(goal)
+        self.base.upgrade("hole")
+        self.assertTrue(self.base._run_hawkey_goal(self.goal, allow_erasing=False))
+        ts = self.base._goal2transaction(self.goal)
         self.assertLength(ts._tsis, 1)
         tsi = ts._tsis[0]
         self.assertCountEqual(map(str, tsi.installs()), ('hole-2-1.x86_64',))

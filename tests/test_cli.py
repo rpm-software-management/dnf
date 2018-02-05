@@ -43,13 +43,15 @@ VERSIONS_OUTPUT = """\
 """
 
 
-class VersionStringTest(tests.support.TestCase):
+class VersionStringTest(tests.support.DnfBaseTestCase):
+
+    REPOS = []
+
     def test_print_versions(self):
-        base = tests.support.MockBase()
         output = tests.support.MockOutput()
         with mock.patch('sys.stdout') as stdout,\
-                mock.patch('dnf.sack._rpmdb_sack', return_value=base.sack):
-            dnf.cli.cli.print_versions(['pepper', 'tour'], base, output)
+                mock.patch('dnf.sack._rpmdb_sack', return_value=self.base.sack):
+            dnf.cli.cli.print_versions(['pepper', 'tour'], self.base, output)
         written = ''.join([mc[1][0] for mc in stdout.method_calls
                            if mc[0] == 'write'])
         self.assertEqual(written, VERSIONS_OUTPUT)
@@ -57,25 +59,28 @@ class VersionStringTest(tests.support.TestCase):
 
 @mock.patch('dnf.cli.cli.logger', new_callable=tests.support.mock_logger)
 class BaseCliTest(tests.support.ResultTestCase):
+
+    REPOS = ["main", "updates"]
+    BASE_CLI = True
+    INIT_SACK = True
+
     def setUp(self):
-        self._base = dnf.cli.cli.BaseCli()
-        self._base._sack = tests.support.mock_sack('main', 'updates')
-        self._base._goal = dnf.goal.Goal(self._base.sack)
-        self._base.output.term = tests.support.MockTerminal()
-        self._base.downgrade_to = mock.Mock(wraps=self._base.downgrade_to)
+        super(BaseCliTest, self).setUp()
+        self.base.output.term = tests.support.MockTerminal()
+        self.base.downgrade_to = mock.Mock(wraps=self.base.downgrade_to)
 
     def test_downgradePkgs(self, logger):
-        self._base.downgradePkgs(('tour',))
+        self.base.downgradePkgs(('tour',))
 
-        self.assertEqual(self._base.downgrade_to.mock_calls, [mock.call('tour', strict=False)])
+        self.assertEqual(self.base.downgrade_to.mock_calls, [mock.call('tour', strict=False)])
         self.assertEqual(logger.mock_calls, [])
 
     def test_downgradePkgs_notfound(self, logger):
         with self.assertRaises(dnf.exceptions.Error) as ctx:
-            self._base.downgradePkgs(('non-existent',))
+            self.base.downgradePkgs(('non-existent',))
         self.assertEqual(str(ctx.exception), 'No packages marked for downgrade.')
 
-        self.assertEqual(self._base.downgrade_to.mock_calls,
+        self.assertEqual(self.base.downgrade_to.mock_calls,
                          [mock.call('non-existent', strict=False)])
         self.assertEqual(logger.mock_calls,
                          [mock.call.info('No package %s available.',
@@ -86,18 +91,21 @@ class BaseCliTest(tests.support.ResultTestCase):
         tests.support.ObjectMatcher(dnf.package.Package, {'name': 'lotus'})
 
         with self.assertRaises(dnf.exceptions.Error) as ctx:
-            self._base.downgradePkgs(('lotus',))
+            self.base.downgradePkgs(('lotus',))
         self.assertEqual(str(ctx.exception), 'No packages marked for downgrade.')
 
-        self.assertEqual(self._base.downgrade_to.mock_calls, [mock.call('lotus', strict=False)])
+        self.assertEqual(self.base.downgrade_to.mock_calls, [mock.call('lotus', strict=False)])
 
 
 @mock.patch('dnf.cli.cli.Cli._read_conf_file')
-class CliTest(tests.support.TestCase):
+class CliTest(tests.support.DnfBaseTestCase):
+
+    REPOS = ["main"]
+    CLI = "init"
+
     def setUp(self):
-        self.base = tests.support.MockBase("main")
+        super(CliTest, self).setUp()
         self.base.output = tests.support.MockOutput()
-        self.cli = dnf.cli.cli.Cli(self.base)
 
     def test_knows_upgrade(self, _):
         upgrade = self.cli.cli_commands['upgrade']
@@ -162,9 +170,13 @@ class CliTest(tests.support.TestCase):
 
 
 @mock.patch('dnf.logging.Logging._setup', new=mock.MagicMock)
-class ConfigureTest(tests.support.TestCase):
+class ConfigureTest(tests.support.DnfBaseTestCase):
+
+    REPOS = ["main"]
+#    CLI = "init"
+
     def setUp(self):
-        self.base = tests.support.MockBase("main")
+        super(ConfigureTest, self).setUp()
         self.base._conf = dnf.conf.Conf()
         self.base.output = tests.support.MockOutput()
         self.base._plugins = mock.Mock()
@@ -221,7 +233,7 @@ class ConfigureTest(tests.support.TestCase):
     @mock.patch('dnf.cli.cli.Cli._parse_commands', new=mock.MagicMock)
     def test_installroot_with_etc(self):
         """Test that conffile is detected in a new installroot."""
-        self.cli.base.extcmds = []
+        self.base.extcmds = []
 
         tlv = tests.support.dnf_toplevel()
         self.cli.configure(['--installroot', tlv, 'update'])

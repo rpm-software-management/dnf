@@ -28,33 +28,28 @@ import tests.support
 
 
 class UpgradeTo(tests.support.ResultTestCase):
+
+    REPOS = ['main', 'updates', 'third_party']
+
     def test_upgrade_to(self):
-        base = tests.support.MockBase("main", "updates")
-        sack = base.sack
-        base.upgrade("pepper-20-1.x86_64")
-        new_set = tests.support.installed_but(sack, "pepper").run()
-        q = sack.query().available()._nevra("pepper-20-1.x86_64")
+        self.base.upgrade("pepper-20-1.x86_64")
+        new_set = tests.support.installed_but(self.sack, "pepper").run()
+        q = self.sack.query().available()._nevra("pepper-20-1.x86_64")
         new_set.extend(q)
-        self.assertResult(base, new_set)
+        self.assertResult(self.base, new_set)
 
     def test_upgrade_to_reponame(self):
         """Test whether only packages in selected repo are used."""
-        base = tests.support.MockBase('updates', 'third_party')
-        base.init_sack()
-
-        base.upgrade('hole-1-2.x86_64', 'updates')
+        self.base.upgrade('hole-1-2.x86_64', 'updates')
 
         subject = dnf.subject.Subject('hole-1-2.x86_64')
-        self.assertResult(base, itertools.chain(
-            base.sack.query().installed().filter(name__neq='hole'),
-            subject.get_best_query(base.sack).filter(reponame='updates'))
+        self.assertResult(self.base, itertools.chain(
+            self.sack.query().installed().filter(name__neq='hole'),
+            subject.get_best_query(self.sack).filter(reponame='updates'))
         )
 
     def test_upgrade_to_reponame_not_in_repo(self):
         """Test whether no packages are upgraded if bad repo is selected."""
-        base = tests.support.MockBase('main', 'updates')
-        base.init_sack()
+        self.base.upgrade('hole-1-2.x86_64', 'main')
 
-        base.upgrade('hole-1-2.x86_64', 'main')
-
-        self.assertResult(base, base.sack.query().installed())
+        self.assertResult(self.base, self.sack.query().installed())

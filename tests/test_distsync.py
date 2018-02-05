@@ -22,15 +22,13 @@ from __future__ import unicode_literals
 
 import rpm
 
-import dnf.goal
-
 import tests.support
 
 
 class DistroSyncAll(tests.support.ResultTestCase):
-    def setUp(self):
-        self.base = tests.support.MockBase("distro")
-        self.sack = self.base.sack
+
+    REPOS = ["distro"]
+    INIT_SACK = True
 
     def test_distro_sync_all(self):
         self.base.distro_sync()
@@ -42,18 +40,17 @@ class DistroSyncAll(tests.support.ResultTestCase):
 
 
 class DistroSync(tests.support.ResultTestCase):
-    def setUp(self):
-        self._base = tests.support.BaseCliStub()
-        self._base._sack = tests.support.mock_sack('main', 'updates')
-        self._base._goal = dnf.goal.Goal(self._base.sack)
+
+    REPOS = ["main", "updates"]
+    BASE_CLI = True
 
     def test_distro_sync(self):
-        installed = self._get_installed(self._base)
+        installed = self._get_installed(self.base)
         original_pkg = list(filter(lambda p: p.name == "hole", installed))
-        self._base.distro_sync_userlist(('bla', 'hole'))
+        self.base.distro_sync_userlist(('bla', 'hole'))
         obsolete_pkg = list(filter(lambda p: p.name == "tour", installed))
 
-        installed2 = self._get_installed(self._base)
+        installed2 = self._get_installed(self.base)
         updated_pkg = list(filter(lambda p: p.name == "hole", installed2))
         self.assertLength(updated_pkg, 1)
         self.assertLength(original_pkg, 1)
