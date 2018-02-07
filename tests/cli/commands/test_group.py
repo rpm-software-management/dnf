@@ -86,7 +86,7 @@ class CompsQueryTest(tests.support.DnfBaseTestCase):
     def test_all(self):
         status_all = CompsQuery.AVAILABLE | CompsQuery.INSTALLED
         kinds_all = CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS
-        q = CompsQuery(self.comps, self.persistor, kinds_all, status_all)
+        q = CompsQuery(self.comps, self.history, kinds_all, status_all)
 
         res = q.get('sugar*', '*er*')
         self.assertCountEqual(res.environments,
@@ -94,19 +94,21 @@ class CompsQueryTest(tests.support.DnfBaseTestCase):
         self.assertCountEqual(res.groups, ("Peppers", 'somerset'))
 
     def test_err(self):
-        q = CompsQuery(self.comps, self.persistor, CompsQuery.ENVIRONMENTS,
+        q = CompsQuery(self.comps, self.history, CompsQuery.ENVIRONMENTS,
                        CompsQuery.AVAILABLE)
         with self.assertRaises(dnf.exceptions.CompsError):
             q.get('*er*')
 
     def test_installed(self):
-        q = CompsQuery(self.comps, self.persistor, CompsQuery.GROUPS,
+        q = CompsQuery(self.comps, self.history, CompsQuery.GROUPS,
                        CompsQuery.INSTALLED)
         self.base.read_mock_comps(False)
         grp = self.base.comps.group_by_pattern('somerset')
         self.base.group_install(grp.id, ('mandatory',))
 
+        self._swdb_commit()
+
         res = q.get('somerset')
         self.assertEmpty(res.environments)
-        grp_ids = [grp.name_id for grp in res.groups]
+        grp_ids = list(res.groups)
         self.assertCountEqual(grp_ids, ('somerset',))

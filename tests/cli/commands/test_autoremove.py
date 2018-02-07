@@ -19,7 +19,7 @@
 
 from __future__ import absolute_import
 
-from hawkey import SwdbReason
+import libdnf.swdb
 
 import dnf.cli.commands.autoremove as autoremove
 from dnf.cli.option_parser import OptionParser
@@ -35,15 +35,17 @@ class AutoRemoveCommandTest(tests.support.ResultTestCase):
     def test_run(self):
         q = self.base.sack.query()
         pkgs = list(q.filter(name='librita')) + list(q.filter(name='pepper'))
+
+        self._swdb_begin()
         for pkg in pkgs:
-            self.history.set_reason(pkg, SwdbReason.USER)
+            self.base.history.set_reason(pkg, libdnf.swdb.TransactionItemReason_USER)
+        self._swdb_end()
 
         cmd = autoremove.AutoremoveCommand(self.cli)
         parser = OptionParser()
         parser.parse_main_args(['autoremove', '-y'])
         parser.parse_command_args(cmd, ['autoremove', '-y'])
         cmd.run()
-
         inst, rem = self.installed_removed(self.base)
         self.assertEmpty(inst)
         removed = ('librita-1-1.i686',

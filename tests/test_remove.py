@@ -22,6 +22,8 @@ from __future__ import unicode_literals
 
 import itertools
 
+import libdnf.swdb
+
 import dnf.cli.commands
 
 import tests.support
@@ -75,8 +77,17 @@ class Remove(tests.support.ResultTestCase):
     def test_reponame(self):
         """Test whether only packages from the repository are uninstalled."""
         pkg_subj = dnf.subject.Subject('librita.x86_64')
+
+        tsis = []
         for pkg in pkg_subj.get_best_query(self.base.sack).installed():
-            tests.support.mockSwdbPkg(self.history, pkg, repo='main')
+            pkg._force_swdb_repoid = "main"
+            tsi = dnf.transaction.TransactionItem(
+                dnf.transaction.INSTALL,
+                installed=pkg,
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            tsis.append(tsi)
+        self._swdb_commit(tsis)
 
         self.base.remove('librita', 'main')
         self.assertResult(self.base, itertools.chain(

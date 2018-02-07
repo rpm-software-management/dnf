@@ -22,11 +22,10 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from hawkey import split_nevra, SwdbReason
+import libdnf.swdb
 
 from dnf.exceptions import PackagesNotAvailableError, PackagesNotInstalledError
 from dnf.history import NEVRAOperations
-from dnf.package import Package
 from dnf.transaction import ERASE, DOWNGRADE, INSTALL, REINSTALL, UPGRADE
 from dnf.transaction import TransactionItem
 
@@ -38,27 +37,12 @@ class BaseTest(tests.support.DnfBaseTestCase):
 
     REPOS = ['main', 'updates']
 
-    def _create_item_matcher(self, op_type, installed=None, erased=None,
-                             obsoleted=[], reason=SwdbReason.UNKNOWN):
-        """Create a new instance of dnf.transaction.TransactionItem matcher."""
-        attrs = {
-            'op_type': op_type,
-            'installed': self._create_package_matcher(installed) if installed else installed,
-            'erased': self._create_package_matcher(erased) if erased else erased,
-            'obsoleted': [self._create_package_matcher(nevra) for nevra in obsoleted],
-            'reason': reason
-        }
-        return tests.support.ObjectMatcher(TransactionItem, attrs)
-
-    def _create_package_matcher(self, nevra_str):
-        """Create a new instance of dnf.package.Package matcher."""
-        nevra = split_nevra(nevra_str)
-        attrs = {'name': nevra.name,
-                 'epoch': nevra.epoch,
-                 'version': nevra.version,
-                 'release': nevra.release,
-                 'arch': nevra.arch}
-        return tests.support.ObjectMatcher(Package, attrs)
+    def assertEqualTransactionItems(self, one, two):
+        self.assertEqual(one.op_type, two.op_type)
+        self.assertEqual(str(one.installed), str(two.installed))
+        self.assertEqual(str(one.erased), str(two.erased))
+        self.assertEqual([str(i) for i in one.obsoleted], [str(i) for i in two.obsoleted])
+        self.assertEqual(one.reason, two.reason)
 
     def test_history_undo_operations_downgrade(self):
         """Test history_undo_operations with a downgrade."""
@@ -74,10 +58,23 @@ class BaseTest(tests.support.DnfBaseTestCase):
             self.base._history_undo_operations(operations, 0)
 
             transaction_it = iter(self.base.transaction)
-            self.assertEqual(next(transaction_it), self._create_item_matcher(
-                UPGRADE, installed='pepper-20-1.x86_64', erased='pepper-20-0.x86_64'))
-            self.assertEqual(next(transaction_it), self._create_item_matcher(
-                INSTALL, installed='lotus-3-16.x86_64', reason=SwdbReason.USER))
+
+            actual = next(transaction_it)
+            expected = TransactionItem(
+                UPGRADE,
+                installed='pepper-20-1.x86_64',
+                erased='pepper-20-0.x86_64'
+            )
+            self.assertEqualTransactionItems(actual, expected)
+
+            actual = next(transaction_it)
+            expected = TransactionItem(
+                INSTALL,
+                installed='lotus-3-16.x86_64',
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            self.assertEqualTransactionItems(actual, expected)
+
             self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_downgrade_notavailable(self):
@@ -109,8 +106,15 @@ class BaseTest(tests.support.DnfBaseTestCase):
             self.base._history_undo_operations(operations, 0)
 
             transaction_it = iter(self.base.transaction)
-            self.assertEqual(next(transaction_it), self._create_item_matcher(
-                INSTALL, installed='lotus-3-16.x86_64', reason=SwdbReason.USER))
+
+            actual = next(transaction_it)
+            expected = TransactionItem(
+                INSTALL,
+                installed='lotus-3-16.x86_64',
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            self.assertEqualTransactionItems(actual, expected)
+
             self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_erase_twoavailable(self):
@@ -120,10 +124,16 @@ class BaseTest(tests.support.DnfBaseTestCase):
 
         with self.base:
             self.base._history_undo_operations(operations, 0)
-
             transaction_it = iter(self.base.transaction)
-            self.assertEqual(next(transaction_it), self._create_item_matcher(
-                INSTALL, installed='lotus-3-16.x86_64', reason=SwdbReason.USER))
+
+            actual = next(transaction_it)
+            expected = TransactionItem(
+                INSTALL,
+                installed='lotus-3-16.x86_64',
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            self.assertEqualTransactionItems(actual, expected)
+
             self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_erase_notavailable(self):
@@ -145,10 +155,19 @@ class BaseTest(tests.support.DnfBaseTestCase):
             self.base._history_undo_operations(operations, 0)
 
             transaction_it = iter(self.base.transaction)
-            self.assertEqual(next(transaction_it), self._create_item_matcher(
-                ERASE, erased='pepper-20-0.x86_64'))
-            self.assertEqual(next(transaction_it), self._create_item_matcher(
-                INSTALL, installed='lotus-3-16.x86_64', reason=SwdbReason.USER))
+
+            actual = next(transaction_it)
+            expected = TransactionItem(ERASE, erased='pepper-20-0.x86_64')
+            self.assertEqualTransactionItems(actual, expected)
+
+            actual = next(transaction_it)
+            expected = TransactionItem(
+                INSTALL,
+                installed='lotus-3-16.x86_64',
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            self.assertEqualTransactionItems(actual, expected)
+
             self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_install_notinstalled(self):
@@ -175,9 +194,16 @@ class BaseTest(tests.support.DnfBaseTestCase):
             self.base._history_undo_operations(operations, 0)
 
             transaction_it = iter(self.base.transaction)
-            self.assertEqual(next(transaction_it), self._create_item_matcher(
-                REINSTALL, installed='pepper-20-0.x86_64', erased='pepper-20-0.x86_64',
-                obsoleted=('hole-1-1.x86_64',)))
+
+            actual = next(transaction_it)
+            expected = TransactionItem(
+                REINSTALL,
+                installed='pepper-20-0.x86_64',
+                erased='pepper-20-0.x86_64',
+                obsoleted=('hole-1-1.x86_64',)
+            )
+            self.assertEqualTransactionItems(actual, expected)
+
             self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_reinstall_notavailable(self):
@@ -214,9 +240,16 @@ class BaseTest(tests.support.DnfBaseTestCase):
             self.base._history_undo_operations(operations, 0)
 
             transaction_it = iter(self.base.transaction)
-            self.assertEqual(next(transaction_it), self._create_item_matcher(
-                REINSTALL, installed='pepper-20-0.x86_64', erased='pepper-20-0.x86_64',
-                obsoleted=()))
+
+            actual = next(transaction_it)
+            expected = TransactionItem(
+                REINSTALL,
+                installed='pepper-20-0.x86_64',
+                erased='pepper-20-0.x86_64',
+                obsoleted=()
+            )
+            self.assertEqualTransactionItems(actual, expected)
+
             self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_update(self):
@@ -228,10 +261,23 @@ class BaseTest(tests.support.DnfBaseTestCase):
             self.base._history_undo_operations(operations, 0)
 
             transaction_it = iter(self.base.transaction)
-            self.assertEqual(next(transaction_it), self._create_item_matcher(
-                DOWNGRADE, installed='tour-4.6-1.noarch', erased='tour-5-0.noarch'))
-            self.assertEqual(next(transaction_it), self._create_item_matcher(
-                INSTALL, installed='lotus-3-16.x86_64', reason=SwdbReason.USER))
+
+            actual = next(transaction_it)
+            expected = TransactionItem(
+                DOWNGRADE,
+                installed='tour-4.6-1.noarch',
+                erased='tour-5-0.noarch'
+            )
+            self.assertEqualTransactionItems(actual, expected)
+
+            actual = next(transaction_it)
+            expected = TransactionItem(
+                INSTALL,
+                installed='lotus-3-16.x86_64',
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            self.assertEqualTransactionItems(actual, expected)
+
             self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_update_notavailable(self):

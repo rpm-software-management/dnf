@@ -20,8 +20,8 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import libdnf.swdb
 import rpm
-from hawkey import SwdbReason
 
 import dnf.goal
 import dnf.repo
@@ -102,30 +102,57 @@ class TransactionItemTest(tests.support.DnfBaseTestCase):
 
     def test_propagated_reason(self):
 
-        pkg1 = self.history.ipkg_to_pkg(self.newpkg)
-        pid = self.history.add_package(pkg1)
-        self.history.swdb.trans_data_beg(1, pid, SwdbReason.DEP, "Installed", False)
+        self.newpkg._force_swdb_repoid = "main"
+        tsi1 = dnf.transaction.TransactionItem(
+            dnf.transaction.INSTALL,
+            installed=self.newpkg,
+            reason=libdnf.swdb.TransactionItemReason_DEPENDENCY
+        )
 
-        pkg2 = self.history.ipkg_to_pkg(self.oldpkg)
-        pid = self.history.add_package(pkg2)
-        self.history.swdb.trans_data_beg(1, pid, SwdbReason.DEP, "Installed", False)
+        self.oldpkg._force_swdb_repoid = "main"
+        tsi2 = dnf.transaction.TransactionItem(
+            dnf.transaction.INSTALL,
+            installed=self.oldpkg,
+            reason=libdnf.swdb.TransactionItemReason_DEPENDENCY
+        )
+
+        tsis = [tsi1, tsi2]
+        self._swdb_commit(tsis)
 
         ionly = self.sack.query().filter(empty=True)  # installonly_query
 
         tsi = dnf.transaction.TransactionItem(
-            dnf.transaction.INSTALL, installed=self.newpkg, reason='user')
-        self.assertEqual(tsi._propagated_reason(self.history, ionly), SwdbReason.USER)
+            dnf.transaction.INSTALL,
+            installed=self.newpkg,
+            reason='user'
+        )
+        actual = tsi._propagated_reason(self.history, ionly)
+        expected = libdnf.swdb.TransactionItemReason_USER
+        self.assertEqual(actual, expected)
+
         tsi = dnf.transaction.TransactionItem(
-            dnf.transaction.UPGRADE, installed=self.newpkg, erased=self.oldpkg)
-        self.assertEqual(tsi._propagated_reason(self.history, ionly), SwdbReason.DEP)
+            dnf.transaction.UPGRADE,
+            installed=self.newpkg,
+            erased=self.oldpkg
+        )
+        actual = tsi._propagated_reason(self.history, ionly)
+        expected = libdnf.swdb.TransactionItemReason_DEPENDENCY
+        self.assertEqual(actual, expected)
+
         tsi = dnf.transaction.TransactionItem(
             dnf.transaction.DOWNGRADE,
-            installed=self.newpkg, erased=self.oldpkg)
-        self.assertEqual(tsi._propagated_reason(self.history, ionly), SwdbReason.DEP)
+            installed=self.newpkg,
+            erased=self.oldpkg
+        )
+        actual = tsi._propagated_reason(self.history, ionly)
+        expected = libdnf.swdb.TransactionItemReason_DEPENDENCY
+        self.assertEqual(actual, expected)
 
         # test the call can survive if no reason is known:
         self.history.reset_db()
-        self.assertEqual(tsi._propagated_reason(self.history, ionly), SwdbReason.UNKNOWN)
+        actual = tsi._propagated_reason(self.history, ionly)
+        expected = libdnf.swdb.TransactionItemReason_UNKNOWN
+        self.assertEqual(actual, expected)
 
     def test_removes(self):
         tsi = dnf.transaction.TransactionItem(

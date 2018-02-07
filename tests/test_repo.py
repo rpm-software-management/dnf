@@ -282,7 +282,7 @@ class RepoTest(RepoTestMixin, tests.support.TestCase):
         self.assertFalse(self.repo.load())
 
     def test_pkgdir(self):
-        self.assertRegexpMatches(self.repo.pkgdir, '/.*tests/repos/rpm')
+        self.assertRegex(self.repo.pkgdir, '/.*tests/repos/rpm')
         self.repo.mirrorlist = 'http://anything'
         self.assertTrue(self.repo.pkgdir.startswith(self.TMP_CACHEDIR))
 
@@ -329,7 +329,7 @@ class RepoTest(RepoTestMixin, tests.support.TestCase):
         self.assertIsNone(self.repo._valid())
 
         repo = dnf.repo.Repo('r', self.conf)
-        self.assertRegexpMatches(repo._valid(), 'no mirror or baseurl')
+        self.assertRegex(repo._valid(), 'no mirror or baseurl')
 
     def test_handle_new_pkg_download(self):
         """Ensure mirrors are never resolved for package download."""

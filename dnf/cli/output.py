@@ -20,12 +20,14 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
+
+import libdnf.swdb
+
 from copy import deepcopy
 from dnf.cli.format import format_number, format_time
 from dnf.i18n import _, P_, ucd, fill_exact_width, textwrap_fill, exact_width
 from dnf.pycomp import xrange, basestring, long, unicode
 from dnf.yum.rpmtrans import LoggingTransactionDisplay
-from hawkey import SwdbReason
 import dnf.callback
 import dnf.cli.progress
 import dnf.cli.term
@@ -69,22 +71,22 @@ def _make_lists(transaction, goal):
         if tsi.op_type == dnf.transaction.DOWNGRADE:
             b.downgraded.append(tsi)
         elif tsi.op_type == dnf.transaction.ERASE:
-            if tsi.erased and goal.get_reason(tsi.erased) == SwdbReason.CLEAN:
+            if tsi.erased and goal.get_reason(tsi.erased) == libdnf.swdb.TransactionItemReason_CLEAN:
                 b.erased_clean.append(tsi)
-            elif tsi.erased and goal.get_reason(tsi.erased) == SwdbReason.DEP:
+            elif tsi.erased and goal.get_reason(tsi.erased) == libdnf.swdb.TransactionItemReason_DEPENDENCY:
                 b.erased_dep.append(tsi)
             else:
                 b.erased.append(tsi)
         elif tsi.op_type == dnf.transaction.INSTALL:
             if tsi.installed:
                 reason = goal.get_reason(tsi.installed)
-                if reason == SwdbReason.USER:
+                if reason == libdnf.swdb.TransactionItemReason_USER:
                     b.installed.append(tsi)
                     continue
-                elif reason == SwdbReason.GROUP:
+                elif reason == libdnf.swdb.TransactionItemReason_GROUP:
                     b.installed_group.append(tsi)
                     continue
-                elif reason == SwdbReason.WEAK:
+                elif reason == libdnf.swdb.TransactionItemReason_WEAK_DEPENDENCY:
                     b.installed_weak.append(tsi)
                     continue
             b.installed_dep.append(tsi)
@@ -1000,7 +1002,7 @@ class Output(object):
         if not error:
             logger.info(_("Freed space: %s"), format_number(totsize))
 
-    def list_group_transaction(self, comps, prst, diff):
+    def list_group_transaction(self, comps, history, diff):
         if not diff:
             return None
 
@@ -1017,7 +1019,7 @@ class Output(object):
             out.append(_('Marking packages as removed by the group:'))
         for grp_id in diff.removed_groups:
             pkgs = list(diff.removed_packages(grp_id))
-            grp_name = prst.group(grp_id).ui_name
+            grp_name = history.group.get(grp_id).ui_name
             rows.extend(_spread_in_columns(4, "@" + grp_name, pkgs))
 
         if rows:
@@ -1328,32 +1330,22 @@ Transaction Summary
 
     def _history_uiactions(self, hpkgs):
         actions = set()
+        actions_short = set()
         count = 0
         for pkg in hpkgs:
-            st = pkg.state
-            if st == 'True-Install':
-                st = 'Install'
-            elif st == 'Dep-Install':
-                # Mask these at the higher levels
-                st = 'Install'
-            elif st == 'Obsoleted' or pkg.obsoleting:
-                #  This is just a UI tweak, as we can't have
-                # just one but we need to count them all.
-                st = 'Obsoleting'
-            if st in ('Install', 'Update', 'Erase', 'Reinstall', 'Downgrade',
-                      'Obsoleting'):
-                actions.add(st)
-                count += 1
-        assert len(actions) <= 6
+            if pkg.state in ('Installed', 'Upgraded', 'Downgraded'):
+                # skip states we don't want to display in user input
+                continue
+            actions.add(pkg.state)
+            actions_short.add(pkg.state_short)
+            count += 1
+
         if len(actions) > 1:
-            large2small = {'Install'      : _('I'),
-                           'Obsoleting'   : _('O'),
-                           'Erase'        : _('E'),
-                           'Reinstall'    : _('R'),
-                           'Downgrade'    : _('D'),
-                           'Update'       : _('U'),
-                           }
-            return count, ", ".join([large2small[x] for x in sorted(actions)])
+            # TODO: translate actions_short and fix ordering accordingly
+            # to preserve output compatibility with YUM and pre-SWDB DNF
+            actions_order = ['D', 'E', 'I', 'O', 'R', 'U']
+            actions_small = [i for i in actions_order if i in actions_short]
+            return count, ", ".join(actions_small)
 
         # So empty transactions work, although that "shouldn't" really happen
         return count, "".join(list(actions))
@@ -1585,7 +1577,7 @@ Transaction Summary
             if lastdbv is not None and trans.tid == lasttid:
                 #  If this is the last transaction, is good and it doesn't
                 # match the current rpmdb ... then mark it as bad.
-                rpmdbv = self.sack._rpmdb_version(self.history)
+                rpmdbv = self.sack._rpmdb_version()
                 trans.compare_rpmdbv(str(rpmdbv))
             lastdbv = None
 
@@ -1767,6 +1759,7 @@ Transaction Summary
                 num += 1
                 print("%4d" % num, line)
 
+    # TODO: remove
     _history_state2uistate = {'True-Install' : _('Install'),
                               'Install'      : _('Install'),
                               'Dep-Install'  : _('Dep-Install'),
