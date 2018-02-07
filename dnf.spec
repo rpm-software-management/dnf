@@ -155,6 +155,7 @@ BuildRequires:  python2-devel
 BuildRequires:  python2-hawkey >= %{hawkey_version}
 BuildRequires:  python2-libdnf >= %{hawkey_version}
 BuildRequires:  python2-libcomps >= %{libcomps_version}
+BuildRequires:  python2-libdnf
 BuildRequires:  python2-librepo >= %{librepo_version}
 BuildRequires:  python2-nose
 %if (0%{?rhel} && 0%{?rhel} <= 7)
@@ -173,6 +174,7 @@ Requires:       deltarpm
 Requires:       python2-hawkey >= %{hawkey_version}
 Requires:       python2-libdnf >= %{hawkey_version}
 Requires:       python2-libcomps >= %{libcomps_version}
+Requires:       python2-libdnf
 Requires:       python2-librepo >= %{librepo_version}
 %if 0%{?rhel} && 0%{?rhel} <= 7
 BuildRequires:  python-iniparse
@@ -200,6 +202,7 @@ BuildRequires:  python3-hawkey >= %{hawkey_version}
 BuildRequires:  python3-libdnf >= %{hawkey_version}
 BuildRequires:  python3-iniparse
 BuildRequires:  python3-libcomps >= %{libcomps_version}
+BuildRequires:  python3-libdnf
 BuildRequires:  python3-librepo >= %{librepo_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-gpg
@@ -212,6 +215,7 @@ Requires:       python3-hawkey >= %{hawkey_version}
 Requires:       python3-libdnf >= %{hawkey_version}
 Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
+Requires:       python3-libdnf
 Requires:       python3-librepo >= %{librepo_version}
 BuildRequires:  python3-rpm >= %{rpm_version}
 Requires:       python3-rpm >= %{rpm_version}
