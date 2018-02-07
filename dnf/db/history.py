@@ -157,7 +157,6 @@ class SwdbInterface(object):
         self._group = None
         self._env = None
         self._addon_data = None
-        self._conn = None
         self._swdb = None
         self._db_dir = db_dir
         self._root = root
@@ -177,49 +176,19 @@ class SwdbInterface(object):
             self._env = EnvironmentPersistor(self)
         return self._env
 
-    def _createdb(self, input_dir):
-        """ Create SWDB database if necessary """
-        if not self._swdb.exist():
-            dbdir = os.path.dirname(self.path)
-            if not os.path.exists(dbdir):
-                os.makedirs(dbdir)
-            self._swdb.create_db()
-
-    def _initSwdb(self, input_dir='/var/lib/dnf/'):
-        """ Create SWDB object and create database if necessary """
-        self._swdb = Swdb.new(self.path, self.releasever)
-        self._createdb(input_dir)
-
     @property
     def swdb(self):
         """ Lazy initialize Swdb object """
         if not self._swdb:
-            dirname = os.path.join(self._root, self._db_dir)
-            path = os.path.join(dirname, "swdb.sqlite")
-            try:
-                os.makedirs(dirname)
-            except OSError as ex:
-                if ex.errno != errno.EEXIST:
-                    raise
-
-            create_db = False
-            if not os.path.exists(path):
-                create_db = True
-
-            self._conn = libdnf.utils.SQLite3(path)
-            # TODO: move _initSwdb into libdnf
-            # TODO: move createdb into libdnf (init Swdb)
-            # TODO: chroot support
+            # _db_dir == persistdir which is prepended with installroot already
+            path = os.path.join(self._db_dir, "sw.db")
+            self._swdb = libdnf.swdb.Swdb(path)
             # TODO: vars -> libdnf
-            self._swdb = libdnf.swdb.Swdb(self._conn)
-            if create_db:
-                self._swdb.createDatabase()
         return self._swdb
 
     def close(self):
         self._group = None
         self._env = None
-        self._conn = None
         if self._swdb:
             self._swdb.closeDatabase()
         self._swdb = None
@@ -371,7 +340,7 @@ class SwdbInterface(object):
         return tid
 
     def pkg_to_swdb_rpm_item(self, po):
-        rpm_item = libdnf.swdb.RPMItem(self._conn)
+        rpm_item = self.swdb.createRPMItem()
         rpm_item.setName(po.name)
         rpm_item.setEpoch(po.epoch or 0)
         rpm_item.setVersion(po.version)
