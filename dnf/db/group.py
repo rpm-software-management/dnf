@@ -68,7 +68,7 @@ class GroupPersistor(PersistorBase):
         self.upgraded[obj.getGroupId()] = obj
 
     def new(self, obj_id, name, translated_name, pkg_types):
-        swdb_group = libdnf.swdb.CompsGroupItem(self.swdb._conn)
+        swdb_group = self.swdb.swdb.createCompsGroupItem()
         swdb_group.setGroupId(obj_id)
         swdb_group.setName(name)
         swdb_group.setTranslatedName(translated_name)
@@ -127,7 +127,7 @@ class EnvironmentPersistor(PersistorBase):
         self.upgraded[obj.getEnvironmentId()] = obj
 
     def new(self, obj_id, name, translated_name, pkg_types):
-        swdb_env = libdnf.swdb.CompsEnvironmentItem(self.swdb._conn)
+        swdb_env = self.swdb.swdb.createCompsEnvironmentItem()
         swdb_env.setEnvironmentId(obj_id)
         swdb_env.setName(name)
         swdb_env.setTranslatedName(translated_name)
