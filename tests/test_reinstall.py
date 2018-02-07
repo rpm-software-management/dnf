@@ -22,6 +22,8 @@ from __future__ import unicode_literals
 
 import itertools
 
+import libdnf.swdb
+
 import dnf
 
 import tests.support
@@ -129,8 +131,21 @@ class Reinstall(tests.support.ResultTestCase):
 
     def test_reinstall_old_reponame_installed(self):
         """Test whether it reinstalls packages only from the repository."""
-        for pkg in self.sack.query().installed().filter(name='librita'):
-            tests.support.mockSwdbPkg(self.history, pkg, repo='main')
+
+        self.base = tests.support.MockBase('main')
+        self.base.conf.multilib_policy = 'all'
+
+        tsis = []
+        for pkg in self.base.sack.query().installed().filter(name='librita'):
+            print("PKG", pkg)
+            pkg._force_swdb_repoid = "main"
+            tsi = dnf.transaction.TransactionItem(
+                dnf.transaction.INSTALL,
+                installed=pkg,
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            tsis.append(tsi)
+        self._swdb_commit(tsis)
 
         reinstalled_count = self.base.reinstall('librita', old_reponame='main')
 
@@ -138,13 +153,15 @@ class Reinstall(tests.support.ResultTestCase):
         self.assertResult(self.base, itertools.chain(
             self.sack.query().installed().filter(name__neq='librita'),
             dnf.subject.Subject('librita.i686').get_best_query(self.sack).installed(),
-            dnf.subject.Subject('librita').get_best_query(self.sack).available()))
+            dnf.subject.Subject('librita').get_best_query(self.sack).available())
+        )
 
     def test_reinstall_old_reponame_notinstalled(self):
         """Test whether it reinstalls packages only from the repository."""
         self.assertRaises(
             dnf.exceptions.PackagesNotInstalledError,
-            self.base.reinstall, 'librita', old_reponame='non-main')
+            self.base.reinstall, 'librita', old_reponame='non-main'
+        )
 
     def test_reinstall_remove_notavailable(self):
         """Test whether it removes the package which is not available."""
@@ -152,4 +169,5 @@ class Reinstall(tests.support.ResultTestCase):
 
         self.assertResult(
             self.base,
-            self.sack.query().installed().filter(name__neq='hole'))
+            self.sack.query().installed().filter(name__neq='hole')
+        )

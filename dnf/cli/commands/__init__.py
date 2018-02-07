@@ -23,9 +23,11 @@ Classes for subcommands of the yum command line interface.
 
 from __future__ import print_function
 from __future__ import unicode_literals
+
+import libdnf.swdb
+
 from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _, ucd
-from hawkey import SwdbReason
 
 import argparse
 import dnf.cli
@@ -843,7 +845,7 @@ class HistoryCommand(Command):
             demands.fresh_metadata = False
         demands.sack_activation = True
         demands.root_user = True
-        if not os.access(self.base.history.get_path(), os.R_OK):
+        if not os.access(self.base.history.path, os.R_OK):
             logger.critical(_("You don't have access to the history DB."))
             raise dnf.cli.CliError
         self.transaction_ids = self._args2transaction_ids(self.merged_transaction_ids,
@@ -883,7 +885,7 @@ class HistoryCommand(Command):
         #   (dependencies are promoted to user installed packages)
 
         try:
-            self.base.transaction = converter.convert(operations, SwdbReason.USER)
+            self.base.transaction = converter.convert(operations, libdnf.swdb.TransactionItemReason_USER)
         except dnf.exceptions.PackagesNotInstalledError as err:
             logger.info(_('No package %s installed.'),
                         self.output.term.bold(ucd(err.pkg_spec)))

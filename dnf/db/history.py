@@ -1,4 +1,6 @@
-# Copyright (C) 2009, 2012-2017  Red Hat, Inc.
+# -*- coding: utf-8 -*-
+
+# Copyright (C) 2009, 2012-2018  Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -14,33 +16,166 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 #
-# James Antill <james@fedoraproject.org>
-# Eduard Cuba <ecuba@redhat.com>
 
-from dnf.i18n import ucd, _
-import time
+import calendar
+import errno
 import os
+import time
+
+import libdnf.swdb
+import libdnf.utils
+
+from dnf.i18n import ucd
+from dnf.transaction import convert_action, convert_reason
 from dnf.yum import misc
-from hawkey import Swdb, SwdbPkg, SwdbItem, convert_reason
-from .group import GroupPersistor
-from dnf.util import logger
+
+from .group import GroupPersistor, EnvironmentPersistor
+
+
+class RPMTransactionItemWrapper(object):
+    def __init__(self, swdb, item):
+        self._swdb = swdb
+        self._item = item
+
+    def __str__(self):
+        return self._item.getItem().toStr()
+
+    def match(self, pattern):
+        return True
+
+    @property
+    def name(self):
+        return self._item.getRPMItem().getName()
+
+    @property
+    def arch(self):
+        return self._item.getRPMItem().getArch()
+
+    @property
+    def state(self):
+        return self._item.getActionName()
+
+    @property
+    def state_short(self):
+        return self._item.getActionShort()
+
+    @property
+    def done(self):
+        return self._item.getDone()
+
+    @property
+    def from_repo(self):
+        return self._item.getRepoid()
+
+    def ui_from_repo(self):
+        if not self._item.getRepoid():
+            return ""
+        return "@" + self._item.getRepoid()
+
+    @property
+    def obsoleting(self):
+        return None
+
+    def get_reason(self):
+        return self._swdb.reason(self)
+
+
+class TransactionWrapper(object):
+    def __init__(self, trans):
+        self._trans = trans
+        self.altered_lt_rpmdb = False
+        self.altered_gt_rpmdb = False
+
+    @property
+    def tid(self):
+        return self._trans.getId()
+
+    @property
+    def cmdline(self):
+        return self._trans.getCmdline()
+
+    @property
+    def beg_timestamp(self):
+        return self._trans.getDtBegin()
+
+    @property
+    def end_timestamp(self):
+        return self._trans.getDtEnd()
+
+    @property
+    def beg_rpmdb_version(self):
+        return self._trans.getRpmdbVersionBegin()
+
+    @property
+    def end_rpmdb_version(self):
+        return self._trans.getRpmdbVersionEnd()
+
+    @property
+    def return_code(self):
+        return self._trans.getDone() != 1
+
+    @property
+    def loginuid(self):
+        return self._trans.getUserId()
+
+    @property
+    def data(self):
+        return self.packages
+
+    @property
+    def is_output(self):
+        output = self._trans.getConsoleOutput()
+        return bool(output)
+
+    def tids(self):
+        return [self._trans.getId()]
+
+    def performed_with(self):
+        return []
+
+    def packages(self):
+        result = self._trans.getItems()
+        result = [RPMTransactionItemWrapper(self, i) for i in result]
+        return result
+
+    def output(self):
+        return []
+
+    def error(self):
+        return []
+
+    def compare_rpmdbv(self, rpmdbv):
+        self.altered_gt_rpmdb = self._trans.getRpmdbVersionEnd() != rpmdbv
 
 
 class SwdbInterface(object):
 
     def __init__(self, db_dir, root='/', releasever=""):
-        self.path = os.path.join(root, db_dir, "swdb.sqlite")
+        # TODO: record all vars
+        # TODO: remove relreasever from options
         self.releasever = str(releasever)
         self._group = None
+        self._env = None
+        self._addon_data = None
+        self._conn = None
         self._swdb = None
         self._db_dir = db_dir
         self._root = root
 
+    def __del__(self):
+        self.close()
+
     @property
     def group(self):
-        if not self._group:
-            self._group = GroupPersistor(self.swdb)
+        if self._group is None:
+            self._group = GroupPersistor(self)
         return self._group
+
+    @property
+    def env(self):
+        if self._env is None:
+            self._env = EnvironmentPersistor(self)
+        return self._env
 
     def _createdb(self, input_dir):
         """ Create SWDB database if necessary """
@@ -50,7 +185,7 @@ class SwdbInterface(object):
                 os.makedirs(dbdir)
             self._swdb.create_db()
 
-    def _initSwdb(self, input_dir):
+    def _initSwdb(self, input_dir='/var/lib/dnf/'):
         """ Create SWDB object and create database if necessary """
         self._swdb = Swdb.new(self.path, self.releasever)
         self._createdb(input_dir)
@@ -59,211 +194,250 @@ class SwdbInterface(object):
     def swdb(self):
         """ Lazy initialize Swdb object """
         if not self._swdb:
-            dbdir = os.path.join(self._root, self._db_dir)
-            self._initSwdb(dbdir)
+            dirname = os.path.join(self._root, self._db_dir)
+            path = os.path.join(dirname, "swdb.sqlite")
+            try:
+                os.makedirs(dirname)
+            except OSError as ex:
+                if ex.errno != errno.EEXIST:
+                    raise
+
+            create_db = False
+            if not os.path.exists(path):
+                create_db = True
+
+            self._conn = libdnf.utils.SQLite3(path)
+            # TODO: move _initSwdb into libdnf
+            # TODO: move createdb into libdnf (init Swdb)
+            # TODO: chroot support
+            # TODO: vars -> libdnf
+            self._swdb = libdnf.swdb.Swdb(self._conn)
+            if create_db:
+                self._swdb.createDatabase()
         return self._swdb
 
-    def group_active(self):
-        return self._group is not None
-
-    def reset_group(self):
-        self._group = GroupPersistor(self.swdb)
-
     def close(self):
-        if not self._swdb:
-            return
-        return self.swdb.close()
+        self._group = None
+        self._env = None
+        self._conn = None
+        if self._swdb:
+            self._swdb.closeDatabase()
+        self._swdb = None
 
-    def add_package(self, pkg):
-        return self.swdb.add_package(pkg)
-
-    def update_package_data(self, pid, tid, package_data):
-        """ Update Swdb.PkgData for package with pid identifier in transaction tid
-            This method must be called after package data initialization using method `beg`
-        """
-        return self.swdb.update_package_data(pid, tid, package_data)
+    @property
+    def path(self):
+        return self.swdb.getPath()
 
     def reset_db(self):
-        return self.swdb.reset_db()
+        return self.swdb.resetDatabase()
 
-    def get_path(self):
-        return self.swdb.get_path()
-
+    # TODO: rename to get_last_transaction?
     def last(self, complete_transactions_only=True):
-        return self.swdb.last(complete_transactions_only)
+        # TODO: complete_transactions_only
+        t = self.swdb.getLastTransaction()
+        if not t:
+            return None
+        return TransactionWrapper(t)
 
-    def set_repo(self, pkg, repo):
-        """Set repository for package"""
-        return self.swdb.set_repo(str(pkg), repo)
+    # TODO: rename to: list_transactions?
+    def old(self, tids=None, limit=0, complete_transactions_only=False):
+        tids = tids or []
+        tids = [int(i) for i in tids]
+        result = self.swdb.listTransactions()
+        result = [TransactionWrapper(i) for i in result]
+        # TODO: move to libdnf
+        if tids:
+            result = [i for i in result if i.tid in tids]
 
-    def checksums(self, packages):
-        """Get checksum list of desired packages.
-        Returns: List is in format
-            [checksum1_type, checksum1_data, checksum2_type, checksum2_data, ...]
-        """
-        return self.swdb.checksums([str(pkg) for pkg in packages])
-
-    def old(self, tids=[], limit=0, complete_transactions_only=False):
-        tids = list(tids)
-        if tids and not isinstance(tids[0], int):
-            for i, value in enumerate(tids):
-                tids[i] = int(value)
-        return self.swdb.trans_old(tids, limit, complete_transactions_only)
-
-    def _log_group_trans(self, tid):
-        installed = self.group.groups_installed
-        removed = self.group.groups_removed
-        self.swdb.log_group_trans(tid, installed, removed)
+        # populate altered_lt_rpmdb and altered_gt_rpmdb
+        for i, trans in enumerate(result):
+            if i == 0:
+                continue
+            prev_trans = result[i-1]
+            if trans._trans.getRpmdbVersionBegin() != prev_trans._trans.getRpmdbVersionEnd():
+                trans.altered_lt_rpmdb = True
+                prev_trans.altered_gt_rpmdb = True
+        return result[::-1]
 
     def set_reason(self, pkg, reason):
         """Set reason for package"""
-        return self.swdb.set_reason(str(pkg), reason)
+        rpm_item = self.pkg_to_swdb_rpm_item(pkg)
+        repoid = self.repo(pkg)
+        action = libdnf.swdb.TransactionItemAction_REASON_CHANGE
+        reason = reason
+        replaced_by = None
+        pkg._swdb_item = self.swdb.addItem(rpm_item, repoid, action, reason)
 
+    '''
     def package(self, pkg):
         """Get SwdbPackage from package"""
         return self.swdb.package(str(pkg))
+    '''
 
     def repo(self, pkg):
         """Get repository of package"""
-        return self.swdb.repo(str(pkg))
+        return self.swdb.getRPMRepo(str(pkg))
 
     def package_data(self, pkg):
         """Get package data for package"""
-        return self.swdb.package_data(str(pkg))
+        # trans item is returned
+        result = self.swdb.getRPMTransactionItem(str(pkg))
+        result = RPMTransactionItemWrapper(self, result)
+        return result
 
     def reason(self, pkg):
         """Get reason for package"""
-        return self.swdb.reason(str(pkg))
+        result = self.swdb.resolveRPMTransactionItemReason(pkg.name, pkg.arch, -1)
+        return result
 
-    def ipkg_to_pkg(self, ipkg):
-        csum = ipkg.returnIdSum()
-        pkgtup = map(ucd, ipkg.pkgtup)
-        (n, a, e, v, r) = pkgtup
-        pkg = SwdbPkg.new(
-            n,
-            int(e),
-            v,
-            r,
-            a,
-            csum[1] or '',
-            csum[0] or '',
-            SwdbItem.RPM)
-        return pkg
-
+    # TODO: rename to begin_transaction?
     def beg(self, rpmdb_version, using_pkgs, tsis, cmdline=None):
-        tid = self.swdb.trans_beg(
-            int(time.time()),
-            str(rpmdb_version),
-            cmdline or "",
-            str(misc.getloginuid()),
-            self.releasever)
+        self.swdb.initTransaction()
 
-        self._tid = tid
-
+        '''
         for pkg in using_pkgs:
             pid = self.pkg2pid(pkg)
             self.swdb.trans_with(tid, pid)
+        '''
 
-        if self.group:
-            self._log_group_trans(tid)
-
+        # add RPMs to the transaction
         for tsi in tsis:
             for (pkg, state, obsoleting) in tsi._history_iterator():
-                pid = self.pkg2pid(pkg)
-                self.swdb.trans_data_beg(
-                    tid,
-                    pid,
-                    convert_reason(tsi.reason),
-                    state,
-                    obsoleting)
+                action = convert_action(state)
+                if action is None:
+                    # skip, we don't want to log the action
+                    continue
+                rpm_item = self.pkg_to_swdb_rpm_item(pkg)
+                force_repoid = getattr(pkg, "_force_swdb_repoid", None)
+                repoid = force_repoid or pkg.reponame
+                reason = convert_reason(tsi.reason)
+                replaced_by = None
+                pkg._swdb_item = self.swdb.addItem(rpm_item, repoid, action, reason)
+
+        if self.group:
+            for group_id, group_item in sorted(self.group.installed.items()):
+                repoid = ""
+                action = libdnf.swdb.TransactionItemAction_INSTALL
+                reason = libdnf.swdb.TransactionItemReason_USER
+                replaced_by = None
+                group_item._swdb_item = self.swdb.addItem(group_item, repoid, action, reason)
+
+            for group_id, group_item in sorted(self.group.upgraded.items()):
+                repoid = ""
+                action = libdnf.swdb.TransactionItemAction_UPGRADE
+                reason = libdnf.swdb.TransactionItemReason_USER
+                replaced_by = None
+                group_item._swdb_item = self.swdb.addItem(group_item, repoid, action, reason)
+
+            for group_id, group_item in sorted(self.group.removed.items()):
+                repoid = ""
+                action = libdnf.swdb.TransactionItemAction_REMOVE
+                reason = libdnf.swdb.TransactionItemReason_USER
+                replaced_by = None
+                group_item._swdb_item = self.swdb.addItem(group_item, repoid, action, reason)
+
+        if self.env:
+            for env_id, env_item in sorted(self.env.installed.items()):
+                repoid = ""
+                action = libdnf.swdb.TransactionItemAction_INSTALL
+                reason = libdnf.swdb.TransactionItemReason_USER
+                replaced_by = None
+                env_item._swdb_item = self.swdb.addItem(env_item, repoid, action, reason)
+
+            for env_id, env_item in sorted(self.env.upgraded.items()):
+                repoid = ""
+                action = libdnf.swdb.TransactionItemAction_UPGRADE
+                reason = libdnf.swdb.TransactionItemReason_USER
+                replaced_by = None
+                env_item._swdb_item = self.swdb.addItem(env_item, repoid, action, reason)
+
+            for env_id, env_item in sorted(self.env.removed.items()):
+                repoid = ""
+                action = libdnf.swdb.TransactionItemAction_REMOVE
+                reason = libdnf.swdb.TransactionItemReason_USER
+                replaced_by = None
+                env_item._swdb_item = self.swdb.addItem(env_item, repoid, action, reason)
+
+        # save when everything is in memory
+        tid = self.swdb.beginTransaction(
+            int(calendar.timegm(time.gmtime())),
+            str(rpmdb_version),
+            cmdline or "",
+            int(misc.getloginuid())
+        )
+        # TODO: store releasever
+        self._tid = tid
+
         return tid
 
-    def pkg2pid(self, po, create=True):
-        if hasattr(po, 'pid') and po.pid:
-            return po.pid
-        # try to find package in DB by its nevra
-        pid = self.swdb.pid_by_nevra(str(po))
-        if pid or not create:
-            return pid
-        # pkg not found in db - create new object
-        if not isinstance(po, SwdbPkg):
-            po = self.ipkg_to_pkg(po)
-        return self.swdb.add_package(po)
+    def pkg_to_swdb_rpm_item(self, po):
+        rpm_item = libdnf.swdb.RPMItem(self._conn)
+        rpm_item.setName(po.name)
+        rpm_item.setEpoch(po.epoch or 0)
+        rpm_item.setVersion(po.version)
+        rpm_item.setRelease(po.release)
+        rpm_item.setArch(po.arch)
+        return rpm_item
 
     def log_scriptlet_output(self, msg):
-        if msg is None or not hasattr(self, '_tid'):
-            return  # Not configured to run
-        for error in msg.splitlines():
-            error = ucd(error)
-            self.swdb.log_output(self._tid, error)
-
-    def trans_data_pid_end(self, pid, state):
-        if not hasattr(self, '_tid') or state is None:
+        if not hasattr(self, '_tid'):
             return
-        self.swdb.trans_data_pid_end(pid, self._tid, state)
+        if not msg:
+            return
+        for line in msg.splitlines():
+            line = ucd(line)
+            self.swdb.addConsoleOutputLine(1, line)
 
+    '''
     def _log_errors(self, errors):
         for error in errors:
             error = ucd(error)
             self.swdb.log_error(self._tid, error)
+    '''
 
+    # TODO: rename to end_transaction?
     def end(self, end_rpmdb_version="", return_code=0, errors=None):
         assert return_code or not errors
+        # TODO: fix return_code
+        return_code = not bool(return_code)
         if not hasattr(self, '_tid'):
             return  # Failed at beg() time
-        self.swdb.trans_end(
-            self._tid,
+        self.swdb.endTransaction(
             int(time.time()),
             str(end_rpmdb_version),
-            return_code
+            bool(return_code)
         )
+        # TODO: consider cleaning individual attributes?
+        self.close()
+        '''
         if errors is not None:
             self._log_errors(errors)
+        '''
         del self._tid
 
-    def _update_ipkg_data(self, ipkg, pkg_data):
-        """ Save all the data for yumdb for this installed pkg, assumes
-            there is no data currently. """
-        pid = self.pkg2pid(ipkg)
-        if pid and self._tid:
-            # FIXME: resolve installonly
-            return self.update_package_data(pid, self._tid, pkg_data)
-        return False
-
-    def sync_alldb(self, ipkg, pkg_data):
-        """ Sync. yumdb for this installed pkg. """
-        return self._update_ipkg_data(ipkg, pkg_data)
-
+    # TODO: ignore_case, more patterns
     def search(self, patterns, ignore_case=True):
         """ Search for history transactions which contain specified
             packages al. la. "yum list". Returns transaction ids. """
-        return self.swdb.search(patterns)
+        return self.swdb.searchTransactionsByRPM(patterns)
 
     def user_installed(self, pkg):
         """Returns True if package is user installed"""
-        return self.swdb.user_installed(str(pkg))
+        reason = self.swdb.resolveRPMTransactionItemReason(pkg.name, pkg.arch, -1)
+        if reason == libdnf.swdb.TransactionItemReason_USER:
+            return True
+        # TODO: return True also for libdnf.swdb.TransactionItemReason_UNKNOWN?
+        return False
 
     def select_user_installed(self, pkgs):
         """Select user installed packages from list of pkgs"""
-
-        # swdb.select_user_installed returns indexes of user installed packages
-        return [pkgs[i] for i in self.swdb.select_user_installed([str(pkg) for pkg in pkgs])]
-
-    def get_packages_by_tid(self, tid):
-        if isinstance(tid, list):
-            packages = []
-            for t in tid:
-                packages += self.swdb.get_packages_by_tid(t)
-            return packages
-        return self.swdb.get_packages_by_tid(tid)
-
-    def trans_cmdline(self, tid):
-        if isinstance(tid, list):
-            cmdlines = []
-            for t in tid:
-                cmdlines.append(self.swdb.trans_cmdline(t))
-            return cmdlines
-        return self.swdb.trans_cmdline(tid)
+        result = []
+        for po in pkgs:
+            reason = self.swdb.resolveRPMTransactionItemReason(po.name, po.arch, -1)
+            if reason != libdnf.swdb.TransactionItemReason_USER:
+                continue
+            result.append(po)
+        return result
 
     def get_erased_reason(self, pkg, first_trans, rollback):
         """Get reason of package before transaction being undone. If package
@@ -272,4 +446,13 @@ class SwdbInterface(object):
         :param pkg: package being installed
         :param first_trans: id of first transaction being undone
         :param rollback: True if transaction is performing a rollback"""
-        return self.swdb.get_erased_reason(str(pkg), first_trans, rollback)
+        if rollback:
+            # return the reason at the point of rollback; we're setting that reason
+            result = self.swdb.resolveRPMTransactionItemReason(pkg.name, pkg.arch, first_trans)
+        else:
+            result = self.swdb.resolveRPMTransactionItemReason(pkg.name, pkg.arch, -1)
+
+        # consider unknown reason as user-installed
+        if result == libdnf.swdb.TransactionItemReason_UNKNOWN:
+            result = libdnf.swdb.TransactionItemReason_USER
+        return result

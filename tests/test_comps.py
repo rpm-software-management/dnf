@@ -24,7 +24,7 @@ from __future__ import unicode_literals
 import operator
 
 import libcomps
-from hawkey import SwdbReason, SwdbPkg, SwdbItem
+import libdnf.swdb
 
 import dnf.comps
 import dnf.exceptions
@@ -176,36 +176,42 @@ class SolverGroupTest(tests.support.DnfBaseTestCase):
     COMPS_SOLVER = True
 
     def test_install(self):
-        grp = self.comps.group_by_pattern('base')
-        trans = self.solver._group_install(grp.id, dnf.comps.MANDATORY, ['right'])
-        self.persistor.commit()
+        group_id = 'base'
+        trans = self.solver._group_install(group_id, dnf.comps.MANDATORY)
         self.assertLength(trans.install, 2)
-        p_grp = self.persistor.group('base')
-        self.assertCountEqual(p_grp.get_full_list(), ['pepper', 'tour'])
-        self.assertCountEqual(p_grp.get_exclude(), ['right'])
-        self.assertEqual(p_grp.pkg_types, dnf.comps.MANDATORY)
+        self._swdb_commit()
+
+        swdb_group = self.history.group.get(group_id)
+        self.assertCountEqual([i.getName() for i in swdb_group.getPackages()], ['pepper', 'tour'])
+        self.assertEqual(swdb_group.getPackageTypes(), dnf.comps.MANDATORY)
 
     def test_removable_pkg(self):
-        grp = self.comps.group_by_pattern('base')
-        self.solver._group_install(grp.id, dnf.comps.MANDATORY, [])
-        self.persistor.commit()
+        comps_group = self.comps.group_by_pattern('base')
+        self.solver._group_install(comps_group.id, dnf.comps.MANDATORY, [])
 
-        pkg1 = SwdbPkg.new("pepper", 0, "20", "0", "x86_64", "987abc", "sha256", SwdbItem.RPM)
-        pid = self.history.add_package(pkg1)
-        self.history.swdb.trans_data_beg(1, pid, SwdbReason.GROUP, "Installed", False)
+        tsis = []
 
-        pkg2 = SwdbPkg.new("right", 1, "22", "0", "x86_64", "321abcd", "sha256", SwdbItem.RPM)
-        pid2 = self.history.add_package(pkg2)
-        self.history.swdb.trans_data_beg(1, pid2, SwdbReason.DEP, "Installed", False)
+        pkg1 = self.base.sack.query().filter(name="pepper", epoch=0, version="20", release="0", arch="x86_64")[0]
+        tsi = dnf.transaction.TransactionItem(
+            dnf.transaction.INSTALL,
+            installed=pkg1,
+            reason=libdnf.swdb.TransactionItemReason_GROUP
+        )
+        tsis.append(tsi)
 
-        n = "dupl"
-        p_grp = self.persistor.new_group(n, n, n, True, 0)
-        self.persistor.add_group(p_grp)
-        p_grp.add_package(["tour"])
+        pkg3 = self.base.sack.query().filter(name="tour", version="5", release="0", arch="noarch")[0]
+        tsi = dnf.transaction.TransactionItem(
+            dnf.transaction.INSTALL,
+            installed=pkg3,
+            reason=libdnf.swdb.TransactionItemReason_GROUP
+        )
+        tsis.append(tsi)
 
-        pkg3 = SwdbPkg.new("tour", 0, "20", "0", "x86_64", "132abcd", "sha256", SwdbItem.RPM)
-        pid3 = self.history.add_package(pkg3)
-        self.history.swdb.trans_data_beg(1, pid3, SwdbReason.GROUP, "Installed", False)
+        group_id = "dupl"
+        swdb_group = self.history.group.new(group_id, group_id, group_id, dnf.comps.DEFAULT)
+        swdb_group.addPackage("tour", True, dnf.comps.MANDATORY)
+        self.history.group.install(swdb_group)
+        self._swdb_commit(tsis)
 
         # pepper is in single group with reason "group"
         self.assertTrue(self.solver._removable_pkg('pepper'))
@@ -214,43 +220,48 @@ class SolverGroupTest(tests.support.DnfBaseTestCase):
         # tour appears in more than one group
         self.assertFalse(self.solver._removable_pkg('tour'))
 
-        self.persistor.remove_group(p_grp, True)
+        swdb_group = self.history.group.get(group_id)
+        self.history.group.remove(swdb_group)
+
         # tour appears only in one group now
         self.assertTrue(self.solver._removable_pkg('tour'))
 
     def test_remove(self):
         grp = self.comps.group_by_pattern('base')
         self.solver._group_install(grp.id, dnf.comps.MANDATORY, [])
-        self.persistor.commit()
 
-        grps = self.persistor.groups_by_pattern('base')
+        grps = self.history.group.search_by_pattern('base')
         for grp in grps:
             self.solver._group_remove(grp)
-        self.persistor.commit()
 
         # need to load groups again - loaded object is stays the same
-        grps = self.persistor.groups_by_pattern('base')
+        grps = self.history.group.search_by_pattern('base')
         for grp in grps:
-                self.assertFalse(grp.installed)
+            self.assertFalse(grp.installed)
 
     def test_upgrade(self):
         # setup of the "current state"
-        name = "base"
-        p_grp = self.persistor.new_group(name,
-                                         name,
-                                         name,
-                                         True,
-                                         dnf.comps.MANDATORY)
-        self.persistor.add_group(p_grp)
-        p_grp.add_package(['pepper', 'handerson'])
-        grp = self.comps.group_by_pattern('base')
-        trans = self.solver._group_upgrade(grp.id)
+        group_id = 'base'
+
+        swdb_group = self.history.group.new(group_id, group_id, group_id, dnf.comps.MANDATORY)
+        for pkg_name in ['pepper', 'handerson']:
+            swdb_group.addPackage(pkg_name, True, dnf.comps.MANDATORY)
+        self.history.group.install(swdb_group)
+        self._swdb_commit()
+
+        swdb_group = self.history.group.get(group_id)
+        self.assertCountEqual([i.getName() for i in swdb_group.getPackages()], ('handerson', 'pepper'))
+
+        comps_group = self.comps.group_by_pattern(group_id)
+
+        trans = self.solver._group_upgrade(group_id)
         self.assertTransEqual(trans.install, ('tour',))
         self.assertTransEqual(trans.remove, ('handerson',))
         self.assertTransEqual(trans.upgrade, ('pepper',))
-        p_grp = self.persistor.group('base')
-        self.assertCountEqual(p_grp.get_full_list(), ('tour', 'pepper'))
+        self._swdb_commit()
 
+        swdb_group = self.history.group.get(group_id)
+        self.assertCountEqual([i.getName() for i in swdb_group.getPackages()], ('tour', 'pepper'))
 
 class SolverEnvironmentTest(tests.support.DnfBaseTestCase):
 
@@ -258,73 +269,82 @@ class SolverEnvironmentTest(tests.support.DnfBaseTestCase):
     COMPS = True
     COMPS_SOLVER = True
 
-    def _install(self, env, ex=True):
-        exclude = ('lotus',) if ex else []
-        trans = self.solver._environment_install(
-            env.id,
-            dnf.comps.MANDATORY,
-            exclude)
-        self.persistor.commit()
-        return trans
-
     def test_install(self):
-        env = self.comps.environment_by_pattern('sugar-desktop-environment')
-        trans = self._install(env)
-        self.assertCountEqual([pkg.name for pkg in trans.install],
-                              ('pepper', 'trampoline', 'hole'))
-        sugar = self.persistor.environment('sugar-desktop-environment')
-        self.assertCountEqual(sugar.get_group_list(), ('Peppers', 'somerset'))
-        somerset = self.persistor.group('somerset')
-        self.assertTrue(somerset.installed)
-        self.assertEqual(somerset.pkg_types, dnf.comps.MANDATORY)
-        self.assertCountEqual(somerset.get_exclude(), ('lotus',))
-        base = self.persistor.group('somerset')
-        self.assertTrue(base.installed)
+        env_id = 'sugar-desktop-environment'
+        env = self.comps._environment_by_id(env_id)
+        trans = self.solver._environment_install(env_id, dnf.comps.MANDATORY, [])
+        self._swdb_commit()
+
+        self.assertCountEqual([pkg.name for pkg in trans.install], ('pepper', 'trampoline', 'hole', 'lotus'))
+
+        sugar = self.history.env.get(env_id)
+        self.assertCountEqual([i.getGroupId() for i in sugar.getGroups()], ('Peppers', 'somerset', 'base'))
+
+        somerset = self.history.group.get('somerset')
+        self.assertIsNotNone(somerset)
+        self.assertEqual(somerset.getPackageTypes(), dnf.comps.MANDATORY)
+
+        base = self.history.group.get('base')
+        self.assertEqual(base, None)
 
     def test_remove(self):
-        env = self.comps.environment_by_pattern('sugar-desktop-environment')
-        self._install(env)
-        self.solver._environment_remove(env.id)
-        self.persistor.commit()
+        env_id = 'sugar-desktop-environment'
+        comps_env = self.comps.environment_by_pattern(env_id)
 
-        p_env = self.persistor.environment('sugar-desktop-environment')
-        self.assertFalse(p_env.installed)
-        self.assertEqual(p_env.pkg_types, dnf.comps.MANDATORY)
-        self.assertEqual(p_env.grp_types, dnf.comps.ALL_TYPES)
+        self.solver._environment_install(comps_env.id, dnf.comps.MANDATORY, [])
+        self._swdb_commit()
 
-        grp_list = p_env.get_group_list()
-        self.assertTrue(len(grp_list))
-        for grp in grp_list:
-            _grp = self.persistor.group(grp)
-            self.assertEqual(_grp.pkg_types, dnf.comps.MANDATORY)
-            self.assertFalse(_grp.installed)
+        swdb_env = self.history.env.get(comps_env.id)
+        self.assertEqual(swdb_env.getPackageTypes(), dnf.comps.MANDATORY)
+        group_ids = [i.getGroupId() for i in swdb_env.getGroups()]
+
+        self.solver._environment_remove(comps_env.id)
+        self._swdb_commit()
+
+        swdb_env = self.history.env.get(comps_env.id)
+        # if swdb_env is None, then it's removed
+        self.assertIsNone(swdb_env)
+        # test if also all groups were removed
+        for group_id in group_ids:
+            swdb_group = self.history.group.get(group_id)
+            self.assertIsNone(swdb_group)
 
         # install it again with different pkg_types
-        self.solver._environment_install(env.id, dnf.comps.OPTIONAL, [])
-        self.persistor.commit()
-        p_env = self.persistor.environment('sugar-desktop-environment')
-        self.assertTrue(p_env.installed)
-        self.assertEqual(p_env.pkg_types, dnf.comps.OPTIONAL)
-        self.assertEqual(p_env.grp_types, dnf.comps.ALL_TYPES)
-        grp_list = p_env.get_group_list()
-        self.assertTrue(len(grp_list))
-        for grp in grp_list:
-            _grp = self.persistor.group(grp)
-            self.assertEqual(_grp.pkg_types, dnf.comps.OPTIONAL)
+        self.solver._environment_install(comps_env.id, dnf.comps.OPTIONAL, [])
+        self._swdb_commit()
+
+        swdb_env = self.history.env.get(comps_env.id)
+        self.assertIsNotNone(swdb_env)
+        self.assertEqual(swdb_env.getPackageTypes(), dnf.comps.OPTIONAL)
+
+        group_ids = [i.getGroupId() for i in swdb_env.getGroups()]
+        self.assertTrue(len(group_ids))
+        for group_id in group_ids:
+            swdb_group = self.history.group.get(group_id)
+            if group_id == "base" and swdb_group is None:
+                continue
+            self.assertEqual(swdb_group.getPackageTypes(), dnf.comps.OPTIONAL)
 
     def test_upgrade(self):
         """Upgrade environment, the one group it knows is no longer installed."""
-        env = self.comps.environment_by_pattern('sugar-desktop-environment')
-        self.solver._environment_install(env.id, dnf.comps.ALL_TYPES, [])
-        self.persistor.commit()
+        env_id = "sugar-desktop-environment"
+        comps_env = self.comps.environment_by_pattern(env_id)
 
-        p_env = self.persistor.environment('sugar-desktop-environment')
-        self.assertTrue(p_env.installed)
+        self.solver._environment_install(comps_env.id, dnf.comps.ALL_TYPES, [])
+        self._swdb_commit()
 
-        grp = self.persistor.group('Peppers')
-        grp.update_full_list([])
+        swdb_env = self.history.env.get(comps_env.id)
+        self.assertNotEqual(swdb_env, None)
 
-        trans = self.solver._environment_upgrade(env.id)
+        # create a new transaction item for group Peppers with no packages
+        self._swdb_commit()
+        swdb_group = self.history.group.get('Peppers')
+        swdb_group = self.history.group.new(swdb_group.getGroupId(), swdb_group.getName(), swdb_group.getTranslatedName(), swdb_group.getPackageTypes())
+        self.history.group.install(swdb_group)
+        self._swdb_commit()
+
+        trans = self.solver._environment_upgrade(comps_env.id)
+        self._swdb_commit()
         self.assertTransEqual(trans.install, ('hole', 'lotus'))
         self.assertTransEqual(trans.upgrade, ('pepper', 'trampoline', 'lotus'))
         self.assertEmpty(trans.remove)

@@ -24,6 +24,8 @@ import itertools
 import logging
 import tempfile
 
+import libdnf.swdb
+
 import dnf.cli.commands
 import dnf.cli.commands.group
 import dnf.cli.commands.install
@@ -33,7 +35,7 @@ import dnf.pycomp
 import dnf.repo
 
 import tests.support
-from tests.support import mock, mockSwdbPkg
+from tests.support import mock
 
 
 class CommandsCliTest(tests.support.DnfBaseTestCase):
@@ -209,8 +211,16 @@ class ReinstallCommandTest(tests.support.ResultTestCase):
     def test_run_notavailable(self):
         """ Test whether it fails if the package is not available. """
         holes_query = dnf.subject.Subject('hole').get_best_query(self.base.sack)
+        tsis = []
         for pkg in holes_query.installed():
-            mockSwdbPkg(self.history, pkg)
+            pkg._force_swdb_repoid = "unknown"
+            tsi = dnf.transaction.TransactionItem(
+                dnf.transaction.INSTALL,
+                installed=pkg,
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            tsis.append(tsi)
+        self._swdb_commit(tsis)
 
         stdout = dnf.pycomp.StringIO()
 
@@ -256,8 +266,16 @@ class RepoPkgsCheckUpdateSubCommandTest(tests.support.DnfBaseTestCase):
     @mock.patch('dnf.cli.term._real_term_width', return_value=80)
     def test(self, _real_term_width):
         """ Test whether only upgrades in the repository are listed. """
+        tsis = []
         for pkg in self.base.sack.query().installed().filter(name='tour'):
-            mockSwdbPkg(self.history, pkg, repo='updates')
+            pkg._force_swdb_repoid = "updates"
+            tsi = dnf.transaction.TransactionItem(
+                dnf.transaction.INSTALL,
+                installed=pkg,
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            tsis.append(tsi)
+        self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with tests.support.patch_std_streams() as (stdout, _):
@@ -353,8 +371,16 @@ class RepoPkgsInfoSubCommandTest(tests.support.DnfBaseTestCase):
 
     def test_info_all(self):
         """Test whether only packages related to the repository are listed."""
+        tsis = []
         for pkg in self.base.sack.query().installed().filter(name='pepper'):
-            mockSwdbPkg(self.history, pkg, repo='main')
+            pkg._force_swdb_repoid = "main"
+            tsi = dnf.transaction.TransactionItem(
+                dnf.transaction.INSTALL,
+                installed=pkg,
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            tsis.append(tsi)
+        self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with tests.support.patch_std_streams() as (stdout, _):
@@ -405,8 +431,16 @@ class RepoPkgsInfoSubCommandTest(tests.support.DnfBaseTestCase):
 
     def test_info_extras(self):
         """Test whether only extras installed from the repository are listed."""
+        tsis = []
         for pkg in self.base.sack.query().installed().filter(name='tour'):
-            mockSwdbPkg(self.history, pkg, repo='main')
+            pkg._force_swdb_repoid = "main"
+            tsi = dnf.transaction.TransactionItem(
+                dnf.transaction.INSTALL,
+                installed=pkg,
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            tsis.append(tsi)
+        self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with tests.support.patch_std_streams() as (stdout, _):
@@ -429,8 +463,16 @@ class RepoPkgsInfoSubCommandTest(tests.support.DnfBaseTestCase):
 
     def test_info_installed(self):
         """Test whether only packages installed from the repository are listed."""
+        tsis = []
         for pkg in self.base.sack.query().installed().filter(name='pepper'):
-            mockSwdbPkg(self.history, pkg, repo='main')
+            pkg._force_swdb_repoid = "main"
+            tsi = dnf.transaction.TransactionItem(
+                dnf.transaction.INSTALL,
+                installed=pkg,
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            tsis.append(tsi)
+        self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         with tests.support.patch_std_streams() as (stdout, _):
@@ -511,9 +553,17 @@ class RepoPkgsReinstallOldSubCommandTest(tests.support.ResultTestCase):
 
     def test_all(self):
         """Test whether all packages from the repository are reinstalled."""
+        tsis = []
         for pkg in self.base.sack.query().installed():
             reponame = 'main' if pkg.name != 'pepper' else 'non-main'
-            mockSwdbPkg(self.history, pkg, repo=reponame)
+            pkg._force_swdb_repoid = reponame
+            tsi = dnf.transaction.TransactionItem(
+                dnf.transaction.INSTALL,
+                installed=pkg,
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            tsis.append(tsi)
+        self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['main', 'reinstall-old'])
@@ -597,9 +647,17 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(tests.support.ResultTestCase):
 
     def test_run_on_repo_spec_sync(self):
         """Test running with a package which can be synchronized."""
+        tsis = []
         for pkg in self.base.sack.query().installed():
             reponame = 'non-distro' if pkg.name == 'pepper' else 'distro'
-            mockSwdbPkg(self.history, pkg, repo=reponame)
+            pkg._force_swdb_repoid = reponame
+            tsi = dnf.transaction.TransactionItem(
+                dnf.transaction.INSTALL,
+                installed=pkg,
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            tsis.append(tsi)
+        self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['non-distro', 'remove-or-distro-sync', 'pepper'])
@@ -611,9 +669,17 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(tests.support.ResultTestCase):
 
     def test_run_on_repo_spec_remove(self):
         """Test running with a package which must be removed."""
+        tsis = []
         for pkg in self.base.sack.query().installed():
             reponame = 'non-distro' if pkg.name == 'hole' else 'distro'
-            mockSwdbPkg(self.history, pkg, repo=reponame)
+            pkg._force_swdb_repoid = reponame
+            tsi = dnf.transaction.TransactionItem(
+                dnf.transaction.INSTALL,
+                installed=pkg,
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            tsis.append(tsi)
+        self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['non-distro', 'remove-or-distro-sync', 'hole'])
@@ -625,9 +691,17 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(tests.support.ResultTestCase):
     def test_run_on_repo_all(self):
         """Test running without a package specification."""
         nondist = {'pepper', 'hole'}
+        tsis = []
         for pkg in self.base.sack.query().installed():
             reponame = 'non-distro' if pkg.name in nondist else 'distro'
-            mockSwdbPkg(self.history, pkg, repo=reponame)
+            pkg._force_swdb_repoid = reponame
+            tsi = dnf.transaction.TransactionItem(
+                dnf.transaction.INSTALL,
+                installed=pkg,
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            tsis.append(tsi)
+        self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['non-distro', 'remove-or-distro-sync'])
@@ -673,7 +747,11 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(tests.support.ResultTestCase):
 
     REPOS = ["distro"]
     BASE_CLI = True
-    CLI = "mock"
+
+    def setUp(self):
+        """Prepare the test fixture."""
+        super(RepoPkgsRemoveOrReinstallSubCommandTest, self).setUp()
+        self.cli = self.base.mock_cli()
 
     def test_all_not_installed(self):
         """Test whether it fails if no package is installed from the repository."""
@@ -686,9 +764,17 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(tests.support.ResultTestCase):
 
     def test_all_reinstall(self):
         """Test whether all packages from the repository are reinstalled."""
+        tsis = []
         for pkg in self.base.sack.query().installed():
             reponame = 'distro' if pkg.name != 'tour' else 'non-distro'
-            mockSwdbPkg(self.history, pkg, repo=reponame)
+            pkg._force_swdb_repoid = reponame
+            tsi = dnf.transaction.TransactionItem(
+                dnf.transaction.INSTALL,
+                installed=pkg,
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            tsis.append(tsi)
+        self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['non-distro', 'remove-or-reinstall'])
@@ -700,9 +786,17 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(tests.support.ResultTestCase):
 
     def test_all_remove(self):
         """Test whether all packages from the repository are removed."""
+        tsis = []
         for pkg in self.base.sack.query().installed():
             reponame = 'distro' if pkg.name != 'hole' else 'non-distro'
-            mockSwdbPkg(self.history, pkg, repo=reponame)
+            pkg._force_swdb_repoid = reponame
+            tsi = dnf.transaction.TransactionItem(
+                dnf.transaction.INSTALL,
+                installed=pkg,
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            tsis.append(tsi)
+        self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['non-distro', 'remove-or-reinstall'])
@@ -722,9 +816,17 @@ class RepoPkgsRemoveSubCommandTest(tests.support.ResultTestCase):
 
     def test_all(self):
         """Test whether only packages from the repository are removed."""
+        tsis = []
         for pkg in self.base.sack.query().installed():
             reponame = 'main' if pkg.name == 'pepper' else 'non-main'
-            mockSwdbPkg(self.history, pkg, repo=reponame)
+            pkg._force_swdb_repoid = reponame
+            tsi = dnf.transaction.TransactionItem(
+                dnf.transaction.INSTALL,
+                installed=pkg,
+                reason=libdnf.swdb.TransactionItemReason_USER
+            )
+            tsis.append(tsi)
+        self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
         tests.support.command_run(cmd, ['main', 'remove'])

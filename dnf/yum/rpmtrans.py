@@ -345,8 +345,11 @@ class RPMTransaction(object):
         for display in self.displays:
             display.filelog(pkg, action)
         self._scriptout()
-        pid = self.base.history.pkg2pid(pkg)
-        self.base.history.trans_data_pid_end(pid, state)
+
+        swdb_item = getattr(pkg, "_swdb_item", None)
+        if swdb_item:
+            # TODO: just done or multiple states?
+            self.base.history.swdb.setItemDone(swdb_item);
 
         if self.complete_actions == self.total_actions:
             # RPM doesn't explicitly report when post-trans phase starts
@@ -394,8 +397,10 @@ class RPMTransaction(object):
 
         if state is not None:
             self._scriptout()
-            pid   = self.base.history.pkg2pid(pkg)
-            self.base.history.trans_data_pid_end(pid, state)
+            swdb_item = getattr(pkg, "_swdb_item", None)
+            if swdb_item is not None:
+                # TODO: just done or multiple states?
+                self.base.history.swdb.setItemDone(swdb_item);
         else:
             self._scriptout()
 

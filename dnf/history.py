@@ -1,7 +1,7 @@
 # history.py
 # Interfaces to the history of transactions.
 #
-# Copyright (C) 2013-2016 Red Hat, Inc.
+# Copyright (C) 2013-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -22,11 +22,14 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
 from collections import defaultdict, Container, Iterable, Sized
-from dnf.util import is_exhausted, split_by
-from hawkey import SwdbReason
+
+import libdnf.swdb
 
 import dnf.exceptions
+from dnf.util import is_exhausted, split_by
+
 
 INSTALLING_STATES = {'Install', 'Reinstall', 'Update', 'Downgrade'}
 
@@ -412,8 +415,9 @@ class TransactionConverter(object):
         assert len(packages) == 1
         return packages[0]
 
-    def convert(self, operations, reason=SwdbReason.UNKNOWN):
+    def convert(self, operations, reason=None):
         """Convert operations to a transaction."""
+        reason = reason or libdnf.swdb.TransactionItemReason_UNKNOWN
         transaction = dnf.transaction.Transaction()
         for state, nevra, rnevra, onevras in operations:
             rpkg = None if rnevra is None else self._find_installed(rnevra)

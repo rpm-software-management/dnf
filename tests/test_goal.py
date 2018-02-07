@@ -20,7 +20,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from hawkey import SwdbReason
+import libdnf.swdb
 
 import dnf.goal
 import dnf.selector
@@ -47,12 +47,12 @@ class GoalTest(tests.support.DnfBaseTestCase):
         mrkite = [pkg for pkg in installs if pkg.name == 'mrkite'][0]
         lotus = [pkg for pkg in installs if pkg.name == 'lotus'][0]
         trampoline = [pkg for pkg in installs if pkg.name == 'trampoline'][0]
-        self.assertEqual(self.goal.get_reason(lotus), SwdbReason.GROUP)
-        self.assertEqual(self.goal.get_reason(mrkite), SwdbReason.USER)
-        self.assertEqual(self.goal.get_reason(trampoline), SwdbReason.DEP)
+        self.assertEqual(self.goal.get_reason(lotus), libdnf.swdb.TransactionItemReason_GROUP)
+        self.assertEqual(self.goal.get_reason(mrkite), libdnf.swdb.TransactionItemReason_USER)
+        self.assertEqual(self.goal.get_reason(trampoline), libdnf.swdb.TransactionItemReason_DEPENDENCY)
 
     def test_group_reason(self):
         hole = self.sack.query().filter(name='hole')[0]
         self.goal.group_members.add('hole')
-        self.assertEqual(SwdbReason.GROUP, self.goal.group_reason(hole, SwdbReason.GROUP))
-        self.assertEqual(SwdbReason.DEP, self.goal.group_reason(hole, SwdbReason.DEP))
+        self.assertEqual(libdnf.swdb.TransactionItemReason_GROUP, self.goal.group_reason(hole, libdnf.swdb.TransactionItemReason_GROUP))
+        self.assertEqual(libdnf.swdb.TransactionItemReason_DEPENDENCY, self.goal.group_reason(hole, libdnf.swdb.TransactionItemReason_DEPENDENCY))

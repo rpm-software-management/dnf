@@ -73,7 +73,7 @@ class GroupCommand(commands.Command):
 
     def _environment_lists(self, patterns):
         def available_pred(env):
-            env_found = self.base.history.group.environment(env.id)
+            env_found = self.base.history.env.get(env.id)
             if env_found:
                 return not env_found.installed
             else:
@@ -89,9 +89,9 @@ class GroupCommand(commands.Command):
 
     def _group_lists(self, uservisible, patterns):
         def installed_pred(group):
-            group_found = self.base.history.group.group(group.id)
+            group_found = self.base.history.group.get(group.id)
             if group_found:
-                return group_found.installed
+                return True
             return False
         installed = []
         available = []
@@ -228,9 +228,18 @@ class GroupCommand(commands.Command):
 
         return 0, []
 
+    def _history_commit(self):
+        old = self.base.history.last()
+        if old is None:
+            rpmdb_version = self.sack._rpmdb_version()
+        else:
+            rpmdb_version = old.end_rpmdb_version
+
+        self.base.history.beg(rpmdb_version, [], [])
+        self.base.history.end(rpmdb_version)
+
     def _mark_install(self, patterns):
-        prst = self.base.history.group
-        q = CompsQuery(self.base.comps, prst,
+        q = CompsQuery(self.base.comps, self.base.history,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
         solver = self.base._build_comps_solver()
@@ -246,37 +255,46 @@ class GroupCommand(commands.Command):
                                              group_id, types):
                 res.groups.remove(group_id)
 
+        if res.groups or res.environments:
+            self._history_commit()
+
         if res.environments:
             logger.info(_('Environments marked installed: %s'),
-                        ','.join([ucd(prst.environment(g).ui_name)
+                        ','.join([ucd(self.base.history.env.get(g).getTranslatedName())
                                   for g in res.environments]))
         if res.groups:
+            print(res.groups)
+            for g in res.groups:
+                x = self.base.history.group.get(g)
+                print(x, type(x), dir(x))
             logger.info(_('Groups marked installed: %s'),
-                        ','.join([ucd(prst.group(g).ui_name)
+                        ','.join([ucd(self.base.history.group.get(g).getTranslatedName())
                                   for g in res.groups]))
-        prst.commit()
 
     def _mark_remove(self, patterns):
-        prst = self.base.history.group
-        q = CompsQuery(self.base.comps, prst,
+        q = CompsQuery(self.base.comps, self.base.history,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.INSTALLED)
         solver = self.base._build_comps_solver()
         res = q.get(*patterns)
         for env_id in res.environments:
+            assert dnf.util.is_string_type(env_id)
             solver._environment_remove(env_id)
         for grp_id in res.groups:
+            assert dnf.util.is_string_type(grp_id)
             solver._group_remove(grp_id)
 
         if res.environments:
             logger.info(_('Environments marked removed: %s'),
-                        ','.join([ucd(prst.environment(e_id).ui_name)
+                        ','.join([ucd(self.base.history.env.get(e_id).getTranslatedName())
                                   for e_id in res.environments]))
         if res.groups:
             logger.info(_('Groups marked removed: %s'),
-                        ','.join([ucd(prst.group(g_id).ui_name)
+                        ','.join([ucd(self.base.history.group.get(g_id).getTranslatedName())
                                   for g_id in res.groups]))
-        prst.commit()
+
+        if res.groups or res.environments:
+            self._history_commit()
 
     def _mark_subcmd(self, extcmds):
         if extcmds[0] in self._MARK_CMDS:

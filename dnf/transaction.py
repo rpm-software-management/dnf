@@ -1,7 +1,9 @@
+# -*- coding: utf-8 -*-
+
 # transaction.py
 # Managing the transaction to be passed to RPM.
 #
-# Copyright (C) 2013-2016 Red Hat, Inc.
+# Copyright (C) 2013-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -20,10 +22,14 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from hawkey import SwdbReason, convert_reason
-from dnf.i18n import _
-from functools import reduce
+
+import functools
 import operator
+
+import libdnf.swdb
+
+from dnf.i18n import _
+
 
 DOWNGRADE = 1
 ERASE     = 2
@@ -33,17 +39,48 @@ UPGRADE   = 5
 FAIL      = 6
 
 
+def convert_reason(reason):
+    if isinstance(reason, int):
+        return reason
+
+    reason_map = {
+        "unknown": libdnf.swdb.TransactionItemReason_UNKNOWN,
+        "dep": libdnf.swdb.TransactionItemReason_DEPENDENCY,
+        "user": libdnf.swdb.TransactionItemReason_USER,
+        "clean": libdnf.swdb.TransactionItemReason_CLEAN,
+        "weak": libdnf.swdb.TransactionItemReason_WEAK_DEPENDENCY,
+        "group": libdnf.swdb.TransactionItemReason_GROUP,
+    }
+    return reason_map[reason]
+
+
+def convert_action(action):
+    if isinstance(action, int):
+        return action
+
+    # TODO: add more records?
+    action_map = {
+        "Install": libdnf.swdb.TransactionItemAction_INSTALL,
+        "Erase": libdnf.swdb.TransactionItemAction_REMOVE,
+        "Reinstall": libdnf.swdb.TransactionItemAction_REINSTALL,
+        # TODO: keep OBSOLETE, remove OBSOLETED?
+#        "Obsoleted": libdnf.swdb.TransactionItemAction_OBSOLETED,
+        "Reinstalled": None,
+    }
+    return action_map[action]
+
+
 class TransactionItem(object):
     # :api
 
     __slots__ = ('op_type', 'installed', 'erased', 'obsoleted', 'reason')
 
-    def __init__(self, op_type, installed=None, erased=None, obsoleted=None,
-                 reason=SwdbReason.UNKNOWN):
+    def __init__(self, op_type, installed=None, erased=None, obsoleted=None, reason=None):
         self.op_type = op_type
         self.installed = installed
         self.erased = erased
         self.obsoleted = list() if obsoleted is None else obsoleted
+        reason = reason or libdnf.swdb.TransactionItemReason_UNKNOWN
         self.reason = convert_reason(reason)  # reason for it to be in the transaction set
 
     @property
@@ -101,12 +138,15 @@ class TransactionItem(object):
         return 'Obsoleting'
 
     def _propagated_reason(self, history, installonly):
-        if self.reason == SwdbReason.USER:
+        if self.reason == libdnf.swdb.TransactionItemReason_USER:
             return self.reason
         if self.installed and installonly.filter(name=self.installed.name):
-            return SwdbReason.USER
+            return libdnf.swdb.TransactionItemReason_USER
         if self.op_type in self._HISTORY_ERASE and self.erased:
-            previously = history.reason(self.erased)
+            try:
+                previously = history.reason(self.erased)
+            except:
+                previously = None
             if previously:
                 return previously
         if self.obsoleted:
@@ -114,14 +154,14 @@ class TransactionItem(object):
             for obs in self.obsoleted:
                 reasons.add(history.reason(obs))
             if reasons:
-                if SwdbReason.USER in reasons:
-                    return SwdbReason.USER
-                if SwdbReason.GROUP in reasons:
-                    return SwdbReason.GROUP
-                if SwdbReason.DEP in reasons:
-                    return SwdbReason.DEP
-                if SwdbReason.WEAK in reasons:
-                    return SwdbReason.WEAK
+                if libdnf.swdb.TransactionItemReason_USER in reasons:
+                    return libdnf.swdb.TransactionItemReason_USER
+                if libdnf.swdb.TransactionItemReason_GROUP in reasons:
+                    return libdnf.swdb.TransactionItemReason_GROUP
+                if libdnf.swdb.TransactionItemReason_DEPENDENCY in reasons:
+                    return libdnf.swdb.TransactionItemReason_DEPENDENCY
+                if libdnf.swdb.TransactionItemReason_WEAK_DEPENDENCY in reasons:
+                    return libdnf.swdb.TransactionItemReason_WEAK_DEPENDENCY
         return self.reason
 
     def _propagate_reason(self, history, installonlypkgs):
@@ -152,7 +192,7 @@ class Transaction(object):
     def _items2set(self, extracting_fn):
         lists = map(extracting_fn, self._tsis)
         sets = map(set, lists)
-        return reduce(operator.or_, sets, set())
+        return functools.reduce(operator.or_, sets, set())
 
     def add_downgrade(self, new, downgraded, obsoleted):
         # :api
@@ -164,8 +204,9 @@ class Transaction(object):
         tsi = TransactionItem(ERASE, erased=erased)
         self._tsis.append(tsi)
 
-    def add_install(self, new, obsoleted, reason=SwdbReason.UNKNOWN):
+    def add_install(self, new, obsoleted, reason=None):
         # :api
+        reason = reason or libdnf.swdb.TransactionItemReason_UNKNOWN
         reason = convert_reason(reason)  # support for string reasons
         tsi = TransactionItem(INSTALL, new, obsoleted=obsoleted,
                               reason=reason)

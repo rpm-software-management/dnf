@@ -72,17 +72,14 @@ class Sack(hawkey.Sack):
         """Factory function returning a DNF Query."""
         return dnf.query.Query(self)
 
-    def _rpmdb_version(self, history):
+    def _rpmdb_version(self):
+        # TODO: verify ordering
         pkgs = self.query().installed().run()
         main = SackVersion()
-
-        # [nevra, type, checksum, nevra, type, checksum...]
-        data = history.checksums(pkgs)
-        i = 0
-
-        while i < len(data) - 2:
-            main._update(data[i], data[i + 1], data[i + 2])
-            i += 3
+        for i in pkgs:
+            # TODO: what if _pkgid is not sha1
+            data = (str(i), "sha1", i._pkgid)
+            main._update(*data)
         return main
 
 def _build_sack(base):
