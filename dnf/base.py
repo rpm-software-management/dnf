@@ -1108,7 +1108,7 @@ class Base(object):
 
         if self.conf.destdir:
             for pkg in local_repository_pkgs:
-                location = os.path.join(pkg.repo.pkgdir, os.path.basename(pkg.location))
+                location = os.path.join(pkg.repo.pkgdir, pkg.location)
                 shutil.copy(location, self.conf.destdir)
 
     def add_remote_rpms(self, path_list, strict=True):
