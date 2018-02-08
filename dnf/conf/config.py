@@ -1029,6 +1029,9 @@ class RepoConf(BaseConfig):
                          SelectionOption('priority', choices=('priority',),
                                          notimplemented=('roundrobin',)))
 
+        # modularity
+        self._add_option('hotfixes', BoolOption(default=False))
+
     def _configure_from_options(self, opts):
         """Configure repos from the opts. """
 

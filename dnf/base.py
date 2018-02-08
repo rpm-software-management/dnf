@@ -254,8 +254,25 @@ class Base(object):
             nevra_query = nevra_query._nevra(nevra).apply()
             exclude_query_list.append(nevra_query)
 
-        for exclude_query in exclude_query_list:
-            self.sack.add_excludes(exclude_query)
+        hotfix_repos = []
+        for repo in self.repos.iter_enabled():
+            if repo.hotfixes:
+                hotfix_repos.append(repo.id)
+
+        names = set()
+        for nevra in sorted(include_nevras_set):
+            nevra = hawkey.split_nevra(nevra)
+            names.add(nevra.name)
+
+        names_query = self.sack.query().filter(name=names, reponame__neq=hotfix_repos)
+        query = self.sack.query().filter(nevra=include_nevras_set)
+
+        names_query = names_query.difference(query)
+        names_query.apply()
+
+        for query in exclude_query_list:
+            self.sack.add_excludes(query)
+        self.sack.add_excludes(names_query)
 
     def _store_persistent_data(self):
         if self._repo_persistor and not self.conf.cacheonly:
