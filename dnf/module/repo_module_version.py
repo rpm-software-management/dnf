@@ -53,6 +53,9 @@ class RepoModuleVersion(object):
         result = self._install_profiles(profiles, False)
         result |= self._install_profiles(default_profiles, True)
 
+        if not profiles and not default_profiles:
+            result |= self._install_profiles(["default"], True)
+
         profiles.extend(self.repo_module.conf.profiles)
         profiles.extend(default_profiles)
         self.base._module_persistor.set_data(self.repo_module, stream=self.stream,
