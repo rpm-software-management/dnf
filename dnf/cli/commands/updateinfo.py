@@ -52,8 +52,7 @@ class UpdateInfoCommand(commands.Command):
     SECURITY2LABEL = {'Critical': _('Critical/Sec.'),
                       'Important': _('Important/Sec.'),
                       'Moderate': _('Moderate/Sec.'),
-                      'Low': _('Low/Sec.'),
-                      None: _('Unknown/Sec.')}
+                      'Low': _('Low/Sec.')}
 
     direct_commands = {'list-updateinfo'    : 'list',
                        'list-security'      : 'list',
@@ -280,8 +279,10 @@ class UpdateInfoCommand(commands.Command):
             return ('' if not mixed else 'i ' if inst else '  ')
 
         def type2label(typ, sev):
-            return (cls.SECURITY2LABEL[sev] if typ == hawkey.ADVISORY_SECURITY
-                    else cls.TYPE2LABEL[typ])
+            if typ == hawkey.ADVISORY_SECURITY:
+                return cls.SECURITY2LABEL.get(sev, _('Unknown/Sec.'))
+            else:
+                return cls.TYPE2LABEL.get(typ, _('unknown'))
 
         # Sort IDs and convert types to labels.
         nevramark2id2tlbl = OrderedDict(
