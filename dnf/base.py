@@ -133,9 +133,14 @@ class Base(object):
             hrepo.updateinfo_fn = repo._updateinfo_fn
         else:
             logger.debug("not found updateinfo for: %s", repo.name)
-        self._sack.load_repo(hrepo, build_cache=True, load_filelists=True,
+        try:
+            self._sack.load_repo(hrepo, build_cache=True, load_filelists=True,
                              load_presto=repo.deltarpm,
                              load_updateinfo=True)
+        except hawkey.Exception as e:
+            logger.debug("loading repo '{}' failure: {}".format(repo.id, e))
+            raise dnf.exceptions.RepoError(
+                _("Loading repository '{}' has failed").format(repo.id))
 
     @staticmethod
     def _setup_default_conf():
