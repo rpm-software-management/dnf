@@ -1250,12 +1250,12 @@ Updateinfo Command
     information is even more detailed.
 
     ``<availability>`` specifies whether advisories about newer versions of
-    installed packages (omitted or ``available``), advisories about equal and
-    older versions of installed packages (``installed``), advisories about
+    installed packages (omitted or ``--available``), advisories about equal and
+    older versions of installed packages (``--installed``), advisories about
     newer versions of those installed packages for which a newer version is
-    available (``updates``) or advisories about any versions of installed
-    packages (``all``) are taken into account. Most of the time, ``available``
-    and ``updates`` displays the same output. The outputs differ only in the
+    available (``--updates``) or advisories about any versions of installed
+    packages (``--all``) are taken into account. Most of the time, ``--available``
+    and ``--updates`` displays the same output. The outputs differ only in the
     cases when an advisory refers to a newer version but there is no enabled
     repository which contains any newer version.
 

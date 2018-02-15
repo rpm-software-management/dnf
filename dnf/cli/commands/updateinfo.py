@@ -24,17 +24,17 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 from collections import OrderedDict
+from itertools import chain
+from operator import itemgetter
+import collections
+import fnmatch
+import itertools
+
+import hawkey
 from dnf.cli import commands
 from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _
 from dnf.pycomp import unicode
-from itertools import chain
-from operator import itemgetter
-
-import collections
-import fnmatch
-import itertools
-import hawkey
 
 def _maxlen(iterable):
     """Return maximum length of items in a non-empty iterable."""
@@ -61,15 +61,106 @@ class UpdateInfoCommand(commands.Command):
                        'info-security'      : 'info',
                        'info-sec'           : 'info',
                        'summary-updateinfo' : 'summary'}
-
     aliases = ['updateinfo'] + list(direct_commands.keys())
     summary = _('display advisories about packages')
+    availability_default = 'available'
+    availabilities = ['installed', 'updates', 'all', availability_default]
 
     def __init__(self, cli):
         """Initialize the command."""
         super(UpdateInfoCommand, self).__init__(cli)
         self._ina2evr_cache = None
         self.clear_installed_cache()
+
+    @staticmethod
+    def set_argparser(parser):
+        availability = parser.add_mutually_exclusive_group()
+        availability.add_argument(
+            "--available", dest='_availability', const='available', action='store_const',
+            help=_("advisories about newer versions of installed packages (default)"))
+        availability.add_argument(
+            "--installed", dest='_availability', const='installed', action='store_const',
+            help=_("advisories about equal and older versions of installed packages"))
+        availability.add_argument(
+            "--updates", dest='_availability', const='updates', action='store_const',
+            help=_("advisories about newer versions of those installed packages "
+                   "for which a newer version is available"))
+        availability.add_argument(
+            "--all", dest='_availability', const='all', action='store_const',
+            help=_("advisories about any versions of installed packages"))
+        cmds = ['summary', 'list', 'info']
+        output_format = parser.add_mutually_exclusive_group()
+        output_format.add_argument("--summary", dest='_spec_action', const='summary',
+                                   action='store_const',
+                                   help=_('show summary of advisories (default)'))
+        output_format.add_argument("--list", dest='_spec_action', const='list',
+                                   action='store_const',
+                                   help=_('show list of advisories'))
+        output_format.add_argument("--info", dest='_spec_action', const='info',
+                                   action='store_const',
+                                   help=_('show info of advisories'))
+        parser.add_argument('spec', nargs='*', metavar='SPEC',
+                            choices=cmds, default=cmds[0],
+                            action=OptionParser.PkgNarrowCallback)
+
+    def configure(self):
+        """Do any command-specific configuration based on command arguments."""
+        self.cli.demands.available_repos = True
+        self.cli.demands.sack_activation = True
+
+        if self.opts.command[0] in self.direct_commands:
+            # we were called with direct command
+            self.opts.spec_action = self.direct_commands[self.opts.command[0]]
+        else:
+            if self.opts._spec_action:
+                self.opts.spec_action = self.opts._spec_action
+
+        if self.opts._availability:
+            self.opts.availability = self.opts._availability
+        else:
+            if not self.opts.spec or self.opts.spec[0] not in self.availabilities:
+                self.opts.availability = self.availability_default
+            else:
+                self.opts.availability = self.opts.spec.pop(0)
+
+
+    def run(self):
+        """Execute the command with arguments."""
+        self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
+        self.refresh_installed_cache()
+
+        mixed = False
+        if self.opts.availability == 'installed':
+            apkg_adv_insts = self.installed_apkg_adv_insts(self.opts.spec)
+            description = _('installed')
+        elif self.opts.availability == 'updates':
+            apkg_adv_insts = self.updating_apkg_adv_insts(self.opts.spec)
+            description = _('updates')
+        elif self.opts.availability == 'all':
+            mixed = True
+            apkg_adv_insts = self.all_apkg_adv_insts(self.opts.spec)
+            description = _('all')
+        elif self.opts.availability == 'available':
+            apkg_adv_insts = self.available_apkg_adv_insts(self.opts.spec)
+            description = _('available')
+
+        display = self.display_summary
+        if self.opts.spec_action == 'list':
+            display = self.display_list
+        elif self.opts.spec_action == 'info':
+            display = self.display_info
+        display(apkg_adv_insts, mixed, description)
+
+        self.clear_installed_cache()
+
+
+
+
+
+
+
+
+
 
     def refresh_installed_cache(self):
         """Fill the cache of installed packages."""
@@ -118,34 +209,6 @@ class UpdateInfoCommand(commands.Command):
             return False
         return (apkg.name, apkg.arch) in self._ina2evr_cache
 
-    def _canonical(self):
-        # were we called with direct command?
-        direct = self.direct_commands.get(self.opts.command[0])
-        if direct:
-            self.opts.spec_action = direct
-
-    @staticmethod
-    def set_argparser(parser):
-        cmds = ['summary', 'list', 'info']
-        parser.add_argument('spec', nargs='*', metavar='SPEC',
-                            choices=cmds, default=cmds[0],
-                            action=OptionParser.PkgNarrowCallback)
-        output_format = parser.add_mutually_exclusive_group()
-        output_format.add_argument("--summary", dest='output_format', const='summary',
-                                   action='store_const', help=_('show summary of advisories'))
-        output_format.add_argument("--list", dest='output_format', const='list',
-                                   action='store_const', help=_('show list of advisories'))
-        output_format.add_argument("--info", dest='output_format', const='info',
-                                   action='store_const', help=_('show info of advisories'))
-
-    def configure(self):
-        """Do any command-specific configuration based on command arguments."""
-        self.cli.demands.available_repos = True
-        self.cli.demands.sack_activation = True
-        self._canonical()
-        if self.opts.output_format:
-            self.opts.spec_action = self.opts.output_format
-
     @staticmethod
     def _apackage_advisory_match(apackage, advisory, specs=()):
         """Test whether an (adv. pkg., adv.) pair matches specifications."""
@@ -180,32 +243,32 @@ class UpdateInfoCommand(commands.Command):
                         installed = self._newer_equal_installed(apackage)
                         yield apackage, advisory, installed
 
-    def available_apkg_adv_insts(self, specs=()):
+    def available_apkg_adv_insts(self, spec=()):
         """Return available (adv. package, adv., inst.) triplets and a flag."""
-        return False, self._apackage_advisory_installeds(
+        return self._apackage_advisory_installeds(
             self.base.sack.query().installed(), hawkey.GT,
-            self._older_installed, specs)
+            self._older_installed, spec)
 
-    def installed_apkg_adv_insts(self, specs=()):
+    def installed_apkg_adv_insts(self, spec=()):
         """Return installed (adv. package, adv., inst.) triplets and a flag."""
-        return False, self._apackage_advisory_installeds(
+        return self._apackage_advisory_installeds(
             self.base.sack.query().installed(), hawkey.LT | hawkey.EQ,
-            self._newer_equal_installed, specs)
+            self._newer_equal_installed, spec)
 
-    def updating_apkg_adv_insts(self, specs=()):
+    def updating_apkg_adv_insts(self, spec=()):
         """Return updating (adv. package, adv., inst.) triplets and a flag."""
-        return False, self._apackage_advisory_installeds(
+        return self._apackage_advisory_installeds(
             self.base.sack.query().filterm(upgradable=True), hawkey.GT,
-            self._older_installed, specs)
+            self._older_installed, spec)
 
-    def all_apkg_adv_insts(self, specs=()):
+    def all_apkg_adv_insts(self, spec=()):
         """Return installed (adv. package, adv., inst.) triplets and a flag."""
         ipackages = self.base.sack.query().installed()
         gttriplets = self._apackage_advisory_installeds(
-            ipackages, hawkey.GT, self._any_installed, specs)
+            ipackages, hawkey.GT, self._any_installed, spec)
         lteqtriplets = self._apackage_advisory_installeds(
-            ipackages, hawkey.LT | hawkey.EQ, self._any_installed, specs)
-        return True, chain(gttriplets, lteqtriplets)
+            ipackages, hawkey.LT | hawkey.EQ, self._any_installed, spec)
+        return chain(gttriplets, lteqtriplets)
 
     @staticmethod
     def _summary(apkg_adv_insts):
@@ -387,34 +450,3 @@ class UpdateInfoCommand(commands.Command):
                     print('%*s : %s' % (width, label_, line))
             print()
 
-    def run(self):
-        """Execute the command with arguments."""
-        self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
-
-        args = self.opts.spec
-        display = self.display_summary
-        if self.opts.spec_action == 'list':
-            display = self.display_list
-        elif self.opts.spec_action == 'info':
-            display = self.display_info
-
-        self.refresh_installed_cache()
-
-        if args[:1] == ['installed']:
-            mixed, apkg_adv_insts = self.installed_apkg_adv_insts(args[1:])
-            description = _('installed')
-        elif args[:1] == ['updates']:
-            mixed, apkg_adv_insts = self.updating_apkg_adv_insts(args[1:])
-            description = _('updates')
-        elif args[:1] == ['all']:
-            mixed, apkg_adv_insts = self.all_apkg_adv_insts(args[1:])
-            description = _('all')
-        else:
-            if args[:1] == ['available']:
-                args = args[1:]
-            mixed, apkg_adv_insts = self.available_apkg_adv_insts(args)
-            description = _('available')
-
-        display(apkg_adv_insts, mixed, description)
-
-        self.clear_installed_cache()

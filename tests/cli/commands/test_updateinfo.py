@@ -66,8 +66,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
         """Test querying with a packages filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.available_apkg_adv_insts(['to*r', 'nxst'])
-        self.assertFalse(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.available_apkg_adv_insts(['to*r', 'nxst'])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-5-1.noarch.rpm', 'DNF-2014-3', False)],
@@ -78,8 +77,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
         """Test querying with a non-existent packages filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.available_apkg_adv_insts(['non-existent'])
-        self.assertFalse(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.available_apkg_adv_insts(['non-existent'])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [], 'incorrect pairs')
@@ -89,8 +87,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
         """Test querying with a security filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.available_apkg_adv_insts(['security'])
-        self.assertFalse(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.available_apkg_adv_insts(['security'])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-5-1.noarch.rpm', 'DNF-2014-3', False)],
@@ -101,8 +98,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
         """Test installed triplets querying."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.installed_apkg_adv_insts()
-        self.assertFalse(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.installed_apkg_adv_insts()
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-4-4.noarch.rpm', 'DNF-2014-1', True),
@@ -114,8 +110,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
         """Test querying with a bugfix filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.installed_apkg_adv_insts(['bugfix'])
-        self.assertFalse(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.installed_apkg_adv_insts(['bugfix'])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-4-4.noarch.rpm', 'DNF-2014-1', True)],
@@ -126,8 +121,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
         """Test querying with an enhancement filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.installed_apkg_adv_insts(['enhancement'])
-        self.assertFalse(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.installed_apkg_adv_insts(['enhancement'])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-5-0.noarch.rpm', 'DNF-2014-2', True)],
@@ -138,8 +132,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
         """Test updating triplets querying."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.updating_apkg_adv_insts()
-        self.assertFalse(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.updating_apkg_adv_insts()
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-5-1.noarch.rpm', 'DNF-2014-3', False)],
@@ -150,8 +143,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
         """Test all triplets querying."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.all_apkg_adv_insts()
-        self.assertTrue(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.all_apkg_adv_insts()
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-4-4.noarch.rpm', 'DNF-2014-1', True),
@@ -163,9 +155,8 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
         """Test querying with an advisories filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
         cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.all_apkg_adv_insts(
+        apkg_adv_insts = cmd.all_apkg_adv_insts(
             ['DNF-201*-[13]', 'NO-0000-0'])
-        self.assertTrue(mixed, 'incorrect flag')
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-4-4.noarch.rpm', 'DNF-2014-1', True),
