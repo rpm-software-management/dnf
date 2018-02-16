@@ -738,7 +738,7 @@ class Cli(object):
         repos = self.base.repos
 
         if demands.root_user:
-            if not os.geteuid() == 0:
+            if not dnf.util.am_i_root():
                 raise dnf.exceptions.Error(_('This command has to be run under the root user.'))
 
         if demands.cacheonly or self.base.conf.cacheonly:
