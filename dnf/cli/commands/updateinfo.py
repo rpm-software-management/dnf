@@ -70,7 +70,7 @@ class UpdateInfoCommand(commands.Command):
         """Initialize the command."""
         super(UpdateInfoCommand, self).__init__(cli)
         self._ina2evr_cache = None
-        self.clear_installed_cache()
+        self._update_filters_cmp_cache = dict()
 
     @staticmethod
     def set_argparser(parser):
@@ -123,11 +123,9 @@ class UpdateInfoCommand(commands.Command):
             else:
                 self.opts.availability = self.opts.spec.pop(0)
 
-
     def run(self):
         """Execute the command with arguments."""
         self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
-        self.refresh_installed_cache()
 
         mixed = False
         if self.opts.availability == 'installed':
@@ -151,63 +149,60 @@ class UpdateInfoCommand(commands.Command):
             display = self.display_info
         display(apkg_adv_insts, mixed, description)
 
-        self.clear_installed_cache()
+    def get_installed_version(self, name, arch):
+        if self._ina2evr_cache is None:
+            self._ina2evr_cache = {(pkg.name, pkg.arch): pkg.evr
+                                   for pkg in self.base.sack.query().installed()}
+        return self._ina2evr_cache.get((name, arch), None)
 
-
-
-
-
-
-
-
-
-
-    def refresh_installed_cache(self):
-        """Fill the cache of installed packages."""
-        self._ina2evr_cache = {(pkg.name, pkg.arch): pkg.evr
-                               for pkg in self.base.sack.query().installed()}
-
-    def clear_installed_cache(self):
-        """Clear the cache of installed packages."""
-        self._ina2evr_cache = None
+    def compare_with_installed(self, apackage):
+        """Compare installed version with apackage version. Returns None either if
+        apackage is not installed, or if there are no update filters for apackage"""
+        key = (apackage.name, apackage.evr, apackage.arch)
+        if not key in self._update_filters_cmp_cache:
+            ievr = self.get_installed_version(key[0], key[2])
+            if ievr is None:
+                self._update_filters_cmp_cache[key] = None
+            else:
+                q = self.base.sack.query().filterm(name=key[0], evr=key[1])
+                if len(self.base._merge_update_filters(q, warning=False)) == 0:
+                    self._update_filters_cmp_cache[key] = None
+                else:
+                    self._update_filters_cmp_cache[key] = self.base.sack.evr_cmp(ievr, key[1])
+        return self._update_filters_cmp_cache[key]
 
     def _older_installed(self, apackage):
         """Test whether an older version of a package is installed."""
-        # Non-cached lookup not implemented. Fill the cache or implement the
-        # functionality via the slow sack query.
-        assert self._ina2evr_cache is not None
-        try:
-            ievr = self._ina2evr_cache[(apackage.name, apackage.arch)]
-        except KeyError:
+        cmp = self.compare_with_installed(apackage)
+        if cmp is None:
             return False
-        q = self.base.sack.query().filterm(name=apackage.name, evr=apackage.evr)
-        if len(self.base._merge_update_filters(q, warning=False)) == 0:
-            return False
-        return self.base.sack.evr_cmp(ievr, apackage.evr) < 0
+        else:
+            return cmp < 0
 
-    def _newer_equal_installed(self, apkg):
+    def _newer_equal_installed(self, apackage):
         """Test whether a newer or equal version of a package is installed."""
-        # Non-cached lookup not implemented. Fill the cache or implement the
-        # functionality via the slow sack query.
-        assert self._ina2evr_cache is not None
-        try:
-            ievr = self._ina2evr_cache[(apkg.name, apkg.arch)]
-        except KeyError:
+        cmp = self.compare_with_installed(apackage)
+        if cmp is None:
             return False
-        q = self.base.sack.query().filterm(name=apkg.name, evr=apkg.evr)
-        if len(self.base._merge_update_filters(q, warning=False)) == 0:
-            return False
-        return self.base.sack.evr_cmp(ievr, apkg.evr) >= 0
+        else:
+            return cmp >= 0
 
-    def _any_installed(self, apkg):
+    def _any_installed(self, apackage):
         """Test whether any version of a package is installed."""
-        # Non-cached lookup not implemented. Fill the cache or implement the
-        # functionality via the slow sack query.
-        assert self._ina2evr_cache is not None
-        q = self.base.sack.query().filterm(name=apkg.name, evr=apkg.evr)
-        if len(self.base._merge_update_filters(q, warning=False)) == 0:
+        if self.compare_with_installed(apackage) is None:
             return False
-        return (apkg.name, apkg.arch) in self._ina2evr_cache
+        return True
+
+
+
+
+
+
+
+
+
+
+
 
     @staticmethod
     def _apackage_advisory_match(apackage, advisory, specs=()):
@@ -232,7 +227,7 @@ class UpdateInfoCommand(commands.Command):
                 any(fnmatch.fnmatchcase(apackage.name, pat) for pat in specs))
 
     def _apackage_advisory_installeds(self, pkgs, cmptype, req_apkg, specs=()):
-        """Return (adv. package, advisory, installed) triplets and a flag."""
+        """Return (adv. package, advisory, installed) triplets."""
         for package in pkgs:
             for advisory in package.get_advisories(cmptype):
                 for apackage in advisory.packages:
@@ -244,25 +239,25 @@ class UpdateInfoCommand(commands.Command):
                         yield apackage, advisory, installed
 
     def available_apkg_adv_insts(self, spec=()):
-        """Return available (adv. package, adv., inst.) triplets and a flag."""
+        """Return available (adv. package, adv., inst.) triplets"""
         return self._apackage_advisory_installeds(
             self.base.sack.query().installed(), hawkey.GT,
             self._older_installed, spec)
 
     def installed_apkg_adv_insts(self, spec=()):
-        """Return installed (adv. package, adv., inst.) triplets and a flag."""
+        """Return installed (adv. package, adv., inst.) triplets"""
         return self._apackage_advisory_installeds(
             self.base.sack.query().installed(), hawkey.LT | hawkey.EQ,
             self._newer_equal_installed, spec)
 
     def updating_apkg_adv_insts(self, spec=()):
-        """Return updating (adv. package, adv., inst.) triplets and a flag."""
+        """Return updating (adv. package, adv., inst.) triplets"""
         return self._apackage_advisory_installeds(
             self.base.sack.query().filterm(upgradable=True), hawkey.GT,
             self._older_installed, spec)
 
     def all_apkg_adv_insts(self, spec=()):
-        """Return installed (adv. package, adv., inst.) triplets and a flag."""
+        """Return installed (adv. package, adv., inst.) triplets"""
         ipackages = self.base.sack.query().installed()
         gttriplets = self._apackage_advisory_installeds(
             ipackages, hawkey.GT, self._any_installed, spec)
@@ -270,8 +265,7 @@ class UpdateInfoCommand(commands.Command):
             ipackages, hawkey.LT | hawkey.EQ, self._any_installed, spec)
         return chain(gttriplets, lteqtriplets)
 
-    @staticmethod
-    def _summary(apkg_adv_insts):
+    def _summary(self, apkg_adv_insts):
         """Make the summary of advisories."""
         # Remove duplicate advisory IDs. We assume that the ID is unique within
         # a repository and two advisories with the same IDs in different
@@ -335,8 +329,7 @@ class UpdateInfoCommand(commands.Command):
             # IDs (e.g. from different repositories) must have the same type.
             yield nevra_ins, {nit[1]: nit[2] for nit in nits}
 
-    @classmethod
-    def display_list(cls, apkg_adv_insts, mixed, description):
+    def display_list(self, apkg_adv_insts, mixed, description):
         """Display the list of advisories."""
         def inst2mark(inst):
             return ('' if not mixed else 'i ' if inst else '  ')
@@ -353,7 +346,7 @@ class UpdateInfoCommand(commands.Command):
              OrderedDict(sorted(((id_, type2label(typ, sev))
                                  for id_, (typ, sev) in id2type.items()),
                                 key=itemgetter(0))))
-            for (nevra, inst), id2type in cls._list(apkg_adv_insts))
+            for (nevra, inst), id2type in self._list(apkg_adv_insts))
         if not nevramark2id2tlbl:
             return
         # Get all advisory IDs and types as two iterables.
