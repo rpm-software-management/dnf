@@ -95,7 +95,7 @@ class Base(object):
         self._plugins = dnf.plugin.Plugins()
         self._trans_success = False
         self._tempfile_persistor = None
-        self._update_security_filters = {}
+        self._update_security_filters = []
         self._allow_erasing = False
         self._revert_reason = []
         self._repo_set_imported_gpg_keys = set()
@@ -2100,46 +2100,28 @@ class Base(object):
         """
         if not self._update_security_filters or not q:
             return q
-        assert len(self._update_security_filters.keys()) == 1
-        for key, filters in self._update_security_filters.items():
-            assert len(filters) > 0
-            t = filters[0]
-            for query in filters[1:]:
-                t = t.union(query)
-            del self._update_security_filters[key]
-            self._update_security_filters['minimal'] = [t]
-            t = q.intersection(t)
-            if not t:
-                if warning:
-                    count = len(q._name_dict().keys())
-                    if pkg_spec is None:
-                        msg1 = _("No security updates needed, but {} update "
-                                 "available").format(count)
-                        msg2 = _("No security updates needed, but {} updates "
-                                 "available").format(count)
-                        logger.warning(P_(msg1, msg2, count))
-                    else:
-                        msg1 = _('No security updates needed for "{}", but {} '
-                                 'update available').format(pkg_spec, count)
-                        msg2 = _('No security updates needed for "{}", but {} '
-                                 'updates available').format(pkg_spec, count)
-                        logger.warning(P_(msg1, msg2, count))
-                return t
-            if key == 'minimal':
-                return t
-            else:
-                # return all packages with eq or higher version
-                latest_pkgs = None
-                pkgs_dict = t._name_dict()
-                for pkg_list in pkgs_dict.values():
-                    pkg_list.sort()
-                    pkg = pkg_list[0]
-                    if latest_pkgs is None:
-                        latest_pkgs = q.filter(name=pkg.name, evr__gte=pkg.evr)
-                    else:
-                        latest_pkgs = latest_pkgs.union(q.filter(
-                            name=pkg.name, evr__gte=pkg.evr))
-                return latest_pkgs
+        merged_queries = self._update_security_filters[0]
+        for query in self._update_security_filters[1:]:
+            merged_queries = merged_queries.union(query)
+
+        self._update_security_filters = [merged_queries]
+        merged_queries = q.intersection(merged_queries)
+        if not merged_queries:
+            if warning:
+                count = len(q._name_dict().keys())
+                if pkg_spec is None:
+                    msg1 = _("No security updates needed, but {} update "
+                             "available").format(count)
+                    msg2 = _("No security updates needed, but {} updates "
+                             "available").format(count)
+                    logger.warning(P_(msg1, msg2, count))
+                else:
+                    msg1 = _('No security updates needed for "{}", but {} '
+                             'update available').format(pkg_spec, count)
+                    msg2 = _('No security updates needed for "{}", but {} '
+                             'updates available').format(pkg_spec, count)
+                    logger.warning(P_(msg1, msg2, count))
+        return merged_queries
 
     def _get_key_for_package(self, po, askcb=None, fullaskcb=None):
         """Retrieve a key for a package. If needed, use the given

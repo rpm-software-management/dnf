@@ -925,30 +925,43 @@ class Cli(object):
         timer()
         return conf
 
-    def _populate_update_security_filter(self, opts, minimal=None, all=None):
+    def _populate_update_security_filter(self, opts, query, cmp_type='eq', all=None):
+        """
+
+        :param opts:
+        :param query: base package set for filters
+        :param cmp_type: string like "eq", "gt", "gte", "lt", "lte"
+        :param all:
+        :return:
+        """
         if (opts is None) and (all is None):
             return
-        q = self.base.sack.query()
         filters = []
         if opts.bugfix or all:
-            filters.append(q.filter(advisory_type='bugfix'))
+            key = {'advisory_type__' + cmp_type: 'bugfix'}
+            filters.append(query.filter(**key))
         if opts.enhancement or all:
-            filters.append(q.filter(advisory_type='enhancement'))
+            key = {'advisory_type__' + cmp_type: 'enhancement'}
+            filters.append(query.filter(**key))
         if opts.newpackage or all:
-            filters.append(q.filter(advisory_type='newpackage'))
+            key = {'advisory_type__' + cmp_type: 'newpackage'}
+            filters.append(query.filter(**key))
         if opts.security or all:
-            filters.append(q.filter(advisory_type='security'))
+            key = {'advisory_type__' + cmp_type: 'security'}
+            filters.append(query.filter(**key))
         if opts.advisory:
-            filters.append(q.filter(advisory=opts.advisory))
+            key = {'advisory__' + cmp_type: opts.advisory}
+            filters.append(query.filter(**key))
         if opts.bugzilla:
-            filters.append(q.filter(advisory_bug=opts.bugzilla))
+            key = {'advisory_bug__' + cmp_type: opts.bugzilla}
+            filters.append(query.filter(**key))
         if opts.cves:
-            filters.append(q.filter(advisory_cve=opts.cves))
+            key = {'advisory_cve__' + cmp_type: opts.cves}
+            filters.append(query.filter(**key))
         if opts.severity:
-            filters.append(q.filter(advisory_severity=opts.severity))
-        if len(filters):
-            key = 'upgrade' if minimal is None else 'minimal'
-            self.base._update_security_filters[key] = filters
+            key = {'advisory_severity__' + cmp_type: opts.severity}
+            filters.append(query.filter(**key))
+        self.base._update_security_filters = filters
 
     def redirect_logger(self, stdout=None, stderr=None):
         """

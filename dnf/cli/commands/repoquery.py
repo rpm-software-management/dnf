@@ -350,7 +350,7 @@ class RepoQueryCommand(commands.Command):
             print(QUERY_TAGS)
             return
 
-        self.cli._populate_update_security_filter(self.opts)
+        self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
 
         q = self.base.sack.query()
         if self.opts.key:
