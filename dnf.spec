@@ -1,4 +1,4 @@
-%global hawkey_version 0.12.3
+%global hawkey_version 0.13.0
 %global librepo_version 1.7.19
 %global libcomps_version 0.1.8
 %global rpm_version 4.14.0
@@ -33,7 +33,7 @@
 %global _docdir_fmt %{name}
 
 Name:           dnf
-Version:        2.8.5
+Version:        2.8.6
 Release:        1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING

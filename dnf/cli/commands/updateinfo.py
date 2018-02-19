@@ -388,7 +388,7 @@ class UpdateInfoCommand(commands.Command):
 
     def run(self):
         """Execute the command with arguments."""
-        self.cli._populate_update_security_filter(self.opts, minimal=True)
+        self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
 
         args = self.opts.spec
         display = self.display_summary

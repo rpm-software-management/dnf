@@ -68,7 +68,7 @@ class InstallCommand(commands.Command):
         forms = [self.nevra_forms[command] for command in self.opts.command
                  if command in list(self.nevra_forms.keys())]
 
-        self.cli._populate_update_security_filter(self.opts, minimal=True)
+        self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
 
         # localinstall valid arguments check
         nonfilenames = self.opts.grp_specs or self.opts.pkg_specs
