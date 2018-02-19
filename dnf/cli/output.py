@@ -28,6 +28,7 @@ from dnf.cli.format import format_number, format_time
 from dnf.i18n import _, P_, ucd, fill_exact_width, textwrap_fill, exact_width
 from dnf.pycomp import xrange, basestring, long, unicode
 from dnf.yum.rpmtrans import LoggingTransactionDisplay
+from dnf.db.history import MergedTransactionWrapper
 import dnf.callback
 import dnf.cli.progress
 import dnf.cli.term
@@ -1585,7 +1586,7 @@ Transaction Summary
 
             if trans.tid >= bmtid and trans.tid <= emtid:
                 if mobj is None:
-                    mobj = trans
+                    mobj = MergedTransactionWrapper(trans)
                 else:
                     mobj.merge(trans)
                 merged = True
@@ -1615,7 +1616,7 @@ Transaction Summary
             self._historyInfoCmd(mobj)
 
     def _historyInfoCmd(self, old, pats=[]):
-        name = self._pwd_ui_username(old.loginuid)
+        name = [self._pwd_ui_username(uid) for uid in old.loginuid]
 
         _pkg_states_installed = {'i' : _('Installed'), 'e' : _('Erased'),
                                  'o' : _('Upgraded'), 'n' : _('Downgraded')}

@@ -493,6 +493,14 @@ class FakeConf(dnf.conf.Conf):
         for optname, val in options:
             setattr(self, optname, dnf.conf.Value(val, dnf.conf.PRIO_DEFAULT))
 
+        # TODO: consolidate with dnf.cli.Cli._read_conf_file()
+        for opt in ('cachedir', 'logdir', 'persistdir'):
+            # don't prepend installroot if option was specified by user
+            # TODO: is this desired? ^^^ (tests won't pass without it ATM)
+            if opt in kwargs:
+                continue
+            self.prepend_installroot(opt)
+
     @property
     def releasever(self):
         return self.substitutions['releasever']
