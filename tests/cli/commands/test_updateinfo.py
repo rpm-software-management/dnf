@@ -158,7 +158,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
              for adv in pkg.get_advisories(hawkey.LT | hawkey.EQ)
              for apkg in adv.packages))
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.display_list(apkg_adv_insts, True, '')
+        cmd.display_list(apkg_adv_insts, True)
         self.assertEqual(
             self._stdout.getvalue(),
             'i DNF-2014-1 bugfix       tour-4-4.noarch\n'
@@ -176,7 +176,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
         )
         self.cli.base.set_debuglevel(dnf.const.VERBOSE_LEVEL)
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.display_info(apkg_adv_insts, False, '')
+        cmd.display_info(apkg_adv_insts, False)
         updated = datetime.datetime.fromtimestamp(1404841143)
         self.assertEqual(self._stdout.getvalue(),
                          '========================================'
@@ -184,11 +184,11 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
                          '  tour-5-1\n'
                          '========================================'
                          '=======================================\n'
-                         '  Update ID : DNF-2014-3\n'
-                         '       Type : security\n'
-                         '    Updated : ' + str(updated) + '\n'
-                         'Description : testing advisory\n'
-                         '      Files : tour-5-1.noarch.rpm\n'
+                         '  Update ID: DNF-2014-3\n'
+                         '       Type: security\n'
+                         '    Updated: ' + str(updated) + '\n'
+                         'Description: testing advisory\n'
+                         '      Files: tour-5-1.noarch.rpm\n'
                          '\n',
                          'incorrect output')
 
@@ -205,46 +205,46 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
              for apkg in adv.packages))
         self.cli.base.set_debuglevel(dnf.const.VERBOSE_LEVEL)
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.display_info(apkg_adv_insts, True, '')
+        cmd.display_info(apkg_adv_insts, True)
         updated1 = datetime.datetime.fromtimestamp(1404840841)
         updated2 = datetime.datetime.fromtimestamp(1404841082)
         updated3 = datetime.datetime.fromtimestamp(1404841143)
         self.assertEqual(self._stdout.getvalue(),
                          '========================================'
                          '=======================================\n'
-                         '  tour-5-1\n'
-                         '========================================'
-                         '=======================================\n'
-                         '  Update ID : DNF-2014-3\n'
-                         '       Type : security\n'
-                         '    Updated : ' + str(updated3) + '\n'
-                         'Description : testing advisory\n'
-                         '      Files : tour-5-1.noarch.rpm\n'
-                         '  Installed : false\n'
-                         '\n'
-                         '========================================'
-                         '=======================================\n'
                          '  tour-4-4\n'
                          '========================================'
                          '=======================================\n'
-                         '  Update ID : DNF-2014-1\n'
-                         '       Type : bugfix\n'
-                         '    Updated : ' + str(updated1) + '\n'
-                         'Description : testing advisory\n'
-                         '      Files : tour-4-4.noarch.rpm\n'
-                         '  Installed : true\n'
+                         '  Update ID: DNF-2014-1\n'
+                         '       Type: bugfix\n'
+                         '    Updated: ' + str(updated1) + '\n'
+                         'Description: testing advisory\n'
+                         '      Files: tour-4-4.noarch.rpm\n'
+                         '  Installed: true\n'
                          '\n'
                          '========================================'
                          '=======================================\n'
                          '  tour-5-0\n'
                          '========================================'
                          '=======================================\n'
-                         '  Update ID : DNF-2014-2\n'
-                         '       Type : enhancement\n'
-                         '    Updated : ' + str(updated2) + '\n'
-                         'Description : testing advisory\n'
-                         '      Files : tour-5-0.noarch.rpm\n'
-                         '  Installed : true\n'
+                         '  Update ID: DNF-2014-2\n'
+                         '       Type: enhancement\n'
+                         '    Updated: ' + str(updated2) + '\n'
+                         'Description: testing advisory\n'
+                         '      Files: tour-5-0.noarch.rpm\n'
+                         '  Installed: true\n'
+                         '\n'
+                         '========================================'
+                         '=======================================\n'
+                         '  tour-5-1\n'
+                         '========================================'
+                         '=======================================\n'
+                         '  Update ID: DNF-2014-3\n'
+                         '       Type: security\n'
+                         '    Updated: ' + str(updated3) + '\n'
+                         'Description: testing advisory\n'
+                         '      Files: tour-5-1.noarch.rpm\n'
+                         '  Installed: false\n'
                          '\n',
                          'incorrect output')
 
@@ -284,9 +284,9 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
                          '  tour-5-1\n'
                          '========================================'
                          '=======================================\n'
-                         '  Update ID : DNF-2014-3\n'
-                         '       Type : security\n'
-                         '    Updated : ' + str(updated) + '\n'
-                         'Description : testing advisory\n'
+                         '  Update ID: DNF-2014-3\n'
+                         '       Type: security\n'
+                         '    Updated: ' + str(updated) + '\n'
+                         'Description: testing advisory\n'
                          '\n',
                          'incorrect output')

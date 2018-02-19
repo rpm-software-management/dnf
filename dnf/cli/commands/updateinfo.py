@@ -19,16 +19,12 @@
 #
 
 """UpdateInfo CLI command."""
-
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
-from collections import OrderedDict
-from itertools import chain
-from operator import itemgetter
+
 import collections
 import fnmatch
-import itertools
 
 import hawkey
 from dnf.cli import commands
@@ -138,16 +134,16 @@ class UpdateInfoCommand(commands.Command):
             mixed = True
             apkg_adv_insts = self.all_apkg_adv_insts(self.opts.spec)
             description = _('all')
-        elif self.opts.availability == 'available':
+        else:
             apkg_adv_insts = self.available_apkg_adv_insts(self.opts.spec)
             description = _('available')
 
-        display = self.display_summary
         if self.opts.spec_action == 'list':
-            display = self.display_list
+            self.display_list(apkg_adv_insts, mixed)
         elif self.opts.spec_action == 'info':
-            display = self.display_info
-        display(apkg_adv_insts, mixed, description)
+            self.display_info(apkg_adv_insts, mixed)
+        else:
+            self.display_summary(apkg_adv_insts, description)
 
     def get_installed_version(self, name, arch):
         if self._ina2evr_cache is None:
@@ -159,7 +155,7 @@ class UpdateInfoCommand(commands.Command):
         """Compare installed version with apackage version. Returns None either if
         apackage is not installed, or if there are no update filters for apackage"""
         key = (apackage.name, apackage.evr, apackage.arch)
-        if not key in self._update_filters_cmp_cache:
+        if key not in self._update_filters_cmp_cache:
             ievr = self.get_installed_version(key[0], key[2])
             if ievr is None:
                 self._update_filters_cmp_cache[key] = None
@@ -214,11 +210,14 @@ class UpdateInfoCommand(commands.Command):
                 if not specs_types and not specs_patterns:
                     advisory_match = True
                 else:
-                    advisory_match = advisory.type in specs_types \
-                        or any(fnmatch.fnmatchcase(advisory.id, pat) for pat in specs_patterns)
+                    advisory_match = advisory.type in specs_types or \
+                        any(fnmatch.fnmatchcase(advisory.id, pat)
+                            for pat in specs_patterns)
                 for apackage in advisory.packages:
                     passed = req_apkg(apackage) \
-                        and (advisory_match or any(fnmatch.fnmatchcase(apackage.name, pat) for pat in specs_patterns))
+                        and (advisory_match or
+                             any(fnmatch.fnmatchcase(apackage.name, pat)
+                                 for pat in specs_patterns))
                     if passed:
                         installed = self._newer_equal_installed(apackage)
                         yield apackage, advisory, installed
@@ -243,32 +242,9 @@ class UpdateInfoCommand(commands.Command):
 
     def all_apkg_adv_insts(self, specs):
         """Return installed (adv. package, adv., inst.) triplets"""
-        ipackages = self.base.sack.query().installed()
-        gttriplets = self._apackage_advisory_installeds(
-            ipackages, hawkey.GT, self._any_installed, specs)
-        lteqtriplets = self._apackage_advisory_installeds(
-            ipackages, hawkey.LT | hawkey.EQ, self._any_installed, specs)
-        return chain(gttriplets, lteqtriplets)
-
-    #TODO this is quicker, but returns different output
-    def xall_apkg_adv_insts(self, specs):
-        """Return installed (adv. package, adv., inst.) triplets"""
-        ipackages = self.base.sack.query().installed()
         return self._apackage_advisory_installeds(
-            ipackages, hawkey.LT | hawkey.EQ | hawkey.GT, self._any_installed, specs)
-
-
-
-
-
-
-
-
-
-
-
-
-
+            self.base.sack.query().installed(), hawkey.LT | hawkey.EQ | hawkey.GT,
+            self._any_installed, specs)
 
     def _summary(self, apkg_adv_insts):
         """Make the summary of advisories."""
@@ -276,175 +252,167 @@ class UpdateInfoCommand(commands.Command):
         # a repository and two advisories with the same IDs in different
         # repositories must have the same type.
         id2type = {}
-        for pkadin in apkg_adv_insts:
-            id2type[pkadin[1].id] = pkadin[1].type
-            if pkadin[1].type == hawkey.ADVISORY_SECURITY:
-                id2type[(pkadin[1].id, pkadin[1].severity)] = (pkadin[1].type,
-                                                               pkadin[1].severity)
+        for (apkg, advisory, installed) in apkg_adv_insts:
+            id2type[advisory.id] = advisory.type
+            if advisory.type == hawkey.ADVISORY_SECURITY:
+                id2type[(advisory.id, advisory.severity)] = (advisory.type, advisory.severity)
         return collections.Counter(id2type.values())
 
-    def display_summary(self, apkg_adv_insts, mixed, description):
+    def display_summary(self, apkg_adv_insts, description):
         """Display the summary of advisories."""
         typ2cnt = self._summary(apkg_adv_insts)
-        if not typ2cnt:
-            if self.base.conf.autocheck_running_kernel:
-                self.cli._check_running_kernel()
-            return
-        print(_('Updates Information Summary: ') + description)
-        # Convert types to strings and order the entries.
-        label_counts = [
-            (0, _('New Package notice(s)'), typ2cnt[hawkey.ADVISORY_NEWPACKAGE]),
-            (0, _('Security notice(s)'), typ2cnt[hawkey.ADVISORY_SECURITY]),
-            (1, _('Critical Security notice(s)'),
-             typ2cnt[(hawkey.ADVISORY_SECURITY, 'Critical')]),
-            (1, _('Important Security notice(s)'),
-             typ2cnt[(hawkey.ADVISORY_SECURITY, 'Important')]),
-            (1, _('Moderate Security notice(s)'),
-             typ2cnt[(hawkey.ADVISORY_SECURITY, 'Moderate')]),
-            (1, _('Low Security notice(s)'),
-             typ2cnt[(hawkey.ADVISORY_SECURITY, 'Low')]),
-            (1, _('Unknown Security notice(s)'),
-             typ2cnt[(hawkey.ADVISORY_SECURITY, None)]),
-            (0, _('Bugfix notice(s)'), typ2cnt[hawkey.ADVISORY_BUGFIX]),
-            (0, _('Enhancement notice(s)'), typ2cnt[hawkey.ADVISORY_ENHANCEMENT]),
-            (0, _('other notice(s)'), typ2cnt[hawkey.ADVISORY_UNKNOWN])]
-        # Convert counts to strings and skip missing types.
-        label2value = OrderedDict((label, (indent, unicode(count)))
-                                  for indent, label, count in label_counts
-                                  if count)
-        width = _maxlen(v[1] for v in label2value.values())
-        for label, (indent, value) in label2value.items():
-            print('    %*s %s' % (width + 4 * indent, value, label))
+        if typ2cnt:
+            print(_('Updates Information Summary: ') + description)
+            # Convert types to strings and order the entries.
+            label_counts = [
+                (0, _('New Package notice(s)'), typ2cnt[hawkey.ADVISORY_NEWPACKAGE]),
+                (0, _('Security notice(s)'), typ2cnt[hawkey.ADVISORY_SECURITY]),
+                (1, _('Critical Security notice(s)'),
+                 typ2cnt[(hawkey.ADVISORY_SECURITY, 'Critical')]),
+                (1, _('Important Security notice(s)'),
+                 typ2cnt[(hawkey.ADVISORY_SECURITY, 'Important')]),
+                (1, _('Moderate Security notice(s)'),
+                 typ2cnt[(hawkey.ADVISORY_SECURITY, 'Moderate')]),
+                (1, _('Low Security notice(s)'),
+                 typ2cnt[(hawkey.ADVISORY_SECURITY, 'Low')]),
+                (1, _('Unknown Security notice(s)'),
+                 typ2cnt[(hawkey.ADVISORY_SECURITY, None)]),
+                (0, _('Bugfix notice(s)'), typ2cnt[hawkey.ADVISORY_BUGFIX]),
+                (0, _('Enhancement notice(s)'), typ2cnt[hawkey.ADVISORY_ENHANCEMENT]),
+                (0, _('other notice(s)'), typ2cnt[hawkey.ADVISORY_UNKNOWN])]
+            width = _maxlen(unicode(v[2]) for v in label_counts if v[2])
+            for indent, label, count in label_counts:
+                if not count:
+                    continue
+                print('    %*s %s' % (width + 4 * indent, unicode(count), label))
         if self.base.conf.autocheck_running_kernel:
             self.cli._check_running_kernel()
 
-    @staticmethod
-    def _list(apkg_adv_insts):
-        """Make the list of advisories."""
-        # Get ((NEVRA, installed), advisory ID, advisory type)
-        apkg2nevra = lambda apkg: apkg.name + '-' + apkg.evr + '.' + apkg.arch
-        nevrains_id_types = (
-            ((apkg2nevra(apkg), inst), adv.id, (adv.type, adv.severity))
-            for apkg, adv, inst in apkg_adv_insts)
-        # Sort and group by (NEVRA, installed).
-        nevrains_nits = itertools.groupby(
-            sorted(nevrains_id_types, key=itemgetter(0)), key=itemgetter(0))
-        for nevra_ins, nits in nevrains_nits:
-            # Remove duplicate IDs. We assume that two advisories with the same
-            # IDs (e.g. from different repositories) must have the same type.
-            yield nevra_ins, {nit[1]: nit[2] for nit in nits}
-
-    def display_list(self, apkg_adv_insts, mixed, description):
+    def display_list(self, apkg_adv_insts, mixed):
         """Display the list of advisories."""
         def inst2mark(inst):
-            return ('' if not mixed else 'i ' if inst else '  ')
+            if not mixed:
+                return ''
+            elif inst:
+                return 'i '
+            else:
+                return '  '
 
         def type2label(typ, sev):
             if typ == hawkey.ADVISORY_SECURITY:
-                return cls.SECURITY2LABEL.get(sev, _('Unknown/Sec.'))
+                return self.SECURITY2LABEL.get(sev, _('Unknown/Sec.'))
             else:
-                return cls.TYPE2LABEL.get(typ, _('unknown'))
+                return self.TYPE2LABEL.get(typ, _('unknown'))
 
-        # Sort IDs and convert types to labels.
-        nevramark2id2tlbl = OrderedDict(
-            ((nevra, inst2mark(inst)),
-             OrderedDict(sorted(((id_, type2label(typ, sev))
-                                 for id_, (typ, sev) in id2type.items()),
-                                key=itemgetter(0))))
-            for (nevra, inst), id2type in self._list(apkg_adv_insts))
-        if not nevramark2id2tlbl:
-            return
-        # Get all advisory IDs and types as two iterables.
-        ids, tlbls = zip(*chain.from_iterable(
-            id2tlbl.items() for id2tlbl in nevramark2id2tlbl.values()))
-        idw, tlw = _maxlen(ids), _maxlen(tlbls)
-        for (nevra, mark), id2tlbl in nevramark2id2tlbl.items():
-            for id_, tlbl in id2tlbl.items():
-                print('%s%-*s %-*s %s' % (mark, idw, id_, tlw, tlbl, nevra))
+        nevra_inst_dict = dict()
+        for apkg, advisory, installed in apkg_adv_insts:
+            nevra = '%s-%s.%s' % (apkg.name, apkg.evr, apkg.arch)
+            nevra_inst_dict.setdefault((nevra, installed), dict())[advisory.id] = (
+                advisory.type, advisory.severity)
+
+        advlist = []
+        # convert types to labels, find max len of advisory IDs and types
+        idw = tlw = 0
+        for (nevra, inst), id2type in sorted(nevra_inst_dict.items(), key=lambda x: x[0]):
+            for aid, atypesev in id2type.items():
+                idw = max(idw, len(aid))
+                label = type2label(*atypesev)
+                tlw = max(tlw, len(label))
+                advlist.append((inst2mark(inst), aid, label, nevra))
+
+        for (inst, aid, label, nevra) in advlist:
+            print('%s%-*s %-*s %s' % (inst, idw, aid, tlw, label, nevra))
+
 
     def _info(self, apkg_adv_insts):
         """Make detailed information about advisories."""
-        # Get mapping from identity to (title, ID, type, time, BZs, CVEs,
-        # description, rights, files, installed). This way we get rid of
+        arches = self.base.sack.list_arches()
+
+        # Get mapping from title to [title, ID, type, time, BZs, CVEs,
+        # description, rights, files, installed]. This way we get rid of
         # unneeded advisory packages given with the advisories and we remove
         # duplicate advisories (that SPEEDS UP the information extraction
         # because the advisory attribute getters are expensive, so we won't get
         # the attributes multiple times). We cannot use a set because
         # advisories are not hashable.
-        getrefs = lambda apkg, typ: (
-            (ref.id, ref.title) for ref in apkg.references if ref.type == typ)
-        id2tuple = OrderedDict()
-        for apkg_adv_inst in apkg_adv_insts:
-            identity, inst = id(apkg_adv_inst[1]), apkg_adv_inst[2]
+        verbose = self.base.conf.verbose
+        bytitle = dict()
+        # mapping from title to list of identities
+        for apkg, advisory, installed in apkg_adv_insts:
+            title = advisory.title.lower()
             try:
-                tuple_ = id2tuple[identity]
+                advlist = bytitle[title]
             except KeyError:
-                id2tuple[identity] = (
-                    apkg_adv_inst[1].title,
-                    apkg_adv_inst[1].id,
-                    apkg_adv_inst[1].type,
-                    apkg_adv_inst[1].updated,
-                    getrefs(apkg_adv_inst[1], hawkey.REFERENCE_BUGZILLA),
-                    getrefs(apkg_adv_inst[1], hawkey.REFERENCE_CVE),
-                    apkg_adv_inst[1].description,
-                    apkg_adv_inst[1].severity,
-                    apkg_adv_inst[1].rights,
-                    (pkg.filename for pkg in apkg_adv_inst[1].packages
-                     if pkg.arch in self.base.sack.list_arches()),
-                    inst)
+                advlist = [
+                    advisory.title,
+                    advisory.id,
+                    self.TYPE2LABEL.get(advisory.type, _('unknown')),
+                    unicode(advisory.updated),
+                    set((ref.type, ref.id, ref.title) for ref in advisory.references),
+                    [],
+                    advisory.description,
+                    advisory.severity,
+                    advisory.rights if verbose else None,
+                    set(pkg.filename for pkg in advisory.packages
+                        if pkg.arch in arches) if verbose else None,
+                    installed]
+                bytitle[title] = advlist
             else:
+                # References and files are merged.
+                advlist[4].update(set((ref.type, ref.id, ref.title)
+                                      for ref in advisory.references))
+                if verbose:
+                    advlist[9].update(set(pkg.filename
+                                          for pkg in advisory.packages
+                                          if pkg.arch in arches))
                 # If the stored advisory is marked as not installed and the
                 # current is marked as installed, mark the stored as installed.
-                if not tuple_[10] and inst:
-                    id2tuple[identity] = tuple_[:10] + (inst,)
-        # Get mapping from title to (ID, type, time, BZs, CVEs, description,
-        # rights, files, installed) => group by titles and merge values. We
-        # assume that two advisories with the same title (e.g. from different
-        # repositories) must have the same ID, type, time, description and
-        # rights. References, files and installs are merged.
-        merge = lambda old, new: set(chain(old, new))
-        title2info = OrderedDict()
-        for tuple_ in id2tuple.values():
-            title, new = tuple_[0], tuple_[1:]
-            old = title2info.get(
-                title, (None, None, None, [], [], None, None, None, [], False))
-            title2info[title] = (
-                new[:3] +
-                (merge(old[3], new[3]),
-                 merge(old[4], new[4])) +
-                new[5:8] +
-                (merge(old[8], new[8]),
-                 old[9] or new[9]))
-        return title2info
+                advlist[10] = advlist[10] or installed
 
-    def display_info(self, apkg_adv_insts, mixed, description):
+        for title in sorted(bytitle.keys()):
+            yield bytitle[title]
+
+    def display_info(self, apkg_adv_insts, mixed):
         """Display the details about available advisories."""
-        info = self._info(apkg_adv_insts).items()
-        # Convert objects to string lines and mark verbose fields.
-        verbse = lambda value: value if self.base.conf.verbose else None
-        info = (
-            (tit, ([id_], [self.TYPE2LABEL[typ]], [unicode(upd)],
-                   (id_title[0] + (' - ' + id_title[1] if id_title[1] else '')
-                    for id_title in bzs),
-                   (id_title[0] for id_title in cvs), desc.splitlines(), [sev],
-                   verbse(rigs.splitlines() if rigs else None), verbse(fils),
-                   None if not mixed else [_('true') if ins else _('false')]))
-            for tit, (id_, typ, upd, bzs, cvs, desc, sev, rigs, fils, ins) in info)
+        def advlist2lines(advlist):
+            # simple one line fields
+            for i in (1, 2, 3, 7):
+                advlist[i] = [advlist[i]]
+            # split referencies to bzs / cves
+            references = sorted(advlist[4])
+            advlist[4] = []
+            advlist[5] = []
+            for ref_type, ref_id, ref_title in references:
+                if ref_type == hawkey.REFERENCE_BUGZILLA:
+                    advlist[4].append('{} - {}'.format(ref_id, ref_title or ''))
+                elif ref_type == hawkey.REFERENCE_CVE:
+                    advlist[5].append(ref_id)
+            # multiline fields
+            for i in (6, 8):
+                if advlist[i]:
+                    advlist[i] = advlist[i].splitlines()
+            # sort filenames
+            if advlist[9]:
+                advlist[9] = sorted(advlist[9])
+            # installed value
+            if not mixed:
+                advlist[10] = None
+            else:
+                advlist[10] = [_('true') if advlist[10] else _('false')]
+            return advlist
+
         labels = (_('Update ID'), _('Type'), _('Updated'), _('Bugs'),
                   _('CVEs'), _('Description'), _('Severity'), _('Rights'),
                   _('Files'), _('Installed'))
         width = _maxlen(labels)
-        for title, vallines in info:
+        for advlist in self._info(apkg_adv_insts):
             print('=' * 79)
-            print('  ' + title)
+            print('  ' + advlist[0])
             print('=' * 79)
-            for label, lines in zip(labels, vallines):
+            for label, lines in zip(labels, advlist2lines(advlist)[1:]):
                 if lines is None or lines == [None]:
                     continue
-                # Use the label only for the first item. For the remaining
-                # items, use an empty label.
-                labels_ = chain([label], itertools.repeat(''))
-                for label_, line in zip(labels_, lines):
-                    print('%*s : %s' % (width, label_, line))
+                for i, line in enumerate(lines):
+                    print('%*s: %s' % (width, label if i == 0 else '', line))
             print()
 
