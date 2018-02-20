@@ -326,11 +326,12 @@ class Comps(object):
 
     def _add_from_xml_filename(self, fn):
         comps = libcomps.Comps()
-        ret = comps.fromxml_f(fn)
-        if ret == -1:
-            errors = comps.get_last_parse_errors()
+        try:
+            comps.fromxml_f(fn)
+        except libcomps.ParserError:
+            errors = comps.get_last_errors()
             raise CompsError(' '.join(errors))
-        self._i = self._i + comps
+        self._i += comps
 
     @property
     def categories(self):
