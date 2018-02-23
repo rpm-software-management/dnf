@@ -191,6 +191,9 @@ class RPMTransaction(object):
         te = self._te_list[self._te_index]
         te_nevra = dnf.util._te_nevra(te)
         for tsi in self.base.transaction:
+            if tsi.action == libdnf.swdb.TransactionItemAction_REINSTALL:
+                # skip REINSTALL in order to return REINSTALLED
+                continue
             if str(tsi) == te_nevra:
                 return tsi.pkg, tsi.action, tsi
 
@@ -280,11 +283,12 @@ class RPMTransaction(object):
         if self.test or not self.trans_running:
             return
 
+        if tsi.state == libdnf.swdb.TransactionItemState_UNKNOWN:
+            tsi.state = libdnf.swdb.TransactionItemState_DONE
+
         for display in self.displays:
             display.filelog(tsi.pkg, tsi.action)
         self._scriptout()
-
-        self.base.history.swdb.setItemDone(tsi._item);
 
         if self.complete_actions == self.total_actions:
             # RPM doesn't explicitly report when post-trans phase starts
@@ -311,6 +315,10 @@ class RPMTransaction(object):
 
     def _unInstStop(self, key):
         _, _, tsi = self._extract_cbkey(key)
+
+        if tsi.state == libdnf.swdb.TransactionItemState_UNKNOWN:
+            tsi.state = libdnf.swdb.TransactionItemState_DONE
+
         for display in self.displays:
             display.filelog(tsi.pkg, tsi.action)
 
@@ -318,7 +326,6 @@ class RPMTransaction(object):
             return
 
         self._scriptout()
-        self.base.history.swdb.setItemDone(tsi._item);
 
     def _cpioError(self, key):
         # In the case of a remove, we only have a name, not a tsi:
@@ -328,10 +335,11 @@ class RPMTransaction(object):
             display.error(msg)
 
     def _unpackError(self, key):
-        pkg, _, _ = self._extract_cbkey(key)
+        pkg, _, tsi = self._extract_cbkey(key)
         msg = "Error unpacking rpm package %s" % pkg
         for display in self.displays:
             display.error(msg)
+        tsi.state = libdnf.swdb.TransactionItemState_ERROR
 
     def _scriptError(self, amount, total, key):
         # "amount" carries the failed scriptlet tag,

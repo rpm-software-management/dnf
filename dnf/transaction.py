@@ -28,9 +28,6 @@ import libdnf.swdb
 from dnf.i18n import _
 
 
-# per-package actions - errors
-PKG_FAIL = -1
-
 # per-package actions - from libdnf
 PKG_DOWNGRADE = libdnf.swdb.TransactionItemAction_DOWNGRADE
 PKG_DOWNGRADED = libdnf.swdb.TransactionItemAction_DOWNGRADED
@@ -57,8 +54,6 @@ TRANS_POST = 202
 
 
 ACTIONS = {
-    # TODO: PKG_FAIL
-
     PKG_DOWNGRADE: _('Downgrading'),
     PKG_INSTALL: _('Installing'),
     PKG_OBSOLETE: _('Obsoleting'),
@@ -78,8 +73,6 @@ ACTIONS = {
 
 # untranslated strings, logging to /var/log/dnf/dnf.rpm.log
 FILE_ACTIONS = {
-    # TODO: PKG_FAIL
-
     PKG_DOWNGRADE: 'Downgrade',
     PKG_DOWNGRADED: 'Downgraded',
     PKG_INSTALL: 'Installed',
