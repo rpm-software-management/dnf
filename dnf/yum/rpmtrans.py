@@ -16,6 +16,9 @@
 
 from __future__ import print_function, absolute_import
 from __future__ import unicode_literals
+
+import libdnf.swdb
+
 from dnf.i18n import _, ucd
 import dnf.transaction
 import dnf.util
@@ -27,6 +30,7 @@ import tempfile
 import traceback
 
 
+# TODO: merge w/ libdnf
 # transaction set states
 TS_UPDATE = 10
 TS_INSTALL = 20
@@ -44,27 +48,6 @@ logger = logging.getLogger('dnf')
 
 
 class TransactionDisplay(object):
-    # per-package events
-    PKG_CLEANUP = 1
-    PKG_DOWNGRADE = 2
-    PKG_ERASE = 3
-    PKG_INSTALL = 4
-    PKG_OBSOLETE = 5
-    PKG_REINSTALL = 6
-    PKG_UPGRADE = 7
-    PKG_VERIFY = 8
-    TRANS_PREPARATION = 9
-    PKG_SCRIPTLET = 10
-    # transaction-wide events
-    TRANS_POST = 11
-
-    ACTION_FROM_OP_TYPE = {
-        dnf.transaction.DOWNGRADE : PKG_DOWNGRADE,
-        dnf.transaction.ERASE     : PKG_ERASE,
-        dnf.transaction.INSTALL   : PKG_INSTALL,
-        dnf.transaction.REINSTALL : PKG_REINSTALL,
-        dnf.transaction.UPGRADE   : PKG_UPGRADE
-        }
 
     def __init__(self):
         pass
@@ -101,7 +84,8 @@ class TransactionDisplay(object):
         pass
 
     def verify_tsi_package(self, pkg, count, total):
-        self.progress(pkg, self.PKG_VERIFY, 100, 100, count, total)
+        # TODO: replace with verify_tsi?
+        self.progress(pkg, dnf.transaction.PKG_VERIFY, 100, 100, count, total)
 
 
 class ErrorTransactionDisplay(TransactionDisplay):
@@ -119,26 +103,6 @@ class LoggingTransactionDisplay(ErrorTransactionDisplay):
     '''
     def __init__(self):
         super(LoggingTransactionDisplay, self).__init__()
-        self.action = {self.PKG_CLEANUP: _('Cleanup'),
-                       self.PKG_DOWNGRADE: _('Downgrading'),
-                       self.PKG_ERASE: _('Erasing'),
-                       self.PKG_INSTALL: _('Installing'),
-                       self.PKG_OBSOLETE: _('Obsoleting'),
-                       self.PKG_REINSTALL: _('Reinstalling'),
-                       self.PKG_UPGRADE: _('Upgrading'),
-                       self.PKG_VERIFY: _('Verifying'),
-                       self.TRANS_PREPARATION: _('Preparing'),
-                       self.PKG_SCRIPTLET: _('Running scriptlet')}
-        self.fileaction = {self.PKG_CLEANUP: 'Cleanup',
-                           self.PKG_DOWNGRADE: 'Downgraded',
-                           self.PKG_ERASE: 'Erased',
-                           self.PKG_INSTALL: 'Installed',
-                           self.PKG_OBSOLETE: 'Obsoleted',
-                           self.PKG_REINSTALL: 'Reinstalled',
-                           self.PKG_UPGRADE:  'Upgraded',
-                           self.PKG_VERIFY: 'Verified',
-                           self.TRANS_PREPARATION: 'Preparing',
-                           self.PKG_SCRIPTLET: 'Running scriptlet'}
         self.rpm_logger = logging.getLogger('dnf.rpm')
 
     def error(self, message):
@@ -146,23 +110,13 @@ class LoggingTransactionDisplay(ErrorTransactionDisplay):
         self.rpm_logger.error(message)
 
     def filelog(self, package, action):
-        # If the action is not in the fileaction list then dump it as a string
-        # hurky but, sadly, not much else
-        if not dnf.util.is_string_type(action):
-            action = self.fileaction[action]
-            if action is None:
-                return
-        msg = '%s: %s' % (action, package)
+        action_str = dnf.transaction.FILE_ACTIONS[action]
+        msg = '%s: %s' % (action_str, package)
         self.rpm_logger.info(msg)
+
 
 class RPMTransaction(object):
     def __init__(self, base, test=False, displays=()):
-        self.ts_action = {TransactionDisplay.PKG_DOWNGRADE: 'Downgrading',
-                          TransactionDisplay.PKG_ERASE: 'Erasing',
-                          TransactionDisplay.PKG_INSTALL: 'Installing',
-                          TransactionDisplay.PKG_REINSTALL: 'Reinstalling',
-                          TransactionDisplay.PKG_UPGRADE: 'Upgrading'}
-
         if not displays:
             displays = [ErrorTransactionDisplay()]
         self.displays = displays
@@ -230,31 +184,17 @@ class RPMTransaction(object):
     def _extract_cbkey(self, cbkey):
         """Obtain the package related to the calling callback."""
 
-        if isinstance(cbkey, dnf.transaction.TransactionItem):
-            # Easy, tsi is provided by the callback (only happens on installs)
-            return cbkey._active, cbkey._active_history_state, cbkey
+        if hasattr(cbkey, "pkg"):
+            tsi = cbkey
+            return tsi.pkg, tsi.action, tsi
 
-        # We don't have the tsi, let's look it up (only happens on erasures)
-        obsoleted = obsoleted_state = obsoleted_tsi = None
-        if self._te_list == []:
-            if isinstance(cbkey, str):
-                obsoleted = cbkey
-        else:
-            te = self._te_list[self._te_index]
-            te_nevra = dnf.util._te_nevra(te)
-            for tsi in self.base.transaction:
-                # only walk the tsis once. prefer finding an erase over an obsoleted
-                # package:
-                if tsi.erased is not None and str(tsi.erased) == te_nevra:
-                    return tsi.erased, tsi._erased_history_state, tsi
-                if tsi.installed is not None and str(tsi.installed) == te_nevra:
-                    return tsi.installed, tsi._installed_history_state, tsi
-                for o in tsi.obsoleted:
-                    if str(o) == te_nevra:
-                        obsoleted = o
-                        obsoleted_state = tsi._obsoleted_history_state
-                        obsoleted_tsi = tsi
-        return obsoleted, obsoleted_state, obsoleted_tsi
+        te = self._te_list[self._te_index]
+        te_nevra = dnf.util._te_nevra(te)
+        for tsi in self.base.transaction:
+            if str(tsi) == te_nevra:
+                return tsi.pkg, tsi.action, tsi
+
+        raise RuntimeError("TransactionItem not found for key: %s" % cbkey)
 
     def callback(self, what, amount, total, key, client_data):
         try:
@@ -305,7 +245,7 @@ class RPMTransaction(object):
         self._te_list = list(self.base._ts)
 
     def _trans_progress(self, amount, total):
-        action = TransactionDisplay.TRANS_PREPARATION
+        action = dnf.transaction.TRANS_PREPARATION
         for display in self.displays:
             display.progress('', action, amount + 1, total, 1, 1)
 
@@ -313,10 +253,9 @@ class RPMTransaction(object):
         self._te_index = index
         self.complete_actions += 1
         if not self.test:
-            pkg, state, tsi = self._extract_cbkey(key)
-            action = TransactionDisplay.ACTION_FROM_OP_TYPE[tsi.op_type]
+            _, _, tsi = self._extract_cbkey(key)
             for display in self.displays:
-                display.filelog(pkg, self.ts_action[action])
+                display.filelog(tsi.pkg, tsi.action)
 
     def _instOpenFile(self, key):
         self.lastmsg = None
@@ -334,75 +273,52 @@ class RPMTransaction(object):
             return self.fd.fileno()
 
     def _instCloseFile(self, key):
-        pkg, state, tsi = self._extract_cbkey(key)
+        _, _, tsi = self._extract_cbkey(key)
         self.fd.close()
         self.fd = None
 
         if self.test or not self.trans_running:
             return
 
-        action = TransactionDisplay.ACTION_FROM_OP_TYPE[tsi.op_type]
         for display in self.displays:
-            display.filelog(pkg, action)
+            display.filelog(tsi.pkg, tsi.action)
         self._scriptout()
 
-        swdb_item = getattr(pkg, "_swdb_item", None)
-        if swdb_item:
-            # TODO: just done or multiple states?
-            self.base.history.swdb.setItemDone(swdb_item);
+        self.base.history.swdb.setItemDone(tsi._item);
 
         if self.complete_actions == self.total_actions:
             # RPM doesn't explicitly report when post-trans phase starts
-            action = TransactionDisplay.TRANS_POST
+            action = dnf.transaction.TRANS_POST
             for display in self.displays:
                 display.progress(None, action, None, None, None, None)
 
     def _instProgress(self, amount, total, key):
-        pkg, _, tsi = self._extract_cbkey(key)
-        action = TransactionDisplay.ACTION_FROM_OP_TYPE[tsi.op_type]
+        _, _, tsi = self._extract_cbkey(key)
         for display in self.displays:
             display.progress(
-                pkg, action, amount, total, self.complete_actions,
+                tsi.pkg, tsi.action, amount, total, self.complete_actions,
                 self.total_actions)
 
     def _uninst_start(self, key):
         self.total_removed += 1
 
     def _uninst_progress(self, amount, total, key):
-        pkg, state, _ = self._extract_cbkey(key)
-        if state == 'Obsoleted':
-            action = TransactionDisplay.PKG_OBSOLETE
-        elif state == 'Updated':
-            action = TransactionDisplay.PKG_CLEANUP
-        else:
-            action = TransactionDisplay.PKG_ERASE
+        _, _, tsi = self._extract_cbkey(key)
         for display in self.displays:
             display.progress(
-                pkg, action, amount, total, self.complete_actions,
+                tsi.pkg, tsi.action, amount, total, self.complete_actions,
                 self.total_actions)
 
     def _unInstStop(self, key):
-        pkg, state, _ = self._extract_cbkey(key)
-        if state == 'Obsoleted':
-            action = TransactionDisplay.PKG_OBSOLETE
-        elif state == 'Updated':
-            action = TransactionDisplay.PKG_CLEANUP
-        else:
-            action = TransactionDisplay.PKG_ERASE
+        _, _, tsi = self._extract_cbkey(key)
         for display in self.displays:
-            display.filelog(pkg, action)
+            display.filelog(tsi.pkg, tsi.action)
 
         if self.test:
             return
 
-        if state is not None:
-            self._scriptout()
-            swdb_item = getattr(pkg, "_swdb_item", None)
-            if swdb_item is not None:
-                # TODO: just done or multiple states?
-                self.base.history.swdb.setItemDone(swdb_item);
-        else:
-            self._scriptout()
+        self._scriptout()
+        self.base.history.swdb.setItemDone(tsi._item);
 
     def _cpioError(self, key):
         # In the case of a remove, we only have a name, not a tsi:
@@ -436,7 +352,8 @@ class RPMTransaction(object):
             display.error(msg)
 
     def _script_start(self, key):
-        action = TransactionDisplay.PKG_SCRIPTLET
+        # TODO: this doesn't fit into libdnf TransactionItem use cases
+        action = dnf.transaction.PKG_SCRIPTLET
         if key is None and self._te_list == []:
             pkg = 'None'
         else:

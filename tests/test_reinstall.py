@@ -135,17 +135,10 @@ class Reinstall(tests.support.ResultTestCase):
         self.base = tests.support.MockBase('main')
         self.base.conf.multilib_policy = 'all'
 
-        tsis = []
         for pkg in self.base.sack.query().installed().filter(name='librita'):
-            print("PKG", pkg)
             pkg._force_swdb_repoid = "main"
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_USER
-            )
-            tsis.append(tsi)
-        self._swdb_commit(tsis)
+            self.history.rpm.add_install(pkg)
+        self._swdb_commit()
 
         reinstalled_count = self.base.reinstall('librita', old_reponame='main')
 

@@ -94,12 +94,13 @@ class PresetPersistorTest(tests.support.ResultTestCase):
                     continue
                 seen_pkgs.add(pkg)
                 pkg._force_swdb_repoid = "main"
-                tsi = dnf.transaction.TransactionItem(
-                    dnf.transaction.INSTALL,
-                    installed=pkg,
-                    reason=libdnf.swdb.TransactionItemReason_GROUP
-                )
-                tsis.append(tsi)
+                self.history.rpm.add_install(pkg, reason=libdnf.swdb.TransactionItemReason_GROUP)
+#                tsi = dnf.transaction.TransactionItem(
+#                    dnf.transaction.INSTALL,
+#                    installed=pkg,
+#                    reason=libdnf.swdb.TransactionItemReason_GROUP
+#                )
+#                tsis.append(tsi)
 
         self._swdb_commit(tsis)
 
@@ -108,7 +109,7 @@ class PresetPersistorTest(tests.support.ResultTestCase):
            handle them manually for proper functionality of group remove"""
         group_id = 'somerset'
         self.base.group_install(group_id, ('mandatory',))
-        swdb_group = self.history.group.installed[group_id]
+        swdb_group = self.history.group._installed[group_id]
         tsis = []
         for swdb_pkg in swdb_group.getPackages():
             swdb_pkg.setInstalled(True)
@@ -117,12 +118,13 @@ class PresetPersistorTest(tests.support.ResultTestCase):
                 continue
             pkg = pkgs[0]
             pkg._force_swdb_repoid = "main"
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_GROUP
-            )
-            tsis.append(tsi)
+            self.history.rpm.add_install(pkg, reason=libdnf.swdb.TransactionItemReason_GROUP)
+#            tsi = dnf.transaction.TransactionItem(
+#                dnf.transaction.INSTALL,
+#                installed=pkg,
+#                reason=libdnf.swdb.TransactionItemReason_GROUP
+#            )
+#            tsis.append(tsi)
 
         self._swdb_commit(tsis)
         self.base.reset(goal=True)

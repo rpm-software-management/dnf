@@ -27,7 +27,7 @@ import dnf.history
 import tests.support
 from tests.support import mock
 
-
+'''
 class NEVRAOperationsTest(tests.support.TestCase):
     """Unit tests of dnf.history.NEVRAOperations."""
 
@@ -502,3 +502,4 @@ class TransactionConverterTest(tests.support.TestCase):
         for item in transaction:
             yield (item.op_type, item.installed, item.erased, item.obsoleted,
                    item.reason)
+'''

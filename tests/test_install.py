@@ -144,6 +144,8 @@ class CommonTest(tests.support.ResultTestCase):
         self.base.resolve()
         self.assertEmpty(self.base._goal.list_reinstalls())
 
+        self.base.history.close()
+
         self.base.package_reinstall(p)
         self.base.resolve()
         self.assertLength(self.base._goal.list_reinstalls(), 1)

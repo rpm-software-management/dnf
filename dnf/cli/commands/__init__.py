@@ -875,27 +875,15 @@ class HistoryCommand(Command):
         print('Repeating transaction %u, from %s' % (old.tid, tm))
         self.output.historyInfoCmdPkgsAltered(old)
 
-        converter = dnf.history.TransactionConverter(self.base.sack)
-        history = dnf.history.open_history(self.base.history)
-        operations = history.transaction_nevra_ops(old.tid)
-
-        # FIXME this is wrong. Will be fixed in new swdb design.
-        #   Reason of a package installed in the original transaction is lost in the
-        #   operation above and replaced by reason USER (in the operation below).
-        #   (dependencies are promoted to user installed packages)
-
-        try:
-            self.base.transaction = converter.convert(operations, libdnf.swdb.TransactionItemReason_USER)
-        except dnf.exceptions.PackagesNotInstalledError as err:
-            logger.info(_('No package %s installed.'),
-                        self.output.term.bold(ucd(err.pkg_spec)))
-            return 1, ['An operation cannot be redone']
-        except dnf.exceptions.PackagesNotAvailableError as err:
-            logger.info(_('No package %s available.'),
-                        self.output.term.bold(ucd(err.pkg_spec)))
-            return 1, ['An operation cannot be redone']
-        else:
-            return 2, ['Repeating transaction %u' % (old.tid,)]
+        # TODO: add transaction item merging into libdnf
+        for i in old.packages():
+            pkgs = list(self.base.sack.query().filter(nevra=str(i), reponame=i.from_repo))
+            if not pkgs:
+                raise
+            pkg = pkgs[0]
+            self.base.history.rpm.new(pkg, i.action, i.reason)
+        self.base.resolve()
+        self.base.do_transaction()
 
     def _hcmd_undo(self, extcmds):
         try:

@@ -81,12 +81,13 @@ class Remove(tests.support.ResultTestCase):
         tsis = []
         for pkg in pkg_subj.get_best_query(self.base.sack).installed():
             pkg._force_swdb_repoid = "main"
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_USER
-            )
-            tsis.append(tsi)
+            self.history.rpm.add_install(pkg)
+#            tsi = dnf.transaction.TransactionItem(
+#                dnf.transaction.INSTALL,
+#                installed=pkg,
+#                reason=libdnf.swdb.TransactionItemReason_USER
+#            )
+#            tsis.append(tsi)
         self._swdb_commit(tsis)
 
         self.base.remove('librita', 'main')
