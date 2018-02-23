@@ -576,7 +576,7 @@ class Base(object):
                        doc="DNF SWDB Interface Object")
 
     def _goal2transaction(self, goal):
-        ts = dnf.transaction.Transaction()
+        ts = self.history.rpm
         all_obsoleted = set(goal.list_obsoleted())
 
         for pkg in goal.list_downgrades():
@@ -593,7 +593,22 @@ class Base(object):
         for pkg in goal.list_installs():
             self._ds_callback.pkg_added(pkg, 'i')
             obs = goal.obsoleted_by_package(pkg)
-            ts.add_install(pkg, obs, goal.get_reason(pkg))
+
+            # TODO: move to libdnf: getBestReason
+            reason = goal.get_reason(pkg)
+            for obsolete in obs:
+                if reason == libdnf.swdb.TransactionItemReason_USER:
+                    # we already have a reason with highest priority
+                    break
+
+                reason_obsolete = ts.get_reason(obsolete)
+                if reason_obsolete == libdnf.swdb.TransactionItemReason_USER:
+                    reason = reason_obsolete
+                elif reason_obsolete == libdnf.swdb.TransactionItemReason_GROUP:
+                    if not self.history.group.is_removable_pkg(pkg.name):
+                        reason = reason_obsolete
+
+            ts.add_install(pkg, obs, reason)
             cb = lambda pkg: self._ds_callback.pkg_added(pkg, 'od')
             dnf.util.mapall(cb, obs)
         for pkg in goal.list_upgrades():
@@ -611,7 +626,8 @@ class Base(object):
             self._ds_callback.pkg_added(pkg, 'u')
         for pkg in goal.list_erasures():
             self._ds_callback.pkg_added(pkg, 'e')
-            ts.add_erase(pkg)
+            reason = goal.get_reason(pkg)
+            ts.add_erase(pkg, reason)
         return ts
 
     def _query_matches_installed(self, q):
@@ -834,10 +850,10 @@ class Base(object):
             tsis = list(self.transaction)
             installonly = self._get_installonly_query()
 
-            for tsi in tsis:
-                tsi._propagate_reason(self.history, installonly)
+#            for tsi in tsis:
+#                tsi._propagate_reason(self.history, installonly)
 
-            tid = self.history.beg(rpmdbv, using_pkgs, tsis, cmdline)
+            tid = self.history.beg(rpmdbv, using_pkgs, [], cmdline)
 
             if self.conf.comment:
                 # write out user provided comment to history info
@@ -877,16 +893,8 @@ class Base(object):
                 for te in failed:
                     te_nevra = dnf.util._te_nevra(te)
                     for tsi in self._transaction:
-                        if tsi.erased is not None and str(tsi.erased) == te_nevra:
-                            tsi.op_type = dnf.transaction.FAIL
-                            break
-                        if tsi.installed is not None and str(tsi.installed) == te_nevra:
-                            tsi.op_type = dnf.transaction.FAIL
-                            break
-                        for o in tsi.obsoleted:
-                            if str(o) == te_nevra:
-                                tsi.op_type = dnf.transaction.FAIL
-                                break
+                        if str(tsi) == te_nevra:
+                            tsi.action = dnf.transaction.PKG_FAIL
 
                 errstring = _('Errors occurred during transaction.')
                 logger.debug(errstring)
@@ -922,34 +930,7 @@ class Base(object):
             self._verify_transaction(cb.verify_tsi_package)
 
     def _verify_transaction(self, verify_pkg_cb=None):
-        self._trans_success = True
-        rpmdb_sack = dnf.sack._rpmdb_sack(self)
-        rpmdbv = rpmdb_sack._rpmdb_version()
-        self.history.end(rpmdbv, 0)
-
-        # TODO: verify if we need transaction verification at all
-        # we should trust RPM returning correct error codes
-        return
-
-
-        """Check that the transaction did what was expected, and
-        propagate external history information.  Output error messages
-        if the transaction did not do what was expected.
-
-        :param txmbr_cb: the callback for the rpm transaction members
-        """
-        # check to see that the rpmdb and the transaction roughly matches
-        # push package object metadata outside of rpmdb into history
-
-        # for each pkg in the transaction
-        # if it is an install - see that the pkg is installed
-        # if it is a remove - see that the pkg is no longer installed, provided
-        #    that there is not also an install of this pkg in the transaction
-        #    (reinstall)
-        # for any kind of install add from_repo to the history, and the cmdline
-        # and the install reason
-
-        total = self.transaction._total_package_count()
+        total = len(self.transaction)
 
         def display_banner(pkg, count):
             count += 1
@@ -959,82 +940,32 @@ class Base(object):
 
         timer = dnf.logging.Timer('verify transaction')
         count = 0
-        # the rpmdb has changed by now. hawkey doesn't support dropping a repo
-        # yet we have to check what packages are in now: build a transient sack
-        # with only rpmdb in it. In the future when RPM Python bindings can
-        # tell us if a particular transaction element failed or not we can skip
-        # this completely.
+
         rpmdb_sack = dnf.sack._rpmdb_sack(self)
 
+        # mark group packages that are installed on the system as installed in the db
+        q = rpmdb_sack.query().installed()
+        names = set([i.name for i in q])
+        for ti in self.history.group:
+            g = ti.getCompsGroupItem()
+            for p in g.getPackages():
+                if p.getName() in names:
+                    p.setInstalled(True)
+                    p.save()
+            self.history.swdb.setItemDone(ti)
+
+        # TODO: installed groups in environments
+
+        # Post-transaction verification is no longer needed,
+        # because DNF trusts error codes returned by RPM.
+        # Verification banner is displayed to preserve UX.
+        # TODO: drop in future DNF
         for tsi in self._transaction:
-            rpo = tsi.installed
-            if rpo is None:
-                continue
+            count = display_banner(tsi.pkg, count)
 
-            installed = rpmdb_sack.query().installed()._nevra(
-                rpo.name, rpo.evr, rpo.arch)
-            if len(installed) < 1:
-                tsi.op_type = dnf.transaction.FAIL
-                logger.critical(_('%s was supposed to be installed'
-                                  ' but is not!'), rpo)
-                count = display_banner(rpo, count)
-                continue
-            po = installed[0]
-            count = display_banner(rpo, count)
-            pkg_info = SwdbPkgData()
-            pkg_info.from_repo = rpo.repoid
-            if rpo._from_cmdline:
-                try:
-                    st = os.stat(rpo.localPkg())
-                    lp_ctime = str(int(st.st_ctime))
-                    lp_mtime = int(st.st_mtime)
-                    pkg_info.from_repo_revision = lp_ctime
-                    pkg_info.from_repo_timestamp = lp_mtime
-                except Exception:
-                    pass
-            elif hasattr(rpo.repo, 'repoXML'):
-                md = rpo.repo.repoXML
-                if md and md._revision is not None:
-                    pkg_info.from_repo_revision = str(md._revision)
-                if md:
-                    try:
-                        pkg_info.from_repo_timestamp = int(md._timestamp)
-                    except Exception:
-                        pass
+        rpmdbv = rpmdb_sack._rpmdb_version()
+        self.history.end(rpmdbv, 0)
 
-            # TODO:
-            '''
-            loginuid = misc.getloginuid()
-            '''
-            loginuid = None
-            if tsi.op_type in (dnf.transaction.DOWNGRADE,
-                               dnf.transaction.REINSTALL,
-                               dnf.transaction.UPGRADE):
-                opo = tsi.erased
-                # TODO: remove, not needed?
-                #opo_pkg_info = self.history.package_data(opo)
-                #if opo_pkg_info and opo_pkg_info.installed_by:
-                #    pkg_info.installed_by = opo_pkg_info.installed_by
-                #if loginuid is not None:
-                #    pkg_info.changed_by = str(loginuid)
-            elif loginuid is not None:
-                pkg_info.installed_by = str(loginuid)
-
-        just_installed = self.sack.query().filterm(pkg=self.transaction.install_set)
-        for rpo in self.transaction.remove_set:
-            installed = rpmdb_sack.query().installed()._nevra(
-                rpo.name, rpo.evr, rpo.arch)
-            if len(installed) > 0:
-                if not len(just_installed.filter(arch=rpo.arch, name=rpo.name,
-                                                 evr=rpo.evr)):
-                    msg = _('%s was supposed to be removed but is not!')
-                    logger.critical(msg, rpo)
-                    count = display_banner(rpo, count)
-                    continue
-            count = display_banner(rpo, count)
-        if self._record_history():
-            rpmdbv = rpmdb_sack._rpmdb_version()
-            self.history.end(rpmdbv, 0)
         timer()
         self._trans_success = True
 
@@ -1508,7 +1439,7 @@ class Base(object):
             if not q:
                 return None
             try:
-                return self.history.reason(q[0])
+                return self.history.rpm.get_reason(q[0])
             except AttributeError:
                 return libdnf.swdb.TransactionItemReason_UNKNOWN
 
@@ -1626,9 +1557,9 @@ class Base(object):
         res = q.get(*patterns)
         cnt = 0
         for env in res.environments:
-            cnt += self.environment_upgrade(env.getCompsEnvironmentItem().getEnvironmentId())
+            cnt += self.environment_upgrade(env)
         for grp in res.groups:
-            cnt += self.group_upgrade(grp.getCompsGroupItem().getGroupId())
+            cnt += self.group_upgrade(grp)
         if not cnt:
             msg = _('No group marked for upgrade.')
             raise dnf.cli.CliError(msg)
@@ -2026,95 +1957,41 @@ class Base(object):
             2 = we've got work yet to do, onto the next stage
         """
 
-        def handle_downgrade(new_nevra, old_nevra, obsoleted_nevras):
-            """Handle a downgraded package."""
-            news = self.sack.query().installed()._nevra(new_nevra)
-            if not news:
-                raise dnf.exceptions.PackagesNotInstalledError(
-                    'no package matched', new_nevra)
-            olds = self.sack.query().available()._nevra(old_nevra)
-            if not olds:
-                raise dnf.exceptions.PackagesNotAvailableError(
-                    'no package matched', old_nevra)
-            assert len(news) == 1
-            self._transaction.add_upgrade(first(olds), news[0], None)
-            for obsoleted_nevra in obsoleted_nevras:
-                handle_erase(obsoleted_nevra)
+        # map actions to their opposites
+        action_map = {
+            libdnf.swdb.TransactionItemAction_DOWNGRADE: None,
+            libdnf.swdb.TransactionItemAction_DOWNGRADED: libdnf.swdb.TransactionItemAction_UPGRADE,
+            libdnf.swdb.TransactionItemAction_INSTALL: libdnf.swdb.TransactionItemAction_REMOVE,
+            libdnf.swdb.TransactionItemAction_OBSOLETE: None,
+            libdnf.swdb.TransactionItemAction_OBSOLETED: libdnf.swdb.TransactionItemAction_INSTALL,
+            libdnf.swdb.TransactionItemAction_REINSTALL: None,
+            libdnf.swdb.TransactionItemAction_REINSTALLED: libdnf.swdb.TransactionItemAction_REINSTALL,
+            libdnf.swdb.TransactionItemAction_REMOVE: libdnf.swdb.TransactionItemAction_INSTALL,
+            libdnf.swdb.TransactionItemAction_UPGRADE: None,
+            libdnf.swdb.TransactionItemAction_UPGRADED: libdnf.swdb.TransactionItemAction_DOWNGRADE,
+            libdnf.swdb.TransactionItemAction_REASON_CHANGE: None,
+        }
 
-        def handle_erase(old_nevra):
-            """Handle an erased package."""
-            pkgs = self.sack.query().available()._nevra(old_nevra)
-            if not pkgs:
-                raise dnf.exceptions.PackagesNotAvailableError(
-                    'no package matched', old_nevra)
-            new_pkg = first(pkgs)
-            old_reason = self.history.get_erased_reason(new_pkg, first_trans, rollback)
-            self._transaction.add_install(new_pkg, None, old_reason)
+        for ti in operations.packages():
+            try:
+                action = action_map[ti.action]
+            except KeyError:
+                raise RuntimeError(_("Action not handled: {}".format(action)))
 
-        def handle_install(new_nevra, obsoleted_nevras):
-            """Handle an installed package."""
-            pkgs = self.sack.query().installed()._nevra(new_nevra)
-            if not pkgs:
-                raise dnf.exceptions.PackagesNotInstalledError(
-                    'no package matched', new_nevra)
-            assert len(pkgs) == 1
-            self._transaction.add_erase(pkgs[0])
-            for obsoleted_nevra in obsoleted_nevras:
-                handle_erase(obsoleted_nevra)
+            if action is None:
+                continue
 
-        def handle_reinstall(new_nevra, old_nevra, obsoleted_nevras):
-            """Handle a reinstalled package."""
-            news = self.sack.query().installed()._nevra(new_nevra)
-            if not news:
-                raise dnf.exceptions.PackagesNotInstalledError(
-                    'no package matched', new_nevra)
-            olds = self.sack.query().available()._nevra(old_nevra)
-            if not olds:
-                raise dnf.exceptions.PackagesNotAvailableError(
-                    'no package matched', old_nevra)
-            obsoleteds = []
-            for nevra in obsoleted_nevras:
-                obsoleteds_ = self.sack.query().installed()._nevra(nevra)
-                if obsoleteds_:
-                    assert len(obsoleteds_) == 1
-                    obsoleteds.append(obsoleteds_[0])
-            assert len(news) == 1
-            self._transaction.add_reinstall(first(olds), news[0],
-                                            obsoleteds)
-
-        def handle_upgrade(new_nevra, old_nevra, obsoleted_nevras):
-            """Handle an upgraded package."""
-            news = self.sack.query().installed()._nevra(new_nevra)
-            if not news:
-                raise dnf.exceptions.PackagesNotInstalledError(
-                    'no package matched', new_nevra)
-            olds = self.sack.query().available()._nevra(old_nevra)
-            if not olds:
-                raise dnf.exceptions.PackagesNotAvailableError(
-                    'no package matched', old_nevra)
-            assert len(news) == 1
-            self._transaction.add_downgrade(
-                first(olds), news[0], None)
-            for obsoleted_nevra in obsoleted_nevras:
-                handle_erase(obsoleted_nevra)
-
-        # Build the transaction directly, because the depsolve is not needed.
-        self._transaction = dnf.transaction.Transaction()
-        for state, nevra, replaced_nevra, obsoleted_nevras in operations:
-            if state == 'Install':
-                assert not replaced_nevra
-                handle_install(nevra, obsoleted_nevras)
-            elif state == 'Erase':
-                assert not replaced_nevra and not obsoleted_nevras
-                handle_erase(nevra)
-            elif state == 'Reinstall':
-                handle_reinstall(nevra, replaced_nevra, obsoleted_nevras)
-            elif state == 'Downgrade':
-                handle_downgrade(nevra, replaced_nevra, obsoleted_nevras)
-            elif state == 'Update':
-                handle_upgrade(nevra, replaced_nevra, obsoleted_nevras)
+            if action == libdnf.swdb.TransactionItemAction_REMOVE:
+                pkgs = self.sack.query().installed().filter(nevra=str(ti))
             else:
-                assert False
+                pkgs = list(self.sack.query().available().filter(nevra=str(ti), reponame=ti.from_repo))
+                if not pkgs:
+                    pkgs = list(self.sack.query().available().filter(nevra=str(ti)))
+            if not pkgs:
+                raise
+            pkg = pkgs[0]
+
+            self.history.rpm.new(pkg, action, ti.reason)
 
     def _merge_update_filters(self, q, pkg_spec=None, warning=True):
         """

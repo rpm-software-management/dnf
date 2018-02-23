@@ -73,6 +73,8 @@ class Update(tests.support.ResultTestCase):
         self.base.resolve()
         self.assertEmpty(self.base._goal.list_upgrades())
 
+        self.base.history.close()
+
         p = self.sack.query().available().filter(nevra="librita-1-1.x86_64")[0]
         self.assertEqual(0, self.base.package_upgrade(p))
         self.base.resolve()
@@ -147,6 +149,9 @@ class Update(tests.support.ResultTestCase):
         installed, removed = self.installed_removed(self.base)
         self.assertLength(installed, 0)
         self.assertLength(removed, 0)
+
+        self.base.history.close()
+
         self.assertResult(self.base, self.sack.query().installed())
         q = dnf.subject.Subject('hole').get_best_query(self.sack).upgrades()
         q = q.filter(reponame__neq='broken_deps')
@@ -188,3 +193,5 @@ class CostUpdate(tests.test_repo.RepoTestMixin, tests.support.ResultTestCase):
         self.base.upgrade("tour")
         (installed, _) = self.installed_removed(self.base)
         self.assertEqual('r1', dnf.util.first(installed).reponame)
+        # TODO:
+        self.base.close()

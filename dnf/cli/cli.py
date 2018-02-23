@@ -73,6 +73,10 @@ import random
 import sys
 import time
 
+import libdnf.swdb
+import dnf.db.history
+import dnf.util
+
 logger = logging.getLogger('dnf')
 
 
@@ -173,13 +177,12 @@ class BaseCli(dnf.Base):
             rmpkgs = []
             install_only = True
             for tsi in trans:
-                installed = tsi.installed
-                if installed is not None:
-                    install_pkgs.append(installed)
-                erased = tsi.erased
-                if erased is not None:
+                # forward / backward
+                if tsi.action in [1, 2, 4, 6, 9]:
+                    install_pkgs.append(tsi.pkg)
+                elif tsi.action in [3, 5, 7, 8]:
                     install_only = False
-                    rmpkgs.append(erased)
+                    rmpkgs.append(tsi.pkg)
 
             # Close the connection to the rpmdb so that rpm doesn't hold the
             # SIGINT handler during the downloads.
@@ -228,11 +231,16 @@ class BaseCli(dnf.Base):
             display = [display]
         display = [output.CliTransactionDisplay()] + list(display)
         super(BaseCli, self).do_transaction(display)
+
+        # display last transaction (which was closed during do_transaction())
+        trans = self.history.last()
+        trans = dnf.db.group.RPMTransaction(self.history, trans._trans)
+
         if trans:
             msg = self.output.post_transaction_output(trans)
             logger.info(msg)
             for tsi in trans:
-                if tsi.op_type == dnf.transaction.FAIL:
+                if tsi.action == dnf.transaction.PKG_FAIL:
                     raise dnf.exceptions.Error(_('Transaction failed'))
 
     def gpgsigcheck(self, pkgs):
@@ -582,7 +590,7 @@ class BaseCli(dnf.Base):
                 logger.warning(_('Transaction history is incomplete, after %u.'), trans.tid)
 
             if mobj is None:
-                mobj = trans
+                mobj = dnf.db.history.MergedTransactionWrapper(trans)
             else:
                 mobj.merge(trans)
 
@@ -592,22 +600,29 @@ class BaseCli(dnf.Base):
                                         ", ".join((str(x) for x in mobj.tids()))))
         self.output.historyInfoCmdPkgsAltered(mobj)  # :todo
 
-        history = dnf.history.open_history(self.history)  # :todo
-        operations = dnf.history.NEVRAOperations()
-        for id_ in range(old.tid + 1, last.tid + 1):
-            operations += history.transaction_nevra_ops(id_)
+#        history = dnf.history.open_history(self.history)  # :todo
+#        m = libdnf.swdb.MergedTransaction()
+
+#        return
+
+#        operations = dnf.history.NEVRAOperations()
+#        for id_ in range(old.tid + 1, last.tid + 1):
+#            operations += history.transaction_nevra_ops(id_)
 
         try:
-            self._history_undo_operations(operations, old.tid + 1, True)
+            self._history_undo_operations(mobj, old.tid + 1, True)
         except dnf.exceptions.PackagesNotInstalledError as err:
+            raise
             logger.info(_('No package %s installed.'),
                         self.output.term.bold(ucd(err.pkg_spec)))
             return 1, ['A transaction cannot be undone']
         except dnf.exceptions.PackagesNotAvailableError as err:
+            raise
             logger.info(_('No package %s available.'),
                         self.output.term.bold(ucd(err.pkg_spec)))
             return 1, ['A transaction cannot be undone']
         except dnf.exceptions.MarkingError:
+            raise
             assert False
         else:
             return 2, ["Rollback to transaction %u" % (old.tid,)]
@@ -623,11 +638,12 @@ class BaseCli(dnf.Base):
         logger.info(msg)
         self.output.historyInfoCmdPkgsAltered(old)  # :todo
 
-        history = dnf.history.open_history(self.history)  # :todo
+
+        mobj = dnf.db.history.MergedTransactionWrapper(old)
 
         try:
             self._history_undo_operations(
-                history.transaction_nevra_ops(old.tid),
+                mobj,
                 old.tid)
         except dnf.exceptions.PackagesNotInstalledError as err:
             logger.info(_('No package %s installed.'),

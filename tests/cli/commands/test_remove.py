@@ -32,12 +32,13 @@ from tests.support import mock
 class RemoveCommandTest(tests.support.ResultTestCase):
     """Tests of ``dnf.cli.commands.EraseCommand`` class."""
 
+    REPOS = []
+    BASE_CLI = True
+    CLI = "mock"
+
     def setUp(self):
-        """Prepare the test fixture."""
         super(RemoveCommandTest, self).setUp()
-        base = tests.support.BaseCliStub()
-        base.init_sack()
-        self.cmd = dnf.cli.commands.remove.RemoveCommand(base.mock_cli())
+        self.cmd = dnf.cli.commands.remove.RemoveCommand(self.base.mock_cli())
 
     def test_configure(self):
         parser = OptionParser()

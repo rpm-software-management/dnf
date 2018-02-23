@@ -192,20 +192,10 @@ class SolverGroupTest(tests.support.DnfBaseTestCase):
         tsis = []
 
         pkg1 = self.base.sack.query().filter(name="pepper", epoch=0, version="20", release="0", arch="x86_64")[0]
-        tsi = dnf.transaction.TransactionItem(
-            dnf.transaction.INSTALL,
-            installed=pkg1,
-            reason=libdnf.swdb.TransactionItemReason_GROUP
-        )
-        tsis.append(tsi)
+        self.history.rpm.add_install(pkg1, reason=libdnf.swdb.TransactionItemReason_GROUP)
 
         pkg3 = self.base.sack.query().filter(name="tour", version="5", release="0", arch="noarch")[0]
-        tsi = dnf.transaction.TransactionItem(
-            dnf.transaction.INSTALL,
-            installed=pkg3,
-            reason=libdnf.swdb.TransactionItemReason_GROUP
-        )
-        tsis.append(tsi)
+        self.history.rpm.add_install(pkg3, reason=libdnf.swdb.TransactionItemReason_GROUP)
 
         group_id = "dupl"
         swdb_group = self.history.group.new(group_id, group_id, group_id, dnf.comps.DEFAULT)

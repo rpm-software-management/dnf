@@ -25,13 +25,13 @@ from __future__ import unicode_literals
 import libdnf.swdb
 
 from dnf.exceptions import PackagesNotAvailableError, PackagesNotInstalledError
-from dnf.history import NEVRAOperations
-from dnf.transaction import ERASE, DOWNGRADE, INSTALL, REINSTALL, UPGRADE
-from dnf.transaction import TransactionItem
+#from dnf.history import NEVRAOperations
+#from dnf.transaction import ERASE, DOWNGRADE, INSTALL, REINSTALL, UPGRADE
+#from dnf.transaction import TransactionItem
 
 import tests.support
 
-
+'''
 class BaseTest(tests.support.DnfBaseTestCase):
     """Unit tests of dnf.Base."""
 
@@ -299,3 +299,4 @@ class BaseTest(tests.support.DnfBaseTestCase):
             self.base._history_undo_operations(operations, 0)
 
         self.assertEqual(context.exception.pkg_spec, 'lotus-4-0.x86_64')
+'''

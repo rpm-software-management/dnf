@@ -24,8 +24,6 @@ import itertools
 
 import libdnf.swdb
 
-import dnf.transaction
-
 import tests.support
 
 
@@ -55,12 +53,7 @@ class List(tests.support.DnfBaseTestCase):
         tsis = []
         for pkg in expected:
             pkg._force_swdb_repoid = "main"
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_USER
-            )
-            tsis.append(tsi)
+            self.history.rpm.add_install(pkg)
         self._swdb_commit(tsis)
 
         lists = self.base._do_package_lists('installed', reponame='main')

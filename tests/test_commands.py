@@ -188,6 +188,9 @@ class ReinstallCommandTest(tests.support.ResultTestCase):
         """Test whether the package is installed."""
         tests.support.command_run(self._cmd, ['pepper'])
 
+        print(list(self.base.sack.query().installed().filter(name__neq='pepper')))
+        print(list(dnf.subject.Subject('pepper.x86_64').get_best_query(self.base.sack).available()))
+
         self.assertResult(self.base, itertools.chain(
             self.base.sack.query().installed().filter(name__neq='pepper'),
             dnf.subject.Subject('pepper.x86_64').get_best_query(self.base.sack)
@@ -214,12 +217,13 @@ class ReinstallCommandTest(tests.support.ResultTestCase):
         tsis = []
         for pkg in holes_query.installed():
             pkg._force_swdb_repoid = "unknown"
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_USER
-            )
-            tsis.append(tsi)
+            self.history.rpm.add_install(pkg)
+#            tsi = dnf.transaction.TransactionItem(
+#                dnf.transaction.INSTALL,
+#                installed=pkg,
+#                reason=libdnf.swdb.TransactionItemReason_USER
+#            )
+#            tsis.append(tsi)
         self._swdb_commit(tsis)
 
         stdout = dnf.pycomp.StringIO()
@@ -269,12 +273,13 @@ class RepoPkgsCheckUpdateSubCommandTest(tests.support.DnfBaseTestCase):
         tsis = []
         for pkg in self.base.sack.query().installed().filter(name='tour'):
             pkg._force_swdb_repoid = "updates"
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_USER
-            )
-            tsis.append(tsi)
+            self.history.rpm.add_install(pkg)
+#            tsi = dnf.transaction.TransactionItem(
+#                dnf.transaction.INSTALL,
+#                installed=pkg,
+#                reason=libdnf.swdb.TransactionItemReason_USER
+#            )
+#            tsis.append(tsi)
         self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
@@ -374,12 +379,13 @@ class RepoPkgsInfoSubCommandTest(tests.support.DnfBaseTestCase):
         tsis = []
         for pkg in self.base.sack.query().installed().filter(name='pepper'):
             pkg._force_swdb_repoid = "main"
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_USER
-            )
-            tsis.append(tsi)
+            self.history.rpm.add_install(pkg)
+#            tsi = dnf.transaction.TransactionItem(
+#                dnf.transaction.INSTALL,
+#                installed=pkg,
+#                reason=libdnf.swdb.TransactionItemReason_USER
+#            )
+#            tsis.append(tsi)
         self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
@@ -434,12 +440,13 @@ class RepoPkgsInfoSubCommandTest(tests.support.DnfBaseTestCase):
         tsis = []
         for pkg in self.base.sack.query().installed().filter(name='tour'):
             pkg._force_swdb_repoid = "main"
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_USER
-            )
-            tsis.append(tsi)
+            self.history.rpm.add_install(pkg)
+#            tsi = dnf.transaction.TransactionItem(
+#                dnf.transaction.INSTALL,
+#                installed=pkg,
+#                reason=libdnf.swdb.TransactionItemReason_USER
+#            )
+#            tsis.append(tsi)
         self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
@@ -466,12 +473,13 @@ class RepoPkgsInfoSubCommandTest(tests.support.DnfBaseTestCase):
         tsis = []
         for pkg in self.base.sack.query().installed().filter(name='pepper'):
             pkg._force_swdb_repoid = "main"
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_USER
-            )
-            tsis.append(tsi)
+            self.history.rpm.add_install(pkg)
+#            tsi = dnf.transaction.TransactionItem(
+#                dnf.transaction.INSTALL,
+#                installed=pkg,
+#                reason=libdnf.swdb.TransactionItemReason_USER
+#            )
+#            tsis.append(tsi)
         self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
@@ -557,12 +565,13 @@ class RepoPkgsReinstallOldSubCommandTest(tests.support.ResultTestCase):
         for pkg in self.base.sack.query().installed():
             reponame = 'main' if pkg.name != 'pepper' else 'non-main'
             pkg._force_swdb_repoid = reponame
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_USER
-            )
-            tsis.append(tsi)
+            self.history.rpm.add_install(pkg)
+#            tsi = dnf.transaction.TransactionItem(
+#                dnf.transaction.INSTALL,
+#                installed=pkg,
+#                reason=libdnf.swdb.TransactionItemReason_USER
+#            )
+#            tsis.append(tsi)
         self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
@@ -651,12 +660,13 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(tests.support.ResultTestCase):
         for pkg in self.base.sack.query().installed():
             reponame = 'non-distro' if pkg.name == 'pepper' else 'distro'
             pkg._force_swdb_repoid = reponame
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_USER
-            )
-            tsis.append(tsi)
+            self.history.rpm.add_install(pkg)
+#            tsi = dnf.transaction.TransactionItem(
+#                dnf.transaction.INSTALL,
+#                installed=pkg,
+#                reason=libdnf.swdb.TransactionItemReason_USER
+#            )
+#            tsis.append(tsi)
         self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
@@ -673,12 +683,13 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(tests.support.ResultTestCase):
         for pkg in self.base.sack.query().installed():
             reponame = 'non-distro' if pkg.name == 'hole' else 'distro'
             pkg._force_swdb_repoid = reponame
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_USER
-            )
-            tsis.append(tsi)
+            self.history.rpm.add_install(pkg)
+#            tsi = dnf.transaction.TransactionItem(
+#                dnf.transaction.INSTALL,
+#                installed=pkg,
+#                reason=libdnf.swdb.TransactionItemReason_USER
+#            )
+#            tsis.append(tsi)
         self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
@@ -695,12 +706,13 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(tests.support.ResultTestCase):
         for pkg in self.base.sack.query().installed():
             reponame = 'non-distro' if pkg.name in nondist else 'distro'
             pkg._force_swdb_repoid = reponame
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_USER
-            )
-            tsis.append(tsi)
+            self.history.rpm.add_install(pkg)
+#            tsi = dnf.transaction.TransactionItem(
+#                dnf.transaction.INSTALL,
+#                installed=pkg,
+#                reason=libdnf.swdb.TransactionItemReason_USER
+#            )
+#            tsis.append(tsi)
         self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
@@ -768,12 +780,13 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(tests.support.ResultTestCase):
         for pkg in self.base.sack.query().installed():
             reponame = 'distro' if pkg.name != 'tour' else 'non-distro'
             pkg._force_swdb_repoid = reponame
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_USER
-            )
-            tsis.append(tsi)
+            self.history.rpm.add_install(pkg)
+#            tsi = dnf.transaction.TransactionItem(
+#                dnf.transaction.INSTALL,
+#                installed=pkg,
+#                reason=libdnf.swdb.TransactionItemReason_USER
+#            )
+#            tsis.append(tsi)
         self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
@@ -790,12 +803,13 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(tests.support.ResultTestCase):
         for pkg in self.base.sack.query().installed():
             reponame = 'distro' if pkg.name != 'hole' else 'non-distro'
             pkg._force_swdb_repoid = reponame
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_USER
-            )
-            tsis.append(tsi)
+            self.history.rpm.add_install(pkg)
+#            tsi = dnf.transaction.TransactionItem(
+#                dnf.transaction.INSTALL,
+#                installed=pkg,
+#                reason=libdnf.swdb.TransactionItemReason_USER
+#            )
+#            tsis.append(tsi)
         self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
@@ -820,12 +834,13 @@ class RepoPkgsRemoveSubCommandTest(tests.support.ResultTestCase):
         for pkg in self.base.sack.query().installed():
             reponame = 'main' if pkg.name == 'pepper' else 'non-main'
             pkg._force_swdb_repoid = reponame
-            tsi = dnf.transaction.TransactionItem(
-                dnf.transaction.INSTALL,
-                installed=pkg,
-                reason=libdnf.swdb.TransactionItemReason_USER
-            )
-            tsis.append(tsi)
+            self.history.rpm.add_install(pkg)
+#            tsi = dnf.transaction.TransactionItem(
+#                dnf.transaction.INSTALL,
+#                installed=pkg,
+#                reason=libdnf.swdb.TransactionItemReason_USER
+#            )
+#            tsis.append(tsi)
         self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)

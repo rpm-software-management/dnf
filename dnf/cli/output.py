@@ -49,70 +49,49 @@ import time
 
 logger = logging.getLogger('dnf')
 
-
 def _make_lists(transaction, goal):
-    def tsi_cmp_key(tsi):
-        return str(tsi._active)
+    b = dnf.util.Bunch({
+        'downgraded': [],
+        'erased': [],
+        'erased_clean': [],
+        'erased_dep': [],
+        'installed': [],
+        'installed_group': [],
+        'installed_dep': [],
+        'installed_weak': [],
+        'reinstalled': [],
+        'upgraded': [],
+        'failed': [],
+    })
 
-    TYPES = ('downgraded',
-             'erased',
-             'erased_clean',
-             'erased_dep',
-             'installed',
-             'installed_group',
-             'installed_dep',
-             'installed_weak',
-             'reinstalled',
-             'upgraded',
-             'failed')
-    b = dnf.util.Bunch()
-    for ttype in TYPES:
-        b[ttype] = []
     for tsi in transaction:
-        if tsi.op_type == dnf.transaction.DOWNGRADE:
+        if tsi.action == libdnf.swdb.TransactionItemAction_DOWNGRADE:
             b.downgraded.append(tsi)
-        elif tsi.op_type == dnf.transaction.ERASE:
-            if tsi.erased and goal.get_reason(tsi.erased) == libdnf.swdb.TransactionItemReason_CLEAN:
+        elif tsi.action == libdnf.swdb.TransactionItemAction_INSTALL:
+            if tsi.reason == libdnf.swdb.TransactionItemReason_GROUP:
+                b.installed_group.append(tsi)
+            elif tsi.reason == libdnf.swdb.TransactionItemReason_DEPENDENCY:
+                b.installed_dep.append(tsi)
+            elif tsi.reason == libdnf.swdb.TransactionItemReason_WEAK_DEPENDENCY:
+                b.installed_weak.append(tsi)
+            else:
+                # TransactionItemReason_USER
+                b.installed.append(tsi)
+        elif tsi.action == libdnf.swdb.TransactionItemAction_REINSTALL:
+            b.reinstalled.append(tsi)
+        elif tsi.action == libdnf.swdb.TransactionItemAction_REMOVE:
+            if tsi.reason == libdnf.swdb.TransactionItemReason_CLEAN:
                 b.erased_clean.append(tsi)
-            elif tsi.erased and goal.get_reason(tsi.erased) == libdnf.swdb.TransactionItemReason_DEPENDENCY:
+            elif tsi.reason == libdnf.swdb.TransactionItemReason_DEPENDENCY:
                 b.erased_dep.append(tsi)
             else:
                 b.erased.append(tsi)
-        elif tsi.op_type == dnf.transaction.INSTALL:
-            if tsi.installed:
-                reason = goal.get_reason(tsi.installed)
-                if reason == libdnf.swdb.TransactionItemReason_USER:
-                    b.installed.append(tsi)
-                    continue
-                elif reason == libdnf.swdb.TransactionItemReason_GROUP:
-                    b.installed_group.append(tsi)
-                    continue
-                elif reason == libdnf.swdb.TransactionItemReason_WEAK_DEPENDENCY:
-                    b.installed_weak.append(tsi)
-                    continue
-            b.installed_dep.append(tsi)
-        elif tsi.op_type == dnf.transaction.REINSTALL:
-            b.reinstalled.append(tsi)
-        elif tsi.op_type == dnf.transaction.UPGRADE:
+        elif tsi.action == libdnf.swdb.TransactionItemAction_UPGRADE:
             b.upgraded.append(tsi)
-        elif tsi.op_type == dnf.transaction.FAIL:
+        elif tsi.action == dnf.transaction.PKG_FAIL:
             b.failed.append(tsi)
 
-    for ttype in TYPES:
-        b[ttype].sort(key=tsi_cmp_key)
     return b
-
-_ACTIVE_DCT = {
-    dnf.transaction.DOWNGRADE : operator.attrgetter('installed'),
-    dnf.transaction.ERASE : operator.attrgetter('erased'),
-    dnf.transaction.INSTALL : operator.attrgetter('installed'),
-    dnf.transaction.REINSTALL : operator.attrgetter('installed'),
-    dnf.transaction.UPGRADE : operator.attrgetter('installed'),
-    }
-def _active_pkg(tsi):
-    """Return the package from tsi that takes the active role in the transaction.
-    """
-    return _ACTIVE_DCT[tsi.op_type](tsi)
 
 
 def _spread_in_columns(cols_count, label, lst):
@@ -1049,7 +1028,6 @@ class Output(object):
         """Return a string representation of the transaction in an
         easy-to-read format.
         """
-
         forward_actions = hawkey.UPGRADE | hawkey.UPGRADE_ALL | hawkey.DISTUPGRADE | \
             hawkey.DISTUPGRADE_ALL | hawkey.DOWNGRADE | hawkey.INSTALL
         skipped_conflicts = set()
@@ -1100,8 +1078,20 @@ class Output(object):
                                   (_('Downgrading'), list_bunch.downgraded)]:
             lines = []
             for tsi in pkglist:
-                active = _active_pkg(tsi)
-                a_wid = _add_line(lines, data, a_wid, active, tsi.obsoleted)
+                if tsi.action not in [1, 2, 4, 6, 8, 9]:
+                    continue
+
+                # compute TransactionItems obsoleted by tsi
+                # TODO: is this fast enough?
+                obsoleted = []
+                for i in transaction:
+                    if i.action != libdnf.swdb.TransactionItemAction_OBSOLETED:
+                        continue
+                    if tsi._item in i._item.getReplacedBy():
+                        obsoleted.append(i)
+                        continue
+
+                a_wid = _add_line(lines, data, a_wid, tsi.pkg, obsoleted)
 
             pkglist_lines.append((action, lines))
 
@@ -1280,8 +1270,8 @@ Transaction Summary
                 continue
             msgs = []
             out += '\n%s:\n' % action
-            for pkg in [tsi._active for tsi in tsis]:
-                msgs.append(str(pkg))
+            for tsi in tsis:
+                msgs.append(str(tsi))
             for num in (8, 7, 6, 5, 4, 3, 2):
                 cols = _fits_in_cols(msgs, num)
                 if cols:
@@ -1616,7 +1606,10 @@ Transaction Summary
             self._historyInfoCmd(mobj)
 
     def _historyInfoCmd(self, old, pats=[]):
-        name = [self._pwd_ui_username(uid) for uid in old.loginuid]
+        loginuid = old.loginuid
+        if isinstance(loginuid, int):
+            loginuid = [loginuid]
+        name = [self._pwd_ui_username(uid) for uid in loginuid]
 
         _pkg_states_installed = {'i' : _('Installed'), 'e' : _('Erased'),
                                  'o' : _('Upgraded'), 'n' : _('Downgraded')}
@@ -1708,8 +1701,10 @@ Transaction Summary
             if codes[0] is None:
                 print(_("Return-Code    :"), "**", _("Aborted"), "**")
                 codes = codes[1:]
-            if codes:
-                print(_("Return-Code    :"), _("Failures:"), ", ".join(codes))
+            elif not all(codes):
+                print(_("Return-Code    :"), _("Success"))
+            elif codes:
+                print(_("Return-Code    :"), _("Failures:"), ", ".join([str(i) for i in codes]))
         elif old.return_code is None:
             print(_("Return-Code    :"), "**", _("Aborted"), "**")
         elif old.return_code:
@@ -2017,8 +2012,8 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         :param ts_total: the total number of transactions in the
            transaction set
         """
-        process = self.action.get(action)
-        if process is None:
+        action_str = dnf.transaction.ACTIONS.get(action)
+        if action_str is None:
             return
 
         wid1 = self._max_action_width()
@@ -2030,12 +2025,12 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         else:
             percent = (ti_done*long(100))//ti_total
         self._out_progress(ti_done, ti_total, ts_done, ts_total,
-                           percent, process, pkgname, wid1)
+                           percent, action_str, pkgname, wid1)
 
     def _max_action_width(self):
         if not hasattr(self, '_max_action_wid_cache'):
             wid1 = 0
-            for val in self.action.values():
+            for val in dnf.transaction.ACTIONS.values():
                 wid_val = exact_width(val)
                 if wid1 < wid_val:
                     wid1 = wid_val

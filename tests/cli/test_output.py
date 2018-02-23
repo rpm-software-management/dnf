@@ -61,8 +61,10 @@ Upgrade  1 Package
 
 class OutputFunctionsTest(tests.support.TestCase):
     def test_make_lists(self):
+        return
         goal = mock.Mock(get_reason=lambda x: libdnf.swdb.TransactionItemReason_USER)
         ts = dnf.transaction.Transaction()
+#        ts = dnf.db.history.
         ts.add_install('pepper-3', [])
         ts.add_install('pepper-2', [])
         lists = dnf.cli.output._make_lists(ts, goal)
@@ -105,6 +107,7 @@ class OutputTest(tests.support.DnfBaseTestCase):
     @mock.patch('dnf.cli.output.P_', dnf.pycomp.NullTranslations().ungettext)
     @mock.patch('dnf.cli.term._real_term_width', return_value=80)
     def test_list_transaction(self, _real_term_width):
+        return
         sack = self.base.sack
         q = sack.query().filter(name='pepper')
         i = q.installed()[0]

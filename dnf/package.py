@@ -114,7 +114,7 @@ class Package(hawkey.Package):
     @property
     def source_name(self):
         # :api
-        """"
+        """
         returns name of source package
         e.g. krb5-libs -> krb5
         """
@@ -247,6 +247,8 @@ class Package(hawkey.Package):
                 return schemes_filter([self.repo.baseurl])
 
     def _is_local_pkg(self):
+        if self.repoid == "@System":
+            return True
         return self._from_cmdline or \
             (self.repo._local and (not self.baseurl or self.baseurl.startswith('file://')))
 

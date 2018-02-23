@@ -44,12 +44,8 @@ class BaseTest(tests.support.TestCase):
     def _setup_packages(history):
         pkg = tests.support.MockPackage('pepper-20-0.x86_64')
         pkg._force_swdb_repoid = "main"
-        tsi = dnf.transaction.TransactionItem(
-            dnf.transaction.INSTALL,
-            installed=pkg,
-            reason=libdnf.swdb.TransactionItemReason_USER
-        )
-        history.beg("", [], [tsi])
+        history.rpm.add_install(pkg)
+        history.beg("", [], [])
         history.end("")
 
     def test_instance(self):
@@ -122,12 +118,8 @@ class BaseTest(tests.support.TestCase):
         history = base.history
         pkg = tests.support.MockPackage('pepper-20-0.x86_64')
         pkg._force_swdb_repoid = "anakonda"
-        tsi = dnf.transaction.TransactionItem(
-            dnf.transaction.INSTALL,
-            installed=pkg,
-            reason=libdnf.swdb.TransactionItemReason_USER
-        )
-        history.beg("", [], [tsi])
+        history.rpm.add_install(pkg)
+        history.beg("", [], [])
         history.end("")
 
         pkg, = base.sack.query().installed().filter(name='pepper')
@@ -144,12 +136,8 @@ class BaseTest(tests.support.TestCase):
         history = base.history
         pkg = tests.support.MockPackage('pepper-20-0.x86_64')
         pkg._force_swdb_repoid = "main"
-        tsi = dnf.transaction.TransactionItem(
-            dnf.transaction.INSTALL,
-            installed=pkg,
-            reason=libdnf.swdb.TransactionItemReason_DEPENDENCY
-        )
-        history.beg("", [], [tsi])
+        history.rpm.add_install(pkg, reason=libdnf.swdb.TransactionItemReason_DEPENDENCY)
+        history.beg("", [], [])
         history.end("")
 
         pkg, = base.sack.query().installed().filter(name='pepper')
@@ -187,7 +175,7 @@ class BuildTransactionTest(tests.support.DnfBaseTestCase):
             mock.call.pkg_added(mock.ANY, 'ud'),
             mock.call.pkg_added(mock.ANY, 'u')
         ])
-        self.assertLength(self.base.transaction, 1)
+        self.assertLength(self.base.transaction, 2)
 
 
 # verify transaction test helpers
@@ -220,21 +208,11 @@ class VerifyTransactionTest(tests.support.DnfBaseTestCase):
         new_pkg._chksum = (hawkey.CHKSUM_MD5, binascii.unhexlify(HASH))
         new_pkg.repo = mock.Mock()
         new_pkg._force_swdb_repoid = "main"
-        tsi = dnf.transaction.TransactionItem(
-            dnf.transaction.INSTALL,
-            installed=new_pkg,
-            reason=libdnf.swdb.TransactionItemReason_USER
-        )
-        tsis.append(tsi)
+        self.history.rpm.add_install(new_pkg)
 
         removed_pkg = self.base.sack.query().available().filter(name="mrkite")[0]
         removed_pkg._force_swdb_repoid = "main"
-        tsi = dnf.transaction.TransactionItem(
-            dnf.transaction.ERASE,
-            erased=removed_pkg,
-            reason=libdnf.swdb.TransactionItemReason_USER
-        )
-        tsis.append(tsi)
+        self.history.rpm.add_remove(removed_pkg)
 
         self._swdb_commit(tsis)
         self.base._verify_transaction()
@@ -252,8 +230,8 @@ class InstallReasonTest(tests.support.ResultTestCase):
     def test_reason(self):
         self.base.install("mrkite")
         self.base.resolve()
-        new_pkgs = self.base._transaction._get_items(dnf.transaction.INSTALL)
-        pkg_reasons = [(tsi.installed.name, tsi.reason) for tsi in new_pkgs]
+        new_pkgs = self.base._transaction._get_items(dnf.transaction.PKG_INSTALL)
+        pkg_reasons = [(tsi.name, tsi.reason) for tsi in new_pkgs]
         self.assertCountEqual([
             ("mrkite", libdnf.swdb.TransactionItemReason_USER),
             ("trampoline", libdnf.swdb.TransactionItemReason_DEPENDENCY)],
@@ -303,8 +281,17 @@ class Goal2TransactionTest(tests.support.DnfBaseTestCase):
         self.base.upgrade("hole")
         self.assertTrue(self.base._run_hawkey_goal(self.goal, allow_erasing=False))
         ts = self.base._goal2transaction(self.goal)
-        self.assertLength(ts._tsis, 1)
-        tsi = ts._tsis[0]
-        self.assertCountEqual(map(str, tsi.installs()), ('hole-2-1.x86_64',))
-        self.assertCountEqual(map(str, tsi.removes()),
-                              ('hole-1-1.x86_64', 'tour-5-0.noarch'))
+        self.assertLength(ts, 3)
+        tsis = list(ts)
+
+        tsi = tsis[0]
+        self.assertEqual(str(tsi.pkg), "hole-2-1.x86_64")
+        self.assertEqual(tsi.action, libdnf.swdb.TransactionItemAction_UPGRADE)
+
+        tsi = tsis[1]
+        self.assertEqual(str(tsi.pkg), "hole-1-1.x86_64")
+        self.assertEqual(tsi.action, libdnf.swdb.TransactionItemAction_UPGRADED)
+
+        tsi = tsis[2]
+        self.assertEqual(str(tsi.pkg), "tour-5-0.noarch")
+        self.assertEqual(tsi.action, libdnf.swdb.TransactionItemAction_OBSOLETED)

@@ -645,7 +645,7 @@ class DnfBaseTestCase(TestCase):
             self.base.init_sack()
 
         if self.INIT_TRANSACTION:
-            self.base._transaction = dnf.transaction.Transaction()
+            self.base._transaction = self.base.history.rpm
 
         if self.COMPS_SOLVER:
             self.solver = dnf.comps.Solver(self.history, self.comps, REASONS.get)

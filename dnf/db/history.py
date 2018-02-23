@@ -18,7 +18,6 @@
 #
 
 import calendar
-import errno
 import os
 import time
 
@@ -26,10 +25,9 @@ import libdnf.swdb
 import libdnf.utils
 
 from dnf.i18n import ucd
-from dnf.transaction import convert_action, convert_reason
 from dnf.yum import misc
 
-from .group import GroupPersistor, EnvironmentPersistor
+from .group import GroupPersistor, EnvironmentPersistor, RPMTransaction
 
 
 class RPMTransactionItemWrapper(object):
@@ -48,20 +46,50 @@ class RPMTransactionItemWrapper(object):
         return self._item.getRPMItem().getName()
 
     @property
+    def evr(self):
+        epoch = self._item.getRPMItem().getEpoch()
+        version = self._item.getRPMItem().getVersion()
+        release = self._item.getRPMItem().getRelease()
+        if epoch:
+            return "{}-{}".format(version, release)
+        return "{}:{}-{}".format(epoch, version, release)
+
+    @property
     def arch(self):
         return self._item.getRPMItem().getArch()
 
     @property
+    def action(self):
+        return self._item.getAction()
+
+    @action.setter
+    def action(self, value):
+        self._item.setAction(value)
+
+    @property
+    def reason(self):
+        return self._item.getReason()
+
+    @property
     def state(self):
-        return self._item.getActionName()
+        try:
+            return self._item.getActionName()
+        except AttributeError:
+            return ""
 
     @property
     def state_short(self):
-        return self._item.getActionShort()
+        try:
+            return self._item.getActionShort()
+        except AttributeError:
+            return ""
 
     @property
     def done(self):
-        return self._item.getDone()
+        try:
+            return self._item.getDone()
+        except AttributeError:
+            return None
 
     @property
     def from_repo(self):
@@ -77,7 +105,21 @@ class RPMTransactionItemWrapper(object):
         return None
 
     def get_reason(self):
-        return self._swdb.reason(self)
+        # TODO: get_history_reason
+        return self._swdb.rpm.get_reason(self)
+
+    @property
+    def pkg(self):
+        return self._swdb.rpm._swdb_ti_pkg[self._item]
+
+    @property
+    def files(self):
+        return self.pkg.files
+
+    @property
+    def _active(self):
+        return self.pkg
+#        return self.action in [1, 2, 4, 6, 9]
 
 
 class TransactionWrapper(object):
@@ -179,6 +221,7 @@ class SwdbInterface(object):
         # TODO: record all vars
         # TODO: remove relreasever from options
         self.releasever = str(releasever)
+        self._rpm = None
         self._group = None
         self._env = None
         self._addon_data = None
@@ -188,6 +231,12 @@ class SwdbInterface(object):
 
     def __del__(self):
         self.close()
+
+    @property
+    def rpm(self):
+        if self._rpm is None:
+            self._rpm = RPMTransaction(self)
+        return self._rpm
 
     @property
     def group(self):
@@ -212,6 +261,7 @@ class SwdbInterface(object):
         return self._swdb
 
     def close(self):
+        self._rpm = None
         self._group = None
         self._env = None
         if self._swdb:
@@ -255,7 +305,7 @@ class SwdbInterface(object):
 
     def set_reason(self, pkg, reason):
         """Set reason for package"""
-        rpm_item = self.pkg_to_swdb_rpm_item(pkg)
+        rpm_item = self.rpm._pkg_to_swdb_rpm_item(pkg)
         repoid = self.repo(pkg)
         action = libdnf.swdb.TransactionItemAction_REASON_CHANGE
         reason = reason
@@ -279,14 +329,17 @@ class SwdbInterface(object):
         result = RPMTransactionItemWrapper(self, result)
         return result
 
-    def reason(self, pkg):
-        """Get reason for package"""
-        result = self.swdb.resolveRPMTransactionItemReason(pkg.name, pkg.arch, -1)
-        return result
+#    def reason(self, pkg):
+#        """Get reason for package"""
+#        result = self.swdb.resolveRPMTransactionItemReason(pkg.name, pkg.arch, -1)
+#        return result
 
     # TODO: rename to begin_transaction?
     def beg(self, rpmdb_version, using_pkgs, tsis, cmdline=None):
-        self.swdb.initTransaction()
+        try:
+            self.swdb.initTransaction()
+        except:
+            pass
 
         '''
         for pkg in using_pkgs:
@@ -295,35 +348,24 @@ class SwdbInterface(object):
         '''
 
         # add RPMs to the transaction
-        for tsi in tsis:
-            for (pkg, state, obsoleting) in tsi._history_iterator():
-                action = convert_action(state)
-                if action is None:
-                    # skip, we don't want to log the action
-                    continue
-                rpm_item = self.pkg_to_swdb_rpm_item(pkg)
-                force_repoid = getattr(pkg, "_force_swdb_repoid", None)
-                repoid = force_repoid or pkg.reponame
-                reason = convert_reason(tsi.reason)
-                replaced_by = None
-                pkg._swdb_item = self.swdb.addItem(rpm_item, repoid, action, reason)
+        # TODO: _populate_rpm_ts() ?
 
         if self.group:
-            for group_id, group_item in sorted(self.group.installed.items()):
+            for group_id, group_item in sorted(self.group._installed.items()):
                 repoid = ""
                 action = libdnf.swdb.TransactionItemAction_INSTALL
                 reason = libdnf.swdb.TransactionItemReason_USER
                 replaced_by = None
                 group_item._swdb_item = self.swdb.addItem(group_item, repoid, action, reason)
 
-            for group_id, group_item in sorted(self.group.upgraded.items()):
+            for group_id, group_item in sorted(self.group._upgraded.items()):
                 repoid = ""
                 action = libdnf.swdb.TransactionItemAction_UPGRADE
                 reason = libdnf.swdb.TransactionItemReason_USER
                 replaced_by = None
                 group_item._swdb_item = self.swdb.addItem(group_item, repoid, action, reason)
 
-            for group_id, group_item in sorted(self.group.removed.items()):
+            for group_id, group_item in sorted(self.group._removed.items()):
                 repoid = ""
                 action = libdnf.swdb.TransactionItemAction_REMOVE
                 reason = libdnf.swdb.TransactionItemReason_USER
@@ -331,21 +373,21 @@ class SwdbInterface(object):
                 group_item._swdb_item = self.swdb.addItem(group_item, repoid, action, reason)
 
         if self.env:
-            for env_id, env_item in sorted(self.env.installed.items()):
+            for env_id, env_item in sorted(self.env._installed.items()):
                 repoid = ""
                 action = libdnf.swdb.TransactionItemAction_INSTALL
                 reason = libdnf.swdb.TransactionItemReason_USER
                 replaced_by = None
                 env_item._swdb_item = self.swdb.addItem(env_item, repoid, action, reason)
 
-            for env_id, env_item in sorted(self.env.upgraded.items()):
+            for env_id, env_item in sorted(self.env._upgraded.items()):
                 repoid = ""
                 action = libdnf.swdb.TransactionItemAction_UPGRADE
                 reason = libdnf.swdb.TransactionItemReason_USER
                 replaced_by = None
                 env_item._swdb_item = self.swdb.addItem(env_item, repoid, action, reason)
 
-            for env_id, env_item in sorted(self.env.removed.items()):
+            for env_id, env_item in sorted(self.env._removed.items()):
                 repoid = ""
                 action = libdnf.swdb.TransactionItemAction_REMOVE
                 reason = libdnf.swdb.TransactionItemReason_USER
@@ -408,6 +450,8 @@ class SwdbInterface(object):
             self._log_errors(errors)
         '''
         del self._tid
+        # TODO: is this a good idea?
+        self.swdb.initTransaction()
 
     # TODO: ignore_case, more patterns
     def search(self, patterns, ignore_case=True):
