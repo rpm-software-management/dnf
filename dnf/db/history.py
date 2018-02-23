@@ -22,21 +22,19 @@ import time
 import os
 from dnf.yum import misc
 from hawkey import Swdb, SwdbPkg, SwdbItem, convert_reason
-from .swdb_transformer import transformSwdb
 from .group import GroupPersistor
 from dnf.util import logger
 
 
 class SwdbInterface(object):
 
-    def __init__(self, db_dir, root='/', releasever="", transform=True):
+    def __init__(self, db_dir, root='/', releasever=""):
         self.path = os.path.join(root, db_dir, "swdb.sqlite")
         self.releasever = str(releasever)
         self._group = None
         self._swdb = None
         self._db_dir = db_dir
         self._root = root
-        self._transform = transform
 
     @property
     def group(self):
@@ -45,15 +43,12 @@ class SwdbInterface(object):
         return self._group
 
     def _createdb(self, input_dir):
-        """ Create SWDB database if necessary and perform transformation """
+        """ Create SWDB database if necessary """
         if not self._swdb.exist():
             dbdir = os.path.dirname(self.path)
             if not os.path.exists(dbdir):
                 os.makedirs(dbdir)
             self._swdb.create_db()
-            # transformation may only run on empty database
-            output_file = self._swdb.get_path()
-            transformSwdb(input_dir, output_file)
 
     def _initSwdb(self, input_dir):
         """ Create SWDB object and create database if necessary """
@@ -67,13 +62,6 @@ class SwdbInterface(object):
             dbdir = os.path.join(self._root, self._db_dir)
             self._initSwdb(dbdir)
         return self._swdb
-
-    def transform(self, input_dir):
-        """ Interface for database transformation """
-        if not self._swdb:
-            self._initSwdb(input_dir)
-        else:
-            logger.error(_('Error: database is already initialized'))
 
     def group_active(self):
         return self._group is not None
