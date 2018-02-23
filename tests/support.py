@@ -677,6 +677,9 @@ class DnfBaseTestCase(TestCase):
         self.history.beg("", [], tsis)
 
     def _swdb_end(self, tsis=None):
+        for tsi in self.history._swdb.getItems():
+            if tsi.getState() == libdnf.swdb.TransactionItemState_UNKNOWN:
+                tsi.setState(libdnf.swdb.TransactionItemState_DONE)
         self.history.end("")
 
     def _swdb_commit(self, tsis=None):

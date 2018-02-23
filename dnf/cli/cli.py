@@ -240,7 +240,7 @@ class BaseCli(dnf.Base):
             msg = self.output.post_transaction_output(trans)
             logger.info(msg)
             for tsi in trans:
-                if tsi.action == dnf.transaction.PKG_FAIL:
+                if tsi.state == libdnf.swdb.TransactionItemState_ERROR:
                     raise dnf.exceptions.Error(_('Transaction failed'))
 
     def gpgsigcheck(self, pkgs):

@@ -46,6 +46,9 @@ class BaseTest(tests.support.TestCase):
         pkg._force_swdb_repoid = "main"
         history.rpm.add_install(pkg)
         history.beg("", [], [])
+        for tsi in history._swdb.getItems():
+            if tsi.getState() == libdnf.swdb.TransactionItemState_UNKNOWN:
+                tsi.setState(libdnf.swdb.TransactionItemState_DONE)
         history.end("")
 
     def test_instance(self):
@@ -120,6 +123,9 @@ class BaseTest(tests.support.TestCase):
         pkg._force_swdb_repoid = "anakonda"
         history.rpm.add_install(pkg)
         history.beg("", [], [])
+        for tsi in history._swdb.getItems():
+            if tsi.getState() == libdnf.swdb.TransactionItemState_UNKNOWN:
+                tsi.setState(libdnf.swdb.TransactionItemState_DONE)
         history.end("")
 
         pkg, = base.sack.query().installed().filter(name='pepper')
@@ -138,6 +144,9 @@ class BaseTest(tests.support.TestCase):
         pkg._force_swdb_repoid = "main"
         history.rpm.add_install(pkg, reason=libdnf.swdb.TransactionItemReason_DEPENDENCY)
         history.beg("", [], [])
+        for tsi in history._swdb.getItems():
+            if tsi.getState() == libdnf.swdb.TransactionItemState_UNKNOWN:
+                tsi.setState(libdnf.swdb.TransactionItemState_DONE)
         history.end("")
 
         pkg, = base.sack.query().installed().filter(name='pepper')
@@ -219,7 +228,7 @@ class VerifyTransactionTest(tests.support.DnfBaseTestCase):
 
         pkg = self.base.history.package_data(new_pkg)
         self.assertEqual(pkg.ui_from_repo(), '@main')
-        self.assertEqual(pkg.state, "Install")
+        self.assertEqual(pkg.action_name, "Install")
         self.assertEqual(pkg.get_reason(), libdnf.swdb.TransactionItemReason_USER)
 
 

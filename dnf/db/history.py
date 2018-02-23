@@ -71,25 +71,26 @@ class RPMTransactionItemWrapper(object):
         return self._item.getReason()
 
     @property
-    def state(self):
+    def action_name(self):
         try:
             return self._item.getActionName()
         except AttributeError:
             return ""
 
     @property
-    def state_short(self):
+    def action_short(self):
         try:
             return self._item.getActionShort()
         except AttributeError:
             return ""
 
     @property
-    def done(self):
-        try:
-            return self._item.getDone()
-        except AttributeError:
-            return None
+    def state(self):
+        return self._item.getState()
+
+    @state.setter
+    def state(self, value):
+        self._item.setState(value)
 
     @property
     def from_repo(self):
@@ -156,7 +157,7 @@ class TransactionWrapper(object):
 
     @property
     def return_code(self):
-        return self._trans.getDone() != 1
+        return int(self._trans.getState() != libdnf.swdb.TransactionItemState_DONE)
 
     @property
     def loginuid(self):
@@ -208,7 +209,7 @@ class MergedTransactionWrapper(TransactionWrapper):
 
     @property
     def return_code(self):
-        return self._trans.listDone()
+        return [int(i != libdnf.swdb.TransactionItemState_DONE) for i in self._trans.listStates()]
 
     @property
     def cmdline(self):
@@ -310,7 +311,9 @@ class SwdbInterface(object):
         action = libdnf.swdb.TransactionItemAction_REASON_CHANGE
         reason = reason
         replaced_by = None
-        pkg._swdb_item = self.swdb.addItem(rpm_item, repoid, action, reason)
+        ti = self.swdb.addItem(rpm_item, repoid, action, reason)
+        ti.setState(libdnf.swdb.TransactionItemState_DONE)
+        return ti
 
     '''
     def package(self, pkg):
@@ -356,21 +359,24 @@ class SwdbInterface(object):
                 action = libdnf.swdb.TransactionItemAction_INSTALL
                 reason = libdnf.swdb.TransactionItemReason_USER
                 replaced_by = None
-                group_item._swdb_item = self.swdb.addItem(group_item, repoid, action, reason)
+                ti = self.swdb.addItem(group_item, repoid, action, reason)
+                ti.setState(libdnf.swdb.TransactionItemState_DONE)
 
             for group_id, group_item in sorted(self.group._upgraded.items()):
                 repoid = ""
                 action = libdnf.swdb.TransactionItemAction_UPGRADE
                 reason = libdnf.swdb.TransactionItemReason_USER
                 replaced_by = None
-                group_item._swdb_item = self.swdb.addItem(group_item, repoid, action, reason)
+                ti = self.swdb.addItem(group_item, repoid, action, reason)
+                ti.setState(libdnf.swdb.TransactionItemState_DONE)
 
             for group_id, group_item in sorted(self.group._removed.items()):
                 repoid = ""
                 action = libdnf.swdb.TransactionItemAction_REMOVE
                 reason = libdnf.swdb.TransactionItemReason_USER
                 replaced_by = None
-                group_item._swdb_item = self.swdb.addItem(group_item, repoid, action, reason)
+                ti = self.swdb.addItem(group_item, repoid, action, reason)
+                ti.setState(libdnf.swdb.TransactionItemState_DONE)
 
         if self.env:
             for env_id, env_item in sorted(self.env._installed.items()):
@@ -378,21 +384,25 @@ class SwdbInterface(object):
                 action = libdnf.swdb.TransactionItemAction_INSTALL
                 reason = libdnf.swdb.TransactionItemReason_USER
                 replaced_by = None
-                env_item._swdb_item = self.swdb.addItem(env_item, repoid, action, reason)
+                ti = self.swdb.addItem(env_item, repoid, action, reason)
+                ti.setState(libdnf.swdb.TransactionItemState_DONE)
 
             for env_id, env_item in sorted(self.env._upgraded.items()):
                 repoid = ""
                 action = libdnf.swdb.TransactionItemAction_UPGRADE
                 reason = libdnf.swdb.TransactionItemReason_USER
                 replaced_by = None
-                env_item._swdb_item = self.swdb.addItem(env_item, repoid, action, reason)
+                ti = self.swdb.addItem(env_item, repoid, action, reason)
+                ti.setState(libdnf.swdb.TransactionItemState_DONE)
 
             for env_id, env_item in sorted(self.env._removed.items()):
                 repoid = ""
                 action = libdnf.swdb.TransactionItemAction_REMOVE
                 reason = libdnf.swdb.TransactionItemReason_USER
                 replaced_by = None
-                env_item._swdb_item = self.swdb.addItem(env_item, repoid, action, reason)
+                ti = self.swdb.addItem(env_item, repoid, action, reason)
+                ti.setState(libdnf.swdb.TransactionItemState_DONE)
+
 
         # save when everything is in memory
         tid = self.swdb.beginTransaction(

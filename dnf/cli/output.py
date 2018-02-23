@@ -88,7 +88,7 @@ def _make_lists(transaction, goal):
                 b.erased.append(tsi)
         elif tsi.action == libdnf.swdb.TransactionItemAction_UPGRADE:
             b.upgraded.append(tsi)
-        elif tsi.action == dnf.transaction.PKG_FAIL:
+        elif tsi.state == libdnf.swdb.TransactionItemState_ERROR:
             b.failed.append(tsi)
 
     return b
@@ -1324,19 +1324,15 @@ Transaction Summary
         actions_short = set()
         count = 0
         for pkg in hpkgs:
-            if pkg.state in ('Installed', 'Upgraded', 'Downgraded'):
+            if pkg.action in (libdnf.swdb.TransactionItemAction_UPGRADED, libdnf.swdb.TransactionItemAction_DOWNGRADED):
                 # skip states we don't want to display in user input
                 continue
-            actions.add(pkg.state)
-            actions_short.add(pkg.state_short)
+            actions.add(pkg.action_name)
+            actions_short.add(pkg.action_short)
             count += 1
 
         if len(actions) > 1:
-            # TODO: translate actions_short and fix ordering accordingly
-            # to preserve output compatibility with YUM and pre-SWDB DNF
-            actions_order = ['D', 'E', 'I', 'O', 'R', 'U']
-            actions_small = [i for i in actions_order if i in actions_short]
-            return count, ", ".join(actions_small)
+            return count, ", ".join(sorted(actions_short))
 
         # So empty transactions work, although that "shouldn't" really happen
         return count, "".join(list(actions))
@@ -1787,7 +1783,7 @@ Transaction Summary
         packages = old.packages()
 
         for pkg in packages:
-            uistate = all_uistates.get(pkg.state, pkg.state)
+            uistate = all_uistates.get(pkg.action_name, pkg.action_name)
             if maxlen < len(uistate):
                 maxlen = len(uistate)
             pkg_len = len(str(pkg))
@@ -1796,7 +1792,7 @@ Transaction Summary
 
         for pkg in packages:
             prefix = " " * 4
-            if not pkg.done:
+            if pkg.state != libdnf.swdb.TransactionItemState_DONE:
                 prefix = " ** "
 
             highlight = 'normal'
@@ -1807,22 +1803,22 @@ Transaction Summary
 
             cn = str(pkg)
 
-            uistate = all_uistates.get(pkg.state, pkg.state)
+            uistate = all_uistates.get(pkg.action_name, pkg.action_name)
             uistate = fill_exact_width(ucd(uistate), maxlen)
 
-            if (last is not None and last.state == 'Updated' and
-                    last.name == pkg.name and pkg.state == 'Update'):
+            if (last is not None and last.action == libdnf.swdb.TransactionItemAction_UPGRADED and
+                    last.name == pkg.name and pkg.action == libdnf.swdb.TransactionItemAction_UPGRADE):
 
                 ln = len(pkg.name) + 1
                 cn = (" " * ln) + cn[ln:]
-            elif (last is not None and last.state == 'Downgrade' and
-                  last.name == pkg.name and pkg.state == 'Downgraded'):
+            elif (last is not None and last.action == libdnf.swdb.TransactionItemAction_DOWNGRADE and
+                  last.name == pkg.name and pkg.action == libdnf.swdb.TransactionItemAction_DOWNGRADED):
 
                 ln = len(pkg.name) + 1
                 cn = (" " * ln) + cn[ln:]
             else:
                 last = None
-                if pkg.state in ('Updated', 'Downgrade'):
+                if pkg.action in (libdnf.swdb.TransactionItemAction_UPGRADED, libdnf.swdb.TransactionItemAction_DOWNGRADE):
                     last = pkg
             print("%s%s%s%s %-*s %s" % (prefix, hibeg, uistate, hiend,
                                         pkg_max_len, str(pkg),
@@ -1882,25 +1878,25 @@ Transaction Summary
                     if not any([pkg.match(pat) for pat in extcmds]):
                         continue
 
-                uistate = all_uistates.get(pkg.state, pkg.state)
+                uistate = all_uistates.get(pkg.action_name, pkg.action_name)
                 uistate = fill_exact_width(uistate, 14)
 
                 #  To chop the name off we need nevra strings, str(pkg) gives
                 # envra so we have to do it by hand ... *sigh*.
                 cn = pkg.ui_nevra
 
-                if (last is not None and last.state == 'Updated' and
-                        last.name == pkg.name and pkg.state == 'Update'):
+                if (last is not None and last.action == libdnf.swdb.TransactionItemAction_UPGRADED and
+                        last.name == pkg.name and pkg.action == libdnf.swdb.TransactionItemAction_UPGRADE):
                     ln = len(pkg.name) + 1
                     cn = (" " * ln) + cn[ln:]
                 elif (last is not None and
-                      last.state == 'Downgrade' and last.name == pkg.name and
-                      pkg.state == 'Downgraded'):
+                      last.action == libdnf.swdb.TransactionItemAction_DOWNGRADE and last.name == pkg.name and
+                      pkg.action == libdnf.swdb.TransactionItemAction_DOWNGRADED):
                     ln = len(pkg.name) + 1
                     cn = (" " * ln) + cn[ln:]
                 else:
                     last = None
-                    if pkg.state in ('Updated', 'Downgrade'):
+                    if pkg.action in (libdnf.swdb.TransactionItemAction_UPGRADED, libdnf.swdb.TransactionItemAction_DOWNGRADE):
                         last = pkg
 
                 num += 1
