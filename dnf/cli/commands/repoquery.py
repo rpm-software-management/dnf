@@ -316,9 +316,7 @@ class RepoQueryCommand(commands.Command):
     def by_all_deps(self, requires_name, depends_name, query):
         name = requires_name or depends_name
         defaultquery = query.intersection(dnf.subject.Subject(name).get_best_query(
-            self.base.sack, with_provides=False, forms=[hawkey.FORM_NEVRA, hawkey.FORM_NEVR,
-                                                        hawkey.FORM_NEV, hawkey.FORM_NA,
-                                                        hawkey.FORM_NAME]))
+            self.base.sack, with_provides=False, with_filenames=False))
         requiresquery = query.filter(requires__glob=name)
         if depends_name:
             requiresquery = requiresquery.union(query.filter(recommends__glob=depends_name))
