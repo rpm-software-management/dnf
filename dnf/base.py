@@ -23,6 +23,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
+
+import argparse
+import fnmatch
+
 from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
 from dnf.module.exceptions import NoModuleException
@@ -1820,6 +1824,10 @@ class Base(object):
             self._goal.install(select=sltr, optional=(not strict))
         return len(available)
 
+    def enable_module(self, specs, save_immediately=False):
+        for spec in specs:
+            self.repo_module_dict.enable(spec, save_immediately)
+
     def install_module(self, specs):
         skipped_specs = specs
         try:
@@ -1828,6 +1836,52 @@ class Base(object):
             self.repo_module_dict.install(specs[1:])
 
         return skipped_specs
+
+    def install_specs(self, install, exclude=None):
+        if exclude is None:
+            exclude = []
+
+        install_specs = argparse.Namespace()
+        exclude_specs = argparse.Namespace()
+        dnf.cli.option_parser.classify_specs(install_specs, install)
+        dnf.cli.option_parser.classify_specs(exclude_specs, exclude)
+
+        for pkg in exclude_specs.pkg_specs:
+            self.sack.add_excludes(pkg)
+
+        for spec in install_specs.pkg_specs:
+            try:
+                self.install(spec, strict=self.conf.strict)
+            except dnf.exceptions.Error:
+                if self.conf.strict:
+                    raise
+
+        groups = self.install_module(install_specs.grp_specs)
+
+        self.read_comps(arch_filter=True)
+        for group in groups:
+            try:
+                types = self.conf.group_package_types
+                if '/' in group:
+                    split = group.split('/')
+                    group = split[0]
+                    types.append(split[1])
+
+                group = self.comps.group_by_pattern(group)
+
+                found = False
+                for pattern in exclude_specs.grp_specs:
+                    if fnmatch.filter(group, pattern):
+                        found = True
+                        break
+
+                if found:
+                    continue
+
+                self.group_install(group, types, strict=self.conf.strict)
+            except dnf.exceptions.Error:
+                if self.conf.strict:
+                    raise
 
     def install(self, pkg_spec, reponame=None, strict=True, forms=None):
         # :api
