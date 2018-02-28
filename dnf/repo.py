@@ -70,6 +70,19 @@ CACHE_FILES = {
 logger = logging.getLogger("dnf")
 
 
+# Returns regex pattern matching any filename that is repo-specific cache data of a
+# particular type for given repo. The filename is expected to not contain the base cachedir
+# path components.
+def repo_cache_files_pattern(type, repo):
+    if type == 'metadata':
+        return r'^%s\/.*(xml(\.gz|\.xz|\.bz2)?|asc|cachecookie|%s)$' % \
+               (repo._cachedir_name, dnf.repo._MIRRORLIST_FILENAME)
+    if type == 'packages':
+        return r'^%s\/%s\/.+rpm$' % (repo._cachedir_name, dnf.repo._PACKAGES_RELATIVE_DIR)
+    if type == 'dbcache':
+        return r'^%s(\.solv|(-filenames|-presto|-updateinfo)\.solvx)$' % repo.id
+
+
 def repo_id_invalid(repo_id):
     # :api
     """Return index of an invalid character in the repo ID (if present)."""
@@ -499,7 +512,7 @@ class MDPayload(dnf.callback.Payload):
 
 # use the local cache even if it's expired. download if there's no cache.
 SYNC_LAZY = 1
- # use the local cache, even if it's expired, never download.
+# use the local cache, even if it's expired, never download.
 SYNC_ONLY_CACHE = 2
 # try the cache, if it is expired download new md.
 SYNC_TRY_CACHE = 3
@@ -541,12 +554,15 @@ class Repo(dnf.conf.RepoConf):
         self._repofile = value
 
     @property
-    def _cachedir(self):
+    def _cachedir_name(self):
         s = self.metalink or self.mirrorlist or \
             (self.baseurl and self.baseurl[0]) or self.id
         digest = hashlib.sha256(s.encode('utf8')).hexdigest()[:16]
-        repodir = "%s-%s" % (self.id, digest)
-        return os.path.join(self.basecachedir, repodir)
+        return "%s-%s" % (self.id, digest)
+
+    @property
+    def _cachedir(self):
+        return os.path.join(self.basecachedir, self._cachedir_name)
 
     @property
     def _filelists_fn(self):

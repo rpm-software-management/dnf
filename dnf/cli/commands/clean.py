@@ -71,6 +71,13 @@ def _clean(dirpath, files):
     return count
 
 
+def _is_repo_cached(repo, files):
+    """Return true if the repo have some cached metadata around."""
+    metapat = dnf.repo.repo_cache_files_pattern('metadata', repo)
+    matches = (re.match(metapat, f) for f in files)
+    return bool(matches)
+
+
 def _cached_repos(files):
     """Return the repo IDs that have some cached metadata around."""
     metapat = dnf.repo.CACHE_FILES['metadata']
@@ -88,11 +95,18 @@ class CleanCommand(commands.Command):
 
     @staticmethod
     def set_argparser(parser):
+        parser.add_argument('--enabled', action='store_true',
+                            dest='enabled',
+                            help=_('Clean only enabled repositories'))
         parser.add_argument('type', nargs='+',
-                           choices=_CACHE_TYPES.keys(),
-                           help=_('Metadata type to clean'))
+                            choices=_CACHE_TYPES.keys(),
+                            help=_('Metadata type to clean'))
 
     def run(self):
+        all_repos = not (self.opts.enabled or self.opts.repos_ed)
+        if not all_repos and not self.base.repos._any_enabled():
+            logger.info(_('There are no enabled repos. Nothing to do.'))
+            return
         cachedir = self.base.conf.cachedir
         md_lock = dnf.lock.build_metadata_lock(cachedir, True)
         download_lock = dnf.lock.build_download_lock(cachedir, True)
@@ -105,12 +119,22 @@ class CleanCommand(commands.Command):
                     logger.debug(_('Cleaning data: ' + ' '.join(types)))
 
                     if 'expire-cache' in types:
-                        expired = _cached_repos(files)
-                        self.base._repo_persistor.expired_to_add.update(expired)
+                        if all_repos:
+                            repos_expire = _cached_repos(files)
+                        else:
+                            repos_expire = set()
+                            for repo in self.base.repos.iter_enabled():
+                                if _is_repo_cached(repo, files):
+                                    repos_expire.add(repo.id)
+                        self.base._repo_persistor.expired_to_add.update(repos_expire)
                         types.remove('expire-cache')
                         logger.info(_('Cache was expired'))
 
-                    patterns = [dnf.repo.CACHE_FILES[t] for t in types]
+                    if all_repos:
+                        patterns = [dnf.repo.CACHE_FILES[t] for t in types]
+                    else:
+                        patterns = [dnf.repo.repo_cache_files_pattern(t, repo)
+                                    for t in types for repo in self.base.repos.iter_enabled()]
                     count = _clean(cachedir, _filter(files, patterns))
                     logger.info(P_('%d file removed', '%d files removed', count) % count)
                     return

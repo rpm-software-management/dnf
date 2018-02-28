@@ -416,7 +416,9 @@ Clean Command
 -------------
 Performs cleanup of temporary files kept for repositories. This includes any
 such data left behind from disabled or removed repositories as well as for
-different distribution release versions.
+different distribution release versions by default.
+However, command can be limited to enabled repositories using option ``--enabled``.
+Option ``--enabled`` is automaticaly activated if list of enabled repositories is changed from commandline (``--repo``. ``--enablerepo``, ``--disablerepo``).
 
 ``dnf clean dbcache``
     Removes cache files generated from the repository metadata. This forces DNF
