@@ -91,7 +91,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
     def test_inst(self):
         """Test installed triplets querying."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        apkg_adv_insts = cmd.installed_apkg_adv_insts()
+        apkg_adv_insts = cmd.installed_apkg_adv_insts([])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-4-4.noarch.rpm', 'DNF-2014-1', True),
@@ -119,7 +119,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
     def test_upd(self):
         """Test updating triplets querying."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        apkg_adv_insts = cmd.updating_apkg_adv_insts()
+        apkg_adv_insts = cmd.updating_apkg_adv_insts([])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-5-1.noarch.rpm', 'DNF-2014-3', False)],
@@ -128,7 +128,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
     def test_all(self):
         """Test all triplets querying."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        apkg_adv_insts = cmd.all_apkg_adv_insts()
+        apkg_adv_insts = cmd.all_apkg_adv_insts([])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-4-4.noarch.rpm', 'DNF-2014-1', True),

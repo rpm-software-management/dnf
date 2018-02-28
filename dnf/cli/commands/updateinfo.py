@@ -193,77 +193,82 @@ class UpdateInfoCommand(commands.Command):
             return False
         return True
 
-
-
-
-
-
-
-
-
-
-
-
-    @staticmethod
-    def _apackage_advisory_match(apackage, advisory, specs=()):
-        """Test whether an (adv. pkg., adv.) pair matches specifications."""
-
-        if not specs:
-            return True
-
-        specs = set(specs)
-        types = set()
-        if 'bugfix' in specs:
-            types.add(hawkey.ADVISORY_BUGFIX)
-        if 'enhancement' in specs:
-            types.add(hawkey.ADVISORY_ENHANCEMENT)
-        if {'security', 'sec'} & specs:
-            types.add(hawkey.ADVISORY_SECURITY)
-        if 'newpackage' in specs:
-            types.add(hawkey.ADVISORY_NEWPACKAGE)
-
-        return (any(fnmatch.fnmatchcase(advisory.id, pat) for pat in specs) or
-                advisory.type in types or
-                any(fnmatch.fnmatchcase(apackage.name, pat) for pat in specs))
-
-    def _apackage_advisory_installeds(self, pkgs, cmptype, req_apkg, specs=()):
+    def _apackage_advisory_installeds(self, pkgs, cmptype, req_apkg, specs):
         """Return (adv. package, advisory, installed) triplets."""
+        specs_types = set()
+        specs_patterns = set()
+        for spec in specs:
+            if spec == 'bugfix':
+                specs_types.add(hawkey.ADVISORY_BUGFIX)
+            elif spec == 'enhancement':
+                specs_types.add(hawkey.ADVISORY_ENHANCEMENT)
+            elif spec in ('security', 'sec'):
+                specs_types.add(hawkey.ADVISORY_SECURITY)
+            elif spec == 'newpackage':
+                specs_types.add(hawkey.ADVISORY_NEWPACKAGE)
+            else:
+                specs_patterns.add(spec)
+
         for package in pkgs:
             for advisory in package.get_advisories(cmptype):
+                if not specs_types and not specs_patterns:
+                    advisory_match = True
+                else:
+                    advisory_match = advisory.type in specs_types \
+                        or any(fnmatch.fnmatchcase(advisory.id, pat) for pat in specs_patterns)
                 for apackage in advisory.packages:
-                    passed = (req_apkg(apackage) and
-                              self._apackage_advisory_match(
-                                  apackage, advisory, specs))
+                    passed = req_apkg(apackage) \
+                        and (advisory_match or any(fnmatch.fnmatchcase(apackage.name, pat) for pat in specs_patterns))
                     if passed:
                         installed = self._newer_equal_installed(apackage)
                         yield apackage, advisory, installed
 
-    def available_apkg_adv_insts(self, spec=()):
+    def available_apkg_adv_insts(self, specs):
         """Return available (adv. package, adv., inst.) triplets"""
         return self._apackage_advisory_installeds(
             self.base.sack.query().installed(), hawkey.GT,
-            self._older_installed, spec)
+            self._older_installed, specs)
 
-    def installed_apkg_adv_insts(self, spec=()):
+    def installed_apkg_adv_insts(self, specs):
         """Return installed (adv. package, adv., inst.) triplets"""
         return self._apackage_advisory_installeds(
             self.base.sack.query().installed(), hawkey.LT | hawkey.EQ,
-            self._newer_equal_installed, spec)
+            self._newer_equal_installed, specs)
 
-    def updating_apkg_adv_insts(self, spec=()):
+    def updating_apkg_adv_insts(self, specs):
         """Return updating (adv. package, adv., inst.) triplets"""
         return self._apackage_advisory_installeds(
             self.base.sack.query().filterm(upgradable=True), hawkey.GT,
-            self._older_installed, spec)
+            self._older_installed, specs)
 
-    def all_apkg_adv_insts(self, spec=()):
+    def all_apkg_adv_insts(self, specs):
         """Return installed (adv. package, adv., inst.) triplets"""
         ipackages = self.base.sack.query().installed()
         gttriplets = self._apackage_advisory_installeds(
-            ipackages, hawkey.GT, self._any_installed, spec)
+            ipackages, hawkey.GT, self._any_installed, specs)
         lteqtriplets = self._apackage_advisory_installeds(
-            ipackages, hawkey.LT | hawkey.EQ, self._any_installed, spec)
+            ipackages, hawkey.LT | hawkey.EQ, self._any_installed, specs)
         return chain(gttriplets, lteqtriplets)
+
+    #TODO this is quicker, but returns different output
+    def xall_apkg_adv_insts(self, specs):
+        """Return installed (adv. package, adv., inst.) triplets"""
+        ipackages = self.base.sack.query().installed()
+        return self._apackage_advisory_installeds(
+            ipackages, hawkey.LT | hawkey.EQ | hawkey.GT, self._any_installed, specs)
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     def _summary(self, apkg_adv_insts):
         """Make the summary of advisories."""
