@@ -75,11 +75,25 @@ class CheckCommand(commands.Command):
         q = self.base.sack.query().installed()
 
         if self.opts.check_types.intersection({'all', 'dependencies'}):
+            sack = None
             for pkg in q:
                 for require in pkg.requires:
                     if str(require).startswith('rpmlib'):
                         continue
                     if not len(q.filter(provides=[require])):
+                        if str(require).startswith('('):
+                            # rich deps can be only tested by solver
+                            if sack is None:
+                                sack = dnf.sack._rpmdb_sack(self.base)
+                            selector = dnf.selector.Selector(sack)
+                            selector.set(provides=str(require))
+                            goal = dnf.goal.Goal(sack)
+                            goal.install(select=selector, optional=False)
+                            solved = goal.run()
+                            # there ase only @system repo in sack, therefore solved is only in case
+                            # when rich deps doesn't require any additional package
+                            if solved:
+                                continue
                         msg = _("{} has missing requires of {}")
                         output_set.add(msg.format(
                             self.base.output.term.bold(pkg),
