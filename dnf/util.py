@@ -28,6 +28,7 @@ from functools import reduce
 import dnf
 import dnf.const
 import dnf.pycomp
+import errno
 import itertools
 import librepo
 import locale
@@ -120,7 +121,7 @@ def ensure_dir(dname):
     try:
         os.makedirs(dname, mode=0o755)
     except OSError as e:
-        if e.errno != os.errno.EEXIST or not os.path.isdir(dname):
+        if e.errno != errno.EEXIST or not os.path.isdir(dname):
             raise e
 
 def empty(iterable):
