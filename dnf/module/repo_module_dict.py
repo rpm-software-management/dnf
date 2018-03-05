@@ -453,7 +453,9 @@ class RepoModuleDict(OrderedDict):
         modules_dir = os.path.join(self.base.conf.installroot,
                                    self.base.conf.modulesdir.lstrip("/"))
 
-        ensure_dir(modules_dir)
+        if self.base.conf.installroot != "/":
+            ensure_dir(modules_dir)
+
         return modules_dir
 
     def get_module_defaults_dir(self):

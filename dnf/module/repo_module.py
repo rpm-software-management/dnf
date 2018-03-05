@@ -22,7 +22,7 @@ from dnf.module import module_messages, DIFFERENT_STREAM_INFO
 from dnf.module.exceptions import NoStreamException, EnabledStreamException
 from dnf.module.repo_module_stream import RepoModuleStream
 from dnf.pycomp import ConfigParser
-from dnf.util import logger, ensure_dir
+from dnf.util import logger
 
 
 class RepoModule(OrderedDict):
@@ -103,7 +103,6 @@ class RepoModule(OrderedDict):
 
     def write_conf_to_file(self):
         output_file = os.path.join(self.parent.get_modules_dir(), "%s.module" % self.conf.name)
-        ensure_dir(self.parent.get_modules_dir())
 
         with open(output_file, "w") as config_file:
             self.conf._write(config_file)
