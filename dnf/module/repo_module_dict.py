@@ -485,6 +485,7 @@ class RepoModuleDict(OrderedDict):
                                    self.base.conf.modulesdir.lstrip("/"))
 
         ensure_dir(modules_dir)
+
         return modules_dir
 
     def get_module_defaults_dir(self):

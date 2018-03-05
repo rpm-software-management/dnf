@@ -288,6 +288,7 @@ mkdir build-py3
 %find_lang %{name}
 mkdir -p %{buildroot}%{confdir}/vars
 mkdir -p %{buildroot}%{pluginconfpath}/
+mkdir -p %{buildroot}%{_sysconfdir}/%{name}/modules.d
 %if %{with python2}
 mkdir -p %{buildroot}%{py2pluginpath}/
 %endif
@@ -379,6 +380,7 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %doc AUTHORS README.rst
 %dir %{confdir}
 %dir %{pluginconfpath}
+%dir %{_sysconfdir}/%{name}/modules.d
 %dir %{confdir}/protected.d
 %dir %{confdir}/vars
 %config(noreplace) %{confdir}/%{name}.conf
@@ -436,6 +438,7 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %{python3_sitelib}/%{name}/
 %dir %{py3pluginpath}
 %dir %{py3pluginpath}/__pycache__
+%dir %{_sysconfdir}/%{name}/modules.d
 %endif
 
 %files automatic
