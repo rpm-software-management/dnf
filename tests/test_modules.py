@@ -301,6 +301,10 @@ class ModuleTest(unittest.TestCase):
         repo = self.base.repos.add_new_repo(repo_id, self.base.conf, baseurl=[url], modules=modules)
         return repo
 
+    def test_module_dir_exist(self):
+        dir = self.base.repo_module_dict.get_modules_dir()
+        self.assertTrue(os.path.exists(dir))
+
     # dnf module enable
 
     def test_enable_name(self):
