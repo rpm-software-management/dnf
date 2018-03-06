@@ -403,8 +403,8 @@ class Output(object):
             nevra_epoch_ensured = "{}-{}:{}-{}.{}".format(pkg.name, pkg.epoch, pkg.version,
                                                           pkg.release, pkg.arch)
 
-            if nevra in installed.module_metadata.artifacts.rpms or \
-                    nevra_epoch_ensured in installed.module_metadata.artifacts.rpms:
+            if nevra in installed.artifacts() or \
+                    nevra_epoch_ensured in installed.artifacts():
                 repo_and_module = installed.full_version + "|" + pkg._from_repo
                 last_column_indentation = columns[1] + (len(repo_and_module) - len(pkg._from_repo))
                 columns = (columns[0], last_column_indentation, 0)
