@@ -19,6 +19,7 @@ from dnf.cli.format import format_number, format_time
 from dnf.cli.term import _term_width
 from dnf.pycomp import unicode
 from time import time
+from dnf.i18n import _
 
 import sys
 import dnf.callback
@@ -69,6 +70,12 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         self.last_time = 0
         self.last_size = 0
         self.rate = None
+
+    def start_transfer(self, payload, total_mirrors, tried_mirrors):
+        text = unicode(payload)
+        msg = _("Initiating transfer, tried %d / %d mirrors.\r") % (tried_mirrors, total_mirrors)
+        left = _term_width() - len(msg)
+        self.message('%-*.*s%s' % (left, left, text, msg))
 
     def progress(self, payload, done):
         now = time()
