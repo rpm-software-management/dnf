@@ -16,10 +16,13 @@
 
 import gzip
 
-import modulemd
 import os
+import gi
 
 from dnf.module.exceptions import LoadCacheException, MissingYamlException
+
+gi.require_version('Modulemd', '1.0')
+from gi.repository import Modulemd
 
 
 class ModuleMetadataLoader(object):
@@ -54,4 +57,4 @@ class ModuleMetadataLoader(object):
         with openfunc(self._metadata_fn or yaml_file_path, "r") as modules_yaml_fd:
             modules_yaml = modules_yaml_fd.read()
 
-        return modulemd.loads_all(modules_yaml)
+        return Modulemd.Module.new_all_from_string(modules_yaml)
