@@ -131,11 +131,10 @@ class Package(hawkey.Package):
 
     @property
     def _pkgid(self):
-        try:
-            (_, chksum) = self.hdr_chksum
-            return binascii.hexlify(chksum)
-        except AttributeError:
+        if self.hdr_chksum is None:
             return None
+        (_, chksum) = self.hdr_chksum
+        return binascii.hexlify(chksum)
 
     @property # yum compatibility attribute
     def idx(self):
@@ -254,6 +253,8 @@ class Package(hawkey.Package):
         """ Return the chksum type and chksum string how the legacy yum expects
             it.
         """
+        if self._chksum is None:
+            return (None, None)
         (chksum_type, chksum) = self._chksum
         return (hawkey.chksum_name(chksum_type), binascii.hexlify(chksum).decode())
 

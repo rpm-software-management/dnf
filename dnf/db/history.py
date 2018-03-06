@@ -156,10 +156,7 @@ class SwdbInterface(object):
         return self.swdb.reason(str(pkg))
 
     def ipkg_to_pkg(self, ipkg):
-        try:
-            csum = ipkg.returnIdSum()
-        except AttributeError:
-            csum = ('', '')
+        csum = ipkg.returnIdSum()
         pkgtup = map(ucd, ipkg.pkgtup)
         (n, a, e, v, r) = pkgtup
         pkg = SwdbPkg.new(
