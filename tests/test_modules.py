@@ -24,7 +24,6 @@ import tempfile
 import unittest
 
 import hawkey
-import modulemd
 from hawkey import ModuleForm
 
 import dnf.conf
@@ -32,6 +31,10 @@ from dnf.conf import ModuleDefaultsConf
 from dnf.module.subject import ModuleSubject
 from dnf.module.repo_module_dict import RepoModuleDict
 from dnf.module.repo_module_version import RepoModuleVersion
+
+import gi
+gi.require_version('Modulemd', '1.0')
+from gi.repository import Modulemd
 
 TOP_DIR = os.path.abspath(os.path.dirname(__file__))
 MODULES_DIR = os.path.join(TOP_DIR, "modules/etc/dnf/modules.d")
@@ -190,20 +193,25 @@ class RepoModuleDictTest(unittest.TestCase):
         rpms = rpms or []
         profiles = profiles or {}  # profile_name: {pkg_format: [pkg_names]}
 
-        mmd = modulemd.ModuleMetadata()
-        mmd.name = str(name)
-        mmd.stream = str(stream)
-        mmd.version = int(version)
-        mmd.add_module_license(str("LGPLv2"))
-        mmd.summary = str("Fake module")
-        mmd.description = mmd.summary
+        mmd = Modulemd.Module()
+        mmd.set_name(str(name))
+        mmd.set_stream(str(stream))
+        mmd.set_version(int(version))
+        licenses = Modulemd.SimpleSet()
+        licenses.add("LGPLv2")
+        mmd.set_module_licenses(licenses)
+        mmd.set_summary(str("Fake module"))
+        mmd.set_description(mmd.get_summary())
         for rpm in rpms:
-            mmd.components.add_rpm(rpm.rsplit("-", 2)[0], "")
-            mmd.artifacts.add_rpm(rpm[:-4])
+            mmd.get_rpm_components.add(rpm.rsplit("-", 2)[0], "")
+            mmd.get_rpm_artifacts.add(rpm[:-4])
         for profile_name in profiles:
-            profile = modulemd.ModuleProfile()
-            profile.rpms.update(profiles[profile_name].get("rpms", []))
-            mmd.profiles["default"] = profile
+
+            profile = Modulemd.Profile()
+            for rpm in profiles[profile_name].get("rpms", []):
+                profile.add_rpm(rpm)
+            profile.set_name(profile_name)
+            mmd.add_profile(profile)
         return mmd
 
     def test_find_module_version(self):
