@@ -105,15 +105,18 @@ class RepoModuleDict(OrderedDict):
             repo_module_version = repo_module_stream.latest()
             version_dependencies.add(repo_module_version)
 
-            for requires_name, requires_stream in \
-                    repo_module_version.module_metadata.requires.items():
-                requires_ns = "{}:{}".format(requires_name, requires_stream)
-                if requires_ns in visited:
-                    continue
-                visited.add(requires_ns)
-                version_dependencies.update(self.get_module_dependency_latest(requires_name,
-                                                                              requires_stream,
-                                                                              visited))
+            for requires_name, requires_streams in \
+                    repo_module_version.requires():
+                for requires_stream in requires_streams:
+                    if requires_stream[0] == '-':
+                        continue
+                    requires_ns = "{}:{}".format(requires_name, requires_stream)
+                    if requires_ns in visited:
+                        continue
+                    visited.add(requires_ns)
+                    version_dependencies.update(self.get_module_dependency_latest(requires_name,
+                                                                                  requires_stream,
+                                                                                  visited))
         except KeyError as e:
             logger.debug(e)
 
@@ -134,15 +137,19 @@ class RepoModuleDict(OrderedDict):
             for repo_module_version in versions:
                 version_dependencies.add(repo_module_version)
 
-                for requires_name, requires_stream in \
-                        repo_module_version.module_metadata.requires.items():
-                    requires_ns = "{}:{}".format(requires_name, requires_stream)
-                    if requires_ns in visited:
-                        continue
-                    visited.add(requires_ns)
-                    version_dependencies.update(self.get_module_dependency_latest(requires_name,
-                                                                                  requires_stream,
-                                                                                  visited))
+                for requires_name, requires_streams in \
+                        repo_module_version.requires():
+                    for requires_stream in requires_streams:
+                        if requires_stream[0] == '-':
+                            continue
+                        requires_ns = "{}:{}".format(requires_name, requires_stream)
+                        if requires_ns in visited:
+                            continue
+                        visited.add(requires_ns)
+                        version_dependencies.update(
+                            self.get_module_dependency_latest(requires_name,
+                                                              requires_stream,
+                                                              visited))
         except KeyError as e:
             logger.debug(e)
 
@@ -172,7 +179,7 @@ class RepoModuleDict(OrderedDict):
                     continue
 
                 nevra = "{}-{}.{}".format(pkg.name, pkg.evr, pkg.arch)
-                if nevra in version.module_metadata.artifacts.rpms and \
+                if nevra in version.artifacts() and \
                         pkg in not_in_enabled:
                     not_in_enabled.remove(pkg)
                 else:
@@ -189,8 +196,8 @@ class RepoModuleDict(OrderedDict):
                 nevra_epoch_ensured = "{}-{}:{}-{}.{}".format(pkg.name, pkg.epoch, pkg.version,
                                                               pkg.release, pkg.arch)
 
-                if nevra in version.module_metadata.artifacts.rpms or \
-                        nevra_epoch_ensured in version.module_metadata.artifacts.rpms:
+                if nevra in version.artifacts() or \
+                        nevra_epoch_ensured in version.artifacts():
                     version.repo_module.enable(version.stream, True)
 
     def enable(self, module_spec, save_immediately=False):
@@ -361,7 +368,7 @@ class RepoModuleDict(OrderedDict):
             if module_version.repo_module.conf.locked:
                 continue
             if not module_version.repo_module.conf.enabled:
-                for rpm in module_version.module_metadata.artifacts.rpms:
+                for rpm in module_version.artifacts():
                     query_for_rpm = self.base.sack.query().filter(nevra=rpm)
                     if query_exclude is None:
                         query_exclude = query_for_rpm
@@ -491,9 +498,9 @@ class RepoModuleDict(OrderedDict):
         lines["Profiles"] = " ".join(module_version.profiles)
         lines["Default profiles"] = " ".join(default_profiles)
         lines["Repo"] = module_version.repo.id
-        lines["Summary"] = module_version.module_metadata.summary
-        lines["Description"] = module_version.module_metadata.description
-        lines["Artifacts"] = "\n".join(sorted(module_version.module_metadata.artifacts.rpms))
+        lines["Summary"] = module_version.summary()
+        lines["Description"] = module_version.description()
+        lines["Artifacts"] = "\n".join(sorted(module_version.artifacts()))
 
         table = self.create_simple_table(lines)
 
@@ -595,7 +602,7 @@ class RepoModuleDict(OrderedDict):
                 lines = {"Module": version.full_version,
                          "Profiles": " ".join(profiles),
                          "Repo": version.repo.id,
-                         "Summary": version.module_metadata.summary}
+                         "Summary": version.summary()}
 
                 table = self.create_simple_table(lines)
 
@@ -687,7 +694,6 @@ class RepoModuleDict(OrderedDict):
                 line = table.new_line()
                 conf = i.repo_module.conf
                 defaults_conf = i.repo_module.defaults
-                data = i.module_metadata
                 default_str = ""
                 enabled_str = ""
                 locked_str = ""
@@ -715,10 +721,10 @@ class RepoModuleDict(OrderedDict):
                 profiles_str = profiles_str[:-2]
                 profiles_str += ", ..." if len(available_profiles) > 2 else ""
 
-                line[column_name] = data.name
-                line[column_stream] = data.stream + default_str + enabled_str
-                line[column_version] = str(data.version) + locked_str
+                line[column_name] = i.name
+                line[column_stream] = i.stream + default_str + enabled_str
+                line[column_version] = str(i.version) + locked_str
                 line[column_profiles] = profiles_str
-                line[column_info] = data.summary
+                line[column_info] = i.summary()
 
         return table

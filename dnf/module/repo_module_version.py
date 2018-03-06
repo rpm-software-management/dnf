@@ -35,7 +35,7 @@ class RepoModuleVersion(object):
         assert self.full_stream == other.full_stream
         if self.repo_module.conf.locked:
             return self.version < self.repo_module.conf.version
-        return self.module_metadata.version < other.module_metadata.version
+        return self.module_metadata.get_version() < other.module_metadata.get_version()
 
     def __repr__(self):
         return self.full_version
@@ -136,17 +136,34 @@ class RepoModuleVersion(object):
                                              profiles=sorted(set(profiles)))
 
     def nevra(self):
-        result = self.module_metadata.artifacts.rpms
+        result = self.artifacts()
         # HACK: remove epoch to make filter(nevra=...) work
         result = [i.replace("0:", "") for i in result]
         return result
+
+    def artifacts(self):
+        return self.module_metadata.get_rpm_artifacts().get()
+
+    def requires(self):
+        dependencies = self.module_metadata.get_dependencies()
+
+        if dependencies:
+            return dependencies[0].get_requires()
+
+        return {}
+
+    def summary(self):
+        return self.module_metadata.get_summary()
+
+    def description(self):
+        return self.module_metadata.get_description()
 
     @staticmethod
     def nevra_object_to_nevr_str(nevra_object):
         return "{}-{}".format(nevra_object.name, nevra_object.evr())
 
     def rpms(self, profile):
-        return self.module_metadata.profiles[profile].rpms
+        return self.module_metadata.get_profiles()[profile].get_rpms().get()
 
     def profile_nevra_objects(self, profile):
         result = []
@@ -161,25 +178,26 @@ class RepoModuleVersion(object):
 
     @property
     def version(self):
-        return self.module_metadata.version
+        return self.module_metadata.get_version()
 
     @property
     def full_version(self):
         return "%s:%s:%s" % (
-            self.module_metadata.name, self.module_metadata.stream, self.module_metadata.version)
+            self.module_metadata.get_name(), self.module_metadata.get_stream(),
+            self.module_metadata.get_version())
 
     @property
     def stream(self):
-        return self.module_metadata.stream
+        return self.module_metadata.get_stream()
 
     @property
     def full_stream(self):
-        return "%s-%s" % (self.module_metadata.name, self.module_metadata.stream)
+        return "%s-%s" % (self.module_metadata.get_name(), self.module_metadata.get_stream())
 
     @property
     def name(self):
-        return self.module_metadata.name
+        return self.module_metadata.get_name()
 
     @property
     def profiles(self):
-        return sorted(self.module_metadata.profiles)
+        return sorted(self.module_metadata.get_profiles())
