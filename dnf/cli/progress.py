@@ -49,6 +49,7 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         self.unknown_progres = 0
         self.total_drpm = 0
         self.isatty = sys.stdout.isatty()
+        self.state = {}
 
     def message(self, msg):
         dnf.util._terminal_messenger('write_flush', msg, self.fo)
@@ -148,6 +149,7 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
         start = now = time()
         text = unicode(payload)
         size = int(payload.download_size)
+        done = 0
 
         # update state
         if status == dnf.callback.STATUS_MIRROR:

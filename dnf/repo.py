@@ -490,7 +490,7 @@ class MDPayload(dnf.callback.Payload):
     def start(self, text):
         self._text = text
         self._download_size = 0
-        self.progress.start(1, 1)
+        self.progress.start(1, 0)
 
     def end(self):
         self._download_size = 0
@@ -807,7 +807,13 @@ class Repo(dnf.conf.RepoConf):
         with dnf.util.tmpdir() as tmpdir, open(repomd_fn) as repomd:
             handle = self._handle_new_remote(tmpdir)
             handle.fetchmirrors = True
+
+            if handle.progresscb:
+                self._md_pload.start(self.name or self.id or 'unknown')
             handle._perform()
+            if handle.progresscb:
+                self._md_pload.end()
+
             if handle.metalink is None:
                 logger.debug(_("reviving: repo '%s' skipped, no metalink."), self.id)
                 return False
@@ -839,7 +845,11 @@ class Repo(dnf.conf.RepoConf):
             handle = self._handle_new_remote(tmpdir)
             handle.yumdlist = librepo.YUM_REPOMDONLY
             with dnf.crypto.pubring_dir(self._pubring_dir):
+                if handle.progresscb:
+                    self._md_pload.start(self.name or self.id or 'unknown')
                 result = handle._perform()
+                if handle.progresscb:
+                    self._md_pload.end()
             fresh_repomd_fn = result.rpmmd_repo['repomd']
             with open(fresh_repomd_fn) as fresh_repomd:
                 if repomd.read() != fresh_repomd.read():
