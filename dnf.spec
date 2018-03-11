@@ -1,5 +1,5 @@
 %global hawkey_version 0.13.1
-%global librepo_version 1.7.19
+%global librepo_version 1.9.0
 %global libcomps_version 0.1.8
 %global rpm_version 4.14.0
 %if 0%{?rhel} == 7
@@ -36,7 +36,7 @@
 As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 
 Name:           dnf
-Version:        2.8.7
+Version:        2.8.8
 Release:        1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING

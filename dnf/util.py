@@ -92,7 +92,11 @@ def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
     else:
         handle = _non_repo_handle(conf)
     try:
+        if repo and handle.progresscb:
+            repo._md_pload.start(repo.name or repo.id or 'unknown')
         librepo.download_url(url, fo.fileno(), handle)
+        if repo and handle.progresscb:
+            repo._md_pload.end()
     except librepo.LibrepoException as e:
         raise IOError(e.args[1])
     fo.seek(0)
