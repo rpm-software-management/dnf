@@ -1844,8 +1844,8 @@ class Base(object):
 
         install_specs = argparse.Namespace()
         exclude_specs = argparse.Namespace()
-        dnf.cli.option_parser.classify_specs(install_specs, install)
-        dnf.cli.option_parser.classify_specs(exclude_specs, exclude)
+        classify_specs(install_specs, install)
+        classify_specs(exclude_specs, exclude)
 
         for pkg in exclude_specs.pkg_specs:
             self.sack.add_excludes(pkg)
