@@ -1862,11 +1862,11 @@ class Base(object):
         self.read_comps(arch_filter=True)
         for group in groups:
             try:
-                types = self.conf.group_package_types
+                types = set()
                 if '/' in group:
                     split = group.split('/')
                     group = split[0]
-                    types.append(split[1])
+                    types = split[1].split(',')
 
                 group = self.comps.group_by_pattern(group)
 
