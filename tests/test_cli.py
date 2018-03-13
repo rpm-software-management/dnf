@@ -190,7 +190,7 @@ class ConfigureTest(tests.support.DnfBaseTestCase):
         self.base._conf = dnf.conf.Conf()
         with mock.patch('dnf.rpm.detect_releasever', return_value=69):
             self.cli.configure(['update', '-c', self.conffile])
-        reg = re.compile('^/var/tmp/dnf-[a-zA-Z0-9_-]+$')
+        reg = re.compile('^/var/tmp/dnf-[.a-zA-Z0-9_-]+$')
         self.assertIsNotNone(reg.match(self.base.conf.cachedir))
         self.assertEqual(self.cli.cmdstring, "dnf update -c %s " % self.conffile)
 
