@@ -589,6 +589,8 @@ class Base(object):
                 self._goal = dnf.goal.Goal(self._sack)
             if self._group_persistor is not None:
                 self._group_persistor = self._activate_group_persistor()
+            if self._module_persistor is not None:
+                self._module_persistor.reset()
             self._comps_trans = dnf.comps.TransactionBunch()
             self._transaction = None
 
