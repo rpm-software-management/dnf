@@ -183,29 +183,6 @@ class PresetPersistorTest(tests.support.ResultTestCase):
         swdb_group = self.history.group.get(comps_group.id)
         self.assertIsNotNone(swdb_group)
 
-    """
-    this should be reconsidered once relengs document comps
-    def test_group_install_broken(self):
-        grp = self.base.comps.group_by_pattern('Broken Group')
-        p_grp = self.history.group.get('broken-group')
-        self.assertFalse(p_grp.installed)
-
-        self.assertRaises(dnf.exceptions.MarkingError,
-                          self.base.group_install, grp.id,
-                          ('mandatory', 'default'))
-        p_grp = self.history.group.get('broken-group')
-        self.assertFalse(p_grp.installed)
-
-        self.assertEqual(self.base.group_install(grp.id,
-                                                 ('mandatory', 'default'),
-                                                 strict=False), 1)
-        inst, removed = self.installed_removed(self.base)
-        self.assertLength(inst, 1)
-        self.assertEmpty(removed)
-        p_grp = self.history.group.get('broken-group')
-        self.assertTrue(p_grp.installed)
-    """
-
     def test_group_remove(self):
         self._install_test_group()
         group_id = 'somerset'
@@ -218,6 +195,105 @@ class PresetPersistorTest(tests.support.ResultTestCase):
         self.assertEmpty(installed)
         self.assertCountEqual([pkg.name for pkg in removed], ('pepper',))
         self._swdb_end()
+
+
+class ProblemGroupTest(tests.support.ResultTestCase):
+    """Test some cases involving problems in groups: packages that
+    don't exist, and packages that exist but cannot be installed. The
+    "broken" group lists three packages. "meaning-of-life", explicitly
+    'default', does not exist. "lotus", implicitly 'mandatory' (no
+    explicit type), exists and is installable. "brokendeps",
+    explicitly 'optional', exists but has broken dependencies. See
+    https://bugzilla.redhat.com/show_bug.cgi?id=1292892,
+    https://bugzilla.redhat.com/show_bug.cgi?id=1337731,
+    https://bugzilla.redhat.com/show_bug.cgi?id=1427365, and
+    https://bugzilla.redhat.com/show_bug.cgi?id=1461539 for some of
+    the background on this.
+    """
+
+    REPOS = ['main', 'broken_group']
+    COMPS = True
+    COMPS_SEED_PERSISTOR = True
+
+    def test_group_install_broken_mandatory(self):
+        """Here we will test installing the group with only mandatory
+        packages. We expect this to succeed, leaving out the
+        non-existent 'meaning-of-life': it should also log a warning,
+        but we don't test that.
+        """
+        comps_group = self.base.comps.group_by_pattern('Broken Group')
+        swdb_group = self.history.group.get(comps_group.id)
+        self.assertIsNone(swdb_group)
+
+        cnt = self.base.group_install(comps_group.id, ('mandatory'))
+        self._swdb_commit()
+        self.base.resolve()
+        # this counts packages *listed* in the group, so 2
+        self.assertEqual(cnt, 2)
+
+        inst, removed = self.installed_removed(self.base)
+        # the above should work, but only 'lotus' actually installed
+        self.assertLength(inst, 1)
+        self.assertEmpty(removed)
+
+    def test_group_install_broken_default(self):
+        """Here we will test installing the group with only mandatory
+        and default packages. Again we expect this to succeed: the new
+        factor is an entry pulling in librita if no-such-package is
+        also included or installed. We expect this not to actually
+        pull in librita (as no-such-package obviously *isn't* there),
+        but also not to cause a fatal error.
+        """
+        comps_group = self.base.comps.group_by_pattern('Broken Group')
+        swdb_group = self.history.group.get(comps_group.id)
+        self.assertIsNone(swdb_group)
+
+        cnt = self.base.group_install(comps_group.id, ('mandatory', 'default'))
+        self._swdb_commit()
+        self.base.resolve()
+        # this counts packages *listed* in the group, so 3
+        self.assertEqual(cnt, 3)
+
+        inst, removed = self.installed_removed(self.base)
+        # the above should work, but only 'lotus' actually installed
+        self.assertLength(inst, 1)
+        self.assertEmpty(removed)
+
+    def test_group_install_broken_optional(self):
+        """Here we test installing the group with optional packages
+        included. We expect this to fail, as a package that exists but
+        has broken dependencies is now included.
+        """
+        comps_group = self.base.comps.group_by_pattern('Broken Group')
+        swdb_group = self.history.group.get(comps_group.id)
+        self.assertIsNone(swdb_group)
+
+        cnt = self.base.group_install(comps_group.id, ('mandatory', 'default', 'optional'))
+        self.assertEqual(cnt, 4)
+
+        self._swdb_commit()
+        # this should fail, as optional 'brokendeps' is now pulled in
+        self.assertRaises(dnf.exceptions.DepsolveError, self.base.resolve)
+
+    def test_group_install_broken_optional_nonstrict(self):
+        """Here we test installing the group with optional packages
+        included, but with strict=False. We expect this to succeed,
+        skipping the package with broken dependencies.
+        """
+        comps_group = self.base.comps.group_by_pattern('Broken Group')
+        swdb_group = self.history.group.get(comps_group.id)
+        self.assertIsNone(swdb_group)
+
+        cnt = self.base.group_install(comps_group.id, ('mandatory', 'default', 'optional'),
+                                      strict=False)
+        self._swdb_commit()
+        self.base.resolve()
+        self.assertEqual(cnt, 4)
+
+        inst, removed = self.installed_removed(self.base)
+        # the above should work, but only 'lotus' actually installed
+        self.assertLength(inst, 1)
+        self.assertEmpty(removed)
 
 
 class EnvironmentInstallTest(tests.support.ResultTestCase):

@@ -476,18 +476,20 @@ class CompsTransPkg(object):
 class TransactionBunch(object):
     def __init__(self):
         self._install = set()
+        self._install_opt = set()
         self._remove = set()
         self._upgrade = set()
 
     def __iadd__(self, other):
         self._install.update(other._install)
+        self._install_opt.update(other._install_opt)
         self._upgrade.update(other._upgrade)
         self._remove = (self._remove | other._remove) - \
-            self._install - self._upgrade
+            self._install - self._install_opt - self._upgrade
         return self
 
     def __len__(self):
-        return len(self.install) + len(self.upgrade) + len(self.remove)
+        return len(self.install) + len(self.install_opt) + len(self.upgrade) + len(self.remove)
 
     @staticmethod
     def _set_value(param, val):
@@ -499,11 +501,27 @@ class TransactionBunch(object):
 
     @property
     def install(self):
+        """
+        Packages to be installed with strict=True - transaction will
+        fail if they cannot be installed due to dependency errors etc.
+        """
         return self._install
 
     @install.setter
     def install(self, value):
         self._set_value(self._install, value)
+
+    @property
+    def install_opt(self):
+        """
+        Packages to be installed with strict=False - they will be
+        skipped if they cannot be installed
+        """
+        return self._install_opt
+
+    @install_opt.setter
+    def install_opt(self, value):
+        self._set_value(self._install_opt, value)
 
     @property
     def remove(self):
@@ -641,7 +659,10 @@ class Solver(object):
 
         trans = TransactionBunch()
         # TODO: remove exclude
-        trans.install.update(self._pkgs_of_type(comps_group, pkg_types, exclude=[]))
+        if strict:
+            trans.install.update(self._pkgs_of_type(comps_group, pkg_types, exclude=[]))
+        else:
+            trans.install_opt.update(self._pkgs_of_type(comps_group, pkg_types, exclude=[]))
         return trans
 
     def _group_remove(self, group_id):

@@ -44,7 +44,9 @@
     <name>Broken Group</name>
     <packagelist>
       <packagereq type="mandatory">meaning-of-life</packagereq>
-      <packagereq>lotus</packagereq>
+      <packagereq type="mandatory">lotus</packagereq>
+      <packagereq type="default" requires="no-such-package">librita</packagereq>
+      <packagereq type="optional">brokendeps</packagereq>
     </packagelist>
   </group>
   <category>

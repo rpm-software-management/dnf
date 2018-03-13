@@ -1,0 +1,4 @@
+=Ver: 2.0
+#
+=Pkg: brokendeps 20 2 x86_64
+=Req: nosuchpackage >= 1.2-0
