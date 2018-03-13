@@ -1450,17 +1450,17 @@ class Base(object):
             self._goal.upgrade(select=sltr)
             return remove_query
 
-        def trans_install(query, remove_query, comps_pkg):
+        def trans_install(query, remove_query, comps_pkg, strict):
             if self.conf.multilib_policy == "all":
                 if not comps_pkg.requires:
-                    self._install_multiarch(query, strict=False)
+                    self._install_multiarch(query, strict=strict)
                 else:
                     # it installs only one arch for conditional packages
                     installed_query = query.installed().apply()
                     self._report_already_installed(installed_query)
                     sltr = dnf.selector.Selector(self.sack)
                     sltr.set(provides="({} if {})".format(comps_pkg.name, comps_pkg.requires))
-                    self._goal.install(select=sltr, optional=True)
+                    self._goal.install(select=sltr, optional=not strict)
 
             else:
                 sltr = dnf.selector.Selector(self.sack)
@@ -1468,7 +1468,7 @@ class Base(object):
                     sltr.set(provides="({} if {})".format(comps_pkg.name, comps_pkg.requires))
                 else:
                     sltr.set(pkg=query)
-                self._goal.install(select=sltr, optional=True)
+                self._goal.install(select=sltr, optional=not strict)
             return remove_query
 
         def trans_remove(query, remove_query, comps_pkg):
@@ -1476,7 +1476,8 @@ class Base(object):
             return remove_query
 
         remove_query = self.sack.query().filterm(empty=True)
-        attr_fn = ((trans.install, trans_install),
+        attr_fn = ((trans.install, functools.partial(trans_install, strict=True)),
+                   (trans.install_opt, functools.partial(trans_install, strict=False)),
                    (trans.upgrade, trans_upgrade),
                    (trans.remove, trans_remove))
 
@@ -1547,6 +1548,10 @@ class Base(object):
         """Installs packages of selected group
         :param exclude: list of package name glob patterns
             that will be excluded from install set
+        :param strict: boolean indicating whether group packages that
+            exist but are non-installable due to e.g. dependency
+            issues should be skipped (False) or cause transaction to
+            fail to resolve (True)
         """
         def _pattern_to_pkgname(pattern):
             if dnf.util.is_glob_pattern(pattern):
@@ -1568,8 +1573,12 @@ class Base(object):
                                           strict)
         if not trans:
             return 0
+        if strict:
+            instlog = trans.install
+        else:
+            instlog = trans.install_opt
         logger.debug(_("Adding packages from group '%s': %s"),
-                     grp_id, trans.install)
+                     grp_id, instlog)
         return self._add_comps_trans(trans)
 
     def env_group_install(self, patterns, types, strict=True, exclude=None, exclude_groups=None):
