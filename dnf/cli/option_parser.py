@@ -21,6 +21,7 @@
 from __future__ import unicode_literals
 from dnf.i18n import _
 
+from dnf.util import classify_specs
 import argparse
 import dnf.exceptions
 import dnf.rpm
@@ -31,22 +32,6 @@ import re
 import sys
 
 logger = logging.getLogger("dnf")
-
-
-def classify_specs(namespace, values):
-    setattr(namespace, "filenames", [])
-    setattr(namespace, "grp_specs", [])
-    setattr(namespace, "pkg_specs", [])
-    for value in values:
-        schemes = dnf.pycomp.urlparse.urlparse(value)[0]
-        if value.endswith('.rpm'):
-            namespace.filenames.append(value)
-        elif schemes and schemes in ('http', 'ftp', 'file', 'https'):
-            namespace.filenames.append(value)
-        elif value.startswith('@'):
-            namespace.grp_specs.append(value[1:])
-        else:
-            namespace.pkg_specs.append(value)
 
 class OptionParser(argparse.ArgumentParser):
     """ArgumentParser like class to do things the "yum way"."""

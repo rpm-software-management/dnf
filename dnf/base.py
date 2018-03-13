@@ -35,6 +35,7 @@ from dnf.module.metadata_loader import ModuleMetadataLoader
 from dnf.module.repo_module_dict import RepoModuleDict
 from dnf.module.repo_module_version import RepoModuleVersion
 from dnf.util import first
+from dnf.util import classify_specs
 from dnf.yum import history
 from dnf.yum import misc
 from dnf.yum import rpmsack
