@@ -444,6 +444,12 @@ class RemoteRPMPayload(PackagePayload):
 
 class MDPayload(dnf.callback.Payload):
 
+    def __init__(self, progress):
+        super(MDPayload, self).__init__(progress)
+        self._text = ""
+        self._download_size = 0
+        self.fm_running = False
+
     def __str__(self):
         if dnf.pycomp.PY3:
             return self._text
@@ -489,7 +495,6 @@ class MDPayload(dnf.callback.Payload):
 
     def start(self, text):
         self._text = text
-        self._download_size = 0
         self.progress.start(1, 0)
 
     def end(self):
