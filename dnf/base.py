@@ -1841,15 +1841,6 @@ class Base(object):
         return skipped_specs
 
     def install_specs(self, install, exclude=None):
-
-        def get_by_pattern(func, pattern):
-            group = func(pattern)
-
-            for spec in exclude_specs.grp_specs:
-                if fnmatch.filter(group, spec):
-                    return group
-            return None
-
         if exclude is None:
             exclude = []
 
@@ -1880,16 +1871,17 @@ class Base(object):
                     types = split[1].split(',')
 
                 if group[0] == "^":
-                    environment = get_by_pattern(self.comps.environment_by_pattern, group[1:])
+                    environment = self.comps.environment_by_pattern(group[1:])
                     if environment:
                         self.environment_install(environment,
                                                  types,
                                                  exclude=exclude_specs.grp_specs,
                                                  strict=self.conf.strict)
                 else:
-                    group = get_by_pattern(self.comps.group_by_pattern, group)
+                    group = self.comps.group_by_pattern(group)
                     if group:
-                        self.group_install(group, types, strict=self.conf.strict)
+                        self.group_install(group, types, exclude=exclude_specs.grp_specs,
+                                           strict=self.conf.strict)
             except dnf.exceptions.Error:
                 if self.conf.strict:
                     raise
