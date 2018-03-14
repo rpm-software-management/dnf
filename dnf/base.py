@@ -1882,7 +1882,10 @@ class Base(object):
                 if group[0] == "^":
                     environment = get_by_pattern(self.comps.environment_by_pattern, group[1:])
                     if environment:
-                        self.environment_install(environment, types, strict=self.conf.strict)
+                        self.environment_install(environment,
+                                                 types,
+                                                 exclude=exclude_specs.grp_specs,
+                                                 strict=self.conf.strict)
                 else:
                     group = get_by_pattern(self.comps.group_by_pattern, group)
                     if group:
