@@ -207,6 +207,8 @@ class _Handle(librepo.Handle):
     def _new_local(cls, subst_dct, gpgcheck, max_mirror_tries, cachedir):
         h = cls(gpgcheck, max_mirror_tries)
         h.varsub = _subst2tuples(subst_dct)
+        if 'releasevariant' in subst_dct:
+            h.useragent += " " + subst_dct['releasevariant']
         h.destdir = cachedir
         h.urls = [cachedir]
         h.local = True
@@ -687,6 +689,8 @@ class Repo(dnf.conf.RepoConf):
     def _handle_new_remote(self, destdir, mirror_setup=True):
         h = _Handle(self.repo_gpgcheck, self._max_mirror_tries,
                     self.max_parallel_downloads)
+        if 'releasevariant' in self._substitutions:
+            h.useragent += " " + self._substitutions['releasevariant']
         h.varsub = _subst2tuples(self._substitutions)
         h.destdir = destdir
         self._set_ip_resolve(h)
