@@ -38,19 +38,20 @@ class Substitutions(dict):
 
     def update_from_etc(self, installroot):
         fsvars = []
-        try:
-            dir_fsvars = os.path.join(installroot, "etc/dnf/vars/")
-            fsvars = os.listdir(dir_fsvars)
-        except OSError:
-            pass
-        for fsvar in fsvars:
-            filepath = os.path.join(dir_fsvars, fsvar)
-            if os.path.isfile(filepath):
-                try:
-                    with open(filepath) as fp:
-                        val = fp.readline()
-                    if val and val[-1] == '\n':
-                        val = val[:-1]
-                except (OSError, IOError):
-                    continue
-            self[fsvar] = val
+        for var_path in ["etc/dnf/vars/", "etc/yum/vars/"]:
+            try:
+                dir_fsvars = os.path.join(installroot, var_path)
+                fsvars = os.listdir(dir_fsvars)
+            except OSError:
+                pass
+            for fsvar in fsvars:
+                filepath = os.path.join(dir_fsvars, fsvar)
+                if os.path.isfile(filepath):
+                    try:
+                        with open(filepath) as fp:
+                            val = fp.readline()
+                        if val and val[-1] == '\n':
+                            val = val[:-1]
+                    except (OSError, IOError):
+                        continue
+                self[fsvar] = val
