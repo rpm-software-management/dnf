@@ -1873,14 +1873,14 @@ class Base(object):
                 if group[0] == "^":
                     environment = self.comps.environment_by_pattern(group[1:])
                     if environment:
-                        self.environment_install(environment,
+                        self.environment_install(environment.id,
                                                  types,
                                                  exclude=exclude_specs.grp_specs,
                                                  strict=self.conf.strict)
                 else:
                     group = self.comps.group_by_pattern(group)
                     if group:
-                        self.group_install(group, types, exclude=exclude_specs.grp_specs,
+                        self.group_install(group.id, types, exclude=exclude_specs.grp_specs,
                                            strict=self.conf.strict)
             except dnf.exceptions.Error:
                 if self.conf.strict:
