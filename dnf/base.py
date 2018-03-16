@@ -1864,7 +1864,7 @@ class Base(object):
         self.read_comps(arch_filter=True)
         for group in groups:
             try:
-                types = set()
+                types = self.conf.group_package_types
                 if '/' in group:
                     split = group.split('/')
                     group = split[0]
