@@ -448,7 +448,7 @@ class MDPayload(dnf.callback.Payload):
         super(MDPayload, self).__init__(progress)
         self._text = ""
         self._download_size = 0
-        self.fm_running = False
+        self.fastest_mirror_running = False
 
     def __str__(self):
         if dnf.pycomp.PY3:
@@ -467,8 +467,8 @@ class MDPayload(dnf.callback.Payload):
         if stage == librepo.FMSTAGE_DETECTION:
             # pinging mirrors, this might take a while
             msg = _('determining the fastest mirror (%d hosts).. ') % data
-            self.fm_running = True
-        elif stage == librepo.FMSTAGE_STATUS and self.fm_running:
+            self.fastest_mirror_running = True
+        elif stage == librepo.FMSTAGE_STATUS and self.fastest_mirror_running:
             # done.. report but ignore any errors
             msg = 'error: %s\n' % data if data else 'done.\n'
         else:
@@ -735,7 +735,7 @@ class Repo(dnf.conf.RepoConf):
 
         # setup download progress
         h.progresscb = self._md_pload._progress_cb
-        self._md_pload.fm_running = False
+        self._md_pload.fastest_mirror_running = False
         h.fastestmirrorcb = self._md_pload._fastestmirror_cb
 
         # apply repo options
