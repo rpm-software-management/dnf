@@ -455,11 +455,13 @@ class RepoQueryCommand(commands.Command):
                     pkg_list += tmp_query.run()
             q = self.base.sack.query().filterm(pkg=pkg_list)
         if self.opts.tree:
-            if not self.opts.whatrequires and not self.opts.packageatr:
+            if not self.opts.whatrequires and self.opts.packageatr not in (
+                    'conflicts', 'enhances', 'obsoletes', 'provides', 'recommends',
+                    'requires', 'suggests', 'supplements'):
                 raise dnf.exceptions.Error(
-                    _("No switch specified\nusage: dnf repoquery [--whatrequires|"
-                        "--requires|--conflicts|--obsoletes|--enhances|--suggest|"
-                        "--provides|--supplements|--recommends] [key] [--tree]\n\n"
+                    _("No valid switch specified\nusage: dnf repoquery [--conflicts|"
+                        "--enhances|--obsoletes|--provides|--recommends|--requires|"
+                        "--suggest|--supplements|--whatrequires] [key] [--tree]\n\n"
                         "description:\n  For the given packages print a tree of the packages."))
             self.tree_seed(q, orquery, self.opts)
             return
