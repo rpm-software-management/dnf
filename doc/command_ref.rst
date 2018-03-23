@@ -191,8 +191,13 @@ Options
     Include enhancement relevant packages. Applicable for install, repoquery, updateinfo, and
     upgrade command.
 
+.. _exclude_option-label:
+
 ``-x <package-spec>, --exclude=<package-spec>``
     Exclude packages specified by ``<package-spec>`` from the operation.
+
+``--excludepkgs=<package-spec>``
+    Deprecated option. It was replaced by \-\ :ref:`-exclude <exclude_option-label>` option.
 
 ``--forcearch=<arch>``
     Force the use of an architecture. Any architecture can be specified.
