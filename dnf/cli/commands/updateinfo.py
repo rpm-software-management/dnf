@@ -189,7 +189,7 @@ class UpdateInfoCommand(commands.Command):
             return False
         return True
 
-    def _apackage_advisory_installeds(self, pkgs, cmptype, req_apkg, specs):
+    def _apackage_advisory_installeds(self, pkgs_query, cmptype, req_apkg, specs):
         """Return (adv. package, advisory, installed) triplets."""
         specs_types = set()
         specs_patterns = set()
@@ -205,22 +205,21 @@ class UpdateInfoCommand(commands.Command):
             else:
                 specs_patterns.add(spec)
 
-        for package in pkgs:
-            for advisory in package.get_advisories(cmptype):
-                if not specs_types and not specs_patterns:
-                    advisory_match = True
-                else:
-                    advisory_match = advisory.type in specs_types or \
-                        any(fnmatch.fnmatchcase(advisory.id, pat)
-                            for pat in specs_patterns)
-                for apackage in advisory.packages:
-                    passed = req_apkg(apackage) \
-                        and (advisory_match or
-                             any(fnmatch.fnmatchcase(apackage.name, pat)
-                                 for pat in specs_patterns))
-                    if passed:
-                        installed = self._newer_equal_installed(apackage)
-                        yield apackage, advisory, installed
+        for apackage in pkgs_query.get_advisory_pkgs(cmptype):
+            if not req_apkg(apackage):
+                continue
+            advisory = apackage.get_advisory(self.base.sack)
+            if not specs_types and not specs_patterns:
+                advisory_match = True
+            else:
+                advisory_match = advisory.type in specs_types or \
+                    any(fnmatch.fnmatchcase(advisory.id, pat)
+                        for pat in specs_patterns)
+            apackage_match = any(fnmatch.fnmatchcase(apackage.name, pat)
+                                 for pat in specs_patterns)
+            if advisory_match or apackage_match:
+                installed = self._newer_equal_installed(apackage)
+                yield apackage, advisory, installed
 
     def available_apkg_adv_insts(self, specs):
         """Return available (adv. package, adv., inst.) triplets"""
