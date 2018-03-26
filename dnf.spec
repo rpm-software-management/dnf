@@ -36,7 +36,7 @@
 As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
 
 Name:           dnf
-Version:        2.8.8
+Version:        2.8.9
 Release:        1%{?dist}
 Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
 # For a breakdown of the licensing, see PACKAGE-LICENSING
