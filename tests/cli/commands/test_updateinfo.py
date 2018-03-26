@@ -65,113 +65,86 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
     def test_avail_filter_pkgs(self):
         """Test querying with a packages filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.available_apkg_adv_insts(['to*r', 'nxst'])
-        self.assertFalse(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.available_apkg_adv_insts(['to*r', 'nxst'])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-5-1.noarch.rpm', 'DNF-2014-3', False)],
             'incorrect pairs')
-        cmd.clear_installed_cache()
 
     def test_avail_filter_pkgs_nonex(self):
         """Test querying with a non-existent packages filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.available_apkg_adv_insts(['non-existent'])
-        self.assertFalse(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.available_apkg_adv_insts(['non-existent'])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [], 'incorrect pairs')
-        cmd.clear_installed_cache()
 
     def test_avail_filter_security(self):
         """Test querying with a security filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.available_apkg_adv_insts(['security'])
-        self.assertFalse(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.available_apkg_adv_insts(['security'])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-5-1.noarch.rpm', 'DNF-2014-3', False)],
             'incorrect pairs')
-        cmd.clear_installed_cache()
 
     def test_inst(self):
         """Test installed triplets querying."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.installed_apkg_adv_insts()
-        self.assertFalse(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.installed_apkg_adv_insts([])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-4-4.noarch.rpm', 'DNF-2014-1', True),
              ('tour-5-0.noarch.rpm', 'DNF-2014-2', True)],
             'incorrect pairs')
-        cmd.clear_installed_cache()
 
     def test_inst_filter_bugfix(self):
         """Test querying with a bugfix filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.installed_apkg_adv_insts(['bugfix'])
-        self.assertFalse(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.installed_apkg_adv_insts(['bugfix'])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-4-4.noarch.rpm', 'DNF-2014-1', True)],
             'incorrect pairs')
-        cmd.clear_installed_cache()
 
     def test_inst_filter_enhancement(self):
         """Test querying with an enhancement filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.installed_apkg_adv_insts(['enhancement'])
-        self.assertFalse(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.installed_apkg_adv_insts(['enhancement'])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-5-0.noarch.rpm', 'DNF-2014-2', True)],
             'incorrect pairs')
-        cmd.clear_installed_cache()
 
     def test_upd(self):
         """Test updating triplets querying."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.updating_apkg_adv_insts()
-        self.assertFalse(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.updating_apkg_adv_insts([])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-5-1.noarch.rpm', 'DNF-2014-3', False)],
             'incorrect pairs')
-        cmd.clear_installed_cache()
 
     def test_all(self):
         """Test all triplets querying."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.all_apkg_adv_insts()
-        self.assertTrue(mixed, 'incorrect flag')
+        apkg_adv_insts = cmd.all_apkg_adv_insts([])
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-4-4.noarch.rpm', 'DNF-2014-1', True),
              ('tour-5-0.noarch.rpm', 'DNF-2014-2', True),
              ('tour-5-1.noarch.rpm', 'DNF-2014-3', False)])
-        cmd.clear_installed_cache()
 
     def test_all_filter_advisories(self):
         """Test querying with an advisories filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.refresh_installed_cache()
-        mixed, apkg_adv_insts = cmd.all_apkg_adv_insts(
+        apkg_adv_insts = cmd.all_apkg_adv_insts(
             ['DNF-201*-[13]', 'NO-0000-0'])
-        self.assertTrue(mixed, 'incorrect flag')
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-4-4.noarch.rpm', 'DNF-2014-1', True),
              ('tour-5-1.noarch.rpm', 'DNF-2014-3', False)],
             'incorrect pairs')
-        cmd.clear_installed_cache()
 
     def test_display_list_mixed(self):
         """Test list displaying with mixed installs."""
@@ -185,7 +158,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
              for adv in pkg.get_advisories(hawkey.LT | hawkey.EQ)
              for apkg in adv.packages))
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.display_list(apkg_adv_insts, True, '')
+        cmd.display_list(apkg_adv_insts, True)
         self.assertEqual(
             self._stdout.getvalue(),
             'i DNF-2014-1 bugfix       tour-4-4.noarch\n'
@@ -203,7 +176,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
         )
         self.cli.base.set_debuglevel(dnf.const.VERBOSE_LEVEL)
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.display_info(apkg_adv_insts, False, '')
+        cmd.display_info(apkg_adv_insts, False)
         updated = datetime.datetime.fromtimestamp(1404841143)
         self.assertEqual(self._stdout.getvalue(),
                          '========================================'
@@ -211,11 +184,11 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
                          '  tour-5-1\n'
                          '========================================'
                          '=======================================\n'
-                         '  Update ID : DNF-2014-3\n'
-                         '       Type : security\n'
-                         '    Updated : ' + str(updated) + '\n'
-                         'Description : testing advisory\n'
-                         '      Files : tour-5-1.noarch.rpm\n'
+                         '  Update ID: DNF-2014-3\n'
+                         '       Type: security\n'
+                         '    Updated: ' + str(updated) + '\n'
+                         'Description: testing advisory\n'
+                         '      Files: tour-5-1.noarch.rpm\n'
                          '\n',
                          'incorrect output')
 
@@ -232,46 +205,46 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
              for apkg in adv.packages))
         self.cli.base.set_debuglevel(dnf.const.VERBOSE_LEVEL)
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.display_info(apkg_adv_insts, True, '')
+        cmd.display_info(apkg_adv_insts, True)
         updated1 = datetime.datetime.fromtimestamp(1404840841)
         updated2 = datetime.datetime.fromtimestamp(1404841082)
         updated3 = datetime.datetime.fromtimestamp(1404841143)
         self.assertEqual(self._stdout.getvalue(),
                          '========================================'
                          '=======================================\n'
-                         '  tour-5-1\n'
-                         '========================================'
-                         '=======================================\n'
-                         '  Update ID : DNF-2014-3\n'
-                         '       Type : security\n'
-                         '    Updated : ' + str(updated3) + '\n'
-                         'Description : testing advisory\n'
-                         '      Files : tour-5-1.noarch.rpm\n'
-                         '  Installed : false\n'
-                         '\n'
-                         '========================================'
-                         '=======================================\n'
                          '  tour-4-4\n'
                          '========================================'
                          '=======================================\n'
-                         '  Update ID : DNF-2014-1\n'
-                         '       Type : bugfix\n'
-                         '    Updated : ' + str(updated1) + '\n'
-                         'Description : testing advisory\n'
-                         '      Files : tour-4-4.noarch.rpm\n'
-                         '  Installed : true\n'
+                         '  Update ID: DNF-2014-1\n'
+                         '       Type: bugfix\n'
+                         '    Updated: ' + str(updated1) + '\n'
+                         'Description: testing advisory\n'
+                         '      Files: tour-4-4.noarch.rpm\n'
+                         '  Installed: true\n'
                          '\n'
                          '========================================'
                          '=======================================\n'
                          '  tour-5-0\n'
                          '========================================'
                          '=======================================\n'
-                         '  Update ID : DNF-2014-2\n'
-                         '       Type : enhancement\n'
-                         '    Updated : ' + str(updated2) + '\n'
-                         'Description : testing advisory\n'
-                         '      Files : tour-5-0.noarch.rpm\n'
-                         '  Installed : true\n'
+                         '  Update ID: DNF-2014-2\n'
+                         '       Type: enhancement\n'
+                         '    Updated: ' + str(updated2) + '\n'
+                         'Description: testing advisory\n'
+                         '      Files: tour-5-0.noarch.rpm\n'
+                         '  Installed: true\n'
+                         '\n'
+                         '========================================'
+                         '=======================================\n'
+                         '  tour-5-1\n'
+                         '========================================'
+                         '=======================================\n'
+                         '  Update ID: DNF-2014-3\n'
+                         '       Type: security\n'
+                         '    Updated: ' + str(updated3) + '\n'
+                         'Description: testing advisory\n'
+                         '      Files: tour-5-1.noarch.rpm\n'
+                         '  Installed: false\n'
                          '\n',
                          'incorrect output')
 
@@ -311,9 +284,9 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
                          '  tour-5-1\n'
                          '========================================'
                          '=======================================\n'
-                         '  Update ID : DNF-2014-3\n'
-                         '       Type : security\n'
-                         '    Updated : ' + str(updated) + '\n'
-                         'Description : testing advisory\n'
+                         '  Update ID: DNF-2014-3\n'
+                         '       Type: security\n'
+                         '    Updated: ' + str(updated) + '\n'
+                         'Description: testing advisory\n'
                          '\n',
                          'incorrect output')
