@@ -20,6 +20,7 @@ import os
 import gi
 
 from dnf.module.exceptions import LoadCacheException, MissingYamlException
+from dnf.pycomp import PY3
 
 gi.require_version('Modulemd', '1.0')
 from gi.repository import Modulemd
@@ -56,5 +57,8 @@ class ModuleMetadataLoader(object):
             openfunc = gzip.open
         with openfunc(self._metadata_fn or yaml_file_path, "r") as modules_yaml_fd:
             modules_yaml = modules_yaml_fd.read()
+
+        if PY3:
+            modules_yaml = modules_yaml.decode("utf-8")
 
         return Modulemd.Module.new_all_from_string(modules_yaml)
