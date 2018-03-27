@@ -218,7 +218,7 @@ class MergedTransactionWrapper(TransactionWrapper):
 
 class SwdbInterface(object):
 
-    def __init__(self, db_dir, root='/', releasever=""):
+    def __init__(self, db_dir, releasever=""):
         # TODO: record all vars
         # TODO: remove relreasever from options
         self.releasever = str(releasever)
@@ -228,7 +228,6 @@ class SwdbInterface(object):
         self._addon_data = None
         self._swdb = None
         self._db_dir = db_dir
-        self._root = root
 
     def __del__(self):
         self.close()
@@ -260,6 +259,11 @@ class SwdbInterface(object):
             self._swdb = libdnf.swdb.Swdb(path)
             # TODO: vars -> libdnf
         return self._swdb
+
+    @staticmethod
+    def transform(input_dir, output_file):
+        transformer = libdnf.swdb.Transformer(input_dir, output_file)
+        transformer.transform()
 
     def close(self):
         self._rpm = None
