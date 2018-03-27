@@ -97,7 +97,6 @@ class RepoListCommand(commands.Command):
     def configure(self):
         demands = self.cli.demands
         demands.available_repos = True
-        demands.fresh_metadata = False
         demands.sack_activation = True
 
         if self.opts._repos_action:
