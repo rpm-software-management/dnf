@@ -88,15 +88,14 @@ class DeltaInfo(object):
            query -- installed packages to use when looking up deltas
            progress -- progress obj to display finished delta rebuilds
         '''
-        deltarpm = 0
+        self.deltarpm_installed = False
         if os.access(APPLYDELTA, os.X_OK):
-            try:
-                deltarpm = os.sysconf('SC_NPROCESSORS_ONLN')
-            except:
-                deltarpm = 4
-        self.deltarpm = deltarpm
-        self.deltarpm_percentage = \
-            deltarpm_percentage or dnf.conf.Conf().deltarpm_percentage
+            self.deltarpm_installed = True
+        try:
+            self.deltarpm_jobs = os.sysconf('SC_NPROCESSORS_ONLN')
+        except (TypeError, ValueError):
+            self.deltarpm_jobs = 4
+        self.deltarpm_percentage = deltarpm_percentage or dnf.conf.Conf().deltarpm_percentage
         self.query = query
         self.progress = progress
 
@@ -106,8 +105,10 @@ class DeltaInfo(object):
 
     def delta_factory(self, po, progress):
         '''Turn a po to Delta RPM po, if possible'''
-        if (not po.repo.deltarpm or not self.deltarpm) \
-                and not self.deltarpm_percentage:
+        if not self.deltarpm_installed:
+            # deltarpm is not installed
+            return None
+        if not po.repo.deltarpm or not self.deltarpm_percentage:
             # drpm disabled
             return None
         if po._is_local_pkg():
@@ -162,7 +163,7 @@ class DeltaInfo(object):
                 break
             self.job_done(pid, code)
         self.queue.append(pload)
-        while len(self.jobs) < self.deltarpm:
+        while len(self.jobs) < self.deltarpm_jobs:
             self.start_job(self.queue.pop(0))
             if not self.queue:
                 break
