@@ -11,10 +11,10 @@ msgstr ""
 "PO-Revision-Date: 2015-03-16 16:46+0000\n"
 "Last-Translator: Jan silhan <jsilhan@redhat.com>\n"
 "Language-Team: Urdu (http://www.transifex.com/projects/p/dnf/language/ur/)\n"
-"Language: ur\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"Language: ur\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: ../dnf/base.py:1744

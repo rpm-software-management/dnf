@@ -90,7 +90,7 @@ msgstr "Temizlenecek üstveri türü"
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "Veri temizleniyor:"
+msgstr "Veri temizleniyor:  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
@@ -271,7 +271,7 @@ msgstr "Depo-etiketleri   : "
 
 #: ../dnf/cli/commands/repolist.py:194
 msgid "Repo-distro-tags: "
-msgstr "Depo-dağıtım-etiketleri:"
+msgstr "Depo-dağıtım-etiketleri: "
 
 #: ../dnf/cli/commands/repolist.py:200
 msgid "Repo-updated : "
@@ -287,7 +287,7 @@ msgstr "Depo-büyüklüğü   : "
 
 #: ../dnf/cli/commands/repolist.py:206
 msgid "Repo-metalink: "
-msgstr "Depo-metabağlantı:"
+msgstr "Depo-metabağlantı: "
 
 #: ../dnf/cli/commands/repolist.py:211
 msgid "  Updated    : "
@@ -392,7 +392,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/updateinfo.py:232
 msgid "Updates Information Summary: "
-msgstr "Güncelleme Bilgisi Özeti:"
+msgstr "Güncelleme Bilgisi Özeti: "
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "New Package notice(s)"
@@ -597,7 +597,7 @@ msgstr "Eşleşme bulunamadı."
 
 #: ../dnf/cli/commands/search.py:135
 msgid "Searching Packages: "
-msgstr "Paketler Aranıyor:"
+msgstr "Paketler Aranıyor: "
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
@@ -835,7 +835,7 @@ msgstr "Şu argüman için eşleşme yok: %s"
 #: ../dnf/cli/commands/reinstall.py:90
 #, python-format
 msgid " (from %s)"
-msgstr "(şuradan: %s)"
+msgstr " (şuradan: %s)"
 
 #: ../dnf/cli/commands/__init__.py:421 ../dnf/cli/commands/__init__.py:478
 #: ../dnf/cli/commands/reinstall.py:91 ../dnf/cli/commands/remove.py:100
@@ -1341,7 +1341,7 @@ msgstr "İşlemi kilitleme hakkında bilgi bulunamadı (PID %d)"
 #: ../dnf/cli/utils.py:117
 #, python-format
 msgid "  The application with PID %d is: %s"
-msgstr "%d PID'li uygulama: %s"
+msgstr "  %d PID'li uygulama: %s"
 
 #: ../dnf/cli/utils.py:120
 #, python-format
@@ -1692,7 +1692,7 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:279
 msgid "disable gpg signature checking"
-msgstr " gpg imzalama denetimini devre dışı bırak"
+msgstr "gpg imzalama denetimini devre dışı bırak"
 
 #: ../dnf/cli/option_parser.py:281
 msgid "control whether color is used"
@@ -1843,11 +1843,11 @@ msgstr "hayır"
 
 #: ../dnf/cli/output.py:668
 msgid "Is this ok [y/N]: "
-msgstr "Bu tamam mı? [e/H]:"
+msgstr "Bu tamam mı? [e/H]: "
 
 #: ../dnf/cli/output.py:672
 msgid "Is this ok [Y/n]: "
-msgstr "Bu tamam mı? [E/h]"
+msgstr "Bu tamam mı? [E/h] "
 
 #: ../dnf/cli/output.py:752
 #, python-format
@@ -1857,33 +1857,33 @@ msgstr "Küme: %s"
 #: ../dnf/cli/output.py:756
 #, python-format
 msgid " Group-Id: %s"
-msgstr "Küme-ID: %s"
+msgstr " Küme-ID: %s"
 
 #: ../dnf/cli/output.py:758 ../dnf/cli/output.py:797
 #, python-format
 msgid " Description: %s"
-msgstr "Tanım: %s"
+msgstr " Tanım: %s"
 
 #: ../dnf/cli/output.py:760
 #, python-format
 msgid " Language: %s"
-msgstr "Dil: %s"
+msgstr " Dil: %s"
 
 #: ../dnf/cli/output.py:763
 msgid " Mandatory Packages:"
-msgstr "Gerekli Paketler:"
+msgstr " Gerekli Paketler:"
 
 #: ../dnf/cli/output.py:764
 msgid " Default Packages:"
-msgstr "Ön Tanımlı Paketler:"
+msgstr " Ön Tanımlı Paketler:"
 
 #: ../dnf/cli/output.py:765
 msgid " Optional Packages:"
-msgstr "İsteğe Bağlı Paketler:"
+msgstr " İsteğe Bağlı Paketler:"
 
 #: ../dnf/cli/output.py:766
 msgid " Conditional Packages:"
-msgstr "İsteğe Bağlı Paketler:"
+msgstr " İsteğe Bağlı Paketler:"
 
 #: ../dnf/cli/output.py:791
 #, fuzzy, python-format
@@ -1893,15 +1893,15 @@ msgstr "Ortam Kümesi: %s"
 #: ../dnf/cli/output.py:794
 #, python-format
 msgid " Environment-Id: %s"
-msgstr "Ortam-Id: %s"
+msgstr " Ortam-Id: %s"
 
 #: ../dnf/cli/output.py:800
 msgid " Mandatory Groups:"
-msgstr "Gerekli Kümeler:"
+msgstr " Gerekli Kümeler:"
 
 #: ../dnf/cli/output.py:801
 msgid " Optional Groups:"
-msgstr "İsteğe Bağlı Kümeler:"
+msgstr " İsteğe Bağlı Kümeler:"
 
 #: ../dnf/cli/output.py:822
 msgid "Matched from:"
@@ -1919,7 +1919,7 @@ msgstr "Depo        : %s"
 
 #: ../dnf/cli/output.py:869
 msgid "Description : "
-msgstr "Tanım :"
+msgstr "Tanım : "
 
 #: ../dnf/cli/output.py:873
 #, python-format
@@ -2855,8 +2855,8 @@ msgstr "Disk Gereksinimleri:"
 #, python-format
 msgid "At least %dMB more space needed on the %s filesystem."
 msgid_plural "At least %dMB more space needed on the %s filesystem."
-msgstr[0] " %s dosya düzeninde en az %dMB boşluğa daha gereksinim var."
-msgstr[1] " %s dosya düzeninde en az %dMB boşluğa daha gereksinim var."
+msgstr[0] "%s dosya düzeninde en az %dMB boşluğa daha gereksinim var."
+msgstr[1] "%s dosya düzeninde en az %dMB boşluğa daha gereksinim var."
 
 #: ../dnf/base.py:777
 msgid "Error Summary"

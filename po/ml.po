@@ -1530,11 +1530,11 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:174
 msgid "quiet operation"
-msgstr "അധിക വിവരങ്ങൾ നല്കാതെയുള്ള പ്രക്രിയ "
+msgstr "അധിക വിവരങ്ങൾ നല്കാതെയുള്ള പ്രക്രിയ"
 
 #: ../dnf/cli/option_parser.py:176
 msgid "verbose operation"
-msgstr "ദീർഗമുള്ള വിവരങ്ങൾ നൽകിയുള്ള പ്രക്രിയ "
+msgstr "ദീർഗമുള്ള വിവരങ്ങൾ നൽകിയുള്ള പ്രക്രിയ"
 
 #: ../dnf/cli/option_parser.py:178
 msgid "show DNF version and exit"
@@ -1550,7 +1550,7 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:185
 msgid "disable all plugins"
-msgstr "എല്ലാ പ്ലഗിൻ  ഉം അപ്രാപ്തമാക്കുക "
+msgstr "എല്ലാ പ്ലഗിൻ  ഉം അപ്രാപ്തമാക്കുക"
 
 #: ../dnf/cli/option_parser.py:188
 msgid "enable plugins by name"
@@ -1580,7 +1580,7 @@ msgstr ""
 msgid "allow erasing of installed packages to resolve dependencies"
 msgstr ""
 "ആശ്രയത്വം പരിഹരികുന്നതിനായി ഇന്‍സ്റ്റോള്‍ ചെയ്ത ചില  പാക്കേജുകള്‍ നീക്കുവാൻ "
-"അനുവധിക്കുക "
+"അനുവധിക്കുക"
 
 #: ../dnf/cli/option_parser.py:213
 msgid "try the best available package versions in transactions."
@@ -2580,7 +2580,7 @@ msgstr ""
 #: ../dnf/persistor.py:425
 #, python-format
 msgid "%s is empty file"
-msgstr "%s ശൂന്യമായ ഫയൽ ആണ് "
+msgstr "%s ശൂന്യമായ ഫയൽ ആണ്"
 
 #: ../dnf/plugin.py:173
 #, python-format

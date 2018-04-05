@@ -289,7 +289,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/repolist.py:211
 msgid "  Updated    : "
-msgstr " Aktualizované  : "
+msgstr "  Aktualizované  : "
 
 #: ../dnf/cli/commands/repolist.py:213
 msgid "Repo-mirrors : "
@@ -593,7 +593,7 @@ msgstr "Nenašli sa žiadne zhody."
 
 #: ../dnf/cli/commands/search.py:135
 msgid "Searching Packages: "
-msgstr "Hľadajú sa balíčky:"
+msgstr "Hľadajú sa balíčky: "
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
@@ -1825,7 +1825,7 @@ msgstr "Skupina: %s"
 #: ../dnf/cli/output.py:756
 #, python-format
 msgid " Group-Id: %s"
-msgstr "ID skupiny: %s"
+msgstr " ID skupiny: %s"
 
 #: ../dnf/cli/output.py:758 ../dnf/cli/output.py:797
 #, python-format
@@ -2003,7 +2003,7 @@ msgstr ""
 "(pridaním parametra „%s“ do príkazového riadku vynútite ich aktualizáciu)"
 
 #: ../dnf/cli/output.py:1115
-#, fuzzy, python-format
+#, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr ""
 
@@ -2614,7 +2614,7 @@ msgid "--> Finding unneeded leftover dependencies"
 msgstr ""
 
 #: ../dnf/repo.py:105
-#, python-format
+#, fuzzy, python-format
 msgid "no matching payload factory for %s"
 msgstr ""
 

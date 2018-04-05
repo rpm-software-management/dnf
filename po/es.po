@@ -337,7 +337,7 @@ msgstr "Repo-include : "
 #. TRANSLATORS: Number of packages that where excluded (5)
 #: ../dnf/cli/commands/repolist.py:237
 msgid "Repo-excluded: "
-msgstr "Repositorio excluído:"
+msgstr "Repositorio excluído: "
 
 #: ../dnf/cli/commands/repolist.py:241
 msgid "Repo-filename: "
@@ -412,7 +412,7 @@ msgstr "muestra información de avisos"
 
 #: ../dnf/cli/commands/updateinfo.py:232
 msgid "Updates Information Summary: "
-msgstr "Resumen de la información de actualización:"
+msgstr "Resumen de la información de actualización: "
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "New Package notice(s)"
@@ -595,7 +595,7 @@ msgstr "URL"
 #. & URL)
 #: ../dnf/cli/commands/search.py:71
 msgid " & "
-msgstr ", "
+msgstr " , "
 
 #. TRANSLATORS: %s  - translated package attributes,
 #. %%s - found keys (in listed attributes)
@@ -617,7 +617,7 @@ msgstr "No se encontraron coincidencias."
 
 #: ../dnf/cli/commands/search.py:135
 msgid "Searching Packages: "
-msgstr "Buscando paquetes:"
+msgstr "Buscando paquetes: "
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
@@ -1049,7 +1049,7 @@ msgstr "El paquete %s está disponible, pero no instalado."
 # DocId: dnf-plugins-core
 #: ../dnf/cli/commands/repoquery.py:94
 msgid "search for packages matching keyword"
-msgstr "buscar paquetes que coincidan con la palabra clave "
+msgstr "buscar paquetes que coincidan con la palabra clave"
 
 # auto translated by TM merge from project: dnf-plugins-core, version: master,
 # DocId: dnf-plugins-core
@@ -2015,11 +2015,11 @@ msgstr "no"
 
 #: ../dnf/cli/output.py:668
 msgid "Is this ok [y/N]: "
-msgstr "¿Está de acuerdo [s/N]?:"
+msgstr "¿Está de acuerdo [s/N]?: "
 
 #: ../dnf/cli/output.py:672
 msgid "Is this ok [Y/n]: "
-msgstr "¿Está de acuerdo [S/n]?:"
+msgstr "¿Está de acuerdo [S/n]?: "
 
 #: ../dnf/cli/output.py:752
 #, python-format
@@ -2069,11 +2069,11 @@ msgstr " Environment-Id: %s"
 
 #: ../dnf/cli/output.py:800
 msgid " Mandatory Groups:"
-msgstr "Grupos obligatorios:"
+msgstr " Grupos obligatorios:"
 
 #: ../dnf/cli/output.py:801
 msgid " Optional Groups:"
-msgstr "Grupos opcionales"
+msgstr " Grupos opcionales"
 
 #: ../dnf/cli/output.py:822
 msgid "Matched from:"
@@ -2091,7 +2091,7 @@ msgstr "Repositorio : %s"
 
 #: ../dnf/cli/output.py:869
 msgid "Description : "
-msgstr "Descripción :"
+msgstr "Descripción : "
 
 #: ../dnf/cli/output.py:873
 #, python-format
@@ -2207,7 +2207,7 @@ msgstr ""
 "(añada '%s' a la linea de comandos para forzar su actualización)"
 
 #: ../dnf/cli/output.py:1115
-#, fuzzy, python-format
+#, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr "Descartando paquetes con conflictos en las dependencias%s"
 
@@ -2414,7 +2414,7 @@ msgstr "(%u dias)"
 
 #: ../dnf/cli/output.py:1687
 msgid "End time       :"
-msgstr "Hora final       : "
+msgstr "Hora final       :"
 
 #: ../dnf/cli/output.py:1690 ../dnf/cli/output.py:1692
 msgid "End rpmdb      :"
@@ -2474,7 +2474,7 @@ msgstr "Paquetes descartados:"
 
 #: ../dnf/cli/output.py:1751
 msgid "Rpmdb Problems:"
-msgstr "Problemas en la base de datos RPM: "
+msgstr "Problemas en la base de datos RPM:"
 
 #: ../dnf/cli/output.py:1762
 msgid "Scriptlet output:"
@@ -2800,7 +2800,7 @@ msgstr "Base de datos de grupos inválida, limpiando."
 
 #: ../dnf/persistor.py:333
 msgid "Unsupported installed groups database found, resetting."
-msgstr "Base de datos de grupos no soportada, reestableciendo. "
+msgstr "Base de datos de grupos no soportada, reestableciendo."
 
 #. empty file is invalid json format
 #: ../dnf/persistor.py:425
@@ -2827,7 +2827,7 @@ msgid "--> Finding unneeded leftover dependencies"
 msgstr "--> Buscando dependencias sobrantes innecesarias"
 
 #: ../dnf/repo.py:105
-#, python-format
+#, fuzzy, python-format
 msgid "no matching payload factory for %s"
 msgstr "no se ha encontrado gestor de datos para %s"
 
@@ -2839,7 +2839,7 @@ msgstr "Ya descargado"
 #: ../dnf/repo.py:463
 #, python-format
 msgid "determining the fastest mirror (%d hosts).. "
-msgstr "buscando el servidor más adecuado (%d servidores)..."
+msgstr "buscando el servidor más adecuado (%d servidores)... "
 
 #: ../dnf/repo.py:716
 #, python-format
@@ -3065,12 +3065,12 @@ msgstr "Falló al eliminar archivo de transacción %s"
 #: ../dnf/base.py:936
 #, python-format
 msgid "%s was supposed to be installed but is not!"
-msgstr "¡se suponía que %s estuviera instalado, pero no lo está! "
+msgstr "¡se suponía que %s estuviera instalado, pero no lo está!"
 
 #: ../dnf/base.py:996
 #, python-format
 msgid "%s was supposed to be removed but is not!"
-msgstr "¡se suponía que %s estuviera eliminado, pero no lo está! "
+msgstr "¡se suponía que %s estuviera eliminado, pero no lo está!"
 
 #: ../dnf/base.py:1059
 msgid "Some packages were not downloaded. Retrying."
@@ -3097,7 +3097,7 @@ msgstr "No se pudo abrir: {}"
 #: ../dnf/base.py:1158
 #, python-format
 msgid "Public key for %s is not installed"
-msgstr "No se ha instalado la llave pública de %s "
+msgstr "No se ha instalado la llave pública de %s"
 
 #: ../dnf/base.py:1162
 #, python-format

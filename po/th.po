@@ -813,7 +813,7 @@ msgstr ""
 #: ../dnf/cli/commands/reinstall.py:90
 #, python-format
 msgid " (from %s)"
-msgstr "(จาก %s)"
+msgstr " (จาก %s)"
 
 #: ../dnf/cli/commands/__init__.py:421 ../dnf/cli/commands/__init__.py:478
 #: ../dnf/cli/commands/reinstall.py:91 ../dnf/cli/commands/remove.py:100
@@ -1309,7 +1309,7 @@ msgstr ""
 #: ../dnf/cli/utils.py:117
 #, python-format
 msgid "  The application with PID %d is: %s"
-msgstr "แอพพลิเคชั่นที่มี PID %d คือ: %s"
+msgstr "  แอพพลิเคชั่นที่มี PID %d คือ: %s"
 
 #: ../dnf/cli/utils.py:120
 #, python-format
@@ -2511,7 +2511,7 @@ msgid ""
 " Fingerprint: %s\n"
 " From       : %s"
 msgstr ""
-" กำลังนำเข้า GPG key 0x%s:\n"
+"กำลังนำเข้า GPG key 0x%s:\n"
 " Userid     : \"%s\"\n"
 " Fingerprint: %s\n"
 " From       : %s"

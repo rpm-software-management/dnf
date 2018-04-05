@@ -114,7 +114,7 @@ msgstr ""
 #: ../dnf/cli/commands/group.py:123
 #, python-format
 msgid "Warning: Group %s does not exist."
-msgstr " सावधानता : गट %s अस्तित्वात नाही"
+msgstr "सावधानता : गट %s अस्तित्वात नाही"
 
 #: ../dnf/cli/commands/group.py:157
 msgid "Warning: No groups match:"
@@ -1315,7 +1315,7 @@ msgstr ""
 #: ../dnf/cli/utils.py:120
 #, python-format
 msgid "    Memory : %5s RSS (%5sB VSZ)"
-msgstr "मेमरि : %5s RSS (%5sB VSZ)"
+msgstr "    मेमरि : %5s RSS (%5sB VSZ)"
 
 #: ../dnf/cli/utils.py:125
 #, python-format
@@ -2271,7 +2271,7 @@ msgstr ""
 
 #: ../dnf/cli/output.py:1777
 msgid "Obsoleted"
-msgstr " कालबाह्य झाले"
+msgstr "कालबाह्य झाले"
 
 #: ../dnf/cli/output.py:1778 ../dnf/yum/rpmtrans.py:126
 msgid "Obsoleting"

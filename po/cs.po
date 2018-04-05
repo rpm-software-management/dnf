@@ -18,16 +18,19 @@
 # Jiri Eischmann <jiri@eischmann.cz>, 2016. #zanata
 # Josef Hruška <hrusjos@gmail.com>, 2016. #zanata
 # Zdenek <chmelarz@gmail.com>, 2016. #zanata
+# Daniel Rusek <mail@asciiwolf.com>, 2017. #zanata
 # Josef Hruška <hrusjos@gmail.com>, 2017. #zanata
 # Marek Suchánek <m.suchanek.2@gmail.com>, 2017. #zanata
 # Zdenek <chmelarz@gmail.com>, 2017. #zanata
+# Daniel Rusek <mail@asciiwolf.com>, 2018. #zanata
+# Zdenek <chmelarz@gmail.com>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-10-12 09:39+0200\n"
-"PO-Revision-Date: 2017-09-12 08:26-0400\n"
-"Last-Translator: Zdenek <chmelarz@gmail.com>\n"
+"PO-Revision-Date: 2018-04-04 06:32-0400\n"
+"Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech (http://www.transifex.com/projects/p/dnf/language/cs/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -109,7 +112,7 @@ msgstr "Typ metadat k vyčištění"
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "Vyčištění dat:"
+msgstr "Vyčištění dat:  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
@@ -311,7 +314,7 @@ msgstr "Repo-metalink: "
 
 #: ../dnf/cli/commands/repolist.py:211
 msgid "  Updated    : "
-msgstr "Aktualizováno: "
+msgstr "  Aktualizováno: "
 
 #: ../dnf/cli/commands/repolist.py:213
 msgid "Repo-mirrors : "
@@ -412,7 +415,7 @@ msgstr "Zobrazit informace doporučení"
 
 #: ../dnf/cli/commands/updateinfo.py:232
 msgid "Updates Information Summary: "
-msgstr "Shrnutí informací o aktualizacích:"
+msgstr "Shrnutí informací o aktualizacích: "
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "New Package notice(s)"
@@ -601,14 +604,14 @@ msgstr " & "
 #: ../dnf/cli/commands/search.py:75
 #, python-format
 msgid "%s Exactly Matched: %%s"
-msgstr "%s Přesně odpovídá: %%s"
+msgstr "%s přesně odpovídá: %%s"
 
 #. TRANSLATORS: %s  - translated package attributes,
 #. %%s - found keys (in listed attributes)
 #: ../dnf/cli/commands/search.py:79
 #, python-format
 msgid "%s Matched: %%s"
-msgstr "%s Odpovídá: %%s"
+msgstr "%s odpovídá: %%s"
 
 #: ../dnf/cli/commands/search.py:116
 msgid "No matches found."
@@ -797,7 +800,7 @@ msgstr "Problém v repozitáři: %s"
 
 #: ../dnf/cli/commands/__init__.py:97
 msgid "There are no enabled repos."
-msgstr "Žádné repositáře nejsou povoleny."
+msgstr "Žádné repozitáře nejsou povoleny."
 
 #: ../dnf/cli/commands/__init__.py:160
 msgid "display details about a package or group of packages"
@@ -908,7 +911,7 @@ msgstr "Nejsou dostupné žádné balíčky s aktualizacemi"
 
 #: ../dnf/cli/commands/__init__.py:714
 msgid "run commands on top of all packages in given repository"
-msgstr "Spustit příkazy pro všechny balíčky v daném repositáři"
+msgstr "Spustit příkazy pro všechny balíčky v daném repozitáři"
 
 #: ../dnf/cli/commands/__init__.py:728
 msgid "REPO"
@@ -1413,7 +1416,7 @@ msgstr "Nelze najít informace o procesu zamykání (PID %d)"
 #: ../dnf/cli/utils.py:117
 #, python-format
 msgid "  The application with PID %d is: %s"
-msgstr "Aplikace s PID %d je: %s"
+msgstr "  Aplikace s PID %d je: %s"
 
 #: ../dnf/cli/utils.py:120
 #, python-format
@@ -1428,7 +1431,7 @@ msgstr "    Spuštěn: %s - před %s"
 #: ../dnf/cli/utils.py:127
 #, python-format
 msgid "    State  : %s"
-msgstr "Stav : %s"
+msgstr "    Stav : %s"
 
 #: ../dnf/cli/main.py:109
 msgid "No read/execute access in current directory, moving to /"
@@ -1443,7 +1446,7 @@ msgstr ""
 #: ../dnf/cli/main.py:130
 #, python-format
 msgid " or '%s' to skip uninstallable packages)"
-msgstr "nebo '%s' pro přeskočení neinstalovatelných balíčků)"
+msgstr " nebo '%s' pro přeskočení neinstalovatelných balíčků)"
 
 #: ../dnf/cli/main.py:147
 msgid "Dependencies resolved."
@@ -1648,7 +1651,7 @@ msgstr "tichý běh"
 
 #: ../dnf/cli/option_parser.py:176
 msgid "verbose operation"
-msgstr "užvaněný běh"
+msgstr "běh s podrobnějším výstupem"
 
 #: ../dnf/cli/option_parser.py:178
 msgid "show DNF version and exit"
@@ -1656,7 +1659,7 @@ msgstr "Ukázat verzi DNF a skončit"
 
 #: ../dnf/cli/option_parser.py:179
 msgid "set install root"
-msgstr "Nastavit kořen instalace "
+msgstr "Nastavit kořen instalace"
 
 #: ../dnf/cli/option_parser.py:182
 msgid "do not install documentations"
@@ -1680,7 +1683,7 @@ msgstr "Přenastavit hodnotu $releasever v konfiguračních a repo souborech"
 
 #: ../dnf/cli/option_parser.py:199
 msgid "set arbitrary config and repo options"
-msgstr "Nastavit doplňkové konfigurace a možnosti repozitáře "
+msgstr "Nastavit doplňkové konfigurace a možnosti repozitáře"
 
 #: ../dnf/cli/option_parser.py:202
 msgid "resolve depsolve problems by skipping packages"
@@ -1927,11 +1930,11 @@ msgstr "ne"
 
 #: ../dnf/cli/output.py:668
 msgid "Is this ok [y/N]: "
-msgstr "Nainstalovat? [a/N]: "
+msgstr "Je to ok? [a/N]: "
 
 #: ../dnf/cli/output.py:672
 msgid "Is this ok [Y/n]: "
-msgstr "Nainstalovat? [A/n]: "
+msgstr "Je to ok? [A/n]: "
 
 #: ../dnf/cli/output.py:752
 #, python-format
@@ -1977,15 +1980,15 @@ msgstr "Skupina prostředí: %s"
 #: ../dnf/cli/output.py:794
 #, python-format
 msgid " Environment-Id: %s"
-msgstr "Prostředí-Id: %s"
+msgstr " Prostředí-Id: %s"
 
 #: ../dnf/cli/output.py:800
 msgid " Mandatory Groups:"
-msgstr "Povinné skupiny:"
+msgstr " Povinné skupiny:"
 
 #: ../dnf/cli/output.py:801
 msgid " Optional Groups:"
-msgstr "Volitelné skupiny:"
+msgstr " Volitelné skupiny:"
 
 #: ../dnf/cli/output.py:822
 msgid "Matched from:"
@@ -2018,12 +2021,12 @@ msgstr "Licence     : %s"
 #: ../dnf/cli/output.py:883
 #, python-format
 msgid "Provide    : %s"
-msgstr ""
+msgstr "Poskytuje    : %s"
 
 #: ../dnf/cli/output.py:903
 #, python-format
 msgid "Other       : %s"
-msgstr ""
+msgstr "Další       : %s"
 
 #: ../dnf/cli/output.py:952
 msgid "There was an error calculating total download size"
@@ -2042,7 +2045,7 @@ msgstr "Celková velikost ke stažení: %s"
 #: ../dnf/cli/output.py:964
 #, python-format
 msgid "Installed size: %s"
-msgstr "Nainstalovaná velikost: %s"
+msgstr "Velikost po nainstalování: %s"
 
 #: ../dnf/cli/output.py:982
 msgid "There was an error calculating installed size"
@@ -2125,7 +2128,7 @@ msgstr "Přeskakuji balíčky s porušenými závislostmi %s"
 
 #: ../dnf/cli/output.py:1119
 msgid " or part of a group"
-msgstr "nebo část skupiny"
+msgstr " nebo část skupiny"
 
 #: ../dnf/cli/output.py:1134 ../dnf/cli/output.py:1180
 #: ../dnf/cli/output.py:1196 ../dnf/cli/output.py:1866
@@ -2611,7 +2614,7 @@ msgstr "Neznámá volba konfigurace: %s = %s v %s"
 #: ../dnf/conf/config.py:634
 #, python-format
 msgid "Could not set cachedir: %s"
-msgstr "Nelze nastavit adresář pro cache: %s "
+msgstr "Nelze nastavit adresář pro cache: %s"
 
 #: ../dnf/conf/config.py:847 ../dnf/conf/config.py:872
 #, python-format
@@ -2657,7 +2660,7 @@ msgstr "nepodporovaný typ kontrolního součtu: %s"
 
 #: ../dnf/drpm.py:140
 msgid "Delta RPM rebuild failed"
-msgstr "Znovu-sestavení Delta RPM selhalo "
+msgstr "Znovu-sestavení Delta RPM selhalo"
 
 #: ../dnf/drpm.py:142
 msgid "Checksum of the delta-rebuilt RPM failed"
@@ -2682,7 +2685,7 @@ msgstr "Vymazání"
 
 #: ../dnf/yum/rpmtrans.py:124
 msgid "Erasing"
-msgstr "Odstranění"
+msgstr "K odstranění"
 
 #: ../dnf/yum/rpmtrans.py:129
 msgid "Verifying"
@@ -2752,7 +2755,7 @@ msgstr "Již stažen"
 #: ../dnf/repo.py:463
 #, python-format
 msgid "determining the fastest mirror (%d hosts).. "
-msgstr "určení nejrychlejšího zrcadla (%d hostů)..."
+msgstr "určení nejrychlejšího zrcadla (%d hostů)... "
 
 #: ../dnf/repo.py:716
 #, python-format
@@ -2821,7 +2824,7 @@ msgstr "Nelze stáhnout '%s': %s."
 #: ../dnf/repo.py:930
 #, python-format
 msgid "Failed to synchronize cache for repo '%s'"
-msgstr "Chyba synchronizace mezipaměti pro repositář '%s'"
+msgstr "Chyba synchronizace mezipaměti pro repozitář '%s'"
 
 #: ../dnf/repo.py:972
 #, python-format

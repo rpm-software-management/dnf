@@ -97,7 +97,7 @@ msgstr "Tipus de metadades a netejar"
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "Es netegen les dades: "
+msgstr "Es netegen les dades:  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
@@ -257,77 +257,77 @@ msgstr "inhabilitat"
 
 #: ../dnf/cli/commands/repolist.py:177
 msgid "Repo-id      : "
-msgstr "Id. del dipòsit:"
+msgstr "Id. del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:178
 msgid "Repo-name    : "
-msgstr "Nom del dipòsit:"
+msgstr "Nom del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:181
 msgid "Repo-status  : "
-msgstr "Estat del dipòsit:"
+msgstr "Estat del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:184
 msgid "Repo-revision: "
-msgstr "Revisió del dipòsit:"
+msgstr "Revisió del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:188
 msgid "Repo-tags    : "
-msgstr "Etiquetes del dipòsit:"
+msgstr "Etiquetes del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:194
 msgid "Repo-distro-tags: "
-msgstr "Etiquetes distro del dipòsit:"
+msgstr "Etiquetes distro del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:200
 msgid "Repo-updated : "
-msgstr "Dipòsit actualitzat:"
+msgstr "Dipòsit actualitzat: "
 
 #: ../dnf/cli/commands/repolist.py:202
 msgid "Repo-pkgs    : "
-msgstr "Paquets del dipòsit:"
+msgstr "Paquets del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:203
 msgid "Repo-size    : "
-msgstr "Mida del dipòsit:"
+msgstr "Mida del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:206
 msgid "Repo-metalink: "
-msgstr "Metaenllaç del dipòsit:"
+msgstr "Metaenllaç del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:211
 msgid "  Updated    : "
-msgstr "Actualitzat:"
+msgstr "  Actualitzat: "
 
 #: ../dnf/cli/commands/repolist.py:213
 msgid "Repo-mirrors : "
-msgstr "Rèpliques dels dipòsits:"
+msgstr "Rèpliques dels dipòsits: "
 
 #: ../dnf/cli/commands/repolist.py:217 ../dnf/cli/commands/repolist.py:221
 msgid "Repo-baseurl : "
-msgstr "URL-base del dipòsit:"
+msgstr "URL-base del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:224
 msgid "Repo-expire  : "
-msgstr "Venciment del dipòsit:"
+msgstr "Venciment del dipòsit: "
 
 #. TRANSLATORS: Packages that are excluded - their names like (dnf systemd)
 #: ../dnf/cli/commands/repolist.py:228
 msgid "Repo-exclude : "
-msgstr "Exclou del dipòsit:"
+msgstr "Exclou del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:232
 msgid "Repo-include : "
-msgstr "Inclou del dipòsit:"
+msgstr "Inclou del dipòsit: "
 
 #. TRANSLATORS: Number of packages that where excluded (5)
 #: ../dnf/cli/commands/repolist.py:237
 msgid "Repo-excluded: "
-msgstr "Exclòs del dipòsit:"
+msgstr "Exclòs del dipòsit: "
 
 #: ../dnf/cli/commands/repolist.py:241
 msgid "Repo-filename: "
-msgstr "Nom del fitxer del dipòsit:"
+msgstr "Nom del fitxer del dipòsit: "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
@@ -398,7 +398,7 @@ msgstr "mostra la informació dels avisos"
 
 #: ../dnf/cli/commands/updateinfo.py:232
 msgid "Updates Information Summary: "
-msgstr "Resum de la informació de les actualitzacions:"
+msgstr "Resum de la informació de les actualitzacions: "
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "New Package notice(s)"
@@ -1040,7 +1040,7 @@ msgstr "mostra únicament els resultats d'aquesta ARCH"
 
 #: ../dnf/cli/commands/repoquery.py:118
 msgid "show only results that owns FILE"
-msgstr "mostra únicament els resultats que siguin propietaris del FITXER "
+msgstr "mostra únicament els resultats que siguin propietaris del FITXER"
 
 #: ../dnf/cli/commands/repoquery.py:120
 msgid "show only results that conflict REQ"

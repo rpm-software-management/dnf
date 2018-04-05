@@ -2947,9 +2947,9 @@ msgstr "Потреба у місці на диску:"
 #, python-format
 msgid "At least %dMB more space needed on the %s filesystem."
 msgid_plural "At least %dMB more space needed on the %s filesystem."
-msgstr[0] "  Потрібно ще %d МБ вільного місця на файловій системі %s."
-msgstr[1] "  Потрібно ще %d МБ вільного місця на файловій системі %s."
-msgstr[2] "  Потрібно ще %d МБ вільного місця на файловій системі %s."
+msgstr[0] "Потрібно ще %d МБ вільного місця на файловій системі %s."
+msgstr[1] "Потрібно ще %d МБ вільного місця на файловій системі %s."
+msgstr[2] "Потрібно ще %d МБ вільного місця на файловій системі %s."
 
 #: ../dnf/base.py:777
 msgid "Error Summary"

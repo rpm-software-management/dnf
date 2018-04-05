@@ -102,7 +102,7 @@ msgstr "Тип метаданных для удаления"
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "Очистка данных:"
+msgstr "Очистка данных:  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
@@ -333,7 +333,7 @@ msgstr "Исключено из репозитория   : "
 
 #: ../dnf/cli/commands/repolist.py:241
 msgid "Repo-filename: "
-msgstr "Файл репозитория:"
+msgstr "Файл репозитория: "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
@@ -404,7 +404,7 @@ msgstr "показывать информацию о рекомендациях"
 
 #: ../dnf/cli/commands/updateinfo.py:232
 msgid "Updates Information Summary: "
-msgstr "Информационная сводка по обновлениям:"
+msgstr "Информационная сводка по обновлениям: "
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "New Package notice(s)"
@@ -587,7 +587,7 @@ msgstr "URL"
 #. & URL)
 #: ../dnf/cli/commands/search.py:71
 msgid " & "
-msgstr "и"
+msgstr " и "
 
 #. TRANSLATORS: %s  - translated package attributes,
 #. %%s - found keys (in listed attributes)
@@ -609,7 +609,7 @@ msgstr "Нет совпадений."
 
 #: ../dnf/cli/commands/search.py:135
 msgid "Searching Packages: "
-msgstr "Поиск пакетов:"
+msgstr "Поиск пакетов: "
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
@@ -1416,7 +1416,7 @@ msgstr ""
 #: ../dnf/cli/utils.py:117
 #, python-format
 msgid "  The application with PID %d is: %s"
-msgstr "Приложение с идентификатором процесса %d: %s"
+msgstr "  Приложение с идентификатором процесса %d: %s"
 
 #: ../dnf/cli/utils.py:120
 #, python-format
@@ -1431,7 +1431,7 @@ msgstr "    Запущено : %s — %s назад"
 #: ../dnf/cli/utils.py:127
 #, python-format
 msgid "    State  : %s"
-msgstr "Статус : %s"
+msgstr "    Статус : %s"
 
 #: ../dnf/cli/main.py:109
 msgid "No read/execute access in current directory, moving to /"
@@ -1690,7 +1690,7 @@ msgstr "установить произвольные настройки и па
 
 #: ../dnf/cli/option_parser.py:202
 msgid "resolve depsolve problems by skipping packages"
-msgstr "разрешить проблемы зависимостей, пропустив пакеты "
+msgstr "разрешить проблемы зависимостей, пропустив пакеты"
 
 #: ../dnf/cli/option_parser.py:205
 msgid "show command help"
@@ -1943,7 +1943,7 @@ msgstr "Продолжить? [д/Н]: "
 
 #: ../dnf/cli/output.py:672
 msgid "Is this ok [Y/n]: "
-msgstr "Все правильно? [Д/н]:"
+msgstr "Все правильно? [Д/н]: "
 
 #: ../dnf/cli/output.py:752
 #, python-format
@@ -1989,15 +1989,15 @@ msgstr "Группа окружения: %s"
 #: ../dnf/cli/output.py:794
 #, python-format
 msgid " Environment-Id: %s"
-msgstr "ID окружения: %s"
+msgstr " ID окружения: %s"
 
 #: ../dnf/cli/output.py:800
 msgid " Mandatory Groups:"
-msgstr "Обязательные группы:"
+msgstr " Обязательные группы:"
 
 #: ../dnf/cli/output.py:801
 msgid " Optional Groups:"
-msgstr "Необязательные группы:"
+msgstr " Необязательные группы:"
 
 #: ../dnf/cli/output.py:822
 msgid "Matched from:"
@@ -2131,13 +2131,13 @@ msgstr ""
 "(добавьте «%s» к командной строке для их принудительного обновления)"
 
 #: ../dnf/cli/output.py:1115
-#, fuzzy, python-format
+#, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr "Пропуск пакетов с нарушенными зависимостями %s"
 
 #: ../dnf/cli/output.py:1119
 msgid " or part of a group"
-msgstr "или часть группы"
+msgstr " или часть группы"
 
 #: ../dnf/cli/output.py:1134 ../dnf/cli/output.py:1180
 #: ../dnf/cli/output.py:1196 ../dnf/cli/output.py:1866
@@ -2149,7 +2149,7 @@ msgstr[2] "Пакетов"
 
 #: ../dnf/cli/output.py:1137
 msgid "Repository"
-msgstr "Репозиторий "
+msgstr "Репозиторий"
 
 #: ../dnf/cli/output.py:1150
 msgid "replacing"
@@ -2637,7 +2637,7 @@ msgstr "Неправильный или неизвестный «{}»: {}"
 #: ../dnf/conf/read.py:51
 #, python-format
 msgid "Warning: failed loading '%s', skipping."
-msgstr "Предупреждение: не удалось загрузить «%s», пропускается. "
+msgstr "Предупреждение: не удалось загрузить «%s», пропускается."
 
 #: ../dnf/conf/read.py:61
 #, python-format
@@ -2754,7 +2754,7 @@ msgid "--> Finding unneeded leftover dependencies"
 msgstr "--> Поиск ненужных остаточных зависимостей"
 
 #: ../dnf/repo.py:105
-#, python-format
+#, fuzzy, python-format
 msgid "no matching payload factory for %s"
 msgstr "нет подходящего обработчика для %s"
 

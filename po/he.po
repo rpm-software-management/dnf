@@ -1830,12 +1830,12 @@ msgstr ""
 #: ../dnf/cli/output.py:758 ../dnf/cli/output.py:797
 #, python-format
 msgid " Description: %s"
-msgstr "תאור: %s"
+msgstr " תאור: %s"
 
 #: ../dnf/cli/output.py:760
 #, python-format
 msgid " Language: %s"
-msgstr "שפה: %s"
+msgstr " שפה: %s"
 
 #: ../dnf/cli/output.py:763
 msgid " Mandatory Packages:"
@@ -1843,11 +1843,11 @@ msgstr ""
 
 #: ../dnf/cli/output.py:764
 msgid " Default Packages:"
-msgstr "חבילות ברירת מחדל:"
+msgstr " חבילות ברירת מחדל:"
 
 #: ../dnf/cli/output.py:765
 msgid " Optional Packages:"
-msgstr "חבילות אופצוינאליות:"
+msgstr " חבילות אופצוינאליות:"
 
 #: ../dnf/cli/output.py:766
 msgid " Conditional Packages:"
@@ -1887,7 +1887,7 @@ msgstr "מאגר : %s"
 
 #: ../dnf/cli/output.py:869
 msgid "Description : "
-msgstr "תאור:"
+msgstr "תאור: "
 
 #: ../dnf/cli/output.py:873
 #, python-format

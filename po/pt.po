@@ -97,7 +97,7 @@ msgstr "Tipo de metadados para limpar"
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "A limpar dados: "
+msgstr "A limpar dados:  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
@@ -281,7 +281,7 @@ msgstr "Etiquetas-distri-repo: "
 
 #: ../dnf/cli/commands/repolist.py:200
 msgid "Repo-updated : "
-msgstr "Repo-actualizado :"
+msgstr "Repo-actualizado : "
 
 #: ../dnf/cli/commands/repolist.py:202
 msgid "Repo-pkgs    : "
@@ -399,7 +399,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/updateinfo.py:232
 msgid "Updates Information Summary: "
-msgstr "Resumo de Informação de Atualizações:"
+msgstr "Resumo de Informação de Atualizações: "
 
 #: ../dnf/cli/commands/updateinfo.py:235
 #, fuzzy
@@ -605,7 +605,7 @@ msgstr "Correspondências não encontradas."
 
 #: ../dnf/cli/commands/search.py:135
 msgid "Searching Packages: "
-msgstr "A Procurar Pacotes:"
+msgstr "A Procurar Pacotes: "
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
@@ -1726,7 +1726,7 @@ msgstr "controlar se a cor é usada"
 
 #: ../dnf/cli/option_parser.py:284
 msgid "set metadata as expired before running the command"
-msgstr "definir os metadados como expirados antes de executar o comando "
+msgstr "definir os metadados como expirados antes de executar o comando"
 
 #: ../dnf/cli/option_parser.py:287
 msgid "resolve to IPv4 addresses only"
@@ -1873,11 +1873,11 @@ msgstr "não"
 
 #: ../dnf/cli/output.py:668
 msgid "Is this ok [y/N]: "
-msgstr "Isto está ok [s/N]:"
+msgstr "Isto está ok [s/N]: "
 
 #: ../dnf/cli/output.py:672
 msgid "Is this ok [Y/n]: "
-msgstr "Isto está ok [S/n]:"
+msgstr "Isto está ok [S/n]: "
 
 #: ../dnf/cli/output.py:752
 #, python-format
@@ -1901,19 +1901,19 @@ msgstr " Língua: %s"
 
 #: ../dnf/cli/output.py:763
 msgid " Mandatory Packages:"
-msgstr "Pacotes Obrigatórios:"
+msgstr " Pacotes Obrigatórios:"
 
 #: ../dnf/cli/output.py:764
 msgid " Default Packages:"
-msgstr "Pacotes Padrão:"
+msgstr " Pacotes Padrão:"
 
 #: ../dnf/cli/output.py:765
 msgid " Optional Packages:"
-msgstr "Pacotes Opcionais:"
+msgstr " Pacotes Opcionais:"
 
 #: ../dnf/cli/output.py:766
 msgid " Conditional Packages:"
-msgstr "Pacotes Condicionais:"
+msgstr " Pacotes Condicionais:"
 
 #: ../dnf/cli/output.py:791
 #, fuzzy, python-format
@@ -1927,11 +1927,11 @@ msgstr " ID Ambiente: %s"
 
 #: ../dnf/cli/output.py:800
 msgid " Mandatory Groups:"
-msgstr "Grupos Obrigatórios:"
+msgstr " Grupos Obrigatórios:"
 
 #: ../dnf/cli/output.py:801
 msgid " Optional Groups:"
-msgstr "Grupos Opcionais:"
+msgstr " Grupos Opcionais:"
 
 #: ../dnf/cli/output.py:822
 msgid "Matched from:"
@@ -3014,8 +3014,7 @@ msgstr "Pacote %s não instalado, não se pode reinstalá-lo."
 #: ../dnf/base.py:1746
 #, python-format
 msgid "File %s is a source package and cannot be updated, ignoring."
-msgstr ""
-"O ficheiro %s é um pacote fonte e não pode ser atualizado, a ignorar. "
+msgstr "O ficheiro %s é um pacote fonte e não pode ser atualizado, a ignorar."
 
 #: ../dnf/base.py:1752
 #, python-format

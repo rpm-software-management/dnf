@@ -1323,7 +1323,7 @@ msgstr "    მეხსიერება : %5s RSS (%5sB VSZ)"
 #: ../dnf/cli/utils.py:125
 #, python-format
 msgid "    Started: %s - %s ago"
-msgstr "    გაიშვა     : %s, გავიდა %s "
+msgstr "    გაიშვა     : %s, გავიდა %s"
 
 #: ../dnf/cli/utils.py:127
 #, python-format
@@ -1996,7 +1996,7 @@ msgid ""
 msgstr ""
 
 #: ../dnf/cli/output.py:1115
-#, fuzzy, python-format
+#, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr ""
 
@@ -2604,7 +2604,7 @@ msgid "--> Finding unneeded leftover dependencies"
 msgstr ""
 
 #: ../dnf/repo.py:105
-#, python-format
+#, fuzzy, python-format
 msgid "no matching payload factory for %s"
 msgstr ""
 
