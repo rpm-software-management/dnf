@@ -98,7 +98,7 @@ msgstr "Tisztítandó metaadatok"
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "Adatok törlése: "
+msgstr "Adatok törlése:  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
@@ -230,7 +230,7 @@ msgstr "%s másodperc (utoljára: %s)"
 
 #: ../dnf/cli/commands/repolist.py:75
 msgid "display the configured software repositories"
-msgstr " a beállított szoftvertárolók megjelenítése"
+msgstr "a beállított szoftvertárolók megjelenítése"
 
 #: ../dnf/cli/commands/repolist.py:82
 msgid "show all repos"
@@ -298,7 +298,7 @@ msgstr "Tároló metalink    : "
 
 #: ../dnf/cli/commands/repolist.py:211
 msgid "  Updated    : "
-msgstr "  Frissítve      :"
+msgstr "  Frissítve      : "
 
 #: ../dnf/cli/commands/repolist.py:213
 msgid "Repo-mirrors : "
@@ -399,7 +399,7 @@ msgstr "tájékoztatók információinak megjelenítése"
 
 #: ../dnf/cli/commands/updateinfo.py:232
 msgid "Updates Information Summary: "
-msgstr "Információ a frissítésekkel kapcsolatban:"
+msgstr "Információ a frissítésekkel kapcsolatban: "
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "New Package notice(s)"
@@ -874,7 +874,7 @@ msgstr "Nem található egyezés a következő argumentumra: %s"
 #: ../dnf/cli/commands/reinstall.py:90
 #, python-format
 msgid " (from %s)"
-msgstr "(ebből: %s)"
+msgstr " (ebből: %s)"
 
 #: ../dnf/cli/commands/__init__.py:421 ../dnf/cli/commands/__init__.py:478
 #: ../dnf/cli/commands/reinstall.py:91 ../dnf/cli/commands/remove.py:100
@@ -1424,7 +1424,7 @@ msgstr ""
 #: ../dnf/cli/utils.py:117
 #, python-format
 msgid "  The application with PID %d is: %s"
-msgstr " A(z) %d PID-ű alkalmazás: %s"
+msgstr "  A(z) %d PID-ű alkalmazás: %s"
 
 #: ../dnf/cli/utils.py:120
 #, python-format
@@ -1454,7 +1454,7 @@ msgstr "(adja hozzá a(z) „%s” kapcsolót az ütköző csomagok lecserélés
 #: ../dnf/cli/main.py:130
 #, python-format
 msgid " or '%s' to skip uninstallable packages)"
-msgstr "vagy „%s” a nem telepíthető csomagok kihagyásához)"
+msgstr " vagy „%s” a nem telepíthető csomagok kihagyásához)"
 
 #: ../dnf/cli/main.py:147
 msgid "Dependencies resolved."
@@ -1722,7 +1722,7 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:221
 msgid "maximum command wait time"
-msgstr " a parancsra várakozás maximális ideje"
+msgstr "a parancsra várakozás maximális ideje"
 
 #: ../dnf/cli/option_parser.py:224
 msgid "debugging output level"
@@ -1943,7 +1943,7 @@ msgstr "nem"
 
 #: ../dnf/cli/output.py:668
 msgid "Is this ok [y/N]: "
-msgstr "Ez így jó? [y/N]"
+msgstr "Ez így jó? [y/N] "
 
 #: ../dnf/cli/output.py:672
 msgid "Is this ok [Y/n]: "
@@ -2141,7 +2141,7 @@ msgstr "Törött függőségekkel rendelkező csomagok kihagyása%s"
 
 #: ../dnf/cli/output.py:1119
 msgid " or part of a group"
-msgstr "vagy része egy csoportnak"
+msgstr " vagy része egy csoportnak"
 
 #: ../dnf/cli/output.py:1134 ../dnf/cli/output.py:1180
 #: ../dnf/cli/output.py:1196 ../dnf/cli/output.py:1866
@@ -2648,7 +2648,7 @@ msgstr "Figyelmeztetés: nem sikerült betölteni: „%s”, átugrás."
 #: ../dnf/conf/read.py:61
 #, python-format
 msgid "Repository '%s': Error parsing config: %s"
-msgstr "„%s” tároló: Hiba a konfiguráció feldolgozásakor: %s "
+msgstr "„%s” tároló: Hiba a konfiguráció feldolgozásakor: %s"
 
 #: ../dnf/conf/read.py:67
 #, fuzzy, python-format

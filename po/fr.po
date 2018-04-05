@@ -12,16 +12,16 @@
 # Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>, 2016. #zanata
 # José Fournier <jaaf64@zoraldia.com>, 2016. #zanata
 # Charles-Antoine Couret <renault@fedoraproject.org>, 2017. #zanata
-# Emmanuel Nedelec <nednet@wanadoo.fr>, 2017. #zanata
 # Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>, 2017. #zanata
 # José Fournier <jaaf64@zoraldia.com>, 2017. #zanata
 # Jérôme Fenal <jfenal@gmail.com>, 2017. #zanata
+# Marek Blaha <mblaha@redhat.com>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-10-12 09:39+0200\n"
-"PO-Revision-Date: 2017-10-06 07:17-0400\n"
+"PO-Revision-Date: 2018-04-05 02:19-0400\n"
 "Last-Translator: Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/dnf/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -34,17 +34,17 @@ msgstr ""
 #: ../dnf/automatic/emitter.py:31
 #, python-format
 msgid "The following updates have been applied on '%s':"
-msgstr "Les mises à jours suivantes ont été appliquées le « %s » :"
+msgstr "Les mises à jour suivantes ont été appliquées le « %s » :"
 
 #: ../dnf/automatic/emitter.py:32
 #, python-format
 msgid "The following updates are available on '%s':"
-msgstr "Les mises à jours suivantes sont disponibles depuis le « %s » :"
+msgstr "Les mises à jour suivantes sont disponibles depuis le « %s » :"
 
 #: ../dnf/automatic/emitter.py:33
 #, python-format
 msgid "The following updates were downloaded on '%s':"
-msgstr "Les mises à jours suivantes ont été téléchargées le « %s » :"
+msgstr "Les mises à jour suivantes ont été téléchargées le « %s » :"
 
 #: ../dnf/automatic/emitter.py:80
 #, python-format
@@ -59,7 +59,7 @@ msgstr "Mises à jour téléchargées le « %s »."
 #: ../dnf/automatic/emitter.py:84
 #, python-format
 msgid "Updates available on '%s'."
-msgstr "Mises à jours disponibles le « %s »."
+msgstr "Mises à jour disponibles le « %s »."
 
 #: ../dnf/automatic/emitter.py:107
 #, python-format
@@ -104,7 +104,7 @@ msgstr "Type de métadonnées à nettoyer"
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "Nettoyage des données : "
+msgstr "Nettoyage des données :  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
@@ -406,7 +406,7 @@ msgstr "montre les informations des avertissements"
 
 #: ../dnf/cli/commands/updateinfo.py:232
 msgid "Updates Information Summary: "
-msgstr "Résumé des informations de mise à jour :"
+msgstr "Résumé des informations de mise à jour : "
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "New Package notice(s)"
@@ -466,7 +466,7 @@ msgstr "Type"
 
 #: ../dnf/cli/commands/updateinfo.py:371
 msgid "Updated"
-msgstr "Mis à jour "
+msgstr "Mis à jour"
 
 #: ../dnf/cli/commands/updateinfo.py:371
 msgid "Bugs"
@@ -496,7 +496,7 @@ msgstr "Fichiers"
 #: ../dnf/cli/commands/updateinfo.py:373 ../dnf/cli/output.py:1261
 #: ../dnf/cli/output.py:1626 ../dnf/cli/output.py:1628
 msgid "Installed"
-msgstr "Installé "
+msgstr "Installé"
 
 #: ../dnf/cli/commands/updateinfo.py:404
 msgid "installed"
@@ -597,14 +597,14 @@ msgstr " & "
 #: ../dnf/cli/commands/search.py:75
 #, python-format
 msgid "%s Exactly Matched: %%s"
-msgstr "%s correspond exactement : %%s"
+msgstr "%s correspond exactement à : %%s"
 
 #. TRANSLATORS: %s  - translated package attributes,
 #. %%s - found keys (in listed attributes)
 #: ../dnf/cli/commands/search.py:79
 #, python-format
 msgid "%s Matched: %%s"
-msgstr "%s correspond : %%s"
+msgstr "%s correspond à : %%s"
 
 #: ../dnf/cli/commands/search.py:116
 msgid "No matches found."
@@ -612,7 +612,7 @@ msgstr "Aucune correspondance trouvée."
 
 #: ../dnf/cli/commands/search.py:135
 msgid "Searching Packages: "
-msgstr "Recherche dans les paquets :"
+msgstr "Recherche dans les paquets : "
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
@@ -837,7 +837,7 @@ msgstr "liste un paquet ou un groupe de paquets"
 
 #: ../dnf/cli/commands/__init__.py:237
 msgid "find what package provides the given value"
-msgstr "recherche à quel paquet fournit la valeur donnée"
+msgstr "recherche quel paquet fournit la valeur donnée"
 
 #: ../dnf/cli/commands/__init__.py:241
 msgid "SOME_STRING"
@@ -883,7 +883,7 @@ msgstr "Aucune correspondance pour l’argument : %s"
 #: ../dnf/cli/commands/reinstall.py:90
 #, python-format
 msgid " (from %s)"
-msgstr "(depuis %s)"
+msgstr " (depuis %s)"
 
 #: ../dnf/cli/commands/__init__.py:421 ../dnf/cli/commands/__init__.py:478
 #: ../dnf/cli/commands/reinstall.py:91 ../dnf/cli/commands/remove.py:100
@@ -970,12 +970,12 @@ msgid ""
 "Invalid transaction ID range definition '{}'.\n"
 "Use '<transaction-id>..<transaction-id>'."
 msgstr ""
-"La définition de la plage d’identifiant de transaction est invalide '{}'.\n"
+"La définition de la plage d’identifiants de transaction est invalide '{}'.\n"
 "Utilisez « <transaction-id>..<transaction-id> »."
 
 #: ../dnf/cli/commands/__init__.py:957
 msgid "No transaction which manipulates package '{}' was found."
-msgstr "Aucune transaction manipulant le paquet '{}' n’a été trouvé."
+msgstr "Aucune transaction manipulant le paquet '{}' n’a été trouvée."
 
 #: ../dnf/cli/commands/check.py:34
 msgid "check for problems in the packagedb"
@@ -1427,7 +1427,7 @@ msgstr ""
 #: ../dnf/cli/utils.py:117
 #, python-format
 msgid "  The application with PID %d is: %s"
-msgstr "L’application de PID %d est : %s"
+msgstr "  L’application de PID %d est : %s"
 
 #: ../dnf/cli/utils.py:120
 #, python-format
@@ -1460,7 +1460,7 @@ msgstr ""
 #: ../dnf/cli/main.py:130
 #, python-format
 msgid " or '%s' to skip uninstallable packages)"
-msgstr "ou « %s » pour ignorer les paquets non installables)"
+msgstr " ou « %s » pour ignorer les paquets non installables)"
 
 #: ../dnf/cli/main.py:147
 msgid "Dependencies resolved."
@@ -1473,12 +1473,12 @@ msgstr "Terminé !"
 #: ../dnf/cli/cli.py:124
 #, python-format
 msgid "  Installed: %s-%s at %s"
-msgstr "      Installés : %s-%s à %s"
+msgstr "  Installés : %s-%s à %s"
 
 #: ../dnf/cli/cli.py:126
 #, fuzzy, python-format
 msgid "  Built    : %s at %s"
-msgstr "      Compilé   : %s à %s"
+msgstr "  Compilé   : %s à %s"
 
 #: ../dnf/cli/cli.py:205
 msgid "DNF will only download packages for the transaction."
@@ -1589,7 +1589,7 @@ msgstr "L’historique des transactions est incomplet, après %u."
 
 #: ../dnf/cli/cli.py:630
 msgid "Undoing transaction {}, from {}"
-msgstr "Transaction en cours {}, de {}"
+msgstr "Défaisant la transaction {}, de {}"
 
 #: ../dnf/cli/cli.py:722
 #, python-format
@@ -1636,7 +1636,7 @@ msgid ""
 "version)"
 msgstr ""
 "Impossible de détecter le numéro de version (utilisez « --releasever » pour "
-"sélectionner une version)"
+"spécifier une version)"
 
 #: ../dnf/cli/cli.py:995
 #, python-format
@@ -1706,7 +1706,7 @@ msgstr "réinitialise la configuration ainsi que les options des dépôts"
 #: ../dnf/cli/option_parser.py:202
 msgid "resolve depsolve problems by skipping packages"
 msgstr ""
-"résoudre les problèmes de résolutions de dépendance en ignorant les paquets"
+"résout les problèmes de résolutions de dépendance en ignorant les paquets"
 
 #: ../dnf/cli/option_parser.py:205
 msgid "show command help"
@@ -1775,11 +1775,11 @@ msgid ""
 "multiple times"
 msgstr ""
 "active seulement des dépôts spécifiques par id ou par le caractère générique"
-" (*), peut être spécifié plusieurs fois "
+" (*), peut être spécifié plusieurs fois"
 
 #: ../dnf/cli/option_parser.py:262
 msgid "exclude packages by name or glob"
-msgstr "exclut des paquets par leur nom ou par le caractère générique (*) "
+msgstr "exclut des paquets par leur nom ou par le caractère générique (*)"
 
 #: ../dnf/cli/option_parser.py:267
 msgid "disable excludepkgs"
@@ -1794,7 +1794,7 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:276
 msgid "disable removal of dependencies that are no longer used"
-msgstr "désactive la suppression des dépendances désormais inutilisées "
+msgstr "désactive la suppression des dépendances désormais inutilisées"
 
 #: ../dnf/cli/option_parser.py:279
 msgid "disable gpg signature checking"
@@ -1827,22 +1827,21 @@ msgstr "télécharge seulement des paquets"
 
 #: ../dnf/cli/option_parser.py:298
 msgid "add a comment to transaction"
-msgstr "ajouter un commentaire à la transaction"
+msgstr "ajoute un commentaire à la transaction"
 
 #: ../dnf/cli/option_parser.py:301
 msgid "Include bugfix relevant packages, in updates"
 msgstr ""
-"Inclure les paquets concernant la correction de bugs dans les mises à jour"
+"Inclut les paquets concernant la correction de bugs dans les mises à jour"
 
 #: ../dnf/cli/option_parser.py:304
 msgid "Include enhancement relevant packages, in updates"
-msgstr ""
-"Inclure les paquets concernant des améliorations dans les mises à jour"
+msgstr "Inclut les paquets concernant des améliorations dans les mises à jour"
 
 #: ../dnf/cli/option_parser.py:307
 msgid "Include newpackage relevant packages, in updates"
 msgstr ""
-"Inclure les paquets concernant les nouveaux paquets dans les mises à jour"
+"Inclut les paquets concernant les nouveaux paquets dans les mises à jour"
 
 #: ../dnf/cli/option_parser.py:310
 msgid "Include security relevant packages, in updates"
@@ -1851,30 +1850,30 @@ msgstr "Inclure les paquets concernant la sécurité dans les mises à jour"
 #: ../dnf/cli/option_parser.py:314
 msgid "Include packages needed to fix the given advisory, in updates"
 msgstr ""
-"Inclure dans les mises à jour les paquets nécessaires pour résoudre le "
+"Inclut dans les mises à jour les paquets nécessaires pour résoudre le "
 "conseil cité"
 
 #: ../dnf/cli/option_parser.py:318
 msgid "Include packages needed to fix the given BZ, in updates"
 msgstr ""
-"Inclure dans les mises à jour les paquets nécessaires pour résoudre le "
-"ticket BugZilla cité"
+"Inclut dans les mises à jour les paquets nécessaires pour résoudre le ticket"
+" BugZilla cité"
 
 #: ../dnf/cli/option_parser.py:320
 msgid "Include packages needed to fix the given CVE, in updates"
 msgstr ""
-"Inclure dans les mises à jour les paquets nécessaires pour résoudre le CVE "
+"Inclut dans les mises à jour les paquets nécessaires pour résoudre le CVE "
 "cité"
 
 #: ../dnf/cli/option_parser.py:325
 msgid "Include security relevant packages matching the severity, in updates"
 msgstr ""
-"Inclure les paquets concernant la sécurité avec une certaine sévérité dans "
+"Inclut les paquets concernant la sécurité avec une certaine sévérité dans "
 "les mises à jour"
 
 #: ../dnf/cli/option_parser.py:331
 msgid "Force the use of an architecture"
-msgstr "Forcer l’utilisation d’une architecture"
+msgstr "Force l’utilisation d’une architecture"
 
 #: ../dnf/cli/option_parser.py:365
 msgid "List of Main Commands:"
@@ -1894,7 +1893,7 @@ msgstr "Version"
 
 #: ../dnf/cli/output.py:502
 msgid "Release"
-msgstr "Révision"
+msgstr "Publication"
 
 #: ../dnf/cli/output.py:503 ../dnf/cli/output.py:1135
 msgid "Arch"
@@ -1961,11 +1960,11 @@ msgstr "non"
 
 #: ../dnf/cli/output.py:668
 msgid "Is this ok [y/N]: "
-msgstr "Voulez-vous continuer ? [o/N] :"
+msgstr "Voulez-vous continuer ? [o/N] : "
 
 #: ../dnf/cli/output.py:672
 msgid "Is this ok [Y/n]: "
-msgstr "Voulez-vous continuer ? [O/n] :"
+msgstr "Voulez-vous continuer ? [O/n] : "
 
 #: ../dnf/cli/output.py:752
 #, python-format
@@ -2011,15 +2010,15 @@ msgstr "Groupe d’environnement : %s"
 #: ../dnf/cli/output.py:794
 #, python-format
 msgid " Environment-Id: %s"
-msgstr "Identifiant d’environnement : %s"
+msgstr " Identifiant d’environnement : %s"
 
 #: ../dnf/cli/output.py:800
 msgid " Mandatory Groups:"
-msgstr "Groupes obligatoires :"
+msgstr " Groupes obligatoires :"
 
 #: ../dnf/cli/output.py:801
 msgid " Optional Groups:"
-msgstr "Groupes optionnels :"
+msgstr " Groupes optionnels :"
 
 #: ../dnf/cli/output.py:822
 msgid "Matched from:"
@@ -2109,7 +2108,7 @@ msgstr "Paquets"
 
 #: ../dnf/cli/output.py:1079 ../dnf/yum/rpmtrans.py:125
 msgid "Installing"
-msgstr "Installation de "
+msgstr "Installation de"
 
 #: ../dnf/cli/output.py:1080 ../dnf/yum/rpmtrans.py:128
 msgid "Upgrading"
@@ -2133,7 +2132,7 @@ msgstr "Installation des dépendances faibles"
 
 #: ../dnf/cli/output.py:1085
 msgid "Removing"
-msgstr "Suppression "
+msgstr "Suppression"
 
 #: ../dnf/cli/output.py:1086
 msgid "Removing dependent packages"
@@ -2157,13 +2156,13 @@ msgstr ""
 "(ajouter « %s » à la ligne de commande pour forcer leur mise à niveau)"
 
 #: ../dnf/cli/output.py:1115
-#, fuzzy, python-format
+#, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr "Saut des paquets ayant des dépendances cassées %s"
 
 #: ../dnf/cli/output.py:1119
 msgid " or part of a group"
-msgstr "ou fait parti d'un groupe"
+msgstr " ou fait parti d'un groupe"
 
 #: ../dnf/cli/output.py:1134 ../dnf/cli/output.py:1180
 #: ../dnf/cli/output.py:1196 ../dnf/cli/output.py:1866
@@ -2440,7 +2439,7 @@ msgstr "Installation des dépendances"
 
 #: ../dnf/cli/output.py:1777
 msgid "Obsoleted"
-msgstr "Rendu obsolète "
+msgstr "Rendu obsolète"
 
 #: ../dnf/cli/output.py:1778 ../dnf/yum/rpmtrans.py:126
 msgid "Obsoleting"
@@ -2699,7 +2698,7 @@ msgstr "Échec de la reconstruction du delta RPM"
 
 #: ../dnf/drpm.py:142
 msgid "Checksum of the delta-rebuilt RPM failed"
-msgstr "Le contrôle du delta RPM reconstruit a échoué"
+msgstr "La somme de contrôle du delta RPM reconstruit a échoué"
 
 #: ../dnf/drpm.py:145
 msgid "done"
@@ -2728,7 +2727,7 @@ msgstr "Vérification de"
 
 #: ../dnf/yum/rpmtrans.py:130
 msgid "Preparing"
-msgstr "Préparation"
+msgstr "Préparation en cours"
 
 #: ../dnf/yum/rpmtrans.py:131
 msgid "Running scriptlet"
@@ -2779,7 +2778,7 @@ msgid "--> Finding unneeded leftover dependencies"
 msgstr "--> Recherche de dépendances inutiles"
 
 #: ../dnf/repo.py:105
-#, python-format
+#, fuzzy, python-format
 msgid "no matching payload factory for %s"
 msgstr "aucune fabrique de contenu ne correspond à %s"
 
@@ -2791,7 +2790,7 @@ msgstr "Déjà téléchargé"
 #: ../dnf/repo.py:463
 #, python-format
 msgid "determining the fastest mirror (%d hosts).. "
-msgstr "détermination du mirroir le plus rapide (%d hôtes).."
+msgstr "détermination du miroir le plus rapide (%d hôtes).. "
 
 #: ../dnf/repo.py:716
 #, python-format
@@ -2804,7 +2803,7 @@ msgid ""
 " minrate or throttle"
 msgstr ""
 "La vitesse de téléchargement maximale est plus basse que le minimum. "
-"Veuillez changer la configuration du débit minimal ou d’accélération"
+"Veuillez modifier les paramètres minrate ou throttle"
 
 #: ../dnf/repo.py:812
 #, fuzzy, python-format
@@ -2866,7 +2865,7 @@ msgstr "Échec de la synchronisation du cache pour le dépôt « %s »"
 #: ../dnf/repo.py:972
 #, python-format
 msgid "Repository %s has no mirror or baseurl set."
-msgstr "Le dépôt %s n'a pas de miroir ou d'adresse de base "
+msgstr "Le dépôt %s n'a pas de miroir ou d'adresse de base"
 
 #: ../dnf/repo.py:975
 msgid "Repository '{}' has unsupported type: 'type={}', skipping."
@@ -3087,7 +3086,7 @@ msgstr "%s supprimé"
 
 #: ../dnf/base.py:1472
 msgid "No match for group package \"{}\""
-msgstr "Aucune correspondance pour le groupe de paquet \"{}\""
+msgstr "Aucune correspondance pour le paquet du groupe « {} »"
 
 #: ../dnf/base.py:1586
 msgid "No groups marked for removal."
@@ -3217,7 +3216,7 @@ msgstr ""
 
 #: ../dnf/base.py:2268
 msgid "  * Maybe you meant: {}"
-msgstr " * Peut-être vouliez-vous dire : {}"
+msgstr "  * Peut-être vouliez-vous dire : {}"
 
 #: ../dnf/base.py:2295
 msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"

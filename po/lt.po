@@ -595,7 +595,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/search.py:135
 msgid "Searching Packages: "
-msgstr "Ieškoma paketų:"
+msgstr "Ieškoma paketų: "
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
@@ -1325,12 +1325,12 @@ msgstr "  Programa su PID %d yra: %s"
 #: ../dnf/cli/utils.py:120
 #, python-format
 msgid "    Memory : %5s RSS (%5sB VSZ)"
-msgstr "  Atmintis : %5s RSS (%5sB VSZ)"
+msgstr "    Atmintis : %5s RSS (%5sB VSZ)"
 
 #: ../dnf/cli/utils.py:125
 #, python-format
 msgid "    Started: %s - %s ago"
-msgstr "   Paleista: %s - prieš %s"
+msgstr "    Paleista: %s - prieš %s"
 
 #: ../dnf/cli/utils.py:127
 #, python-format
@@ -1839,7 +1839,7 @@ msgstr " Aprašymas: %s"
 #: ../dnf/cli/output.py:760
 #, python-format
 msgid " Language: %s"
-msgstr "Kalba: %s"
+msgstr " Kalba: %s"
 
 #: ../dnf/cli/output.py:763
 msgid " Mandatory Packages:"

@@ -20,13 +20,14 @@
 # lexuge <LEXUGEyky@outlook.com>, 2017. #zanata
 # n0vad3v <jonasguo@fedoraproject.org>, 2017. #zanata
 # zhouxiaobo <zhouxiaobo.500@gmail.com>, 2017. #zanata
+# Pany <geekpany@gmail.com>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-10-12 09:39+0200\n"
-"PO-Revision-Date: 2017-07-13 11:23-0400\n"
-"Last-Translator: cheng ye <18969068329@163.com>\n"
+"PO-Revision-Date: 2018-04-04 12:49-0400\n"
+"Last-Translator: Pany <geekpany@gmail.com>\n"
 "Language-Team: Chinese (China) (http://www.transifex.com/projects/p/dnf/language/zh_CN/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -106,7 +107,7 @@ msgstr "清除元数据"
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "正在清理数据："
+msgstr "正在清理数据：  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
@@ -301,15 +302,15 @@ msgstr "仓库大小    ： "
 
 #: ../dnf/cli/commands/repolist.py:206
 msgid "Repo-metalink: "
-msgstr "仓库元链接："
+msgstr "仓库元链接： "
 
 #: ../dnf/cli/commands/repolist.py:211
 msgid "  Updated    : "
-msgstr "更新："
+msgstr "  更新： "
 
 #: ../dnf/cli/commands/repolist.py:213
 msgid "Repo-mirrors : "
-msgstr "仓库镜像："
+msgstr "仓库镜像： "
 
 #: ../dnf/cli/commands/repolist.py:217 ../dnf/cli/commands/repolist.py:221
 msgid "Repo-baseurl : "
@@ -317,25 +318,25 @@ msgstr "仓库基本地址： "
 
 #: ../dnf/cli/commands/repolist.py:224
 msgid "Repo-expire  : "
-msgstr "仓库到期："
+msgstr "仓库到期： "
 
 #. TRANSLATORS: Packages that are excluded - their names like (dnf systemd)
 #: ../dnf/cli/commands/repolist.py:228
 msgid "Repo-exclude : "
-msgstr "仓库排除："
+msgstr "仓库排除： "
 
 #: ../dnf/cli/commands/repolist.py:232
 msgid "Repo-include : "
-msgstr "仓库包括："
+msgstr "仓库包括： "
 
 #. TRANSLATORS: Number of packages that where excluded (5)
 #: ../dnf/cli/commands/repolist.py:237
 msgid "Repo-excluded: "
-msgstr "仓库排除："
+msgstr "仓库排除： "
 
 #: ../dnf/cli/commands/repolist.py:241
 msgid "Repo-filename: "
-msgstr "仓库文件名："
+msgstr "仓库文件名： "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
@@ -370,23 +371,23 @@ msgstr "新的软件包"
 
 #: ../dnf/cli/commands/updateinfo.py:52
 msgid "Critical/Sec."
-msgstr ""
+msgstr "严重/安全漏洞"
 
 #: ../dnf/cli/commands/updateinfo.py:53
 msgid "Important/Sec."
-msgstr ""
+msgstr "重要/安全漏洞"
 
 #: ../dnf/cli/commands/updateinfo.py:54
 msgid "Moderate/Sec."
-msgstr ""
+msgstr "中危/安全漏洞"
 
 #: ../dnf/cli/commands/updateinfo.py:55
 msgid "Low/Sec."
-msgstr ""
+msgstr "低危/安全漏洞"
 
 #: ../dnf/cli/commands/updateinfo.py:56
 msgid "Unknown/Sec."
-msgstr ""
+msgstr "未知/安全漏洞"
 
 #: ../dnf/cli/commands/updateinfo.py:67
 msgid "display advisories about packages"
@@ -394,7 +395,7 @@ msgstr "显示软件包的参考建议"
 
 #: ../dnf/cli/commands/updateinfo.py:136
 msgid "show summary of advisories"
-msgstr ""
+msgstr "显示公告概要"
 
 #: ../dnf/cli/commands/updateinfo.py:138
 msgid "show list of advisories"
@@ -406,7 +407,7 @@ msgstr "显示公告信息"
 
 #: ../dnf/cli/commands/updateinfo.py:232
 msgid "Updates Information Summary: "
-msgstr "更新信息概要"
+msgstr "更新信息概要 "
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "New Package notice(s)"
@@ -547,7 +548,7 @@ msgstr "%s 取消标记为用户安装的。"
 #: ../dnf/cli/commands/mark.py:57
 #, python-format
 msgid "%s marked as group installed."
-msgstr ""
+msgstr "%s 已标记为已安装软件组。"
 
 #: ../dnf/cli/commands/mark.py:82 ../dnf/cli/commands/shell.py:116
 #: ../dnf/cli/commands/shell.py:225
@@ -587,21 +588,21 @@ msgstr "URL"
 #. & URL)
 #: ../dnf/cli/commands/search.py:71
 msgid " & "
-msgstr ""
+msgstr " 和 "
 
 #. TRANSLATORS: %s  - translated package attributes,
 #. %%s - found keys (in listed attributes)
 #: ../dnf/cli/commands/search.py:75
 #, python-format
 msgid "%s Exactly Matched: %%s"
-msgstr ""
+msgstr "%s 精准匹配：%%s"
 
 #. TRANSLATORS: %s  - translated package attributes,
 #. %%s - found keys (in listed attributes)
 #: ../dnf/cli/commands/search.py:79
 #, python-format
 msgid "%s Matched: %%s"
-msgstr ""
+msgstr "%s 匹配：%%s"
 
 #: ../dnf/cli/commands/search.py:116
 msgid "No matches found."
@@ -609,7 +610,7 @@ msgstr "未找到匹配项。"
 
 #: ../dnf/cli/commands/search.py:135
 msgid "Searching Packages: "
-msgstr "搜索软件包："
+msgstr "搜索软件包： "
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
@@ -866,7 +867,7 @@ msgstr "未找到匹配的参数： %s"
 #: ../dnf/cli/commands/reinstall.py:90
 #, python-format
 msgid " (from %s)"
-msgstr "（来自 %s）"
+msgstr " （来自 %s）"
 
 #: ../dnf/cli/commands/__init__.py:421 ../dnf/cli/commands/__init__.py:478
 #: ../dnf/cli/commands/reinstall.py:91 ../dnf/cli/commands/remove.py:100
@@ -1362,7 +1363,7 @@ msgstr "无法找到关于锁定进程 (PID %d)的信息"
 #: ../dnf/cli/utils.py:117
 #, python-format
 msgid "  The application with PID %d is: %s"
-msgstr "PID 为 %d 的应用程序是：%s"
+msgstr "  PID 为 %d 的应用程序是：%s"
 
 #: ../dnf/cli/utils.py:120
 #, python-format
@@ -1413,13 +1414,13 @@ msgstr "  构建    ：%s 在 %s"
 
 #: ../dnf/cli/cli.py:205
 msgid "DNF will only download packages for the transaction."
-msgstr ""
+msgstr "DNF 只会下载事务所需的软件包。"
 
 #: ../dnf/cli/cli.py:207
 msgid ""
 "DNF will only download packages, install gpg keys, and check the "
 "transaction."
-msgstr ""
+msgstr "DNF 会仅下载软件包、安装 gpg 密钥并检查事务。"
 
 #: ../dnf/cli/cli.py:211
 msgid "Operation aborted."
@@ -1447,7 +1448,7 @@ msgstr ""
 
 #: ../dnf/cli/cli.py:283
 msgid "GPG check FAILED"
-msgstr ""
+msgstr "GPG 检查失败"
 
 #: ../dnf/cli/cli.py:311 ../dnf/cli/cli.py:455 ../dnf/cli/cli.py:461
 msgid "Obsoleting Packages"
@@ -1858,11 +1859,11 @@ msgstr "否"
 
 #: ../dnf/cli/output.py:668
 msgid "Is this ok [y/N]: "
-msgstr "确定吗？[y/N]："
+msgstr "确定吗？[y/N]： "
 
 #: ../dnf/cli/output.py:672
 msgid "Is this ok [Y/n]: "
-msgstr "确定吗？[Y/n]："
+msgstr "确定吗？[Y/n]： "
 
 #: ../dnf/cli/output.py:752
 #, python-format
@@ -1994,7 +1995,7 @@ msgstr "标记软件包为遵循软件包组移除的："
 
 #: ../dnf/cli/output.py:1012
 msgid "Group"
-msgstr " 组"
+msgstr "组"
 
 #: ../dnf/cli/output.py:1012
 msgid "Packages"
@@ -2626,7 +2627,7 @@ msgstr "运行脚本"
 #: ../dnf/yum/history.py:742
 #, python-format
 msgid "Unable to initialize DNF DB history: %s"
-msgstr "无法初始化 DNF 数据库历史：%s "
+msgstr "无法初始化 DNF 数据库历史：%s"
 
 #: ../dnf/yum/history.py:1710
 #, python-format
@@ -2678,7 +2679,7 @@ msgstr "已下载"
 #: ../dnf/repo.py:463
 #, python-format
 msgid "determining the fastest mirror (%d hosts).. "
-msgstr "正在查找最快的镜像（%d 个主机）"
+msgstr "正在查找最快的镜像（%d 个主机） "
 
 #: ../dnf/repo.py:716
 #, python-format

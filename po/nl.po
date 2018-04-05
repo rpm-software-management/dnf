@@ -91,7 +91,7 @@ msgstr "Metadatatype om te schonen"
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "Data opruimen: "
+msgstr "Data opruimen:  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
@@ -392,7 +392,7 @@ msgstr "toon info van adviesen"
 
 #: ../dnf/cli/commands/updateinfo.py:232
 msgid "Updates Information Summary: "
-msgstr "Samenvatting update-info"
+msgstr "Samenvatting update-info "
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "New Package notice(s)"
@@ -597,7 +597,7 @@ msgstr "Geen resultaten gevonden."
 
 #: ../dnf/cli/commands/search.py:135
 msgid "Searching Packages: "
-msgstr "Pakketten zoeken:"
+msgstr "Pakketten zoeken: "
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
@@ -1121,7 +1121,7 @@ msgstr "toon recursieve boom voor pakket(ten)"
 
 #: ../dnf/cli/commands/repoquery.py:152
 msgid "operate on corresponding source RPM"
-msgstr "bewerk op overeenkomstige bron  RPM "
+msgstr "bewerk op overeenkomstige bron  RPM"
 
 #: ../dnf/cli/commands/repoquery.py:154
 msgid ""
@@ -1145,7 +1145,7 @@ msgstr "Source-RPM-naam van pakket tonen"
 
 #: ../dnf/cli/commands/repoquery.py:169
 msgid "format for displaying found packages"
-msgstr "formatteer voor het tonen van de gevonden pakketten "
+msgstr "formatteer voor het tonen van de gevonden pakketten"
 
 #: ../dnf/cli/commands/repoquery.py:172
 msgid ""
@@ -1340,7 +1340,7 @@ msgstr "upgrade een pakket of pakketten van je systeem"
 
 #: ../dnf/cli/commands/upgrade.py:42
 msgid "Package to upgrade"
-msgstr "Het te upgraden pakket "
+msgstr "Het te upgraden pakket"
 
 #: ../dnf/cli/commands/deplist.py:32
 msgid "List package's dependencies and what packages provide them"
@@ -1483,7 +1483,7 @@ msgstr "Downloaden pakketten:"
 
 #: ../dnf/cli/cli.py:224
 msgid "Error downloading packages:"
-msgstr "Fout bij downloaden pakketten: "
+msgstr "Fout bij downloaden pakketten:"
 
 #: ../dnf/cli/cli.py:244
 msgid "Transaction failed"
@@ -1928,11 +1928,11 @@ msgstr "nee"
 
 #: ../dnf/cli/output.py:668
 msgid "Is this ok [y/N]: "
-msgstr "Is dit goed [y/N]:"
+msgstr "Is dit goed [y/N]: "
 
 #: ../dnf/cli/output.py:672
 msgid "Is this ok [Y/n]: "
-msgstr "Is dit goed [Y/n]:"
+msgstr "Is dit goed [Y/n]: "
 
 #: ../dnf/cli/output.py:752
 #, python-format
@@ -1947,28 +1947,28 @@ msgstr " Groep-Id: %s"
 #: ../dnf/cli/output.py:758 ../dnf/cli/output.py:797
 #, python-format
 msgid " Description: %s"
-msgstr "Beschrijving: %s"
+msgstr " Beschrijving: %s"
 
 #: ../dnf/cli/output.py:760
 #, python-format
 msgid " Language: %s"
-msgstr "Taal:%s"
+msgstr " Taal:%s"
 
 #: ../dnf/cli/output.py:763
 msgid " Mandatory Packages:"
-msgstr "Verplichte pakketten:"
+msgstr " Verplichte pakketten:"
 
 #: ../dnf/cli/output.py:764
 msgid " Default Packages:"
-msgstr "Standaardpakketten:"
+msgstr " Standaardpakketten:"
 
 #: ../dnf/cli/output.py:765
 msgid " Optional Packages:"
-msgstr "Optionele pakketten:"
+msgstr " Optionele pakketten:"
 
 #: ../dnf/cli/output.py:766
 msgid " Conditional Packages:"
-msgstr "Voorwaardelijke pakketten:"
+msgstr " Voorwaardelijke pakketten:"
 
 #: ../dnf/cli/output.py:791
 #, fuzzy, python-format
@@ -1978,15 +1978,15 @@ msgstr "Omgevingsgroep: %s"
 #: ../dnf/cli/output.py:794
 #, python-format
 msgid " Environment-Id: %s"
-msgstr "Omgeving-ID: %s"
+msgstr " Omgeving-ID: %s"
 
 #: ../dnf/cli/output.py:800
 msgid " Mandatory Groups:"
-msgstr "Verplichte groepen:"
+msgstr " Verplichte groepen:"
 
 #: ../dnf/cli/output.py:801
 msgid " Optional Groups:"
-msgstr "Optionele groepen:"
+msgstr " Optionele groepen:"
 
 #: ../dnf/cli/output.py:822
 msgid "Matched from:"
@@ -2004,7 +2004,7 @@ msgstr "Repo        : %s"
 
 #: ../dnf/cli/output.py:869
 msgid "Description : "
-msgstr "Beschrijving:"
+msgstr "Beschrijving: "
 
 #: ../dnf/cli/output.py:873
 #, python-format
@@ -2120,13 +2120,13 @@ msgstr ""
 "(voeg '%s' toe aan opdrachtregel om upgrade te forceren)"
 
 #: ../dnf/cli/output.py:1115
-#, fuzzy, python-format
+#, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr "Pakketten overslaan met defecte afhankelijkheden %s"
 
 #: ../dnf/cli/output.py:1119
 msgid " or part of a group"
-msgstr "of onderdeel van een groep"
+msgstr " of onderdeel van een groep"
 
 #: ../dnf/cli/output.py:1134 ../dnf/cli/output.py:1180
 #: ../dnf/cli/output.py:1196 ../dnf/cli/output.py:1866
@@ -2739,7 +2739,7 @@ msgid "--> Finding unneeded leftover dependencies"
 msgstr "--> Opsporen onnodige maar overgebleven afhankelijkheden"
 
 #: ../dnf/repo.py:105
-#, python-format
+#, fuzzy, python-format
 msgid "no matching payload factory for %s"
 msgstr "geen overeenkomende payload factory voor %s"
 

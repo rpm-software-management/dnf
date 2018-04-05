@@ -269,7 +269,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/repolist.py:194
 msgid "Repo-distro-tags: "
-msgstr "Arkivdistribusjonsmerkelapper:"
+msgstr "Arkivdistribusjonsmerkelapper: "
 
 #: ../dnf/cli/commands/repolist.py:200
 msgid "Repo-updated : "
@@ -954,7 +954,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/reinstall.py:38
 msgid "reinstall a package"
-msgstr "ominstaller en pakke "
+msgstr "ominstaller en pakke"
 
 #: ../dnf/cli/commands/reinstall.py:42
 msgid "Package to reinstall"
@@ -1356,7 +1356,7 @@ msgstr "Ferdig!"
 #: ../dnf/cli/cli.py:124
 #, python-format
 msgid "  Installed: %s-%s at %s"
-msgstr "Installert: %s-%s til %s"
+msgstr "  Installert: %s-%s til %s"
 
 #: ../dnf/cli/cli.py:126
 #, fuzzy, python-format
@@ -1809,7 +1809,7 @@ msgstr "nei"
 
 #: ../dnf/cli/output.py:668
 msgid "Is this ok [y/N]: "
-msgstr "Er dette ok [j/N]:"
+msgstr "Er dette ok [j/N]: "
 
 #: ../dnf/cli/output.py:672
 msgid "Is this ok [Y/n]: "
@@ -1823,7 +1823,7 @@ msgstr ""
 #: ../dnf/cli/output.py:756
 #, python-format
 msgid " Group-Id: %s"
-msgstr "GruppeId:%s"
+msgstr " GruppeId:%s"
 
 #: ../dnf/cli/output.py:758 ../dnf/cli/output.py:797
 #, python-format
@@ -1837,19 +1837,19 @@ msgstr ""
 
 #: ../dnf/cli/output.py:763
 msgid " Mandatory Packages:"
-msgstr "Obligatoriske pakker:"
+msgstr " Obligatoriske pakker:"
 
 #: ../dnf/cli/output.py:764
 msgid " Default Packages:"
-msgstr "Standard pakker:"
+msgstr " Standard pakker:"
 
 #: ../dnf/cli/output.py:765
 msgid " Optional Packages:"
-msgstr "Valgfrie pakker:"
+msgstr " Valgfrie pakker:"
 
 #: ../dnf/cli/output.py:766
 msgid " Conditional Packages:"
-msgstr "Betingede pakker:"
+msgstr " Betingede pakker:"
 
 #: ../dnf/cli/output.py:791
 #, fuzzy, python-format
@@ -1999,7 +1999,7 @@ msgid ""
 msgstr ""
 
 #: ../dnf/cli/output.py:1115
-#, fuzzy, python-format
+#, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr ""
 
@@ -2609,7 +2609,7 @@ msgid "--> Finding unneeded leftover dependencies"
 msgstr ""
 
 #: ../dnf/repo.py:105
-#, python-format
+#, fuzzy, python-format
 msgid "no matching payload factory for %s"
 msgstr ""
 

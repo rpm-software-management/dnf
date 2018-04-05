@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-10-12 09:39+0200\n"
-"PO-Revision-Date: 2017-08-07 02:07-0400\n"
+"PO-Revision-Date: 2017-11-17 02:59-0500\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/dnf/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -540,7 +540,7 @@ msgstr "%s avmarkerad som användarinstallerad."
 #: ../dnf/cli/commands/mark.py:57
 #, python-format
 msgid "%s marked as group installed."
-msgstr ""
+msgstr "%s markerad som gruppinstallerad."
 
 #: ../dnf/cli/commands/mark.py:82 ../dnf/cli/commands/shell.py:116
 #: ../dnf/cli/commands/shell.py:225
@@ -919,10 +919,12 @@ msgid ""
 "Found more than one transaction ID.\n"
 "'{}' requires one transaction ID or package name."
 msgstr ""
+"Hittade mer än ett transaktions-ID.\n"
+"'{}' behöver ett transaktions-ID eller paketnamn."
 
 #: ../dnf/cli/commands/__init__.py:828
 msgid "No transaction ID or package name given."
-msgstr ""
+msgstr "Inget transaktions-ID eller paketnamn angivet."
 
 #: ../dnf/cli/commands/__init__.py:840
 msgid "You don't have access to the history DB."
@@ -957,10 +959,12 @@ msgid ""
 "Invalid transaction ID range definition '{}'.\n"
 "Use '<transaction-id>..<transaction-id>'."
 msgstr ""
+"Felaktig definition av transaktions-ID-intevall ”{}”.\n"
+"Använd ”<transaction-id>..<transaction-id>”."
 
 #: ../dnf/cli/commands/__init__.py:957
 msgid "No transaction which manipulates package '{}' was found."
-msgstr ""
+msgstr "Ingen transaktion som hanterar paketet ”{}” hittades."
 
 #: ../dnf/cli/commands/check.py:34
 msgid "check for problems in the packagedb"
@@ -1426,7 +1430,7 @@ msgstr ""
 #: ../dnf/cli/main.py:130
 #, python-format
 msgid " or '%s' to skip uninstallable packages)"
-msgstr ""
+msgstr " eller ”%s” för att hoppa över oinstallerbara paket)"
 
 #: ../dnf/cli/main.py:147
 msgid "Dependencies resolved."
@@ -1448,13 +1452,15 @@ msgstr "  Byggde      : %s %s"
 
 #: ../dnf/cli/cli.py:205
 msgid "DNF will only download packages for the transaction."
-msgstr ""
+msgstr "DNF kommer endast hämta paket för transaktionen."
 
 #: ../dnf/cli/cli.py:207
 msgid ""
 "DNF will only download packages, install gpg keys, and check the "
 "transaction."
 msgstr ""
+"DNF kommer endast hämta paket, installera gpg-nycklar och kontrollera "
+"transaktionen."
 
 #: ../dnf/cli/cli.py:211
 msgid "Operation aborted."
@@ -1482,7 +1488,7 @@ msgstr ""
 
 #: ../dnf/cli/cli.py:283
 msgid "GPG check FAILED"
-msgstr ""
+msgstr "GPG-kontrollen MISSLYCKADES"
 
 #: ../dnf/cli/cli.py:311 ../dnf/cli/cli.py:455 ../dnf/cli/cli.py:461
 msgid "Obsoleting Packages"
@@ -1553,7 +1559,7 @@ msgstr "Transaktionshistoriken är ofullständig, efter %u."
 
 #: ../dnf/cli/cli.py:630
 msgid "Undoing transaction {}, from {}"
-msgstr ""
+msgstr "Backar transaktionen {} från {}"
 
 #: ../dnf/cli/cli.py:722
 #, python-format
@@ -1592,6 +1598,7 @@ msgstr "Konfigurationsfel: %s"
 #: ../dnf/cli/cli.py:828
 msgid "--destdir must be used with --downloadonly or download command."
 msgstr ""
+"--destdir får bara användas med --downloadonly eller kommandot download."
 
 #: ../dnf/cli/cli.py:920
 msgid ""
@@ -1747,11 +1754,11 @@ msgstr "etikett och sökväg till ytterligare förråd, kan anges flera gånger.
 
 #: ../dnf/cli/option_parser.py:276
 msgid "disable removal of dependencies that are no longer used"
-msgstr ""
+msgstr "avaktivera borttagande av beroenden som inte används längre"
 
 #: ../dnf/cli/option_parser.py:279
 msgid "disable gpg signature checking"
-msgstr "inaktivera kontroll av gpg-signatur"
+msgstr "avaktivera kontroll av gpg-signatur"
 
 #: ../dnf/cli/option_parser.py:281
 msgid "control whether color is used"
@@ -1771,7 +1778,7 @@ msgstr "lös endast upp till IPv6-adresser"
 
 #: ../dnf/cli/option_parser.py:293
 msgid "set directory to copy packages to"
-msgstr ""
+msgstr "ange katalog att kopiera paket till"
 
 #: ../dnf/cli/option_parser.py:296
 msgid "only download packages"
@@ -1779,7 +1786,7 @@ msgstr "hämta endast paket"
 
 #: ../dnf/cli/option_parser.py:298
 msgid "add a comment to transaction"
-msgstr ""
+msgstr "lägg till en kommentar till transaktionen"
 
 #: ../dnf/cli/option_parser.py:301
 msgid "Include bugfix relevant packages, in updates"
@@ -1820,7 +1827,7 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:331
 msgid "Force the use of an architecture"
-msgstr ""
+msgstr "Framtvinga användningen av en arkitektur"
 
 #: ../dnf/cli/option_parser.py:365
 msgid "List of Main Commands:"
@@ -1957,7 +1964,7 @@ msgstr "Miljögrupp: %s"
 #: ../dnf/cli/output.py:794
 #, python-format
 msgid " Environment-Id: %s"
-msgstr "Miljö-id: %s"
+msgstr " Miljö-id: %s"
 
 #: ../dnf/cli/output.py:800
 msgid " Mandatory Groups:"
@@ -1998,12 +2005,12 @@ msgstr "Licens      : %s"
 #: ../dnf/cli/output.py:883
 #, python-format
 msgid "Provide    : %s"
-msgstr ""
+msgstr "Tillhandahåll: %s"
 
 #: ../dnf/cli/output.py:903
 #, python-format
 msgid "Other       : %s"
-msgstr ""
+msgstr "Annat       : %s"
 
 #: ../dnf/cli/output.py:952
 msgid "There was an error calculating total download size"
@@ -2063,7 +2070,7 @@ msgstr "Ominstallerar"
 
 #: ../dnf/cli/output.py:1082
 msgid "Installing group packages"
-msgstr ""
+msgstr "Installerar gruppaket"
 
 #: ../dnf/cli/output.py:1083
 msgid "Installing dependencies"
@@ -2079,7 +2086,7 @@ msgstr "Tar bort"
 
 #: ../dnf/cli/output.py:1086
 msgid "Removing dependent packages"
-msgstr ""
+msgstr "Tar bort beroende paket"
 
 #: ../dnf/cli/output.py:1087
 msgid "Removing unused dependencies"
@@ -2099,13 +2106,13 @@ msgstr ""
 "(lägg till ”%s” på kommandoraden för att framtvinga deras uppgradering)"
 
 #: ../dnf/cli/output.py:1115
-#, fuzzy, python-format
+#, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr "Hoppar över paket med trasiga  beroenden%s"
 
 #: ../dnf/cli/output.py:1119
 msgid " or part of a group"
-msgstr "eller del av en grupp"
+msgstr " eller del av en grupp"
 
 #: ../dnf/cli/output.py:1134 ../dnf/cli/output.py:1180
 #: ../dnf/cli/output.py:1196 ../dnf/cli/output.py:1866
@@ -2349,7 +2356,7 @@ msgstr "Ytterligare icke-standardinformation lagrad: %d"
 
 #: ../dnf/cli/output.py:1731
 msgid "Comment        :"
-msgstr ""
+msgstr "Kommentar      :"
 
 #. This is _possible_, but not common
 #: ../dnf/cli/output.py:1735
@@ -2600,7 +2607,7 @@ msgstr "Okänt konfigurationsalternativ: %s = %s"
 
 #: ../dnf/conf/config.py:910 ../dnf/conf/config.py:928
 msgid "Incorrect or unknown \"{}\": {}"
-msgstr ""
+msgstr "Felaktig eller okänd ”{}”: {}"
 
 #: ../dnf/conf/read.py:51
 #, python-format
@@ -2707,7 +2714,7 @@ msgstr "Misslyckades att ladda en insticksmodul: %s"
 
 #: ../dnf/subject.py:164
 msgid "No security updates for argument \"{}\""
-msgstr ""
+msgstr "Inga säkerhetsuppdateringar för argumentet ”{}”"
 
 #: ../dnf/transaction.py:225
 #, python-format
@@ -2719,7 +2726,7 @@ msgid "--> Finding unneeded leftover dependencies"
 msgstr "--> Letar efter överblivna beroenden som inte behövs"
 
 #: ../dnf/repo.py:105
-#, python-format
+#, fuzzy, python-format
 msgid "no matching payload factory for %s"
 msgstr "ingen matchande lastfabrik för %s"
 
@@ -2731,7 +2738,7 @@ msgstr "Redan hämtat"
 #: ../dnf/repo.py:463
 #, python-format
 msgid "determining the fastest mirror (%d hosts).. "
-msgstr "bestämmer den snabbaste spegeln (%d värdar) …"
+msgstr "bestämmer den snabbaste spegeln (%d värdar) … "
 
 #: ../dnf/repo.py:716
 #, python-format
@@ -3066,7 +3073,7 @@ msgstr ""
 #: ../dnf/base.py:1786
 #, python-format
 msgid "Package %s available, but installed for different architecture."
-msgstr ""
+msgstr "Paketet %s är tillgängligt, men installerat för en annan arkitektur."
 
 #: ../dnf/base.py:1961
 #, python-format
@@ -3099,7 +3106,7 @@ msgstr ""
 #: ../dnf/base.py:2152
 #, python-format
 msgid ". Failing package is: %s"
-msgstr ""
+msgstr ". Paketet som misslyckas är: %s"
 
 #: ../dnf/base.py:2153
 #, python-format
@@ -3144,6 +3151,7 @@ msgstr "  * Kanske du menade: {}"
 #: ../dnf/base.py:2295
 msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
 msgstr ""
+"Paketet ”{}” från det lokala förrådet ”{}” har en felaktig kontrollsumma"
 
 #: ../dnf/base.py:2304
 msgid "Some packages from local repository have incorrect checksum"
@@ -3151,17 +3159,19 @@ msgstr "Några paket från ett lokalt förråd har felaktig kontrollsumma"
 
 #: ../dnf/base.py:2308
 msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
-msgstr ""
+msgstr "Paketet ”{}” från förrådet ”{}” har en felaktig kontrollsumma"
 
 #: ../dnf/base.py:2313
 msgid "Package \"{}\" from repository \"{}\" has invalid cache"
-msgstr ""
+msgstr "Paketet ”{}” från förrådet ”{}” har en ogiltig cache"
 
 #: ../dnf/base.py:2319
 msgid ""
 "Some packages have invalid cache, but cannot be downloaded due to \"--"
 "cacheonly\" option"
 msgstr ""
+"Några paket har en ogiltig cache, men kan inte hämtas på grund av flaggan "
+"”--cacheonly”"
 
 #: ../dnf/base.py:2328
 #, python-format

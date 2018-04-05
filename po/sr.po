@@ -95,7 +95,7 @@ msgstr "Врста метаподатка за чишћење"
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "Чистим податке:"
+msgstr "Чистим податке:  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
@@ -254,15 +254,15 @@ msgstr "искључена"
 
 #: ../dnf/cli/commands/repolist.py:177
 msgid "Repo-id      : "
-msgstr "ID ризнице          :"
+msgstr "ID ризнице          : "
 
 #: ../dnf/cli/commands/repolist.py:178
 msgid "Repo-name    : "
-msgstr "Име ризнице         :"
+msgstr "Име ризнице         : "
 
 #: ../dnf/cli/commands/repolist.py:181
 msgid "Repo-status  : "
-msgstr "Стање ризнице       :"
+msgstr "Стање ризнице       : "
 
 #: ../dnf/cli/commands/repolist.py:184
 msgid "Repo-revision: "
@@ -270,7 +270,7 @@ msgstr "Ревизија ризнице     : "
 
 #: ../dnf/cli/commands/repolist.py:188
 msgid "Repo-tags    : "
-msgstr "Ознака ризница      :"
+msgstr "Ознака ризница      : "
 
 #: ../dnf/cli/commands/repolist.py:194
 msgid "Repo-distro-tags: "
@@ -278,15 +278,15 @@ msgstr "Дистро ознаке ризнице: "
 
 #: ../dnf/cli/commands/repolist.py:200
 msgid "Repo-updated : "
-msgstr "Ризница ажурирана   :"
+msgstr "Ризница ажурирана   : "
 
 #: ../dnf/cli/commands/repolist.py:202
 msgid "Repo-pkgs    : "
-msgstr "Пакета из ризнице   :"
+msgstr "Пакета из ризнице   : "
 
 #: ../dnf/cli/commands/repolist.py:203
 msgid "Repo-size    : "
-msgstr "Величина ризнице    :"
+msgstr "Величина ризнице    : "
 
 #: ../dnf/cli/commands/repolist.py:206
 msgid "Repo-metalink: "
@@ -298,33 +298,33 @@ msgstr "  Ажурирано          : "
 
 #: ../dnf/cli/commands/repolist.py:213
 msgid "Repo-mirrors : "
-msgstr "Огледала ризнице    :"
+msgstr "Огледала ризнице    : "
 
 #: ../dnf/cli/commands/repolist.py:217 ../dnf/cli/commands/repolist.py:221
 msgid "Repo-baseurl : "
-msgstr "Основни url ризнице :"
+msgstr "Основни url ризнице : "
 
 #: ../dnf/cli/commands/repolist.py:224
 msgid "Repo-expire  : "
-msgstr "Ризница истиче      :"
+msgstr "Ризница истиче      : "
 
 #. TRANSLATORS: Packages that are excluded - their names like (dnf systemd)
 #: ../dnf/cli/commands/repolist.py:228
 msgid "Repo-exclude : "
-msgstr "Ризница искључује   :"
+msgstr "Ризница искључује   : "
 
 #: ../dnf/cli/commands/repolist.py:232
 msgid "Repo-include : "
-msgstr "Укључени у ризници  :"
+msgstr "Укључени у ризници  : "
 
 #. TRANSLATORS: Number of packages that where excluded (5)
 #: ../dnf/cli/commands/repolist.py:237
 msgid "Repo-excluded: "
-msgstr "Искључени из ризнице:"
+msgstr "Искључени из ризнице: "
 
 #: ../dnf/cli/commands/repolist.py:241
 msgid "Repo-filename: "
-msgstr "Име датотеке ризнице:"
+msgstr "Име датотеке ризнице: "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
@@ -395,7 +395,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/updateinfo.py:232
 msgid "Updates Information Summary: "
-msgstr "Сажетак информација о ажурирањима:"
+msgstr "Сажетак информација о ажурирањима: "
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "New Package notice(s)"
@@ -1880,11 +1880,11 @@ msgstr " Id окружења: %s"
 
 #: ../dnf/cli/output.py:800
 msgid " Mandatory Groups:"
-msgstr "Обавезне групе:"
+msgstr " Обавезне групе:"
 
 #: ../dnf/cli/output.py:801
 msgid " Optional Groups:"
-msgstr "Изборне групе:"
+msgstr " Изборне групе:"
 
 #: ../dnf/cli/output.py:822
 msgid "Matched from:"
@@ -2018,7 +2018,7 @@ msgstr ""
 "(додајте '%s' у командну линију да бисте присилили надоградњу истих)"
 
 #: ../dnf/cli/output.py:1115
-#, fuzzy, python-format
+#, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr ""
 
@@ -2639,7 +2639,7 @@ msgid "--> Finding unneeded leftover dependencies"
 msgstr "--> Проналазим преостале непотребне програмске зависности"
 
 #: ../dnf/repo.py:105
-#, python-format
+#, fuzzy, python-format
 msgid "no matching payload factory for %s"
 msgstr ""
 

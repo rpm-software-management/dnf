@@ -569,7 +569,7 @@ msgstr "URL"
 #. & URL)
 #: ../dnf/cli/commands/search.py:71
 msgid " & "
-msgstr ", "
+msgstr " , "
 
 #. TRANSLATORS: %s  - translated package attributes,
 #. %%s - found keys (in listed attributes)
@@ -861,7 +861,7 @@ msgstr "Nissune corispuindince pal argoment: %s"
 #: ../dnf/cli/commands/reinstall.py:90
 #, python-format
 msgid " (from %s)"
-msgstr "(di %s)"
+msgstr " (di %s)"
 
 #: ../dnf/cli/commands/__init__.py:421 ../dnf/cli/commands/__init__.py:478
 #: ../dnf/cli/commands/reinstall.py:91 ../dnf/cli/commands/remove.py:100
@@ -1707,7 +1707,7 @@ msgid ""
 msgstr ""
 "al abilite la logjiche di elaborazion di dnf pai pachets obsolets pai "
 "inzornaments o al mostre lis funzionalitâts che il pachet al fâs deventâ "
-"obsolet pai comants info, list e repoquery "
+"obsolet pai comants info, list e repoquery"
 
 #: ../dnf/cli/option_parser.py:241
 msgid "debugging output level for rpm"

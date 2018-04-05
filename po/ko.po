@@ -38,7 +38,7 @@ msgstr "'%s'에 업데이트가 적용 되었습니다."
 #: ../dnf/automatic/emitter.py:82
 #, python-format
 msgid "Updates downloaded on '%s'."
-msgstr " '%s'에 업데이트가 다운로드 되었습니다."
+msgstr "'%s'에 업데이트가 다운로드 되었습니다."
 
 #: ../dnf/automatic/emitter.py:84
 #, python-format
@@ -1310,12 +1310,12 @@ msgstr "잠긴 프로세스(PID %d)에 대해 정보를 가져올 수 없습니�
 #: ../dnf/cli/utils.py:117
 #, python-format
 msgid "  The application with PID %d is: %s"
-msgstr "PID %d를 가진 애플리케이션은 %s 입니다"
+msgstr "  PID %d를 가진 애플리케이션은 %s 입니다"
 
 #: ../dnf/cli/utils.py:120
 #, python-format
 msgid "    Memory : %5s RSS (%5sB VSZ)"
-msgstr "   메모리 : %5s RSS (%5sB VSZ)"
+msgstr "    메모리 : %5s RSS (%5sB VSZ)"
 
 #: ../dnf/cli/utils.py:125
 #, python-format
@@ -1352,12 +1352,12 @@ msgstr ""
 #: ../dnf/cli/cli.py:124
 #, fuzzy, python-format
 msgid "  Installed: %s-%s at %s"
-msgstr "%s-%s 일 %s 에 설치됨"
+msgstr "  %s-%s 일 %s 에 설치됨"
 
 #: ../dnf/cli/cli.py:126
 #, fuzzy, python-format
 msgid "  Built    : %s at %s"
-msgstr "%s 일 %s 에 빌드됨"
+msgstr "  %s 일 %s 에 빌드됨"
 
 #: ../dnf/cli/cli.py:205
 msgid "DNF will only download packages for the transaction."
@@ -1994,7 +1994,7 @@ msgid ""
 msgstr ""
 
 #: ../dnf/cli/output.py:1115
-#, fuzzy, python-format
+#, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr ""
 
@@ -2607,7 +2607,7 @@ msgid "--> Finding unneeded leftover dependencies"
 msgstr ""
 
 #: ../dnf/repo.py:105
-#, python-format
+#, fuzzy, python-format
 msgid "no matching payload factory for %s"
 msgstr ""
 

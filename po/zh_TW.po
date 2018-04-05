@@ -1,13 +1,15 @@
 # Cheng-Chia Tseng <pswo10680@gmail.com>, 2015. #zanata
 # Cheng-Chia Tseng <pswo10680@gmail.com>, 2016. #zanata
 # Cheng-Chia Tseng <pswo10680@gmail.com>, 2017. #zanata
+# Cheng-Chia Tseng <pswo10680@gmail.com>, 2018. #zanata
+# Peter Pan <pan93412@gmail.com>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-10-12 09:39+0200\n"
-"PO-Revision-Date: 2017-06-27 01:25-0400\n"
-"Last-Translator: Cheng-Chia Tseng <pswo10680@gmail.com>\n"
+"PO-Revision-Date: 2018-03-27 12:39-0400\n"
+"Last-Translator: Peter Pan <pan93412@gmail.com>\n"
 "Language-Team: Chinese (Taiwan)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -19,42 +21,42 @@ msgstr ""
 #: ../dnf/automatic/emitter.py:31
 #, python-format
 msgid "The following updates have been applied on '%s':"
-msgstr ""
+msgstr "下列更新已套用至「%s」："
 
 #: ../dnf/automatic/emitter.py:32
 #, python-format
 msgid "The following updates are available on '%s':"
-msgstr ""
+msgstr "下列更新於「%s」上可用："
 
 #: ../dnf/automatic/emitter.py:33
 #, python-format
 msgid "The following updates were downloaded on '%s':"
-msgstr ""
+msgstr "下列更新已下載於「%s」："
 
 #: ../dnf/automatic/emitter.py:80
 #, python-format
 msgid "Updates applied on '%s'."
-msgstr ""
+msgstr "更新已套用至「%s」。"
 
 #: ../dnf/automatic/emitter.py:82
 #, python-format
 msgid "Updates downloaded on '%s'."
-msgstr ""
+msgstr "更新已下載於「%s」。"
 
 #: ../dnf/automatic/emitter.py:84
 #, python-format
 msgid "Updates available on '%s'."
-msgstr ""
+msgstr "更新於「%s」上可用。"
 
 #: ../dnf/automatic/emitter.py:107
 #, python-format
 msgid "Failed to send an email via '%s': %s"
-msgstr ""
+msgstr "無法透過「%s」發送電子郵件：%s"
 
 #: ../dnf/automatic/emitter.py:137
 #, python-format
 msgid "Failed to execute command '%s': returned %d"
-msgstr ""
+msgstr "無法執行「%s」指令：已回傳 %d"
 
 #: ../dnf/automatic/main.py:226 ../dnf/cli/main.py:57
 #, python-format
@@ -79,19 +81,19 @@ msgstr "PACKAGE"
 
 #: ../dnf/cli/commands/clean.py:87
 msgid "remove cached data"
-msgstr ""
+msgstr "移除快取資料"
 
 #: ../dnf/cli/commands/clean.py:93
 msgid "Metadata type to clean"
-msgstr ""
+msgstr "要清除的中介資料類型"
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr ""
+msgstr "正在清理資料：  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
-msgstr ""
+msgstr "快取已過期"
 
 #: ../dnf/cli/commands/clean.py:115
 #, python-format
@@ -102,100 +104,100 @@ msgstr[0] ""
 #: ../dnf/cli/commands/clean.py:119 ../dnf/lock.py:139
 #, python-format
 msgid "Waiting for process with pid %d to finish."
-msgstr "正在等候 pid %d 程序完成。"
+msgstr "正在等候 PID %d 程序完成。"
 
 #: ../dnf/cli/commands/group.py:45
 msgid "display, or use, the groups information"
-msgstr ""
+msgstr "顯示或使用群組資訊"
 
 #: ../dnf/cli/commands/group.py:70
 msgid "No group data available for configured repositories."
-msgstr ""
+msgstr "設定的軟體庫沒有可用的群組資料。"
 
 #: ../dnf/cli/commands/group.py:123
 #, python-format
 msgid "Warning: Group %s does not exist."
-msgstr ""
+msgstr "警告： %s 群組不存在。"
 
 #: ../dnf/cli/commands/group.py:157
 msgid "Warning: No groups match:"
-msgstr ""
+msgstr "警告：沒有符合的群組："
 
 #: ../dnf/cli/commands/group.py:186
 msgid "Available Environment Groups:"
-msgstr ""
+msgstr "可用的環境群組："
 
 #: ../dnf/cli/commands/group.py:188
 msgid "Installed Environment Groups:"
-msgstr ""
+msgstr "已安裝的環境群組："
 
 #: ../dnf/cli/commands/group.py:195 ../dnf/cli/commands/group.py:300
 msgid "Installed Groups:"
-msgstr ""
+msgstr "已安裝的群組："
 
 #: ../dnf/cli/commands/group.py:202 ../dnf/cli/commands/group.py:307
 msgid "Installed Language Groups:"
-msgstr ""
+msgstr "已安裝的語言群組："
 
 #: ../dnf/cli/commands/group.py:212 ../dnf/cli/commands/group.py:314
 msgid "Available Groups:"
-msgstr ""
+msgstr "可用的群組："
 
 #: ../dnf/cli/commands/group.py:219 ../dnf/cli/commands/group.py:321
 msgid "Available Language Groups:"
-msgstr ""
+msgstr "可用的語言群組"
 
 #: ../dnf/cli/commands/group.py:243
 #, python-format
 msgid "Environments marked installed: %s"
-msgstr ""
+msgstr "標記安裝的環境： %s"
 
 #: ../dnf/cli/commands/group.py:247
 #, python-format
 msgid "Groups marked installed: %s"
-msgstr ""
+msgstr "標記安裝的群組： %s"
 
 #: ../dnf/cli/commands/group.py:264
 #, python-format
 msgid "Environments marked removed: %s"
-msgstr ""
+msgstr "標記移除的環境： %s"
 
 #: ../dnf/cli/commands/group.py:268
 #, python-format
 msgid "Groups marked removed: %s"
-msgstr ""
+msgstr "標記移除的群組： %s"
 
 #: ../dnf/cli/commands/group.py:328
 msgid "include optional packages from group"
-msgstr ""
+msgstr "包含群組提供的選用軟體包"
 
 #: ../dnf/cli/commands/group.py:331
 msgid "show also hidden groups"
-msgstr ""
+msgstr "也顯示隱藏群組"
 
 #: ../dnf/cli/commands/group.py:333
 msgid "show only installed groups"
-msgstr ""
+msgstr "僅顯示已安裝的群組"
 
 #: ../dnf/cli/commands/group.py:335
 msgid "show only available groups"
-msgstr ""
+msgstr "僅顯示可用的群組"
 
 #: ../dnf/cli/commands/group.py:347
 #, python-format
 msgid "Invalid groups sub-command, use: %s."
-msgstr ""
+msgstr "無效的群組子指令，請用：%s。"
 
 #: ../dnf/cli/commands/group.py:402 ../dnf/cli/commands/__init__.py:358
 #: ../dnf/cli/commands/__init__.py:880 ../dnf/cli/cli.py:368
 #: ../dnf/cli/cli.py:615 ../dnf/cli/cli.py:645
 #, python-format
 msgid "No package %s available."
-msgstr ""
+msgstr "沒有 %s 軟體包可用。"
 
 #: ../dnf/cli/commands/group.py:405
 msgid "Unable to find a mandatory group package."
-msgstr ""
+msgstr "找不到強制群組軟體包。"
 
 #: ../dnf/cli/commands/repolist.py:37 ../dnf/cli/commands/updateinfo.py:49
 msgid "unknown"
@@ -218,23 +220,23 @@ msgstr "%s 秒（上次：%s）"
 
 #: ../dnf/cli/commands/repolist.py:75
 msgid "display the configured software repositories"
-msgstr ""
+msgstr "顯示設定的軟體庫"
 
 #: ../dnf/cli/commands/repolist.py:82
 msgid "show all repos"
-msgstr ""
+msgstr "顯示所有軟體庫"
 
 #: ../dnf/cli/commands/repolist.py:85
 msgid "show enabled repos (default)"
-msgstr ""
+msgstr "顯示啟用的軟體庫 （預設）"
 
 #: ../dnf/cli/commands/repolist.py:88
 msgid "show disabled repos"
-msgstr ""
+msgstr "顯示停用的軟體庫"
 
 #: ../dnf/cli/commands/repolist.py:120
 msgid "No repositories available"
-msgstr ""
+msgstr "沒有可用的軟體庫"
 
 #: ../dnf/cli/commands/repolist.py:142 ../dnf/cli/commands/repolist.py:143
 msgid "enabled"
@@ -246,216 +248,221 @@ msgstr "已停用"
 
 #: ../dnf/cli/commands/repolist.py:177
 msgid "Repo-id      : "
-msgstr ""
+msgstr "軟體庫ID： "
 
 #: ../dnf/cli/commands/repolist.py:178
 msgid "Repo-name    : "
-msgstr ""
+msgstr "軟體庫名稱： "
 
 #: ../dnf/cli/commands/repolist.py:181
 msgid "Repo-status  : "
-msgstr ""
+msgstr "軟體庫狀態： "
 
 #: ../dnf/cli/commands/repolist.py:184
 msgid "Repo-revision: "
-msgstr ""
+msgstr "軟體庫修訂： "
 
 #: ../dnf/cli/commands/repolist.py:188
 msgid "Repo-tags    : "
-msgstr ""
+msgstr "軟體庫標籤： "
 
 #: ../dnf/cli/commands/repolist.py:194
 msgid "Repo-distro-tags: "
-msgstr ""
+msgstr "軟體庫散布版標籤： "
 
 #: ../dnf/cli/commands/repolist.py:200
 msgid "Repo-updated : "
-msgstr ""
+msgstr "軟體庫更新： "
 
 #: ../dnf/cli/commands/repolist.py:202
 msgid "Repo-pkgs    : "
-msgstr ""
+msgstr "軟體庫軟體包： "
 
 #: ../dnf/cli/commands/repolist.py:203
 msgid "Repo-size    : "
-msgstr ""
+msgstr "軟體庫大小： "
 
 #: ../dnf/cli/commands/repolist.py:206
 msgid "Repo-metalink: "
-msgstr ""
+msgstr "軟體庫中介連結： "
 
 #: ../dnf/cli/commands/repolist.py:211
 msgid "  Updated    : "
-msgstr ""
+msgstr "  更新時間： "
 
 #: ../dnf/cli/commands/repolist.py:213
 msgid "Repo-mirrors : "
-msgstr ""
+msgstr "軟體庫鏡像： "
 
 #: ../dnf/cli/commands/repolist.py:217 ../dnf/cli/commands/repolist.py:221
 msgid "Repo-baseurl : "
-msgstr ""
+msgstr "軟體庫基礎URL： "
 
 #: ../dnf/cli/commands/repolist.py:224
 msgid "Repo-expire  : "
-msgstr ""
+msgstr "軟體庫過期： "
 
 #. TRANSLATORS: Packages that are excluded - their names like (dnf systemd)
 #: ../dnf/cli/commands/repolist.py:228
 msgid "Repo-exclude : "
-msgstr ""
+msgstr "軟體庫排除： "
 
 #: ../dnf/cli/commands/repolist.py:232
 msgid "Repo-include : "
-msgstr ""
+msgstr "軟體庫納入： "
 
 #. TRANSLATORS: Number of packages that where excluded (5)
 #: ../dnf/cli/commands/repolist.py:237
 msgid "Repo-excluded: "
-msgstr ""
+msgstr "軟體庫排除： "
 
 #: ../dnf/cli/commands/repolist.py:241
 msgid "Repo-filename: "
-msgstr ""
+msgstr "軟體庫檔名： "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
 #: ../dnf/cli/commands/repolist.py:249 ../dnf/cli/commands/repolist.py:278
 msgid "repo id"
-msgstr ""
+msgstr "軟體庫ID"
 
 #: ../dnf/cli/commands/repolist.py:266 ../dnf/cli/commands/repolist.py:267
 #: ../dnf/cli/commands/repolist.py:283
 msgid "status"
-msgstr ""
+msgstr "狀態"
 
 #: ../dnf/cli/commands/repolist.py:279
 msgid "repo name"
-msgstr ""
+msgstr "軟體庫名稱"
 
 #: ../dnf/cli/commands/updateinfo.py:46
 msgid "bugfix"
-msgstr ""
+msgstr "臭蟲修復"
 
 #: ../dnf/cli/commands/updateinfo.py:47
 msgid "enhancement"
-msgstr ""
+msgstr "增強"
 
 #: ../dnf/cli/commands/updateinfo.py:48
 msgid "security"
-msgstr ""
+msgstr "安全性"
 
 #: ../dnf/cli/commands/updateinfo.py:50
 msgid "newpackage"
-msgstr ""
+msgstr "新軟體包"
 
 #: ../dnf/cli/commands/updateinfo.py:52
+#, fuzzy
 msgid "Critical/Sec."
-msgstr ""
+msgstr "關鍵/秒"
 
 #: ../dnf/cli/commands/updateinfo.py:53
+#, fuzzy
 msgid "Important/Sec."
-msgstr ""
+msgstr "重要/秒."
 
 #: ../dnf/cli/commands/updateinfo.py:54
+#, fuzzy
 msgid "Moderate/Sec."
-msgstr ""
+msgstr "中等/秒."
 
 #: ../dnf/cli/commands/updateinfo.py:55
+#, fuzzy
 msgid "Low/Sec."
-msgstr ""
+msgstr "低等/秒."
 
 #: ../dnf/cli/commands/updateinfo.py:56
+#, fuzzy
 msgid "Unknown/Sec."
-msgstr ""
+msgstr "未知/秒."
 
 #: ../dnf/cli/commands/updateinfo.py:67
 msgid "display advisories about packages"
-msgstr ""
+msgstr "顯示軟體包通告"
 
 #: ../dnf/cli/commands/updateinfo.py:136
 msgid "show summary of advisories"
-msgstr ""
+msgstr "顯示通告的摘要"
 
 #: ../dnf/cli/commands/updateinfo.py:138
 msgid "show list of advisories"
-msgstr ""
+msgstr "顯示通告列表"
 
 #: ../dnf/cli/commands/updateinfo.py:140
 msgid "show info of advisories"
-msgstr ""
+msgstr "顯示通告資訊"
 
 #: ../dnf/cli/commands/updateinfo.py:232
 msgid "Updates Information Summary: "
-msgstr ""
+msgstr "更新資訊摘要： "
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "New Package notice(s)"
-msgstr ""
+msgstr "新軟體包注意"
 
 #: ../dnf/cli/commands/updateinfo.py:236
 msgid "Security notice(s)"
-msgstr ""
+msgstr "安全性注意"
 
 #: ../dnf/cli/commands/updateinfo.py:237
 msgid "Critical Security notice(s)"
-msgstr ""
+msgstr "重大安全注意"
 
 #: ../dnf/cli/commands/updateinfo.py:239
 msgid "Important Security notice(s)"
-msgstr ""
+msgstr "重要安全注意"
 
 #: ../dnf/cli/commands/updateinfo.py:241
 msgid "Moderate Security notice(s)"
-msgstr ""
+msgstr "中等安全注意"
 
 #: ../dnf/cli/commands/updateinfo.py:243
 msgid "Low Security notice(s)"
-msgstr ""
+msgstr "低等安全注意"
 
 #: ../dnf/cli/commands/updateinfo.py:245
 msgid "Unknown Security notice(s)"
-msgstr ""
+msgstr "未知安全注意"
 
 #: ../dnf/cli/commands/updateinfo.py:247
 msgid "Bugfix notice(s)"
-msgstr ""
+msgstr "臭蟲修正注意"
 
 #: ../dnf/cli/commands/updateinfo.py:248
 msgid "Enhancement notice(s)"
-msgstr ""
+msgstr "功能增強注意"
 
 #: ../dnf/cli/commands/updateinfo.py:249
 msgid "other notice(s)"
-msgstr ""
+msgstr "其他注意"
 
 #: ../dnf/cli/commands/updateinfo.py:369
 msgid "true"
-msgstr ""
+msgstr "true"
 
 #: ../dnf/cli/commands/updateinfo.py:369
 msgid "false"
-msgstr ""
+msgstr "false"
 
 #: ../dnf/cli/commands/updateinfo.py:371
 msgid "Update ID"
-msgstr ""
+msgstr "更新ID"
 
 #: ../dnf/cli/commands/updateinfo.py:371
 msgid "Type"
-msgstr ""
+msgstr "類型"
 
 #: ../dnf/cli/commands/updateinfo.py:371
 msgid "Updated"
-msgstr ""
+msgstr "已更新"
 
 #: ../dnf/cli/commands/updateinfo.py:371
 msgid "Bugs"
-msgstr ""
+msgstr "臭蟲"
 
 #: ../dnf/cli/commands/updateinfo.py:372
 msgid "CVEs"
-msgstr ""
+msgstr "CVE"
 
 #: ../dnf/cli/commands/updateinfo.py:372 ../dnf/cli/commands/search.py:58
 #: ../dnf/cli/output.py:538
@@ -464,15 +471,15 @@ msgstr "描述"
 
 #: ../dnf/cli/commands/updateinfo.py:372
 msgid "Severity"
-msgstr ""
+msgstr "嚴重"
 
 #: ../dnf/cli/commands/updateinfo.py:372
 msgid "Rights"
-msgstr ""
+msgstr "權利"
 
 #: ../dnf/cli/commands/updateinfo.py:373
 msgid "Files"
-msgstr ""
+msgstr "檔案"
 
 #: ../dnf/cli/commands/updateinfo.py:373 ../dnf/cli/output.py:1261
 #: ../dnf/cli/output.py:1626 ../dnf/cli/output.py:1628
@@ -485,15 +492,15 @@ msgstr "已安裝"
 
 #: ../dnf/cli/commands/updateinfo.py:407
 msgid "updates"
-msgstr ""
+msgstr "更新"
 
 #: ../dnf/cli/commands/updateinfo.py:410
 msgid "all"
-msgstr ""
+msgstr "所有"
 
 #: ../dnf/cli/commands/updateinfo.py:415
 msgid "available"
-msgstr ""
+msgstr "可用"
 
 #: ../dnf/cli/commands/distrosync.py:33
 msgid "synchronize installed packages to the latest available versions"
@@ -505,52 +512,52 @@ msgstr "要同步的軟體包"
 
 #: ../dnf/cli/commands/makecache.py:37
 msgid "generate the metadata cache"
-msgstr ""
+msgstr "生成中介資料快取"
 
 #: ../dnf/cli/commands/makecache.py:53
 msgid "Making cache files for all metadata files."
-msgstr ""
+msgstr "為所有中介資料檔案製作快取檔案。"
 
 #: ../dnf/cli/commands/mark.py:36
 msgid "mark or unmark installed packages as installed by user."
-msgstr ""
+msgstr "由使用者標記為安裝或取消標記的軟體包"
 
 #: ../dnf/cli/commands/mark.py:47
 #, python-format
 msgid "%s marked as user installed."
-msgstr ""
+msgstr "%s 標記為使用者安裝。"
 
 #: ../dnf/cli/commands/mark.py:52
 #, python-format
 msgid "%s unmarked as user installed."
-msgstr ""
+msgstr "%s 取消標記使用者安裝。"
 
 #: ../dnf/cli/commands/mark.py:57
 #, python-format
 msgid "%s marked as group installed."
-msgstr ""
+msgstr "%s 標記為群組安裝。"
 
 #: ../dnf/cli/commands/mark.py:82 ../dnf/cli/commands/shell.py:116
 #: ../dnf/cli/commands/shell.py:225
 msgid "Error:"
-msgstr ""
+msgstr "錯誤："
 
 #: ../dnf/cli/commands/mark.py:84
 #, python-format
 msgid "Package %s is not installed."
-msgstr ""
+msgstr "%s 軟體包尚未安裝。"
 
 #: ../dnf/cli/commands/search.py:43
 msgid "search package details for the given string"
-msgstr ""
+msgstr "根據字串搜尋軟體包詳細資訊"
 
 #: ../dnf/cli/commands/search.py:48
 msgid "search also package description and URL"
-msgstr ""
+msgstr "也搜尋軟體包描述說明和URL"
 
 #: ../dnf/cli/commands/search.py:49
 msgid "QUERY_STRING"
-msgstr ""
+msgstr "QUERY_STRING"
 
 #: ../dnf/cli/commands/search.py:56 ../dnf/cli/output.py:498
 msgid "Name"
@@ -568,50 +575,50 @@ msgstr "URL"
 #. & URL)
 #: ../dnf/cli/commands/search.py:71
 msgid " & "
-msgstr ""
+msgstr " & "
 
 #. TRANSLATORS: %s  - translated package attributes,
 #. %%s - found keys (in listed attributes)
 #: ../dnf/cli/commands/search.py:75
 #, python-format
 msgid "%s Exactly Matched: %%s"
-msgstr ""
+msgstr "%s 精確符合：%%s"
 
 #. TRANSLATORS: %s  - translated package attributes,
 #. %%s - found keys (in listed attributes)
 #: ../dnf/cli/commands/search.py:79
 #, python-format
 msgid "%s Matched: %%s"
-msgstr ""
+msgstr "%s 符合： %%s"
 
 #: ../dnf/cli/commands/search.py:116
 msgid "No matches found."
-msgstr ""
+msgstr "找不到符合項目。"
 
 #: ../dnf/cli/commands/search.py:135
 msgid "Searching Packages: "
-msgstr ""
+msgstr "搜尋軟體包： "
 
 #: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
-msgstr ""
+msgstr "執行互動式 DNF shell"
 
 #: ../dnf/cli/commands/shell.py:73
 msgid "SCRIPT"
-msgstr ""
+msgstr "SCRIPT"
 
 #: ../dnf/cli/commands/shell.py:74
 msgid "Script to run in DNF shell"
-msgstr ""
+msgstr "要在 DNF shell 中執行的指令稿"
 
 #: ../dnf/cli/commands/shell.py:130
 msgid "Unsupported key value."
-msgstr ""
+msgstr "不支援的金鑰值。"
 
 #: ../dnf/cli/commands/shell.py:146
 #, python-format
 msgid "Could not find repository: %s"
-msgstr ""
+msgstr "找不到軟體庫：%s"
 
 #: ../dnf/cli/commands/shell.py:162
 msgid ""
@@ -621,12 +628,19 @@ msgid ""
 "    If no value is given it prints the current value.\n"
 "    If value is given it sets that value."
 msgstr ""
+"{} arg [value]\n"
+"  arg: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,\n"
+"        repo_id.gpgcheck, repo_id.exclude\n"
+"    如果沒有指定值，則顯示目前的值。\n"
+"    如果有指定值，則設定該值。"
 
 #: ../dnf/cli/commands/shell.py:169
 msgid ""
 "{} [command]\n"
 "    print help"
 msgstr ""
+"{} [command]\n"
+"    print help"
 
 #: ../dnf/cli/commands/shell.py:173
 msgid ""
@@ -635,12 +649,18 @@ msgid ""
 "  enable: enable repositories. option = repository id\n"
 "  disable: disable repositories. option = repository id"
 msgstr ""
+"{} arg [option]\n"
+"  list: 列出軟體庫與其狀態。 option = [all | id | glob]\n"
+"  enable: 啟用軟體庫 option = 軟體庫ID\n"
+"  disable: 停用軟體庫 option = 軟體庫ID"
 
 #: ../dnf/cli/commands/shell.py:179
 msgid ""
 "{}\n"
 "    resolve the transaction set"
 msgstr ""
+"{}\n"
+"    解析處理事項集"
 
 #: ../dnf/cli/commands/shell.py:183
 msgid ""
@@ -649,18 +669,26 @@ msgid ""
 "  reset: reset (zero-out) the transaction\n"
 "  run: run the transaction"
 msgstr ""
+"{} arg\n"
+"  list: 列出處理事項內容\n"
+"  reset: 重設（歸零）處理事項\n"
+"  run: 執行處理事項"
 
 #: ../dnf/cli/commands/shell.py:189
 msgid ""
 "{}\n"
 "    run the transaction"
 msgstr ""
+"{}\n"
+"    執行處理事項"
 
 #: ../dnf/cli/commands/shell.py:193
 msgid ""
 "{}\n"
 "    exit the shell"
 msgstr ""
+"{}\n"
+"    離開 Shell"
 
 #: ../dnf/cli/commands/shell.py:198
 msgid ""
@@ -674,11 +702,20 @@ msgid ""
 "run                      resolve and run the transaction set\n"
 "exit (or quit)           exit the shell"
 msgstr ""
+"Shell 專用引數：\n"
+"\n"
+"config                   設定配置選項\n"
+"help                     顯示說明\n"
+"repository (or repo)     啟用、停用、列出軟體庫\n"
+"resolvedep               解析處理事項設定\n"
+"transaction (or ts)      列出、重設、執行處理事項集\n"
+"run                      解析並執行處理事項集\n"
+"exit (or quit)           離開 Shell"
 
 #: ../dnf/cli/commands/shell.py:225 ../dnf/cli/cli.py:708
 #, python-format
 msgid "Unknown repo: '%s'"
-msgstr ""
+msgstr "未知的軟體庫：「%s」"
 
 #: ../dnf/cli/commands/shell.py:248
 #, python-format
@@ -1804,11 +1841,11 @@ msgstr "否"
 
 #: ../dnf/cli/output.py:668
 msgid "Is this ok [y/N]: "
-msgstr "這樣可以嗎 [y/N]："
+msgstr "這樣可以嗎 [y/N]： "
 
 #: ../dnf/cli/output.py:672
 msgid "Is this ok [Y/n]: "
-msgstr "這樣可以嗎 [Y/n]："
+msgstr "這樣可以嗎 [Y/n]： "
 
 #: ../dnf/cli/output.py:752
 #, python-format
@@ -1880,7 +1917,7 @@ msgstr "軟體庫    ：%s"
 
 #: ../dnf/cli/output.py:869
 msgid "Description : "
-msgstr "描述      ："
+msgstr "描述      ： "
 
 #: ../dnf/cli/output.py:873
 #, python-format

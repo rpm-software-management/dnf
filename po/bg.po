@@ -88,7 +88,7 @@ msgstr "Тип метаданни за почистване"
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "Почиствам данни:"
+msgstr "Почиствам данни:  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
@@ -169,7 +169,7 @@ msgstr "Групи, маркирани като премахнати: %s"
 
 #: ../dnf/cli/commands/group.py:328
 msgid "include optional packages from group"
-msgstr " включва незадължителни пакети от група"
+msgstr "включва незадължителни пакети от група"
 
 #: ../dnf/cli/commands/group.py:331
 msgid "show also hidden groups"
@@ -1626,7 +1626,7 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:224
 msgid "debugging output level"
-msgstr " ниво на информация за откриване на грешки"
+msgstr "ниво на информация за откриване на грешки"
 
 #: ../dnf/cli/option_parser.py:227
 msgid "dumps detailed solving results into files"
@@ -1638,7 +1638,7 @@ msgstr "показва дублирания, в хранилища, в спис�
 
 #: ../dnf/cli/option_parser.py:234
 msgid "error output level"
-msgstr " ниво на информация грешки"
+msgstr "ниво на информация грешки"
 
 #: ../dnf/cli/option_parser.py:237
 msgid ""
@@ -1648,7 +1648,7 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:241
 msgid "debugging output level for rpm"
-msgstr " ниво на информация за откриване на грешки за rpm"
+msgstr "ниво на информация за откриване на грешки за rpm"
 
 #: ../dnf/cli/option_parser.py:244
 msgid "automatically answer yes for all questions"
@@ -2025,7 +2025,7 @@ msgid ""
 msgstr ""
 
 #: ../dnf/cli/output.py:1115
-#, fuzzy, python-format
+#, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr ""
 
@@ -2638,7 +2638,7 @@ msgid "--> Finding unneeded leftover dependencies"
 msgstr "--> Намиране на ненужни останали зависимости"
 
 #: ../dnf/repo.py:105
-#, python-format
+#, fuzzy, python-format
 msgid "no matching payload factory for %s"
 msgstr ""
 

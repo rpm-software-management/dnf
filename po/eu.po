@@ -95,7 +95,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/clean.py:105
 msgid "Cleaning data:  "
-msgstr "Datuak garbitzen:"
+msgstr "Datuak garbitzen:  "
 
 #: ../dnf/cli/commands/clean.py:111
 msgid "Cache was expired"
@@ -396,7 +396,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/updateinfo.py:232
 msgid "Updates Information Summary: "
-msgstr "Informazio-laburpena eguneratzen du:"
+msgstr "Informazio-laburpena eguneratzen du: "
 
 #: ../dnf/cli/commands/updateinfo.py:235
 msgid "New Package notice(s)"
@@ -1325,7 +1325,7 @@ msgstr "Ez da aurkitu blokeo-prozesuari buruzko informazioa (%d PIDa)"
 #: ../dnf/cli/utils.py:117
 #, python-format
 msgid "  The application with PID %d is: %s"
-msgstr "%d PIDa duen aplikazioa hau da: %s"
+msgstr "  %d PIDa duen aplikazioa hau da: %s"
 
 #: ../dnf/cli/utils.py:120
 #, python-format
@@ -1340,7 +1340,7 @@ msgstr "    Hasiera: %s - duela %s"
 #: ../dnf/cli/utils.py:127
 #, python-format
 msgid "    State  : %s"
-msgstr " Egoera : %s"
+msgstr "    Egoera : %s"
 
 #: ../dnf/cli/main.py:109
 msgid "No read/execute access in current directory, moving to /"
@@ -1825,11 +1825,11 @@ msgstr "ez"
 
 #: ../dnf/cli/output.py:668
 msgid "Is this ok [y/N]: "
-msgstr "Ados? [b/E]:  "
+msgstr "Ados? [b/E]: "
 
 #: ../dnf/cli/output.py:672
 msgid "Is this ok [Y/n]: "
-msgstr "Ongi [Y/n]:"
+msgstr "Ongi [Y/n]: "
 
 #: ../dnf/cli/output.py:752
 #, python-format
@@ -1875,15 +1875,15 @@ msgstr "Ingurune-taldea: %s"
 #: ../dnf/cli/output.py:794
 #, python-format
 msgid " Environment-Id: %s"
-msgstr "Ingurune-IDa: %s"
+msgstr " Ingurune-IDa: %s"
 
 #: ../dnf/cli/output.py:800
 msgid " Mandatory Groups:"
-msgstr "Derrigorrezko taldeak:"
+msgstr " Derrigorrezko taldeak:"
 
 #: ../dnf/cli/output.py:801
 msgid " Optional Groups:"
-msgstr "Aukerako taldeak:"
+msgstr " Aukerako taldeak:"
 
 #: ../dnf/cli/output.py:822
 msgid "Matched from:"
@@ -2017,7 +2017,7 @@ msgstr ""
 "(gehitu '%s' komando-lerroari haien bertsio-berritzea behartzeko)"
 
 #: ../dnf/cli/output.py:1115
-#, fuzzy, python-format
+#, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr ""
 
@@ -2369,7 +2369,7 @@ msgstr "saltatzen."
 #: ../dnf/comps.py:170
 #, python-format
 msgid "Group '%s' is not installed."
-msgstr " '%s' taldea ez da hasieratu."
+msgstr "'%s' taldea ez da hasieratu."
 
 #: ../dnf/comps.py:172
 #, python-format
@@ -2634,7 +2634,7 @@ msgid "--> Finding unneeded leftover dependencies"
 msgstr "--> Behar ez diren gainerako mendekotasunak aurkitzen"
 
 #: ../dnf/repo.py:105
-#, python-format
+#, fuzzy, python-format
 msgid "no matching payload factory for %s"
 msgstr ""
 

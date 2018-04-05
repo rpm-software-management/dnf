@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2017-10-12 09:39+0200\n"
-"PO-Revision-Date: 2017-09-30 08:50-0400\n"
+"PO-Revision-Date: 2017-10-25 09:40-0400\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/dnf/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -580,7 +580,7 @@ msgstr "Adres URL"
 #. & URL)
 #: ../dnf/cli/commands/search.py:71
 msgid " & "
-msgstr " i "
+msgstr " i "
 
 #. TRANSLATORS: %s  - translated package attributes,
 #. %%s - found keys (in listed attributes)
@@ -1275,8 +1275,8 @@ msgid ""
 "--resolve'"
 msgstr ""
 "Opcja „--recursive” musi być używana z opcją „--whatrequires <ZALEŻNOŚĆ>” "
-"(opcjonalnie z opcją „--alldeps”, ale nie z opcją „--exactdeps”) albo z "
-"opcją „--requires <ZALEŻNOŚĆ> --resolve”"
+"(opcjonalnie z opcją „--alldeps”, ale nie z opcją „--exactdeps”) albo "
+"z opcją „--requires <ZALEŻNOŚĆ> --resolve”"
 
 #: ../dnf/cli/commands/repoquery.py:279
 msgid "Package {} contains no files"
@@ -1730,8 +1730,8 @@ msgid ""
 " that the package obsoletes for info, list and repoquery"
 msgstr ""
 "włącza mechanikę przetwarzania zastąpień programu DNF do aktualizacji lub "
-"wyświetlenia możliwości, które pakiet zastępuje dla parametrów info, list i "
-"repoquery"
+"wyświetlenia możliwości, które pakiet zastępuje dla parametrów info, list "
+"i repoquery"
 
 #: ../dnf/cli/option_parser.py:241
 msgid "debugging output level for rpm"
@@ -1823,14 +1823,14 @@ msgstr "uwzględnia pakiety z poprawkami bezpieczeństwa w aktualizacjach"
 #: ../dnf/cli/option_parser.py:314
 msgid "Include packages needed to fix the given advisory, in updates"
 msgstr ""
-"uwzględnia pakiety wymagane do naprawienia podanego błędu bezpieczeństwa w "
-"aktualizacjach"
+"uwzględnia pakiety wymagane do naprawienia podanego błędu bezpieczeństwa "
+"w aktualizacjach"
 
 #: ../dnf/cli/option_parser.py:318
 msgid "Include packages needed to fix the given BZ, in updates"
 msgstr ""
-"uwzględnia pakiety wymagane do naprawienia podanego błędu z Bugzilli w "
-"aktualizacjach"
+"uwzględnia pakiety wymagane do naprawienia podanego błędu z Bugzilli "
+"w aktualizacjach"
 
 #: ../dnf/cli/option_parser.py:320
 msgid "Include packages needed to fix the given CVE, in updates"
@@ -1841,8 +1841,8 @@ msgstr ""
 #: ../dnf/cli/option_parser.py:325
 msgid "Include security relevant packages matching the severity, in updates"
 msgstr ""
-"uwzględnia pakiety z poprawkami bezpieczeństwa pasujące ważnością w "
-"aktualizacjach"
+"uwzględnia pakiety z poprawkami bezpieczeństwa pasujące ważnością "
+"w aktualizacjach"
 
 #: ../dnf/cli/option_parser.py:331
 msgid "Force the use of an architecture"
@@ -2266,7 +2266,7 @@ msgstr "Nazwa użytkownika"
 #. REALLY Needs to use columns!
 #: ../dnf/cli/output.py:1503 ../dnf/cli/output.py:1864
 msgid "ID"
-msgstr "Identyfikator"
+msgstr "Ident."
 
 #: ../dnf/cli/output.py:1505
 msgid "Date and time"
@@ -2278,7 +2278,7 @@ msgstr "Działania"
 
 #: ../dnf/cli/output.py:1507
 msgid "Altered"
-msgstr "Zmieniono"
+msgstr "Zmien."
 
 #: ../dnf/cli/output.py:1565
 msgid "No transaction ID, or package, given"

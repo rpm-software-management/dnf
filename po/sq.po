@@ -132,15 +132,15 @@ msgstr ""
 
 #: ../dnf/cli/commands/group.py:195 ../dnf/cli/commands/group.py:300
 msgid "Installed Groups:"
-msgstr "Grupet e instaluara: "
+msgstr "Grupet e instaluara:"
 
 #: ../dnf/cli/commands/group.py:202 ../dnf/cli/commands/group.py:307
 msgid "Installed Language Groups:"
-msgstr "Grupet e gjuhëve të instaluara: "
+msgstr "Grupet e gjuhëve të instaluara:"
 
 #: ../dnf/cli/commands/group.py:212 ../dnf/cli/commands/group.py:314
 msgid "Available Groups:"
-msgstr "Grupet në dispozicion: "
+msgstr "Grupet në dispozicion:"
 
 #: ../dnf/cli/commands/group.py:219 ../dnf/cli/commands/group.py:321
 msgid "Available Language Groups:"
@@ -1995,7 +1995,7 @@ msgid ""
 msgstr ""
 
 #: ../dnf/cli/output.py:1115
-#, fuzzy, python-format
+#, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr ""
 
@@ -2602,7 +2602,7 @@ msgid "--> Finding unneeded leftover dependencies"
 msgstr ""
 
 #: ../dnf/repo.py:105
-#, python-format
+#, fuzzy, python-format
 msgid "no matching payload factory for %s"
 msgstr ""
 
