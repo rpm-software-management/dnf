@@ -80,6 +80,7 @@
     provides*    Hawkey.Reldep  match against packages' provides
     requires     string         match against packages' requirements
     requires*    Hawkey.Reldep  match against packages' requirements
+    sourcerpm    string         match against packages' source rpm
     upgrades     boolean        see :meth:`upgrades`. Defaults to ``False``.
     ==========   ============== ======================================================
 
