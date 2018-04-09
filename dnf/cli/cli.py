@@ -54,7 +54,6 @@ import dnf.cli.commands.upgrademinimal
 import dnf.cli.demand
 import dnf.cli.option_parser
 import dnf.conf
-import dnf.conf.parser
 import dnf.conf.substitutions
 import dnf.const
 import dnf.exceptions

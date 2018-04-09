@@ -20,10 +20,11 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-from dnf.conf.parser import substitute
+from libdnf.conf import ConfigParser
 
 import tests.support
 
+substitute = ConfigParser.substitute
 
 class SubstituteTest(tests.support.TestCase):
     def test_read(self):
