@@ -22,7 +22,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _, ucd
 import dnf.conf
-import dnf.conf.parser
+import libdnf.conf as cfg
 import dnf.exceptions
 import dnf.repo
 import glob
@@ -76,18 +76,17 @@ class RepoReader(object):
         """Parse and yield all repositories from a config file."""
 
         substs = self.conf.substitutions
-        parser = dnf.conf.ConfigParser()
+        parser = cfg.ConfigParser()
+        parser.setSubstitutions(substs)
         try:
-            confpp_obj = dnf.conf.parser.ConfigPreProcessor(repofn,
-                                                            variables=substs)
-
-            parser.readfp(confpp_obj)
-        except dnf.conf.ParsingError as e:
-            msg = str(e)
-            raise dnf.exceptions.ConfigError(msg)
+            parser.read(repofn)
+        except RuntimeError as e:
+            raise dnf.exceptions.ConfigError(_('Parsing file "%s" failed: %s') % (repofn, e))
+        except IOError as e:
+            logger.warning(e)
 
         # Check sections in the .repo file that was just slurped up
-        for section in parser.sections():
+        for section in parser.getData():
 
             if section == 'main':
                 continue
@@ -100,7 +99,7 @@ class RepoReader(object):
                 continue
 
             try:
-                thisrepo = self._build_repo(parser, section, repofn)
+                thisrepo = self._build_repo(parser, ucd(section), repofn)
             except (dnf.exceptions.RepoError, dnf.exceptions.ConfigError) as e:
                 logger.warning(e)
                 continue

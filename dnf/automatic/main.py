@@ -28,7 +28,7 @@ import dnf.cli
 import dnf.cli.cli
 import dnf.cli.output
 import dnf.conf
-import dnf.conf.parser
+import libdnf.conf as cfg
 import dnf.const
 import dnf.exceptions
 import dnf.util
@@ -106,12 +106,13 @@ class AutomaticConfig(object):
         self.filename = filename
 
     def _load(self, filename):
-        parser = iniparse.compat.ConfigParser()
-        config_pp = dnf.conf.parser.ConfigPreProcessor(filename)
+        parser = cfg.ConfigParser()
         try:
-            parser.readfp(config_pp)
-        except iniparse.compat.ParsingError as e:
-            raise dnf.exceptions.ConfigError("Parsing file failed: %s" % e)
+            parser.read(filename)
+        except RuntimeError as e:
+            raise dnf.exceptions.ConfigError('Parsing file "%s" failed: %s' % (filename, e))
+        except IOError as e:
+            logger.warning(e)
 
         self.commands._populate(parser, 'commands', filename, dnf.conf.PRIO_AUTOMATICCONFIG)
         self.email._populate(parser, 'email', filename, dnf.conf.PRIO_AUTOMATICCONFIG)

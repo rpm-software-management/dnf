@@ -49,7 +49,4 @@ from dnf.conf.config import SelectionOption
 
 from dnf.conf.config import BaseConfig, MainConf, RepoConf
 
-from dnf.conf.config import ParsingError, ConfigParser
-
-
 Conf = MainConf

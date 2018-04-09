@@ -23,10 +23,8 @@ from __future__ import unicode_literals
 from dnf.yum import misc
 from dnf.i18n import ucd, _
 from dnf.pycomp import basestring
-from iniparse.compat import ParsingError, RawConfigParser as ConfigParser
 
 import copy
-import dnf.conf.parser
 import dnf.conf.substitutions
 import dnf.const
 import dnf.exceptions
@@ -255,9 +253,9 @@ class BaseConfig(object):
 
     def _populate(self, parser, section, filename, priority=PRIO_DEFAULT):
         """Set option values from an INI file section."""
-        if parser.has_section(section):
-            for name in parser.options(section):
-                value = parser.get(section, name)
+        if parser.hasSection(section):
+            for name in parser.getData()[section]:
+                value = parser.getSubstitutedValue(section, name)
                 if not value or value == 'None':
                     value = None
                 opt = self._get_option(name)
@@ -418,7 +416,7 @@ class MainConf(BaseConfig):
 
     def _prepend_installroot_path(self, path):
         root_path = os.path.join(self._get_value('installroot'), path.lstrip('/'))
-        return dnf.conf.parser.substitute(root_path, self.substitutions)
+        return cfg.ConfigParser.substitute(root_path, self.substitutions)
 
     def _configure_from_options(self, opts):
         """Configure parts of CLI from the opts """
@@ -487,7 +485,7 @@ class MainConf(BaseConfig):
         if val is None:
             self.substitutions.pop('releasever', None)
             return
-        self.substitutions['releasever'] = val
+        self.substitutions['releasever'] = str(val)
 
     @property
     def arch(self):
@@ -528,12 +526,13 @@ class MainConf(BaseConfig):
         # :api
         if filename is None:
             filename = self._get_value('config_file_path')
-        self._parser = ConfigParser()
-        config_pp = dnf.conf.parser.ConfigPreProcessor(filename)
+        self._parser = cfg.ConfigParser()
         try:
-            self._parser.readfp(config_pp)
-        except ParsingError as e:
-            raise dnf.exceptions.ConfigError("Parsing file failed: %s" % e)
+            self._parser.read(filename)
+        except RuntimeError as e:
+            raise dnf.exceptions.ConfigError(_('Parsing file "%s" failed: %s') % (filename, e))
+        except IOError as e:
+            logger.warning(e)
         self._populate(self._parser, self._section, filename, priority)
 
         # update to where we read the file from
