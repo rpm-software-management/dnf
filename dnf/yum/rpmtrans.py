@@ -425,12 +425,8 @@ class RPMTransaction(object):
         else:
             name = 'None'
 
-        if total:
-            msg = ("Error in %s scriptlet in rpm package %s" %
-                   (scriptlet_name, name))
-        else:
-            msg = ("Non-fatal %s scriptlet failure in rpm package %s" %
-                   (scriptlet_name, name))
+        msg = ("Error in %s scriptlet in rpm package %s" % (scriptlet_name, name))
+
         for display in self.displays:
             display.error(msg)
 
