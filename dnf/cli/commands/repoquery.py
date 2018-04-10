@@ -266,7 +266,7 @@ class RepoQueryCommand(commands.Command):
                 self.cli._option_conflict("--recursive", "--exactdeps")
             if not any([self.opts.whatrequires,
                         (self.opts.packageatr == "requires" and self.opts.resolve)]):
-                raise dnf.exceptions.Error(
+                raise dnf.cli.CliError(
                     _("Option '--recursive' has to be used with '--whatrequires <REQ>' "
                       "(optionaly with '--alldeps', but not with '--exactdeps'), or with "
                       "'--requires <REQ> --resolve'"))
