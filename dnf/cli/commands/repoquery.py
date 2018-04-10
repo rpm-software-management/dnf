@@ -255,6 +255,12 @@ class RepoQueryCommand(commands.Command):
         if self.opts.querytags:
             return
 
+        if self.opts.resolve and not self.opts.packageatr:
+            raise dnf.cli.CliError(
+                _("Option '--resolve' has to be used together with one of the "
+                  "'--conflicts', '--depends', '--enhances', '--provides', '--recommends', "
+                  "'--requires', '--requires-pre', '--suggests' or '--supplements' options"))
+
         if self.opts.recursive:
             if self.opts.exactdeps:
                 self.cli._option_conflict("--recursive", "--exactdeps")
