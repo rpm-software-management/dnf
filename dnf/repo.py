@@ -239,11 +239,11 @@ class _NullKeyImport(dnf.callback.KeyImport):
 
 
 class Metadata(object):
-    def __init__(self, res, handle):
+    def __init__(self, repo_dct, repomd_dct):
         self.fresh = False  # :api
-        self._repo_dct = res.yum_repo
-        self._repomd_dct = res.yum_repomd
-        self._priv_mirrors = handle.mirrors[:]
+        self._repo_dct = repo_dct
+        self._repomd_dct = repomd_dct
+        # self._priv_mirrors = handle.mirrors[:] TODO
 
     @property
     def _age(self):
@@ -676,7 +676,7 @@ class Repo(dnf.conf.RepoConf):
         if handle.progresscb:
             self._md_pload.end()
 
-        return Metadata(result, handle)
+        return Metadata(result.yum_repo, result.yum_repomd)
 
     def _handle_load_with_pubring(self, handle):
         with dnf.crypto.pubring_dir(self._pubring_dir):
@@ -763,6 +763,13 @@ class Repo(dnf.conf.RepoConf):
         hrepo.cost = self.cost
         hrepo.priority = self.priority
         return hrepo
+
+    def _init_hawkey_remote(self):
+        return (
+            self.baseurl[0],
+            self._cachedir,
+            self.metadata_expire,
+        )
 
     def _replace_metadata(self, handle):
         dnf.util.ensure_dir(self._cachedir)
@@ -904,8 +911,8 @@ class Repo(dnf.conf.RepoConf):
         Returns True if this call to load() caused a fresh metadata download.
 
         """
-        self._hawkey_repo.load(self.baseurl[0], self._cachedir, 60)
-        self._try_cache()
+        meta = self._hawkey_repo.load(*self._init_hawkey_remote())
+        self.metadata = Metadata(*meta)
         return True
 
     def _md_expire_cache(self):
