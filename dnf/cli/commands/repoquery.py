@@ -468,28 +468,29 @@ class RepoQueryCommand(commands.Command):
 
         pkgs = set()
         if self.opts.packageatr:
+            rels = set()
             for pkg in q.run():
                 if self.opts.list != 'userinstalled' or self.base._is_userinstalled(pkg):
                     if self.opts.packageatr == 'depends':
-                        rels = pkg.requires + pkg.enhances + pkg.suggests + pkg.supplements + \
-                               pkg.recommends
+                        rels.update(pkg.requires + pkg.enhances + pkg.suggests +
+                                    pkg.supplements + pkg.recommends)
                     else:
-                        rels = getattr(pkg, OPTS_MAPPING[self.opts.packageatr])
-                    for rel in rels:
-                        pkgs.add(str(rel))
+                        rels.update(getattr(pkg, OPTS_MAPPING[self.opts.packageatr]))
             if self.opts.resolve:
                 # find the providing packages and show them
                 if self.opts.list == "installed":
                     query = self.filter_repo_arch(self.opts, self.base.sack.query())
                 else:
                     query = self.filter_repo_arch(self.opts, self.base.sack.query().available())
-                providers = query.filter(provides=list(pkgs))
+                providers = query.filter(provides=rels)
                 if self.opts.recursive:
                     providers = providers.union(
                         self._get_recursive_providers_query(query, providers))
                 pkgs = set()
                 for pkg in providers.latest().run():
                     pkgs.add(self.build_format_fn(self.opts, pkg))
+            else:
+                pkgs.update(str(rel) for rel in rels)
         elif self.opts.location:
             for pkg in q.run():
                 location = pkg.remote_location()
