@@ -559,7 +559,7 @@ class Base(object):
         """auto create the history object that to access/append the transaction
            history information. """
         if self._history is None:
-            db_path = os.path.join(self.conf.installroot, self.conf.persistdir, "history")
+            db_path = os.path.join(self.conf.installroot, self.conf.persistdir)
             releasever = self.conf.releasever
             self._history = SwdbInterface(db_path, releasever=releasever)
         return self._history
