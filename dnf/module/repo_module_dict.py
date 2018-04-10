@@ -106,7 +106,7 @@ class RepoModuleDict(OrderedDict):
             version_dependencies.add(repo_module_version)
 
             for requires_name, requires_streams in \
-                    repo_module_version.requires():
+                    repo_module_version.requires().items():
                 for requires_stream in requires_streams:
                     if requires_stream[0] == '-':
                         continue
@@ -138,7 +138,7 @@ class RepoModuleDict(OrderedDict):
                 version_dependencies.add(repo_module_version)
 
                 for requires_name, requires_streams in \
-                        repo_module_version.requires():
+                        repo_module_version.requires().items():
                     for requires_stream in requires_streams:
                         if requires_stream[0] == '-':
                             continue
