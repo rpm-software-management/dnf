@@ -251,18 +251,20 @@ class SwdbInterface(object):
         return self._env
 
     @property
+    def dbpath(self):
+        return os.path.join(self._db_dir, libdnf.transaction.Swdb.defaultDatabaseName)
+
+    @property
     def swdb(self):
         """ Lazy initialize Swdb object """
         if not self._swdb:
             # _db_dir == persistdir which is prepended with installroot already
-            path = os.path.join(self._db_dir, "sw.db")
-            self._swdb = libdnf.transaction.Swdb(path)
+            self._swdb = libdnf.transaction.Swdb(self.dbpath)
             # TODO: vars -> libdnf
         return self._swdb
 
-    @staticmethod
-    def transform(input_dir, output_file):
-        transformer = libdnf.transaction.Transformer(input_dir, output_file)
+    def transform(self, input_dir):
+        transformer = libdnf.transaction.Transformer(input_dir, self.dbpath)
         transformer.transform()
 
     def close(self):
