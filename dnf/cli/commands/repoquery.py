@@ -478,7 +478,7 @@ class RepoQueryCommand(commands.Command):
             for pkg in q.run():
                 if self.opts.list != 'userinstalled' or self.base._is_userinstalled(pkg):
                     if self.opts.packageatr == 'depends':
-                        rels.update(pkg.requires + pkg.enhances + pkg.suggests + \
+                        rels.update(pkg.requires + pkg.enhances + pkg.suggests +
                                     pkg.supplements + pkg.recommends)
                     else:
                         rels.update(getattr(pkg, OPTS_MAPPING[self.opts.packageatr]))
