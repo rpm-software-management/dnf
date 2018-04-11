@@ -22,7 +22,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import libdnf.swdb
+import libdnf.transaction
 
 from dnf.exceptions import PackagesNotAvailableError, PackagesNotInstalledError
 #from dnf.history import NEVRAOperations
@@ -71,7 +71,7 @@ class BaseTest(tests.support.DnfBaseTestCase):
             expected = TransactionItem(
                 INSTALL,
                 installed='lotus-3-16.x86_64',
-                reason=libdnf.swdb.TransactionItemReason_USER
+                reason=libdnf.transaction.TransactionItemReason_USER
             )
             self.assertEqualTransactionItems(actual, expected)
 
@@ -111,7 +111,7 @@ class BaseTest(tests.support.DnfBaseTestCase):
             expected = TransactionItem(
                 INSTALL,
                 installed='lotus-3-16.x86_64',
-                reason=libdnf.swdb.TransactionItemReason_USER
+                reason=libdnf.transaction.TransactionItemReason_USER
             )
             self.assertEqualTransactionItems(actual, expected)
 
@@ -130,7 +130,7 @@ class BaseTest(tests.support.DnfBaseTestCase):
             expected = TransactionItem(
                 INSTALL,
                 installed='lotus-3-16.x86_64',
-                reason=libdnf.swdb.TransactionItemReason_USER
+                reason=libdnf.transaction.TransactionItemReason_USER
             )
             self.assertEqualTransactionItems(actual, expected)
 
@@ -164,7 +164,7 @@ class BaseTest(tests.support.DnfBaseTestCase):
             expected = TransactionItem(
                 INSTALL,
                 installed='lotus-3-16.x86_64',
-                reason=libdnf.swdb.TransactionItemReason_USER
+                reason=libdnf.transaction.TransactionItemReason_USER
             )
             self.assertEqualTransactionItems(actual, expected)
 
@@ -274,7 +274,7 @@ class BaseTest(tests.support.DnfBaseTestCase):
             expected = TransactionItem(
                 INSTALL,
                 installed='lotus-3-16.x86_64',
-                reason=libdnf.swdb.TransactionItemReason_USER
+                reason=libdnf.transaction.TransactionItemReason_USER
             )
             self.assertEqualTransactionItems(actual, expected)
 

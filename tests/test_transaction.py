@@ -20,7 +20,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import libdnf.swdb
+import libdnf.transaction
 import rpm
 
 import dnf.goal
@@ -106,14 +106,14 @@ class TransactionItemTest(tests.support.DnfBaseTestCase):
         tsi1 = dnf.transaction.TransactionItem(
             dnf.transaction.INSTALL,
             installed=self.newpkg,
-            reason=libdnf.swdb.TransactionItemReason_DEPENDENCY
+            reason=libdnf.transaction.TransactionItemReason_DEPENDENCY
         )
 
         self.oldpkg._force_swdb_repoid = "main"
         tsi2 = dnf.transaction.TransactionItem(
             dnf.transaction.INSTALL,
             installed=self.oldpkg,
-            reason=libdnf.swdb.TransactionItemReason_DEPENDENCY
+            reason=libdnf.transaction.TransactionItemReason_DEPENDENCY
         )
 
         tsis = [tsi1, tsi2]
@@ -127,7 +127,7 @@ class TransactionItemTest(tests.support.DnfBaseTestCase):
             reason='user'
         )
         actual = tsi._propagated_reason(self.history, ionly)
-        expected = libdnf.swdb.TransactionItemReason_USER
+        expected = libdnf.transaction.TransactionItemReason_USER
         self.assertEqual(actual, expected)
 
         tsi = dnf.transaction.TransactionItem(
@@ -136,7 +136,7 @@ class TransactionItemTest(tests.support.DnfBaseTestCase):
             erased=self.oldpkg
         )
         actual = tsi._propagated_reason(self.history, ionly)
-        expected = libdnf.swdb.TransactionItemReason_DEPENDENCY
+        expected = libdnf.transaction.TransactionItemReason_DEPENDENCY
         self.assertEqual(actual, expected)
 
         tsi = dnf.transaction.TransactionItem(
@@ -145,13 +145,13 @@ class TransactionItemTest(tests.support.DnfBaseTestCase):
             erased=self.oldpkg
         )
         actual = tsi._propagated_reason(self.history, ionly)
-        expected = libdnf.swdb.TransactionItemReason_DEPENDENCY
+        expected = libdnf.transaction.TransactionItemReason_DEPENDENCY
         self.assertEqual(actual, expected)
 
         # test the call can survive if no reason is known:
         self.history.reset_db()
         actual = tsi._propagated_reason(self.history, ionly)
-        expected = libdnf.swdb.TransactionItemReason_UNKNOWN
+        expected = libdnf.transaction.TransactionItemReason_UNKNOWN
         self.assertEqual(actual, expected)
 
     def test_removes(self):

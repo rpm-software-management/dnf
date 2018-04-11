@@ -21,7 +21,7 @@
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import libdnf.swdb
+import libdnf.transaction
 
 from dnf.i18n import _
 from dnf.cli import commands
@@ -45,15 +45,15 @@ class MarkCommand(commands.Command):
         parser.add_argument('package', nargs='+')
 
     def _mark_install(self, pkg):
-        self.base.history.set_reason(pkg, libdnf.swdb.TransactionItemReason_USER)
+        self.base.history.set_reason(pkg, libdnf.transaction.TransactionItemReason_USER)
         logger.info(_('%s marked as user installed.'), str(pkg))
 
     def _mark_remove(self, pkg):
-        self.base.history.set_reason(pkg, libdnf.swdb.TransactionItemReason_DEPENDENCY)
+        self.base.history.set_reason(pkg, libdnf.transaction.TransactionItemReason_DEPENDENCY)
         logger.info(_('%s unmarked as user installed.'), str(pkg))
 
     def _mark_group(self, pkg):
-        self.base.history.set_reason(pkg, libdnf.swdb.TransactionItemReason_GROUP)
+        self.base.history.set_reason(pkg, libdnf.transaction.TransactionItemReason_GROUP)
         logger.info(_('%s marked as group installed.'), str(pkg))
 
     def configure(self):

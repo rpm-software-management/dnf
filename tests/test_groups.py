@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 
 import operator
 
-import libdnf.swdb
+import libdnf.transaction
 
 import dnf.comps
 import dnf.util
@@ -94,11 +94,11 @@ class PresetPersistorTest(tests.support.ResultTestCase):
                     continue
                 seen_pkgs.add(pkg)
                 pkg._force_swdb_repoid = "main"
-                self.history.rpm.add_install(pkg, reason=libdnf.swdb.TransactionItemReason_GROUP)
+                self.history.rpm.add_install(pkg, reason=libdnf.transaction.TransactionItemReason_GROUP)
 #                tsi = dnf.transaction.TransactionItem(
 #                    dnf.transaction.INSTALL,
 #                    installed=pkg,
-#                    reason=libdnf.swdb.TransactionItemReason_GROUP
+#                    reason=libdnf.transaction.TransactionItemReason_GROUP
 #                )
 #                tsis.append(tsi)
 
@@ -118,11 +118,11 @@ class PresetPersistorTest(tests.support.ResultTestCase):
                 continue
             pkg = pkgs[0]
             pkg._force_swdb_repoid = "main"
-            self.history.rpm.add_install(pkg, reason=libdnf.swdb.TransactionItemReason_GROUP)
+            self.history.rpm.add_install(pkg, reason=libdnf.transaction.TransactionItemReason_GROUP)
 #            tsi = dnf.transaction.TransactionItem(
 #                dnf.transaction.INSTALL,
 #                installed=pkg,
-#                reason=libdnf.swdb.TransactionItemReason_GROUP
+#                reason=libdnf.transaction.TransactionItemReason_GROUP
 #            )
 #            tsis.append(tsi)
 

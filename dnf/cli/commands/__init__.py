@@ -24,8 +24,6 @@ Classes for subcommands of the yum command line interface.
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import libdnf.swdb
-
 from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _, ucd
 

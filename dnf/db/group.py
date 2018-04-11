@@ -18,7 +18,7 @@
 #
 
 
-import libdnf.swdb
+import libdnf.transaction
 
 import dnf.db.history
 from dnf.i18n import _
@@ -93,7 +93,7 @@ class GroupPersistor(PersistorBase):
     def is_removable_pkg(self, pkg_name):
         # for group removal and autoremove
         reason = self.history.swdb.resolveRPMTransactionItemReason(pkg_name, "", -2)
-        if reason != libdnf.swdb.TransactionItemReason_GROUP:
+        if reason != libdnf.transaction.TransactionItemReason_GROUP:
             return False
 
         # TODO: implement lastTransId == -2 in libdnf
@@ -238,69 +238,69 @@ class RPMTransaction(object):
     def _add_obsoleted(self, obsoleted, replaced_by=None):
         obsoleted = obsoleted or []
         for obs in obsoleted:
-            ti = self.new(obs, libdnf.swdb.TransactionItemAction_OBSOLETED)
+            ti = self.new(obs, libdnf.transaction.TransactionItemAction_OBSOLETED)
             if replaced_by:
                 ti.addReplacedBy(replaced_by)
 
     def add_downgrade(self, new, old, obsoleted=None):
-        ti_new = self.new(new, libdnf.swdb.TransactionItemAction_DOWNGRADE)
-        ti_old = self.new(old, libdnf.swdb.TransactionItemAction_DOWNGRADED, replaced_by=ti_new)
+        ti_new = self.new(new, libdnf.transaction.TransactionItemAction_DOWNGRADE)
+        ti_old = self.new(old, libdnf.transaction.TransactionItemAction_DOWNGRADED, replaced_by=ti_new)
         self._add_obsoleted(obsoleted, replaced_by=ti_new)
 
     def add_erase(self, old, reason=None):
         self.add_remove(old, reason)
 
     def add_install(self, new, obsoleted=None, reason=None):
-        reason = reason or libdnf.swdb.TransactionItemReason_USER
-        ti_new = self.new(new, libdnf.swdb.TransactionItemAction_INSTALL, reason)
+        reason = reason or libdnf.transaction.TransactionItemReason_USER
+        ti_new = self.new(new, libdnf.transaction.TransactionItemAction_INSTALL, reason)
         self._add_obsoleted(obsoleted, replaced_by=ti_new)
 
     def add_reinstall(self, new, old, obsoleted=None):
-        ti_new = self.new(new, libdnf.swdb.TransactionItemAction_REINSTALL)
-        ti_old = self.new(old, libdnf.swdb.TransactionItemAction_REINSTALLED, replaced_by=ti_new)
+        ti_new = self.new(new, libdnf.transaction.TransactionItemAction_REINSTALL)
+        ti_old = self.new(old, libdnf.transaction.TransactionItemAction_REINSTALLED, replaced_by=ti_new)
         self._add_obsoleted(obsoleted, replaced_by=ti_new)
 
     def add_remove(self, old, reason=None):
-        reason = reason or libdnf.swdb.TransactionItemReason_USER
-        ti_old = self.new(old, libdnf.swdb.TransactionItemAction_REMOVE, reason)
+        reason = reason or libdnf.transaction.TransactionItemReason_USER
+        ti_old = self.new(old, libdnf.transaction.TransactionItemAction_REMOVE, reason)
 
     def add_upgrade(self, new, old, obsoleted=None):
-        ti_new = self.new(new, libdnf.swdb.TransactionItemAction_UPGRADE)
-        ti_old = self.new(old, libdnf.swdb.TransactionItemAction_UPGRADED, replaced_by=ti_new)
+        ti_new = self.new(new, libdnf.transaction.TransactionItemAction_UPGRADE)
+        ti_old = self.new(old, libdnf.transaction.TransactionItemAction_UPGRADED, replaced_by=ti_new)
         self._add_obsoleted(obsoleted, replaced_by=ti_new)
 
     def _populate_rpm_ts(self, ts):
         """Populate the RPM transaction set."""
 
         for tsi in self:
-            if tsi.action == libdnf.swdb.TransactionItemAction_DOWNGRADE:
+            if tsi.action == libdnf.transaction.TransactionItemAction_DOWNGRADE:
                 hdr = tsi.pkg._header
                 ts.addInstall(hdr, tsi, 'u')
-            elif tsi.action == libdnf.swdb.TransactionItemAction_DOWNGRADED:
+            elif tsi.action == libdnf.transaction.TransactionItemAction_DOWNGRADED:
                 ts.addErase(tsi.pkg.idx)
-            elif tsi.action == libdnf.swdb.TransactionItemAction_INSTALL:
+            elif tsi.action == libdnf.transaction.TransactionItemAction_INSTALL:
                 hdr = tsi.pkg._header
                 ts.addInstall(hdr, tsi, 'i')
-            elif tsi.action == libdnf.swdb.TransactionItemAction_OBSOLETE:
+            elif tsi.action == libdnf.transaction.TransactionItemAction_OBSOLETE:
                 hdr = tsi.pkg._header
                 ts.addInstall(hdr, tsi, 'u')
-            elif tsi.action == libdnf.swdb.TransactionItemAction_OBSOLETED:
+            elif tsi.action == libdnf.transaction.TransactionItemAction_OBSOLETED:
                 ts.addErase(tsi.pkg.idx)
-            elif tsi.action == libdnf.swdb.TransactionItemAction_REINSTALL:
+            elif tsi.action == libdnf.transaction.TransactionItemAction_REINSTALL:
                 # note: in rpm 4.12 there should not be set
                 # rpm.RPMPROB_FILTER_REPLACEPKG to work
                 hdr = tsi.pkg._header
                 ts.addReinstall(hdr, tsi)
-            elif tsi.action == libdnf.swdb.TransactionItemAction_REINSTALLED:
+            elif tsi.action == libdnf.transaction.TransactionItemAction_REINSTALLED:
                 pass
-            elif tsi.action == libdnf.swdb.TransactionItemAction_REMOVE:
+            elif tsi.action == libdnf.transaction.TransactionItemAction_REMOVE:
                 ts.addErase(tsi.pkg.idx)
-            elif tsi.action == libdnf.swdb.TransactionItemAction_UPGRADE:
+            elif tsi.action == libdnf.transaction.TransactionItemAction_UPGRADE:
                 hdr = tsi.pkg._header
                 ts.addInstall(hdr, tsi, 'u')
-            elif tsi.action == libdnf.swdb.TransactionItemAction_UPGRADED:
+            elif tsi.action == libdnf.transaction.TransactionItemAction_UPGRADED:
                 ts.addErase(tsi.pkg.idx)
-            elif tsi.action == libdnf.swdb.TransactionItemAction_REASON_CHANGE:
+            elif tsi.action == libdnf.transaction.TransactionItemAction_REASON_CHANGE:
                 pass
             else:
                 raise RuntimeError("TransactionItemAction not handled: %s" % tsi.action)

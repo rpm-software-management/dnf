@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 
 import itertools
 
-import libdnf.swdb
+import libdnf.transaction
 
 import tests.support
 

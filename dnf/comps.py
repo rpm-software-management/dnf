@@ -22,7 +22,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import libdnf.swdb
+import libdnf.transaction
 
 from dnf.exceptions import CompsError
 from dnf.i18n import _, ucd
@@ -428,7 +428,7 @@ class CompsTransPkg(object):
             self.name = pkg_or_name
             self.optional = True
             self.requires = None
-        elif isinstance(pkg_or_name, libdnf.swdb.CompsGroupPackage):
+        elif isinstance(pkg_or_name, libdnf.transaction.CompsGroupPackage):
             # from swdb package
             # TODO:
             self.basearchonly = False

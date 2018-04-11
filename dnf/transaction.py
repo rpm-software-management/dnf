@@ -23,22 +23,22 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import libdnf.swdb
+import libdnf.transaction
 
 from dnf.i18n import _
 
 
 # per-package actions - from libdnf
-PKG_DOWNGRADE = libdnf.swdb.TransactionItemAction_DOWNGRADE
-PKG_DOWNGRADED = libdnf.swdb.TransactionItemAction_DOWNGRADED
-PKG_INSTALL = libdnf.swdb.TransactionItemAction_INSTALL
-PKG_OBSOLETE = libdnf.swdb.TransactionItemAction_OBSOLETE
-PKG_OBSOLETED = libdnf.swdb.TransactionItemAction_OBSOLETED
-PKG_REINSTALL = libdnf.swdb.TransactionItemAction_REINSTALL
-PKG_REINSTALLED = libdnf.swdb.TransactionItemAction_REINSTALLED
-PKG_REMOVE = libdnf.swdb.TransactionItemAction_REMOVE
-PKG_UPGRADE = libdnf.swdb.TransactionItemAction_UPGRADE
-PKG_UPGRADED = libdnf.swdb.TransactionItemAction_UPGRADED
+PKG_DOWNGRADE = libdnf.transaction.TransactionItemAction_DOWNGRADE
+PKG_DOWNGRADED = libdnf.transaction.TransactionItemAction_DOWNGRADED
+PKG_INSTALL = libdnf.transaction.TransactionItemAction_INSTALL
+PKG_OBSOLETE = libdnf.transaction.TransactionItemAction_OBSOLETE
+PKG_OBSOLETED = libdnf.transaction.TransactionItemAction_OBSOLETED
+PKG_REINSTALL = libdnf.transaction.TransactionItemAction_REINSTALL
+PKG_REINSTALLED = libdnf.transaction.TransactionItemAction_REINSTALLED
+PKG_REMOVE = libdnf.transaction.TransactionItemAction_REMOVE
+PKG_UPGRADE = libdnf.transaction.TransactionItemAction_UPGRADE
+PKG_UPGRADED = libdnf.transaction.TransactionItemAction_UPGRADED
 
 # compatibility
 PKG_ERASE = PKG_REMOVE

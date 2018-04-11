@@ -29,7 +29,7 @@ from functools import reduce
 
 import hawkey
 import hawkey.test
-import libdnf.swdb
+import libdnf.transaction
 
 import dnf
 import dnf.conf
@@ -678,8 +678,8 @@ class DnfBaseTestCase(TestCase):
 
     def _swdb_end(self, tsis=None):
         for tsi in self.history._swdb.getItems():
-            if tsi.getState() == libdnf.swdb.TransactionItemState_UNKNOWN:
-                tsi.setState(libdnf.swdb.TransactionItemState_DONE)
+            if tsi.getState() == libdnf.transaction.TransactionItemState_UNKNOWN:
+                tsi.setState(libdnf.transaction.TransactionItemState_DONE)
         self.history.end("")
 
     def _swdb_commit(self, tsis=None):

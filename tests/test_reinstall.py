@@ -22,8 +22,6 @@ from __future__ import unicode_literals
 
 import itertools
 
-import libdnf.swdb
-
 import dnf
 
 import tests.support
