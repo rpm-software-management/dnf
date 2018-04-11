@@ -27,7 +27,8 @@ from dnf.module import module_messages, NOTHING_TO_SHOW, \
     INSTALLING_NEWER_VERSION, NOTHING_TO_INSTALL, VERSION_LOCKED, NO_PROFILE_SPECIFIED
 from dnf.module.exceptions import NoStreamSpecifiedException, NoModuleException, \
     EnabledStreamException, ProfileNotInstalledException, NoProfileSpecifiedException, \
-    NoProfileToRemoveException, VersionLockedException, CannotLockVersionException
+    NoProfileToRemoveException, VersionLockedException, CannotLockVersionException, \
+    DifferentStreamEnabledException
 from dnf.module.repo_module import RepoModule
 from dnf.module.subject import ModuleSubject
 from dnf.selector import Selector
@@ -450,6 +451,9 @@ class RepoModuleDict(OrderedDict):
                 continue
 
             conf = self[module_form.name].conf
+            if module_form.stream != conf.stream:
+                raise DifferentStreamEnabledException(module_form.name)
+
             if conf and conf.profiles:
                 installed_profiles = conf.profiles
             else:
