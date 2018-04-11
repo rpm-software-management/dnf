@@ -53,9 +53,6 @@ class RepoModuleVersion(object):
         result = self._install_profiles(profiles, False)
         result |= self._install_profiles(default_profiles, True)
 
-        if not profiles and not default_profiles:
-            result |= self._install_profiles(["default"], True)
-
         profiles.extend(self.repo_module.conf.profiles)
         profiles.extend(default_profiles)
         self.base._module_persistor.set_data(self.repo_module, stream=self.stream,
@@ -123,7 +120,8 @@ class RepoModuleVersion(object):
                 remove_query = dnf.subject.Subject(nevr) \
                     .get_best_query(self.base.sack, forms=hawkey.FORM_NEVR)
 
-                if self.base._yumdb.get_package(remove_query[0]).reason == 'user':
+                if not remove_query \
+                        or self.base._yumdb.get_package(remove_query[0]).reason == 'user':
                     continue
 
                 self.base._remove_if_unneeded(remove_query)
