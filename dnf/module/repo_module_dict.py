@@ -369,7 +369,7 @@ class RepoModuleDict(OrderedDict):
                     default_profiles = module_version.repo_module.defaults.profiles
                     profiles = []
                 else:
-                    logger.info(module_messages[NO_PROFILE_SPECIFIED].format(key))
+                    default_profiles = ['default']
 
                 best_versions[key] = [module_version, profiles, default_profiles]
 
