@@ -21,7 +21,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import libdnf.swdb
+import libdnf.transaction
 
 from copy import deepcopy
 from dnf.cli.format import format_number, format_time
@@ -65,30 +65,30 @@ def _make_lists(transaction, goal):
     })
 
     for tsi in transaction:
-        if tsi.action == libdnf.swdb.TransactionItemAction_DOWNGRADE:
+        if tsi.action == libdnf.transaction.TransactionItemAction_DOWNGRADE:
             b.downgraded.append(tsi)
-        elif tsi.action == libdnf.swdb.TransactionItemAction_INSTALL:
-            if tsi.reason == libdnf.swdb.TransactionItemReason_GROUP:
+        elif tsi.action == libdnf.transaction.TransactionItemAction_INSTALL:
+            if tsi.reason == libdnf.transaction.TransactionItemReason_GROUP:
                 b.installed_group.append(tsi)
-            elif tsi.reason == libdnf.swdb.TransactionItemReason_DEPENDENCY:
+            elif tsi.reason == libdnf.transaction.TransactionItemReason_DEPENDENCY:
                 b.installed_dep.append(tsi)
-            elif tsi.reason == libdnf.swdb.TransactionItemReason_WEAK_DEPENDENCY:
+            elif tsi.reason == libdnf.transaction.TransactionItemReason_WEAK_DEPENDENCY:
                 b.installed_weak.append(tsi)
             else:
                 # TransactionItemReason_USER
                 b.installed.append(tsi)
-        elif tsi.action == libdnf.swdb.TransactionItemAction_REINSTALL:
+        elif tsi.action == libdnf.transaction.TransactionItemAction_REINSTALL:
             b.reinstalled.append(tsi)
-        elif tsi.action == libdnf.swdb.TransactionItemAction_REMOVE:
-            if tsi.reason == libdnf.swdb.TransactionItemReason_CLEAN:
+        elif tsi.action == libdnf.transaction.TransactionItemAction_REMOVE:
+            if tsi.reason == libdnf.transaction.TransactionItemReason_CLEAN:
                 b.erased_clean.append(tsi)
-            elif tsi.reason == libdnf.swdb.TransactionItemReason_DEPENDENCY:
+            elif tsi.reason == libdnf.transaction.TransactionItemReason_DEPENDENCY:
                 b.erased_dep.append(tsi)
             else:
                 b.erased.append(tsi)
-        elif tsi.action == libdnf.swdb.TransactionItemAction_UPGRADE:
+        elif tsi.action == libdnf.transaction.TransactionItemAction_UPGRADE:
             b.upgraded.append(tsi)
-        elif tsi.state == libdnf.swdb.TransactionItemState_ERROR:
+        elif tsi.state == libdnf.transaction.TransactionItemState_ERROR:
             b.failed.append(tsi)
 
     return b
@@ -1085,7 +1085,7 @@ class Output(object):
                 # TODO: is this fast enough?
                 obsoleted = []
                 for i in transaction:
-                    if i.action != libdnf.swdb.TransactionItemAction_OBSOLETED:
+                    if i.action != libdnf.transaction.TransactionItemAction_OBSOLETED:
                         continue
                     if tsi._item in i._item.getReplacedBy():
                         obsoleted.append(i)
@@ -1324,7 +1324,7 @@ Transaction Summary
         actions_short = set()
         count = 0
         for pkg in hpkgs:
-            if pkg.action in (libdnf.swdb.TransactionItemAction_UPGRADED, libdnf.swdb.TransactionItemAction_DOWNGRADED):
+            if pkg.action in (libdnf.transaction.TransactionItemAction_UPGRADED, libdnf.transaction.TransactionItemAction_DOWNGRADED):
                 # skip states we don't want to display in user input
                 continue
             actions.add(pkg.action_name)
@@ -1792,7 +1792,7 @@ Transaction Summary
 
         for pkg in packages:
             prefix = " " * 4
-            if pkg.state != libdnf.swdb.TransactionItemState_DONE:
+            if pkg.state != libdnf.transaction.TransactionItemState_DONE:
                 prefix = " ** "
 
             highlight = 'normal'
@@ -1806,19 +1806,19 @@ Transaction Summary
             uistate = all_uistates.get(pkg.action_name, pkg.action_name)
             uistate = fill_exact_width(ucd(uistate), maxlen)
 
-            if (last is not None and last.action == libdnf.swdb.TransactionItemAction_UPGRADED and
-                    last.name == pkg.name and pkg.action == libdnf.swdb.TransactionItemAction_UPGRADE):
+            if (last is not None and last.action == libdnf.transaction.TransactionItemAction_UPGRADED and
+                    last.name == pkg.name and pkg.action == libdnf.transaction.TransactionItemAction_UPGRADE):
 
                 ln = len(pkg.name) + 1
                 cn = (" " * ln) + cn[ln:]
-            elif (last is not None and last.action == libdnf.swdb.TransactionItemAction_DOWNGRADE and
-                  last.name == pkg.name and pkg.action == libdnf.swdb.TransactionItemAction_DOWNGRADED):
+            elif (last is not None and last.action == libdnf.transaction.TransactionItemAction_DOWNGRADE and
+                  last.name == pkg.name and pkg.action == libdnf.transaction.TransactionItemAction_DOWNGRADED):
 
                 ln = len(pkg.name) + 1
                 cn = (" " * ln) + cn[ln:]
             else:
                 last = None
-                if pkg.action in (libdnf.swdb.TransactionItemAction_UPGRADED, libdnf.swdb.TransactionItemAction_DOWNGRADE):
+                if pkg.action in (libdnf.transaction.TransactionItemAction_UPGRADED, libdnf.transaction.TransactionItemAction_DOWNGRADE):
                     last = pkg
             print("%s%s%s%s %-*s %s" % (prefix, hibeg, uistate, hiend,
                                         pkg_max_len, str(pkg),
@@ -1885,18 +1885,18 @@ Transaction Summary
                 # envra so we have to do it by hand ... *sigh*.
                 cn = pkg.ui_nevra
 
-                if (last is not None and last.action == libdnf.swdb.TransactionItemAction_UPGRADED and
-                        last.name == pkg.name and pkg.action == libdnf.swdb.TransactionItemAction_UPGRADE):
+                if (last is not None and last.action == libdnf.transaction.TransactionItemAction_UPGRADED and
+                        last.name == pkg.name and pkg.action == libdnf.transaction.TransactionItemAction_UPGRADE):
                     ln = len(pkg.name) + 1
                     cn = (" " * ln) + cn[ln:]
                 elif (last is not None and
-                      last.action == libdnf.swdb.TransactionItemAction_DOWNGRADE and last.name == pkg.name and
-                      pkg.action == libdnf.swdb.TransactionItemAction_DOWNGRADED):
+                      last.action == libdnf.transaction.TransactionItemAction_DOWNGRADE and last.name == pkg.name and
+                      pkg.action == libdnf.transaction.TransactionItemAction_DOWNGRADED):
                     ln = len(pkg.name) + 1
                     cn = (" " * ln) + cn[ln:]
                 else:
                     last = None
-                    if pkg.action in (libdnf.swdb.TransactionItemAction_UPGRADED, libdnf.swdb.TransactionItemAction_DOWNGRADE):
+                    if pkg.action in (libdnf.transaction.TransactionItemAction_UPGRADED, libdnf.transaction.TransactionItemAction_DOWNGRADE):
                         last = pkg
 
                 num += 1

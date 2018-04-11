@@ -20,7 +20,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import libdnf.swdb
+import libdnf.transaction
 
 import dnf.history
 
@@ -453,13 +453,13 @@ class TransactionConverterTest(tests.support.TestCase):
 
         sack = tests.support.mock_sack('main')
         converter = dnf.history.TransactionConverter(sack)
-        actual = converter.convert(operations, libdnf.swdb.TransactionItemReason_USER)
+        actual = converter.convert(operations, libdnf.transaction.TransactionItemReason_USER)
 
         expected = dnf.transaction.Transaction()
         expected.add_install(
             next(iter(sack.query().available()._nevra('lotus-3-16.x86_64'))),
             [next(iter(sack.query().installed()._nevra('hole-1-1.x86_64')))],
-            libdnf.swdb.TransactionItemReason_USER)
+            libdnf.transaction.TransactionItemReason_USER)
         self.assert_transaction_equal(actual, expected)
 
     def test_convert_reinstall(self):

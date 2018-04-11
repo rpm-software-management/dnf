@@ -24,7 +24,7 @@ import itertools
 import logging
 import tempfile
 
-import libdnf.swdb
+import libdnf.transaction
 
 import dnf.cli.commands
 import dnf.cli.commands.group
@@ -221,7 +221,7 @@ class ReinstallCommandTest(tests.support.ResultTestCase):
 #            tsi = dnf.transaction.TransactionItem(
 #                dnf.transaction.INSTALL,
 #                installed=pkg,
-#                reason=libdnf.swdb.TransactionItemReason_USER
+#                reason=libdnf.transaction.TransactionItemReason_USER
 #            )
 #            tsis.append(tsi)
         self._swdb_commit(tsis)
@@ -277,7 +277,7 @@ class RepoPkgsCheckUpdateSubCommandTest(tests.support.DnfBaseTestCase):
 #            tsi = dnf.transaction.TransactionItem(
 #                dnf.transaction.INSTALL,
 #                installed=pkg,
-#                reason=libdnf.swdb.TransactionItemReason_USER
+#                reason=libdnf.transaction.TransactionItemReason_USER
 #            )
 #            tsis.append(tsi)
         self._swdb_commit(tsis)
@@ -383,7 +383,7 @@ class RepoPkgsInfoSubCommandTest(tests.support.DnfBaseTestCase):
 #            tsi = dnf.transaction.TransactionItem(
 #                dnf.transaction.INSTALL,
 #                installed=pkg,
-#                reason=libdnf.swdb.TransactionItemReason_USER
+#                reason=libdnf.transaction.TransactionItemReason_USER
 #            )
 #            tsis.append(tsi)
         self._swdb_commit(tsis)
@@ -444,7 +444,7 @@ class RepoPkgsInfoSubCommandTest(tests.support.DnfBaseTestCase):
 #            tsi = dnf.transaction.TransactionItem(
 #                dnf.transaction.INSTALL,
 #                installed=pkg,
-#                reason=libdnf.swdb.TransactionItemReason_USER
+#                reason=libdnf.transaction.TransactionItemReason_USER
 #            )
 #            tsis.append(tsi)
         self._swdb_commit(tsis)
@@ -477,7 +477,7 @@ class RepoPkgsInfoSubCommandTest(tests.support.DnfBaseTestCase):
 #            tsi = dnf.transaction.TransactionItem(
 #                dnf.transaction.INSTALL,
 #                installed=pkg,
-#                reason=libdnf.swdb.TransactionItemReason_USER
+#                reason=libdnf.transaction.TransactionItemReason_USER
 #            )
 #            tsis.append(tsi)
         self._swdb_commit(tsis)
@@ -569,7 +569,7 @@ class RepoPkgsReinstallOldSubCommandTest(tests.support.ResultTestCase):
 #            tsi = dnf.transaction.TransactionItem(
 #                dnf.transaction.INSTALL,
 #                installed=pkg,
-#                reason=libdnf.swdb.TransactionItemReason_USER
+#                reason=libdnf.transaction.TransactionItemReason_USER
 #            )
 #            tsis.append(tsi)
         self._swdb_commit(tsis)
@@ -664,7 +664,7 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(tests.support.ResultTestCase):
 #            tsi = dnf.transaction.TransactionItem(
 #                dnf.transaction.INSTALL,
 #                installed=pkg,
-#                reason=libdnf.swdb.TransactionItemReason_USER
+#                reason=libdnf.transaction.TransactionItemReason_USER
 #            )
 #            tsis.append(tsi)
         self._swdb_commit(tsis)
@@ -687,7 +687,7 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(tests.support.ResultTestCase):
 #            tsi = dnf.transaction.TransactionItem(
 #                dnf.transaction.INSTALL,
 #                installed=pkg,
-#                reason=libdnf.swdb.TransactionItemReason_USER
+#                reason=libdnf.transaction.TransactionItemReason_USER
 #            )
 #            tsis.append(tsi)
         self._swdb_commit(tsis)
@@ -710,7 +710,7 @@ class RepoPkgsRemoveOrDistroSyncSubCommandTest(tests.support.ResultTestCase):
 #            tsi = dnf.transaction.TransactionItem(
 #                dnf.transaction.INSTALL,
 #                installed=pkg,
-#                reason=libdnf.swdb.TransactionItemReason_USER
+#                reason=libdnf.transaction.TransactionItemReason_USER
 #            )
 #            tsis.append(tsi)
         self._swdb_commit(tsis)
@@ -784,7 +784,7 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(tests.support.ResultTestCase):
 #            tsi = dnf.transaction.TransactionItem(
 #                dnf.transaction.INSTALL,
 #                installed=pkg,
-#                reason=libdnf.swdb.TransactionItemReason_USER
+#                reason=libdnf.transaction.TransactionItemReason_USER
 #            )
 #            tsis.append(tsi)
         self._swdb_commit(tsis)
@@ -807,7 +807,7 @@ class RepoPkgsRemoveOrReinstallSubCommandTest(tests.support.ResultTestCase):
 #            tsi = dnf.transaction.TransactionItem(
 #                dnf.transaction.INSTALL,
 #                installed=pkg,
-#                reason=libdnf.swdb.TransactionItemReason_USER
+#                reason=libdnf.transaction.TransactionItemReason_USER
 #            )
 #            tsis.append(tsi)
         self._swdb_commit(tsis)
@@ -838,7 +838,7 @@ class RepoPkgsRemoveSubCommandTest(tests.support.ResultTestCase):
 #            tsi = dnf.transaction.TransactionItem(
 #                dnf.transaction.INSTALL,
 #                installed=pkg,
-#                reason=libdnf.swdb.TransactionItemReason_USER
+#                reason=libdnf.transaction.TransactionItemReason_USER
 #            )
 #            tsis.append(tsi)
         self._swdb_commit(tsis)

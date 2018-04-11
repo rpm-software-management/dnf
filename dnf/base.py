@@ -24,7 +24,7 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import libdnf.swdb
+import libdnf.transaction
 
 from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
@@ -592,14 +592,14 @@ class Base(object):
             # TODO: move to libdnf: getBestReason
             reason = goal.get_reason(pkg)
             for obsolete in obs:
-                if reason == libdnf.swdb.TransactionItemReason_USER:
+                if reason == libdnf.transaction.TransactionItemReason_USER:
                     # we already have a reason with highest priority
                     break
 
                 reason_obsolete = ts.get_reason(obsolete)
-                if reason_obsolete == libdnf.swdb.TransactionItemReason_USER:
+                if reason_obsolete == libdnf.transaction.TransactionItemReason_USER:
                     reason = reason_obsolete
-                elif reason_obsolete == libdnf.swdb.TransactionItemReason_GROUP:
+                elif reason_obsolete == libdnf.transaction.TransactionItemReason_GROUP:
                     if not self.history.group.is_removable_pkg(pkg.name):
                         reason = reason_obsolete
 
@@ -889,7 +889,7 @@ class Base(object):
                     te_nevra = dnf.util._te_nevra(te)
                     for tsi in self._transaction:
                         if str(tsi) == te_nevra:
-                            tsi.state = libdnf.swdb.TransactionItemState_ERROR
+                            tsi.state = libdnf.transaction.TransactionItemState_ERROR
 
                 errstring = _('Errors occurred during transaction.')
                 logger.debug(errstring)
@@ -1435,7 +1435,7 @@ class Base(object):
             try:
                 return self.history.rpm.get_reason(q[0])
             except AttributeError:
-                return libdnf.swdb.TransactionItemReason_UNKNOWN
+                return libdnf.transaction.TransactionItemReason_UNKNOWN
 
         return dnf.comps.Solver(self.history, self._comps, reason_fn)
 
@@ -1953,17 +1953,17 @@ class Base(object):
 
         # map actions to their opposites
         action_map = {
-            libdnf.swdb.TransactionItemAction_DOWNGRADE: None,
-            libdnf.swdb.TransactionItemAction_DOWNGRADED: libdnf.swdb.TransactionItemAction_UPGRADE,
-            libdnf.swdb.TransactionItemAction_INSTALL: libdnf.swdb.TransactionItemAction_REMOVE,
-            libdnf.swdb.TransactionItemAction_OBSOLETE: None,
-            libdnf.swdb.TransactionItemAction_OBSOLETED: libdnf.swdb.TransactionItemAction_INSTALL,
-            libdnf.swdb.TransactionItemAction_REINSTALL: None,
-            libdnf.swdb.TransactionItemAction_REINSTALLED: libdnf.swdb.TransactionItemAction_REINSTALL,
-            libdnf.swdb.TransactionItemAction_REMOVE: libdnf.swdb.TransactionItemAction_INSTALL,
-            libdnf.swdb.TransactionItemAction_UPGRADE: None,
-            libdnf.swdb.TransactionItemAction_UPGRADED: libdnf.swdb.TransactionItemAction_DOWNGRADE,
-            libdnf.swdb.TransactionItemAction_REASON_CHANGE: None,
+            libdnf.transaction.TransactionItemAction_DOWNGRADE: None,
+            libdnf.transaction.TransactionItemAction_DOWNGRADED: libdnf.transaction.TransactionItemAction_UPGRADE,
+            libdnf.transaction.TransactionItemAction_INSTALL: libdnf.transaction.TransactionItemAction_REMOVE,
+            libdnf.transaction.TransactionItemAction_OBSOLETE: None,
+            libdnf.transaction.TransactionItemAction_OBSOLETED: libdnf.transaction.TransactionItemAction_INSTALL,
+            libdnf.transaction.TransactionItemAction_REINSTALL: None,
+            libdnf.transaction.TransactionItemAction_REINSTALLED: libdnf.transaction.TransactionItemAction_REINSTALL,
+            libdnf.transaction.TransactionItemAction_REMOVE: libdnf.transaction.TransactionItemAction_INSTALL,
+            libdnf.transaction.TransactionItemAction_UPGRADE: None,
+            libdnf.transaction.TransactionItemAction_UPGRADED: libdnf.transaction.TransactionItemAction_DOWNGRADE,
+            libdnf.transaction.TransactionItemAction_REASON_CHANGE: None,
         }
 
         for ti in operations.packages():
@@ -1975,7 +1975,7 @@ class Base(object):
             if action is None:
                 continue
 
-            if action == libdnf.swdb.TransactionItemAction_REMOVE:
+            if action == libdnf.transaction.TransactionItemAction_REMOVE:
                 pkgs = self.sack.query().installed().filter(nevra=str(ti))
             else:
                 pkgs = list(self.sack.query().available().filter(nevra=str(ti), reponame=ti.from_repo))

@@ -21,7 +21,7 @@ import calendar
 import os
 import time
 
-import libdnf.swdb
+import libdnf.transaction
 import libdnf.utils
 
 from dnf.i18n import ucd
@@ -157,7 +157,7 @@ class TransactionWrapper(object):
 
     @property
     def return_code(self):
-        return int(self._trans.getState() != libdnf.swdb.TransactionItemState_DONE)
+        return int(self._trans.getState() != libdnf.transaction.TransactionItemState_DONE)
 
     @property
     def loginuid(self):
@@ -195,7 +195,7 @@ class TransactionWrapper(object):
 class MergedTransactionWrapper(TransactionWrapper):
 
     def __init__(self, trans):
-        self._trans = libdnf.swdb.MergedTransaction(trans._trans)
+        self._trans = libdnf.transaction.MergedTransaction(trans._trans)
 
     def merge(self, trans):
         self._trans.merge(trans._trans)
@@ -209,7 +209,7 @@ class MergedTransactionWrapper(TransactionWrapper):
 
     @property
     def return_code(self):
-        return [int(i != libdnf.swdb.TransactionItemState_DONE) for i in self._trans.listStates()]
+        return [int(i != libdnf.transaction.TransactionItemState_DONE) for i in self._trans.listStates()]
 
     @property
     def cmdline(self):
@@ -256,13 +256,13 @@ class SwdbInterface(object):
         if not self._swdb:
             # _db_dir == persistdir which is prepended with installroot already
             path = os.path.join(self._db_dir, "sw.db")
-            self._swdb = libdnf.swdb.Swdb(path)
+            self._swdb = libdnf.transaction.Swdb(path)
             # TODO: vars -> libdnf
         return self._swdb
 
     @staticmethod
     def transform(input_dir, output_file):
-        transformer = libdnf.swdb.Transformer(input_dir, output_file)
+        transformer = libdnf.transaction.Transformer(input_dir, output_file)
         transformer.transform()
 
     def close(self):
@@ -312,11 +312,11 @@ class SwdbInterface(object):
         """Set reason for package"""
         rpm_item = self.rpm._pkg_to_swdb_rpm_item(pkg)
         repoid = self.repo(pkg)
-        action = libdnf.swdb.TransactionItemAction_REASON_CHANGE
+        action = libdnf.transaction.TransactionItemAction_REASON_CHANGE
         reason = reason
         replaced_by = None
         ti = self.swdb.addItem(rpm_item, repoid, action, reason)
-        ti.setState(libdnf.swdb.TransactionItemState_DONE)
+        ti.setState(libdnf.transaction.TransactionItemState_DONE)
         return ti
 
     '''
@@ -360,52 +360,52 @@ class SwdbInterface(object):
         if self.group:
             for group_id, group_item in sorted(self.group._installed.items()):
                 repoid = ""
-                action = libdnf.swdb.TransactionItemAction_INSTALL
-                reason = libdnf.swdb.TransactionItemReason_USER
+                action = libdnf.transaction.TransactionItemAction_INSTALL
+                reason = libdnf.transaction.TransactionItemReason_USER
                 replaced_by = None
                 ti = self.swdb.addItem(group_item, repoid, action, reason)
-                ti.setState(libdnf.swdb.TransactionItemState_DONE)
+                ti.setState(libdnf.transaction.TransactionItemState_DONE)
 
             for group_id, group_item in sorted(self.group._upgraded.items()):
                 repoid = ""
-                action = libdnf.swdb.TransactionItemAction_UPGRADE
-                reason = libdnf.swdb.TransactionItemReason_USER
+                action = libdnf.transaction.TransactionItemAction_UPGRADE
+                reason = libdnf.transaction.TransactionItemReason_USER
                 replaced_by = None
                 ti = self.swdb.addItem(group_item, repoid, action, reason)
-                ti.setState(libdnf.swdb.TransactionItemState_DONE)
+                ti.setState(libdnf.transaction.TransactionItemState_DONE)
 
             for group_id, group_item in sorted(self.group._removed.items()):
                 repoid = ""
-                action = libdnf.swdb.TransactionItemAction_REMOVE
-                reason = libdnf.swdb.TransactionItemReason_USER
+                action = libdnf.transaction.TransactionItemAction_REMOVE
+                reason = libdnf.transaction.TransactionItemReason_USER
                 replaced_by = None
                 ti = self.swdb.addItem(group_item, repoid, action, reason)
-                ti.setState(libdnf.swdb.TransactionItemState_DONE)
+                ti.setState(libdnf.transaction.TransactionItemState_DONE)
 
         if self.env:
             for env_id, env_item in sorted(self.env._installed.items()):
                 repoid = ""
-                action = libdnf.swdb.TransactionItemAction_INSTALL
-                reason = libdnf.swdb.TransactionItemReason_USER
+                action = libdnf.transaction.TransactionItemAction_INSTALL
+                reason = libdnf.transaction.TransactionItemReason_USER
                 replaced_by = None
                 ti = self.swdb.addItem(env_item, repoid, action, reason)
-                ti.setState(libdnf.swdb.TransactionItemState_DONE)
+                ti.setState(libdnf.transaction.TransactionItemState_DONE)
 
             for env_id, env_item in sorted(self.env._upgraded.items()):
                 repoid = ""
-                action = libdnf.swdb.TransactionItemAction_UPGRADE
-                reason = libdnf.swdb.TransactionItemReason_USER
+                action = libdnf.transaction.TransactionItemAction_UPGRADE
+                reason = libdnf.transaction.TransactionItemReason_USER
                 replaced_by = None
                 ti = self.swdb.addItem(env_item, repoid, action, reason)
-                ti.setState(libdnf.swdb.TransactionItemState_DONE)
+                ti.setState(libdnf.transaction.TransactionItemState_DONE)
 
             for env_id, env_item in sorted(self.env._removed.items()):
                 repoid = ""
-                action = libdnf.swdb.TransactionItemAction_REMOVE
-                reason = libdnf.swdb.TransactionItemReason_USER
+                action = libdnf.transaction.TransactionItemAction_REMOVE
+                reason = libdnf.transaction.TransactionItemReason_USER
                 replaced_by = None
                 ti = self.swdb.addItem(env_item, repoid, action, reason)
-                ti.setState(libdnf.swdb.TransactionItemState_DONE)
+                ti.setState(libdnf.transaction.TransactionItemState_DONE)
 
 
         # save when everything is in memory
@@ -476,9 +476,9 @@ class SwdbInterface(object):
     def user_installed(self, pkg):
         """Returns True if package is user installed"""
         reason = self.swdb.resolveRPMTransactionItemReason(pkg.name, pkg.arch, -1)
-        if reason == libdnf.swdb.TransactionItemReason_USER:
+        if reason == libdnf.transaction.TransactionItemReason_USER:
             return True
-        # TODO: return True also for libdnf.swdb.TransactionItemReason_UNKNOWN?
+        # TODO: return True also for libdnf.transaction.TransactionItemReason_UNKNOWN?
         return False
 
     def select_user_installed(self, pkgs):
@@ -486,7 +486,7 @@ class SwdbInterface(object):
         result = []
         for po in pkgs:
             reason = self.swdb.resolveRPMTransactionItemReason(po.name, po.arch, -1)
-            if reason != libdnf.swdb.TransactionItemReason_USER:
+            if reason != libdnf.transaction.TransactionItemReason_USER:
                 continue
             result.append(po)
         return result
@@ -505,6 +505,6 @@ class SwdbInterface(object):
             result = self.swdb.resolveRPMTransactionItemReason(pkg.name, pkg.arch, -1)
 
         # consider unknown reason as user-installed
-        if result == libdnf.swdb.TransactionItemReason_UNKNOWN:
-            result = libdnf.swdb.TransactionItemReason_USER
+        if result == libdnf.transaction.TransactionItemReason_UNKNOWN:
+            result = libdnf.transaction.TransactionItemReason_USER
         return result

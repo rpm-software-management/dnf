@@ -19,7 +19,7 @@
 
 from __future__ import absolute_import
 
-import libdnf.swdb
+import libdnf.transaction
 
 import dnf.cli.commands.autoremove as autoremove
 from dnf.cli.option_parser import OptionParser
@@ -38,7 +38,7 @@ class AutoRemoveCommandTest(tests.support.ResultTestCase):
 
         self._swdb_begin()
         for pkg in pkgs:
-            self.base.history.set_reason(pkg, libdnf.swdb.TransactionItemReason_USER)
+            self.base.history.set_reason(pkg, libdnf.transaction.TransactionItemReason_USER)
         self._swdb_end()
 
         cmd = autoremove.AutoremoveCommand(self.cli)

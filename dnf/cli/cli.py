@@ -73,7 +73,7 @@ import random
 import sys
 import time
 
-import libdnf.swdb
+import libdnf.transaction
 import dnf.db.history
 import dnf.util
 
@@ -240,7 +240,7 @@ class BaseCli(dnf.Base):
             msg = self.output.post_transaction_output(trans)
             logger.info(msg)
             for tsi in trans:
-                if tsi.state == libdnf.swdb.TransactionItemState_ERROR:
+                if tsi.state == libdnf.transaction.TransactionItemState_ERROR:
                     raise dnf.exceptions.Error(_('Transaction failed'))
 
     def gpgsigcheck(self, pkgs):
@@ -601,7 +601,7 @@ class BaseCli(dnf.Base):
         self.output.historyInfoCmdPkgsAltered(mobj)  # :todo
 
 #        history = dnf.history.open_history(self.history)  # :todo
-#        m = libdnf.swdb.MergedTransaction()
+#        m = libdnf.transaction.MergedTransaction()
 
 #        return
 

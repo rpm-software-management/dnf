@@ -25,7 +25,7 @@ import itertools
 import re
 
 import hawkey
-import libdnf.swdb
+import libdnf.transaction
 import rpm
 
 import dnf
@@ -47,8 +47,8 @@ class BaseTest(tests.support.TestCase):
         history.rpm.add_install(pkg)
         history.beg("", [], [])
         for tsi in history._swdb.getItems():
-            if tsi.getState() == libdnf.swdb.TransactionItemState_UNKNOWN:
-                tsi.setState(libdnf.swdb.TransactionItemState_DONE)
+            if tsi.getState() == libdnf.transaction.TransactionItemState_UNKNOWN:
+                tsi.setState(libdnf.transaction.TransactionItemState_DONE)
         history.end("")
 
     def test_instance(self):
@@ -124,8 +124,8 @@ class BaseTest(tests.support.TestCase):
         history.rpm.add_install(pkg)
         history.beg("", [], [])
         for tsi in history._swdb.getItems():
-            if tsi.getState() == libdnf.swdb.TransactionItemState_UNKNOWN:
-                tsi.setState(libdnf.swdb.TransactionItemState_DONE)
+            if tsi.getState() == libdnf.transaction.TransactionItemState_UNKNOWN:
+                tsi.setState(libdnf.transaction.TransactionItemState_DONE)
         history.end("")
 
         pkg, = base.sack.query().installed().filter(name='pepper')
@@ -142,11 +142,11 @@ class BaseTest(tests.support.TestCase):
         history = base.history
         pkg = tests.support.MockPackage('pepper-20-0.x86_64')
         pkg._force_swdb_repoid = "main"
-        history.rpm.add_install(pkg, reason=libdnf.swdb.TransactionItemReason_DEPENDENCY)
+        history.rpm.add_install(pkg, reason=libdnf.transaction.TransactionItemReason_DEPENDENCY)
         history.beg("", [], [])
         for tsi in history._swdb.getItems():
-            if tsi.getState() == libdnf.swdb.TransactionItemState_UNKNOWN:
-                tsi.setState(libdnf.swdb.TransactionItemState_DONE)
+            if tsi.getState() == libdnf.transaction.TransactionItemState_UNKNOWN:
+                tsi.setState(libdnf.transaction.TransactionItemState_DONE)
         history.end("")
 
         pkg, = base.sack.query().installed().filter(name='pepper')
@@ -229,7 +229,7 @@ class VerifyTransactionTest(tests.support.DnfBaseTestCase):
         pkg = self.base.history.package_data(new_pkg)
         self.assertEqual(pkg.ui_from_repo(), '@main')
         self.assertEqual(pkg.action_name, "Install")
-        self.assertEqual(pkg.get_reason(), libdnf.swdb.TransactionItemReason_USER)
+        self.assertEqual(pkg.get_reason(), libdnf.transaction.TransactionItemReason_USER)
 
 
 class InstallReasonTest(tests.support.ResultTestCase):
@@ -242,8 +242,8 @@ class InstallReasonTest(tests.support.ResultTestCase):
         new_pkgs = self.base._transaction._get_items(dnf.transaction.PKG_INSTALL)
         pkg_reasons = [(tsi.name, tsi.reason) for tsi in new_pkgs]
         self.assertCountEqual([
-            ("mrkite", libdnf.swdb.TransactionItemReason_USER),
-            ("trampoline", libdnf.swdb.TransactionItemReason_DEPENDENCY)],
+            ("mrkite", libdnf.transaction.TransactionItemReason_USER),
+            ("trampoline", libdnf.transaction.TransactionItemReason_DEPENDENCY)],
             pkg_reasons
         )
 
@@ -295,12 +295,12 @@ class Goal2TransactionTest(tests.support.DnfBaseTestCase):
 
         tsi = tsis[0]
         self.assertEqual(str(tsi.pkg), "hole-2-1.x86_64")
-        self.assertEqual(tsi.action, libdnf.swdb.TransactionItemAction_UPGRADE)
+        self.assertEqual(tsi.action, libdnf.transaction.TransactionItemAction_UPGRADE)
 
         tsi = tsis[1]
         self.assertEqual(str(tsi.pkg), "hole-1-1.x86_64")
-        self.assertEqual(tsi.action, libdnf.swdb.TransactionItemAction_UPGRADED)
+        self.assertEqual(tsi.action, libdnf.transaction.TransactionItemAction_UPGRADED)
 
         tsi = tsis[2]
         self.assertEqual(str(tsi.pkg), "tour-5-0.noarch")
-        self.assertEqual(tsi.action, libdnf.swdb.TransactionItemAction_OBSOLETED)
+        self.assertEqual(tsi.action, libdnf.transaction.TransactionItemAction_OBSOLETED)

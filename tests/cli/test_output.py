@@ -20,7 +20,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import libdnf.swdb
+import libdnf.transaction
 
 import dnf.cli.output
 import dnf.const
@@ -62,7 +62,7 @@ Upgrade  1 Package
 class OutputFunctionsTest(tests.support.TestCase):
     def test_make_lists(self):
         return
-        goal = mock.Mock(get_reason=lambda x: libdnf.swdb.TransactionItemReason_USER)
+        goal = mock.Mock(get_reason=lambda x: libdnf.transaction.TransactionItemReason_USER)
         ts = dnf.transaction.Transaction()
 #        ts = dnf.db.history.
         ts.add_install('pepper-3', [])

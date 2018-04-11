@@ -17,7 +17,7 @@
 from __future__ import print_function, absolute_import
 from __future__ import unicode_literals
 
-import libdnf.swdb
+import libdnf.transaction
 
 from dnf.i18n import _, ucd
 import dnf.transaction
@@ -191,7 +191,7 @@ class RPMTransaction(object):
         te = self._te_list[self._te_index]
         te_nevra = dnf.util._te_nevra(te)
         for tsi in self.base.transaction:
-            if tsi.action == libdnf.swdb.TransactionItemAction_REINSTALL:
+            if tsi.action == libdnf.transaction.TransactionItemAction_REINSTALL:
                 # skip REINSTALL in order to return REINSTALLED
                 continue
             if str(tsi) == te_nevra:
@@ -283,8 +283,8 @@ class RPMTransaction(object):
         if self.test or not self.trans_running:
             return
 
-        if tsi.state == libdnf.swdb.TransactionItemState_UNKNOWN:
-            tsi.state = libdnf.swdb.TransactionItemState_DONE
+        if tsi.state == libdnf.transaction.TransactionItemState_UNKNOWN:
+            tsi.state = libdnf.transaction.TransactionItemState_DONE
 
         for display in self.displays:
             display.filelog(tsi.pkg, tsi.action)
@@ -316,8 +316,8 @@ class RPMTransaction(object):
     def _unInstStop(self, key):
         _, _, tsi = self._extract_cbkey(key)
 
-        if tsi.state == libdnf.swdb.TransactionItemState_UNKNOWN:
-            tsi.state = libdnf.swdb.TransactionItemState_DONE
+        if tsi.state == libdnf.transaction.TransactionItemState_UNKNOWN:
+            tsi.state = libdnf.transaction.TransactionItemState_DONE
 
         for display in self.displays:
             display.filelog(tsi.pkg, tsi.action)
@@ -339,7 +339,7 @@ class RPMTransaction(object):
         msg = "Error unpacking rpm package %s" % pkg
         for display in self.displays:
             display.error(msg)
-        tsi.state = libdnf.swdb.TransactionItemState_ERROR
+        tsi.state = libdnf.transaction.TransactionItemState_ERROR
 
     def _scriptError(self, amount, total, key):
         # "amount" carries the failed scriptlet tag,
