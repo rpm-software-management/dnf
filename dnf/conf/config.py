@@ -401,7 +401,9 @@ class MainConf(BaseConfig):
         val = opt._get()
         # if it exists inside installroot use it (i.e. adjust configuration)
         # for lists any component counts
-        if not isinstance(val, str):
+        if not val:
+            opt._set(cfg.VectorString([]), prio)
+        elif not isinstance(val, str):
             if any(os.path.exists(os.path.join(self._get_value('installroot'),
                                                p.lstrip('/'))) for p in val):
                 opt._set(cfg.VectorString([self._prepend_installroot_path(p) for p in val]), prio)
