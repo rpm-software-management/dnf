@@ -239,11 +239,11 @@ class _NullKeyImport(dnf.callback.KeyImport):
 
 
 class Metadata(object):
-    def __init__(self, repo_dct, repomd_dct):
+    def __init__(self, repo_dct, repomd_dct, mirrors):
         self.fresh = False  # :api
         self._repo_dct = repo_dct
         self._repomd_dct = repomd_dct
-        # self._priv_mirrors = handle.mirrors[:] TODO
+        self._priv_mirrors = mirrors[:]
 
     @property
     def _age(self):
@@ -676,7 +676,7 @@ class Repo(dnf.conf.RepoConf):
         if handle.progresscb:
             self._md_pload.end()
 
-        return Metadata(result.yum_repo, result.yum_repomd)
+        return Metadata(result.yum_repo, result.yum_repomd, handle.mirrors)
 
     def _handle_load_with_pubring(self, handle):
         with dnf.crypto.pubring_dir(self._pubring_dir):
