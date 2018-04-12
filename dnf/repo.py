@@ -769,6 +769,9 @@ class Repo(dnf.conf.RepoConf):
             self.baseurl[0],
             self._cachedir,
             self.metadata_expire,
+            self.repo_gpgcheck,
+            self._max_mirror_tries,
+            self.max_parallel_downloads,
         )
 
     def _replace_metadata(self, handle):
