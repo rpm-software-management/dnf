@@ -689,3 +689,28 @@ class ModuleTest(unittest.TestCase):
 
     def test_remove_invalid(self):
         pass
+
+    def test_bare_rpms_filtering(self):
+        """
+        Test hybrid repos where RPMs of the same name (or Provides)
+        can be both modular and bare (non-modular).
+        """
+
+        rmv = self.base.repo_module_dict.find_module_version(name="httpd")
+        self.assertEqual(rmv.full_version, "httpd:2.4:2")
+
+        # no match with modular RPM $name -> keep
+        q = self.base.sack.query().filter(nevra="grub2-2.02-0.40.x86_64")
+        self.assertEqual(len(q), 1)
+
+        # $name matches with modular RPM $name -> exclude
+        q = self.base.sack.query().filter(nevra="httpd-2.2.10-1.x86_64")
+        self.assertEqual(len(q), 0)
+
+        # Provides: $name matches with modular RPM $name -> exclude
+        q = self.base.sack.query().filter(nevra="httpd-provides-name-3.0-1.x86_64")
+        self.assertEqual(len(q), 0)
+
+        # Provides: $name = ... matches with modular RPM $name -> exclude
+        q = self.base.sack.query().filter(nevra="httpd-provides-name-version-release-3.0-1.x86_64")
+        self.assertEqual(len(q), 0)
