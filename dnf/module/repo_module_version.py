@@ -146,7 +146,11 @@ class RepoModuleVersion(object):
         return self.module_metadata.get_rpm_artifacts().get()
 
     def requires(self):
-        return self.module_metadata.peek_requires()
+        requires = {}
+        for dependencies in self.module_metadata.peek_dependencies():
+            for name, streams in dependencies.peek_requires().items():
+                requires[name] = streams.get()
+        return requires
 
     def summary(self):
         return self.module_metadata.get_summary()
