@@ -239,10 +239,6 @@ class RepoModuleDict(OrderedDict):
             self.base._module_persistor.commit()
             self.base._module_persistor.save()
 
-        self.base.sack.reset_includes()
-        self.base.sack.reset_excludes()
-        self.base._setup_excludes_includes()
-
     def disable(self, module_spec, save_immediately=False):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
@@ -317,6 +313,11 @@ class RepoModuleDict(OrderedDict):
 
             self.enable("{}:{}".format(module_version.name, module_version.stream))
 
+        self.base.sack.reset_includes()
+        self.base.sack.reset_excludes()
+        self.base._setup_excludes_includes()
+
+        for module_version, profiles, default_profiles in versions.values():
             if module_version.version > module_version.repo_module.conf.version:
                 profiles.extend(module_version.repo_module.conf.profiles)
                 profiles = list(set(profiles))
