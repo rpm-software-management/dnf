@@ -139,7 +139,7 @@ class RepoModuleVersion(object):
     def nevra(self):
         result = self.artifacts()
         # HACK: remove epoch to make filter(nevra=...) work
-        result = [i.replace("0:", "") for i in result]
+        result = [i.replace("-0:", "-") for i in result]
         return result
 
     def artifacts(self):

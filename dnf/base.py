@@ -275,47 +275,50 @@ class Base(object):
 
         exclude_nevras_dict = {}
         exclude_query_list = []
+
         include_nevras_set = set()
+        exclude_nevras_set = set()
+
         for repo_module in self.repo_module_dict.values():
             if repo_module.conf.enabled:
                 update_include_nevras(repo_module.name, repo_module.conf.stream)
             elif repo_module.defaults.peek_default_stream():
                 update_include_nevras(repo_module.name, repo_module.defaults.peek_default_stream())
 
-            exclude_set, repos = self.repo_module_dict.get_excludes(repo_module.name)
-            for nevra in exclude_set:
-                exclude_nevras_dict.setdefault(nevra, set()).update([repo.id for repo in repos])
+            exclude_set, _ = self.repo_module_dict.get_excludes(repo_module.name)
+            exclude_nevras_set.update(exclude_set)
 
-        exclude_nevras_dict = {key: value for key, value in exclude_nevras_dict.items()
-                               if key not in include_nevras_set}
+        # collect all hotfix repo repoids - we don't filter them at all
+        hotfix_repos = [i.id for i in self.repos.iter_enabled() if i.hotfixes]
 
-        repos_query_dict = {}
-        for nevra, repos in exclude_nevras_dict.items():
-            nevra_query = repos_query_dict.setdefault(
-                ','.join(sorted(repos)), self.sack.query().filter(reponame=repos))
-            nevra_query.apply()
-            nevra_query = nevra_query._nevra(nevra).apply()
-            exclude_query_list.append(nevra_query)
+        # collect all RPM $names for bare RPMs filtering
+        names = {hawkey.split_nevra(i).name for i in include_nevras_set}
 
-        hotfix_repos = []
-        for repo in self.repos.iter_enabled():
-            if repo.hotfixes:
-                hotfix_repos.append(repo.id)
+        module_include_query = self.sack.query().filter(
+            nevra=include_nevras_set,
+            reponame__neq=hotfix_repos
+        )
+        module_exclude_query = self.sack.query().filter(
+            nevra=exclude_nevras_set,
+            reponame__neq=hotfix_repos
+        )
+        # don't exclude NEVRAs that are also in active module streams
+        module_exclude_query = module_exclude_query.difference(module_include_query)
 
-        names = set()
-        for nevra in sorted(include_nevras_set):
-            nevra = hawkey.split_nevra(nevra)
-            names.add(nevra.name)
-
+        # exclude bare RPMs with $name that exists in active modular repos
         names_query = self.sack.query().filter(name=names, reponame__neq=hotfix_repos)
-        query = self.sack.query().filter(nevra=include_nevras_set)
+        names_query = names_query.difference(module_include_query)
 
-        names_query = names_query.difference(query)
-        names_query.apply()
+        # exclude bare RPMs with Provides: matching RPM $name from an active modular repo
+        provides_query = self.sack.query().filter(provides=names, reponame__neq=hotfix_repos)
+        provides_query = provides_query.difference(module_include_query)
 
-        for query in exclude_query_list:
-            self.sack.add_excludes(query)
+        # exclude RPMs from inactive streams
+        self.sack.add_excludes(module_exclude_query)
+
+        # exclude bare RPMs that collide with modular RPMs
         self.sack.add_excludes(names_query)
+        self.sack.add_excludes(provides_query)
 
     def _store_persistent_data(self):
         if self._repo_persistor and not self.conf.cacheonly:
