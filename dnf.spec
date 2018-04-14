@@ -1,4 +1,4 @@
-%global hawkey_version 0.13.1
+%global hawkey_version 0.13.2
 %global librepo_version 1.9.0
 %global libcomps_version 0.1.8
 %global rpm_version 4.14.0
@@ -132,6 +132,7 @@ Summary:        Python 2 interface to DNF
 %{?python_provide:%python_provide python2-%{name}}
 BuildRequires:  python2-devel
 BuildRequires:  python2-hawkey >= %{hawkey_version}
+BuildRequires:  python2-libdnf >= %{hawkey_version}
 BuildRequires:  python2-libcomps >= %{libcomps_version}
 BuildRequires:  python2-librepo >= %{librepo_version}
 BuildRequires:  python2-nose
@@ -144,6 +145,7 @@ Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
 %endif
 Requires:       python2-hawkey >= %{hawkey_version}
+Requires:       python2-libdnf >= %{hawkey_version}
 Requires:       python2-libcomps >= %{libcomps_version}
 Requires:       python2-librepo >= %{librepo_version}
 %if 0%{?rhel} && 0%{?rhel} <= 7
@@ -173,6 +175,7 @@ Summary:        Python 3 interface to DNF.
 %{?python_provide:%python_provide python3-%{name}}
 BuildRequires:  python3-devel
 BuildRequires:  python3-hawkey >= %{hawkey_version}
+BuildRequires:  python3-libdnf >= %{hawkey_version}
 BuildRequires:  python3-iniparse
 BuildRequires:  python3-libcomps >= %{libcomps_version}
 BuildRequires:  python3-librepo >= %{librepo_version}
@@ -184,6 +187,7 @@ Requires:       %{name}-conf = %{version}-%{release}
 Requires:       deltarpm
 %endif
 Requires:       python3-hawkey >= %{hawkey_version}
+Requires:       python3-libdnf >= %{hawkey_version}
 Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
 Requires:       python3-librepo >= %{librepo_version}

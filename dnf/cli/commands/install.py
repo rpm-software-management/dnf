@@ -108,7 +108,7 @@ class InstallCommand(commands.Command):
             self.base.read_comps(arch_filter=True)
             try:
                 self.base.env_group_install(self.opts.grp_specs,
-                                            self.base.conf.group_package_types,
+                                            tuple(self.base.conf.group_package_types),
                                             strict=strict)
             except dnf.exceptions.Error:
                 if self.base.conf.strict:
