@@ -1853,8 +1853,7 @@ class Base(object):
 
     def upgrade_all(self, reponame=None):
         # :api
-        if reponame is None and not self._update_security_filters and \
-                not self.repo_module_dict:
+        if reponame is None and not self._update_security_filters:
             self._goal.upgrade_all()
         else:
             # provide only available packages to solver otherwise selection of available
