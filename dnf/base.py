@@ -1934,19 +1934,12 @@ class Base(object):
 
     def upgrade_all(self, reponame=None):
         # :api
-        if reponame is None and not self._update_security_filters and \
-                not self.repo_module_dict:
+        if reponame is None and not self._update_security_filters:
             self._goal.upgrade_all()
         else:
-            module_query, query_exclude = self.repo_module_dict.upgrade_all()
-
             # provide only available packages to solver otherwise selection of available
             # possibilities will be ignored
             q = self.sack.query().available()
-            if module_query:
-                q = q.union(module_query)
-            if query_exclude:
-                q = q.difference(query_exclude)
 
             # add obsoletes into transaction
             if self.conf.obsoletes:
