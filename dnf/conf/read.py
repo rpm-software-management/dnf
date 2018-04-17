@@ -167,22 +167,3 @@ class ModuleReader(object):
                 module.config_file = module_path
 
             yield module
-
-
-class ModuleDefaultsReader(ModuleReader):
-    def __init__(self, module_defaults_dir):
-        super(ModuleDefaultsReader, self).__init__(module_defaults_dir, "defaults")
-
-    def _build_module(self, parser, id_, defaults_path):
-        """Build a module using the parsed data."""
-
-        defaults = dnf.conf.ModuleDefaultsConf(section=id_, parser=parser)
-        try:
-            defaults._populate(parser, id_, defaults_path)
-        except ValueError as e:
-            msg = _("Module defaults '%s': Error parsing config: %s" % (id_, e))
-            raise dnf.exceptions.ConfigError(msg)
-
-        defaults._cfg = parser
-
-        return defaults

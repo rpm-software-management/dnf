@@ -289,6 +289,7 @@ mkdir build-py3
 mkdir -p %{buildroot}%{confdir}/vars
 mkdir -p %{buildroot}%{pluginconfpath}/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/modules.d
+mkdir -p %{buildroot}%{_sysconfdir}/%{name}/modules.defaults.d
 %if %{with python2}
 mkdir -p %{buildroot}%{py2pluginpath}/
 %endif
@@ -381,6 +382,7 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %dir %{confdir}
 %dir %{pluginconfpath}
 %dir %{_sysconfdir}/%{name}/modules.d
+%dir %{_sysconfdir}/%{name}/modules.defaults.d
 %dir %{confdir}/protected.d
 %dir %{confdir}/vars
 %config(noreplace) %{confdir}/%{name}.conf
@@ -439,6 +441,7 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %dir %{py3pluginpath}
 %dir %{py3pluginpath}/__pycache__
 %dir %{_sysconfdir}/%{name}/modules.d
+%dir %{_sysconfdir}/%{name}/modules.defaults.d
 %endif
 
 %files automatic

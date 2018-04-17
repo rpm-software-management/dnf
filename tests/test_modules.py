@@ -27,7 +27,6 @@ import hawkey
 from hawkey import ModuleForm
 
 import dnf.conf
-from dnf.conf import ModuleDefaultsConf
 from dnf.module.subject import ModuleSubject
 from dnf.module.repo_module_dict import RepoModuleDict
 from dnf.module.repo_module_version import RepoModuleVersion
@@ -238,10 +237,10 @@ class RepoModuleDictTest(unittest.TestCase):
         rmd.add(rmv)
 
         # set defaults
-        defaults = ModuleDefaultsConf()
-        defaults.name = "module-name"
-        defaults.stream = "stream"
-        defaults.profile = []
+        defaults = Modulemd.Defaults()
+        defaults.set_module_name("module-name")
+        defaults.set_default_stream("stream")
+        # no default profiles provided
         rmd["module-name"].defaults = defaults
 
         # no default, no active -> can't find stream automatically
