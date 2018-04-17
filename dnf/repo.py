@@ -766,9 +766,9 @@ class Repo(dnf.conf.RepoConf):
 
     def _init_hawkey_remote(self):
         return (
-            self.baseurl[0],
             self._cachedir,
             self.metadata_expire,
+            self.baseurl[0],
             self.repo_gpgcheck,
             self._max_mirror_tries,
             self.max_parallel_downloads,
