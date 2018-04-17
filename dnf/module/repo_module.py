@@ -17,7 +17,11 @@
 import os
 from collections import OrderedDict
 
-from dnf.conf import ModuleConf, ModuleDefaultsConf
+import gi
+gi.require_version('Modulemd', '1.0')
+from gi.repository import Modulemd
+
+from dnf.conf import ModuleConf
 from dnf.module import module_messages, DIFFERENT_STREAM_INFO
 from dnf.module.exceptions import NoStreamException, EnabledStreamException
 from dnf.module.repo_module_stream import RepoModuleStream
@@ -52,11 +56,9 @@ class RepoModule(OrderedDict):
     @property
     def defaults(self):
         if self._defaults is None:
-            self._defaults = ModuleDefaultsConf(section=self.name, parser=ConfigParser())
-            self._defaults.name = self.name
-            self._defaults.stream = None
-            self._defaults.profiles = None
-
+            self._defaults = Modulemd.Defaults()
+            self._defaults.set_module_name(self.name)
+            # default stream and profiles remain unset
         return self._defaults
 
     @defaults.setter

@@ -1,0 +1,7 @@
+document: modulemd-defaults
+version: 1
+data:
+  module: base-runtime
+  stream: f26
+  profiles:
+    f26: [minimal]

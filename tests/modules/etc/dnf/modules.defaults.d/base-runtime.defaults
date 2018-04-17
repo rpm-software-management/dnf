@@ -1,4 +1,0 @@
-[base-runtime]
-name=base-runtime
-stream=f26
-profiles=minimal

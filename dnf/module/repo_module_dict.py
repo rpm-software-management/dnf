@@ -1,4 +1,4 @@
-# Copyright (C) 2017  Red Hat, Inc.
+# Copyright (C) 2017-2018  Red Hat, Inc.
 #
 # This program is free software; you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@ from collections import OrderedDict
 import hawkey
 import smartcols
 
-from dnf.conf.read import ModuleReader, ModuleDefaultsReader
+from dnf.conf.read import ModuleReader
 from dnf.module import module_messages, NOTHING_TO_SHOW, \
     INSTALLING_NEWER_VERSION, NOTHING_TO_INSTALL, VERSION_LOCKED, NO_PROFILE_SPECIFIED
 from dnf.module.exceptions import NoStreamSpecifiedException, NoModuleException, \
@@ -60,7 +60,7 @@ class RepoModuleDict(OrderedDict):
             return None
 
         def use_default_stream(repo_module):
-            return repo_module.defaults.stream
+            return repo_module.defaults.peek_default_stream()
 
         try:
             repo_module = self[name]
@@ -181,7 +181,7 @@ class RepoModuleDict(OrderedDict):
             for repo_module_stream in repo_module.values():
                 if repo_module.conf.enabled and \
                         repo_module.conf.stream == repo_module_stream.stream or \
-                        repo_module.defaults.stream == repo_module_stream.stream:
+                        repo_module.defaults.peek_default_stream() == repo_module_stream.stream:
                     continue
 
                 for repo_module_version in repo_module_stream.values():
@@ -212,7 +212,7 @@ class RepoModuleDict(OrderedDict):
 
         defaults = []
         for version in self.base.repo_module_dict.list_module_version_latest():
-            if version.stream == version.repo_module.defaults.stream:
+            if version.stream == version.repo_module.defaults.peek_default_stream():
                 defaults.append(version)
 
         for version in defaults:
@@ -353,7 +353,10 @@ class RepoModuleDict(OrderedDict):
                 if module_form.profile:
                     profiles.append(module_form.profile)
                 else:
-                    default_profiles.extend(module_version.repo_module.defaults.profiles)
+                    default_stream = module_version.repo_module.defaults.peek_default_stream()
+                    profile_defaults = module_version.repo_module.defaults.peek_profile_defaults()
+                    if default_stream in profile_defaults:
+                        default_profiles.extend(profile_defaults[default_stream].get())
 
                 if best_version < module_version:
                     logger.info(module_messages[INSTALLING_NEWER_VERSION].format(best_version,
@@ -365,10 +368,14 @@ class RepoModuleDict(OrderedDict):
                 default_profiles = []
                 profiles = []
 
+                default_stream = module_version.repo_module.defaults.peek_default_stream()
+                profile_defaults = module_version.repo_module.defaults.peek_profile_defaults()
+                if default_stream in profile_defaults:
+                    default_profiles.extend(profile_defaults[default_stream].get())
+
                 if module_form.profile:
                     profiles = [module_form.profile]
-                elif module_version.repo_module.defaults.profiles:
-                    default_profiles = module_version.repo_module.defaults.profiles
+                elif default_profiles:
                     profiles = []
                 else:
                     default_profiles = ['default']
@@ -477,14 +484,6 @@ class RepoModuleDict(OrderedDict):
             repo_module.name = conf.name
             repo_module.parent = self
 
-    def read_all_module_defaults(self):
-        defaults_reader = ModuleDefaultsReader(self.base.conf.moduledefaultsdir)
-        for conf in defaults_reader:
-            try:
-                self[conf.name].defaults = conf
-            except KeyError:
-                logger.debug("No module named {}, skipping.".format(conf.name))
-
     def get_modules_dir(self):
         modules_dir = os.path.join(self.base.conf.installroot,
                                    self.base.conf.modulesdir.lstrip("/"))
@@ -514,12 +513,14 @@ class RepoModuleDict(OrderedDict):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
 
-        default_stream = module_version.repo_module.defaults.stream
+        default_stream = module_version.repo_module.defaults.peek_default_stream()
         default_str = " (default)" if module_version.stream == default_stream else ""
 
         default_profiles = []
-        if module_version.repo_module.defaults.profiles:
-            default_profiles = module_version.repo_module.defaults.profiles
+        default_stream = module_version.repo_module.defaults.peek_default_stream()
+        profile_defaults = module_version.repo_module.defaults.peek_profile_defaults()
+        if default_stream in profile_defaults:
+            default_profiles.extend(profile_defaults[default_stream].get())
 
         lines = OrderedDict()
         lines["Name"] = module_version.name
@@ -731,7 +732,7 @@ class RepoModuleDict(OrderedDict):
                 available_profiles = i.profiles
                 installed_profiles = []
 
-                if i.stream == defaults_conf.stream:
+                if i.stream == defaults_conf.peek_default_stream():
                     default_str = " [d]"
 
                 if i.stream == conf.stream and conf.enabled:
