@@ -61,4 +61,4 @@ class ModuleMetadataLoader(object):
         if PY3:
             modules_yaml = modules_yaml.decode("utf-8")
 
-        return Modulemd.Module.new_all_from_string(modules_yaml)
+        return Modulemd.Module.new_all_from_string_ext(modules_yaml)
