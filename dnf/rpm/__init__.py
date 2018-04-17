@@ -33,6 +33,8 @@ def detect_releasever(installroot):
     ts = transaction.initReadOnlyTransaction(root=installroot)
     ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES | rpm._RPMVSF_NODIGESTS))
     for distroverpkg in dnf.const.DISTROVERPKG:
+        if dnf.pycomp.PY3:
+            distroverpkg = bytes(distroverpkg, 'utf-8')
         try:
             idx = ts.dbMatch('provides', distroverpkg)
         except (TypeError, rpm.error) as e:
