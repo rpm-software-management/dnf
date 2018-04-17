@@ -322,96 +322,56 @@ class UpdateInfoCommand(commands.Command):
         for (inst, aid, label, nevra) in advlist:
             print('%s%-*s %-*s %s' % (inst, idw, aid, tlw, label, nevra))
 
-
-    def _info(self, apkg_adv_insts):
-        """Make detailed information about advisories."""
-        arches = self.base.sack.list_arches()
-
-        # Get mapping from title to [title, ID, type, time, BZs, CVEs,
-        # description, rights, files, installed]. This way we get rid of
-        # unneeded advisory packages given with the advisories and we remove
-        # duplicate advisories (that SPEEDS UP the information extraction
-        # because the advisory attribute getters are expensive, so we won't get
-        # the attributes multiple times). We cannot use a set because
-        # advisories are not hashable.
-        verbose = self.base.conf.verbose
-        bytitle = dict()
-        # mapping from title to list of identities
-        for apkg, advisory, installed in apkg_adv_insts:
-            title = advisory.title.lower()
-            try:
-                advlist = bytitle[title]
-            except KeyError:
-                advlist = [
-                    advisory.title,
-                    advisory.id,
-                    self.TYPE2LABEL.get(advisory.type, _('unknown')),
-                    unicode(advisory.updated),
-                    set((ref.type, ref.id, ref.title) for ref in advisory.references),
-                    [],
-                    advisory.description,
-                    advisory.severity,
-                    advisory.rights if verbose else None,
-                    set(pkg.filename for pkg in advisory.packages
-                        if pkg.arch in arches) if verbose else None,
-                    installed]
-                bytitle[title] = advlist
-            else:
-                # References and files are merged.
-                advlist[4].update(set((ref.type, ref.id, ref.title)
-                                      for ref in advisory.references))
-                if verbose:
-                    advlist[9].update(set(pkg.filename
-                                          for pkg in advisory.packages
-                                          if pkg.arch in arches))
-                # If the stored advisory is marked as not installed and the
-                # current is marked as installed, mark the stored as installed.
-                advlist[10] = advlist[10] or installed
-
-        for title in sorted(bytitle.keys()):
-            yield bytitle[title]
-
     def display_info(self, apkg_adv_insts, mixed):
         """Display the details about available advisories."""
-        def advlist2lines(advlist):
-            # simple one line fields
-            for i in (1, 2, 3, 7):
-                advlist[i] = [advlist[i]]
-            # split referencies to bzs / cves
-            references = sorted(advlist[4])
-            advlist[4] = []
-            advlist[5] = []
-            for ref_type, ref_id, ref_title in references:
-                if ref_type == hawkey.REFERENCE_BUGZILLA:
-                    advlist[4].append('{} - {}'.format(ref_id, ref_title or ''))
-                elif ref_type == hawkey.REFERENCE_CVE:
-                    advlist[5].append(ref_id)
-            # multiline fields
-            for i in (6, 8):
-                if advlist[i]:
-                    advlist[i] = advlist[i].splitlines()
-            # sort filenames
-            if advlist[9]:
-                advlist[9] = sorted(advlist[9])
-            # installed value
-            if not mixed:
-                advlist[10] = None
-            else:
-                advlist[10] = [_('true') if advlist[10] else _('false')]
-            return advlist
-
+        arches = self.base.sack.list_arches()
+        verbose = self.base.conf.verbose
         labels = (_('Update ID'), _('Type'), _('Updated'), _('Bugs'),
                   _('CVEs'), _('Description'), _('Severity'), _('Rights'),
                   _('Files'), _('Installed'))
-        width = _maxlen(labels)
-        for advlist in self._info(apkg_adv_insts):
-            print('=' * 79)
-            print('  ' + advlist[0])
-            print('=' * 79)
-            for label, lines in zip(labels, advlist2lines(advlist)[1:]):
-                if lines is None or lines == [None]:
-                    continue
-                for i, line in enumerate(lines):
-                    print('%*s: %s' % (width, label if i == 0 else '', line))
-            print()
 
+        def advisory2info(advisory, installed):
+            attributes = [
+                [advisory.id],
+                [self.TYPE2LABEL.get(advisory.type, _('unknown'))],
+                [unicode(advisory.updated)],
+                [],
+                [],
+                (advisory.description or '').splitlines(),
+                [advisory.severity],
+                (advisory.rights or '').splitlines(),
+                sorted(set(pkg.filename for pkg in advisory.packages
+                           if pkg.arch in arches)),
+                None]
+            for ref in advisory.references:
+                if ref.type == hawkey.REFERENCE_BUGZILLA:
+                    attributes[3].append('{} - {}'.format(ref.id, ref.title or ''))
+                elif ref.type == hawkey.REFERENCE_CVE:
+                    attributes[4].append(ref.id)
+            attributes[3].sort()
+            attributes[4].sort()
+            if not verbose:
+                attributes[7] = None
+                attributes[8] = None
+            if mixed:
+                attributes[9] = [_('true') if installed else _('false')]
+
+            width = _maxlen(labels)
+            lines = []
+            lines.append('=' * 79)
+            lines.append('  ' + advisory.title)
+            lines.append('=' * 79)
+            for label, atr_lines in zip(labels, attributes):
+                if atr_lines in (None, [None]):
+                    continue
+                for i, line in enumerate(atr_lines):
+                    lines.append('%*s: %s' % (width, label if i == 0 else '', line))
+            return '\n'.join(lines)
+
+        advisories = set()
+        for apkg, advisory, installed in apkg_adv_insts:
+            advisories.add(advisory2info(advisory, installed))
+
+        for advisory in sorted(advisories, key=lambda x: x.lower()):
+            print(advisory)
+            print()
