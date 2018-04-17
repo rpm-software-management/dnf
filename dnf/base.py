@@ -64,6 +64,7 @@ import dnf.subject
 import dnf.transaction
 import dnf.util
 import dnf.yum.rpmtrans
+import errno
 import functools
 import hawkey
 import itertools
@@ -75,6 +76,10 @@ import rpm
 import sys
 import time
 import shutil
+
+import gi
+gi.require_version('Modulemd', '1.0')
+from gi.repository import Modulemd
 
 logger = logging.getLogger("dnf")
 
@@ -223,17 +228,55 @@ class Base(object):
                 self.sack.add_excludes(query)
 
     def _setup_modules(self):
+        module_defaults_prioritizer = Modulemd.Prioritizer()
+        # HACK: https://github.com/fedora-modularity/libmodulemd/issues/42
+        module_defaults_prioritizer.add([], 0)
+
+        # read defaults from repos
         for repo in self.repos.iter_enabled():
             try:
                 module_metadata = ModuleMetadataLoader(repo).load()
+
+                defaults = [i for i in module_metadata if isinstance(i, Modulemd.Defaults)]
+                module_defaults_prioritizer.add(defaults, 0)
+
+                # read modules from modulemd
                 for data in module_metadata:
+                    if not isinstance(data, Modulemd.Module):
+                        continue
                     self.repo_module_dict.add(RepoModuleVersion(data, base=self, repo=repo))
             except dnf.exceptions.Error as e:
                 logger.debug(e)
                 continue
 
+        # read defaults from disk
+        # chroot behavior:
+        #   * use host configuration (repos work the same)
+        #   * to use chroot configuration, you need to switch to chroot
+        topdir = self.conf.moduledefaultsdir
+        try:
+            for fn in os.listdir(topdir):
+                if not fn.endswith(".yaml"):
+                    continue
+                path = os.path.join(topdir, fn)
+
+                with open(path, "r") as f:
+                    modules_yaml = f.read()
+                module_metadata = Modulemd.Module.new_all_from_string_ext(modules_yaml)
+                defaults = [i for i in module_metadata if isinstance(i, Modulemd.Defaults)]
+                module_defaults_prioritizer.add(defaults, 1000)
+        except OSError as ex:
+            if ex.errno != errno.ENOENT:
+                raise
+
+        # resolve defaults and store them for future use
+        for default in module_defaults_prioritizer.resolve():
+            try:
+                self.repo_module_dict[default.peek_module_name()].defaults = default
+            except KeyError:
+                logger.debug("No module named {}, skipping.".format(default.peek_module_name()))
+
         self.repo_module_dict.read_all_module_confs()
-        self.repo_module_dict.read_all_module_defaults()
         self._module_persistor = ModulePersistor()
 
     def use_module_includes(self):
@@ -247,8 +290,8 @@ class Base(object):
         for repo_module in self.repo_module_dict.values():
             if repo_module.conf.enabled:
                 update_include_nevras(repo_module.name, repo_module.conf.stream)
-            elif repo_module.defaults.stream:
-                update_include_nevras(repo_module.name, repo_module.defaults.stream)
+            elif repo_module.defaults.peek_default_stream():
+                update_include_nevras(repo_module.name, repo_module.defaults.peek_default_stream())
 
             exclude_set, repos = self.repo_module_dict.get_excludes(repo_module.name)
             for nevra in exclude_set:
