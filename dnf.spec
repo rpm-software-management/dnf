@@ -252,7 +252,6 @@ mkdir -p %{buildroot}%{py2pluginpath}/
 mkdir -p %{buildroot}%{py3pluginpath}/__pycache__/
 %endif
 ln -sr  %{buildroot}%{confdir}/%{name}.conf %{buildroot}%{_sysconfdir}/yum.conf
-ln -sr  %{buildroot}%{confdir} %{buildroot}%{_sysconfdir}/yum
 mkdir -p %{buildroot}%{_localstatedir}/log/
 mkdir -p %{buildroot}%{_var}/cache/dnf/
 touch %{buildroot}%{_localstatedir}/log/%{name}.log
@@ -283,14 +282,6 @@ pushd build-py3
   ctest -VV
 popd
 %endif
-
-%pretrans yum
-if [ -d /etc/yum ]; then
-  if [ ! -L /etc/yum ]; then
-    cp -r /etc/yum/* /etc/dnf
-    rm -rf /etc/yum
-  fi
-fi
 
 %post
 %systemd_post dnf-makecache.timer
@@ -366,7 +357,6 @@ fi
 %else
 %files yum
 %{_sysconfdir}/yum.conf
-%{_sysconfdir}/yum
 %{_bindir}/yum
 %{_mandir}/man5/yum.conf.5*
 %{_mandir}/man8/yum.8*
