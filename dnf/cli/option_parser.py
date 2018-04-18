@@ -97,10 +97,10 @@ class OptionParser(argparse.ArgumentParser):
         def __call__(self, parser, namespace, values, opt_str):
             vals = values.split('=')
             if len(vals) > 2:
-                logger.warning("Setopt argument has multiple values: %s", values)
+                logger.warning(_("Setopt argument has multiple values: %s"), values)
                 return
             if len(vals) < 2:
-                logger.warning("Setopt argument has no value: %s", values)
+                logger.warning(_("Setopt argument has no value: %s"), values)
                 return
             k, v = vals
             period = k.find('.')

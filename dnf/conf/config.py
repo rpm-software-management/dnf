@@ -450,7 +450,7 @@ class MainConf(BaseConfig):
                 elif hasattr(self, name):
                     setattr(self, name, val)
                 else:
-                    msg = "Main config did not have a %s attr. before setopt"
+                    msg = _("Main config did not have a %s attr. before setopt")
                     logger.warning(msg, name)
 
     def exclude_pkgs(self, pkgs):
@@ -567,5 +567,5 @@ class RepoConf(BaseConfig):
                 if opt:
                     opt._set(val, dnf.conf.PRIO_COMMANDLINE)
                 else:
-                    msg = "Repo %s did not have a %s attr. before setopt"
+                    msg = _("Repo %s did not have a %s attr. before setopt")
                     logger.warning(msg, self._section, name)
