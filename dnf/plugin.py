@@ -122,7 +122,7 @@ class Plugins(object):
         self._check_enabled(conf)
         if len(self.plugin_cls) > 0:
             names = sorted(plugin.name for plugin in self.plugin_cls)
-            logger.debug('Loaded plugins: %s', ', '.join(names))
+            logger.debug(_('Loaded plugins: %s'), ', '.join(names))
 
     _run_pre_config = _caller('pre_config')
 

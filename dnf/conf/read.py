@@ -94,7 +94,7 @@ class RepoReader(object):
             # Check the repo.id against the valid chars
             invalid = dnf.repo.repo_id_invalid(section)
             if invalid is not None:
-                logger.warning("Bad id for repo: %s, byte = %s %d", section,
+                logger.warning(_("Bad id for repo: %s, byte = %s %d"), section,
                                section[invalid], invalid)
                 continue
 

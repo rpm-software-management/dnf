@@ -53,14 +53,14 @@ def import_repo_keys(repo):
         for keyinfo in retrieve(keyurl):
             keyid = keyinfo.id_
             if keyid in known_keys:
-                logger.debug('repo %s: 0x%s already imported', repo.id, keyid)
+                logger.debug(_('repo %s: 0x%s already imported'), repo.id, keyid)
                 continue
             if not repo._key_import._confirm(keyinfo):
                 continue
             dnf.yum.misc.import_key_to_pubring(
                 keyinfo.raw_key, keyinfo.short_id, gpgdir=gpgdir,
                 make_ro_copy=False)
-            logger.debug('repo %s: imported key 0x%s.', repo.id, keyid)
+            logger.debug(_('repo %s: imported key 0x%s.'), repo.id, keyid)
 
 
 def keyids_from_pubring(gpgdir):

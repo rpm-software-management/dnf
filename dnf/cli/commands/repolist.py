@@ -292,5 +292,5 @@ class RepoListCommand(commands.Command):
                 print("%s %s %s%s" % (fill_exact_width(rid, id_len),
                                       fill_exact_width(rname, nm_len, nm_len),
                                       ui_enabled, ui_num))
-        msg = 'Total packages: %s'
+        msg = _('Total packages: %s')
         logger.debug(msg, _num2ui_num(tot_num))

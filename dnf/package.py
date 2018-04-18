@@ -23,6 +23,8 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+from dnf.i18n import _
+
 import binascii
 import dnf.rpm
 import dnf.yum.misc
@@ -268,7 +270,7 @@ class Package(hawkey.Package):
         real_sum = dnf.yum.misc.checksum(chksum_type, self.localPkg(),
                                          datasize=self._size)
         if real_sum != chksum:
-            logger.debug('%s: %s check failed: %s vs %s',
+            logger.debug(_('%s: %s check failed: %s vs %s'),
                          self, chksum_type, real_sum, chksum)
             return False
         return True

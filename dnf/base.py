@@ -122,23 +122,23 @@ class Base(object):
         if repo._filelists_fn is not None:
             hrepo.filelists_fn = repo._filelists_fn
         else:
-            logger.debug("not found filelists for: %s", repo.name)
+            logger.debug(_("not found filelists for: %s"), repo.name)
         hrepo.cost = repo.cost
         hrepo.priority = repo.priority
         if repo._presto_fn:
             hrepo.presto_fn = repo._presto_fn
         else:
-            logger.debug("not found deltainfo for: %s", repo.name)
+            logger.debug(_("not found deltainfo for: %s"), repo.name)
         if repo._updateinfo_fn:
             hrepo.updateinfo_fn = repo._updateinfo_fn
         else:
-            logger.debug("not found updateinfo for: %s", repo.name)
+            logger.debug(_("not found updateinfo for: %s"), repo.name)
         try:
             self._sack.load_repo(hrepo, build_cache=True, load_filelists=True,
                              load_presto=repo.deltarpm,
                              load_updateinfo=True)
         except hawkey.Exception as e:
-            logger.debug("loading repo '{}' failure: {}".format(repo.id, e))
+            logger.debug(_("loading repo '{}' failure: {}").format(repo.id, e))
             raise dnf.exceptions.RepoError(
                 _("Loading repository '{}' has failed").format(repo.id))
 
@@ -308,19 +308,17 @@ class Base(object):
         for r in self.repos.iter_enabled():
             (is_cache, expires_in) = r._metadata_expire_in()
             if expires_in is None:
-                logger.info('%s: will never be expired'
-                            ' and will not be refreshed.', r.id)
+                logger.info(_('%s: will never be expired and will not be refreshed.'), r.id)
             elif not is_cache or expires_in <= 0:
-                logger.debug('%s: has expired and will be refreshed.', r.id)
+                logger.debug(_('%s: has expired and will be refreshed.'), r.id)
                 r._md_expire_cache()
             elif timer and expires_in < period:
                 # expires within the checking period:
-                msg = "%s: metadata will expire after %d seconds " \
-                      "and will be refreshed now"
+                msg = _("%s: metadata will expire after %d seconds and will be refreshed now")
                 logger.debug(msg, r.id, expires_in)
                 r._md_expire_cache()
             else:
-                logger.debug('%s: will expire after %d seconds.', r.id,
+                logger.debug(_('%s: will expire after %d seconds.'), r.id,
                              expires_in)
 
         if timer:
@@ -824,7 +822,7 @@ class Base(object):
                 lastdbv = lastdbv.end_rpmdb_version
 
             if lastdbv is None or rpmdbv != lastdbv:
-                logger.debug("RPMDB altered outside of DNF.")
+                logger.debug(_("RPMDB altered outside of DNF."))
 
             cmdline = None
             if hasattr(self, 'args') and self.args:
@@ -1560,7 +1558,7 @@ class Base(object):
                                           strict)
         if not trans:
             return 0
-        logger.debug("Adding packages from group '%s': %s",
+        logger.debug(_("Adding packages from group '%s': %s"),
                      grp_id, trans.install)
         return self._add_comps_trans(trans)
 
