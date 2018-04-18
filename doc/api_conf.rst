@@ -220,10 +220,12 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
     nocrypto                RPMTRANS_FLAG_NOFILEDIGEST
     ==========              ===========================
 
-    The ``"nocrypto"`` option will also set the ``_RPMVSF_NOSIGNATURES`` and ``_RPMVSF_NODIGESTS`` VS flags.
-    The ``test`` option provides a transaction check without performing the transaction. It includes
-    download of packages, gpg keys check (including permanent import of additional keys if
-    necessary), and rpm check to prevent file conflicts.
+    The ``nocrypto`` option will also set the ``_RPMVSF_NOSIGNATURES`` and ``_RPMVSF_NODIGESTS`` VS
+    flags.     The ``test`` option provides a transaction check without performing the transaction.
+    It includes download of packages, gpg keys check (including permanent import of additional keys
+    if necessary), and rpm check to prevent file conflicts.
+    The ``nocaps`` is supported with rpm-4.14 or later. When ``nocaps`` is used but rpm doesn't
+    support it, DNF only reports it as an invalid tsflag.
 
   .. attribute:: username
 
