@@ -2169,7 +2169,16 @@ class Base(object):
         providers = dnf.query._by_provides(self.sack, provides_spec)
         if providers:
             return providers, [provides_spec]
-        binary_provides = [prefix + provides_spec for prefix in ['/usr/bin/', '/usr/sbin/']]
+        if provides_spec.startswith('/bin/') or provides_spec.startswith('/sbin/'):
+            # compatibility for packages thad didn't do UsrMove
+            binary_provides = ['/usr' + provides_spec]
+        elif provides_spec.startswith('/'):
+            # provides_spec is a file path
+            return providers, [provides_spec]
+        else:
+            # suppose that provides_spec is a command, search in /usr/sbin/
+            binary_provides = [prefix + provides_spec
+                               for prefix in ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/']]
         return self.sack.query().filterm(file__glob=binary_provides), binary_provides
 
     def _history_undo_operations(self, operations, first_trans, rollback=False, strict=True):
