@@ -1708,6 +1708,8 @@ Transaction Summary
         else:
             print(_("Return-Code    :"), _("Success"))
 
+        print(_("Releasever     :"), old._trans.getReleasever())
+
         if old.cmdline is not None:
             if isinstance(old.cmdline, list):
                 for cmdline in old.cmdline:
