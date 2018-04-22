@@ -239,8 +239,8 @@ class _NullKeyImport(dnf.callback.KeyImport):
 
 
 class Metadata(object):
-    def __init__(self, repo_dct, repomd_dct, mirrors):
-        self.fresh = False  # :api
+    def __init__(self, fresh, repo_dct, repomd_dct, mirrors):
+        self.fresh = fresh  # :api
         self._repo_dct = repo_dct
         self._repomd_dct = repomd_dct
         self._priv_mirrors = mirrors[:]
