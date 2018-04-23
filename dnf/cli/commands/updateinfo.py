@@ -372,6 +372,4 @@ class UpdateInfoCommand(commands.Command):
         for apkg, advisory, installed in apkg_adv_insts:
             advisories.add(advisory2info(advisory, installed))
 
-        for advisory in sorted(advisories, key=lambda x: x.lower()):
-            print(advisory)
-            print()
+        print("\n\n".join(sorted(advisories, key=lambda x: x.lower())))
