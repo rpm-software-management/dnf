@@ -188,8 +188,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
                          '       Type: security\n'
                          '    Updated: ' + str(updated) + '\n'
                          'Description: testing advisory\n'
-                         '      Files: tour-5-1.noarch.rpm\n'
-                         '\n',
+                         '      Files: tour-5-1.noarch.rpm\n',
                          'incorrect output')
 
     def test_display_info_verbose_mixed(self):
@@ -244,8 +243,7 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
                          '    Updated: ' + str(updated3) + '\n'
                          'Description: testing advisory\n'
                          '      Files: tour-5-1.noarch.rpm\n'
-                         '  Installed: false\n'
-                         '\n',
+                         '  Installed: false\n',
                          'incorrect output')
 
     # This test also tests the display_summary and available_apkg_adv_insts
@@ -287,6 +285,5 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
                          '  Update ID: DNF-2014-3\n'
                          '       Type: security\n'
                          '    Updated: ' + str(updated) + '\n'
-                         'Description: testing advisory\n'
-                         '\n',
+                         'Description: testing advisory\n',
                          'incorrect output')
