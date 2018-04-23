@@ -58,7 +58,7 @@ class ModuleMetadataLoader(object):
         with openfunc(self._metadata_fn or yaml_file_path, "r") as modules_yaml_fd:
             modules_yaml = modules_yaml_fd.read()
 
-        if PY3:
+        if PY3 and isinstance(modules_yaml, bytes):
             modules_yaml = modules_yaml.decode("utf-8")
 
         return Modulemd.Module.new_all_from_string(modules_yaml)
