@@ -1,36 +1,55 @@
+# default dependencies
 %global hawkey_version 0.13.3
 %global librepo_version 1.9.0
 %global libcomps_version 0.1.8
 %global rpm_version 4.14.0
+
+# conflicts
+%global conflicts_dnf_plugins_core_version 2.1.3
+
+# override dependencies for rhel 7
 %if 0%{?rhel} == 7
-%global rpm_version 4.11.3-27
+    %global rpm_version 4.11.3-25.el7.centos.1
 %endif
+
+# override dependencies for fedora 26
 %if 0%{?fedora} == 26
-%global rpm_version 4.13.0.1-7
+    %global rpm_version 4.13.0.1-7
 %endif
-%if 0%{?fedora} > 26
-%global rpm_version 4.13.90
-%endif
-%global min_plugins_core 2.1.3
-%global dnf_langpacks_ver 0.15.1-6
 
-%global confdir %{_sysconfdir}/%{name}
 
-%global pluginconfpath %{confdir}/plugins
-%global py2pluginpath %{python2_sitelib}/%{name}-plugins
-
-%if 0%{?rhel} && 0%{?rhel} <= 7
-%bcond_with python3
-%else
+# default build options
+# %%bcond_without sets an --without option -> %%{with foo} is true
+# overriding with %%undefine is not ideal, but it avoids complicated nested conditions
+%bcond_without python2
 %bcond_without python3
+
+# override build options for rhel <= 7
+%if 0%{?rhel} && 0%{?rhel} <= 7
+    %undefine with_python3
+%endif
+
+# override build options for rhel >= 8
+%if 0%{?rhel} >= 8
+    %undefine with_python2
+%endif
+
+
+# paths
+%global confdir %{_sysconfdir}/%{name}
+%global pluginconfpath %{confdir}/plugins
+
+%if %{with python2}
+    %global py2pluginpath %{python2_sitelib}/%{name}-plugins
 %endif
 
 %if %{with python3}
-%global py3pluginpath %{python3_sitelib}/%{name}-plugins
+    %global py3pluginpath %{python3_sitelib}/%{name}-plugins
 %endif
 
 # Use the same directory of the main package for subpackage licence and docs
 %global _docdir_fmt %{name}
+
 
 %global yum_package_description \
 As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
@@ -89,12 +108,8 @@ Provides:       dnf-command(search)
 Provides:       dnf-command(updateinfo)
 Provides:       dnf-command(upgrade)
 Provides:       dnf-command(upgrade-to)
-Conflicts:      python2-dnf-plugins-core < %{min_plugins_core}
-Conflicts:      python3-dnf-plugins-core < %{min_plugins_core}
-
-# dnf-langpacks package is retired in F25
-# to have clean upgrade path for dnf-langpacks
-Obsoletes:      dnf-langpacks < %{dnf_langpacks_ver}
+Conflicts:      python2-dnf-plugins-core < %{conflicts_dnf_plugins_core_version}
+Conflicts:      python3-dnf-plugins-core < %{conflicts_dnf_plugins_core_version}
 
 %description
 Package manager forked from Yum, using libsolv as a dependency resolver.
@@ -102,9 +117,6 @@ Package manager forked from Yum, using libsolv as a dependency resolver.
 %package conf
 Summary:        Configuration files for DNF
 Requires:       libreport-filesystem
-# dnf-langpacks package is retired in F25
-# to have clean upgrade path for dnf-langpacks
-Obsoletes:      dnf-langpacks-conf < %{dnf_langpacks_ver}
 
 %description conf
 Configuration files for DNF.
@@ -127,6 +139,7 @@ Summary:        As a Yum CLI compatibility layer, supplies /usr/bin/yum redirect
 %{yum_package_description}
 %endif
 
+%if %{with python2}
 %package -n python2-%{name}
 Summary:        Python 2 interface to DNF
 %{?python_provide:%python_provide python2-%{name}}
@@ -161,12 +174,10 @@ BuildRequires:  python2-rpm >= %{rpm_version}
 Requires:       python2-rpm >= %{rpm_version}
 Recommends:     rpm-plugin-systemd-inhibit
 %endif
-# dnf-langpacks package is retired in F25
-# to have clean upgrade path for dnf-langpacks
-Obsoletes:      python-dnf-langpacks < %{dnf_langpacks_ver}
 
 %description -n python2-%{name}
 Python 2 interface to DNF.
+%endif  # %%{with python2}
 
 %if %{with python3}
 %package -n python3-%{name}
@@ -198,9 +209,6 @@ Requires:       rpm-plugin-systemd-inhibit
 %else
 Recommends:     rpm-plugin-systemd-inhibit
 %endif
-# dnf-langpacks package is retired in F25
-# to have clean upgrade path for dnf-langpacks
-Obsoletes:      python3-dnf-langpacks < %{dnf_langpacks_ver}
 
 %description -n python3-%{name}
 Python 3 interface to DNF.
@@ -215,39 +223,50 @@ Requires:       %{name} = %{version}-%{release}
 %description automatic
 Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
 
+
 %prep
 %autosetup
-mkdir build
-%if %{with python3}
+mkdir build-py2
 mkdir build-py3
-%endif
+
 
 %build
-pushd build
-  %cmake ..
-  %make_build
-  make doc-man
-popd
-%if %{with python3}
-pushd build-py3
-  %cmake .. -DPYTHON_DESIRED:str=3 -DWITH_MAN=0
-  %make_build
-popd
+%if %{with python2}
+    pushd build-py2
+    %cmake .. -DPYTHON_DESIRED:str=2
+    %make_build
+    make doc-man
+    popd
 %endif
 
-%install
-pushd build
-  %make_install
-popd
 %if %{with python3}
-pushd build-py3
-  %make_install
-popd
+    pushd build-py3
+    %cmake .. -DPYTHON_DESIRED:str=3
+    %make_build
+    make doc-man
+    popd
 %endif
+
+
+%install
+%if %{with python2}
+    pushd build-py2
+    %make_install
+    popd
+%endif
+
+%if %{with python3}
+    pushd build-py3
+    %make_install
+    popd
+%endif
+
 %find_lang %{name}
 mkdir -p %{buildroot}%{confdir}/vars
 mkdir -p %{buildroot}%{pluginconfpath}/
+%if %{with python2}
 mkdir -p %{buildroot}%{py2pluginpath}/
+%endif
 %if %{with python3}
 mkdir -p %{buildroot}%{py3pluginpath}/__pycache__/
 %endif
@@ -273,15 +292,20 @@ ln -sr  %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/yum
 %endif
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
+
 %check
-pushd build
-  ctest -VV
-popd
-%if %{with python3}
-pushd build-py3
-  ctest -VV
-popd
+%if %{with python2}
+    pushd build-py2
+    ctest -VV
+    popd
 %endif
+
+%if %{with python3}
+    pushd build-py3
+    ctest -VV
+    popd
+%endif
+
 
 %post
 %systemd_post dnf-makecache.timer
@@ -291,6 +315,7 @@ popd
 
 %postun
 %systemd_postun_with_restart dnf-makecache.timer
+
 
 %post automatic
 %systemd_post dnf-automatic.timer
@@ -309,6 +334,7 @@ popd
 %systemd_postun_with_restart dnf-automatic-notifyonly.timer
 %systemd_postun_with_restart dnf-automatic-download.timer
 %systemd_postun_with_restart dnf-automatic-install.timer
+
 
 %files -f %{name}.lang
 %{_bindir}/%{name}
@@ -352,6 +378,8 @@ popd
 %files -n yum4
 %{_bindir}/yum4
 %{_mandir}/man8/yum4.8*
+%exclude %{_sysconfdir}/yum.conf
+%exclude %{_mandir}/man5/yum.conf.5.*
 %exclude %{_mandir}/man8/yum.8*
 
 %else
@@ -362,11 +390,13 @@ popd
 %{_mandir}/man8/yum.8*
 %endif
 
+%if %{with python2}
 %files -n python2-%{name}
 %{_bindir}/%{name}-2
 %exclude %{python2_sitelib}/%{name}/automatic
 %{python2_sitelib}/%{name}/
 %dir %{py2pluginpath}
+%endif
 
 %if %{with python3}
 %files -n python3-%{name}
