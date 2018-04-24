@@ -4,12 +4,12 @@ yum/sqlutils.py : GPLv2
 rpm/transaction.py : GPL
 
 Licensing conditions of the following files were disputed when DNF was forked
-from Yum:
+from YUM:
 
 yum/misc.py
 yum/parser.py
 
-In the yum-devel-list-thread below those concernes were resolved by Yum
+In the yum-devel-list-thread below those concernes were resolved by YUM
 maintainers who confirmed these files were covered by GPLv2+:
 
 http://lists.baseurl.org/pipermail/yum-devel/2012-July/009376.html

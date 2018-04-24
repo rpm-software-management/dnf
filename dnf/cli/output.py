@@ -2016,7 +2016,7 @@ class CliKeyImport(dnf.callback.KeyImport):
 
 
 class CliTransactionDisplay(LoggingTransactionDisplay):
-    """A Yum specific callback class for RPM operations."""
+    """A YUM specific callback class for RPM operations."""
 
     width = property(lambda self: dnf.cli.term._term_width())
 
