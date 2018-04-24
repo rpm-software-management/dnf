@@ -335,7 +335,7 @@ class BaseConfig(object):
         # out which one is which
         if section_id not in ini:
             for sect in ini:
-                if dnf.conf.parser.substitute(sect, substitutions) == section_id:
+                if cfg.ConfigParser.substitute(sect, substitutions) == section_id:
                     section_id = sect
 
         for name, value in modify.items():
