@@ -51,13 +51,14 @@
 %global _docdir_fmt %{name}
 
 
-%global yum_package_description \
-As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF.
+%global pkg_summary     Package manager
+%global pkg_description Utility that allows users to manage packages on their systems. \
+It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
 Version:        2.8.9
 Release:        1%{?dist}
-Summary:        Package manager forked from Yum, using libsolv as a dependency resolver
+Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
 URL:            https://github.com/rpm-software-management/dnf
@@ -112,7 +113,7 @@ Conflicts:      python2-dnf-plugins-core < %{conflicts_dnf_plugins_core_version}
 Conflicts:      python3-dnf-plugins-core < %{conflicts_dnf_plugins_core_version}
 
 %description
-Package manager forked from Yum, using libsolv as a dependency resolver.
+%{pkg_description}
 
 %package conf
 Summary:        Configuration files for DNF
@@ -124,19 +125,19 @@ Configuration files for DNF.
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %package -n yum4
 Requires:       %{name} = %{version}-%{release}
-Summary:        As a Yum CLI compatibility layer, supplies /usr/bin/yum4 redirecting to DNF
+Summary:        %{pkg_summary}
 
 %description -n yum4
-%{yum_package_description}
+%{pkg_description}
 
 %else
 %package yum
 Conflicts:      yum
 Requires:       %{name} = %{version}-%{release}
-Summary:        As a Yum CLI compatibility layer, supplies /usr/bin/yum redirecting to DNF
+Summary:        %{pkg_summary}
 
 %description yum
-%{yum_package_description}
+%{pkg_description}
 %endif
 
 %if %{with python2}
@@ -181,7 +182,7 @@ Python 2 interface to DNF.
 
 %if %{with python3}
 %package -n python3-%{name}
-Summary:        Python 3 interface to DNF.
+Summary:        Python 3 interface to DNF
 %{?system_python_abi}
 %{?python_provide:%python_provide python3-%{name}}
 BuildRequires:  python3-devel
@@ -215,13 +216,13 @@ Python 3 interface to DNF.
 %endif
 
 %package automatic
-Summary:        Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
+Summary:        %{pkg_summary} - automated upgrades
 BuildRequires:  systemd
 Requires:       %{name} = %{version}-%{release}
 %{?systemd_requires}
 
 %description automatic
-Alternative CLI to "dnf upgrade" suitable for automatic, regular execution.
+Systemd units that can periodically download package upgrades and apply them.
 
 
 %prep
