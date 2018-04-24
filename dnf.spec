@@ -35,6 +35,20 @@
 %endif
 
 
+# configurable name for the compat yum package
+%global yum_subpackage_name %{name}-yum
+
+# provide yum4 on rhel <= 7 to avoid conflict with existing yum
+%if 0%{?rhel} && 0%{?rhel} <= 7
+    %global yum_subpackage_name yum4
+%endif
+
+# provide yum on rhel >= 8, it replaces old yum
+%if 0%{?rhel} && 0%{?rhel} >= 8
+    %global yum_subpackage_name yum
+%endif
+
+
 # paths
 %global confdir %{_sysconfdir}/%{name}
 %global pluginconfpath %{confdir}/plugins
@@ -124,23 +138,15 @@ Provides:       %{name}-conf = %{version}-%{release}
 %description data
 Common data and configuration files for DNF
 
-%if 0%{?rhel} && 0%{?rhel} <= 7
-%package -n yum4
+%package -n %{yum_subpackage_name}
 Requires:       %{name} = %{version}-%{release}
 Summary:        %{pkg_summary}
-
-%description -n yum4
-%{pkg_description}
-
-%else
-%package yum
+%if 0%{?fedora}
 Conflicts:      yum
-Requires:       %{name} = %{version}-%{release}
-Summary:        %{pkg_summary}
-
-%description yum
-%{pkg_description}
 %endif
+
+%description -n %{yum_subpackage_name}
+%{pkg_description}
 
 %if %{with python2}
 %package -n python2-%{name}
@@ -375,16 +381,24 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %{_tmpfilesdir}/%{name}.conf
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 
-%if 0%{?rhel} && 0%{?rhel} <= 7
-%files -n yum4
+%files -n %{yum_subpackage_name}
+%if "%{yum_subpackage_name}" == "yum"
+%{_bindir}/yum
+%{_mandir}/man8/yum.8*
+%{_sysconfdir}/yum.conf
+%{_mandir}/man5/yum.conf.5.*
+%{_mandir}/man8/yum.8*
+%endif
+
+%if "%{yum_subpackage_name}" == "yum4"
 %{_bindir}/yum4
 %{_mandir}/man8/yum4.8*
 %exclude %{_sysconfdir}/yum.conf
 %exclude %{_mandir}/man5/yum.conf.5.*
 %exclude %{_mandir}/man8/yum.8*
+%endif
 
-%else
-%files yum
+%if "%{yum_subpackage_name}" == "%{name}-yum"
 %{_sysconfdir}/yum.conf
 %{_bindir}/yum
 %{_mandir}/man5/yum.conf.5*
