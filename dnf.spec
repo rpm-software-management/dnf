@@ -115,12 +115,14 @@ Conflicts:      python3-dnf-plugins-core < %{conflicts_dnf_plugins_core_version}
 %description
 %{pkg_description}
 
-%package conf
-Summary:        Configuration files for DNF
+%package data
+Summary:        Common data and configuration files for DNF
 Requires:       libreport-filesystem
+Obsoletes:      %{name}-conf <= %{version}-%{release}
+Provides:       %{name}-conf = %{version}-%{release}
 
-%description conf
-Configuration files for DNF.
+%description data
+Common data and configuration files for DNF
 
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %package -n yum4
@@ -154,7 +156,7 @@ BuildRequires:  python2-gpg
 Requires:       python2-gpg
 BuildRequires:  pyliblzma
 Requires:       pyliblzma
-Requires:       %{name}-conf = %{version}-%{release}
+Requires:       %{name}-data = %{version}-%{release}
 %if 0%{?fedora} || 0%{?centos}
 Requires:       deltarpm
 %endif
@@ -193,7 +195,7 @@ BuildRequires:  python3-librepo >= %{librepo_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-gpg
 Requires:       python3-gpg
-Requires:       %{name}-conf = %{version}-%{release}
+Requires:       %{name}-data = %{version}-%{release}
 %if 0%{?fedora} || 0%{?centos}
 Requires:       deltarpm
 %endif
@@ -350,7 +352,7 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %{_unitdir}/%{name}-makecache.timer
 %{_var}/cache/%{name}/
 
-%files conf
+%files data
 %license COPYING PACKAGE-LICENSING
 %doc AUTHORS README.rst
 %dir %{confdir}
