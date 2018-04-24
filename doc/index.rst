@@ -16,7 +16,7 @@
   Red Hat, Inc.
 
 #############################################
- DNF, the next-generation replacement for Yum
+ DNF, the next-generation replacement for YUM
 #############################################
 
 Contents:

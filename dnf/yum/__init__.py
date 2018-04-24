@@ -1,5 +1,5 @@
 # __init__.py
-# The legacy Yum subpackage.
+# The legacy YUM subpackage.
 #
 # Copyright (C) 2013  Red Hat, Inc.
 #
