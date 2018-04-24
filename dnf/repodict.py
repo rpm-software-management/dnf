@@ -23,6 +23,7 @@ from dnf.exceptions import ConfigError
 from dnf.i18n import _
 
 import dnf.util
+import libdnf.conf
 import fnmatch
 import os
 
@@ -70,12 +71,13 @@ class RepoDict(dict):
         """
         def substitute(values):
             if isinstance(values, str):
-                return dnf.conf.parser.substitute(values, conf.substitutions)
+                return libdnf.conf.ConfigParser.substitute(values, conf.substitutions)
             elif isinstance(values, list) or isinstance(values, tuple):
                 substituted = []
                 for value in values:
                     if isinstance(value, str):
-                        substituted.append(dnf.conf.parser.substitute(value, conf.substitutions))
+                        substituted.append(
+                            libdnf.conf.ConfigParser.substitute(value, conf.substitutions))
                     if substituted:
                         return substituted
             return values
