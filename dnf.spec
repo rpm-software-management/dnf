@@ -175,7 +175,6 @@ BuildRequires:  python-iniparse
 Requires:       python-iniparse
 BuildRequires:  rpm-python >= %{rpm_version}
 Requires:       rpm-python >= %{rpm_version}
-Requires:       rpm-plugin-systemd-inhibit
 %else
 BuildRequires:  python2-iniparse
 Requires:       python2-iniparse
