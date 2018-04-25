@@ -86,7 +86,7 @@ class RepoDict(dict):
         for path in baseurl:
             if '://' not in path:
                 path = 'file://{}'.format(os.path.abspath(path))
-            repo.baseurl.append(substitute(path))
+            repo.baseurl += [substitute(path)]
         for (key, value) in kwargs.items():
             setattr(repo, key, substitute(value))
         self.add(repo)
