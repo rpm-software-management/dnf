@@ -158,8 +158,13 @@ BuildRequires:  python2-libdnf >= %{hawkey_version}
 BuildRequires:  python2-libcomps >= %{libcomps_version}
 BuildRequires:  python2-librepo >= %{librepo_version}
 BuildRequires:  python2-nose
+%if (0%{?rhel} && 0%{?rhel} <= 7)
+BuildRequires:  pygpgme
+Requires:       pygpgme
+%else
 BuildRequires:  python2-gpg
 Requires:       python2-gpg
+%endif
 BuildRequires:  pyliblzma
 Requires:       pyliblzma
 Requires:       %{name}-data = %{version}-%{release}
