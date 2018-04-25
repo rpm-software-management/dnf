@@ -189,11 +189,11 @@ def main(args):
             cli._read_conf_file()
             conf.update_baseconf(base.conf)
             base.init_plugins(cli=cli)
-            logger.debug('Started dnf-automatic.')
+            logger.debug(_('Started dnf-automatic.'))
 
             if opts.timer:
                 sleeper = random.randint(0, conf.commands.random_sleep)
-                logger.debug('Sleep for %s seconds', sleeper)
+                logger.debug(_('Sleep for %s seconds'), sleeper)
                 time.sleep(sleeper)
 
             base.pre_configure_plugins()

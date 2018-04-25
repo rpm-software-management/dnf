@@ -65,7 +65,7 @@ def _clean(dirpath, files):
     count = 0
     for f in files:
         path = os.path.join(dirpath, f)
-        logger.log(dnf.logging.DDEBUG, 'Removing file %s', path)
+        logger.log(dnf.logging.DDEBUG, _('Removing file %s'), path)
         misc.unlink_f(path)
         count += 1
     return count

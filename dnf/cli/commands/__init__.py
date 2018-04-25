@@ -248,7 +248,7 @@ class ProvidesCommand(Command):
         demands.sack_activation = True
 
     def run(self):
-        logger.debug("Searching Packages: ")
+        logger.debug(_("Searching Packages: "))
         return self.base.provides(self.opts.dependency)
 
 class CheckUpdateCommand(Command):
@@ -937,8 +937,8 @@ class HistoryCommand(Command):
                           "Use '<transaction-id>..<transaction-id>'."
                           ).format(t))
                     raise dnf.cli.CliError
-                cant_convert_msg = "Can't convert '{}' to transaction ID.\n" \
-                                   "Use '<integer>', 'last', 'last-<positive-integer>'."
+                cant_convert_msg = _("Can't convert '{}' to transaction ID.\n"
+                                     "Use '<integer>', 'last', 'last-<positive-integer>'.")
                 try:
                     begin_transaction_id = str2transaction_id(begin_transaction_id)
                 except ValueError:

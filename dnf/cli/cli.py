@@ -149,16 +149,18 @@ class BaseCli(dnf.Base):
 
         # Reports about excludes and includes (but not from plugins)
         if self.conf.excludepkgs:
-            logger.debug('Excludes in dnf.conf: ' + ", ".join(sorted(set(self.conf.excludepkgs))))
+            logger.debug(_('Excludes in dnf.conf: ') +
+                         ", ".join(sorted(set(self.conf.excludepkgs))))
         if self.conf.includepkgs:
-            logger.debug('Includes in dnf.conf: ' + ", ".join(sorted(set(self.conf.includepkgs))))
+            logger.debug(_('Includes in dnf.conf: ') +
+                         ", ".join(sorted(set(self.conf.includepkgs))))
         for repo in self.repos.iter_enabled():
             if repo.excludepkgs:
-                logger.debug(
-                    'Excludes in repo ' + repo.id + ": " + ", ".join(sorted(set(repo.excludepkgs))))
+                logger.debug(_('Excludes in repo ') + repo.id + ": " +
+                             ", ".join(sorted(set(repo.excludepkgs))))
             if repo.includepkgs:
-                logger.debug(
-                    'Includes in repo ' + repo.id + ": " + ", ".join(sorted(set(repo.includepkgs))))
+                logger.debug(_('Includes in repo ') + repo.id + ": " +
+                             ", ".join(sorted(set(repo.includepkgs))))
 
         trans = self.transaction
         pkg_str = self.output.list_transaction(trans)

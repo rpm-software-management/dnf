@@ -76,7 +76,7 @@ def main(args, conf_class=Conf, cli_class=Cli, option_parser_class=OptionParser)
     except IOError as e:
         return ex_IOError(e)
     except KeyboardInterrupt as e:
-        logger.critical('{}: {}'.format(type(e).__name__, "Terminated."))
+        logger.critical('{}: {}'.format(type(e).__name__, _("Terminated.")))
         return 1
 
 
