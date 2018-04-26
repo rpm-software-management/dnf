@@ -120,8 +120,6 @@ class UpdateInfoCommand(commands.Command):
 
     def run(self):
         """Execute the command with arguments."""
-        self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
-
         mixed = False
         if self.opts.availability == 'installed':
             apkg_adv_insts = self.installed_apkg_adv_insts(self.opts.spec)
@@ -144,24 +142,22 @@ class UpdateInfoCommand(commands.Command):
         else:
             self.display_summary(apkg_adv_insts, description)
 
-    def _in_security_filters(self, apackage):
-        """If dnf security options used it returns True if present or security selection unused,
-        False if absent in security filter query"""
-        if self.base._update_security_filters:
-            q = self.base.sack.query().filterm(name=apackage.name, evr__gte=apackage.evr)
-            if len(self.base._merge_update_filters(q, warning=False)) == 0:
-                return False
-            return True
-        else:
-            return True
-
     def _newer_equal_installed(self, apackage):
         if self._installed_query is None:
             self._installed_query = self.base.sack.query().installed().apply()
         q = self._installed_query.filter(name=apackage.name, evr__gte=apackage.evr)
         return len(q) > 0
 
-    def _apackage_advisory_installeds(self, pkgs_query, cmptype, req_apkg, specs):
+    def _advisory_matcher(self, advisory):
+        if self.opts.severity and advisory.severity in self.opts.severity:
+            return True
+        if self.opts.bugzilla and any([advisory.match_bug(bug) for bug in self.opts.bugzilla]):
+            return True
+        if self.opts.cves and any([advisory.match_cve(cve) for cve in self.opts.cves]):
+            return True
+        return False
+
+    def _apackage_advisory_installeds(self, pkgs_query, cmptype, specs):
         """Return (adv. package, advisory, installed) triplets."""
         specs_types = set()
         specs_patterns = set()
@@ -177,16 +173,27 @@ class UpdateInfoCommand(commands.Command):
             else:
                 specs_patterns.add(spec)
 
+        if self.opts.bugfix:
+            specs_types.add(hawkey.ADVISORY_BUGFIX)
+        if self.opts.enhancement:
+            specs_types.add(hawkey.ADVISORY_ENHANCEMENT)
+        if self.opts.newpackage:
+            specs_types.add(hawkey.ADVISORY_NEWPACKAGE)
+        if self.opts.security:
+            specs_types.add(hawkey.ADVISORY_SECURITY)
+        if self.opts.advisory:
+            specs_patterns.update(self.opts.advisory)
+
         for apackage in pkgs_query.get_advisory_pkgs(cmptype):
-            if not req_apkg(apackage):
-                continue
             advisory = apackage.get_advisory(self.base.sack)
-            if not specs_types and not specs_patterns:
+            if not specs_types and not specs_patterns and not self.opts.severity and \
+                    not self.opts.bugzilla and not self.opts.cves:
                 advisory_match = True
             else:
                 advisory_match = advisory.type in specs_types or \
                     any(fnmatch.fnmatchcase(advisory.id, pat)
-                        for pat in specs_patterns)
+                        for pat in specs_patterns) or \
+                    self._advisory_matcher(advisory)
             apackage_match = any(fnmatch.fnmatchcase(apackage.name, pat)
                                  for pat in specs_patterns)
             if advisory_match or apackage_match:
@@ -196,26 +203,22 @@ class UpdateInfoCommand(commands.Command):
     def available_apkg_adv_insts(self, specs):
         """Return available (adv. package, adv., inst.) triplets"""
         return self._apackage_advisory_installeds(
-            self.base.sack.query().installed(), hawkey.GT,
-            self._in_security_filters, specs)
+            self.base.sack.query().installed(), hawkey.GT, specs)
 
     def installed_apkg_adv_insts(self, specs):
         """Return installed (adv. package, adv., inst.) triplets"""
         return self._apackage_advisory_installeds(
-            self.base.sack.query().installed(), hawkey.LT | hawkey.EQ,
-            self._in_security_filters, specs)
+            self.base.sack.query().installed(), hawkey.LT | hawkey.EQ, specs)
 
     def updating_apkg_adv_insts(self, specs):
         """Return updating (adv. package, adv., inst.) triplets"""
         return self._apackage_advisory_installeds(
-            self.base.sack.query().filterm(upgradable=True), hawkey.GT,
-            self._in_security_filters, specs)
+            self.base.sack.query().filterm(upgradable=True), hawkey.GT, specs)
 
     def all_apkg_adv_insts(self, specs):
         """Return installed (adv. package, adv., inst.) triplets"""
         return self._apackage_advisory_installeds(
-            self.base.sack.query().installed(), hawkey.LT | hawkey.EQ | hawkey.GT,
-            self._in_security_filters, specs)
+            self.base.sack.query().installed(), hawkey.LT | hawkey.EQ | hawkey.GT, specs)
 
     def _summary(self, apkg_adv_insts):
         """Make the summary of advisories."""
