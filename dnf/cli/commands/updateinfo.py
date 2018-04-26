@@ -65,8 +65,7 @@ class UpdateInfoCommand(commands.Command):
     def __init__(self, cli):
         """Initialize the command."""
         super(UpdateInfoCommand, self).__init__(cli)
-        self._ina2evr_cache = None
-        self._update_filters_cmp_cache = dict()
+        self._installed_query = None
 
     @staticmethod
     def set_argparser(parser):
@@ -145,49 +144,22 @@ class UpdateInfoCommand(commands.Command):
         else:
             self.display_summary(apkg_adv_insts, description)
 
-    def get_installed_version(self, name, arch):
-        if self._ina2evr_cache is None:
-            self._ina2evr_cache = {(pkg.name, pkg.arch): pkg.evr
-                                   for pkg in self.base.sack.query().installed()}
-        return self._ina2evr_cache.get((name, arch), None)
-
-    def compare_with_installed(self, apackage):
-        """Compare installed version with apackage version. Returns None either if
-        apackage is not installed, or if there are no update filters for apackage"""
-        key = (apackage.name, apackage.evr, apackage.arch)
-        if key not in self._update_filters_cmp_cache:
-            ievr = self.get_installed_version(key[0], key[2])
-            if ievr is None:
-                self._update_filters_cmp_cache[key] = None
-            else:
-                q = self.base.sack.query().filterm(name=key[0], evr=key[1])
-                if len(self.base._merge_update_filters(q, warning=False)) == 0:
-                    self._update_filters_cmp_cache[key] = None
-                else:
-                    self._update_filters_cmp_cache[key] = self.base.sack.evr_cmp(ievr, key[1])
-        return self._update_filters_cmp_cache[key]
-
-    def _older_installed(self, apackage):
-        """Test whether an older version of a package is installed."""
-        cmp = self.compare_with_installed(apackage)
-        if cmp is None:
-            return False
+    def _in_security_filters(self, apackage):
+        """If dnf security options used it returns True if present or security selection unused,
+        False if absent in security filter query"""
+        if self.base._update_security_filters:
+            q = self.base.sack.query().filterm(name=apackage.name, evr__gte=apackage.evr)
+            if len(self.base._merge_update_filters(q, warning=False)) == 0:
+                return False
+            return True
         else:
-            return cmp < 0
+            return True
 
     def _newer_equal_installed(self, apackage):
-        """Test whether a newer or equal version of a package is installed."""
-        cmp = self.compare_with_installed(apackage)
-        if cmp is None:
-            return False
-        else:
-            return cmp >= 0
-
-    def _any_installed(self, apackage):
-        """Test whether any version of a package is installed."""
-        if self.compare_with_installed(apackage) is None:
-            return False
-        return True
+        if self._installed_query is None:
+            self._installed_query = self.base.sack.query().installed().apply()
+        q = self._installed_query.filter(name=apackage.name, evr__gte=apackage.evr)
+        return len(q) > 0
 
     def _apackage_advisory_installeds(self, pkgs_query, cmptype, req_apkg, specs):
         """Return (adv. package, advisory, installed) triplets."""
@@ -225,25 +197,25 @@ class UpdateInfoCommand(commands.Command):
         """Return available (adv. package, adv., inst.) triplets"""
         return self._apackage_advisory_installeds(
             self.base.sack.query().installed(), hawkey.GT,
-            self._older_installed, specs)
+            self._in_security_filters, specs)
 
     def installed_apkg_adv_insts(self, specs):
         """Return installed (adv. package, adv., inst.) triplets"""
         return self._apackage_advisory_installeds(
             self.base.sack.query().installed(), hawkey.LT | hawkey.EQ,
-            self._newer_equal_installed, specs)
+            self._in_security_filters, specs)
 
     def updating_apkg_adv_insts(self, specs):
         """Return updating (adv. package, adv., inst.) triplets"""
         return self._apackage_advisory_installeds(
             self.base.sack.query().filterm(upgradable=True), hawkey.GT,
-            self._older_installed, specs)
+            self._in_security_filters, specs)
 
     def all_apkg_adv_insts(self, specs):
         """Return installed (adv. package, adv., inst.) triplets"""
         return self._apackage_advisory_installeds(
             self.base.sack.query().installed(), hawkey.LT | hawkey.EQ | hawkey.GT,
-            self._any_installed, specs)
+            self._in_security_filters, specs)
 
     def _summary(self, apkg_adv_insts):
         """Make the summary of advisories."""
