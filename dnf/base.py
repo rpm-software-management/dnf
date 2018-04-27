@@ -217,9 +217,14 @@ class Base(object):
                 self.sack.add_excludes(query)
 
     def _setup_modules(self):
-        module_defaults_prioritizer = Modulemd.Prioritizer()
-        # HACK: https://github.com/fedora-modularity/libmodulemd/issues/42
-        module_defaults_prioritizer.add([], 0)
+        try:
+            module_defaults_prioritizer = Modulemd.Prioritizer()
+            # HACK: https://github.com/fedora-modularity/libmodulemd/issues/42
+            module_defaults_prioritizer.add([], 0)
+        except TypeError:
+            # For reason see: https://bugzilla.redhat.com/show_bug.cgi?id=1571081
+            logger.error(self.output.term.bold(_("Run 'dnf update' command, please")))
+            return
 
         # read defaults from repos
         for repo in self.repos.iter_enabled():
