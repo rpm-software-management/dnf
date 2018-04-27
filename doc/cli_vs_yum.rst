@@ -1,5 +1,5 @@
 ..
-  Copyright (C) 2014-2016 Red Hat, Inc.
+  Copyright (C) 2014-2018 Red Hat, Inc.
 
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions of
@@ -16,7 +16,7 @@
   Red Hat, Inc.
 
 ####################################
- Changes in DNF CLI compared to Yum
+ Changes in DNF CLI compared to YUM
 ####################################
 
 .. only :: html
@@ -36,7 +36,7 @@ in dnf.conf file. See :ref:`strict conf option <strict-label>`.
 
 For upgrade command:
 
-The semantics that were supposed to trigger in Yum with ``--skip-broken`` are now set for plain
+The semantics that were supposed to trigger in YUM with ``--skip-broken`` are now set for plain
 ``dnf update`` as a default. There is no need to use ``--skip-broken`` with the ``dnf upgrade``
 command. To use only the latest versions of packages in transactions, there is the ``--best``
 command line switch.
@@ -46,7 +46,7 @@ Update and Upgrade Commands are the Same
 ========================================
 
 Invoking ``dnf update`` or ``dnf upgrade``, in all their forms, has the same
-effect in DNF, with the latter being preferred. In Yum ``yum upgrade`` was
+effect in DNF, with the latter being preferred. In YUM ``yum upgrade`` was
 exactly like ``yum --obsoletes update``.
 
 ================================================
@@ -55,21 +55,21 @@ exactly like ``yum --obsoletes update``.
 
 The :ref:`clean_requirements_on_remove <clean_requirements_on_remove-label>`
 switch is on by default in DNF. It can thus be confusing to compare the "remove"
-operation results between DNF and Yum as by default DNF is often going to remove
+operation results between DNF and YUM as by default DNF is often going to remove
 more packages.
 
 ===========================
  No ``resolvedep`` command
 ===========================
 
-The Yum version of this command is maintained for legacy reasons only. The user
+The YUM version of this command is maintained for legacy reasons only. The user
 can just use ``dnf provides`` to find out what package provides a particular file.
 
 ===========================
  No ``deplist`` command
 ===========================
 
-An alternative to the Yum ``deplist`` command to find out dependencies of a package
+An alternative to the YUM ``deplist`` command to find out dependencies of a package
 is ``dnf repoquery --deplist`` using :ref:`repoquery command
 <repoquery_command-label>`.
 
@@ -80,7 +80,7 @@ is ``dnf repoquery --deplist`` using :ref:`repoquery command
  Excludes and repo excludes apply to all operations
 ====================================================
 
-Yum only respects excludes during installs and upgrades. DNF extends this to all
+YUM only respects excludes during installs and upgrades. DNF extends this to all
 operations, among others erasing and listing. If you e.g. want to see a list of
 all installed ``python-f*`` packages but not any of the Flask packages, the
 following will work::
@@ -88,7 +88,7 @@ following will work::
     dnf -x '*flask*' list installed 'python-f*'
 
 ==========================================================
- Yum's conf directive ``includepkgs`` is just ``include``
+ YUM's conf directive ``includepkgs`` is just ``include``
 ==========================================================
 
 ``include`` directive name of [main] and Repo configuration is a more logical and better named counterpart of ``exclude`` in DNF.
@@ -97,7 +97,7 @@ following will work::
  ``dnf remove kernel`` deletes all packages called ``kernel``
 =============================================================
 
-In Yum, the running kernel is spared. There is no reason to keep this in DNF,
+In YUM, the running kernel is spared. There is no reason to keep this in DNF,
 the user can always specify concrete versions on the command line, e.g.::
 
     dnf remove kernel-3.9.4
@@ -115,7 +115,7 @@ such as::
 
     dnf provides /b*/<file>
 
-will fail still (as they do in Yum now). To find what provides a particular
+will fail still (as they do in YUM now). To find what provides a particular
 binary, use the actual path for binaries on Fedora::
 
     dnf provides /usr/bin/<file>
@@ -133,7 +133,7 @@ Also see related Fedora bugzillas `982947
 The important system repos should never be down and we see the third-party repos
 down often enough to warrant this change. Note that without this setting and
 without an explicit ``skip_if_unavailable=True`` in the relevant repo .ini file
-Yum immediately stops on a repo error, confusing and bothering the user.
+YUM immediately stops on a repo error, confusing and bothering the user.
 
 See the related `Fedora bug 984483 <https://bugzilla.redhat.com/show_bug.cgi?id=984483>`_.
 
@@ -221,25 +221,25 @@ DNF provides swap command but only ``dnf swap A B`` syntax is supported
  Dependency processing details are not shown in the CLI
 ========================================================
 
-During its depsolving phase, Yum outputs lines similar to::
+During its depsolving phase, YUM outputs lines similar to::
 
   ---> Package rubygem-rhc.noarch 0:1.16.9-1.fc19 will be an update
   --> Processing Dependency: rubygem-net-ssh-multi >= 1.2.0 for package: rubygem-rhc-1.16.9-1.fc19.noarch
 
-DNF does not output information like this. The technical reason is that depsolver below DNF always considers all dependencies for update candidates and the output would be very long. Secondly, even in Yum this output gets confusing very quickly especially for large transactions and so does more harm than good.
+DNF does not output information like this. The technical reason is that depsolver below DNF always considers all dependencies for update candidates and the output would be very long. Secondly, even in YUM this output gets confusing very quickly especially for large transactions and so does more harm than good.
 
 See the the related `Fedora bug 1044999
 <https://bugzilla.redhat.com/show_bug.cgi?id=1044999>`_.
 
 ===================================================================
-``dnf provides`` complies with the Yum documentation of the command
+``dnf provides`` complies with the YUM documentation of the command
 ===================================================================
 
 When one executes::
 
   yum provides sandbox
 
-Yum applies extra heuristics to determine what the user meant by ``sandbox``, for instance it sequentially prepends entries from the ``PATH`` environment variable to it to see if it matches a file provided by some package. This is an undocumented behavior that DNF does not emulate. Just typically use::
+YUM applies extra heuristics to determine what the user meant by ``sandbox``, for instance it sequentially prepends entries from the ``PATH`` environment variable to it to see if it matches a file provided by some package. This is an undocumented behavior that DNF does not emulate. Just typically use::
 
   dnf provides /usr/bin/sandbox
 
@@ -253,28 +253,28 @@ to obtain similar results.
 ``--enableplugin`` not recognized
 =================================
 
-This switch has been dropped. It is not documented for Yum and of questionable use (all plugins are enabled by default).
+This switch has been dropped. It is not documented for YUM and of questionable use (all plugins are enabled by default).
 
 ==================
 Bandwidth limiting
 ==================
 
-DNF supports the ``throttle`` and ``bandwidth`` options familiar from Yum.
-Contrary to Yum, when multiple downloads run simultaneously the total
-downloading speed is throttled. This was not possible in Yum since
+DNF supports the ``throttle`` and ``bandwidth`` options familiar from YUM.
+Contrary to YUM, when multiple downloads run simultaneously the total
+downloading speed is throttled. This was not possible in YUM since
 downloaders ran in different processes.
 
 ===================================
  ``installonlypkgs`` config option
 ===================================
 
-Compared to Yum, DNF appends list values from the ``installonlypkgs`` config option to DNF defaults, where YUM overwrites the defaults by option values.
+Compared to YUM, DNF appends list values from the ``installonlypkgs`` config option to DNF defaults, where YUM overwrites the defaults by option values.
 
 ==============================
  The usage of Delta RPM files
 ==============================
 
-The boolean ``deltarpm`` option controls whether delta RPM files are used. Compared to Yum, DNF does not support ``deltarpm_percentage`` and instead chooses some optimal value of DRPM/RPM ratio to decide whether using deltarpm makes sense in the given case.
+The boolean ``deltarpm`` option controls whether delta RPM files are used. Compared to YUM, DNF does not support ``deltarpm_percentage`` and instead chooses some optimal value of DRPM/RPM ratio to decide whether using deltarpm makes sense in the given case.
 
 ================================================
  Handling .srpm files and non-existent packages
@@ -287,13 +287,13 @@ DNF will terminate early with an error if a command is executed requesting an in
 
 The same applies for package specifications that do not match any available package.
 
-Yum will only issue a warning in this case and continue installing the "tour" package. The rationale behind the result in DNF is that a program should terminate with an error if it can not fulfill the CLI command in its entirety.
+YUM will only issue a warning in this case and continue installing the "tour" package. The rationale behind the result in DNF is that a program should terminate with an error if it can not fulfill the CLI command in its entirety.
 
 =============================================================
  Promoting package to install to a package that obsoletes it
 =============================================================
 
-DNF will not magically replace a request for installing package ``X`` to installing package ``Y`` if ``Y`` obsoletes ``X``. Yum does this if its ``obsoletes`` config option is enabled but the behavior is not properly documented and can be harmful.
+DNF will not magically replace a request for installing package ``X`` to installing package ``Y`` if ``Y`` obsoletes ``X``. YUM does this if its ``obsoletes`` config option is enabled but the behavior is not properly documented and can be harmful.
 
 See the the related `Fedora bug 1096506
 <https://bugzilla.redhat.com/show_bug.cgi?id=1096506>`_ and `guidelines for renaming and obsoleting packages in Fedora <http://fedoraproject.org/wiki/Upgrade_paths_%E2%80%94_renaming_or_splitting_packages>`_.
@@ -304,18 +304,18 @@ Behavior of ``--installroot`` option
 
 DNF offers more predictable behavior of installroot. DNF handles the path differently
 from the ``--config`` command-line option, where this path is always related to the host
-system (Yum combines this path with installroot). Reposdir is also handled slightly
+system (YUM combines this path with installroot). Reposdir is also handled slightly
 differently, if one path of the reposdirs exists inside of installroot, then
-repos are strictly taken from installroot (Yum tests each path from reposdir
+repos are strictly taken from installroot (YUM tests each path from reposdir
 separately and use installroot path if existed). See the detailed description for
 \-\ :ref:`-installroot <installroot-label>` option.
 
 ###############################################
- Changes in DNF plugins compared to Yum plugins
+ Changes in DNF plugins compared to YUM plugins
 ###############################################
 
 ======================================  ================================================================  ===================================
-Original Yum tool                       DNF command/option                                                Package
+Original YUM tool                       DNF command/option                                                Package
 --------------------------------------  ----------------------------------------------------------------  -----------------------------------
 ``yum check``                           :ref:`dnf repoquery <repoquery_command-label>` ``--unsatisfied``  ``dnf``
 ``yum-langpacks``                                                                                         ``dnf-langpacks``
@@ -352,13 +352,13 @@ Plugins that have not been ported yet:
 Feel free to file an RFE_ for missing functionality if you need it.
 
 #################################################
- Changes in DNF plugins compared to Yum utilities
+ Changes in DNF plugins compared to YUM utilities
 #################################################
 
-All ported Yum tools are now implemented as DNF plugins.
+All ported YUM tools are now implemented as DNF plugins.
 
 =========================  ================================================ =================================
-Original Yum tool          New DNF command                                  Package
+Original YUM tool          New DNF command                                  Package
 -------------------------  ------------------------------------------------ ---------------------------------
 ``debuginfo-install``      `dnf debuginfo-install`_                         ``dnf-plugins-core``
 ``find-repos-of-install``  `dnf list installed`_                            ``dnf``
@@ -399,7 +399,7 @@ Utilities that have not been ported yet:
 ``verifytree``,
 ``yum-groups-manager``
 
-Take a look at the FAQ_ about Yum to DNF migration. Feel free to file an RFE_ for missing functionality if you need it.
+Take a look at the FAQ_ about YUM to DNF migration. Feel free to file an RFE_ for missing functionality if you need it.
 
 .. _dnf debuginfo-install: http://dnf-plugins-core.readthedocs.org/en/latest/debuginfo-install.html
 .. _dnf list installed: http://dnf.readthedocs.org/en/latest/command_ref.html

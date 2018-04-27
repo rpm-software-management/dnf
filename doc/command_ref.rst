@@ -1,5 +1,5 @@
 ..
-  Copyright (C) 2014-2016 Red Hat, Inc.
+  Copyright (C) 2014-2018 Red Hat, Inc.
 
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions of
@@ -33,8 +33,8 @@ Description
 
 .. _command_provides-label:
 
-`DNF`_ is the next upcoming major version of `Yum`_, a package manager for RPM-based Linux
-distributions. It roughly maintains CLI compatibility with Yum and defines a strict API for
+`DNF`_ is the next upcoming major version of `YUM`_, a package manager for RPM-based Linux
+distributions. It roughly maintains CLI compatibility with YUM and defines a strict API for
 extensions and plugins.
 
 Plugins can modify or extend features of DNF or provide additional CLI commands on top of those
@@ -1450,6 +1450,6 @@ See Also
 * :manpage:`dnf.plugin.*(8)`, assorted DNF plugins that might be installed on the system.
 * `DNF`_ project homepage (https://github.com/rpm-software-management/dnf/)
 * How to report a bug (https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting)
-* `Yum`_ project homepage (http://yum.baseurl.org/)
+* `YUM`_ project homepage (http://yum.baseurl.org/)
 
 .. _dnf config-manager: https://dnf-plugins-core.readthedocs.org/en/latest/config_manager.html

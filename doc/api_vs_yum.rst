@@ -1,5 +1,5 @@
 ..
-    Copyright (C) 2014-2015  Red Hat, Inc.
+    Copyright (C) 2014-2018 Red Hat, Inc.
 
   This copyrighted material is made available to anyone wishing to use,
   modify, copy, or redistribute it subject to the terms and conditions of
@@ -15,19 +15,19 @@
   License and may only be used or replicated with the express permission of
   Red Hat, Inc.
 
-#########################################
- Changes in the DNF hook API compared to Yum
-#########################################
+#############################################
+ Changes in the DNF hook API compared to YUM
+#############################################
 
 
 .. only :: html
    
 
 This table provides what alternative hooks are available in DNF compared to
-yum.
+YUM.
 
 ===========  =================  ==============================
-Hook Number  Yum hook           DNF hook
+Hook Number  YUM hook           DNF hook
 -----------  -----------------  ------------------------------
 ``1``        ``config``         ``init``
 ``2``        ``postconfig``     ``init``
