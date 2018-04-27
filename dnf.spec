@@ -9,6 +9,10 @@
 
 # override dependencies for rhel 7
 %if 0%{?rhel} == 7
+    %global rpm_version 4.11.3-32
+%endif
+
+%if 0%{?rhel} == 7 && 0%{?centos}
     %global rpm_version 4.11.3-25.el7.centos.1
 %endif
 
