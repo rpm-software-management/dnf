@@ -22,22 +22,17 @@
 %endif
 
 
-# default build options
-# %%bcond_without sets an --without option -> %%{with foo} is true
-# overriding with %%undefine is not ideal, but it avoids complicated nested conditions
-%bcond_without python2
-%bcond_without python3
-
-# override build options for rhel <= 7
 %if 0%{?rhel} && 0%{?rhel} <= 7
-    %undefine with_python3
+%bcond_with python3
+%else
+%bcond_without python3
 %endif
 
-# override build options for rhel >= 8
 %if 0%{?rhel} >= 8
-    %undefine with_python2
+%bcond_with python2
+%else
+%bcond_without python2
 %endif
-
 
 # configurable name for the compat yum package
 %global yum_subpackage_name %{name}-yum
