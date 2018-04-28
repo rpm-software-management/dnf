@@ -519,7 +519,8 @@ class RepoQueryCommand(commands.Command):
                         for provider in query.run():
                             deplist_output.append('   provider: ' + str(provider))
                     pkgs.append('\n'.join(deplist_output))
-            print('\n\n'.join(pkgs))
+            if pkgs:
+                print('\n\n'.join(pkgs))
             return
         elif self.opts.groupmember:
             self._group_member_report(q)
@@ -530,10 +531,11 @@ class RepoQueryCommand(commands.Command):
                 if self.opts.list != 'userinstalled' or self.base._is_userinstalled(pkg):
                     pkgs.add(self.build_format_fn(self.opts, pkg))
 
-        if self.opts.queryinfo:
-            print("\n\n".join(sorted(pkgs)))
-        else:
-            print("\n".join(sorted(pkgs)))
+        if pkgs:
+            if self.opts.queryinfo:
+                print("\n\n".join(sorted(pkgs)))
+            else:
+                print("\n".join(sorted(pkgs)))
 
     def _group_member_report(self, query):
         self.base.read_comps(arch_filter=True)
@@ -557,7 +559,8 @@ class RepoQueryCommand(commands.Command):
             output.append(
                 '\n'.join(sorted(package_list) + sorted(['  @' + id for id in key.split('$')])))
         output.append('\n'.join(sorted(pkg_not_in_group)))
-        print('\n'.join(output))
+        if output:
+            print('\n'.join(output))
 
     def grow_tree(self, level, pkg, opts):
         pkg_string = self.build_format_fn(opts, pkg)
