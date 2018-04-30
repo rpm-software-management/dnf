@@ -22,6 +22,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from dnf.i18n import ucd, _
+import libdnf.conf as cfg
 
 import dnf.callback
 import dnf.conf
@@ -540,6 +541,10 @@ class Repo(dnf.conf.RepoConf):
     def __init__(self, name=None, parent_conf=None):
         # :api
         super(Repo, self).__init__(section=name, parent=parent_conf)
+        # <<< TEST
+        self._repo = cfg.Repo(name, self._config)
+        self._config.this.disown()
+        # >>> TEST
         self._repofile = None
         self._expired = False
         self._pkgdir = None
@@ -933,43 +938,7 @@ class Repo(dnf.conf.RepoConf):
         Returns True if this call to load() caused a fresh metadata download.
 
         """
-        if self.metadata or self._try_cache():
-            if self._check_config_file_age and self.repofile \
-                    and dnf.util.file_age(self.repofile) < self.metadata._age:
-                self._md_expire_cache()
-            if self._sync_strategy in (SYNC_ONLY_CACHE, SYNC_LAZY) or \
-               not self._expired:
-                logger.debug(_('repo: using cache for: %s'), self.id)
-                return False
-        if self._sync_strategy == SYNC_ONLY_CACHE:
-            msg = _("Cache-only enabled but no cache for '%s'") % self.id
-            raise dnf.exceptions.RepoError(msg)
-        try:
-            if self._try_revive():
-                # the expired metadata still reflect the origin:
-                self.metadata._reset_age()
-                self._expired = False
-                return True
-
-            with dnf.util.tmpdir() as tmpdir:
-                handle = self._handle_new_remote(tmpdir)
-                msg = _('repo: downloading from remote: %s, %s')
-                logger.log(dnf.logging.DDEBUG, msg, self.id, handle)
-                self._handle_load(handle)
-                # override old md with the new ones:
-                self._replace_metadata(handle)
-
-            # get md from the cache now:
-            handle = self._handle_new_local(self._cachedir)
-            self.metadata = self._handle_load(handle)
-            self.metadata.fresh = True
-        except _DetailedLibrepoError as e:
-            dmsg = _("Cannot download '%s': %s.")
-            logger.log(dnf.logging.DEBUG, dmsg, e.source_url, e.librepo_msg)
-            msg = _("Failed to synchronize cache for repo '%s'") % (self.id)
-            raise dnf.exceptions.RepoError(msg)
-        self._expired = False
-        return True
+        self._repo.load()
 
     def _md_expire_cache(self):
         """Mark whatever is in the current cache expired.

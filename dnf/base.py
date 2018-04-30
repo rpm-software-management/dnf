@@ -138,8 +138,7 @@ class Base(object):
     def _add_repo_to_sack(self, repo):
         repo.load()
         hrepo = repo._hawkey_repo
-        hrepo.repomd_fn = repo._repomd_fn
-        hrepo.primary_fn = repo._primary_fn
+        repo._repo.initHyRepo(hrepo)
         if repo._filelists_fn is not None:
             hrepo.filelists_fn = repo._filelists_fn
         else:
