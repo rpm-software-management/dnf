@@ -746,7 +746,7 @@ class Repo(dnf.conf.RepoConf):
             raise dnf.exceptions.Error(_("Maximum download speed is lower than minimum. "
                                          "Please change configuration of minrate or throttle"))
         h.maxspeed = maxspeed
-        h.setopt(librepo.LRO_PROXYAUTH, True)
+        h.setopt(librepo.LRO_PROXYAUTHMETHODS, librepo.LR_AUTH_ANY)
         h.proxy = self.proxy
         if self.timeout > 0:
             h.connecttimeout = self.timeout
