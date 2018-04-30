@@ -116,7 +116,7 @@ class Option(object):
         return self._actual is None
 
     def _is_runtimeonly(self):
-        """Was value changed from default?"""
+        """Is value for internal use only at runtime?"""
         return self._runtimeonly
 
     def _parse(self, strval):
