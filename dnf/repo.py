@@ -722,6 +722,7 @@ class Repo(dnf.conf.RepoConf):
 
         """
         self._repo.load()
+        self.metadata = Metadata(self._repo)
 
     def _md_expire_cache(self):
         """Mark whatever is in the current cache expired.
