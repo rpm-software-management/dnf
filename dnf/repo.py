@@ -573,10 +573,6 @@ class Repo(dnf.conf.RepoConf):
         return self._repo.getCachedir()
 
     @property
-    def _filelists_fn(self):
-        return self.metadata._filelists_fn
-
-    @property
     def _local(self):
         if self.metalink or self.mirrorlist:
             return False
@@ -644,24 +640,8 @@ class Repo(dnf.conf.RepoConf):
         self._pkgdir = val
 
     @property
-    def _presto_fn(self):
-        return self.metadata._presto_fn
-
-    @property
-    def _primary_fn(self):
-        return self.metadata._primary_fn
-
-    @property
     def _pubring_dir(self):
         return os.path.join(self._cachedir, 'pubring')
-
-    @property
-    def _repomd_fn(self):
-        return self.metadata._repomd_fn
-
-    @property
-    def _updateinfo_fn(self):
-        return self.metadata._updateinfo_fn
 
     def __lt__(self, other):
         return self.id < other.id

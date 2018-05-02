@@ -122,24 +122,10 @@ class Base(object):
         repo.load()
         hrepo = repo._hawkey_repo
         repo._repo.initHyRepo(hrepo)
-        if repo._filelists_fn is not None:
-            hrepo.filelists_fn = repo._filelists_fn
-        else:
-            logger.debug(_("not found filelists for: %s"), repo.name)
-        hrepo.cost = repo.cost
-        hrepo.priority = repo.priority
-        if repo._presto_fn:
-            hrepo.presto_fn = repo._presto_fn
-        else:
-            logger.debug(_("not found deltainfo for: %s"), repo.name)
-        if repo._updateinfo_fn:
-            hrepo.updateinfo_fn = repo._updateinfo_fn
-        else:
-            logger.debug(_("not found updateinfo for: %s"), repo.name)
         try:
             self._sack.load_repo(hrepo, build_cache=True, load_filelists=True,
-                             load_presto=repo.deltarpm,
-                             load_updateinfo=True)
+                                 load_presto=repo.deltarpm,
+                                 load_updateinfo=True)
         except hawkey.Exception as e:
             logger.debug(_("loading repo '{}' failure: {}").format(repo.id, e))
             raise dnf.exceptions.RepoError(
