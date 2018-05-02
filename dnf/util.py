@@ -45,6 +45,22 @@ logger = logging.getLogger('dnf')
 """DNF Utilities."""
 
 
+def classify_specs(namespace, values):
+    setattr(namespace, "filenames", [])
+    setattr(namespace, "grp_specs", [])
+    setattr(namespace, "pkg_specs", [])
+    for value in values:
+        schemes = dnf.pycomp.urlparse.urlparse(value)[0]
+        if value.endswith('.rpm'):
+            namespace.filenames.append(value)
+        elif schemes and schemes in ('http', 'ftp', 'file', 'https'):
+            namespace.filenames.append(value)
+        elif value.startswith('@'):
+            namespace.grp_specs.append(value[1:])
+        else:
+            namespace.pkg_specs.append(value)
+
+
 def _non_repo_handle(conf=None):
     handle = librepo.Handle()
     handle.useragent = dnf.const.USER_AGENT

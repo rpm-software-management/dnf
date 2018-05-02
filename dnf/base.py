@@ -23,6 +23,10 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
+
+import argparse
+import fnmatch
+
 from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
 from dnf.module.exceptions import NoModuleException
@@ -31,6 +35,7 @@ from dnf.module.metadata_loader import ModuleMetadataLoader
 from dnf.module.repo_module_dict import RepoModuleDict
 from dnf.module.repo_module_version import RepoModuleVersion
 from dnf.util import first
+from dnf.util import classify_specs
 from dnf.yum import history
 from dnf.yum import misc
 from dnf.yum import rpmsack
@@ -584,6 +589,8 @@ class Base(object):
                 self._goal = dnf.goal.Goal(self._sack)
             if self._group_persistor is not None:
                 self._group_persistor = self._activate_group_persistor()
+            if self._module_persistor is not None:
+                self._module_persistor.reset()
             self._comps_trans = dnf.comps.TransactionBunch()
             self._transaction = None
 
@@ -1820,6 +1827,10 @@ class Base(object):
             self._goal.install(select=sltr, optional=(not strict))
         return len(available)
 
+    def enable_module(self, specs, save_immediately=False):
+        for spec in specs:
+            self.repo_module_dict.enable(spec, save_immediately)
+
     def install_module(self, specs):
         skipped_specs = specs
         try:
@@ -1828,6 +1839,52 @@ class Base(object):
             self.repo_module_dict.install(specs[1:])
 
         return skipped_specs
+
+    def install_specs(self, install, exclude=None):
+        if exclude is None:
+            exclude = []
+
+        install_specs = argparse.Namespace()
+        exclude_specs = argparse.Namespace()
+        classify_specs(install_specs, install)
+        classify_specs(exclude_specs, exclude)
+
+        for pkg in exclude_specs.pkg_specs:
+            self.sack.add_excludes(pkg)
+
+        for spec in install_specs.pkg_specs:
+            try:
+                self.install(spec, strict=self.conf.strict)
+            except dnf.exceptions.Error:
+                if self.conf.strict:
+                    raise
+
+        groups = self.install_module(install_specs.grp_specs)
+
+        self.read_comps(arch_filter=True)
+        for group in groups:
+            try:
+                types = self.conf.group_package_types
+                if '/' in group:
+                    split = group.split('/')
+                    group = split[0]
+                    types = split[1].split(',')
+
+                if group[0] == "^":
+                    environment = self.comps.environment_by_pattern(group[1:])
+                    if environment:
+                        self.environment_install(environment.id,
+                                                 types,
+                                                 exclude=exclude_specs.grp_specs,
+                                                 strict=self.conf.strict)
+                else:
+                    group = self.comps.group_by_pattern(group)
+                    if group:
+                        self.group_install(group.id, types, exclude=exclude_specs.grp_specs,
+                                           strict=self.conf.strict)
+            except dnf.exceptions.Error:
+                if self.conf.strict:
+                    raise
 
     def install(self, pkg_spec, reponame=None, strict=True, forms=None):
         # :api
