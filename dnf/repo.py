@@ -758,36 +758,11 @@ class Repo(dnf.conf.RepoConf):
         hrepo.priority = self.priority
         return hrepo
 
-    def _reset_metadata_expired(self):
-        if self._expired:
-            # explicitly requested expired state
-            return
-        self._expired = self.metadata._age >= self.metadata_expire
-        if self.metadata_expire == -1:
-            self._expired = False
-
     def _set_ip_resolve(self, handle):
         if self.ip_resolve == 'ipv4':
             handle.setopt(librepo.LRO_IPRESOLVE, librepo.IPRESOLVE_V4)
         elif self.ip_resolve == 'ipv6':
             handle.setopt(librepo.LRO_IPRESOLVE, librepo.IPRESOLVE_V6)
-
-    def _try_cache(self):
-        """Tries to load metadata from the local cache.
-
-        Correctly sets self._expired.
-
-        Returns True if we got any (even expired) metadata locally.
-
-        """
-        assert self.metadata is None
-        handle = self._handle_new_local(self._cachedir)
-        try:
-            self.metadata = self._handle_load(handle)
-        except (_DetailedLibrepoError, IOError):
-            return False
-        self._reset_metadata_expired()
-        return True
 
     def _try_revive_by_metalink(self):
         """Use metalink to check whether our metadata are still current."""
@@ -907,7 +882,7 @@ class Repo(dnf.conf.RepoConf):
 
         """
         if not self.metadata:
-            self._try_cache()
+            self._repo.loadCache()
         if self.metadata:
             if self.metadata_expire == -1:
                 return True, None
