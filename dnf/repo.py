@@ -562,7 +562,7 @@ class Repo(dnf.conf.RepoConf):
     @property
     def id(self):
         # :api
-        return self._section
+        return self._repo.getId()
 
     @property
     def repofile(self):
