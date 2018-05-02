@@ -2,6 +2,8 @@
 %global hawkey_version 0.14.0
 %global librepo_version 1.9.0
 %global libcomps_version 0.1.8
+%global libmodulemd_version 1.4.0
+%global python_smartcols_version 0.3.0
 %global rpm_version 4.14.0
 
 # conflicts
@@ -76,7 +78,7 @@ Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
 URL:            https://github.com/rpm-software-management/dnf
-Source0:        %{url}/archive/%{commit}/%{name}-%{shortcommit}.tar.gz
+Source0:        %{url}/archive/%{version}/%{name}-%{version}-modularity-5.tar.gz
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -161,6 +163,12 @@ BuildRequires:  python2-libcomps >= %{libcomps_version}
 BuildRequires:  python2-libdnf
 BuildRequires:  python2-librepo >= %{librepo_version}
 BuildRequires:  python2-nose
+BuildRequires:  libmodulemd >= %{libmodulemd_version}
+Requires:       libmodulemd >= %{libmodulemd_version}
+BuildRequires:  python2-gobject-base
+Requires:       python2-gobject-base
+BuildRequires:  python2-smartcols >= %{python_smartcols_version}
+Requires:       python2-smartcols >= %{python_smartcols_version}
 %if (0%{?rhel} && 0%{?rhel} <= 7)
 BuildRequires:  pygpgme
 Requires:       pygpgme
@@ -210,6 +218,12 @@ BuildRequires:  python3-iniparse
 BuildRequires:  python3-libcomps >= %{libcomps_version}
 BuildRequires:  python3-libdnf
 BuildRequires:  python3-librepo >= %{librepo_version}
+BuildRequires:  libmodulemd >= %{libmodulemd_version}
+Requires:       libmodulemd >= %{libmodulemd_version}
+BuildRequires:  python3-gobject-base
+Requires:       python3-gobject-base
+BuildRequires:  python3-smartcols >= %{python_smartcols_version}
+Requires:       python3-smartcols >= %{python_smartcols_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-gpg
 Requires:       python3-gpg
@@ -249,7 +263,7 @@ Systemd units that can periodically download package upgrades and apply them.
 
 
 %prep
-%autosetup
+%autosetup -n %{name}-%{version}-modularity-5
 mkdir build-py2
 mkdir build-py3
 
@@ -380,6 +394,8 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %license COPYING PACKAGE-LICENSING
 %doc AUTHORS README.rst
 %dir %{confdir}
+%dir %{confdir}/modules.d
+%dir %{confdir}/modules.defaults.d
 %dir %{pluginconfpath}
 %dir %{_sysconfdir}/%{name}/modules.d
 %dir %{_sysconfdir}/%{name}/modules.defaults.d
@@ -440,8 +456,6 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %{python3_sitelib}/%{name}/
 %dir %{py3pluginpath}
 %dir %{py3pluginpath}/__pycache__
-%dir %{_sysconfdir}/%{name}/modules.d
-%dir %{_sysconfdir}/%{name}/modules.defaults.d
 %endif
 
 %files automatic
@@ -463,6 +477,21 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %endif
 
 %changelog
+* Wed Oct 18 2017 Igor Gnatenko <ignatenko@redhat.com> - 2.7.5-1
+- Improve performance for excludes and includes handling (RHBZ #1500361)
+- Fixed problem of handling checksums for local repositories (RHBZ #1502106)
+- Fix traceback when using dnf.Base.close() (RHBZ #1503575)
+
+* Mon Oct 16 2017 Jaroslav Mracek <jmracek@redhat.com> - 2.7.4-1
+- Update to 2.7.4-1
+- Enhanced performance for excludes and includes handling
+- Solved memory leaks at time of closing of dnf.Base()
+- Resolves: rhbz#1480979 - I thought it abnormal that dnf crashed.
+- Resolves: rhbz#1461423 - Memory leak in python-dnf
+- Resolves: rhbz#1499564 - dnf list installed crashes
+- Resolves: rhbz#1499534 - dnf-2 is much slower than dnf-1 when handling groups
+- Resolves: rhbz#1499623 - Mishandling stderr vs stdout (dnf search, dnf repoquery)
+
 * Fri Oct 06 2017 Igor Gnatenko <ignatenko@redhat.com> - 2.7.3-1
 - Fix URL detection (RHBZ #1472847)
 - Do not remove downloaded files with --destdir option (RHBZ #1498426)
