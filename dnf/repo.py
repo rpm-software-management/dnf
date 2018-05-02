@@ -619,18 +619,6 @@ class Repo(dnf.conf.RepoConf):
             return False
 
     @property
-    def _metadata_dir(self):
-        return os.path.join(self._cachedir, _METADATA_RELATIVE_DIR)
-
-    @property
-    def _metalink_path(self):
-        return _priv_metalink_path(self._cachedir)
-
-    @property
-    def _mirrorlist_path(self):
-        return _priv_mirrorlist_path(self._cachedir)
-
-    @property
     def pkgdir(self):
         # :api
         if self._local:
@@ -769,17 +757,6 @@ class Repo(dnf.conf.RepoConf):
         hrepo.cost = self.cost
         hrepo.priority = self.priority
         return hrepo
-
-    def _replace_metadata(self, handle):
-        dnf.util.ensure_dir(self._cachedir)
-        dnf.util.rm_rf(self._metadata_dir)
-        dnf.util.rm_rf(self._metalink_path)
-        dnf.util.rm_rf(self._mirrorlist_path)
-        shutil.move(handle._metadata_dir, self._metadata_dir)
-        if handle.metalink:
-            shutil.move(handle._metalink_path, self._metalink_path)
-        elif handle.mirrorlist:
-            shutil.move(handle._mirrorlist_path, self._mirrorlist_path)
 
     def _reset_metadata_expired(self):
         if self._expired:
