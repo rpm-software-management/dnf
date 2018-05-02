@@ -640,38 +640,6 @@ class Repo(dnf.conf.RepoConf):
         if name == 'priority':
             self._hawkey_repo.priority = self.priority
 
-    def _handle_load(self, handle):
-        if not self.repo_gpgcheck:
-            return self._handle_load_core(handle)
-        try:
-            return self._handle_load_with_pubring(handle)
-        except _DetailedLibrepoError as e:
-            if e.librepo_code != librepo.LRE_BADGPG:
-                raise
-            dnf.util.clear_dir(handle.destdir)
-            dnf.crypto.import_repo_keys(self)
-            return self._handle_load_with_pubring(handle)
-
-    def _handle_load_core(self, handle):
-        if handle.progresscb:
-            self._md_pload.start(self.name or self.id or 'unknown')
-        result = handle._perform()
-        if handle.progresscb:
-            self._md_pload.end()
-
-        return Metadata(result, handle)
-
-    def _handle_load_with_pubring(self, handle):
-        with dnf.crypto.pubring_dir(self._pubring_dir):
-            return self._handle_load_core(handle)
-
-    def _handle_new_local(self, destdir):
-        return _Handle._new_local(self._substitutions, self.repo_gpgcheck,
-                                  self._max_mirror_tries, destdir)
-
-    def _handle_new_pkg_download(self):
-        return self._handle_new_remote(self.pkgdir, mirror_setup=False)
-
     def _handle_new_remote(self, destdir, mirror_setup=True):
         h = _Handle(self.repo_gpgcheck, self._max_mirror_tries,
                     self.max_parallel_downloads)
