@@ -53,11 +53,11 @@
     <database_version>10</database_version>
   </data>
   <data type="modules">
-    <checksum type="sha256">9c251903c4b1eafa9ec5565d5cf16ccda0262196707257d7041504e5d945d886</checksum>
-    <open-checksum type="sha256">fdc18441c234860179ee1d1096ab222114af58a939eef078bfdc699ed986f55a</open-checksum>
-    <location href="repodata/9c251903c4b1eafa9ec5565d5cf16ccda0262196707257d7041504e5d945d886-modules.yaml.gz"/>
-    <timestamp>1501143137</timestamp>
-    <size>245</size>
-    <open-size>472</open-size>
+    <checksum type="sha256">195bcb8e663b53e365a389c0f44fb23202d977f52cd95a9ea5609e3344cccf24</checksum>
+    <open-checksum type="sha256">ad56ccb05ed2438e9d0624c8e06b1b95ddbc58d7479af3ec189b8e925ade1e5f</open-checksum>
+    <location href="repodata/195bcb8e663b53e365a389c0f44fb23202d977f52cd95a9ea5609e3344cccf24-modules.yaml.gz"/>
+    <timestamp>1525271933</timestamp>
+    <size>247</size>
+    <open-size>502</open-size>
   </data>
 </repomd>

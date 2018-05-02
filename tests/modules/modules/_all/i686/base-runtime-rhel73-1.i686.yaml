@@ -1,36 +1,67 @@
-data:
-  artifacts:
-    rpms: [glibc-debuginfo-common-2.17-157.i686, basesystem-10.0-7.noarch, glibc-debuginfo-2.17-157.i686,
-      glibc-common-2.17-157.i686, kernel-3.10.0-514.i686, systemd-219-30.i686, filesystem-3.2-21.i686,
-      dummy-nscd-2.17-157.i686, bash-debuginfo-4.2.46-21.i686, bash-doc-4.2.46-21.noarch,
-      glibc-2.17-157.i686, bash-4.2.46-21.i686, kernel-headers-3.10.0-514.i686, kernel-doc-3.10.0-514.noarch]
-  components:
-    rpms:
-      basesystem: {rationale: ''}
-      bash: {rationale: ''}
-      bash-debuginfo: {rationale: ''}
-      bash-doc: {rationale: ''}
-      dummy-nscd: {rationale: ''}
-      filesystem: {rationale: ''}
-      glibc: {rationale: ''}
-      glibc-common: {rationale: ''}
-      glibc-debuginfo: {rationale: ''}
-      glibc-debuginfo-common: {rationale: ''}
-      kernel: {rationale: ''}
-      kernel-doc: {rationale: ''}
-      kernel-headers: {rationale: ''}
-      systemd: {rationale: ''}
-  description: Fake module
-  license:
-    module: [LGPLv2]
-  name: base-runtime
-  profiles:
-    default:
-      rpms: [kernel, glibc, systemd, bash]
-    minimal:
-      rpms: [glibc]
-  stream: rhel73
-  summary: Fake module
-  version: 1
 document: modulemd
 version: 1
+data:
+  name: base-runtime
+  stream: rhel73
+  version: 1
+  summary: Fake module
+  description: Fake module
+  license:
+    module:
+    - LGPLv2
+  profiles:
+    default:
+      rpms:
+      - bash
+      - glibc
+      - kernel
+      - systemd
+    minimal:
+      rpms:
+      - glibc
+  components:
+    rpms:
+      kernel-headers:
+        rationale: ''
+      kernel:
+        rationale: ''
+      systemd:
+        rationale: ''
+      glibc-debuginfo-common:
+        rationale: ''
+      kernel-doc:
+        rationale: ''
+      glibc:
+        rationale: ''
+      basesystem:
+        rationale: ''
+      glibc-debuginfo:
+        rationale: ''
+      bash-doc:
+        rationale: ''
+      bash:
+        rationale: ''
+      bash-debuginfo:
+        rationale: ''
+      filesystem:
+        rationale: ''
+      dummy-nscd:
+        rationale: ''
+      glibc-common:
+        rationale: ''
+  artifacts:
+    rpms:
+    - basesystem-0:10.0-7.noarch
+    - bash-0:4.2.46-21.i686
+    - bash-debuginfo-0:4.2.46-21.i686
+    - bash-doc-0:4.2.46-21.noarch
+    - dummy-nscd-0:2.17-157.i686
+    - filesystem-0:3.2-21.i686
+    - glibc-0:2.17-157.i686
+    - glibc-common-0:2.17-157.i686
+    - glibc-debuginfo-0:2.17-157.i686
+    - glibc-debuginfo-common-0:2.17-157.i686
+    - kernel-0:3.10.0-514.i686
+    - kernel-doc-0:3.10.0-514.noarch
+    - kernel-headers-0:3.10.0-514.i686
+    - systemd-0:219-30.i686

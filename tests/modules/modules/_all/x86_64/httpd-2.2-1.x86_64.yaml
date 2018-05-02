@@ -1,22 +1,31 @@
-data:
-  artifacts:
-    rpms: [httpd-2.2.15-59.x86_64, httpd-debuginfo-2.2.15-59.x86_64, httpd-doc-2.2.15-59.x86_64]
-  components:
-    rpms:
-      httpd: {rationale: ''}
-      httpd-debuginfo: {rationale: ''}
-      httpd-doc: {rationale: ''}
-  description: Fake module
-  license:
-    module: [LGPLv2]
-  name: httpd
-  profiles:
-    default:
-      rpms: [httpd]
-    doc:
-      rpms: [httpd-doc]
-  stream: '2.2'
-  summary: Fake module
-  version: 1
 document: modulemd
 version: 1
+data:
+  name: httpd
+  stream: '2.2'
+  version: 1
+  summary: Fake module
+  description: Fake module
+  license:
+    module:
+    - LGPLv2
+  profiles:
+    default:
+      rpms:
+      - httpd
+    doc:
+      rpms:
+      - httpd-doc
+  components:
+    rpms:
+      httpd:
+        rationale: ''
+      httpd-doc:
+        rationale: ''
+      httpd-debuginfo:
+        rationale: ''
+  artifacts:
+    rpms:
+    - httpd-0:2.2.15-59.x86_64
+    - httpd-debuginfo-0:2.2.15-59.x86_64
+    - httpd-doc-0:2.2.15-59.x86_64
