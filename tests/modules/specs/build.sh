@@ -39,7 +39,7 @@ for module in $DIR/*-*-*; do
     for target in $ARCHES; do
         repo_path=$DIR/../modules/$module_name/$target
         if [ -d $repo_path_noarch ]; then
-            cp -a $repo_path_noarch/* $repo_path/
+            cp $repo_path_noarch/* $repo_path/ || :
         fi
     done
 done
@@ -58,7 +58,7 @@ repo_path_noarch=$DIR/../modules/_non-modular/noarch
 for target in $ARCHES; do
     repo_path=$DIR/../modules/_non-modular/$target
     if [ -d $repo_path_noarch ]; then
-        cp -a $repo_path_noarch/* $repo_path/
+        cp $repo_path_noarch/* $repo_path/ || :
     fi
 done
 
@@ -73,7 +73,7 @@ for module in $DIR/*-*-* $DIR/_non-modular; do
         repo_path_all=$DIR/../modules/_all/$target
 
         mkdir -p $repo_path_all
-        cp -a $repo_path/* $repo_path_all/
+        cp $repo_path/* $repo_path_all/ || :
 
         createrepo_c $repo_path
         ./_createrepo_c_modularity_hack.py $repo_path

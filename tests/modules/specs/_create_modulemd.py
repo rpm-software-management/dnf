@@ -43,6 +43,14 @@ for module_id in os.listdir(MODULES_DIR):
 
         rpms = sorted(set(rpms) | set(noarch_rpms))
 
+        # HACK: force epoch to make test data compatible with libmodulemd >= 1.4.0
+        rpms_with_epoch = []
+        for i in rpms:
+            n, v, ra = i.rsplit("-", 2)
+            nevra = "%s-0:%s-%s" % (n, v, ra)
+            rpms_with_epoch.append(nevra)
+        rpms = rpms_with_epoch
+
         mmd = modulemd.ModuleMetadata()
         mmd.name = name
         mmd.stream = stream
