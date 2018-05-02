@@ -259,41 +259,30 @@ class _NullKeyImport(dnf.callback.KeyImport):
 
 
 class Metadata(object):
-    def __init__(self, res, handle):
-        self.fresh = False  # :api
-        self._repo_dct = res.yum_repo
-        self._repomd_dct = res.yum_repomd
-        self._priv_mirrors = handle.mirrors[:]
+    def __init__(self, repo):
+        self._repo = repo
+
+    @property
+    def fresh(self):
+        # :api
+        return self._repo.fresh()
 
     @property
     def _age(self):
-        return self._file_age('primary')
+        return self._repo.getAge()
 
     @property
     def _comps_fn(self):
-        return self._repo_dct.get("group_gz") or self._repo_dct.get("group")
+        return self._repo.getCompsFn()
 
     @property
     def _content_tags(self):
-        return self._repomd_dct.get('content_tags')
+        return self._repo.getContentTags()
 
     @property
     def _distro_tags(self):
-        pairs = self._repomd_dct.get('distro_tags', [])
+        pairs = self._repo.getDistroTags()
         return {k: v for (k, v) in pairs}
-
-    def _file_age(self, what):
-        return time.time() - self._file_timestamp(what)
-
-    def _file_timestamp(self, what):
-        try:
-            return dnf.util.file_timestamp(self._repo_dct[what])
-        except OSError as e:
-            raise dnf.exceptions.MetadataError(ucd(e))
-
-    @property
-    def _filelists_fn(self):
-        return self._repo_dct.get('filelists')
 
     @property
     def _modules_fn(self):
@@ -306,37 +295,15 @@ class Metadata(object):
     @property
     def _md_timestamp(self):
         """Gets the highest timestamp of all metadata types."""
-        timestamps = [content.get('timestamp')
-                      for (_, content) in self._repomd_dct.items()
-                      if isinstance(content, dict)]
-        return max(timestamps)
-
-    @property
-    def _presto_fn(self):
-        return self._repo_dct.get('prestodelta')
-
-    @property
-    def _primary_fn(self):
-        return self._repo_dct.get('primary')
-
-    def _reset_age(self):
-        dnf.util.touch(self._primary_fn, no_create=True)
-
-    @property
-    def _repomd_fn(self):
-        return self._repo_dct.get('repomd')
+        return self._repo.getMaxTimestamp()
 
     @property
     def _revision(self):
-        return self._repomd_dct.get('revision')
+        return self._repo.getRevision()
 
     @property
     def _timestamp(self):
-        return self._file_timestamp('primary')
-
-    @property
-    def _updateinfo_fn(self):
-        return self._repo_dct.get('updateinfo')
+        return self._repo.getTimestamp()
 
 
 class PackagePayload(dnf.callback.Payload):
