@@ -881,7 +881,7 @@ class Repo(dnf.conf.RepoConf):
         if self.metadata:
             if self.metadata_expire == -1:
                 return True, None
-            expiration = self.metadata_expire - self.metadata._age
+            expiration = self._repo.expiresIn()
             if self._expired:
                 expiration = min(0, expiration)
             return True, expiration
