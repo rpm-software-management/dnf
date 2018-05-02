@@ -570,11 +570,7 @@ class Repo(dnf.conf.RepoConf):
 
     @property
     def _cachedir(self):
-        s = self.metalink or self.mirrorlist or \
-            (self.baseurl and self.baseurl[0]) or self.id
-        digest = hashlib.sha256(s.encode('utf8')).hexdigest()[:16]
-        repodir = "%s-%s" % (self.id, digest)
-        return os.path.join(self.basecachedir, repodir)
+        return self._repo.getCachedir()
 
     @property
     def _filelists_fn(self):
