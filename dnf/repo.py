@@ -612,11 +612,7 @@ class Repo(dnf.conf.RepoConf):
     @property
     def _md_expired(self):
         """Return whether the cached metadata is expired."""
-        try:
-            exp_remaining = self._metadata_expire_in()[1]
-            return False if exp_remaining is None else exp_remaining <= 0
-        except dnf.exceptions.MetadataError:
-            return False
+        return self._repo.expired()
 
     @property
     def pkgdir(self):
