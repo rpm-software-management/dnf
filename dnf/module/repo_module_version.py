@@ -51,7 +51,8 @@ class RepoModuleVersion(object):
 
     def install(self, profiles, default_profiles):
         result = self._install_profiles(profiles, False)
-        result |= self._install_profiles(default_profiles, True)
+        if not profiles:
+            result |= self._install_profiles(default_profiles, True)
 
         profiles.extend(self.repo_module.conf.profiles)
         profiles.extend(default_profiles)
