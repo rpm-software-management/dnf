@@ -22,19 +22,21 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from dnf.i18n import _
-import dnf.logging
-import dnf.pycomp
-import dnf.util
 import fnmatch
 import glob
 import importlib
 import iniparse.compat
+import iniparse.configparser
 import inspect
 import logging
 import operator
 import os
 import sys
+
+import dnf.logging
+import dnf.pycomp
+import dnf.util
+from dnf.i18n import _
 
 logger = logging.getLogger('dnf')
 
@@ -53,7 +55,10 @@ class Plugin(object):
         parser = iniparse.compat.ConfigParser()
         name = cls.config_name if cls.config_name else cls.name
         files = ['%s/%s.conf' % (path, name) for path in conf.pluginconfpath]
-        parser.read(files)
+        try:
+            parser.read(files)
+        except iniparse.configparser.ParsingError as e:
+            raise dnf.exceptions.ConfigError(_("Parsing file failed: %s") % e)
         return parser
 
     def __init__(self, base, cli):
