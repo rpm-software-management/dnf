@@ -862,7 +862,7 @@ class Repo(dnf.conf.RepoConf):
         method is called.
 
         """
-        self._expired = True
+        self._repo.expire()
 
     def _metadata_expire_in(self):
         """Get the number of seconds after which the cached metadata will expire.
