@@ -195,7 +195,7 @@ class ModuleCommand(commands.Command):
         def run_on_module(self):
             for spec in self.opts.module_nsvp:
                 print()
-                logger.info(self.base.repo_module_dict.get_info_profiles(spec))
+                print(self.base.repo_module_dict.get_info_profiles(spec))
 
     class StreamsSubCommand(SubCommand):
 
