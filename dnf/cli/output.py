@@ -1077,19 +1077,22 @@ class Output(object):
                                   (_('Removing unused dependencies'), list_bunch.erased_clean),
                                   (_('Downgrading'), list_bunch.downgraded)]:
             lines = []
+
+            # build a reverse mapping to 'replaced_by'
+            # this is required to achieve reasonable speed
+            replaces = {}
+            for tsi in transaction:
+                if tsi.action != libdnf.transaction.TransactionItemAction_OBSOLETED:
+                    continue
+                for i in tsi._item.getReplacedBy():
+                    replaces.setdefault(i, set()).add(tsi)
+
             for tsi in pkglist:
                 if tsi.action not in [1, 2, 4, 6, 8, 9]:
                     continue
 
-                # compute TransactionItems obsoleted by tsi
-                # TODO: is this fast enough?
-                obsoleted = []
-                for i in transaction:
-                    if i.action != libdnf.transaction.TransactionItemAction_OBSOLETED:
-                        continue
-                    if tsi._item in i._item.getReplacedBy():
-                        obsoleted.append(i)
-                        continue
+                # get TransactionItems obsoleted by tsi
+                obsoleted = sorted(replaces.get(tsi._item, []))
 
                 a_wid = _add_line(lines, data, a_wid, tsi.pkg, obsoleted)
 
