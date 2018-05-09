@@ -503,10 +503,17 @@ class Repo(dnf.conf.RepoConf):
     def __init__(self, name=None, parent_conf=None):
         # :api
         super(Repo, self).__init__(section=name, parent=parent_conf)
-        # <<< TEST
+
+        # Create a libdnf repo object that takes over most of the operations
+        # originally present in this class.  This happens internally; the
+        # public API is kept unchanged.
+        #
+        # Currently, only the very basic stuff (such as cache loading) has been
+        # ported to libdnf.  Moving forward with libdnf work, this module (or
+        # the contained logic at least) should eventually go away completely.
         self._repo = cfg.Repo(name, self._config)
-        self._config.this.disown()
-        # >>> TEST
+        self._config.this.disown()  # _repo is the owner of _config
+
         self._repofile = None
         self._expired = False
         self._pkgdir = None
