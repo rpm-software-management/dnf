@@ -69,7 +69,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        2.8.9
+Version:        2.8.10
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
