@@ -363,8 +363,12 @@ class MockPackage(object):
         self.reponame = None if repo is None else repo.id
         self.str = nevra
         self.buildtime = 0
-        (self.name, self.epoch, self.version, self.release, self.arch) = \
-            hawkey.split_nevra(nevra)
+        nevra = hawkey.split_nevra(nevra)
+        self.name = nevra.name
+        self.epoch = nevra.epoch
+        self.version = nevra.version
+        self.release = nevra.release
+        self.arch = nevra.arch
         self.evr = '%(epoch)d:%(version)s-%(release)s' % vars(self)
         self.pkgtup = (self.name, self.arch, str(self.epoch), self.version,
                        self.release)
