@@ -459,7 +459,7 @@ class RepoModuleDict(OrderedDict):
                 continue
 
             conf = self[module_form.name].conf
-            if module_form.stream != conf.stream:
+            if module_form.stream and module_form.stream != conf.stream:
                 raise DifferentStreamEnabledException(module_form.name)
 
             if conf and conf.profiles:
