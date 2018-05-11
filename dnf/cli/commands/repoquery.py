@@ -483,7 +483,7 @@ class RepoQueryCommand(commands.Command):
         if self.opts.packageatr:
             rels = set()
             for pkg in q.run():
-                if self.opts.list != 'userinstalled' or self.base._is_userinstalled(pkg):
+                if self.opts.list != 'userinstalled' or self.base.history.user_installed(pkg):
                     if self.opts.packageatr == 'depends':
                         rels.update(pkg.requires + pkg.enhances + pkg.suggests +
                                     pkg.supplements + pkg.recommends)
@@ -512,7 +512,7 @@ class RepoQueryCommand(commands.Command):
         elif self.opts.deplist:
             pkgs = []
             for pkg in sorted(set(q.run())):
-                if self.opts.list != 'userinstalled' or self.base._is_userinstalled(pkg):
+                if self.opts.list != 'userinstalled' or self.base.history.user_installed(pkg):
                     deplist_output = []
                     deplist_output.append('package: ' + str(pkg))
                     for req in sorted([str(req) for req in pkg.requires]):
@@ -535,7 +535,7 @@ class RepoQueryCommand(commands.Command):
 
         else:
             for pkg in q.run():
-                if self.opts.list != 'userinstalled' or self.base._is_userinstalled(pkg):
+                if self.opts.list != 'userinstalled' or self.base.history.user_installed(pkg):
                     pkgs.add(self.build_format_fn(self.opts, pkg))
 
         if pkgs:
