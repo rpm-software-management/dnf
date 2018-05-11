@@ -8,6 +8,8 @@ After=network-online.target
 [Timer]
 OnBootSec=1h
 OnUnitInactiveSec=1d
+RandomizedDelaySec=5m
+AccuracySec=1s
 
 [Install]
 WantedBy=basic.target
