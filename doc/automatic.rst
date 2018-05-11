@@ -81,9 +81,9 @@ Setting the mode of operation of the program.
     What kind of upgrades to look at. ``default`` signals looking for all available updates, ``security`` only those with an issued security advisory.
 
 ``random_sleep``
-    time in seconds, default: 300
+    time in seconds, default: 0
 
-    Maximal random delay before downloading.
+    Maximal random delay before downloading.  Note that, by default, the ``systemd`` timers also apply a random delay of up to 5 minutes.
 
 ----------------------
 ``[emitters]`` section
