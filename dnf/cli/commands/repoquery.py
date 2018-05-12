@@ -303,15 +303,22 @@ class RepoQueryCommand(commands.Command):
                                   all_deps=False):
         done = done if done else self.base.sack.query().filterm(empty=True)
         t = self.base.sack.query().filterm(empty=True)
+        set_requires = set()
+        set_all_deps = set()
+
         for pkg in query_select.run():
             pkg_provides = pkg.provides
-            t = t.union(query_in.filter(requires=pkg.provides))
-            t = t.union(query_in.filter(requires=pkg.files))
+            set_requires.update(pkg_provides)
+            set_requires.update(pkg.files)
             if all_deps:
-                t = t.union(query_in.filter(recommends=pkg_provides))
-                t = t.union(query_in.filter(enhances=pkg_provides))
-                t = t.union(query_in.filter(supplements=pkg_provides))
-                t = t.union(query_in.filter(suggests=pkg_provides))
+                set_all_deps.update(pkg_provides)
+
+        t = t.union(query_in.filter(requires=set_requires))
+        if set_all_deps:
+            t = t.union(query_in.filter(recommends=set_all_deps))
+            t = t.union(query_in.filter(enhances=set_all_deps))
+            t = t.union(query_in.filter(supplements=set_all_deps))
+            t = t.union(query_in.filter(suggests=set_all_deps))
         if recursive:
             query_select = t.difference(done)
             if query_select:
