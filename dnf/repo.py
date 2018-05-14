@@ -77,11 +77,15 @@ def repo_id_invalid(repo_id):
     return dnf.util.first(invalids)
 
 
-def _user_pass_str(user, password):
+def _user_pass_str(user, password, quote=True):
     if user is None:
         return None
-    user = dnf.pycomp.urllib_quote(user)
-    password = '' if password is None else dnf.pycomp.urllib_quote(password)
+    if quote:
+        user = dnf.pycomp.urllib_quote(user)
+    if password is None:
+        password = ''
+    if quote:
+        password = dnf.pycomp.urllib_quote(password)
     return '%s:%s' % (user, password)
 
 
@@ -723,7 +727,8 @@ class Repo(dnf.conf.RepoConf):
 
         # setup username/password if needed
         if self.username:
-            h.setopt(librepo.LRO_USERPWD, _user_pass_str(self.username, self.password))
+            h.setopt(librepo.LRO_USERPWD,
+                     _user_pass_str(self.username, self.password, quote=False))
 
         # setup ssl stuff
         if self.sslcacert:
