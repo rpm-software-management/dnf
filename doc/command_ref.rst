@@ -203,7 +203,9 @@ Options
 ``--forcearch=<arch>``
     Force the use of an architecture. Any architecture can be specified.
     However, use of an architecture not supported natively by your CPU will
-    require emulation of some kind. This is usually through QEMU.
+    require emulation of some kind. This is usually through QEMU. The behavior of ``--forcearch``
+    could be emulate using configuration option :ref:`arch <arch-label>` with ``<arch>`` and
+    :ref:`ignorearch <ignorearch-label>` with ``True``.
 
 ``-h, --help``
     Show the help.
