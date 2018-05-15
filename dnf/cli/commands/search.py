@@ -85,7 +85,7 @@ class SearchCommand(commands.Command):
             self._search_counted(counter, 'name', arg)
             self._search_counted(counter, 'summary', arg)
 
-        if self.opts.all or counter.total() == 0:
+        if self.opts.all:
             for arg in args:
                 self._search_counted(counter, 'description', arg)
                 self._search_counted(counter, 'url', arg)
