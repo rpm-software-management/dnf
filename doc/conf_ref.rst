@@ -46,6 +46,14 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
  [main] Options
 ================
 
+.. _arch-label:
+
+``arch``
+    :ref:`string <string-label>`
+
+    The architecture used for installing packages. By default this is auto-detected. Often used
+    together with :ref:`ignorearch <ignorearch-label>` option.
+
 .. _assumeyes-label:
 
 ``assumeyes``
@@ -127,6 +135,16 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     List of the following: optional, default, mandatory. Tells dnf which type of packages in groups will
     be installed when 'groupinstall' is called. Default is: default, mandatory
+
+.. _ignorearch-label:
+
+``ignorearch``
+    :ref:`boolean <boolean-label>`
+
+    If set to ``True``, RPM will allow attempts to install packages incompatible with the CPU's
+    architecture. Defaults to ``False``. Often used together with
+    :ref:`arch <arch-label>` option.
+
 
 ``install_weak_deps``
     :ref:`boolean <boolean-label>`
