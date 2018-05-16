@@ -1184,7 +1184,11 @@ Search Command
 --------------
 
 ``dnf [options] search [--all] <keywords>...``
-    Search package metadata for the keywords. Keywords are matched as case-insensitive substrings, globbing is supported. By default the command will only look at package names and summaries, failing that (or whenever ``all`` was given as an argument) it will match against package descriptions and URLs. The result is sorted from the most relevant results to the least.
+    Search package metadata for the keywords. Keywords are matched as case-insensitive substrings, globbing is supported.
+    By default lists packages that match all requested keys (AND operation). Keys are searched in package names and summaries.
+    If option "--all" is used, lists packages that match at least one of keys (OR operation).
+    And in addition keys are searched in package descriptions and URLs.
+    The result is sorted from the most relevant results to the least.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
