@@ -89,6 +89,12 @@ class SearchCommand(commands.Command):
             for arg in args:
                 self._search_counted(counter, 'description', arg)
                 self._search_counted(counter, 'url', arg)
+        else:
+            needles = len(args)
+            pkgs = list(counter.keys())
+            for pkg in pkgs:
+                if len(counter.matched_needles(pkg)) != needles:
+                    del counter[pkg]
 
         used_attrs = None
         matched_needles = None
