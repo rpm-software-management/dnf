@@ -69,13 +69,16 @@ class RepoFunctionsTest(tests.support.TestCase):
         self.assertEqual(index, 7)
 
     def test_user_pass_str(self):
-        user = 'cap'
+        user = 'name@host.com'
         passwd = 'bag'
-        self.assertEqual(dnf.repo._user_pass_str(user, passwd), 'cap:bag')
+        self.assertEqual(dnf.repo._user_pass_str(user, passwd, False), 'name@host.com:bag')
+        self.assertEqual(dnf.repo._user_pass_str(user, passwd, True), 'name%40host.com:bag')
+        user = 'cap'
+        self.assertEqual(dnf.repo._user_pass_str(user, passwd, True), 'cap:bag')
         passwd = 'm:ltr'
-        self.assertEqual(dnf.repo._user_pass_str(user, passwd), 'cap:m%3Altr')
+        self.assertEqual(dnf.repo._user_pass_str(user, passwd, True), 'cap:m%3Altr')
         user = None
-        self.assertEqual(dnf.repo._user_pass_str(user, passwd), None)
+        self.assertEqual(dnf.repo._user_pass_str(user, passwd, True), None)
 
 
 class RepoTestMixin(object):

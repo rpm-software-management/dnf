@@ -55,7 +55,7 @@ def _non_repo_handle(conf=None):
             else int(conf.bandwidth * conf.throttle)
         handle.proxy = conf.proxy
         handle.proxyuserpwd = dnf.repo._user_pass_str(conf.proxy_username,
-                                                      conf.proxy_password)
+                                                      conf.proxy_password, True)
         handle.sslverifypeer = handle.sslverifyhost = conf.sslverify
     return handle
 
