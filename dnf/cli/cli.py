@@ -822,8 +822,8 @@ class Cli(object):
             self.base.conf.destdir = opts.destdir
             if not self.base.conf.downloadonly and opts.command not in (
                     'download', 'system-upgrade'):
-                logger.critical(
-                    _('--destdir must be used with --downloadonly or download command.')
+                logger.critical(_('--destdir or --downloaddir must be used with --downloadonly '
+                                  'or download or system-upgrade command.')
                 )
                 sys.exit(1)
 
