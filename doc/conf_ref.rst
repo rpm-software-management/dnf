@@ -460,6 +460,11 @@ configuration.
 
     The password to use for connecting to the proxy server. Empty by default.
 
+``proxy_auth_method``
+    :ref:`string <string-label>`
+
+    The authentication method used by the proxy server. Valid values are 'basic', 'digest', 'negotiate', 'ntlm', 'digest_ie', 'ntlm_wb', 'none' and 'any' (default).
+
 .. _repo_gpgcheck-label:
 
 ``repo_gpgcheck``
