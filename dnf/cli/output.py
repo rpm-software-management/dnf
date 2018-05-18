@@ -1690,12 +1690,16 @@ Transaction Summary
                 print(_("End rpmdb      :"), old.end_rpmdb_version, "**")
             else:
                 print(_("End rpmdb      :"), old.end_rpmdb_version)
-        if isinstance(name, list):
-            for name in name:
-                print(_("User           :"), name)
+        if isinstance(name, (list, tuple)):
+            seen = set()
+            for i in name:
+                if i in seen:
+                    continue
+                seen.add(i)
+                print(_("User           :"), i)
         else:
             print(_("User           :"), name)
-        if isinstance(old.return_code, list):
+        if isinstance(old.return_code, (list, tuple)):
             codes = old.return_code
             if codes[0] is None:
                 print(_("Return-Code    :"), "**", _("Aborted"), "**")
@@ -1711,10 +1715,18 @@ Transaction Summary
         else:
             print(_("Return-Code    :"), _("Success"))
 
-        print(_("Releasever     :"), old._trans.getReleasever())
+        if isinstance(old.releasever, (list, tuple)):
+            seen = set()
+            for i in old.releasever:
+                if i in seen:
+                    continue
+                seen.add(i)
+            print(_("Releasever     :"), i)
+        else:
+            print(_("Releasever     :"), old.releasever)
 
         if old.cmdline is not None:
-            if isinstance(old.cmdline, list):
+            if isinstance(old.cmdline, (list, tuple)):
                 for cmdline in old.cmdline:
                     print(_("Command Line   :"), cmdline)
             else:

@@ -140,6 +140,10 @@ class TransactionWrapper(object):
         return self._trans.getCmdline()
 
     @property
+    def releasever(self):
+        return self._trans.getReleasever()
+
+    @property
     def beg_timestamp(self):
         return self._trans.getDtBegin()
 
@@ -183,7 +187,7 @@ class TransactionWrapper(object):
         return [RPMTransactionItemWrapper(self, i) for i in result]
 
     def output(self):
-        return []
+        return [i[1] for i in self._trans.getConsoleOutput()]
 
     def error(self):
         return []
@@ -215,6 +219,12 @@ class MergedTransactionWrapper(TransactionWrapper):
     def cmdline(self):
         return self._trans.listCmdlines()
 
+    @property
+    def releasever(self):
+        return self._trans.listReleasevers()
+
+    def output(self):
+        return [i[1] for i in self._trans.getConsoleOutput()]
 
 class SwdbInterface(object):
 
