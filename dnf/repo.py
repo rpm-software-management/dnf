@@ -67,6 +67,18 @@ CACHE_FILES = {
     'dbcache': r'^.+(solv|solvx)$',
 }
 
+# Map string from config option proxy_auth_method to librepo LrAuth value
+PROXYAUTHMETHODS = {
+    'none': librepo.LR_AUTH_NONE,
+    'basic': librepo.LR_AUTH_BASIC,
+    'digest': librepo.LR_AUTH_DIGEST,
+    'negotiate': librepo.LR_AUTH_NEGOTIATE,
+    'ntlm': librepo.LR_AUTH_NTLM,
+    'digest_ie': librepo.LR_AUTH_DIGEST_IE,
+    'ntlm_wb': librepo.LR_AUTH_NTLM_WB,
+    'any': librepo.LR_AUTH_ANY,
+}
+
 logger = logging.getLogger("dnf")
 
 
@@ -746,7 +758,8 @@ class Repo(dnf.conf.RepoConf):
             raise dnf.exceptions.Error(_("Maximum download speed is lower than minimum. "
                                          "Please change configuration of minrate or throttle"))
         h.maxspeed = maxspeed
-        h.setopt(librepo.LRO_PROXYAUTHMETHODS, librepo.LR_AUTH_ANY)
+        h.setopt(librepo.LRO_PROXYAUTHMETHODS,
+                 PROXYAUTHMETHODS.get(self.proxy_auth_method, librepo.LR_AUTH_ANY))
         h.proxy = self.proxy
         if self.timeout > 0:
             h.connecttimeout = self.timeout

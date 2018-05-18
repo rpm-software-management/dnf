@@ -139,6 +139,25 @@ Repository Configuration
 
     The password to use for connecting to the proxy server. Defaults to ``None``.
 
+  .. attribute:: proxy_auth_method
+
+    The authentication method used by the proxy server. Valid values are
+
+    ==========     ==========================================================
+    method         meaning
+    ==========     ==========================================================
+    basic          HTTP Basic authentication
+    digest         HTTP Digest authentication
+    negotiate      HTTP Negotiate (SPNEGO) authentication
+    ntlm           HTTP NTLM authentication
+    digest_ie      HTTP Digest authentication with an IE flavor
+    ntlm_wb        NTLM delegating to winbind helper
+    none           None auth method
+    any            All suitable methods
+    ==========     ==========================================================
+
+    Defaults to ``any``
+
   .. attribute:: repofile
 
     The path to configuration file of the class.
