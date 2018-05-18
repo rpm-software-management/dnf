@@ -1982,7 +1982,8 @@ class Base(object):
                 if not pkgs:
                     pkgs = list(self.sack.query().available().filter(nevra=str(ti)))
             if not pkgs:
-                raise
+                logger.info(_('No package %s available.'), self.output.term.bold(ucd(str(ti))))
+                raise dnf.exceptions.PackageNotFoundError(_('no package matched'), ucd(str(ti)))
             pkg = pkgs[0]
 
             self.history.rpm.new(pkg, action, ti.reason)
