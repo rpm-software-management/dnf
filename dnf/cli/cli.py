@@ -654,7 +654,7 @@ class BaseCli(dnf.Base):
                         self.output.term.bold(ucd(err.pkg_spec)))
             return 1, ['An operation cannot be undone']
         except dnf.exceptions.MarkingError:
-            assert False
+            raise
         else:
             return 2, ["Undoing transaction %u" % (old.tid,)]
 

@@ -24,6 +24,8 @@ Classes for subcommands of the yum command line interface.
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import libdnf
+
 from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _, ucd
 
@@ -873,13 +875,22 @@ class HistoryCommand(Command):
         print('Repeating transaction %u, from %s' % (old.tid, tm))
         self.output.historyInfoCmdPkgsAltered(old)
 
-        # TODO: add transaction item merging into libdnf
         for i in old.packages():
             pkgs = list(self.base.sack.query().filter(nevra=str(i), reponame=i.from_repo))
-            if not pkgs:
-                raise
-            pkg = pkgs[0]
-            self.base.history.rpm.new(pkg, i.action, i.reason)
+            if i.action in [1, 2, 4, 6, 9]:
+                if not pkgs:
+                    logger.info(_('No package %s available.'),
+                    self.output.term.bold(ucd(str(i))))
+                    return 1, ['An operation cannot be redone']
+                pkg = pkgs[0]
+                self.base.install(str(pkg))
+            elif i.action == libdnf.transaction.TransactionItemAction_REMOVE:
+                if not pkgs:
+                    # package was removed already, we can skip removing it again
+                    continue
+                pkg = pkgs[0]
+                self.base.remove(str(pkg))
+
         self.base.resolve()
         self.base.do_transaction()
 
