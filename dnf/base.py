@@ -253,7 +253,11 @@ class Base(object):
                     modules_yaml = f.read()
                 module_metadata = Modulemd.Module.new_all_from_string_ext(modules_yaml)
                 defaults = [i for i in module_metadata if isinstance(i, Modulemd.Defaults)]
-                module_defaults_prioritizer.add(defaults, 1000)
+
+                try:
+                    module_defaults_prioritizer.add(defaults, 1000)
+                except gi.repository.GLib.Error as e:
+                    logger.warning(e)
         except OSError as ex:
             if ex.errno != errno.ENOENT:
                 raise
