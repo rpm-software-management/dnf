@@ -5,7 +5,8 @@
 %global rpm_version 4.14.0
 
 # conflicts
-%global conflicts_dnf_plugins_core_version 2.1.3
+%global conflicts_dnf_plugins_core_version 3.0.0
+%global conflicts_dnf_plugins_extras_version 3.0.0
 
 # override dependencies for rhel 7
 %if 0%{?rhel} == 7
@@ -124,6 +125,8 @@ Provides:       dnf-command(upgrade)
 Provides:       dnf-command(upgrade-to)
 Conflicts:      python2-dnf-plugins-core < %{conflicts_dnf_plugins_core_version}
 Conflicts:      python3-dnf-plugins-core < %{conflicts_dnf_plugins_core_version}
+Conflicts:      python2-dnf-plugins-extras < %{conflicts_dnf_plugins_extras_version}
+Conflicts:      python3-dnf-plugins-extras < %{conflicts_dnf_plugins_extras_version}
 
 %description
 %{pkg_description}
