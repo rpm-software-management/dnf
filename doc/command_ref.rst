@@ -1447,6 +1447,11 @@ Files
 .. _see_also-label:
 
 ========
+Footnotes
+========
+DNF cannot import, list or remove public GPG keys (gpg-pubkey-* packages) because they aren't real packages and they are not stored in the RPM database. Use the :manpage:`rpm(8)` and :manpage:`rpmkeys(8)` commands for that.
+
+========
 See Also
 ========
 
