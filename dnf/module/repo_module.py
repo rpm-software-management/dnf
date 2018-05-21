@@ -92,7 +92,8 @@ class RepoModule(OrderedDict):
             else:
                 raise EnabledStreamException("{}:{}".format(self.name, stream))
 
-        self.parent.base._module_persistor.set_data(self, stream=stream, enabled=True)
+        self.parent.base._module_persistor.set_data(self, stream=stream, enabled=True,
+                                                    version=-1, profiles=set())
 
     def disable(self):
         self.parent.base._module_persistor.set_data(self, enabled=False, profiles=[])
