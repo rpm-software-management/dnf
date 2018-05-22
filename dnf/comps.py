@@ -43,10 +43,10 @@ import sys
 logger = logging.getLogger("dnf")
 
 # :api :binformat
-CONDITIONAL = 1
-DEFAULT     = 2
-MANDATORY   = 4
-OPTIONAL    = 8
+CONDITIONAL = libdnf.transaction.CompsPackageType_CONDITIONAL
+DEFAULT     = libdnf.transaction.CompsPackageType_DEFAULT
+MANDATORY   = libdnf.transaction.CompsPackageType_MANDATORY
+OPTIONAL    = libdnf.transaction.CompsPackageType_OPTIONAL
 
 ALL_TYPES = CONDITIONAL | DEFAULT | MANDATORY | OPTIONAL
 
