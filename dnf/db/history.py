@@ -120,7 +120,6 @@ class RPMTransactionItemWrapper(object):
     @property
     def _active(self):
         return self.pkg
-#        return self.action in [1, 2, 4, 6, 9]
 
 
 class TransactionWrapper(object):

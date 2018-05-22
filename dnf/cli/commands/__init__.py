@@ -36,6 +36,7 @@ import dnf.const
 import dnf.exceptions
 import dnf.i18n
 import dnf.pycomp
+import dnf.transaction
 import dnf.util
 import functools
 import logging
@@ -877,7 +878,7 @@ class HistoryCommand(Command):
 
         for i in old.packages():
             pkgs = list(self.base.sack.query().filter(nevra=str(i), reponame=i.from_repo))
-            if i.action in [1, 2, 4, 6, 9]:
+            if i.action in dnf.transaction.FORWARD_ACTIONS:
                 if not pkgs:
                     logger.info(_('No package %s available.'),
                     self.output.term.bold(ucd(str(i))))
