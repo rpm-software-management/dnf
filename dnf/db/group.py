@@ -21,6 +21,7 @@
 import libdnf.transaction
 
 import dnf.db.history
+import dnf.transaction
 from dnf.i18n import _
 
 
@@ -312,7 +313,7 @@ class RPMTransaction(object):
         # :api
         result = set()
         for tsi in self:
-            if tsi.action in [1, 2, 4, 6, 9]:
+            if tsi.action in dnf.transaction.FORWARD_ACTIONS:
                 try:
                     result.add(tsi.pkg)
                 except KeyError:
@@ -324,7 +325,7 @@ class RPMTransaction(object):
         # :api
         result = set()
         for tsi in self:
-            if tsi.action in [3, 5, 7, 8, 10]:
+            if tsi.action in dnf.transaction.BACKWARD_ACTIONS + [libdnf.transaction.TransactionItemAction_REINSTALLED]:
                 try:
                     result.add(tsi.pkg)
                 except KeyError:

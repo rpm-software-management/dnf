@@ -53,6 +53,27 @@ TRANS_PREPARATION = 201
 TRANS_POST = 202
 
 
+# packages that appeared on the system
+FORWARD_ACTIONS = [
+    libdnf.transaction.TransactionItemAction_INSTALL,
+    libdnf.transaction.TransactionItemAction_DOWNGRADE,
+    libdnf.transaction.TransactionItemAction_OBSOLETE,
+    libdnf.transaction.TransactionItemAction_UPGRADE,
+    libdnf.transaction.TransactionItemAction_REINSTALL,
+]
+
+
+# packages that got removed from the system
+BACKWARD_ACTIONS = [
+    libdnf.transaction.TransactionItemAction_DOWNGRADED,
+    libdnf.transaction.TransactionItemAction_OBSOLETED,
+    libdnf.transaction.TransactionItemAction_UPGRADED,
+    libdnf.transaction.TransactionItemAction_REMOVE,
+# TODO: REINSTALLED may and may not belong here; the same NEVRA is in FORWARD_ACTIONS already
+#    libdnf.transaction.TransactionItemAction_REINSTALLED,
+]
+
+
 ACTIONS = {
     PKG_DOWNGRADE: _('Downgrading'),
     PKG_INSTALL: _('Installing'),

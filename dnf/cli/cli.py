@@ -63,6 +63,7 @@ import dnf.plugin
 import dnf.persistor
 import dnf.rpm
 import dnf.sack
+import dnf.transaction
 import dnf.util
 import dnf.yum.misc
 import hawkey
@@ -177,10 +178,9 @@ class BaseCli(dnf.Base):
             rmpkgs = []
             install_only = True
             for tsi in trans:
-                # forward / backward
-                if tsi.action in [1, 2, 4, 6, 9]:
+                if tsi.action in dnf.transaction.FORWARD_ACTIONS:
                     install_pkgs.append(tsi.pkg)
-                elif tsi.action in [3, 5, 7, 8]:
+                elif tsi.action in dnf.transaction.BACKWARD_ACTIONS:
                     install_only = False
                     rmpkgs.append(tsi.pkg)
 

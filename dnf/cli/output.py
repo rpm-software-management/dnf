@@ -1088,7 +1088,7 @@ class Output(object):
                     replaces.setdefault(i, set()).add(tsi)
 
             for tsi in pkglist:
-                if tsi.action not in [1, 2, 4, 6, 8, 9]:
+                if tsi.action not in dnf.transaction.FORWARD_ACTIONS + [libdnf.transaction.TransactionItemAction_REMOVE]:
                     continue
 
                 # get TransactionItems obsoleted by tsi
