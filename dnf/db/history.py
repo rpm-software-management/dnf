@@ -501,16 +501,6 @@ class SwdbInterface(object):
         # TODO: return True also for libdnf.transaction.TransactionItemReason_UNKNOWN?
         return False
 
-    def select_user_installed(self, pkgs):
-        """Select user installed packages from list of pkgs"""
-        result = []
-        for po in pkgs:
-            reason = self.swdb.resolveRPMTransactionItemReason(po.name, po.arch, -1)
-            if reason != libdnf.transaction.TransactionItemReason_USER:
-                continue
-            result.append(po)
-        return result
-
     def get_erased_reason(self, pkg, first_trans, rollback):
         """Get reason of package before transaction being undone. If package
         is already installed in the system, keep his reason.
