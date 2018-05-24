@@ -439,6 +439,9 @@ class MainConf(BaseConfig):
                 else:
                     logger.warning(_('Unknown configuration option: %s = %s'),
                                    ucd(name), ucd(value))
+        if getattr(opts, 'gpgcheck', None) is False:
+            opt = self._get_option("localpkg_gpgcheck")
+            opt._set(False, dnf.conf.PRIO_COMMANDLINE)
 
         if hasattr(opts, 'main_setopts'):
             # now set all the non-first-start opts from main from our setopts
