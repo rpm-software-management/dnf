@@ -267,9 +267,12 @@ class BaseConfig(object):
                                        '%s=%s in %s; %s'), ucd(name),
                                      ucd(value), ucd(filename), e.raw_error)
                 else:
-                    logger.debug(
-                        _('Unknown configuration option: %s = %s in %s'),
-                        ucd(name), ucd(value), ucd(filename))
+                    if name == 'arch' and hasattr(self, name):
+                        setattr(self, name, value)
+                    else:
+                        logger.debug(
+                            _('Unknown configuration option: %s = %s in %s'),
+                            ucd(name), ucd(value), ucd(filename))
 
 #    def _config_items(self):
         """Yield (name, value) pairs for every option in the instance."""
