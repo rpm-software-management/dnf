@@ -378,7 +378,11 @@ def _te_nevra(te):
     nevra = te.N() + '-'
     if te.E() is not None and te.E() != '0':
         nevra += te.E() + ':'
-    return nevra + te.V() + '-' + te.R() + '.' + te.A()
+    if te.A() is None:
+        arch = "noarch"
+    else:
+        arch = te.A()
+    return nevra + te.V() + '-' + te.R() + '.' + arch
 
 
 class tmpdir(object):
