@@ -38,6 +38,15 @@ class RPMTransactionItemWrapper(object):
     def __str__(self):
         return self._item.getItem().toStr()
 
+    def __lt__(self, other):
+        return self._item < other._item
+
+    def __eq__(self, other):
+        return self._item == other._item
+
+    def __hash__(self):
+        return self._item.__hash__()
+
     def match(self, pattern):
         return True
 
