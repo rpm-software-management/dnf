@@ -55,8 +55,10 @@ class InstallCompletionCommand(dnf.cli.commands.install.InstallCommand):
         self.cli.demands.sack_activation = True
 
     def run(self):
-        installed =  listpkg_to_setstr(ListCompletionCommand.installed(self.base, self.opts.pkg_specs))
-        available = listpkg_to_setstr(ListCompletionCommand.available(self.base, self.opts.pkg_specs))
+        installed = listpkg_to_setstr(ListCompletionCommand.installed(self.base,
+                                                                      self.opts.pkg_specs))
+        available = listpkg_to_setstr(ListCompletionCommand.available(self.base,
+                                                                      self.opts.pkg_specs))
         for pkg in (available - installed):
             print(str(pkg))
 
@@ -71,8 +73,10 @@ class ReinstallCompletionCommand(dnf.cli.commands.reinstall.ReinstallCommand):
         self.cli.demands.sack_activation = True
 
     def run(self):
-        installed =  listpkg_to_setstr(ListCompletionCommand.installed(self.base, self.opts.packages))
-        available = listpkg_to_setstr(ListCompletionCommand.available(self.base, self.opts.packages))
+        installed = listpkg_to_setstr(ListCompletionCommand.installed(self.base,
+                                                                      self.opts.pkg_specs))
+        available = listpkg_to_setstr(ListCompletionCommand.available(self.base,
+                                                                      self.opts.pkg_specs))
         for pkg in (installed & available):
             print(str(pkg))
 
@@ -83,31 +87,37 @@ class ListCompletionCommand(dnf.cli.commands.ListCommand):
     def run(self):
         subcmds = self.pkgnarrows
         args = self.opts.packages
-        if args[0] not in subcmds:
+        action = self.opts.packages_action
+        if len(args) > 1 and args[1] not in subcmds:
             print("\n".join(filter_list_by_kw(args[1], subcmds)))
         else:
-            if args[0] == "installed":
-                pkgs = self.installed(self.base, args[1])
-            elif args[0] == "available":
-                pkgs = self.available(self.base, args[1])
-            elif args[0] == "updates":
-                pkgs = self.updates(self.base, args[1])
+            if action == "installed":
+                pkgs = self.installed(self.base, args)
+            elif action == "available":
+                pkgs = self.available(self.base, args)
+            elif action == "updates":
+                pkgs = self.updates(self.base, args)
             else:
-                return
+                available = listpkg_to_setstr(self.available(self.base, args))
+                installed = listpkg_to_setstr(self.installed(self.base, args))
+                pkgs = (available | installed)
+                if not pkgs:
+                    print("\n".join(filter_list_by_kw(args[0], subcmds)))
+                    return
             for pkg in pkgs:
                 print(str(pkg))
 
     @staticmethod
     def installed(base, arg):
-        return base.sack.query().installed().filterm(name__glob="{}*".format(arg))
+        return base.sack.query().installed().filterm(name__glob="{}*".format(arg[0]))
 
     @staticmethod
     def available(base, arg):
-        return base.sack.query().available().filterm(name__glob="{}*".format(arg))
+        return base.sack.query().available().filterm(name__glob="{}*".format(arg[0]))
 
     @staticmethod
     def updates(base, arg):
-        return base.check_updates(["{}*".format(arg)], print_=False)
+        return base.check_updates(["{}*".format(arg[0])], print_=False)
 
 
 class RepoListCompletionCommand(dnf.cli.commands.repolist.RepoListCommand):
@@ -115,11 +125,16 @@ class RepoListCompletionCommand(dnf.cli.commands.repolist.RepoListCommand):
         super(RepoListCompletionCommand, self).__init__(args)
 
     def run(self):
-        args = self.opts.extcmds
-        if args[0] == "enabled":
-            print("\n".join(filter_list_by_kw(args[1], [r.id for r in self.base.repos.iter_enabled()])))
-        elif args[0] == "disabled":
-            print("\n".join(filter_list_by_kw(args[1], [r.id for r in self.base.repos.all() if not r.enabled])))
+        args = self.opts
+        if args.repos_action == "enabled":
+            print("\n".join(filter_list_by_kw(args.repos[0],
+                            [r.id for r in self.base.repos.iter_enabled()])))
+        elif args.repos_action == "disabled":
+            print("\n".join(filter_list_by_kw(args.repos[0],
+                            [r.id for r in self.base.repos.all() if not r.enabled])))
+        elif args.repos_action == "all":
+            print("\n".join(filter_list_by_kw(args.repos[0],
+                            [r.id for r in self.base.repos.all()])))
 
 
 class UpgradeCompletionCommand(dnf.cli.commands.upgrade.UpgradeCommand):
@@ -146,7 +161,7 @@ class DowngradeCompletionCommand(dnf.cli.commands.downgrade.DowngradeCommand):
         self.cli.demands.sack_activation = True
 
     def run(self):
-        for pkg in ListCompletionCommand.available(self.base, self.opts.package).downgrades():
+        for pkg in ListCompletionCommand.available(self.base, self.opts.pkg_specs).downgrades():
             print(str(pkg))
 
 
@@ -157,16 +172,6 @@ class CleanCompletionCommand(dnf.cli.commands.clean.CleanCommand):
     def run(self):
         subcmds = dnf.cli.commands.clean._CACHE_TYPES.keys()
         print("\n".join(filter_list_by_kw(self.opts.type[1], subcmds)))
-
-
-class HistoryCompletionCommand(dnf.cli.commands.HistoryCommand):
-    def __init__(self, args):
-        super(HistoryCompletionCommand, self).__init__(args)
-
-    def run(self, args):
-        subcmds = self.__class__.__base__.usage[1:-1].split("|")
-        if args[0] not in subcmds:
-            print("\n".join(filter_list_by_kw(self.opts.tid, subcmds)))
 
 
 def main(args):
@@ -185,7 +190,6 @@ def main(args):
     cli.register_command(UpgradeCompletionCommand)
     cli.register_command(DowngradeCompletionCommand)
     cli.register_command(CleanCompletionCommand)
-    cli.register_command(HistoryCompletionCommand)
     cli.configure(args)
     try:
         cli.run()
