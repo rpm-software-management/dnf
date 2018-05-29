@@ -231,8 +231,8 @@ def main(args):
 
 def upgrade(base, upgrade_type):
     if upgrade_type == 'security':
-        base._update_security_filters['upgrade'] = [base.sack.query().filterm(
-            advisory_type='security')]
+        base._update_security_filters.append(base.sack.query().upgrades().filterm(
+            advisory_type='security'))
         base.upgrade_all()
     elif upgrade_type == 'default':
         base.upgrade_all()
