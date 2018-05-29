@@ -496,6 +496,31 @@ SYNC_ONLY_CACHE = 2
 SYNC_TRY_CACHE = 3
 
 
+class RepoCallbacks(cfg.RepoCB):
+    def __init__(self, md_pload):
+        super(RepoCallbacks, self).__init__()
+        self._md_pload = md_pload
+
+    def start(self, what):
+        self._md_pload.start(what)
+
+    def end(self):
+        self._md_pload.end()
+
+    def progress(self, totalToDownload, downloaded):
+        self._md_pload._progress_cb(None, totalToDownload, downloaded)
+        # print("totalToDownload:", totalToDownload,  "downloaded:", downloaded)
+        return 0
+
+    def fastestMirror(self, stage, ptr):
+        self._md_pload._fastestmirror_cb(None, stage, ptr)
+        #print("fastestMirror:", stage)
+
+    def handleMirrorFailure(self, msg, url, metadata):
+        self._md_pload._mirror_failure_cb(None, msg, url, metadata)
+        # print("handlemirrorFailure:", msg, url, metadata)
+        return 0;
+
 class Repo(dnf.conf.RepoConf):
     # :api
     DEFAULT_SYNC = SYNC_TRY_CACHE
@@ -511,13 +536,18 @@ class Repo(dnf.conf.RepoConf):
         # Currently, only the very basic stuff (such as cache loading) has been
         # ported to libdnf.  Moving forward with libdnf work, this module (or
         # the contained logic at least) should eventually go away completely.
+        self._config.this.disown()  # _repo will be the owner of _config
         self._repo = cfg.Repo(name, self._config)
-        self._config.this.disown()  # _repo is the owner of _config
+
+        self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
+        self._callbacks = RepoCallbacks(self._md_pload)
+        self._callbacks.this.disown()  # _repo will be the owner of callbacks
+        self._repo.setCallbacks(self._callbacks)
+
 
         self._repofile = None
         self._expired = False
         self._pkgdir = None
-        self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
         self._key_import = _NullKeyImport()
         self.metadata = None  # :api
         self._sync_strategy = self.DEFAULT_SYNC
