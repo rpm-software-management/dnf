@@ -1849,8 +1849,8 @@ class Base(object):
         classify_specs(install_specs, install)
         classify_specs(exclude_specs, exclude)
 
-        for pkg in exclude_specs.pkg_specs:
-            self.sack.add_excludes(pkg)
+        exclude_query = self.sack.query().filter(name=exclude_specs.pkg_specs)
+        self.sack.add_excludes(exclude_query)
 
         for spec in install_specs.pkg_specs:
             try:
