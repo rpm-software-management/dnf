@@ -658,6 +658,26 @@ class ModuleTest(unittest.TestCase):
     def test_install_deps_same_module_version(self):
         pass
 
+    def test_install_implicit_empty_default_profile(self):
+        # install module without a 'default' profile
+        # implicit empty 'default' profile is assumed
+        # -> no packages should be installed, just module enablement
+        rmd = self.base.repo_module_dict
+        try:
+            rmd.install(["m4:1.4.18"])
+        except SystemExit as e:
+            self.assertIsNotNone(e)
+            self.assertEqual(e.code, 0)
+
+        repo_module = rmd["m4"]
+        self.assertTrue(repo_module.conf.enabled)
+        self.assertEqual(repo_module.conf.name, "m4")
+        self.assertEqual(repo_module.conf.stream, "1.4.18")
+        self.assertEqual(repo_module.conf.profiles, ['default'])
+
+        self.base.resolve()
+        self.assertInstalls([])
+
     # dnf module upgrade / dnf upgrade @
 
     def test_upgrade(self):

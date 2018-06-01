@@ -33,19 +33,15 @@ data:
         rationale: ''
       glibc:
         rationale: ''
-      basesystem:
-        rationale: ''
-      glibc-debuginfo:
+      dummy-nscd:
         rationale: ''
       bash-doc:
         rationale: ''
-      bash:
-        rationale: ''
-      bash-debuginfo:
+      basesystem:
         rationale: ''
       filesystem:
         rationale: ''
-      dummy-nscd:
+      bash:
         rationale: ''
       glibc-common:
         rationale: ''
@@ -53,13 +49,11 @@ data:
     rpms:
     - basesystem-0:10.0-7.noarch
     - bash-0:4.2.46-21.s390x
-    - bash-debuginfo-0:4.2.46-21.s390x
     - bash-doc-0:4.2.46-21.noarch
     - dummy-nscd-0:2.17-157.s390x
     - filesystem-0:3.2-21.s390x
     - glibc-0:2.17-157.s390x
     - glibc-common-0:2.17-157.s390x
-    - glibc-debuginfo-0:2.17-157.s390x
     - glibc-debuginfo-common-0:2.17-157.s390x
     - kernel-0:3.10.0-514.s390x
     - kernel-doc-0:3.10.0-514.noarch

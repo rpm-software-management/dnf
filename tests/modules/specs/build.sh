@@ -45,9 +45,9 @@ for module in $DIR/*-*-*; do
 done
 
 
-for spec in _non-modular/*.spec; do
+for spec in $DIR/_non-modular/*.spec; do
     echo
-    echo "Building NON-MODULAR $spec..."
+    echo "Building NON-MODULAR $(basename $spec)..."
     for target in $ARCHES; do
         rpmbuild --quiet --target=$target -ba --nodeps --define "_srcrpmdir $DIR/../modules/_non-modular/src" --define "_rpmdir $DIR/../modules/_non-modular/" $spec
     done
@@ -63,7 +63,7 @@ for target in $ARCHES; do
 done
 
 
-./_create_modulemd.py
+$DIR/_create_modulemd.py
 
 
 for module in $DIR/*-*-* $DIR/_non-modular; do
@@ -76,7 +76,7 @@ for module in $DIR/*-*-* $DIR/_non-modular; do
         cp $repo_path/* $repo_path_all/ || :
 
         createrepo_c $repo_path
-        ./_createrepo_c_modularity_hack.py $repo_path
+        $DIR/_createrepo_c_modularity_hack.py $repo_path
     done
 done
 
@@ -84,7 +84,7 @@ done
 for target in $ARCHES; do
     repo_path=$DIR/../modules/_all/$target
     createrepo_c $repo_path
-    ./_createrepo_c_modularity_hack.py $repo_path
+    $DIR/_createrepo_c_modularity_hack.py $repo_path
 done
 
 

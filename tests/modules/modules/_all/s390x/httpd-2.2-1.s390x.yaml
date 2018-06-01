@@ -22,10 +22,7 @@ data:
         rationale: ''
       httpd-doc:
         rationale: ''
-      httpd-debuginfo:
-        rationale: ''
   artifacts:
     rpms:
     - httpd-0:2.2.15-59.s390x
-    - httpd-debuginfo-0:2.2.15-59.s390x
     - httpd-doc-0:2.2.15-59.s390x

@@ -18,20 +18,14 @@ data:
       - httpd-doc
   components:
     rpms:
-      libnghttp2-debuginfo:
-        rationale: ''
       httpd:
         rationale: ''
       httpd-doc:
         rationale: ''
       libnghttp2:
         rationale: ''
-      httpd-debuginfo:
-        rationale: ''
   artifacts:
     rpms:
     - httpd-0:2.4.25-7.i686
-    - httpd-debuginfo-0:2.4.25-7.i686
     - httpd-doc-0:2.4.25-7.i686
     - libnghttp2-0:1.21.1-1.i686
-    - libnghttp2-debuginfo-0:1.21.1-1.i686

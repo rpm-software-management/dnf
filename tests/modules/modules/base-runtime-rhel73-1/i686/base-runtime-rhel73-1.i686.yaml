@@ -33,19 +33,15 @@ data:
         rationale: ''
       glibc:
         rationale: ''
-      basesystem:
-        rationale: ''
-      glibc-debuginfo:
+      dummy-nscd:
         rationale: ''
       bash-doc:
         rationale: ''
-      bash:
-        rationale: ''
-      bash-debuginfo:
+      basesystem:
         rationale: ''
       filesystem:
         rationale: ''
-      dummy-nscd:
+      bash:
         rationale: ''
       glibc-common:
         rationale: ''
@@ -53,13 +49,11 @@ data:
     rpms:
     - basesystem-0:10.0-7.noarch
     - bash-0:4.2.46-21.i686
-    - bash-debuginfo-0:4.2.46-21.i686
     - bash-doc-0:4.2.46-21.noarch
     - dummy-nscd-0:2.17-157.i686
     - filesystem-0:3.2-21.i686
     - glibc-0:2.17-157.i686
     - glibc-common-0:2.17-157.i686
-    - glibc-debuginfo-0:2.17-157.i686
     - glibc-debuginfo-common-0:2.17-157.i686
     - kernel-0:3.10.0-514.i686
     - kernel-doc-0:3.10.0-514.noarch
