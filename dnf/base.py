@@ -1844,6 +1844,8 @@ class Base(object):
         if exclude is None:
             exclude = []
 
+        ignored = []
+
         install_specs = argparse.Namespace()
         exclude_specs = argparse.Namespace()
         classify_specs(install_specs, install)
@@ -1856,8 +1858,7 @@ class Base(object):
             try:
                 self.install(spec, strict=self.conf.strict)
             except dnf.exceptions.Error:
-                if self.conf.strict:
-                    raise
+                ignored.append(spec)
 
         groups = self.install_module(install_specs.grp_specs)
 
@@ -1883,8 +1884,9 @@ class Base(object):
                         self.group_install(group.id, types, exclude=exclude_specs.grp_specs,
                                            strict=self.conf.strict)
             except dnf.exceptions.Error:
-                if self.conf.strict:
-                    raise
+                ignored.append("@" + group)
+
+        return ignored
 
     def install(self, pkg_spec, reponame=None, strict=True, forms=None):
         # :api
