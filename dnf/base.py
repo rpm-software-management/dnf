@@ -1863,32 +1863,32 @@ class Base(object):
         groups = self.install_module(install_specs.grp_specs)
 
         self.read_comps(arch_filter=True)
-        for group in groups:
+        for group_spec in groups:
             try:
                 types = self.conf.group_package_types
-                if '/' in group:
-                    split = group.split('/')
-                    group = split[0]
+                if '/' in group_spec:
+                    split = group_spec.split('/')
+                    group_spec = split[0]
                     types = split[1].split(',')
 
-                if group[0] == "^":
-                    environment = self.comps.environment_by_pattern(group[1:])
+                if group_spec[0] == "^":
+                    environment = self.comps.environment_by_pattern(group_spec[1:])
                     if environment:
                         self.environment_install(environment.id,
                                                  types,
                                                  exclude=exclude_specs.grp_specs,
                                                  strict=self.conf.strict)
                     else:
-                        ignored.append("@" + group)
+                        ignored.append("@" + group_spec)
                 else:
-                    group = self.comps.group_by_pattern(group)
+                    group = self.comps.group_by_pattern(group_spec)
                     if group:
                         self.group_install(group.id, types, exclude=exclude_specs.grp_specs,
                                            strict=self.conf.strict)
                     else:
-                        ignored.append("@" + group)
+                        ignored.append("@" + group_spec)
             except dnf.exceptions.Error:
-                ignored.append("@" + group)
+                ignored.append("@" + group_spec)
 
         return ignored
 
