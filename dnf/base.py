@@ -1851,8 +1851,15 @@ class Base(object):
         classify_specs(install_specs, install)
         classify_specs(exclude_specs, exclude)
 
-        exclude_query = self.sack.query().filter(name=exclude_specs.pkg_specs)
+        glob_excludes = [exclude for exclude in exclude_specs.pkg_specs
+                         if dnf.util.is_glob_pattern(exclude)]
+        excludes = [exclude for exclude in exclude_specs.pkg_specs
+                    if exclude not in glob_excludes]
+
+        exclude_query = self.sack.query().filter(name=excludes)
+        glob_exclude_query = self.sack.query().filter(name__glob=glob_excludes)
         self.sack.add_excludes(exclude_query)
+        self.sack.add_excludes(glob_exclude_query)
 
         for spec in install_specs.pkg_specs:
             try:
@@ -1863,6 +1870,7 @@ class Base(object):
         groups = self.install_module(install_specs.grp_specs)
 
         self.read_comps(arch_filter=True)
+        groups = [group for group in groups if group not in exclude_specs.grp_specs]
         for group_spec in groups:
             try:
                 types = self.conf.group_package_types
@@ -1876,14 +1884,14 @@ class Base(object):
                     if environment:
                         self.environment_install(environment.id,
                                                  types,
-                                                 exclude=exclude_specs.grp_specs,
+                                                 exclude=exclude_specs.pkg_specs,
                                                  strict=self.conf.strict)
                     else:
                         ignored.append("@" + group_spec)
                 else:
                     group = self.comps.group_by_pattern(group_spec)
                     if group:
-                        self.group_install(group.id, types, exclude=exclude_specs.grp_specs,
+                        self.group_install(group.id, types, exclude=exclude_specs.pkg_specs,
                                            strict=self.conf.strict)
                     else:
                         ignored.append("@" + group_spec)
