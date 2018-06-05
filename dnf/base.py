@@ -1878,11 +1878,15 @@ class Base(object):
                                                  types,
                                                  exclude=exclude_specs.grp_specs,
                                                  strict=self.conf.strict)
+                    else:
+                        ignored.append("@" + group)
                 else:
                     group = self.comps.group_by_pattern(group)
                     if group:
                         self.group_install(group.id, types, exclude=exclude_specs.grp_specs,
                                            strict=self.conf.strict)
+                    else:
+                        ignored.append("@" + group)
             except dnf.exceptions.Error:
                 ignored.append("@" + group)
 
