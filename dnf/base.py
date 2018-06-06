@@ -1870,7 +1870,26 @@ class Base(object):
         groups = self.install_module(install_specs.grp_specs)
 
         self.read_comps(arch_filter=True)
-        groups = [group for group in groups if group not in exclude_specs.grp_specs]
+
+        group_excludes = []
+        for group_spec in groups:
+            if '/' in group_spec:
+                split = group_spec.split('/')
+                group_spec = split[0]
+
+            if group_spec[0] == "^":
+                environment = self.comps.environment_by_pattern(group_spec[1:])
+                for group in environment.groups_iter():
+                    for pkg in group.packages_iter():
+                        group_excludes.append(pkg.name)
+            else:
+                group = self.comps.group_by_pattern(group_spec)
+                for pkg in group.packages_iter():
+                    group_excludes.append(pkg.name)
+
+        exclude_query = self.sack.query().filter(name=group_excludes)
+        self.sack.add_excludes(exclude_query)
+
         for group_spec in groups:
             try:
                 types = self.conf.group_package_types
