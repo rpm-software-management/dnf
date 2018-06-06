@@ -1872,18 +1872,24 @@ class Base(object):
         self.read_comps(arch_filter=True)
 
         group_excludes = []
-        for group_spec in groups:
+        for group_spec in exclude_specs.grp_specs:
             if '/' in group_spec:
                 split = group_spec.split('/')
                 group_spec = split[0]
 
             if group_spec[0] == "^":
                 environment = self.comps.environment_by_pattern(group_spec[1:])
+                if not environment:
+                    continue
+
                 for group in environment.groups_iter():
                     for pkg in group.packages_iter():
                         group_excludes.append(pkg.name)
             else:
                 group = self.comps.group_by_pattern(group_spec)
+                if not group:
+                    continue
+                    
                 for pkg in group.packages_iter():
                     group_excludes.append(pkg.name)
 
