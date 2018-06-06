@@ -20,21 +20,6 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
 # 02110-1301  USA
 
-__dnf_commands="
-autoremove autoremove-n autoremove-na autoremove-nevra builddep build-dep check
-check-update check-upgrade clean config-manager copr debug-dump debuginfo-install
-debug-restore deplist distribution-synchronization distrosync distro-sync downgrade
-download erase erase-n erase-na erase-nevra fedup group grouperase groupinfo groupinstall
-grouplist groupremove groups groupupdate help history info info-sec info-security
-info-updateinfo install install-n install-na install-nevra leaves list list-sec
-list-security list-updateinfo localinstall makecache mark needs-restarting playground
-provides reinstall remove remove-n remove-na remove-nevra repoclosure repograph
-repo-graph repoinfo repolist repomanage repo-packages repo-pkgs repoquery repoquery-n
-repoquery-na repoquery-nevra repository-packages repository-pkgs reposync search shell
-summary-updateinfo swap system-upgrade update updateinfo update-minimal update-to
-upgrade upgrade-minimal upgrade-to versionlock whatprovides
-"
-
 __dnf_main_options="
     -4 -6 -b -c -C -d -e -h -q -R -v -x -y
     --advisory --advisories
@@ -211,8 +196,7 @@ _dnf()
     local query_installed="SELECT pkg FROM installed WHERE pkg LIKE \"$cur%\""
     local query_available="SELECT pkg FROM available WHERE pkg LIKE \"$cur%\""
 
-    #cmd_list="$( _dnf_commands_helper "_cmds" "" )"
-    cmd_list="$__dnf_commands"
+    cmd_list="$( _dnf_commands_helper "_cmds" "" )"
     command="$( _dnf_get_first_command "$cmd_list" )"
 
     case $prev in
@@ -274,11 +258,11 @@ _dnf()
         complete_commands="$__dnf_clean_subcmds"
         ;;
 
-    dup|dist-upgrade|dsync|distro*sync|distribution-synchronization)
+    dist-upgrade|dsync|distro*sync|distribution-synchronization)
         _dnf_show_packages "$query_installed" list installed
         ;;
 
-    dg|downgrade)
+    downgrade)
         _dnf_show_packages "$query_installed" $command
         ;;
 
@@ -333,7 +317,7 @@ _dnf()
         _dnf_show_packages "$query_installed" list installed
         ;;
 
-    mc|ref|makecache|refresh)
+    makecache|refresh)
         [[ "$prev" == *"timer" ]] && return
         extra_options="--timer"
         complete_commands="timer"
@@ -342,11 +326,11 @@ _dnf()
     provides)
         ;;
 
-    ri|rei|reinstall)
+    reinstall)
         _dnf_show_packages "$query_installed" $command
         ;;
 
-    rm|remove*|erase*)
+    remove*|erase*)
         _dnf_show_packages "$query_installed" $command
         extra_options="--oldinstallonly --duplicates --duplicated"
         ;;
@@ -373,21 +357,21 @@ _dnf()
         complete_commands="$__dnf_repopkgs_subcmds"
         ;;
 
-    se|search)
+    search)
         [[ "$prev" == *"all" ]] && return
         extra_options="--all"
         complete_commands="all"
         ;;
 
-    sh|shell) ;;
+    shell) ;;
 
     swap) ;;
 
-    um|u-m|upgrade|upgrade-n*)
+    upgrade|upgrade-n*)
         _dnf_show_packages "$query_available" $command
         ;;
 
-    up|up-min|update|update-n*)
+    update|update-n*)
         _dnf_show_packages "$query_available" $command
         ;;
 
