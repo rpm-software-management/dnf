@@ -32,6 +32,7 @@ from .group import GroupPersistor, EnvironmentPersistor, RPMTransaction
 
 class RPMTransactionItemWrapper(object):
     def __init__(self, swdb, item):
+        assert item is not None
         self._swdb = swdb
         self._item = item
 
@@ -353,6 +354,8 @@ class SwdbInterface(object):
         """Get package data for package"""
         # trans item is returned
         result = self.swdb.getRPMTransactionItem(str(pkg))
+        if result is None:
+            return result
         result = RPMTransactionItemWrapper(self, result)
         return result
 
