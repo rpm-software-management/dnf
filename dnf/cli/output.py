@@ -488,7 +488,7 @@ class Output(object):
 
         output_list = []
         (hibeg, hiend) = self._highlight(highlight)
-        pkg_data = {}
+        pkg_data = None
         if pkg._from_system:
             pkg_data = self.history.package_data(pkg)
 
