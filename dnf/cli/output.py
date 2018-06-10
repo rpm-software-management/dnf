@@ -488,10 +488,6 @@ class Output(object):
 
         output_list = []
         (hibeg, hiend) = self._highlight(highlight)
-        pkg_data = None
-        if pkg._from_system:
-            pkg_data = self.history.package_data(pkg)
-
         output_list.append(format_key_val(_("Name"), "%s%s%s" % (hibeg, pkg.name, hiend)))
         if pkg.epoch:
             output_list.append(format_key_val(_("Epoch"), pkg.epoch))
@@ -501,8 +497,8 @@ class Output(object):
         output_list.append(format_key_val(_("Size"), format_number(float(pkg._size))))
         output_list.append(format_key_val(_("Source"), pkg.sourcerpm))
         output_list.append(format_key_val(_("Repo"), pkg.repoid))
-        if pkg_data and pkg_data.from_repo:
-            output_list.append(format_key_val(_("From repo"), pkg_data.from_repo))
+        if pkg._from_system:
+            output_list.append(format_key_val(_("From repo"), pkg._from_repo))
         if self.conf.verbose:
             # :hawkey does not support changelog information
             # print(_("Committer   : %s") % ucd(pkg.committer))
