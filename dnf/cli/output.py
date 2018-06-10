@@ -503,10 +503,6 @@ class Output(object):
 
         output_list = []
         (hibeg, hiend) = self._highlight(highlight)
-        pkg_data = None
-        if pkg._from_system:
-            pkg_data = self.history.package_data(pkg)
-
         output_list.append(format_key_val(_("Name"), "%s%s%s" % (hibeg, pkg.name, hiend)))
         if pkg.epoch:
             output_list.append(format_key_val(_("Epoch"), pkg.epoch))
@@ -516,8 +512,11 @@ class Output(object):
         output_list.append(format_key_val(_("Size"), format_number(float(pkg._size))))
         output_list.append(format_key_val(_("Source"), pkg.sourcerpm))
         output_list.append(format_key_val(_("Repo"), pkg.repoid))
-        if pkg_data and pkg_data.from_repo:
-            output_list.append(format_key_val(_("From repo"), pkg_data.from_repo))
+
+        if pkg._from_system:
+            history_repo = self.history.repo(pkg)
+            if history_repo:
+                output_list.append(format_key_val(_("From repo"), history_repo))
         if self.conf.verbose:
             # :hawkey does not support changelog information
             # print(_("Committer   : %s") % ucd(pkg.committer))
@@ -528,21 +527,13 @@ class Output(object):
             if pkg.installtime:
                 output_list.append(format_key_val(_("Install time"),
                                                   dnf.util.normalize_time(pkg.installtime)))
-            if pkg_data:
-                uid = None
-                if pkg_data.installed_by:
-                    try:
-                        uid = int(pkg_data.installed_by)
-                    except ValueError: # In case int() fails
-                        uid = None
+            history_pkg = self.history.package_data(pkg)
+            if history_pkg:
+                try:
+                    uid = int(history_pkg._item.getInstalledBy())
+                except ValueError: # In case int() fails
+                    uid = None
                 output_list.append(format_key_val(_("Installed by"), self._pwd_ui_username(uid)))
-                uid = None
-                if pkg_data.changed_by:
-                    try:
-                        uid = int(pkg_data.changed_by)
-                    except ValueError: # In case int() fails
-                        uid = None
-                output_list.append(format_key_val(_("Changed by"), self._pwd_ui_username(uid)))
         output_list.append(format_key_val_fill(_("Summary"), pkg.summary))
         if pkg.url:
             output_list.append(format_key_val(_("URL"), ucd(pkg.url)))
