@@ -752,6 +752,13 @@ class Repo(dnf.conf.RepoConf):
         if self.sslclientkey:
             h.setopt(librepo.LRO_SSLCLIENTKEY, self.sslclientkey)
 
+        # setup cache directory
+        if self.basecachedir:
+            try:
+                h.setopt(librepo.LRO_CACHEDIR, self.basecachedir)
+            except AttributeError:
+                pass
+
         # setup download progress
         h.progresscb = self._md_pload._progress_cb
         self._md_pload.fastest_mirror_running = False
