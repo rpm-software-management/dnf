@@ -74,10 +74,7 @@ class GroupCommand(commands.Command):
     def _environment_lists(self, patterns):
         def available_pred(env):
             env_found = self.base.history.env.get(env.id)
-            if env_found:
-                return not env_found.installed
-            else:
-                return True
+            return not(env_found)
 
         self._assert_comps()
         if patterns is None:
