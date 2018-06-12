@@ -1867,7 +1867,12 @@ class Base(object):
             except dnf.exceptions.Error:
                 ignored.append(spec)
 
+        # temporary hack, in future raise exception/add to ignored
+        # when enabling different stream for kickstart
+        former_assumeyes = self.conf.assumeyes
+        self.conf.assumeyes = True
         groups = self.install_module(install_specs.grp_specs)
+        self.conf.assumeyes = former_assumeyes
 
         self.read_comps(arch_filter=True)
 
@@ -1889,7 +1894,7 @@ class Base(object):
                 group = self.comps.group_by_pattern(group_spec)
                 if not group:
                     continue
-                    
+
                 for pkg in group.packages_iter():
                     group_excludes.append(pkg.name)
 
