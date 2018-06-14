@@ -79,13 +79,8 @@ class Package(hawkey.Package):
 
     @property
     def _from_repo(self):
-        pkgrepo = None
         if self._from_system:
-            pkgrepo = self.base.history.repo(self)
-        else:
-            pkgrepo = {}
-        if pkgrepo:
-            return '@' + pkgrepo
+            return self.base.history.repo(str(self))
         return self.reponame
 
     @property
@@ -183,7 +178,7 @@ class Package(hawkey.Package):
 
     @property # yum compatibility attribute
     def ui_from_repo(self):
-        return self.reponame
+        return self._from_repo
 
     # yum compatibility method
     def evr_eq(self, pkg):
