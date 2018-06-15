@@ -26,6 +26,7 @@ from .pycomp import PY3, basestring
 from dnf.i18n import _, ucd
 from functools import reduce
 import dnf
+import dnf.callback
 import dnf.const
 import dnf.pycomp
 import errno
@@ -60,11 +61,12 @@ def _non_repo_handle(conf=None):
     return handle
 
 
-def _urlopen_progress(url, conf):
+def _urlopen_progress(url, conf, progress=None):
     handle = _non_repo_handle(conf)
     handle.repotype = librepo.LR_YUMREPO
     handle.setopt(librepo.LRO_URLS, os.path.dirname(url))
-    progress = dnf.cli.progress.MultiFileProgressMeter(fo=sys.stdout)
+    if progress is None:
+        progress = dnf.callback.NullDownloadProgress()
     pload = dnf.repo.RemoteRPMPayload(url, conf, handle, progress)
     if os.path.exists(pload.local_path):
         return pload.local_path

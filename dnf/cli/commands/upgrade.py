@@ -73,7 +73,8 @@ class UpgradeCommand(commands.Command):
         if self.opts.filenames or self.opts.pkg_specs or self.opts.grp_specs:
             # Update files.
             if self.opts.filenames:
-                for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=False):
+                for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=False,
+                                                     progress=self.base.output.progress):
                     try:
                         self.base.package_upgrade(pkg)
                     except dnf.exceptions.MarkingError as e:

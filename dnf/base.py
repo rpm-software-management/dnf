@@ -1056,7 +1056,7 @@ class Base(object):
                 location = os.path.join(pkg.repo.pkgdir, pkg.location)
                 shutil.copy(location, self.conf.destdir)
 
-    def add_remote_rpms(self, path_list, strict=True):
+    def add_remote_rpms(self, path_list, strict=True, progress=None):
         # :api
         pkgs = []
         if not path_list:
@@ -1065,7 +1065,7 @@ class Base(object):
         for path in path_list:
             if not os.path.exists(path) and '://' in path:
                 # download remote rpm to a tempfile
-                path = dnf.util._urlopen_progress(path, self.conf)
+                path = dnf.util._urlopen_progress(path, self.conf, progress)
                 self._add_tempfiles([path])
             try:
                 pkgs.append(self.sack.add_cmdline_package(path))
