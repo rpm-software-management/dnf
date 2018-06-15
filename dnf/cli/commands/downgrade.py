@@ -50,7 +50,9 @@ class DowngradeCommand(commands.Command):
             commands._checkEnabledRepo(self.base)
 
     def run(self):
+        file_pkgs = self.base.add_remote_rpms(self.opts.filenames, strict=False,
+                                              progress=self.base.output.progress)
         return self.base.downgradePkgs(
             specs=self.opts.pkg_specs + ['@' + x for x in self.opts.grp_specs],
-            file_pkgs=self.base.add_remote_rpms(self.opts.filenames, strict=False),
+            file_pkgs=file_pkgs,
             strict=self.base.conf.strict)

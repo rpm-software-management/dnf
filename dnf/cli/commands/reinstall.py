@@ -62,7 +62,8 @@ class ReinstallCommand(commands.Command):
 
         # Reinstall files.
         done = False
-        for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=False):
+        for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=False,
+                                             progress=self.base.output.progress):
             try:
                 self.base.package_reinstall(pkg)
             except dnf.exceptions.MarkingError:

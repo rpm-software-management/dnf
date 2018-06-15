@@ -89,7 +89,8 @@ class InstallCommand(commands.Command):
             if strict:
                 raise dnf.exceptions.Error(_('No packages marked for install.'))
         else:
-            for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=strict):
+            for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=strict,
+                                                 progress=self.base.output.progress):
                 try:
                     self.base.package_install(pkg, strict=strict)
                 except dnf.exceptions.MarkingError:
