@@ -447,14 +447,6 @@ class Repo(dnf.conf.RepoConf):
         self._repo.setRepoFilePath(value)
 
     @property
-    def _local(self):
-        if self.metalink or self.mirrorlist:
-            return False
-        if self.baseurl[0].startswith('file://'):
-            return True
-        return False
-
-    @property
     def _md_expired(self):
         """Return whether the cached metadata is expired."""
         return self._repo.expired()
@@ -462,7 +454,7 @@ class Repo(dnf.conf.RepoConf):
     @property
     def pkgdir(self):
         # :api
-        if self._local:
+        if self._repo.isLocal():
             return dnf.util.strip_prefix(self.baseurl[0], 'file://')
         if self._pkgdir is not None:
             return self._pkgdir
