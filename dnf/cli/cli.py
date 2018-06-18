@@ -768,7 +768,7 @@ class Cli(object):
 
         if demands.cacheonly or self.base.conf.cacheonly:
             self.base.conf.cacheonly = True
-            repos.all()._md_only_cached = True
+            repos.all()._repo.setSyncStrategy(dnf.repo.SYNC_ONLY_CACHE)
         else:
             if demands.freshest_metadata:
                 for repo in repos.iter_enabled():
