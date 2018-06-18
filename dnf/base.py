@@ -436,13 +436,13 @@ class Base(object):
                 for r in self.repos.iter_enabled():
                     try:
                         self._add_repo_to_sack(r)
-                        if r.metadata._timestamp > mts:
-                            mts = r.metadata._timestamp
-                        if r.metadata._age < age:
-                            age = r.metadata._age
+                        if r._repo.getTimestamp() > mts:
+                            mts = r._repo.getTimestamp()
+                        if r._repo.getAge() < age:
+                            age = r._repo.getAge()
                         logger.debug(_("%s: using metadata from %s."), r.id,
                                      dnf.util.normalize_time(
-                                         r.metadata._md_timestamp))
+                                         r._repo.getMaxTimestamp()))
                     except dnf.exceptions.RepoError as e:
                         r._repo.expire()
                         if r.skip_if_unavailable is False:
@@ -611,8 +611,8 @@ class Base(object):
                 continue
             if not repo.metadata:
                 continue
-            comps_fn = repo.metadata._comps_fn
-            if comps_fn is None:
+            comps_fn = repo._repo.getCompsFn()
+            if not comps_fn:
                 continue
 
             logger.log(dnf.logging.DDEBUG,

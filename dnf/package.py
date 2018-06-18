@@ -238,8 +238,9 @@ class Package(hawkey.Package):
         if not self.location:
             return None
 
-        if self.repo.metadata._mirrors:
-            return schemes_filter(self.repo.metadata._mirrors)
+        mirrors = self.repo._repo.getMirrors()
+        if mirrors:
+            return schemes_filter(mirrors)
         elif self.repo.baseurl:
             if isinstance(self.repo.baseurl, list):
                 return schemes_filter(self.repo.baseurl)

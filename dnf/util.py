@@ -41,6 +41,7 @@ import subprocess
 import sys
 import tempfile
 import time
+import libdnf.conf as cfg
 
 logger = logging.getLogger('dnf')
 
@@ -90,23 +91,26 @@ def _non_repo_handle(conf=None):
 
 
 def _urlopen_progress(url, conf, progress=None):
-    handle = _non_repo_handle(conf)
-    handle.repotype = librepo.LR_YUMREPO
-    handle.setopt(librepo.LRO_URLS, [os.path.dirname(url)])
     if progress is None:
         progress = dnf.callback.NullDownloadProgress()
-    pload = dnf.repo.RemoteRPMPayload(url, conf, handle, progress)
+    pload = dnf.repo.RemoteRPMPayload(url, conf, progress)
     if os.path.exists(pload.local_path):
         return pload.local_path
     est_remote_size = sum([pload.download_size])
     progress.start(1, est_remote_size)
     targets = [pload._librepo_target()]
     try:
-        librepo.download_packages(targets, failfast=True)
+        cfg.PackageTarget.downloadPackages(cfg.VectorPPackageTarget(targets), True)
     except librepo.LibrepoException as e:
         if conf.strict:
             raise IOError(e.args[1])
         logger.error(e.args[1])
+#    try:
+#        librepo.download_packages(targets, failfast=True)
+#    except librepo.LibrepoException as e:
+#        if conf.strict:
+#            raise IOError(e.args[1])
+#        logger.error(e.args[1])
     return pload.local_path
 
 def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
@@ -114,16 +118,16 @@ def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
     Open the specified absolute url, return a file object
     which respects proxy setting even for non-repo downloads
     """
+    print("!!!!!!!!!!! _urlopen() !!!!!!!!!!!!!!!!")
     if PY3 and 'b' not in mode:
         kwargs.setdefault('encoding', 'utf-8')
     fo = tempfile.NamedTemporaryFile(mode, **kwargs)
 
     try:
         if repo:
-            repo._repo.downloadUrl(url, fo.fileno)
+            repo._repo.downloadUrl(url, fo.fileno())
         else:
-            handle = _non_repo_handle(conf)
-            librepo.download_url(url, fo.fileno(), handle)
+             cfg.Downloader.downloadURL(conf._config if conf else None, url, fo.fileno())
     except RuntimeError as e:
         raise IOError(e.args[1])
     except librepo.LibrepoException as e:
