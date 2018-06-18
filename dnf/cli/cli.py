@@ -775,7 +775,7 @@ class Cli(object):
                     repo._repo.expire()
             elif not demands.fresh_metadata:
                 for repo in repos.values():
-                    repo._repo.setSyncStrategy(SYNC_LAZY)
+                    repo._repo.setSyncStrategy(dnf.repo.SYNC_LAZY)
 
         if demands.sack_activation:
             self.base.fill_sack(load_system_repo='auto',
