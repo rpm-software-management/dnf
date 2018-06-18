@@ -32,7 +32,7 @@ class ModuleSubject(object):
         kwargs = {}
         if forms:
             kwargs["form"] = forms
-        return subj.module_form_possibilities(**kwargs)
+        return subj.nsvcap_possibilities(**kwargs)
 
     def find_module_version(self, repo_module_dict):
         """

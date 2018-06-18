@@ -42,10 +42,10 @@ class RepoModule(OrderedDict):
     def conf(self):
         if self._conf is None:
             self._conf = ModuleConf(section=self.name, parser=ConfigParser())
-            self._conf.name = self.name
-            self._conf.enabled = False
-            self._conf.locked = False
-            self._conf.version = -1
+            self._conf.name._set(self.name)
+            self._conf.enabled._set(False)
+            self._conf.locked._set(False)
+            self._conf.version._set(-1)
 
         return self._conf
 
@@ -77,11 +77,11 @@ class RepoModule(OrderedDict):
         if stream not in self:
             raise NoStreamException("{}:{}".format(self.name, stream))
 
-        if self.conf.enabled and self.conf.stream == stream:
+        if self.conf.enabled._get() and self.conf.stream._get() == stream:
             return
 
-        if self.conf.stream is not None and \
-                str(self.conf.stream) != str(stream) and \
+        if self.conf.stream._get() is not "" and \
+                str(self.conf.stream._get()) != str(stream) and \
                 not assumeyes:
             logger.info(module_messages[DIFFERENT_STREAM_INFO].format(self.name))
 
@@ -104,7 +104,8 @@ class RepoModule(OrderedDict):
         self.parent.base._module_persistor.set_data(self, locked=False)
 
     def write_conf_to_file(self):
-        output_file = os.path.join(self.parent.get_modules_dir(), "%s.module" % self.conf.name)
+        output_file = os.path.join(self.parent.get_modules_dir(),
+                                   "%s.module" % self.conf.name._get())
 
         with open(output_file, "w") as config_file:
             self.conf._write(config_file)

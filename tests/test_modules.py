@@ -24,7 +24,7 @@ import tempfile
 import unittest
 
 import hawkey
-from hawkey import ModuleForm
+from hawkey import NSVCAP
 
 import dnf.conf
 from dnf.module.subject import ModuleSubject
@@ -63,8 +63,8 @@ class ModuleSubjectTest(unittest.TestCase):
         result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSVAP))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = ModuleForm(name="module-name", stream="stream", version=1,
-                              arch="x86_64", profile="profile")
+        expected = NSVCAP(name="module-name", stream="stream", version=1,
+                          arch="x86_64", profile="profile")
         self.assertEqual(actual, expected)
 
     def test_nsva(self):
@@ -72,8 +72,8 @@ class ModuleSubjectTest(unittest.TestCase):
         result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSVA))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = ModuleForm(name="module-name", stream="stream", version=1,
-                              arch="x86_64", profile=None)
+        expected = NSVCAP(name="module-name", stream="stream", version=1,
+                          arch="x86_64", profile=None)
         self.assertEqual(actual, expected)
 
         # empty profile spec -> no profile
@@ -81,8 +81,8 @@ class ModuleSubjectTest(unittest.TestCase):
         result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSVA))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = ModuleForm(name="module-name", stream="stream", version=1,
-                              arch="x86_64", profile=None)
+        expected = NSVCAP(name="module-name", stream="stream", version=1,
+                          arch="x86_64", profile=None)
         self.assertEqual(actual, expected)
 
     def test_nsvp(self):
@@ -90,8 +90,8 @@ class ModuleSubjectTest(unittest.TestCase):
         result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSVAP))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = ModuleForm(name="module-name", stream="stream", version=1,
-                              arch="x86_64", profile="profile")
+        expected = NSVCAP(name="module-name", stream="stream", version=1,
+                          arch="x86_64", profile="profile")
         self.assertEqual(actual, expected)
 
     def test_nsv(self):
@@ -99,8 +99,8 @@ class ModuleSubjectTest(unittest.TestCase):
         result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSV))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = ModuleForm(name="module-name", stream="stream", version=1,
-                              arch=None, profile=None)
+        expected = NSVCAP(name="module-name", stream="stream", version=1,
+                          arch=None, profile=None)
         self.assertEqual(actual, expected)
 
     def test_nsap(self):
@@ -108,8 +108,8 @@ class ModuleSubjectTest(unittest.TestCase):
         result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSAP))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = ModuleForm(name="module-name", stream="stream", version=None,
-                              arch="x86_64", profile="profile")
+        expected = NSVCAP(name="module-name", stream="stream", version=None,
+                          arch="x86_64", profile="profile")
         self.assertEqual(actual, expected)
 
     def test_nsa(self):
@@ -117,8 +117,8 @@ class ModuleSubjectTest(unittest.TestCase):
         result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSA))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = ModuleForm(name="module-name", stream="stream", version=None,
-                              arch="x86_64", profile=None)
+        expected = NSVCAP(name="module-name", stream="stream", version=None,
+                          arch="x86_64", profile=None)
         self.assertEqual(actual, expected)
 
     def test_nsp(self):
@@ -126,8 +126,8 @@ class ModuleSubjectTest(unittest.TestCase):
         result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSP))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = ModuleForm(name="module-name", stream="stream", version=None,
-                              arch=None, profile="profile")
+        expected = NSVCAP(name="module-name", stream="stream", version=None,
+                          arch=None, profile="profile")
         self.assertEqual(actual, expected)
 
     def test_ns(self):
@@ -135,8 +135,8 @@ class ModuleSubjectTest(unittest.TestCase):
         result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NS))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = ModuleForm(name="module-name", stream="stream", version=None,
-                              arch=None, profile=None)
+        expected = NSVCAP(name="module-name", stream="stream", version=None,
+                          arch=None, profile=None)
         self.assertEqual(actual, expected)
 
     def test_nap(self):
@@ -144,8 +144,8 @@ class ModuleSubjectTest(unittest.TestCase):
         result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NAP))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = ModuleForm(name="module-name", stream=None, version=None,
-                              arch="x86_64", profile="profile")
+        expected = NSVCAP(name="module-name", stream=None, version=None,
+                          arch="x86_64", profile="profile")
         self.assertEqual(actual, expected)
 
     def test_na(self):
@@ -153,8 +153,8 @@ class ModuleSubjectTest(unittest.TestCase):
         result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NA))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = ModuleForm(name="module-name", stream=None, version=None,
-                              arch="x86_64", profile=None)
+        expected = NSVCAP(name="module-name", stream=None, version=None,
+                          arch="x86_64", profile=None)
         self.assertEqual(actual, expected)
 
     def test_np(self):
@@ -162,8 +162,8 @@ class ModuleSubjectTest(unittest.TestCase):
         result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NP))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = ModuleForm(name="module-name", stream=None, version=None,
-                              arch=None, profile="profile")
+        expected = NSVCAP(name="module-name", stream=None, version=None,
+                          arch=None, profile="profile")
         self.assertEqual(actual, expected)
 
     def test_n(self):
@@ -171,8 +171,8 @@ class ModuleSubjectTest(unittest.TestCase):
         result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_N))
         self.assertEqual(len(result), 1)
         actual = result[0]
-        expected = ModuleForm(name="module-name", stream=None, version=None,
-                              arch=None, profile=None)
+        expected = NSVCAP(name="module-name", stream=None, version=None,
+                          arch=None, profile=None)
         self.assertEqual(actual, expected)
 
     def test_all(self):
@@ -181,8 +181,8 @@ class ModuleSubjectTest(unittest.TestCase):
         self.assertEqual(len(result), 1)
 
         actual = result[0]
-        expected = ModuleForm(name="module-name", stream="stream", version=1,
-                              arch="x86_64", profile="profile")
+        expected = NSVCAP(name="module-name", stream="stream", version=1,
+                          arch="x86_64", profile="profile")
         self.assertEqual(actual, expected)
 
 
@@ -193,24 +193,27 @@ class RepoModuleDictTest(unittest.TestCase):
         profiles = profiles or {}  # profile_name: {pkg_format: [pkg_names]}
 
         mmd = Modulemd.Module()
+        mmd.set_mdversion(int(1))
         mmd.set_name(str(name))
         mmd.set_stream(str(stream))
         mmd.set_version(int(version))
-        licenses = Modulemd.SimpleSet()
-        licenses.add("LGPLv2")
-        mmd.set_module_licenses(licenses)
+        sset = Modulemd.SimpleSet()
+        sset.add("LGPLv2")
+        mmd.set_module_licenses(sset)
         mmd.set_summary(str("Fake module"))
         mmd.set_description(mmd.get_summary())
+        artifacts = Modulemd.SimpleSet()
         for rpm in rpms:
-            mmd.get_rpm_components.add(rpm.rsplit("-", 2)[0], "")
-            mmd.get_rpm_artifacts.add(rpm[:-4])
+            artifacts.add(rpm[:-4])
+        mmd.set_rpm_artifacts(artifacts)
         for profile_name in profiles:
-
             profile = Modulemd.Profile()
-            for rpm in profiles[profile_name].get("rpms", []):
-                profile.add_rpm(rpm)
             profile.set_name(profile_name)
+            profile_rpms = Modulemd.SimpleSet()
+            profile_rpms.set(profiles[profile_name].get("rpms", []))
+            profile.set_rpms(profile_rpms)
             mmd.add_profile(profile)
+
         return mmd
 
     def test_find_module_version(self):
@@ -248,9 +251,9 @@ class RepoModuleDictTest(unittest.TestCase):
         self.assertEqual(rmv.full_version, "module-name:stream:2")
 
         # set enabled stream
-        conf = dnf.conf.ModuleConf()
-        conf.enabled = 1
-        conf.stream = "enabled_stream"
+        conf = dnf.conf.ModuleConf(section="test")
+        conf.enabled._set(1)
+        conf.stream._set("enabled_stream")
         rmd["module-name"].conf = conf
 
         # stream provided by user
@@ -266,7 +269,7 @@ class RepoModuleDictTest(unittest.TestCase):
         self.assertEqual(rmv.full_version, "module-name:enabled_stream:1")
 
         # stream == default stream
-        conf.enabled = 0
+        conf.enabled._set(0)
         rmv = rmd.find_module_version(name="module-name")
         self.assertEqual(rmv.full_version, "module-name:stream:2")
 
@@ -279,11 +282,11 @@ class ModuleTest(unittest.TestCase):
 
     def setUp(self):
         self.tmpdir = tempfile.mkdtemp(prefix="dnf_test_")
-        self.conf = dnf.conf.Conf()
+        self.conf = dnf.conf.MainConf()
         self.conf.cachedir = os.path.join(self.tmpdir, "cache")
         self.conf.installroot = os.path.join(self.tmpdir, "root")
-        self.conf.modulesdir = MODULES_DIR
-        self.conf.moduledefaultsdir = DEFAULTS_DIR
+        self.conf.modulesdir._set(MODULES_DIR)
+        self.conf.moduledefaultsdir._set(DEFAULTS_DIR)
         self.conf.substitutions["arch"] = "x86_64"
         self.conf.substitutions["basearch"] = dnf.rpm.basearch(self.conf.substitutions["arch"])
         self.conf.assumeyes = True
@@ -310,16 +313,16 @@ class ModuleTest(unittest.TestCase):
         # use default stream
         self.base.repo_module_dict.enable("httpd")
         repo_module = self.base.repo_module_dict["httpd"]
-        self.assertTrue(repo_module.conf.enabled)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
     def test_enable_name_stream(self):
         self.base.repo_module_dict.enable("httpd:2.4")
         repo_module = self.base.repo_module_dict["httpd"]
-        self.assertTrue(repo_module.conf.enabled)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
         # also enable base-runtime; it's a dependency that's used in other tests
         self.base.repo_module_dict.enable("base-runtime:f26")
@@ -327,9 +330,9 @@ class ModuleTest(unittest.TestCase):
     def test_enable_pkgspec(self):
         self.base.repo_module_dict.enable("httpd:2.4:1/foo")
         repo_module = self.base.repo_module_dict["httpd"]
-        self.assertTrue(repo_module.conf.enabled)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
     def test_enable_invalid(self):
         with self.assertRaises(dnf.exceptions.Error):
@@ -339,14 +342,14 @@ class ModuleTest(unittest.TestCase):
         repo_module = self.base.repo_module_dict["httpd"]
 
         self.base.repo_module_dict.enable("httpd:2.4")
-        self.assertTrue(repo_module.conf.enabled)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
         self.base.repo_module_dict.enable("httpd:2.2")
-        self.assertTrue(repo_module.conf.enabled)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.2")
+        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.2")
 
     def test_enable_different_stream_missing_profile(self):
         pass
@@ -357,48 +360,48 @@ class ModuleTest(unittest.TestCase):
         repo_module = self.base.repo_module_dict["httpd"]
 
         self.base.repo_module_dict.enable("httpd")
-        self.assertTrue(repo_module.conf.enabled)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
         self.base.repo_module_dict.disable("httpd")
-        self.assertFalse(repo_module.conf.enabled)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertFalse(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
     def test_disable_name_stream(self):
         repo_module = self.base.repo_module_dict["httpd"]
 
         self.base.repo_module_dict.enable("httpd:2.4")
-        self.assertTrue(repo_module.conf.enabled)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
         self.base.repo_module_dict.disable("httpd:2.4")
-        self.assertFalse(repo_module.conf.enabled)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertFalse(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
     def test_disable_pkgspec(self):
         repo_module = self.base.repo_module_dict["httpd"]
 
         self.base.repo_module_dict.enable("httpd:2.4")
-        self.assertTrue(repo_module.conf.enabled)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
         self.base.repo_module_dict.disable("httpd:2.4:1/foo")
-        self.assertFalse(repo_module.conf.enabled)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertFalse(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
     def test_disable_invalid(self):
         repo_module = self.base.repo_module_dict["httpd"]
 
         self.base.repo_module_dict.enable("httpd:2.4")
-        self.assertTrue(repo_module.conf.enabled)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
         with self.assertRaises(dnf.exceptions.Error):
             self.base.repo_module_dict.disable("httpd:invalid")
@@ -409,25 +412,25 @@ class ModuleTest(unittest.TestCase):
         self.base.repo_module_dict.enable("httpd")
         self.base.repo_module_dict.lock("httpd")
         repo_module = self.base.repo_module_dict["httpd"]
-        self.assertTrue(repo_module.conf.locked)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertTrue(repo_module.conf.locked._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
     def test_lock_name_stream(self):
         self.base.repo_module_dict.enable("httpd:2.4")
         self.base.repo_module_dict.lock("httpd:2.4")
         repo_module = self.base.repo_module_dict["httpd"]
-        self.assertTrue(repo_module.conf.locked)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertTrue(repo_module.conf.locked._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
     def test_lock_pkgspec(self):
         self.base.repo_module_dict.enable("httpd:2.4:1/foo")
         self.base.repo_module_dict.lock("httpd:2.4:1/foo")
         repo_module = self.base.repo_module_dict["httpd"]
-        self.assertTrue(repo_module.conf.locked)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
+        self.assertTrue(repo_module.conf.locked._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
     def test_lock_invalid(self):
         with self.assertRaises(dnf.exceptions.Error):
@@ -441,10 +444,10 @@ class ModuleTest(unittest.TestCase):
 
         self.base.repo_module_dict.unlock("httpd")
         repo_module = self.base.repo_module_dict["httpd"]
-        self.assertFalse(repo_module.conf.locked)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
-        self.assertEqual(repo_module.conf.version, 2)
+        self.assertFalse(repo_module.conf.locked._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
+        self.assertEqual(repo_module.conf.version._get(), 2)
 
     def test_unlock_name_stream(self):
         self.base.repo_module_dict.enable("httpd:2.4")
@@ -452,10 +455,10 @@ class ModuleTest(unittest.TestCase):
 
         self.base.repo_module_dict.unlock("httpd:2.4")
         repo_module = self.base.repo_module_dict["httpd"]
-        self.assertFalse(repo_module.conf.locked)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
-        self.assertEqual(repo_module.conf.version, 2)
+        self.assertFalse(repo_module.conf.locked._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
+        self.assertEqual(repo_module.conf.version._get(), 2)
 
     def test_unlock_pkgspec(self):
         self.base.repo_module_dict.enable("httpd:2.4:1/foo")
@@ -463,10 +466,10 @@ class ModuleTest(unittest.TestCase):
 
         self.base.repo_module_dict.unlock("httpd:2.4:1/foo")
         repo_module = self.base.repo_module_dict["httpd"]
-        self.assertFalse(repo_module.conf.locked)
-        self.assertEqual(repo_module.conf.name, "httpd")
-        self.assertEqual(repo_module.conf.stream, "2.4")
-        self.assertEqual(repo_module.conf.version, 1)
+        self.assertFalse(repo_module.conf.locked._get())
+        self.assertEqual(repo_module.conf.name._get(), "httpd")
+        self.assertEqual(repo_module.conf.stream._get(), "2.4")
+        self.assertEqual(repo_module.conf.version._get(), 1)
 
     def test_unlock_invalid(self):
         with self.assertRaises(dnf.exceptions.Error):
@@ -553,18 +556,18 @@ class ModuleTest(unittest.TestCase):
             # module profile wasn't, module was just enabled
 
             repo_module = rmd["base-runtime"]
-            self.assertTrue(repo_module.conf.enabled)
-            self.assertEqual(repo_module.conf.name, "base-runtime")
-            self.assertEqual(repo_module.conf.stream, "f26")
-            self.assertEqual(repo_module.conf.profiles, [])
+            self.assertTrue(repo_module.conf.enabled._get())
+            self.assertEqual(repo_module.conf.name._get(), "base-runtime")
+            self.assertEqual(repo_module.conf.stream._get(), "f26")
+            self.assertEqual(repo_module.conf.profile._get(), [])
             return
 
         # check module conf
         repo_module = rmd["base-runtime"]
-        self.assertTrue(repo_module.conf.enabled)
-        self.assertEqual(repo_module.conf.name, "base-runtime")
-        self.assertEqual(repo_module.conf.stream, "f26")
-        self.assertEqual(repo_module.conf.profiles, ["minimal"])
+        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.name._get(), "base-runtime")
+        self.assertEqual(repo_module.conf.stream._get(), "f26")
+        self.assertEqual(list(repo_module.conf.profiles._get()), ["minimal"])
 
         # check installed
         installed = rmd.list_module_version_installed()

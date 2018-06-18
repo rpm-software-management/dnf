@@ -33,8 +33,8 @@ class RepoModuleVersion(object):
     def __lt__(self, other):
         # for finding latest
         assert self.full_stream == other.full_stream
-        if self.repo_module.conf.locked:
-            return self.version < self.repo_module.conf.version
+        if self.repo_module.conf.locked._get():
+            return self.version < self.repo_module.conf.version._get()
         return self.module_metadata.get_version() < other.module_metadata.get_version()
 
     def __repr__(self):
@@ -54,7 +54,7 @@ class RepoModuleVersion(object):
         if not profiles:
             result |= self._install_profiles(default_profiles, True)
 
-        profiles.extend(self.repo_module.conf.profiles)
+        profiles.extend(list(self.repo_module.conf.profiles._get()))
         profiles.extend(default_profiles)
         self.base._module_persistor.set_data(self.repo_module, stream=self.stream,
                                              version=self.version, profiles=sorted(set(profiles)))
@@ -77,7 +77,6 @@ class RepoModuleVersion(object):
                 if nevra not in installed_nevras:
                     self.base.install(nevr, reponame=self.repo.id, forms=hawkey.FORM_NEVR)
                     self.base._goal.group_members.add(nevra_object.name)
-                    self.base._goal.module_members.add(nevra)
                     result = True
 
         return result
@@ -128,11 +127,11 @@ class RepoModuleVersion(object):
                 self.base._remove_if_unneeded(remove_query)
 
         conf = self.repo_module.conf
-        version = conf.version
-        profiles = [x for x in conf.profiles if x not in profiles]
+        version = conf.version._get()
+        profiles = [x for x in list(conf.profiles._get()) if x not in profiles]
 
-        if len(conf.profiles) == 0:
-            conf.version = -1
+        if len(list(conf.profiles._get())) == 0:
+            conf.version._set(-1)
 
         self.base._module_persistor.set_data(self.repo_module, stream=self.stream, version=version,
                                              profiles=sorted(set(profiles)))

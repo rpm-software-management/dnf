@@ -1085,7 +1085,6 @@ class Output(object):
                                   (_('Upgrading'), list_bunch.upgraded),
                                   (_('Reinstalling'), list_bunch.reinstalled),
                                   (_('Installing group packages'), list_bunch.installed_group),
-                                  (_('Installing module packages'), list_bunch.installing_module),
                                   (_('Installing dependencies'), list_bunch.installed_dep),
                                   (_('Installing weak dependencies'), list_bunch.installed_weak),
                                   (_('Removing'), list_bunch.erased),

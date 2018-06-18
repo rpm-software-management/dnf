@@ -158,6 +158,18 @@ class SecondsOption(Option):
         super(SecondsOption, self).__init__(option)
 
 
+class StringOption(Option):
+    def __init__(self, default=""):
+        option = cfg.OptionString(default)
+        super(StringOption, self).__init__(option)
+
+
+class PathOption(Option):
+    def __init__(self, default="", exists=False, absPath=False):
+        option = cfg.OptionPath(default, exists, absPath)
+        super(PathOption, self).__init__(option)
+
+
 class BaseConfig(object):
     """Base class for storing configuration definitions.
 
@@ -378,6 +390,8 @@ class MainConf(BaseConfig):
 
         self._config.cachedir().set(PRIO_DEFAULT, cachedir)
         self._config.logdir().set(PRIO_DEFAULT, logdir)
+        self.modulesdir = PathOption('/etc/dnf/modules.d', absPath=True)
+        self.moduledefaultsdir = PathOption('/etc/dnf/modules.defaults.d', absPath=True)
 
     @property
     def get_reposdir(self):
@@ -559,7 +573,7 @@ class RepoConf(BaseConfig):
         self._masterConfig = parent._config
 
         # modularity
-        self._add_option('hotfixes', BoolOption(default=False))
+        self.hotfixes = BoolOption(False)
 
     def _configure_from_options(self, opts):
         """Configure repos from the opts. """
@@ -588,18 +602,23 @@ class ModuleConf(BaseConfig):
     def __init__(self, section=None, parser=None):
         super(ModuleConf, self).__init__(section, parser)
         # module name, stream and installed version
-        self._add_option('name', Option(default=self._section))
-        self._add_option('stream', Option())
-        self._add_option('version', IntOption())
+        self.name = StringOption(section)
+        self.stream = StringOption("")
+        self.version = IntOption()
         # installed profiles
-        self._add_option('profiles', ListOption([]))
+        self.profiles = ListOption([])
         # enable/disable a module
-        self._add_option('enabled', BoolOption(True))
+        self.enabled = BoolOption(True)
         # lock module on installed version, don't upgrade or downgrade
-        self._add_option('locked', BoolOption(False))
+        self.locked = BoolOption(False)
 
     def _write(self, fileobj):
-        if not self._parser.has_section(self._section):
-            self._parser.add_section(self._section)
-        super(ModuleConf, self)._write(fileobj, always=["stream", "version", "profiles",
-                                                        "enabled", "locked"])
+        output = "[{}]\n".format(self._section)
+        output += "name = {}\n".format(self.name._get())
+        output += "stream = {}\n".format(self.stream._get())
+        output += "version = {}\n".format(self.version._get())
+        output += "profiles = {}\n".format(",".join(self.profiles._get()))
+        output += "enabled = {}\n".format(self.enabled._get())
+        output += "locked = {}\n".format(self.locked._get())
+
+        fileobj.write(output)

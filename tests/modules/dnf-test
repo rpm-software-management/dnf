@@ -4,7 +4,7 @@
 export LC_ALL=C
 
 
-if [ ! -f ../../bin/dnf-2 ]; then
+if [ ! -f ../../bin/dnf-3 ]; then
 echo
 echo 'DNF is not configured.'
 echo 'Go to the project top directory and run following commands first:'
@@ -15,4 +15,4 @@ exit 1
 fi
 
 
-../../bin/dnf-2 --installroot=/tmp/dnf-test --config=etc/dnf/dnf.conf "$@"
+../../bin/dnf-3 --installroot=/tmp/dnf-test --config=etc/dnf/dnf.conf "$@"

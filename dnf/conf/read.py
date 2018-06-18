@@ -131,7 +131,27 @@ class ModuleReader(object):
 
         module = dnf.conf.ModuleConf(section=id_, parser=parser)
         try:
-            module._populate(parser, id_, module_path)
+            for name in parser.getData()[id_]:
+                value = parser.getSubstitutedValue(id_, name)
+                if not value or value == 'None':
+                    value = None
+
+                opt = module.__getattribute__(name)
+                if opt:  # and not opt._is_runtimeonly():
+                    try:
+                        if value is not None:
+                            opt._set(value)
+                    except dnf.exceptions.ConfigError as e:
+                        logger.debug(_('Unknown configuration value: '
+                                       '%s=%s in %s; %s'), ucd(name),
+                                     ucd(value), ucd(module_path), e.raw_error)
+                else:
+                    if name == 'arch' and hasattr(self, name):
+                        setattr(self, name, value)
+                    else:
+                        logger.debug(
+                            _('Unknown configuration option: %s = %s in %s'),
+                            ucd(name), ucd(value), ucd(module_path))
         except ValueError as e:
             msg = _("Module '%s': Error parsing config: %s" % (id_, e))
             raise dnf.exceptions.ConfigError(msg)
@@ -144,17 +164,15 @@ class ModuleReader(object):
     def _get_module_configs(self, module_path):
         """Parse and yield all module configs from a config file."""
 
-        parser = dnf.conf.ConfigParser()
+        parser = cfg.ConfigParser()
         try:
-            confpp_obj = dnf.conf.parser.ConfigPreProcessor(module_path)
-            parser.readfp(confpp_obj)
-        except dnf.conf.ParsingError as e:
+            parser.read(module_path)
+        except (cfg.ConfigParser.ParsingError, cfg.ConfigParser.CantOpenFile) as e:
             msg = str(e)
             raise dnf.exceptions.ConfigError(msg)
 
         # Check sections in the .module file that was just slurped up
-        for section in parser.sections():
-
+        for section in parser.getData().keys():
             if section == 'main':
                 continue
 
