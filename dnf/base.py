@@ -1415,13 +1415,13 @@ class Base(object):
                 if (comps_pkg.basearchonly):
                     query_args.update({'arch': basearch})
                 q = self.sack.query().filterm(**query_args).apply()
+                q.filterm(arch__neq="src")
                 if not q:
                     package_string = comps_pkg.name
                     if comps_pkg.basearchonly:
                         package_string += '.' + basearch
                     logger.warning(_('No match for group package "{}"').format(package_string))
                     continue
-                q.filterm(arch__neq="src")
                 remove_query = fn(q, remove_query, comps_pkg)
                 self._goal.group_members.add(comps_pkg.name)
 
@@ -1617,10 +1617,10 @@ class Base(object):
         """Mark package(s) given by pkg_spec and reponame for installation."""
 
         subj = dnf.subject.Subject(pkg_spec)
-        solution = subj.get_best_solution(self.sack, forms=forms)
+        solution = subj.get_best_solution(self.sack, forms=forms, with_src=False)
 
         if self.conf.multilib_policy == "all" or subj._is_arch_specified(solution):
-            q = solution['query'].filterm(arch__neq="src")
+            q = solution['query']
             if reponame is not None:
                 q.filterm(reponame=reponame)
             if not q:
