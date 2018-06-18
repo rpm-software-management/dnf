@@ -48,11 +48,8 @@ import sys
 import time
 import traceback
 
-_METADATA_RELATIVE_DIR = "repodata"
 _PACKAGES_RELATIVE_DIR = "packages"
-_METALINK_FILENAME = "metalink.xml"
 _MIRRORLIST_FILENAME = "mirrorlist"
-_RECOGNIZED_CHKSUMS = ['sha512', 'sha256']
 # Chars allowed in a repo ID
 _REPOID_CHARS = string.ascii_letters + string.digits + '-_.:'
 # Regex pattern that matches a repo cachedir and captures the repo ID
@@ -69,53 +66,13 @@ CACHE_FILES = {
     'dbcache': r'^.+(solv|solvx)$',
 }
 
-# Map string from config option proxy_auth_method to librepo LrAuth value
-PROXYAUTHMETHODS = {
-    'none': librepo.LR_AUTH_NONE,
-    'basic': librepo.LR_AUTH_BASIC,
-    'digest': librepo.LR_AUTH_DIGEST,
-    'negotiate': librepo.LR_AUTH_NEGOTIATE,
-    'ntlm': librepo.LR_AUTH_NTLM,
-    'digest_ie': librepo.LR_AUTH_DIGEST_IE,
-    'ntlm_wb': librepo.LR_AUTH_NTLM_WB,
-    'any': librepo.LR_AUTH_ANY,
-}
-
 logger = logging.getLogger("dnf")
-
 
 def repo_id_invalid(repo_id):
     # :api
     """Return index of an invalid character in the repo ID (if present)."""
     invalids = (i for i, c in enumerate(repo_id) if c not in _REPOID_CHARS)
     return dnf.util.first(invalids)
-
-
-def _user_pass_str(user, password, quote):
-    """Returns user and password in user:password form. If quote is True,
-    special characters in user and password are URL encoded.
-    """
-    if user is None:
-        return None
-    if password is None:
-        password = ''
-    if quote:
-        user = dnf.pycomp.urllib_quote(user)
-        password = dnf.pycomp.urllib_quote(password)
-    return '%s:%s' % (user, password)
-
-
-def _priv_metalink_path(dirname):
-    return os.path.join(dirname, _METALINK_FILENAME)
-
-
-def _priv_mirrorlist_path(dirname):
-    return os.path.join(dirname, _MIRRORLIST_FILENAME)
-
-
-def _subst2tuples(subst_dct):
-    return [(k, v) for (k, v) in subst_dct.items()]
-
 
 def _pkg2payload(pkg, progress, *factories):
     for fn in factories:
@@ -156,7 +113,6 @@ def _download_payloads(payloads, drpm):
         errs._irrecoverable[pkg] = [err]
 
     return errs
-
 
 def _update_saving(saving, payloads, errs):
     real, full = saving
@@ -207,53 +163,6 @@ class _DetailedLibrepoError(Exception):
         self.source_url = source_url
 
 
-class _Handle(librepo.Handle):
-    def __init__(self, gpgcheck, max_mirror_tries, max_parallel_downloads=None):
-        super(_Handle, self).__init__()
-        self.gpgcheck = gpgcheck
-        self.maxmirrortries = max_mirror_tries
-        self.interruptible = True
-        self.repotype = librepo.LR_YUMREPO
-        self.useragent = dnf.const.USER_AGENT
-        self.maxparalleldownloads = max_parallel_downloads
-        self.yumdlist = [
-            "primary", "filelists", "prestodelta", "group_gz", "updateinfo", "modules"]
-        self.yumslist = [('group_gz', 'group')]
-
-    def __str__(self):
-        return '_Handle: metalnk: %s, mlist: %s, urls %s.' % \
-            (self.metalinkurl, self.mirrorlisturl, self.urls)
-
-    @classmethod
-    def _new_local(cls, subst_dct, gpgcheck, max_mirror_tries, cachedir):
-        h = cls(gpgcheck, max_mirror_tries)
-        h.varsub = _subst2tuples(subst_dct)
-        h.destdir = cachedir
-        h.urls = [cachedir]
-        h.local = True
-        return h
-
-    @property
-    def _metadata_dir(self):
-        return os.path.join(self.destdir, _METADATA_RELATIVE_DIR)
-
-    @property
-    def _metalink_path(self):
-        return _priv_metalink_path(self.destdir)
-
-    @property
-    def _mirrorlist_path(self):
-        return _priv_mirrorlist_path(self.destdir)
-
-    def _perform(self, result=None):
-        try:
-            return super(_Handle, self).perform(result)
-        except librepo.LibrepoException as exc:
-            source = self.metalinkurl or self.mirrorlisturl or \
-                     ', '.join(self.urls)
-            raise _DetailedLibrepoError(exc, source)
-
-
 class _NullKeyImport(dnf.callback.KeyImport):
     def _confirm(self, _keyinfo):
         return True
@@ -268,43 +177,6 @@ class Metadata(object):
         # :api
         return self._repo.fresh()
 
-    @property
-    def _age(self):
-        return self._repo.getAge()
-
-    @property
-    def _comps_fn(self):
-        return self._repo.getCompsFn()
-
-    @property
-    def _content_tags(self):
-        return self._repo.getContentTags()
-
-    @property
-    def _distro_tags(self):
-        pairs = self._repo.getDistroTags()
-        return {k: v for (k, v) in pairs}
-
-    @property
-    def _modules_fn(self):
-        return self._repo_dct.get('modules')
-
-    @property
-    def _mirrors(self):
-        return self._priv_mirrors
-
-    @property
-    def _md_timestamp(self):
-        """Gets the highest timestamp of all metadata types."""
-        return self._repo.getMaxTimestamp()
-
-    @property
-    def _revision(self):
-        return self._repo.getRevision()
-
-    @property
-    def _timestamp(self):
-        return self._repo.getTimestamp()
 
 class PackageTargetCallbacks(cfg.PackageTargetCB):
     def __init__(self, package_pload):
@@ -376,7 +248,6 @@ class PackagePayload(dnf.callback.Payload):
         }
         target_dct.update(self._target_params())
 
-        # return librepo.PackageTarget(**target_dct)
         return cfg.PackageTarget(pkg.repo._repo, target_dct['relative_url'], target_dct['dest'],
             target_dct['checksum_type'], target_dct['checksum'], target_dct['expectedsize'],
             target_dct['base_url'], target_dct['resume'], 0, 0, self.callbacks)
@@ -410,11 +281,10 @@ class RPMPayload(PackagePayload):
 
 class RemoteRPMPayload(PackagePayload):
 
-    def __init__(self, remote_location, conf, handle, progress):
+    def __init__(self, remote_location, conf, progress):
         super(RemoteRPMPayload, self).__init__("unused_object", progress)
         self.remote_location = remote_location
         self.remote_size = 0
-        self.handle = handle
         self.conf = conf
         s = (self.conf.releasever or "") + self.conf.substitutions.get('basearch')
         digest = hashlib.sha256(s.encode('utf8')).hexdigest()[:16]
@@ -436,22 +306,8 @@ class RemoteRPMPayload(PackagePayload):
             logger.critical(''.join(except_list))
 
     def _librepo_target(self):
-        target_dct = {
-            'handle': self.handle,
-            'relative_url': os.path.basename(self.remote_location),
-            'dest': self.pkgdir,
-            'resume': True,
-            'cbdata': self,
-            'progresscb': self._progress_cb,
-            'endcb': self._end_cb,
-            'mirrorfailurecb': self._mirrorfail_cb,
-            'base_url': os.path.dirname(self.remote_location),
-        }
-
-        # return librepo.PackageTarget(**target_dct)
-        return cfg.PackageTarget(self.conf._conf, target_dct['relative_url'], target_dct['dest'],
-            target_dct['checksum_type'], target_dct['checksum'], target_dct['expectedsize'],
-            target_dct['base_url'], target_dct['resume'], 0, 0, self.callbacks)
+        return cfg.PackageTarget(self.conf._config, os.path.basename(self.remote_location), self.pkgdir,
+            0, None, 0, os.path.dirname(self.remote_location), True, 0, 0, self.callbacks)
 
     @property
     def download_size(self):
@@ -597,18 +453,6 @@ class Repo(dnf.conf.RepoConf):
         if self.baseurl[0].startswith('file://'):
             return True
         return False
-
-    @property
-    def _md_only_cached(self):
-        return self._repo.getSyncStrategy() == SYNC_ONLY_CACHE
-
-    @_md_only_cached.setter
-    def _md_only_cached(self, val):
-        """Force using only the metadata the repo has in the local cache."""
-        if val:
-            self._repo.setSyncStrategy(SYNC_ONLY_CACHE)
-        else:
-            self._repo.setSyncStrategy(SYNC_TRY_CACHE)
 
     @property
     def _md_expired(self):
