@@ -810,6 +810,10 @@ Remove Examples
     Remove packages not present in any repository, but it doesn't remove packages ``tito``
     and ``acpi`` (they still might be removed if they require some of the removed packages).
 
+Remove older versions of duplicated packages (an equivalent of yum's `package-cleanup --cleandups`)::
+
+    dnf remove --duplicates
+
 .. _repoinfo_command-label:
 
 ----------------
@@ -1091,10 +1095,9 @@ Display duplicated packages::
 
     dnf repoquery --duplicates
 
-Remove older versions of duplicated packages (an equivalent of yum's `package-cleanup --cleandups`)::
+Display source packages that requires a <provide> for a build::
 
-    dnf remove --duplicates
-
+    dnf repoquery --disablerepo=* --enablerepo=*-source --arch=src --whatrequires <provide>
 
 .. _repository-packages_command-label:
 
