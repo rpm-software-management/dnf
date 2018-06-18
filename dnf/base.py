@@ -80,6 +80,7 @@ import shutil
 import gi
 gi.require_version('Modulemd', '1.0')
 from gi.repository import Modulemd
+from gi.repository import GLib
 
 logger = logging.getLogger("dnf")
 
@@ -245,7 +246,7 @@ class Base(object):
                     if not isinstance(data, Modulemd.Module):
                         continue
                     self.repo_module_dict.add(RepoModuleVersion(data, base=self, repo=repo))
-            except dnf.exceptions.Error as e:
+            except (dnf.exceptions.Error, glib.Error) as e:
                 logger.debug(e)
                 continue
 
@@ -253,7 +254,7 @@ class Base(object):
         # chroot behavior:
         #   * use host configuration (repos work the same)
         #   * to use chroot configuration, you need to switch to chroot
-        topdir = self.conf.moduledefaultsdir
+        topdir = self.conf.moduledefaultsdir._get()
         try:
             for fn in os.listdir(topdir):
                 if not fn.endswith(".yaml"):
@@ -284,15 +285,12 @@ class Base(object):
             include_set, _ = self.repo_module_dict.get_includes(name, stream)
             include_nevras_set.update(include_set)
 
-        exclude_nevras_dict = {}
-        exclude_query_list = []
-
         include_nevras_set = set()
         exclude_nevras_set = set()
 
         for repo_module in self.repo_module_dict.values():
-            if repo_module.conf.enabled:
-                update_include_nevras(repo_module.name, repo_module.conf.stream)
+            if repo_module.conf.enabled._get():
+                update_include_nevras(repo_module.name, repo_module.conf.stream._get())
             elif repo_module.defaults.peek_default_stream():
                 update_include_nevras(repo_module.name, repo_module.defaults.peek_default_stream())
 
@@ -300,10 +298,10 @@ class Base(object):
             exclude_nevras_set.update(exclude_set)
 
         # collect all hotfix repo repoids - we don't filter them at all
-        hotfix_repos = [i.id for i in self.repos.iter_enabled() if i.hotfixes]
+        hotfix_repos = [i.id for i in self.repos.iter_enabled() if i.hotfixes._get()]
 
         # collect all RPM $names for bare RPMs filtering
-        names = {hawkey.split_nevra(i).name for i in include_nevras_set}
+        names = [hawkey.split_nevra(i).name for i in include_nevras_set]
 
         module_include_query = self.sack.query().filter(
             nevra=include_nevras_set,
@@ -325,11 +323,11 @@ class Base(object):
         provides_query = provides_query.difference(module_include_query)
 
         # exclude RPMs from inactive streams
-        self.sack.add_excludes(module_exclude_query)
+        self.sack.add_module_excludes(module_exclude_query)
 
         # exclude bare RPMs that collide with modular RPMs
-        self.sack.add_excludes(names_query)
-        self.sack.add_excludes(provides_query)
+        self.sack.add_module_excludes(names_query)
+        self.sack.add_module_excludes(provides_query)
 
     def _store_persistent_data(self):
         if self._repo_persistor and not self.conf.cacheonly:

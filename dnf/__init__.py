@@ -19,14 +19,14 @@
 #
 
 from __future__ import unicode_literals
+from dnf.exceptions import DeprecationWarning
 import warnings
-import dnf.exceptions
 import dnf.pycomp
 
-warnings.filterwarnings('once', category=dnf.exceptions.DeprecationWarning)
+warnings.filterwarnings('once', category=DeprecationWarning)
 
-import dnf.const
-__version__ = dnf.const.VERSION
+from dnf.const import VERSION
+__version__ = VERSION
 
 import dnf.base
 Base = dnf.base.Base # :api

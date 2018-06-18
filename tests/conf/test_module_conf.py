@@ -22,8 +22,8 @@ import os
 import tempfile
 import unittest
 
-import dnf.conf
-
+import libdnf.conf
+import dnf
 
 DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 
@@ -31,25 +31,25 @@ DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
 class ModuleConfTest(unittest.TestCase):
 
     def setUp(self):
-        self.dnf_conf = dnf.conf.Conf()
-        self.dnf_conf.modulesdir = [os.path.join(DIR, "modules/etc/dnf/modules.d")]
-        parser = dnf.conf.ConfigParser()
+        self.dnf_conf = dnf.conf.MainConf()
+        self.dnf_conf.modulesdir = os.path.join(DIR, "modules/etc/dnf/modules.d")
+        parser = libdnf.conf.ConfigParser()
         self.conf = dnf.conf.ModuleConf(section="base-runtime", parser=parser)
 
         # name - equal to section name
-        self.conf.stream = "f26"
-        self.conf.version = 1
+        self.conf.stream._set("f26")
+        self.conf.version._set(1)
         # profiles - empty list by default
-        self.conf.enabled = 1
-        self.conf.locked = 0
+        self.conf.enabled._set(1)
+        self.conf.locked._set(0)
 
     def test_options(self):
-        self.assertEqual(self.conf.name, "base-runtime")
-        self.assertEqual(self.conf.stream, "f26")
-        self.assertEqual(self.conf.version, 1)
-        self.assertEqual(self.conf.profiles, [])
-        self.assertEqual(self.conf.enabled, True)
-        self.assertEqual(self.conf.locked, False)
+        self.assertEqual(self.conf.name._get(), "base-runtime")
+        self.assertEqual(self.conf.stream._get(), "f26")
+        self.assertEqual(self.conf.version._get(), 1)
+        self.assertEqual(list(self.conf.profiles._get()), [])
+        self.assertEqual(self.conf.enabled._get(), True)
+        self.assertEqual(self.conf.locked._get(), False)
 
     def test_write(self):
         tmp_dir = tempfile.mkdtemp()

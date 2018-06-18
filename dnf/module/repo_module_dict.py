@@ -55,8 +55,8 @@ class RepoModuleDict(OrderedDict):
 
     def find_module_version(self, name, stream=None, version=None, context=None, arch=None):
         def use_enabled_stream(repo_module):
-            if repo_module.conf and repo_module.conf.enabled:
-                return repo_module.conf.stream
+            if repo_module.conf.enabled._get():
+                return repo_module.conf.stream._get()
             return None
 
         def use_default_stream(repo_module):
@@ -75,14 +75,14 @@ class RepoModuleDict(OrderedDict):
             repo_module_stream = repo_module[stream]
 
             if repo_module.conf and \
-                    repo_module.conf.locked and \
-                    repo_module.conf.version is not None:
-                if repo_module_stream.latest().version != repo_module.conf.version:
+                    repo_module.conf.locked._get() and \
+                    repo_module.conf.version._get() is not -1:
+                if repo_module_stream.latest().version != repo_module.conf.version._get():
                     logger.info(module_messages[VERSION_LOCKED]
                                 .format("{}:{}".format(repo_module.name, stream),
-                                        repo_module.conf.version))
+                                        repo_module.conf.version._get()))
 
-                repo_module_version = repo_module_stream[repo_module.conf.version]
+                repo_module_version = repo_module_stream[repo_module.conf.version._get()]
             elif version:
                 repo_module_version = repo_module_stream[version]
             else:
@@ -132,8 +132,8 @@ class RepoModuleDict(OrderedDict):
             repo_module_stream = repo_module[stream]
 
             versions = repo_module_stream.values()
-            if repo_module.conf.locked:
-                versions = [repo_module_stream[repo_module.conf.version]]
+            if repo_module.conf.locked._get():
+                versions = [repo_module_stream[repo_module.conf.version._get()]]
 
             for repo_module_version in versions:
                 version_dependencies.add(repo_module_version)
@@ -179,8 +179,8 @@ class RepoModuleDict(OrderedDict):
         try:
             repo_module = self[name]
             for repo_module_stream in repo_module.values():
-                if repo_module.conf.enabled and \
-                        repo_module.conf.stream == repo_module_stream.stream or \
+                if repo_module.conf.enabled._get() and \
+                        repo_module.conf.stream._get() == repo_module_stream.stream or \
                         repo_module.defaults.peek_default_stream() == repo_module_stream.stream:
                     continue
 
@@ -245,7 +245,7 @@ class RepoModuleDict(OrderedDict):
 
         repo_module = module_version.repo_module
 
-        if repo_module.conf.locked:
+        if repo_module.conf.locked._get():
             raise VersionLockedException(module_spec, module_version.version)
 
         repo_module.disable()
@@ -260,16 +260,16 @@ class RepoModuleDict(OrderedDict):
 
         repo_module = module_version.repo_module
 
-        if not repo_module.conf.enabled:
+        if not repo_module.conf.enabled._get():
             raise EnabledStreamException(module_spec)
-        elif repo_module.conf.locked and \
-                (repo_module.conf.stream != module_version.stream or
-                 repo_module.conf.version != module_version.version):
+        elif repo_module.conf.locked._get() and \
+                (repo_module.conf.stream._get() != module_version.stream or
+                 repo_module.conf.version._get() != module_version.version):
             raise VersionLockedException(module_spec, module_version.version)
 
         version_to_lock = module_version.version
-        if repo_module.conf.profiles:
-            version_to_lock = module_version.repo_module.conf.version
+        if list(repo_module.conf.profiles._get()):
+            version_to_lock = module_version.repo_module.conf.version._get()
         repo_module.lock(version_to_lock)
 
         if module_form.version and version_to_lock != module_form.version:
@@ -288,7 +288,7 @@ class RepoModuleDict(OrderedDict):
 
         repo_module = module_version.repo_module
 
-        if not repo_module.conf.enabled:
+        if not repo_module.conf.enabled._get():
             raise EnabledStreamException(module_spec)
 
         repo_module.unlock()
@@ -305,10 +305,10 @@ class RepoModuleDict(OrderedDict):
         result = False
         for module_version, profiles, default_profiles in versions.values():
             conf = module_version.repo_module.conf
-            if conf.locked and conf.version != module_version.version:
+            if conf.locked._get() and conf.version._get() != module_version.version:
                 logger.warning(module_messages[VERSION_LOCKED]
                                .format(module_version.name,
-                                       module_version.repo_module.conf.version))
+                                       module_version.repo_module.conf.version._get()))
                 continue
 
             self.enable("{}:{}".format(module_version.name, module_version.stream))
@@ -318,8 +318,8 @@ class RepoModuleDict(OrderedDict):
         self.base._setup_excludes_includes()
 
         for module_version, profiles, default_profiles in versions.values():
-            if module_version.version > module_version.repo_module.conf.version:
-                profiles.extend(module_version.repo_module.conf.profiles)
+            if module_version.version > module_version.repo_module.conf.version._get():
+                profiles.extend(list(module_version.repo_module.conf.profiles._get()))
                 profiles = list(set(profiles))
 
             if profiles or default_profiles:
@@ -398,9 +398,9 @@ class RepoModuleDict(OrderedDict):
             except NoStreamSpecifiedException:
                 continue
 
-            if module_version.repo_module.conf.locked:
+            if module_version.repo_module.conf.locked._get():
                 continue
-            if not module_version.repo_module.conf.enabled:
+            if not module_version.repo_module.conf.enabled._get():
                 for rpm in module_version.artifacts():
                     query_for_rpm = self.base.sack.query().filter(nevra=rpm)
                     if query_exclude is None:
@@ -411,7 +411,7 @@ class RepoModuleDict(OrderedDict):
 
             conf = self[module_form.name].conf
             if conf:
-                installed_profiles = conf.profiles
+                installed_profiles = list(conf.profiles._get())
             else:
                 installed_profiles = []
             if module_form.profile:
@@ -459,11 +459,11 @@ class RepoModuleDict(OrderedDict):
                 continue
 
             conf = self[module_form.name].conf
-            if module_form.stream != conf.stream:
+            if module_form.stream != conf.stream._get():
                 raise DifferentStreamEnabledException(module_form.name)
 
-            if conf and conf.profiles:
-                installed_profiles = conf.profiles
+            if list(conf.profiles._get()):
+                installed_profiles = list(conf.profiles._get())
             else:
                 raise NoProfileToRemoveException(module_spec)
             if module_form.profile:
@@ -479,21 +479,21 @@ class RepoModuleDict(OrderedDict):
     def read_all_module_confs(self):
         module_reader = ModuleReader(self.get_modules_dir())
         for conf in module_reader:
-            repo_module = self.setdefault(conf.name, RepoModule())
+            repo_module = self.setdefault(conf.name._get(), RepoModule())
             repo_module.conf = conf
-            repo_module.name = conf.name
+            repo_module.name = conf.name._get()
             repo_module.parent = self
 
     def get_modules_dir(self):
         modules_dir = os.path.join(self.base.conf.installroot,
-                                   self.base.conf.modulesdir.lstrip("/"))
+                                   self.base.conf.modulesdir._get().lstrip("/"))
 
         ensure_dir(modules_dir)
 
         return modules_dir
 
     def get_module_defaults_dir(self):
-        return self.base.conf.moduledefaultsdir
+        return self.base.conf.moduledefaultsdir._get()
 
     def get_info_profiles(self, module_spec):
         subj = ModuleSubject(module_spec)
@@ -587,8 +587,8 @@ class RepoModuleDict(OrderedDict):
         versions = []
 
         for version in self.list_module_version_all():
-            conf = version.parent.parent.conf
-            if conf is not None and conf.enabled and conf.stream == version.stream:
+            conf = version.repo_module.conf
+            if conf.enabled._get() and conf.stream._get() == version.stream:
                 versions.append(version)
 
         return versions
@@ -597,8 +597,8 @@ class RepoModuleDict(OrderedDict):
         versions = []
 
         for version in self.list_module_version_all():
-            conf = version.parent.parent.conf
-            if conf is None or not conf.enabled or version.stream != conf.stream:
+            conf = version.repo_module.conf
+            if not conf.enabled._get() or version.stream != conf.stream._get():
                 versions.append(version)
 
         return versions
@@ -607,9 +607,9 @@ class RepoModuleDict(OrderedDict):
         versions = []
 
         for version in self.list_module_version_all():
-            conf = version.parent.parent.conf
-            if conf is not None and conf.enabled and conf.version == version.version and \
-                    conf.stream == version.stream and conf.profiles:
+            conf = version.repo_module.conf
+            if conf.enabled._get() and conf.version._get() == version.version and \
+                    conf.stream._get() == version.stream and list(conf.profiles._get()):
                 versions.append(version)
 
         return versions
@@ -735,15 +735,15 @@ class RepoModuleDict(OrderedDict):
                 if i.stream == defaults_conf.peek_default_stream():
                     default_str = " [d]"
 
-                if i.stream == conf.stream and conf.enabled:
+                if i.stream == conf.stream._get() and conf.enabled._get():
                     if not default_str:
                         enabled_str = " "
                     enabled_str += "[e]"
 
-                if i.stream == conf.stream and i.version == conf.version:
-                    if conf.locked:
+                if i.stream == conf.stream._get() and i.version == conf.version._get():
+                    if conf.locked._get():
                         locked_str = " [l]"
-                    installed_profiles = conf.profiles
+                    installed_profiles = list(conf.profiles._get())
 
                 for profile in available_profiles[:2]:
                     profiles_str += "{}{}, ".format(profile,

@@ -822,7 +822,7 @@ In case stream is not specified dnf takes enabled or default stream, in this ord
     Dnf prints out content of each profile from given module stream.
 
 ``dnf [options] module streams [module_spec...]``
-    Alias for `dnf module list --enabled`.
+    Alias for `dnf module list \-\-enabled`.
 
 .. _provides_command-label:
 
