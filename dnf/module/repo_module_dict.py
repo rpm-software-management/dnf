@@ -16,7 +16,6 @@
 
 import fnmatch
 import os
-import sys
 from collections import OrderedDict
 
 import hawkey
@@ -24,7 +23,7 @@ import smartcols
 
 from dnf.conf.read import ModuleReader
 from dnf.module import module_messages, NOTHING_TO_SHOW, \
-    INSTALLING_NEWER_VERSION, NOTHING_TO_INSTALL, VERSION_LOCKED
+    INSTALLING_NEWER_VERSION, ENABLED_MODULES, VERSION_LOCKED
 from dnf.module.exceptions import NoStreamSpecifiedException, NoModuleException, \
     EnabledStreamException, ProfileNotInstalledException, NoProfileToRemoveException, \
     VersionLockedException, CannotLockVersionException, \
@@ -34,11 +33,6 @@ from dnf.module.subject import ModuleSubject
 from dnf.selector import Selector
 from dnf.subject import Subject
 from dnf.util import first_not_none, logger, ensure_dir
-
-
-def exit_dnf(message):
-    logger.info(message)
-    sys.exit(0)
 
 
 class RepoModuleDict(OrderedDict):
@@ -299,7 +293,7 @@ class RepoModuleDict(OrderedDict):
 
         return module_version.stream, module_version.version
 
-    def install(self, module_specs):
+    def install(self, module_specs, strict=True):
         versions, module_specs = self.get_best_versions(module_specs)
 
         result = False
@@ -313,9 +307,8 @@ class RepoModuleDict(OrderedDict):
 
             self.enable("{}:{}".format(module_version.name, module_version.stream))
 
-        self.base.sack.reset_includes()
-        self.base.sack.reset_excludes()
-        self.base._setup_excludes_includes()
+        self.base.sack.reset_module_excludes()
+        self.base.use_module_includes()
 
         for module_version, profiles, default_profiles in versions.values():
             if module_version.version > module_version.repo_module.conf.version._get():
@@ -323,14 +316,14 @@ class RepoModuleDict(OrderedDict):
                 profiles = list(set(profiles))
 
             if profiles or default_profiles:
-                result |= module_version.install(profiles, default_profiles)
+                result |= module_version.install(profiles, default_profiles, strict)
 
         if not result and versions and self.base._module_persistor:
             module_versions = ["{}:{}".format(module_version.name, module_version.stream)
                                for module_version, profiles, default_profiles in versions.values()]
             self.base._module_persistor.commit()
             self.base._module_persistor.save()
-            exit_dnf(module_messages[NOTHING_TO_INSTALL].format(", ".join(module_versions)))
+            logger.info(module_messages[ENABLED_MODULES].format(", ".join(module_versions)))
 
         return module_specs
 

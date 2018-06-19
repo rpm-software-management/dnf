@@ -20,7 +20,7 @@ DIFFERENT_STREAM_INFO = 1
 NOTHING_TO_SHOW = 2
 VERSION_LOCKED = 3
 INSTALLING_NEWER_VERSION = 4
-NOTHING_TO_INSTALL = 5
+ENABLED_MODULES = 5
 NO_PROFILE_SPECIFIED = 6
 
 module_messages = {
@@ -28,6 +28,6 @@ module_messages = {
     NOTHING_TO_SHOW: _("Nothing to show."),
     VERSION_LOCKED: _("'{}' is locked to version: {}."),
     INSTALLING_NEWER_VERSION: _("Installing newer version of '{}' than specified. Reason: {}"),
-    NOTHING_TO_INSTALL: _("Nothing to install. Enabled modules: {}."),
+    ENABLED_MODULES: _("Enabled modules: {}."),
     NO_PROFILE_SPECIFIED: _("No profile specified for '{}', please specify profile."),
 }
