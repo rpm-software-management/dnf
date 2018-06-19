@@ -117,7 +117,8 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            module_specs = self.base.repo_module_dict.install(self.opts.module_nsvp)
+            module_specs = self.base.repo_module_dict.install(self.opts.module_nsvp,
+                                                              self.base.conf.strict)
             if module_specs:
                 raise NoModuleException(", ".join(module_specs))
 

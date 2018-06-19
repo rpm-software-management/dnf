@@ -79,7 +79,8 @@ class InstallCommand(commands.Command):
 
         skipped_grp_specs = self.opts.grp_specs
         if self.opts.grp_specs and self.opts.command != ['localinstall']:
-            skipped_grp_specs = self.base.install_module(self.opts.grp_specs)
+            skipped_grp_specs = self.base.install_module(self.opts.grp_specs,
+                                                         strict=self.base.conf.strict)
 
         if self.opts.filenames and nevra_forms:
             self._inform_not_a_valid_combination(self.opts.filenames)

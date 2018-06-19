@@ -1,5 +1,16 @@
 #!/usr/bin/python
 
+"""
+Generate module metadata for modularity tests.
+
+Input:
+
+RPMs built under ../modules/$name-$stream-$version/$arch
+profiles defined in $name-$stream-$version/profiles.json
+Output:
+
+../modules/$name-$stream-$version/$arch/$name-$stream-$version.$arch.yaml
+"""
 
 import os
 import json

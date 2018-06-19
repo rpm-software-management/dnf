@@ -49,10 +49,10 @@ class RepoModuleVersion(object):
         else:
             raise NoProfilesException("{}/{}".format(self.full_version, profile))
 
-    def install(self, profiles, default_profiles):
+    def install(self, profiles, default_profiles, strict=True):
         result = self._install_profiles(profiles, False)
         if not profiles:
-            result |= self._install_profiles(default_profiles, True)
+            result |= self._install_profiles(default_profiles, True, strict)
 
         profiles.extend(list(self.repo_module.conf.profiles._get()))
         profiles.extend(default_profiles)
@@ -61,7 +61,7 @@ class RepoModuleVersion(object):
 
         return result
 
-    def _install_profiles(self, profiles, defaults_used):
+    def _install_profiles(self, profiles, defaults_used, strict=True):
         installed = self.base.sack.query().installed().run()
         installed_nevras = [str(pkg) for pkg in installed]
 
@@ -75,7 +75,8 @@ class RepoModuleVersion(object):
                 nevra = "{}.{}".format(nevr, nevra_object.arch)
 
                 if nevra not in installed_nevras:
-                    self.base.install(nevr, reponame=self.repo.id, forms=hawkey.FORM_NEVR)
+                    self.base.install(nevr, reponame=self.repo.id, forms=hawkey.FORM_NEVR,
+                                      strict=strict)
                     self.base._goal.group_members.add(nevra_object.name)
                     result = True
 
@@ -95,7 +96,8 @@ class RepoModuleVersion(object):
                 nevra = "{}.{}".format(nevr, nevra_object.arch)
 
                 if nevra not in installed_nevras:
-                    self.base.install(nevr, reponame=self.repo.id, forms=hawkey.FORM_NEVR)
+                    self.base.install(nevr, reponame=self.repo.id, forms=hawkey.FORM_NEVR,
+                                      strict=self.base.conf.strict)
                 else:
                     # TODO: verify that filter(nevra) really works correctly
                     # (possibly breaks multilib)

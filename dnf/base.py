@@ -28,7 +28,6 @@ import libdnf.transaction
 
 from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
-from dnf.module.exceptions import NoModuleException
 from dnf.module.persistor import ModulePersistor
 from dnf.module.metadata_loader import ModuleMetadataLoader
 from dnf.module.repo_module_dict import RepoModuleDict
@@ -230,8 +229,6 @@ class Base(object):
 
     def _setup_modules(self):
         module_defaults_prioritizer = Modulemd.Prioritizer()
-        # HACK: https://github.com/fedora-modularity/libmodulemd/issues/42
-        module_defaults_prioritizer.add([], 0)
 
         # read defaults from repos
         for repo in self.repos.iter_enabled():
@@ -259,23 +256,29 @@ class Base(object):
             for fn in os.listdir(topdir):
                 if not fn.endswith(".yaml"):
                     continue
-                path = os.path.join(topdir, fn)
+                yaml_file = os.path.join(topdir, fn)
 
-                with open(path, "r") as f:
-                    modules_yaml = f.read()
-                module_metadata = Modulemd.Module.new_all_from_string_ext(modules_yaml)
-                defaults = [i for i in module_metadata if isinstance(i, Modulemd.Defaults)]
-                module_defaults_prioritizer.add(defaults, 1000)
+                try:
+                    with open(yaml_file, "r") as f:
+                        modules_yaml = f.read()
+                    module_metadata = Modulemd.Module.new_all_from_string_ext(modules_yaml)
+                    defaults = [i for i in module_metadata if isinstance(i, Modulemd.Defaults)]
+                    module_defaults_prioritizer.add(defaults, 1000)
+                except IOError as ex:
+                    logger.warning(ex)
         except OSError as ex:
             if ex.errno != errno.ENOENT:
                 raise
 
         # resolve defaults and store them for future use
-        for default in module_defaults_prioritizer.resolve():
-            try:
-                self.repo_module_dict[default.peek_module_name()].defaults = default
-            except KeyError:
-                logger.debug("No module named {}, skipping.".format(default.peek_module_name()))
+        try:
+            for default in module_defaults_prioritizer.resolve():
+                try:
+                    self.repo_module_dict[default.peek_module_name()].defaults = default
+                except KeyError:
+                    logger.debug("No module named {}, skipping.".format(default.peek_module_name()))
+        except GLib.GError as ex:
+            logger.debug(ex)
 
         self.repo_module_dict.read_all_module_confs()
         self._module_persistor = ModulePersistor()
@@ -299,16 +302,17 @@ class Base(object):
 
         # collect all hotfix repo repoids - we don't filter them at all
         hotfix_repos = [i.id for i in self.repos.iter_enabled() if i.hotfixes._get()]
+        hotfix_repos.extend([hawkey.SYSTEM_REPO_NAME, hawkey.CMDLINE_REPO_NAME])
 
         # collect all RPM $names for bare RPMs filtering
         names = [hawkey.split_nevra(i).name for i in include_nevras_set]
 
         module_include_query = self.sack.query().filter(
-            nevra=include_nevras_set,
+            nevra_strict=include_nevras_set,
             reponame__neq=hotfix_repos
         )
         module_exclude_query = self.sack.query().filter(
-            nevra=exclude_nevras_set,
+            nevra_strict=exclude_nevras_set,
             reponame__neq=hotfix_repos
         )
         # don't exclude NEVRAs that are also in active module streams
@@ -1737,14 +1741,14 @@ class Base(object):
             self._goal.install(select=sltr, optional=(not strict))
         return len(available)
 
-    def install_module(self, specs):
-        skipped_specs = specs
-        try:
-            skipped_specs = self.repo_module_dict.install(specs)
-        except NoModuleException:
-            self.repo_module_dict.install(specs[1:])
+    def install_module(self, specs, strict=True):
+        """
+        Install module based on provided specs
 
-        return skipped_specs
+        :param specs: group and module specs
+        :return: skipped/not installed group specs or problematic module specs
+        """
+        return self.repo_module_dict.install(specs, strict)
 
     def install(self, pkg_spec, reponame=None, strict=True, forms=None):
         # :api

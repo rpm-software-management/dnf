@@ -390,7 +390,9 @@ class MainConf(BaseConfig):
 
         self._config.cachedir().set(PRIO_DEFAULT, cachedir)
         self._config.logdir().set(PRIO_DEFAULT, logdir)
+        # TODO move to libdnf
         self.modulesdir = PathOption('/etc/dnf/modules.d', absPath=True)
+        # TODO move to libdnf
         self.moduledefaultsdir = PathOption('/etc/dnf/modules.defaults.d', absPath=True)
 
     @property
@@ -573,6 +575,7 @@ class RepoConf(BaseConfig):
         self._masterConfig = parent._config
 
         # modularity
+        # TODO move to libdnf
         self.hotfixes = BoolOption(False)
 
     def _configure_from_options(self, opts):
@@ -596,6 +599,7 @@ class RepoConf(BaseConfig):
                     logger.warning(msg, self._section, name)
 
 
+# TODO move to libdnf
 class ModuleConf(BaseConfig):
     """Option definitions for module INI file sections."""
 

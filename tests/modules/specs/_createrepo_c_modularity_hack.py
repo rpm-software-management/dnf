@@ -1,5 +1,10 @@
 #!/usr/bin/python
 
+"""
+Createrepo_c doesn't support indexing module metadata.
+This script indexes all yaml files found in a target directory,
+concatenates them and injects into repodata as "modules" mdtype.
+"""
 
 import os
 import argparse
