@@ -78,7 +78,7 @@ Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
 URL:            https://github.com/rpm-software-management/dnf
-Source0:        %{url}/archive/%{version}/%{name}-%{version}-modularity-5.tar.gz
+Source0:        %{url}/archive/%{version}/%{name}-%{version}.tar.gz
 BuildArch:      noarch
 BuildRequires:  cmake
 BuildRequires:  gettext
@@ -263,7 +263,7 @@ Systemd units that can periodically download package upgrades and apply them.
 
 
 %prep
-%autosetup -n %{name}-%{version}-modularity-5
+%autosetup
 mkdir build-py2
 mkdir build-py3
 
