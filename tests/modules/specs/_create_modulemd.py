@@ -4,8 +4,10 @@
 import os
 import json
 
-import modulemd
+import gi
 
+gi.require_version('Modulemd', '1.0')
+from gi.repository import Modulemd
 
 MODULES_DIR = os.path.join(os.path.dirname(__file__), "..", "modules")
 SPECS_DIR = os.path.join(os.path.dirname(__file__), "..", "specs")
@@ -43,19 +45,35 @@ for module_id in os.listdir(MODULES_DIR):
 
         rpms = sorted(set(rpms) | set(noarch_rpms))
 
-        mmd = modulemd.ModuleMetadata()
-        mmd.name = name
-        mmd.stream = stream
-        mmd.version = int(version)
-        mmd.add_module_license("LGPLv2")
-        mmd.summary = "Fake module"
-        mmd.description = mmd.summary
-        for rpm in rpms:
-            mmd.components.add_rpm(rpm.rsplit("-", 2)[0], "")
-            mmd.artifacts.add_rpm(rpm[:-4])
-        for profile_name in profiles:
-            profile = modulemd.ModuleProfile()
-            profile.rpms.update(profiles[profile_name]["rpms"])
-            mmd.profiles[profile_name] = profile
+        # HACK: force epoch to make test data compatible with libmodulemd >= 1.4.0
+        rpms_with_epoch = []
+        for i in rpms:
+            n, v, ra = i.rsplit("-", 2)
+            nevra = "%s-0:%s-%s" % (n, v, ra)
+            rpms_with_epoch.append(nevra)
+        rpms = rpms_with_epoch
 
-        mmd.dump(os.path.join(module_dir, "%s.%s.yaml" % (module_id, arch)))
+        mmd = Modulemd.Module()
+        mmd.set_mdversion(int(1))
+        mmd.set_name(name)
+        mmd.set_stream(stream)
+        mmd.set_version(int(version))
+        sset = Modulemd.SimpleSet()
+        sset.add("LGPLv2")
+        mmd.set_module_licenses(sset)
+        mmd.set_summary("Fake module")
+        mmd.set_description(mmd.get_summary())
+        artifacts = Modulemd.SimpleSet()
+        for rpm in rpms:
+            #mmd.add_module_component(rpm.rsplit("-", 2)[0], "")
+            artifacts.add(rpm[:-4])
+        mmd.set_rpm_artifacts(artifacts)
+        for profile_name in profiles:
+            profile = Modulemd.Profile()
+            profile.set_name(profile_name)
+            profile_rpms = Modulemd.SimpleSet()
+            profile_rpms.set(profiles[profile_name]["rpms"])
+            profile.set_rpms(profile_rpms)
+            mmd.add_profile(profile)
+
+        Modulemd.dump([mmd], os.path.join(module_dir, "%s.%s.yaml" % (module_id, arch)))

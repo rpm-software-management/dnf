@@ -6,7 +6,9 @@ import argparse
 import subprocess
 import tempfile
 
-import modulemd
+import gi
+gi.require_version('Modulemd', '1.0')
+from gi.repository import Modulemd
 
 
 def get_parser():
@@ -33,16 +35,16 @@ def index_modulemd_files(repo_path):
         if not fn.endswith(".yaml"):
             continue
         yaml_path = os.path.join(repo_path, fn)
-        mmd = modulemd.ModuleMetadata()
-        mmd.load(yaml_path)
-        result.append(mmd)
+        mmd = Modulemd.objects_from_file_ext(yaml_path)
+        result.append(mmd[0][0])
     return result
 
 
 def modify_repo(repo_path, modules):
     tmp = tempfile.mkdtemp()
     path = os.path.join(tmp, "modules.yaml")
-    modulemd.dump_all(path, modules)
+    for module in modules:
+        Modulemd.dump(modules, path)
     subprocess.check_call(["modifyrepo_c", "--mdtype=modules", path,
                            os.path.join(repo_path, "repodata")])
     os.unlink(path)
