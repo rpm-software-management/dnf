@@ -24,10 +24,10 @@ import smartcols
 
 from dnf.conf.read import ModuleReader
 from dnf.module import module_messages, NOTHING_TO_SHOW, \
-    INSTALLING_NEWER_VERSION, NOTHING_TO_INSTALL, VERSION_LOCKED, NO_PROFILE_SPECIFIED
+    INSTALLING_NEWER_VERSION, NOTHING_TO_INSTALL, VERSION_LOCKED
 from dnf.module.exceptions import NoStreamSpecifiedException, NoModuleException, \
-    EnabledStreamException, ProfileNotInstalledException, NoProfileSpecifiedException, \
-    NoProfileToRemoveException, VersionLockedException, CannotLockVersionException, \
+    EnabledStreamException, ProfileNotInstalledException, NoProfileToRemoveException, \
+    VersionLockedException, CannotLockVersionException, \
     DifferentStreamEnabledException
 from dnf.module.repo_module import RepoModule
 from dnf.module.subject import ModuleSubject

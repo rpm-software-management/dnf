@@ -246,7 +246,7 @@ class Base(object):
                     if not isinstance(data, Modulemd.Module):
                         continue
                     self.repo_module_dict.add(RepoModuleVersion(data, base=self, repo=repo))
-            except (dnf.exceptions.Error, glib.Error) as e:
+            except (dnf.exceptions.Error, GLib.Error) as e:
                 logger.debug(e)
                 continue
 

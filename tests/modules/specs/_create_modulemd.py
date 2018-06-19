@@ -65,7 +65,6 @@ for module_id in os.listdir(MODULES_DIR):
         mmd.set_description(mmd.get_summary())
         artifacts = Modulemd.SimpleSet()
         for rpm in rpms:
-            #mmd.add_module_component(rpm.rsplit("-", 2)[0], "")
             artifacts.add(rpm[:-4])
         mmd.set_rpm_artifacts(artifacts)
         for profile_name in profiles:

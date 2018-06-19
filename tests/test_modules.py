@@ -623,7 +623,6 @@ class ModuleTest(unittest.TestCase):
     def test_install_two_profiles_different_versions(self):
         self.test_enable_name_stream()
         self.base.repo_module_dict.install(["httpd:2.4:2/default", "httpd:2.4:1/doc"])
-        #self.base.resolve()
         self.base.resolve()
         expected = [
             "basesystem-11-3.noarch",
