@@ -318,10 +318,6 @@ class Base(object):
         # don't exclude NEVRAs that are also in active module streams
         module_exclude_query = module_exclude_query.difference(module_include_query)
 
-        # exclude bare RPMs with $name that exists in active modular repos
-        names_query = self.sack.query().filter(name=names, reponame__neq=hotfix_repos)
-        names_query = names_query.difference(module_include_query)
-
         # exclude bare RPMs with Provides: matching RPM $name from an active modular repo
         provides_query = self.sack.query().filter(provides=names, reponame__neq=hotfix_repos)
         provides_query = provides_query.difference(module_include_query)
@@ -330,7 +326,6 @@ class Base(object):
         self.sack.add_module_excludes(module_exclude_query)
 
         # exclude bare RPMs that collide with modular RPMs
-        self.sack.add_module_excludes(names_query)
         self.sack.add_module_excludes(provides_query)
 
     def _store_persistent_data(self):
