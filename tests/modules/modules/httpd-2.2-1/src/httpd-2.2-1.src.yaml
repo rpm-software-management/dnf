@@ -1,20 +1,24 @@
-data:
-  artifacts:
-    rpms: [httpd-2.2.15-59.src]
-  components:
-    rpms:
-      httpd: {rationale: ''}
-  description: Fake module
-  license:
-    module: [LGPLv2]
-  name: httpd
-  profiles:
-    default:
-      rpms: [httpd]
-    doc:
-      rpms: [httpd-doc]
-  stream: '2.2'
-  summary: Fake module
-  version: 1
+---
 document: modulemd
 version: 1
+data:
+  name: httpd
+  stream: 2.2
+  version: 1
+  summary: Fake module
+  description: >-
+    Fake module
+  license:
+    module:
+    - LGPLv2
+  profiles:
+    default:
+      rpms:
+      - httpd
+    doc:
+      rpms:
+      - httpd-doc
+  artifacts:
+    rpms:
+    - httpd-0:2.2.15-59.src
+...
