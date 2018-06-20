@@ -427,6 +427,7 @@ class Repo(dnf.conf.RepoConf):
         self._pkgdir = None
         self._key_import = _NullKeyImport()
         self.metadata = None  # :api
+        self._repo.setSyncStrategy(self.DEFAULT_SYNC)
         self._substitutions = dnf.conf.substitutions.Substitutions()
         self._hawkey_repo = self._init_hawkey_repo()
         self._check_config_file_age = parent_conf.check_config_file_age \
