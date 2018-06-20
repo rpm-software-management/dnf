@@ -283,7 +283,7 @@ class Base(object):
 
     def _store_persistent_data(self):
         if self._repo_persistor and not self.conf.cacheonly:
-            expired = [r.id for r in self.repos.iter_enabled() if r._md_expired]
+            expired = [r.id for r in self.repos.iter_enabled() if r._repo.isExpired()]
             self._repo_persistor.expired_to_add.update(expired)
             self._repo_persistor.save()
 
