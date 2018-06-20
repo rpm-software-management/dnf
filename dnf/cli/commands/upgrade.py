@@ -20,12 +20,13 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from dnf.cli import commands
-from dnf.i18n import _
-from dnf.cli.option_parser import OptionParser
+
+import logging
 
 import dnf.exceptions
-import logging
+from dnf.cli import commands
+from dnf.cli.option_parser import OptionParser
+from dnf.i18n import _
 
 logger = logging.getLogger('dnf')
 
@@ -59,6 +60,7 @@ class UpgradeCommand(commands.Command):
             commands._checkEnabledRepo(self.base)
         self.upgrade_minimal = None
         self.all_security = None
+        self.skipped_grp_specs = None
 
     def run(self):
         query = self.base.sack.query().upgrades()
@@ -69,42 +71,57 @@ class UpgradeCommand(commands.Command):
         cmp_type = "eq" if self.upgrade_minimal else "gte"
         self.cli._populate_update_security_filter(self.opts, query, cmp_type=cmp_type,
                                                   all=self.all_security)
-        done = False
-        if self.opts.filenames or self.opts.pkg_specs or self.opts.grp_specs:
-            # Update files.
-            if self.opts.filenames:
-                for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=False,
-                                                     progress=self.base.output.progress):
-                    try:
-                        self.base.package_upgrade(pkg)
-                    except dnf.exceptions.MarkingError as e:
-                        logger.info(_('No match for argument: %s'),
-                                    self.base.output.term.bold(pkg.location))
-                    else:
-                        done = True
 
-            # Update packages.
-            for pkg_spec in self.opts.pkg_specs:
+        if self.opts.filenames or self.opts.pkg_specs or self.opts.grp_specs:
+            result = False
+            result |= self._update_modules()
+            result |= self._update_files()
+            result |= self._update_packages()
+            result |= self._update_groups()
+
+            if result:
+                return
+        else:
+            self.base.upgrade_all()
+            return
+
+        raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
+
+    def _update_modules(self):
+        group_specs_num = len(self.opts.grp_specs)
+
+        self.skipped_grp_specs, _, _ = self.base.repo_module_dict.upgrade(self.opts.grp_specs, True)
+
+        return len(self.skipped_grp_specs) != group_specs_num
+
+    def _update_files(self):
+        success = False
+        if self.opts.filenames:
+            for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=False,
+                                                 progress=self.base.output.progress):
                 try:
-                    self.base.upgrade(pkg_spec)
-                except dnf.exceptions.PackagesNotInstalledError:
-                    logger.info(_('No match for argument: %s'),
-                                self.base.output.term.bold(pkg_spec))
+                    self.base.package_upgrade(pkg)
+                    success = True
                 except dnf.exceptions.MarkingError as e:
                     logger.info(_('No match for argument: %s'),
-                                 self.base.output.term.bold(pkg_spec))
-                    self.base._report_icase_hint(pkg_spec)
-                else:
-                    done = True
+                                self.base.output.term.bold(pkg.location))
+        return success
 
-            # Update groups.
-            if self.opts.grp_specs:
-                self.base.read_comps(arch_filter=True)
-                self.base.env_group_upgrade(self.opts.grp_specs)
-                done = True
-        else:
-            # Update all packages.
-            self.base.upgrade_all()
-            done = True
-        if not done:
-            raise dnf.exceptions.Error(_('No packages marked for upgrade.'))
+    def _update_packages(self):
+        success = False
+        for pkg_spec in self.opts.pkg_specs:
+            try:
+                self.base.upgrade(pkg_spec)
+                success = True
+            except dnf.exceptions.MarkingError as e:
+                self.base._report_icase_hint(pkg_spec)
+                logger.info(_('No match for argument: %s'),
+                            self.base.output.term.bold(pkg_spec))
+        return success
+
+    def _update_groups(self):
+        if self.skipped_grp_specs:
+            self.base.read_comps(arch_filter=True)
+            self.base.env_group_upgrade(self.skipped_grp_specs)
+            return True
+        return False

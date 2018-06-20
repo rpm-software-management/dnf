@@ -20,14 +20,16 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
+import logging
+from itertools import chain
+
+import hawkey
+
+import dnf.exceptions
 from dnf.cli import commands
 from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _
-from itertools import chain
-
-import dnf.exceptions
-import hawkey
-import logging
 
 logger = logging.getLogger('dnf')
 
@@ -46,8 +48,8 @@ class InstallCommand(commands.Command):
     @staticmethod
     def set_argparser(parser):
         parser.add_argument('package', nargs='+', metavar=_('PACKAGE'),
-                          action=OptionParser.ParseSpecGroupFileCallback,
-                          help=_('Package to install'))
+                            action=OptionParser.ParseSpecGroupFileCallback,
+                            help=_('Package to install'))
 
     def configure(self):
         """Verify that conditions are met so that this command can run.
@@ -64,69 +66,95 @@ class InstallCommand(commands.Command):
             commands._checkEnabledRepo(self.base)
 
     def run(self):
-        strict = self.base.conf.strict
-        forms = [self.nevra_forms[command] for command in self.opts.command
-                 if command in list(self.nevra_forms.keys())]
+        err_pkgs = []
+        errs = []
+
+        nevra_forms = self._get_nevra_forms_from_command()
 
         self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
+        if self.opts.command == ['localinstall'] and (self.opts.grp_specs or self.opts.pkg_specs):
+            self._log_not_valid_rpm_file_paths(self.opts.grp_specs)
+            if self.base.conf.strict:
+                raise dnf.exceptions.Error(_('Nothing to do.'))
 
-        # localinstall valid arguments check
-        nonfilenames = self.opts.grp_specs or self.opts.pkg_specs
-        if self.opts.command == ['localinstall'] and nonfilenames:
-            group_names = map(lambda g: '@' + g, self.opts.grp_specs)
-            for pkg in chain(self.opts.pkg_specs, group_names):
-                msg = _('Not a valid rpm file path: %s')
-                logger.info(msg, self.base.output.term.bold(pkg))
-            if strict:
-                raise dnf.exceptions.Error(_('No packages marked for install.'))
+        skipped_grp_specs = self.opts.grp_specs
+        if self.opts.grp_specs and self.opts.command != ['localinstall']:
+            skipped_grp_specs = self.base.install_module(self.opts.grp_specs,
+                                                         strict=self.base.conf.strict)
 
-        # Install files.
-        err_pkgs = []
-        if self.opts.filenames and forms:
-            for filename in self.opts.filenames:
-                msg = _('Not a valid form: %s')
-                logger.warning(msg, self.base.output.term.bold(filename))
-            if strict:
-                raise dnf.exceptions.Error(_('No packages marked for install.'))
+        if self.opts.filenames and nevra_forms:
+            self._inform_not_a_valid_combination(self.opts.filenames)
+            if self.base.conf.strict:
+                raise dnf.exceptions.Error(_('Nothing to do.'))
         else:
-            for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=strict,
-                                                 progress=self.base.output.progress):
-                try:
-                    self.base.package_install(pkg, strict=strict)
-                except dnf.exceptions.MarkingError:
-                    msg = _('No match for argument: %s')
-                    logger.info(msg, self.base.output.term.bold(pkg.location))
-                    err_pkgs.append(pkg)
+            err_pkgs = self._install_files()
 
-        # Install groups.
-        if self.opts.grp_specs and forms:
-            for grp_spec in self.opts.grp_specs:
-                msg = _('Not a valid form: %s')
-                logger.warning(msg, self.base.output.term.bold(grp_spec))
-            if strict:
-                raise dnf.exceptions.Error(_('No packages marked for install.'))
-        elif self.opts.grp_specs and self.opts.command != ['localinstall']:
-            self.base.read_comps(arch_filter=True)
-            try:
-                self.base.env_group_install(self.opts.grp_specs,
-                                            tuple(self.base.conf.group_package_types),
-                                            strict=strict)
-            except dnf.exceptions.Error:
-                if self.base.conf.strict:
-                    raise
+        if skipped_grp_specs and nevra_forms:
+            self._inform_not_a_valid_combination(skipped_grp_specs)
+            if self.base.conf.strict:
+                raise dnf.exceptions.Error(_('Nothing to do.'))
+        elif skipped_grp_specs and self.opts.command != ['localinstall']:
+            self._install_groups(skipped_grp_specs)
 
-        # Install packages.
-        errs = []
         if self.opts.command != ['localinstall']:
-            for pkg_spec in self.opts.pkg_specs:
-                try:
-                    self.base.install(pkg_spec, strict=strict, forms=forms)
-                except dnf.exceptions.MarkingError:
-                    msg = _('No match for argument: %s')
-                    logger.info(msg, self.base.output.term.bold(pkg_spec))
-                    errs.append(pkg_spec)
+            errs = self._install_packages(nevra_forms)
 
         if (len(errs) != 0 or len(err_pkgs) != 0) and self.base.conf.strict:
-            raise dnf.exceptions.PackagesNotAvailableError(
-                _("Unable to find a match"), pkg_spec=' '.join(errs),
-                packages=err_pkgs)
+            raise dnf.exceptions.PackagesNotAvailableError(_("Unable to find a match"),
+                                                           pkg_spec=' '.join(errs),
+                                                           packages=err_pkgs)
+
+    def _get_nevra_forms_from_command(self):
+        return [self.nevra_forms[command]
+                for command in self.opts.command
+                if command in list(self.nevra_forms.keys())
+                ]
+
+    def _log_not_valid_rpm_file_paths(self, grp_specs):
+        group_names = map(lambda g: '@' + g, grp_specs)
+        for pkg in chain(self.opts.pkg_specs, group_names):
+            msg = _('Not a valid rpm file path: %s')
+            logger.info(msg, self.base.output.term.bold(pkg))
+
+    def _inform_not_a_valid_combination(self, forms):
+        for form in forms:
+            msg = _('Not a valid form: %s')
+            logger.warning(msg, self.base.output.term.bold(form))
+
+    def _install_files(self):
+        err_pkgs = []
+        strict = self.base.conf.strict
+        for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=strict,
+                                             progress=self.base.output.progress):
+            try:
+                self.base.package_install(pkg, strict=strict)
+            except dnf.exceptions.MarkingError:
+                msg = _('No match for argument: %s')
+                logger.info(msg, self.base.output.term.bold(pkg.location))
+                err_pkgs.append(pkg)
+
+        return err_pkgs
+
+    def _install_groups(self, grp_specs):
+        self.base.read_comps(arch_filter=True)
+        try:
+            self.base.env_group_install(self.opts.grp_specs,
+                                        tuple(self.base.conf.group_package_types),
+                                        strict=self.base.conf.strict)
+        except dnf.exceptions.Error:
+            if self.base.conf.strict:
+                raise
+
+    def _install_packages(self, nevra_forms):
+        errs = []
+        strict = self.base.conf.strict
+        for pkg_spec in self.opts.pkg_specs:
+            try:
+                self.base.install(pkg_spec, strict=strict, forms=nevra_forms)
+            except dnf.exceptions.MarkingError:
+                msg = _('No match for argument: %s')
+                logger.info(msg, self.base.output.term.bold(pkg_spec))
+                self.base._report_icase_hint(pkg_spec)
+                errs.append(pkg_spec)
+
+        return errs

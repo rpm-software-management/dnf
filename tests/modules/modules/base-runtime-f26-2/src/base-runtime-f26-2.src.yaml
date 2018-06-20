@@ -1,0 +1,35 @@
+---
+document: modulemd
+version: 1
+data:
+  name: base-runtime
+  stream: f26
+  version: 2
+  summary: Fake module
+  description: >-
+    Fake module
+  license:
+    module:
+    - LGPLv2
+  profiles:
+    default:
+      rpms:
+      - bash
+      - glibc
+      - kernel
+      - systemd
+    minimal:
+      rpms:
+      - glibc
+  artifacts:
+    rpms:
+    - basesystem-0:11-3.noarch
+    - basesystem-0:11-3.src
+    - bash-0:4.4.12-2.src
+    - bash-doc-0:4.4.12-2.noarch
+    - filesystem-0:3.2-40.src
+    - glibc-0:2.25.90-2.src
+    - kernel-0:4.11.0-1.src
+    - kernel-doc-0:4.11.0-1.noarch
+    - systemd-0:233-3.src
+...

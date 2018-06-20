@@ -395,7 +395,22 @@ class Output(object):
             columns = (-40, -22, -16) # Old default
         na = '%s%s.%s' % (indent, pkg.name, pkg.arch)
         hi_cols = [highlight, 'normal', 'normal']
-        columns = zip((na, pkg.evr, pkg._from_repo), columns, hi_cols)
+
+        installed_module_versions = self.base.repo_module_dict.list_module_version_installed()
+        repo_and_module = ""
+        for installed in installed_module_versions:
+            nevra = "{}-{}.{}".format(pkg.name, pkg.evr, pkg.arch)
+            nevra_epoch_ensured = "{}-{}:{}-{}.{}".format(pkg.name, pkg.epoch, pkg.version,
+                                                          pkg.release, pkg.arch)
+
+            if nevra in installed.artifacts() or \
+                    nevra_epoch_ensured in installed.artifacts():
+                repo_and_module = installed.full_version + "|" + pkg._from_repo
+                last_column_indentation = columns[1] + (len(repo_and_module) - len(pkg._from_repo))
+                columns = (columns[0], last_column_indentation, 0)
+                break
+
+        columns = zip((na, pkg.evr, repo_and_module or pkg._from_repo), columns, hi_cols)
         print(self.fmtColumns(columns))
 
     def simpleEnvraList(self, pkg, ui_overflow=False,

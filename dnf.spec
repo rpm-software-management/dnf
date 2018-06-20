@@ -2,6 +2,8 @@
 %global hawkey_version 0.14.0
 %global librepo_version 1.9.0
 %global libcomps_version 0.1.8
+%global libmodulemd_version 1.4.0
+%global python_smartcols_version 0.3.0
 %global rpm_version 4.14.0
 
 # conflicts
@@ -161,10 +163,18 @@ BuildRequires:  python2-libcomps >= %{libcomps_version}
 BuildRequires:  python2-libdnf
 BuildRequires:  python2-librepo >= %{librepo_version}
 BuildRequires:  python2-nose
+BuildRequires:  libmodulemd >= %{libmodulemd_version}
+Requires:       libmodulemd >= %{libmodulemd_version}
+BuildRequires:  python2-smartcols >= %{python_smartcols_version}
+Requires:       python2-smartcols >= %{python_smartcols_version}
 %if (0%{?rhel} && 0%{?rhel} <= 7)
 BuildRequires:  pygpgme
 Requires:       pygpgme
+BuildRequires:  python-gobject-base
+Requires:       python-gobject-base
 %else
+BuildRequires:  python2-gobject-base
+Requires:       python2-gobject-base
 BuildRequires:  python2-gpg
 Requires:       python2-gpg
 %endif
@@ -210,6 +220,12 @@ BuildRequires:  python3-iniparse
 BuildRequires:  python3-libcomps >= %{libcomps_version}
 BuildRequires:  python3-libdnf
 BuildRequires:  python3-librepo >= %{librepo_version}
+BuildRequires:  libmodulemd >= %{libmodulemd_version}
+Requires:       libmodulemd >= %{libmodulemd_version}
+BuildRequires:  python3-gobject-base
+Requires:       python3-gobject-base
+BuildRequires:  python3-smartcols >= %{python_smartcols_version}
+Requires:       python3-smartcols >= %{python_smartcols_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-gpg
 Requires:       python3-gpg
@@ -288,6 +304,8 @@ mkdir build-py3
 %find_lang %{name}
 mkdir -p %{buildroot}%{confdir}/vars
 mkdir -p %{buildroot}%{pluginconfpath}/
+mkdir -p %{buildroot}%{_sysconfdir}/%{name}/modules.d
+mkdir -p %{buildroot}%{_sysconfdir}/%{name}/modules.defaults.d
 %if %{with python2}
 mkdir -p %{buildroot}%{py2pluginpath}/
 %endif
@@ -378,7 +396,11 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %license COPYING PACKAGE-LICENSING
 %doc AUTHORS README.rst
 %dir %{confdir}
+%dir %{confdir}/modules.d
+%dir %{confdir}/modules.defaults.d
 %dir %{pluginconfpath}
+%dir %{_sysconfdir}/%{name}/modules.d
+%dir %{_sysconfdir}/%{name}/modules.defaults.d
 %dir %{confdir}/protected.d
 %dir %{confdir}/vars
 %config(noreplace) %{confdir}/%{name}.conf

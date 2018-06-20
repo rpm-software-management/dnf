@@ -1,6 +1,6 @@
 # dnf configuration classes.
 #
-# Copyright (C) 2016  Red Hat, Inc.
+# Copyright (C) 2016-2017 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -158,6 +158,18 @@ class SecondsOption(Option):
         super(SecondsOption, self).__init__(option)
 
 
+class StringOption(Option):
+    def __init__(self, default=""):
+        option = cfg.OptionString(default)
+        super(StringOption, self).__init__(option)
+
+
+class PathOption(Option):
+    def __init__(self, default="", exists=False, absPath=False):
+        option = cfg.OptionPath(default, exists, absPath)
+        super(PathOption, self).__init__(option)
+
+
 class BaseConfig(object):
     """Base class for storing configuration definitions.
 
@@ -258,10 +270,12 @@ class BaseConfig(object):
                 value = parser.getSubstitutedValue(section, name)
                 if not value or value == 'None':
                     value = None
+
                 opt = self._get_option(name)
                 if opt:  # and not opt._is_runtimeonly():
                     try:
-                        opt._set(value, priority)
+                        if value is not None:
+                            opt._set(value, priority)
                     except dnf.exceptions.ConfigError as e:
                         logger.debug(_('Unknown configuration value: '
                                        '%s=%s in %s; %s'), ucd(name),
@@ -376,6 +390,10 @@ class MainConf(BaseConfig):
 
         self._config.cachedir().set(PRIO_DEFAULT, cachedir)
         self._config.logdir().set(PRIO_DEFAULT, logdir)
+        # TODO move to libdnf
+        self.modulesdir = PathOption('/etc/dnf/modules.d', absPath=True)
+        # TODO move to libdnf
+        self.moduledefaultsdir = PathOption('/etc/dnf/modules.defaults.d', absPath=True)
 
     @property
     def get_reposdir(self):
@@ -553,8 +571,13 @@ class RepoConf(BaseConfig):
     """Option definitions for repository INI file sections."""
 
     def __init__(self, parent, section=None, parser=None):
-        super(RepoConf, self).__init__(cfg.ConfigRepo(parent._config), section, parser)
-        self._masterConfig = parent._config
+        super(RepoConf, self).__init__(cfg.ConfigRepo(
+            parent._config if parent else cfg.ConfigMain()), section, parser)
+        self._masterConfig = parent._config if parent else cfg.ConfigMain()
+
+        # modularity
+        # TODO move to libdnf
+        self.hotfixes = BoolOption(False)
 
     def _configure_from_options(self, opts):
         """Configure repos from the opts. """
@@ -575,3 +598,32 @@ class RepoConf(BaseConfig):
                 else:
                     msg = _("Repo %s did not have a %s attr. before setopt")
                     logger.warning(msg, self._section, name)
+
+
+# TODO move to libdnf
+class ModuleConf(BaseConfig):
+    """Option definitions for module INI file sections."""
+
+    def __init__(self, section=None, parser=None):
+        super(ModuleConf, self).__init__(section, parser)
+        # module name, stream and installed version
+        self.name = StringOption(section)
+        self.stream = StringOption("")
+        self.version = IntOption()
+        # installed profiles
+        self.profiles = ListOption([])
+        # enable/disable a module
+        self.enabled = BoolOption(True)
+        # lock module on installed version, don't upgrade or downgrade
+        self.locked = BoolOption(False)
+
+    def _write(self, fileobj):
+        output = "[{}]\n".format(self._section)
+        output += "name = {}\n".format(self.name._get())
+        output += "stream = {}\n".format(self.stream._get())
+        output += "version = {}\n".format(self.version._get())
+        output += "profiles = {}\n".format(",".join(self.profiles._get()))
+        output += "enabled = {}\n".format(self.enabled._get())
+        output += "locked = {}\n".format(self.locked._get())
+
+        fileobj.write(output)
