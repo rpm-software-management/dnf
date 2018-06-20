@@ -71,8 +71,8 @@ logger = logging.getLogger("dnf")
 def repo_id_invalid(repo_id):
     # :api
     """Return index of an invalid character in the repo ID (if present)."""
-    invalids = (i for i, c in enumerate(repo_id) if c not in _REPOID_CHARS)
-    return dnf.util.first(invalids)
+    first_invalid = cfg.Repo.verifyId(repo_id)
+    return None if first_invalid < 0 else first_invalid
 
 def _pkg2payload(pkg, progress, *factories):
     for fn in factories:
@@ -445,11 +445,6 @@ class Repo(dnf.conf.RepoConf):
     @repofile.setter
     def repofile(self, value):
         self._repo.setRepoFilePath(value)
-
-    @property
-    def _md_expired(self):
-        """Return whether the cached metadata is expired."""
-        return self._repo.expired()
 
     @property
     def pkgdir(self):
