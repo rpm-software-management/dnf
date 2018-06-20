@@ -571,8 +571,9 @@ class RepoConf(BaseConfig):
     """Option definitions for repository INI file sections."""
 
     def __init__(self, parent, section=None, parser=None):
-        super(RepoConf, self).__init__(cfg.ConfigRepo(parent._config), section, parser)
-        self._masterConfig = parent._config
+        super(RepoConf, self).__init__(cfg.ConfigRepo(
+            parent._config if parent else cfg.ConfigMain()), section, parser)
+        self._masterConfig = parent._config if parent else cfg.ConfigMain()
 
         # modularity
         # TODO move to libdnf

@@ -139,10 +139,7 @@ class RepoModuleVersion(object):
                                              profiles=sorted(set(profiles)))
 
     def nevra(self):
-        result = self.artifacts()
-        # HACK: remove epoch to make filter(nevra=...) work
-        result = [i.replace("-0:", "-") for i in result]
-        return result
+        return self.artifacts()
 
     def artifacts(self):
         return self.module_metadata.get_rpm_artifacts().get()
