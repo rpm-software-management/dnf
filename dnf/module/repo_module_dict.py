@@ -161,7 +161,7 @@ class RepoModuleDict(OrderedDict):
 
         for module_version in version_dependencies:
             repos.add(module_version.repo)
-            includes.update(module_version.nevra())
+            includes.update(module_version.artifacts())
 
         return includes, repos
 
@@ -185,7 +185,7 @@ class RepoModuleDict(OrderedDict):
 
         for dependency in version_dependencies:
             repos.add(dependency.repo)
-            excludes.update(dependency.nevra())
+            excludes.update(dependency.artifacts())
 
         return excludes, repos
 
@@ -611,7 +611,7 @@ class RepoModuleDict(OrderedDict):
         output = ""
         versions = self.list_module_version_all()
         for version in versions:
-            nevras = version.nevra()
+            nevras = version.artifacts()
             for nevra in nevras:
                 subj = Subject(nevra)
                 nevra_obj = list(subj.get_nevra_possibilities(hawkey.FORM_NEVRA))[0]
