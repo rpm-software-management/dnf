@@ -165,14 +165,16 @@ BuildRequires:  python2-librepo >= %{librepo_version}
 BuildRequires:  python2-nose
 BuildRequires:  libmodulemd >= %{libmodulemd_version}
 Requires:       libmodulemd >= %{libmodulemd_version}
-BuildRequires:  python2-gobject-base
-Requires:       python2-gobject-base
 BuildRequires:  python2-smartcols >= %{python_smartcols_version}
 Requires:       python2-smartcols >= %{python_smartcols_version}
 %if (0%{?rhel} && 0%{?rhel} <= 7)
 BuildRequires:  pygpgme
 Requires:       pygpgme
+BuildRequires:  python-gobject-base
+Requires:       python-gobject-base
 %else
+BuildRequires:  python2-gobject-base
+Requires:       python2-gobject-base
 BuildRequires:  python2-gpg
 Requires:       python2-gpg
 %endif
