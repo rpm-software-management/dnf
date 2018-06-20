@@ -138,9 +138,6 @@ class RepoModuleVersion(object):
         self.base._module_persistor.set_data(self.repo_module, stream=self.stream, version=version,
                                              profiles=sorted(set(profiles)))
 
-    def nevra(self):
-        return self.artifacts()
-
     def artifacts(self):
         return self.module_metadata.get_rpm_artifacts().get()
 
@@ -167,7 +164,7 @@ class RepoModuleVersion(object):
     def profile_nevra_objects(self, profile):
         result = []
         rpms = set(self.rpms(profile))
-        for nevra in self.nevra():
+        for nevra in self.artifacts():
             subj = Subject(nevra)
             nevra_obj = list(subj.get_nevra_possibilities(hawkey.FORM_NEVRA))[0]
             if nevra_obj.name not in rpms:
