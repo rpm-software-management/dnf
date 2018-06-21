@@ -117,7 +117,6 @@ def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
     Open the specified absolute url, return a file object
     which respects proxy setting even for non-repo downloads
     """
-    print("!!!!!!!!!!! _urlopen() !!!!!!!!!!!!!!!!")
     if PY3 and 'b' not in mode:
         kwargs.setdefault('encoding', 'utf-8')
     fo = tempfile.NamedTemporaryFile(mode, **kwargs)
