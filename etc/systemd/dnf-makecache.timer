@@ -1,5 +1,5 @@
 [Unit]
-Description=dnf makecache timer
+Description=dnf makecache --timer
 ConditionKernelCommandLine=!rd.live.image
 # See comment in dnf-makecache.service
 ConditionPathExists=!/run/ostree-booted
