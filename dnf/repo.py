@@ -38,7 +38,6 @@ import functools
 import hashlib
 import hawkey
 import logging
-import librepo
 import operator
 import os
 import re
@@ -93,8 +92,8 @@ def _download_payloads(payloads, drpm):
     errs = _DownloadErrors()
     try:
         cfg.PackageTarget.downloadPackages(cfg.VectorPPackageTarget(targets), True)
-    except librepo.LibrepoException as e:
-        errs._fatal = e.args[1] or '<unspecified librepo error>'
+    except RuntimeError as e:
+        errs._fatal = str(e)
     drpm.wait()
 
     # process downloading errors
@@ -212,7 +211,7 @@ class PackagePayload(dnf.callback.Payload):
             status = dnf.callback.STATUS_OK
         elif msg.startswith('Not finished'):
             return
-        elif lr_status == librepo.TRANSFER_ALREADYEXISTS:
+        elif lr_status == cfg.PackageTargetCB.TransferStatus_ALREADYEXISTS:
             status = dnf.callback.STATUS_ALREADY_EXISTS
 
         self.progress.end(self, status, msg)
@@ -261,8 +260,8 @@ class RPMPayload(PackagePayload):
     def _target_params(self):
         pkg = self.pkg
         ctype, csum = pkg.returnIdSum()
-        ctype_code = getattr(librepo, ctype.upper(), librepo.CHECKSUM_UNKNOWN)
-        if ctype_code == librepo.CHECKSUM_UNKNOWN:
+        ctype_code = cfg.PackageTarget.checksumType(ctype)
+        if ctype_code == cfg.PackageTarget.ChecksumType_UNKNOWN:
             logger.warning(_("unsupported checksum type: %s"), ctype)
 
         return {
@@ -337,11 +336,11 @@ class MDPayload(dnf.callback.Payload):
         self.progress.progress(self, done)
 
     def _fastestmirror_cb(self, cbdata, stage, data):
-        if stage == librepo.FMSTAGE_DETECTION:
+        if stage == cfg.RepoCB.FastestMirrorStage_DETECTION:
             # pinging mirrors, this might take a while
             msg = _('determining the fastest mirror (%d hosts).. ') % data
             self.fastest_mirror_running = True
-        elif stage == librepo.FMSTAGE_STATUS and self.fastest_mirror_running:
+        elif stage == cfg.RepoCB.FastestMirrorStage_STATUS and self.fastest_mirror_running:
             # done.. report but ignore any errors
             msg = 'error: %s\n' % data if data else 'done.\n'
         else:
