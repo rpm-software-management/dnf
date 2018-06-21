@@ -287,6 +287,7 @@ class ModuleTest(unittest.TestCase):
         self.conf.installroot = os.path.join(self.tmpdir, "root")
         self.conf.modulesdir._set(MODULES_DIR)
         self.conf.moduledefaultsdir._set(DEFAULTS_DIR)
+        self.conf.persistdir = os.path.join(self.conf.installroot, self.conf.persistdir.lstrip("/"))
         self.conf.substitutions["arch"] = "x86_64"
         self.conf.substitutions["basearch"] = dnf.rpm.basearch(self.conf.substitutions["arch"])
         self.conf.assumeyes = True
