@@ -165,7 +165,7 @@ class CliTest(tests.support.DnfBaseTestCase):
         self.cli.demands.fresh_metadata = False
         self.cli.demands.cacheonly = True
         self.cli._process_demands()
-        self.assertEqual(self.base.repos['one']._sync_strategy,
+        self.assertEqual(self.base.repos['one']._repo.getSyncStrategy(),
                          dnf.repo.SYNC_ONLY_CACHE)
 
 
