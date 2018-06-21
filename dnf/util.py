@@ -31,7 +31,6 @@ import dnf.const
 import dnf.pycomp
 import errno
 import itertools
-import librepo
 import locale
 import logging
 import os
@@ -101,7 +100,7 @@ def _urlopen_progress(url, conf, progress=None):
     targets = [pload._librepo_target()]
     try:
         cfg.PackageTarget.downloadPackages(cfg.VectorPPackageTarget(targets), True)
-    except librepo.LibrepoException as e:
+    except RuntimeError as e:
         if conf.strict:
             raise IOError(e.args[1])
         logger.error(e.args[1])
@@ -130,8 +129,8 @@ def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
              cfg.Downloader.downloadURL(conf._config if conf else None, url, fo.fileno())
     except RuntimeError as e:
         raise IOError(e.args[1])
-    except librepo.LibrepoException as e:
-        raise IOError(e.args[1])
+#    except librepo.LibrepoException as e:
+#        raise IOError(e.args[1])
 
     fo.seek(0)
     return fo
