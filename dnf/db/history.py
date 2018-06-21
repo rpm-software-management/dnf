@@ -56,17 +56,26 @@ class RPMTransactionItemWrapper(object):
         return self._item.getRPMItem().getName()
 
     @property
-    def evr(self):
-        epoch = self._item.getRPMItem().getEpoch()
-        version = self._item.getRPMItem().getVersion()
-        release = self._item.getRPMItem().getRelease()
-        if epoch:
-            return "{}-{}".format(version, release)
-        return "{}:{}-{}".format(epoch, version, release)
+    def epoch(self):
+        return self._item.getRPMItem().getEpoch()
+
+    @property
+    def version(self):
+        return self._item.getRPMItem().getVersion()
+
+    @property
+    def release(self):
+        return self._item.getRPMItem().getRelease()
 
     @property
     def arch(self):
         return self._item.getRPMItem().getArch()
+
+    @property
+    def evr(self):
+        if self.epoch:
+            return "{}:{}-{}".format(self.epoch, self.version, self.release)
+        return "{}-{}".format(self.version, self.release)
 
     @property
     def action(self):
