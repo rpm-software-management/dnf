@@ -426,7 +426,7 @@ class RemoteRPMPayload(PackagePayload):
         repodir = "commandline-" + digest
         self.pkgdir = os.path.join(self.conf.cachedir, repodir, "packages")
         dnf.util.ensure_dir(self.pkgdir)
-        self.local_path = os.path.join(self.pkgdir, self.__str__())
+        self.local_path = os.path.join(self.pkgdir, self.__str__().lstrip("/"))
 
     def __str__(self):
         return os.path.basename(self.remote_location)

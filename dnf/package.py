@@ -214,8 +214,8 @@ class Package(hawkey.Package):
         if not self.repo._local:
             loc = os.path.basename(loc)
         elif self.baseurl and self.baseurl.startswith('file://'):
-            return os.path.join(self.baseurl, loc)[7:]
-        return os.path.join(self.repo.pkgdir, loc)
+            return os.path.join(self.baseurl, loc.lstrip("/"))[7:]
+        return os.path.join(self.repo.pkgdir, loc.lstrip("/"))
 
     def remote_location(self, schemes=('http', 'ftp', 'file', 'https')):
         # :api

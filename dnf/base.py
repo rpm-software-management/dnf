@@ -679,9 +679,8 @@ class Base(object):
         """auto create the history object that to access/append the transaction
            history information. """
         if self._history is None:
-            db_path = os.path.join(self.conf.installroot, self.conf.persistdir)
             releasever = self.conf.releasever
-            self._history = SwdbInterface(db_path, releasever=releasever)
+            self._history = SwdbInterface(self.conf.persistdir, releasever=releasever)
         return self._history
 
     history = property(fget=lambda self: self._getHistory(),
@@ -1177,7 +1176,7 @@ class Base(object):
 
         if self.conf.destdir:
             for pkg in local_repository_pkgs:
-                location = os.path.join(pkg.repo.pkgdir, pkg.location)
+                location = os.path.join(pkg.repo.pkgdir, pkg.location.lstrip("/"))
                 shutil.copy(location, self.conf.destdir)
 
     def add_remote_rpms(self, path_list, strict=True, progress=None):
