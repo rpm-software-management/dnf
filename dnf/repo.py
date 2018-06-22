@@ -22,7 +22,6 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from dnf.i18n import ucd, _
-import libdnf.conf as cfg
 
 import dnf.callback
 import dnf.conf
@@ -34,6 +33,7 @@ import dnf.logging
 import dnf.pycomp
 import dnf.util
 import dnf.yum.misc
+import libdnf.repo
 import functools
 import hashlib
 import hawkey
@@ -70,7 +70,7 @@ logger = logging.getLogger("dnf")
 def repo_id_invalid(repo_id):
     # :api
     """Return index of an invalid character in the repo ID (if present)."""
-    first_invalid = cfg.Repo.verifyId(repo_id)
+    first_invalid = libdnf.repo.Repo.verifyId(repo_id)
     return None if first_invalid < 0 else first_invalid
 
 def _pkg2payload(pkg, progress, *factories):
@@ -91,7 +91,7 @@ def _download_payloads(payloads, drpm):
                for pload in sorted(payloads, key=_download_sort_key)]
     errs = _DownloadErrors()
     try:
-        cfg.PackageTarget.downloadPackages(cfg.VectorPPackageTarget(targets), True)
+        libdnf.repo.PackageTarget.downloadPackages(libdnf.repo.VectorPPackageTarget(targets), True)
     except RuntimeError as e:
         errs._fatal = str(e)
     drpm.wait()
@@ -177,7 +177,7 @@ class Metadata(object):
         return self._repo.fresh()
 
 
-class PackageTargetCallbacks(cfg.PackageTargetCB):
+class PackageTargetCallbacks(libdnf.repo.PackageTargetCB):
     def __init__(self, package_pload):
         super(PackageTargetCallbacks, self).__init__()
         self.package_pload = package_pload
@@ -211,7 +211,7 @@ class PackagePayload(dnf.callback.Payload):
             status = dnf.callback.STATUS_OK
         elif msg.startswith('Not finished'):
             return
-        elif lr_status == cfg.PackageTargetCB.TransferStatus_ALREADYEXISTS:
+        elif lr_status == libdnf.repo.PackageTargetCB.TransferStatus_ALREADYEXISTS:
             status = dnf.callback.STATUS_ALREADY_EXISTS
 
         self.progress.end(self, status, msg)
@@ -247,7 +247,7 @@ class PackagePayload(dnf.callback.Payload):
         }
         target_dct.update(self._target_params())
 
-        return cfg.PackageTarget(pkg.repo._repo, target_dct['relative_url'], target_dct['dest'],
+        return libdnf.repo.PackageTarget(pkg.repo._repo, target_dct['relative_url'], target_dct['dest'],
             target_dct['checksum_type'], target_dct['checksum'], target_dct['expectedsize'],
             target_dct['base_url'], target_dct['resume'], 0, 0, self.callbacks)
 
@@ -260,8 +260,8 @@ class RPMPayload(PackagePayload):
     def _target_params(self):
         pkg = self.pkg
         ctype, csum = pkg.returnIdSum()
-        ctype_code = cfg.PackageTarget.checksumType(ctype)
-        if ctype_code == cfg.PackageTarget.ChecksumType_UNKNOWN:
+        ctype_code = libdnf.repo.PackageTarget.checksumType(ctype)
+        if ctype_code == libdnf.repo.PackageTarget.ChecksumType_UNKNOWN:
             logger.warning(_("unsupported checksum type: %s"), ctype)
 
         return {
@@ -305,7 +305,7 @@ class RemoteRPMPayload(PackagePayload):
             logger.critical(''.join(except_list))
 
     def _librepo_target(self):
-        return cfg.PackageTarget(self.conf._config, os.path.basename(self.remote_location), self.pkgdir,
+        return libdnf.repo.PackageTarget(self.conf._config, os.path.basename(self.remote_location), self.pkgdir,
             0, None, 0, os.path.dirname(self.remote_location), True, 0, 0, self.callbacks)
 
     @property
@@ -336,11 +336,11 @@ class MDPayload(dnf.callback.Payload):
         self.progress.progress(self, done)
 
     def _fastestmirror_cb(self, cbdata, stage, data):
-        if stage == cfg.RepoCB.FastestMirrorStage_DETECTION:
+        if stage == libdnf.repo.RepoCB.FastestMirrorStage_DETECTION:
             # pinging mirrors, this might take a while
             msg = _('determining the fastest mirror (%d hosts).. ') % data
             self.fastest_mirror_running = True
-        elif stage == cfg.RepoCB.FastestMirrorStage_STATUS and self.fastest_mirror_running:
+        elif stage == libdnf.repo.RepoCB.FastestMirrorStage_STATUS and self.fastest_mirror_running:
             # done.. report but ignore any errors
             msg = 'error: %s\n' % data if data else 'done.\n'
         else:
@@ -375,14 +375,14 @@ class MDPayload(dnf.callback.Payload):
 
 
 # use the local cache even if it's expired. download if there's no cache.
-SYNC_LAZY = cfg.Repo.SyncStrategy_LAZY
+SYNC_LAZY = libdnf.repo.Repo.SyncStrategy_LAZY
  # use the local cache, even if it's expired, never download.
-SYNC_ONLY_CACHE = cfg.Repo.SyncStrategy_ONLY_CACHE
+SYNC_ONLY_CACHE = libdnf.repo.Repo.SyncStrategy_ONLY_CACHE
 # try the cache, if it is expired download new md.
-SYNC_TRY_CACHE = cfg.Repo.SyncStrategy_TRY_CACHE
+SYNC_TRY_CACHE = libdnf.repo.Repo.SyncStrategy_TRY_CACHE
 
 
-class RepoCallbacks(cfg.RepoCB):
+class RepoCallbacks(libdnf.repo.RepoCB):
     def __init__(self, md_pload):
         super(RepoCallbacks, self).__init__()
         self._md_pload = md_pload
@@ -416,7 +416,7 @@ class Repo(dnf.conf.RepoConf):
         super(Repo, self).__init__(section=name, parent=parent_conf)
 
         self._config.this.disown()  # _repo will be the owner of _config
-        self._repo = cfg.Repo(name, self._config)
+        self._repo = libdnf.repo.Repo(name, self._config)
 
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
         self._callbacks = RepoCallbacks(self._md_pload)

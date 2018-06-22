@@ -23,7 +23,7 @@ from __future__ import unicode_literals
 import dnf.exceptions
 import dnf.const
 import dnf.util
-import libdnf
+import libdnf.repo
 import logging
 import os
 import sys
@@ -153,7 +153,7 @@ class Logging(object):
         logger_warnings.addHandler(handler)
 
         lr_logfile = os.path.join(logdir, dnf.const.LOG_LIBREPO)
-        libdnf.conf.LibrepoLog.addHandler(lr_logfile)
+        libdnf.repo.LibrepoLog.addHandler(lr_logfile)
 
         # setup RPM callbacks logger
         logger_rpm = logging.getLogger("dnf.rpm")
