@@ -40,7 +40,7 @@ import subprocess
 import sys
 import tempfile
 import time
-import libdnf.conf as cfg
+import libdnf.repo
 
 logger = logging.getLogger('dnf')
 
@@ -99,7 +99,7 @@ def _urlopen_progress(url, conf, progress=None):
     progress.start(1, est_remote_size)
     targets = [pload._librepo_target()]
     try:
-        cfg.PackageTarget.downloadPackages(cfg.VectorPPackageTarget(targets), True)
+        libdnf.repo.PackageTarget.downloadPackages(libdnf.repo.VectorPPackageTarget(targets), True)
     except RuntimeError as e:
         if conf.strict:
             raise IOError(e.args[1])
@@ -125,7 +125,7 @@ def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
         if repo:
             repo._repo.downloadUrl(url, fo.fileno())
         else:
-             cfg.Downloader.downloadURL(conf._config if conf else None, url, fo.fileno())
+            libdnf.repo.Downloader.downloadURL(conf._config if conf else None, url, fo.fileno())
     except RuntimeError as e:
         raise IOError(e.args[1])
 #    except librepo.LibrepoException as e:

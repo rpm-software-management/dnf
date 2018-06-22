@@ -29,7 +29,7 @@ import dnf.logging
 import dnf.repo
 import hawkey
 import logging
-import libdnf
+import libdnf.repo
 import os
 
 APPLYDELTA = '/usr/bin/applydeltarpm'
@@ -48,7 +48,7 @@ class DeltaPayload(dnf.repo.PackagePayload):
 
     def _end_cb(self, cbdata, lr_status, msg):
         super(DeltaPayload, self)._end_cb(cbdata, lr_status, msg)
-        if lr_status != libdnf.conf.PackageTargetCB.TransferStatus_ERROR:
+        if lr_status != libdnf.repo.PackageTargetCB.TransferStatus_ERROR:
             self.delta_info.enqueue(self)
 
     def _target_params(self):
@@ -57,8 +57,8 @@ class DeltaPayload(dnf.repo.PackagePayload):
         ctype = hawkey.chksum_name(ctype)
         chksum = hexlify(csum).decode()
 
-        ctype_code = libdnf.conf.PackageTarget.checksumType(ctype)
-        if ctype_code == libdnf.conf.PackageTarget.ChecksumType_UNKNOWN:
+        ctype_code = libdnf.repo.PackageTarget.checksumType(ctype)
+        if ctype_code == libdnf.repo.PackageTarget.ChecksumType_UNKNOWN:
             logger.warning(_("unsupported checksum type: %s"), ctype)
 
         return {
