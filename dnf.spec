@@ -9,6 +9,7 @@
 # conflicts
 %global conflicts_dnf_plugins_core_version 3.0.1
 %global conflicts_dnf_plugins_extras_version 3.0.0
+%global conflicts_dnfdaemon_version 0.3.19
 
 # override dependencies for rhel 7
 %if 0%{?rhel} == 7
@@ -204,6 +205,7 @@ BuildRequires:  python2-rpm >= %{rpm_version}
 Requires:       python2-rpm >= %{rpm_version}
 Recommends:     rpm-plugin-systemd-inhibit
 %endif
+Conflicts:      dnfdaemon < %{conflicts_dnfdaemon_version}
 
 %description -n python2-%{name}
 Python 2 interface to DNF.
