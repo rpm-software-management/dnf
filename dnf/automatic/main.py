@@ -28,7 +28,7 @@ import dnf.cli
 import dnf.cli.cli
 import dnf.cli.output
 import dnf.conf
-import libdnf.conf as cfg
+import libdnf.conf
 import dnf.const
 import dnf.exceptions
 import dnf.util
@@ -106,7 +106,7 @@ class AutomaticConfig(object):
         self.filename = filename
 
     def _load(self, filename):
-        parser = cfg.ConfigParser()
+        parser = libdnf.conf.ConfigParser()
         try:
             parser.read(filename)
         except RuntimeError as e:

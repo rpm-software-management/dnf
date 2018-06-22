@@ -22,7 +22,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _, ucd
 import dnf.conf
-import libdnf.conf as cfg
+import libdnf.conf
 import dnf.exceptions
 import dnf.repo
 import glob
@@ -76,7 +76,7 @@ class RepoReader(object):
         """Parse and yield all repositories from a config file."""
 
         substs = self.conf.substitutions
-        parser = cfg.ConfigParser()
+        parser = libdnf.conf.ConfigParser()
         parser.setSubstitutions(substs)
         try:
             parser.read(repofn)
@@ -167,10 +167,10 @@ class ModuleReader(object):
     def _get_module_configs(self, module_path):
         """Parse and yield all module configs from a config file."""
 
-        parser = cfg.ConfigParser()
+        parser = libdnf.conf.ConfigParser()
         try:
             parser.read(module_path)
-        except (cfg.ConfigParser.ParsingError, cfg.ConfigParser.CantOpenFile) as e:
+        except (libdnf.conf.ConfigParser.ParsingError, libdnf.conf.ConfigParser.CantOpenFile) as e:
             msg = str(e)
             raise dnf.exceptions.ConfigError(msg)
 

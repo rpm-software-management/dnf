@@ -34,17 +34,17 @@ import hawkey
 import iniparse
 import logging
 import os
-import libdnf.conf as cfg
+import libdnf.conf
 
-PRIO_EMPTY = cfg.Option.Priority_EMPTY
-PRIO_DEFAULT = cfg.Option.Priority_DEFAULT
-PRIO_MAINCONFIG = cfg.Option.Priority_MAINCONFIG
-PRIO_AUTOMATICCONFIG = cfg.Option.Priority_AUTOMATICCONFIG
-PRIO_REPOCONFIG = cfg.Option.Priority_REPOCONFIG
-PRIO_PLUGINDEFAULT = cfg.Option.Priority_PLUGINDEFAULT
-PRIO_PLUGINCONFIG = cfg.Option.Priority_PLUGINCONFIG
-PRIO_COMMANDLINE = cfg.Option.Priority_COMMANDLINE
-PRIO_RUNTIME = cfg.Option.Priority_RUNTIME
+PRIO_EMPTY = libdnf.conf.Option.Priority_EMPTY
+PRIO_DEFAULT = libdnf.conf.Option.Priority_DEFAULT
+PRIO_MAINCONFIG = libdnf.conf.Option.Priority_MAINCONFIG
+PRIO_AUTOMATICCONFIG = libdnf.conf.Option.Priority_AUTOMATICCONFIG
+PRIO_REPOCONFIG = libdnf.conf.Option.Priority_REPOCONFIG
+PRIO_PLUGINDEFAULT = libdnf.conf.Option.Priority_PLUGINDEFAULT
+PRIO_PLUGINCONFIG = libdnf.conf.Option.Priority_PLUGINCONFIG
+PRIO_COMMANDLINE = libdnf.conf.Option.Priority_COMMANDLINE
+PRIO_RUNTIME = libdnf.conf.Option.Priority_RUNTIME
 
 logger = logging.getLogger('dnf')
 
@@ -70,10 +70,10 @@ class Option(object):
         written to config file.
     """
     def __init__(self, option):
-        if isinstance(option, cfg.Option):
+        if isinstance(option, libdnf.conf.Option):
             self._option = option
         else:
-            self._option = cfg.OptionString(option)
+            self._option = libdnf.conf.OptionString(option)
 
     def _get(self):
         """Get option's value."""
@@ -94,9 +94,9 @@ class Option(object):
         else:
             try:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    self._option.set(priority, cfg.VectorString(value))
-                elif (isinstance(self._option, cfg.OptionBool) or
-                      isinstance(self._option, cfg.OptionChildBool)) and isinstance(value, int):
+                    self._option.set(priority, libdnf.conf.VectorString(value))
+                elif (isinstance(self._option, libdnf.conf.OptionBool) or
+                      isinstance(self._option, libdnf.conf.OptionChildBool)) and isinstance(value, int):
                     self._option.set(priority, bool(value))
                 else:
                     self._option.set(priority, value)
@@ -128,51 +128,51 @@ class Option(object):
 
 class IntOption(Option):
     def __init__(self, default=0):
-        option = cfg.OptionNumberInt32(default)
+        option = libdnf.conf.OptionNumberInt32(default)
         super(IntOption, self).__init__(option)
 
 
 class LongOption(Option):
     def __init__(self, default=0):
-        option = cfg.OptionNumberInt64(default)
+        option = libdnf.conf.OptionNumberInt64(default)
         super(LongOption, self).__init__(option)
 
 
 class BoolOption(Option):
     def __init__(self, default=False):
-        option = cfg.OptionBool(default)
+        option = libdnf.conf.OptionBool(default)
         super(BoolOption, self).__init__(option)
 
 
 class SelectionOption(Option):
     """Handles string values where only specific values are allowed."""
     def __init__(self, default=None, choices=()):
-        option = cfg.OptionEnumString(default, cfg.VectorString(choices))
+        option = libdnf.conf.OptionEnumString(default, libdnf.conf.VectorString(choices))
         super(SelectionOption, self).__init__(option)
 
 
 class ListOption(Option):
     """Handles string values where only specific values are allowed."""
     def __init__(self, default=None):
-        option = cfg.OptionStringList(cfg.VectorString(default))
+        option = libdnf.conf.OptionStringList(libdnf.conf.VectorString(default))
         super(ListOption, self).__init__(option)
 
 
 class SecondsOption(Option):
     def __init__(self, default=0):
-        option = cfg.OptionSeconds(default)
+        option = libdnf.conf.OptionSeconds(default)
         super(SecondsOption, self).__init__(option)
 
 
 class StringOption(Option):
     def __init__(self, default=""):
-        option = cfg.OptionString(default)
+        option = libdnf.conf.OptionString(default)
         super(StringOption, self).__init__(option)
 
 
 class PathOption(Option):
     def __init__(self, default="", exists=False, absPath=False):
-        option = cfg.OptionPath(default, exists, absPath)
+        option = libdnf.conf.OptionPath(default, exists, absPath)
         super(PathOption, self).__init__(option)
 
 
@@ -211,7 +211,7 @@ class BaseConfig(object):
             value = option().getValue()
         except Exception as ex:
             return None
-        if isinstance(value, cfg.VectorString):
+        if isinstance(value, libdnf.conf.VectorString):
             return list(value)
         if type(value).__name__ == "VectorString":
             # every module generated with swig provides a different VectorString class
@@ -239,9 +239,9 @@ class BaseConfig(object):
         else:
             try:
                 if isinstance(value, list) or isinstance(value, tuple):
-                    option().set(priority, cfg.VectorString(value))
-                elif (isinstance(option(), cfg.OptionBool) or
-                      isinstance(option(), cfg.OptionChildBool)) and isinstance(value, int):
+                    option().set(priority, libdnf.conf.VectorString(value))
+                elif (isinstance(option(), libdnf.conf.OptionBool) or
+                      isinstance(option(), libdnf.conf.OptionChildBool)) and isinstance(value, int):
                     option().set(priority, bool(value))
                 else:
                     option().set(priority, value)
@@ -377,7 +377,7 @@ class BaseConfig(object):
         # out which one is which
         if section_id not in ini:
             for sect in ini:
-                if cfg.ConfigParser.substitute(sect, substitutions) == section_id:
+                if libdnf.conf.ConfigParser.substitute(sect, substitutions) == section_id:
                     section_id = sect
 
         for name, value in modify.items():
@@ -394,7 +394,7 @@ class MainConf(BaseConfig):
     """Configuration option definitions for dnf.conf's [main] section."""
     def __init__(self, section='main', parser=None):
         # pylint: disable=R0915
-        config = cfg.ConfigMain()
+        config = libdnf.conf.ConfigMain()
         super(MainConf, self).__init__(config, section, parser)
         self._get_option('pluginpath')._set([dnf.const.PLUGINPATH], PRIO_DEFAULT)
         self._get_option('pluginconfpath')._set([dnf.const.PLUGINCONFPATH], PRIO_DEFAULT)
@@ -448,7 +448,7 @@ class MainConf(BaseConfig):
         if not isinstance(val, str):
             if any(os.path.exists(os.path.join(self._get_value('installroot'),
                                                p.lstrip('/'))) for p in val):
-                opt._set(cfg.VectorString([self._prepend_installroot_path(p) for p in val]), prio)
+                opt._set(libdnf.conf.VectorString([self._prepend_installroot_path(p) for p in val]), prio)
         elif os.path.exists(os.path.join(self._get_value('installroot'),
                                          val.lstrip('/'))):
             opt._set(self._prepend_installroot_path(val), prio)
@@ -462,7 +462,7 @@ class MainConf(BaseConfig):
 
     def _prepend_installroot_path(self, path):
         root_path = os.path.join(self._get_value('installroot'), path.lstrip('/'))
-        return cfg.ConfigParser.substitute(root_path, self.substitutions)
+        return libdnf.conf.ConfigParser.substitute(root_path, self.substitutions)
 
     def _configure_from_options(self, opts):
         """Configure parts of CLI from the opts """
@@ -575,7 +575,7 @@ class MainConf(BaseConfig):
         # :api
         if filename is None:
             filename = self._get_value('config_file_path')
-        self._parser = cfg.ConfigParser()
+        self._parser = libdnf.conf.ConfigParser()
         try:
             self._parser.read(filename)
         except RuntimeError as e:
@@ -596,9 +596,9 @@ class RepoConf(BaseConfig):
     """Option definitions for repository INI file sections."""
 
     def __init__(self, parent, section=None, parser=None):
-        super(RepoConf, self).__init__(cfg.ConfigRepo(
-            parent._config if parent else cfg.ConfigMain()), section, parser)
-        self._masterConfig = parent._config if parent else cfg.ConfigMain()
+        super(RepoConf, self).__init__(libdnf.conf.ConfigRepo(
+            parent._config if parent else libdnf.conf.ConfigMain()), section, parser)
+        self._masterConfig = parent._config if parent else libdnf.conf.ConfigMain()
 
     def _configure_from_options(self, opts):
         """Configure repos from the opts. """
