@@ -1,6 +1,5 @@
 # default dependencies
-%global hawkey_version 0.17.2
-%global librepo_version 1.9.0
+%global hawkey_version 0.18.0
 %global libcomps_version 0.1.8
 %global libmodulemd_version 1.4.0
 %global rpm_version 4.14.0
@@ -72,7 +71,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        3.3.0
+Version:        3.4.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -166,7 +165,6 @@ BuildRequires:  python2-hawkey >= %{hawkey_version}
 BuildRequires:  python2-libdnf >= %{hawkey_version}
 BuildRequires:  python2-libcomps >= %{libcomps_version}
 BuildRequires:  python2-libdnf
-BuildRequires:  python2-librepo >= %{librepo_version}
 BuildRequires:  python2-nose
 BuildRequires:  libmodulemd >= %{libmodulemd_version}
 Requires:       libmodulemd >= %{libmodulemd_version}
@@ -194,7 +192,6 @@ Requires:       python2-hawkey >= %{hawkey_version}
 Requires:       python2-libdnf >= %{hawkey_version}
 Requires:       python2-libcomps >= %{libcomps_version}
 Requires:       python2-libdnf
-Requires:       python2-librepo >= %{librepo_version}
 %if 0%{?rhel} && 0%{?rhel} <= 7
 BuildRequires:  python-iniparse
 Requires:       python-iniparse
@@ -223,7 +220,6 @@ BuildRequires:  python3-libdnf >= %{hawkey_version}
 BuildRequires:  python3-iniparse
 BuildRequires:  python3-libcomps >= %{libcomps_version}
 BuildRequires:  python3-libdnf
-BuildRequires:  python3-librepo >= %{librepo_version}
 BuildRequires:  libmodulemd >= %{libmodulemd_version}
 Requires:       libmodulemd >= %{libmodulemd_version}
 BuildRequires:  python3-gobject-base
@@ -243,7 +239,6 @@ Requires:       python3-libdnf >= %{hawkey_version}
 Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
 Requires:       python3-libdnf
-Requires:       python3-librepo >= %{librepo_version}
 BuildRequires:  python3-rpm >= %{rpm_version}
 Requires:       python3-rpm >= %{rpm_version}
 %if 0%{?rhel} && 0%{?rhel} <= 7
