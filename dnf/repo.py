@@ -520,7 +520,7 @@ class Repo(dnf.conf.RepoConf):
 
         """
         if not self.metadata:
-            self._repo.loadCache()
+            self._repo.loadCache(False)
         if self.metadata:
             if self.metadata_expire == -1:
                 return True, None
