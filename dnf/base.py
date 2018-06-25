@@ -24,6 +24,8 @@ from __future__ import division
 from __future__ import print_function
 from __future__ import unicode_literals
 
+import argparse
+
 import libdnf.transaction
 
 from dnf.comps import CompsQuery
@@ -32,7 +34,7 @@ from dnf.module.persistor import ModulePersistor
 from dnf.module.metadata_loader import ModuleMetadataLoader
 from dnf.module.repo_module_dict import RepoModuleDict
 from dnf.module.repo_module_version import RepoModuleVersion
-from dnf.util import first
+from dnf.util import _parse_specs
 from dnf.db.history import SwdbInterface
 from dnf.yum import misc
 from functools import reduce
@@ -112,6 +114,7 @@ class Base(object):
         self._allow_erasing = False
         self._repo_set_imported_gpg_keys = set()
         self.repo_module_dict = RepoModuleDict(self)
+        self.output = None
 
     def __enter__(self):
         return self
@@ -576,6 +579,8 @@ class Base(object):
             self._goal = None
             if self._sack is not None:
                 self._goal = dnf.goal.Goal(self._sack)
+            if self._module_persistor is not None:
+                self._module_persistor.reset()
             self.history.close()
             self._comps_trans = dnf.comps.TransactionBunch()
             self._transaction = None
@@ -1562,13 +1567,13 @@ class Base(object):
 
         return dnf.comps.Solver(self.history, self._comps, reason_fn)
 
-    def environment_install(self, env_id, types, exclude=None, strict=True):
+    def environment_install(self, env_id, types, exclude=None, strict=True, exclude_groups=None):
         assert dnf.util.is_string_type(env_id)
         solver = self._build_comps_solver()
         types = self._translate_comps_pkg_types(types)
         trans = dnf.comps.install_or_skip(solver._environment_install,
                                           env_id, types, exclude or set(),
-                                          strict)
+                                          strict, exclude_groups)
         if not trans:
             return 0
         return self._add_comps_trans(trans)
@@ -1624,7 +1629,7 @@ class Base(object):
                      grp_id, trans.install)
         return self._add_comps_trans(trans)
 
-    def env_group_install(self, patterns, types, strict=True):
+    def env_group_install(self, patterns, types, strict=True, exclude=None, exclude_groups=None):
         q = CompsQuery(self.comps, self.history,
                        CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
                        CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
@@ -1638,9 +1643,10 @@ class Base(object):
                 done = False
                 continue
             for group_id in res.groups:
-                cnt += self.group_install(group_id, types, strict=strict)
+                cnt += self.group_install(group_id, types, exclude=exclude, strict=strict)
             for env_id in res.environments:
-                cnt += self.environment_install(env_id, types, strict=strict)
+                cnt += self.environment_install(env_id, types, exclude=exclude, strict=strict,
+                                                exclude_groups=exclude_groups)
         if not done and strict:
             raise dnf.exceptions.Error(_('Nothing to do.'))
         return cnt
@@ -1735,6 +1741,10 @@ class Base(object):
             self._goal.install(select=sltr, optional=(not strict))
         return len(available)
 
+    def enable_module(self, specs, save_immediately=False):
+        for spec in specs:
+            self.repo_module_dict.enable(spec, save_immediately)
+
     def install_module(self, specs, strict=True):
         """
         Install module based on provided specs
@@ -1743,6 +1753,97 @@ class Base(object):
         :return: skipped/not installed group specs or problematic module specs
         """
         return self.repo_module_dict.install(specs, strict)
+
+    def _categorize_specs(self, install, exclude):
+        """
+        Categorize :param install and :param exclude list into two groups each (packages and groups)
+
+        :param install: list of specs, whether packages ('foo') or groups/modules ('@bar')
+        :param exclude: list of specs, whether packages ('foo') or groups/modules ('@bar')
+        :return: categorized install and exclude specs (stored in argparse.Namespace class)
+
+        To access packages use: specs.pkg_specs,
+        to access groups use: specs.grp_specs
+        """
+        install_specs = argparse.Namespace()
+        exclude_specs = argparse.Namespace()
+        _parse_specs(install_specs, install)
+        _parse_specs(exclude_specs, exclude)
+
+        return install_specs, exclude_specs
+
+    def _exclude_package_specs(self, exclude_specs):
+        glob_excludes = [exclude for exclude in exclude_specs.pkg_specs
+                         if dnf.util.is_glob_pattern(exclude)]
+        excludes = [exclude for exclude in exclude_specs.pkg_specs
+                    if exclude not in glob_excludes]
+
+        exclude_query = self.sack.query().filter(name=excludes)
+        glob_exclude_query = self.sack.query().filter(name__glob=glob_excludes)
+
+        self.sack.add_excludes(exclude_query)
+        self.sack.add_excludes(glob_exclude_query)
+
+    def _exclude_groups(self, group_specs):
+        group_excludes = []
+
+        for group_spec in group_specs:
+            if '/' in group_spec:
+                split = group_spec.split('/')
+                group_spec = split[0]
+
+            environment = self.comps.environment_by_pattern(group_spec)
+            if environment:
+                for group in environment.groups_iter():
+                    for pkg in group.packages_iter():
+                        group_excludes.append(pkg.name)
+            else:
+                group = self.comps.group_by_pattern(group_spec)
+                if not group:
+                    continue
+
+                for pkg in group.packages_iter():
+                    group_excludes.append(pkg.name)
+
+        exclude_query = self.sack.query().filter(name=group_excludes)
+        self.sack.add_excludes(exclude_query)
+
+    def _install_groups(self, group_specs, excludes, skipped, strict=True):
+        for group_spec in group_specs:
+            try:
+                types = self.conf.group_package_types
+
+                if '/' in group_spec:
+                    split = group_spec.split('/')
+                    group_spec = split[0]
+                    types = split[1].split(',')
+
+                self.env_group_install([group_spec], types, strict, excludes.pkg_specs,
+                                       excludes.grp_specs)
+            except dnf.exceptions.Error:
+                skipped.append("@" + group_spec)
+
+    def install_specs(self, install, exclude=None, reponame=None, strict=True, forms=None):
+        if exclude is None:
+            exclude = []
+
+        skipped = []
+        install_specs, exclude_specs = self._categorize_specs(install, exclude)
+
+        self._exclude_package_specs(exclude_specs)
+        for spec in install_specs.pkg_specs:
+            try:
+                self.install(spec, reponame=reponame, strict=strict, forms=forms)
+            except dnf.exceptions.Error:
+                skipped.append(spec)
+
+        groups = self.install_module(install_specs.grp_specs, strict)
+
+        self.read_comps(arch_filter=True)
+        self._exclude_groups(exclude_specs.grp_specs)
+        self._install_groups(groups, exclude_specs, skipped, strict)
+
+        return skipped
 
     def install(self, pkg_spec, reponame=None, strict=True, forms=None):
         # :api

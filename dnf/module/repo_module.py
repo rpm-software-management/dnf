@@ -80,6 +80,9 @@ class RepoModule(OrderedDict):
         if self.conf.enabled._get() and self.conf.stream._get() == stream:
             return
 
+        if not self.parent.base.conf.assumeno and not self.parent.base.output:
+            assumeyes = True
+
         if self.conf.stream._get() is not "" and \
                 str(self.conf.stream._get()) != str(stream) and \
                 not assumeyes:
@@ -92,7 +95,8 @@ class RepoModule(OrderedDict):
             else:
                 raise EnabledStreamException("{}:{}".format(self.name, stream))
 
-        self.parent.base._module_persistor.set_data(self, stream=stream, enabled=True)
+        self.parent.base._module_persistor.set_data(self, stream=stream, enabled=True,
+                                                    version=-1, profiles=[])
 
     def disable(self):
         self.parent.base._module_persistor.set_data(self, enabled=False, profiles=[])

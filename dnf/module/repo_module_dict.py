@@ -27,7 +27,7 @@ from dnf.module import module_messages, NOTHING_TO_SHOW, \
 from dnf.module.exceptions import NoStreamSpecifiedException, NoModuleException, \
     EnabledStreamException, ProfileNotInstalledException, NoProfileToRemoveException, \
     VersionLockedException, CannotLockVersionException, \
-    DifferentStreamEnabledException
+    DifferentStreamEnabledException, InstallMultipleStreamsException
 from dnf.module.repo_module import RepoModule
 from dnf.module.subject import ModuleSubject
 from dnf.selector import Selector
@@ -339,9 +339,11 @@ class RepoModuleDict(OrderedDict):
                 skipped.append(module_spec)
                 continue
 
-            key = "{}:{}".format(module_version.name, module_version.stream)
+            key = module_version.name
             if key in best_versions:
                 best_version, profiles, default_profiles = best_versions[key]
+                if best_version.stream != module_version.stream:
+                    raise InstallMultipleStreamsException(module_version.name)
 
                 if module_form.profile:
                     profiles.append(module_form.profile)

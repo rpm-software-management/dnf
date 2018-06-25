@@ -51,6 +51,12 @@ class EnabledStreamException(dnf.exceptions.Error):
         super(EnabledStreamException, self).__init__(value)
 
 
+class InstallMultipleStreamsException(dnf.exceptions.Error):
+    def __init__(self, module_spec):
+        value = "Cannot install more streams from module '{}' at the same time".format(module_spec)
+        super(InstallMultipleStreamsException, self).__init__(value)
+
+
 class DifferentStreamEnabledException(dnf.exceptions.Error):
     def __init__(self, module_spec):
         value = "Different stream enabled for module: {}".format(module_spec)
