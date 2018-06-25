@@ -47,6 +47,34 @@ logger = logging.getLogger('dnf')
 """DNF Utilities."""
 
 
+def _parse_specs(namespace, values):
+    """
+    Categorize :param values list into packages, groups and filenames
+
+    :param namespace: argparse.Namespace, where specs will be stored
+    :param values: list of specs, whether packages ('foo') or groups/modules ('@bar')
+                   or filenames ('*.rmp', 'http://*', ...)
+
+    To access packages use: specs.pkg_specs,
+    to access groups use: specs.grp_specs,
+    to access filenames use: specs.filenames
+    """
+
+    setattr(namespace, "filenames", [])
+    setattr(namespace, "grp_specs", [])
+    setattr(namespace, "pkg_specs", [])
+    for value in values:
+        schemes = dnf.pycomp.urlparse.urlparse(value)[0]
+        if value.endswith('.rpm'):
+            namespace.filenames.append(value)
+        elif schemes and schemes in ('http', 'ftp', 'file', 'https'):
+            namespace.filenames.append(value)
+        elif value.startswith('@'):
+            namespace.grp_specs.append(value[1:])
+        else:
+            namespace.pkg_specs.append(value)
+
+
 def _non_repo_handle(conf=None):
     handle = librepo.Handle()
     handle.useragent = dnf.const.USER_AGENT

@@ -1,6 +1,0 @@
-[boltron]
-name=Boltron
-baseurl=https://download.fedoraproject.org/pub/alt/unofficial/releases/26/Server/$basearch/os/
-enabled=1
-gpgcheck=0
-metadata_expire=0

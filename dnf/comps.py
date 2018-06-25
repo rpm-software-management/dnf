@@ -83,14 +83,14 @@ def _fn_display_order(group):
 
 
 def install_or_skip(install_fnc, grp_or_env_id, types, exclude=None,
-                    strict=True):
+                    strict=True, exclude_groups=None):
     """Either mark in persistor as installed given `grp_or_env` (group
        or environment) or skip it (if it's already installed).
        `install_fnc` has to be Solver._group_install
        or Solver._environment_install.
        """
     try:
-        return install_fnc(grp_or_env_id, types, exclude, strict)
+        return install_fnc(grp_or_env_id, types, exclude, strict, exclude_groups)
     except dnf.comps.CompsError as e:
         logger.warning("%s, %s", ucd(e)[:-1], _("skipping."))
 
@@ -550,7 +550,7 @@ class Solver(object):
         assert dnf.util.is_string_type(group_id)
         return self.history.env.is_removable_group(group_id)
 
-    def _environment_install(self, env_id, pkg_types, exclude, strict=True):
+    def _environment_install(self, env_id, pkg_types, exclude, strict=True, exclude_groups=None):
         assert dnf.util.is_string_type(env_id)
         comps_env = self.comps._environment_by_id(env_id)
         swdb_env = self.history.env.new(env_id, comps_env.name, comps_env.ui_name, pkg_types)
@@ -558,10 +558,14 @@ class Solver(object):
 
         trans = TransactionBunch()
         for comps_group in comps_env.mandatory_groups:
+            if exclude_groups and comps_group in exclude_groups:
+                continue
             trans += self._group_install(comps_group.id, pkg_types, exclude, strict)
             swdb_env.addGroup(comps_group.id, True, MANDATORY)
 
         for comps_group in comps_env.optional_groups:
+            if exclude_groups and comps_group in exclude_groups:
+                continue
             swdb_env.addGroup(comps_group.id, False, OPTIONAL)
             # TODO: if a group is already installed, mark it as installed?
         return trans
@@ -611,7 +615,7 @@ class Solver(object):
         self.history.env.upgrade(swdb_env)
         return trans
 
-    def _group_install(self, group_id, pkg_types, exclude=None, strict=True):
+    def _group_install(self, group_id, pkg_types, exclude=None, strict=True, exclude_groups=None):
         assert dnf.util.is_string_type(group_id)
         comps_group = self.comps._group_by_id(group_id)
         if not comps_group:
