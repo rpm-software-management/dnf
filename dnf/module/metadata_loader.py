@@ -33,7 +33,7 @@ class ModuleMetadataLoader(object):
     @property
     def _metadata_fn(self):
         if self.repo.metadata:
-            return self.repo.metadata._repo_dct.get("modules")
+            return self.repo._repo.getModulesFn()
 
     def load(self):
         if self.repo is None:
@@ -41,7 +41,7 @@ class ModuleMetadataLoader(object):
 
         yaml_file_path = None
         if not self._metadata_fn:
-            repodata_dir = self.repo._cachedir + "/repodata/"
+            repodata_dir = self.repo._repo.getCachedir() + "/repodata/"
             files = os.listdir(repodata_dir)
             for file in files:
                 if "modules.yaml" in file:
@@ -49,7 +49,7 @@ class ModuleMetadataLoader(object):
                     break
 
         if not self._metadata_fn and not yaml_file_path:
-            raise MissingYamlException(self.repo._cachedir)
+            raise MissingYamlException(self.repo._repo.getCachedir())
 
         openfunc = open
         if (self._metadata_fn and self._metadata_fn.endswith('.gz')) \
