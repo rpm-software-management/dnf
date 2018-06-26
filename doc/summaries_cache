@@ -1,2338 +1,2542 @@
 [
     [
-        916657, 
+        916657,
         "dnf remove wants to downgrade packages; fails on transaction check"
-    ], 
+    ],
     [
-        921294, 
+        921294,
         "dnf downgrade failure"
-    ], 
+    ],
     [
-        922521, 
+        922521,
         "DNF crashes when passing packages to it via pipe"
-    ], 
+    ],
     [
-        926871, 
+        926871,
         "[abrt] download_packages:AttributeError: 'Repo' object has no attribute 'cache'"
-    ], 
+    ],
     [
-        878826, 
+        878826,
         "[rfe] dnf could use systemd timer unit rather than crontabs"
-    ], 
+    ],
     [
-        922664, 
+        922664,
         "an option for disabling the regular metadata sync"
-    ], 
+    ],
     [
-        892064, 
+        892064,
         "hourly dnf makecache too frequent, also consider using ionice"
-    ], 
+    ],
     [
-        919769, 
+        919769,
         "dnf runs makecache hourly despite laptop power state"
-    ], 
+    ],
     [
-        947258, 
+        947258,
         "dnf doesn't erase excluded packages"
-    ], 
+    ],
     [
-        889202, 
+        889202,
         "[rfe] [repos] add support for skip_if_unavailable in repository config"
-    ], 
+    ],
     [
-        923384, 
+        923384,
         "DNF uses yum web signature"
-    ], 
+    ],
     [
-        950722, 
+        950722,
         "[abrt] dnf-0.3.2-1.gitf3818b4.fc20: queries.py:179:_construct_result:AttributeError: 'NoneType' object has no attribute 'query'"
-    ], 
+    ],
     [
-        903775, 
+        903775,
         "Update command is deprecated but nomenclature still being used"
-    ], 
+    ],
     [
-        887317, 
+        887317,
         "Dnf should beter report upgrades via obsoletes."
-    ], 
+    ],
     [
-        914919, 
+        914919,
         "DNF does not have   group install"
-    ], 
+    ],
     [
-        922667, 
+        922667,
         "the cronned 'dnf makecache' runs should give up quickly if there's network/checksumming issues"
-    ], 
+    ],
     [
-        958452, 
+        958452,
         "dnf update Produces Log Messages Involving \"ts_done state\""
-    ], 
+    ],
     [
-        959990, 
+        959990,
         "dnf dist-sync recommended in manual page but is missing from dnf's command line options"
-    ], 
+    ],
     [
-        961549, 
+        961549,
         "[abrt] dnf-0.3.4-1.git03fd687.fc19: __init__.py:826:perform:Exception: (10, 'Error HTTP/FTP status code: 404', 404)"
-    ], 
+    ],
     [
-        962188, 
+        962188,
         "obsoletes sometimes result in \"ERROR with transaction check vs depsolve\""
-    ], 
+    ],
     [
-        966372, 
+        966372,
         "dnf prints an empty python list after running without root privileges"
-    ], 
+    ],
     [
-        965410, 
+        965410,
         "\"dnf clean expire-cache\" does not have any effect"
-    ], 
+    ],
     [
-        963627, 
+        963627,
         "dnf shows way over 100% in its progress bar"
-    ], 
+    ],
     [
-        965114, 
+        965114,
         "When running dnf using file:/// as the media, it tries to erase packages in file:///"
-    ], 
+    ],
     [
-        964467, 
+        964467,
         "group install is broken"
-    ], 
+    ],
     [
-        963680, 
+        963680,
         "dnf dies with a traceback during update"
-    ], 
+    ],
     [
-        963133, 
+        963133,
         "name is misprinted when package is not found"
-    ], 
+    ],
     [
-        916662, 
+        916662,
         "dnf remove wants to install new packages"
-    ], 
+    ],
     [
-        967732, 
+        967732,
         "[abrt] dnf-0.3.6-1.git24ce938.fc19: __init__.py:364:hashopen:DBNoSuchFileError: (2, 'Datei oder Verzeichnis nicht gefunden')"
-    ], 
+    ],
     [
-        908491, 
+        908491,
         "[rfe] list recent"
-    ], 
+    ],
     [
-        968159, 
+        968159,
         "repo_rpmmd.c: base:xml attr in <location> is ignored"
-    ], 
+    ],
     [
-        974427, 
+        974427,
         "dnf fails on all commands with fatal error: \"global name 'os' is not defined\""
-    ], 
+    ],
     [
-        974866, 
+        974866,
         "dnf crashes if neither baseurl nor mirrorlist are defined"
-    ], 
+    ],
     [
-        976652, 
+        976652,
         "[abrt] UnicodeEncodeError with 'dnf info checkpolicy'"
-    ], 
+    ],
     [
-        975858, 
+        975858,
         "dnf can't install in an empty installroot"
-    ], 
+    ],
     [
-        964584, 
+        964584,
         "dnf doesn't replace $releasever/$basearch in mirror url"
-    ], 
+    ],
     [
-        979942, 
+        979942,
         "[abrt] cli.py:1015:_configure_repos:KeyError: <repo id>"
-    ], 
+    ],
     [
-        980227, 
+        980227,
         "[locking] OSError when a long running transaction gets metadata files written over by a concurrent 'dnf makecache'"
-    ], 
+    ],
     [
-        981310, 
+        981310,
         "NameError: global name 'to_utf8' is not defined"
-    ], 
+    ],
     [
-        977661, 
+        977661,
         "[abrt] Ctrl+C ends up with a TypeError traceback involving Base.__exit__() and Repo._handle_load()"
-    ], 
+    ],
     [
-        984483, 
+        984483,
         "default to skip_if_unavailable=True"
-    ], 
+    ],
     [
-        986545, 
+        986545,
         "dnf mismatching it's librepo dep in rawhide"
-    ], 
+    ],
     [
-        979042, 
+        979042,
         "Slow download of packages"
-    ], 
+    ],
     [
-        977753, 
+        977753,
         "Repository \"@System\" instead of \"fedora\""
-    ], 
+    ],
     [
-        996138, 
+        996138,
         "[abrt] install_grouplist:UnicodeDecodeError during 'dnf group install'"
-    ], 
+    ],
     [
-        993916, 
+        993916,
         "'upgrade' command displays old version numbers in summary, rather than new version numbers"
-    ], 
+    ],
     [
-        997403, 
+        997403,
         "Error message instructs users to invoke 'yum' rather than 'dnf' to fix a problem"
-    ], 
+    ],
     [
-        1002508, 
+        1002508,
         "Updated to install any packages \"An Curl handle error: Unsupported protocol\""
-    ], 
+    ],
     [
-        1002798, 
+        1002798,
         "Error when checking librepo explicit requires"
-    ], 
+    ],
     [
-        998859, 
+        998859,
         "\"dnf upgrade --best\" will always install 64bits package when 32bit package is installed"
-    ], 
+    ],
     [
-        1006366, 
+        1006366,
         "dnf makecache runs on LiveCD"
-    ], 
+    ],
     [
-        1008444, 
+        1008444,
         "confusing message when removing packages"
-    ], 
+    ],
     [
-        1003220, 
+        1003220,
         "[abrt] dnf-0.3.11-1.git7d717c7.fc19: output.py:838:_enc:TypeError: object of type 'NoneType' has no len()"
-    ], 
+    ],
     [
-        909744, 
+        909744,
         "[rfe] support parallel downloads"
-    ], 
+    ],
     [
-        984529, 
+        984529,
         "[rfe] fastest mirror"
-    ], 
+    ],
     [
-        967798, 
+        967798,
         "[RFE] repositories costs"
-    ], 
+    ],
     [
-        995459, 
+        995459,
         "conflicting requests when trying to install locally available packages"
-    ], 
+    ],
     [
-        1013764, 
+        1013764,
         "DNF group remove doesn't work"
-    ], 
+    ],
     [
-        1013773, 
+        1013773,
         "DNF group info doesn't work"
-    ], 
+    ],
     [
-        1017278, 
+        1017278,
         "dnf does not notice file conflicts"
-    ], 
+    ],
     [
-        1021087, 
+        1021087,
         "traceback during download after a transaction with obsoletes"
-    ], 
+    ],
     [
-        878348, 
+        878348,
         "'dnf history undo' support missing"
-    ], 
+    ],
     [
-        880524, 
+        880524,
         "[kernel] managing multiple kernel packages"
-    ], 
+    ],
     [
-        1019957, 
+        1019957,
         "'dnf groups summary' traceback (global name 'patterns' is not defined)"
-    ], 
+    ],
     [
-        1020101, 
+        1020101,
         "'dnf grouplist' throws NameError"
-    ], 
+    ],
     [
-        1020934, 
+        1020934,
         "traceback in \"dnf repolist\""
-    ], 
+    ],
     [
-        1023486, 
+        1023486,
         "groups operations failing due to a libcomps API change in its latest version (KeyError: 'en_US.UTF-8')"
-    ], 
+    ],
     [
-        1019170, 
+        1019170,
         "handling wildcards in the version"
-    ], 
+    ],
     [
-        1024776, 
+        1024776,
         "librepo version mismatch (no attribute 'LRO_FASTESTMIRRORCACHE')"
-    ], 
+    ],
     [
-        1025650, 
+        1025650,
         "[abrt] dnf-0.4.6-1.fc20: i18n.py:119:ucd:UnicodeEncodeError: 'ascii' codec can't encode character u'\\xe9' in position 51: ordinal not in range(128)"
-    ], 
+    ],
     [
-        1014563, 
+        1014563,
         "Support Python 3 in DNF"
-    ], 
+    ],
     [
-        1029948, 
+        1029948,
         "dnf does not show all desktop environments in dnf groups list output"
-    ], 
+    ],
     [
-        1030998, 
+        1030998,
         "install doesn't work for '*/binaryname' patterns"
-    ], 
+    ],
     [
-        1030297, 
+        1030297,
         "dnf doesn't support http urls"
-    ], 
+    ],
     [
-        1030980, 
+        1030980,
         "dnf downgrade PACKAGE, misleading message about possible typo if PACKAGE is not installed"
-    ], 
+    ],
     [
-        884615, 
+        884615,
         "RFE: Provide list of packages installed on top of the system"
-    ], 
+    ],
     [
-        963137, 
+        963137,
         "[rfe] perform complex packaging operations as a CLI user"
-    ], 
+    ],
     [
-        991038, 
+        991038,
         "lacks history rollback"
-    ], 
+    ],
     [
-        1032455, 
+        1032455,
         "[abrt] dnf-0.4.7-1.fc20: decoder.py:383:raw_decode:ValueError: No JSON object could be decoded"
-    ], 
+    ],
     [
-        1034607, 
+        1034607,
         "dnf does not work with media repo"
-    ], 
+    ],
     [
-        1036116, 
+        1036116,
         "dnf install failed with exception"
-    ], 
+    ],
     [
-        967264, 
+        967264,
         "[plugins] Support post-transaction actions"
-    ], 
+    ],
     [
-        1018284, 
+        1018284,
         "[rfe] [api] refactor check for valid id into separate function"
-    ], 
+    ],
     [
-        1035164, 
+        1035164,
         "[abrt] dnf-0.4.7-1.fc20: miscutils.py:61:checkSig:OSError: [Errno 2] Adres\u00e1\u0159 nebo soubor neexistuje: '/var/cache/dnf/x86_64/20/updates-testing/packages/kernel-3.11.9-300.fc20.x86_64.rpm'"
-    ], 
+    ],
     [
-        1036147, 
+        1036147,
         "[locking] Traceback for dnf search if running under su - USER"
-    ], 
+    ],
     [
-        1036211, 
+        1036211,
         "Install groups using @ sign"
-    ], 
+    ],
     [
-        1038403, 
+        1038403,
         "[abrt] dnf-0.4.9-1.fc20: base.py:1832:handle_erase:AssertionError"
-    ], 
+    ],
     [
-        1038937, 
+        1038937,
         "[plugins] [api] Add hook for metadata download complete event"
-    ], 
+    ],
     [
-        1040255, 
+        1040255,
         "dnf show wrong Installed size when  install  packages"
-    ], 
+    ],
     [
-        1044502, 
+        1044502,
         "[abrt] dnf: base.py:125:_add_repo_to_sack:UnicodeDecodeError: 'ascii' codec can't decode byte 0xd0 in position 113: ordinal not in range(128)"
-    ], 
+    ],
     [
-        1044981, 
+        1044981,
         "[doc] [rfe] support setopt"
-    ], 
+    ],
     [
-        1044999, 
+        1044999,
         "[doc] show dependencies during update"
-    ], 
+    ],
     [
-        1048402, 
+        1048402,
         "[abrt] dnf: cli.py:1521:search:AttributeError: 'module' object has no attribute 'exception'"
-    ], 
+    ],
     [
-        1048572, 
+        1048572,
         "dnf resolve failure"
-    ], 
+    ],
     [
-        1048716, 
+        1048716,
         "man page does not mention sub command remove"
-    ], 
+    ],
     [
-        1048719, 
+        1048719,
         "Minor error in 'dnf --help', using the package name Yum instead of dnf"
-    ], 
+    ],
     [
-        1048988, 
+        1048988,
         "[plugins] [api] add a hook for MD refresh"
-    ], 
+    ],
     [
-        1045737, 
+        1045737,
         "[RFE] 'throttle' option."
-    ], 
+    ],
     [
-        1048468, 
+        1048468,
         "dnf --cacheonly list installed tries to download repodata"
-    ], 
+    ],
     [
-        1048488, 
+        1048488,
         "AssertionError on invalid error log level"
-    ], 
+    ],
     [
-        1049025, 
+        1049025,
         "Incorrect dependency check on removal"
-    ], 
+    ],
     [
-        1051554, 
+        1051554,
         "disable fastestmirror by default (and make it configurable)"
-    ], 
+    ],
     [
-        909468, 
+        909468,
         "[rfe] delta rpm support"
-    ], 
+    ],
     [
-        1030440, 
+        1030440,
         "[RFE] bash completion support"
-    ], 
+    ],
     [
-        1046244, 
+        1046244,
         "dnf doesn't keep the downloaded packages in the cache"
-    ], 
+    ],
     [
-        1055051, 
+        1055051,
         "things like ' dnf install \"kernel-devel-uname-r = 3.12.8-300.fc20.x86_64\" ' don't work"
-    ], 
+    ],
     [
-        1056400, 
+        1056400,
         "DNF not support url installation for a package"
-    ], 
+    ],
     [
-        1062390, 
+        1062390,
         "dnf.rpmUtils.arch.getBaseArch() doesn't return identical results to yum's rpmUtils.arch.getBaseArch()"
-    ], 
+    ],
     [
-        1062847, 
+        1062847,
         "dnf man page errors"
-    ], 
+    ],
     [
-        1063022, 
+        1063022,
         "[abrt] dnf: i18n.py:38:write:UnicodeEncodeError: 'ascii' codec can't encode character u'\\xe9' in position 12: ordinal not in range(128)"
-    ], 
+    ],
     [
-        1064148, 
+        1064148,
         "DNF attempts to remove packages from local file-based repository"
-    ], 
+    ],
     [
-        1048788, 
+        1048788,
         "[abrt] dnf: __init__.py:183:install:ArchException: Used arch is unknown."
-    ], 
+    ],
     [
-        1065728, 
+        1065728,
         "[doc] Metadata expire configurable per repository"
-    ], 
+    ],
     [
-        1065879, 
+        1065879,
         "[API] provides is missing in queries documentation"
-    ], 
+    ],
     [
-        1065959, 
+        1065959,
         "dnf tab completion should use \"distro-sync\" instead of \"distribution-synchronization\""
-    ], 
+    ],
     [
-        1066743, 
+        1066743,
         "[doc] `dnf clean` should function or warn when run as normal user"
-    ], 
+    ],
     [
-        1069996, 
+        1069996,
         "[abrt] dnf: repo.py:312:start:AttributeError: 'NoneType' object has no attribute 'start'"
-    ], 
+    ],
     [
-        1059704, 
+        1059704,
         "[api] dnf.base.Base.read_comps() fails when there's no comps"
-    ], 
+    ],
     [
-        1058224, 
+        1058224,
         "the system cache should be world readable by default"
-    ], 
+    ],
     [
-        1069538, 
+        1069538,
         "DNF doesn't support \"never\" or \"-1\" for metadata_expire option unlike yum"
-    ], 
+    ],
     [
-        1070598, 
+        1070598,
         "problems downloading large files (and counting past 100%)"
-    ], 
+    ],
     [
-        1070710, 
+        1070710,
         "dnf.Base.read_comps() fails in Python3, works ok in Python2"
-    ], 
+    ],
     [
-        1071323, 
+        1071323,
         "[api] [rfe]: dnf.repo & dnf.repodict API extention"
-    ], 
+    ],
     [
-        1071455, 
+        1071455,
         "[i18n] Wrong characters in Japanese translatated message"
-    ], 
+    ],
     [
-        1071501, 
+        1071501,
         "[drpm] fallback to full RPM download on drpm failure"
-    ], 
+    ],
     [
-        1071518, 
+        1071518,
         "curl error"
-    ], 
+    ],
     [
-        1071677, 
+        1071677,
         "[doc] faq suggests it's a good idea to install rawhide packages on stable releases"
-    ], 
+    ],
     [
-        963710, 
+        963710,
         "RFE: allow package specs for distro-sync"
-    ], 
+    ],
     [
-        1067136, 
+        1067136,
         "[comps] no way to install optional packages from a group"
-    ], 
+    ],
     [
-        1071212, 
+        1071212,
         "dnf doesn't skip unreadable repository files"
-    ], 
+    ],
     [
-        1077173, 
+        1077173,
         "IOError: [Errno 13] Permission denied: '/var/lib/dnf/groups.json'"
-    ], 
+    ],
     [
-        1078832, 
+        1078832,
         "TypeError: '_DownloadErrors' object is not iterable"
-    ], 
+    ],
     [
-        1079621, 
+        1079621,
         "Incorrect package count when some packages already downloaded"
-    ], 
+    ],
     [
-        1029022, 
+        1029022,
         "RFE: API for reverse group operations"
-    ], 
+    ],
     [
-        1051869, 
+        1051869,
         "[abrt] dnf: comps.py:62:_by_pattern:TypeError: expected string or buffer"
-    ], 
+    ],
     [
-        1061780, 
+        1061780,
         "Dnf allows installing conflicting packages"
-    ], 
+    ],
     [
-        1062884, 
+        1062884,
         "[api] Allow dnf plugin to set exit code"
-    ], 
+    ],
     [
-        1062889, 
+        1062889,
         "[RFE] [api] add class attribute to dnf.cli.Command which will say it is root-only plugin"
-    ], 
+    ],
     [
-        1063666, 
+        1063666,
         "[comps] [environments] dnf group remove \"GNOME Desktop\""
-    ], 
+    ],
     [
-        1064211, 
+        1064211,
         "Dnf should provide logrotate script"
-    ], 
+    ],
     [
-        1064226, 
+        1064226,
         "[rfe] cmdline option forcing cache refresh"
-    ], 
+    ],
     [
-        1073859, 
+        1073859,
         "[api][rfe] access to dnf.Base.goal_parameters.allow_uninstall"
-    ], 
+    ],
     [
-        1076884, 
+        1076884,
         "[py3] highlight characters broken under py3"
-    ], 
+    ],
     [
-        1079519, 
+        1079519,
         "[api][rfe] install .rpm files with dnf API"
-    ], 
+    ],
     [
-        1079932, 
+        1079932,
         "[api][rfe] public api for getting all packages in a group"
-    ], 
+    ],
     [
-        1080331, 
+        1080331,
         "dnf group list fail to run with noroot plugin"
-    ], 
+    ],
     [
-        1080489, 
+        1080489,
         "[RFE] dnf exits with an error when at least one srpm is present on the command line"
-    ], 
+    ],
     [
-        1082230, 
+        1082230,
         "TypeError in dnf history info <id>"
-    ], 
+    ],
     [
-        1083432, 
+        1083432,
         "group is marked as installed, even if install of the packages failed"
-    ], 
+    ],
     [
-        1083767, 
+        1083767,
         "dnf documents cached packages in a way which does not agree with reality"
-    ], 
+    ],
     [
-        1084139, 
+        1084139,
         "dnf manpage \"manipualte\" typos"
-    ], 
+    ],
     [
-        1084553, 
+        1084553,
         "[doc] dnf docs describe '--best' option in undecipherabke manner"
-    ], 
+    ],
     [
-        1088166, 
+        1088166,
         "[doc] DNF doesn't say you need root rights to run dnf update"
-    ], 
+    ],
     [
-        1065882, 
+        1065882,
         "[delta] delta rpm download size statistics"
-    ], 
+    ],
     [
-        1081753, 
+        1081753,
         "do not emit uncaught exceptions from automatic makecache runs"
-    ], 
+    ],
     [
-        1089864, 
+        1089864,
         "[api] group persistor is not saved when using group_* API"
-    ], 
+    ],
     [
-        963345, 
+        963345,
         "[rfe] autoremove"
-    ], 
+    ],
     [
-        1073457, 
+        1073457,
         "Auto-completion issue with sudo dnf install"
-    ], 
+    ],
     [
-        1076045, 
+        1076045,
         "[rfe] ssl support"
-    ], 
+    ],
     [
-        1083679, 
+        1083679,
         "dnf globbing does not really work"
-    ], 
+    ],
     [
-        1092006, 
+        1092006,
         "[abrt] dnf: __init__.py:1704:parse_extcmds:ValueError: need more than 0 values to unpack"
-    ], 
+    ],
     [
-        1092777, 
+        1092777,
         "[abrt] dnf: __init__.py:403:run:UnicodeDecodeError: 'ascii' codec can't decode byte 0xd0 in position 0: ordinal not in range(128)"
-    ], 
+    ],
     [
-        1093888, 
+        1093888,
         "[search] put exact matches first"
-    ], 
+    ],
     [
-        1094594, 
+        1094594,
         "dnf history rollback tracebacks"
-    ], 
+    ],
     [
-        1095580, 
+        1095580,
         "[kernel] kernel-models-extra cannot be installed because a newer one is already installed"
-    ], 
+    ],
     [
-        1095861, 
+        1095861,
         "UnicodeDecodeError: 'ascii' codec can't decode byte 0xe2 in position 21: ordinal not in range(128)"
-    ], 
+    ],
     [
-        1096506, 
+        1096506,
         "promoting 'install a' to 'install b' when b obsoletes a"
-    ], 
+    ],
     [
-        1047049, 
+        1047049,
         "distroverpkg default should be the same in dnf as in yum"
-    ], 
+    ],
     [
-        1067156, 
+        1067156,
         "[api] introspecting transaction"
-    ], 
+    ],
     [
-        1093420, 
+        1093420,
         "Add to dnf.conf ip_resolve entry"
-    ], 
+    ],
     [
-        1104757, 
+        1104757,
         "[api] yumvars not set fail fedora metadata download"
-    ], 
+    ],
     [
-        1105009, 
+        1105009,
         "Please update the queries api documentation"
-    ], 
+    ],
     [
-        1110800, 
+        1110800,
         "[abrt] dnf: parser.py:59:varReplace:UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 6: ordinal not in range(128)"
-    ], 
+    ],
     [
-        1111569, 
+        1111569,
         "make \"Transaction couldn't start (no root?)\" error more clear"
-    ], 
+    ],
     [
-        1111997, 
+        1111997,
         "[abrt] dnf: base.py:1894:_retrievePublicKey:TypeError: not all arguments converted during string formatting"
-    ], 
+    ],
     [
-        1112669, 
+        1112669,
         "commands from dnf-plugins-core not mentioned in man page"
-    ], 
+    ],
     [
-        1112704, 
+        1112704,
         "NameError: global name 'i18n' is not defined"
-    ], 
+    ],
     [
-        1048973, 
+        1048973,
         "[rfe] repo priorities"
-    ], 
+    ],
     [
-        1108908, 
+        1108908,
         "dnf dies immediately complaining that ascii codec can't decode 0xc3"
-    ], 
+    ],
     [
-        1116544, 
+        1116544,
         "[i18n] double width Unicode characters"
-    ], 
+    ],
     [
-        1116839, 
+        1116839,
         "CompsError: Group 'Core' is already installed."
-    ], 
+    ],
     [
-        1116845, 
+        1116845,
         "dnf crashed when executing 'dnf -v repolist all'"
-    ], 
+    ],
     [
-        1117102, 
+        1117102,
         "[doc] configuring plugin search directories"
-    ], 
+    ],
     [
-        1117293, 
+        1117293,
         "--installroot proceeds with an undefined conf.releasever"
-    ], 
+    ],
     [
-        1117678, 
+        1117678,
         "[py3] proper binary for python3-dnf"
-    ], 
+    ],
     [
-        1118178, 
+        1118178,
         "should create /etc/dnf/plugins directory"
-    ], 
+    ],
     [
-        1118796, 
+        1118796,
         "TypeError: must be unicode, not str"
-    ], 
+    ],
     [
-        1119032, 
+        1119032,
         "python3-dnf-0.5.3 conflicts with  dnf-0.5.2"
-    ], 
+    ],
     [
-        1100946, 
+        1100946,
         "dnf install <bin filename> installs both i686 and x86_64 packages for no reason"
-    ], 
+    ],
     [
-        1117789, 
+        1117789,
         "[doc] [api] custom repos"
-    ], 
+    ],
     [
-        1120583, 
+        1120583,
         "[api] full-featured proxy configuration"
-    ], 
+    ],
     [
-        1121280, 
+        1121280,
         "History list with login names fails with non-ascii names"
-    ], 
+    ],
     [
-        1122900, 
+        1122900,
         "[abrt] dnf: package.py:73:header:RuntimeError: (Rpm file does not exist)"
-    ], 
+    ],
     [
-        1123688, 
+        1123688,
         "dnf missing Requires on pyliblzma"
-    ], 
+    ],
     [
-        850912, 
+        850912,
         "RFE: support updateinfo"
-    ], 
+    ],
     [
-        1055910, 
+        1055910,
         "[rfe] includepkgs directive support"
-    ], 
+    ],
     [
-        1116666, 
+        1116666,
         "handling groups installed by Yum"
-    ], 
+    ],
     [
-        1118272, 
+        1118272,
         "search command show traceback when in a debug mode"
-    ], 
+    ],
     [
-        1127206, 
+        1127206,
         "[abrt] dnf: __init__.py:186:install:Exception: Goal operation failed."
-    ], 
+    ],
     [
-        1132335, 
+        1132335,
         "RFE [UX] - Give users hint on uknown command"
-    ], 
+    ],
     [
-        1071854, 
+        1071854,
         "dnf reinstall does not work as expected"
-    ], 
+    ],
     [
-        1131969, 
+        1131969,
         "[rfe] group_install: accepts package specs as excludes"
-    ], 
+    ],
     [
-        908764, 
+        908764,
         "RFE: Support repo-pkgs command set"
-    ], 
+    ],
     [
-        1130878, 
+        1130878,
         "[abrt] dnf: persistor.py:60:_diff_dcts:AttributeError: 'NoneType' object has no attribute 'keys'"
-    ], 
+    ],
     [
-        1130432, 
+        1130432,
         "[abrt] dnf: locale.py:166:_group:UnicodeDecodeError: 'ascii' codec can't decode byte 0xc2 in position 0: ordinal not in range(128)"
-    ], 
+    ],
     [
-        1118236, 
+        1118236,
         "dnf doesn't seem to support repo_gpgcheck config"
-    ], 
+    ],
     [
-        1109915, 
+        1109915,
         "[rfe] yum-cron replacement"
-    ], 
+    ],
     [
-        909856, 
+        909856,
         "[rfe] lazy mode for metadata syncing"
-    ], 
+    ],
     [
-        1134893, 
+        1134893,
         "\"dnf update\" works as \"dnf install\" on local package files"
-    ], 
+    ],
     [
-        1138700, 
+        1138700,
         "dnf doesn't install all packages on command line"
-    ], 
+    ],
     [
-        1070902, 
+        1070902,
         "dnf autocomplete for install ./* + <TAB> takes ages"
-    ], 
+    ],
     [
-        1124316, 
+        1124316,
         "[locking] per-installroot metadata lock"
-    ], 
+    ],
     [
-        1136584, 
+        1136584,
         "[abrt] dnf: rpmsack.py:255:_read:AttributeError: <dnf.yum.rpmsack.RPMDBAdditionalDataPackage object at 0x7f10fed01b50> has no attribute reason"
-    ], 
+    ],
     [
-        1135861, 
+        1135861,
         "group erase libreoffice fails, package requires but none of the providers can be installed"
-    ], 
+    ],
     [
-        1136223, 
+        1136223,
         "[abrt] dnf: packages.py:76:parsePackages:TypeError: unsupported operand type(s) for |=: 'set' and 'list'"
-    ], 
+    ],
     [
-        1122617, 
+        1122617,
         "reinstall of local rpms gives traceback"
-    ], 
+    ],
     [
-        1133830, 
+        1133830,
         "Does not import gpg keys"
-    ], 
+    ],
     [
-        1121184, 
+        1121184,
         "dnf: shows fake download speed when not downloading anything"
-    ], 
+    ],
     [
-        1153543, 
+        1153543,
         "dnf bash completion hangs when trying to complete local path"
-    ], 
+    ],
     [
-        1151231, 
+        1151231,
         "Broken bash completion (does not occur when dnf-plugins-core installed)"
-    ], 
+    ],
     [
-        1163063, 
+        1163063,
         "dnf install with glob pattern output should be similar to yum install with glob"
-    ], 
+    ],
     [
-        1151854, 
+        1151854,
         "--cacheonly is not being respected \u2013 will update the cache if expired"
-    ], 
+    ],
     [
-        1151740, 
+        1151740,
         "dnf base api should not use errorSummary from dnf.cli.BaseCli"
-    ], 
+    ],
     [
-        1110780, 
+        1110780,
         "dnf swap not supported"
-    ], 
+    ],
     [
-        1149972, 
+        1149972,
         "update command implicitly working as reinstall"
-    ], 
+    ],
     [
-        1150474, 
+        1150474,
         "dnf group install broken for locale other than en_US"
-    ], 
+    ],
     [
-        995537, 
+        995537,
         "RFE: /etc/motd emitter for yum-cron"
-    ], 
+    ],
     [
-        1149952, 
+        1149952,
         "Python exception thrown when searching dnf history"
-    ], 
+    ],
     [
-        1149350, 
+        1149350,
         "Odd placement and no rotation of hawkey.log"
-    ], 
+    ],
     [
-        1170232, 
+        1170232,
         "dnf eats newlines from error message"
-    ], 
+    ],
     [
-        1147523, 
+        1147523,
         "missing group info environment group support"
-    ], 
+    ],
     [
-        1148208, 
+        1148208,
         "[rfe] enable deltarpm support by default"
-    ], 
+    ],
     [
-        1109927, 
+        1109927,
         "RFE: take systemd inhibitor lock while doing operations that shouldn't be interrupted by shutdown"
-    ], 
+    ],
     [
-        1155877, 
+        1155877,
         "[abrt] dnf: i18n.py:130:ucd:UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 1: ordinal not in range(128)"
-    ], 
+    ],
     [
-        1175466, 
+        1175466,
         "add timeout option to repo conf"
-    ], 
+    ],
     [
-        1186461, 
+        1186461,
         "\"file\" filter in DNF"
-    ], 
+    ],
     [
-        1170156, 
+        1170156,
         "[RFE][UX] Display metadata timestamp"
-    ], 
+    ],
     [
-        1184943, 
+        1184943,
         "please enrich DNF API with a method for setting up base.conf.cachedir for non privileged users"
-    ], 
+    ],
     [
-        1177002, 
+        1177002,
         "comps display_order for environment groups not respected by installer with dnf payload (or dnf itself)"
-    ], 
+    ],
     [
-        1169165, 
+        1169165,
         "let glob pattern describing package to match multiple packages"
-    ], 
+    ],
     [
-        1167982, 
+        1167982,
         "dnf.conf man page is in the wrong section"
-    ], 
+    ],
     [
-        1157233, 
+        1157233,
         "'dnf download' cannot be run in parallel as non-root user"
-    ], 
+    ],
     [
-        1138096, 
+        1138096,
         "[doc] add examples on install, resolve, do_transaction api usage"
-    ], 
+    ],
     [
-        1181189, 
+        1181189,
         "dnf downgrade ./<TAB> doesn't autocomplete"
-    ], 
+    ],
     [
-        1181397, 
+        1181397,
         "[abrt] dnf: output.py:683:_display_packages_verbose:KeyError: u'ppc64-utils'"
-    ], 
+    ],
     [
-        1175434, 
+        1175434,
         "Odd placement and no rotation of hawkey.log"
-    ], 
+    ],
     [
-        1162887, 
+        1162887,
         "[api] introspecting transaction package sets"
-    ], 
+    ],
     [
-        1156084, 
+        1156084,
         "dnf install @some-environment-id does not work"
-    ], 
+    ],
     [
-        1175098, 
+        1175098,
         "dnf: unowned dir /etc/dnf/protected.d"
-    ], 
+    ],
     [
-        1174136, 
+        1174136,
         "wrongly computed text width with nonascii characters"
-    ], 
+    ],
     [
-        1155918, 
+        1155918,
         "let \"history list\" show all records"
-    ], 
+    ],
     [
-        1119030, 
+        1119030,
         "skip_if_unavailable to correctly treat repos that are down during package download"
-    ], 
+    ],
     [
-        1177394, 
+        1177394,
         "Dnf specifies both \"size\" and an age in the logrotate configuration"
-    ], 
+    ],
     [
-        1154476, 
+        1154476,
         "[abrt] dnf: lock.py:64:_read_lock:ValueError: invalid literal for int() with base 10: ''"
-    ], 
+    ],
     [
-        1203151, 
+        1203151,
         "Duplicated output for already installed packages"
-    ], 
+    ],
     [
-        1187579, 
+        1187579,
         "dnf upgrade ./<TAB> doesn't autocomplete"
-    ], 
+    ],
     [
-        1185977, 
+        1185977,
         "[api] remove cached package file only after transaction()"
-    ], 
+    ],
     [
-        1195240, 
+        1195240,
         "dnf-automatic \"how to use\""
-    ], 
+    ],
     [
-        1193914, 
+        1193914,
         "'help history' does not correspond with supported commands"
-    ], 
+    ],
     [
-        1195385, 
+        1195385,
         "dnf regression: cannot resolve provides with slashes"
-    ], 
+    ],
     [
-        1160806, 
+        1160806,
         "DNF shoud not deprecate \"remove\" command"
-    ], 
+    ],
     [
-        1186710, 
+        1186710,
         "dnf --setopt exclude=XXX adds garbage to excludes"
-    ], 
+    ],
     [
-        1207726, 
+        1207726,
         "Update dnf and yum packages for proposed dnf default change"
-    ], 
+    ],
     [
-        1190671, 
+        1190671,
         "DNF ships bash completition file but lacks requirement on bash completion"
-    ], 
+    ],
     [
-        1191579, 
+        1191579,
         "python3-dnf cannot be used without python2"
-    ], 
+    ],
     [
-        1195325, 
+        1195325,
         "RFE: provide a way to configure the config directory used by plugins"
-    ], 
+    ],
     [
-        1154202, 
+        1154202,
         "[depsolv] removing a package results in downloading more packages"
-    ], 
+    ],
     [
-        1189083, 
+        1189083,
         "[doc] please document 'skip_if_unavailable' Repo flag"
-    ], 
+    ],
     [
-        1193915, 
+        1193915,
         "[abrt] dnf: output.py:1730:historySummaryCmd:ValueError: need more than 0 values to unpack"
-    ], 
+    ],
     [
-        1195661, 
+        1195661,
         "lock files cannot be created for non logged users"
-    ], 
+    ],
     [
-        1190458, 
+        1190458,
         "[abrt] dnf: cli.py:210:do_transaction:UnicodeEncodeError: 'ascii' codec can't encode character u'\\xf3' in position 196: ordinal not in range(128)"
-    ], 
+    ],
     [
-        1194685, 
+        1194685,
         "CACHEDIR_SUFFIX appended twice to cachedir when using dnf CLI."
-    ], 
+    ],
     [
-        1160950, 
+        1160950,
         "\"dnf install foo.rpm\" doesn't upgrade \"foo\""
-    ], 
+    ],
     [
-        1199648, 
+        1199648,
         "[UX] dnf groupinstall claims that installed group does not exist"
-    ], 
+    ],
     [
-        1208773, 
+        1208773,
         "[RFE] Define virtual provides for DNF commands and suggest installing the appropriate one if a command was not found"
-    ], 
+    ],
     [
-        1208018, 
+        1208018,
         "config-manager: enable won't work. TypeError: unorderable types: Repo() < Repo()"
-    ], 
+    ],
     [
-        1207861, 
+        1207861,
         "Python 3: historical transactions that had multiple problems causes tracebacks"
-    ], 
+    ],
     [
-        1201445, 
+        1201445,
         "\"dnf autoremove\" removes \"user-installed\" installonly packages installed using \"dnf upgrade\""
-    ], 
+    ],
     [
-        1210275, 
+        1210275,
         "DNF doesn't support http authentication"
-    ], 
+    ],
     [
-        1191275, 
+        1191275,
         "dnf downgrade <target-nevra> fails"
-    ], 
+    ],
     [
-        1207965, 
+        1207965,
         "Improve yum deprecated message"
-    ], 
+    ],
     [
-        1215560, 
+        1215560,
         "[abrt] dnf: i18n.py:165:exact_width:TypeError: 'NoneType' object is not iterable"
-    ], 
+    ],
     [
-        1215289, 
+        1215289,
         "bash completion file adds a shell alias for python"
-    ], 
+    ],
     [
-        1214968, 
+        1214968,
         "dnf reports installed group does not exist"
-    ], 
+    ],
     [
-        1222694, 
+        1222694,
         "[abrt] python-dnf: comps.py:86:install_or_skip:TypeError: unsupported operand type(s) for +=: 'int' and 'TransactionBunch'"
-    ], 
+    ],
     [
-        1225246, 
+        1225246,
         "yum2dnf manpage: too much underlining"
-    ], 
+    ],
     [
-        1213985, 
+        1213985,
         "[rfe] add equivalent of \"random_sleep\" to dnf-automatic"
-    ], 
+    ],
     [
-        1225277, 
+        1225277,
         "python(abi) = 3.3 is needed by (installed)"
-    ], 
+    ],
     [
-        1223932, 
+        1223932,
         "UnicodeEncodeError: 'ascii' codec can't encode character u'\\xe1' in position 19: ordinal not in range(128)"
-    ], 
+    ],
     [
-        1223614, 
+        1223614,
         "dnf groupinstall fails and returns success"
-    ], 
+    ],
     [
-        1203661, 
+        1203661,
         "[CRY] sslclientcert and sslclientkey not supported"
-    ], 
+    ],
     [
-        1187741, 
+        1187741,
         "dnf should state if packages explicitly requested for update aren't installed"
-    ], 
+    ],
     [
-        1148630, 
+        1148630,
         "add --allowerasing hint for conflict problems"
-    ], 
+    ],
     [
-        1176351, 
+        1176351,
         "[RFC] print warning message when we're going to install not latest version"
-    ], 
+    ],
     [
-        1210445, 
+        1210445,
         "[rfe] report when skipping available updates due to dependency reasons"
-    ], 
+    ],
     [
-        1173107, 
+        1173107,
         "mock: use of \"dnf --installroot ...\" yields \"releasever not given\" error"
-    ], 
+    ],
     [
-        1219199, 
+        1219199,
         "Problem when using proxy authentication in dnf.conf"
-    ], 
+    ],
     [
-        1220040, 
+        1220040,
         "[abrt] python-dnf: completion_helper.py:92:run:UnboundLocalError: local variable 'pkgs' referenced before assignment"
-    ], 
+    ],
     [
-        1230975, 
+        1230975,
         "[rfe] configurable parallel downloads (like yum's max_connections)"
-    ], 
+    ],
     [
-        1232815, 
+        1232815,
         "'dnf install @group' returns error code 1 if all packages are already installed"
-    ], 
+    ],
     [
-        1113384, 
+        1113384,
         "[rfe] repofrompath option to specify ad-hoc repo"
-    ], 
+    ],
     [
-        1133979, 
+        1133979,
         "yum/dnf --quiet option not working for check-update command"
-    ], 
+    ],
     [
-        1238958, 
+        1238958,
         "dnf-automatic fails to send mail"
-    ], 
+    ],
     [
-        1238252, 
+        1238252,
         "Typo in dnf man page"
-    ], 
+    ],
     [
-        1212320, 
+        1212320,
         "[metadata] dnf makecache never timeouts"
-    ], 
+    ],
     [
-        1218401, 
+        1218401,
         "[doc] document history_list_view and set it to cmd by default"
-    ], 
+    ],
     [
-        1227952, 
+        1227952,
         "dnf update on a local directory does not handle mutliple versions of the same package"
-    ], 
+    ],
     [
-        1197456, 
+        1197456,
         "[RFE] implement `strict` config option (defaults=True)"
-    ], 
+    ],
     [
-        1236310, 
+        1236310,
         "dnf --quiet repolist doesn't output anything"
-    ], 
+    ],
     [
-        1219638, 
+        1219638,
         "DNF doesn't use xml:base in repodata"
-    ], 
+    ],
     [
-        1207981, 
+        1207981,
         "[UX] error during unpacking archive does not fail the installation"
-    ], 
+    ],
     [
-        1208918, 
+        1208918,
         "RFE: dnf shouldn't stop processing the command line at the first unknown package"
-    ], 
+    ],
     [
-        1221635, 
+        1221635,
         "add dnf config option to (not)obey weak deps"
-    ], 
+    ],
     [
-        1236306, 
+        1236306,
         "Some of dnf's subcommands can't handle pipe"
-    ], 
+    ],
     [
-        1234639, 
+        1234639,
         "dnf package actions triggered by dnf-automatic aren't logged to dnf.rpm.log"
-    ], 
+    ],
     [
-        1244486, 
+        1244486,
         "[doc] Add yum vs dnf hooks information in dnf documentation"
-    ], 
+    ],
     [
-        1224248, 
+        1224248,
         "[UX] Error message doesn't show names of packages well"
-    ], 
+    ],
     [
-        1243501, 
+        1243501,
         "`dnf downgrade' treats installed packages as not installed"
-    ], 
+    ],
     [
-        1225237, 
+        1225237,
         "[UX] [doc] FILES section missing from manual pages"
-    ], 
+    ],
     [
-        1249319, 
+        1249319,
         "dnf says \"downloaded packages were saved in cache\" before actually downloading any packages"
-    ], 
+    ],
     [
-        1234763, 
+        1234763,
         "wildcard in dnf update/downgrade should match installed packages only"
-    ], 
+    ],
     [
-        1242946, 
+        1242946,
         "[depsolv] dnf prefers package names over provide names"
-    ], 
+    ],
     [
-        1225225, 
+        1225225,
         "[abrt] python-dnf: repo.py:774:load:RepoError: Cache-only enabled but no cache for 'fedora'"
-    ], 
+    ],
     [
-        1254687, 
+        1254687,
         "DNF does not display any translations"
-    ], 
+    ],
     [
-        1247766, 
+        1247766,
         "dnf logrotate.d rotates logs too fast in many cases"
-    ], 
+    ],
     [
-        1125925, 
+        1125925,
         "[RFE] provide a 'add to user-installed-list' command"
-    ], 
+    ],
     [
-        1210289, 
+        1210289,
         "RFE: Have a way to wait on dnf lock rather than terminate"
-    ], 
+    ],
     [
-        1262082, 
+        1262082,
         "'ascii' codec can't decode byte 0xc3 in position 40: ordinal not in range(128)"
-    ], 
+    ],
     [
-        1250038, 
+        1250038,
         "[abrt] python-dnf: completion_helper.py:84:run:IndexError: list index out of range"
-    ], 
+    ],
     [
-        1048433, 
+        1048433,
         "RFE --downloadonly"
-    ], 
+    ],
     [
-        1259650, 
+        1259650,
         "\"dnf provides\" or \"dnf repoquery --whatprovides\" does not support globs"
-    ], 
+    ],
     [
-        1260198, 
+        1260198,
         "python-dnf should provide python2-dnf"
-    ], 
+    ],
     [
-        1259657, 
+        1259657,
         "No dnf-command() provides for dnf commands"
-    ], 
+    ],
     [
-        1254982, 
+        1254982,
         "dnf-automatic generates emails with broken charset"
-    ], 
+    ],
     [
-        1261766, 
+        1261766,
         "RFE: way to force no metadata expiration system-wide"
-    ], 
+    ],
     [
-        1234491, 
+        1234491,
         "[UX] dnf list installed: show repo id the package was installed from"
-    ], 
+    ],
     [
-        1256531, 
+        1256531,
         "dnf install crashes if terminal window is too small"
-    ], 
+    ],
     [
-        1261656, 
+        1261656,
         "DNF group update doesn't work"
-    ], 
+    ],
     [
-        1258364, 
+        1258364,
         "Some important dnf output goes to STDERR and not to STDOUT"
-    ], 
+    ],
     [
-        1278031, 
+        1278031,
         "dnf fails to find system-upgrade plugin with certain locales (Chinese, Japanese and maybe more)"
-    ], 
+    ],
     [
-        1264032, 
+        1264032,
         "RFE: add \"Skipped\" into Transaction Summary"
-    ], 
+    ],
     [
-        1209056, 
+        1209056,
         "[UX] [TRANS] Plural strings are not extracted properly"
-    ], 
+    ],
     [
-        1274946, 
+        1274946,
         "[abrt] dnf: main.py:99:main:IOError: [Errno 5] Input/output error"
-    ], 
+    ],
     [
-        1286619, 
+        1286619,
         "[abrt] dnf: group.py:253:_mark_install:AttributeError: 'GroupPersistor' object has no attribute 'environement'"
-    ], 
+    ],
     [
-        1229046, 
+        1229046,
         "mark group as installed only after successful transaction"
-    ], 
+    ],
     [
-        1282250, 
+        1282250,
         "RFE: don't consider remove operations as successful transactions"
-    ], 
+    ],
     [
-        1265391, 
+        1265391,
         "`dnf update @group` doesn't work"
-    ], 
+    ],
     [
-        1283017, 
+        1283017,
         "[rfe] support braces in variable substitution"
-    ], 
+    ],
     [
-        1278592, 
+        1278592,
         "Bad default for email_from in automatic.conf"
-    ], 
+    ],
     [
-        1260421, 
+        1260421,
         "[rfe] dnf should download drpms first"
-    ], 
+    ],
     [
-        1278382, 
+        1278382,
         "DNF python programming error when run from virt-builder"
-    ], 
+    ],
     [
-        1230820, 
+        1230820,
         "/usr/bin/dnf using -OO"
-    ], 
+    ],
     [
-        1280240, 
+        1280240,
         "dnf should warn if plugins are disabled and an unknown command is requested"
-    ], 
+    ],
     [
-        1291895, 
+        1291895,
         "DNF history failure if no history"
-    ], 
+    ],
     [
-        1256587, 
+        1256587,
         "The proxy option in dnf.conf doesn't support socks5"
-    ], 
+    ],
     [
-        1287221, 
+        1287221,
         "dnf stutters when writing in /var/log/dnf.rpm.log"
-    ], 
+    ],
     [
-        1277360, 
+        1277360,
         "doc: update specifying the packages in commands"
-    ], 
+    ],
     [
-        1294241, 
+        1294241,
         "file /var/lib/dnf/* is not owned by any package"
-    ], 
+    ],
     [
-        1289166, 
+        1289166,
         "dnf makecache triggers a python exception"
-    ], 
+    ],
     [
-        1294355, 
+        1294355,
         "German translation incomplete on delta RPMS"
-    ], 
+    ],
     [
-        1226322, 
+        1226322,
         "dnf clean all does not clean package metadata for local repos"
-    ], 
+    ],
     [
-        1275878, 
+        1275878,
         "[abrt] dnf: rpmsack.py:288:_delete:AttributeError: Cannot delete attribute installed_by on <dnf.yum.rpmsack.RPMDBAdditionalDataPackage object at 0x7f10c32f15d0>"
-    ], 
+    ],
     [
-        1239274, 
+        1239274,
         "dnf history does not show command line"
-    ], 
+    ],
     [
-        1286477, 
+        1286477,
         "DNF creates /etc/yum/repos.d instead of /etc/dnf/repos.d when no repodir is present/configured"
-    ], 
+    ],
     [
-        1305356, 
+        1305356,
         "dnf groupinstall does not install packages, only marks them"
-    ], 
+    ],
     [
-        1258503, 
+        1258503,
         "regression in dnf, requires network access for history"
-    ], 
+    ],
     [
-        1283432, 
+        1283432,
         "dnf group list --installed / --available"
-    ], 
+    ],
     [
-        1268818, 
+        1268818,
         "dnf -v group list not mentioned in man page"
-    ], 
+    ],
     [
-        1306304, 
+        1306304,
         "[perf] cache installed set of packages in query (for updates)"
-    ], 
+    ],
     [
-        1302934, 
+        1302934,
         "Malformed translations in 1.1.6"
-    ], 
+    ],
     [
-        1303149, 
+        1303149,
         "dnf history info failing"
-    ], 
+    ],
     [
-        1302217, 
+        1302217,
         "dnf metadata expiration message does not fit on screen"
-    ], 
+    ],
     [
-        1309408, 
+        1309408,
         "[RFE] Add docs that --best is showing more details on broken package dependencies"
-    ], 
+    ],
     [
-        1209649, 
+        1209649,
         "[UX] dnf group info (and other two word commands) give wrong mini_usage info"
-    ], 
+    ],
     [
-        1272977, 
+        1272977,
         "dnf waits 10 minutes for a single repo (for unresponsive ftp server?)"
-    ], 
+    ],
     [
-        1322226, 
+        1322226,
         "[pt-BR] some strings translated in zanata are missing in the terminal"
-    ], 
+    ],
     [
-        1315349, 
+        1315349,
         "dnf-makecache.service fills journal with useless lines because of verbose option"
-    ], 
+    ],
     [
-        1214562, 
+        1214562,
         "Config error: Error parsing \"installonly_limit = u'1'\": Out of range integer value."
-    ], 
+    ],
     [
-        1313215, 
+        1313215,
         "got \"IndexError: list index out of range \" after ran dnf history command"
-    ], 
+    ],
     [
-        1306057, 
+        1306057,
         "[UX] different behaviour of installonly in  yum/dnf"
-    ], 
+    ],
     [
-        1289164, 
+        1289164,
         "[RFE]  positive prompt answer by default"
-    ], 
+    ],
     [
-        1324086, 
+        1324086,
         "dnf \"autoremove\" command has no description in dnf --help"
-    ], 
+    ],
     [
-        1332012, 
+        1332012,
         "UnicodeEncodeError: 'ascii' codec can't encode characters in position 342-343: ordinal not in range(128)"
-    ], 
+    ],
     [
-        1292892, 
+        1292892,
         "dnf groupinstall ignores errors"
-    ], 
+    ],
     [
-        1328674, 
+        1328674,
         "diskspacecheck=0 in dnf.conf has no effect"
-    ], 
+    ],
     [
-        1286556, 
+        1286556,
         "/usr/lib64/python3.5/re.py:203: FutureWarning: split() requires a non-empty pattern match."
-    ], 
+    ],
     [
-        1245121, 
+        1245121,
         "TypeError: unhashable type: 'YumHistoryPackageState'"
-    ], 
+    ],
     [
-        1257965, 
+        1257965,
         "DNF doesn't treat the \"xml:base\" attribute in the primary.xml location tag correctly"
-    ], 
+    ],
     [
-        1352130, 
+        1352130,
         "dnf should not report errors to stdout, it's mildly dangerous"
-    ], 
+    ],
     [
-        1343764, 
+        1343764,
         "dnf reinstall deletes yumdb entry"
-    ], 
+    ],
     [
-        1308994, 
+        1308994,
         "After installing a package from local unicode directory a traceback is shown (UnicodeEncodeError)"
-    ], 
+    ],
     [
-        1230183, 
+        1230183,
         "Package update does not work when package changes from noarch <-> arch"
-    ], 
+    ],
     [
-        1325869, 
+        1325869,
         "[abrt] dnf: config.py:91:__set__:ValueError: Error parsing \"baseurl = repodata\": URL must be http, ftp, file or https not \"\""
-    ], 
+    ],
     [
-        1338046, 
+        1338046,
         "dnf will consume 100% CPU when there is no space left on device"
-    ], 
+    ],
     [
-        1214768, 
+        1214768,
         "history userinstalled lists should print NEVRAs instead of names"
-    ], 
+    ],
     [
-        1338504, 
+        1338504,
         "dnf upgrade (to 1.1.9) broke bash completion"
-    ], 
+    ],
     [
-        1338564, 
+        1338564,
         "Update fails with \"AttributeError: 'Base' object has no attribute 'sigCheckPkg'  (36)\""
-    ], 
+    ],
     [
-        1295090, 
+        1295090,
         "[abrt] dnf: i18n.py:44:write:UnicodeEncodeError: 'ascii' codec can't encode character '\\xe6' in position 54: ordinal not in range(128)"
-    ], 
+    ],
     [
-        1348766, 
+        1348766,
         "\"The operation would result in removing the booted kernel\" when installonlypkgs is set in dnf.conf"
-    ], 
+    ],
     [
-        1337731, 
+        1337731,
         "Live image compose fails with dnf 1.1.9"
-    ], 
+    ],
     [
-        1333591, 
+        1333591,
         "F24 PAE kernel conflicts with F23 PAE kernel"
-    ], 
+    ],
     [
-        1314961, 
+        1314961,
         "dnf-automatic crashes when 'None' emitter is used"
-    ], 
+    ],
     [
-        1372307, 
+        1372307,
         "dnf-automatic does not run etckeeper's autocommit"
-    ], 
+    ],
     [
-        1373108, 
+        1373108,
         "Whitelist 'type=*' option in config"
-    ], 
+    ],
     [
-        1148627, 
+        1148627,
         "dnf doesn't provide enough info to understand the package dependencies"
-    ], 
+    ],
     [
-        1267298, 
+        1267298,
         "dnf doesn't handle uncompressed comps.xml"
-    ], 
+    ],
     [
-        1373591, 
+        1373591,
         "TypeError: decode() argument 1 must be string, not MagicMock"
-    ], 
+    ],
     [
-        1230355, 
+        1230355,
         "Running \"dnf history\" as non-root user produces unhelpful error message"
-    ], 
+    ],
     [
-        1366793, 
+        1366793,
         "Nothing obsoletes retired dnf-langpacks packages, breaks upgrade from Fedora 23 to 25+"
-    ], 
+    ],
     [
-        1369411, 
+        1369411,
         "information about metadata expiration should go into stderr"
-    ], 
+    ],
     [
-        1369459, 
+        1369459,
         "dnf repolist disabled doesn't show repository name"
-    ], 
+    ],
     [
-        1306096, 
+        1306096,
         "time zone not displayed"
-    ], 
+    ],
     [
-        1368832, 
+        1368832,
         "AttributeError: 'Repo' object has no attribute 'metalink_path'"
-    ], 
+    ],
     [
-        1359016, 
+        1359016,
         "Unknown configuration option: enabled_metadata = 1"
-    ], 
+    ],
     [
-        1365593, 
+        1365593,
         "dnf: misleading error message when trying to \"upgrade\" src.rpm"
-    ], 
+    ],
     [
-        1297087, 
+        1297087,
         "[RFE] Implementation of localpkg_gpgcheck option for checking gpg signature for local packages or packages specified by URL"
-    ], 
+    ],
     [
-        1227053, 
+        1227053,
         "'--exclude' option empties whole transaction"
-    ], 
+    ],
     [
-        1356926, 
+        1356926,
         "Results of 'dnf repoquery --whatprovides' and 'dnf provides' don't match"
-    ], 
+    ],
     [
-        1219867, 
+        1219867,
         "include option in repository should not effect the rest repos"
-    ], 
+    ],
     [
-        1226677, 
+        1226677,
         "dnf repoquery -f does not support wildcards"
-    ], 
+    ],
     [
-        1350604, 
+        1350604,
         "RFE: Add 'build-dep' and 'distrosync' aliases to 'builddep' and 'distro-sync'"
-    ], 
+    ],
     [
-        1253120, 
+        1253120,
         "dnf remove: when remove multiple versions of kernel packages, the \"Erasing\" result of \"Running transaction\" show duplicated lowest version number"
-    ], 
+    ],
     [
-        1158548, 
+        1158548,
         "[rfe] \"dnf <plugin> --help\" does not print plugin help"
-    ], 
+    ],
     [
-        1262878, 
+        1262878,
         "dnf --exclude doesn't work for local installed package"
-    ], 
+    ],
     [
-        1318852, 
+        1318852,
         "DNF doesn't install groups, reports the group is already installed."
-    ], 
+    ],
     [
-        1327438, 
+        1327438,
         "make --available default in dnf repoquery"
-    ], 
+    ],
     [
-        1343880, 
+        1343880,
         "dnf.plugin.repoquery documentation should use/explain --alldeps"
-    ], 
+    ],
     [
-        1338921, 
+        1338921,
         "dnf removes sqlite-libs because plexmediaserver  pretends it provides them"
-    ], 
+    ],
     [
-        1284349, 
+        1284349,
         "installed hipchat confuses dnf to remove sqlite (which destroys the system)"
-    ], 
+    ],
     [
-        1218071, 
+        1218071,
         "No API to enable/run plugins"
-    ], 
+    ],
     [
-        1193823, 
+        1193823,
         "[RFE] Plugins  can't be disabled in config files"
-    ], 
+    ],
     [
-        1246211, 
+        1246211,
         "DNF Repoquery: Automatically enable repo selected by --repo"
-    ], 
+    ],
     [
-        1193851, 
+        1193851,
         "[RFE] Add support for --repoid parameter"
-    ], 
+    ],
     [
-        1215208, 
+        1215208,
         "Double-dash (\"--\") argument separator is not supported"
-    ], 
+    ],
     [
-        1212693, 
+        1212693,
         "dnf does not consistently exit immediately when an invalid option is given"
-    ], 
+    ],
     [
-        1212341, 
+        1212341,
         "[RFE] Allow plugins to override the core configuration"
-    ], 
+    ],
     [
-        1306591, 
+        1306591,
         "when weak_install_weak_deps==False don't show weak dependencies in \"Skipping packages with conflicts\" section"
-    ], 
+    ],
     [
-        1227001, 
+        1227001,
         "Using DNF to with --installroot fails where yum works"
-    ], 
+    ],
     [
-        1163028, 
+        1163028,
         "[doc] Document behaviour of --installroot"
-    ], 
+    ],
     [
-        1279185, 
+        1279185,
         "dnf searches in /etc/yum.repos.d/*.repo when using --installroot"
-    ], 
+    ],
     [
-        1289067, 
+        1289067,
         "[RFE][UX] visual separation of autoremoved packages"
-    ], 
+    ],
     [
-        1380580, 
+        1380580,
         "dnf 2.0 doesn't accept type=rpm in repo files"
-    ], 
+    ],
     [
-        1229730, 
+        1229730,
         "dnf.subject.Subject() does not honour epoch"
-    ], 
+    ],
     [
-        1375277, 
+        1375277,
         "releasever in baseurl translated to major.minor, not just major (7.3 instead of 7, yum incompatibility)"
-    ], 
+    ],
     [
-        1384289, 
+        1384289,
         "dnf repoquery --quiet outputs \"Last metadata expiration check:\""
-    ], 
+    ],
     [
-        1398272, 
+        1398272,
         "Dnf import of public keys causes stale rpmdb locks left behind"
-    ], 
+    ],
     [
-        1382224, 
+        1382224,
         "RFE: dnf transactions should run in a transient systemd service"
-    ], 
+    ],
     [
-        1177785, 
+        1177785,
         "add hawkey.Selector epoch support"
-    ], 
+    ],
     [
-        1272109, 
+        1272109,
         "Dnf very slow with wildcards."
-    ], 
+    ],
     [
-        1234930, 
+        1234930,
         "[RFE] Add yum-security functionality to DNF"
-    ], 
+    ],
     [
-        1341086, 
+        1341086,
         "dnf install exists with 0 even if it did not install all packages"
-    ], 
+    ],
     [
-        1382247, 
+        1382247,
         "installonlypkgs doesn't work by provides"
-    ], 
+    ],
     [
-        1381216, 
+        1381216,
         "--nogpgcheck doesn't work properly"
-    ], 
+    ],
     [
-        1381432, 
+        1381432,
         "L10N - update DNF 2.0 strings in Zanata so we can translate and fix tiny localization issues"
-    ], 
+    ],
     [
-        1332830, 
+        1332830,
         "DNF builddep is not consistently installing packages providing capabilities properly"
-    ], 
+    ],
     [
-        1327999, 
+        1327999,
         "\"dnf upgrade-to\" requiring full NEVRA"
-    ], 
+    ],
     [
-        1400081, 
+        1400081,
         "Crash  with empty includepkgs list in repository configuration file"
-    ], 
+    ],
     [
-        1293782, 
+        1293782,
         "dnf clean all does not wait for current running upgrade"
-    ], 
+    ],
     [
-        1386078, 
+        1386078,
         "L10N - Explain repoquery strings"
-    ], 
+    ],
     [
-        1358245, 
+        1358245,
         "repoquery: valid use of stderr and stdout, use stdout only for requested data"
-    ], 
+    ],
     [
-        1243393, 
+        1243393,
         "Query.filter(pkgs=XXX) is not documented"
-    ], 
+    ],
     [
-        1339739, 
+        1339739,
         "Option --skip-broken is missing"
-    ], 
+    ],
     [
-        1409361, 
+        1409361,
         "[abrt] dnf: output.py:1508:historyInfoCmd:AttributeError: 'list' object has no attribute 'add'"
-    ], 
+    ],
     [
-        1414512, 
+        1414512,
         "[rfe] Add dnf api for autoremove"
-    ], 
+    ],
     [
-        1238808, 
+        1238808,
         "[UX] Negative percentage reported when delta rebuilds fail"
-    ], 
+    ],
     [
-        1386085, 
+        1386085,
         "L10N - Uncut sentence DepSolveProgressCallBack > pkg_added"
-    ], 
+    ],
     [
-        1286553, 
+        1286553,
         "[UX] Should say \"Freed space\" rather than \"Installed size\" when removing packages"
-    ], 
+    ],
     [
-        1336879, 
+        1336879,
         "dnf fails to respect conditional level in comps.xml"
-    ], 
+    ],
     [
-        1173349, 
+        1173349,
         "wildcard doesn't work properly when downgrade"
-    ], 
+    ],
     [
-        1329617, 
+        1329617,
         "Downgrade fails with broken dep with --setopt=strict=False"
-    ], 
+    ],
     [
-        1283255, 
+        1283255,
         "downgrade doesn't resolve dependencies automatically"
-    ], 
+    ],
     [
-        1411349, 
+        1411349,
         "dnf makes wrong assumptions about metalinks"
-    ], 
+    ],
     [
-        1345976, 
+        1345976,
         "[UX] When no repo and --disablerepo=* - incorrect error message"
-    ], 
+    ],
     [
-        1369212, 
+        1369212,
         "dnf repolist with no repos"
-    ], 
+    ],
     [
-        1349247, 
+        1349247,
         "[doc] Document dnf grouplist hidden"
-    ], 
+    ],
     [
-        1403930, 
+        1403930,
         "dnf repoquery -f with multiple files doesn't seem to work"
-    ], 
+    ],
     [
-        1403465, 
+        1403465,
         "[RFE] Transaction modifiers for \"dnf install\" and \"dnf remove\""
-    ], 
+    ],
     [
-        1405333, 
+        1405333,
         "[RFE] add history to prompt line in dnf shell"
-    ], 
+    ],
     [
-        1254879, 
+        1254879,
         "dnf repoquery -l should display '(contains no files)' if there are no files"
-    ], 
+    ],
     [
-        1421835, 
+        1421835,
         "dnf list command broken"
-    ], 
+    ],
     [
-        1415711, 
+        1415711,
         "DNF should not automatically download repodata over metered connections"
-    ], 
+    ],
     [
-        1417627, 
+        1417627,
         "RFE: show hint how to display why package was skipped"
-    ], 
+    ],
     [
-        1417542, 
+        1417542,
         "Dnf won't synchronize cache"
-    ], 
+    ],
     [
-        1401446, 
+        1401446,
         "dnf does not report cleaning packages"
-    ], 
+    ],
     [
-        1416699, 
+        1416699,
         "Error: Will not install a source rpm package"
-    ], 
+    ],
     [
-        1427132, 
+        1427132,
         "create an API for initializing repos"
-    ], 
+    ],
     [
-        1397047, 
+        1397047,
         "[abrt] dnf: _scriptError(): rpmtrans.py:550:_scriptError:AttributeError: 'NoneType' object has no attribute 'name'"
-    ], 
+    ],
     [
-        1379628, 
+        1379628,
         "[RFE] Add \"--nodocs\" option for install"
-    ], 
+    ],
     [
-        1424939, 
+        1424939,
         "L10N - explain \"Login User\""
-    ], 
+    ],
     [
-        1396992, 
+        1396992,
         "dnf repoquery/whatrequires doesn't work correctly"
-    ], 
+    ],
     [
-        1412970, 
+        1412970,
         "[RFE] repoquery: Allow querying all packages"
-    ], 
+    ],
     [
-        1411432, 
+        1411432,
         "doc: Expected order of actions not documented for dnf.callback.TransactionProgress"
-    ], 
+    ],
     [
-        1406130, 
+        1406130,
         "Upgrade does not show progress between Cleanup and Verify"
-    ], 
+    ],
     [
-        1411423, 
+        1411423,
         "RFE: Add package scriptlet action to dnf.callback.TransactionProgress"
-    ], 
+    ],
     [
-        1290137, 
+        1290137,
         "RFE: dnf repoquery list not all available tags and there no full support of repoquery --location"
-    ], 
+    ],
     [
-        1349314, 
+        1349314,
         "Dnf autoremove removes  kernel-modules-extra but dnf update reinstalls those kernel modules again."
-    ], 
+    ],
     [
-        1247122, 
+        1247122,
         "implement --randomwait option"
-    ], 
+    ],
     [
-        1298717, 
+        1298717,
         "Translation missing, when package already  downloaded."
-    ], 
+    ],
     [
-        1302935, 
+        1302935,
         "Untranslatable element in the header"
-    ], 
+    ],
     [
-        1248684, 
+        1248684,
         "RFE: add exclude and cost properties to dnf.repo.Repo API"
-    ], 
+    ],
     [
-        1441636, 
+        1441636,
         "--installroot against non-existent rpm database no longer works"
-    ], 
+    ],
     [
-        1438438, 
+        1438438,
         "AssertionError from DNF"
-    ], 
+    ],
     [
-        1256313, 
+        1256313,
         "DNF should download packages specified by URL into the cache directory"
-    ], 
+    ],
     [
-        1161950, 
+        1161950,
         "[visual] output and progress bar not visible during package downloads specified by remote url"
-    ], 
+    ],
     [
-        1421244, 
+        1421244,
         "DNF keeps packages with broken scriptlets installed, although it claims they were removed."
-    ], 
+    ],
     [
-        1446756, 
+        1446756,
         "Msgid bug, the flag \"supplements\" is misspelled in a help text"
-    ], 
+    ],
     [
-        1446432, 
+        1446432,
         "Minimal install option install full gnome desktop"
-    ], 
+    ],
     [
-        1446641, 
+        1446641,
         "dnf repoquery --duplicates --latest-limit -1 -q does not work"
-    ], 
+    ],
     [
-        1278124, 
+        1278124,
         "RFE: Add new option to repoquery - user-installed"
-    ], 
+    ],
     [
-        1301868, 
+        1301868,
         "dnf search with multiple matches shows repeated grouping"
-    ], 
+    ],
     [
-        1350546, 
+        1350546,
         "print more useful info when package can not be installed"
-    ], 
+    ],
     [
-        1449618, 
+        1449618,
         "dnf won't explain conflicts even with --best"
-    ], 
+    ],
     [
-        1270451, 
+        1270451,
         "Don't show packages from lower priority repos which are masked/blocked by higher prority repo packages"
-    ], 
+    ],
     [
-        1254966, 
+        1254966,
         "[UX] dnf install tries to update the installed dependencies to newer version (at least message says that)"
-    ], 
+    ],
     [
-        1426787, 
+        1426787,
         "\"add '--best' to command line to see why package dependency cannot be satisfied\" doesn't help"
-    ], 
+    ],
     [
-        1293983, 
+        1293983,
         "[UX] show skipped packages during upgrade with pkg param"
-    ], 
+    ],
     [
-        1370062, 
+        1370062,
         "history userinstalled should not show NEVRA"
-    ], 
+    ],
     [
-        1293067, 
+        1293067,
         "RFE: dnf suggests --allowerasing even when it cannot help"
-    ], 
+    ],
     [
-        1393814, 
+        1393814,
         "dnf reports a lot of conflicting packages where there are no conflicts"
-    ], 
+    ],
     [
-        1398040, 
+        1398040,
         "dnf calls weak dependencies \"Skipping packages with broken dependencies\""
-    ], 
+    ],
     [
-        1342157, 
+        1342157,
         "Search that does not match anything has odd \"error\" message"
-    ], 
+    ],
     [
-        1379906, 
+        1379906,
         "Traceback when dependency of plugin is removed and plugin calls the dependency"
-    ], 
+    ],
     [
-        1198975, 
+        1198975,
         "[UX] show progress for DRPM"
-    ], 
+    ],
     [
-        1456419, 
+        1456419,
         "dnf update --refresh fails for repo_gpgcheck=1"
-    ], 
+    ],
     [
-        1445021, 
+        1445021,
         "Unlocalized date format"
-    ], 
+    ],
     [
-        1400714, 
+        1400714,
         "implement alwaysprompt=no option"
-    ], 
+    ],
     [
-        1250702, 
+        1250702,
         "dnf.Base.group_install does not honor multilib_policy=all"
-    ], 
+    ],
     [
-        1381988, 
+        1381988,
         "[RFE] output excluded packages during update"
-    ], 
+    ],
     [
-        1397848, 
+        1397848,
         "UnicodeDecodeError: 'utf-8' codec can't decode byte 0xf3 in position 1: invalid continuation byte"
-    ], 
+    ],
     [
-        1321407, 
+        1321407,
         "ValueError: (2, 'LRO_MAXSPEED (400) is lower than LRO_LOWSPEEDLIMIT (1000)', 'Bad argument of a handle option')"
-    ], 
+    ],
     [
-        1291867, 
+        1291867,
         "[conn] show progress when repo has metalink"
-    ], 
+    ],
     [
-        1372895, 
+        1372895,
         "don't access network/load latest repo metadata when doing \"list installed\""
-    ], 
+    ],
     [
-        1444751, 
+        1444751,
         "dnf repoquery allow --qf use with --tree"
-    ], 
+    ],
     [
-        1279001, 
+        1279001,
         "[RFE] Missing dnf --downloaddir option"
-    ], 
+    ],
     [
-        1361424, 
+        1361424,
         "[RFE] add cli option for clean_requirements_on_remove=no"
-    ], 
+    ],
     [
-        1387925, 
+        1387925,
         "RFE: Display all unsigned package errors instead of only one"
-    ], 
+    ],
     [
-        1332099, 
+        1332099,
         "Installing packages produces a backtrace, installation goes ok"
-    ], 
+    ],
     [
-        1470116, 
+        1470116,
         "/etc/dnf/automatic.conf configuration for command_email is ignored"
-    ], 
+    ],
     [
-        1320254, 
+        1320254,
         "[RFE] Support short abbrevations of commands like install in DNF"
-    ], 
+    ],
     [
-        1424723, 
+        1424723,
         "doc: Hard to find documentation for weak dependencies"
-    ], 
+    ],
     [
-        1462486, 
+        1462486,
         "RFE: Add support for groupmember on repoquery"
-    ], 
+    ],
     [
-        1314405, 
+        1314405,
         "No checksum check"
-    ], 
+    ],
     [
-        1457368, 
+        1457368,
         "dnf repoquery --obsoletes does not work"
-    ], 
+    ],
     [
-        1339280, 
+        1339280,
         "[rfe] Case insensitive match hint"
-    ], 
+    ],
     [
-        1138978, 
+        1138978,
         "[rfe]  maybe you meant?"
-    ], 
+    ],
     [
-        1423472, 
+        1423472,
         "dnf list updates  should only print newest version"
-    ], 
+    ],
     [
-        1427365, 
+        1427365,
         "DNF (and thus anaconda, livemedia-creator...) skips packages that are missing or cannot be installed due to conflicts or dependency issues with no warning, error or information"
-    ], 
+    ],
     [
-        1398871, 
+        1398871,
         "dnf group remove removes packages from other groups, and explicitly installed packages"
-    ], 
+    ],
     [
-        1432312, 
+        1432312,
         "removing MATE Desktop would remove dnf and systemd"
-    ], 
+    ],
     [
-        1476215, 
+        1476215,
         "repoquery --location sometimes prints invalid URL"
-    ], 
+    ],
     [
-        1473964, 
+        1473964,
         "dnf -C (or dnf --cacheonly) does not work as documented for a regular user"
-    ], 
+    ],
     [
-        1359482, 
+        1359482,
         "Trying to remove 'KDE Plasma Workspaces' group using dnf tries to remove systemd and dnf"
-    ], 
+    ],
     [
-        1476834, 
+        1476834,
         "[abrt] dnf: arch(): config.py:908:arch:TypeError: unhashable type: 'list'"
-    ], 
+    ],
     [
-        1244755, 
+        1244755,
         "[UX] additional dependencies to be installed or removed are not listed separately"
-    ], 
+    ],
     [
-        1476748, 
+        1476748,
         "Boltron: yum-dnf wrapper breaks installation of modules"
-    ], 
+    ],
     [
-        1476464, 
+        1476464,
         "dnf download broken if repository is file:/// (ie. local)"
-    ], 
+    ],
     [
-        1464192, 
+        1464192,
         "rpm.RPMTRANS_FLAG_TEST prevents to save newly imported gpg key"
-    ], 
+    ],
     [
-        1463107, 
+        1463107,
         "Undoing a remove transaction marks packages as user installed"
-    ], 
+    ],
     [
-        1426196, 
+        1426196,
         "RFE: Change \"upgraded X packages\" to \"download X packages\" when dnf download is used"
-    ], 
+    ],
     [
-        1457507, 
+        1457507,
         "[api] Explicitly set metalink is not substituted"
-    ], 
+    ],
     [
-        1421478, 
+        1421478,
         "dnf repository-packages: error: unrecognized arguments: -x rust-rpm-macros"
-    ], 
+    ],
     [
-        1491560, 
+        1491560,
         "'dnf check' reports spurious \"has missing requires of\" errors"
-    ], 
+    ],
     [
-        1465292, 
+        1465292,
         "DNF remove protected duplicate package"
-    ], 
+    ],
     [
-        1299482, 
+        1299482,
         "mock --init fails with message \"Failed calculating RPMDB checksum\""
-    ], 
+    ],
     [
-        1192811, 
+        1192811,
         "dnf whatprovides should show which provides matched a pattern"
-    ], 
+    ],
     [
-        1288845, 
+        1288845,
         "\"dnf provides\" wildcard matching is unreliable (not all packages with matches listed)"
-    ], 
+    ],
     [
-        1237349, 
+        1237349,
         "dnf autoremove not removing what dnf list extras shows"
-    ], 
+    ],
     [
-        1470050, 
+        1470050,
         "the 'priority=' option in /etc/yum.repos.d/*.repo is not respected"
-    ], 
+    ],
     [
-        1347927, 
+        1347927,
         "dnf --cacheonly downloads packages"
-    ], 
+    ],
     [
-        1478115, 
+        1478115,
         "[abrt] dnf: _hcmd_undo(): __init__.py:888:_hcmd_undo:IndexError: list index out of range"
-    ], 
+    ],
     [
-        1461171, 
+        1461171,
         "RFE: support --advisory= with install"
-    ], 
+    ],
     [
-        1495116, 
+        1495116,
         "Dnf version fails with traceback in container"
-    ], 
+    ],
     [
-        1448874, 
+        1448874,
         "\"dnf needs-restarting\" vanished from bash completion"
-    ], 
+    ],
     [
-        1472847, 
+        1472847,
         "dnf install dosn't handle 'Location:' http header"
-    ], 
+    ],
     [
-        1498426, 
+        1498426,
         "dnf download does not download RPMs in fedora rawhide container image"
-    ], 
+    ],
     [
-        1427144, 
+        1427144,
         "libselinux-python not installed when @ansible-node in kickstart %packages"
-    ], 
+    ],
     [
-        1480979, 
+        1480979,
         "I thought it abnormal that dnf crashed."
-    ], 
+    ],
     [
-        1461423, 
+        1461423,
         "Memory leak in python-dnf"
-    ], 
+    ],
     [
-        1499564, 
+        1499564,
         "dnf list installed crashes"
-    ], 
+    ],
     [
-        1499534, 
+        1499534,
         "dnf-2 is much slower than dnf-1 when handling groups"
-    ], 
+    ],
     [
-        1499623, 
+        1499623,
         "Mishandling stderr vs stdout (dnf search, dnf repoquery)"
-    ], 
+    ],
     [
-        1502106, 
+        1502106,
         "dnf packages update breaks package removal via ansible"
-    ], 
+    ],
     [
-        1500361, 
+        1500361,
         "DNF in Fedora 26 is terrible slow"
-    ], 
+    ],
     [
-        1503575, 
+        1503575,
         "DNF breaks composes: AttributeError: 'NoneType' object has no attribute 'install_set'"
+    ],
+    [
+        1488112,
+        "[modularity] introduce module provides"
+    ],
+    [
+        1488105,
+        "[modularity] introduce dnf module streams for showing enabled streams"
+    ],
+    [
+        1488089,
+        "[modularity] switching stream should erase info about installed profiles"
+    ],
+    [
+        1488092,
+        "[modularity] no info in dnf list about locked modules"
+    ],
+    [
+        1486839,
+        "[modularity] show content of profile"
+    ],
+    [
+        1486827,
+        "[modularity] include profiles info in module list command"
+    ],
+    [
+        1486816,
+        "[modularity] show defaults in module list/info command"
+    ],
+    [
+        1565647,
+        "No match for a package that exists in the repo"
+    ],
+    [
+        1565599,
+        "IndexError: list index out of range when removing a module with a wrong stream specified"
+    ],
+    [
+        1565543,
+        "dnf module install dosen't work if no profile is given"
+    ],
+    [
+        1508839,
+        "[modularity] list doesn't show enabled modules, but installed and locked only"
+    ],
+    [
+        1506486,
+        "[modularity] rpm install doesn't follow package versions from a locked module"
+    ],
+    [
+        1506475,
+        "[modularity] inconsistent ordering in module listing"
+    ],
+    [
+        1505577,
+        "[modularity] I can disable the locked module"
+    ],
+    [
+        1505574,
+        "[modularity] can't install additional profiles when module is locked"
+    ],
+    [
+        1505573,
+        "[modularity] module is not locked on the version installed but the latest"
+    ],
+    [
+        1480481,
+        "[modularity] can't remove a module"
+    ],
+    [
+        1496732,
+        "[modularity] Error: No such module on update locked module"
+    ],
+    [
+        1497272,
+        "[modularity] UX: Replace the \"Group '...' does not exist.\" message"
+    ],
+    [
+        1488100,
+        "[modularity] do not show module version in dnf module list if showing only latest"
+    ],
+    [
+        1488086,
+        "[modularity] inform user that they are installing module"
+    ],
+    [
+        1583834,
+        "dnf and deltarpm"
+    ],
+    [
+        1576921,
+        "RFE: dnf does not \"remember\" --forcearch="
+    ],
+    [
+        1270295,
+        "dnf bash-completion is a bit flaky"
+    ],
+    [
+        1361698,
+        "dnf history bash completion"
+    ],
+    [
+        1369847,
+        "[completion] reinstall shows all packages from repo"
+    ],
+    [
+        1368651,
+        "Autocomplete not working after first option"
+    ],
+    [
+        1563841,
+        "--nogpgcheck should override localpkg_gpgcheck=True"
+    ],
+    [
+        1387622,
+        "add proxy auth method option"
+    ],
+    [
+        1575998,
+        "CentOS: dnf can't handle password-protected repos"
+    ],
+    [
+        1577854,
+        "DNF search should use logical conjunction of terms"
+    ],
+    [
+        1542416,
+        "'dnf updateinfo --info' provides incorrect output"
+    ],
+    [
+        1496153,
+        "Extend DNF compatibility with YUM"
+    ],
+    [
+        1568366,
+        "detect_releasever is broken under python3"
+    ],
+    [
+        1539803,
+        "dnf repoquery --requires --resolve is very slow"
+    ],
+    [
+        1552576,
+        "repolist and info use expired cache"
+    ],
+    [
+        1545075,
+        "updateinfo tracebacks when an advisory consists of multiple repos"
+    ],
+    [
+        1544359,
+        "dnf fails with traceback for repos containing strange characters"
+    ],
+    [
+        1547672,
+        "wrong repoquery results"
+    ],
+    [
+        1537957,
+        "[abrt] dnf: _add_from_xml_filename(): comps.py:328:_add_from_xml_filename:_libpycomps.ParserError: Fatal parser error"
+    ],
+    [
+        1542920,
+        "dnf download fails for certain repos"
+    ],
+    [
+        1507129,
+        "DNF crashes on repositories without filelists"
+    ],
+    [
+        1512956,
+        "Incomplete listing for `dnf list installed`"
+    ],
+    [
+        1512663,
+        "dnf impossible to install docs if tsflags=nodocs is in dnf.conf, can't override settings from commandline"
+    ],
+    [
+        1247083,
+        "dnf timers require network access and thus should require systemd network target"
+    ],
+    [
+        1519325,
+        "dnf fails to install a package by a \"provides\" name"
+    ],
+    [
+        1492036,
+        "system-upgrade fails to connect to online mirrors during upgrade when caches are missing"
+    ],
+    [
+        1391911,
+        "[RFE]  repoquery: get list of all dependent packages (with even soft dependencies)"
+    ],
+    [
+        1479330,
+        "DNF 2.0: bash-completion not working by default, until sqlite is installed"
+    ],
+    [
+        1505185,
+        "dnf incudepkgs broken"
+    ],
+    [
+        1305232,
+        "log currently processing package from rpm installation"
     ]
 ]

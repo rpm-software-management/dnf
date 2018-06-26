@@ -20,6 +20,75 @@
 ###################
 
 ===================
+3.0.1 Release Notes
+===================
+
+* Support of MODULES - new DNF command `module`
+* :attr:`dnf.conf.Conf.proxy_auth_method`
+* New repoquery option `--depends` and `--whatdepends`
+* Enhanced support of variables
+* Enhanced documentation
+
+Bugs fixed in 3.0.1:
+
+* :rhbug:`1565599`
+* :rhbug:`1508839`
+* :rhbug:`1506486`
+* :rhbug:`1506475`
+* :rhbug:`1505577`
+* :rhbug:`1505574`
+* :rhbug:`1505573`
+* :rhbug:`1480481`
+* :rhbug:`1496732`
+* :rhbug:`1497272`
+* :rhbug:`1488100`
+* :rhbug:`1488086`
+* :rhbug:`1488112`
+* :rhbug:`1488105`
+* :rhbug:`1488089`
+* :rhbug:`1488092`
+* :rhbug:`1486839`
+* :rhbug:`1486839`
+* :rhbug:`1486827`
+* :rhbug:`1486816`
+* :rhbug:`1565647`
+* :rhbug:`1583834`
+* :rhbug:`1576921`
+* :rhbug:`1270295`
+* :rhbug:`1361698`
+* :rhbug:`1369847`
+* :rhbug:`1368651`
+* :rhbug:`1563841`
+* :rhbug:`1387622`
+* :rhbug:`1575998`
+* :rhbug:`1577854`
+* :rhbug:`1387622`
+* :rhbug:`1542416`
+* :rhbug:`1542416`
+* :rhbug:`1496153`
+* :rhbug:`1568366`
+* :rhbug:`1539803`
+* :rhbug:`1552576`
+* :rhbug:`1545075`
+* :rhbug:`1544359`
+* :rhbug:`1547672`
+* :rhbug:`1537957`
+* :rhbug:`1542920`
+* :rhbug:`1507129`
+* :rhbug:`1512956`
+* :rhbug:`1512663`
+* :rhbug:`1247083`
+* :rhbug:`1247083`
+* :rhbug:`1247083`
+* :rhbug:`1519325`
+* :rhbug:`1492036`
+* :rhbug:`1391911`
+* :rhbug:`1391911`
+* :rhbug:`1479330`
+* :rhbug:`1505185`
+* :rhbug:`1305232`
+
+===================
 2.7.5 Release Notes
 ===================
 
