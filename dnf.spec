@@ -481,6 +481,70 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %endif
 
 %changelog
+* Tue Jun 26 2018 Jaroslav Mracek <jmracek@redhat.com> - 3.0.1-1
+- Update to 3.0.1-1
+- Support of MODULES - new DNF command `module`
+- Add attribute dnf.conf.Conf.proxy_auth_method
+- New repoquery option `--depends` and `--whatdepends`
+- Enhanced support of variables
+- Enhanced documentation
+- Resolves: rhbz#1565599
+- Resolves: rhbz#1508839
+- Resolves: rhbz#1506486
+- Resolves: rhbz#1506475
+- Resolves: rhbz#1505577
+- Resolves: rhbz#1505574
+- Resolves: rhbz#1505573
+- Resolves: rhbz#1480481
+- Resolves: rhbz#1496732
+- Resolves: rhbz#1497272
+- Resolves: rhbz#1488100
+- Resolves: rhbz#1488086
+- Resolves: rhbz#1488112
+- Resolves: rhbz#1488105
+- Resolves: rhbz#1488089
+- Resolves: rhbz#1488092
+- Resolves: rhbz#1486839
+- Resolves: rhbz#1486839
+- Resolves: rhbz#1486827
+- Resolves: rhbz#1486816
+- Resolves: rhbz#1565647
+- Resolves: rhbz#1583834
+- Resolves: rhbz#1576921
+- Resolves: rhbz#1270295
+- Resolves: rhbz#1361698
+- Resolves: rhbz#1369847
+- Resolves: rhbz#1368651
+- Resolves: rhbz#1563841
+- Resolves: rhbz#1387622
+- Resolves: rhbz#1575998
+- Resolves: rhbz#1577854
+- Resolves: rhbz#1387622
+- Resolves: rhbz#1542416
+- Resolves: rhbz#1542416
+- Resolves: rhbz#1496153
+- Resolves: rhbz#1568366
+- Resolves: rhbz#1539803
+- Resolves: rhbz#1552576
+- Resolves: rhbz#1545075
+- Resolves: rhbz#1544359
+- Resolves: rhbz#1547672
+- Resolves: rhbz#1537957
+- Resolves: rhbz#1542920
+- Resolves: rhbz#1507129
+- Resolves: rhbz#1512956
+- Resolves: rhbz#1512663
+- Resolves: rhbz#1247083
+- Resolves: rhbz#1247083
+- Resolves: rhbz#1247083
+- Resolves: rhbz#1519325
+- Resolves: rhbz#1492036
+- Resolves: rhbz#1391911
+- Resolves: rhbz#1391911
+- Resolves: rhbz#1479330
+- Resolves: rhbz#1505185
+- Resolves: rhbz#1305232
+
 * Wed Oct 18 2017 Igor Gnatenko <ignatenko@redhat.com> - 2.7.5-1
 - Improve performance for excludes and includes handling (RHBZ #1500361)
 - Fixed problem of handling checksums for local repositories (RHBZ #1502106)
