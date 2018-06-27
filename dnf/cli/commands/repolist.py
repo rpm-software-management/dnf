@@ -162,7 +162,7 @@ class RepoListCommand(commands.Command):
                 ui_endis_wid = exact_width(_('disabled'))
 
             if not any((verbose, ('repoinfo' in self.opts.command))):
-                rid = repo.id
+                rid = ucd(repo.id)
                 if enabled and repo.metalink:
                     mdts = repo._repo.getTimestamp()
                     if mdts > repo._repo.getMaxTimestamp():
