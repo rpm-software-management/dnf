@@ -118,7 +118,7 @@ class RepoListCommand(commands.Command):
         tot_num = 0
         cols = []
         if not repos:
-            logger.warn(_('No repositories available'))
+            logger.warning(_('No repositories available'))
             return
 
         for repo in repos:
