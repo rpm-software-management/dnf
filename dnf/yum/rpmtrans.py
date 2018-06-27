@@ -20,6 +20,7 @@ from __future__ import unicode_literals
 import libdnf.transaction
 
 from dnf.i18n import _, ucd
+import dnf.callback
 import dnf.transaction
 import dnf.util
 import rpm
@@ -28,6 +29,7 @@ import logging
 import sys
 import tempfile
 import traceback
+import warnings
 
 
 # TODO: merge w/ libdnf
@@ -47,10 +49,38 @@ TS_REMOVE_STATES = [TS_ERASE, TS_OBSOLETED, TS_UPDATED]
 logger = logging.getLogger('dnf')
 
 
+def _add_deprecated_action(name):
+    """
+    Wrapper to return a deprecated action constant
+    while printing a deprecation warning.
+    """
+    @property
+    def _func(self):
+        msg = "%s.%s is deprecated. Use dnf.callback.%s instead." \
+            % (self.__class__.__name__, name, name)
+        warnings.warn(msg, DeprecationWarning, stacklevel=2)
+        value = getattr(dnf.callback, name)
+        return value
+    return _func
+
+
 class TransactionDisplay(object):
 
     def __init__(self):
         pass
+
+    # use constants from dnf.callback which are the official API
+    PKG_CLEANUP = _add_deprecated_action("PKG_CLEANUP")
+    PKG_DOWNGRADE = _add_deprecated_action("PKG_DOWNGRADE")
+    PKG_ERASE = _add_deprecated_action("PKG_ERASE")
+    PKG_INSTALL = _add_deprecated_action("PKG_INSTALL")
+    PKG_OBSOLETE = _add_deprecated_action("PKG_OBSOLETE")
+    PKG_REINSTALL = _add_deprecated_action("PKG_REINSTALL")
+    PKG_UPGRADE = _add_deprecated_action("PKG_UPGRADE")
+    PKG_VERIFY = _add_deprecated_action("PKG_VERIFY")
+    TRANS_PREPARATION = _add_deprecated_action("TRANS_PREPARATION")
+    PKG_SCRIPTLET = _add_deprecated_action("PKG_SCRIPTLET")
+    TRANS_POST = _add_deprecated_action("TRANS_POST")
 
     def progress(self, package, action, ti_done, ti_total, ts_done, ts_total):
         """Report ongoing progress on a transaction item. :api
