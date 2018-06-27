@@ -1095,31 +1095,9 @@ class Base(object):
         timer()
         self._trans_success = True
 
-    def download_packages(self, pkglist, progress=None, callback_total=None):
-        # :api
-        """Download the packages specified by the given list of packages.
-
-        `pkglist` is a list of packages to download, `progress` is an optional
-         DownloadProgress instance, `callback_total` an optional callback to
-         output messages about the download operation.
-
-        """
-
-        # select and sort packages to download
-        if progress is None:
-            progress = dnf.callback.NullDownloadProgress()
-
+    def _download_remote_payloads(self, payloads, drpm, progress, callback_total):
         lock = dnf.lock.build_download_lock(self.conf.cachedir, self.conf.exit_on_lock)
         with lock:
-            drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(),
-                                      progress, self.conf.deltarpm_percentage)
-            remote_pkgs, local_repository_pkgs = self._select_remote_pkgs(pkglist)
-            self._add_tempfiles([pkg.localPkg() for pkg in remote_pkgs])
-
-            payloads = [dnf.repo._pkg2payload(pkg, progress, drpm.delta_factory,
-                                             dnf.repo.RPMPayload)
-                        for pkg in remote_pkgs]
-
             beg_download = time.time()
             est_remote_size = sum(pload.download_size for pload in payloads)
             total_drpm = len(
@@ -1182,6 +1160,27 @@ class Base(object):
                         "(%d.1%% wasted)")
             percent = 100 - real / full * 100
             logger.info(msg, full / 1024 ** 2, real / 1024 ** 2, percent)
+
+    def download_packages(self, pkglist, progress=None, callback_total=None):
+        # :api
+        """Download the packages specified by the given list of packages.
+
+        `pkglist` is a list of packages to download, `progress` is an optional
+         DownloadProgress instance, `callback_total` an optional callback to
+         output messages about the download operation.
+
+        """
+        remote_pkgs, local_repository_pkgs = self._select_remote_pkgs(pkglist)
+        if remote_pkgs:
+            if progress is None:
+                progress = dnf.callback.NullDownloadProgress()
+            drpm = dnf.drpm.DeltaInfo(self.sack.query().installed(),
+                                      progress, self.conf.deltarpm_percentage)
+            self._add_tempfiles([pkg.localPkg() for pkg in remote_pkgs])
+            payloads = [dnf.repo._pkg2payload(pkg, progress, drpm.delta_factory,
+                                              dnf.repo.RPMPayload)
+                        for pkg in remote_pkgs]
+            self._download_remote_payloads(payloads, drpm, progress, callback_total)
 
         if self.conf.destdir:
             for pkg in local_repository_pkgs:
