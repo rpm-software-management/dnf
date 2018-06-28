@@ -112,22 +112,12 @@ class InstallCommandTest(tests.support.ResultTestCase):
     def setUp(self):
         """Prepare the test fixture."""
         super(InstallCommandTest, self).setUp()
-        self.base.repos['main'].metadata = mock.Mock(_comps_fn=tests.support.COMPS_PATH, _age=0)
         self._cmd = dnf.cli.commands.install.InstallCommand(self.cli)
 
     def test_configure(self):
         tests.support.command_configure(self._cmd, ['pkg'])
         self.assertFalse(self.cli.demands.allow_erasing)
         self.assertTrue(self.cli.demands.sack_activation)
-
-    def test_run_group(self):
-        """Test whether a group is installed."""
-        tests.support.command_run(self._cmd, ['@Solid Ground'])
-
-        self.assertResult(self.base, itertools.chain(
-            self.base.sack.query().installed(),
-            dnf.subject.Subject('trampoline').get_best_query(self.base.sack))
-        )
 
     @mock.patch('dnf.cli.commands.install._',
                 dnf.pycomp.NullTranslations().ugettext)
