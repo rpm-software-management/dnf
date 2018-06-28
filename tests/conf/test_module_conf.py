@@ -41,7 +41,6 @@ class ModuleConfTest(unittest.TestCase):
         self.conf.version._set(1)
         # profiles - empty list by default
         self.conf.enabled._set(1)
-        self.conf.locked._set(0)
 
     def test_options(self):
         self.assertEqual(self.conf.name._get(), "base-runtime")
@@ -49,7 +48,6 @@ class ModuleConfTest(unittest.TestCase):
         self.assertEqual(self.conf.version._get(), 1)
         self.assertEqual(list(self.conf.profiles._get()), [])
         self.assertEqual(self.conf.enabled._get(), True)
-        self.assertEqual(self.conf.locked._get(), False)
 
     def test_write(self):
         tmp_dir = tempfile.mkdtemp()

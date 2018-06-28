@@ -153,37 +153,6 @@ class ModuleCommand(commands.Command):
         def run_on_module(self):
             self.base.repo_module_dict.remove(self.opts.module_nsvp)
 
-    class LockSubCommand(SubCommand):
-
-        aliases = ("lock",)
-
-        def configure(self):
-            demands = self.cli.demands
-            demands.available_repos = True
-            demands.sack_activation = True
-            demands.root_user = True
-
-        def run_on_module(self):
-            for module_n in self.opts.module_nsvp:
-                stream, version = self.base.repo_module_dict.lock(module_n, True)
-                logger.info("'{}' is locked (stream: {}, version: {})"
-                            .format(module_n, stream, version))
-
-    class UnlockSubCommand(SubCommand):
-
-        aliases = ("unlock",)
-
-        def configure(self):
-            demands = self.cli.demands
-            demands.available_repos = True
-            demands.sack_activation = True
-            demands.root_user = True
-
-        def run_on_module(self):
-            for module_n in self.opts.module_nsvp:
-                self.base.repo_module_dict.unlock(module_n, True)
-                logger.info("'{}' is unlocked".format(module_n))
-
     class ProfileInfoSubCommand(SubCommand):
 
         aliases = ("profile", "profile-info")
@@ -225,8 +194,7 @@ class ModuleCommand(commands.Command):
 
     SUBCMDS = {ListSubCommand, InfoSubCommand, EnableSubCommand,
                DisableSubCommand, InstallSubCommand, UpdateSubCommand,
-               RemoveSubCommand, LockSubCommand, UnlockSubCommand,
-               ProfileInfoSubCommand, StreamsSubCommand, ProvidesSubCommand}
+               RemoveSubCommand, ProfileInfoSubCommand, StreamsSubCommand, ProvidesSubCommand}
 
     SUBCMDS_NOT_REQUIRED_ARG = {ListSubCommand, StreamsSubCommand}
 
