@@ -67,11 +67,13 @@ CACHE_FILES = {
 
 logger = logging.getLogger("dnf")
 
+
 def repo_id_invalid(repo_id):
     # :api
     """Return index of an invalid character in the repo ID (if present)."""
     first_invalid = libdnf.repo.Repo.verifyId(repo_id)
     return None if first_invalid < 0 else first_invalid
+
 
 def _pkg2payload(pkg, progress, *factories):
     for fn in factories:
@@ -112,6 +114,7 @@ def _download_payloads(payloads, drpm):
         errs._irrecoverable[pkg] = [err]
 
     return errs
+
 
 def _update_saving(saving, payloads, errs):
     real, full = saving
@@ -247,9 +250,12 @@ class PackagePayload(dnf.callback.Payload):
         }
         target_dct.update(self._target_params())
 
-        return libdnf.repo.PackageTarget(pkg.repo._repo, target_dct['relative_url'], target_dct['dest'],
-            target_dct['checksum_type'], target_dct['checksum'], target_dct['expectedsize'],
-            target_dct['base_url'], target_dct['resume'], 0, 0, self.callbacks)
+        return libdnf.repo.PackageTarget(
+            pkg.repo._repo,
+            target_dct['relative_url'],
+            target_dct['dest'], target_dct['checksum_type'], target_dct['checksum'],
+            target_dct['expectedsize'], target_dct['base_url'], target_dct['resume'],
+            0, 0, self.callbacks)
 
 
 class RPMPayload(PackagePayload):
@@ -305,8 +311,10 @@ class RemoteRPMPayload(PackagePayload):
             logger.critical(''.join(except_list))
 
     def _librepo_target(self):
-        return libdnf.repo.PackageTarget(self.conf._config, os.path.basename(self.remote_location), self.pkgdir,
-            0, None, 0, os.path.dirname(self.remote_location), True, 0, 0, self.callbacks)
+        return libdnf.repo.PackageTarget(
+            self.conf._config, os.path.basename(self.remote_location),
+            self.pkgdir, 0, None, 0, os.path.dirname(self.remote_location),
+            True, 0, 0, self.callbacks)
 
     @property
     def download_size(self):
@@ -376,7 +384,7 @@ class MDPayload(dnf.callback.Payload):
 
 # use the local cache even if it's expired. download if there's no cache.
 SYNC_LAZY = libdnf.repo.Repo.SyncStrategy_LAZY
- # use the local cache, even if it's expired, never download.
+# use the local cache, even if it's expired, never download.
 SYNC_ONLY_CACHE = libdnf.repo.Repo.SyncStrategy_ONLY_CACHE
 # try the cache, if it is expired download new md.
 SYNC_TRY_CACHE = libdnf.repo.Repo.SyncStrategy_TRY_CACHE
@@ -400,12 +408,11 @@ class RepoCallbacks(libdnf.repo.RepoCB):
 
     def fastestMirror(self, stage, ptr):
         self._md_pload._fastestmirror_cb(None, stage, ptr)
-        #print("fastestMirror:", stage)
 
     def handleMirrorFailure(self, msg, url, metadata):
         self._md_pload._mirror_failure_cb(None, msg, url, metadata)
-        # print("handlemirrorFailure:", msg, url, metadata)
         return 0
+
 
 class Repo(dnf.conf.RepoConf):
     # :api

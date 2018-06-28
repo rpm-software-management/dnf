@@ -96,7 +96,8 @@ class Option(object):
                 if isinstance(value, list) or isinstance(value, tuple):
                     self._option.set(priority, libdnf.conf.VectorString(value))
                 elif (isinstance(self._option, libdnf.conf.OptionBool) or
-                      isinstance(self._option, libdnf.conf.OptionChildBool)) and isinstance(value, int):
+                      isinstance(self._option, libdnf.conf.OptionChildBool)) and \
+                        isinstance(value, int):
                     self._option.set(priority, bool(value))
                 else:
                     self._option.set(priority, value)
@@ -448,7 +449,8 @@ class MainConf(BaseConfig):
         if not isinstance(val, str):
             if any(os.path.exists(os.path.join(self._get_value('installroot'),
                                                p.lstrip('/'))) for p in val):
-                opt._set(libdnf.conf.VectorString([self._prepend_installroot_path(p) for p in val]), prio)
+                opt._set(libdnf.conf.VectorString([self._prepend_installroot_path(p) for p in val]),
+                         prio)
         elif os.path.exists(os.path.join(self._get_value('installroot'),
                                          val.lstrip('/'))):
             opt._set(self._prepend_installroot_path(val), prio)
