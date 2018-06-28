@@ -60,35 +60,6 @@ class MakeCacheCommandTest(tests.support.DnfBaseTestCase):
         self.assertFalse(self._do_makecache(cmd))
         self.assert_last_info(logger, u'Metadata cache refreshed recently.')
 
-        self.base._repo_persistor.since_last_makecache = mock.Mock(return_value=10)
-        self.base._sack = 'nonempty'
-        r = tests.support.MockRepo("glimpse", self.base.conf)
-        self.base.repos.add(r)
-
-        # regular case 1: metadata is already expired:
-        r._metadata_expire_in = mock.Mock(return_value=(False, 0))
-        r._sync_strategy = dnf.repo.SYNC_TRY_CACHE
-        self.assertTrue(self._do_makecache(cmd))
-        self.assert_last_info(logger, u'Metadata cache created.')
-        self.assertTrue(r._expired)
-        r._expired = False
-
-        # regular case 2: metadata is cached and will expire later than
-        # metadata_timer_sync:
-        r._metadata_expire_in = mock.Mock(return_value=(True, 100))
-        r._sync_strategy = dnf.repo.SYNC_TRY_CACHE
-        self.assertTrue(self._do_makecache(cmd))
-        self.assert_last_info(logger, u'Metadata cache created.')
-        self.assertFalse(r._expired)
-
-        # regular case 3: metadata is cached but will eqpire before
-        # metadata_timer_sync:
-        r._metadata_expire_in = mock.Mock(return_value=(True, 4))
-        r._sync_strategy = dnf.repo.SYNC_TRY_CACHE
-        self.assertTrue(self._do_makecache(cmd))
-        self.assert_last_info(logger, u'Metadata cache created.')
-        self.assertTrue(r._expired)
-
     @mock.patch('dnf.base.logger',
                 new_callable=tests.support.mock_logger)
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
