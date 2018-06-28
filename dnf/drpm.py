@@ -95,7 +95,10 @@ class DeltaInfo(object):
             self.deltarpm_jobs = os.sysconf('SC_NPROCESSORS_ONLN')
         except (TypeError, ValueError):
             self.deltarpm_jobs = 4
-        self.deltarpm_percentage = deltarpm_percentage or dnf.conf.Conf().deltarpm_percentage
+        if deltarpm_percentage is None:
+            self.deltarpm_percentage = dnf.conf.Conf().deltarpm_percentage
+        else:
+            self.deltarpm_percentage = deltarpm_percentage
         self.query = query
         self.progress = progress
 
