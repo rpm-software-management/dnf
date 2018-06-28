@@ -621,8 +621,6 @@ class ModuleConf(BaseConfig):
         self.profiles = ListOption([])
         # enable/disable a module
         self.enabled = BoolOption(True)
-        # lock module on installed version, don't upgrade or downgrade
-        self.locked = BoolOption(False)
 
     def _write(self, fileobj):
         output = "[{}]\n".format(self._section)
@@ -631,6 +629,5 @@ class ModuleConf(BaseConfig):
         output += "version = {}\n".format(self.version._get())
         output += "profiles = {}\n".format(",".join(self.profiles._get()))
         output += "enabled = {}\n".format(self.enabled._get())
-        output += "locked = {}\n".format(self.locked._get())
 
         fileobj.write(output)

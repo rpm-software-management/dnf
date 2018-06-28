@@ -63,12 +63,6 @@ class DifferentStreamEnabledException(dnf.exceptions.Error):
         super(DifferentStreamEnabledException, self).__init__(value)
 
 
-class VersionLockedException(dnf.exceptions.Error):
-    def __init__(self, module_spec, version):
-        value = "'{}' is locked to version: {}".format(module_spec, version)
-        super(VersionLockedException, self).__init__(value)
-
-
 class CannotLockVersionException(dnf.exceptions.Error):
     def __init__(self, module_spec, version, reason=None):
         value = "Cannot lock '{}' to version: {}".format(module_spec, version)

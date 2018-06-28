@@ -33,8 +33,6 @@ class RepoModuleVersion(object):
     def __lt__(self, other):
         # for finding latest
         assert self.full_stream == other.full_stream
-        if self.repo_module.conf.locked._get():
-            return self.version < self.repo_module.conf.version._get()
         return self.module_metadata.peek_version() < other.module_metadata.peek_version()
 
     def __repr__(self):

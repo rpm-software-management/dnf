@@ -44,7 +44,6 @@ class RepoModule(OrderedDict):
             self._conf = ModuleConf(section=self.name, parser=ConfigParser())
             self._conf.name._set(self.name)
             self._conf.enabled._set(False)
-            self._conf.locked._set(False)
             self._conf.version._set(-1)
 
         return self._conf
@@ -100,12 +99,6 @@ class RepoModule(OrderedDict):
 
     def disable(self):
         self.parent.base._module_persistor.set_data(self, enabled=False, profiles=[])
-
-    def lock(self, version):
-        self.parent.base._module_persistor.set_data(self, locked=True, version=version)
-
-    def unlock(self):
-        self.parent.base._module_persistor.set_data(self, locked=False)
 
     def write_conf_to_file(self):
         output_file = os.path.join(self.parent.get_modules_dir(),

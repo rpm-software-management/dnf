@@ -23,10 +23,9 @@ import smartcols
 
 from dnf.conf.read import ModuleReader
 from dnf.module import module_messages, NOTHING_TO_SHOW, \
-    INSTALLING_NEWER_VERSION, ENABLED_MODULES, VERSION_LOCKED
+    INSTALLING_NEWER_VERSION, ENABLED_MODULES
 from dnf.module.exceptions import NoStreamSpecifiedException, NoModuleException, \
-    EnabledStreamException, ProfileNotInstalledException, NoProfileToRemoveException, \
-    VersionLockedException, CannotLockVersionException, \
+    ProfileNotInstalledException, NoProfileToRemoveException, \
     DifferentStreamEnabledException, InstallMultipleStreamsException
 from dnf.module.repo_module import RepoModule
 from dnf.module.subject import ModuleSubject
@@ -68,16 +67,7 @@ class RepoModuleDict(OrderedDict):
 
             repo_module_stream = repo_module[stream]
 
-            if repo_module.conf and \
-                    repo_module.conf.locked._get() and \
-                    repo_module.conf.version._get() is not -1:
-                if repo_module_stream.latest().version != repo_module.conf.version._get():
-                    logger.info(module_messages[VERSION_LOCKED]
-                                .format("{}:{}".format(repo_module.name, stream),
-                                        repo_module.conf.version._get()))
-
-                repo_module_version = repo_module_stream[repo_module.conf.version._get()]
-            elif version:
+            if version:
                 repo_module_version = repo_module_stream[version]
             else:
                 # if version is not specified, pick the latest
@@ -126,9 +116,6 @@ class RepoModuleDict(OrderedDict):
             repo_module_stream = repo_module[stream]
 
             versions = repo_module_stream.values()
-            if repo_module.conf.locked._get():
-                versions = [repo_module_stream[repo_module.conf.version._get()]]
-
             for repo_module_version in versions:
                 version_dependencies.add(repo_module_version)
 
@@ -239,59 +226,11 @@ class RepoModuleDict(OrderedDict):
 
         repo_module = module_version.repo_module
 
-        if repo_module.conf.locked._get():
-            raise VersionLockedException(module_spec, module_version.version)
-
         repo_module.disable()
 
         if save_immediately:
             self.base._module_persistor.commit()
             self.base._module_persistor.save()
-
-    def lock(self, module_spec, save_immediately=False):
-        subj = ModuleSubject(module_spec)
-        module_version, module_form = subj.find_module_version(self)
-
-        repo_module = module_version.repo_module
-
-        if not repo_module.conf.enabled._get():
-            raise EnabledStreamException(module_spec)
-        elif repo_module.conf.locked._get() and \
-                (repo_module.conf.stream._get() != module_version.stream or
-                 repo_module.conf.version._get() != module_version.version):
-            raise VersionLockedException(module_spec, module_version.version)
-
-        version_to_lock = module_version.version
-        if list(repo_module.conf.profiles._get()):
-            version_to_lock = module_version.repo_module.conf.version._get()
-        repo_module.lock(version_to_lock)
-
-        if module_form.version and version_to_lock != module_form.version:
-            raise CannotLockVersionException(module_spec, module_form.version,
-                                             "Different version installed.")
-
-        if save_immediately:
-            self.base._module_persistor.commit()
-            self.base._module_persistor.save()
-
-        return module_version.stream, version_to_lock
-
-    def unlock(self, module_spec, save_immediately=False):
-        subj = ModuleSubject(module_spec)
-        module_version, module_form = subj.find_module_version(self)
-
-        repo_module = module_version.repo_module
-
-        if not repo_module.conf.enabled._get():
-            raise EnabledStreamException(module_spec)
-
-        repo_module.unlock()
-
-        if save_immediately:
-            self.base._module_persistor.commit()
-            self.base._module_persistor.save()
-
-        return module_version.stream, module_version.version
 
     def install(self, module_specs, strict=True):
         versions, module_specs = self.get_best_versions(module_specs)
@@ -299,12 +238,6 @@ class RepoModuleDict(OrderedDict):
         result = False
         for module_version, profiles, default_profiles in versions.values():
             conf = module_version.repo_module.conf
-            if conf.locked._get() and conf.version._get() != module_version.version:
-                logger.warning(module_messages[VERSION_LOCKED]
-                               .format(module_version.name,
-                                       module_version.repo_module.conf.version._get()))
-                continue
-
             self.enable("{}:{}".format(module_version.name, module_version.stream))
 
         self.base.sack.reset_module_excludes()
@@ -393,8 +326,6 @@ class RepoModuleDict(OrderedDict):
             except NoStreamSpecifiedException:
                 continue
 
-            if module_version.repo_module.conf.locked._get():
-                continue
             if not module_version.repo_module.conf.enabled._get():
                 for rpm in module_version.artifacts():
                     query_for_rpm = self.base.sack.query().filter(nevra=rpm)
@@ -723,7 +654,6 @@ class RepoModuleDict(OrderedDict):
                 defaults_conf = i.repo_module.defaults
                 default_str = ""
                 enabled_str = ""
-                locked_str = ""
                 profiles_str = ""
                 available_profiles = i.profiles
                 installed_profiles = []
@@ -737,8 +667,6 @@ class RepoModuleDict(OrderedDict):
                     enabled_str += "[e]"
 
                 if i.stream == conf.stream._get() and i.version == conf.version._get():
-                    if conf.locked._get():
-                        locked_str = " [l]"
                     installed_profiles = list(conf.profiles._get())
 
                 for profile in available_profiles[:2]:
@@ -750,7 +678,7 @@ class RepoModuleDict(OrderedDict):
 
                 line[column_name] = i.name
                 line[column_stream] = i.stream + default_str + enabled_str
-                line[column_version] = str(i.version) + locked_str
+                line[column_version] = str(i.version)
                 line[column_profiles] = profiles_str
                 line[column_info] = i.summary()
 
