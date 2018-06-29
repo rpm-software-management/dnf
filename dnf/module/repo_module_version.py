@@ -35,7 +35,7 @@ class RepoModuleVersion(object):
         assert self.full_stream == other.full_stream
         if self.repo_module.conf.locked._get():
             return self.version < self.repo_module.conf.version._get()
-        return self.module_metadata.get_version() < other.module_metadata.get_version()
+        return self.module_metadata.peek_version() < other.module_metadata.peek_version()
 
     def __repr__(self):
         return self.full_version
@@ -139,7 +139,7 @@ class RepoModuleVersion(object):
                                              profiles=sorted(set(profiles)))
 
     def artifacts(self):
-        return self.module_metadata.get_rpm_artifacts().get()
+        return self.module_metadata.peek_rpm_artifacts().dup()
 
     def requires(self):
         requires = {}
@@ -149,17 +149,17 @@ class RepoModuleVersion(object):
         return requires
 
     def summary(self):
-        return self.module_metadata.get_summary()
+        return self.module_metadata.peek_summary()
 
     def description(self):
-        return self.module_metadata.get_description()
+        return self.module_metadata.peek_description()
 
     @staticmethod
     def nevra_object_to_nevr_str(nevra_object):
         return "{}-{}".format(nevra_object.name, nevra_object.evr())
 
     def rpms(self, profile):
-        return self.module_metadata.get_profiles()[profile].get_rpms().get()
+        return self.module_metadata.peek_profiles()[profile].peek_rpms().dup()
 
     def profile_nevra_objects(self, profile):
         result = []
@@ -174,26 +174,26 @@ class RepoModuleVersion(object):
 
     @property
     def version(self):
-        return self.module_metadata.get_version()
+        return self.module_metadata.peek_version()
 
     @property
     def full_version(self):
         return "%s:%s:%s" % (
-            self.module_metadata.get_name(), self.module_metadata.get_stream(),
-            self.module_metadata.get_version())
+            self.module_metadata.peek_name(), self.module_metadata.peek_stream(),
+            self.module_metadata.peek_version())
 
     @property
     def stream(self):
-        return self.module_metadata.get_stream()
+        return self.module_metadata.peek_stream()
 
     @property
     def full_stream(self):
-        return "%s-%s" % (self.module_metadata.get_name(), self.module_metadata.get_stream())
+        return "%s-%s" % (self.module_metadata.peek_name(), self.module_metadata.peek_stream())
 
     @property
     def name(self):
-        return self.module_metadata.get_name()
+        return self.module_metadata.peek_name()
 
     @property
     def profiles(self):
-        return sorted(self.module_metadata.get_profiles())
+        return sorted(self.module_metadata.peek_profiles())
