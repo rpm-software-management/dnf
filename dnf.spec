@@ -73,7 +73,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        3.0.1
+Version:        3.0.2
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -481,6 +481,9 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %endif
 
 %changelog
+* Fri Jun 29 2018 Jaroslav Mracek <jmracek@redhat.com> - 3.0.2-1
+- Update to 3.0.2-1
+
 * Tue Jun 26 2018 Jaroslav Mracek <jmracek@redhat.com> - 3.0.1-1
 - Update to 3.0.1-1
 - Support of MODULES - new DNF command `module`

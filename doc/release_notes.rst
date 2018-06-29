@@ -20,6 +20,12 @@
 ###################
 
 ===================
+3.0.2 Release Notes
+===================
+
+* Add limited compatibility with dnf-2.0 (constants)
+
+===================
 3.0.1 Release Notes
 ===================
 
