@@ -261,7 +261,7 @@ class Base(object):
                 try:
                     with open(yaml_file, "r") as f:
                         modules_yaml = f.read()
-                    module_metadata = Modulemd.Module.new_all_from_string_ext(modules_yaml)
+                    module_metadata = Modulemd.objects_from_string(modules_yaml)
                     defaults = [i for i in module_metadata if isinstance(i, Modulemd.Defaults)]
                     module_defaults_prioritizer.add(defaults, 1000)
                 except IOError as ex:

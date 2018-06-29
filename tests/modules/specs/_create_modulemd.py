@@ -73,7 +73,7 @@ for module_id in os.listdir(MODULES_DIR):
         sset.add("LGPLv2")
         mmd.set_module_licenses(sset)
         mmd.set_summary("Fake module")
-        mmd.set_description(mmd.get_summary())
+        mmd.set_description(mmd.peek_summary())
         artifacts = Modulemd.SimpleSet()
         for rpm in rpms:
             artifacts.add(rpm[:-4])

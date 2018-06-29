@@ -349,7 +349,7 @@ class RepoModuleDict(OrderedDict):
                     default_stream = module_version.repo_module.defaults.peek_default_stream()
                     profile_defaults = module_version.repo_module.defaults.peek_profile_defaults()
                     if default_stream in profile_defaults:
-                        default_profiles.extend(profile_defaults[default_stream].get())
+                        default_profiles.extend(profile_defaults[default_stream].dup())
 
                 if best_version < module_version:
                     logger.info(module_messages[INSTALLING_NEWER_VERSION].format(best_version,
@@ -364,7 +364,7 @@ class RepoModuleDict(OrderedDict):
                 default_stream = module_version.repo_module.defaults.peek_default_stream()
                 profile_defaults = module_version.repo_module.defaults.peek_profile_defaults()
                 if default_stream in profile_defaults:
-                    default_profiles.extend(profile_defaults[default_stream].get())
+                    default_profiles.extend(profile_defaults[default_stream].dup())
 
                 if module_form.profile:
                     profiles = [module_form.profile]
@@ -513,7 +513,7 @@ class RepoModuleDict(OrderedDict):
         default_stream = module_version.repo_module.defaults.peek_default_stream()
         profile_defaults = module_version.repo_module.defaults.peek_profile_defaults()
         if default_stream in profile_defaults:
-            default_profiles.extend(profile_defaults[default_stream].get())
+            default_profiles.extend(profile_defaults[default_stream].dup())
 
         lines = OrderedDict()
         lines["Name"] = module_version.name
