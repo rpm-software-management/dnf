@@ -145,7 +145,7 @@ class RepoModuleVersion(object):
         requires = {}
         for dependencies in self.module_metadata.peek_dependencies():
             for name, streams in dependencies.peek_requires().items():
-                requires[name] = streams.get()
+                requires[name] = streams.dup()
         return requires
 
     def summary(self):
