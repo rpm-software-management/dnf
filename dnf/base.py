@@ -466,7 +466,7 @@ class Base(object):
                         errors.append(e)
                         r.disable()
                 for e in errors:
-                    logger.warning(_("%s, disabling."), e)
+                    logger.warning(_("%s, ignoring this repo."), e)
                 if self.repos._any_enabled():
                     if age != 0 and mts != 0:
                         logger.info(_("Last metadata expiration check: %s ago on %s."),
