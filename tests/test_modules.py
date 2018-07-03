@@ -86,12 +86,12 @@ class ModuleSubjectTest(unittest.TestCase):
         self.assertEqual(actual, expected)
 
     def test_nsvp(self):
-        subj = ModuleSubject(MODULE_NSVAP)
-        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSVAP))
+        subj = ModuleSubject(MODULE_NSVP)
+        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSVP))
         self.assertEqual(len(result), 1)
         actual = result[0]
         expected = NSVCAP(name="module-name", stream="stream", version=1,
-                          arch="x86_64", profile="profile")
+                          arch=None, profile="profile")
         self.assertEqual(actual, expected)
 
     def test_nsv(self):
