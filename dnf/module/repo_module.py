@@ -87,7 +87,7 @@ class RepoModule(OrderedDict):
 
             if not self.parent.base.conf.assumeno and \
                     self.parent.base.output.userconfirm():
-                self.parent.base._module_persistor.set_data(self, version=-1, profiles=set())
+                self.parent.base._module_persistor.set_data(self, version=-1, profiles=[])
                 self.enable(stream, True)
             else:
                 raise EnabledStreamException("{}:{}".format(self.name, stream))
