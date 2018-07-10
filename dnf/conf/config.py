@@ -132,6 +132,12 @@ class IntOption(Option):
         super(IntOption, self).__init__(option)
 
 
+class LongOption(Option):
+    def __init__(self, default=0):
+        option = cfg.OptionNumberInt64(default)
+        super(LongOption, self).__init__(option)
+
+
 class BoolOption(Option):
     def __init__(self, default=False):
         option = cfg.OptionBool(default)
@@ -609,7 +615,7 @@ class ModuleConf(BaseConfig):
         # module name, stream and installed version
         self.name = StringOption(section)
         self.stream = StringOption("")
-        self.version = IntOption()
+        self.version = LongOption()
         # installed profiles
         self.profiles = ListOption([])
         # enable/disable a module
