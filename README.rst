@@ -38,7 +38,7 @@ To build DNF::
 
     mkdir build;
     pushd build;
-    cmake ..; # add '-DPYTHON_EXECUTABLE="/usr/bin/python3"' option for Python 3 build
+    cmake ..; # add '-DPYTHON_DESIRED="3"' option for Python 3 build
     make;
     popd;
 
