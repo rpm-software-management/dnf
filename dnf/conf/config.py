@@ -611,7 +611,8 @@ class ModuleConf(BaseConfig):
     """Option definitions for module INI file sections."""
 
     def __init__(self, section=None, parser=None):
-        super(ModuleConf, self).__init__(section, parser)
+        config = None
+        super(ModuleConf, self).__init__(config, section, parser)
         # module name, stream and installed version
         self.name = StringOption(section)
         self.stream = StringOption("")
