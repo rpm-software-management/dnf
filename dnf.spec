@@ -73,8 +73,8 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        3.0.2
-Release:        2%{?dist}
+Version:        3.0.3
+Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -481,7 +481,7 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %endif
 
 %changelog
-* Thu Jul 12 2018 Martin Hatina <mhatina@redhat.com> - 3.0.2-2
+* Thu Jul 12 2018 Martin Hatina <mhatina@redhat.com> - 3.0.3-1
 - Bug fix release
 
 * Fri Jun 29 2018 Jaroslav Mracek <jmracek@redhat.com> - 3.0.2-1
