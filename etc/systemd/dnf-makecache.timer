@@ -12,4 +12,4 @@ OnUnitInactiveSec=1h
 Unit=dnf-makecache.service
 
 [Install]
-WantedBy=basic.target
+WantedBy=multi-user.target
