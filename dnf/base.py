@@ -707,6 +707,9 @@ class Base(object):
         for pkg in goal.list_installs():
             self._ds_callback.pkg_added(pkg, 'i')
             obs = goal.obsoleted_by_package(pkg)
+            # skip obsoleted packages that are not part of all_obsoleted
+            # they are handled as upgrades/downgrades
+            obs = [i for i in obs if i in all_obsoleted]
 
             # TODO: move to libdnf: getBestReason
             reason = goal.get_reason(pkg)
@@ -726,17 +729,28 @@ class Base(object):
             cb = lambda pkg: self._ds_callback.pkg_added(pkg, 'od')
             dnf.util.mapall(cb, obs)
         for pkg in goal.list_upgrades():
-            group_fn = functools.partial(operator.contains, all_obsoleted)
-            obs, upgraded = dnf.util.group_by_filter(
-                group_fn, goal.obsoleted_by_package(pkg))
+            obs = goal.obsoleted_by_package(pkg)
+            upgraded = None
+            for i in obs:
+                # try to find a package with matching name as the upgrade
+                if i.name == pkg.name:
+                    upgraded = i
+                    break
+            if upgraded is None:
+                # no matching name -> pick the first one
+                upgraded = obs.pop(0)
+            else:
+                obs.remove(upgraded)
+            # skip obsoleted packages that are not part of all_obsoleted
+            # they are handled as upgrades/downgrades
+            obs = [i for i in obs if i in all_obsoleted]
             cb = lambda pkg: self._ds_callback.pkg_added(pkg, 'od')
             dnf.util.mapall(cb, obs)
             if pkg in self._get_installonly_query():
                 ts.add_install(pkg, obs)
             else:
-                ts.add_upgrade(pkg, upgraded[0], obs)
-                cb = lambda pkg: self._ds_callback.pkg_added(pkg, 'ud')
-                dnf.util.mapall(cb, upgraded)
+                ts.add_upgrade(pkg, upgraded, obs)
+                self._ds_callback.pkg_added(upgraded, 'ud')
             self._ds_callback.pkg_added(pkg, 'u')
         for pkg in goal.list_erasures():
             self._ds_callback.pkg_added(pkg, 'e')
