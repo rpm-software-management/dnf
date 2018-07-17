@@ -76,12 +76,16 @@ BACKWARD_ACTIONS = [
 
 ACTIONS = {
     PKG_DOWNGRADE: _('Downgrading'),
+    PKG_DOWNGRADED: _('Cleanup'),
     PKG_INSTALL: _('Installing'),
     PKG_OBSOLETE: _('Obsoleting'),
+    PKG_OBSOLETED: _('Obsoleting'),
     PKG_REINSTALL: _('Reinstalling'),
+    PKG_REINSTALLED: _('Cleanup'),
     # TODO: 'Removing'?
     PKG_REMOVE: _('Erasing'),
     PKG_UPGRADE: _('Upgrading'),
+    PKG_UPGRADED: _('Cleanup'),
 
     PKG_CLEANUP: _('Cleanup'),
     PKG_VERIFY: _('Verifying'),
