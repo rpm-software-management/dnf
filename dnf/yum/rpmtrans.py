@@ -166,6 +166,7 @@ class RPMTransaction(object):
         # Index in _te_list of the transaction element being processed (for use
         # in callbacks)
         self._te_index = 0
+        self._tsi_cache = None
 
     def _setupOutputLogging(self, rpmverbosity="info"):
         # UGLY... set up the transaction to record output from scriptlets
@@ -220,11 +221,16 @@ class RPMTransaction(object):
 
         te = self._te_list[self._te_index]
         te_nevra = dnf.util._te_nevra(te)
+        if self._tsi_cache is not None:
+            if str(self._tsi_cache) == te_nevra:
+                return self._tsi_cache.pkg, self._tsi_cache.action, self._tsi_cache
+
         for tsi in self.base.transaction:
             if tsi.action == libdnf.transaction.TransactionItemAction_REINSTALL:
                 # skip REINSTALL in order to return REINSTALLED
                 continue
             if str(tsi) == te_nevra:
+                self._tsi_cache = tsi
                 return tsi.pkg, tsi.action, tsi
 
         raise RuntimeError("TransactionItem not found for key: %s" % cbkey)
