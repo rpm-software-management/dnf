@@ -23,6 +23,7 @@ from __future__ import unicode_literals
 import dnf.exceptions
 import dnf.const
 import dnf.util
+import libdnf
 import librepo
 import logging
 import os
@@ -40,6 +41,7 @@ INFO = logging.INFO
 DEBUG = logging.DEBUG
 DDEBUG = 8
 SUBDEBUG = 6
+TRACE = 4
 
 def only_once(func):
     """Method decorator turning the method into noop on second or later calls."""
@@ -110,8 +112,9 @@ class Logging(object):
     def _presetup(self):
         logging.addLevelName(DDEBUG, "DDEBUG")
         logging.addLevelName(SUBDEBUG, "SUBDEBUG")
+        logging.addLevelName(TRACE, "TRACE")
         logger_dnf = logging.getLogger("dnf")
-        logger_dnf.setLevel(SUBDEBUG)
+        logger_dnf.setLevel(TRACE)
 
         # setup stdout
         stdout = logging.StreamHandler(sys.stdout)
@@ -179,3 +182,35 @@ class Timer(object):
         diff = time.time() - self.start
         msg = 'timer: %s: %d ms' % (self.what, diff * 1000)
         logging.getLogger("dnf").log(DDEBUG, msg)
+
+
+_LIBDNF_TO_DNF_LOGLEVEL_MAPPING = {
+    libdnf.utils.Logger.Level_CRITICAL: CRITICAL,
+    libdnf.utils.Logger.Level_ERROR: ERROR,
+    libdnf.utils.Logger.Level_WARNING: WARNING,
+    libdnf.utils.Logger.Level_NOTICE: INFO,
+    libdnf.utils.Logger.Level_INFO: INFO,
+    libdnf.utils.Logger.Level_DEBUG: DEBUG,
+    libdnf.utils.Logger.Level_TRACE: TRACE
+}
+
+
+class LibdnfLoggerCB(libdnf.utils.Logger):
+    def __init__(self):
+        super(LibdnfLoggerCB, self).__init__()
+        self._logger = logging.getLogger("dnf")
+
+    def write(self, source, *args):
+        """Log message.
+
+        source -- integer, defines origin (libdnf, librepo, ...) of message, 0 - unknown
+        """
+        if len(args) == 2:
+            level, message = args
+        elif len(args) == 4:
+            time, pid, level, message = args
+        self._logger.log(_LIBDNF_TO_DNF_LOGLEVEL_MAPPING[level], message)
+
+
+libdnfLoggerCB = LibdnfLoggerCB()
+libdnf.utils.Log.setLogger(libdnfLoggerCB)
