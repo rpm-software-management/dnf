@@ -144,6 +144,11 @@ Provides:       %{name}-conf = %{version}-%{release}
 Common data and configuration files for DNF
 
 %package -n %{yum_subpackage_name}
+# DNF == YUM4; prefix version with 4.0 to make it higher than any version of YUM3
+# save and restore version, otherwise setting Version affects other sub-packages
+%global pkg_version %{version}
+Version:        4.0.%{version}
+%global version %{pkg_version}
 Requires:       %{name} = %{version}-%{release}
 Summary:        %{pkg_summary}
 %if 0%{?fedora}
