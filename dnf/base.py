@@ -107,6 +107,7 @@ class Base(object):
         self._rpm_probfilter = set([rpm.RPMPROB_FILTER_OLDPACKAGE])
         self._plugins = dnf.plugin.Plugins()
         self._trans_success = False
+        self._trans_install_set = False
         self._tempfile_persistor = None
         self._update_security_filters = []
         self._allow_erasing = False
@@ -517,7 +518,7 @@ class Base(object):
                 self._trans_tempfiles.update(
                     self._tempfile_persistor.get_saved_tempfiles())
                 self._tempfile_persistor.empty()
-                if self._transaction and self._transaction.install_set:
+                if self._trans_install_set:
                     self._clean_packages(self._trans_tempfiles)
             else:
                 self._tempfile_persistor.tempfiles_to_add.update(
@@ -1043,9 +1044,13 @@ class Base(object):
                     msg = _('Failed to remove transaction file %s')
                     logger.critical(msg, fn)
 
+        # keep install_set status because _verify_transaction will clean it
+        self._trans_install_set = bool(self._transaction.install_set)
+
         # sync up what just happened versus what is in the rpmdb
         if not self._ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
             self._verify_transaction(cb.verify_tsi_package)
+
 
     def _verify_transaction(self, verify_pkg_cb=None):
         total = len(self.transaction)
