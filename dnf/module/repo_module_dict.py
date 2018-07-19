@@ -448,11 +448,12 @@ class RepoModuleDict(OrderedDict):
             try:
                 module_version, module_form = subj.find_module_version(self)
             except NoModuleException:
+                # TODO: report skipped module specs to the user
                 skipped.append(module_spec)
                 continue
 
             conf = self[module_form.name].conf
-            if module_form.stream != conf.stream._get():
+            if module_version.stream != conf.stream._get():
                 raise DifferentStreamEnabledException(module_form.name)
 
             if list(conf.profiles._get()):
