@@ -122,8 +122,7 @@ class RepoModuleVersion(object):
                 remove_query = dnf.subject.Subject(nevr) \
                     .get_best_query(self.base.sack, forms=hawkey.FORM_NEVR)
 
-                if not remove_query \
-                        or self.base._yumdb.get_package(remove_query[0]).reason == 'user':
+                if not remove_query or self.base.history.user_installed(remove_query[0]):
                     continue
 
                 self.base._remove_if_unneeded(remove_query)
