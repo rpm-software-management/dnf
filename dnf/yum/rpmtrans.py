@@ -72,7 +72,8 @@ class TransactionDisplay(object):
     # use constants from dnf.callback which are the official API
     PKG_CLEANUP = _add_deprecated_action("PKG_CLEANUP")
     PKG_DOWNGRADE = _add_deprecated_action("PKG_DOWNGRADE")
-    PKG_ERASE = _add_deprecated_action("PKG_ERASE")
+    PKG_REMOVE = _add_deprecated_action("PKG_REMOVE")
+    PKG_ERASE = PKG_REMOVE
     PKG_INSTALL = _add_deprecated_action("PKG_INSTALL")
     PKG_OBSOLETE = _add_deprecated_action("PKG_OBSOLETE")
     PKG_REINSTALL = _add_deprecated_action("PKG_REINSTALL")
