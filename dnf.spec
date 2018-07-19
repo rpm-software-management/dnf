@@ -486,6 +486,18 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %endif
 
 %changelog
+* Thu Jul 19 2018 Daniel Mach <dmach@redhat.com> - 3.0.4-1
+- [transaction] Fix 'TransactionItem not found for key' error.
+- [module] Allow removing module profile without specifying a stream.
+- [module] Fix 'BaseCli' object has no attribute '_yumdb' error.
+- [callback] Fix TransactionDisplay.PKG_ERASE redirect to a non-existing constant.
+- [spec] Change yum compat package version to 4.0.version.
+- [cache] Clean transaction temp files after successfull transaction
+- [log] Log messages from libdnf logger
+- [transaction] Add states to report rpm transaction progress
+- [transaction] Cache TransactionItem during handling of RPM callback (RhBug:1599597)
+- [systemd] dnf-makecache.timer: move to multi-user to fix loop
+
 * Thu Jul 12 2018 Martin Hatina <mhatina@redhat.com> - 3.0.3-1
 - Bug fix release
 
