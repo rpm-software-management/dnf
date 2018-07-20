@@ -512,11 +512,13 @@ class Repo(dnf.conf.RepoConf):
         Returns True if this call to load() caused a fresh metadata download.
 
         """
+        ret = False
         try:
-            self._repo.load()
+            ret = self._repo.load()
         except RuntimeError as e:
             raise dnf.exceptions.RepoError(str(e))
         self.metadata = Metadata(self._repo)
+        return ret
 
     def _metadata_expire_in(self):
         """Get the number of seconds after which the cached metadata will expire.
