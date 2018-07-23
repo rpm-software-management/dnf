@@ -26,6 +26,7 @@ import logging
 import dnf.pycomp
 import smtplib
 import email.utils
+import shlex
 import subprocess
 
 APPLIED = _("The following updates have been applied on '%s':")
@@ -130,7 +131,8 @@ class CommandEmitterMixIn(object):
         stdin_feed = stdin_fmt.format(**msg).encode('utf-8')
 
         # Execute the command
-        subp = subprocess.Popen(command, shell=True, stdin=subprocess.PIPE)
+        args = shlex.split(command)
+        subp = subprocess.Popen(args, shell=True, stdin=subprocess.PIPE)
         subp.communicate(stdin_feed)
         subp.stdin.close()
         if subp.wait() != 0:
