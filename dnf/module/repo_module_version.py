@@ -67,7 +67,7 @@ class RepoModuleVersion(object):
 
         result = False
         for profile in profiles:
-            if profile not in self.profiles:
+            if profile not in self.profiles + ['default']:
                 self.report_profile_error(profile, defaults_used)
 
             for nevra_object in self.profile_nevra_objects(profile):
@@ -158,7 +158,12 @@ class RepoModuleVersion(object):
         return "{}-{}".format(nevra_object.name, nevra_object.evr())
 
     def rpms(self, profile):
-        return self.module_metadata.peek_profiles()[profile].peek_rpms().dup()
+        module_profiles = self.module_metadata.peek_profiles()
+        if profile not in module_profiles and profile in ['default']:
+            result = []
+        else:
+            result = module_profiles[profile].peek_rpms().dup()
+        return result
 
     def profile_nevra_objects(self, profile):
         result = []
