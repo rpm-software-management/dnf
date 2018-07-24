@@ -433,6 +433,9 @@ class RepoModuleDict(OrderedDict):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
 
+        if module_form.profile:
+            logger.info("Ignoring unnecessary profile '{}'".format(module_form.profile))
+
         lines = OrderedDict()
         lines["Name"] = module_version.full_version
 
@@ -446,6 +449,10 @@ class RepoModuleDict(OrderedDict):
     def get_info(self, module_spec):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
+
+        if module_form.profile:
+            logger.info("Ignoring unnecessary profile '{}'".format(module_form.profile))
+
         conf = module_version.repo_module.conf
 
         default_stream = module_version.repo_module.defaults.peek_default_stream()
@@ -516,6 +523,9 @@ class RepoModuleDict(OrderedDict):
     def get_full_info(self, module_spec):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
+
+        if module_form.profile:
+            logger.info("Ignoring unnecessary profile '{}'".format(module_form.profile))
 
         return module_version.module_metadata.dumps().rstrip("\n")
 
