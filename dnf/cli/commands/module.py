@@ -21,7 +21,7 @@ from __future__ import print_function
 
 from dnf.cli import commands, CliError
 from dnf.i18n import _
-from dnf.module.exceptions import NoModuleException
+from dnf.module.exceptions import NoModuleException, EnableMultipleStreamsException
 from dnf.module.subject import ModuleSubject
 from dnf.util import logger
 
@@ -87,10 +87,17 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
+            module_versions = dict()
             for module_ns in self.opts.module_nsvp:
                 subj = ModuleSubject(module_ns)
                 module_version, module_form = subj.find_module_version(self.base.repo_module_dict)
 
+                if module_version.name in module_versions:
+                    raise EnableMultipleStreamsException(module_version.name)
+
+                module_versions[module_version.name] = (module_version, module_form)
+
+            for module_version, module_form in module_versions.values():
                 if module_form.profile:
                     logger.info("Ignoring unnecessary profile: '{}'".format(module_form.profile))
 
