@@ -467,8 +467,9 @@ class RepoModuleDict(OrderedDict):
             installed_profiles = list(conf.profiles._get())
 
         for profile in available_profiles:
-            profiles_str += "{}{}, ".format(profile,
-                                            " [i]" if profile in installed_profiles else "")
+            profiles_str += "{}{}".format(profile,
+                                          " [d]" if profile in default_profiles else "")
+            profiles_str += "[i], " if profile in installed_profiles else ", "
 
         profiles_str = profiles_str[:-2]
 
@@ -691,9 +692,15 @@ class RepoModuleDict(OrderedDict):
                 if i.stream == conf.stream._get() and i.version == conf.version._get():
                     installed_profiles = list(conf.profiles._get())
 
+                default_profiles = []
+                default_stream = defaults_conf.peek_default_stream()
+                profile_defaults = defaults_conf.peek_profile_defaults()
+                if default_stream in profile_defaults:
+                    default_profiles.extend(profile_defaults[default_stream].dup())
                 for profile in available_profiles:
-                    profiles_str += "{}{}, ".format(profile,
-                                                    " [i]" if profile in installed_profiles else "")
+                    profiles_str += "{}{}".format(profile,
+                                                  " [d]" if profile in default_profiles else "")
+                    profiles_str += "[i], " if profile in installed_profiles else ", "
 
                 profiles_str = profiles_str[:-2]
                 profiles_str += ", ..." if len(available_profiles) > 2 else ""
