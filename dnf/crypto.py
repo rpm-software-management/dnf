@@ -102,7 +102,7 @@ def import_repo_keys(repo):
     gpgdir = repo._pubring_dir
     known_keys = keyids_from_pubring(gpgdir)
     for keyurl in repo.gpgkey:
-        for keyinfo in retrieve(keyurl):
+        for keyinfo in retrieve(keyurl, repo):
             keyid = keyinfo.id_
             if keyid in known_keys:
                 logger.debug(_('repo %s: 0x%s already imported'), repo.id, keyid)
