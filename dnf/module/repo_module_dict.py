@@ -206,10 +206,7 @@ class RepoModuleDict(OrderedDict):
                         nevra_epoch_ensured in version.artifacts():
                     version.repo_module.enable(version.stream, True)
 
-    def enable(self, module_spec, save_immediately=False):
-        subj = ModuleSubject(module_spec)
-        module_version, module_form = subj.find_module_version(self)
-
+    def enable_by_version(self, module_version, save_immediately=False):
         version_dependencies = self.get_module_dependency_latest(module_version.name,
                                                                  module_version.stream)
 
@@ -220,18 +217,71 @@ class RepoModuleDict(OrderedDict):
             self.base._module_persistor.commit()
             self.base._module_persistor.save()
 
-    def disable(self, module_spec, save_immediately=False):
+    def enable(self, module_spec, save_immediately=False):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
 
-        repo_module = module_version.repo_module
+        self.enable_by_version(module_version, save_immediately)
 
-        repo_module.disable()
+    def disable_by_version(self, module_version, save_immediately=False):
+        module_version.repo_module.disable()
 
         if save_immediately:
             self.base._module_persistor.commit()
             self.base._module_persistor.save()
 
+    def disable(self, module_spec, save_immediately=False):
+        subj = ModuleSubject(module_spec)
+        module_version, module_form = subj.find_module_version(self)
+
+        self.disable_by_version(module_version, save_immediately)
+
+    def lock(self, module_spec, save_immediately=False):
+        subj = ModuleSubject(module_spec)
+        module_version, module_form = subj.find_module_version(self)
+
+        repo_module = module_version.repo_module
+
+        if not repo_module.conf.enabled._get():
+            raise EnabledStreamException(module_spec)
+        elif repo_module.conf.locked._get() and \
+                (repo_module.conf.stream._get() != module_version.stream or
+                 repo_module.conf.version._get() != module_version.version):
+            raise VersionLockedException(module_spec, module_version.version)
+
+        version_to_lock = module_version.version
+        if list(repo_module.conf.profiles._get()):
+            version_to_lock = module_version.repo_module.conf.version._get()
+        repo_module.lock(version_to_lock)
+
+        if module_form.version and version_to_lock != module_form.version:
+            raise CannotLockVersionException(module_spec, module_form.version,
+                                             "Different version installed.")
+
+        if save_immediately:
+            self.base._module_persistor.commit()
+            self.base._module_persistor.save()
+
+        return module_version.stream, version_to_lock
+
+    def unlock(self, module_spec, save_immediately=False):
+        subj = ModuleSubject(module_spec)
+        module_version, module_form = subj.find_module_version(self)
+
+        repo_module = module_version.repo_module
+
+        if not repo_module.conf.enabled._get():
+            raise EnabledStreamException(module_spec)
+
+        repo_module.unlock()
+
+        if save_immediately:
+            self.base._module_persistor.commit()
+            self.base._module_persistor.save()
+
+        return module_version.stream, module_version.version
+
+>>>>>>> warn user about ignored profile when enabling/disabling module:stream (RhBug:1561303)
     def install(self, module_specs, strict=True):
         versions, module_specs = self.get_best_versions(module_specs)
 
