@@ -81,6 +81,7 @@ for module_id in os.listdir(MODULES_DIR):
         for profile_name in profiles:
             profile = Modulemd.Profile()
             profile.set_name(profile_name)
+            profile.set_description("Description for profile %s." % profile_name)
             profile_rpms = Modulemd.SimpleSet()
             profile_rpms.set(profiles[profile_name]["rpms"])
             profile.set_rpms(profile_rpms)
