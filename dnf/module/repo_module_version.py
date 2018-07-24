@@ -129,8 +129,9 @@ class RepoModuleVersion(object):
         version = conf.version._get()
         profiles = [x for x in list(conf.profiles._get()) if x not in profiles]
 
-        if len(list(conf.profiles._get())) == 0:
+        if len(profiles) == 0:
             conf.version._set(-1)
+            version = -1
 
         self.base._module_persistor.set_data(self.repo_module, stream=self.stream, version=version,
                                              profiles=sorted(set(profiles)))
