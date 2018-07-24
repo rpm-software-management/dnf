@@ -68,13 +68,16 @@ class ModuleCommand(commands.Command):
 
         def run_on_module(self):
             for spec in self.opts.module_nsvp:
-                print()
-                if self.opts.verbose:
-                    print(self.base.repo_module_dict.get_full_info(spec))
-                elif self.opts.profile:
-                    print(self.base.repo_module_dict.get_info_profiles(spec))
-                else:
-                    print(self.base.repo_module_dict.get_info(spec))
+                try:
+                    print()
+                    if self.opts.verbose:
+                        print(self.base.repo_module_dict.get_full_info(spec))
+                    elif self.opts.profile:
+                        print(self.base.repo_module_dict.get_info_profiles(spec))
+                    else:
+                        print(self.base.repo_module_dict.get_info(spec))
+                except NoModuleException as e:
+                    logger.info(e)
 
     class EnableSubCommand(SubCommand):
 
