@@ -442,9 +442,15 @@ class RepoModuleDict(OrderedDict):
     def get_info(self, module_spec):
         subj = ModuleSubject(module_spec)
         module_version, module_form = subj.find_module_version(self)
+        conf = module_version.repo_module.conf
 
         default_stream = module_version.repo_module.defaults.peek_default_stream()
-        default_str = " (default)" if module_version.stream == default_stream else ""
+        default_str = " [d]" if module_version.stream == default_stream else ""
+        enabled_str = ""
+        if module_version.stream == conf.stream._get() and conf.enabled._get():
+            if not default_str:
+                enabled_str = " "
+            enabled_str += "[e]"
 
         default_profiles = []
         default_stream = module_version.repo_module.defaults.peek_default_stream()
@@ -452,20 +458,34 @@ class RepoModuleDict(OrderedDict):
         if default_stream in profile_defaults:
             default_profiles.extend(profile_defaults[default_stream].dup())
 
+        profiles_str = ""
+        available_profiles = module_version.profiles
+        installed_profiles = []
+
+        if module_version.stream == conf.stream._get() and \
+                module_version.version == conf.version._get():
+            installed_profiles = list(conf.profiles._get())
+
+        for profile in available_profiles:
+            profiles_str += "{}{}, ".format(profile,
+                                            " [i]" if profile in installed_profiles else "")
+
+        profiles_str = profiles_str[:-2]
+
         lines = OrderedDict()
         lines["Name"] = module_version.name
-        lines["Stream"] = module_version.stream + default_str
+        lines["Stream"] = module_version.stream + default_str + enabled_str
         lines["Version"] = module_version.version
-        lines["Profiles"] = " ".join(module_version.profiles)
+        lines["Profiles"] = profiles_str
         lines["Default profiles"] = " ".join(default_profiles)
         lines["Repo"] = module_version.repo.id
         lines["Summary"] = module_version.summary()
         lines["Description"] = module_version.description()
         lines["Artifacts"] = "\n".join(sorted(module_version.artifacts()))
 
-        table = self.create_simple_table(lines)
+        str_table = str(self.create_simple_table(lines))
 
-        return table
+        return str_table + "\n\nHint: [d]efault, [e]nabled, [i]nstalled"
 
     @staticmethod
     def create_simple_table(lines):
@@ -641,7 +661,6 @@ class RepoModuleDict(OrderedDict):
         table.maxout = True
         column_name = table.new_column("Name")
         column_stream = table.new_column("Stream")
-        column_version = table.new_column("Version")
         column_profiles = table.new_column("Profiles")
         column_profiles.wrap = True
         column_info = table.new_column("Info")
@@ -672,7 +691,7 @@ class RepoModuleDict(OrderedDict):
                 if i.stream == conf.stream._get() and i.version == conf.version._get():
                     installed_profiles = list(conf.profiles._get())
 
-                for profile in available_profiles[:2]:
+                for profile in available_profiles:
                     profiles_str += "{}{}, ".format(profile,
                                                     " [i]" if profile in installed_profiles else "")
 
@@ -681,7 +700,6 @@ class RepoModuleDict(OrderedDict):
 
                 line[column_name] = i.name
                 line[column_stream] = i.stream + default_str + enabled_str
-                line[column_version] = str(i.version)
                 line[column_profiles] = profiles_str
                 line[column_info] = i.summary()
 
