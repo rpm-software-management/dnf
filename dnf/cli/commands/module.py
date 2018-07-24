@@ -22,6 +22,7 @@ from __future__ import print_function
 from dnf.cli import commands, CliError
 from dnf.i18n import _
 from dnf.module.exceptions import NoModuleException
+from dnf.module.subject import ModuleSubject
 from dnf.util import logger
 
 
@@ -87,8 +88,14 @@ class ModuleCommand(commands.Command):
 
         def run_on_module(self):
             for module_ns in self.opts.module_nsvp:
-                self.base.repo_module_dict.enable(module_ns, True)
-                logger.info("'{}' is enabled".format(module_ns))
+                subj = ModuleSubject(module_ns)
+                module_version, module_form = subj.find_module_version(self.base.repo_module_dict)
+
+                if module_form.profile:
+                    logger.info("Ignoring unnecessary profile: '{}'".format(module_form.profile))
+
+                self.base.repo_module_dict.enable_by_version(module_version, True)
+                logger.info("{}:{} is enabled".format(module_version.name, module_version.stream))
 
     class DisableSubCommand(SubCommand):
 
@@ -102,8 +109,15 @@ class ModuleCommand(commands.Command):
 
         def run_on_module(self):
             for module_n in self.opts.module_nsvp:
-                self.base.repo_module_dict.disable(module_n, True)
-                logger.info("'{}' is disabled".format(module_n))
+                subj = ModuleSubject(module_n)
+                module_version, module_form = subj.find_module_version(self.base.repo_module_dict)
+
+                if module_form.profile:
+                    logger.info("Ignoring unnecessary profile: '{}'".format(module_form.profile))
+
+                self.base.repo_module_dict.disable_by_version(module_n, True)
+                logger.info("{}:{} is disabled".format(module_version.name,
+                                                       module_version.stream))
 
     class InstallSubCommand(SubCommand):
 
