@@ -714,7 +714,7 @@ class RepoModuleDict(OrderedDict):
         column_stream = table.new_column("Stream")
         column_profiles = table.new_column("Profiles")
         column_profiles.wrap = True
-        column_info = table.new_column("Info")
+        column_info = table.new_column("Summary")
         column_info.wrap = True
 
         if not self.base.conf.verbose:
