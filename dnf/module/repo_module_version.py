@@ -55,7 +55,7 @@ class RepoModuleVersion(object):
         profiles.extend(list(self.repo_module.conf.profiles._get()))
         profiles.extend(default_profiles)
         self.base._module_persistor.set_data(self.repo_module, stream=self.stream,
-                                             version=self.version, profiles=sorted(set(profiles)))
+                                             profiles=sorted(set(profiles)))
 
         return result
 
@@ -105,8 +105,7 @@ class RepoModuleVersion(object):
                     else:
                         query_to_return = query_to_return.union(query)
 
-        self.base._module_persistor.set_data(self.repo_module, stream=self.stream,
-                                             version=self.version)
+        self.base._module_persistor.set_data(self.repo_module, stream=self.stream)
 
         return query_to_return
 
@@ -126,14 +125,9 @@ class RepoModuleVersion(object):
                 self.base._remove_if_unneeded(remove_query)
 
         conf = self.repo_module.conf
-        version = conf.version._get()
         profiles = [x for x in list(conf.profiles._get()) if x not in profiles]
 
-        if len(profiles) == 0:
-            conf.version._set(-1)
-            version = -1
-
-        self.base._module_persistor.set_data(self.repo_module, stream=self.stream, version=version,
+        self.base._module_persistor.set_data(self.repo_module, stream=self.stream,
                                              profiles=sorted(set(profiles)))
 
     def artifacts(self):

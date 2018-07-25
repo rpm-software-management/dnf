@@ -38,14 +38,12 @@ class ModuleConfTest(unittest.TestCase):
 
         # name - equal to section name
         self.conf.stream._set("f26")
-        self.conf.version._set(1)
         # profiles - empty list by default
         self.conf.enabled._set(1)
 
     def test_options(self):
         self.assertEqual(self.conf.name._get(), "base-runtime")
         self.assertEqual(self.conf.stream._get(), "f26")
-        self.assertEqual(self.conf.version._get(), 1)
         self.assertEqual(list(self.conf.profiles._get()), [])
         self.assertEqual(self.conf.enabled._get(), True)
 

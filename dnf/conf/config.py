@@ -627,7 +627,6 @@ class ModuleConf(BaseConfig):
         # module name, stream and installed version
         self.name = StringOption(section)
         self.stream = StringOption("")
-        self.version = LongOption()
         # installed profiles
         self.profiles = ListOption([])
         # enable/disable a module
@@ -637,7 +636,6 @@ class ModuleConf(BaseConfig):
         output = "[{}]\n".format(self._section)
         output += "name = {}\n".format(self.name._get())
         output += "stream = {}\n".format(self.stream._get())
-        output += "version = {}\n".format(self.version._get())
         output += "profiles = {}\n".format(",".join(self.profiles._get()))
         output += "enabled = {}\n".format(self.enabled._get())
 
