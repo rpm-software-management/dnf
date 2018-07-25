@@ -136,7 +136,7 @@ class ModuleReader(object):
                 if not value or value == 'None':
                     value = None
 
-                opt = module.__getattribute__(name)
+                opt = getattr(module, name, None)
                 if opt:  # and not opt._is_runtimeonly():
                     try:
                         if value is not None:
