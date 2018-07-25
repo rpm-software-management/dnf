@@ -250,9 +250,8 @@ class RepoModuleDict(OrderedDict):
                                       self.base.conf.installroot, None)
 
         for module_version, profiles, default_profiles in versions.values():
-            if module_version.version > module_version.repo_module.conf.version._get():
-                profiles.extend(list(module_version.repo_module.conf.profiles._get()))
-                profiles = list(set(profiles))
+            profiles.extend(list(module_version.repo_module.conf.profiles._get()))
+            profiles = list(set(profiles))
 
             if profiles or default_profiles:
                 result |= module_version.install(profiles, default_profiles, strict)
@@ -474,8 +473,7 @@ class RepoModuleDict(OrderedDict):
         available_profiles = module_version.profiles
         installed_profiles = []
 
-        if module_version.stream == conf.stream._get() and \
-                module_version.version == conf.version._get():
+        if module_version.stream == conf.stream._get():
             installed_profiles = list(conf.profiles._get())
 
         for profile in available_profiles:
@@ -574,8 +572,8 @@ class RepoModuleDict(OrderedDict):
 
         for version in self.list_module_version_latest():
             conf = version.repo_module.conf
-            if conf.enabled._get() and conf.version._get() == version.version and \
-                    conf.stream._get() == version.stream and list(conf.profiles._get()):
+            if conf.enabled._get() and conf.stream._get() == version.stream \
+                    and list(conf.profiles._get()):
                 versions.append(version)
 
         return versions
@@ -701,7 +699,7 @@ class RepoModuleDict(OrderedDict):
                         enabled_str = " "
                     enabled_str += "[e]"
 
-                if i.stream == conf.stream._get() and i.version == conf.version._get():
+                if i.stream == conf.stream._get():
                     installed_profiles = list(conf.profiles._get())
 
                 default_profiles = []
