@@ -2036,8 +2036,11 @@ class Base(object):
         if pkg_spec is None:
             self._goal.distupgrade_all()
         else:
-            sltrs = dnf.subject.Subject(pkg_spec) \
-                       ._get_best_selectors(self, obsoletes=self.conf.obsoletes, reports=True)
+            subject = dnf.subject.Subject(pkg_spec)
+            solution = subject.get_best_solution(self.sack, with_src=False)
+            solution["query"].filterm(reponame__neq=hawkey.SYSTEM_REPO_NAME)
+            sltrs = subject._get_best_selectors(self, solution=solution,
+                                                obsoletes=self.conf.obsoletes, reports=True)
             if not sltrs:
                 logger.info(_('No package %s installed.'), pkg_spec)
                 return 0
