@@ -241,7 +241,6 @@ class RepoModuleDict(OrderedDict):
 
         result = False
         for module_version, profiles, default_profiles in versions.values():
-            conf = module_version.repo_module.conf
             self.enable("{}:{}".format(module_version.name, module_version.stream))
             self.base._moduleContainer.enable(
                 module_version.name, module_version.stream)
@@ -288,10 +287,11 @@ class RepoModuleDict(OrderedDict):
                 if module_form.profile:
                     profiles.append(module_form.profile)
                 else:
-                    default_stream = module_version.repo_module.defaults.peek_default_stream()
+                    stream = module_form.stream or module_version.repo_module.defaults \
+                        .peek_default_stream()
                     profile_defaults = module_version.repo_module.defaults.peek_profile_defaults()
-                    if default_stream in profile_defaults:
-                        default_profiles.extend(profile_defaults[default_stream].dup())
+                    if stream in profile_defaults:
+                        default_profiles.extend(profile_defaults[stream].dup())
 
                 if best_version < module_version:
                     logger.info(module_messages[INSTALLING_NEWER_VERSION].format(best_version,
@@ -303,10 +303,11 @@ class RepoModuleDict(OrderedDict):
                 default_profiles = []
                 profiles = []
 
-                default_stream = module_version.repo_module.defaults.peek_default_stream()
+                stream = module_form.stream or module_version.repo_module.defaults \
+                    .peek_default_stream()
                 profile_defaults = module_version.repo_module.defaults.peek_profile_defaults()
-                if default_stream in profile_defaults:
-                    default_profiles.extend(profile_defaults[default_stream].dup())
+                if stream in profile_defaults:
+                    default_profiles.extend(profile_defaults[stream].dup())
 
                 if module_form.profile:
                     profiles = [module_form.profile]
@@ -464,10 +465,10 @@ class RepoModuleDict(OrderedDict):
             enabled_str += "[e]"
 
         default_profiles = []
-        default_stream = module_version.repo_module.defaults.peek_default_stream()
+        stream = module_form.stream or module_version.repo_module.defaults.peek_default_stream()
         profile_defaults = module_version.repo_module.defaults.peek_profile_defaults()
-        if default_stream in profile_defaults:
-            default_profiles.extend(profile_defaults[default_stream].dup())
+        if stream in profile_defaults:
+            default_profiles.extend(profile_defaults[stream].dup())
 
         profiles_str = ""
         available_profiles = module_version.profiles
