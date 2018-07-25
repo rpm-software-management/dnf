@@ -79,7 +79,7 @@ class NoProfileException(dnf.exceptions.Error):
 
 class ProfileNotInstalledException(dnf.exceptions.Error):
     def __init__(self, module_spec):
-        value = "Profile not installed: {}".format(module_spec)
+        value = "Specified profile not installed for {}".format(module_spec)
         super(ProfileNotInstalledException, self).__init__(value)
 
 

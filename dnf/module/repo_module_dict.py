@@ -116,6 +116,7 @@ class RepoModuleDict(OrderedDict):
             repo_module_stream = repo_module[stream]
 
             versions = repo_module_stream.values()
+
             for repo_module_version in versions:
                 version_dependencies.add(repo_module_version)
 
@@ -137,14 +138,11 @@ class RepoModuleDict(OrderedDict):
 
         return version_dependencies
 
-    def get_includes(self, name, stream, latest=False):
+    def get_includes(self, name, stream):
         includes = set()
         repos = set()
 
-        if latest:
-            version_dependencies = self.get_module_dependency_latest(name, stream)
-        else:
-            version_dependencies = self.get_module_dependency(name, stream)
+        version_dependencies = self.get_module_dependency(name, stream)
 
         for module_version in version_dependencies:
             repos.add(module_version.repo)
@@ -211,7 +209,9 @@ class RepoModuleDict(OrderedDict):
                                                                  module_version.stream)
 
         for dependency in version_dependencies:
-            self[dependency.name].enable(dependency.stream, self.base.conf.assumeyes)
+            conf = self[dependency.name].conf
+            if not conf.enabled._get() or conf.stream._get() != dependency.stream:
+                self[dependency.name].enable(dependency.stream, self.base.conf.assumeyes)
 
         if save_immediately:
             self.base._module_persistor.commit()
@@ -241,7 +241,7 @@ class RepoModuleDict(OrderedDict):
 
         result = False
         for module_version, profiles, default_profiles in versions.values():
-            self.enable("{}:{}".format(module_version.name, module_version.stream))
+            self.enable_by_version(module_version)
             self.base._moduleContainer.enable(
                 module_version.name, module_version.stream)
 
@@ -322,24 +322,27 @@ class RepoModuleDict(OrderedDict):
     def upgrade(self, module_specs, create_goal=False):
         skipped = []
         query = None
-        query_exclude = None
+
+        module_versions = []
         for module_spec in module_specs:
             subj = ModuleSubject(module_spec)
             try:
                 module_version, module_form = subj.find_module_version(self)
+                module_version.append(module_version)
+
+                # in case there is new dependency
+                self.enable_by_version(module_version)
             except NoModuleException:
                 skipped.append(module_spec)
                 continue
             except NoStreamSpecifiedException:
                 continue
 
+        self.base.sack.reset_module_excludes()
+        self.base.use_module_includes()
+
+        for module_version in module_versions:
             if not module_version.repo_module.conf.enabled._get():
-                for rpm in module_version.artifacts():
-                    query_for_rpm = self.base.sack.query().filter(nevra=rpm)
-                    if query_exclude is None:
-                        query_exclude = query_for_rpm
-                    else:
-                        query_exclude = query_exclude.union(query_for_rpm)
                 continue
 
             conf = self[module_form.name].conf
@@ -349,7 +352,7 @@ class RepoModuleDict(OrderedDict):
                 installed_profiles = []
             if module_form.profile:
                 if module_form.profile not in installed_profiles:
-                    raise ProfileNotInstalledException(module_spec)
+                    raise ProfileNotInstalledException(module_version.name)
                 profiles = [module_form.profile]
             else:
                 profiles = installed_profiles
@@ -368,17 +371,7 @@ class RepoModuleDict(OrderedDict):
             sltr.set(pkg=query)
             self.base._goal.upgrade(select=sltr)
 
-        return skipped, query, query_exclude
-
-    def upgrade_all(self):
-        modules = []
-        for module_name, repo_module in self.items():
-            if not repo_module.conf:
-                continue
-            modules.append(module_name)
-        modules.sort()
-        _, query, query_exclude = self.upgrade(modules)
-        return query, query_exclude
+        return skipped
 
     def remove(self, module_specs):
         skipped = []
