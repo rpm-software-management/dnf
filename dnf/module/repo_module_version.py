@@ -110,11 +110,21 @@ class RepoModuleVersion(object):
         return query_to_return
 
     def remove(self, profiles):
+        keep_profiles = [profile for profile in list(self.repo_module.conf.profiles._get())
+                         if profile not in profiles]
+        keep_nevras = set()
+        for profile in keep_profiles:
+            keep_nevras.update([self.nevra_object_to_nevr_str(nevra_object)
+                                for nevra_object in self.profile_nevra_objects(profile)])
+
         for profile in profiles:
             if profile not in self.profiles:
                 raise NoProfileException("{}/{}".format(self.full_version, profile))
 
             for nevra_object in self.profile_nevra_objects(profile):
+                if self.nevra_object_to_nevr_str(nevra_object) in keep_nevras:
+                    continue
+
                 nevr = self.nevra_object_to_nevr_str(nevra_object)
                 remove_query = dnf.subject.Subject(nevr) \
                     .get_best_query(self.base.sack, forms=hawkey.FORM_NEVR)
