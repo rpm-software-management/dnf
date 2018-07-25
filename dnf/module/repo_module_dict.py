@@ -140,26 +140,26 @@ class RepoModuleDict(OrderedDict):
 
     def get_includes(self, name, stream):
         includes = set()
-        repos = set()
 
         version_dependencies = self.get_module_dependency(name, stream)
 
         for module_version in version_dependencies:
-            repos.add(module_version.repo)
-            includes.update(module_version.artifacts())
+            conf = module_version.repo_module.conf
+            default_stream = module_version.repo_module.defaults.peek_default_stream()
+            if conf.enabled._get() or default_stream == module_version.stream:
+                includes.update(module_version.artifacts())
 
-        return includes, repos
+        return includes
 
     def get_excludes(self, name):
         excludes = set()
-        repos = set()
         version_dependencies = set()
 
         try:
             repo_module = self[name]
             for repo_module_stream in repo_module.values():
-                if repo_module.conf.enabled._get() and \
-                        repo_module.conf.stream._get() == repo_module_stream.stream or \
+                if (repo_module.conf.enabled._get() and
+                    repo_module.conf.stream._get() == repo_module_stream.stream) or \
                         repo_module.defaults.peek_default_stream() == repo_module_stream.stream:
                     continue
 
@@ -169,10 +169,9 @@ class RepoModuleDict(OrderedDict):
             logger.debug(e)
 
         for dependency in version_dependencies:
-            repos.add(dependency.repo)
             excludes.update(dependency.artifacts())
 
-        return excludes, repos
+        return excludes
 
     def enable_based_on_rpms(self):
         not_in_enabled = set(self.base._goal.list_installs())
