@@ -551,7 +551,7 @@ class RepoModuleDict(OrderedDict):
     def list_module_version_enabled(self):
         versions = []
 
-        for version in self.list_module_version_all():
+        for version in self.list_module_version_latest():
             conf = version.repo_module.conf
             if conf.enabled._get() and conf.stream._get() == version.stream:
                 versions.append(version)
@@ -561,7 +561,7 @@ class RepoModuleDict(OrderedDict):
     def list_module_version_disabled(self):
         versions = []
 
-        for version in self.list_module_version_all():
+        for version in self.list_module_version_latest():
             conf = version.repo_module.conf
             if not conf.enabled._get() or version.stream != conf.stream._get():
                 versions.append(version)
@@ -571,7 +571,7 @@ class RepoModuleDict(OrderedDict):
     def list_module_version_installed(self):
         versions = []
 
-        for version in self.list_module_version_all():
+        for version in self.list_module_version_latest():
             conf = version.repo_module.conf
             if conf.enabled._get() and conf.version._get() == version.version and \
                     conf.stream._get() == version.stream and list(conf.profiles._get()):
@@ -609,9 +609,6 @@ class RepoModuleDict(OrderedDict):
 
     def get_brief_description_latest(self, module_n):
         return self.get_brief_description_by_name(module_n, self.list_module_version_latest())
-
-    def get_brief_description_all(self, module_n):
-        return self.get_brief_description_by_name(module_n, self.list_module_version_all())
 
     def get_brief_description_enabled(self, module_n):
         return self.get_brief_description_by_name(module_n, self.list_module_version_enabled())
@@ -662,7 +659,7 @@ class RepoModuleDict(OrderedDict):
 
             str_table += table.str_line(lines[i], lines[i])
 
-        return str_table + "\n\nHint: [d]efault, [e]nabled, [i]nstalled, [l]ocked"
+        return str_table + "\n\nHint: [d]efault, [e]nabled, [i]nstalled"
 
     def print_header(self, table, repo_id):
         header = str(table).split('\n', 1)[0]
