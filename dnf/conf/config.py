@@ -590,10 +590,6 @@ class RepoConf(BaseConfig):
             parent._config if parent else cfg.ConfigMain()), section, parser)
         self._masterConfig = parent._config if parent else cfg.ConfigMain()
 
-        # modularity
-        # TODO move to libdnf
-        self.hotfixes = BoolOption(False)
-
     def _configure_from_options(self, opts):
         """Configure repos from the opts. """
 

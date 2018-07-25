@@ -305,7 +305,7 @@ class Base(object):
             exclude_nevras_set.update(exclude_set)
 
         # collect all hotfix repo repoids - we don't filter them at all
-        hotfix_repos = [i.id for i in self.repos.iter_enabled() if i.hotfixes._get()]
+        hotfix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
         hotfix_repos.extend([hawkey.SYSTEM_REPO_NAME, hawkey.CMDLINE_REPO_NAME])
 
         # collect all RPM $names for bare RPMs filtering
