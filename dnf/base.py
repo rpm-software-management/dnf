@@ -290,7 +290,8 @@ class Base(object):
                 try:
                     self.repo_module_dict[default.peek_module_name()].defaults = default
                 except KeyError:
-                    logger.debug("No module named {}, skipping.".format(default.peek_module_name()))
+                    logger.debug("No module named {}, ignoring defaults."
+                                 .format(default.peek_module_name()))
         except GLib.GError as ex:
             logger.debug(ex)
 
