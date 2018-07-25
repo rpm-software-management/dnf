@@ -303,6 +303,16 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     URL of a mirrorlist for the repository.
 
+.. _module_hotfixes-label:
+
+``module_hofixes``
+    :ref:`boolean <boolean-label>`
+
+    Set this to True to disable module RPM filtering and make all RPMs from the repository available. The default is False.
+    This allows user to create a repository with cherry-picked hotfixes that are included in a package set on a modular system.
+
+.. _mirrorlist-label:
+
 ``name``
     :ref:`string <string-label>`
 
