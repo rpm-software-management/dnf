@@ -44,9 +44,7 @@ class ModuleCommand(commands.Command):
         def run_on_module(self):
             mods = self.base.repo_module_dict
 
-            if self.opts.all:
-                print(mods.get_brief_description_all(self.opts.module_nsvp))
-            elif self.opts.enabled:
+            if self.opts.enabled:
                 print(mods.get_brief_description_enabled(self.opts.module_nsvp))
             elif self.opts.disabled:
                 print(mods.get_brief_description_disabled(self.opts.module_nsvp))
@@ -238,9 +236,6 @@ class ModuleCommand(commands.Command):
         parser.add_argument('module_nsvp', nargs='*')
 
         narrows = parser.add_mutually_exclusive_group()
-        narrows.add_argument('--all', dest='all',
-                             action='store_true',
-                             help=_("show all modules"))
         narrows.add_argument('--enabled', dest='enabled',
                              action='store_true',
                              help=_("show only enabled modules"))
