@@ -15,6 +15,7 @@
 # Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
 import hawkey
+import rpm
 
 import dnf
 from dnf.module.exceptions import NoProfileException, PossibleProfilesExceptions, \
@@ -31,9 +32,8 @@ class RepoModuleVersion(object):
         self.repo_module = None
 
     def __lt__(self, other):
-        # for finding latest
-        assert self.full_stream == other.full_stream
-        return self.module_metadata.peek_version() < other.module_metadata.peek_version()
+        return rpm.labelCompare((self.name, self.stream, str(self.version)),
+                                (other.name, other.stream, str(other.version))) == -1
 
     def __repr__(self):
         return self.full_version
