@@ -2042,8 +2042,21 @@ class CliKeyImport(dnf.callback.KeyImport):
         self.base = base
         self.output = output
 
-    def _confirm(self, keyinfo):
-        dnf.crypto.log_key_import(keyinfo)
+    def _confirm(self, id, userid, fingerprint, url, timestamp):
+
+        def short_id(id):
+            rj = '0' if dnf.pycomp.PY3 else b'0'
+            return id[-8:].rjust(8, rj)
+
+        msg = (_('Importing GPG key 0x%s:\n'
+                 ' Userid     : "%s"\n'
+                 ' Fingerprint: %s\n'
+                 ' From       : %s') %
+               (short_id(id), userid,
+                dnf.crypto._printable_fingerprint(fingerprint),
+                url.replace("file://", "")))
+        logger.critical("%s", msg)
+
         if self.base.conf.assumeyes:
             return True
         if self.base.conf.assumeno:

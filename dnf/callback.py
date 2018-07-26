@@ -45,7 +45,7 @@ STATUS_DRPM = 4    # :api
 
 
 class KeyImport(object):
-    def _confirm(self, _keyinfo):
+    def _confirm(self, id, userid, fingerprint, url, timestamp):
         """Ask the user if the key should be imported."""
         return False
 
