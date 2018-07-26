@@ -25,6 +25,9 @@ from dnf.module.exceptions import NoModuleException, EnableMultipleStreamsExcept
 from dnf.module.subject import ModuleSubject
 from dnf.util import logger
 
+import sys
+import os
+
 
 class ModuleCommand(commands.Command):
     class SubCommand(commands.Command):
@@ -100,10 +103,16 @@ class ModuleCommand(commands.Command):
 
             for module_version, module_form in module_versions.values():
                 if module_form.profile:
-                    logger.info("Ignoring unnecessary profile: '{}'".format(module_form.profile))
+                    logger.info("Ignoring unnecessary profile: '{}/{}'".format(module_form.name,
+                                                                               module_form.profile))
 
                 self.base.repo_module_dict.enable_by_version(module_version, True)
-                logger.info("{}:{} is enabled".format(module_version.name, module_version.stream))
+                logger.info("Module stream has been enabled: {}:{}".format(module_version.name,
+                                                                           module_version.stream))
+
+            logger.info(_("\nTo switch to the new streams' RPMs, run '{} distro-sync'. \n"
+                        "Then migrate configuration files and data as necessary."
+                          .format(os.path.basename(sys.argv[0]))))
 
     class DisableSubCommand(SubCommand):
 
@@ -121,11 +130,12 @@ class ModuleCommand(commands.Command):
                 module_version, module_form = subj.find_module_version(self.base.repo_module_dict)
 
                 if module_form.profile:
-                    logger.info("Ignoring unnecessary profile: '{}'".format(module_form.profile))
+                    logger.info("Ignoring unnecessary profile: '{}/{}'".format(module_form.name,
+                                                                               module_form.profile))
 
-                self.base.repo_module_dict.disable_by_version(module_n, True)
-                logger.info("{}:{} is disabled".format(module_version.name,
-                                                       module_version.stream))
+                self.base.repo_module_dict.disable_by_version(module_version, True)
+                logger.info("Module stream has been disabled: {}:{}".format(module_version.name,
+                                                                            module_version.stream))
 
     class InstallSubCommand(SubCommand):
 
