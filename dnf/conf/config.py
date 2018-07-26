@@ -247,8 +247,9 @@ class BaseConfig(object):
     def __str__(self):
         out = []
         out.append('[%s]' % self._section)
-        for optBind in self._config.optBinds():
-            out.append('%s: %s' % (optBind.first, optBind.second.getValueString()))
+        if self._config:
+            for optBind in self._config.optBinds():
+                out.append('%s: %s' % (optBind.first, optBind.second.getValueString()))
         return '\n'.join(out)
 
     def _get_option(self, name):
@@ -278,6 +279,8 @@ class BaseConfig(object):
                     value = None
 
                 try:
+                    if not self._config:
+                        raise RuntimeError()
                     self._config.optBinds().at(name).newString(priority, value)
                 except RuntimeError:
                     opt = self._get_option(name)
@@ -308,12 +311,13 @@ class BaseConfig(object):
         """
         output = ['[%s]' % self._section]
 
-        for optBind in self._config.optBinds():
-            # if not opt._is_runtimeonly():
-            try:
-                output.append('%s = %s' % (optBind.first, optBind.second.getValueString()))
-            except RuntimeError:
-                pass
+        if self._config:
+            for optBind in self._config.optBinds():
+                # if not opt._is_runtimeonly():
+                try:
+                    output.append('%s = %s' % (optBind.first, optBind.second.getValueString()))
+                except RuntimeError:
+                    pass
 
         return '\n'.join(output) + '\n'
 
@@ -336,12 +340,14 @@ class BaseConfig(object):
         # Updated the ConfigParser with the changed values
         cfg_options = self._parser.options(section)
 
-        for optBind in self._config.optBinds():
-            # if (not option._is_runtimeonly() and
-            if (always is None or optBind.first in always or
-                    optBind.second.getPriority() >= PRIO_DEFAULT or
-                    optBind.first in cfg_options):
-                self._parser.set(section, optBind.first, optBind.second.getValueString())
+        if self._config:
+            for optBind in self._config.optBinds():
+                # if (not option._is_runtimeonly() and
+                if (always is None or optBind.first in always or
+                        optBind.second.getPriority() >= PRIO_DEFAULT or
+                        optBind.first in cfg_options):
+                    self._parser.set(section, optBind.first, optBind.second.getValueString())
+
         # write the updated ConfigParser to the fileobj.
         self._parser.write(fileobj)
 
