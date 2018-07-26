@@ -395,8 +395,8 @@ def stat_f(filename, ignore_EACCES=False):
         raise
 
 def _getloginuid():
-    """ Get the audit-uid/login-uid, if available. None is returned if there
-        was a problem. Note that no caching is done here. """
+    """ Get the audit-uid/login-uid, if available. os.getuid() is returned
+        instead if there was a problem. Note that no caching is done here. """
     #  We might normally call audit.audit_getloginuid(), except that requires
     # importing all of the audit module. And it doesn't work anyway: BZ 518721
     try:
@@ -404,12 +404,13 @@ def _getloginuid():
             data = fo.read()
             return int(data)
     except (IOError, ValueError):
-        return None
+        return os.getuid()
 
 _cached_getloginuid = None
 def getloginuid():
-    """ Get the audit-uid/login-uid, if available. None is returned if there
-        was a problem. The value is cached, so you don't have to save it. """
+    """ Get the audit-uid/login-uid, if available. os.getuid() is returned
+        instead if there was a problem. The value is cached, so you don't
+        have to save it. """
     global _cached_getloginuid
     if _cached_getloginuid is None:
         _cached_getloginuid = _getloginuid()
