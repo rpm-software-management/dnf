@@ -73,8 +73,7 @@ class RepoModuleVersion(object):
                 nevra = "{}.{}".format(nevr, nevra_object.arch)
 
                 if nevra not in installed_nevras:
-                    self.base.install(nevr, reponame=self.repo.id, forms=hawkey.FORM_NEVR,
-                                      strict=strict)
+                    self.base.install(nevr, forms=hawkey.FORM_NEVR, strict=strict)
                     self.base._goal.group_members.add(nevra_object.name)
                     result = True
 
@@ -94,8 +93,7 @@ class RepoModuleVersion(object):
                 nevra = "{}.{}".format(nevr, nevra_object.arch)
 
                 if nevra not in installed_nevras:
-                    self.base.install(nevr, reponame=self.repo.id, forms=hawkey.FORM_NEVR,
-                                      strict=self.base.conf.strict)
+                    self.base.install(nevr, forms=hawkey.FORM_NEVR, strict=self.base.conf.strict)
                 else:
                     # TODO: verify that filter(nevra) really works correctly
                     # (possibly breaks multilib)
