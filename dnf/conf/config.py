@@ -277,22 +277,25 @@ class BaseConfig(object):
                 if not value or value == 'None':
                     value = None
 
-                opt = self._get_option(name)
-                if opt:  # and not opt._is_runtimeonly():
-                    try:
-                        if value is not None:
-                            opt._set(value, priority)
-                    except dnf.exceptions.ConfigError as e:
-                        logger.debug(_('Unknown configuration value: '
-                                       '%s=%s in %s; %s'), ucd(name),
-                                     ucd(value), ucd(filename), e.raw_error)
-                else:
-                    if name == 'arch' and hasattr(self, name):
-                        setattr(self, name, value)
+                try:
+                    self._config.optBinds().at(name).newString(priority, value)
+                except RuntimeError:
+                    opt = self._get_option(name)
+                    if opt:  # and not opt._is_runtimeonly():
+                        try:
+                            if value is not None:
+                                opt._set(value, priority)
+                        except dnf.exceptions.ConfigError as e:
+                            logger.debug(_('Unknown configuration value: '
+                                           '%s=%s in %s; %s'), ucd(name),
+                                         ucd(value), ucd(filename), e.raw_error)
                     else:
-                        logger.debug(
-                            _('Unknown configuration option: %s = %s in %s'),
-                            ucd(name), ucd(value), ucd(filename))
+                        if name == 'arch' and hasattr(self, name):
+                            setattr(self, name, value)
+                        else:
+                            logger.debug(
+                                _('Unknown configuration option: %s = %s in %s'),
+                                ucd(name), ucd(value), ucd(filename))
 
 #    def _config_items(self):
         """Yield (name, value) pairs for every option in the instance."""
