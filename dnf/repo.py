@@ -166,7 +166,7 @@ class _DetailedLibrepoError(Exception):
 
 
 class _NullKeyImport(dnf.callback.KeyImport):
-    def _confirm(self, _keyinfo):
+    def _confirm(self, id, userid, fingerprint, url, timestamp):
         return True
 
 
@@ -391,9 +391,10 @@ SYNC_TRY_CACHE = libdnf.repo.Repo.SyncStrategy_TRY_CACHE
 
 
 class RepoCallbacks(libdnf.repo.RepoCB):
-    def __init__(self, md_pload):
+    def __init__(self, repo):
         super(RepoCallbacks, self).__init__()
-        self._md_pload = md_pload
+        self._repo = repo
+        self._md_pload = repo._md_pload
 
     def start(self, what):
         self._md_pload.start(what)
@@ -413,6 +414,9 @@ class RepoCallbacks(libdnf.repo.RepoCB):
         self._md_pload._mirror_failure_cb(None, msg, url, metadata)
         return 0
 
+    def repokeyImport(self, id, userid, fingerprint, url, timestamp):
+        return self._repo._key_import._confirm(id, userid, fingerprint, url, timestamp)
+
 
 class Repo(dnf.conf.RepoConf):
     # :api
@@ -426,7 +430,7 @@ class Repo(dnf.conf.RepoConf):
         self._repo = libdnf.repo.Repo(name, self._config)
 
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
-        self._callbacks = RepoCallbacks(self._md_pload)
+        self._callbacks = RepoCallbacks(self)
         self._callbacks.this.disown()  # _repo will be the owner of callbacks
         self._repo.setCallbacks(self._callbacks)
 
