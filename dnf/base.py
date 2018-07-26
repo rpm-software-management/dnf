@@ -179,6 +179,7 @@ class Base(object):
     def _setup_excludes_includes(self, only_main=False):
         disabled = set(self.conf.disable_excludes)
         if 'all' in disabled:
+            self.use_module_includes()
             return
         repo_includes = []
         repo_excludes = []
