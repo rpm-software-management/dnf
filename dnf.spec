@@ -1,5 +1,5 @@
 # default dependencies
-%global hawkey_version 0.16.0
+%global hawkey_version 0.16.1
 %global librepo_version 1.9.0
 %global libcomps_version 0.1.8
 %global libmodulemd_version 1.4.0
@@ -73,7 +73,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        3.0.4
+Version:        3.1.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -486,6 +486,15 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %endif
 
 %changelog
+* Fri Jul 27 2018 Daniel Mach <dmach@redhat.com> - 3.1.0-1
+- [module] Move 'hotfixes' conf option to libdnf and rename it to 'module_hotfixes'.
+- [goal] Exclude @System repo packages from distro_sync.
+- [conf] Setup configuration values using C++ bindings.
+- [module] Drop module lock command.
+- [crypto] Use handle from repo in dnf.crypto.retrieve().
+- [module] Assume a 'default' profile exists for all modules (RhBug:1568165)
+- [base] Introduce easy installation of package, group and module specs.
+
 * Thu Jul 19 2018 Daniel Mach <dmach@redhat.com> - 3.0.4-1
 - [transaction] Fix 'TransactionItem not found for key' error.
 - [module] Allow removing module profile without specifying a stream.
