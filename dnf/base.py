@@ -146,6 +146,8 @@ class Base(object):
             hrepo.filelists_fn = repo._filelists_fn
         else:
             logger.debug(_("not found filelists for: %s"), repo.name)
+        if repo._modules_fn is not None:
+            hrepo.modules_fn = repo._modules_fn
         hrepo.cost = repo.cost
         hrepo.priority = repo.priority
         if repo._presto_fn:
