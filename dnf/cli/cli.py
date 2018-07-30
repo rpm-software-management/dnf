@@ -763,6 +763,9 @@ class Cli(object):
             if not dnf.util.am_i_root():
                 raise dnf.exceptions.Error(_('This command has to be run under the root user.'))
 
+        if demands.changelogs:
+            self.base.conf.extra_metadata += ["other"]
+
         if demands.cacheonly or self.base.conf.cacheonly:
             self.base.conf.cacheonly = True
             for repo in repos.values():
