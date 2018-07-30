@@ -295,6 +295,10 @@ class Metadata(object):
         return self._repo_dct.get('filelists')
 
     @property
+    def _modules_fn(self):
+        return self._repo_dct.get('modules')
+
+    @property
     def _mirrors(self):
         return self._priv_mirrors
 
@@ -575,6 +579,10 @@ class Repo(dnf.conf.RepoConf):
     @property
     def _filelists_fn(self):
         return self.metadata._filelists_fn
+
+    @property
+    def _modules_fn(self):
+        return self.metadata._modules_fn
 
     @property
     def _local(self):
