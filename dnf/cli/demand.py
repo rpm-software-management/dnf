@@ -55,5 +55,6 @@ class DemandSheet(object):
     cacheonly = _BoolDefault(False)
     fresh_metadata = _BoolDefault(True)
     freshest_metadata = _BoolDefault(False)
+    changelogs = _BoolDefault(False)
 
     transaction_display = None
