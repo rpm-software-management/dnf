@@ -19,21 +19,22 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
-from datetime import datetime
 from dnf.i18n import _
 from dnf.cli import commands
 from dnf.cli.option_parser import OptionParser
 
 import argparse
+import datetime
+import logging
+import re
+import sys
+
 import dnf
 import dnf.cli
 import dnf.exceptions
 import dnf.subject
 import dnf.util
 import hawkey
-import logging
-import re
-import sys
 
 logger = logging.getLogger('dnf')
 
@@ -176,6 +177,9 @@ class RepoQueryCommand(commands.Command):
         outform.add_argument('-s', "--source", dest='querysourcerpm',
                              default=False, action='store_true',
                              help=_('show package source RPM name'))
+        outform.add_argument('--changelogs', dest='querychangelogs',
+                             default=False, action='store_true',
+                             help=_('show changelogs of the package'))
         outform.add_argument('--qf', "--queryformat", dest='queryformat',
                              default=QFORMAT_DEFAULT,
                              help=_('format for displaying found packages'))
@@ -291,7 +295,18 @@ class RepoQueryCommand(commands.Command):
 
         demands.sack_activation = True
 
+        if self.opts.querychangelogs:
+            demands.changelogs = True
+
     def build_format_fn(self, opts, pkg):
+        if opts.querychangelogs:
+            out = []
+            for chlog in reversed(pkg.changelogs):
+                dt = datetime.date.fromtimestamp(chlog['timestamp'])
+                out.append('* %s %s\n%s\n' % (dt.strftime("%a %b %d %Y"),
+                                              dnf.i18n.ucd(chlog['author']),
+                                              dnf.i18n.ucd(chlog['text'])))
+            return '\n'.join(out)
         try:
             po = PackageWrapper(pkg)
             if opts.queryinfo:
@@ -631,7 +646,7 @@ class PackageWrapper(object):
     @staticmethod
     def _get_timestamp(timestamp):
         if timestamp > 0:
-            dt = datetime.utcfromtimestamp(timestamp)
+            dt = datetime.datetime.utcfromtimestamp(timestamp)
             return dt.strftime("%Y-%m-%d %H:%M")
         else:
             return ''
