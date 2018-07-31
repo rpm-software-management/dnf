@@ -38,7 +38,10 @@ from dnf.util import _parse_specs
 from dnf.db.history import SwdbInterface
 from dnf.yum import misc
 from functools import reduce
-import collections
+try:
+    from collections.abc import Sequence
+except ImportError:
+    from collections import Sequence
 import datetime
 import dnf.callback
 import dnf.comps
@@ -855,7 +858,7 @@ class Base(object):
 
     def do_transaction(self, display=()):
         # :api
-        if not isinstance(display, collections.Sequence):
+        if not isinstance(display, Sequence):
             display = [display]
         display = \
             [dnf.yum.rpmtrans.LoggingTransactionDisplay()] + list(display)
