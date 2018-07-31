@@ -19,7 +19,7 @@ import os
 from collections import OrderedDict
 
 import hawkey
-import smartcols
+import libdnf.smartcols
 
 from dnf.conf.read import ModuleReader
 from dnf.module import module_messages, NOTHING_TO_SHOW, \
@@ -466,22 +466,21 @@ class RepoModuleDict(OrderedDict):
 
     @staticmethod
     def create_simple_table(lines):
-        table = smartcols.Table()
-        table.noheadings = True
-        table.column_separator = " : "
+        table = libdnf.smartcols.Table()
+        table.enableNoheadings(True)
+        table.setColumnSeparator(" : ")
 
-        column_name = table.new_column("Name")
-        column_value = table.new_column("Value")
-        column_value.wrap = True
-        column_value.safechars = "\n"
-        column_value.set_wrapfunc(smartcols.wrapnl_chunksize,
-                                  smartcols.wrapnl_nextchunk)
+        column_name = table.newColumn("Name")
+        column_value = table.newColumn("Value")
+        column_value.setWrap(True)
+        column_value.setSafechars("\n")
+        column_value.setNewlineWrapFunction()
 
         for line_name, value in lines.items():
             if value:
-                line = table.new_line()
-                line[column_name] = line_name
-                line[column_value] = str(value)
+                line = table.newLine()
+                line.getColumnCell(column_name).setData(line_name)
+                line.getColumnCell(column_value).setData(str(value))
 
         return table
 
@@ -606,14 +605,13 @@ class RepoModuleDict(OrderedDict):
             default_list.append(version)
 
         table = self.create_and_fill_table(versions_by_repo)
-        lines = table.lines()
 
         current_repo_id_index = 0
         already_printed_lines = 0
         items = list(versions_by_repo.items())
         repo_id, versions = items[current_repo_id_index]
         str_table = self.print_header(table, repo_id)
-        for i in range(0, len(lines)):
+        for i in range(0, table.getNumberOfLines()):
             if len(versions) + already_printed_lines <= i:
                 already_printed_lines += len(versions)
                 current_repo_id_index += 1
@@ -622,34 +620,36 @@ class RepoModuleDict(OrderedDict):
                 str_table += "\n"
                 str_table += self.print_header(table, repo_id)
 
-            str_table += table.str_line(lines[i], lines[i])
+            line = table.getLine(i)
+            str_table += table.toString(line, line)
 
         return str_table + "\n\nHint: [d]efault, [e]nabled, [i]nstalled, [l]ocked"
 
     def print_header(self, table, repo_id):
-        header = str(table).split('\n', 1)[0]
+        line = table.getLine(0)
+        header = table.toString(line, line).split('\n', 1)[0]
         out_str = "{}\n".format(self.base.output.term.bold(repo_id))
         out_str += "{}\n".format(header)
         return out_str
 
     def create_and_fill_table(self, versions_by_repo):
-        table = smartcols.Table()
-        table.termforce = 'always'
-        table.maxout = True
-        column_name = table.new_column("Name")
-        column_stream = table.new_column("Stream")
-        column_version = table.new_column("Version")
-        column_profiles = table.new_column("Profiles")
-        column_profiles.wrap = True
-        column_info = table.new_column("Info")
-        column_info.wrap = True
+        table = libdnf.smartcols.Table()
+        table.setTermforce(libdnf.smartcols.Table.TermForce_ALWAYS)
+        table.enableMaxout(True)
+        column_name = table.newColumn("Name")
+        column_stream = table.newColumn("Stream")
+        column_version = table.newColumn("Version")
+        column_profiles = table.newColumn("Profiles")
+        column_profiles.setWrap(True)
+        column_info = table.newColumn("Info")
+        column_info.setWrap(True)
 
         if not self.base.conf.verbose:
             column_info.hidden = True
 
         for repo_id, versions in sorted(versions_by_repo.items(), key=lambda key: key[0]):
             for i in sorted(versions, key=lambda data: (data.name, data.stream, data.version)):
-                line = table.new_line()
+                line = table.newLine()
                 conf = i.repo_module.conf
                 defaults_conf = i.repo_module.defaults
                 default_str = ""
@@ -676,10 +676,10 @@ class RepoModuleDict(OrderedDict):
                 profiles_str = profiles_str[:-2]
                 profiles_str += ", ..." if len(available_profiles) > 2 else ""
 
-                line[column_name] = i.name
-                line[column_stream] = i.stream + default_str + enabled_str
-                line[column_version] = str(i.version)
-                line[column_profiles] = profiles_str
-                line[column_info] = i.summary()
+                line.getColumnCell(column_name).setData(i.name)
+                line.getColumnCell(column_stream).setData(i.stream + default_str + enabled_str)
+                line.getColumnCell(column_version).setData(str(i.version))
+                line.getColumnCell(column_profiles).setData(profiles_str)
+                line.getColumnCell(column_info).setData(i.summary())
 
         return table
