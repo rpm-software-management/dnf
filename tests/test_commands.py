@@ -187,10 +187,6 @@ class ReinstallCommandTest(tests.support.ResultTestCase):
     def test_run(self):
         """Test whether the package is installed."""
         tests.support.command_run(self._cmd, ['pepper'])
-
-        print(list(self.base.sack.query().installed().filter(name__neq='pepper')))
-        print(list(dnf.subject.Subject('pepper.x86_64').get_best_query(self.base.sack).available()))
-
         self.assertResult(self.base, itertools.chain(
             self.base.sack.query().installed().filter(name__neq='pepper'),
             dnf.subject.Subject('pepper.x86_64').get_best_query(self.base.sack)

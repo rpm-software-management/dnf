@@ -218,14 +218,19 @@ class Base(object):
                 subj = dnf.subject.Subject(excl)
                 exclude_query = exclude_query.union(subj.get_best_query(
                     self.sack, with_nevra=True, with_provides=False, with_filenames=False))
-            self.use_module_includes()
+            if not only_main:
+                hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
+                self.sack.filter_modules(self._moduleContainer, hot_fix_repos,
+                                         self.conf.installroot, None)
             if include_query:
                 self.sack.add_includes(include_query)
                 self.sack.set_use_includes(True)
             if exclude_query:
                 self.sack.add_excludes(exclude_query)
-        else:
-            self.use_module_includes()
+        elif not only_main:
+            hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
+            self.sack.filter_modules(self._moduleContainer, hot_fix_repos,
+                                     self.conf.installroot, None)
 
         if repo_includes:
             for query, repoid in repo_includes:
@@ -292,51 +297,6 @@ class Base(object):
         self.repo_module_dict.read_all_module_confs()
         self._module_persistor = ModulePersistor()
 
-    def use_module_includes(self):
-        def update_include_nevras(name, stream):
-            include_set, _ = self.repo_module_dict.get_includes(name, stream)
-            include_nevras_set.update(include_set)
-
-        include_nevras_set = set()
-        exclude_nevras_set = set()
-
-        for repo_module in self.repo_module_dict.values():
-            if repo_module.conf.enabled._get():
-                update_include_nevras(repo_module.name, repo_module.conf.stream._get())
-            elif repo_module.defaults.peek_default_stream():
-                update_include_nevras(repo_module.name, repo_module.defaults.peek_default_stream())
-
-            exclude_set, _ = self.repo_module_dict.get_excludes(repo_module.name)
-            exclude_nevras_set.update(exclude_set)
-
-        # collect all hotfix repo repoids - we don't filter them at all
-        hotfix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
-        hotfix_repos.extend([hawkey.SYSTEM_REPO_NAME, hawkey.CMDLINE_REPO_NAME])
-
-        # collect all RPM $names for bare RPMs filtering
-        names = [hawkey.split_nevra(i).name for i in include_nevras_set]
-
-        module_include_query = self.sack.query().filter(
-            nevra_strict=include_nevras_set,
-            reponame__neq=hotfix_repos
-        )
-        module_exclude_query = self.sack.query().filter(
-            nevra_strict=exclude_nevras_set,
-            reponame__neq=hotfix_repos
-        )
-        # don't exclude NEVRAs that are also in active module streams
-        module_exclude_query = module_exclude_query.difference(module_include_query)
-
-        # exclude bare RPMs with Provides: matching RPM $name from an active modular repo
-        provides_query = self.sack.query().filter(provides=names, reponame__neq=hotfix_repos)
-        provides_query = provides_query.difference(module_include_query)
-
-        # exclude RPMs from inactive streams
-        self.sack.add_module_excludes(module_exclude_query)
-
-        # exclude bare RPMs that collide with modular RPMs
-        self.sack.add_module_excludes(provides_query)
-
     def _store_persistent_data(self):
         if self._repo_persistor and not self.conf.cacheonly:
             expired = [r.id for r in self.repos.iter_enabled() if r._md_expired]
@@ -378,6 +338,15 @@ class Base(object):
     def sack(self):
         # :api
         return self._sack
+
+    @property
+    def _moduleContainer(self):
+        if self.sack is None:
+            raise dnf.exceptions.Error("Sack was not initialized")
+        if self.sack._moduleContainer is None:
+            self.sack._moduleContainer = libdnf.module.ModulePackageContainer(
+                False, self.conf.installroot, self.conf.substitutions["arch"])
+        return self.sack._moduleContainer
 
     @property
     def transaction(self):

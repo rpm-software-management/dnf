@@ -284,7 +284,7 @@ class ModuleTest(unittest.TestCase):
         self.tmpdir = tempfile.mkdtemp(prefix="dnf_test_")
         self.conf = dnf.conf.MainConf()
         self.conf.cachedir = os.path.join(self.tmpdir, "cache")
-        self.conf.installroot = os.path.join(self.tmpdir, "root")
+        self.conf.installroot = os.path.join(TOP_DIR, "modules")
         self.conf.modulesdir._set(MODULES_DIR)
         self.conf.moduledefaultsdir._set(DEFAULTS_DIR)
         self.conf.persistdir = os.path.join(self.conf.installroot, self.conf.persistdir.lstrip("/"))
