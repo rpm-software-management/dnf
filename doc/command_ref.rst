@@ -1045,6 +1045,9 @@ are displayed in the standard NEVRA notation.
 ``-s, --source``
     Show package source RPM name.
 
+``--changelogs``
+    Print package changelogs.
+
 ``--conflicts``
     Display capabilities that the package conflicts with. Same as ``--qf "%{conflicts}``.
 
