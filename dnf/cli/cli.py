@@ -28,7 +28,10 @@ from . import output
 from dnf.cli import CliError
 from dnf.i18n import ucd, _
 
-import collections
+try:
+    from collections.abc import Sequence
+except ImportError:
+    from collections import Sequence
 import dnf
 import dnf.cli.commands
 import dnf.cli.commands.autoremove
@@ -228,7 +231,7 @@ class BaseCli(dnf.Base):
         if self.conf.downloadonly:
             return
 
-        if not isinstance(display, collections.Sequence):
+        if not isinstance(display, Sequence):
             display = [display]
         display = [output.CliTransactionDisplay()] + list(display)
         super(BaseCli, self).do_transaction(display)
