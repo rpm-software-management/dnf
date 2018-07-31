@@ -1662,7 +1662,8 @@ class Base(object):
                 done = False
                 continue
             for group_id in res.groups:
-                cnt += self.group_install(group_id, types, exclude=exclude, strict=strict)
+                if not exclude_groups or group_id not in exclude_groups:
+                    cnt += self.group_install(group_id, types, exclude=exclude, strict=strict)
             for env_id in res.environments:
                 cnt += self.environment_install(env_id, types, exclude=exclude, strict=strict,
                                                 exclude_groups=exclude_groups)
@@ -1803,29 +1804,28 @@ class Base(object):
         self.sack.add_excludes(exclude_query)
         self.sack.add_excludes(glob_exclude_query)
 
-    def _exclude_groups(self, group_specs):
-        group_excludes = []
+    def _expand_groups(self, group_specs):
+        groups = set()
+        q = CompsQuery(self.comps, self.history,
+                       CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
+                       CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
 
-        for group_spec in group_specs:
-            if '/' in group_spec:
-                split = group_spec.split('/')
-                group_spec = split[0]
+        for pattern in group_specs:
+            try:
+                res = q.get(pattern)
+            except dnf.exceptions.CompsError as err:
+                logger.error("Warning: Module or %s", ucd(err))
+                continue
 
-            environment = self.comps.environment_by_pattern(group_spec)
-            if environment:
+            groups.update(res.groups)
+            groups.update(res.environments)
+
+            for environment_id in res.environments:
+                environment = self.comps._environment_by_id(environment_id)
                 for group in environment.groups_iter():
-                    for pkg in group.packages_iter():
-                        group_excludes.append(pkg.name)
-            else:
-                group = self.comps.group_by_pattern(group_spec)
-                if not group:
-                    continue
+                    groups.add(group.id)
 
-                for pkg in group.packages_iter():
-                    group_excludes.append(pkg.name)
-
-        exclude_query = self.sack.query().filter(name=group_excludes)
-        self.sack.add_excludes(exclude_query)
+        return list(groups)
 
     def _install_groups(self, group_specs, excludes, skipped, strict=True):
         for group_spec in group_specs:
@@ -1859,7 +1859,7 @@ class Base(object):
         groups = self.install_module(install_specs.grp_specs, strict)
 
         self.read_comps(arch_filter=True)
-        self._exclude_groups(exclude_specs.grp_specs)
+        exclude_specs.grp_specs = self._expand_groups(exclude_specs.grp_specs)
         self._install_groups(groups, exclude_specs, skipped, strict)
 
         return skipped

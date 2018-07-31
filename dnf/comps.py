@@ -558,13 +558,13 @@ class Solver(object):
 
         trans = TransactionBunch()
         for comps_group in comps_env.mandatory_groups:
-            if exclude_groups and comps_group in exclude_groups:
+            if exclude_groups and comps_group.id in exclude_groups:
                 continue
             trans += self._group_install(comps_group.id, pkg_types, exclude, strict)
             swdb_env.addGroup(comps_group.id, True, MANDATORY)
 
         for comps_group in comps_env.optional_groups:
-            if exclude_groups and comps_group in exclude_groups:
+            if exclude_groups and comps_group.id in exclude_groups:
                 continue
             swdb_env.addGroup(comps_group.id, False, OPTIONAL)
             # TODO: if a group is already installed, mark it as installed?
