@@ -239,9 +239,12 @@ class RepoModuleDict(OrderedDict):
         for module_version, profiles, default_profiles in versions.values():
             conf = module_version.repo_module.conf
             self.enable("{}:{}".format(module_version.name, module_version.stream))
+            self.base._moduleContainer.enable(
+                module_version.name, module_version.stream)
 
-        self.base.sack.reset_module_excludes()
-        self.base.use_module_includes()
+        hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
+        self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
+                                      self.base.conf.installroot, None)
 
         for module_version, profiles, default_profiles in versions.values():
             if module_version.version > module_version.repo_module.conf.version._get():

@@ -61,6 +61,7 @@ class SackVersion(object):
 class Sack(hawkey.Sack):
     def __init__(self, *args, **kwargs):
         super(Sack, self).__init__(*args, **kwargs)
+        self._moduleContainer = None
 
     def _configure(self, installonly=None, installonly_limit=0):
         if installonly:
