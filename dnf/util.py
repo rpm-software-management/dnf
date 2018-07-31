@@ -92,7 +92,7 @@ def _non_repo_handle(conf=None):
 def _urlopen_progress(url, conf, progress=None):
     handle = _non_repo_handle(conf)
     handle.repotype = librepo.LR_YUMREPO
-    handle.setopt(librepo.LRO_URLS, os.path.dirname(url))
+    handle.setopt(librepo.LRO_URLS, [os.path.dirname(url)])
     if progress is None:
         progress = dnf.callback.NullDownloadProgress()
     pload = dnf.repo.RemoteRPMPayload(url, conf, handle, progress)
