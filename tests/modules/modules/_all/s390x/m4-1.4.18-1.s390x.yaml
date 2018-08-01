@@ -1,0 +1,22 @@
+---
+document: modulemd
+version: 1
+data:
+  name: m4
+  stream: 1.4.18
+  version: 1
+  summary: Fake module
+  description: >-
+    Fake module
+  license:
+    module:
+    - LGPLv2
+  profiles:
+    specific:
+      description: Description for profile specific.
+      rpms:
+      - m4
+  artifacts:
+    rpms:
+    - m4-0:1.4.18-6.s390x
+...

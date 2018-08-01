@@ -13,9 +13,11 @@ data:
     - LGPLv2
   profiles:
     default:
+      description: Description for profile default.
       rpms:
       - httpd
     doc:
+      description: Description for profile doc.
       rpms:
       - httpd-doc
   artifacts:
