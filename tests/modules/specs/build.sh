@@ -15,7 +15,7 @@ set -e
 
 
 DIR=$(dirname $(readlink -f $0))
-ARCHES="i686 x86_64 s390x"
+ARCHES="x86_64"
 rm -rf $DIR/../modules
 mkdir -p $DIR/../modules
 
