@@ -13,12 +13,14 @@ data:
     - LGPLv2
   profiles:
     default:
+      description: Description for profile default.
       rpms:
       - bash
       - glibc
       - kernel
       - systemd
     minimal:
+      description: Description for profile minimal.
       rpms:
       - glibc
   artifacts:
