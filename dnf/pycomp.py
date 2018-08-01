@@ -64,7 +64,7 @@ if PY3:
 
     # functions that don't take unicode arguments in py2
     ModuleType = lambda m: types.ModuleType(m)
-    format = locale.format
+    format = locale.format_string
     def setlocale(category, loc=None):
         locale.setlocale(category, loc)
     def write_to_file(f, content):
