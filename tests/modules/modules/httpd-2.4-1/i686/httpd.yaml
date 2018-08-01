@@ -1,7 +1,0 @@
-document: modulemd-defaults
-version: 1
-data:
-  module: httpd
-  stream: 2.4
-  profiles:
-    2.4: [default]
