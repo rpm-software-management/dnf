@@ -202,7 +202,9 @@ class BaseConfig(object):
         setattr(type(self), name, property(prop_get, prop_set))
 
     def __getattr__(self, name):
-        option = getattr(self._config, name, None)
+        if "_config" not in self.__dict__:
+            raise AttributeError("'{}' object has no attribute '{}'".format(self.__class__, name))
+        option = getattr(self._config, name)
         if option is None:
             return None
         try:
@@ -249,7 +251,11 @@ class BaseConfig(object):
         out.append('[%s]' % self._section)
         if self._config:
             for optBind in self._config.optBinds():
-                out.append('%s: %s' % (optBind.first, optBind.second.getValueString()))
+                try:
+                    value = optBind.second.getValueString()
+                except RuntimeError:
+                    value = ""
+                out.append('%s: %s' % (optBind.first, value))
         return '\n'.join(out)
 
     def _get_option(self, name):
