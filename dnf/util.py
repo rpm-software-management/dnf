@@ -117,18 +117,18 @@ def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
     if PY3 and 'b' not in mode:
         kwargs.setdefault('encoding', 'utf-8')
     fo = tempfile.NamedTemporaryFile(mode, **kwargs)
-    if repo:
-        handle = repo._get_handle()
-    else:
-        handle = _non_repo_handle(conf)
+
     try:
-        if repo and handle.progresscb:
-            repo._md_pload.start(repo.name or repo.id or 'unknown')
-        librepo.download_url(url, fo.fileno(), handle)
-        if repo and handle.progresscb:
-            repo._md_pload.end()
+        if repo:
+            repo._repo.downloadUrl(url, fo.fileno)
+        else:
+            handle = _non_repo_handle(conf)
+            librepo.download_url(url, fo.fileno(), handle)
+    except RutimeException as e:
+        raise IOError(e.args[1])
     except librepo.LibrepoException as e:
         raise IOError(e.args[1])
+
     fo.seek(0)
     return fo
 

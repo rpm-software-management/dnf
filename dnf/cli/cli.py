@@ -737,7 +737,7 @@ class Cli(object):
         for rid in self.base._repo_persistor.get_expired_repos():
             repo = self.base.repos.get(rid)
             if repo:
-                repo._md_expire_cache()
+                repo._repo.expire()
 
         # setup the progress bars/callbacks
         (bar, self.base._ds_callback) = self.base.output.setup_progress_callbacks()
@@ -769,10 +769,10 @@ class Cli(object):
         else:
             if demands.freshest_metadata:
                 for repo in repos.iter_enabled():
-                    repo._md_expire_cache()
+                    repo._repo.expire()
             elif not demands.fresh_metadata:
                 for repo in repos.values():
-                    repo._md_lazy = True
+                    repo._repo.setSyncStrategy(SYNC_LAZY)
 
         if demands.sack_activation:
             self.base.fill_sack(load_system_repo='auto',

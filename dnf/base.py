@@ -140,26 +140,11 @@ class Base(object):
     def _add_repo_to_sack(self, repo):
         repo.load()
         hrepo = repo._hawkey_repo
-        hrepo.repomd_fn = repo._repomd_fn
-        hrepo.primary_fn = repo._primary_fn
-        if repo._filelists_fn is not None:
-            hrepo.filelists_fn = repo._filelists_fn
-        else:
-            logger.debug(_("not found filelists for: %s"), repo.name)
-        hrepo.cost = repo.cost
-        hrepo.priority = repo.priority
-        if repo._presto_fn:
-            hrepo.presto_fn = repo._presto_fn
-        else:
-            logger.debug(_("not found deltainfo for: %s"), repo.name)
-        if repo._updateinfo_fn:
-            hrepo.updateinfo_fn = repo._updateinfo_fn
-        else:
-            logger.debug(_("not found updateinfo for: %s"), repo.name)
+        repo._repo.initHyRepo(hrepo)
         try:
             self._sack.load_repo(hrepo, build_cache=True, load_filelists=True,
-                             load_presto=repo.deltarpm,
-                             load_updateinfo=True)
+                                 load_presto=repo.deltarpm,
+                                 load_updateinfo=True)
         except hawkey.Exception as e:
             logger.debug(_("loading repo '{}' failure: {}").format(repo.id, e))
             raise dnf.exceptions.RepoError(
@@ -433,7 +418,7 @@ class Base(object):
             if since_last_makecache is not None and since_last_makecache < period:
                 logger.info(_('Metadata cache refreshed recently.'))
                 return False
-            self.repos.all()._max_mirror_tries = 1
+            self.repos.all()._repo.setMaxMirrorTries(1)
 
         for r in self.repos.iter_enabled():
             (is_cache, expires_in) = r._metadata_expire_in()
@@ -441,12 +426,12 @@ class Base(object):
                 logger.info(_('%s: will never be expired and will not be refreshed.'), r.id)
             elif not is_cache or expires_in <= 0:
                 logger.debug(_('%s: has expired and will be refreshed.'), r.id)
-                r._md_expire_cache()
+                r._repo.expire()
             elif timer and expires_in < period:
                 # expires within the checking period:
                 msg = _("%s: metadata will expire after %d seconds and will be refreshed now")
                 logger.debug(msg, r.id, expires_in)
-                r._md_expire_cache()
+                r._repo.expire()
             else:
                 logger.debug(_('%s: will expire after %d seconds.'), r.id,
                              expires_in)
@@ -491,7 +476,7 @@ class Base(object):
                                      dnf.util.normalize_time(
                                          r.metadata._md_timestamp))
                     except dnf.exceptions.RepoError as e:
-                        r._md_expire_cache()
+                        r._repo.expire()
                         if r.skip_if_unavailable is False:
                             raise
                         errors.append(e)
