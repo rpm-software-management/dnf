@@ -339,6 +339,12 @@ ln -sr  %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/yum
 %endif
 %endif
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
+%if "%{yum_subpackage_name}" == "yum"
+mkdir -p %{buildroot}%{_sysconfdir}/yum
+ln -sr  %{buildroot}%{pluginconfpath} %{buildroot}%{_sysconfdir}/yum/pluginconf.d
+ln -sr  %{buildroot}%{confdir}/protected.d %{buildroot}%{_sysconfdir}/yum/protected.d
+ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
+%endif
 
 
 %check
@@ -406,8 +412,6 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %dir %{confdir}/modules.d
 %dir %{confdir}/modules.defaults.d
 %dir %{pluginconfpath}
-%dir %{_sysconfdir}/%{name}/modules.d
-%dir %{_sysconfdir}/%{name}/modules.defaults.d
 %dir %{confdir}/protected.d
 %dir %{confdir}/vars
 %config(noreplace) %{confdir}/%{name}.conf
@@ -431,8 +435,19 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %{_bindir}/yum
 %{_mandir}/man8/yum.8*
 %{_sysconfdir}/yum.conf
+%{_sysconfdir}/yum/pluginconf.d
+%{_sysconfdir}/yum/protected.d
+%{_sysconfdir}/yum/vars
+%{_mandir}/man1/repoquery.1.*
 %{_mandir}/man5/yum.conf.5.*
 %{_mandir}/man8/yum.8*
+%{_mandir}/man8/yum-shell.8*
+%else
+%exclude %{_mandir}/man1/repoquery.1.*
+%exclude %{_mandir}/man8/yum-shell.8*
+%exclude %{_sysconfdir}/yum/pluginconf.d
+%exclude %{_sysconfdir}/yum/protected.d
+%exclude %{_sysconfdir}/yum/vars
 %endif
 
 %if "%{yum_subpackage_name}" == "yum4"
@@ -444,8 +459,8 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %endif
 
 %if "%{yum_subpackage_name}" == "%{name}-yum"
-%{_sysconfdir}/yum.conf
 %{_bindir}/yum
+%{_sysconfdir}/yum.conf
 %{_mandir}/man5/yum.conf.5*
 %{_mandir}/man8/yum.8*
 %endif
