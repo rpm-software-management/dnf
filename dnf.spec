@@ -3,7 +3,6 @@
 %global librepo_version 1.9.0
 %global libcomps_version 0.1.8
 %global libmodulemd_version 1.4.0
-%global python_smartcols_version 0.3.0
 %global rpm_version 4.14.0
 
 # conflicts
@@ -171,8 +170,6 @@ BuildRequires:  python2-librepo >= %{librepo_version}
 BuildRequires:  python2-nose
 BuildRequires:  libmodulemd >= %{libmodulemd_version}
 Requires:       libmodulemd >= %{libmodulemd_version}
-BuildRequires:  python2-smartcols >= %{python_smartcols_version}
-Requires:       python2-smartcols >= %{python_smartcols_version}
 %if (0%{?rhel} && 0%{?rhel} <= 7)
 BuildRequires:  pygpgme
 Requires:       pygpgme
@@ -231,8 +228,6 @@ BuildRequires:  libmodulemd >= %{libmodulemd_version}
 Requires:       libmodulemd >= %{libmodulemd_version}
 BuildRequires:  python3-gobject-base
 Requires:       python3-gobject-base
-BuildRequires:  python3-smartcols >= %{python_smartcols_version}
-Requires:       python3-smartcols >= %{python_smartcols_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-gpg
 Requires:       python3-gpg
