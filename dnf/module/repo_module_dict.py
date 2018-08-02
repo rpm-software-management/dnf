@@ -337,8 +337,9 @@ class RepoModuleDict(OrderedDict):
             except NoStreamSpecifiedException:
                 continue
 
-        self.base.sack.reset_module_excludes()
-        self.base.use_module_includes()
+        hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
+        self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
+                                      self.base.conf.installroot, None)
 
         for module_version in module_versions:
             if not module_version.repo_module.conf.enabled._get():

@@ -179,7 +179,9 @@ class Base(object):
     def _setup_excludes_includes(self, only_main=False):
         disabled = set(self.conf.disable_excludes)
         if 'all' in disabled:
-            self.use_module_includes()
+            hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
+            self.sack.filter_modules(self._moduleContainer, hot_fix_repos,
+                                     self.conf.installroot, None)
             return
         repo_includes = []
         repo_excludes = []
