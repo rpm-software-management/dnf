@@ -244,6 +244,10 @@ man_pages = [
      AUTHORS, 8),
     ('command_ref', 'yum', u'redirecting to DNF Command Reference',
      AUTHORS, 8),
+    ('command_ref', 'repoquery', u'redirecting to DNF Command Reference',
+     AUTHORS, 1),
+    ('command_ref', 'yum-shell', u'redirecting to DNF Command Reference',
+     AUTHORS, 8),
 ]
 
 # If true, show URL addresses after external links.
