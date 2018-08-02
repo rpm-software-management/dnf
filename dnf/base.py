@@ -1919,6 +1919,26 @@ class Base(object):
             logger.warning(msg, pkg.name)
             return 0
 
+    def _upgrade_internal(self, query, obsoletes, reponame, pkg_spec=None):
+        installed = self.sack.query().installed()
+        q = query.intersection(self.sack.query().filterm(name=[pkg.name for pkg in installed]))
+        if obsoletes:
+            obsoletes = self.sack.query().available().filterm(obsoletes=q.installed.union(q.upgrades()))
+            # add obsoletes into transaction
+            q = q.union(obsoletes)
+        # provide only available packages to solver otherwise selection of available
+        # possibilities will be ignored
+        q = q.available()
+        if reponame is not None:
+            q.filterm(reponame=reponame)
+        q = self._merge_update_filters(q, pkg_spec=pkg_spec)
+        if q:
+            sltr = dnf.selector.Selector(self.sack)
+            sltr.set(pkg=q)
+            self._goal.upgrade(select=sltr)
+        return 1
+
+
     def upgrade(self, pkg_spec, reponame=None):
         # :api
         subj = dnf.subject.Subject(pkg_spec)
@@ -1941,45 +1961,18 @@ class Base(object):
                     if not installed.filter(arch=solution['nevra'].arch):
                         msg = _('Package %s available, but installed for different architecture.')
                         logger.warning(msg, "{}.{}".format(pkg_name, solution['nevra'].arch))
-
-            if self.conf.obsoletes and solution['nevra'] and solution['nevra'].has_just_name():
-                obsoletes = self.sack.query().filterm(obsoletes=q.installed())
-                # provide only available packages to solver otherwise selection of available
-                # possibilities will be ignored
-                q = q.available()
-                # add obsoletes into transaction
-                q = q.union(obsoletes)
-            else:
-                q = q.available()
-            if reponame is not None:
-                q.filterm(reponame=reponame)
-            q = self._merge_update_filters(q, pkg_spec=pkg_spec)
-            if q:
-                sltr = dnf.selector.Selector(self.sack)
-                sltr.set(pkg=q)
-                self._goal.upgrade(select=sltr)
-            return 1
-
+            obsoletes = self.conf.obsoletes and solution['nevra'] \
+                        and solution['nevra'].has_just_name()
+            return self._upgrade_internal(q, obsoletes, reponame, pkg_spec)
         raise dnf.exceptions.MarkingError(_('No match for argument: %s') % pkg_spec, pkg_spec)
 
     def upgrade_all(self, reponame=None):
         # :api
-        if reponame is None and not self._update_security_filters:
-            self._goal.upgrade_all()
-        else:
-            # provide only available packages to solver otherwise selection of available
-            # possibilities will be ignored
-            q = self.sack.query().available()
-            # add obsoletes into transaction
-            if self.conf.obsoletes:
-                q = q.union(self.sack.query().filterm(obsoletes=self.sack.query().installed()))
-            if reponame is not None:
-                q.filterm(reponame=reponame)
-            q = self._merge_update_filters(q)
-            sltr = dnf.selector.Selector(self.sack)
-            sltr.set(pkg=q)
-            self._goal.upgrade(select=sltr)
-        return 1
+        # provide only available packages to solver to trigger targeted upgrade
+        # possibilities will be ignored
+        # usage of selected packages will unify dnf behavior with other upgrade functions
+        return self._upgrade_internal(
+            self.sack.query(), self.conf.obsoletes, reponame, pkg_spec=None)
 
     def distro_sync(self, pkg_spec=None):
         if pkg_spec is None:
