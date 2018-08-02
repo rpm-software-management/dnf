@@ -249,17 +249,30 @@ class Environment(Forwarder):
             raise ValueError(msg % (grp_id.name, self.id))
         return grp
 
+    def _build_groups(self, ids):
+        groups = []
+        for gi in ids:
+            try:
+                groups.append(self._build_group(gi))
+            except ValueError as e:
+                logger.error(e)
+
+        return groups
+
     def groups_iter(self):
         for grp_id in itertools.chain(self.group_ids, self.option_ids):
-            yield self._build_group(grp_id)
+            try:
+                yield self._build_group(grp_id)
+            except ValueError as e:
+                logger.error(e)
 
     @property
     def mandatory_groups(self):
-        return [self._build_group(gi) for gi in self.group_ids]
+        return self._build_groups(self.group_ids)
 
     @property
     def optional_groups(self):
-        return [self._build_group(gi) for gi in self.option_ids]
+        return self._build_groups(self.option_ids)
 
 class Group(Forwarder):
     # :api
