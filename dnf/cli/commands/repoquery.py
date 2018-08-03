@@ -302,8 +302,8 @@ class RepoQueryCommand(commands.Command):
         if opts.querychangelogs:
             out = []
             out.append('Changelog for %s' % str(pkg))
-            for chlog in reversed(pkg.changelogs):
-                dt = datetime.date.fromtimestamp(chlog['timestamp'])
+            for chlog in pkg.changelogs:
+                dt = chlog['timestamp']
                 out.append('* %s %s\n%s\n' % (dt.strftime("%a %b %d %Y"),
                                               dnf.i18n.ucd(chlog['author']),
                                               dnf.i18n.ucd(chlog['text'])))
