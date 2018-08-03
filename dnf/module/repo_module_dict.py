@@ -48,7 +48,7 @@ class RepoModuleDict(OrderedDict):
 
     def find_module_version(self, name, stream=None, version=None, context=None, arch=None):
         def use_enabled_stream(repo_module):
-            if repo_module.conf.enabled._get():
+            if repo_module.conf.state._get() == "enabled":
                 return repo_module.conf.stream._get()
             return None
 
@@ -174,7 +174,7 @@ class RepoModuleDict(OrderedDict):
 
         for dependency in version_dependencies:
             conf = self[dependency.name].conf
-            if not conf.enabled._get() or conf.stream._get() != dependency.stream:
+            if conf.state._get() != "enabled" or conf.stream._get() != dependency.stream:
                 self[dependency.name].enable(dependency.stream, self.base.conf.assumeyes)
 
         if save_immediately:
@@ -307,7 +307,7 @@ class RepoModuleDict(OrderedDict):
                                       self.base.conf.installroot, None)
 
         for module_version in module_versions:
-            if not module_version.repo_module.conf.enabled._get():
+            if module_version.repo_module.conf.state._get() != "enabled":
                 continue
 
             conf = self[module_form.name].conf
@@ -418,7 +418,7 @@ class RepoModuleDict(OrderedDict):
         default_stream = module_version.repo_module.defaults.peek_default_stream()
         default_str = " [d]" if module_version.stream == default_stream else ""
         enabled_str = ""
-        if module_version.stream == conf.stream._get() and conf.enabled._get():
+        if module_version.stream == conf.stream._get() and conf.state._get() == "enabled":
             if not default_str:
                 enabled_str = " "
             enabled_str += "[e]"
@@ -513,7 +513,7 @@ class RepoModuleDict(OrderedDict):
 
         for version in self.list_module_version_latest():
             conf = version.repo_module.conf
-            if conf.enabled._get() and conf.stream._get() == version.stream:
+            if conf.state._get() == "enabled" and conf.stream._get() == version.stream:
                 versions.append(version)
 
         return versions
@@ -523,7 +523,7 @@ class RepoModuleDict(OrderedDict):
 
         for version in self.list_module_version_latest():
             conf = version.repo_module.conf
-            if not conf.enabled._get() or version.stream != conf.stream._get():
+            if conf.state._get() != "enabled" or version.stream != conf.stream._get():
                 versions.append(version)
 
         return versions
@@ -533,7 +533,7 @@ class RepoModuleDict(OrderedDict):
 
         for version in self.list_module_version_latest():
             conf = version.repo_module.conf
-            if conf.enabled._get() and conf.stream._get() == version.stream \
+            if conf.state._get() == "enabled" and conf.stream._get() == version.stream \
                     and list(conf.profiles._get()):
                 versions.append(version)
 
@@ -655,7 +655,7 @@ class RepoModuleDict(OrderedDict):
                 if i.stream == defaults_conf.peek_default_stream():
                     default_str = " [d]"
 
-                if i.stream == conf.stream._get() and conf.enabled._get():
+                if i.stream == conf.stream._get() and conf.state._get() == "enabled":
                     if not default_str:
                         enabled_str = " "
                     enabled_str += "[e]"

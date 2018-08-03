@@ -43,7 +43,7 @@ class RepoModule(OrderedDict):
         if self._conf is None:
             self._conf = ModuleConf(section=self.name, parser=ConfigParser())
             self._conf.name._set(self.name)
-            self._conf.enabled._set(False)
+            self._conf.state._set("")
 
         return self._conf
 
@@ -75,7 +75,7 @@ class RepoModule(OrderedDict):
         if stream not in self:
             raise NoStreamException("{}:{}".format(self.name, stream))
 
-        if self.conf.enabled._get() and self.conf.stream._get() == stream:
+        if self.conf.state._get() == "enabled" and self.conf.stream._get() == stream:
             return
 
         if not self.parent.base.conf.assumeno and not self.parent.base.output:
@@ -93,10 +93,13 @@ class RepoModule(OrderedDict):
             else:
                 raise EnabledStreamException("{}:{}".format(self.name, stream))
 
-        self.parent.base._module_persistor.set_data(self, stream=stream, enabled=True, profiles=[])
+        self.parent.base._module_persistor.set_data(self, stream=stream, state="enabled", profiles=[])
 
     def disable(self):
-        self.parent.base._module_persistor.set_data(self, enabled=False, profiles=[])
+        self.parent.base._module_persistor.set_data(self, state="disabled", profiles=[])
+
+    def reset_to_default(self):
+        self.parent.base._module_persistor.set_data(self, state="", profiles=[])
 
     def write_conf_to_file(self):
         output_file = os.path.join(self.parent.get_modules_dir(),
