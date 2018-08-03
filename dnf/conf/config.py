@@ -630,13 +630,16 @@ class ModuleConf(BaseConfig):
         # installed profiles
         self.profiles = ListOption([])
         # enable/disable a module
-        self.enabled = BoolOption(True)
+        self.enabled = BoolOption(False)
+        self.state = StringOption("")
 
     def _write(self, fileobj):
+        if self.state._get() == "" and self.enabled._get():
+            self.state._set("enabled")
+
         output = "[{}]\n".format(self._section)
         output += "name = {}\n".format(self.name._get())
         output += "stream = {}\n".format(self.stream._get())
         output += "profiles = {}\n".format(",".join(self.profiles._get()))
-        output += "enabled = {}\n".format(self.enabled._get())
-
+        output += "state = {}\n".format(self.state._get())
         fileobj.write(output)

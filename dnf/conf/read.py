@@ -159,6 +159,9 @@ class ModuleReader(object):
         # TODO: unset module.name?
         module._cfg = parser
 
+        if not module.state._get() and module.enabled._get():
+            module.state._set("enabled")
+
         return module
 
     def _get_module_configs(self, module_path):
