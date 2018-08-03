@@ -24,8 +24,11 @@ class ModulePersistor(object):
     def set_data(self, repo_module, **kwargs):
         self.repo_modules.append(repo_module)
         for name, value in kwargs.items():
-            attribute = getattr(repo_module.conf, name)
-            attribute._set(value)
+            try:
+                attribute = getattr(repo_module.conf, name)
+                attribute._set(value)
+            except AttributeError:
+                continue
 
     def commit(self):
         self._commit = True
