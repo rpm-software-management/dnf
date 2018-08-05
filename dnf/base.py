@@ -846,6 +846,7 @@ class Base(object):
 #                self.history.group.commit()
             return
 
+        tid = None
         logger.info(_('Running transaction check'))
         lock = dnf.lock.build_rpmdb_lock(self.conf.persistdir,
                                          self.conf.exit_on_lock)
@@ -899,7 +900,7 @@ class Base(object):
             self._plugins.run_pre_transaction()
 
             logger.info(_('Running transaction'))
-            self._run_transaction(cb=cb)
+            tid = self._run_transaction(cb=cb)
         timer()
         self._plugins.unload_removed_plugins(self.transaction)
         self._plugins.run_transaction()
@@ -908,6 +909,7 @@ class Base(object):
         if self._trans_success:
             if self._module_persistor:
                 self._module_persistor.commit()
+        return tid
 
     def _trans_error_summary(self, errstring):
         """Parse the error string for 'interesting' errors which can
@@ -943,8 +945,13 @@ class Base(object):
             not self._ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)
 
     def _run_transaction(self, cb):
-        """Perform the RPM transaction."""
+        """
+        Perform the RPM transaction.
 
+        :return: history database transaction ID or None
+        """
+
+        tid = None
         if self._record_history():
             using_pkgs_pats = list(self.conf.history_record_packages)
             installed_query = self.sack.query().installed()
@@ -1048,6 +1055,7 @@ class Base(object):
         if not self._ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
             self._verify_transaction(cb.verify_tsi_package)
 
+        return tid
 
     def _verify_transaction(self, verify_pkg_cb=None):
         total = len(self.transaction)

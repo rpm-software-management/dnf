@@ -151,9 +151,7 @@ class BaseCli(dnf.Base):
         confirmation and actually running the transaction.
 
         :param display: `rpm.callback.TransactionProgress` object(s)
-        :return: a numeric return code, and optionally a list of
-           errors.  A negative return code indicates that errors
-           occurred in the pre-transaction checks
+        :return: history database transaction ID or None
         """
 
         # Reports about excludes and includes (but not from plugins)
@@ -234,11 +232,14 @@ class BaseCli(dnf.Base):
         if not isinstance(display, Sequence):
             display = [display]
         display = [output.CliTransactionDisplay()] + list(display)
-        super(BaseCli, self).do_transaction(display)
+        tid = super(BaseCli, self).do_transaction(display)
 
         # display last transaction (which was closed during do_transaction())
-        trans = self.history.last()
-        trans = dnf.db.group.RPMTransaction(self.history, trans._trans)
+        if tid is not None:
+            trans = self.history.old([tid])[0]
+            trans = dnf.db.group.RPMTransaction(self.history, trans._trans)
+        else:
+            trans = None
 
         if trans:
             msg = self.output.post_transaction_output(trans)
@@ -246,6 +247,8 @@ class BaseCli(dnf.Base):
             for tsi in trans:
                 if tsi.state == libdnf.transaction.TransactionItemState_ERROR:
                     raise dnf.exceptions.Error(_('Transaction failed'))
+
+        return tid
 
     def gpgsigcheck(self, pkgs):
         """Perform GPG signature verification on the given packages,
