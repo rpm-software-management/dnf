@@ -1040,7 +1040,9 @@ class Output(object):
         skipped_broken = set()
 
         if transaction is None:
-            return None
+            # set empty transaction list instead of returning None
+            # in order to display module changes when RPM transaction is empty
+            transaction = []
 
         list_bunch = _make_lists(transaction, self.base._goal)
         pkglist_lines = []
@@ -1104,6 +1106,48 @@ class Output(object):
 
             pkglist_lines.append((action, lines))
 
+        installedProfiles = sorted(dict(self.base._moduleContainer.getInstalledProfiles()).items())
+        if installedProfiles:
+            action = "Installing module profiles"
+            lines = []
+            for name, profiles in installedProfiles:
+                for profile in list(profiles):
+                    lines.append(("%s/%s" % (name, profile), "", "", "", "", "", ""))
+            pkglist_lines.append((action, lines))
+
+        removedProfiles = sorted(dict(self.base._moduleContainer.getRemovedProfiles()).items())
+        if removedProfiles:
+            action = "Removing module profiles"
+            lines = []
+            for name, profiles in removedProfiles:
+                for profile in list(profiles):
+                    lines.append(("%s/%s" % (name, profile), "", "", "", "", "", ""))
+            pkglist_lines.append((action, lines))
+
+        enabledStreams = sorted(dict(self.base._moduleContainer.getEnabledStreams()).items())
+        if enabledStreams:
+            action = "Enabling module streams"
+            lines = []
+            for name, stream in enabledStreams:
+                lines.append((name, "", stream, "", "", "", ""))
+            pkglist_lines.append((action, lines))
+
+        switchedStreams = sorted(dict(self.base._moduleContainer.getSwitchedStreams()).items())
+        if switchedStreams:
+            action = "Switching module streams"
+            lines = []
+            for name, stream in switchedStreams:
+                lines.append((name, "", "%s -> %s" % (stream[0], stream[1]), "", "", "", ""))
+            pkglist_lines.append((action, lines))
+
+        disabledStreams = sorted(dict(self.base._moduleContainer.getDisabledStreams()).items())
+        if disabledStreams:
+            action = "Disabling module streams"
+            lines = []
+            for name, stream in disabledStreams:
+                lines.append((name, "", stream, "", "", "", ""))
+            pkglist_lines.append((action, lines))
+
         # show skipped conflicting packages
         if not self.conf.best and self.base._goal.actions & forward_actions:
             lines = []
@@ -1131,7 +1175,7 @@ class Output(object):
 
             pkglist_lines.append((skip_str, lines))
 
-        if not data['n']:
+        if not data['n'] and not self.base._moduleContainer.isChanged():
             return u''
         else:
             data = [data['n'], {}, data['v'], data['r'], {}]

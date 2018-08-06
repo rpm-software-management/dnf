@@ -252,7 +252,7 @@ class RepoModuleDictTest(unittest.TestCase):
 
         # set enabled stream
         conf = dnf.conf.ModuleConf(section="test")
-        conf.enabled._set(1)
+        conf.state._set("enabled")
         conf.stream._set("enabled_stream")
         rmd["module-name"].conf = conf
 
@@ -269,7 +269,7 @@ class RepoModuleDictTest(unittest.TestCase):
         self.assertEqual(rmv.full_version, "module-name:enabled_stream:1")
 
         # stream == default stream
-        conf.enabled._set(0)
+        conf.state._set("")
         rmv = rmd.find_module_version(name="module-name")
         self.assertEqual(rmv.full_version, "module-name:stream:2")
 
@@ -314,14 +314,14 @@ class ModuleTest(unittest.TestCase):
         # use default stream
         self.base.repo_module_dict.enable("httpd")
         repo_module = self.base.repo_module_dict["httpd"]
-        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.state._get(), "enabled")
         self.assertEqual(repo_module.conf.name._get(), "httpd")
         self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
     def test_enable_name_stream(self):
         self.base.repo_module_dict.enable("httpd:2.4")
         repo_module = self.base.repo_module_dict["httpd"]
-        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.state._get(), "enabled")
         self.assertEqual(repo_module.conf.name._get(), "httpd")
         self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
@@ -331,7 +331,7 @@ class ModuleTest(unittest.TestCase):
     def test_enable_pkgspec(self):
         self.base.repo_module_dict.enable("httpd:2.4:1/foo")
         repo_module = self.base.repo_module_dict["httpd"]
-        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.state._get(), "enabled")
         self.assertEqual(repo_module.conf.name._get(), "httpd")
         self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
@@ -343,12 +343,12 @@ class ModuleTest(unittest.TestCase):
         repo_module = self.base.repo_module_dict["httpd"]
 
         self.base.repo_module_dict.enable("httpd:2.4")
-        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.state._get(), "enabled")
         self.assertEqual(repo_module.conf.name._get(), "httpd")
         self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
         self.base.repo_module_dict.enable("httpd:2.2")
-        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.state._get(), "enabled")
         self.assertEqual(repo_module.conf.name._get(), "httpd")
         self.assertEqual(repo_module.conf.stream._get(), "2.2")
 
@@ -361,12 +361,12 @@ class ModuleTest(unittest.TestCase):
         repo_module = self.base.repo_module_dict["httpd"]
 
         self.base.repo_module_dict.enable("httpd")
-        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.state._get(), "enabled")
         self.assertEqual(repo_module.conf.name._get(), "httpd")
         self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
         self.base.repo_module_dict.disable("httpd")
-        self.assertFalse(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.state._get(), "disabled")
         self.assertEqual(repo_module.conf.name._get(), "httpd")
         self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
@@ -374,12 +374,12 @@ class ModuleTest(unittest.TestCase):
         repo_module = self.base.repo_module_dict["httpd"]
 
         self.base.repo_module_dict.enable("httpd:2.4")
-        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.state._get(), "enabled")
         self.assertEqual(repo_module.conf.name._get(), "httpd")
         self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
         self.base.repo_module_dict.disable("httpd:2.4")
-        self.assertFalse(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.state._get(), "disabled")
         self.assertEqual(repo_module.conf.name._get(), "httpd")
         self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
@@ -387,12 +387,12 @@ class ModuleTest(unittest.TestCase):
         repo_module = self.base.repo_module_dict["httpd"]
 
         self.base.repo_module_dict.enable("httpd:2.4")
-        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.state._get(), "enabled")
         self.assertEqual(repo_module.conf.name._get(), "httpd")
         self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
         self.base.repo_module_dict.disable("httpd:2.4:1/foo")
-        self.assertFalse(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.state._get(), "disabled")
         self.assertEqual(repo_module.conf.name._get(), "httpd")
         self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
@@ -400,7 +400,7 @@ class ModuleTest(unittest.TestCase):
         repo_module = self.base.repo_module_dict["httpd"]
 
         self.base.repo_module_dict.enable("httpd:2.4")
-        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.state._get(), "enabled")
         self.assertEqual(repo_module.conf.name._get(), "httpd")
         self.assertEqual(repo_module.conf.stream._get(), "2.4")
 
@@ -488,7 +488,7 @@ class ModuleTest(unittest.TestCase):
             # module profile wasn't, module was just enabled
 
             repo_module = rmd["base-runtime"]
-            self.assertTrue(repo_module.conf.enabled._get())
+            self.assertEqual(repo_module.conf.state._get(), "enabled")
             self.assertEqual(repo_module.conf.name._get(), "base-runtime")
             self.assertEqual(repo_module.conf.stream._get(), "f26")
             self.assertEqual(repo_module.conf.profile._get(), [])
@@ -496,7 +496,7 @@ class ModuleTest(unittest.TestCase):
 
         # check module conf
         repo_module = rmd["base-runtime"]
-        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.state._get(), "enabled")
         self.assertEqual(repo_module.conf.name._get(), "base-runtime")
         self.assertEqual(repo_module.conf.stream._get(), "f26")
         self.assertEqual(list(repo_module.conf.profiles._get()), ["minimal"])
@@ -604,7 +604,7 @@ class ModuleTest(unittest.TestCase):
             self.assertEqual(e.code, 0)
 
         repo_module = rmd["m4"]
-        self.assertTrue(repo_module.conf.enabled._get())
+        self.assertEqual(repo_module.conf.state._get(), "enabled")
         self.assertEqual(repo_module.conf.name._get(), "m4")
         self.assertEqual(repo_module.conf.stream._get(), "1.4.18")
         self.assertEqual(list(repo_module.conf.profiles._get()), ['default'])

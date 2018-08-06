@@ -106,9 +106,9 @@ class ModuleCommand(commands.Command):
                     logger.info("Ignoring unnecessary profile: '{}/{}'".format(module_form.name,
                                                                                module_form.profile))
 
-                self.base.repo_module_dict.enable_by_version(module_version, True)
-                logger.info("Module stream has been enabled: {}:{}".format(module_version.name,
-                                                                           module_version.stream))
+                self.base.repo_module_dict.enable_by_version(module_version)
+
+            self.base.do_transaction()
 
             logger.info(_("\nTo switch to the new streams' RPMs, run '{} distro-sync'. \n"
                         "Then migrate configuration files and data as necessary."

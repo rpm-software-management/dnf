@@ -48,14 +48,23 @@ class RepoModuleVersion(object):
             raise NoProfilesException("{}/{}".format(self.full_version, profile))
 
     def install(self, profiles, default_profiles, strict=True):
-        result = self._install_profiles(profiles, False)
-        if not profiles:
-            result |= self._install_profiles(default_profiles, True, strict)
+        if profiles:
+            result = self._install_profiles(profiles, False)
+            persistor_profiles = profiles
+        else:
+            if not default_profiles:
+                # if no default profiles are set, install the "default" profile
+                default_profiles = ["default"]
+            result = self._install_profiles(default_profiles, True, strict)
+            persistor_profiles = default_profiles
 
-        profiles.extend(list(self.repo_module.conf.profiles._get()))
-        profiles.extend(default_profiles)
-        self.base._module_persistor.set_data(self.repo_module, stream=self.stream,
-                                             profiles=sorted(set(profiles)))
+        for profile in sorted(set(persistor_profiles)):
+            self.base._moduleContainer.install(self.name, self.stream, profile)
+
+        # TODO: remove; temporary workaround for syncing RepoModule.conf with libdnf
+        conf_profiles = set(self.parent.parent.conf.profiles._get())
+        conf_profiles.update(persistor_profiles)
+        self.parent.parent.conf.profiles._set(", ".join(sorted(conf_profiles)))
 
         return result
 
@@ -103,8 +112,6 @@ class RepoModuleVersion(object):
                     else:
                         query_to_return = query_to_return.union(query)
 
-        self.base._module_persistor.set_data(self.repo_module, stream=self.stream)
-
         return query_to_return
 
     def remove(self, profiles):
@@ -132,11 +139,8 @@ class RepoModuleVersion(object):
 
                 self.base._remove_if_unneeded(remove_query)
 
-        conf = self.repo_module.conf
-        profiles = [x for x in list(conf.profiles._get()) if x not in profiles]
-
-        self.base._module_persistor.set_data(self.repo_module, stream=self.stream,
-                                             profiles=sorted(set(profiles)))
+        for profile in sorted(set(profiles)):
+            self.base._moduleContainer.uninstall(self.name, self.stream, profile)
 
     def artifacts(self):
         return self.module_metadata.peek_rpm_artifacts().dup()
