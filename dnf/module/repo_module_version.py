@@ -47,47 +47,6 @@ class RepoModuleVersion(object):
         else:
             raise NoProfilesException("{}/{}".format(self.full_version, profile))
 
-    def install(self, profiles, default_profiles, strict=True):
-        if profiles:
-            result = self._install_profiles(profiles, False)
-            persistor_profiles = profiles
-        else:
-            if not default_profiles:
-                # if no default profiles are set, install the "default" profile
-                default_profiles = ["default"]
-            result = self._install_profiles(default_profiles, True, strict)
-            persistor_profiles = default_profiles
-
-        for profile in sorted(set(persistor_profiles)):
-            self.base._moduleContainer.install(self.name, self.stream, profile)
-
-        # TODO: remove; temporary workaround for syncing RepoModule.conf with libdnf
-        conf_profiles = set(self.parent.parent.conf.profiles._get())
-        conf_profiles.update(persistor_profiles)
-        self.parent.parent.conf.profiles._set(", ".join(sorted(conf_profiles)))
-
-        return result
-
-    def _install_profiles(self, profiles, defaults_used, strict=True):
-        installed = self.base.sack.query().installed().run()
-        installed_nevras = [str(pkg) for pkg in installed]
-
-        result = False
-        for profile in profiles:
-            if profile not in self.profiles + ['default']:
-                self.report_profile_error(profile, defaults_used)
-
-            for nevra_object in self.profile_nevra_objects(profile):
-                nevr = self.nevra_object_to_nevr_str(nevra_object)
-                nevra = "{}.{}".format(nevr, nevra_object.arch)
-
-                if nevra not in installed_nevras:
-                    self.base.install(nevr, forms=hawkey.FORM_NEVR, strict=strict)
-                    self.base._goal.group_members.add(nevra_object.name)
-                    result = True
-
-        return result
-
     def upgrade(self, profiles):
         installed = self.base.sack.query().installed().run()
         installed_nevras = [str(pkg) for pkg in installed]
