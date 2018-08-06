@@ -828,7 +828,14 @@ class Base(object):
             raise exc
 
         self._plugins.run_resolved()
-        self.repo_module_dict.enable_based_on_rpms()
+
+        # auto-enable module streams based on installed RPMs
+        new_pkgs = self._goal.list_installs()
+        new_pkgs += self._goal.list_upgrades()
+        new_pkgs += self._goal.list_downgrades()
+        new_pkgs += self._goal.list_reinstalls()
+        self.sack.set_modules_enabled_by_pkgset(self._moduleContainer, new_pkgs)
+
         return got_transaction
 
     def do_transaction(self, display=()):
