@@ -20,6 +20,8 @@ from collections import OrderedDict
 
 import hawkey
 import libdnf.smartcols
+import libdnf.module
+import dnf.selector
 
 from dnf.conf.read import ModuleReader
 from dnf.module import module_messages, NOTHING_TO_SHOW, \
@@ -32,7 +34,10 @@ from dnf.module.subject import ModuleSubject
 from dnf.selector import Selector
 from dnf.subject import Subject
 from dnf.util import first_not_none, logger, ensure_dir
+from dnf.i18n import _, P_, ucd
 
+STATE_DEFAULT = libdnf.module.ModulePackageContainer.ModuleState_DEFAULT
+STATE_ENABLED = libdnf.module.ModulePackageContainer.ModuleState_ENABLED
 
 class RepoModuleDict(OrderedDict):
 
@@ -181,6 +186,122 @@ class RepoModuleDict(OrderedDict):
 
         self.disable_by_version(module_version, save_immediately)
 
+    def get_modules(self, module_spec):
+        subj = hawkey.Subject(module_spec)
+        for nsvcap in subj.nsvcap_possibilities():
+            name = nsvcap.name if nsvcap.name else ""
+            stream = nsvcap.stream if nsvcap.stream else ""
+            version = ""
+            context = nsvcap.context if nsvcap.context else ""
+            arch = nsvcap.arch if nsvcap.arch else ""
+            if nsvcap.version and nsvcap.version != -1:
+                version = str(nsvcap.version)
+            modules = self.base._moduleContainer.query(name, stream, version, context, arch)
+            if modules:
+                return modules, nsvcap
+        return None, None
+
+    def _module_enable(self, module_list):
+        moduleDict = {}
+        for module in module_list:
+            moduleDict.setdefault(
+                module.getName(), {}).setdefault(module.getStream(), []).append(module)
+
+        for moduleName, streamDict in moduleDict.items():
+            moduleState = self.base._moduleContainer.getModuleState(moduleName)
+            if len(streamDict) > 1:
+                if moduleState != STATE_DEFAULT and moduleState != STATE_ENABLED:
+                    raise EnableMultipleStreamsException(moduleName)
+                if moduleState == STATE_ENABLED:
+                    stream = self.base._moduleContainer.getEnabledStream(moduleName)
+                else:
+                    stream = self.base._moduleContainer.getDefaultStream(moduleName)
+                if stream not in streamDict:
+                    raise EnableMultipleStreamsException(moduleName)
+                for key in sorted(streamDict.keys()):
+                    if key == stream:
+                        self.base._moduleContainer.enable(moduleName, key)
+                        continue
+                    del streamDict[key]
+            else:
+                for key in streamDict.keys():
+                    self.base._moduleContainer.enable(moduleName, key)
+            assert len(streamDict) == 1
+        return moduleDict
+
+    def install(self, module_specs, strict=True):
+        no_match_specs = []
+        error_spec = []
+        module_dicts = {}
+        for spec in set(module_specs):
+            module_list, nsvcap = self.get_modules(spec)
+            if module_list is None:
+                no_match_specs.append(spec)
+                continue
+            try:
+                module_dict = self._module_enable(module_list)
+                module_dicts[spec] = (nsvcap, module_dict)
+            except (RuntimeError, EnableMultipleStreamsException) as e:
+                error_spec.append(spec)
+                logger.error(ucd(e))
+                logger.error(_("Unable to resolve argument {}").format(spec))
+        hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
+        self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
+                                      self.base.conf.installroot, None)
+
+        # <package_name, set_of_spec>
+        install_dict = {}
+        install_set_artefacts = set()
+        for spec, (nsvcap, moduledict) in module_dicts.items():
+            for name, streamdict in moduledict.items():
+                for stream, module_list in streamdict.items():
+                    install_module_list = [x for x in module_list if self.base._moduleContainer.isModuleActive(x.getId())]
+                    if not install_module_list:
+                        logger.error(_("Unable to resolve argument {}").format(spec))
+                        error_spec.append(spec)
+                        continue
+                    profiles = []
+                    if nsvcap.profile:
+                        install_module_list.sort(reverse=True, key=lambda x: x.getVersion())
+                        profiles.extend(install_module_list[0].getProfiles(nsvcap.profile))
+                        if not profiles:
+                            logger.error(_("Unable to match profile in argument {}").format(spec))
+                            error_spec.append(spec)
+                            continue
+                    else:
+                        profiles_strings = self.base._moduleContainer.getDefaultProfiles(name, stream)
+                        if not profiles_strings:
+                            logger.error(_("No default profiles for module {}:{}").format(name, stream))
+                            profiles_strings = ['default']
+                        for profile in set(profiles_strings):
+                            module_profiles = install_module_list[0].getProfiles(profile)
+                            if not module_profiles:
+                                logger.error(_("Default profile {} not matched for module {}:{}").format(profile, name,
+                                                                                                         stream))
+                            profiles.extend(module_profiles)
+                    for profile in profiles:
+                        self.base._moduleContainer.install(install_module_list[0] ,profile.getName())
+                        for pkg_name in profile.getContent():
+                            install_dict.setdefault(pkg_name, set()).add(spec)
+                    for module in install_module_list:
+                        install_set_artefacts.update(module.getArtifacts())
+        install_base_query = self.base.sack.query().filterm(nevra_strict=install_set_artefacts).apply()
+
+        for pkg_name, set_specs in install_dict.items():
+            query = install_base_query.filter(name=pkg_name)
+            if not query:
+                for spec in set_specs:
+                    logger.error(_("Unable to resolve argument {}").format(spec))
+                logger.error(_("No match for package {}").format(pkg_name))
+                error_spec.extend(set_specs)
+                continue
+            self.base._goal.group_members.add(pkg_name)
+            sltr = dnf.selector.Selector(self.base.sack)
+            sltr.set(pkg=query)
+            self.base._goal.install(select=sltr, optional=(not strict))
+        # TODO reise exception and return specks with problem
+        return no_match_specs
+
     def reset_by_version(self, module_version, save_immediately=False):
         self.base._moduleContainer.reset(module_version.name)
 
@@ -202,88 +323,6 @@ class RepoModuleDict(OrderedDict):
         module_version, module_form = subj.find_module_version(self)
 
         self.reset_by_version(module_version, save_immediately)
-
-    def install(self, module_specs, strict=True):
-        versions, module_specs = self.get_best_versions(module_specs)
-
-        result = False
-        for module_version, profiles, default_profiles in versions.values():
-            self.enable_by_version(module_version)
-            self.base._moduleContainer.enable(
-                module_version.name, module_version.stream)
-
-        hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
-        self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
-                                      self.base.conf.installroot, self.base.conf.module_platform_id,
-                                      update_only=True)
-
-        for module_version, profiles, default_profiles in versions.values():
-            profiles = sorted(set(profiles))
-            default_profiles = sorted(set(default_profiles))
-
-            if profiles or default_profiles:
-                result |= module_version.install(profiles, default_profiles, strict)
-
-        if not result and versions:
-            module_versions = ["{}:{}".format(module_version.name, module_version.stream)
-                               for module_version, profiles, default_profiles in versions.values()]
-            logger.info(module_messages[ENABLED_MODULES].format(", ".join(module_versions)))
-
-        return module_specs
-
-    def get_best_versions(self, module_specs):
-        best_versions = {}
-        skipped = []
-        for module_spec in module_specs:
-            subj = ModuleSubject(module_spec)
-
-            try:
-                module_version, module_form = subj.find_module_version(self)
-            except NoModuleException:
-                skipped.append(module_spec)
-                continue
-
-            key = module_version.name
-            if key in best_versions:
-                best_version, profiles, default_profiles = best_versions[key]
-                if best_version.stream != module_version.stream:
-                    raise EnableMultipleStreamsException(module_version.name)
-
-                if module_form.profile:
-                    profiles.append(module_form.profile)
-                else:
-                    stream = module_form.stream or module_version.repo_module.defaults \
-                        .peek_default_stream()
-                    profile_defaults = module_version.repo_module.defaults.peek_profile_defaults()
-                    if stream in profile_defaults:
-                        default_profiles.extend(profile_defaults[stream].dup())
-
-                if best_version < module_version:
-                    logger.info(module_messages[INSTALLING_NEWER_VERSION].format(best_version,
-                                                                                 module_version))
-                    best_versions[key] = [module_version, profiles, default_profiles]
-                else:
-                    best_versions[key] = [best_version, profiles, default_profiles]
-            else:
-                default_profiles = []
-                profiles = []
-
-                stream = module_form.stream or module_version.repo_module.defaults \
-                    .peek_default_stream()
-                profile_defaults = module_version.repo_module.defaults.peek_profile_defaults()
-                if stream in profile_defaults:
-                    default_profiles.extend(profile_defaults[stream].dup())
-
-                if module_form.profile:
-                    profiles = [module_form.profile]
-                elif default_profiles:
-                    profiles = []
-                else:
-                    default_profiles = ['default']
-
-                best_versions[key] = [module_version, profiles, default_profiles]
-
-        return best_versions, skipped
 
     def upgrade(self, module_specs, create_goal=False):
         skipped = []
