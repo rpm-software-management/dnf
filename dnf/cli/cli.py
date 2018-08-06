@@ -24,14 +24,26 @@ Command line interface yum class and related.
 from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
-from . import output
-from dnf.cli import CliError
-from dnf.i18n import ucd, _
 
 try:
     from collections.abc import Sequence
 except ImportError:
     from collections import Sequence
+import datetime
+import logging
+import operator
+import os
+import random
+import rpm
+import sys
+import time
+
+import hawkey
+import libdnf.transaction
+
+from . import output
+from dnf.cli import CliError
+from dnf.i18n import ucd, _
 import dnf
 import dnf.cli.commands
 import dnf.cli.commands.autoremove
@@ -40,13 +52,13 @@ import dnf.cli.commands.clean
 import dnf.cli.commands.deplist
 import dnf.cli.commands.distrosync
 import dnf.cli.commands.downgrade
-import dnf.cli.commands.remove
 import dnf.cli.commands.group
 import dnf.cli.commands.install
 import dnf.cli.commands.makecache
 import dnf.cli.commands.mark
 import dnf.cli.commands.module
 import dnf.cli.commands.reinstall
+import dnf.cli.commands.remove
 import dnf.cli.commands.repolist
 import dnf.cli.commands.repoquery
 import dnf.cli.commands.search
@@ -56,31 +68,21 @@ import dnf.cli.commands.updateinfo
 import dnf.cli.commands.upgrade
 import dnf.cli.commands.upgrademinimal
 import dnf.cli.demand
+import dnf.cli.format
 import dnf.cli.option_parser
 import dnf.conf
 import dnf.conf.substitutions
 import dnf.const
+import dnf.db.history
 import dnf.exceptions
-import dnf.cli.format
 import dnf.logging
-import dnf.plugin
 import dnf.persistor
+import dnf.plugin
 import dnf.rpm
 import dnf.sack
 import dnf.transaction
 import dnf.util
 import dnf.yum.misc
-import hawkey
-import logging
-import operator
-import os
-import random
-import sys
-import time
-
-import libdnf.transaction
-import dnf.db.history
-import dnf.util
 
 logger = logging.getLogger('dnf')
 
@@ -289,7 +291,40 @@ class BaseCli(dnf.Base):
                 logger.critical(msg)
             raise dnf.exceptions.Error(_("GPG check FAILED"))
 
-    def check_updates(self, patterns=(), reponame=None, print_=True):
+    def latest_changelogs(self, package):
+        """Return list of changelogs for package newer then installed version"""
+        newest = None
+        # find the date of the newest changelog for installed version of package
+        # stored in rpmdb
+        for mi in self._rpmconn.readonly_ts.dbMatch('name', package.name):
+            changelogtimes = mi[rpm.RPMTAG_CHANGELOGTIME]
+            if changelogtimes:
+                newest = datetime.date.fromtimestamp(changelogtimes[0])
+                break
+        chlogs = [chlog for chlog in package.changelogs
+                  if newest is None or chlog['timestamp'] > newest]
+        return chlogs
+
+    def format_changelog(self, changelog):
+        """Return changelog formated as in spec file"""
+        chlog_str = '* %s %s\n%s\n' % (changelog['timestamp'].strftime("%a %b %d %Y"),
+                                       dnf.i18n.ucd(changelog['author']),
+                                       dnf.i18n.ucd(changelog['text']))
+        return chlog_str
+
+    def print_changelogs(self, packages):
+        # group packages by src.rpm to avoid showing duplicate changelogs
+        bysrpm = dict()
+        for p in packages:
+            # there are packeges without source_name, use name then.
+            bysrpm.setdefault(p.source_name or p.name, []).append(p)
+        for source_name in sorted(bysrpm.keys()):
+            bin_packages = bysrpm[source_name]
+            print(_("Changelogs for {}").format(', '.join([str(pkg) for pkg in bin_packages])))
+            for chl in self.latest_changelogs(bin_packages[0]):
+                print(self.format_changelog(chl))
+
+    def check_updates(self, patterns=(), reponame=None, print_=True, changelogs=False):
         """Check updates matching given *patterns* in selected repository."""
         ypl = self.returnPkgLists('upgrades', patterns, reponame=reponame)
         if self.conf.obsoletes or self.conf.verbose:
@@ -314,6 +349,9 @@ class BaseCli(dnf.Base):
                 self.output.listPkgs(ypl.updates, '', outputType='list',
                               highlight_na=local_pkgs, columns=columns,
                               highlight_modes={'=' : cul, 'not in' : cur})
+                if changelogs:
+                    self.print_changelogs(ypl.updates)
+
             if len(ypl.obsoletes) > 0:
                 print(_('Obsoleting Packages'))
                 # The tuple is (newPkg, oldPkg) ... so sort by new
