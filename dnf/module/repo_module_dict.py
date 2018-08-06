@@ -138,36 +138,6 @@ class RepoModuleDict(OrderedDict):
 
         return version_dependencies
 
-    def enable_based_on_rpms(self):
-        not_in_enabled = set(self.base._goal.list_installs())
-
-        for version in self.base.repo_module_dict.list_module_version_enabled():
-            for pkg in self.base._goal.list_installs():
-                if version.repo.id != pkg.reponame:
-                    continue
-
-                nevra = "{}-{}.{}".format(pkg.name, pkg.evr, pkg.arch)
-                if nevra in version.artifacts() and \
-                        pkg in not_in_enabled:
-                    not_in_enabled.remove(pkg)
-                else:
-                    not_in_enabled.add(pkg)
-
-        defaults = []
-        for version in self.base.repo_module_dict.list_module_version_latest():
-            if version.stream == version.repo_module.defaults.peek_default_stream():
-                defaults.append(version)
-
-        for version in defaults:
-            for pkg in not_in_enabled:
-                nevra = "{}-{}.{}".format(pkg.name, pkg.evr, pkg.arch)
-                nevra_epoch_ensured = "{}-{}:{}-{}.{}".format(pkg.name, pkg.epoch, pkg.version,
-                                                              pkg.release, pkg.arch)
-
-                if nevra in version.artifacts() or \
-                        nevra_epoch_ensured in version.artifacts():
-                    version.repo_module.enable(version.stream, True)
-
     def enable_by_version(self, module_version, save_immediately=False):
         version_dependencies = self.get_module_dependency_latest(module_version.name,
                                                                  module_version.stream)
