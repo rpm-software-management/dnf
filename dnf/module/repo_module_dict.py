@@ -139,17 +139,18 @@ class RepoModuleDict(OrderedDict):
         return version_dependencies
 
     def enable_by_version(self, module_version, save_immediately=False):
-        version_dependencies = self.get_module_dependency_latest(module_version.name,
-                                                                 module_version.stream)
+        self.base._moduleContainer.enable(module_version.name, module_version.stream)
+        # re-compute enabled streams and filtered RPMs
+        hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
+        self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
+                                      self.base.conf.installroot, None, update_only=True)
 
-        for dependency in version_dependencies:
-            conf = self[dependency.name].conf
-            if conf.state._get() != "enabled" or conf.stream._get() != dependency.stream:
-                self[dependency.name].enable(dependency.stream, self.base.conf.assumeyes)
+        # TODO: remove; temporary workaround for syncing RepoModule.conf with libdnf
+        self[module_version.name].conf.stream._set(module_version.stream)
+        self[module_version.name].conf.state._set("enabled")
 
         if save_immediately:
-            self.base._module_persistor.commit()
-            self.base._module_persistor.save()
+            self.base._moduleContainer.save()
 
     def enable(self, module_spec, save_immediately=False):
         subj = ModuleSubject(module_spec)
@@ -158,11 +159,14 @@ class RepoModuleDict(OrderedDict):
         self.enable_by_version(module_version, save_immediately)
 
     def disable_by_version(self, module_version, save_immediately=False):
-        module_version.repo_module.disable()
+        self.base._moduleContainer.disable(module_version.name, "")
+
+        # TODO: remove; temporary workaround for syncing RepoModule.conf with libdnf
+        self[module_version.name].conf.profiles._set("")
+        self[module_version.name].conf.state._set("disabled")
 
         if save_immediately:
-            self.base._module_persistor.commit()
-            self.base._module_persistor.save()
+            self.base._moduleContainer.save()
 
     def disable(self, module_spec, save_immediately=False):
         subj = ModuleSubject(module_spec)
@@ -184,17 +188,15 @@ class RepoModuleDict(OrderedDict):
                                       self.base.conf.installroot, None)
 
         for module_version, profiles, default_profiles in versions.values():
-            profiles.extend(list(module_version.repo_module.conf.profiles._get()))
-            profiles = list(set(profiles))
+            profiles = sorted(set(profiles))
+            default_profiles = sorted(set(default_profiles))
 
             if profiles or default_profiles:
                 result |= module_version.install(profiles, default_profiles, strict)
 
-        if not result and versions and self.base._module_persistor:
+        if not result and versions:
             module_versions = ["{}:{}".format(module_version.name, module_version.stream)
                                for module_version, profiles, default_profiles in versions.values()]
-            self.base._module_persistor.commit()
-            self.base._module_persistor.save()
             logger.info(module_messages[ENABLED_MODULES].format(", ".join(module_versions)))
 
         return module_specs
@@ -262,7 +264,7 @@ class RepoModuleDict(OrderedDict):
             subj = ModuleSubject(module_spec)
             try:
                 module_version, module_form = subj.find_module_version(self)
-                module_version.append(module_version)
+                module_versions.append(module_version)
 
                 # in case there is new dependency
                 self.enable_by_version(module_version)
