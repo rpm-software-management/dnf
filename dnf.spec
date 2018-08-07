@@ -313,6 +313,7 @@ mkdir -p %{buildroot}%{confdir}/vars
 mkdir -p %{buildroot}%{pluginconfpath}/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/modules.d
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/modules.defaults.d
+mkdir -p %{buildroot}%{_sysconfdir}/yum
 %if %{with python2}
 mkdir -p %{buildroot}%{py2pluginpath}/
 %endif
@@ -320,6 +321,7 @@ mkdir -p %{buildroot}%{py2pluginpath}/
 mkdir -p %{buildroot}%{py3pluginpath}/__pycache__/
 %endif
 ln -sr  %{buildroot}%{confdir}/%{name}.conf %{buildroot}%{_sysconfdir}/yum.conf
+ln -sr  %{buildroot}%{pluginconfpath} %{buildroot}%{_sysconfdir}/yum/pluginconf.d
 mkdir -p %{buildroot}%{_localstatedir}/log/
 mkdir -p %{buildroot}%{_var}/cache/dnf/
 touch %{buildroot}%{_localstatedir}/log/%{name}.log
@@ -431,6 +433,7 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %{_bindir}/yum
 %{_mandir}/man8/yum.8*
 %{_sysconfdir}/yum.conf
+%{_sysconfdir}/yum/pluginconf.d
 %{_mandir}/man5/yum.conf.5.*
 %{_mandir}/man8/yum.8*
 %endif
@@ -439,6 +442,7 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %{_bindir}/yum4
 %{_mandir}/man8/yum4.8*
 %exclude %{_sysconfdir}/yum.conf
+%exclude %{_sysconfdir}/yum/pluginconf.d
 %exclude %{_mandir}/man5/yum.conf.5.*
 %exclude %{_mandir}/man8/yum.8*
 %endif
@@ -448,6 +452,7 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %{_bindir}/yum
 %{_mandir}/man5/yum.conf.5*
 %{_mandir}/man8/yum.8*
+%exclude %{_sysconfdir}/yum/pluginconf.d
 %endif
 
 %if %{with python2}
