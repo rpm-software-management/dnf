@@ -1,5 +1,5 @@
 # default dependencies
-%global hawkey_version 0.16.2
+%global hawkey_version 0.17.0
 %global librepo_version 1.9.0
 %global libcomps_version 0.1.8
 %global libmodulemd_version 1.4.0
@@ -73,7 +73,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        3.1.1
+Version:        3.2.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -486,6 +486,17 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %endif
 
 %changelog
+* Tue Aug 07 2018 Daniel Mach <dmach@redhat.com> - 3.2.0-1
+- [sack] Use module_platform_id option.
+- [module] Switch module persistor to libdnf implementation.
+- [module] Auto-enable module streams based on installed RPMs.
+- [transaction] Fix: show packages from the current transaction.
+- [conf] Convert any VectorString type to list.
+- [module] Replace 'enabled' config option with 'state'.
+- [install_specs] Do not exclude groups' packages
+- [module] Use module sack filtering from libdnf
+- [module] Many UX fixes.
+
 * Fri Jul 27 2018 Daniel Mach <dmach@redhat.com> - 3.1.0-1
 - [module] Move 'hotfixes' conf option to libdnf and rename it to 'module_hotfixes'.
 - [goal] Exclude @System repo packages from distro_sync.
