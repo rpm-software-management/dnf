@@ -143,7 +143,8 @@ class RepoModuleDict(OrderedDict):
         # re-compute enabled streams and filtered RPMs
         hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
         self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
-                                      self.base.conf.installroot, None, update_only=True)
+                                      self.base.conf.installroot, self.base.conf.module_platform_id,
+                                      update_only=True)
 
         # TODO: remove; temporary workaround for syncing RepoModule.conf with libdnf
         self[module_version.name].conf.stream._set(module_version.stream)
@@ -185,7 +186,8 @@ class RepoModuleDict(OrderedDict):
 
         hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
         self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
-                                      self.base.conf.installroot, None)
+                                      self.base.conf.installroot, self.base.conf.module_platform_id,
+                                      update_only=True)
 
         for module_version, profiles, default_profiles in versions.values():
             profiles = sorted(set(profiles))
@@ -276,7 +278,8 @@ class RepoModuleDict(OrderedDict):
 
         hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
         self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
-                                      self.base.conf.installroot, None)
+                                      self.base.conf.installroot, self.base.conf.module_platform_id,
+                                      update_only=True)
 
         for module_version in module_versions:
             if module_version.repo_module.conf.state._get() != "enabled":

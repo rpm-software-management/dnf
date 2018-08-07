@@ -179,7 +179,7 @@ class Base(object):
         if 'all' in disabled:
             hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
             self.sack.filter_modules(self._moduleContainer, hot_fix_repos,
-                                     self.conf.installroot, None, False)
+                                     self.conf.installroot, self.conf.module_platform_id, False)
             return
         repo_includes = []
         repo_excludes = []
@@ -222,7 +222,7 @@ class Base(object):
             if not only_main:
                 hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
                 self.sack.filter_modules(self._moduleContainer, hot_fix_repos,
-                                         self.conf.installroot, None, False)
+                                         self.conf.installroot, self.conf.module_platform_id, False)
             if include_query:
                 self.sack.add_includes(include_query)
                 self.sack.set_use_includes(True)
@@ -231,7 +231,7 @@ class Base(object):
         elif not only_main:
             hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
             self.sack.filter_modules(self._moduleContainer, hot_fix_repos,
-                                     self.conf.installroot, None, False)
+                                     self.conf.installroot, self.conf.module_platform_id, False)
 
         if repo_includes:
             for query, repoid in repo_includes:
