@@ -202,6 +202,14 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     disable automatic metadata synchronizing. The default corresponds to three
     hours. The value is rounded to the next commenced hour.
 
+.. _module_platform_id-label:
+
+``module_platform_id``
+    :ref:`string <string-label>`
+
+    Set this to $name:$stream to override PLATFORM_ID detected from /etc/os-release.
+    It is necessary to perform a system upgrade and switch to a new platform.
+
 .. _obsoletes_conf_option-label:
 
 ``obsoletes``
