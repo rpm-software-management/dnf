@@ -229,10 +229,6 @@ class BaseCli(dnf.Base):
         if self.conf.downloadonly:
             return
 
-        # save module states on disk right before entering rpm transaction,
-        # because we want system in recoverable state if transaction gets interrupted
-        self._moduleContainer.save()
-
         if not isinstance(display, Sequence):
             display = [display]
         display = [output.CliTransactionDisplay()] + list(display)
