@@ -840,6 +840,10 @@ class Base(object):
         display = \
             [dnf.yum.rpmtrans.LoggingTransactionDisplay()] + list(display)
 
+        # save module states on disk right before entering rpm transaction,
+        # because we want system in recoverable state if transaction gets interrupted
+        self._moduleContainer.save()
+
         if not self.transaction:
             # TODO: no packages changed, but a comps change to be commited
             # TODO: -> need to detect the change properly and store it to swdb
