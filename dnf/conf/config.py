@@ -286,7 +286,7 @@ class BaseConfig(object):
             for name in parser.getData()[section]:
                 value = parser.getSubstitutedValue(section, name)
                 if not value or value == 'None':
-                    value = None
+                    value = ''
 
                 try:
                     if not self._config:

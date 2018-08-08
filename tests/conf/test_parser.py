@@ -20,14 +20,16 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import dnf.conf
 from libdnf.conf import ConfigParser
 
 import tests.support
 
 substitute = ConfigParser.substitute
 
-class SubstituteTest(tests.support.TestCase):
-    def test_read(self):
+
+class ParserTest(tests.support.TestCase):
+    def test_substitute(self):
         substs = {'lies': 'fact'}
         # Test a single word without braces
         rawstr = '$Substitute some $lies.'
@@ -51,3 +53,11 @@ class SubstituteTest(tests.support.TestCase):
         rawstr = '$Substitute some $lies}withoutspace.'
         result = '$Substitute some fact}withoutspace.'
         self.assertEqual(substitute(rawstr, substs), result)
+
+    def test_empty_option(self):
+        # Parser is able to read config file with option without value
+        FN = tests.support.resource_path('etc/empty_option.conf')
+        conf = dnf.conf.Conf()
+        conf.config_file_path = FN
+        conf.read()
+        self.assertEqual(conf.installroot, '')
