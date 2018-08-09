@@ -1,5 +1,5 @@
 # default dependencies
-%global hawkey_version 0.17.0
+%global hawkey_version 0.17.1
 %global librepo_version 1.9.0
 %global libcomps_version 0.1.8
 %global libmodulemd_version 1.4.0
