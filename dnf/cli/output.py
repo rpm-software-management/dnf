@@ -1148,6 +1148,14 @@ class Output(object):
                 lines.append((name, "", stream, "", "", "", ""))
             pkglist_lines.append((action, lines))
 
+        resetStreams = sorted(dict(self.base._moduleContainer.getResetStreams()).items())
+        if resetStreams:
+            action = "Resetting module streams"
+            lines = []
+            for name, stream in resetStreams:
+                lines.append((name, "", stream, "", "", "", ""))
+            pkglist_lines.append((action, lines))
+
         # show skipped conflicting packages
         if not self.conf.best and self.base._goal.actions & forward_actions:
             lines = []

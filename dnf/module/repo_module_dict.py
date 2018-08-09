@@ -181,6 +181,28 @@ class RepoModuleDict(OrderedDict):
 
         self.disable_by_version(module_version, save_immediately)
 
+    def reset_by_version(self, module_version, save_immediately=False):
+        self.base._moduleContainer.reset(module_version.name)
+
+        # re-compute enabled streams and filtered RPMs
+        hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
+        self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
+                                      self.base.conf.installroot, self.base.conf.module_platform_id,
+                                      update_only=True)
+
+        # TODO: remove; temporary workaround for syncing RepoModule.conf with libdnf
+        self[module_version.name].conf.profiles._set("")
+        self[module_version.name].conf.state._set("")
+
+        if save_immediately:
+            self.base._moduleContainer.save()
+
+    def reset(self, module_spec, save_immediately=False):
+        subj = ModuleSubject(module_spec)
+        module_version, module_form = subj.find_module_version(self)
+
+        self.reset_by_version(module_version, save_immediately)
+
     def install(self, module_specs, strict=True):
         versions, module_specs = self.get_best_versions(module_specs)
 
