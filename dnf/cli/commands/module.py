@@ -137,6 +137,29 @@ class ModuleCommand(commands.Command):
 
             self.base.do_transaction()
 
+    class ResetSubCommand(SubCommand):
+
+        aliases = ('reset',)
+
+        def configure(self):
+            demands = self.cli.demands
+            demands.available_repos = True
+            demands.sack_activation = True
+            demands.root_user = True
+
+        def run_on_module(self):
+            for module_n in self.opts.module_nsvp:
+                subj = ModuleSubject(module_n)
+                module_version, module_form = subj.find_module_version(self.base.repo_module_dict)
+
+                if module_form.profile:
+                    logger.info("Ignoring unnecessary profile: '{}/{}'".format(module_form.name,
+                                                                               module_form.profile))
+
+                self.base.repo_module_dict.reset_by_version(module_version)
+
+            self.base.do_transaction()
+
     class InstallSubCommand(SubCommand):
 
         aliases = ('install',)
@@ -225,7 +248,7 @@ class ModuleCommand(commands.Command):
             self.base.repo_module_dict.print_what_provides(self.opts.module_nsvp)
 
     SUBCMDS = {ListSubCommand, InfoSubCommand, EnableSubCommand,
-               DisableSubCommand, InstallSubCommand, UpdateSubCommand,
+               DisableSubCommand, ResetSubCommand, InstallSubCommand, UpdateSubCommand,
                RemoveSubCommand, ProfileInfoSubCommand, StreamsSubCommand, ProvidesSubCommand}
 
     SUBCMDS_NOT_REQUIRED_ARG = {ListSubCommand, StreamsSubCommand}
