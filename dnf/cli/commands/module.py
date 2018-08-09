@@ -133,9 +133,9 @@ class ModuleCommand(commands.Command):
                     logger.info("Ignoring unnecessary profile: '{}/{}'".format(module_form.name,
                                                                                module_form.profile))
 
-                self.base.repo_module_dict.disable_by_version(module_version, True)
-                logger.info("Module stream has been disabled: {}:{}".format(module_version.name,
-                                                                            module_version.stream))
+                self.base.repo_module_dict.disable_by_version(module_version)
+
+            self.base.do_transaction()
 
     class InstallSubCommand(SubCommand):
 
