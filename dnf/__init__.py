@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 import warnings
 import dnf.pycomp
 
-warnings.filterwarnings('once', category=DeprecationWarning)
+warnings.filterwarnings('once', category=DeprecationWarning, module=r'^dnf\..*$')
 
 from dnf.const import VERSION
 __version__ = VERSION
