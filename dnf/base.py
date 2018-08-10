@@ -807,6 +807,9 @@ class Base(object):
             msg = dnf.util._format_resolve_problems(goal.problem_rules())
             exc = dnf.exceptions.DepsolveError(msg)
         else:
+            logger.info(_('Suggested packages:'))
+            for pkg in goal.list_suggested():
+                logger.info('  %s', pkg)
             self._transaction = self._goal2transaction(goal)
 
         self._ds_callback.end()
