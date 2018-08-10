@@ -313,7 +313,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
 .. _module_hotfixes-label:
 
-``module_hofixes``
+``module_hotfixes``
     :ref:`boolean <boolean-label>`
 
     Set this to True to disable module RPM filtering and make all RPMs from the repository available. The default is False.
