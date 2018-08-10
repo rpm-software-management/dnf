@@ -565,7 +565,7 @@ class RepoModuleDict(OrderedDict):
                 table = self.create_simple_table(lines)
 
                 output += "{}\n".format(self.base.output.term.bold(nevra))
-                output += "{}\n\n".format(table)
+                output += "{}\n\n".format(table.toString())
 
         logger.info(output[:-2])
 
