@@ -769,57 +769,52 @@ Module Command
 ---------------
 
 Module subcommands take module_spec in form NAME:STREAM:VERSION:CONTEXT:ARCH/PROFILE from which only name is mandatory.
-In case stream is not specified dnf takes enabled or default stream, in this order.
+In case stream is not specified enabled or default stream is used, in this order.
 
 .. _module_install_command-label:
 
 ``dnf [options] module install <module_spec>...``
-    Dnf will make sure that RPMs from specified module profile or, in case no profile was provided, default module profile are installed.
-    Dnf will also make sure module stream is enabled after.
+    Install module profiles incl. their RPMs.
+    In case no profile was provided, all default profiles get installed.
+    Module streams get enabled accordingly.
 
 ``dnf [options] module update <module_spec>...``
-    Dnf will make sure that RPMs from all installed module profiles are updated to latest version within enabled module streams.
+    Update RPMs in installed module profiles.
+    In case no profile was provided, all installed profiles get updated.
 
 ``dnf [options] module remove <module_spec>...``
-    Dnf will remove all RPMs from all installed module profiles and marks specified profiles as not installed.
+    Remove installed module profiles incl. their RPMs.
+    In case no profile was provided, all installed profiles get removed.
 
 ``dnf [options] module enable <module_spec>...``
-    Dnf will make sure that given module stream is marked as enabled. This operation will affect available package set.
-    All RPMs from the given module stream are included into package set.
+    Enable a module stream and make the stream RPMs available in the package set.
 
 ``dnf [options] module disable <module_spec>...``
-    Dnf will make sure that given module stream is marked as disabled.
+    Disable a module. All related module streams will become unavailable.
 
-``dnf [options] module lock <module_spec>...``
-    Dnf will make sure that given module version is locked on latest or installed, in case version was installed before.
-    This means module version is not possible to update.
-
-``dnf [options] module unlock <module_spec>...``
-    Dnf will make sure that given version is marked as unlocked allowing possibility to update it.
-
-``dnf [options] module list [module_name...]``
-    Lists latest module versions and their profiles and basic information about default, enabled, installed and locked state of module.
+``dnf [options] module reset <module_spec>...``
+    Reset module state so it's no longer enabled or disabled.
 
 ``dnf [options] module list [--all] [module_name...]``
-    Lists all module versions.
+    Lists all module streams, their profiles and states (enabled, disabled, default)
 
-``dnf [options] module list [--enabled] [module_name...]``
-    Lists only enabled module streams.
+``dnf [options] module list --enabled [module_name...]``
+    Lists module streams that are enabled.
 
-``dnf [options] module list [--disabled] [module_name...]``
-    Lists only disabled module streams.
+``dnf [options] module list --disabled [module_name...]``
+    Lists module streams that are disabled.
 
-``dnf [options] module list [--installed] [module_name...]``
-    Lists only installed module versions.
+``dnf [options] module list --installed [module_name...]``
+    List module streams with installed profiles.
 
 ``dnf [options] module info <module_spec>...``
-    Dnf prints out detailed information about given module stream.
+    Print detailed information about given module stream.
 
 ``dnf [options] module provides <spec>...``
-    Dnf prints out to which module streams the given RPM belongs to.
+    Print list of streams to which a given RPM belongs to.
 
 ``dnf [options] module profile <module_spec>...``
-    Dnf prints out content of each profile from given module stream.
+    Print detailed information about given module profiles.
 
 ``dnf [options] module streams [module_spec...]``
     Alias for `dnf module list \-\-enabled`.
