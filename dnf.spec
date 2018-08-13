@@ -1,5 +1,5 @@
 # default dependencies
-%global hawkey_version 0.17.1
+%global hawkey_version 0.17.2
 %global librepo_version 1.9.0
 %global libcomps_version 0.1.8
 %global libmodulemd_version 1.4.0
@@ -72,7 +72,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        3.2.0
+Version:        3.3.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -481,6 +481,21 @@ rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %endif
 
 %changelog
+* Mon Aug 13 2018 Daniel Mach <dmach@redhat.com> - 3.3.0-1
+- [misc] Fallback to os.getuid() if /proc/self/loginuid can't be read (RhBug:1597005)
+- [translations] Update translations from zanata.
+- [doc] Update module documentation.
+- [module] Fix `module provides` output.
+- [module] Add `module reset` command.
+- [module] Fix module disable command
+- [repo] Improve error message on broken repo (RhBug:1595796)
+- [doc] Enhance a command documentation (RhBug:1361617)
+- [module] Automatically save module persistor in do_transaction().
+- [drpm] Fixed setting deltarpm_percentage=0 to switch drpm off
+- [repo] Split base.download_packages into two functions
+- [output] Use libdnf wrapper for smartcols
+- [conf] Do not traceback on empty option (RhBug:1613577)
+
 * Tue Aug 07 2018 Daniel Mach <dmach@redhat.com> - 3.2.0-1
 - [sack] Use module_platform_id option.
 - [module] Switch module persistor to libdnf implementation.
