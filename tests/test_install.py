@@ -235,7 +235,7 @@ class MultilibAllTest(tests.support.ResultTestCase):
     def test_install_installed(self):
         """Test that nothing changes if an installed package matches."""
         stdout = dnf.pycomp.StringIO()
-        with tests.support.wiretap_logs('dnf', logging.WARNING, stdout):
+        with tests.support.wiretap_logs('dnf', logging.INFO, stdout):
             self.base.install('librita')
         self.assertEqual(self.base._goal.req_length(), 0)
         self.assertIn(
@@ -268,7 +268,7 @@ class MultilibAllTest(tests.support.ResultTestCase):
             dnf.subject.Subject('pepper.src').get_best_query(self.base.sack))
 
         stdout = dnf.pycomp.StringIO()
-        with tests.support.wiretap_logs('dnf', logging.WARNING, stdout):
+        with tests.support.wiretap_logs('dnf', logging.INFO, stdout):
             self.base.install('pepper')
         self.assertEqual(self.base._goal.req_length(), 0)
         self.assertIn(
@@ -373,7 +373,7 @@ class MultilibBestTest(tests.support.ResultTestCase):
     def test_install_installed(self):
         """Test that nothing changes if an installed package matches."""
         stdout = dnf.pycomp.StringIO()
-        with tests.support.wiretap_logs('dnf', logging.WARNING, stdout):
+        with tests.support.wiretap_logs('dnf', logging.INFO, stdout):
             self.base.install('librita')
         installed, removed = self.installed_removed(self.base)
         self.assertEmpty(installed)
@@ -408,7 +408,7 @@ class MultilibBestTest(tests.support.ResultTestCase):
             dnf.subject.Subject('pepper.src').get_best_query(self.base.sack))
 
         stdout = dnf.pycomp.StringIO()
-        with tests.support.wiretap_logs('dnf', logging.WARNING, stdout):
+        with tests.support.wiretap_logs('dnf', logging.INFO, stdout):
             self.base.install('pepper')
         installed, removed = self.installed_removed(self.base)
         self.assertEmpty(installed | removed)
@@ -451,7 +451,7 @@ class MultilibBestTest(tests.support.ResultTestCase):
     def test_install_unavailable(self):
         """Test that nothing changes if an unavailable package matches."""
         stdout = dnf.pycomp.StringIO()
-        with tests.support.wiretap_logs('dnf', logging.WARNING, stdout):
+        with tests.support.wiretap_logs('dnf', logging.INFO, stdout):
             cnt = self.base.install('hole')
         self.assertEqual(cnt, 1)
         installed_pkgs = self.base.sack.query().installed().run()
