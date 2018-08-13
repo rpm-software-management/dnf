@@ -2423,4 +2423,4 @@ class Base(object):
 def _msg_installed(pkg):
     name = ucd(pkg)
     msg = _('Package %s is already installed, skipping.')
-    logger.warning(msg, name)
+    logger.info(msg, name)
