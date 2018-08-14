@@ -44,6 +44,7 @@ import dnf.comps
 import dnf.conf
 import dnf.conf.read
 import dnf.crypto
+import dnf.dnssec
 import dnf.drpm
 import dnf.exceptions
 import dnf.goal
@@ -388,6 +389,9 @@ class Base(object):
                 errors = []
                 mts = 0
                 age = time.time()
+                # Iterate over installed GPG keys and check their validity using DNSSEC
+                if self.conf.gpgkey_dns_verification:
+                    dnf.dnssec.RpmImportedKeys.check_imported_keys_validity()
                 for r in self.repos.iter_enabled():
                     try:
                         self._add_repo_to_sack(r)
@@ -2263,6 +2267,14 @@ class Base(object):
                     logger.info(msg, keyurl, info.short_id)
                     continue
 
+                # DNS Extension: create a key object, pass it to the verification class
+                # and print its result as an advice to the user.
+                if self.conf.gpgkey_dns_verification:
+                    dns_input_key = dnf.dnssec.KeyInfo.from_rpm_key_object(info.userid,
+                                                                           info.raw_key)
+                    dns_result = dnf.dnssec.DNSSECKeyVerification.verify(dns_input_key)
+                    logger.info(dnf.dnssec.nice_user_msg(dns_input_key, dns_result))
+
                 # Try installing/updating GPG key
                 info.url = keyurl
                 dnf.crypto.log_key_import(info)
@@ -2270,7 +2282,26 @@ class Base(object):
                 if self.conf.assumeno:
                     rc = False
                 elif self.conf.assumeyes:
-                    rc = True
+                    # DNS Extension: We assume, that the key is trusted in case it is valid,
+                    # its existence is explicitly denied or in case the domain is not signed
+                    # and therefore there is no way to know for sure (this is mainly for
+                    # backward compatibility)
+                    # FAQ:
+                    # * What is PROVEN_NONEXISTENCE?
+                    #    In DNSSEC, your domain does not need to be signed, but this state
+                    #    (not signed) has to be proven by the upper domain. e.g. when example.com.
+                    #    is not signed, com. servers have to sign the message, that example.com.
+                    #    does not have any signing key (KSK to be more precise).
+                    if self.conf.gpgkey_dns_verification:
+                        if dns_result in (dnf.dnssec.Validity.VALID,
+                                          dnf.dnssec.Validity.PROVEN_NONEXISTENCE):
+                            rc = True
+                            logger.info(dnf.dnssec.any_msg(_("The key has been approved.")))
+                        else:
+                            rc = False
+                            logger.info(dnf.dnssec.any_msg(_("The key has been rejected.")))
+                    else:
+                        rc = True
 
                 # grab the .sig/.asc for the keyurl, if it exists if it
                 # does check the signature on the key if it is signed by
