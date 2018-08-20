@@ -676,12 +676,9 @@ class RepoModuleDict(OrderedDict):
                                                   " [d]" if profile in default_profiles else "")
                     profiles_str += "[i], " if profile in installed_profiles else ", "
 
-                profiles_str = profiles_str[:-2]
-                profiles_str += ", ..." if len(available_profiles) > 2 else ""
-
                 line.getColumnCell(column_name).setData(i.name)
                 line.getColumnCell(column_stream).setData(i.stream + default_str + enabled_str)
-                line.getColumnCell(column_profiles).setData(profiles_str)
+                line.getColumnCell(column_profiles).setData(profiles_str[:-2])
                 line.getColumnCell(column_info).setData(i.summary())
 
         return table
