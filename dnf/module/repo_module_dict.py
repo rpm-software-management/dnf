@@ -406,7 +406,7 @@ class RepoModuleDict(OrderedDict):
             lines[profile] = "\n".join(["{}-{}".format(nevra.name, nevra.evr())
                                         for nevra in nevra_objects])
 
-        return self.create_simple_table(lines)
+        return self.create_simple_table(lines).toString()
 
     def get_info(self, module_spec):
         subj = ModuleSubject(module_spec)
@@ -457,7 +457,7 @@ class RepoModuleDict(OrderedDict):
         lines["Description"] = module_version.description()
         lines["Artifacts"] = "\n".join(sorted(module_version.artifacts()))
 
-        str_table = str(self.create_simple_table(lines))
+        str_table = self.create_simple_table(lines).toString()
 
         return str_table + "\n\nHint: [d]efault, [e]nabled, [i]nstalled"
 

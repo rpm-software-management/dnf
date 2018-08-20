@@ -72,11 +72,11 @@ class ModuleCommand(commands.Command):
                 try:
                     print()
                     if self.opts.verbose:
-                        print(self.base.repo_module_dict.get_full_info(spec).toString())
+                        print(self.base.repo_module_dict.get_full_info(spec))
                     elif self.opts.profile:
-                        print(self.base.repo_module_dict.get_info_profiles(spec).toString())
+                        print(self.base.repo_module_dict.get_info_profiles(spec))
                     else:
-                        print(self.base.repo_module_dict.get_info(spec).toString())
+                        print(self.base.repo_module_dict.get_info(spec))
                 except NoModuleException as e:
                     logger.info(e)
 
