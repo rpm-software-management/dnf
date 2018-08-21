@@ -62,7 +62,7 @@ _CACHEDIR_RE = r'(?P<repoid>[%s]+)\-[%s]{16}' % (re.escape(_REPOID_CHARS),
 # particular type.  The filename is expected to not contain the base cachedir
 # path components.
 CACHE_FILES = {
-    'metadata': r'^%s\/.*(xml(\.gz|\.xz|\.bz2)?|asc|cachecookie|%s)$' %
+    'metadata': r'^%s\/.*(xml(\.zck|\.gz|\.xz|\.bz2)?|asc|cachecookie|%s)$' %
                 (_CACHEDIR_RE, _MIRRORLIST_FILENAME),
     'packages': r'^%s\/%s\/.+rpm$' % (_CACHEDIR_RE, _PACKAGES_RELATIVE_DIR),
     'dbcache': r'^.+(solv|solvx)$',
@@ -760,6 +760,13 @@ class Repo(dnf.conf.RepoConf):
             h.setopt(librepo.LRO_SSLCLIENTCERT, self.sslclientcert)
         if self.sslclientkey:
             h.setopt(librepo.LRO_SSLCLIENTKEY, self.sslclientkey)
+
+        # setup cache directory
+        if self.basecachedir:
+            try:
+                h.setopt(librepo.LRO_CACHEDIR, self.basecachedir)
+            except AttributeError:
+                pass
 
         # setup download progress
         h.progresscb = self._md_pload._progress_cb
