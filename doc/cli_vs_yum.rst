@@ -310,6 +310,13 @@ repos are strictly taken from installroot (YUM tests each path from reposdir
 separately and use installroot path if existed). See the detailed description for
 \-\ :ref:`-installroot <installroot-label>` option.
 
+========================================
+Different prompt after transaction table
+========================================
+
+DNF doesn't provide download functionality after displaying transaction table. It only asks user whether to continue with transaction or not.
+If one wants to download packages, they can use the 'download' command.
+
 ###############################################
  Changes in DNF plugins compared to YUM plugins
 ###############################################
