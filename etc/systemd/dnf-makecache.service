@@ -5,6 +5,8 @@ Description=dnf makecache
 # anyone who wants that could override this via a file in /etc.
 ConditionPathExists=!/run/ostree-booted
 
+After=network-online.target
+
 [Service]
 Type=oneshot
 Nice=19
