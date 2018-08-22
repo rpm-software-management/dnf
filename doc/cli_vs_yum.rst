@@ -343,6 +343,7 @@ Original YUM tool                       DNF command/option                      
 ``yum-plugin-remove-with-leaves``       ``dnf autoremove``                                                ``dnf``
 ``yum-plugin-show-leaves``                                                                                ``dnf-plugins-core``
 ``yum-plugin-versionlock``                                                                                ``dnf-plugins-core``
+``yum-rhn-plugin``                                                                                        ``dnf-plugin-spacewalk``
 ======================================  ================================================================  ===================================
 
 Plugins that have not been ported yet:
