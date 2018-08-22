@@ -2231,6 +2231,7 @@ class Base(object):
         merged_queries = q.intersection(merged_queries)
         if not merged_queries:
             if warning:
+                q = q.upgrades()
                 count = len(q._name_dict().keys())
                 if pkg_spec is None:
                     msg1 = _("No security updates needed, but {} update "
