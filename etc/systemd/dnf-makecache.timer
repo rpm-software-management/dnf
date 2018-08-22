@@ -4,7 +4,6 @@ ConditionKernelCommandLine=!rd.live.image
 # See comment in dnf-makecache.service
 ConditionPathExists=!/run/ostree-booted
 Wants=network-online.target
-After=network-online.target
 
 [Timer]
 OnBootSec=10min
