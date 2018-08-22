@@ -845,7 +845,7 @@ class Cli(object):
         if opts.destdir is not None:
             self.base.conf.destdir = opts.destdir
             if not self.base.conf.downloadonly and opts.command not in (
-                    'download', 'system-upgrade'):
+                    'download', 'system-upgrade', 'reposync'):
                 logger.critical(_('--destdir or --downloaddir must be used with --downloadonly '
                                   'or download or system-upgrade command.')
                 )
