@@ -317,6 +317,13 @@ Different prompt after transaction table
 DNF doesn't provide download functionality after displaying transaction table. It only asks user whether to continue with transaction or not.
 If one wants to download packages, they can use the 'download' command.
 
+========================================
+List command shows all repo alternatives
+========================================
+
+DNF lists all packages from all repos, which means there can be duplicates package names (with different repo name). This is due to providing users
+possibility to choose preferred repo.
+
 ###############################################
  Changes in DNF plugins compared to YUM plugins
 ###############################################
