@@ -48,13 +48,13 @@ class ModuleCommand(commands.Command):
             mods = self.base.repo_module_dict
 
             if self.opts.enabled:
-                print(mods.get_brief_description_enabled(self.opts.module_nsvp))
+                print(mods.get_brief_description_enabled(self.opts.module_spec))
             elif self.opts.disabled:
-                print(mods.get_brief_description_disabled(self.opts.module_nsvp))
+                print(mods.get_brief_description_disabled(self.opts.module_spec))
             elif self.opts.installed:
-                print(mods.get_brief_description_installed(self.opts.module_nsvp))
+                print(mods.get_brief_description_installed(self.opts.module_spec))
             else:
-                print(mods.get_brief_description_latest(self.opts.module_nsvp))
+                print(mods.get_brief_description_latest(self.opts.module_spec))
 
             return 0
 
@@ -68,7 +68,7 @@ class ModuleCommand(commands.Command):
             demands.sack_activation = True
 
         def run_on_module(self):
-            for spec in self.opts.module_nsvp:
+            for spec in self.opts.module_spec:
                 try:
                     print()
                     if self.opts.verbose:
@@ -92,7 +92,7 @@ class ModuleCommand(commands.Command):
 
         def run_on_module(self):
             module_versions = dict()
-            for module_ns in self.opts.module_nsvp:
+            for module_ns in self.opts.module_spec:
                 subj = ModuleSubject(module_ns)
                 module_version, module_form = subj.find_module_version(self.base.repo_module_dict)
 
@@ -125,7 +125,7 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            for module_n in self.opts.module_nsvp:
+            for module_n in self.opts.module_spec:
                 subj = ModuleSubject(module_n)
                 module_version, module_form = subj.find_module_version(self.base.repo_module_dict)
 
@@ -148,7 +148,7 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            for module_n in self.opts.module_nsvp:
+            for module_n in self.opts.module_spec:
                 subj = ModuleSubject(module_n)
                 module_version, module_form = subj.find_module_version(self.base.repo_module_dict)
 
@@ -172,7 +172,7 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            module_specs = self.base.repo_module_dict.install(self.opts.module_nsvp,
+            module_specs = self.base.repo_module_dict.install(self.opts.module_spec,
                                                               self.base.conf.strict)
             if module_specs:
                 raise NoModuleException(", ".join(module_specs))
@@ -189,7 +189,7 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            module_specs = self.base.repo_module_dict.upgrade(self.opts.module_nsvp, True)
+            module_specs = self.base.repo_module_dict.upgrade(self.opts.module_spec, True)
             if module_specs:
                 raise NoModuleException(", ".join(module_specs))
 
@@ -206,7 +206,7 @@ class ModuleCommand(commands.Command):
             demands.sack_activation = True
 
         def run_on_module(self):
-            self.base.repo_module_dict.remove(self.opts.module_nsvp)
+            self.base.repo_module_dict.remove(self.opts.module_spec)
 
     class ProfileInfoSubCommand(SubCommand):
 
@@ -218,7 +218,7 @@ class ModuleCommand(commands.Command):
             demands.sack_activation = True
 
         def run_on_module(self):
-            for spec in self.opts.module_nsvp:
+            for spec in self.opts.module_spec:
                 print()
                 logger.info(self.base.repo_module_dict.get_info_profiles(spec))
 
@@ -233,7 +233,7 @@ class ModuleCommand(commands.Command):
 
         def run_on_module(self):
             logger.info(self.base.repo_module_dict
-                        .get_brief_description_enabled(self.opts.module_nsvp))
+                        .get_brief_description_enabled(self.opts.module_spec))
 
     class ProvidesSubCommand(SubCommand):
 
@@ -245,7 +245,7 @@ class ModuleCommand(commands.Command):
             demands.sack_activation = True
 
         def run_on_module(self):
-            self.base.repo_module_dict.print_what_provides(self.opts.module_nsvp)
+            self.base.repo_module_dict.print_what_provides(self.opts.module_spec)
 
     SUBCMDS = {ListSubCommand, InfoSubCommand, EnableSubCommand,
                DisableSubCommand, ResetSubCommand, InstallSubCommand, UpdateSubCommand,
@@ -266,7 +266,7 @@ class ModuleCommand(commands.Command):
     def set_argparser(self, parser):
         subcommand_help = [subcmd.aliases[0] for subcmd in self.SUBCMDS]
         parser.add_argument('subcmd', nargs=1, choices=subcommand_help)
-        parser.add_argument('module_nsvp', nargs='*')
+        parser.add_argument('module_spec', nargs='*')
 
         narrows = parser.add_mutually_exclusive_group()
         narrows.add_argument('--enabled', dest='enabled',
@@ -303,7 +303,7 @@ class ModuleCommand(commands.Command):
                                  for subcmd in self.SUBCMDS_NOT_REQUIRED_ARG
                                  for alias in subcmd.aliases]
         if self.opts.subcmd[0] not in not_required_argument:
-            if not self.opts.module_nsvp:
+            if not self.opts.module_spec:
                 raise CliError(
                     "dnf {} {}: too few arguments".format(self.opts.command[0],
                                                           self.opts.subcmd[0]))
