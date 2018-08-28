@@ -135,10 +135,13 @@ class Base(object):
         repo.load()
         hrepo = repo._hawkey_repo
         repo._repo.initHyRepo(hrepo)
+        mdload_flags = dict(load_filelists=True,
+                            load_presto=repo.deltarpm,
+                            load_updateinfo=True)
+        if "other" in repo.extra_metadata:
+            mdload_flags["load_other"] = True
         try:
-            self._sack.load_repo(hrepo, build_cache=True, load_filelists=True,
-                                 load_presto=repo.deltarpm,
-                                 load_updateinfo=True)
+            self._sack.load_repo(hrepo, build_cache=True, **mdload_flags)
         except hawkey.Exception as e:
             logger.debug(_("loading repo '{}' failure: {}").format(repo.id, e))
             raise dnf.exceptions.RepoError(
