@@ -256,6 +256,7 @@ class SwdbInterface(object):
         self._addon_data = None
         self._swdb = None
         self._db_dir = db_dir
+        self._output = []
 
     def __del__(self):
         self.close()
@@ -302,6 +303,7 @@ class SwdbInterface(object):
         if self._swdb:
             self._swdb.closeDatabase()
         self._swdb = None
+        self._output = []
 
     @property
     def path(self):
@@ -468,7 +470,8 @@ class SwdbInterface(object):
             return
         for line in msg.splitlines():
             line = ucd(line)
-            self.swdb.addConsoleOutputLine(1, line)
+            # logging directly to database fails if transaction runs in a background process
+            self._output.append((1, line))
 
     '''
     def _log_errors(self, errors):
@@ -484,6 +487,11 @@ class SwdbInterface(object):
         return_code = not bool(return_code)
         if not hasattr(self, '_tid'):
             return  # Failed at beg() time
+
+        for file_descriptor, line in self._output:
+            self.swdb.addConsoleOutputLine(file_descriptor, line)
+        self._output = []
+
         self.swdb.endTransaction(
             int(time.time()),
             str(end_rpmdb_version),
