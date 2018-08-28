@@ -85,64 +85,6 @@ class RepoModuleDict(OrderedDict):
             return None
         return repo_module_version
 
-    def get_module_dependency_latest(self, name, stream, visited=None):
-        visited = visited or set()
-        version_dependencies = set()
-
-        try:
-            repo_module = self[name]
-            repo_module_stream = repo_module[stream]
-            repo_module_version = repo_module_stream.latest()
-            version_dependencies.add(repo_module_version)
-
-            for requires_name, requires_streams in \
-                    repo_module_version.requires().items():
-                for requires_stream in requires_streams:
-                    if requires_stream[0] == '-':
-                        continue
-                    requires_ns = "{}:{}".format(requires_name, requires_stream)
-                    if requires_ns in visited:
-                        continue
-                    visited.add(requires_ns)
-                    version_dependencies.update(self.get_module_dependency_latest(requires_name,
-                                                                                  requires_stream,
-                                                                                  visited))
-        except KeyError as e:
-            logger.debug(e)
-
-        return version_dependencies
-
-    def get_module_dependency(self, name, stream, visited=None):
-        visited = visited or set()
-        version_dependencies = set()
-
-        try:
-            repo_module = self[name]
-            repo_module_stream = repo_module[stream]
-
-            versions = repo_module_stream.values()
-
-            for repo_module_version in versions:
-                version_dependencies.add(repo_module_version)
-
-                for requires_name, requires_streams in \
-                        repo_module_version.requires().items():
-                    for requires_stream in requires_streams:
-                        if requires_stream[0] == '-':
-                            continue
-                        requires_ns = "{}:{}".format(requires_name, requires_stream)
-                        if requires_ns in visited:
-                            continue
-                        visited.add(requires_ns)
-                        version_dependencies.update(
-                            self.get_module_dependency_latest(requires_name,
-                                                              requires_stream,
-                                                              visited))
-        except KeyError as e:
-            logger.debug(e)
-
-        return version_dependencies
-
     def enable_by_version(self, module_version, save_immediately=False):
         self.base._moduleContainer.enable(module_version.name, module_version.stream)
         # re-compute enabled streams and filtered RPMs
@@ -186,7 +128,7 @@ class RepoModuleDict(OrderedDict):
 
         self.disable_by_version(module_version, save_immediately)
 
-    def get_modules(self, module_spec):
+    def _get_modules(self, module_spec):
         subj = hawkey.Subject(module_spec)
         for nsvcap in subj.nsvcap_possibilities():
             name = nsvcap.name if nsvcap.name else ""
@@ -201,7 +143,18 @@ class RepoModuleDict(OrderedDict):
                 return modules, nsvcap
         return None, None
 
-    def _module_enable(self, module_list):
+    def _get_latest(self, module_list):
+        latest = None
+        if module_list:
+            latest = module_list[0]
+            for module in module_list[1:]:
+                if module.getVersion() > latest.getVersion():
+                    latest = module
+        return latest
+
+        module_list.sort(reverse=True, key=lambda x: x.getVersion())
+
+    def _create_module_dict_and_enable(self, module_list, enable = True):
         moduleDict = {}
         for module in module_list:
             moduleDict.setdefault(
@@ -220,10 +173,11 @@ class RepoModuleDict(OrderedDict):
                     raise EnableMultipleStreamsException(moduleName)
                 for key in sorted(streamDict.keys()):
                     if key == stream:
-                        self.base._moduleContainer.enable(moduleName, key)
+                        if enable:
+                            self.base._moduleContainer.enable(moduleName, key)
                         continue
                     del streamDict[key]
-            else:
+            elif enable:
                 for key in streamDict.keys():
                     self.base._moduleContainer.enable(moduleName, key)
             assert len(streamDict) == 1
@@ -234,12 +188,12 @@ class RepoModuleDict(OrderedDict):
         error_spec = []
         module_dicts = {}
         for spec in set(module_specs):
-            module_list, nsvcap = self.get_modules(spec)
+            module_list, nsvcap = self._get_modules(spec)
             if module_list is None:
                 no_match_specs.append(spec)
                 continue
             try:
-                module_dict = self._module_enable(module_list)
+                module_dict = self._create_module_dict_and_enable(module_list)
                 module_dicts[spec] = (nsvcap, module_dict)
             except (RuntimeError, EnableMultipleStreamsException) as e:
                 error_spec.append(spec)
@@ -255,15 +209,16 @@ class RepoModuleDict(OrderedDict):
         for spec, (nsvcap, moduledict) in module_dicts.items():
             for name, streamdict in moduledict.items():
                 for stream, module_list in streamdict.items():
+                    latest_module = self._get_latest()
                     install_module_list = [x for x in module_list if self.base._moduleContainer.isModuleActive(x.getId())]
                     if not install_module_list:
                         logger.error(_("Unable to resolve argument {}").format(spec))
                         error_spec.append(spec)
                         continue
                     profiles = []
+                    latest_module = self._get_latest(install_module_list)
                     if nsvcap.profile:
-                        install_module_list.sort(reverse=True, key=lambda x: x.getVersion())
-                        profiles.extend(install_module_list[0].getProfiles(nsvcap.profile))
+                        profiles.extend(latest_module.getProfiles(nsvcap.profile))
                         if not profiles:
                             logger.error(_("Unable to match profile in argument {}").format(spec))
                             error_spec.append(spec)
@@ -274,13 +229,13 @@ class RepoModuleDict(OrderedDict):
                             logger.error(_("No default profiles for module {}:{}").format(name, stream))
                             profiles_strings = ['default']
                         for profile in set(profiles_strings):
-                            module_profiles = install_module_list[0].getProfiles(profile)
+                            module_profiles = latest_module.getProfiles(profile)
                             if not module_profiles:
                                 logger.error(_("Default profile {} not matched for module {}:{}").format(profile, name,
                                                                                                          stream))
                             profiles.extend(module_profiles)
                     for profile in profiles:
-                        self.base._moduleContainer.install(install_module_list[0] ,profile.getName())
+                        self.base._moduleContainer.install(latest_module ,profile.getName())
                         for pkg_name in profile.getContent():
                             install_dict.setdefault(pkg_name, set()).add(spec)
                     for module in install_module_list:
@@ -324,91 +279,96 @@ class RepoModuleDict(OrderedDict):
 
         self.reset_by_version(module_version, save_immediately)
 
-    def upgrade(self, module_specs, create_goal=False):
-        skipped = []
-        query = None
+    def _get_package_name_set_and_remove_profiles(self, module_list, nsvcap, remove=False):
+        package_name_set = set()
+        latest_module = self._get_latest(module_list)
+        installed_profiles_strings = set(self.base._moduleContainer.getInstalledProfiles(latest_module.getName()))
+        if not installed_profiles_strings:
+            return set()
+        if nsvcap.profile:
+            profiles_set = latest_module.getProfiles(nsvcap.profile)
+            if not profiles_set:
+                return set()
+            for profile in profiles_set:
+                if profile.getName() in installed_profiles_strings:
+                    if remove:
+                        self.base._moduleContainer.uninstall(latest_module, profile.getName())
+                    package_name_set.update(profile.getContent())
+        else:
+            for profile_string in installed_profiles_strings:
+                if remove:
+                    self.base._moduleContainer.uninstall(latest_module, profile_string)
+                for profile in latest_module.getProfiles(profile_string):
+                    package_name_set.update(profile.getContent())
+        return package_name_set
 
-        module_versions = []
-        for module_spec in module_specs:
-            subj = ModuleSubject(module_spec)
-            try:
-                module_version, module_form = subj.find_module_version(self)
-                module_versions.append(module_version)
+    def upgrade(self, module_specs):
+        no_match_specs = []
 
-                # in case there is new dependency
-                self.enable_by_version(module_version)
-            except NoModuleException:
-                skipped.append(module_spec)
+        for spec in set(module_specs):
+            module_list, nsvcap = self._get_modules(spec)
+            if module_list is None:
+                no_match_specs.append(spec)
                 continue
-            except NoStreamSpecifiedException:
+            update_module_list = [x for x in module_list if self.base._moduleContainer.isModuleActive(x.getId())]
+            if not update_module_list:
+                logger.error(_("Unable to resolve argument {}").format(spec))
                 continue
-
-        hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
-        self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
-                                      self.base.conf.installroot, self.base.conf.module_platform_id,
-                                      update_only=True)
-
-        for module_version in module_versions:
-            if module_version.repo_module.conf.state._get() != "enabled":
-                continue
-
-            conf = self[module_form.name].conf
-            if conf:
-                installed_profiles = list(conf.profiles._get())
-            else:
-                installed_profiles = []
-            if module_form.profile:
-                if module_form.profile not in installed_profiles:
-                    raise ProfileNotInstalledException(module_version.name)
-                profiles = [module_form.profile]
-            else:
-                profiles = installed_profiles
-
-            if not profiles:
-                continue
-
-            returned_query = module_version.upgrade(profiles)
-            if query is None and returned_query:
-                query = returned_query
-            elif returned_query:
-                query = query.union(returned_query)
-
-        if create_goal and query:
-            sltr = Selector(self.base.sack)
-            sltr.set(pkg=query)
-            self.base._goal.upgrade(select=sltr)
-
-        return skipped
+            module_dict = self._create_module_dict_and_enable(update_module_list, False)
+            upgrade_package_set = set()
+            for name, streamdict in module_dict.items():
+                for stream, module_list_from_dict in streamdict.items():
+                    upgrade_package_set.update(self._get_package_name_set_and_remove_profiles(module_list_from_dict, nsvcap))
+                    latest_module = self._get_latest(module_list_from_dict)
+                    installed_profiles_strings = set(self.base._moduleContainer.getInstalledProfiles(latest_module.getName()))
+                    if not installed_profiles_strings:
+                        continue
+                    if nsvcap.profile:
+                        profiles_set = latest_module.getProfiles(nsvcap.profile)
+                        if not profiles_set:
+                            continue
+                        for profile in profiles_set:
+                            if profile.getName() in installed_profiles_strings:
+                                upgrade_package_set.update(profile.getContent())
+                    else:
+                        for profile_string in installed_profiles_strings:
+                            for profile in latest_module.getProfiles(profile_string):
+                                upgrade_package_set.update(profile.getContent())
+            if not upgrade_package_set:
+                logger.error(_("Unable to match profile in argument {}").format(spec))
+            query = self.base.sack.query().available().filterm(name=upgrade_package_set)
+            if query:
+                sltr = Selector(self.base.sack)
+                sltr.set(pkg=query)
+                self.base._goal.upgrade(select=sltr)
+        return no_match_specs
 
     def remove(self, module_specs):
-        skipped = []
-        for module_spec in module_specs:
-            subj = ModuleSubject(module_spec)
+        no_match_specs = []
+        remove_package_set = set()
 
-            try:
-                module_version, module_form = subj.find_module_version(self)
-            except NoModuleException:
-                # TODO: report skipped module specs to the user
-                skipped.append(module_spec)
+        for spec in set(module_specs):
+            module_list, nsvcap = self._get_modules(spec)
+            if module_list is None:
+                no_match_specs.append(spec)
                 continue
+            module_dict = self._create_module_dict_and_enable(module_list, False)
+            remove_packages_names = []
+            for name, streamdict in module_dict.items():
+                for stream, module_list_from_dict in streamdict.items():
+                    remove_packages_names.extend(self._get_package_name_set_and_remove_profiles(module_list_from_dict, nsvcap, True))
+            if not remove_packages_names:
+                logger.error(_("Unable to match profile in argument {}").format(spec))
+            remove_package_set.update(remove_packages_names)
 
-            conf = self[module_form.name].conf
-            if module_version.stream != conf.stream._get():
-                raise DifferentStreamEnabledException(module_form.name)
-
-            if list(conf.profiles._get()):
-                installed_profiles = list(conf.profiles._get())
-            else:
-                raise NoProfileToRemoveException(module_spec)
-            if module_form.profile:
-                if module_form.profile not in installed_profiles:
-                    raise ProfileNotInstalledException(module_spec)
-                profiles = [module_form.profile]
-            else:
-                profiles = installed_profiles
-
-            module_version.remove(profiles)
-        return skipped
+        if remove_package_set:
+            keep_pkg_names = self.base._moduleContainer.getInstalledPkgNames()
+            remove_package_set.difference(keep_pkg_names)
+            if remove_package_set:
+                query = self.base.sack.query().installed().filterm(name=remove_package_set)
+                if query:
+                    self.base._remove_if_unneeded(query)
+        return no_match_specs
 
     def read_all_module_confs(self):
         module_reader = ModuleReader(self.get_modules_dir())

@@ -38,69 +38,6 @@ class RepoModuleVersion(object):
     def __repr__(self):
         return self.full_version
 
-    def report_profile_error(self, profile, default_profiles_used=False):
-        if default_profiles_used:
-            raise NoProfileException("{}/{}".format(self.full_version, profile))
-        elif self.profiles:
-            raise PossibleProfilesExceptions("{}/{}".format(self.full_version, profile),
-                                             self.profiles)
-        else:
-            raise NoProfilesException("{}/{}".format(self.full_version, profile))
-
-    def upgrade(self, profiles):
-        installed = self.base.sack.query().installed().run()
-        installed_nevras = [str(pkg) for pkg in installed]
-        query_to_return = None
-
-        for profile in profiles:
-            if profile not in self.profiles:
-                raise NoProfileException("{}/{}".format(self.full_version, profile))
-
-            for nevra_object in self.profile_nevra_objects(profile):
-                nevr = self.nevra_object_to_nevr_str(nevra_object)
-                nevra = "{}.{}".format(nevr, nevra_object.arch)
-
-                if nevra not in installed_nevras:
-                    self.base.install(nevr, forms=hawkey.FORM_NEVR, strict=self.base.conf.strict)
-                else:
-                    # TODO: verify that filter(nevra) really works correctly
-                    # (possibly breaks multilib)
-                    query = self.base.sack.query().filter(nevra=nevra)
-                    if query_to_return is None:
-                        query_to_return = query
-                    else:
-                        query_to_return = query_to_return.union(query)
-
-        return query_to_return
-
-    def remove(self, profiles):
-        keep_profiles = [profile for profile in list(self.repo_module.conf.profiles._get())
-                         if profile not in profiles]
-        keep_nevras = set()
-        for profile in keep_profiles:
-            keep_nevras.update([self.nevra_object_to_nevr_str(nevra_object)
-                                for nevra_object in self.profile_nevra_objects(profile)])
-
-        for profile in profiles:
-            if profile not in self.profiles:
-                raise NoProfileException("{}/{}".format(self.full_version, profile))
-
-            for nevra_object in self.profile_nevra_objects(profile):
-                if self.nevra_object_to_nevr_str(nevra_object) in keep_nevras:
-                    continue
-
-                nevr = self.nevra_object_to_nevr_str(nevra_object)
-                remove_query = dnf.subject.Subject(nevr) \
-                    .get_best_query(self.base.sack, forms=hawkey.FORM_NEVR)
-
-                if not remove_query or self.base.history.user_installed(remove_query[0]):
-                    continue
-
-                self.base._remove_if_unneeded(remove_query)
-
-        for profile in sorted(set(profiles)):
-            self.base._moduleContainer.uninstall(self.name, self.stream, profile)
-
     def artifacts(self):
         return self.module_metadata.peek_rpm_artifacts().dup()
 
@@ -116,10 +53,6 @@ class RepoModuleVersion(object):
 
     def description(self):
         return self.module_metadata.peek_description()
-
-    @staticmethod
-    def nevra_object_to_nevr_str(nevra_object):
-        return "{}-{}".format(nevra_object.name, nevra_object.evr())
 
     def rpms(self, profile):
         module_profiles = self.module_metadata.peek_profiles()
