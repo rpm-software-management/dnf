@@ -1737,9 +1737,8 @@ class Base(object):
             self._goal.install(select=sltr, optional=(not strict))
         return len(available)
 
-    def enable_module(self, specs, save_immediately=False):
-        for spec in specs:
-            self.repo_module_dict.enable(spec, save_immediately)
+    def enable_module(self, specs):
+        self.repo_module_dict.enable(specs)
 
     def install_module(self, specs, strict=True):
         """
