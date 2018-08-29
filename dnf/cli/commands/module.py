@@ -122,6 +122,7 @@ class ModuleCommand(commands.Command):
             demands = self.cli.demands
             demands.available_repos = True
             demands.sack_activation = True
+            demands.resolving = True
             demands.root_user = True
 
         def run_on_module(self):
@@ -145,20 +146,11 @@ class ModuleCommand(commands.Command):
             demands = self.cli.demands
             demands.available_repos = True
             demands.sack_activation = True
+            demands.resolving = True
             demands.root_user = True
 
         def run_on_module(self):
-            for module_n in self.opts.module_spec:
-                subj = ModuleSubject(module_n)
-                module_version, module_form = subj.find_module_version(self.base.repo_module_dict)
-
-                if module_form.profile:
-                    logger.info("Ignoring unnecessary profile: '{}/{}'".format(module_form.name,
-                                                                               module_form.profile))
-
-                self.base.repo_module_dict.reset_by_version(module_version)
-
-            self.base.do_transaction()
+            self.base.repo_module_dict.reset(self.opts.module_nsvp)
 
     class InstallSubCommand(SubCommand):
 

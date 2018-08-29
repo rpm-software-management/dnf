@@ -209,7 +209,6 @@ class RepoModuleDict(OrderedDict):
         for spec, (nsvcap, moduledict) in module_dicts.items():
             for name, streamdict in moduledict.items():
                 for stream, module_list in streamdict.items():
-                    latest_module = self._get_latest()
                     install_module_list = [x for x in module_list if self.base._moduleContainer.isModuleActive(x.getId())]
                     if not install_module_list:
                         logger.error(_("Unable to resolve argument {}").format(spec))
@@ -257,27 +256,23 @@ class RepoModuleDict(OrderedDict):
         # TODO reise exception and return specks with problem
         return no_match_specs
 
-    def reset_by_version(self, module_version, save_immediately=False):
-        self.base._moduleContainer.reset(module_version.name)
-
-        # re-compute enabled streams and filtered RPMs
+    def reset(self, module_specs):
+        for spec in set(module_specs):
+            module_list, nsvcap = self._get_modules(spec)
+            if module_list:
+                if nsvcap.profile:
+                    logger.info("Ignoring unnecessary profile: '{}/{}'".format(nsvcap.name, nsvcap.profile))
+                module_names = set()
+                for module in module_list:
+                    module_names.add(module.getName())
+                for name in module_names:
+                    self.base._moduleContainer.reset(name)
+            else:
+                logger.error(_("Unable to resolve argument {}").format(spec))
         hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
         self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
                                       self.base.conf.installroot, self.base.conf.module_platform_id,
                                       update_only=True)
-
-        # TODO: remove; temporary workaround for syncing RepoModule.conf with libdnf
-        self[module_version.name].conf.profiles._set("")
-        self[module_version.name].conf.state._set("")
-
-        if save_immediately:
-            self.base._moduleContainer.save()
-
-    def reset(self, module_spec, save_immediately=False):
-        subj = ModuleSubject(module_spec)
-        module_version, module_form = subj.find_module_version(self)
-
-        self.reset_by_version(module_version, save_immediately)
 
     def _get_package_name_set_and_remove_profiles(self, module_list, nsvcap, remove=False):
         package_name_set = set()
