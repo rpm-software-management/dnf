@@ -475,6 +475,14 @@ class Repo(dnf.conf.RepoConf):
     def _pubring_dir(self):
         return os.path.join(self._repo.getCachedir(), 'pubring')
 
+    @property
+    def load_metadata_other(self):
+        return self._repo.getLoadMetadataOther()
+
+    @load_metadata_other.setter
+    def load_metadata_other(self, val):
+        self._repo.setLoadMetadataOther(val)
+
     def __lt__(self, other):
         return self.id < other.id
 
