@@ -92,9 +92,13 @@ class RepoModuleDict(OrderedDict):
         for spec, (nsvcap, module_dict) in module_dicts.items():
             if nsvcap.profile:
                 logger.info("Ignoring unnecessary profile: '{}/{}'".format(nsvcap.name, nsvcap.profile))
+        if no_match_specs:
+            raise dnf.module.exceptions.ModuleMarkingError(no_match_specs=no_match_specs)
 
     def disable(self, module_specs):
-        self._modules_reset_or_disable(module_specs, STATE_DISABLED)
+        no_match_specs = self._modules_reset_or_disable(module_specs, STATE_DISABLED)
+        if no_match_specs:
+            raise dnf.module.exceptions.ModuleMarkingError(no_match_specs=no_match_specs)
 
     def _get_modules(self, module_spec):
         subj = hawkey.Subject(module_spec)
@@ -204,6 +208,9 @@ class RepoModuleDict(OrderedDict):
                             if not module_profiles:
                                 logger.error(_("Default profile {} not matched for module {}:{}").format(profile, name,
                                                                                                          stream))
+                                if profiles_strings == ['default']:
+                                    self.base._moduleContainer.install(latest_module, 'default')
+
                             profiles.extend(module_profiles)
                     for profile in profiles:
                         self.base._moduleContainer.install(latest_module ,profile.getName())
@@ -229,25 +236,29 @@ class RepoModuleDict(OrderedDict):
         return no_match_specs
 
     def _modules_reset_or_disable(self, module_specs, to_state):
+        no_match_specs = []
         for spec in set(module_specs):
             module_list, nsvcap = self._get_modules(spec)
-            if module_list:
-                if nsvcap.profile:
-                    logger.info("Ignoring unnecessary profile: '{}/{}'".format(nsvcap.name, nsvcap.profile))
-                module_names = set()
-                for module in module_list:
-                    module_names.add(module.getName())
-                for name in module_names:
-                    if to_state == STATE_UNKNOWN:
-                        self.base._moduleContainer.reset(name)
-                    if to_state == STATE_DISABLED:
-                        self.base._moduleContainer.disable(name)
-            else:
+            if not module_list:
                 logger.error(_("Unable to resolve argument {}").format(spec))
+                no_match_specs.append(spec)
+                continue
+            if nsvcap.profile:
+                logger.info("Ignoring unnecessary profile: '{}/{}'".format(nsvcap.name, nsvcap.profile))
+            module_names = set()
+            for module in module_list:
+                module_names.add(module.getName())
+            for name in module_names:
+                if to_state == STATE_UNKNOWN:
+                    self.base._moduleContainer.reset(name)
+                if to_state == STATE_DISABLED:
+                    self.base._moduleContainer.disable(name)
+
         hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
         self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
                                       self.base.conf.installroot, self.base.conf.module_platform_id,
                                       update_only=True)
+        return no_match_specs
 
     def reset(self, module_specs):
         self._modules_reset_or_disable(module_specs, STATE_UNKNOWN)

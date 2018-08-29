@@ -25,6 +25,7 @@ import unittest
 
 import hawkey
 from hawkey import NSVCAP
+import libdnf
 
 import dnf.conf
 from dnf.module.subject import ModuleSubject
@@ -312,45 +313,40 @@ class ModuleTest(unittest.TestCase):
 
     def test_enable_name(self):
         # use default stream
-        self.base.repo_module_dict.enable("httpd")
-        repo_module = self.base.repo_module_dict["httpd"]
-        self.assertEqual(repo_module.conf.state._get(), "enabled")
-        self.assertEqual(repo_module.conf.name._get(), "httpd")
-        self.assertEqual(repo_module.conf.stream._get(), "2.4")
+        self.base.repo_module_dict.enable(["httpd"])
+        self.assertEqual(self.base._moduleContainer.getModuleState("httpd"),
+                         libdnf.module.ModulePackageContainer.ModuleState_ENABLED)
+        self.assertEqual(self.base._moduleContainer.getEnabledStream("httpd"), "2.4")
 
     def test_enable_name_stream(self):
-        self.base.repo_module_dict.enable("httpd:2.4")
-        repo_module = self.base.repo_module_dict["httpd"]
-        self.assertEqual(repo_module.conf.state._get(), "enabled")
-        self.assertEqual(repo_module.conf.name._get(), "httpd")
-        self.assertEqual(repo_module.conf.stream._get(), "2.4")
+        self.base.repo_module_dict.enable(["httpd:2.4"])
+        self.assertEqual(self.base._moduleContainer.getModuleState("httpd"),
+                         libdnf.module.ModulePackageContainer.ModuleState_ENABLED)
+        self.assertEqual(self.base._moduleContainer.getEnabledStream("httpd"), "2.4")
 
         # also enable base-runtime; it's a dependency that's used in other tests
-        self.base.repo_module_dict.enable("base-runtime:f26")
+        self.base.repo_module_dict.enable(["base-runtime:f26"])
 
     def test_enable_pkgspec(self):
-        self.base.repo_module_dict.enable("httpd:2.4:1/foo")
-        repo_module = self.base.repo_module_dict["httpd"]
-        self.assertEqual(repo_module.conf.state._get(), "enabled")
-        self.assertEqual(repo_module.conf.name._get(), "httpd")
-        self.assertEqual(repo_module.conf.stream._get(), "2.4")
+        self.base.repo_module_dict.enable(["httpd:2.4:1/foo"])
+        self.assertEqual(self.base._moduleContainer.getModuleState("httpd"),
+                         libdnf.module.ModulePackageContainer.ModuleState_ENABLED)
+        self.assertEqual(self.base._moduleContainer.getEnabledStream("httpd"), "2.4")
 
     def test_enable_invalid(self):
         with self.assertRaises(dnf.exceptions.Error):
-            self.base.repo_module_dict.enable("httpd:invalid")
+            self.base.repo_module_dict.enable(["httpd:invalid"])
 
     def test_enable_different_stream(self):
-        repo_module = self.base.repo_module_dict["httpd"]
+        self.base.repo_module_dict.enable(["httpd:2.4"])
+        self.assertEqual(self.base._moduleContainer.getModuleState("httpd"),
+                         libdnf.module.ModulePackageContainer.ModuleState_ENABLED)
+        self.assertEqual(self.base._moduleContainer.getEnabledStream("httpd"), "2.4")
 
-        self.base.repo_module_dict.enable("httpd:2.4")
-        self.assertEqual(repo_module.conf.state._get(), "enabled")
-        self.assertEqual(repo_module.conf.name._get(), "httpd")
-        self.assertEqual(repo_module.conf.stream._get(), "2.4")
-
-        self.base.repo_module_dict.enable("httpd:2.2")
-        self.assertEqual(repo_module.conf.state._get(), "enabled")
-        self.assertEqual(repo_module.conf.name._get(), "httpd")
-        self.assertEqual(repo_module.conf.stream._get(), "2.2")
+        self.base.repo_module_dict.enable(["httpd:2.2"])
+        self.assertEqual(self.base._moduleContainer.getModuleState("httpd"),
+                         libdnf.module.ModulePackageContainer.ModuleState_ENABLED)
+        self.assertEqual(self.base._moduleContainer.getEnabledStream("httpd"), "2.2")
 
     def test_enable_different_stream_missing_profile(self):
         pass
@@ -358,56 +354,47 @@ class ModuleTest(unittest.TestCase):
     # dnf module disable
 
     def test_disable_name(self):
-        repo_module = self.base.repo_module_dict["httpd"]
+        self.base.repo_module_dict.enable(["httpd:2.4"])
+        self.assertEqual(self.base._moduleContainer.getModuleState("httpd"),
+                         libdnf.module.ModulePackageContainer.ModuleState_ENABLED)
+        self.assertEqual(self.base._moduleContainer.getEnabledStream("httpd"), "2.4")
 
-        self.base.repo_module_dict.enable("httpd")
-        self.assertEqual(repo_module.conf.state._get(), "enabled")
-        self.assertEqual(repo_module.conf.name._get(), "httpd")
-        self.assertEqual(repo_module.conf.stream._get(), "2.4")
-
-        self.base.repo_module_dict.disable("httpd")
-        self.assertEqual(repo_module.conf.state._get(), "disabled")
-        self.assertEqual(repo_module.conf.name._get(), "httpd")
-        self.assertEqual(repo_module.conf.stream._get(), "2.4")
+        self.base.repo_module_dict.disable(["httpd"])
+        self.assertEqual(self.base._moduleContainer.getModuleState("httpd"),
+                         libdnf.module.ModulePackageContainer.ModuleState_DISABLED)
+        self.assertEqual(self.base._moduleContainer.getEnabledStream("httpd"), "")
 
     def test_disable_name_stream(self):
-        repo_module = self.base.repo_module_dict["httpd"]
+        # It should disable whole module not only stream (strem = "")
+        self.base.repo_module_dict.enable(["httpd:2.4"])
+        self.assertEqual(self.base._moduleContainer.getModuleState("httpd"),
+                         libdnf.module.ModulePackageContainer.ModuleState_ENABLED)
+        self.assertEqual(self.base._moduleContainer.getEnabledStream("httpd"), "2.4")
 
-        self.base.repo_module_dict.enable("httpd:2.4")
-        self.assertEqual(repo_module.conf.state._get(), "enabled")
-        self.assertEqual(repo_module.conf.name._get(), "httpd")
-        self.assertEqual(repo_module.conf.stream._get(), "2.4")
-
-        self.base.repo_module_dict.disable("httpd:2.4")
-        self.assertEqual(repo_module.conf.state._get(), "disabled")
-        self.assertEqual(repo_module.conf.name._get(), "httpd")
-        self.assertEqual(repo_module.conf.stream._get(), "2.4")
+        self.base.repo_module_dict.disable(["httpd:2.4"])
+        self.assertEqual(self.base._moduleContainer.getModuleState("httpd"),
+                         libdnf.module.ModulePackageContainer.ModuleState_DISABLED)
+        self.assertEqual(self.base._moduleContainer.getEnabledStream("httpd"), "")
 
     def test_disable_pkgspec(self):
-        repo_module = self.base.repo_module_dict["httpd"]
+        # It should disable whole module not only profile (strem = "")
+        self.base.repo_module_dict.enable(["httpd:2.4"])
+        self.assertEqual(self.base._moduleContainer.getModuleState("httpd"),
+                         libdnf.module.ModulePackageContainer.ModuleState_ENABLED)
+        self.assertEqual(self.base._moduleContainer.getEnabledStream("httpd"), "2.4")
 
-        self.base.repo_module_dict.enable("httpd:2.4")
-        self.assertEqual(repo_module.conf.state._get(), "enabled")
-        self.assertEqual(repo_module.conf.name._get(), "httpd")
-        self.assertEqual(repo_module.conf.stream._get(), "2.4")
-
-        self.base.repo_module_dict.disable("httpd:2.4:1/foo")
-        self.assertEqual(repo_module.conf.state._get(), "disabled")
-        self.assertEqual(repo_module.conf.name._get(), "httpd")
-        self.assertEqual(repo_module.conf.stream._get(), "2.4")
+        self.base.repo_module_dict.disable(["httpd:2.4:1/foo"])
+        self.assertEqual(self.base._moduleContainer.getModuleState("httpd"),
+                         libdnf.module.ModulePackageContainer.ModuleState_DISABLED)
+        self.assertEqual(self.base._moduleContainer.getEnabledStream("httpd"), "")
 
     def test_disable_invalid(self):
-        repo_module = self.base.repo_module_dict["httpd"]
-
-        self.base.repo_module_dict.enable("httpd:2.4")
-        self.assertEqual(repo_module.conf.state._get(), "enabled")
-        self.assertEqual(repo_module.conf.name._get(), "httpd")
-        self.assertEqual(repo_module.conf.stream._get(), "2.4")
-
+        self.base.repo_module_dict.enable(["httpd:2.4"])
+        self.assertEqual(self.base._moduleContainer.getModuleState("httpd"),
+                         libdnf.module.ModulePackageContainer.ModuleState_ENABLED)
+        self.assertEqual(self.base._moduleContainer.getEnabledStream("httpd"), "2.4")
         with self.assertRaises(dnf.exceptions.Error):
-            self.base.repo_module_dict.disable("httpd:invalid")
-
-    # dnf module info
+            self.base.repo_module_dict.disable(["httpd:invalid"])
 
     def test_info_name(self):
         pass
@@ -448,7 +435,7 @@ class ModuleTest(unittest.TestCase):
         rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=2)
         self.assertNotIn(rmv, enabled)
 
-        rmd.enable("base-runtime:f26")
+        rmd.enable(["base-runtime:f26"])
 
         enabled = rmd.list_module_version_enabled()
         rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=2)
@@ -458,7 +445,7 @@ class ModuleTest(unittest.TestCase):
         rmd = self.base.repo_module_dict
 
         # enable
-        rmd.enable("base-runtime:f26")
+        rmd.enable(["base-runtime:f26"])
 
         # check not in disabled
         disabled = rmd.list_module_version_disabled()
@@ -466,7 +453,7 @@ class ModuleTest(unittest.TestCase):
         self.assertNotIn(rmv, disabled)
 
         # disable
-        rmd.disable("base-runtime")
+        rmd.disable(["base-runtime"])
 
         # check in disabled
         disabled = rmd.list_module_version_disabled()
@@ -495,11 +482,10 @@ class ModuleTest(unittest.TestCase):
             return
 
         # check module conf
-        repo_module = rmd["base-runtime"]
-        self.assertEqual(repo_module.conf.state._get(), "enabled")
-        self.assertEqual(repo_module.conf.name._get(), "base-runtime")
-        self.assertEqual(repo_module.conf.stream._get(), "f26")
-        self.assertEqual(list(repo_module.conf.profiles._get()), ["minimal"])
+        self.assertEqual(self.base._moduleContainer.getModuleState("base-runtime"),
+                         libdnf.module.ModulePackageContainer.ModuleState_ENABLED)
+        self.assertEqual(self.base._moduleContainer.getEnabledStream("base-runtime"), "f26")
+        self.assertEqual(list(self.base._moduleContainer.getInstalledProfiles("base-runtime")), ["minimal"])
 
         # check installed
         installed = rmd.list_module_version_installed()
@@ -603,11 +589,10 @@ class ModuleTest(unittest.TestCase):
             self.assertIsNotNone(e)
             self.assertEqual(e.code, 0)
 
-        repo_module = rmd["m4"]
-        self.assertEqual(repo_module.conf.state._get(), "enabled")
-        self.assertEqual(repo_module.conf.name._get(), "m4")
-        self.assertEqual(repo_module.conf.stream._get(), "1.4.18")
-        self.assertEqual(list(repo_module.conf.profiles._get()), ['default'])
+        self.assertEqual(self.base._moduleContainer.getModuleState("m4"),
+                         libdnf.module.ModulePackageContainer.ModuleState_ENABLED)
+        self.assertEqual(self.base._moduleContainer.getEnabledStream("m4"), "1.4.18")
+        self.assertEqual(list(self.base._moduleContainer.getInstalledProfiles("m4")), ['default'])
 
         self.base.resolve()
         self.assertInstalls([])

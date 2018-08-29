@@ -19,6 +19,7 @@
 
 import dnf
 from dnf.module import module_messages, NO_PROFILE_SPECIFIED
+from dnf.i18n import _
 
 
 class LoadCacheException(dnf.exceptions.Error):
@@ -70,6 +71,12 @@ class CannotLockVersionException(dnf.exceptions.Error):
             value = "{}. {}".format(value, reason)
         super(CannotLockVersionException, self).__init__(value)
 
+class ModuleMarkingError(dnf.exceptions.Error):
+    def __init__(self, no_match_specs=None, error_specs=None):
+        value = _('No match for one or more arguments')
+        super(ModuleMarkingError, self).__init__(value)
+        self.no_match_specs = no_match_specs,
+        self.error_specs = error_specs
 
 class NoProfileException(dnf.exceptions.Error):
     def __init__(self, profile):
