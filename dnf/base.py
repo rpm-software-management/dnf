@@ -138,7 +138,7 @@ class Base(object):
         mdload_flags = dict(load_filelists=True,
                             load_presto=repo.deltarpm,
                             load_updateinfo=True)
-        if "other" in repo.extra_metadata:
+        if "other" in repo._additional_metadata:
             mdload_flags["load_other"] = True
         try:
             self._sack.load_repo(hrepo, build_cache=True, **mdload_flags)

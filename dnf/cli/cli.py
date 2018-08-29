@@ -764,8 +764,8 @@ class Cli(object):
                 raise dnf.exceptions.Error(_('This command has to be run under the root user.'))
 
         if demands.changelogs:
-            self.base.conf.extra_metadata = list(self.base.conf.extra_metadata) + \
-                ["other"]
+            self.base.conf._additional_metadata = list(
+                self.base.conf._additional_metadata) + ["other"]
 
         if demands.cacheonly or self.base.conf.cacheonly:
             self.base.conf.cacheonly = True
