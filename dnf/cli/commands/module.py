@@ -88,31 +88,11 @@ class ModuleCommand(commands.Command):
             demands = self.cli.demands
             demands.available_repos = True
             demands.sack_activation = True
+            demands.resolving = True
             demands.root_user = True
 
         def run_on_module(self):
-            module_versions = dict()
-            for module_ns in self.opts.module_spec:
-                subj = ModuleSubject(module_ns)
-                module_version, module_form = subj.find_module_version(self.base.repo_module_dict)
-
-                if module_version.name in module_versions:
-                    raise EnableMultipleStreamsException(module_version.name)
-
-                module_versions[module_version.name] = (module_version, module_form)
-
-            for module_version, module_form in module_versions.values():
-                if module_form.profile:
-                    logger.info("Ignoring unnecessary profile: '{}/{}'".format(module_form.name,
-                                                                               module_form.profile))
-
-                self.base.repo_module_dict.enable_by_version(module_version)
-
-            self.base.do_transaction()
-
-            logger.info(_("\nTo switch to the new streams' RPMs, run '{} distro-sync'. \n"
-                        "Then migrate configuration files and data as necessary."
-                          .format(os.path.basename(sys.argv[0]))))
+            self.base.repo_module_dict.enable(self.opts.module_spec)
 
     class DisableSubCommand(SubCommand):
 
@@ -126,17 +106,7 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            for module_n in self.opts.module_spec:
-                subj = ModuleSubject(module_n)
-                module_version, module_form = subj.find_module_version(self.base.repo_module_dict)
-
-                if module_form.profile:
-                    logger.info("Ignoring unnecessary profile: '{}/{}'".format(module_form.name,
-                                                                               module_form.profile))
-
-                self.base.repo_module_dict.disable_by_version(module_version)
-
-            self.base.do_transaction()
+            self.base.repo_module_dict.disable(self.opts.module_spec)
 
     class ResetSubCommand(SubCommand):
 
@@ -164,8 +134,7 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            module_specs = self.base.repo_module_dict.install(self.opts.module_spec,
-                                                              self.base.conf.strict)
+            module_specs = self.base.repo_module_dict.install(self.opts.module_spec, self.base.conf.strict)
             if module_specs:
                 raise NoModuleException(", ".join(module_specs))
 
@@ -299,3 +268,9 @@ class ModuleCommand(commands.Command):
                 raise CliError(
                     "dnf {} {}: too few arguments".format(self.opts.command[0],
                                                           self.opts.subcmd[0]))
+
+    def run_transaction(self):
+        if self.opts.subcmd[0] in ('enable',):
+            logger.info(_("\nTo switch to the new streams' RPMs, run '{} distro-sync'. \n"
+                          "Then migrate configuration files and data as necessary."
+                          .format(os.path.basename(sys.argv[0]))))

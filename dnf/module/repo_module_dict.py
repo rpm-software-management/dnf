@@ -38,6 +38,8 @@ from dnf.i18n import _, P_, ucd
 
 STATE_DEFAULT = libdnf.module.ModulePackageContainer.ModuleState_DEFAULT
 STATE_ENABLED = libdnf.module.ModulePackageContainer.ModuleState_ENABLED
+STATE_DISABLED = libdnf.module.ModulePackageContainer.ModuleState_DISABLED
+STATE_UNKNOWN = libdnf.module.ModulePackageContainer.ModuleState_UNKNOWN
 
 class RepoModuleDict(OrderedDict):
 
@@ -85,48 +87,14 @@ class RepoModuleDict(OrderedDict):
             return None
         return repo_module_version
 
-    def enable_by_version(self, module_version, save_immediately=False):
-        self.base._moduleContainer.enable(module_version.name, module_version.stream)
-        # re-compute enabled streams and filtered RPMs
-        hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
-        self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
-                                      self.base.conf.installroot, self.base.conf.module_platform_id,
-                                      update_only=True)
+    def enable(self, module_specs):
+        no_match_specs, error_spec, module_dicts = self._resolve_specs_enable_update_sack(module_specs)
+        for spec, (nsvcap, module_dict) in module_dicts.items():
+            if nsvcap.profile:
+                logger.info("Ignoring unnecessary profile: '{}/{}'".format(nsvcap.name, nsvcap.profile))
 
-        # TODO: remove; temporary workaround for syncing RepoModule.conf with libdnf
-        self[module_version.name].conf.stream._set(module_version.stream)
-        self[module_version.name].conf.state._set("enabled")
-
-        if save_immediately:
-            self.base._moduleContainer.save()
-
-    def enable(self, module_spec, save_immediately=False):
-        subj = ModuleSubject(module_spec)
-        module_version, module_form = subj.find_module_version(self)
-
-        self.enable_by_version(module_version, save_immediately)
-
-    def disable_by_version(self, module_version, save_immediately=False):
-        self.base._moduleContainer.disable(module_version.name, module_version.stream)
-
-        # re-compute enabled streams and filtered RPMs
-        hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
-        self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
-                                      self.base.conf.installroot, self.base.conf.module_platform_id,
-                                      update_only=True)
-
-        # TODO: remove; temporary workaround for syncing RepoModule.conf with libdnf
-        self[module_version.name].conf.profiles._set("")
-        self[module_version.name].conf.state._set("disabled")
-
-        if save_immediately:
-            self.base._moduleContainer.save()
-
-    def disable(self, module_spec, save_immediately=False):
-        subj = ModuleSubject(module_spec)
-        module_version, module_form = subj.find_module_version(self)
-
-        self.disable_by_version(module_version, save_immediately)
+    def disable(self, module_specs):
+        self._modules_reset_or_disable(module_specs, STATE_DISABLED)
 
     def _get_modules(self, module_spec):
         subj = hawkey.Subject(module_spec)
@@ -183,7 +151,7 @@ class RepoModuleDict(OrderedDict):
             assert len(streamDict) == 1
         return moduleDict
 
-    def install(self, module_specs, strict=True):
+    def _resolve_specs_enable_update_sack(self, module_specs):
         no_match_specs = []
         error_spec = []
         module_dicts = {}
@@ -202,6 +170,10 @@ class RepoModuleDict(OrderedDict):
         hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
         self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
                                       self.base.conf.installroot, None)
+        return no_match_specs, error_spec, module_dicts
+
+    def install(self, module_specs, strict=True):
+        no_match_specs, error_spec, module_dicts = self._resolve_specs_enable_update_sack(module_specs)
 
         # <package_name, set_of_spec>
         install_dict = {}
@@ -256,7 +228,7 @@ class RepoModuleDict(OrderedDict):
         # TODO reise exception and return specks with problem
         return no_match_specs
 
-    def reset(self, module_specs):
+    def _modules_reset_or_disable(self, module_specs, to_state):
         for spec in set(module_specs):
             module_list, nsvcap = self._get_modules(spec)
             if module_list:
@@ -266,13 +238,19 @@ class RepoModuleDict(OrderedDict):
                 for module in module_list:
                     module_names.add(module.getName())
                 for name in module_names:
-                    self.base._moduleContainer.reset(name)
+                    if to_state == STATE_UNKNOWN:
+                        self.base._moduleContainer.reset(name)
+                    if to_state == STATE_DISABLED:
+                        self.base._moduleContainer.disable(name)
             else:
                 logger.error(_("Unable to resolve argument {}").format(spec))
         hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
         self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
                                       self.base.conf.installroot, self.base.conf.module_platform_id,
                                       update_only=True)
+
+    def reset(self, module_specs):
+        self._modules_reset_or_disable(module_specs, STATE_UNKNOWN)
 
     def _get_package_name_set_and_remove_profiles(self, module_list, nsvcap, remove=False):
         package_name_set = set()
