@@ -779,8 +779,9 @@ class Cli(object):
                     repo._repo.setSyncStrategy(dnf.repo.SYNC_LAZY)
 
         if demands.sack_activation:
-            self.base.fill_sack(load_system_repo='auto',
-                                load_available_repos=self.demands.available_repos)
+            self.base.fill_sack(
+                load_system_repo='auto' if self.demands.load_system_repo else False,
+                load_available_repos=self.demands.available_repos)
 
     def _parse_commands(self, opts, args):
         """Check that the requested CLI command exists."""
