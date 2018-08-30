@@ -68,6 +68,7 @@ class InstallCommand(commands.Command):
     def run(self):
         err_pkgs = []
         errs = []
+        error_module_specs = []
 
         nevra_forms = self._get_nevra_forms_from_command()
 
@@ -76,12 +77,17 @@ class InstallCommand(commands.Command):
             self._log_not_valid_rpm_file_paths(self.opts.grp_specs)
             if self.base.conf.strict:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
-
-        skipped_grp_specs = self.opts.grp_specs
+        skipped_grp_specs = ()
         if self.opts.grp_specs and self.opts.command != ['localinstall']:
-            skipped_grp_specs = self.base.install_module(self.opts.grp_specs,
-                                                         strict=self.base.conf.strict)
-
+            try:
+                self.base.install_module(self.opts.grp_specs, strict=self.base.conf.strict)
+            except dnf.module.exceptions.ModuleMarkingError as e:
+                if e.no_match_specs:
+                    for e_spec in e.no_match_specs:
+                        skipped_grp_specs.append(e_spec)
+                if e.error_specs:
+                    for e_spec in e.error_specs:
+                        error_module_specs.append("@" + e_spec)
         if self.opts.filenames and nevra_forms:
             self._inform_not_a_valid_combination(self.opts.filenames)
             if self.base.conf.strict:
@@ -99,7 +105,7 @@ class InstallCommand(commands.Command):
         if self.opts.command != ['localinstall']:
             errs = self._install_packages(nevra_forms)
 
-        if (len(errs) != 0 or len(err_pkgs) != 0) and self.base.conf.strict:
+        if (len(errs) != 0 or len(err_pkgs) != 0 or error_module_specs) and self.base.conf.strict:
             raise dnf.exceptions.PackagesNotAvailableError(_("Unable to find a match"),
                                                            pkg_spec=' '.join(errs),
                                                            packages=err_pkgs)
@@ -138,7 +144,7 @@ class InstallCommand(commands.Command):
     def _install_groups(self, grp_specs):
         self.base.read_comps(arch_filter=True)
         try:
-            self.base.env_group_install(self.opts.grp_specs,
+            self.base.env_group_install(grp_specs,
                                         tuple(self.base.conf.group_package_types),
                                         strict=self.base.conf.strict)
         except dnf.exceptions.Error:

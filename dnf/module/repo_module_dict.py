@@ -124,9 +124,7 @@ class RepoModuleDict(OrderedDict):
                     latest = module
         return latest
 
-        module_list.sort(reverse=True, key=lambda x: x.getVersion())
-
-    def _create_module_dict_and_enable(self, module_list, enable = True):
+    def _create_module_dict_and_enable(self, module_list, enable=True):
         moduleDict = {}
         for module in module_list:
             moduleDict.setdefault(
@@ -165,7 +163,7 @@ class RepoModuleDict(OrderedDict):
                 no_match_specs.append(spec)
                 continue
             try:
-                module_dict = self._create_module_dict_and_enable(module_list)
+                module_dict = self._create_module_dict_and_enable(module_list, True)
                 module_dicts[spec] = (nsvcap, module_dict)
             except (RuntimeError, EnableMultipleStreamsException) as e:
                 error_spec.append(spec)
@@ -177,7 +175,7 @@ class RepoModuleDict(OrderedDict):
         return no_match_specs, error_spec, module_dicts
 
     def install(self, module_specs, strict=True):
-        no_match_specs, error_spec, module_dicts = self._resolve_specs_enable_update_sack(module_specs)
+        no_match_specs, error_specs, module_dicts = self._resolve_specs_enable_update_sack(module_specs)
 
         # <package_name, set_of_spec>
         install_dict = {}
@@ -187,8 +185,7 @@ class RepoModuleDict(OrderedDict):
                 for stream, module_list in streamdict.items():
                     install_module_list = [x for x in module_list if self.base._moduleContainer.isModuleActive(x.getId())]
                     if not install_module_list:
-                        logger.error(_("Unable to resolve argument {}").format(spec))
-                        error_spec.append(spec)
+                        error_specs.append(spec)
                         continue
                     profiles = []
                     latest_module = self._get_latest(install_module_list)
@@ -196,7 +193,7 @@ class RepoModuleDict(OrderedDict):
                         profiles.extend(latest_module.getProfiles(nsvcap.profile))
                         if not profiles:
                             logger.error(_("Unable to match profile in argument {}").format(spec))
-                            error_spec.append(spec)
+                            error_specs.append(spec)
                             continue
                     else:
                         profiles_strings = self.base._moduleContainer.getDefaultProfiles(name, stream)
@@ -226,14 +223,15 @@ class RepoModuleDict(OrderedDict):
                 for spec in set_specs:
                     logger.error(_("Unable to resolve argument {}").format(spec))
                 logger.error(_("No match for package {}").format(pkg_name))
-                error_spec.extend(set_specs)
+                error_specs.extend(set_specs)
                 continue
             self.base._goal.group_members.add(pkg_name)
             sltr = dnf.selector.Selector(self.base.sack)
             sltr.set(pkg=query)
             self.base._goal.install(select=sltr, optional=(not strict))
-        # TODO reise exception and return specks with problem
-        return no_match_specs
+        if no_match_specs or error_specs:
+            raise dnf.module.exceptions.ModuleMarkingError(no_match_specs=no_match_specs,
+                                                           error_specs=error_specs)
 
     def _modules_reset_or_disable(self, module_specs, to_state):
         no_match_specs = []
