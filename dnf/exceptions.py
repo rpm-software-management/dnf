@@ -18,7 +18,7 @@ Core DNF Errors.
 """
 
 from __future__ import unicode_literals
-from dnf.i18n import ucd
+from dnf.i18n import ucd, _
 
 
 class DeprecationWarning(DeprecationWarning):
@@ -98,7 +98,11 @@ class MarkingError(Error):
             string += ': ' + self.pkg_spec
         return string
 
-
+class MarkingErrors(Error):
+    def __init__(self, specs=()):
+        """Initialize the marking error instance."""
+        super(MarkingErrors, self).__init__(_('No match for one or more arguments'))
+        self.specs = specs
 
 class MetadataError(Error):
     pass

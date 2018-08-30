@@ -21,7 +21,7 @@ from __future__ import print_function
 
 from dnf.cli import commands, CliError
 from dnf.i18n import _
-from dnf.module.exceptions import NoModuleException, EnableMultipleStreamsException
+from dnf.module.exceptions import NoModuleException, EnableMultipleStreamsException, ModuleMarkingError
 from dnf.module.subject import ModuleSubject
 from dnf.util import logger
 
@@ -134,9 +134,15 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            module_specs = self.base.repo_module_dict.install(self.opts.module_spec, self.base.conf.strict)
-            if module_specs:
-                raise NoModuleException(", ".join(module_specs))
+            try:
+                self.base.repo_module_dict.install(self.opts.module_spec, self.base.conf.strict)
+            except ModuleMarkingError as e:
+                no_match_specs = e.no_match_specs
+                if no_match_specs:
+                    for spec in no_match_specs:
+                        logger.error(_("Unable to resolve argument {}").format(spec))
+                if self.base.conf.strict:
+                    raise e
 
     class UpdateSubCommand(SubCommand):
 

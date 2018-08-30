@@ -1830,14 +1830,24 @@ class Base(object):
                 self.install(spec, reponame=reponame, strict=strict, forms=forms)
             except dnf.exceptions.Error:
                 skipped.append(spec)
+        no_match_module_specs = ()
 
-        groups = self.install_module(install_specs.grp_specs, strict)
+        try:
+            self.install_module(install_specs.grp_specs, strict)
+        except dnf.module.exceptions.ModuleMarkingError as e:
+            no_match_module_specs = e.no_match_specs
+            error_module_specs = e.error_specs
+            if error_module_specs:
+                for spec in error_module_specs:
+                    skipped.append("@" + spec)
 
-        self.read_comps(arch_filter=True)
-        exclude_specs.grp_specs = self._expand_groups(exclude_specs.grp_specs)
-        self._install_groups(groups, exclude_specs, skipped, strict)
+        if no_match_module_specs:
+            self.read_comps(arch_filter=True)
+            exclude_specs.grp_specs = self._expand_groups(exclude_specs.grp_specs)
+            self._install_groups(no_match_module_specs, exclude_specs, skipped, strict)
 
-        return skipped
+        if skipped:
+            raise dnf.exceptions.MarkingErrors(specs=skipped)
 
     def install(self, pkg_spec, reponame=None, strict=True, forms=None):
         # :api
