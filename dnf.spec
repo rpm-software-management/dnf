@@ -491,6 +491,23 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Fri Aug 31 2018 Daniel Mach <dmach@redhat.com> - 3.4.0-1
+- [history] Fix 'attempt to write a readonly database' error in addConsoleOutputLine().
+- [spec] Improve YUM v3 compat layer.
+- [doc] document missing link from yum-rhn-plugin to dnf-plugin-spacewalk (RhBug:1580356)
+- [doc] document difference between yum and dnf when listing packages (RhBug:1615834)
+- [doc] document missing download functionality after transaction table is displayed (RhBug:1585140)
+- [systemd] dnf-makecache.timer: move the ordering after network to .service
+- [translations] Update translations from zanata.
+- [cli] Fix 'already installed' message output.
+- [module] change 'module_nsvp' to 'module_spec'
+- [module] show module profiles without ', ...'
+- [module] unify usability of RepoModuleDict.get_info*(); fix traceback
+- [security] fix update count (RhBug:1585138)
+- [cli] enable reposync to use --destdir (RhBug:1582152)
+- [repo] Replace dnf.repo.Repo with libdnf implementation.
+- [dnf] Limit DeprecationWarning to dnf.* modules only.
+
 * Mon Aug 13 2018 Daniel Mach <dmach@redhat.com> - 3.3.0-1
 - [misc] Fallback to os.getuid() if /proc/self/loginuid can't be read (RhBug:1597005)
 - [translations] Update translations from zanata.
