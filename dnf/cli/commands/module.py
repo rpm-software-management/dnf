@@ -28,6 +28,8 @@ from dnf.util import logger
 import sys
 import os
 
+import libdnf
+
 
 class ModuleCommand(commands.Command):
     class SubCommand(commands.Command):
@@ -48,13 +50,17 @@ class ModuleCommand(commands.Command):
             mods = self.base.repo_module_dict
 
             if self.opts.enabled:
-                print(mods.get_brief_description_enabled(self.opts.module_spec))
+                print(mods._get_brief_description(self.opts.module_spec,
+                    libdnf.module.ModulePackageContainer.ModuleState_ENABLED))
             elif self.opts.disabled:
-                print(mods.get_brief_description_disabled(self.opts.module_spec))
+                print(mods._get_brief_description(self.opts.module_spec,
+                    libdnf.module.ModulePackageContainer.ModuleState_DISABLED))
             elif self.opts.installed:
-                print(mods.get_brief_description_installed(self.opts.module_spec))
+                print(mods._get_brief_description(self.opts.module_spec,
+                    libdnf.module.ModulePackageContainer.ModuleState_INSTALLED))
             else:
-                print(mods.get_brief_description_latest(self.opts.module_spec))
+                print(mods._get_brief_description(self.opts.module_spec,
+                    libdnf.module.ModulePackageContainer.ModuleState_UNKNOWN))
 
             return 0
 
@@ -189,19 +195,6 @@ class ModuleCommand(commands.Command):
                 print()
                 logger.info(self.base.repo_module_dict.get_info_profiles(spec))
 
-    class StreamsSubCommand(SubCommand):
-
-        aliases = ("streams", "enabled", "enabled-streams")
-
-        def configure(self):
-            demands = self.cli.demands
-            demands.available_repos = True
-            demands.sack_activation = True
-
-        def run_on_module(self):
-            logger.info(self.base.repo_module_dict
-                        .get_brief_description_enabled(self.opts.module_spec))
-
     class ProvidesSubCommand(SubCommand):
 
         aliases = ("provides", )
@@ -216,9 +209,9 @@ class ModuleCommand(commands.Command):
 
     SUBCMDS = {ListSubCommand, InfoSubCommand, EnableSubCommand,
                DisableSubCommand, ResetSubCommand, InstallSubCommand, UpdateSubCommand,
-               RemoveSubCommand, ProfileInfoSubCommand, StreamsSubCommand, ProvidesSubCommand}
+               RemoveSubCommand, ProfileInfoSubCommand, ProvidesSubCommand}
 
-    SUBCMDS_NOT_REQUIRED_ARG = {ListSubCommand, StreamsSubCommand}
+    SUBCMDS_NOT_REQUIRED_ARG = {ListSubCommand}
 
     aliases = ("module",)
     summary = _("Interact with Modules.")

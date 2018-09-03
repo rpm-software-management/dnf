@@ -113,7 +113,7 @@ class RepoModuleDict(OrderedDict):
             modules = self.base._moduleContainer.query(name, stream, version, context, arch)
             if modules:
                 return modules, nsvcap
-        return None, None
+        return (), None
 
     def _get_latest(self, module_list):
         latest = None
@@ -159,7 +159,7 @@ class RepoModuleDict(OrderedDict):
         module_dicts = {}
         for spec in set(module_specs):
             module_list, nsvcap = self._get_modules(spec)
-            if module_list is None:
+            if not module_list:
                 no_match_specs.append(spec)
                 continue
             try:
@@ -289,7 +289,7 @@ class RepoModuleDict(OrderedDict):
 
         for spec in set(module_specs):
             module_list, nsvcap = self._get_modules(spec)
-            if module_list is None:
+            if not module_list:
                 no_match_specs.append(spec)
                 continue
             update_module_list = [x for x in module_list if self.base._moduleContainer.isModuleActive(x.getId())]
@@ -331,7 +331,7 @@ class RepoModuleDict(OrderedDict):
 
         for spec in set(module_specs):
             module_list, nsvcap = self._get_modules(spec)
-            if module_list is None:
+            if not module_list:
                 no_match_specs.append(spec)
                 continue
             module_dict = self._create_module_dict_and_enable(module_list, False)
@@ -491,26 +491,6 @@ class RepoModuleDict(OrderedDict):
 
         return versions
 
-    def list_module_version_enabled(self):
-        versions = []
-
-        for version in self.list_module_version_latest():
-            conf = version.repo_module.conf
-            if conf.state._get() == "enabled" and conf.stream._get() == version.stream:
-                versions.append(version)
-
-        return versions
-
-    def list_module_version_disabled(self):
-        versions = []
-
-        for version in self.list_module_version_latest():
-            conf = version.repo_module.conf
-            if conf.state._get() != "enabled" or version.stream != conf.stream._get():
-                versions.append(version)
-
-        return versions
-
     def list_module_version_installed(self):
         versions = []
 
@@ -550,68 +530,7 @@ class RepoModuleDict(OrderedDict):
 
         logger.info(output[:-2])
 
-    def get_brief_description_latest(self, module_n):
-        return self.get_brief_description_by_name(module_n, self.list_module_version_latest())
-
-    def get_brief_description_enabled(self, module_n):
-        return self.get_brief_description_by_name(module_n, self.list_module_version_enabled())
-
-    def get_brief_description_disabled(self, module_n):
-        return self.get_brief_description_by_name(module_n, self.list_module_version_disabled())
-
-    def get_brief_description_installed(self, module_n):
-        return self.get_brief_description_by_name(module_n, self.list_module_version_installed())
-
-    def get_brief_description_by_name(self, module_n, repo_module_versions):
-        if module_n is None or not module_n:
-            return self._get_brief_description(repo_module_versions)
-        else:
-            filtered_versions_by_name = set()
-            for name in module_n:
-                for version in repo_module_versions:
-                    if fnmatch.fnmatch(version.name, name):
-                        filtered_versions_by_name.add(version)
-
-            return self._get_brief_description(list(filtered_versions_by_name))
-
-    def _get_brief_description(self, repo_module_versions):
-        if not repo_module_versions:
-            return module_messages[NOTHING_TO_SHOW]
-
-        versions_by_repo = OrderedDict()
-        for version in sorted(repo_module_versions, key=lambda version: version.repo.name):
-            default_list = versions_by_repo.setdefault(version.repo.name, [])
-            default_list.append(version)
-
-        table = self.create_and_fill_table(versions_by_repo)
-
-        current_repo_id_index = 0
-        already_printed_lines = 0
-        items = list(versions_by_repo.items())
-        repo_id, versions = items[current_repo_id_index]
-        str_table = self.print_header(table, repo_id)
-        for i in range(0, table.getNumberOfLines()):
-            if len(versions) + already_printed_lines <= i:
-                already_printed_lines += len(versions)
-                current_repo_id_index += 1
-
-                repo_id, versions = items[current_repo_id_index]
-                str_table += "\n"
-                str_table += self.print_header(table, repo_id)
-
-            line = table.getLine(i)
-            str_table += table.toString(line, line)
-
-        return str_table + "\n\nHint: [d]efault, [e]nabled, [i]nstalled"
-
-    def print_header(self, table, repo_id):
-        line = table.getLine(0)
-        header = table.toString(line, line).split('\n', 1)[0]
-        out_str = "{}\n".format(self.base.output.term.bold(repo_id))
-        out_str += "{}\n".format(header)
-        return out_str
-
-    def create_and_fill_table(self, versions_by_repo):
+    def _create_and_fill_table(self, latest):
         table = libdnf.smartcols.Table()
         table.setTermforce(libdnf.smartcols.Table.TermForce_ALWAYS)
         table.enableMaxout(True)
@@ -625,41 +544,83 @@ class RepoModuleDict(OrderedDict):
         if not self.base.conf.verbose:
             column_info.hidden = True
 
-        for repo_id, versions in versions_by_repo.items():
-            for i in sorted(versions):
+        for latest_per_repo in latest:
+            for nameStreamArch in latest_per_repo:
+                if len(nameStreamArch) == 1:
+                    modulePackage = nameStreamArch[0]
+                else:
+                    active = [module for module in nameStreamArch if self.base._moduleContainer.isModuleActive(module)]
+                    if active:
+                        modulePackage = active[0]
+                    else:
+                        modulePackage = nameStreamArch[0]
                 line = table.newLine()
-                conf = i.repo_module.conf
-                defaults_conf = i.repo_module.defaults
                 default_str = ""
                 enabled_str = ""
                 profiles_str = ""
-                available_profiles = i.profiles
-                installed_profiles = []
+                available_profiles = modulePackage.getProfiles()
 
-                if i.stream == defaults_conf.peek_default_stream():
+                if modulePackage.getStream == self.base._moduleContainer.getDefaultStream(modulePackage.getName()):
                     default_str = " [d]"
 
-                if i.stream == conf.stream._get() and conf.state._get() == "enabled":
+                if self.base._moduleContainer.isEnabled(modulePackage):
                     if not default_str:
                         enabled_str = " "
                     enabled_str += "[e]"
 
-                if i.stream == conf.stream._get():
-                    installed_profiles = list(conf.profiles._get())
+                installed_profiles = self.base._moduleContainer.getInstalledProfiles(modulePackage.getName())
 
-                default_profiles = []
-                default_stream = defaults_conf.peek_default_stream()
-                profile_defaults = defaults_conf.peek_profile_defaults()
-                if default_stream in profile_defaults:
-                    default_profiles.extend(profile_defaults[default_stream].dup())
+                default_profiles = self.base._moduleContainer.getDefaultProfiles(modulePackage.getName(), modulePackage.getStream())
                 for profile in available_profiles:
-                    profiles_str += "{}{}".format(profile,
-                                                  " [d]" if profile in default_profiles else "")
-                    profiles_str += "[i], " if profile in installed_profiles else ", "
+                    profile_name = profile.getName()
+                    profiles_str += "{}{}".format(profile_name,
+                                                  " [d]" if profile_name in default_profiles else "")
+                    profiles_str += "[i], " if profile_name in installed_profiles else ", "
 
-                line.getColumnCell(column_name).setData(i.name)
-                line.getColumnCell(column_stream).setData(i.stream + default_str + enabled_str)
+                line.getColumnCell(column_name).setData(modulePackage.getName())
+                line.getColumnCell(column_stream).setData(modulePackage.getStream() + default_str + enabled_str)
                 line.getColumnCell(column_profiles).setData(profiles_str[:-2])
-                line.getColumnCell(column_info).setData(i.summary())
+                line.getColumnCell(column_info).setData(modulePackage.getSummary())
 
         return table
+
+    def _get_brief_description(self, module_specs, module_state):
+        modules = []
+        if module_specs:
+            for spec in set(module_specs):
+                module_list, nsvcap = self._get_modules(spec)
+                modules.extend(module_list)
+        else:
+            modules = self.base._moduleContainer.getModulePackages()
+        latest = self.base._moduleContainer.getLatestModulesPerRepo(module_state, modules)
+        if not latest:
+            return module_messages[NOTHING_TO_SHOW]
+
+        table = self._create_and_fill_table(latest)
+        current_repo_id_index = 0
+        already_printed_lines = 0
+        repo_name = self.base.repos[latest[0][0][0].getRepoID()].name
+        versions = len(latest[0])
+        str_table = self._print_header(table, repo_name, True)
+        for i in range(0, table.getNumberOfLines()):
+            if versions + already_printed_lines <= i:
+                already_printed_lines += versions
+                current_repo_id_index += 1
+                repo_name = self.base.repos[latest[current_repo_id_index][0][0].getRepoID()].name
+                versions = len(latest[current_repo_id_index])
+                str_table += "\n"
+                str_table += self._print_header(table, repo_name, False)
+
+            line = table.getLine(i)
+            str_table += table.toString(line, line)
+
+        return str_table + "\n\nHint: [d]efault, [e]nabled, [i]nstalled"
+
+    def _print_header(self, table, repo_id, with_header):
+        # TODO Fix header to print it always - now not accessible in second call.
+        line = table.getLine(0)
+        header = table.toString(line, line).split('\n', 1)[0]
+        out_str = "{}\n".format(self.base.output.term.bold(repo_id))
+        if with_header:
+            out_str += "{}\n".format(header)
+        return out_str
