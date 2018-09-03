@@ -428,38 +428,6 @@ class ModuleTest(unittest.TestCase):
         rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=1)
         self.assertIn(rmv, all)
 
-    def test_list_enabled(self):
-        rmd = self.base.repo_module_dict
-
-        enabled = rmd.list_module_version_enabled()
-        rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=2)
-        self.assertNotIn(rmv, enabled)
-
-        rmd.enable(["base-runtime:f26"])
-
-        enabled = rmd.list_module_version_enabled()
-        rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=2)
-        self.assertIn(rmv, enabled)
-
-    def test_list_disabled(self):
-        rmd = self.base.repo_module_dict
-
-        # enable
-        rmd.enable(["base-runtime:f26"])
-
-        # check not in disabled
-        disabled = rmd.list_module_version_disabled()
-        rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=2)
-        self.assertNotIn(rmv, disabled)
-
-        # disable
-        rmd.disable(["base-runtime"])
-
-        # check in disabled
-        disabled = rmd.list_module_version_disabled()
-        rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=2)
-        self.assertIn(rmv, disabled)
-
     def test_list_installed(self):
         rmd = self.base.repo_module_dict
 

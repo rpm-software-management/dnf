@@ -816,9 +816,6 @@ In case stream is not specified enabled or default stream is used, in this order
 ``dnf [options] module profile <module_spec>...``
     Print detailed information about given module profiles.
 
-``dnf [options] module streams [module_spec...]``
-    Alias for `dnf module list \-\-enabled`.
-
 .. _provides_command-label:
 
 ----------------
