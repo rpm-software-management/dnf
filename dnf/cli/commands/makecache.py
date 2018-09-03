@@ -43,12 +43,6 @@ class MakeCacheCommand(commands.Command):
         parser.add_argument('timer', nargs='?', choices=['timer'],
                             metavar='timer', help=argparse.SUPPRESS)
 
-    def configure(self):
-        """Verify that conditions are met so that this command can
-        run; namely that there is an enabled repository.
-        """
-        commands._checkEnabledRepo(self.base)
-
     def run(self):
         timer = self.opts.timer is not None or self.opts.timer_opt
         msg = _("Making cache files for all metadata files.")
