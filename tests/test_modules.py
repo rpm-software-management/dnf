@@ -23,15 +23,9 @@ import shutil
 import tempfile
 import unittest
 
-import hawkey
-from hawkey import NSVCAP
 import libdnf
 
 import dnf.conf
-
-import gi
-gi.require_version('Modulemd', '1.0')
-from gi.repository import Modulemd
 
 TOP_DIR = os.path.abspath(os.path.dirname(__file__))
 MODULES_DIR = os.path.join(TOP_DIR, "modules/etc/dnf/modules.d")
@@ -53,37 +47,6 @@ MODULE_NSA = "module-name:stream::x86_64"
 MODULE_NS = "module-name:stream"
 MODULE_N = "module-name"
 MODULE_NA = "module-name::x86_64"
-
-
-class RepoModuleDictTest(unittest.TestCase):
-    @staticmethod
-    def _create_mmd(name, stream, version, rpms=None, profiles=None):
-        rpms = rpms or []
-        profiles = profiles or {}  # profile_name: {pkg_format: [pkg_names]}
-
-        mmd = Modulemd.Module()
-        mmd.set_mdversion(int(1))
-        mmd.set_name(str(name))
-        mmd.set_stream(str(stream))
-        mmd.set_version(int(version))
-        sset = Modulemd.SimpleSet()
-        sset.add("LGPLv2")
-        mmd.set_module_licenses(sset)
-        mmd.set_summary(str("Fake module"))
-        mmd.set_description(mmd.peek_summary())
-        artifacts = Modulemd.SimpleSet()
-        for rpm in rpms:
-            artifacts.add(rpm[:-4])
-        mmd.set_rpm_artifacts(artifacts)
-        for profile_name in profiles:
-            profile = Modulemd.Profile()
-            profile.set_name(profile_name)
-            profile_rpms = Modulemd.SimpleSet()
-            profile_rpms.set(profiles[profile_name].get("rpms", []))
-            profile.set_rpms(profile_rpms)
-            mmd.add_profile(profile)
-
-        return mmd
 
 
 class ModuleTest(unittest.TestCase):
