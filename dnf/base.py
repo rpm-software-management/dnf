@@ -2113,19 +2113,13 @@ class Base(object):
         binary_provides = [prefix + provides_spec for prefix in ['/usr/bin/', '/usr/sbin/']]
         return self.sack.query().filterm(file__glob=binary_provides), binary_provides
 
-    def _history_undo_operations(self, operations, first_trans, rollback=False):
+    def _history_undo_operations(self, operations, first_trans, rollback=False, strict=True):
         """Undo the operations on packages by their NEVRAs.
 
         :param operations: a NEVRAOperations to be undone
         :param first_trans: first transaction id being undone
         :param rollback: True if transaction is performing a rollback
-        :return: (exit_code, [ errors ])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-            2 = we've got work yet to do, onto the next stage
+        :param strict: if True, raise an exception on any errors
         """
 
         # map actions to their opposites
@@ -2136,13 +2130,15 @@ class Base(object):
             libdnf.transaction.TransactionItemAction_OBSOLETE: None,
             libdnf.transaction.TransactionItemAction_OBSOLETED: libdnf.transaction.TransactionItemAction_INSTALL,
             libdnf.transaction.TransactionItemAction_REINSTALL: None,
-            libdnf.transaction.TransactionItemAction_REINSTALLED: libdnf.transaction.TransactionItemAction_REINSTALL,
+            # reinstalls are skipped as they are considered as no-operation from history perspective
+            libdnf.transaction.TransactionItemAction_REINSTALLED: None,
             libdnf.transaction.TransactionItemAction_REMOVE: libdnf.transaction.TransactionItemAction_INSTALL,
             libdnf.transaction.TransactionItemAction_UPGRADE: None,
             libdnf.transaction.TransactionItemAction_UPGRADED: libdnf.transaction.TransactionItemAction_DOWNGRADE,
             libdnf.transaction.TransactionItemAction_REASON_CHANGE: None,
         }
 
+        failed = False
         for ti in operations.packages():
             try:
                 action = action_map[ti.action]
@@ -2153,17 +2149,28 @@ class Base(object):
                 continue
 
             if action == libdnf.transaction.TransactionItemAction_REMOVE:
-                pkgs = self.sack.query().installed().filter(nevra=str(ti))
+                query = self.sack.query().installed().filterm(nevra_strict=str(ti))
+                if not query:
+                    logger.error(_('No package %s installed.'), ucd(str(ti)))
+                    failed = True
+                    continue
             else:
-                pkgs = list(self.sack.query().available().filter(nevra=str(ti), reponame=ti.from_repo))
-                if not pkgs:
-                    pkgs = list(self.sack.query().available().filter(nevra=str(ti)))
-            if not pkgs:
-                logger.info(_('No package %s available.'), ucd(str(ti)))
-                raise dnf.exceptions.PackageNotFoundError(_('no package matched'), ucd(str(ti)))
-            pkg = pkgs[0]
+                query = self.sack.query().filterm(nevra_strict=str(ti))
+                if not query:
+                    logger.error(_('No package %s available.'), ucd(str(ti)))
+                    failed = True
+                    continue
 
-            self.history.rpm.new(pkg, action, ti.reason)
+            selector = dnf.selector.Selector(self.sack)
+            selector.set(pkg=query)
+
+            if action == libdnf.transaction.TransactionItemAction_REMOVE:
+                self._goal.erase(select=selector)
+            else:
+                self._goal.install(select=selector, optional=(not strict))
+
+        if strict and failed:
+            raise dnf.exceptions.PackageNotFoundError(_('no package matched'))
 
     def _merge_update_filters(self, q, pkg_spec=None, warning=True):
         """
