@@ -91,7 +91,7 @@ class RepoModuleDict(OrderedDict):
         no_match_specs, error_spec, module_dicts = self._resolve_specs_enable_update_sack(module_specs)
         for spec, (nsvcap, module_dict) in module_dicts.items():
             if nsvcap.profile:
-                logger.info("Ignoring unnecessary profile: '{}/{}'".format(nsvcap.name, nsvcap.profile))
+                logger.info(_("Ignoring unnecessary profile: '{}/{}'").format(nsvcap.name, nsvcap.profile))
         if no_match_specs:
             raise dnf.module.exceptions.ModuleMarkingError(no_match_specs=no_match_specs)
 
@@ -242,7 +242,7 @@ class RepoModuleDict(OrderedDict):
                 no_match_specs.append(spec)
                 continue
             if nsvcap.profile:
-                logger.info("Ignoring unnecessary profile: '{}/{}'".format(nsvcap.name, nsvcap.profile))
+                logger.info(_("Ignoring unnecessary profile: '{}/{}'").format(nsvcap.name, nsvcap.profile))
             module_names = set()
             for module in module_list:
                 module_names.add(module.getName())
@@ -368,82 +368,79 @@ class RepoModuleDict(OrderedDict):
 
         return modules_dir
 
-    def get_module_defaults_dir(self):
-        return self.base.conf.moduledefaultsdir._get()
+    def _get_info_profiles(self, module_specs):
+        output = []
+        for module_spec in module_specs:
+            module_list, nsvcap = self._get_modules(module_spec)
+            if not module_list:
+                logger.info(_("Unable to resolve argument {}").format(module_spec))
+                continue
 
-    def get_info_profiles(self, module_spec):
-        subj = ModuleSubject(module_spec)
-        module_version, module_form = subj.find_module_version(self)
+            if nsvcap.profile:
+                logger.info(_("Ignoring unnecessary profile: '{}/{}'").format(
+                    nsvcap.name, nsvcap.profile))
+            for module in module_list:
 
-        if module_form.profile:
-            logger.info("Ignoring unnecessary profile: '{}/{}'".format(module_form.name,
-                                                                       module_form.profile))
+                lines = OrderedDict()
+                lines["Name"] = module.getFullIdentifier()
 
-        lines = OrderedDict()
-        lines["Name"] = module_version.full_version
+                for profile in module.getProfiles():
+                    lines[profile.getName()] = "\n".join([pkgName for pkgName in profile.getContent()])
 
-        for profile in module_version.profiles:
-            nevra_objects = module_version.profile_nevra_objects(profile)
-            lines[profile] = "\n".join(["{}-{}".format(nevra.name, nevra.evr())
-                                        for nevra in nevra_objects])
+                output.append(self._create_simple_table(lines).toString())
+        return "\n\n".join(sorted(output))
 
-        return self.create_simple_table(lines).toString()
+    def _get_info(self, module_specs):
+        output = []
+        for module_spec in module_specs:
+            module_list, nsvcap = self._get_modules(module_spec)
+            if not module_list:
+                logger.info(_("Unable to resolve argument {}").format(module_spec))
+                continue
 
-    def get_info(self, module_spec):
-        subj = ModuleSubject(module_spec)
-        module_version, module_form = subj.find_module_version(self)
+            if nsvcap.profile:
+                logger.info(_("Ignoring unnecessary profile: '{}/{}'").format(
+                    nsvcap.name, nsvcap.profile))
+            for modulePackage in module_list:
+                default_str = ""
+                if modulePackage.getStream == self.base._moduleContainer.getDefaultStream(
+                        modulePackage.getName()):
+                    default_str = " [d]"
+                enabled_str = ""
+                if self.base._moduleContainer.isEnabled(modulePackage):
+                    if not default_str:
+                        enabled_str = " "
+                    enabled_str += "[e]"
+                installed_profiles = self.base._moduleContainer.getInstalledProfiles(
+                    modulePackage.getName())
+                available_profiles = modulePackage.getProfiles()
 
-        if module_form.profile:
-            logger.info("Ignoring unnecessary profile: '{}/{}'".format(module_form.name,
-                                                                       module_form.profile))
+                default_profiles = self.base._moduleContainer.getDefaultProfiles(
+                    modulePackage.getName(), modulePackage.getStream())
+                profiles_str = ""
+                for profile in available_profiles:
+                    profiles_str += "{}{}".format(profile.getName(),
+                                                  " [d]" if profile.getName() in default_profiles else "")
+                    profiles_str += "[i], " if profile in installed_profiles else ", "
 
-        conf = module_version.repo_module.conf
+                profiles_str = profiles_str[:-2]
 
-        default_stream = module_version.repo_module.defaults.peek_default_stream()
-        default_str = " [d]" if module_version.stream == default_stream else ""
-        enabled_str = ""
-        if module_version.stream == conf.stream._get() and conf.state._get() == "enabled":
-            if not default_str:
-                enabled_str = " "
-            enabled_str += "[e]"
-
-        default_profiles = []
-        stream = module_form.stream or module_version.repo_module.defaults.peek_default_stream()
-        profile_defaults = module_version.repo_module.defaults.peek_profile_defaults()
-        if stream in profile_defaults:
-            default_profiles.extend(profile_defaults[stream].dup())
-
-        profiles_str = ""
-        available_profiles = module_version.profiles
-        installed_profiles = []
-
-        if module_version.stream == conf.stream._get():
-            installed_profiles = list(conf.profiles._get())
-
-        for profile in available_profiles:
-            profiles_str += "{}{}".format(profile,
-                                          " [d]" if profile in default_profiles else "")
-            profiles_str += "[i], " if profile in installed_profiles else ", "
-
-        profiles_str = profiles_str[:-2]
-
-        lines = OrderedDict()
-        lines["Name"] = module_version.name
-        lines["Stream"] = module_version.stream + default_str + enabled_str
-        lines["Version"] = module_version.version
-        lines["Profiles"] = profiles_str
-        lines["Default profiles"] = " ".join(default_profiles)
-        lines["Repo"] = module_version.repo.id
-        lines["Summary"] = module_version.summary()
-        lines["Description"] = module_version.description()
-        lines["Artifacts"] = "\n".join(sorted(module_version.artifacts()))
-
-        str_table = self.create_simple_table(lines).toString()
-
+                lines = OrderedDict()
+                lines["Name"] = modulePackage.getName()
+                lines["Stream"] = modulePackage.getStream() + default_str + enabled_str
+                lines["Version"] = modulePackage.getVersion()
+                lines["Profiles"] = profiles_str
+                lines["Default profiles"] = " ".join(default_profiles)
+                lines["Repo"] = modulePackage.getRepoID()
+                lines["Summary"] = modulePackage.getSummary()
+                lines["Description"] = modulePackage.getDescription()
+                lines["Artifacts"] = "\n".join(sorted(modulePackage.getArtifacts()))
+                output.append(self._create_simple_table(lines).toString())
+        str_table = "\n\n".join(sorted(set(output)))
         return str_table + "\n\nHint: [d]efault, [e]nabled, [i]nstalled"
 
     @staticmethod
-    def create_simple_table(lines):
+    def _create_simple_table(lines):
         table = libdnf.smartcols.Table()
         table.enableNoheadings(True)
         table.setColumnSeparator(" : ")
@@ -462,15 +459,23 @@ class RepoModuleDict(OrderedDict):
 
         return table
 
-    def get_full_info(self, module_spec):
-        subj = ModuleSubject(module_spec)
-        module_version, module_form = subj.find_module_version(self)
+    def _get_full_info(self, module_specs):
+        output = []
+        for module_spec in module_specs:
+            module_list, nsvcap = self._get_modules(module_spec)
+            if not module_list:
+                logger.info(_("Unable to resolve argument {}").format(module_spec))
+                continue
 
-        if module_form.profile:
-            logger.info("Ignoring unnecessary profile: '{}/{}'".format(module_form.name,
-                                                                       module_form.profile))
-
-        return module_version.module_metadata.dumps().rstrip("\n")
+            if nsvcap.profile:
+                logger.info(_("Ignoring unnecessary profile: '{}/{}'").format(
+                    nsvcap.name, nsvcap.profile))
+            for modulePackage in module_list:
+                info = modulePackage.getYaml()
+                if info:
+                    output.append(info)
+        output_string = "\n\n".join(sorted(set(output)))
+        return output_string
 
     def list_module_version_latest(self):
         versions = []
@@ -520,7 +525,7 @@ class RepoModuleDict(OrderedDict):
                              "Repo": modulePackage.getRepoID(),
                              "Summary": modulePackage.getSummary()}
 
-                    table = self.create_simple_table(lines)
+                    table = self._create_simple_table(lines)
 
                     string_output += "{}\n".format(self.base.output.term.bold(str(pkg)))
                     string_output += "{}".format(table.toString())

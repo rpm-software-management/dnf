@@ -445,11 +445,6 @@ class ModuleTest(unittest.TestCase):
         self.assertEqual(self.base._moduleContainer.getEnabledStream("base-runtime"), "f26")
         self.assertEqual(list(self.base._moduleContainer.getInstalledProfiles("base-runtime")), ["minimal"])
 
-        # check installed
-        installed = rmd.list_module_version_installed()
-        rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=2)
-        self.assertIn(rmv, installed)
-
     # dnf module install / dnf install @
 
     def test_install_profile_latest(self):
