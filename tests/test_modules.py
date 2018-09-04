@@ -418,16 +418,6 @@ class ModuleTest(unittest.TestCase):
         rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=1)
         self.assertNotIn(rmv, latest)
 
-    def test_list_all(self):
-        rmd = self.base.repo_module_dict
-        all = rmd.list_module_version_all()
-
-        rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=2)
-        self.assertIn(rmv, all)
-
-        rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=1)
-        self.assertIn(rmv, all)
-
     def test_list_installed(self):
         rmd = self.base.repo_module_dict
 

@@ -205,7 +205,9 @@ class ModuleCommand(commands.Command):
             demands.sack_activation = True
 
         def run_on_module(self):
-            self.base.repo_module_dict.print_what_provides(self.opts.module_spec)
+            output = self.base.repo_module_dict._what_provides(self.opts.module_spec)
+            if output:
+                print(output)
 
     SUBCMDS = {ListSubCommand, InfoSubCommand, EnableSubCommand,
                DisableSubCommand, ResetSubCommand, InstallSubCommand, UpdateSubCommand,
