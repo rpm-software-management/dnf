@@ -30,9 +30,6 @@ import libdnf.transaction
 
 from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
-from dnf.module.metadata_loader import ModuleMetadataLoader
-from dnf.module.repo_module_dict import RepoModuleDict
-from dnf.module.repo_module_version import RepoModuleVersion
 from dnf.util import _parse_specs
 from dnf.db.history import SwdbInterface
 from dnf.yum import misc
@@ -53,6 +50,7 @@ import dnf.goal
 import dnf.history
 import dnf.lock
 import dnf.logging
+import dnf.module.module_base
 import dnf.persistor
 import dnf.plugin
 import dnf.query
@@ -67,7 +65,6 @@ import dnf.subject
 import dnf.transaction
 import dnf.util
 import dnf.yum.rpmtrans
-import errno
 import functools
 import hawkey
 import itertools
@@ -76,14 +73,9 @@ import os
 import operator
 import re
 import rpm
-import sys
 import time
 import shutil
 
-import gi
-gi.require_version('Modulemd', '1.0')
-from gi.repository import Modulemd
-from gi.repository import GLib
 
 logger = logging.getLogger("dnf")
 
@@ -115,7 +107,7 @@ class Base(object):
         self._update_security_filters = []
         self._allow_erasing = False
         self._repo_set_imported_gpg_keys = set()
-        self.repo_module_dict = RepoModuleDict(self)
+        self.module_base = dnf.module.module_base.ModuleBase(self)
         self.output = None
 
     def __enter__(self):
@@ -224,62 +216,6 @@ class Base(object):
         if repo_excludes:
             for query, repoid in repo_excludes:
                 self.sack.add_excludes(query)
-
-    def _setup_modules(self):
-        module_defaults_prioritizer = Modulemd.Prioritizer()
-
-        # read defaults from repos
-        for repo in self.repos.iter_enabled():
-            try:
-                module_metadata = ModuleMetadataLoader(repo).load()
-
-                defaults = [i for i in module_metadata if isinstance(i, Modulemd.Defaults)]
-                module_defaults_prioritizer.add(defaults, 0)
-
-                # read modules from modulemd
-                for data in module_metadata:
-                    if not isinstance(data, Modulemd.Module):
-                        continue
-                    self.repo_module_dict.add(RepoModuleVersion(data, base=self, repo=repo))
-            except (dnf.exceptions.Error, GLib.Error) as e:
-                logger.debug(e)
-                continue
-
-        # read defaults from disk
-        # chroot behavior:
-        #   * use host configuration (repos work the same)
-        #   * to use chroot configuration, you need to switch to chroot
-        topdir = self.conf.moduledefaultsdir._get()
-        try:
-            for fn in os.listdir(topdir):
-                if not fn.endswith(".yaml"):
-                    continue
-                yaml_file = os.path.join(topdir, fn)
-
-                try:
-                    with open(yaml_file, "r") as f:
-                        modules_yaml = f.read()
-                    module_metadata = Modulemd.objects_from_string(modules_yaml)
-                    defaults = [i for i in module_metadata if isinstance(i, Modulemd.Defaults)]
-                    module_defaults_prioritizer.add(defaults, 1000)
-                except IOError as ex:
-                    logger.warning(ex)
-        except OSError as ex:
-            if ex.errno != errno.ENOENT:
-                raise
-
-        # resolve defaults and store them for future use
-        try:
-            for default in module_defaults_prioritizer.resolve():
-                try:
-                    self.repo_module_dict[default.peek_module_name()].defaults = default
-                except KeyError:
-                    logger.debug("No module named {}, ignoring defaults."
-                                 .format(default.peek_module_name()))
-        except GLib.GError as ex:
-            logger.debug(ex)
-
-        self.repo_module_dict.read_all_module_confs()
 
     def _store_persistent_data(self):
         if self._repo_persistor and not self.conf.cacheonly:
@@ -464,7 +400,6 @@ class Base(object):
                 self.repos.all().disable()
         conf = self.conf
         self._sack._configure(conf.installonlypkgs, conf.installonly_limit)
-        self._setup_modules()
         self._setup_excludes_includes()
         timer()
         self._goal = dnf.goal.Goal(self._sack)
@@ -1738,16 +1673,17 @@ class Base(object):
         return len(available)
 
     def enable_module(self, specs):
-        self.repo_module_dict.enable(specs)
+        self.module_base.enable(specs)
 
     def install_module(self, specs, strict=True):
         """
-        Install module based on provided specs
+        Install module based on provided specs.In case of problem it raises
+        dnf.module.exception.ModuleMarkingError
 
         :param specs: group and module specs
-        :return: skipped/not installed group specs or problematic module specs
+
         """
-        return self.repo_module_dict.install(specs, strict)
+        self.module_base.install(specs, strict)
 
     def _categorize_specs(self, install, exclude):
         """
