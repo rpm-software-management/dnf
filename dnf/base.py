@@ -388,6 +388,10 @@ class Base(object):
             for repo in self.repos.values():
                 repo._repo.setMaxMirrorTries(1)
 
+        if not self.repos._any_enabled():
+            logger.info(_('There are no enabled repos.'))
+            return False
+
         for r in self.repos.iter_enabled():
             (is_cache, expires_in) = r._metadata_expire_in()
             if expires_in is None:
