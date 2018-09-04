@@ -617,7 +617,7 @@ class BaseCli(dnf.Base):
 #            operations += history.transaction_nevra_ops(id_)
 
         try:
-            self._history_undo_operations(mobj, old.tid + 1, True)
+            self._history_undo_operations(mobj, old.tid + 1, True, strict=self.conf.strict)
         except dnf.exceptions.PackagesNotInstalledError as err:
             raise
             logger.info(_('No package %s installed.'),
@@ -649,9 +649,7 @@ class BaseCli(dnf.Base):
         mobj = dnf.db.history.MergedTransactionWrapper(old)
 
         try:
-            self._history_undo_operations(
-                mobj,
-                old.tid)
+            self._history_undo_operations(mobj, old.tid, strict=self.conf.strict)
         except dnf.exceptions.PackagesNotInstalledError as err:
             logger.info(_('No package %s installed.'),
                         self.output.term.bold(ucd(err.pkg_spec)))
