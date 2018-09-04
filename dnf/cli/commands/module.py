@@ -46,7 +46,7 @@ class ModuleCommand(commands.Command):
             demands.sack_activation = True
 
         def run_on_module(self):
-            mods = self.base.repo_module_dict
+            mods = self.base.module_base
 
             if self.opts.enabled:
                 print(mods._get_brief_description(self.opts.module_spec,
@@ -74,11 +74,11 @@ class ModuleCommand(commands.Command):
 
         def run_on_module(self):
             if self.opts.verbose:
-                output = self.base.repo_module_dict._get_full_info(self.opts.module_spec)
+                output = self.base.module_base._get_full_info(self.opts.module_spec)
             elif self.opts.profile:
-                output = self.base.repo_module_dict._get_info_profiles(self.opts.module_spec)
+                output = self.base.module_base._get_info_profiles(self.opts.module_spec)
             else:
-                output = self.base.repo_module_dict._get_info(self.opts.module_spec)
+                output = self.base.module_base._get_info(self.opts.module_spec)
             if output:
                 print(output)
 
@@ -95,7 +95,7 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            self.base.repo_module_dict.enable(self.opts.module_spec)
+            self.base.module_base.enable(self.opts.module_spec)
 
     class DisableSubCommand(SubCommand):
 
@@ -109,7 +109,7 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            self.base.repo_module_dict.disable(self.opts.module_spec)
+            self.base.module_base.disable(self.opts.module_spec)
 
     class ResetSubCommand(SubCommand):
 
@@ -123,7 +123,7 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            self.base.repo_module_dict.reset(self.opts.module_nsvp)
+            self.base.module_base.reset(self.opts.module_nsvp)
 
     class InstallSubCommand(SubCommand):
 
@@ -138,7 +138,7 @@ class ModuleCommand(commands.Command):
 
         def run_on_module(self):
             try:
-                self.base.repo_module_dict.install(self.opts.module_spec, self.base.conf.strict)
+                self.base.module_base.install(self.opts.module_spec, self.base.conf.strict)
             except ModuleMarkingError as e:
                 no_match_specs = e.no_match_specs
                 if no_match_specs:
@@ -159,7 +159,7 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            module_specs = self.base.repo_module_dict.upgrade(self.opts.module_spec)
+            module_specs = self.base.module_base.upgrade(self.opts.module_spec)
             if module_specs:
                 raise NoModuleException(", ".join(module_specs))
 
@@ -176,7 +176,7 @@ class ModuleCommand(commands.Command):
             demands.sack_activation = True
 
         def run_on_module(self):
-            self.base.repo_module_dict.remove(self.opts.module_spec)
+            self.base.module_base.remove(self.opts.module_spec)
 
     class ProvidesSubCommand(SubCommand):
 
@@ -188,7 +188,7 @@ class ModuleCommand(commands.Command):
             demands.sack_activation = True
 
         def run_on_module(self):
-            output = self.base.repo_module_dict._what_provides(self.opts.module_spec)
+            output = self.base.module_base._what_provides(self.opts.module_spec)
             if output:
                 print(output)
 

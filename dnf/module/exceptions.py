@@ -22,18 +22,6 @@ from dnf.module import module_messages, NO_PROFILE_SPECIFIED
 from dnf.i18n import _
 
 
-class LoadCacheException(dnf.exceptions.Error):
-    def __init__(self, cache_dir):
-        value = "Cannot load from cache dir: {}".format(cache_dir)
-        super(LoadCacheException, self).__init__(value)
-
-
-class MissingYamlException(dnf.exceptions.Error):
-    def __init__(self, cache_dir):
-        value = "Missing file *modules.yaml in metadata cache dir: {}".format(cache_dir)
-        super(MissingYamlException, self).__init__(value)
-
-
 class NoModuleException(dnf.exceptions.Error):
     def __init__(self, module_spec):
         value = "No such module: {}".format(module_spec)
@@ -64,13 +52,6 @@ class DifferentStreamEnabledException(dnf.exceptions.Error):
         super(DifferentStreamEnabledException, self).__init__(value)
 
 
-class CannotLockVersionException(dnf.exceptions.Error):
-    def __init__(self, module_spec, version, reason=None):
-        value = "Cannot lock '{}' to version: {}".format(module_spec, version)
-        if reason:
-            value = "{}. {}".format(value, reason)
-        super(CannotLockVersionException, self).__init__(value)
-
 class ModuleMarkingError(dnf.exceptions.Error):
     def __init__(self, no_match_specs=(), error_specs=()):
         value = _('No match for one or more arguments')
@@ -100,12 +81,6 @@ class NoProfileSpecifiedException(dnf.exceptions.Error):
     def __init__(self, module_spec):
         value = module_messages[NO_PROFILE_SPECIFIED].format(module_spec)
         super(NoProfileSpecifiedException, self).__init__(value)
-
-
-class PossibleProfilesExceptions(dnf.exceptions.Error):
-    def __init__(self, module_spec, profiles):
-        value = "No such profile: {}. Possible profiles: {}".format(module_spec, profiles)
-        super(PossibleProfilesExceptions, self).__init__(value)
 
 
 class NoProfilesException(dnf.exceptions.Error):
