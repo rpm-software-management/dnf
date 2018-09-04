@@ -74,17 +74,15 @@ class ModuleCommand(commands.Command):
             demands.sack_activation = True
 
         def run_on_module(self):
-            for spec in self.opts.module_spec:
-                try:
-                    print()
-                    if self.opts.verbose:
-                        print(self.base.repo_module_dict.get_full_info(spec))
-                    elif self.opts.profile:
-                        print(self.base.repo_module_dict.get_info_profiles(spec))
-                    else:
-                        print(self.base.repo_module_dict.get_info(spec))
-                except NoModuleException as e:
-                    logger.info(e)
+            if self.opts.verbose:
+                output = self.base.repo_module_dict._get_full_info(self.opts.module_spec)
+            elif self.opts.profile:
+                output = self.base.repo_module_dict._get_info_profiles(self.opts.module_spec)
+            else:
+                output = self.base.repo_module_dict._get_info(self.opts.module_spec)
+            if output:
+                print(output)
+
 
     class EnableSubCommand(SubCommand):
 
@@ -181,20 +179,6 @@ class ModuleCommand(commands.Command):
         def run_on_module(self):
             self.base.repo_module_dict.remove(self.opts.module_spec)
 
-    class ProfileInfoSubCommand(SubCommand):
-
-        aliases = ("profile", "profile-info")
-
-        def configure(self):
-            demands = self.cli.demands
-            demands.available_repos = True
-            demands.sack_activation = True
-
-        def run_on_module(self):
-            for spec in self.opts.module_spec:
-                print()
-                logger.info(self.base.repo_module_dict.get_info_profiles(spec))
-
     class ProvidesSubCommand(SubCommand):
 
         aliases = ("provides", )
@@ -211,7 +195,7 @@ class ModuleCommand(commands.Command):
 
     SUBCMDS = {ListSubCommand, InfoSubCommand, EnableSubCommand,
                DisableSubCommand, ResetSubCommand, InstallSubCommand, UpdateSubCommand,
-               RemoveSubCommand, ProfileInfoSubCommand, ProvidesSubCommand}
+               RemoveSubCommand, ProvidesSubCommand}
 
     SUBCMDS_NOT_REQUIRED_ARG = {ListSubCommand}
 
