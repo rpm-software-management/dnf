@@ -481,16 +481,6 @@ class RepoModuleDict(OrderedDict):
 
         return versions
 
-    def list_module_version_all(self):
-        versions = []
-
-        for module in self.values():
-            for stream in module.values():
-                for version in stream.values():
-                    versions.append(version)
-
-        return versions
-
     def list_module_version_installed(self):
         versions = []
 
@@ -502,33 +492,41 @@ class RepoModuleDict(OrderedDict):
 
         return versions
 
-    def print_what_provides(self, rpms):
-        output = ""
-        versions = self.list_module_version_all()
-        for version in versions:
-            nevras = version.artifacts()
-            for nevra in nevras:
-                subj = Subject(nevra)
-                nevra_obj = list(subj.get_nevra_possibilities(hawkey.FORM_NEVRA))[0]
-                if nevra_obj.name not in rpms:
-                    continue
+    def _what_provides(self, rpm_specs):
+        output = []
+        modulePackages = self.base._moduleContainer.getModulePackages()
+        baseQuery = self.base.sack.query().filterm(empty=True).apply()
+        for spec in rpm_specs:
+            subj = dnf.subject.Subject(spec)
+            baseQuery = baseQuery.union(subj.get_best_query(
+                self.base.sack, with_nevra=True, with_provides=False, with_filenames=False))
+        baseQuery.apply()
 
-                profiles = []
-                for profile in version.profiles:
-                    if nevra_obj.name in version.rpms(profile):
-                        profiles.append(profile)
+        for modulePackage in modulePackages:
+            artifacts = modulePackage.getArtifacts()
+            if not artifacts:
+                continue
+            query = baseQuery.filter(nevra_strict=artifacts)
+            if query:
+                for pkg in query:
+                    string_output = ""
+                    profiles = []
+                    for profile in modulePackage.getProfiles():
+                        if pkg.name in profile.getContent():
+                            profiles.append(profile.getName())
 
-                lines = {"Module": version.full_version,
-                         "Profiles": " ".join(profiles),
-                         "Repo": version.repo.id,
-                         "Summary": version.summary()}
+                    lines = {"Module": modulePackage.getFullIdentifier(),
+                             "Profiles": " ".join(profiles),
+                             "Repo": modulePackage.getRepoID(),
+                             "Summary": modulePackage.getSummary()}
 
-                table = self.create_simple_table(lines)
+                    table = self.create_simple_table(lines)
 
-                output += "{}\n".format(self.base.output.term.bold(nevra))
-                output += "{}\n\n".format(table.toString())
+                    string_output += "{}\n".format(self.base.output.term.bold(str(pkg)))
+                    string_output += "{}".format(table.toString())
+                    output.append(string_output)
 
-        logger.info(output[:-2])
+        return "\n\n".join(sorted(output))
 
     def _create_and_fill_table(self, latest):
         table = libdnf.smartcols.Table()
