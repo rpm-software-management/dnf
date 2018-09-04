@@ -59,6 +59,7 @@ class ModuleMarkingError(dnf.exceptions.Error):
         self.no_match_specs = no_match_specs
         self.error_specs = error_specs
 
+
 class NoProfileException(dnf.exceptions.Error):
     def __init__(self, profile):
         value = "No such profile: {}".format(profile)

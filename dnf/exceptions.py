@@ -99,10 +99,14 @@ class MarkingError(Error):
         return string
 
 class MarkingErrors(Error):
-    def __init__(self, specs=()):
+    def __init__(self, no_match_group_specs=(), error_group_specs=(), no_match_pkg_specs=(),
+                 error_pkg_specs=()):
         """Initialize the marking error instance."""
         super(MarkingErrors, self).__init__(_('No match for one or more arguments'))
-        self.specs = specs
+        self.no_match_group_specs = no_match_group_specs
+        self.error_group_specs = error_group_specs
+        self.no_match_pkg_specs = no_match_pkg_specs
+        self.error_pkg_specs = error_pkg_specs
 
 class MetadataError(Error):
     pass

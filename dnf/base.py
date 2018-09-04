@@ -1756,34 +1756,42 @@ class Base(object):
     def install_specs(self, install, exclude=None, reponame=None, strict=True, forms=None):
         if exclude is None:
             exclude = []
-
-        skipped = []
+        no_match_group_specs = []
+        error_group_specs = []
+        no_match_pkg_specs = []
+        error_pkg_specs = []
         install_specs, exclude_specs = self._categorize_specs(install, exclude)
 
         self._exclude_package_specs(exclude_specs)
         for spec in install_specs.pkg_specs:
             try:
                 self.install(spec, reponame=reponame, strict=strict, forms=forms)
-            except dnf.exceptions.Error:
-                skipped.append(spec)
-        no_match_module_specs = ()
+            except dnf.exceptions.MarkingError:
+                msg = _('No match for argument: %s')
+                logger.error(msg, self.base.output.term.bold(spec))
+                no_match_pkg_specs.append(spec)
+        no_match_module_specs = []
 
         try:
             self.install_module(install_specs.grp_specs, strict)
         except dnf.module.exceptions.ModuleMarkingError as e:
-            no_match_module_specs = e.no_match_specs
-            error_module_specs = e.error_specs
-            if error_module_specs:
-                for spec in error_module_specs:
-                    skipped.append("@" + spec)
+            if e.no_match_specs:
+                for e_spec in e.no_match_specs:
+                    no_match_module_specs.append(e_spec)
+            if e.error_specs:
+                for e_spec in e.error_specs:
+                    error_group_specs.append("@" + e_spec)
 
         if no_match_module_specs:
             self.read_comps(arch_filter=True)
             exclude_specs.grp_specs = self._expand_groups(exclude_specs.grp_specs)
-            self._install_groups(no_match_module_specs, exclude_specs, skipped, strict)
+            self._install_groups(no_match_module_specs, exclude_specs, no_match_group_specs, strict)
 
-        if skipped:
-            raise dnf.exceptions.MarkingErrors(specs=skipped)
+        if no_match_group_specs or error_group_specs or no_match_pkg_specs or error_pkg_specs:
+            raise dnf.exceptions.MarkingErrors(no_match_group_specs=no_match_group_specs,
+                                               error_group_specs=error_group_specs,
+                                               no_match_pkg_specs=no_match_pkg_specs,
+                                               error_pkg_specs=error_pkg_specs)
 
     def install(self, pkg_spec, reponame=None, strict=True, forms=None):
         # :api
