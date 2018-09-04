@@ -171,11 +171,7 @@ Requires:       libmodulemd >= %{libmodulemd_version}
 %if (0%{?rhel} && 0%{?rhel} <= 7)
 BuildRequires:  pygpgme
 Requires:       pygpgme
-BuildRequires:  python-gobject-base
-Requires:       python-gobject-base
 %else
-BuildRequires:  python2-gobject-base
-Requires:       python2-gobject-base
 BuildRequires:  python2-gpg
 Requires:       python2-gpg
 %endif
@@ -222,8 +218,6 @@ BuildRequires:  python3-libcomps >= %{libcomps_version}
 BuildRequires:  python3-libdnf
 BuildRequires:  libmodulemd >= %{libmodulemd_version}
 Requires:       libmodulemd >= %{libmodulemd_version}
-BuildRequires:  python3-gobject-base
-Requires:       python3-gobject-base
 BuildRequires:  python3-nose
 BuildRequires:  python3-gpg
 Requires:       python3-gpg
