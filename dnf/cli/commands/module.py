@@ -21,8 +21,7 @@ from __future__ import print_function
 
 from dnf.cli import commands, CliError
 from dnf.i18n import _
-from dnf.module.exceptions import NoModuleException, EnableMultipleStreamsException, ModuleMarkingError
-from dnf.module.subject import ModuleSubject
+from dnf.module.exceptions import NoModuleException, ModuleMarkingError
 from dnf.util import logger
 
 import sys

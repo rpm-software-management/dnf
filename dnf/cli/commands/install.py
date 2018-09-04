@@ -77,7 +77,7 @@ class InstallCommand(commands.Command):
             self._log_not_valid_rpm_file_paths(self.opts.grp_specs)
             if self.base.conf.strict:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
-        skipped_grp_specs = ()
+        skipped_grp_specs = []
         if self.opts.grp_specs and self.opts.command != ['localinstall']:
             try:
                 self.base.install_module(self.opts.grp_specs, strict=self.base.conf.strict)

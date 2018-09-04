@@ -28,9 +28,6 @@ from hawkey import NSVCAP
 import libdnf
 
 import dnf.conf
-from dnf.module.subject import ModuleSubject
-from dnf.module.repo_module_dict import RepoModuleDict
-from dnf.module.repo_module_version import RepoModuleVersion
 
 import gi
 gi.require_version('Modulemd', '1.0')
@@ -56,135 +53,6 @@ MODULE_NSA = "module-name:stream::x86_64"
 MODULE_NS = "module-name:stream"
 MODULE_N = "module-name"
 MODULE_NA = "module-name::x86_64"
-
-
-class ModuleSubjectTest(unittest.TestCase):
-    def test_nsvap(self):
-        subj = ModuleSubject(MODULE_NSVAP)
-        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSVAP))
-        self.assertEqual(len(result), 1)
-        actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=1,
-                          arch="x86_64", profile="profile")
-        self.assertEqual(actual, expected)
-
-    def test_nsva(self):
-        subj = ModuleSubject(MODULE_NSVA)
-        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSVA))
-        self.assertEqual(len(result), 1)
-        actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=1,
-                          arch="x86_64", profile=None)
-        self.assertEqual(actual, expected)
-
-        # empty profile spec -> no profile
-        subj = ModuleSubject(MODULE_NSVA + "/")
-        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSVA))
-        self.assertEqual(len(result), 1)
-        actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=1,
-                          arch="x86_64", profile=None)
-        self.assertEqual(actual, expected)
-
-    def test_nsvp(self):
-        subj = ModuleSubject(MODULE_NSVP)
-        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSVP))
-        self.assertEqual(len(result), 1)
-        actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=1,
-                          arch=None, profile="profile")
-        self.assertEqual(actual, expected)
-
-    def test_nsv(self):
-        subj = ModuleSubject(MODULE_NSV)
-        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSV))
-        self.assertEqual(len(result), 1)
-        actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=1,
-                          arch=None, profile=None)
-        self.assertEqual(actual, expected)
-
-    def test_nsap(self):
-        subj = ModuleSubject(MODULE_NSAP)
-        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSAP))
-        self.assertEqual(len(result), 1)
-        actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=None,
-                          arch="x86_64", profile="profile")
-        self.assertEqual(actual, expected)
-
-    def test_nsa(self):
-        subj = ModuleSubject(MODULE_NSA)
-        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSA))
-        self.assertEqual(len(result), 1)
-        actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=None,
-                          arch="x86_64", profile=None)
-        self.assertEqual(actual, expected)
-
-    def test_nsp(self):
-        subj = ModuleSubject(MODULE_NSP)
-        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NSP))
-        self.assertEqual(len(result), 1)
-        actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=None,
-                          arch=None, profile="profile")
-        self.assertEqual(actual, expected)
-
-    def test_ns(self):
-        subj = ModuleSubject(MODULE_NS)
-        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NS))
-        self.assertEqual(len(result), 1)
-        actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=None,
-                          arch=None, profile=None)
-        self.assertEqual(actual, expected)
-
-    def test_nap(self):
-        subj = ModuleSubject(MODULE_NAP)
-        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NAP))
-        self.assertEqual(len(result), 1)
-        actual = result[0]
-        expected = NSVCAP(name="module-name", stream=None, version=None,
-                          arch="x86_64", profile="profile")
-        self.assertEqual(actual, expected)
-
-    def test_na(self):
-        subj = ModuleSubject(MODULE_NA)
-        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NA))
-        self.assertEqual(len(result), 1)
-        actual = result[0]
-        expected = NSVCAP(name="module-name", stream=None, version=None,
-                          arch="x86_64", profile=None)
-        self.assertEqual(actual, expected)
-
-    def test_np(self):
-        subj = ModuleSubject(MODULE_NP)
-        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_NP))
-        self.assertEqual(len(result), 1)
-        actual = result[0]
-        expected = NSVCAP(name="module-name", stream=None, version=None,
-                          arch=None, profile="profile")
-        self.assertEqual(actual, expected)
-
-    def test_n(self):
-        subj = ModuleSubject(MODULE_N)
-        result = list(subj.get_module_form_possibilities(forms=hawkey.MODULE_FORM_N))
-        self.assertEqual(len(result), 1)
-        actual = result[0]
-        expected = NSVCAP(name="module-name", stream=None, version=None,
-                          arch=None, profile=None)
-        self.assertEqual(actual, expected)
-
-    def test_all(self):
-        subj = ModuleSubject(MODULE_NSVAP)
-        result = list(subj.get_module_form_possibilities())
-        self.assertEqual(len(result), 1)
-
-        actual = result[0]
-        expected = NSVCAP(name="module-name", stream="stream", version=1,
-                          arch="x86_64", profile="profile")
-        self.assertEqual(actual, expected)
 
 
 class RepoModuleDictTest(unittest.TestCase):
@@ -216,63 +84,6 @@ class RepoModuleDictTest(unittest.TestCase):
             mmd.add_profile(profile)
 
         return mmd
-
-    def test_find_module_version(self):
-        rmd = RepoModuleDict(None)
-
-        mmd = self._create_mmd(name="module-name", stream="stream", version=1,
-                               profiles={"default": {}})
-        rmv = RepoModuleVersion(mmd, None, None)
-        rmd.add(rmv)
-
-        mmd = self._create_mmd(name="module-name", stream="stream", version=2,
-                               profiles={"default": {}})
-        rmv = RepoModuleVersion(mmd, None, None)
-        rmd.add(rmv)
-
-        mmd = self._create_mmd(name="module-name", stream="enabled_stream", version=1,
-                               profiles={"default": {}})
-        rmv = RepoModuleVersion(mmd, None, None)
-        rmd.add(rmv)
-
-        mmd = self._create_mmd(name="module-name", stream="default_stream", version=1,
-                               profiles={"default": {}})
-        rmv = RepoModuleVersion(mmd, None, None)
-        rmd.add(rmv)
-
-        # set defaults
-        defaults = Modulemd.Defaults()
-        defaults.set_module_name("module-name")
-        defaults.set_default_stream("stream")
-        # no default profiles provided
-        rmd["module-name"].defaults = defaults
-
-        # no default, no active -> can't find stream automatically
-        rmv = rmd.find_module_version(name="module-name")
-        self.assertEqual(rmv.full_version, "module-name:stream:2")
-
-        # set enabled stream
-        conf = dnf.conf.ModuleConf(section="test")
-        conf.state._set("enabled")
-        conf.stream._set("enabled_stream")
-        rmd["module-name"].conf = conf
-
-        # stream provided by user
-        rmv = rmd.find_module_version(name="module-name", stream="stream")
-        self.assertEqual(rmv.full_version, "module-name:stream:2")
-
-        # stream and version provided by user
-        rmv = rmd.find_module_version(name="module-name", stream="stream", version=1)
-        self.assertEqual(rmv.full_version, "module-name:stream:1")
-
-        # stream == active stream
-        rmv = rmd.find_module_version(name="module-name")
-        self.assertEqual(rmv.full_version, "module-name:enabled_stream:1")
-
-        # stream == default stream
-        conf.state._set("")
-        rmv = rmd.find_module_version(name="module-name")
-        self.assertEqual(rmv.full_version, "module-name:stream:2")
 
 
 class ModuleTest(unittest.TestCase):
@@ -407,24 +218,8 @@ class ModuleTest(unittest.TestCase):
 
     # dnf module list
 
-    def test_list(self):
-        # show latest module versions
-        rmd = self.base.repo_module_dict
-        latest = rmd.list_module_version_latest()
-
-        rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=2)
-        self.assertIn(rmv, latest)
-
-        rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=1)
-        self.assertNotIn(rmv, latest)
-
     def test_list_installed(self):
         rmd = self.base.repo_module_dict
-
-        # check not installed
-        installed = rmd.list_module_version_installed()
-        rmv = rmd.find_module_version(name="base-runtime", stream="f26", version=2)
-        self.assertNotIn(rmv, installed)
 
         # install
         try:
@@ -587,9 +382,6 @@ class ModuleTest(unittest.TestCase):
         Test hybrid repos where RPMs of the same name (or Provides)
         can be both modular and bare (non-modular).
         """
-
-        rmv = self.base.repo_module_dict.find_module_version(name="httpd")
-        self.assertEqual(rmv.full_version, "httpd:2.4:2")
 
         # no match with modular RPM $name -> keep
         q = self.base.sack.query().filter(nevra="grub2-2.02-0.40.x86_64")

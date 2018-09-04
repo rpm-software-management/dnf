@@ -72,7 +72,7 @@ class CannotLockVersionException(dnf.exceptions.Error):
         super(CannotLockVersionException, self).__init__(value)
 
 class ModuleMarkingError(dnf.exceptions.Error):
-    def __init__(self, no_match_specs=None, error_specs=None):
+    def __init__(self, no_match_specs=(), error_specs=()):
         value = _('No match for one or more arguments')
         super(ModuleMarkingError, self).__init__(value)
         self.no_match_specs = no_match_specs

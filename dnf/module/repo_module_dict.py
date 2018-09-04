@@ -30,7 +30,6 @@ from dnf.module.exceptions import NoStreamSpecifiedException, NoModuleException,
     ProfileNotInstalledException, NoProfileToRemoveException, \
     DifferentStreamEnabledException, EnableMultipleStreamsException
 from dnf.module.repo_module import RepoModule
-from dnf.module.subject import ModuleSubject
 from dnf.selector import Selector
 from dnf.subject import Subject
 from dnf.util import first_not_none, logger, ensure_dir
@@ -52,40 +51,6 @@ class RepoModuleDict(OrderedDict):
         module = self.setdefault(repo_module_version.name, RepoModule())
         module.add(repo_module_version)
         module.parent = self
-
-    def find_module_version(self, name, stream=None, version=None, context=None, arch=None):
-        def use_enabled_stream(repo_module):
-            if repo_module.conf.state._get() == "enabled":
-                return repo_module.conf.stream._get()
-            return None
-
-        def use_default_stream(repo_module):
-            return repo_module.defaults.peek_default_stream()
-
-        try:
-            repo_module = self[name]
-
-            stream = first_not_none([stream,
-                                     use_enabled_stream(repo_module),
-                                     use_default_stream(repo_module)])
-
-            if not stream:
-                raise NoStreamSpecifiedException(name)
-
-            repo_module_stream = repo_module[stream]
-
-            if version:
-                repo_module_version = repo_module_stream[version]
-            else:
-                # if version is not specified, pick the latest
-                repo_module_version = repo_module_stream.latest()
-
-            # TODO: arch
-            # TODO: platform module
-
-        except KeyError:
-            return None
-        return repo_module_version
 
     def enable(self, module_specs):
         no_match_specs, error_spec, module_dicts = self._resolve_specs_enable_update_sack(module_specs)
@@ -476,26 +441,6 @@ class RepoModuleDict(OrderedDict):
                     output.append(info)
         output_string = "\n\n".join(sorted(set(output)))
         return output_string
-
-    def list_module_version_latest(self):
-        versions = []
-
-        for module in self.values():
-            for stream in module.values():
-                versions.append(stream.latest())
-
-        return versions
-
-    def list_module_version_installed(self):
-        versions = []
-
-        for version in self.list_module_version_latest():
-            conf = version.repo_module.conf
-            if conf.state._get() == "enabled" and conf.stream._get() == version.stream \
-                    and list(conf.profiles._get()):
-                versions.append(version)
-
-        return versions
 
     def _what_provides(self, rpm_specs):
         output = []
