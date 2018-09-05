@@ -24,6 +24,7 @@ from __future__ import unicode_literals
 import logging
 
 import dnf.exceptions
+import dnf.base
 from dnf.cli import commands
 from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _
@@ -89,8 +90,11 @@ class UpgradeCommand(commands.Command):
 
     def _update_modules(self):
         group_specs_num = len(self.opts.grp_specs)
-
-        self.skipped_grp_specs = self.base.module_base.upgrade(self.opts.grp_specs)
+        if dnf.base.WITH_MODULES:
+            module_base = dnf.module.module_base.ModuleBase(self.base)
+            self.skipped_grp_specs = module_base.upgrade(self.opts.grp_specs)
+        else:
+            self.skipped_grp_specs = self.opts.grp_specs
 
         return len(self.skipped_grp_specs) != group_specs_num
 

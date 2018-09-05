@@ -25,7 +25,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import argparse
-
+import dnf
 import libdnf.transaction
 
 from dnf.comps import CompsQuery
@@ -50,7 +50,11 @@ import dnf.goal
 import dnf.history
 import dnf.lock
 import dnf.logging
-import dnf.module.module_base
+try:
+    import dnf.module.module_base
+    WITH_MODULES = True
+except ImportError:
+    WITH_MODULES = False
 import dnf.persistor
 import dnf.plugin
 import dnf.query
@@ -107,7 +111,6 @@ class Base(object):
         self._update_security_filters = []
         self._allow_erasing = False
         self._repo_set_imported_gpg_keys = set()
-        self.module_base = dnf.module.module_base.ModuleBase(self)
         self.output = None
 
     def __enter__(self):
@@ -1672,19 +1675,6 @@ class Base(object):
             self._goal.install(select=sltr, optional=(not strict))
         return len(available)
 
-    def enable_module(self, specs):
-        self.module_base.enable(specs)
-
-    def install_module(self, specs, strict=True):
-        """
-        Install module based on provided specs.In case of problem it raises
-        dnf.module.exception.ModuleMarkingError
-
-        :param specs: group and module specs
-
-        """
-        self.module_base.install(specs, strict)
-
     def _categorize_specs(self, install, exclude):
         """
         Categorize :param install and :param exclude list into two groups each (packages and groups)
@@ -1771,16 +1761,19 @@ class Base(object):
                 logger.error(msg, self.base.output.term.bold(spec))
                 no_match_pkg_specs.append(spec)
         no_match_module_specs = []
-
-        try:
-            self.install_module(install_specs.grp_specs, strict)
-        except dnf.module.exceptions.ModuleMarkingError as e:
-            if e.no_match_specs:
-                for e_spec in e.no_match_specs:
-                    no_match_module_specs.append(e_spec)
-            if e.error_specs:
-                for e_spec in e.error_specs:
-                    error_group_specs.append("@" + e_spec)
+        if WITH_MODULES and install_specs.grp_specs:
+            try:
+                module_base = dnf.module.module_base.ModuleBase(self)
+                module_base.install(install_specs.grp_specs, strict)
+            except dnf.module.exceptions.ModuleMarkingError as e:
+                if e.no_match_specs:
+                    for e_spec in e.no_match_specs:
+                        no_match_module_specs.append(e_spec)
+                if e.error_specs:
+                    for e_spec in e.error_specs:
+                        error_group_specs.append("@" + e_spec)
+        else:
+            no_match_module_specs = install_specs.grp_specs
 
         if no_match_module_specs:
             self.read_comps(arch_filter=True)

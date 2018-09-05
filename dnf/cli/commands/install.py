@@ -79,15 +79,19 @@ class InstallCommand(commands.Command):
                 raise dnf.exceptions.Error(_('Nothing to do.'))
         skipped_grp_specs = []
         if self.opts.grp_specs and self.opts.command != ['localinstall']:
-            try:
-                self.base.install_module(self.opts.grp_specs, strict=self.base.conf.strict)
-            except dnf.module.exceptions.ModuleMarkingError as e:
-                if e.no_match_specs:
-                    for e_spec in e.no_match_specs:
-                        skipped_grp_specs.append(e_spec)
-                if e.error_specs:
-                    for e_spec in e.error_specs:
-                        error_module_specs.append("@" + e_spec)
+            if dnf.base.WITH_MODULES:
+                try:
+                    module_base = dnf.module.module_base.ModuleBase(self.base)
+                    module_base.install(self.opts.grp_specs, strict=self.base.conf.strict)
+                except dnf.module.exceptions.ModuleMarkingError as e:
+                    if e.no_match_specs:
+                        for e_spec in e.no_match_specs:
+                            skipped_grp_specs.append(e_spec)
+                    if e.error_specs:
+                        for e_spec in e.error_specs:
+                            error_module_specs.append("@" + e_spec)
+            else:
+                skipped_grp_specs = self.opts.grp_specs
         if self.opts.filenames and nevra_forms:
             self._inform_not_a_valid_combination(self.opts.filenames)
             if self.base.conf.strict:
