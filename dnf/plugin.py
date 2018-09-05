@@ -26,7 +26,6 @@ import fnmatch
 import glob
 import importlib
 import iniparse.compat
-import iniparse.configparser
 import inspect
 import logging
 import operator
@@ -57,7 +56,7 @@ class Plugin(object):
         files = ['%s/%s.conf' % (path, name) for path in conf.pluginconfpath]
         try:
             parser.read(files)
-        except iniparse.configparser.ParsingError as e:
+        except iniparse.compat.ParsingError as e:
             raise dnf.exceptions.ConfigError(_("Parsing file failed: %s") % e)
         return parser
 
