@@ -1758,7 +1758,7 @@ class Base(object):
                 self.install(spec, reponame=reponame, strict=strict, forms=forms)
             except dnf.exceptions.MarkingError:
                 msg = _('No match for argument: %s')
-                logger.error(msg, self.base.output.term.bold(spec))
+                logger.error(msg, spec)
                 no_match_pkg_specs.append(spec)
         no_match_module_specs = []
         if WITH_MODULES and install_specs.grp_specs:
@@ -1983,7 +1983,7 @@ class Base(object):
             if grp_specs and forms:
                 for grp_spec in grp_specs:
                     msg = _('Not a valid form: %s')
-                    logger.warning(msg, self.output.term.bold(grp_spec))
+                    logger.warning(msg, grp_spec)
             elif grp_specs:
                 self.read_comps(arch_filter=True)
                 if self.env_group_remove(grp_specs):
@@ -2159,7 +2159,7 @@ class Base(object):
                 if not pkgs:
                     pkgs = list(self.sack.query().available().filter(nevra=str(ti)))
             if not pkgs:
-                logger.info(_('No package %s available.'), self.output.term.bold(ucd(str(ti))))
+                logger.info(_('No package %s available.'), ucd(str(ti)))
                 raise dnf.exceptions.PackageNotFoundError(_('no package matched'), ucd(str(ti)))
             pkg = pkgs[0]
 
