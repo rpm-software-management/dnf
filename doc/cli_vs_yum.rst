@@ -385,7 +385,7 @@ Original YUM tool          New DNF command                                  Pack
 ``repomanage``             `dnf repomanage`_                                ``dnf-plugins-extras-repomanage``
 ``repoquery``              :ref:`dnf repoquery <repoquery_command-label>`   ``dnf``
 ``reposync``               `dnf reposync`_                                  ``dnf-plugins-core``
-``repotrack``              `dnf download`_                                  ``dnf-plugins-core``
+``repotrack``              `dnf download --resolve --alldeps`_              ``dnf-plugins-core``
 ``yum-builddep``           `dnf builddep`_                                  ``dnf-plugins-core``
 ``yum-config-manager``     `dnf config-manager`_                            ``dnf-plugins-core``
 ``yum-debug-dump``         `dnf debug-dump`_                                ``dnf-plugins-extras-debug``
