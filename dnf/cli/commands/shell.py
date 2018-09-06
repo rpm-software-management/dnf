@@ -36,6 +36,7 @@ logger = logging.getLogger('dnf')
 class ShellDemandSheet(object):
     allow_erasing = False
     available_repos = True
+    load_system_repo = True
     resolving = True
     root_user = True
     sack_activation = True
