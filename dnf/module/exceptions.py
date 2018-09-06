@@ -35,6 +35,7 @@ class MissingYamlException(dnf.exceptions.Error):
 
 class NoModuleException(dnf.exceptions.Error):
     def __init__(self, module_spec):
+        self.module_spec = module_spec
         value = "No such module: {}".format(module_spec)
         super(NoModuleException, self).__init__(value)
 
