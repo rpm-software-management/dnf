@@ -19,6 +19,7 @@
 
 from __future__ import print_function
 
+import dnf
 from dnf.cli import commands, CliError
 from dnf.i18n import _
 from dnf.module.exceptions import NoModuleException, EnableMultipleStreamsException
@@ -68,9 +69,9 @@ class ModuleCommand(commands.Command):
             demands.sack_activation = True
 
         def run_on_module(self):
+            errors = []
             for spec in self.opts.module_spec:
                 try:
-                    print()
                     if self.opts.verbose:
                         print(self.base.repo_module_dict.get_full_info(spec))
                     elif self.opts.profile:
@@ -78,7 +79,10 @@ class ModuleCommand(commands.Command):
                     else:
                         print(self.base.repo_module_dict.get_info(spec))
                 except NoModuleException as e:
-                    logger.info(e)
+                    errors.append(e.module_spec)
+
+            if errors and len(errors) == len(self.opts.module_spec):
+                raise dnf.exceptions.Error("No such modules: {}".format(", ".join(errors)))
 
     class EnableSubCommand(SubCommand):
 
