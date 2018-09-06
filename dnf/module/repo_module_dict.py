@@ -608,7 +608,8 @@ class RepoModuleDict(OrderedDict):
         already_printed_lines = 0
         items = list(versions_by_repo.items())
         repo_id, versions = items[current_repo_id_index]
-        str_table = self.print_header(table, repo_id)
+        header = self.get_header(table, repo_id)
+        str_table = header
         for i in range(0, table.getNumberOfLines()):
             if len(versions) + already_printed_lines <= i:
                 already_printed_lines += len(versions)
@@ -616,14 +617,14 @@ class RepoModuleDict(OrderedDict):
 
                 repo_id, versions = items[current_repo_id_index]
                 str_table += "\n"
-                str_table += self.print_header(table, repo_id)
+                str_table += header
 
             line = table.getLine(i)
             str_table += table.toString(line, line)
 
         return str_table + "\n\nHint: [d]efault, [e]nabled, [i]nstalled"
 
-    def print_header(self, table, repo_id):
+    def get_header(self, table, repo_id):
         line = table.getLine(0)
         header = table.toString(line, line).split('\n', 1)[0]
         out_str = "{}\n".format(self.base.output.term.bold(repo_id))
