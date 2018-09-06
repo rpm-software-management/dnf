@@ -930,7 +930,7 @@ class Cli(object):
         conf.read(priority=dnf.conf.PRIO_MAINCONFIG)
 
         # search reposdir file inside the installroot first
-        conf._search_inside_installroot('reposdir')
+        conf._search_reposdir_inside_installroot()
 
         # cachedir, logs, releasever, and gpgkey are taken from or stored in installroot
         subst = conf.substitutions
