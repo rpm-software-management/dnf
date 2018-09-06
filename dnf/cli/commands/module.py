@@ -124,7 +124,7 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            self.module_base.reset(self.opts.module_nsvp)
+            self.module_base.reset(self.opts.module_spec)
 
     class InstallSubCommand(SubCommand):
 
