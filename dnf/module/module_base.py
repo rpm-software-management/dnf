@@ -354,7 +354,7 @@ class ModuleBase(object):
                     nsvcap.name, nsvcap.profile))
             for modulePackage in module_list:
                 default_str = ""
-                if modulePackage.getStream == self.base._moduleContainer.getDefaultStream(
+                if modulePackage.getStream() == self.base._moduleContainer.getDefaultStream(
                         modulePackage.getName()):
                     default_str = " [d]"
                 enabled_str = ""
@@ -372,7 +372,7 @@ class ModuleBase(object):
                 for profile in available_profiles:
                     profiles_str += "{}{}".format(
                         profile.getName(), " [d]" if profile.getName() in default_profiles else "")
-                    profiles_str += "[i], " if profile in installed_profiles else ", "
+                    profiles_str += " [i], " if profile in installed_profiles else ", "
 
                 profiles_str = profiles_str[:-2]
 
@@ -495,7 +495,7 @@ class ModuleBase(object):
                 profiles_str = ""
                 available_profiles = modulePackage.getProfiles()
 
-                if modulePackage.getStream == self.base._moduleContainer.getDefaultStream(
+                if modulePackage.getStream() == self.base._moduleContainer.getDefaultStream(
                         modulePackage.getName()):
                     default_str = " [d]"
 
@@ -513,7 +513,7 @@ class ModuleBase(object):
                     profile_name = profile.getName()
                     profiles_str += "{}{}".format(
                         profile_name, " [d]" if profile_name in default_profiles else "")
-                    profiles_str += "[i], " if profile_name in installed_profiles else ", "
+                    profiles_str += " [i], " if profile_name in installed_profiles else ", "
 
                 line.getColumnCell(column_name).setData(modulePackage.getName())
                 line.getColumnCell(
