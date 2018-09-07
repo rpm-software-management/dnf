@@ -485,6 +485,9 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Fri Sep 07 2018 Jaroslav Mracek <jmracek@redhat.com> - 3.5.0-1
+- New implementation of modularity
+
 * Fri Aug 31 2018 Daniel Mach <dmach@redhat.com> - 3.4.0-1
 - [history] Fix 'attempt to write a readonly database' error in addConsoleOutputLine().
 - [spec] Improve YUM v3 compat layer.
