@@ -522,7 +522,7 @@ Groups are virtual collections of packages. DNF keeps track of groups that the u
     Mark the group removed and remove those packages in the group from the system which are neither comprising another installed group and were not installed explicitly by the user.
 
 ``dnf [options] group upgrade <group-spec>...``
-    Upgrades the packages from the group and upgrades the group itself. The latter comprises of installing pacakges that were added to the group by the distribution and removing packages that got removed from the group as far as they were not installed explicitly by the user.
+    Upgrades the packages from the group and upgrades the group itself. The latter comprises of installing packages that were added to the group by the distribution and removing packages that got removed from the group as far as they were not installed explicitly by the user.
 
 Groups can also be marked installed or removed without physically manipulating any packages:
 
