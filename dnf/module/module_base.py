@@ -539,7 +539,9 @@ class ModuleBase(object):
         already_printed_lines = 0
         repo_name = self.base.repos[latest[0][0][0].getRepoID()].name
         versions = len(latest[0])
-        str_table = self._print_header(table, repo_name, True)
+        header = self._format_header(table)
+        str_table = self._format_repoid(repo_name)
+        str_table += header
         for i in range(0, table.getNumberOfLines()):
             if versions + already_printed_lines <= i:
                 already_printed_lines += versions
@@ -547,17 +549,16 @@ class ModuleBase(object):
                 repo_name = self.base.repos[latest[current_repo_id_index][0][0].getRepoID()].name
                 versions = len(latest[current_repo_id_index])
                 str_table += "\n"
-                str_table += self._print_header(table, repo_name, False)
+                str_table += self._format_repoid(repo_name)
+                str_table += header
 
             line = table.getLine(i)
             str_table += table.toString(line, line)
         return str_table + "\n\nHint: [d]efault, [e]nabled, [i]nstalled"
 
-    def _print_header(self, table, repo_id, with_header):
-        # TODO Fix header to print it always - now not accessible in second call.
+    def _format_header(self, table):
         line = table.getLine(0)
-        header = table.toString(line, line).split('\n', 1)[0]
-        out_str = "{}\n".format(self.base.output.term.bold(repo_id))
-        if with_header:
-            out_str += "{}\n".format(header)
-        return out_str
+        return table.toString(line, line).split('\n', 1)[0]
+
+    def _format_repoid(self, repo_name):
+        return "{}\n".format(self.base.output.term.bold(repo_name))
