@@ -50,19 +50,23 @@ class ModuleCommand(commands.Command):
             mods = self.module_base
 
             if self.opts.enabled:
-                print(mods._get_brief_description(self.opts.module_spec,
-                    libdnf.module.ModulePackageContainer.ModuleState_ENABLED))
+                output = mods._get_brief_description(
+                    self.opts.module_spec, libdnf.module.ModulePackageContainer.ModuleState_ENABLED)
             elif self.opts.disabled:
-                print(mods._get_brief_description(self.opts.module_spec,
-                    libdnf.module.ModulePackageContainer.ModuleState_DISABLED))
+                output = mods._get_brief_description(
+                    self.opts.module_spec,
+                    libdnf.module.ModulePackageContainer.ModuleState_DISABLED)
             elif self.opts.installed:
-                print(mods._get_brief_description(self.opts.module_spec,
-                    libdnf.module.ModulePackageContainer.ModuleState_INSTALLED))
+                output = mods._get_brief_description(
+                    self.opts.module_spec,
+                    libdnf.module.ModulePackageContainer.ModuleState_INSTALLED)
             else:
-                print(mods._get_brief_description(self.opts.module_spec,
-                    libdnf.module.ModulePackageContainer.ModuleState_UNKNOWN))
-
-            return 0
+                output = mods._get_brief_description(
+                    self.opts.module_spec, libdnf.module.ModulePackageContainer.ModuleState_UNKNOWN)
+            if output:
+                print(output)
+            else:
+                raise dnf.exceptions.Error(_('No matching Modules to list'))
 
     class InfoSubCommand(SubCommand):
 
@@ -82,6 +86,8 @@ class ModuleCommand(commands.Command):
                 output = self.module_base._get_info(self.opts.module_spec)
             if output:
                 print(output)
+            else:
+                raise dnf.exceptions.Error(_('No matching Modules to list'))
 
 
     class EnableSubCommand(SubCommand):

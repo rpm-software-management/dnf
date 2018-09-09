@@ -21,10 +21,7 @@ import libdnf.smartcols
 import libdnf.module
 import dnf.selector
 
-from dnf.module import module_messages, NOTHING_TO_SHOW
-from dnf.module.exceptions import NoStreamSpecifiedException, EnableMultipleStreamsException
-from dnf.selector import Selector
-from dnf.subject import Subject
+from dnf.module.exceptions import EnableMultipleStreamsException
 from dnf.util import logger
 from dnf.i18n import _, ucd
 
@@ -161,7 +158,7 @@ class ModuleBase(object):
                 logger.error(_("Unable to match profile in argument {}").format(spec))
             query = self.base.sack.query().available().filterm(name=upgrade_package_set)
             if query:
-                sltr = Selector(self.base.sack)
+                sltr = dnf.selector.Selector(self.base.sack)
                 sltr.set(pkg=query)
                 self.base._goal.upgrade(select=sltr)
         return no_match_specs
@@ -388,7 +385,9 @@ class ModuleBase(object):
                 lines["Artifacts"] = "\n".join(sorted(modulePackage.getArtifacts()))
                 output.append(self._create_simple_table(lines).toString())
         str_table = "\n\n".join(sorted(set(output)))
-        return str_table + "\n\nHint: [d]efault, [e]nabled, [i]nstalled"
+        if str_table:
+            str_table += "\n\nHint: [d]efault, [e]nabled, [i]nstalled"
+        return str_table
 
     @staticmethod
     def _create_simple_table(lines):
@@ -533,7 +532,7 @@ class ModuleBase(object):
             modules = self.base._moduleContainer.getModulePackages()
         latest = self.base._moduleContainer.getLatestModulesPerRepo(module_state, modules)
         if not latest:
-            return module_messages[NOTHING_TO_SHOW]
+            return ""
 
         table = self._create_and_fill_table(latest)
         current_repo_id_index = 0
@@ -552,7 +551,6 @@ class ModuleBase(object):
 
             line = table.getLine(i)
             str_table += table.toString(line, line)
-
         return str_table + "\n\nHint: [d]efault, [e]nabled, [i]nstalled"
 
     def _print_header(self, table, repo_id, with_header):
