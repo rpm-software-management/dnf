@@ -369,7 +369,8 @@ class ModuleBase(object):
                 for profile in available_profiles:
                     profiles_str += "{}{}".format(
                         profile.getName(), " [d]" if profile.getName() in default_profiles else "")
-                    profiles_str += " [i], " if profile in installed_profiles else ", "
+                    profiles_str += " [i], " if profile in installed_profiles and enabled_str \
+                        else ", "
 
                 profiles_str = profiles_str[:-2]
 
@@ -512,7 +513,8 @@ class ModuleBase(object):
                     profile_name = profile.getName()
                     profiles_str += "{}{}".format(
                         profile_name, " [d]" if profile_name in default_profiles else "")
-                    profiles_str += " [i], " if profile_name in installed_profiles else ", "
+                    profiles_str += " [i], " if profile_name in installed_profiles and enabled_str \
+                        else ", "
 
                 line.getColumnCell(column_name).setData(modulePackage.getName())
                 line.getColumnCell(
