@@ -297,5 +297,14 @@ def translation(name):
     t = dnf.pycomp.gettext.translation(name, fallback=True)
     return map(ucd_wrapper, dnf.pycomp.gettext_setup(t))
 
+
+def pgettext(context, message):
+    result = _(context + chr(4) + message)
+    if "\004" in result:
+        return message
+    else:
+        return result
+
 # setup translations
 _, P_ = translation("dnf")
+C_ = pgettext
