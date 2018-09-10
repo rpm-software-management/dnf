@@ -61,10 +61,9 @@ Man pages will be located in ``build/doc`` and can be read with ``man -l``, e.g:
 =============================
 
 From the DNF git checkout directory::
-    
-    cmake .
-    ./package/build-test-rpm
-    sudo rpm -i ~/rpmbuild/RPMS/noarch/dnf-<version>-<release>.noarch.rpm
+
+    $ tito build --test --rpm
+    # dnf install /tmp/tito/noarch/*
 
 ===============
  Running tests
