@@ -3,7 +3,7 @@
 file (RELATIVE_PATH SRCDIR ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_SOURCE_DIR}/dnf)
 ADD_CUSTOM_TARGET (gettext-export
                    find ${SRCDIR} -iname "*.py" |
-                   xargs xgettext --from-code=UTF-8 --keyword=P_:1,2 -c --output=dnf.pot &&
+                   xargs xgettext --from-code=UTF-8 --keyword=P_:1,2 --keyword=C_:1c,2 -c --output=dnf.pot &&
                    zanata push -f
                    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
                    COMMENT "Pushing translation source file to zanata")
