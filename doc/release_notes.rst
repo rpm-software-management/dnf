@@ -20,6 +20,12 @@
 ###################
 
 ===================
+3.5.1 Release Notes
+===================
+
+* [module] Fixed list and info subcommands
+
+===================
 3.5.0 Release Notes
 ===================
 

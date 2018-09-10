@@ -71,7 +71,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        3.5.0
+Version:        3.5.1
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -485,6 +485,9 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Mon Sep 10 2018 Jaroslav Mracek <jmracek@redhat.com> - 0.19.1-1
+- [module] Fixed list and info subcommands
+
 * Fri Sep 07 2018 Jaroslav Mracek <jmracek@redhat.com> - 3.5.0-1
 - New implementation of modularity
 
