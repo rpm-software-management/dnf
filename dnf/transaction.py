@@ -25,7 +25,7 @@ from __future__ import unicode_literals
 
 import libdnf.transaction
 
-from dnf.i18n import _
+from dnf.i18n import _, C_
 
 
 # per-package actions - from libdnf
@@ -75,16 +75,20 @@ BACKWARD_ACTIONS = [
 
 
 ACTIONS = {
-    PKG_DOWNGRADE: _('Downgrading'),
+    # TRANSLATORS: This is for a single package currently being downgraded.
+    PKG_DOWNGRADE: C_('currently', 'Downgrading'),
     PKG_DOWNGRADED: _('Cleanup'),
-    PKG_INSTALL: _('Installing'),
+    # TRANSLATORS: This is for a single package currently being installed.
+    PKG_INSTALL: C_('currently', 'Installing'),
     PKG_OBSOLETE: _('Obsoleting'),
     PKG_OBSOLETED: _('Obsoleting'),
-    PKG_REINSTALL: _('Reinstalling'),
+    # TRANSLATORS: This is for a single package currently being reinstalled.
+    PKG_REINSTALL: C_('currently', 'Reinstalling'),
     PKG_REINSTALLED: _('Cleanup'),
     # TODO: 'Removing'?
     PKG_REMOVE: _('Erasing'),
-    PKG_UPGRADE: _('Upgrading'),
+    # TRANSLATORS: This is for a single package currently being upgraded.
+    PKG_UPGRADE: C_('currently', 'Upgrading'),
     PKG_UPGRADED: _('Cleanup'),
 
     PKG_CLEANUP: _('Cleanup'),
