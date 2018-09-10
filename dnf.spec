@@ -30,7 +30,8 @@
 %bcond_without python3
 %endif
 
-%if 0%{?rhel} >= 8
+%if 0%{?rhel} >= 8 || 0%{?fedora} > 29
+# Disable python2 build
 %bcond_with python2
 %else
 %bcond_without python2
