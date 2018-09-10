@@ -25,7 +25,7 @@ import libdnf.transaction
 
 from copy import deepcopy
 from dnf.cli.format import format_number, format_time
-from dnf.i18n import _, P_, ucd, fill_exact_width, textwrap_fill, exact_width
+from dnf.i18n import _, C_, P_, ucd, fill_exact_width, textwrap_fill, exact_width
 from dnf.pycomp import xrange, basestring, long, unicode
 from dnf.yum.rpmtrans import LoggingTransactionDisplay
 from dnf.db.history import MergedTransactionWrapper
@@ -1063,16 +1063,22 @@ class Output(object):
         ins_group_msg = _('Installing group/module packages') if dnf.base.WITH_MODULES \
             else _('Installing group packages')
 
-        for (action, pkglist) in [(_('Installing'), list_bunch.installed),
-                                  (_('Upgrading'), list_bunch.upgraded),
-                                  (_('Reinstalling'), list_bunch.reinstalled),
-                                  (ins_group_msg, list_bunch.installed_group),
-                                  (_('Installing dependencies'), list_bunch.installed_dep),
-                                  (_('Installing weak dependencies'), list_bunch.installed_weak),
-                                  (_('Removing'), list_bunch.erased),
-                                  (_('Removing dependent packages'), list_bunch.erased_dep),
-                                  (_('Removing unused dependencies'), list_bunch.erased_clean),
-                                  (_('Downgrading'), list_bunch.downgraded)]:
+        for (action, pkglist) in [
+                # TRANSLATORS: This is for a list of packages to be installed.
+                (C_('summary', 'Installing'), list_bunch.installed),
+                # TRANSLATORS: This is for a list of packages to be upgraded.
+                (C_('summary', 'Upgrading'), list_bunch.upgraded),
+                # TRANSLATORS: This is for a list of packages to be reinstalled.
+                (C_('summary', 'Reinstalling'), list_bunch.reinstalled),
+                (ins_group_msg, list_bunch.installed_group),
+                (_('Installing dependencies'), list_bunch.installed_dep),
+                (_('Installing weak dependencies'), list_bunch.installed_weak),
+                # TRANSLATORS: This is for a list of packages to be removed.
+                (_('Removing'), list_bunch.erased),
+                (_('Removing dependent packages'), list_bunch.erased_dep),
+                (_('Removing unused dependencies'), list_bunch.erased_clean),
+                # TRANSLATORS: This is for a list of packages to be downgraded.
+                (C_('summary', 'Downgrading'), list_bunch.downgraded)]:
             lines = []
 
             # build a reverse mapping to 'replaced_by'
