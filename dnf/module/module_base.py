@@ -37,14 +37,15 @@ class ModuleBase(object):
         self.base = base
 
     def enable(self, module_specs):
-        no_match_specs, error_spec, module_dicts = self._resolve_specs_enable_update_sack(
+        no_match_specs, error_specs, module_dicts = self._resolve_specs_enable_update_sack(
             module_specs)
         for spec, (nsvcap, module_dict) in module_dicts.items():
             if nsvcap.profile:
                 logger.info(_("Ignoring unnecessary profile: '{}/{}'").format(
                     nsvcap.name, nsvcap.profile))
-        if no_match_specs:
-            raise dnf.module.exceptions.ModuleMarkingError(no_match_specs=no_match_specs)
+        if no_match_specs or error_specs:
+            raise dnf.module.exceptions.ModuleMarkingError(no_match_specs=no_match_specs,
+                                                           error_specs=error_specs)
 
     def disable(self, module_specs):
         no_match_specs = self._modules_reset_or_disable(module_specs, STATE_DISABLED)
