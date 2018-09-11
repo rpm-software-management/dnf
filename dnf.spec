@@ -148,6 +148,9 @@ Common data and configuration files for DNF
 Version:        4.0.%{version}
 %global version %{pkg_version}
 Requires:       %{name} = %{version}-%{release}
+%if "%{yum_subpackage_name}" == "yum"
+Requires(pre):  bash
+%endif
 Summary:        %{pkg_summary}
 %if 0%{?fedora}
 Conflicts:      yum
@@ -344,6 +347,14 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
     popd
 %endif
 
+%if "%{yum_subpackage_name}" == "yum"
+%pretrans yum
+if [ -d /etc/yum && ! -L /etc/yum ]; then
+  cp -a /etc/yum/* /etc/dnf
+  rm -rf /etc/yum
+  ln -sr  %{buildroot}%{confdir} %{buildroot}%{_sysconfdir}/yum
+fi
+%endif
 
 %post
 %systemd_post dnf-makecache.timer
