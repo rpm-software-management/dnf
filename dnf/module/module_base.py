@@ -263,7 +263,7 @@ class ModuleBase(object):
                 logger.error(_("Unable to resolve argument {}").format(spec))
         hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
         self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
-                                      self.base.conf.installroot, None)
+                                      self.base.conf.installroot, None, self.base.conf.debug_solver)
         return no_match_specs, error_spec, module_dicts
 
     def _modules_reset_or_disable(self, module_specs, to_state):
@@ -289,7 +289,7 @@ class ModuleBase(object):
         hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
         self.base.sack.filter_modules(self.base._moduleContainer, hot_fix_repos,
                                       self.base.conf.installroot, self.base.conf.module_platform_id,
-                                      update_only=True)
+                                      update_only=True, debugsolver=self.base.conf.debug_solver)
         return no_match_specs
 
     def _get_package_name_set_and_remove_profiles(self, module_list, nsvcap, remove=False):
