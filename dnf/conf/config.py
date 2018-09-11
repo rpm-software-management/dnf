@@ -213,11 +213,11 @@ class BaseConfig(object):
         except Exception as ex:
             return None
         if isinstance(value, libdnf.conf.VectorString):
-            return list(value)
+            return tuple(value)
         if type(value).__name__ == "VectorString":
             # every module generated with swig provides a different VectorString class
             # that's why isinstance() is insufficient and the type has to be matched by name
-            return list(value)
+            return tuple(value)
         if isinstance(value, str):
             return ucd(value)
         return value

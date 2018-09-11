@@ -171,7 +171,7 @@ class CommonTest(tests.support.ResultTestCase):
 
     def test_pkg_install_installonly(self):
         """Test that installonly packages are installed, not upgraded."""
-        self.base.conf.installonlypkgs += ['hole']
+        self.base.conf.installonlypkgs += ('hole',)
         p = self.base.sack.query().available().filter(
             nevra='hole-1-2.x86_64')[0]
         self.assertEqual(1, self.base.package_install(p))
@@ -244,7 +244,7 @@ class MultilibAllTest(tests.support.ResultTestCase):
 
     def test_install_installonly(self):
         """Test that installonly packages are installed, not upgraded."""
-        self.base.conf.installonlypkgs += ['hole']
+        self.base.conf.installonlypkgs += ('hole',)
         self.base.install('hole-1-2')
         installed, removed = self.installed_removed(self.base)
         self.assertGreaterEqual(
@@ -384,7 +384,7 @@ class MultilibBestTest(tests.support.ResultTestCase):
 
     def test_install_installonly(self):
         """Test that installonly packages are installed, not upgraded."""
-        self.base.conf.installonlypkgs += ['hole']
+        self.base.conf.installonlypkgs += ('hole',)
         self.base.install('hole-1-2')
         installed, removed = self.installed_removed(self.base)
         self.assertGreaterEqual(
