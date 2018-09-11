@@ -40,7 +40,7 @@ class RepoReaderTest(tests.support.TestCase):
 
         r1 = all_repos[0]
         self.assertEqual(r1.id, 'fixing')
-        self.assertEqual(r1.baseurl, ['http://cracks'])
+        self.assertEqual(r1.baseurl, ('http://cracks',))
 
         r2 = all_repos[1]
         self.assertEqual(r2.id, 'rain')
