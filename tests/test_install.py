@@ -239,7 +239,7 @@ class MultilibAllTest(tests.support.ResultTestCase):
             self.base.install('librita')
         self.assertEqual(self.base._goal.req_length(), 0)
         self.assertIn(
-            'Package librita-1-1.x86_64 is already installed, skipping.',
+            'Package librita-1-1.x86_64 is already installed.',
             stdout.getvalue())
 
     def test_install_installonly(self):
@@ -272,7 +272,7 @@ class MultilibAllTest(tests.support.ResultTestCase):
             self.base.install('pepper')
         self.assertEqual(self.base._goal.req_length(), 0)
         self.assertIn(
-            'Package pepper-20-0.x86_64 is already installed, skipping.',
+            'Package pepper-20-0.x86_64 is already installed.',
             stdout.getvalue())
 
     def test_install_nonexistent(self):
@@ -379,7 +379,7 @@ class MultilibBestTest(tests.support.ResultTestCase):
         self.assertEmpty(installed)
         self.assertEmpty(removed)
         self.assertIn(
-            'Package librita-1-1.x86_64 is already installed, skipping.',
+            'Package librita-1-1.x86_64 is already installed.',
             stdout.getvalue())
 
     def test_install_installonly(self):
@@ -413,7 +413,7 @@ class MultilibBestTest(tests.support.ResultTestCase):
         installed, removed = self.installed_removed(self.base)
         self.assertEmpty(installed | removed)
         self.assertIn(
-            'Package pepper-20-0.x86_64 is already installed, skipping.',
+            'Package pepper-20-0.x86_64 is already installed.',
             stdout.getvalue())
 
     def test_install_nonexistent(self):
@@ -457,7 +457,7 @@ class MultilibBestTest(tests.support.ResultTestCase):
         installed_pkgs = self.base.sack.query().installed().run()
         self.assertResult(self.base, installed_pkgs)
         self.assertIn(
-            'Package hole-1-1.x86_64 is already installed, skipping.',
+            'Package hole-1-1.x86_64 is already installed.',
             stdout.getvalue())
 
     def test_install_upgrade(self):
