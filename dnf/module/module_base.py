@@ -123,7 +123,7 @@ class ModuleBase(object):
     def upgrade(self, module_specs):
         no_match_specs = []
 
-        for spec in set(module_specs):
+        for spec in module_specs:
             module_list, nsvcap = self._get_modules(spec)
             if not module_list:
                 no_match_specs.append(spec)
@@ -168,7 +168,7 @@ class ModuleBase(object):
         no_match_specs = []
         remove_package_set = set()
 
-        for spec in set(module_specs):
+        for spec in module_specs:
             module_list, nsvcap = self._get_modules(spec)
             if not module_list:
                 no_match_specs.append(spec)
@@ -249,7 +249,7 @@ class ModuleBase(object):
         no_match_specs = []
         error_spec = []
         module_dicts = {}
-        for spec in set(module_specs):
+        for spec in module_specs:
             module_list, nsvcap = self._get_modules(spec)
             if not module_list:
                 no_match_specs.append(spec)
@@ -268,7 +268,7 @@ class ModuleBase(object):
 
     def _modules_reset_or_disable(self, module_specs, to_state):
         no_match_specs = []
-        for spec in set(module_specs):
+        for spec in module_specs:
             module_list, nsvcap = self._get_modules(spec)
             if not module_list:
                 logger.error(_("Unable to resolve argument {}").format(spec))
@@ -528,7 +528,7 @@ class ModuleBase(object):
     def _get_brief_description(self, module_specs, module_state):
         modules = []
         if module_specs:
-            for spec in set(module_specs):
+            for spec in module_specs:
                 module_list, nsvcap = self._get_modules(spec)
                 modules.extend(module_list)
         else:
