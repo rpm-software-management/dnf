@@ -262,6 +262,5 @@ class ModuleCommand(commands.Command):
 
     def run_transaction(self):
         if self.opts.subcmd[0] in ('enable',):
-            logger.info(_("\nTo switch to the new streams' RPMs, run '{} distro-sync'. \n"
-                          "Then migrate configuration files and data as necessary."
-                          .format(os.path.basename(sys.argv[0]))))
+            logger.info(_("\nSwitching module streams does not alter installed packages "
+                          "(see 'module enable' in dnf(8) for details)"))
