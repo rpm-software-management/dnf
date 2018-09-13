@@ -789,6 +789,13 @@ In case stream is not specified enabled or default stream is used, in this order
 ``dnf [options] module enable <module_spec>...``
     Enable a module stream and make the stream RPMs available in the package set.
 
+    This command can also be used for switching module streams.
+    RPMs from the original stream become unavailable and RPMs from the new
+    stream become available in the package set.
+    The operation does not alter installed packages and their configuration.
+    It is suggested to use the ``dnf distro-sync`` command
+    to synchronize to the latest available RPMs from the new stream.
+
 ``dnf [options] module disable <module_spec>...``
     Disable a module. All related module streams will become unavailable.
 
