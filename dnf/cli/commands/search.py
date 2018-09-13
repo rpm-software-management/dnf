@@ -21,6 +21,9 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
+
+import collections
+
 from dnf.cli import commands
 from dnf.cli.option_parser import OptionParser
 from dnf.i18n import ucd, _
@@ -53,11 +56,12 @@ class SearchCommand(commands.Command):
     def _search(self, args):
         """Search for simple text tags in a package object."""
 
-        TRANS_TBL = {'name': _('Name'),
-                     'summary': _('Summary'),
-                     'description': _('Description'),
-                     'url': _('URL')
-                     }
+        TRANS_TBL = collections.OrderedDict((
+            ('name', _('Name')),
+            ('summary', _('Summary')),
+            ('description', _('Description')),
+            ('url', _('URL')),
+        ))
 
         def _translate_attr(attr):
             try:
