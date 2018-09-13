@@ -40,9 +40,9 @@
 # configurable name for the compat yum package
 %global yum_subpackage_name %{name}-yum
 
-# provide yum4 on rhel <= 7 to avoid conflict with existing yum
+# provide nextgen-yum4 on rhel <= 7 to avoid conflict with existing yum
 %if 0%{?rhel} && 0%{?rhel} <= 7
-    %global yum_subpackage_name yum4
+    %global yum_subpackage_name nextgen-yum4
 %endif
 
 # provide yum on rhel >= 8, it replaces old yum
@@ -435,7 +435,7 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %exclude %{_sysconfdir}/yum/vars
 %endif
 
-%if "%{yum_subpackage_name}" == "yum4"
+%if "%{yum_subpackage_name}" == "nextgen-yum4"
 %{_bindir}/yum4
 %{_mandir}/man8/yum4.8*
 %exclude %{_sysconfdir}/yum.conf
