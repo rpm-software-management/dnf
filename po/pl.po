@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-08-29 12:20+0200\n"
-"PO-Revision-Date: 2018-08-28 05:09+0000\n"
+"PO-Revision-Date: 2018-08-29 04:59+0000\n"
 "Last-Translator: Piotr Drąg <piotrdrag@gmail.com>\n"
 "Language-Team: Polish (http://www.transifex.com/projects/p/dnf/language/pl/)\n"
 "MIME-Version: 1.0\n"
@@ -2059,7 +2059,7 @@ msgstr "wyświetla nazwę źródłowego pakietu RPM"
 
 #: ../dnf/cli/commands/repoquery.py:173
 msgid "show changelogs of the package"
-msgstr ""
+msgstr "wyświetla dzienniki zmian pakietu"
 
 #: ../dnf/cli/commands/repoquery.py:176
 msgid "format for displaying found packages"

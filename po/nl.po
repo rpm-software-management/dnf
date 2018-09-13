@@ -3,12 +3,13 @@
 # Corne van der Plas <vdplas@gmail.com>, 2017. #zanata
 # Geert Warrink <geert.warrink@onsnet.nu>, 2017. #zanata
 # Richard E. van der Luit <nippur@fedoraproject.org>, 2017. #zanata
+# Geert Warrink <geert.warrink@onsnet.nu>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-08-29 12:20+0200\n"
-"PO-Revision-Date: 2017-10-01 07:28+0000\n"
+"PO-Revision-Date: 2018-08-29 01:34+0000\n"
 "Last-Translator: Geert Warrink <geert.warrink@onsnet.nu>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -63,12 +64,12 @@ msgstr "Voorbereiden"
 #: ../dnf/plugin.py:61
 #, python-format
 msgid "Parsing file failed: %s"
-msgstr ""
+msgstr "Ontleden van bestand mislukte: %s"
 
 #: ../dnf/plugin.py:130
 #, python-format
 msgid "Loaded plugins: %s"
-msgstr ""
+msgstr "Geladen plug-ins: %s"
 
 #: ../dnf/plugin.py:178
 #, python-format
@@ -455,7 +456,7 @@ msgstr "Systeem"
 #: ../dnf/cli/output.py:1479
 #, python-format
 msgid "Skipping merged transaction %d to %d, as it overlaps"
-msgstr ""
+msgstr "Samenvoegen van transactie %d naar %d overslaan, om deze overlapt"
 
 #: ../dnf/cli/output.py:1490 ../dnf/cli/output.py:1597
 msgid "No transactions"
@@ -579,7 +580,7 @@ msgstr "Mislukt:"
 
 #: ../dnf/cli/output.py:1782 ../dnf/cli/output.py:1784
 msgid "Releasever     :"
-msgstr ""
+msgstr "Release versie     :"
 
 #: ../dnf/cli/output.py:1789 ../dnf/cli/output.py:1791
 msgid "Command Line   :"
@@ -695,12 +696,12 @@ msgstr "slecht format: %s"
 #: ../dnf/cli/option_parser.py:101
 #, python-format
 msgid "Setopt argument has multiple values: %s"
-msgstr ""
+msgstr "Setopt argument heeft meerdere waarden: %s"
 
 #: ../dnf/cli/option_parser.py:104
 #, python-format
 msgid "Setopt argument has no value: %s"
-msgstr ""
+msgstr "Setopt argument heeft geen waarde: %s"
 
 #: ../dnf/cli/option_parser.py:157
 msgid "Optional arguments"
@@ -964,19 +965,19 @@ msgstr "  Gebouwd    : %s op %s"
 
 #: ../dnf/cli/cli.py:159
 msgid "Excludes in dnf.conf: "
-msgstr ""
+msgstr "Uitsluitingen in dnf.conf: "
 
 #: ../dnf/cli/cli.py:162
 msgid "Includes in dnf.conf: "
-msgstr ""
+msgstr "Insluitingen in dnf.conf: "
 
 #: ../dnf/cli/cli.py:166
 msgid "Excludes in repo "
-msgstr ""
+msgstr "Uitsluitingen in repo "
 
 #: ../dnf/cli/cli.py:169
 msgid "Includes in repo "
-msgstr ""
+msgstr "Insluitingen in repo "
 
 #: ../dnf/cli/cli.py:202
 msgid "DNF will only download packages for the transaction."
@@ -1062,7 +1063,7 @@ msgstr "Pakketten voor argument %s beschikbaar, maar niet geïnstalleerd."
 
 #: ../dnf/cli/cli.py:385
 msgid "No packages marked for downgrade."
-msgstr ""
+msgstr "Geen pakketten voor degradatie aangemerkt."
 
 #: ../dnf/cli/cli.py:436
 msgid "Installed Packages"
@@ -1171,6 +1172,8 @@ msgid ""
 "--destdir or --downloaddir must be used with --downloadonly or download or "
 "system-upgrade command."
 msgstr ""
+"--destdir of --downloaddir moet gebruikt worden met --downloadonly of "
+"download of system-upgrade commando."
 
 #: ../dnf/cli/cli.py:948
 msgid ""
@@ -1470,7 +1473,7 @@ msgstr "Geen pakket beschikbaar."
 
 #: ../dnf/cli/commands/__init__.py:374
 msgid "No packages marked for install."
-msgstr ""
+msgstr "Geen pakketten voor installatie aangemerkt."
 
 #: ../dnf/cli/commands/__init__.py:410
 msgid "No package installed."
@@ -1495,7 +1498,7 @@ msgstr "Geen pakket van de repository geïnstalleerd."
 
 #: ../dnf/cli/commands/__init__.py:528 ../dnf/cli/commands/reinstall.py:101
 msgid "No packages marked for reinstall."
-msgstr ""
+msgstr "Geen pakketten voor herinstallatie aangemerkt."
 
 #: ../dnf/cli/commands/__init__.py:679 ../dnf/cli/commands/remove.py:141
 #: ../dnf/base.py:2055
@@ -1569,6 +1572,8 @@ msgid ""
 "Can't convert '{}' to transaction ID.\n"
 "Use '<integer>', 'last', 'last-<positive-integer>'."
 msgstr ""
+"Kan '{}' niet converteren naar transactir ID.\n"
+"Gebruik '<integer>', 'last', 'last-<positive-integer>'."
 
 #: ../dnf/cli/commands/__init__.py:969
 msgid "No transaction which manipulates package '{}' was found."
@@ -1596,30 +1601,33 @@ msgid ""
 "To switch to the new streams' RPMs, run '{} distro-sync'. \n"
 "Then migrate configuration files and data as necessary."
 msgstr ""
+"\n"
+"Om om te schakelen naar de RPMs van de nieuwe stream, voer je '{} distro-sync' uit. \n"
+"Migreer daarna configuratiebestanden en data als nodig."
 
 #: ../dnf/cli/commands/module.py:257
 msgid "Interact with Modules."
-msgstr ""
+msgstr "Communiceer met modules."
 
 #: ../dnf/cli/commands/module.py:274
 msgid "show only enabled modules"
-msgstr ""
+msgstr "toon alleen ingeschakelde modules"
 
 #: ../dnf/cli/commands/module.py:277
 msgid "show only disabled modules"
-msgstr ""
+msgstr "toon alleen uitgeschakelde modules"
 
 #: ../dnf/cli/commands/module.py:280
 msgid "show only installed modules"
-msgstr ""
+msgstr "toon alleen geïnstalleerde modules"
 
 #: ../dnf/cli/commands/module.py:283
 msgid "show profile content"
-msgstr ""
+msgstr "toon profielinhoud"
 
 #: ../dnf/cli/commands/module.py:286
 msgid "auto enable stream"
-msgstr ""
+msgstr "stroom automatisch inschakelen"
 
 #: ../dnf/cli/commands/remove.py:46
 msgid "remove a package or packages from your system"
@@ -1691,24 +1699,27 @@ msgstr "advies over pakketten tonen"
 #: ../dnf/cli/commands/updateinfo.py:75
 msgid "advisories about newer versions of installed packages (default)"
 msgstr ""
+"adviezen over nieuwere versies van geïnstalleerde pakketten (standaard)"
 
 #: ../dnf/cli/commands/updateinfo.py:78
 msgid "advisories about equal and older versions of installed packages"
-msgstr ""
+msgstr "adviezen over gelijke en oudere versies van geïnstalleerde pakketten"
 
 #: ../dnf/cli/commands/updateinfo.py:81
 msgid ""
 "advisories about newer versions of those installed packages for which a "
 "newer version is available"
 msgstr ""
+"adviezen over nieuwere versies van die geïnstalleerde pakketten waarvoor een"
+" nieuwere versie beschikbaar is"
 
 #: ../dnf/cli/commands/updateinfo.py:85
 msgid "advisories about any versions of installed packages"
-msgstr ""
+msgstr "adviezen over alle versies van geïnstalleerde pakketten"
 
 #: ../dnf/cli/commands/updateinfo.py:90
 msgid "show summary of advisories (default)"
-msgstr ""
+msgstr "toon een samenvatting van de adviezen (standard)"
 
 #: ../dnf/cli/commands/updateinfo.py:93
 msgid "show list of advisories"
@@ -1859,7 +1870,7 @@ msgstr "Toon pakketafhankelijkheden en in welke pakketten deze zitten"
 #: ../dnf/cli/commands/clean.py:68
 #, python-format
 msgid "Removing file %s"
-msgstr ""
+msgstr "Bestand %s wordt verwijderd"
 
 #: ../dnf/cli/commands/clean.py:87
 msgid "remove cached data"
@@ -1943,6 +1954,8 @@ msgid ""
 "shows results that requires, suggests, supplements, enhances,or recommends "
 "package provides and files REQ"
 msgstr ""
+"toont resultaten die vereiste, gesuggereerde, aanvullende, verbeterende of "
+"aanbevolen pakketten bieden en bestanden VEREISTE"
 
 #: ../dnf/cli/commands/repoquery.py:126
 msgid "show only results that obsolete REQ"

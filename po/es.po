@@ -26,7 +26,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-08-29 12:20+0200\n"
-"PO-Revision-Date: 2018-08-22 08:50+0000\n"
+"PO-Revision-Date: 2018-08-31 06:22+0000\n"
 "Last-Translator: Máximo Castañeda Riloba <mcrcctm@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/dnf/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -2102,11 +2102,11 @@ msgstr "mostrar la lista de archivos del paquete"
 # DocId: dnf-plugins-core
 #: ../dnf/cli/commands/repoquery.py:170
 msgid "show package source RPM name"
-msgstr "muestra el nombre del paquete fuente RPM"
+msgstr "mostrar el nombre del paquete fuente RPM"
 
 #: ../dnf/cli/commands/repoquery.py:173
 msgid "show changelogs of the package"
-msgstr ""
+msgstr "mostrar cambios del paquete"
 
 # auto translated by TM merge from project: dnf-plugins-core, version: master,
 # DocId: dnf-plugins-core
@@ -2863,7 +2863,7 @@ msgstr "%s: usando metadatos de %s."
 #: ../dnf/base.py:456
 #, python-format
 msgid "%s, ignoring this repo."
-msgstr ""
+msgstr "%s, obviando este repositorio"
 
 #: ../dnf/base.py:459
 #, python-format
@@ -3214,6 +3214,7 @@ msgstr "Opción de configuración desconocida: %s = %s"
 #, python-format
 msgid "Main config did not have a %s attr. before setopt"
 msgstr ""
+"La configuración principal no tiene ningún atributo %s antes de setopt"
 
 #: ../dnf/conf/config.py:554 ../dnf/conf/config.py:572
 msgid "Incorrect or unknown \"{}\": {}"
@@ -3227,7 +3228,7 @@ msgstr "Falló el análisis del archivo \"%s\": %s"
 #: ../dnf/conf/config.py:622
 #, python-format
 msgid "Repo %s did not have a %s attr. before setopt"
-msgstr ""
+msgstr "El repositorio %s no tiene ningún atributo %s ates de setopt"
 
 #: ../dnf/conf/read.py:51
 #, python-format

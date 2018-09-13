@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-08-29 12:20+0200\n"
-"PO-Revision-Date: 2018-08-14 08:39+0000\n"
+"PO-Revision-Date: 2018-08-30 06:47+0000\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/dnf/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -2045,7 +2045,7 @@ msgstr "visa paketets käll-RPM-namn"
 
 #: ../dnf/cli/commands/repoquery.py:173
 msgid "show changelogs of the package"
-msgstr ""
+msgstr "visa ändringsloggar för paketet"
 
 #: ../dnf/cli/commands/repoquery.py:176
 msgid "format for displaying found packages"
@@ -2759,7 +2759,7 @@ msgstr "%s: använder metadata från %s."
 #: ../dnf/base.py:456
 #, python-format
 msgid "%s, ignoring this repo."
-msgstr ""
+msgstr "%s, ignorera detta förråd."
 
 #: ../dnf/base.py:459
 #, python-format

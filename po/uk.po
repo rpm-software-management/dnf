@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-08-29 12:20+0200\n"
-"PO-Revision-Date: 2018-08-10 05:01+0000\n"
+"PO-Revision-Date: 2018-08-30 04:17+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/projects/p/dnf/language/uk/)\n"
 "MIME-Version: 1.0\n"
@@ -2055,7 +2055,7 @@ msgstr "показати назву пакунка RPM із початковим
 
 #: ../dnf/cli/commands/repoquery.py:173
 msgid "show changelogs of the package"
-msgstr ""
+msgstr "показати журнал змін у пакунку"
 
 #: ../dnf/cli/commands/repoquery.py:176
 msgid "format for displaying found packages"
@@ -2774,7 +2774,7 @@ msgstr "%s: з використанням метаданих з %s."
 #: ../dnf/base.py:456
 #, python-format
 msgid "%s, ignoring this repo."
-msgstr ""
+msgstr "%s, ігноруємо це сховище."
 
 #: ../dnf/base.py:459
 #, python-format
