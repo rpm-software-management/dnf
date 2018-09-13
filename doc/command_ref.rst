@@ -789,6 +789,10 @@ In case stream is not specified enabled or default stream is used, in this order
 ``dnf [options] module enable <module_spec>...``
     Enable a module stream and make the stream RPMs available in the package set.
 
+    Modular dependencies are resolved and checked at the enablement time,
+    but do not get enabled automatically, but lazily any time an RPM
+    is installed from them.
+
     This command can also be used for switching module streams.
     RPMs from the original stream become unavailable and RPMs from the new
     stream become available in the package set.
