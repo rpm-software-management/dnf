@@ -24,14 +24,13 @@ import dnf.exceptions
 
 from dnf.module.exceptions import EnableMultipleStreamsException
 from dnf.util import logger
-from dnf.i18n import _, ucd
+from dnf.i18n import _, P_, ucd
 
 STATE_DEFAULT = libdnf.module.ModulePackageContainer.ModuleState_DEFAULT
 STATE_ENABLED = libdnf.module.ModulePackageContainer.ModuleState_ENABLED
 STATE_DISABLED = libdnf.module.ModulePackageContainer.ModuleState_DISABLED
 STATE_UNKNOWN = libdnf.module.ModulePackageContainer.ModuleState_UNKNOWN
 
-BROKEN_DEPENDENCY_MSG = _('The operation could result in broken dependency of modules:')
 
 class ModuleBase(object):
 
@@ -39,26 +38,22 @@ class ModuleBase(object):
         self.base = base
 
     def enable(self, module_specs):
-        no_match_specs, error_spec, solver_errors, module_dicts = \
+        no_match_specs, error_specs, solver_errors, module_dicts = \
             self._resolve_specs_enable_update_sack(module_specs)
         for spec, (nsvcap, module_dict) in module_dicts.items():
             if nsvcap.profile:
                 logger.info(_("Ignoring unnecessary profile: '{}/{}'").format(
                     nsvcap.name, nsvcap.profile))
-        if no_match_specs or error_specs:
-            raise dnf.module.exceptions.ModuleMarkingError(no_match_specs=no_match_specs,
-                                                           error_specs=error_specs)
-        if solver_errors:
-            msg = dnf.util._format_resolve_problems(solver_errors)
-            raise dnf.exceptions.DepsolveError("\n".join([BROKEN_DEPENDENCY_MSG, msg]) )
+        if no_match_specs or error_specs or solver_errors:
+            raise dnf.exceptions.MarkingErrors(no_match_group_specs=no_match_specs,
+                                               error_group_specs=error_specs,
+                                               module_debsolv_errors=solver_errors)
 
     def disable(self, module_specs):
         no_match_specs, solver_errors = self._modules_reset_or_disable(module_specs, STATE_DISABLED)
-        if no_match_specs:
-            raise dnf.module.exceptions.ModuleMarkingError(no_match_specs=no_match_specs)
-        if solver_errors:
-            msg = dnf.util._format_resolve_problems(solver_errors)
-            raise dnf.exceptions.DepsolveError("\n".join([BROKEN_DEPENDENCY_MSG, msg]))
+        if no_match_specs or solver_errors:
+            raise dnf.exceptions.MarkingErrors(no_match_group_specs=no_match_specs,
+                                               module_debsolv_errors=solver_errors)
 
     def install(self, module_specs, strict=True):
         no_match_specs, error_specs, solver_errors, module_dicts = \
@@ -121,14 +116,16 @@ class ModuleBase(object):
             sltr = dnf.selector.Selector(self.base.sack)
             sltr.set(pkg=query)
             self.base._goal.install(select=sltr, optional=(not strict))
-        if no_match_specs or error_specs:
-            raise dnf.module.exceptions.ModuleMarkingError(no_match_specs=no_match_specs,
-                                                           error_specs=error_specs)
+        if no_match_specs or error_specs or solver_errors:
+            raise dnf.exceptions.MarkingErrors(no_match_group_specs=no_match_specs,
+                                               error_group_specs=error_specs,
+                                               module_debsolv_errors=solver_errors)
 
     def reset(self, module_specs):
         no_match_specs, solver_errors = self._modules_reset_or_disable(module_specs, STATE_UNKNOWN)
         if no_match_specs:
-            raise dnf.module.exceptions.ModuleMarkingError(no_match_specs=no_match_specs)
+            raise dnf.exceptions.MarkingErrors(no_match_group_specs=no_match_specs,
+                                               module_debsolv_errors=solver_errors)
 
     def upgrade(self, module_specs):
         no_match_specs = []
@@ -578,3 +575,9 @@ class ModuleBase(object):
 
     def _format_repoid(self, repo_name):
         return "{}\n".format(self.base.output.term.bold(repo_name))
+
+
+def format_modular_solver_errors(errors):
+    msg = dnf.util._format_resolve_problems(errors)
+    return "\n".join(
+        [P_('Modular dependency problem:', 'Modular dependency problems:', len(errors)), msg])

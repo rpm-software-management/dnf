@@ -154,11 +154,14 @@ class Base(object):
 
     def _setup_excludes_includes(self, only_main=False):
         disabled = set(self.conf.disable_excludes)
-        if 'all' in disabled:
+        if 'all' in disabled and WITH_MODULES:
             hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
-            self.sack.filter_modules(self._moduleContainer, hot_fix_repos,
-                    self.conf.installroot, self.conf.module_platform_id, False,
-                    self.conf.debug_solver)
+            solver_errors = self.sack.filter_modules(
+                self._moduleContainer, hot_fix_repos, self.conf.installroot,
+                self.conf.module_platform_id, False, self.conf.debug_solver)
+            if solver_errors:
+                logger.warning(
+                    dnf.module.module_base.format_modular_solver_errors(solver_errors))
             return
         repo_includes = []
         repo_excludes = []
@@ -198,21 +201,27 @@ class Base(object):
                 subj = dnf.subject.Subject(excl)
                 exclude_query = exclude_query.union(subj.get_best_query(
                     self.sack, with_nevra=True, with_provides=False, with_filenames=False))
-            if not only_main:
+            if not only_main and WITH_MODULES:
                 hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
-                self.sack.filter_modules(self._moduleContainer, hot_fix_repos,
-                                         self.conf.installroot, self.conf.module_platform_id, False,
-                                         self.conf.debug_solver)
+                solver_errors = self.sack.filter_modules(
+                    self._moduleContainer, hot_fix_repos, self.conf.installroot,
+                    self.conf.module_platform_id, False, self.conf.debug_solver)
+                if solver_errors:
+                    logger.warning(
+                        dnf.module.module_base.format_modular_solver_errors(solver_errors))
             if include_query:
                 self.sack.add_includes(include_query)
                 self.sack.set_use_includes(True)
             if exclude_query:
                 self.sack.add_excludes(exclude_query)
-        elif not only_main:
+        elif not only_main and WITH_MODULES:
             hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
-            self.sack.filter_modules(self._moduleContainer, hot_fix_repos,
-                                     self.conf.installroot, self.conf.module_platform_id, False,
-                                     self.conf.debug_solver)
+            solver_errors = self.sack.filter_modules(
+                self._moduleContainer, hot_fix_repos, self.conf.installroot,
+                self.conf.module_platform_id, False, self.conf.debug_solver)
+            if solver_errors:
+                logger.warning(
+                    dnf.module.module_base.format_modular_solver_errors(solver_errors))
 
         if repo_includes:
             for query, repoid in repo_includes:
@@ -1764,17 +1773,20 @@ class Base(object):
                 logger.error(msg, spec)
                 no_match_pkg_specs.append(spec)
         no_match_module_specs = []
+        module_debsolv_errors = ()
         if WITH_MODULES and install_specs.grp_specs:
             try:
                 module_base = dnf.module.module_base.ModuleBase(self)
                 module_base.install(install_specs.grp_specs, strict)
-            except dnf.module.exceptions.ModuleMarkingError as e:
-                if e.no_match_specs:
-                    for e_spec in e.no_match_specs:
+            except dnf.exceptions.MarkingErrors as e:
+                if e.no_match_group_specs:
+                    for e_spec in e.no_match_group_specs:
                         no_match_module_specs.append(e_spec)
-                if e.error_specs:
-                    for e_spec in e.error_specs:
+                if e.error_group_specs:
+                    for e_spec in e.error_group_specs:
                         error_group_specs.append("@" + e_spec)
+                module_debsolv_errors = e.module_debsolv_errors
+
         else:
             no_match_module_specs = install_specs.grp_specs
 
@@ -1783,11 +1795,13 @@ class Base(object):
             exclude_specs.grp_specs = self._expand_groups(exclude_specs.grp_specs)
             self._install_groups(no_match_module_specs, exclude_specs, no_match_group_specs, strict)
 
-        if no_match_group_specs or error_group_specs or no_match_pkg_specs or error_pkg_specs:
+        if no_match_group_specs or error_group_specs or no_match_pkg_specs or error_pkg_specs \
+                or module_debsolv_errors:
             raise dnf.exceptions.MarkingErrors(no_match_group_specs=no_match_group_specs,
                                                error_group_specs=error_group_specs,
                                                no_match_pkg_specs=no_match_pkg_specs,
-                                               error_pkg_specs=error_pkg_specs)
+                                               error_pkg_specs=error_pkg_specs,
+                                               module_debsolv_errors=module_debsolv_errors)
 
     def install(self, pkg_spec, reponame=None, strict=True, forms=None):
         # :api

@@ -21,7 +21,7 @@ from __future__ import print_function
 
 from dnf.cli import commands, CliError
 from dnf.i18n import _
-from dnf.module.exceptions import NoModuleException, ModuleMarkingError
+from dnf.module.exceptions import NoModuleException
 from dnf.util import logger
 
 import sys
@@ -29,6 +29,7 @@ import os
 
 import libdnf
 import dnf.module.module_base
+import dnf.exceptions
 
 class ModuleCommand(commands.Command):
     class SubCommand(commands.Command):
@@ -92,7 +93,6 @@ class ModuleCommand(commands.Command):
             else:
                 raise dnf.exceptions.Error(_('No matching Modules to list'))
 
-
     class EnableSubCommand(SubCommand):
 
         aliases = ('enable',)
@@ -105,7 +105,12 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            self.module_base.enable(self.opts.module_spec)
+            try:
+                self.module_base.enable(self.opts.module_spec)
+            except dnf.exceptions.MarkingErrors as e:
+                if self.base.conf.strict:
+                    raise e
+                logger.error(str(e))
 
     class DisableSubCommand(SubCommand):
 
@@ -119,7 +124,12 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            self.module_base.disable(self.opts.module_spec)
+            try:
+                self.module_base.disable(self.opts.module_spec)
+            except dnf.exceptions.MarkingErrors as e:
+                if self.base.conf.strict:
+                    raise e
+                logger.error(str(e))
 
     class ResetSubCommand(SubCommand):
 
@@ -133,7 +143,13 @@ class ModuleCommand(commands.Command):
             demands.root_user = True
 
         def run_on_module(self):
-            self.module_base.reset(self.opts.module_spec)
+            try:
+                self.module_base.reset(self.opts.module_spec)
+            except dnf.exceptions.MarkingErrors as e:
+                if self.base.conf.strict:
+                    if e.no_match_group_specs:
+                        raise e
+                logger.error(str(e))
 
     class InstallSubCommand(SubCommand):
 
@@ -149,13 +165,11 @@ class ModuleCommand(commands.Command):
         def run_on_module(self):
             try:
                 self.module_base.install(self.opts.module_spec, self.base.conf.strict)
-            except ModuleMarkingError as e:
-                no_match_specs = e.no_match_specs
-                if no_match_specs:
-                    for spec in no_match_specs:
-                        logger.error(_("Unable to resolve argument {}").format(spec))
+            except dnf.exceptions.MarkingErrors as e:
                 if self.base.conf.strict:
-                    raise e
+                    if e.no_match_group_specs or e.error_group_specs:
+                        raise e
+                logger.error(str(e))
 
     class UpdateSubCommand(SubCommand):
 
