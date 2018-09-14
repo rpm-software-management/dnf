@@ -147,7 +147,7 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
                 p = 3
                 n = 0 if n < 0 else n
                 bar = ' ' * n + '=' * p
-                msg = '%3s%% [%-*s]%s' % ('???', bl, bar, msg)
+                msg = '     [%-*s]%s' % (bl, bar, msg)
                 left -= bl + 7
                 self.unknown_progres = self.unknown_progres + 3 if self.unknown_progres + 3 < bl \
                     else 0
