@@ -52,14 +52,6 @@ class DifferentStreamEnabledException(dnf.exceptions.Error):
         super(DifferentStreamEnabledException, self).__init__(value)
 
 
-class ModuleMarkingError(dnf.exceptions.Error):
-    def __init__(self, no_match_specs=(), error_specs=()):
-        value = _('No match for one or more arguments')
-        super(ModuleMarkingError, self).__init__(value)
-        self.no_match_specs = no_match_specs
-        self.error_specs = error_specs
-
-
 class NoProfileException(dnf.exceptions.Error):
     def __init__(self, profile):
         value = "No such profile: {}".format(profile)

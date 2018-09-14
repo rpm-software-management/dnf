@@ -18,8 +18,8 @@ Core DNF Errors.
 """
 
 from __future__ import unicode_literals
-from dnf.i18n import ucd, _
-
+from dnf.i18n import ucd, _, P_
+import dnf.util
 
 class DeprecationWarning(DeprecationWarning):
     # :api
@@ -98,15 +98,32 @@ class MarkingError(Error):
             string += ': ' + self.pkg_spec
         return string
 
+
 class MarkingErrors(Error):
     def __init__(self, no_match_group_specs=(), error_group_specs=(), no_match_pkg_specs=(),
-                 error_pkg_specs=()):
+                 error_pkg_specs=(), module_debsolv_errors=()):
         """Initialize the marking error instance."""
-        super(MarkingErrors, self).__init__(_('No match for one or more arguments'))
+        msg = _("Problems in request:")
+        if (no_match_pkg_specs):
+            msg += "\n" + _("missing packages: ") + ", ".join(no_match_pkg_specs)
+        if (error_pkg_specs):
+            msg += "\n" + _("broken packages: ") + ", ".join(error_pkg_specs)
+        if (no_match_group_specs):
+            msg += "\n" + _("missing groups or modules: ") + ", ".join(no_match_group_specs)
+        if (error_group_specs):
+            msg += "\n" + _("broken groups or modules: ") + ", ".join(error_group_specs)
+        if (module_debsolv_errors):
+
+            msg_mod = dnf.util._format_resolve_problems(module_debsolv_errors)
+            msg += "\n" + "\n".join([P_('Modular dependency problem:',
+                                        'Modular dependency problems:', len(module_debsolv_errors)),
+                                    msg_mod])
+        super(MarkingErrors, self).__init__(msg)
         self.no_match_group_specs = no_match_group_specs
         self.error_group_specs = error_group_specs
         self.no_match_pkg_specs = no_match_pkg_specs
         self.error_pkg_specs = error_pkg_specs
+        self.module_debsolv_errors = module_debsolv_errors
 
 class MetadataError(Error):
     pass
