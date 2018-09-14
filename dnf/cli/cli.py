@@ -374,7 +374,6 @@ class BaseCli(dnf.Base):
             except dnf.exceptions.PackageNotFoundError as err:
                 msg = _('No package %s available.')
                 logger.info(msg, self.output.term.bold(arg))
-                self._report_icase_hint(arg)
             except dnf.exceptions.PackagesNotInstalledError as err:
                 logger.info(_('Packages for argument %s available, but not installed.'),
                             self.output.term.bold(err.pkg_spec))

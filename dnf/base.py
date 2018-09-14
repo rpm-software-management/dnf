@@ -1457,9 +1457,7 @@ class Base(object):
                 else:
                     # it installs only one arch for conditional packages
                     installed_query = query.installed().apply()
-                    if installed_query:
-                        for pkg in installed_query:
-                            _msg_installed(pkg)
+                    self._report_already_installed(installed_query)
                     sltr = dnf.selector.Selector(self.sack)
                     sltr.set(provides="({} if {})".format(comps_pkg.name, comps_pkg.requires))
                     self._goal.install(select=sltr, optional=True)
@@ -1677,8 +1675,7 @@ class Base(object):
 
     def _install_multiarch(self, query, reponame=None, strict=True):
         already_inst, available = self._query_matches_installed(query)
-        for i in already_inst:
-            _msg_installed(i)
+        self._report_already_installed(already_inst)
         for a in available:
             sltr = dnf.selector.Selector(self.sack)
             sltr = sltr.set(pkg=a)
@@ -1861,7 +1858,7 @@ class Base(object):
         q = self.sack.query()._nevra(pkg.name, pkg.evr, pkg.arch)
         already_inst, available = self._query_matches_installed(q)
         if pkg in already_inst:
-            _msg_installed(pkg)
+            self._report_already_installed([pkg])
         elif pkg not in itertools.chain.from_iterable(available):
             raise dnf.exceptions.PackageNotFoundError(_('No match for argument: %s'), pkg.location)
         else:
@@ -2342,10 +2339,10 @@ class Base(object):
 
     def _report_icase_hint(self, pkg_spec):
         subj = dnf.subject.Subject(pkg_spec, ignore_case=True)
-        solution = subj.get_best_solution(self.sack, with_nevra=True, with_provides=False,
-                                          with_filenames=False)
+        solution = subj.get_best_solution(self.sack, with_nevra=True,
+                                          with_provides=False, with_filenames=False)
         if solution['query'] and solution['nevra'] and solution['nevra'].name and \
-                pkg_spec != solution['nevra'].name:
+                pkg_spec != solution['query'][0].name:
             logger.info(_("  * Maybe you meant: {}").format(solution['query'][0].name))
 
     def _select_remote_pkgs(self, install_pkgs):
@@ -2393,6 +2390,9 @@ class Base(object):
 
         return remote_pkgs, local_repository_pkgs
 
+    def _report_already_installed(self, packages):
+        for pkg in packages:
+            _msg_installed(pkg)
 
 def _msg_installed(pkg):
     name = ucd(pkg)
