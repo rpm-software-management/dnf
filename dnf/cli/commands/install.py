@@ -41,6 +41,7 @@ class InstallCommand(commands.Command):
     nevra_forms = {'install-n': hawkey.FORM_NAME,
                    'install-na': hawkey.FORM_NA,
                    'install-nevra': hawkey.FORM_NEVRA}
+    alternatives_provide = 'alternative-for({})'
 
     aliases = ('install', 'localinstall') + tuple(nevra_forms.keys())
     summary = _('install a package or packages on your system')
@@ -155,6 +156,15 @@ class InstallCommand(commands.Command):
             if self.base.conf.strict:
                 raise
 
+    def _report_alternatives(self, pkg_spec):
+        query = self.base.sack.query().filterm(
+            provides=self.alternatives_provide.format(pkg_spec))
+        if query:
+            msg = _('There are following alternatives for "{0}": {1}')
+            logger.info(msg.format(
+                pkg_spec,
+                ', '.join(sorted(set([alt.name for alt in query])))))
+
     def _install_packages(self, nevra_forms):
         errs = []
         strict = self.base.conf.strict
@@ -165,6 +175,7 @@ class InstallCommand(commands.Command):
                 msg = _('No match for argument: %s')
                 logger.info(msg, self.base.output.term.bold(pkg_spec))
                 self.base._report_icase_hint(pkg_spec)
+                self._report_alternatives(pkg_spec)
                 errs.append(pkg_spec)
 
         return errs
