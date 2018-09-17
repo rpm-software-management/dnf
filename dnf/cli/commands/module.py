@@ -65,8 +65,11 @@ class ModuleCommand(commands.Command):
                     self.opts.module_spec, libdnf.module.ModulePackageContainer.ModuleState_UNKNOWN)
             if output:
                 print(output)
-            else:
-                raise dnf.exceptions.Error(_('No matching Modules to list'))
+                return
+            msg = _('No matching Modules to list')
+            if self.opts.module_spec:
+                raise dnf.exceptions.Error(msg)
+            logger.warning(msg)
 
     class InfoSubCommand(SubCommand):
 
