@@ -30,7 +30,7 @@ STATE_DEFAULT = libdnf.module.ModulePackageContainer.ModuleState_DEFAULT
 STATE_ENABLED = libdnf.module.ModulePackageContainer.ModuleState_ENABLED
 STATE_DISABLED = libdnf.module.ModulePackageContainer.ModuleState_DISABLED
 STATE_UNKNOWN = libdnf.module.ModulePackageContainer.ModuleState_UNKNOWN
-
+MODULE_TABLE_HINT = _("\n\nHint: [d]efault, [e]nabled, [x]disabled, [i]nstalled")
 
 class ModuleBase(object):
 
@@ -361,6 +361,23 @@ class ModuleBase(object):
                 else ", "
         return profiles_str[:-2]
 
+    def _module_strs_formater(self, modulePackage):
+        default_str = ""
+        enabled_str = ""
+        disabled_str = ""
+        if modulePackage.getStream() == self.base._moduleContainer.getDefaultStream(
+                modulePackage.getName()):
+            default_str = " [d]"
+        if self.base._moduleContainer.isEnabled(modulePackage):
+            if not default_str:
+                enabled_str = " "
+            enabled_str += "[e]"
+        elif self.base._moduleContainer.isDisabled(modulePackage):
+            if not default_str:
+                disabled_str = " "
+            disabled_str += "[x]"
+        return default_str, enabled_str, disabled_str
+
     def _get_info(self, module_specs):
         output = []
         for module_spec in module_specs:
@@ -373,15 +390,7 @@ class ModuleBase(object):
                 logger.info(_("Ignoring unnecessary profile: '{}/{}'").format(
                     nsvcap.name, nsvcap.profile))
             for modulePackage in module_list:
-                default_str = ""
-                if modulePackage.getStream() == self.base._moduleContainer.getDefaultStream(
-                        modulePackage.getName()):
-                    default_str = " [d]"
-                enabled_str = ""
-                if self.base._moduleContainer.isEnabled(modulePackage):
-                    if not default_str:
-                        enabled_str = " "
-                    enabled_str += "[e]"
+                default_str, enabled_str, disabled_str = self._module_strs_formater(modulePackage)
                 default_profiles = self.base._moduleContainer.getDefaultProfiles(
                     modulePackage.getName(), modulePackage.getStream())
 
@@ -390,7 +399,8 @@ class ModuleBase(object):
 
                 lines = OrderedDict()
                 lines["Name"] = modulePackage.getName()
-                lines["Stream"] = modulePackage.getStream() + default_str + enabled_str
+                lines["Stream"] = modulePackage.getStream() + default_str + enabled_str + \
+                                  disabled_str
                 lines["Version"] = modulePackage.getVersion()
                 lines["Profiles"] = profiles_str
                 lines["Default profiles"] = " ".join(default_profiles)
@@ -401,7 +411,7 @@ class ModuleBase(object):
                 output.append(self._create_simple_table(lines).toString())
         str_table = "\n\n".join(sorted(set(output)))
         if str_table:
-            str_table += "\n\nHint: [d]efault, [e]nabled, [i]nstalled"
+            str_table += MODULE_TABLE_HINT
         return str_table
 
     @staticmethod
@@ -504,25 +514,15 @@ class ModuleBase(object):
                     else:
                         modulePackage = nameStreamArch[0]
                 line = table.newLine()
-                default_str = ""
-                enabled_str = ""
-
-                if modulePackage.getStream() == self.base._moduleContainer.getDefaultStream(
-                        modulePackage.getName()):
-                    default_str = " [d]"
-
-                if self.base._moduleContainer.isEnabled(modulePackage):
-                    if not default_str:
-                        enabled_str = " "
-                    enabled_str += "[e]"
-
+                default_str, enabled_str, disabled_str = self._module_strs_formater(modulePackage)
                 default_profiles = self.base._moduleContainer.getDefaultProfiles(
                     modulePackage.getName(), modulePackage.getStream())
                 profiles_str = self._profile_report_formater(modulePackage, default_profiles,
                                                              enabled_str)
                 line.getColumnCell(column_name).setData(modulePackage.getName())
                 line.getColumnCell(
-                    column_stream).setData(modulePackage.getStream() + default_str + enabled_str)
+                    column_stream).setData(
+                    modulePackage.getStream() + default_str + enabled_str + disabled_str)
                 line.getColumnCell(column_profiles).setData(profiles_str)
                 line.getColumnCell(column_info).setData(modulePackage.getSummary())
 
@@ -560,7 +560,7 @@ class ModuleBase(object):
 
             line = table.getLine(i)
             str_table += table.toString(line, line)
-        return str_table + "\n\nHint: [d]efault, [e]nabled, [i]nstalled"
+        return str_table + MODULE_TABLE_HINT
 
     def _format_header(self, table):
         line = table.getLine(0)
