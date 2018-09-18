@@ -346,7 +346,7 @@ class MDPayload(dnf.callback.Payload):
     def _fastestmirror_cb(self, cbdata, stage, data):
         if stage == libdnf.repo.RepoCB.FastestMirrorStage_DETECTION:
             # pinging mirrors, this might take a while
-            msg = _('determining the fastest mirror (%d hosts).. ') % data
+            msg = _('determining the fastest mirror (%s hosts).. ') % data
             self.fastest_mirror_running = True
         elif stage == libdnf.repo.RepoCB.FastestMirrorStage_STATUS and self.fastest_mirror_running:
             # done.. report but ignore any errors
