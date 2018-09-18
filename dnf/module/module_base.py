@@ -185,7 +185,7 @@ class ModuleBase(object):
 
         if remove_package_set:
             keep_pkg_names = self.base._moduleContainer.getInstalledPkgNames()
-            remove_package_set.difference(keep_pkg_names)
+            remove_package_set = remove_package_set.difference(keep_pkg_names)
             if remove_package_set:
                 query = self.base.sack.query().installed().filterm(name=remove_package_set)
                 if query:
