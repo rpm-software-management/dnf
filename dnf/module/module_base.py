@@ -349,6 +349,18 @@ class ModuleBase(object):
                 output.append(self._create_simple_table(lines).toString())
         return "\n\n".join(sorted(output))
 
+    def _profile_report_formater(self, modulePackage, default_profiles, enabled_str):
+        installed_profiles = self.base._moduleContainer.getInstalledProfiles(
+            modulePackage.getName())
+        available_profiles = modulePackage.getProfiles()
+        profiles_str = ""
+        for profile in available_profiles:
+            profiles_str += "{}{}".format(
+                profile.getName(), " [d]" if profile.getName() in default_profiles else "")
+            profiles_str += " [i], " if profile.getName() in installed_profiles and enabled_str \
+                else ", "
+        return profiles_str[:-2]
+
     def _get_info(self, module_specs):
         output = []
         for module_spec in module_specs:
@@ -370,20 +382,11 @@ class ModuleBase(object):
                     if not default_str:
                         enabled_str = " "
                     enabled_str += "[e]"
-                installed_profiles = self.base._moduleContainer.getInstalledProfiles(
-                    modulePackage.getName())
-                available_profiles = modulePackage.getProfiles()
-
                 default_profiles = self.base._moduleContainer.getDefaultProfiles(
                     modulePackage.getName(), modulePackage.getStream())
-                profiles_str = ""
-                for profile in available_profiles:
-                    profiles_str += "{}{}".format(
-                        profile.getName(), " [d]" if profile.getName() in default_profiles else "")
-                    profiles_str += " [i], " if profile in installed_profiles and enabled_str \
-                        else ", "
 
-                profiles_str = profiles_str[:-2]
+                profiles_str = self._profile_report_formater(
+                    modulePackage, default_profiles, enabled_str)
 
                 lines = OrderedDict()
                 lines["Name"] = modulePackage.getName()
@@ -503,8 +506,6 @@ class ModuleBase(object):
                 line = table.newLine()
                 default_str = ""
                 enabled_str = ""
-                profiles_str = ""
-                available_profiles = modulePackage.getProfiles()
 
                 if modulePackage.getStream() == self.base._moduleContainer.getDefaultStream(
                         modulePackage.getName()):
@@ -515,22 +516,14 @@ class ModuleBase(object):
                         enabled_str = " "
                     enabled_str += "[e]"
 
-                installed_profiles = self.base._moduleContainer.getInstalledProfiles(
-                    modulePackage.getName())
-
                 default_profiles = self.base._moduleContainer.getDefaultProfiles(
                     modulePackage.getName(), modulePackage.getStream())
-                for profile in available_profiles:
-                    profile_name = profile.getName()
-                    profiles_str += "{}{}".format(
-                        profile_name, " [d]" if profile_name in default_profiles else "")
-                    profiles_str += " [i], " if profile_name in installed_profiles and enabled_str \
-                        else ", "
-
+                profiles_str = self._profile_report_formater(modulePackage, default_profiles,
+                                                             enabled_str)
                 line.getColumnCell(column_name).setData(modulePackage.getName())
                 line.getColumnCell(
                     column_stream).setData(modulePackage.getStream() + default_str + enabled_str)
-                line.getColumnCell(column_profiles).setData(profiles_str[:-2])
+                line.getColumnCell(column_profiles).setData(profiles_str)
                 line.getColumnCell(column_info).setData(modulePackage.getSummary())
 
         return table
