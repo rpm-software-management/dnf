@@ -29,6 +29,7 @@ from dnf.i18n import _, P_, ucd, fill_exact_width, textwrap_fill, exact_width
 from dnf.pycomp import xrange, basestring, long, unicode
 from dnf.yum.rpmtrans import LoggingTransactionDisplay
 from dnf.db.history import MergedTransactionWrapper
+import dnf.base
 import dnf.callback
 import dnf.cli.progress
 import dnf.cli.term
@@ -1059,11 +1060,13 @@ class Output(object):
                 data[d][v] += 1
             a_wid = max(a_wid, len(a))
             return a_wid
+        ins_group_msg = _('Installing group/module packages') if dnf.base.WITH_MODULES \
+            else _('Installing group packages')
 
         for (action, pkglist) in [(_('Installing'), list_bunch.installed),
                                   (_('Upgrading'), list_bunch.upgraded),
                                   (_('Reinstalling'), list_bunch.reinstalled),
-                                  (_('Installing group packages'), list_bunch.installed_group),
+                                  (ins_group_msg, list_bunch.installed_group),
                                   (_('Installing dependencies'), list_bunch.installed_dep),
                                   (_('Installing weak dependencies'), list_bunch.installed_weak),
                                   (_('Removing'), list_bunch.erased),
