@@ -453,7 +453,7 @@ class ModuleBase(object):
         return output_string
 
     def _what_provides(self, rpm_specs):
-        output = []
+        output = set()
         modulePackages = self.base._moduleContainer.getModulePackages()
         baseQuery = self.base.sack.query().filterm(empty=True).apply()
         for spec in rpm_specs:
@@ -474,17 +474,17 @@ class ModuleBase(object):
                     for profile in modulePackage.getProfiles():
                         if pkg.name in profile.getContent():
                             profiles.append(profile.getName())
-
-                    lines = {"Module": modulePackage.getFullIdentifier(),
-                             "Profiles": " ".join(profiles),
-                             "Repo": modulePackage.getRepoID(),
-                             "Summary": modulePackage.getSummary()}
+                    lines = OrderedDict()
+                    lines["Module"] = modulePackage.getFullIdentifier()
+                    lines["Profiles"] = " ".join(profiles)
+                    lines["Repo"] = modulePackage.getRepoID()
+                    lines["Summary"] = modulePackage.getSummary()
 
                     table = self._create_simple_table(lines)
 
                     string_output += "{}\n".format(self.base.output.term.bold(str(pkg)))
                     string_output += "{}".format(table.toString())
-                    output.append(string_output)
+                    output.add(string_output)
 
         return "\n\n".join(sorted(output))
 
