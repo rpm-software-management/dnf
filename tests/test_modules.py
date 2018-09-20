@@ -278,14 +278,13 @@ class ModuleTest(unittest.TestCase):
 
     def test_install_implicit_empty_default_profile(self):
         # install module without a 'default' profile
-        # implicit empty 'default' profile is assumed
         # -> no packages should be installed, just module enablement
         self.module_base.install(["m4:1.4.18"])
 
         self.assertEqual(self.base._moduleContainer.getModuleState("m4"),
                          libdnf.module.ModulePackageContainer.ModuleState_ENABLED)
         self.assertEqual(self.base._moduleContainer.getEnabledStream("m4"), "1.4.18")
-        self.assertEqual(list(self.base._moduleContainer.getInstalledProfiles("m4")), ['default'])
+        self.assertEqual(list(self.base._moduleContainer.getInstalledProfiles("m4")), [])
 
         self.base.resolve()
         self.assertInstalls([])
