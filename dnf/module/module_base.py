@@ -84,15 +84,12 @@ class ModuleBase(object):
                         if not profiles_strings:
                             logger.error(_("No default profiles for module {}:{}").format(
                                 name, stream))
-                            profiles_strings = ['default']
                         for profile in set(profiles_strings):
                             module_profiles = latest_module.getProfiles(profile)
                             if not module_profiles:
                                 logger.error(
-                                    _("Default profile {} not matched for module {}:{}").format(
+                                    _("Profile {} not matched for module {}:{}").format(
                                         profile, name, stream))
-                                if profiles_strings == ['default']:
-                                    self.base._moduleContainer.install(latest_module, 'default')
 
                             profiles.extend(module_profiles)
                     for profile in profiles:
