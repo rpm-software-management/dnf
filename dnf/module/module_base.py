@@ -232,13 +232,14 @@ class ModuleBase(object):
         for moduleName, streamDict in moduleDict.items():
             moduleState = self.base._moduleContainer.getModuleState(moduleName)
             if len(streamDict) > 1:
-                if moduleState != STATE_DEFAULT and moduleState != STATE_ENABLED:
+                if moduleState != STATE_DEFAULT and moduleState != STATE_ENABLED \
+                        and moduleState != STATE_DISABLED:
                     raise EnableMultipleStreamsException(moduleName)
                 if moduleState == STATE_ENABLED:
                     stream = self.base._moduleContainer.getEnabledStream(moduleName)
                 else:
                     stream = self.base._moduleContainer.getDefaultStream(moduleName)
-                if stream not in streamDict:
+                if not stream or stream not in streamDict:
                     raise EnableMultipleStreamsException(moduleName)
                 for key in sorted(streamDict.keys()):
                     if key == stream:
