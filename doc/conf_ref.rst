@@ -130,6 +130,23 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     Should the dnf client exit immediately when something else has the lock. Default is False
 
+``gpgkey_dns_verification``
+    :ref:`boolean <boolean-label>`
+
+    Should the dnf attempt to automatically verify GPG verification keys using the DNS
+    system. This option requires libunbound to be installed on the client system. This
+    system has two main features. The first one is to check if any of the already
+    installed keys have been revoked. Automatic removal of the key is not yet available,
+    so it is up to the user, to remove revoked keys from the system. The second feature is
+    automatic verification of new keys when a repository is added to the system. In
+    interactive mode, the result is written to the output as a suggestion to the user. In
+    non-interactive mode (i.e. when -y is used), this system will automatically accept
+    keys that are available in the DNS and are correctly signed using DNSSEC. It will also
+    accept keys that do not exist in the DNS system and their NON-existence is
+    cryptographically proven using DNSSEC. This is mainly to preserve backward
+    compatibility.
+
+
 ``group_package_types``
     :ref:`list <list-label>`
 
