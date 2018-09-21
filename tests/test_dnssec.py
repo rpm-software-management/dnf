@@ -38,8 +38,8 @@ RPM_RAW_KEY = b'-----BEGIN PGP PUBLIC KEY BLOCK-----\n\nmQENBFqWzewBCADMHY8wL2Gm
               b'xLKOqVy/jsySqIHK96RrjY/m8Q9\nBzsi/6fj/GHkewaM8zaeNLHE7MgXFZAuJ8lzjD0r2oBD' \
               b'JGeBKfjjz9xh26YWjG/A\noiolXfliTEox6p0bf820eRhdX9UdSesBROL3rkB+hM5FOT8crSP' \
               b'JsuGZWJ9brikf\nsurWyU+5AQ0EWpbN7AEIAK0/PThuvsLdDGe5HeZn3VdrFcD9QSOV9Xjos8' \
-              b'zWkwx8\nv0t4KXPM4GshyU2ddNjgA+00LhzjACm2ropT5vdvKPtf8lRGOcWWHkiMPdDW/R3/\
-              nI5S0Oh1WFNrQZwQSXn/DoPnhUZNGErpZlUzF00BEltwoVWgT1n81Bp486U3oziZn\nUM8kxXXY' \
+              b'zWkwx8\nv0t4KXPM4GshyU2ddNjgA+00LhzjACm2ropT5vdvKPtf8lRGOcWWHkiMPdDW/R3/\n' \
+              b'I5S0Oh1WFNrQZwQSXn/DoPnhUZNGErpZlUzF00BEltwoVWgT1n81Bp486U3oziZn\nUM8kxXXY' \
               b'2PN8aTfWjsxOSmjyu2m7abeyjTqX9s++vUCQhmCNboSY1AhXF8GQl1Ce\nmpHVv0hOuC6Bead' \
               b'ZRXEfEF0sQogswXpFhYG4GFUvVzKBn00/5phNWHvff1GDjzZz\nmVcRPje+rH6gGP8tpQn7NL' \
               b'1SvrazSqSOih//FfV73EMAEQEAAYkBNgQYAQgAIBYh\nBMwU+9636QKkbYsjdMKSn1VZ4I5DB' \
