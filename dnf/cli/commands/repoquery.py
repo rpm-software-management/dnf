@@ -39,7 +39,7 @@ logger = logging.getLogger('dnf')
 
 QFORMAT_DEFAULT = '%{name}-%{epoch}:%{version}-%{release}.%{arch}'
 # matches %[-][dd]{attr}
-QFORMAT_MATCH = re.compile(r'%([-\d]*?){([:\.\w]*?)}')
+QFORMAT_MATCH = re.compile(r'%(-?\d*?){([:.\w]+?)}')
 
 QUERY_TAGS = """
 name, arch, epoch, version, release, reponame (repoid), evr,
@@ -75,11 +75,19 @@ def rpm2py_format(queryformat):
             fill = ':' + fill
         return '{0.' + key.lower() + fill + "}"
 
-    queryformat = queryformat.replace("\\n", "\n")
-    queryformat = queryformat.replace("\\t", "\t")
+    def brackets(txt):
+        return txt.replace('{', '{{').replace('}', '}}')
+
+    queryformat = queryformat.replace("\\n", "\n").replace("\\t", "\t")
     for key, value in OPTS_MAPPING.items():
         queryformat = queryformat.replace(key, value)
-    fmt = re.sub(QFORMAT_MATCH, fmt_repl, queryformat)
+    fmt = ""
+    spos = 0
+    for item in QFORMAT_MATCH.finditer(queryformat):
+        fmt += brackets(queryformat[spos:item.start()])
+        fmt += fmt_repl(item)
+        spos = item.end()
+    fmt += brackets(queryformat[spos:])
     return fmt
 
 
