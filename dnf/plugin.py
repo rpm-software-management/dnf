@@ -100,10 +100,13 @@ class Plugins(object):
             dnf.util.mapall(operator.methodcaller(method), self.plugins)
         return fn
 
-    def _check_enabled(self, conf):
+    def _check_enabled(self, conf, enable_plugins):
         """Checks whether plugins are enabled or disabled in configuration files
            and removes disabled plugins from list"""
         for plug_cls in self.plugin_cls[:]:
+            name = plug_cls.name
+            if any(fnmatch.fnmatch(name, pattern) for pattern in enable_plugins):
+                continue
             parser = plug_cls.read_config(conf)
             # has it enabled = False?
             disabled = (parser.has_section('main')
@@ -123,7 +126,7 @@ class Plugins(object):
         files = _iter_py_files(conf.pluginpath, skips, enable_plugins)
         _import_modules(package, files)
         self.plugin_cls = _plugin_classes()[:]
-        self._check_enabled(conf)
+        self._check_enabled(conf, enable_plugins)
         if len(self.plugin_cls) > 0:
             names = sorted(plugin.name for plugin in self.plugin_cls)
             logger.debug(_('Loaded plugins: %s'), ', '.join(names))
