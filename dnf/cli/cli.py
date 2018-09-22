@@ -1000,6 +1000,11 @@ class Cli(object):
         if stderr is not None:
             self.base._logging.stderr_handler.setLevel(stderr)
 
+    def redirect_repo_progress(self, fo=sys.stderr):
+        progress = dnf.cli.progress.MultiFileProgressMeter(fo)
+        self.base.output.progress = progress
+        self.base.repos.all().set_progress_bar(progress)
+
     def _check_running_kernel(self):
         kernel = self.base.sack.get_running_kernel()
         if kernel is None:
