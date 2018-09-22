@@ -24,6 +24,7 @@ import contextlib
 import logging
 import os
 import re
+import sys
 import unittest
 from functools import reduce
 
@@ -327,6 +328,9 @@ class CliStub(object):
         self.register_command(dnf.cli.commands.HelpCommand)
 
     def redirect_logger(self, stdout=None, stderr=None):
+        return
+
+    def redirect_repo_progress(self, fo=sys.stderr):
         return
 
     def register_command(self, command):

@@ -5,8 +5,8 @@
 %global rpm_version 4.14.0
 
 # conflicts
-%global conflicts_dnf_plugins_core_version 3.0.1
-%global conflicts_dnf_plugins_extras_version 3.0.0
+%global conflicts_dnf_plugins_core_version 3.0.4
+%global conflicts_dnf_plugins_extras_version 3.0.2
 %global conflicts_dnfdaemon_version 0.3.19
 
 # override dependencies for rhel 7
@@ -72,7 +72,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        3.6.0
+Version:        3.6.1
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING

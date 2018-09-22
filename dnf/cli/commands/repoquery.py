@@ -252,6 +252,8 @@ class RepoQueryCommand(commands.Command):
             self.cli.redirect_logger(stdout=logging.WARNING, stderr=logging.INFO)
 
     def configure(self):
+        if not self.opts.verbose and not self.opts.quiet:
+            self.cli.redirect_repo_progress()
         demands = self.cli.demands
 
         if self.opts.obsoletes:
