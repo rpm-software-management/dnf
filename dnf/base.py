@@ -294,6 +294,8 @@ class Base(object):
 
         # collect all hotfix repo repoids - we don't filter them at all
         hotfix_repos = [i.id for i in self.repos.iter_enabled() if i.hotfixes]
+        hotfix_repos.append(hawkey.SYSTEM_REPO_NAME)
+        hotfix_repos.append(hawkey.CMDLINE_REPO_NAME)
 
         # collect all RPM $names for bare RPMs filtering
         names = {hawkey.split_nevra(i).name for i in include_nevras_set}
