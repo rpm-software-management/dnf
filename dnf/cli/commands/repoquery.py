@@ -29,6 +29,7 @@ import dnf
 import dnf.cli
 import dnf.exceptions
 import dnf.subject
+import dnf.util
 import hawkey
 import logging
 import re
@@ -411,8 +412,7 @@ class RepoQueryCommand(commands.Command):
             goal = dnf.goal.Goal(rpmdb)
             solved = goal.run(verify=True)
             if not solved:
-                for msg in goal.problems:
-                    print(msg)
+                print(dnf.util._format_resolve_problems(goal.problem_rules()))
             return
         elif not self.opts.list:
             # do not show packages from @System repo
