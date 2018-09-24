@@ -171,6 +171,7 @@ BuildRequires:  python2-libdnf >= %{hawkey_version}
 BuildRequires:  python2-libcomps >= %{libcomps_version}
 BuildRequires:  python2-libdnf
 BuildRequires:  python2-nose
+Requires:       python2-enum34
 BuildRequires:  libmodulemd >= %{libmodulemd_version}
 Requires:       libmodulemd >= %{libmodulemd_version}
 %if (0%{?rhel} && 0%{?rhel} <= 7)
@@ -185,6 +186,7 @@ Requires:       pyliblzma
 Requires:       %{name}-data = %{version}-%{release}
 %if 0%{?fedora}
 Recommends:     deltarpm
+Recommends:     python2-unbound
 %endif
 %if 0%{?centos}
 Requires:       deltarpm
@@ -240,6 +242,7 @@ Requires:       python3-libcomps >= %{libcomps_version}
 Requires:       python3-libdnf
 BuildRequires:  python3-rpm >= %{rpm_version}
 Requires:       python3-rpm >= %{rpm_version}
+Recommends:     python3-unbound
 %if 0%{?rhel} && 0%{?rhel} <= 7
 Requires:       rpm-plugin-systemd-inhibit
 %else
