@@ -2538,5 +2538,29 @@
     [
         1305232,
         "log currently processing package from rpm installation"
+    ],
+    [
+        1626011,
+        "Don't print progress bar to stdout, and when there's no tty (dnf repoquery)"
+    ],
+    [
+        1631458,
+        "[abrt] dnf: build_format_fn(): repoquery.py:285:build_format_fn:KeyError: 'name'"
+    ],
+    [
+        1305340,
+        "DNF message \"Upgrading\"  at Zanata translation defect. is this Present Progressive ? or , is Gerund? Grammar problem."
+    ],
+    [
+        1623866,
+        "dnf module provides not having consistent output"
+    ],
+    [
+        1600444,
+        "Wrong conflicts between dnf and yum prevents upgrade"
+    ],
+    [
+        1628056,
+        "dnf has problem when setting option fastestmirror"
     ]
 ]

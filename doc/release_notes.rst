@@ -20,6 +20,23 @@
 ###################
 
 ===================
+3.6.1 Release Notes
+===================
+
+* [module] Improved module commands list, info
+* [module] Reports error from module solver
+
+Bugs fixed in 3.6.1:
+
+* :rhbug:`1626011`
+* :rhbug:`1631458`
+* :rhbug:`1305340`
+* :rhbug:`1305340`
+* :rhbug:`1623866`
+* :rhbug:`1600444`
+* :rhbug:`1628056`
+
+===================
 3.5.1 Release Notes
 ===================
 

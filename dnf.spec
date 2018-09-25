@@ -495,7 +495,27 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
-* Mon Sep 10 2018 Jaroslav Mracek <jmracek@redhat.com> - 0.19.1-1
+* Tue Sep 25 2018 Jaroslav Mracek <jmracek@redhat.com> - 3.6.1-1
+- [module] Improved module commands list, info
+- [module] Reports error from module solver
+- Fix: Error detected when calling 'RepoCB.fastestMirror' (RhBug:1628056)
+- Preserve packages from other installed mod profiles (RhBug:1629841)
+- [spec] Postpone conflict with yum to Fedora 30+ (RhBug:1600444)
+- [cli] Install command recommends alternative packages (RhBug:1625586)
+- [cli] Fix case insensitive hint (1628514)
+- Fix installed profiles for module info (RhBug:1629689)
+- Fix module provides not having consistent output (RhBug:1623866)
+- Enhance label for transaction table (RhBug:1609919)
+- Implement C_, the gettext function with a context (RhBug:1305340)
+- Actually disambiguate some messages using C_ (RhBug:1305340)
+- Restore 'strict' choice for group installs (#1461539)
+- [repoquery] More strict queryformat parsing (RhBug:1631458)
+- Redirect repo progress to std error (RhBug:1626011)
+- Unify behavior of remove and module remove (RhBug:1629848)
+- Change behavior of disabled module for module install (RhBug:1629711)
+- Allow enablement on disabled plugin (RhBug:1614539)
+
+* Mon Sep 10 2018 Jaroslav Mracek <jmracek@redhat.com> - 3.5.1-1
 - [module] Fixed list and info subcommands
 
 * Fri Sep 07 2018 Jaroslav Mracek <jmracek@redhat.com> - 3.5.0-1
