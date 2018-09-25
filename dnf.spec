@@ -171,15 +171,18 @@ BuildRequires:  python2-libdnf >= %{hawkey_version}
 BuildRequires:  python2-libcomps >= %{libcomps_version}
 BuildRequires:  python2-libdnf
 BuildRequires:  python2-nose
-Requires:       python2-enum34
 BuildRequires:  libmodulemd >= %{libmodulemd_version}
 Requires:       libmodulemd >= %{libmodulemd_version}
 %if (0%{?rhel} && 0%{?rhel} <= 7)
 BuildRequires:  pygpgme
 Requires:       pygpgme
+BuildRequires:  python-enum34
+Requires:       python-enum34
 %else
 BuildRequires:  python2-gpg
 Requires:       python2-gpg
+BuildRequires:  python2-enum34
+Requires:       python2-enum34
 %endif
 BuildRequires:  pyliblzma
 Requires:       pyliblzma
