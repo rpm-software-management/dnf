@@ -93,15 +93,6 @@ following will work::
 
 ``include`` directive name of [main] and Repo configuration is a more logical and better named counterpart of ``exclude`` in DNF.
 
-=============================================================
- ``dnf remove kernel`` deletes all packages called ``kernel``
-=============================================================
-
-In YUM, the running kernel is spared. There is no reason to keep this in DNF,
-the user can always specify concrete versions on the command line, e.g.::
-
-    dnf remove kernel-3.9.4
-
 =====================================================================
 ``dnf provides /bin/<file>`` does not find any packages on Fedora
 =====================================================================
