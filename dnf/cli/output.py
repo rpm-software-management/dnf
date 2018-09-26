@@ -2135,6 +2135,9 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
     def filelog(self, package, action):
         pass
 
+    def error(self, message):
+        pass
+
     def scriptout(self, msgs):
         """Print messages originating from a package script.
 
