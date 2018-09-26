@@ -121,7 +121,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     :ref:`integer <integer-label>`
 
     Error messages output level, in the range 0 to 10. The higher the number the
-    more error output is put to stderr. Default is 2. This is deprecated in DNF
+    more error output is put to stderr. Default is 3. This is deprecated in DNF
     and overwritten by \-\ :ref:`-verbose <verbose_options-label>` commandline
     option.
 

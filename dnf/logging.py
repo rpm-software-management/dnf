@@ -74,11 +74,13 @@ def _cfg_verbose_val2level(cfg_errval):
     assert 0 <= cfg_errval <= 10
     return _VERBOSE_VAL_MAPPING.get(cfg_errval, DDEBUG)
 
+
 # Both the DNF default and the verbose default are WARNING. Note that ERROR has
 # no specific level.
 _ERR_VAL_MAPPING = {
-    0 : SUPERCRITICAL,
-    1 : logging.CRITICAL
+    0: SUPERCRITICAL,
+    1: logging.CRITICAL,
+    2: logging.ERROR
     }
 
 def _cfg_err_val2level(cfg_errval):
