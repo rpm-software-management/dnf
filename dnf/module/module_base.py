@@ -325,7 +325,7 @@ class ModuleBase(object):
         return package_name_set
 
     def _get_info_profiles(self, module_specs):
-        output = []
+        output = set()
         for module_spec in module_specs:
             module_list, nsvcap = self._get_modules(module_spec)
             if not module_list:
@@ -344,7 +344,7 @@ class ModuleBase(object):
                     lines[profile.getName()] = "\n".join(
                         [pkgName for pkgName in profile.getContent()])
 
-                output.append(self._create_simple_table(lines).toString())
+                output.add(self._create_simple_table(lines).toString())
         return "\n\n".join(sorted(output))
 
     def _profile_report_formater(self, modulePackage, default_profiles, enabled_str):
@@ -377,7 +377,7 @@ class ModuleBase(object):
         return default_str, enabled_str, disabled_str
 
     def _get_info(self, module_specs):
-        output = []
+        output = set()
         for module_spec in module_specs:
             module_list, nsvcap = self._get_modules(module_spec)
             if not module_list:
@@ -406,8 +406,8 @@ class ModuleBase(object):
                 lines["Summary"] = modulePackage.getSummary()
                 lines["Description"] = modulePackage.getDescription()
                 lines["Artifacts"] = "\n".join(sorted(modulePackage.getArtifacts()))
-                output.append(self._create_simple_table(lines).toString())
-        str_table = "\n\n".join(sorted(set(output)))
+                output.add(self._create_simple_table(lines).toString())
+        str_table = "\n\n".join(sorted(output))
         if str_table:
             str_table += MODULE_TABLE_HINT
         return str_table
@@ -433,7 +433,7 @@ class ModuleBase(object):
         return table
 
     def _get_full_info(self, module_specs):
-        output = []
+        output = set()
         for module_spec in module_specs:
             module_list, nsvcap = self._get_modules(module_spec)
             if not module_list:
@@ -446,8 +446,8 @@ class ModuleBase(object):
             for modulePackage in module_list:
                 info = modulePackage.getYaml()
                 if info:
-                    output.append(info)
-        output_string = "\n\n".join(sorted(set(output)))
+                    output.add(info)
+        output_string = "\n\n".join(sorted(output))
         return output_string
 
     def _what_provides(self, rpm_specs):
