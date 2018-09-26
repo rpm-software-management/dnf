@@ -142,9 +142,6 @@ class Logging(object):
         self.stderr_handler.setLevel(SUPERCRITICAL)
         # put the marker in the file now:
         _paint_mark(logger_dnf)
-        # bring std handlers to the preferred level
-        self.stdout_handler.setLevel(verbose_level)
-        self.stderr_handler.setLevel(error_level)
 
         # setup Python warnings
         logging.captureWarnings(True)
@@ -161,8 +158,13 @@ class Logging(object):
         logger_rpm.setLevel(SUBDEBUG)
         logfile = os.path.join(logdir, dnf.const.LOG_RPM)
         handler = _create_filehandler(logfile)
+        logger_rpm.addHandler(self.stdout_handler)
+        logger_rpm.addHandler(self.stderr_handler)
         logger_rpm.addHandler(handler)
         _paint_mark(logger_rpm)
+        # bring std handlers to the preferred level
+        self.stdout_handler.setLevel(verbose_level)
+        self.stderr_handler.setLevel(error_level)
         logging.raiseExceptions = False
 
     def _setup_from_dnf_conf(self, conf):

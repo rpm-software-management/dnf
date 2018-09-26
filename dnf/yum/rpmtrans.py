@@ -137,7 +137,6 @@ class LoggingTransactionDisplay(ErrorTransactionDisplay):
         self.rpm_logger = logging.getLogger('dnf.rpm')
 
     def error(self, message):
-        super(LoggingTransactionDisplay, self).error(message)
         self.rpm_logger.error(message)
 
     def filelog(self, package, action):
