@@ -2144,7 +2144,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         :param msgs: the messages coming from the script
         """
         if msgs:
-            dnf.util._terminal_messenger('write_flush', ucd(msgs), sys.stdout)
+            self.rpm_logger.info(ucd(msgs))
 
     def _makefmt(self, percent, ts_done, ts_total, progress=True,
                  pkgname=None, wid1=15):
