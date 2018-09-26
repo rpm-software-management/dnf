@@ -100,7 +100,7 @@ class TestLogging(tests.support.TestCase):
 
     @mock.patch('dnf.logging.Logging._setup')
     def test_setup_from_dnf_conf(self, setup_m):
-        conf = mock.Mock(debuglevel=2, errorlevel=2, logdir=self.logdir)
+        conf = mock.Mock(debuglevel=2, errorlevel=3, logdir=self.logdir)
         self.logging._setup_from_dnf_conf(conf)
         self.assertEqual(setup_m.call_args, mock.call(dnf.logging.INFO,
                                                       dnf.logging.WARNING,

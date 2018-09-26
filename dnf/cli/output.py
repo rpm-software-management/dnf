@@ -66,7 +66,9 @@ def _make_lists(transaction, goal):
     })
 
     for tsi in transaction:
-        if tsi.action == libdnf.transaction.TransactionItemAction_DOWNGRADE:
+        if tsi.state == libdnf.transaction.TransactionItemState_ERROR:
+            b.failed.append(tsi)
+        elif tsi.action == libdnf.transaction.TransactionItemAction_DOWNGRADE:
             b.downgraded.append(tsi)
         elif tsi.action == libdnf.transaction.TransactionItemAction_INSTALL:
             if tsi.reason == libdnf.transaction.TransactionItemReason_GROUP:
@@ -89,8 +91,6 @@ def _make_lists(transaction, goal):
                 b.erased.append(tsi)
         elif tsi.action == libdnf.transaction.TransactionItemAction_UPGRADE:
             b.upgraded.append(tsi)
-        elif tsi.state == libdnf.transaction.TransactionItemState_ERROR:
-            b.failed.append(tsi)
 
     return b
 
