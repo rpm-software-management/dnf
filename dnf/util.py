@@ -102,8 +102,8 @@ def _urlopen_progress(url, conf, progress=None):
         libdnf.repo.PackageTarget.downloadPackages(libdnf.repo.VectorPPackageTarget(targets), True)
     except RuntimeError as e:
         if conf.strict:
-            raise IOError(e.args[1])
-        logger.error(e.args[1])
+            raise IOError(str(e))
+        logger.error(str(e))
 #    try:
 #        librepo.download_packages(targets, failfast=True)
 #    except librepo.LibrepoException as e:
@@ -127,7 +127,7 @@ def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
         else:
             libdnf.repo.Downloader.downloadURL(conf._config if conf else None, url, fo.fileno())
     except RuntimeError as e:
-        raise IOError(e.args[1])
+        raise IOError(str(e))
 #    except librepo.LibrepoException as e:
 #        raise IOError(e.args[1])
 
