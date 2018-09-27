@@ -1,6 +1,6 @@
 # dnf configuration classes.
 #
-# Copyright (C) 2016-2017 Red Hat, Inc.
+# Copyright (C) 2016-2018 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -177,6 +177,37 @@ class PathOption(Option):
         super(PathOption, self).__init__(option)
 
 
+class ListOptionValue(list):
+    """
+    Option aware list that updates underlying option on every change.
+    """
+
+    def __init__(self, config, name, *args, **kwargs):
+        super(ListOptionValue, self).__init__(*args, **kwargs)
+        self._config = config
+        self._name = name
+
+    def _wrap_list_method(name):
+        def new_method(self, *args, **kwargs):
+            method = getattr(super(ListOptionValue, self), name)
+            result = method(*args, **kwargs)
+            self._config._set_value(self._name, self)
+            return result
+        return new_method
+
+    __iadd__ = _wrap_list_method("__iadd__")
+    __imul__ = _wrap_list_method("__imul__")
+    __setitem__ = _wrap_list_method("__setitem__")
+    append = _wrap_list_method("append")
+    clear = _wrap_list_method("clear")
+    extend = _wrap_list_method("extend")
+    insert = _wrap_list_method("insert")
+    pop = _wrap_list_method("pop")
+    remove = _wrap_list_method("remove")
+    reverse = _wrap_list_method("reverse")
+    sort = _wrap_list_method("sort")
+
+
 class BaseConfig(object):
     """Base class for storing configuration definitions.
 
@@ -212,12 +243,10 @@ class BaseConfig(object):
             value = option().getValue()
         except Exception as ex:
             return None
-        if isinstance(value, libdnf.conf.VectorString):
-            return list(value)
-        if type(value).__name__ == "VectorString":
+        if isinstance(value, libdnf.conf.VectorString) or type(value).__name__ == "VectorString":
             # every module generated with swig provides a different VectorString class
             # that's why isinstance() is insufficient and the type has to be matched by name
-            return list(value)
+            return ListOptionValue(self, name, value)
         if isinstance(value, str):
             return ucd(value)
         return value
