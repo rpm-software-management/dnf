@@ -838,7 +838,7 @@ class Cli(object):
             logger.critical(_('Config error: %s'), e)
             sys.exit(1)
         except IOError as e:
-            e = '%s: %s' % (ucd(e.args[1]), repr(e.filename))
+            e = '%s: %s' % (ucd(str(e)), repr(e.filename))
             logger.critical(_('Config error: %s'), e)
             sys.exit(1)
         if opts.destdir is not None:
