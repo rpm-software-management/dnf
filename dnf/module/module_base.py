@@ -104,11 +104,14 @@ class ModuleBase(object):
         for pkg_name, set_specs in install_dict.items():
             query = install_base_query.filter(name=pkg_name)
             if not query:
-                for spec in set_specs:
-                    logger.error(_("Unable to resolve argument {}").format(spec))
-                logger.error(_("No match for package {}").format(pkg_name))
-                error_specs.extend(set_specs)
-                continue
+                # package can also be non-modular or part of another stream
+                query = self.base.sack.query().filterm(name=pkg_name)
+                if not query:
+                    for spec in set_specs:
+                        logger.error(_("Unable to resolve argument {}").format(spec))
+                    logger.error(_("No match for package {}").format(pkg_name))
+                    error_specs.extend(set_specs)
+                    continue
             self.base._goal.group_members.add(pkg_name)
             sltr = dnf.selector.Selector(self.base.sack)
             sltr.set(pkg=query)
