@@ -191,6 +191,9 @@ class ListOptionValue(list):
         def new_method(self, *args, **kwargs):
             method = getattr(super(ListOptionValue, self), name)
             result = method(*args, **kwargs)
+            # storing an empty list clears OptionStringListAppend
+            # and following _set_value doesn't duplicate data
+            self._config._set_value(self._name, [])
             self._config._set_value(self._name, self)
             return result
         return new_method
