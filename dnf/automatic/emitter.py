@@ -100,7 +100,7 @@ class EmailEmitter(Emitter):
 
         # Send the email
         try:
-            smtp = smtplib.SMTP(self._conf.email_host)
+            smtp = smtplib.SMTP(self._conf.email_host, timeout=300)
             smtp.sendmail(email_from, email_to, message.as_string())
             smtp.close()
         except smtplib.SMTPException as exc:
