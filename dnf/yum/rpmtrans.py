@@ -394,7 +394,7 @@ class RPMTransaction(object):
         msg = ("Error in %s scriptlet in rpm package %s" % (scriptlet_name, name))
 
         for display in self.displays:
-            display.error(msg)
+            display.error(dnf.cli.term.Term().bold(msg))
 
     def _script_start(self, key):
         # TODO: this doesn't fit into libdnf TransactionItem use cases
