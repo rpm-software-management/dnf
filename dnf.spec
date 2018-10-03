@@ -5,7 +5,7 @@
 %global rpm_version 4.14.0
 
 # conflicts
-%global conflicts_dnf_plugins_core_version 3.0.4
+%global conflicts_dnf_plugins_core_version 3.1
 %global conflicts_dnf_plugins_extras_version 3.0.2
 %global conflicts_dnfdaemon_version 0.3.19
 
@@ -72,7 +72,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        3.6.1
+Version:        3.7.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -433,12 +433,10 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %{_sysconfdir}/yum/pluginconf.d
 %{_sysconfdir}/yum/protected.d
 %{_sysconfdir}/yum/vars
-%{_mandir}/man1/repoquery.1.*
 %{_mandir}/man5/yum.conf.5.*
 %{_mandir}/man8/yum.8*
 %{_mandir}/man8/yum-shell.8*
 %else
-%exclude %{_mandir}/man1/repoquery.1.*
 %exclude %{_mandir}/man8/yum-shell.8*
 %exclude %{_sysconfdir}/yum/pluginconf.d
 %exclude %{_sysconfdir}/yum/protected.d
