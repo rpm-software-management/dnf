@@ -562,7 +562,7 @@ class ModuleBase(object):
 
     def _format_header(self, table):
         line = table.getLine(0)
-        return table.toString(line, line).split('\n', 1)[0]
+        return table.toString(line, line).split('\n', 1)[0] + '\n'
 
     def _format_repoid(self, repo_name):
         return "{}\n".format(self.base.output.term.bold(repo_name))
