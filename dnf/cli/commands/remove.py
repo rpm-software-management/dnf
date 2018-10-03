@@ -87,7 +87,8 @@ class RemoveCommand(commands.Command):
             instonly = self.base._get_installonly_query(q.installed())
             dups = q.duplicated().difference(instonly)
             if not dups:
-                raise dnf.exceptions.Error(_('No duplicated packages found for removal.'))
+                logger.info(_('No duplicated packages found for removal.'))
+                return
 
             for (name, arch), pkgs_list in dups._na_dict().items():
                 if len(pkgs_list) < 2:
@@ -112,7 +113,7 @@ class RemoveCommand(commands.Command):
                 for pkg in instonly:
                     self.base.package_remove(pkg)
             else:
-                raise dnf.exceptions.Error(
+                logger.info(
                     _('No old installonly packages found for removal.'))
             return
 
@@ -142,4 +143,4 @@ class RemoveCommand(commands.Command):
                 done = True
 
         if not done:
-            raise dnf.exceptions.Error(_('No packages marked for removal.'))
+            logger.info(_('No packages marked for removal.'))

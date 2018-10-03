@@ -676,7 +676,7 @@ class RepoPkgsCommand(Command):
                         done = True
 
             if not done:
-                raise dnf.exceptions.Error(_('No packages marked for removal.'))
+                logger.info(_('No packages marked for removal.'))
 
     class UpgradeSubCommand(Command):
         """Implementation of the upgrade sub-command."""
