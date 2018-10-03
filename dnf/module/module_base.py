@@ -488,7 +488,7 @@ class ModuleBase(object):
 
     def _create_and_fill_table(self, latest):
         table = libdnf.smartcols.Table()
-        table.setTermforce(libdnf.smartcols.Table.TermForce_ALWAYS)
+        table.setTermforce(libdnf.smartcols.Table.TermForce_AUTO)
         table.enableMaxout(True)
         column_name = table.newColumn("Name")
         column_stream = table.newColumn("Stream")
