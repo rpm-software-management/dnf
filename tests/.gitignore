@@ -1,0 +1,2 @@
+modules/etc/dnf/dnf.conf
+modules/etc/dnf/repos.d/test.repo

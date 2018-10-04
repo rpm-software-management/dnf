@@ -1,6 +1,0 @@
-[test]
-name=Test
-baseurl=file:///home/msehnout/Fedora/dnf/dnf-2.7.5-modularity-6/tests/modules/modules/_all/x86_64/
-enabled=1
-gpgcheck=0
-metadata_expire=0
