@@ -68,14 +68,14 @@ class Sack(hawkey.Sack):
             self.installonly = installonly
         self.installonly_limit = installonly_limit
 
-    def query(self):
+    def query(self, flags=0):
         # :api
         """Factory function returning a DNF Query."""
-        return dnf.query.Query(self)
+        return dnf.query.Query(self, flags)
 
     def _rpmdb_version(self):
         # TODO: verify ordering
-        pkgs = self.query().installed().run()
+        pkgs = self.query(hawkey.IGNORE_EXCLUDES).installed().run()
         main = SackVersion()
         for i in pkgs:
             # TODO: what if _pkgid is not sha1
