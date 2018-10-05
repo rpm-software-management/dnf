@@ -68,7 +68,7 @@ class CheckCommand(commands.Command):
             self.opts.check_types = {'all'}
         else:
             self.opts.check_types = set(self.opts.check_types)
-        self.base.conf.disable_excludes += ("all",)
+        self.base.conf.disable_excludes += ["all"]
 
     def run(self):
         output_set = set()
