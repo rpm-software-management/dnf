@@ -256,9 +256,6 @@ class ModuleCommand(commands.Command):
         narrows.add_argument('--profile', dest='profile',
                              action='store_true',
                              help=_("show profile content"))
-        narrows.add_argument('--autoenable', dest='autoenable',
-                             action='store_true',
-                             help=_("auto enable stream"))
 
     def configure(self):
         try:
