@@ -33,18 +33,12 @@ import sys
 logger = logging.getLogger('dnf')
 
 
+# only demands we'd like to override
 class ShellDemandSheet(object):
-    allow_erasing = False
     available_repos = True
-    load_system_repo = True
     resolving = True
     root_user = True
     sack_activation = True
-    success_exit_status = 0
-    cacheonly = False
-    fresh_metadata = True
-    freshest_metadata = False
-    transaction_display = None
 
 
 class ShellCommand(commands.Command, cmd.Cmd):
@@ -75,7 +69,17 @@ class ShellCommand(commands.Command, cmd.Cmd):
                             help=_('Script to run in DNF shell'))
 
     def configure(self):
+        # append to ShellDemandSheet missing demands from
+        # dnf.cli.demand.DemandSheet with their default values.
+        default_demands = self.cli.demands
         self.cli.demands = ShellDemandSheet()
+        for attr in dir(default_demands):
+            if attr.startswith('__'):
+                continue
+            try:
+                getattr(self.cli.demands, attr)
+            except AttributeError:
+                setattr(self.cli.demands, attr, getattr(default_demands, attr))
 
     def run(self):
         if self.opts.script:
