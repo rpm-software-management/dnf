@@ -413,9 +413,9 @@ class GroupCommand(commands.Command):
 
         if cmd == 'install':
             if self.opts.with_optional:
-                types = self.base.conf.group_package_types + ('optional',)
+                types = tuple(self.base.conf.group_package_types + ['optional'])
             else:
-                types = self.base.conf.group_package_types
+                types = tuple(self.base.conf.group_package_types)
 
             self._remark = True
             try:
