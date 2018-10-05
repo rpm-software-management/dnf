@@ -1923,7 +1923,8 @@ class Base(object):
         installed = self.sack.query().installed()
         q = query.intersection(self.sack.query().filterm(name=[pkg.name for pkg in installed]))
         if obsoletes:
-            obsoletes = self.sack.query().available().filterm(obsoletes=q.installed.union(q.upgrades()))
+            obsoletes = self.sack.query().available().filterm(
+                obsoletes=q.installed().union(q.upgrades()))
             # add obsoletes into transaction
             q = q.union(obsoletes)
         # provide only available packages to solver otherwise selection of available
