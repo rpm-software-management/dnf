@@ -400,6 +400,7 @@ class ModuleBase(object):
                 lines["Stream"] = modulePackage.getStream() + default_str + enabled_str + \
                                   disabled_str
                 lines["Version"] = modulePackage.getVersion()
+                lines["Context"] = modulePackage.getContext()
                 lines["Profiles"] = profiles_str
                 lines["Default profiles"] = " ".join(default_profiles)
                 lines["Repo"] = modulePackage.getRepoID()
