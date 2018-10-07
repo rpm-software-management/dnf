@@ -253,14 +253,6 @@ def lazyattr(attrname):
         return cached_getter
     return get_decorated
 
-def log_method_call(log_call):
-    def wrapper(fn):
-        def new_func(*args, **kwargs):
-            name = '%s.%s' % (args[0].__class__.__name__, fn.__name__)
-            log_call('Call: %s: %s, %s', name, args[1:], kwargs)
-            return fn(*args, **kwargs)
-        return new_func
-    return wrapper
 
 def mapall(fn, *seq):
     """Like functools.map(), but return a list instead of an iterator.

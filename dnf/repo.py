@@ -206,7 +206,6 @@ class PackagePayload(dnf.callback.Payload):
         self.callbacks = PackageTargetCallbacks(self)
         self.pkg = pkg
 
-    @dnf.util.log_method_call(functools.partial(logger.log, dnf.logging.SUBDEBUG))
     def _end_cb(self, cbdata, lr_status, msg):
         """End callback to librepo operation."""
         status = dnf.callback.STATUS_FAILED
@@ -219,7 +218,6 @@ class PackagePayload(dnf.callback.Payload):
 
         self.progress.end(self, status, msg)
 
-    @dnf.util.log_method_call(functools.partial(logger.log, dnf.logging.SUBDEBUG))
     def _mirrorfail_cb(self, cbdata, err, url):
         self.progress.end(self, dnf.callback.STATUS_MIRROR, err)
 

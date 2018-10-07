@@ -151,7 +151,6 @@ class MultiFileProgressMeter(dnf.callback.DownloadProgress):
                 left -= bl + 7
                 self.unknown_progres = self.unknown_progres + 3 if self.unknown_progres + 3 < bl \
                     else 0
-
         self.message('%-*.*s%s' % (left, left, text, msg))
 
     def end(self, payload, status, err_msg):
