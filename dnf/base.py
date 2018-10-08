@@ -523,6 +523,10 @@ class Base(object):
                           rpm._RPMVSF_NODIGESTS}
 
     @property
+    def goal(self):
+        return self._goal
+
+    @property
     def _ts(self):
         """Set up the RPM transaction set that will be used
            for all the work."""
