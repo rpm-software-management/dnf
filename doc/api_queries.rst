@@ -106,6 +106,10 @@
 
       q = base.sack.query().filter(name__substr="club")
 
+  .. method:: filterm(**kwargs)
+
+    Similar to :meth:`dnf.query.Query.filter` but it modifies the query in place.
+
   .. method:: installed
 
     Return a new query that limits the result to the installed packages only.
