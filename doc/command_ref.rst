@@ -680,6 +680,9 @@ Install Examples
     core functionality of the package, but they enhance the original package (like extended
     documentation, plugins, additional functions, ...).
 
+``dnf install --advisory=FEDORA-2018-b7b99fe852 \*``
+    Install all packages that belong to "FEDORA-2018-b7b99fe852" advisory.
+
 .. _list_command-label:
 
 ------------
