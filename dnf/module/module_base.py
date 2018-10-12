@@ -274,6 +274,10 @@ class ModuleBase(object):
             self.base._moduleContainer, hot_fix_repos, self.base.conf.installroot, None,
             self.base.conf.debug_solver
         )
+        for nsvcap, moduleDict in module_dicts.values():
+            for streamDict in moduleDict.values():
+                for modules in streamDict.values():
+                    self.base._moduleContainer.enableDependencyTree(modules)
         return no_match_specs, error_spec, solver_errors, module_dicts
 
     def _modules_reset_or_disable(self, module_specs, to_state):
