@@ -277,7 +277,8 @@ class ModuleBase(object):
         for nsvcap, moduleDict in module_dicts.values():
             for streamDict in moduleDict.values():
                 for modules in streamDict.values():
-                    self.base._moduleContainer.enableDependencyTree(modules)
+                    self.base._moduleContainer.enableDependencyTree(
+                        libdnf.module.VectorModulePackagePtr(modules))
         return no_match_specs, error_spec, solver_errors, module_dicts
 
     def _modules_reset_or_disable(self, module_specs, to_state):
