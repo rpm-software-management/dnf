@@ -2562,5 +2562,41 @@
     [
         1628056,
         "dnf has problem when setting option fastestmirror"
+    ],
+    [
+        1508649,
+        "quiet option, should quiet errors ?"
+    ],
+    [
+        1590690,
+        "dnf -q is not quiet"
+    ],
+    [
+        1624291,
+        "[sack] rpmdb version is incorrect when using excludes"
+    ],
+    [
+        1631217,
+        "unable to install stratis"
+    ],
+    [
+        1489308,
+        "[abrt] dnf: _progress_cb(): __init__.py:1366:log:SystemError: <built-in function isinstance> returned a result with an error set"
+    ],
+    [
+        1625879,
+        "advisory option not working with dnf install"
+    ],
+    [
+        1483458,
+        "RFE: add --changelog into dnf repoquery"
+    ],
+    [
+        1497171,
+        "[yum-compatibility] Prevent user from removing running kernel."
+    ],
+    [
+        1620242,
+        "dnf repoquery --unsatisfied gives python traceback"
     ]
 ]

@@ -72,7 +72,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        3.7.1
+Version:        4.0.4
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -143,11 +143,6 @@ Provides:       %{name}-conf = %{version}-%{release}
 Common data and configuration files for DNF
 
 %package -n %{yum_subpackage_name}
-# DNF == YUM4; prefix version with 4.0 to make it higher than any version of YUM3
-# save and restore version, otherwise setting Version affects other sub-packages
-%global pkg_version %{version}
-Version:        4.0.%{version}
-%global version %{pkg_version}
 Requires:       %{name} = %{version}-%{release}
 Summary:        %{pkg_summary}
 %if 0%{?fedora}
@@ -499,6 +494,14 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Mon Oct 15 2018 Jaroslav Mracek <jmracek@redhat.com> - 4.0.4-1
+- Update to 4.0.4
+- Add dnssec extension
+- Set termforce to AUTO to automatically detect if stdout is terminal
+- Repoquery command accepts --changelogs option (RhBug:1483458)
+- Calculate sack version from all installed packages (RhBug:1624291)
+- [module] Allow to enable module dependencies (RhBug:1622566)
+
 * Tue Sep 25 2018 Jaroslav Mracek <jmracek@redhat.com> - 3.6.1-1
 - [module] Improved module commands list, info
 - [module] Reports error from module solver

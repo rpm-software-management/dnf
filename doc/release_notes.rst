@@ -20,6 +20,28 @@
 ###################
 
 ===================
+4.0.4 Release Notes
+===================
+
+* Add dnssec extension
+* Set termforce to AUTO to automatically detect if stdout is terminal
+* Repoquery command accepts --changelogs option (RhBug:1483458)
+* Calculate sack version from all installed packages (RhBug:1624291)
+* [module] Allow to enable module dependencies (RhBug:1622566)
+
+Bugs fixed in 4.0.4:
+
+* :rhbug:`1508649`
+* :rhbug:`1590690`
+* :rhbug:`1624291`
+* :rhbug:`1631217`
+* :rhbug:`1489308`
+* :rhbug:`1625879`
+* :rhbug:`1483458`
+* :rhbug:`1497171`
+* :rhbug:`1620242`
+
+===================
 3.6.1 Release Notes
 ===================
 
