@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-09-25 07:58+0200\n"
+"POT-Creation-Date: 2018-10-15 09:16+0200\n"
 "PO-Revision-Date: 2018-05-01 09:26+0000\n"
 "Last-Translator: Fabio Tomat <f.t.public@gmail.com>\n"
 "Language-Team: Friulian\n"
@@ -1031,7 +1031,7 @@ msgstr "Operazion interote."
 #: ../dnf/cli/commands/__init__.py:497 ../dnf/cli/commands/__init__.py:590
 #: ../dnf/cli/commands/__init__.py:639 ../dnf/cli/commands/install.py:80
 #: ../dnf/cli/commands/install.py:103 ../dnf/cli/commands/install.py:110
-#: ../dnf/base.py:1604
+#: ../dnf/base.py:1611
 msgid "Nothing to do."
 msgstr "Nuie ce fâ."
 
@@ -1072,21 +1072,21 @@ msgstr "Nissun pachet segnât pe sincronizazion de distribuzion."
 #: ../dnf/cli/commands/__init__.py:709 ../dnf/cli/commands/remove.py:139
 #: ../dnf/cli/commands/install.py:147 ../dnf/cli/commands/install.py:179
 #: ../dnf/cli/commands/reinstall.py:70 ../dnf/cli/commands/reinstall.py:84
-#: ../dnf/base.py:1778 ../dnf/base.py:1853 ../dnf/base.py:1872
-#: ../dnf/base.py:1885 ../dnf/base.py:1906 ../dnf/base.py:1935
-#: ../dnf/base.py:1959 ../dnf/base.py:2019 ../dnf/base.py:2108
+#: ../dnf/base.py:1785 ../dnf/base.py:1860 ../dnf/base.py:1879
+#: ../dnf/base.py:1892 ../dnf/base.py:1913 ../dnf/base.py:1963
+#: ../dnf/base.py:1971 ../dnf/base.py:2020 ../dnf/base.py:2109
 #, python-format
 msgid "No match for argument: %s"
 msgstr "Nissune corispondence pal argoment: %s"
 
 #: ../dnf/cli/cli.py:375 ../dnf/cli/cli.py:627 ../dnf/cli/cli.py:657
 #: ../dnf/cli/commands/__init__.py:368 ../dnf/cli/commands/__init__.py:883
-#: ../dnf/cli/commands/group.py:425 ../dnf/base.py:2183
+#: ../dnf/cli/commands/group.py:425 ../dnf/base.py:2184
 #, python-format
 msgid "No package %s available."
 msgstr "Nissun pachet %s disponibil."
 
-#: ../dnf/cli/cli.py:378 ../dnf/base.py:2115
+#: ../dnf/cli/cli.py:378 ../dnf/base.py:2116
 #, python-format
 msgid "Packages for argument %s available, but not installed."
 msgstr "A son disponibii pachets pal argoment %s, ma no son instalâts."
@@ -1149,8 +1149,8 @@ msgstr "La cronologjie des transazions no je complete, prime di %u."
 msgid "Transaction history is incomplete, after %u."
 msgstr "La cronologjie des transazions no je complete, dopo di %u."
 
-#: ../dnf/cli/cli.py:622 ../dnf/cli/cli.py:653 ../dnf/base.py:1990
-#: ../dnf/base.py:2177
+#: ../dnf/cli/cli.py:622 ../dnf/cli/cli.py:653 ../dnf/base.py:1991
+#: ../dnf/base.py:2178
 #, python-format
 msgid "No package %s installed."
 msgstr "Nissun pachet %s instalât."
@@ -1159,7 +1159,7 @@ msgstr "Nissun pachet %s instalât."
 msgid "Undoing transaction {}, from {}"
 msgstr "Si anule la transazion {}, di {}"
 
-#: ../dnf/cli/cli.py:721 ../dnf/cli/commands/shell.py:226
+#: ../dnf/cli/cli.py:721 ../dnf/cli/commands/shell.py:230
 #, python-format
 msgid "Unknown repo: '%s'"
 msgstr "Repo no cognossût: '%s'"
@@ -1173,19 +1173,19 @@ msgstr "Nissune corispondence di repository: %s"
 msgid "This command has to be run under the root user."
 msgstr "Chest comant al à di jessi eseguît come utent root."
 
-#: ../dnf/cli/cli.py:789
+#: ../dnf/cli/cli.py:793
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "Comant inesistent: %s. Dopre %s --help"
 
-#: ../dnf/cli/cli.py:792
+#: ../dnf/cli/cli.py:796
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
 "Al podarès jessi un comant di plugin DNF, prove \"dnf install 'dnf-"
 "command(%s)'\""
 
-#: ../dnf/cli/cli.py:795
+#: ../dnf/cli/cli.py:799
 msgid ""
 "It could be a DNF plugin command, but loading of plugins is currently "
 "disabled."
@@ -1193,18 +1193,18 @@ msgstr ""
 "Al podarès jessi un comant di plugin DNF, ma il cjariament dai plugins al è "
 "pal moment disabilitât."
 
-#: ../dnf/cli/cli.py:838 ../dnf/cli/cli.py:842
+#: ../dnf/cli/cli.py:842 ../dnf/cli/cli.py:846
 #, python-format
 msgid "Config error: %s"
 msgstr "Erôr di configurazion: %s"
 
-#: ../dnf/cli/cli.py:848
+#: ../dnf/cli/cli.py:852
 msgid ""
 "--destdir or --downloaddir must be used with --downloadonly or download or "
 "system-upgrade command."
 msgstr ""
 
-#: ../dnf/cli/cli.py:942
+#: ../dnf/cli/cli.py:946
 msgid ""
 "Unable to detect release version (use '--releasever' to specify release "
 "version)"
@@ -1212,11 +1212,11 @@ msgstr ""
 "Impussibil rilevâ la version di publicazion (dopre '--releasever' par "
 "specificâ la version di publicazion)"
 
-#: ../dnf/cli/cli.py:1028 ../dnf/cli/commands/repoquery.py:396
+#: ../dnf/cli/cli.py:1032 ../dnf/cli/commands/repoquery.py:413
 msgid "argument {}: not allowed with argument {}"
 msgstr "argoment {}: nol è permetût cul argoment {}"
 
-#: ../dnf/cli/cli.py:1035
+#: ../dnf/cli/cli.py:1039
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Comant \"%s\" za definît"
@@ -1440,7 +1440,7 @@ msgstr ""
 msgid "Problem repository: %s"
 msgstr "Repository dal probleme: %s"
 
-#: ../dnf/cli/commands/__init__.py:101 ../dnf/base.py:343
+#: ../dnf/cli/commands/__init__.py:101 ../dnf/base.py:347
 msgid "There are no enabled repos."
 msgstr "No'ndi son repos abilitâts."
 
@@ -1528,7 +1528,7 @@ msgid "No packages marked for reinstall."
 msgstr ""
 
 #: ../dnf/cli/commands/__init__.py:679 ../dnf/cli/commands/remove.py:145
-#: ../dnf/base.py:2025
+#: ../dnf/base.py:2026
 msgid "No packages marked for removal."
 msgstr "Nissun pachet segnât di gjavâ."
 
@@ -1644,11 +1644,7 @@ msgstr ""
 msgid "show profile content"
 msgstr ""
 
-#: ../dnf/cli/commands/module.py:261
-msgid "auto enable stream"
-msgstr ""
-
-#: ../dnf/cli/commands/module.py:288
+#: ../dnf/cli/commands/module.py:285
 msgid ""
 "\n"
 "Switching module streams does not alter installed packages (see 'module enable' in dnf(8) for details)"
@@ -1675,7 +1671,7 @@ msgid "No old installonly packages found for removal."
 msgstr "Nissun pachet vieri di dome instalazion cjatât pe rimozion."
 
 #: ../dnf/cli/commands/remove.py:122 ../dnf/cli/commands/install.py:136
-#: ../dnf/base.py:2008
+#: ../dnf/base.py:2009
 #, python-format
 msgid "Not a valid form: %s"
 msgstr "Formât no valit: %s"
@@ -1874,8 +1870,8 @@ msgstr "gjavât il segn di “instalât dal utent” su %s."
 msgid "%s marked as group installed."
 msgstr "%s segnât come grup instalât."
 
-#: ../dnf/cli/commands/mark.py:82 ../dnf/cli/commands/shell.py:117
-#: ../dnf/cli/commands/shell.py:226
+#: ../dnf/cli/commands/mark.py:82 ../dnf/cli/commands/shell.py:121
+#: ../dnf/cli/commands/shell.py:230
 msgid "Error:"
 msgstr "Erôr:"
 
@@ -1943,15 +1939,15 @@ msgstr "Percors dal file rpm no valit: %s"
 msgid "There are following alternatives for \"{0}\": {1}"
 msgstr ""
 
-#: ../dnf/cli/commands/repoquery.py:102
+#: ../dnf/cli/commands/repoquery.py:104
 msgid "search for packages matching keyword"
 msgstr "cîr i pachets che a corispuindin ae peraule clâf"
 
-#: ../dnf/cli/commands/repoquery.py:116
+#: ../dnf/cli/commands/repoquery.py:118
 msgid "the key to search for"
 msgstr "la clâf di cirî"
 
-#: ../dnf/cli/commands/repoquery.py:118
+#: ../dnf/cli/commands/repoquery.py:120
 msgid ""
 "Query all packages (shorthand for repoquery '*' or repoquery without "
 "argument)"
@@ -1959,68 +1955,68 @@ msgstr ""
 "Interoghe ducj i pachets (scurte par repoquery '*' o repoquery cence "
 "argoment)"
 
-#: ../dnf/cli/commands/repoquery.py:121
+#: ../dnf/cli/commands/repoquery.py:123
 msgid "Query all versions of packages (default)"
 msgstr "Interoghe dutis lis version dai pachets (predefinît)"
 
-#: ../dnf/cli/commands/repoquery.py:124
+#: ../dnf/cli/commands/repoquery.py:126
 msgid "show only results from this ARCH"
 msgstr "mostre dome i risultâts par cheste ARCH"
 
-#: ../dnf/cli/commands/repoquery.py:126
+#: ../dnf/cli/commands/repoquery.py:128
 msgid "show only results that owns FILE"
 msgstr "mostre dome i risultâts che a son proprietaris di chest FILE"
 
-#: ../dnf/cli/commands/repoquery.py:128
+#: ../dnf/cli/commands/repoquery.py:130
 msgid "show only results that conflict REQ"
 msgstr "mostre dome i risultâts che a son in conflit cun REQ"
 
-#: ../dnf/cli/commands/repoquery.py:130
+#: ../dnf/cli/commands/repoquery.py:132
 msgid ""
 "shows results that requires, suggests, supplements, enhances,or recommends "
 "package provides and files REQ"
 msgstr ""
 
-#: ../dnf/cli/commands/repoquery.py:133
+#: ../dnf/cli/commands/repoquery.py:135
 msgid "show only results that obsolete REQ"
 msgstr "mostre dome i risultâts che a rindin obsolet REQ"
 
-#: ../dnf/cli/commands/repoquery.py:135
+#: ../dnf/cli/commands/repoquery.py:137
 msgid "show only results that provide REQ"
 msgstr "mostre dome i risultâts che a furnissin REQ"
 
-#: ../dnf/cli/commands/repoquery.py:137
+#: ../dnf/cli/commands/repoquery.py:139
 msgid "shows results that requires package provides and files REQ"
 msgstr ""
 
-#: ../dnf/cli/commands/repoquery.py:139
+#: ../dnf/cli/commands/repoquery.py:141
 msgid "show only results that recommend REQ"
 msgstr "mostre dome i risultâts che a consein REQ"
 
-#: ../dnf/cli/commands/repoquery.py:141
+#: ../dnf/cli/commands/repoquery.py:143
 msgid "show only results that enhance REQ"
 msgstr "mostre dome i risultât che a miorin REQ"
 
-#: ../dnf/cli/commands/repoquery.py:143
+#: ../dnf/cli/commands/repoquery.py:145
 msgid "show only results that suggest REQ"
 msgstr "mostre dome i risultâts che a sugjerissin REQ"
 
-#: ../dnf/cli/commands/repoquery.py:145
+#: ../dnf/cli/commands/repoquery.py:147
 msgid "show only results that supplement REQ"
 msgstr "mostre dome i risultâts che a integrin REQ"
 
-#: ../dnf/cli/commands/repoquery.py:148
+#: ../dnf/cli/commands/repoquery.py:150
 msgid "check non-explicit dependencies (files and Provides); default"
 msgstr ""
 "controle lis dipendencis no esplicitis (file e pachets furnîts); predefinît"
 
-#: ../dnf/cli/commands/repoquery.py:150
+#: ../dnf/cli/commands/repoquery.py:152
 msgid "check dependencies exactly as given, opposite of --alldeps"
 msgstr ""
 "controle lis dipendencis propite come che a son furnidis, contrari di "
 "--alldeps"
 
-#: ../dnf/cli/commands/repoquery.py:152
+#: ../dnf/cli/commands/repoquery.py:154
 msgid ""
 "used with --whatrequires, and --requires --resolve, query packages "
 "recursively."
@@ -2028,28 +2024,28 @@ msgstr ""
 "doprât cun --whatrequires e --requires --resolve, interoghe i pachets in "
 "maniere ricorsive."
 
-#: ../dnf/cli/commands/repoquery.py:154
+#: ../dnf/cli/commands/repoquery.py:156
 msgid "show a list of all dependencies and what packages provide them"
 msgstr ""
 "mostre une liste di dutis lis dipendencis e cuai pachets lis furnissin"
 
-#: ../dnf/cli/commands/repoquery.py:156
+#: ../dnf/cli/commands/repoquery.py:158
 msgid "show available tags to use with --queryformat"
 msgstr "mostre lis etichetis disponibilis di doprâ cun --queryformat"
 
-#: ../dnf/cli/commands/repoquery.py:159
+#: ../dnf/cli/commands/repoquery.py:161
 msgid "resolve capabilities to originating package(s)"
 msgstr ""
 
-#: ../dnf/cli/commands/repoquery.py:161
+#: ../dnf/cli/commands/repoquery.py:163
 msgid "show recursive tree for package(s)"
 msgstr "mostre arbul ricorsîf pai pachets"
 
-#: ../dnf/cli/commands/repoquery.py:163
+#: ../dnf/cli/commands/repoquery.py:165
 msgid "operate on corresponding source RPM"
 msgstr "lavore sul RPM sorzint corispuindint"
 
-#: ../dnf/cli/commands/repoquery.py:165
+#: ../dnf/cli/commands/repoquery.py:167
 msgid ""
 "show N latest packages for a given name.arch (or latest but N if N is "
 "negative)"
@@ -2057,23 +2053,27 @@ msgstr ""
 "mostre i ultins N pachets par une dade cumbinazion non.architeture (o i "
 "prins N se N al è negatîf)"
 
-#: ../dnf/cli/commands/repoquery.py:171
+#: ../dnf/cli/commands/repoquery.py:173
 msgid "show detailed information about the package"
 msgstr "mostre informazions detaiadis sul pachet"
 
-#: ../dnf/cli/commands/repoquery.py:174
+#: ../dnf/cli/commands/repoquery.py:176
 msgid "show list of files in the package"
 msgstr "mostre la liste dai file dal pachet"
 
-#: ../dnf/cli/commands/repoquery.py:177
+#: ../dnf/cli/commands/repoquery.py:179
 msgid "show package source RPM name"
 msgstr "mostre il non dal RPM dal sorzint dal pachet"
 
-#: ../dnf/cli/commands/repoquery.py:180
+#: ../dnf/cli/commands/repoquery.py:182
+msgid "show changelogs of the package"
+msgstr ""
+
+#: ../dnf/cli/commands/repoquery.py:185
 msgid "format for displaying found packages"
 msgstr "formât par mostrâ i pachets cjatâts"
 
-#: ../dnf/cli/commands/repoquery.py:183
+#: ../dnf/cli/commands/repoquery.py:188
 msgid ""
 "use name-epoch:version-release.architecture format for displaying found "
 "packages (default)"
@@ -2081,7 +2081,7 @@ msgstr ""
 "dopre il formât non-epoche:version-publicazion.architeture par mostrâ i "
 "pachets cjatâts (predefinît)"
 
-#: ../dnf/cli/commands/repoquery.py:186
+#: ../dnf/cli/commands/repoquery.py:191
 msgid ""
 "use name-version-release format for displaying found packages (rpm query "
 "default)"
@@ -2089,7 +2089,7 @@ msgstr ""
 "dopre formât non-version-publicazion par mostrâ i pachets cjatâts "
 "(predefinide pes interogazions rpm)"
 
-#: ../dnf/cli/commands/repoquery.py:192
+#: ../dnf/cli/commands/repoquery.py:197
 msgid ""
 "use epoch:name-version-release.architecture format for displaying found "
 "packages"
@@ -2097,54 +2097,54 @@ msgstr ""
 "dopre formât epoche:non-version-publicazion.architeture par mostrâ i pachets"
 " cjatâts"
 
-#: ../dnf/cli/commands/repoquery.py:195
+#: ../dnf/cli/commands/repoquery.py:200
 msgid "Display in which comps groups are presented selected packages"
 msgstr ""
 
-#: ../dnf/cli/commands/repoquery.py:199
+#: ../dnf/cli/commands/repoquery.py:204
 msgid "limit the query to installed duplicate packages"
 msgstr "limite la interogazion ai pachets dopleâts instalâts"
 
-#: ../dnf/cli/commands/repoquery.py:206
+#: ../dnf/cli/commands/repoquery.py:211
 msgid "limit the query to installed installonly packages"
 msgstr "limite la interogazion ai pachets instalâts di gjenar “installonly”"
 
-#: ../dnf/cli/commands/repoquery.py:209
+#: ../dnf/cli/commands/repoquery.py:214
 msgid "limit the query to installed packages with unsatisfied dependencies"
 msgstr ""
 "limite la interogazion ai pachets instalâts cun dipendencis no sodisfatis"
 
-#: ../dnf/cli/commands/repoquery.py:211
+#: ../dnf/cli/commands/repoquery.py:216
 msgid "show a location from where packages can be downloaded"
 msgstr "mostre une posizion dulà che i pachets a puedin jessi discjariâts"
 
-#: ../dnf/cli/commands/repoquery.py:214
+#: ../dnf/cli/commands/repoquery.py:219
 msgid "Display capabilities that the package conflicts with."
 msgstr "Mostre lis funzionalitâts che cun chês al va in conflit il pachet."
 
-#: ../dnf/cli/commands/repoquery.py:215
+#: ../dnf/cli/commands/repoquery.py:220
 msgid ""
 "Display capabilities that the package can depend on, enhance, recommend, "
 "suggest, and supplement."
 msgstr ""
 
-#: ../dnf/cli/commands/repoquery.py:217
+#: ../dnf/cli/commands/repoquery.py:222
 msgid "Display capabilities that the package can enhance."
 msgstr "Mostre lis funzionalitâts che il pachet al pues miorâ."
 
-#: ../dnf/cli/commands/repoquery.py:218
+#: ../dnf/cli/commands/repoquery.py:223
 msgid "Display capabilities provided by the package."
 msgstr "Mostre lis funzionalitâts furnidis dal pachet."
 
-#: ../dnf/cli/commands/repoquery.py:219
+#: ../dnf/cli/commands/repoquery.py:224
 msgid "Display capabilities that the package recommends."
 msgstr "Mostre lis funzionalitâts che il pachet al consee."
 
-#: ../dnf/cli/commands/repoquery.py:220
+#: ../dnf/cli/commands/repoquery.py:225
 msgid "Display capabilities that the package depends on."
 msgstr "Mostre lis funzionalitâts che su chês il pachet al dipent."
 
-#: ../dnf/cli/commands/repoquery.py:221
+#: ../dnf/cli/commands/repoquery.py:226
 #, python-format
 msgid ""
 "Display capabilities that the package depends on for running a %%pre script."
@@ -2152,30 +2152,30 @@ msgstr ""
 "Mostre lis funzionalitâts che su chês il pachet al dipent par eseguî un "
 "script %%pre."
 
-#: ../dnf/cli/commands/repoquery.py:222
+#: ../dnf/cli/commands/repoquery.py:227
 msgid "Display capabilities that the package suggests."
 msgstr "Mostre lis funzionalitâts che il pachet al sugjerìs."
 
-#: ../dnf/cli/commands/repoquery.py:223
+#: ../dnf/cli/commands/repoquery.py:228
 msgid "Display capabilities that the package can supplement."
 msgstr "Mostre lis funzionalitâts che il pachet al pues integrâ."
 
-#: ../dnf/cli/commands/repoquery.py:229
+#: ../dnf/cli/commands/repoquery.py:234
 msgid "Display only available packages."
 msgstr "Mostre dome i pachets disponibii."
 
-#: ../dnf/cli/commands/repoquery.py:232
+#: ../dnf/cli/commands/repoquery.py:237
 msgid "Display only installed packages."
 msgstr "Mostre dome i pachets instalâts."
 
-#: ../dnf/cli/commands/repoquery.py:233
+#: ../dnf/cli/commands/repoquery.py:238
 msgid ""
 "Display only packages that are not present in any of available repositories."
 msgstr ""
 "Mostre dome i pachets che no son presints in nissun dai repository "
 "disponibii."
 
-#: ../dnf/cli/commands/repoquery.py:234
+#: ../dnf/cli/commands/repoquery.py:239
 msgid ""
 "Display only packages that provide an upgrade for some already installed "
 "package."
@@ -2183,27 +2183,27 @@ msgstr ""
 "Mostre dome i pachets che a furnissin un inzornament par cualchi pachet za "
 "instalât."
 
-#: ../dnf/cli/commands/repoquery.py:235
+#: ../dnf/cli/commands/repoquery.py:240
 msgid "Display only packages that can be removed by \"dnf autoremove\" command."
 msgstr ""
 "Mostre dome i pachets che a puedin jessi gjavâts dal comant “dnf autoremove”"
 
-#: ../dnf/cli/commands/repoquery.py:236
+#: ../dnf/cli/commands/repoquery.py:241
 msgid "Display only packages that were installed by user."
 msgstr "Mostre dome i pachets che a son stâts instalâts dal utent."
 
-#: ../dnf/cli/commands/repoquery.py:248
+#: ../dnf/cli/commands/repoquery.py:253
 msgid "Display only recently edited packages"
 msgstr "Mostre dome i pachets modificâts di resint"
 
-#: ../dnf/cli/commands/repoquery.py:270
+#: ../dnf/cli/commands/repoquery.py:275
 msgid ""
 "Option '--resolve' has to be used together with one of the '--conflicts', '"
 "--depends', '--enhances', '--provides', '--recommends', '--requires', '--"
 "requires-pre', '--suggests' or '--supplements' options"
 msgstr ""
 
-#: ../dnf/cli/commands/repoquery.py:280
+#: ../dnf/cli/commands/repoquery.py:285
 msgid ""
 "Option '--recursive' has to be used with '--whatrequires <REQ>' (optionaly "
 "with '--alldeps', but not with '--exactdeps'), or with '--requires <REQ> "
@@ -2213,21 +2213,21 @@ msgstr ""
 "(optionaly with '--alldeps', but not with '--exactdeps'), o cun '--requires "
 "<REQ> --resolve'"
 
-#: ../dnf/cli/commands/repoquery.py:301
+#: ../dnf/cli/commands/repoquery.py:318
 msgid "Package {} contains no files"
 msgstr "Il pachet {} nol conten file"
 
-#: ../dnf/cli/commands/repoquery.py:370
+#: ../dnf/cli/commands/repoquery.py:387
 #, python-brace-format
 msgid "Available query-tags: use --queryformat \".. %{tag} ..\""
 msgstr ""
 "Etichetis di interogazion disponibilis: dopre --queryformat \".. %{tag} ..\""
 
-#: ../dnf/cli/commands/repoquery.py:440
+#: ../dnf/cli/commands/repoquery.py:456
 msgid "argument {} requires --whatrequires or --whatdepends option"
 msgstr ""
 
-#: ../dnf/cli/commands/repoquery.py:485
+#: ../dnf/cli/commands/repoquery.py:501
 msgid ""
 "No valid switch specified\n"
 "usage: dnf repoquery [--conflicts|--enhances|--obsoletes|--provides|--recommends|--requires|--suggest|--supplements|--whatrequires] [key] [--tree]\n"
@@ -2373,28 +2373,28 @@ msgstr "non repo"
 msgid "Total packages: %s"
 msgstr ""
 
-#: ../dnf/cli/commands/shell.py:53
+#: ../dnf/cli/commands/shell.py:47
 msgid "run an interactive DNF shell"
 msgstr "eseguìs une shell DNF interative"
 
-#: ../dnf/cli/commands/shell.py:74
+#: ../dnf/cli/commands/shell.py:68
 msgid "SCRIPT"
 msgstr "SCRIPT"
 
-#: ../dnf/cli/commands/shell.py:75
+#: ../dnf/cli/commands/shell.py:69
 msgid "Script to run in DNF shell"
 msgstr "Script di eseguî inte shell DNF"
 
-#: ../dnf/cli/commands/shell.py:131
+#: ../dnf/cli/commands/shell.py:135
 msgid "Unsupported key value."
 msgstr "Valôr clâf no supuartât."
 
-#: ../dnf/cli/commands/shell.py:147
+#: ../dnf/cli/commands/shell.py:151
 #, python-format
 msgid "Could not find repository: %s"
 msgstr "Impussibil cjatâ il repository: %s"
 
-#: ../dnf/cli/commands/shell.py:163
+#: ../dnf/cli/commands/shell.py:167
 msgid ""
 "{} arg [value]\n"
 "  arg: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,\n"
@@ -2408,7 +2408,7 @@ msgstr ""
 "    se nissun valôr al ven furnît al stampe il valôr atuâl.\n"
 "    se il valôr al ven furnît al met chel valôr."
 
-#: ../dnf/cli/commands/shell.py:170
+#: ../dnf/cli/commands/shell.py:174
 msgid ""
 "{} [command]\n"
 "    print help"
@@ -2416,7 +2416,7 @@ msgstr ""
 "{} [comant]\n"
 "    stampe jutori"
 
-#: ../dnf/cli/commands/shell.py:174
+#: ../dnf/cli/commands/shell.py:178
 msgid ""
 "{} arg [option]\n"
 "  list: lists repositories and their status. option = [all | id | glob]\n"
@@ -2428,7 +2428,7 @@ msgstr ""
 "  enable: abilite i repository. opzion = id dal repository\n"
 "  disable: disabilite i repository. opzion = id dal repository"
 
-#: ../dnf/cli/commands/shell.py:180
+#: ../dnf/cli/commands/shell.py:184
 msgid ""
 "{}\n"
 "    resolve the transaction set"
@@ -2436,7 +2436,7 @@ msgstr ""
 "{}\n"
 "    risolf la cumbinazion di transazions"
 
-#: ../dnf/cli/commands/shell.py:184
+#: ../dnf/cli/commands/shell.py:188
 msgid ""
 "{} arg\n"
 "  list: lists the contents of the transaction\n"
@@ -2448,7 +2448,7 @@ msgstr ""
 "  reset: azere (cancele dal dut) la transazion\n"
 "  run: eseguìs la transazion"
 
-#: ../dnf/cli/commands/shell.py:190
+#: ../dnf/cli/commands/shell.py:194
 msgid ""
 "{}\n"
 "    run the transaction"
@@ -2456,7 +2456,7 @@ msgstr ""
 "{}\n"
 "    eseguìs la transazion"
 
-#: ../dnf/cli/commands/shell.py:194
+#: ../dnf/cli/commands/shell.py:198
 msgid ""
 "{}\n"
 "    exit the shell"
@@ -2464,7 +2464,7 @@ msgstr ""
 "{}\n"
 "    jes de shell"
 
-#: ../dnf/cli/commands/shell.py:199
+#: ../dnf/cli/commands/shell.py:203
 msgid ""
 "Shell specific arguments:\n"
 "\n"
@@ -2486,12 +2486,12 @@ msgstr ""
 "run                      risolf e eseguìs la cumbinazion de transazion\n"
 "exit (or quit)           jes de shell"
 
-#: ../dnf/cli/commands/shell.py:249
+#: ../dnf/cli/commands/shell.py:253
 #, python-format
 msgid "Error: Cannot open %s for reading"
 msgstr "Erôr: impussibil vierzi %s pe leture"
 
-#: ../dnf/cli/commands/shell.py:279
+#: ../dnf/cli/commands/shell.py:283
 msgid "Leaving Shell"
 msgstr "Daûr a lassâ la shell"
 
@@ -2503,7 +2503,7 @@ msgstr "Torne instale un pachet"
 msgid "Package to reinstall"
 msgstr "Pachet di tornâ a instalâ"
 
-#: ../dnf/cli/commands/reinstall.py:81 ../dnf/base.py:1932
+#: ../dnf/cli/commands/reinstall.py:81 ../dnf/base.py:1960
 #, python-format
 msgid "Package %s available, but not installed."
 msgstr "Pachet %s disponibil, ma no instalât."
@@ -2622,13 +2622,13 @@ msgstr ""
 msgid "Already downloaded"
 msgstr "Za discjariât"
 
-#: ../dnf/repo.py:271 ../dnf/drpm.py:62
+#: ../dnf/repo.py:269 ../dnf/drpm.py:62
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr ""
 
 #. pinging mirrors, this might take a while
-#: ../dnf/repo.py:349
+#: ../dnf/repo.py:347
 #, python-format
 msgid "determining the fastest mirror (%s hosts).. "
 msgstr ""
@@ -2642,7 +2642,7 @@ msgstr ""
 
 #: ../dnf/module/module_base.py:45 ../dnf/module/module_base.py:288
 #: ../dnf/module/module_base.py:339 ../dnf/module/module_base.py:391
-#: ../dnf/module/module_base.py:447
+#: ../dnf/module/module_base.py:448
 msgid "Ignoring unnecessary profile: '{}/{}'"
 msgstr ""
 
@@ -2655,14 +2655,14 @@ msgstr ""
 msgid "No default profiles for module {}:{}"
 msgstr ""
 
-#: ../dnf/module/module_base.py:92
-msgid "Default profile {} not matched for module {}:{}"
+#: ../dnf/module/module_base.py:91
+msgid "Profile {} not matched for module {}:{}"
 msgstr ""
 
 #: ../dnf/module/module_base.py:111 ../dnf/module/module_base.py:141
 #: ../dnf/module/module_base.py:271 ../dnf/module/module_base.py:284
 #: ../dnf/module/module_base.py:335 ../dnf/module/module_base.py:387
-#: ../dnf/module/module_base.py:443
+#: ../dnf/module/module_base.py:444
 msgid "Unable to resolve argument {}"
 msgstr ""
 
@@ -2670,7 +2670,7 @@ msgstr ""
 msgid "No match for package {}"
 msgstr ""
 
-#: ../dnf/module/module_base.py:577 ../dnf/exceptions.py:118
+#: ../dnf/module/module_base.py:578 ../dnf/exceptions.py:118
 msgid "Modular dependency problem:"
 msgid_plural "Modular dependency problems:"
 msgstr[0] ""
@@ -2693,6 +2693,26 @@ msgstr ""
 
 #: ../dnf/module/__init__.py:30
 msgid "No profile specified for '{}', please specify profile."
+msgstr ""
+
+#: ../dnf/dnssec.py:222
+msgid "DNSSEC extension: Key for user "
+msgstr ""
+
+#: ../dnf/dnssec.py:224
+msgid "is valid."
+msgstr ""
+
+#: ../dnf/dnssec.py:226
+msgid "has unknown status."
+msgstr ""
+
+#: ../dnf/dnssec.py:234
+msgid "DNSSEC extension: "
+msgstr ""
+
+#: ../dnf/dnssec.py:266
+msgid "Testing already imported keys for their validity."
 msgstr ""
 
 #: ../dnf/automatic/main.py:192
@@ -2778,76 +2798,76 @@ msgstr ""
 msgid "Failed determining last makecache time."
 msgstr ""
 
-#: ../dnf/util.py:411 ../dnf/util.py:413
+#: ../dnf/util.py:403 ../dnf/util.py:405
 msgid "Problem"
 msgstr "Probleme"
 
-#: ../dnf/base.py:142
+#: ../dnf/base.py:146
 msgid "loading repo '{}' failure: {}"
 msgstr ""
 
-#: ../dnf/base.py:144
+#: ../dnf/base.py:148
 msgid "Loading repository '{}' has failed"
 msgstr ""
 
-#: ../dnf/base.py:322
+#: ../dnf/base.py:326
 msgid "Metadata timer caching disabled when running on metered connection."
 msgstr ""
 
-#: ../dnf/base.py:327
+#: ../dnf/base.py:331
 msgid "Metadata timer caching disabled when running on a battery."
 msgstr ""
 
-#: ../dnf/base.py:332
+#: ../dnf/base.py:336
 msgid "Metadata timer caching disabled."
 msgstr ""
 
-#: ../dnf/base.py:337
+#: ../dnf/base.py:341
 msgid "Metadata cache refreshed recently."
 msgstr "Cache metadâts inzornade di resint."
 
-#: ../dnf/base.py:349
+#: ../dnf/base.py:353
 #, python-format
 msgid "%s: will never be expired and will not be refreshed."
 msgstr ""
 
-#: ../dnf/base.py:351
+#: ../dnf/base.py:355
 #, python-format
 msgid "%s: has expired and will be refreshed."
 msgstr ""
 
 #. expires within the checking period:
-#: ../dnf/base.py:355
+#: ../dnf/base.py:359
 #, python-format
 msgid "%s: metadata will expire after %d seconds and will be refreshed now"
 msgstr ""
 
-#: ../dnf/base.py:359
+#: ../dnf/base.py:363
 #, python-format
 msgid "%s: will expire after %d seconds."
 msgstr ""
 
 #. performs the md sync
-#: ../dnf/base.py:365
+#: ../dnf/base.py:369
 msgid "Metadata cache created."
 msgstr "Cache metadâts creade."
 
-#: ../dnf/base.py:398
+#: ../dnf/base.py:405
 #, python-format
 msgid "%s: using metadata from %s."
 msgstr "%s: si dopre i metadâts di %s."
 
-#: ../dnf/base.py:408
+#: ../dnf/base.py:415
 #, python-format
 msgid "%s, ignoring this repo."
 msgstr ""
 
-#: ../dnf/base.py:411
+#: ../dnf/base.py:418
 #, python-format
 msgid "Last metadata expiration check: %s ago on %s."
 msgstr "Ultin control de scjadence dai metadâts: %s indaûr ai %s."
 
-#: ../dnf/base.py:441
+#: ../dnf/base.py:448
 msgid ""
 "The downloaded packages were saved in cache until the next successful "
 "transaction."
@@ -2855,331 +2875,339 @@ msgstr ""
 "I pachets discjariâts a son stâts salvâts te cache fin ae prossime "
 "transazion eseguide cun sucès."
 
-#: ../dnf/base.py:443
+#: ../dnf/base.py:450
 #, python-format
 msgid "You can remove cached packages by executing '%s'."
 msgstr "Si pues gjavâ i pachets metûts in cache eseguint '%s'."
 
-#: ../dnf/base.py:530
+#: ../dnf/base.py:537
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr ""
 
-#: ../dnf/base.py:586
+#: ../dnf/base.py:593
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr ""
 
-#: ../dnf/base.py:794
+#: ../dnf/base.py:801
 msgid "Running transaction check"
 msgstr "Esecuzion control de transazion"
 
-#: ../dnf/base.py:805
+#: ../dnf/base.py:812
 msgid "Error: transaction check vs depsolve:"
 msgstr ""
 
-#: ../dnf/base.py:811
+#: ../dnf/base.py:818
 msgid "Transaction check succeeded."
 msgstr "Controi di transazion passâts."
 
-#: ../dnf/base.py:814
+#: ../dnf/base.py:821
 msgid "Running transaction test"
 msgstr "Esecuzion prove di transazion"
 
-#: ../dnf/base.py:824
+#: ../dnf/base.py:831
 msgid "Transaction check error:"
 msgstr "Erôr dal control de transazion:"
 
-#: ../dnf/base.py:831
+#: ../dnf/base.py:838
 msgid "Transaction test succeeded."
 msgstr "Prove di transazion passade."
 
-#: ../dnf/base.py:846
+#: ../dnf/base.py:853
 msgid "Running transaction"
 msgstr "Esecuzion transazion."
 
-#: ../dnf/base.py:873
+#: ../dnf/base.py:880
 msgid "Disk Requirements:"
 msgstr "Recuisîts dal disc:"
 
-#: ../dnf/base.py:876
+#: ../dnf/base.py:883
 #, python-format
 msgid "At least %dMB more space needed on the %s filesystem."
 msgid_plural "At least %dMB more space needed on the %s filesystem."
 msgstr[0] "Al covente almancul %dMB in plui di spazi sul filesystem %s."
 msgstr[1] "A coventin almancul %dMB in plui di spazi sul filesystem %s."
 
-#: ../dnf/base.py:880
+#: ../dnf/base.py:887
 msgid "Error Summary"
 msgstr "Sintesi erôrs"
 
-#: ../dnf/base.py:906
+#: ../dnf/base.py:913
 msgid "RPMDB altered outside of DNF."
 msgstr ""
 
-#: ../dnf/base.py:963
+#: ../dnf/base.py:970
 msgid "Errors occurred during transaction."
 msgstr "Erôrs vignûts fûr dilunc la transazion."
 
-#: ../dnf/base.py:967
+#: ../dnf/base.py:974
 #, python-format
 msgid "Failed to obtain the transaction lock (logged in as: %s)."
 msgstr "No si è rivâts a otignî il bloc de transazion (jentrât come: %s)."
 
 #. should this be 'to_unicoded'?
-#: ../dnf/base.py:970 ../dnf/base.py:980
+#: ../dnf/base.py:977 ../dnf/base.py:987
 msgid "Could not run transaction."
 msgstr "Impussibil eseguî la transazion."
 
-#: ../dnf/base.py:977
+#: ../dnf/base.py:984
 msgid "Transaction couldn't start:"
 msgstr "Nol è stât pussibil scomençâ la transazion:"
 
-#: ../dnf/base.py:989
+#: ../dnf/base.py:996
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "No si è rivâts a gjavâ il file de transazion %s"
 
-#: ../dnf/base.py:1068
+#: ../dnf/base.py:1075
 msgid "Some packages were not downloaded. Retrying."
 msgstr "Cualchi pachet nol è stât discjariât. Si torne a provâ."
 
-#: ../dnf/base.py:1098
+#: ../dnf/base.py:1105
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
 msgstr ""
 
-#: ../dnf/base.py:1101
+#: ../dnf/base.py:1108
 #, python-format
 msgid ""
 "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
 msgstr ""
 
-#: ../dnf/base.py:1150
+#: ../dnf/base.py:1157
 msgid "Could not open: {}"
 msgstr "Impussibil vierzi: {}"
 
-#: ../dnf/base.py:1188
+#: ../dnf/base.py:1195
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "La clâf publiche par %s no je instalade"
 
-#: ../dnf/base.py:1192
+#: ../dnf/base.py:1199
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Probleme tal vierzi il pachet %s"
 
-#: ../dnf/base.py:1200
+#: ../dnf/base.py:1207
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "La clâf publiche par %s no je fidade"
 
-#: ../dnf/base.py:1204
+#: ../dnf/base.py:1211
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Il pachet %s nol è firmât"
 
-#: ../dnf/base.py:1219
+#: ../dnf/base.py:1226
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Impussibil gjavâ %s"
 
-#: ../dnf/base.py:1223
+#: ../dnf/base.py:1230
 #, python-format
 msgid "%s removed"
 msgstr "%s gjavât"
 
-#: ../dnf/base.py:1495
+#: ../dnf/base.py:1502
 msgid "No match for group package \"{}\""
 msgstr "Nissune corispondence pal pachet di grup \"{}\""
 
-#: ../dnf/base.py:1580
+#: ../dnf/base.py:1587
 #, python-format
 msgid "Adding packages from group '%s': %s"
 msgstr ""
 
-#: ../dnf/base.py:1621
+#: ../dnf/base.py:1628
 msgid "No groups marked for removal."
 msgstr "Nissun grup segnâ pe rimozion."
 
-#: ../dnf/base.py:1640
+#: ../dnf/base.py:1647
 msgid "No group marked for upgrade."
 msgstr "Nissun grup segnât pal inzornament."
 
-#: ../dnf/base.py:1825 ../dnf/base.py:1836 ../dnf/base.py:2196
+#: ../dnf/base.py:1832 ../dnf/base.py:1843 ../dnf/base.py:2197
 msgid "no package matched"
 msgstr "nissun pachet corispondent"
 
-#: ../dnf/base.py:1851
+#: ../dnf/base.py:1858
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
 msgstr ""
 "Il pachet %s nol è instalât, impussibil cessâlu ae version precedente."
 
-#: ../dnf/base.py:1860
+#: ../dnf/base.py:1867
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
 msgstr ""
 
-#: ../dnf/base.py:1883
+#: ../dnf/base.py:1890
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
 msgstr "Il pachet %s nol è instalât, impussibil tornâ a instalâlu."
 
-#: ../dnf/base.py:1898
+#: ../dnf/base.py:1905
 #, python-format
 msgid "File %s is a source package and cannot be updated, ignoring."
 msgstr ""
 "Il file %s al è un pachet sorzint e nol pues jessi inzornât, si ignore."
 
-#: ../dnf/base.py:1904
+#: ../dnf/base.py:1911
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr "Il pachet %s nol è instalât, impussibil inzornâlu."
 
-#: ../dnf/base.py:1913
+#: ../dnf/base.py:1920
 #, python-format
 msgid "Package %s of higher version already installed, cannot update it."
 msgstr ""
 
-#: ../dnf/base.py:1938
+#: ../dnf/base.py:1966
 #, python-format
 msgid "Package %s available, but installed for different architecture."
 msgstr "Pachet %s disponibil, ma instalât par une architeture diferente."
 
-#: ../dnf/base.py:2120
+#: ../dnf/base.py:2121
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr ""
 
-#: ../dnf/base.py:2169
+#: ../dnf/base.py:2170
 msgid "Action not handled: {}"
 msgstr ""
 
-#: ../dnf/base.py:2217
+#: ../dnf/base.py:2218
 msgid "No security updates needed, but {} update available"
 msgstr ""
 "Nissun inzornament di sigurece necessari, ma al è disponibil {} inzornament"
 
-#: ../dnf/base.py:2219
+#: ../dnf/base.py:2220
 msgid "No security updates needed, but {} updates available"
 msgstr ""
 "Nissun inzornament di sigurece necessari, ma a son disponibii {} "
 "inzornaments"
 
-#: ../dnf/base.py:2223
+#: ../dnf/base.py:2224
 msgid "No security updates needed for \"{}\", but {} update available"
 msgstr ""
 
-#: ../dnf/base.py:2225
+#: ../dnf/base.py:2226
 msgid "No security updates needed for \"{}\", but {} updates available"
-msgstr ""
-
-#: ../dnf/base.py:2249
-#, python-format
-msgid ". Failing package is: %s"
 msgstr ""
 
 #: ../dnf/base.py:2250
 #, python-format
+msgid ". Failing package is: %s"
+msgstr ""
+
+#: ../dnf/base.py:2251
+#, python-format
 msgid "GPG Keys are configured as: %s"
 msgstr "Lis clâfs GPG a son configuradis come: %s"
 
-#: ../dnf/base.py:2262
+#: ../dnf/base.py:2263
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "La clâf GPG su %s (0x%s) e je za instalade"
 
+#: ../dnf/base.py:2296
+msgid "The key has been approved."
+msgstr ""
+
 #: ../dnf/base.py:2299
+msgid "The key has been rejected."
+msgstr ""
+
+#: ../dnf/base.py:2327
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Importazion clâf falide (codiç %d)"
 
-#: ../dnf/base.py:2301
+#: ../dnf/base.py:2329
 msgid "Key imported successfully"
 msgstr "Clâf impuartade cun sucès"
 
-#: ../dnf/base.py:2305
+#: ../dnf/base.py:2333
 msgid "Didn't install any keys"
 msgstr "No si à instalât nissune clâf"
 
-#: ../dnf/base.py:2308
+#: ../dnf/base.py:2336
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
 
-#: ../dnf/base.py:2319
+#: ../dnf/base.py:2347
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr ""
 
-#: ../dnf/base.py:2355
+#: ../dnf/base.py:2383
 msgid "  * Maybe you meant: {}"
 msgstr "  * forsit si intindeve: {}"
 
-#: ../dnf/base.py:2387
+#: ../dnf/base.py:2415
 msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
 msgstr ""
 
-#: ../dnf/base.py:2390
+#: ../dnf/base.py:2418
 msgid "Some packages from local repository have incorrect checksum"
 msgstr ""
 
-#: ../dnf/base.py:2393
+#: ../dnf/base.py:2421
 msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
 msgstr ""
 
-#: ../dnf/base.py:2396
+#: ../dnf/base.py:2424
 msgid ""
 "Some packages have invalid cache, but cannot be downloaded due to \"--"
 "cacheonly\" option"
 msgstr ""
 
-#: ../dnf/base.py:2408
+#: ../dnf/base.py:2436
 #, python-format
 msgid "Package %s is already installed."
 msgstr ""
 
-#: ../dnf/conf/config.py:105 ../dnf/conf/config.py:250
+#: ../dnf/conf/config.py:105 ../dnf/conf/config.py:244
 #, python-format
 msgid "Error parsing '%s': %s"
 msgstr "Erôr tal analizâ '%s': %s"
 
-#: ../dnf/conf/config.py:303 ../dnf/conf/read.py:145
+#: ../dnf/conf/config.py:297 ../dnf/conf/read.py:145
 #, python-format
 msgid "Unknown configuration value: %s=%s in %s; %s"
 msgstr "Valôr di configurazion no cognossût: %s=%s in %s; %s"
 
-#: ../dnf/conf/config.py:311 ../dnf/conf/read.py:153
+#: ../dnf/conf/config.py:305 ../dnf/conf/read.py:153
 #, python-format
 msgid "Unknown configuration option: %s = %s in %s"
 msgstr "Opzion di configurazion no cognossude: %s = %s in %s"
 
-#: ../dnf/conf/config.py:414
+#: ../dnf/conf/config.py:408
 msgid "Could not set cachedir: {}"
 msgstr ""
 
-#: ../dnf/conf/config.py:488 ../dnf/conf/config.py:516
+#: ../dnf/conf/config.py:482 ../dnf/conf/config.py:510
 #, python-format
 msgid "Unknown configuration option: %s = %s"
 msgstr "Opzion di configurazion no cognossude: %s = %s"
 
-#: ../dnf/conf/config.py:504
+#: ../dnf/conf/config.py:498
 #, python-format
 msgid "Main config did not have a %s attr. before setopt"
 msgstr ""
 
-#: ../dnf/conf/config.py:554 ../dnf/conf/config.py:572
+#: ../dnf/conf/config.py:548 ../dnf/conf/config.py:566
 msgid "Incorrect or unknown \"{}\": {}"
 msgstr "\"{}\" no just o no cognossût: {}"
 
-#: ../dnf/conf/config.py:584 ../dnf/conf/read.py:84
+#: ../dnf/conf/config.py:578 ../dnf/conf/read.py:84
 #, python-format
 msgid "Parsing file \"%s\" failed: %s"
 msgstr ""
 
-#: ../dnf/conf/config.py:622
+#: ../dnf/conf/config.py:616
 #, python-format
 msgid "Repo %s did not have a %s attr. before setopt"
 msgstr ""
