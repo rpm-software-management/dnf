@@ -31,6 +31,7 @@ STATE_ENABLED = libdnf.module.ModulePackageContainer.ModuleState_ENABLED
 STATE_DISABLED = libdnf.module.ModulePackageContainer.ModuleState_DISABLED
 STATE_UNKNOWN = libdnf.module.ModulePackageContainer.ModuleState_UNKNOWN
 MODULE_TABLE_HINT = _("\n\nHint: [d]efault, [e]nabled, [x]disabled, [i]nstalled")
+MODULE_INFO_TABLE_HINT = _("\n\nHint: [d]efault, [e]nabled, [x]disabled, [i]nstalled, [a]ctive]")
 
 class ModuleBase(object):
 
@@ -382,6 +383,10 @@ class ModuleBase(object):
             if not default_str:
                 disabled_str = " "
             disabled_str += "[x]"
+        if self.base._moduleContainer.isModuleActive(modulePackage):
+            if not default_str:
+                disabled_str = " "
+            disabled_str += "[a]"
         return default_str, enabled_str, disabled_str
 
     def _get_info(self, module_specs):
@@ -418,7 +423,7 @@ class ModuleBase(object):
                 output.add(self._create_simple_table(lines).toString())
         str_table = "\n\n".join(sorted(output))
         if str_table:
-            str_table += MODULE_TABLE_HINT
+            str_table += MODULE_INFO_TABLE_HINT
         return str_table
 
     @staticmethod
