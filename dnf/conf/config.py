@@ -473,14 +473,31 @@ class MainConf(BaseConfig):
         for name in config_args:
             value = getattr(opts, name, None)
             if value is not None and value != []:
-                confopt = self._get_option(name)
-                if confopt:
-                    confopt._set(value, dnf.conf.PRIO_COMMANDLINE)
+                opt = self._get_option(name)
+                if opt is not None:
+                    appendValue = False
+                    if self._config:
+                        try:
+                            appendValue = self._config.optBinds().at(name).getAddValue()
+                        except RuntimeError:
+                            pass
+                    if appendValue:
+                        add_priority = dnf.conf.PRIO_COMMANDLINE
+                        if add_priority < opt._get_priority():
+                            add_priority = opt._get_priority()
+                        for item in value:
+                            if item:
+                                opt._set(opt._get() + [item], add_priority)
+                            else:
+                                opt._set([], dnf.conf.PRIO_COMMANDLINE)
+                    else:
+                        opt._set(value, dnf.conf.PRIO_COMMANDLINE)
                 elif hasattr(self, name):
                     setattr(self, name, value)
                 else:
                     logger.warning(_('Unknown configuration option: %s = %s'),
                                    ucd(name), ucd(value))
+
         if getattr(opts, 'gpgcheck', None) is False:
             opt = self._get_option("localpkg_gpgcheck")
             opt._set(False, dnf.conf.PRIO_COMMANDLINE)
@@ -489,14 +506,18 @@ class MainConf(BaseConfig):
             # now set all the non-first-start opts from main from our setopts
             # pylint: disable=W0212
             for name, val in opts.main_setopts._get_kwargs():
-                opt = self._get_option(name)
-                if opt:
-                    opt._set(val, dnf.conf.PRIO_COMMANDLINE)
-                elif hasattr(self, name):
-                    setattr(self, name, val)
-                else:
-                    msg = _("Main config did not have a %s attr. before setopt")
-                    logger.warning(msg, name)
+                try:
+                    # values in main_setopts are strings, we try to parse it using newString()
+                    self._config.optBinds().at(name).newString(dnf.conf.PRIO_COMMANDLINE, val)
+                except RuntimeError:
+                    option = self._option.get(name, None)
+                    if option:
+                        option._set(val, dnf.conf.PRIO_COMMANDLINE)
+                    elif hasattr(self, name):
+                        setattr(self, name, val)
+                    else:
+                        msg = _("Main config did not have a %s attr. before setopt")
+                        logger.warning(msg, name)
 
     def exclude_pkgs(self, pkgs):
         # :api
@@ -609,13 +630,16 @@ class RepoConf(BaseConfig):
             # pylint: disable=W0212
             setopts = repo_setopts[self._section]._get_kwargs()
             for name, val in setopts:
-                opt = self._get_option(name)
-                if opt:
-                    opt._set(val, dnf.conf.PRIO_COMMANDLINE)
-                else:
-                    msg = _("Repo %s did not have a %s attr. before setopt")
-                    logger.warning(msg, self._section, name)
-
+                try:
+                    # values in repo_setopts are strings, we try to parse it using newString()
+                    self._config.optBinds().at(name).newString(dnf.conf.PRIO_COMMANDLINE, val)
+                except RuntimeError:
+                    option = self._option.get(name, None)
+                    if option:
+                        option._set(val, dnf.conf.PRIO_COMMANDLINE)
+                    else:
+                        msg = _("Repo %s did not have a %s attr. before setopt")
+                        logger.warning(msg, self._section, name)
 
 # TODO move to libdnf
 class ModuleConf(BaseConfig):
