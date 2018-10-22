@@ -142,7 +142,7 @@ class LoggingTransactionDisplay(ErrorTransactionDisplay):
     def filelog(self, package, action):
         action_str = dnf.transaction.FILE_ACTIONS[action]
         msg = '%s: %s' % (action_str, package)
-        self.rpm_logger.info(msg)
+        self.rpm_logger.log(dnf.logging.SUBDEBUG, msg)
 
 
 class RPMTransaction(object):
