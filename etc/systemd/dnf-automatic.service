@@ -2,6 +2,7 @@
 Description=dnf automatic
 # See comment in dnf-makecache.service
 ConditionPathExists=!/run/ostree-booted
+After=network-online.target
 
 [Service]
 Type=oneshot
