@@ -246,6 +246,15 @@ class OptionParser(argparse.ArgumentParser):
                                 action=self._SplitCallback, default=[],
                                 help=_('enable just specific repositories by an id or a glob, '
                                        'can be specified multiple times'))
+        enable_group = main_parser.add_mutually_exclusive_group()
+        enable_group.add_argument("--enable", "--set-enabled", default=False,
+                                  dest="set_enabled", action="store_true",
+                                  help=_("enable repos with config-manager "
+                                         "command (automatically saves)"))
+        enable_group.add_argument("--disable", "--set-disabled", default=False,
+                                  dest="set_disabled", action="store_true",
+                                  help=_("disable repos with config-manager "
+                                         "command (automatically saves)"))
         main_parser.add_argument("-x", "--exclude", "--excludepkgs", default=[],
                                  dest='excludepkgs', action=self._SplitCallback,
                                  help=_("exclude packages by name or glob"),

@@ -853,6 +853,11 @@ class Cli(object):
                                   'or download or system-upgrade command.')
                 )
                 sys.exit(1)
+        if (opts.set_enabled or opts.set_disabled) and opts.command != 'config-manager':
+            logger.critical(
+                _('--enable, --set-enabled and --disable, --set-disabled '
+                  'must be used with config-manager command.'))
+            sys.exit(1)
 
         if opts.sleeptime is not None:
             time.sleep(random.randrange(opts.sleeptime * 60))

@@ -162,6 +162,10 @@ Options
     * ``main``, disables excludes defined in the ``[main]`` section
     * ``repoid``, disables excludes defined for the given repo
 
+``--disable, --set-disabled``
+    Disable specified repositories (automatically saves). The option has to be used together with
+    ``config-manager`` command (dnf-plugins-core).
+
 ``--disableplugin=<plugin names>``
     Disable the listed plugins specified by names or globs.
 
@@ -182,6 +186,10 @@ Options
 ``-e <error level>, --errorlevel=<error level>``
     Error output level. This is an integer value between 0 (no error output) and
     10 (shows all error messages), default is 3. Deprecated, use ``-v`` instead.
+
+``--enable, --set-enabled``
+    Enable specified repositories (automatically saves). The option has to be used together with
+    ``config-manager`` command (dnf-plugins-core).
 
 ``--enableplugin=<plugin names>``
     Enable the listed plugins specified by names or globs.
