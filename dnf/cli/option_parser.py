@@ -114,7 +114,6 @@ class OptionParser(argparse.ArgumentParser):
                 setattr(namespace, 'repo_' + self.dest, self.repoopts)
             else:
                 setattr(self.mainopts, k, v)
-                setattr(namespace, k, v)
                 setattr(namespace, 'main_' + self.dest, self.mainopts)
 
     class ParseSpecGroupFileCallback(argparse.Action):
