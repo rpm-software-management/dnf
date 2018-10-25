@@ -90,11 +90,6 @@ class OptionParser(argparse.ArgumentParser):
     class _SetoptsCallback(argparse.Action):
         """ Parse setopts arguments and put them into main_<setopts>
             and repo_<setopts>."""
-        def __init__(self, *args, **kwargs):
-            super(OptionParser._SetoptsCallback, self).__init__(*args, **kwargs)
-            self.repoopts = {}
-            self.mainopts = argparse.Namespace()
-
         def __call__(self, parser, namespace, values, opt_str):
             vals = values.split('=')
             if len(vals) > 2:
@@ -108,13 +103,19 @@ class OptionParser(argparse.ArgumentParser):
             if period != -1:
                 repo = k[:period]
                 k = k[period+1:]
-                if repo not in self.repoopts:
-                    self.repoopts[repo] = argparse.Namespace()
-                setattr(self.repoopts[repo], k, v)
-                setattr(namespace, 'repo_' + self.dest, self.repoopts)
+                if hasattr(namespace, 'repo_setopts'):
+                    repoopts = namespace.repo_setopts
+                else:
+                    repoopts = {}
+                repoopts.setdefault(repo, {}).setdefault(k, []).append(v)
+                setattr(namespace, 'repo_' + self.dest, repoopts)
             else:
-                setattr(self.mainopts, k, v)
-                setattr(namespace, 'main_' + self.dest, self.mainopts)
+                if hasattr(namespace, 'main_setopts'):
+                    mainopts = namespace.main_setopts
+                else:
+                    mainopts = {}
+                mainopts.setdefault(k, []).append(v)
+                setattr(namespace, 'main_' + self.dest, mainopts)
 
     class ParseSpecGroupFileCallback(argparse.Action):
         def __call__(self, parser, namespace, values, opt_str):

@@ -106,7 +106,7 @@ class ConfTest(tests.support.TestCase):
         conf.config_file_path = '%s/etc/dnf/dnf.conf' % tests.support.dnf_toplevel()
         opts = argparse.Namespace(
             gpgcheck=False,
-            main_setopts=argparse.Namespace(installonly_limit=5)
+            main_setopts={'installonly_limit': ['5']}
         )
         # read config
         conf.read(priority=dnf.conf.PRIO_MAINCONFIG)
