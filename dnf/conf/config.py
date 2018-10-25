@@ -480,6 +480,7 @@ class MainConf(BaseConfig):
                         try:
                             appendValue = self._config.optBinds().at(name).getAddValue()
                         except RuntimeError:
+                            # fails if option with "name" does not exist in _config (libdnf)
                             pass
                     if appendValue:
                         add_priority = dnf.conf.PRIO_COMMANDLINE
@@ -505,19 +506,22 @@ class MainConf(BaseConfig):
         if hasattr(opts, 'main_setopts'):
             # now set all the non-first-start opts from main from our setopts
             # pylint: disable=W0212
-            for name, val in opts.main_setopts._get_kwargs():
-                try:
-                    # values in main_setopts are strings, we try to parse it using newString()
-                    self._config.optBinds().at(name).newString(dnf.conf.PRIO_COMMANDLINE, val)
-                except RuntimeError:
-                    option = self._option.get(name, None)
-                    if option:
-                        option._set(val, dnf.conf.PRIO_COMMANDLINE)
-                    elif hasattr(self, name):
-                        setattr(self, name, val)
-                    else:
-                        msg = _("Main config did not have a %s attr. before setopt")
-                        logger.warning(msg, name)
+            for name, values in opts.main_setopts.items():
+                for val in values:
+                    try:
+                        # values in main_setopts are strings, we try to parse it using newString()
+                        self._config.optBinds().at(name).newString(dnf.conf.PRIO_COMMANDLINE, val)
+                    except RuntimeError:
+                        # if config option with "name" doesn't exist in _config, it could be defined
+                        # only in Python layer
+                        option = self._option.get(name, None)
+                        if option:
+                            option._set(val, dnf.conf.PRIO_COMMANDLINE)
+                        elif hasattr(self, name):
+                            setattr(self, name, val)
+                        else:
+                            msg = _("Main config did not have a %s attr. before setopt")
+                            logger.warning(msg, name)
 
     def exclude_pkgs(self, pkgs):
         # :api
@@ -628,18 +632,21 @@ class RepoConf(BaseConfig):
         repo_setopts = getattr(opts, 'repo_setopts', {})
         if self._section in repo_setopts:
             # pylint: disable=W0212
-            setopts = repo_setopts[self._section]._get_kwargs()
-            for name, val in setopts:
-                try:
-                    # values in repo_setopts are strings, we try to parse it using newString()
-                    self._config.optBinds().at(name).newString(dnf.conf.PRIO_COMMANDLINE, val)
-                except RuntimeError:
-                    option = self._option.get(name, None)
-                    if option:
-                        option._set(val, dnf.conf.PRIO_COMMANDLINE)
-                    else:
-                        msg = _("Repo %s did not have a %s attr. before setopt")
-                        logger.warning(msg, self._section, name)
+            setopts = repo_setopts[self._section].items()
+            for name, values in setopts:
+                for val in values:
+                    try:
+                        # values in repo_setopts are strings, we try to parse it using newString()
+                        self._config.optBinds().at(name).newString(dnf.conf.PRIO_COMMANDLINE, val)
+                    except RuntimeError:
+                        # if config option with "name" doesn't exist in _config, it could be defined
+                        # only in Python layer
+                        option = self._option.get(name, None)
+                        if option:
+                            option._set(val, dnf.conf.PRIO_COMMANDLINE)
+                        else:
+                            msg = _("Repo %s did not have a %s attr. before setopt")
+                            logger.warning(msg, self._section, name)
 
 # TODO move to libdnf
 class ModuleConf(BaseConfig):
