@@ -407,15 +407,15 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %config(noreplace) %{confdir}/%{name}.conf
 %config(noreplace) %{confdir}/protected.d/%{name}.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
-%ghost %{_localstatedir}/log/hawkey.log
-%ghost %{_localstatedir}/log/%{name}.log
-%ghost %{_localstatedir}/log/%{name}.librepo.log
-%ghost %{_localstatedir}/log/%{name}.rpm.log
-%ghost %{_localstatedir}/log/%{name}.plugin.log
-%ghost %{_sharedstatedir}/%{name}
-%ghost %{_sharedstatedir}/%{name}/groups.json
-%ghost %{_sharedstatedir}/%{name}/yumdb
-%ghost %{_sharedstatedir}/%{name}/history
+%ghost %attr(644,-,-) %{_localstatedir}/log/hawkey.log
+%ghost %attr(644,-,-) %{_localstatedir}/log/%{name}.log
+%ghost %attr(644,-,-) %{_localstatedir}/log/%{name}.librepo.log
+%ghost %attr(644,-,-) %{_localstatedir}/log/%{name}.rpm.log
+%ghost %attr(644,-,-) %{_localstatedir}/log/%{name}.plugin.log
+%ghost %attr(755,-,-) %dir %{_sharedstatedir}/%{name}
+%ghost %attr(644,-,-) %{_sharedstatedir}/%{name}/groups.json
+%ghost %attr(755,-,-) %dir %{_sharedstatedir}/%{name}/yumdb
+%ghost %attr(755,-,-) %dir %{_sharedstatedir}/%{name}/history
 %{_mandir}/man5/%{name}.conf.5*
 %{_tmpfilesdir}/%{name}.conf
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
