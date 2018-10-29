@@ -810,10 +810,10 @@ class Cli(object):
 
         # Read up configuration options and initialize plugins
         try:
-            self.base.conf._configure_from_options(opts)
             if opts.cacheonly:
                 self.base.conf.cachedir = self.base.conf.system_cachedir
                 self.demands.cacheonly = True
+            self.base.conf._configure_from_options(opts)
             self._read_conf_file(opts.releasever)
             self.base.conf._adjust_conf_options()
         except (dnf.exceptions.ConfigError, ValueError) as e:
