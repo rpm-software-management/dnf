@@ -172,7 +172,6 @@ Requires:       %{name}-data = %{version}-%{release}
 Requires:       deltarpm
 %endif
 Requires:       python2-hawkey >= %{hawkey_version}
-Requires:       python2-libdnf >= %{hawkey_version}
 Requires:       python2-libcomps >= %{libcomps_version}
 Requires:       python2-librepo >= %{librepo_version}
 %if 0%{?rhel} && 0%{?rhel} <= 7
@@ -216,7 +215,6 @@ Requires:       %{name}-data = %{version}-%{release}
 Requires:       deltarpm
 %endif
 Requires:       python3-hawkey >= %{hawkey_version}
-Requires:       python3-libdnf >= %{hawkey_version}
 Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
 Requires:       python3-librepo >= %{librepo_version}
