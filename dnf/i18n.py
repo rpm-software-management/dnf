@@ -287,6 +287,45 @@ def textwrap_fill(text, width=70, initial_indent='', subsequent_indent=''):
     return '\n'.join(ret)
 
 
+def select_short_long(width, msg_short, msg_long):
+    """ Automatically selects the short (abbreviated) or long (full) message
+        depending on whether we have enough screen space to display the full
+        message or not. If a caller by mistake passes a long string as
+        msg_short and a short string as a msg_long this function recognizes
+        the mistake and swaps the arguments. This function is especially useful
+        in the i18n context when you cannot predict how long are the translated
+        messages.
+
+        Limitations:
+
+        1. If msg_short is longer than width you will still get an overflow.
+           This function does not abbreviate the string.
+        2. You are not obliged to provide an actually abbreviated string, it is
+           perfectly correct to pass the same string twice if you don't want
+           any abbreviation. However, if you provide two different strings but
+           having the same width this function is unable to recognize which one
+           is correct and you should assume that it is unpredictable which one
+           is returned.
+
+       Example:
+
+       ``select_short_long (10, _("Repo"), _("Repository"))``
+
+       will return "Repository" in English but the results in other languages
+       may be different. """
+    width_short = exact_width(msg_short)
+    width_long = exact_width(msg_long)
+    # If we have two strings of the same width:
+    if width_short == width_long:
+        return msg_long
+    # If the short string is wider than the long string:
+    elif width_short > width_long:
+        return msg_short if width_short <= width else msg_long
+    # The regular case:
+    else:
+        return msg_long if width_long <= width else msg_short
+
+
 def translation(name):
     # :api, deprecated in 2.0.0, will be erased when python2 is abandoned
     """ Easy gettext translations setup based on given domain name """

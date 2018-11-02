@@ -26,7 +26,7 @@ import collections
 
 from dnf.cli import commands
 from dnf.cli.option_parser import OptionParser
-from dnf.i18n import ucd, _
+from dnf.i18n import ucd, _, C_
 
 import dnf.i18n
 import dnf.match_counter
@@ -57,9 +57,9 @@ class SearchCommand(commands.Command):
         """Search for simple text tags in a package object."""
 
         TRANS_TBL = collections.OrderedDict((
-            ('name', _('Name')),
-            ('summary', _('Summary')),
-            ('description', _('Description')),
+            ('name', C_('long', 'Name')),
+            ('summary', C_('long', 'Summary')),
+            ('description', C_('long', 'Description')),
             ('url', _('URL')),
         ))
 

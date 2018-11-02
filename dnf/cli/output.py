@@ -25,7 +25,7 @@ import libdnf.transaction
 
 from copy import deepcopy
 from dnf.cli.format import format_number, format_time
-from dnf.i18n import _, C_, P_, ucd, fill_exact_width, textwrap_fill, exact_width
+from dnf.i18n import _, C_, P_, ucd, fill_exact_width, textwrap_fill, exact_width, select_short_long
 from dnf.pycomp import xrange, basestring, long, unicode
 from dnf.yum.rpmtrans import LoggingTransactionDisplay
 from dnf.db.history import MergedTransactionWrapper
@@ -490,28 +490,49 @@ class Output(object):
 
         output_list = []
         (hibeg, hiend) = self._highlight(highlight)
-        output_list.append(format_key_val(_("Name"), "%s%s%s" % (hibeg, pkg.name, hiend)))
+        # Translators: This is abbreviated 'Name'. Should be no longer
+        # than 12 characters. You can use the full version if it is short
+        # enough in your language.
+        key = select_short_long(12, C_("short", "Name"),
+                                    C_("long", "Name"))
+        output_list.append(format_key_val(key,
+                                          "%s%s%s" % (hibeg, pkg.name, hiend)))
         if pkg.epoch:
+            # Translators: This message should be no longer than 12 characters.
             output_list.append(format_key_val(_("Epoch"), pkg.epoch))
-        output_list.append(format_key_val(_("Version"), pkg.version))
+        key = select_short_long(12, C_("short", "Version"),
+                                    C_("long", "Version"))
+        output_list.append(format_key_val(key, pkg.version))
+        # Translators: This message should be no longer than 12 characters.
         output_list.append(format_key_val(_("Release"), pkg.release))
-        output_list.append(format_key_val(_("Arch"), pkg.arch))
-        output_list.append(format_key_val(_("Size"), format_number(float(pkg._size))))
+        key = select_short_long(12, C_("short", "Arch"),
+                                    C_("long", "Architecture"))
+        output_list.append(format_key_val(key, pkg.arch))
+        key = select_short_long(12, C_("short", "Size"), C_("long", "Size"))
+        output_list.append(format_key_val(key,
+                                          format_number(float(pkg._size))))
+        # Translators: This message should be no longer than 12 characters.
         output_list.append(format_key_val(_("Source"), pkg.sourcerpm))
-        output_list.append(format_key_val(_("Repo"), pkg.repoid))
+        key = select_short_long(12, C_("short", "Repo"),
+                                    C_("long", "Repository"))
+        output_list.append(format_key_val(key, pkg.repoid))
 
         if pkg._from_system:
             history_repo = self.history.repo(pkg)
             if history_repo:
+                # Translators: This message should be no longer than 12 chars.
                 output_list.append(format_key_val(_("From repo"), history_repo))
         if self.conf.verbose:
             # :hawkey does not support changelog information
             # print(_("Committer   : %s") % ucd(pkg.committer))
             # print(_("Committime  : %s") % time.ctime(pkg.committime))
+            # Translators: This message should be no longer than 12 characters.
             output_list.append(format_key_val(_("Packager"), pkg.packager))
+            # Translators: This message should be no longer than 12 characters.
             output_list.append(format_key_val(_("Buildtime"),
                                               dnf.util.normalize_time(pkg.buildtime)))
             if pkg.installtime:
+            # Translators: This message should be no longer than 12 characters.
                 output_list.append(format_key_val(_("Install time"),
                                                   dnf.util.normalize_time(pkg.installtime)))
             history_pkg = self.history.package_data(pkg)
@@ -520,12 +541,24 @@ class Output(object):
                     uid = int(history_pkg._item.getInstalledBy())
                 except ValueError: # In case int() fails
                     uid = None
+                # Translators: This message should be no longer than 12 chars.
                 output_list.append(format_key_val(_("Installed by"), self._pwd_ui_username(uid)))
-        output_list.append(format_key_val_fill(_("Summary"), pkg.summary))
+        # Translators: This is abbreviated 'Summary'. Should be no longer
+        # than 12 characters. You can use the full version if it is short
+        # enough in your language.
+        key = select_short_long(12, C_("short", "Summary"),
+                                    C_("long", "Summary"))
+        output_list.append(format_key_val_fill(key, pkg.summary))
         if pkg.url:
             output_list.append(format_key_val(_("URL"), ucd(pkg.url)))
+        # Translators: This message should be no longer than 12 characters.
         output_list.append(format_key_val_fill(_("License"), pkg.license))
-        output_list.append(format_key_val_fill(_("Description"), pkg.description))
+        # Translators: This is abbreviated 'Description'. Should be no longer
+        # than 12 characters. You can use the full version if it is short
+        # enough in your language.
+        key = select_short_long(12, C_("short", "Description"),
+                                    C_("long", "Description"))
+        output_list.append(format_key_val_fill(key, pkg.description))
         return "\n".join(output_list)
 
     def updatesObsoletesList(self, uotup, changetype, columns=None):
@@ -1232,12 +1265,53 @@ class Output(object):
                                        remainder_column=2)
             (n_wid, a_wid, v_wid, r_wid, s_wid) = columns
 
+            # Do not use 'Package' without context. Using context resolves
+            # RhBug 1302935 as a side effect.
+            msg_package = select_short_long(n_wid,
+            # Translators: This is the short version of 'Package'. You can
+            # use the full (unabbreviated) term 'Package' if you think that
+            # the translation to your language is not too long and will
+            # always fit to limited space.
+                                            C_('short', 'Package'),
+            # Translators: This is the full (unabbreviated) term 'Package'.
+                                            C_('long', 'Package'))
+            msg_arch = select_short_long(a_wid,
+            # Translators: This is abbreviated 'Architecture', used when
+            # we have not enough space to display the full word.
+                                         C_('short', 'Arch'),
+            # Translators: This is the full word 'Architecture', used when
+            # we have enough space.
+                                         C_('long', 'Architecture'))
+            msg_version = select_short_long(v_wid,
+            # Translators: This is the short version of 'Version'. You can
+            # use the full (unabbreviated) term 'Version' if you think that
+            # the translation to your language is not too long and will
+            # always fit to limited space.
+                                            C_('short', 'Version'),
+            # Translators: This is the full (unabbreviated) term 'Version'.
+                                            C_('long', 'Version'))
+            msg_repository = select_short_long(r_wid,
+            # Translators: This is abbreviated 'Repository', used when
+            # we have not enough space to display the full word.
+                                               C_('short', 'Repo'),
+            # Translators: This is the full word 'Repository', used when
+            # we have enough space.
+                                               C_('long', 'Repository'))
+            msg_size = select_short_long(s_wid,
+            # Translators: This is the short version of 'Size'. It should
+            # not be longer than 5 characters. If the term 'Size' in your
+            # language is not longer than 5 characters then you can use it
+            # unabbreviated.
+                                         C_('short', 'Size'),
+            # Translators: This is the full (unabbreviated) term 'Size'.
+                                         C_('long', 'Size'))
+
             out = [u"%s\n%s\n%s\n" % ('=' * self.term.columns,
-                                      self.fmtColumns(((P_('Package', 'Packages', 1), -n_wid),
-                                                       (_('Arch'), -a_wid),
-                                                       (_('Version'), -v_wid),
-                                                       (_('Repository'), -r_wid),
-                                                       (_('Size'), s_wid)), u" "),
+                                      self.fmtColumns(((msg_package, -n_wid),
+                                                       (msg_arch, -a_wid),
+                                                       (msg_version, -v_wid),
+                                                       (msg_repository, -r_wid),
+                                                       (msg_size, s_wid)), u" "),
                                       '=' * self.term.columns)]
 
         for (action, lines) in pkglist_lines:
@@ -1963,7 +2037,8 @@ Transaction Summary
         # REALLY Needs to use columns!
         print(fmt % (fill_exact_width(_("ID"), 6, 6),
                      fill_exact_width(_("Action(s)"), 14, 14),
-                     fill_exact_width(P_("Package", "Packages", 1), 53, 53)))
+        # This is also a hack to resolve RhBug 1302935 correctly.
+                     fill_exact_width(C_("long", "Package"), 53, 53)))
         print("-" * 79)
         fmt = "%6u | %s | %-50s"
         num = 0
