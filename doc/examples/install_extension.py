@@ -19,6 +19,8 @@
 
 import sys
 
+import dnf
+import dnf.module
 import dnf.rpm
 
 
@@ -26,6 +28,7 @@ if __name__ == '__main__':
     FTR_SPECS = {'hawkey-0.5.3-1.fc21.i686'}  # <-- SET YOUR FEATURES HERE.
     RPM_SPECS = {'./hawkey-0.5.3-1.fc21.i686.rpm'}  # <-- SET YOUR RPMS HERE.
     GRP_SPECS = {'kde-desktop'}  # <-- SET YOUR GROUPS HERE.
+    MODULE_SPEC = {"nodejs:10/default"}  # <-- SET YOUR MODULES HERE.
 
     with dnf.Base() as base:
         # Substitutions are needed for correct interpretation of repo files.
@@ -50,6 +53,9 @@ if __name__ == '__main__':
         if GRP_SPECS:
             base.read_comps(arch_filter=True)
         # Group marking methods set the user request.
+        if MODULE_SPEC:
+            module_base = dnf.module.module_base.ModuleBase(base)
+            module_base.install(MODULE_SPEC, strict=False)
         for grp_spec in GRP_SPECS:
             group = base.comps.group_by_pattern(grp_spec)
             if not group:
