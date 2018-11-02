@@ -824,7 +824,7 @@ In case stream is not specified enabled or default stream is used, in this order
 ``dnf [options] module info <module_spec>...``
     Print detailed information about given module stream.
 
-``dnf [options] module profile <module_spec>...``
+``dnf [options] module info --profile <module_spec>...``
     Print detailed information about given module profiles.
 
 .. _provides_command-label:
