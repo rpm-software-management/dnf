@@ -114,68 +114,108 @@ class AutomaticConfig(object):
         except IOError as e:
             logger.warning(e)
 
-        self.commands._populate(parser, 'commands', filename, dnf.conf.PRIO_AUTOMATICCONFIG)
-        self.email._populate(parser, 'email', filename, dnf.conf.PRIO_AUTOMATICCONFIG)
-        self.emitters._populate(parser, 'emitters', filename, dnf.conf.PRIO_AUTOMATICCONFIG)
-        self.command_email._populate(parser, 'command_email', filename,
-                                     dnf.conf.PRIO_AUTOMATICCONFIG)
+        self.commands.populate(parser, 'commands', filename,
+                               libdnf.conf.Option.Priority_AUTOMATICCONFIG)
+        self.email.populate(parser, 'email', filename, libdnf.conf.Option.Priority_AUTOMATICCONFIG)
+        self.emitters.populate(parser, 'emitters', filename,
+                               libdnf.conf.Option.Priority_AUTOMATICCONFIG)
+        self.command_email.populate(parser, 'command_email', filename,
+                                    libdnf.conf.Option.Priority_AUTOMATICCONFIG)
         self._parser = parser
 
     def update_baseconf(self, baseconf):
         baseconf._populate(self._parser, 'base', self.filename, dnf.conf.PRIO_AUTOMATICCONFIG)
 
 
-class CommandsConfig(dnf.conf.BaseConfig):
-    def __init__(self, section='commands', parser=None):
-        super(CommandsConfig, self).__init__(section=section, parser=parser)
-        self._add_option('apply_updates',  dnf.conf.BoolOption(False))
-        self._add_option('base_config_file',  dnf.conf.Option('/etc/dnf/dnf.conf'))
-        self._add_option('download_updates',  dnf.conf.BoolOption(False))
-        self._add_option('upgrade_type',  dnf.conf.SelectionOption('default',
-                                        choices=('default', 'security')))
-        self._add_option('random_sleep',  dnf.conf.SecondsOption(300))
+class Config(object):
+    def __init__(self):
+        self._options = {}
+
+    def add_option(self, name, optionobj):
+        self._options[name] = optionobj
+
+        def prop_get(obj):
+            return obj._options[name].getValue()
+
+        def prop_set(obj, val):
+            obj._options[name].set(libdnf.conf.Option.Priority_RUNTIME, val)
+
+        setattr(type(self), name, property(prop_get, prop_set))
+
+    def populate(self, parser, section, filename, priority):
+        """Set option values from an INI file section."""
+        if parser.hasSection(section):
+            for name in parser.getData()[section]:
+                value = parser.getValue(section, name)
+                if not value or value == 'None':
+                    value = ''
+                opt = self._options.get(name, None)
+                if opt:
+                    try:
+                        opt.set(priority, value)
+                    except RuntimeError as e:
+                        logger.debug(_('Unknown configuration value: %s=%s in %s; %s'),
+                                     ucd(name), ucd(value), ucd(filename), str(e))
+                else:
+                    logger.debug(
+                        _('Unknown configuration option: %s = %s in %s'),
+                        ucd(name), ucd(value), ucd(filename))
+
+
+class CommandsConfig(Config):
+    def __init__(self):
+        super(CommandsConfig, self).__init__()
+        self.add_option('apply_updates', libdnf.conf.OptionBool(False))
+        self.add_option('base_config_file', libdnf.conf.OptionString('/etc/dnf/dnf.conf'))
+        self.add_option('download_updates', libdnf.conf.OptionBool(False))
+        self.add_option('upgrade_type', libdnf.conf.OptionEnumString('default',
+                        libdnf.conf.VectorString(['default', 'security'])))
+        self.add_option('random_sleep', libdnf.conf.OptionNumberInt32(300))
 
     def imply(self):
         if self.apply_updates:
-            self._set_value('download_updates', True, dnf.conf.PRIO_RUNTIME)
+            self.download_updates = True
 
 
-class EmailConfig(dnf.conf.BaseConfig):
-    def __init__(self, section='email', parser=None):
-        super(EmailConfig, self).__init__(section=section, parser=parser)
-        self._add_option('email_to',  dnf.conf.ListOption(["root"]))
-        self._add_option('email_from',  dnf.conf.Option("root"))
-        self._add_option('email_host',  dnf.conf.Option("localhost"))
-        self._add_option('email_port',  dnf.conf.IntOption(25))
+class EmailConfig(Config):
+    def __init__(self):
+        super(EmailConfig, self).__init__()
+        self.add_option('email_to',
+                        libdnf.conf.OptionStringList(libdnf.conf.VectorString(["root"])))
+        self.add_option('email_from', libdnf.conf.OptionString("root"))
+        self.add_option('email_host', libdnf.conf.OptionString("localhost"))
+        self.add_option('email_port', libdnf.conf.OptionNumberInt32(25))
 
 
-class CommandConfig(dnf.conf.BaseConfig):
+class CommandConfig(Config):
     _default_command_format = "cat"
     _default_stdin_format = "{body}"
 
-    def __init__(self, section='command', parser=None):
-        super(CommandConfig, self).__init__(section=section, parser=parser)
-        self._add_option('command_format',
-                         dnf.conf.Option(self._default_command_format))
-        self._add_option('stdin_format',
-                         dnf.conf.Option(self._default_stdin_format))
+    def __init__(self):
+        super(CommandConfig, self).__init__()
+        self.add_option('command_format',
+                        libdnf.conf.OptionString(self._default_command_format))
+        self.add_option('stdin_format',
+                        libdnf.conf.OptionString(self._default_stdin_format))
 
 
 class CommandEmailConfig(CommandConfig):
     _default_command_format = "mail -s {subject} -r {email_from} {email_to}"
 
-    def __init__(self, section='command_email', parser=None):
-        super(CommandEmailConfig, self).__init__(section=section, parser=parser)
-        self._add_option('email_to', dnf.conf.ListOption(["root"]))
-        self._add_option('email_from', dnf.conf.Option("root"))
+    def __init__(self):
+        super(CommandEmailConfig, self).__init__()
+        self.add_option('email_to',
+                        libdnf.conf.OptionStringList(libdnf.conf.VectorString(["root"])))
+        self.add_option('email_from', libdnf.conf.OptionString("root"))
 
 
-class EmittersConfig(dnf.conf.BaseConfig):
-    def __init__(self, section='emiter', parser=None):
-        super(EmittersConfig, self).__init__(section=section, parser=parser)
-        self._add_option('emit_via',  dnf.conf.ListOption(['email', 'stdio']))
-        self._add_option('output_width',  dnf.conf.IntOption(80))
-        self._add_option('system_name',  dnf.conf.Option(socket.gethostname()))
+class EmittersConfig(Config):
+    def __init__(self):
+        super(EmittersConfig, self).__init__()
+        self.add_option('emit_via', libdnf.conf.OptionStringList(
+            libdnf.conf.VectorString(['email', 'stdio'])))
+        self.add_option('output_width', libdnf.conf.OptionNumberInt32(80))
+        self.add_option('system_name', libdnf.conf.OptionString(socket.gethostname()))
 
 
 def main(args):
