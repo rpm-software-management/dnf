@@ -368,7 +368,7 @@ class ModuleBase(object):
                 else ", "
         return profiles_str[:-2]
 
-    def _module_strs_formater(self, modulePackage):
+    def _module_strs_formater(self, modulePackage, markActive=False):
         default_str = ""
         enabled_str = ""
         disabled_str = ""
@@ -383,7 +383,7 @@ class ModuleBase(object):
             if not default_str:
                 disabled_str = " "
             disabled_str += "[x]"
-        if self.base._moduleContainer.isModuleActive(modulePackage):
+        if markActive and self.base._moduleContainer.isModuleActive(modulePackage):
             if not default_str:
                 disabled_str = " "
             disabled_str += "[a]"
@@ -401,7 +401,8 @@ class ModuleBase(object):
                 logger.info(_("Ignoring unnecessary profile: '{}/{}'").format(
                     nsvcap.name, nsvcap.profile))
             for modulePackage in module_list:
-                default_str, enabled_str, disabled_str = self._module_strs_formater(modulePackage)
+                default_str, enabled_str, disabled_str = self._module_strs_formater(
+                    modulePackage, markActive=True)
                 default_profiles = self.base._moduleContainer.getDefaultProfiles(
                     modulePackage.getName(), modulePackage.getStream())
 
@@ -526,7 +527,8 @@ class ModuleBase(object):
                     else:
                         modulePackage = nameStreamArch[0]
                 line = table.newLine()
-                default_str, enabled_str, disabled_str = self._module_strs_formater(modulePackage)
+                default_str, enabled_str, disabled_str = self._module_strs_formater(
+                    modulePackage, markActive=False)
                 default_profiles = self.base._moduleContainer.getDefaultProfiles(
                     modulePackage.getName(), modulePackage.getStream())
                 profiles_str = self._profile_report_formater(modulePackage, default_profiles,
