@@ -77,7 +77,7 @@ class ModuleBase(object):
                         profiles.extend(latest_module.getProfiles(nsvcap.profile))
                         if not profiles:
                             logger.error(_("Unable to match profile in argument {}").format(spec))
-                            error_specs.append(spec)
+                            no_match_specs.append(spec)
                             continue
                     else:
                         profiles_strings = self.base._moduleContainer.getDefaultProfiles(
