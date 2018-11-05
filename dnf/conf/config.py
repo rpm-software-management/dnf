@@ -186,21 +186,8 @@ class BaseConfig(object):
 
     def __init__(self, config=None, section=None, parser=None):
         self.__dict__["_config"] = config
-        self._option = {}
         self._section = section
         self._parser = parser
-
-    # is used in the "automatic" and in the test, remove in future
-    def _add_option(self, name, optionobj):
-        self._option[name] = optionobj
-
-        def prop_get(obj):
-            return obj._option[name]._get()
-
-        def prop_set(obj, val):
-            obj._option[name]._set(val)
-
-        setattr(type(self), name, property(prop_get, prop_set))
 
     def __getattr__(self, name):
         if "_config" not in self.__dict__:
@@ -260,7 +247,7 @@ class BaseConfig(object):
     def _get_option(self, name):
         method = getattr(self._config, name, None)
         if method is None:
-            return self._option.get(name, None)
+            return None
         return Option(method())
 
     def _get_value(self, name):
@@ -282,32 +269,19 @@ class BaseConfig(object):
                 value = parser.getSubstitutedValue(section, name)
                 if not value or value == 'None':
                     value = ''
-
-                try:
-                    if not self._config:
-                        raise RuntimeError()
-                    self._config.optBinds().at(name).newString(priority, value)
-                except RuntimeError:
-                    opt = self._get_option(name)
-                    if opt:  # and not opt._is_runtimeonly():
-                        try:
-                            if value is not None:
-                                opt._set(value, priority)
-                        except dnf.exceptions.ConfigError as e:
-                            logger.debug(_('Unknown configuration value: '
-                                           '%s=%s in %s; %s'), ucd(name),
-                                         ucd(value), ucd(filename), e.raw_error)
+                if hasattr(self._config, name):
+                    try:
+                        self._config.optBinds().at(name).newString(priority, value)
+                    except RuntimeError as e:
+                        logger.debug(_('Unknown configuration value: %s=%s in %s; %s'),
+                                     ucd(name), ucd(value), ucd(filename), str(e))
+                else:
+                    if name == 'arch' and hasattr(self, name):
+                        setattr(self, name, value)
                     else:
-                        if name == 'arch' and hasattr(self, name):
-                            setattr(self, name, value)
-                        else:
-                            logger.debug(
-                                _('Unknown configuration option: %s = %s in %s'),
-                                ucd(name), ucd(value), ucd(filename))
-
-#    def _config_items(self):
-        """Yield (name, value) pairs for every option in the instance."""
-#        return self._option.items()
+                        logger.debug(
+                            _('Unknown configuration option: %s = %s in %s'),
+                            ucd(name), ucd(value), ucd(filename))
 
     def dump(self):
         # :api
@@ -508,16 +482,18 @@ class MainConf(BaseConfig):
             # pylint: disable=W0212
             for name, values in opts.main_setopts.items():
                 for val in values:
-                    try:
-                        # values in main_setopts are strings, we try to parse it using newString()
-                        self._config.optBinds().at(name).newString(dnf.conf.PRIO_COMMANDLINE, val)
-                    except RuntimeError:
+                    if hasattr(self._config, name):
+                        try:
+                            # values in main_setopts are strings, try to parse it using newString()
+                            self._config.optBinds().at(name).newString(PRIO_COMMANDLINE, val)
+                        except RuntimeError as e:
+                            raise dnf.exceptions.ConfigError(
+                                _("Error parsing --setopt with key '%s', value '%s': %s")
+                                % (name, val, str(e)), raw_error=str(e))
+                    else:
                         # if config option with "name" doesn't exist in _config, it could be defined
                         # only in Python layer
-                        option = self._option.get(name, None)
-                        if option:
-                            option._set(val, dnf.conf.PRIO_COMMANDLINE)
-                        elif hasattr(self, name):
+                        if hasattr(self, name):
                             setattr(self, name, val)
                         else:
                             msg = _("Main config did not have a %s attr. before setopt")
@@ -635,18 +611,18 @@ class RepoConf(BaseConfig):
             setopts = repo_setopts[self._section].items()
             for name, values in setopts:
                 for val in values:
-                    try:
-                        # values in repo_setopts are strings, we try to parse it using newString()
-                        self._config.optBinds().at(name).newString(dnf.conf.PRIO_COMMANDLINE, val)
-                    except RuntimeError:
-                        # if config option with "name" doesn't exist in _config, it could be defined
-                        # only in Python layer
-                        option = self._option.get(name, None)
-                        if option:
-                            option._set(val, dnf.conf.PRIO_COMMANDLINE)
-                        else:
-                            msg = _("Repo %s did not have a %s attr. before setopt")
-                            logger.warning(msg, self._section, name)
+                    if hasattr(self._config, name):
+                        try:
+                            # values in repo_setopts are strings, try to parse it using newString()
+                            self._config.optBinds().at(name).newString(PRIO_COMMANDLINE, val)
+                        except RuntimeError as e:
+                            raise dnf.exceptions.ConfigError(
+                                _("Error parsing --setopt with key '%s.%s', value '%s': %s")
+                                % (self._section, name, val, str(e)), raw_error=str(e))
+                    else:
+                        msg = _("Repo %s did not have a %s attr. before setopt")
+                        logger.warning(msg, self._section, name)
+
 
 # TODO move to libdnf
 class ModuleConf(BaseConfig):
