@@ -30,25 +30,6 @@ import tests.support
 from tests.support import mock
 
 
-class OptionTest(tests.support.TestCase):
-
-    class Cfg(BaseConfig):
-        def __init__(self):
-            super(OptionTest.Cfg, self).__init__()
-            self._add_option('a_setting', Option("roundabout"))
-
-    def test_option(self):
-        cfg = self.Cfg()
-        # default
-        self.assertEqual(cfg.a_setting, "roundabout")
-        # new value with high priority
-        cfg.a_setting = "turn left"
-        self.assertEqual(cfg.a_setting, "turn left")
-        # new value with lower priority does nothing
-        cfg._set_value('a_setting', "turn right", dnf.conf.PRIO_DEFAULT)
-        self.assertEqual(cfg.a_setting, "turn left")
-
-
 class CacheTest(tests.support.TestCase):
 
     @mock.patch('dnf.util.am_i_root', return_value=True)
