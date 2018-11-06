@@ -106,26 +106,6 @@ class Option(object):
                                                  % (value, str(e)),
                                                  raw_error=str(e))
 
-    def _is_default(self):
-        """Was value changed from default?"""
-        return self._option.getPriority() == PRIO_DEFAULT
-
-    # def _is_runtimeonly(self):
-        """Was value changed from default?"""
-        # return self._runtimeonly
-
-    def _parse(self, strval):
-        """Parse the string value to the option's native value."""
-        # pylint: disable=R0201
-        return self._option.fromString(strval)
-
-    def _tostring(self):
-        """Convert the option's native actual value to a string."""
-        val = ('' if self._is_default() or
-               self._option.getPriority() == PRIO_EMPTY
-               else self._option.getValueString())
-        return str(val)
-
 
 class IntOption(Option):
     def __init__(self, default=0):
