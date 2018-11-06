@@ -217,22 +217,23 @@ class RPMTransaction(object):
 
         if hasattr(cbkey, "pkg"):
             tsi = cbkey
-            return tsi.pkg, tsi.action, tsi
+            return [tsi]
 
         te = self._te_list[self._te_index]
         te_nevra = dnf.util._te_nevra(te)
-        if self._tsi_cache is not None:
-            if str(self._tsi_cache) == te_nevra:
-                return self._tsi_cache.pkg, self._tsi_cache.action, self._tsi_cache
-
+        if self._tsi_cache:
+            if str(self._tsi_cache[0]) == te_nevra:
+                return self._tsi_cache
+        items = []
         for tsi in self.base.transaction:
             if tsi.action == libdnf.transaction.TransactionItemAction_REINSTALL:
                 # skip REINSTALL in order to return REINSTALLED
                 continue
             if str(tsi) == te_nevra:
-                self._tsi_cache = tsi
-                return tsi.pkg, tsi.action, tsi
-
+                items.append(tsi)
+        if items:
+            self._tsi_cache = items
+            return items
         raise RuntimeError("TransactionItem not found for key: %s" % cbkey)
 
     def callback(self, what, amount, total, key, client_data):
@@ -292,13 +293,14 @@ class RPMTransaction(object):
         self._te_index = index
         self.complete_actions += 1
         if not self.test:
-            _, _, tsi = self._extract_cbkey(key)
+            transaction_list = self._extract_cbkey(key)
             for display in self.displays:
-                display.filelog(tsi.pkg, tsi.action)
+                display.filelog(transaction_list[0].pkg, transaction_list[0].action)
 
     def _instOpenFile(self, key):
         self.lastmsg = None
-        pkg, _, _ = self._extract_cbkey(key)
+        transaction_list = self._extract_cbkey(key)
+        pkg = transaction_list[0].pkg
         rpmloc = pkg.localPkg()
         try:
             self.fd = open(rpmloc)
@@ -312,15 +314,16 @@ class RPMTransaction(object):
             return self.fd.fileno()
 
     def _instCloseFile(self, key):
-        _, _, tsi = self._extract_cbkey(key)
+        transaction_list = self._extract_cbkey(key)
         self.fd.close()
         self.fd = None
 
         if self.test or not self.trans_running:
             return
-
-        if tsi.state == libdnf.transaction.TransactionItemState_UNKNOWN:
-            tsi.state = libdnf.transaction.TransactionItemState_DONE
+        for tsi in transaction_list:
+            if tsi.state == libdnf.transaction.TransactionItemState_UNKNOWN:
+                tsi.state = libdnf.transaction.TransactionItemState_DONE
+                break
 
         for display in self.displays:
             display.filelog(tsi.pkg, tsi.action)
@@ -333,27 +336,28 @@ class RPMTransaction(object):
                 display.progress(None, action, None, None, None, None)
 
     def _instProgress(self, amount, total, key):
-        _, _, tsi = self._extract_cbkey(key)
+        transaction_list = self._extract_cbkey(key)
+        pkg = transaction_list[0].pkg
+        action = transaction_list[0].action
         for display in self.displays:
-            display.progress(
-                tsi.pkg, tsi.action, amount, total, self.complete_actions,
-                self.total_actions)
+            display.progress(pkg, action, amount, total, self.complete_actions, self.total_actions)
 
     def _uninst_start(self, key):
         self.total_removed += 1
 
     def _uninst_progress(self, amount, total, key):
-        _, _, tsi = self._extract_cbkey(key)
+        transaction_list = self._extract_cbkey(key)
+        pkg = transaction_list[0].pkg
+        action = transaction_list[0].action
         for display in self.displays:
-            display.progress(
-                tsi.pkg, tsi.action, amount, total, self.complete_actions,
-                self.total_actions)
+            display.progress(pkg, action, amount, total, self.complete_actions, self.total_actions)
 
     def _unInstStop(self, key):
-        _, _, tsi = self._extract_cbkey(key)
-
-        if tsi.state == libdnf.transaction.TransactionItemState_UNKNOWN:
-            tsi.state = libdnf.transaction.TransactionItemState_DONE
+        transaction_list = self._extract_cbkey(key)
+        for tsi in transaction_list:
+            if tsi.state == libdnf.transaction.TransactionItemState_UNKNOWN:
+                tsi.state = libdnf.transaction.TransactionItemState_DONE
+                break
 
         for display in self.displays:
             display.filelog(tsi.pkg, tsi.action)
@@ -364,15 +368,15 @@ class RPMTransaction(object):
         self._scriptout()
 
     def _cpioError(self, key):
-        # In the case of a remove, we only have a name, not a tsi:
-        pkg, _, _ = self._extract_cbkey(key)
-        msg = "Error in cpio payload of rpm package %s" % pkg
+        transaction_list = self._extract_cbkey(key)
+        msg = "Error in cpio payload of rpm package %s" % transaction_list[0].pkg
         for display in self.displays:
             display.error(msg)
 
     def _unpackError(self, key):
-        pkg, _, tsi = self._extract_cbkey(key)
-        msg = "Error unpacking rpm package %s" % pkg
+        transaction_list = self._extract_cbkey(key)
+        tsi = transaction_list[0]
+        msg = "Error unpacking rpm package %s" % tsi.pkg
         for display in self.displays:
             display.error(msg)
         tsi.state = libdnf.transaction.TransactionItemState_ERROR
@@ -382,13 +386,8 @@ class RPMTransaction(object):
         # "total" carries fatal/non-fatal status
         scriptlet_name = rpm.tagnames.get(amount, "<unknown>")
 
-        pkg, _, _ = self._extract_cbkey(key)
-        if pkg is not None:
-            name = pkg.name
-        elif dnf.util.is_string_type(key):
-            name = key
-        else:
-            name = 'None'
+        transaction_list = self._extract_cbkey(key)
+        name = transaction_list[0].pkg.name
 
         msg = ("Error in %s scriptlet in rpm package %s" % (scriptlet_name, name))
 
@@ -401,7 +400,8 @@ class RPMTransaction(object):
         if key is None and self._te_list == []:
             pkg = 'None'
         else:
-            pkg, _, _ = self._extract_cbkey(key)
+            transaction_list = self._extract_cbkey(key)
+            pkg = transaction_list[0].pkg
         complete = self.complete_actions if self.total_actions != 0 and self.complete_actions != 0 \
             else 1
         total = self.total_actions if self.total_actions != 0 and self.complete_actions != 0 else 1
