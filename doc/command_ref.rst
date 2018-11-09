@@ -336,9 +336,14 @@ Options
     but the value is appended. If there is no value like ``--setopt=tsflags=`` it remove all values
     in append options.
 
+.. _skip-broken_option-label:
+
 ``--skip-broken``
     Resolve depsolve problems by removing packages that are causing problems from the transaction.
     It is alias for configuration option :ref:`strict <strict-label>` with False value.
+    Additionally with module subcommands :ref:`enable <module_enable_command-label>` and
+    :ref:`disable <module_disable_command-label>` it allow to perform action even in case of broken
+    modular dependencies.
 
 ``--showduplicates``
     show duplicates, in repos, in list/search commands
@@ -797,10 +802,14 @@ In case stream is not specified enabled or default stream is used, in this order
     Remove installed module profiles incl. their RPMs.
     In case no profile was provided, all installed profiles get removed.
 
+.. _module_enable_command-label:
+
 ``dnf [options] module enable <module_spec>...``
     Enable a module stream and make the stream RPMs available in the package set.
 
-    Modular dependencies are resolved, dependencies checked and also recursively enabled.
+    Modular dependencies are resolved, dependencies checked and also recursively enabled. In case
+    of modular dependency issue the operation will be rejected. To perform action anyway please use
+    \-\ :ref:`-skip-broken option <skip-broken_option-label>`.
 
     This command can also be used for switching module streams.
     RPMs from the original stream become unavailable and RPMs from the new
@@ -809,8 +818,12 @@ In case stream is not specified enabled or default stream is used, in this order
     It is suggested to use the ``dnf distro-sync`` command
     to synchronize to the latest available RPMs from the new stream.
 
+.. _module_disable_command-label:
+
 ``dnf [options] module disable <module_spec>...``
-    Disable a module. All related module streams will become unavailable.
+    Disable a module. All related module streams will become unavailable. In case of modular
+    dependency issue the operation will be rejected. To perform action anyway please use \-\
+    :ref:`-skip-broken option <skip-broken_option-label>`.
 
 ``dnf [options] module reset <module_spec>...``
     Reset module state so it's no longer enabled or disabled.
