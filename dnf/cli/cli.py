@@ -45,7 +45,9 @@ from . import output
 from dnf.cli import CliError
 from dnf.i18n import ucd, _
 import dnf
+import dnf.cli.aliases
 import dnf.cli.commands
+import dnf.cli.commands.alias
 import dnf.cli.commands.autoremove
 import dnf.cli.commands.check
 import dnf.cli.commands.clean
@@ -708,6 +710,7 @@ class Cli(object):
         self.command = None
         self.demands = dnf.cli.demand.DemandSheet() #:cli
 
+        self.register_command(dnf.cli.commands.alias.AliasCommand)
         self.register_command(dnf.cli.commands.autoremove.AutoremoveCommand)
         self.register_command(dnf.cli.commands.check.CheckCommand)
         self.register_command(dnf.cli.commands.clean.CleanCommand)
@@ -850,6 +853,9 @@ class Cli(object):
         :param args: a list of command line arguments
         :param option_parser: a class for parsing cli options
         """
+        aliases = dnf.cli.aliases.Aliases()
+        aliases.resolve(args)
+
         self.optparser = dnf.cli.option_parser.OptionParser() \
             if option_parser is None else option_parser
         opts = self.optparser.parse_main_args(args)
