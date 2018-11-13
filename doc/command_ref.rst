@@ -54,6 +54,7 @@ Return values:
 
 Available commands:
 
+* :ref:`alias <alias_command-label>`
 * :ref:`autoremove <autoremove_command-label>`
 * :ref:`check <check_command-label>`
 * :ref:`check-update <check_update_command-label>`
@@ -378,6 +379,71 @@ For an explanation of ``<group-spec>`` see :ref:`\specifying_groups-label`.
 For an explanation of ``<module-spec>`` see :ref:`\specifying_modules-label`.
 
 For an explanation of ``<transaction-spec>`` see :ref:`\specifying_transactions-label`.
+
+.. _alias_command-label:
+
+-------------
+Alias Command
+-------------
+Alias command allows the user to define and manage a list of aliases (in the form ``<name=value>``),
+which can be then used as dnf commands to abbreviate longer command sequences. For examples on using
+the alias command, see :ref:`\Alias Examples\ <alias_examples-label>`. For examples on the alias
+processing, see :ref:`\Alias Processing Examples\ <alias_processing_examples-label>`.
+
+To use an alias (name=value), the name must be placed as the first "command" (e.g. the first argument
+that is not an option). It is then replaced by its value and the resulting sequence is again searched
+for aliases. The alias processing stops when the first found command is not a name of any alias.
+
+Also, like in shell aliases, if the result starts with ``\`` then alias processing will stop.
+
+All aliases are defined in configuration files in directory /etc/dnf/aliases.d/ in the [aliases] section,
+and aliases created by the alias command are located in the file USER.conf.
+Optionally, there is a section [main] with option ``enabled`` defaulting to True. This can be set for each
+file separately in the respective file, or globaly for all aliases in the file ALIASES.conf.
+
+``dnf alias [options] [list] [<name>...]``
+
+    List aliases with their final result. The ``[<alias>...]`` parameter further limits the result to only those aliases matching it.
+
+``dnf alias [options] add <name=value>...``
+
+    Create new aliases.
+
+``dnf alias [options] delete <name>...``
+
+    Delete aliases.
+ 
+.. _alias_examples-label:
+
+Alias Examples
+--------------
+
+``dnf alias list``
+    Lists all defined aliases.
+
+``dnf alias add rm=remove``
+    Adds new alias command called "rm" which does the same thing as the command "remove".
+
+``dnf alias add update="\update --skip-broken --disableexcludes=all --obsoletes"``
+    Adds new alias command called "update" which does the same thing as the command "update", but with options ``--skip-broken --disableexcludes=all --obsoletes``.
+
+``dnf alias add update="\update --skip-broken --disableexcludes=all --obsoletes"``
+    Adds new alias command called "update" which does the same thing as the command "update", but with options ``--skip-broken --disableexcludes=all --obsoletes``.
+
+.. _alias_processing_examples-label:
+
+Alias Processing Examples
+-------------------------
+
+If there are defined aliases ``in=install`` and ``FORCE="--skip-broken --disableexcludes=all"``:
+
+* ``dnf FORCE in`` will be replaced with ``dnf --skip-broken --disableexcludes=all install``
+* ``dnf in FORCE`` will be replaced with ``dnf install FORCE`` (which will fail)
+
+If there is defined alias ``in=install``:
+
+* ``dnf in`` will be replaced with ``dnf install``
+* ``dnf --repo updates in`` will be replaced with ``dnf --repo updates in`` (which will fail)
 
 .. _autoremove_command-label:
 
