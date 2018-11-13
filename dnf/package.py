@@ -242,10 +242,7 @@ class Package(hawkey.Package):
         if mirrors:
             return schemes_filter(mirrors)
         elif self.repo.baseurl:
-            if isinstance(self.repo.baseurl, list):
-                return schemes_filter(self.repo.baseurl)
-            else:
-                return schemes_filter([self.repo.baseurl])
+            return schemes_filter(self.repo.baseurl)
 
     def _is_local_pkg(self):
         if self.repoid == "@System":
