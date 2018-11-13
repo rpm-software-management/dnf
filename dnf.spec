@@ -300,6 +300,7 @@ mkdir build-py3
 
 %find_lang %{name}
 mkdir -p %{buildroot}%{confdir}/vars
+mkdir -p %{buildroot}%{confdir}/aliases.d
 mkdir -p %{buildroot}%{pluginconfpath}/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/modules.d
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/modules.defaults.d
@@ -404,6 +405,7 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %dir %{pluginconfpath}
 %dir %{confdir}/protected.d
 %dir %{confdir}/vars
+%dir %{confdir}/aliases.d
 %config(noreplace) %{confdir}/%{name}.conf
 %config(noreplace) %{confdir}/protected.d/%{name}.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
