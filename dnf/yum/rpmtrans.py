@@ -196,6 +196,13 @@ class RPMTransaction(object):
 
     def _scriptOutput(self):
         try:
+            # XXX ugly workaround of problem which started after upgrading glibc
+            # from glibc-2.27-32.fc28.x86_64 to glibc-2.28-9.fc29.x86_64
+            # After this upgrade nothing is read from _readpipe, so every
+            # posttrans and postun scriptlet output is lost. The problem
+            # only occurs when using dnf-2, dnf-3 is OK.
+            # I did not find the root cause of this error yet.
+            self._readpipe.seek(self._readpipe.tell())
             out = self._readpipe.read()
             if not out:
                 return None
