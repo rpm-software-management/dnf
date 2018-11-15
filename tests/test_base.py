@@ -50,6 +50,7 @@ class BaseTest(tests.support.TestCase):
             if tsi.getState() == libdnf.transaction.TransactionItemState_UNKNOWN:
                 tsi.setState(libdnf.transaction.TransactionItemState_DONE)
         history.end("")
+        history.close()
 
     def test_instance(self):
         base = tests.support.MockBase()
@@ -127,6 +128,7 @@ class BaseTest(tests.support.TestCase):
             if tsi.getState() == libdnf.transaction.TransactionItemState_UNKNOWN:
                 tsi.setState(libdnf.transaction.TransactionItemState_DONE)
         history.end("")
+        history.close()
 
         pkg, = base.sack.query().installed().filter(name='pepper')
         self.assertEqual(base.history.user_installed(pkg), True)
@@ -148,6 +150,7 @@ class BaseTest(tests.support.TestCase):
             if tsi.getState() == libdnf.transaction.TransactionItemState_UNKNOWN:
                 tsi.setState(libdnf.transaction.TransactionItemState_DONE)
         history.end("")
+        history.close()
 
         pkg, = base.sack.query().installed().filter(name='pepper')
         self.assertEqual(base.history.user_installed(pkg), False)
