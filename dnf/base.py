@@ -500,7 +500,8 @@ class Base(object):
             if self._sack and self._moduleContainer:
                 # sack must be set to enable operations on moduleContainer
                 self._moduleContainer.rollback()
-            self.history.close()
+            if self._history is not None:
+                self.history.close()
             self._comps_trans = dnf.comps.TransactionBunch()
             self._transaction = None
 
@@ -861,6 +862,13 @@ class Base(object):
         self._plugins.run_transaction()
 #        if self.history.group_active() and self._trans_success:
 #            self.history.group.commit()
+
+        # Plugins were executed already.
+        # They may have used information about the last transaction.
+        # Closing history/transaction here because nobody is supposed to read it anymore.
+        self.history.close()
+        self._history = None
+
         return tid
 
     def _trans_error_summary(self, errstring):

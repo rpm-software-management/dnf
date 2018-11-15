@@ -685,10 +685,12 @@ class DnfBaseTestCase(TestCase):
             if tsi.getState() == libdnf.transaction.TransactionItemState_UNKNOWN:
                 tsi.setState(libdnf.transaction.TransactionItemState_DONE)
         self.history.end("")
+        self.history.close()
 
     def _swdb_commit(self, tsis=None):
         self._swdb_begin(tsis)
         self._swdb_end()
+        self.history.close()
 
 
 class ResultTestCase(DnfBaseTestCase):

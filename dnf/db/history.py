@@ -289,6 +289,7 @@ class SwdbInterface(object):
         if not self._swdb:
             # _db_dir == persistdir which is prepended with installroot already
             self._swdb = libdnf.transaction.Swdb(self.dbpath)
+            self._swdb.initTransaction()
             # TODO: vars -> libdnf
         return self._swdb
 
@@ -297,6 +298,11 @@ class SwdbInterface(object):
         transformer.transform()
 
     def close(self):
+        try:
+            del self._tid
+        except AttributeError:
+            pass
+        self.swdb.closeTransaction()
         self._rpm = None
         self._group = None
         self._env = None
@@ -497,15 +503,10 @@ class SwdbInterface(object):
             str(end_rpmdb_version),
             bool(return_code)
         )
-        # TODO: consider cleaning individual attributes?
-        self.close()
-        '''
-        if errors is not None:
-            self._log_errors(errors)
-        '''
-        del self._tid
-        # TODO: is this a good idea?
-        self.swdb.initTransaction()
+
+        # Closing and cleanup is done in the close() method.
+        # It is important to keep data around after the transaction ends
+        # because it's needed by plugins to report installed packages etc.
 
     # TODO: ignore_case, more patterns
     def search(self, patterns, ignore_case=True):
