@@ -557,3 +557,26 @@ class Repo(dnf.conf.RepoConf):
     def set_progress_bar(self, progress):
         # :api
         self._md_pload.progress = progress
+
+    def get_http_headers(self):
+        # :api
+        """Returns user defined http headers.
+
+        Returns
+        -------
+        headers : tuple of strings
+        """
+        return self._repo.getHttpHeaders()
+
+    def set_http_headers(self, headers):
+        # :api
+        """Sets http headers.
+
+        Sets new http headers and rewrites existing ones.
+
+        Parameters
+        ----------
+        headers : tuple or list of strings
+            Example: set_http_headers(["User-Agent: Agent007", "MyFieldName: MyFieldValue"])
+        """
+        self._repo.setHttpHeaders(headers)

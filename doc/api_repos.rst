@@ -217,3 +217,11 @@ Repository Configuration
   .. method:: set_progress_bar(progress)
 
     Set the download progress reporting object for this repo during :meth:`load`. `progress` must be an instance of :class:`dnf.callback.DownloadProgress`.
+
+  .. method:: get_http_headers()
+
+    Return user defined http headers. Return tuple of strings.
+
+  .. method:: set_http_headers(headers)
+
+    Set new user headers and rewrite existing ones. `headers` must be an instance of tuple of strings or list of strings.
