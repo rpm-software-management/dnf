@@ -42,7 +42,11 @@ class DnssecError(dnf.exceptions.Error):
     """
     Exception used in the dnssec module
     """
-    pass
+    def __init__(self, msg=None):
+        self.msg = msg
+
+    def __repr__(self):
+        return "<DnssecError, msg={}>".format(self.msg if not None else "Not specified")
 
 
 def email2location(email_address, tag="_openpgpkey"):
@@ -56,6 +60,7 @@ def email2location(email_address, tag="_openpgpkey"):
     """
     split = email_address.split("@")
     if len(split) != 2:
+        logger.error("Email address should contain only one '@' sign.")
         raise DnssecError()
 
     local = split[0]
@@ -142,10 +147,14 @@ class DNSSECKeyVerification:
         Compare the key in case it was found in the cache.
         """
         if key_union == input_key_string:
+            logger.debug("Cache hit, valid key")
             return Validity.VALID
         elif key_union is NoKey:
+            logger.debug("Cache hit, proven non-existence")
             return Validity.PROVEN_NONEXISTENCE
         else:
+            logger.debug("Key in cache: {}".format(key_union))
+            logger.debug("Input key   : {}".format(input_key_string))
             return Validity.REVOKED
 
     @staticmethod
@@ -177,16 +186,21 @@ class DNSSECKeyVerification:
         status, result = ctx.resolve(email2location(input_key.email),
                                      RR_TYPE_OPENPGPKEY, unbound.RR_CLASS_IN)
         if status != 0:
+            logger.debug("Communication with DNS servers failed")
             return Validity.ERROR
         if result.bogus:
+            logger.debug("DNSSEC signatures are wrong")
             return Validity.BOGUS_RESULT
         if not result.secure:
+            logger.debug("Result is not secured with DNSSEC")
             return Validity.RESULT_NOT_SECURE
         if result.nxdomain:
+            logger.debug("Non-existence of this record was proven by DNSSEC")
             return Validity.PROVEN_NONEXISTENCE
         if not result.havedata:
             # TODO: This is weird result, but there is no way to perform validation, so just return
             # an error
+            logger.debug("Unknown error in DNS communication")
             return Validity.ERROR
         else:
             data = result.data.as_raw_data()[0]
@@ -194,6 +208,9 @@ class DNSSECKeyVerification:
             if dns_data_b64 == input_key.key:
                 return Validity.VALID
             else:
+                # In case it is different, print the keys for further examination in debug mode
+                logger.debug("Key from DNS: {}".format(dns_data_b64))
+                logger.debug("Input key   : {}".format(input_key.key))
                 return Validity.REVOKED
 
     @staticmethod
@@ -202,6 +219,7 @@ class DNSSECKeyVerification:
         """
         Public API. Use this method to verify a KeyInfo object.
         """
+        logger.debug("Running verification for key with id: {}".format(input_key.email))
         key_union = DNSSECKeyVerification._cache.get(input_key.email)
         if key_union is not None:
             return DNSSECKeyVerification._cache_hit(key_union, input_key.key)
@@ -265,12 +283,19 @@ class RpmImportedKeys:
         keys = RpmImportedKeys._query_db_for_gpg_keys()
         logger.info(any_msg(_("Testing already imported keys for their validity.")))
         for key in keys:
-            result = DNSSECKeyVerification.verify(key)
+            try:
+                result = DNSSECKeyVerification.verify(key)
+            except DnssecError as e:
+                # Errors in this exception should not be fatal, print it and just continue
+                logger.exception("Exception raised in DNSSEC extension: email={}, exception={}"
+                                 .format(key.email, e))
+                continue
             # TODO: remove revoked keys automatically and possibly ask user to confirm
             if result == Validity.VALID:
-                logger.info(any_msg("GPG Key {} is valid".format(key.email)))
+                logger.debug(any_msg("GPG Key {} is valid".format(key.email)))
+                pass
             elif result == Validity.PROVEN_NONEXISTENCE:
-                logger.info(any_msg("GPG Key {} does not support DNS"
+                logger.debug(any_msg("GPG Key {} does not support DNS"
                                     " verification".format(key.email)))
             elif result == Validity.BOGUS_RESULT:
                 logger.info(any_msg("GPG Key {} could not be verified, because DNSSEC signatures"
@@ -280,4 +305,4 @@ class RpmImportedKeys:
                 logger.info(any_msg("GPG Key {} has been revoked and should"
                                     " be removed immediately".format(key.email)))
             else:
-                logger.info(any_msg("GPG Key {} could not be tested".format(key.email)))
+                logger.debug(any_msg("GPG Key {} could not be tested".format(key.email)))
