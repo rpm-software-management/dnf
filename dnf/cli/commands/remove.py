@@ -134,9 +134,14 @@ class RemoveCommand(commands.Command):
             else:
                 skipped_grps = self.opts.grp_specs
 
-            self.base.read_comps(arch_filter=True)
-            if self.base.env_group_remove(skipped_grps):
-                done = True
+            if skipped_grps:
+                self.base.read_comps(arch_filter=True)
+                for group in skipped_grps:
+                    try:
+                        if self.base.env_group_remove([group]):
+                            done = True
+                    except dnf.exceptions.Error:
+                        pass
 
         for pkg_spec in self.opts.pkg_specs:
             try:
@@ -148,4 +153,4 @@ class RemoveCommand(commands.Command):
                 done = True
 
         if not done:
-            raise dnf.exceptions.Error(_('No packages marked for removal.'))
+            logger.warning(_('No packages marked for removal.'))
