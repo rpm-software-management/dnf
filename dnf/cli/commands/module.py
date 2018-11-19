@@ -207,6 +207,7 @@ class ModuleCommand(commands.Command):
             groups = set(self.opts.module_spec)
             if not groups.difference(skipped_groups):
                 raise dnf.exceptions.MarkingErrors(no_match_group_specs=skipped_groups)
+
             logger.error(dnf.exceptions.MarkingErrors(no_match_group_specs=skipped_groups))
 
     class ProvidesSubCommand(SubCommand):
