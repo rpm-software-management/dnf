@@ -204,9 +204,6 @@ class ModuleCommand(commands.Command):
             skipped_groups = self.module_base.remove(self.opts.module_spec)
             if not skipped_groups:
                 return
-            groups = set(self.opts.module_spec)
-            if not groups.difference(skipped_groups):
-                raise dnf.exceptions.MarkingErrors(no_match_group_specs=skipped_groups)
 
             logger.error(dnf.exceptions.MarkingErrors(no_match_group_specs=skipped_groups))
 
