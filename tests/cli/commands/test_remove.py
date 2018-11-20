@@ -54,9 +54,7 @@ class RemoveCommandTest(tests.support.ResultTestCase):
         stdout = dnf.pycomp.StringIO()
 
         with tests.support.wiretap_logs('dnf', logging.INFO, stdout):
-            self.assertRaises(dnf.exceptions.Error, tests.support.command_run, self.cmd,
-                              ['non-existent'])
-
+            tests.support.command_run(self.cmd, ['non-existent'])
         self.assertEqual(stdout.getvalue(),
-                         'No match for argument: non-existent\n')
+                         'No match for argument: non-existent\nNo packages marked for removal.\n')
         self.assertResult(self.cmd.base, self.cmd.base.sack.query().installed())
