@@ -871,7 +871,7 @@ class Cli(object):
         try:
             if opts.cacheonly:
                 opt = self.base.conf._get_option("cachedir")
-                opt._set(self.base.conf.system_cachedir, dnf.conf.PRIO_COMMANDLINE)
+                opt._set(self.base.conf.system_cachedir, dnf.conf.PRIO_DEFAULT)
                 self.demands.cacheonly = True
             self.base.conf._configure_from_options(opts)
             self._read_conf_file(opts.releasever)
