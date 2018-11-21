@@ -225,3 +225,15 @@ Repository Configuration
   .. method:: set_http_headers(headers)
 
     Set new user headers and rewrite existing ones. `headers` must be an instance of tuple of strings or list of strings.
+
+  .. method:: add_metadata_type_to_download(metadata_type)
+
+    Ask for additional repository metadata type to download. Given `metadata_type` is appended to the default metadata set when repository is downloaded.
+
+  .. method:: get_metadata_path(metadata_type)
+
+    Return path to the file with downloaded repository metadata of given type.
+
+  .. method:: get_metadata_content(metadata_type)
+
+    Return content of the file with downloaded repository metadata of given type. Content of compressed metadata file is returned uncompressed.

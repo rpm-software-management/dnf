@@ -510,6 +510,43 @@ class Repo(dnf.conf.RepoConf):
         # :api
         self._repo.enable()
 
+    def add_metadata_type_to_download(self, metadata_type):
+        # :api
+        """Ask for additional repository metadata type to download.
+
+        Given metadata_type is appended to the default metadata set when
+        repository is downloaded.
+
+        Parameters
+        ----------
+        metadata_type: string
+
+        Example: add_metadata_type_to_download("productid")
+        """
+        self._repo.addMetadataTypeToDownload(metadata_type)
+
+    def get_metadata_path(self, metadata_type):
+        # :api
+        """Return path to the file with downloaded repository metadata of given type.
+
+        Parameters
+        ----------
+        metadata_type: string
+        """
+        return self._repo.getMetadataPath(metadata_type)
+
+    def get_metadata_content(self, metadata_type):
+        # :api
+        """Return content of the file with downloaded repository metadata of given type.
+
+        Content of compressed metadata file is returned uncompressed.
+
+        Parameters
+        ----------
+        metadata_type: string
+        """
+        return self._repo.getMetadataContent(metadata_type)
+
     def load(self):
         # :api
         """Load the metadata for this repo.
