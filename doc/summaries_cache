@@ -2598,5 +2598,29 @@
     [
         1620242,
         "dnf repoquery --unsatisfied gives python traceback"
+    ],
+    [
+        1541832,
+        "Inconsistent return values"
+    ],
+    [
+        1642796,
+        "PackageKit terminated before end of offline update: TransactionItem state is not set (when any multiarch package is installed)"
+    ],
+    [
+        1637148,
+        "dnf doesn't resolve variables in mirrorlists"
+    ],
+    [
+        1639998,
+        "dnf 4 output changes"
+    ],
+    [
+        1615164,
+        "[abrt] python3-dnf: configure(): __init__.py:841:configure:dnf.cli.CliError: None"
+    ],
+    [
+        1636480,
+        "dnf-automatic timer files: Incorrect dependency WantedBy=basic.target causing ordering cycle for systemd"
     ]
 ]

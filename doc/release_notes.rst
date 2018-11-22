@@ -20,6 +20,31 @@
 ###################
 
 ===================
+4.0.9 Release Notes
+===================
+
+* Added :meth:`dnf.repo.Repo.get_http_headers`
+* Added :meth:`dnf.repo.Repo.set_http_headers`
+* Added :meth:`dnf.repo.Repo.add_metadata_type_to_download`
+* Added :meth:`dnf.repo.Repo.get_metadata_path`
+* Added :meth:`dnf.repo.Repo.get_metadata_content`
+* Added --changelogs option for check-update command
+* [module] Add information about active modules
+* Hide messages created only for logging
+* Enhanced --setopt option
+* [module] Fix dnf remove @<module>
+* [transaction] Make transaction content available for plugins
+
+Bugs fixed in 4.0.9:
+
+* :rhbug:`1541832`
+* :rhbug:`1642796`
+* :rhbug:`1637148`
+* :rhbug:`1639998`
+* :rhbug:`1615164`
+* :rhbug:`1636480`
+
+===================
 4.0.4 Release Notes
 ===================
 

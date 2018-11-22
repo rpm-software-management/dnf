@@ -494,6 +494,19 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Thu Nov 22 2018 Jaroslav Mracek <jmracek@redhat.com> - 4.0.9-1
+- Added dnf.repo.Repo.get_http_headers
+- Added dnf.repo.Repo.set_http_headers
+- Added dnf.repo.Repo.add_metadata_type_to_download
+- Added dnf.repo.Repo.get_metadata_path
+- Added dnf.repo.Repo.get_metadata_content
+- Added --changelogs option for check-update command
+- [module] Add information about active modules
+- Hide messages created only for logging
+- Enhanced --setopt option
+- [module] Fix dnf remove @<module>
+- [transaction] Make transaction content available for plugins
+
 * Mon Oct 15 2018 Jaroslav Mracek <jmracek@redhat.com> - 4.0.4-1
 - Update to 4.0.4
 - Add dnssec extension
