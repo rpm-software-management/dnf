@@ -46,7 +46,7 @@ class DnssecError(dnf.exceptions.Error):
         self.msg = msg
 
     def __repr__(self):
-        return "<DnssecError, msg={}>".format(self.msg if not None else "Not specified")
+        return "<DnssecError, msg='{}'>".format(self.msg if not None else "Not specified")
 
 
 def email2location(email_address, tag="_openpgpkey"):
@@ -60,8 +60,9 @@ def email2location(email_address, tag="_openpgpkey"):
     """
     split = email_address.split("@")
     if len(split) != 2:
-        logger.error("Email address should contain only one '@' sign.")
-        raise DnssecError()
+        msg = "Email address should contain exactly one '@' sign."
+        logger.error(msg)
+        raise DnssecError(msg)
 
     local = split[0]
     domain = split[1]
@@ -288,7 +289,7 @@ class RpmImportedKeys:
             except DnssecError as e:
                 # Errors in this exception should not be fatal, print it and just continue
                 logger.exception("Exception raised in DNSSEC extension: email={}, exception={}"
-                                 .format(key.email, e))
+                                 .format(key.email, repr(e)))
                 continue
             # TODO: remove revoked keys automatically and possibly ask user to confirm
             if result == Validity.VALID:
