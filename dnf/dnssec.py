@@ -42,11 +42,9 @@ class DnssecError(dnf.exceptions.Error):
     """
     Exception used in the dnssec module
     """
-    def __init__(self, msg=None):
-        self.msg = msg
-
     def __repr__(self):
-        return "<DnssecError, msg='{}'>".format(self.msg if not None else "Not specified")
+        return "<DnssecError, value='{}'>"\
+            .format(self.value if self.value is not None else "Not specified")
 
 
 def email2location(email_address, tag="_openpgpkey"):
