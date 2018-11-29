@@ -798,6 +798,9 @@ class Base(object):
             # TODO: no packages changed, but a comps change to be commited
             # TODO: -> need to detect the change properly and store it to swdb
 #            if self.history.group_active():
+            self._plugins.run_pre_transaction()
+            self._plugins.run_transaction()
+
             self._trans_success = True
 #                self.history.group.commit()
             return
