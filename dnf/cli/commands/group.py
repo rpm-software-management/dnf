@@ -429,7 +429,11 @@ class GroupCommand(commands.Command):
         if cmd == 'upgrade':
             return self.base.env_group_upgrade(extcmds)
         if cmd == 'remove':
-            return self.base.env_group_remove(extcmds)
+            for arg in extcmds:
+                try:
+                    self.base.env_group_remove([arg])
+                except dnf.exceptions.Error:
+                    pass
 
     def run_transaction(self):
         if not self._remark:
