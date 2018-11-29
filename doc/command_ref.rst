@@ -375,6 +375,8 @@ For an explanation of ``<provide-spec>`` see :ref:`\specifying_provides-label`.
 
 For an explanation of ``<group-spec>`` see :ref:`\specifying_groups-label`.
 
+For an explanation of ``<module-spec>`` see :ref:`\specifying_modules-label`.
+
 For an explanation of ``<transaction-spec>`` see :ref:`\specifying_transactions-label`.
 
 .. _autoremove_command-label:
@@ -634,10 +636,13 @@ Install Command
 
 ``dnf [options] install <spec>...``
     DNF makes sure that the given packages and their dependencies are installed
-    on the system. Each ``<spec>`` can be either a :ref:`<package-spec>
-    <specifying_packages-label>`, or a \@\ :ref:`\<group-spec>\ <specifying_groups-label>`. See :ref:`\Install Examples\ <install_examples-label>`.
+    on the system. Each ``<spec>`` can be either a :ref:`<package-spec> <specifying_packages-label>`,
+    or a \@\ :ref:`\<module-spec>\ <specifying_modules-label>`, or a \@\ :ref:`\<group-spec>\ <specifying_groups-label>`.
+    See :ref:`\Install Examples\ <install_examples-label>`.
     If a given package or provide cannot be (and is not already) installed,
     the exit code will be non-zero.
+    If the ``<spec>`` matches both a \@\ :ref:`\<module-spec>\ <specifying_modules-label>` and
+    a \@\ :ref:`\<group-spec>\ <specifying_groups-label>`, only the module is installed.
 
     When :ref:`<package-spec> <specifying_packages-label>` that specify exact version
     of the package is given, DNF will install the desired version, no matter which
@@ -681,6 +686,9 @@ Install Examples
 
 ``dnf install https://kojipkgs.fedoraproject.org//packages/tito/0.6.0/1.fc22/noarch/tito-0.6.0-1.fc22.noarch.rpm``
     Install package directly from URL.
+
+``dnf install '@docker'``
+    Install all default profiles of module 'docker' and their RPMs. Module streams get enabled accordingly.
 
 ``dnf install '@Web Server'``
     Install environmental group 'Web Server'
@@ -784,27 +792,26 @@ Mark Command
 Module Command
 ---------------
 
-Module subcommands take module_spec in form NAME:STREAM:VERSION:CONTEXT:ARCH/PROFILE from which only name is mandatory.
-In case stream is not specified enabled or default stream is used, in this order.
+Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>` that specify modules or profiles.
 
 .. _module_install_command-label:
 
-``dnf [options] module install <module_spec>...``
+``dnf [options] module install <module-spec>...``
     Install module profiles incl. their RPMs.
     In case no profile was provided, all default profiles get installed.
     Module streams get enabled accordingly.
 
-``dnf [options] module update <module_spec>...``
+``dnf [options] module update <module-spec>...``
     Update RPMs in installed module profiles.
     In case no profile was provided, all installed profiles get updated.
 
-``dnf [options] module remove <module_spec>...``
+``dnf [options] module remove <module-spec>...``
     Remove installed module profiles incl. their RPMs.
     In case no profile was provided, all installed profiles get removed.
 
 .. _module_enable_command-label:
 
-``dnf [options] module enable <module_spec>...``
+``dnf [options] module enable <module-spec>...``
     Enable a module stream and make the stream RPMs available in the package set.
 
     Modular dependencies are resolved, dependencies checked and also recursively enabled. In case
@@ -820,12 +827,12 @@ In case stream is not specified enabled or default stream is used, in this order
 
 .. _module_disable_command-label:
 
-``dnf [options] module disable <module_spec>...``
+``dnf [options] module disable <module-spec>...``
     Disable a module. All related module streams will become unavailable. In case of modular
     dependency issue the operation will be rejected. To perform action anyway please use \-\
     :ref:`-skip-broken option <skip-broken_option-label>`.
 
-``dnf [options] module reset <module_spec>...``
+``dnf [options] module reset <module-spec>...``
     Reset module state so it's no longer enabled or disabled.
 
 ``dnf [options] module list [--all] [module_name...]``
@@ -840,10 +847,10 @@ In case stream is not specified enabled or default stream is used, in this order
 ``dnf [options] module list --installed [module_name...]``
     List module streams with installed profiles.
 
-``dnf [options] module info <module_spec>...``
+``dnf [options] module info <module-spec>...``
     Print detailed information about given module stream.
 
-``dnf [options] module info --profile <module_spec>...``
+``dnf [options] module info --profile <module-spec>...``
     Print detailed information about given module profiles.
 
 .. _provides_command-label:
@@ -1493,6 +1500,28 @@ Specifying Groups
 on. It is a case insensitive string (supporting globbing characters) that is
 matched against a group's ID, canonical name and name translated into the
 current LC_MESSAGES locale (if possible).
+
+.. _specifying_modules-label:
+
+==================
+Specifying Modules
+==================
+
+``<module-spec>`` allows one to select modules or profiles a particular operation should work
+on.
+
+It is of form ``NAME:STREAM:VERSION:CONTEXT:ARCH/PROFILE`` and supported partial forms are the following:
+
+
+* ``NAME``
+* ``NAME:STREAM``
+* ``NAME:STREAM:VERSION``
+* ``NAME:STREAM:VERSION:CONTEXT``
+* all above combinations with ``::ARCH`` (e.g. ``NAME::ARCH``)
+* ``NAME:STREAM:VERSION:CONTEXT:ARCH``
+* all above combinations with ``/PROFILE`` (e.g. ``NAME/PROFILE``)
+
+In case stream is not specified, enabled or default stream is used, in this order. In case profile is not specified, system default profile or 'default' profile is used.
 
 .. _specifying_transactions-label:
 
