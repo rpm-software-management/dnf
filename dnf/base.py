@@ -2035,7 +2035,7 @@ class Base(object):
                     done = True
 
             if not done:
-                raise dnf.exceptions.Error(_('No packages marked for removal.'))
+                logger.warning(_('No packages marked for removal.'))
 
         else:
             pkgs = self.sack.query()._unneeded(self.history.swdb,
