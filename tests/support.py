@@ -84,7 +84,9 @@ REASONS = {
     'tour': 'group',
     'trampoline': 'group',
 }
-RPMDB_CHECKSUM = '47655615e9eae2d339443fa00065d41900f99baf'
+# @System.repo doesn't provide sha1header/pkgid
+# the checksum is computed from an empty string
+RPMDB_CHECKSUM = 'da39a3ee5e6b4b0d3255bfef95601890afd80709'
 TOTAL_RPMDB_COUNT = 10
 SYSTEM_NSOLVABLES = TOTAL_RPMDB_COUNT
 MAIN_NSOLVABLES = 9

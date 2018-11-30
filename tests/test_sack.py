@@ -35,8 +35,8 @@ class SackTest(tests.support.DnfBaseTestCase):
     def test_rpmdb_version(self):
         version = self.sack._rpmdb_version()
         self.assertIsNotNone(version)
-        self.assertEqual(version._num, tests.support.TOTAL_RPMDB_COUNT)
-        self.assertEqual(version._chksum.hexdigest(), tests.support.RPMDB_CHECKSUM)
+        expected = "%s:%s" % (tests.support.TOTAL_RPMDB_COUNT, tests.support.RPMDB_CHECKSUM)
+        self.assertEqual(version, expected)
 
     def test_excludepkgs(self):
         self.base.conf.excludepkgs = ['pepper']
