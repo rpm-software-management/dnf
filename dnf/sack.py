@@ -21,41 +21,11 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 import dnf.util
-import dnf.yum.misc
 import dnf.package
 import dnf.query
 import hawkey
 import os
 from dnf.pycomp import basestring
-
-class SackVersion(object):
-    def __init__(self):
-        self._num = 0
-        self._chksum = dnf.yum.misc.Checksums(['sha1'])
-
-    def __str__(self):
-        return "%u:%s" % (self._num, self._chksum.hexdigest())
-
-    def __eq__(self, other):
-        if other is None:
-            return False
-        if isinstance(other, basestring):
-            return str(self) == other
-        if self._num != other._num:
-            return False
-        if self._chksum.digest() != other._chksum.digest():
-            return False
-        return True
-
-    def __ne__(self, other):
-        return not (self == other)
-
-    def _update(self, pkg, csum_type, csum_data):
-        self._num += 1
-        self._chksum.update(pkg)
-        if csum_type and csum_data:
-            self._chksum.update(csum_type)
-            self._chksum.update(csum_data)
 
 
 class Sack(hawkey.Sack):
@@ -73,15 +43,6 @@ class Sack(hawkey.Sack):
         """Factory function returning a DNF Query."""
         return dnf.query.Query(self, flags)
 
-    def _rpmdb_version(self):
-        # TODO: verify ordering
-        pkgs = self.query(hawkey.IGNORE_EXCLUDES).installed().run()
-        main = SackVersion()
-        for i in pkgs:
-            # TODO: what if _pkgid is not sha1
-            data = (str(i), "sha1", i._pkgid)
-            main._update(*data)
-        return main
 
 def _build_sack(base):
     cachedir = base.conf.cachedir
