@@ -33,6 +33,9 @@ class PersistorBase(object):
         self._removed = {}
         self._upgraded = {}
 
+    def __len__(self):
+        return len(self._installed) + len(self._removed) + len(self._upgraded)
+
     def clean(self):
         self._installed = {}
         self._removed = {}

@@ -795,11 +795,24 @@ class Base(object):
         self._moduleContainer.save()
 
         if not self.transaction:
-            # TODO: no packages changed, but a comps change to be commited
-            # TODO: -> need to detect the change properly and store it to swdb
-#            if self.history.group_active():
+            # packages changed, but a comps change to be commited
+            if self._history and (self._history.group or self._history.env):
+                cmdline = None
+                if hasattr(self, 'args') and self.args:
+                    cmdline = ' '.join(self.args)
+                elif hasattr(self, 'cmds') and self.cmds:
+                    cmdline = ' '.join(self.cmds)
+                old = self.history.last()
+                if old is None:
+                    rpmdb_version = self.sack._rpmdb_version()
+                else:
+                    rpmdb_version = old.end_rpmdb_version
+
+                self.history.beg(rpmdb_version, [], [], cmdline)
+                self.history.end(rpmdb_version)
+            self._plugins.run_pre_transaction()
+            self._plugins.run_transaction()
             self._trans_success = True
-#                self.history.group.commit()
             return
 
         tid = None
@@ -860,8 +873,6 @@ class Base(object):
         timer()
         self._plugins.unload_removed_plugins(self.transaction)
         self._plugins.run_transaction()
-#        if self.history.group_active() and self._trans_success:
-#            self.history.group.commit()
 
         return tid
 
