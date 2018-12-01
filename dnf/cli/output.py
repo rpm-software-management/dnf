@@ -1150,7 +1150,49 @@ class Output(object):
             for name, stream in resetStreams:
                 lines.append((name, "", stream, "", "", "", ""))
             pkglist_lines.append((action, lines))
-
+        if self.base._history:
+            install_env_group = self.base._history.env._installed
+            if install_env_group:
+                action = "Installing Environment Groups"
+                lines = []
+                for group in install_env_group.values():
+                    lines.append((group.getName(), "", "", "", "", "", ""))
+                pkglist_lines.append((action, lines))
+            upgrade_env_group = self.base._history.env._upgraded
+            if upgrade_env_group:
+                action = "Upgrading Environment Groups"
+                lines = []
+                for group in upgrade_env_group.values():
+                    lines.append((group.getName(), "", "", "", "", "", ""))
+                pkglist_lines.append((action, lines))
+            remove_env_group = self.base._history.env._removed
+            if remove_env_group:
+                action = "Removing Environment Groups"
+                lines = []
+                for group in remove_env_group.values():
+                    lines.append((group.getName(), "", "", "", "", "", ""))
+                pkglist_lines.append((action, lines))
+            install_group = self.base._history.group._installed
+            if install_group:
+                action = "Installing Groups"
+                lines = []
+                for group in install_group.values():
+                    lines.append((group.getName(), "", "", "", "", "", ""))
+                pkglist_lines.append((action, lines))
+            upgrade_group = self.base._history.group._upgraded
+            if upgrade_group:
+                action = "Upgrading Groups"
+                lines = []
+                for group in upgrade_group.values():
+                    lines.append((group.getName(), "", "", "", "", "", ""))
+                pkglist_lines.append((action, lines))
+            remove_group = self.base._history.group._removed
+            if remove_group:
+                action = "Removing Groups"
+                lines = []
+                for group in remove_group.values():
+                    lines.append((group.getName(), "", "", "", "", "", ""))
+                pkglist_lines.append((action, lines))
         # show skipped conflicting packages
         if not self.conf.best and self.base._goal.actions & forward_actions:
             lines = []
@@ -1178,7 +1220,8 @@ class Output(object):
 
             pkglist_lines.append((skip_str, lines))
 
-        if not data['n'] and not self.base._moduleContainer.isChanged():
+        if not data['n'] and not self.base._moduleContainer.isChanged() and not \
+                (self.base._history and (self.base._history.group or self.base._history.env)):
             return u''
         else:
             data = [data['n'], {}, data['v'], data['r'], {}]
