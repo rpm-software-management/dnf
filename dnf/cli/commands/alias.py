@@ -143,6 +143,15 @@ class AliasCommand(commands.Command):
         self._store_user_aliases(user_aliases, conf.enabled)
         logger.info(_("Aliases deleted: %s"), ', '.join(valid_cmds))
 
+    def list_alias(self, cmd):
+        args = [cmd]
+        try:
+            self.aliases_base._resolve(args)
+        except dnf.exceptions.Error as e:
+            logger.error(_('%s, alias %s'), e, cmd)
+        else:
+            print(_("Alias %s='%s'") % (cmd, " ".join(args)))
+
     def run(self):
         if not self.aliases_base.enabled:
             logger.warning(_("Aliases resolving is disabled."))
@@ -166,14 +175,10 @@ class AliasCommand(commands.Command):
                 logger.info(_("No aliases defined."))
                 return
             for cmd in self.aliases_base.aliases:
-                args = self.aliases_base.aliases[cmd][:]
-                self.aliases_base._resolve(args)
-                print(_("Alias %s='%s'") % (cmd, " ".join(args)))
+                self.list_alias(cmd)
         else:  # List alias by key
             for cmd in self.opts.alias:
                 if cmd not in self.aliases_base.aliases:
                     logger.info(_("No match for alias: %s") % cmd)
                     continue
-                args = [cmd]
-                self.aliases_base._resolve(args)
-                print(_("Alias %s='%s'") % (cmd, " ".join(args)))
+                self.list_alias(cmd)

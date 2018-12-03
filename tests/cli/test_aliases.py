@@ -47,41 +47,41 @@ class AliasesTest(tests.support.TestCase):
     def test_undefined(self):
         args = ['undefined', 'undefined2']
         expected_args = list(args)
-        self.aliases_base._resolve(args)
+        args = self.aliases_base._resolve(args)
         self.assertEqual(args, expected_args)
 
     def test_simple(self):
         args = ['h']
         expected_args = ['history']
-        self.aliases_base._resolve(args)
+        args = self.aliases_base._resolve(args)
         self.assertEqual(args, expected_args)
 
     def test_command_changed(self):
         args = ['cu']
         expected_args = ['check-update']
-        self.aliases_base._resolve(args)
+        args = self.aliases_base._resolve(args)
         self.assertEqual(args, expected_args)
 
     def test_package_unchanged(self):
         args = ['install', 'cu']
         expected_args = ['install', 'cu']
-        self.aliases_base._resolve(args)
+        args = self.aliases_base._resolve(args)
         self.assertEqual(args, expected_args)
 
     def test_recursive(self):
         args = ['lsi']
         expected_args = ['list', 'installed']
-        self.aliases_base._resolve(args)
+        args = self.aliases_base._resolve(args)
         self.assertEqual(args, expected_args)
 
     def test_options(self):
         args = ['FORCE']
         expected_args = ['--skip-broken', '--disableexcludes=all']
-        self.aliases_base._resolve(args)
+        args = self.aliases_base._resolve(args)
         self.assertEqual(args, expected_args)
 
     def test_options_recursive(self):
         args = ['force-inst']
         expected_args = ['--skip-broken', '--disableexcludes=all', 'install']
-        self.aliases_base._resolve(args)
+        args = self.aliases_base._resolve(args)
         self.assertEqual(args, expected_args)

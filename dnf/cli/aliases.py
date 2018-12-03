@@ -154,29 +154,51 @@ class Aliases(object):
         return filenames
 
     def _resolve(self, args):
-        """In-place replacement of args."""
-        while True:
+        stack = []
+        self.prefix_options = []
+
+        def store_prefix(args):
             num = 0
             for arg in args:
                 if arg and arg[0] != '-':
                     break
                 num += 1
 
-            if num >= len(args):  # Only options
-                break
+            self.prefix_options += args[:num]
 
-            if args[num] not in self.aliases:
-                break
+            return args[num:]
 
-            cmd = args[num]
-            logger.debug('ALIAS DONE(%s): %s', cmd, self.aliases[cmd])
-            args[num:num + 1] = self.aliases[cmd]
-            # Mostly works like the shell, so \ls does no alias lookup on ls
-            if args[num][0] == '\\':
-                args[num] = args[num][1:]
-                break
+        def subresolve(args):
+            suffix = store_prefix(args)
+
+            if (not suffix or  # Current alias on stack is resolved
+                    suffix[0] not in self.aliases or  # End resolving
+                    suffix[0].startswith('\\')):  # End resolving
+                try:
+                    stack.pop()
+                except IndexError:
+                    pass
+                return suffix
+
+            if suffix[0] in stack:  # Infinite recursion detected
+                raise dnf.exceptions.Error(
+                    _('Aliases contain infinite recursion'))
+
+            # Next word must be an alias
+            stack.append(suffix[0])
+            current_alias_result = subresolve(self.aliases[suffix[0]])
+            if current_alias_result:  # We reached non-alias or '\'
+                return current_alias_result + suffix[1:]
+            else:  # Need to resolve aliases in the rest
+                return subresolve(suffix[1:])
+
+        suffix = subresolve(args)
+        return self.prefix_options + suffix
 
     def resolve(self, args):
         if self.enabled:
-            self._resolve(args)
+            try:
+                args = self._resolve(args)
+            except dnf.exceptions.Error as e:
+                logger.error(_('%s, using original arguments.'), e)
         return args
