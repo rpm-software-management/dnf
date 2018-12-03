@@ -854,7 +854,7 @@ class Cli(object):
         :param option_parser: a class for parsing cli options
         """
         aliases = dnf.cli.aliases.Aliases()
-        aliases.resolve(args)
+        args = aliases.resolve(args)
 
         self.optparser = dnf.cli.option_parser.OptionParser() \
             if option_parser is None else option_parser

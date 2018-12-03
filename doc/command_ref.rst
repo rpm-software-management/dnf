@@ -427,9 +427,6 @@ Alias Examples
 ``dnf alias add update="\update --skip-broken --disableexcludes=all --obsoletes"``
     Adds new alias command called "update" which does the same thing as the command "update", but with options ``--skip-broken --disableexcludes=all --obsoletes``.
 
-``dnf alias add update="\update --skip-broken --disableexcludes=all --obsoletes"``
-    Adds new alias command called "update" which does the same thing as the command "update", but with options ``--skip-broken --disableexcludes=all --obsoletes``.
-
 .. _alias_processing_examples-label:
 
 Alias Processing Examples
