@@ -225,48 +225,22 @@ class GroupCommand(commands.Command):
 
         return 0, []
 
-    def _history_commit(self):
-        old = self.base.history.last()
-        if old is None:
-            rpmdb_version = self.sack._rpmdb_version()
-        else:
-            rpmdb_version = old.end_rpmdb_version
-
-        self.base.history.beg(rpmdb_version, [], [])
-        self.base.history.end(rpmdb_version)
-
     def _mark_install(self, patterns):
         q = CompsQuery(self.base.comps, self.base.history,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
         solver = self.base._build_comps_solver()
         res = q.get(*patterns)
-        types = dnf.comps.DEFAULT | dnf.comps.MANDATORY | dnf.comps.OPTIONAL
 
+        if self.opts.with_optional:
+            types = tuple(self.base.conf.group_package_types + ['optional'])
+        else:
+            types = tuple(self.base.conf.group_package_types)
+        pkg_types = self.base._translate_comps_pkg_types(types)
         for env_id in res.environments:
-            if not dnf.comps.install_or_skip(solver._environment_install,
-                                             env_id, types):
-                res.environments.remove(env_id)
+            dnf.comps.install_or_skip(solver._environment_install, env_id, pkg_types)
         for group_id in res.groups:
-            if not dnf.comps.install_or_skip(solver._group_install,
-                                             group_id, types):
-                res.groups.remove(group_id)
-
-        if res.groups or res.environments:
-            self._history_commit()
-
-        if res.environments:
-            logger.info(_('Environments marked installed: %s'),
-                        ','.join([ucd(self.base.history.env.get(g).getTranslatedName())
-                                  for g in res.environments]))
-        if res.groups:
-            print(res.groups)
-            for g in res.groups:
-                x = self.base.history.group.get(g)
-                print(x, type(x), dir(x))
-            logger.info(_('Groups marked installed: %s'),
-                        ','.join([ucd(self.base.history.group.get(g).getTranslatedName())
-                                  for g in res.groups]))
+            dnf.comps.install_or_skip(solver._group_install, group_id, pkg_types)
 
     def _mark_remove(self, patterns):
         q = CompsQuery(self.base.comps, self.base.history,
@@ -280,18 +254,6 @@ class GroupCommand(commands.Command):
         for grp_id in res.groups:
             assert dnf.util.is_string_type(grp_id)
             solver._group_remove(grp_id)
-
-        if res.environments:
-            logger.info(_('Environments marked removed: %s'),
-                        ','.join([ucd(self.base.history.env.get(e_id).getTranslatedName())
-                                  for e_id in res.environments]))
-        if res.groups:
-            logger.info(_('Groups marked removed: %s'),
-                        ','.join([ucd(self.base.history.group.get(g_id).getTranslatedName())
-                                  for g_id in res.groups]))
-
-        if res.groups or res.environments:
-            self._history_commit()
 
     def _mark_subcmd(self, extcmds):
         if extcmds[0] in self._MARK_CMDS:
@@ -378,7 +340,6 @@ class GroupCommand(commands.Command):
         demands.sack_activation = True
         if cmd in ('install', 'mark', 'remove', 'upgrade'):
             demands.root_user = True
-        if cmd in ('install', 'remove', 'upgrade'):
             demands.resolving = True
         if cmd == 'remove':
             demands.allow_erasing = True
