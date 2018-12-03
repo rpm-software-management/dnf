@@ -127,7 +127,7 @@ Options
     Include packages that fix a bugfix issue. Applicable for the install, repoquery, updateinfo and
     upgrade commands.
 
-``--bz=<bugzilla>``
+``--bz=<bugzilla>, --bzs=<bugzilla>``
     Include packages that fix a Bugzilla ID, Eg. 123123. Applicable for the install, repoquery,
     updateinfo and upgrade commands.
 
@@ -136,13 +136,16 @@ Options
 
     DNF uses a separate cache for each user under which it executes. The cache for the root user is called the system cache. This switch allows a regular user read-only access to the system cache, which usually is more fresh than the user's and thus he does not have to wait for metadata sync.
 
+``--color=<color>``
+    Control whether color is used in terminal output. Valid values are ``always``, ``never`` and ``auto`` (default).
+
 ``--comment=<comment>``
     Add a comment to the transaction history.
 
 ``-c <config file>, --config=<config file>``
     Configuration file location.
 
-``--cve=<cves>``
+``--cve=<cves>, --cves=<cves>``
     Include packages that fix a CVE (Common Vulnerabilities and Exposures) ID
     (http://cve.mitre.org/about/), Eg. CVE-2201-0123. Applicable for the install, repoquery, updateinfo,
     and upgrade commands.
@@ -155,7 +158,7 @@ Options
 
 .. _disableexcludes-label:
 
-``--disableexcludes=[all|main|<repoid>]``
+``--disableexcludes=[all|main|<repoid>], --disableexcludepkgs=[all|main|<repoid>]``
 
     Disable the configuration file excludes. Takes one of the following three options:
 
@@ -173,7 +176,7 @@ Options
 ``--disablerepo=<repoid>``
     Disable specific repositories by an id or a glob. This option is mutually exclusive with ``--repo``.
 
-``--downloaddir=<path>``
+``--downloaddir=<path>, --destdir=<path>``
     Redirect downloaded packages to provided directory. The option has to be used together with the \-\
     :ref:`-downloadonly <downloadonly-label>` command line option, with the
     ``download`` command (dnf-plugins-core) or with the ``system-upgrade`` command
@@ -217,7 +220,7 @@ Options
     can be configured by using the :ref:`arch <arch-label>` and :ref:`ignorearch <ignorearch-label>`
     configuration options with values ``<arch>`` and ``True`` respectively.
 
-``-h, --help``
+``-h, --help, --help-cmd``
     Show the help.
 
 .. _installroot-label:
@@ -321,7 +324,7 @@ Options
     or ``--disablerepo="*"`` switches.
     The repository label for the repository is specified by <repo>.
 
-``--repo=<repoid>``
+``--repo=<repoid>, --repoid=<repoid>``
     Enable just specific repositories by an id or a glob. Can be used multiple
     times with accumulative effect. It is basically a shortcut for
     ``--disablerepo="*" --enablerepo=<repoid>`` and is mutually exclusive with
@@ -1033,7 +1036,7 @@ packages to those matching the specification. All packages are considered if no 
     Query all packages (for rpmquery compatibility, also a shorthand for repoquery '*' or repoquery
     without arguments).
 
-``--arch <arch>[,<arch>...]``
+``--arch <arch>[,<arch>...], --archlist <arch>[,<arch>...]``
     Limit the resulting set only to packages of selected architectures (default is all
     architectures). In some cases the result is affected by the basearch of the running system, therefore
     to run repoquery for an arch incompatible with your system use the ``--forcearch=<arch>``

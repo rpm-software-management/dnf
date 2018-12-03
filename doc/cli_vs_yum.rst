@@ -240,12 +240,6 @@ or even::
 
 to obtain similar results.
 
-=================================
-``--enableplugin`` not recognized
-=================================
-
-This switch has been dropped. It is not documented for YUM and of questionable use (all plugins are enabled by default).
-
 ==================
 Bandwidth limiting
 ==================
