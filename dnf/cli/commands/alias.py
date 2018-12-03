@@ -86,6 +86,9 @@ class AliasCommand(commands.Command):
             if len(cmd.split()) != 1:
                 logger.warning(_("Invalid alias key: %s"), cmd)
                 continue
+            if cmd.startswith('-'):
+                logger.warning(_("Invalid alias key: %s"), cmd)
+                continue
             if len(alias) == 1:
                 logger.warning(_("Alias argument has no value: %s"), cmd)
                 continue
