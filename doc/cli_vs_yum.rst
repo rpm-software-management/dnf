@@ -401,8 +401,8 @@ Detailed table for ``package-cleanup`` replacement:
 yum-updateonboot
 ================
 
-DNF does not have a direct drop-in replacement of yum-updateonboot command.
-However, the similar result can be achieved by using ``dnf automatic`` command (see :doc:`automatic`).
+DNF does not have a direct replacement of yum-updateonboot command.
+However, the similar result can be achieved by ``dnf automatic`` command (see :doc:`automatic`).
 
 You can either use the shortcut::
 
@@ -412,9 +412,7 @@ Or set ``apply_updates`` option of ``/etc/dnf/automatic.conf`` to True and use g
 
   $ systemctl enable dnf-automatic.timer && systemctl start dnf-automatic.timer
 
-The timer is in both cases activated 1 hour after the system was booted up and then repetitively each 24 hours. There is also a random delay on these timers set to 5 minutes. These values can be tweaked via ``dnf-automatic*.timer`` config files located in the ``/usr/lib/systemd/system/`` directory.
-
-None of ``/etc/sysconfig/yum-updateonboot`` configuration options (REBOOT_RPMS, GROUPLIST, OPTIONS) are supported.
+The timer in both cases is activated 1 hour after the system was booted up and then repetitively once every 24 hours. There is also a random delay on these timers set to 5 minutes. These values can be tweaked via ``dnf-automatic*.timer`` config files located in the ``/usr/lib/systemd/system/`` directory.
 
 
 =======================================
