@@ -717,9 +717,6 @@ Install Command
 
     See also :ref:`\configuration_files_replacement_policy-label`.
 
-``dnf [options] install @<spec>...``
-    Alias for `dnf module install` command.
-
 .. _install_examples-label:
 
 Install Examples
