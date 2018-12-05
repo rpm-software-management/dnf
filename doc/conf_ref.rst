@@ -336,7 +336,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     Set this to True to disable module RPM filtering and make all RPMs from the repository available. The default is False.
     This allows user to create a repository with cherry-picked hotfixes that are included in a package set on a modular system.
 
-.. _mirrorlist-label:
+.. _repo_name-label:
 
 ``name``
     :ref:`string <string-label>`

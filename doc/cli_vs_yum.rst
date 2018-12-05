@@ -372,11 +372,12 @@ Original YUM tool          New DNF command                                  Pack
 ``package-cleanup``        :ref:`dnf list <list_command-label>`,
                            :ref:`dnf repoquery <repoquery_command-label>`   ``dnf``, ``dnf-plugins-core``
 ``repoclosure``            `dnf repoclosure`_                               ``dnf-plugins-extras-repoclosure``
+``repodiff``               `dnf repodiff`_                                  ``dnf-plugins-core``
 ``repo-graph``             `dnf repograph`_                                 ``dnf-plugins-extras-repograph``
 ``repomanage``             `dnf repomanage`_                                ``dnf-plugins-extras-repomanage``
 ``repoquery``              :ref:`dnf repoquery <repoquery_command-label>`   ``dnf``
 ``reposync``               `dnf reposync`_                                  ``dnf-plugins-core``
-``repotrack``              `dnf download --resolve --alldeps`_              ``dnf-plugins-core``
+``repotrack``              `dnf download`_ --resolve --alldeps              ``dnf-plugins-core``
 ``yum-builddep``           `dnf builddep`_                                  ``dnf-plugins-core``
 ``yum-config-manager``     `dnf config-manager`_                            ``dnf-plugins-core``
 ``yum-debug-dump``         `dnf debug-dump`_                                ``dnf-plugins-extras-debug``
@@ -396,9 +397,30 @@ Detailed table for ``package-cleanup`` replacement:
 ``package-cleanup --oldkernels``         ``dnf remove --oldinstallonly``
 ==================================       =====================================
 
-Utilities that have not been ported yet:
+================
+yum-updateonboot
+================
 
-``repodiff``,
+DNF does not have a direct drop-in replacement of yum-updateonboot command.
+However, the similar result can be achieved by using ``dnf automatic`` command (see :doc:`automatic`).
+
+You can either use the shortcut::
+
+  $ systemctl enable dnf-automatic-install.timer && systemctl start dnf-automatic-install.timer
+
+Or set ``apply_updates`` option of ``/etc/dnf/automatic.conf`` to True and use generic timer unit::
+
+  $ systemctl enable dnf-automatic.timer && systemctl start dnf-automatic.timer
+
+The timer is in both cases activated 1 hour after the system was booted up and then repetitively each 24 hours. There is also a random delay on these timers set to 5 minutes. These values can be tweaked via ``dnf-automatic*.timer`` config files located in the ``/usr/lib/systemd/system/`` directory.
+
+None of ``/etc/sysconfig/yum-updateonboot`` configuration options (REBOOT_RPMS, GROUPLIST, OPTIONS) are supported.
+
+
+=======================================
+Utilities that have not been ported yet
+=======================================
+
 ``repo-rss``,
 ``show-changed-rco``,
 ``show-installed``,
@@ -411,6 +433,7 @@ Take a look at the FAQ_ about YUM to DNF migration. Feel free to file an RFE_ fo
 .. _dnf list installed: http://dnf.readthedocs.org/en/latest/command_ref.html
 .. _dnf tracer: http://dnf-plugins-extras.readthedocs.org/en/latest/tracer.html
 .. _dnf repoclosure: http://dnf-plugins-extras.readthedocs.org/en/latest/repoclosure.html
+.. _dnf repodiff: http://dnf-plugins-core.readthedocs.org/en/latest/repodiff.html
 .. _dnf repograph: http://dnf-plugins-extras.readthedocs.org/en/latest/repograph.html
 .. _dnf repomanage: http://dnf-plugins-extras.readthedocs.org/en/latest/repomanage.html
 .. _dnf reposync: http://dnf-plugins-core.readthedocs.org/en/latest/reposync.html
