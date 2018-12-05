@@ -863,12 +863,6 @@ class Base(object):
 #        if self.history.group_active() and self._trans_success:
 #            self.history.group.commit()
 
-        # Plugins were executed already.
-        # They may have used information about the last transaction.
-        # Closing history/transaction here because nobody is supposed to read it anymore.
-        self.history.close()
-        self._history = None
-
         return tid
 
     def _trans_error_summary(self, errstring):
