@@ -103,6 +103,7 @@ Recommends:     (python2-dbus if NetworkManager)
 Recommends:     (%{_bindir}/sqlite3 if bash-completion)
 %endif
 %{?systemd_requires}
+Provides:       dnf-command(alias)
 Provides:       dnf-command(autoremove)
 Provides:       dnf-command(check-update)
 Provides:       dnf-command(clean)
