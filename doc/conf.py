@@ -246,6 +246,8 @@ man_pages = [
      AUTHORS, 8),
     ('command_ref', 'yum-shell', u'redirecting to DNF Command Reference',
      AUTHORS, 8),
+    ('command_ref', 'yum-aliases', u'redirecting to DNF Command Reference',
+     AUTHORS, 1),
 ]
 
 # If true, show URL addresses after external links.
