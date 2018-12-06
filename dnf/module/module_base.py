@@ -275,11 +275,16 @@ class ModuleBase(object):
             self.base._moduleContainer, hot_fix_repos, self.base.conf.installroot, None,
             self.base.conf.debug_solver
         )
-        for nsvcap, moduleDict in module_dicts.values():
+        for spec, (nsvcap, moduleDict) in module_dicts.items():
             for streamDict in moduleDict.values():
                 for modules in streamDict.values():
-                    self.base._moduleContainer.enableDependencyTree(
-                        libdnf.module.VectorModulePackagePtr(modules))
+                    try:
+                        self.base._moduleContainer.enableDependencyTree(
+                            libdnf.module.VectorModulePackagePtr(modules))
+                    except RuntimeError as e:
+                        error_spec.append(spec)
+                        logger.error(ucd(e))
+                        logger.error(_("Unable to resolve argument {}").format(spec))
         return no_match_specs, error_spec, solver_errors, module_dicts
 
     def _modules_reset_or_disable(self, module_specs, to_state):
