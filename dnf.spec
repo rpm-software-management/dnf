@@ -434,8 +434,10 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %{_mandir}/man5/yum.conf.5.*
 %{_mandir}/man8/yum.8*
 %{_mandir}/man8/yum-shell.8*
+%{_mandir}/man1/yum-aliases.1*
 %else
 %exclude %{_mandir}/man8/yum-shell.8*
+%exclude %{_mandir}/man1/yum-aliases.1*
 %exclude %{_sysconfdir}/yum/pluginconf.d
 %exclude %{_sysconfdir}/yum/protected.d
 %exclude %{_sysconfdir}/yum/vars
