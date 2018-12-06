@@ -160,9 +160,12 @@ class Base(object):
         disabled = set(self.conf.disable_excludes)
         if 'all' in disabled and WITH_MODULES:
             hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
-            solver_errors = self.sack.filter_modules(
-                self._moduleContainer, hot_fix_repos, self.conf.installroot,
-                self.conf.module_platform_id, False, self.conf.debug_solver)
+            try:
+                solver_errors = self.sack.filter_modules(
+                    self._moduleContainer, hot_fix_repos, self.conf.installroot,
+                    self.conf.module_platform_id, False, self.conf.debug_solver)
+            except hawkey.Exception as e:
+                raise dnf.exceptions.Error(ucd(e))
             if solver_errors:
                 logger.warning(
                     dnf.module.module_base.format_modular_solver_errors(solver_errors))
@@ -207,9 +210,12 @@ class Base(object):
                     self.sack, with_nevra=True, with_provides=False, with_filenames=False))
             if not only_main and WITH_MODULES:
                 hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
-                solver_errors = self.sack.filter_modules(
-                    self._moduleContainer, hot_fix_repos, self.conf.installroot,
-                    self.conf.module_platform_id, False, self.conf.debug_solver)
+                try:
+                    solver_errors = self.sack.filter_modules(
+                        self._moduleContainer, hot_fix_repos, self.conf.installroot,
+                        self.conf.module_platform_id, False, self.conf.debug_solver)
+                except hawkey.Exception as e:
+                    raise dnf.exceptions.Error(ucd(e))
                 if solver_errors:
                     logger.warning(
                         dnf.module.module_base.format_modular_solver_errors(solver_errors))
@@ -220,9 +226,12 @@ class Base(object):
                 self.sack.add_excludes(exclude_query)
         elif not only_main and WITH_MODULES:
             hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
-            solver_errors = self.sack.filter_modules(
-                self._moduleContainer, hot_fix_repos, self.conf.installroot,
-                self.conf.module_platform_id, False, self.conf.debug_solver)
+            try:
+                solver_errors = self.sack.filter_modules(
+                    self._moduleContainer, hot_fix_repos, self.conf.installroot,
+                    self.conf.module_platform_id, False, self.conf.debug_solver)
+            except hawkey.Exception as e:
+                raise dnf.exceptions.Error(ucd(e))
             if solver_errors:
                 logger.warning(
                     dnf.module.module_base.format_modular_solver_errors(solver_errors))
