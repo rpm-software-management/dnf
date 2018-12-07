@@ -165,7 +165,7 @@ class Base(object):
                 self.conf.module_platform_id, False, self.conf.debug_solver)
             if solver_errors:
                 logger.warning(
-                    dnf.module.module_base.format_modular_solver_errors(solver_errors))
+                    dnf.module.module_base.format_modular_solver_errors(solver_errors[0]))
             return
         repo_includes = []
         repo_excludes = []
@@ -212,7 +212,7 @@ class Base(object):
                     self.conf.module_platform_id, False, self.conf.debug_solver)
                 if solver_errors:
                     logger.warning(
-                        dnf.module.module_base.format_modular_solver_errors(solver_errors))
+                        dnf.module.module_base.format_modular_solver_errors(solver_errors[0]))
             if include_query:
                 self.sack.add_includes(include_query)
                 self.sack.set_use_includes(True)
@@ -225,7 +225,7 @@ class Base(object):
                 self.conf.module_platform_id, False, self.conf.debug_solver)
             if solver_errors:
                 logger.warning(
-                    dnf.module.module_base.format_modular_solver_errors(solver_errors))
+                    dnf.module.module_base.format_modular_solver_errors(solver_errors[0]))
 
         if repo_includes:
             for query, repoid in repo_includes:
