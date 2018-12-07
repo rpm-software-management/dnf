@@ -102,6 +102,12 @@ class ModuleBase(object):
         install_base_query = self.base.sack.query().filterm(
             nevra_strict=install_set_artefacts).apply()
 
+        # add hot-fix packages
+        hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
+        hotfix_packages = self.base.sack.query().filterm(reponame=hot_fix_repos).filterm(
+            name=install_dict.keys())
+        install_base_query = install_base_query.union(hotfix_packages)
+
         for pkg_name, set_specs in install_dict.items():
             query = install_base_query.filter(name=pkg_name)
             if not query:
