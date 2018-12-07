@@ -109,7 +109,11 @@ class ModuleCommand(commands.Command):
                 self.module_base.enable(self.opts.module_spec)
             except dnf.exceptions.MarkingErrors as e:
                 if self.base.conf.strict:
-                    raise e
+                    if e.no_match_group_specs or e.error_group_specs:
+                        raise e
+                    if e.module_debsolv_errors and e.module_debsolv_errors[1] != \
+                            libdnf.module.ModulePackageContainer.ModuleErrorType_ERROR_IN_DEFAULTS:
+                        raise e
                 logger.error(str(e))
 
     class DisableSubCommand(SubCommand):
@@ -128,7 +132,11 @@ class ModuleCommand(commands.Command):
                 self.module_base.disable(self.opts.module_spec)
             except dnf.exceptions.MarkingErrors as e:
                 if self.base.conf.strict:
-                    raise e
+                    if e.no_match_group_specs or e.error_group_specs:
+                        raise e
+                    if e.module_debsolv_errors and e.module_debsolv_errors[1] != \
+                            libdnf.module.ModulePackageContainer.ModuleErrorType_ERROR_IN_DEFAULTS:
+                        raise e
                 logger.error(str(e))
 
     class ResetSubCommand(SubCommand):
