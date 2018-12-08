@@ -112,6 +112,11 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Directory where the log files will be stored. Default is ``"/var/log"``.
 
+  .. attribute:: module_platform_id
+
+    Set this to $name:$stream to override PLATFORM_ID detected from ``/etc/os-release``.
+    It is necessary to perform a system upgrade and switch to a new platform.
+
   .. attribute:: multilib_policy
 
     Controls how multilib packages are treated during install operations. Can either be ``"best"`` (the default) for the depsolver to prefer packages which best match the system's architecture, or ``"all"`` to install all available packages with compatible architectures.
