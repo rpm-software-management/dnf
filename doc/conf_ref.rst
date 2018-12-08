@@ -224,7 +224,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 ``module_platform_id``
     :ref:`string <string-label>`
 
-    Set this to $name:$stream to override PLATFORM_ID detected from /etc/os-release.
+    Set this to $name:$stream to override PLATFORM_ID detected from ``/etc/os-release``.
     It is necessary to perform a system upgrade and switch to a new platform.
 
 .. _obsoletes_conf_option-label:
