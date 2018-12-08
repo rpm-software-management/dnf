@@ -247,6 +247,12 @@ Options
  releasever will be detected from host (``/``) system. The new installroot path at time of creation
  does not contain *repository*, *releasever*, and *dnf.conf* file.
 
+ On modular system you may also want to use the command-line option
+ ``--setopt=module_platform_id=<module_platform_name:stream>`` when creating the installroot
+ otherwise  the :ref:`module_platform_id <module_platform_id-label>` value is taken from the
+ ``/etc/os-release`` within the installroot (and thus it is empty at time of creation, the modular
+ dependency could be unsatisfied and modules content could be excluded).
+
  Installroot examples:
 
  ``dnf --installroot=<installroot> --releasever=<release> install system-release``
