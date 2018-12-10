@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-15 09:16+0200\n"
-"PO-Revision-Date: 2018-09-13 06:20+0000\n"
+"PO-Revision-Date: 2018-11-14 07:26+0000\n"
 "Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/dnf/language/sv/)\n"
 "MIME-Version: 1.0\n"
@@ -28,7 +28,7 @@ msgstr ""
 #: ../dnf/transaction.py:79
 msgctxt "currently"
 msgid "Downgrading"
-msgstr ""
+msgstr "Nedgraderar"
 
 #: ../dnf/transaction.py:80 ../dnf/transaction.py:87 ../dnf/transaction.py:92
 #: ../dnf/transaction.py:94
@@ -39,7 +39,7 @@ msgstr "Rensar upp"
 #: ../dnf/transaction.py:82
 msgctxt "currently"
 msgid "Installing"
-msgstr ""
+msgstr "Installerar"
 
 #: ../dnf/transaction.py:83 ../dnf/transaction.py:84 ../dnf/cli/output.py:1829
 msgid "Obsoleting"
@@ -49,7 +49,7 @@ msgstr "Fasar ut"
 #: ../dnf/transaction.py:86
 msgctxt "currently"
 msgid "Reinstalling"
-msgstr ""
+msgstr "Ominstallerar"
 
 #. TODO: 'Removing'?
 #: ../dnf/transaction.py:89
@@ -60,7 +60,7 @@ msgstr "Raderar"
 #: ../dnf/transaction.py:91
 msgctxt "currently"
 msgid "Upgrading"
-msgstr ""
+msgstr "Uppgraderar"
 
 #: ../dnf/transaction.py:95
 msgid "Verifying"
@@ -333,7 +333,7 @@ msgstr "Paket"
 
 #: ../dnf/cli/output.py:1063
 msgid "Installing group/module packages"
-msgstr ""
+msgstr "Installerar grupp-/modulpaket"
 
 #: ../dnf/cli/output.py:1064
 msgid "Installing group packages"
@@ -343,19 +343,19 @@ msgstr "Installerar gruppaket"
 #: ../dnf/cli/output.py:1068
 msgctxt "summary"
 msgid "Installing"
-msgstr ""
+msgstr "Installerar"
 
 #. TRANSLATORS: This is for a list of packages to be upgraded.
 #: ../dnf/cli/output.py:1070
 msgctxt "summary"
 msgid "Upgrading"
-msgstr ""
+msgstr "Uppgraderar"
 
 #. TRANSLATORS: This is for a list of packages to be reinstalled.
 #: ../dnf/cli/output.py:1072
 msgctxt "summary"
 msgid "Reinstalling"
-msgstr ""
+msgstr "Ominstallerar"
 
 #: ../dnf/cli/output.py:1074
 msgid "Installing dependencies"
@@ -382,7 +382,7 @@ msgstr "Tar bort oanvända beroenden"
 #: ../dnf/cli/output.py:1081
 msgctxt "summary"
 msgid "Downgrading"
-msgstr ""
+msgstr "Nedgraderar"
 
 #: ../dnf/cli/output.py:1165
 #, python-format
@@ -1637,7 +1637,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/module.py:70 ../dnf/cli/commands/module.py:94
 msgid "No matching Modules to list"
-msgstr ""
+msgstr "Inga matchande moduler att lista"
 
 #: ../dnf/cli/commands/module.py:232
 msgid "Interact with Modules."
@@ -1664,6 +1664,8 @@ msgid ""
 "\n"
 "Switching module streams does not alter installed packages (see 'module enable' in dnf(8) for details)"
 msgstr ""
+"\n"
+"Att byta modulström förändrar inte de installerade paketen (se ”module enable” i dnf(8) för detaljer)"
 
 #: ../dnf/cli/commands/remove.py:46
 msgid "remove a package or packages from your system"
@@ -1955,7 +1957,7 @@ msgstr "Inte en giltig sökväg till en rpm: %s"
 #: ../dnf/cli/commands/install.py:167
 #, python-brace-format
 msgid "There are following alternatives for \"{0}\": {1}"
-msgstr ""
+msgstr "Det finns följande alternativ för ”{0}”: {1}"
 
 #: ../dnf/cli/commands/repoquery.py:104
 msgid "search for packages matching keyword"
@@ -2649,7 +2651,7 @@ msgstr "ej stödd typ av kontrollsumma: %s"
 #: ../dnf/repo.py:347
 #, python-format
 msgid "determining the fastest mirror (%s hosts).. "
-msgstr ""
+msgstr "avgör den snabbaste spegeln (%s värdar).. "
 
 #: ../dnf/module/module_base.py:33
 msgid ""
@@ -2657,41 +2659,45 @@ msgid ""
 "\n"
 "Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled"
 msgstr ""
+"\n"
+"\n"
+"Ledtråd: [d]standard, [e]aktiverad, [x]avaktiverad, [i]installerad"
 
 #: ../dnf/module/module_base.py:45 ../dnf/module/module_base.py:288
 #: ../dnf/module/module_base.py:339 ../dnf/module/module_base.py:391
 #: ../dnf/module/module_base.py:448
 msgid "Ignoring unnecessary profile: '{}/{}'"
-msgstr ""
+msgstr "Ignorerar onödig profil: ”{}/{}”"
 
 #: ../dnf/module/module_base.py:78 ../dnf/module/module_base.py:166
 #: ../dnf/module/module_base.py:190
 msgid "Unable to match profile in argument {}"
-msgstr ""
+msgstr "Kan inte matcha en profil i argumentet {}"
 
 #: ../dnf/module/module_base.py:85
 msgid "No default profiles for module {}:{}"
-msgstr ""
+msgstr "Inga standardprofiler för modulen {}:{}"
 
 #: ../dnf/module/module_base.py:91
 msgid "Profile {} not matched for module {}:{}"
-msgstr ""
+msgstr "Profilen {} matchas inte för modulen {}:{}"
 
 #: ../dnf/module/module_base.py:111 ../dnf/module/module_base.py:141
 #: ../dnf/module/module_base.py:271 ../dnf/module/module_base.py:284
 #: ../dnf/module/module_base.py:335 ../dnf/module/module_base.py:387
 #: ../dnf/module/module_base.py:444
 msgid "Unable to resolve argument {}"
-msgstr ""
+msgstr "Kan inte lösa upp argumentet {}"
 
 #: ../dnf/module/module_base.py:112
 msgid "No match for package {}"
-msgstr ""
+msgstr "Ingen matchning för paketet {}"
 
 #: ../dnf/module/module_base.py:578 ../dnf/exceptions.py:118
 msgid "Modular dependency problem:"
 msgid_plural "Modular dependency problems:"
-msgstr[0] ""
+msgstr[0] "Modulärt beroendeproblem:"
+msgstr[1] "Modulära beroendeproblem:"
 
 #: ../dnf/module/__init__.py:26
 msgid "Enabling different stream for '{}'."
@@ -2715,23 +2721,23 @@ msgstr "Ingen profil angiven för ”{}”, ange en profil."
 
 #: ../dnf/dnssec.py:222
 msgid "DNSSEC extension: Key for user "
-msgstr ""
+msgstr "DNSSEC-utvidgning: nyckeln för användaren "
 
 #: ../dnf/dnssec.py:224
 msgid "is valid."
-msgstr ""
+msgstr "är giltig."
 
 #: ../dnf/dnssec.py:226
 msgid "has unknown status."
-msgstr ""
+msgstr "har okänd status."
 
 #: ../dnf/dnssec.py:234
 msgid "DNSSEC extension: "
-msgstr ""
+msgstr "DNSSEC-utvidgning: "
 
 #: ../dnf/dnssec.py:266
 msgid "Testing already imported keys for their validity."
-msgstr ""
+msgstr "Testning importerade redan nycklar för deras validitet."
 
 #: ../dnf/automatic/main.py:192
 msgid "Started dnf-automatic."
@@ -2784,23 +2790,23 @@ msgstr "Misslyckades att köra kommandot ”%s”: returnerade %d"
 
 #: ../dnf/exceptions.py:106
 msgid "Problems in request:"
-msgstr ""
+msgstr "Problem i begäran:"
 
 #: ../dnf/exceptions.py:108
 msgid "missing packages: "
-msgstr ""
+msgstr "saknade paket: "
 
 #: ../dnf/exceptions.py:110
 msgid "broken packages: "
-msgstr ""
+msgstr "trasiga paket: "
 
 #: ../dnf/exceptions.py:112
 msgid "missing groups or modules: "
-msgstr ""
+msgstr "saknade grupper eller moduler: "
 
 #: ../dnf/exceptions.py:114
 msgid "broken groups or modules: "
-msgstr ""
+msgstr "trasiga grupper eller moduler: "
 
 #. empty file is invalid json format
 #: ../dnf/persistor.py:54
@@ -3140,11 +3146,11 @@ msgstr "GPG-nyckel vid %s (0x%s) är redan installerad"
 
 #: ../dnf/base.py:2296
 msgid "The key has been approved."
-msgstr ""
+msgstr "Nyckeln har godkänts."
 
 #: ../dnf/base.py:2299
 msgid "The key has been rejected."
-msgstr ""
+msgstr "Nyckeln har avvisats."
 
 #: ../dnf/base.py:2327
 #, python-format
@@ -3200,7 +3206,7 @@ msgstr ""
 #: ../dnf/base.py:2436
 #, python-format
 msgid "Package %s is already installed."
-msgstr ""
+msgstr "Paketet %s är redan installerat."
 
 #: ../dnf/conf/config.py:105 ../dnf/conf/config.py:244
 #, python-format

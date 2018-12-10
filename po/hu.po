@@ -11,13 +11,14 @@
 # Meskó Balázs <meskobalazs@gmail.com>, 2017. #zanata
 # Zoltan Hoppar <zoltanh721@fedoraproject.org>, 2017. #zanata
 # Meskó Balázs <meskobalazs@gmail.com>, 2018. #zanata
+# Teknős Ferenc <teknos.ferenc@gmail.com>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-15 09:16+0200\n"
-"PO-Revision-Date: 2018-10-02 07:54+0000\n"
-"Last-Translator: Meskó Balázs <meskobalazs@gmail.com>\n"
+"PO-Revision-Date: 2018-11-12 10:05+0000\n"
+"Last-Translator: Teknős Ferenc <teknos.ferenc@gmail.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/projects/p/dnf/language/hu/)\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -2708,7 +2709,7 @@ msgstr "Nincs alapértelmezett profil a(z) {}:{} modulhoz"
 
 #: ../dnf/module/module_base.py:91
 msgid "Profile {} not matched for module {}:{}"
-msgstr ""
+msgstr "A(z) {} profil nem illik a(z) {}:{} modulhoz"
 
 #: ../dnf/module/module_base.py:111 ../dnf/module/module_base.py:141
 #: ../dnf/module/module_base.py:271 ../dnf/module/module_base.py:284
@@ -2749,23 +2750,23 @@ msgstr "Nincs profil megadva ehhez: „{}”, adja meg a profilt."
 
 #: ../dnf/dnssec.py:222
 msgid "DNSSEC extension: Key for user "
-msgstr ""
+msgstr "DNSSEC bővítmény: A felhasználó kulcsa "
 
 #: ../dnf/dnssec.py:224
 msgid "is valid."
-msgstr ""
+msgstr "érvényes."
 
 #: ../dnf/dnssec.py:226
 msgid "has unknown status."
-msgstr ""
+msgstr "ismeretlen állapotú."
 
 #: ../dnf/dnssec.py:234
 msgid "DNSSEC extension: "
-msgstr ""
+msgstr "DNSSEC bővítmény: "
 
 #: ../dnf/dnssec.py:266
 msgid "Testing already imported keys for their validity."
-msgstr ""
+msgstr "A már importált kulcsok érvényességének ellenőrzése."
 
 #: ../dnf/automatic/main.py:192
 msgid "Started dnf-automatic."
@@ -3182,11 +3183,11 @@ msgstr "A következő GPG kulcs már telepítve van: %s (0x%s)"
 
 #: ../dnf/base.py:2296
 msgid "The key has been approved."
-msgstr ""
+msgstr "A kulcs jóváhagyásra került."
 
 #: ../dnf/base.py:2299
 msgid "The key has been rejected."
-msgstr ""
+msgstr "A kulcs elutasításra került."
 
 #: ../dnf/base.py:2327
 #, python-format

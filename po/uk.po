@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-15 09:16+0200\n"
-"PO-Revision-Date: 2018-09-30 04:34+0000\n"
+"PO-Revision-Date: 2018-10-15 08:16+0000\n"
 "Last-Translator: Yuri Chornoivan <yurchor@ukr.net>\n"
 "Language-Team: Ukrainian (http://www.transifex.com/projects/p/dnf/language/uk/)\n"
 "MIME-Version: 1.0\n"
@@ -2693,7 +2693,7 @@ msgstr "Немає типового профілю для модуля {}:{}"
 
 #: ../dnf/module/module_base.py:91
 msgid "Profile {} not matched for module {}:{}"
-msgstr ""
+msgstr "Профіль {} є невідповідним до модуля {}:{}"
 
 #: ../dnf/module/module_base.py:111 ../dnf/module/module_base.py:141
 #: ../dnf/module/module_base.py:271 ../dnf/module/module_base.py:284
@@ -2735,23 +2735,23 @@ msgstr "Не вказано профілю для «{}». Будь ласка, �
 
 #: ../dnf/dnssec.py:222
 msgid "DNSSEC extension: Key for user "
-msgstr ""
+msgstr "Розширення DNSSEC: ключ для користувача "
 
 #: ../dnf/dnssec.py:224
 msgid "is valid."
-msgstr ""
+msgstr "є коректним."
 
 #: ../dnf/dnssec.py:226
 msgid "has unknown status."
-msgstr ""
+msgstr "перебуває у невідомому стані."
 
 #: ../dnf/dnssec.py:234
 msgid "DNSSEC extension: "
-msgstr ""
+msgstr "Розширення DNSSEC: "
 
 #: ../dnf/dnssec.py:266
 msgid "Testing already imported keys for their validity."
-msgstr ""
+msgstr "Тестуємо вже імпортовані ключа на коректність."
 
 #: ../dnf/automatic/main.py:192
 msgid "Started dnf-automatic."
@@ -3160,11 +3160,11 @@ msgstr "Ключ GPG у %s (0x%s) вже встановлено"
 
 #: ../dnf/base.py:2296
 msgid "The key has been approved."
-msgstr ""
+msgstr "Ключ підтверджено."
 
 #: ../dnf/base.py:2299
 msgid "The key has been rejected."
-msgstr ""
+msgstr "У використанні ключа відмовлено."
 
 #: ../dnf/base.py:2327
 #, python-format

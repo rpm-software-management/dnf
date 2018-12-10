@@ -22,7 +22,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-15 09:16+0200\n"
-"PO-Revision-Date: 2018-10-03 11:17+0000\n"
+"PO-Revision-Date: 2018-10-17 11:34+0000\n"
 "Last-Translator: Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>\n"
 "Language-Team: French (http://www.transifex.com/projects/p/dnf/language/fr/)\n"
 "MIME-Version: 1.0\n"
@@ -2731,7 +2731,7 @@ msgstr "Aucun profil par défaut pour le module {}:{}"
 
 #: ../dnf/module/module_base.py:91
 msgid "Profile {} not matched for module {}:{}"
-msgstr ""
+msgstr "Le profil {}  ne correspond pas pour le module {}:{}"
 
 #: ../dnf/module/module_base.py:111 ../dnf/module/module_base.py:141
 #: ../dnf/module/module_base.py:271 ../dnf/module/module_base.py:284
@@ -2774,23 +2774,23 @@ msgstr "Aucun profil spécifié pour '{}', veuillez spécifier un profil."
 
 #: ../dnf/dnssec.py:222
 msgid "DNSSEC extension: Key for user "
-msgstr ""
+msgstr "Extension DNSSEC : clef pour l'utilisateur "
 
 #: ../dnf/dnssec.py:224
 msgid "is valid."
-msgstr ""
+msgstr "est valide."
 
 #: ../dnf/dnssec.py:226
 msgid "has unknown status."
-msgstr ""
+msgstr "a un statut inconnu."
 
 #: ../dnf/dnssec.py:234
 msgid "DNSSEC extension: "
-msgstr ""
+msgstr "extension DNSSEC : "
 
 #: ../dnf/dnssec.py:266
 msgid "Testing already imported keys for their validity."
-msgstr ""
+msgstr "Test de validité des clefs déjà importées."
 
 #: ../dnf/automatic/main.py:192
 msgid "Started dnf-automatic."
@@ -3217,11 +3217,11 @@ msgstr "La clé GPG %s (0x%s) est déjà installée"
 
 #: ../dnf/base.py:2296
 msgid "The key has been approved."
-msgstr ""
+msgstr "La clef a été approuvée."
 
 #: ../dnf/base.py:2299
 msgid "The key has been rejected."
-msgstr ""
+msgstr "La clef a été rejetée."
 
 #: ../dnf/base.py:2327
 #, python-format

@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-15 09:16+0200\n"
-"PO-Revision-Date: 2018-05-12 02:02+0000\n"
+"PO-Revision-Date: 2018-11-29 07:01+0000\n"
 "Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>\n"
 "Language-Team: Finnish (http://www.transifex.com/projects/p/dnf/language/fi/)\n"
 "MIME-Version: 1.0\n"
@@ -39,7 +39,7 @@ msgstr "Siivotaan"
 #: ../dnf/transaction.py:82
 msgctxt "currently"
 msgid "Installing"
-msgstr ""
+msgstr "Asennetaan"
 
 #: ../dnf/transaction.py:83 ../dnf/transaction.py:84 ../dnf/cli/output.py:1829
 msgid "Obsoleting"
@@ -49,7 +49,7 @@ msgstr "Vanhentava"
 #: ../dnf/transaction.py:86
 msgctxt "currently"
 msgid "Reinstalling"
-msgstr ""
+msgstr "Asennetaan uudelleen"
 
 #. TODO: 'Removing'?
 #: ../dnf/transaction.py:89
@@ -82,7 +82,7 @@ msgstr ""
 #: ../dnf/plugin.py:132
 #, python-format
 msgid "Loaded plugins: %s"
-msgstr ""
+msgstr "Ladattu liitännäiset: %s"
 
 #: ../dnf/plugin.py:180
 #, python-format
@@ -343,7 +343,7 @@ msgstr "Asennetaan ryhmäpaketteja"
 #: ../dnf/cli/output.py:1068
 msgctxt "summary"
 msgid "Installing"
-msgstr ""
+msgstr "Asennetaan"
 
 #. TRANSLATORS: This is for a list of packages to be upgraded.
 #: ../dnf/cli/output.py:1070
@@ -355,7 +355,7 @@ msgstr ""
 #: ../dnf/cli/output.py:1072
 msgctxt "summary"
 msgid "Reinstalling"
-msgstr ""
+msgstr "Asennetaan uudelleen"
 
 #: ../dnf/cli/output.py:1074
 msgid "Installing dependencies"
@@ -1795,7 +1795,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/updateinfo.py:305
 msgid "CVEs"
-msgstr ""
+msgstr "CVE:t"
 
 #: ../dnf/cli/commands/updateinfo.py:305
 msgid "Severity"
@@ -1853,7 +1853,7 @@ msgstr ""
 #: ../dnf/cli/commands/clean.py:68
 #, python-format
 msgid "Removing file %s"
-msgstr ""
+msgstr "Poistetaan tiedosto %s"
 
 #: ../dnf/cli/commands/clean.py:87
 msgid "remove cached data"
@@ -2587,7 +2587,7 @@ msgstr ""
 
 #: ../dnf/module/__init__.py:27
 msgid "Nothing to show."
-msgstr ""
+msgstr "Ei mitään näytettävää."
 
 #: ../dnf/module/__init__.py:28
 msgid "Installing newer version of '{}' than specified. Reason: {}"
@@ -3018,11 +3018,11 @@ msgstr "Osoitteesta %s ladattu GPG-avain (0x%s) on jo asennetuna"
 
 #: ../dnf/base.py:2296
 msgid "The key has been approved."
-msgstr ""
+msgstr "Avain on hyväksytty."
 
 #: ../dnf/base.py:2299
 msgid "The key has been rejected."
-msgstr ""
+msgstr "Avain on hylätty."
 
 #: ../dnf/base.py:2327
 #, python-format
@@ -3075,7 +3075,7 @@ msgstr ""
 #: ../dnf/base.py:2436
 #, python-format
 msgid "Package %s is already installed."
-msgstr ""
+msgstr "Paketti %s on jo asennettu."
 
 #: ../dnf/conf/config.py:105 ../dnf/conf/config.py:244
 #, python-format

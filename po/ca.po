@@ -15,7 +15,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-15 09:16+0200\n"
-"PO-Revision-Date: 2018-05-23 07:37+0000\n"
+"PO-Revision-Date: 2018-11-03 06:46+0000\n"
 "Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
 "Language-Team: Catalan (https://fedora.zanata.org/language/view/ca) <fedora@llistes.softcatala.org>\n"
 "MIME-Version: 1.0\n"
@@ -29,7 +29,7 @@ msgstr ""
 #: ../dnf/transaction.py:79
 msgctxt "currently"
 msgid "Downgrading"
-msgstr ""
+msgstr "Revertir"
 
 #: ../dnf/transaction.py:80 ../dnf/transaction.py:87 ../dnf/transaction.py:92
 #: ../dnf/transaction.py:94
@@ -40,7 +40,7 @@ msgstr "Netejar"
 #: ../dnf/transaction.py:82
 msgctxt "currently"
 msgid "Installing"
-msgstr ""
+msgstr "Instal·lar"
 
 #: ../dnf/transaction.py:83 ../dnf/transaction.py:84 ../dnf/cli/output.py:1829
 msgid "Obsoleting"
@@ -50,7 +50,7 @@ msgstr "Devaluar"
 #: ../dnf/transaction.py:86
 msgctxt "currently"
 msgid "Reinstalling"
-msgstr ""
+msgstr "Reinstal·lar"
 
 #. TODO: 'Removing'?
 #: ../dnf/transaction.py:89
@@ -61,7 +61,7 @@ msgstr "Eliminar"
 #: ../dnf/transaction.py:91
 msgctxt "currently"
 msgid "Upgrading"
-msgstr ""
+msgstr "Actualitzar"
 
 #: ../dnf/transaction.py:95
 msgid "Verifying"
@@ -83,7 +83,7 @@ msgstr ""
 #: ../dnf/plugin.py:132
 #, python-format
 msgid "Loaded plugins: %s"
-msgstr ""
+msgstr "Connectors carregats: %s"
 
 #: ../dnf/plugin.py:180
 #, python-format
@@ -334,29 +334,29 @@ msgstr "Paquets"
 
 #: ../dnf/cli/output.py:1063
 msgid "Installing group/module packages"
-msgstr ""
+msgstr "instal·lar paquets de grups o mòduls"
 
 #: ../dnf/cli/output.py:1064
 msgid "Installing group packages"
-msgstr ""
+msgstr "instal·lar paquets de grups"
 
 #. TRANSLATORS: This is for a list of packages to be installed.
 #: ../dnf/cli/output.py:1068
 msgctxt "summary"
 msgid "Installing"
-msgstr ""
+msgstr "Instal·lar"
 
 #. TRANSLATORS: This is for a list of packages to be upgraded.
 #: ../dnf/cli/output.py:1070
 msgctxt "summary"
 msgid "Upgrading"
-msgstr ""
+msgstr "Actualitzar"
 
 #. TRANSLATORS: This is for a list of packages to be reinstalled.
 #: ../dnf/cli/output.py:1072
 msgctxt "summary"
 msgid "Reinstalling"
-msgstr ""
+msgstr "Reinstal·lar"
 
 #: ../dnf/cli/output.py:1074
 msgid "Installing dependencies"
@@ -383,7 +383,7 @@ msgstr "Treure dependències no utilitzades"
 #: ../dnf/cli/output.py:1081
 msgctxt "summary"
 msgid "Downgrading"
-msgstr ""
+msgstr "Revertir"
 
 #: ../dnf/cli/output.py:1165
 #, python-format
@@ -1522,7 +1522,7 @@ msgstr "No hi ha cap paquet disponible."
 
 #: ../dnf/cli/commands/__init__.py:374
 msgid "No packages marked for install."
-msgstr ""
+msgstr "No s'ha marcat cap paquet per instal·lar."
 
 #: ../dnf/cli/commands/__init__.py:410
 msgid "No package installed."
@@ -1547,7 +1547,7 @@ msgstr "No hi ha cap paquet instal·lat des del dipòsit."
 
 #: ../dnf/cli/commands/__init__.py:528 ../dnf/cli/commands/reinstall.py:101
 msgid "No packages marked for reinstall."
-msgstr ""
+msgstr "No s'ha marcat cap paquet per reinstal·lar."
 
 #: ../dnf/cli/commands/__init__.py:679 ../dnf/cli/commands/remove.py:145
 #: ../dnf/base.py:2026
@@ -1622,6 +1622,8 @@ msgid ""
 "Can't convert '{}' to transaction ID.\n"
 "Use '<integer>', 'last', 'last-<positive-integer>'."
 msgstr ""
+"No es pot convertir '{}' a un ID de transacció.\n"
+"Utilitzeu '<integer>', 'last', 'last-<positive-integer>'."
 
 #: ../dnf/cli/commands/__init__.py:969
 msgid "No transaction which manipulates package '{}' was found."
@@ -1645,27 +1647,27 @@ msgstr ""
 
 #: ../dnf/cli/commands/module.py:70 ../dnf/cli/commands/module.py:94
 msgid "No matching Modules to list"
-msgstr ""
+msgstr "No hi ha mòduls coincidents per llistar"
 
 #: ../dnf/cli/commands/module.py:232
 msgid "Interact with Modules."
-msgstr ""
+msgstr "Interactua amb els mòduls."
 
 #: ../dnf/cli/commands/module.py:249
 msgid "show only enabled modules"
-msgstr ""
+msgstr "mostra únicament els mòduls habilitats"
 
 #: ../dnf/cli/commands/module.py:252
 msgid "show only disabled modules"
-msgstr ""
+msgstr "mostra únicament els mòduls inhabilitats"
 
 #: ../dnf/cli/commands/module.py:255
 msgid "show only installed modules"
-msgstr ""
+msgstr "mostra únicament els mòduls instal·lats"
 
 #: ../dnf/cli/commands/module.py:258
 msgid "show profile content"
-msgstr ""
+msgstr "mostra el contingut del perfil"
 
 #: ../dnf/cli/commands/module.py:285
 msgid ""
@@ -1738,29 +1740,32 @@ msgstr "Baix/Seg."
 
 #: ../dnf/cli/commands/updateinfo.py:61
 msgid "display advisories about packages"
-msgstr "mostra els avisos quant als paquets"
+msgstr "mostra els avisos sobre els paquets"
 
 #: ../dnf/cli/commands/updateinfo.py:75
 msgid "advisories about newer versions of installed packages (default)"
 msgstr ""
+"avisos sobre versions més noves dels paquets instal·lats (per defecte)"
 
 #: ../dnf/cli/commands/updateinfo.py:78
 msgid "advisories about equal and older versions of installed packages"
-msgstr ""
+msgstr "avisos sobre versions iguals i antigues de paquets instal·lats"
 
 #: ../dnf/cli/commands/updateinfo.py:81
 msgid ""
 "advisories about newer versions of those installed packages for which a "
 "newer version is available"
 msgstr ""
+"avisos sobre versions més noves d'aquells paquets instal·lats per als quals "
+"hi ha disponible una versió més nova"
 
 #: ../dnf/cli/commands/updateinfo.py:85
 msgid "advisories about any versions of installed packages"
-msgstr ""
+msgstr "avisos sobre qualsevol versió dels paquets instal·lats"
 
 #: ../dnf/cli/commands/updateinfo.py:90
 msgid "show summary of advisories (default)"
-msgstr ""
+msgstr "mostra el resum dels avisos (per defecte)"
 
 #: ../dnf/cli/commands/updateinfo.py:93
 msgid "show list of advisories"
@@ -1961,7 +1966,7 @@ msgstr "El camí al fitxer rpm no és vàlid: %s"
 #: ../dnf/cli/commands/install.py:167
 #, python-brace-format
 msgid "There are following alternatives for \"{0}\": {1}"
-msgstr ""
+msgstr "Hi ha les alternatives següents per \"{0}\": {1}"
 
 #: ../dnf/cli/commands/repoquery.py:104
 msgid "search for packages matching keyword"
@@ -1979,7 +1984,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/repoquery.py:123
 msgid "Query all versions of packages (default)"
-msgstr "Consulta totes les versions dels paquets (predeterminat)"
+msgstr "Consulta totes les versions dels paquets (per defecte)"
 
 #: ../dnf/cli/commands/repoquery.py:126
 msgid "show only results from this ARCH"
@@ -2084,7 +2089,7 @@ msgstr "mostra el nom RPM del codi font del paquet"
 
 #: ../dnf/cli/commands/repoquery.py:182
 msgid "show changelogs of the package"
-msgstr ""
+msgstr "mostra els registres de canvis del paquet"
 
 #: ../dnf/cli/commands/repoquery.py:185
 msgid "format for displaying found packages"
@@ -2096,7 +2101,7 @@ msgid ""
 "packages (default)"
 msgstr ""
 "utilitza el format nom-època:versió-llançament.arquitectura per a la "
-"visualització dels paquets trobats (predeterminat)"
+"visualització dels paquets trobats (per defecte)"
 
 #: ../dnf/cli/commands/repoquery.py:191
 msgid ""
@@ -2239,7 +2244,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/repoquery.py:456
 msgid "argument {} requires --whatrequires or --whatdepends option"
-msgstr ""
+msgstr "l'argument {} requereix l'opció --whatrequires o --whatdepends"
 
 #: ../dnf/cli/commands/repoquery.py:501
 msgid ""
@@ -2385,7 +2390,7 @@ msgstr "nom del dipòsit"
 #: ../dnf/cli/commands/repolist.py:300
 #, python-format
 msgid "Total packages: %s"
-msgstr ""
+msgstr "Nombre total de paquets: %s"
 
 #: ../dnf/cli/commands/shell.py:47
 msgid "run an interactive DNF shell"
@@ -2627,7 +2632,7 @@ msgstr "tipus no admès de suma de comprovació: %s"
 #: ../dnf/repo.py:347
 #, python-format
 msgid "determining the fastest mirror (%s hosts).. "
-msgstr ""
+msgstr "s'està determinant la rèplica més ràpida (%s amfitrions).. "
 
 #: ../dnf/module/module_base.py:33
 msgid ""
@@ -2660,11 +2665,11 @@ msgstr ""
 #: ../dnf/module/module_base.py:335 ../dnf/module/module_base.py:387
 #: ../dnf/module/module_base.py:444
 msgid "Unable to resolve argument {}"
-msgstr ""
+msgstr "No es pot resoldre l'argument {}"
 
 #: ../dnf/module/module_base.py:112
 msgid "No match for package {}"
-msgstr ""
+msgstr "No hi ha cap coincidència per al paquet {}"
 
 #: ../dnf/module/module_base.py:578 ../dnf/exceptions.py:118
 msgid "Modular dependency problem:"
@@ -2677,7 +2682,7 @@ msgstr ""
 
 #: ../dnf/module/__init__.py:27
 msgid "Nothing to show."
-msgstr ""
+msgstr "Res a mostrar."
 
 #: ../dnf/module/__init__.py:28
 msgid "Installing newer version of '{}' than specified. Reason: {}"
@@ -2685,7 +2690,7 @@ msgstr ""
 
 #: ../dnf/module/__init__.py:29
 msgid "Enabled modules: {}."
-msgstr ""
+msgstr "Mòduls habilitats: {}."
 
 #: ../dnf/module/__init__.py:30
 msgid "No profile specified for '{}', please specify profile."
@@ -2693,7 +2698,7 @@ msgstr ""
 
 #: ../dnf/dnssec.py:222
 msgid "DNSSEC extension: Key for user "
-msgstr ""
+msgstr "extensió DNSSEC: clau per a l'usuari "
 
 #: ../dnf/dnssec.py:224
 msgid "is valid."
@@ -2701,11 +2706,11 @@ msgstr ""
 
 #: ../dnf/dnssec.py:226
 msgid "has unknown status."
-msgstr ""
+msgstr "té un estat desconegut."
 
 #: ../dnf/dnssec.py:234
 msgid "DNSSEC extension: "
-msgstr ""
+msgstr "Extensió DNSSEC: "
 
 #: ../dnf/dnssec.py:266
 msgid "Testing already imported keys for their validity."
@@ -2762,23 +2767,23 @@ msgstr "Ha fallat l'execució de l'ordre «%s»: ha tornat %d"
 
 #: ../dnf/exceptions.py:106
 msgid "Problems in request:"
-msgstr ""
+msgstr "Problemes a la sol·licitud:"
 
 #: ../dnf/exceptions.py:108
 msgid "missing packages: "
-msgstr ""
+msgstr "paquets que falten: "
 
 #: ../dnf/exceptions.py:110
 msgid "broken packages: "
-msgstr ""
+msgstr "paquets trencats: "
 
 #: ../dnf/exceptions.py:112
 msgid "missing groups or modules: "
-msgstr ""
+msgstr "mòduls o grups que falten: "
 
 #: ../dnf/exceptions.py:114
 msgid "broken groups or modules: "
-msgstr ""
+msgstr "mòduls o grups trencats: "
 
 #. empty file is invalid json format
 #: ../dnf/persistor.py:54
@@ -2788,11 +2793,11 @@ msgstr "%s és un fitxer buit"
 
 #: ../dnf/persistor.py:98
 msgid "Failed storing last makecache time."
-msgstr ""
+msgstr "No s'ha pogut emmagatzemar l'hora de l'últim makecache."
 
 #: ../dnf/persistor.py:105
 msgid "Failed determining last makecache time."
-msgstr ""
+msgstr "No s'ha pogut determinar l'hora de l'últim makecache."
 
 #: ../dnf/util.py:403 ../dnf/util.py:405
 msgid "Problem"
@@ -2804,7 +2809,7 @@ msgstr ""
 
 #: ../dnf/base.py:148
 msgid "Loading repository '{}' has failed"
-msgstr ""
+msgstr "Ha fallat la càrrega del dipòsit '{}'"
 
 #: ../dnf/base.py:326
 msgid "Metadata timer caching disabled when running on metered connection."
@@ -2829,23 +2834,23 @@ msgstr "Recentment s'ha refrescat la memòria cau de les metadades."
 #: ../dnf/base.py:353
 #, python-format
 msgid "%s: will never be expired and will not be refreshed."
-msgstr ""
+msgstr "%s: no vencerà mai i no es refrescarà."
 
 #: ../dnf/base.py:355
 #, python-format
 msgid "%s: has expired and will be refreshed."
-msgstr ""
+msgstr "%s: ha vençut i es refrescarà."
 
 #. expires within the checking period:
 #: ../dnf/base.py:359
 #, python-format
 msgid "%s: metadata will expire after %d seconds and will be refreshed now"
-msgstr ""
+msgstr "%s: les metadades venceran després de %d segons i es refrescara ara"
 
 #: ../dnf/base.py:363
 #, python-format
 msgid "%s: will expire after %d seconds."
-msgstr ""
+msgstr "%s: vencerà després de %d segons."
 
 #. performs the md sync
 #: ../dnf/base.py:369
@@ -2860,7 +2865,7 @@ msgstr "%s: s'utilitzen les metadades del %s."
 #: ../dnf/base.py:415
 #, python-format
 msgid "%s, ignoring this repo."
-msgstr ""
+msgstr "%s, s'ignora aquest dipòsit."
 
 #: ../dnf/base.py:418
 #, python-format
@@ -2938,7 +2943,7 @@ msgstr "Resum de l'error"
 
 #: ../dnf/base.py:913
 msgid "RPMDB altered outside of DNF."
-msgstr ""
+msgstr "RPMDB s'ha alterat fora de DNF."
 
 #: ../dnf/base.py:970
 msgid "Errors occurred during transaction."
@@ -3087,7 +3092,7 @@ msgstr ""
 
 #: ../dnf/base.py:2170
 msgid "Action not handled: {}"
-msgstr ""
+msgstr "Acció no gestionada: {}"
 
 #: ../dnf/base.py:2218
 msgid "No security updates needed, but {} update available"
@@ -3130,11 +3135,11 @@ msgstr "La clau GPG de %s (0x%s) ja està instal·lada"
 
 #: ../dnf/base.py:2296
 msgid "The key has been approved."
-msgstr ""
+msgstr "S'ha aprovat la clau."
 
 #: ../dnf/base.py:2299
 msgid "The key has been rejected."
-msgstr ""
+msgstr "S'ha rebutjat la clau."
 
 #: ../dnf/base.py:2327
 #, python-format
@@ -3190,7 +3195,7 @@ msgstr ""
 #: ../dnf/base.py:2436
 #, python-format
 msgid "Package %s is already installed."
-msgstr ""
+msgstr "El paquet %s ja està instal·lat."
 
 #: ../dnf/conf/config.py:105 ../dnf/conf/config.py:244
 #, python-format
@@ -3272,12 +3277,12 @@ msgstr ""
 #: ../dnf/crypto.py:108
 #, python-format
 msgid "repo %s: 0x%s already imported"
-msgstr ""
+msgstr "dipòsit %s: 0x%s ja s'ha importat"
 
 #: ../dnf/crypto.py:115
 #, python-format
 msgid "repo %s: imported key 0x%s."
-msgstr ""
+msgstr "dipòsit %s: s'ha importat la clau 0x%s."
 
 #: ../dnf/drpm.py:144
 msgid "Delta RPM rebuild failed"

@@ -13,7 +13,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-15 09:16+0200\n"
-"PO-Revision-Date: 2018-10-08 04:26+0000\n"
+"PO-Revision-Date: 2018-10-30 08:52+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish (http://www.transifex.com/projects/p/dnf/language/da/)\n"
 "MIME-Version: 1.0\n"
@@ -2679,7 +2679,7 @@ msgstr "Ingen standardprofiler for modulet {}:{}"
 
 #: ../dnf/module/module_base.py:91
 msgid "Profile {} not matched for module {}:{}"
-msgstr ""
+msgstr "Profilen {} ikke matchet for modulet {}:{}"
 
 #: ../dnf/module/module_base.py:111 ../dnf/module/module_base.py:141
 #: ../dnf/module/module_base.py:271 ../dnf/module/module_base.py:284
@@ -2720,23 +2720,24 @@ msgstr "Ingen profil angivet til '{}', angiv venligst profil."
 
 #: ../dnf/dnssec.py:222
 msgid "DNSSEC extension: Key for user "
-msgstr ""
+msgstr "DNSSEC-udvidelse: Nøgle til bruger "
 
 #: ../dnf/dnssec.py:224
 msgid "is valid."
-msgstr ""
+msgstr "er gyldig."
 
 #: ../dnf/dnssec.py:226
 msgid "has unknown status."
-msgstr ""
+msgstr "har ukendt status."
 
 #: ../dnf/dnssec.py:234
 msgid "DNSSEC extension: "
-msgstr ""
+msgstr "DNSSEC-udvidelse: "
 
 #: ../dnf/dnssec.py:266
 msgid "Testing already imported keys for their validity."
 msgstr ""
+"Tester nøgler, som allerede er blevet importeret, for deres gyldighed."
 
 #: ../dnf/automatic/main.py:192
 msgid "Started dnf-automatic."
@@ -2890,7 +2891,7 @@ msgstr "%s, ignorerer softwarearkivet."
 #: ../dnf/base.py:418
 #, python-format
 msgid "Last metadata expiration check: %s ago on %s."
-msgstr "Sidste tjek af metadataudløb: %s siden den %s."
+msgstr "Sidste tjek af metadataudløb: %s siden %s."
 
 #: ../dnf/base.py:448
 msgid ""
@@ -3146,11 +3147,11 @@ msgstr "GPG-nøgle på %s (0x%s) er allerede installeret"
 
 #: ../dnf/base.py:2296
 msgid "The key has been approved."
-msgstr ""
+msgstr "Nøglen er blevet godkendt."
 
 #: ../dnf/base.py:2299
 msgid "The key has been rejected."
-msgstr ""
+msgstr "Nøglen er blevet afvist."
 
 #: ../dnf/base.py:2327
 #, python-format

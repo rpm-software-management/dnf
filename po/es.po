@@ -20,13 +20,14 @@
 # Eduard Lucena <x3mboy@fedoraproject.org>, 2017. #zanata
 # Emilio Herrera <ehespinosa57@gmail.com>, 2017. #zanata
 # Máximo Castañeda Riloba <mcrcctm@gmail.com>, 2017. #zanata
+# Ludek Janda <ljanda@redhat.com>, 2018. #zanata
 # Máximo Castañeda Riloba <mcrcctm@gmail.com>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-15 09:16+0200\n"
-"PO-Revision-Date: 2018-10-01 03:13+0000\n"
+"PO-Revision-Date: 2018-11-22 04:18+0000\n"
 "Last-Translator: Máximo Castañeda Riloba <mcrcctm@gmail.com>\n"
 "Language-Team: Spanish (http://www.transifex.com/projects/p/dnf/language/es/)\n"
 "MIME-Version: 1.0\n"
@@ -2781,7 +2782,7 @@ msgstr "No hay perfiles predeterminados para el módulo {}:{}"
 
 #: ../dnf/module/module_base.py:91
 msgid "Profile {} not matched for module {}:{}"
-msgstr ""
+msgstr "No hay coincidencia para el perfil {} del módulo {}:{}"
 
 #: ../dnf/module/module_base.py:111 ../dnf/module/module_base.py:141
 #: ../dnf/module/module_base.py:271 ../dnf/module/module_base.py:284
@@ -2821,23 +2822,23 @@ msgstr "No se ha indicado perfil para '{}', por favor indique uno."
 
 #: ../dnf/dnssec.py:222
 msgid "DNSSEC extension: Key for user "
-msgstr ""
+msgstr "Extensión DNSSEC: la clave para el usuario "
 
 #: ../dnf/dnssec.py:224
 msgid "is valid."
-msgstr ""
+msgstr "es válida."
 
 #: ../dnf/dnssec.py:226
 msgid "has unknown status."
-msgstr ""
+msgstr "tiene un estado desconocido."
 
 #: ../dnf/dnssec.py:234
 msgid "DNSSEC extension: "
-msgstr ""
+msgstr "Extensión DNSSEC: "
 
 #: ../dnf/dnssec.py:266
 msgid "Testing already imported keys for their validity."
-msgstr ""
+msgstr "Comprobando la validez de las claves importadas."
 
 #: ../dnf/automatic/main.py:192
 msgid "Started dnf-automatic."
@@ -3253,11 +3254,11 @@ msgstr "La llave GPG de %s (0x%s) ya se encuentra instalada"
 
 #: ../dnf/base.py:2296
 msgid "The key has been approved."
-msgstr ""
+msgstr "Se ha aprobado la clave."
 
 #: ../dnf/base.py:2299
 msgid "The key has been rejected."
-msgstr ""
+msgstr "Se ha rechazado la clave."
 
 #: ../dnf/base.py:2327
 #, python-format

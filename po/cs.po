@@ -28,7 +28,7 @@ msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-15 09:16+0200\n"
-"PO-Revision-Date: 2018-07-11 09:49+0000\n"
+"PO-Revision-Date: 2018-10-28 07:48+0000\n"
 "Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech (http://www.transifex.com/projects/p/dnf/language/cs/)\n"
 "MIME-Version: 1.0\n"
@@ -42,7 +42,7 @@ msgstr ""
 #: ../dnf/transaction.py:79
 msgctxt "currently"
 msgid "Downgrading"
-msgstr ""
+msgstr "Snížení verze"
 
 #: ../dnf/transaction.py:80 ../dnf/transaction.py:87 ../dnf/transaction.py:92
 #: ../dnf/transaction.py:94
@@ -53,7 +53,7 @@ msgstr "Vymazání"
 #: ../dnf/transaction.py:82
 msgctxt "currently"
 msgid "Installing"
-msgstr ""
+msgstr "Instalování"
 
 #: ../dnf/transaction.py:83 ../dnf/transaction.py:84 ../dnf/cli/output.py:1829
 msgid "Obsoleting"
@@ -63,7 +63,7 @@ msgstr "Zastaralé"
 #: ../dnf/transaction.py:86
 msgctxt "currently"
 msgid "Reinstalling"
-msgstr ""
+msgstr "Reinstalace"
 
 #. TODO: 'Removing'?
 #: ../dnf/transaction.py:89
@@ -74,7 +74,7 @@ msgstr "K odstranění"
 #: ../dnf/transaction.py:91
 msgctxt "currently"
 msgid "Upgrading"
-msgstr ""
+msgstr "Aktualizace"
 
 #: ../dnf/transaction.py:95
 msgid "Verifying"
@@ -357,19 +357,19 @@ msgstr "Instalace skupiny balíčků"
 #: ../dnf/cli/output.py:1068
 msgctxt "summary"
 msgid "Installing"
-msgstr ""
+msgstr "Instalování"
 
 #. TRANSLATORS: This is for a list of packages to be upgraded.
 #: ../dnf/cli/output.py:1070
 msgctxt "summary"
 msgid "Upgrading"
-msgstr ""
+msgstr "Aktualizace"
 
 #. TRANSLATORS: This is for a list of packages to be reinstalled.
 #: ../dnf/cli/output.py:1072
 msgctxt "summary"
 msgid "Reinstalling"
-msgstr ""
+msgstr "Reinstalace"
 
 #: ../dnf/cli/output.py:1074
 msgid "Installing dependencies"
@@ -396,7 +396,7 @@ msgstr "Odstranění nepoužívaných závislostí"
 #: ../dnf/cli/output.py:1081
 msgctxt "summary"
 msgid "Downgrading"
-msgstr ""
+msgstr "Snížení verze"
 
 #: ../dnf/cli/output.py:1165
 #, python-format
@@ -2697,7 +2697,7 @@ msgstr ""
 
 #: ../dnf/module/__init__.py:27
 msgid "Nothing to show."
-msgstr ""
+msgstr "Nic k zobrazení."
 
 #: ../dnf/module/__init__.py:28
 msgid "Installing newer version of '{}' than specified. Reason: {}"
