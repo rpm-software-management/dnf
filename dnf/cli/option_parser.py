@@ -152,8 +152,7 @@ class OptionParser(argparse.ArgumentParser):
         """ Standard options known to all dnf subcommands. """
         # All defaults need to be a None, so we can always tell whether the user
         # has set something or whether we are getting a default.
-        main_parser = argparse.ArgumentParser(dnf.const.PROGRAM_NAME,
-                                              add_help=False)
+        main_parser = argparse.ArgumentParser(add_help=False)
         main_parser._optionals.title = _("Optional arguments")
         main_parser.add_argument("-c", "--config", dest="config_file_path",
                                  default=None, metavar='[config file]',
@@ -332,7 +331,8 @@ class OptionParser(argparse.ArgumentParser):
         return main_parser
 
     def _command_parser(self, command):
-        prog = "%s %s" % (dnf.const.PROGRAM_NAME, command._basecmd)
+        parser = argparse.ArgumentParser()
+        prog = "%s %s" % (parser.prog, command._basecmd)
         super(OptionParser, self).__init__(prog, add_help=False,
                                            parents=[self.main_parser],
                                            description=command.summary)
@@ -364,8 +364,8 @@ class OptionParser(argparse.ArgumentParser):
         """ get the usage information to show the user. """
         desc = {'main': _('List of Main Commands:'),
                 'plugin': _('List of Plugin Commands:')}
-        name = dnf.const.PROGRAM_NAME
-        usage = '%s [options] COMMAND\n' % name
+        parser = argparse.ArgumentParser()
+        usage = '%s [options] COMMAND\n' % parser.prog
         for grp in ['main', 'plugin']:
             if not grp in self._cmd_groups:
                 # dont add plugin usage, if we dont have plugins
@@ -385,7 +385,7 @@ class OptionParser(argparse.ArgumentParser):
             return self.command_arg_parser.add_argument(*args, **kwargs)
 
     def parse_main_args(self, args):
-        parser = argparse.ArgumentParser(dnf.const.PROGRAM_NAME, add_help=False,
+        parser = argparse.ArgumentParser(add_help=False,
                                          parents=[self.main_parser])
         parser.add_argument('command', nargs='?', help=argparse.SUPPRESS)
         namespace, _unused_args = parser.parse_known_args(args)

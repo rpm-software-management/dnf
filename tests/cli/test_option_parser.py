@@ -20,6 +20,8 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import argparse
+
 from dnf.cli.option_parser import OptionParser
 
 import dnf.cli.commands
@@ -120,8 +122,9 @@ class OptionParserAddCmdTest(tests.support.TestCase):
         self.assertFalse(opts.help)
 
     def test_get_usage(self):
+        parser = argparse.ArgumentParser()
         output = [
-            u'dnf [options] COMMAND',
+            u'%s [options] COMMAND' % parser.prog,
             u'',
             u'List of Main Commands:',
             u'',

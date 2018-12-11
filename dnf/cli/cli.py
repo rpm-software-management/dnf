@@ -910,7 +910,7 @@ class Cli(object):
         # save our original args out
         self.base.args = args
         # save out as a nice command string
-        self.cmdstring = dnf.const.PROGRAM_NAME + ' '
+        self.cmdstring = self.optparser.prog + ' '
         for arg in self.base.args:
             self.cmdstring += '%s ' % arg
 
