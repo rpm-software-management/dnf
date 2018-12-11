@@ -20,6 +20,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import argparse
 import os
 import re
 from argparse import Namespace
@@ -192,7 +193,9 @@ class ConfigureTest(tests.support.DnfBaseTestCase):
             self.cli.configure(['update', '-c', self.conffile])
         reg = re.compile('^/var/tmp/dnf-[.a-zA-Z0-9_-]+$')
         self.assertIsNotNone(reg.match(self.base.conf.cachedir))
-        self.assertEqual(self.cli.cmdstring, "dnf update -c %s " % self.conffile)
+        parser = argparse.ArgumentParser()
+        expected = "%s update -c %s " % (parser.prog, self.conffile)
+        self.assertEqual(self.cli.cmdstring, expected)
 
     @mock.patch('dnf.util.am_i_root', lambda: True)
     def test_configure_root(self):
@@ -202,14 +205,16 @@ class ConfigureTest(tests.support.DnfBaseTestCase):
             self.cli.configure(['update', '--nogpgcheck', '-c', self.conffile])
         reg = re.compile('^/var/cache/dnf$')
         self.assertIsNotNone(reg.match(self.base.conf.system_cachedir))
-        self.assertEqual(self.cli.cmdstring,
-                         "dnf update --nogpgcheck -c %s " % self.conffile)
+        parser = argparse.ArgumentParser()
+        expected = "%s update --nogpgcheck -c %s " % (parser.prog, self.conffile)
+        self.assertEqual(self.cli.cmdstring, expected)
 
     def test_configure_verbose(self):
         with mock.patch('dnf.rpm.detect_releasever', return_value=69):
             self.cli.configure(['-v', 'update', '-c', self.conffile])
-        self.assertEqual(self.cli.cmdstring, "dnf -v update -c %s " %
-                         self.conffile)
+        parser = argparse.ArgumentParser()
+        expected = "%s -v update -c %s " % (parser.prog, self.conffile)
+        self.assertEqual(self.cli.cmdstring, expected)
         self.assertEqual(self.base.conf.debuglevel, 6)
         self.assertEqual(self.base.conf.errorlevel, 6)
 

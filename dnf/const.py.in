@@ -48,10 +48,9 @@ TMPDIR='/var/tmp/'
 VERBOSE_LEVEL=6
 
 PREFIX=NAME.lower()
-PROGRAM_NAME=NAME.lower()
+PROGRAM_NAME=NAME.lower()  # Deprecated - no longer used, Argparser prints program name based on sys.argv
 PLUGINCONFPATH = '/etc/dnf/plugins'  # :api
-PLUGINPATH = '%s/%s-plugins' % (distutils.sysconfig.get_python_lib(),
-                                PROGRAM_NAME)
+PLUGINPATH = '%s/dnf-plugins' % distutils.sysconfig.get_python_lib()
 VERSION='@DNF_VERSION@'
 USER_AGENT = "dnf/%s" % VERSION
 
