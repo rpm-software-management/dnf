@@ -158,21 +158,6 @@ class BaseCli(dnf.Base):
         :return: history database transaction ID or None
         """
 
-        # Reports about excludes and includes (but not from plugins)
-        if self.conf.excludepkgs:
-            logger.debug(_('Excludes in dnf.conf: ') +
-                         ", ".join(sorted(set(self.conf.excludepkgs))))
-        if self.conf.includepkgs:
-            logger.debug(_('Includes in dnf.conf: ') +
-                         ", ".join(sorted(set(self.conf.includepkgs))))
-        for repo in self.repos.iter_enabled():
-            if repo.excludepkgs:
-                logger.debug(_('Excludes in repo ') + repo.id + ": " +
-                             ", ".join(sorted(set(repo.excludepkgs))))
-            if repo.includepkgs:
-                logger.debug(_('Includes in repo ') + repo.id + ": " +
-                             ", ".join(sorted(set(repo.includepkgs))))
-
         trans = self.transaction
         pkg_str = self.output.list_transaction(trans)
         if pkg_str:
@@ -1104,4 +1089,20 @@ class Cli(object):
             2 = we've got work yet to do, onto the next stage
         """
         self._process_demands()
+
+        # Reports about excludes and includes (but not from plugins)
+        if self.base.conf.excludepkgs:
+            logger.debug(
+                _('Excludes in dnf.conf: ') + ", ".join(sorted(set(self.base.conf.excludepkgs))))
+        if self.base.conf.includepkgs:
+            logger.debug(
+                _('Includes in dnf.conf: ') + ", ".join(sorted(set(self.base.conf.includepkgs))))
+        for repo in self.base.repos.iter_enabled():
+            if repo.excludepkgs:
+                logger.debug(_('Excludes in repo ') + repo.id + ": "
+                             + ", ".join(sorted(set(repo.excludepkgs))))
+            if repo.includepkgs:
+                logger.debug(_('Includes in repo ') + repo.id + ": "
+                             + ", ".join(sorted(set(repo.includepkgs))))
+
         return self.command.run()
