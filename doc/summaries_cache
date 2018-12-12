@@ -2622,5 +2622,13 @@
     [
         1636480,
         "dnf-automatic timer files: Incorrect dependency WantedBy=basic.target causing ordering cycle for systemd"
+    ],
+    [
+        1654738,
+        "hotfix repository content is not used when installing a module stream"
+    ],
+    [
+        1495482,
+        "system-upgrade fails when snapper plugin installed"
     ]
 ]

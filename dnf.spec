@@ -499,6 +499,18 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Wed Dec 12 2018 Jaroslav Mracek <jmracek@redhat.com> - 4.0.10-1
+- Updated difference YUM vs. DNF for yum-updateonboot
+- Added new command ``dnf alias [options] [list|add|delete] [<name>...]`` to allow the user to
+  define and manage a list of aliases
+- Enhanced documentation
+- Unifying return codes for remove operations
+- [transaction] Make transaction content available for commands
+- Triggering transaction hooks if no transaction (RhBug:1650157)
+- Add hotfix packages to install pool (RhBug:1654738)
+- Report group operation in transaction table
+- [sack] Change algorithm to calculate rpmdb_version
+
 * Thu Nov 22 2018 Jaroslav Mracek <jmracek@redhat.com> - 4.0.9-1
 - Added dnf.repo.Repo.get_http_headers
 - Added dnf.repo.Repo.set_http_headers

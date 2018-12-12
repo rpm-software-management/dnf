@@ -19,6 +19,26 @@
  DNF Release Notes
 ###################
 
+====================
+4.0.10 Release Notes
+====================
+
+* Updated difference YUM vs. DNF for yum-updateonboot
+* Added new command ``dnf alias [options] [list|add|delete] [<name>...]`` to allow the user to
+  define and manage a list of aliases
+* Enhanced documentation
+* Unifying return codes for remove operations
+* [transaction] Make transaction content available for commands
+* Triggering transaction hooks if no transaction (RhBug:1650157)
+* Add hotfix packages to install pool (RhBug:1654738)
+* Report group operation in transaction table
+* [sack] Change algorithm to calculate rpmdb_version
+
+Bugs fixed in 4.0.10:
+
+* :rhbug:`1654738`
+* :rhbug:`1495482`
+
 ===================
 4.0.9 Release Notes
 ===================
