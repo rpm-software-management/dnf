@@ -28,6 +28,7 @@ PKG_INSTALL = dnf.transaction.PKG_INSTALL  # :api
 PKG_OBSOLETE = dnf.transaction.PKG_OBSOLETE  # :api
 PKG_REINSTALL = dnf.transaction.PKG_REINSTALL  # :api
 PKG_REMOVE = dnf.transaction.PKG_ERASE  # :api
+PKG_ERASE = PKG_REMOVE  # deprecated, use PKG_REMOVE instead
 PKG_UPGRADE = dnf.transaction.PKG_UPGRADE  # :api
 
 PKG_CLEANUP = dnf.transaction.PKG_CLEANUP  # :api
