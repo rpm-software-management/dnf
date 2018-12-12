@@ -418,7 +418,7 @@ file separately in the respective file, or globaly for all aliases in the file A
 ``dnf alias [options] delete <name>...``
 
     Delete aliases.
- 
+
 .. _alias_examples-label:
 
 Alias Examples
