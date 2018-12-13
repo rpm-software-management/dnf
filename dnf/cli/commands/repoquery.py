@@ -100,7 +100,7 @@ class RepoQueryCommand(commands.Command):
                    'repoquery-na': hawkey.FORM_NA,
                    'repoquery-nevra': hawkey.FORM_NEVRA}
 
-    aliases = ('repoquery',) + tuple(nevra_forms.keys())
+    aliases = ('repoquery', 'rq') + tuple(nevra_forms.keys())
     summary = _('search for packages matching keyword')
 
     @staticmethod
