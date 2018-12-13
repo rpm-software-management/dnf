@@ -69,7 +69,11 @@ def _header(path):
     ts = transaction.initReadOnlyTransaction()
     with open(path) as package:
         fdno = package.fileno()
-        return ts.hdrFromFdno(fdno)
+        try:
+            hdr = ts.hdrFromFdno(fdno)
+        except rpm.error as e:
+            raise dnf.exceptions.Error("{0}: '{1}'".format(e, path))
+        return hdr
 
 
 def _invert(dct):
