@@ -30,7 +30,7 @@ class DowngradeCommand(commands.Command):
     downgrade command.
     """
 
-    aliases = ('downgrade',)
+    aliases = ('downgrade', 'dg')
     summary = _("Downgrade a package")
 
     @staticmethod

@@ -235,7 +235,7 @@ class ProvidesCommand(Command):
     provides command.
     """
 
-    aliases = ('provides', 'whatprovides')
+    aliases = ('provides', 'whatprovides', 'prov')
     summary = _('find what package provides the given value')
 
     @staticmethod
@@ -816,7 +816,7 @@ class HistoryCommand(Command):
     history command.
     """
 
-    aliases = ('history',)
+    aliases = ('history', 'hist')
     summary = _('display, or use, the transaction history')
 
     transaction_ids = set()

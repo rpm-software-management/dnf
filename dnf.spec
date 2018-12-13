@@ -412,6 +412,7 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %dir %{confdir}/protected.d
 %dir %{confdir}/vars
 %dir %{confdir}/aliases.d
+%exclude %{confdir}/aliases.d/zypper.conf
 %config(noreplace) %{confdir}/%{name}.conf
 %config(noreplace) %{confdir}/protected.d/%{name}.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
