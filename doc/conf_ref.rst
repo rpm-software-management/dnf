@@ -452,7 +452,12 @@ configuration.
 ``gpgcheck``
     :ref:`boolean <boolean-label>`
 
-    Whether to perform GPG signature check on packages found in this repository. The default is False.
+    Whether to perform GPG signature check on packages found in this repository.
+    The default is False.
+
+    This option can only be used to strengthen the active RPM security policy set with the ``%_pkgverify_level`` macro (see the ``/usr/lib/rpm/macros`` file for details).
+    That means, if the macro is set to 'signature' or 'all' and this option is False, it will be overridden to True during DNF runtime, and a warning will be printed.
+    To squelch the warning, make sure this option is True for every enabled repository, and also enable :ref:`localpkg_gpgcheck <localpkg_gpgcheck-label>`.
 
 .. _include-label:
 
@@ -470,10 +475,14 @@ configuration.
 
     Determines how DNF resolves host names. Set this to '4'/'IPv4' or '6'/'IPv6' to resolve to IPv4 or IPv6 addresses only. By default, DNF resolves to either addresses.
 
+.. _localpkg_gpgcheck-label:
+
 ``localpkg_gpgcheck``
     :ref:`boolean <boolean-label>`
 
-    Whether to perform a GPG signature check on local packages (packages in a file, not in a repositoy). The default is False.
+    Whether to perform a GPG signature check on local packages (packages in a file, not in a repository).
+    The default is False.
+    This option is subject to the active RPM security policy (see :ref:`gpgcheck <gpgcheck-label>` for more details).
 
 ``max_parallel_downloads``
     :ref:`integer <integer-label>`
