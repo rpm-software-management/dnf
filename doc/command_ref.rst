@@ -282,7 +282,7 @@ Options
     Do not install documentation. Sets the rpm flag 'RPMTRANS_FLAG_NODOCS'.
 
 ``--nogpgcheck``
-    Skip checking GPG signatures on packages.
+    Skip checking GPG signatures on packages (if RPM policy allows).
 
 ``--noplugins``
     Disable all plugins.

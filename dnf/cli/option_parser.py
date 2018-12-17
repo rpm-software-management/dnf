@@ -275,7 +275,7 @@ class OptionParser(argparse.ArgumentParser):
                                  help=_("disable removal of dependencies that are no longer used"))
         main_parser.add_argument("--nogpgcheck", action="store_false",
                                  default=None, dest='gpgcheck',
-                                 help=_("disable gpg signature checking"))
+                                 help=_("disable gpg signature checking (if RPM policy allows)"))
         main_parser.add_argument("--color", dest="color", default=None,
                                  help=_("control whether color is used"))
         main_parser.add_argument("--refresh", dest="freshest_metadata",

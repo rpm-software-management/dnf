@@ -957,6 +957,24 @@ class Cli(object):
         if self.base.conf.color != 'auto':
             self.base.output.term.reinit(color=self.base.conf.color)
 
+        if rpm.expandMacro('%_pkgverify_level') in ('signature', 'all'):
+            forcing = False
+            for repo in self.base.repos.iter_enabled():
+                if repo.gpgcheck:
+                    continue
+                repo.gpgcheck = True
+                forcing = True
+            if not self.base.conf.localpkg_gpgcheck:
+                self.base.conf.localpkg_gpgcheck = True
+                forcing = True
+            if forcing:
+                logger.warning(
+                    _("Warning: Enforcing GPG signature check globally "
+                      "as per active RPM security policy (see 'gpgcheck' in "
+                      "dnf.conf(5) for how to squelch this message)"
+                      )
+                )
+
     def _read_conf_file(self, releasever=None):
         timer = dnf.logging.Timer('config')
         conf = self.base.conf
