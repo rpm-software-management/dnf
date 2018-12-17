@@ -3,13 +3,12 @@
 # Corne van der Plas <vdplas@gmail.com>, 2017. #zanata
 # Geert Warrink <geert.warrink@onsnet.nu>, 2017. #zanata
 # Richard E. van der Luit <nippur@fedoraproject.org>, 2017. #zanata
-# Geert Warrink <geert.warrink@onsnet.nu>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-10-15 09:16+0200\n"
-"PO-Revision-Date: 2018-09-26 10:19+0000\n"
+"POT-Creation-Date: 2018-08-28 14:09+0200\n"
+"PO-Revision-Date: 2017-10-01 07:28+0000\n"
 "Last-Translator: Geert Warrink <geert.warrink@onsnet.nu>\n"
 "Language-Team: Dutch\n"
 "MIME-Version: 1.0\n"
@@ -19,67 +18,59 @@ msgstr ""
 "Plural-Forms: nplurals=2; plural=(n != 1)\n"
 "X-Generator: Zanata 4.6.2\n"
 
-#. TRANSLATORS: This is for a single package currently being downgraded.
-#: ../dnf/transaction.py:79
-msgctxt "currently"
+#: ../dnf/transaction.py:78 ../dnf/cli/output.py:1086
 msgid "Downgrading"
 msgstr "Downgraden"
 
-#: ../dnf/transaction.py:80 ../dnf/transaction.py:87 ../dnf/transaction.py:92
-#: ../dnf/transaction.py:94
+#: ../dnf/transaction.py:79 ../dnf/transaction.py:84 ../dnf/transaction.py:88
+#: ../dnf/transaction.py:90
 msgid "Cleanup"
 msgstr "Opschonen"
 
-#. TRANSLATORS: This is for a single package currently being installed.
-#: ../dnf/transaction.py:82
-msgctxt "currently"
+#: ../dnf/transaction.py:80 ../dnf/cli/output.py:1077
 msgid "Installing"
 msgstr "Installeren"
 
-#: ../dnf/transaction.py:83 ../dnf/transaction.py:84 ../dnf/cli/output.py:1829
+#: ../dnf/transaction.py:81 ../dnf/transaction.py:82 ../dnf/cli/output.py:1834
 msgid "Obsoleting"
 msgstr "Als verouderd aanmerken"
 
-#. TRANSLATORS: This is for a single package currently being reinstalled.
-#: ../dnf/transaction.py:86
-msgctxt "currently"
+#: ../dnf/transaction.py:83 ../dnf/cli/output.py:1079
 msgid "Reinstalling"
 msgstr "Herinstalleren"
 
 #. TODO: 'Removing'?
-#: ../dnf/transaction.py:89
+#: ../dnf/transaction.py:86
 msgid "Erasing"
 msgstr "Wissen"
 
-#. TRANSLATORS: This is for a single package currently being upgraded.
-#: ../dnf/transaction.py:91
-msgctxt "currently"
+#: ../dnf/transaction.py:87 ../dnf/cli/output.py:1078
 msgid "Upgrading"
 msgstr "Upgraden"
 
-#: ../dnf/transaction.py:95
+#: ../dnf/transaction.py:91
 msgid "Verifying"
 msgstr "Verifiëren"
 
-#: ../dnf/transaction.py:96
+#: ../dnf/transaction.py:92
 msgid "Running scriptlet"
 msgstr "Uitvoeren van scriptlet"
 
-#: ../dnf/transaction.py:98
+#: ../dnf/transaction.py:94
 msgid "Preparing"
 msgstr "Voorbereiden"
 
-#: ../dnf/plugin.py:60
+#: ../dnf/plugin.py:61
 #, python-format
 msgid "Parsing file failed: %s"
-msgstr "Ontleden van bestand mislukte: %s"
+msgstr ""
 
-#: ../dnf/plugin.py:132
+#: ../dnf/plugin.py:130
 #, python-format
 msgid "Loaded plugins: %s"
-msgstr "Geladen plug-ins: %s"
+msgstr ""
 
-#: ../dnf/plugin.py:180
+#: ../dnf/plugin.py:178
 #, python-format
 msgid "Failed loading plugin: %s"
 msgstr "Fout bij laden plugin: %s"
@@ -94,292 +85,263 @@ msgstr "%s repository aanzetten"
 msgid "Added %s repo from %s"
 msgstr "%s repo toegevoegd van %s"
 
-#: ../dnf/cli/output.py:493 ../dnf/cli/commands/search.py:60
+#: ../dnf/cli/output.py:506 ../dnf/cli/commands/search.py:56
 msgid "Name"
 msgstr "Naam"
 
-#: ../dnf/cli/output.py:495
+#: ../dnf/cli/output.py:508
 msgid "Epoch"
 msgstr "Epoch"
 
-#: ../dnf/cli/output.py:496 ../dnf/cli/output.py:1193
+#: ../dnf/cli/output.py:509 ../dnf/cli/output.py:1198
 msgid "Version"
 msgstr "Versie"
 
-#: ../dnf/cli/output.py:497
+#: ../dnf/cli/output.py:510
 msgid "Release"
 msgstr "Release"
 
-#: ../dnf/cli/output.py:498 ../dnf/cli/output.py:1192
+#: ../dnf/cli/output.py:511 ../dnf/cli/output.py:1197
 msgid "Arch"
 msgstr "Arch"
 
-#: ../dnf/cli/output.py:499 ../dnf/cli/output.py:1195
+#: ../dnf/cli/output.py:512 ../dnf/cli/output.py:1200
 msgid "Size"
 msgstr "Grootte"
 
-#: ../dnf/cli/output.py:500
+#: ../dnf/cli/output.py:513
 msgid "Source"
 msgstr "Bron"
 
-#: ../dnf/cli/output.py:501
+#: ../dnf/cli/output.py:514
 msgid "Repo"
 msgstr "Repo"
 
-#: ../dnf/cli/output.py:506
+#: ../dnf/cli/output.py:519
 msgid "From repo"
 msgstr "Van repo"
 
 #. :hawkey does not support changelog information
 #. print(_("Committer   : %s") % ucd(pkg.committer))
 #. print(_("Committime  : %s") % time.ctime(pkg.committime))
-#: ../dnf/cli/output.py:511
+#: ../dnf/cli/output.py:524
 msgid "Packager"
 msgstr "Pakketsamensteller"
 
-#: ../dnf/cli/output.py:512
+#: ../dnf/cli/output.py:525
 msgid "Buildtime"
 msgstr "Bouwtijdstip"
 
-#: ../dnf/cli/output.py:515
+#: ../dnf/cli/output.py:528
 msgid "Install time"
 msgstr "Installatietijd"
 
-#: ../dnf/cli/output.py:523
+#: ../dnf/cli/output.py:536
 msgid "Installed by"
 msgstr "Geïnstalleerd door"
 
-#: ../dnf/cli/output.py:524 ../dnf/cli/commands/search.py:61
+#: ../dnf/cli/output.py:537 ../dnf/cli/commands/search.py:57
 msgid "Summary"
 msgstr "Samenvatting"
 
-#: ../dnf/cli/output.py:526 ../dnf/cli/commands/search.py:63
+#: ../dnf/cli/output.py:539 ../dnf/cli/commands/search.py:59
 msgid "URL"
 msgstr "URL"
 
-#: ../dnf/cli/output.py:527
+#: ../dnf/cli/output.py:540
 msgid "License"
 msgstr "Licentie"
 
-#: ../dnf/cli/output.py:528 ../dnf/cli/commands/search.py:62
+#: ../dnf/cli/output.py:541 ../dnf/cli/commands/search.py:58
 #: ../dnf/cli/commands/updateinfo.py:305
 msgid "Description"
 msgstr "Beschrijving"
 
-#: ../dnf/cli/output.py:653
+#: ../dnf/cli/output.py:666
 msgid "y"
 msgstr "y"
 
-#: ../dnf/cli/output.py:653
+#: ../dnf/cli/output.py:666
 msgid "yes"
 msgstr "yes"
 
-#: ../dnf/cli/output.py:654
+#: ../dnf/cli/output.py:667
 msgid "n"
 msgstr "n"
 
-#: ../dnf/cli/output.py:654
+#: ../dnf/cli/output.py:667
 msgid "no"
 msgstr "nee"
 
-#: ../dnf/cli/output.py:658
+#: ../dnf/cli/output.py:671
 msgid "Is this ok [y/N]: "
 msgstr "Is dit goed [y/N]: "
 
-#: ../dnf/cli/output.py:662
+#: ../dnf/cli/output.py:675
 msgid "Is this ok [Y/n]: "
 msgstr "Is dit goed [Y/n]: "
 
-#: ../dnf/cli/output.py:742
+#: ../dnf/cli/output.py:755
 #, python-format
 msgid "Group: %s"
 msgstr "Groep: %s"
 
-#: ../dnf/cli/output.py:746
+#: ../dnf/cli/output.py:759
 #, python-format
 msgid " Group-Id: %s"
 msgstr " Groep-Id: %s"
 
-#: ../dnf/cli/output.py:748 ../dnf/cli/output.py:787
+#: ../dnf/cli/output.py:761 ../dnf/cli/output.py:800
 #, python-format
 msgid " Description: %s"
 msgstr " Beschrijving: %s"
 
-#: ../dnf/cli/output.py:750
+#: ../dnf/cli/output.py:763
 #, python-format
 msgid " Language: %s"
 msgstr " Taal:%s"
 
-#: ../dnf/cli/output.py:753
+#: ../dnf/cli/output.py:766
 msgid " Mandatory Packages:"
 msgstr " Verplichte pakketten:"
 
-#: ../dnf/cli/output.py:754
+#: ../dnf/cli/output.py:767
 msgid " Default Packages:"
 msgstr " Standaardpakketten:"
 
-#: ../dnf/cli/output.py:755
+#: ../dnf/cli/output.py:768
 msgid " Optional Packages:"
 msgstr " Optionele pakketten:"
 
-#: ../dnf/cli/output.py:756
+#: ../dnf/cli/output.py:769
 msgid " Conditional Packages:"
 msgstr " Voorwaardelijke pakketten:"
 
-#: ../dnf/cli/output.py:781
+#: ../dnf/cli/output.py:794
 #, python-format
 msgid "Environment Group: %s"
 msgstr "Omgevingsgroep: %s"
 
-#: ../dnf/cli/output.py:784
+#: ../dnf/cli/output.py:797
 #, python-format
 msgid " Environment-Id: %s"
 msgstr " Omgeving-ID: %s"
 
-#: ../dnf/cli/output.py:790
+#: ../dnf/cli/output.py:803
 msgid " Mandatory Groups:"
 msgstr " Verplichte groepen:"
 
-#: ../dnf/cli/output.py:791
+#: ../dnf/cli/output.py:804
 msgid " Optional Groups:"
 msgstr " Optionele groepen:"
 
-#: ../dnf/cli/output.py:812
+#: ../dnf/cli/output.py:825
 msgid "Matched from:"
 msgstr "Overeenkomend van:"
 
-#: ../dnf/cli/output.py:826
+#: ../dnf/cli/output.py:839
 #, python-format
 msgid "Filename    : %s"
 msgstr "Bestandsnaam   : %s"
 
-#: ../dnf/cli/output.py:850
+#: ../dnf/cli/output.py:863
 #, python-format
 msgid "Repo        : %s"
 msgstr "Repo        : %s"
 
-#: ../dnf/cli/output.py:859
+#: ../dnf/cli/output.py:872
 msgid "Description : "
 msgstr "Beschrijving: "
 
-#: ../dnf/cli/output.py:863
+#: ../dnf/cli/output.py:876
 #, python-format
 msgid "URL         : %s"
 msgstr "URL         : %s"
 
-#: ../dnf/cli/output.py:867
+#: ../dnf/cli/output.py:880
 #, python-format
 msgid "License     : %s"
 msgstr "Licentie     : %s"
 
-#: ../dnf/cli/output.py:873
+#: ../dnf/cli/output.py:886
 #, python-format
 msgid "Provide    : %s"
 msgstr "Verschaft    : %s"
 
-#: ../dnf/cli/output.py:893
+#: ../dnf/cli/output.py:906
 #, python-format
 msgid "Other       : %s"
 msgstr "Andere       : %s"
 
-#: ../dnf/cli/output.py:942
+#: ../dnf/cli/output.py:955
 msgid "There was an error calculating total download size"
 msgstr "Bij het berekenen van totale downloadgrootte is iets mis gegaan"
 
-#: ../dnf/cli/output.py:948
+#: ../dnf/cli/output.py:961
 #, python-format
 msgid "Total size: %s"
 msgstr "Totale grootte        : %s"
 
-#: ../dnf/cli/output.py:951
+#: ../dnf/cli/output.py:964
 #, python-format
 msgid "Total download size: %s"
 msgstr "Totale downloadgrootte: %s"
 
-#: ../dnf/cli/output.py:954
+#: ../dnf/cli/output.py:967
 #, python-format
 msgid "Installed size: %s"
 msgstr "Installatiegrootte    : %s"
 
-#: ../dnf/cli/output.py:972
+#: ../dnf/cli/output.py:985
 msgid "There was an error calculating installed size"
 msgstr "Bij het berekenen van totale installatiegrootte is iets mis gegaan"
 
-#: ../dnf/cli/output.py:976
+#: ../dnf/cli/output.py:989
 #, python-format
 msgid "Freed space: %s"
 msgstr "Vrijgemaakte ruimte: %s"
 
-#: ../dnf/cli/output.py:985
+#: ../dnf/cli/output.py:998
 msgid "Marking packages as installed by the group:"
 msgstr "Markeren pakketten als geïnstalleerd door de groep:"
 
-#: ../dnf/cli/output.py:992
+#: ../dnf/cli/output.py:1005
 msgid "Marking packages as removed by the group:"
 msgstr "Markeren pakketten als verwijderd door de groep:"
 
-#: ../dnf/cli/output.py:1002
+#: ../dnf/cli/output.py:1015
 msgid "Group"
 msgstr "Groep"
 
-#: ../dnf/cli/output.py:1002
+#: ../dnf/cli/output.py:1015
 msgid "Packages"
 msgstr "Pakketten"
 
-#: ../dnf/cli/output.py:1063
-msgid "Installing group/module packages"
-msgstr "Groep/module pakketten installeren"
-
-#: ../dnf/cli/output.py:1064
+#: ../dnf/cli/output.py:1080
 msgid "Installing group packages"
 msgstr "Groepspakketten installeren"
 
-#. TRANSLATORS: This is for a list of packages to be installed.
-#: ../dnf/cli/output.py:1068
-msgctxt "summary"
-msgid "Installing"
-msgstr "Installeren"
-
-#. TRANSLATORS: This is for a list of packages to be upgraded.
-#: ../dnf/cli/output.py:1070
-msgctxt "summary"
-msgid "Upgrading"
-msgstr "Upgraden"
-
-#. TRANSLATORS: This is for a list of packages to be reinstalled.
-#: ../dnf/cli/output.py:1072
-msgctxt "summary"
-msgid "Reinstalling"
-msgstr "Herinstalleren"
-
-#: ../dnf/cli/output.py:1074
+#: ../dnf/cli/output.py:1081
 msgid "Installing dependencies"
 msgstr "Afhankelijkheden installeren"
 
-#: ../dnf/cli/output.py:1075
+#: ../dnf/cli/output.py:1082
 msgid "Installing weak dependencies"
 msgstr "Zwakke afhankelijkheden worden geïnstalleerd"
 
-#. TRANSLATORS: This is for a list of packages to be removed.
-#: ../dnf/cli/output.py:1077
+#: ../dnf/cli/output.py:1083
 msgid "Removing"
 msgstr "Verwijderen"
 
-#: ../dnf/cli/output.py:1078
+#: ../dnf/cli/output.py:1084
 msgid "Removing dependent packages"
 msgstr "Afhankelijke pakketten verwijderen"
 
-#: ../dnf/cli/output.py:1079
+#: ../dnf/cli/output.py:1085
 msgid "Removing unused dependencies"
 msgstr "Verwijderen ongebruikte afhankelijkheden"
 
-#. TRANSLATORS: This is for a list of packages to be downgraded.
-#: ../dnf/cli/output.py:1081
-msgctxt "summary"
-msgid "Downgrading"
-msgstr "Downgraden"
-
-#: ../dnf/cli/output.py:1165
+#: ../dnf/cli/output.py:1170
 #, python-format
 msgid ""
 "Skipping packages with conflicts:\n"
@@ -388,31 +350,31 @@ msgstr ""
 "Conflicterende pakketten overslaan:\n"
 "(voeg '%s' toe aan opdrachtregel om upgrade te forceren)"
 
-#: ../dnf/cli/output.py:1173
+#: ../dnf/cli/output.py:1178
 #, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr "Pakketten overslaan met defecte afhankelijkheden %s"
 
-#: ../dnf/cli/output.py:1177
+#: ../dnf/cli/output.py:1182
 msgid " or part of a group"
 msgstr " of onderdeel van een groep"
 
-#: ../dnf/cli/output.py:1191 ../dnf/cli/output.py:1237
-#: ../dnf/cli/output.py:1253 ../dnf/cli/output.py:1917
+#: ../dnf/cli/output.py:1196 ../dnf/cli/output.py:1242
+#: ../dnf/cli/output.py:1258 ../dnf/cli/output.py:1922
 msgid "Package"
 msgid_plural "Packages"
 msgstr[0] "Pakket"
 msgstr[1] "Pakketten"
 
-#: ../dnf/cli/output.py:1194
+#: ../dnf/cli/output.py:1199
 msgid "Repository"
 msgstr "Repo"
 
-#: ../dnf/cli/output.py:1207
+#: ../dnf/cli/output.py:1212
 msgid "replacing"
 msgstr "vervangen"
 
-#: ../dnf/cli/output.py:1215
+#: ../dnf/cli/output.py:1220
 #, python-format
 msgid ""
 "\n"
@@ -424,290 +386,290 @@ msgstr ""
 "%s\n"
 
 #. TODO: remove
-#: ../dnf/cli/output.py:1220 ../dnf/cli/output.py:1825
-#: ../dnf/cli/output.py:1826
+#: ../dnf/cli/output.py:1225 ../dnf/cli/output.py:1830
+#: ../dnf/cli/output.py:1831
 msgid "Install"
 msgstr "Installeren"
 
-#: ../dnf/cli/output.py:1224 ../dnf/cli/output.py:1834
+#: ../dnf/cli/output.py:1229 ../dnf/cli/output.py:1839
 msgid "Upgrade"
 msgstr "Upgrade"
 
-#: ../dnf/cli/output.py:1225
+#: ../dnf/cli/output.py:1230
 msgid "Remove"
 msgstr "Verwijderen"
 
-#: ../dnf/cli/output.py:1227 ../dnf/cli/output.py:1832
+#: ../dnf/cli/output.py:1232 ../dnf/cli/output.py:1837
 msgid "Downgrade"
 msgstr "Downgrade"
 
-#: ../dnf/cli/output.py:1228
+#: ../dnf/cli/output.py:1233
 msgid "Skip"
 msgstr "Overslaan"
 
-#: ../dnf/cli/output.py:1255
+#: ../dnf/cli/output.py:1260
 msgid "Dependent package"
 msgid_plural "Dependent packages"
 msgstr[0] "Afhankelijk pakket"
 msgstr[1] "Afhankelijke pakketten"
 
-#: ../dnf/cli/output.py:1314 ../dnf/cli/output.py:1667
-#: ../dnf/cli/output.py:1835
+#: ../dnf/cli/output.py:1319 ../dnf/cli/output.py:1672
+#: ../dnf/cli/output.py:1840
 msgid "Upgraded"
 msgstr "Upgraded"
 
-#: ../dnf/cli/output.py:1315 ../dnf/cli/output.py:1667
-#: ../dnf/cli/output.py:1833
+#: ../dnf/cli/output.py:1320 ../dnf/cli/output.py:1672
+#: ../dnf/cli/output.py:1838
 msgid "Downgraded"
 msgstr "Downgraded"
 
-#: ../dnf/cli/output.py:1316 ../dnf/cli/output.py:1666
-#: ../dnf/cli/output.py:1668 ../dnf/cli/commands/updateinfo.py:306
+#: ../dnf/cli/output.py:1321 ../dnf/cli/output.py:1671
+#: ../dnf/cli/output.py:1673 ../dnf/cli/commands/updateinfo.py:306
 msgid "Installed"
 msgstr "Geïnstalleerd"
 
-#: ../dnf/cli/output.py:1320
+#: ../dnf/cli/output.py:1325
 msgid "Reinstalled"
 msgstr "Opnieuw geïnstalleerd."
 
-#: ../dnf/cli/output.py:1321
+#: ../dnf/cli/output.py:1326
 msgid "Removed"
 msgstr "Verwijderd"
 
-#: ../dnf/cli/output.py:1324
+#: ../dnf/cli/output.py:1329
 msgid "Failed"
 msgstr "Mislukte"
 
-#: ../dnf/cli/output.py:1375
+#: ../dnf/cli/output.py:1380
 msgid "Total"
 msgstr "Totaal"
 
-#: ../dnf/cli/output.py:1403
+#: ../dnf/cli/output.py:1408
 msgid "<unset>"
 msgstr "<unset>"
 
-#: ../dnf/cli/output.py:1404
+#: ../dnf/cli/output.py:1409
 msgid "System"
 msgstr "Systeem"
 
-#: ../dnf/cli/output.py:1474
+#: ../dnf/cli/output.py:1479
 #, python-format
 msgid "Skipping merged transaction %d to %d, as it overlaps"
-msgstr "Samenvoegen van transactie %d naar %d overslaan, om deze overlapt"
+msgstr ""
 
-#: ../dnf/cli/output.py:1485 ../dnf/cli/output.py:1592
+#: ../dnf/cli/output.py:1490 ../dnf/cli/output.py:1597
 msgid "No transactions"
 msgstr "Geen transacties"
 
-#: ../dnf/cli/output.py:1505 ../dnf/cli/output.py:1906
+#: ../dnf/cli/output.py:1510 ../dnf/cli/output.py:1911
 msgid "Bad transaction IDs, or package(s), given"
 msgstr "Slechte transactie-ID of pakket(ten) opgegeven"
 
-#: ../dnf/cli/output.py:1541
+#: ../dnf/cli/output.py:1546
 msgid "Command line"
 msgstr "Opdrachtregel"
 
 #. TRANSLATORS: user names who executed transaction in history command output
-#: ../dnf/cli/output.py:1544
+#: ../dnf/cli/output.py:1549
 msgid "User name"
 msgstr "Gebruikersnaam"
 
 #. REALLY Needs to use columns!
-#: ../dnf/cli/output.py:1545 ../dnf/cli/output.py:1915
+#: ../dnf/cli/output.py:1550 ../dnf/cli/output.py:1920
 msgid "ID"
 msgstr "ID"
 
-#: ../dnf/cli/output.py:1547
+#: ../dnf/cli/output.py:1552
 msgid "Date and time"
 msgstr "Datum en tijd"
 
-#: ../dnf/cli/output.py:1548 ../dnf/cli/output.py:1916
+#: ../dnf/cli/output.py:1553 ../dnf/cli/output.py:1921
 msgid "Action(s)"
 msgstr "Actie(s)"
 
-#: ../dnf/cli/output.py:1549
+#: ../dnf/cli/output.py:1554
 msgid "Altered"
 msgstr "Veranderd"
 
-#: ../dnf/cli/output.py:1608
+#: ../dnf/cli/output.py:1613
 msgid "No transaction ID, or package, given"
 msgstr "Geen transactie-ID of pakket opgegeven"
 
-#: ../dnf/cli/output.py:1666
+#: ../dnf/cli/output.py:1671
 msgid "Erased"
 msgstr "Gewist"
 
-#: ../dnf/cli/output.py:1668
+#: ../dnf/cli/output.py:1673
 msgid "Not installed"
 msgstr "Niet geïnstalleerd"
 
-#: ../dnf/cli/output.py:1669
+#: ../dnf/cli/output.py:1674
 msgid "Older"
 msgstr "Ouder"
 
-#: ../dnf/cli/output.py:1669
+#: ../dnf/cli/output.py:1674
 msgid "Newer"
 msgstr "Nieuwer"
 
-#: ../dnf/cli/output.py:1717 ../dnf/cli/output.py:1719
+#: ../dnf/cli/output.py:1722 ../dnf/cli/output.py:1724
 msgid "Transaction ID :"
 msgstr "Transactie-ID :"
 
-#: ../dnf/cli/output.py:1722
+#: ../dnf/cli/output.py:1727
 msgid "Begin time     :"
 msgstr "Begintijd     :"
 
-#: ../dnf/cli/output.py:1725 ../dnf/cli/output.py:1727
+#: ../dnf/cli/output.py:1730 ../dnf/cli/output.py:1732
 msgid "Begin rpmdb    :"
 msgstr "Begin-rpmdb    :"
 
-#: ../dnf/cli/output.py:1733
+#: ../dnf/cli/output.py:1738
 #, python-format
 msgid "(%u seconds)"
 msgstr "(%u seconds)"
 
-#: ../dnf/cli/output.py:1735
+#: ../dnf/cli/output.py:1740
 #, python-format
 msgid "(%u minutes)"
 msgstr "(%u minutes)"
 
-#: ../dnf/cli/output.py:1737
+#: ../dnf/cli/output.py:1742
 #, python-format
 msgid "(%u hours)"
 msgstr "(%u hours)"
 
-#: ../dnf/cli/output.py:1739
+#: ../dnf/cli/output.py:1744
 #, python-format
 msgid "(%u days)"
 msgstr "(%u days)"
 
-#: ../dnf/cli/output.py:1740
+#: ../dnf/cli/output.py:1745
 msgid "End time       :"
 msgstr "Eindtijd       :"
 
-#: ../dnf/cli/output.py:1743 ../dnf/cli/output.py:1745
+#: ../dnf/cli/output.py:1748 ../dnf/cli/output.py:1750
 msgid "End rpmdb      :"
 msgstr "Eind-rpmdb      :"
 
-#: ../dnf/cli/output.py:1752 ../dnf/cli/output.py:1754
+#: ../dnf/cli/output.py:1757 ../dnf/cli/output.py:1759
 msgid "User           :"
 msgstr "Gebruiker           :"
 
-#: ../dnf/cli/output.py:1758 ../dnf/cli/output.py:1761
-#: ../dnf/cli/output.py:1763 ../dnf/cli/output.py:1765
-#: ../dnf/cli/output.py:1767 ../dnf/cli/output.py:1769
+#: ../dnf/cli/output.py:1763 ../dnf/cli/output.py:1766
+#: ../dnf/cli/output.py:1768 ../dnf/cli/output.py:1770
+#: ../dnf/cli/output.py:1772 ../dnf/cli/output.py:1774
 msgid "Return-Code    :"
 msgstr "Return-Code    :"
 
-#: ../dnf/cli/output.py:1758 ../dnf/cli/output.py:1765
+#: ../dnf/cli/output.py:1763 ../dnf/cli/output.py:1770
 msgid "Aborted"
 msgstr "Afgebroken"
 
-#: ../dnf/cli/output.py:1761 ../dnf/cli/output.py:1769
+#: ../dnf/cli/output.py:1766 ../dnf/cli/output.py:1774
 msgid "Success"
 msgstr "Succes"
 
-#: ../dnf/cli/output.py:1763
+#: ../dnf/cli/output.py:1768
 msgid "Failures:"
 msgstr "Mislukkingen:"
 
-#: ../dnf/cli/output.py:1767
+#: ../dnf/cli/output.py:1772
 msgid "Failure:"
 msgstr "Mislukt:"
 
-#: ../dnf/cli/output.py:1777 ../dnf/cli/output.py:1779
+#: ../dnf/cli/output.py:1782 ../dnf/cli/output.py:1784
 msgid "Releasever     :"
-msgstr "Release versie     :"
+msgstr ""
 
-#: ../dnf/cli/output.py:1784 ../dnf/cli/output.py:1786
+#: ../dnf/cli/output.py:1789 ../dnf/cli/output.py:1791
 msgid "Command Line   :"
 msgstr "Opdrachtregel :"
 
-#: ../dnf/cli/output.py:1792
+#: ../dnf/cli/output.py:1797
 msgid "Comment        :"
 msgstr "Commentaar        :"
 
-#: ../dnf/cli/output.py:1796
+#: ../dnf/cli/output.py:1801
 msgid "Transaction performed with:"
 msgstr "Transactie uitgevoerd met:"
 
-#: ../dnf/cli/output.py:1805
+#: ../dnf/cli/output.py:1810
 msgid "Packages Altered:"
 msgstr "Pakketten veranderd:"
 
-#: ../dnf/cli/output.py:1811
+#: ../dnf/cli/output.py:1816
 msgid "Scriptlet output:"
 msgstr "Scriptlet-output:"
 
-#: ../dnf/cli/output.py:1818
+#: ../dnf/cli/output.py:1823
 msgid "Errors:"
 msgstr "Fouten:"
 
-#: ../dnf/cli/output.py:1827
+#: ../dnf/cli/output.py:1832
 msgid "Dep-Install"
 msgstr "Dep-Installaties"
 
-#: ../dnf/cli/output.py:1828
+#: ../dnf/cli/output.py:1833
 msgid "Obsoleted"
 msgstr "Als verouderd aangemerkt"
 
-#: ../dnf/cli/output.py:1830
+#: ../dnf/cli/output.py:1835
 msgid "Erase"
 msgstr "Gewist"
 
-#: ../dnf/cli/output.py:1831
+#: ../dnf/cli/output.py:1836
 msgid "Reinstall"
 msgstr "Geherinstalleerd"
 
-#: ../dnf/cli/output.py:2004
+#: ../dnf/cli/output.py:2009
 #, python-format
 msgid "---> Package %s.%s %s will be installed"
 msgstr "---> Pakket %s.%s %s zal geïnstalleerd worden"
 
-#: ../dnf/cli/output.py:2006
+#: ../dnf/cli/output.py:2011
 #, python-format
 msgid "---> Package %s.%s %s will be an upgrade"
 msgstr "---> Pakket %s.%s %s is een upgrade"
 
-#: ../dnf/cli/output.py:2008
+#: ../dnf/cli/output.py:2013
 #, python-format
 msgid "---> Package %s.%s %s will be erased"
 msgstr "---> Pakket %s.%s %s zal gewist worden"
 
-#: ../dnf/cli/output.py:2010
+#: ../dnf/cli/output.py:2015
 #, python-format
 msgid "---> Package %s.%s %s will be reinstalled"
 msgstr "---> Pakket %s.%s %s zal opnieuw geïnstalleerd worden"
 
-#: ../dnf/cli/output.py:2012
+#: ../dnf/cli/output.py:2017
 #, python-format
 msgid "---> Package %s.%s %s will be a downgrade"
 msgstr "---> Pakket %s.%s %s zal een downgrade zijn"
 
-#: ../dnf/cli/output.py:2014
+#: ../dnf/cli/output.py:2019
 #, python-format
 msgid "---> Package %s.%s %s will be obsoleting"
 msgstr "---> Pakket %s.%s %s zal verouderd worden"
 
-#: ../dnf/cli/output.py:2016
+#: ../dnf/cli/output.py:2021
 #, python-format
 msgid "---> Package %s.%s %s will be upgraded"
 msgstr "---> Pakket %s.%s %s zal opgewaardeerd worden"
 
-#: ../dnf/cli/output.py:2018
+#: ../dnf/cli/output.py:2023
 #, python-format
 msgid "---> Package %s.%s %s will be obsoleted"
 msgstr "---> Pakket %s.%s %s zal verouderd worden"
 
-#: ../dnf/cli/output.py:2027
+#: ../dnf/cli/output.py:2032
 msgid "--> Starting dependency resolution"
 msgstr "--> Beginnen oplossen afhankelijkheden"
 
-#: ../dnf/cli/output.py:2032
+#: ../dnf/cli/output.py:2037
 msgid "--> Finished dependency resolution"
 msgstr "--> Oplossen afhankelijkheden beeindigd"
 
-#: ../dnf/cli/output.py:2046 ../dnf/crypto.py:132
+#: ../dnf/cli/output.py:2051 ../dnf/crypto.py:132
 #, python-format
 msgid ""
 "Importing GPG key 0x%s:\n"
@@ -733,12 +695,12 @@ msgstr "slecht format: %s"
 #: ../dnf/cli/option_parser.py:101
 #, python-format
 msgid "Setopt argument has multiple values: %s"
-msgstr "Setopt argument heeft meerdere waarden: %s"
+msgstr ""
 
 #: ../dnf/cli/option_parser.py:104
 #, python-format
 msgid "Setopt argument has no value: %s"
-msgstr "Setopt argument heeft geen waarde: %s"
+msgstr ""
 
 #: ../dnf/cli/option_parser.py:157
 msgid "Optional arguments"
@@ -1002,19 +964,19 @@ msgstr "  Gebouwd    : %s op %s"
 
 #: ../dnf/cli/cli.py:159
 msgid "Excludes in dnf.conf: "
-msgstr "Uitsluitingen in dnf.conf: "
+msgstr ""
 
 #: ../dnf/cli/cli.py:162
 msgid "Includes in dnf.conf: "
-msgstr "Insluitingen in dnf.conf: "
+msgstr ""
 
 #: ../dnf/cli/cli.py:166
 msgid "Excludes in repo "
-msgstr "Uitsluitingen in repo "
+msgstr ""
 
 #: ../dnf/cli/cli.py:169
 msgid "Includes in repo "
-msgstr "Insluitingen in repo "
+msgstr ""
 
 #: ../dnf/cli/cli.py:202
 msgid "DNF will only download packages for the transaction."
@@ -1034,9 +996,9 @@ msgstr "Uitvoering afgebroken."
 
 #: ../dnf/cli/cli.py:210 ../dnf/cli/commands/__init__.py:440
 #: ../dnf/cli/commands/__init__.py:497 ../dnf/cli/commands/__init__.py:590
-#: ../dnf/cli/commands/__init__.py:639 ../dnf/cli/commands/install.py:80
-#: ../dnf/cli/commands/install.py:103 ../dnf/cli/commands/install.py:110
-#: ../dnf/base.py:1611
+#: ../dnf/cli/commands/__init__.py:639 ../dnf/cli/commands/install.py:78
+#: ../dnf/cli/commands/install.py:88 ../dnf/cli/commands/install.py:95
+#: ../dnf/base.py:1643
 msgid "Nothing to do."
 msgstr "Niets te doen."
 
@@ -1064,7 +1026,7 @@ msgstr ""
 msgid "GPG check FAILED"
 msgstr "GPG check is MISLUKT"
 
-#: ../dnf/cli/cli.py:318 ../dnf/cli/cli.py:461 ../dnf/cli/cli.py:467
+#: ../dnf/cli/cli.py:318 ../dnf/cli/cli.py:462 ../dnf/cli/cli.py:468
 msgid "Obsoleting Packages"
 msgstr "Pakketten als verouderd aanmerken"
 
@@ -1072,127 +1034,126 @@ msgstr "Pakketten als verouderd aanmerken"
 msgid "No packages marked for distribution synchronization."
 msgstr "Geen pakketten voor distributiesynchronisatie aangemerkt."
 
-#: ../dnf/cli/cli.py:366 ../dnf/cli/commands/upgrade.py:110
-#: ../dnf/cli/commands/upgrade.py:121 ../dnf/cli/commands/__init__.py:423
+#: ../dnf/cli/cli.py:366 ../dnf/cli/commands/upgrade.py:106
+#: ../dnf/cli/commands/upgrade.py:118 ../dnf/cli/commands/__init__.py:423
 #: ../dnf/cli/commands/__init__.py:480 ../dnf/cli/commands/__init__.py:584
 #: ../dnf/cli/commands/__init__.py:631 ../dnf/cli/commands/__init__.py:674
-#: ../dnf/cli/commands/__init__.py:709 ../dnf/cli/commands/remove.py:139
-#: ../dnf/cli/commands/install.py:147 ../dnf/cli/commands/install.py:179
+#: ../dnf/cli/commands/__init__.py:709 ../dnf/cli/commands/remove.py:135
+#: ../dnf/cli/commands/install.py:132 ../dnf/cli/commands/install.py:155
 #: ../dnf/cli/commands/reinstall.py:70 ../dnf/cli/commands/reinstall.py:84
-#: ../dnf/base.py:1785 ../dnf/base.py:1860 ../dnf/base.py:1879
-#: ../dnf/base.py:1892 ../dnf/base.py:1913 ../dnf/base.py:1963
-#: ../dnf/base.py:1971 ../dnf/base.py:2020 ../dnf/base.py:2109
+#: ../dnf/base.py:1880 ../dnf/base.py:1899 ../dnf/base.py:1912
+#: ../dnf/base.py:1933 ../dnf/base.py:1962 ../dnf/base.py:1986
+#: ../dnf/base.py:2046 ../dnf/base.py:2135
 #, python-format
 msgid "No match for argument: %s"
 msgstr "Niets gevonden met argument: %s"
 
-#: ../dnf/cli/cli.py:375 ../dnf/cli/cli.py:627 ../dnf/cli/cli.py:657
+#: ../dnf/cli/cli.py:375 ../dnf/cli/cli.py:628 ../dnf/cli/cli.py:660
 #: ../dnf/cli/commands/__init__.py:368 ../dnf/cli/commands/__init__.py:883
-#: ../dnf/cli/commands/group.py:425 ../dnf/base.py:2184
+#: ../dnf/cli/commands/group.py:425 ../dnf/base.py:2212
 #, python-format
 msgid "No package %s available."
 msgstr "Geen pakket %s beschikbaar."
 
-#: ../dnf/cli/cli.py:378 ../dnf/base.py:2116
+#: ../dnf/cli/cli.py:379 ../dnf/base.py:2142
 #, python-format
 msgid "Packages for argument %s available, but not installed."
 msgstr "Pakketten voor argument %s beschikbaar, maar niet geïnstalleerd."
 
-#: ../dnf/cli/cli.py:384
+#: ../dnf/cli/cli.py:385
 msgid "No packages marked for downgrade."
-msgstr "Geen pakketten voor degradatie aangemerkt."
+msgstr ""
 
-#: ../dnf/cli/cli.py:435
+#: ../dnf/cli/cli.py:436
 msgid "Installed Packages"
 msgstr "Geïnstalleerde pakketten"
 
-#: ../dnf/cli/cli.py:443
+#: ../dnf/cli/cli.py:444
 msgid "Available Packages"
 msgstr "Beschikbare pakketten"
 
-#: ../dnf/cli/cli.py:447
+#: ../dnf/cli/cli.py:448
 msgid "Autoremove Packages"
 msgstr "Pakketten automatisch verwijderen"
 
-#: ../dnf/cli/cli.py:449
+#: ../dnf/cli/cli.py:450
 msgid "Extra Packages"
 msgstr "Extra pakketten"
 
-#: ../dnf/cli/cli.py:453
+#: ../dnf/cli/cli.py:454
 msgid "Available Upgrades"
 msgstr "Beschikbare upgrades"
 
-#: ../dnf/cli/cli.py:469
+#: ../dnf/cli/cli.py:470
 msgid "Recently Added Packages"
 msgstr "Recent toegevoegde pakketten"
 
-#: ../dnf/cli/cli.py:474
+#: ../dnf/cli/cli.py:475
 msgid "No matching Packages to list"
 msgstr "Geen overeenkomende pakketten om te laten zien"
 
-#: ../dnf/cli/cli.py:553
+#: ../dnf/cli/cli.py:554
 msgid "No Matches found"
 msgstr "Geen resultaten gevonden"
 
-#: ../dnf/cli/cli.py:563
+#: ../dnf/cli/cli.py:564
 msgid "No transaction ID given"
 msgstr "Geen transactie-ID opgegeven"
 
-#: ../dnf/cli/cli.py:568
+#: ../dnf/cli/cli.py:569
 msgid "Not found given transaction ID"
 msgstr "Opgegeven transactie-ID niet gevonden"
 
-#: ../dnf/cli/cli.py:577
+#: ../dnf/cli/cli.py:578
 msgid "Found more than one transaction ID!"
 msgstr "Meer dan één transactie-ID gevonden!"
 
-#: ../dnf/cli/cli.py:594
+#: ../dnf/cli/cli.py:595
 #, python-format
 msgid "Transaction history is incomplete, before %u."
 msgstr "Transactiegeschiedenis is incompleet, voor %u."
 
-#: ../dnf/cli/cli.py:596
+#: ../dnf/cli/cli.py:597
 #, python-format
 msgid "Transaction history is incomplete, after %u."
 msgstr "Transactiegeschiedenis is incompleet, na %u."
 
-#: ../dnf/cli/cli.py:622 ../dnf/cli/cli.py:653 ../dnf/base.py:1991
-#: ../dnf/base.py:2178
+#: ../dnf/cli/cli.py:623 ../dnf/cli/cli.py:656 ../dnf/base.py:2017
 #, python-format
 msgid "No package %s installed."
 msgstr "Pakket %s is niet geïnstalleerd."
 
-#: ../dnf/cli/cli.py:643
+#: ../dnf/cli/cli.py:644
 msgid "Undoing transaction {}, from {}"
 msgstr "Transactie {} ongedaan maken, vanaf {}"
 
-#: ../dnf/cli/cli.py:721 ../dnf/cli/commands/shell.py:230
+#: ../dnf/cli/cli.py:724 ../dnf/cli/commands/shell.py:225
 #, python-format
 msgid "Unknown repo: '%s'"
 msgstr "Onbekende repo: '%s'"
 
-#: ../dnf/cli/cli.py:735
+#: ../dnf/cli/cli.py:738
 #, python-format
 msgid "No repository match: %s"
 msgstr "Geen repository match: %s"
 
-#: ../dnf/cli/cli.py:764
+#: ../dnf/cli/cli.py:767
 msgid "This command has to be run under the root user."
 msgstr "Dit commando moet uitgevoerd worden door de root gebruiker."
 
-#: ../dnf/cli/cli.py:793
+#: ../dnf/cli/cli.py:791
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "Zo'n commando bestaat niet: %s. Gebruik %s --help"
 
-#: ../dnf/cli/cli.py:796
+#: ../dnf/cli/cli.py:794
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
 "Het zou een DNF-plugin-opdracht kunnen zijn, probeer: \"dnf install 'dnf-"
 "command(%s)'\""
 
-#: ../dnf/cli/cli.py:799
+#: ../dnf/cli/cli.py:797
 msgid ""
 "It could be a DNF plugin command, but loading of plugins is currently "
 "disabled."
@@ -1200,20 +1161,18 @@ msgstr ""
 "Het zou een DNF-plugin-opdracht kunnen zijn, maar het laden van plugins is "
 "momenteel uitgeschakeld."
 
-#: ../dnf/cli/cli.py:842 ../dnf/cli/cli.py:846
+#: ../dnf/cli/cli.py:840 ../dnf/cli/cli.py:844
 #, python-format
 msgid "Config error: %s"
 msgstr "Configuratiefout: %s"
 
-#: ../dnf/cli/cli.py:852
+#: ../dnf/cli/cli.py:850
 msgid ""
 "--destdir or --downloaddir must be used with --downloadonly or download or "
 "system-upgrade command."
 msgstr ""
-"--destdir of --downloaddir moet gebruikt worden met --downloadonly of "
-"download of system-upgrade commando."
 
-#: ../dnf/cli/cli.py:946
+#: ../dnf/cli/cli.py:944
 msgid ""
 "Unable to detect release version (use '--releasever' to specify release "
 "version)"
@@ -1221,11 +1180,11 @@ msgstr ""
 "Kan vrijgaveversie niet detecteren (gebruik '--releasever' om vrijgaveversie"
 " te specificeren)"
 
-#: ../dnf/cli/cli.py:1032 ../dnf/cli/commands/repoquery.py:413
+#: ../dnf/cli/cli.py:1025 ../dnf/cli/commands/repoquery.py:386
 msgid "argument {}: not allowed with argument {}"
 msgstr "argument {}: niet toegestaan met argument {}"
 
-#: ../dnf/cli/cli.py:1039
+#: ../dnf/cli/cli.py:1032
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Commando \"%s\" is al gedefinieerd"
@@ -1280,43 +1239,43 @@ msgstr "    Gestart: %s - %s geleden"
 msgid "    State  : %s"
 msgstr "    Status  : %s"
 
-#: ../dnf/cli/commands/search.py:46
+#: ../dnf/cli/commands/search.py:43
 msgid "search package details for the given string"
 msgstr "pakketdetails zoeken voor opgegeven string"
 
-#: ../dnf/cli/commands/search.py:51
+#: ../dnf/cli/commands/search.py:48
 msgid "search also package description and URL"
 msgstr "zoek ook naar pakketbeschrijving en URL"
 
-#: ../dnf/cli/commands/search.py:52
+#: ../dnf/cli/commands/search.py:49
 msgid "QUERY_STRING"
 msgstr "QUERY_STRING"
 
 #. TRANSLATORS: separator used between package attributes (eg. Name & Summary
 #. & URL)
-#: ../dnf/cli/commands/search.py:75
+#: ../dnf/cli/commands/search.py:71
 msgid " & "
 msgstr " & "
 
 #. TRANSLATORS: %s  - translated package attributes,
 #. %%s - found keys (in listed attributes)
-#: ../dnf/cli/commands/search.py:79
+#: ../dnf/cli/commands/search.py:75
 #, python-format
 msgid "%s Exactly Matched: %%s"
 msgstr "%s Komt exact overeen met: %%s"
 
 #. TRANSLATORS: %s  - translated package attributes,
 #. %%s - found keys (in listed attributes)
-#: ../dnf/cli/commands/search.py:83
+#: ../dnf/cli/commands/search.py:79
 #, python-format
 msgid "%s Matched: %%s"
 msgstr "%s Komt overeen met: %%s"
 
-#: ../dnf/cli/commands/search.py:126
+#: ../dnf/cli/commands/search.py:122
 msgid "No matches found."
 msgstr "Geen resultaten gevonden."
 
-#: ../dnf/cli/commands/search.py:151 ../dnf/cli/commands/__init__.py:254
+#: ../dnf/cli/commands/search.py:145 ../dnf/cli/commands/__init__.py:254
 msgid "Searching Packages: "
 msgstr "Pakketten zoeken: "
 
@@ -1369,22 +1328,22 @@ msgstr ""
 msgid "Package to synchronize"
 msgstr "Pakket om te synchroniseren"
 
-#: ../dnf/cli/commands/upgrade.py:40
+#: ../dnf/cli/commands/upgrade.py:39
 msgid "upgrade a package or packages on your system"
 msgstr "upgrade een pakket of pakketten van je systeem"
 
-#: ../dnf/cli/commands/upgrade.py:44
+#: ../dnf/cli/commands/upgrade.py:43
 msgid "Package to upgrade"
 msgstr "Het te upgraden pakket"
 
-#: ../dnf/cli/commands/upgrade.py:46 ../dnf/cli/commands/autoremove.py:48
+#: ../dnf/cli/commands/upgrade.py:45 ../dnf/cli/commands/autoremove.py:48
 #: ../dnf/cli/commands/__init__.py:196 ../dnf/cli/commands/__init__.py:267
 #: ../dnf/cli/commands/__init__.py:770 ../dnf/cli/commands/remove.py:61
-#: ../dnf/cli/commands/install.py:51 ../dnf/cli/commands/reinstall.py:44
+#: ../dnf/cli/commands/install.py:50 ../dnf/cli/commands/reinstall.py:44
 msgid "PACKAGE"
 msgstr "PAKKET"
 
-#: ../dnf/cli/commands/upgrade.py:89 ../dnf/cli/commands/__init__.py:714
+#: ../dnf/cli/commands/upgrade.py:88 ../dnf/cli/commands/__init__.py:714
 msgid "No packages marked for upgrade."
 msgstr "Geen pakketten voor upgrade aangemerkt."
 
@@ -1403,7 +1362,7 @@ msgstr "Te verwijderen pakketten"
 msgid "generate the metadata cache"
 msgstr "genereer de metadatacache"
 
-#: ../dnf/cli/commands/makecache.py:48
+#: ../dnf/cli/commands/makecache.py:54
 msgid "Making cache files for all metadata files."
 msgstr "Cachebestanden maken voor alle metadatabestanden"
 
@@ -1451,7 +1410,7 @@ msgstr ""
 msgid "Problem repository: %s"
 msgstr "Probleemrepo: %s"
 
-#: ../dnf/cli/commands/__init__.py:101 ../dnf/base.py:347
+#: ../dnf/cli/commands/__init__.py:101
 msgid "There are no enabled repos."
 msgstr "Er zijn geen ingeschakelde repo's."
 
@@ -1511,7 +1470,7 @@ msgstr "Geen pakket beschikbaar."
 
 #: ../dnf/cli/commands/__init__.py:374
 msgid "No packages marked for install."
-msgstr "Geen pakketten voor installatie aangemerkt."
+msgstr ""
 
 #: ../dnf/cli/commands/__init__.py:410
 msgid "No package installed."
@@ -1536,10 +1495,10 @@ msgstr "Geen pakket van de repository geïnstalleerd."
 
 #: ../dnf/cli/commands/__init__.py:528 ../dnf/cli/commands/reinstall.py:101
 msgid "No packages marked for reinstall."
-msgstr "Geen pakketten voor herinstallatie aangemerkt."
+msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:679 ../dnf/cli/commands/remove.py:145
-#: ../dnf/base.py:2026
+#: ../dnf/cli/commands/__init__.py:679 ../dnf/cli/commands/remove.py:141
+#: ../dnf/base.py:2052
 msgid "No packages marked for removal."
 msgstr "Geen pakketten aangemerkt om te verwijderen."
 
@@ -1610,8 +1569,6 @@ msgid ""
 "Can't convert '{}' to transaction ID.\n"
 "Use '<integer>', 'last', 'last-<positive-integer>'."
 msgstr ""
-"Kan '{}' niet converteren naar transactir ID.\n"
-"Gebruik '<integer>', 'last', 'last-<positive-integer>'."
 
 #: ../dnf/cli/commands/__init__.py:969
 msgid "No transaction which manipulates package '{}' was found."
@@ -1633,37 +1590,36 @@ msgstr ""
 "upgrade, maar alleen met 'nieuwste' pakketovereenkomst welke een probleem "
 "repareert dat invloed heeft op je systeem"
 
-#: ../dnf/cli/commands/module.py:70 ../dnf/cli/commands/module.py:94
-msgid "No matching Modules to list"
-msgstr "Geen overeenkomende modules om te laten zien"
-
-#: ../dnf/cli/commands/module.py:232
-msgid "Interact with Modules."
-msgstr "Communiceer met modules."
-
-#: ../dnf/cli/commands/module.py:249
-msgid "show only enabled modules"
-msgstr "toon alleen ingeschakelde modules"
-
-#: ../dnf/cli/commands/module.py:252
-msgid "show only disabled modules"
-msgstr "toon alleen uitgeschakelde modules"
-
-#: ../dnf/cli/commands/module.py:255
-msgid "show only installed modules"
-msgstr "toon alleen geïnstalleerde modules"
-
-#: ../dnf/cli/commands/module.py:258
-msgid "show profile content"
-msgstr "toon profielinhoud"
-
-#: ../dnf/cli/commands/module.py:285
+#: ../dnf/cli/commands/module.py:113
 msgid ""
 "\n"
-"Switching module streams does not alter installed packages (see 'module enable' in dnf(8) for details)"
+"To switch to the new streams' RPMs, run '{} distro-sync'. \n"
+"Then migrate configuration files and data as necessary."
 msgstr ""
-"\n"
-"Het omschakelen van module stromen verandert geïnstalleerde pakketten niet (zie 'module enable' in dnf(8) voor details)"
+
+#: ../dnf/cli/commands/module.py:257
+msgid "Interact with Modules."
+msgstr ""
+
+#: ../dnf/cli/commands/module.py:274
+msgid "show only enabled modules"
+msgstr ""
+
+#: ../dnf/cli/commands/module.py:277
+msgid "show only disabled modules"
+msgstr ""
+
+#: ../dnf/cli/commands/module.py:280
+msgid "show only installed modules"
+msgstr ""
+
+#: ../dnf/cli/commands/module.py:283
+msgid "show profile content"
+msgstr ""
+
+#: ../dnf/cli/commands/module.py:286
+msgid "auto enable stream"
+msgstr ""
 
 #: ../dnf/cli/commands/remove.py:46
 msgid "remove a package or packages from your system"
@@ -1685,8 +1641,8 @@ msgstr "Er zijn geen gedupliceerde pakketten gevonden om te verwijderen."
 msgid "No old installonly packages found for removal."
 msgstr "Er zijn geen installonly pakketten gevonden om te verwijderen."
 
-#: ../dnf/cli/commands/remove.py:122 ../dnf/cli/commands/install.py:136
-#: ../dnf/base.py:2009
+#: ../dnf/cli/commands/remove.py:122 ../dnf/cli/commands/install.py:121
+#: ../dnf/base.py:2035
 #, python-format
 msgid "Not a valid form: %s"
 msgstr "Geen geldig formulier: %s"
@@ -1735,27 +1691,24 @@ msgstr "advies over pakketten tonen"
 #: ../dnf/cli/commands/updateinfo.py:75
 msgid "advisories about newer versions of installed packages (default)"
 msgstr ""
-"adviezen over nieuwere versies van geïnstalleerde pakketten (standaard)"
 
 #: ../dnf/cli/commands/updateinfo.py:78
 msgid "advisories about equal and older versions of installed packages"
-msgstr "adviezen over gelijke en oudere versies van geïnstalleerde pakketten"
+msgstr ""
 
 #: ../dnf/cli/commands/updateinfo.py:81
 msgid ""
 "advisories about newer versions of those installed packages for which a "
 "newer version is available"
 msgstr ""
-"adviezen over nieuwere versies van die geïnstalleerde pakketten waarvoor een"
-" nieuwere versie beschikbaar is"
 
 #: ../dnf/cli/commands/updateinfo.py:85
 msgid "advisories about any versions of installed packages"
-msgstr "adviezen over alle versies van geïnstalleerde pakketten"
+msgstr ""
 
 #: ../dnf/cli/commands/updateinfo.py:90
 msgid "show summary of advisories (default)"
-msgstr "toon een samenvatting van de adviezen (standard)"
+msgstr ""
 
 #: ../dnf/cli/commands/updateinfo.py:93
 msgid "show list of advisories"
@@ -1889,8 +1842,8 @@ msgstr "%s niet-aangemerkt als geïnstalleerd door gebruiker."
 msgid "%s marked as group installed."
 msgstr "%s aangemerkt als geïnstalleerd."
 
-#: ../dnf/cli/commands/mark.py:82 ../dnf/cli/commands/shell.py:121
-#: ../dnf/cli/commands/shell.py:230
+#: ../dnf/cli/commands/mark.py:82 ../dnf/cli/commands/shell.py:116
+#: ../dnf/cli/commands/shell.py:225
 msgid "Error:"
 msgstr "Fout:"
 
@@ -1906,7 +1859,7 @@ msgstr "Toon pakketafhankelijkheden en in welke pakketten deze zitten"
 #: ../dnf/cli/commands/clean.py:68
 #, python-format
 msgid "Removing file %s"
-msgstr "Bestand %s wordt verwijderd"
+msgstr ""
 
 #: ../dnf/cli/commands/clean.py:87
 msgid "remove cached data"
@@ -1936,37 +1889,32 @@ msgstr[1] "%d bestanden verwijderd"
 msgid "Waiting for process with pid %d to finish."
 msgstr "Wachten op eindigen van proces met pid %d."
 
-#: ../dnf/cli/commands/install.py:47
+#: ../dnf/cli/commands/install.py:46
 msgid "install a package or packages on your system"
 msgstr "installeer een pakket of pakketten op je systeem"
 
-#: ../dnf/cli/commands/install.py:53
+#: ../dnf/cli/commands/install.py:52
 msgid "Package to install"
 msgstr "installeer pakket"
 
-#: ../dnf/cli/commands/install.py:118
+#: ../dnf/cli/commands/install.py:103
 msgid "Unable to find a match"
 msgstr "Niets gevonden."
 
-#: ../dnf/cli/commands/install.py:131
+#: ../dnf/cli/commands/install.py:116
 #, python-format
 msgid "Not a valid rpm file path: %s"
 msgstr "Geen geldig rpm pad: %s"
 
-#: ../dnf/cli/commands/install.py:167
-#, python-brace-format
-msgid "There are following alternatives for \"{0}\": {1}"
-msgstr "Er zijn de volgende alternatieven voor \"{0}\": {1}"
-
-#: ../dnf/cli/commands/repoquery.py:104
+#: ../dnf/cli/commands/repoquery.py:94
 msgid "search for packages matching keyword"
 msgstr "zoek naar pakketten die overeenkomen met het sleutelwoord"
 
-#: ../dnf/cli/commands/repoquery.py:118
+#: ../dnf/cli/commands/repoquery.py:108
 msgid "the key to search for"
 msgstr "de sleutel om te zoeken"
 
-#: ../dnf/cli/commands/repoquery.py:120
+#: ../dnf/cli/commands/repoquery.py:110
 msgid ""
 "Query all packages (shorthand for repoquery '*' or repoquery without "
 "argument)"
@@ -1974,71 +1922,69 @@ msgstr ""
 "Bevraag alle pakketten (afkorting van repoquery '*' of repoquery zonder "
 "argument)"
 
-#: ../dnf/cli/commands/repoquery.py:123
+#: ../dnf/cli/commands/repoquery.py:113
 msgid "Query all versions of packages (default)"
 msgstr "Zoek alle versies van pakketten (standaard)"
 
-#: ../dnf/cli/commands/repoquery.py:126
+#: ../dnf/cli/commands/repoquery.py:116
 msgid "show only results from this ARCH"
 msgstr "toon alleen resultaten voor deze architectuur"
 
-#: ../dnf/cli/commands/repoquery.py:128
+#: ../dnf/cli/commands/repoquery.py:118
 msgid "show only results that owns FILE"
 msgstr "toon allen resultaten die eigenaar zijn van BESTAND"
 
-#: ../dnf/cli/commands/repoquery.py:130
+#: ../dnf/cli/commands/repoquery.py:120
 msgid "show only results that conflict REQ"
 msgstr "toon alleen resultaten die in conflict zijn met VEREISTE"
 
-#: ../dnf/cli/commands/repoquery.py:132
+#: ../dnf/cli/commands/repoquery.py:122
 msgid ""
 "shows results that requires, suggests, supplements, enhances,or recommends "
 "package provides and files REQ"
 msgstr ""
-"toont resultaten die vereiste, gesuggereerde, aanvullende, verbeterende of "
-"aanbevolen pakketten bieden en bestanden VEREISTE"
 
-#: ../dnf/cli/commands/repoquery.py:135
+#: ../dnf/cli/commands/repoquery.py:125
 msgid "show only results that obsolete REQ"
 msgstr "toon alleen resultaten die VEREISTE verouderen"
 
-#: ../dnf/cli/commands/repoquery.py:137
+#: ../dnf/cli/commands/repoquery.py:127
 msgid "show only results that provide REQ"
 msgstr "toon alleen resultaten die VEREISTE aanbieden"
 
-#: ../dnf/cli/commands/repoquery.py:139
+#: ../dnf/cli/commands/repoquery.py:129
 msgid "shows results that requires package provides and files REQ"
 msgstr "toont resultaten die vereiste pakketten bieden en bestanden VEREISTE"
 
-#: ../dnf/cli/commands/repoquery.py:141
+#: ../dnf/cli/commands/repoquery.py:131
 msgid "show only results that recommend REQ"
 msgstr "toon alleen resultaten die VEREISTE aanbeveelt"
 
-#: ../dnf/cli/commands/repoquery.py:143
+#: ../dnf/cli/commands/repoquery.py:133
 msgid "show only results that enhance REQ"
 msgstr "toon alleen resultaten die VEREISTE verbeteren"
 
-#: ../dnf/cli/commands/repoquery.py:145
+#: ../dnf/cli/commands/repoquery.py:135
 msgid "show only results that suggest REQ"
 msgstr "toon alleen resultaten die VEREISTE suggereert"
 
-#: ../dnf/cli/commands/repoquery.py:147
+#: ../dnf/cli/commands/repoquery.py:137
 msgid "show only results that supplement REQ"
 msgstr "toon alleen resultaten die VEREISTE supplementeren"
 
-#: ../dnf/cli/commands/repoquery.py:150
+#: ../dnf/cli/commands/repoquery.py:140
 msgid "check non-explicit dependencies (files and Provides); default"
 msgstr ""
 "controleer niet-expliciete afhankelijkheden (bestanden en Provides); "
 "standaard"
 
-#: ../dnf/cli/commands/repoquery.py:152
+#: ../dnf/cli/commands/repoquery.py:142
 msgid "check dependencies exactly as given, opposite of --alldeps"
 msgstr ""
 "controleer afhankelijkheden precies als opgegeven, in tegenstelling met "
 "--alldeps"
 
-#: ../dnf/cli/commands/repoquery.py:154
+#: ../dnf/cli/commands/repoquery.py:144
 msgid ""
 "used with --whatrequires, and --requires --resolve, query packages "
 "recursively."
@@ -2046,28 +1992,28 @@ msgstr ""
 "gebruikt met --whatrequires, en --requires --resolve, bevraag pakketten "
 "recursief."
 
-#: ../dnf/cli/commands/repoquery.py:156
+#: ../dnf/cli/commands/repoquery.py:146
 msgid "show a list of all dependencies and what packages provide them"
 msgstr ""
 "toon een lijst van alle afhankelijkheden en in welke pakketten deze zitten"
 
-#: ../dnf/cli/commands/repoquery.py:158
+#: ../dnf/cli/commands/repoquery.py:148
 msgid "show available tags to use with --queryformat"
 msgstr "toon beschikbare tags voor gebruik met --queryformat"
 
-#: ../dnf/cli/commands/repoquery.py:161
+#: ../dnf/cli/commands/repoquery.py:151
 msgid "resolve capabilities to originating package(s)"
 msgstr "los mogelijkheden op van afkomstige pakket(ten)"
 
-#: ../dnf/cli/commands/repoquery.py:163
+#: ../dnf/cli/commands/repoquery.py:153
 msgid "show recursive tree for package(s)"
 msgstr "toon recursieve boom voor pakket(ten)"
 
-#: ../dnf/cli/commands/repoquery.py:165
+#: ../dnf/cli/commands/repoquery.py:155
 msgid "operate on corresponding source RPM"
 msgstr "bewerk op overeenkomstige bron  RPM"
 
-#: ../dnf/cli/commands/repoquery.py:167
+#: ../dnf/cli/commands/repoquery.py:157
 msgid ""
 "show N latest packages for a given name.arch (or latest but N if N is "
 "negative)"
@@ -2075,27 +2021,23 @@ msgstr ""
 "toon N laatste pakketten voor een gegeven naam.arch (of laatste maar N als N"
 " negatief is)"
 
-#: ../dnf/cli/commands/repoquery.py:173
+#: ../dnf/cli/commands/repoquery.py:163
 msgid "show detailed information about the package"
 msgstr "toon gedetailleerde informatie over het pakket"
 
-#: ../dnf/cli/commands/repoquery.py:176
+#: ../dnf/cli/commands/repoquery.py:166
 msgid "show list of files in the package"
 msgstr "bestandslijst in pakket tonen"
 
-#: ../dnf/cli/commands/repoquery.py:179
+#: ../dnf/cli/commands/repoquery.py:169
 msgid "show package source RPM name"
 msgstr "Source-RPM-naam van pakket tonen"
 
-#: ../dnf/cli/commands/repoquery.py:182
-msgid "show changelogs of the package"
-msgstr "toon veranderlogs van het pakket"
-
-#: ../dnf/cli/commands/repoquery.py:185
+#: ../dnf/cli/commands/repoquery.py:172
 msgid "format for displaying found packages"
 msgstr "formatteer voor het tonen van de gevonden pakketten"
 
-#: ../dnf/cli/commands/repoquery.py:188
+#: ../dnf/cli/commands/repoquery.py:175
 msgid ""
 "use name-epoch:version-release.architecture format for displaying found "
 "packages (default)"
@@ -2103,7 +2045,7 @@ msgstr ""
 "gebruik naam-tijdperk:versie-release.architectuur formaat voor het tonen van"
 " de gevonden pakketten (standaard)"
 
-#: ../dnf/cli/commands/repoquery.py:191
+#: ../dnf/cli/commands/repoquery.py:178
 msgid ""
 "use name-version-release format for displaying found packages (rpm query "
 "default)"
@@ -2111,7 +2053,7 @@ msgstr ""
 "gebruik naam-versie-release formaat voor het tonen van de gevonden pakketten"
 " (standaard voor rpm zoekopdracht)"
 
-#: ../dnf/cli/commands/repoquery.py:197
+#: ../dnf/cli/commands/repoquery.py:184
 msgid ""
 "use epoch:name-version-release.architecture format for displaying found "
 "packages"
@@ -2119,58 +2061,56 @@ msgstr ""
 "gebruike tijdperk:naam-versie-release.architectuur formaat voor het tonen "
 "van de gevonden pakketten"
 
-#: ../dnf/cli/commands/repoquery.py:200
+#: ../dnf/cli/commands/repoquery.py:187
 msgid "Display in which comps groups are presented selected packages"
 msgstr ""
 "Laat zien in welke comps groepen de geselecteerde pakketten zich bevinden"
 
-#: ../dnf/cli/commands/repoquery.py:204
+#: ../dnf/cli/commands/repoquery.py:191
 msgid "limit the query to installed duplicate packages"
 msgstr "beperk de zoekopdracht tot geïnstalleerde duplicaat pakketten"
 
-#: ../dnf/cli/commands/repoquery.py:211
+#: ../dnf/cli/commands/repoquery.py:198
 msgid "limit the query to installed installonly packages"
 msgstr "beperk de zoekopdracht tot geïnstalleerde installonly pakketten"
 
-#: ../dnf/cli/commands/repoquery.py:214
+#: ../dnf/cli/commands/repoquery.py:201
 msgid "limit the query to installed packages with unsatisfied dependencies"
 msgstr ""
 "beperk de zoekopdracht tot geïnstalleerde pakketten met onvoldane "
 "afhankelijkheden"
 
-#: ../dnf/cli/commands/repoquery.py:216
+#: ../dnf/cli/commands/repoquery.py:203
 msgid "show a location from where packages can be downloaded"
 msgstr "toon een locatie waarvan pakketten gedownload kunnen worden"
 
-#: ../dnf/cli/commands/repoquery.py:219
+#: ../dnf/cli/commands/repoquery.py:206
 msgid "Display capabilities that the package conflicts with."
 msgstr "Toon mogelijkheden waarmee het pakket conflicteert."
 
-#: ../dnf/cli/commands/repoquery.py:220
+#: ../dnf/cli/commands/repoquery.py:207
 msgid ""
 "Display capabilities that the package can depend on, enhance, recommend, "
 "suggest, and supplement."
 msgstr ""
-"Toon de mogelijkheden waar het pakket afhankelijk van is, die het verbetert,"
-" adviseert, suggereert en aanvult."
 
-#: ../dnf/cli/commands/repoquery.py:222
+#: ../dnf/cli/commands/repoquery.py:209
 msgid "Display capabilities that the package can enhance."
 msgstr "Toon mogelijkheden die het pakket kan verbeteren."
 
-#: ../dnf/cli/commands/repoquery.py:223
+#: ../dnf/cli/commands/repoquery.py:210
 msgid "Display capabilities provided by the package."
 msgstr "Toon de voorziene mogelijkheden van het pakket."
 
-#: ../dnf/cli/commands/repoquery.py:224
+#: ../dnf/cli/commands/repoquery.py:211
 msgid "Display capabilities that the package recommends."
 msgstr "Toon de mogelijkheden die het pakket aanbeveelt."
 
-#: ../dnf/cli/commands/repoquery.py:225
+#: ../dnf/cli/commands/repoquery.py:212
 msgid "Display capabilities that the package depends on."
 msgstr "Toon de mogelijkheden waar het pakket van afhangt."
 
-#: ../dnf/cli/commands/repoquery.py:226
+#: ../dnf/cli/commands/repoquery.py:213
 #, python-format
 msgid ""
 "Display capabilities that the package depends on for running a %%pre script."
@@ -2178,30 +2118,30 @@ msgstr ""
 "Toon de mogelijkheden waar het pakket ban afhangt voor het uitvoeren van een"
 " %%pre script."
 
-#: ../dnf/cli/commands/repoquery.py:227
+#: ../dnf/cli/commands/repoquery.py:214
 msgid "Display capabilities that the package suggests."
 msgstr "Toon de mogelijkheden die het pakket suggereert."
 
-#: ../dnf/cli/commands/repoquery.py:228
+#: ../dnf/cli/commands/repoquery.py:215
 msgid "Display capabilities that the package can supplement."
 msgstr "Toon de mogelijkheden die het pakket kan aanvullen."
 
-#: ../dnf/cli/commands/repoquery.py:234
+#: ../dnf/cli/commands/repoquery.py:221
 msgid "Display only available packages."
 msgstr "Toon alleen beschikbare pakketten."
 
-#: ../dnf/cli/commands/repoquery.py:237
+#: ../dnf/cli/commands/repoquery.py:224
 msgid "Display only installed packages."
 msgstr "Toon alleen geïnstalleerde pakketten."
 
-#: ../dnf/cli/commands/repoquery.py:238
+#: ../dnf/cli/commands/repoquery.py:225
 msgid ""
 "Display only packages that are not present in any of available repositories."
 msgstr ""
 "Toon alleen pakketten die in geen van de beschikbare repositories aanwezig "
 "zijn."
 
-#: ../dnf/cli/commands/repoquery.py:239
+#: ../dnf/cli/commands/repoquery.py:226
 msgid ""
 "Display only packages that provide an upgrade for some already installed "
 "package."
@@ -2209,31 +2149,28 @@ msgstr ""
 "Toon alleen pakketten die een upgrade aanbieden voor een reeds geïnstalleerd"
 " pakket."
 
-#: ../dnf/cli/commands/repoquery.py:240
+#: ../dnf/cli/commands/repoquery.py:227
 msgid "Display only packages that can be removed by \"dnf autoremove\" command."
 msgstr ""
 "Toon alleen pakketten die verwijderd kunen worden met het \"dnf autoremove\""
 " commando."
 
-#: ../dnf/cli/commands/repoquery.py:241
+#: ../dnf/cli/commands/repoquery.py:228
 msgid "Display only packages that were installed by user."
 msgstr "Toon alleen pakketten die door de gebruiker geïnstalleerd werde."
 
-#: ../dnf/cli/commands/repoquery.py:253
+#: ../dnf/cli/commands/repoquery.py:240
 msgid "Display only recently edited packages"
 msgstr "Toon alleen onlangs veranderde pakketten"
 
-#: ../dnf/cli/commands/repoquery.py:275
+#: ../dnf/cli/commands/repoquery.py:260
 msgid ""
 "Option '--resolve' has to be used together with one of the '--conflicts', '"
 "--depends', '--enhances', '--provides', '--recommends', '--requires', '--"
 "requires-pre', '--suggests' or '--supplements' options"
 msgstr ""
-"Optie '--resolve' moet tezamen gebruikt worden met één van de '--conflicts',"
-" '--depends', '--enhances', '--provides', '--recommends', '--requires', '--"
-"requires-pre', '--suggests' of '--supplements' opties"
 
-#: ../dnf/cli/commands/repoquery.py:285
+#: ../dnf/cli/commands/repoquery.py:270
 msgid ""
 "Option '--recursive' has to be used with '--whatrequires <REQ>' (optionaly "
 "with '--alldeps', but not with '--exactdeps'), or with '--requires <REQ> "
@@ -2243,20 +2180,20 @@ msgstr ""
 "(optioneel met '--alldeps', maar niet met '--exactdeps'), of met '--requires"
 " <REQ> --resolve'"
 
-#: ../dnf/cli/commands/repoquery.py:318
+#: ../dnf/cli/commands/repoquery.py:291
 msgid "Package {} contains no files"
 msgstr "Pakket {} bevat geen bestanden"
 
-#: ../dnf/cli/commands/repoquery.py:387
+#: ../dnf/cli/commands/repoquery.py:360
 #, python-brace-format
 msgid "Available query-tags: use --queryformat \".. %{tag} ..\""
 msgstr "Beschikbare query-tags: gebruik --queryformat \".. %{tag} ..\""
 
-#: ../dnf/cli/commands/repoquery.py:456
+#: ../dnf/cli/commands/repoquery.py:430
 msgid "argument {} requires --whatrequires or --whatdepends option"
-msgstr "argument {} vereist --whatrequires of --whatdepends optie"
+msgstr ""
 
-#: ../dnf/cli/commands/repoquery.py:501
+#: ../dnf/cli/commands/repoquery.py:475
 msgid ""
 "No valid switch specified\n"
 "usage: dnf repoquery [--conflicts|--enhances|--obsoletes|--provides|--recommends|--requires|--suggest|--supplements|--whatrequires] [key] [--tree]\n"
@@ -2264,11 +2201,6 @@ msgid ""
 "description:\n"
 "  For the given packages print a tree of the packages."
 msgstr ""
-"Geen geldige schakelaar gespecificeerd\n"
-"gebruik: dnf repoquery [--conflicts|--enhances|--obsoletes|--provides|--recommends|--requires|--suggest|--supplements|--whatrequires] [key] [--tree]\n"
-"\n"
-"beschrijving:\n"
-"  Print een boom van pakketten voor het gegeven pakket."
 
 #: ../dnf/cli/commands/repolist.py:39
 #, python-format
@@ -2301,134 +2233,134 @@ msgstr "toon alle ingeschakelde repositories (standaard)"
 msgid "show disabled repos"
 msgstr "toon alle uitgeschakelde repositories"
 
-#: ../dnf/cli/commands/repolist.py:123
+#: ../dnf/cli/commands/repolist.py:121
 msgid "No repositories available"
 msgstr "Er zijn geen repositories beschikbaar"
 
-#: ../dnf/cli/commands/repolist.py:145 ../dnf/cli/commands/repolist.py:146
+#: ../dnf/cli/commands/repolist.py:143 ../dnf/cli/commands/repolist.py:144
 msgid "enabled"
 msgstr "aangezet"
 
-#: ../dnf/cli/commands/repolist.py:163 ../dnf/cli/commands/repolist.py:164
+#: ../dnf/cli/commands/repolist.py:161 ../dnf/cli/commands/repolist.py:162
 msgid "disabled"
 msgstr "uitgezet"
 
-#: ../dnf/cli/commands/repolist.py:179
+#: ../dnf/cli/commands/repolist.py:177
 msgid "Repo-id      : "
 msgstr "Repo-id      : "
 
-#: ../dnf/cli/commands/repolist.py:180
+#: ../dnf/cli/commands/repolist.py:178
 msgid "Repo-name    : "
 msgstr "Repo-naam    : "
 
-#: ../dnf/cli/commands/repolist.py:183
+#: ../dnf/cli/commands/repolist.py:181
 msgid "Repo-status  : "
 msgstr "Repo-status  : "
 
-#: ../dnf/cli/commands/repolist.py:186
+#: ../dnf/cli/commands/repolist.py:184
 msgid "Repo-revision: "
 msgstr "Repo-revisie: "
 
-#: ../dnf/cli/commands/repolist.py:190
+#: ../dnf/cli/commands/repolist.py:188
 msgid "Repo-tags    : "
 msgstr "Repo-tags    : "
 
-#: ../dnf/cli/commands/repolist.py:197
+#: ../dnf/cli/commands/repolist.py:195
 msgid "Repo-distro-tags: "
 msgstr "Repo-distro-tags: "
 
-#: ../dnf/cli/commands/repolist.py:203
+#: ../dnf/cli/commands/repolist.py:201
 msgid "Repo-updated : "
 msgstr "Repo-updated : "
 
-#: ../dnf/cli/commands/repolist.py:205
+#: ../dnf/cli/commands/repolist.py:203
 msgid "Repo-pkgs    : "
 msgstr "Repo-pkgs    : "
 
-#: ../dnf/cli/commands/repolist.py:206
+#: ../dnf/cli/commands/repolist.py:204
 msgid "Repo-size    : "
 msgstr "Repo-grootte   : "
 
-#: ../dnf/cli/commands/repolist.py:209
+#: ../dnf/cli/commands/repolist.py:207
 msgid "Repo-metalink: "
 msgstr "Repo-metalink: "
 
-#: ../dnf/cli/commands/repolist.py:214
+#: ../dnf/cli/commands/repolist.py:212
 msgid "  Updated    : "
 msgstr "  Updated    : "
 
-#: ../dnf/cli/commands/repolist.py:216
+#: ../dnf/cli/commands/repolist.py:214
 msgid "Repo-mirrors : "
 msgstr "Repo-mirrors : "
 
-#: ../dnf/cli/commands/repolist.py:220 ../dnf/cli/commands/repolist.py:226
+#: ../dnf/cli/commands/repolist.py:218 ../dnf/cli/commands/repolist.py:224
 msgid "Repo-baseurl : "
 msgstr "Repo-baseurl : "
 
-#: ../dnf/cli/commands/repolist.py:229
+#: ../dnf/cli/commands/repolist.py:227
 msgid "Repo-expire  : "
 msgstr "Repo-expire  : "
 
 #. TRANSLATORS: Packages that are excluded - their names like (dnf systemd)
-#: ../dnf/cli/commands/repolist.py:233
+#: ../dnf/cli/commands/repolist.py:231
 msgid "Repo-exclude : "
 msgstr "Repo-exclude : "
 
-#: ../dnf/cli/commands/repolist.py:237
+#: ../dnf/cli/commands/repolist.py:235
 msgid "Repo-include : "
 msgstr "Repo-include : "
 
 #. TRANSLATORS: Number of packages that where excluded (5)
-#: ../dnf/cli/commands/repolist.py:242
+#: ../dnf/cli/commands/repolist.py:240
 msgid "Repo-excluded: "
 msgstr "Repo-excluded: "
 
-#: ../dnf/cli/commands/repolist.py:246
+#: ../dnf/cli/commands/repolist.py:244
 msgid "Repo-filename: "
 msgstr "Repo-bestandsnaam: "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
-#: ../dnf/cli/commands/repolist.py:254 ../dnf/cli/commands/repolist.py:283
+#: ../dnf/cli/commands/repolist.py:252 ../dnf/cli/commands/repolist.py:281
 msgid "repo id"
 msgstr "repo id"
 
-#: ../dnf/cli/commands/repolist.py:271 ../dnf/cli/commands/repolist.py:272
-#: ../dnf/cli/commands/repolist.py:288
+#: ../dnf/cli/commands/repolist.py:269 ../dnf/cli/commands/repolist.py:270
+#: ../dnf/cli/commands/repolist.py:286
 msgid "status"
 msgstr "status"
 
-#: ../dnf/cli/commands/repolist.py:284
+#: ../dnf/cli/commands/repolist.py:282
 msgid "repo name"
 msgstr "repo-naam"
 
-#: ../dnf/cli/commands/repolist.py:300
+#: ../dnf/cli/commands/repolist.py:298
 #, python-format
 msgid "Total packages: %s"
-msgstr "Totaal aantal pakketten: %s"
+msgstr ""
 
-#: ../dnf/cli/commands/shell.py:47
+#: ../dnf/cli/commands/shell.py:52
 msgid "run an interactive DNF shell"
 msgstr "voer een interactieve DNF shell uit"
 
-#: ../dnf/cli/commands/shell.py:68
+#: ../dnf/cli/commands/shell.py:73
 msgid "SCRIPT"
 msgstr "SCRIPT"
 
-#: ../dnf/cli/commands/shell.py:69
+#: ../dnf/cli/commands/shell.py:74
 msgid "Script to run in DNF shell"
 msgstr "Script om in DNF shell te draaien"
 
-#: ../dnf/cli/commands/shell.py:135
+#: ../dnf/cli/commands/shell.py:130
 msgid "Unsupported key value."
 msgstr "Niet ondersteunde sleutelwaarde."
 
-#: ../dnf/cli/commands/shell.py:151
+#: ../dnf/cli/commands/shell.py:146
 #, python-format
 msgid "Could not find repository: %s"
 msgstr "Kon repository niet vinden: %s"
 
-#: ../dnf/cli/commands/shell.py:167
+#: ../dnf/cli/commands/shell.py:162
 msgid ""
 "{} arg [value]\n"
 "  arg: debuglevel, errorlevel, obsoletes, gpgcheck, assumeyes, exclude,\n"
@@ -2442,7 +2374,7 @@ msgstr ""
 "    Als geen waarde is gegeven print het de huidige waarde.\n"
 "    Als waarde gegeven is dan wordt die ingesteld."
 
-#: ../dnf/cli/commands/shell.py:174
+#: ../dnf/cli/commands/shell.py:169
 msgid ""
 "{} [command]\n"
 "    print help"
@@ -2450,7 +2382,7 @@ msgstr ""
 "{} [commando]\n"
 "    print hulp"
 
-#: ../dnf/cli/commands/shell.py:178
+#: ../dnf/cli/commands/shell.py:173
 msgid ""
 "{} arg [option]\n"
 "  list: lists repositories and their status. option = [all | id | glob]\n"
@@ -2462,7 +2394,7 @@ msgstr ""
 "  enable: zet repositories aan. optie = repository id\n"
 "  disable: zet repositories uit. optie = repository id"
 
-#: ../dnf/cli/commands/shell.py:184
+#: ../dnf/cli/commands/shell.py:179
 msgid ""
 "{}\n"
 "    resolve the transaction set"
@@ -2470,7 +2402,7 @@ msgstr ""
 "{}\n"
 "    Los de transactie set op"
 
-#: ../dnf/cli/commands/shell.py:188
+#: ../dnf/cli/commands/shell.py:183
 msgid ""
 "{} arg\n"
 "  list: lists the contents of the transaction\n"
@@ -2482,7 +2414,7 @@ msgstr ""
 "  reset: reset (geheel verwijderen) de transactie\n"
 "  run: voer de transactie uit"
 
-#: ../dnf/cli/commands/shell.py:194
+#: ../dnf/cli/commands/shell.py:189
 msgid ""
 "{}\n"
 "    run the transaction"
@@ -2490,7 +2422,7 @@ msgstr ""
 "{}\n"
 "    voer de transactie uit"
 
-#: ../dnf/cli/commands/shell.py:198
+#: ../dnf/cli/commands/shell.py:193
 msgid ""
 "{}\n"
 "    exit the shell"
@@ -2498,7 +2430,7 @@ msgstr ""
 "{}\n"
 "    verlaat de shell"
 
-#: ../dnf/cli/commands/shell.py:203
+#: ../dnf/cli/commands/shell.py:198
 msgid ""
 "Shell specific arguments:\n"
 "\n"
@@ -2520,12 +2452,12 @@ msgstr ""
 "run                      los de transactie set op en voer uit\n"
 "exit (or quit)           verlaat de shell"
 
-#: ../dnf/cli/commands/shell.py:253
+#: ../dnf/cli/commands/shell.py:248
 #, python-format
 msgid "Error: Cannot open %s for reading"
 msgstr "Fout: Kan %s niet openen om te lezen"
 
-#: ../dnf/cli/commands/shell.py:283
+#: ../dnf/cli/commands/shell.py:278
 msgid "Leaving Shell"
 msgstr "Shell wordt verlaten"
 
@@ -2537,7 +2469,7 @@ msgstr "herinstalleren pakket"
 msgid "Package to reinstall"
 msgstr "Herinstalleer pakket"
 
-#: ../dnf/cli/commands/reinstall.py:81 ../dnf/base.py:1960
+#: ../dnf/cli/commands/reinstall.py:81 ../dnf/base.py:1959
 #, python-format
 msgid "Package %s available, but not installed."
 msgstr "Pakket %s is beschikbaar, maar niet geïnstalleerd."
@@ -2656,112 +2588,45 @@ msgstr "geen overeenkomende payload factory voor %s"
 msgid "Already downloaded"
 msgstr "Al gedownload"
 
-#: ../dnf/repo.py:269 ../dnf/drpm.py:62
+#: ../dnf/repo.py:271 ../dnf/drpm.py:62
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr "Niet ondersteund checksumtype: %s"
 
 #. pinging mirrors, this might take a while
-#: ../dnf/repo.py:347
+#: ../dnf/repo.py:349
 #, python-format
-msgid "determining the fastest mirror (%s hosts).. "
-msgstr "snelste spiegel wordt bepaald (%s hosts).. "
-
-#: ../dnf/module/module_base.py:33
-msgid ""
-"\n"
-"\n"
-"Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled"
-msgstr ""
-"\n"
-"\n"
-"Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled"
-
-#: ../dnf/module/module_base.py:45 ../dnf/module/module_base.py:288
-#: ../dnf/module/module_base.py:339 ../dnf/module/module_base.py:391
-#: ../dnf/module/module_base.py:448
-msgid "Ignoring unnecessary profile: '{}/{}'"
-msgstr "Onnodig profiel wordt genegeerd: '{}/{}'"
-
-#: ../dnf/module/module_base.py:78 ../dnf/module/module_base.py:166
-#: ../dnf/module/module_base.py:190
-msgid "Unable to match profile in argument {}"
-msgstr "Kan profiel in argument {} niet matchen"
-
-#: ../dnf/module/module_base.py:85
-msgid "No default profiles for module {}:{}"
-msgstr "Geen standaard profielen voor module {}:{}"
-
-#: ../dnf/module/module_base.py:91
-msgid "Profile {} not matched for module {}:{}"
-msgstr ""
-
-#: ../dnf/module/module_base.py:111 ../dnf/module/module_base.py:141
-#: ../dnf/module/module_base.py:271 ../dnf/module/module_base.py:284
-#: ../dnf/module/module_base.py:335 ../dnf/module/module_base.py:387
-#: ../dnf/module/module_base.py:444
-msgid "Unable to resolve argument {}"
-msgstr "Kan argument {} niet oplossen"
-
-#: ../dnf/module/module_base.py:112
-msgid "No match for package {}"
-msgstr "Geen match voor pakket {}"
-
-#: ../dnf/module/module_base.py:578 ../dnf/exceptions.py:118
-msgid "Modular dependency problem:"
-msgid_plural "Modular dependency problems:"
-msgstr[0] "Modulair afhankelijkheid probleem:"
-msgstr[1] "Modulaire afhankelijkheid problemen:"
+msgid "determining the fastest mirror (%d hosts).. "
+msgstr "snelste speigel wordt bepaald (%d hosts).. "
 
 #: ../dnf/module/__init__.py:26
 msgid "Enabling different stream for '{}'."
-msgstr "Zet voor '{}' een andere stroom aan."
+msgstr ""
 
 #: ../dnf/module/__init__.py:27
 msgid "Nothing to show."
-msgstr "Er is niets te tonen."
+msgstr ""
 
 #: ../dnf/module/__init__.py:28
 msgid "Installing newer version of '{}' than specified. Reason: {}"
 msgstr ""
-"Nieuwere versie van '{}' wordt geïnstalleerd dan gespecificeerd. Reden: {}"
 
 #: ../dnf/module/__init__.py:29
 msgid "Enabled modules: {}."
-msgstr "Aangezette modules: {}."
+msgstr ""
 
 #: ../dnf/module/__init__.py:30
 msgid "No profile specified for '{}', please specify profile."
-msgstr "Geen profiel gespecificeerd voor '{}', specificeer een profiel."
-
-#: ../dnf/dnssec.py:222
-msgid "DNSSEC extension: Key for user "
-msgstr ""
-
-#: ../dnf/dnssec.py:224
-msgid "is valid."
-msgstr ""
-
-#: ../dnf/dnssec.py:226
-msgid "has unknown status."
-msgstr ""
-
-#: ../dnf/dnssec.py:234
-msgid "DNSSEC extension: "
-msgstr ""
-
-#: ../dnf/dnssec.py:266
-msgid "Testing already imported keys for their validity."
 msgstr ""
 
 #: ../dnf/automatic/main.py:192
 msgid "Started dnf-automatic."
-msgstr "dnf-automatic is gestart."
+msgstr ""
 
 #: ../dnf/automatic/main.py:196
 #, python-format
 msgid "Sleep for %s seconds"
-msgstr "Ga voor %s seconden slapen"
+msgstr ""
 
 #: ../dnf/automatic/emitter.py:31
 #, python-format
@@ -2803,26 +2668,6 @@ msgstr "Verzenden email via '%s' mislukte: %s"
 msgid "Failed to execute command '%s': returned %d"
 msgstr "Het uitvoeren van commando '%s' is mislukt: %d werd teruggemeld"
 
-#: ../dnf/exceptions.py:106
-msgid "Problems in request:"
-msgstr "Problemen in verzoek:"
-
-#: ../dnf/exceptions.py:108
-msgid "missing packages: "
-msgstr "ontbrekende pakketten: "
-
-#: ../dnf/exceptions.py:110
-msgid "broken packages: "
-msgstr "defecte pakketten: "
-
-#: ../dnf/exceptions.py:112
-msgid "missing groups or modules: "
-msgstr "ontbrekende groepen of modules: "
-
-#: ../dnf/exceptions.py:114
-msgid "broken groups or modules: "
-msgstr "defecte groepen of modules: "
-
 #. empty file is invalid json format
 #: ../dnf/persistor.py:54
 #, python-format
@@ -2831,82 +2676,82 @@ msgstr "%s is een leeg bestand"
 
 #: ../dnf/persistor.py:98
 msgid "Failed storing last makecache time."
-msgstr "Mislukte opslag van laatste makecache tijd"
+msgstr ""
 
 #: ../dnf/persistor.py:105
 msgid "Failed determining last makecache time."
-msgstr "Mislukte bepaling van laatste makecache tijd"
+msgstr ""
 
-#: ../dnf/util.py:403 ../dnf/util.py:405
+#: ../dnf/util.py:411 ../dnf/util.py:413
 msgid "Problem"
 msgstr "Probleem"
 
-#: ../dnf/base.py:146
+#: ../dnf/base.py:147
 msgid "loading repo '{}' failure: {}"
-msgstr "het laden van repo '{}' is mislukt: {}"
+msgstr ""
 
-#: ../dnf/base.py:148
+#: ../dnf/base.py:149
 msgid "Loading repository '{}' has failed"
-msgstr "Het laden van repository '{}' is mislukt"
+msgstr ""
 
-#: ../dnf/base.py:326
+#: ../dnf/base.py:371
 msgid "Metadata timer caching disabled when running on metered connection."
 msgstr "Metadatatimercaching uitgeschakeld bij gedoseerde verbinding."
 
-#: ../dnf/base.py:331
+#: ../dnf/base.py:376
 msgid "Metadata timer caching disabled when running on a battery."
 msgstr "Metadatatimercaching uitgeschakeld bij batterijgebruik"
 
-#: ../dnf/base.py:336
+#: ../dnf/base.py:381
 msgid "Metadata timer caching disabled."
 msgstr "Metadatatimercaching uitgeschakeld."
 
-#: ../dnf/base.py:341
+#: ../dnf/base.py:386
 msgid "Metadata cache refreshed recently."
 msgstr "Metadatacache pas nog ververst."
 
-#: ../dnf/base.py:353
+#: ../dnf/base.py:394
 #, python-format
 msgid "%s: will never be expired and will not be refreshed."
-msgstr "%s: zal nooit verlopen zijn en zal niet ververst worden."
+msgstr ""
 
-#: ../dnf/base.py:355
+#: ../dnf/base.py:396
 #, python-format
 msgid "%s: has expired and will be refreshed."
-msgstr "%s: is verlopen en zal ververst worden."
+msgstr ""
 
 #. expires within the checking period:
-#: ../dnf/base.py:359
+#: ../dnf/base.py:400
 #, python-format
 msgid "%s: metadata will expire after %d seconds and will be refreshed now"
-msgstr "%s: metadata zal verlopen over %d seconden en zal nu ververst worden"
+msgstr ""
 
-#: ../dnf/base.py:363
+#: ../dnf/base.py:404
 #, python-format
 msgid "%s: will expire after %d seconds."
-msgstr "%s: zal verlopen over %d seconden."
+msgstr ""
 
 #. performs the md sync
-#: ../dnf/base.py:369
+#: ../dnf/base.py:410
 msgid "Metadata cache created."
 msgstr "Metadatacache aangemaakt."
 
-#: ../dnf/base.py:405
+#: ../dnf/base.py:443
 #, python-format
 msgid "%s: using metadata from %s."
 msgstr "%s: metadata gebruikend van %s."
 
-#: ../dnf/base.py:415
+#: ../dnf/base.py:453
 #, python-format
 msgid "%s, ignoring this repo."
-msgstr "%s, deze repo wordt genegeerd."
+msgstr ""
 
-#: ../dnf/base.py:418
+#: ../dnf/base.py:456
 #, python-format
 msgid "Last metadata expiration check: %s ago on %s."
 msgstr "Laatste metadata-expiratie-check: %s geleden op %s."
 
-#: ../dnf/base.py:448
+#: ../dnf/base.py:487
 msgid ""
 "The downloaded packages were saved in cache until the next successful "
 "transaction."
@@ -2914,102 +2759,102 @@ msgstr ""
 "De gedownloade pakketten zijn in de cache opgeslagen tot de volgende "
 "sucessvolle transactie."
 
-#: ../dnf/base.py:450
+#: ../dnf/base.py:489
 #, python-format
 msgid "You can remove cached packages by executing '%s'."
 msgstr "Je kan pakketten in de cache verwijderen met %s"
 
-#: ../dnf/base.py:537
+#: ../dnf/base.py:576
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "Ongeldige tsflag in configbestand: %s"
 
-#: ../dnf/base.py:593
+#: ../dnf/base.py:632
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Groepbestand voor repository %s - %s toevoegen mislukt"
 
-#: ../dnf/base.py:801
+#: ../dnf/base.py:840
 msgid "Running transaction check"
 msgstr "Uitvoeren transactiecontrole"
 
-#: ../dnf/base.py:812
+#: ../dnf/base.py:851
 msgid "Error: transaction check vs depsolve:"
 msgstr "Fout:  transactiecontrole vs oplossen afhankelijkheden:"
 
-#: ../dnf/base.py:818
+#: ../dnf/base.py:857
 msgid "Transaction check succeeded."
 msgstr "Transactiecontrole ok."
 
-#: ../dnf/base.py:821
+#: ../dnf/base.py:860
 msgid "Running transaction test"
 msgstr "Uitvoeren transactietest"
 
-#: ../dnf/base.py:831
+#: ../dnf/base.py:870
 msgid "Transaction check error:"
 msgstr "Transactiecontrole-fout:"
 
-#: ../dnf/base.py:838
+#: ../dnf/base.py:877
 msgid "Transaction test succeeded."
 msgstr "Transactietest ok."
 
-#: ../dnf/base.py:853
+#: ../dnf/base.py:892
 msgid "Running transaction"
 msgstr "Uitvoeren transactie"
 
-#: ../dnf/base.py:880
+#: ../dnf/base.py:919
 msgid "Disk Requirements:"
 msgstr "Schijfvereisten:"
 
-#: ../dnf/base.py:883
+#: ../dnf/base.py:922
 #, python-format
 msgid "At least %dMB more space needed on the %s filesystem."
 msgid_plural "At least %dMB more space needed on the %s filesystem."
 msgstr[0] "Ten minste %dMB meer nodig op bestandssysteem %s."
 msgstr[1] "Ten minste %dMB meer nodig op bestandssysteem %s."
 
-#: ../dnf/base.py:887
+#: ../dnf/base.py:926
 msgid "Error Summary"
 msgstr "Samenvatting  van fouten"
 
-#: ../dnf/base.py:913
+#: ../dnf/base.py:952
 msgid "RPMDB altered outside of DNF."
-msgstr "RPMDB is buiten DNF gewijzigd."
+msgstr ""
 
-#: ../dnf/base.py:970
+#: ../dnf/base.py:1009
 msgid "Errors occurred during transaction."
 msgstr "Tijdens de transactie traden fouten op."
 
-#: ../dnf/base.py:974
+#: ../dnf/base.py:1013
 #, python-format
 msgid "Failed to obtain the transaction lock (logged in as: %s)."
 msgstr "Transactieslot zetten lukte niet (ingelogd als: %s)"
 
 #. should this be 'to_unicoded'?
-#: ../dnf/base.py:977 ../dnf/base.py:987
+#: ../dnf/base.py:1016 ../dnf/base.py:1026
 msgid "Could not run transaction."
 msgstr "Kon transactie niet uitvoeren."
 
-#: ../dnf/base.py:984
+#: ../dnf/base.py:1023
 msgid "Transaction couldn't start:"
 msgstr "Transactie kon niet starten:"
 
-#: ../dnf/base.py:996
+#: ../dnf/base.py:1035
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Verwijderen van transactiebestand %s mislukt"
 
-#: ../dnf/base.py:1075
+#: ../dnf/base.py:1114
 msgid "Some packages were not downloaded. Retrying."
 msgstr "Sommige pakketten zijn niet gedownload. Opnieuw proberen.."
 
-#: ../dnf/base.py:1105
+#: ../dnf/base.py:1144
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
 msgstr ""
 "Delta-RPMs brachten %.1f MB aan updates terug tot %.1f MB (scheelt %d.1%%)"
 
-#: ../dnf/base.py:1108
+#: ../dnf/base.py:1147
 #, python-format
 msgid ""
 "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
@@ -3017,165 +2862,157 @@ msgstr ""
 "Mislukte Delta RPM's verhoogden %.1f MB updates naar %.1f MB (%d.1%% "
 "verspild)"
 
-#: ../dnf/base.py:1157
+#: ../dnf/base.py:1196
 msgid "Could not open: {}"
 msgstr "Kon niet openen: {}"
 
-#: ../dnf/base.py:1195
+#: ../dnf/base.py:1234
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "Publieke sleutel voor %s is niet geïnstalleerd"
 
-#: ../dnf/base.py:1199
+#: ../dnf/base.py:1238
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Er deed zich een probleem voor tijdens het openen van pakket %s"
 
-#: ../dnf/base.py:1207
+#: ../dnf/base.py:1246
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "Publieke sleutel voor %s is niet vertrouwd"
 
-#: ../dnf/base.py:1211
+#: ../dnf/base.py:1250
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Publieke sleutel voor %s is niet getekend"
 
-#: ../dnf/base.py:1226
+#: ../dnf/base.py:1265
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Kan %s niet verwijderen"
 
-#: ../dnf/base.py:1230
+#: ../dnf/base.py:1269
 #, python-format
 msgid "%s removed"
 msgstr "%s verwijderd"
 
-#: ../dnf/base.py:1502
+#: ../dnf/base.py:1542
 msgid "No match for group package \"{}\""
 msgstr "Geen match voor groeppakket \"{}\""
 
-#: ../dnf/base.py:1587
+#: ../dnf/base.py:1619
 #, python-format
 msgid "Adding packages from group '%s': %s"
-msgstr "Pakketten van groep '%s' toevoegen: %s"
+msgstr ""
 
-#: ../dnf/base.py:1628
+#: ../dnf/base.py:1660
 msgid "No groups marked for removal."
 msgstr "Geen pakketten voor verwijdering aangemerkt."
 
-#: ../dnf/base.py:1647
+#: ../dnf/base.py:1679
 msgid "No group marked for upgrade."
 msgstr "Geen pakketten voor upgrade aangemerkt."
 
-#: ../dnf/base.py:1832 ../dnf/base.py:1843 ../dnf/base.py:2197
+#: ../dnf/base.py:1852 ../dnf/base.py:1863 ../dnf/base.py:2213
 msgid "no package matched"
 msgstr "Geen overeenkomend pakket"
 
-#: ../dnf/base.py:1858
+#: ../dnf/base.py:1878
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
 msgstr "Pakket %s is niet geïnstalleerd, kan het niet downgraden."
 
-#: ../dnf/base.py:1867
+#: ../dnf/base.py:1887
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
 msgstr ""
 "Pakket %s met lagere versie is al geïnstalleerd, kan het niet downgraden."
 
-#: ../dnf/base.py:1890
+#: ../dnf/base.py:1910
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
 msgstr "Pakket %s is niet geïnstalleerd, kan het niet herinstalleren."
 
-#: ../dnf/base.py:1905
+#: ../dnf/base.py:1925
 #, python-format
 msgid "File %s is a source package and cannot be updated, ignoring."
 msgstr ""
 "Bestand %s is een broncode pakket en kan niet worden geupdate, wordt "
 "genegeerd."
 
-#: ../dnf/base.py:1911
+#: ../dnf/base.py:1931
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr "Pakket %s is niet geïnstalleerd, kan het niet updaten."
 
-#: ../dnf/base.py:1920
+#: ../dnf/base.py:1940
 #, python-format
 msgid "Package %s of higher version already installed, cannot update it."
 msgstr ""
 "Pakket %s met hogere versie is al geïnstalleerd, kan het niet updaten."
 
-#: ../dnf/base.py:1966
+#: ../dnf/base.py:1965
 #, python-format
 msgid "Package %s available, but installed for different architecture."
 msgstr ""
 "Pakket %s is beschikbaar, maar geïnstalleerd voor een andere architectuur."
 
-#: ../dnf/base.py:2121
+#: ../dnf/base.py:2147
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr ""
 "Pakket %s met laagste versie is al geïnstalleerd, kan het niet downgraden."
 
-#: ../dnf/base.py:2170
+#: ../dnf/base.py:2200
 msgid "Action not handled: {}"
-msgstr "Actie niet afgehandeld: {}"
+msgstr ""
 
-#: ../dnf/base.py:2218
+#: ../dnf/base.py:2237
 msgid "No security updates needed, but {} update available"
 msgstr "Geen beveiliging updates nodig, maar update {} is beschikbaar"
 
-#: ../dnf/base.py:2220
+#: ../dnf/base.py:2239
 msgid "No security updates needed, but {} updates available"
 msgstr "Geen beveiligings updates nodig, maar updates {} zijn beschikbaar"
 
-#: ../dnf/base.py:2224
+#: ../dnf/base.py:2243
 msgid "No security updates needed for \"{}\", but {} update available"
 msgstr "Geen beveiligingsupdates nodig voor\"{}\", maar update {} is beschikbaar"
 
-#: ../dnf/base.py:2226
+#: ../dnf/base.py:2245
 msgid "No security updates needed for \"{}\", but {} updates available"
 msgstr ""
 "Geen beveiligingsupdates nodig voor\"{}\", maar updates {} zijn beschikbaar"
 
-#: ../dnf/base.py:2250
+#: ../dnf/base.py:2269
 #, python-format
 msgid ". Failing package is: %s"
 msgstr ". Pakket dat mislukt is: %s"
 
-#: ../dnf/base.py:2251
+#: ../dnf/base.py:2270
 #, python-format
 msgid "GPG Keys are configured as: %s"
 msgstr "GPG sleutels zijn geconfigureerd als: %s"
 
-#: ../dnf/base.py:2263
+#: ../dnf/base.py:2282
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "GPG-sleutel op %s (0x%s) is al geïnstalleerd"
 
-#: ../dnf/base.py:2296
-msgid "The key has been approved."
-msgstr ""
-
-#: ../dnf/base.py:2299
-msgid "The key has been rejected."
-msgstr ""
-
-#: ../dnf/base.py:2327
+#: ../dnf/base.py:2319
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Importeren sleutel mislukt (code %d)"
 
-#: ../dnf/base.py:2329
+#: ../dnf/base.py:2321
 msgid "Key imported successfully"
 msgstr "Sleutel succesvol geïmporteerd"
 
-#: ../dnf/base.py:2333
+#: ../dnf/base.py:2325
 msgid "Didn't install any keys"
 msgstr "Er werden geen sleutels geïnstalleerd"
 
-#: ../dnf/base.py:2336
+#: ../dnf/base.py:2328
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
@@ -3184,28 +3021,28 @@ msgstr ""
 "De GPG-sleutels bedoeld voor repository \"%s\" zijn al geïnstalleerd maar niet correct voor dit pakket.\n"
 "Controleer of de juiste sleutel-URLs voor deze repository zijn opgegeven."
 
-#: ../dnf/base.py:2347
+#: ../dnf/base.py:2339
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Importen van sleutel(s) hielp niet; verkeerde sleutel(s)?"
 
-#: ../dnf/base.py:2383
+#: ../dnf/base.py:2375
 msgid "  * Maybe you meant: {}"
 msgstr "  * Misschien bedoel  je: {}"
 
-#: ../dnf/base.py:2415
+#: ../dnf/base.py:2407
 msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
 msgstr "Pakket \"{}\" van lokale repository \"{}\" heeft een onjuiste checksum"
 
-#: ../dnf/base.py:2418
+#: ../dnf/base.py:2410
 msgid "Some packages from local repository have incorrect checksum"
 msgstr ""
 "Sommige paketten van de lokale repository hebbenb een onjuiste checksum"
 
-#: ../dnf/base.py:2421
+#: ../dnf/base.py:2413
 msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
 msgstr "Pakket \"{}\" van repository \"{}\" heeft een onjuiste checksum"
 
-#: ../dnf/base.py:2424
+#: ../dnf/base.py:2416
 msgid ""
 "Some packages have invalid cache, but cannot be downloaded due to \"--"
 "cacheonly\" option"
@@ -3213,53 +3050,53 @@ msgstr ""
 "Sommige pakketten hebben een ongeldige cache, maar kunnen door de \"--"
 "cacheonly\" optie niet gedownload worden"
 
-#: ../dnf/base.py:2436
+#: ../dnf/base.py:2425
 #, python-format
-msgid "Package %s is already installed."
-msgstr "Pakket %s is al geïnstalleerd."
+msgid "Package %s is already installed, skipping."
+msgstr "Pakket %s is al geïnstalleerd, overslaan."
 
-#: ../dnf/conf/config.py:105 ../dnf/conf/config.py:244
+#: ../dnf/conf/config.py:105 ../dnf/conf/config.py:250
 #, python-format
 msgid "Error parsing '%s': %s"
 msgstr "Fout bij ontleden van '%s': %s"
 
-#: ../dnf/conf/config.py:297 ../dnf/conf/read.py:145
+#: ../dnf/conf/config.py:303 ../dnf/conf/read.py:145
 #, python-format
 msgid "Unknown configuration value: %s=%s in %s; %s"
 msgstr "Onbekende configuratiewaarde: %s=%s in %s; %s"
 
-#: ../dnf/conf/config.py:305 ../dnf/conf/read.py:153
+#: ../dnf/conf/config.py:311 ../dnf/conf/read.py:153
 #, python-format
 msgid "Unknown configuration option: %s = %s in %s"
 msgstr "Onbekende configuratie-optie: %s = %s in %s"
 
-#: ../dnf/conf/config.py:408
+#: ../dnf/conf/config.py:414
 msgid "Could not set cachedir: {}"
-msgstr "Kan cachemap niet instellen: {}"
+msgstr ""
 
-#: ../dnf/conf/config.py:482 ../dnf/conf/config.py:510
+#: ../dnf/conf/config.py:488 ../dnf/conf/config.py:516
 #, python-format
 msgid "Unknown configuration option: %s = %s"
 msgstr "Onbekende configuratie-optie: %s = %s"
 
-#: ../dnf/conf/config.py:498
+#: ../dnf/conf/config.py:504
 #, python-format
 msgid "Main config did not have a %s attr. before setopt"
-msgstr "Hoofdconfiguratie heeft geen %s attr. voor setopt"
+msgstr ""
 
-#: ../dnf/conf/config.py:548 ../dnf/conf/config.py:566
+#: ../dnf/conf/config.py:554 ../dnf/conf/config.py:572
 msgid "Incorrect or unknown \"{}\": {}"
 msgstr "Niet-correct of onbekend \"{}\": {}"
 
-#: ../dnf/conf/config.py:578 ../dnf/conf/read.py:84
+#: ../dnf/conf/config.py:584 ../dnf/conf/read.py:84
 #, python-format
 msgid "Parsing file \"%s\" failed: %s"
-msgstr "Ontleden van bestand \"%s\" mislukte: %s"
+msgstr ""
 
-#: ../dnf/conf/config.py:616
+#: ../dnf/conf/config.py:622
 #, python-format
 msgid "Repo %s did not have a %s attr. before setopt"
-msgstr "Repo %s heeft geen %s attr. voor setopt"
+msgstr ""
 
 #: ../dnf/conf/read.py:51
 #, python-format
@@ -3279,27 +3116,27 @@ msgstr "Naam ontbreekt in configuratie van repository '%s', id wordt gebruikt"
 #: ../dnf/conf/read.py:97
 #, python-format
 msgid "Bad id for repo: %s, byte = %s %d"
-msgstr "Slechte id voor repo: %s, byte = %s %d"
+msgstr ""
 
 #: ../dnf/conf/read.py:156
 #, python-format
 msgid "Module '%s': Error parsing config: %s"
-msgstr "Module '%s': Fout bij ontleden van configuratie: %s"
+msgstr ""
 
 #: ../dnf/package.py:276
 #, python-format
 msgid "%s: %s check failed: %s vs %s"
-msgstr "%s: %s check mislukte: %s vs %s"
+msgstr ""
 
 #: ../dnf/crypto.py:108
 #, python-format
 msgid "repo %s: 0x%s already imported"
-msgstr "repo %s: 0x%s is al geimporteerd"
+msgstr ""
 
 #: ../dnf/crypto.py:115
 #, python-format
 msgid "repo %s: imported key 0x%s."
-msgstr "repo %s: importeerde sleutel 0x%s."
+msgstr ""
 
 #: ../dnf/drpm.py:144
 msgid "Delta RPM rebuild failed"
@@ -3336,17 +3173,17 @@ msgstr "Groep '%s' is niet geïnstalleerd."
 msgid "Group '%s' does not exist."
 msgstr "Groep '%s' bestaat niet."
 
-#: ../dnf/comps.py:608 ../dnf/comps.py:625
+#: ../dnf/comps.py:590 ../dnf/comps.py:607
 #, python-format
 msgid "Environment '%s' is not installed."
 msgstr "Omgeving '%s' is niet geïnstalleerd."
 
-#: ../dnf/comps.py:653
+#: ../dnf/comps.py:635
 #, python-format
 msgid "Group_id '%s' does not exist."
 msgstr "Groep_id '%s' bestaat niet."
 
-#: ../dnf/comps.py:684
+#: ../dnf/comps.py:663
 #, python-format
 msgid "Group '%s' not installed."
 msgstr "Groep '%s' is niet geïnstalleerd."
