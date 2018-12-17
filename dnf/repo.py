@@ -565,6 +565,10 @@ class Repo(dnf.conf.RepoConf):
         try:
             ret = self._repo.load()
         except RuntimeError as e:
+            if self.skip_if_unavailable:
+                logger.warning(str(e))
+            else:
+                logger.error(str(e))
             raise dnf.exceptions.RepoError(str(e))
         self.metadata = Metadata(self._repo)
         return ret
