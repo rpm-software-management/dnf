@@ -389,7 +389,7 @@ class Base(object):
                     if load_system_repo != 'auto':
                         raise
             if load_available_repos:
-                errors = []
+                error_repos = []
                 mts = 0
                 age = time.time()
                 # Iterate over installed GPG keys and check their validity using DNSSEC
@@ -405,14 +405,15 @@ class Base(object):
                         logger.debug(_("%s: using metadata from %s."), r.id,
                                      dnf.util.normalize_time(
                                          r._repo.getMaxTimestamp()))
-                    except dnf.exceptions.RepoError as e:
+                    except dnf.exceptions.RepoError:
                         r._repo.expire()
                         if r.skip_if_unavailable is False:
                             raise
-                        errors.append(e)
+                        error_repos.append(r.id)
                         r.disable()
-                for e in errors:
-                    logger.warning(_("%s, ignoring this repo."), e)
+                if error_repos:
+                    logger.warning(
+                        _("Ignoring repositories: %s"), ', '.join(error_repos))
                 if self.repos._any_enabled():
                     if age != 0 and mts != 0:
                         logger.info(_("Last metadata expiration check: %s ago on %s."),
