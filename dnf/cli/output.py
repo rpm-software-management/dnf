@@ -1002,15 +1002,19 @@ class Output(object):
             out[0:0] = self._banner(col_data, (_('Group'), _('Packages'), '', ''))
         return '\n'.join(out)
 
-    def _skipped_packages(self, upgrade_type=False):
+    def _skipped_packages(self, report_problems):
         """returns set of conflicting packages and set of packages with broken dependency that would
         be additionally installed when --best and --allowerasing"""
+        if self.base._goal.actions & (hawkey.INSTALL | hawkey.UPGRADE | hawkey.UPGRADE_ALL):
+            best = True
+        else:
+            best = False
         ng = deepcopy(self.base._goal)
         params = {"allow_uninstall": self.base._allow_erasing,
-                  "force_best": upgrade_type,
-                  "ignore_weak": not upgrade_type}
+                  "force_best": best,
+                  "ignore_weak": not best}
         ret = ng.run(**params)
-        if not ret:
+        if not ret and report_problems:
             msg = dnf.util._format_resolve_problems(ng.problem_rules())
             logger.warning(msg)
         problem_conflicts = set(ng.problem_conflicts(available=True))
@@ -1196,9 +1200,7 @@ class Output(object):
         # show skipped conflicting packages
         if not self.conf.best and self.base._goal.actions & forward_actions:
             lines = []
-            upgrade_type = True if self.base._goal.actions & hawkey.UPGRADE | hawkey.UPGRADE_ALL \
-                else False
-            skipped_conflicts, skipped_broken = self._skipped_packages(upgrade_type=upgrade_type)
+            skipped_conflicts, skipped_broken = self._skipped_packages(report_problems=True)
             for pkg in sorted(skipped_conflicts):
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
             recommendations = ["--best"]
@@ -1353,6 +1355,7 @@ Transaction Summary
 
         out = ''
         list_bunch = _make_lists(transaction, self.base._goal)
+        skipped_conflicts, skipped_broken = self._skipped_packages(report_problems=False)
 
         for (action, tsis) in [(_('Upgraded'), list_bunch.upgraded),
                                (_('Downgraded'), list_bunch.downgraded),
@@ -1361,6 +1364,7 @@ Transaction Summary
                                 list_bunch.installed_weak +
                                 list_bunch.installed_dep),
                                (_('Reinstalled'), list_bunch.reinstalled),
+                               (_('Skipped'), skipped_conflicts.union(skipped_broken)),
                                (_('Removed'), list_bunch.erased +
                                    list_bunch.erased_dep +
                                    list_bunch.erased_clean),
