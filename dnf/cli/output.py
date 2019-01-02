@@ -1012,7 +1012,7 @@ class Output(object):
         ng = deepcopy(self.base._goal)
         params = {"allow_uninstall": self.base._allow_erasing,
                   "force_best": best,
-                  "ignore_weak": not best}
+                  "ignore_weak": True}
         ret = ng.run(**params)
         if not ret and report_problems:
             msg = dnf.util._format_resolve_problems(ng.problem_rules())
@@ -1356,6 +1356,8 @@ Transaction Summary
         out = ''
         list_bunch = _make_lists(transaction, self.base._goal)
         skipped_conflicts, skipped_broken = self._skipped_packages(report_problems=False)
+        skipped = skipped_conflicts.union(skipped_broken)
+        skipped = sorted(set([str(pkg) for pkg in skipped]))
 
         for (action, tsis) in [(_('Upgraded'), list_bunch.upgraded),
                                (_('Downgraded'), list_bunch.downgraded),
@@ -1364,7 +1366,7 @@ Transaction Summary
                                 list_bunch.installed_weak +
                                 list_bunch.installed_dep),
                                (_('Reinstalled'), list_bunch.reinstalled),
-                               (_('Skipped'), skipped_conflicts.union(skipped_broken)),
+                               (_('Skipped'), skipped),
                                (_('Removed'), list_bunch.erased +
                                    list_bunch.erased_dep +
                                    list_bunch.erased_clean),
