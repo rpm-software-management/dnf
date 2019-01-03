@@ -75,20 +75,6 @@ def _parse_specs(namespace, values):
             namespace.pkg_specs.append(value)
 
 
-def _non_repo_handle(conf=None):
-    handle = librepo.Handle()
-    handle.useragent = dnf.const.USER_AGENT
-    # see dnf.repo.Repo._handle_new_remote() how to pass
-    if conf:
-        handle.maxspeed = conf.throttle if type(conf.throttle) is int \
-            else int(conf.bandwidth * conf.throttle)
-        handle.proxy = conf.proxy
-        handle.proxyuserpwd = dnf.repo._user_pass_str(conf.proxy_username,
-                                                      conf.proxy_password, True)
-        handle.sslverifypeer = handle.sslverifyhost = conf.sslverify
-    return handle
-
-
 def _urlopen_progress(url, conf, progress=None):
     if progress is None:
         progress = dnf.callback.NullDownloadProgress()
@@ -104,12 +90,6 @@ def _urlopen_progress(url, conf, progress=None):
         if conf.strict:
             raise IOError(str(e))
         logger.error(str(e))
-#    try:
-#        librepo.download_packages(targets, failfast=True)
-#    except librepo.LibrepoException as e:
-#        if conf.strict:
-#            raise IOError(e.args[1])
-#        logger.error(e.args[1])
     return pload.local_path
 
 def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
@@ -128,8 +108,6 @@ def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
             libdnf.repo.Downloader.downloadURL(conf._config if conf else None, url, fo.fileno())
     except RuntimeError as e:
         raise IOError(str(e))
-#    except librepo.LibrepoException as e:
-#        raise IOError(e.args[1])
 
     fo.seek(0)
     return fo
