@@ -247,7 +247,7 @@ class BaseConfig(object):
         if parser.hasSection(section):
             for name in parser.getData()[section]:
                 value = parser.getSubstitutedValue(section, name)
-                if not value or value == 'None':
+                if not value or value in ['None', '_none_']:
                     value = ''
                 if hasattr(self._config, name):
                     try:
