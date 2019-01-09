@@ -219,7 +219,7 @@ class Base(object):
                 if solver_errors:
                     logger.warning(
                         dnf.module.module_base.format_modular_solver_errors(solver_errors[0]))
-            if include_query:
+            if len(self.conf.includepkgs) > 0:
                 self.sack.add_includes(include_query)
                 self.sack.set_use_includes(True)
             if exclude_query:

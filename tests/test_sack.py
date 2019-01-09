@@ -69,7 +69,7 @@ class SackTest(tests.support.DnfBaseTestCase):
         self.base.conf.excludepkgs = ['*.i?86']
         self.base.conf.includepkgs = ['lib*']
         self.base._setup_excludes_includes()
-        peppers = self.base.sack.query().filter().run()
+        peppers = self.base.sack.query().run()
         self.assertLength(peppers, 1)
         self.assertEqual(str(peppers[0]), "librita-1-1.x86_64")
 
