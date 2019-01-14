@@ -67,10 +67,9 @@ class ModuleCommand(commands.Command):
             if output:
                 print(output)
                 return
-            msg = _('No matching Modules to list')
             if self.opts.module_spec:
+                msg = _('No matching Modules to list')
                 raise dnf.exceptions.Error(msg)
-            logger.warning(msg)
 
     class InfoSubCommand(SubCommand):
 
