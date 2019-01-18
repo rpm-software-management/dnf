@@ -18,7 +18,8 @@
 
 
 import dnf.cli
-
+from dnf.i18n import _
+from dnf.cli.option_parser import OptionParser
 
 # The parent class allows registration to the CLI manager.
 class Command(dnf.cli.Command):
