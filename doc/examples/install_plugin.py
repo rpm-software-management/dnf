@@ -56,10 +56,11 @@ class Command(dnf.cli.Command):
             except dnf.exceptions.MarkingError:
                 raise dnf.exceptions.Error('feature(s) not found: ' + ftr_spec)
         # Package marking methods set the user request.
-        try:
-            self.base.package_install(self.base.add_remote_rpms(self.opts.filenames, strict=False))
-        except EnvironmentError as e:
-            raise dnf.exceptions.Error(e)
+        for pkg in self.base.add_remote_rpms(self.opts.filenames, strict=False):
+            try:
+                self.base.package_install(pkg, strict=False)
+            except dnf.exceptions.MarkingError as e:
+                raise dnf.exceptions.Error(e)
         # Comps data reading initializes the base.comps attribute.
         if self.opts.grp_specs:
             self.base.read_comps(arch_filter=True)
@@ -68,7 +69,7 @@ class Command(dnf.cli.Command):
             group = self.base.comps.group_by_pattern(grp_spec)
             if not group:
                 raise dnf.exceptions.Error('group not found: ' + grp_spec)
-            self.base.group_install(group, ['mandatory', 'default'])
+            self.base.group_install(group.id, ['mandatory', 'default'])
 
 
 # Every plugin must be a subclass of dnf.Plugin.

@@ -40,4 +40,4 @@ if __name__ == '__main__':
         available = q_avail.run()
         for pkg in q_inst.run():
             if pkg not in available:
-                print('%s.%s' % (pkg.name, pkg.arch))
+                print(str(pkg))
