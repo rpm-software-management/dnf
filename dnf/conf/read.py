@@ -58,7 +58,7 @@ class RepoReader(object):
         try:
             repo._populate(parser, id_, repofn, dnf.conf.PRIO_REPOCONFIG)
         except ValueError as e:
-            msg = _("Repository '%s': Error parsing config: %s" % (id_, e))
+            msg = _("Repository '%s': Error parsing config: %s") % (id_, e)
             raise dnf.exceptions.ConfigError(msg)
 
         # Ensure that the repo name is set
@@ -153,7 +153,7 @@ class ModuleReader(object):
                             _('Unknown configuration option: %s = %s in %s'),
                             ucd(name), ucd(value), ucd(module_path))
         except ValueError as e:
-            msg = _("Module '%s': Error parsing config: %s" % (id_, e))
+            msg = _("Module '%s': Error parsing config: %s") % (id_, e)
             raise dnf.exceptions.ConfigError(msg)
 
         # TODO: unset module.name?
