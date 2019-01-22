@@ -146,7 +146,7 @@ class AliasCommand(commands.Command):
     def list_alias(self, cmd):
         args = [cmd]
         try:
-            self.aliases_base._resolve(args)
+            args = self.aliases_base._resolve(args)
         except dnf.exceptions.Error as e:
             logger.error(_('%s, alias %s'), e, cmd)
         else:
