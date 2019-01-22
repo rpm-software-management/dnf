@@ -116,7 +116,7 @@ class CleanCommand(commands.Command):
                     return
             except dnf.exceptions.LockError as e:
                 if not self.base.conf.exit_on_lock:
-                    msg = _('Waiting for process with pid %d to finish.' % (e.pid))
+                    msg = _('Waiting for process with pid %d to finish.') % (e.pid)
                     logger.info(msg)
                     time.sleep(3)
                 else:

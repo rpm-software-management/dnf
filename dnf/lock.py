@@ -100,7 +100,7 @@ class ProcessLock(object):
                 msg = _('Malformed lock file found: %s.\n'
                         'Ensure no other dnf process is running and '
                         'remove the lock file manually or run '
-                        'systemd-tmpfiles --remove dnf.conf.' % (self.target))
+                        'systemd-tmpfiles --remove dnf.conf.') % (self.target)
                 raise LockError(msg)
 
     def _try_unlink(self):
@@ -136,7 +136,7 @@ class ProcessLock(object):
                 msg = '%s already locked by %d' % (self.description, pid)
                 raise ProcessLockError(msg, pid)
             if inform or prev_pid != pid:
-                msg = _('Waiting for process with pid %d to finish.' % (pid))
+                msg = _('Waiting for process with pid %d to finish.') % (pid)
                 logger.info(msg)
                 inform = False
                 prev_pid = pid
