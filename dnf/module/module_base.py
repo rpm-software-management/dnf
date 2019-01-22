@@ -279,7 +279,8 @@ class ModuleBase(object):
         hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
         try:
             solver_errors = self.base.sack.filter_modules(
-                self.base._moduleContainer, hot_fix_repos, self.base.conf.installroot, None,
+                self.base._moduleContainer, hot_fix_repos, self.base.conf.installroot,
+                self.base.conf.module_platform_id,
                 self.base.conf.debug_solver)
         except hawkey.Exception as e:
             raise dnf.exceptions.Error(ucd(e))
