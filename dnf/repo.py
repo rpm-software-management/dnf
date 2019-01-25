@@ -191,12 +191,10 @@ class PackageTargetCallbacks(libdnf.repo.PackageTargetCB):
 
     def progress(self, totalToDownload, downloaded):
         self.package_pload._progress_cb(None, totalToDownload, downloaded)
-        # print("totalToDownload:", totalToDownload,  "downloaded:", downloaded)
         return 0
 
     def mirrorFailure(self, msg, url):
         self.package_pload._mirrorfail_cb(None, msg, url)
-        # print("handlemirrorFailure:", msg, url, metadata)
         return 0
 
 
@@ -402,7 +400,6 @@ class RepoCallbacks(libdnf.repo.RepoCB):
 
     def progress(self, totalToDownload, downloaded):
         self._md_pload._progress_cb(None, totalToDownload, downloaded)
-        # print("totalToDownload:", totalToDownload,  "downloaded:", downloaded)
         return 0
 
     def fastestMirror(self, stage, ptr):
