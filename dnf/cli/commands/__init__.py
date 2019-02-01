@@ -199,7 +199,6 @@ class InfoCommand(Command):
 
     def configure(self):
         demands = self.cli.demands
-        demands.fresh_metadata = False
         demands.sack_activation = True
         if self.opts._packages_action:
             self.opts.packages_action = self.opts._packages_action
