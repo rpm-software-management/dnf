@@ -35,10 +35,10 @@ Name         : tour
 Epoch        : 1
 Version      : 5
 Release      : 0
-Arch         : noarch
+Architecture : noarch
 Size         : 0.0  
 Source       : tour.src.rpm
-Repo         : None
+Repository   : None
 Summary      : A summary of the package.
 URL          : http://example.com
 License      : GPL+
