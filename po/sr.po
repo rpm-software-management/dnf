@@ -7,19 +7,19 @@
 # Momcilo Medic <medicmomcilo@gmail.com>, 2015. #zanata
 # Marko Kostic <marko.m.kostic@gmail.com>, 2016. #zanata
 # Marko Kostic <marko.m.kostic@gmail.com>, 2017. #zanata
-# Momcilo Medic <medicmomcilo@gmail.com>, 2017. #zanata
+# Marko Kostic <marko.m.kostic@gmail.com>, 2019. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-15 09:16+0200\n"
-"PO-Revision-Date: 2017-05-06 04:12+0000\n"
+"PO-Revision-Date: 2019-01-31 08:22+0000\n"
 "Last-Translator: Marko Kostic <marko.m.kostic@gmail.com>\n"
 "Language-Team: Serbian (http://www.transifex.com/projects/p/dnf/language/sr/)\n"
+"Language: sr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: sr\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Zanata 4.6.2\n"
 
@@ -27,7 +27,7 @@ msgstr ""
 #: ../dnf/transaction.py:79
 msgctxt "currently"
 msgid "Downgrading"
-msgstr ""
+msgstr "Деградирам"
 
 #: ../dnf/transaction.py:80 ../dnf/transaction.py:87 ../dnf/transaction.py:92
 #: ../dnf/transaction.py:94
@@ -38,17 +38,17 @@ msgstr "Чистим"
 #: ../dnf/transaction.py:82
 msgctxt "currently"
 msgid "Installing"
-msgstr ""
+msgstr "Инсталирам"
 
 #: ../dnf/transaction.py:83 ../dnf/transaction.py:84 ../dnf/cli/output.py:1829
 msgid "Obsoleting"
-msgstr "Постаје застарело"
+msgstr "Застаревам"
 
 #. TRANSLATORS: This is for a single package currently being reinstalled.
 #: ../dnf/transaction.py:86
 msgctxt "currently"
 msgid "Reinstalling"
-msgstr ""
+msgstr "Поново инсталирам"
 
 #. TODO: 'Removing'?
 #: ../dnf/transaction.py:89
@@ -59,7 +59,7 @@ msgstr "Бришем"
 #: ../dnf/transaction.py:91
 msgctxt "currently"
 msgid "Upgrading"
-msgstr ""
+msgstr "Надограђујем"
 
 #: ../dnf/transaction.py:95
 msgid "Verifying"
@@ -76,17 +76,17 @@ msgstr "Припремам"
 #: ../dnf/plugin.py:60
 #, python-format
 msgid "Parsing file failed: %s"
-msgstr ""
+msgstr "Обрађивање датотеке неуспешно: %s"
 
 #: ../dnf/plugin.py:132
 #, python-format
 msgid "Loaded plugins: %s"
-msgstr ""
+msgstr "Учитани прикључци: %s"
 
 #: ../dnf/plugin.py:180
 #, python-format
 msgid "Failed loading plugin: %s"
-msgstr "Грешка при учитавању додатка: %s"
+msgstr "Грешка при учитавању прикључка: %s"
 
 #: ../dnf/repodict.py:58
 #, python-format
@@ -108,7 +108,7 @@ msgstr "Епоха"
 
 #: ../dnf/cli/output.py:496 ../dnf/cli/output.py:1193
 msgid "Version"
-msgstr "Верзија"
+msgstr "Издање"
 
 #: ../dnf/cli/output.py:497
 msgid "Release"
@@ -192,7 +192,7 @@ msgstr "Да ли је ово у реду [d/N]: "
 
 #: ../dnf/cli/output.py:662
 msgid "Is this ok [Y/n]: "
-msgstr "Да ли је ово у реду [Д/н]: "
+msgstr "Да ли је ово у реду [D/n]: "
 
 #: ../dnf/cli/output.py:742
 #, python-format
@@ -202,7 +202,7 @@ msgstr ""
 #: ../dnf/cli/output.py:746
 #, python-format
 msgid " Group-Id: %s"
-msgstr " ИБ групе: %s"
+msgstr " ИБ-групе: %s"
 
 #: ../dnf/cli/output.py:748 ../dnf/cli/output.py:787
 #, python-format
@@ -238,7 +238,7 @@ msgstr "Група окружења: %s"
 #: ../dnf/cli/output.py:784
 #, python-format
 msgid " Environment-Id: %s"
-msgstr " Id окружења: %s"
+msgstr " ИБ-окружења: %s"
 
 #: ../dnf/cli/output.py:790
 msgid " Mandatory Groups:"
@@ -250,26 +250,26 @@ msgstr " Изборне групе:"
 
 #: ../dnf/cli/output.py:812
 msgid "Matched from:"
-msgstr "Повезан из  :"
+msgstr "Подудара се из:"
 
 #: ../dnf/cli/output.py:826
 #, python-format
 msgid "Filename    : %s"
-msgstr "Име датотеке: %s"
+msgstr "Назив датотеке: %s"
 
 #: ../dnf/cli/output.py:850
 #, python-format
 msgid "Repo        : %s"
-msgstr "Ризница     : %s"
+msgstr "Ризница        : %s"
 
 #: ../dnf/cli/output.py:859
 msgid "Description : "
-msgstr "Опис        : "
+msgstr "Опис : "
 
 #: ../dnf/cli/output.py:863
 #, python-format
 msgid "URL         : %s"
-msgstr "УРЛ         : %s"
+msgstr "URL         : %s"
 
 #: ../dnf/cli/output.py:867
 #, python-format
@@ -453,9 +453,9 @@ msgstr "Прескочи"
 #: ../dnf/cli/output.py:1255
 msgid "Dependent package"
 msgid_plural "Dependent packages"
-msgstr[0] "Dependent packages"
-msgstr[1] "Dependent packages"
-msgstr[2] "Dependent packages"
+msgstr[0] "Зависни пакет"
+msgstr[1] "Зависна пакета"
+msgstr[2] "Зависних пакета"
 
 #: ../dnf/cli/output.py:1314 ../dnf/cli/output.py:1667
 #: ../dnf/cli/output.py:1835
@@ -470,7 +470,7 @@ msgstr "Деградирано"
 #: ../dnf/cli/output.py:1316 ../dnf/cli/output.py:1666
 #: ../dnf/cli/output.py:1668 ../dnf/cli/commands/updateinfo.py:306
 msgid "Installed"
-msgstr "Инсталирани"
+msgstr "Инсталирано"
 
 #: ../dnf/cli/output.py:1320
 msgid "Reinstalled"
@@ -507,7 +507,7 @@ msgstr "Нема трансакција"
 
 #: ../dnf/cli/output.py:1505 ../dnf/cli/output.py:1906
 msgid "Bad transaction IDs, or package(s), given"
-msgstr "Задати су неисправни пакети или ID трансакције"
+msgstr "Наведени су неисправни пакети или ИБ трансакције"
 
 #: ../dnf/cli/output.py:1541
 msgid "Command line"
@@ -521,7 +521,7 @@ msgstr ""
 #. REALLY Needs to use columns!
 #: ../dnf/cli/output.py:1545 ../dnf/cli/output.py:1915
 msgid "ID"
-msgstr "ID"
+msgstr "ИБ"
 
 #: ../dnf/cli/output.py:1547
 msgid "Date and time"
@@ -529,7 +529,7 @@ msgstr "Датум и време"
 
 #: ../dnf/cli/output.py:1548 ../dnf/cli/output.py:1916
 msgid "Action(s)"
-msgstr "Акција(е)"
+msgstr "Радња(е)"
 
 #: ../dnf/cli/output.py:1549
 msgid "Altered"
@@ -537,7 +537,7 @@ msgstr "Промењено"
 
 #: ../dnf/cli/output.py:1608
 msgid "No transaction ID, or package, given"
-msgstr "Није задат пакет или ID трансакције"
+msgstr "Није наведен пакет или ИБ трансакције"
 
 #: ../dnf/cli/output.py:1666
 msgid "Erased"
@@ -557,15 +557,15 @@ msgstr "Новије"
 
 #: ../dnf/cli/output.py:1717 ../dnf/cli/output.py:1719
 msgid "Transaction ID :"
-msgstr "ID трансакције   :"
+msgstr "ИБ трансакције :"
 
 #: ../dnf/cli/output.py:1722
 msgid "Begin time     :"
-msgstr "Време почетка    :"
+msgstr "Почетно време     :"
 
 #: ../dnf/cli/output.py:1725 ../dnf/cli/output.py:1727
 msgid "Begin rpmdb    :"
-msgstr "Почетак rpmdb    :"
+msgstr "Почетак rpmdb-а    :"
 
 #: ../dnf/cli/output.py:1733
 #, python-format
@@ -760,11 +760,11 @@ msgstr "тиха радња"
 
 #: ../dnf/cli/option_parser.py:165
 msgid "verbose operation"
-msgstr "опширна радња"
+msgstr "причљива радња"
 
 #: ../dnf/cli/option_parser.py:167
 msgid "show DNF version and exit"
-msgstr "приказује DNF верзију и излази"
+msgstr "приказује DNF издање и излази"
 
 #: ../dnf/cli/option_parser.py:168
 msgid "set install root"
@@ -776,15 +776,15 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:174
 msgid "disable all plugins"
-msgstr "онемогућује све додатке"
+msgstr "онемогући све прикључке"
 
 #: ../dnf/cli/option_parser.py:177
 msgid "enable plugins by name"
-msgstr ""
+msgstr "омогући прикључке по називу"
 
 #: ../dnf/cli/option_parser.py:181
 msgid "disable plugins by name"
-msgstr "искључи додатке по имену"
+msgstr "онемогући прикључке по називу"
 
 #: ../dnf/cli/option_parser.py:184
 msgid "override the value of $releasever in config and repo files"
@@ -809,7 +809,7 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:202
 msgid "try the best available package versions in transactions."
-msgstr "покушава најбоље доступне верзије у трансакцијама."
+msgstr "покушава најбоља доступна издања у трансакцијама."
 
 #: ../dnf/cli/option_parser.py:206
 msgid "run entirely from system cache, don't update cache"
@@ -862,7 +862,7 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:251
 msgid "exclude packages by name or glob"
-msgstr "искључује пакете по имену или глобу"
+msgstr "изузми пакете по називу или глобу"
 
 #: ../dnf/cli/option_parser.py:256
 msgid "disable excludepkgs"
@@ -951,7 +951,7 @@ msgstr ""
 
 #: ../dnf/cli/option_parser.py:355
 msgid "List of Plugin Commands:"
-msgstr ""
+msgstr "Списак наредби за прикључке:"
 
 #: ../dnf/cli/main.py:57 ../dnf/automatic/main.py:227
 #, python-format
@@ -1181,14 +1181,14 @@ msgstr "Нема такве команде: %s. Молим употребите 
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
-"Можда је команда DNF додатка, покушајте: \"dnf install 'dnf-command(%s)'\""
+"Можда је команда DNF прикључка, покушајте: \"dnf install 'dnf-command(%s)'\""
 
 #: ../dnf/cli/cli.py:799
 msgid ""
 "It could be a DNF plugin command, but loading of plugins is currently "
 "disabled."
 msgstr ""
-"Можда је ово наредба DNF додатка али је учитавање додатака онемогућено."
+"Можда је ово наредба DNF прикључка али је учитавање прикључака онемогућено."
 
 #: ../dnf/cli/cli.py:842 ../dnf/cli/cli.py:846
 #, python-format
@@ -1288,18 +1288,18 @@ msgstr ""
 #: ../dnf/cli/commands/search.py:79
 #, python-format
 msgid "%s Exactly Matched: %%s"
-msgstr ""
+msgstr "%s Тачна подударања: %%s"
 
 #. TRANSLATORS: %s  - translated package attributes,
 #. %%s - found keys (in listed attributes)
 #: ../dnf/cli/commands/search.py:83
 #, python-format
 msgid "%s Matched: %%s"
-msgstr ""
+msgstr "%s Подударања: %%s"
 
 #: ../dnf/cli/commands/search.py:126
 msgid "No matches found."
-msgstr "Нису пронађене подударности."
+msgstr "Нису пронађена подударања."
 
 #: ../dnf/cli/commands/search.py:151 ../dnf/cli/commands/__init__.py:254
 msgid "Searching Packages: "
@@ -1562,8 +1562,8 @@ msgid ""
 "Cannot rollback transaction %s, doing so would result in an inconsistent "
 "package database."
 msgstr ""
-"Не могу да вратим уназад трансакцију %s, чинивши то  би узроковало натечну "
-"базу података пакета."
+"Не могу да вратим уназад трансакцију %s, чинивши то  би узроковало "
+"неистоветну базу података пакета."
 
 #: ../dnf/cli/commands/__init__.py:936
 msgid ""
@@ -1583,11 +1583,11 @@ msgstr ""
 
 #: ../dnf/cli/commands/downgrade.py:34
 msgid "Downgrade a package"
-msgstr "Уназади пакет"
+msgstr "Деградирај пакет"
 
 #: ../dnf/cli/commands/downgrade.py:38
 msgid "Package to downgrade"
-msgstr "Пакет за уназађивање"
+msgstr "Пакет за деградирање"
 
 #: ../dnf/cli/commands/upgrademinimal.py:31
 msgid ""
@@ -2235,7 +2235,7 @@ msgstr "ID ризнице          : "
 
 #: ../dnf/cli/commands/repolist.py:180
 msgid "Repo-name    : "
-msgstr "Име ризнице         : "
+msgstr "Назив-ризнице    : "
 
 #: ../dnf/cli/commands/repolist.py:183
 msgid "Repo-status  : "
@@ -2301,7 +2301,7 @@ msgstr "Искључени из ризнице: "
 
 #: ../dnf/cli/commands/repolist.py:246
 msgid "Repo-filename: "
-msgstr "Име датотеке ризнице: "
+msgstr "Назив-датотеке-ризнице: "
 
 #. Work out the first (id) and last (enabled/disalbed/count),
 #. then chop the middle (name)...
@@ -2316,7 +2316,7 @@ msgstr "статус"
 
 #: ../dnf/cli/commands/repolist.py:284
 msgid "repo name"
-msgstr "репо име"
+msgstr "назив ризнице"
 
 #: ../dnf/cli/commands/repolist.py:300
 #, python-format
@@ -2846,15 +2846,15 @@ msgstr[0] ""
 
 #: ../dnf/base.py:887
 msgid "Error Summary"
-msgstr ""
+msgstr "Сажетак грешке"
 
 #: ../dnf/base.py:913
 msgid "RPMDB altered outside of DNF."
-msgstr ""
+msgstr "RPM база је измењена ван DNF алатке."
 
 #: ../dnf/base.py:970
 msgid "Errors occurred during transaction."
-msgstr ""
+msgstr "Догодиле су се грешке приликом трансакције."
 
 #: ../dnf/base.py:974
 #, python-format
@@ -2877,7 +2877,7 @@ msgstr "Није успело уклањање датотеке трансакц
 
 #: ../dnf/base.py:1075
 msgid "Some packages were not downloaded. Retrying."
-msgstr ""
+msgstr "Неки пакети нису преузети. Поново покушавам."
 
 #: ../dnf/base.py:1105
 #, python-format
@@ -2890,10 +2890,12 @@ msgstr ""
 msgid ""
 "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
 msgstr ""
+"Неуспешни Delta RPM-ови су повећали количину исправки са %.1f MB на %.1f MB "
+"(%d.1%% неискоришћено)"
 
 #: ../dnf/base.py:1157
 msgid "Could not open: {}"
-msgstr ""
+msgstr "Не могу да отворим: {}"
 
 #: ../dnf/base.py:1195
 #, python-format
@@ -2927,12 +2929,12 @@ msgstr "%s је уклоњен"
 
 #: ../dnf/base.py:1502
 msgid "No match for group package \"{}\""
-msgstr ""
+msgstr "Нема подударања за групу пакета „{}“"
 
 #: ../dnf/base.py:1587
 #, python-format
 msgid "Adding packages from group '%s': %s"
-msgstr ""
+msgstr "Додајем пакете из групе „%s“: %s"
 
 #: ../dnf/base.py:1628
 msgid "No groups marked for removal."
@@ -2954,7 +2956,7 @@ msgstr "Пакет %s није инсталиран, не могу га дегр
 #: ../dnf/base.py:1867
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
-msgstr "Пакет %s ниже верзије је већ инсталиран, не могу га деградирати."
+msgstr "Пакет %s нижег издања је већ инсталиран, не могу га деградирати."
 
 #: ../dnf/base.py:1890
 #, python-format
@@ -2965,6 +2967,8 @@ msgstr "Пакет %s није инсталиран, не могу га поно
 #, python-format
 msgid "File %s is a source package and cannot be updated, ignoring."
 msgstr ""
+"Датотека %s је пакет са изворним кодом и он се не може ажурирати, "
+"занемарујем."
 
 #: ../dnf/base.py:1911
 #, python-format
@@ -2974,47 +2978,49 @@ msgstr "Пакет %s није инсталиран, не могу га ажур
 #: ../dnf/base.py:1920
 #, python-format
 msgid "Package %s of higher version already installed, cannot update it."
-msgstr "Пакет %s више верзије је већ инсталиран, не могу га ажурирати."
+msgstr "Пакет %s вишег издања је већ инсталиран, не могу га ажурирати."
 
 #: ../dnf/base.py:1966
 #, python-format
 msgid "Package %s available, but installed for different architecture."
-msgstr ""
+msgstr "Пакет %s је доступан али је инсталиран за другу архитектуру."
 
 #: ../dnf/base.py:2121
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
-msgstr "Пакет %s најниже верзије је већ инсталиран, не могу га деградирати."
+msgstr "Пакет %s најнижег издања је већ инсталиран, не могу га деградирати."
 
 #: ../dnf/base.py:2170
 msgid "Action not handled: {}"
-msgstr ""
+msgstr "Радња није урађена: {}"
 
 #: ../dnf/base.py:2218
 msgid "No security updates needed, but {} update available"
-msgstr ""
+msgstr "Безбедносне исправке нису потребне али је {} исправка доступна"
 
 #: ../dnf/base.py:2220
 msgid "No security updates needed, but {} updates available"
-msgstr ""
+msgstr "Безбедносне исправке нису потребне али је {} исправки доступно"
 
 #: ../dnf/base.py:2224
 msgid "No security updates needed for \"{}\", but {} update available"
 msgstr ""
+"Безбедносне исправке за „{}“ нису потребне али је {} исправка доступна"
 
 #: ../dnf/base.py:2226
 msgid "No security updates needed for \"{}\", but {} updates available"
 msgstr ""
+"Безбедносне исправке за „{}“ нису потребне али је {} исправки доступно"
 
 #: ../dnf/base.py:2250
 #, python-format
 msgid ". Failing package is: %s"
-msgstr ""
+msgstr "Неуспешан пакет је: %s"
 
 #: ../dnf/base.py:2251
 #, python-format
 msgid "GPG Keys are configured as: %s"
-msgstr ""
+msgstr "GPG кључеви су подешени као: %s"
 
 #: ../dnf/base.py:2263
 #, python-format
@@ -3023,11 +3029,11 @@ msgstr "GPG кључ на %s (0x%s) је већ инсталиран"
 
 #: ../dnf/base.py:2296
 msgid "The key has been approved."
-msgstr ""
+msgstr "Кључ је одобрен."
 
 #: ../dnf/base.py:2299
 msgid "The key has been rejected."
-msgstr ""
+msgstr "Кључ је одбијен."
 
 #: ../dnf/base.py:2327
 #, python-format
@@ -3053,77 +3059,80 @@ msgstr ""
 
 #: ../dnf/base.py:2347
 msgid "Import of key(s) didn't help, wrong key(s)?"
-msgstr "Увоз кључа(кључева) није помогао, погрешан кључ(кључеви)?"
+msgstr ""
+"Увоз кључа (или кључева) није помогао, погрешан кључ (погрешни кључеви)?"
 
 #: ../dnf/base.py:2383
 msgid "  * Maybe you meant: {}"
-msgstr ""
+msgstr "  * Можда сте хтели: {}"
 
 #: ../dnf/base.py:2415
 msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
-msgstr ""
+msgstr "Контролна сума пакета „{}“ из локалне ризнице „{}“ је неисправна"
 
 #: ../dnf/base.py:2418
 msgid "Some packages from local repository have incorrect checksum"
-msgstr ""
+msgstr "Контролне суме неких пакета из локалне ризнице су неисправне"
 
 #: ../dnf/base.py:2421
 msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
-msgstr ""
+msgstr "Контролна сума пакета „{}“ из ризнице „{}“ је неисправна"
 
 #: ../dnf/base.py:2424
 msgid ""
 "Some packages have invalid cache, but cannot be downloaded due to \"--"
 "cacheonly\" option"
 msgstr ""
+"Неки пакети садрже неисправан кеш али се не могу преузети због опције "
+"„--cacheonly“"
 
 #: ../dnf/base.py:2436
 #, python-format
 msgid "Package %s is already installed."
-msgstr ""
+msgstr "Пакет %s је већ инсталиран."
 
 #: ../dnf/conf/config.py:105 ../dnf/conf/config.py:244
 #, python-format
 msgid "Error parsing '%s': %s"
-msgstr ""
+msgstr "Грешка при обради „%s“: %s"
 
 #: ../dnf/conf/config.py:297 ../dnf/conf/read.py:145
 #, python-format
 msgid "Unknown configuration value: %s=%s in %s; %s"
-msgstr ""
+msgstr "Непозната вредност подешавања: %s=%s in %s; %s"
 
 #: ../dnf/conf/config.py:305 ../dnf/conf/read.py:153
 #, python-format
 msgid "Unknown configuration option: %s = %s in %s"
-msgstr ""
+msgstr "Непозната опција подешавања: %s = %s in %s"
 
 #: ../dnf/conf/config.py:408
 msgid "Could not set cachedir: {}"
-msgstr ""
+msgstr "Нисам могао да подесим директоријум са кешом: {}"
 
 #: ../dnf/conf/config.py:482 ../dnf/conf/config.py:510
 #, python-format
 msgid "Unknown configuration option: %s = %s"
-msgstr ""
+msgstr "Непозната опција подешавања: %s = %s"
 
 #: ../dnf/conf/config.py:498
 #, python-format
 msgid "Main config did not have a %s attr. before setopt"
-msgstr ""
+msgstr "Главно подешавање није имало особину %s пре подешавања опција"
 
 #: ../dnf/conf/config.py:548 ../dnf/conf/config.py:566
 msgid "Incorrect or unknown \"{}\": {}"
-msgstr ""
+msgstr "Неисправно или непознато „{}“: {}"
 
 #: ../dnf/conf/config.py:578 ../dnf/conf/read.py:84
 #, python-format
 msgid "Parsing file \"%s\" failed: %s"
-msgstr ""
+msgstr "Обрада датотеке „%s“ није успела: %s"
 
 #: ../dnf/conf/config.py:616
 #, python-format
 msgid "Repo %s did not have a %s attr. before setopt"
-msgstr ""
+msgstr "Ризница %s није имала %s особину пре постављања опција"
 
 #: ../dnf/conf/read.py:51
 #, python-format
@@ -3133,37 +3142,37 @@ msgstr "Упозорење: неуспешно учитавање '%s', прес
 #: ../dnf/conf/read.py:61
 #, python-format
 msgid "Repository '%s': Error parsing config: %s"
-msgstr ""
+msgstr "Ризница „%s“: грешка при обради подешавања: %s"
 
 #: ../dnf/conf/read.py:67
 #, python-format
 msgid "Repository '%s' is missing name in configuration, using id."
-msgstr ""
+msgstr "Ризници „%s“ недостаје назив у подешавању, користим иб."
 
 #: ../dnf/conf/read.py:97
 #, python-format
 msgid "Bad id for repo: %s, byte = %s %d"
-msgstr ""
+msgstr "Лош иб за ризницу: %s, бајт = %s %d"
 
 #: ../dnf/conf/read.py:156
 #, python-format
 msgid "Module '%s': Error parsing config: %s"
-msgstr ""
+msgstr "Модул „%s“: грешка при обради подешавања: %s"
 
 #: ../dnf/package.py:276
 #, python-format
 msgid "%s: %s check failed: %s vs %s"
-msgstr ""
+msgstr "%s: %s провера није успела: %s против %s"
 
 #: ../dnf/crypto.py:108
 #, python-format
 msgid "repo %s: 0x%s already imported"
-msgstr ""
+msgstr "ризница %s: 0x%s је већ увезена"
 
 #: ../dnf/crypto.py:115
 #, python-format
 msgid "repo %s: imported key 0x%s."
-msgstr ""
+msgstr "ризница %s: увезен кључ 0x%s."
 
 #: ../dnf/drpm.py:144
 msgid "Delta RPM rebuild failed"
@@ -3208,7 +3217,7 @@ msgstr "Окружење '%s' није инсталирано."
 #: ../dnf/comps.py:653
 #, python-format
 msgid "Group_id '%s' does not exist."
-msgstr ""
+msgstr "ИБ групе „%s“ не постоји."
 
 #: ../dnf/comps.py:684
 #, python-format

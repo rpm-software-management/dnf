@@ -9,18 +9,19 @@
 # A S Alam <aalam@fedoraproject.org>, 2016. #zanata
 # A S Alam <aalam@fedoraproject.org>, 2017. #zanata
 # A S Alam <aalam@fedoraproject.org>, 2018. #zanata
+# A S Alam <aalam@fedoraproject.org>, 2019. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-15 09:16+0200\n"
-"PO-Revision-Date: 2018-09-23 03:07+0000\n"
+"PO-Revision-Date: 2019-01-26 07:06+0000\n"
 "Last-Translator: A S Alam <aalam@fedoraproject.org>\n"
 "Language-Team: Panjabi (Punjabi) (http://www.transifex.com/projects/p/dnf/language/pa/)\n"
+"Language: pa\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: pa\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Zanata 4.6.2\n"
 
@@ -28,7 +29,7 @@ msgstr ""
 #: ../dnf/transaction.py:79
 msgctxt "currently"
 msgid "Downgrading"
-msgstr ""
+msgstr "ਡਾਊਨਗਰੇਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../dnf/transaction.py:80 ../dnf/transaction.py:87 ../dnf/transaction.py:92
 #: ../dnf/transaction.py:94
@@ -39,7 +40,7 @@ msgstr "ਸਫ਼ਾਈ"
 #: ../dnf/transaction.py:82
 msgctxt "currently"
 msgid "Installing"
-msgstr ""
+msgstr "ਇੰਸਟਾਲ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../dnf/transaction.py:83 ../dnf/transaction.py:84 ../dnf/cli/output.py:1829
 msgid "Obsoleting"
@@ -49,7 +50,7 @@ msgstr "ਬਰਤਰਫ਼ ਕੀਤਾ ਜਾਂਦਾ ਹੈ"
 #: ../dnf/transaction.py:86
 msgctxt "currently"
 msgid "Reinstalling"
-msgstr ""
+msgstr "ਮੁੜ-ਇੰਸਟਾਲ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
 #. TODO: 'Removing'?
 #: ../dnf/transaction.py:89
@@ -60,7 +61,7 @@ msgstr "ਮਿਟਾਇਆ ਜਾਂਦਾ ਹੈ"
 #: ../dnf/transaction.py:91
 msgctxt "currently"
 msgid "Upgrading"
-msgstr ""
+msgstr "ਅੱਪਗਰੇਡ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 
 #: ../dnf/transaction.py:95
 msgid "Verifying"
@@ -77,7 +78,7 @@ msgstr "ਤਿਆਰ ਕੀਤਾ ਜਾ ਰਿਹਾ ਹੈ"
 #: ../dnf/plugin.py:60
 #, python-format
 msgid "Parsing file failed: %s"
-msgstr ""
+msgstr "ਫਾਇਲ ਪਾਰਸ ਕਰਨ ਲਈ ਅਸਫ਼ਲ: %s"
 
 #: ../dnf/plugin.py:132
 #, python-format
@@ -994,11 +995,11 @@ msgstr "  ਬਿਲਟ   : %s %s ਉੱਤੇ"
 
 #: ../dnf/cli/cli.py:159
 msgid "Excludes in dnf.conf: "
-msgstr ""
+msgstr "dnf.conf ਵਿੱਚੋਂ ਅਲਹਿਦਾ ਹੈ: "
 
 #: ../dnf/cli/cli.py:162
 msgid "Includes in dnf.conf: "
-msgstr ""
+msgstr "dnf.conf ਵਿੱਚ ਸ਼ਾਮਲ ਹੈ: "
 
 #: ../dnf/cli/cli.py:166
 msgid "Excludes in repo "
@@ -1089,7 +1090,7 @@ msgstr ""
 
 #: ../dnf/cli/cli.py:384
 msgid "No packages marked for downgrade."
-msgstr ""
+msgstr "ਡਾਊਨਗਰੇਡ ਕਰਨ ਲਈ ਕੋਈ ਪੈਕੇਜ ਨਹੀਂ ਚੁਣਿਆ ਹੈ।"
 
 #: ../dnf/cli/cli.py:435
 msgid "Installed Packages"
@@ -2620,7 +2621,7 @@ msgstr ""
 
 #: ../dnf/dnssec.py:226
 msgid "has unknown status."
-msgstr ""
+msgstr "ਦੀ ਹਾਲਤ ਅਣਪਛਾਤੀ ਹੈ।"
 
 #: ../dnf/dnssec.py:234
 msgid "DNSSEC extension: "
@@ -2685,19 +2686,19 @@ msgstr ""
 
 #: ../dnf/exceptions.py:108
 msgid "missing packages: "
-msgstr ""
+msgstr "ਗੁੰਮ-ਹੋਏ ਪੈਕੇਜ: "
 
 #: ../dnf/exceptions.py:110
 msgid "broken packages: "
-msgstr ""
+msgstr "ਖ਼ਰਾਬ ਹੋਏ ਪੈਕੇਜ: "
 
 #: ../dnf/exceptions.py:112
 msgid "missing groups or modules: "
-msgstr ""
+msgstr "ਗੁੰਮ ਹੋਏ ਗਰੁੱਪ ਜਾਂ ਮੋਡੀਊਲ: "
 
 #: ../dnf/exceptions.py:114
 msgid "broken groups or modules: "
-msgstr ""
+msgstr "ਖ਼ਰਾਬ ਹੋਏ ਗਰੁੱਪ ਜਾਂ ਮੋਡੀਊਲ: "
 
 #. empty file is invalid json format
 #: ../dnf/persistor.py:54
@@ -3026,7 +3027,7 @@ msgstr ""
 
 #: ../dnf/base.py:2299
 msgid "The key has been rejected."
-msgstr ""
+msgstr "ਕੁੰਜੀ ਨੂੰ ਰੱਦ ਕੀਤਾ ਜਾ ਚੁੱਕਿਆ ਹੈ।"
 
 #: ../dnf/base.py:2327
 #, python-format
@@ -3077,7 +3078,7 @@ msgstr ""
 #: ../dnf/base.py:2436
 #, python-format
 msgid "Package %s is already installed."
-msgstr ""
+msgstr "ਪੈਕੇਜ %s ਪਹਿਲਾਂ ਹੀ ਇੰਸਟਾਲ ਹੈ।"
 
 #: ../dnf/conf/config.py:105 ../dnf/conf/config.py:244
 #, python-format

@@ -8,19 +8,20 @@
 # Jan Silhan <jsilhan@redhat.com>, 2015. #zanata
 # Göran Uddeborg <goeran@uddeborg.se>, 2016. #zanata
 # Göran Uddeborg <goeran@uddeborg.se>, 2017. #zanata
+# Gleb Vassiljev <gleb@netkom.se>, 2018. #zanata
 # Göran Uddeborg <goeran@uddeborg.se>, 2018. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-15 09:16+0200\n"
-"PO-Revision-Date: 2018-11-14 07:26+0000\n"
-"Last-Translator: Göran Uddeborg <goeran@uddeborg.se>\n"
+"PO-Revision-Date: 2018-12-18 01:00+0000\n"
+"Last-Translator: Gleb Vassiljev <gleb@netkom.se>\n"
 "Language-Team: Swedish (http://www.transifex.com/projects/p/dnf/language/sv/)\n"
+"Language: sv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: sv\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 "X-Generator: Zanata 4.6.2\n"
 
@@ -121,7 +122,7 @@ msgstr "Arkitektur"
 
 #: ../dnf/cli/output.py:499 ../dnf/cli/output.py:1195
 msgid "Size"
-msgstr "Storlk"
+msgstr "Storlek"
 
 #: ../dnf/cli/output.py:500
 msgid "Source"

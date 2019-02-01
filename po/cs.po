@@ -23,18 +23,19 @@
 # Zdenek <chmelarz@gmail.com>, 2017. #zanata
 # Daniel Rusek <mail@asciiwolf.com>, 2018. #zanata
 # Zdenek <chmelarz@gmail.com>, 2018. #zanata
+# Daniel Rusek <mail@asciiwolf.com>, 2019. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2018-10-15 09:16+0200\n"
-"PO-Revision-Date: 2018-10-28 07:48+0000\n"
+"PO-Revision-Date: 2019-01-31 03:44+0000\n"
 "Last-Translator: Daniel Rusek <mail@asciiwolf.com>\n"
 "Language-Team: Czech (http://www.transifex.com/projects/p/dnf/language/cs/)\n"
+"Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Language: cs\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 "X-Generator: Zanata 4.6.2\n"
 
@@ -1056,7 +1057,7 @@ msgstr "Operace přerušena."
 #: ../dnf/cli/commands/install.py:103 ../dnf/cli/commands/install.py:110
 #: ../dnf/base.py:1611
 msgid "Nothing to do."
-msgstr "Není co dělat"
+msgstr "Není co dělat."
 
 #: ../dnf/cli/cli.py:215
 msgid "Downloading Packages:"
