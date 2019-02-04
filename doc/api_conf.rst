@@ -30,7 +30,7 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
   
   .. attribute:: best
 
-    Boolean option, ``True`` instructs the solver to either use a package with the highest available version or fail. On ``False``, do not fail if the latest version can not be installed. Default is ``False``.
+    Boolean option, ``True`` instructs the solver to either use a package with the highest available version or fail. On ``False``, do not fail if the latest version can not be installed. Default is ``True``.
 
   .. attribute:: cachedir
 
