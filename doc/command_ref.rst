@@ -271,6 +271,9 @@ Options
     disable removal of dependencies that are no longer used. It sets
     :ref:`clean_requirements_on_remove <clean_requirements_on_remove-label>` conf option to ``False``.
 
+``--nobest``
+    Set best option as false, therefore transactions are not limited to only best candidates.
+
 ``--nodocs``
     do not install documentation by using rpm flag 'RPMTRANS_FLAG_NODOCS'
 
