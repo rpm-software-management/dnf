@@ -46,7 +46,7 @@ class AliasCommand(commands.Command):
         enable_group = parser.add_mutually_exclusive_group()
         enable_group.add_argument(
             '--enable-resolving', default=False, action='store_true',
-            help=_('enable aliases resolving)'))
+            help=_('enable aliases resolving'))
         enable_group.add_argument(
             '--disable-resolving', default=False, action='store_true',
             help=_('disable aliases resolving'))
