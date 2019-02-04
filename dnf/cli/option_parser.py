@@ -197,10 +197,11 @@ class OptionParser(argparse.ArgumentParser):
                                  default=None,
                                  help=_('allow erasing of installed packages to '
                                         'resolve dependencies'))
-        main_parser.add_argument("-b", "--best", action="store_true",
-                                 default=None,
-                                 help=_("try the best available package "
-                                        "versions in transactions."))
+        best_group = main_parser.add_mutually_exclusive_group()
+        best_group.add_argument("-b", "--best", action="store_true", dest='best', default=None,
+                                help=_("try the best available package versions in transactions."))
+        best_group.add_argument("--nobest", action="store_false", dest='best',
+                                help=_("not narrow transaction to best candidate"))
         main_parser.add_argument("-C", "--cacheonly", dest="cacheonly",
                                  action="store_true", default=None,
                                  help=_("run entirely from system cache, "
