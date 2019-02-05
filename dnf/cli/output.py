@@ -1606,7 +1606,12 @@ Transaction Summary
             else:
                 name = self._pwd_ui_username(transaction.loginuid, 24)
             name = ucd(name)
-            tm = time.strftime("%Y-%m-%d %H:%M",
+            # TRANSLATORS: This is the time format for dnf history list.
+            # You can change it but do it with caution because the output
+            # must be no longer than 16 characters. Format specifiers:
+            # %Y - year number (4 digits), %m - month (00-12), %d - day
+            # number (01-31), %H - hour (00-23), %M - minute (00-59).
+            tm = time.strftime(_("%Y-%m-%d %H:%M"),
                                time.localtime(transaction.beg_timestamp))
             num, uiacts = self._history_uiactions(transaction.data())
             name = fill_exact_width(name, 24, 24)

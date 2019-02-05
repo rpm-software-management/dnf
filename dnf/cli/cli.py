@@ -312,7 +312,7 @@ class BaseCli(dnf.Base):
     def format_changelog(self, changelog):
         """Return changelog formatted as in spec file"""
         chlog_str = '* %s %s\n%s\n' % (
-            changelog['timestamp'].strftime("%a %b %d %X %Y"),
+            changelog['timestamp'].strftime("%c"),
             dnf.i18n.ucd(changelog['author']),
             dnf.i18n.ucd(changelog['text']))
         return chlog_str

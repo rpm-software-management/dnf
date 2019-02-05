@@ -318,7 +318,15 @@ class RepoQueryCommand(commands.Command):
             out.append('Changelog for %s' % str(pkg))
             for chlog in pkg.changelogs:
                 dt = chlog['timestamp']
-                out.append('* %s %s\n%s\n' % (dt.strftime("%a %b %d %Y"),
+                out.append('* %s %s\n%s\n' % (
+                    # TRANSLATORS: This is the date format for a changelog
+                    # in dnf repoquery. You are encouraged to change it
+                    # according to the requirements of your language. Format
+                    # specifiers used here: %a - abbreviated weekday name in
+                    # your language, %b - abbreviated month name in the correct
+                    # grammatical form, %d - day number (01-31), %Y - year
+                    # number (4 digits).
+                                              dt.strftime(_("%a %b %d %Y")),
                                               dnf.i18n.ucd(chlog['author']),
                                               dnf.i18n.ucd(chlog['text'])))
             return '\n'.join(out)
@@ -667,7 +675,8 @@ class PackageWrapper(object):
     def _get_timestamp(timestamp):
         if timestamp > 0:
             dt = datetime.datetime.utcfromtimestamp(timestamp)
-            return dt.strftime("%Y-%m-%d %H:%M")
+            # TRANSLATORS: This is the default time format for dnf repoquery.
+            return dt.strftime(_("%Y-%m-%d %H:%M"))
         else:
             return ''
 
