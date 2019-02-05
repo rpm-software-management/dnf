@@ -73,7 +73,7 @@ It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
 Version:        4.1.0
-Release:        1%{?dist}
+Release:        2%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
 License:        GPLv2+ and GPLv2 and GPL
@@ -103,7 +103,11 @@ Recommends:     (python2-dbus if NetworkManager)
 %endif
 Recommends:     (%{_bindir}/sqlite3 if bash-completion)
 %endif
+%if 0%{?fedora} && 0%{?fedora} < 28 || 0%{?rhel} && 0%{?rhel} < 8
 %{?systemd_requires}
+%else
+%{?systemd_ordering} # does not exist on Fedora27/RHEL7
+%endif
 Provides:       dnf-command(alias)
 Provides:       dnf-command(autoremove)
 Provides:       dnf-command(check-update)
@@ -257,7 +261,11 @@ Python 3 interface to DNF.
 Summary:        %{pkg_summary} - automated upgrades
 BuildRequires:  systemd
 Requires:       %{name} = %{version}-%{release}
+%if 0%{?fedora} && 0%{?fedora} < 28 || 0%{?rhel} && 0%{?rhel} < 8
 %{?systemd_requires}
+%else
+%{?systemd_ordering} # does not exist on Fedora27/RHEL7
+%endif
 
 %description automatic
 Systemd units that can periodically download package upgrades and apply them.
@@ -500,6 +508,9 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Thu Feb 05 2019 Bogdan Dobrelia <bdobreli@redhat.com> - 4.1.0-2
+- Use %%systemd_ordering
+
 * Wed Dec 12 2018 Jaroslav Mracek <jmracek@redhat.com> - 4.0.10-1
 - Updated difference YUM vs. DNF for yum-updateonboot
 - Added new command ``dnf alias [options] [list|add|delete] [<name>...]`` to allow the user to
