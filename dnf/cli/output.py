@@ -639,7 +639,7 @@ class Output(object):
                         pass
 
             if thingslisted == 0:
-                return 1, ['No packages to list']
+                return 1, [_('No packages to list')]
             return 0, []
 
     def userconfirm(self, msg=None, defaultyes_msg=None):
@@ -1107,7 +1107,7 @@ class Output(object):
 
         installedProfiles = sorted(dict(self.base._moduleContainer.getInstalledProfiles()).items())
         if installedProfiles:
-            action = "Installing module profiles"
+            action = _("Installing module profiles")
             lines = []
             for name, profiles in installedProfiles:
                 for profile in list(profiles):
@@ -1116,7 +1116,7 @@ class Output(object):
 
         removedProfiles = sorted(dict(self.base._moduleContainer.getRemovedProfiles()).items())
         if removedProfiles:
-            action = "Removing module profiles"
+            action = _("Removing module profiles")
             lines = []
             for name, profiles in removedProfiles:
                 for profile in list(profiles):
@@ -1125,7 +1125,7 @@ class Output(object):
 
         enabledStreams = sorted(dict(self.base._moduleContainer.getEnabledStreams()).items())
         if enabledStreams:
-            action = "Enabling module streams"
+            action = _("Enabling module streams")
             lines = []
             for name, stream in enabledStreams:
                 lines.append((name, "", stream, "", "", "", ""))
@@ -1133,7 +1133,7 @@ class Output(object):
 
         switchedStreams = sorted(dict(self.base._moduleContainer.getSwitchedStreams()).items())
         if switchedStreams:
-            action = "Switching module streams"
+            action = _("Switching module streams")
             lines = []
             for name, stream in switchedStreams:
                 lines.append((name, "", "%s -> %s" % (stream[0], stream[1]), "", "", "", ""))
@@ -1141,7 +1141,7 @@ class Output(object):
 
         disabledStreams = sorted(dict(self.base._moduleContainer.getDisabledStreams()).items())
         if disabledStreams:
-            action = "Disabling module streams"
+            action = _("Disabling module streams")
             lines = []
             for name, stream in disabledStreams:
                 lines.append((name, "", stream, "", "", "", ""))
@@ -1149,7 +1149,7 @@ class Output(object):
 
         resetStreams = sorted(dict(self.base._moduleContainer.getResetStreams()).items())
         if resetStreams:
-            action = "Resetting module streams"
+            action = _("Resetting module streams")
             lines = []
             for name, stream in resetStreams:
                 lines.append((name, "", stream, "", "", "", ""))
@@ -1157,42 +1157,42 @@ class Output(object):
         if self.base._history:
             install_env_group = self.base._history.env._installed
             if install_env_group:
-                action = "Installing Environment Groups"
+                action = _("Installing Environment Groups")
                 lines = []
                 for group in install_env_group.values():
                     lines.append((group.getName(), "", "", "", "", "", ""))
                 pkglist_lines.append((action, lines))
             upgrade_env_group = self.base._history.env._upgraded
             if upgrade_env_group:
-                action = "Upgrading Environment Groups"
+                action = _("Upgrading Environment Groups")
                 lines = []
                 for group in upgrade_env_group.values():
                     lines.append((group.getName(), "", "", "", "", "", ""))
                 pkglist_lines.append((action, lines))
             remove_env_group = self.base._history.env._removed
             if remove_env_group:
-                action = "Removing Environment Groups"
+                action = _("Removing Environment Groups")
                 lines = []
                 for group in remove_env_group.values():
                     lines.append((group.getName(), "", "", "", "", "", ""))
                 pkglist_lines.append((action, lines))
             install_group = self.base._history.group._installed
             if install_group:
-                action = "Installing Groups"
+                action = _("Installing Groups")
                 lines = []
                 for group in install_group.values():
                     lines.append((group.getName(), "", "", "", "", "", ""))
                 pkglist_lines.append((action, lines))
             upgrade_group = self.base._history.group._upgraded
             if upgrade_group:
-                action = "Upgrading Groups"
+                action = _("Upgrading Groups")
                 lines = []
                 for group in upgrade_group.values():
                     lines.append((group.getName(), "", "", "", "", "", ""))
                 pkglist_lines.append((action, lines))
             remove_group = self.base._history.group._removed
             if remove_group:
-                action = "Removing Groups"
+                action = _("Removing Groups")
                 lines = []
                 for group in remove_group.values():
                     lines.append((group.getName(), "", "", "", "", "", ""))
@@ -1639,7 +1639,7 @@ Transaction Summary
         old = self.history.last()
         if old is None:
             logger.critical(_('No transactions'))
-            return 1, ['Failed history info']
+            return 1, [_('Failed history info')]
 
         lasttid = old.tid
         lastdbv = old.end_rpmdb_version
@@ -1655,7 +1655,7 @@ Transaction Summary
 
         if not tids:
             logger.critical(_('No transaction ID, or package, given'))
-            return 1, ['Failed history info']
+            return 1, [_('Failed history info')]
 
         bmtid, emtid = -1, -1
         mobj = None
