@@ -125,26 +125,26 @@ def cli_run(cli, base):
             ex_Error(e)
             msg = ""
             if not cli.demands.allow_erasing and base._goal.problem_conflicts(available=True):
-                msg += _("(try to add '%s' to command line to replace conflicting "
-                         "packages") % "--allowerasing"
+                msg += _("try to add '{}' to command line to replace conflicting "
+                         "packages").format("--allowerasing")
             if cli.base.conf.strict:
                 if not msg:
-                    msg += "(try to add "
+                    msg += _("try to add '{}' to skip uninstallable packages").format(
+                        "--skip-broken")
                 else:
-                    msg += " or "
-                msg += _("'%s' to skip uninstallable packages") % "--skip-broken"
+                    msg += _(" or '%s' to skip uninstallable packages").format("--skip-broken")
             if cli.base.conf.best:
                 opt = cli.base.conf._get_option("best")
                 prio = opt._get_priority()
                 if prio <= dnf.conf.PRIO_MAINCONFIG:
                     if not msg:
-                        msg += "(try to add "
+                        msg += _("try to add '%s' to use not only best candidate packages").format(
+                            "--nobest")
                     else:
-                        msg += " or "
-                    msg += _("'%s' to use not only best candidate packages") % "--nobest"
+                        msg += _(" or '%s' to use not only best candidate packages").format(
+                            "--nobest")
             if msg:
-                msg += ")"
-                logger.info(msg)
+                logger.info("({})".format(msg))
             raise
         if ret:
             return ret
