@@ -201,7 +201,7 @@ class OptionParser(argparse.ArgumentParser):
         best_group.add_argument("-b", "--best", action="store_true", dest='best', default=None,
                                 help=_("try the best available package versions in transactions."))
         best_group.add_argument("--nobest", action="store_false", dest='best',
-                                help=_("not narrow transaction to best candidate"))
+                                help=_("do not limit the transaction to the best candidate"))
         main_parser.add_argument("-C", "--cacheonly", dest="cacheonly",
                                  action="store_true", default=None,
                                  help=_("run entirely from system cache, "
