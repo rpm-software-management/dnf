@@ -500,6 +500,12 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Tue Feb 12 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.1.0-1
+- Allow to enable modules that break default modules (RhBug:1648839)
+- Enhance documentation - API examples
+- Add best as default behavior (RhBug:1670776,1671683)
+- Add --nobest option
+
 * Wed Dec 12 2018 Jaroslav Mracek <jmracek@redhat.com> - 4.0.10-1
 - Updated difference YUM vs. DNF for yum-updateonboot
 - Added new command ``dnf alias [options] [list|add|delete] [<name>...]`` to allow the user to

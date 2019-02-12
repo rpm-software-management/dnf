@@ -2630,5 +2630,33 @@
     [
         1495482,
         "system-upgrade fails when snapper plugin installed"
+    ],
+    [
+        1585509,
+        "Translation of \"Size\" in different contexts ought to be different."
+    ],
+    [
+        1656726,
+        "Show excluded packages"
+    ],
+    [
+        1667423,
+        "The doc/examples/install_plugin.py leads to traceback"
+    ],
+    [
+        1672432,
+        "Group and module operations in transaction table not marked for translation"
+    ],
+    [
+        1509393,
+        "Translation missing, when more than one process run"
+    ],
+    [
+        1671683,
+        "dnf / libdnf should default to --best behavior"
+    ],
+    [
+        1667426,
+        "The doc/examples/list_obsoletes_plugin.py produces traceback"
     ]
 ]

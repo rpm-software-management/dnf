@@ -19,6 +19,25 @@
  DNF Release Notes
 ###################
 
+===================
+4.1.0 Release Notes
+===================
+
+* Allow to enable modules that break default modules (RhBug:1648839)
+* Enhance documentation - API examples
+* Add best as default behavior (RhBug:1670776,1671683)
+* Add --nobest option
+
+Bugs fixed in 4.1.0:
+
+* :rhbug:`1585509`
+* :rhbug:`1672432`
+* :rhbug:`1509393`
+* :rhbug:`1667423`
+* :rhbug:`1656726`
+* :rhbug:`1671683`
+* :rhbug:`1667426`
+
 ====================
 4.0.10 Release Notes
 ====================
