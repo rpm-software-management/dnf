@@ -870,6 +870,11 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>` that s
     In case no profile was provided, all default profiles get installed.
     Module streams get enabled accordingly.
 
+    This command cannot be used for switching module streams. It is recommended to remove all
+    installed content from the module, and reset the module using
+    :ref:`reset <module_reset_command-label>` command. After you reset the module, you can install
+    the other stream.
+
 ``dnf [options] module update <module-spec>...``
     Update RPMs in installed module profiles.
     In case no profile was provided, all installed profiles get updated.
@@ -887,12 +892,10 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>` that s
     of modular dependency issue the operation will be rejected. To perform action anyway please use
     \-\ :ref:`-skip-broken option <skip-broken_option-label>`.
 
-    This command can also be used for switching module streams.
-    RPMs from the original stream become unavailable and RPMs from the new
-    stream become available in the package set.
-    The operation does not alter installed packages and their configuration.
-    It is suggested to use the ``dnf distro-sync`` command
-    to synchronize to the latest available RPMs from the new stream.
+    This command cannot be used for switching module streams. It is recommended to remove all
+    installed content from the module, and reset the module using
+    :ref:`reset <module_reset_command-label>` command. After you reset the module, you can enable
+    the other stream.
 
 .. _module_disable_command-label:
 
@@ -900,6 +903,8 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>` that s
     Disable a module. All related module streams will become unavailable. In case of modular
     dependency issue the operation will be rejected. To perform action anyway please use \-\
     :ref:`-skip-broken option <skip-broken_option-label>`.
+
+.. _module_reset_command-label:
 
 ``dnf [options] module reset <module-spec>...``
     Reset module state so it's no longer enabled or disabled.
