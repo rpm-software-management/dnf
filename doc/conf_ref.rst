@@ -606,6 +606,18 @@ configuration.
 
     The password to use for connecting to repo with basic HTTP authentication. Empty by default.
 
+``user_agent``
+    :ref:`string <string-label>`
+
+    The User-Agent string to send in HTTP requests when fetching repository metadata.
+    Defaults to ::
+        libdnf/VERSION (NAME VERSION_ID; [VARIANT_ID; ]OS[.BASEARCH])
+    where VERSION is the libdnf version, NAME, VERSION_ID and VARIANT_ID (if available) are OS
+    identifiers read from the :manpage:`os-release(5)` file and OS and BASEARCH (if found) are the
+    canonical OS name and base architecture, respectively.
+    Example: ::
+        libdnf/0.26.0 (Fedora 29; server; Linux.x86_64)
+
 =================
 Types of Options
 =================
