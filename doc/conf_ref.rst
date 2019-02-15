@@ -648,6 +648,40 @@ configuration.
 
     The password to use for connecting to repo with basic HTTP authentication. Empty by default.
 
+``user_agent``
+    :ref:`string <string-label>`
+
+    The User-Agent string to include in HTTP requests sent by DNF.
+    Defaults to ::
+
+        libdnf/VERSION (NAME VERSION_ID; VARIANT_ID; OS.BASEARCH)
+
+    where VERSION is the libdnf version, NAME, VERSION_ID and VARIANT_ID are OS
+    identifiers read from the :manpage:`os-release(5)` file and OS and BASEARCH
+    are the canonical OS name and base architecture, respectively.
+    Example: ::
+
+        libdnf/0.35.2 (Fedora 31; server; Linux.x86_64)
+
+    To prevent the leakage of identifiable information, the whole OS part
+    (enclosed in parenthesis) is omitted if this is a non-Fedora or non-Linux
+    system, or is running an unknown Fedora variant.
+
+``countme``
+    :ref:`boolean <boolean-label>`
+
+    Determines whether a "countme" flag should be added to a single, randomly
+    chosen metalink query each week.
+    This allows the repository owner to estimate the number of systems
+    consuming it, by counting such queries over a week's time, which is much
+    more accurate than just counting unique IP addresses (which is subject to
+    both overcounting and undercounting due to short DHCP leases and NAT,
+    respectively).
+    The flag is a simple static parameter appended to the metalink URL and is
+    the same on every system (that means, no personal or machine-specific
+    information is included).
+    Default is False.
+
 =================
 Types of Options
 =================
