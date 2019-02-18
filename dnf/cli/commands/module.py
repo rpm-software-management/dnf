@@ -310,8 +310,3 @@ class ModuleCommand(commands.Command):
                 raise CliError(
                     "dnf {} {}: too few arguments".format(self.opts.command[0],
                                                           self.opts.subcmd[0]))
-
-    def run_transaction(self):
-        if self.opts.subcmd[0] in ('enable',):
-            logger.info(_("\nSwitching module streams does not alter installed packages "
-                          "(see 'module enable' in dnf(8) for details)"))
