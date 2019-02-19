@@ -272,7 +272,7 @@ class ModuleCommand(commands.Command):
     def set_argparser(self, parser):
         subcommand_help = [subcmd.aliases[0] for subcmd in self.SUBCMDS]
         parser.add_argument('subcmd', nargs=1, choices=subcommand_help)
-        parser.add_argument('module_spec', nargs='*')
+        parser.add_argument('module_spec', metavar='module-spec', nargs='*')
 
         narrows = parser.add_mutually_exclusive_group()
         narrows.add_argument('--enabled', dest='enabled',
