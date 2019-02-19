@@ -304,9 +304,9 @@ class ModuleBase(object):
                 logger.error(_("Unable to resolve argument {}").format(spec))
                 no_match_specs.append(spec)
                 continue
-            if nsvcap.profile:
-                logger.info(_("Ignoring unnecessary profile: '{}/{}'").format(
-                    nsvcap.name, nsvcap.profile))
+            if nsvcap.stream or nsvcap.version or nsvcap.context or nsvcap.arch or nsvcap.profile:
+                logger.info(_("Only module name required. "
+                              "Ignoring unneeded information in argument: '{}'").format(spec))
             module_names = set()
             for module in module_list:
                 module_names.add(module.getName())
