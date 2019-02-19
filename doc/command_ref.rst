@@ -899,14 +899,14 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>` that s
 
 .. _module_disable_command-label:
 
-``dnf [options] module disable <module-spec>...``
+``dnf [options] module disable <module-name>...``
     Disable a module. All related module streams will become unavailable. In case of modular
     dependency issue the operation will be rejected. To perform action anyway please use \-\
     :ref:`-skip-broken option <skip-broken_option-label>`.
 
 .. _module_reset_command-label:
 
-``dnf [options] module reset <module-spec>...``
+``dnf [options] module reset <module-name>...``
     Reset module state so it's no longer enabled or disabled.
 
 ``dnf [options] module list [--all] [module_name...]``
