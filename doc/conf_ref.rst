@@ -618,6 +618,13 @@ configuration.
     Example: ::
         libdnf/0.26.0 (Fedora 29; server; Linux.x86_64)
 
+``countme``
+    :ref:`boolean <boolean-label>`
+
+    Determines whether this system should be checked in with this repository.
+    For details, see the :ref:`\countme_command-label` command.
+    Default is True.
+
 =================
 Types of Options
 =================

@@ -727,6 +727,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.RepoPkgsCommand)
         self.register_command(dnf.cli.commands.HelpCommand)
         self.register_command(dnf.cli.commands.HistoryCommand)
+        self.register_command(dnf.cli.commands.CountMeCommand)
 
     def _configure_repos(self, opts):
         self.base.read_all_repos(opts)

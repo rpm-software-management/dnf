@@ -1007,3 +1007,21 @@ class HistoryCommand(Command):
             self.cli.demands.resolving = True
         elif code != 0:
             raise dnf.exceptions.Error(strs[0])
+
+
+class CountMeCommand(Command):
+    """A class containing methods needed by the cli to execute the countme
+    command.
+    """
+
+    aliases = ('countme',)
+    summary = _('checks in this system with the repositories for statistical purposes')
+
+    def configure(self):
+        demands = self.cli.demands
+        demands.available_repos = True
+        demands.sack_activation = True
+
+    def run(self):
+        for repo in self.base.repos.iter_enabled():
+            repo.check_in()
