@@ -229,7 +229,8 @@ Options
 
 - *cachedir*, *log files*, *releasever*, and *gpgkey* are taken from or
   stored in the installroot. *Gpgkeys* are imported into the installroot from
-  a path relative to the host which can be specified in the .repo file.
+  a path relative to the host which can be specified in the repository section
+  of configuration files.
 
 - *configuration file* and :ref:`reposdir <reposdir-label>` are searched inside the installroot first. If
   they are not present, they are taken from the host system.
