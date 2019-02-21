@@ -214,8 +214,8 @@ Options
     Force the use of an architecture. Any architecture can be specified.
     However, use of an architecture not supported natively by your CPU will
     require emulation of some kind. This is usually through QEMU. The behavior of ``--forcearch``
-    could be emulated by using the :ref:`arch <arch-label>` configuration option with ``<arch>`` and
-    :ref:`ignorearch <ignorearch-label>` with ``True``.
+    can be configured by using the :ref:`arch <arch-label>` and :ref:`ignorearch <ignorearch-label>`
+    configuration options with values ``<arch>`` and ``True`` respectively.
 
 ``-h, --help``
     Show the help.
