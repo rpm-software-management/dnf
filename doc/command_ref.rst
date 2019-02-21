@@ -1014,7 +1014,7 @@ Repoquery Command
     is an equivalent of ``rpm -q`` for remote repositories.
 
 ``dnf [options] repoquery --querytags``
-    Provides list of recognized tags by repoquery option \-\ :ref:`-queryformat <queryformat_repoquery-label>`.
+    Provides the list of tags recognized by the \-\ :ref:`-queryformat <queryformat_repoquery-label>` repoquery option.
 
     There are also a few specific repoquery commands ``repoquery-n``, ``repoquery-na`` and ``repoquery-nevra``
     that allow the specification of an exact argument in the NEVRA format (does not affect arguments of options like --whatprovides <arg>, ...).
