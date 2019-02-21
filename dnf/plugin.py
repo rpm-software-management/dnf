@@ -25,7 +25,6 @@ from __future__ import unicode_literals
 import fnmatch
 import glob
 import importlib
-import iniparse.compat
 import inspect
 import logging
 import operator
@@ -33,6 +32,7 @@ import os
 import sys
 import traceback
 
+import libdnf
 import dnf.logging
 import dnf.pycomp
 import dnf.util
@@ -52,13 +52,15 @@ class Plugin(object):
     @classmethod
     def read_config(cls, conf):
         # :api
-        parser = iniparse.compat.ConfigParser()
+        parser = libdnf.conf.ConfigParser()
         name = cls.config_name if cls.config_name else cls.name
         files = ['%s/%s.conf' % (path, name) for path in conf.pluginconfpath]
-        try:
-            parser.read(files)
-        except iniparse.compat.ParsingError as e:
-            raise dnf.exceptions.ConfigError(_("Parsing file failed: %s") % e)
+        for file in files:
+            if os.path.isfile(file):
+                try:
+                    parser.read(file)
+                except Exception as e:
+                    raise dnf.exceptions.ConfigError(_("Parsing file failed: %s") % str(e))
         return parser
 
     def __init__(self, base, cli):
@@ -178,6 +180,7 @@ class Plugins(object):
             if inspect.getfile(plugin.__class__) in files_erased:
                 self.plugins.remove(plugin)
 
+
 def _plugin_classes():
     return Plugin.__subclasses__()
 
@@ -206,7 +209,7 @@ def _iter_py_files(paths, skips, enable_plugins):
 
 
 def register_command(command_class):
-    #:api
+    # :api
     """A class decorator for automatic command registration."""
     def __init__(self, base, cli):
         if cli:

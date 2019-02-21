@@ -34,7 +34,6 @@ import dnf.exceptions
 import dnf.util
 import dnf.logging
 import hawkey
-import iniparse.compat
 import logging
 import socket
 import argparse

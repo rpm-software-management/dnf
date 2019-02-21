@@ -1,12 +1,12 @@
 # default dependencies
-%global hawkey_version 0.25.0
+%global hawkey_version 0.27.0
 %global libcomps_version 0.1.8
 %global libmodulemd_version 1.4.0
 %global rpm_version 4.14.0
 
 # conflicts
-%global conflicts_dnf_plugins_core_version 4.0.2
-%global conflicts_dnf_plugins_extras_version 3.0.2
+%global conflicts_dnf_plugins_core_version 4.0.5
+%global conflicts_dnf_plugins_extras_version 4.0.3
 %global conflicts_dnfdaemon_version 0.3.19
 
 # override dependencies for rhel 7
@@ -72,7 +72,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.1.0
+Version:        4.2.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -196,13 +196,9 @@ Requires:       python2-libdnf >= %{hawkey_version}
 Requires:       python2-libcomps >= %{libcomps_version}
 Requires:       python2-libdnf
 %if 0%{?rhel} && 0%{?rhel} <= 7
-BuildRequires:  python-iniparse
-Requires:       python-iniparse
 BuildRequires:  rpm-python >= %{rpm_version}
 Requires:       rpm-python >= %{rpm_version}
 %else
-BuildRequires:  python2-iniparse
-Requires:       python2-iniparse
 BuildRequires:  python2-rpm >= %{rpm_version}
 Requires:       python2-rpm >= %{rpm_version}
 Recommends:     rpm-plugin-systemd-inhibit
@@ -220,7 +216,6 @@ Summary:        Python 3 interface to DNF
 BuildRequires:  python3-devel
 BuildRequires:  python3-hawkey >= %{hawkey_version}
 BuildRequires:  python3-libdnf >= %{hawkey_version}
-BuildRequires:  python3-iniparse
 BuildRequires:  python3-libcomps >= %{libcomps_version}
 BuildRequires:  python3-libdnf
 BuildRequires:  libmodulemd >= %{libmodulemd_version}
@@ -237,7 +232,6 @@ Requires:       deltarpm
 %endif
 Requires:       python3-hawkey >= %{hawkey_version}
 Requires:       python3-libdnf >= %{hawkey_version}
-Requires:       python3-iniparse
 Requires:       python3-libcomps >= %{libcomps_version}
 Requires:       python3-libdnf
 BuildRequires:  python3-rpm >= %{rpm_version}
