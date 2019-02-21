@@ -31,7 +31,6 @@ import dnf.exceptions
 import dnf.pycomp
 import dnf.util
 import hawkey
-import iniparse
 import logging
 import os
 import libdnf.conf
@@ -319,23 +318,22 @@ class BaseConfig(object):
         substitutions - instance of base.conf.substitutions
         modify     - dict of modified options
         """
-        with open(filename) as fp:
-            ini = iniparse.INIConfig(fp)
+        parser = libdnf.conf.ConfigParser()
+        parser.read(filename)
 
         # b/c repoids can have $values in them we need to map both ways to figure
         # out which one is which
-        if section_id not in ini:
-            for sect in ini:
+        if not parser.hasSection(section_id):
+            for sect in parser.getData():
                 if libdnf.conf.ConfigParser.substitute(sect, substitutions) == section_id:
                     section_id = sect
 
         for name, value in modify.items():
             if isinstance(value, list):
                 value = ' '.join(value)
-            ini[section_id][name] = value
+            parser.setValue(section_id, name, value)
 
-        with open(filename, "w") as fp:
-            fp.write(str(ini))
+        parser.write(filename, False)
 
 
 class MainConf(BaseConfig):
