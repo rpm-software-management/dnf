@@ -239,7 +239,7 @@ Options
   ``--setopt=reposdir=<reposdir>`` for *reposdir*) then this path is always
   relative to the host with no exceptions.
 
-- The *pluginpath* and *pluginconfpath* are not relative to the installroot.
+- The *pluginpath* and *pluginconfpath* are relative to the host.
 
  Note: You may also want to use the command-line option
  ``--releasever=<release>`` when creating the installroot, otherwise the
