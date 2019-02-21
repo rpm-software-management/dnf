@@ -540,7 +540,7 @@ different distribution release versions.
 ``dnf clean all``
     Does all of the above.
 
-.. _countme_command_label:
+.. _countme_command-label:
 
 ---------------
 Countme Command
@@ -555,7 +555,7 @@ Countme Command
     the intent of this system to be counted in (assuming the server supports
     that).
     No additional data is included with the request, other than the usual such
-    as the User-Agent header (see the :ref:`user-agent <user_agent-label>`
+    as the User-Agent header (see the :ref:`user_agent <user_agent-label>`
     configuration option).
 
     The check-in will be performed at most once per week (starting every Monday
@@ -566,8 +566,9 @@ Countme Command
     In order to provide helpful metrics, this command should be executed on a
     weekly basis (such as from a systemd timer).
 
-    This feature can be disabled globally or per-repo by setting the
-    :ref:`countme <countme-label>` configuration option to 0.
+    This command will have no effect on those repositories that have the
+    :ref:`countme <countme-label>` configuration option set to 0 (the option
+    can also be used globally).
 
 .. _distro_sync_command-label:
 
