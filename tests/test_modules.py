@@ -29,9 +29,7 @@ import dnf.conf
 import dnf.base
 
 TOP_DIR = os.path.abspath(os.path.dirname(__file__))
-MODULES_DIR = os.path.join(TOP_DIR, "modules/etc/dnf/modules.d")
 REPOS_DIR = os.path.join(TOP_DIR, "modules/modules")
-DEFAULTS_DIR = os.path.join(TOP_DIR, "modules/etc/dnf/modules.defaults.d")
 
 # with profile
 MODULE_NSVAP = "module-name:stream:1::x86_64/profile"
@@ -61,8 +59,6 @@ class ModuleTest(unittest.TestCase):
         self.conf = dnf.conf.MainConf()
         self.conf.cachedir = os.path.join(self.tmpdir, "cache")
         self.conf.installroot = os.path.join(TOP_DIR, "modules")
-        self.conf.modulesdir._set(MODULES_DIR)
-        self.conf.moduledefaultsdir._set(DEFAULTS_DIR)
         self.conf.persistdir = os.path.join(self.conf.installroot, self.conf.persistdir.lstrip("/"))
         self.conf.substitutions["arch"] = "x86_64"
         self.conf.substitutions["basearch"] = dnf.rpm.basearch(self.conf.substitutions["arch"])

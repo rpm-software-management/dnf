@@ -362,10 +362,6 @@ class MainConf(BaseConfig):
 
         self._config.cachedir().set(PRIO_DEFAULT, cachedir)
         self._config.logdir().set(PRIO_DEFAULT, logdir)
-        # TODO move to libdnf
-        self.modulesdir = PathOption('/etc/dnf/modules.d', absPath=True)
-        # TODO move to libdnf
-        self.moduledefaultsdir = PathOption('/etc/dnf/modules.defaults.d', absPath=True)
 
     @property
     def get_reposdir(self):
@@ -600,31 +596,3 @@ class RepoConf(BaseConfig):
                     else:
                         msg = _("Repo %s did not have a %s attr. before setopt")
                         logger.warning(msg, self._section, name)
-
-
-# TODO move to libdnf
-class ModuleConf(BaseConfig):
-    """Option definitions for module INI file sections."""
-
-    def __init__(self, section=None, parser=None):
-        config = None
-        super(ModuleConf, self).__init__(config, section, parser)
-        # module name, stream and installed version
-        self.name = StringOption(section)
-        self.stream = StringOption("")
-        # installed profiles
-        self.profiles = ListOption([])
-        # enable/disable a module
-        self.enabled = BoolOption(False)
-        self.state = StringOption("")
-
-    def _write(self, fileobj):
-        if self.state._get() == "" and self.enabled._get():
-            self.state._set("enabled")
-
-        output = "[{}]\n".format(self._section)
-        output += "name = {}\n".format(self.name._get())
-        output += "stream = {}\n".format(self.stream._get())
-        output += "profiles = {}\n".format(",".join(self.profiles._get()))
-        output += "state = {}\n".format(self.state._get())
-        fileobj.write(output)
