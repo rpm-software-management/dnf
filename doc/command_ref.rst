@@ -1026,7 +1026,7 @@ Together with ``<pkg-spec>``, control what packages are displayed in the output.
 packages to those matching the specification. All packages are considered if no ``<pkg-spec>`` is specified.
 
 ``<pkg-spec>``
-    Package specification like: name[-[epoch:]version[-release]][.arch]. See :ref:`Specifying Packages
+    Package specification in the NEVRA format (name[-[epoch:]version[-release]][.arch]). See :ref:`Specifying Packages
     <specifying_packages-label>`.
 
 ``-a``, ``--all``
