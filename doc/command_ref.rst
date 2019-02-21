@@ -289,9 +289,9 @@ Options
 ``--obsoletes``
     This option has an effect on an install/update, it enables
     dnf's obsoletes processing logic. For more information see the
-    :ref:`obsoletes option <obsoletes_conf_option-label>`.
+    :ref:`obsoletes <obsoletes_conf_option-label>` option.
 
-    This option also displays capabilities that the package obsoletes when used togehter with the :ref:`repoquery command <repoquery_command-label>`.
+    This option also displays capabilities that the package obsoletes when used togehter with the :ref:`repoquery <repoquery_command-label>` command.
 
     Configuration Option: :ref:`obsoletes <obsoletes_conf_option-label>`
 
@@ -889,7 +889,7 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
 
     Modular dependencies are resolved, dependencies checked and also recursively enabled. In case
     of modular dependency issue the operation will be rejected. To perform the action anyway please use
-    \-\ :ref:`-skip-broken option <skip-broken_option-label>`.
+    \-\ :ref:`-skip-broken <skip-broken_option-label>` option.
 
     This command cannot be used for switching module streams. It is recommended to remove all
     installed content from the module, and reset the module using the
@@ -901,7 +901,7 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
 ``dnf [options] module disable <module-spec>...``
     Disable a module. All related module streams will become unavailable. In case of modular
     dependency issue the operation will be rejected. To perform the action anyway please use \-\
-    :ref:`-skip-broken option <skip-broken_option-label>`.
+    :ref:`-skip-broken <skip-broken_option-label>` option.
 
 .. _module_reset_command-label:
 
