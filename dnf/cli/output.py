@@ -1149,7 +1149,7 @@ class Output(object):
 
         removedProfiles = sorted(dict(self.base._moduleContainer.getRemovedProfiles()).items())
         if removedProfiles:
-            action = _("Removing module profiles")
+            action = _("Disabling module profiles")
             lines = []
             for name, profiles in removedProfiles:
                 for profile in list(profiles):
