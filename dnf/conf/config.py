@@ -60,52 +60,6 @@ class Value(object):
                                               self.value, self.priority)
 
 
-class Option(object):
-    """ This class handles a single configuration file option.
-        Create subclasses for each type of supported configuration option.
-        Each option remembers its default value and can inherit from a parent
-        option (e.g. repo.gpgcheck inherits from main.gpgcheck).
-        Some options can may be runtimeonly which means they are not read from or
-        written to config file.
-    """
-    def __init__(self, option):
-        if isinstance(option, libdnf.conf.Option):
-            self._option = option
-        else:
-            self._option = libdnf.conf.OptionString(option)
-
-    def _get(self):
-        """Get option's value."""
-        return self._option.getValue()
-
-    def _get_priority(self):
-        """Get option's priority."""
-        return self._option.getPriority()
-
-    def _set(self, value, priority=PRIO_RUNTIME):
-        """Set option's value if priority is equal or higher
-           than curent priority."""
-        if value is None:
-            try:
-                self._option.set(priority, value)
-            except Exception:
-                pass
-        else:
-            try:
-                if isinstance(value, list) or isinstance(value, tuple):
-                    self._option.set(priority, libdnf.conf.VectorString(value))
-                elif (isinstance(self._option, libdnf.conf.OptionBool) or
-                      isinstance(self._option, libdnf.conf.OptionChildBool)) and \
-                        isinstance(value, int):
-                    self._option.set(priority, bool(value))
-                else:
-                    self._option.set(priority, value)
-            except RuntimeError as e:
-                raise dnf.exceptions.ConfigError(_("Error parsing '%s': %s")
-                                                 % (value, str(e)),
-                                                 raw_error=str(e))
-
-
 class BaseConfig(object):
     """Base class for storing configuration definitions.
 
@@ -141,24 +95,7 @@ class BaseConfig(object):
             value = value.value
         else:
             priority = PRIO_RUNTIME
-        if value is None:
-            try:
-                option().set(priority, value)
-            except Exception:
-                pass
-        else:
-            try:
-                if isinstance(value, list) or isinstance(value, tuple):
-                    option().set(priority, libdnf.conf.VectorString(value))
-                elif (isinstance(option(), libdnf.conf.OptionBool) or
-                      isinstance(option(), libdnf.conf.OptionChildBool)) and isinstance(value, int):
-                    option().set(priority, bool(value))
-                else:
-                    option().set(priority, value)
-            except RuntimeError as e:
-                raise dnf.exceptions.ConfigError(_("Error parsing '%s': %s")
-                                                 % (value, str(e)),
-                                                 raw_error=str(e))
+        self._set_value(name, value, priority)
 
     def __str__(self):
         out = []
@@ -172,23 +109,48 @@ class BaseConfig(object):
                 out.append('%s: %s' % (optBind.first, value))
         return '\n'.join(out)
 
-    def _get_option(self, name):
+    def _has_option(self, name):
+        method = getattr(self._config, name, None)
+        return method is not None
+
+    def _get_value(self, name):
         method = getattr(self._config, name, None)
         if method is None:
             return None
-        return Option(method())
+        return method().getValue()
 
-    def _get_value(self, name):
-        opt = self._get_option(name)
-        if opt is None:
+    def _get_priority(self, name):
+        method = getattr(self._config, name, None)
+        if method is None:
             return None
-        return opt._get()
+        return method().getPriority()
 
     def _set_value(self, name, value, priority=PRIO_RUNTIME):
-        opt = self._get_option(name)
-        if opt is None:
-            raise Exception("Option " + name + "does not exists")
-        return opt._set(value, priority)
+        """Set option's value if priority is equal or higher
+           than curent priority."""
+        method = getattr(self._config, name, None)
+        if method is None:
+            raise Exception("Option \"" + name + "\" does not exists")
+        option = method()
+        if value is None:
+            try:
+                option.set(priority, value)
+            except Exception:
+                pass
+        else:
+            try:
+                if isinstance(value, list) or isinstance(value, tuple):
+                    option.set(priority, libdnf.conf.VectorString(value))
+                elif (isinstance(option, libdnf.conf.OptionBool)
+                      or isinstance(option, libdnf.conf.OptionChildBool)
+                      ) and isinstance(value, int):
+                    option.set(priority, bool(value))
+                else:
+                    option.set(priority, value)
+            except RuntimeError as e:
+                raise dnf.exceptions.ConfigError(_("Error parsing '%s': %s")
+                                                 % (value, str(e)),
+                                                 raw_error=str(e))
 
     def _populate(self, parser, section, filename, priority=PRIO_DEFAULT):
         """Set option values from an INI file section."""
@@ -262,8 +224,8 @@ class MainConf(BaseConfig):
         # pylint: disable=R0915
         config = libdnf.conf.ConfigMain()
         super(MainConf, self).__init__(config, section, parser)
-        self._get_option('pluginpath')._set([dnf.const.PLUGINPATH], PRIO_DEFAULT)
-        self._get_option('pluginconfpath')._set([dnf.const.PLUGINCONFPATH], PRIO_DEFAULT)
+        self._set_value('pluginpath', [dnf.const.PLUGINPATH], PRIO_DEFAULT)
+        self._set_value('pluginconfpath', [dnf.const.PLUGINCONFPATH], PRIO_DEFAULT)
         self.substitutions = dnf.conf.substitutions.Substitutions()
         self.arch = hawkey.detect_arch()
         self._config.system_cachedir().set(PRIO_DEFAULT, dnf.const.SYSTEM_CACHEDIR)
@@ -299,29 +261,29 @@ class MainConf(BaseConfig):
         return myrepodir
 
     def _search_inside_installroot(self, optname):
-        opt = self._get_option(optname)
-        prio = opt._get_priority()
+        prio = self._get_priority(optname)
         # dont modify paths specified on commandline
         if prio >= PRIO_COMMANDLINE:
             return
-        val = opt._get()
+        val = self._get_value(optname)
         # if it exists inside installroot use it (i.e. adjust configuration)
         # for lists any component counts
         if not isinstance(val, str):
             if any(os.path.exists(os.path.join(self._get_value('installroot'),
                                                p.lstrip('/'))) for p in val):
-                opt._set(libdnf.conf.VectorString([self._prepend_installroot_path(p) for p in val]),
-                         prio)
-        elif os.path.exists(os.path.join(self._get_value('installroot'),
-                                         val.lstrip('/'))):
-            opt._set(self._prepend_installroot_path(val), prio)
+                self._set_value(
+                    optname,
+                    libdnf.conf.VectorString([self._prepend_installroot_path(p) for p in val]),
+                    prio
+                )
+        elif os.path.exists(os.path.join(self._get_value('installroot'), val.lstrip('/'))):
+            self._set_value(optname, self._prepend_installroot_path(val), prio)
 
     def prepend_installroot(self, optname):
         # :api
-        opt = self._get_option(optname)
-        prio = opt._get_priority()
-        new_path = self._prepend_installroot_path(opt._get())
-        opt._set(new_path, prio)
+        prio = self._get_priority(optname)
+        new_path = self._prepend_installroot_path(self._get_value(optname))
+        self._set_value(optname, new_path, prio)
 
     def _prepend_installroot_path(self, path):
         root_path = os.path.join(self._get_value('installroot'), path.lstrip('/'))
@@ -340,8 +302,7 @@ class MainConf(BaseConfig):
         for name in config_args:
             value = getattr(opts, name, None)
             if value is not None and value != []:
-                opt = self._get_option(name)
-                if opt is not None:
+                if self._has_option(name):
                     appendValue = False
                     if self._config:
                         try:
@@ -351,15 +312,15 @@ class MainConf(BaseConfig):
                             pass
                     if appendValue:
                         add_priority = dnf.conf.PRIO_COMMANDLINE
-                        if add_priority < opt._get_priority():
-                            add_priority = opt._get_priority()
+                        if add_priority < self._get_priority(name):
+                            add_priority = self._get_priority(name)
                         for item in value:
                             if item:
-                                opt._set(opt._get() + [item], add_priority)
+                                self._set_value(name, self._get_value(name) + [item], add_priority)
                             else:
-                                opt._set([], dnf.conf.PRIO_COMMANDLINE)
+                                self._set_value(name, [], dnf.conf.PRIO_COMMANDLINE)
                     else:
-                        opt._set(value, dnf.conf.PRIO_COMMANDLINE)
+                        self._set_value(name, value, dnf.conf.PRIO_COMMANDLINE)
                 elif hasattr(self, name):
                     setattr(self, name, value)
                 else:
@@ -367,8 +328,7 @@ class MainConf(BaseConfig):
                                    ucd(name), ucd(value))
 
         if getattr(opts, 'gpgcheck', None) is False:
-            opt = self._get_option("localpkg_gpgcheck")
-            opt._set(False, dnf.conf.PRIO_COMMANDLINE)
+            self._set_value("localpkg_gpgcheck", False, dnf.conf.PRIO_COMMANDLINE)
 
         if hasattr(opts, 'main_setopts'):
             # now set all the non-first-start opts from main from our setopts
@@ -397,9 +357,8 @@ class MainConf(BaseConfig):
         name = "excludepkgs"
 
         if pkgs is not None and pkgs != []:
-            confopt = self._get_option(name)
-            if confopt:
-                confopt._set(pkgs, dnf.conf.PRIO_COMMANDLINE)
+            if self._has_option(name):
+                self._set_value(name, pkgs, dnf.conf.PRIO_COMMANDLINE)
             else:
                 logger.warning(_('Unknown configuration option: %s = %s'),
                                ucd(name), ucd(pkgs))
@@ -407,11 +366,9 @@ class MainConf(BaseConfig):
     def _adjust_conf_options(self):
         """Adjust conf options interactions"""
 
-        skip_broken = self._get_option('skip_broken')
-        skip_broken_val = skip_broken._get()
+        skip_broken_val = self._get_value('skip_broken')
         if skip_broken_val:
-            strict = self._get_option('strict')
-            strict._set(not skip_broken_val, skip_broken._get_priority())
+            self._set_value('strict', not skip_broken_val, self._get_priority('skip_broken'))
 
     @property
     def releasever(self):
@@ -495,8 +452,7 @@ class RepoConf(BaseConfig):
 
         if getattr(opts, 'gpgcheck', None) is False:
             for optname in ['gpgcheck', 'repo_gpgcheck']:
-                opt = self._get_option(optname)
-                opt._set(False, dnf.conf.PRIO_COMMANDLINE)
+                self._set_value(optname, False, dnf.conf.PRIO_COMMANDLINE)
 
         repo_setopts = getattr(opts, 'repo_setopts', {})
         if self._section in repo_setopts:

@@ -862,8 +862,8 @@ class Cli(object):
         # Read up configuration options and initialize plugins
         try:
             if opts.cacheonly:
-                opt = self.base.conf._get_option("cachedir")
-                opt._set(self.base.conf.system_cachedir, dnf.conf.PRIO_DEFAULT)
+                self.base.conf._set_value("cachedir", self.base.conf.system_cachedir,
+                                          dnf.conf.PRIO_DEFAULT)
                 self.demands.cacheonly = True
             self.base.conf._configure_from_options(opts)
             self._read_conf_file(opts.releasever)
