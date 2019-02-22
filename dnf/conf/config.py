@@ -106,56 +106,6 @@ class Option(object):
                                                  raw_error=str(e))
 
 
-class IntOption(Option):
-    def __init__(self, default=0):
-        option = libdnf.conf.OptionNumberInt32(default)
-        super(IntOption, self).__init__(option)
-
-
-class LongOption(Option):
-    def __init__(self, default=0):
-        option = libdnf.conf.OptionNumberInt64(default)
-        super(LongOption, self).__init__(option)
-
-
-class BoolOption(Option):
-    def __init__(self, default=False):
-        option = libdnf.conf.OptionBool(default)
-        super(BoolOption, self).__init__(option)
-
-
-class SelectionOption(Option):
-    """Handles string values where only specific values are allowed."""
-    def __init__(self, default=None, choices=()):
-        option = libdnf.conf.OptionEnumString(default, libdnf.conf.VectorString(choices))
-        super(SelectionOption, self).__init__(option)
-
-
-class ListOption(Option):
-    """Handles string values where only specific values are allowed."""
-    def __init__(self, default=None):
-        option = libdnf.conf.OptionStringList(libdnf.conf.VectorString(default))
-        super(ListOption, self).__init__(option)
-
-
-class SecondsOption(Option):
-    def __init__(self, default=0):
-        option = libdnf.conf.OptionSeconds(default)
-        super(SecondsOption, self).__init__(option)
-
-
-class StringOption(Option):
-    def __init__(self, default=""):
-        option = libdnf.conf.OptionString(default)
-        super(StringOption, self).__init__(option)
-
-
-class PathOption(Option):
-    def __init__(self, default="", exists=False, absPath=False):
-        option = libdnf.conf.OptionPath(default, exists, absPath)
-        super(PathOption, self).__init__(option)
-
-
 class BaseConfig(object):
     """Base class for storing configuration definitions.
 
