@@ -62,8 +62,7 @@ class RepoReader(object):
             raise dnf.exceptions.ConfigError(msg)
 
         # Ensure that the repo name is set
-        repo_name_object = repo._get_option('name')
-        if repo_name_object._get_priority() == dnf.conf.PRIO_DEFAULT:
+        if repo._get_priority('name') == dnf.conf.PRIO_DEFAULT:
             msg = _("Repository '%s' is missing name in configuration, using id.")
             logger.warning(msg, id_)
         repo.name = ucd(repo.name)

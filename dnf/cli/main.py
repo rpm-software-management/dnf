@@ -134,8 +134,7 @@ def cli_run(cli, base):
                 else:
                     msg += _(" or '{}' to skip uninstallable packages").format("--skip-broken")
             if cli.base.conf.best:
-                opt = cli.base.conf._get_option("best")
-                prio = opt._get_priority()
+                prio = cli.base.conf._get_priority("best")
                 if prio <= dnf.conf.PRIO_MAINCONFIG:
                     if not msg:
                         msg += _("try to add '{}' to use not only best candidate packages").format(

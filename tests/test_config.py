@@ -24,7 +24,7 @@ import argparse
 import dnf.conf
 import dnf.conf.read
 import dnf.exceptions
-from dnf.conf import Option, BaseConfig, Conf, RepoConf
+from dnf.conf import BaseConfig, Conf, RepoConf
 
 import tests.support
 from tests.support import mock
