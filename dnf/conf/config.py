@@ -166,7 +166,6 @@ class BaseConfig(object):
     def __init__(self, config=None, section=None, parser=None):
         self.__dict__["_config"] = config
         self._section = section
-        self._parser = parser
 
     def __getattr__(self, name):
         if "_config" not in self.__dict__:
@@ -516,14 +515,14 @@ class MainConf(BaseConfig):
         # :api
         if filename is None:
             filename = self._get_value('config_file_path')
-        self._parser = libdnf.conf.ConfigParser()
+        parser = libdnf.conf.ConfigParser()
         try:
-            self._parser.read(filename)
+            parser.read(filename)
         except RuntimeError as e:
             raise dnf.exceptions.ConfigError(_('Parsing file "%s" failed: %s') % (filename, e))
         except IOError as e:
             logger.warning(e)
-        self._populate(self._parser, self._section, filename, priority)
+        self._populate(parser, self._section, filename, priority)
 
         # update to where we read the file from
         self._set_value('config_file_path', filename, priority)
