@@ -279,36 +279,6 @@ class BaseConfig(object):
 
         return '\n'.join(output) + '\n'
 
-    def _write(self, fileobj, section=None, always=()):
-        """Write out the configuration to a file-like object.
-
-        :param fileobj: File-like object to write to
-        :param section: Section name to use. If not specified, the section name
-            used during parsing will be used
-        :param always: A sequence of option names to always write out.
-            Options not listed here will only be written out if they are at
-            non-default values. Set to None to dump out all options
-        """
-        # Write section heading
-        if section is None:
-            if self._section is None:
-                raise ValueError("not populated, don't know section")
-            section = self._section
-
-        # Updated the ConfigParser with the changed values
-        cfg_options = self._parser.options(section)
-
-        if self._config:
-            for optBind in self._config.optBinds():
-                # if (not option._is_runtimeonly() and
-                if (always is None or optBind.first in always or
-                        optBind.second.getPriority() >= PRIO_DEFAULT or
-                        optBind.first in cfg_options):
-                    self._parser.set(section, optBind.first, optBind.second.getValueString())
-
-        # write the updated ConfigParser to the fileobj.
-        self._parser.write(fileobj)
-
     @staticmethod
     def write_raw_configfile(filename, section_id, substitutions, modify):
         # :api
