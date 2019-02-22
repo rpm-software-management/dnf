@@ -154,21 +154,21 @@ class ModuleBase(object):
                     upgrade_package_set.update(self._get_package_name_set_and_remove_profiles(
                         module_list_from_dict, nsvcap))
                     latest_module = self._get_latest(module_list_from_dict)
-                    installed_profiles_strings = set(
-                        self.base._moduleContainer.getInstalledProfiles(latest_module.getName()))
-                    if not installed_profiles_strings:
-                        continue
                     if nsvcap.profile:
                         profiles_set = latest_module.getProfiles(nsvcap.profile)
                         if not profiles_set:
                             continue
                         for profile in profiles_set:
-                            if profile.getName() in installed_profiles_strings:
-                                upgrade_package_set.update(profile.getContent())
+                            upgrade_package_set.update(profile.getContent())
                     else:
-                        for profile_string in installed_profiles_strings:
-                            for profile in latest_module.getProfiles(profile_string):
-                                upgrade_package_set.update(profile.getContent())
+                        for profile in latest_module.getProfiles():
+                            upgrade_package_set.update(profile.getContent())
+                        for artefact in latest_module.getArtifacts():
+                            subj = hawkey.Subject(artefact)
+                            for nevra_obj in subj.get_nevra_possibilities(
+                                    forms=[hawkey.FORM_NEVRA]):
+                                upgrade_package_set.add(nevra_obj.name)
+
             if not upgrade_package_set:
                 logger.error(_("Unable to match profile in argument {}").format(spec))
             query = self.base.sack.query().available().filterm(name=upgrade_package_set)
