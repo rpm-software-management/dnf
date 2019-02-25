@@ -1174,18 +1174,18 @@ class Output(object):
 
         disabledStreams = sorted(dict(self.base._moduleContainer.getDisabledStreams()).items())
         if disabledStreams:
-            action = _("Disabling module streams")
+            action = _("Disabling modules")
             lines = []
             for name, stream in disabledStreams:
-                lines.append((name, "", stream, "", "", "", ""))
+                lines.append((name, "", "", "", "", "", ""))
             pkglist_lines.append((action, lines))
 
         resetStreams = sorted(dict(self.base._moduleContainer.getResetStreams()).items())
         if resetStreams:
-            action = _("Resetting module streams")
+            action = _("Resetting modules")
             lines = []
             for name, stream in resetStreams:
-                lines.append((name, "", stream, "", "", "", ""))
+                lines.append((name, "", "", "", "", "", ""))
             pkglist_lines.append((action, lines))
         if self.base._history:
             install_env_group = self.base._history.env._installed
