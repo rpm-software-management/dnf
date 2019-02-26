@@ -36,8 +36,10 @@ logger = logging.getLogger("dnf")
 class OptionParser(argparse.ArgumentParser):
     """ArgumentParser like class to do things the "yum way"."""
 
+    _arg_parser_init_kws = {"allow_abbrev": False} if sys.version_info >= (3, 5) else {}
+
     def __init__(self):
-        super(OptionParser, self).__init__()
+        super(OptionParser, self).__init__(**self._arg_parser_init_kws)
         self._cmd_usage = {} # names, summary for dnf commands, to build usage
         self._cmd_groups = set() # cmd groups added (main, plugin)
         self.main_parser = self._main_parser()
@@ -153,7 +155,7 @@ class OptionParser(argparse.ArgumentParser):
         # All defaults need to be a None, so we can always tell whether the user
         # has set something or whether we are getting a default.
         main_parser = argparse.ArgumentParser(dnf.const.PROGRAM_NAME,
-                                              add_help=False)
+                                              add_help=False, **self._arg_parser_init_kws)
         main_parser._optionals.title = _("Optional arguments")
         main_parser.add_argument("-c", "--config", dest="config_file_path",
                                  default=None, metavar='[config file]',
@@ -334,10 +336,12 @@ class OptionParser(argparse.ArgumentParser):
         prog = "%s %s" % (dnf.const.PROGRAM_NAME, command._basecmd)
         super(OptionParser, self).__init__(prog, add_help=False,
                                            parents=[self.main_parser],
-                                           description=command.summary)
+                                           description=command.summary,
+                                           **self._arg_parser_init_kws)
         super(OptionParser, self).add_argument('command', nargs=1,
                                                help=argparse.SUPPRESS)
-        self.command_arg_parser = argparse.ArgumentParser(prog, add_help=False)
+        self.command_arg_parser = argparse.ArgumentParser(prog, add_help=False,
+                                                          **self._arg_parser_init_kws)
         self.command_arg_parser.print_usage = self.print_usage
         command.set_argparser(self)
         return self
@@ -385,7 +389,7 @@ class OptionParser(argparse.ArgumentParser):
 
     def parse_main_args(self, args):
         parser = argparse.ArgumentParser(dnf.const.PROGRAM_NAME, add_help=False,
-                                         parents=[self.main_parser])
+                                         parents=[self.main_parser], **self._arg_parser_init_kws)
         parser.add_argument('command', nargs='?', help=argparse.SUPPRESS)
         namespace, _unused_args = parser.parse_known_args(args)
         return namespace
