@@ -1172,19 +1172,19 @@ class Output(object):
                 lines.append((name, "", "%s -> %s" % (stream[0], stream[1]), "", "", "", ""))
             pkglist_lines.append((action, lines))
 
-        disabledStreams = sorted(dict(self.base._moduleContainer.getDisabledStreams()).items())
-        if disabledStreams:
+        disabledModules = sorted(list(self.base._moduleContainer.getDisabledModules()))
+        if disabledModules:
             action = _("Disabling modules")
             lines = []
-            for name, stream in disabledStreams:
+            for name in disabledModules:
                 lines.append((name, "", "", "", "", "", ""))
             pkglist_lines.append((action, lines))
 
-        resetStreams = sorted(dict(self.base._moduleContainer.getResetStreams()).items())
-        if resetStreams:
+        resetModules = sorted(list(self.base._moduleContainer.getResetModules()))
+        if resetModules:
             action = _("Resetting modules")
             lines = []
-            for name, stream in resetStreams:
+            for name in resetModules:
                 lines.append((name, "", "", "", "", "", ""))
             pkglist_lines.append((action, lines))
         if self.base._history:
