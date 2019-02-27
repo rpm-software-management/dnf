@@ -133,15 +133,13 @@ class Base(object):
 
     def _add_repo_to_sack(self, repo):
         repo.load()
-        hrepo = repo._hawkey_repo
-        repo._repo.initHyRepo(hrepo)
         mdload_flags = dict(load_filelists=True,
                             load_presto=repo.deltarpm,
                             load_updateinfo=True)
         if repo.load_metadata_other:
             mdload_flags["load_other"] = True
         try:
-            self._sack.load_repo(hrepo, build_cache=True, **mdload_flags)
+            self._sack.load_repo(repo._repo, build_cache=True, **mdload_flags)
         except hawkey.Exception as e:
             logger.debug(_("loading repo '{}' failure: {}").format(repo.id, e))
             raise dnf.exceptions.RepoError(
@@ -383,9 +381,6 @@ class Base(object):
         """Prepare the Sack and the Goal objects. """
         timer = dnf.logging.Timer('sack setup')
         self.reset(sack=True, goal=True)
-        if self._repos is not None:
-            for repo in self._repos.values():
-                repo._hawkey_repo = repo._init_hawkey_repo()
         self._sack = dnf.sack._build_sack(self)
         lock = dnf.lock.build_metadata_lock(self.conf.cachedir, self.conf.exit_on_lock)
         with lock:
@@ -498,9 +493,6 @@ class Base(object):
         """Make the Base object forget about various things."""
         if sack:
             self._sack = None
-            if self._repos is not None:
-                for repo in self._repos.values():
-                    repo._hawkey_repo = None
         if repos:
             self._repos = dnf.repodict.RepoDict()
         if goal:

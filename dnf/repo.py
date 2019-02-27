@@ -436,7 +436,6 @@ class Repo(dnf.conf.RepoConf):
         if parent_conf:
             self._repo.setSubstitutions(parent_conf.substitutions)
         self._substitutions = dnf.conf.substitutions.Substitutions()
-        self._hawkey_repo = self._init_hawkey_repo()
         self._check_config_file_age = parent_conf.check_config_file_age \
             if parent_conf is not None else True
 
@@ -488,16 +487,6 @@ class Repo(dnf.conf.RepoConf):
 
     def __setattr__(self, name, value):
         super(Repo, self).__setattr__(name, value)
-        if name == 'cost':
-            self._hawkey_repo.cost = self.cost
-        if name == 'priority':
-            self._hawkey_repo.priority = self.priority
-
-    def _init_hawkey_repo(self):
-        hrepo = hawkey.Repo(self.id)
-        hrepo.cost = self.cost
-        hrepo.priority = self.priority
-        return hrepo
 
     def disable(self):
         # :api
