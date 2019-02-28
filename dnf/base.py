@@ -156,6 +156,17 @@ class Base(object):
                 dnf.rpm.detect_releasever(conf.installroot)
         return conf
 
+    @staticmethod
+    def _logging_module_errors(solver_errors):
+        if solver_errors:
+            if solver_errors[1] == \
+                    libdnf.module.ModulePackageContainer.ModuleErrorType_ERROR_IN_DEFAULTS:
+                logger.debug(
+                    dnf.module.module_base.format_modular_solver_errors(solver_errors[0]))
+            else:
+                logger.warning(
+                    dnf.module.module_base.format_modular_solver_errors(solver_errors[0]))
+
     def _setup_excludes_includes(self, only_main=False):
         disabled = set(self.conf.disable_excludes)
         if 'all' in disabled and WITH_MODULES:
@@ -166,9 +177,7 @@ class Base(object):
                     self.conf.module_platform_id, False, self.conf.debug_solver)
             except hawkey.Exception as e:
                 raise dnf.exceptions.Error(ucd(e))
-            if solver_errors:
-                logger.warning(
-                    dnf.module.module_base.format_modular_solver_errors(solver_errors[0]))
+            self._logging_module_errors(solver_errors)
             return
         repo_includes = []
         repo_excludes = []
@@ -216,9 +225,7 @@ class Base(object):
                         self.conf.module_platform_id, False, self.conf.debug_solver)
                 except hawkey.Exception as e:
                     raise dnf.exceptions.Error(ucd(e))
-                if solver_errors:
-                    logger.warning(
-                        dnf.module.module_base.format_modular_solver_errors(solver_errors[0]))
+                self._logging_module_errors(solver_errors)
             if len(self.conf.includepkgs) > 0:
                 self.sack.add_includes(include_query)
                 self.sack.set_use_includes(True)
@@ -232,9 +239,7 @@ class Base(object):
                     self.conf.module_platform_id, False, self.conf.debug_solver)
             except hawkey.Exception as e:
                 raise dnf.exceptions.Error(ucd(e))
-            if solver_errors:
-                logger.warning(
-                    dnf.module.module_base.format_modular_solver_errors(solver_errors[0]))
+            self._logging_module_errors(solver_errors)
 
         if repo_includes:
             for query, repoid in repo_includes:
