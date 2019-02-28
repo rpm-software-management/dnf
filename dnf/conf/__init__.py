@@ -41,8 +41,6 @@ from dnf.conf.config import PRIO_DEFAULT, PRIO_MAINCONFIG, PRIO_AUTOMATICCONFIG
 from dnf.conf.config import PRIO_REPOCONFIG, PRIO_PLUGINDEFAULT, PRIO_PLUGINCONFIG
 from dnf.conf.config import PRIO_COMMANDLINE, PRIO_RUNTIME
 
-from dnf.conf.config import Value
-
 from dnf.conf.config import BaseConfig, MainConf, RepoConf
 
 Conf = MainConf

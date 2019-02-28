@@ -48,18 +48,6 @@ PRIO_RUNTIME = libdnf.conf.Option.Priority_RUNTIME
 logger = logging.getLogger('dnf')
 
 
-class Value(object):
-    """Value of an Option consists of an actual value and its priority.
-    """
-    def __init__(self, value, priority):
-        self.value = value
-        self.priority = priority
-
-    def __repr__(self):
-        return "%s(value=%r, priority=%r)" % (self.__class__.__name__,
-                                              self.value, self.priority)
-
-
 class BaseConfig(object):
     """Base class for storing configuration definitions.
 
@@ -90,12 +78,7 @@ class BaseConfig(object):
         if option is None:
             # unknown config option, store to BaseConfig only
             return super(BaseConfig, self).__setattr__(name, value)
-        if isinstance(value, Value):
-            priority = value.priority
-            value = value.value
-        else:
-            priority = PRIO_RUNTIME
-        self._set_value(name, value, priority)
+        self._set_value(name, value, PRIO_RUNTIME)
 
     def __str__(self):
         out = []
