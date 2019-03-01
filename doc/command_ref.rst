@@ -76,7 +76,7 @@ Available commands:
 * :ref:`repoinfo <repoinfo_command-label>`
 * :ref:`repolist <repolist_command-label>`
 * :ref:`repoquery <repoquery_command-label>`
-* :ref:`repository-packages <repository-packages_command-label>`
+* :ref:`repository-packages <repository_packages_command-label>`
 * :ref:`search <search_command-label>`
 * :ref:`shell <shell_command-label>`
 * :ref:`swap <swap_command-label>`
@@ -496,7 +496,7 @@ Check Command
 .. _check_update_command-label:
 
 --------------------
-Check Update Command
+Check-Update Command
 --------------------
 
 ``dnf [options] check-update [--changelogs] [<package-specs>...]``
@@ -538,7 +538,7 @@ different distribution release versions.
 .. _distro_sync_command-label:
 
 -------------------
-Distro-sync command
+Distro-Sync command
 -------------------
 
 ``dnf distro-sync [<package-spec>...]``
@@ -548,7 +548,7 @@ Distro-sync command
     See also :ref:`\configuration_files_replacement_policy-label`.
 
 ------------------------------------
-Distribution-synchronization command
+Distribution-Synchronization command
 ------------------------------------
 
 ``dnf distribution-synchronization``
@@ -1290,16 +1290,16 @@ Display source packages that require a <provide> for a build::
 
     dnf repoquery --disablerepo=* --enablerepo=*-source --arch=src --whatrequires <provide>
 
-.. _repo-pkgs_command-label:
+.. _repo_pkgs_command-label:
 
 -----------------
 Repo-Pkgs Command
 -----------------
 
 ``dnf [options] repo-pkgs``
-    Deprecated alias for the :ref:`\repository-packages_command-label`.
+    Deprecated alias for the :ref:`\repository_packages_command-label`.
 
-.. _repository-packages_command-label:
+.. _repository_packages_command-label:
 
 ---------------------------
 Repository-Packages Command
@@ -1480,7 +1480,7 @@ Updateinfo Command
 .. _update_minimal_command-label:
 
 ----------------------
-Update-minimal Command
+Update-Minimal Command
 ----------------------
 
 ``dnf [options] update-minimal``
@@ -1516,7 +1516,7 @@ See also :ref:`\configuration_files_replacement_policy-label`.
 .. _upgrade_minimal_command-label:
 
 -----------------------
-Upgrade-minimal Command
+Upgrade-Minimal Command
 -----------------------
 
 ``dnf [options] upgrade-minimal``
