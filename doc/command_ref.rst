@@ -623,6 +623,15 @@ Groups can also be marked installed or removed without physically manipulating a
 
 See also :ref:`\configuration_files_replacement_policy-label`.
 
+.. _groups_command-label:
+
+--------------
+Groups Command
+--------------
+
+``dnf [options] groups``
+    Deprecated alias for the :ref:`\group_command-label`.
+
 .. _help_command-label:
 
 ------------
@@ -820,6 +829,15 @@ result to only packages that matching it.
     List packages which will be removed by the ``dnf autoremove`` command.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
+
+.. _localinstall_command-label:
+
+--------------------
+Localinstall Command
+--------------------
+
+``dnf [options] localinstall <spec>...``
+    Deprecated alias for the :ref:`\install_command-label`.
 
 .. _makecache_command-label:
 
@@ -1272,6 +1290,15 @@ Display source packages that require a <provide> for a build::
 
     dnf repoquery --disablerepo=* --enablerepo=*-source --arch=src --whatrequires <provide>
 
+.. _repo-pkgs_command-label:
+
+-----------------
+Repo-Pkgs Command
+-----------------
+
+``dnf [options] repo-pkgs``
+    Deprecated alias for the :ref:`\repository-packages_command-label`.
+
 .. _repository-packages_command-label:
 
 ---------------------------
@@ -1448,6 +1475,17 @@ Updateinfo Command
     is supported.
 
     Output of the ``--summary`` option is affected by the :ref:`autocheck_running_kernel <autocheck_running_kernel-label>` configuration option.
+
+
+.. _update_minimal_command-label:
+
+----------------------
+Update-minimal Command
+----------------------
+
+``dnf [options] update-minimal``
+    Deprecated alias for the :ref:`\upgrade_minimal_command-label`.
+
 
 .. _upgrade_command-label:
 
