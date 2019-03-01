@@ -37,22 +37,26 @@
 %bcond_without python2
 %endif
 
-# configurable name for the compat yum package
-%global yum_compat_level minimal
-%global yum_subpackage_name %{name}-yum
-
-# provide nextgen-yum4 on rhel <= 7 to avoid conflict with existing yum
+# YUM compat subpackage configuration
+#
+# level=full    -> deploy all compat symlinks (conflicts with yum < 4)
+# level=minimal -> deploy a subset of compat symlinks only
+#                  (no conflict with yum >= 3.4.3-505)*
+# level=preview -> minimal level with altered paths (no conflict with yum < 4)
+# *release 505 renamed /usr/bin/yum to /usr/bin/yum-deprecated
+%global yum_compat_level full
+%global yum_subpackage_name yum
+%if 0%{?fedora}
+    %global yum_compat_level minimal
+    %if 0%{?fedora} < 31
+        # Avoid name conflict with yum < 4
+        %global yum_subpackage_name %{name}-yum
+    %endif
+%endif
 %if 0%{?rhel} && 0%{?rhel} <= 7
     %global yum_compat_level preview
     %global yum_subpackage_name nextgen-yum4
 %endif
-
-# provide yum on rhel >= 8, it replaces old yum
-%if 0%{?rhel} && 0%{?rhel} >= 8
-    %global yum_compat_level full
-    %global yum_subpackage_name yum
-%endif
-
 
 # paths
 %global confdir %{_sysconfdir}/%{name}
@@ -150,7 +154,12 @@ Common data and configuration files for DNF
 %package -n %{yum_subpackage_name}
 Requires:       %{name} = %{version}-%{release}
 Summary:        %{pkg_summary}
+%if 0%{?fedora} >= 31
+Provides:       %{name}-yum = %{version}-%{release}
+Obsoletes:      %{name}-yum < %{version}-%{release}
+%else
 Conflicts:      yum < 3.4.3-505
+%endif
 
 %description -n %{yum_subpackage_name}
 %{pkg_description}
