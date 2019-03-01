@@ -20,7 +20,6 @@ Core DNF Errors.
 from __future__ import unicode_literals
 from dnf.i18n import ucd, _, P_
 import dnf.util
-import libdnf
 
 
 class DeprecationWarning(DeprecationWarning):
