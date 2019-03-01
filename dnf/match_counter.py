@@ -102,7 +102,13 @@ class MatchCounter(dict):
         return set(getattr(pkg, m[0]) for m in self[pkg])
 
     def matched_keys(self, pkg):
-        return set(m[0] for m in self[pkg])
+        # return keys in the same order they appear in the list
+        result = []
+        for i in self[pkg]:
+            if i[0] in result:
+                continue
+            result.append(i[0])
+        return result
 
     def matched_needles(self, pkg):
         return set(m[1] for m in self[pkg])
