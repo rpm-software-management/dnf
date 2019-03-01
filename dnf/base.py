@@ -158,14 +158,13 @@ class Base(object):
 
     @staticmethod
     def _logging_module_errors(solver_errors):
-        if solver_errors:
+        if solver_errors and WITH_MODULES:
+            msg = dnf.util._format_modular_solver_errors(solver_errors[0], solver_errors[1])
             if solver_errors[1] == \
                     libdnf.module.ModulePackageContainer.ModuleErrorType_ERROR_IN_DEFAULTS:
-                logger.debug(
-                    dnf.module.module_base.format_modular_solver_errors(solver_errors[0]))
+                logger.debug(msg)
             else:
-                logger.warning(
-                    dnf.module.module_base.format_modular_solver_errors(solver_errors[0]))
+                logger.warning(msg)
 
     def _setup_excludes_includes(self, only_main=False):
         disabled = set(self.conf.disable_excludes)

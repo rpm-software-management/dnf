@@ -601,7 +601,5 @@ class ModuleBase(object):
         return "{}\n".format(self.base.output.term.bold(repo_name))
 
 
-def format_modular_solver_errors(errors):
-    msg = dnf.util._format_resolve_problems(errors)
-    return "\n".join(
-        [P_('Modular dependency problem:', 'Modular dependency problems:', len(errors)), msg])
+def format_modular_solver_errors(errors, error_type=None):
+    return dnf.util._format_modular_solver_errors(errors, error_type)

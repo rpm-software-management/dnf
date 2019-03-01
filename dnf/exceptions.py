@@ -22,6 +22,7 @@ from dnf.i18n import ucd, _, P_
 import dnf.util
 import libdnf
 
+
 class DeprecationWarning(DeprecationWarning):
     # :api
     pass
@@ -113,19 +114,9 @@ class MarkingErrors(Error):
             msg += "\n" + _("missing groups or modules: ") + ", ".join(no_match_group_specs)
         if (error_group_specs):
             msg += "\n" + _("broken groups or modules: ") + ", ".join(error_group_specs)
-        if (module_debsolv_errors):
-            msg_mod = dnf.util._format_resolve_problems(module_debsolv_errors[0])
-            if module_debsolv_errors[1] == \
-                    libdnf.module.ModulePackageContainer.ModuleErrorType_ERROR_IN_DEFAULTS:
-                msg += "\n" + "\n".join([P_('Modular dependency problem with Defaults:',
-                                            'Modular dependency problems with Defaults:',
-                                            len(module_debsolv_errors)),
-                                        msg_mod])
-            else:
-                msg += "\n" + "\n".join([P_('Modular dependency problem:',
-                                            'Modular dependency problems:',
-                                            len(module_debsolv_errors)),
-                                        msg_mod])
+        if module_debsolv_errors:
+            msg += "\n" + dnf.util._format_modular_solver_errors(
+                module_debsolv_errors[0], error_type=module_debsolv_errors[1])
         super(MarkingErrors, self).__init__(msg)
         self.no_match_group_specs = no_match_group_specs
         self.error_group_specs = error_group_specs

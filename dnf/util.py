@@ -23,7 +23,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 from .pycomp import PY3, basestring
-from dnf.i18n import _, ucd
+from dnf.i18n import _, P_, ucd
 from functools import reduce
 import dnf
 import dnf.callback
@@ -383,6 +383,20 @@ def _format_resolve_problems(resolve_problems):
             msg += "\n " + _("Problem") + ": "
         msg += "\n  - ".join(rs)
     return msg
+
+
+def _format_modular_solver_errors(errors, error_type=None):
+    msg_mod = dnf.util._format_resolve_problems(errors)
+    if error_type == libdnf.module.ModulePackageContainer.ModuleErrorType_ERROR_IN_DEFAULTS:
+        return "\n".join([P_('Modular dependency problem with Defaults:',
+                             'Modular dependency problems with Defaults:',
+                             len(errors)),
+                          msg_mod])
+    else:
+        return "\n".join([P_('Modular dependency problem:',
+                             'Modular dependency problems:',
+                             len(errors)),
+                          msg_mod])
 
 
 def _te_nevra(te):
