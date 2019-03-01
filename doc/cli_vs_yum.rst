@@ -219,7 +219,7 @@ During its depsolving phase, YUM outputs lines similar to::
 
 DNF does not output information like this. The technical reason is that depsolver below DNF always considers all dependencies for update candidates and the output would be very long. Secondly, even in YUM this output gets confusing very quickly especially for large transactions and so does more harm than good.
 
-See the the related `Fedora bug 1044999
+See the related `Fedora bug 1044999
 <https://bugzilla.redhat.com/show_bug.cgi?id=1044999>`_.
 
 ===================================================================
@@ -280,7 +280,7 @@ YUM will only issue a warning in this case and continue installing the "tour" pa
 
 DNF will not magically replace a request for installing package ``X`` to installing package ``Y`` if ``Y`` obsoletes ``X``. YUM does this if its ``obsoletes`` config option is enabled but the behavior is not properly documented and can be harmful.
 
-See the the related `Fedora bug 1096506
+See the related `Fedora bug 1096506
 <https://bugzilla.redhat.com/show_bug.cgi?id=1096506>`_ and `guidelines for renaming and obsoleting packages in Fedora <http://fedoraproject.org/wiki/Upgrade_paths_%E2%80%94_renaming_or_splitting_packages>`_.
 
 ====================================
