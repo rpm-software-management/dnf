@@ -25,17 +25,15 @@ from __future__ import unicode_literals
 from dnf.exceptions import MiscError
 from dnf.pycomp import base64_decodebytes, basestring, unicode
 from stat import *
-import bz2
+import libdnf.utils
 import dnf.const
 import dnf.crypto
 import dnf.exceptions
 import dnf.i18n
 import errno
 import glob
-import gzip
 import hashlib
 import io
-import lzma
 import os
 import os.path
 import pwd
@@ -332,34 +330,6 @@ def getCacheDir():
     cachedir = tempfile.mkdtemp(prefix=prefix, dir=dnf.const.TMPDIR)
     return cachedir
 
-def _decompress_chunked(source, dest, ztype):
-    if ztype == 'bz2':
-        s_fn = bz2.BZ2File(source, 'r')
-    elif ztype == 'xz':
-        s_fn = lzma.LZMAFile(source, 'r')
-    elif ztype == 'gz':
-        s_fn = gzip.GzipFile(source, 'r')
-
-    destination = open(dest, 'wb')
-
-    while True:
-        try:
-            data = s_fn.read(1024000)
-        except IOError:
-            break
-
-        if not data:
-            break
-
-        try:
-            destination.write(data)
-        except (OSError, IOError) as e:
-            msg = "Error writing to file %s: %s" % (dest, str(e))
-            raise dnf.exceptions.MiscError(msg)
-
-    destination.close()
-    s_fn.close()
-
 def seq_max_split(seq, max_entries):
     """ Given a seq, split into a list of lists of length max_entries each. """
     ret = []
@@ -420,31 +390,15 @@ def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
     """take a filename and decompress it into the same relative location.
        if the file is not compressed just return the file"""
 
-    out = dest
-    if not dest:
-        out = filename
+    ztype = None
+    out = filename  # If the file is not compressed, it returns the same file
 
-    if filename.endswith('.gz'):
-        ztype = 'gz'
-        if not dest:
-            out = filename.replace('.gz', '')
-
-    elif filename.endswith('.bz') or filename.endswith('.bz2'):
-        ztype = 'bz2'
-        if not dest:
-            if filename.endswith('.bz'):
-                out = filename.replace('.bz', '')
-            else:
-                out = filename.replace('.bz2', '')
-
-    elif filename.endswith('.xz'):
-        ztype = 'xz'
-        if not dest:
-            out = filename.replace('.xz', '')
-
-    else:
-        out = filename # returning the same file since it is not compressed
-        ztype = None
+    dot_pos = filename.rfind('.')
+    if dot_pos > 0:
+        ext = filename[dot_pos:]
+        if ext in ('.xz', '.bz2', '.bz', '.gz'):
+            ztype = '.bz2' if ext == '.bz' else ext
+            out = dest if dest else filename[:dot_pos]
 
     if ztype and not fn_only:
         if check_timestamps:
@@ -453,7 +407,11 @@ def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
             if fi and fo and fo.st_mtime == fi.st_mtime:
                 return out
 
-        _decompress_chunked(filename, out, ztype)
+        try:
+            libdnf.utils.decompress(filename, out, 0o644, ztype)
+        except RuntimeError as e:
+            raise dnf.exceptions.MiscError(str(e))
+
         if check_timestamps and fi:
             os.utime(out, (fi.st_mtime, fi.st_mtime))
 
