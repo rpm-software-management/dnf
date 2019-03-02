@@ -1,5 +1,5 @@
 # default dependencies
-%global hawkey_version 0.27.1
+%global hawkey_version 0.28.0
 %global libcomps_version 0.1.8
 %global libmodulemd_version 1.4.0
 %global rpm_version 4.14.0
@@ -181,8 +181,6 @@ Requires:       python2-gpg
 BuildRequires:  python2-enum34
 Requires:       python2-enum34
 %endif
-BuildRequires:  pyliblzma
-Requires:       pyliblzma
 Requires:       %{name}-data = %{version}-%{release}
 %if 0%{?fedora}
 Recommends:     deltarpm
