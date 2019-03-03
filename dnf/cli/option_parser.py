@@ -315,8 +315,8 @@ class OptionParser(argparse.ArgumentParser):
         main_parser.add_argument("--bz", "--bzs", default=[], dest="bugzilla",
                                  action="append", help=_(
                 "Include packages needed to fix the given BZ, in updates"))
-        main_parser.add_argument("--cve", "--cves", default=[], action="append", help=_(
-            "Include packages needed to fix the given CVE, in updates"))
+        main_parser.add_argument("--cve", "--cves", default=[], dest="cves", action="append",
+                                 help=_("Include packages needed to fix the given CVE, in updates"))
         main_parser.add_argument(
             "--sec-severity", "--secseverity",
             choices=['Critical', 'Important', 'Moderate', 'Low'], default=[],
