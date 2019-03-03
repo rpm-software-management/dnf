@@ -396,8 +396,8 @@ def decompress(filename, dest=None, fn_only=False, check_timestamps=False):
     dot_pos = filename.rfind('.')
     if dot_pos > 0:
         ext = filename[dot_pos:]
-        if ext in ('.zck', '.xz', '.bz2', '.bz', '.gz'):
-            ztype = '.bz2' if ext == '.bz' else ext
+        if ext in ('.zck', '.xz', '.bz2', '.gz'):
+            ztype = ext
             out = dest if dest else filename[:dot_pos]
 
     if ztype and not fn_only:
