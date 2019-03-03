@@ -895,8 +895,8 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
     the other stream.
 
 ``dnf [options] module update <module-spec>...``
-    Update packages in installed module profiles.
-    In case no profile was provided, all installed profiles get updated.
+    Update packages associated with an active module stream, optionally restricted to a profile.
+    If the `profile_name` is provided, only the packages referenced by that profile will be updated.
 
 ``dnf [options] module remove <module-spec>...``
     Remove installed module profiles, including their packages.
