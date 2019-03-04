@@ -309,18 +309,19 @@ class OptionParser(argparse.ArgumentParser):
                                  help=_("Include security relevant packages, "
                                         "in updates"))
         main_parser.add_argument("--advisory", "--advisories", dest="advisory",
-                                 default=[], action="append",
+                                 default=[], action=self._SplitCallback,
                                  help=_("Include packages needed to fix the "
                                         "given advisory, in updates"))
         main_parser.add_argument("--bz", "--bzs", default=[], dest="bugzilla",
-                                 action="append", help=_(
+                                 action=self._SplitCallback, help=_(
                 "Include packages needed to fix the given BZ, in updates"))
-        main_parser.add_argument("--cve", "--cves", default=[], dest="cves", action="append",
+        main_parser.add_argument("--cve", "--cves", default=[], dest="cves",
+                                 action=self._SplitCallback,
                                  help=_("Include packages needed to fix the given CVE, in updates"))
         main_parser.add_argument(
             "--sec-severity", "--secseverity",
             choices=['Critical', 'Important', 'Moderate', 'Low'], default=[],
-            dest="severity", action="append", help=_(
+            dest="severity", action=self._SplitCallback, help=_(
                 "Include security relevant packages matching the severity, "
                 "in updates"))
         main_parser.add_argument("--forcearch", metavar="ARCH",
