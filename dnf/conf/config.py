@@ -209,7 +209,8 @@ class MainConf(BaseConfig):
         super(MainConf, self).__init__(config, section, parser)
         self._set_value('pluginpath', [dnf.const.PLUGINPATH], PRIO_DEFAULT)
         self._set_value('pluginconfpath', [dnf.const.PLUGINCONFPATH], PRIO_DEFAULT)
-        self.substitutions = dnf.conf.substitutions.Substitutions()
+        dnf.conf.substitutions._update_from_env(config.vars())
+        self.substitutions = config.vars()
         self.arch = hawkey.detect_arch()
         self._config.system_cachedir().set(PRIO_DEFAULT, dnf.const.SYSTEM_CACHEDIR)
 
@@ -356,27 +357,28 @@ class MainConf(BaseConfig):
     @property
     def releasever(self):
         # :api
-        return self.substitutions.get('releasever')
+        subst = self.substitutions
+        return subst['releasever'] if 'releasever' in subst else None
 
     @releasever.setter
     def releasever(self, val):
         # :api
         if val is None:
-            self.substitutions.pop('releasever', None)
+            self.substitutions.erase('releasever')
             return
         self.substitutions['releasever'] = str(val)
 
     @property
     def arch(self):
         # :api
-        return self.substitutions.get('arch')
+        subst = self.substitutions
+        return subst['arch'] if 'arch' in subst else None
 
     @arch.setter
     def arch(self, val):
         # :api
-
         if val is None:
-            self.substitutions.pop('arch', None)
+            self.substitutions.erase('arch')
             return
         if val not in dnf.rpm._BASEARCH_MAP.keys():
             msg = _('Incorrect or unknown "{}": {}')
@@ -387,14 +389,15 @@ class MainConf(BaseConfig):
     @property
     def basearch(self):
         # :api
-        return self.substitutions.get('basearch')
+        subst = self.substitutions
+        return subst['basearch'] if 'basearch' in subst else None
 
     @basearch.setter
     def basearch(self, val):
         # :api
 
         if val is None:
-            self.substitutions.pop('basearch', None)
+            self.substitutions.erase('basearch')
             return
         if val not in dnf.rpm._BASEARCH_MAP.values():
             msg = _('Incorrect or unknown "{}": {}')

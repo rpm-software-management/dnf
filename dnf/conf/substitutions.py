@@ -26,33 +26,29 @@ import dnf.exceptions
 
 ENVIRONMENT_VARS_RE = re.compile(r'^DNF_VAR_[A-Za-z0-9_]+$')
 
-class Substitutions(dict):
 
-    def __init__(self):
-        super(Substitutions, self).__init__()
-        self._update_from_env()
+def _update_from_env(vars):
+    numericvars = ['DNF%d' % num for num in range(0, 10)]
+    for key, val in os.environ.items():
+        if ENVIRONMENT_VARS_RE.match(key) or key in numericvars:
+            vars[key] = val
 
-    def _update_from_env(self):
-        numericvars = ['DNF%d' % num for num in range(0, 10)]
-        for key, val in os.environ.items():
-            if ENVIRONMENT_VARS_RE.match(key) or key in numericvars:
-                self[key] = val
 
-    def update_from_etc(self, installroot):
-        fsvars = []
-        try:
-            dir_fsvars = os.path.join(installroot, "etc/dnf/vars/")
-            fsvars = os.listdir(dir_fsvars)
-        except OSError:
-            pass
-        for fsvar in fsvars:
-            filepath = os.path.join(dir_fsvars, fsvar)
-            if os.path.isfile(filepath):
-                try:
-                    with open(filepath) as fp:
-                        val = fp.readline()
-                    if val and val[-1] == '\n':
-                        val = val[:-1]
-                except (OSError, IOError):
-                    continue
-            self[fsvar] = val
+def _update_from_etc(vars, installroot):
+    fsvars = []
+    try:
+        dir_fsvars = os.path.join(installroot, "etc/dnf/vars/")
+        fsvars = os.listdir(dir_fsvars)
+    except OSError:
+        pass
+    for fsvar in fsvars:
+        filepath = os.path.join(dir_fsvars, fsvar)
+        if os.path.isfile(filepath):
+            try:
+                with open(filepath) as fp:
+                    val = fp.readline()
+                if val and val[-1] == '\n':
+                    val = val[:-1]
+            except (OSError, IOError):
+                continue
+        vars[fsvar] = val

@@ -152,8 +152,8 @@ class Base(object):
         conf = dnf.conf.Conf()
         subst = conf.substitutions
         if 'releasever' not in subst:
-            subst['releasever'] = \
-                dnf.rpm.detect_releasever(conf.installroot)
+            releasever = dnf.rpm.detect_releasever(conf.installroot)
+            subst['releasever'] = releasever if releasever else ""
         return conf
 
     def _setup_excludes_includes(self, only_main=False):
