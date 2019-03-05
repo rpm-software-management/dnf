@@ -66,7 +66,6 @@ class RepoReader(object):
             msg = _("Repository '%s' is missing name in configuration, using id.")
             logger.warning(msg, id_)
         repo.name = ucd(repo.name)
-        repo._substitutions.update(self.conf.substitutions)
         repo.cfg = parser
 
         return repo
