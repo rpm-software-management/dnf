@@ -19,10 +19,12 @@
 #
 
 import os
+import re
 
 import dnf
 import dnf.exceptions
 
+ENVIRONMENT_VARS_RE = re.compile(r'^DNF_VARS_[A-Za-z0-9_]+$')
 
 class Substitutions(dict):
 
@@ -31,11 +33,10 @@ class Substitutions(dict):
         self._update_from_env()
 
     def _update_from_env(self):
-        for num in range(0, 10):
-            env = 'DNF%d' % num
-            val = os.environ.get(env, '')
-            if val:
-                self[env] = val
+        numericvars = ['DNF%d' % num for num in range(0, 10)]
+        for key, val in os.environ.items():
+            if ENVIRONMENT_VARS_RE.match(key) or key in numericvars:
+                self[key] = val
 
     def update_from_etc(self, installroot):
         fsvars = []
