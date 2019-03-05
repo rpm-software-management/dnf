@@ -18,9 +18,10 @@
 # Red Hat, Inc.
 #
 
+import os
+
 import dnf
 import dnf.exceptions
-import os
 
 
 class Substitutions(dict):
