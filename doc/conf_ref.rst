@@ -396,6 +396,11 @@ Right side of every repo option can be enriched by the following variables:
 
     Refers to the release version of operating system which DNF derives from information available in RPMDB.
 
+
+In addition to these hard coded variables, user-defined ones can also be used. They can be defined either via :ref:`variable files <varfiles-label>`, or by using special environmental variables. The names of these variables must be prefixed with DNF_VARS\_ and they can only consist of alphanumeric characters and underscores::
+
+    $ DNF_VARS_MY_VARIABLE=value
+
 ==================================
  Options for both [main] and Repo
 ==================================
@@ -632,6 +637,8 @@ Files
 
 ``Repository``
     /etc/yum.repos.d/
+
+.. _varfiles-label:
 
 ``Variables``
     Any properly named file in /etc/dnf/vars is turned into a variable named after the filename (or
