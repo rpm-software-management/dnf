@@ -25,7 +25,6 @@ from dnf.i18n import ucd, _
 from dnf.pycomp import basestring
 
 import copy
-import dnf.conf.substitutions
 import dnf.const
 import dnf.exceptions
 import dnf.pycomp
@@ -209,7 +208,7 @@ class MainConf(BaseConfig):
         super(MainConf, self).__init__(config, section, parser)
         self._set_value('pluginpath', [dnf.const.PLUGINPATH], PRIO_DEFAULT)
         self._set_value('pluginconfpath', [dnf.const.PLUGINCONFPATH], PRIO_DEFAULT)
-        dnf.conf.substitutions._update_from_env(config.vars())
+        config.addVarsFromEnv()
         self.substitutions = config.vars()
         self.arch = hawkey.detect_arch()
         self._config.system_cachedir().set(PRIO_DEFAULT, dnf.const.SYSTEM_CACHEDIR)

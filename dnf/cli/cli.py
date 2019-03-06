@@ -73,7 +73,6 @@ import dnf.cli.demand
 import dnf.cli.format
 import dnf.cli.option_parser
 import dnf.conf
-import dnf.conf.substitutions
 import dnf.const
 import dnf.db.history
 import dnf.exceptions
@@ -992,7 +991,7 @@ class Cli(object):
         conf._search_inside_installroot('reposdir')
 
         # cachedir, logs, releasever, and gpgkey are taken from or stored in installroot
-        dnf.conf.substitutions._update_from_etc(conf.substitutions, conf.installroot)
+        conf._config.addVarsFromDir(conf.installroot)
         if releasever is None and conf.releasever is None:
             releasever = dnf.rpm.detect_releasever(conf.installroot)
         elif releasever == '/':

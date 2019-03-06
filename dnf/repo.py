@@ -25,7 +25,6 @@ from dnf.i18n import ucd, _
 
 import dnf.callback
 import dnf.conf
-import dnf.conf.substitutions
 import dnf.const
 import dnf.crypto
 import dnf.exceptions
