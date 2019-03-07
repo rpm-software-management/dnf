@@ -537,7 +537,9 @@ class BaseCli(dnf.Base):
         ypl = self._do_package_lists(
             pkgnarrow, patterns, ignore_case=True, reponame=reponame)
         if self.conf.showdupesfromrepos:
-            ypl.available += ypl.reinstall_available
+            for pkg in ypl.reinstall_available:
+                if not pkg.installed and not done_hidden_available:
+                    ypl.available.append(pkg)
 
         if installed_available:
             ypl.hidden_available = ypl.available
