@@ -432,6 +432,7 @@ class ModuleBase(object):
                                   disabled_str
                 lines["Version"] = modulePackage.getVersion()
                 lines["Context"] = modulePackage.getContext()
+                lines["Architecture"] = modulePackage.getArch()
                 lines["Profiles"] = profiles_str
                 lines["Default profiles"] = " ".join(default_profiles)
                 lines["Repo"] = modulePackage.getRepoID()
