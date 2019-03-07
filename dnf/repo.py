@@ -432,8 +432,6 @@ class Repo(dnf.conf.RepoConf):
         self._key_import = _NullKeyImport()
         self.metadata = None  # :api
         self._repo.setSyncStrategy(self.DEFAULT_SYNC)
-        if parent_conf:
-            self._repo.setSubstitutions(parent_conf.substitutions)
         self._hawkey_repo = self._init_hawkey_repo()
         self._check_config_file_age = parent_conf.check_config_file_age \
             if parent_conf is not None else True
