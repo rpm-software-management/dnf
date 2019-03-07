@@ -305,7 +305,7 @@ class ModuleBase(object):
                 no_match_specs.append(spec)
                 continue
             if nsvcap.stream or nsvcap.version or nsvcap.context or nsvcap.arch or nsvcap.profile:
-                logger.info(_("Only module name required. "
+                logger.info(_("Only module name is required. "
                               "Ignoring unneeded information in argument: '{}'").format(spec))
             module_names = set()
             for module in module_list:
