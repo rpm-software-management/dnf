@@ -1,1 +1,1 @@
-INSTALL (FILES "dnf.conf" DESTINATION ${SYSCONFDIR}/dnf/protected.d)
+INSTALL (FILES "dnf.conf" "yum.conf" DESTINATION ${SYSCONFDIR}/dnf/protected.d)
