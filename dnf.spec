@@ -428,12 +428,14 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %{_mandir}/man8/yum.8*
 %{_mandir}/man8/yum-shell.8*
 %{_mandir}/man1/yum-aliases.1*
+%config(noreplace) %{confdir}/protected.d/yum.conf
 %else
 %exclude %{_mandir}/man8/yum-shell.8*
 %exclude %{_mandir}/man1/yum-aliases.1*
 %exclude %{_sysconfdir}/yum/pluginconf.d
 %exclude %{_sysconfdir}/yum/protected.d
 %exclude %{_sysconfdir}/yum/vars
+%exclude %{confdir}/protected.d/yum.conf
 %endif
 
 %if "%{yum_subpackage_name}" == "nextgen-yum4"
