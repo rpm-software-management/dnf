@@ -298,17 +298,23 @@ mkdir -p %{buildroot}%{py2pluginpath}/
 %if %{with python3}
 mkdir -p %{buildroot}%{py3pluginpath}/__pycache__/
 %endif
-ln -sr  %{buildroot}%{confdir}/%{name}.conf %{buildroot}%{_sysconfdir}/yum.conf
 mkdir -p %{buildroot}%{_localstatedir}/log/
 mkdir -p %{buildroot}%{_var}/cache/dnf/
 touch %{buildroot}%{_localstatedir}/log/%{name}.log
 %if %{with python3}
 ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf
 mv %{buildroot}%{_bindir}/dnf-automatic-3 %{buildroot}%{_bindir}/dnf-automatic
-ln -sr  %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/yum
 %else
 ln -sr %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/dnf
 mv %{buildroot}%{_bindir}/dnf-automatic-2 %{buildroot}%{_bindir}/dnf-automatic
+%endif
+rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
+
+# YUM compat layer
+ln -sr  %{buildroot}%{confdir}/%{name}.conf %{buildroot}%{_sysconfdir}/yum.conf
+%if %{with python3}
+ln -sr  %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/yum
+%else
 %if 0%{?rhel} && 0%{?rhel} <= 7
 ln -sr  %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/yum4
 ln -sr  %{buildroot}%{_mandir}/man8/dnf.8.gz %{buildroot}%{_mandir}/man8/yum4.8.gz
@@ -317,7 +323,6 @@ rm -f %{buildroot}%{_mandir}/man8/yum.8.gz
 ln -sr  %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/yum
 %endif
 %endif
-rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 %if "%{yum_subpackage_name}" == "yum"
 mkdir -p %{buildroot}%{_sysconfdir}/yum
 ln -sr  %{buildroot}%{pluginconfpath} %{buildroot}%{_sysconfdir}/yum/pluginconf.d
@@ -413,38 +418,35 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %files -n %{yum_subpackage_name}
 %if "%{yum_subpackage_name}" == "yum"
 %{_bindir}/yum
-%{_mandir}/man8/yum.8*
 %{_sysconfdir}/yum.conf
 %{_sysconfdir}/yum/pluginconf.d
 %{_sysconfdir}/yum/protected.d
 %{_sysconfdir}/yum/vars
-%{_mandir}/man5/yum.conf.5.*
 %{_mandir}/man8/yum.8*
+%{_mandir}/man5/yum.conf.5.*
 %{_mandir}/man8/yum-shell.8*
 %{_mandir}/man1/yum-aliases.1*
 %config(noreplace) %{confdir}/protected.d/yum.conf
 %else
-%exclude %{_mandir}/man8/yum-shell.8*
-%exclude %{_mandir}/man1/yum-aliases.1*
+%exclude %{_sysconfdir}/yum.conf
 %exclude %{_sysconfdir}/yum/pluginconf.d
 %exclude %{_sysconfdir}/yum/protected.d
 %exclude %{_sysconfdir}/yum/vars
 %exclude %{confdir}/protected.d/yum.conf
+%exclude %{_mandir}/man5/yum.conf.5.*
+%exclude %{_mandir}/man8/yum-shell.8*
+%exclude %{_mandir}/man1/yum-aliases.1*
 %endif
 
 %if "%{yum_subpackage_name}" == "nextgen-yum4"
 %{_bindir}/yum4
 %{_mandir}/man8/yum4.8*
-%exclude %{_sysconfdir}/yum.conf
-%exclude %{_mandir}/man5/yum.conf.5.*
 %exclude %{_mandir}/man8/yum.8*
 %endif
 
 %if "%{yum_subpackage_name}" == "%{name}-yum"
 %{_bindir}/yum
 %{_mandir}/man8/yum.8*
-%exclude %{_sysconfdir}/yum.conf
-%exclude %{_mandir}/man5/yum.conf.5*
 %endif
 
 %if %{with python2}
