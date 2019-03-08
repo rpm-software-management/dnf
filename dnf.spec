@@ -147,13 +147,7 @@ Common data and configuration files for DNF
 %package -n %{yum_subpackage_name}
 Requires:       %{name} = %{version}-%{release}
 Summary:        %{pkg_summary}
-%if 0%{?fedora}
-%if 0%{?fedora} >= 31
-Conflicts:      yum
-%else
 Conflicts:      yum < 3.4.3-505
-%endif
-%endif
 
 %description -n %{yum_subpackage_name}
 %{pkg_description}
@@ -449,13 +443,8 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %if "%{yum_subpackage_name}" == "%{name}-yum"
 %{_bindir}/yum
 %{_mandir}/man8/yum.8*
-%if 0%{?fedora} >= 31
-%{_sysconfdir}/yum.conf
-%{_mandir}/man5/yum.conf.5*
-%else
 %exclude %{_sysconfdir}/yum.conf
 %exclude %{_mandir}/man5/yum.conf.5*
-%endif
 %endif
 
 %if %{with python2}
