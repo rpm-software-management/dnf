@@ -38,15 +38,18 @@
 %endif
 
 # configurable name for the compat yum package
+%global yum_compat_level minimal
 %global yum_subpackage_name %{name}-yum
 
 # provide nextgen-yum4 on rhel <= 7 to avoid conflict with existing yum
 %if 0%{?rhel} && 0%{?rhel} <= 7
+    %global yum_compat_level preview
     %global yum_subpackage_name nextgen-yum4
 %endif
 
 # provide yum on rhel >= 8, it replaces old yum
 %if 0%{?rhel} && 0%{?rhel} >= 8
+    %global yum_compat_level full
     %global yum_subpackage_name yum
 %endif
 
@@ -315,7 +318,7 @@ ln -sr  %{buildroot}%{confdir}/%{name}.conf %{buildroot}%{_sysconfdir}/yum.conf
 %if %{with python3}
 ln -sr  %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/yum
 %else
-%if 0%{?rhel} && 0%{?rhel} <= 7
+%if "%{yum_compat_level}" == "preview"
 ln -sr  %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/yum4
 ln -sr  %{buildroot}%{_mandir}/man8/dnf.8.gz %{buildroot}%{_mandir}/man8/yum4.8.gz
 rm -f %{buildroot}%{_mandir}/man8/yum.8.gz
@@ -323,7 +326,7 @@ rm -f %{buildroot}%{_mandir}/man8/yum.8.gz
 ln -sr  %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/yum
 %endif
 %endif
-%if "%{yum_subpackage_name}" == "yum"
+%if "%{yum_compat_level}" == "full"
 mkdir -p %{buildroot}%{_sysconfdir}/yum
 ln -sr  %{buildroot}%{pluginconfpath} %{buildroot}%{_sysconfdir}/yum/pluginconf.d
 ln -sr  %{buildroot}%{confdir}/protected.d %{buildroot}%{_sysconfdir}/yum/protected.d
@@ -416,7 +419,7 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 
 %files -n %{yum_subpackage_name}
-%if "%{yum_subpackage_name}" == "yum"
+%if "%{yum_compat_level}" == "full"
 %{_bindir}/yum
 %{_sysconfdir}/yum.conf
 %{_sysconfdir}/yum/pluginconf.d
@@ -438,12 +441,12 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %exclude %{_mandir}/man1/yum-aliases.1*
 %endif
 
-%if "%{yum_subpackage_name}" == "%{name}-yum"
+%if "%{yum_compat_level}" == "minimal"
 %{_bindir}/yum
 %{_mandir}/man8/yum.8*
 %endif
 
-%if "%{yum_subpackage_name}" == "nextgen-yum4"
+%if "%{yum_compat_level}" == "preview"
 %{_bindir}/yum4
 %{_mandir}/man8/yum4.8*
 %exclude %{_mandir}/man8/yum.8*
