@@ -438,15 +438,15 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %exclude %{_mandir}/man1/yum-aliases.1*
 %endif
 
+%if "%{yum_subpackage_name}" == "%{name}-yum"
+%{_bindir}/yum
+%{_mandir}/man8/yum.8*
+%endif
+
 %if "%{yum_subpackage_name}" == "nextgen-yum4"
 %{_bindir}/yum4
 %{_mandir}/man8/yum4.8*
 %exclude %{_mandir}/man8/yum.8*
-%endif
-
-%if "%{yum_subpackage_name}" == "%{name}-yum"
-%{_bindir}/yum
-%{_mandir}/man8/yum.8*
 %endif
 
 %if %{with python2}
