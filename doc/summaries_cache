@@ -2658,5 +2658,41 @@
     [
         1667426,
         "The doc/examples/list_obsoletes_plugin.py produces traceback"
+    ],
+    [
+        1655605,
+        "yum list available --showduplicates will list not only available packages but packages installed on the system."
+    ],
+    [
+        1669247,
+        "dnf does not refresh expired repository metadata"
+    ],
+    [
+        1670835,
+        "[manpage] yum2dnf incorrect and missing info"
+    ],
+    [
+        1673278,
+        "[manpage] inconsistent cmdline options docs: dnf --help/man page"
+    ],
+    [
+        1677640,
+        "The module enable/disable works unexpectedly with slow/fast train virt module"
+    ],
+    [
+        1597182,
+        "rpmtrans says to use non-existent dnf.callback.PKG_ERASE"
+    ],
+    [
+        1666325,
+        "yum alias list does not work properly"
+    ],
+    [
+        1678689,
+        "dnf module --help refers to module_spec while man page uses module-spec"
+    ],
+    [
+        1669491,
+        "stream switching should be prevented with installed profiles"
     ]
 ]

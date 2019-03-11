@@ -20,6 +20,34 @@
 ###################
 
 ===================
+4.2.1 Release Notes
+===================
+
+* Do not allow direct module switch (RhBug:1669491)
+* Use improved config parser that preserves order of data
+* Fix ``alias list`` command (RhBug:1666325)
+* Postpone yum conflict to F31
+* Update documentation: implemented plugins; options; deprecated commands (RhBug:1670835,1673278) 
+* Support zchunk (".zck") compression
+* Fix behavior  of ``--bz`` option when specifying more values
+* Follow RPM security policy for package verification
+* Update modules regardless of installed profiles
+* Add protection of yum package (RhBug:1639363)
+* Fix ``list --showduplicates`` (RhBug:1655605)
+
+Bugs fixed in 4.2.1:
+
+* :rhbug:`1655605`
+* :rhbug:`1669247`
+* :rhbug:`1670835`
+* :rhbug:`1673278`
+* :rhbug:`1677640`
+* :rhbug:`1597182`
+* :rhbug:`1666325`
+* :rhbug:`1678689`
+* :rhbug:`1669491`
+
+===================
 4.1.0 Release Notes
 ===================
 
