@@ -59,7 +59,7 @@ class AliasesConfig(object):
         section = "aliases"
         if not self._parser.hasSection(section):
             return result
-        for key in self._parser.getData()[section]:
+        for key in self._parser.options(section):
             value = self._parser.getValue(section, key)
             if not value:
                 continue

@@ -138,7 +138,7 @@ class BaseConfig(object):
     def _populate(self, parser, section, filename, priority=PRIO_DEFAULT):
         """Set option values from an INI file section."""
         if parser.hasSection(section):
-            for name in parser.getData()[section]:
+            for name in parser.options(section):
                 value = parser.getSubstitutedValue(section, name)
                 if not value or value == 'None':
                     value = ''
