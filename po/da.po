@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-20 14:35+0100\n"
-"PO-Revision-Date: 2019-02-06 09:20+0000\n"
+"POT-Creation-Date: 2019-03-11 10:38+0100\n"
+"PO-Revision-Date: 2019-02-25 12:19+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish (http://www.transifex.com/projects/p/dnf/language/da/)\n"
 "Language: da\n"
@@ -74,17 +74,17 @@ msgstr "Kører scriptlet"
 msgid "Preparing"
 msgstr "Forbereder"
 
-#: ../dnf/plugin.py:61
+#: ../dnf/plugin.py:63
 #, python-format
 msgid "Parsing file failed: %s"
 msgstr "Behandling af fil mislykkedes: %s"
 
-#: ../dnf/plugin.py:137
+#: ../dnf/plugin.py:139
 #, python-format
 msgid "Loaded plugins: %s"
 msgstr "Indlæser plugins: %s"
 
-#: ../dnf/plugin.py:194
+#: ../dnf/plugin.py:197
 #, python-format
 msgid "Failed loading plugin: %s"
 msgstr "Kunne ikke indlæse plugin: %s"
@@ -176,19 +176,19 @@ msgstr "Kilde"
 #: ../dnf/cli/output.py:516 ../dnf/cli/output.py:1296
 msgctxt "short"
 msgid "Repo"
-msgstr "Arkiv"
+msgstr "Softwarearkiv"
 
 #. Translators: This is the full word 'Repository', used when
 #. we have enough space.
 #: ../dnf/cli/output.py:517 ../dnf/cli/output.py:1299
 msgctxt "long"
 msgid "Repository"
-msgstr ""
+msgstr "Softwarearkiv"
 
 #. Translators: This message should be no longer than 12 chars.
 #: ../dnf/cli/output.py:524
 msgid "From repo"
-msgstr "Fra arkiv"
+msgstr "Fra softwarearkiv"
 
 #. :hawkey does not support changelog information
 #. print(_("Committer   : %s") % ucd(pkg.committer))
@@ -467,39 +467,39 @@ msgstr "Nedgraderer"
 
 #: ../dnf/cli/output.py:1143
 msgid "Installing module profiles"
-msgstr ""
+msgstr "Installerer modulprofiler"
 
 #: ../dnf/cli/output.py:1152
-msgid "Removing module profiles"
+msgid "Disabling module profiles"
 msgstr ""
 
 #: ../dnf/cli/output.py:1161
 msgid "Enabling module streams"
-msgstr ""
+msgstr "Aktiverer modulstrømme"
 
 #: ../dnf/cli/output.py:1169
 msgid "Switching module streams"
-msgstr ""
+msgstr "Skift modulstrømme"
 
 #: ../dnf/cli/output.py:1177
-msgid "Disabling module streams"
+msgid "Disabling modules"
 msgstr ""
 
 #: ../dnf/cli/output.py:1185
-msgid "Resetting module streams"
+msgid "Resetting modules"
 msgstr ""
 
 #: ../dnf/cli/output.py:1193
 msgid "Installing Environment Groups"
-msgstr ""
+msgstr "Installerer miljøgrupper"
 
 #: ../dnf/cli/output.py:1200
 msgid "Upgrading Environment Groups"
-msgstr ""
+msgstr "Opgraderer miljøgrupper"
 
 #: ../dnf/cli/output.py:1207
 msgid "Removing Environment Groups"
-msgstr ""
+msgstr "Fjerner miljøgrupper"
 
 #: ../dnf/cli/output.py:1214
 msgid "Installing Groups"
@@ -680,7 +680,7 @@ msgstr "Ændret"
 
 #: ../dnf/cli/output.py:1716 ../dnf/cli/output.py:1732
 msgid "Failed history info"
-msgstr ""
+msgstr "Information om mislykket historik"
 
 #: ../dnf/cli/output.py:1731
 msgid "No transaction ID, or package, given"
@@ -893,99 +893,99 @@ msgstr "Setopt-argument har flere værdier: %s"
 msgid "Setopt argument has no value: %s"
 msgstr "Setopt-argument har ingen værdi: %s"
 
-#: ../dnf/cli/option_parser.py:157
+#: ../dnf/cli/option_parser.py:156
 msgid "Optional arguments"
 msgstr "Valgfrie argumenter"
 
-#: ../dnf/cli/option_parser.py:160
+#: ../dnf/cli/option_parser.py:159
 msgid "config file location"
 msgstr "placering af konfigurationsfil"
 
-#: ../dnf/cli/option_parser.py:163
+#: ../dnf/cli/option_parser.py:162
 msgid "quiet operation"
 msgstr "stille operation"
 
-#: ../dnf/cli/option_parser.py:165
+#: ../dnf/cli/option_parser.py:164
 msgid "verbose operation"
 msgstr "uddybende operation"
 
-#: ../dnf/cli/option_parser.py:167
+#: ../dnf/cli/option_parser.py:166
 msgid "show DNF version and exit"
 msgstr "vis DNF-version og afslut"
 
-#: ../dnf/cli/option_parser.py:168
+#: ../dnf/cli/option_parser.py:167
 msgid "set install root"
 msgstr "sæt installationsroden"
 
-#: ../dnf/cli/option_parser.py:171
+#: ../dnf/cli/option_parser.py:170
 msgid "do not install documentations"
 msgstr "installer ikke dokumentationer"
 
-#: ../dnf/cli/option_parser.py:174
+#: ../dnf/cli/option_parser.py:173
 msgid "disable all plugins"
 msgstr "deaktivér alle plugins"
 
-#: ../dnf/cli/option_parser.py:177
+#: ../dnf/cli/option_parser.py:176
 msgid "enable plugins by name"
 msgstr "aktivér plugins efter navn"
 
-#: ../dnf/cli/option_parser.py:181
+#: ../dnf/cli/option_parser.py:180
 msgid "disable plugins by name"
 msgstr "deaktivér plugins ved navn"
 
-#: ../dnf/cli/option_parser.py:184
+#: ../dnf/cli/option_parser.py:183
 msgid "override the value of $releasever in config and repo files"
 msgstr "tilsidesæt værdien af $releasever i konfigurations- og arkivfiler"
 
-#: ../dnf/cli/option_parser.py:188
+#: ../dnf/cli/option_parser.py:187
 msgid "set arbitrary config and repo options"
 msgstr "indstil arbitrærkonfiguration og indstillinger for pakkearkiv"
 
-#: ../dnf/cli/option_parser.py:191
+#: ../dnf/cli/option_parser.py:190
 msgid "resolve depsolve problems by skipping packages"
 msgstr "løs depsolve-problemer ved at springer pakker over"
 
-#: ../dnf/cli/option_parser.py:194
+#: ../dnf/cli/option_parser.py:193
 msgid "show command help"
 msgstr "vis kommandohjælp"
 
-#: ../dnf/cli/option_parser.py:198
+#: ../dnf/cli/option_parser.py:197
 msgid "allow erasing of installed packages to resolve dependencies"
 msgstr "tillad sletning af installerede pakker for at løse afhængigheder"
 
-#: ../dnf/cli/option_parser.py:202
+#: ../dnf/cli/option_parser.py:201
 msgid "try the best available package versions in transactions."
 msgstr "prøv de bedste tilgængelige pakkeversioner i transaktioner."
 
-#: ../dnf/cli/option_parser.py:204
+#: ../dnf/cli/option_parser.py:203
 msgid "do not limit the transaction to the best candidate"
-msgstr ""
+msgstr "begræns ikke transaktionen til den bedste kandidat"
 
-#: ../dnf/cli/option_parser.py:207
+#: ../dnf/cli/option_parser.py:206
 msgid "run entirely from system cache, don't update cache"
 msgstr "kør udelukkende fra systemmellemlager, opdater ikke mellemlager"
 
-#: ../dnf/cli/option_parser.py:211
+#: ../dnf/cli/option_parser.py:210
 msgid "maximum command wait time"
 msgstr "maksimum ventetid for kommando"
 
-#: ../dnf/cli/option_parser.py:214
+#: ../dnf/cli/option_parser.py:213
 msgid "debugging output level"
 msgstr "debug-visningsniveau"
 
-#: ../dnf/cli/option_parser.py:217
+#: ../dnf/cli/option_parser.py:216
 msgid "dumps detailed solving results into files"
 msgstr "dumper detaljeret løsningsresultater i filer"
 
-#: ../dnf/cli/option_parser.py:221
+#: ../dnf/cli/option_parser.py:220
 msgid "show duplicates, in repos, in list/search commands"
 msgstr "vis gengangere, i pakkearkiver, i list/search-kommandoer"
 
-#: ../dnf/cli/option_parser.py:224
+#: ../dnf/cli/option_parser.py:223
 msgid "error output level"
 msgstr "fejlvisningsniveau"
 
-#: ../dnf/cli/option_parser.py:227
+#: ../dnf/cli/option_parser.py:226
 msgid ""
 "enables dnf's obsoletes processing logic for upgrade or display capabilities"
 " that the package obsoletes for info, list and repoquery"
@@ -993,19 +993,19 @@ msgstr ""
 "aktiverer dnf's logik til behandling af forældede, til opgradering eller "
 "visningsformåenheder som pakken forælder for info, list og repoquery"
 
-#: ../dnf/cli/option_parser.py:231
+#: ../dnf/cli/option_parser.py:230
 msgid "debugging output level for rpm"
 msgstr "outputniveau for fejlsøgning af rpm"
 
-#: ../dnf/cli/option_parser.py:234
+#: ../dnf/cli/option_parser.py:233
 msgid "automatically answer yes for all questions"
 msgstr "svar automatisk ja til alle spørgsmål"
 
-#: ../dnf/cli/option_parser.py:237
+#: ../dnf/cli/option_parser.py:236
 msgid "automatically answer no for all questions"
 msgstr "svar automatisk nej til alle spørgsmål"
 
-#: ../dnf/cli/option_parser.py:248
+#: ../dnf/cli/option_parser.py:247
 msgid ""
 "enable just specific repositories by an id or a glob, can be specified "
 "multiple times"
@@ -1013,86 +1013,88 @@ msgstr ""
 "aktivér blot specifikke softwarepakkearkiver efter et id eller en glob, kan "
 "angives flere gange"
 
-#: ../dnf/cli/option_parser.py:253
+#: ../dnf/cli/option_parser.py:252
 msgid "enable repos with config-manager command (automatically saves)"
 msgstr ""
+"aktivér softwarearkiver med config-manager-kommandoen (gemmer automatisk)"
 
-#: ../dnf/cli/option_parser.py:257
+#: ../dnf/cli/option_parser.py:256
 msgid "disable repos with config-manager command (automatically saves)"
 msgstr ""
+"deaktivér softwarearkiver med config-manager-kommandoen (gemmer automatisk)"
 
-#: ../dnf/cli/option_parser.py:261
+#: ../dnf/cli/option_parser.py:260
 msgid "exclude packages by name or glob"
 msgstr "ekskluder pakker efter navn eller glob"
 
-#: ../dnf/cli/option_parser.py:266
+#: ../dnf/cli/option_parser.py:265
 msgid "disable excludepkgs"
 msgstr "deaktiver excludepkgs"
 
-#: ../dnf/cli/option_parser.py:271
+#: ../dnf/cli/option_parser.py:270
 msgid ""
 "label and path to additional repository, can be specified multiple times."
 msgstr "etiket og sti til yderligere pakkearkiv, kan angives flere gange."
 
-#: ../dnf/cli/option_parser.py:275
+#: ../dnf/cli/option_parser.py:274
 msgid "disable removal of dependencies that are no longer used"
 msgstr "deaktivér fjernelse af afhængigheder som ikke længere bruges"
 
-#: ../dnf/cli/option_parser.py:278
-msgid "disable gpg signature checking"
-msgstr "deaktivér kontrol af gpg-signaturer"
+#: ../dnf/cli/option_parser.py:277
+msgid "disable gpg signature checking (if RPM policy allows)"
+msgstr ""
 
-#: ../dnf/cli/option_parser.py:280
+#: ../dnf/cli/option_parser.py:279
 msgid "control whether color is used"
 msgstr "kontrollér om farve er brugt"
 
-#: ../dnf/cli/option_parser.py:283
+#: ../dnf/cli/option_parser.py:282
 msgid "set metadata as expired before running the command"
 msgstr "sæt metadata som udløbet inden kommandoen køres"
 
-#: ../dnf/cli/option_parser.py:286
+#: ../dnf/cli/option_parser.py:285
 msgid "resolve to IPv4 addresses only"
 msgstr "oversæt kun til IPv4-adresser"
 
-#: ../dnf/cli/option_parser.py:289
+#: ../dnf/cli/option_parser.py:288
 msgid "resolve to IPv6 addresses only"
 msgstr "oversæt kun til IPv6-adresser"
 
-#: ../dnf/cli/option_parser.py:292
+#: ../dnf/cli/option_parser.py:291
 msgid "set directory to copy packages to"
 msgstr "sæt mappe som pakker skal kopieres til"
 
-#: ../dnf/cli/option_parser.py:295
+#: ../dnf/cli/option_parser.py:294
 msgid "only download packages"
 msgstr "download kun pakker"
 
-#: ../dnf/cli/option_parser.py:297
+#: ../dnf/cli/option_parser.py:296
 msgid "add a comment to transaction"
 msgstr "tilføj en kommentar til transaktion"
 
-#: ../dnf/cli/option_parser.py:300
+#: ../dnf/cli/option_parser.py:299
 msgid "Include bugfix relevant packages, in updates"
 msgstr "Inkluder fejlrettelsesrelevante pakker, i opdateringer"
 
-#: ../dnf/cli/option_parser.py:303
+#: ../dnf/cli/option_parser.py:302
 msgid "Include enhancement relevant packages, in updates"
 msgstr "Inkluder forbedringsrelevante pakker, i opdateringer"
 
-#: ../dnf/cli/option_parser.py:306
+#: ../dnf/cli/option_parser.py:305
 msgid "Include newpackage relevant packages, in updates"
 msgstr "Inkluder nypakkerelevante pakker, i opdateringer"
 
-#: ../dnf/cli/option_parser.py:309
+#: ../dnf/cli/option_parser.py:308
 msgid "Include security relevant packages, in updates"
 msgstr "Inkluder sikkerhedsrelavante pakker, i opdateringer"
 
-#: ../dnf/cli/option_parser.py:313
+#: ../dnf/cli/option_parser.py:312
 msgid "Include packages needed to fix the given advisory, in updates"
 msgstr ""
 "Inkluder pakker som er nødvendige til at rette den givne rådgivning, i "
 "opdateringer"
 
-#: ../dnf/cli/option_parser.py:317
+#: ../dnf/cli/option_parser.py:316
 msgid "Include packages needed to fix the given BZ, in updates"
 msgstr ""
 "Inkluder pakker som er nødvendige til at rette den givne BZ, i opdateringer"
@@ -1112,15 +1114,15 @@ msgstr ""
 msgid "Force the use of an architecture"
 msgstr "Gennemtving brugen af en arkitektur"
 
-#: ../dnf/cli/option_parser.py:364
+#: ../dnf/cli/option_parser.py:365
 msgid "List of Main Commands:"
 msgstr "Liste over hovedkommandoer:"
 
-#: ../dnf/cli/option_parser.py:365
+#: ../dnf/cli/option_parser.py:366
 msgid "List of Plugin Commands:"
 msgstr "Liste over plugin-kommandoer:"
 
-#: ../dnf/cli/main.py:57 ../dnf/automatic/main.py:267
+#: ../dnf/cli/main.py:57 ../dnf/automatic/main.py:266
 #, python-format
 msgid "Error: %s"
 msgstr "Fejl: %s"
@@ -1136,28 +1138,31 @@ msgstr "Ingen læse/udfør-adgang i nuværende mappe, flytter til /"
 #: ../dnf/cli/main.py:128
 msgid "try to add '{}' to command line to replace conflicting packages"
 msgstr ""
+"prøv og tilføj '{}' til kommandolinjen for at erstatte pakker som er i "
+"konflikt"
 
 #: ../dnf/cli/main.py:132
 msgid "try to add '{}' to skip uninstallable packages"
-msgstr ""
+msgstr "prøv at tilføje '{}' for at springe uinstallerede pakker over"
 
 #: ../dnf/cli/main.py:135
 msgid " or '{}' to skip uninstallable packages"
-msgstr ""
+msgstr " eller '{}' for at springer uinstallerede pakker over"
 
-#: ../dnf/cli/main.py:141
+#: ../dnf/cli/main.py:140
 msgid "try to add '{}' to use not only best candidate packages"
 msgstr ""
+"prøv at tilføje '{}' for ikke kun at bruge pakker med de bedste kandidater"
 
-#: ../dnf/cli/main.py:144
+#: ../dnf/cli/main.py:143
 msgid " or '{}' to use not only best candidate packages"
-msgstr ""
+msgstr " eller '{}' for ikke kun at bruge pakker med de bedste kandidater"
 
-#: ../dnf/cli/main.py:161
+#: ../dnf/cli/main.py:160
 msgid "Dependencies resolved."
 msgstr "Afhængigheder løst."
 
-#: ../dnf/cli/main.py:179
+#: ../dnf/cli/main.py:178
 msgid "Complete!"
 msgstr "Færdig!"
 
@@ -1186,9 +1191,9 @@ msgstr ""
 msgid "Operation aborted."
 msgstr "Operation afbrudt."
 
-#: ../dnf/cli/cli.py:200 ../dnf/cli/commands/__init__.py:446
-#: ../dnf/cli/commands/__init__.py:503 ../dnf/cli/commands/__init__.py:596
-#: ../dnf/cli/commands/__init__.py:645 ../dnf/cli/commands/install.py:80
+#: ../dnf/cli/cli.py:200 ../dnf/cli/commands/__init__.py:445
+#: ../dnf/cli/commands/__init__.py:502 ../dnf/cli/commands/__init__.py:595
+#: ../dnf/cli/commands/__init__.py:644 ../dnf/cli/commands/install.py:80
 #: ../dnf/cli/commands/install.py:103 ../dnf/cli/commands/install.py:110
 #: ../dnf/base.py:1638
 msgid "Nothing to do."
@@ -1220,7 +1225,7 @@ msgstr "GPG-tjek FEJLEDE"
 
 #: ../dnf/cli/cli.py:312
 msgid "Changelogs for {}"
-msgstr ""
+msgstr "Ændringslogge for {}"
 
 #: ../dnf/cli/cli.py:345 ../dnf/cli/cli.py:488 ../dnf/cli/cli.py:494
 msgid "Obsoleting Packages"
@@ -1231,10 +1236,10 @@ msgid "No packages marked for distribution synchronization."
 msgstr "Ingen pakker er markeret til distributionssynkronisering."
 
 #: ../dnf/cli/cli.py:393 ../dnf/cli/commands/upgrade.py:110
-#: ../dnf/cli/commands/upgrade.py:121 ../dnf/cli/commands/__init__.py:429
-#: ../dnf/cli/commands/__init__.py:486 ../dnf/cli/commands/__init__.py:590
-#: ../dnf/cli/commands/__init__.py:637 ../dnf/cli/commands/__init__.py:680
-#: ../dnf/cli/commands/__init__.py:715 ../dnf/cli/commands/remove.py:150
+#: ../dnf/cli/commands/upgrade.py:121 ../dnf/cli/commands/__init__.py:428
+#: ../dnf/cli/commands/__init__.py:485 ../dnf/cli/commands/__init__.py:589
+#: ../dnf/cli/commands/__init__.py:636 ../dnf/cli/commands/__init__.py:679
+#: ../dnf/cli/commands/__init__.py:714 ../dnf/cli/commands/remove.py:150
 #: ../dnf/cli/commands/install.py:147 ../dnf/cli/commands/install.py:179
 #: ../dnf/cli/commands/reinstall.py:70 ../dnf/cli/commands/reinstall.py:84
 #: ../dnf/base.py:1812 ../dnf/base.py:1887 ../dnf/base.py:1906
@@ -1244,8 +1249,8 @@ msgstr "Ingen pakker er markeret til distributionssynkronisering."
 msgid "No match for argument: %s"
 msgstr "Intet match for argument: %s"
 
-#: ../dnf/cli/cli.py:402 ../dnf/cli/cli.py:654 ../dnf/cli/cli.py:684
-#: ../dnf/cli/commands/__init__.py:374 ../dnf/cli/commands/__init__.py:891
+#: ../dnf/cli/cli.py:402 ../dnf/cli/cli.py:656 ../dnf/cli/cli.py:686
+#: ../dnf/cli/commands/__init__.py:373 ../dnf/cli/commands/__init__.py:890
 #: ../dnf/cli/commands/group.py:386 ../dnf/base.py:2211
 #, python-format
 msgid "No package %s available."
@@ -1288,68 +1293,68 @@ msgstr "Pakker som er tilføjet for nyligt"
 msgid "No matching Packages to list"
 msgstr "Ingen matchende pakker at opliste"
 
-#: ../dnf/cli/cli.py:580
+#: ../dnf/cli/cli.py:582
 msgid "No Matches found"
 msgstr "Ingen match fundet"
 
-#: ../dnf/cli/cli.py:590
+#: ../dnf/cli/cli.py:592
 msgid "No transaction ID given"
 msgstr "Intet transaktions-id givet"
 
-#: ../dnf/cli/cli.py:595
+#: ../dnf/cli/cli.py:597
 msgid "Not found given transaction ID"
 msgstr "Det angivne transaktions-id ikke fundet"
 
-#: ../dnf/cli/cli.py:604
+#: ../dnf/cli/cli.py:606
 msgid "Found more than one transaction ID!"
 msgstr "Fandt mere end ét transaktions-id!"
 
-#: ../dnf/cli/cli.py:621
+#: ../dnf/cli/cli.py:623
 #, python-format
 msgid "Transaction history is incomplete, before %u."
 msgstr "Transaktionshistorikken er ufuldstændig før %u."
 
-#: ../dnf/cli/cli.py:623
+#: ../dnf/cli/cli.py:625
 #, python-format
 msgid "Transaction history is incomplete, after %u."
 msgstr "Transaktionshistorikken er ufuldstændig efter %u."
 
-#: ../dnf/cli/cli.py:649 ../dnf/cli/cli.py:680 ../dnf/base.py:2018
+#: ../dnf/cli/cli.py:651 ../dnf/cli/cli.py:682 ../dnf/base.py:2018
 #: ../dnf/base.py:2205
 #, python-format
 msgid "No package %s installed."
 msgstr "Pakken %s ikke installeret."
 
-#: ../dnf/cli/cli.py:670
+#: ../dnf/cli/cli.py:672
 msgid "Undoing transaction {}, from {}"
 msgstr "Fortryder transaktion {}, fra {}"
 
-#: ../dnf/cli/cli.py:749 ../dnf/cli/commands/shell.py:230
+#: ../dnf/cli/cli.py:751 ../dnf/cli/commands/shell.py:230
 #, python-format
 msgid "Unknown repo: '%s'"
 msgstr "Ukendt pakkearkiv: *%s'"
 
-#: ../dnf/cli/cli.py:763
+#: ../dnf/cli/cli.py:765
 #, python-format
 msgid "No repository match: %s"
 msgstr "Ingen pakkearkiv match: %s"
 
-#: ../dnf/cli/cli.py:792
+#: ../dnf/cli/cli.py:794
 msgid "This command has to be run under the root user."
 msgstr "Kommandoen skal køres under root-brugeren."
 
-#: ../dnf/cli/cli.py:821
+#: ../dnf/cli/cli.py:823
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "Ingen sådan kommando: %s. Brug %s --help"
 
-#: ../dnf/cli/cli.py:824
+#: ../dnf/cli/cli.py:826
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
 "Det kan være en DNF-plugin-kommando, prøv: \"dnf install 'dnf-command(%s)'\""
 
-#: ../dnf/cli/cli.py:827
+#: ../dnf/cli/cli.py:829
 msgid ""
 "It could be a DNF plugin command, but loading of plugins is currently "
 "disabled."
@@ -1357,13 +1362,13 @@ msgstr ""
 "Det kan være en DNF-plugin-kommando, men indlæsning af plugins er "
 "deaktiveret på nuværende tidspunkt."
 
-#: ../dnf/cli/cli.py:874 ../dnf/cli/cli.py:878 ../dnf/cli/aliases.py:115
+#: ../dnf/cli/cli.py:876 ../dnf/cli/cli.py:880 ../dnf/cli/aliases.py:115
 #: ../dnf/cli/aliases.py:128 ../dnf/cli/commands/alias.py:105
 #, python-format
 msgid "Config error: %s"
 msgstr "Konfigurationsfejl: %s"
 
-#: ../dnf/cli/cli.py:884
+#: ../dnf/cli/cli.py:886
 msgid ""
 "--destdir or --downloaddir must be used with --downloadonly or download or "
 "system-upgrade command."
@@ -1371,13 +1376,21 @@ msgstr ""
 "--destdir eller --downloaddir skal bruges med --downloadonly eller download-"
 " eller system-upgrade-kommando."
 
-#: ../dnf/cli/cli.py:890
+#: ../dnf/cli/cli.py:892
 msgid ""
 "--enable, --set-enabled and --disable, --set-disabled must be used with "
 "config-manager command."
 msgstr ""
+"--enable, --set-enabled og --disable, --set-disabled skal bruges sammen med "
+"config-manager-kommandoen."
 
-#: ../dnf/cli/cli.py:983
+#: ../dnf/cli/cli.py:974
+msgid ""
+"Warning: Enforcing GPG signature check globally as per active RPM security "
+"policy (see 'gpgcheck' in dnf.conf(5) for how to squelch this message)"
+msgstr ""
+
+#: ../dnf/cli/cli.py:1003
 msgid ""
 "Unable to detect release version (use '--releasever' to specify release "
 "version)"
@@ -1385,37 +1398,37 @@ msgstr ""
 "Kan ikke registrerer udgivelsesversion (brug '--releasever' til at angive "
 "udgivelsesversion)"
 
-#: ../dnf/cli/cli.py:1069 ../dnf/cli/commands/repoquery.py:413
+#: ../dnf/cli/cli.py:1089 ../dnf/cli/commands/repoquery.py:413
 msgid "argument {}: not allowed with argument {}"
 msgstr "argument {}: ikke tilladt med argument {}"
 
-#: ../dnf/cli/cli.py:1076
+#: ../dnf/cli/cli.py:1096
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Kommandoen \"%s\" er allerede defineret"
 
-#: ../dnf/cli/cli.py:1096
+#: ../dnf/cli/cli.py:1116
 msgid "Excludes in dnf.conf: "
 msgstr "Ekskluderer i dnf.conf: "
 
-#: ../dnf/cli/cli.py:1099
+#: ../dnf/cli/cli.py:1119
 msgid "Includes in dnf.conf: "
 msgstr "Inkluderer i dnf.conf: "
 
-#: ../dnf/cli/cli.py:1102
+#: ../dnf/cli/cli.py:1122
 msgid "Excludes in repo "
 msgstr "Ekskluderer i arkiv "
 
-#: ../dnf/cli/cli.py:1105
+#: ../dnf/cli/cli.py:1125
 msgid "Includes in repo "
 msgstr "Inkluderer i arkiv "
 
 #: ../dnf/cli/aliases.py:96
 #, python-format
 msgid "Unexpected value of environment variable: DNF_DISABLE_ALIASES=%s"
-msgstr ""
+msgstr "Uventede værdi i miljøvariabel: DNF_DISABLE_ALIASES=%s"
 
-#: ../dnf/cli/aliases.py:105 ../dnf/conf/config.py:559 ../dnf/conf/read.py:84
+#: ../dnf/cli/aliases.py:105 ../dnf/conf/config.py:412 ../dnf/conf/read.py:83
 #, python-format
 msgid "Parsing file \"%s\" failed: %s"
 msgstr "Behandling af filen \"%s\" mislykkedes: %s"
@@ -1423,16 +1436,16 @@ msgstr "Behandling af filen \"%s\" mislykkedes: %s"
 #: ../dnf/cli/aliases.py:108
 #, python-format
 msgid "Cannot read file \"%s\": %s"
-msgstr ""
+msgstr "Kan ikke læse filen \"%s\": %s"
 
 #: ../dnf/cli/aliases.py:185
 msgid "Aliases contain infinite recursion"
-msgstr ""
+msgstr "Aliasser indeholder uendelig gentagelse"
 
 #: ../dnf/cli/aliases.py:203
 #, python-format
 msgid "%s, using original arguments."
-msgstr ""
+msgstr "%s, bruger originale argumenter."
 
 #: ../dnf/cli/utils.py:98
 msgid "Running"
@@ -1485,48 +1498,48 @@ msgstr "    Status : %s"
 
 #: ../dnf/cli/commands/alias.py:39
 msgid "List or create command aliases"
-msgstr ""
+msgstr "Vis eller opret kommandoaliasser"
 
 #: ../dnf/cli/commands/alias.py:49
 msgid "enable aliases resolving"
-msgstr ""
+msgstr "aktivér løsning af aliasser"
 
 #: ../dnf/cli/commands/alias.py:52
 msgid "disable aliases resolving"
-msgstr ""
+msgstr "deaktivér løsning af aliasser"
 
 #: ../dnf/cli/commands/alias.py:67
 msgid "Aliases are now enabled"
-msgstr ""
+msgstr "Aliasser er nu aktiveret"
 
 #: ../dnf/cli/commands/alias.py:70
 msgid "Aliases are now disabled"
-msgstr ""
+msgstr "Aliasser er nu deaktiveret"
 
 #: ../dnf/cli/commands/alias.py:87 ../dnf/cli/commands/alias.py:90
 #, python-format
 msgid "Invalid alias key: %s"
-msgstr ""
+msgstr "Ugyldig aliasnøgle: %s"
 
 #: ../dnf/cli/commands/alias.py:93
 #, python-format
 msgid "Alias argument has no value: %s"
-msgstr ""
+msgstr "Aliasargument har ingen værdi: %s"
 
 #: ../dnf/cli/commands/alias.py:127
 #, python-format
 msgid "Aliases added: %s"
-msgstr ""
+msgstr "Aliasser tilføjet: %s"
 
 #: ../dnf/cli/commands/alias.py:141
 #, python-format
 msgid "Alias not found: %s"
-msgstr ""
+msgstr "Alias ikke fundet: %s"
 
 #: ../dnf/cli/commands/alias.py:144
 #, python-format
 msgid "Aliases deleted: %s"
-msgstr ""
+msgstr "Aliases slettet: %s"
 
 #: ../dnf/cli/commands/alias.py:151
 #, python-format
@@ -1540,24 +1553,24 @@ msgstr "Alias %s='%s'"
 
 #: ../dnf/cli/commands/alias.py:157
 msgid "Aliases resolving is disabled."
-msgstr ""
+msgstr "Løsning af aliasser er deaktiveret."
 
 #: ../dnf/cli/commands/alias.py:162
 msgid "No aliases specified."
-msgstr ""
+msgstr "Ingen aliasser angivet."
 
 #: ../dnf/cli/commands/alias.py:169
 msgid "No alias specified."
-msgstr ""
+msgstr "Intet alias angivet."
 
 #: ../dnf/cli/commands/alias.py:175
 msgid "No aliases defined."
-msgstr ""
+msgstr "Ingen aliasser defineret."
 
 #: ../dnf/cli/commands/alias.py:182
 #, python-format
 msgid "No match for alias: %s"
-msgstr ""
+msgstr "Intet match for alias: %s"
 
 #: ../dnf/cli/commands/search.py:46
 msgid "search package details for the given string"
@@ -1595,7 +1608,7 @@ msgstr "%s matchede: %%s"
 msgid "No matches found."
 msgstr "Ingen match fundet."
 
-#: ../dnf/cli/commands/search.py:151 ../dnf/cli/commands/__init__.py:254
+#: ../dnf/cli/commands/search.py:151 ../dnf/cli/commands/__init__.py:253
 msgid "Searching Packages: "
 msgstr "Søger i pakkerne: "
 
@@ -1656,13 +1669,13 @@ msgid "Package to upgrade"
 msgstr "Pakke som skal opgraderes"
 
 #: ../dnf/cli/commands/upgrade.py:46 ../dnf/cli/commands/autoremove.py:48
-#: ../dnf/cli/commands/__init__.py:196 ../dnf/cli/commands/__init__.py:270
-#: ../dnf/cli/commands/__init__.py:776 ../dnf/cli/commands/remove.py:61
+#: ../dnf/cli/commands/__init__.py:196 ../dnf/cli/commands/__init__.py:269
+#: ../dnf/cli/commands/__init__.py:775 ../dnf/cli/commands/remove.py:61
 #: ../dnf/cli/commands/install.py:51 ../dnf/cli/commands/reinstall.py:44
 msgid "PACKAGE"
 msgstr "PAKKE"
 
-#: ../dnf/cli/commands/upgrade.py:89 ../dnf/cli/commands/__init__.py:720
+#: ../dnf/cli/commands/upgrade.py:89 ../dnf/cli/commands/__init__.py:719
 msgid "No packages marked for upgrade."
 msgstr "Ingen pakker markeret til opgradering."
 
@@ -1738,115 +1751,115 @@ msgstr "Der er ingen aktiverede arkiver."
 msgid "display details about a package or group of packages"
 msgstr "vis detaljer om en pakke eller en gruppe af pakker"
 
-#: ../dnf/cli/commands/__init__.py:174 ../dnf/cli/commands/__init__.py:754
+#: ../dnf/cli/commands/__init__.py:174 ../dnf/cli/commands/__init__.py:753
 msgid "show all packages (default)"
 msgstr "vis alle pakker (standard)"
 
-#: ../dnf/cli/commands/__init__.py:177 ../dnf/cli/commands/__init__.py:757
+#: ../dnf/cli/commands/__init__.py:177 ../dnf/cli/commands/__init__.py:756
 msgid "show only available packages"
 msgstr "vis kun tilgængelige pakker"
 
-#: ../dnf/cli/commands/__init__.py:180 ../dnf/cli/commands/__init__.py:760
+#: ../dnf/cli/commands/__init__.py:180 ../dnf/cli/commands/__init__.py:759
 msgid "show only installed packages"
 msgstr "vis kun installerede pakker"
 
-#: ../dnf/cli/commands/__init__.py:183 ../dnf/cli/commands/__init__.py:763
+#: ../dnf/cli/commands/__init__.py:183 ../dnf/cli/commands/__init__.py:762
 msgid "show only extras packages"
 msgstr "vis kun ekstra pakker"
 
 #: ../dnf/cli/commands/__init__.py:186 ../dnf/cli/commands/__init__.py:189
-#: ../dnf/cli/commands/__init__.py:766 ../dnf/cli/commands/__init__.py:769
+#: ../dnf/cli/commands/__init__.py:765 ../dnf/cli/commands/__init__.py:768
 msgid "show only upgrades packages"
 msgstr "vis kun opgraderingspakker"
 
-#: ../dnf/cli/commands/__init__.py:192 ../dnf/cli/commands/__init__.py:772
+#: ../dnf/cli/commands/__init__.py:192 ../dnf/cli/commands/__init__.py:771
 msgid "show only autoremove packages"
 msgstr "vis kun pakker som fjernes automatisk"
 
-#: ../dnf/cli/commands/__init__.py:195 ../dnf/cli/commands/__init__.py:775
+#: ../dnf/cli/commands/__init__.py:195 ../dnf/cli/commands/__init__.py:774
 msgid "show only recently changed packages"
 msgstr "vis kun seneste ændrede pakker"
 
-#: ../dnf/cli/commands/__init__.py:227
+#: ../dnf/cli/commands/__init__.py:226
 msgid "list a package or groups of packages"
 msgstr "vis en pakke eller grupper af pakker"
 
-#: ../dnf/cli/commands/__init__.py:241
+#: ../dnf/cli/commands/__init__.py:240
 msgid "find what package provides the given value"
 msgstr "find ud af hvilke pakke som leverer den givne værdi"
 
-#: ../dnf/cli/commands/__init__.py:245
+#: ../dnf/cli/commands/__init__.py:244
 msgid "SOME_STRING"
 msgstr "EN_STRENG"
 
-#: ../dnf/cli/commands/__init__.py:263
+#: ../dnf/cli/commands/__init__.py:262
 msgid "check for available package upgrades"
 msgstr "søg efter tilgængelige pakkeopgraderinger"
 
-#: ../dnf/cli/commands/__init__.py:269
+#: ../dnf/cli/commands/__init__.py:268
 msgid "show changelogs before update"
-msgstr ""
+msgstr "Vis ændringslogge inden opdatering"
 
-#: ../dnf/cli/commands/__init__.py:365 ../dnf/cli/commands/__init__.py:418
-#: ../dnf/cli/commands/__init__.py:474
+#: ../dnf/cli/commands/__init__.py:364 ../dnf/cli/commands/__init__.py:417
+#: ../dnf/cli/commands/__init__.py:473
 msgid "No package available."
 msgstr "Ingen pakke tilgængelig."
 
-#: ../dnf/cli/commands/__init__.py:380
+#: ../dnf/cli/commands/__init__.py:379
 msgid "No packages marked for install."
 msgstr "Ingen pakker mærket til installation."
 
-#: ../dnf/cli/commands/__init__.py:416
+#: ../dnf/cli/commands/__init__.py:415
 msgid "No package installed."
 msgstr "Ingen pakke installeret."
 
-#: ../dnf/cli/commands/__init__.py:436 ../dnf/cli/commands/__init__.py:493
+#: ../dnf/cli/commands/__init__.py:435 ../dnf/cli/commands/__init__.py:492
 #: ../dnf/cli/commands/reinstall.py:91
 #, python-format
 msgid " (from %s)"
 msgstr " (fra %s)"
 
-#: ../dnf/cli/commands/__init__.py:437 ../dnf/cli/commands/__init__.py:494
+#: ../dnf/cli/commands/__init__.py:436 ../dnf/cli/commands/__init__.py:493
 #: ../dnf/cli/commands/remove.py:104 ../dnf/cli/commands/reinstall.py:92
 #, python-format
 msgid "Installed package %s%s not available."
 msgstr "Installerede pakke %s%s er ikke tilgængelig."
 
-#: ../dnf/cli/commands/__init__.py:471 ../dnf/cli/commands/__init__.py:580
-#: ../dnf/cli/commands/__init__.py:623 ../dnf/cli/commands/__init__.py:670
+#: ../dnf/cli/commands/__init__.py:470 ../dnf/cli/commands/__init__.py:579
+#: ../dnf/cli/commands/__init__.py:622 ../dnf/cli/commands/__init__.py:669
 msgid "No package installed from the repository."
 msgstr "Ingen pakke installeret fra pakkearkivet."
 
-#: ../dnf/cli/commands/__init__.py:534 ../dnf/cli/commands/reinstall.py:101
+#: ../dnf/cli/commands/__init__.py:533 ../dnf/cli/commands/reinstall.py:101
 msgid "No packages marked for reinstall."
 msgstr "Ingen pakker mærket til geninstallation."
 
-#: ../dnf/cli/commands/__init__.py:685 ../dnf/cli/commands/remove.py:156
+#: ../dnf/cli/commands/__init__.py:684 ../dnf/cli/commands/remove.py:156
 #: ../dnf/base.py:2053
 msgid "No packages marked for removal."
 msgstr "Ingen pakker markeret til fjernelse."
 
-#: ../dnf/cli/commands/__init__.py:730
+#: ../dnf/cli/commands/__init__.py:729
 msgid "run commands on top of all packages in given repository"
 msgstr "kør kommandoer oven på alle pakker i givne pakkearkiv"
 
-#: ../dnf/cli/commands/__init__.py:744
+#: ../dnf/cli/commands/__init__.py:743
 msgid "REPO"
 msgstr "ARKIV"
 
-#: ../dnf/cli/commands/__init__.py:802
+#: ../dnf/cli/commands/__init__.py:801
 msgid "display a helpful usage message"
 msgstr "vis en hjælpsom anvendelsesmeddelelse"
 
-#: ../dnf/cli/commands/__init__.py:806
+#: ../dnf/cli/commands/__init__.py:805
 msgid "COMMAND"
 msgstr "KOMMANDO"
 
-#: ../dnf/cli/commands/__init__.py:822
+#: ../dnf/cli/commands/__init__.py:821
 msgid "display, or use, the transaction history"
 msgstr "vis eller brug transaktionshistorikken"
 
-#: ../dnf/cli/commands/__init__.py:837
+#: ../dnf/cli/commands/__init__.py:836
 msgid ""
 "Found more than one transaction ID.\n"
 "'{}' requires one transaction ID or package name."
@@ -1854,15 +1867,15 @@ msgstr ""
 "Fandt mere end ét transaktions-id.\n"
 "'{}' kræver ét transaktions-id eller pakkenavn."
 
-#: ../dnf/cli/commands/__init__.py:844
+#: ../dnf/cli/commands/__init__.py:843
 msgid "No transaction ID or package name given."
 msgstr "Intet transaktions-id eller pakkenavn givet."
 
-#: ../dnf/cli/commands/__init__.py:857
+#: ../dnf/cli/commands/__init__.py:856
 msgid "You don't have access to the history DB."
 msgstr "Du har ikke adgang til historikdatabasen."
 
-#: ../dnf/cli/commands/__init__.py:869
+#: ../dnf/cli/commands/__init__.py:868
 #, python-format
 msgid ""
 "Cannot undo transaction %s, doing so would result in an inconsistent package"
@@ -1871,7 +1884,7 @@ msgstr ""
 "Kan ikke fortryde transaktionen %s. Det ville resulterer i en "
 "uoverensstemmende pakkedatabase."
 
-#: ../dnf/cli/commands/__init__.py:874
+#: ../dnf/cli/commands/__init__.py:873
 #, python-format
 msgid ""
 "Cannot rollback transaction %s, doing so would result in an inconsistent "
@@ -1880,7 +1893,7 @@ msgstr ""
 "Kan ikke tilbageføre transaktionen %s. Det ville resulterer i en "
 "uoverensstemmende pakkedatabase."
 
-#: ../dnf/cli/commands/__init__.py:944
+#: ../dnf/cli/commands/__init__.py:943
 msgid ""
 "Invalid transaction ID range definition '{}'.\n"
 "Use '<transaction-id>..<transaction-id>'."
@@ -1888,7 +1901,7 @@ msgstr ""
 "Ugyldigt transaktions-id områdedefinition '{}'.\n"
 "Brug '<transaktions-id>..<transaktions-id>'."
 
-#: ../dnf/cli/commands/__init__.py:948
+#: ../dnf/cli/commands/__init__.py:947
 msgid ""
 "Can't convert '{}' to transaction ID.\n"
 "Use '<integer>', 'last', 'last-<positive-integer>'."
@@ -1896,7 +1909,7 @@ msgstr ""
 "Kan ikke konvertere '{}' til transaktions-id.\n"
 "Brug '<heltal>', 'sidste', 'sidste-<positivt-heltal>'."
 
-#: ../dnf/cli/commands/__init__.py:977
+#: ../dnf/cli/commands/__init__.py:976
 msgid "No transaction which manipulates package '{}' was found."
 msgstr "Der blev ikke fundet nogen transaktion som manipulerer pakken '{}'."
 
@@ -1922,40 +1935,46 @@ msgid ""
 "The operation would result in switching of module '{0}' stream '{1}' to "
 "stream '{2}'"
 msgstr ""
+"Handlingen ville resultere i skift af modulet '{0}' strømmen '{1}' til "
+"strømmen '{2}'"
 
-#: ../dnf/cli/commands/module.py:78 ../dnf/cli/commands/module.py:102
+#: ../dnf/cli/commands/module.py:79 ../dnf/cli/commands/module.py:101
 msgid "No matching Modules to list"
 msgstr "Ingen matchende moduler at opliste"
 
-#: ../dnf/cli/commands/module.py:129
+#: ../dnf/cli/commands/module.py:128
 msgid ""
 "It is not possible to switch enabled streams of a module.\n"
 "It is recommended to remove all installed content from the module, and reset the module using 'dnf module reset <module_name>' command. After you reset the module, you can enable the other stream."
 msgstr ""
+"Det er ikke muligt at skifte aktiverede strømme for et modul.\n"
+"Det anbefales at fjerne alt installeret indhold fra modulet, og nulstille modulet med 'dnf module reset <modulnavn>'-kommandoen. Når du har nulstillet moduler, så kan du aktivere den anden strøm."
 
-#: ../dnf/cli/commands/module.py:200
+#: ../dnf/cli/commands/module.py:199
 msgid ""
 "It is not possible to switch enabled streams of a module.\n"
 "It is recommended to remove all installed content from the module, and reset the module using 'dnf module reset <module_name>' command. After you reset the module, you can install the other stream."
 msgstr ""
+"Det er ikke muligt at skifte aktiverede strømme for et modul.\n"
+"Det anbefales at fjerne alt installeret indhold fra modulet, og nulstille modulet med 'dnf module reset <modulnavn>'-kommandoen. Når du har nulstillet moduler, så kan du installere den anden strøm."
 
-#: ../dnf/cli/commands/module.py:263
+#: ../dnf/cli/commands/module.py:262
 msgid "Interact with Modules."
 msgstr "Interager med moduler."
 
-#: ../dnf/cli/commands/module.py:280
+#: ../dnf/cli/commands/module.py:279
 msgid "show only enabled modules"
 msgstr "vis kun aktiverede moduler"
 
-#: ../dnf/cli/commands/module.py:283
+#: ../dnf/cli/commands/module.py:282
 msgid "show only disabled modules"
 msgstr "vis kun deaktiverede moduler"
 
-#: ../dnf/cli/commands/module.py:286
+#: ../dnf/cli/commands/module.py:285
 msgid "show only installed modules"
 msgstr "vis kun installerede moduler"
 
-#: ../dnf/cli/commands/module.py:289
+#: ../dnf/cli/commands/module.py:288
 msgid "show profile content"
 msgstr "vis profilindhold"
 
@@ -2920,13 +2939,13 @@ msgstr "ingen matchende payloadfabrik til %s"
 msgid "Already downloaded"
 msgstr "Allerede downloadet"
 
-#: ../dnf/repo.py:269 ../dnf/drpm.py:62
+#: ../dnf/repo.py:267 ../dnf/drpm.py:62
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr "ikke-understøttet tjeksumstype: %s"
 
 #. pinging mirrors, this might take a while
-#: ../dnf/repo.py:347
+#: ../dnf/repo.py:345
 #, python-format
 msgid "determining the fastest mirror (%s hosts).. "
 msgstr "bestemmer det hurtigste spejl (%s værter).. "
@@ -2947,10 +2966,12 @@ msgid ""
 "\n"
 "Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled, [a]ctive"
 msgstr ""
+"\n"
+"\n"
+"Fif: [d]efault, [e]nabled, [x]disabled, [i]nstalled, [a]ctive"
 
-#: ../dnf/module/module_base.py:46 ../dnf/module/module_base.py:307
-#: ../dnf/module/module_base.py:361 ../dnf/module/module_base.py:417
-#: ../dnf/module/module_base.py:475
+#: ../dnf/module/module_base.py:46 ../dnf/module/module_base.py:362
+#: ../dnf/module/module_base.py:418 ../dnf/module/module_base.py:476
 msgid "Ignoring unnecessary profile: '{}/{}'"
 msgstr "Ignorerer unødvendig profil: '{}/{}'"
 
@@ -2968,9 +2989,9 @@ msgid "Profile {} not matched for module {}:{}"
 msgstr "Profilen {} ikke matchet for modulet {}:{}"
 
 #: ../dnf/module/module_base.py:118 ../dnf/module/module_base.py:148
-#: ../dnf/module/module_base.py:278 ../dnf/module/module_base.py:295
-#: ../dnf/module/module_base.py:303 ../dnf/module/module_base.py:357
-#: ../dnf/module/module_base.py:413 ../dnf/module/module_base.py:471
+#: ../dnf/module/module_base.py:278 ../dnf/module/module_base.py:296
+#: ../dnf/module/module_base.py:304 ../dnf/module/module_base.py:358
+#: ../dnf/module/module_base.py:414 ../dnf/module/module_base.py:472
 msgid "Unable to resolve argument {}"
 msgstr "Kan ikke løse argumentet {}"
 
@@ -2978,7 +2999,12 @@ msgstr "Kan ikke løse argumentet {}"
 msgid "No match for package {}"
 msgstr "Ingen match for pakken {}"
 
-#: ../dnf/module/module_base.py:606 ../dnf/exceptions.py:125
+#: ../dnf/module/module_base.py:308
+msgid ""
+"Only module name required. Ignoring unneeded information in argument: '{}'"
+msgstr ""
+
+#: ../dnf/module/module_base.py:607 ../dnf/exceptions.py:125
 msgid "Modular dependency problem:"
 msgid_plural "Modular dependency problems:"
 msgstr[0] "Problem med modulær afhængighed:"
@@ -3025,23 +3051,21 @@ msgid "Testing already imported keys for their validity."
 msgstr ""
 "Tester nøgler, som allerede er blevet importeret, for deres gyldighed."
 
-#: ../dnf/automatic/main.py:157 ../dnf/conf/config.py:256
-#: ../dnf/conf/read.py:145
+#: ../dnf/automatic/main.py:156 ../dnf/conf/config.py:149
 #, python-format
 msgid "Unknown configuration value: %s=%s in %s; %s"
 msgstr "Ukendt konfigurationsværdi: %s=%s i %s; %s"
 
-#: ../dnf/automatic/main.py:161 ../dnf/conf/config.py:263
-#: ../dnf/conf/read.py:153
+#: ../dnf/automatic/main.py:160 ../dnf/conf/config.py:156
 #, python-format
 msgid "Unknown configuration option: %s = %s in %s"
 msgstr "Ukendt konfigurationstilvalg: %s = %s i %s"
 
-#: ../dnf/automatic/main.py:232
+#: ../dnf/automatic/main.py:231
 msgid "Started dnf-automatic."
 msgstr "Starter dnf-automatic."
 
-#: ../dnf/automatic/main.py:236
+#: ../dnf/automatic/main.py:235
 #, python-format
 msgid "Sleep for %s seconds"
 msgstr "Sov i %s sekunder"
@@ -3109,7 +3133,8 @@ msgstr "ødelagte grupper eller moduler: "
 #: ../dnf/exceptions.py:120
 msgid "Modular dependency problem with Defaults:"
 msgid_plural "Modular dependency problems with Defaults:"
-msgstr[0] ""
+msgstr[0] "Modulært afhængighedsproblem med Defaults:"
+msgstr[1] "Modulære afhængighedsproblemer med Defaults:"
 
 #. empty file is invalid json format
 #: ../dnf/persistor.py:54
@@ -3189,7 +3214,7 @@ msgstr "%s: bruger metadata fra %s."
 #: ../dnf/base.py:425
 #, python-format
 msgid "Ignoring repositories: %s"
-msgstr ""
+msgstr "Ignorerer softwarearkiver: %s"
 
 #: ../dnf/base.py:428
 #, python-format
@@ -3511,40 +3536,40 @@ msgstr ""
 msgid "Package %s is already installed."
 msgstr "Pakken %s er allerede installeret."
 
-#: ../dnf/conf/config.py:105 ../dnf/conf/config.py:211
+#: ../dnf/conf/config.py:134
 #, python-format
 msgid "Error parsing '%s': %s"
 msgstr "Fejl ved behandling af '%s': %s"
 
-#: ../dnf/conf/config.py:362
+#: ../dnf/conf/config.py:224
 msgid "Could not set cachedir: {}"
 msgstr "Kunne ikke sætte mellemlagermappe: {}"
 
-#: ../dnf/conf/config.py:453 ../dnf/conf/config.py:491
+#: ../dnf/conf/config.py:310 ../dnf/conf/config.py:346
 #, python-format
 msgid "Unknown configuration option: %s = %s"
 msgstr "Ukendt konfigurationstilvalg: %s = %s"
 
-#: ../dnf/conf/config.py:471
+#: ../dnf/conf/config.py:327
 #, python-format
 msgid "Error parsing --setopt with key '%s', value '%s': %s"
-msgstr ""
+msgstr "Fejl ved fortolkning af --setopt med nøglen '%s', værdien '%s': %s"
 
-#: ../dnf/conf/config.py:479
+#: ../dnf/conf/config.py:335
 #, python-format
 msgid "Main config did not have a %s attr. before setopt"
 msgstr "Hovedkonfiguration havde ikke en %s-attribut inden setopt"
 
-#: ../dnf/conf/config.py:529 ../dnf/conf/config.py:547
+#: ../dnf/conf/config.py:382 ../dnf/conf/config.py:400
 msgid "Incorrect or unknown \"{}\": {}"
 msgstr "Ukorrekt eller ukendt \"{}\": {}"
 
-#: ../dnf/conf/config.py:600
+#: ../dnf/conf/config.py:452
 #, python-format
 msgid "Error parsing --setopt with key '%s.%s', value '%s': %s"
-msgstr ""
+msgstr "Fejl ved fortolkning af --setopt med nøglen '%s.%s', værdien '%s': %s"
 
-#: ../dnf/conf/config.py:603
+#: ../dnf/conf/config.py:455
 #, python-format
 msgid "Repo %s did not have a %s attr. before setopt"
 msgstr "Softwarearkivet %s havde ikke en %s-attribut inden setopt"
@@ -3559,20 +3584,15 @@ msgstr "Advarsel: kunne ikke indlæse '%s', springer over."
 msgid "Repository '%s': Error parsing config: %s"
 msgstr "Softwarearkivet '%s': Fejl ved fortolkning af konfiguration: %s"
 
-#: ../dnf/conf/read.py:67
+#: ../dnf/conf/read.py:66
 #, python-format
 msgid "Repository '%s' is missing name in configuration, using id."
 msgstr "Softwarearkivet '%s' mangler navn i konfiguration, bruger id."
 
-#: ../dnf/conf/read.py:97
+#: ../dnf/conf/read.py:96
 #, python-format
 msgid "Bad id for repo: %s, byte = %s %d"
 msgstr "Dårligt id til softwarearkiv: %s, byte = %s %d"
-
-#: ../dnf/conf/read.py:156
-#, python-format
-msgid "Module '%s': Error parsing config: %s"
-msgstr "Modulet '%s': Fejl ved behandling af konfiguration: %s"
 
 #: ../dnf/package.py:273
 #, python-format

@@ -3,8 +3,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-02-20 14:35+0100\n"
-"PO-Revision-Date: 2019-01-16 03:27+0000\n"
+"POT-Creation-Date: 2019-03-11 10:38+0100\n"
+"PO-Revision-Date: 2019-02-23 11:17+0000\n"
 "Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
 "Language-Team: Esperanto\n"
 "Language: eo\n"
@@ -64,17 +64,17 @@ msgstr "Rulante skripteton"
 msgid "Preparing"
 msgstr "Preparante"
 
-#: ../dnf/plugin.py:61
+#: ../dnf/plugin.py:63
 #, python-format
 msgid "Parsing file failed: %s"
 msgstr "Analizado de dosiero malsukcesis: %s"
 
-#: ../dnf/plugin.py:137
+#: ../dnf/plugin.py:139
 #, python-format
 msgid "Loaded plugins: %s"
 msgstr "Ŝargitaj kromprogramoj: %s"
 
-#: ../dnf/plugin.py:194
+#: ../dnf/plugin.py:197
 #, python-format
 msgid "Failed loading plugin: %s"
 msgstr "Malsukcesis ŝargi kromprogramon: %s"
@@ -400,7 +400,7 @@ msgstr "Grupo"
 
 #: ../dnf/cli/output.py:1035
 msgid "Packages"
-msgstr "Pakoj"
+msgstr "Pakojn"
 
 #: ../dnf/cli/output.py:1100
 msgid "Installing group/module packages"
@@ -430,11 +430,11 @@ msgstr "Reinstalonte"
 
 #: ../dnf/cli/output.py:1111
 msgid "Installing dependencies"
-msgstr "Instalante dependecojn"
+msgstr "Instalonte dependecojn"
 
 #: ../dnf/cli/output.py:1112
 msgid "Installing weak dependencies"
-msgstr "Instalante malfortajn dependecojn"
+msgstr "Instalonte malfortajn dependecojn"
 
 #. TRANSLATORS: This is for a list of packages to be removed.
 #: ../dnf/cli/output.py:1114
@@ -460,7 +460,7 @@ msgid "Installing module profiles"
 msgstr ""
 
 #: ../dnf/cli/output.py:1152
-msgid "Removing module profiles"
+msgid "Disabling module profiles"
 msgstr ""
 
 #: ../dnf/cli/output.py:1161
@@ -472,11 +472,11 @@ msgid "Switching module streams"
 msgstr ""
 
 #: ../dnf/cli/output.py:1177
-msgid "Disabling module streams"
+msgid "Disabling modules"
 msgstr ""
 
 #: ../dnf/cli/output.py:1185
-msgid "Resetting module streams"
+msgid "Resetting modules"
 msgstr ""
 
 #: ../dnf/cli/output.py:1193
@@ -879,118 +879,118 @@ msgstr "Setopt-argumento havas plurajn valorojn: %s"
 msgid "Setopt argument has no value: %s"
 msgstr "Setopt-argumento havas neniun valoron: %s"
 
-#: ../dnf/cli/option_parser.py:157
+#: ../dnf/cli/option_parser.py:156
 msgid "Optional arguments"
 msgstr "Malnepraj argumentoj"
 
-#: ../dnf/cli/option_parser.py:160
+#: ../dnf/cli/option_parser.py:159
 msgid "config file location"
 msgstr "loko de agordodosiero"
 
-#: ../dnf/cli/option_parser.py:163
+#: ../dnf/cli/option_parser.py:162
 msgid "quiet operation"
 msgstr "kvieta operacio"
 
-#: ../dnf/cli/option_parser.py:165
+#: ../dnf/cli/option_parser.py:164
 msgid "verbose operation"
 msgstr "babilema operacio"
 
-#: ../dnf/cli/option_parser.py:167
+#: ../dnf/cli/option_parser.py:166
 msgid "show DNF version and exit"
 msgstr "montri DNF-version kaj ĉesi"
 
-#: ../dnf/cli/option_parser.py:168
+#: ../dnf/cli/option_parser.py:167
 msgid "set install root"
 msgstr "agordi instal-radikon"
 
-#: ../dnf/cli/option_parser.py:171
+#: ../dnf/cli/option_parser.py:170
 msgid "do not install documentations"
 msgstr "ne instali dokumentadon"
 
-#: ../dnf/cli/option_parser.py:174
+#: ../dnf/cli/option_parser.py:173
 msgid "disable all plugins"
 msgstr "malŝalti ĉiujn kromprogramojn"
 
-#: ../dnf/cli/option_parser.py:177
+#: ../dnf/cli/option_parser.py:176
 msgid "enable plugins by name"
 msgstr "ŝalti kromprogramojn per nomo"
 
-#: ../dnf/cli/option_parser.py:181
+#: ../dnf/cli/option_parser.py:180
 msgid "disable plugins by name"
 msgstr "malŝalti kromprogramojn per nomo"
 
-#: ../dnf/cli/option_parser.py:184
+#: ../dnf/cli/option_parser.py:183
 msgid "override the value of $releasever in config and repo files"
 msgstr ""
 "anstataŭigi la valoron de $releasever en agordaj kaj deponejaj dosieroj"
 
-#: ../dnf/cli/option_parser.py:188
+#: ../dnf/cli/option_parser.py:187
 msgid "set arbitrary config and repo options"
 msgstr "agordi hazardajn agordajn kaj deponejajn opciojn"
 
-#: ../dnf/cli/option_parser.py:191
+#: ../dnf/cli/option_parser.py:190
 msgid "resolve depsolve problems by skipping packages"
 msgstr "solvi dependeco-solvajn problemojn per preterpasado de pakoj"
 
-#: ../dnf/cli/option_parser.py:194
+#: ../dnf/cli/option_parser.py:193
 msgid "show command help"
 msgstr "montri komandan helpon"
 
-#: ../dnf/cli/option_parser.py:198
+#: ../dnf/cli/option_parser.py:197
 msgid "allow erasing of installed packages to resolve dependencies"
 msgstr "permesi forigon de instalitajn pakojn por solvi dependecojn"
 
-#: ../dnf/cli/option_parser.py:202
+#: ../dnf/cli/option_parser.py:201
 msgid "try the best available package versions in transactions."
 msgstr "provi la plej bonajn disponeblajn pakajn versiojn en transakcioj."
 
-#: ../dnf/cli/option_parser.py:204
+#: ../dnf/cli/option_parser.py:203
 msgid "do not limit the transaction to the best candidate"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:207
+#: ../dnf/cli/option_parser.py:206
 msgid "run entirely from system cache, don't update cache"
 msgstr "ruli entute el sistema kaŝmemoro, ne ĝisdatigi kaŝmemoron"
 
-#: ../dnf/cli/option_parser.py:211
+#: ../dnf/cli/option_parser.py:210
 msgid "maximum command wait time"
 msgstr "maksimuma komanda atendotempo"
 
-#: ../dnf/cli/option_parser.py:214
+#: ../dnf/cli/option_parser.py:213
 msgid "debugging output level"
 msgstr "sencimiga eliga nivelo"
 
-#: ../dnf/cli/option_parser.py:217
+#: ../dnf/cli/option_parser.py:216
 msgid "dumps detailed solving results into files"
 msgstr "ŝutas detalajn solv-rezultojn en dosierojn"
 
-#: ../dnf/cli/option_parser.py:221
+#: ../dnf/cli/option_parser.py:220
 msgid "show duplicates, in repos, in list/search commands"
 msgstr "montri duoblaĵojn, en deponejoj, en listaj/serĉaj komandoj"
 
-#: ../dnf/cli/option_parser.py:224
+#: ../dnf/cli/option_parser.py:223
 msgid "error output level"
 msgstr "erara eliga nivelo"
 
-#: ../dnf/cli/option_parser.py:227
+#: ../dnf/cli/option_parser.py:226
 msgid ""
 "enables dnf's obsoletes processing logic for upgrade or display capabilities"
 " that the package obsoletes for info, list and repoquery"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:231
+#: ../dnf/cli/option_parser.py:230
 msgid "debugging output level for rpm"
 msgstr "sencimiga eniga nivelo por rpm"
 
-#: ../dnf/cli/option_parser.py:234
+#: ../dnf/cli/option_parser.py:233
 msgid "automatically answer yes for all questions"
 msgstr "aŭtomate jesi ĉiujn demandojn"
 
-#: ../dnf/cli/option_parser.py:237
+#: ../dnf/cli/option_parser.py:236
 msgid "automatically answer no for all questions"
 msgstr "aŭtomate nei ĉiujn demandojn"
 
-#: ../dnf/cli/option_parser.py:248
+#: ../dnf/cli/option_parser.py:247
 msgid ""
 "enable just specific repositories by an id or a glob, can be specified "
 "multiple times"
@@ -998,86 +998,86 @@ msgstr ""
 "ŝalti nur specifajn deponejojn pere de identigilo aŭ glob, povas esti "
 "specifita plurfoje"
 
-#: ../dnf/cli/option_parser.py:253
+#: ../dnf/cli/option_parser.py:252
 msgid "enable repos with config-manager command (automatically saves)"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:257
+#: ../dnf/cli/option_parser.py:256
 msgid "disable repos with config-manager command (automatically saves)"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:261
+#: ../dnf/cli/option_parser.py:260
 msgid "exclude packages by name or glob"
 msgstr "ekskluzivi pakojn pere de nomo aŭ glob"
 
-#: ../dnf/cli/option_parser.py:266
+#: ../dnf/cli/option_parser.py:265
 msgid "disable excludepkgs"
 msgstr ""
 
-#: ../dnf/cli/option_parser.py:271
+#: ../dnf/cli/option_parser.py:270
 msgid ""
 "label and path to additional repository, can be specified multiple times."
 msgstr "etikedo kaj vojo al cetera deponejo, povas esti specifita plurfoje."
 
-#: ../dnf/cli/option_parser.py:275
+#: ../dnf/cli/option_parser.py:274
 msgid "disable removal of dependencies that are no longer used"
 msgstr "malŝalti forigon de deponejoj kiuj ne plu estas uzataj"
 
-#: ../dnf/cli/option_parser.py:278
-msgid "disable gpg signature checking"
-msgstr "malŝalti kontroladon de gpg-subskriboj"
+#: ../dnf/cli/option_parser.py:277
+msgid "disable gpg signature checking (if RPM policy allows)"
+msgstr ""
 
-#: ../dnf/cli/option_parser.py:280
+#: ../dnf/cli/option_parser.py:279
 msgid "control whether color is used"
 msgstr "kontroli ĉu koloro estas uzata"
 
-#: ../dnf/cli/option_parser.py:283
+#: ../dnf/cli/option_parser.py:282
 msgid "set metadata as expired before running the command"
 msgstr "marki metadatumojn kiel senvalidigitaj antaŭ ol ruli la komando"
 
-#: ../dnf/cli/option_parser.py:286
+#: ../dnf/cli/option_parser.py:285
 msgid "resolve to IPv4 addresses only"
 msgstr "solvi nur al IPv4-adresoj"
 
-#: ../dnf/cli/option_parser.py:289
+#: ../dnf/cli/option_parser.py:288
 msgid "resolve to IPv6 addresses only"
 msgstr "solvi nur al IPv6-adresoj"
 
-#: ../dnf/cli/option_parser.py:292
+#: ../dnf/cli/option_parser.py:291
 msgid "set directory to copy packages to"
 msgstr "agordi dosierujon al kiu kopii pakojn"
 
-#: ../dnf/cli/option_parser.py:295
+#: ../dnf/cli/option_parser.py:294
 msgid "only download packages"
 msgstr "nur elŝuti pakojn"
 
-#: ../dnf/cli/option_parser.py:297
+#: ../dnf/cli/option_parser.py:296
 msgid "add a comment to transaction"
 msgstr "aldoni komenton al transakcio"
 
-#: ../dnf/cli/option_parser.py:300
+#: ../dnf/cli/option_parser.py:299
 msgid "Include bugfix relevant packages, in updates"
 msgstr "Inkluzivi cimoriparo-rilatajn pakojn, en ĝisdatigoj"
 
-#: ../dnf/cli/option_parser.py:303
+#: ../dnf/cli/option_parser.py:302
 msgid "Include enhancement relevant packages, in updates"
 msgstr "Inkluzivi plibonigo-rilatajn pakojn, en ĝisdatigoj"
 
-#: ../dnf/cli/option_parser.py:306
+#: ../dnf/cli/option_parser.py:305
 msgid "Include newpackage relevant packages, in updates"
 msgstr "Inkluzivi novapako-rilatajn pakojn, en ĝisdatigoj"
 
-#: ../dnf/cli/option_parser.py:309
+#: ../dnf/cli/option_parser.py:308
 msgid "Include security relevant packages, in updates"
 msgstr "Inkluzivi sekureco-rilatajn pakojn, en ĝisdatigoj"
 
-#: ../dnf/cli/option_parser.py:313
+#: ../dnf/cli/option_parser.py:312
 msgid "Include packages needed to fix the given advisory, in updates"
 msgstr ""
 "Inkluzivi pakojn kiu necesas por ripari la specifitan konsilon, en "
 "ĝisdatigoj"
 
-#: ../dnf/cli/option_parser.py:317
+#: ../dnf/cli/option_parser.py:316
 msgid "Include packages needed to fix the given BZ, in updates"
 msgstr ""
 "Inkluzivi pakojn kiu necesas por ripari la specifitan BZ, en ĝisdatigoj"
@@ -1096,15 +1096,15 @@ msgstr ""
 msgid "Force the use of an architecture"
 msgstr "Devigi uzon de arĥitekturo"
 
-#: ../dnf/cli/option_parser.py:364
+#: ../dnf/cli/option_parser.py:365
 msgid "List of Main Commands:"
 msgstr "Listo de ĉefaj komandoj:"
 
-#: ../dnf/cli/option_parser.py:365
+#: ../dnf/cli/option_parser.py:366
 msgid "List of Plugin Commands:"
 msgstr "Listo de kromprogramaj komandoj:"
 
-#: ../dnf/cli/main.py:57 ../dnf/automatic/main.py:267
+#: ../dnf/cli/main.py:57 ../dnf/automatic/main.py:266
 #, python-format
 msgid "Error: %s"
 msgstr "Eraro: %s"
@@ -1129,19 +1129,19 @@ msgstr ""
 msgid " or '{}' to skip uninstallable packages"
 msgstr ""
 
-#: ../dnf/cli/main.py:141
+#: ../dnf/cli/main.py:140
 msgid "try to add '{}' to use not only best candidate packages"
 msgstr ""
 
-#: ../dnf/cli/main.py:144
+#: ../dnf/cli/main.py:143
 msgid " or '{}' to use not only best candidate packages"
 msgstr ""
 
-#: ../dnf/cli/main.py:161
+#: ../dnf/cli/main.py:160
 msgid "Dependencies resolved."
 msgstr "Solvis dependecojn."
 
-#: ../dnf/cli/main.py:179
+#: ../dnf/cli/main.py:178
 msgid "Complete!"
 msgstr "Plenumita!"
 
@@ -1171,9 +1171,9 @@ msgstr ""
 msgid "Operation aborted."
 msgstr "Rompis operacion."
 
-#: ../dnf/cli/cli.py:200 ../dnf/cli/commands/__init__.py:446
-#: ../dnf/cli/commands/__init__.py:503 ../dnf/cli/commands/__init__.py:596
-#: ../dnf/cli/commands/__init__.py:645 ../dnf/cli/commands/install.py:80
+#: ../dnf/cli/cli.py:200 ../dnf/cli/commands/__init__.py:445
+#: ../dnf/cli/commands/__init__.py:502 ../dnf/cli/commands/__init__.py:595
+#: ../dnf/cli/commands/__init__.py:644 ../dnf/cli/commands/install.py:80
 #: ../dnf/cli/commands/install.py:103 ../dnf/cli/commands/install.py:110
 #: ../dnf/base.py:1638
 msgid "Nothing to do."
@@ -1214,10 +1214,10 @@ msgid "No packages marked for distribution synchronization."
 msgstr "Neniu pako markita por distribuaĵa sinkronigo."
 
 #: ../dnf/cli/cli.py:393 ../dnf/cli/commands/upgrade.py:110
-#: ../dnf/cli/commands/upgrade.py:121 ../dnf/cli/commands/__init__.py:429
-#: ../dnf/cli/commands/__init__.py:486 ../dnf/cli/commands/__init__.py:590
-#: ../dnf/cli/commands/__init__.py:637 ../dnf/cli/commands/__init__.py:680
-#: ../dnf/cli/commands/__init__.py:715 ../dnf/cli/commands/remove.py:150
+#: ../dnf/cli/commands/upgrade.py:121 ../dnf/cli/commands/__init__.py:428
+#: ../dnf/cli/commands/__init__.py:485 ../dnf/cli/commands/__init__.py:589
+#: ../dnf/cli/commands/__init__.py:636 ../dnf/cli/commands/__init__.py:679
+#: ../dnf/cli/commands/__init__.py:714 ../dnf/cli/commands/remove.py:150
 #: ../dnf/cli/commands/install.py:147 ../dnf/cli/commands/install.py:179
 #: ../dnf/cli/commands/reinstall.py:70 ../dnf/cli/commands/reinstall.py:84
 #: ../dnf/base.py:1812 ../dnf/base.py:1887 ../dnf/base.py:1906
@@ -1227,8 +1227,8 @@ msgstr "Neniu pako markita por distribuaĵa sinkronigo."
 msgid "No match for argument: %s"
 msgstr "Neniu kongruo por argumento: %s"
 
-#: ../dnf/cli/cli.py:402 ../dnf/cli/cli.py:654 ../dnf/cli/cli.py:684
-#: ../dnf/cli/commands/__init__.py:374 ../dnf/cli/commands/__init__.py:891
+#: ../dnf/cli/cli.py:402 ../dnf/cli/cli.py:656 ../dnf/cli/cli.py:686
+#: ../dnf/cli/commands/__init__.py:373 ../dnf/cli/commands/__init__.py:890
 #: ../dnf/cli/commands/group.py:386 ../dnf/base.py:2211
 #, python-format
 msgid "No package %s available."
@@ -1271,69 +1271,69 @@ msgstr "Freŝaldonitaj pakoj"
 msgid "No matching Packages to list"
 msgstr "Neniu kongrua pako al listo"
 
-#: ../dnf/cli/cli.py:580
+#: ../dnf/cli/cli.py:582
 msgid "No Matches found"
 msgstr "Neniu kongruo trovita"
 
-#: ../dnf/cli/cli.py:590
+#: ../dnf/cli/cli.py:592
 msgid "No transaction ID given"
 msgstr "Neniu transakcia identigilo specifita"
 
-#: ../dnf/cli/cli.py:595
+#: ../dnf/cli/cli.py:597
 msgid "Not found given transaction ID"
 msgstr "Ne trovis specifitan transakcian identigilon"
 
-#: ../dnf/cli/cli.py:604
+#: ../dnf/cli/cli.py:606
 msgid "Found more than one transaction ID!"
 msgstr "Trovis pli ol unu transakcian identigilon!"
 
-#: ../dnf/cli/cli.py:621
+#: ../dnf/cli/cli.py:623
 #, python-format
 msgid "Transaction history is incomplete, before %u."
 msgstr "Transakcia historio ne kompletas, antaŭ %u."
 
-#: ../dnf/cli/cli.py:623
+#: ../dnf/cli/cli.py:625
 #, python-format
 msgid "Transaction history is incomplete, after %u."
 msgstr "Transakcia historio ne kompletas, post %u."
 
-#: ../dnf/cli/cli.py:649 ../dnf/cli/cli.py:680 ../dnf/base.py:2018
+#: ../dnf/cli/cli.py:651 ../dnf/cli/cli.py:682 ../dnf/base.py:2018
 #: ../dnf/base.py:2205
 #, python-format
 msgid "No package %s installed."
 msgstr "Neniu pako %s instalita."
 
-#: ../dnf/cli/cli.py:670
+#: ../dnf/cli/cli.py:672
 msgid "Undoing transaction {}, from {}"
 msgstr "Malfarante transakcion {}, de {}"
 
-#: ../dnf/cli/cli.py:749 ../dnf/cli/commands/shell.py:230
+#: ../dnf/cli/cli.py:751 ../dnf/cli/commands/shell.py:230
 #, python-format
 msgid "Unknown repo: '%s'"
 msgstr "Nekonata deponejo: “%s”"
 
-#: ../dnf/cli/cli.py:763
+#: ../dnf/cli/cli.py:765
 #, python-format
 msgid "No repository match: %s"
 msgstr "Neniu deponeja kongruo: %s"
 
-#: ../dnf/cli/cli.py:792
+#: ../dnf/cli/cli.py:794
 msgid "This command has to be run under the root user."
 msgstr "Oni devas ruli ĉi tiun komando per la root-uzanto."
 
-#: ../dnf/cli/cli.py:821
+#: ../dnf/cli/cli.py:823
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "Neniu tia komando: %s. Bonvolu uzi %s --help"
 
-#: ../dnf/cli/cli.py:824
+#: ../dnf/cli/cli.py:826
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
 "Povus esti DNF kromprograman komandon, provu: “dnf install 'dnf-"
 "command(%s)'”"
 
-#: ../dnf/cli/cli.py:827
+#: ../dnf/cli/cli.py:829
 msgid ""
 "It could be a DNF plugin command, but loading of plugins is currently "
 "disabled."
@@ -1341,53 +1341,59 @@ msgstr ""
 "Povus esti DNF kromprograman komandon, sed ŝargado de kromprogramoj estas "
 "ĉimomente malŝaltita."
 
-#: ../dnf/cli/cli.py:874 ../dnf/cli/cli.py:878 ../dnf/cli/aliases.py:115
+#: ../dnf/cli/cli.py:876 ../dnf/cli/cli.py:880 ../dnf/cli/aliases.py:115
 #: ../dnf/cli/aliases.py:128 ../dnf/cli/commands/alias.py:105
 #, python-format
 msgid "Config error: %s"
 msgstr "Agorda eraro: %s"
 
-#: ../dnf/cli/cli.py:884
+#: ../dnf/cli/cli.py:886
 msgid ""
 "--destdir or --downloaddir must be used with --downloadonly or download or "
 "system-upgrade command."
 msgstr ""
 
-#: ../dnf/cli/cli.py:890
+#: ../dnf/cli/cli.py:892
 msgid ""
 "--enable, --set-enabled and --disable, --set-disabled must be used with "
 "config-manager command."
 msgstr ""
 
-#: ../dnf/cli/cli.py:983
+#: ../dnf/cli/cli.py:974
+msgid ""
+"Warning: Enforcing GPG signature check globally as per active RPM security "
+"policy (see 'gpgcheck' in dnf.conf(5) for how to squelch this message)"
+msgstr ""
+
+#: ../dnf/cli/cli.py:1003
 msgid ""
 "Unable to detect release version (use '--releasever' to specify release "
 "version)"
 msgstr ""
 "Ne eblas detekti eldonversion (uzu “--releasever” por specifi eldonversion)"
 
-#: ../dnf/cli/cli.py:1069 ../dnf/cli/commands/repoquery.py:413
+#: ../dnf/cli/cli.py:1089 ../dnf/cli/commands/repoquery.py:413
 msgid "argument {}: not allowed with argument {}"
 msgstr "argumento {}: ne permesita kun argumento {}"
 
-#: ../dnf/cli/cli.py:1076
+#: ../dnf/cli/cli.py:1096
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Komando “%s” jam specifita"
 
-#: ../dnf/cli/cli.py:1096
+#: ../dnf/cli/cli.py:1116
 msgid "Excludes in dnf.conf: "
 msgstr "Ekskludoj en dnf.conf: "
 
-#: ../dnf/cli/cli.py:1099
+#: ../dnf/cli/cli.py:1119
 msgid "Includes in dnf.conf: "
 msgstr "Inkludoj en dnf.conf: "
 
-#: ../dnf/cli/cli.py:1102
+#: ../dnf/cli/cli.py:1122
 msgid "Excludes in repo "
 msgstr "Ekskludoj en deponejo "
 
-#: ../dnf/cli/cli.py:1105
+#: ../dnf/cli/cli.py:1125
 msgid "Includes in repo "
 msgstr "Inkludoj en deponejo "
 
@@ -1396,7 +1402,7 @@ msgstr "Inkludoj en deponejo "
 msgid "Unexpected value of environment variable: DNF_DISABLE_ALIASES=%s"
 msgstr ""
 
-#: ../dnf/cli/aliases.py:105 ../dnf/conf/config.py:559 ../dnf/conf/read.py:84
+#: ../dnf/cli/aliases.py:105 ../dnf/conf/config.py:412 ../dnf/conf/read.py:83
 #, python-format
 msgid "Parsing file \"%s\" failed: %s"
 msgstr ""
@@ -1576,7 +1582,7 @@ msgstr "%s kongruis: %%s"
 msgid "No matches found."
 msgstr "Trovis neniun kongruon."
 
-#: ../dnf/cli/commands/search.py:151 ../dnf/cli/commands/__init__.py:254
+#: ../dnf/cli/commands/search.py:151 ../dnf/cli/commands/__init__.py:253
 msgid "Searching Packages: "
 msgstr "Serĉante pakojn: "
 
@@ -1637,13 +1643,13 @@ msgid "Package to upgrade"
 msgstr "Altgradigenda pako"
 
 #: ../dnf/cli/commands/upgrade.py:46 ../dnf/cli/commands/autoremove.py:48
-#: ../dnf/cli/commands/__init__.py:196 ../dnf/cli/commands/__init__.py:270
-#: ../dnf/cli/commands/__init__.py:776 ../dnf/cli/commands/remove.py:61
+#: ../dnf/cli/commands/__init__.py:196 ../dnf/cli/commands/__init__.py:269
+#: ../dnf/cli/commands/__init__.py:775 ../dnf/cli/commands/remove.py:61
 #: ../dnf/cli/commands/install.py:51 ../dnf/cli/commands/reinstall.py:44
 msgid "PACKAGE"
 msgstr "PAKO"
 
-#: ../dnf/cli/commands/upgrade.py:89 ../dnf/cli/commands/__init__.py:720
+#: ../dnf/cli/commands/upgrade.py:89 ../dnf/cli/commands/__init__.py:719
 msgid "No packages marked for upgrade."
 msgstr "Neniu pako markita por altgradigo."
 
@@ -1704,115 +1710,115 @@ msgstr "Estas neniu ŝaltita deponejo."
 msgid "display details about a package or group of packages"
 msgstr "montri detalojn pri la pako aŭ grupo de pakoj"
 
-#: ../dnf/cli/commands/__init__.py:174 ../dnf/cli/commands/__init__.py:754
+#: ../dnf/cli/commands/__init__.py:174 ../dnf/cli/commands/__init__.py:753
 msgid "show all packages (default)"
 msgstr "montri ĉiujn pakojn (implicita)"
 
-#: ../dnf/cli/commands/__init__.py:177 ../dnf/cli/commands/__init__.py:757
+#: ../dnf/cli/commands/__init__.py:177 ../dnf/cli/commands/__init__.py:756
 msgid "show only available packages"
 msgstr "montri nur disponeblajn pakojn"
 
-#: ../dnf/cli/commands/__init__.py:180 ../dnf/cli/commands/__init__.py:760
+#: ../dnf/cli/commands/__init__.py:180 ../dnf/cli/commands/__init__.py:759
 msgid "show only installed packages"
 msgstr "montri nur instalitajn pakojn"
 
-#: ../dnf/cli/commands/__init__.py:183 ../dnf/cli/commands/__init__.py:763
+#: ../dnf/cli/commands/__init__.py:183 ../dnf/cli/commands/__init__.py:762
 msgid "show only extras packages"
 msgstr "montri nur ceterajn pakojn"
 
 #: ../dnf/cli/commands/__init__.py:186 ../dnf/cli/commands/__init__.py:189
-#: ../dnf/cli/commands/__init__.py:766 ../dnf/cli/commands/__init__.py:769
+#: ../dnf/cli/commands/__init__.py:765 ../dnf/cli/commands/__init__.py:768
 msgid "show only upgrades packages"
 msgstr "montri nur altgradigajn pakojn"
 
-#: ../dnf/cli/commands/__init__.py:192 ../dnf/cli/commands/__init__.py:772
+#: ../dnf/cli/commands/__init__.py:192 ../dnf/cli/commands/__init__.py:771
 msgid "show only autoremove packages"
 msgstr "montri nur aŭtomate-forigi pakojn"
 
-#: ../dnf/cli/commands/__init__.py:195 ../dnf/cli/commands/__init__.py:775
+#: ../dnf/cli/commands/__init__.py:195 ../dnf/cli/commands/__init__.py:774
 msgid "show only recently changed packages"
 msgstr "montri nur freŝdate aliigitajn pakojn"
 
-#: ../dnf/cli/commands/__init__.py:227
+#: ../dnf/cli/commands/__init__.py:226
 msgid "list a package or groups of packages"
 msgstr "listigi pakon aŭ grupon de pakoj"
 
-#: ../dnf/cli/commands/__init__.py:241
+#: ../dnf/cli/commands/__init__.py:240
 msgid "find what package provides the given value"
 msgstr "serĉi la pakon kiu provizas la specifitan valoron"
 
-#: ../dnf/cli/commands/__init__.py:245
+#: ../dnf/cli/commands/__init__.py:244
 msgid "SOME_STRING"
 msgstr "IA_ĈENO"
 
-#: ../dnf/cli/commands/__init__.py:263
+#: ../dnf/cli/commands/__init__.py:262
 msgid "check for available package upgrades"
 msgstr "kontroli por disponeblaj pakaj altgradigoj"
 
-#: ../dnf/cli/commands/__init__.py:269
+#: ../dnf/cli/commands/__init__.py:268
 msgid "show changelogs before update"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:365 ../dnf/cli/commands/__init__.py:418
-#: ../dnf/cli/commands/__init__.py:474
+#: ../dnf/cli/commands/__init__.py:364 ../dnf/cli/commands/__init__.py:417
+#: ../dnf/cli/commands/__init__.py:473
 msgid "No package available."
 msgstr "Neniu pako disponeblas."
 
-#: ../dnf/cli/commands/__init__.py:380
+#: ../dnf/cli/commands/__init__.py:379
 msgid "No packages marked for install."
 msgstr "Neniu pako markita por instalo."
 
-#: ../dnf/cli/commands/__init__.py:416
+#: ../dnf/cli/commands/__init__.py:415
 msgid "No package installed."
 msgstr "Neniu pako instalita."
 
-#: ../dnf/cli/commands/__init__.py:436 ../dnf/cli/commands/__init__.py:493
+#: ../dnf/cli/commands/__init__.py:435 ../dnf/cli/commands/__init__.py:492
 #: ../dnf/cli/commands/reinstall.py:91
 #, python-format
 msgid " (from %s)"
 msgstr " (el %s)"
 
-#: ../dnf/cli/commands/__init__.py:437 ../dnf/cli/commands/__init__.py:494
+#: ../dnf/cli/commands/__init__.py:436 ../dnf/cli/commands/__init__.py:493
 #: ../dnf/cli/commands/remove.py:104 ../dnf/cli/commands/reinstall.py:92
 #, python-format
 msgid "Installed package %s%s not available."
 msgstr "Instalita pako %s%s ne disponeblas."
 
-#: ../dnf/cli/commands/__init__.py:471 ../dnf/cli/commands/__init__.py:580
-#: ../dnf/cli/commands/__init__.py:623 ../dnf/cli/commands/__init__.py:670
+#: ../dnf/cli/commands/__init__.py:470 ../dnf/cli/commands/__init__.py:579
+#: ../dnf/cli/commands/__init__.py:622 ../dnf/cli/commands/__init__.py:669
 msgid "No package installed from the repository."
 msgstr "Neniu pako instalita el la deponejo."
 
-#: ../dnf/cli/commands/__init__.py:534 ../dnf/cli/commands/reinstall.py:101
+#: ../dnf/cli/commands/__init__.py:533 ../dnf/cli/commands/reinstall.py:101
 msgid "No packages marked for reinstall."
 msgstr "Neniu pako markita por reinstalo."
 
-#: ../dnf/cli/commands/__init__.py:685 ../dnf/cli/commands/remove.py:156
+#: ../dnf/cli/commands/__init__.py:684 ../dnf/cli/commands/remove.py:156
 #: ../dnf/base.py:2053
 msgid "No packages marked for removal."
 msgstr "Neniu pako markita por forigo."
 
-#: ../dnf/cli/commands/__init__.py:730
+#: ../dnf/cli/commands/__init__.py:729
 msgid "run commands on top of all packages in given repository"
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:744
+#: ../dnf/cli/commands/__init__.py:743
 msgid "REPO"
 msgstr "DEPONEJO"
 
-#: ../dnf/cli/commands/__init__.py:802
+#: ../dnf/cli/commands/__init__.py:801
 msgid "display a helpful usage message"
 msgstr "montri helpeman mesaĝon pri uzado"
 
-#: ../dnf/cli/commands/__init__.py:806
+#: ../dnf/cli/commands/__init__.py:805
 msgid "COMMAND"
 msgstr "KOMANDO"
 
-#: ../dnf/cli/commands/__init__.py:822
+#: ../dnf/cli/commands/__init__.py:821
 msgid "display, or use, the transaction history"
 msgstr "montri, aŭ uzi, la transakcian historion"
 
-#: ../dnf/cli/commands/__init__.py:837
+#: ../dnf/cli/commands/__init__.py:836
 msgid ""
 "Found more than one transaction ID.\n"
 "'{}' requires one transaction ID or package name."
@@ -1820,15 +1826,15 @@ msgstr ""
 "Trovis pli ol unu transakcian identigilon.\n"
 "“{}” bezonas unu transakcian identigilon aŭ pakonomon."
 
-#: ../dnf/cli/commands/__init__.py:844
+#: ../dnf/cli/commands/__init__.py:843
 msgid "No transaction ID or package name given."
 msgstr "Neniu transakcia identigilo aŭ pakonomo specifita."
 
-#: ../dnf/cli/commands/__init__.py:857
+#: ../dnf/cli/commands/__init__.py:856
 msgid "You don't have access to the history DB."
 msgstr "Vi ne havas atingon al la historia datumbazo."
 
-#: ../dnf/cli/commands/__init__.py:869
+#: ../dnf/cli/commands/__init__.py:868
 #, python-format
 msgid ""
 "Cannot undo transaction %s, doing so would result in an inconsistent package"
@@ -1837,7 +1843,7 @@ msgstr ""
 "Ne povas malfari transakcion %s, fari tion kaŭzus nekoheran pakan "
 "datumbazon."
 
-#: ../dnf/cli/commands/__init__.py:874
+#: ../dnf/cli/commands/__init__.py:873
 #, python-format
 msgid ""
 "Cannot rollback transaction %s, doing so would result in an inconsistent "
@@ -1846,13 +1852,13 @@ msgstr ""
 "Ne povas ŝanĝomalfari transakcion %s, fari tion kaŭzus nekoheran pakan "
 "datumbazon."
 
-#: ../dnf/cli/commands/__init__.py:944
+#: ../dnf/cli/commands/__init__.py:943
 msgid ""
 "Invalid transaction ID range definition '{}'.\n"
 "Use '<transaction-id>..<transaction-id>'."
 msgstr ""
 
-#: ../dnf/cli/commands/__init__.py:948
+#: ../dnf/cli/commands/__init__.py:947
 msgid ""
 "Can't convert '{}' to transaction ID.\n"
 "Use '<integer>', 'last', 'last-<positive-integer>'."
@@ -1860,7 +1866,7 @@ msgstr ""
 "Ne povas konverti “{}” al transakcia identigilo.\n"
 "Uzu “<entjero>”, “last”, “last-<pozitiva-entjero>”."
 
-#: ../dnf/cli/commands/__init__.py:977
+#: ../dnf/cli/commands/__init__.py:976
 msgid "No transaction which manipulates package '{}' was found."
 msgstr "Neniu transakcio kiu manipulas la pakon “{}” estis trovita."
 
@@ -1887,39 +1893,39 @@ msgid ""
 "stream '{2}'"
 msgstr ""
 
-#: ../dnf/cli/commands/module.py:78 ../dnf/cli/commands/module.py:102
+#: ../dnf/cli/commands/module.py:79 ../dnf/cli/commands/module.py:101
 msgid "No matching Modules to list"
 msgstr "Neniu kongruo modulo al listo"
 
-#: ../dnf/cli/commands/module.py:129
+#: ../dnf/cli/commands/module.py:128
 msgid ""
 "It is not possible to switch enabled streams of a module.\n"
 "It is recommended to remove all installed content from the module, and reset the module using 'dnf module reset <module_name>' command. After you reset the module, you can enable the other stream."
 msgstr ""
 
-#: ../dnf/cli/commands/module.py:200
+#: ../dnf/cli/commands/module.py:199
 msgid ""
 "It is not possible to switch enabled streams of a module.\n"
 "It is recommended to remove all installed content from the module, and reset the module using 'dnf module reset <module_name>' command. After you reset the module, you can install the other stream."
 msgstr ""
 
-#: ../dnf/cli/commands/module.py:263
+#: ../dnf/cli/commands/module.py:262
 msgid "Interact with Modules."
 msgstr "Interagi kun moduloj."
 
-#: ../dnf/cli/commands/module.py:280
+#: ../dnf/cli/commands/module.py:279
 msgid "show only enabled modules"
 msgstr "montri nur ŝaltitajn modulojn"
 
-#: ../dnf/cli/commands/module.py:283
+#: ../dnf/cli/commands/module.py:282
 msgid "show only disabled modules"
 msgstr "montri nur malŝaltitajn modulojn"
 
-#: ../dnf/cli/commands/module.py:286
+#: ../dnf/cli/commands/module.py:285
 msgid "show only installed modules"
 msgstr "montri nur instalitajn modulojn"
 
-#: ../dnf/cli/commands/module.py:289
+#: ../dnf/cli/commands/module.py:288
 msgid "show profile content"
 msgstr "montri profilan enhavon"
 
@@ -2843,13 +2849,13 @@ msgstr ""
 msgid "Already downloaded"
 msgstr "Jam elŝutita"
 
-#: ../dnf/repo.py:269 ../dnf/drpm.py:62
+#: ../dnf/repo.py:267 ../dnf/drpm.py:62
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr "mesubtenita kontrolsuma speco: %s"
 
 #. pinging mirrors, this might take a while
-#: ../dnf/repo.py:347
+#: ../dnf/repo.py:345
 #, python-format
 msgid "determining the fastest mirror (%s hosts).. "
 msgstr ""
@@ -2871,9 +2877,8 @@ msgid ""
 "Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled, [a]ctive"
 msgstr ""
 
-#: ../dnf/module/module_base.py:46 ../dnf/module/module_base.py:307
-#: ../dnf/module/module_base.py:361 ../dnf/module/module_base.py:417
-#: ../dnf/module/module_base.py:475
+#: ../dnf/module/module_base.py:46 ../dnf/module/module_base.py:362
+#: ../dnf/module/module_base.py:418 ../dnf/module/module_base.py:476
 msgid "Ignoring unnecessary profile: '{}/{}'"
 msgstr "Malatente nenecesan profilon: “{}/{}”"
 
@@ -2891,9 +2896,9 @@ msgid "Profile {} not matched for module {}:{}"
 msgstr "Profilo {} ne kongruas por modulo {}:{}"
 
 #: ../dnf/module/module_base.py:118 ../dnf/module/module_base.py:148
-#: ../dnf/module/module_base.py:278 ../dnf/module/module_base.py:295
-#: ../dnf/module/module_base.py:303 ../dnf/module/module_base.py:357
-#: ../dnf/module/module_base.py:413 ../dnf/module/module_base.py:471
+#: ../dnf/module/module_base.py:278 ../dnf/module/module_base.py:296
+#: ../dnf/module/module_base.py:304 ../dnf/module/module_base.py:358
+#: ../dnf/module/module_base.py:414 ../dnf/module/module_base.py:472
 msgid "Unable to resolve argument {}"
 msgstr "Ne eblas solvi argumenton {}"
 
@@ -2901,7 +2906,12 @@ msgstr "Ne eblas solvi argumenton {}"
 msgid "No match for package {}"
 msgstr "Neniu kongruo por pako {}"
 
-#: ../dnf/module/module_base.py:606 ../dnf/exceptions.py:125
+#: ../dnf/module/module_base.py:308
+msgid ""
+"Only module name required. Ignoring unneeded information in argument: '{}'"
+msgstr ""
+
+#: ../dnf/module/module_base.py:607 ../dnf/exceptions.py:125
 msgid "Modular dependency problem:"
 msgid_plural "Modular dependency problems:"
 msgstr[0] ""
@@ -2947,23 +2957,21 @@ msgstr "DNSSEC-etendaĵo: "
 msgid "Testing already imported keys for their validity."
 msgstr ""
 
-#: ../dnf/automatic/main.py:157 ../dnf/conf/config.py:256
-#: ../dnf/conf/read.py:145
+#: ../dnf/automatic/main.py:156 ../dnf/conf/config.py:149
 #, python-format
 msgid "Unknown configuration value: %s=%s in %s; %s"
 msgstr ""
 
-#: ../dnf/automatic/main.py:161 ../dnf/conf/config.py:263
-#: ../dnf/conf/read.py:153
+#: ../dnf/automatic/main.py:160 ../dnf/conf/config.py:156
 #, python-format
 msgid "Unknown configuration option: %s = %s in %s"
 msgstr ""
 
-#: ../dnf/automatic/main.py:232
+#: ../dnf/automatic/main.py:231
 msgid "Started dnf-automatic."
 msgstr "Komencis dnf-automatic."
 
-#: ../dnf/automatic/main.py:236
+#: ../dnf/automatic/main.py:235
 #, python-format
 msgid "Sleep for %s seconds"
 msgstr "Dormi por %s sekundoj"
@@ -3163,11 +3171,11 @@ msgstr ""
 
 #: ../dnf/base.py:881
 msgid "Running transaction"
-msgstr ""
+msgstr "Rulante transakcion"
 
 #: ../dnf/base.py:907
 msgid "Disk Requirements:"
-msgstr ""
+msgstr "Diskaj bezonoj:"
 
 #: ../dnf/base.py:910
 #, python-format
@@ -3370,7 +3378,7 @@ msgstr ""
 
 #: ../dnf/base.py:2356
 msgid "Key imported successfully"
-msgstr ""
+msgstr "Ŝlosilo sukcese enportita"
 
 #: ../dnf/base.py:2360
 msgid "Didn't install any keys"
@@ -3414,40 +3422,40 @@ msgstr ""
 msgid "Package %s is already installed."
 msgstr "Pako %s jam estas instalita."
 
-#: ../dnf/conf/config.py:105 ../dnf/conf/config.py:211
+#: ../dnf/conf/config.py:134
 #, python-format
 msgid "Error parsing '%s': %s"
 msgstr "Eraro dum analizado de “%s”: %s"
 
-#: ../dnf/conf/config.py:362
+#: ../dnf/conf/config.py:224
 msgid "Could not set cachedir: {}"
 msgstr ""
 
-#: ../dnf/conf/config.py:453 ../dnf/conf/config.py:491
+#: ../dnf/conf/config.py:310 ../dnf/conf/config.py:346
 #, python-format
 msgid "Unknown configuration option: %s = %s"
 msgstr ""
 
-#: ../dnf/conf/config.py:471
+#: ../dnf/conf/config.py:327
 #, python-format
 msgid "Error parsing --setopt with key '%s', value '%s': %s"
 msgstr ""
 
-#: ../dnf/conf/config.py:479
+#: ../dnf/conf/config.py:335
 #, python-format
 msgid "Main config did not have a %s attr. before setopt"
 msgstr ""
 
-#: ../dnf/conf/config.py:529 ../dnf/conf/config.py:547
+#: ../dnf/conf/config.py:382 ../dnf/conf/config.py:400
 msgid "Incorrect or unknown \"{}\": {}"
 msgstr "Malĝusta aŭ nekonata “{}”: {}"
 
-#: ../dnf/conf/config.py:600
+#: ../dnf/conf/config.py:452
 #, python-format
 msgid "Error parsing --setopt with key '%s.%s', value '%s': %s"
 msgstr ""
 
-#: ../dnf/conf/config.py:603
+#: ../dnf/conf/config.py:455
 #, python-format
 msgid "Repo %s did not have a %s attr. before setopt"
 msgstr ""
@@ -3462,19 +3470,14 @@ msgstr "Averto: malsukcesis ŝargi “%s”, preterpasante."
 msgid "Repository '%s': Error parsing config: %s"
 msgstr ""
 
-#: ../dnf/conf/read.py:67
+#: ../dnf/conf/read.py:66
 #, python-format
 msgid "Repository '%s' is missing name in configuration, using id."
 msgstr ""
 
-#: ../dnf/conf/read.py:97
+#: ../dnf/conf/read.py:96
 #, python-format
 msgid "Bad id for repo: %s, byte = %s %d"
-msgstr ""
-
-#: ../dnf/conf/read.py:156
-#, python-format
-msgid "Module '%s': Error parsing config: %s"
 msgstr ""
 
 #: ../dnf/package.py:273
