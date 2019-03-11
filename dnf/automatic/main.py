@@ -144,7 +144,7 @@ class Config(object):
     def populate(self, parser, section, filename, priority):
         """Set option values from an INI file section."""
         if parser.hasSection(section):
-            for name in parser.getData()[section]:
+            for name in parser.options(section):
                 value = parser.getValue(section, name)
                 if not value or value == 'None':
                     value = ''
