@@ -646,9 +646,10 @@ class Base(object):
         for pkg in goal.list_installs():
             self._ds_callback.pkg_added(pkg, 'i')
             obs = goal.obsoleted_by_package(pkg)
-            # skip obsoleted packages that are not part of all_obsoleted
-            # they are handled as upgrades/downgrades
-            obs = [i for i in obs if i in all_obsoleted]
+            # Skip obsoleted packages that are not part of all_obsoleted,
+            # they are handled as upgrades/downgrades.
+            # Also keep RPMs with the same name - they're not always in all_obsoleted.
+            obs = [i for i in obs if i in all_obsoleted or i.name == pkg.name]
 
             # TODO: move to libdnf: getBestReason
             reason = goal.get_reason(pkg)
@@ -680,9 +681,11 @@ class Base(object):
                 upgraded = obs.pop(0)
             else:
                 obs.remove(upgraded)
-            # skip obsoleted packages that are not part of all_obsoleted
-            # they are handled as upgrades/downgrades
-            obs = [i for i in obs if i in all_obsoleted]
+            # Skip obsoleted packages that are not part of all_obsoleted,
+            # they are handled as upgrades/downgrades.
+            # Also keep RPMs with the same name - they're not always in all_obsoleted.
+            obs = [i for i in obs if i in all_obsoleted or i.name == pkg.name]
+
             cb = lambda pkg: self._ds_callback.pkg_added(pkg, 'od')
             dnf.util.mapall(cb, obs)
             if pkg in self._get_installonly_query():
