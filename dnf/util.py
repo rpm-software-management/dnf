@@ -63,7 +63,11 @@ def _parse_specs(namespace, values):
     setattr(namespace, "filenames", [])
     setattr(namespace, "grp_specs", [])
     setattr(namespace, "pkg_specs", [])
+    tmp_set = set()
     for value in values:
+        if value in tmp_set:
+            continue
+        tmp_set.add(value)
         schemes = dnf.pycomp.urlparse.urlparse(value)[0]
         if value.endswith('.rpm'):
             namespace.filenames.append(value)
