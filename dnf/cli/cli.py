@@ -813,6 +813,14 @@ class Cli(object):
             self.base.fill_sack(
                 load_system_repo='auto' if self.demands.load_system_repo else False,
                 load_available_repos=self.demands.available_repos)
+            if dnf.base.WITH_MODULES:
+                moduleContainer = self.base._moduleContainer
+                if not moduleContainer.empty() and not moduleContainer.isPlatformPresent():
+                    msg = _("Unable to detect a platform module (use "
+                            "'--setopt=module_platform_id=<platform_name>:<platform_stream>' "
+                            "to specify the platform module)")
+                    logger.warning(msg)
+
 
     def _parse_commands(self, opts, args):
         """Check that the requested CLI command exists."""
