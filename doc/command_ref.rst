@@ -1109,6 +1109,8 @@ packages to those matching the specification. All packages are considered if no 
     in the configuration file might influence the result, but if the command line option  \-\
     :ref:`-disableexcludes <disableexcludes-label>` is used, it ensures that all installed packages will be listed.
 
+.. _whatdepends_option-label:
+
 ``--whatdepends <capability>``
     Limit the resulting set only to packages that require, enhance, recommend, suggest or
     supplement ``<capability>``.
@@ -1117,7 +1119,8 @@ packages to those matching the specification. All packages are considered if no 
     Limit the resulting set only to packages that conflict ``<capability>``.
 
 ``--whatenhances <capability>``
-    Limit the resulting set only to packages that enhance ``<capability>``.
+    Limit the resulting set only to packages that enhance ``<capability>``. Use \-\
+    :ref:`-whatdepends <whatdepends_option-label>` if you want to list all depending packages.
 
 ``--whatobsoletes <capability>``
     Limit the resulting set only to packages that obsolete ``<capability>``.
@@ -1126,24 +1129,30 @@ packages to those matching the specification. All packages are considered if no 
     Limit the resulting set only to packages that provide ``<capability>``.
 
 ``--whatrecommends <capability>``
-    Limit the resulting set only to packages that recommend ``<capability>``.
+    Limit the resulting set only to packages that recommend ``<capability>``. Use \-\
+    :ref:`-whatdepends <whatdepends_option-label>` if you want to list all depending packages.
 
 ``--whatrequires <capability>``
-    Limit the resulting set only to packages that require ``<capability>``.
+    Limit the resulting set only to packages that require ``<capability>``. Use \-\
+    :ref:`-whatdepends <whatdepends_option-label>` if you want to list all depending packages.
 
 ``--whatsuggests <capability>``
-    Limit the resulting set only to packages that suggest ``<capability>``.
+    Limit the resulting set only to packages that suggest ``<capability>``. Use \-\
+    :ref:`-whatdepends <whatdepends_option-label>` if you want to list all depending packages.
 
 ``--whatsupplements <capability>``
-    Limit the resulting set only to packages that supplement ``<capability>``.
+    Limit the resulting set only to packages that supplement ``<capability>``. Use \-\
+    :ref:`-whatdepends <whatdepends_option-label>` if you want to list all depending packages.
 
 ``--alldeps``
-    This option is stackable with ``--whatrequires`` or ``--whatdepends`` only. Additionally it
-    adds all packages requiring the package features to the result set (used as default).
+    This option is stackable with ``--whatrequires`` or \-\
+    :ref:`-whatdepends <whatdepends_option-label>` only. Additionally it adds all packages requiring
+    the package features to the result set (used as default).
 
 ``--exactdeps``
-    This option is stackable with ``--whatrequires`` or ``--whatdepends`` only. Limit the resulting
-    set only to packages that require ``<capability>`` specified by --whatrequires.
+    This option is stackable with ``--whatrequires`` or \-\
+    :ref:`-whatdepends <whatdepends_option-label>` only. Limit the resulting set only to packages
+    that require ``<capability>`` specified by --whatrequires.
 
 ``--srpm``
     Operate on the corresponding source RPM.
