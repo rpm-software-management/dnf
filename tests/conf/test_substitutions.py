@@ -48,7 +48,7 @@ class SubstitutionsFromEnvironmentTest(tests.support.TestCase):
         os.environ['DNF_VAR_MALFORMED '] = 'not this'
         conf = dnf.conf.Conf()
         os.environ = env
-        self.assertItemsEqual(
+        self.assertCountEqual(
             conf.substitutions.keys(),
             ['basearch', 'arch', 'DNF_VAR_GENRE', 'DNF_VAR_EMPTY'])
         self.assertEqual('opera', conf.substitutions['DNF_VAR_GENRE'])
