@@ -24,7 +24,7 @@ import re
 import dnf
 import dnf.exceptions
 
-ENVIRONMENT_VARS_RE = re.compile(r'^DNF_VARS_[A-Za-z0-9_]+$')
+ENVIRONMENT_VARS_RE = re.compile(r'^DNF_VAR_[A-Za-z0-9_]+$')
 
 class Substitutions(dict):
 
