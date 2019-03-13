@@ -397,9 +397,9 @@ Right side of every repo option can be enriched by the following variables:
     Refers to the release version of operating system which DNF derives from information available in RPMDB.
 
 
-In addition to these hard coded variables, user-defined ones can also be used. They can be defined either via :ref:`variable files <varfiles-label>`, or by using special environmental variables. The names of these variables must be prefixed with DNF_VARS\_ and they can only consist of alphanumeric characters and underscores::
+In addition to these hard coded variables, user-defined ones can also be used. They can be defined either via :ref:`variable files <varfiles-label>`, or by using special environmental variables. The names of these variables must be prefixed with DNF_VAR\_ and they can only consist of alphanumeric characters and underscores::
 
-    $ DNF_VARS_MY_VARIABLE=value
+    $ DNF_VAR_MY_VARIABLE=value
 
 ==================================
  Options for both [main] and Repo
