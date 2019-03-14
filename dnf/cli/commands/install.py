@@ -94,7 +94,7 @@ class InstallCommand(commands.Command):
                     module_debsolv_errors = e.module_debsolv_errors
                     if module_debsolv_errors:
                         logger.error(dnf.module.module_base.format_modular_solver_errors(
-                            module_debsolv_errors))
+                            module_debsolv_errors[0]))
             else:
                 skipped_grp_specs = self.opts.grp_specs
         if self.opts.filenames and nevra_forms:
