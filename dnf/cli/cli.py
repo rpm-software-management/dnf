@@ -732,7 +732,8 @@ class Cli(object):
         self.base.read_all_repos(opts)
         if opts.repofrompath:
             for label, path in opts.repofrompath.items():
-                self.base.repos.add_new_repo(label, self.base.conf, baseurl=[path])
+                this_repo = self.base.repos.add_new_repo(label, self.base.conf, baseurl=[path])
+                this_repo._configure_from_options(opts)
                 # do not let this repo to be disabled
                 opts.repos_ed.append((label, "enable"))
 

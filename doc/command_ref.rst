@@ -323,6 +323,8 @@ Options
     only packages from this repository, combine this with the ``--repo=<repo>``
     or ``--disablerepo="*"`` switches.
     The repository label for the repository is specified by <repo>.
+    The configuration for the repo could be adjusted using \-\
+    :ref:`-setopt <setopt_option-label>`\=<repo>.<option>=<value>\.
 
 ``--repo=<repoid>, --repoid=<repoid>``
     Enable just specific repositories by an id or a glob. Can be used multiple
@@ -341,6 +343,8 @@ Options
 ``--security``
     Includes packages that provide a fix for a security issue. Applicable for the
     upgrade command.
+
+.. _setopt_option-label:
 
 ``--setopt=<option>=<value>``
     Override a configuration option from the configuration file. To override configuration options for repositories, use
