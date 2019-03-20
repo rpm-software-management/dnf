@@ -182,6 +182,12 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Number of times any attempt to retrieve a file should retry before returning an error. Setting this to `0` makes it try forever. Defaults to `10`.
 
+  .. attribute:: skip_if_unavailable
+
+    If enabled, DNF will continue running and disable the repository that couldn't be synchronized
+    for any reason. This option doesn't affect skipping of unavailable packages after dependency
+    resolution. The default is ``False``.
+
   .. attribute:: sslcacert
 
     Path to the directory or file containing the certificate authorities to verify SSL certificates.

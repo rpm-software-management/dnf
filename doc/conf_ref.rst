@@ -357,13 +357,6 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     Overrides the retries option from the [main] section for this repository.
 
-.. _skip_if_unavailable-label:
-
-``skip_if_unavailable``
-    :ref:`boolean <boolean-label>`
-
-    If enabled, DNF will continue running and disable the repository that couldn't be contacted for any reason when downloading metadata. This option doesn't affect skipping of unavailable packages after dependency resolution. To check inaccessibility of repository use it in combination with :ref:`refresh command line option <refresh_command-label>`. The default is True.
-
 .. _strict-label:
 
 ``strict``
@@ -543,6 +536,16 @@ configuration.
     :ref:`integer <integer-label>`
 
     Set the number of times any attempt to retrieve a file should retry before returning an error. Setting this to `0` makes dnf try forever. Default is `10`.
+
+.. _skip_if_unavailable-label:
+
+``skip_if_unavailable``
+    :ref:`boolean <boolean-label>`
+
+    If enabled, DNF will continue running and disable the repository that couldn't be synchronized
+    for any reason. This option doesn't affect skipping of unavailable packages after dependency
+    resolution. To check inaccessibility of repository use it in combination with
+    :ref:`refresh command line option <refresh_command-label>`. The default is ``False``.
 
 .. _sslcacert-label:
 

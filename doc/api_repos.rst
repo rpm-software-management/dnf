@@ -164,7 +164,9 @@ Repository Configuration
 
   .. attribute:: skip_if_unavailable
 
-    If enabled, DNF will continue running and disable the repository that couldn't be contacted for any reason when downloading metadata. This option doesn't affect skipping of unavailable packages after dependency resolution. The default is ``True``.
+    If enabled, DNF will continue running and disable the repository that couldn't be synchronized
+    for any reason. This option doesn't affect skipping of unavailable packages after dependency
+    resolution. The default is inherited from :attr:`dnf.conf.Conf.skip_if_unavailable`.
 
   .. attribute:: sslcacert
 
