@@ -77,6 +77,13 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     satisfiable. Enable this if you want to experience broken dependencies in
     the repositories firsthand. The default is False.
 
+``cachedir``
+    :ref:`string <string-label>`
+
+    Path to a directory used by various DNF subsystems for storing cache data.
+    Has a reasonable root-writable default depending on the distribution. DNF
+    needs to be able to create files and directories at this location.
+
 .. _check_config_file_age-label:
 
 ``check_config_file_age``
