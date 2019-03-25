@@ -1459,9 +1459,10 @@ class Base(object):
         if not query:
             return
 
-        unneeded_pkgs = query._unneeded(self.history.swdb, debug_solver=False)
-        unneeded_pkgs_history = query.filter(pkg=[i for i in query if self.history.group.is_removable_pkg(i.name)])
-        unneeded_pkgs = unneeded_pkgs.union(unneeded_pkgs_history)
+        unneeded_pkgs = query._safe_to_remove(self.history.swdb, debug_solver=False)
+        unneeded_pkgs_history = query.filter(
+            pkg=[i for i in query if self.history.group.is_removable_pkg(i.name)])
+        unneeded_pkgs = unneeded_pkgs.intersection(unneeded_pkgs_history)
 
         remove_packages = query.intersection(unneeded_pkgs)
         if remove_packages:
