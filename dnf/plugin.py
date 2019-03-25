@@ -194,7 +194,7 @@ def _import_modules(package, py_files):
         try:
             module = importlib.import_module(name)
         except Exception as e:
-            logger.error(_('Failed loading plugin: %s'), module)
+            logger.error(_('Failed loading plugin "%s": %s'), module, e)
             logger.log(dnf.logging.SUBDEBUG, '', exc_info=True)
 
 
