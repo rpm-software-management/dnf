@@ -1028,7 +1028,10 @@ class Base(object):
         return tid
 
     def _verify_transaction(self, verify_pkg_cb=None):
-        total = len(self.transaction)
+        transaction_items = [
+            tsi for tsi in self.transaction
+            if tsi.action != libdnf.transaction.TransactionItemAction_REASON_CHANGE]
+        total = len(transaction_items)
 
         def display_banner(pkg, count):
             count += 1
@@ -1057,7 +1060,7 @@ class Base(object):
         # because DNF trusts error codes returned by RPM.
         # Verification banner is displayed to preserve UX.
         # TODO: drop in future DNF
-        for tsi in self._transaction:
+        for tsi in transaction_items:
             count = display_banner(tsi.pkg, count)
 
         rpmdbv = rpmdb_sack._rpmdb_version()
@@ -1462,6 +1465,12 @@ class Base(object):
         unneeded_pkgs = query._safe_to_remove(self.history.swdb, debug_solver=False)
         unneeded_pkgs_history = query.filter(
             pkg=[i for i in query if self.history.group.is_removable_pkg(i.name)])
+        pkg_with_dependent_pkgs = unneeded_pkgs_history.difference(unneeded_pkgs)
+
+        # mark packages with dependent packages as a dependency to allow removal with dependent
+        # package
+        for pkg in pkg_with_dependent_pkgs:
+            self.history.set_reason(pkg, libdnf.transaction.TransactionItemReason_DEPENDENCY)
         unneeded_pkgs = unneeded_pkgs.intersection(unneeded_pkgs_history)
 
         remove_packages = query.intersection(unneeded_pkgs)
