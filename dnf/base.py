@@ -1813,7 +1813,7 @@ class Base(object):
                 logger.error(msg, spec)
                 no_match_pkg_specs.append(spec)
         no_match_module_specs = []
-        module_debsolv_errors = ()
+        module_depsolv_errors = ()
         if WITH_MODULES and install_specs.grp_specs:
             try:
                 module_base = dnf.module.module_base.ModuleBase(self)
@@ -1825,7 +1825,7 @@ class Base(object):
                 if e.error_group_specs:
                     for e_spec in e.error_group_specs:
                         error_group_specs.append("@" + e_spec)
-                module_debsolv_errors = e.module_debsolv_errors
+                module_depsolv_errors = e.module_depsolv_errors
 
         else:
             no_match_module_specs = install_specs.grp_specs
@@ -1836,12 +1836,12 @@ class Base(object):
             self._install_groups(no_match_module_specs, exclude_specs, no_match_group_specs, strict)
 
         if no_match_group_specs or error_group_specs or no_match_pkg_specs or error_pkg_specs \
-                or module_debsolv_errors:
+                or module_depsolv_errors:
             raise dnf.exceptions.MarkingErrors(no_match_group_specs=no_match_group_specs,
                                                error_group_specs=error_group_specs,
                                                no_match_pkg_specs=no_match_pkg_specs,
                                                error_pkg_specs=error_pkg_specs,
-                                               module_debsolv_errors=module_debsolv_errors)
+                                               module_depsolv_errors=module_depsolv_errors)
 
     def install(self, pkg_spec, reponame=None, strict=True, forms=None):
         # :api

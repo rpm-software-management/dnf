@@ -102,7 +102,7 @@ class MarkingError(Error):
 
 class MarkingErrors(Error):
     def __init__(self, no_match_group_specs=(), error_group_specs=(), no_match_pkg_specs=(),
-                 error_pkg_specs=(), module_debsolv_errors=()):
+                 error_pkg_specs=(), module_depsolv_errors=()):
         """Initialize the marking error instance."""
         msg = _("Problems in request:")
         if (no_match_pkg_specs):
@@ -113,25 +113,25 @@ class MarkingErrors(Error):
             msg += "\n" + _("missing groups or modules: ") + ", ".join(no_match_group_specs)
         if (error_group_specs):
             msg += "\n" + _("broken groups or modules: ") + ", ".join(error_group_specs)
-        if (module_debsolv_errors):
-            msg_mod = dnf.util._format_resolve_problems(module_debsolv_errors[0])
-            if module_debsolv_errors[1] == \
+        if (module_depsolv_errors):
+            msg_mod = dnf.util._format_resolve_problems(module_depsolv_errors[0])
+            if module_depsolv_errors[1] == \
                     libdnf.module.ModulePackageContainer.ModuleErrorType_ERROR_IN_DEFAULTS:
                 msg += "\n" + "\n".join([P_('Modular dependency problem with Defaults:',
                                             'Modular dependency problems with Defaults:',
-                                            len(module_debsolv_errors)),
+                                            len(module_depsolv_errors)),
                                         msg_mod])
             else:
                 msg += "\n" + "\n".join([P_('Modular dependency problem:',
                                             'Modular dependency problems:',
-                                            len(module_debsolv_errors)),
+                                            len(module_depsolv_errors)),
                                         msg_mod])
         super(MarkingErrors, self).__init__(msg)
         self.no_match_group_specs = no_match_group_specs
         self.error_group_specs = error_group_specs
         self.no_match_pkg_specs = no_match_pkg_specs
         self.error_pkg_specs = error_pkg_specs
-        self.module_debsolv_errors = module_debsolv_errors
+        self.module_depsolv_errors = module_depsolv_errors
 
 class MetadataError(Error):
     pass
