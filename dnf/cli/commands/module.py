@@ -118,7 +118,7 @@ class ModuleCommand(commands.Command):
                 if self.base.conf.strict:
                     if e.no_match_group_specs or e.error_group_specs:
                         raise e
-                    if e.module_debsolv_errors and e.module_debsolv_errors[1] != \
+                    if e.module_depsolv_errors and e.module_depsolv_errors[1] != \
                             libdnf.module.ModulePackageContainer.ModuleErrorType_ERROR_IN_DEFAULTS:
                         raise e
                 logger.error(str(e))
@@ -149,7 +149,7 @@ class ModuleCommand(commands.Command):
                 if self.base.conf.strict:
                     if e.no_match_group_specs or e.error_group_specs:
                         raise e
-                    if e.module_debsolv_errors and e.module_debsolv_errors[1] != \
+                    if e.module_depsolv_errors and e.module_depsolv_errors[1] != \
                             libdnf.module.ModulePackageContainer.ModuleErrorType_ERROR_IN_DEFAULTS:
                         raise e
                 logger.error(str(e))

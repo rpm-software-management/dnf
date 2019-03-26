@@ -91,10 +91,10 @@ class InstallCommand(commands.Command):
                     if e.error_group_specs:
                         for e_spec in e.error_group_specs:
                             error_module_specs.append("@" + e_spec)
-                    module_debsolv_errors = e.module_debsolv_errors
-                    if module_debsolv_errors:
+                    module_depsolv_errors = e.module_depsolv_errors
+                    if module_depsolv_errors:
                         logger.error(dnf.module.module_base.format_modular_solver_errors(
-                            module_debsolv_errors[0]))
+                            module_depsolv_errors[0]))
             else:
                 skipped_grp_specs = self.opts.grp_specs
         if self.opts.filenames and nevra_forms:

@@ -48,13 +48,13 @@ class ModuleBase(object):
         if no_match_specs or error_specs or solver_errors:
             raise dnf.exceptions.MarkingErrors(no_match_group_specs=no_match_specs,
                                                error_group_specs=error_specs,
-                                               module_debsolv_errors=solver_errors)
+                                               module_depsolv_errors=solver_errors)
 
     def disable(self, module_specs):
         no_match_specs, solver_errors = self._modules_reset_or_disable(module_specs, STATE_DISABLED)
         if no_match_specs or solver_errors:
             raise dnf.exceptions.MarkingErrors(no_match_group_specs=no_match_specs,
-                                               module_debsolv_errors=solver_errors)
+                                               module_depsolv_errors=solver_errors)
 
     def install(self, module_specs, strict=True):
         no_match_specs, error_specs, solver_errors, module_dicts = \
@@ -126,13 +126,13 @@ class ModuleBase(object):
         if no_match_specs or error_specs or solver_errors:
             raise dnf.exceptions.MarkingErrors(no_match_group_specs=no_match_specs,
                                                error_group_specs=error_specs,
-                                               module_debsolv_errors=solver_errors)
+                                               module_depsolv_errors=solver_errors)
 
     def reset(self, module_specs):
         no_match_specs, solver_errors = self._modules_reset_or_disable(module_specs, STATE_UNKNOWN)
         if no_match_specs:
             raise dnf.exceptions.MarkingErrors(no_match_group_specs=no_match_specs,
-                                               module_debsolv_errors=solver_errors)
+                                               module_depsolv_errors=solver_errors)
 
     def upgrade(self, module_specs):
         no_match_specs = []
