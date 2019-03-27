@@ -152,7 +152,7 @@ class Logging(object):
         logger_warnings.addHandler(handler)
 
         lr_logfile = os.path.join(logdir, dnf.const.LOG_LIBREPO)
-        libdnf.repo.LibrepoLog.addHandler(lr_logfile)
+        libdnf.repo.LibrepoLog.addHandler(lr_logfile, verbose_level <= DEBUG)
 
         # setup RPM callbacks logger
         logger_rpm = logging.getLogger("dnf.rpm")
