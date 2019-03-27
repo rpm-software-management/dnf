@@ -51,7 +51,7 @@ class GroupCommand(commands.Command):
 
     def _canonical(self):
         # were we called with direct command?
-        direct = self.direct_commands.get(self.opts.command[0])
+        direct = self.direct_commands.get(self.opts.command)
         if direct:
             # canonize subcmd and args
             if self.opts.subcmd is not None:
