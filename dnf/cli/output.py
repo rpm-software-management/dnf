@@ -647,6 +647,13 @@ class Output(object):
             if len(lst) > 0:
                 thingslisted = 1
                 print('%s' % description)
+                if outputType == 'list':
+                    unique_item_dict = {}
+                    for pkg in lst:
+                        unique_item_dict[str(pkg) + str(pkg._from_repo)] = pkg
+
+                    lst = unique_item_dict.values()
+
                 for pkg in sorted(lst):
                     key = (pkg.name, pkg.arch)
                     highlight = False
