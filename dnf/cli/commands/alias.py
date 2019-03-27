@@ -41,9 +41,6 @@ class AliasCommand(commands.Command):
 
     @staticmethod
     def set_argparser(parser):
-        parser.add_argument("subcommand", nargs='?', default='list',
-                            choices=['add', 'list', 'delete'])
-        parser.add_argument("alias", nargs="*", metavar="command[=result]")
         enable_group = parser.add_mutually_exclusive_group()
         enable_group.add_argument(
             '--enable-resolving', default=False, action='store_true',
@@ -51,6 +48,11 @@ class AliasCommand(commands.Command):
         enable_group.add_argument(
             '--disable-resolving', default=False, action='store_true',
             help=_('disable aliases resolving'))
+        parser.add_argument("subcommand", nargs='?', default='list',
+                            choices=['add', 'list', 'delete'],
+                            help=_("action to do with aliases"))
+        parser.add_argument("alias", nargs="*", metavar="command[=result]",
+                            help=_("alias definition"))
 
     def configure(self):
         demands = self.cli.demands
