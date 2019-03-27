@@ -210,6 +210,11 @@ class MainConf(BaseConfig):
         self._set_value('pluginconfpath', [dnf.const.PLUGINCONFPATH], PRIO_DEFAULT)
         config.addVarsFromEnv()
         self.substitutions = config.vars()
+
+        # For compatibility define update_from_etc
+        # TODO: Undocumented API. Remove it in the future.
+        self.substitutions.update_from_etc = lambda rootdir: config.addVarsFromDir(rootdir)
+
         self.arch = hawkey.detect_arch()
         self._config.system_cachedir().set(PRIO_DEFAULT, dnf.const.SYSTEM_CACHEDIR)
 
