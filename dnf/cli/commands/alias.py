@@ -21,15 +21,16 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
-from dnf.i18n import _
+
+import logging
+import os.path
 
 import dnf.cli
 import dnf.cli.aliases
 from dnf.cli import commands
 import dnf.conf
 import dnf.exceptions
-import logging
-import os.path
+from dnf.i18n import _
 
 logger = logging.getLogger('dnf')
 
