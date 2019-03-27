@@ -21,6 +21,7 @@ from __future__ import unicode_literals
 from dnf.i18n import ucd, _, P_
 import dnf.util
 import libdnf
+import warnings
 
 class DeprecationWarning(DeprecationWarning):
     # :api
@@ -132,6 +133,13 @@ class MarkingErrors(Error):
         self.no_match_pkg_specs = no_match_pkg_specs
         self.error_pkg_specs = error_pkg_specs
         self.module_depsolv_errors = module_depsolv_errors
+
+    @property
+    def module_debsolv_errors(self):
+        msg = "Attribute module_debsolv_errors is deprecated. Use module_depsolv_errors " \
+              "attribute instead."
+        warnings.warn(msg, DeprecationWarning, stacklevel=2)
+        return self.module_depsolv_errors
 
 class MetadataError(Error):
     pass
