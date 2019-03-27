@@ -20,6 +20,23 @@
 ###################
 
 ===================
+4.2.2 Release Notes
+===================
+
+- [conf] Use environment variables prefixed with ``DNF_VAR_``
+- Enhance documentation of --whatdepends option (RhBug:1687070)
+- Allow adjustment of repo from --repofrompath (RhBug:1689591)
+- Document cachedir option (RhBug:1691365)
+- Retain order of headers in search results (RhBug:1613860)
+- Solve traceback with the "dnf install @module" (RhBug:1688823)
+- Build "yum" instead of "dnf-yum" on Fedora 31
+
+Bugs fixed in 4.2.2:
+
+* :rhbug:`1689591`
+* :rhbug:`1687070`
+
+===================
 4.2.1 Release Notes
 ===================
 

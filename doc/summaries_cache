@@ -2694,5 +2694,13 @@
     [
         1669491,
         "stream switching should be prevented with installed profiles"
+    ],
+    [
+        1689591,
+        "RFE: Add support for passing a gpgkey file path to --repofrompath"
+    ],
+    [
+        1687070,
+        "[REF] Provide single command, which tells what depends on specific package."
     ]
 ]

@@ -79,7 +79,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.2.1
+Version:        4.2.2
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -498,6 +498,15 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Wed Mar 27 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.2.2-1
+- [conf] Use environment variables prefixed with DNF_VAR_
+- Enhance documentation of --whatdepends option (RhBug:1687070)
+- Allow adjustment of repo from --repofrompath (RhBug:1689591)
+- Document cachedir option (RhBug:1691365)
+- Retain order of headers in search results (RhBug:1613860)
+- Solve traceback with the "dnf install @module" (RhBug:1688823)
+- Build "yum" instead of "dnf-yum" on Fedora 31
+
 * Mon Mar 11 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.2.1-1
 - Do not allow direct module switch (RhBug:1669491)
 - Use improved config parser that preserves order of data
