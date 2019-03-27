@@ -307,5 +307,5 @@ class ModuleCommand(commands.Command):
         if self.opts.subcmd[0] not in not_required_argument:
             if not self.opts.module_spec:
                 raise CliError(
-                    "dnf {} {}: too few arguments".format(self.opts.command[0],
+                    "dnf {} {}: too few arguments".format(self.opts.command,
                                                           self.opts.subcmd[0]))

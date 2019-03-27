@@ -36,12 +36,15 @@ logger = logging.getLogger("dnf")
 class OptionParser(argparse.ArgumentParser):
     """ArgumentParser like class to do things the "yum way"."""
 
+    def reset_parser(self):
+        super(OptionParser, self).__init__(add_help=False)
+        self.command_positional_parser = None
+        self._add_general_options()
+
     def __init__(self):
-        super(OptionParser, self).__init__()
+        self.reset_parser()
         self._cmd_usage = {} # names, summary for dnf commands, to build usage
         self._cmd_groups = set() # cmd groups added (main, plugin)
-        self.main_parser = self._main_parser()
-        self.command_arg_parser = None
 
     def error(self, msg):
         """Output an error message, and exit the program.
@@ -150,97 +153,96 @@ class OptionParser(argparse.ArgumentParser):
             namespace.ignorearch = True
             namespace.arch = values
 
-    def _main_parser(self):
+    def _add_general_options(self):
         """ Standard options known to all dnf subcommands. """
         # All defaults need to be a None, so we can always tell whether the user
         # has set something or whether we are getting a default.
-        main_parser = argparse.ArgumentParser(add_help=False)
-        main_parser._optionals.title = _("Optional arguments")
-        main_parser.add_argument("-c", "--config", dest="config_file_path",
+        general_grp = self.add_argument_group('General DNF options')
+        general_grp.add_argument("-c", "--config", dest="config_file_path",
                                  default=None, metavar='[config file]',
                                  help=_("config file location"))
-        main_parser.add_argument("-q", "--quiet", dest="quiet",
+        general_grp.add_argument("-q", "--quiet", dest="quiet",
                                  action="store_true", default=None,
                                  help=_("quiet operation"))
-        main_parser.add_argument("-v", "--verbose", action="store_true",
+        general_grp.add_argument("-v", "--verbose", action="store_true",
                                  default=None, help=_("verbose operation"))
-        main_parser.add_argument("--version", action="store_true", default=None,
+        general_grp.add_argument("--version", action="store_true", default=None,
                                  help=_("show DNF version and exit"))
-        main_parser.add_argument("--installroot", help=_("set install root"),
+        general_grp.add_argument("--installroot", help=_("set install root"),
                                  metavar='[path]')
-        main_parser.add_argument("--nodocs", action="store_const", const=['nodocs'], dest='tsflags',
+        general_grp.add_argument("--nodocs", action="store_const", const=['nodocs'], dest='tsflags',
                                  help=_("do not install documentations"))
-        main_parser.add_argument("--noplugins", action="store_false",
+        general_grp.add_argument("--noplugins", action="store_false",
                                  default=None, dest='plugins',
                                  help=_("disable all plugins"))
-        main_parser.add_argument("--enableplugin", dest="enableplugin",
+        general_grp.add_argument("--enableplugin", dest="enableplugin",
                                  default=[], action=self._SplitCallback,
                                  help=_("enable plugins by name"),
                                  metavar='[plugin]')
-        main_parser.add_argument("--disableplugin", dest="disableplugin",
+        general_grp.add_argument("--disableplugin", dest="disableplugin",
                                  default=[], action=self._SplitCallback,
                                  help=_("disable plugins by name"),
                                  metavar='[plugin]')
-        main_parser.add_argument("--releasever", default=None,
+        general_grp.add_argument("--releasever", default=None,
                                  help=_("override the value of $releasever"
                                         " in config and repo files"))
-        main_parser.add_argument("--setopt", dest="setopts", default=[],
+        general_grp.add_argument("--setopt", dest="setopts", default=[],
                                  action=self._SetoptsCallback,
                                  help=_("set arbitrary config and repo options"))
-        main_parser.add_argument("--skip-broken", dest="skip_broken", action="store_true",
+        general_grp.add_argument("--skip-broken", dest="skip_broken", action="store_true",
                                  default=None,
                                  help=_("resolve depsolve problems by skipping packages"))
-        main_parser.add_argument('-h', '--help', '--help-cmd',
+        general_grp.add_argument('-h', '--help', '--help-cmd',
                                  action="store_true", dest='help',
                                  help=_("show command help"))
 
-        main_parser.add_argument('--allowerasing', action='store_true',
+        general_grp.add_argument('--allowerasing', action='store_true',
                                  default=None,
                                  help=_('allow erasing of installed packages to '
                                         'resolve dependencies'))
-        best_group = main_parser.add_mutually_exclusive_group()
+        best_group = general_grp.add_mutually_exclusive_group()
         best_group.add_argument("-b", "--best", action="store_true", dest='best', default=None,
                                 help=_("try the best available package versions in transactions."))
         best_group.add_argument("--nobest", action="store_false", dest='best',
                                 help=_("do not limit the transaction to the best candidate"))
-        main_parser.add_argument("-C", "--cacheonly", dest="cacheonly",
+        general_grp.add_argument("-C", "--cacheonly", dest="cacheonly",
                                  action="store_true", default=None,
                                  help=_("run entirely from system cache, "
                                         "don't update cache"))
-        main_parser.add_argument("-R", "--randomwait", dest="sleeptime", type=int,
+        general_grp.add_argument("-R", "--randomwait", dest="sleeptime", type=int,
                                  default=None, metavar='[minutes]',
                                  help=_("maximum command wait time"))
-        main_parser.add_argument("-d", "--debuglevel", dest="debuglevel",
+        general_grp.add_argument("-d", "--debuglevel", dest="debuglevel",
                                  metavar='[debug level]', default=None,
                                  help=_("debugging output level"), type=int)
-        main_parser.add_argument("--debugsolver",
+        general_grp.add_argument("--debugsolver",
                                  action="store_true", default=None,
                                  help=_("dumps detailed solving results into"
                                         " files"))
-        main_parser.add_argument("--showduplicates", dest="showdupesfromrepos",
+        general_grp.add_argument("--showduplicates", dest="showdupesfromrepos",
                                  action="store_true", default=None,
                                  help=_("show duplicates, in repos, "
                                         "in list/search commands"))
-        main_parser.add_argument("-e", "--errorlevel", default=None, type=int,
+        general_grp.add_argument("-e", "--errorlevel", default=None, type=int,
                                  help=_("error output level"))
-        main_parser.add_argument("--obsoletes", default=None, dest="obsoletes",
+        general_grp.add_argument("--obsoletes", default=None, dest="obsoletes",
                                  action="store_true",
                                  help=_("enables dnf's obsoletes processing logic "
                                         "for upgrade or display capabilities that "
                                         "the package obsoletes for info, list and repoquery"))
-        main_parser.add_argument("--rpmverbosity", default=None,
+        general_grp.add_argument("--rpmverbosity", default=None,
                                  help=_("debugging output level for rpm"),
                                  metavar='[debug level name]')
-        main_parser.add_argument("-y", "--assumeyes", action="store_true",
+        general_grp.add_argument("-y", "--assumeyes", action="store_true",
                                  default=None, help=_("automatically answer yes"
                                                       " for all questions"))
-        main_parser.add_argument("--assumeno", action="store_true",
+        general_grp.add_argument("--assumeno", action="store_true",
                                  default=None, help=_("automatically answer no"
                                                       " for all questions"))
-        main_parser.add_argument("--enablerepo", action=self._RepoCallback,
+        general_grp.add_argument("--enablerepo", action=self._RepoCallback,
                                  dest='repos_ed', default=[],
                                  metavar='[repo]')
-        repo_group = main_parser.add_mutually_exclusive_group()
+        repo_group = general_grp.add_mutually_exclusive_group()
         repo_group.add_argument("--disablerepo", action=self._RepoCallback,
                                 dest='repos_ed', default=[],
                                 metavar='[repo]')
@@ -248,7 +250,7 @@ class OptionParser(argparse.ArgumentParser):
                                 action=self._SplitCallback, default=[],
                                 help=_('enable just specific repositories by an id or a glob, '
                                        'can be specified multiple times'))
-        enable_group = main_parser.add_mutually_exclusive_group()
+        enable_group = general_grp.add_mutually_exclusive_group()
         enable_group.add_argument("--enable", "--set-enabled", default=False,
                                   dest="set_enabled", action="store_true",
                                   help=_("enable repos with config-manager "
@@ -257,93 +259,80 @@ class OptionParser(argparse.ArgumentParser):
                                   dest="set_disabled", action="store_true",
                                   help=_("disable repos with config-manager "
                                          "command (automatically saves)"))
-        main_parser.add_argument("-x", "--exclude", "--excludepkgs", default=[],
+        general_grp.add_argument("-x", "--exclude", "--excludepkgs", default=[],
                                  dest='excludepkgs', action=self._SplitCallback,
                                  help=_("exclude packages by name or glob"),
                                  metavar='[package]')
-        main_parser.add_argument("--disableexcludes", "--disableexcludepkgs",
+        general_grp.add_argument("--disableexcludes", "--disableexcludepkgs",
                                  default=[], dest="disable_excludes",
                                  action=self._SplitCallback,
                                  help=_("disable excludepkgs"),
                                  metavar='[repo]')
-        main_parser.add_argument("--repofrompath", default={},
+        general_grp.add_argument("--repofrompath", default={},
                                  action=self._SplitExtendDictCallback,
                                  metavar='[repo,path]',
                                  help=_("label and path to additional repository,"
                                         " can be specified multiple times."))
-        main_parser.add_argument("--noautoremove", action="store_false",
+        general_grp.add_argument("--noautoremove", action="store_false",
                                  default=None, dest='clean_requirements_on_remove',
                                  help=_("disable removal of dependencies that are no longer used"))
-        main_parser.add_argument("--nogpgcheck", action="store_false",
+        general_grp.add_argument("--nogpgcheck", action="store_false",
                                  default=None, dest='gpgcheck',
                                  help=_("disable gpg signature checking (if RPM policy allows)"))
-        main_parser.add_argument("--color", dest="color", default=None,
+        general_grp.add_argument("--color", dest="color", default=None,
                                  help=_("control whether color is used"))
-        main_parser.add_argument("--refresh", dest="freshest_metadata",
+        general_grp.add_argument("--refresh", dest="freshest_metadata",
                                  action="store_true",
                                  help=_("set metadata as expired before running"
                                         " the command"))
-        main_parser.add_argument("-4", dest="ip_resolve", default=None,
+        general_grp.add_argument("-4", dest="ip_resolve", default=None,
                                  help=_("resolve to IPv4 addresses only"),
                                  action="store_const", const='ipv4')
-        main_parser.add_argument("-6", dest="ip_resolve", default=None,
+        general_grp.add_argument("-6", dest="ip_resolve", default=None,
                                  help=_("resolve to IPv6 addresses only"),
                                  action="store_const", const='ipv6')
-        main_parser.add_argument("--destdir", "--downloaddir", dest="destdir", default=None,
+        general_grp.add_argument("--destdir", "--downloaddir", dest="destdir", default=None,
                                  help=_("set directory to copy packages to"))
-        main_parser.add_argument("--downloadonly", dest="downloadonly",
+        general_grp.add_argument("--downloadonly", dest="downloadonly",
                                  action="store_true", default=False,
                                  help=_("only download packages"))
-        main_parser.add_argument("--comment", dest="comment", default=None,
+        general_grp.add_argument("--comment", dest="comment", default=None,
                                  help=_("add a comment to transaction"))
         # Updateinfo options...
-        main_parser.add_argument("--bugfix", action="store_true",
+        general_grp.add_argument("--bugfix", action="store_true",
                                  help=_("Include bugfix relevant packages, "
                                         "in updates"))
-        main_parser.add_argument("--enhancement", action="store_true",
+        general_grp.add_argument("--enhancement", action="store_true",
                                  help=_("Include enhancement relevant packages,"
                                         " in updates"))
-        main_parser.add_argument("--newpackage", action="store_true",
+        general_grp.add_argument("--newpackage", action="store_true",
                                  help=_("Include newpackage relevant packages,"
                                         " in updates"))
-        main_parser.add_argument("--security", action="store_true",
+        general_grp.add_argument("--security", action="store_true",
                                  help=_("Include security relevant packages, "
                                         "in updates"))
-        main_parser.add_argument("--advisory", "--advisories", dest="advisory",
+        general_grp.add_argument("--advisory", "--advisories", dest="advisory",
                                  default=[], action=self._SplitCallback,
                                  help=_("Include packages needed to fix the "
                                         "given advisory, in updates"))
-        main_parser.add_argument("--bz", "--bzs", default=[], dest="bugzilla",
+        general_grp.add_argument("--bz", "--bzs", default=[], dest="bugzilla",
                                  action=self._SplitCallback, help=_(
                 "Include packages needed to fix the given BZ, in updates"))
-        main_parser.add_argument("--cve", "--cves", default=[], dest="cves",
+        general_grp.add_argument("--cve", "--cves", default=[], dest="cves",
                                  action=self._SplitCallback,
                                  help=_("Include packages needed to fix the given CVE, in updates"))
-        main_parser.add_argument(
+        general_grp.add_argument(
             "--sec-severity", "--secseverity",
             choices=['Critical', 'Important', 'Moderate', 'Low'], default=[],
             dest="severity", action=self._SplitCallback, help=_(
                 "Include security relevant packages matching the severity, "
                 "in updates"))
-        main_parser.add_argument("--forcearch", metavar="ARCH",
+        general_grp.add_argument("--forcearch", metavar="ARCH",
                                  dest=argparse.SUPPRESS,
                                  action=self.ForceArchAction,
                                  choices=sorted(dnf.rpm._BASEARCH_MAP.keys()),
                                  help=_("Force the use of an architecture"))
-        return main_parser
-
-    def _command_parser(self, command):
-        parser = argparse.ArgumentParser()
-        prog = "%s %s" % (parser.prog, command._basecmd)
-        super(OptionParser, self).__init__(prog, add_help=False,
-                                           parents=[self.main_parser],
-                                           description=command.summary)
-        super(OptionParser, self).add_argument('command', nargs=1,
-                                               help=argparse.SUPPRESS)
-        self.command_arg_parser = argparse.ArgumentParser(prog, add_help=False)
-        self.command_arg_parser.print_usage = self.print_usage
-        command.set_argparser(self)
-        return self
+        general_grp.add_argument('command', nargs='?', help=argparse.SUPPRESS)
 
     def _add_cmd_usage(self, cmd, group):
         """ store usage info about a single dnf command."""
@@ -379,38 +368,45 @@ class OptionParser(argparse.ArgumentParser):
                     usage += "%-25s %s\n" % (name, summary)
         return usage
 
-    def add_argument(self, *args, **kwargs):
-        # process options and arguments separately
+    def _add_command_options(self, command):
+        self.prog = "%s %s" % (self.prog, command._basecmd)
+        self.description = command.summary
+        self.command_positional_parser = argparse.ArgumentParser(self.prog, add_help=False)
+        self.command_positional_parser.print_usage = self.print_usage
+        self.command_positional_parser._positionals.title = None
+        self.command_group = self.add_argument_group(
+            '{} command-specific options'.format(command._basecmd.capitalize()))
+        self.command_group.add_argument = self.cmd_add_argument
+        command.set_argparser(self.command_group)
+
+    def cmd_add_argument(self, *args, **kwargs):
         if all([(arg[0] in self.prefix_chars) for arg in args]):
-            return super(OptionParser, self).add_argument(*args, **kwargs)
+            return type(self.command_group).add_argument(self.command_group, *args, **kwargs)
         else:
-            return self.command_arg_parser.add_argument(*args, **kwargs)
+            return self.command_positional_parser.add_argument(*args, **kwargs)
 
     def parse_main_args(self, args):
-        parser = argparse.ArgumentParser(add_help=False,
-                                         parents=[self.main_parser])
-        parser.add_argument('command', nargs='?', help=argparse.SUPPRESS)
-        namespace, _unused_args = parser.parse_known_args(args)
+        namespace, _unused_args = self.parse_known_args(args)
         return namespace
 
     def parse_command_args(self, command, args):
-        self._command_parser(command)
-        namespace, extras = super(OptionParser,
-                                  self).parse_known_args(args)
-        command.opts = self.command_arg_parser.parse_args(extras, namespace)
+        self._add_command_options(command)
+        namespace, unused_args = self.parse_known_args(args)
+        namespace = self.command_positional_parser.parse_args(unused_args, namespace)
+        command.opts = namespace
         return command.opts
 
     def print_usage(self, file_=None):
-        # pylint: disable=E0202,W0212
-        self._actions += self.command_arg_parser._actions
+        if self.command_positional_parser:
+            self._actions += self.command_positional_parser._actions
         super(OptionParser, self).print_usage(file_)
 
     def print_help(self, command=None):
         # pylint: disable=W0212
         if command:
-            cp = self._command_parser(command)
-            cp._actions += cp.command_arg_parser._actions
-            super(OptionParser, cp).print_help()
+            self._add_command_options(command)
+            self._actions += self.command_positional_parser._actions
+            self._action_groups.append(self.command_positional_parser._positionals)
         else:
-            self.main_parser.usage = self.get_usage()
-            self.main_parser.print_help()
+            self.usage = self.get_usage()
+        super(OptionParser, self).print_help()
