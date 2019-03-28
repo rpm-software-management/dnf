@@ -647,6 +647,7 @@ class Output(object):
             if len(lst) > 0:
                 thingslisted = 1
                 print('%s' % description)
+                info_set = set()
                 if outputType == 'list':
                     unique_item_dict = {}
                     for pkg in lst:
@@ -670,13 +671,16 @@ class Output(object):
                         self.simpleList(pkg, ui_overflow=True,
                                         highlight=highlight, columns=columns)
                     elif outputType == 'info':
-                        print(self.infoOutput(pkg, highlight=highlight) + "\n")
+                        info_set.add(self.infoOutput(pkg, highlight=highlight) + "\n")
                     elif outputType == 'name':
                         self.simple_name_list(pkg)
                     elif outputType == 'nevra':
                         self.simple_nevra_list(pkg)
                     else:
                         pass
+
+                if info_set:
+                    print("\n".join(sorted(info_set)))
 
             if thingslisted == 0:
                 return 1, [_('No packages to list')]
