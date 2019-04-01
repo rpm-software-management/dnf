@@ -100,7 +100,7 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
   .. attribute:: installroot
 
-    The root of the filesystem for all packaging operations.
+    The root of the filesystem for all packaging operations. It requires absolute path.
 
   .. attribute:: keepcache
 
