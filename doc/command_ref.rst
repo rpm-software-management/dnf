@@ -228,7 +228,7 @@ Options
 ``--installroot=<path>``
     Specifies an alternative installroot, relative to where all packages will be
     installed. Think of this like doing ``chroot <root> dnf``, except using
-    ``--installroot`` allows dnf to work before the chroot is created.
+    ``--installroot`` allows dnf to work before the chroot is created. It requires absolute path.
 
 - *cachedir*, *log files*, *releasever*, and *gpgkey* are taken from or
   stored in the installroot. *Gpgkeys* are imported into the installroot from
