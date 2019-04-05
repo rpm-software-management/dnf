@@ -60,4 +60,4 @@ class ParserTest(tests.support.TestCase):
         conf = dnf.conf.Conf()
         conf.config_file_path = FN
         conf.read()
-        self.assertEqual(conf.installroot, '')
+        self.assertEqual(conf.reposdir, '')
