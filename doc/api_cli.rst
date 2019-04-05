@@ -37,7 +37,7 @@ When packaging your custom command, we recommend you to define a virtual provide
 
     .. attribute:: allow_erasing
 
-      If ``True``, the dependnecy solver is allowed to look for solutions that include removing other packages while looking to fulfill the current packaging requests. Defaults to ``False``. Also see :meth:`dnf.Base.resolve`.
+      If ``True``, the dependency solver is allowed to look for solutions that include removing other packages while looking to fulfill the current packaging requests. Defaults to ``False``. Also see :meth:`dnf.Base.resolve`.
 
     .. attribute:: available_repos
 
