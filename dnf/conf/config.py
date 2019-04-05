@@ -24,7 +24,7 @@ from dnf.yum import misc
 from dnf.i18n import ucd, _
 from dnf.pycomp import basestring
 
-import copy
+import fnmatch
 import dnf.conf.substitutions
 import dnf.const
 import dnf.exceptions
@@ -438,10 +438,10 @@ class RepoConf(BaseConfig):
                 self._set_value(optname, False, dnf.conf.PRIO_COMMANDLINE)
 
         repo_setopts = getattr(opts, 'repo_setopts', {})
-        if self._section in repo_setopts:
-            # pylint: disable=W0212
-            setopts = repo_setopts[self._section].items()
-            for name, values in setopts:
+        for repoid, setopts in repo_setopts.items():
+            if not fnmatch.fnmatch(self._section, repoid):
+                continue
+            for name, values in setopts.items():
                 for val in values:
                     if hasattr(self._config, name):
                         try:
