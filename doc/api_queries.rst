@@ -85,7 +85,7 @@
     upgrades          boolean        see :meth:`upgrades`. Defaults to ``False``.
     ===============   ============== ======================================================
 
-    *The key can also accept a list of values with specified type.
+    \* The key can also accept a list of values with specified type.
 
     The key name can be supplemented with a relation-specifying suffix, separated by ``__``:
 
