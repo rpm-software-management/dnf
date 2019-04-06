@@ -355,6 +355,7 @@ API additions in 2.6.2:
 * :attr:`dnf.conf.Conf.ignorearch`
 * Introduced new configuration option ``autocheck_running_kernel``
 * :meth:`dnf.subject.Subject.get_best_selector` can use three additional key words: ``obsoletes``, ``reports``, and ``reponame``.
+
 From commandline it is possible to use new option ``--noautoremove`` to disable removal of dependencies that are no longer used.
 
 Bugs fixed in 2.6.2:
@@ -625,8 +626,7 @@ DNF command changes in 2.0.0:
 * ``--releasever`` :doc:`command line argument <command_ref>` now doesn't detect release number from running system.
 * ``--repofrompath`` :doc:`command line argument <command_ref>` can now be combined with ``--repo`` instead of ``--enablerepo``.
 * Alternative of yum's ``deplist`` changes from ``dnf repoquery --requires`` to ``dnf repoquery --deplist``.
-* New systemd units `dnf-automatic-notifyonly`, `dnf-automatic-download`, `dnf-automatic-download`
-were added for a better customizability of :doc:`dnf-automatic <automatic>`.
+* New systemd units `dnf-automatic-notifyonly`, `dnf-automatic-download`, `dnf-automatic-download` were added for a better customizability of :doc:`dnf-automatic <automatic>`.
 
 DNF command additions in 2.0.0:
 
