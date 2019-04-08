@@ -391,11 +391,11 @@ Detailed table for ``package-cleanup`` replacement:
 ``package-cleanup --oldkernels``         ``dnf remove --oldinstallonly``
 ==================================       =====================================
 
-================
-yum-updateonboot
-================
+=============================
+yum-updateonboot and yum-cron
+=============================
 
-DNF does not have a direct replacement of yum-updateonboot command.
+DNF does not have a direct replacement of yum-updateonboot and yum-cron commands.
 However, the similar result can be achieved by ``dnf automatic`` command (see :doc:`automatic`).
 
 You can either use the shortcut::
