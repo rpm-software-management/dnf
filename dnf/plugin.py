@@ -132,7 +132,7 @@ class Plugins(object):
         sys.modules[DYNAMIC_PACKAGE] = package = dnf.pycomp.ModuleType(DYNAMIC_PACKAGE)
         package.__path__ = []
 
-        files = _iter_py_files(conf.pluginpath, skips, enable_plugins)
+        files = _get_plugins_files(conf.pluginpath, skips, enable_plugins)
         _import_modules(package, files)
         self.plugin_cls = _plugin_classes()[:]
         self._check_enabled(conf, enable_plugins)
@@ -200,14 +200,41 @@ def _import_modules(package, py_files):
             logger.log(dnf.logging.SUBDEBUG, '', exc_info=True)
 
 
-def _iter_py_files(paths, skips, enable_plugins):
+def _get_plugins_files(paths, disable_plugins, enable_plugins):
+    plugins = []
+    disable_plugins = set(disable_plugins)
+    enable_plugins = set(enable_plugins)
+    pattern_enable_found = set()
+    pattern_disable_found = set()
     for p in paths:
         for fn in glob.glob('%s/*.py' % p):
-            (name, _) = os.path.splitext(os.path.basename(fn))
-            if any(fnmatch.fnmatch(name, pattern) for pattern in skips):
-                if not any(fnmatch.fnmatch(name, pattern) for pattern in enable_plugins):
-                    continue
-            yield fn
+            (plugin_name, dummy) = os.path.splitext(os.path.basename(fn))
+            matched = True
+            enable_pattern_tested = False
+            for pattern_skip in disable_plugins:
+                if fnmatch.fnmatch(plugin_name, pattern_skip):
+                    pattern_disable_found.add(pattern_skip)
+                    matched = False
+                    for pattern_enable in enable_plugins:
+                        if fnmatch.fnmatch(plugin_name, pattern_enable):
+                            matched = True
+                            pattern_enable_found.add(pattern_enable)
+                    enable_pattern_tested = True
+            if not enable_pattern_tested:
+                for pattern_enable in enable_plugins:
+                    if fnmatch.fnmatch(plugin_name, pattern_enable):
+                        pattern_enable_found.add(pattern_enable)
+            if matched:
+                plugins.append(fn)
+    enable_not_found = enable_plugins.difference(pattern_enable_found)
+    if enable_not_found:
+        logger.warning(_("No matches found for the following enable plugin patterns: {}").format(
+            ", ".join(sorted(enable_not_found))))
+    disable_not_found = disable_plugins.difference(pattern_disable_found)
+    if disable_not_found:
+        logger.warning(_("No matches found for the following disable plugin patterns: {}").format(
+            ", ".join(sorted(disable_not_found))))
+    return plugins
 
 
 def register_command(command_class):
