@@ -97,8 +97,7 @@ def _checkEnabledRepo(base, possible_local_files=()):
         scheme = dnf.pycomp.urlparse.urlparse(lfile)[0]
         if scheme in ('http', 'ftp', 'file', 'https'):
             return
-
-    msg = _('There are no enabled repos.')
+    msg = _('There are no enabled repositories in "{}".').format('", "'.join(base.conf.reposdir))
     raise dnf.cli.CliError(msg)
 
 

@@ -352,7 +352,8 @@ class Base(object):
                 repo._repo.setMaxMirrorTries(1)
 
         if not self.repos._any_enabled():
-            logger.info(_('There are no enabled repos.'))
+            logger.info(_('There are no enabled repositories in "{}".').format(
+                '", "'.join(self.conf.reposdir)))
             return False
 
         for r in self.repos.iter_enabled():
