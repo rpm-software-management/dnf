@@ -126,24 +126,33 @@ class RepoQueryCommand(commands.Command):
                             help=_('show only results from this ARCH'))
         parser.add_argument('-f', '--file', metavar='FILE', nargs='+',
                             help=_('show only results that owns FILE'))
-        parser.add_argument('--whatconflicts', metavar='REQ',
+        parser.add_argument('--whatconflicts', default=[], action=OptionParser._SplitCallback,
+                            metavar='REQ',
                             help=_('show only results that conflict REQ'))
-        parser.add_argument('--whatdepends', metavar='REQ',
+        parser.add_argument('--whatdepends', default=[], action=OptionParser._SplitCallback,
+                            metavar='REQ',
                             help=_('shows results that requires, suggests, supplements, enhances,'
                                    'or recommends package provides and files REQ'))
-        parser.add_argument('--whatobsoletes', metavar='REQ',
+        parser.add_argument('--whatobsoletes', default=[], action=OptionParser._SplitCallback,
+                            metavar='REQ',
                             help=_('show only results that obsolete REQ'))
-        parser.add_argument('--whatprovides', metavar='REQ',
+        parser.add_argument('--whatprovides', default=[], action=OptionParser._SplitCallback,
+                            metavar='REQ',
                             help=_('show only results that provide REQ'))
-        parser.add_argument('--whatrequires', metavar='REQ',
+        parser.add_argument('--whatrequires', default=[], action=OptionParser._SplitCallback,
+                            metavar='REQ',
                             help=_('shows results that requires package provides and files REQ'))
-        parser.add_argument('--whatrecommends', metavar='REQ',
+        parser.add_argument('--whatrecommends', default=[], action=OptionParser._SplitCallback,
+                            metavar='REQ',
                             help=_('show only results that recommend REQ'))
-        parser.add_argument('--whatenhances', metavar='REQ',
+        parser.add_argument('--whatenhances', default=[], action=OptionParser._SplitCallback,
+                            metavar='REQ',
                             help=_('show only results that enhance REQ'))
-        parser.add_argument('--whatsuggests', metavar='REQ',
+        parser.add_argument('--whatsuggests', default=[], action=OptionParser._SplitCallback,
+                            metavar='REQ',
                             help=_('show only results that suggest REQ'))
-        parser.add_argument('--whatsupplements', metavar='REQ',
+        parser.add_argument('--whatsupplements', default=[], action=OptionParser._SplitCallback,
+                            metavar='REQ',
                             help=_('show only results that supplement REQ'))
         whatrequiresform = parser.add_mutually_exclusive_group()
         whatrequiresform.add_argument("--alldeps", action="store_true",
@@ -354,10 +363,12 @@ class RepoQueryCommand(commands.Command):
         return t.union(done)
 
     def by_all_deps(self, requires_name, depends_name, query):
-        name = requires_name or depends_name
-        defaultquery = query.intersection(dnf.subject.Subject(name).get_best_query(
-            self.base.sack, with_provides=False, with_filenames=False))
-        requiresquery = query.filter(requires__glob=name)
+        names = requires_name or depends_name
+        defaultquery = self.base.sack.query().filter(empty=True)
+        for name in names:
+            defaultquery.union(query.intersection(dnf.subject.Subject(name).get_best_query(
+                self.base.sack, with_provides=False, with_filenames=False)))
+        requiresquery = query.filter(requires__glob=names)
         if depends_name:
             requiresquery = requiresquery.union(query.filter(recommends__glob=depends_name))
             requiresquery = requiresquery.union(query.filter(enhances__glob=depends_name))
@@ -446,7 +457,7 @@ class RepoQueryCommand(commands.Command):
         if self.opts.whatobsoletes:
             q.filterm(obsoletes=self.opts.whatobsoletes)
         if self.opts.whatprovides:
-            query_for_provide = q.filter(provides__glob=[self.opts.whatprovides])
+            query_for_provide = q.filter(provides__glob=self.opts.whatprovides)
             if query_for_provide:
                 q = query_for_provide
             else:
