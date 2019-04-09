@@ -78,8 +78,8 @@ class ArgParseTest(tests.support.TestCase):
 
     def test_parse(self):
         tests.support.command_configure(self.cmd, ['--whatrequires', 'prudence'])
-        self.assertIsNone(self.cmd.opts.whatprovides)
-        self.assertEqual(self.cmd.opts.whatrequires, 'prudence')
+        self.assertEqual(self.cmd.opts.whatprovides, [])
+        self.assertEqual(self.cmd.opts.whatrequires, ['prudence'])
         self.assertEqual(self.cmd.opts.queryformat,
                          dnf.cli.commands.repoquery.QFORMAT_DEFAULT)
 
