@@ -17,16 +17,19 @@
 # Red Hat, Inc.
 #
 
+from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.pycomp import unicode
 
 import dnf
 import locale
+import codecs
 import os
 import signal
 import sys
 import unicodedata
+import logging
 
 """
 Centralize i18n stuff here. Must be unittested.
@@ -104,6 +107,12 @@ def setup_stdout():
         sys.stdout = UnicodeStream(stdout, _guess_encoding())
         return False
     return True
+
+# This feature is tested in test_logging.py
+def logging_handler(logfile):
+    encoding = _guess_encoding()
+    stream = codecs.open(logfile, 'a', encoding=encoding, errors='replace')
+    return logging.StreamHandler(stream)
 
 
 def ucd_input(ucstring):

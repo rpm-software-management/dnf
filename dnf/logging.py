@@ -23,6 +23,7 @@ from __future__ import unicode_literals
 import dnf.exceptions
 import dnf.const
 import dnf.util
+import dnf.i18n
 import libdnf.repo
 import logging
 import os
@@ -94,7 +95,8 @@ def _create_filehandler(logfile):
         # By default, make logfiles readable by the user (so the reporting ABRT
         # user can attach root logfiles).
         os.chmod(logfile, 0o644)
-    handler = logging.FileHandler(logfile)
+
+    handler = dnf.i18n.logging_handler(logfile)
     formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s",
                                   "%Y-%m-%dT%H:%M:%SZ")
     formatter.converter = time.gmtime

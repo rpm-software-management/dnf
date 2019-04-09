@@ -25,9 +25,11 @@ import collections
 import operator
 import os
 import tempfile
+import codecs
 
 import dnf.const
 import dnf.logging
+import dnf.i18n
 
 import tests.support
 from tests.support import mock
@@ -127,6 +129,49 @@ class TestLogging(tests.support.TestCase):
             msgs = map(operator.attrgetter("message"),
                        map(_split_logfile_entry, f.readlines()))
         self.assertSequenceEqual(list(msgs), [dnf.const.LOG_MARKER, 'i', 'c'])
+        # the file is appended to
+        drop_all_handlers()
+        self.logging._setup(dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL, self.logdir)
+        logger = logging.getLogger("dnf")
+        logger.error("e")
+        with open(logfile) as f:
+            msgs = map(operator.attrgetter("message"),
+                       map(_split_logfile_entry, f.readlines()))
+        self.assertSequenceEqual(list(msgs), [dnf.const.LOG_MARKER, 'i', 'c', 'e'])
+        # and we do not get UnicodeEncodeError, nor drop the message
+        logger.info("happy unicode 🙂")
+        with codecs.open(logfile, encoding='us-ascii', errors='replace') as f:
+            msgs = map(operator.attrgetter("message"),
+                       map(_split_logfile_entry, f.readlines()))
+        self.assertEqual(len(list(msgs)), 5)
+
+    @mock.patch('dnf.i18n._guess_encoding', return_value='utf-8')
+    def test_file_log_utf8(self, _unused):
+        self.logging._setup(dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL, self.logdir)
+        logger = logging.getLogger("dnf")
+        logger.info("happy unicode café 🙂")
+        # the file encodes all the unicode characters
+        logfile = os.path.join(self.logdir, "dnf.log")
+        self.assertFile(logfile)
+        with codecs.open(logfile, encoding='utf-8', errors='replace') as f:
+            msgs = map(operator.attrgetter("message"),
+                       map(_split_logfile_entry, f.readlines()))
+        self.assertSequenceEqual(list(msgs), [dnf.const.LOG_MARKER,
+                                              "happy unicode café 🙂"])
+
+    @mock.patch('dnf.i18n._guess_encoding', return_value='iso-8859-1')
+    def test_file_log_not_utf8(self, _unused):
+        self.logging._setup(dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL, self.logdir)
+        logger = logging.getLogger("dnf")
+        logger.info("happy unicode café 🙂")
+        # the file replaces characters which cannot be encoded
+        logfile = os.path.join(self.logdir, "dnf.log")
+        self.assertFile(logfile)
+        with codecs.open(logfile, encoding='iso-8859-1', errors='replace') as f:
+            msgs = map(operator.attrgetter("message"),
+                       map(_split_logfile_entry, f.readlines()))
+        self.assertSequenceEqual(list(msgs), [dnf.const.LOG_MARKER,
+                                              "happy unicode café ?"])
 
     def test_rpm_logging(self):
         # log everything to the console:
