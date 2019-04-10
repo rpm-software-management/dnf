@@ -628,8 +628,31 @@ configuration.
 ``countme``
     :ref:`boolean <boolean-label>`
 
-    Determines whether this system should be checked in with this repository.
-    For details, see the :ref:`countme <countme_command-label>` command.
+    Determines whether this system should perform a regular check-in with this
+    repository for statistical purposes.
+
+    The check-in is anonymous and consists of sending an HTTP request for the
+    configured metalink URL with a special parameter added (see below).
+    No additional data is included with the request, other than the usual such
+    as the User-Agent header (see the :ref:`user_agent <user_agent-label>`
+    configuration option).
+
+    The check-in is scheduled to occur within subsequent time windows, once per
+    window, using a systemd timer.
+    A new window starts every Monday at 12:00 AM UTC and lasts for 7 days.
+    There are three attempts every day at predefined times.
+    While a window may be completely missed (such as when the system is off or
+    the server is unavailable for a longer period of time), no more than one
+    successful check-in will occur within any particular window.
+    This property prevents overcounting in the accumulated metrics.
+
+    The parameter added to the check-in request is an integer value incremented
+    with each successful check-in.
+    This helps filter out short-lived systems (such as test containers or CI
+    infrastructure machines) from the accumulated metrics.
+    However, for privacy reasons, any values exceeding 60 will be reported as
+    60+.
+
     Default is True.
 
 =================

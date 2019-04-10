@@ -59,7 +59,6 @@ Available commands:
 * :ref:`check <check_command-label>`
 * :ref:`check-update <check_update_command-label>`
 * :ref:`clean <clean_command-label>`
-* :ref:`countme <countme_command-label>`
 * :ref:`distro-sync <distro_sync_command-label>`
 * :ref:`downgrade <downgrade_command-label>`
 * :ref:`group <group_command-label>`
@@ -539,36 +538,6 @@ different distribution release versions.
 
 ``dnf clean all``
     Does all of the above.
-
-.. _countme_command-label:
-
----------------
-Countme Command
----------------
-
-``dnf countme``
-    Performs a "check-in" on behalf of this system with the servers of all the
-    enabled repositories, for statistical purposes.
-
-    The check-in is anonymous and consists of sending an HTTP request for the
-    configured metalink URL with a special boolean parameter added to indicate
-    the intent of this system to be counted in (assuming the server supports
-    that).
-    No additional data is included with the request, other than the usual such
-    as the User-Agent header (see the :ref:`user_agent <user_agent-label>`
-    configuration option).
-
-    The check-in will be performed at most once per week (starting every Monday
-    at 00:00 UTC), regardless of how often this command is executed.
-    This is to allow for accumulating weekly metrics on the servers without the
-    same systems being counted multiple times.
-
-    In order to provide helpful metrics, this command should be executed on a
-    weekly basis (such as from a systemd timer).
-
-    This command will have no effect on those repositories that have the
-    :ref:`countme <countme-label>` configuration option set to 0 (the option
-    can also be used globally).
 
 .. _distro_sync_command-label:
 
