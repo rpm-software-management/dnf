@@ -212,7 +212,7 @@ Conflicts:      dnfdaemon < %{conflicts_dnfdaemon_version}
 %description -n python2-%{name}
 Python 2 interface to DNF.
 %endif
-# ^ %{with python2}
+# ^ %%{with python2}
 
 %if %{with python3}
 %package -n python3-%{name}
