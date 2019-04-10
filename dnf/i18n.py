@@ -80,11 +80,16 @@ def _guess_encoding():
 def setup_locale():
     try:
         dnf.pycomp.setlocale(locale.LC_ALL, '')
-    except locale.Error as e:
-        # default to C locale if we get a failure.
-        print('Failed to set locale, defaulting to C', file=sys.stderr)
-        os.environ['LC_ALL'] = 'C'
-        dnf.pycomp.setlocale(locale.LC_ALL, 'C')
+    except locale.Error:
+        # default to C.UTF-8 or C locale if we got a failure.
+        try:
+            dnf.pycomp.setlocale(locale.LC_ALL, 'C.UTF-8')
+            os.environ['LC_ALL'] = 'C.UTF-8'
+        except locale.Error:
+            dnf.pycomp.setlocale(locale.LC_ALL, 'C')
+            os.environ['LC_ALL'] = 'C'
+        print('Failed to set locale, defaulting to {}'.format(os.environ['LC_ALL']),
+              file=sys.stderr)
 
 def setup_stdout():
     """ Check that stdout is of suitable encoding and handle the situation if
