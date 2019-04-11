@@ -11,6 +11,7 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+from dnf.i18n import _
 import rpm
 
 read_ts = None
@@ -111,9 +112,11 @@ class TransactionWrapper(object):
         self.ts.setFlags(origflags)
 
         reserrors = []
-        if tserrors:
+        if tserrors is not None:
             for (descr, (etype, mount, need)) in tserrors:
                 reserrors.append(descr)
+            if not reserrors:
+                reserrors.append(_('Errors occurred during test transaction.'))
 
         return reserrors
 
