@@ -60,6 +60,7 @@ def ex_Error(e):
 
 def main(args, conf_class=Conf, cli_class=Cli, option_parser_class=OptionParser):
     try:
+        dnf.i18n.setup_stdout()
         with dnf.cli.cli.BaseCli(conf_class()) as base:
             return _main(base, args, cli_class, option_parser_class)
     except dnf.exceptions.ProcessLockError as e:
@@ -82,8 +83,6 @@ def main(args, conf_class=Conf, cli_class=Cli, option_parser_class=OptionParser)
 
 def _main(base, args, cli_class, option_parser):
     """Run the dnf program from a command line interface."""
-
-    dnf.i18n.setup_stdout()
 
     # our core object for the cli
     base._logging._presetup()
