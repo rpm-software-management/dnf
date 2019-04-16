@@ -63,21 +63,20 @@ def _parse_specs(namespace, values):
     setattr(namespace, "filenames", [])
     setattr(namespace, "grp_specs", [])
     setattr(namespace, "pkg_specs", [])
+    tmp_set = set()
     for value in values:
+        if value in tmp_set:
+            continue
+        tmp_set.add(value)
         schemes = dnf.pycomp.urlparse.urlparse(value)[0]
         if value.endswith('.rpm'):
-            if value not in namespace.filenames:
-                namespace.filenames.append(value)
+            namespace.filenames.append(value)
         elif schemes and schemes in ('http', 'ftp', 'file', 'https'):
-            if value not in namespace.filenames:
-                namespace.filenames.append(value)
+            namespace.filenames.append(value)
         elif value.startswith('@'):
-            stripped_value = value[1:]
-            if stripped_value not in namespace.grp_specs:
-                namespace.grp_specs.append(stripped_value)
+            namespace.grp_specs.append(value[1:])
         else:
-            if value not in namespace.pkg_specs:
-                namespace.pkg_specs.append(value)
+            namespace.pkg_specs.append(value)
 
 
 def _urlopen_progress(url, conf, progress=None):
