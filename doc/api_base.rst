@@ -146,9 +146,15 @@
 
   .. method:: update_cache(timer=False)
 
-    Downloads and caches in binary format metadata for all known repos. Tries to avoid downloading whenever possible (e.g. when the local metadata hasn’t expired yet or when the metadata timestamp hasn’t changed).
+    Downloads and caches in binary format metadata for all known repos. Tries to avoid downloading
+    whenever possible (e.g. when the local metadata hasn’t expired yet or when the metadata
+    timestamp hasn’t changed).
 
-    If 'timer' equals 'True', DNF becomes more resource-aware, meaning DNF will not do anything if running on battery power and will terminate immediately if it’s too soon after the last successful update_cache operation7.
+    If 'timer' equals 'True', DNF becomes more resource-aware, meaning DNF will not do anything if
+    running on battery power and will terminate immediately if it’s too soon after the last
+    successful update_cache operation.
+
+    When the method is used after :meth:`fill_sack`, information about packages will not be updated.
 
   .. _package_marking-label:
 
