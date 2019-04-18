@@ -50,7 +50,8 @@ def _build_sack(base):
     return Sack(pkgcls=dnf.package.Package, pkginitval=base,
                 arch=base.conf.substitutions["arch"],
                 cachedir=cachedir, rootdir=base.conf.installroot,
-                logfile=os.path.join(base.conf.logdir, dnf.const.LOG_HAWKEY))
+                logfile=os.path.join(base.conf.logdir, dnf.const.LOG_HAWKEY),
+                logdebug=base.conf.debuglevel > 2)
 
 
 def _rpmdb_sack(base):
