@@ -22,14 +22,6 @@
     create 0600 root root
 }
 
-/var/log/dnf.plugin.log {
-    missingok
-    notifempty
-    rotate 4
-    weekly
-    create 0600 root root
-}
-
 /var/log/hawkey.log {
     missingok
     notifempty

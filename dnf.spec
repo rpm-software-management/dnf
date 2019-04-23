@@ -419,7 +419,6 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %ghost %attr(644,-,-) %{_localstatedir}/log/%{name}.log
 %ghost %attr(644,-,-) %{_localstatedir}/log/%{name}.librepo.log
 %ghost %attr(644,-,-) %{_localstatedir}/log/%{name}.rpm.log
-%ghost %attr(644,-,-) %{_localstatedir}/log/%{name}.plugin.log
 %ghost %attr(755,-,-) %dir %{_sharedstatedir}/%{name}
 %ghost %attr(644,-,-) %{_sharedstatedir}/%{name}/groups.json
 %ghost %attr(755,-,-) %dir %{_sharedstatedir}/%{name}/yumdb
