@@ -39,10 +39,11 @@ class Error(Exception):
         self.value = None if value is None else ucd(value)
 
     def __str__(self):
-        return "%s" %(self.value,)
+        return "{}".format(self.value)
 
     def __unicode__(self):
-        return '%s' % self.value
+        return ucd(self.__str__())
+
 
 
 class CompsError(Error):
@@ -78,9 +79,6 @@ class DownloadError(Error):
     def __str__(self):
         return self.errmap2str(self.errmap)
 
-    def __unicode__(self):
-        return ucd(self.__str__())
-
 
 class LockError(Error):
     pass
@@ -94,8 +92,8 @@ class MarkingError(Error):
         super(MarkingError, self).__init__(value)
         self.pkg_spec = None if pkg_spec is None else ucd(pkg_spec)
 
-    def __unicode__(self):
-        string = super(MarkingError, self).__unicode__()
+    def __str__(self):
+        string = super(MarkingError, self).__str__()
         if self.pkg_spec:
             string += ': ' + self.pkg_spec
         return string
