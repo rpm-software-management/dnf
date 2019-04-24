@@ -960,8 +960,32 @@ Provides Command
     Finds the packages providing the given ``<provide-spec>``. This is useful
     when one knows a filename and wants to find what package (installed or not)
     provides this file.
+    The ``<provide-spec>`` is gradually looked for at following locations:
 
-This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
+    1. The ``<provide-spec>`` is matched with all file provides of any available package::
+
+        $ dnf provides /usr/bin/gzip
+        gzip-1.9-9.fc29.x86_64 : The GNU data compression program
+        Matched from:
+        Filename    : /usr/bin/gzip
+
+    2. Then all provides of all available packages are searched::
+
+        $ dnf provides "gzip(x86-64)"
+        gzip-1.9-9.fc29.x86_64 : The GNU data compression program
+        Matched from:
+        Provide     : gzip(x86-64) = 1.9-9.fc29
+
+    3. DNF assumes that the ``<provide-spec>`` is a system command, prepends it with ``/usr/bin/``, ``/usr/sbin/`` prefixes (one at a time) and does the file provides search again. For legacy reasons (packages that didn't do UsrMove) also ``/bin`` and ``/sbin`` prefixes are being searched::
+
+        $ dnf provides zless
+        gzip-1.9-9.fc29.x86_64 : The GNU data compression program
+        Matched from:
+        Filename    : /usr/bin/zless
+
+    4. If this last step also fails, DNF returns "Error: No Matches found".
+
+    This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
 .. _reinstall_command-label:
 
