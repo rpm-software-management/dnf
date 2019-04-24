@@ -93,9 +93,9 @@ following will work::
 
 ``include`` directive name of [main] and Repo configuration is a more logical and better named counterpart of ``exclude`` in DNF.
 
-=====================================================================
-``dnf provides /bin/<file>`` does not find any packages on Fedora
-=====================================================================
+===================================================
+``dnf provides /bin/<file>`` is not fully supported
+===================================================
 
 After `UsrMove <https://fedoraproject.org/wiki/Features/UsrMove>`_ there's no
 directory ``/bin`` on Fedora systems and no files get installed there,
