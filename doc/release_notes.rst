@@ -20,6 +20,30 @@
 ###################
 
 ===================
+4.2.5 Release Notes
+===================
+
+- Fix multilib obsoletes (RhBug:1672947)
+- Do not remove group package if other packages depend on it
+- Remove duplicates from "dnf list" and "dnf info" outputs
+- Installroot now requires absolute path
+- Fix the installation of completion_helper.py
+- Allow globs in setopt in repoid part
+- Fix formatting of message about free space required
+- [doc] Add info of relation update_cache with fill_sack (RhBug:1658694)
+- Fix installation failiure when duplicit RPMs are specified (RhBug:1687286)
+- Add command abbreviations (RhBug:1634232)
+- Allow plugins to terminate dnf (RhBug:1701807)
+
+Bugs fixed in 4.2.5:
+
+* :rhbug:`1701807`
+* :rhbug:`1634232`
+* :rhbug:`1687286`
+* :rhbug:`1658694`
+* :rhbug:`1672947`
+
+===================
 4.2.2 Release Notes
 ===================
 

@@ -2702,5 +2702,25 @@
     [
         1687070,
         "[REF] Provide single command, which tells what depends on specific package."
+    ],
+    [
+        1701807,
+        "dnf ignores exception error raised by plugin etckeeper-dnf"
+    ],
+    [
+        1634232,
+        "dnf lost aliases for command arguments"
+    ],
+    [
+        1687286,
+        "Specifying same RPM filename in commandline breaks installation"
+    ],
+    [
+        1658694,
+        "DNF Python API update_cache() breaks transaction check"
+    ],
+    [
+        1672947,
+        "dnf prints tracebacks RuntimeError: TransactionItem not found for key"
     ]
 ]

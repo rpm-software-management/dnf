@@ -499,6 +499,19 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Thu Apr 25 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.2.5-1
+- Fix multilib obsoletes (RhBug:1672947)
+- Do not remove group package if other packages depend on it
+- Remove duplicates from "dnf list" and "dnf info" outputs
+- Installroot now requires absolute path
+- Fix the installation of completion_helper.py
+- Allow globs in setopt in repoid part
+- Fix formatting of message about free space required
+- [doc] Add info of relation update_cache with fill_sack (RhBug:1658694)
+- Fix installation failiure when duplicit RPMs are specified (RhBug:1687286)
+- Add command abbreviations (RhBug:1634232)
+- Allow plugins to terminate dnf (RhBug:1701807)
+
 * Wed Mar 27 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.2.2-1
 - [conf] Use environment variables prefixed with DNF_VAR_
 - Enhance documentation of --whatdepends option (RhBug:1687070)
