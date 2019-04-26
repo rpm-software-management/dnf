@@ -232,7 +232,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    ('automatic', 'dnf.automatic', u'DNF Automatic',
+    ('automatic', 'dnf-automatic', u'DNF Automatic',
      AUTHORS, 8),
     ('command_ref', 'dnf', u'DNF Command Reference',
      AUTHORS, 8),
