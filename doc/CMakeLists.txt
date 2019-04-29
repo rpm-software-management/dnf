@@ -21,7 +21,7 @@ ADD_DEPENDENCIES (doc doc-html doc-man)
 
 if (NOT WITH_MAN EQUAL 0)
     INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/dnf.8
-              ${CMAKE_CURRENT_BINARY_DIR}/dnf.automatic.8
+              ${CMAKE_CURRENT_BINARY_DIR}/dnf-automatic.8
               ${CMAKE_CURRENT_BINARY_DIR}/yum2dnf.8
               ${CMAKE_CURRENT_BINARY_DIR}/yum.8
               ${CMAKE_CURRENT_BINARY_DIR}/yum-shell.8

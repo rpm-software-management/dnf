@@ -483,7 +483,7 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %files automatic
 %{_bindir}/%{name}-automatic
 %config(noreplace) %{confdir}/automatic.conf
-%{_mandir}/man8/%{name}.automatic.8*
+%{_mandir}/man8/%{name}-automatic.8*
 %{_unitdir}/%{name}-automatic.service
 %{_unitdir}/%{name}-automatic.timer
 %{_unitdir}/%{name}-automatic-notifyonly.service
