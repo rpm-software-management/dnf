@@ -29,6 +29,7 @@ import libdnf.transaction
 import logging
 import operator
 import pwd
+import re
 import sys
 import time
 
@@ -112,6 +113,7 @@ class Output(object):
     """Main output class for the yum command line."""
 
     GRP_PACKAGE_INDENT = ' ' * 3
+    FILE_PROVIDE_RE = re.compile(r'^\*{0,2}/')
 
     def __init__(self, base, conf):
         self.conf = conf
@@ -865,7 +867,7 @@ class Output(object):
                 print(key % item)
 
         def print_file_provides(item, printed_match):
-            if not any([item.startswith("/"), item.startswith('*/')]):
+            if not self.FILE_PROVIDE_RE.match(item):
                 return False
             key = _("Filename    : %s")
             file_match = False
