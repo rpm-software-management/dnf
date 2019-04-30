@@ -21,9 +21,17 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import libdnf.transaction
-
 from copy import deepcopy
+import fnmatch
+import hawkey
+import itertools
+import libdnf.transaction
+import logging
+import operator
+import pwd
+import sys
+import time
+
 from dnf.cli.format import format_number, format_time
 from dnf.i18n import _, C_, P_, ucd, fill_exact_width, textwrap_fill, exact_width, select_short_long
 from dnf.pycomp import xrange, basestring, long, unicode
@@ -39,14 +47,6 @@ import dnf.i18n
 import dnf.transaction
 import dnf.util
 import dnf.yum.misc
-import fnmatch
-import hawkey
-import itertools
-import logging
-import operator
-import pwd
-import sys
-import time
 
 logger = logging.getLogger('dnf')
 
