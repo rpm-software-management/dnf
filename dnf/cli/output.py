@@ -871,8 +871,9 @@ class Output(object):
             file_match = False
             for filename in po.files:
                 if fnmatch.fnmatch(filename, item):
+                    print_highlighted_key_item(
+                        key, filename, file_match or printed_match, can_overflow=False)
                     file_match = True
-                    print_highlighted_key_item(key, filename, printed_match, can_overflow=False)
             return file_match
 
         if self.conf.showdupesfromrepos:
