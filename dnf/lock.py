@@ -58,6 +58,11 @@ def build_rpmdb_lock(persistdir, exit_on_lock):
                        'RPMDB', not exit_on_lock)
 
 
+def build_log_lock(logdir, exit_on_lock):
+    return ProcessLock(os.path.join(_fit_lock_dir(logdir), 'log_lock.pid'),
+                       'log', not exit_on_lock)
+
+
 class ProcessLock(object):
     def __init__(self, target, description, blocking=False):
         self.blocking = blocking

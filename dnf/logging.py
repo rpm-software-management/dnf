@@ -22,9 +22,11 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import dnf.exceptions
 import dnf.const
+import dnf.lock
 import dnf.util
 import libdnf.repo
 import logging
+import logging.handlers
 import os
 import sys
 import time
@@ -86,6 +88,28 @@ _ERR_VAL_MAPPING = {
 def _cfg_err_val2level(cfg_errval):
     assert 0 <= cfg_errval <= 10
     return _ERR_VAL_MAPPING.get(cfg_errval, logging.WARNING)
+
+
+class MultiprocessRotatingFileHandler(logging.handlers.RotatingFileHandler):
+    def __init__(self, filename, mode='a', maxBytes=0, backupCount=0, encoding=None, delay=False):
+        super(MultiprocessRotatingFileHandler, self).__init__(
+            filename, mode, maxBytes, backupCount, encoding, delay)
+        self.rotate_lock = dnf.lock.build_log_lock("/var/log/", True)
+
+    def emit(self, record):
+        while True:
+            try:
+                if self.shouldRollover(record):
+                    with self.rotate_lock:
+                        self.doRollover()
+                logging.FileHandler.emit(self, record)
+                return
+            except (dnf.exceptions.ProcessLockError, dnf.exceptions.ThreadLockError):
+                time.sleep(0.01)
+            except Exception:
+                self.handleError(record)
+                return
+
 
 def _create_filehandler(logfile):
     if not os.path.exists(logfile):
