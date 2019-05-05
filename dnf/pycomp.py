@@ -25,6 +25,7 @@ import email.mime.text
 import gettext
 import itertools
 import locale
+import sys
 import types
 
 PY3 = version_info.major >= 3
@@ -49,6 +50,7 @@ if PY3:
     urlparse = urllib.parse
     urllib_quote = urlparse.quote
     shlex_quote = shlex.quote
+    sys_maxsize = sys.maxsize
 
 
     def gettext_setup(t):
@@ -86,6 +88,7 @@ else:
     base64_decodebytes = base64.decodestring
     urllib_quote = urllib.quote
     shlex_quote = pipes.quote
+    sys_maxsize = sys.maxint
 
     def gettext_setup(t):
         _ = t.ugettext

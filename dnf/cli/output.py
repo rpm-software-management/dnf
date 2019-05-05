@@ -35,7 +35,7 @@ import time
 
 from dnf.cli.format import format_number, format_time
 from dnf.i18n import _, C_, P_, ucd, fill_exact_width, textwrap_fill, exact_width, select_short_long
-from dnf.pycomp import xrange, basestring, long, unicode
+from dnf.pycomp import xrange, basestring, long, unicode, sys_maxsize
 from dnf.yum.rpmtrans import LoggingTransactionDisplay
 from dnf.db.history import MergedTransactionWrapper
 import dnf.base
@@ -442,7 +442,11 @@ class Output(object):
         :return: the key value pair formatted in two columns for output
         """
         keylen = exact_width(key)
-        cols = self.term.columns
+        cols = self.term.real_columns
+        if not cols:
+            cols = sys_maxsize
+        elif cols < 20:
+            cols = 20
         nxt = ' ' * (keylen - 2) + ': '
         if not val:
             # textwrap.fill in case of empty val returns empty string
