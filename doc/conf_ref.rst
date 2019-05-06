@@ -215,6 +215,27 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     Directory where the log files will be stored. Default is ``/var/log``.
 
+.. _log_size-label:
+
+``log_size``
+    storage size
+
+    Log  files are rotated when they grow bigger than log_size bytes. If
+    log_size is 0, the rotation is not performed. The default is 1 MB. Valid
+    units are 'k', 'M', 'G'.
+
+    The size applies for individual log files, not the sum of all log files.
+    See also :ref:`log_rotate <log_rotate-label>`.
+
+.. _log_rotate-label:
+
+``log_rotate``
+    :ref:`integer <integer-label>`
+
+    Log files are rotated log_rotate times before being removed. If log_rotate
+    is 0, the rotation is not performed.
+    Default is 4.
+
 .. _metadata_timer_sync-label:
 
 ``metadata_timer_sync``
