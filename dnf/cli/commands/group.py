@@ -31,7 +31,6 @@ import logging
 
 logger = logging.getLogger("dnf")
 
-
 class GroupCommand(commands.Command):
     """ Single sub-command interface for most groups interaction. """
 
@@ -47,6 +46,7 @@ class GroupCommand(commands.Command):
     _CMD_ALIASES = {'update'     : 'upgrade',
                     'erase'      : 'remove'}
     _MARK_CMDS = ('install', 'remove')
+    _GROUP_SUBCOMMANDS = ('summary', 'list', 'info', 'remove', 'install', 'upgrade', 'mark')
 
 
     def _canonical(self):
@@ -318,8 +318,12 @@ class GroupCommand(commands.Command):
                                help=_("show only installed groups"))
         grpparser.add_argument('--available', action='store_true',
                                help=_("show only available groups"))
-        parser.add_argument('subcmd', nargs='?', metavar='COMMAND')
-        parser.add_argument('args', nargs='*')
+        parser.add_argument('subcmd', nargs='?', metavar='COMMAND',
+                            help=_('available subcommands: {} (default), {}').format(
+                                GroupCommand._GROUP_SUBCOMMANDS[0],
+                                ', '.join(GroupCommand._GROUP_SUBCOMMANDS[1:])))
+        parser.add_argument('args', nargs='*', metavar='COMMAND_ARG',
+                            help=_('argument for group subcommand'))
 
     def configure(self):
         self._canonical()
@@ -327,10 +331,9 @@ class GroupCommand(commands.Command):
         cmd = self.opts.subcmd
         args = self.opts.args
 
-        cmds = ('list', 'info', 'remove', 'install', 'upgrade', 'summary', 'mark')
-        if cmd not in cmds:
+        if cmd not in self._GROUP_SUBCOMMANDS:
             logger.critical(_('Invalid groups sub-command, use: %s.'),
-                            ", ".join(cmds))
+                            ", ".join(self._GROUP_SUBCOMMANDS))
             raise dnf.cli.CliError
         if cmd in ('install', 'remove', 'mark', 'info') and not args:
             self.cli.optparser.print_help(self)
