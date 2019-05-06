@@ -1479,9 +1479,8 @@ class Base(object):
 
         remove_packages = query.intersection(unneeded_pkgs)
         if remove_packages:
-            sltr = dnf.selector.Selector(self.sack)
-            sltr.set(pkg=remove_packages)
-            self._goal.erase(select=sltr, clean_deps=self.conf.clean_requirements_on_remove)
+            for pkg in remove_packages:
+                self._goal.erase(pkg, clean_deps=self.conf.clean_requirements_on_remove)
 
     def _finalize_comps_trans(self):
         trans = self._comps_trans
@@ -2221,12 +2220,12 @@ class Base(object):
                     failed = True
                     continue
 
-            selector = dnf.selector.Selector(self.sack)
-            selector.set(pkg=query)
-
             if action == libdnf.transaction.TransactionItemAction_REMOVE:
-                self._goal.erase(select=selector)
+                for pkg in query:
+                    self._goal.erase(pkg)
             else:
+                selector = dnf.selector.Selector(self.sack)
+                selector.set(pkg=query)
                 self._goal.install(select=selector, optional=(not strict))
 
         if strict and failed:
