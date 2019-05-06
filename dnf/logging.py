@@ -111,14 +111,14 @@ class MultiprocessRotatingFileHandler(logging.handlers.RotatingFileHandler):
                 return
 
 
-def _create_filehandler(logfile):
+def _create_filehandler(logfile, log_size, log_rotate):
     if not os.path.exists(logfile):
         dnf.util.ensure_dir(os.path.dirname(logfile))
         dnf.util.touch(logfile)
         # By default, make logfiles readable by the user (so the reporting ABRT
         # user can attach root logfiles).
         os.chmod(logfile, 0o644)
-    handler = logging.FileHandler(logfile)
+    handler = MultiprocessRotatingFileHandler(logfile, maxBytes=log_size, backupCount=log_rotate)
     formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s",
                                   "%Y-%m-%dT%H:%M:%SZ")
     formatter.converter = time.gmtime
@@ -155,13 +155,13 @@ class Logging(object):
         self.stderr_handler = stderr
 
     @only_once
-    def _setup(self, verbose_level, error_level, logdir):
+    def _setup(self, verbose_level, error_level, logdir, log_size, log_rotate):
         self._presetup()
         logger_dnf = logging.getLogger("dnf")
 
         # setup file logger
         logfile = os.path.join(logdir, dnf.const.LOG)
-        handler = _create_filehandler(logfile)
+        handler = _create_filehandler(logfile, log_size, log_rotate)
         logger_dnf.addHandler(handler)
         # temporarily turn off stdout/stderr handlers:
         self.stdout_handler.setLevel(SUPERCRITICAL)
@@ -183,7 +183,7 @@ class Logging(object):
         logger_rpm.propagate = False
         logger_rpm.setLevel(SUBDEBUG)
         logfile = os.path.join(logdir, dnf.const.LOG_RPM)
-        handler = _create_filehandler(logfile)
+        handler = _create_filehandler(logfile, log_size, log_rotate)
         logger_rpm.addHandler(self.stdout_handler)
         logger_rpm.addHandler(self.stderr_handler)
         logger_rpm.addHandler(handler)
@@ -197,7 +197,9 @@ class Logging(object):
         verbose_level_r = _cfg_verbose_val2level(conf.debuglevel)
         error_level_r = _cfg_err_val2level(conf.errorlevel)
         logdir = conf.logdir
-        return self._setup(verbose_level_r, error_level_r, logdir)
+        log_size = conf.log_size
+        log_rotate = conf.log_rotate
+        return self._setup(verbose_level_r, error_level_r, logdir, log_size, log_rotate)
 
 
 class Timer(object):

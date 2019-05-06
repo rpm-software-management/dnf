@@ -62,6 +62,8 @@ class TestLogging(tests.support.TestCase):
 
     def setUp(self):
         self.logdir = tempfile.mkdtemp(prefix="dnf-logtest-")
+        self.log_size = 1024 * 1024
+        self.log_rotate = 4
         self.logging = dnf.logging.Logging()
 
     def tearDown(self):
@@ -85,7 +87,8 @@ class TestLogging(tests.support.TestCase):
     def test_setup(self):
         logger = logging.getLogger("dnf")
         with tests.support.patch_std_streams() as (stdout, stderr):
-            self.logging._setup(logging.INFO, logging.ERROR, self.logdir)
+            self.logging._setup(
+                logging.INFO, logging.ERROR, self.logdir, self.log_size, self.log_rotate)
             self._bench(logger)
         self.assertEqual("i\n", stdout.getvalue())
         self.assertEqual("e\n", stderr.getvalue())
@@ -93,27 +96,38 @@ class TestLogging(tests.support.TestCase):
     def test_setup_verbose(self):
         logger = logging.getLogger("dnf")
         with tests.support.patch_std_streams() as (stdout, stderr):
-            self.logging._setup(logging.DEBUG, logging.WARNING, self.logdir)
+            self.logging._setup(
+                logging.DEBUG, logging.WARNING, self.logdir, self.log_size, self.log_rotate)
             self._bench(logger)
         self.assertEqual("d\ni\n", stdout.getvalue())
         self.assertEqual("w\ne\n", stderr.getvalue())
 
     @mock.patch('dnf.logging.Logging._setup')
     def test_setup_from_dnf_conf(self, setup_m):
-        conf = mock.Mock(debuglevel=2, errorlevel=3, logdir=self.logdir)
+        conf = mock.Mock(
+            debuglevel=2, errorlevel=3, logdir=self.logdir,
+            log_size=self.log_size, log_rotate=self.log_rotate)
         self.logging._setup_from_dnf_conf(conf)
         self.assertEqual(setup_m.call_args, mock.call(dnf.logging.INFO,
                                                       dnf.logging.WARNING,
-                                                      self.logdir))
-        conf = mock.Mock(debuglevel=6, errorlevel=6, logdir=self.logdir)
+                                                      self.logdir,
+                                                      self.log_size,
+                                                      self.log_rotate))
+        conf = mock.Mock(
+            debuglevel=6, errorlevel=6, logdir=self.logdir,
+            log_size=self.log_size, log_rotate=self.log_rotate)
         self.logging._setup_from_dnf_conf(conf)
         self.assertEqual(setup_m.call_args, mock.call(dnf.logging.DEBUG,
                                                       dnf.logging.WARNING,
-                                                      self.logdir))
+                                                      self.logdir,
+                                                      self.log_size,
+                                                      self.log_rotate))
 
     def test_file_logging(self):
         # log nothing to the console:
-        self.logging._setup(dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL, self.logdir)
+        self.logging._setup(
+            dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL,
+            self.logdir, self.log_size, self.log_rotate)
         logger = logging.getLogger("dnf")
         with tests.support.patch_std_streams() as (stdout, stderr):
             logger.info("i")
@@ -130,7 +144,9 @@ class TestLogging(tests.support.TestCase):
 
     def test_rpm_logging(self):
         # log everything to the console:
-        self.logging._setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG, self.logdir)
+        self.logging._setup(
+            dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
+            self.logdir, self.log_size, self.log_rotate)
         logger = logging.getLogger("dnf.rpm")
         with tests.support.patch_std_streams() as (stdout, stderr):
             logger.info('rpm transaction happens.')
@@ -150,9 +166,13 @@ class TestLogging(tests.support.TestCase):
     def test_setup_only_once(self):
         logger = logging.getLogger("dnf")
         self.assertLength(logger.handlers, 0)
-        self.logging._setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG, self.logdir)
+        self.logging._setup(
+            dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
+            self.logdir, self.log_size, self.log_rotate)
         cnt = len(logger.handlers)
         self.assertGreater(cnt, 0)
-        self.logging._setup(dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG, self.logdir)
+        self.logging._setup(
+            dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
+            self.logdir, self.log_size, self.log_rotate)
         # no new handlers
         self.assertEqual(cnt, len(logger.handlers))
