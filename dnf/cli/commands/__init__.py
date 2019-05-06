@@ -801,7 +801,8 @@ class HelpCommand(Command):
 
     @staticmethod
     def set_argparser(parser):
-        parser.add_argument('cmd', nargs='?', metavar=_('COMMAND'))
+        parser.add_argument('cmd', nargs='?', metavar=_('COMMAND'),
+                            help="DNF command to get help for")
 
     def run(self):
         if (not self.opts.cmd
