@@ -26,6 +26,7 @@ from dnf.yum import misc
 import dnf.logging
 import dnf.util
 import errno
+import fcntl
 import hashlib
 import logging
 import os
@@ -75,11 +76,40 @@ class ProcessLock(object):
         pid = str(os.getpid()).encode('utf-8')
         try:
             fd = os.open(self.target, os.O_CREAT | os.O_WRONLY | os.O_EXCL, 0o644)
-            os.write(fd, pid)
-            os.close(fd)
-            return True
+            try:
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except OSError:
+                os.close(fd)
+                return False
+            try:
+                os.write(fd, pid)
+                os.close(fd)
+                return True
+            except OSError:
+                os.close(fd)
+                raise
         except OSError as e:
+            if e.errno == errno.EAGAIN:   # Try again (locked)
+                return False
             if e.errno == errno.EEXIST:   # File exists
+                try:
+                    fd = os.open(self.target, os.O_RDONLY, 0o644)
+                except OSError:
+                    return False
+                try:
+                    fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+                except OSError:
+                    os.close(fd)
+                    return False
+                try:
+                    if os.path.getsize(self.target) == 0:
+                        try:              # File is empty, delete it
+                            os.remove(self.target)
+                        except OSError:
+                            pass
+                except OSError:
+                    pass
+                os.close(fd)
                 return False
             raise
 
