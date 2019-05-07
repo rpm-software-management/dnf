@@ -820,18 +820,32 @@ class HistoryCommand(Command):
     aliases = ('history', 'hist')
     summary = _('display, or use, the transaction history')
 
+    _CMDS = ['list', 'info', 'redo', 'undo', 'rollback', 'userinstalled']
+
     transaction_ids = set()
     merged_transaction_ids = set()
 
     @staticmethod
     def set_argparser(parser):
-        cmds = ['list', 'info', 'redo', 'undo', 'rollback', 'userinstalled']
-        parser.add_argument('transactions', nargs='*',
-                            choices=cmds, default=cmds[0],
-                            action=OptionParser.PkgNarrowCallback,
-                            metavar="[%s]" % "|".join(cmds))
+        parser.add_argument('transactions_action', nargs='?', metavar="COMMAND",
+                            help="Available commands: {} (default), {}".format(
+                                HistoryCommand._CMDS[0],
+                                ", ".join(HistoryCommand._CMDS[1:]),
+                                ))
+        parser.add_argument('transactions', nargs='*', metavar="TRANSACTION",
+                            help="Transaction ID (<number>, 'last' or 'last-<number>' "
+                                 "for one transaction, <transaction-id>..<transaction-id> "
+                                 "for range)")
 
     def configure(self):
+        if not self.opts.transactions_action:
+            # no positional argument given
+            self.opts.transactions_action = self._CMDS[0]
+        elif self.opts.transactions_action not in self._CMDS:
+            # first positional argument is not a command
+            self.opts.transactions.insert(0, self.opts.transactions_action)
+            self.opts.transactions_action = self._CMDS[0]
+
         require_one_transaction_id = False
         require_one_transaction_id_msg = _("Found more than one transaction ID.\n"
                                            "'{}' requires one transaction ID or package name."
@@ -945,7 +959,7 @@ class HistoryCommand(Command):
                           ).format(t))
                     raise dnf.cli.CliError
                 cant_convert_msg = _("Can't convert '{}' to transaction ID.\n"
-                                     "Use '<integer>', 'last', 'last-<positive-integer>'.")
+                                     "Use '<number>', 'last', 'last-<number>'.")
                 try:
                     begin_transaction_id = str2transaction_id(begin_transaction_id)
                 except ValueError:
