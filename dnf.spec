@@ -79,7 +79,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.2.5
+Version:        4.2.6
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -499,6 +499,13 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Tue May 07 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.2.6-1
+- librepo: Turn on debug logging only if debuglevel is greater than 2 (RhBug:1355764,1580022)
+- Fix issues with terminal hangs when attempting bash completion (RhBug:1702854)
+- Rename man page from dnf.automatic to dnf-automatic to match command name
+- [provides] Enhanced detecting of file provides (RhBug:1702621)
+- [provides] Sort the output packages alphabetically
+
 * Thu Apr 25 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.2.5-1
 - Fix multilib obsoletes (RhBug:1672947)
 - Do not remove group package if other packages depend on it

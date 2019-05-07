@@ -20,6 +20,23 @@
 ###################
 
 ===================
+4.2.6 Release Notes
+===================
+
+- librepo: Turn on debug logging only if debuglevel is greater than 2 (RhBug:1355764,1580022)
+- Fix issues with terminal hangs when attempting bash completion (RhBug:1702854)
+- Rename man page from dnf.automatic to dnf-automatic to match command name
+- [provides] Enhanced detecting of file provides (RhBug:1702621)
+- [provides] Sort the output packages alphabetically
+
+Bugs fixed in 4.2.6:
+
+* :rhbug:`1355764`
+* :rhbug:`1580022`
+* :rhbug:`1702621`
+* :rhbug:`1702854`
+
+===================
 4.2.5 Release Notes
 ===================
 

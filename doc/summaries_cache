@@ -2722,5 +2722,21 @@
     [
         1672947,
         "dnf prints tracebacks RuntimeError: TransactionItem not found for key"
+    ],
+    [
+        1355764,
+        "Excessive DNF logging (all messages - including debug - from dnf, libdnf, librepo and rpm interface logged to file by default, not configurable)"
+    ],
+    [
+        1580022,
+        "/var/log/dnf.librepo.log way too verbose and big"
+    ],
+    [
+        1702621,
+        "'dnf provides' wildcard search doesn't show the actual matched file"
+    ],
+    [
+        1702854,
+        "Tab completion attempts with dnf cause terminal to hang."
     ]
 ]
