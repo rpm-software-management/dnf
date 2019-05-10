@@ -241,7 +241,8 @@ class ProvidesCommand(Command):
 
     @staticmethod
     def set_argparser(parser):
-        parser.add_argument('dependency', nargs='+', metavar=_('SOME_STRING'))
+        parser.add_argument('dependency', nargs='+', metavar=_('PROVIDE'),
+                            help=_("Provide specification to search for"))
 
     def configure(self):
         demands = self.cli.demands
