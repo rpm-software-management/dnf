@@ -49,9 +49,10 @@ class SearchCommand(commands.Command):
     def set_argparser(parser):
         parser.add_argument('--all', action='store_true',
                             help=_("search also package description and URL"))
-        parser.add_argument('query_string', nargs='+', metavar=_('QUERY_STRING'),
+        parser.add_argument('query_string', nargs='+', metavar=_('KEYWORD'),
                             choices=['all'], default=None,
-                            action=OptionParser.PkgNarrowCallback)
+                            action=OptionParser.PkgNarrowCallback,
+                            help=_("Keyword to search for"))
 
     def _search(self, args):
         """Search for simple text tags in a package object."""
