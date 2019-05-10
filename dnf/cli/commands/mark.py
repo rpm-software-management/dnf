@@ -41,8 +41,11 @@ class MarkCommand(commands.Command):
     @staticmethod
     def set_argparser(parser):
         parser.add_argument('mark', nargs=1, choices=['install', 'remove', 'group'],
-                            metavar='[ install | remove | group ]')
-        parser.add_argument('package', nargs='+')
+                            help=_("install: mark as installed by user, "
+                                   "remove: unmark as installed by user, "
+                                   "group: mark as installed by group"))
+        parser.add_argument('package', nargs='+', metavar="PACKAGE",
+                            help=_("Package specification"))
 
     def _mark_install(self, pkg):
         self.base.history.set_reason(pkg, libdnf.transaction.TransactionItemReason_USER)
