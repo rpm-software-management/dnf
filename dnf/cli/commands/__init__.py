@@ -830,8 +830,7 @@ class HistoryCommand(Command):
         parser.add_argument('transactions_action', nargs='?', metavar="COMMAND",
                             help="Available commands: {} (default), {}".format(
                                 HistoryCommand._CMDS[0],
-                                ", ".join(HistoryCommand._CMDS[1:]),
-                                ))
+                                ", ".join(HistoryCommand._CMDS[1:])))
         parser.add_argument('transactions', nargs='*', metavar="TRANSACTION",
                             help="Transaction ID (<number>, 'last' or 'last-<number>' "
                                  "for one transaction, <transaction-id>..<transaction-id> "
@@ -852,6 +851,7 @@ class HistoryCommand(Command):
                                            ).format(self.opts.transactions_action)
         demands = self.cli.demands
         if self.opts.transactions_action in ['redo', 'undo', 'rollback']:
+            demands.root_user = True
             require_one_transaction_id = True
             if not self.opts.transactions:
                 msg = _('No transaction ID or package name given.')
@@ -865,7 +865,6 @@ class HistoryCommand(Command):
         else:
             demands.fresh_metadata = False
         demands.sack_activation = True
-        demands.root_user = True
         if not os.access(self.base.history.path, os.R_OK):
             msg = _("You don't have access to the history DB.")
             logger.critical(msg)
