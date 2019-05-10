@@ -31,6 +31,13 @@
 
     Seconds since the epoch when the package was built (integer).
 
+  .. attribute:: chksum
+
+    Tuple with package checksum and checksum type or None. The checksum is returned only for
+    packages from repository. The checksum is not returned for installed package or packages from
+    commandline repository. The checksum represents @pkgid value which links primary metadata with
+    other repository metadata files.
+
   .. attribute:: debug_name
 
     The name of the gebug-info package (string).
