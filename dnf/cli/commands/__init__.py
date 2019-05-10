@@ -738,16 +738,6 @@ class RepoPkgsCommand(Command):
             alias: subcmd for subcmd in subcmd_objs for alias in subcmd.aliases}
 
     def set_argparser(self, parser):
-        subcommand_choices = [subcmd.aliases[0] for subcmd in self.SUBCMDS]
-        super(OptionParser, parser).add_argument(
-            'reponame', nargs=1, action=OptionParser._RepoCallbackEnable,
-            metavar=_('REPO'))
-        parser.add_argument('subcmd', nargs=1, choices=subcommand_choices)
-        DEFAULT_PKGNARROW = 'all'
-        pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available',
-                      'autoremove', 'extras', 'obsoletes', 'recent',
-                      'upgrades'}
-
         narrows = parser.add_mutually_exclusive_group()
         narrows.add_argument('--all', dest='_pkg_specs_action',
                              action='store_const', const='all', default=None,
@@ -773,9 +763,21 @@ class RepoPkgsCommand(Command):
         narrows.add_argument('--recent', dest='_pkg_specs_action',
                              action='store_const', const='recent',
                              help=_("show only recently changed packages"))
+
+        parser.add_argument(
+            'reponame', nargs=1, action=OptionParser._RepoCallbackEnable,
+            metavar=_('REPOID'), help=_("Repository ID"))
+        subcommand_choices = [subcmd.aliases[0] for subcmd in self.SUBCMDS]
+        parser.add_argument('subcmd', nargs=1, metavar="SUBCOMMAND",
+                            choices=subcommand_choices, help=", ".join(subcommand_choices))
+        DEFAULT_PKGNARROW = 'all'
+        pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available',
+                      'autoremove', 'extras', 'obsoletes', 'recent',
+                      'upgrades'}
         parser.add_argument('pkg_specs', nargs='*', metavar=_('PACKAGE'),
                             choices=pkgnarrows, default=DEFAULT_PKGNARROW,
-                            action=OptionParser.PkgNarrowCallback)
+                            action=OptionParser.PkgNarrowCallback,
+                            help=_("Package specification"))
 
     def configure(self):
         """Verify whether the command can run with given arguments."""
