@@ -86,9 +86,10 @@ class RepoListCommand(commands.Command):
         repolimit.add_argument('--disabled', dest='_repos_action',
                                action='store_const', const='disabled',
                                help=_("show disabled repos"))
-        parser.add_argument('repos', nargs='*', default='enabled',
+        parser.add_argument('repos', nargs='*', default='enabled', metavar="REPOSITORY",
                             choices=['all', 'enabled', 'disabled'],
-                            action=OptionParser.PkgNarrowCallback)
+                            action=OptionParser.PkgNarrowCallback,
+                            help=_("Repository specification"))
 
     def pre_configure(self):
         if not self.opts.verbose and not self.opts.quiet:
