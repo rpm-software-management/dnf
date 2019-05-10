@@ -96,7 +96,8 @@ class UpdateInfoCommand(commands.Command):
                                    help=_('show info of advisories'))
         parser.add_argument('spec', nargs='*', metavar='SPEC',
                             choices=cmds, default=cmds[0],
-                            action=OptionParser.PkgNarrowCallback)
+                            action=OptionParser.PkgNarrowCallback,
+                            help=_("Package specification"))
 
     def configure(self):
         """Do any command-specific configuration based on command arguments."""
