@@ -269,10 +269,6 @@ class ModuleCommand(commands.Command):
             alias: subcmd for subcmd in subcmd_objs for alias in subcmd.aliases}
 
     def set_argparser(self, parser):
-        subcommand_help = [subcmd.aliases[0] for subcmd in self.SUBCMDS]
-        parser.add_argument('subcmd', nargs=1, choices=subcommand_help)
-        parser.add_argument('module_spec', metavar='module-spec', nargs='*')
-
         narrows = parser.add_mutually_exclusive_group()
         narrows.add_argument('--enabled', dest='enabled',
                              action='store_true',
@@ -286,6 +282,12 @@ class ModuleCommand(commands.Command):
         narrows.add_argument('--profile', dest='profile',
                              action='store_true',
                              help=_("show profile content"))
+
+        subcommand_help = [subcmd.aliases[0] for subcmd in self.SUBCMDS]
+        parser.add_argument('subcmd', nargs=1, choices=subcommand_help,
+                            help=_("Modular command"))
+        parser.add_argument('module_spec', metavar='module-spec', nargs='*',
+                            help=_("Module specification"))
 
     def configure(self):
         try:
