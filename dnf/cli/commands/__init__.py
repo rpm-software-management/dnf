@@ -194,7 +194,8 @@ class InfoCommand(Command):
                              help=_("show only recently changed packages"))
         parser.add_argument('packages', nargs='*', metavar=_('PACKAGE'),
                             choices=cls.pkgnarrows, default=cls.DEFAULT_PKGNARROW,
-                            action=OptionParser.PkgNarrowCallback)
+                            action=OptionParser.PkgNarrowCallback,
+                            help=_("Package name specification"))
 
     def configure(self):
         demands = self.cli.demands
