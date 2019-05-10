@@ -114,8 +114,6 @@ class RepoQueryCommand(commands.Command):
 
     @staticmethod
     def set_argparser(parser):
-        parser.add_argument('key', nargs='*',
-                            help=_('the key to search for'))
         parser.add_argument('-a', '--all', dest='queryall', action='store_true',
                             help=_("Query all packages (shorthand for repoquery '*' "
                                    "or repoquery without argument)"))
@@ -260,6 +258,9 @@ class RepoQueryCommand(commands.Command):
             '--autoremove', dest='list', action='store_const',
             const="unneeded", help=argparse.SUPPRESS)
         parser.add_argument('--recent', action="store_true", help=_('Display only recently edited packages'))
+
+        parser.add_argument('key', nargs='*', metavar="KEY",
+                            help=_('the key to search for'))
 
     def pre_configure(self):
         if not self.opts.verbose and not self.opts.quiet:
