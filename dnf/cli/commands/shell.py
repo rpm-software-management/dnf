@@ -102,6 +102,8 @@ class ShellCommand(commands.Command, cmd.Cmd):
         except:
             self._help()
             return
+        # reset option parser before each command, keep usage information
+        self.cli.optparser.__init__(reset_usage=False)
         opts = self.cli.optparser.parse_main_args(s_line)
         # Disable shell recursion.
         if opts.command == 'shell':
