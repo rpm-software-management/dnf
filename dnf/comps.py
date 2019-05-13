@@ -184,11 +184,11 @@ class CompsQuery(object):
                 res.groups.extend(grps)
             if not envs and not grps:
                 if self.status == self.INSTALLED:
-                    msg = _("Group '%s' is not installed.") % ucd(pat)
+                    msg = _("Module or Group '%s' is not installed.") % ucd(pat)
                 elif self.status == self.AVAILABLE:
-                    msg = _("Group '%s' is not available.") % ucd(pat)
+                    msg = _("Module or Group '%s' is not available.") % ucd(pat)
                 else:
-                    msg = _("Group '%s' does not exist.") % ucd(pat)
+                    msg = _("Module or Group '%s' does not exist.") % ucd(pat)
                 raise CompsError(msg)
         return res
 
