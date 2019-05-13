@@ -1624,9 +1624,8 @@ class Base(object):
         return self._add_comps_trans(trans)
 
     def env_group_install(self, patterns, types, strict=True, exclude=None, exclude_groups=None):
-        q = CompsQuery(self.comps, self.history,
-                       CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
-                       CompsQuery.AVAILABLE | CompsQuery.INSTALLED)
+        q = CompsQuery(self.comps, self.history, CompsQuery.ENVIRONMENTS | CompsQuery.GROUPS,
+                       CompsQuery.AVAILABLE)
         cnt = 0
         done = True
         for pattern in patterns:
