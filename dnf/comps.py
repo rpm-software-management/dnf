@@ -625,6 +625,8 @@ class Solver(object):
         swdb_env = self.history.env.get(comps_env.id)
         if not swdb_env:
             raise CompsError(_("Environment '%s' is not installed.") % env_id)
+        if not comps_env:
+            raise CompsError(_("Environment '%s' is not available.") % env_id)
 
         old_set = set([i.getGroupId() for i in swdb_env.getGroups() if i.getInstalled()])
         pkg_types = swdb_env.getPackageTypes()
@@ -683,9 +685,10 @@ class Solver(object):
         exclude = []
 
         if not swdb_group:
-            raise CompsError(_("Group '%s' not installed.") %
-                             comps_group.ui_name)
-
+            argument = comps_group.ui_name if comps_group else group_id
+            raise CompsError(_("Module or Group '%s' is not installed.") % argument)
+        if not comps_group:
+            raise CompsError(_("Module or Group '%s' is not available.") % group_id)
         pkg_types = swdb_group.getPackageTypes()
         old_set = set([i.getName() for i in swdb_group.getPackages()])
         new_set = self._pkgs_of_type(comps_group, pkg_types, exclude)
