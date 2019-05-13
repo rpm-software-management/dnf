@@ -36,15 +36,13 @@ logger = logging.getLogger("dnf")
 class OptionParser(argparse.ArgumentParser):
     """ArgumentParser like class to do things the "yum way"."""
 
-    def reset_parser(self):
+    def __init__(self, reset_usage=True):
         super(OptionParser, self).__init__(add_help=False)
         self.command_positional_parser = None
         self._add_general_options()
-
-    def __init__(self):
-        self.reset_parser()
-        self._cmd_usage = {} # names, summary for dnf commands, to build usage
-        self._cmd_groups = set() # cmd groups added (main, plugin)
+        if reset_usage:
+            self._cmd_usage = {}      # names, summary for dnf commands, to build usage
+            self._cmd_groups = set()  # cmd groups added (main, plugin)
 
     def error(self, msg):
         """Output an error message, and exit the program.
