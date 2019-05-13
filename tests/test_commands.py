@@ -129,8 +129,7 @@ class InstallCommandTest(tests.support.ResultTestCase):
             self.assertRaises(dnf.exceptions.Error,
                               tests.support.command_run, self._cmd, ['@non-existent'])
 
-        self.assertEqual(stdout.getvalue(),
-                         "Warning: Module or Group 'non-existent' is not available.\n")
+        self.assertEqual(stdout.getvalue(), "Module or Group 'non-existent' is not available.\n")
         self.assertResult(self._cmd.cli.base,
                           self._cmd.cli.base.sack.query().installed())
 

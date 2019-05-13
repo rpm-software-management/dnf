@@ -1632,7 +1632,7 @@ class Base(object):
             try:
                 res = q.get(pattern)
             except dnf.exceptions.CompsError as err:
-                logger.error("Warning: Module or %s", ucd(err))
+                logger.error(ucd(err))
                 done = False
                 continue
             for group_id in res.groups:
