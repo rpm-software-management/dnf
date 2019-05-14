@@ -46,7 +46,7 @@ class OptionParserTest(tests.support.TestCase):
 
     def test_parse(self):
         parser, opts = _parse(self.command, ['update', '--nogpgcheck'])
-        self.assertEqual(opts.command, ['update'])
+        self.assertEqual(opts.command, 'update')
         self.assertFalse(opts.gpgcheck)
         self.assertIsNone(opts.color)
 
