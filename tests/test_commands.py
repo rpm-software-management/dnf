@@ -241,7 +241,7 @@ class RepoPkgsCommandTest(tests.support.DnfBaseTestCase):
                 tests.support.patch_std_streams() as (stdout, stderr), \
                 mock.patch('logging.Logger.critical'):
             tests.support.command_configure(self.cmd, [])
-        self.assertEqual(exit.exception.code, 1)
+        self.assertEqual(exit.exception.code, 2)
 
 
 class RepoPkgsCheckUpdateSubCommandTest(tests.support.DnfBaseTestCase):

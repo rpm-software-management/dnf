@@ -128,7 +128,7 @@ class CliTest(tests.support.DnfBaseTestCase):
         for param in params:
             self.cli.configure(args=param)
             self.assertTrue(self.base.conf.assumeyes)
-            self.assertEqual(self.cli.command.opts.command, ["install"])
+            self.assertEqual(self.cli.command.opts.command, "install")
             self.assertEqual(self.cli.command.opts.pkg_specs, ["pkg1", "pkg2"])
 
     def test_configure_repos(self, _):
