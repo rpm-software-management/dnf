@@ -26,6 +26,7 @@ from dnf.yum import misc
 import dnf.logging
 import dnf.util
 import errno
+import fcntl
 import hashlib
 import logging
 import os
@@ -71,31 +72,25 @@ class ProcessLock(object):
             raise ThreadLockError(msg)
         self.count += 1
 
-    def _try_lock(self):
-        pid = str(os.getpid()).encode('utf-8')
-        try:
-            fd = os.open(self.target, os.O_CREAT | os.O_WRONLY | os.O_EXCL, 0o644)
-            os.write(fd, pid)
-            os.close(fd)
-            return True
-        except OSError as e:
-            if e.errno == errno.EEXIST:   # File exists
-                return False
-            raise
+    def _try_lock(self, pid):
+        fd = os.open(self.target, os.O_CREAT | os.O_RDWR, 0o644)
 
-    def _try_read_lock(self):
         try:
-            with open(self.target, 'r') as f:
-                return int(f.readline())
-        except IOError:
-            return -1
-        except ValueError:
-            time.sleep(2)
             try:
-                with open(self.target, 'r') as f:
-                    return int(f.readline())
-            except IOError:
-                return -1
+                fcntl.flock(fd, fcntl.LOCK_EX | fcntl.LOCK_NB)
+            except OSError as e:
+                if e.errno == errno.EWOULDBLOCK:
+                    return -1
+                raise
+
+            old_pid = os.read(fd, 20)
+            if len(old_pid) == 0:
+                # empty file, write our pid
+                os.write(fd, str(pid).encode('utf-8'))
+                return pid
+
+            try:
+                old_pid = int(old_pid)
             except ValueError:
                 msg = _('Malformed lock file found: %s.\n'
                         'Ensure no other dnf process is running and '
@@ -103,12 +98,21 @@ class ProcessLock(object):
                         'systemd-tmpfiles --remove dnf.conf.') % (self.target)
                 raise LockError(msg)
 
-    def _try_unlink(self):
-        try:
-            os.unlink(self.target)
-            return True
-        except OSError:
-            return False
+            if old_pid == pid:
+                # already locked by this process
+                return pid
+
+            if not os.access('/proc/%d/stat' % old_pid, os.F_OK):
+                # locked by a dead process, write our pid
+                os.lseek(fd, 0, os.SEEK_SET)
+                os.ftruncate(fd, 0)
+                os.write(fd, str(pid).encode('utf-8'))
+                return pid
+
+            return old_pid
+
+        finally:
+            os.close(fd)
 
     def _unlock_thread(self):
         self.count -= 1
@@ -117,30 +121,21 @@ class ProcessLock(object):
     def __enter__(self):
         dnf.util.ensure_dir(os.path.dirname(self.target))
         self._lock_thread()
-        inform = True
-        prev_pid = 0
-        while not self._try_lock():
-            pid = self._try_read_lock()
-            if pid == -1:
-                # already removed by other process
-                continue
-            if pid == os.getpid():
-                # already locked by this process
-                return
-            if not os.access('/proc/%d/stat' % pid, os.F_OK):
-                # locked by a dead process
-                self._try_unlink()
-                continue
-            if not self.blocking:
-                self._unlock_thread()
-                msg = '%s already locked by %d' % (self.description, pid)
-                raise ProcessLockError(msg, pid)
-            if inform or prev_pid != pid:
-                msg = _('Waiting for process with pid %d to finish.') % (pid)
-                logger.info(msg)
-                inform = False
-                prev_pid = pid
-            time.sleep(2)
+        prev_pid = -1
+        my_pid = os.getpid()
+        pid = self._try_lock(my_pid)
+        while pid != my_pid:
+            if pid != -1:
+                if not self.blocking:
+                    self._unlock_thread()
+                    msg = '%s already locked by %d' % (self.description, pid)
+                    raise ProcessLockError(msg, pid)
+                if prev_pid != pid:
+                    msg = _('Waiting for process with pid %d to finish.') % (pid)
+                    logger.info(msg)
+                    prev_pid = pid
+            time.sleep(1)
+            pid = self._try_lock(my_pid)
 
     def __exit__(self, *exc_args):
         if self.count == 1:
