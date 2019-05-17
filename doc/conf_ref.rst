@@ -283,6 +283,24 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     RPM debug scriptlet output level. One of: ``critical``, ``emergency``,
     ``error``, ``warn``, ``info`` or ``debug``. Default is ``info``.
 
+``tsflags``
+    :ref:`list <list-label>`
+
+    List of strings adding extra flags for the RPM transaction.
+
+    ============  ===========================
+    tsflag value  RPM Transaction Flag
+    ============  ===========================
+    noscripts     RPMTRANS_FLAG_NOSCRIPTS
+    test          RPMTRANS_FLAG_TEST
+    notriggers    RPMTRANS_FLAG_NOTRIGGERS
+    nodocs        RPMTRANS_FLAG_NODOCS
+    justdb        RPMTRANS_FLAG_JUSTDB
+    nocontexts    RPMTRANS_FLAG_NOCONTEXTS
+    nocaps        RPMTRANS_FLAG_NOCAPS
+    nocrypto      RPMTRANS_FLAG_NOFILEDIGEST
+    ============  ===========================
+
 ``upgrade_group_objects_upgrade``
     :ref:`boolean <boolean-label>`
 
