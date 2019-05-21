@@ -48,11 +48,17 @@ def detect_releasever(installroot):
             raise dnf.exceptions.Error(msg)
         releasever = hdr['version']
         try:
-            off = hdr[rpm.RPMTAG_PROVIDENAME].index(distroverpkg)
+            try:
+                # header returns bytes -> look for bytes
+                # it may fail because rpm returns a decoded string since 10 Apr 2019
+                off = hdr[rpm.RPMTAG_PROVIDENAME].index(distroverpkg)
+            except ValueError:
+                # header returns a string -> look for a string
+                off = hdr[rpm.RPMTAG_PROVIDENAME].index(distroverpkg.decode("utf8"))
             flag = hdr[rpm.RPMTAG_PROVIDEFLAGS][off]
             ver = hdr[rpm.RPMTAG_PROVIDEVERSION][off]
             if flag == rpm.RPMSENSE_EQUAL and ver:
-                if hdr['name'] != distroverpkg:
+                if hdr['name'] not in (distroverpkg, distroverpkg.decode("utf8")):
                     # override the package version
                     releasever = ver
         except (ValueError, KeyError, IndexError):
