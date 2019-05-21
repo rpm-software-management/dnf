@@ -985,6 +985,12 @@ class Cli(object):
         # search config file inside the installroot first
         conf._search_inside_installroot('config_file_path')
 
+        # check whether a config file is requested from command line and the file exists
+        filename = conf._get_value('config_file_path')
+        if (conf._get_priority('config_file_path') == dnf.conf.PRIO_COMMANDLINE) and \
+                not os.path.isfile(filename):
+            raise dnf.exceptions.ConfigError(_('Config file "{}" does not exist').format(filename))
+
         # read config
         conf.read(priority=dnf.conf.PRIO_MAINCONFIG)
 
