@@ -29,7 +29,7 @@
 
     Provide concise, human-readable representation of this Payload.
 
-  .. method:: download_size
+  .. attribute:: download_size
 
     Total size of this Payload when transferred (e.g. over network).
 
