@@ -1,28 +1,4 @@
-/var/log/dnf.log {
-    missingok
-    notifempty
-    rotate 4
-    weekly
-    create 0600 root root
-}
-
 /var/log/dnf.librepo.log {
-    missingok
-    notifempty
-    rotate 4
-    weekly
-    create 0600 root root
-}
-
-/var/log/dnf.rpm.log {
-    missingok
-    notifempty
-    rotate 4
-    weekly
-    create 0600 root root
-}
-
-/var/log/dnf.plugin.log {
     missingok
     notifempty
     rotate 4
