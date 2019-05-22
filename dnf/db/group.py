@@ -22,7 +22,9 @@ import libdnf.transaction
 
 import dnf.db.history
 import dnf.transaction
+import dnf.exceptions
 from dnf.i18n import _
+from dnf.util import logger
 
 
 class PersistorBase(object):
@@ -273,20 +275,38 @@ class RPMTransaction(object):
         ti_old = self.new(old, libdnf.transaction.TransactionItemAction_UPGRADED, replaced_by=ti_new)
         self._add_obsoleted(obsoleted, replaced_by=ti_new)
 
+    def _test_fail_safe(self, hdr, pkg):
+        if pkg._from_cmdline:
+            return 0
+        if pkg.repo.module_hotfixes:
+            return 0
+        try:
+            if hdr['modularitylabel'] and not pkg._is_in_active_module():
+                logger.critical(_("No available modular metadata for modular package '{}', "
+                                  "it cannot be installed on the system").format(pkg))
+                return 1
+        except ValueError:
+            return 0
+        return 0
+
     def _populate_rpm_ts(self, ts):
         """Populate the RPM transaction set."""
+        modular_problems = 0
 
         for tsi in self:
             if tsi.action == libdnf.transaction.TransactionItemAction_DOWNGRADE:
                 hdr = tsi.pkg._header
+                modular_problems += self._test_fail_safe(hdr, tsi.pkg)
                 ts.addInstall(hdr, tsi, 'u')
             elif tsi.action == libdnf.transaction.TransactionItemAction_DOWNGRADED:
                 ts.addErase(tsi.pkg.idx)
             elif tsi.action == libdnf.transaction.TransactionItemAction_INSTALL:
                 hdr = tsi.pkg._header
+                modular_problems += self._test_fail_safe(hdr, tsi.pkg)
                 ts.addInstall(hdr, tsi, 'i')
             elif tsi.action == libdnf.transaction.TransactionItemAction_OBSOLETE:
                 hdr = tsi.pkg._header
+                modular_problems += self._test_fail_safe(hdr, tsi.pkg)
                 ts.addInstall(hdr, tsi, 'u')
             elif tsi.action == libdnf.transaction.TransactionItemAction_OBSOLETED:
                 ts.addErase(tsi.pkg.idx)
@@ -294,6 +314,7 @@ class RPMTransaction(object):
                 # note: in rpm 4.12 there should not be set
                 # rpm.RPMPROB_FILTER_REPLACEPKG to work
                 hdr = tsi.pkg._header
+                modular_problems += self._test_fail_safe(hdr, tsi.pkg)
                 ts.addReinstall(hdr, tsi)
             elif tsi.action == libdnf.transaction.TransactionItemAction_REINSTALLED:
                 pass
@@ -301,6 +322,7 @@ class RPMTransaction(object):
                 ts.addErase(tsi.pkg.idx)
             elif tsi.action == libdnf.transaction.TransactionItemAction_UPGRADE:
                 hdr = tsi.pkg._header
+                modular_problems += self._test_fail_safe(hdr, tsi.pkg)
                 ts.addInstall(hdr, tsi, 'u')
             elif tsi.action == libdnf.transaction.TransactionItemAction_UPGRADED:
                 ts.addErase(tsi.pkg.idx)
@@ -308,6 +330,8 @@ class RPMTransaction(object):
                 pass
             else:
                 raise RuntimeError("TransactionItemAction not handled: %s" % tsi.action)
+        if modular_problems:
+            raise dnf.exceptions.Error(_("No available modular metadata for modular package"))
 
         return ts
 

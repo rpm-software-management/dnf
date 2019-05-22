@@ -575,7 +575,10 @@ class ModuleBase(object):
         table = self._create_and_fill_table(latest)
         current_repo_id_index = 0
         already_printed_lines = 0
-        repo_name = self.base.repos[latest[0][0][0].getRepoID()].name
+        try:
+            repo_name = self.base.repos[latest[0][0][0].getRepoID()].name
+        except KeyError:
+            repo_name = latest[0][0][0].getRepoID()
         versions = len(latest[0])
         header = self._format_header(table)
         str_table = self._format_repoid(repo_name)
@@ -584,7 +587,12 @@ class ModuleBase(object):
             if versions + already_printed_lines <= i:
                 already_printed_lines += versions
                 current_repo_id_index += 1
-                repo_name = self.base.repos[latest[current_repo_id_index][0][0].getRepoID()].name
+                # Fail-Safe repository is not in self.base.repos
+                try:
+                    repo_name = self.base.repos[
+                        latest[current_repo_id_index][0][0].getRepoID()].name
+                except KeyError:
+                    repo_name = latest[current_repo_id_index][0][0].getRepoID()
                 versions = len(latest[current_repo_id_index])
                 str_table += "\n"
                 str_table += self._format_repoid(repo_name)

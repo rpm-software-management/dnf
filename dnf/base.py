@@ -289,7 +289,7 @@ class Base(object):
             raise dnf.exceptions.Error("Sack was not initialized")
         if self.sack._moduleContainer is None:
             self.sack._moduleContainer = libdnf.module.ModulePackageContainer(
-                False, self.conf.installroot, self.conf.substitutions["arch"])
+                False, self.conf.installroot, self.conf.substitutions["arch"], self.conf.persistdir)
         return self.sack._moduleContainer
 
     @property
@@ -800,6 +800,7 @@ class Base(object):
         # save module states on disk right before entering rpm transaction,
         # because we want system in recoverable state if transaction gets interrupted
         self._moduleContainer.save()
+        self._moduleContainer.updateFailSafeData()
 
         if not self.transaction:
             # packages changed, but a comps change to be commited
