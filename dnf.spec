@@ -154,11 +154,13 @@ Common data and configuration files for DNF
 %package -n %{yum_subpackage_name}
 Requires:       %{name} = %{version}-%{release}
 Summary:        %{pkg_summary}
+%if 0%{?fedora}
 %if 0%{?fedora} >= 31
 Provides:       %{name}-yum = %{version}-%{release}
 Obsoletes:      %{name}-yum < %{version}-%{release}
 %else
 Conflicts:      yum < 3.4.3-505
+%endif
 %endif
 
 %description -n %{yum_subpackage_name}
