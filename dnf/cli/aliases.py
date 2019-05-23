@@ -143,7 +143,7 @@ class Aliases(object):
         try:
             if not os.path.exists(ALIASES_DROPIN_DIR):
                 os.mkdir(ALIASES_DROPIN_DIR)
-            for fn in os.listdir(ALIASES_DROPIN_DIR):
+            for fn in sorted(os.listdir(ALIASES_DROPIN_DIR)):
                 if _ignore_filename(fn):
                     continue
                 filenames.append(os.path.join(ALIASES_DROPIN_DIR, fn))
