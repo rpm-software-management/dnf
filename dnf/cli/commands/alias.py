@@ -151,7 +151,8 @@ class AliasCommand(commands.Command):
         try:
             args = self.aliases_base._resolve(args)
         except dnf.exceptions.Error as e:
-            logger.error(_('%s, alias %s'), e, cmd)
+            logger.error(
+                _('%s, alias %s="%s"'), e, cmd, (' ').join(self.aliases_base.aliases[cmd]))
         else:
             print(_("Alias %s='%s'") % (cmd, " ".join(args)))
 
