@@ -454,10 +454,12 @@ Alias Examples
     Lists all defined aliases.
 
 ``dnf alias add rm=remove``
-    Adds new alias command called "rm" which does the same thing as the command "remove".
+    Adds a new command alias called ``rm`` which works the same as the ``remove`` command.
 
 ``dnf alias add update="\update --skip-broken --disableexcludes=all --obsoletes"``
-    Adds new alias command called "update" which does the same thing as the command "update", but with options ``--skip-broken --disableexcludes=all --obsoletes``.
+    Adds a new command alias called ``update`` which works the same as the ``update`` command,
+    with additional options. Note that the original ``update`` command is prefixed with a ``\``
+    to prevent an infinite loop in alias processing.
 
 .. _alias_processing_examples-label:
 
