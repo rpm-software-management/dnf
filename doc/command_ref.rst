@@ -424,7 +424,10 @@ for aliases. The alias processing stops when the first found command is not a na
 Also, like in shell aliases, if the result starts with a ``\``, the alias processing will stop.
 
 All aliases are defined in configuration files in the ``/etc/dnf/aliases.d/`` directory in the [aliases] section,
-and aliases created by the alias command are written to the ``USER.conf`` file.
+and aliases created by the alias command are written to the ``USER.conf`` file. In case of conflicts,
+the ``USER.conf`` has the highest priority, and alphabetical ordering is used for the rest of the
+configuration files.
+
 Optionally, there is the ``enabled`` option in the ``[main]`` section defaulting to True. This can be set for each
 file separately in the respective file, or globally for all aliases in the ``ALIASES.conf`` file.
 
