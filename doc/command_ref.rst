@@ -423,6 +423,8 @@ To use an alias (name=value), the name must be placed as the first "command" (e.
 that is not an option). It is then replaced by its value and the resulting sequence is again searched
 for aliases. The alias processing stops when the first found command is not a name of any alias.
 
+In case the processing would result in an infinite recursion, the original arguments are used instead.
+
 Also, like in shell aliases, if the result starts with a ``\``, the alias processing will stop.
 
 All aliases are defined in configuration files in the ``/etc/dnf/aliases.d/`` directory in the [aliases] section,
