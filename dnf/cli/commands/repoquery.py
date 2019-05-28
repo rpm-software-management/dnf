@@ -611,7 +611,7 @@ class RepoQueryCommand(commands.Command):
 
     def tree_seed(self, query, aquery, opts, level=-1, usedpkgs=None):
         for pkg in sorted(set(query.run()), key=lambda p: p.name):
-            usedpkgs = set() if usedpkgs is None or level is -1 else usedpkgs
+            usedpkgs = set() if usedpkgs is None or level == -1 else usedpkgs
             if pkg.name.startswith("rpmlib") or pkg.name.startswith("solvable"):
                 return
             self.grow_tree(level, pkg, opts)
