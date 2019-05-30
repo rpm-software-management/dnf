@@ -61,8 +61,10 @@ class ModuleBase(object):
             self._resolve_specs_enable_update_sack(module_specs)
 
         # <package_name, set_of_spec>
+        fail_safe_repo = hawkey.MODULE_FAIL_SAFE_REPO_NAME
         install_dict = {}
         install_set_artefacts = set()
+        fail_safe_repo_used = False
         for spec, (nsvcap, moduledict) in module_dicts.items():
             for name, streamdict in moduledict.items():
                 for stream, module_list in streamdict.items():
@@ -73,6 +75,11 @@ class ModuleBase(object):
                         continue
                     profiles = []
                     latest_module = self._get_latest(install_module_list)
+                    if latest_module.getRepoID() == fail_safe_repo:
+                        msg = _(
+                            "Installing module '{0}' from Fail-Safe repository {1} is not allowed")
+                        logger.critical(msg.format(latest_module.getNameStream(), fail_safe_repo))
+                        fail_safe_repo_used = True
                     if nsvcap.profile:
                         profiles.extend(latest_module.getProfiles(nsvcap.profile))
                         if not profiles:
@@ -99,6 +106,9 @@ class ModuleBase(object):
                             install_dict.setdefault(pkg_name, set()).add(spec)
                     for module in install_module_list:
                         install_set_artefacts.update(module.getArtifacts())
+        if fail_safe_repo_used:
+            raise dnf.exceptions.Error(_(
+                "Installing module from Fail-Safe repository is not allowed"))
         install_base_query = self.base.sack.query().filterm(
             nevra_strict=install_set_artefacts).apply()
 
