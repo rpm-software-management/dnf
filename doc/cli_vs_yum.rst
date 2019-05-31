@@ -309,6 +309,22 @@ List command shows all repo alternatives
 DNF lists all packages from all repos, which means there can be duplicates package names (with different repo name). This is due to providing users
 possibility to choose preferred repo.
 
+
+===============================================
+``yum-langpacks`` subcommands have been removed
+===============================================
+Translations became part of core DNF and it is no longer
+necessary to manage individual language packs.
+
+Following sub-commands were removed:
+
+* langavailable
+* langinstall
+* langremove
+* langlist
+* langinfo
+
+
 ###############################################
  Changes in DNF plugins compared to YUM plugins
 ###############################################
@@ -317,7 +333,7 @@ possibility to choose preferred repo.
 Original YUM tool                       DNF command/option                                                Package
 --------------------------------------  ----------------------------------------------------------------  -----------------------------------
 ``yum check``                           :ref:`dnf repoquery <repoquery_command-label>` ``--unsatisfied``  ``dnf``
-``yum-langpacks``                                                                                         ``dnf-langpacks``
+``yum-langpacks``                                                                                         ``dnf``
 ``yum-plugin-aliases``                  :ref:`dnf alias <alias_command-label>`                            ``dnf``
 ``yum-plugin-auto-update-debug-info``   option in ``debuginfo-install.conf``                              ``dnf-plugins-core``
 ``yum-plugin-changelog``                                                                                  ``dnf-plugins-core``
