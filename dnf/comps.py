@@ -279,7 +279,7 @@ class Group(Forwarder):
     def __init__(self, iobj, langs, pkg_factory):
         super(Group, self).__init__(iobj, langs)
         self._pkg_factory = pkg_factory
-        self.selected = False
+        self.selected = iobj.default
 
     def _packages_of_type(self, type_):
         return [pkg for pkg in self.packages if pkg.type == type_]
