@@ -386,6 +386,10 @@ class RPMTransaction(object):
         msg = "Error unpacking rpm package %s" % tsi.pkg
         for display in self.displays:
             display.error(msg)
+        for tsi1 in transaction_list:
+            if tsi1.state == libdnf.transaction.TransactionItemState_UNKNOWN:
+                tsi1.state = libdnf.transaction.TransactionItemState_ERROR
+                return
         tsi.state = libdnf.transaction.TransactionItemState_ERROR
 
     def _scriptError(self, amount, total, key):
