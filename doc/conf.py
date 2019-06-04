@@ -49,7 +49,7 @@ master_doc = 'index'
 
 # General information about the project.
 project = u'DNF'
-copyright = u'2012-2014, Red Hat, Licensed under GPLv2+'
+copyright = u'2012-2019, Red Hat, Licensed under GPLv2+'
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -248,6 +248,8 @@ man_pages = [
      AUTHORS, 8),
     ('command_ref', 'yum-aliases', u'redirecting to DNF Command Reference',
      AUTHORS, 1),
+    ('modularity', 'dnf.modularity', u'Modularity in DNF',
+     AUTHORS, 7),
 ]
 
 # If true, show URL addresses after external links.

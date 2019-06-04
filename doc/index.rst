@@ -30,6 +30,7 @@ Contents:
    automatic
    api
    user_faq
+   modularity
    release_notes
    cli_vs_yum
    api_vs_yum
