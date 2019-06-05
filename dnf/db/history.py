@@ -486,13 +486,17 @@ class SwdbInterface(object):
             self.swdb.log_error(self._tid, error)
     '''
 
-    # TODO: rename to end_transaction?
-    def end(self, end_rpmdb_version="", return_code=0, errors=None):
-        assert return_code or not errors
-        # TODO: fix return_code
-        return_code = not bool(return_code)
+    def end(self, end_rpmdb_version="", return_code=None, errors=None):
         if not hasattr(self, '_tid'):
             return  # Failed at beg() time
+
+        if return_code is None:
+            # return_code/state auto-detection
+            return_code = libdnf.transaction.TransactionState_DONE
+            for tsi in self.rpm:
+                if tsi.state == libdnf.transaction.TransactionItemState_ERROR:
+                    return_code = libdnf.transaction.TransactionState_ERROR
+                    break
 
         for file_descriptor, line in self._output:
             self.swdb.addConsoleOutputLine(file_descriptor, line)
@@ -501,7 +505,7 @@ class SwdbInterface(object):
         self.swdb.endTransaction(
             int(time.time()),
             str(end_rpmdb_version),
-            bool(return_code)
+            return_code,
         )
 
         # Closing and cleanup is done in the close() method.
