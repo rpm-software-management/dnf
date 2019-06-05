@@ -987,7 +987,7 @@ class Base(object):
             # particular element failed and if not, decide that is the
             # case.
             failed = [el for el in self._ts if el.Failed()]
-            if len(failed) > 0:
+            if failed:
                 for te in failed:
                     te_nevra = dnf.util._te_nevra(te)
                     for tsi in self._transaction:
@@ -996,6 +996,7 @@ class Base(object):
 
                 errstring = _('Errors occurred during transaction.')
                 logger.debug(errstring)
+                self.history.end(rpmdbv)
             else:
                 login = dnf.util.get_effective_login()
                 msg = _("Failed to obtain the transaction lock "
@@ -1006,7 +1007,7 @@ class Base(object):
         else:
             if self._record_history():
                 herrors = [ucd(x) for x in errors]
-                self.history.end(rpmdbv, 2, errors=herrors)
+                self.history.end(rpmdbv)
 
             logger.critical(_("Transaction couldn't start:"))
             for e in errors:
@@ -1069,7 +1070,7 @@ class Base(object):
             count = display_banner(tsi.pkg, count)
 
         rpmdbv = rpmdb_sack._rpmdb_version()
-        self.history.end(rpmdbv, 0)
+        self.history.end(rpmdbv)
 
         timer()
         self._trans_success = True
