@@ -262,6 +262,10 @@ class RPMTransaction(object):
                 return self._instOpenFile(key)
             elif what == rpm.RPMCALLBACK_INST_CLOSE_FILE:
                 self._instCloseFile(key)
+            elif what == rpm.RPMCALLBACK_INST_START:
+                self._inst_start(key)
+            elif what == rpm.RPMCALLBACK_INST_STOP:
+                self._inst_stop(key)
             elif what == rpm.RPMCALLBACK_INST_PROGRESS:
                 self._instProgress(amount, total, key)
             elif what == rpm.RPMCALLBACK_UNINST_START:
@@ -321,12 +325,17 @@ class RPMTransaction(object):
             return self.fd.fileno()
 
     def _instCloseFile(self, key):
-        transaction_list = self._extract_cbkey(key)
         self.fd.close()
         self.fd = None
 
+    def _inst_start(self, key):
+        pass
+
+    def _inst_stop(self, key):
         if self.test or not self.trans_running:
             return
+
+        transaction_list = self._extract_cbkey(key)
         for tsi in transaction_list:
             if tsi.state == libdnf.transaction.TransactionItemState_UNKNOWN:
                 tsi.state = libdnf.transaction.TransactionItemState_DONE
@@ -376,6 +385,10 @@ class RPMTransaction(object):
 
     def _cpioError(self, key):
         transaction_list = self._extract_cbkey(key)
+        for tsi in transaction_list:
+            if tsi.state == libdnf.transaction.TransactionItemState_UNKNOWN:
+                tsi.state = libdnf.transaction.TransactionItemState_ERROR
+                break
         msg = "Error in cpio payload of rpm package %s" % transaction_list[0].pkg
         for display in self.displays:
             display.error(msg)
@@ -386,11 +399,11 @@ class RPMTransaction(object):
         msg = "Error unpacking rpm package %s" % tsi.pkg
         for display in self.displays:
             display.error(msg)
-        for tsi1 in transaction_list:
-            if tsi1.state == libdnf.transaction.TransactionItemState_UNKNOWN:
-                tsi1.state = libdnf.transaction.TransactionItemState_ERROR
+
+        for tsi in transaction_list:
+           if tsi.state == libdnf.transaction.TransactionItemState_UNKNOWN:
+                tsi.state = libdnf.transaction.TransactionItemState_ERROR
                 return
-        tsi.state = libdnf.transaction.TransactionItemState_ERROR
 
     def _scriptError(self, amount, total, key):
         # "amount" carries the failed scriptlet tag,
