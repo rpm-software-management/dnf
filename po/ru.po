@@ -18,7 +18,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-11 10:38+0100\n"
+"POT-Creation-Date: 2019-06-05 10:58+0200\n"
 "PO-Revision-Date: 2019-02-05 08:17+0000\n"
 "Last-Translator: Igor Gorbounov <igor.gorbounov@gmail.com>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/dnf/language/ru/)\n"
@@ -29,1154 +29,538 @@ msgstr ""
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
 "X-Generator: Zanata 4.6.2\n"
 
-#. TRANSLATORS: This is for a single package currently being downgraded.
-#: ../dnf/transaction.py:79
-msgctxt "currently"
-msgid "Downgrading"
-msgstr "Откат версии"
-
-#: ../dnf/transaction.py:80 ../dnf/transaction.py:87 ../dnf/transaction.py:92
-#: ../dnf/transaction.py:94
-msgid "Cleanup"
-msgstr "Очистка"
-
-#. TRANSLATORS: This is for a single package currently being installed.
-#: ../dnf/transaction.py:82
-msgctxt "currently"
-msgid "Installing"
-msgstr "Установка"
-
-#: ../dnf/transaction.py:83 ../dnf/transaction.py:84 ../dnf/cli/output.py:1952
-msgid "Obsoleting"
-msgstr "Исключаем"
-
-#. TRANSLATORS: This is for a single package currently being reinstalled.
-#: ../dnf/transaction.py:86
-msgctxt "currently"
-msgid "Reinstalling"
-msgstr "Переустановка"
-
-#. TODO: 'Removing'?
-#: ../dnf/transaction.py:89
-msgid "Erasing"
-msgstr "Удаление"
-
-#. TRANSLATORS: This is for a single package currently being upgraded.
-#: ../dnf/transaction.py:91
-msgctxt "currently"
-msgid "Upgrading"
-msgstr "Обновление"
-
-#: ../dnf/transaction.py:95
-msgid "Verifying"
-msgstr "Проверка"
-
-#: ../dnf/transaction.py:96
-msgid "Running scriptlet"
-msgstr "Запуск скриптлета"
-
-#: ../dnf/transaction.py:98
-msgid "Preparing"
-msgstr "Подготовка"
-
-#: ../dnf/plugin.py:63
+#: ../dnf/automatic/emitter.py:31
 #, python-format
-msgid "Parsing file failed: %s"
-msgstr "Ошибка при разборе файла: %s"
+msgid "The following updates have been applied on '%s':"
+msgstr "Были применены следующие обновления на «%s»:"
 
-#: ../dnf/plugin.py:139
+#: ../dnf/automatic/emitter.py:32
 #, python-format
-msgid "Loaded plugins: %s"
-msgstr "Загружены модули: %s"
+msgid "The following updates are available on '%s':"
+msgstr "Доступны следующие обновления для «%s»:"
 
-#: ../dnf/plugin.py:197
+#: ../dnf/automatic/emitter.py:33
 #, python-format
-msgid "Failed loading plugin: %s"
-msgstr "Не удалось загрузить модуль: %s"
+msgid "The following updates were downloaded on '%s':"
+msgstr "Следующие обновления загружены на «%s»:"
 
-#: ../dnf/repodict.py:58
+#: ../dnf/automatic/emitter.py:80
 #, python-format
-msgid "enabling %s repository"
-msgstr "подключение репозитория %s"
+msgid "Updates applied on '%s'."
+msgstr "Обновления применены на «%s»."
 
-#: ../dnf/repodict.py:94
+#: ../dnf/automatic/emitter.py:82
 #, python-format
-msgid "Added %s repo from %s"
-msgstr "Добавлен %s репозиторий из %s"
+msgid "Updates downloaded on '%s'."
+msgstr "Обновления загружены на «%s»."
 
-#. Translators: This is abbreviated 'Name'. Should be no longer
-#. than 12 characters. You can use the full version if it is short
-#. enough in your language.
-#: ../dnf/cli/output.py:496
-msgctxt "short"
-msgid "Name"
-msgstr ""
-
-#: ../dnf/cli/output.py:497 ../dnf/cli/commands/search.py:60
-msgctxt "long"
-msgid "Name"
-msgstr ""
-
-#. Translators: This message should be no longer than 12 characters.
-#: ../dnf/cli/output.py:502
-msgid "Epoch"
-msgstr "Эпоха"
-
-#. Translators: This is the short version of 'Version'. You can
-#. use the full (unabbreviated) term 'Version' if you think that
-#. the translation to your language is not too long and will
-#. always fit to limited space.
-#: ../dnf/cli/output.py:503 ../dnf/cli/output.py:1290
-msgctxt "short"
-msgid "Version"
-msgstr ""
-
-#. Translators: This is the full (unabbreviated) term 'Version'.
-#: ../dnf/cli/output.py:504 ../dnf/cli/output.py:1292
-msgctxt "long"
-msgid "Version"
-msgstr ""
-
-#. Translators: This message should be no longer than 12 characters.
-#: ../dnf/cli/output.py:507
-msgid "Release"
-msgstr "Выпуск"
-
-#. Translators: This is abbreviated 'Architecture', used when
-#. we have not enough space to display the full word.
-#: ../dnf/cli/output.py:508 ../dnf/cli/output.py:1281
-msgctxt "short"
-msgid "Arch"
-msgstr ""
-
-#. Translators: This is the full word 'Architecture', used when
-#. we have enough space.
-#: ../dnf/cli/output.py:509 ../dnf/cli/output.py:1284
-msgctxt "long"
-msgid "Architecture"
-msgstr ""
-
-#. Translators: This is the short version of 'Size'. It should
-#. not be longer than 5 characters. If the term 'Size' in your
-#. language is not longer than 5 characters then you can use it
-#. unabbreviated.
-#: ../dnf/cli/output.py:511 ../dnf/cli/output.py:1305
-msgctxt "short"
-msgid "Size"
-msgstr ""
-
-#. Translators: This is the full (unabbreviated) term 'Size'.
-#: ../dnf/cli/output.py:511 ../dnf/cli/output.py:1307
-msgctxt "long"
-msgid "Size"
-msgstr ""
-
-#. Translators: This message should be no longer than 12 characters.
-#: ../dnf/cli/output.py:515
-msgid "Source"
-msgstr "Источник"
-
-#. Translators: This is abbreviated 'Repository', used when
-#. we have not enough space to display the full word.
-#: ../dnf/cli/output.py:516 ../dnf/cli/output.py:1296
-msgctxt "short"
-msgid "Repo"
-msgstr ""
-
-#. Translators: This is the full word 'Repository', used when
-#. we have enough space.
-#: ../dnf/cli/output.py:517 ../dnf/cli/output.py:1299
-msgctxt "long"
-msgid "Repository"
-msgstr ""
-
-#. Translators: This message should be no longer than 12 chars.
-#: ../dnf/cli/output.py:524
-msgid "From repo"
-msgstr "Из репозитория"
-
-#. :hawkey does not support changelog information
-#. print(_("Committer   : %s") % ucd(pkg.committer))
-#. print(_("Committime  : %s") % time.ctime(pkg.committime))
-#. Translators: This message should be no longer than 12 characters.
-#: ../dnf/cli/output.py:530
-msgid "Packager"
-msgstr "Сопровождающий"
-
-#. Translators: This message should be no longer than 12 characters.
-#: ../dnf/cli/output.py:532
-msgid "Buildtime"
-msgstr "Время сборки"
-
-#. Translators: This message should be no longer than 12 characters.
-#: ../dnf/cli/output.py:536
-msgid "Install time"
-msgstr "Время установки"
-
-#. Translators: This message should be no longer than 12 chars.
-#: ../dnf/cli/output.py:545
-msgid "Installed by"
-msgstr "Установлен"
-
-#. Translators: This is abbreviated 'Summary'. Should be no longer
-#. than 12 characters. You can use the full version if it is short
-#. enough in your language.
-#: ../dnf/cli/output.py:549
-msgctxt "short"
-msgid "Summary"
-msgstr ""
-
-#: ../dnf/cli/output.py:550 ../dnf/cli/commands/search.py:61
-msgctxt "long"
-msgid "Summary"
-msgstr ""
-
-#: ../dnf/cli/output.py:553 ../dnf/cli/commands/search.py:63
-msgid "URL"
-msgstr "URL"
-
-#. Translators: This message should be no longer than 12 characters.
-#: ../dnf/cli/output.py:555
-msgid "License"
-msgstr "Лицензия"
-
-#. Translators: This is abbreviated 'Description'. Should be no longer
-#. than 12 characters. You can use the full version if it is short
-#. enough in your language.
-#: ../dnf/cli/output.py:559
-msgctxt "short"
-msgid "Description"
-msgstr ""
-
-#: ../dnf/cli/output.py:560 ../dnf/cli/commands/search.py:62
-msgctxt "long"
-msgid "Description"
-msgstr ""
-
-#: ../dnf/cli/output.py:675
-msgid "No packages to list"
-msgstr "Нет пакетов для списка"
-
-#: ../dnf/cli/output.py:686
-msgid "y"
-msgstr "д"
-
-#: ../dnf/cli/output.py:686
-msgid "yes"
-msgstr "да"
-
-#: ../dnf/cli/output.py:687
-msgid "n"
-msgstr "н"
-
-#: ../dnf/cli/output.py:687
-msgid "no"
-msgstr "нет"
-
-#: ../dnf/cli/output.py:691
-msgid "Is this ok [y/N]: "
-msgstr "Продолжить? [д/Н]: "
-
-#: ../dnf/cli/output.py:695
-msgid "Is this ok [Y/n]: "
-msgstr "Все правильно? [Д/н]: "
-
-#: ../dnf/cli/output.py:775
+#: ../dnf/automatic/emitter.py:84
 #, python-format
-msgid "Group: %s"
-msgstr "Группа: %s"
+msgid "Updates available on '%s'."
+msgstr "Обновления доступны на «%s»."
 
-#: ../dnf/cli/output.py:779
+#: ../dnf/automatic/emitter.py:107
 #, python-format
-msgid " Group-Id: %s"
-msgstr " Код группы: %s"
+msgid "Failed to send an email via '%s': %s"
+msgstr "Сбой отправки электронного письма через «%s»: %s"
 
-#: ../dnf/cli/output.py:781 ../dnf/cli/output.py:820
+#: ../dnf/automatic/emitter.py:137
 #, python-format
-msgid " Description: %s"
-msgstr " Описание: %s"
+msgid "Failed to execute command '%s': returned %d"
+msgstr "Не удалось выполнить команду «%s»: возвращено %d"
 
-#: ../dnf/cli/output.py:783
+#: ../dnf/automatic/main.py:156 ../dnf/conf/config.py:149
 #, python-format
-msgid " Language: %s"
-msgstr " Язык: %s"
+msgid "Unknown configuration value: %s=%s in %s; %s"
+msgstr "Неизвестное значение параметра: %s=%s в %s; %s"
 
-#: ../dnf/cli/output.py:786
-msgid " Mandatory Packages:"
-msgstr " Обязательные пакеты:"
-
-#: ../dnf/cli/output.py:787
-msgid " Default Packages:"
-msgstr " Пакеты по умолчанию:"
-
-#: ../dnf/cli/output.py:788
-msgid " Optional Packages:"
-msgstr " Необязательные пакеты:"
-
-#: ../dnf/cli/output.py:789
-msgid " Conditional Packages:"
-msgstr " Условные пакеты:"
-
-#: ../dnf/cli/output.py:814
+#: ../dnf/automatic/main.py:160 ../dnf/conf/config.py:156
 #, python-format
-msgid "Environment Group: %s"
-msgstr "Группа окружения: %s"
+msgid "Unknown configuration option: %s = %s in %s"
+msgstr "Неизвестный параметр конфигурации: %s = %s в %s"
 
-#: ../dnf/cli/output.py:817
+#: ../dnf/automatic/main.py:231
+msgid "Started dnf-automatic."
+msgstr "Запущен dnf-automatic."
+
+#: ../dnf/automatic/main.py:235
 #, python-format
-msgid " Environment-Id: %s"
-msgstr " ID окружения: %s"
+msgid "Sleep for %s seconds"
+msgstr "Ожидание на %s секунд"
 
-#: ../dnf/cli/output.py:823
-msgid " Mandatory Groups:"
-msgstr " Обязательные группы:"
-
-#: ../dnf/cli/output.py:824
-msgid " Optional Groups:"
-msgstr " Необязательные группы:"
-
-#: ../dnf/cli/output.py:845
-msgid "Matched from:"
-msgstr "Совпадения с:"
-
-#: ../dnf/cli/output.py:859
-#, python-format
-msgid "Filename    : %s"
-msgstr "Имя файла   : %s"
-
-#: ../dnf/cli/output.py:883
-#, python-format
-msgid "Repo        : %s"
-msgstr "Репозиторий        : %s"
-
-#: ../dnf/cli/output.py:892
-msgid "Description : "
-msgstr "Описание : "
-
-#: ../dnf/cli/output.py:896
-#, python-format
-msgid "URL         : %s"
-msgstr "Ссылка         : %s"
-
-#: ../dnf/cli/output.py:900
-#, python-format
-msgid "License     : %s"
-msgstr "Лицензия    : %s"
-
-#: ../dnf/cli/output.py:906
-#, python-format
-msgid "Provide    : %s"
-msgstr "Предоставьте    : %s"
-
-#: ../dnf/cli/output.py:926
-#, python-format
-msgid "Other       : %s"
-msgstr "Другое       : %s"
-
-#: ../dnf/cli/output.py:975
-msgid "There was an error calculating total download size"
-msgstr "Произошла ошибка при подсчете общего объема загрузки"
-
-#: ../dnf/cli/output.py:981
-#, python-format
-msgid "Total size: %s"
-msgstr "Общий размер: %s"
-
-#: ../dnf/cli/output.py:984
-#, python-format
-msgid "Total download size: %s"
-msgstr "Объем загрузки: %s"
-
-#: ../dnf/cli/output.py:987
-#, python-format
-msgid "Installed size: %s"
-msgstr "Объем изменений: %s"
-
-#: ../dnf/cli/output.py:1005
-msgid "There was an error calculating installed size"
-msgstr "Ошибка при подсчете объема установки"
-
-#: ../dnf/cli/output.py:1009
-#, python-format
-msgid "Freed space: %s"
-msgstr "Освобожденное место: %s"
-
-#: ../dnf/cli/output.py:1018
-msgid "Marking packages as installed by the group:"
-msgstr "Отметка, что пакеты  установлены группой:"
-
-#: ../dnf/cli/output.py:1025
-msgid "Marking packages as removed by the group:"
-msgstr "Отметка, что пакеты  удалены группой:"
-
-#: ../dnf/cli/output.py:1035
-msgid "Group"
-msgstr "Группа"
-
-#: ../dnf/cli/output.py:1035
-msgid "Packages"
-msgstr "Пакеты"
-
-#: ../dnf/cli/output.py:1100
-msgid "Installing group/module packages"
-msgstr "Установка пакетов группы/модуля"
-
-#: ../dnf/cli/output.py:1101
-msgid "Installing group packages"
-msgstr "Установка пакетов группы"
-
-#. TRANSLATORS: This is for a list of packages to be installed.
-#: ../dnf/cli/output.py:1105
-msgctxt "summary"
-msgid "Installing"
-msgstr "Установка"
-
-#. TRANSLATORS: This is for a list of packages to be upgraded.
-#: ../dnf/cli/output.py:1107
-msgctxt "summary"
-msgid "Upgrading"
-msgstr "Обновление"
-
-#. TRANSLATORS: This is for a list of packages to be reinstalled.
-#: ../dnf/cli/output.py:1109
-msgctxt "summary"
-msgid "Reinstalling"
-msgstr "Переустановка"
-
-#: ../dnf/cli/output.py:1111
-msgid "Installing dependencies"
-msgstr "Установка зависимостей"
-
-#: ../dnf/cli/output.py:1112
-msgid "Installing weak dependencies"
-msgstr "Установка слабых зависимостей"
-
-#. TRANSLATORS: This is for a list of packages to be removed.
-#: ../dnf/cli/output.py:1114
-msgid "Removing"
-msgstr "Удаление"
-
-#: ../dnf/cli/output.py:1115
-msgid "Removing dependent packages"
-msgstr "Удаление зависимых пакетов"
-
-#: ../dnf/cli/output.py:1116
-msgid "Removing unused dependencies"
-msgstr "Удаление неиспользуемых зависимостей"
-
-#. TRANSLATORS: This is for a list of packages to be downgraded.
-#: ../dnf/cli/output.py:1118
-msgctxt "summary"
-msgid "Downgrading"
-msgstr "Откат версии"
-
-#: ../dnf/cli/output.py:1143
-msgid "Installing module profiles"
-msgstr "Установка профилей модулей"
-
-#: ../dnf/cli/output.py:1152
-msgid "Disabling module profiles"
-msgstr ""
-
-#: ../dnf/cli/output.py:1161
-msgid "Enabling module streams"
-msgstr "Включение потоков модулей"
-
-#: ../dnf/cli/output.py:1169
-msgid "Switching module streams"
-msgstr "Переключение потоков модулей"
-
-#: ../dnf/cli/output.py:1177
-msgid "Disabling modules"
-msgstr ""
-
-#: ../dnf/cli/output.py:1185
-msgid "Resetting modules"
-msgstr ""
-
-#: ../dnf/cli/output.py:1193
-msgid "Installing Environment Groups"
-msgstr "Установка групп с рабочими средами"
-
-#: ../dnf/cli/output.py:1200
-msgid "Upgrading Environment Groups"
-msgstr "Обновление групп с рабочими средами"
-
-#: ../dnf/cli/output.py:1207
-msgid "Removing Environment Groups"
-msgstr "Удаление групп с рабочими средами"
-
-#: ../dnf/cli/output.py:1214
-msgid "Installing Groups"
-msgstr "Установка групп"
-
-#: ../dnf/cli/output.py:1221
-msgid "Upgrading Groups"
-msgstr "Обновление групп"
-
-#: ../dnf/cli/output.py:1228
-msgid "Removing Groups"
-msgstr "Удаление групп"
-
-#: ../dnf/cli/output.py:1242
-#, python-format
-msgid ""
-"Skipping packages with conflicts:\n"
-"(add '%s' to command line to force their upgrade)"
-msgstr ""
-"Пропуск пакетов с конфликтами:\n"
-"(добавьте «%s» к командной строке для их принудительного обновления)"
-
-#: ../dnf/cli/output.py:1250
-#, python-format
-msgid "Skipping packages with broken dependencies%s"
-msgstr "Пропуск пакетов с нарушенными зависимостями %s"
-
-#: ../dnf/cli/output.py:1254
-msgid " or part of a group"
-msgstr " или часть группы"
-
-#. Translators: This is the short version of 'Package'. You can
-#. use the full (unabbreviated) term 'Package' if you think that
-#. the translation to your language is not too long and will
-#. always fit to limited space.
-#: ../dnf/cli/output.py:1275
-msgctxt "short"
-msgid "Package"
-msgstr ""
-
-#. Translators: This is the full (unabbreviated) term 'Package'.
-#. This is also a hack to resolve RhBug 1302935 correctly.
-#: ../dnf/cli/output.py:1277 ../dnf/cli/output.py:2041
-msgctxt "long"
-msgid "Package"
-msgstr ""
-
-#: ../dnf/cli/output.py:1326
-msgid "replacing"
-msgstr "замена"
-
-#: ../dnf/cli/output.py:1334
-#, python-format
-msgid ""
-"\n"
-"Transaction Summary\n"
-"%s\n"
-msgstr ""
-"\n"
-"Результат транзакции\n"
-"%s\n"
-
-#. TODO: remove
-#: ../dnf/cli/output.py:1339 ../dnf/cli/output.py:1948
-#: ../dnf/cli/output.py:1949
-msgid "Install"
-msgstr "Установка"
-
-#: ../dnf/cli/output.py:1343 ../dnf/cli/output.py:1957
-msgid "Upgrade"
-msgstr "Обновление"
-
-#: ../dnf/cli/output.py:1344
-msgid "Remove"
-msgstr "Удаление"
-
-#: ../dnf/cli/output.py:1346 ../dnf/cli/output.py:1955
-msgid "Downgrade"
-msgstr "Откат версии"
-
-#: ../dnf/cli/output.py:1347
-msgid "Skip"
-msgstr "Пропуск"
-
-#: ../dnf/cli/output.py:1356 ../dnf/cli/output.py:1372
-msgid "Package"
-msgid_plural "Packages"
-msgstr[0] "Пакет"
-msgstr[1] "Пакета"
-msgstr[2] "Пакетов"
-
-#: ../dnf/cli/output.py:1374
-msgid "Dependent package"
-msgid_plural "Dependent packages"
-msgstr[0] "Зависимый пакет"
-msgstr[1] "Зависимых пакета"
-msgstr[2] "Зависимых пакетов"
-
-#: ../dnf/cli/output.py:1436 ../dnf/cli/output.py:1790
-#: ../dnf/cli/output.py:1958
-msgid "Upgraded"
-msgstr "Обновлен"
-
-#: ../dnf/cli/output.py:1437 ../dnf/cli/output.py:1790
-#: ../dnf/cli/output.py:1956
-msgid "Downgraded"
-msgstr "Возвращен к предыдущей версии"
-
-#: ../dnf/cli/output.py:1438 ../dnf/cli/output.py:1789
-#: ../dnf/cli/output.py:1791 ../dnf/cli/commands/updateinfo.py:306
-msgid "Installed"
-msgstr "Установлен"
-
-#: ../dnf/cli/output.py:1442
-msgid "Reinstalled"
-msgstr "Переустановлен"
-
-#: ../dnf/cli/output.py:1443
-msgid "Skipped"
-msgstr "Пропущено"
-
-#: ../dnf/cli/output.py:1444
-msgid "Removed"
-msgstr "Удален"
-
-#: ../dnf/cli/output.py:1447
-msgid "Failed"
-msgstr "Сбой"
-
-#: ../dnf/cli/output.py:1498
-msgid "Total"
-msgstr "Общий размер"
-
-#: ../dnf/cli/output.py:1526
-msgid "<unset>"
-msgstr "<unset>"
-
-#: ../dnf/cli/output.py:1527
-msgid "System"
-msgstr "Система"
-
-#: ../dnf/cli/output.py:1597
-#, python-format
-msgid "Skipping merged transaction %d to %d, as it overlaps"
-msgstr "Пропуск объединенной транзакции %d to %d, поскольку она перекрывается"
-
-#: ../dnf/cli/output.py:1608 ../dnf/cli/output.py:1715
-msgid "No transactions"
-msgstr "Нет транзакций"
-
-#: ../dnf/cli/output.py:1628 ../dnf/cli/output.py:2029
-msgid "Bad transaction IDs, or package(s), given"
-msgstr "Даны неправильные идентификаторы транзакций или пакеты"
-
-#: ../dnf/cli/output.py:1664
-msgid "Command line"
-msgstr "Командная строка"
-
-#. TRANSLATORS: user names who executed transaction in history command output
-#: ../dnf/cli/output.py:1667
-msgid "User name"
-msgstr "Имя пользователя"
-
-#. REALLY Needs to use columns!
-#: ../dnf/cli/output.py:1668 ../dnf/cli/output.py:2038
-msgid "ID"
-msgstr "Идентификатор"
-
-#: ../dnf/cli/output.py:1670
-msgid "Date and time"
-msgstr "Дата и время"
-
-#: ../dnf/cli/output.py:1671 ../dnf/cli/output.py:2039
-msgid "Action(s)"
-msgstr "Действия"
-
-#: ../dnf/cli/output.py:1672
-msgid "Altered"
-msgstr "Изменено"
-
-#: ../dnf/cli/output.py:1716 ../dnf/cli/output.py:1732
-msgid "Failed history info"
-msgstr "Информация об истории отказов"
-
-#: ../dnf/cli/output.py:1731
-msgid "No transaction ID, or package, given"
-msgstr "Не задан идентификатор транзакции или пакет"
-
-#: ../dnf/cli/output.py:1789
-msgid "Erased"
-msgstr "Удалено"
-
-#: ../dnf/cli/output.py:1791
-msgid "Not installed"
-msgstr "Не установлено"
-
-#: ../dnf/cli/output.py:1792
-msgid "Older"
-msgstr "Старее"
-
-#: ../dnf/cli/output.py:1792
-msgid "Newer"
-msgstr "Новее"
-
-#: ../dnf/cli/output.py:1840 ../dnf/cli/output.py:1842
-msgid "Transaction ID :"
-msgstr "Идентификатор транзакции   :"
-
-#: ../dnf/cli/output.py:1845
-msgid "Begin time     :"
-msgstr "Время начала   :"
-
-#: ../dnf/cli/output.py:1848 ../dnf/cli/output.py:1850
-msgid "Begin rpmdb    :"
-msgstr "Начало rpmdb   :"
-
-#: ../dnf/cli/output.py:1856
-#, python-format
-msgid "(%u seconds)"
-msgstr "(%u секунд)"
-
-#: ../dnf/cli/output.py:1858
-#, python-format
-msgid "(%u minutes)"
-msgstr "(%u минут)"
-
-#: ../dnf/cli/output.py:1860
-#, python-format
-msgid "(%u hours)"
-msgstr "(%u часов)"
-
-#: ../dnf/cli/output.py:1862
-#, python-format
-msgid "(%u days)"
-msgstr "(%u дней)"
-
-#: ../dnf/cli/output.py:1863
-msgid "End time       :"
-msgstr "Время окончания       :"
-
-#: ../dnf/cli/output.py:1866 ../dnf/cli/output.py:1868
-msgid "End rpmdb      :"
-msgstr "Конец rpmdb    :"
-
-#: ../dnf/cli/output.py:1875 ../dnf/cli/output.py:1877
-msgid "User           :"
-msgstr "Пользователь   :"
-
-#: ../dnf/cli/output.py:1881 ../dnf/cli/output.py:1884
-#: ../dnf/cli/output.py:1886 ../dnf/cli/output.py:1888
-#: ../dnf/cli/output.py:1890 ../dnf/cli/output.py:1892
-msgid "Return-Code    :"
-msgstr "Код возврата   :"
-
-#: ../dnf/cli/output.py:1881 ../dnf/cli/output.py:1888
-msgid "Aborted"
-msgstr "Прекращено"
-
-#: ../dnf/cli/output.py:1884 ../dnf/cli/output.py:1892
-msgid "Success"
-msgstr "Успешно"
-
-#: ../dnf/cli/output.py:1886
-msgid "Failures:"
-msgstr "Ошибки:"
-
-#: ../dnf/cli/output.py:1890
-msgid "Failure:"
-msgstr "Неудача:"
-
-#: ../dnf/cli/output.py:1900 ../dnf/cli/output.py:1902
-msgid "Releasever     :"
-msgstr "Выпускаемая версия     :"
-
-#: ../dnf/cli/output.py:1907 ../dnf/cli/output.py:1909
-msgid "Command Line   :"
-msgstr "Команда   :"
-
-#: ../dnf/cli/output.py:1915
-msgid "Comment        :"
-msgstr "Комментарий        :"
-
-#: ../dnf/cli/output.py:1919
-msgid "Transaction performed with:"
-msgstr "Транзакция выполнена:"
-
-#: ../dnf/cli/output.py:1928
-msgid "Packages Altered:"
-msgstr "Пакеты изменены:"
-
-#: ../dnf/cli/output.py:1934
-msgid "Scriptlet output:"
-msgstr "Вывод скриптлета:"
-
-#: ../dnf/cli/output.py:1941
-msgid "Errors:"
-msgstr "Ошибки:"
-
-#: ../dnf/cli/output.py:1950
-msgid "Dep-Install"
-msgstr "Установка зависимостей"
-
-#: ../dnf/cli/output.py:1951
-msgid "Obsoleted"
-msgstr "Исключено"
-
-#: ../dnf/cli/output.py:1953
-msgid "Erase"
-msgstr "Удаление"
-
-#: ../dnf/cli/output.py:1954
-msgid "Reinstall"
-msgstr "Переустановка"
-
-#: ../dnf/cli/output.py:2128
-#, python-format
-msgid "---> Package %s.%s %s will be installed"
-msgstr "---> Пакет %s.%s %s будет устанавливаться"
-
-#: ../dnf/cli/output.py:2130
-#, python-format
-msgid "---> Package %s.%s %s will be an upgrade"
-msgstr "---> Пакет %s.%s %s будет обновлением"
-
-#: ../dnf/cli/output.py:2132
-#, python-format
-msgid "---> Package %s.%s %s will be erased"
-msgstr "---> Пакет %s.%s %s будет удаляться"
-
-#: ../dnf/cli/output.py:2134
-#, python-format
-msgid "---> Package %s.%s %s will be reinstalled"
-msgstr "---> Пакет %s.%s %s будет переустанавливаться"
-
-#: ../dnf/cli/output.py:2136
-#, python-format
-msgid "---> Package %s.%s %s will be a downgrade"
-msgstr "---> Пакет %s.%s %s будет возвращаться к прежней версии"
-
-#: ../dnf/cli/output.py:2138
-#, python-format
-msgid "---> Package %s.%s %s will be obsoleting"
-msgstr "---> Пакет %s.%s %s будет убираться"
-
-#: ../dnf/cli/output.py:2140
-#, python-format
-msgid "---> Package %s.%s %s will be upgraded"
-msgstr "---> Пакет %s.%s %s будет обновляться"
-
-#: ../dnf/cli/output.py:2142
-#, python-format
-msgid "---> Package %s.%s %s will be obsoleted"
-msgstr "---> Пакет %s.%s %s будет считаться устаревшим"
-
-#: ../dnf/cli/output.py:2151
-msgid "--> Starting dependency resolution"
-msgstr "--> Начало разрешения зависимостей"
-
-#: ../dnf/cli/output.py:2156
-msgid "--> Finished dependency resolution"
-msgstr "--> Конец разрешения зависимостей"
-
-#: ../dnf/cli/output.py:2170 ../dnf/crypto.py:132
-#, python-format
-msgid ""
-"Importing GPG key 0x%s:\n"
-" Userid     : \"%s\"\n"
-" Fingerprint: %s\n"
-" From       : %s"
-msgstr ""
-"Импорт GPG-ключа 0x%s:\n"
-"Идентификатор пользователя:  \"%s\"\n"
-"Отпечаток: %s\n"
-"Источник:  %s"
-
-#: ../dnf/cli/option_parser.py:54
-#, python-format
-msgid "Command line error: %s"
-msgstr "Ошибка команды: %s"
-
-#: ../dnf/cli/option_parser.py:85
-#, python-format
-msgid "bad format: %s"
-msgstr "плохой формат: %s"
-
-#: ../dnf/cli/option_parser.py:96
-#, python-format
-msgid "Setopt argument has multiple values: %s"
-msgstr "Аргумент setopt имеет несколько значений: %s"
-
-#: ../dnf/cli/option_parser.py:99
-#, python-format
-msgid "Setopt argument has no value: %s"
-msgstr "Аргумент setopt не имеет значения: %s"
-
-#: ../dnf/cli/option_parser.py:156
-msgid "Optional arguments"
-msgstr "Дополнительные параметры"
-
-#: ../dnf/cli/option_parser.py:159
-msgid "config file location"
-msgstr "расположение файла конфигурации"
-
-#: ../dnf/cli/option_parser.py:162
-msgid "quiet operation"
-msgstr "работать без вывода сообщений"
-
-#: ../dnf/cli/option_parser.py:164
-msgid "verbose operation"
-msgstr "подробно описывать действия"
-
-#: ../dnf/cli/option_parser.py:166
-msgid "show DNF version and exit"
-msgstr "вывести версию DNF и выйти"
-
-#: ../dnf/cli/option_parser.py:167
-msgid "set install root"
-msgstr "настройка корневого каталога установки"
-
-#: ../dnf/cli/option_parser.py:170
-msgid "do not install documentations"
-msgstr "не устанавливать документацию"
-
-#: ../dnf/cli/option_parser.py:173
-msgid "disable all plugins"
-msgstr "отключить все модули"
-
-#: ../dnf/cli/option_parser.py:176
-msgid "enable plugins by name"
-msgstr "включить модули по названию"
-
-#: ../dnf/cli/option_parser.py:180
-msgid "disable plugins by name"
-msgstr "отключить модули по названию"
-
-#: ../dnf/cli/option_parser.py:183
-msgid "override the value of $releasever in config and repo files"
-msgstr "заместить значение $releasever в файлах конфигурации и репозиториев"
-
-#: ../dnf/cli/option_parser.py:187
-msgid "set arbitrary config and repo options"
-msgstr "установить произвольные настройки и параметры репозиториев"
-
-#: ../dnf/cli/option_parser.py:190
-msgid "resolve depsolve problems by skipping packages"
-msgstr "разрешить проблемы зависимостей, пропустив пакеты"
-
-#: ../dnf/cli/option_parser.py:193
-msgid "show command help"
-msgstr "показать справку по команде"
-
-#: ../dnf/cli/option_parser.py:197
-msgid "allow erasing of installed packages to resolve dependencies"
-msgstr "разрешить удаление установленных пакетов для разрешения зависимостей"
-
-#: ../dnf/cli/option_parser.py:201
-msgid "try the best available package versions in transactions."
-msgstr ""
-"попытаться использовать наиболее подходящие версии пакетов в транзакциях."
-
-#: ../dnf/cli/option_parser.py:203
-msgid "do not limit the transaction to the best candidate"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:206
-msgid "run entirely from system cache, don't update cache"
-msgstr "брать полностью из системного кэша, не обновлять его"
-
-#: ../dnf/cli/option_parser.py:210
-msgid "maximum command wait time"
-msgstr "максимальное время ожидания команды"
-
-#: ../dnf/cli/option_parser.py:213
-msgid "debugging output level"
-msgstr "уровень отладочных сообщений"
-
-#: ../dnf/cli/option_parser.py:216
-msgid "dumps detailed solving results into files"
-msgstr "сохраняет подробные результаты в файлах"
-
-#: ../dnf/cli/option_parser.py:220
-msgid "show duplicates, in repos, in list/search commands"
-msgstr "показывать повторяющиеся в репозиториях пакеты для команд list/search"
-
-#: ../dnf/cli/option_parser.py:223
-msgid "error output level"
-msgstr "уровень сообщений об ошибках"
-
-#: ../dnf/cli/option_parser.py:226
-msgid ""
-"enables dnf's obsoletes processing logic for upgrade or display capabilities"
-" that the package obsoletes for info, list and repoquery"
-msgstr ""
-"включает логику обработки устаревших пакетов dnf для обновления или "
-"отображения возможностей, устаревающих с пакетом, для  info, list и "
-"repoquery"
-
-#: ../dnf/cli/option_parser.py:230
-msgid "debugging output level for rpm"
-msgstr "уровень отладочных сообщений для rpm"
-
-#: ../dnf/cli/option_parser.py:233
-msgid "automatically answer yes for all questions"
-msgstr "автоматически отвечать утвердительно на все вопросы"
-
-#: ../dnf/cli/option_parser.py:236
-msgid "automatically answer no for all questions"
-msgstr "автоматически отвечать отрицательно на все вопросы"
-
-#: ../dnf/cli/option_parser.py:247
-msgid ""
-"enable just specific repositories by an id or a glob, can be specified "
-"multiple times"
-msgstr ""
-"включить только определенные репозитории по идентификатору или маске, можно"
-"  задать несколько раз"
-
-#: ../dnf/cli/option_parser.py:252
-msgid "enable repos with config-manager command (automatically saves)"
-msgstr ""
-"подключить репозитории командой config-manager (сохранение автоматическое)"
-
-#: ../dnf/cli/option_parser.py:256
-msgid "disable repos with config-manager command (automatically saves)"
-msgstr ""
-"отключить репозитории командой config-manager (сохранение автоматическое)"
-
-#: ../dnf/cli/option_parser.py:260
-msgid "exclude packages by name or glob"
-msgstr "исключить пакеты по имени или маске"
-
-#: ../dnf/cli/option_parser.py:265
-msgid "disable excludepkgs"
-msgstr "отключить excludepkgs"
-
-#: ../dnf/cli/option_parser.py:270
-msgid ""
-"label and path to additional repository, can be specified multiple times."
-msgstr ""
-"метка и путь к дополнительному репозитарию, может быть определено несколько "
-"раз."
-
-#: ../dnf/cli/option_parser.py:274
-msgid "disable removal of dependencies that are no longer used"
-msgstr "запретить удаление зависимостей, которые больше не используются"
-
-#: ../dnf/cli/option_parser.py:277
-msgid "disable gpg signature checking (if RPM policy allows)"
-msgstr ""
-
-#: ../dnf/cli/option_parser.py:279
-msgid "control whether color is used"
-msgstr "использовать ли цветовые схемы"
-
-#: ../dnf/cli/option_parser.py:282
-msgid "set metadata as expired before running the command"
-msgstr "установить метаданные как истекшие перед запуском команды"
-
-#: ../dnf/cli/option_parser.py:285
-msgid "resolve to IPv4 addresses only"
-msgstr "разрешение только в адреса IPv4"
-
-#: ../dnf/cli/option_parser.py:288
-msgid "resolve to IPv6 addresses only"
-msgstr "разрешение только в адреса IPv6"
-
-#: ../dnf/cli/option_parser.py:291
-msgid "set directory to copy packages to"
-msgstr "задать каталог для копирования в него пакетов"
-
-#: ../dnf/cli/option_parser.py:294
-msgid "only download packages"
-msgstr "только загрузить пакеты"
-
-#: ../dnf/cli/option_parser.py:296
-msgid "add a comment to transaction"
-msgstr "добавить к транзакции комментарий"
-
-#: ../dnf/cli/option_parser.py:299
-msgid "Include bugfix relevant packages, in updates"
-msgstr "Включить в обновления пакеты для исправлений ошибок"
-
-#: ../dnf/cli/option_parser.py:302
-msgid "Include enhancement relevant packages, in updates"
-msgstr "Включить в обновления пакеты, связанные с  улучшениями"
-
-#: ../dnf/cli/option_parser.py:305
-msgid "Include newpackage relevant packages, in updates"
-msgstr "Включить в обновления пакеты, связанные с newpackage"
-
-#: ../dnf/cli/option_parser.py:308
-msgid "Include security relevant packages, in updates"
-msgstr "Включить в обновления пакеты, связанные с безопасностью"
-
-#: ../dnf/cli/option_parser.py:312
-msgid "Include packages needed to fix the given advisory, in updates"
-msgstr ""
-"Включить в обновления пакеты, необходимые для исправлений в связи с данной "
-"рекомендацией"
-
-#: ../dnf/cli/option_parser.py:316
-msgid "Include packages needed to fix the given BZ, in updates"
-msgstr ""
-"Включать в обноления пакеты, требуемые для исправления данной ошибки из "
-"багзиллы"
-
-#: ../dnf/cli/option_parser.py:319
-msgid "Include packages needed to fix the given CVE, in updates"
-msgstr ""
-"Включать в обновления пакеты, требуемые для исправления данной уязвимости "
-"CVE"
-
-#: ../dnf/cli/option_parser.py:324
-msgid "Include security relevant packages matching the severity, in updates"
-msgstr ""
-"Включать в обновления пакеты, связанные с безопасностью, с указанным уровнем"
-" опасности"
-
-#: ../dnf/cli/option_parser.py:330
-msgid "Force the use of an architecture"
-msgstr "Принудительно использовать архитектуру"
-
-#: ../dnf/cli/option_parser.py:365
-msgid "List of Main Commands:"
-msgstr "Список основных команд:"
-
-#: ../dnf/cli/option_parser.py:366
-msgid "List of Plugin Commands:"
-msgstr "Список команд подключаемых модулей:"
-
-#: ../dnf/cli/main.py:57 ../dnf/automatic/main.py:266
+#: ../dnf/automatic/main.py:266 ../dnf/cli/main.py:57
 #, python-format
 msgid "Error: %s"
 msgstr "Ошибка: %s"
 
-#: ../dnf/cli/main.py:79
-msgid "Terminated."
-msgstr "Останов процесса."
+#: ../dnf/base.py:145
+msgid "loading repo '{}' failure: {}"
+msgstr "при загрузке репозитория «{}» произошел сбой: {}"
 
-#: ../dnf/cli/main.py:109
-msgid "No read/execute access in current directory, moving to /"
+#: ../dnf/base.py:147
+msgid "Loading repository '{}' has failed"
+msgstr "Не удалось загрузить репозиторий «{}»"
+
+#: ../dnf/base.py:334
+msgid "Metadata timer caching disabled when running on metered connection."
 msgstr ""
-"Отсутствуют права на чтение/запуск в данном каталоге, будет использован "
-"корневой каталог \"/\""
+"Таймер кэширования метаданных отключен при работе через тарифицируемое "
+"подключение."
 
-#: ../dnf/cli/main.py:128
-msgid "try to add '{}' to command line to replace conflicting packages"
+#: ../dnf/base.py:339
+msgid "Metadata timer caching disabled when running on a battery."
+msgstr "Таймер кэширования метаданных отключен при работе от батареи."
+
+#: ../dnf/base.py:344
+msgid "Metadata timer caching disabled."
+msgstr "Таймер кэширования метаданных отключен."
+
+#: ../dnf/base.py:349
+msgid "Metadata cache refreshed recently."
+msgstr "Кэш метаданных недавно обновлен."
+
+#: ../dnf/base.py:355 ../dnf/cli/commands/__init__.py:100
+msgid "There are no enabled repositories in \"{}\"."
 msgstr ""
 
-#: ../dnf/cli/main.py:132
-msgid "try to add '{}' to skip uninstallable packages"
+#: ../dnf/base.py:362
+#, python-format
+msgid "%s: will never be expired and will not be refreshed."
+msgstr "%s: никогда не истечет и не будет обновляться"
+
+#: ../dnf/base.py:364
+#, python-format
+msgid "%s: has expired and will be refreshed."
+msgstr "%s: истекло и будет обновляться."
+
+#. expires within the checking period:
+#: ../dnf/base.py:368
+#, python-format
+msgid "%s: metadata will expire after %d seconds and will be refreshed now"
+msgstr "%s: метаданные истекают через %d секунд сейчас будут обновляться"
+
+#: ../dnf/base.py:372
+#, python-format
+msgid "%s: will expire after %d seconds."
+msgstr "%s: истекает через %d секунд."
+
+#. performs the md sync
+#: ../dnf/base.py:378
+msgid "Metadata cache created."
+msgstr "Создан кэш метаданных."
+
+#: ../dnf/base.py:411
+#, python-format
+msgid "%s: using metadata from %s."
+msgstr "%s: используются метаданные из %s."
+
+#: ../dnf/base.py:422
+#, python-format
+msgid "Ignoring repositories: %s"
+msgstr "Игнорируется репозиториев: %s"
+
+#: ../dnf/base.py:425
+#, python-format
+msgid "Last metadata expiration check: %s ago on %s."
+msgstr "Последняя проверка окончания срока действия метаданных: %s назад, %s."
+
+#: ../dnf/base.py:455
+msgid ""
+"The downloaded packages were saved in cache until the next successful "
+"transaction."
 msgstr ""
+"Загруженные пакеты были сохранены в кэше до следующей успешной транзакции."
 
-#: ../dnf/cli/main.py:135
-msgid " or '{}' to skip uninstallable packages"
+#: ../dnf/base.py:457
+#, python-format
+msgid "You can remove cached packages by executing '%s'."
+msgstr "Вы можете удалить кэшированные пакеты, выполнив «%s»."
+
+#: ../dnf/base.py:546
+#, python-format
+msgid "Invalid tsflag in config file: %s"
+msgstr "Неверный tsflag в файле настроек: %s"
+
+#: ../dnf/base.py:602
+#, python-format
+msgid "Failed to add groups file for repository: %s - %s"
+msgstr "Ошибка добавления файла групп для репозитория: %s — %s"
+
+#: ../dnf/base.py:826
+msgid "Running transaction check"
+msgstr "Проверка транзакции"
+
+#: ../dnf/base.py:837
+msgid "Error: transaction check vs depsolve:"
+msgstr "Ошибка: проверка транзакции на разрешение зависимостей:"
+
+#: ../dnf/base.py:843
+msgid "Transaction check succeeded."
+msgstr "Проверка транзакции успешно завершена."
+
+#: ../dnf/base.py:846
+msgid "Running transaction test"
+msgstr "Идет проверка транзакции"
+
+#: ../dnf/base.py:856
+msgid "Transaction check error:"
+msgstr "Ошибка при проверке транзакции:"
+
+#: ../dnf/base.py:863
+msgid "Transaction test succeeded."
+msgstr "Тест транзакции проведен успешно"
+
+#: ../dnf/base.py:878
+msgid "Running transaction"
+msgstr "Выполнение транзакции"
+
+#: ../dnf/base.py:906
+msgid "Disk Requirements:"
+msgstr "Требования к диску:"
+
+#: ../dnf/base.py:909
+#, python-format
+msgid "At least %dMB more space needed on the %s filesystem."
+msgid_plural "At least %dMB more space needed on the %s filesystem."
+msgstr[0] ""
+"Требуется по крайней мере еще %d МБ пространства в файловой системе %s."
+msgstr[1] ""
+"Требуется по крайней мере еще %d МБ пространства в файловой системе %s."
+msgstr[2] ""
+"Требуется по крайней мере еще %d МБ пространства в файловой системе %s."
+
+#: ../dnf/base.py:913
+msgid "Error Summary"
+msgstr "Сводка ошибок"
+
+#: ../dnf/base.py:939
+msgid "RPMDB altered outside of DNF."
+msgstr "RPMDB изменена вне DNF."
+
+#: ../dnf/base.py:996
+msgid "Errors occurred during transaction."
+msgstr "Во время транзакции возникли ошибки."
+
+#: ../dnf/base.py:1000
+#, python-format
+msgid "Failed to obtain the transaction lock (logged in as: %s)."
+msgstr "Не удалось получить блокировку транзакции (добавлено в журнал: %s)."
+
+#. should this be 'to_unicoded'?
+#: ../dnf/base.py:1003 ../dnf/base.py:1013
+msgid "Could not run transaction."
+msgstr "Не удалось запустить транзакцию."
+
+#: ../dnf/base.py:1010
+msgid "Transaction couldn't start:"
+msgstr "Не удалось начать транзакцию:"
+
+#: ../dnf/base.py:1022
+#, python-format
+msgid "Failed to remove transaction file %s"
+msgstr "Не удалось удалить файл транзакции %s"
+
+#: ../dnf/base.py:1104
+msgid "Some packages were not downloaded. Retrying."
+msgstr "Некоторые пакеты не были загружены. Повторная попытка."
+
+#: ../dnf/base.py:1134
+#, python-format
+msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
+msgstr "Delta RPM уменьшил %.1f МБ обновлений до %.1f МБ (%d.1%% сохранено)"
+
+#: ../dnf/base.py:1137
+#, python-format
+msgid ""
+"Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
 msgstr ""
+"Сбой Delta RPM привел к увеличению %.1f МБ обновлений до %.1f МБ (%d.1%% "
+"потрачено)"
 
-#: ../dnf/cli/main.py:140
-msgid "try to add '{}' to use not only best candidate packages"
+#: ../dnf/base.py:1186
+msgid "Could not open: {}"
+msgstr "Не удалось открыть: {}"
+
+#: ../dnf/base.py:1224
+#, python-format
+msgid "Public key for %s is not installed"
+msgstr "Публичный ключ для %s не установлен"
+
+#: ../dnf/base.py:1228
+#, python-format
+msgid "Problem opening package %s"
+msgstr "Проблема открытия пакета %s"
+
+#: ../dnf/base.py:1236
+#, python-format
+msgid "Public key for %s is not trusted"
+msgstr "Публичный ключ для %s не заслуживает доверия"
+
+#: ../dnf/base.py:1240
+#, python-format
+msgid "Package %s is not signed"
+msgstr "Пакет %s не подписан"
+
+#: ../dnf/base.py:1255
+#, python-format
+msgid "Cannot remove %s"
+msgstr "Не удается удалить %s"
+
+#: ../dnf/base.py:1259
+#, python-format
+msgid "%s removed"
+msgstr "%s удален(ы)"
+
+#: ../dnf/base.py:1537
+msgid "No match for group package \"{}\""
+msgstr "Нет соответствия для группового пакета «{}»"
+
+#: ../dnf/base.py:1622
+#, python-format
+msgid "Adding packages from group '%s': %s"
+msgstr "Добавление пакетов из группы «%s»: %s"
+
+#: ../dnf/base.py:1646 ../dnf/cli/cli.py:200
+#: ../dnf/cli/commands/__init__.py:444 ../dnf/cli/commands/__init__.py:501
+#: ../dnf/cli/commands/__init__.py:594 ../dnf/cli/commands/__init__.py:643
+#: ../dnf/cli/commands/install.py:80 ../dnf/cli/commands/install.py:103
+#: ../dnf/cli/commands/install.py:110
+msgid "Nothing to do."
+msgstr "Отсутствуют действия для выполнения"
+
+#: ../dnf/base.py:1663
+msgid "No groups marked for removal."
+msgstr "Нет групп, помеченных для удаления."
+
+#: ../dnf/base.py:1682
+msgid "No group marked for upgrade."
+msgstr "Не отмечена группа для обновления."
+
+#: ../dnf/base.py:1820 ../dnf/base.py:1895 ../dnf/base.py:1914
+#: ../dnf/base.py:1927 ../dnf/base.py:1948 ../dnf/base.py:1998
+#: ../dnf/base.py:2006 ../dnf/base.py:2055 ../dnf/base.py:2144
+#: ../dnf/cli/cli.py:393 ../dnf/cli/commands/__init__.py:427
+#: ../dnf/cli/commands/__init__.py:484 ../dnf/cli/commands/__init__.py:588
+#: ../dnf/cli/commands/__init__.py:635 ../dnf/cli/commands/__init__.py:678
+#: ../dnf/cli/commands/__init__.py:713 ../dnf/cli/commands/install.py:147
+#: ../dnf/cli/commands/install.py:179 ../dnf/cli/commands/reinstall.py:70
+#: ../dnf/cli/commands/reinstall.py:84 ../dnf/cli/commands/remove.py:150
+#: ../dnf/cli/commands/upgrade.py:110 ../dnf/cli/commands/upgrade.py:121
+#, python-format
+msgid "No match for argument: %s"
+msgstr "Отсутствуют совпадения для аргумента: %s"
+
+#: ../dnf/base.py:1867 ../dnf/base.py:1878 ../dnf/base.py:2241
+msgid "no package matched"
+msgstr "нет подходящего пакета"
+
+#: ../dnf/base.py:1893
+#, python-format
+msgid "Package %s not installed, cannot downgrade it."
+msgstr "Пакет %s не установлен, нельзя произвести откат версии."
+
+#: ../dnf/base.py:1902
+#, python-format
+msgid "Package %s of lower version already installed, cannot downgrade it."
+msgstr "Пакет %s версией ниже уже установлен, нельзя произвести откат версии."
+
+#: ../dnf/base.py:1925
+#, python-format
+msgid "Package %s not installed, cannot reinstall it."
+msgstr "Пакет %s не установлен, нельзя произвести переустановку."
+
+#: ../dnf/base.py:1940
+#, python-format
+msgid "File %s is a source package and cannot be updated, ignoring."
 msgstr ""
+"Файл %s является исходным пакетом и не может быть обновлен, пропускается."
 
-#: ../dnf/cli/main.py:143
-msgid " or '{}' to use not only best candidate packages"
+#: ../dnf/base.py:1946
+#, python-format
+msgid "Package %s not installed, cannot update it."
+msgstr "Пакет %s не установлен, нельзя произвести обновление."
+
+#: ../dnf/base.py:1955
+#, python-format
+msgid "Package %s of higher version already installed, cannot update it."
 msgstr ""
+"Пакет %s более новой версии уже установлен, нельзя произвести обновление."
 
-#: ../dnf/cli/main.py:160
-msgid "Dependencies resolved."
-msgstr "Зависимости разрешены."
+#: ../dnf/base.py:1995 ../dnf/cli/commands/reinstall.py:81
+#, python-format
+msgid "Package %s available, but not installed."
+msgstr "Пакет %s есть, но не установлен."
 
-#: ../dnf/cli/main.py:178
-msgid "Complete!"
-msgstr "Выполнено!"
+#: ../dnf/base.py:2001
+#, python-format
+msgid "Package %s available, but installed for different architecture."
+msgstr "Пакет %s есть, но  установлен для другой архитектуры."
+
+#: ../dnf/base.py:2026 ../dnf/base.py:2222 ../dnf/cli/cli.py:651
+#: ../dnf/cli/cli.py:682
+#, python-format
+msgid "No package %s installed."
+msgstr "Пакет %s не был установлен."
+
+#: ../dnf/base.py:2044 ../dnf/cli/commands/install.py:136
+#: ../dnf/cli/commands/remove.py:126
+#, python-format
+msgid "Not a valid form: %s"
+msgstr "Неправильная форма: %s"
+
+#: ../dnf/base.py:2061 ../dnf/cli/commands/__init__.py:683
+#: ../dnf/cli/commands/remove.py:156
+msgid "No packages marked for removal."
+msgstr "Нет пакетов, помеченных для удаления."
+
+#: ../dnf/base.py:2151 ../dnf/cli/cli.py:405
+#, python-format
+msgid "Packages for argument %s available, but not installed."
+msgstr "Пакеты для аргумента %s доступны, но не установлены."
+
+#: ../dnf/base.py:2156
+#, python-format
+msgid "Package %s of lowest version already installed, cannot downgrade it."
+msgstr "Пакет %s самой старой версии уже установлен, нельзя произвести откат."
+
+#: ../dnf/base.py:2214
+msgid "Action not handled: {}"
+msgstr "Действие не обрабатывается: {}"
+
+#: ../dnf/base.py:2228 ../dnf/cli/cli.py:402 ../dnf/cli/cli.py:656
+#: ../dnf/cli/cli.py:686 ../dnf/cli/commands/__init__.py:372
+#: ../dnf/cli/commands/__init__.py:889 ../dnf/cli/commands/group.py:386
+#, python-format
+msgid "No package %s available."
+msgstr "Нет пакета %s."
+
+#: ../dnf/base.py:2262
+msgid "No security updates needed, but {} update available"
+msgstr "Не требуются обновления безопасности, но обновление {} имеется"
+
+#: ../dnf/base.py:2264
+msgid "No security updates needed, but {} updates available"
+msgstr "Не требуются обновления безопасности, но обновления {} имеются"
+
+#: ../dnf/base.py:2268
+msgid "No security updates needed for \"{}\", but {} update available"
+msgstr ""
+"Для «{}» не требуются обновления безопасности, но обновление {} имеется"
+
+#: ../dnf/base.py:2270
+msgid "No security updates needed for \"{}\", but {} updates available"
+msgstr ""
+"Для «{}» не требуются обновления безопасности, но обновления {} имеются"
+
+#: ../dnf/base.py:2294
+#, python-format
+msgid ". Failing package is: %s"
+msgstr ". Сбойный пакет: %s"
+
+#: ../dnf/base.py:2295
+#, python-format
+msgid "GPG Keys are configured as: %s"
+msgstr "Ключи GPG настроены как: %s"
+
+#: ../dnf/base.py:2307
+#, python-format
+msgid "GPG key at %s (0x%s) is already installed"
+msgstr "GPG ключ %s (0x%s) уже установлен"
+
+#: ../dnf/base.py:2340
+msgid "The key has been approved."
+msgstr "Ключ принят."
+
+#: ../dnf/base.py:2343
+msgid "The key has been rejected."
+msgstr "Ключ отклонен."
+
+#: ../dnf/base.py:2371
+#, python-format
+msgid "Key import failed (code %d)"
+msgstr "Неудача импорта ключа (code %d)"
+
+#: ../dnf/base.py:2373
+msgid "Key imported successfully"
+msgstr "Импорт ключа успешно завершен"
+
+#: ../dnf/base.py:2377
+msgid "Didn't install any keys"
+msgstr "Не установлены какие-либо ключи"
+
+#: ../dnf/base.py:2380
+#, python-format
+msgid ""
+"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
+"Check that the correct key URLs are configured for this repository."
+msgstr ""
+"GPG ключи, перечисленные для репозитория «%s», уже установлены, но они не являются правильными для этого пакета.\n"
+"Проверьте, правильно ли настроены URL ключей для этого репозитория."
+
+#: ../dnf/base.py:2391
+msgid "Import of key(s) didn't help, wrong key(s)?"
+msgstr "Импорт ключа(ключей) не помог, неверный ключ(ключи)?"
+
+#: ../dnf/base.py:2427
+msgid "  * Maybe you meant: {}"
+msgstr "  * Возможно, вы имели в виду: {}"
+
+#: ../dnf/base.py:2459
+msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
+msgstr ""
+"У пакета «{}» из локального репозитория «{}» неправильная контрольная сумма"
+
+#: ../dnf/base.py:2462
+msgid "Some packages from local repository have incorrect checksum"
+msgstr ""
+"У некоторых пакетов из локального репозитория неправильная контрольная сумма"
+
+#: ../dnf/base.py:2465
+msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
+msgstr "У пакета «{}» из репозитория «{}» неправильная контрольная сумма"
+
+#: ../dnf/base.py:2468
+msgid ""
+"Some packages have invalid cache, but cannot be downloaded due to \"--"
+"cacheonly\" option"
+msgstr ""
+"У некоторых пакетов неправильный кеш, но они не загружаются из-за параметра "
+"«--cacheonly»"
+
+#: ../dnf/base.py:2480
+#, python-format
+msgid "Package %s is already installed."
+msgstr "Пакет %s уже установлен."
+
+#: ../dnf/cli/aliases.py:96
+#, python-format
+msgid "Unexpected value of environment variable: DNF_DISABLE_ALIASES=%s"
+msgstr "Непредвиденное значение переменной окружения: DNF_DISABLE_ALIASES=%s"
+
+#: ../dnf/cli/aliases.py:105 ../dnf/conf/config.py:412 ../dnf/conf/read.py:83
+#, python-format
+msgid "Parsing file \"%s\" failed: %s"
+msgstr "При разборе файла «%s» произошла ошибка: %s"
+
+#: ../dnf/cli/aliases.py:108
+#, python-format
+msgid "Cannot read file \"%s\": %s"
+msgstr "Не удалось прочитать файл «%s»: %s"
+
+#: ../dnf/cli/aliases.py:115 ../dnf/cli/aliases.py:128 ../dnf/cli/cli.py:877
+#: ../dnf/cli/cli.py:881 ../dnf/cli/commands/alias.py:105
+#, python-format
+msgid "Config error: %s"
+msgstr "Ошибка конфигурации: %s"
+
+#: ../dnf/cli/aliases.py:185
+msgid "Aliases contain infinite recursion"
+msgstr "Псевдонимы могут содержать бесконечную рекурсию"
+
+#: ../dnf/cli/aliases.py:203
+#, python-format
+msgid "%s, using original arguments."
+msgstr "%s, используются первоначальные аргументы."
 
 #: ../dnf/cli/cli.py:136
 #, python-format
@@ -1202,14 +586,6 @@ msgstr ""
 #: ../dnf/cli/cli.py:198
 msgid "Operation aborted."
 msgstr "Операция отменена"
-
-#: ../dnf/cli/cli.py:200 ../dnf/cli/commands/__init__.py:445
-#: ../dnf/cli/commands/__init__.py:502 ../dnf/cli/commands/__init__.py:595
-#: ../dnf/cli/commands/__init__.py:644 ../dnf/cli/commands/install.py:80
-#: ../dnf/cli/commands/install.py:103 ../dnf/cli/commands/install.py:110
-#: ../dnf/base.py:1638
-msgid "Nothing to do."
-msgstr "Отсутствуют действия для выполнения"
 
 #: ../dnf/cli/cli.py:205
 msgid "Downloading Packages:"
@@ -1246,32 +622,6 @@ msgstr "Исключение пакетов"
 #: ../dnf/cli/cli.py:374
 msgid "No packages marked for distribution synchronization."
 msgstr "Отсутствуют пакеты, помеченные для синхронизации дистрибутивов."
-
-#: ../dnf/cli/cli.py:393 ../dnf/cli/commands/upgrade.py:110
-#: ../dnf/cli/commands/upgrade.py:121 ../dnf/cli/commands/__init__.py:428
-#: ../dnf/cli/commands/__init__.py:485 ../dnf/cli/commands/__init__.py:589
-#: ../dnf/cli/commands/__init__.py:636 ../dnf/cli/commands/__init__.py:679
-#: ../dnf/cli/commands/__init__.py:714 ../dnf/cli/commands/remove.py:150
-#: ../dnf/cli/commands/install.py:147 ../dnf/cli/commands/install.py:179
-#: ../dnf/cli/commands/reinstall.py:70 ../dnf/cli/commands/reinstall.py:84
-#: ../dnf/base.py:1812 ../dnf/base.py:1887 ../dnf/base.py:1906
-#: ../dnf/base.py:1919 ../dnf/base.py:1940 ../dnf/base.py:1990
-#: ../dnf/base.py:1998 ../dnf/base.py:2047 ../dnf/base.py:2136
-#, python-format
-msgid "No match for argument: %s"
-msgstr "Отсутствуют совпадения для аргумента: %s"
-
-#: ../dnf/cli/cli.py:402 ../dnf/cli/cli.py:656 ../dnf/cli/cli.py:686
-#: ../dnf/cli/commands/__init__.py:373 ../dnf/cli/commands/__init__.py:890
-#: ../dnf/cli/commands/group.py:386 ../dnf/base.py:2211
-#, python-format
-msgid "No package %s available."
-msgstr "Нет пакета %s."
-
-#: ../dnf/cli/cli.py:405 ../dnf/base.py:2143
-#, python-format
-msgid "Packages for argument %s available, but not installed."
-msgstr "Пакеты для аргумента %s доступны, но не установлены."
 
 #: ../dnf/cli/cli.py:411
 msgid "No packages marked for downgrade."
@@ -1331,56 +681,44 @@ msgstr "Неполная история транзакций, до %u."
 msgid "Transaction history is incomplete, after %u."
 msgstr "Неполная история транзакций, после %u."
 
-#: ../dnf/cli/cli.py:651 ../dnf/cli/cli.py:682 ../dnf/base.py:2018
-#: ../dnf/base.py:2205
-#, python-format
-msgid "No package %s installed."
-msgstr "Пакет %s не был установлен."
-
 #: ../dnf/cli/cli.py:672
 msgid "Undoing transaction {}, from {}"
 msgstr "Откат транзакции {}, с {}"
 
-#: ../dnf/cli/cli.py:751 ../dnf/cli/commands/shell.py:230
+#: ../dnf/cli/cli.py:752 ../dnf/cli/commands/shell.py:230
 #, python-format
 msgid "Unknown repo: '%s'"
 msgstr "Неизвестный репозиторий: «%s»"
 
-#: ../dnf/cli/cli.py:765
+#: ../dnf/cli/cli.py:766
 #, python-format
 msgid "No repository match: %s"
 msgstr "Нет соответствующих репозиториев: %s"
 
-#: ../dnf/cli/cli.py:794
+#: ../dnf/cli/cli.py:795
 msgid "This command has to be run under the root user."
 msgstr "Эта команда должны быть выполнена от имени пользователя root."
 
-#: ../dnf/cli/cli.py:823
+#: ../dnf/cli/cli.py:824
 #, python-format
 msgid "No such command: %s. Please use %s --help"
 msgstr "Не найдена команда: %s . Воспользуйтесь %s --help"
 
-#: ../dnf/cli/cli.py:826
+#: ../dnf/cli/cli.py:827
 #, python-format
 msgid "It could be a DNF plugin command, try: \"dnf install 'dnf-command(%s)'\""
 msgstr ""
 "Это может быть команда модуля DNF, попробуйте: \"dnf install 'dnf-"
 "command(%s)'\""
 
-#: ../dnf/cli/cli.py:829
+#: ../dnf/cli/cli.py:830
 msgid ""
 "It could be a DNF plugin command, but loading of plugins is currently "
 "disabled."
 msgstr ""
 "Это может быть команда модуля DNF, но загрузка модулей сейчас отключена."
 
-#: ../dnf/cli/cli.py:876 ../dnf/cli/cli.py:880 ../dnf/cli/aliases.py:115
-#: ../dnf/cli/aliases.py:128 ../dnf/cli/commands/alias.py:105
-#, python-format
-msgid "Config error: %s"
-msgstr "Ошибка конфигурации: %s"
-
-#: ../dnf/cli/cli.py:886
+#: ../dnf/cli/cli.py:887
 msgid ""
 "--destdir or --downloaddir must be used with --downloadonly or download or "
 "system-upgrade command."
@@ -1388,7 +726,7 @@ msgstr ""
 "--destdir или -downloaddir должны использоваться с --downloadonly или с "
 "командой download или system-upgrade."
 
-#: ../dnf/cli/cli.py:892
+#: ../dnf/cli/cli.py:893
 msgid ""
 "--enable, --set-enabled and --disable, --set-disabled must be used with "
 "config-manager command."
@@ -1396,13 +734,17 @@ msgstr ""
 "--enable, --set-enabled и --disable, --set-disabled должны использоваться "
 "вместе с командой config-manager."
 
-#: ../dnf/cli/cli.py:974
+#: ../dnf/cli/cli.py:975
 msgid ""
 "Warning: Enforcing GPG signature check globally as per active RPM security "
 "policy (see 'gpgcheck' in dnf.conf(5) for how to squelch this message)"
 msgstr ""
 
-#: ../dnf/cli/cli.py:1003
+#: ../dnf/cli/cli.py:992
+msgid "Config file \"{}\" does not exist"
+msgstr ""
+
+#: ../dnf/cli/cli.py:1010
 msgid ""
 "Unable to detect release version (use '--releasever' to specify release "
 "version)"
@@ -1410,105 +752,250 @@ msgstr ""
 "Не удается определить  версию выпуска (используйте '--releasever' для "
 "задания версии выпуска)"
 
-#: ../dnf/cli/cli.py:1089 ../dnf/cli/commands/repoquery.py:413
+#: ../dnf/cli/cli.py:1096 ../dnf/cli/commands/repoquery.py:413
 msgid "argument {}: not allowed with argument {}"
 msgstr "аргумент {}: не допускается с аргументом {}"
 
-#: ../dnf/cli/cli.py:1096
+#: ../dnf/cli/cli.py:1103
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "Команда \"%s\" уже определена"
 
-#: ../dnf/cli/cli.py:1116
+#: ../dnf/cli/cli.py:1123
 msgid "Excludes in dnf.conf: "
 msgstr "Исключения из dnf.conf: "
 
-#: ../dnf/cli/cli.py:1119
+#: ../dnf/cli/cli.py:1126
 msgid "Includes in dnf.conf: "
 msgstr "Включения в dnf.conf: "
 
-#: ../dnf/cli/cli.py:1122
+#: ../dnf/cli/cli.py:1129
 msgid "Excludes in repo "
 msgstr "Исключения из репозитория "
 
-#: ../dnf/cli/cli.py:1125
+#: ../dnf/cli/cli.py:1132
 msgid "Includes in repo "
 msgstr "Включения в репозиторий "
 
-#: ../dnf/cli/aliases.py:96
+#: ../dnf/cli/commands/__init__.py:47
 #, python-format
-msgid "Unexpected value of environment variable: DNF_DISABLE_ALIASES=%s"
-msgstr "Непредвиденное значение переменной окружения: DNF_DISABLE_ALIASES=%s"
+msgid "To diagnose the problem, try running: '%s'."
+msgstr "Для проведения диагностики, попробуйте выполнить: «%s»."
 
-#: ../dnf/cli/aliases.py:105 ../dnf/conf/config.py:412 ../dnf/conf/read.py:83
+#: ../dnf/cli/commands/__init__.py:49
 #, python-format
-msgid "Parsing file \"%s\" failed: %s"
-msgstr "При разборе файла «%s» произошла ошибка: %s"
-
-#: ../dnf/cli/aliases.py:108
-#, python-format
-msgid "Cannot read file \"%s\": %s"
-msgstr "Не удалось прочитать файл «%s»: %s"
-
-#: ../dnf/cli/aliases.py:185
-msgid "Aliases contain infinite recursion"
-msgstr "Псевдонимы могут содержать бесконечную рекурсию"
-
-#: ../dnf/cli/aliases.py:203
-#, python-format
-msgid "%s, using original arguments."
-msgstr "%s, используются первоначальные аргументы."
-
-#: ../dnf/cli/utils.py:98
-msgid "Running"
-msgstr "Работает"
-
-#: ../dnf/cli/utils.py:99
-msgid "Sleeping"
-msgstr "Ожидание"
-
-#: ../dnf/cli/utils.py:100
-msgid "Uninterruptible"
-msgstr "Непрерываемый"
-
-#: ../dnf/cli/utils.py:101
-msgid "Zombie"
-msgstr "Зомби"
-
-#: ../dnf/cli/utils.py:102
-msgid "Traced/Stopped"
-msgstr "Трассировано/Остановлено"
-
-#: ../dnf/cli/utils.py:103
-msgid "Unknown"
-msgstr "Неизвестно"
-
-#: ../dnf/cli/utils.py:113
-#, python-format
-msgid "Unable to find information about the locking process (PID %d)"
+msgid "You probably have corrupted RPMDB, running '%s' might fix the issue."
 msgstr ""
-"Невозможно найти информацию о блокирующем процессе (идентификатор процесса "
-"%d)"
+"Вероятно у вас повреждена RPMDB, запуск «%s» может исправить эту проблему."
 
-#: ../dnf/cli/utils.py:117
-#, python-format
-msgid "  The application with PID %d is: %s"
-msgstr "  Приложение с идентификатором процесса %d: %s"
+#: ../dnf/cli/commands/__init__.py:53
+msgid ""
+"You have enabled checking of packages via GPG keys. This is a good thing.\n"
+"However, you do not have any GPG public keys installed. You need to download\n"
+"the keys for packages you wish to install and install them.\n"
+"You can do that by running the command:\n"
+"    rpm --import public.gpg.key\n"
+"\n"
+"\n"
+"Alternatively you can specify the url to the key you would like to use\n"
+"for a repository in the 'gpgkey' option in a repository section and DNF\n"
+"will install it for you.\n"
+"\n"
+"For more information contact your distribution or package provider."
+msgstr ""
+"У вас включена проверка пакетов посредством ключей GPG. Это хорошо.\n"
+"Однако, нет установленных публичных ключей GPG. Следует загрузить\n"
+"ключи для устанавливаемых пакетов и установить их.\n"
+"Можно сделать это запуском команды:\n"
+"    rpm --import public.gpg.key\n"
+"\n"
+"\n"
+"В качестве альтернативы можно указать URL ключа, который нужно\n"
+"использовать для репозитория посредством параметра «gpgkey» в\n"
+"разделе репозитория, и DNF установит его.\n"
+"\n"
+"Для получения дополнительной информации свяжитесь с поставщиком дистрибутива или пакета."
 
-#: ../dnf/cli/utils.py:120
+#: ../dnf/cli/commands/__init__.py:80
 #, python-format
-msgid "    Memory : %5s RSS (%5sB VSZ)"
-msgstr "    Память   : %5s RSS (%5sB VSZ)"
+msgid "Problem repository: %s"
+msgstr "Проблема с репозиторием: %s"
 
-#: ../dnf/cli/utils.py:125
-#, python-format
-msgid "    Started: %s - %s ago"
-msgstr "    Запущено : %s — %s назад"
+#: ../dnf/cli/commands/__init__.py:163
+msgid "display details about a package or group of packages"
+msgstr "отобразить информацию о пакете или группе пакетов"
 
-#: ../dnf/cli/utils.py:127
+#: ../dnf/cli/commands/__init__.py:173 ../dnf/cli/commands/__init__.py:752
+msgid "show all packages (default)"
+msgstr "показывать все пакеты (по умолчанию)"
+
+#: ../dnf/cli/commands/__init__.py:176 ../dnf/cli/commands/__init__.py:755
+msgid "show only available packages"
+msgstr "показывать только имеющиеся пакеты"
+
+#: ../dnf/cli/commands/__init__.py:179 ../dnf/cli/commands/__init__.py:758
+msgid "show only installed packages"
+msgstr "показывать только установленные пакеты"
+
+#: ../dnf/cli/commands/__init__.py:182 ../dnf/cli/commands/__init__.py:761
+msgid "show only extras packages"
+msgstr "показывать только дополнительные пакеты"
+
+#: ../dnf/cli/commands/__init__.py:185 ../dnf/cli/commands/__init__.py:188
+#: ../dnf/cli/commands/__init__.py:764 ../dnf/cli/commands/__init__.py:767
+msgid "show only upgrades packages"
+msgstr "показывать только пакеты с обновлениями"
+
+#: ../dnf/cli/commands/__init__.py:191 ../dnf/cli/commands/__init__.py:770
+msgid "show only autoremove packages"
+msgstr "показывать только пакеты с автоудалением"
+
+#: ../dnf/cli/commands/__init__.py:194 ../dnf/cli/commands/__init__.py:773
+msgid "show only recently changed packages"
+msgstr "показывать только недавно измененные пакеты"
+
+#: ../dnf/cli/commands/__init__.py:195 ../dnf/cli/commands/__init__.py:268
+#: ../dnf/cli/commands/__init__.py:774 ../dnf/cli/commands/autoremove.py:48
+#: ../dnf/cli/commands/install.py:51 ../dnf/cli/commands/reinstall.py:44
+#: ../dnf/cli/commands/remove.py:61 ../dnf/cli/commands/upgrade.py:46
+msgid "PACKAGE"
+msgstr "ПАКЕТ"
+
+#: ../dnf/cli/commands/__init__.py:225
+msgid "list a package or groups of packages"
+msgstr "вывести список пакетов или групп пакетов"
+
+#: ../dnf/cli/commands/__init__.py:239
+msgid "find what package provides the given value"
+msgstr "найти пакет по заданному значению"
+
+#: ../dnf/cli/commands/__init__.py:243
+msgid "SOME_STRING"
+msgstr "ОБРАЗЕЦ_СТРОКИ"
+
+#: ../dnf/cli/commands/__init__.py:252 ../dnf/cli/commands/search.py:151
+msgid "Searching Packages: "
+msgstr "Поиск пакетов: "
+
+#: ../dnf/cli/commands/__init__.py:261
+msgid "check for available package upgrades"
+msgstr "проверить доступные обновления для пакетов"
+
+#: ../dnf/cli/commands/__init__.py:267
+msgid "show changelogs before update"
+msgstr "перед обновлением показывать журналы изменений"
+
+#: ../dnf/cli/commands/__init__.py:363 ../dnf/cli/commands/__init__.py:416
+#: ../dnf/cli/commands/__init__.py:472
+msgid "No package available."
+msgstr "Нет пакетов."
+
+#: ../dnf/cli/commands/__init__.py:378
+msgid "No packages marked for install."
+msgstr "Нет пакетов, помеченных для установки."
+
+#: ../dnf/cli/commands/__init__.py:414
+msgid "No package installed."
+msgstr "Пакеты не были установлены."
+
+#: ../dnf/cli/commands/__init__.py:434 ../dnf/cli/commands/__init__.py:491
+#: ../dnf/cli/commands/reinstall.py:91
 #, python-format
-msgid "    State  : %s"
-msgstr "    Статус : %s"
+msgid " (from %s)"
+msgstr " (из %s)"
+
+#: ../dnf/cli/commands/__init__.py:435 ../dnf/cli/commands/__init__.py:492
+#: ../dnf/cli/commands/reinstall.py:92 ../dnf/cli/commands/remove.py:104
+#, python-format
+msgid "Installed package %s%s not available."
+msgstr "Установленный пакет %s%s недоступен."
+
+#: ../dnf/cli/commands/__init__.py:469 ../dnf/cli/commands/__init__.py:578
+#: ../dnf/cli/commands/__init__.py:621 ../dnf/cli/commands/__init__.py:668
+msgid "No package installed from the repository."
+msgstr "Пакеты не были установлены из репозитория."
+
+#: ../dnf/cli/commands/__init__.py:532 ../dnf/cli/commands/reinstall.py:101
+msgid "No packages marked for reinstall."
+msgstr "Нет пакетов, помеченных для переустановки."
+
+#: ../dnf/cli/commands/__init__.py:718 ../dnf/cli/commands/upgrade.py:89
+msgid "No packages marked for upgrade."
+msgstr "Отсутствуют пакеты, помеченные для обновления."
+
+#: ../dnf/cli/commands/__init__.py:728
+msgid "run commands on top of all packages in given repository"
+msgstr "выполнить команды над всеми пакетами заданного репозитория"
+
+#: ../dnf/cli/commands/__init__.py:742
+msgid "REPO"
+msgstr "РЕПОЗИТОРИЙ"
+
+#: ../dnf/cli/commands/__init__.py:800
+msgid "display a helpful usage message"
+msgstr "отобразить подсказку по использованию"
+
+#: ../dnf/cli/commands/__init__.py:804
+msgid "COMMAND"
+msgstr "КОМАНДА"
+
+#: ../dnf/cli/commands/__init__.py:820
+msgid "display, or use, the transaction history"
+msgstr "отобразить (или использовать) историю транзакций"
+
+#: ../dnf/cli/commands/__init__.py:835
+msgid ""
+"Found more than one transaction ID.\n"
+"'{}' requires one transaction ID or package name."
+msgstr ""
+"Найдено более одного идентификатора транзакции.\n"
+"'{}' требует один идентификатор транзакции или имя пакета."
+
+#: ../dnf/cli/commands/__init__.py:842
+msgid "No transaction ID or package name given."
+msgstr "Не задан идентификатор транзакции или имя пакета."
+
+#: ../dnf/cli/commands/__init__.py:855
+msgid "You don't have access to the history DB."
+msgstr "Нет доступа к спискам предыдущих действий."
+
+#: ../dnf/cli/commands/__init__.py:867
+#, python-format
+msgid ""
+"Cannot undo transaction %s, doing so would result in an inconsistent package"
+" database."
+msgstr ""
+"Не удается отменить транзакцию %s, поскольку это приведет к нарушениям в "
+"базе данных пакетов."
+
+#: ../dnf/cli/commands/__init__.py:872
+#, python-format
+msgid ""
+"Cannot rollback transaction %s, doing so would result in an inconsistent "
+"package database."
+msgstr ""
+"Не удается откатить транзакцию %s, поскольку это приведет к нарушениям в "
+"базе данных пакетов."
+
+#: ../dnf/cli/commands/__init__.py:942
+msgid ""
+"Invalid transaction ID range definition '{}'.\n"
+"Use '<transaction-id>..<transaction-id>'."
+msgstr ""
+"Неверное определение диапазона идентификатора «{}».\n"
+"Используйте «<transaction-id>..<transaction-id>»."
+
+#: ../dnf/cli/commands/__init__.py:946
+msgid ""
+"Can't convert '{}' to transaction ID.\n"
+"Use '<integer>', 'last', 'last-<positive-integer>'."
+msgstr ""
+"Не удается преобразовать «{}» в идентификатор транзакции.\n"
+"Используйте «<integer>», «last», «last-<positive-integer>»."
+
+#: ../dnf/cli/commands/__init__.py:975
+msgid "No transaction which manipulates package '{}' was found."
+msgstr "Не найдено транзакций, работающих с пакетом «{}»."
 
 #: ../dnf/cli/commands/alias.py:39
 msgid "List or create command aliases"
@@ -1586,45 +1073,15 @@ msgstr "Псевдонимы не определены."
 msgid "No match for alias: %s"
 msgstr "Нет совпадения для псевдонима: %s"
 
-#: ../dnf/cli/commands/search.py:46
-msgid "search package details for the given string"
-msgstr "поиск информации о пакете по заданной строке"
+#: ../dnf/cli/commands/autoremove.py:41
+msgid ""
+"remove all unneeded packages that were originally installed as dependencies"
+msgstr ""
+"удалить все ненужные пакеты, первоначально установленные по зависимостям"
 
-#: ../dnf/cli/commands/search.py:51
-msgid "search also package description and URL"
-msgstr "поиск также описания пакета и URL"
-
-#: ../dnf/cli/commands/search.py:52
-msgid "QUERY_STRING"
-msgstr "СТРОКА_ЗАПРОСА"
-
-#. TRANSLATORS: separator used between package attributes (eg. Name & Summary
-#. & URL)
-#: ../dnf/cli/commands/search.py:75
-msgid " & "
-msgstr " и "
-
-#. TRANSLATORS: %s  - translated package attributes,
-#. %%s - found keys (in listed attributes)
-#: ../dnf/cli/commands/search.py:79
-#, python-format
-msgid "%s Exactly Matched: %%s"
-msgstr "%s точное соответствие: %%s"
-
-#. TRANSLATORS: %s  - translated package attributes,
-#. %%s - found keys (in listed attributes)
-#: ../dnf/cli/commands/search.py:83
-#, python-format
-msgid "%s Matched: %%s"
-msgstr "%s совпадение: %%s"
-
-#: ../dnf/cli/commands/search.py:126
-msgid "No matches found."
-msgstr "Нет совпадений."
-
-#: ../dnf/cli/commands/search.py:151 ../dnf/cli/commands/__init__.py:253
-msgid "Searching Packages: "
-msgstr "Поиск пакетов: "
+#: ../dnf/cli/commands/autoremove.py:46 ../dnf/cli/commands/remove.py:59
+msgid "Package to remove"
+msgstr "Пакет для удаления"
 
 #: ../dnf/cli/commands/check.py:34
 msgid "check for problems in the packagedb"
@@ -1666,6 +1123,44 @@ msgstr "{} замещается {}"
 msgid "{} provides {} but it cannot be found"
 msgstr "{} обеспечивает {}, но не найден"
 
+#: ../dnf/cli/commands/clean.py:68
+#, python-format
+msgid "Removing file %s"
+msgstr "Удаление файла %s"
+
+#: ../dnf/cli/commands/clean.py:87
+msgid "remove cached data"
+msgstr "удалить кэшированные данные"
+
+#: ../dnf/cli/commands/clean.py:93
+msgid "Metadata type to clean"
+msgstr "Тип метаданных для удаления"
+
+#: ../dnf/cli/commands/clean.py:105
+msgid "Cleaning data:  "
+msgstr "Очистка данных:  "
+
+#: ../dnf/cli/commands/clean.py:111
+msgid "Cache was expired"
+msgstr "Неактуальный кеш"
+
+#: ../dnf/cli/commands/clean.py:115
+#, python-format
+msgid "%d file removed"
+msgid_plural "%d files removed"
+msgstr[0] "%d файл удален"
+msgstr[1] "%d файла удалено"
+msgstr[2] "%d файлов удалено"
+
+#: ../dnf/cli/commands/clean.py:119 ../dnf/lock.py:134
+#, python-format
+msgid "Waiting for process with pid %d to finish."
+msgstr "Ожидание завершения процесса с PID %d."
+
+#: ../dnf/cli/commands/deplist.py:32
+msgid "List package's dependencies and what packages provide them"
+msgstr "Показывать список зависимостей пакета и какие пакеты их предоставляют"
+
 #: ../dnf/cli/commands/distrosync.py:32
 msgid "synchronize installed packages to the latest available versions"
 msgstr "обновить установленные пакеты до последних имеющихся версий"
@@ -1673,257 +1168,6 @@ msgstr "обновить установленные пакеты до после
 #: ../dnf/cli/commands/distrosync.py:36
 msgid "Package to synchronize"
 msgstr "Пакет для синхронизации"
-
-#: ../dnf/cli/commands/upgrade.py:40
-msgid "upgrade a package or packages on your system"
-msgstr "обновить пакет или пакеты в системе"
-
-#: ../dnf/cli/commands/upgrade.py:44
-msgid "Package to upgrade"
-msgstr "Пакет для обновления"
-
-#: ../dnf/cli/commands/upgrade.py:46 ../dnf/cli/commands/autoremove.py:48
-#: ../dnf/cli/commands/__init__.py:196 ../dnf/cli/commands/__init__.py:269
-#: ../dnf/cli/commands/__init__.py:775 ../dnf/cli/commands/remove.py:61
-#: ../dnf/cli/commands/install.py:51 ../dnf/cli/commands/reinstall.py:44
-msgid "PACKAGE"
-msgstr "ПАКЕТ"
-
-#: ../dnf/cli/commands/upgrade.py:89 ../dnf/cli/commands/__init__.py:719
-msgid "No packages marked for upgrade."
-msgstr "Отсутствуют пакеты, помеченные для обновления."
-
-#: ../dnf/cli/commands/autoremove.py:41
-msgid ""
-"remove all unneeded packages that were originally installed as dependencies"
-msgstr ""
-"удалить все ненужные пакеты, первоначально установленные по зависимостям"
-
-#: ../dnf/cli/commands/autoremove.py:46 ../dnf/cli/commands/remove.py:59
-msgid "Package to remove"
-msgstr "Пакет для удаления"
-
-#: ../dnf/cli/commands/makecache.py:37
-msgid "generate the metadata cache"
-msgstr "создание кэша метаданных"
-
-#: ../dnf/cli/commands/makecache.py:48
-msgid "Making cache files for all metadata files."
-msgstr "Создание кэша для всех метаданных файлов."
-
-#: ../dnf/cli/commands/__init__.py:47
-#, python-format
-msgid "To diagnose the problem, try running: '%s'."
-msgstr "Для проведения диагностики, попробуйте выполнить: «%s»."
-
-#: ../dnf/cli/commands/__init__.py:49
-#, python-format
-msgid "You probably have corrupted RPMDB, running '%s' might fix the issue."
-msgstr ""
-"Вероятно у вас повреждена RPMDB, запуск «%s» может исправить эту проблему."
-
-#: ../dnf/cli/commands/__init__.py:53
-msgid ""
-"You have enabled checking of packages via GPG keys. This is a good thing.\n"
-"However, you do not have any GPG public keys installed. You need to download\n"
-"the keys for packages you wish to install and install them.\n"
-"You can do that by running the command:\n"
-"    rpm --import public.gpg.key\n"
-"\n"
-"\n"
-"Alternatively you can specify the url to the key you would like to use\n"
-"for a repository in the 'gpgkey' option in a repository section and DNF\n"
-"will install it for you.\n"
-"\n"
-"For more information contact your distribution or package provider."
-msgstr ""
-"У вас включена проверка пакетов посредством ключей GPG. Это хорошо.\n"
-"Однако, нет установленных публичных ключей GPG. Следует загрузить\n"
-"ключи для устанавливаемых пакетов и установить их.\n"
-"Можно сделать это запуском команды:\n"
-"    rpm --import public.gpg.key\n"
-"\n"
-"\n"
-"В качестве альтернативы можно указать URL ключа, который нужно\n"
-"использовать для репозитория посредством параметра «gpgkey» в\n"
-"разделе репозитория, и DNF установит его.\n"
-"\n"
-"Для получения дополнительной информации свяжитесь с поставщиком дистрибутива или пакета."
-
-#: ../dnf/cli/commands/__init__.py:80
-#, python-format
-msgid "Problem repository: %s"
-msgstr "Проблема с репозиторием: %s"
-
-#: ../dnf/cli/commands/__init__.py:101 ../dnf/base.py:356
-msgid "There are no enabled repos."
-msgstr "Отсутствуют настроенные репозитории."
-
-#: ../dnf/cli/commands/__init__.py:164
-msgid "display details about a package or group of packages"
-msgstr "отобразить информацию о пакете или группе пакетов"
-
-#: ../dnf/cli/commands/__init__.py:174 ../dnf/cli/commands/__init__.py:753
-msgid "show all packages (default)"
-msgstr "показывать все пакеты (по умолчанию)"
-
-#: ../dnf/cli/commands/__init__.py:177 ../dnf/cli/commands/__init__.py:756
-msgid "show only available packages"
-msgstr "показывать только имеющиеся пакеты"
-
-#: ../dnf/cli/commands/__init__.py:180 ../dnf/cli/commands/__init__.py:759
-msgid "show only installed packages"
-msgstr "показывать только установленные пакеты"
-
-#: ../dnf/cli/commands/__init__.py:183 ../dnf/cli/commands/__init__.py:762
-msgid "show only extras packages"
-msgstr "показывать только дополнительные пакеты"
-
-#: ../dnf/cli/commands/__init__.py:186 ../dnf/cli/commands/__init__.py:189
-#: ../dnf/cli/commands/__init__.py:765 ../dnf/cli/commands/__init__.py:768
-msgid "show only upgrades packages"
-msgstr "показывать только пакеты с обновлениями"
-
-#: ../dnf/cli/commands/__init__.py:192 ../dnf/cli/commands/__init__.py:771
-msgid "show only autoremove packages"
-msgstr "показывать только пакеты с автоудалением"
-
-#: ../dnf/cli/commands/__init__.py:195 ../dnf/cli/commands/__init__.py:774
-msgid "show only recently changed packages"
-msgstr "показывать только недавно измененные пакеты"
-
-#: ../dnf/cli/commands/__init__.py:226
-msgid "list a package or groups of packages"
-msgstr "вывести список пакетов или групп пакетов"
-
-#: ../dnf/cli/commands/__init__.py:240
-msgid "find what package provides the given value"
-msgstr "найти пакет по заданному значению"
-
-#: ../dnf/cli/commands/__init__.py:244
-msgid "SOME_STRING"
-msgstr "ОБРАЗЕЦ_СТРОКИ"
-
-#: ../dnf/cli/commands/__init__.py:262
-msgid "check for available package upgrades"
-msgstr "проверить доступные обновления для пакетов"
-
-#: ../dnf/cli/commands/__init__.py:268
-msgid "show changelogs before update"
-msgstr "перед обновлением показывать журналы изменений"
-
-#: ../dnf/cli/commands/__init__.py:364 ../dnf/cli/commands/__init__.py:417
-#: ../dnf/cli/commands/__init__.py:473
-msgid "No package available."
-msgstr "Нет пакетов."
-
-#: ../dnf/cli/commands/__init__.py:379
-msgid "No packages marked for install."
-msgstr "Нет пакетов, помеченных для установки."
-
-#: ../dnf/cli/commands/__init__.py:415
-msgid "No package installed."
-msgstr "Пакеты не были установлены."
-
-#: ../dnf/cli/commands/__init__.py:435 ../dnf/cli/commands/__init__.py:492
-#: ../dnf/cli/commands/reinstall.py:91
-#, python-format
-msgid " (from %s)"
-msgstr " (из %s)"
-
-#: ../dnf/cli/commands/__init__.py:436 ../dnf/cli/commands/__init__.py:493
-#: ../dnf/cli/commands/remove.py:104 ../dnf/cli/commands/reinstall.py:92
-#, python-format
-msgid "Installed package %s%s not available."
-msgstr "Установленный пакет %s%s недоступен."
-
-#: ../dnf/cli/commands/__init__.py:470 ../dnf/cli/commands/__init__.py:579
-#: ../dnf/cli/commands/__init__.py:622 ../dnf/cli/commands/__init__.py:669
-msgid "No package installed from the repository."
-msgstr "Пакеты не были установлены из репозитория."
-
-#: ../dnf/cli/commands/__init__.py:533 ../dnf/cli/commands/reinstall.py:101
-msgid "No packages marked for reinstall."
-msgstr "Нет пакетов, помеченных для переустановки."
-
-#: ../dnf/cli/commands/__init__.py:684 ../dnf/cli/commands/remove.py:156
-#: ../dnf/base.py:2053
-msgid "No packages marked for removal."
-msgstr "Нет пакетов, помеченных для удаления."
-
-#: ../dnf/cli/commands/__init__.py:729
-msgid "run commands on top of all packages in given repository"
-msgstr "выполнить команды над всеми пакетами заданного репозитория"
-
-#: ../dnf/cli/commands/__init__.py:743
-msgid "REPO"
-msgstr "РЕПОЗИТОРИЙ"
-
-#: ../dnf/cli/commands/__init__.py:801
-msgid "display a helpful usage message"
-msgstr "отобразить подсказку по использованию"
-
-#: ../dnf/cli/commands/__init__.py:805
-msgid "COMMAND"
-msgstr "КОМАНДА"
-
-#: ../dnf/cli/commands/__init__.py:821
-msgid "display, or use, the transaction history"
-msgstr "отобразить (или использовать) историю транзакций"
-
-#: ../dnf/cli/commands/__init__.py:836
-msgid ""
-"Found more than one transaction ID.\n"
-"'{}' requires one transaction ID or package name."
-msgstr ""
-"Найдено более одного идентификатора транзакции.\n"
-"'{}' требует один идентификатор транзакции или имя пакета."
-
-#: ../dnf/cli/commands/__init__.py:843
-msgid "No transaction ID or package name given."
-msgstr "Не задан идентификатор транзакции или имя пакета."
-
-#: ../dnf/cli/commands/__init__.py:856
-msgid "You don't have access to the history DB."
-msgstr "Нет доступа к спискам предыдущих действий."
-
-#: ../dnf/cli/commands/__init__.py:868
-#, python-format
-msgid ""
-"Cannot undo transaction %s, doing so would result in an inconsistent package"
-" database."
-msgstr ""
-"Не удается отменить транзакцию %s, поскольку это приведет к нарушениям в "
-"базе данных пакетов."
-
-#: ../dnf/cli/commands/__init__.py:873
-#, python-format
-msgid ""
-"Cannot rollback transaction %s, doing so would result in an inconsistent "
-"package database."
-msgstr ""
-"Не удается откатить транзакцию %s, поскольку это приведет к нарушениям в "
-"базе данных пакетов."
-
-#: ../dnf/cli/commands/__init__.py:943
-msgid ""
-"Invalid transaction ID range definition '{}'.\n"
-"Use '<transaction-id>..<transaction-id>'."
-msgstr ""
-"Неверное определение диапазона идентификатора «{}».\n"
-"Используйте «<transaction-id>..<transaction-id>»."
-
-#: ../dnf/cli/commands/__init__.py:947
-msgid ""
-"Can't convert '{}' to transaction ID.\n"
-"Use '<integer>', 'last', 'last-<positive-integer>'."
-msgstr ""
-"Не удается преобразовать «{}» в идентификатор транзакции.\n"
-"Используйте «<integer>», «last», «last-<positive-integer>»."
-
-#: ../dnf/cli/commands/__init__.py:976
-msgid "No transaction which manipulates package '{}' was found."
-msgstr "Не найдено транзакций, работающих с пакетом «{}»."
 
 #: ../dnf/cli/commands/downgrade.py:34
 msgid "Downgrade a package"
@@ -1933,13 +1177,132 @@ msgstr "Откат к предыдущей версии пакета"
 msgid "Package to downgrade"
 msgstr "Пакет для отката версии"
 
-#: ../dnf/cli/commands/upgrademinimal.py:31
-msgid ""
-"upgrade, but only 'newest' package match which fixes a problem that affects "
-"your system"
+#: ../dnf/cli/commands/group.py:45
+msgid "display, or use, the groups information"
+msgstr "показать или использовать информацию о группах"
+
+#: ../dnf/cli/commands/group.py:70
+msgid "No group data available for configured repositories."
+msgstr "Отсутствует информация о группах для настроенных репозиториев."
+
+#: ../dnf/cli/commands/group.py:127
+#, python-format
+msgid "Warning: Group %s does not exist."
+msgstr "Внимание: группа %s не существует."
+
+#: ../dnf/cli/commands/group.py:161
+msgid "Warning: No groups match:"
+msgstr "Предупреждение: ни одна группа не совпадает:"
+
+#: ../dnf/cli/commands/group.py:190
+msgid "Available Environment Groups:"
+msgstr "Доступные группы рабочих сред:"
+
+#: ../dnf/cli/commands/group.py:192
+msgid "Installed Environment Groups:"
+msgstr "Установленные группы рабочих сред:"
+
+#: ../dnf/cli/commands/group.py:199 ../dnf/cli/commands/group.py:285
+msgid "Installed Groups:"
+msgstr "Установленные группы:"
+
+#: ../dnf/cli/commands/group.py:206 ../dnf/cli/commands/group.py:292
+msgid "Installed Language Groups:"
+msgstr "Установленные языковые группы:"
+
+#: ../dnf/cli/commands/group.py:216 ../dnf/cli/commands/group.py:299
+msgid "Available Groups:"
+msgstr "Доступные группы:"
+
+#: ../dnf/cli/commands/group.py:223 ../dnf/cli/commands/group.py:306
+msgid "Available Language Groups:"
+msgstr "Доступные языковые группы:"
+
+#: ../dnf/cli/commands/group.py:313
+msgid "include optional packages from group"
+msgstr "включать дополнительные пакеты из группы"
+
+#: ../dnf/cli/commands/group.py:316
+msgid "show also hidden groups"
+msgstr "показывать и скрытые группы"
+
+#: ../dnf/cli/commands/group.py:318
+msgid "show only installed groups"
+msgstr "показывать только установленные группы"
+
+#: ../dnf/cli/commands/group.py:320
+msgid "show only available groups"
+msgstr "показывать только доступные группы"
+
+#: ../dnf/cli/commands/group.py:332
+#, python-format
+msgid "Invalid groups sub-command, use: %s."
+msgstr "Неправильная подкоманда для групп, используйте: %s."
+
+#: ../dnf/cli/commands/group.py:389
+msgid "Unable to find a mandatory group package."
+msgstr "Не удается найти пакет из обязательной группы."
+
+#: ../dnf/cli/commands/install.py:47
+msgid "install a package or packages on your system"
+msgstr "установка пакета(ов) в систему"
+
+#: ../dnf/cli/commands/install.py:53
+msgid "Package to install"
+msgstr "Пакет для установки"
+
+#: ../dnf/cli/commands/install.py:118
+msgid "Unable to find a match"
+msgstr "Совпадений не найдено"
+
+#: ../dnf/cli/commands/install.py:131
+#, python-format
+msgid "Not a valid rpm file path: %s"
+msgstr "Неправильный путь к файлу rpm: %s"
+
+#: ../dnf/cli/commands/install.py:167
+#, python-brace-format
+msgid "There are following alternatives for \"{0}\": {1}"
+msgstr "Есть следующие альтернативы для «{0}»: {1}"
+
+#: ../dnf/cli/commands/makecache.py:37
+msgid "generate the metadata cache"
+msgstr "создание кэша метаданных"
+
+#: ../dnf/cli/commands/makecache.py:48
+msgid "Making cache files for all metadata files."
+msgstr "Создание кэша для всех метаданных файлов."
+
+#: ../dnf/cli/commands/mark.py:39
+msgid "mark or unmark installed packages as installed by user."
 msgstr ""
-"обновление, но только «новейших» пакетов, которые исправляют проблему в "
-"вашей системе"
+"отметить или снять отметку пользовательской установки с установленных "
+"пакетов."
+
+#: ../dnf/cli/commands/mark.py:49
+#, python-format
+msgid "%s marked as user installed."
+msgstr "%s помечено как пользовательская установка."
+
+#: ../dnf/cli/commands/mark.py:53
+#, python-format
+msgid "%s unmarked as user installed."
+msgstr "с %s снята отметка пользовательской установки."
+
+#: ../dnf/cli/commands/mark.py:57
+#, python-format
+msgid "%s marked as group installed."
+msgstr "%s помечено как установленное в составе группы."
+
+#: ../dnf/cli/commands/mark.py:82 ../dnf/cli/commands/shell.py:121
+#: ../dnf/cli/commands/shell.py:230
+msgid "Error:"
+msgstr "Ошибка:"
+
+#: ../dnf/cli/commands/mark.py:84
+#, python-format
+msgid "Package %s is not installed."
+msgstr "Пакет %s не установлен."
 
 #: ../dnf/cli/commands/module.py:36
 #, python-brace-format
@@ -1984,6 +1347,14 @@ msgstr "показывать только установленные модул�
 msgid "show profile content"
 msgstr "показывать содержимое профиля"
 
+#: ../dnf/cli/commands/reinstall.py:38
+msgid "reinstall a package"
+msgstr "переустановка пакета"
+
+#: ../dnf/cli/commands/reinstall.py:42
+msgid "Package to reinstall"
+msgstr "Пакет для переустановки"
+
 #: ../dnf/cli/commands/remove.py:46
 msgid "remove a package or packages from your system"
 msgstr "удалить пакет или пакеты из системы"
@@ -2005,283 +1376,147 @@ msgstr "Не найдено повторящихся пакетов для уд�
 msgid "No old installonly packages found for removal."
 msgstr "Не найдены пакеты только для установки, помеченные для удаления."
 
-#: ../dnf/cli/commands/remove.py:126 ../dnf/cli/commands/install.py:136
-#: ../dnf/base.py:2036
-#, python-format
-msgid "Not a valid form: %s"
-msgstr "Неправильная форма: %s"
-
-#: ../dnf/cli/commands/updateinfo.py:42
-msgid "bugfix"
-msgstr "исправление ошибки"
-
-#: ../dnf/cli/commands/updateinfo.py:43
-msgid "enhancement"
-msgstr "улучшение"
-
-#: ../dnf/cli/commands/updateinfo.py:44
-msgid "security"
-msgstr "безопасность"
-
-#: ../dnf/cli/commands/updateinfo.py:45 ../dnf/cli/commands/updateinfo.py:279
-#: ../dnf/cli/commands/updateinfo.py:311 ../dnf/cli/commands/repolist.py:37
+#: ../dnf/cli/commands/repolist.py:37 ../dnf/cli/commands/updateinfo.py:45
+#: ../dnf/cli/commands/updateinfo.py:279 ../dnf/cli/commands/updateinfo.py:311
 msgid "unknown"
 msgstr "неизвестно"
 
-#: ../dnf/cli/commands/updateinfo.py:46
-msgid "newpackage"
-msgstr "newpackage"
-
-#: ../dnf/cli/commands/updateinfo.py:48
-msgid "Critical/Sec."
-msgstr "Критические/Безоп."
-
-#: ../dnf/cli/commands/updateinfo.py:49
-msgid "Important/Sec."
-msgstr "Важные/Безоп."
-
-#: ../dnf/cli/commands/updateinfo.py:50
-msgid "Moderate/Sec."
-msgstr "Умеренные/Безоп."
-
-#: ../dnf/cli/commands/updateinfo.py:51
-msgid "Low/Sec."
-msgstr "Низкие/Безоп."
-
-#: ../dnf/cli/commands/updateinfo.py:61
-msgid "display advisories about packages"
-msgstr "показать рекомендации к пакетам"
-
-#: ../dnf/cli/commands/updateinfo.py:75
-msgid "advisories about newer versions of installed packages (default)"
-msgstr "рекомендации к новым версиям установленных пакетов (по умолчанию)"
-
-#: ../dnf/cli/commands/updateinfo.py:78
-msgid "advisories about equal and older versions of installed packages"
-msgstr "рекомендации к равным и более старым версиям установленных пакетов"
-
-#: ../dnf/cli/commands/updateinfo.py:81
-msgid ""
-"advisories about newer versions of those installed packages for which a "
-"newer version is available"
-msgstr ""
-"рекомендации к новым версиям тех установленных пакетов, для которых есть "
-"новая версия"
-
-#: ../dnf/cli/commands/updateinfo.py:85
-msgid "advisories about any versions of installed packages"
-msgstr "рекомендации к любым версиям установленных пакетов"
-
-#: ../dnf/cli/commands/updateinfo.py:90
-msgid "show summary of advisories (default)"
-msgstr "показывать сводку рекомендаций (по умолчанию)"
-
-#: ../dnf/cli/commands/updateinfo.py:93
-msgid "show list of advisories"
-msgstr "показывать список рекомендаций"
-
-#: ../dnf/cli/commands/updateinfo.py:96
-msgid "show info of advisories"
-msgstr "показывать информацию о рекомендациях"
-
-#: ../dnf/cli/commands/updateinfo.py:126
-msgid "installed"
-msgstr "установленные"
-
-#: ../dnf/cli/commands/updateinfo.py:129
-msgid "updates"
-msgstr "обновления"
-
-#: ../dnf/cli/commands/updateinfo.py:133
-msgid "all"
-msgstr "все"
-
-#: ../dnf/cli/commands/updateinfo.py:136
-msgid "available"
-msgstr "доступные"
-
-#: ../dnf/cli/commands/updateinfo.py:239
-msgid "Updates Information Summary: "
-msgstr "Информационная сводка по обновлениям: "
-
-#: ../dnf/cli/commands/updateinfo.py:242
-msgid "New Package notice(s)"
-msgstr "Уведомления о новом пакете"
-
-#: ../dnf/cli/commands/updateinfo.py:243
-msgid "Security notice(s)"
-msgstr "Уведомления о безопасности"
-
-#: ../dnf/cli/commands/updateinfo.py:244
-msgid "Critical Security notice(s)"
-msgstr "Критические уведомления о безопасности"
-
-#: ../dnf/cli/commands/updateinfo.py:246
-msgid "Important Security notice(s)"
-msgstr "Важные уведомления о безопасности"
-
-#: ../dnf/cli/commands/updateinfo.py:248
-msgid "Moderate Security notice(s)"
-msgstr "Уведомления о безопасности (умеренная степень)"
-
-#: ../dnf/cli/commands/updateinfo.py:250
-msgid "Low Security notice(s)"
-msgstr "Уведомления о безопасности (низкий уровень)"
-
-#: ../dnf/cli/commands/updateinfo.py:252
-msgid "Unknown Security notice(s)"
-msgstr "Уведомления о безопасности (неизвестный уровень)"
-
-#: ../dnf/cli/commands/updateinfo.py:254
-msgid "Bugfix notice(s)"
-msgstr "Сведения об исправлении ошибок"
-
-#: ../dnf/cli/commands/updateinfo.py:255
-msgid "Enhancement notice(s)"
-msgstr "Сведения об улучшениях"
-
-#: ../dnf/cli/commands/updateinfo.py:256
-msgid "other notice(s)"
-msgstr "другие уведомления"
-
-#: ../dnf/cli/commands/updateinfo.py:277
-msgid "Unknown/Sec."
-msgstr "Неизвестные/Безоп."
-
-#: ../dnf/cli/commands/updateinfo.py:304
-msgid "Update ID"
-msgstr "Идентификатор обновления"
-
-#: ../dnf/cli/commands/updateinfo.py:304
-msgid "Type"
-msgstr "Тип"
-
-#: ../dnf/cli/commands/updateinfo.py:304
-msgid "Updated"
-msgstr "Обновлено"
-
-#: ../dnf/cli/commands/updateinfo.py:304
-msgid "Bugs"
-msgstr "Ошибки"
-
-#: ../dnf/cli/commands/updateinfo.py:305
-msgid "CVEs"
-msgstr "Уязвимости (CVE)"
-
-#: ../dnf/cli/commands/updateinfo.py:305
-msgid "Description"
-msgstr "Описание"
-
-#: ../dnf/cli/commands/updateinfo.py:305
-msgid "Severity"
-msgstr "Опасность"
-
-#: ../dnf/cli/commands/updateinfo.py:305
-msgid "Rights"
-msgstr "Права"
-
-#: ../dnf/cli/commands/updateinfo.py:306
-msgid "Files"
-msgstr "Файлы"
-
-#: ../dnf/cli/commands/updateinfo.py:332
-msgid "true"
-msgstr "истина"
-
-#: ../dnf/cli/commands/updateinfo.py:332
-msgid "false"
-msgstr "ложь"
-
-#: ../dnf/cli/commands/mark.py:39
-msgid "mark or unmark installed packages as installed by user."
-msgstr ""
-"отметить или снять отметку пользовательской установки с установленных "
-"пакетов."
-
-#: ../dnf/cli/commands/mark.py:49
+#: ../dnf/cli/commands/repolist.py:39
 #, python-format
-msgid "%s marked as user installed."
-msgstr "%s помечено как пользовательская установка."
+msgid "Never (last: %s)"
+msgstr "Никогда (осталось: %s)"
 
-#: ../dnf/cli/commands/mark.py:53
+#: ../dnf/cli/commands/repolist.py:41
 #, python-format
-msgid "%s unmarked as user installed."
-msgstr "с %s снята отметка пользовательской установки."
+msgid "Instant (last: %s)"
+msgstr "Немедленно (осталось:%s)"
 
-#: ../dnf/cli/commands/mark.py:57
+#: ../dnf/cli/commands/repolist.py:44
 #, python-format
-msgid "%s marked as group installed."
-msgstr "%s помечено как установленное в составе группы."
+msgid "%s second(s) (last: %s)"
+msgstr "%s секунд(а) (осталось: %s)"
 
-#: ../dnf/cli/commands/mark.py:82 ../dnf/cli/commands/shell.py:121
-#: ../dnf/cli/commands/shell.py:230
-msgid "Error:"
-msgstr "Ошибка:"
+#: ../dnf/cli/commands/repolist.py:75
+msgid "display the configured software repositories"
+msgstr "отобразить настроенные репозитории ПО"
 
-#: ../dnf/cli/commands/mark.py:84
+#: ../dnf/cli/commands/repolist.py:82
+msgid "show all repos"
+msgstr "показать все репозитории"
+
+#: ../dnf/cli/commands/repolist.py:85
+msgid "show enabled repos (default)"
+msgstr "показать активированные репозитории (по умолчанию)"
+
+#: ../dnf/cli/commands/repolist.py:88
+msgid "show disabled repos"
+msgstr "показать отключенные репозитории"
+
+#: ../dnf/cli/commands/repolist.py:123
+msgid "No repositories available"
+msgstr "Нет репозиториев"
+
+#: ../dnf/cli/commands/repolist.py:145 ../dnf/cli/commands/repolist.py:146
+msgid "enabled"
+msgstr "включено"
+
+#: ../dnf/cli/commands/repolist.py:163 ../dnf/cli/commands/repolist.py:164
+msgid "disabled"
+msgstr "отключено"
+
+#: ../dnf/cli/commands/repolist.py:179
+msgid "Repo-id      : "
+msgstr "Код репозитория      : "
+
+#: ../dnf/cli/commands/repolist.py:180
+msgid "Repo-name    : "
+msgstr "Имя репозитория      : "
+
+#: ../dnf/cli/commands/repolist.py:183
+msgid "Repo-status  : "
+msgstr "Состояние репозитория: "
+
+#: ../dnf/cli/commands/repolist.py:186
+msgid "Repo-revision: "
+msgstr "Версия репозитория  : "
+
+#: ../dnf/cli/commands/repolist.py:190
+msgid "Repo-tags    : "
+msgstr "Метки репозитория    : "
+
+#: ../dnf/cli/commands/repolist.py:197
+msgid "Repo-distro-tags: "
+msgstr "Метки дистрибутива   : "
+
+#: ../dnf/cli/commands/repolist.py:203
+msgid "Repo-updated : "
+msgstr "Репозиторий обновлен : "
+
+#: ../dnf/cli/commands/repolist.py:205
+msgid "Repo-pkgs    : "
+msgstr "Пакеты репозитория   : "
+
+#: ../dnf/cli/commands/repolist.py:206
+msgid "Repo-size    : "
+msgstr "Размер репозитория   : "
+
+#: ../dnf/cli/commands/repolist.py:209
+msgid "Repo-metalink: "
+msgstr "Metalink репозитория : "
+
+#: ../dnf/cli/commands/repolist.py:214
+msgid "  Updated    : "
+msgstr "  Обновлено          : "
+
+#: ../dnf/cli/commands/repolist.py:216
+msgid "Repo-mirrors : "
+msgstr "Зеркала репозитория  : "
+
+#: ../dnf/cli/commands/repolist.py:220 ../dnf/cli/commands/repolist.py:226
+msgid "Repo-baseurl : "
+msgstr "Baseurl репозитория  : "
+
+#: ../dnf/cli/commands/repolist.py:229
+msgid "Repo-expire  : "
+msgstr "Окончание срока репозитория: "
+
+#. TRANSLATORS: Packages that are excluded - their names like (dnf systemd)
+#: ../dnf/cli/commands/repolist.py:233
+msgid "Repo-exclude : "
+msgstr "Исключения репозитория     : "
+
+#: ../dnf/cli/commands/repolist.py:237
+msgid "Repo-include : "
+msgstr "Включено в репозиторий     : "
+
+#. TRANSLATORS: Number of packages that where excluded (5)
+#: ../dnf/cli/commands/repolist.py:242
+msgid "Repo-excluded: "
+msgstr "Исключено из репозитория   : "
+
+#: ../dnf/cli/commands/repolist.py:246
+msgid "Repo-filename: "
+msgstr "Файл репозитория: "
+
+#. Work out the first (id) and last (enabled/disalbed/count),
+#. then chop the middle (name)...
+#: ../dnf/cli/commands/repolist.py:254 ../dnf/cli/commands/repolist.py:283
+msgid "repo id"
+msgstr "идентификатор репозитория"
+
+#: ../dnf/cli/commands/repolist.py:271 ../dnf/cli/commands/repolist.py:272
+#: ../dnf/cli/commands/repolist.py:288
+msgid "status"
+msgstr "состояние"
+
+#: ../dnf/cli/commands/repolist.py:284
+msgid "repo name"
+msgstr "имя репозитория"
+
+#: ../dnf/cli/commands/repolist.py:300
 #, python-format
-msgid "Package %s is not installed."
-msgstr "Пакет %s не установлен."
-
-#: ../dnf/cli/commands/deplist.py:32
-msgid "List package's dependencies and what packages provide them"
-msgstr "Показывать список зависимостей пакета и какие пакеты их предоставляют"
-
-#: ../dnf/cli/commands/clean.py:68
-#, python-format
-msgid "Removing file %s"
-msgstr "Удаление файла %s"
-
-#: ../dnf/cli/commands/clean.py:87
-msgid "remove cached data"
-msgstr "удалить кэшированные данные"
-
-#: ../dnf/cli/commands/clean.py:93
-msgid "Metadata type to clean"
-msgstr "Тип метаданных для удаления"
-
-#: ../dnf/cli/commands/clean.py:105
-msgid "Cleaning data:  "
-msgstr "Очистка данных:  "
-
-#: ../dnf/cli/commands/clean.py:111
-msgid "Cache was expired"
-msgstr "Неактуальный кеш"
-
-#: ../dnf/cli/commands/clean.py:115
-#, python-format
-msgid "%d file removed"
-msgid_plural "%d files removed"
-msgstr[0] "%d файл удален"
-msgstr[1] "%d файла удалено"
-msgstr[2] "%d файлов удалено"
-
-#: ../dnf/cli/commands/clean.py:119 ../dnf/lock.py:139
-#, python-format
-msgid "Waiting for process with pid %d to finish."
-msgstr "Ожидание завершения процесса с PID %d."
-
-#: ../dnf/cli/commands/install.py:47
-msgid "install a package or packages on your system"
-msgstr "установка пакета(ов) в систему"
-
-#: ../dnf/cli/commands/install.py:53
-msgid "Package to install"
-msgstr "Пакет для установки"
-
-#: ../dnf/cli/commands/install.py:118
-msgid "Unable to find a match"
-msgstr "Совпадений не найдено"
-
-#: ../dnf/cli/commands/install.py:131
-#, python-format
-msgid "Not a valid rpm file path: %s"
-msgstr "Неправильный путь к файлу rpm: %s"
-
-#: ../dnf/cli/commands/install.py:167
-#, python-brace-format
-msgid "There are following alternatives for \"{0}\": {1}"
-msgstr "Есть следующие альтернативы для «{0}»: {1}"
+msgid "Total packages: %s"
+msgstr "Всего пакетов: %s"
 
 #: ../dnf/cli/commands/repoquery.py:104
 msgid "search for packages matching keyword"
@@ -2587,142 +1822,60 @@ msgstr ""
 "описание:\n"
 "  Для данных пакетов выводится дерево пакетов."
 
-#: ../dnf/cli/commands/repolist.py:39
+#: ../dnf/cli/commands/search.py:46
+msgid "search package details for the given string"
+msgstr "поиск информации о пакете по заданной строке"
+
+#: ../dnf/cli/commands/search.py:51
+msgid "search also package description and URL"
+msgstr "поиск также описания пакета и URL"
+
+#: ../dnf/cli/commands/search.py:52
+msgid "QUERY_STRING"
+msgstr "СТРОКА_ЗАПРОСА"
+
+#: ../dnf/cli/commands/search.py:60 ../dnf/cli/output.py:499
+msgctxt "long"
+msgid "Name"
+msgstr ""
+
+#: ../dnf/cli/commands/search.py:61 ../dnf/cli/output.py:552
+msgctxt "long"
+msgid "Summary"
+msgstr ""
+
+#: ../dnf/cli/commands/search.py:62 ../dnf/cli/output.py:562
+msgctxt "long"
+msgid "Description"
+msgstr ""
+
+#: ../dnf/cli/commands/search.py:63 ../dnf/cli/output.py:555
+msgid "URL"
+msgstr "URL"
+
+#. TRANSLATORS: separator used between package attributes (eg. Name & Summary
+#. & URL)
+#: ../dnf/cli/commands/search.py:75
+msgid " & "
+msgstr " и "
+
+#. TRANSLATORS: %s  - translated package attributes,
+#. %%s - found keys (in listed attributes)
+#: ../dnf/cli/commands/search.py:79
 #, python-format
-msgid "Never (last: %s)"
-msgstr "Никогда (осталось: %s)"
+msgid "%s Exactly Matched: %%s"
+msgstr "%s точное соответствие: %%s"
 
-#: ../dnf/cli/commands/repolist.py:41
+#. TRANSLATORS: %s  - translated package attributes,
+#. %%s - found keys (in listed attributes)
+#: ../dnf/cli/commands/search.py:83
 #, python-format
-msgid "Instant (last: %s)"
-msgstr "Немедленно (осталось:%s)"
+msgid "%s Matched: %%s"
+msgstr "%s совпадение: %%s"
 
-#: ../dnf/cli/commands/repolist.py:44
-#, python-format
-msgid "%s second(s) (last: %s)"
-msgstr "%s секунд(а) (осталось: %s)"
-
-#: ../dnf/cli/commands/repolist.py:75
-msgid "display the configured software repositories"
-msgstr "отобразить настроенные репозитории ПО"
-
-#: ../dnf/cli/commands/repolist.py:82
-msgid "show all repos"
-msgstr "показать все репозитории"
-
-#: ../dnf/cli/commands/repolist.py:85
-msgid "show enabled repos (default)"
-msgstr "показать активированные репозитории (по умолчанию)"
-
-#: ../dnf/cli/commands/repolist.py:88
-msgid "show disabled repos"
-msgstr "показать отключенные репозитории"
-
-#: ../dnf/cli/commands/repolist.py:123
-msgid "No repositories available"
-msgstr "Нет репозиториев"
-
-#: ../dnf/cli/commands/repolist.py:145 ../dnf/cli/commands/repolist.py:146
-msgid "enabled"
-msgstr "включено"
-
-#: ../dnf/cli/commands/repolist.py:163 ../dnf/cli/commands/repolist.py:164
-msgid "disabled"
-msgstr "отключено"
-
-#: ../dnf/cli/commands/repolist.py:179
-msgid "Repo-id      : "
-msgstr "Код репозитория      : "
-
-#: ../dnf/cli/commands/repolist.py:180
-msgid "Repo-name    : "
-msgstr "Имя репозитория      : "
-
-#: ../dnf/cli/commands/repolist.py:183
-msgid "Repo-status  : "
-msgstr "Состояние репозитория: "
-
-#: ../dnf/cli/commands/repolist.py:186
-msgid "Repo-revision: "
-msgstr "Версия репозитория  : "
-
-#: ../dnf/cli/commands/repolist.py:190
-msgid "Repo-tags    : "
-msgstr "Метки репозитория    : "
-
-#: ../dnf/cli/commands/repolist.py:197
-msgid "Repo-distro-tags: "
-msgstr "Метки дистрибутива   : "
-
-#: ../dnf/cli/commands/repolist.py:203
-msgid "Repo-updated : "
-msgstr "Репозиторий обновлен : "
-
-#: ../dnf/cli/commands/repolist.py:205
-msgid "Repo-pkgs    : "
-msgstr "Пакеты репозитория   : "
-
-#: ../dnf/cli/commands/repolist.py:206
-msgid "Repo-size    : "
-msgstr "Размер репозитория   : "
-
-#: ../dnf/cli/commands/repolist.py:209
-msgid "Repo-metalink: "
-msgstr "Metalink репозитория : "
-
-#: ../dnf/cli/commands/repolist.py:214
-msgid "  Updated    : "
-msgstr "  Обновлено          : "
-
-#: ../dnf/cli/commands/repolist.py:216
-msgid "Repo-mirrors : "
-msgstr "Зеркала репозитория  : "
-
-#: ../dnf/cli/commands/repolist.py:220 ../dnf/cli/commands/repolist.py:226
-msgid "Repo-baseurl : "
-msgstr "Baseurl репозитория  : "
-
-#: ../dnf/cli/commands/repolist.py:229
-msgid "Repo-expire  : "
-msgstr "Окончание срока репозитория: "
-
-#. TRANSLATORS: Packages that are excluded - their names like (dnf systemd)
-#: ../dnf/cli/commands/repolist.py:233
-msgid "Repo-exclude : "
-msgstr "Исключения репозитория     : "
-
-#: ../dnf/cli/commands/repolist.py:237
-msgid "Repo-include : "
-msgstr "Включено в репозиторий     : "
-
-#. TRANSLATORS: Number of packages that where excluded (5)
-#: ../dnf/cli/commands/repolist.py:242
-msgid "Repo-excluded: "
-msgstr "Исключено из репозитория   : "
-
-#: ../dnf/cli/commands/repolist.py:246
-msgid "Repo-filename: "
-msgstr "Файл репозитория: "
-
-#. Work out the first (id) and last (enabled/disalbed/count),
-#. then chop the middle (name)...
-#: ../dnf/cli/commands/repolist.py:254 ../dnf/cli/commands/repolist.py:283
-msgid "repo id"
-msgstr "идентификатор репозитория"
-
-#: ../dnf/cli/commands/repolist.py:271 ../dnf/cli/commands/repolist.py:272
-#: ../dnf/cli/commands/repolist.py:288
-msgid "status"
-msgstr "состояние"
-
-#: ../dnf/cli/commands/repolist.py:284
-msgid "repo name"
-msgstr "имя репозитория"
-
-#: ../dnf/cli/commands/repolist.py:300
-#, python-format
-msgid "Total packages: %s"
-msgstr "Всего пакетов: %s"
+#: ../dnf/cli/commands/search.py:126
+msgid "No matches found."
+msgstr "Нет совпадений."
 
 #: ../dnf/cli/commands/shell.py:47
 msgid "run an interactive DNF shell"
@@ -2846,19 +1999,6 @@ msgstr "Ошибка: не удалось открыть %s для чтения"
 msgid "Leaving Shell"
 msgstr "Выход из оболочки"
 
-#: ../dnf/cli/commands/reinstall.py:38
-msgid "reinstall a package"
-msgstr "переустановка пакета"
-
-#: ../dnf/cli/commands/reinstall.py:42
-msgid "Package to reinstall"
-msgstr "Пакет для переустановки"
-
-#: ../dnf/cli/commands/reinstall.py:81 ../dnf/base.py:1987
-#, python-format
-msgid "Package %s available, but not installed."
-msgstr "Пакет %s есть, но не установлен."
-
 #: ../dnf/cli/commands/swap.py:33
 msgid "run an interactive dnf mod for remove and install one spec"
 msgstr ""
@@ -2873,677 +2013,1331 @@ msgstr "Спецификации, которые будут удалены"
 msgid "The specs that will be installed"
 msgstr "Спецификации, которые будут установлены"
 
-#: ../dnf/cli/commands/group.py:45
-msgid "display, or use, the groups information"
-msgstr "показать или использовать информацию о группах"
+#: ../dnf/cli/commands/updateinfo.py:42
+msgid "bugfix"
+msgstr "исправление ошибки"
 
-#: ../dnf/cli/commands/group.py:70
-msgid "No group data available for configured repositories."
-msgstr "Отсутствует информация о группах для настроенных репозиториев."
+#: ../dnf/cli/commands/updateinfo.py:43
+msgid "enhancement"
+msgstr "улучшение"
 
-#: ../dnf/cli/commands/group.py:127
+#: ../dnf/cli/commands/updateinfo.py:44
+msgid "security"
+msgstr "безопасность"
+
+#: ../dnf/cli/commands/updateinfo.py:46
+msgid "newpackage"
+msgstr "newpackage"
+
+#: ../dnf/cli/commands/updateinfo.py:48
+msgid "Critical/Sec."
+msgstr "Критические/Безоп."
+
+#: ../dnf/cli/commands/updateinfo.py:49
+msgid "Important/Sec."
+msgstr "Важные/Безоп."
+
+#: ../dnf/cli/commands/updateinfo.py:50
+msgid "Moderate/Sec."
+msgstr "Умеренные/Безоп."
+
+#: ../dnf/cli/commands/updateinfo.py:51
+msgid "Low/Sec."
+msgstr "Низкие/Безоп."
+
+#: ../dnf/cli/commands/updateinfo.py:61
+msgid "display advisories about packages"
+msgstr "показать рекомендации к пакетам"
+
+#: ../dnf/cli/commands/updateinfo.py:75
+msgid "advisories about newer versions of installed packages (default)"
+msgstr "рекомендации к новым версиям установленных пакетов (по умолчанию)"
+
+#: ../dnf/cli/commands/updateinfo.py:78
+msgid "advisories about equal and older versions of installed packages"
+msgstr "рекомендации к равным и более старым версиям установленных пакетов"
+
+#: ../dnf/cli/commands/updateinfo.py:81
+msgid ""
+"advisories about newer versions of those installed packages for which a "
+"newer version is available"
+msgstr ""
+"рекомендации к новым версиям тех установленных пакетов, для которых есть "
+"новая версия"
+
+#: ../dnf/cli/commands/updateinfo.py:85
+msgid "advisories about any versions of installed packages"
+msgstr "рекомендации к любым версиям установленных пакетов"
+
+#: ../dnf/cli/commands/updateinfo.py:90
+msgid "show summary of advisories (default)"
+msgstr "показывать сводку рекомендаций (по умолчанию)"
+
+#: ../dnf/cli/commands/updateinfo.py:93
+msgid "show list of advisories"
+msgstr "показывать список рекомендаций"
+
+#: ../dnf/cli/commands/updateinfo.py:96
+msgid "show info of advisories"
+msgstr "показывать информацию о рекомендациях"
+
+#: ../dnf/cli/commands/updateinfo.py:126
+msgid "installed"
+msgstr "установленные"
+
+#: ../dnf/cli/commands/updateinfo.py:129
+msgid "updates"
+msgstr "обновления"
+
+#: ../dnf/cli/commands/updateinfo.py:133
+msgid "all"
+msgstr "все"
+
+#: ../dnf/cli/commands/updateinfo.py:136
+msgid "available"
+msgstr "доступные"
+
+#: ../dnf/cli/commands/updateinfo.py:239
+msgid "Updates Information Summary: "
+msgstr "Информационная сводка по обновлениям: "
+
+#: ../dnf/cli/commands/updateinfo.py:242
+msgid "New Package notice(s)"
+msgstr "Уведомления о новом пакете"
+
+#: ../dnf/cli/commands/updateinfo.py:243
+msgid "Security notice(s)"
+msgstr "Уведомления о безопасности"
+
+#: ../dnf/cli/commands/updateinfo.py:244
+msgid "Critical Security notice(s)"
+msgstr "Критические уведомления о безопасности"
+
+#: ../dnf/cli/commands/updateinfo.py:246
+msgid "Important Security notice(s)"
+msgstr "Важные уведомления о безопасности"
+
+#: ../dnf/cli/commands/updateinfo.py:248
+msgid "Moderate Security notice(s)"
+msgstr "Уведомления о безопасности (умеренная степень)"
+
+#: ../dnf/cli/commands/updateinfo.py:250
+msgid "Low Security notice(s)"
+msgstr "Уведомления о безопасности (низкий уровень)"
+
+#: ../dnf/cli/commands/updateinfo.py:252
+msgid "Unknown Security notice(s)"
+msgstr "Уведомления о безопасности (неизвестный уровень)"
+
+#: ../dnf/cli/commands/updateinfo.py:254
+msgid "Bugfix notice(s)"
+msgstr "Сведения об исправлении ошибок"
+
+#: ../dnf/cli/commands/updateinfo.py:255
+msgid "Enhancement notice(s)"
+msgstr "Сведения об улучшениях"
+
+#: ../dnf/cli/commands/updateinfo.py:256
+msgid "other notice(s)"
+msgstr "другие уведомления"
+
+#: ../dnf/cli/commands/updateinfo.py:277
+msgid "Unknown/Sec."
+msgstr "Неизвестные/Безоп."
+
+#: ../dnf/cli/commands/updateinfo.py:304
+msgid "Bugs"
+msgstr "Ошибки"
+
+#: ../dnf/cli/commands/updateinfo.py:304
+msgid "Type"
+msgstr "Тип"
+
+#: ../dnf/cli/commands/updateinfo.py:304
+msgid "Update ID"
+msgstr "Идентификатор обновления"
+
+#: ../dnf/cli/commands/updateinfo.py:304
+msgid "Updated"
+msgstr "Обновлено"
+
+#: ../dnf/cli/commands/updateinfo.py:305
+msgid "CVEs"
+msgstr "Уязвимости (CVE)"
+
+#: ../dnf/cli/commands/updateinfo.py:305
+msgid "Description"
+msgstr "Описание"
+
+#: ../dnf/cli/commands/updateinfo.py:305
+msgid "Rights"
+msgstr "Права"
+
+#: ../dnf/cli/commands/updateinfo.py:305
+msgid "Severity"
+msgstr "Опасность"
+
+#: ../dnf/cli/commands/updateinfo.py:306
+msgid "Files"
+msgstr "Файлы"
+
+#: ../dnf/cli/commands/updateinfo.py:306 ../dnf/cli/output.py:1452
+#: ../dnf/cli/output.py:1803 ../dnf/cli/output.py:1805
+msgid "Installed"
+msgstr "Установлен"
+
+#: ../dnf/cli/commands/updateinfo.py:332
+msgid "false"
+msgstr "ложь"
+
+#: ../dnf/cli/commands/updateinfo.py:332
+msgid "true"
+msgstr "истина"
+
+#: ../dnf/cli/commands/upgrade.py:40
+msgid "upgrade a package or packages on your system"
+msgstr "обновить пакет или пакеты в системе"
+
+#: ../dnf/cli/commands/upgrade.py:44
+msgid "Package to upgrade"
+msgstr "Пакет для обновления"
+
+#: ../dnf/cli/commands/upgrademinimal.py:31
+msgid ""
+"upgrade, but only 'newest' package match which fixes a problem that affects "
+"your system"
+msgstr ""
+"обновление, но только «новейших» пакетов, которые исправляют проблему в "
+"вашей системе"
+
+#: ../dnf/cli/main.py:80
+msgid "Terminated."
+msgstr "Останов процесса."
+
+#: ../dnf/cli/main.py:108
+msgid "No read/execute access in current directory, moving to /"
+msgstr ""
+"Отсутствуют права на чтение/запуск в данном каталоге, будет использован "
+"корневой каталог \"/\""
+
+#: ../dnf/cli/main.py:127
+msgid "try to add '{}' to command line to replace conflicting packages"
+msgstr ""
+
+#: ../dnf/cli/main.py:131
+msgid "try to add '{}' to skip uninstallable packages"
+msgstr ""
+
+#: ../dnf/cli/main.py:134
+msgid " or '{}' to skip uninstallable packages"
+msgstr ""
+
+#: ../dnf/cli/main.py:139
+msgid "try to add '{}' to use not only best candidate packages"
+msgstr ""
+
+#: ../dnf/cli/main.py:142
+msgid " or '{}' to use not only best candidate packages"
+msgstr ""
+
+#: ../dnf/cli/main.py:159
+msgid "Dependencies resolved."
+msgstr "Зависимости разрешены."
+
+#: ../dnf/cli/main.py:177
+msgid "Complete!"
+msgstr "Выполнено!"
+
+#: ../dnf/cli/option_parser.py:54
 #, python-format
-msgid "Warning: Group %s does not exist."
-msgstr "Внимание: группа %s не существует."
+msgid "Command line error: %s"
+msgstr "Ошибка команды: %s"
 
-#: ../dnf/cli/commands/group.py:161
-msgid "Warning: No groups match:"
-msgstr "Предупреждение: ни одна группа не совпадает:"
-
-#: ../dnf/cli/commands/group.py:190
-msgid "Available Environment Groups:"
-msgstr "Доступные группы рабочих сред:"
-
-#: ../dnf/cli/commands/group.py:192
-msgid "Installed Environment Groups:"
-msgstr "Установленные группы рабочих сред:"
-
-#: ../dnf/cli/commands/group.py:199 ../dnf/cli/commands/group.py:285
-msgid "Installed Groups:"
-msgstr "Установленные группы:"
-
-#: ../dnf/cli/commands/group.py:206 ../dnf/cli/commands/group.py:292
-msgid "Installed Language Groups:"
-msgstr "Установленные языковые группы:"
-
-#: ../dnf/cli/commands/group.py:216 ../dnf/cli/commands/group.py:299
-msgid "Available Groups:"
-msgstr "Доступные группы:"
-
-#: ../dnf/cli/commands/group.py:223 ../dnf/cli/commands/group.py:306
-msgid "Available Language Groups:"
-msgstr "Доступные языковые группы:"
-
-#: ../dnf/cli/commands/group.py:313
-msgid "include optional packages from group"
-msgstr "включать дополнительные пакеты из группы"
-
-#: ../dnf/cli/commands/group.py:316
-msgid "show also hidden groups"
-msgstr "показывать и скрытые группы"
-
-#: ../dnf/cli/commands/group.py:318
-msgid "show only installed groups"
-msgstr "показывать только установленные группы"
-
-#: ../dnf/cli/commands/group.py:320
-msgid "show only available groups"
-msgstr "показывать только доступные группы"
-
-#: ../dnf/cli/commands/group.py:332
+#: ../dnf/cli/option_parser.py:85
 #, python-format
-msgid "Invalid groups sub-command, use: %s."
-msgstr "Неправильная подкоманда для групп, используйте: %s."
+msgid "bad format: %s"
+msgstr "плохой формат: %s"
 
-#: ../dnf/cli/commands/group.py:389
-msgid "Unable to find a mandatory group package."
-msgstr "Не удается найти пакет из обязательной группы."
-
-#: ../dnf/db/group.py:344
+#: ../dnf/cli/option_parser.py:96
 #, python-format
-msgid "Will not install a source rpm package (%s)."
-msgstr "RPM-пакет с исходным кодом не будет установлен (%s)."
+msgid "Setopt argument has multiple values: %s"
+msgstr "Аргумент setopt имеет несколько значений: %s"
 
-#: ../dnf/repo.py:83
+#: ../dnf/cli/option_parser.py:99
 #, python-format
-msgid "no matching payload factory for %s"
-msgstr "нет подходящего обработчика для %s"
+msgid "Setopt argument has no value: %s"
+msgstr "Аргумент setopt не имеет значения: %s"
 
-#: ../dnf/repo.py:110
-msgid "Already downloaded"
-msgstr "Уже загружен"
+#: ../dnf/cli/option_parser.py:156
+msgid "Optional arguments"
+msgstr "Дополнительные параметры"
 
-#: ../dnf/repo.py:267 ../dnf/drpm.py:62
+#: ../dnf/cli/option_parser.py:159
+msgid "config file location"
+msgstr "расположение файла конфигурации"
+
+#: ../dnf/cli/option_parser.py:162
+msgid "quiet operation"
+msgstr "работать без вывода сообщений"
+
+#: ../dnf/cli/option_parser.py:164
+msgid "verbose operation"
+msgstr "подробно описывать действия"
+
+#: ../dnf/cli/option_parser.py:166
+msgid "show DNF version and exit"
+msgstr "вывести версию DNF и выйти"
+
+#: ../dnf/cli/option_parser.py:167
+msgid "set install root"
+msgstr "настройка корневого каталога установки"
+
+#: ../dnf/cli/option_parser.py:170
+msgid "do not install documentations"
+msgstr "не устанавливать документацию"
+
+#: ../dnf/cli/option_parser.py:173
+msgid "disable all plugins"
+msgstr "отключить все модули"
+
+#: ../dnf/cli/option_parser.py:176
+msgid "enable plugins by name"
+msgstr "включить модули по названию"
+
+#: ../dnf/cli/option_parser.py:180
+msgid "disable plugins by name"
+msgstr "отключить модули по названию"
+
+#: ../dnf/cli/option_parser.py:183
+msgid "override the value of $releasever in config and repo files"
+msgstr "заместить значение $releasever в файлах конфигурации и репозиториев"
+
+#: ../dnf/cli/option_parser.py:187
+msgid "set arbitrary config and repo options"
+msgstr "установить произвольные настройки и параметры репозиториев"
+
+#: ../dnf/cli/option_parser.py:190
+msgid "resolve depsolve problems by skipping packages"
+msgstr "разрешить проблемы зависимостей, пропустив пакеты"
+
+#: ../dnf/cli/option_parser.py:193
+msgid "show command help"
+msgstr "показать справку по команде"
+
+#: ../dnf/cli/option_parser.py:197
+msgid "allow erasing of installed packages to resolve dependencies"
+msgstr "разрешить удаление установленных пакетов для разрешения зависимостей"
+
+#: ../dnf/cli/option_parser.py:201
+msgid "try the best available package versions in transactions."
+msgstr ""
+"попытаться использовать наиболее подходящие версии пакетов в транзакциях."
+
+#: ../dnf/cli/option_parser.py:203
+msgid "do not limit the transaction to the best candidate"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:206
+msgid "run entirely from system cache, don't update cache"
+msgstr "брать полностью из системного кэша, не обновлять его"
+
+#: ../dnf/cli/option_parser.py:210
+msgid "maximum command wait time"
+msgstr "максимальное время ожидания команды"
+
+#: ../dnf/cli/option_parser.py:213
+msgid "debugging output level"
+msgstr "уровень отладочных сообщений"
+
+#: ../dnf/cli/option_parser.py:216
+msgid "dumps detailed solving results into files"
+msgstr "сохраняет подробные результаты в файлах"
+
+#: ../dnf/cli/option_parser.py:220
+msgid "show duplicates, in repos, in list/search commands"
+msgstr "показывать повторяющиеся в репозиториях пакеты для команд list/search"
+
+#: ../dnf/cli/option_parser.py:223
+msgid "error output level"
+msgstr "уровень сообщений об ошибках"
+
+#: ../dnf/cli/option_parser.py:226
+msgid ""
+"enables dnf's obsoletes processing logic for upgrade or display capabilities"
+" that the package obsoletes for info, list and repoquery"
+msgstr ""
+"включает логику обработки устаревших пакетов dnf для обновления или "
+"отображения возможностей, устаревающих с пакетом, для  info, list и "
+"repoquery"
+
+#: ../dnf/cli/option_parser.py:230
+msgid "debugging output level for rpm"
+msgstr "уровень отладочных сообщений для rpm"
+
+#: ../dnf/cli/option_parser.py:233
+msgid "automatically answer yes for all questions"
+msgstr "автоматически отвечать утвердительно на все вопросы"
+
+#: ../dnf/cli/option_parser.py:236
+msgid "automatically answer no for all questions"
+msgstr "автоматически отвечать отрицательно на все вопросы"
+
+#: ../dnf/cli/option_parser.py:247
+msgid ""
+"enable just specific repositories by an id or a glob, can be specified "
+"multiple times"
+msgstr ""
+"включить только определенные репозитории по идентификатору или маске, можно"
+"  задать несколько раз"
+
+#: ../dnf/cli/option_parser.py:252
+msgid "enable repos with config-manager command (automatically saves)"
+msgstr ""
+"подключить репозитории командой config-manager (сохранение автоматическое)"
+
+#: ../dnf/cli/option_parser.py:256
+msgid "disable repos with config-manager command (automatically saves)"
+msgstr ""
+"отключить репозитории командой config-manager (сохранение автоматическое)"
+
+#: ../dnf/cli/option_parser.py:260
+msgid "exclude packages by name or glob"
+msgstr "исключить пакеты по имени или маске"
+
+#: ../dnf/cli/option_parser.py:265
+msgid "disable excludepkgs"
+msgstr "отключить excludepkgs"
+
+#: ../dnf/cli/option_parser.py:270
+msgid ""
+"label and path to additional repository, can be specified multiple times."
+msgstr ""
+"метка и путь к дополнительному репозитарию, может быть определено несколько "
+"раз."
+
+#: ../dnf/cli/option_parser.py:274
+msgid "disable removal of dependencies that are no longer used"
+msgstr "запретить удаление зависимостей, которые больше не используются"
+
+#: ../dnf/cli/option_parser.py:277
+msgid "disable gpg signature checking (if RPM policy allows)"
+msgstr ""
+
+#: ../dnf/cli/option_parser.py:279
+msgid "control whether color is used"
+msgstr "использовать ли цветовые схемы"
+
+#: ../dnf/cli/option_parser.py:282
+msgid "set metadata as expired before running the command"
+msgstr "установить метаданные как истекшие перед запуском команды"
+
+#: ../dnf/cli/option_parser.py:285
+msgid "resolve to IPv4 addresses only"
+msgstr "разрешение только в адреса IPv4"
+
+#: ../dnf/cli/option_parser.py:288
+msgid "resolve to IPv6 addresses only"
+msgstr "разрешение только в адреса IPv6"
+
+#: ../dnf/cli/option_parser.py:291
+msgid "set directory to copy packages to"
+msgstr "задать каталог для копирования в него пакетов"
+
+#: ../dnf/cli/option_parser.py:294
+msgid "only download packages"
+msgstr "только загрузить пакеты"
+
+#: ../dnf/cli/option_parser.py:296
+msgid "add a comment to transaction"
+msgstr "добавить к транзакции комментарий"
+
+#: ../dnf/cli/option_parser.py:299
+msgid "Include bugfix relevant packages, in updates"
+msgstr "Включить в обновления пакеты для исправлений ошибок"
+
+#: ../dnf/cli/option_parser.py:302
+msgid "Include enhancement relevant packages, in updates"
+msgstr "Включить в обновления пакеты, связанные с  улучшениями"
+
+#: ../dnf/cli/option_parser.py:305
+msgid "Include newpackage relevant packages, in updates"
+msgstr "Включить в обновления пакеты, связанные с newpackage"
+
+#: ../dnf/cli/option_parser.py:308
+msgid "Include security relevant packages, in updates"
+msgstr "Включить в обновления пакеты, связанные с безопасностью"
+
+#: ../dnf/cli/option_parser.py:312
+msgid "Include packages needed to fix the given advisory, in updates"
+msgstr ""
+"Включить в обновления пакеты, необходимые для исправлений в связи с данной "
+"рекомендацией"
+
+#: ../dnf/cli/option_parser.py:316
+msgid "Include packages needed to fix the given BZ, in updates"
+msgstr ""
+"Включать в обноления пакеты, требуемые для исправления данной ошибки из "
+"багзиллы"
+
+#: ../dnf/cli/option_parser.py:319
+msgid "Include packages needed to fix the given CVE, in updates"
+msgstr ""
+"Включать в обновления пакеты, требуемые для исправления данной уязвимости "
+"CVE"
+
+#: ../dnf/cli/option_parser.py:324
+msgid "Include security relevant packages matching the severity, in updates"
+msgstr ""
+"Включать в обновления пакеты, связанные с безопасностью, с указанным уровнем"
+" опасности"
+
+#: ../dnf/cli/option_parser.py:330
+msgid "Force the use of an architecture"
+msgstr "Принудительно использовать архитектуру"
+
+#: ../dnf/cli/option_parser.py:365
+msgid "List of Main Commands:"
+msgstr "Список основных команд:"
+
+#: ../dnf/cli/option_parser.py:366
+msgid "List of Plugin Commands:"
+msgstr "Список команд подключаемых модулей:"
+
+#. Translators: This is abbreviated 'Name'. Should be no longer
+#. than 12 characters. You can use the full version if it is short
+#. enough in your language.
+#: ../dnf/cli/output.py:498
+msgctxt "short"
+msgid "Name"
+msgstr ""
+
+#. Translators: This message should be no longer than 12 characters.
+#: ../dnf/cli/output.py:504
+msgid "Epoch"
+msgstr "Эпоха"
+
+#. Translators: This is the short version of 'Version'. You can
+#. use the full (unabbreviated) term 'Version' if you think that
+#. the translation to your language is not too long and will
+#. always fit to limited space.
+#: ../dnf/cli/output.py:505 ../dnf/cli/output.py:1304
+msgctxt "short"
+msgid "Version"
+msgstr ""
+
+#. Translators: This is the full (unabbreviated) term 'Version'.
+#: ../dnf/cli/output.py:506 ../dnf/cli/output.py:1306
+msgctxt "long"
+msgid "Version"
+msgstr ""
+
+#. Translators: This message should be no longer than 12 characters.
+#: ../dnf/cli/output.py:509
+msgid "Release"
+msgstr "Выпуск"
+
+#. Translators: This is abbreviated 'Architecture', used when
+#. we have not enough space to display the full word.
+#: ../dnf/cli/output.py:510 ../dnf/cli/output.py:1295
+msgctxt "short"
+msgid "Arch"
+msgstr ""
+
+#. Translators: This is the full word 'Architecture', used when
+#. we have enough space.
+#: ../dnf/cli/output.py:511 ../dnf/cli/output.py:1298
+msgctxt "long"
+msgid "Architecture"
+msgstr ""
+
+#. Translators: This is the full (unabbreviated) term 'Size'.
+#: ../dnf/cli/output.py:513 ../dnf/cli/output.py:1321
+msgctxt "long"
+msgid "Size"
+msgstr ""
+
+#. Translators: This is the short version of 'Size'. It should
+#. not be longer than 5 characters. If the term 'Size' in your
+#. language is not longer than 5 characters then you can use it
+#. unabbreviated.
+#: ../dnf/cli/output.py:513 ../dnf/cli/output.py:1319
+msgctxt "short"
+msgid "Size"
+msgstr ""
+
+#. Translators: This message should be no longer than 12 characters.
+#: ../dnf/cli/output.py:517
+msgid "Source"
+msgstr "Источник"
+
+#. Translators: This is abbreviated 'Repository', used when
+#. we have not enough space to display the full word.
+#: ../dnf/cli/output.py:518 ../dnf/cli/output.py:1310
+msgctxt "short"
+msgid "Repo"
+msgstr ""
+
+#. Translators: This is the full word 'Repository', used when
+#. we have enough space.
+#: ../dnf/cli/output.py:519 ../dnf/cli/output.py:1313
+msgctxt "long"
+msgid "Repository"
+msgstr ""
+
+#. Translators: This message should be no longer than 12 chars.
+#: ../dnf/cli/output.py:526
+msgid "From repo"
+msgstr "Из репозитория"
+
+#. :hawkey does not support changelog information
+#. print(_("Committer   : %s") % ucd(pkg.committer))
+#. print(_("Committime  : %s") % time.ctime(pkg.committime))
+#. Translators: This message should be no longer than 12 characters.
+#: ../dnf/cli/output.py:532
+msgid "Packager"
+msgstr "Сопровождающий"
+
+#. Translators: This message should be no longer than 12 characters.
+#: ../dnf/cli/output.py:534
+msgid "Buildtime"
+msgstr "Время сборки"
+
+#. Translators: This message should be no longer than 12 characters.
+#: ../dnf/cli/output.py:538
+msgid "Install time"
+msgstr "Время установки"
+
+#. Translators: This message should be no longer than 12 chars.
+#: ../dnf/cli/output.py:547
+msgid "Installed by"
+msgstr "Установлен"
+
+#. Translators: This is abbreviated 'Summary'. Should be no longer
+#. than 12 characters. You can use the full version if it is short
+#. enough in your language.
+#: ../dnf/cli/output.py:551
+msgctxt "short"
+msgid "Summary"
+msgstr ""
+
+#. Translators: This message should be no longer than 12 characters.
+#: ../dnf/cli/output.py:557
+msgid "License"
+msgstr "Лицензия"
+
+#. Translators: This is abbreviated 'Description'. Should be no longer
+#. than 12 characters. You can use the full version if it is short
+#. enough in your language.
+#: ../dnf/cli/output.py:561
+msgctxt "short"
+msgid "Description"
+msgstr ""
+
+#: ../dnf/cli/output.py:688
+msgid "No packages to list"
+msgstr "Нет пакетов для списка"
+
+#: ../dnf/cli/output.py:699
+msgid "y"
+msgstr "д"
+
+#: ../dnf/cli/output.py:699
+msgid "yes"
+msgstr "да"
+
+#: ../dnf/cli/output.py:700
+msgid "n"
+msgstr "н"
+
+#: ../dnf/cli/output.py:700
+msgid "no"
+msgstr "нет"
+
+#: ../dnf/cli/output.py:704
+msgid "Is this ok [y/N]: "
+msgstr "Продолжить? [д/Н]: "
+
+#: ../dnf/cli/output.py:708
+msgid "Is this ok [Y/n]: "
+msgstr "Все правильно? [Д/н]: "
+
+#: ../dnf/cli/output.py:788
 #, python-format
-msgid "unsupported checksum type: %s"
-msgstr "неподдерживаемый тип контрольной суммы: %s"
+msgid "Group: %s"
+msgstr "Группа: %s"
 
-#. pinging mirrors, this might take a while
-#: ../dnf/repo.py:345
+#: ../dnf/cli/output.py:792
 #, python-format
-msgid "determining the fastest mirror (%s hosts).. "
-msgstr "определение самого быстрого зеркала (%s узлов).. "
+msgid " Group-Id: %s"
+msgstr " Код группы: %s"
 
-#: ../dnf/module/module_base.py:33
+#: ../dnf/cli/output.py:794 ../dnf/cli/output.py:833
+#, python-format
+msgid " Description: %s"
+msgstr " Описание: %s"
+
+#: ../dnf/cli/output.py:796
+#, python-format
+msgid " Language: %s"
+msgstr " Язык: %s"
+
+#: ../dnf/cli/output.py:799
+msgid " Mandatory Packages:"
+msgstr " Обязательные пакеты:"
+
+#: ../dnf/cli/output.py:800
+msgid " Default Packages:"
+msgstr " Пакеты по умолчанию:"
+
+#: ../dnf/cli/output.py:801
+msgid " Optional Packages:"
+msgstr " Необязательные пакеты:"
+
+#: ../dnf/cli/output.py:802
+msgid " Conditional Packages:"
+msgstr " Условные пакеты:"
+
+#: ../dnf/cli/output.py:827
+#, python-format
+msgid "Environment Group: %s"
+msgstr "Группа окружения: %s"
+
+#: ../dnf/cli/output.py:830
+#, python-format
+msgid " Environment-Id: %s"
+msgstr " ID окружения: %s"
+
+#: ../dnf/cli/output.py:836
+msgid " Mandatory Groups:"
+msgstr " Обязательные группы:"
+
+#: ../dnf/cli/output.py:837
+msgid " Optional Groups:"
+msgstr " Необязательные группы:"
+
+#: ../dnf/cli/output.py:858
+msgid "Matched from:"
+msgstr "Совпадения с:"
+
+#: ../dnf/cli/output.py:872
+#, python-format
+msgid "Filename    : %s"
+msgstr "Имя файла   : %s"
+
+#: ../dnf/cli/output.py:897
+#, python-format
+msgid "Repo        : %s"
+msgstr "Репозиторий        : %s"
+
+#: ../dnf/cli/output.py:906
+msgid "Description : "
+msgstr "Описание : "
+
+#: ../dnf/cli/output.py:910
+#, python-format
+msgid "URL         : %s"
+msgstr "Ссылка         : %s"
+
+#: ../dnf/cli/output.py:914
+#, python-format
+msgid "License     : %s"
+msgstr "Лицензия    : %s"
+
+#: ../dnf/cli/output.py:920
+#, python-format
+msgid "Provide    : %s"
+msgstr "Предоставьте    : %s"
+
+#: ../dnf/cli/output.py:940
+#, python-format
+msgid "Other       : %s"
+msgstr "Другое       : %s"
+
+#: ../dnf/cli/output.py:989
+msgid "There was an error calculating total download size"
+msgstr "Произошла ошибка при подсчете общего объема загрузки"
+
+#: ../dnf/cli/output.py:995
+#, python-format
+msgid "Total size: %s"
+msgstr "Общий размер: %s"
+
+#: ../dnf/cli/output.py:998
+#, python-format
+msgid "Total download size: %s"
+msgstr "Объем загрузки: %s"
+
+#: ../dnf/cli/output.py:1001
+#, python-format
+msgid "Installed size: %s"
+msgstr "Объем изменений: %s"
+
+#: ../dnf/cli/output.py:1019
+msgid "There was an error calculating installed size"
+msgstr "Ошибка при подсчете объема установки"
+
+#: ../dnf/cli/output.py:1023
+#, python-format
+msgid "Freed space: %s"
+msgstr "Освобожденное место: %s"
+
+#: ../dnf/cli/output.py:1032
+msgid "Marking packages as installed by the group:"
+msgstr "Отметка, что пакеты  установлены группой:"
+
+#: ../dnf/cli/output.py:1039
+msgid "Marking packages as removed by the group:"
+msgstr "Отметка, что пакеты  удалены группой:"
+
+#: ../dnf/cli/output.py:1049
+msgid "Group"
+msgstr "Группа"
+
+#: ../dnf/cli/output.py:1049
+msgid "Packages"
+msgstr "Пакеты"
+
+#: ../dnf/cli/output.py:1114
+msgid "Installing group/module packages"
+msgstr "Установка пакетов группы/модуля"
+
+#: ../dnf/cli/output.py:1115
+msgid "Installing group packages"
+msgstr "Установка пакетов группы"
+
+#. TRANSLATORS: This is for a list of packages to be installed.
+#: ../dnf/cli/output.py:1119
+msgctxt "summary"
+msgid "Installing"
+msgstr "Установка"
+
+#. TRANSLATORS: This is for a list of packages to be upgraded.
+#: ../dnf/cli/output.py:1121
+msgctxt "summary"
+msgid "Upgrading"
+msgstr "Обновление"
+
+#. TRANSLATORS: This is for a list of packages to be reinstalled.
+#: ../dnf/cli/output.py:1123
+msgctxt "summary"
+msgid "Reinstalling"
+msgstr "Переустановка"
+
+#: ../dnf/cli/output.py:1125
+msgid "Installing dependencies"
+msgstr "Установка зависимостей"
+
+#: ../dnf/cli/output.py:1126
+msgid "Installing weak dependencies"
+msgstr "Установка слабых зависимостей"
+
+#. TRANSLATORS: This is for a list of packages to be removed.
+#: ../dnf/cli/output.py:1128
+msgid "Removing"
+msgstr "Удаление"
+
+#: ../dnf/cli/output.py:1129
+msgid "Removing dependent packages"
+msgstr "Удаление зависимых пакетов"
+
+#: ../dnf/cli/output.py:1130
+msgid "Removing unused dependencies"
+msgstr "Удаление неиспользуемых зависимостей"
+
+#. TRANSLATORS: This is for a list of packages to be downgraded.
+#: ../dnf/cli/output.py:1132
+msgctxt "summary"
+msgid "Downgrading"
+msgstr "Откат версии"
+
+#: ../dnf/cli/output.py:1157
+msgid "Installing module profiles"
+msgstr "Установка профилей модулей"
+
+#: ../dnf/cli/output.py:1166
+msgid "Disabling module profiles"
+msgstr ""
+
+#: ../dnf/cli/output.py:1175
+msgid "Enabling module streams"
+msgstr "Включение потоков модулей"
+
+#: ../dnf/cli/output.py:1183
+msgid "Switching module streams"
+msgstr "Переключение потоков модулей"
+
+#: ../dnf/cli/output.py:1191
+msgid "Disabling modules"
+msgstr ""
+
+#: ../dnf/cli/output.py:1199
+msgid "Resetting modules"
+msgstr ""
+
+#: ../dnf/cli/output.py:1207
+msgid "Installing Environment Groups"
+msgstr "Установка групп с рабочими средами"
+
+#: ../dnf/cli/output.py:1214
+msgid "Upgrading Environment Groups"
+msgstr "Обновление групп с рабочими средами"
+
+#: ../dnf/cli/output.py:1221
+msgid "Removing Environment Groups"
+msgstr "Удаление групп с рабочими средами"
+
+#: ../dnf/cli/output.py:1228
+msgid "Installing Groups"
+msgstr "Установка групп"
+
+#: ../dnf/cli/output.py:1235
+msgid "Upgrading Groups"
+msgstr "Обновление групп"
+
+#: ../dnf/cli/output.py:1242
+msgid "Removing Groups"
+msgstr "Удаление групп"
+
+#: ../dnf/cli/output.py:1256
+#, python-format
+msgid ""
+"Skipping packages with conflicts:\n"
+"(add '%s' to command line to force their upgrade)"
+msgstr ""
+"Пропуск пакетов с конфликтами:\n"
+"(добавьте «%s» к командной строке для их принудительного обновления)"
+
+#: ../dnf/cli/output.py:1264
+#, python-format
+msgid "Skipping packages with broken dependencies%s"
+msgstr "Пропуск пакетов с нарушенными зависимостями %s"
+
+#: ../dnf/cli/output.py:1268
+msgid " or part of a group"
+msgstr " или часть группы"
+
+#. Translators: This is the short version of 'Package'. You can
+#. use the full (unabbreviated) term 'Package' if you think that
+#. the translation to your language is not too long and will
+#. always fit to limited space.
+#: ../dnf/cli/output.py:1289
+msgctxt "short"
+msgid "Package"
+msgstr ""
+
+#. Translators: This is the full (unabbreviated) term 'Package'.
+#. This is also a hack to resolve RhBug 1302935 correctly.
+#: ../dnf/cli/output.py:1291 ../dnf/cli/output.py:2055
+msgctxt "long"
+msgid "Package"
+msgstr ""
+
+#: ../dnf/cli/output.py:1340
+msgid "replacing"
+msgstr "замена"
+
+#: ../dnf/cli/output.py:1348
+#, python-format
 msgid ""
 "\n"
-"\n"
-"Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled"
+"Transaction Summary\n"
+"%s\n"
 msgstr ""
 "\n"
-"\n"
-"Подсказка: [d]efault, [e]nabled, [x]disabled, [i]nstalled"
+"Результат транзакции\n"
+"%s\n"
 
-#: ../dnf/module/module_base.py:34
-msgid ""
-"\n"
-"\n"
-"Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled, [a]ctive"
-msgstr ""
+#. TODO: remove
+#: ../dnf/cli/output.py:1353 ../dnf/cli/output.py:1962
+#: ../dnf/cli/output.py:1963
+msgid "Install"
+msgstr "Установка"
 
-#: ../dnf/module/module_base.py:46 ../dnf/module/module_base.py:362
-#: ../dnf/module/module_base.py:418 ../dnf/module/module_base.py:476
-msgid "Ignoring unnecessary profile: '{}/{}'"
-msgstr "Пропуск ненужного профиля: «{}/{}»"
+#: ../dnf/cli/output.py:1357 ../dnf/cli/output.py:1971
+msgid "Upgrade"
+msgstr "Обновление"
 
-#: ../dnf/module/module_base.py:79 ../dnf/module/module_base.py:173
-#: ../dnf/module/module_base.py:197
-msgid "Unable to match profile in argument {}"
-msgstr "Не удается подобрать подходящий профиль в аргументе {}"
+#: ../dnf/cli/output.py:1358
+msgid "Remove"
+msgstr "Удаление"
 
-#: ../dnf/module/module_base.py:86
-msgid "No default profiles for module {}:{}"
-msgstr "Нет профилей по умолчанию для модуля {}:{}"
+#: ../dnf/cli/output.py:1360 ../dnf/cli/output.py:1969
+msgid "Downgrade"
+msgstr "Откат версии"
 
-#: ../dnf/module/module_base.py:92
-msgid "Profile {} not matched for module {}:{}"
-msgstr "Профиль {} не подходит для модуля {}:{}"
+#: ../dnf/cli/output.py:1361
+msgid "Skip"
+msgstr "Пропуск"
 
-#: ../dnf/module/module_base.py:118 ../dnf/module/module_base.py:148
-#: ../dnf/module/module_base.py:278 ../dnf/module/module_base.py:296
-#: ../dnf/module/module_base.py:304 ../dnf/module/module_base.py:358
-#: ../dnf/module/module_base.py:414 ../dnf/module/module_base.py:472
-msgid "Unable to resolve argument {}"
-msgstr "Не удается разрешить аргумент {}"
+#: ../dnf/cli/output.py:1370 ../dnf/cli/output.py:1386
+msgid "Package"
+msgid_plural "Packages"
+msgstr[0] "Пакет"
+msgstr[1] "Пакета"
+msgstr[2] "Пакетов"
 
-#: ../dnf/module/module_base.py:119
-msgid "No match for package {}"
-msgstr "Нет соответствия для пакета {}"
+#: ../dnf/cli/output.py:1388
+msgid "Dependent package"
+msgid_plural "Dependent packages"
+msgstr[0] "Зависимый пакет"
+msgstr[1] "Зависимых пакета"
+msgstr[2] "Зависимых пакетов"
 
-#: ../dnf/module/module_base.py:308
-msgid ""
-"Only module name required. Ignoring unneeded information in argument: '{}'"
-msgstr ""
+#: ../dnf/cli/output.py:1450 ../dnf/cli/output.py:1804
+#: ../dnf/cli/output.py:1972
+msgid "Upgraded"
+msgstr "Обновлен"
 
-#: ../dnf/module/module_base.py:607 ../dnf/exceptions.py:125
-msgid "Modular dependency problem:"
-msgid_plural "Modular dependency problems:"
-msgstr[0] "Проблема с зависимостями модулей"
-msgstr[1] "Проблемы с зависимостями модулей"
-msgstr[2] "Проблем с зависимостями модулей"
+#: ../dnf/cli/output.py:1451 ../dnf/cli/output.py:1804
+#: ../dnf/cli/output.py:1970
+msgid "Downgraded"
+msgstr "Возвращен к предыдущей версии"
 
-#: ../dnf/module/__init__.py:26
-msgid "Enabling different stream for '{}'."
-msgstr "Включение другого потока для «{}»."
+#: ../dnf/cli/output.py:1456
+msgid "Reinstalled"
+msgstr "Переустановлен"
 
-#: ../dnf/module/__init__.py:27
-msgid "Nothing to show."
-msgstr "Нечего показывать."
+#: ../dnf/cli/output.py:1457
+msgid "Skipped"
+msgstr "Пропущено"
 
-#: ../dnf/module/__init__.py:28
-msgid "Installing newer version of '{}' than specified. Reason: {}"
-msgstr "Устанавливается версия «{}», которая новее, чем задано. Причина: {}"
+#: ../dnf/cli/output.py:1458
+msgid "Removed"
+msgstr "Удален"
 
-#: ../dnf/module/__init__.py:29
-msgid "Enabled modules: {}."
-msgstr "Активированные модули: {}."
+#: ../dnf/cli/output.py:1461
+msgid "Failed"
+msgstr "Сбой"
 
-#: ../dnf/module/__init__.py:30
-msgid "No profile specified for '{}', please specify profile."
-msgstr "Для «{}» не задан профиль, задайте профиль."
+#: ../dnf/cli/output.py:1512
+msgid "Total"
+msgstr "Общий размер"
 
-#: ../dnf/dnssec.py:239
-msgid "DNSSEC extension: Key for user "
-msgstr "Расширение DNSSEC: ключ для пользователя "
+#: ../dnf/cli/output.py:1540
+msgid "<unset>"
+msgstr "<unset>"
 
-#: ../dnf/dnssec.py:241
-msgid "is valid."
-msgstr "неверный."
+#: ../dnf/cli/output.py:1541
+msgid "System"
+msgstr "Система"
 
-#: ../dnf/dnssec.py:243
-msgid "has unknown status."
-msgstr "имеет неизвестный статус."
-
-#: ../dnf/dnssec.py:251
-msgid "DNSSEC extension: "
-msgstr "Расширение DNSSEC: "
-
-#: ../dnf/dnssec.py:283
-msgid "Testing already imported keys for their validity."
-msgstr "Проверка действительности уже импортированных ключей."
-
-#: ../dnf/automatic/main.py:156 ../dnf/conf/config.py:149
+#: ../dnf/cli/output.py:1611
 #, python-format
-msgid "Unknown configuration value: %s=%s in %s; %s"
-msgstr "Неизвестное значение параметра: %s=%s в %s; %s"
+msgid "Skipping merged transaction %d to %d, as it overlaps"
+msgstr "Пропуск объединенной транзакции %d to %d, поскольку она перекрывается"
 
-#: ../dnf/automatic/main.py:160 ../dnf/conf/config.py:156
+#: ../dnf/cli/output.py:1622 ../dnf/cli/output.py:1729
+msgid "No transactions"
+msgstr "Нет транзакций"
+
+#: ../dnf/cli/output.py:1642 ../dnf/cli/output.py:2043
+msgid "Bad transaction IDs, or package(s), given"
+msgstr "Даны неправильные идентификаторы транзакций или пакеты"
+
+#: ../dnf/cli/output.py:1678
+msgid "Command line"
+msgstr "Командная строка"
+
+#. TRANSLATORS: user names who executed transaction in history command output
+#: ../dnf/cli/output.py:1681
+msgid "User name"
+msgstr "Имя пользователя"
+
+#. REALLY Needs to use columns!
+#: ../dnf/cli/output.py:1682 ../dnf/cli/output.py:2052
+msgid "ID"
+msgstr "Идентификатор"
+
+#: ../dnf/cli/output.py:1684
+msgid "Date and time"
+msgstr "Дата и время"
+
+#: ../dnf/cli/output.py:1685 ../dnf/cli/output.py:2053
+msgid "Action(s)"
+msgstr "Действия"
+
+#: ../dnf/cli/output.py:1686
+msgid "Altered"
+msgstr "Изменено"
+
+#: ../dnf/cli/output.py:1730 ../dnf/cli/output.py:1746
+msgid "Failed history info"
+msgstr "Информация об истории отказов"
+
+#: ../dnf/cli/output.py:1745
+msgid "No transaction ID, or package, given"
+msgstr "Не задан идентификатор транзакции или пакет"
+
+#: ../dnf/cli/output.py:1803
+msgid "Erased"
+msgstr "Удалено"
+
+#: ../dnf/cli/output.py:1805
+msgid "Not installed"
+msgstr "Не установлено"
+
+#: ../dnf/cli/output.py:1806
+msgid "Newer"
+msgstr "Новее"
+
+#: ../dnf/cli/output.py:1806
+msgid "Older"
+msgstr "Старее"
+
+#: ../dnf/cli/output.py:1854 ../dnf/cli/output.py:1856
+msgid "Transaction ID :"
+msgstr "Идентификатор транзакции   :"
+
+#: ../dnf/cli/output.py:1859
+msgid "Begin time     :"
+msgstr "Время начала   :"
+
+#: ../dnf/cli/output.py:1862 ../dnf/cli/output.py:1864
+msgid "Begin rpmdb    :"
+msgstr "Начало rpmdb   :"
+
+#: ../dnf/cli/output.py:1870
 #, python-format
-msgid "Unknown configuration option: %s = %s in %s"
-msgstr "Неизвестный параметр конфигурации: %s = %s в %s"
+msgid "(%u seconds)"
+msgstr "(%u секунд)"
 
-#: ../dnf/automatic/main.py:231
-msgid "Started dnf-automatic."
-msgstr "Запущен dnf-automatic."
-
-#: ../dnf/automatic/main.py:235
+#: ../dnf/cli/output.py:1872
 #, python-format
-msgid "Sleep for %s seconds"
-msgstr "Ожидание на %s секунд"
+msgid "(%u minutes)"
+msgstr "(%u минут)"
 
-#: ../dnf/automatic/emitter.py:31
+#: ../dnf/cli/output.py:1874
 #, python-format
-msgid "The following updates have been applied on '%s':"
-msgstr "Были применены следующие обновления на «%s»:"
+msgid "(%u hours)"
+msgstr "(%u часов)"
 
-#: ../dnf/automatic/emitter.py:32
+#: ../dnf/cli/output.py:1876
 #, python-format
-msgid "The following updates are available on '%s':"
-msgstr "Доступны следующие обновления для «%s»:"
+msgid "(%u days)"
+msgstr "(%u дней)"
 
-#: ../dnf/automatic/emitter.py:33
+#: ../dnf/cli/output.py:1877
+msgid "End time       :"
+msgstr "Время окончания       :"
+
+#: ../dnf/cli/output.py:1880 ../dnf/cli/output.py:1882
+msgid "End rpmdb      :"
+msgstr "Конец rpmdb    :"
+
+#: ../dnf/cli/output.py:1889 ../dnf/cli/output.py:1891
+msgid "User           :"
+msgstr "Пользователь   :"
+
+#: ../dnf/cli/output.py:1895 ../dnf/cli/output.py:1902
+msgid "Aborted"
+msgstr "Прекращено"
+
+#: ../dnf/cli/output.py:1895 ../dnf/cli/output.py:1898
+#: ../dnf/cli/output.py:1900 ../dnf/cli/output.py:1902
+#: ../dnf/cli/output.py:1904 ../dnf/cli/output.py:1906
+msgid "Return-Code    :"
+msgstr "Код возврата   :"
+
+#: ../dnf/cli/output.py:1898 ../dnf/cli/output.py:1906
+msgid "Success"
+msgstr "Успешно"
+
+#: ../dnf/cli/output.py:1900
+msgid "Failures:"
+msgstr "Ошибки:"
+
+#: ../dnf/cli/output.py:1904
+msgid "Failure:"
+msgstr "Неудача:"
+
+#: ../dnf/cli/output.py:1914 ../dnf/cli/output.py:1916
+msgid "Releasever     :"
+msgstr "Выпускаемая версия     :"
+
+#: ../dnf/cli/output.py:1921 ../dnf/cli/output.py:1923
+msgid "Command Line   :"
+msgstr "Команда   :"
+
+#: ../dnf/cli/output.py:1929
+msgid "Comment        :"
+msgstr "Комментарий        :"
+
+#: ../dnf/cli/output.py:1933
+msgid "Transaction performed with:"
+msgstr "Транзакция выполнена:"
+
+#: ../dnf/cli/output.py:1942
+msgid "Packages Altered:"
+msgstr "Пакеты изменены:"
+
+#: ../dnf/cli/output.py:1948
+msgid "Scriptlet output:"
+msgstr "Вывод скриптлета:"
+
+#: ../dnf/cli/output.py:1955
+msgid "Errors:"
+msgstr "Ошибки:"
+
+#: ../dnf/cli/output.py:1964
+msgid "Dep-Install"
+msgstr "Установка зависимостей"
+
+#: ../dnf/cli/output.py:1965
+msgid "Obsoleted"
+msgstr "Исключено"
+
+#: ../dnf/cli/output.py:1966 ../dnf/transaction.py:83 ../dnf/transaction.py:84
+msgid "Obsoleting"
+msgstr "Исключаем"
+
+#: ../dnf/cli/output.py:1967
+msgid "Erase"
+msgstr "Удаление"
+
+#: ../dnf/cli/output.py:1968
+msgid "Reinstall"
+msgstr "Переустановка"
+
+#: ../dnf/cli/output.py:2142
 #, python-format
-msgid "The following updates were downloaded on '%s':"
-msgstr "Следующие обновления загружены на «%s»:"
+msgid "---> Package %s.%s %s will be installed"
+msgstr "---> Пакет %s.%s %s будет устанавливаться"
 
-#: ../dnf/automatic/emitter.py:80
+#: ../dnf/cli/output.py:2144
 #, python-format
-msgid "Updates applied on '%s'."
-msgstr "Обновления применены на «%s»."
+msgid "---> Package %s.%s %s will be an upgrade"
+msgstr "---> Пакет %s.%s %s будет обновлением"
 
-#: ../dnf/automatic/emitter.py:82
+#: ../dnf/cli/output.py:2146
 #, python-format
-msgid "Updates downloaded on '%s'."
-msgstr "Обновления загружены на «%s»."
+msgid "---> Package %s.%s %s will be erased"
+msgstr "---> Пакет %s.%s %s будет удаляться"
 
-#: ../dnf/automatic/emitter.py:84
+#: ../dnf/cli/output.py:2148
 #, python-format
-msgid "Updates available on '%s'."
-msgstr "Обновления доступны на «%s»."
+msgid "---> Package %s.%s %s will be reinstalled"
+msgstr "---> Пакет %s.%s %s будет переустанавливаться"
 
-#: ../dnf/automatic/emitter.py:107
+#: ../dnf/cli/output.py:2150
 #, python-format
-msgid "Failed to send an email via '%s': %s"
-msgstr "Сбой отправки электронного письма через «%s»: %s"
+msgid "---> Package %s.%s %s will be a downgrade"
+msgstr "---> Пакет %s.%s %s будет возвращаться к прежней версии"
 
-#: ../dnf/automatic/emitter.py:137
+#: ../dnf/cli/output.py:2152
 #, python-format
-msgid "Failed to execute command '%s': returned %d"
-msgstr "Не удалось выполнить команду «%s»: возвращено %d"
+msgid "---> Package %s.%s %s will be obsoleting"
+msgstr "---> Пакет %s.%s %s будет убираться"
 
-#: ../dnf/exceptions.py:107
-msgid "Problems in request:"
-msgstr "Проблемы в запросе:"
-
-#: ../dnf/exceptions.py:109
-msgid "missing packages: "
-msgstr "недостающие пакеты: "
-
-#: ../dnf/exceptions.py:111
-msgid "broken packages: "
-msgstr "поврежденные пакеты: "
-
-#: ../dnf/exceptions.py:113
-msgid "missing groups or modules: "
-msgstr "недостающие группы или модули: "
-
-#: ../dnf/exceptions.py:115
-msgid "broken groups or modules: "
-msgstr "поврежденные группы или модули: "
-
-#: ../dnf/exceptions.py:120
-msgid "Modular dependency problem with Defaults:"
-msgid_plural "Modular dependency problems with Defaults:"
-msgstr[0] "Проблема с зависимостями модулей с параметрами по умолчанию"
-msgstr[1] "Проблемы с зависимостями модулей с параметрами по умолчанию"
-msgstr[2] "Проблем с зависимостями модулей с параметрами по умолчанию"
-
-#. empty file is invalid json format
-#: ../dnf/persistor.py:54
+#: ../dnf/cli/output.py:2154
 #, python-format
-msgid "%s is empty file"
-msgstr "%s - пустой файл"
+msgid "---> Package %s.%s %s will be upgraded"
+msgstr "---> Пакет %s.%s %s будет обновляться"
 
-#: ../dnf/persistor.py:98
-msgid "Failed storing last makecache time."
-msgstr "Не удалось сохранить последнее время кэширования."
-
-#: ../dnf/persistor.py:105
-msgid "Failed determining last makecache time."
-msgstr "Не удалось определить последнее время кэширования."
-
-#: ../dnf/util.py:381 ../dnf/util.py:383
-msgid "Problem"
-msgstr "Проблема"
-
-#: ../dnf/base.py:146
-msgid "loading repo '{}' failure: {}"
-msgstr "при загрузке репозитория «{}» произошел сбой: {}"
-
-#: ../dnf/base.py:148
-msgid "Loading repository '{}' has failed"
-msgstr "Не удалось загрузить репозиторий «{}»"
-
-#: ../dnf/base.py:335
-msgid "Metadata timer caching disabled when running on metered connection."
-msgstr ""
-"Таймер кэширования метаданных отключен при работе через тарифицируемое "
-"подключение."
-
-#: ../dnf/base.py:340
-msgid "Metadata timer caching disabled when running on a battery."
-msgstr "Таймер кэширования метаданных отключен при работе от батареи."
-
-#: ../dnf/base.py:345
-msgid "Metadata timer caching disabled."
-msgstr "Таймер кэширования метаданных отключен."
-
-#: ../dnf/base.py:350
-msgid "Metadata cache refreshed recently."
-msgstr "Кэш метаданных недавно обновлен."
-
-#: ../dnf/base.py:362
+#: ../dnf/cli/output.py:2156
 #, python-format
-msgid "%s: will never be expired and will not be refreshed."
-msgstr "%s: никогда не истечет и не будет обновляться"
+msgid "---> Package %s.%s %s will be obsoleted"
+msgstr "---> Пакет %s.%s %s будет считаться устаревшим"
 
-#: ../dnf/base.py:364
-#, python-format
-msgid "%s: has expired and will be refreshed."
-msgstr "%s: истекло и будет обновляться."
+#: ../dnf/cli/output.py:2165
+msgid "--> Starting dependency resolution"
+msgstr "--> Начало разрешения зависимостей"
 
-#. expires within the checking period:
-#: ../dnf/base.py:368
-#, python-format
-msgid "%s: metadata will expire after %d seconds and will be refreshed now"
-msgstr "%s: метаданные истекают через %d секунд сейчас будут обновляться"
+#: ../dnf/cli/output.py:2170
+msgid "--> Finished dependency resolution"
+msgstr "--> Конец разрешения зависимостей"
 
-#: ../dnf/base.py:372
-#, python-format
-msgid "%s: will expire after %d seconds."
-msgstr "%s: истекает через %d секунд."
-
-#. performs the md sync
-#: ../dnf/base.py:378
-msgid "Metadata cache created."
-msgstr "Создан кэш метаданных."
-
-#: ../dnf/base.py:414
-#, python-format
-msgid "%s: using metadata from %s."
-msgstr "%s: используются метаданные из %s."
-
-#: ../dnf/base.py:425
-#, python-format
-msgid "Ignoring repositories: %s"
-msgstr "Игнорируется репозиториев: %s"
-
-#: ../dnf/base.py:428
-#, python-format
-msgid "Last metadata expiration check: %s ago on %s."
-msgstr "Последняя проверка окончания срока действия метаданных: %s назад, %s."
-
-#: ../dnf/base.py:458
-msgid ""
-"The downloaded packages were saved in cache until the next successful "
-"transaction."
-msgstr ""
-"Загруженные пакеты были сохранены в кэше до следующей успешной транзакции."
-
-#: ../dnf/base.py:460
-#, python-format
-msgid "You can remove cached packages by executing '%s'."
-msgstr "Вы можете удалить кэшированные пакеты, выполнив «%s»."
-
-#: ../dnf/base.py:552
-#, python-format
-msgid "Invalid tsflag in config file: %s"
-msgstr "Неверный tsflag в файле настроек: %s"
-
-#: ../dnf/base.py:608
-#, python-format
-msgid "Failed to add groups file for repository: %s - %s"
-msgstr "Ошибка добавления файла групп для репозитория: %s — %s"
-
-#: ../dnf/base.py:829
-msgid "Running transaction check"
-msgstr "Проверка транзакции"
-
-#: ../dnf/base.py:840
-msgid "Error: transaction check vs depsolve:"
-msgstr "Ошибка: проверка транзакции на разрешение зависимостей:"
-
-#: ../dnf/base.py:846
-msgid "Transaction check succeeded."
-msgstr "Проверка транзакции успешно завершена."
-
-#: ../dnf/base.py:849
-msgid "Running transaction test"
-msgstr "Идет проверка транзакции"
-
-#: ../dnf/base.py:859
-msgid "Transaction check error:"
-msgstr "Ошибка при проверке транзакции:"
-
-#: ../dnf/base.py:866
-msgid "Transaction test succeeded."
-msgstr "Тест транзакции проведен успешно"
-
-#: ../dnf/base.py:881
-msgid "Running transaction"
-msgstr "Выполнение транзакции"
-
-#: ../dnf/base.py:907
-msgid "Disk Requirements:"
-msgstr "Требования к диску:"
-
-#: ../dnf/base.py:910
-#, python-format
-msgid "At least %dMB more space needed on the %s filesystem."
-msgid_plural "At least %dMB more space needed on the %s filesystem."
-msgstr[0] ""
-"Требуется по крайней мере еще %d МБ пространства в файловой системе %s."
-msgstr[1] ""
-"Требуется по крайней мере еще %d МБ пространства в файловой системе %s."
-msgstr[2] ""
-"Требуется по крайней мере еще %d МБ пространства в файловой системе %s."
-
-#: ../dnf/base.py:914
-msgid "Error Summary"
-msgstr "Сводка ошибок"
-
-#: ../dnf/base.py:940
-msgid "RPMDB altered outside of DNF."
-msgstr "RPMDB изменена вне DNF."
-
-#: ../dnf/base.py:997
-msgid "Errors occurred during transaction."
-msgstr "Во время транзакции возникли ошибки."
-
-#: ../dnf/base.py:1001
-#, python-format
-msgid "Failed to obtain the transaction lock (logged in as: %s)."
-msgstr "Не удалось получить блокировку транзакции (добавлено в журнал: %s)."
-
-#. should this be 'to_unicoded'?
-#: ../dnf/base.py:1004 ../dnf/base.py:1014
-msgid "Could not run transaction."
-msgstr "Не удалось запустить транзакцию."
-
-#: ../dnf/base.py:1011
-msgid "Transaction couldn't start:"
-msgstr "Не удалось начать транзакцию:"
-
-#: ../dnf/base.py:1023
-#, python-format
-msgid "Failed to remove transaction file %s"
-msgstr "Не удалось удалить файл транзакции %s"
-
-#: ../dnf/base.py:1102
-msgid "Some packages were not downloaded. Retrying."
-msgstr "Некоторые пакеты не были загружены. Повторная попытка."
-
-#: ../dnf/base.py:1132
-#, python-format
-msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
-msgstr "Delta RPM уменьшил %.1f МБ обновлений до %.1f МБ (%d.1%% сохранено)"
-
-#: ../dnf/base.py:1135
+#: ../dnf/cli/output.py:2184 ../dnf/crypto.py:132
 #, python-format
 msgid ""
-"Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
+"Importing GPG key 0x%s:\n"
+" Userid     : \"%s\"\n"
+" Fingerprint: %s\n"
+" From       : %s"
 msgstr ""
-"Сбой Delta RPM привел к увеличению %.1f МБ обновлений до %.1f МБ (%d.1%% "
-"потрачено)"
+"Импорт GPG-ключа 0x%s:\n"
+"Идентификатор пользователя:  \"%s\"\n"
+"Отпечаток: %s\n"
+"Источник:  %s"
 
-#: ../dnf/base.py:1184
-msgid "Could not open: {}"
-msgstr "Не удалось открыть: {}"
+#: ../dnf/cli/utils.py:98
+msgid "Running"
+msgstr "Работает"
 
-#: ../dnf/base.py:1222
+#: ../dnf/cli/utils.py:99
+msgid "Sleeping"
+msgstr "Ожидание"
+
+#: ../dnf/cli/utils.py:100
+msgid "Uninterruptible"
+msgstr "Непрерываемый"
+
+#: ../dnf/cli/utils.py:101
+msgid "Zombie"
+msgstr "Зомби"
+
+#: ../dnf/cli/utils.py:102
+msgid "Traced/Stopped"
+msgstr "Трассировано/Остановлено"
+
+#: ../dnf/cli/utils.py:103
+msgid "Unknown"
+msgstr "Неизвестно"
+
+#: ../dnf/cli/utils.py:113
 #, python-format
-msgid "Public key for %s is not installed"
-msgstr "Публичный ключ для %s не установлен"
-
-#: ../dnf/base.py:1226
-#, python-format
-msgid "Problem opening package %s"
-msgstr "Проблема открытия пакета %s"
-
-#: ../dnf/base.py:1234
-#, python-format
-msgid "Public key for %s is not trusted"
-msgstr "Публичный ключ для %s не заслуживает доверия"
-
-#: ../dnf/base.py:1238
-#, python-format
-msgid "Package %s is not signed"
-msgstr "Пакет %s не подписан"
-
-#: ../dnf/base.py:1253
-#, python-format
-msgid "Cannot remove %s"
-msgstr "Не удается удалить %s"
-
-#: ../dnf/base.py:1257
-#, python-format
-msgid "%s removed"
-msgstr "%s удален(ы)"
-
-#: ../dnf/base.py:1529
-msgid "No match for group package \"{}\""
-msgstr "Нет соответствия для группового пакета «{}»"
-
-#: ../dnf/base.py:1614
-#, python-format
-msgid "Adding packages from group '%s': %s"
-msgstr "Добавление пакетов из группы «%s»: %s"
-
-#: ../dnf/base.py:1655
-msgid "No groups marked for removal."
-msgstr "Нет групп, помеченных для удаления."
-
-#: ../dnf/base.py:1674
-msgid "No group marked for upgrade."
-msgstr "Не отмечена группа для обновления."
-
-#: ../dnf/base.py:1859 ../dnf/base.py:1870 ../dnf/base.py:2224
-msgid "no package matched"
-msgstr "нет подходящего пакета"
-
-#: ../dnf/base.py:1885
-#, python-format
-msgid "Package %s not installed, cannot downgrade it."
-msgstr "Пакет %s не установлен, нельзя произвести откат версии."
-
-#: ../dnf/base.py:1894
-#, python-format
-msgid "Package %s of lower version already installed, cannot downgrade it."
-msgstr "Пакет %s версией ниже уже установлен, нельзя произвести откат версии."
-
-#: ../dnf/base.py:1917
-#, python-format
-msgid "Package %s not installed, cannot reinstall it."
-msgstr "Пакет %s не установлен, нельзя произвести переустановку."
-
-#: ../dnf/base.py:1932
-#, python-format
-msgid "File %s is a source package and cannot be updated, ignoring."
+msgid "Unable to find information about the locking process (PID %d)"
 msgstr ""
-"Файл %s является исходным пакетом и не может быть обновлен, пропускается."
+"Невозможно найти информацию о блокирующем процессе (идентификатор процесса "
+"%d)"
 
-#: ../dnf/base.py:1938
+#: ../dnf/cli/utils.py:117
 #, python-format
-msgid "Package %s not installed, cannot update it."
-msgstr "Пакет %s не установлен, нельзя произвести обновление."
+msgid "  The application with PID %d is: %s"
+msgstr "  Приложение с идентификатором процесса %d: %s"
 
-#: ../dnf/base.py:1947
+#: ../dnf/cli/utils.py:120
 #, python-format
-msgid "Package %s of higher version already installed, cannot update it."
-msgstr ""
-"Пакет %s более новой версии уже установлен, нельзя произвести обновление."
+msgid "    Memory : %5s RSS (%5sB VSZ)"
+msgstr "    Память   : %5s RSS (%5sB VSZ)"
 
-#: ../dnf/base.py:1993
+#: ../dnf/cli/utils.py:125
 #, python-format
-msgid "Package %s available, but installed for different architecture."
-msgstr "Пакет %s есть, но  установлен для другой архитектуры."
+msgid "    Started: %s - %s ago"
+msgstr "    Запущено : %s — %s назад"
 
-#: ../dnf/base.py:2148
+#: ../dnf/cli/utils.py:127
 #, python-format
-msgid "Package %s of lowest version already installed, cannot downgrade it."
-msgstr "Пакет %s самой старой версии уже установлен, нельзя произвести откат."
+msgid "    State  : %s"
+msgstr "    Статус : %s"
 
-#: ../dnf/base.py:2197
-msgid "Action not handled: {}"
-msgstr "Действие не обрабатывается: {}"
+#: ../dnf/comps.py:95
+msgid "skipping."
+msgstr "пропускается."
 
-#: ../dnf/base.py:2245
-msgid "No security updates needed, but {} update available"
-msgstr "Не требуются обновления безопасности, но обновление {} имеется"
-
-#: ../dnf/base.py:2247
-msgid "No security updates needed, but {} updates available"
-msgstr "Не требуются обновления безопасности, но обновления {} имеются"
-
-#: ../dnf/base.py:2251
-msgid "No security updates needed for \"{}\", but {} update available"
-msgstr ""
-"Для «{}» не требуются обновления безопасности, но обновление {} имеется"
-
-#: ../dnf/base.py:2253
-msgid "No security updates needed for \"{}\", but {} updates available"
-msgstr ""
-"Для «{}» не требуются обновления безопасности, но обновления {} имеются"
-
-#: ../dnf/base.py:2277
+#: ../dnf/comps.py:187
 #, python-format
-msgid ". Failing package is: %s"
-msgstr ". Сбойный пакет: %s"
+msgid "Group '%s' is not installed."
+msgstr "Группа «%s» не установлена."
 
-#: ../dnf/base.py:2278
+#: ../dnf/comps.py:189
 #, python-format
-msgid "GPG Keys are configured as: %s"
-msgstr "Ключи GPG настроены как: %s"
+msgid "Group '%s' does not exist."
+msgstr "Группа «%s» не существует."
 
-#: ../dnf/base.py:2290
+#: ../dnf/comps.py:608 ../dnf/comps.py:625
 #, python-format
-msgid "GPG key at %s (0x%s) is already installed"
-msgstr "GPG ключ %s (0x%s) уже установлен"
+msgid "Environment '%s' is not installed."
+msgstr "Среда «%s» еще не установлена"
 
-#: ../dnf/base.py:2323
-msgid "The key has been approved."
-msgstr "Ключ принят."
-
-#: ../dnf/base.py:2326
-msgid "The key has been rejected."
-msgstr "Ключ отклонен."
-
-#: ../dnf/base.py:2354
+#: ../dnf/comps.py:653
 #, python-format
-msgid "Key import failed (code %d)"
-msgstr "Неудача импорта ключа (code %d)"
+msgid "Group_id '%s' does not exist."
+msgstr "ID группы «%s» не существует."
 
-#: ../dnf/base.py:2356
-msgid "Key imported successfully"
-msgstr "Импорт ключа успешно завершен"
-
-#: ../dnf/base.py:2360
-msgid "Didn't install any keys"
-msgstr "Не установлены какие-либо ключи"
-
-#: ../dnf/base.py:2363
+#: ../dnf/comps.py:684
 #, python-format
-msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
-"Check that the correct key URLs are configured for this repository."
-msgstr ""
-"GPG ключи, перечисленные для репозитория «%s», уже установлены, но они не являются правильными для этого пакета.\n"
-"Проверьте, правильно ли настроены URL ключей для этого репозитория."
-
-#: ../dnf/base.py:2374
-msgid "Import of key(s) didn't help, wrong key(s)?"
-msgstr "Импорт ключа(ключей) не помог, неверный ключ(ключи)?"
-
-#: ../dnf/base.py:2410
-msgid "  * Maybe you meant: {}"
-msgstr "  * Возможно, вы имели в виду: {}"
-
-#: ../dnf/base.py:2442
-msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
-msgstr ""
-"У пакета «{}» из локального репозитория «{}» неправильная контрольная сумма"
-
-#: ../dnf/base.py:2445
-msgid "Some packages from local repository have incorrect checksum"
-msgstr ""
-"У некоторых пакетов из локального репозитория неправильная контрольная сумма"
-
-#: ../dnf/base.py:2448
-msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
-msgstr "У пакета «{}» из репозитория «{}» неправильная контрольная сумма"
-
-#: ../dnf/base.py:2451
-msgid ""
-"Some packages have invalid cache, but cannot be downloaded due to \"--"
-"cacheonly\" option"
-msgstr ""
-"У некоторых пакетов неправильный кеш, но они не загружаются из-за параметра "
-"«--cacheonly»"
-
-#: ../dnf/base.py:2463
-#, python-format
-msgid "Package %s is already installed."
-msgstr "Пакет %s уже установлен."
+msgid "Group '%s' not installed."
+msgstr "Группа «%s» не установлена"
 
 #: ../dnf/conf/config.py:134
 #, python-format
@@ -3605,11 +3399,6 @@ msgstr ""
 msgid "Bad id for repo: %s, byte = %s %d"
 msgstr "Плохой идентификатор для репозитория: %s, байт = %s %d"
 
-#: ../dnf/package.py:273
-#, python-format
-msgid "%s: %s check failed: %s vs %s"
-msgstr "%s: ошибка проверки %s: %s вместо %s"
-
 #: ../dnf/crypto.py:108
 #, python-format
 msgid "repo %s: 0x%s already imported"
@@ -3619,6 +3408,36 @@ msgstr "репозиторий %s: 0x%s уже импортирован"
 #, python-format
 msgid "repo %s: imported key 0x%s."
 msgstr "репозиторий %s: импортирован ключ 0x%s."
+
+#: ../dnf/db/group.py:344
+#, python-format
+msgid "Will not install a source rpm package (%s)."
+msgstr "RPM-пакет с исходным кодом не будет установлен (%s)."
+
+#: ../dnf/dnssec.py:239
+msgid "DNSSEC extension: Key for user "
+msgstr "Расширение DNSSEC: ключ для пользователя "
+
+#: ../dnf/dnssec.py:241
+msgid "is valid."
+msgstr "неверный."
+
+#: ../dnf/dnssec.py:243
+msgid "has unknown status."
+msgstr "имеет неизвестный статус."
+
+#: ../dnf/dnssec.py:251
+msgid "DNSSEC extension: "
+msgstr "Расширение DNSSEC: "
+
+#: ../dnf/dnssec.py:283
+msgid "Testing already imported keys for their validity."
+msgstr "Проверка действительности уже импортированных ключей."
+
+#: ../dnf/drpm.py:62 ../dnf/repo.py:267
+#, python-format
+msgid "unsupported checksum type: %s"
+msgstr "неподдерживаемый тип контрольной суммы: %s"
 
 #: ../dnf/drpm.py:144
 msgid "Delta RPM rebuild failed"
@@ -3632,7 +3451,41 @@ msgstr "Контрольная сумма пересобранного паке�
 msgid "done"
 msgstr "готово"
 
-#: ../dnf/lock.py:100
+#: ../dnf/exceptions.py:106
+msgid "Problems in request:"
+msgstr "Проблемы в запросе:"
+
+#: ../dnf/exceptions.py:108
+msgid "missing packages: "
+msgstr "недостающие пакеты: "
+
+#: ../dnf/exceptions.py:110
+msgid "broken packages: "
+msgstr "поврежденные пакеты: "
+
+#: ../dnf/exceptions.py:112
+msgid "missing groups or modules: "
+msgstr "недостающие группы или модули: "
+
+#: ../dnf/exceptions.py:114
+msgid "broken groups or modules: "
+msgstr "поврежденные группы или модули: "
+
+#: ../dnf/exceptions.py:119
+msgid "Modular dependency problem with Defaults:"
+msgid_plural "Modular dependency problems with Defaults:"
+msgstr[0] "Проблема с зависимостями модулей с параметрами по умолчанию"
+msgstr[1] "Проблемы с зависимостями модулей с параметрами по умолчанию"
+msgstr[2] "Проблем с зависимостями модулей с параметрами по умолчанию"
+
+#: ../dnf/exceptions.py:124 ../dnf/module/module_base.py:608
+msgid "Modular dependency problem:"
+msgid_plural "Modular dependency problems:"
+msgstr[0] "Проблема с зависимостями модулей"
+msgstr[1] "Проблемы с зависимостями модулей"
+msgstr[2] "Проблем с зависимостями модулей"
+
+#: ../dnf/lock.py:95
 #, python-format
 msgid ""
 "Malformed lock file found: %s.\n"
@@ -3641,31 +3494,187 @@ msgstr ""
 "Найден неправильно сформированный файл блокировки: %s.\n"
 "Убедитесь, что ни один процесс dnf не запущен и удалите файл блокировки вручную или запустите systemd-tmpfiles --remove dnf.conf."
 
-#: ../dnf/comps.py:95
-msgid "skipping."
-msgstr "пропускается."
+#: ../dnf/module/__init__.py:26
+msgid "Enabling different stream for '{}'."
+msgstr "Включение другого потока для «{}»."
 
-#: ../dnf/comps.py:187
-#, python-format
-msgid "Group '%s' is not installed."
-msgstr "Группа «%s» не установлена."
+#: ../dnf/module/__init__.py:27
+msgid "Nothing to show."
+msgstr "Нечего показывать."
 
-#: ../dnf/comps.py:189
-#, python-format
-msgid "Group '%s' does not exist."
-msgstr "Группа «%s» не существует."
+#: ../dnf/module/__init__.py:28
+msgid "Installing newer version of '{}' than specified. Reason: {}"
+msgstr "Устанавливается версия «{}», которая новее, чем задано. Причина: {}"
 
-#: ../dnf/comps.py:608 ../dnf/comps.py:625
-#, python-format
-msgid "Environment '%s' is not installed."
-msgstr "Среда «%s» еще не установлена"
+#: ../dnf/module/__init__.py:29
+msgid "Enabled modules: {}."
+msgstr "Активированные модули: {}."
 
-#: ../dnf/comps.py:653
-#, python-format
-msgid "Group_id '%s' does not exist."
-msgstr "ID группы «%s» не существует."
+#: ../dnf/module/__init__.py:30
+msgid "No profile specified for '{}', please specify profile."
+msgstr "Для «{}» не задан профиль, задайте профиль."
 
-#: ../dnf/comps.py:684
+#: ../dnf/module/module_base.py:33
+msgid ""
+"\n"
+"\n"
+"Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled"
+msgstr ""
+"\n"
+"\n"
+"Подсказка: [d]efault, [e]nabled, [x]disabled, [i]nstalled"
+
+#: ../dnf/module/module_base.py:34
+msgid ""
+"\n"
+"\n"
+"Hint: [d]efault, [e]nabled, [x]disabled, [i]nstalled, [a]ctive"
+msgstr ""
+
+#: ../dnf/module/module_base.py:46 ../dnf/module/module_base.py:362
+#: ../dnf/module/module_base.py:418 ../dnf/module/module_base.py:477
+msgid "Ignoring unnecessary profile: '{}/{}'"
+msgstr "Пропуск ненужного профиля: «{}/{}»"
+
+#: ../dnf/module/module_base.py:79 ../dnf/module/module_base.py:173
+#: ../dnf/module/module_base.py:197
+msgid "Unable to match profile in argument {}"
+msgstr "Не удается подобрать подходящий профиль в аргументе {}"
+
+#: ../dnf/module/module_base.py:86
+msgid "No default profiles for module {}:{}"
+msgstr "Нет профилей по умолчанию для модуля {}:{}"
+
+#: ../dnf/module/module_base.py:92
+msgid "Profile {} not matched for module {}:{}"
+msgstr "Профиль {} не подходит для модуля {}:{}"
+
+#: ../dnf/module/module_base.py:118 ../dnf/module/module_base.py:148
+#: ../dnf/module/module_base.py:278 ../dnf/module/module_base.py:296
+#: ../dnf/module/module_base.py:304 ../dnf/module/module_base.py:358
+#: ../dnf/module/module_base.py:414 ../dnf/module/module_base.py:473
+msgid "Unable to resolve argument {}"
+msgstr "Не удается разрешить аргумент {}"
+
+#: ../dnf/module/module_base.py:119
+msgid "No match for package {}"
+msgstr "Нет соответствия для пакета {}"
+
+#: ../dnf/module/module_base.py:308
+msgid ""
+"Only module name is required. Ignoring unneeded information in argument: "
+"'{}'"
+msgstr ""
+
+#: ../dnf/package.py:273
 #, python-format
-msgid "Group '%s' not installed."
-msgstr "Группа «%s» не установлена"
+msgid "%s: %s check failed: %s vs %s"
+msgstr "%s: ошибка проверки %s: %s вместо %s"
+
+#. empty file is invalid json format
+#: ../dnf/persistor.py:54
+#, python-format
+msgid "%s is empty file"
+msgstr "%s - пустой файл"
+
+#: ../dnf/persistor.py:98
+msgid "Failed storing last makecache time."
+msgstr "Не удалось сохранить последнее время кэширования."
+
+#: ../dnf/persistor.py:105
+msgid "Failed determining last makecache time."
+msgstr "Не удалось определить последнее время кэширования."
+
+#: ../dnf/plugin.py:63
+#, python-format
+msgid "Parsing file failed: %s"
+msgstr "Ошибка при разборе файла: %s"
+
+#: ../dnf/plugin.py:141
+#, python-format
+msgid "Loaded plugins: %s"
+msgstr "Загружены модули: %s"
+
+#: ../dnf/plugin.py:199
+#, python-format
+msgid "Failed loading plugin \"%s\": %s"
+msgstr ""
+
+#: ../dnf/repo.py:83
+#, python-format
+msgid "no matching payload factory for %s"
+msgstr "нет подходящего обработчика для %s"
+
+#: ../dnf/repo.py:110
+msgid "Already downloaded"
+msgstr "Уже загружен"
+
+#. pinging mirrors, this might take a while
+#: ../dnf/repo.py:345
+#, python-format
+msgid "determining the fastest mirror (%s hosts).. "
+msgstr "определение самого быстрого зеркала (%s узлов).. "
+
+#: ../dnf/repodict.py:58
+#, python-format
+msgid "enabling %s repository"
+msgstr "подключение репозитория %s"
+
+#: ../dnf/repodict.py:94
+#, python-format
+msgid "Added %s repo from %s"
+msgstr "Добавлен %s репозиторий из %s"
+
+#: ../dnf/rpm/transaction.py:119
+msgid "Errors occurred during test transaction."
+msgstr ""
+
+#. TRANSLATORS: This is for a single package currently being downgraded.
+#: ../dnf/transaction.py:79
+msgctxt "currently"
+msgid "Downgrading"
+msgstr "Откат версии"
+
+#: ../dnf/transaction.py:80 ../dnf/transaction.py:87 ../dnf/transaction.py:92
+#: ../dnf/transaction.py:94
+msgid "Cleanup"
+msgstr "Очистка"
+
+#. TRANSLATORS: This is for a single package currently being installed.
+#: ../dnf/transaction.py:82
+msgctxt "currently"
+msgid "Installing"
+msgstr "Установка"
+
+#. TRANSLATORS: This is for a single package currently being reinstalled.
+#: ../dnf/transaction.py:86
+msgctxt "currently"
+msgid "Reinstalling"
+msgstr "Переустановка"
+
+#. TODO: 'Removing'?
+#: ../dnf/transaction.py:89
+msgid "Erasing"
+msgstr "Удаление"
+
+#. TRANSLATORS: This is for a single package currently being upgraded.
+#: ../dnf/transaction.py:91
+msgctxt "currently"
+msgid "Upgrading"
+msgstr "Обновление"
+
+#: ../dnf/transaction.py:95
+msgid "Verifying"
+msgstr "Проверка"
+
+#: ../dnf/transaction.py:96
+msgid "Running scriptlet"
+msgstr "Запуск скриптлета"
+
+#: ../dnf/transaction.py:98
+msgid "Preparing"
+msgstr "Подготовка"
+
+#: ../dnf/util.py:385 ../dnf/util.py:387
+msgid "Problem"
+msgstr "Проблема"
