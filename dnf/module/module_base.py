@@ -146,6 +146,8 @@ class ModuleBase(object):
 
     def upgrade(self, module_specs):
         no_match_specs = []
+        fail_safe_repo = hawkey.MODULE_FAIL_SAFE_REPO_NAME
+        fail_safe_repo_used = False
 
         for spec in module_specs:
             module_list, nsvcap = self._get_modules(spec)
@@ -164,6 +166,11 @@ class ModuleBase(object):
                     upgrade_package_set.update(self._get_package_name_set_and_remove_profiles(
                         module_list_from_dict, nsvcap))
                     latest_module = self._get_latest(module_list_from_dict)
+                    if latest_module.getRepoID() == fail_safe_repo:
+                        msg = _(
+                            "Upgrading module '{0}' from Fail-Safe repository {1} is not allowed")
+                        logger.critical(msg.format(latest_module.getNameStream(), fail_safe_repo))
+                        fail_safe_repo_used = True
                     if nsvcap.profile:
                         profiles_set = latest_module.getProfiles(nsvcap.profile)
                         if not profiles_set:
@@ -186,6 +193,9 @@ class ModuleBase(object):
                 sltr = dnf.selector.Selector(self.base.sack)
                 sltr.set(pkg=query)
                 self.base._goal.upgrade(select=sltr)
+        if fail_safe_repo_used:
+            raise dnf.exceptions.Error(_(
+                "Upgrading module from Fail-Safe repository is not allowed"))
         return no_match_specs
 
     def remove(self, module_specs):
