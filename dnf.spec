@@ -400,6 +400,7 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 %{_mandir}/man8/%{name}.8*
 %{_mandir}/man8/yum2dnf.8*
+%{_mandir}/man7/dnf.modularity.7*
 %{_unitdir}/%{name}-makecache.service
 %{_unitdir}/%{name}-makecache.timer
 %{_var}/cache/%{name}/
