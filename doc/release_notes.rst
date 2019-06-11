@@ -20,6 +20,36 @@
 ###################
 
 ===================
+4.2.7 Release Notes
+===================
+
+- Set default to skip_if_unavailable=false (RhBug:1679509)
+- Fix package reinstalls during yum module remove (RhBug:1700529)
+- Fail when "-c" option is given nonexistent file (RhBug:1512457)
+- Reuse empty lock file instead of stopping dnf (RhBug:1581824)
+- Propagate comps 'default' value correctly (RhBug:1674562)
+- Better search of provides in /(s)bin/ (RhBug:1657993)
+- Add detection for armv7hcnl (RhBug:1691430)
+- Fix group install/upgrade when group is not available (RhBug:1707624)
+- Report not matching plugins when using --enableplugin/--disableplugin
+  (RhBug:1673289) (RhBug:1467304)
+- Add support of modular FailSafe (RhBug:1623128)
+- Replace logrotate with build-in log rotation for dnf.log and dnf.rpm.log
+  (RhBug:1702690)
+
+Bugs fixed in 4.2.7:
+
+* :rhbug:`1702690`
+* :rhbug:`1672649`
+* :rhbug:`1467304`
+* :rhbug:`1673289`
+* :rhbug:`1674562`
+* :rhbug:`1581824`
+* :rhbug:`1709783`
+* :rhbug:`1512457`
+* :rhbug:`1673913`
+
+===================
 4.2.6 Release Notes
 ===================
 

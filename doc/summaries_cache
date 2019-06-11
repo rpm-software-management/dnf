@@ -2738,5 +2738,41 @@
     [
         1702854,
         "Tab completion attempts with dnf cause terminal to hang."
+    ],
+    [
+        1702690,
+        "implement built-in log rotation"
+    ],
+    [
+        1672649,
+        "Add dnf.package.Package API for getting pkgid of package from repo in DNF plugin"
+    ],
+    [
+        1467304,
+        "RFE: --disableplugin should print error/warning on non-existing plugin"
+    ],
+    [
+        1673289,
+        "dnf enableplugin/disableplugin does not report unknown plugin"
+    ],
+    [
+        1674562,
+        "dnf not parsing default state of comps group correctly"
+    ],
+    [
+        1581824,
+        "Malformed lock file found: /var/cache/dnf/metadata_lock.pid."
+    ],
+    [
+        1709783,
+        "[api] dnf.callback.Payload.download_size incorrectly documented"
+    ],
+    [
+        1512457,
+        "when you feed \"-c\" option with nonexistent file, dnf still returns 0"
+    ],
+    [
+        1673913,
+        "option tsflags missing in dnf.conf"
     ]
 ]
