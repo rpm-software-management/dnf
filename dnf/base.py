@@ -782,13 +782,10 @@ class Base(object):
         display = \
             [dnf.yum.rpmtrans.LoggingTransactionDisplay()] + list(display)
 
-        # save module states on disk right before entering rpm transaction,
-        # because we want system in recoverable state if transaction gets interrupted
-        self._moduleContainer.save()
-        self._moduleContainer.updateFailSafeData()
-
         if not self.transaction:
-            # packages changed, but a comps change to be commited
+            # packages are not changed, but comps and modules changes need to be commited
+            self._moduleContainer.save()
+            self._moduleContainer.updateFailSafeData()
             if self._history and (self._history.group or self._history.env):
                 cmdline = None
                 if hasattr(self, 'args') and self.args:
@@ -850,6 +847,11 @@ class Base(object):
 
             logger.info(_('Transaction test succeeded.'))
             timer()
+
+            # save module states on disk right before entering rpm transaction,
+            # because we want system in recoverable state if transaction gets interrupted
+            self._moduleContainer.save()
+            self._moduleContainer.updateFailSafeData()
 
             # unset the sigquit handler
             timer = dnf.logging.Timer('transaction')
