@@ -396,6 +396,42 @@ def _te_nevra(te):
     return nevra + te.V() + '-' + te.R() + '.' + te.A()
 
 
+def _sync_rpm_trans_with_swdb(rpm_transaction, swdb_transaction):
+    revert_actions = {libdnf.transaction.TransactionItemAction_DOWNGRADED,
+                      libdnf.transaction.TransactionItemAction_OBSOLETED,
+                      libdnf.transaction.TransactionItemAction_REMOVE,
+                      libdnf.transaction.TransactionItemAction_UPGRADED,
+                      libdnf.transaction.TransactionItemAction_REINSTALLED}
+    cached_tsi = [tsi for tsi in swdb_transaction]
+    el_not_found = False
+    error = False
+    for rpm_el in rpm_transaction:
+        te_nevra = _te_nevra(rpm_el)
+        tsi = rpm_el.Key()
+        if tsi is None or not hasattr(tsi, "pkg"):
+            for tsi_candidate in cached_tsi:
+                if tsi_candidate.state != libdnf.transaction.TransactionItemState_UNKNOWN:
+                    continue
+                if tsi_candidate.action not in revert_actions:
+                    continue
+                if str(tsi_candidate) == te_nevra:
+                    tsi = tsi_candidate
+                    break
+        if tsi is None or not hasattr(tsi, "pkg"):
+            logger.critical(_("TransactionItem not found for key: {}").format(te_nevra))
+            el_not_found = True
+            continue
+        if rpm_el.Failed():
+            tsi.state = libdnf.transaction.TransactionItemState_ERROR
+            error = True
+        else:
+            tsi.state = libdnf.transaction.TransactionItemState_DONE
+    if error:
+        logger.debug(_('Errors occurred during transaction.'))
+
+    return el_not_found
+
+
 class tmpdir(object):
     def __init__(self):
         prefix = '%s-' % dnf.const.PREFIX
