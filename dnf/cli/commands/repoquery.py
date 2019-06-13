@@ -394,11 +394,11 @@ class RepoQueryCommand(commands.Command):
         return t.union(done)
 
     def run(self):
-        self.base._moduleContainer.updateFailSafeData()
         if self.opts.querytags:
             print(_('Available query-tags: use --queryformat ".. %{tag} .."'))
             print(QUERY_TAGS)
             return
+        self.base._moduleContainer.updateFailSafeData()
 
         self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
 
