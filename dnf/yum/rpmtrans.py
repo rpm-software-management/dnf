@@ -336,10 +336,7 @@ class RPMTransaction(object):
             return
 
         transaction_list = self._extract_cbkey(key)
-        for tsi in transaction_list:
-            if tsi.state == libdnf.transaction.TransactionItemState_UNKNOWN:
-                tsi.state = libdnf.transaction.TransactionItemState_DONE
-                break
+        tsi = transaction_list[0]
 
         for display in self.displays:
             display.filelog(tsi.pkg, tsi.action)
@@ -370,10 +367,7 @@ class RPMTransaction(object):
 
     def _unInstStop(self, key):
         transaction_list = self._extract_cbkey(key)
-        for tsi in transaction_list:
-            if tsi.state == libdnf.transaction.TransactionItemState_UNKNOWN:
-                tsi.state = libdnf.transaction.TransactionItemState_DONE
-                break
+        tsi = transaction_list[0]
 
         for display in self.displays:
             display.filelog(tsi.pkg, tsi.action)
@@ -385,25 +379,15 @@ class RPMTransaction(object):
 
     def _cpioError(self, key):
         transaction_list = self._extract_cbkey(key)
-        for tsi in transaction_list:
-            if tsi.state == libdnf.transaction.TransactionItemState_UNKNOWN:
-                tsi.state = libdnf.transaction.TransactionItemState_ERROR
-                break
         msg = "Error in cpio payload of rpm package %s" % transaction_list[0].pkg
         for display in self.displays:
             display.error(msg)
 
     def _unpackError(self, key):
         transaction_list = self._extract_cbkey(key)
-        tsi = transaction_list[0]
-        msg = "Error unpacking rpm package %s" % tsi.pkg
+        msg = "Error unpacking rpm package %s" % transaction_list[0].pkg
         for display in self.displays:
             display.error(msg)
-
-        for tsi in transaction_list:
-           if tsi.state == libdnf.transaction.TransactionItemState_UNKNOWN:
-                tsi.state = libdnf.transaction.TransactionItemState_ERROR
-                return
 
     def _scriptError(self, amount, total, key):
         # "amount" carries the failed scriptlet tag,
