@@ -978,6 +978,7 @@ class Base(object):
                 os.nice(onice)
             except:
                 pass
+        dnf.util._sync_rpm_trans_with_swdb(self._ts, self._transaction)
 
         if errors is None:
             pass
@@ -987,17 +988,7 @@ class Base(object):
             # particular element failed and if not, decide that is the
             # case.
             failed = [el for el in self._ts if el.Failed()]
-            if failed:
-                for te in failed:
-                    te_nevra = dnf.util._te_nevra(te)
-                    for tsi in self._transaction:
-                        if str(tsi) == te_nevra:
-                            tsi.state = libdnf.transaction.TransactionItemState_ERROR
-
-                errstring = _('Errors occurred during transaction.')
-                logger.debug(errstring)
-                self.history.end(rpmdbv)
-            else:
+            if not failed:
                 login = dnf.util.get_effective_login()
                 msg = _("Failed to obtain the transaction lock "
                         "(logged in as: %s).")
@@ -1005,13 +996,11 @@ class Base(object):
                 msg = _('Could not run transaction.')
                 raise dnf.exceptions.Error(msg)
         else:
-            if self._record_history():
-                herrors = [ucd(x) for x in errors]
-                self.history.end(rpmdbv)
-
             logger.critical(_("Transaction couldn't start:"))
             for e in errors:
-                logger.critical(e[0])  # should this be 'to_unicoded'?
+                logger.critical(ucd(e[0]))
+            if self._record_history() and not self._ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
+                self.history.end(rpmdbv)
             msg = _("Could not run transaction.")
             raise dnf.exceptions.Error(msg)
 
