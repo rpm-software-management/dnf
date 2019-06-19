@@ -142,6 +142,13 @@ def print_versions(pkgs, base, output):
         #                                    sm_ui_date(pkg.committime)))
 
 
+def report_module_switch(switchedModules):
+    msg1 = _("The operation would result in switching of module '{0}' stream '{1}' to "
+             "stream '{2}'")
+    for moduleName, streams in switchedModules.items():
+        logger.warning(msg1.format(moduleName, streams[0], streams[1]))
+
+
 class BaseCli(dnf.Base):
     """This is the base class for yum cli."""
 
@@ -157,6 +164,15 @@ class BaseCli(dnf.Base):
         :param display: `rpm.callback.TransactionProgress` object(s)
         :return: history database transaction ID or None
         """
+        if dnf.base.WITH_MODULES:
+            switchedModules = dict(self._moduleContainer.getSwitchedStreams())
+            if switchedModules:
+                report_module_switch(switchedModules)
+                msg = _("It is not possible to switch enabled streams of a module.\n"
+                        "It is recommended to remove all installed content from the module, and "
+                        "reset the module using 'dnf module reset <module_name>' command. After "
+                        "you reset the module, you can install the other stream.")
+                raise dnf.exceptions.Error(msg)
 
         trans = self.transaction
         pkg_str = self.output.list_transaction(trans)
