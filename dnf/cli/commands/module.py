@@ -32,13 +32,6 @@ import dnf.module.module_base
 import dnf.exceptions
 
 
-def report_module_switch(switchedModules):
-    msg1 = _("The operation would result in switching of module '{0}' stream '{1}' to "
-             "stream '{2}'")
-    for moduleName, streams in switchedModules.items():
-        logger.warning(msg1.format(moduleName, streams[0], streams[1]))
-
-
 class ModuleCommand(commands.Command):
     class SubCommand(commands.Command):
 
@@ -122,14 +115,6 @@ class ModuleCommand(commands.Command):
                             libdnf.module.ModulePackageContainer.ModuleErrorType_ERROR_IN_DEFAULTS:
                         raise e
                 logger.error(str(e))
-            switchedModules = dict(self.base._moduleContainer.getSwitchedStreams())
-            if switchedModules:
-                report_module_switch(switchedModules)
-                msg = _("It is not possible to switch enabled streams of a module.\n"
-                        "It is recommended to remove all installed content from the module, and "
-                        "reset the module using 'dnf module reset <module_name>' command. After "
-                        "you reset the module, you can enable the other stream.")
-                raise dnf.exceptions.Error(msg)
 
     class DisableSubCommand(SubCommand):
 
@@ -193,14 +178,6 @@ class ModuleCommand(commands.Command):
                     if e.no_match_group_specs or e.error_group_specs:
                         raise e
                 logger.error(str(e))
-            switchedModules = dict(self.base._moduleContainer.getSwitchedStreams())
-            if switchedModules:
-                report_module_switch(switchedModules)
-                msg = _("It is not possible to switch enabled streams of a module.\n"
-                        "It is recommended to remove all installed content from the module, and "
-                        "reset the module using 'dnf module reset <module_name>' command. After "
-                        "you reset the module, you can install the other stream.")
-                raise dnf.exceptions.Error(msg)
 
     class UpdateSubCommand(SubCommand):
 
