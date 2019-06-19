@@ -364,10 +364,11 @@ class RepoQueryCommand(commands.Command):
 
     def by_all_deps(self, requires_name, depends_name, query):
         names = requires_name or depends_name
-        defaultquery = self.base.sack.query().filter(empty=True)
+        defaultquery = self.base.sack.query().filterm(empty=True)
         for name in names:
-            defaultquery.union(query.intersection(dnf.subject.Subject(name).get_best_query(
-                self.base.sack, with_provides=False, with_filenames=False)))
+            defaultquery = defaultquery.union(query.intersection(
+                dnf.subject.Subject(name).get_best_query(self.base.sack, with_provides=False,
+                                                         with_filenames=False)))
         requiresquery = query.filter(requires__glob=names)
         if depends_name:
             requiresquery = requiresquery.union(query.filter(recommends__glob=depends_name))
