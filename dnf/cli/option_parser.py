@@ -68,8 +68,10 @@ class OptionParser(argparse.ArgumentParser):
     class _SplitCallback(argparse._AppendAction):
         """ Split all strings in seq, at "," and whitespace.
         Returns a new list. """
+        SPLITTER = r'\s*[,\s]\s*'
+
         def __call__(self, parser, namespace, values, opt_str):
-            for val in re.split(r'\s*[,\s]\s*', values):
+            for val in re.split(self.SPLITTER, values):
                 super(OptionParser._SplitCallback,
                       self).__call__(parser, namespace, val, opt_str)
 

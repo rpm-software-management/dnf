@@ -93,6 +93,10 @@ def rpm2py_format(queryformat):
     return fmt
 
 
+class _CommaSplitCallback(OptionParser._SplitCallback):
+    SPLITTER = r'\s*,\s*'
+
+
 class RepoQueryCommand(commands.Command):
     """A class containing methods needed by the cli to execute the repoquery command.
     """
@@ -122,36 +126,36 @@ class RepoQueryCommand(commands.Command):
         parser.add_argument('--show-duplicates', action='store_true',
                             help=_("Query all versions of packages (default)"))
         parser.add_argument('--arch', '--archlist', dest='arches', default=[],
-                            action=OptionParser._SplitCallback, metavar='[arch]',
+                            action=_CommaSplitCallback, metavar='[arch]',
                             help=_('show only results from this ARCH'))
         parser.add_argument('-f', '--file', metavar='FILE', nargs='+',
                             help=_('show only results that owns FILE'))
-        parser.add_argument('--whatconflicts', default=[], action=OptionParser._SplitCallback,
+        parser.add_argument('--whatconflicts', default=[], action=_CommaSplitCallback,
                             metavar='REQ',
                             help=_('show only results that conflict REQ'))
-        parser.add_argument('--whatdepends', default=[], action=OptionParser._SplitCallback,
+        parser.add_argument('--whatdepends', default=[], action=_CommaSplitCallback,
                             metavar='REQ',
                             help=_('shows results that requires, suggests, supplements, enhances,'
                                    'or recommends package provides and files REQ'))
-        parser.add_argument('--whatobsoletes', default=[], action=OptionParser._SplitCallback,
+        parser.add_argument('--whatobsoletes', default=[], action=_CommaSplitCallback,
                             metavar='REQ',
                             help=_('show only results that obsolete REQ'))
-        parser.add_argument('--whatprovides', default=[], action=OptionParser._SplitCallback,
+        parser.add_argument('--whatprovides', default=[], action=_CommaSplitCallback,
                             metavar='REQ',
                             help=_('show only results that provide REQ'))
-        parser.add_argument('--whatrequires', default=[], action=OptionParser._SplitCallback,
+        parser.add_argument('--whatrequires', default=[], action=_CommaSplitCallback,
                             metavar='REQ',
                             help=_('shows results that requires package provides and files REQ'))
-        parser.add_argument('--whatrecommends', default=[], action=OptionParser._SplitCallback,
+        parser.add_argument('--whatrecommends', default=[], action=_CommaSplitCallback,
                             metavar='REQ',
                             help=_('show only results that recommend REQ'))
-        parser.add_argument('--whatenhances', default=[], action=OptionParser._SplitCallback,
+        parser.add_argument('--whatenhances', default=[], action=_CommaSplitCallback,
                             metavar='REQ',
                             help=_('show only results that enhance REQ'))
-        parser.add_argument('--whatsuggests', default=[], action=OptionParser._SplitCallback,
+        parser.add_argument('--whatsuggests', default=[], action=_CommaSplitCallback,
                             metavar='REQ',
                             help=_('show only results that suggest REQ'))
-        parser.add_argument('--whatsupplements', default=[], action=OptionParser._SplitCallback,
+        parser.add_argument('--whatsupplements', default=[], action=_CommaSplitCallback,
                             metavar='REQ',
                             help=_('show only results that supplement REQ'))
         whatrequiresform = parser.add_mutually_exclusive_group()
