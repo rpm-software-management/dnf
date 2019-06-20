@@ -29,7 +29,7 @@ import logging
 import re
 
 from dnf.i18n import _
-import dnf.rpm.transaction
+import dnf.rpm
 import dnf.exceptions
 
 logger = logging.getLogger("dnf")
@@ -269,10 +269,10 @@ class RpmImportedKeys:
         packages = transaction_set.dbMatch("name", "gpg-pubkey")
         return_list = []
         for pkg in packages:
-            packager = pkg['packager'].decode('ascii')
+            packager = dnf.rpm.getheader(pkg, 'packager')
             email = re.search('<(.*@.*)>', packager).group(1)
-            description = pkg['description']
-            key_lines = description.decode('ascii').split('\n')[3:-3]
+            description = dnf.rpm.getheader(pkg, 'description')
+            key_lines = description.split('\n')[3:-3]
             key_str = ''.join(key_lines)
             return_list += [KeyInfo(email, key_str.encode('ascii'))]
 
