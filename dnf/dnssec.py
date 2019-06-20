@@ -166,8 +166,9 @@ class DNSSECKeyVerification:
         try:
             import unbound
         except ImportError as e:
-            raise RuntimeError("Configuration option 'gpgkey_dns_verification' requires\
-            libunbound ({})".format(e))
+            msg = _("Configuration option 'gpgkey_dns_verification' requires "
+                    "libunbound ({})".format(e))
+            raise dnf.exceptions.Error(msg)
 
         ctx = unbound.ub_ctx()
         if ctx.set_option("verbosity:", "0") != 0:
