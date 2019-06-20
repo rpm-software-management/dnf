@@ -118,3 +118,14 @@ _BASEARCH_MAP = _invert({
 def basearch(arch):
     # :api
     return _BASEARCH_MAP[arch]
+
+
+def getheader(rpm_hdr, key):
+    '''
+    Returns value of rpm_hdr[key] as a string. Rpm has switched from bytes to str
+    and we need to handle both properly.
+    '''
+    value = rpm_hdr[key]
+    if is_py3bytes(value):
+        value = str(value, "utf-8")
+    return value
