@@ -234,8 +234,12 @@ class ModuleBase(object):
                     self.base._remove_if_unneeded(query)
         return no_match_specs
 
+    def get_modules(self, module_spec):
+        # :api
+        return self._get_modules(module_spec)
+
     def _get_modules(self, module_spec):
-        # :api (used by ansible)
+        # used by ansible (lib/ansible/modules/packaging/os/dnf.py)
         subj = hawkey.Subject(module_spec)
         for nsvcap in subj.nsvcap_possibilities():
             name = nsvcap.name if nsvcap.name else ""
