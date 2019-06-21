@@ -99,8 +99,9 @@ class RepoListCommand(commands.Command):
         if not self.opts.verbose and not self.opts.quiet:
             self.cli.redirect_repo_progress()
         demands = self.cli.demands
-        demands.available_repos = True
-        demands.sack_activation = True
+        if any((self.opts.verbose, ('repoinfo' in self.opts.command))):
+            demands.available_repos = True
+            demands.sack_activation = True
 
         if self.opts._repos_action:
             self.opts.repos_action = self.opts._repos_action
@@ -145,16 +146,8 @@ class RepoListCommand(commands.Command):
                 if any((force_show, verbose, 'repoinfo' in self.opts.command)):
                     ui_enabled = ehibeg + _('enabled') + hiend
                     ui_endis_wid = exact_width(_('enabled'))
-                    if not any((verbose, 'repoinfo' in self.opts.command)):
-                        ui_enabled += ": "
-                        ui_endis_wid += 2
                 if verbose or ('repoinfo' in self.opts.command):
                     ui_size = _repo_size(self.base.sack, repo)
-                # We don't show status for list disabled
-                if arg != 'disabled' or verbose:
-                    num = len(self.base.sack.query().filterm(reponame__eq=repo.id))
-                    ui_num = _num2ui_num(num)
-                    tot_num += num
             else:
                 enabled = False
                 if arg == 'disabled':
@@ -199,6 +192,9 @@ class RepoListCommand(commands.Command):
                             "[%s]: %s" % (distro, ", ".join(sorted(tags))))]
 
                 if md:
+                    num = len(self.base.sack.query().filterm(reponame__eq=repo.id))
+                    ui_num = _num2ui_num(num)
+                    tot_num += num
                     out += [
                         self.output.fmtKeyValFill(
                             _("Repo-updated : "),
@@ -252,6 +248,8 @@ class RepoListCommand(commands.Command):
         if not verbose and cols:
             #  Work out the first (id) and last (enabled/disabled/count),
             # then chop the middle (name)...
+
+            include_status = arg == 'all' or repo.id in extcmds or repo.name in extcmds
             id_len = exact_width(_('repo id'))
             nm_len = 0
             st_len = 0
@@ -267,12 +265,13 @@ class RepoListCommand(commands.Command):
                 # Need this as well as above for: fill_exact_width()
                 if ui_len < len(ui_num):
                     ui_len = len(ui_num)
-            if arg == 'disabled': # Don't output a status column.
+            if include_status:
+                if exact_width(_('status')) > st_len:
+                    left = term.columns - (id_len + len(_('status')) + 2)
+                else:
+                    left = term.columns - (id_len + st_len + 2)
+            else:  # Don't output a status column.
                 left = term.columns - (id_len + 1)
-            elif exact_width(_('status')) > st_len:
-                left = term.columns - (id_len + len(_('status')) + 2)
-            else:
-                left = term.columns - (id_len + st_len + 2)
 
             if left < nm_len: # Name gets chopped
                 nm_len = left
@@ -283,12 +282,12 @@ class RepoListCommand(commands.Command):
 
             txt_rid = fill_exact_width(_('repo id'), id_len)
             txt_rnam = fill_exact_width(_('repo name'), nm_len, nm_len)
-            if arg == 'disabled': # Don't output a status column.
+            if not include_status:  # Don't output a status column.
                 print("%s %s" % (txt_rid, txt_rnam))
             else:
                 print("%s %s %s" % (txt_rid, txt_rnam, _('status')))
             for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
-                if arg == 'disabled': # Don't output a status column.
+                if not include_status:  # Don't output a status column.
                     print("%s %s" % (fill_exact_width(rid, id_len),
                                      fill_exact_width(rname, nm_len, nm_len)))
                     continue
