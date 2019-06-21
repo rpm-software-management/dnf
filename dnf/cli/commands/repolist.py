@@ -131,7 +131,6 @@ class RepoListCommand(commands.Command):
             (ehibeg, dhibeg, hiend) = '', '', ''
             ui_enabled = ''
             ui_endis_wid = 0
-            ui_num = ""
             ui_excludes_num = ''
             force_show = False
             if arg == 'all' or repo.id in extcmds or repo.name in extcmds:
@@ -159,12 +158,7 @@ class RepoListCommand(commands.Command):
 
             if not any((verbose, ('repoinfo' in self.opts.command))):
                 rid = ucd(repo.id)
-                if enabled and repo.metalink:
-                    mdts = repo._repo.getTimestamp()
-                    if mdts > repo._repo.getMaxTimestamp():
-                        rid = '*' + rid
-                cols.append((rid, repo.name,
-                             (ui_enabled, ui_endis_wid), ui_num))
+                cols.append((rid, repo.name, (ui_enabled, ui_endis_wid)))
             else:
                 if enabled:
                     md = repo.metadata
@@ -253,18 +247,15 @@ class RepoListCommand(commands.Command):
             id_len = exact_width(_('repo id'))
             nm_len = 0
             st_len = 0
-            ui_len = 0
 
-            for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
+            for (rid, rname, (ui_enabled, ui_endis_wid)) in cols:
                 if id_len < exact_width(rid):
                     id_len = exact_width(rid)
                 if nm_len < exact_width(rname):
                     nm_len = exact_width(rname)
-                if st_len < (ui_endis_wid + len(ui_num)):
-                    st_len = (ui_endis_wid + len(ui_num))
+                if st_len < ui_endis_wid:
+                    st_len = ui_endis_wid
                 # Need this as well as above for: fill_exact_width()
-                if ui_len < len(ui_num):
-                    ui_len = len(ui_num)
             if include_status:
                 if exact_width(_('status')) > st_len:
                     left = term.columns - (id_len + len(_('status')) + 2)
@@ -273,9 +264,9 @@ class RepoListCommand(commands.Command):
             else:  # Don't output a status column.
                 left = term.columns - (id_len + 1)
 
-            if left < nm_len: # Name gets chopped
+            if left < nm_len:  # Name gets chopped
                 nm_len = left
-            else: # Share the extra...
+            else:  # Share the extra...
                 left -= nm_len
                 id_len += left // 2
                 nm_len += left - (left // 2)
@@ -286,17 +277,15 @@ class RepoListCommand(commands.Command):
                 print("%s %s" % (txt_rid, txt_rnam))
             else:
                 print("%s %s %s" % (txt_rid, txt_rnam, _('status')))
-            for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
+            for (rid, rname, (ui_enabled, ui_endis_wid)) in cols:
                 if not include_status:  # Don't output a status column.
                     print("%s %s" % (fill_exact_width(rid, id_len),
                                      fill_exact_width(rname, nm_len, nm_len)))
                     continue
 
-                if ui_num:
-                    ui_num = fill_exact_width(ui_num, ui_len, left=False)
-                print("%s %s %s%s" % (fill_exact_width(rid, id_len),
-                                      fill_exact_width(rname, nm_len, nm_len),
-                                      ui_enabled, ui_num))
+                print("%s %s %s" % (fill_exact_width(rid, id_len),
+                                    fill_exact_width(rname, nm_len, nm_len),
+                                    ui_enabled))
         if any((verbose, ('repoinfo' in self.opts.command))):
             msg = _('Total packages: {}')
             print(msg.format(_num2ui_num(tot_num)))
