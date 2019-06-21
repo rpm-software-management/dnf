@@ -47,14 +47,21 @@ Repository Configuration
 
     The returned list acts as a `composite <http://en.wikipedia.org/wiki/Composite_pattern>`_, transparently forwarding all method calls on itself to the contained repositories. The following thus disables all matching repos::
 
-      repos = base.repos.get_matching('*-debuginfo')
-      repos.disable()
+        #!/usr/bin/python3
+        import dnf
+
+        base = dnf.Base()
+        base.read_all_repos()
+        base.fill_sack()
+
+        repos = base.repos.get_matching('*-debuginfo')
+        repos.disable()
 
   .. method:: iter_enabled()
 
     Return an iterator over all enabled repos from the dict.
 
-  .. method:: add_new_repo(repoid, conf, baseurl=(), **kwargs)
+  .. method:: add_new_repo(repoid, conf, baseurl=(), \*\*kwargs)
 
     Initialize new :class:`.Repo` object and add it to the repodict. It requires ``repoid``
     (string), and :class:`dnf.conf.Conf` object. Optionally it can be speciffied baseurl (list), and
