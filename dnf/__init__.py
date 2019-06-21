@@ -25,7 +25,7 @@ import dnf.pycomp
 warnings.filterwarnings('once', category=DeprecationWarning, module=r'^dnf\..*$')
 
 from dnf.const import VERSION
-__version__ = VERSION
+__version__ = VERSION  # :api
 
 import dnf.base
 Base = dnf.base.Base # :api

@@ -23,7 +23,7 @@ from . import transaction
 from dnf.pycomp import is_py3bytes
 import dnf.const
 import dnf.exceptions
-import rpm
+import rpm  # used by ansible (dnf.rpm.rpm.labelCompare in lib/ansible/modules/packaging/os/dnf.py)
 
 
 def detect_releasever(installroot):

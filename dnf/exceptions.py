@@ -29,6 +29,7 @@ class DeprecationWarning(DeprecationWarning):
 
 
 class Error(Exception):
+    # :api
     """Base Error. All other Errors thrown by DNF should inherit from this.
 
     :api
@@ -47,6 +48,7 @@ class Error(Exception):
 
 
 class CompsError(Error):
+    # :api
     pass
 
 
@@ -100,6 +102,7 @@ class MarkingError(Error):
 
 
 class MarkingErrors(Error):
+    # :api
     def __init__(self, no_match_group_specs=(), error_group_specs=(), no_match_pkg_specs=(),
                  error_pkg_specs=(), module_depsolv_errors=()):
         """Initialize the marking error instance."""

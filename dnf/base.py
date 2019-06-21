@@ -51,6 +51,7 @@ import dnf.goal
 import dnf.history
 import dnf.lock
 import dnf.logging
+# WITH_MODULES is used by ansible (lib/ansible/modules/packaging/os/dnf.py)
 try:
     import dnf.module.module_base
     WITH_MODULES = True
@@ -1545,6 +1546,7 @@ class Base(object):
         return dnf.comps.Solver(self.history, self._comps, reason_fn)
 
     def environment_install(self, env_id, types, exclude=None, strict=True, exclude_groups=None):
+        # :api
         assert dnf.util.is_string_type(env_id)
         solver = self._build_comps_solver()
         types = self._translate_comps_pkg_types(types)
@@ -1556,6 +1558,7 @@ class Base(object):
         return self._add_comps_trans(trans)
 
     def environment_remove(self, env_id):
+        # :api
         assert dnf.util.is_string_type(env_id)
         solver = self._build_comps_solver()
         trans = solver._environment_remove(env_id)
@@ -1637,6 +1640,7 @@ class Base(object):
         return cnt
 
     def group_remove(self, grp_id):
+        # :api
         assert dnf.util.is_string_type(grp_id)
         solver = self._build_comps_solver()
         trans = solver._group_remove(grp_id)
@@ -1690,12 +1694,14 @@ class Base(object):
             raise dnf.cli.CliError(msg)
 
     def environment_upgrade(self, env_id):
+        # :api
         assert dnf.util.is_string_type(env_id)
         solver = self._build_comps_solver()
         trans = solver._environment_upgrade(env_id)
         return self._add_comps_trans(trans)
 
     def group_upgrade(self, grp_id):
+        # :api
         assert dnf.util.is_string_type(grp_id)
         solver = self._build_comps_solver()
         trans = solver._group_upgrade(grp_id)
