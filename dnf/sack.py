@@ -29,6 +29,8 @@ from dnf.pycomp import basestring
 
 
 class Sack(hawkey.Sack):
+    # :api
+
     def __init__(self, *args, **kwargs):
         super(Sack, self).__init__(*args, **kwargs)
 

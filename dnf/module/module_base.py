@@ -34,11 +34,14 @@ MODULE_TABLE_HINT = _("\n\nHint: [d]efault, [e]nabled, [x]disabled, [i]nstalled"
 MODULE_INFO_TABLE_HINT = _("\n\nHint: [d]efault, [e]nabled, [x]disabled, [i]nstalled, [a]ctive")
 
 class ModuleBase(object):
+    # :api
 
     def __init__(self, base):
+        # :api
         self.base = base
 
     def enable(self, module_specs):
+        # :api
         no_match_specs, error_specs, solver_errors, module_dicts = \
             self._resolve_specs_enable_update_sack(module_specs)
         for spec, (nsvcap, module_dict) in module_dicts.items():
@@ -51,12 +54,14 @@ class ModuleBase(object):
                                                module_depsolv_errors=solver_errors)
 
     def disable(self, module_specs):
+        # :api
         no_match_specs, solver_errors = self._modules_reset_or_disable(module_specs, STATE_DISABLED)
         if no_match_specs or solver_errors:
             raise dnf.exceptions.MarkingErrors(no_match_group_specs=no_match_specs,
                                                module_depsolv_errors=solver_errors)
 
     def install(self, module_specs, strict=True):
+        # :api
         no_match_specs, error_specs, solver_errors, module_dicts = \
             self._resolve_specs_enable_update_sack(module_specs)
 
@@ -139,12 +144,14 @@ class ModuleBase(object):
                                                module_depsolv_errors=solver_errors)
 
     def reset(self, module_specs):
+        # :api
         no_match_specs, solver_errors = self._modules_reset_or_disable(module_specs, STATE_UNKNOWN)
         if no_match_specs:
             raise dnf.exceptions.MarkingErrors(no_match_group_specs=no_match_specs,
                                                module_depsolv_errors=solver_errors)
 
     def upgrade(self, module_specs):
+        # :api
         no_match_specs = []
         fail_safe_repo = hawkey.MODULE_FAIL_SAFE_REPO_NAME
         fail_safe_repo_used = False
@@ -199,6 +206,7 @@ class ModuleBase(object):
         return no_match_specs
 
     def remove(self, module_specs):
+        # :api
         no_match_specs = []
         remove_package_set = set()
 
@@ -227,6 +235,7 @@ class ModuleBase(object):
         return no_match_specs
 
     def _get_modules(self, module_spec):
+        # :api (used by ansible)
         subj = hawkey.Subject(module_spec)
         for nsvcap in subj.nsvcap_possibilities():
             name = nsvcap.name if nsvcap.name else ""

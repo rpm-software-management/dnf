@@ -123,6 +123,7 @@ def rtrim(s, r):
 
 
 def am_i_root():
+    # used by ansible (lib/ansible/modules/packaging/os/dnf.py)
     return os.geteuid() == 0
 
 def clear_dir(path):
@@ -136,6 +137,7 @@ def clear_dir(path):
         rm_rf(contained_path)
 
 def ensure_dir(dname):
+    # used by ansible (lib/ansible/modules/packaging/os/dnf.py)
     try:
         os.makedirs(dname, mode=0o755)
     except OSError as e:
