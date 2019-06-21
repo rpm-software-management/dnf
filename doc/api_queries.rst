@@ -25,15 +25,38 @@
 
   Facilitates lookup of packages in a :class:`~dnf.sack.Sack` based on given criteria. Query actually does not consult the information in the :class:`~!dnf.sack.Sack` until it is evaluated. The evaluation happens either explicitly using :meth:`~dnf.query.Query.run` or by iterating the query, for example::
 
+    #!/usr/bin/python3
+    import dnf
+
+    base = dnf.Base()
+    base.fill_sack()
+
     q = base.sack.query()
     i = q.installed()
-    i = i.filter(name='pepper')
-    packages = list(i) # i only gets evaluated here
+    i = i.filter(name='dnf')
 
+    packages = list(i)  # i only gets evaluated here
+    print("Installed dnf package:")
+    for pkg in packages:
+        print(pkg, pkg.reponame)
+
+  or::
+
+    #!/usr/bin/python3
+    import dnf
+
+    base = dnf.Base()
+    base.read_all_repos()
+    base.fill_sack()
+
+    q = base.sack.query()
     a = q.available()
-    a = a.filter(name='pepper')
-    for pkg in a: # a only gets evaluated here
-        print(pkg.name)
+    a = a.filter(name='dnf')
+
+    print("Available dnf packages:")
+    for pkg in a:  # a only gets evaluated here
+        print('{} in repo {}'.format(pkg, pkg.reponame))
+
 
   Notice that none of the filtering methods mutates the state of the :class:`~dnf.query.Query` but produces a new object instead.
 
@@ -53,7 +76,7 @@
 
     Return a new query that limits the result to installed packages that are not present in any repo
 
-  .. method:: filter(**kwargs)
+  .. method:: filter(\*\*kwargs)
 
     Return a new query limiting the original query to the key/value pairs from `kwargs`. Multiple `kwargs` can be passed, the filter then works by applying all of them together (logical AND). Values inside of list or query are cumulative (logical OR).
 
@@ -106,7 +129,7 @@
 
       q = base.sack.query().filter(name__substr="club")
 
-  .. method:: filterm(**kwargs)
+  .. method:: filterm(\*\*kwargs)
 
     Similar to :meth:`dnf.query.Query.filter` but it modifies the query in place.
 
@@ -154,7 +177,7 @@
     used in a transaction operation. `sack` and `forms` have the same meaning as in
     :meth:`get_best_query`. If ``obsoletes``, selector will also contain packages that obsoletes
     requested packages (default is True). If ``reponame``, the selection of available packages is
-    limited to packages from that repo (default is False). Attribute ``reports`` is deprecated and
+    limited to packages from that repo (default is None). Attribute ``reports`` is deprecated and
     not used any more. Will be removed on 2018-01-01.
 
   .. method:: get_nevra_possibilities(self, forms=None)
@@ -165,10 +188,20 @@
 
     Example how to use it when it is known that string could be full NEVRA or NEVR::
 
-      subject = dnf.subjet.Subject("my_nevra_string")
-      possible_nevra = subject.get_nevra_possibilities(forms=[hawkey.FORM_NEVRA, hawkey.FORM_NEVR])
+        #!/usr/bin/python3
+        import dnf
+        import hawkey
 
-    To print all possible names use::
+        nevra_string = "dnf-0:4.2.2-2.fc30.noarch"
+        subject = dnf.subject.Subject(nevra_string)
+        possible_nevra = subject.get_nevra_possibilities(
+            forms=[hawkey.FORM_NEVRA, hawkey.FORM_NEVR])
 
-      for nevra in possible_nevra:
-          print(nevra.name)
+        for i,nevra in enumerate(possible_nevra):
+            print("Possibility {} for \"{}\":".format(i+1, nevra_string))
+            print("name: {}".format(nevra.name))
+            print("epoch: {}".format(nevra.epoch))
+            print("version: {}".format(nevra.version))
+            print("release: {}".format(nevra.release))
+            print("architecture: {}".format(nevra.arch))
+            print()
