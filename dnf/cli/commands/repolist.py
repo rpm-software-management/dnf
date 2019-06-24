@@ -297,5 +297,6 @@ class RepoListCommand(commands.Command):
                 print("%s %s %s%s" % (fill_exact_width(rid, id_len),
                                       fill_exact_width(rname, nm_len, nm_len),
                                       ui_enabled, ui_num))
-        msg = _('Total packages: %s')
-        logger.debug(msg, _num2ui_num(tot_num))
+        if any((verbose, ('repoinfo' in self.opts.command))):
+            msg = _('Total packages: {}')
+            print(msg.format(_num2ui_num(tot_num)))
