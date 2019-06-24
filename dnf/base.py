@@ -843,8 +843,12 @@ class Base(object):
                 for descr in tserrors:
                     errstring += '  %s\n' % ucd(descr)
 
-                raise dnf.exceptions.Error(errstring + '\n' +
-                                        self._trans_error_summary(errstring))
+                summary = self._trans_error_summary(errstring)
+                if summary:
+                    errstring += '\n' + summary
+
+                raise dnf.exceptions.Error(errstring)
+
 
             logger.info(_('Transaction test succeeded.'))
             timer()
@@ -895,6 +899,9 @@ class Base(object):
                     'At least %dMB more space needed on the %s filesystem.',
                     'At least %dMB more space needed on the %s filesystem.',
                     disk[k]) % (disk[k], k) + '\n'
+
+        if not summary:
+            return None
 
         summary = _('Error Summary') + '\n-------------\n' + summary
 
