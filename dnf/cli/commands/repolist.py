@@ -86,7 +86,7 @@ class RepoListCommand(commands.Command):
         repolimit.add_argument('--disabled', dest='_repos_action',
                                action='store_const', const='disabled',
                                help=_("show disabled repos"))
-        parser.add_argument('repos', nargs='*', default='enabled', metavar="REPOSITORY",
+        parser.add_argument('repos', nargs='*', default='enabled-default', metavar="REPOSITORY",
                             choices=['all', 'enabled', 'disabled'],
                             action=OptionParser.PkgNarrowCallback,
                             help=_("Repository specification"))
@@ -114,7 +114,6 @@ class RepoListCommand(commands.Command):
 
         repos = list(self.base.repos.values())
         repos.sort(key=operator.attrgetter('id'))
-        enabled_repos = list(self.base.repos.iter_enabled())
         term = self.output.term
         on_ehibeg = term.FG_COLOR['green'] + term.MODE['bold']
         on_dhibeg = term.FG_COLOR['red']
@@ -124,6 +123,7 @@ class RepoListCommand(commands.Command):
         if not repos:
             logger.warning(_('No repositories available'))
             return
+        include_status = arg == 'all' or (arg == 'enabled-default' and extcmds)
 
         for repo in repos:
             if len(extcmds) and not _repo_match(repo, extcmds):
@@ -132,26 +132,20 @@ class RepoListCommand(commands.Command):
             ui_enabled = ''
             ui_endis_wid = 0
             ui_excludes_num = ''
-            force_show = False
-            if arg == 'all' or repo.id in extcmds or repo.name in extcmds:
-                force_show = True
+            if include_status:
                 (ehibeg, dhibeg, hiend) = (on_ehibeg, on_dhibeg, on_hiend)
-            if repo in enabled_repos:
+            if repo.enabled:
                 enabled = True
-                if arg == 'enabled':
-                    force_show = False
-                elif arg == 'disabled' and not force_show:
+                if arg == 'disabled':
                     continue
-                if any((force_show, verbose, 'repoinfo' in self.opts.command)):
+                if any((include_status, verbose, 'repoinfo' in self.opts.command)):
                     ui_enabled = ehibeg + _('enabled') + hiend
                     ui_endis_wid = exact_width(_('enabled'))
                 if verbose or ('repoinfo' in self.opts.command):
                     ui_size = _repo_size(self.base.sack, repo)
             else:
                 enabled = False
-                if arg == 'disabled':
-                    force_show = False
-                elif arg == 'enabled' and not force_show:
+                if arg == 'enabled' or (arg == 'enabled-default' and not extcmds):
                     continue
                 ui_enabled = dhibeg + _('disabled') + hiend
                 ui_endis_wid = exact_width(_('disabled'))
@@ -167,7 +161,7 @@ class RepoListCommand(commands.Command):
                 out = [self.output.fmtKeyValFill(_("Repo-id      : "), repo.id),
                        self.output.fmtKeyValFill(_("Repo-name    : "), repo.name)]
 
-                if force_show or extcmds:
+                if include_status:
                     out += [self.output.fmtKeyValFill(_("Repo-status  : "),
                                                       ui_enabled)]
                 if md and repo._repo.getRevision():
@@ -243,7 +237,6 @@ class RepoListCommand(commands.Command):
             #  Work out the first (id) and last (enabled/disabled/count),
             # then chop the middle (name)...
 
-            include_status = arg == 'all' or repo.id in extcmds or repo.name in extcmds
             id_len = exact_width(_('repo id'))
             nm_len = 0
             st_len = 0
