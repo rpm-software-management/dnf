@@ -265,15 +265,17 @@ class RepoListCommand(commands.Command):
                 nm_len += left - (left // 2)
 
             txt_rid = fill_exact_width(_('repo id'), id_len)
-            txt_rnam = fill_exact_width(_('repo name'), nm_len, nm_len)
+            if include_status:
+                txt_rnam = fill_exact_width(_('repo name'), nm_len, nm_len)
+            else:
+                txt_rnam = _('repo name')
             if not include_status:  # Don't output a status column.
                 print("%s %s" % (txt_rid, txt_rnam))
             else:
                 print("%s %s %s" % (txt_rid, txt_rnam, _('status')))
             for (rid, rname, (ui_enabled, ui_endis_wid)) in cols:
                 if not include_status:  # Don't output a status column.
-                    print("%s %s" % (fill_exact_width(rid, id_len),
-                                     fill_exact_width(rname, nm_len, nm_len)))
+                    print("%s %s" % (fill_exact_width(rid, id_len), rname))
                     continue
 
                 print("%s %s %s" % (fill_exact_width(rid, id_len),
