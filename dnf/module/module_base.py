@@ -88,21 +88,40 @@ class ModuleBase(object):
                     if nsvcap.profile:
                         profiles.extend(latest_module.getProfiles(nsvcap.profile))
                         if not profiles:
-                            logger.error(_("Unable to match profile in argument {}").format(spec))
+                            available_profiles = latest_module.getProfiles()
+                            if available_profiles:
+                                profile_names = ", ".join(
+                                    [profile.getName() for profile in available_profiles])
+                                msg = _("Unable to match profile for argument {}. Available "
+                                        "profiles for '{}:{}': {}").format(
+                                    spec, name, stream, profile_names)
+                            else:
+                                msg = _("Unable to match profile for argument {}").format(spec)
+                            logger.error(msg)
                             no_match_specs.append(spec)
                             continue
                     else:
                         profiles_strings = self.base._moduleContainer.getDefaultProfiles(
                             name, stream)
                         if not profiles_strings:
-                            logger.error(_("No default profiles for module {}:{}").format(
-                                name, stream))
+                            available_profiles = latest_module.getProfiles()
+                            if available_profiles:
+                                profile_names = ", ".join(
+                                    [profile.getName() for profile in available_profiles])
+                                msg = _("No default profiles for module {}:{}. Available profiles"
+                                        ": {}").format(
+                                    name, stream, profile_names)
+                            else:
+                                msg = _("No default profiles for module {}:{}").format(name, stream)
+                            logger.error(msg)
+                            no_match_specs.append(spec)
                         for profile in set(profiles_strings):
                             module_profiles = latest_module.getProfiles(profile)
                             if not module_profiles:
                                 logger.error(
-                                    _("Profile {} not matched for module {}:{}").format(
+                                    _("Default profile {} not available in module {}:{}").format(
                                         profile, name, stream))
+                                no_match_specs.append(spec)
 
                             profiles.extend(module_profiles)
                     for profile in profiles:
