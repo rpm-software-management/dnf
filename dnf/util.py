@@ -396,6 +396,23 @@ def _te_nevra(te):
     return nevra + te.V() + '-' + te.R() + '.' + te.A()
 
 
+def _log_rpm_trans_with_swdb(rpm_transaction, swdb_transaction):
+    logger.debug("Logging transaction elements")
+    for rpm_el in rpm_transaction:
+        tsi = rpm_el.Key()
+        tsi_state = None
+        if tsi is not None:
+            tsi_state = tsi.state
+        msg = "RPM element: '{}', Key(): '{}', Key state: '{}', Failed() '{}': ".format(
+            _te_nevra(rpm_el), tsi, tsi_state, rpm_el.Failed())
+        logger.debug(msg)
+    for tsi in swdb_transaction:
+        msg = "SWDB element: '{}', State: '{}', Action: '{}', From repo: '{}', Reason: '{}', " \
+              "Get reason: '{}'".format(str(tsi), tsi.state, tsi.action, tsi.from_repo, tsi.reason,
+                                        tsi.get_reason())
+        logger.debug(msg)
+
+
 def _sync_rpm_trans_with_swdb(rpm_transaction, swdb_transaction):
     revert_actions = {libdnf.transaction.TransactionItemAction_DOWNGRADED,
                       libdnf.transaction.TransactionItemAction_OBSOLETED,
@@ -426,10 +443,14 @@ def _sync_rpm_trans_with_swdb(rpm_transaction, swdb_transaction):
             error = True
         else:
             tsi.state = libdnf.transaction.TransactionItemState_DONE
+    for tsi in cached_tsi:
+        if tsi.state == libdnf.transaction.TransactionItemState_UNKNOWN:
+            logger.critical(_("TransactionSWDBItem not found for key: {}").format(str(tsi)))
+            el_not_found = True
     if error:
         logger.debug(_('Errors occurred during transaction.'))
-
-    return el_not_found
+    if el_not_found:
+        _log_rpm_trans_with_swdb(rpm_transaction, cached_tsi)
 
 
 class tmpdir(object):
