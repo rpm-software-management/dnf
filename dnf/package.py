@@ -38,6 +38,9 @@ logger = logging.getLogger("dnf")
 class Package(hawkey.Package):
     """ Represents a package. #:api """
 
+    DEBUGINFO_SUFFIX = "-debuginfo"  # :api
+    DEBUGSOURCE_SUFFIX = "-debugsource"  # :api
+
     def __init__(self, initobject, base):
         super(Package, self).__init__(initobject)
         self.base = base
@@ -64,10 +67,20 @@ class Package(hawkey.Package):
     def debug_name(self):
         # :api
         """
-        returns name of debuginfo package for given package
+        Returns name of the debuginfo package for this package.
+        If this package is a debuginfo package, returns its name.
+        If this package is a debugsource package, returns the debuginfo package
+        for the base package.
         e.g. kernel-PAE -> kernel-PAE-debuginfo
         """
-        return "{}-debuginfo".format(self.name)
+        if self.name.endswith(self.DEBUGINFO_SUFFIX):
+            return self.name
+
+        name = self.name
+        if self.name.endswith(self.DEBUGSOURCE_SUFFIX):
+            name = name[:-len(self.DEBUGSOURCE_SUFFIX)]
+
+        return name + self.DEBUGINFO_SUFFIX
 
     @property
     def _from_cmdline(self):
@@ -109,7 +122,7 @@ class Package(hawkey.Package):
         returns name of debuginfo package for source package of given package
         e.g. krb5-libs -> krb5-debuginfo
         """
-        return "{}-debuginfo".format(self.source_name)
+        return self.source_name + self.DEBUGINFO_SUFFIX
 
     @property
     def source_name(self):
