@@ -951,10 +951,6 @@ class Cli(object):
             self.base._allow_erasing = True
         if opts.freshest_metadata:
             self.demands.freshest_metadata = opts.freshest_metadata
-        if opts.debugsolver:
-            self.base.conf.debug_solver = True
-        if opts.obsoletes:
-            self.base.conf.obsoletes = True
         self.command.pre_configure()
         self.base.pre_configure_plugins()
 

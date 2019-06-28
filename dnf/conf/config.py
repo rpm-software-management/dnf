@@ -335,6 +335,12 @@ class MainConf(BaseConfig):
                             msg = _("Main config did not have a %s attr. before setopt")
                             logger.warning(msg, name)
 
+        if getattr(opts 'debugsolver'):
+            self._set_value("debug_solver", True, dnf.conf.PRIO_COMMANDLINE)
+
+        if getattr(opts 'obsoletes'):
+            self._set_value("obsoletes", True, dnf.conf.PRIO_COMMANDLINE)
+
     def exclude_pkgs(self, pkgs):
         # :api
         name = "excludepkgs"
