@@ -1,5 +1,5 @@
 # misc.py
-# Copyright (C) 2012-2016 Red Hat, Inc.
+# Copyright (C) 2012-2019 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -373,7 +373,7 @@ def _getloginuid():
         with open("/proc/self/loginuid") as fo:
             data = fo.read()
             return int(data)
-    except (IOError, ValueError):
+    except (IOError, ValueError, TypeError):
         return os.getuid()
 
 _cached_getloginuid = None
