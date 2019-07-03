@@ -210,6 +210,12 @@ class RPMTransaction(object):
         except IOError:
             pass
 
+    def messages(self):
+        messages = self._scriptOutput()
+        if messages:
+            for line in messages.splitlines():
+                yield ucd(line)
+
     def _scriptout(self):
         msgs = self._scriptOutput()
         for display in self.displays:
