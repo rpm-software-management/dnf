@@ -331,7 +331,7 @@ class RPMTransaction(object):
             else:
                 raise RuntimeError("TransactionItemAction not handled: %s" % tsi.action)
         if modular_problems:
-            raise dnf.exceptions.Error(_("No available modular metadata for modular package"))
+            logger.critical(_("No available modular metadata for modular package"))
 
         return ts
 

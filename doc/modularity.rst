@@ -99,5 +99,4 @@ Orphaned modular packages
 =========================
 All packages that are built as a part of a module have ``%{modularitylabel}`` RPM header set.
 If such package becomes part of RPM transaction and cannot be associated with any available
-modulemd, DNF prevents from getting it on the system (package is available, but cannot be
-installed, upgraded, etc.)
+modulemd, DNF logs the issue as critical problem.
