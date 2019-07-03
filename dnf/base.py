@@ -984,16 +984,16 @@ class Base(object):
         if errors is None:
             pass
         elif len(errors) == 0:
-            # this is a particularly tricky case happening also when rpm failed
-            # to obtain the transaction lock. We can only try to see if a
-            # particular element failed and if not, decide that is the
-            # case.
+            # If there is no failing element it means that some "global" error
+            # occured (like rpm failed to obtain the transaction lock). Just pass
+            # the rpm logs on to the user and raise an Error.
+            # If there are failing elements the problem is related to those
+            # elements and the Error is raised later, after saving the failure
+            # to the history and printing out the transaction table to user.
             failed = [el for el in self._ts if el.Failed()]
             if not failed:
-                login = dnf.util.get_effective_login()
-                msg = _("Failed to obtain the transaction lock "
-                        "(logged in as: %s).")
-                logger.critical(msg, login)
+                for msg in cb.messages():
+                    logger.critical(_('RPM: {}').format(msg))
                 msg = _('Could not run transaction.')
                 raise dnf.exceptions.Error(msg)
         else:
