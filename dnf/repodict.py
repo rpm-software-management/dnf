@@ -128,17 +128,19 @@ class RepoDict(dict):
         # :api
         return (r for r in self.values() if r.enabled)
 
-    # return items ordered by priority
     def items(self):
-       """return repos sorted by priority"""
-       return (item for item in sorted(super(RepoDict, self).items(),
-                                       key=lambda x: (x[1].priority, x[1].cost)))
+        # :api
+        """return repos sorted by priority"""
+        return (item for item in sorted(super(RepoDict, self).items(),
+                                        key=lambda x: (x[1].priority, x[1].cost)))
 
     def __iter__(self):
         return self.keys()
 
     def keys(self):
+        # :api
         return (k for k, v in self.items())
 
     def values(self):
+        # :api
         return (v for k, v in self.items())

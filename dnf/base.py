@@ -1817,6 +1817,7 @@ class Base(object):
                 skipped.append("@" + group_spec)
 
     def install_specs(self, install, exclude=None, reponame=None, strict=True, forms=None):
+        # :api
         if exclude is None:
             exclude = []
         no_match_group_specs = []
