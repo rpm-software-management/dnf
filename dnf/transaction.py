@@ -27,6 +27,7 @@ import libdnf.transaction
 
 from dnf.i18n import _, C_
 
+# :api - all action constants are considered an API
 
 # per-package actions - from libdnf
 PKG_DOWNGRADE = libdnf.transaction.TransactionItemAction_DOWNGRADE

@@ -65,8 +65,10 @@ def _add_deprecated_action(name):
 
 
 class TransactionDisplay(object):
+    # :api
 
     def __init__(self):
+        # :api
         pass
 
     # use constants from dnf.callback which are the official API

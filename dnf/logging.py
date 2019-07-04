@@ -40,7 +40,7 @@ ERROR = logging.ERROR
 WARNING = logging.WARNING
 INFO = logging.INFO
 DEBUG = logging.DEBUG
-DDEBUG = 8
+DDEBUG = 8  # used by anaconda (pyanaconda/payload/dnfpayload.py)
 SUBDEBUG = 6
 TRACE = 4
 

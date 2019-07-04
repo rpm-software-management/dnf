@@ -27,6 +27,7 @@ import dnf.exceptions
 ENVIRONMENT_VARS_RE = re.compile(r'^DNF_VAR_[A-Za-z0-9_]+$')
 
 class Substitutions(dict):
+    # :api
 
     def __init__(self):
         super(Substitutions, self).__init__()
@@ -39,6 +40,7 @@ class Substitutions(dict):
                 self[key] = val
 
     def update_from_etc(self, installroot):
+        # :api
         fsvars = []
         try:
             dir_fsvars = os.path.join(installroot, "etc/dnf/vars/")
