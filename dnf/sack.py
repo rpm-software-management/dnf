@@ -57,6 +57,7 @@ def _build_sack(base):
 
 
 def _rpmdb_sack(base):
+    # used by subscription-manager (src/dnf-plugins/product-id.py)
     sack = _build_sack(base)
     try:
         # It can fail if rpmDB is not present
