@@ -456,6 +456,7 @@ def _sync_rpm_trans_with_swdb(rpm_transaction, swdb_transaction):
 
 
 class tmpdir(object):
+    # used by subscription-manager (src/dnf-plugins/product-id.py)
     def __init__(self):
         prefix = '%s-' % dnf.const.PREFIX
         self.path = tempfile.mkdtemp(prefix=prefix)
