@@ -349,54 +349,61 @@ class RepoQueryCommand(commands.Command):
             # there don't exist on the dnf Package object.
             raise dnf.exceptions.Error(str(e))
 
-    def _get_recursive_deps_query(self, query_in, query_select, done=None, recursive=False,
-                                  all_dep_types=False):
-        done = done if done else self.base.sack.query().filterm(empty=True)
-        t = self.base.sack.query().filterm(empty=True)
-        set_requires = set()
-        set_all_deps = set()
+    def _resolve_nevras(self, nevras, base_query):
+        resolved_nevras_query = self.base.sack.query().filterm(empty=True)
+        for nevra in nevras:
+            resolved_nevras_query = resolved_nevras_query.union(base_query.intersection(
+                dnf.subject.Subject(nevra).get_best_query(
+                    self.base.sack,
+                    with_provides=False,
+                    with_filenames=False
+                )
+            ))
 
-        for pkg in query_select.run():
-            pkg_provides = pkg.provides
-            set_requires.update(pkg_provides)
-            set_requires.update(pkg.files)
-            if all_dep_types:
-                set_all_deps.update(pkg_provides)
+        return resolved_nevras_query
 
-        t = t.union(query_in.filter(requires=set_requires))
-        if set_all_deps:
-            t = t.union(query_in.filter(recommends=set_all_deps))
-            t = t.union(query_in.filter(enhances=set_all_deps))
-            t = t.union(query_in.filter(supplements=set_all_deps))
-            t = t.union(query_in.filter(suggests=set_all_deps))
-        if recursive:
-            query_select = t.difference(done)
-            if query_select:
-                done = self._get_recursive_deps_query(query_in, query_select, done=t.union(done),
-                                                      recursive=recursive,
-                                                      all_dep_types=all_dep_types)
-        return t.union(done)
+    def _do_recursive_deps(self, query_in, query_select, done=None):
+        done = done if done else query_select
+
+        query_required = query_in.filter(requires=query_select)
+
+        query_select = query_required.difference(done)
+        done = query_required.union(done)
+
+        if query_select:
+            done = self._do_recursive_deps(query_in, query_select, done=done)
+
+        return done
 
     def by_all_deps(self, names, query, all_dep_types=False):
-        defaultquery = self.base.sack.query().filterm(empty=True)
-        for name in names:
-            defaultquery = defaultquery.union(query.intersection(
-                dnf.subject.Subject(name).get_best_query(self.base.sack, with_provides=False,
-                                                         with_filenames=False)))
-        requiresquery = query.filter(requires__glob=names)
-        if all_dep_types:
-            requiresquery = requiresquery.union(query.filter(recommends__glob=names))
-            requiresquery = requiresquery.union(query.filter(enhances__glob=names))
-            requiresquery = requiresquery.union(query.filter(supplements__glob=names))
-            requiresquery = requiresquery.union(query.filter(suggests__glob=names))
+        # in case of arguments being NEVRAs, resolve them to packages
+        resolved_nevras_query = self._resolve_nevras(names, query)
 
-        done = requiresquery.union(self._get_recursive_deps_query(query, defaultquery,
-                                                                  all_dep_types=all_dep_types))
+        # filter the arguments directly as reldeps
+        depquery = query.filter(requires__glob=names)
+
+        # filter the resolved NEVRAs as packages
+        depquery = depquery.union(query.filter(requires=resolved_nevras_query))
+
+        if all_dep_types:
+            # TODO this is very inefficient, as it resolves the `names` glob to
+            # reldeps four more times, which in a reasonably wide glob like
+            # `dnf repoquery --whatdepends "libdnf*"` can take roughly 50% of
+            # the total execution time.
+            depquery = depquery.union(query.filter(recommends__glob=names))
+            depquery = depquery.union(query.filter(enhances__glob=names))
+            depquery = depquery.union(query.filter(supplements__glob=names))
+            depquery = depquery.union(query.filter(suggests__glob=names))
+
+            depquery = depquery.union(query.filter(recommends=resolved_nevras_query))
+            depquery = depquery.union(query.filter(enhances=resolved_nevras_query))
+            depquery = depquery.union(query.filter(supplements=resolved_nevras_query))
+            depquery = depquery.union(query.filter(suggests=resolved_nevras_query))
+
         if self.opts.recursive:
-            done = done.union(self._get_recursive_deps_query(query, done,
-                                                             recursive=self.opts.recursive,
-                                                             all_dep_types=all_dep_types))
-        return done
+            depquery = self._do_recursive_deps(query, depquery)
+
+        return depquery
 
     def _get_recursive_providers_query(self, query_in, providers, done=None):
         done = done if done else self.base.sack.query().filterm(empty=True)
