@@ -303,6 +303,12 @@ class RepoQueryCommand(commands.Command):
                       "(optionally with '--alldeps', but not with '--exactdeps'), or with "
                       "'--requires <REQ> --resolve'"))
 
+        if self.opts.alldeps or self.opts.exactdeps:
+            if not (self.opts.whatrequires or self.opts.whatdepends):
+                raise dnf.cli.CliError(
+                    _("argument {} requires --whatrequires or --whatdepends option".format(
+                        '--alldeps' if self.opts.alldeps else '--exactdeps')))
+
         if self.opts.srpm:
             self.base.repos.enable_source_repos()
 
@@ -496,10 +502,6 @@ class RepoQueryCommand(commands.Command):
             else:
                 q.filterm(file__glob=self.opts.whatprovides)
         if self.opts.alldeps or self.opts.exactdeps:
-            if not (self.opts.whatrequires or self.opts.whatdepends):
-                raise dnf.exceptions.Error(
-                    _("argument {} requires --whatrequires or --whatdepends option".format(
-                        '--alldeps' if self.opts.alldeps else '--exactdeps')))
             if self.opts.alldeps:
                 q = self.by_all_deps(self.opts.whatrequires, self.opts.whatdepends, q)
             else:
