@@ -674,7 +674,7 @@ class RepoQueryCommand(commands.Command):
                             ar[querypkg.name + "." + querypkg.arch] = querypkg
                     pkgquery = self.base.sack.query().filterm(pkg=list(ar.values()))
                 else:
-                    pkgquery = self.by_all_deps(pkg.name, None, aquery) if opts.alldeps \
+                    pkgquery = self.by_all_deps((pkg.name, ), None, aquery) if opts.alldeps \
                         else aquery.filter(requires__glob=pkg.name)
                 self.tree_seed(pkgquery, aquery, opts, level + 1, usedpkgs)
 
