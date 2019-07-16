@@ -238,12 +238,14 @@ class OptionParser(argparse.ArgumentParser):
                                  default=None, help=_("automatically answer no"
                                                       " for all questions"))
         general_grp.add_argument("--enablerepo", action=self._RepoCallback,
-                                 dest='repos_ed', default=[],
-                                 metavar='[repo]')
+                                 dest='repos_ed', default=[], metavar='[repo]',
+                                 help=_("Enable additional repositories. List option. "
+                                        "Supports globs, can be specified multiple times."))
         repo_group = general_grp.add_mutually_exclusive_group()
         repo_group.add_argument("--disablerepo", action=self._RepoCallback,
-                                dest='repos_ed', default=[],
-                                metavar='[repo]')
+                                dest='repos_ed', default=[], metavar='[repo]',
+                                help=_("Disable repositories. List option. "
+                                       "Supports globs, can be specified multiple times."))
         repo_group.add_argument('--repo', '--repoid', metavar='[repo]', dest='repo',
                                 action=self._SplitCallback, default=[],
                                 help=_('enable just specific repositories by an id or a glob, '
