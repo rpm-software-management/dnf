@@ -83,6 +83,15 @@ class Package(hawkey.Package):
         return name + self.DEBUGINFO_SUFFIX
 
     @property
+    def debugsource_name(self):
+        # :api
+        """
+        Returns name of the debugsource package for this package.
+        e.g. krb5-libs -> krb5-debugsource
+        """
+        return self.source_name + self.DEBUGSOURCE_SUFFIX
+
+    @property
     def _from_cmdline(self):
         return self.reponame == hawkey.CMDLINE_REPO_NAME
 
