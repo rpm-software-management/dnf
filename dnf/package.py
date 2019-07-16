@@ -64,34 +64,6 @@ class Package(hawkey.Package):
         self._priv_chksum = val
 
     @property
-    def debug_name(self):
-        # :api
-        """
-        Returns name of the debuginfo package for this package.
-        If this package is a debuginfo package, returns its name.
-        If this package is a debugsource package, returns the debuginfo package
-        for the base package.
-        e.g. kernel-PAE -> kernel-PAE-debuginfo
-        """
-        if self.name.endswith(self.DEBUGINFO_SUFFIX):
-            return self.name
-
-        name = self.name
-        if self.name.endswith(self.DEBUGSOURCE_SUFFIX):
-            name = name[:-len(self.DEBUGSOURCE_SUFFIX)]
-
-        return name + self.DEBUGINFO_SUFFIX
-
-    @property
-    def debugsource_name(self):
-        # :api
-        """
-        Returns name of the debugsource package for this package.
-        e.g. krb5-libs -> krb5-debugsource
-        """
-        return self.source_name + self.DEBUGSOURCE_SUFFIX
-
-    @property
     def _from_cmdline(self):
         return self.reponame == hawkey.CMDLINE_REPO_NAME
 
@@ -125,13 +97,11 @@ class Package(hawkey.Package):
         self._priv_size = val
 
     @property
-    def source_debug_name(self):
-        # :api
-        """
-        returns name of debuginfo package for source package of given package
-        e.g. krb5-libs -> krb5-debuginfo
-        """
-        return self.source_name + self.DEBUGINFO_SUFFIX
+    def _pkgid(self):
+        if self.hdr_chksum is None:
+            return None
+        (_, chksum) = self.hdr_chksum
+        return binascii.hexlify(chksum)
 
     @property
     def source_name(self):
@@ -154,11 +124,41 @@ class Package(hawkey.Package):
         return srcname
 
     @property
-    def _pkgid(self):
-        if self.hdr_chksum is None:
-            return None
-        (_, chksum) = self.hdr_chksum
-        return binascii.hexlify(chksum)
+    def debug_name(self):
+        # :api
+        """
+        Returns name of the debuginfo package for this package.
+        If this package is a debuginfo package, returns its name.
+        If this package is a debugsource package, returns the debuginfo package
+        for the base package.
+        e.g. kernel-PAE -> kernel-PAE-debuginfo
+        """
+        if self.name.endswith(self.DEBUGINFO_SUFFIX):
+            return self.name
+
+        name = self.name
+        if self.name.endswith(self.DEBUGSOURCE_SUFFIX):
+            name = name[:-len(self.DEBUGSOURCE_SUFFIX)]
+
+        return name + self.DEBUGINFO_SUFFIX
+
+    @property
+    def debugsource_name(self):
+        # :api
+        """
+        Returns name of the debugsource package for this package.
+        e.g. krb5-libs -> krb5-debugsource
+        """
+        return self.source_name + self.DEBUGSOURCE_SUFFIX
+
+    @property
+    def source_debug_name(self):
+        # :api
+        """
+        returns name of debuginfo package for source package of given package
+        e.g. krb5-libs -> krb5-debuginfo
+        """
+        return self.source_name + self.DEBUGINFO_SUFFIX
 
     @property # yum compatibility attribute
     def idx(self):
