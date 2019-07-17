@@ -833,10 +833,11 @@ class Base(object):
 
             testcb = dnf.yum.rpmtrans.RPMTransaction(self, test=True)
             tserrors = self._ts.test(testcb)
-            del testcb
 
             if len(tserrors) > 0:
-                errstring = _('Transaction check error:') + '\n'
+                for msg in testcb.messages():
+                    logger.critical(_('RPM: {}').format(msg))
+                errstring = _('Transaction test error:') + '\n'
                 for descr in tserrors:
                     errstring += '  %s\n' % ucd(descr)
 
@@ -845,7 +846,7 @@ class Base(object):
                     errstring += '\n' + summary
 
                 raise dnf.exceptions.Error(errstring)
-
+            del testcb
 
             logger.info(_('Transaction test succeeded.'))
             timer()
