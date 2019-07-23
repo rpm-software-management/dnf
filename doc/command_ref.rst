@@ -934,7 +934,8 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
 
 ``dnf [options] module disable <module-name>...``
     Disable a module. All related module streams will become unavailable.
-    Consequently, all installed profiles will be removed. In case of modular
+    Consequently, all installed profiles will be removed and the module RPMs
+    will become unavailable in the package set. In case of modular
     dependency issue the operation will be rejected. To perform the action anyway please use \-\
     :ref:`-skip-broken <skip-broken_option-label>` option.
 
@@ -942,7 +943,8 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
 
 ``dnf [options] module reset <module-name>...``
     Reset module state so it's no longer enabled or disabled.
-    Consequently, all installed profiles will be removed.
+    Consequently, all installed profiles will be removed and
+    only RPMs from the default stream will be available in the package set.
 
 ``dnf [options] module list [--all] [module_name...]``
     Lists all module streams, their profiles and states (enabled, disabled, default).
