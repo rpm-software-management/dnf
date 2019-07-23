@@ -913,7 +913,9 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
     If the `profile_name` is provided, only the packages referenced by that profile will be updated.
 
 ``dnf [options] module remove <module-spec>...``
-    Remove installed module profiles, including their packages.
+    Remove installed module profiles, including packages that were installed with the
+    :ref:`dnf module install <module_install_command-label>` command. Will not remove packages
+    required by other installed module profiles or by other user-installed packages.
     In case no profile was provided, all installed profiles get removed.
 
 .. _module_enable_command-label:
