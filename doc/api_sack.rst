@@ -19,10 +19,16 @@
  Sack
 ======
 
-.. class:: dnf.sack.Sack
+.. module:: dnf.sack
+
+.. class:: Sack
 
   The package sack. Contains metadata information about all known packages, installed and available.
 
   .. method:: query()
 
     Return a :class:`Query<dnf.query.Query>` for querying packages contained in this sack.
+
+.. function:: rpmdb_sack(base)
+
+    Returns a new instance of sack containing only installed packages (@System repo). Useful to get list of the installed RPMs after transaction.

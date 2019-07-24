@@ -440,7 +440,7 @@ class RepoQueryCommand(commands.Command):
         elif self.opts.pkgfilter == "installonly":
             q = self.base._get_installonly_query(q)
         elif self.opts.pkgfilter == "unsatisfied":
-            rpmdb = dnf.sack._rpmdb_sack(self.base)
+            rpmdb = dnf.sack.rpmdb_sack(self.base)
             rpmdb._configure(self.base.conf.installonlypkgs, self.base.conf.installonly_limit)
             goal = dnf.goal.Goal(rpmdb)
             solved = goal.run(verify=True)

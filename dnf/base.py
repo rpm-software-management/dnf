@@ -1029,7 +1029,7 @@ class Base(object):
         timer = dnf.logging.Timer('verify transaction')
         count = 0
 
-        rpmdb_sack = dnf.sack._rpmdb_sack(self)
+        rpmdb_sack = dnf.sack.rpmdb_sack(self)
 
         # mark group packages that are installed on the system as installed in the db
         q = rpmdb_sack.query().installed()
