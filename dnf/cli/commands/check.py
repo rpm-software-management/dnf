@@ -84,7 +84,7 @@ class CheckCommand(commands.Command):
                         if str(require).startswith('('):
                             # rich deps can be only tested by solver
                             if sack is None:
-                                sack = dnf.sack._rpmdb_sack(self.base)
+                                sack = dnf.sack.rpmdb_sack(self.base)
                             selector = dnf.selector.Selector(sack)
                             selector.set(provides=str(require))
                             goal = dnf.goal.Goal(sack)

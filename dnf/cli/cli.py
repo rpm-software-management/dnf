@@ -121,7 +121,7 @@ def print_versions(pkgs, base, output):
     def sm_ui_time(x):
         return time.strftime("%c", time.gmtime(x))
 
-    rpmdb_sack = dnf.sack._rpmdb_sack(base)
+    rpmdb_sack = dnf.sack.rpmdb_sack(base)
     done = False
     for pkg in rpmdb_sack.query().installed().filterm(name=pkgs):
         if done:

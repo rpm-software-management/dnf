@@ -65,3 +65,12 @@ def _rpmdb_sack(base):
     except IOError:
         pass
     return sack
+
+
+def rpmdb_sack(base):
+    # :api
+    """
+    Returns a new instance of sack containing only installed packages (@System repo)
+    Useful to get list of the installed RPMs after transaction.
+    """
+    return _rpmdb_sack(base)
