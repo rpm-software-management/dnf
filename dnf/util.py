@@ -36,7 +36,6 @@ import logging
 import os
 import pwd
 import shutil
-import subprocess
 import sys
 import tempfile
 import time
@@ -264,9 +263,10 @@ def on_ac_power():
 
     """
     try:
-        ret = subprocess.call('/usr/bin/on_ac_power')
-        return not ret
-    except OSError:
+        with open("/sys/class/power_supply/AC/online") as ac_status:
+            data = ac_status.read()
+            return int(data) == 1
+    except (IOError, ValueError):
         return None
 
 
