@@ -111,13 +111,13 @@
 
     Perform the resolved transaction. Use the optional `display` object(s) to report the progress. `display` can be either an instance of a subclass of :class:`dnf.callback.TransactionProgress` or a sequence of such instances. Raise :exc:`dnf.exceptions.Error` or dnf.exceptions.TransactionCheckError.
 
-  .. method:: download_packages(pkglist, progress=None)
+  .. method:: download_packages(pkglist, progress=None, callback_total=None)
 
-    Download packages in `pkglist` from remote repositories. Packages from local repositories or from the command line are not downloaded. `progress`, if given, should be a :class:`.DownloadProgress` and can be used by the caller to monitor the progress of the download. Raises :exc:`.DownloadError` if some packages failed to download.
+    Download packages in `pkglist` from remote repositories. Packages from local repositories or from the command line are not downloaded. `progress`, if given, should be a :class:`.DownloadProgress` and can be used by the caller to monitor the progress of the download. `callback_total` is function accepting two parameters - total size of the downloaded content in bytes and time when the download process started in seconds since the epoch. Raises :exc:`.DownloadError` if some packages failed to download.
 
-  .. method:: group_install(group_id, pkg_types, exclude=None)
+  .. method:: group_install(group_id, pkg_types, exclude=None, strict=True)
 
-    Mark group with corresponding `group_id` installed and mark the packages in the group for installation. Return the number of packages that the operation has marked for installation. `pkg_types` is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by including ``"mandatory"``, ``"default"`` or ``"optional"`` in it. If `exclude` is given, it has to be an iterable of package name glob patterns: :meth:`.group_install` will then not mark the respective packages for installation whenever possible.
+    Mark group with corresponding `group_id` installed and mark the packages in the group for installation. Return the number of packages that the operation has marked for installation. `pkg_types` is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by including ``"mandatory"``, ``"default"`` or ``"optional"`` in it. If `exclude` is given, it has to be an iterable of package name glob patterns: :meth:`.group_install` will then not mark the respective packages for installation whenever possible. Parameter `strict` is a boolean indicating whether group packages that exist but are non-installable due to e.g. dependency issues should be skipped (False) or cause transaction to fail to resolve (True).
 
   .. method:: group_remove(group_id)
 
@@ -127,6 +127,18 @@
 
     Upgrade group with corresponding `group_id`. If there has been packages added to the group's comps information since installing on the system, they will be marked for installation. Similarly, removed packages get marked for removal. The remaining packages in the group are marked for an upgrade. The operation respects the package types from the original installation of the group.
 
+  .. method:: environment_install(env_id, types, exclude=None, strict=True, exclude_groups=None)
+
+    Similar to :meth:`.group_install` but operates on environmental groups. `exclude_groups` is an iterable of group IDs that will be not marked as installed.
+
+  .. method:: environment_remove(env_id)
+
+    Similar to :meth:`.group_remove` but operates on environmental groups.
+
+  .. method:: environment_upgrade(env_id)
+
+    Similar to :meth:`.group_upgrade` but operates on environmental groups.
+
   .. method:: read_all_repos()
 
     Read repository configuration from the main configuration file specified by :attr:`dnf.conf.Conf.config_file_path` and any ``.repo`` files under :attr:`dnf.conf.Conf.reposdir`. All the repositories found this way are added to :attr:`~.Base.repos`.
@@ -135,7 +147,7 @@
 
     Read comps data from all the enabled repositories and initialize the :attr:`comps` object. If `arch_filter` is set to ``True``, the result is limited to system basearch.
 
-  .. method:: reset(**kwargs)
+  .. method:: reset(\*\*kwargs)
 
     Reset the state of different :class:`.Base` attributes. Selecting attributes to reset is controlled by passing the method keyword arguments set to ``True``. When called with no arguments the method has no effect.
 
@@ -148,7 +160,7 @@
     `sack=True`     drop the current sack (see :attr:`.sack`)
     =============== =================================================
 
-  .. method:: resolve(allow_erasing=True)
+  .. method:: resolve(allow_erasing=False)
 
     Resolve the marked requirements and store the resulting :class:`dnf.transaction.Transaction` into :attr:`transaction`. Raise :exc:`dnf.exceptions.DepsolveError` on a depsolving error. Return ``True`` if the resolved transaction is non-empty.
 
@@ -176,17 +188,18 @@
 
     Mark packages matching `pkg_spec` for downgrade.
 
-  .. method:: install(pkg_spec)
+  .. method:: install(pkg_spec, reponame=None, strict=True, forms=None)
 
-    Mark packages matching `pkg_spec` for installation.
+    Mark packages matching `pkg_spec` for installation. 
+    `reponame` can be a name of a repository or a list of repository names. If given, the selection of available packages is limited to packages from these repositories. If strict is set to False, the installation ignores packages with dependency solving problems. Parameter `forms` has the same meaning as in :meth:`dnf.subject.Subject.get_best_query`.
 
   .. method:: package_downgrade(pkg, strict=False)
 
     If `pkg` is a :class:`dnf.package.Package` in an available repository, mark the matching installed package for downgrade to `pkg`. If strict=False it ignores problems with dep-solving.
 
-  .. method:: package_install(pkg)
+  .. method:: package_install(pkg, strict=True)
 
-    Mark `pkg` (a :class:`dnf.package.Package` instance) for installation. Ignores package that is already installed.
+    Mark `pkg` (a :class:`dnf.package.Package` instance) for installation. Ignores package that is already installed. `strict` has the same meaning as in :meth:`install`.
 
   .. method:: package_upgrade(pkg)
 
@@ -196,18 +209,41 @@
 
     Removes all 'leaf' packages from the system that were originally installed as dependencies of user-installed packages but which are no longer required by any such package.
 
-  .. method:: remove(pkg_spec)
+  .. method:: remove(pkg_spec, reponame=None, forms=None)
 
-    Mark packages matching `pkg_spec` for removal.
+    Mark packages matching `pkg_spec` for removal. `reponame` and `forms` have the same meaning as in :meth:`install`.
 
-  .. method:: upgrade(pkg_spec)
+  .. method:: upgrade(pkg_spec, reponame=None)
 
-    Mark packages matching `pkg_spec` for upgrade.
+    Mark packages matching `pkg_spec` for upgrade. `reponame` has the same meaning as in :meth:`install`.
 
-  .. method:: upgrade_all
+  .. method:: upgrade_all(reponame=None)
 
-    Mark all installed packages for an upgrade.
+    Mark all installed packages for an upgrade. `reponame` has the same meaning as in :meth:`install`.
 
-  .. method:: urlopen(url, repo=None, mode='w+b', **kwargs):
+  .. method:: urlopen(url, repo=None, mode='w+b', \*\*kwargs):
 
     Open the specified absolute `url` and return a file object which respects proxy setting even for non-repo downloads
+
+  .. method:: install_specs(install, exclude=None, reponame=None, strict=True, forms=None)
+
+    Provides unified way to mark packages, groups or modules for installation. The `install` and `exclude` argument have to be an iterable containing specifications of packages (e.g. 'dnf') or groups/modules (e.g. '\@core'). Specifications from the `exclude` list will not be marked for installation. Parameters `reponame`, `strict` and `forms` have the same meaning as in :meth:`install`.
+
+    Example to install two groups and a package::
+
+        #!/usr/bin/python3
+        import dnf
+        import dnf.cli.progress
+
+        base = dnf.Base()
+        base.read_all_repos()
+        base.fill_sack()
+
+        base.install_specs(['acpi', '@Web Server', '@core'])
+        print("Resolving transaction...",)
+        base.resolve()
+        print("Downloading packages...")
+        progress = dnf.cli.progress.MultiFileProgressMeter()
+        base.download_packages(base.transaction.install_set, progress)
+        print("Installing...")
+        base.do_transaction()
