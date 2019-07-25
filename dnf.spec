@@ -47,6 +47,8 @@
 %global yum_compat_level full
 %global yum_subpackage_name yum
 %if 0%{?fedora}
+    # Avoid file conflict with yum < 4 in all Fedoras
+    # It can be resolved by pretrans scriptlet but they are not recommended in Fedora
     %global yum_compat_level minimal
     %if 0%{?fedora} < 31
         # Avoid name conflict with yum < 4
