@@ -37,6 +37,16 @@
 
   Base class providing callbacks to receive information about an ongoing download.
 
+  .. method:: start(total_files, total_size, total_drpms=0)
+
+    Report start of a download batch. `total_files` is the total number of payloads in the batch.
+    `total_size` is the total number of bytes to be downloaded. `total_drpms` is the total number
+    of drpms payloads in the batch.
+
+  .. method:: progress(payload, done)
+
+    Report ongoing progress on the given `payload`. `done` is the number of bytes already downloaded from `payload`.
+
   .. method:: end(payload, status, msg)
 
     Report finished download of a `payload`, :class:`.Payload` instance. `status` is a constant with the following meaning:
@@ -54,16 +64,6 @@
 
     `msg` is an optional string error message further explaining the `status`.
 
-  .. method:: progress(payload, done)
-
-    Report ongoing progress on the given `payload`. `done` is the number of bytes already downloaded from `payload`.
-
-  .. method:: start(total_files, total_size, total_drpms=0)
-
-    Report start of a download batch. `total_files` is the total number of payloads in the batch.
-    `total_size` is the total number of bytes to be downloaded. `total_drpms` is the total number
-    of drpms payloads in the batch.
-
 .. class:: TransactionProgress
 
   Base class providing callbacks to receive information about an ongoing transaction.
@@ -80,12 +80,16 @@
     `action` value     meaning                                                                           Appearance*
     ================== ================================================================================= ===========
     PKG_CLEANUP        `package` cleanup is being performed.                                             3
-    PKG_DOWNGRADE      `package` is being downgraded.                                                    2
+    PKG_DOWNGRADE      new `package` is being installed as a downgrade                                   2
+    PKG_DOWNGRADED     installed `package` is being downgraded.                                          2
     PKG_INSTALL        `package` is being installed.                                                     2
-    PKG_OBSOLETE       `package` is being obsoleted.                                                     2
-    PKG_REINSTALL      `package` is being reinstalled.                                                   2
+    PKG_OBSOLETE       new `package` is obsoleting a package.                                            2
+    PKG_OBSOLETED      installed `package` is being obsoleted.                                           2
+    PKG_REINSTALL      new `package` is installed as reinstall.                                          2
+    PKG_REINSTALLED    installed `package` is being reinstalled.                                         2
     PKG_REMOVE         `package` is being removed.                                                       2
-    PKG_UPGRADE        `package` is being upgraded.                                                      2
+    PKG_UPGRADE        new `package` is installed as an upgrade.                                         2
+    PKG_UPGRADED       installed `package` is being upgraded.                                            2
     PKG_VERIFY         `package` is being verified.                                                      5
     PKG_SCRIPTLET      `package` scriptlet is being performed.                                           Anytime
     TRANS_PREPARATION  `transaction` is being prepared.                                                  1
