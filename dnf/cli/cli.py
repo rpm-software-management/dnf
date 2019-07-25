@@ -712,7 +712,7 @@ class Cli(object):
         self.base = base
         self.cli_commands = {}
         self.command = None
-        self.demands = dnf.cli.demand.DemandSheet() #:cli
+        self.demands = dnf.cli.demand.DemandSheet()  # :api
 
         self.register_command(dnf.cli.commands.alias.AliasCommand)
         self.register_command(dnf.cli.commands.autoremove.AutoremoveCommand)
@@ -1073,6 +1073,7 @@ class Cli(object):
         self.base._update_security_filters = filters
 
     def redirect_logger(self, stdout=None, stderr=None):
+        # :api
         """
         Change minimal logger level for terminal output to stdout and stderr according to specific
         command requirements

@@ -57,13 +57,34 @@ When packaging your custom command, we recommend you to define a virtual provide
 
       Depending on other demands and the user's configuration, this might or might not correctly trigger metadata download for the available repositories.
 
+    .. attribute:: load_system_repo
+
+      If ``True`` DNF will load information about installed packages from the local RPMDB into the sack during :meth:`dnf.Base.fill_sack` Defaults to ``True``.
+
+    .. attribute:: cacheonly
+
+      When ``True``, DNF will run entirely from the system cache (equivalent of ``-C`` command line option). Defaults to ``False``.
+
+    .. attribute:: fresh_metadata
+
+      ``False`` means that (even expired) cached repository metadata will be used. When ``True`` the expired repository metadata caches are synchronized with server. Defaults to ``True``.
+
+    .. attribute:: freshest_metadata
+
+      If ``True`` metadata caches for all enabled repositories are forcibly expired before the sack is activated. Defaults to ``False``.
+
+    .. attribute:: changelogs
+
+      If ``True`` also the repository metadata containing changelogs for packages will be downloaded. Defaults to ``False``.
+
     .. attribute:: success_exit_status
 
       The return status of the DNF command on success. Defaults to ``0``.
 
     .. attribute:: transaction_display
 
-      An additional instance of a subclass of :class:`dnf.callback.TransactionProgress` used to report information about an ongoing transaction.
+      An additional instance of a subclass of :class:`dnf.callback.TransactionProgress` used to report information about an ongoing transaction. Defaults to ``None``.
+
 .. class:: Command
 
   Base class of every DNF command.
