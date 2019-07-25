@@ -960,27 +960,14 @@ class Base(object):
                 # self._store_comment_in_history(tid, self.conf.comment)
                 pass
 
-        if self.conf.reset_nice:
-            onice = os.nice(0)
-            if onice:
-                try:
-                    os.nice(-onice)
-                except:
-                    onice = 0
-
         logger.log(dnf.logging.DDEBUG, 'RPM transaction start.')
         errors = self._ts.run(cb.callback, '')
         logger.log(dnf.logging.DDEBUG, 'RPM transaction over.')
+        dnf.util._sync_rpm_trans_with_swdb(self._ts, self._transaction)
+
         # ts.run() exit codes are, hmm, "creative": None means all ok, empty
         # list means some errors happened in the transaction and non-empty
         # list that there were errors preventing the ts from starting...
-        if self.conf.reset_nice:
-            try:
-                os.nice(onice)
-            except:
-                pass
-        dnf.util._sync_rpm_trans_with_swdb(self._ts, self._transaction)
-
         if errors is None:
             pass
         elif len(errors) == 0:
