@@ -59,6 +59,7 @@ Available commands:
 * :ref:`check <check_command-label>`
 * :ref:`check-update <check_update_command-label>`
 * :ref:`clean <clean_command-label>`
+* :ref:`deplist <deplist_command-label>`
 * :ref:`distro-sync <distro_sync_command-label>`
 * :ref:`downgrade <downgrade_command-label>`
 * :ref:`group <group_command-label>`
@@ -538,6 +539,15 @@ different distribution release versions.
 
 ``dnf clean all``
     Does all of the above.
+
+.. _deplist_command-label:
+
+---------------
+Deplist command
+---------------
+
+``dnf [options] deplist [<select-options>] [<query-options>] [<pkg-spec>]``
+    Alias for :ref:`dnf repoquery --deplist <deplist_option-label>`.
 
 .. _distro_sync_command-label:
 
@@ -1247,8 +1257,10 @@ are displayed in the standard NEVRA notation.
     ``--whatrequires``, ``--requires``, ``--conflicts``, ``--enhances``, ``--suggests``, ``--provides``,
     ``--supplements``, ``--recommends``.
 
+.. _deplist_option-label:
+
 ``--deplist``
-    Produce a list of all dependencies and what packages provide those
+    Produce a list of all direct dependencies and what packages provide those
     dependencies for the given packages. The result only shows the newest
     providers (which can be changed by using --verbose).
 
