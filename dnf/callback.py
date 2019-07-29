@@ -24,12 +24,16 @@ import dnf.yum.rpmtrans
 import dnf.transaction
 
 PKG_DOWNGRADE = dnf.transaction.PKG_DOWNGRADE  # :api
+PKG_DOWNGRADED = dnf.transaction.PKG_DOWNGRADED  # :api
 PKG_INSTALL = dnf.transaction.PKG_INSTALL  # :api
 PKG_OBSOLETE = dnf.transaction.PKG_OBSOLETE  # :api
+PKG_OBSOLETED = dnf.transaction.PKG_OBSOLETED  # :api
 PKG_REINSTALL = dnf.transaction.PKG_REINSTALL  # :api
+PKG_REINSTALLED = dnf.transaction.PKG_REINSTALLED  # :api
 PKG_REMOVE = dnf.transaction.PKG_ERASE  # :api
 PKG_ERASE = PKG_REMOVE  # deprecated, use PKG_REMOVE instead
 PKG_UPGRADE = dnf.transaction.PKG_UPGRADE  # :api
+PKG_UPGRADED = dnf.transaction.PKG_UPGRADED  # :api
 
 PKG_CLEANUP = dnf.transaction.PKG_CLEANUP  # :api
 PKG_VERIFY = dnf.transaction.PKG_VERIFY  # :api
