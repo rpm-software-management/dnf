@@ -195,7 +195,7 @@ class RPMTransaction(object):
     # TODO: close trans if needed
 
     def __iter__(self):
-        #: api
+        # :api
         if self.transaction:
             items = self.transaction.getItems()
         else:
