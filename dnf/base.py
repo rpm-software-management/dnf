@@ -2231,25 +2231,20 @@ class Base(object):
                 continue
 
             if action == libdnf.transaction.TransactionItemAction_REMOVE:
+                # skip groups and environments
+                if str(ti).startswith("@"):
+                    continue
                 query = self.sack.query().installed().filterm(nevra_strict=str(ti))
                 if not query:
                     logger.error(_('No package %s installed.'), ucd(str(ti)))
                     failed = True
                     continue
-            else:
-                query = self.sack.query().filterm(nevra_strict=str(ti))
-                if not query:
-                    logger.error(_('No package %s available.'), ucd(str(ti)))
-                    failed = True
-                    continue
 
-            if action == libdnf.transaction.TransactionItemAction_REMOVE:
                 for pkg in query:
                     self._goal.erase(pkg)
+
             else:
-                selector = dnf.selector.Selector(self.sack)
-                selector.set(pkg=query)
-                self._goal.install(select=selector, optional=(not strict))
+                self.install_specs([str(ti)], [])
 
         if strict and failed:
             raise dnf.exceptions.PackageNotFoundError(_('no package matched'))
