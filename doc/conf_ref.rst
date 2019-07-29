@@ -42,6 +42,8 @@ and ``:``. The minimal repository configuration file should aside from repo ID
 consists of :ref:`baseurl <baseurl-label>`, :ref:`metalink <metalink-label>`
 or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
+.. _conf_main_options-label:
+
 ================
  [main] Options
 ================
@@ -54,28 +56,40 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     The architecture used for installing packages. By default this is auto-detected. Often used
     together with :ref:`ignorearch <ignorearch-label>` option.
 
+.. _assumeno-label:
+
+``assumeno``
+    :ref:`boolean <boolean-label>`
+
+    If enabled dnf will assume ``No`` where it would normally prompt for
+    confirmation from user input. Default is ``False``.
+
 .. _assumeyes-label:
 
 ``assumeyes``
     :ref:`boolean <boolean-label>`
 
     If enabled dnf will assume ``Yes`` where it would normally prompt for
-    confirmation from user input (see also :ref:`defaultyes <defaultyes-label>`). Default is False.
+    confirmation from user input (see also :ref:`defaultyes <defaultyes-label>`). Default is ``False``.
 
 .. _autocheck_running_kernel-label:
 
 ``autocheck_running_kernel``
     :ref:`boolean <boolean-label>`
 
-    Automatic check whether there is installed newer kernel module with security update than currently running kernel. Default is True.
+    Automatic check whether there is installed newer kernel module with security update than currently running kernel. Default is ``True``.
+
+``basearch``
+    :ref:`string <string-label>`
+
+    The base architecture used for installing packages. By default this is auto-detected.
 
 ``best``
     :ref:`boolean <boolean-label>`
 
-    When upgrading a package, always try to install its highest version
-    available, even only to find out some of its deps are not
-    satisfiable. Enable this if you want to experience broken dependencies in
-    the repositories firsthand. The default is False.
+    ``True`` instructs the solver to either use a package with the highest available
+    version or fail. On ``False``, do not fail if the latest version cannot be
+    installed and go with the lower version. The default is ``True``.
 
 ``cachedir``
     :ref:`string <string-label>`
@@ -83,6 +97,12 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     Path to a directory used by various DNF subsystems for storing cache data.
     Has a reasonable root-writable default depending on the distribution. DNF
     needs to be able to create files and directories at this location.
+
+``cacheonly``
+    :ref:`boolean <boolean-label>`
+
+    If set to ``True`` DNF will run entirely from system cache, will not update
+    the cache and will use it even in case it is expired. Default is ``False``.
 
 .. _check_config_file_age-label:
 
@@ -116,13 +136,26 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     Debug messages output level, in the range 0 to 10. The higher the number the
     more debug output is put to stdout. Default is 2.
 
+``debug_solver``
+    :ref:`boolean <boolean-label>`
+
+    Controls whether the libsolv debug files should be created when solving the
+    transaction. The debug files are created in the `./debugdata` directory.
+    Default is ``False``.
+
 .. _defaultyes-label:
 
 ``defaultyes``
     :ref:`boolean <boolean-label>`
 
     If enabled the default answer to user confirmation prompts will be ``Yes``. Not
-    to be confused with :ref:`assumeyes <assumeyes-label>` which will not prompt at all. Default is False.
+    to be confused with :ref:`assumeyes <assumeyes-label>` which will not prompt at all. Default is ``False``.
+
+``diskspacecheck``
+    :ref:`boolean <boolean-label>`
+
+    Controls wheather rpm shoud check available disk space during the transaction.
+    Default is ``True``.
 
 ``errorlevel``
     :ref:`integer <integer-label>`
@@ -135,7 +168,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 ``exit_on_lock``
     :ref:`boolean <boolean-label>`
 
-    Should the dnf client exit immediately when something else has the lock. Default is False
+    Should the dnf client exit immediately when something else has the lock. Default is ``False``.
 
 ``gpgkey_dns_verification``
     :ref:`boolean <boolean-label>`
@@ -152,13 +185,14 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     accept keys that do not exist in the DNS system and their NON-existence is
     cryptographically proven using DNSSEC. This is mainly to preserve backward
     compatibility.
+    Default is ``False``.
 
 
 ``group_package_types``
     :ref:`list <list-label>`
 
     List of the following: optional, default, mandatory. Tells dnf which type of packages in groups will
-    be installed when 'groupinstall' is called. Default is: default, mandatory
+    be installed when 'groupinstall' is called. Default is: ``default, mandatory``.
 
 .. _ignorearch-label:
 
@@ -168,14 +202,6 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     If set to ``True``, RPM will allow attempts to install packages incompatible with the CPU's
     architecture. Defaults to ``False``. Often used together with
     :ref:`arch <arch-label>` option.
-
-
-``install_weak_deps``
-    :ref:`boolean <boolean-label>`
-
-    When this option is set to True and a new package is about to be
-    installed, all packages linked by weak dependency relation (Recommends or Supplements flags) with this package will pulled into the transaction.
-    Default is True.
 
 .. _installonlypkgs-label:
 
@@ -201,6 +227,18 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     concurrently. Defaults to 3. The minimal number of installonly packages is 2. Value 0 or 1 means
     unlimited number of installonly packages.
 
+``installroot``
+    :ref:`string <string-label>`
+
+    The root of the filesystem for all packaging operations. It requires an absolute path. See also :ref:`--installroot commandline option <installroot-label>`.
+
+``install_weak_deps``
+    :ref:`boolean <boolean-label>`
+
+    When this option is set to True and a new package is about to be
+    installed, all packages linked by weak dependency relation (Recommends or Supplements flags) with this package will be pulled into the transaction.
+    Default is ``True``.
+
 .. _keepcache-label:
 
 ``keepcache``
@@ -208,12 +246,21 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     Keeps downloaded packages in the cache when set to True. Even if it is set to False and packages have not been
     installed they will still persist until next successful transaction. The default
-    is False.
+    is ``False``.
 
 ``logdir``
     :ref:`string <string-label>`
 
     Directory where the log files will be stored. Default is ``/var/log``.
+
+.. _log_rotate-label:
+
+``log_rotate``
+    :ref:`integer <integer-label>`
+
+    Log files are rotated ``log_rotate`` times before being removed. If ``log_rotate``
+    is ``0``, the rotation is not performed.
+    Default is ``4``.
 
 .. _log_size-label:
 
@@ -226,15 +273,6 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     The size applies for individual log files, not the sum of all log files.
     See also :ref:`log_rotate <log_rotate-label>`.
-
-.. _log_rotate-label:
-
-``log_rotate``
-    :ref:`integer <integer-label>`
-
-    Log files are rotated log_rotate times before being removed. If log_rotate
-    is 0, the rotation is not performed.
-    Default is 4.
 
 .. _metadata_timer_sync-label:
 
@@ -255,6 +293,11 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     Set this to $name:$stream to override PLATFORM_ID detected from ``/etc/os-release``.
     It is necessary to perform a system upgrade and switch to a new platform.
 
+``multilib_policy``
+    :ref:`string <string-label>`
+
+    Controls how multilib packages are treated during install operations. Can either be ``"best"`` (the default) for the depsolver to prefer packages which best match the system's architecture, or ``"all"`` to install all available packages with compatible architectures.
+
 .. _obsoletes_conf_option-label:
 
 ``obsoletes``
@@ -268,6 +311,11 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     Command-line option: :ref:`--obsoletes <obsoletes_option-label>`
 
+``persistdir``
+    :ref:`string <string-label>`
+
+    Directory where the data that DNF keeps track of between different runs is stored. Default is ``"/var/lib/dnf"``.
+
 ``pluginconfpath``
     :ref:`list <list-label>`
 
@@ -280,6 +328,11 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     List of directories that are searched for plugins to load. Plugins found in *any of the directories* in this configuration option are used. The default contains a Python version-specific path.
 
+``plugins``
+    :ref:`boolean <boolean-label>`
+
+    Controls whether the plugins are enabled. Default is ``True``.
+
 ``protected_packages``
     :ref:`list <list-label>`
 
@@ -288,6 +341,12 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     The default is: ``dnf``, ``glob:/etc/yum/protected.d/*.conf`` and ``glob:/etc/dnf/protected.d/*.conf``. So any packages which should be protected can do so by including a file in ``/etc/dnf/protected.d`` with their package name in it.
 
     DNF will protect also the package corresponding to the running version of the kernel.
+
+``releasever``
+    :ref:`string <string-label>`
+
+    Used for substitution of ``$releasever`` in the repository configuration.
+    See also :ref:`repo variables <repo-variables-label>`.
 
 .. _reposdir-label:
 
@@ -322,10 +381,26 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     nocrypto      RPMTRANS_FLAG_NOFILEDIGEST
     ============  ===========================
 
+    The ``nocrypto`` option will also set the ``_RPMVSF_NOSIGNATURES`` and
+    ``_RPMVSF_NODIGESTS`` VS flags. The ``test`` option provides a transaction check
+    without performing the transaction. It includes download of packages, gpg keys check
+    (including permanent import of additional keys if necessary), and rpm check to prevent
+    file conflicts.
+    The ``nocaps`` is supported with rpm-4.14 or later. When ``nocaps`` is used but rpm
+    doesn't support it, DNF only reports it as an invalid tsflag.
+
 ``upgrade_group_objects_upgrade``
     :ref:`boolean <boolean-label>`
 
-    Set this to False to disable the automatic running of ``group upgrade`` when running the ``upgrade`` command. Default is True (perform the operation).
+    Set this to False to disable the automatic running of ``group upgrade`` when running the ``upgrade`` command. Default is ``True`` (perform the operation).
+
+``varsdir``
+    :ref:`list <list-label>`
+
+    List of directories where variable definitions files are looked for. Defaults to
+    ``"/etc/dnf/vars", "/etc/yum/vars"``. See :ref:`variable files <varfiles-label>`
+    in Configuration reference.
+
 
 ``zchunk``
     :ref:`boolean <boolean-label>`
@@ -401,13 +476,6 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     The priority value of this repository, default is 99. If there is more than one candidate package for a particular operation, the one from a repo with *the lowest priority value* is picked, possibly despite being less convenient otherwise (e.g. by being a lower version).
 
-..  _retries-label:
-
-``retries``
-    :ref:`integer <integer-label>`
-
-    Overrides the retries option from the [main] section for this repository.
-
 .. _strict-label:
 
 ``strict``
@@ -420,6 +488,8 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     Type of repository metadata. Supported values are: ``rpm-md``.
     Aliases for ``rpm-md``: ``rpm``, ``repomd``, ``rpmmd``, ``yum``, ``YUM``.
+
+.. _repo-variables-label:
 
 ================
  Repo Variables
@@ -445,13 +515,15 @@ In addition to these hard coded variables, user-defined ones can also be used. T
 
     $ DNF_VAR_MY_VARIABLE=value
 
+.. _conf_main_and_repo_options-label:
+
 ==================================
  Options for both [main] and Repo
 ==================================
 
 Some options can be applied in either the main section, per repository, or in a
 combination. The value provided in the main section is used for all repositories
-as the default value and concrete repositories can override it in their
+as the default value and particular repositories can override it in their
 configuration.
 
 .. _bandwidth-label:
@@ -460,6 +532,21 @@ configuration.
     storage size
 
     Total bandwidth available for downloading. Meaningful when used with the :ref:`throttle option <throttle-label>`. Storage size is in bytes by default but can be specified with a unit of storage. Valid units are 'k', 'M', 'G'.
+
+``countme``
+    :ref:`boolean <boolean-label>`
+
+    Determines whether a "countme" flag should be added to a single, randomly
+    chosen metalink query each week.
+    This allows the repository owner to estimate the number of systems
+    consuming it, by counting such queries over a week's time, which is much
+    more accurate than just counting unique IP addresses (which is subject to
+    both overcounting and undercounting due to short DHCP leases and NAT,
+    respectively).
+    The flag is a simple static parameter appended to the metalink URL and is
+    the same on every system (that means, no personal or machine-specific
+    information is included).
+    Default is False.
 
 .. _deltarpm-label:
 
@@ -556,10 +643,15 @@ configuration.
 
     This sets the low speed threshold in bytes per second. If the server is sending data at the same or slower speed than this value for at least :ref:`timeout option <timeout-label>` seconds, DNF aborts the connection. The default is 1000. Valid units are 'k', 'M', 'G'.
 
+``password``
+    :ref:`string <string-label>`
+
+    The password to use for connecting to repo with basic HTTP authentication. Empty by default.
+
 ``proxy``
     :ref:`string <string-label>`
 
-    URL of a proxy server to connect through. Set to the empty string to disable the proxy setting inherited from the main section.
+    URL of a proxy server to connect through. Set to the empty string to disable the proxy setting inherited from the main section and use the direct connection instead. The expected format of this option is ``<scheme>://<ip-or-hostname>[:port]``.
     (For backward compatibility, '_none_' can be used instead of the empty string.)
 
     Note: The curl environment variables (such as ``http_proxy``) are effective if this option is unset. See the ``curl`` man page for details.
@@ -577,7 +669,23 @@ configuration.
 ``proxy_auth_method``
     :ref:`string <string-label>`
 
-    The authentication method used by the proxy server. Valid values are 'basic', 'digest', 'negotiate', 'ntlm', 'digest_ie', 'ntlm_wb', 'none' and 'any' (default).
+    The authentication method used by the proxy server. Valid values are
+
+    ==========     ==========================================================
+    method         meaning
+    ==========     ==========================================================
+    basic          HTTP Basic authentication
+    digest         HTTP Digest authentication
+    negotiate      HTTP Negotiate (SPNEGO) authentication
+    ntlm           HTTP NTLM authentication
+    digest_ie      HTTP Digest authentication with an IE flavor
+    ntlm_wb        NTLM delegating to winbind helper
+    none           None auth method
+    any            All suitable methods
+    ==========     ==========================================================
+
+    Defaults to ``any``
+
 
 .. _repo_gpgcheck-label:
 
@@ -614,7 +722,7 @@ configuration.
 ``sslverify``
     :ref:`boolean <boolean-label>`
 
-    When enabled, remote SSL connections are verified. If the client can not be authenticated connecting fails and the given repo is not used further. On False, SSL connections can be used but are not verified. Default is True.
+    When enabled, remote SSL certificates are verified. If the client can not be authenticated connecting fails and the given repo is not used further. On False, SSL connections can be used but are not verified. Default is ``True``.
 
 .. _sslclientcert-label:
 
@@ -651,11 +759,6 @@ configuration.
 
     The username to use for connecting to repo with basic HTTP authentication. Empty by default.
 
-``password``
-    :ref:`string <string-label>`
-
-    The password to use for connecting to repo with basic HTTP authentication. Empty by default.
-
 ``user_agent``
     :ref:`string <string-label>`
 
@@ -674,21 +777,6 @@ configuration.
     To prevent the leakage of identifiable information, the whole OS part
     (enclosed in parenthesis) is omitted if this is a non-Fedora or non-Linux
     system, or is running an unknown Fedora variant.
-
-``countme``
-    :ref:`boolean <boolean-label>`
-
-    Determines whether a "countme" flag should be added to a single, randomly
-    chosen metalink query each week.
-    This allows the repository owner to estimate the number of systems
-    consuming it, by counting such queries over a week's time, which is much
-    more accurate than just counting unique IP addresses (which is subject to
-    both overcounting and undercounting due to short DHCP leases and NAT,
-    respectively).
-    The flag is a simple static parameter appended to the metalink URL and is
-    the same on every system (that means, no personal or machine-specific
-    information is included).
-    Default is False.
 
 =================
 Types of Options
