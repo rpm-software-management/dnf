@@ -403,6 +403,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     ``"/etc/dnf/vars", "/etc/yum/vars"``. See :ref:`variable files <varfiles-label>`
     in Configuration reference.
 
+.. _conf_repo_options-label:
 
 ``zchunk``
     :ref:`boolean <boolean-label>`
@@ -418,7 +419,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 ``baseurl``
     :ref:`list <list-label>`
 
-    URLs for the repository.
+    List of URLs for the repository. Defaults to ``[]``.
 
 .. _repo_cost-label:
 
@@ -447,14 +448,14 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 ``metalink``
     :ref:`string <string-label>`
 
-    URL of a metalink for the repository.
+    URL of a metalink for the repository. Defaults to ``None``.
 
 .. _mirrorlist-label:
 
 ``mirrorlist``
     :ref:`string <string-label>`
 
-    URL of a mirrorlist for the repository.
+    URL of a mirrorlist for the repository. Defaults to ``None``.
 
 .. _module_hotfixes-label:
 
@@ -579,6 +580,7 @@ configuration.
     Exclude packages of this repository, specified by a name or a glob and
     separated by a comma, from all operations.
     Can be disabled using ``--disableexcludes`` command line switch.
+    Defaults to ``[]``.
 
 ``fastestmirror``
     :ref:`boolean <boolean-label>`
@@ -605,6 +607,7 @@ configuration.
     Include packages of this repository, specified by a name or a glob and separated by a comma, in all operations.
     Inverse of :ref:`excludepkgs <exclude-label>`, DNF will exclude any package in the repository that doesn't match this list. This works in conjunction with exclude and doesn't override it, so if you 'excludepkgs=*.i386' and 'includepkgs=python*' then only packages starting with python that do not have an i386 arch will be seen by DNF in this repo.
     Can be disabled using ``--disableexcludes`` command line switch.
+    Defaults to ``[]``.
 
 .. _ip-resolve-label:
 
