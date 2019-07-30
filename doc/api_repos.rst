@@ -19,6 +19,15 @@
 Repository Configuration
 ========================
 
+
+.. IMPORTANT::
+    Some :class:`.RepoDict` attributes return other than Python native types.
+    Duck typing works (objects have identical behavior), but isinstance()
+    and type() doesn't work as expected because of different types.
+    For example :attr:`excludepkgs` and :attr:`includepkgs` return a VectorString, which
+    is s SWIG wrapper on top of underlying libdnf C++ code.
+
+
 .. class:: dnf.repodict.RepoDict
 
   Dictionary mapping repository IDs to the respective :class:`dnf.repo.Repo` objects. Derived from the standard :class:`dict`.
