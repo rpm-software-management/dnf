@@ -323,6 +323,8 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     configuration files found in these directories, that are named same as a
     plugin, are parsed. The default path is ``/etc/dnf/plugins``.
 
+.. _pluginpath-label:
+
 ``pluginpath``
     :ref:`list <list-label>`
 
