@@ -332,8 +332,8 @@ class ModuleBase(object):
         try:
             solver_errors = self.base.sack.filter_modules(
                 self.base._moduleContainer, hot_fix_repos, self.base.conf.installroot,
-                self.base.conf.module_platform_id,
-                self.base.conf.debug_solver)
+                self.base.conf.module_platform_id, update_only=True,
+                debugsolver=self.base.conf.debug_solver)
         except hawkey.Exception as e:
             raise dnf.exceptions.Error(ucd(e))
         for spec, (nsvcap, moduleDict) in module_dicts.items():
