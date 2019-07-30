@@ -227,7 +227,7 @@
 
   .. method:: install_specs(install, exclude=None, reponame=None, strict=True, forms=None)
 
-    Provides unified way to mark packages, groups or modules for installation. The `install` and `exclude` argument have to be an iterable containing specifications of packages (e.g. 'dnf') or groups/modules (e.g. '\@core'). Specifications from the `exclude` list will not be marked for installation. Parameters `reponame`, `strict` and `forms` have the same meaning as in :meth:`install`.
+    Provides unified way to mark packages, groups or modules for installation. The `install` and `exclude` argument have to be an iterable containing specifications of packages (e.g. 'dnf') or groups/modules (e.g. '\@core'). Specifications from the `exclude` list will not be marked for installation. Parameters `reponame`, `strict` and `forms` have the same meaning as in :meth:`install`. In case of errors the method raises :exc:`dnf.exceptions.MarkingErrors`.
 
     Example to install two groups and a package::
 
