@@ -156,19 +156,22 @@ class Base(object):
                 dnf.rpm.detect_releasever(conf.installroot)
         return conf
 
+    def _setup_modular_excludes(self):
+        hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
+        try:
+            solver_errors = self.sack.filter_modules(
+                self._moduleContainer, hot_fix_repos, self.conf.installroot,
+                self.conf.module_platform_id, False, self.conf.debug_solver)
+        except hawkey.Exception as e:
+            raise dnf.exceptions.Error(ucd(e))
+        if solver_errors:
+            logger.warning(
+                dnf.module.module_base.format_modular_solver_errors(solver_errors[0]))
+
     def _setup_excludes_includes(self, only_main=False):
         disabled = set(self.conf.disable_excludes)
         if 'all' in disabled and WITH_MODULES:
-            hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
-            try:
-                solver_errors = self.sack.filter_modules(
-                    self._moduleContainer, hot_fix_repos, self.conf.installroot,
-                    self.conf.module_platform_id, False, self.conf.debug_solver)
-            except hawkey.Exception as e:
-                raise dnf.exceptions.Error(ucd(e))
-            if solver_errors:
-                logger.warning(
-                    dnf.module.module_base.format_modular_solver_errors(solver_errors[0]))
+            self._setup_modular_excludes()
             return
         repo_includes = []
         repo_excludes = []
@@ -208,33 +211,11 @@ class Base(object):
                 subj = dnf.subject.Subject(excl)
                 exclude_query = exclude_query.union(subj.get_best_query(
                     self.sack, with_nevra=True, with_provides=False, with_filenames=False))
-            if not only_main and WITH_MODULES:
-                hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
-                try:
-                    solver_errors = self.sack.filter_modules(
-                        self._moduleContainer, hot_fix_repos, self.conf.installroot,
-                        self.conf.module_platform_id, False, self.conf.debug_solver)
-                except hawkey.Exception as e:
-                    raise dnf.exceptions.Error(ucd(e))
-                if solver_errors:
-                    logger.warning(
-                        dnf.module.module_base.format_modular_solver_errors(solver_errors[0]))
             if len(self.conf.includepkgs) > 0:
                 self.sack.add_includes(include_query)
                 self.sack.set_use_includes(True)
             if exclude_query:
                 self.sack.add_excludes(exclude_query)
-        elif not only_main and WITH_MODULES:
-            hot_fix_repos = [i.id for i in self.repos.iter_enabled() if i.module_hotfixes]
-            try:
-                solver_errors = self.sack.filter_modules(
-                    self._moduleContainer, hot_fix_repos, self.conf.installroot,
-                    self.conf.module_platform_id, False, self.conf.debug_solver)
-            except hawkey.Exception as e:
-                raise dnf.exceptions.Error(ucd(e))
-            if solver_errors:
-                logger.warning(
-                    dnf.module.module_base.format_modular_solver_errors(solver_errors[0]))
 
         if repo_includes:
             for query, repoid in repo_includes:
@@ -244,6 +225,9 @@ class Base(object):
         if repo_excludes:
             for query, repoid in repo_excludes:
                 self.sack.add_excludes(query)
+
+        if not only_main and WITH_MODULES:
+            self._setup_modular_excludes()
 
     def _store_persistent_data(self):
         if self._repo_persistor and not self.conf.cacheonly:
