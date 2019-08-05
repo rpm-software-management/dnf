@@ -514,6 +514,22 @@ class Repo(dnf.conf.RepoConf):
         """
         self._repo.addMetadataTypeToDownload(metadata_type)
 
+    def remove_metadata_type_from_download(self, metadata_type):
+        # :api
+        """Stop asking for this additional repository metadata type
+        in download.
+
+        Given metadata_type is no longer downloaded by default
+        when this repository is downloaded.
+
+        Parameters
+        ----------
+        metadata_type: string
+
+        Example: remove_metadata_type_from_download("productid")
+        """
+        self._repo.removeMetadataTypeFromDownload(metadata_type)
+
     def get_metadata_path(self, metadata_type):
         # :api
         """Return path to the file with downloaded repository metadata of given type.
