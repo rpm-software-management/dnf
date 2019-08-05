@@ -813,9 +813,6 @@ class Base(object):
         lock = dnf.lock.build_rpmdb_lock(self.conf.persistdir,
                                          self.conf.exit_on_lock)
         with lock:
-            # save our ds_callback out
-            dscb = self._ds_callback
-            self._ds_callback = None
             self.transaction._populate_rpm_ts(self._ts)
 
             msgs = self._run_rpm_check()
@@ -855,8 +852,6 @@ class Base(object):
 
             # unset the sigquit handler
             timer = dnf.logging.Timer('transaction')
-            # put back our depcheck callback
-            self._ds_callback = dscb
             # setup our rpm ts callback
             cb = dnf.yum.rpmtrans.RPMTransaction(self, displays=display)
             if self.conf.debuglevel < 2:
