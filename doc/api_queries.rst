@@ -60,11 +60,15 @@
 
   Notice that none of the filtering methods mutates the state of the :class:`~dnf.query.Query` but produces a new object instead.
 
-  .. method:: available
+  .. method:: available()
 
-    Return a new query limiting the original query to the not-installed packages, that is packages available from the repositories.
+    Return a new query limiting the original query to the packages available from the repositories.
 
-  .. method:: downgrades
+  .. method:: difference(other)
+
+    Returns a new query that contains only those results of original query, that are not in the results of the ``other`` query.
+
+  .. method:: downgrades()
 
     Return a new query that limits the result only to packages that can be downgrade candidates to other packages in the current set. Downgrade candidate has the same name, lower EVR and the architecture of the original and the downgrade candidate are suitable for a downgrade. Specifically, the filtering does not take any steps to establish that the downgrade candidate can actually be installed.
 
@@ -133,9 +137,13 @@
 
     Similar to :meth:`dnf.query.Query.filter` but it modifies the query in place.
 
-  .. method:: installed
+  .. method:: installed()
 
     Return a new query that limits the result to the installed packages only.
+
+  .. method:: intersection(other)
+
+    Returns a new query where the result contains only packages that are found in both original and ``other`` queries.
 
   .. method:: latest(limit=1)
 
@@ -143,11 +151,15 @@
     name and per architecture. In case the limit is negative number, it excludes the number of
     latest versions according to limit.
 
-  .. method:: run
+  .. method:: run()
 
     Evaluate the query. Returns a list of matching :class:`dnf.package.Package` instances.
 
-  .. method:: upgrades
+  .. method:: union(other)
+
+    Returns a new query where the results of the ``other`` query are added to the results of the original query.
+
+  .. method:: upgrades()
 
     Return a new query that limits the result only to packages that can be upgrade candidates to at least one package in the current set. Upgrade candidate has the same name, higher EVR and the architectures of the original and the upgrade candidate package are suitable for an upgrade. Specifically, the filtering does not take any steps to establish that the upgrade candidate can actually be installed.
 
