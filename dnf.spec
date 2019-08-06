@@ -502,6 +502,21 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Tue Aug 06 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.2.8-1
+- Enhance synchronization of rpm transaction to swdb
+- Accept multiple specs in repoquery options (RhBug:1667898)
+- Prevent switching modules in all cases (RhBug:1706215)
+- [history] Don't store failed transactions as succeeded
+- [history] Do not require root for informative commands
+- [dnssec] Fix UnicodeWarning when using new rpm (RhBug:1699650)
+- Print rpm error messages during transaction (RhBug:1677199)
+- Report missing default profile as an error (RhBug:1669527)
+- Apply excludes before modular excludes (RhBug:1709453)
+- Improve help for command line arguments (RhBug:1659328)
+- [doc] Describe a behavior when plugin is removed (RhBug:1700741)
+- Add new modular API method ModuleBase.get_modules
+- Mark features used by ansible, anaconda and subscription-manager as an API
+
 * Tue Jun 11 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.2.7-1
 - Set default to skip_if_unavailable=false (RhBug:1679509)
 - Fix package reinstalls during yum module remove (RhBug:1700529)

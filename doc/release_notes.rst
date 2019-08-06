@@ -20,6 +20,38 @@
 ###################
 
 ===================
+4.2.8 Release Notes
+===================
+
+- Enhance synchronization of rpm transaction to swdb
+- Accept multiple specs in repoquery options (RhBug:1667898)
+- Prevent switching modules in all cases (RhBug:1706215)
+- [history] Don't store failed transactions as succeeded
+- [history] Do not require root for informative commands
+- [dnssec] Fix UnicodeWarning when using new rpm (RhBug:1699650)
+- Print rpm error messages during transaction (RhBug:1677199)
+- Report missing default profile as an error (RhBug:1669527)
+- Apply excludes before modular excludes (RhBug:1709453)
+- Improve help for command line arguments (RhBug:1659328)
+- [doc] Describe a behavior when plugin is removed (RhBug:1700741)
+- Add new modular API method ModuleBase.get_modules
+- Mark features used by ansible, anaconda and subscription-manager as an API
+
+Bugs fixed in 4.2.8:
+
+* :rhbug:`1630113`
+* :rhbug:`1653736`
+* :rhbug:`1669527`
+* :rhbug:`1661814`
+* :rhbug:`1667898`
+* :rhbug:`1673075`
+* :rhbug:`1677199`
+* :rhbug:`1699650`
+* :rhbug:`1700741`
+* :rhbug:`1706215`
+* :rhbug:`1709453`
+
+===================
 4.2.7 Release Notes
 ===================
 

@@ -2774,5 +2774,49 @@
     [
         1673913,
         "option tsflags missing in dnf.conf"
+    ],
+    [
+        1630113,
+        "Transaction callbacks use action constants that aren't part of the callback API"
+    ],
+    [
+        1653736,
+        "Options deplist, repoquery do not return expected packages"
+    ],
+    [
+        1669527,
+        "dnf module install <module> - just enable it, without installing it."
+    ],
+    [
+        1661814,
+        "DNF return a VectorString instead of a Python List"
+    ],
+    [
+        1667898,
+        "repoquery --whatrequires only accepts one pkgspec"
+    ],
+    [
+        1673075,
+        "The base.sack.query().available() example does not seem to work out of box"
+    ],
+    [
+        1677199,
+        "Fail to obtian the transaction lock after change of SELinux policy type"
+    ],
+    [
+        1699650,
+        "warnings from dnssec"
+    ],
+    [
+        1700741,
+        "When dnf plugin is upgraded via Obsolete, it is not run in the transaction phase"
+    ],
+    [
+        1706215,
+        "using the @ module syntax for yum4 avoids the stream switching error protection"
+    ],
+    [
+        1709453,
+        "Re-emergence of a old (unreported?) bug: Modular dependency problems"
     ]
 ]
