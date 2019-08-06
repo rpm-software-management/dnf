@@ -894,6 +894,7 @@ Mark Command
 Module Command
 ---------------
 
+Modularity overview is available at :ref:`man page dnf.modularity(7) <modularity-label>`.
 Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arguments that specify modules or profiles.
 
 .. _module_install_command-label:
@@ -1747,6 +1748,7 @@ See Also
 
 * :manpage:`dnf.conf(5)`, :ref:`DNF Configuration Reference <conf_ref-label>`
 * :manpage:`dnf.plugin.*(8)`, assorted DNF plugins that might be installed on the system.
+* :manpage:`dnf.modularity(7)`, :ref:`Modularity overview <modularity-label>`.
 * `DNF`_ project homepage (https://github.com/rpm-software-management/dnf/)
 * How to report a bug (https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting)
 * `YUM`_ project homepage (http://yum.baseurl.org/)
