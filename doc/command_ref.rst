@@ -546,7 +546,7 @@ different distribution release versions.
 Deplist command
 ---------------
 
-``dnf [options] deplist [<select-options>] [<query-options>] [<pkg-spec>]``
+``dnf [options] deplist [<select-options>] [<query-options>] [<package-spec>]``
     Alias for :ref:`dnf repoquery --deplist <deplist_option-label>`.
 
 .. _distro_sync_command-label:
@@ -1078,7 +1078,7 @@ This command by default does not force a sync of expired metadata. See also :ref
 Repoquery Command
 -----------------
 
-``dnf [options] repoquery [<select-options>] [<query-options>] [<pkg-spec>]``
+``dnf [options] repoquery [<select-options>] [<query-options>] [<package-spec>]``
     Searches available DNF repositories for selected packages and displays the requested information about them. It
     is an equivalent of ``rpm -q`` for remote repositories.
 
@@ -1091,10 +1091,10 @@ Repoquery Command
 Select Options
 --------------
 
-Together with ``<pkg-spec>``, control what packages are displayed in the output. If ``<pkg-spec>`` is given, limits the resulting set of
-packages to those matching the specification. All packages are considered if no ``<pkg-spec>`` is specified.
+Together with ``<package-spec>``, control what packages are displayed in the output. If ``<package-spec>`` is given, limits the resulting set of
+packages to those matching the specification. All packages are considered if no ``<package-spec>`` is specified.
 
-``<pkg-spec>``
+``<package-spec>``
     Package specification in the NEVRA format (name[-[epoch:]version[-release]][.arch]). See :ref:`Specifying Packages
     <specifying_packages-label>`.
 
