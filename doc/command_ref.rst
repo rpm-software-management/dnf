@@ -574,7 +574,7 @@ Distribution-Synchronization command
 Downgrade Command
 -----------------
 
-``dnf [options] downgrade <package-installed-spec>...``
+``dnf [options] downgrade <package-spec>...``
     Downgrades the specified packages to the highest installable package of all known lower versions
     if possible. When version is given and is lower than version of installed package then it
     downgrades to target version.
@@ -1556,7 +1556,7 @@ Upgrade Command
     Updates each package to the latest version that is both available and
     resolvable.
 
-``dnf [options] upgrade <package-installed-spec>...``
+``dnf [options] upgrade <package-spec>...``
     Updates each specified package to the latest available version. Updates
     dependencies as necessary.
 
@@ -1582,7 +1582,7 @@ Upgrade-Minimal Command
     Updates each package to the latest available version that provides a bugfix, enhancement
     or a fix for a security issue (security).
 
-``dnf [options] upgrade-minimal <package-installed-spec>...``
+``dnf [options] upgrade-minimal <package-spec>...``
     Updates each specified package to the latest available version that provides
     a bugfix, enhancement or a fix for security issue (security). Updates
     dependencies as necessary.
@@ -1639,9 +1639,6 @@ matching is never attempted there.
 
 ``<package-name-spec>`` is similar to ``<package-file-spec>`` except file provide
 matching is never attempted there.
-
-``<package-installed-spec>`` is similar to ``<package-spec>`` except it
-considers only installed packages.
 
 .. _specifying_packages_versions-label:
 
