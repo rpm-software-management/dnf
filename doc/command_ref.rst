@@ -208,10 +208,10 @@ Options
 
 .. _exclude_option-label:
 
-``-x <package-spec>, --exclude=<package-spec>``
-    Exclude packages specified by ``<package-spec>`` from the operation.
+``-x <package-file-spec>, --exclude=<package-file-spec>``
+    Exclude packages specified by ``<package-file-spec>`` from the operation.
 
-``--excludepkgs=<package-spec>``
+``--excludepkgs=<package-file-spec>``
     Deprecated option. It was replaced by the \-\ :ref:`-exclude <exclude_option-label>` option.
 
 ``--forcearch=<arch>``
@@ -382,7 +382,7 @@ List options are comma-separated. Command-line options override respective setti
 Commands
 ========
 
-For an explanation of ``<package-spec>`` and ``<package-name-spec>`` see
+For an explanation of ``<package-spec>`` and ``<package-file-spec>`` see
 :ref:`\specifying_packages-label`.
 
 For an explanation of ``<package-nevr-spec>`` see
@@ -504,9 +504,9 @@ Check Command
 Check-Update Command
 --------------------
 
-``dnf [options] check-update [--changelogs] [<package-spec>...]``
+``dnf [options] check-update [--changelogs] [<package-file-spec>...]``
 
-    Non-interactively checks if updates of the specified packages are available. If no ``<package-spec>`` is given, checks whether any updates at all are available for your system. DNF exit code will be 100 when there are updates available and a list of the updates will be printed, 0 if not and 1 if an error occurs. If ``--changelogs`` option is specified, also changelog delta of packages about to be updated is printed.
+    Non-interactively checks if updates of the specified packages are available. If no ``<package-file-spec>`` is given, checks whether any updates at all are available for your system. DNF exit code will be 100 when there are updates available and a list of the updates will be printed, 0 if not and 1 if an error occurs. If ``--changelogs`` option is specified, also changelog delta of packages about to be updated is printed.
 
     Please note that having a specific newer version available for an installed package (and reported by ``check-update``) does not imply that subsequent ``dnf upgrade`` will install it. The difference is that ``dnf upgrade`` has restrictions (like package dependencies being satisfied) to take into account.
 
@@ -672,7 +672,7 @@ transactions and act according to this information (assuming the
     The default history action is listing information about given transactions
     in a table. Each ``<spec>`` can be either a ``<transaction-spec>``, which
     specifies a transaction directly, or a ``<transaction-spec>..<transaction-spec>``,
-    which specifies a range of transactions, or a ``<package-name-spec>``,
+    which specifies a range of transactions, or a ``<package-file-spec>``,
     which specifies a transaction by a package which it manipulated. When no
     transaction is specified, list all known transactions.
 
@@ -684,21 +684,21 @@ transactions and act according to this information (assuming the
 
 .. _history_redo_command-label:
 
-``dnf history redo <transaction-spec>|<package-name-spec>``
+``dnf history redo <transaction-spec>|<package-file-spec>``
     Repeat the specified transaction. Uses the last transaction (with the highest ID)
-    if more than one transaction for given <package-name-spec> is found. If it is not possible
+    if more than one transaction for given <package-file-spec> is found. If it is not possible
     to redo some operations due to the current state of RPMDB, it will not redo the transaction.
 
-``dnf history rollback <transaction-spec>|<package-name-spec>``
+``dnf history rollback <transaction-spec>|<package-file-spec>``
     Undo all transactions performed after the specified transaction. Uses the last transaction
-    (with the highest ID) if more than one transaction for given <package-name-spec> is found.
+    (with the highest ID) if more than one transaction for given <package-file-spec> is found.
     If it is not possible to undo some transactions due to the current state of RPMDB, it will not undo
     any transaction.
 
-``dnf history undo <transaction-spec>|<package-name-spec>``
+``dnf history undo <transaction-spec>|<package-file-spec>``
     Perform the opposite operation to all operations performed in the specified transaction.
     Uses the last transaction (with the highest ID) if more than one transaction for given
-    <package-name-spec> is found. If it is not possible to undo some operations due to
+    <package-file-spec> is found. If it is not possible to undo some operations due to
     the current state of RPMDB, it will not undo the transaction.
 
 ``dnf history userinstalled``
@@ -720,7 +720,7 @@ and :ref:`\configuration_files_replacement_policy-label`.
 Info Command
 ------------
 
-``dnf [options] info [<package-name-spec>...]``
+``dnf [options] info [<package-file-spec>...]``
     Lists description and summary information about installed and available packages.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
@@ -813,30 +813,30 @@ e.g. to only those that update an installed package. The :ref:`exclude
 result, but if the \-\ :ref:`-disableexcludes <disableexcludes-label>` command line
 option is used, it ensures that all installed packages will be listed.
 
-All the forms take the ``[<package-spec>...]`` parameter to further limit the
-result to only packages that matching it.
+All the forms take the ``[<package-file-spec>...]`` parameter to further limit the
+result to only packages that match it.
 
-``dnf [options] list [--all] [<package-name-spec>...]``
+``dnf [options] list [--all] [<package-file-spec>...]``
     Lists all packages, present in the RPMDB, in a repository or both.
 
-``dnf [options] list --installed [<package-name-spec>...]``
+``dnf [options] list --installed [<package-file-spec>...]``
     Lists installed packages.
 
-``dnf [options] list --available [<package-name-spec>...]``
+``dnf [options] list --available [<package-file-spec>...]``
     Lists available packages.
 
-``dnf [options] list --extras [<package-name-spec>...]``
+``dnf [options] list --extras [<package-file-spec>...]``
     Lists extras, that is packages installed on the system that are not
     available in any known repository.
 
-``dnf [options] list --obsoletes [<package-name-spec>...]``
+``dnf [options] list --obsoletes [<package-file-spec>...]``
     List packages installed on the system that are obsoleted by packages in
     any known repository.
 
-``dnf [options] list --recent [<package-name-spec>...]``
+``dnf [options] list --recent [<package-file-spec>...]``
     List packages recently added into the repositories.
 
-``dnf [options] list --upgrades [<package-name-spec>...]``
+``dnf [options] list --upgrades [<package-file-spec>...]``
     List upgrades available for the installed packages.
 
 ``dnf [options] list --autoremove``
@@ -1078,7 +1078,7 @@ This command by default does not force a sync of expired metadata. See also :ref
 Repoquery Command
 -----------------
 
-``dnf [options] repoquery [<select-options>] [<query-options>] [<package-spec>]``
+``dnf [options] repoquery [<select-options>] [<query-options>] [<package-file-spec>]``
     Searches available DNF repositories for selected packages and displays the requested information about them. It
     is an equivalent of ``rpm -q`` for remote repositories.
 
@@ -1091,11 +1091,11 @@ Repoquery Command
 Select Options
 --------------
 
-Together with ``<package-spec>``, control what packages are displayed in the output. If ``<package-spec>`` is given, limits the resulting set of
-packages to those matching the specification. All packages are considered if no ``<package-spec>`` is specified.
+Together with ``<package-file-spec>``, control what packages are displayed in the output. If ``<package-file-spec>`` is given, limits the resulting set of
+packages to those matching the specification. All packages are considered if no ``<package-file-spec>`` is specified.
 
-``<package-spec>``
-    Package specification in the NEVRA format (name[-[epoch:]version[-release]][.arch]). See :ref:`Specifying Packages
+``<package-file-spec>``
+    Package specification in the NEVRA format (name[-[epoch:]version[-release]][.arch]), a package provide or a file provide. See :ref:`Specifying Packages
     <specifying_packages-label>`.
 
 ``-a``, ``--all``
@@ -1364,77 +1364,77 @@ Repo-Pkgs Command
 Repository-Packages Command
 ---------------------------
 
-The repository-packages command allows the user to run commands on top of all packages in the repository named ``<repoid>``. However, any dependency resolution takes into account packages from all enabled repositories. The ``<package-name-spec>`` and ``<package-spec>`` specifications further limit the candidates to only those packages matching at least one of them.
+The repository-packages command allows the user to run commands on top of all packages in the repository named ``<repoid>``. However, any dependency resolution takes into account packages from all enabled repositories. The ``<package-file-spec>`` and ``<package-spec>`` specifications further limit the candidates to only those packages matching at least one of them.
 
 The ``info`` subcommand lists description and summary information about packages depending on the packages' relation to the repository. The ``list`` subcommand just prints lists of those packages.
 
-``dnf [options] repository-packages <repoid> check-update [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> check-update [<package-file-spec>...]``
     Non-interactively checks if updates of the specified packages in the repository are available. DNF exit code will be 100 when there are updates available and a list of the updates will be printed.
 
-``dnf [options] repository-packages <repoid> info [--all] [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info [--all] [<package-file-spec>...]``
     List all related packages.
 
-``dnf [options] repository-packages <repoid> info --installed [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info --installed [<package-file-spec>...]``
     List packages installed from the repository.
 
-``dnf [options] repository-packages <repoid> info --available [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info --available [<package-file-spec>...]``
     List packages available in the repository but not currently installed on the system.
 
-``dnf [options] repository-packages <repoid> info --extras [<package-name-specs>...]``
+``dnf [options] repository-packages <repoid> info --extras [<package-file-specs>...]``
     List packages installed from the repository that are not available in any repository.
 
-``dnf [options] repository-packages <repoid> info --obsoletes [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info --obsoletes [<package-file-spec>...]``
     List packages in the repository that obsolete packages installed on the system.
 
-``dnf [options] repository-packages <repoid> info --recent [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info --recent [<package-file-spec>...]``
     List packages recently added into the repository.
 
-``dnf [options] repository-packages <repoid> info --upgrades [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info --upgrades [<package-file-spec>...]``
     List packages in the repository that upgrade packages installed on the system.
 
 ``dnf [options] repository-packages <repoid> install [<package-spec>...]``
     Install all packages in the repository.
 
-``dnf [options] repository-packages <repoid> list [--all] [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list [--all] [<package-file-spec>...]``
     List all related packages.
 
-``dnf [options] repository-packages <repoid> list --installed [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --installed [<package-file-spec>...]``
     List packages installed from the repository.
 
-``dnf [options] repository-packages <repoid> list --available [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --available [<package-file-spec>...]``
     List packages available in the repository but not currently installed on the system.
 
-``dnf [options] repository-packages <repoid> list --extras [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --extras [<package-file-spec>...]``
     List packages installed from the repository that are not available in any repository.
 
-``dnf [options] repository-packages <repoid> list --obsoletes [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --obsoletes [<package-file-spec>...]``
     List packages in the repository that obsolete packages installed on the system.
 
-``dnf [options] repository-packages <repoid> list --recent [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --recent [<package-file-spec>...]``
     List packages recently added into the repository.
 
-``dnf [options] repository-packages <repoid> list --upgrades [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --upgrades [<package-file-spec>...]``
     List packages in the repository that upgrade packages installed on the system.
 
-``dnf [options] repository-packages <repoid> move-to [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> move-to [<package-spec>...]``
     Reinstall all those packages that are available in the repository.
 
-``dnf [options] repository-packages <repoid> reinstall [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> reinstall [<package-spec>...]``
     Run the ``reinstall-old`` subcommand. If it fails, run the ``move-to`` subcommand.
 
-``dnf [options] repository-packages <repoid> reinstall-old [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> reinstall-old [<package-spec>...]``
     Reinstall all those packages that were installed from the repository and simultaneously are available in the repository.
 
-``dnf [options] repository-packages <repoid> remove [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> remove [<package-spec>...]``
     Remove all packages installed from the repository along with any packages depending on the packages being removed. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
-``dnf [options] repository-packages <repoid> remove-or-distro-sync [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> remove-or-distro-sync [<package-spec>...]``
     Select all packages installed from the repository. Upgrade, downgrade or keep those of them that are available in another repository to match the latest version available there and remove the others along with any packages depending on the packages being removed. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
-``dnf [options] repository-packages <repoid> remove-or-reinstall [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> remove-or-reinstall [<package-spec>...]``
     Select all packages installed from the repository. Reinstall those of them that are available in another repository and remove the others along with any packages depending on the packages being removed. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
-``dnf [options] repository-packages <repoid> upgrade [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> upgrade [<package-spec>...]``
     Update all packages to the highest resolvable version available in the repository.
 
 ``dnf [options] repository-packages <repoid> upgrade-to <package-nevr-specs>...``
@@ -1634,7 +1634,7 @@ trigger shell-like glob matching. If a globbing character is present in ``name``
 DNF expands given ``name`` first and consequently selects all packages matching
 the expanded ``<package-spec>``.
 
-``<package-name-spec>`` is similar to ``<package-spec>`` except the provides
+``<package-file-spec>`` is similar to ``<package-spec>`` except the provides
 matching is never attempted there.
 
 ``<package-installed-spec>`` is similar to ``<package-spec>`` except it
