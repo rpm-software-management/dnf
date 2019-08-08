@@ -504,9 +504,9 @@ Check Command
 Check-Update Command
 --------------------
 
-``dnf [options] check-update [--changelogs] [<package-specs>...]``
+``dnf [options] check-update [--changelogs] [<package-spec>...]``
 
-    Non-interactively checks if updates of the specified packages are available. If no ``<package-specs>`` are given, checks whether any updates at all are available for your system. DNF exit code will be 100 when there are updates available and a list of the updates will be printed, 0 if not and 1 if an error occurs. If ``--changelogs`` option is specified, also changelog delta of packages about to be updated is printed.
+    Non-interactively checks if updates of the specified packages are available. If no ``<package-spec>`` is given, checks whether any updates at all are available for your system. DNF exit code will be 100 when there are updates available and a list of the updates will be printed, 0 if not and 1 if an error occurs. If ``--changelogs`` option is specified, also changelog delta of packages about to be updated is printed.
 
     Please note that having a specific newer version available for an installed package (and reported by ``check-update``) does not imply that subsequent ``dnf upgrade`` will install it. The difference is that ``dnf upgrade`` has restrictions (like package dependencies being satisfied) to take into account.
 
@@ -574,7 +574,7 @@ Distribution-Synchronization command
 Downgrade Command
 -----------------
 
-``dnf [options] downgrade <package-installed-specs>...``
+``dnf [options] downgrade <package-installed-spec>...``
     Downgrades the specified packages to the highest installable package of all known lower versions
     if possible. When version is given and is lower than version of installed package then it
     downgrades to target version.
@@ -813,30 +813,30 @@ e.g. to only those that update an installed package. The :ref:`exclude
 result, but if the \-\ :ref:`-disableexcludes <disableexcludes-label>` command line
 option is used, it ensures that all installed packages will be listed.
 
-All the forms take the ``[<package-specs>...]`` parameter to further limit the
+All the forms take the ``[<package-spec>...]`` parameter to further limit the
 result to only packages that matching it.
 
-``dnf [options] list [--all] [<package-name-specs>...]``
+``dnf [options] list [--all] [<package-name-spec>...]``
     Lists all packages, present in the RPMDB, in a repository or both.
 
-``dnf [options] list --installed [<package-name-specs>...]``
+``dnf [options] list --installed [<package-name-spec>...]``
     Lists installed packages.
 
-``dnf [options] list --available [<package-name-specs>...]``
+``dnf [options] list --available [<package-name-spec>...]``
     Lists available packages.
 
-``dnf [options] list --extras [<package-name-specs>...]``
+``dnf [options] list --extras [<package-name-spec>...]``
     Lists extras, that is packages installed on the system that are not
     available in any known repository.
 
-``dnf [options] list --obsoletes [<package-name-specs>...]``
+``dnf [options] list --obsoletes [<package-name-spec>...]``
     List packages installed on the system that are obsoleted by packages in
     any known repository.
 
-``dnf [options] list --recent [<package-name-specs>...]``
+``dnf [options] list --recent [<package-name-spec>...]``
     List packages recently added into the repositories.
 
-``dnf [options] list --upgrades [<package-name-specs>...]``
+``dnf [options] list --upgrades [<package-name-spec>...]``
     List upgrades available for the installed packages.
 
 ``dnf [options] list --autoremove``
@@ -877,13 +877,13 @@ Makecache Command
 Mark Command
 -------------
 
-``dnf mark install <package-specs>...``
+``dnf mark install <package-spec>...``
     Marks the specified packages as installed by user. This can be useful if any package was installed as a dependency and is desired to stay on the system when :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with `clean_requirements_on_remove` configuration option set to ``True`` is executed.
 
-``dnf mark remove <package-specs>...``
+``dnf mark remove <package-spec>...``
     Unmarks the specified packages as installed by user. Whenever you as a user don't need a specific package you can mark it for removal. The package stays installed on the system but will be removed when :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with `clean_requirements_on_remove` configuration option set to ``True`` is executed. You should use this operation instead of :ref:`\remove_command-label` if you're not sure whether the package is a requirement of other user installed packages on the system.
 
-``dnf mark group <package-specs>...``
+``dnf mark group <package-spec>...``
     Marks the specified packages as installed by group. This can be useful if any package was
     installed as a dependency or a user and is desired to be protected and handled as a group
     member like during group remove.
@@ -1010,7 +1010,7 @@ Provides Command
 Reinstall Command
 -----------------
 
-``dnf [options] reinstall <package-specs>...``
+``dnf [options] reinstall <package-spec>...``
     Installs the specified packages, fails if some of the packages are either
     not installed or not available (i.e. there is no repository where to
     download the same RPM).
@@ -1021,7 +1021,7 @@ Reinstall Command
 Remove Command
 --------------
 
-``dnf [options] remove <package-specs>...``
+``dnf [options] remove <package-spec>...``
     Removes the specified packages from the system along with any packages depending on the packages being removed. Each ``<spec>`` can be either a ``<package-spec>``, which specifies a package directly, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If ``clean_requirements_on_remove`` is enabled (the default), also removes any dependencies that are no longer needed.
 
 ``dnf [options] remove --duplicates``
@@ -1404,7 +1404,7 @@ The ``info`` subcommand lists description and summary information about packages
 ``dnf [options] repository-packages <repoid> list --available [<package-name-spec>...]``
     List packages available in the repository but not currently installed on the system.
 
-``dnf [options] repository-packages <repoid> list --extras [<package-name-specs>...]``
+``dnf [options] repository-packages <repoid> list --extras [<package-name-spec>...]``
     List packages installed from the repository that are not available in any repository.
 
 ``dnf [options] repository-packages <repoid> list --obsoletes [<package-name-spec>...]``
@@ -1556,7 +1556,7 @@ Upgrade Command
     Updates each package to the latest version that is both available and
     resolvable.
 
-``dnf [options] upgrade <package-installed-specs>...``
+``dnf [options] upgrade <package-installed-spec>...``
     Updates each specified package to the latest available version. Updates
     dependencies as necessary.
 
@@ -1582,7 +1582,7 @@ Upgrade-Minimal Command
     Updates each package to the latest available version that provides a bugfix, enhancement
     or a fix for a security issue (security).
 
-``dnf [options] upgrade-minimal <package-installed-specs>...``
+``dnf [options] upgrade-minimal <package-installed-spec>...``
     Updates each specified package to the latest available version that provides
     a bugfix, enhancement or a fix for security issue (security). Updates
     dependencies as necessary.
@@ -1637,7 +1637,7 @@ the expanded ``<package-spec>``.
 ``<package-name-spec>`` is similar to ``<package-spec>`` except the provides
 matching is never attempted there.
 
-``<package-installed-specs>`` is similar to ``<package-specs>`` except it
+``<package-installed-spec>`` is similar to ``<package-spec>`` except it
 considers only installed packages.
 
 .. _specifying_packages_versions-label:
