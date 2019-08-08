@@ -1606,36 +1606,69 @@ Upgrade-To Command
 Specifying Packages
 ===================
 
-Many commands take a ``<package-spec>`` parameter that selects a package for the
-operation. DNF looks for interpretations of the parameter from the most commonly
-used meanings to the least, that is it tries to see if the given spec fits one
-of the following patterns (in decreasing order of priority):
+Many commands take a ``<package-spec>`` parameter that selects a package for
+the operation. The ``<package-spec>`` argument is matched against package
+NEVRAs, provides and file provides.
 
+``<package-file-spec>`` is similar to ``<package-spec>``, except provides
+matching is not performed. Therefore, ``<package-file-spec>`` is matched only
+against NEVRAs and file provides.
+
+``<package-name-spec>`` is matched against NEVRAs only.
+
+-----
+Globs
+-----
+
+Package specification supports the same glob pattern matching that shell does,
+in all three above mentioned packages it matches against (NEVRAs, provides and
+file provides).
+
+The following patterns are supported:
+
+``*``
+    Matches any number of characters.
+``?``
+    Matches any single character.
+``[]``
+    Matches any one of the enclosed characters. A pair of characters separated
+    by a hyphen denotes a range expression; any character that falls between
+    those two characters, inclusive, is matched. If the first character
+    following the ``[`` is a ``!`` or a ``^`` then any character not enclosed
+    is matched.
+``{}``
+    Matches any of the comma separated list of enclosed strings.
+
+--------------
+NEVRA Matching
+--------------
+
+When matching against NEVRAs, partial matching is supported. DNF tries to match
+the spec against the following list of NEVRA forms (in decreasing order of
+priority):
+
+* ``name-[epoch:]version-release.arch``
 * ``name.arch``
 * ``name``
-* ``name-[epoch:]version-release.arch``
 * ``name-[epoch:]version-release``
 * ``name-[epoch:]version``
 
-Note that ``name`` can in general contain dashes (e.g. ``package-subpackage``).
+Note that ``name`` can in general contain dashes (e.g. ``package-with-dashes``).
 
-Failing to match the input argument to an existing package name based on the
-patterns above, DNF tries to see if the argument matches an existing provide.
+The first form that matches any packages is used and the remaining forms are
+not tried. If none of the forms match any packages, an attempt is made to match
+the ``<package-spec>`` against full package NEVRAs. This is only relevant
+if globs are present in the ``<package-spec>``.
 
-By default, if multiple versions of the selected package exist in the repository, the
-most recent version suitable for the given operation is used. If the selected
-package exists for multiple architectures, the packages which best match the
-system's architecture will be preferred. The name specification is
-case-sensitive, globbing characters "``?``, ``*`` and ``[`` are allowed and
-trigger shell-like glob matching. If a globbing character is present in ``name``,
-DNF expands given ``name`` first and consequently selects all packages matching
-the expanded ``<package-spec>``.
+``<package-spec>`` matches NEVRAs the same way ``<package-name-spec>`` does,
+but in case matching NEVRAs fails, it attempts to match against provides and
+file provides of packages as well.
 
-``<package-file-spec>`` is similar to ``<package-spec>`` except the provides
-matching is never attempted there.
-
-``<package-name-spec>`` is similar to ``<package-file-spec>`` except file provide
-matching is never attempted there.
+You can specify globs as part of any of the five NEVRA components. You can also
+specify a glob pattern to match over multiple NEVRA components (in other words,
+to match across the NEVRA separators). In that case, however, you need to write
+the spec to match against full package NEVRAs, as it is not possible to split
+such spec into NEVRA forms.
 
 .. _specifying_packages_versions-label:
 
