@@ -813,9 +813,6 @@ e.g. to only those that update an installed package. The :ref:`exclude
 result, but if the \-\ :ref:`-disableexcludes <disableexcludes-label>` command line
 option is used, it ensures that all installed packages will be listed.
 
-All the forms take the ``[<package-file-spec>...]`` parameter to further limit the
-result to only packages that match it.
-
 ``dnf [options] list [--all] [<package-file-spec>...]``
     Lists all packages, present in the RPMDB, in a repository or both.
 
