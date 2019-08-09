@@ -257,24 +257,7 @@ class Package(hawkey.Package):
         :param schemes: list of allowed protocols. Default is ('http', 'ftp', 'file', 'https')
         :return: location (string) or None
         """
-        def schemes_filter(url_list):
-            for url in url_list:
-                if schemes:
-                    s = dnf.pycomp.urlparse.urlparse(url)[0]
-                    if s in schemes:
-                        return os.path.join(url, self.location.lstrip('/'))
-                else:
-                    return os.path.join(url, self.location.lstrip('/'))
-            return None
-
-        if not self.location:
-            return None
-
-        mirrors = self.repo._repo.getMirrors()
-        if mirrors:
-            return schemes_filter(mirrors)
-        elif self.repo.baseurl:
-            return schemes_filter(self.repo.baseurl)
+        return self.repo.remote_location(self.location, schemes)
 
     def _is_local_pkg(self):
         if self.repoid == "@System":
