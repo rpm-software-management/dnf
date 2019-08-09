@@ -606,3 +606,28 @@ class Repo(dnf.conf.RepoConf):
             Example: set_http_headers(["User-Agent: Agent007", "MyFieldName: MyFieldValue"])
         """
         self._repo.setHttpHeaders(headers)
+
+    def remote_location(self, location, schemes=('http', 'ftp', 'file', 'https')):
+        """
+        :param location: relative location inside the repo
+        :param schemes: list of allowed protocols. Default is ('http', 'ftp', 'file', 'https')
+        :return: absolute url (string) or None
+        """
+        def schemes_filter(url_list):
+            for url in url_list:
+                if schemes:
+                    s = dnf.pycomp.urlparse.urlparse(url)[0]
+                    if s in schemes:
+                        return os.path.join(url, location.lstrip('/'))
+                else:
+                    return os.path.join(url, location.lstrip('/'))
+            return None
+
+        if not location:
+            return None
+
+        mirrors = self._repo.getMirrors()
+        if mirrors:
+            return schemes_filter(mirrors)
+        elif self.baseurl:
+            return schemes_filter(self.baseurl)
