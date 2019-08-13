@@ -1,5 +1,5 @@
 # default dependencies
-%global hawkey_version 0.35.2
+%global hawkey_version 0.35.3
 %global libcomps_version 0.1.8
 %global libmodulemd_version 1.4.0
 %global rpm_version 4.14.0
@@ -79,7 +79,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.2.8
+Version:        4.2.9
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -502,6 +502,10 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Tue Aug 13 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.2.9-1
+- Prevent printing empty Error Summary (RhBug: 1690414)
+- [doc] Add user_agent and countme options
+
 * Tue Aug 06 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.2.8-1
 - Enhance synchronization of rpm transaction to swdb
 - Accept multiple specs in repoquery options (RhBug:1667898)

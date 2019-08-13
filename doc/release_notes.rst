@@ -20,6 +20,13 @@
 ###################
 
 ===================
+4.2.9 Release Notes
+===================
+
+- Prevent printing empty Error Summary (RhBug: 1690414)
+- [doc] Add user_agent and countme options
+
+===================
 4.2.8 Release Notes
 ===================
 
