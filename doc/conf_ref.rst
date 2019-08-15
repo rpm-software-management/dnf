@@ -554,7 +554,10 @@ configuration.
 ``proxy``
     :ref:`string <string-label>`
 
-    URL of a proxy server to connect through. If none is specified then direct connection is used (the default).
+    URL of a proxy server to connect through. Set to the empty string to disable the proxy setting inherited from the main section.
+    (For backward compatibility, '_none_' can be used instead of the empty string.)
+
+    Note: The curl environment variables (such as ``http_proxy``) are effective if this option is unset. See the ``curl`` man page for details.
 
 ``proxy_username``
     :ref:`string <string-label>`
