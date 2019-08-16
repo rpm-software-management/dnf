@@ -523,7 +523,10 @@ class SwdbInterface(object):
         reason = self.swdb.resolveRPMTransactionItemReason(pkg.name, pkg.arch, -1)
         if reason == libdnf.transaction.TransactionItemReason_USER:
             return True
-        # TODO: return True also for libdnf.transaction.TransactionItemReason_UNKNOWN?
+        # if reason is not known, consider a package user-installed
+        # because it was most likely installed via rpm
+        if reason == libdnf.transaction.TransactionItemReason_UNKNOWN:
+            return True
         return False
 
     def get_erased_reason(self, pkg, first_trans, rollback):
