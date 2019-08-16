@@ -29,12 +29,14 @@ import fnmatch
 import hawkey
 from dnf.cli import commands
 from dnf.cli.option_parser import OptionParser
-from dnf.i18n import _
+from dnf.i18n import _, exact_width
 from dnf.pycomp import unicode
+
 
 def _maxlen(iterable):
     """Return maximum length of items in a non-empty iterable."""
-    return max(len(item) for item in iterable)
+    return max(exact_width(item) for item in iterable)
+
 
 class UpdateInfoCommand(commands.Command):
     """Implementation of the UpdateInfo command."""
@@ -341,7 +343,9 @@ class UpdateInfoCommand(commands.Command):
                 if atr_lines in (None, [None]):
                     continue
                 for i, line in enumerate(atr_lines):
-                    lines.append('%*s: %s' % (width, label if i == 0 else '', line))
+                    key = label if i == 0 else ''
+                    key_padding = width - exact_width(label)
+                    lines.append('%*s%s: %s' % (key_padding, "", key, line))
             return '\n'.join(lines)
 
         advisories = set()
