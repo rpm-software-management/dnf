@@ -295,7 +295,7 @@ Options
     dnf's obsoletes processing logic. For more information see the
     :ref:`obsoletes <obsoletes_conf_option-label>` option.
 
-    This option also displays capabilities that the package obsoletes when used togehter with the :ref:`repoquery <repoquery_command-label>` command.
+    This option also displays capabilities that the package obsoletes when used together with the :ref:`repoquery <repoquery_command-label>` command.
 
     Configuration Option: :ref:`obsoletes <obsoletes_conf_option-label>`
 
