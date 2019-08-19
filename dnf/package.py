@@ -183,6 +183,12 @@ class Package(hawkey.Package):
     def repo(self, val):
         self._repo = val
 
+    @property
+    def reason(self):
+        if self.repoid != hawkey.SYSTEM_REPO_NAME:
+            return None
+        return self.base.history.rpm.get_reason_name(self)
+
     @property # yum compatibility attribute
     def relativepath(self):
         return self.location

@@ -48,7 +48,7 @@ name, arch, epoch, version, release, reponame (repoid), evr,
 debug_name, source_name, source_debug_name,
 installtime, buildtime, size, downloadsize, installsize,
 provides, requires, obsoletes, conflicts, sourcerpm,
-description, summary, license, url
+description, summary, license, url, reason
 """
 
 OPTS_MAPPING = {
