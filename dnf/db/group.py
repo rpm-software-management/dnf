@@ -241,6 +241,10 @@ class RPMTransaction(object):
         """Get reason for package"""
         return self.history.swdb.resolveRPMTransactionItemReason(pkg.name, pkg.arch, -1)
 
+    def get_reason_name(self, pkg):
+        """Get reason for package"""
+        return libdnf.transaction.TransactionItemReasonToString(self.get_reason(pkg))
+
     def _add_obsoleted(self, obsoleted, replaced_by=None):
         obsoleted = obsoleted or []
         for obs in obsoleted:
