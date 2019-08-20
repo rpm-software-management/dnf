@@ -161,7 +161,6 @@ class RPMTransaction(object):
         self.complete_actions = 0
         self.installed_pkg_names = set()
         self.total_removed = 0
-        self.filelog = False
 
         self._setupOutputLogging(base.conf.rpmverbosity)
         self._te_list = []
