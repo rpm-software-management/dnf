@@ -1130,7 +1130,7 @@ class Base(object):
          output messages about the download operation.
 
         """
-        remote_pkgs, local_repository_pkgs = self._select_remote_pkgs(pkglist)
+        remote_pkgs, local_pkgs = self._select_remote_pkgs(pkglist)
         if remote_pkgs:
             if progress is None:
                 progress = dnf.callback.NullDownloadProgress()
@@ -1143,8 +1143,12 @@ class Base(object):
             self._download_remote_payloads(payloads, drpm, progress, callback_total)
 
         if self.conf.destdir:
-            for pkg in local_repository_pkgs:
-                location = os.path.join(pkg.repo.pkgdir, pkg.location.lstrip("/"))
+            for pkg in local_pkgs:
+                if pkg.baseurl:
+                    location = os.path.join(pkg.baseurl.replace("file://", ""),
+                                            pkg.location.lstrip("/"))
+                else:
+                    location = os.path.join(pkg.repo.pkgdir, pkg.location.lstrip("/"))
                 shutil.copy(location, self.conf.destdir)
 
     def add_remote_rpms(self, path_list, strict=True, progress=None):
