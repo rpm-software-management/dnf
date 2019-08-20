@@ -233,7 +233,7 @@ class PackagePayload(dnf.callback.Payload):
 
     def _librepo_target(self):
         pkg = self.pkg
-        pkgdir = pkg.repo.pkgdir
+        pkgdir = pkg.pkgdir
         dnf.util.ensure_dir(pkgdir)
 
         target_dct = {
@@ -458,6 +458,9 @@ class Repo(dnf.conf.RepoConf):
         # :api
         if self._repo.isLocal():
             return dnf.util.strip_prefix(self.baseurl[0], 'file://')
+        return self.cache_pkgdir()
+
+    def cache_pkgdir(self):
         if self._pkgdir is not None:
             return self._pkgdir
         return os.path.join(self._repo.getCachedir(), _PACKAGES_RELATIVE_DIR)

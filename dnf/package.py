@@ -243,11 +243,11 @@ class Package(hawkey.Package):
         if self._from_cmdline:
             return self.location
         loc = self.location
-        if not self.repo._repo.isLocal():
-            loc = os.path.basename(loc)
-        elif self.baseurl and self.baseurl.startswith('file://'):
+        if self.repo._repo.isLocal() and self.baseurl and self.baseurl.startswith('file://'):
             return os.path.join(self.baseurl, loc.lstrip("/"))[7:]
-        return os.path.join(self.repo.pkgdir, loc.lstrip("/"))
+        if not self._is_local_pkg():
+            loc = os.path.basename(loc)
+        return os.path.join(self.pkgdir, loc.lstrip("/"))
 
     def remote_location(self, schemes=('http', 'ftp', 'file', 'https')):
         # :api
@@ -281,6 +281,13 @@ class Package(hawkey.Package):
             return True
         return self._from_cmdline or \
             (self.repo._repo.isLocal() and (not self.baseurl or self.baseurl.startswith('file://')))
+
+    @property
+    def pkgdir(self):
+        if (self.repo._repo.isLocal() and not self._is_local_pkg()):
+            return self.repo.cache_pkgdir()
+        else:
+            return self.repo.pkgdir
 
     # yum compatibility method
     def returnIdSum(self):
