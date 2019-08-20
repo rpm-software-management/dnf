@@ -342,11 +342,6 @@ class RPMTransaction(object):
         if self.test or not self.trans_running:
             return
 
-        transaction_list = self._extract_cbkey(key)
-        tsi = transaction_list[0]
-
-        for display in self.displays:
-            display.filelog(tsi.pkg, tsi.action)
         self._scriptout()
 
         if self.complete_actions == self.total_actions:
@@ -373,12 +368,6 @@ class RPMTransaction(object):
             display.progress(pkg, action, amount, total, self.complete_actions, self.total_actions)
 
     def _unInstStop(self, key):
-        transaction_list = self._extract_cbkey(key)
-        tsi = transaction_list[0]
-
-        for display in self.displays:
-            display.filelog(tsi.pkg, tsi.action)
-
         if self.test:
             return
 
