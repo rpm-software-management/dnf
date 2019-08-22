@@ -108,7 +108,14 @@ class SearchCommand(commands.Command):
         limit = None
         if not self.base.conf.showdupesfromrepos:
             limit = self.base.sack.query().filterm(pkg=counter.keys()).latest()
+
+        seen = set()
         for pkg in counter.sorted(reverse=True, limit_to=limit):
+            if not self.base.conf.showdupesfromrepos:
+                if pkg.name + pkg.arch in seen:
+                    continue
+                seen.add(pkg.name + pkg.arch)
+
             if used_attrs != counter.matched_keys(pkg):
                 used_attrs = counter.matched_keys(pkg)
                 print_section_header = True
