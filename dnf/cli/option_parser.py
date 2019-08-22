@@ -280,8 +280,8 @@ class OptionParser(argparse.ArgumentParser):
         general_grp.add_argument("--repofrompath", default={},
                                  action=self._SplitExtendDictCallback,
                                  metavar='[repo,path]',
-                                 help=_("label and path to additional repository,"
-                                        " can be specified multiple times."))
+                                 help=_("label and path to an additional repository to use (same "
+                                        "path as in a baseurl), can be specified multiple times."))
         general_grp.add_argument("--noautoremove", action="store_false",
                                  default=None, dest='clean_requirements_on_remove',
                                  help=_("disable removal of dependencies that are no longer used"))
