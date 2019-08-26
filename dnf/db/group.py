@@ -282,8 +282,9 @@ class RPMTransaction(object):
             return 0
         try:
             if hdr['modularitylabel'] and not pkg._is_in_active_module():
-                logger.critical(_("No available modular metadata for modular package '{}', "
-                                  "it cannot be installed on the system").format(pkg))
+                logger.critical(_("Warning: No available modular metadata for modular package '{0}'"
+                                  "from repository '{1}', it is not recommended to install it on "
+                                  "the system").format(pkg, pkg.repo.id))
                 return 1
         except ValueError:
             return 0
@@ -331,7 +332,7 @@ class RPMTransaction(object):
             else:
                 raise RuntimeError("TransactionItemAction not handled: %s" % tsi.action)
         if modular_problems:
-            logger.critical(_("No available modular metadata for modular package"))
+            logger.critical(_("Warning: No available modular metadata for modular package"))
 
         return ts
 
