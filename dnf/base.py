@@ -2152,8 +2152,7 @@ class Base(object):
         to one version lower than the package installed.
         """
         subj = dnf.subject.Subject(pkg_spec)
-        q = subj.get_best_query(self.sack, with_nevra=True, with_provides=False,
-                                with_filenames=False)
+        q = subj.get_best_query(self.sack)
         if not q:
             msg = _('No match for argument: %s') % pkg_spec
             raise dnf.exceptions.PackageNotFoundError(msg, pkg_spec)
