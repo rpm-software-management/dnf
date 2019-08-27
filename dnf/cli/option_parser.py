@@ -39,7 +39,9 @@ class OptionParser(argparse.ArgumentParser):
     def __init__(self, reset_usage=True):
         super(OptionParser, self).__init__(add_help=False)
         self.command_positional_parser = None
+        self.command_group = None
         self._add_general_options()
+        self._main_prog = argparse.ArgumentParser().prog
         if reset_usage:
             self._cmd_usage = {}      # names, summary for dnf commands, to build usage
             self._cmd_groups = set()  # cmd groups added (main, plugin)
@@ -355,8 +357,7 @@ class OptionParser(argparse.ArgumentParser):
         """ get the usage information to show the user. """
         desc = {'main': _('List of Main Commands:'),
                 'plugin': _('List of Plugin Commands:')}
-        parser = argparse.ArgumentParser()
-        usage = '%s [options] COMMAND\n' % parser.prog
+        usage = '%s [options] COMMAND\n' % self._main_prog
         for grp in ['main', 'plugin']:
             if not grp in self._cmd_groups:
                 # dont add plugin usage, if we dont have plugins
@@ -369,7 +370,7 @@ class OptionParser(argparse.ArgumentParser):
         return usage
 
     def _add_command_options(self, command):
-        self.prog = "%s %s" % (self.prog, command._basecmd)
+        self.prog = "%s %s" % (self._main_prog, command._basecmd)
         self.description = command.summary
         self.command_positional_parser = argparse.ArgumentParser(self.prog, add_help=False)
         self.command_positional_parser.print_usage = self.print_usage
@@ -377,6 +378,7 @@ class OptionParser(argparse.ArgumentParser):
         self.command_group = self.add_argument_group(
             '{} command-specific options'.format(command._basecmd.capitalize()))
         self.command_group.add_argument = self.cmd_add_argument
+        self.command_group._command = command._basecmd
         command.set_argparser(self.command_group)
 
     def cmd_add_argument(self, *args, **kwargs):
@@ -404,7 +406,8 @@ class OptionParser(argparse.ArgumentParser):
     def print_help(self, command=None):
         # pylint: disable=W0212
         if command:
-            self._add_command_options(command)
+            if not self.command_group or self.command_group._command != command._basecmd:
+                self._add_command_options(command)
             self._actions += self.command_positional_parser._actions
             self._action_groups.append(self.command_positional_parser._positionals)
         else:
