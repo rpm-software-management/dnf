@@ -672,7 +672,7 @@ transactions and act according to this information (assuming the
     The default history action is listing information about given transactions
     in a table. Each ``<spec>`` can be either a ``<transaction-spec>``, which
     specifies a transaction directly, or a ``<transaction-spec>..<transaction-spec>``,
-    which specifies a range of transactions, or a ``<package-file-spec>``,
+    which specifies a range of transactions, or a ``<package-name-spec>``,
     which specifies a transaction by a package which it manipulated. When no
     transaction is specified, list all known transactions.
 
@@ -1635,6 +1635,9 @@ DNF expands given ``name`` first and consequently selects all packages matching
 the expanded ``<package-spec>``.
 
 ``<package-file-spec>`` is similar to ``<package-spec>`` except the provides
+matching is never attempted there.
+
+``<package-name-spec>`` is similar to ``<package-file-spec>`` except file provide
 matching is never attempted there.
 
 ``<package-installed-spec>`` is similar to ``<package-spec>`` except it
