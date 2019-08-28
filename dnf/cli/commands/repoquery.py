@@ -424,6 +424,8 @@ class RepoQueryCommand(commands.Command):
 
         if self.opts.recent:
             q = q._recent(self.base.conf.recent)
+        if self.opts.latest_limit:
+            q = q.latest(self.opts.latest_limit)
         if self.opts.available:
             if self.opts.list and self.opts.list != "installed":
                 print(self.cli.optparser.print_usage())
@@ -497,8 +499,6 @@ class RepoQueryCommand(commands.Command):
             q.filterm(supplements__glob=self.opts.whatsupplements)
         if self.opts.whatsuggests:
             q.filterm(suggests__glob=self.opts.whatsuggests)
-        if self.opts.latest_limit:
-            q = q.latest(self.opts.latest_limit)
         # reduce a query to security upgrades if they are specified
         q = self.base._merge_update_filters(q, warning=False)
         if self.opts.srpm:
