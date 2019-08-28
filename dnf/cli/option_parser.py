@@ -102,7 +102,7 @@ class OptionParser(argparse.ArgumentParser):
                 logger.warning(_("Setopt argument has no value: %s"), values)
                 return
             k, v = vals
-            period = k.find('.')
+            period = k.rfind('.')
             if period != -1:
                 repo = k[:period]
                 k = k[period+1:]
