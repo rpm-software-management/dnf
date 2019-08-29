@@ -41,11 +41,11 @@ When packaging your custom command, we recommend you to define a virtual provide
 
     .. attribute:: available_repos
 
-      If ``True`` during sack creation (:attr:`.sack_activation`), download and load into the sack the available repositories. Defaults to ``False``.
+      If ``True``, during sack creation (:attr:`.sack_activation`), download and load into the sack the available repositories. Defaults to ``False``.
 
     .. attribute:: resolving
 
-      If ``True`` at a place where the CLI would otherwise successfully exit, resolve the transaction for any outstanding packaging requests before exiting. Defaults to ``False``.
+      If ``True``, at a place where the CLI would otherwise successfully exit, resolve the transaction for any outstanding packaging requests before exiting. Defaults to ``False``.
 
     .. attribute:: root_user
 
@@ -59,7 +59,7 @@ When packaging your custom command, we recommend you to define a virtual provide
 
     .. attribute:: load_system_repo
 
-      If ``True`` DNF will load information about installed packages from the local RPMDB into the sack during :meth:`dnf.Base.fill_sack` Defaults to ``True``.
+      If ``True``, DNF will load information about installed packages from the local RPMDB into the sack during :meth:`dnf.Base.fill_sack`. Defaults to ``True``.
 
     .. attribute:: cacheonly
 
@@ -67,15 +67,15 @@ When packaging your custom command, we recommend you to define a virtual provide
 
     .. attribute:: fresh_metadata
 
-      ``False`` means that (even expired) cached repository metadata will be used. When ``True`` the expired repository metadata caches are synchronized with server. Defaults to ``True``.
+      ``False`` means that (even expired) cached repository metadata will be used. When ``True``, the expired repository metadata caches are synchronized with server. Defaults to ``True``.
 
     .. attribute:: freshest_metadata
 
-      If ``True`` metadata caches for all enabled repositories are forcibly expired before the sack is activated. Defaults to ``False``.
+      If ``True``, metadata caches for all enabled repositories are forcibly expired before the sack is activated. Defaults to ``False``.
 
     .. attribute:: changelogs
 
-      If ``True`` also the repository metadata containing changelogs for packages will be downloaded. Defaults to ``False``.
+      If ``True``, also the repository metadata containing changelogs for packages will be downloaded. Defaults to ``False``.
 
     .. attribute:: success_exit_status
 

@@ -80,15 +80,15 @@
     `action` value     meaning                                                                           Appearance*
     ================== ================================================================================= ===========
     PKG_CLEANUP        `package` cleanup is being performed.                                             3
-    PKG_DOWNGRADE      new `package` is being installed as a downgrade                                   2
+    PKG_DOWNGRADE      `package` is being installed as a downgrade.                                      2
     PKG_DOWNGRADED     installed `package` is being downgraded.                                          2
     PKG_INSTALL        `package` is being installed.                                                     2
-    PKG_OBSOLETE       new `package` is obsoleting a package.                                            2
+    PKG_OBSOLETE       `package` is obsoleting another package.                                          2
     PKG_OBSOLETED      installed `package` is being obsoleted.                                           2
-    PKG_REINSTALL      new `package` is installed as reinstall.                                          2
+    PKG_REINSTALL      `package` is installed as a reinstall.                                            2
     PKG_REINSTALLED    installed `package` is being reinstalled.                                         2
     PKG_REMOVE         `package` is being removed.                                                       2
-    PKG_UPGRADE        new `package` is installed as an upgrade.                                         2
+    PKG_UPGRADE        `package` is installed as an upgrade.                                             2
     PKG_UPGRADED       installed `package` is being upgraded.                                            2
     PKG_VERIFY         `package` is being verified.                                                      5
     PKG_SCRIPTLET      `package` scriptlet is being performed.                                           Anytime

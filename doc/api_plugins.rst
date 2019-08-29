@@ -33,7 +33,7 @@ When DNF CLI runs it loads the plugins found in the paths during the CLI's initi
 
   .. attribute:: name
 
-    Plugin must set this class variable to a string identifying the plugin. The string can only contain alphanumeric characters and underscores.
+    The plugin must set this class variable to a string identifying the plugin. The string can only contain alphanumeric characters and underscores.
 
   .. staticmethod:: read_config(conf)
 
@@ -41,38 +41,38 @@ When DNF CLI runs it loads the plugins found in the paths during the CLI's initi
 
   .. method:: __init__(base, cli)
 
-    Plugin must override this. Called immediately after all the plugins are loaded. `base` is an instance of :class:`dnf.Base`. `cli` is an instance of :class:`dnf.cli.Cli` but can also be ``None`` in case DNF is running without a CLI (e.g. from an extension).
+    The plugin must override this. Called immediately after all the plugins are loaded. `base` is an instance of :class:`dnf.Base`. `cli` is an instance of :class:`dnf.cli.Cli` but can also be ``None`` in case DNF is running without a CLI (e.g. from an extension).
 
   .. method:: pre_config()
 
-    Plugin can override this. This hook is called before configuring the repos.
+    This hook is called before configuring the repos.
 
   .. method:: config()
 
-    Plugin can override this. This hook is called immediately after the CLI/extension is finished configuring DNF.  The plugin can use this to tweak the global configuration or the repository configuration.
+    This hook is called immediately after the CLI/extension is finished configuring DNF.  The plugin can use this to tweak the global configuration or the repository configuration.
 
   .. method:: resolved()
 
-    Plugin can override this. This hook is called immediately after the CLI has finished resolving a transaction. The plugin can use this to inspect the resolved but not yet executed :attr:`Base.transaction`.
+    This hook is called immediately after the CLI has finished resolving a transaction. The plugin can use this to inspect the resolved but not yet executed :attr:`Base.transaction`.
 
   .. method:: sack()
 
-    Plugin can override this. This hook is called immediately after :attr:`.Base.sack` is initialized with data from all the enabled repos.
+    This hook is called immediately after :attr:`.Base.sack` is initialized with data from all the enabled repos.
 
   .. method:: pre_transaction()
 
-    Plugin can override this. This hook is called just before transaction execution. This means after a successful transaction test. RPMDB is locked during that time.
+    This hook is called just before transaction execution. This means after a successful transaction test. RPMDB is locked during that time.
 
   .. method:: transaction()
 
-    Plugin can override this. This hook is called immediately after a successful transaction.
+    This hook is called immediately after a successful transaction.
     Plugins that were removed or obsoleted by the transaction will not run the transaction hook.
 
 .. method:: register_command(command_class)
 
     A class decorator for automatic command registration.
 
-    Example of the plugin that provides hello-world dnf command (the file must be placed in one of the :ref:`pluginpath <pluginpath-label>` directories::
+    Example of a plugin that provides a hello-world dnf command (the file must be placed in one of the :ref:`pluginpath <pluginpath-label>` directories::
 
         import dnf
 
