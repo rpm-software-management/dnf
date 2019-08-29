@@ -19,7 +19,7 @@
 #
 
 from dnf.cli import commands
-from dnf.i18n import _
+from dnf.i18n import _, ucd
 
 
 import cmd
@@ -116,12 +116,16 @@ class ShellCommand(commands.Command, cmd.Cmd):
                 cmd = cmd_cls(self.cli)
                 try:
                     opts = self.cli.optparser.parse_command_args(cmd, s_line)
+                except SystemExit:
+                    # argparse.ArgumentParser prints usage information and executes
+                    # sys.exit() on problems with parsing command line arguments
+                    return
+                try:
                     cmd.cli.demands = copy.deepcopy(self.cli.demands)
                     cmd.configure()
                     cmd.run()
                 except dnf.exceptions.Error as e:
-                    logger.error(_("Error:") + " " + e.value)
-                except:
+                    logger.error(_("Error:") + " " + ucd(e))
                     return
             else:
                 self._help()
@@ -271,8 +275,10 @@ exit (or quit)           exit the shell""")
         elif cmd == 'run':
             try:
                 self.base.do_transaction()
-            except:
-                pass
+            except dnf.exceptions.Error as e:
+                logger.error(_("Error:") + " " + ucd(e))
+            else:
+                logger.info(_("Complete!"))
             self._clean()
 
         else:
