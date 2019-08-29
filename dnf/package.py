@@ -149,7 +149,9 @@ class Package(hawkey.Package):
         Returns name of the debugsource package for this package.
         e.g. krb5-libs -> krb5-debugsource
         """
-        return self.source_name + self.DEBUGSOURCE_SUFFIX
+        # assuming self.source_name is None only for a source package
+        src_name = self.source_name if self.source_name is not None else self.name
+        return src_name + self.DEBUGSOURCE_SUFFIX
 
     @property
     def source_debug_name(self):
@@ -158,7 +160,9 @@ class Package(hawkey.Package):
         returns name of debuginfo package for source package of given package
         e.g. krb5-libs -> krb5-debuginfo
         """
-        return self.source_name + self.DEBUGINFO_SUFFIX
+        # assuming self.source_name is None only for a source package
+        src_name = self.source_name if self.source_name is not None else self.name
+        return src_name + self.DEBUGINFO_SUFFIX
 
     @property # yum compatibility attribute
     def idx(self):
