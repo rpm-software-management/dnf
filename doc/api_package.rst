@@ -37,7 +37,7 @@
 
   .. attribute:: chksum
 
-    Tuple with package checksum and checksum type or None. The checksum is returned only for
+    Tuple with package checksum and checksum type or ``None``. The checksum is returned only for
     packages from repository. The checksum is not returned for installed package or packages from
     commandline repository. The checksum represents @pkgid value which links primary metadata with
     other repository metadata files.
@@ -80,11 +80,11 @@
 
   .. attribute:: hdr_chksum
 
-    Tuple with package header checksum and checksum type or None. The checksum is returned only for installed packages.
+    Tuple with package header checksum and checksum type or ``None``. The checksum is returned only for installed packages.
 
   .. attribute:: hdr_end
 
-    Header end index for the package. Returns 0 for not known. (integer).
+    Header end index for the package. Returns 0 for not known (integer).
 
   .. attribute:: changelogs
 
@@ -92,7 +92,7 @@
 
   .. attribute:: installed
 
-    Returns True if the package is installed (boolean).
+    Returns ``True`` if the package is installed (boolean).
 
   .. attribute:: installtime
 
@@ -180,5 +180,5 @@
 
   .. method:: remote_location(schemes=('http', 'ftp', 'file', 'https'))
 
-    The location from where the package can be downloaded from (string). If information unavailable
+    The location from where the package can be downloaded from (string). If the information is unavailable
     it returns ``None``. ``schemes`` limits result to list of protocols.

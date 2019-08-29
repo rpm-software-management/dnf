@@ -69,7 +69,7 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
   .. method:: exclude_pkgs(pkgs)
 
-    Exclude all packages in pkgs list from all operations.
+    Exclude all packages in the `pkgs` list from all operations.
 
   .. method:: prepend_installroot(option)
 

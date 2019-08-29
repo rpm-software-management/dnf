@@ -49,4 +49,4 @@
 
 .. exception:: dnf.exceptions.RepoError
 
-  Errors when loading repositories.
+  Error when loading repositories.

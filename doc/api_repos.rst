@@ -91,10 +91,10 @@ Repository Configuration
   This object has attributes corresponding to all configuration options from both :ref:`"Repo Options" <conf_repo_options-label>` and :ref:`"Options for both [main] and Repo" <conf_main_and_repo_options-label>` sections.
 
   .. IMPORTANT::
-    Some :class:`.Repo` attributes return other than Python native types.
-    Duck typing works (objects have identical behavior), but isinstance()
-    and type() doesn't work as expected because of different types.
-    For example :ref:`excludepkgs <exclude-label>` and :ref:`includepkgs <include-label>` return a VectorString, which
+    Some :class:`.Repo` attributes have non-native Python types.
+    Duck typing works (objects have identical behavior), but ``isinstance()``
+    and ``type()`` doesn't work as expected because of different types.
+    For example :ref:`excludepkgs <exclude-label>` and :ref:`includepkgs <include-label>` return a ``VectorString``, which
     is s SWIG wrapper on top of underlying libdnf C++ code.
 
   .. attribute:: id
@@ -140,7 +140,7 @@ Repository Configuration
 
   .. method:: get_metadata_content(metadata_type)
 
-    Return content of the file with downloaded repository metadata of given type. Content of compressed metadata file is returned uncompressed.
+    Return contents of the repository's metadata file of the given metadata type. Contents of compressed files are returned uncompressed.
 
   .. method:: get_metadata_path(metadata_type)
 

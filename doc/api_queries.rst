@@ -62,27 +62,27 @@
 
   .. method:: available()
 
-    Return a new query limiting the original query to the packages available from the repositories.
+    Returns a new query limiting the original query to the packages available from the repositories.
 
   .. method:: difference(other)
 
-    Returns a new query that contains only those results of original query, that are not in the results of the ``other`` query.
+    Returns a new query that contains only those results of original query that are not in the results of the ``other`` query.
 
   .. method:: downgrades()
 
-    Return a new query that limits the result only to packages that can be downgrade candidates to other packages in the current set. Downgrade candidate has the same name, lower EVR and the architecture of the original and the downgrade candidate are suitable for a downgrade. Specifically, the filtering does not take any steps to establish that the downgrade candidate can actually be installed.
+    Returns a new query that limits the result only to packages that can be downgrade candidates to other packages in the current set. Downgrade candidate has the same name, lower EVR and the architecture of the original and the downgrade candidate are suitable for a downgrade. Specifically, the filtering does not take any steps to establish that the downgrade candidate can actually be installed.
 
   .. method:: duplicated()
 
-    Return a new query that limits the result only to installed packages of same name and different version. Optional argument exclude accepts a list of package names that will be excluded from result.
+    Returns a new query that limits the result only to installed packages of same name and different version. Optional argument exclude accepts a list of package names that will be excluded from result.
 
   .. method:: extras()
 
-    Return a new query that limits the result to installed packages that are not present in any repo
+    Returns a new query that limits the result to installed packages that are not present in any repo
 
   .. method:: filter(\*\*kwargs)
 
-    Return a new query limiting the original query to the key/value pairs from `kwargs`. Multiple `kwargs` can be passed, the filter then works by applying all of them together (logical AND). Values inside of list or query are cumulative (logical OR).
+    Returns a new query limiting the original query to the key/value pairs from `kwargs`. Multiple `kwargs` can be passed, the filter then works by applying all of them together (logical AND). Values inside of list or query are cumulative (logical OR).
 
     Allowed keys are:
 
@@ -139,7 +139,7 @@
 
   .. method:: installed()
 
-    Return a new query that limits the result to the installed packages only.
+    Returns a new query that limits the result to the installed packages only.
 
   .. method:: intersection(other)
 
@@ -147,7 +147,7 @@
 
   .. method:: latest(limit=1)
 
-    Return a new query that limits the result to ``limit`` highest version of packages per package
+    Returns a new query that limits the result to ``limit`` highest version of packages per package
     name and per architecture. In case the limit is negative number, it excludes the number of
     latest versions according to limit.
 
@@ -161,7 +161,7 @@
 
   .. method:: upgrades()
 
-    Return a new query that limits the result only to packages that can be upgrade candidates to at least one package in the current set. Upgrade candidate has the same name, higher EVR and the architectures of the original and the upgrade candidate package are suitable for an upgrade. Specifically, the filtering does not take any steps to establish that the upgrade candidate can actually be installed.
+    Returns a new query that limits the result only to packages that can be upgrade candidates to at least one package in the current set. Upgrade candidate has the same name, higher EVR and the architectures of the original and the upgrade candidate package are suitable for an upgrade. Specifically, the filtering does not take any steps to establish that the upgrade candidate can actually be installed.
 
 .. module:: dnf.subject
 
@@ -175,7 +175,7 @@
 
   .. method:: get_best_query(sack, with_nevra=True, with_provides=True, with_filenames=True, forms=None)
 
-    Return a :class:`~Query` yielding packages matching the given input. The result of the returned
+    Returns a :class:`~Query` yielding packages matching the given input. The result of the returned
     query can be an empty set if no package matches. `sack` is the :class:`~dnf.sack.Sack` that the
     returned query will search. `with_nevra` enable search by nevra, `with_provides` indicates
     whether besides package names also packages' provides are searched for a match, and
@@ -185,7 +185,7 @@
 
   .. method:: get_best_selector(sack, forms=None, obsoletes=True, reponame=None, reports=False)
 
-    Return a :class:`~dnf.selector.Selector` that will select a single best-matching package when
+    Returns a :class:`~dnf.selector.Selector` that will select a single best-matching package when
     used in a transaction operation. `sack` and `forms` have the same meaning as in
     :meth:`get_best_query`. If ``obsoletes``, selector will also contain packages that obsoletes
     requested packages (default is True). If ``reponame``, the selection of available packages is
@@ -194,7 +194,7 @@
 
   .. method:: get_nevra_possibilities(self, forms=None)
 
-    Return generator for every possible nevra. Each possible nevra is represented by NEVRA class
+    Returns generator for every possible nevra. Each possible nevra is represented by NEVRA class
     (libdnf) that has attributes name, epoch, version, release, arch. `forms` have the same
     meaning as in :meth:`get_best_query`.
 

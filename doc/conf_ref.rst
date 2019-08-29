@@ -314,7 +314,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 ``persistdir``
     :ref:`string <string-label>`
 
-    Directory where the data that DNF keeps track of between different runs is stored. Default is ``"/var/lib/dnf"``.
+    Directory where DNF stores its persistent data between runs. Default is ``"/var/lib/dnf"``.
 
 ``pluginconfpath``
     :ref:`list <list-label>`
@@ -385,7 +385,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     The ``nocrypto`` option will also set the ``_RPMVSF_NOSIGNATURES`` and
     ``_RPMVSF_NODIGESTS`` VS flags. The ``test`` option provides a transaction check
-    without performing the transaction. It includes download of packages, gpg keys check
+    without performing the transaction. It includes downloading of packages, gpg keys check
     (including permanent import of additional keys if necessary), and rpm check to prevent
     file conflicts.
     The ``nocaps`` is supported with rpm-4.14 or later. When ``nocaps`` is used but rpm
@@ -399,7 +399,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 ``varsdir``
     :ref:`list <list-label>`
 
-    List of directories where variable definitions files are looked for. Defaults to
+    List of directories where variables definition files are looked for. Defaults to
     ``"/etc/dnf/vars", "/etc/yum/vars"``. See :ref:`variable files <varfiles-label>`
     in Configuration reference.
 
@@ -526,7 +526,7 @@ In addition to these hard coded variables, user-defined ones can also be used. T
 
 Some options can be applied in either the main section, per repository, or in a
 combination. The value provided in the main section is used for all repositories
-as the default value and particular repositories can override it in their
+as the default value, which repositories can then override in their
 configuration.
 
 .. _bandwidth-label:
@@ -651,12 +651,12 @@ configuration.
 ``password``
     :ref:`string <string-label>`
 
-    The password to use for connecting to repo with basic HTTP authentication. Empty by default.
+    The password to use for connecting to a repository with basic HTTP authentication. Empty by default.
 
 ``proxy``
     :ref:`string <string-label>`
 
-    URL of a proxy server to connect through. Set to the empty string to disable the proxy setting inherited from the main section and use the direct connection instead. The expected format of this option is ``<scheme>://<ip-or-hostname>[:port]``.
+    URL of a proxy server to connect through. Set to an empty string to disable the proxy setting inherited from the main section and use direct connection instead. The expected format of this option is ``<scheme>://<ip-or-hostname>[:port]``.
     (For backward compatibility, '_none_' can be used instead of the empty string.)
 
     Note: The curl environment variables (such as ``http_proxy``) are effective if this option is unset. See the ``curl`` man page for details.
@@ -727,7 +727,7 @@ configuration.
 ``sslverify``
     :ref:`boolean <boolean-label>`
 
-    When enabled, remote SSL certificates are verified. If the client can not be authenticated connecting fails and the given repo is not used further. On False, SSL connections can be used but are not verified. Default is ``True``.
+    When enabled, remote SSL certificates are verified. If the client can not be authenticated, connecting fails and the repository is not used any further. If ``False``, SSL connections can be used, but certificates are not verified. Default is ``True``.
 
 .. _sslclientcert-label:
 

@@ -113,7 +113,7 @@
 
   .. method:: download_packages(pkglist, progress=None, callback_total=None)
 
-    Download packages in `pkglist` from remote repositories. Packages from local repositories or from the command line are not downloaded. `progress`, if given, should be a :class:`.DownloadProgress` and can be used by the caller to monitor the progress of the download. `callback_total` is function accepting two parameters - total size of the downloaded content in bytes and time when the download process started in seconds since the epoch. Raises :exc:`.DownloadError` if some packages failed to download.
+    Download packages in `pkglist` from remote repositories. Packages from local repositories or from the command line are not downloaded. `progress`, if given, should be a :class:`.DownloadProgress` and can be used by the caller to monitor the progress of the download. `callback_total` is a function accepting two parameters: total size of the downloaded content in bytes and time when the download process started, in seconds since the epoch. Raises :exc:`.DownloadError` if some packages failed to download.
 
   .. method:: group_install(group_id, pkg_types, exclude=None, strict=True)
 
@@ -129,7 +129,7 @@
 
   .. method:: environment_install(env_id, types, exclude=None, strict=True, exclude_groups=None)
 
-    Similar to :meth:`.group_install` but operates on environmental groups. `exclude_groups` is an iterable of group IDs that will be not marked as installed.
+    Similar to :meth:`.group_install` but operates on environmental groups. `exclude_groups` is an iterable of group IDs that will not be marked as installed.
 
   .. method:: environment_remove(env_id)
 
@@ -227,7 +227,7 @@
 
   .. method:: install_specs(install, exclude=None, reponame=None, strict=True, forms=None)
 
-    Provides unified way to mark packages, groups or modules for installation. The `install` and `exclude` argument have to be an iterable containing specifications of packages (e.g. 'dnf') or groups/modules (e.g. '\@core'). Specifications from the `exclude` list will not be marked for installation. Parameters `reponame`, `strict` and `forms` have the same meaning as in :meth:`install`. In case of errors the method raises :exc:`dnf.exceptions.MarkingErrors`.
+    Provides unified way to mark packages, groups or modules for installation. The `install` and `exclude` arguments have to be iterables containing specifications of packages (e.g. 'dnf') or groups/modules (e.g. '\@core'). Specifications from the `exclude` list will not be marked for installation. The `reponame`, `strict` and `forms` parameters have the same meaning as in :meth:`install`. In case of errors the method raises :exc:`dnf.exceptions.MarkingErrors`.
 
     Example to install two groups and a package::
 
