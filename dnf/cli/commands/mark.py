@@ -41,8 +41,8 @@ class MarkCommand(commands.Command):
     @staticmethod
     def set_argparser(parser):
         parser.add_argument('mark', nargs=1, choices=['install', 'remove', 'group'],
-                            help=_("install: mark as installed by user, "
-                                   "remove: unmark as installed by user, "
+                            help=_("install: mark as installed by user\n"
+                                   "remove: unmark as installed by user\n"
                                    "group: mark as installed by group"))
         parser.add_argument('package', nargs='+', metavar="PACKAGE",
                             help=_("Package specification"))
