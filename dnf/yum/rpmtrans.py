@@ -391,9 +391,21 @@ class RPMTransaction(object):
         scriptlet_name = rpm.tagnames.get(amount, "<unknown>")
 
         transaction_list = self._extract_cbkey(key)
-        name = transaction_list[0].pkg.name
+        pkg_currenly_being_handled = transaction_list[0].pkg
 
-        msg = ("Error in %s scriptlet in rpm package %s" % (scriptlet_name, name))
+        if hasattr(key, "name"):
+            pkg_which_owns_this_scriptlet_name = key.name
+        else:
+            pkg_which_owns_this_scriptlet_name = key
+
+        # In case rpm trigger runs scriptlet of some other package
+        if pkg_which_owns_this_scriptlet_name != pkg_currenly_being_handled.name:
+            msg = ("Error in %s scriptlet in rpm package %s triggered by rpm package %s"
+                   % (scriptlet_name, pkg_which_owns_this_scriptlet_name,
+                      pkg_currenly_being_handled))
+        else:
+            msg = ("Error in %s scriptlet in rpm package %s"
+                   % (scriptlet_name, pkg_currenly_being_handled))
 
         for display in self.displays:
             display.error(msg)
@@ -402,15 +414,29 @@ class RPMTransaction(object):
         # TODO: this doesn't fit into libdnf TransactionItem use cases
         action = dnf.transaction.PKG_SCRIPTLET
         if key is None and self._te_list == []:
-            pkg = 'None'
+            pkg_currenly_being_handled = 'None'
         else:
             transaction_list = self._extract_cbkey(key)
-            pkg = transaction_list[0].pkg
+            pkg_currenly_being_handled = transaction_list[0].pkg
         complete = self.complete_actions if self.total_actions != 0 and self.complete_actions != 0 \
             else 1
         total = self.total_actions if self.total_actions != 0 and self.complete_actions != 0 else 1
+
+        if hasattr(key, "name"):
+            pkg_which_owns_this_scriptlet_name = key.name
+        else:
+            pkg_which_owns_this_scriptlet_name = key
+
+        # In case rpm trigger runs scriptlet of some other package
+        if pkg_which_owns_this_scriptlet_name != pkg_currenly_being_handled.name:
+            # Show only the pkg name, because we don't have the full nevra
+            # and if we search for the pkg we could show misleding information
+            pkg_or_key = pkg_which_owns_this_scriptlet_name
+        else:
+            pkg_or_key = pkg_currenly_being_handled
+
         for display in self.displays:
-            display.progress(pkg, action, 100, 100, complete, total)
+            display.progress(pkg_or_key, action, 100, 100, complete, total)
 
     def _scriptStop(self):
         self._scriptout()
