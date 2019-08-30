@@ -33,11 +33,18 @@ import sys
 
 logger = logging.getLogger("dnf")
 
+class MultilineHelpFormatter(argparse.HelpFormatter):
+    def _split_lines(self, text, width):
+        if '\n' in text:
+            return text.splitlines()
+        return super(MultilineHelpFormatter, self)._split_lines(text, width)
+
 class OptionParser(argparse.ArgumentParser):
     """ArgumentParser like class to do things the "yum way"."""
 
     def __init__(self, reset_usage=True):
-        super(OptionParser, self).__init__(add_help=False)
+        super(OptionParser, self).__init__(add_help=False,
+                                           formatter_class=MultilineHelpFormatter)
         self.command_positional_parser = None
         self.command_group = None
         self._add_general_options()
