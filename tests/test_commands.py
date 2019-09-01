@@ -423,15 +423,10 @@ class RepoPkgsInfoSubCommandTest(tests.support.DnfBaseTestCase):
     def test_info_extras(self):
         """Test whether only extras installed from the repository are listed."""
         tsis = []
-        for pkg in self.base.sack.query().installed().filter(name='tour'):
+        for pkg in self.base.sack.query().installed().filter(name='test'):
             pkg._force_swdb_repoid = "main"
             self.history.rpm.add_install(pkg)
-#            tsi = dnf.transaction.TransactionItem(
-#                dnf.transaction.INSTALL,
-#                installed=pkg,
-#                reason=libdnf.transaction.TransactionItemReason_USER
-#            )
-#            tsis.append(tsi)
+
         self._swdb_commit(tsis)
 
         cmd = dnf.cli.commands.RepoPkgsCommand(self.cli)
@@ -441,8 +436,8 @@ class RepoPkgsInfoSubCommandTest(tests.support.DnfBaseTestCase):
         self.assertEqual(
             stdout.getvalue(),
             u'Extra Packages\n'
-            u'Name         : tour\n'
-            u'Version      : 5\n'
+            u'Name         : test\n'
+            u'Version      : 1\n'
             u'Release      : 0\n'
             u'Architecture : noarch\n'
             u'Size         : 0.0  \n'
