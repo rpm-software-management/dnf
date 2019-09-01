@@ -58,7 +58,7 @@ class QueriesTest(tests.support.TestCase):
 
     def test_extras(self):
         pkgs = self.sack.query().extras()
-        self.assertEqual(len(pkgs), tests.support.TOTAL_RPMDB_COUNT - 2)
+        self.assertEqual(len(pkgs), tests.support.TOTAL_RPMDB_COUNT - 4)
 
     def test_installed_exact(self):
         pkgs = self.sack.query().installed()._nevra("tour-4.9-0.noarch")
