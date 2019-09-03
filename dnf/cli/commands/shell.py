@@ -242,11 +242,10 @@ exit (or quit)           exit the shell""")
             self._help('repo')
 
     def _resolve(self, args=None):
-        if self.cli.base.transaction is None:
-            try:
-                self.cli.base.resolve(self.cli.demands.allow_erasing)
-            except dnf.exceptions.DepsolveError as e:
-                print(e)
+        try:
+            self.cli.base.resolve(self.cli.demands.allow_erasing)
+        except dnf.exceptions.DepsolveError as e:
+            print(e)
 
     def _run_script(self, file):
         try:
