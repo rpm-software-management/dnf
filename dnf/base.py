@@ -1955,7 +1955,7 @@ class Base(object):
             self._goal.upgrade(select=sltr)
             return 1
         else:
-            msg = _("Package %s of higher version already installed, "
+            msg = _("The same or higher version of %s is already installed, "
                     "cannot update it.")
             logger.warning(msg, pkg.name)
             return 0
