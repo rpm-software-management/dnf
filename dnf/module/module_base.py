@@ -214,7 +214,7 @@ class ModuleBase(object):
 
             if not upgrade_package_set:
                 logger.error(_("Unable to match profile in argument {}").format(spec))
-            query = self.base.sack.query().available().filterm(name=upgrade_package_set)
+            query = self.base.sack.query().filterm(name=upgrade_package_set)
             if query:
                 sltr = dnf.selector.Selector(self.base.sack)
                 sltr.set(pkg=query)

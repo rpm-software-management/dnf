@@ -1,5 +1,5 @@
 # default dependencies
-%global hawkey_version 0.35.4
+%global hawkey_version 0.35.5
 %global libcomps_version 0.1.8
 %global libmodulemd_version 1.4.0
 %global rpm_version 4.14.0
@@ -81,7 +81,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.2.10
+Version:        4.2.11
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING

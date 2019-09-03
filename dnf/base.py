@@ -1968,9 +1968,6 @@ class Base(object):
                 obsoletes=q.installed().union(q.upgrades()))
             # add obsoletes into transaction
             q = q.union(obsoletes)
-        # provide only available packages to solver otherwise selection of available
-        # possibilities will be ignored
-        q = q.available()
         if reponame is not None:
             q.filterm(reponame=reponame)
         q = self._merge_update_filters(q, pkg_spec=pkg_spec)
