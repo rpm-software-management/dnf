@@ -396,10 +396,11 @@ class Base(object):
                         logger.debug(_("%s: using metadata from %s."), r.id,
                                      dnf.util.normalize_time(
                                          r._repo.getMaxTimestamp()))
-                    except dnf.exceptions.RepoError:
+                    except dnf.exceptions.RepoError as e:
                         r._repo.expire()
                         if r.skip_if_unavailable is False:
                             raise
+                        logger.warning("Error: %s", e)
                         error_repos.append(r.id)
                         r.disable()
                 if error_repos:
