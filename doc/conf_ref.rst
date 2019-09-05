@@ -327,6 +327,11 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     Set this to False to disable the automatic running of ``group upgrade`` when running the ``upgrade`` command. Default is True (perform the operation).
 
+``zchunk``
+    :ref:`boolean <boolean-label>`
+
+    Enables or disables the use of repository metadata compressed using the zchunk format (if available). Default is ``True``.
+
 ==============
  Repo Options
 ==============
