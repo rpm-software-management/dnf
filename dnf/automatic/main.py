@@ -226,6 +226,11 @@ def main(args):
         with dnf.Base() as base:
             cli = dnf.cli.Cli(base)
             cli._read_conf_file()
+            # Although dnf-automatic does not use demands, the versionlock
+            # plugin uses this demand do decide whether it's rules should
+            # be applied.
+            # https://bugzilla.redhat.com/show_bug.cgi?id=1746562
+            cli.demands.resolving = True
             conf.update_baseconf(base.conf)
             base.init_plugins(cli=cli)
             logger.debug(_('Started dnf-automatic.'))
