@@ -321,7 +321,8 @@ class RPMTransaction(object):
                 modular_problems += self._test_fail_safe(hdr, tsi.pkg)
                 ts.addReinstall(hdr, tsi)
             elif tsi.action == libdnf.transaction.TransactionItemAction_REINSTALLED:
-                pass
+                # Required when multiple packages with the same NEVRA marked as installed
+                ts.addErase(tsi.pkg.idx)
             elif tsi.action == libdnf.transaction.TransactionItemAction_REMOVE:
                 ts.addErase(tsi.pkg.idx)
             elif tsi.action == libdnf.transaction.TransactionItemAction_UPGRADE:

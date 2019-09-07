@@ -620,8 +620,17 @@ class Base(object):
         for pkg in goal.list_reinstalls():
             self._ds_callback.pkg_added(pkg, 'r')
             obs = goal.obsoleted_by_package(pkg)
-            reinstalled = obs[0]
-            ts.add_reinstall(pkg, reinstalled, obs[1:])
+            nevra_pkg = str(pkg)
+            # reinstall could obsolete multiple packages with the same NEVRA or different NEVRA
+            # Set the package with the same NEVRA as reinstalled
+            obsoletes = []
+            for obs_pkg in obs:
+                if str(obs_pkg) == nevra_pkg:
+                    obsoletes.insert(0, obs_pkg)
+                else:
+                    obsoletes.append(obs_pkg)
+            reinstalled = obsoletes[0]
+            ts.add_reinstall(pkg, reinstalled, obsoletes[1:])
         for pkg in goal.list_installs():
             self._ds_callback.pkg_added(pkg, 'i')
             obs = goal.obsoleted_by_package(pkg)
