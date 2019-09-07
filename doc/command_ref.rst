@@ -1025,7 +1025,10 @@ Remove Command
     Removes the specified packages from the system along with any packages depending on the packages being removed. Each ``<spec>`` can be either a ``<package-spec>``, which specifies a package directly, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If ``clean_requirements_on_remove`` is enabled (the default), also removes any dependencies that are no longer needed.
 
 ``dnf [options] remove --duplicates``
-    Removes older version of duplicated packages.
+    Removes older versions of duplicate packages. To ensure the integrity of the system it
+    reinstalls the newest package. In some cases the command cannot resolve conflicts. In such cases
+    the :ref:`dnf shell <shell_command-label>` command with ``remove --duplicates`` and ``upgrade``
+    dnf-shell sub-commands could help.
 
 ``dnf [options] remove --oldinstallonly``
     Removes old installonly packages, keeping only ``installonly_limit`` latest versions.
