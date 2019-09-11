@@ -143,7 +143,7 @@
     argument passed effect
     =============== =================================================
     `goal=True`     drop all the current :ref:`packaging requests <package_marking-label>`
-    `repos=True`    drop the current repositries (see :attr:`.repos`). This won't
+    `repos=True`    drop the current repositories (see :attr:`.repos`). This won't
                     affect the package data already loaded into the :attr:`.sack`.
     `sack=True`     drop the current sack (see :attr:`.sack`)
     =============== =================================================

@@ -359,8 +359,8 @@ Options
     Resolve depsolve problems by removing packages that are causing problems from the transaction.
     It is an alias for the :ref:`strict <strict-label>` configuration option with value ``False``.
     Additionally, with the :ref:`enable <module_enable_command-label>` and
-    :ref:`disable <module_disable_command-label>` module subcommands it allows to perform an action even in case of broken
-    modular dependencies.
+    :ref:`disable <module_disable_command-label>` module subcommands it allows one to perform an action even in case of
+    broken modular dependencies.
 
 ``--showduplicates``
     Show duplicate packages in repositories. Applicable for the list and search commands.
@@ -415,7 +415,7 @@ Also, like in shell aliases, if the result starts with a ``\``, the alias proces
 All aliases are defined in configuration files in the ``/etc/dnf/aliases.d/`` directory in the [aliases] section,
 and aliases created by the alias command are written to the ``USER.conf`` file.
 Optionally, there is the ``enabled`` option in the ``[main]`` section defaulting to True. This can be set for each
-file separately in the respective file, or globaly for all aliases in the ``ALIASES.conf`` file.
+file separately in the respective file, or globally for all aliases in the ``ALIASES.conf`` file.
 
 ``dnf alias [options] [list] [<name>...]``
 
@@ -1292,7 +1292,7 @@ are displayed in the standard NEVRA notation.
 
 ``--recursive``
     Query packages recursively. Has to be used with ``--whatrequires <REQ>``
-    (optionaly with ``--alldeps``, but not with ``--exactdeps``) or with
+    (optionally with ``--alldeps``, but not with ``--exactdeps``) or with
     ``--requires <REQ> --resolve``.
 
 ``--resolve``
@@ -1310,7 +1310,7 @@ Display NEVRAs of all available packages matching name ``light*`` and architectu
 
     dnf repoquery-na 'light*.noarch'
 
-Display requires of all ligttpd packages::
+Display requires of all lighttpd packages::
 
     dnf repoquery --requires lighttpd
 

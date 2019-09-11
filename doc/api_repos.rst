@@ -73,7 +73,7 @@ Repository Configuration
   .. method:: add_new_repo(repoid, conf, baseurl=(), \*\*kwargs)
 
     Initialize new :class:`.Repo` object and add it to the repodict. It requires ``repoid``
-    (string), and :class:`dnf.conf.Conf` object. Optionally it can be speciffied baseurl (list), and
+    (string), and :class:`dnf.conf.Conf` object. Optionally it can be specified baseurl (list), and
     additionally key/value pairs from `kwargs` to set additional attribute of the :class:`.Repo`
     object. Variables in provided values (``baseurl`` or ``kwargs``) will be automatically
     substituted using conf.substitutions (like ``$releasever``, ...). It returns the :class:`.Repo`
