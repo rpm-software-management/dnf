@@ -1697,7 +1697,7 @@ msgstr ""
 
 #: ../dnf/cli/commands/repoquery.py:285
 msgid ""
-"Option '--recursive' has to be used with '--whatrequires <REQ>' (optionaly "
+"Option '--recursive' has to be used with '--whatrequires <REQ>' (optionally "
 "with '--alldeps', but not with '--exactdeps'), or with '--requires <REQ> --"
 "resolve'"
 msgstr ""
