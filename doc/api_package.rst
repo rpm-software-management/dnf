@@ -40,7 +40,7 @@
 
   .. attribute:: debug_name
 
-    The name of the gebug-info package (string).
+    The name of the debug-info package (string).
 
   .. attribute:: downloadsize
 
@@ -89,7 +89,7 @@
 
   .. attribute:: source_debug_name
 
-    The name of the source gebug-info package (string).
+    The name of the source debug-info package (string).
 
   .. attribute:: source_name
 

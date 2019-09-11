@@ -87,7 +87,7 @@
     PKG_REMOVE         `package` is being removed.                                                       2
     PKG_UPGRADE        `package` is being upgraded.                                                      2
     PKG_VERIFY         `package` is being verified.                                                      5
-    PKG_SCRIPTLET      `package` scriplet is being performed.                                            Anytime
+    PKG_SCRIPTLET      `package` scriptlet is being performed.                                           Anytime
     TRANS_PREPARATION  `transaction` is being prepared.                                                  1
     TRANS_POST         The post-trans phase started. In this case, all the other arguments are ``None``. 4
     ================== ================================================================================= ===========

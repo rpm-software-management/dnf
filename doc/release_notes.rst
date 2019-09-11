@@ -117,7 +117,7 @@ Bugs fixed in 4.2.6:
 - Allow globs in setopt in repoid part
 - Fix formatting of message about free space required
 - [doc] Add info of relation update_cache with fill_sack (RhBug:1658694)
-- Fix installation failiure when duplicit RPMs are specified (RhBug:1687286)
+- Fix installation failure when duplicate RPMs are specified (RhBug:1687286)
 - Add command abbreviations (RhBug:1634232)
 - Allow plugins to terminate dnf (RhBug:1701807)
 
@@ -593,7 +593,7 @@ DNF command additions in 2.3.0:
 * ``dnf [options] repoquery --nvr`` show found packages in format name-version-release.
 * ``dnf [options] repoquery --nevra`` show found packages in format name-epoch:version-release.architecture (default).
 * ``dnf [options] repoquery --envra`` show found packages in format epoch:name-version-release.architecture.
-* ``dnf [options] repoquery --recursive`` query packages recursively. Can be used with ``--whatrequires <REQ>`` (optionaly with --alldeps, but it has no effect with --exactdeps), or with ``--requires <REQ> --resolve``.
+* ``dnf [options] repoquery --recursive`` query packages recursively. Can be used with ``--whatrequires <REQ>`` (optionally with --alldeps, but it has no effect with --exactdeps), or with ``--requires <REQ> --resolve``.
 
 Bugs fixed in 2.3.0:
 
@@ -886,7 +886,7 @@ Added :meth:`dnf.rpm.basearch` method, intended for the detection of CPU base ar
 
 The :ref:`group list <grouplist_command-label>` command was enriched with ``installed`` and ``available`` switches.
 
-Documented a standard way of overriding autodetected arhitectures in :doc:`DNF API <api_conf>`.
+Documented a standard way of overriding autodetected architectures in :doc:`DNF API <api_conf>`.
 
 Bugs fixed in 1.1.7:
 
@@ -1731,7 +1731,7 @@ Bugs fixed in 0.4.10:
 0.4.9 Release Notes
 ===================
 
-Several YUM features are revived in this release. ``dnf history rollback`` now works again. The ``history userinstalled`` has been added, it displays a list of ackages that the user manually selected for installation on an installed system and does not include those packages that got installed as dependencies.
+Several YUM features are revived in this release. ``dnf history rollback`` now works again. The ``history userinstalled`` has been added, it displays a list of packages that the user manually selected for installation on an installed system and does not include those packages that got installed as dependencies.
 
 We're happy to announce that the API in 0.4.9 has been extended to finally support plugins. There is a limited set of plugin hooks now, we will carefully add new ones in the following releases. New marking operations have ben added to the API and also some configuration options.
 
@@ -1912,7 +1912,7 @@ require urlgrabber for neither build nor run.
 
 Similarly, since `librepo started to support this
 <https://github.com/Tojaj/librepo/commit/acf458f29f7234d2d8d93a68391334343beae4b9>`_,
-downloads in DNF now use the fastests mirrors available by default.
+downloads in DNF now use the fastest mirrors available by default.
 
 The option to :ref:`specify repositories' costs <repo_cost-label>` has been
 readded.
