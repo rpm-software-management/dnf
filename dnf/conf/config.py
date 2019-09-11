@@ -110,7 +110,7 @@ class BaseConfig(object):
 
     def _set_value(self, name, value, priority=PRIO_RUNTIME):
         """Set option's value if priority is equal or higher
-           than curent priority."""
+           than current priority."""
         method = getattr(self._config, name, None)
         if method is None:
             raise Exception("Option \"" + name + "\" does not exists")
@@ -213,7 +213,7 @@ class MainConf(BaseConfig):
         self.arch = hawkey.detect_arch()
         self._config.system_cachedir().set(PRIO_DEFAULT, dnf.const.SYSTEM_CACHEDIR)
 
-        # setup different cache and log for non-priviledged users
+        # setup different cache and log for non-privileged users
         if dnf.util.am_i_root():
             cachedir = dnf.const.SYSTEM_CACHEDIR
             logdir = '/var/log'

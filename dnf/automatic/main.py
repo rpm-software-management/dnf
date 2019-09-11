@@ -62,7 +62,7 @@ def build_emitters(conf):
                 emitter = dnf.automatic.emitter.CommandEmailEmitter(system_name, conf.command_email)
                 emitters.append(emitter)
             else:
-                raise dnf.exceptions.ConfigError("Unknowr emitter option: %s" % name)
+                raise dnf.exceptions.ConfigError("Unknown emitter option: %s" % name)
     return emitters
 
 

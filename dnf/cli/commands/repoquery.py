@@ -297,7 +297,7 @@ class RepoQueryCommand(commands.Command):
                         (self.opts.packageatr == "requires" and self.opts.resolve)]):
                 raise dnf.cli.CliError(
                     _("Option '--recursive' has to be used with '--whatrequires <REQ>' "
-                      "(optionaly with '--alldeps', but not with '--exactdeps'), or with "
+                      "(optionally with '--alldeps', but not with '--exactdeps'), or with "
                       "'--requires <REQ> --resolve'"))
 
         if self.opts.srpm:
@@ -621,8 +621,8 @@ class RepoQueryCommand(commands.Command):
         for x in range(0, level):
             spacing += "|   "
         requires = []
-        for reqirepkg in pkg.requires:
-            requires.append(str(reqirepkg))
+        for requirepkg in pkg.requires:
+            requires.append(str(requirepkg))
         reqstr = "[" + str(len(requires)) + ": " + ", ".join(requires) + "]"
         print(spacing + r"\_ " + pkg_string + " " + reqstr)
 

@@ -187,7 +187,7 @@ class RPMTransaction(object):
         rpm.setLogFile(self._writepipe)
 
     def _shutdownOutputLogging(self):
-        # reset rpm bits from reording output
+        # reset rpm bits from recording output
         rpm.setVerbosity(rpm.RPMLOG_NOTICE)
         rpm.setLogFile(sys.stderr)
         try:
