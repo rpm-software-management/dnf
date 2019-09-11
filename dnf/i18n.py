@@ -145,7 +145,7 @@ def ucd(obj):
         return dnf.pycomp.unicode(str(obj), _guess_encoding(), errors='ignore')
 
 
-# functions for formating output according to terminal width,
+# functions for formatting output according to terminal width,
 # They should be used instead of build-in functions to count on different
 # widths of Unicode characters
 

@@ -310,7 +310,7 @@ class BaseCli(dnf.Base):
         return chlogs
 
     def format_changelog(self, changelog):
-        """Return changelog formated as in spec file"""
+        """Return changelog formatted as in spec file"""
         chlog_str = '* %s %s\n%s\n' % (
             changelog['timestamp'].strftime("%a %b %d %X %Y"),
             dnf.i18n.ucd(changelog['author']),
@@ -321,7 +321,7 @@ class BaseCli(dnf.Base):
         # group packages by src.rpm to avoid showing duplicate changelogs
         bysrpm = dict()
         for p in packages:
-            # there are packeges without source_name, use name then.
+            # there are packages without source_name, use name then.
             bysrpm.setdefault(p.source_name or p.name, []).append(p)
         for source_name in sorted(bysrpm.keys()):
             bin_packages = bysrpm[source_name]

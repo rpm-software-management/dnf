@@ -250,7 +250,7 @@ class RepoListCommand(commands.Command):
                 print("\n" + "\n".join(map(ucd, out)))
 
         if not verbose and cols:
-            #  Work out the first (id) and last (enabled/disalbed/count),
+            #  Work out the first (id) and last (enabled/disabled/count),
             # then chop the middle (name)...
             id_len = exact_width(_('repo id'))
             nm_len = 0

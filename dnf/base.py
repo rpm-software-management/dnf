@@ -784,7 +784,7 @@ class Base(object):
             [dnf.yum.rpmtrans.LoggingTransactionDisplay()] + list(display)
 
         if not self.transaction:
-            # packages are not changed, but comps and modules changes need to be commited
+            # packages are not changed, but comps and modules changes need to be committed
             self._moduleContainer.save()
             self._moduleContainer.updateFailSafeData()
             if self._history and (self._history.group or self._history.env):
@@ -975,7 +975,7 @@ class Base(object):
             pass
         elif len(errors) == 0:
             # If there is no failing element it means that some "global" error
-            # occured (like rpm failed to obtain the transaction lock). Just pass
+            # occurred (like rpm failed to obtain the transaction lock). Just pass
             # the rpm logs on to the user and raise an Error.
             # If there are failing elements the problem is related to those
             # elements and the Error is raised later, after saving the failure
@@ -2171,7 +2171,7 @@ class Base(object):
         if providers:
             return providers, [provides_spec]
         if provides_spec.startswith('/bin/') or provides_spec.startswith('/sbin/'):
-            # compatibility for packages thad didn't do UsrMove
+            # compatibility for packages that didn't do UsrMove
             binary_provides = ['/usr' + provides_spec]
         elif provides_spec.startswith('/'):
             # provides_spec is a file path

@@ -390,7 +390,7 @@ class Output(object):
            e.g. an indent
         :param highlight: highlighting options for the name of the
            package
-        :param colums: tuple containing the space allocated for each
+        :param columns: tuple containing the space allocated for each
            column of output.  The columns are the package name, version,
            and repository
         """
@@ -413,7 +413,7 @@ class Output(object):
            e.g. an indent
         :param highlight: highlighting options for the name of the
            package
-        :param colums: tuple containing the space allocated for each
+        :param columns: tuple containing the space allocated for each
            column of output.  The columns the are the package envra and
            repository
         """
@@ -458,7 +458,7 @@ class Output(object):
 
     def fmtSection(self, name, fill='='):
         """Format and return a section header.  The format of the
-        header is a line with *name* centred, and *fill* repeated on
+        header is a line with *name* centered, and *fill* repeated on
         either side to fill an entire line on the terminal.
 
         :param name: the name of the section
@@ -481,7 +481,7 @@ class Output(object):
         """Print information about the given package.
 
         :param pkg: the package to print information about
-        :param hightlight: highlighting options for the name of the
+        :param highlight: highlighting options for the name of the
            package
         """
         def format_key_val(key, val):
@@ -1602,7 +1602,7 @@ Transaction Summary
         return (btid, etid)
 
     def _historyRangeTIDs(self, rtids):
-        ''' Convert a list of ranged tid typles into all the tids needed, Eg.
+        ''' Convert a list of ranged tid tuples into all the tids needed, Eg.
             [(2,4), (6,8)] == [2, 3, 4, 6, 7, 8]. '''
         tids = set()
         last_end = -1 # This just makes displaying it easier...

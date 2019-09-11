@@ -160,7 +160,7 @@ class UpdateInfoCommand(commands.Command):
             return True
         return False
 
-    def _apackage_advisory_installeds(self, pkgs_query, cmptype, specs):
+    def _apackage_advisory_installed(self, pkgs_query, cmptype, specs):
         """Return (adv. package, advisory, installed) triplets."""
         specs_types = set()
         specs_patterns = set()
@@ -205,22 +205,22 @@ class UpdateInfoCommand(commands.Command):
 
     def available_apkg_adv_insts(self, specs):
         """Return available (adv. package, adv., inst.) triplets"""
-        return self._apackage_advisory_installeds(
+        return self._apackage_advisory_installed(
             self.base.sack.query().installed(), hawkey.GT, specs)
 
     def installed_apkg_adv_insts(self, specs):
         """Return installed (adv. package, adv., inst.) triplets"""
-        return self._apackage_advisory_installeds(
+        return self._apackage_advisory_installed(
             self.base.sack.query().installed(), hawkey.LT | hawkey.EQ, specs)
 
     def updating_apkg_adv_insts(self, specs):
         """Return updating (adv. package, adv., inst.) triplets"""
-        return self._apackage_advisory_installeds(
+        return self._apackage_advisory_installed(
             self.base.sack.query().filterm(upgradable=True), hawkey.GT, specs)
 
     def all_apkg_adv_insts(self, specs):
         """Return installed (adv. package, adv., inst.) triplets"""
-        return self._apackage_advisory_installeds(
+        return self._apackage_advisory_installed(
             self.base.sack.query().installed(), hawkey.LT | hawkey.EQ | hawkey.GT, specs)
 
     def _summary(self, apkg_adv_insts):

@@ -212,7 +212,7 @@ class GenericHolder(object):
         return self
 
 def procgpgkey(rawkey):
-    '''Convert ASCII armoured GPG key to binary
+    '''Convert ASCII-armored GPG key to binary
     '''
 
     # Normalise newlines

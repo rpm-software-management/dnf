@@ -425,7 +425,7 @@ class ModuleBase(object):
                 output.add(self._create_simple_table(lines).toString())
         return "\n\n".join(sorted(output))
 
-    def _profile_report_formater(self, modulePackage, default_profiles, enabled_str):
+    def _profile_report_formatter(self, modulePackage, default_profiles, enabled_str):
         installed_profiles = self.base._moduleContainer.getInstalledProfiles(
             modulePackage.getName())
         available_profiles = modulePackage.getProfiles()
@@ -437,7 +437,7 @@ class ModuleBase(object):
                 else ", "
         return profiles_str[:-2]
 
-    def _module_strs_formater(self, modulePackage, markActive=False):
+    def _module_strs_formatter(self, modulePackage, markActive=False):
         default_str = ""
         enabled_str = ""
         disabled_str = ""
@@ -470,12 +470,12 @@ class ModuleBase(object):
                 logger.info(_("Ignoring unnecessary profile: '{}/{}'").format(
                     nsvcap.name, nsvcap.profile))
             for modulePackage in module_list:
-                default_str, enabled_str, disabled_str = self._module_strs_formater(
+                default_str, enabled_str, disabled_str = self._module_strs_formatter(
                     modulePackage, markActive=True)
                 default_profiles = self.base._moduleContainer.getDefaultProfiles(
                     modulePackage.getName(), modulePackage.getStream())
 
-                profiles_str = self._profile_report_formater(
+                profiles_str = self._profile_report_formatter(
                     modulePackage, default_profiles, enabled_str)
 
                 lines = OrderedDict()
@@ -597,11 +597,11 @@ class ModuleBase(object):
                     else:
                         modulePackage = nameStreamArch[0]
                 line = table.newLine()
-                default_str, enabled_str, disabled_str = self._module_strs_formater(
+                default_str, enabled_str, disabled_str = self._module_strs_formatter(
                     modulePackage, markActive=False)
                 default_profiles = self.base._moduleContainer.getDefaultProfiles(
                     modulePackage.getName(), modulePackage.getStream())
-                profiles_str = self._profile_report_formater(modulePackage, default_profiles,
+                profiles_str = self._profile_report_formatter(modulePackage, default_profiles,
                                                              enabled_str)
                 line.getColumnCell(column_name).setData(modulePackage.getName())
                 line.getColumnCell(
