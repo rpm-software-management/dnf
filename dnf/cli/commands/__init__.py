@@ -1003,9 +1003,10 @@ class HistoryCommand(Command):
     def run(self):
         vcmd = self.opts.transactions_action
 
-        if vcmd == 'list':
+        ret = None
+        if vcmd == 'list' and (self.transaction_ids or not self.opts.transactions):
             ret = self.output.historyListCmd(self.transaction_ids)
-        elif vcmd == 'info':
+        elif vcmd == 'info' and (self.transaction_ids or not self.opts.transactions):
             ret = self.output.historyInfoCmd(self.transaction_ids, self.opts.transactions,
                                              self.merged_transaction_ids)
         elif vcmd == 'undo':
