@@ -1648,12 +1648,6 @@ Transaction Summary
         transactions.
 
         :param extcmds: list of extra command line arguments
-        :return: (exit_code, [errors])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
         """
         tids = self._history_list_transactions(extcmds)
         if tids is not None:
@@ -1716,18 +1710,13 @@ Transaction Summary
         """Output information about a transaction in history
 
         :param extcmds: list of extra command line arguments
-        :return: (exit_code, [errors])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
+        :raises dnf.exceptions.Error in case no transactions were found
         """
         tids = set(extcmds)
         old = self.history.last()
         if old is None:
             logger.critical(_('No transactions'))
-            return 1, [_('Failed history info')]
+            raise dnf.exceptions.Error(_('Failed history info'))
 
         lasttid = old.tid
         lastdbv = old.end_rpmdb_version
@@ -1743,7 +1732,7 @@ Transaction Summary
 
         if not tids:
             logger.critical(_('No transaction ID, or package, given'))
-            return 1, [_('Failed history info')]
+            raise dnf.exceptions.Error(_('Failed history info'))
 
         bmtid, emtid = -1, -1
         mobj = None
