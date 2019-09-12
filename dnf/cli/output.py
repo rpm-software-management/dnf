@@ -1564,96 +1564,12 @@ Transaction Summary
         except KeyError:
             return ucd(uid)
 
-    @staticmethod
-    def _historyRangeRTIDs(old, tid):
-        ''' Convert a user "TID" string of 2..4 into: (2, 4). '''
-        def str2int(x):
-            try:
-                if x == '--last' or x.startswith('--last-'):
-                    tid = old.tid
-                    if x.startswith('--last-'):
-                        off = int(x[len('--last-'):])
-                        if off <= 0:
-                            int("z")
-                        tid -= off
-                    return tid
-                return int(x)
-            except ValueError:
-                return None
-
-        if '..' not in tid:
-            return None
-        btid, etid = tid.split('..', 2)
-        btid = str2int(btid)
-        if btid > old.tid:
-            return None
-        elif btid <= 0:
-            return None
-        etid = str2int(etid)
-        if etid > old.tid:
-            return None
-
-        if btid is None or etid is None:
-            return None
-
-        # Have a range ... do a "merged" transaction.
-        if btid > etid:
-            btid, etid = etid, btid
-        return (btid, etid)
-
-    def _historyRangeTIDs(self, rtids):
-        ''' Convert a list of ranged tid tuples into all the tids needed, Eg.
-            [(2,4), (6,8)] == [2, 3, 4, 6, 7, 8]. '''
-        tids = set()
-        last_end = -1 # This just makes displaying it easier...
-        for mtid in sorted(rtids):
-            if mtid[0] < last_end:
-                msg = _('Skipping merged transaction %d to %d, as it overlaps')
-                logger.warning(msg, mtid[0], mtid[1])
-                continue # Don't do overlapping
-            last_end = mtid[1]
-            for num in range(mtid[0], mtid[1] + 1):
-                tids.add(num)
-        return tids
-
-    def _history_list_transactions(self, extcmds):
-        old = self.history.last()
-        if old is None:
-            logger.critical(_('No transactions'))
-            return None
-
-        tids = set()
-        pats = []
-        usertids = extcmds
-        for tid in usertids:
-            try:
-                int(tid)
-                tids.add(tid)
-            except ValueError:
-                rtid = self._historyRangeRTIDs(old, tid)
-                if rtid:
-                    tids.update(self._historyRangeTIDs([rtid]))
-                    continue
-                pats.append(tid)
-        if pats:
-            tids.update(self.history.search(pats))
-
-        if not tids and usertids:
-            logger.critical(_('Bad transaction IDs, or package(s), given'))
-            return None
-        return tids
-
-    def historyListCmd(self, extcmds):
+    def historyListCmd(self, tids):
         """Output a list of information about the history of yum
         transactions.
 
-        :param extcmds: list of extra command line arguments
+        :param tids: transaction Ids; lists all transactions if empty
         """
-        tids = self._history_list_transactions(extcmds)
-
-        if tids is None:
-            return
-
         transactions = self.history.old(tids)
         if self.conf.history_list_view == 'users':
             uids = [1, 2]
@@ -1709,13 +1625,13 @@ Transaction Summary
                 lmark = '>'
             print(fmt % (transaction.tid, name, tm, uiacts, num), "%s%s" % (lmark, rmark))
 
-    def historyInfoCmd(self, extcmds, pats=[], mtids=set()):
+    def historyInfoCmd(self, tids, pats=[], mtids=set()):
         """Output information about a transaction in history
 
-        :param extcmds: list of extra command line arguments
+        :param tids: transaction Ids; prints info for the last transaction if empty
         :raises dnf.exceptions.Error in case no transactions were found
         """
-        tids = set(extcmds)
+        tids = set(tids)
         last = self.history.last()
         if last is None:
             logger.critical(_('No transactions'))
@@ -1725,7 +1641,7 @@ Transaction Summary
         lastdbv = last.end_rpmdb_version
 
         transactions = []
-        if not tids and len(extcmds) < 2:
+        if not tids:
             last = self.history.last(complete_transactions_only=False)
             if last is not None:
                 tids.add(last.tid)
