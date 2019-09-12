@@ -1654,7 +1654,7 @@ Transaction Summary
         if tids is None:
             return
 
-        old_tids = self.history.old(tids)
+        transactions = self.history.old(tids)
         if self.conf.history_list_view == 'users':
             uids = [1, 2]
         elif self.conf.history_list_view == 'commands':
@@ -1664,11 +1664,11 @@ Transaction Summary
             uids = set()
             done = 0
             blanks = 0
-            for old in old_tids:
+            for transaction in transactions:
                 done += 1
-                if old.cmdline is None:
+                if transaction.cmdline is None:
                     blanks += 1
-                uids.add(old.loginuid)
+                uids.add(transaction.loginuid)
 
         fmt = "%s | %s | %s | %s | %s"
         if len(uids) == 1:
@@ -1684,30 +1684,30 @@ Transaction Summary
         print("-" * 79)
         fmt = "%6u | %s | %-16.16s | %s | %4u"
 
-        for old in old_tids:
+        for transaction in transactions:
             if len(uids) == 1:
-                name = old.cmdline or ''
+                name = transaction.cmdline or ''
             else:
-                name = self._pwd_ui_username(old.loginuid, 24)
+                name = self._pwd_ui_username(transaction.loginuid, 24)
             name = ucd(name)
             tm = time.strftime("%Y-%m-%d %H:%M",
-                               time.localtime(old.beg_timestamp))
-            num, uiacts = self._history_uiactions(old.data())
+                               time.localtime(transaction.beg_timestamp))
+            num, uiacts = self._history_uiactions(transaction.data())
             name = fill_exact_width(name, 24, 24)
             uiacts = fill_exact_width(uiacts, 14, 14)
             rmark = lmark = ' '
-            if old.return_code is None:
+            if transaction.return_code is None:
                 rmark = lmark = '*'
-            elif old.return_code:
+            elif transaction.return_code:
                 rmark = lmark = '#'
                 # We don't check .errors, because return_code will be non-0
-            elif old.is_output:
+            elif transaction.is_output:
                 rmark = lmark = 'E'
-            if old.altered_lt_rpmdb:
+            if transaction.altered_lt_rpmdb:
                 rmark = '<'
-            if old.altered_gt_rpmdb:
+            if transaction.altered_gt_rpmdb:
                 lmark = '>'
-            print(fmt % (old.tid, name, tm, uiacts, num), "%s%s" % (lmark, rmark))
+            print(fmt % (transaction.tid, name, tm, uiacts, num), "%s%s" % (lmark, rmark))
 
     def historyInfoCmd(self, extcmds, pats=[], mtids=set()):
         """Output information about a transaction in history
@@ -1716,20 +1716,20 @@ Transaction Summary
         :raises dnf.exceptions.Error in case no transactions were found
         """
         tids = set(extcmds)
-        old = self.history.last()
-        if old is None:
+        last = self.history.last()
+        if last is None:
             logger.critical(_('No transactions'))
             raise dnf.exceptions.Error(_('Failed history info'))
 
-        lasttid = old.tid
-        lastdbv = old.end_rpmdb_version
+        lasttid = last.tid
+        lastdbv = last.end_rpmdb_version
 
         transactions = []
         if not tids and len(extcmds) < 2:
-            old = self.history.last(complete_transactions_only=False)
-            if old is not None:
-                tids.add(old.tid)
-                transactions.append(old)
+            last = self.history.last(complete_transactions_only=False)
+            if last is not None:
+                tids.add(last.tid)
+                transactions.append(last)
         else:
             transactions = self.history.old(tids)
 
