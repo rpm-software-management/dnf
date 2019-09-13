@@ -2365,9 +2365,14 @@ class Base(object):
 
                 # Import the key
                 # If rpm.RPMTRANS_FLAG_TEST in self._ts, gpg keys cannot be imported successfully
-                # therefore the new instance of dnf.rpm.transaction.TransactionWrapper is used'
-                ts_import_instance = dnf.rpm.transaction.TransactionWrapper(self.conf.installroot)
-                result = ts_import_instance.pgpImportPubkey(misc.procgpgkey(info.raw_key))
+                # therefore the flag was removed for import operation
+                test_flag = self._ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST)
+                if test_flag:
+                    orig_flags = self._ts.getTsFlags()
+                    self._ts.setFlags(orig_flags - rpm.RPMTRANS_FLAG_TEST)
+                result = self._ts.pgpImportPubkey(misc.procgpgkey(info.raw_key))
+                if test_flag:
+                    self._ts.setFlags(orig_flags)
                 if result != 0:
                     msg = _('Key import failed (code %d)') % result
                     raise dnf.exceptions.Error(_prov_key_data(msg))
