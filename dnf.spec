@@ -326,6 +326,13 @@ mv %{buildroot}%{_bindir}/dnf-automatic-2 %{buildroot}%{_bindir}/dnf-automatic
 %endif
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
+# Strict conf distribution
+%if 0%{?rhel}
+mv -f %{buildroot}%{confdir}/%{name}-strict.conf %{buildroot}%{confdir}/%{name}.conf
+%else
+rm -vf %{buildroot}%{confdir}/%{name}-strict.conf
+%endif
+
 # YUM compat layer
 ln -sr  %{buildroot}%{confdir}/%{name}.conf %{buildroot}%{_sysconfdir}/yum.conf
 %if %{with python3}
