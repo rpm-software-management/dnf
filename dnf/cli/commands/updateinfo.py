@@ -203,10 +203,22 @@ class UpdateInfoCommand(commands.Command):
                 installed = self._newer_equal_installed(apackage)
                 yield apackage, advisory, installed
 
+    def running_kernel_pkgs(self):
+        """Return query containing packages of currently running kernel"""
+        sack = self.base.sack
+        q = sack.query().filterm(empty=True)
+        kernel = sack.get_running_kernel()
+        if kernel:
+            q = q.union(sack.query().filterm(sourcerpm=kernel.sourcerpm))
+        return q
+
     def available_apkg_adv_insts(self, specs):
         """Return available (adv. package, adv., inst.) triplets"""
-        return self._apackage_advisory_installed(
-            self.base.sack.query().installed(), hawkey.GT, specs)
+        # check advisories for the latest installed packages
+        q = self.base.sack.query().installed().latest(1)
+        # plus packages of the running kernel
+        q = q.union(self.running_kernel_pkgs().installed())
+        return self._apackage_advisory_installed(q, hawkey.GT, specs)
 
     def installed_apkg_adv_insts(self, specs):
         """Return installed (adv. package, adv., inst.) triplets"""
