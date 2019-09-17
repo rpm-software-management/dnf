@@ -1524,6 +1524,11 @@ Updateinfo Command
     cases when an advisory refers to a newer version but there is no enabled
     repository which contains any newer version.
 
+    Note, that ``--available`` tooks only the latest installed versions of
+    packages into account. In case of the kernel packages (when multiple
+    version could be installed simultaneously) also packages of the currently
+    running version of kernel are added.
+
     If given and if neither ID, type (``bugfix``, ``enhancement``,
     ``security``/``sec``) nor a package name of an advisory matches
     ``<spec>``, the advisory is not taken into account. The matching is
