@@ -36,8 +36,6 @@ def checkSig(ts, package):
     try:
         hdr = ts.hdrFromFdno(fdno)
     except rpm.error as e:
-        if str(e) == "public key not availaiable":
-            value = 1
         if str(e) == "public key not available":
             value = 1
         if str(e) == "public key not trusted":
