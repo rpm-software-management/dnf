@@ -19,6 +19,40 @@
  DNF Release Notes
 ###################
 
+====================
+4.2.11 Release Notes
+====================
+
+- Improve modularity documentation (RhBug:1730162,1730162,1730807,1734081)
+- Fix detection whether system is running on battery (used by metadata caching timer) (RhBug:1498680)
+- New repoquery queryformat: %{reason}
+- Print rpm errors during test transaction (RhBug:1730348) 
+- Fix: --setopt and repo with dots
+- Fix incorrectly marked profile and stream after failed rpm transaction check (RhBug:1719679)
+- Show transaction errors inside dnf shell (RhBug:1743644)
+- Don't reinstall modified packages with the same NEVRA (RhBug:1644241)
+- dnf-automatic now respects versionlock excludes (RhBug:1746562)
+
+Bugs fixed in 4.2.11:
+
+* :rhbug:`1498680`
+* :rhbug:`1730348`
+* :rhbug:`1719679`
+* :rhbug:`1601741`
+* :rhbug:`1665636`
+* :rhbug:`1739457`
+* :rhbug:`1715807`
+* :rhbug:`1734081`
+* :rhbug:`1739773`
+* :rhbug:`1730807`
+* :rhbug:`1728252`
+* :rhbug:`1746562`
+* :rhbug:`1730162`
+* :rhbug:`1743644`
+* :rhbug:`1737201`
+* :rhbug:`1689645`
+* :rhbug:`1741381`
+
 ===================
 4.2.9 Release Notes
 ===================

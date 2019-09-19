@@ -503,6 +503,17 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Thu Sep 19 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.2.11-1
+- Improve modularity documentation (RhBug:1730162,1730162,1730807,1734081)
+- Fix detection whether system is running on battery (used by metadata caching timer) (RhBug:1498680)
+- New repoquery queryformat: %{reason}
+- Print rpm errors during test transaction (RhBug:1730348) 
+- Fix: --setopt and repo with dots
+- Fix incorrectly marked profile and stream after failed rpm transaction check (RhBug:1719679)
+- Show transaction errors inside dnf shell (RhBug:1743644)
+- Don't reinstall modified packages with the same NEVRA (RhBug:1644241)
+- dnf-automatic now respects versionlock excludes (RhBug:1746562)
+
 * Tue Aug 13 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.2.9-1
 - Prevent printing empty Error Summary (RhBug: 1690414)
 - [doc] Add user_agent and countme options

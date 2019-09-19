@@ -2818,5 +2818,73 @@
     [
         1709453,
         "Re-emergence of a old (unreported?) bug: Modular dependency problems"
+    ],
+    [
+        1498680,
+        "dnf makecache timer is confused about batteries"
+    ],
+    [
+        1730348,
+        "installroot fails with no info when run under fakeroot"
+    ],
+    [
+        1719679,
+        "Module is marked as installed even if the rpm transaction check failed"
+    ],
+    [
+        1601741,
+        "[ja] \"dnf updateinfo info\" not formatted well in Japanese"
+    ],
+    [
+        1665636,
+        "dnf history userinstalled doesn't account packages which are installed after question if it should be installed"
+    ],
+    [
+        1739457,
+        "double logging"
+    ],
+    [
+        1715807,
+        "man page dnf.conf weak about proxy settings and other proxy issues"
+    ],
+    [
+        1734081,
+        "No way to ignore \"is excluded\" packages"
+    ],
+    [
+        1739773,
+        "Wrong behavior using dnf update for downloaded package"
+    ],
+    [
+        1730807,
+        "Behavior of dnf module remove"
+    ],
+    [
+        1728252,
+        "dnf should not take buildtime into account when upgrading packages"
+    ],
+    [
+        1746562,
+        "dnf-automatic (and dnf list) ignores versionlock"
+    ],
+    [
+        1730162,
+        "\"dnf module reset\" will clear the \"install\" information"
+    ],
+    [
+        1743644,
+        "dnf shell failes to commit transaction?"
+    ],
+    [
+        1737201,
+        "man dnf.conf has no mention of 'zchunk=True|False' option"
+    ],
+    [
+        1689645,
+        "Out of date manual for dnf download"
+    ],
+    [
+        1741381,
+        "DNF wants to remove kernel-core"
     ]
 ]
