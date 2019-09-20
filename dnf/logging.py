@@ -169,6 +169,9 @@ class Logging(object):
         # put the marker in the file now:
         _paint_mark(logger_dnf)
 
+        logger_dnf_no_stderr = logging.getLogger("dnf_no_stderr")
+        logger_dnf_no_stderr.addHandler(handler)
+
         # setup Python warnings
         logging.captureWarnings(True)
         logger_warnings = logging.getLogger("py.warnings")
