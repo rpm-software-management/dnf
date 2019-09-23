@@ -1248,6 +1248,7 @@ class Output(object):
         if not self.conf.best and self.base._goal.actions & forward_actions:
             lines = []
             skipped_conflicts, skipped_broken = self._skipped_packages(report_problems=True)
+            skipped_broken = dict((str(pkg), pkg) for pkg in skipped_broken)
             for pkg in sorted(skipped_conflicts):
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
             recommendations = ["--best"]
@@ -1259,7 +1260,7 @@ class Output(object):
             pkglist_lines.append((skip_str, lines))
 
             lines = []
-            for pkg in sorted(skipped_broken):
+            for nevra, pkg in sorted(skipped_broken.items()):
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
             skip_str = _("Skipping packages with broken dependencies%s")
             if self.base.conf.upgrade_group_objects_upgrade:
