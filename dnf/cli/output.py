@@ -1072,7 +1072,7 @@ class Output(object):
         problem_dependency = set(ng.problem_broken_dependency(available=True)) - problem_conflicts
         return problem_conflicts, problem_dependency
 
-    def list_transaction(self, transaction):
+    def list_transaction(self, transaction, total_width=None):
         """Return a string representation of the transaction in an
         easy-to-read format.
         """
@@ -1281,7 +1281,7 @@ class Output(object):
             data = [data['n'], {}, data['v'], data['r'], {}]
             columns = [1, a_wid, 1, 1, 5]
             columns = self.calcColumns(data, indent="  ", columns=columns,
-                                       remainder_column=2)
+                                       remainder_column=2, total_width=total_width)
             (n_wid, a_wid, v_wid, r_wid, s_wid) = columns
 
             # Do not use 'Package' without context. Using context resolves
