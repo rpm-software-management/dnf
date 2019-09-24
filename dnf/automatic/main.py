@@ -251,7 +251,7 @@ def main(args):
             if not trans:
                 return 0
 
-            lst = output.list_transaction(trans)
+            lst = output.list_transaction(trans, total_width=80)
             emitters = build_emitters(conf)
             emitters.notify_available(lst)
             if not conf.commands.download_updates:
