@@ -905,8 +905,8 @@ class Base(object):
             summary += _('Disk Requirements:') + "\n"
             for k in disk:
                 summary += "   " + P_(
-                    'At least %dMB more space needed on the %s filesystem.',
-                    'At least %dMB more space needed on the %s filesystem.',
+                    'At least %sMB more space needed on the %s filesystem.',
+                    'At least %sMB more space needed on the %s filesystem.',
                     disk[k]) % (disk[k], k) + '\n'
 
         if not summary:
