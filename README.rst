@@ -1,5 +1,5 @@
 ###############
- Dandified YUM
+ Improve Dandified YUM
 ###############
 
 .. image:: https://raw.githubusercontent.com/rpm-software-management/dnf/gh-pages/logos/DNF_logo.png
