@@ -39,22 +39,24 @@ class Substitutions(dict):
             if ENVIRONMENT_VARS_RE.match(key) or key in numericvars:
                 self[key] = val
 
-    def update_from_etc(self, installroot):
+    def update_from_etc(self, installroot, varsdir=("/etc/yum/vars/", "/etc/dnf/vars/")):
         # :api
-        fsvars = []
-        try:
-            dir_fsvars = os.path.join(installroot, "etc/dnf/vars/")
-            fsvars = os.listdir(dir_fsvars)
-        except OSError:
-            pass
-        for fsvar in fsvars:
-            filepath = os.path.join(dir_fsvars, fsvar)
-            if os.path.isfile(filepath):
-                try:
-                    with open(filepath) as fp:
-                        val = fp.readline()
-                    if val and val[-1] == '\n':
-                        val = val[:-1]
-                except (OSError, IOError):
-                    continue
-            self[fsvar] = val
+
+        for vars_path in varsdir:
+            fsvars = []
+            try:
+                dir_fsvars = os.path.join(installroot, vars_path.lstrip('/'))
+                fsvars = os.listdir(dir_fsvars)
+            except OSError:
+                continue
+            for fsvar in fsvars:
+                filepath = os.path.join(dir_fsvars, fsvar)
+                if os.path.isfile(filepath):
+                    try:
+                        with open(filepath) as fp:
+                            val = fp.readline()
+                        if val and val[-1] == '\n':
+                            val = val[:-1]
+                    except (OSError, IOError):
+                        continue
+                self[fsvar] = val
