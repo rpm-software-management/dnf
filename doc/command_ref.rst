@@ -243,6 +243,12 @@ Options
   ``--setopt=reposdir=<reposdir>`` for *reposdir*) then this path is always
   relative to the host with no exceptions.
 
+- *vars* are taken from the host system or installroot according to :ref:`reposdir <reposdir-label>`
+  . When *reposdir* path is specified within a command line argument, vars are taken from the
+  installroot. When :ref:`varsdir <varsdir_options-label>` paths are specified within a command line
+  argument (``--setopt=varsdir=<reposdir>``) then those path are always relative to the host with no
+  exceptions.
+
 - The *pluginpath* and *pluginconfpath* are relative to the host.
 
  Note: You may also want to use the command-line option
