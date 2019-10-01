@@ -244,23 +244,30 @@ class MainConf(BaseConfig):
         return myrepodir
 
     def _search_inside_installroot(self, optname):
+        """
+        Return root used as prefix for option (installroot or "/"). When specified from commandline
+        it returns value from conf.installroot
+        """
         prio = self._get_priority(optname)
         # dont modify paths specified on commandline
+        installroot = self._get_value('installroot')
         if prio >= PRIO_COMMANDLINE:
-            return
+            return installroot
         val = self._get_value(optname)
         # if it exists inside installroot use it (i.e. adjust configuration)
         # for lists any component counts
         if not isinstance(val, str):
-            if any(os.path.exists(os.path.join(self._get_value('installroot'),
-                                               p.lstrip('/'))) for p in val):
+            if any(os.path.exists(os.path.join(installroot, p.lstrip('/'))) for p in val):
                 self._set_value(
                     optname,
                     libdnf.conf.VectorString([self._prepend_installroot_path(p) for p in val]),
                     prio
                 )
-        elif os.path.exists(os.path.join(self._get_value('installroot'), val.lstrip('/'))):
+                return installroot
+        elif os.path.exists(os.path.join(installroot, val.lstrip('/'))):
             self._set_value(optname, self._prepend_installroot_path(val), prio)
+            return installroot
+        return "/"
 
     def prepend_installroot(self, optname):
         # :api
