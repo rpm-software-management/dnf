@@ -248,9 +248,11 @@ class MainConf(BaseConfig):
         Return root used as prefix for option (installroot or "/"). When specified from commandline
         it returns value from conf.installroot
         """
-        prio = self._get_priority(optname)
-        # dont modify paths specified on commandline
         installroot = self._get_value('installroot')
+        if installroot == "/":
+            return installroot
+        prio = self._get_priority(optname)
+        # don't modify paths specified on commandline
         if prio >= PRIO_COMMANDLINE:
             return installroot
         val = self._get_value(optname)
