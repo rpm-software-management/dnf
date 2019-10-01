@@ -1013,8 +1013,10 @@ class Cli(object):
         # search reposdir file inside the installroot first
         from_root = conf._search_inside_installroot('reposdir')
         # Update vars from same root like repos were taken
+        if conf._get_priority('varsdir') == dnf.conf.PRIO_COMMANDLINE:
+            from_root = "/"
         subst = conf.substitutions
-        subst.update_from_etc(from_root)
+        subst.update_from_etc(from_root, varsdir=conf._get_value('varsdir'))
         # cachedir, logs, releasever, and gpgkey are taken from or stored in installroot
         if releasever is None and conf.releasever is None:
             releasever = dnf.rpm.detect_releasever(conf.installroot)
