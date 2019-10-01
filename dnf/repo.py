@@ -325,6 +325,7 @@ class MDPayload(dnf.callback.Payload):
         self._text = ""
         self._download_size = 0
         self.fastest_mirror_running = False
+        self.mirror_failures = set()
 
     def __str__(self):
         if dnf.pycomp.PY3:
@@ -352,6 +353,7 @@ class MDPayload(dnf.callback.Payload):
         self.progress.message(msg)
 
     def _mirror_failure_cb(self, cbdata, msg, url, metadata):
+        self.mirror_failures.add(msg)
         msg = 'error: %s (%s).' % (msg, url)
         logger.debug(msg)
 
@@ -570,7 +572,14 @@ class Repo(dnf.conf.RepoConf):
         try:
             ret = self._repo.load()
         except RuntimeError as e:
+            if self._md_pload.mirror_failures:
+                msg = "Errors during downloading metadata for repository '%s':" % self.id
+                for failure in self._md_pload.mirror_failures:
+                    msg += "\n  - %s" % failure
+                logger.warning(msg)
             raise dnf.exceptions.RepoError(str(e))
+        finally:
+            self._md_pload.mirror_failures = set()
         self.metadata = Metadata(self._repo)
         return ret
 
