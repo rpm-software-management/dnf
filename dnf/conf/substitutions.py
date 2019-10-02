@@ -36,7 +36,9 @@ class Substitutions(dict):
     def _update_from_env(self):
         numericvars = ['DNF%d' % num for num in range(0, 10)]
         for key, val in os.environ.items():
-            if ENVIRONMENT_VARS_RE.match(key) or key in numericvars:
+            if ENVIRONMENT_VARS_RE.match(key):
+                self[key[8:]] = val  # remove "DNF_VAR_" prefix
+            elif key in numericvars:
                 self[key] = val
 
     def update_from_etc(self, installroot, varsdir=("/etc/yum/vars/", "/etc/dnf/vars/")):
