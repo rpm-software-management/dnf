@@ -949,6 +949,9 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
     Consequently, all installed profiles will be removed and
     only RPMs from the default stream will be available in the package set.
 
+``dnf [options] module provides <package-name-spec>...``
+    Lists all modular packages matching ``<package-name-spec>`` from all modules (including disabled), along with the modules and streams they belong to.
+
 ``dnf [options] module list [--all] [module_name...]``
     Lists all module streams, their profiles and states (enabled, disabled, default).
 
