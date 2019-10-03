@@ -429,6 +429,8 @@ class RepoConf(BaseConfig):
         super(RepoConf, self).__init__(libdnf.conf.ConfigRepo(
             parent._config if parent else libdnf.conf.ConfigMain()), section, parser)
         self._masterConfig = parent._config if parent else libdnf.conf.ConfigMain()
+        if section:
+            self.name = section
 
     def _configure_from_options(self, opts):
         """Configure repos from the opts. """
