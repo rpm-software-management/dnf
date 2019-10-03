@@ -486,6 +486,7 @@ class RepoQueryCommand(commands.Command):
             rpmdb = dnf.sack.rpmdb_sack(self.base)
             rpmdb._configure(self.base.conf.installonlypkgs, self.base.conf.installonly_limit)
             goal = dnf.goal.Goal(rpmdb)
+            goal.protect_running_kernel = False
             solved = goal.run(verify=True)
             if not solved:
                 print(dnf.util._format_resolve_problems(goal.problem_rules()))
