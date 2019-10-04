@@ -422,7 +422,7 @@ class Repo(dnf.conf.RepoConf):
         super(Repo, self).__init__(section=name, parent=parent_conf)
 
         self._config.this.disown()  # _repo will be the owner of _config
-        self._repo = libdnf.repo.Repo(name, self._config)
+        self._repo = libdnf.repo.Repo(name if name else "", self._config)
 
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
         self._callbacks = RepoCallbacks(self)
