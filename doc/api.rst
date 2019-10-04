@@ -72,6 +72,7 @@ API Documentation Contents
   api_callback
   api_rpm
   api_cli
+  api_module
 
 Indices:
 
