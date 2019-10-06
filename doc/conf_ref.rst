@@ -778,18 +778,19 @@ configuration.
     The User-Agent string to include in HTTP requests sent by DNF.
     Defaults to ::
 
-        libdnf/VERSION (NAME VERSION_ID; VARIANT_ID; OS.BASEARCH)
+        libdnf (NAME VERSION_ID; VARIANT_ID; OS.BASEARCH)
 
-    where VERSION is the libdnf version, NAME, VERSION_ID and VARIANT_ID are OS
-    identifiers read from the :manpage:`os-release(5)` file and OS and BASEARCH
-    are the canonical OS name and base architecture, respectively.
+    where NAME, VERSION_ID and VARIANT_ID are OS identifiers read from the
+    :manpage:`os-release(5)` file, and OS and BASEARCH are the canonical OS
+    name and base architecture, respectively.
     Example: ::
 
-        libdnf/0.35.2 (Fedora 31; server; Linux.x86_64)
+        libdnf (Fedora 31; server; Linux.x86_64)
 
-    To prevent the leakage of identifiable information, the whole OS part
-    (enclosed in parenthesis) is omitted if this is a non-Fedora or non-Linux
-    system, or is running an unknown Fedora variant.
+    To avoid leaking identifiable data, the variant in the above string will be
+    replaced by "generic" if the value is not an official Fedora variant.
+    Likewise, the whole OS part (enclosed in parenthesis) will be omitted if
+    this is a non-Fedora system.
 
 =================
 Types of Options
