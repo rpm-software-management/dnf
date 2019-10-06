@@ -539,16 +539,24 @@ configuration.
 ``countme``
     :ref:`boolean <boolean-label>`
 
-    Determines whether a "countme" flag should be added to a single, randomly
-    chosen metalink query each week.
+    Determines whether a special flag should be added to a single, randomly
+    chosen metalink/mirrorlist query each week.
     This allows the repository owner to estimate the number of systems
     consuming it, by counting such queries over a week's time, which is much
     more accurate than just counting unique IP addresses (which is subject to
     both overcounting and undercounting due to short DHCP leases and NAT,
     respectively).
-    The flag is a simple static parameter appended to the metalink URL and is
-    the same on every system (that means, no personal or machine-specific
-    information is included).
+
+    The flag is a simple "countme=N" parameter appended to the metalink and
+    mirrorlist URL, where N is an integer representing the "longevity" bucket
+    this system belongs to.
+    The following 4 buckets are defined, based on how many full weeks have
+    passed since the beginning of the week when this system was installed: 1 =
+    first week, 2 = first month (2-4 weeks), 3 = six months (5-24 weeks) and 4
+    = more than six months (> 24 weeks).
+    This information is meant to help distinguish short-lived installs from
+    long-term ones, and to gather other statistics about system lifecycle.
+
     Default is False.
 
 .. _deltarpm-label:
