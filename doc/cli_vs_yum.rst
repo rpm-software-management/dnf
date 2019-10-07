@@ -117,14 +117,15 @@ Also see related Fedora bugzillas `982947
 
 .. _skip_if_unavailable_default:
 
-============================================
- ``skip_if_unavailable`` enabled by default
-============================================
+====================================================
+ ``skip_if_unavailable`` could be enabled by default
+====================================================
 
-The important system repos should never be down and we see the third-party repos
-down often enough to warrant this change. Note that without this setting and
-without an explicit ``skip_if_unavailable=True`` in the relevant repo .ini file
-YUM immediately stops on a repo error, confusing and bothering the user.
+In some distributions DNF is shipped with ``skip_if_unavailable=True`` in
+the :ref:`DNF configuration file <conf_ref-label>`. The reason for the change
+is that third-party repositories can often be unavailable. Without this setting
+in the relevant repository configuration file YUM immediately stops on a
+repository synchronization error, confusing and bothering the user.
 
 See the related `Fedora bug 984483 <https://bugzilla.redhat.com/show_bug.cgi?id=984483>`_.
 
