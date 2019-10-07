@@ -162,17 +162,6 @@ the related `Fedora bug 948788
 
 Unsupported to simplify the configuration.
 
-.. _group_package_types_dropped:
-
-=================================
- ``group_package_types`` dropped
-=================================
-
-Done to simplify the configuration. Users will typically want to decide what
-packages to install per-group and not via a global setting::
-
-    dnf group install with-optional Editors
-
 .. _upgrade_requirements_on_install_dropped:
 
 =============================================

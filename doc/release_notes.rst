@@ -1843,7 +1843,7 @@ We start to publish the :doc:`api` with this release. It is largely
 incomprehensive at the moment, yet outlines the shape of the documentation and
 the process the project is going to use to maintain it.
 
-There are two YUM configuration options that were dropped: :ref:`group_package_types <group_package_types_dropped>` and :ref:`upgrade_requirements_on_install <upgrade_requirements_on_install_dropped>`.
+The :ref:upgrade_requirements_on_install <upgrade_requirements_on_install_dropped> configuration option was dropped.
 
 Bugs fixed in 0.4.7:
 
