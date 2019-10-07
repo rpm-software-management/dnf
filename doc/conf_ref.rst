@@ -89,7 +89,8 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     ``True`` instructs the solver to either use a package with the highest available
     version or fail. On ``False``, do not fail if the latest version cannot be
-    installed and go with the lower version. The default is ``True``.
+    installed and go with the lower version. The default is ``True``. The default can be overridden
+    by :ref:`DNF configuration file <conf_ref-label>` that can differ for particular distribution.
 
 ``cachedir``
     :ref:`string <string-label>`
@@ -712,7 +713,9 @@ configuration.
     If enabled, DNF will continue running and disable the repository that couldn't be synchronized
     for any reason. This option doesn't affect skipping of unavailable packages after dependency
     resolution. To check inaccessibility of repository use it in combination with
-    :ref:`refresh command line option <refresh_command-label>`. The default is ``False``.
+    :ref:`refresh command line option <refresh_command-label>`. The default is ``False``. The
+    default can be overridden by :ref:`DNF configuration file <conf_ref-label>` that can differ for
+    particular distribution.
 
 .. _sslcacert-label:
 

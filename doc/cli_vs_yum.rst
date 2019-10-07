@@ -117,6 +117,15 @@ Also see related Fedora bugzillas `982947
 
 .. _skip_if_unavailable_default:
 
+===========================================
+ ``skip_if_unavailable`` enabled by default
+===========================================
+
+In some distributions DNF is shipped with ``skip_if_unavailable=True`` in
+:ref:`DNF configuration file <conf_ref-label>` file. The reason for the change is that third-party
+repositories may often be unavailable. Note that without `skip_if_unavailable=True`` YUM immediately
+stops on a repo error, confusing and bothering the user.
+
 ============================================
  ``skip_if_unavailable`` enabled by default
 ============================================
