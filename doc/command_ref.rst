@@ -322,8 +322,9 @@ Options
     This option can be used multiple times.
 
 - The repository label is specified by ``<repo>``.
-- The path or url to the repository is specified by ``<path/url>``
-  and it is the same path as in a baseurl.
+- The path or url to the repository is specified by ``<path/url>``.
+  It is the same path as a baseurl and can be also enriched by the
+  :ref:`repo variables <repo-variables-label>`.
 - The configuration for the repository can be adjusted using \-\
   :ref:`-setopt <setopt_option-label>`\=<repo>.<option>=<value>\.
 - If you want to view only packages from this repository, combine this
