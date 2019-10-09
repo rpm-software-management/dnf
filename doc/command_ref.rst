@@ -318,14 +318,16 @@ Options
 
 
 ``--repofrompath <repo>,<path/url>``
-    Specify a path or url to a repository (same path as in a baseurl) to add to
-    the repositories for this query. This option can be used multiple times. The
-    repository label for the repository is specified by <repo>. If you want to view
-    only packages from this repository, combine this with the ``--repo=<repo>``
-    or ``--disablerepo="*"`` switches.
-    The repository label for the repository is specified by <repo>.
-    The configuration for the repo could be adjusted using \-\
-    :ref:`-setopt <setopt_option-label>`\=<repo>.<option>=<value>\.
+    Specify a repository to add to the repositories for this query.
+    This option can be used multiple times.
+
+- The repository label is specified by ``<repo>``.
+- The path or url to the repository is specified by ``<path/url>``
+  and it is the same path as in a baseurl.
+- The configuration for the repository can be adjusted using \-\
+  :ref:`-setopt <setopt_option-label>`\=<repo>.<option>=<value>\.
+- If you want to view only packages from this repository, combine this
+  with the ``--repo=<repo>`` or ``--disablerepo="*"`` switches.
 
 ``--repo=<repoid>, --repoid=<repoid>``
     Enable just specific repositories by an id or a glob. Can be used multiple
