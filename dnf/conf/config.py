@@ -430,7 +430,7 @@ class RepoConf(BaseConfig):
             parent._config if parent else libdnf.conf.ConfigMain()), section, parser)
         self._masterConfig = parent._config if parent else libdnf.conf.ConfigMain()
         if section:
-            self.name = section
+            self._config.name().set(PRIO_DEFAULT, section)
 
     def _configure_from_options(self, opts):
         """Configure repos from the opts. """
