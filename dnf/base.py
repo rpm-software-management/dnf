@@ -1505,6 +1505,8 @@ class Base(object):
                 if comps_pkg.requires:
                     sltr.set(provides="({} if {})".format(comps_pkg.name, comps_pkg.requires))
                 else:
+                    if self.conf.obsoletes:
+                        query = query.union(self.sack.query().filterm(obsoletes=query))
                     sltr.set(pkg=query)
                 self._goal.install(select=sltr, optional=not strict)
             return remove_query
@@ -1744,9 +1746,12 @@ class Base(object):
     def _install_multiarch(self, query, reponame=None, strict=True):
         already_inst, available = self._query_matches_installed(query)
         self._report_already_installed(already_inst)
-        for a in available:
+        for packages in available:
             sltr = dnf.selector.Selector(self.sack)
-            sltr = sltr.set(pkg=a)
+            q = self.sack.query().filterm(pkg=packages)
+            if self.conf.obsoletes:
+                q = q.union(self.sack.query().filterm(obsoletes=q))
+            sltr = sltr.set(pkg=q)
             if reponame is not None:
                 sltr = sltr.set(reponame=reponame)
             self._goal.install(select=sltr, optional=(not strict))

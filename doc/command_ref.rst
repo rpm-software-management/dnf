@@ -614,6 +614,7 @@ Groups are virtual collections of packages. DNF keeps track of groups that the u
     specified. All `mandatory` and `Default` packages will be installed whenever possible.
     Conditional packages are installed if they meet their requirement.
     If the group is already (partially) installed, the command installs the missing packages from the group.
+    Depending on the value of :ref:`obsoletes configuration option <obsoletes_conf_option-label>` group installation takes obsoletes into account.
 
 .. _grouplist_command-label:
 
