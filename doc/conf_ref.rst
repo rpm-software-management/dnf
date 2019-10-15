@@ -365,6 +365,13 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     RPM debug scriptlet output level. One of: ``critical``, ``emergency``,
     ``error``, ``warn``, ``info`` or ``debug``. Default is ``info``.
 
+.. _strict-label:
+
+``strict``
+    :ref:`boolean <boolean-label>`
+
+    If disabled, all unavailable packages or packages with broken dependencies given to DNF command will be skipped without raising the error causing the whole operation to fail. Currently works for install command only. The default is True.
+
 ``tsflags``
     :ref:`list <list-label>`
 
@@ -478,13 +485,6 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     :ref:`integer <integer-label>`
 
     The priority value of this repository, default is 99. If there is more than one candidate package for a particular operation, the one from a repo with *the lowest priority value* is picked, possibly despite being less convenient otherwise (e.g. by being a lower version).
-
-.. _strict-label:
-
-``strict``
-    :ref:`boolean <boolean-label>`
-
-    If disabled, all unavailable packages or packages with broken dependencies given to DNF command will be skipped without raising the error causing the whole operation to fail. Currently works for install command only. The default is True.
 
 ``type``
     :ref:`string <string-label>`
