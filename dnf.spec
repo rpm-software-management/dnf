@@ -158,7 +158,7 @@ Summary:        %{pkg_summary}
 %if 0%{?fedora}
 %if 0%{?fedora} >= 31
 Provides:       %{name}-yum = %{version}-%{release}
-Obsoletes:      %{name}-yum < %{version}-%{release}
+Obsoletes:      %{name}-yum < 5
 %else
 Conflicts:      yum < 3.4.3-505
 %endif
