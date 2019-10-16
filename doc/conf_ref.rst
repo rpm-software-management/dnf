@@ -42,6 +42,17 @@ and ``:``. The minimal repository configuration file should aside from repo ID
 consists of :ref:`baseurl <baseurl-label>`, :ref:`metalink <metalink-label>`
 or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
+.. _conf_distribution_specific-label:
+
+=====================================
+ Distribution-Specific Configuration
+=====================================
+
+Configuration options, namely :ref:`best <best-label>` and
+:ref:`skip_if_unavlailable <skip_if_unavailable-label>`, can be set in the DNF
+configuration file by your distribution to override the DNF defaults.
+
+
 .. _conf_main_options-label:
 
 ================
@@ -84,12 +95,16 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     The base architecture used for installing packages. By default this is auto-detected.
 
+.. _best-label:
+
 ``best``
     :ref:`boolean <boolean-label>`
 
     ``True`` instructs the solver to either use a package with the highest available
     version or fail. On ``False``, do not fail if the latest version cannot be
-    installed and go with the lower version. The default is ``True``.
+    installed and go with the lower version. The default is ``True``.  Note
+    this option in particular :ref:`can be set in your configuration file by
+    your distribution <conf_distribution_specific-label>`.
 
 ``cachedir``
     :ref:`string <string-label>`
@@ -721,6 +736,8 @@ configuration.
     for any reason. This option doesn't affect skipping of unavailable packages after dependency
     resolution. To check inaccessibility of repository use it in combination with
     :ref:`refresh command line option <refresh_command-label>`. The default is ``False``.
+    Note this option in particular :ref:`can be set in your configuration file
+    by your distribution <conf_distribution_specific-label>`.
 
 .. _sslcacert-label:
 
