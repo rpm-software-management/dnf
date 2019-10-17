@@ -891,7 +891,7 @@ class Base(object):
         """
         summary = ''
         # do disk space report first
-        p = re.compile(r'needs (\d+)(K|M)B on the (\S+) filesystem')
+        p = re.compile(r'needs (\d+)(K|M)B(?: more space)? on the (\S+) filesystem')
         disk = {}
         for m in p.finditer(errstring):
             size_in_mb = int(m.group(1)) if m.group(2) == 'M' else math.ceil(
