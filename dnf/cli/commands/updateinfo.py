@@ -153,7 +153,6 @@ class UpdateInfoCommand(commands.Command):
 
     def run(self):
         """Execute the command with arguments."""
-        mixed = False
         if self.opts.availability == 'installed':
             apkg_adv_insts = self.installed_apkg_adv_insts(self.opts.spec)
             description = _('installed')
@@ -161,7 +160,6 @@ class UpdateInfoCommand(commands.Command):
             apkg_adv_insts = self.updating_apkg_adv_insts(self.opts.spec)
             description = _('updates')
         elif self.opts.availability == 'all':
-            mixed = True
             apkg_adv_insts = self.all_apkg_adv_insts(self.opts.spec)
             description = _('all')
         else:
@@ -169,9 +167,9 @@ class UpdateInfoCommand(commands.Command):
             description = _('available')
 
         if self.opts.spec_action == 'list':
-            self.display_list(apkg_adv_insts, mixed)
+            self.display_list(apkg_adv_insts)
         elif self.opts.spec_action == 'info':
-            self.display_info(apkg_adv_insts, mixed)
+            self.display_info(apkg_adv_insts)
         else:
             self.display_summary(apkg_adv_insts, description)
 
@@ -285,10 +283,10 @@ class UpdateInfoCommand(commands.Command):
         if self.base.conf.autocheck_running_kernel:
             self.cli._check_running_kernel()
 
-    def display_list(self, apkg_adv_insts, mixed):
+    def display_list(self, apkg_adv_insts):
         """Display the list of advisories."""
         def inst2mark(inst):
-            if not mixed:
+            if not self.opts.availability == 'all':
                 return ''
             elif inst:
                 return 'i '
@@ -320,7 +318,7 @@ class UpdateInfoCommand(commands.Command):
         for (inst, aid, label, nevra) in advlist:
             print('%s%-*s %-*s %s' % (inst, idw, aid, tlw, label, nevra))
 
-    def display_info(self, apkg_adv_insts, mixed):
+    def display_info(self, apkg_adv_insts):
         """Display the details about available advisories."""
         arches = self.base.sack.list_arches()
         verbose = self.base.conf.verbose
@@ -351,7 +349,7 @@ class UpdateInfoCommand(commands.Command):
             if not verbose:
                 attributes[7] = None
                 attributes[8] = None
-            if mixed:
+            if self.opts.availability == 'all':
                 attributes[9] = [_('true') if installed else _('false')]
 
             width = _maxlen(labels)
