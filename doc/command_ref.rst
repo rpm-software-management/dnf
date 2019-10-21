@@ -1542,6 +1542,11 @@ Updateinfo Command
     version could be installed simultaneously) also packages of the currently
     running version of kernel are added.
 
+    To print only advisories referencing a CVE or a bugzilla use ``--with-cve`` or
+    ``--with-bz`` options. When these switches are used also the output
+    of the ``--list`` is altered - the ID of the CVE or the bugzilla is printed
+    instead of the one of the advisory.
+
     If given and if neither ID, type (``bugfix``, ``enhancement``,
     ``security``/``sec``) nor a package name of an advisory matches
     ``<spec>``, the advisory is not taken into account. The matching is
