@@ -389,7 +389,7 @@ class UpdateInfoCommand(commands.Command):
                     continue
                 for i, line in enumerate(atr_lines):
                     key = label if i == 0 else ''
-                    key_padding = width - exact_width(label)
+                    key_padding = width - exact_width(key)
                     lines.append('%*s%s: %s' % (key_padding, "", key, line))
             return '\n'.join(lines)
 
