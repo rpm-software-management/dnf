@@ -116,10 +116,40 @@ class UpdateInfoCommand(commands.Command):
         if self.opts._availability:
             self.opts.availability = self.opts._availability
         else:
+            # yum compatibility - search for all|available|installed|updates in spec[0]
             if not self.opts.spec or self.opts.spec[0] not in self.availabilities:
                 self.opts.availability = self.availability_default
             else:
                 self.opts.availability = self.opts.spec.pop(0)
+
+        # filtering by advisory types (security/bugfix/enhancement/newpackage)
+        self.opts._advisory_types = set()
+        if self.opts.bugfix:
+            self.opts._advisory_types.add(hawkey.ADVISORY_BUGFIX)
+        if self.opts.enhancement:
+            self.opts._advisory_types.add(hawkey.ADVISORY_ENHANCEMENT)
+        if self.opts.newpackage:
+            self.opts._advisory_types.add(hawkey.ADVISORY_NEWPACKAGE)
+        if self.opts.security:
+            self.opts._advisory_types.add(hawkey.ADVISORY_SECURITY)
+
+        # yum compatibility - yum accepts types also as positional arguments
+        if self.opts.spec:
+            spec = self.opts.spec.pop(0)
+            if spec == 'bugfix':
+                self.opts._advisory_types.add(hawkey.ADVISORY_BUGFIX)
+            elif spec == 'enhancement':
+                self.opts._advisory_types.add(hawkey.ADVISORY_ENHANCEMENT)
+            elif spec in ('security', 'sec'):
+                self.opts._advisory_types.add(hawkey.ADVISORY_SECURITY)
+            elif spec == 'newpackage':
+                self.opts._advisory_types.add(hawkey.ADVISORY_NEWPACKAGE)
+            else:
+                self.opts.spec.insert(0, spec)
+
+        if self.opts.advisory:
+            self.opts.spec.extend(self.opts.advisory)
+
 
     def run(self):
         """Execute the command with arguments."""
@@ -152,6 +182,16 @@ class UpdateInfoCommand(commands.Command):
         return len(q) > 0
 
     def _advisory_matcher(self, advisory):
+        if not self.opts._advisory_types \
+                and not self.opts.spec \
+                and not self.opts.severity \
+                and not self.opts.bugzilla \
+                and not self.opts.cves:
+            return True
+        if advisory.type in self.opts._advisory_types:
+            return True
+        if any(fnmatch.fnmatchcase(advisory.id, pat) for pat in self.opts.spec):
+            return True
         if self.opts.severity and advisory.severity in self.opts.severity:
             return True
         if self.opts.bugzilla and any([advisory.match_bug(bug) for bug in self.opts.bugzilla]):
@@ -162,43 +202,11 @@ class UpdateInfoCommand(commands.Command):
 
     def _apackage_advisory_installed(self, pkgs_query, cmptype, specs):
         """Return (adv. package, advisory, installed) triplets."""
-        specs_types = set()
-        specs_patterns = set()
-        for spec in specs:
-            if spec == 'bugfix':
-                specs_types.add(hawkey.ADVISORY_BUGFIX)
-            elif spec == 'enhancement':
-                specs_types.add(hawkey.ADVISORY_ENHANCEMENT)
-            elif spec in ('security', 'sec'):
-                specs_types.add(hawkey.ADVISORY_SECURITY)
-            elif spec == 'newpackage':
-                specs_types.add(hawkey.ADVISORY_NEWPACKAGE)
-            else:
-                specs_patterns.add(spec)
-
-        if self.opts.bugfix:
-            specs_types.add(hawkey.ADVISORY_BUGFIX)
-        if self.opts.enhancement:
-            specs_types.add(hawkey.ADVISORY_ENHANCEMENT)
-        if self.opts.newpackage:
-            specs_types.add(hawkey.ADVISORY_NEWPACKAGE)
-        if self.opts.security:
-            specs_types.add(hawkey.ADVISORY_SECURITY)
-        if self.opts.advisory:
-            specs_patterns.update(self.opts.advisory)
-
         for apackage in pkgs_query.get_advisory_pkgs(cmptype):
             advisory = apackage.get_advisory(self.base.sack)
-            if not specs_types and not specs_patterns and not self.opts.severity and \
-                    not self.opts.bugzilla and not self.opts.cves:
-                advisory_match = True
-            else:
-                advisory_match = advisory.type in specs_types or \
-                    any(fnmatch.fnmatchcase(advisory.id, pat)
-                        for pat in specs_patterns) or \
-                    self._advisory_matcher(advisory)
+            advisory_match = self._advisory_matcher(advisory)
             apackage_match = any(fnmatch.fnmatchcase(apackage.name, pat)
-                                 for pat in specs_patterns)
+                                 for pat in self.opts.spec)
             if advisory_match or apackage_match:
                 installed = self._newer_equal_installed(apackage)
                 yield apackage, advisory, installed
