@@ -96,6 +96,12 @@ class UpdateInfoCommand(commands.Command):
         output_format.add_argument("--info", dest='_spec_action', const='info',
                                    action='store_const',
                                    help=_('show info of advisories'))
+        parser.add_argument("--with-cve", dest='with_cve', default=False,
+                            action='store_true',
+                            help=_('show only advisories with CVE reference'))
+        parser.add_argument("--with-bz", dest='with_bz', default=False,
+                            action='store_true',
+                            help=_('show only advisories with bugzilla reference'))
         parser.add_argument('spec', nargs='*', metavar='SPEC',
                             choices=cmds, default=cmds[0],
                             action=OptionParser.PkgNarrowCallback,
@@ -144,6 +150,10 @@ class UpdateInfoCommand(commands.Command):
                 self.opts._advisory_types.add(hawkey.ADVISORY_SECURITY)
             elif spec == 'newpackage':
                 self.opts._advisory_types.add(hawkey.ADVISORY_NEWPACKAGE)
+            elif spec in ('bugzillas', 'bzs'):
+                self.opts.with_bz = True
+            elif spec == 'cves':
+                self.opts.with_cve = True
             else:
                 self.opts.spec.insert(0, spec)
 
@@ -184,7 +194,9 @@ class UpdateInfoCommand(commands.Command):
                 and not self.opts.spec \
                 and not self.opts.severity \
                 and not self.opts.bugzilla \
-                and not self.opts.cves:
+                and not self.opts.cves \
+                and not self.opts.with_cve \
+                and not self.opts.with_bz:
             return True
         if advisory.type in self.opts._advisory_types:
             return True
@@ -196,6 +208,12 @@ class UpdateInfoCommand(commands.Command):
             return True
         if self.opts.cves and any([advisory.match_cve(cve) for cve in self.opts.cves]):
             return True
+        if self.opts.with_cve:
+            if any([ref.type == hawkey.REFERENCE_CVE for ref in advisory.references]):
+                return True
+        if self.opts.with_bz:
+            if any([ref.type == hawkey.REFERENCE_BUGZILLA for ref in advisory.references]):
+                return True
         return False
 
     def _apackage_advisory_installed(self, pkgs_query, cmptype, specs):
@@ -302,8 +320,17 @@ class UpdateInfoCommand(commands.Command):
         nevra_inst_dict = dict()
         for apkg, advisory, installed in apkg_adv_insts:
             nevra = '%s-%s.%s' % (apkg.name, apkg.evr, apkg.arch)
-            nevra_inst_dict.setdefault((nevra, installed), dict())[advisory.id] = (
-                advisory.type, advisory.severity)
+            if self.opts.with_cve or self.opts.with_bz:
+                for ref in advisory.references:
+                    if ref.type == hawkey.REFERENCE_BUGZILLA and not self.opts.with_bz:
+                        continue
+                    elif ref.type == hawkey.REFERENCE_CVE and not self.opts.with_cve:
+                        continue
+                    nevra_inst_dict.setdefault((nevra, installed), dict())[ref.id] = (
+                        advisory.type, advisory.severity)
+            else:
+                nevra_inst_dict.setdefault((nevra, installed), dict())[advisory.id] = (
+                    advisory.type, advisory.severity)
 
         advlist = []
         # convert types to labels, find max len of advisory IDs and types
