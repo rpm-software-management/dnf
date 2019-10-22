@@ -539,12 +539,13 @@ class ModuleBase(object):
         output = set()
         modulePackages = self.base._moduleContainer.getModulePackages()
         baseQuery = self.base.sack.query().filterm(empty=True).apply()
+        getBestInitQuery = self.base.sack.query(flags=hawkey.IGNORE_MODULAR_EXCLUDES)
 
         for spec in rpm_specs:
             subj = dnf.subject.Subject(spec)
             baseQuery = baseQuery.union(subj.get_best_query(
                 self.base.sack, with_nevra=True, with_provides=False, with_filenames=False,
-                exclude_flags=hawkey.IGNORE_MODULAR_EXCLUDES))
+                query=getBestInitQuery))
 
         baseQuery.apply()
 
