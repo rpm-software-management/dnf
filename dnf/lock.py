@@ -98,7 +98,7 @@ class ProcessLock(object):
                 old_pid = int(old_pid)
             except ValueError:
                 msg = _('Malformed lock file found: %s.\n'
-                        'Ensure no other dnf process is running and '
+                        'Ensure no other dnf/yum process is running and '
                         'remove the lock file manually or run '
                         'systemd-tmpfiles --remove dnf.conf.') % (self.target)
                 raise LockError(msg)

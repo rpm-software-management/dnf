@@ -24,6 +24,7 @@ from dnf.util import _parse_specs
 
 import argparse
 import dnf.exceptions
+import dnf.util
 import dnf.rpm
 import dnf.yum.misc
 import logging
@@ -32,6 +33,7 @@ import re
 import sys
 
 logger = logging.getLogger("dnf")
+
 
 class MultilineHelpFormatter(argparse.HelpFormatter):
     def _split_lines(self, text, width):
@@ -48,7 +50,6 @@ class OptionParser(argparse.ArgumentParser):
         self.command_positional_parser = None
         self.command_group = None
         self._add_general_options()
-        self._main_prog = argparse.ArgumentParser().prog
         if reset_usage:
             self._cmd_usage = {}      # names, summary for dnf commands, to build usage
             self._cmd_groups = set()  # cmd groups added (main, plugin)
@@ -164,7 +165,8 @@ class OptionParser(argparse.ArgumentParser):
         """ Standard options known to all dnf subcommands. """
         # All defaults need to be a None, so we can always tell whether the user
         # has set something or whether we are getting a default.
-        general_grp = self.add_argument_group('General DNF options')
+        general_grp = self.add_argument_group(_('General {prog} options'.format(
+            prog=dnf.util.MAIN_PROG_UPPER)))
         general_grp.add_argument("-c", "--config", dest="config_file_path",
                                  default=None, metavar='[config file]',
                                  help=_("config file location"))
@@ -174,7 +176,8 @@ class OptionParser(argparse.ArgumentParser):
         general_grp.add_argument("-v", "--verbose", action="store_true",
                                  default=None, help=_("verbose operation"))
         general_grp.add_argument("--version", action="store_true", default=None,
-                                 help=_("show DNF version and exit"))
+                                 help=_("show {prog} version and exit").format(
+                                     prog=dnf.util.MAIN_PROG_UPPER))
         general_grp.add_argument("--installroot", help=_("set install root"),
                                  metavar='[path]')
         general_grp.add_argument("--nodocs", action="store_const", const=['nodocs'], dest='tsflags',
@@ -234,9 +237,10 @@ class OptionParser(argparse.ArgumentParser):
                                  help=_("error output level"))
         general_grp.add_argument("--obsoletes", default=None, dest="obsoletes",
                                  action="store_true",
-                                 help=_("enables dnf's obsoletes processing logic "
+                                 help=_("enables {prog}'s obsoletes processing logic "
                                         "for upgrade or display capabilities that "
-                                        "the package obsoletes for info, list and repoquery"))
+                                        "the package obsoletes for info, list and "
+                                        "repoquery").format(prog=dnf.util.MAIN_PROG))
         general_grp.add_argument("--rpmverbosity", default=None,
                                  help=_("debugging output level for rpm"),
                                  metavar='[debug level name]')
@@ -364,8 +368,7 @@ class OptionParser(argparse.ArgumentParser):
         """ get the usage information to show the user. """
         desc = {'main': _('List of Main Commands:'),
                 'plugin': _('List of Plugin Commands:')}
-        main_prog = self._main_prog if self._main_prog in ["dnf", "yum"] else "dnf"
-        usage = '%s [options] COMMAND\n' % main_prog
+        usage = '%s [options] COMMAND\n' % dnf.util.MAIN_PROG
         for grp in ['main', 'plugin']:
             if not grp in self._cmd_groups:
                 # dont add plugin usage, if we dont have plugins
@@ -378,8 +381,7 @@ class OptionParser(argparse.ArgumentParser):
         return usage
 
     def _add_command_options(self, command):
-        main_prog = self._main_prog if self._main_prog in ["dnf", "yum"] else "dnf"
-        self.prog = "%s %s" % (main_prog, command._basecmd)
+        self.prog = "%s %s" % (dnf.util.MAIN_PROG, command._basecmd)
         self.description = command.summary
         self.command_positional_parser = argparse.ArgumentParser(self.prog, add_help=False)
         self.command_positional_parser.print_usage = self.print_usage

@@ -25,6 +25,7 @@ from __future__ import unicode_literals
 from .pycomp import PY3, basestring
 from dnf.i18n import _, ucd
 from functools import reduce
+import argparse
 import dnf
 import dnf.callback
 import dnf.const
@@ -42,6 +43,9 @@ import time
 import libdnf.repo
 
 logger = logging.getLogger('dnf')
+
+MAIN_PROG = argparse.ArgumentParser().prog if argparse.ArgumentParser().prog == "yum" else "dnf"
+MAIN_PROG_UPPER = MAIN_PROG.upper()
 
 """DNF Utilities."""
 

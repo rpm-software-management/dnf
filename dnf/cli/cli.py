@@ -170,8 +170,9 @@ class BaseCli(dnf.Base):
                 report_module_switch(switchedModules)
                 msg = _("It is not possible to switch enabled streams of a module.\n"
                         "It is recommended to remove all installed content from the module, and "
-                        "reset the module using 'dnf module reset <module_name>' command. After "
-                        "you reset the module, you can install the other stream.")
+                        "reset the module using '{prog} module reset <module_name>' command. After "
+                        "you reset the module, you can install the other stream.").format(
+                    prog=dnf.util.MAIN_PROG)
                 raise dnf.exceptions.Error(msg)
 
         trans = self.transaction
@@ -205,10 +206,11 @@ class BaseCli(dnf.Base):
                 (self._history and (self._history.group or self._history.env)):
             # confirm with user
             if self.conf.downloadonly:
-                logger.info(_("DNF will only download packages for the transaction."))
+                logger.info(_("{prog} will only download packages for the transaction.").format(
+                    prog=dnf.util.MAIN_PROG_UPPER))
             elif 'test' in self.conf.tsflags:
-                logger.info(_("DNF will only download packages, install gpg keys, and check the "
-                              "transaction."))
+                logger.info(_("{prog} will only download packages, install gpg keys, and check the "
+                              "transaction.").format(prog=dnf.util.MAIN_PROG_UPPER))
             if self._promptWanted():
                 if self.conf.assumeno or not self.output.userconfirm():
                     raise CliError(_("Operation aborted."))
@@ -793,7 +795,8 @@ class Cli(object):
         self.base.repos.all()._set_key_import(key_import)
 
     def _log_essentials(self):
-        logger.debug('DNF version: %s', dnf.const.VERSION)
+        logger.debug('{prog} version: %s'.format(prog=dnf.util.MAIN_PROG_UPPER),
+                     dnf.const.VERSION)
         logger.log(dnf.logging.DDEBUG,
                         'Command: %s', self.cmdstring)
         logger.log(dnf.logging.DDEBUG,
@@ -840,11 +843,13 @@ class Cli(object):
             logger.critical(_('No such command: %s. Please use %s --help'),
                             basecmd, sys.argv[0])
             if self.base.conf.plugins:
-                logger.critical(_("It could be a DNF plugin command, "
-                            "try: \"dnf install 'dnf-command(%s)'\""), basecmd)
+                logger.critical(_("It could be a {PROG} plugin command, "
+                                  "try: \"{prog} install 'dnf-command(%s)'\"").format(
+                    prog=dnf.util.MAIN_PROG, PROG=dnf.util.MAIN_PROG_UPPER), basecmd)
             else:
-                logger.critical(_("It could be a DNF plugin command, "
-                            "but loading of plugins is currently disabled."))
+                logger.critical(_("It could be a {prog} plugin command, "
+                                  "but loading of plugins is currently disabled.").format(
+                    prog=dnf.util.MAIN_PROG_UPPER))
             raise CliError
         self.command = command_cls(self)
 

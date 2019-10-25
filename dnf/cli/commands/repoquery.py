@@ -248,7 +248,8 @@ class RepoQueryCommand(commands.Command):
             'installed': _('Display only installed packages.'),
             'extras': _('Display only packages that are not present in any of available repositories.'),
             'upgrades': _('Display only packages that provide an upgrade for some already installed package.'),
-            'unneeded': _('Display only packages that can be removed by "dnf autoremove" command.'),
+            'unneeded': _('Display only packages that can be removed by "{prog} autoremove" '
+                          'command.').format(prog=dnf.util.MAIN_PROG),
             'userinstalled': _('Display only packages that were installed by user.')
         }
         list_group = parser.add_mutually_exclusive_group()
@@ -515,10 +516,11 @@ class RepoQueryCommand(commands.Command):
                     'conflicts', 'enhances', 'obsoletes', 'provides', 'recommends',
                     'requires', 'suggests', 'supplements'):
                 raise dnf.exceptions.Error(
-                    _("No valid switch specified\nusage: dnf repoquery [--conflicts|"
-                        "--enhances|--obsoletes|--provides|--recommends|--requires|"
-                        "--suggest|--supplements|--whatrequires] [key] [--tree]\n\n"
-                        "description:\n  For the given packages print a tree of the packages."))
+                    _("No valid switch specified\nusage: {prog} repoquery [--conflicts|"
+                      "--enhances|--obsoletes|--provides|--recommends|--requires|"
+                      "--suggest|--supplements|--whatrequires] [key] [--tree]\n\n"
+                      "description:\n  For the given packages print a tree of the"
+                      "packages.").format(prog=dnf.util.MAIN_PROG))
             self.tree_seed(q, orquery, self.opts)
             return
 

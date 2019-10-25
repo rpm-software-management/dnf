@@ -58,7 +58,7 @@ You can do that by running the command:
 
 
 Alternatively you can specify the url to the key you would like to use
-for a repository in the 'gpgkey' option in a repository section and DNF
+for a repository in the 'gpgkey' option in a repository section and {prog}}
 will install it for you.
 
 For more information contact your distribution or package provider.""")
@@ -76,7 +76,7 @@ def _checkGPGKey(base, cli):
     if not base._gpg_key_check():
         for repo in base.repos.iter_enabled():
             if (repo.gpgcheck or repo.repo_gpgcheck) and not repo.gpgkey:
-                logger.critical("\n%s\n", gpg_msg)
+                logger.critical("\n%s\n", gpg_msg.format(prog=dnf.util.MAIN_PROG_UPPER))
                 logger.critical(_("Problem repository: %s"), repo)
                 raise dnf.cli.CliError
 
@@ -806,7 +806,8 @@ class HelpCommand(Command):
     @staticmethod
     def set_argparser(parser):
         parser.add_argument('cmd', nargs='?', metavar=_('COMMAND'),
-                            help="DNF command to get help for")
+                            help=_("{prog} command to get help for").format(
+                                prog=dnf.util.MAIN_PROG_UPPER))
 
     def run(self):
         if (not self.opts.cmd
