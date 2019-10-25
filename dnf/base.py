@@ -442,7 +442,7 @@ class Base(object):
             logger.info(_("The downloaded packages were saved in cache "
                           "until the next successful transaction."))
             logger.info(_("You can remove cached packages by executing "
-                          "'%s'."), "dnf clean packages")
+                          "'%s'."), "{prog} clean packages").format(prog=dnf.util.MAIN_PROG)
 
         # Do not trigger the lazy creation:
         if self._history is not None:
@@ -938,7 +938,8 @@ class Base(object):
                 lastdbv = lastdbv.end_rpmdb_version
 
             if lastdbv is None or rpmdbv != lastdbv:
-                logger.debug(_("RPMDB altered outside of DNF."))
+                logger.debug(_("RPMDB altered outside of {prog}.").format(
+                    prog=dnf.util.MAIN_PROG_UPPER))
 
             cmdline = None
             if hasattr(self, 'args') and self.args:

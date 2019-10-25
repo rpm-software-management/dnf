@@ -21,7 +21,7 @@
 from dnf.cli import commands
 from dnf.i18n import _, ucd
 
-
+import dnf.util
 import cmd
 import copy
 import dnf
@@ -44,7 +44,7 @@ class ShellDemandSheet(object):
 class ShellCommand(commands.Command, cmd.Cmd):
 
     aliases = ('shell', 'sh')
-    summary = _('run an interactive DNF shell')
+    summary = _('run an interactive {prog} shell').format(prog=dnf.util.MAIN_PROG_UPPER)
 
     MAPPING = {'repo': 'repo',
                'repository': 'repo',
@@ -66,7 +66,8 @@ class ShellCommand(commands.Command, cmd.Cmd):
     @staticmethod
     def set_argparser(parser):
         parser.add_argument('script', nargs='?', metavar=_('SCRIPT'),
-                            help=_('Script to run in DNF shell'))
+                            help=_('Script to run in {prog} shell').format(
+                                prog=dnf.util.MAIN_PROG_UPPER))
 
     def configure(self):
         # append to ShellDemandSheet missing demands from

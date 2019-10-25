@@ -23,6 +23,7 @@ from dnf.cli import commands, CliError
 from dnf.i18n import _
 from dnf.module.exceptions import NoModuleException
 from dnf.util import logger
+import dnf.util
 
 import sys
 import os
@@ -286,5 +287,6 @@ class ModuleCommand(commands.Command):
         if self.opts.subcmd[0] not in not_required_argument:
             if not self.opts.module_spec:
                 raise CliError(
-                    "dnf {} {}: too few arguments".format(self.opts.command,
-                                                          self.opts.subcmd[0]))
+                    _("{} {} {}: too few arguments").format(dnf.util.MAIN_PROG,
+                                                            self.opts.command,
+                                                            self.opts.subcmd[0]))
