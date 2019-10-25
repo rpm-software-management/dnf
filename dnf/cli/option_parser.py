@@ -364,7 +364,8 @@ class OptionParser(argparse.ArgumentParser):
         """ get the usage information to show the user. """
         desc = {'main': _('List of Main Commands:'),
                 'plugin': _('List of Plugin Commands:')}
-        usage = '%s [options] COMMAND\n' % self._main_prog
+        main_prog = self._main_prog if self._main_prog in ["dnf", "yum"] else "dnf"
+        usage = '%s [options] COMMAND\n' % main_prog
         for grp in ['main', 'plugin']:
             if not grp in self._cmd_groups:
                 # dont add plugin usage, if we dont have plugins
@@ -377,7 +378,8 @@ class OptionParser(argparse.ArgumentParser):
         return usage
 
     def _add_command_options(self, command):
-        self.prog = "%s %s" % (self._main_prog, command._basecmd)
+        main_prog = self._main_prog if self._main_prog in ["dnf", "yum"] else "dnf"
+        self.prog = "%s %s" % (main_prog, command._basecmd)
         self.description = command.summary
         self.command_positional_parser = argparse.ArgumentParser(self.prog, add_help=False)
         self.command_positional_parser.print_usage = self.print_usage

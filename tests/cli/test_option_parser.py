@@ -124,7 +124,7 @@ class OptionParserAddCmdTest(tests.support.TestCase):
     def test_get_usage(self):
         parser = argparse.ArgumentParser()
         output = [
-            u'%s [options] COMMAND' % parser.prog,
+            u'%s [options] COMMAND' % (parser.prog if parser.prog in ["dnf", "yum"] else "dnf"),
             u'',
             u'List of Main Commands:',
             u'',
