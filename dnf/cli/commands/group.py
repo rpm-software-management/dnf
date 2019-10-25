@@ -132,7 +132,9 @@ class GroupCommand(commands.Command):
         uservisible = 1
         showinstalled = 0
         showavailable = 0
-        if len(userlist) > 0:
+        print_ids = self.base.conf.verbose or self.opts.ids
+
+        while userlist:
             if userlist[0] == 'hidden':
                 uservisible = 0
                 userlist.pop(0)
@@ -142,6 +144,11 @@ class GroupCommand(commands.Command):
             elif userlist[0] == 'available':
                 showavailable = 1
                 userlist.pop(0)
+            elif userlist[0] == 'ids':
+                print_ids = True
+                userlist.pop(0)
+            else:
+                break
         if self.opts.hidden:
             uservisible = 0
         if self.opts.installed:
@@ -171,7 +178,7 @@ class GroupCommand(commands.Command):
             if not done:
                 print(sect)
             msg = '   %s' % group.ui_name
-            if self.base.conf.verbose:
+            if print_ids:
                 msg += ' (%s)' % group.id
             if group.lang_only:
                 msg += ' [%s]' % group.lang_only
@@ -182,7 +189,7 @@ class GroupCommand(commands.Command):
                 print(sect)
             for e in envs:
                 msg = '   %s' % e.ui_name
-                if self.base.conf.verbose:
+                if print_ids:
                     msg += ' (%s)' % e.id
                 print(msg)
 
@@ -318,6 +325,8 @@ class GroupCommand(commands.Command):
                                help=_("show only installed groups"))
         grpparser.add_argument('--available', action='store_true',
                                help=_("show only available groups"))
+        grpparser.add_argument('--ids', action='store_true',
+                               help=_("show also ID of groups"))
         parser.add_argument('subcmd', nargs='?', metavar='COMMAND',
                             help=_('available subcommands: {} (default), {}').format(
                                 GroupCommand._GROUP_SUBCOMMANDS[0],
