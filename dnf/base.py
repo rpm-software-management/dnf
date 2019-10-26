@@ -905,9 +905,9 @@ class Base(object):
             summary += _('Disk Requirements:') + "\n"
             for k in disk:
                 summary += "   " + P_(
-                    'At least %sMB more space needed on the %s filesystem.',
-                    'At least %sMB more space needed on the %s filesystem.',
-                    disk[k]) % (disk[k], k) + '\n'
+                    'At least {0}MB more space needed on the {1} filesystem.',
+                    'At least {0}MB more space needed on the {1} filesystem.',
+                    disk[k]).format(disk[k], k) + '\n'
 
         if not summary:
             return None
