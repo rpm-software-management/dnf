@@ -697,7 +697,7 @@ msgstr "Нет соответствующих репозиториев: %s"
 
 #: ../dnf/cli/cli.py:795
 msgid "This command has to be run under the root user."
-msgstr "Эта команда должны быть выполнена от имени пользователя root."
+msgstr "Эта команда должна быть выполнена от имени пользователя root."
 
 #: ../dnf/cli/cli.py:824
 #, python-format
