@@ -33,6 +33,11 @@ STATE_UNKNOWN = libdnf.module.ModulePackageContainer.ModuleState_UNKNOWN
 MODULE_TABLE_HINT = _("\n\nHint: [d]efault, [e]nabled, [x]disabled, [i]nstalled")
 MODULE_INFO_TABLE_HINT = _("\n\nHint: [d]efault, [e]nabled, [x]disabled, [i]nstalled, [a]ctive")
 
+
+def _profile_comparison_key(profile):
+    return profile.getName()
+
+
 class ModuleBase(object):
     # :api
 
@@ -90,8 +95,8 @@ class ModuleBase(object):
                         if not profiles:
                             available_profiles = latest_module.getProfiles()
                             if available_profiles:
-                                profile_names = ", ".join(
-                                    [profile.getName() for profile in available_profiles])
+                                profile_names = ", ".join(sorted(
+                                    [profile.getName() for profile in available_profiles]))
                                 msg = _("Unable to match profile for argument {}. Available "
                                         "profiles for '{}:{}': {}").format(
                                     spec, name, stream, profile_names)
@@ -106,8 +111,8 @@ class ModuleBase(object):
                         if not profiles_strings:
                             available_profiles = latest_module.getProfiles()
                             if available_profiles:
-                                profile_names = ", ".join(
-                                    [profile.getName() for profile in available_profiles])
+                                profile_names = ", ".join(sorted(
+                                    [profile.getName() for profile in available_profiles]))
                                 msg = _("No default profiles for module {}:{}. Available profiles"
                                         ": {}").format(
                                     name, stream, profile_names)
@@ -418,7 +423,7 @@ class ModuleBase(object):
                 lines = OrderedDict()
                 lines["Name"] = module.getFullIdentifier()
 
-                for profile in module.getProfiles():
+                for profile in sorted(module.getProfiles(), key=_profile_comparison_key):
                     lines[profile.getName()] = "\n".join(
                         [pkgName for pkgName in profile.getContent()])
 
@@ -430,7 +435,7 @@ class ModuleBase(object):
             modulePackage.getName())
         available_profiles = modulePackage.getProfiles()
         profiles_str = ""
-        for profile in available_profiles:
+        for profile in sorted(available_profiles, key=_profile_comparison_key):
             profiles_str += "{}{}".format(
                 profile.getName(), " [d]" if profile.getName() in default_profiles else "")
             profiles_str += " [i], " if profile.getName() in installed_profiles and enabled_str \
@@ -558,12 +563,12 @@ class ModuleBase(object):
                 for pkg in query:
                     string_output = ""
                     profiles = []
-                    for profile in modulePackage.getProfiles():
+                    for profile in sorted(modulePackage.getProfiles(), key=_profile_comparison_key):
                         if pkg.name in profile.getContent():
                             profiles.append(profile.getName())
                     lines = OrderedDict()
                     lines["Module"] = modulePackage.getFullIdentifier()
-                    lines["Profiles"] = " ".join(profiles)
+                    lines["Profiles"] = " ".join(sorted(profiles))
                     lines["Repo"] = modulePackage.getRepoID()
                     lines["Summary"] = modulePackage.getSummary()
 
