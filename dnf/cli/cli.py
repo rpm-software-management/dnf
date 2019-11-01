@@ -886,6 +886,7 @@ class Cli(object):
                 self.demands.cacheonly = True
             self.base.conf._configure_from_options(opts)
             self._read_conf_file(opts.releasever)
+            self.base.conf.read_dropin_dir()
             if 'arch' in opts:
                 self.base.conf.arch = opts.arch
             self.base.conf._adjust_conf_options()

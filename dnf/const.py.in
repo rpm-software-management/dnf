@@ -23,6 +23,7 @@ import distutils.sysconfig
 
 CONF_FILENAME='/etc/dnf/dnf.conf' # :api
 CONF_AUTOMATIC_FILENAME='/etc/dnf/automatic.conf'
+CONF_DROPIN_DIR='/etc/dnf/conf.d/'
 DISTROVERPKG=('system-release(releasever)', 'system-release',
               'distribution-release(releasever)', 'distribution-release',
               'redhat-release', 'suse-release')
