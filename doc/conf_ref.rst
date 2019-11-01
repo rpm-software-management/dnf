@@ -49,7 +49,7 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 =====================================
 
 Configuration options, namely :ref:`best <best-label>` and
-:ref:`skip_if_unavlailable <skip_if_unavailable-label>`, can be set in the DNF
+:ref:`skip_if_unavailable <skip_if_unavailable-label>`, can be set in the DNF
 configuration file by your distribution to override the DNF defaults.
 
 
