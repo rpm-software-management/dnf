@@ -175,9 +175,9 @@ class InstallCommand(commands.Command):
         for pkg_spec in self.opts.pkg_specs:
             try:
                 self.base.install(pkg_spec, strict=strict, forms=nevra_forms)
-            except dnf.exceptions.MarkingError:
-                msg = _('No match for argument: %s')
-                logger.info(msg, self.base.output.term.bold(pkg_spec))
+            except dnf.exceptions.MarkingError as e:
+                msg = '{}: {}'.format(e.value, self.base.output.term.bold(pkg_spec))
+                logger.info(msg)
                 self.base._report_icase_hint(pkg_spec)
                 self._report_alternatives(pkg_spec)
                 errs.append(pkg_spec)

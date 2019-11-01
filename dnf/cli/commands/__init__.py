@@ -370,9 +370,9 @@ class RepoPkgsCommand(Command):
                 for pkg_spec in self.opts.pkg_specs:
                     try:
                         self.base.install(pkg_spec, self.reponame)
-                    except dnf.exceptions.MarkingError:
-                        msg = _('No package %s available.')
-                        logger.info(msg, self.output.term.bold(pkg_spec))
+                    except dnf.exceptions.MarkingError as e:
+                        msg = '{}: {}'.format(e.value, self.base.output.term.bold(pkg_spec))
+                        logger.info(msg)
                     else:
                         done = True
 
