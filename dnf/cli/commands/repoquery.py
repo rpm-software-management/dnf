@@ -499,7 +499,8 @@ class RepoQueryCommand(commands.Command):
         if self.opts.file:
             q.filterm(file__glob=self.opts.file)
         if self.opts.whatconflicts:
-            q.filterm(conflicts=self.opts.whatconflicts)
+            rels = q.filter(conflicts__glob=self.opts.whatconflicts)
+            q = rels.union(q.filter(conflicts=self._resolve_nevras(self.opts.whatconflicts, q)))
         if self.opts.whatobsoletes:
             q.filterm(obsoletes=self.opts.whatobsoletes)
         if self.opts.whatprovides:
@@ -526,13 +527,18 @@ class RepoQueryCommand(commands.Command):
                 q = self.by_all_deps(self.opts.whatdepends, q, True)
 
         if self.opts.whatrecommends:
-            q.filterm(recommends__glob=self.opts.whatrecommends)
+            rels = q.filter(recommends__glob=self.opts.whatrecommends)
+            q = rels.union(q.filter(recommends=self._resolve_nevras(self.opts.whatrecommends, q)))
         if self.opts.whatenhances:
-            q.filterm(enhances__glob=self.opts.whatenhances)
+            rels = q.filter(enhances__glob=self.opts.whatenhances)
+            q = rels.union(q.filter(enhances=self._resolve_nevras(self.opts.whatenhances, q)))
         if self.opts.whatsupplements:
-            q.filterm(supplements__glob=self.opts.whatsupplements)
+            rels = q.filter(supplements__glob=self.opts.whatsupplements)
+            q = rels.union(q.filter(supplements=self._resolve_nevras(self.opts.whatsupplements, q)))
         if self.opts.whatsuggests:
-            q.filterm(suggests__glob=self.opts.whatsuggests)
+            rels = q.filter(suggests__glob=self.opts.whatsuggests)
+            q = rels.union(q.filter(suggests=self._resolve_nevras(self.opts.whatsuggests, q)))
+
         if self.opts.latest_limit:
             q = q.latest(self.opts.latest_limit)
         # reduce a query to security upgrades if they are specified
