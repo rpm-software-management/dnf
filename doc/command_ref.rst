@@ -1129,6 +1129,9 @@ packages to those matching the specification. All packages are considered if no 
 ``--available``
     Limit the resulting set to available packages only (set by default).
 
+``--disable-modular-filtering``
+    Disables filtering of modular packages, so that packages of inactive module streams are included in the result.
+
 ``--extras``
     Limit the resulting set to packages that are not present in any of the available repositories.
 
