@@ -20,6 +20,52 @@
 ###################
 
 ====================
+4.2.15 Release Notes
+====================
+
+- Fix downloading local packages into destdir (RhBug:1727137)
+- Report skipped packages with identical nevra only once (RhBug:1643109)
+- Restore functionality of dnf remove --duplicates (RhBug:1674296)
+- Improve API documentation
+- Document NEVRA parsing in the man page
+- Do not wrap output when no terminal (RhBug:1577889)
+- Allow to ship alternative dnf.conf (RhBug:1752249)
+- Don't check if repo is expired if it doesn't have loaded metadata (RhBug:1745170)
+- Remove duplicate entries from "dnf search" output (RhBug:1742926)
+- Set default value of repo name attribute to repo id (RhBug:1669711)
+- Allow searching in disabled modules using "dnf module provides" (RhBug:1629667)
+- Group install takes obsoletes into account (RhBug:1761137)
+- Improve handling of vars
+- Do not load metadata for repolist commands (RhBug:1697472,1713055,1728894)
+- Fix messages for starting and failing scriptlets (RhBug:1724779)
+- Don't show older install-only pkgs updates in updateinfo (RhBug:1649383,1728004)
+- Add --ids option to the group command (RhBug:1706382)
+- Add --with_cve and --with_bz options to the updateinfo command (RhBug:1750528)
+
+Bugs fixed in 4.2.15:
+
+* :rhbug:`1738837`
+* :rhbug:`1674296`
+* :rhbug:`1577889`
+* :rhbug:`1669711`
+* :rhbug:`1643109`
+* :rhbug:`1649383`
+* :rhbug:`1666236`
+* :rhbug:`1728894`
+* :rhbug:`1727137`
+* :rhbug:`1689645`
+* :rhbug:`1742926`
+* :rhbug:`1761137`
+* :rhbug:`1706382`
+* :rhbug:`1761518`
+* :rhbug:`1752249`
+* :rhbug:`1760937`
+* :rhbug:`1713055`
+* :rhbug:`1724779`
+* :rhbug:`1745170`
+* :rhbug:`1750528`
+
+====================
 4.2.11 Release Notes
 ====================
 

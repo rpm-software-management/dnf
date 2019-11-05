@@ -81,7 +81,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.2.14
+Version:        4.2.15
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -510,6 +510,26 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Tue Nov 05 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.2.15-1
+- Fix downloading local packages into destdir (RhBug:1727137)
+- Report skipped packages with identical nevra only once (RhBug:1643109)
+- Restore functionality of dnf remove --duplicates (RhBug:1674296)
+- Improve API documentation
+- Document NEVRA parsing in the man page
+- Do not wrap output when no terminal (RhBug:1577889)
+- Allow to ship alternative dnf.conf (RhBug:1752249)
+- Don't check if repo is expired if it doesn't have loaded metadata (RhBug:1745170)
+- Remove duplicate entries from "dnf search" output (RhBug:1742926)
+- Set default value of repo name attribute to repo id (RhBug:1669711)
+- Allow searching in disabled modules using "dnf module provides" (RhBug:1629667)
+- Group install takes obsoletes into account (RhBug:1761137)
+- Improve handling of vars
+- Do not load metadata for repolist commands (RhBug:1697472,1713055,1728894)
+- Fix messages for starting and failing scriptlets (RhBug:1724779)
+- Don't show older install-only pkgs updates in updateinfo (RhBug:1649383,1728004)
+- Add --ids option to the group command (RhBug:1706382)
+- Add --with_cve and --with_bz options to the updateinfo command (RhBug:1750528)
+
 * Thu Sep 19 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.2.11-1
 - Improve modularity documentation (RhBug:1730162,1730162,1730807,1734081)
 - Fix detection whether system is running on battery (used by metadata caching timer) (RhBug:1498680)

@@ -2886,5 +2886,81 @@
     [
         1741381,
         "DNF wants to remove kernel-core"
+    ],
+    [
+        1738837,
+        "man dnf.conf mentions best=False as default"
+    ],
+    [
+        1674296,
+        "package-cleanup doesn't work as expected"
+    ],
+    [
+        1577889,
+        "Description in search output is wrapped when stdout isn't terminal"
+    ],
+    [
+        1669711,
+        "kickstart install: additional nfs repos are not accepted"
+    ],
+    [
+        1643109,
+        "dnf should not list redundant entries in \"Skipping packages with conflicts:\" formatted output"
+    ],
+    [
+        1649383,
+        "dnf update updateinfo shows up-to-date packages"
+    ],
+    [
+        1666236,
+        "dnf(8) does not document module provides subcommand"
+    ],
+    [
+        1728894,
+        "dnf repolist should be very fast"
+    ],
+    [
+        1727137,
+        "dnf download ignores destdir argument for some packages"
+    ],
+    [
+        1742926,
+        "search yields duplicate entries"
+    ],
+    [
+        1761137,
+        "Conflicting request while trying to install xfce-desktop-environment in Fedora 30"
+    ],
+    [
+        1706382,
+        "Group subcommand should support listing IDs"
+    ],
+    [
+        1761518,
+        "dnf.conf.Conf strict option is not honored"
+    ],
+    [
+        1752249,
+        "Revert skip_if_unavailable default back to true"
+    ],
+    [
+        1760937,
+        "dnf-yum in F30 is now higher versioned than F31+ yum's \"Obsoletes\" (affects upgrades)"
+    ],
+    [
+        1713055,
+        "dnf repolist should not update metadata or anything else"
+    ],
+    [
+        1724779,
+        "Incorrect logging of post-transaction scripts"
+    ],
+    [
+        1745170,
+        "dnf ignores repo expiration limit set by metadata-expire in /etc/dnf/dnf.conf, updates repo data unless -C added"
+    ],
+    [
+        1750528,
+        "\"yum updateinfo list cves\" does not list cves"
     ]
 ]
