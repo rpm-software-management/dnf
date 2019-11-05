@@ -58,7 +58,7 @@ You can do that by running the command:
 
 
 Alternatively you can specify the url to the key you would like to use
-for a repository in the 'gpgkey' option in a repository section and {prog}}
+for a repository in the 'gpgkey' option in a repository section and {prog}
 will install it for you.
 
 For more information contact your distribution or package provider.""")
