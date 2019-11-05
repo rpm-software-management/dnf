@@ -1,0 +1,3 @@
+summary: Concise summary describing what the test does
+contact: Name Surname <email@example.com>
+test: ./test.sh

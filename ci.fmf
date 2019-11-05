@@ -1,0 +1,6 @@
+summary:
+    Essential command line features
+discover:
+    how: fmf
+execute:
+    how: beakerlib
