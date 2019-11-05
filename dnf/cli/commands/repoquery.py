@@ -177,6 +177,8 @@ class RepoQueryCommand(commands.Command):
         parser.add_argument("--latest-limit", dest='latest_limit', type=int,
                              help=_('show N latest packages for a given name.arch'
                                     ' (or latest but N if N is negative)'))
+        parser.add_argument("--disable-modular-filtering", action="store_true",
+                            help=_("list also packages of inactive module streams"))
 
         outform = parser.add_mutually_exclusive_group()
         outform.add_argument('-i', "--info", dest='queryinfo',
@@ -408,7 +410,11 @@ class RepoQueryCommand(commands.Command):
 
         self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
 
-        q = self.base.sack.query()
+        q = self.base.sack.query(
+            flags=hawkey.IGNORE_MODULAR_EXCLUDES
+            if self.opts.disable_modular_filtering
+            else hawkey.APPLY_EXCLUDES
+        )
         if self.opts.key:
             kwark = {}
             forms = [self.nevra_forms[command] for command in self.opts.command
@@ -420,7 +426,7 @@ class RepoQueryCommand(commands.Command):
             for key in self.opts.key:
                 query_results = query_results.union(
                     dnf.subject.Subject(key, ignore_case=True).get_best_query(
-                        self.base.sack, with_provides=False, **kwark))
+                        self.base.sack, with_provides=False, query=q, **kwark))
             q = query_results
 
         if self.opts.recent:
