@@ -1003,6 +1003,9 @@ class Cli(object):
         timer = dnf.logging.Timer('config')
         conf = self.base.conf
 
+        # replace remote config path with downloaded file
+        conf._check_remote_file('config_file_path')
+
         # search config file inside the installroot first
         conf._search_inside_installroot('config_file_path')
 

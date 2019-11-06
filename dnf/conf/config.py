@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 
 from dnf.yum import misc
 from dnf.i18n import ucd, _
-from dnf.pycomp import basestring
+from dnf.pycomp import basestring, urlparse
 
 import fnmatch
 import dnf.conf.substitutions
@@ -34,6 +34,8 @@ import hawkey
 import logging
 import os
 import libdnf.conf
+import libdnf.repo
+import tempfile
 
 PRIO_EMPTY = libdnf.conf.Option.Priority_EMPTY
 PRIO_DEFAULT = libdnf.conf.Option.Priority_DEFAULT
@@ -227,6 +229,13 @@ class MainConf(BaseConfig):
         self._config.cachedir().set(PRIO_DEFAULT, cachedir)
         self._config.logdir().set(PRIO_DEFAULT, logdir)
 
+        # track list of temporary files created
+        self.tempfiles = []
+
+    def __del__(self):
+        for file_name in self.tempfiles:
+            os.unlink(file_name)
+
     @property
     def get_reposdir(self):
         # :api
@@ -242,6 +251,33 @@ class MainConf(BaseConfig):
             myrepodir = self._get_value('reposdir')[0]
             dnf.util.ensure_dir(myrepodir)
         return myrepodir
+
+    def _check_remote_file(self, optname):
+        """
+        In case the option value is a remote URL, download it to the temporary location
+        and use this temporary file instead.
+        """
+        prio = self._get_priority(optname)
+        val = self._get_value(optname)
+        if isinstance(val, basestring):
+            location = urlparse.urlparse(val)
+            if location[0] in ('file', ''):
+                # just strip the file:// prefix
+                self._set_value(optname, location.path, prio)
+            else:
+                downloader = libdnf.repo.Downloader()
+                temp_fd, temp_path = tempfile.mkstemp(prefix='dnf-downloaded-config-')
+                self.tempfiles.append(temp_path)
+                try:
+                    downloader.downloadURL(None, val, temp_fd)
+                except RuntimeError as e:
+                    raise dnf.exceptions.ConfigError(
+                        _('Configuration file URL "{}" could not be downloaded:\n'
+                          '  {}').format(val, str(e)))
+                else:
+                    self._set_value(optname, temp_path, prio)
+                finally:
+                    os.close(temp_fd)
 
     def _search_inside_installroot(self, optname):
         """
