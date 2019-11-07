@@ -442,7 +442,7 @@ class Base(object):
             logger.info(_("The downloaded packages were saved in cache "
                           "until the next successful transaction."))
             logger.info(_("You can remove cached packages by executing "
-                          "'%s'."), "{prog} clean packages").format(prog=dnf.util.MAIN_PROG)
+                          "'%s'."), "{prog} clean packages".format(prog=dnf.util.MAIN_PROG))
 
         # Do not trigger the lazy creation:
         if self._history is not None:
