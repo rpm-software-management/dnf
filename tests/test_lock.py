@@ -83,7 +83,7 @@ class LockTest(tests.support.TestCase):
         with mock.patch('dnf.util.am_i_root', return_value=False):
             dir_ = dnf.lock._fit_lock_dir(orig)
             match = re.match(
-                r'/var/tmp/dnf-[^:]+-[^/]+/locks/8e58d9adbd213a8b602f30604a8875f2',
+                r'/var/tmp/dnf-[^:]+-[^/]+/locks/2690814ff0269c86e5109d2915ea572092918cb3',
                 dir_)
             self.assertTrue(match)
 
