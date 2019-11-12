@@ -947,12 +947,6 @@ class Base(object):
             elif hasattr(self, 'cmds') and self.cmds:
                 cmdline = ' '.join(self.cmds)
 
-            tsis = list(self.transaction)
-            installonly = self._get_installonly_query()
-
-#            for tsi in tsis:
-#                tsi._propagate_reason(self.history, installonly)
-
             tid = self.history.beg(rpmdbv, using_pkgs, [], cmdline)
 
             if self.conf.comment:
