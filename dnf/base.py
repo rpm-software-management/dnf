@@ -641,18 +641,12 @@ class Base(object):
             # Also keep RPMs with the same name - they're not always in all_obsoleted.
             obs = [i for i in obs if i in all_obsoleted or i.name == pkg.name]
 
-            reason = None
+            reason = goal.get_reason(pkg)
             # inherit the best reason from obsoleted packages
             for obsolete in obs:
                 reason_obsolete = ts.get_reason(obsolete)
-                if reason is None:
+                if libdnf.transaction.TransactionItemReasonCompare(reason, reason_obsolete) < 1:
                     reason = reason_obsolete
-                elif libdnf.transaction.TransactionItemReasonCompare(reason, reason_obsolete) < 1:
-                    reason = reason_obsolete
-
-            # reason is not inherited from any obsoleted packages, get one from the goal
-            if reason is None:
-                reason = goal.get_reason(pkg)
 
             ts.add_install(pkg, obs, reason)
             cb = lambda pkg: self._ds_callback.pkg_added(pkg, 'od')
