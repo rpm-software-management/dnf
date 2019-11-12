@@ -146,9 +146,9 @@ class RemoveCommand(commands.Command):
         for pkg_spec in self.opts.pkg_specs:
             try:
                 self.base.remove(pkg_spec, forms=forms)
-            except dnf.exceptions.MarkingError:
-                logger.info(_('No match for argument: %s'),
-                                      pkg_spec)
+            except dnf.exceptions.MarkingError as e:
+                msg = '{}: {}'.format(e.value, self.base.output.term.bold(pkg_spec))
+                logger.info(msg)
             else:
                 done = True
 

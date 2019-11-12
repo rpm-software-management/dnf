@@ -2070,9 +2070,8 @@ class Base(object):
             for pkg_spec in pkg_specs:
                 try:
                     self.remove(pkg_spec, forms=forms)
-                except dnf.exceptions.MarkingError:
-                    logger.info(_('No match for argument: %s'),
-                                pkg_spec)
+                except dnf.exceptions.MarkingError as e:
+                    logger.info(str(e))
                 else:
                     done = True
 
@@ -2095,8 +2094,7 @@ class Base(object):
             if reponame is None or
             self.history.repo(pkg) == reponame]
         if not installed:
-            raise dnf.exceptions.PackagesNotInstalledError(
-                'no package matched', pkg_spec)
+            self._raise_package_not_installed_error(pkg_spec, forms, reponame)
 
         clean_deps = self.conf.clean_requirements_on_remove
         for pkg in installed:
@@ -2518,6 +2516,24 @@ class Base(object):
             else:
                 msg = _('All matches were filtered out by modular filtering for argument')
             raise dnf.exceptions.PackageNotFoundError(msg, pkg_spec)
+
+    def _raise_package_not_installed_error(self, pkg_spec, forms, reponame):
+        all_query = self.sack.query(flags=hawkey.IGNORE_EXCLUDES).installed()
+        subject = dnf.subject.Subject(pkg_spec)
+        solution = subject.get_best_solution(
+            self.sack, forms=forms, with_src=False, query=all_query)
+
+        if not solution['query']:
+            raise dnf.exceptions.PackagesNotInstalledError(_('No match for argument'), pkg_spec)
+        if reponame is not None:
+            installed = [pkg for pkg in solution['query'] if self.history.repo(pkg) == reponame]
+        else:
+            installed = solution['query']
+        if not installed:
+            msg = _('All matches were installed from a different repository for argument')
+        else:
+            msg = _('All matches were filtered out by exclude filtering for argument')
+        raise dnf.exceptions.PackagesNotInstalledError(msg, pkg_spec)
 
 
 def _msg_installed(pkg):
