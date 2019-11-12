@@ -612,6 +612,7 @@ class Base(object):
     def _goal2transaction(self, goal):
         ts = self.history.rpm
         all_obsoleted = set(goal.list_obsoleted())
+        installonly_query = self._get_installonly_query()
 
         for pkg in goal.list_downgrades():
             obs = goal.obsoleted_by_package(pkg)
@@ -642,6 +643,12 @@ class Base(object):
             obs = [i for i in obs if i in all_obsoleted or i.name == pkg.name]
 
             reason = goal.get_reason(pkg)
+
+            if pkg in installonly_query:
+                reason_installonly = ts.get_reason(pkg)
+                if libdnf.transaction.TransactionItemReasonCompare(reason, reason_installonly) < 1:
+                    reason = reason_installonly
+
             # inherit the best reason from obsoleted packages
             for obsolete in obs:
                 reason_obsolete = ts.get_reason(obsolete)
@@ -671,7 +678,7 @@ class Base(object):
 
             cb = lambda pkg: self._ds_callback.pkg_added(pkg, 'od')
             dnf.util.mapall(cb, obs)
-            if pkg in self._get_installonly_query():
+            if pkg in installonly_query:
                 ts.add_install(pkg, obs)
             else:
                 ts.add_upgrade(pkg, upgraded, obs)
