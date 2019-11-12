@@ -171,6 +171,8 @@ Options
     Disable specified repositories (automatically saves). The option has to be used together with the
     ``config-manager`` command (dnf-plugins-core).
 
+.. _disableplugin-label:
+
 ``--disableplugin=<plugin names>``
     Disable the listed plugins specified by names or globs.
 
@@ -955,6 +957,8 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
     Reset module state so it's no longer enabled or disabled.
     Consequently, all installed profiles will be removed and
     only RPMs from the default stream will be available in the package set.
+
+.. _module_provide_command-label:
 
 ``dnf [options] module provides <package-name-spec>...``
     Lists all modular packages matching ``<package-name-spec>`` from all modules (including disabled), along with the modules and streams they belong to.
@@ -1761,6 +1765,53 @@ specifies a transaction ID. Specifying ``last`` is the same as specifying the ID
 of the most recent transaction. The last form is ``last-<offset>``, where
 ``<offset>`` is a positive integer. It specifies offset-th transaction preceding
 the most recent transaction.
+
+.. _excluded_packages-label:
+
+=================
+Package Filtering
+=================
+
+Package filtering filters packages out from the available package set, making them invisible to most
+of dnf commands. They cannot be used in a transaction. Packages can be filtered out by either
+Exclude Filtering or Modular Filtering.
+
+-----------------
+Exclude Filtering
+-----------------
+
+Exclude Filtering is a mechanism used by a user or by a DNF plugin to modify the set of available
+packages. Exclude Filtering can be modified by either :ref:`includepkgs <include-label>` or
+:ref:`excludepkgs <exclude-label>` configuration options in
+:ref:`configuration files <conf_ref-label>`. The -:ref:`-disableexcludes <disableexcludes-label>`
+command line option can be used to override excludes from configuration files. In addition to
+user-configured excludes, plugins can also extend the set of excluded packages. To disable excludes
+from a DNF plugin you can use the -:ref:`-disableplugin <disableplugin-label>` command line option.
+
+To disable all excludes for e.g. the install command you can use the following combination
+of command line options:
+
+``dnf --disableexcludes=all --disableplugin=* install bash``
+
+-----------------
+Modular Filtering
+-----------------
+
+Please see :ref:`the modularity documentation <modularity-label>` for details on how Modular
+Filtering works.
+
+With modularity, only RPM packages from ``active`` module streams are included in the available
+package set. RPM packages from ``inactive`` module streams, as well as non-modular packages with
+the same name or provides as a package from an ``active`` module stream, are filtered out. Modular
+filtering is not applied to packages added from the command line, installed packages, or packages
+from repositories with ``module_hotfixes=true`` in their ``.repo`` file.
+
+Disabling of modular filtering is not recommended, because it could cause the system to get into
+a broken state. To disable modular filtering for a particular repository, specify
+``module_hotfixes=true`` in the ``.repo`` file or use ``--setopt=<repo_id>.module_hotfixes=true``.
+
+To discover the module which contains an excluded package use
+:ref:`dnf module provides <module_provide_command-label>`.
 
 .. _metadata_synchronization-label:
 
