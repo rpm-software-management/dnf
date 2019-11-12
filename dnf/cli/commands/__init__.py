@@ -676,8 +676,8 @@ class RepoPkgsCommand(Command):
                 for pkg_spec in self.opts.pkg_specs:
                     try:
                         self.base.remove(pkg_spec, self.reponame)
-                    except dnf.exceptions.MarkingError:
-                        logger.info(_('No match for argument: %s'), pkg_spec)
+                    except dnf.exceptions.MarkingError as e:
+                        logger.info(str(e))
                     else:
                         done = True
 
