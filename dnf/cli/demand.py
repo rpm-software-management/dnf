@@ -58,3 +58,8 @@ class DemandSheet(object):
     changelogs = _BoolDefault(False)
 
     transaction_display = None
+
+    # This demand controlls applicability of the plugins that could filter
+    # repositories packages (e.g. versionlock).
+    # If it stays None, the demands.resolving is used as a fallback.
+    plugin_filtering_enabled = _BoolDefault(None)
