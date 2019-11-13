@@ -273,6 +273,7 @@ class CheckUpdateCommand(Command):
         demands = self.cli.demands
         demands.sack_activation = True
         demands.available_repos = True
+        demands.plugin_filtering_enabled = True
         if self.opts.changelogs:
             demands.changelogs = True
         _checkEnabledRepo(self.base)
