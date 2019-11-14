@@ -81,6 +81,8 @@ class ModuleBase(object):
                     install_module_list = [x for x in module_list
                                            if self.base._moduleContainer.isModuleActive(x.getId())]
                     if not install_module_list:
+                        logger.error(_("All matches for argument '{0}' in module '{1}:{2}' are not "
+                                       "active").format(spec, name, stream))
                         error_specs.append(spec)
                         continue
                     profiles = []
