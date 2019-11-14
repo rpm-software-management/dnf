@@ -20,6 +20,14 @@
 ###################
 
 ====================
+4.2.16 Release Notes
+====================
+
+- Make DNF compatible with FIPS mode (RhBug:1762032)
+- Return always alphabetically sorted modular profiles
+- Revert "Fix messages for starting and failing scriptlets"
+
+====================
 4.2.15 Release Notes
 ====================
 

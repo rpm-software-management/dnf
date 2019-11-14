@@ -81,7 +81,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.2.15
+Version:        4.2.16
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -510,6 +510,11 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Thu Nov 14 2019 Aleš Matěj <amatej@redhat.com> - 4.2.16-1
+- Make DNF compatible with FIPS mode (RhBug:1762032)
+- Return always alphabetically sorted modular profiles
+- Revert "Fix messages for starting and failing scriptlets"
+
 * Tue Nov 05 2019 Pavla Kratochvilova <pkratoch@redhat.com> - 4.2.15-1
 - Fix downloading local packages into destdir (RhBug:1727137)
 - Report skipped packages with identical nevra only once (RhBug:1643109)
