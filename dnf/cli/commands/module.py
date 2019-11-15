@@ -28,6 +28,7 @@ import dnf.util
 import sys
 import os
 
+import hawkey
 import libdnf
 import dnf.module.module_base
 import dnf.exceptions
@@ -39,6 +40,36 @@ class ModuleCommand(commands.Command):
         def __init__(self, cli):
             super(ModuleCommand.SubCommand, self).__init__(cli)
             self.module_base = dnf.module.module_base.ModuleBase(self.base)
+
+        def _get_modules_from_name_stream_specs(self):
+            modules_from_specs = set()
+            for module_spec in self.opts.module_spec:
+                __, nsvcap = self.module_base._get_modules(module_spec)
+                name = nsvcap.name if nsvcap.name else ""
+                stream = nsvcap.stream if nsvcap.stream else ""
+                if (nsvcap.version and nsvcap.version != -1) or nsvcap.context:
+                    logger.info(_("Only module name, stream, architecture or profile is used. "
+                                  "Ignoring unneeded information in argument: '{}'").format(
+                        module_spec))
+                arch = nsvcap.arch if nsvcap.arch else ""
+                modules = self.base._moduleContainer.query(name, stream, "", "", arch)
+                modules_from_specs.update(modules)
+            return modules_from_specs
+
+        def _get_module_artifact_names(self, use_modules, skip_modules):
+            artifacts = set()
+            pkg_names = set()
+            for module in use_modules:
+                if module not in skip_modules:
+                    if self.base._moduleContainer.isModuleActive(module):
+                        artifacts.update(module.getArtifacts())
+            for artifact in artifacts:
+                subj = hawkey.Subject(artifact)
+                for nevra_obj in subj.get_nevra_possibilities(
+                        forms=[hawkey.FORM_NEVRA]):
+                    if nevra_obj.name:
+                        pkg_names.add(nevra_obj.name)
+            return pkg_names, artifacts
 
     class ListSubCommand(SubCommand):
 
@@ -230,9 +261,39 @@ class ModuleCommand(commands.Command):
             if output:
                 print(output)
 
+    class RepoquerySubCommand(SubCommand):
+
+        aliases = ("repoquery", )
+
+        def configure(self):
+            demands = self.cli.demands
+            demands.available_repos = True
+            demands.sack_activation = True
+
+        def run_on_module(self):
+            modules_from_specs = set()
+            for module_spec in self.opts.module_spec:
+                modules, __ = self.module_base._get_modules(module_spec)
+                modules_from_specs.update(modules)
+            names_from_spec, spec_artifacts = self._get_module_artifact_names(
+                modules_from_specs, set())
+            package_strings = set()
+            if self.opts.available or not self.opts.installed:
+                query = self.base.sack.query().available().filterm(nevra_strict=spec_artifacts)
+                for pkg in query:
+                    package_strings.add(str(pkg))
+            if self.opts.installed:
+                query = self.base.sack.query().installed().filterm(name=names_from_spec)
+                for pkg in query:
+                    package_strings.add(str(pkg))
+
+            output = "\n".join(sorted(package_strings))
+            print(output)
+
+
     SUBCMDS = {ListSubCommand, InfoSubCommand, EnableSubCommand,
                DisableSubCommand, ResetSubCommand, InstallSubCommand, UpdateSubCommand,
-               RemoveSubCommand, ProvidesSubCommand}
+               RemoveSubCommand, ProvidesSubCommand, RepoquerySubCommand}
 
     SUBCMDS_NOT_REQUIRED_ARG = {ListSubCommand}
 
@@ -256,10 +317,12 @@ class ModuleCommand(commands.Command):
                              help=_("show only disabled modules"))
         narrows.add_argument('--installed', dest='installed',
                              action='store_true',
-                             help=_("show only installed modules"))
+                             help=_("show only installed modules or packages"))
         narrows.add_argument('--profile', dest='profile',
                              action='store_true',
                              help=_("show profile content"))
+        parser.add_argument('--available', dest='available', action='store_true',
+                            help=_("show only available packages"))
 
         subcommand_help = [subcmd.aliases[0] for subcmd in self.SUBCMDS]
         parser.add_argument('subcmd', nargs=1, choices=subcommand_help,
