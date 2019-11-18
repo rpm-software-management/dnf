@@ -27,6 +27,7 @@ import dnf.cli.format
 import dnf.pycomp
 import dnf.util
 import fnmatch
+import hawkey
 import logging
 import operator
 
@@ -158,77 +159,81 @@ class RepoListCommand(commands.Command):
                     md = repo.metadata
                 else:
                     md = None
-                out = [self.output.fmtKeyValFill(_("Repo-id      : "), repo.id),
-                       self.output.fmtKeyValFill(_("Repo-name    : "), repo.name)]
+                out = [self.output.fmtKeyValFill(_("Repo-id            : "), repo.id),
+                       self.output.fmtKeyValFill(_("Repo-name          : "), repo.name)]
 
                 if include_status:
-                    out += [self.output.fmtKeyValFill(_("Repo-status  : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-status        : "),
                                                       ui_enabled)]
                 if md and repo._repo.getRevision():
-                    out += [self.output.fmtKeyValFill(_("Repo-revision: "),
+                    out += [self.output.fmtKeyValFill(_("Repo-revision      : "),
                                                       repo._repo.getRevision())]
                 if md and repo._repo.getContentTags():
                     tags = repo._repo.getContentTags()
-                    out += [self.output.fmtKeyValFill(_("Repo-tags    : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-tags          : "),
                                                       ", ".join(sorted(tags)))]
 
                 if md and repo._repo.getDistroTags():
                     distroTagsDict = {k: v for (k, v) in repo._repo.getDistroTags()}
                     for (distro, tags) in distroTagsDict.items():
                         out += [self.output.fmtKeyValFill(
-                            _("Repo-distro-tags: "),
+                            _("Repo-distro-tags      : "),
                             "[%s]: %s" % (distro, ", ".join(sorted(tags))))]
 
                 if md:
-                    num = len(self.base.sack.query().filterm(reponame__eq=repo.id))
+                    num = len(self.base.sack.query(flags=hawkey.IGNORE_EXCLUDES).filterm(
+                        reponame__eq=repo.id))
+                    num_available = len(self.base.sack.query().filterm(reponame__eq=repo.id))
                     ui_num = _num2ui_num(num)
+                    ui_num_available = _num2ui_num(num_available)
                     tot_num += num
                     out += [
                         self.output.fmtKeyValFill(
-                            _("Repo-updated : "),
+                            _("Repo-updated       : "),
                             dnf.util.normalize_time(repo._repo.getMaxTimestamp())),
-                        self.output.fmtKeyValFill(_("Repo-pkgs    : "), ui_num),
-                        self.output.fmtKeyValFill(_("Repo-size    : "), ui_size)]
+                        self.output.fmtKeyValFill(_("Repo-pkgs          : "), ui_num),
+                        self.output.fmtKeyValFill(_("Repo-available-pkgs: "), ui_num_available),
+                        self.output.fmtKeyValFill(_("Repo-size          : "), ui_size)]
 
                 if repo.metalink:
-                    out += [self.output.fmtKeyValFill(_("Repo-metalink: "),
+                    out += [self.output.fmtKeyValFill(_("Repo-metalink      : "),
                                                       repo.metalink)]
                     if enabled:
                         ts = repo._repo.getTimestamp()
                         out += [self.output.fmtKeyValFill(
-                            _("  Updated    : "), dnf.util.normalize_time(ts))]
+                            _("  Updated          : "), dnf.util.normalize_time(ts))]
                 elif repo.mirrorlist:
-                    out += [self.output.fmtKeyValFill(_("Repo-mirrors : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-mirrors       : "),
                                                       repo.mirrorlist)]
                 baseurls = repo.baseurl
                 if baseurls:
-                    out += [self.output.fmtKeyValFill(_("Repo-baseurl : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-baseurl       : "),
                                                       ", ".join(baseurls))]
                 elif enabled:
                     mirrors = repo._repo.getMirrors()
                     if mirrors:
                         url = "%s (%d more)" % (mirrors[0], len(mirrors) - 1)
-                        out += [self.output.fmtKeyValFill(_("Repo-baseurl : "), url)]
+                        out += [self.output.fmtKeyValFill(_("Repo-baseurl       : "), url)]
 
                 expire = _expire_str(repo, md)
-                out += [self.output.fmtKeyValFill(_("Repo-expire  : "), expire)]
+                out += [self.output.fmtKeyValFill(_("Repo-expire        : "), expire)]
 
                 if repo.excludepkgs:
                     # TRANSLATORS: Packages that are excluded - their names like (dnf systemd)
-                    out += [self.output.fmtKeyValFill(_("Repo-exclude : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-exclude       : "),
                                                       ", ".join(repo.excludepkgs))]
 
                 if repo.includepkgs:
-                    out += [self.output.fmtKeyValFill(_("Repo-include : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-include       : "),
                                                       ", ".join(repo.includepkgs))]
 
                 if ui_excludes_num:
                     # TRANSLATORS: Number of packages that where excluded (5)
-                    out += [self.output.fmtKeyValFill(_("Repo-excluded: "),
+                    out += [self.output.fmtKeyValFill(_("Repo-excluded      : "),
                                                       ui_excludes_num)]
 
                 if repo.repofile:
-                    out += [self.output.fmtKeyValFill(_("Repo-filename: "),
+                    out += [self.output.fmtKeyValFill(_("Repo-filename      : "),
                                                       repo.repofile)]
 
                 print("\n" + "\n".join(map(ucd, out)))
