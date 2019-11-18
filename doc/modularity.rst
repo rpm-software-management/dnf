@@ -44,6 +44,15 @@ modular package
     Stream is a collection of packages, a virtual repository. It is identified with
     ``Name`` and ``Stream`` from modulemd separated with colon, for example "postgresql:9.6".
 
+    Module streams can be ``active`` or ``inactive``. ``active`` means the RPM
+    packages from this stream are included in the set of available packages.
+    Packages from ``inactive`` streams are filtered out.  Streams are
+    ``active`` either if marked as ``default`` or if they are explicitly
+    ``enabled`` by a user action. Streams that satisfy dependencies of
+    ``default`` or ``enabled`` streams are also considered ``active``.  Only
+    one stream of a particular module can be ``active`` at a given point in
+    time.
+
 
 ===================
  Package filtering
