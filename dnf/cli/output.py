@@ -652,7 +652,8 @@ class Output(object):
             thingslisted = 0
             if len(lst) > 0:
                 thingslisted = 1
-                print('%s' % description)
+                if description:
+                    print('%s' % description)
                 info_set = set()
                 if outputType == 'list':
                     unique_item_dict = {}
