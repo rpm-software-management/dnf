@@ -401,10 +401,11 @@ class BaseCli(dnf.Base):
         :param file_pkgs: a list of pkg objects from local files
         """
 
-        oldcount = self._goal.req_length()
+        result = False
         for pkg in file_pkgs:
             try:
                 self.package_downgrade(pkg, strict=strict)
+                result = True
             except dnf.exceptions.MarkingError as e:
                 logger.info(_('No match for argument: %s'),
                             self.output.term.bold(pkg.location))
@@ -412,6 +413,7 @@ class BaseCli(dnf.Base):
         for arg in specs:
             try:
                 self.downgrade_to(arg, strict=strict)
+                result = True
             except dnf.exceptions.PackageNotFoundError as err:
                 msg = _('No package %s available.')
                 logger.info(msg, self.output.term.bold(arg))
@@ -420,8 +422,8 @@ class BaseCli(dnf.Base):
                             self.output.term.bold(err.pkg_spec))
             except dnf.exceptions.MarkingError:
                 assert False
-        cnt = self._goal.req_length() - oldcount
-        if cnt <= 0:
+
+        if not result:
             raise dnf.exceptions.Error(_('No packages marked for downgrade.'))
 
     def output_packages(self, basecmd, pkgnarrow='all', patterns=(), reponame=None):
