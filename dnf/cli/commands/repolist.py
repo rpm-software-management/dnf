@@ -62,7 +62,7 @@ def _repo_match(repo, patterns):
 
 def _repo_size(sack, repo):
     ret = 0
-    for pkg in sack.query().filterm(reponame__eq=repo.id):
+    for pkg in sack.query(flags=hawkey.IGNORE_EXCLUDES).filterm(reponame__eq=repo.id):
         ret += pkg._size
     return dnf.cli.format.format_number(ret)
 
