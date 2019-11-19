@@ -242,6 +242,22 @@ class ModuleCommand(commands.Command):
 
         def run_on_module(self):
             skipped_groups = self.module_base.remove(self.opts.module_spec)
+            if self.opts.all:
+                modules_from_specs = self._get_modules_from_name_stream_specs()
+                remove_names_from_spec, __ = self._get_module_artifact_names(
+                    modules_from_specs, set())
+                keep_names, __ = self._get_module_artifact_names(
+                    self.base._moduleContainer.getModulePackages(), modules_from_specs)
+                remove_query = self.base.sack.query().installed().filterm(
+                    name=remove_names_from_spec)
+                keep_query = self.base.sack.query().installed().filterm(name=keep_names)
+                for pkg in remove_query:
+                    if pkg in keep_query:
+                        msg = _("Package {} belongs to multiple modules, skipping").format(pkg)
+                        logger.info(msg)
+                    else:
+                        self.base.goal.erase(
+                            pkg, clean_deps=self.base.conf.clean_requirements_on_remove)
             if not skipped_groups:
                 return
 
@@ -323,6 +339,9 @@ class ModuleCommand(commands.Command):
                              help=_("show profile content"))
         parser.add_argument('--available', dest='available', action='store_true',
                             help=_("show only available packages"))
+        narrows.add_argument('--all', dest='all',
+                             action='store_true',
+                             help=_("remove all modular packages"))
 
         subcommand_help = [subcmd.aliases[0] for subcmd in self.SUBCMDS]
         parser.add_argument('subcmd', nargs=1, choices=subcommand_help,
