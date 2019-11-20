@@ -926,6 +926,13 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
     required by other installed module profiles or by other user-installed packages.
     In case no profile was provided, all installed profiles get removed.
 
+``dnf [options] module remove --all <module-spec>...``
+    Remove installed module profiles, including packages that were installed with the
+    :ref:`dnf module install <module_install_command-label>` command.
+    With --all option it additionally removes all packages whose names are provided by specified
+    modules. Packages required by other installed module profiles and packages whose names are also
+    provided by any other module are not removed.
+
 .. _module_enable_command-label:
 
 ``dnf [options] module enable <module-spec>...``
@@ -976,6 +983,15 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
 
 ``dnf [options] module info --profile <module-spec>...``
     Print detailed information about given module profiles.
+
+``dnf [options] module repoquery <module-spec>...``
+    List all available packages belonging to selected modules.
+
+``dnf [options] module repoquery --available <module-spec>...``
+    List all available packages belonging to selected modules.
+
+``dnf [options] module repoquery --installed <module-spec>...``
+    List all installed packages with same name like packages belonging to selected modules.
 
 .. _provides_command-label:
 
