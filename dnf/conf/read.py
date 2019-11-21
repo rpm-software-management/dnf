@@ -43,7 +43,7 @@ class RepoReader(object):
 
         # read .repo files from directories specified by conf.reposdir
         for repofn in (repofn for reposdir in self.conf.reposdir
-                       for repofn in sorted(glob.glob('%s/*.repo' % reposdir))):
+                       for repofn in sorted(glob.glob('{}/*.repo'.format(reposdir)))):
             try:
                 for r in self._get_repos(repofn):
                     yield r
@@ -54,17 +54,38 @@ class RepoReader(object):
     def _build_repo(self, parser, id_, repofn):
         """Build a repository using the parsed data."""
 
-        repo = dnf.repo.Repo(id_, self.conf)
+        substituted_id = libdnf.conf.ConfigParser.substitute(id_, self.conf.substitutions)
+
+        # Check the repo.id against the valid chars
+        invalid = dnf.repo.repo_id_invalid(substituted_id)
+        if invalid is not None:
+            if substituted_id != id_:
+                msg = _("Bad id for repo: {} ({}), byte = {} {}").format(substituted_id, id_,
+                                                                         substituted_id[invalid],
+                                                                         invalid)
+            else:
+                msg = _("Bad id for repo: {}, byte = {} {}").format(id_, id_[invalid], invalid)
+            raise dnf.exceptions.ConfigError(msg)
+
+        repo = dnf.repo.Repo(substituted_id, self.conf)
         try:
             repo._populate(parser, id_, repofn, dnf.conf.PRIO_REPOCONFIG)
         except ValueError as e:
-            msg = _("Repository '%s': Error parsing config: %s") % (id_, e)
+            if substituted_id != id_:
+                msg = _("Repository '{}' ({}): Error parsing config: {}").format(substituted_id,
+                                                                                 id_, e)
+            else:
+                msg = _("Repository '{}': Error parsing config: {}").format(id_, e)
             raise dnf.exceptions.ConfigError(msg)
 
         # Ensure that the repo name is set
         if repo._get_priority('name') == dnf.conf.PRIO_DEFAULT:
-            msg = _("Repository '%s' is missing name in configuration, using id.")
-            logger.warning(msg, id_)
+            if substituted_id != id_:
+                msg = _("Repository '{}' ({}) is missing name in configuration, using id.").format(
+                    substituted_id, id_)
+            else:
+                msg = _("Repository '{}' is missing name in configuration, using id.").format(id_)
+            logger.warning(msg)
         repo.name = ucd(repo.name)
         repo._substitutions.update(self.conf.substitutions)
         repo.cfg = parser
@@ -80,7 +101,7 @@ class RepoReader(object):
         try:
             parser.read(repofn)
         except RuntimeError as e:
-            raise dnf.exceptions.ConfigError(_('Parsing file "%s" failed: %s') % (repofn, e))
+            raise dnf.exceptions.ConfigError(_('Parsing file "{}" failed: {}').format(repofn, e))
         except IOError as e:
             logger.warning(e)
 
@@ -88,13 +109,6 @@ class RepoReader(object):
         for section in parser.getData():
 
             if section == 'main':
-                continue
-
-            # Check the repo.id against the valid chars
-            invalid = dnf.repo.repo_id_invalid(section)
-            if invalid is not None:
-                logger.warning(_("Bad id for repo: %s, byte = %s %d"), section,
-                               section[invalid], invalid)
                 continue
 
             try:
