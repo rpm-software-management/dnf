@@ -523,10 +523,11 @@ class ModuleBase(object):
         column_value.setNewlineWrapFunction()
 
         for line_name, value in lines.items():
-            if value:
-                line = table.newLine()
-                line.getColumnCell(column_name).setData(line_name)
-                line.getColumnCell(column_value).setData(str(value))
+            if value is None:
+                value = ""
+            line = table.newLine()
+            line.getColumnCell(column_name).setData(line_name)
+            line.getColumnCell(column_value).setData(str(value))
 
         return table
 
