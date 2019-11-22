@@ -646,13 +646,14 @@ class Base(object):
 
             if pkg in installonly_query:
                 reason_installonly = ts.get_reason(pkg)
-                if libdnf.transaction.TransactionItemReasonCompare(reason, reason_installonly) < 1:
+                if libdnf.transaction.TransactionItemReasonCompare(
+                        reason, reason_installonly) == -1:
                     reason = reason_installonly
 
             # inherit the best reason from obsoleted packages
             for obsolete in obs:
                 reason_obsolete = ts.get_reason(obsolete)
-                if libdnf.transaction.TransactionItemReasonCompare(reason, reason_obsolete) < 1:
+                if libdnf.transaction.TransactionItemReasonCompare(reason, reason_obsolete) == -1:
                     reason = reason_obsolete
 
             ts.add_install(pkg, obs, reason)
