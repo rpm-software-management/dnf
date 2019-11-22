@@ -405,13 +405,9 @@ class BaseCli(dnf.Base):
         for pkg in file_pkgs:
             try:
                 self.package_downgrade(pkg, strict=strict)
-                continue # it was something on disk and it ended in rpm
-                         # no matter what we don't go looking at repos
             except dnf.exceptions.MarkingError as e:
                 logger.info(_('No match for argument: %s'),
                             self.output.term.bold(pkg.location))
-                # it was something on disk and it ended in rpm
-                # no matter what we don't go looking at repos
 
         for arg in specs:
             try:
