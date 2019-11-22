@@ -110,8 +110,14 @@ class RemoveCommand(commands.Command):
 
         if self.opts.oldinstallonly:
             q = self.base.sack.query()
-            instonly = self.base._get_installonly_query(q.installed()).latest(
-                - self.base.conf.installonly_limit)
+            instonly = self.base._get_installonly_query(q.installed()).latest(-1)
+            # also remove running kernel from the set
+            kernel = self.base.sack.get_running_kernel()
+            if kernel is not None:
+                running_installonly = instonly.filter(
+                    epoch=kernel.epoch, version=kernel.version, release=kernel.release)
+                if running_installonly:
+                    instonly = instonly.difference(running_installonly)
             if instonly:
                 for pkg in instonly:
                     self.base.package_remove(pkg)
