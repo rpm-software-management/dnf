@@ -497,6 +497,12 @@ class ModuleBase(object):
                 lines["Repo"] = modulePackage.getRepoID()
                 lines["Summary"] = modulePackage.getSummary()
                 lines["Description"] = modulePackage.getDescription()
+                req_set = set()
+                for req in modulePackage.getModuleDependencies():
+                    for require_dict in req.getRequires():
+                        for mod_require, stream in require_dict.items():
+                            req_set.add("{}:[{}]".format(mod_require, ",".join(stream)))
+                lines["Requires"] = "\n".join(sorted(req_set))
                 lines["Artifacts"] = "\n".join(sorted(modulePackage.getArtifacts()))
                 output.add(self._create_simple_table(lines).toString())
         str_table = "\n\n".join(sorted(output))
