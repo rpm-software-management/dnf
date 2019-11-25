@@ -510,6 +510,24 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Mon Nov 25 2019 Aleš Matěj <amatej@redhat.com> - 4.2.17-1
+- Enable versionlock for check-update command (RhBug:1750620)
+- Add error message when no active modules matched (RhBug:1696204)
+- Log mirror failures as warning when repo load fails (RhBug:1713627)
+- dnf-automatic: Change all systemd timers to a fixed time of day (RhBug:1754609)
+- DNF can use config from the remote location (RhBug:1721091)
+- [doc] update reference to plugin documentation (RhBug:1706386)
+- [yum compatibility] Report all packages in repoinfo
+- [doc] Add definition of active/inactive module stream
+- repoquery: Add a switch to disable modular excludes
+- Report more informative messages when no match for argument (RhBug:1709563)
+- [doc] Add description of excludes in dnf
+- Report more descriptive message when removed package is excluded
+- Add module repoquery command
+- Fix assumptions about ARMv8 and the way the rpm features work (RhBug:1691430)
+- Add Requires information into module info commands
+- Enhance inheritance of transaction reasons (RhBug:1672618,1769788)
+
 * Thu Nov 14 2019 Aleš Matěj <amatej@redhat.com> - 4.2.16-1
 - Make DNF compatible with FIPS mode (RhBug:1762032)
 - Return always alphabetically sorted modular profiles

@@ -2962,5 +2962,45 @@
     [
         1750528,
         "\"yum updateinfo list cves\" does not list cves"
+    ],
+    [
+        1696204,
+        "dnf should enable parent-required-modules if user specify exact module version to install. Or print missing installed modules."
+    ],
+    [
+        1709563,
+        "yum operations on disabled appstreams should have more targeted error messages"
+    ],
+    [
+        1721091,
+        "yum doesn't read config file via http any more"
+    ],
+    [
+        1769788,
+        "dnf autoremove tries to remove kernel"
+    ],
+    [
+        1706386,
+        "[RFE] Discoverable man page names for DNF plugins"
+    ],
+    [
+        1750620,
+        "dnf check-update not honouring versionlock"
+    ],
+    [
+        1713627,
+        "dnf exits with \"Error: Failed to synchronize cache for repo 'xxx'\" without further details"
+    ],
+    [
+        1672618,
+        "Upgrading obsoleted package doesn't keep reason"
+    ],
+    [
+        1754609,
+        "Modify default dnf-automatic unit timers"
+    ],
+    [
+        1691430,
+        "dnf.exceptions.Error: Incorrect or unknown \"arch\": armv7hcnl"
     ]
 ]
