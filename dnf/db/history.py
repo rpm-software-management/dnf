@@ -318,6 +318,18 @@ class SwdbInterface(object):
     def reset_db(self):
         return self.swdb.resetDatabase()
 
+    def backup_db(self, path=None):
+        if path is None:
+            db_dir = os.path.dirname(self.dbpath)
+            db_name, db_suffix = os.path.basename(self.dbpath).split('.')
+            backup_name = '{}-{}.{}'.format(
+                db_name,
+                time.strftime('%Y-%m-%d-%H-%M-%S', time.gmtime()),
+                db_suffix)
+            path = os.path.join(db_dir, backup_name)
+        self.swdb.backupDatabase(path)
+        return path
+
     # TODO: rename to get_last_transaction?
     def last(self, complete_transactions_only=True):
         # TODO: complete_transactions_only
