@@ -826,7 +826,7 @@ class HistoryCommand(Command):
     aliases = ('history', 'hist')
     summary = _('display, or use, the transaction history')
 
-    _CMDS = ['list', 'info', 'redo', 'undo', 'rollback', 'userinstalled']
+    _CMDS = ['list', 'info', 'redo', 'undo', 'rollback', 'userinstalled', 'new']
 
     transaction_ids = set()
     merged_transaction_ids = set()
@@ -856,7 +856,9 @@ class HistoryCommand(Command):
                                            "'{}' requires one transaction ID or package name."
                                            ).format(self.opts.transactions_action)
         demands = self.cli.demands
-        if self.opts.transactions_action in ['redo', 'undo', 'rollback']:
+        if self.opts.transactions_action == 'new':
+            demands.root_user = True
+        elif self.opts.transactions_action in ['redo', 'undo', 'rollback']:
             demands.root_user = True
             require_one_transaction_id = True
             if not self.opts.transactions:
@@ -937,6 +939,31 @@ class HistoryCommand(Command):
         """Execute history userinstalled command."""
         pkgs = tuple(self.base.iter_userinstalled())
         return self.output.listPkgs(pkgs, 'Packages installed by user', 'nevra')
+
+    def _hcmd_new(self):
+        """Backup and reset history database"""
+        if self.base._promptWanted():
+            msg = _("This command will clear all the package history including "
+                    "information about installed groups and about packages installed "
+                    "by user.")
+            logger.info(msg)
+            if self.base.conf.assumeno or not self.base.output.userconfirm():
+                raise dnf.cli.CliError(_("Operation aborted."))
+
+        try:
+            backup_path = self.base.history.backup_db()
+        except RuntimeError as e:
+            msg = _("Failed to backup history database: {}".format(e))
+            raise dnf.exceptions.Error(msg)
+        logger.info(_("Original history database was backed up in location '{}'.").format(
+            backup_path))
+
+        try:
+            self.base.history.reset_db()
+        except RuntimeError as e:
+            msg = _("Failed to reset history database: {}".format(e))
+            raise dnf.exceptions.Error(msg)
+        return
 
     def _args2transaction_ids(self, merged_ids=set(),
                               require_one_trans_id=False, require_one_trans_id_msg=''):
@@ -1019,6 +1046,8 @@ class HistoryCommand(Command):
             ret = self._hcmd_rollback(self.transaction_ids)
         elif vcmd == 'userinstalled':
             ret = self._hcmd_userinstalled()
+        elif vcmd == 'new':
+            ret = self._hcmd_new()
 
         if ret is None:
             return

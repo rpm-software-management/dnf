@@ -721,6 +721,10 @@ transactions and act according to this information (assuming the
     results can be accomplished with ``dnf repoquery --userinstalled``, and the repoquery
     command is more powerful in formatting of the output.
 
+``dnf history new``
+    Clears the transaction history database.
+    Be careful because after issuing this command all DNF package history is lost (including information about installed groups and about packages marked as installed by user - see :ref:`mark command <mark_command-label>`).
+
 This command by default does not force a sync of expired metadata, except for
 the redo, rollback, and undo subcommands.
 See also :ref:`\metadata_synchronization-label`
