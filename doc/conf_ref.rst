@@ -806,11 +806,6 @@ configuration.
 
         libdnf (Fedora 31; server; Linux.x86_64)
 
-    To avoid leaking identifiable data, the variant in the above string will be
-    replaced by "generic" if the value is not an official Fedora variant.
-    Likewise, the whole OS part (enclosed in parenthesis) will be omitted if
-    this is a non-Fedora system.
-
 =================
 Types of Options
 =================
