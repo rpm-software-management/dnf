@@ -630,7 +630,7 @@ configuration.
     :ref:`list <list-label>`
 
     Include packages of this repository, specified by a name or a glob and separated by a comma, in all operations.
-    Inverse of :ref:`excludepkgs <exclude-label>`, DNF will exclude any package in the repository that doesn't match this list. This works in conjunction with exclude and doesn't override it, so if you 'excludepkgs=*.i386' and 'includepkgs=python*' then only packages starting with python that do not have an i386 arch will be seen by DNF in this repo.
+    Inverse of :ref:`excludepkgs <exclude-label>`, DNF will exclude any package in the repository that doesn't match this list. This works in conjunction with ``excludepkgs`` and doesn't override it, so if you 'excludepkgs=*.i386' and 'includepkgs=python*' then only packages starting with python that do not have an i386 arch will be seen by DNF in this repo.
     Can be disabled using ``--disableexcludes`` command line switch.
     Defaults to ``[]``.
 
