@@ -44,6 +44,8 @@ may find/install the package which provides it using the appropriate virtual pro
 'dnf-command(versionlock)'`` installs a ``versionlock`` plugin. This approach also applies to
 specifying dependencies of packages that require a particular DNF command.
 
+.. _exit_codes-label:
+
 Return values:
 
 * ``0``  : Operation was successful.
