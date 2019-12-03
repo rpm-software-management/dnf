@@ -1516,6 +1516,11 @@ Shell Command
         * reset: reset the transaction
         * run: resolve and run the transaction
 
+    Note that all local packages must be used in the first shell transaction subcommand (e.g.
+    `install /tmp/nodejs-1-1.x86_64.rpm /tmp/acpi-1-1.noarch.rpm`) otherwise an error will occur.
+    Any `disable`, `enable`, and `reset` module operations (e.g. `module enable nodejs`) must also
+    be performed before any other shell transaction subcommand is used.
+
 .. _swap_command-label:
 
 ------------
