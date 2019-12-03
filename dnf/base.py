@@ -1162,6 +1162,9 @@ class Base(object):
         pkgs = []
         if not path_list:
             return pkgs
+        if self._goal.req_length():
+            raise dnf.exceptions.Error(
+                _("Cannot add local packages, because transaction job already exists"))
         pkgs_error = []
         for path in path_list:
             if not os.path.exists(path) and '://' in path:
