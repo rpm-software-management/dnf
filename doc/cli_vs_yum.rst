@@ -387,15 +387,15 @@ Original YUM tool          New DNF command                                  Pack
 
 Detailed table for ``package-cleanup`` replacement:
 
-==================================       =====================================
-``package-cleanup --dupes``              ``dnf repoquery --duplicates``
-``package-cleanup --leaves``             ``dnf repoquery --unneeded``
-``package-cleanup --orphans``            ``dnf repoquery --extras``
-``package-cleanup --oldkernels``         ``dnf repoquery --installonly``
-``package-cleanup --problems``           ``dnf repoquery --unsatisfied``
-``package-cleanup --cleandupes``         ``dnf remove --duplicates``
-``package-cleanup --oldkernels``         ``dnf remove --oldinstallonly``
-==================================       =====================================
+==========================================       ===============================================================
+``package-cleanup --dupes``                      ``dnf repoquery --duplicates``
+``package-cleanup --leaves``                     ``dnf repoquery --unneeded``
+``package-cleanup --orphans``                    ``dnf repoquery --extras``
+``package-cleanup --problems``                   ``dnf repoquery --unsatisfied``
+``package-cleanup --cleandupes``                 ``dnf remove --duplicates``
+``package-cleanup --oldkernels``                 ``dnf remove --oldinstallonly``
+``package-cleanup --oldkernels --keep=2``        ``dnf remove $(dnf repoquery --installonly --latest-limit=-2)``
+==========================================       ===============================================================
 
 =============================
 yum-updateonboot and yum-cron
