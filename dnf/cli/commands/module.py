@@ -74,6 +74,7 @@ class ModuleCommand(commands.Command):
     class ListSubCommand(SubCommand):
 
         aliases = ('list',)
+        summary = _('list all module streams, profiles and states')
 
         def configure(self):
             demands = self.cli.demands
@@ -107,6 +108,7 @@ class ModuleCommand(commands.Command):
     class InfoSubCommand(SubCommand):
 
         aliases = ('info',)
+        summary = _('print detailed information about a module')
 
         def configure(self):
             demands = self.cli.demands
@@ -128,6 +130,7 @@ class ModuleCommand(commands.Command):
     class EnableSubCommand(SubCommand):
 
         aliases = ('enable',)
+        summary = _('enable a module stream')
 
         def configure(self):
             demands = self.cli.demands
@@ -151,6 +154,7 @@ class ModuleCommand(commands.Command):
     class DisableSubCommand(SubCommand):
 
         aliases = ('disable',)
+        summary = _('disable a module with all its streams')
 
         def configure(self):
             demands = self.cli.demands
@@ -174,6 +178,7 @@ class ModuleCommand(commands.Command):
     class ResetSubCommand(SubCommand):
 
         aliases = ('reset',)
+        summary = _('reset a module')
 
         def configure(self):
             demands = self.cli.demands
@@ -194,6 +199,7 @@ class ModuleCommand(commands.Command):
     class InstallSubCommand(SubCommand):
 
         aliases = ('install',)
+        summary = _('install a module profile including its packages')
 
         def configure(self):
             demands = self.cli.demands
@@ -214,6 +220,7 @@ class ModuleCommand(commands.Command):
     class UpdateSubCommand(SubCommand):
 
         aliases = ('update',)
+        summary = _('update packages associated with an active stream')
 
         def configure(self):
             demands = self.cli.demands
@@ -230,6 +237,7 @@ class ModuleCommand(commands.Command):
     class RemoveSubCommand(SubCommand):
 
         aliases = ('remove', 'erase',)
+        summary = _('remove installed module profiles and their packages')
 
         def configure(self):
             demands = self.cli.demands
@@ -266,6 +274,7 @@ class ModuleCommand(commands.Command):
     class ProvidesSubCommand(SubCommand):
 
         aliases = ("provides", )
+        summary = _('list modular packages')
 
         def configure(self):
             demands = self.cli.demands
@@ -280,6 +289,7 @@ class ModuleCommand(commands.Command):
     class RepoquerySubCommand(SubCommand):
 
         aliases = ("repoquery", )
+        summary = _('list packages belonging to a module')
 
         def configure(self):
             demands = self.cli.demands
@@ -342,10 +352,14 @@ class ModuleCommand(commands.Command):
         narrows.add_argument('--all', dest='all',
                              action='store_true',
                              help=_("remove all modular packages"))
-
-        subcommand_help = [subcmd.aliases[0] for subcmd in self.SUBCMDS]
-        parser.add_argument('subcmd', nargs=1, choices=subcommand_help,
-                            help=_("Modular command"))
+        subcommand_choices = []
+        subcommand_help = []
+        for subcmd in sorted(self.SUBCMDS, key=lambda x: x.aliases[0]):
+            subcommand_choices.append(subcmd.aliases[0])
+            subcommand_help.append('{}: {}'.format(subcmd.aliases[0], subcmd.summary or ''))
+        parser.add_argument('subcmd', nargs=1, choices=subcommand_choices,
+                            metavar='<modular command>',
+                            help='\n'.join(subcommand_help))
         parser.add_argument('module_spec', metavar='module-spec', nargs='*',
                             help=_("Module specification"))
 
