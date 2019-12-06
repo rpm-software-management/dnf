@@ -1064,7 +1064,7 @@ Remove Command
     dnf-shell sub-commands could help.
 
 ``dnf [options] remove --oldinstallonly``
-    Removes old installonly packages, keeping only ``installonly_limit`` latest versions.
+    Removes old installonly packages, keeping only latest versions and version of running kernel.
 
     There are also a few specific remove commands ``remove-n``, ``remove-na`` and ``remove-nevra``
     that allow the specification of an exact argument in the NEVRA format.
