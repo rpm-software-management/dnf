@@ -1981,17 +1981,19 @@ class Base(object):
             return 0
 
     def _upgrade_internal(self, query, obsoletes, reponame, pkg_spec=None):
-        installed = self.sack.query().installed()
-        q = query.intersection(self.sack.query().filterm(name=[pkg.name for pkg in installed]))
+        installed_all = self.sack.query().installed()
+        q = query.intersection(self.sack.query().filterm(name=[pkg.name for pkg in installed_all]))
+        installed_query = q.installed()
         if obsoletes:
             obsoletes = self.sack.query().available().filterm(
-                obsoletes=q.installed().union(q.upgrades()))
+                obsoletes=installed_query.union(q.upgrades()))
             # add obsoletes into transaction
             q = q.union(obsoletes)
         if reponame is not None:
             q.filterm(reponame=reponame)
         q = self._merge_update_filters(q, pkg_spec=pkg_spec)
         if q:
+            q = q.available().union(installed_query.latest())
             sltr = dnf.selector.Selector(self.sack)
             sltr.set(pkg=q)
             self._goal.upgrade(select=sltr)
