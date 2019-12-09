@@ -285,7 +285,7 @@ class ModuleBase(object):
         if module_list:
             latest = module_list[0]
             for module in module_list[1:]:
-                if module.getVersion() > latest.getVersion():
+                if module.getVersionNum() > latest.getVersionNum():
                     latest = module
         return latest
 
