@@ -224,23 +224,6 @@ class Output(object):
         if total_width is None:
             total_width = self.term.real_columns
 
-        # i'm not able to get real terminal width so i'm probably
-        # running in non interactive terminal (pipe to grep, redirect to file...)
-        # avoid splitting lines to enable filtering output
-        if not total_width:
-            full_columns = []
-            for col in data:
-                if col:
-                    full_columns.append(col[-1][0])
-                else:
-                    full_columns.append(0)
-            full_columns[0] += len(indent)
-            # if possible, try to keep default width (usually 80 columns)
-            default_width = self.term.columns
-            if sum(full_columns) > default_width:
-                return full_columns
-            total_width = default_width
-
         #  We start allocating 1 char to everything but the last column, and a
         # space between each (again, except for the last column). Because
         # at worst we are better with:
@@ -255,6 +238,25 @@ class Output(object):
         if columns is None:
             columns = [1] * (cols - 1)
             columns.append(0)
+
+        # i'm not able to get real terminal width so i'm probably
+        # running in non interactive terminal (pipe to grep, redirect to file...)
+        # avoid splitting lines to enable filtering output
+        if not total_width:
+            full_columns = []
+            for d in xrange(0, cols):
+                col = data[d]
+                if col:
+                    full_columns.append(col[-1][0])
+                else:
+                    full_columns.append(columns[d] + 1)
+            full_columns[0] += len(indent)
+            # if possible, try to keep default width (usually 80 columns)
+            default_width = self.term.columns
+            if sum(full_columns) > default_width:
+                return full_columns
+            total_width = default_width
+
 
         total_width -= (sum(columns) + (cols - 1) + exact_width(indent))
         if not columns[-1]:
@@ -1273,7 +1275,7 @@ class Output(object):
                 skip_str = skip_str % _(" or part of a group")
 
             pkglist_lines.append((skip_str, lines))
-
+        output_width = self.term.columns
         if not data['n'] and not self.base._moduleContainer.isChanged() and not \
                 (self.base._history and (self.base._history.group or self.base._history.env)):
             return u''
@@ -1283,6 +1285,8 @@ class Output(object):
             columns = self.calcColumns(data, indent="  ", columns=columns,
                                        remainder_column=2, total_width=total_width)
             (n_wid, a_wid, v_wid, r_wid, s_wid) = columns
+            real_width = sum(columns) + 5
+            output_width = output_width if output_width >= real_width else real_width
 
             # Do not use 'Package' without context. Using context resolves
             # RhBug 1302935 as a side effect.
@@ -1325,13 +1329,13 @@ class Output(object):
             # Translators: This is the full (unabbreviated) term 'Size'.
                                          C_('long', 'Size'))
 
-            out = [u"%s\n%s\n%s\n" % ('=' * self.term.columns,
+            out = [u"%s\n%s\n%s\n" % ('=' * output_width,
                                       self.fmtColumns(((msg_package, -n_wid),
                                                        (msg_arch, -a_wid),
                                                        (msg_version, -v_wid),
                                                        (msg_repository, -r_wid),
                                                        (msg_size, s_wid)), u" "),
-                                      '=' * self.term.columns)]
+                                      '=' * output_width)]
 
         for (action, lines) in pkglist_lines:
             if lines:
@@ -1349,11 +1353,10 @@ class Output(object):
 
             if lines:
                 out.append(totalmsg)
-
         out.append(_("""
 Transaction Summary
 %s
-""") % ('=' * self.term.columns))
+""") % ('=' * output_width))
         summary_data = (
             (_('Install'), len(list_bunch.installed) +
              len(list_bunch.installed_group) +
