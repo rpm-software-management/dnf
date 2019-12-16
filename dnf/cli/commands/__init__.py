@@ -279,7 +279,7 @@ class CheckUpdateCommand(Command):
         _checkEnabledRepo(self.base)
 
     def run(self):
-        query = self.base.sack.query().upgrades()
+        query = self.base.sack.query().filterm(upgrades_by_priority=True)
         if self.base.conf.obsoletes:
             obsoleted = query.union(self.base.sack.query().installed())
             obsoletes = self.base.sack.query().filter(obsoletes=obsoleted)
