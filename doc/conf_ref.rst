@@ -727,7 +727,10 @@ configuration.
 ``retries``
     :ref:`integer <integer-label>`
 
-    Set the number of times any attempt to retrieve a file should retry before returning an error. Setting this to `0` makes dnf try forever. Default is `10`.
+    Set the number of total retries for downloading packages. The number is
+    accumulative, so e.g. for `retries=10`, dnf will fail after any package
+    download fails for eleventh time. Setting this to `0` makes dnf try
+    forever. Default is `10`.
 
 .. _skip_if_unavailable-label:
 
