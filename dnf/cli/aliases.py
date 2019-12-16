@@ -176,8 +176,13 @@ class Aliases(object):
                     suffix[0].startswith('\\')):  # End resolving
                 try:
                     stack.pop()
+
+                    # strip the '\' if it exists
+                    if suffix[0].startswith('\\'):
+                        suffix[0] = suffix[0][1:]
                 except IndexError:
                     pass
+
                 return suffix
 
             if suffix[0] in stack:  # Infinite recursion detected
