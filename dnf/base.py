@@ -1365,7 +1365,7 @@ class Base(object):
 
         # produce the updates list of tuples
         elif pkgnarrow == 'upgrades':
-            updates = query_for_repo(q).upgrades()
+            updates = query_for_repo(q).filterm(upgrades_by_priority=True)
             # reduce a query to security upgrades if they are specified
             updates = self._merge_update_filters(updates)
             # reduce a query to latest packages
@@ -1417,7 +1417,7 @@ class Base(object):
         elif pkgnarrow == 'obsoletes':
             inst = q.installed()
             obsoletes = query_for_repo(
-                self.sack.query()).filter(obsoletes=inst)
+                self.sack.query()).filter(obsoletes_by_priority=inst)
             # reduce a query to security upgrades if they are specified
             obsoletes = self._merge_update_filters(obsoletes, warning=False)
             obsoletesTuples = []
