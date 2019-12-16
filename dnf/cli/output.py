@@ -23,6 +23,7 @@ from __future__ import unicode_literals
 
 from copy import deepcopy
 import fnmatch
+import functools
 import hawkey
 import itertools
 import libdnf.transaction
@@ -1449,11 +1450,26 @@ Transaction Summary
                 col_lens[col] *= -1
             return col_lens
 
+        def _tsi_or_pkg_nevra_cmp(item1, item2):
+            """Compares two transaction items or packages by nevra.
+               Used as a fallback when tsi does not contain package object.
+            """
+            ret = (item1.name > item2.name) - (item1.name < item2.name)
+            if ret != 0:
+                return ret
+            nevra1 = hawkey.NEVRA(name=item1.name, epoch=item1.epoch, version=item1.version,
+                                  release=item1.release, arch=item1.arch)
+            nevra2 = hawkey.NEVRA(name=item2.name, epoch=item2.epoch, version=item2.version,
+                                  release=item2.release, arch=item2.arch)
+            ret = nevra1.evr_cmp(nevra2, self.sack)
+            if ret != 0:
+                return ret
+            return (item1.arch > item2.arch) - (item1.arch < item2.arch)
+
         out = ''
         list_bunch = _make_lists(transaction, self.base._goal)
         skipped_conflicts, skipped_broken = self._skipped_packages(report_problems=False)
         skipped = skipped_conflicts.union(skipped_broken)
-        skipped = sorted(set([str(pkg) for pkg in skipped]))
 
         for (action, tsis) in [(_('Upgraded'), list_bunch.upgraded),
                                (_('Downgraded'), list_bunch.downgraded),
@@ -1471,7 +1487,7 @@ Transaction Summary
                 continue
             msgs = []
             out += '\n%s:\n' % action
-            for tsi in tsis:
+            for tsi in sorted(tsis, key=functools.cmp_to_key(_tsi_or_pkg_nevra_cmp)):
                 msgs.append(str(tsi))
             for num in (8, 7, 6, 5, 4, 3, 2):
                 cols = _fits_in_cols(msgs, num)
