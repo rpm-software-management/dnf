@@ -1147,7 +1147,7 @@ class Output(object):
                 for i in tsi._item.getReplacedBy():
                     replaces.setdefault(i, set()).add(tsi)
 
-            for tsi in pkglist:
+            for tsi in sorted(pkglist, key=lambda x: x.pkg):
                 if tsi.action not in dnf.transaction.FORWARD_ACTIONS + [libdnf.transaction.TransactionItemAction_REMOVE]:
                     continue
 
