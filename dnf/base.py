@@ -858,6 +858,9 @@ class Base(object):
             del testcb
 
             logger.info(_('Transaction test succeeded.'))
+            #  With RPMTRANS_FLAG_TEST return just before anything is stored permanently
+            if self._ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
+                return
             timer()
 
             # save module states on disk right before entering rpm transaction,
