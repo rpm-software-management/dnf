@@ -302,11 +302,11 @@ class SwdbInterface(object):
             del self._tid
         except AttributeError:
             pass
-        self.swdb.closeTransaction()
         self._rpm = None
         self._group = None
         self._env = None
         if self._swdb:
+            self._swdb.closeTransaction()
             self._swdb.closeDatabase()
         self._swdb = None
         self._output = []
