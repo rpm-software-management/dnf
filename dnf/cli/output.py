@@ -1676,15 +1676,19 @@ Transaction Summary
             fmt = "%s | %s | %s | %s | %s"
             if len(uids) == 1:
                 name = _("Command line")
+                name_width = self.term.columns - 55 if self.term.columns > 79 else 24
             else:
                 # TRANSLATORS: user names who executed transaction in history command output
                 name = _("User name")
+                name_width = 24
             print(fmt % (fill_exact_width(_("ID"), 6, 6),
-                        fill_exact_width(name, 24, 24),
+                        fill_exact_width(name, name_width, name_width),
                         fill_exact_width(_("Date and time"), 16, 16),
                         fill_exact_width(_("Action(s)"), 14, 14),
                         fill_exact_width(_("Altered"), 7, 7)))
-            print("-" * 79)
+            # total table width: each column length +3 (padding and separator between columns)
+            table_width = 6 + 3 + name_width + 3 + 16 + 3 + 14 + 3 + 7
+            print("-" * table_width)
             fmt = "%6u | %s | %-16.16s | %s | %4u"
 
             for old in old_tids:
@@ -1696,7 +1700,7 @@ Transaction Summary
                 tm = time.strftime("%Y-%m-%d %H:%M",
                                    time.localtime(old.beg_timestamp))
                 num, uiacts = self._history_uiactions(old.data())
-                name = fill_exact_width(name, 24, 24)
+                name = fill_exact_width(name, name_width, name_width)
                 uiacts = fill_exact_width(uiacts, 14, 14)
                 rmark = lmark = ' '
                 if old.return_code is None:
