@@ -151,7 +151,7 @@ class BaseConfig(object):
                         logger.debug(_('Unknown configuration value: %s=%s in %s; %s'),
                                      ucd(name), ucd(value), ucd(filename), str(e))
                 else:
-                    if name == 'arch' and hasattr(self, name):
+                    if name in ('arch', 'basearch') and hasattr(self, name):
                         setattr(self, name, value)
                     else:
                         logger.debug(
