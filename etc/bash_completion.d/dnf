@@ -110,8 +110,8 @@ _dnf_set_python_exec()
     if [[ "$( readlink /usr/bin/dnf )" == "dnf-2" ]]; then
         __dnf_python_exec="/usr/bin/python2"
     else
-        if [ -x /usr/libexec/system-python ]; then
-            __dnf_python_exec="/usr/libexec/system-python"
+        if [ -x /usr/libexec/platform-python ]; then
+            __dnf_python_exec="/usr/libexec/platform-python"
         else
             __dnf_python_exec="/usr/bin/python3"
         fi
