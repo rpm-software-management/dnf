@@ -65,6 +65,8 @@ class ShellCommand(commands.Command, cmd.Cmd):
 
     @staticmethod
     def set_argparser(parser):
+        parser.add_argument('--errexit', action='store_true', default=None,
+                            help=_('Exit immediately if a command produces an error.'))
         parser.add_argument('script', nargs='?', metavar=_('SCRIPT'),
                             help=_('Script to run in {prog} shell').format(
                                 prog=dnf.util.MAIN_PROG_UPPER))
@@ -127,6 +129,8 @@ class ShellCommand(commands.Command, cmd.Cmd):
                     cmd.run()
                 except dnf.exceptions.Error as e:
                     logger.error(_("Error:") + " " + ucd(e))
+                    if self.opts.errexit:
+                        sys.exit(1)
                     return
             else:
                 self._help()
@@ -277,6 +281,8 @@ exit (or quit)           exit the shell""")
                 self.base.do_transaction()
             except dnf.exceptions.Error as e:
                 logger.error(_("Error:") + " " + ucd(e))
+                if self.opts.errexit:
+                    sys.exit(1)
             else:
                 logger.info(_("Complete!"))
             self._clean()
