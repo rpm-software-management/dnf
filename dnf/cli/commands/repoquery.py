@@ -402,6 +402,20 @@ class RepoQueryCommand(commands.Command):
             done = self._get_recursive_providers_query(query_in, query_select, done=t.union(done))
         return t.union(done)
 
+    def _add_add_remote_packages(self):
+        rpmnames = []
+        remote_packages = []
+        for key in self.opts.key:
+            schemes = dnf.pycomp.urlparse.urlparse(key)[0]
+            if key.endswith('.rpm'):
+                rpmnames.append(key)
+            elif schemes and schemes in ('http', 'ftp', 'file', 'https'):
+                rpmnames.append(key)
+        if rpmnames:
+            remote_packages = self.base.add_remote_rpms(
+                rpmnames, strict=False, progress=self.base.output.progress)
+        return remote_packages
+
     def run(self):
         if self.opts.querytags:
             print(_('Available query-tags: use --queryformat ".. %{tag} .."'))
@@ -416,6 +430,8 @@ class RepoQueryCommand(commands.Command):
             else hawkey.APPLY_EXCLUDES
         )
         if self.opts.key:
+            remote_packages = self._add_add_remote_packages()
+
             kwark = {}
             forms = [self.nevra_forms[command] for command in self.opts.command
                      if command in list(self.nevra_forms.keys())]
@@ -423,6 +439,11 @@ class RepoQueryCommand(commands.Command):
                 kwark["forms"] = forms
             pkgs = []
             query_results = q.filter(empty=True)
+
+            if remote_packages:
+                query_results = query_results.union(
+                    self.base.sack.query().filterm(pkg=remote_packages))
+
             for key in self.opts.key:
                 query_results = query_results.union(
                     dnf.subject.Subject(key, ignore_case=True).get_best_query(
