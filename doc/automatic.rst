@@ -49,7 +49,7 @@ Regardless of the configuration file settings, the first will only notify of ava
 
 You can select one that most closely fits your needs, customize ``/etc/dnf/automatic.conf`` for any specific behaviors, and enable the timer unit.
 
-For example: ``systemctl enable dnf-automatic-notifyonly.timer && systemctl start dnf-automatic-notifyonly.timer``
+For example: ``systemctl enable --now dnf-automatic-notifyonly.timer``
 
 ===========================
  Configuration File Format
@@ -171,4 +171,3 @@ The email emitter configuration.
 ------------------
 
 Can be used to override settings from DNF's main configuration file. See :doc:`conf_ref`.
-
