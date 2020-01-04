@@ -406,11 +406,11 @@ However, the similar result can be achieved by ``dnf automatic`` command (see :d
 
 You can either use the shortcut::
 
-  $ systemctl enable dnf-automatic-install.timer && systemctl start dnf-automatic-install.timer
+  $ systemctl enable --now dnf-automatic-install.timer
 
 Or set ``apply_updates`` option of ``/etc/dnf/automatic.conf`` to True and use generic timer unit::
 
-  $ systemctl enable dnf-automatic.timer && systemctl start dnf-automatic.timer
+  $ systemctl enable --now dnf-automatic.timer
 
 The timer in both cases is activated 1 hour after the system was booted up and then repetitively once every 24 hours. There is also a random delay on these timers set to 5 minutes. These values can be tweaked via ``dnf-automatic*.timer`` config files located in the ``/usr/lib/systemd/system/`` directory.
 
