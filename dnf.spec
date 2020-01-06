@@ -274,7 +274,7 @@ mkdir build-py3
 %build
 %if %{with python2}
     pushd build-py2
-    %cmake .. -DPYTHON_DESIRED:FILEPATH=%{__python2}
+    %cmake .. -DPYTHON_DESIRED:FILEPATH=%{__python2} -DDNF_VERSION=%{version}
     %make_build
     make doc-man
     popd
@@ -282,7 +282,7 @@ mkdir build-py3
 
 %if %{with python3}
     pushd build-py3
-    %cmake .. -DPYTHON_DESIRED:FILEPATH=%{__python3}
+    %cmake .. -DPYTHON_DESIRED:FILEPATH=%{__python3} -DDNF_VERSION=%{version}
     %make_build
     make doc-man
     popd
