@@ -1617,7 +1617,7 @@ Transaction Summary
             # TRANSLATORS: user names who executed transaction in history command output
             name = _("User name")
 
-        #create columns
+        # create columns
         columns = []
 
         for transaction in transactions:
@@ -1642,11 +1642,11 @@ Transaction Summary
             if transaction.altered_gt_rpmdb:
                 lmark = '>'
 
-            t_tm=tm
-            t_id=transaction.tid
-            t_name=name
-            t_uiacts=uiacts
-            t_rmark= "%s%s" % (lmark, rmark)
+            t_tm = tm
+            t_id = transaction.tid
+            t_name = name
+            t_uiacts = uiacts
+            t_rmark = "%s%s" % (lmark, rmark)
             columns.append(
                 (t_id, t_tm, t_name, t_uiacts, t_rmark)
             )
@@ -1662,7 +1662,7 @@ Transaction Summary
         separator = " | "
         sp_len = len(separator)
 
-        if self.term.real_columns != None:
+        if self.term.real_columns is not None:
             nm_len = self.term.real_columns - (id_len + tm_len + ui_len + rm_len) - sp_len * 4
             title_line = "-" * self.term.real_columns
         else:
@@ -1677,7 +1677,7 @@ Transaction Summary
         print(title_line)
         for (id, tm, name, uiacts, rmark) in columns:
             print(
-                fill_exact_width(" "+_(id), id_len, id_len),
+                fill_exact_width(" " + _(id), id_len, id_len),
                 fill_exact_width(name, nm_len, nm_len),
                 fill_exact_width(tm, tm_len, tm_len),
                 fill_exact_width(uiacts, ui_len, ui_len),
