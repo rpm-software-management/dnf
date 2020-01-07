@@ -1616,13 +1616,9 @@ Transaction Summary
         else:
             # TRANSLATORS: user names who executed transaction in history command output
             name = _("User name")
-        print(fmt % (fill_exact_width(_("ID"), 6, 6),
-                     fill_exact_width(name, 24, 24),
-                     fill_exact_width(_("Date and time"), 16, 16),
-                     fill_exact_width(_("Action(s)"), 14, 14),
-                     fill_exact_width(_("Altered"), 7, 7)))
-        print("-" * 79)
-        fmt = "%6u | %s | %-16.16s | %s | %4u"
+
+        #create columns
+        columns = []
 
         for transaction in transactions:
             if len(uids) == 1:
@@ -1633,8 +1629,6 @@ Transaction Summary
             tm = time.strftime("%Y-%m-%d %H:%M",
                                time.localtime(transaction.beg_timestamp))
             num, uiacts = self._history_uiactions(transaction.data())
-            name = fill_exact_width(name, 24, 24)
-            uiacts = fill_exact_width(uiacts, 14, 14)
             rmark = lmark = ' '
             if transaction.return_code is None:
                 rmark = lmark = '*'
@@ -1647,7 +1641,44 @@ Transaction Summary
                 rmark = '<'
             if transaction.altered_gt_rpmdb:
                 lmark = '>'
-            print(fmt % (transaction.tid, name, tm, uiacts, num), "%s%s" % (lmark, rmark))
+
+            t_tm=tm
+            t_id=transaction.tid
+            t_name=name
+            t_uiacts=uiacts
+            t_rmark= "%s%s" % (lmark, rmark)
+            columns.append(
+                (t_id, t_tm, t_name, t_uiacts, t_rmark)
+            )
+
+        # I want to fix the size of columns except for name->Command Line (2nd column)
+        # I need to find the longest line
+        # name length at least 16
+        nm_len = max([16] + [len(x[2]) for x in columns])
+        id_len = 4
+        tm_len = 16
+        ui_len = 14
+        rm_len = 7
+        separator = "| "
+        sp_len = len(separator)
+
+        nm_len = self.term.columns - (id_len + tm_len + ui_len + rm_len) - sp_len * 4
+        print(fill_exact_width(_(" ID"), id_len, id_len),
+              fill_exact_width(_("Command line"), nm_len, nm_len),
+              fill_exact_width(_("Date and time"), tm_len, tm_len),
+              fill_exact_width(_("Action(s)"), ui_len, ui_len),
+              fill_exact_width(_("Altered "), rm_len, rm_len),
+              sep=separator)
+        print("-"*self.term.columns)
+        for (id, tm, name, uiacts, rmark) in columns:
+            print(
+                fill_exact_width(" "+_(id), id_len, id_len),
+                fill_exact_width(name, nm_len, nm_len),
+                fill_exact_width(tm, tm_len, tm_len),
+                fill_exact_width(uiacts, ui_len, ui_len),
+                fill_exact_width(rmark, rm_len, rm_len),
+                sep=separator
+            )
 
     def historyInfoCmd(self, tids, pats=[], mtids=set()):
         """Output information about a transaction in history
