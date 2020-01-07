@@ -1659,17 +1659,22 @@ Transaction Summary
         tm_len = 16
         ui_len = 14
         rm_len = 7
-        separator = "| "
+        separator = " | "
         sp_len = len(separator)
 
-        nm_len = self.term.columns - (id_len + tm_len + ui_len + rm_len) - sp_len * 4
+        if self.term.real_columns != None:
+            nm_len = self.term.real_columns - (id_len + tm_len + ui_len + rm_len) - sp_len * 4
+            title_line = "-" * self.term.real_columns
+        else:
+            title_line = "-" * (nm_len + id_len + tm_len + ui_len + rm_len + sp_len * 4)
+
         print(fill_exact_width(_(" ID"), id_len, id_len),
               fill_exact_width(_("Command line"), nm_len, nm_len),
               fill_exact_width(_("Date and time"), tm_len, tm_len),
               fill_exact_width(_("Action(s)"), ui_len, ui_len),
               fill_exact_width(_("Altered "), rm_len, rm_len),
               sep=separator)
-        print("-"*self.term.columns)
+        print(title_line)
         for (id, tm, name, uiacts, rmark) in columns:
             print(
                 fill_exact_width(" "+_(id), id_len, id_len),
