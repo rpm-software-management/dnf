@@ -123,7 +123,8 @@ class Aliases(object):
         for filename in filenames:
             try:
                 conf = self._load_conf(filename)
-                self.aliases.update(conf.aliases)
+                if conf.enabled:
+                    self.aliases.update(conf.aliases)
             except dnf.exceptions.ConfigError as e:
                 logger.warning(_('Config error: %s'), e)
 
