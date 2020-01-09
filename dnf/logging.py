@@ -134,10 +134,14 @@ class Logging(object):
         self.stdout_handler = self.stderr_handler = None
 
     @only_once
-    def _presetup(self):
+    def _new_logging_levels(self):
         logging.addLevelName(DDEBUG, "DDEBUG")
         logging.addLevelName(SUBDEBUG, "SUBDEBUG")
         logging.addLevelName(TRACE, "TRACE")
+
+    @only_once
+    def _presetup(self):
+        self._new_logging_levels()
         logger_dnf = logging.getLogger("dnf")
         logger_dnf.setLevel(TRACE)
 
@@ -155,39 +159,59 @@ class Logging(object):
         self.stderr_handler = stderr
 
     @only_once
-    def _setup(self, verbose_level, error_level, logdir, log_size, log_rotate):
-        self._presetup()
-        logger_dnf = logging.getLogger("dnf")
+    def _setup_rpm_logger(self, logdir, log_size, log_rotate, verbosity=None, logfile=None):
+        if verbosity is None:
+            verbosity = SUBDEBUG
+        logger_rpm = logging.getLogger("dnf.rpm")
+        logger_rpm.propagate = False
+        logfile = os.path.join(logdir, logfile or dnf.const.LOG_RPM)
+        handler = _create_filehandler(logfile, log_size, log_rotate)
+        logger_rpm.addHandler(handler)
+        logger_rpm.setLevel(verbosity)
+        _paint_mark(logger_rpm)
 
-        # setup file logger
-        logfile = os.path.join(logdir, dnf.const.LOG)
+    @only_once
+    def _setup_librepo_logger(self, logdir, verbosity, logfile=None):
+        logfile = os.path.join(logdir, logfile or dnf.const.LOG_LIBREPO)
+        libdnf.repo.LibrepoLog.addHandler(logfile, verbosity <= DEBUG)
+
+    @only_once
+    def _setup_dnf_logger(self, logdir, log_size, log_rotate, verbosity=None, logfile=None):
+        if verbosity is None:
+            verbosity = TRACE
+        logger_dnf = logging.getLogger("dnf")
+        logger_dnf.setLevel(verbosity)
+        logfile = os.path.join(logdir, logfile or dnf.const.LOG)
         handler = _create_filehandler(logfile, log_size, log_rotate)
         logger_dnf.addHandler(handler)
-        # temporarily turn off stdout/stderr handlers:
-        self.stdout_handler.setLevel(SUPERCRITICAL)
-        self.stderr_handler.setLevel(SUPERCRITICAL)
-        # put the marker in the file now:
-        _paint_mark(logger_dnf)
-
         # setup Python warnings
         logging.captureWarnings(True)
         logger_warnings = logging.getLogger("py.warnings")
         logger_warnings.addHandler(self.stderr_handler)
         logger_warnings.addHandler(handler)
+        _paint_mark(logger_dnf)
 
-        lr_logfile = os.path.join(logdir, dnf.const.LOG_LIBREPO)
-        libdnf.repo.LibrepoLog.addHandler(lr_logfile, verbose_level <= DEBUG)
+    @only_once
+    def _setup(self, verbose_level, error_level, logdir, log_size, log_rotate):
+        self._presetup()
+
+        # temporarily turn off stdout/stderr handlers:
+        self.stdout_handler.setLevel(SUPERCRITICAL)
+        self.stderr_handler.setLevel(SUPERCRITICAL)
+
+        # setup DNF logger
+        self._setup_dnf_logger(logdir, log_size, log_rotate)
+        logger_dnf = logging.getLogger("dnf")
+
+        # setup librepo logger
+        self._setup_librepo_logger(logdir, verbose_level)
 
         # setup RPM callbacks logger
+        self._setup_rpm_logger(logdir, log_size, log_rotate)
         logger_rpm = logging.getLogger("dnf.rpm")
-        logger_rpm.propagate = False
-        logger_rpm.setLevel(SUBDEBUG)
-        logfile = os.path.join(logdir, dnf.const.LOG_RPM)
-        handler = _create_filehandler(logfile, log_size, log_rotate)
         logger_rpm.addHandler(self.stdout_handler)
         logger_rpm.addHandler(self.stderr_handler)
-        logger_rpm.addHandler(handler)
-        _paint_mark(logger_rpm)
+
         # bring std handlers to the preferred level
         self.stdout_handler.setLevel(verbose_level)
         self.stderr_handler.setLevel(error_level)
