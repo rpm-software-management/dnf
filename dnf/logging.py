@@ -201,7 +201,6 @@ class Logging(object):
 
         # setup DNF logger
         self._setup_dnf_logger(logdir, log_size, log_rotate)
-        logger_dnf = logging.getLogger("dnf")
 
         # setup librepo logger
         self._setup_librepo_logger(logdir, verbose_level)

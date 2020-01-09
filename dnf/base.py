@@ -787,6 +787,37 @@ class Base(object):
 
         return got_transaction
 
+    def setup_logger(self, logger_name, verbosity=None, logfile=None):
+        # :api
+        """
+        Set up given loggers. The logdir and settings of the log rotating  is read
+        from the configuration.
+        :param logger_name: name of the logger that is supposed to be set:
+            "dnf.rpm" - for rpm transaction callback, defaults to <log dir>/dnf.rpm.log
+            "librepo" - for librepo log
+            "dnf" - for general dnf log
+        :param verbosity: verbosity level, default differs for particular loggers
+        :param logfile: name of the file to log in
+        :return: False if the logger_name was not recognized, True otherwise
+        """
+        logdir = self.conf.logdir
+        log_size = self.conf.log_size
+        log_rotate = self.conf.log_rotate
+        verbosity_conf = dnf.logging._cfg_verbose_val2level(self.conf.debuglevel)
+
+        self._logging._new_logging_levels()
+        if logger_name == 'dnf.rpm':
+            self._logging._setup_rpm_logger(
+                logdir, log_size, log_rotate, verbosity, logfile=logfile)
+        elif logger_name == 'librepo':
+            self._logging._setup_librepo_logger(logdir, verbosity or verbosity_conf)
+        elif logger_name == 'dnf':
+            self._logging._setup_dnf_logger(logdir, log_size, log_rotate, verbosity)
+        else:
+            logger.error(_("Unknown logger name '{}'").format(logger_name))
+            return False
+        return True
+
     def do_transaction(self, display=()):
         # :api
         if not isinstance(display, Sequence):
