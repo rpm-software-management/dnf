@@ -93,6 +93,12 @@ following will work::
 
 ``include`` directive name of [main] and Repo configuration is a more logical and better named counterpart of ``exclude`` in DNF.
 
+=======================================
+The ``include`` option has been removed
+=======================================
+
+Inclusion of other configuration files in the main configuration file is no longer supported.
+
 ====================================================
 ``dnf provides /bin/<file>`` is not fully supported
 ====================================================
