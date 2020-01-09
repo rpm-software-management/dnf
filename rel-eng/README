@@ -1,7 +1,0 @@
-Release instructions:
-
-1. Tag: tito tag
-2. Test: tito build --rpm --offline
-3. Push: git push && git push $ORIGIN $TAG
-4. Release: tito release fedora-git
-
