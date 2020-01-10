@@ -724,9 +724,16 @@ class Base(object):
                 if self.history.user_installed(pkg))
 
     def _run_hawkey_goal(self, goal, allow_erasing):
+        flags = 0
+        for flag in self.conf.solverflags:
+            if flag == "allowdowngrade":
+                flags |= hawkey.ALLOW_DOWNGRADE
+            else:
+                msg = _('Skipping unsupported solver flag "{}"').format(flag)
+                logger.error(msg)
         ret = goal.run(
             allow_uninstall=allow_erasing, force_best=self.conf.best,
-            ignore_weak_deps=(not self.conf.install_weak_deps))
+            ignore_weak_deps=(not self.conf.install_weak_deps), flags=flags)
         if self.conf.debug_solver:
             goal.write_debugdata('./debugdata/rpms')
         return ret
