@@ -2536,6 +2536,14 @@ class Base(object):
             msg = _('All matches were filtered out by exclude filtering for argument')
         raise dnf.exceptions.PackagesNotInstalledError(msg, pkg_spec)
 
+    def setup_loggers(self):
+        # :api
+        """
+        Setup DNF file loggers based on given configuration file. The loggers are set the same
+        way as if DNF was run from CLI.
+        """
+        self._logging._setup_from_dnf_conf(self.conf, file_loggers_only=True)
+
 
 def _msg_installed(pkg):
     name = ucd(pkg)
