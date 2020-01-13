@@ -82,9 +82,15 @@ class OptionParser(argparse.ArgumentParser):
         SPLITTER = r'\s*[,\s]\s*'
 
         def __call__(self, parser, namespace, values, opt_str):
+            first = True
             for val in re.split(self.SPLITTER, values):
-                super(OptionParser._SplitCallback,
-                      self).__call__(parser, namespace, val, opt_str)
+                if first or val:
+                    # Empty values are sometimes used to clear existing content of the option.
+                    # Only the first value in the parsed string can be empty. Other empty values
+                    # are ignored.
+                    super(OptionParser._SplitCallback,
+                          self).__call__(parser, namespace, val, opt_str)
+                first = False
 
     class _SplitExtendDictCallback(argparse.Action):
         """ Split string at "," or whitespace to (key, value).
