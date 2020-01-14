@@ -101,16 +101,19 @@
     release           string         match against packages' releases
     reponame          string         match against packages repositories' names
     version           string         match against packages' versions
-    obsoletes         Query          match packages that obsolete any package from query
     pkg               Query          match against packages in query
     pkg*              list           match against hawkey.Packages in list
     provides          string         match against packages' provides
     provides*         Hawkey.Reldep  match against packages' provides
-    requires          string         match against packages' requirements
-    requires*         Hawkey.Reldep  match against packages' requirements
+    <DEP>             string         match against packages' <DEP>
+    <DEP>*            Hawkey.Reldep  match a reldep against packages' <DEP>
+    <DEP>*            Query          match the result of a query against packages' <DEP>
+    <DEP>*            list(Package)  match the list of hawkey.Packages against packages' <DEP>
     sourcerpm         string         match against packages' source rpm
     upgrades          boolean        see :meth:`upgrades`. Defaults to ``False``.
     ===============   ============== ======================================================
+
+    ``<DEP>`` can be any of: requires, conflicts, obsoletes, enhances, recomments, suggests, supplements
 
     \* The key can also accept a list of values with specified type.
 
@@ -132,6 +135,8 @@
     For example, the following creates a query that matches all packages containing the string "club" in its name::
 
       q = base.sack.query().filter(name__substr="club")
+
+    Note that using packages or queries for dependency filtering performs a more advanced resolution than using a string or a reldep. When a package list or a query is used, rich dependencies are resolved in a more precise way than what is possible when a string or a reldep is used.
 
   .. method:: filterm(\*\*kwargs)
 
