@@ -3002,5 +3002,57 @@
     [
         1691430,
         "dnf.exceptions.Error: Incorrect or unknown \"arch\": armv7hcnl"
+    ],
+    [
+        1773483,
+        "The dnf shell will fail to load multiple transactions when using locally downloaded packages."
+    ],
+    [
+        1758447,
+        "dnf module disable <module:stream> disables all streams"
+    ],
+    [
+        1748841,
+        "dnf: Bad id for repo when dnf variables are used inside repoid field of repo file"
+    ],
+    [
+        1679008,
+        "no auto completion with dnf"
+    ],
+    [
+        1680482,
+        "dnf update alias from man page doesn't work"
+    ],
+    [
+        1680566,
+        "cannot disable an alias"
+    ],
+    [
+        1784148,
+        "dnf deplist is not returning linux-firmware dependency"
+    ],
+    [
+        1680488,
+        "dnf alias infinite recursion processing"
+    ],
+    [
+        1759847,
+        "command `dnf downgrade pkg` emits Error: No packages marked for downgrade"
+    ],
+    [
+        1773436,
+        "dnf update no longer sorts the list of rpms being updated."
+    ],
+    [
+        1783041,
+        "dnf seems to ignore retries and skip_if_unavailable when reading repo cache"
+    ],
+    [
+        1680489,
+        "dnf alias does not define order of alias config files"
+    ],
+    [
+        1781769,
+        "Dnf does not correctly detect the latest version of the module stream"
     ]
 ]

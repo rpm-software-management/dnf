@@ -20,6 +20,43 @@
 ###################
 
 ====================
+4.2.18 Release Notes
+====================
+
+- [doc] Remove note about user-agent whitelist
+- Do a substitution of variables in repo_id (RhBug:1748841)
+- Respect order of config files in aliases.d (RhBug:1680489)
+- Unify downgrade exit codes with upgrade (RhBug:1759847)
+- Improve help for 'dnf module' command (RhBug:1758447)
+- Add shell restriction for local packages (RhBug:1773483)
+- Fix detection of the latest module (RhBug:1781769)
+- Document the retries config option only works for packages (RhBug:1783041)
+- Sort packages in transaction output by nevra (RhBug:1773436)
+- Honor repo priority with check-update (RhBug:1769466)
+- Strip '\' from aliases when processing (RhBug:1680482)
+- Print the whole alias definition in case of infinite recursion (RhBug:1680488)
+- Add support of commandline packages by repoquery (RhBug:1784148)
+- Running with tsflags=test doesn't update log files
+- Restore functionality of remove --oldinstallonly
+- Allow disabling individual aliases config files (RhBug:1680566)
+
+Bugs fixed in 4.2.18:
+
+* :rhbug:`1773483`
+* :rhbug:`1758447`
+* :rhbug:`1748841`
+* :rhbug:`1679008`
+* :rhbug:`1680482`
+* :rhbug:`1680566`
+* :rhbug:`1784148`
+* :rhbug:`1680488`
+* :rhbug:`1759847`
+* :rhbug:`1773436`
+* :rhbug:`1783041`
+* :rhbug:`1680489`
+* :rhbug:`1781769`
+
+====================
 4.2.17 Release Notes
 ====================
 

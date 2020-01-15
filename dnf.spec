@@ -81,7 +81,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.2.17
+Version:        4.2.18
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -510,6 +510,24 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Wed Jan 15 2020 Aleš Matěj <amatej@redhat.com> - 4.2.18-1
+- [doc] Remove note about user-agent whitelist
+- Do a substitution of variables in repo_id (RhBug:1748841)
+- Respect order of config files in aliases.d (RhBug:1680489)
+- Unify downgrade exit codes with upgrade (RhBug:1759847)
+- Improve help for 'dnf module' command (RhBug:1758447)
+- Add shell restriction for local packages (RhBug:1773483)
+- Fix detection of the latest module (RhBug:1781769)
+- Document the retries config option only works for packages (RhBug:1783041)
+- Sort packages in transaction output by nevra (RhBug:1773436)
+- Honor repo priority with check-update (RhBug:1769466)
+- Strip '\' from aliases when processing (RhBug:1680482)
+- Print the whole alias definition in case of infinite recursion (RhBug:1680488)
+- Add support of commandline packages by repoquery (RhBug:1784148)
+- Running with tsflags=test doesn't update log files
+- Restore functionality of remove --oldinstallonly
+- Allow disabling individual aliases config files (RhBug:1680566)
+
 * Mon Nov 25 2019 Aleš Matěj <amatej@redhat.com> - 4.2.17-1
 - Enable versionlock for check-update command (RhBug:1750620)
 - Add error message when no active modules matched (RhBug:1696204)
