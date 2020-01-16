@@ -195,9 +195,6 @@ Requires:       %{name}-data = %{version}-%{release}
 Recommends:     deltarpm
 Recommends:     python2-unbound
 %endif
-%if 0%{?centos}
-Requires:       deltarpm
-%endif
 Requires:       python2-hawkey >= %{hawkey_version}
 Requires:       python2-libdnf >= %{hawkey_version}
 Requires:       python2-libcomps >= %{libcomps_version}
@@ -234,9 +231,6 @@ Requires:       python3-gpg
 Requires:       %{name}-data = %{version}-%{release}
 %if 0%{?fedora}
 Recommends:     deltarpm
-%endif
-%if 0%{?centos}
-Requires:       deltarpm
 %endif
 Requires:       python3-hawkey >= %{hawkey_version}
 Requires:       python3-libdnf >= %{hawkey_version}
