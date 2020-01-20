@@ -1389,7 +1389,7 @@ Display duplicate packages::
 
 Display source packages that require a <provide> for a build::
 
-    dnf repoquery --disablerepo=* --enablerepo=*-source --arch=src --whatrequires <provide>
+    dnf repoquery --disablerepo="*" --enablerepo="*-source" --arch=src --whatrequires <provide>
 
 .. _repo_pkgs_command-label:
 
@@ -1821,7 +1821,7 @@ from a DNF plugin you can use the -:ref:`-disableplugin <disableplugin-label>` c
 To disable all excludes for e.g. the install command you can use the following combination
 of command line options:
 
-``dnf --disableexcludes=all --disableplugin=* install bash``
+``dnf --disableexcludes=all --disableplugin="*" install bash``
 
 -----------------
 Modular Filtering
