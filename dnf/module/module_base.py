@@ -121,14 +121,14 @@ class ModuleBase(object):
                             else:
                                 msg = _("No default profiles for module {}:{}").format(name, stream)
                             logger.error(msg)
-                            no_match_specs.append(spec)
+                            error_specs.append(spec)
                         for profile in set(profiles_strings):
                             module_profiles = latest_module.getProfiles(profile)
                             if not module_profiles:
                                 logger.error(
                                     _("Default profile {} not available in module {}:{}").format(
                                         profile, name, stream))
-                                no_match_specs.append(spec)
+                                error_specs.append(spec)
 
                             profiles.extend(module_profiles)
                     for profile in profiles:
