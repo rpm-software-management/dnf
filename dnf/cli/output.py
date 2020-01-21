@@ -1655,20 +1655,21 @@ Transaction Summary
         # I need to find the longest line
         # name length at least 16
         nm_len = max([16] + [len(x[2]) for x in columns])
-        id_len = 4
+        id_len = len(_("ID")) + 1
         tm_len = 16
         ui_len = 14
         rm_len = 7
         separator = " | "
         sp_len = len(separator)
 
+        # compute the final column wdth. -1 is a space for readability
         if self.term.real_columns is not None:
-            nm_len = self.term.real_columns - (id_len + tm_len + ui_len + rm_len) - sp_len * 4
+            nm_len = self.term.real_columns - (id_len + tm_len + ui_len + rm_len) - sp_len * 4 - 1
             title_line = "-" * self.term.real_columns
         else:
-            title_line = "-" * (nm_len + id_len + tm_len + ui_len + rm_len + sp_len * 4)
+            title_line = "-" * (nm_len + id_len + tm_len + ui_len + rm_len + sp_len * 4 - 1)
 
-        print(fill_exact_width(_(" ID"), id_len, id_len),
+        print(fill_exact_width(" "+_("ID"), id_len, id_len),
               fill_exact_width(_("Command line"), nm_len, nm_len),
               fill_exact_width(_("Date and time"), tm_len, tm_len),
               fill_exact_width(_("Action(s)"), ui_len, ui_len),
