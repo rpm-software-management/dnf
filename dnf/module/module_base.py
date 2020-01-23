@@ -119,7 +119,7 @@ class ModuleBase(object):
                                         ": {}").format(
                                     name, stream, profile_names)
                             else:
-                                msg = _("No default profiles for module {}:{}").format(name, stream)
+                                msg = _("No profiles for module {}:{}").format(name, stream)
                             logger.error(msg)
                             error_specs.append(spec)
                         for profile in set(profiles_strings):
