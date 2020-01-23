@@ -1056,7 +1056,7 @@ class Output(object):
             out[0:0] = self._banner(col_data, (_('Group'), _('Packages'), '', ''))
         return '\n'.join(out)
 
-    def _skipped_packages(self, report_problems):
+    def _skipped_packages(self, report_problems, transaction):
         """returns set of conflicting packages and set of packages with broken dependency that would
         be additionally installed when --best and --allowerasing"""
         if self.base._goal.actions & (hawkey.INSTALL | hawkey.UPGRADE | hawkey.UPGRADE_ALL):
@@ -1073,7 +1073,19 @@ class Output(object):
             logger.warning(msg)
         problem_conflicts = set(ng.problem_conflicts(available=True))
         problem_dependency = set(ng.problem_broken_dependency(available=True)) - problem_conflicts
-        return problem_conflicts, problem_dependency
+
+        def _nevra(item):
+            return hawkey.NEVRA(name=item.name, epoch=item.epoch, version=item.version,
+                                release=item.release, arch=item.arch)
+
+        # Sometimes, pkg is not in transaction item, therefore, comparing by nevra
+        transaction_nevras = [_nevra(tsi) for tsi in transaction]
+        skipped_conflicts = set(
+            [pkg for pkg in problem_conflicts if _nevra(pkg) not in transaction_nevras])
+        skipped_dependency = set(
+            [pkg for pkg in problem_dependency if _nevra(pkg) not in transaction_nevras])
+
+        return skipped_conflicts, skipped_dependency
 
     def list_transaction(self, transaction, total_width=None):
         """Return a string representation of the transaction in an
@@ -1254,7 +1266,8 @@ class Output(object):
         # show skipped conflicting packages
         if not self.conf.best and self.base._goal.actions & forward_actions:
             lines = []
-            skipped_conflicts, skipped_broken = self._skipped_packages(report_problems=True)
+            skipped_conflicts, skipped_broken = self._skipped_packages(
+                report_problems=True, transaction=transaction)
             skipped_broken = dict((str(pkg), pkg) for pkg in skipped_broken)
             for pkg in sorted(skipped_conflicts):
                 a_wid = _add_line(lines, data, a_wid, pkg, [])
@@ -1468,7 +1481,9 @@ Transaction Summary
 
         out = ''
         list_bunch = _make_lists(transaction, self.base._goal)
-        skipped_conflicts, skipped_broken = self._skipped_packages(report_problems=False)
+
+        skipped_conflicts, skipped_broken = self._skipped_packages(
+            report_problems=False, transaction=transaction)
         skipped = skipped_conflicts.union(skipped_broken)
 
         for (action, tsis) in [(_('Upgraded'), list_bunch.upgraded),
