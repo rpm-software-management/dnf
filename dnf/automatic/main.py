@@ -217,6 +217,17 @@ class EmittersConfig(Config):
         self.add_option('system_name', libdnf.conf.OptionString(socket.gethostname()))
 
 
+def gpgsigcheck(base, pkgs):
+    ok = True
+    for po in pkgs:
+        result, errmsg = base.package_signature_check(po)
+        if result != 0:
+            ok = False
+            logger.critical(errmsg)
+    if not ok:
+        raise dnf.exceptions.Error(_("GPG check FAILED"))
+
+
 def main(args):
     (opts, parser) = parse_arguments(args)
 
@@ -264,6 +275,7 @@ def main(args):
                 emitters.commit()
                 return 0
 
+            gpgsigcheck(base, trans.install_set)
             base.do_transaction()
             emitters.notify_applied()
             emitters.commit()
