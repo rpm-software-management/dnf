@@ -91,7 +91,7 @@ _BASEARCH_MAP = _invert({
               'alphaev6', 'alphaev67', 'alphaev68', 'alphaev7', 'alphapca56'),
     'arm': ('armv5tejl', 'armv5tel', 'armv5tl', 'armv6l', 'armv7l', 'armv8l'),
     'armhfp': ('armv6hl', 'armv7hl', 'armv7hnl', 'armv8hl'),
-    'i386': ('i386', 'athlon', 'geode', 'i386', 'i486', 'i586', 'i686'),
+    'i386': ('i386', 'athlon', 'geode', 'i386', 'i486', 'i586', 'i686', 'znver1_32'),
     'ia64': ('ia64',),
     'mips': ('mips',),
     'mipsel': ('mipsel',),
@@ -110,7 +110,7 @@ _BASEARCH_MAP = _invert({
     'sh4': ('sh4', 'sh4a'),
     'sparc': ('sparc', 'sparc64', 'sparc64v', 'sparcv8', 'sparcv9',
               'sparcv9v'),
-    'x86_64': ('x86_64', 'amd64', 'ia32e'),
+    'x86_64': ('x86_64', 'amd64', 'ia32e', 'znver1'),
 })
 
 
