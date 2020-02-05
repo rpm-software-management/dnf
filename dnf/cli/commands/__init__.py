@@ -875,8 +875,8 @@ class HistoryCommand(Command):
         else:
             demands.fresh_metadata = False
         demands.sack_activation = True
-        if not os.access(self.base.history.path, os.R_OK):
-            msg = _("You don't have access to the history DB.")
+        if self.base.history.path != ":memory:" and not os.access(self.base.history.path, os.R_OK):
+            msg = _("You don't have access to the history DB: %s" % self.base.history.path)
             logger.critical(msg)
             raise dnf.cli.CliError(msg)
         self.transaction_ids = self._args2transaction_ids(self.merged_transaction_ids,
