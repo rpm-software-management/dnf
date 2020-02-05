@@ -33,6 +33,6 @@ class APITest(tests.support.TestCase):
         base = tests.support.MockBase()
         self.assertIsInstance(base.conf.installroot, unicode)
         # reasonable default
-        self.assertEqual(base.conf.installroot, '/tmp/swdb/')
+        self.assertEqual(base.conf.installroot, '/tmp/dnf-test-installroot/')
         # assignable
         dnf.conf.installroot = '/mnt/rootimage'
