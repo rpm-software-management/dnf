@@ -458,9 +458,9 @@ Alias Examples
 ``dnf alias add rm=remove``
     Adds a new command alias called ``rm`` which works the same as the ``remove`` command.
 
-``dnf alias add update="\update --skip-broken --disableexcludes=all --obsoletes"``
-    Adds a new command alias called ``update`` which works the same as the ``update`` command,
-    with additional options. Note that the original ``update`` command is prefixed with a ``\``
+``dnf alias add upgrade="\upgrade --skip-broken --disableexcludes=all --obsoletes"``
+    Adds a new command alias called ``upgrade`` which works the same as the ``upgrade`` command,
+    with additional options. Note that the original ``upgrade`` command is prefixed with a ``\``
     to prevent an infinite loop in alias processing.
 
 .. _alias_processing_examples-label:
