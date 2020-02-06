@@ -1632,7 +1632,14 @@ Transaction Summary
         fmt = "%s | %s | %s | %s | %s"
         if len(uids) == 1:
             name = _("Command line")
-            name_width = self.term.columns - 55 if self.term.columns > 79 else 24
+            real_cols = self.term.real_columns
+            if real_cols is None:
+                name_width = (
+                        24 if not transactions
+                        else max([len(t.cmdline) for t in transactions])
+                        )
+            else:
+                name_width = real_cols - 55 if real_cols > 79 else 24
         else:
             # TRANSLATORS: user names who executed transaction in history command output
             name = _("User name")
