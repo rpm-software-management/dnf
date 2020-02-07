@@ -89,6 +89,10 @@ class RPMTransactionItemWrapper(object):
     def reason(self):
         return self._item.getReason()
 
+    @reason.setter
+    def reason(self, value):
+        return self._item.setReason(value)
+
     @property
     def action_name(self):
         try:
