@@ -26,6 +26,7 @@ import libdnf.utils
 
 from dnf.i18n import ucd
 from dnf.yum import misc
+from dnf.exceptions import DatabaseError
 
 from .group import GroupPersistor, EnvironmentPersistor, RPMTransaction
 
@@ -288,7 +289,10 @@ class SwdbInterface(object):
         """ Lazy initialize Swdb object """
         if not self._swdb:
             # _db_dir == persistdir which is prepended with installroot already
-            self._swdb = libdnf.transaction.Swdb(self.dbpath)
+            try:
+                self._swdb = libdnf.transaction.Swdb(self.dbpath)
+            except RuntimeError as ex:
+                raise DatabaseError(str(ex))
             self._swdb.initTransaction()
             # TODO: vars -> libdnf
         return self._swdb
