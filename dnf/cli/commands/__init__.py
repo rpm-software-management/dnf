@@ -150,6 +150,10 @@ class Command(object):
         """Execute the command."""
         pass
 
+    def run_resolved(self):
+        """Finalize operation after resolvement"""
+        pass
+
     def run_transaction(self):
         """Finalize operations post-transaction."""
         pass
