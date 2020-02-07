@@ -166,6 +166,8 @@ def resolving(cli, base):
         base.resolve(cli.demands.allow_erasing)
         logger.info(_('Dependencies resolved.'))
 
+    cli.command.run_resolved()
+
     # Run the transaction
     displays = []
     if cli.demands.transaction_display is not None:
