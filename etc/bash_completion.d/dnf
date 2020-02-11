@@ -60,6 +60,8 @@ __dnf_secseverity_subcmds='Critical Important Low Moderate'
 
 __dnf_clean_subcmds="all dbcache expire-cache metadata packages"
 
+__dnf_module_subcmds="install remove update enable disable reset provides list info repoquery"
+
 __dnf_repoquery_subcmds="
     -a -f -i -l -s
     --all --arch
@@ -302,6 +304,25 @@ _dnf()
         [[ "$prev" == *"timer" ]] && return
         extra_options="--timer"
         complete_commands="timer"
+        ;;
+
+    module)
+        extra_options="--enabled --disabled --installed --profile --available --all"
+        complete_commands="$__dnf_module_subcmds"
+        case $prev in
+            info)
+                extra_options="--profile"
+                ;;
+            remove)
+                extra_options="--all"
+                ;;
+            list)
+                extra_options="--all --enabled --disabled --installed"
+                ;;
+            repoquery)
+                extra_options="--available --installed"
+                ;;
+        esac
         ;;
 
     provides)
