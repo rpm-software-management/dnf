@@ -1,5 +1,5 @@
 # default dependencies
-%global hawkey_version 0.44.0
+%global hawkey_version 0.45.0
 %global libcomps_version 0.1.8
 %global libmodulemd_version 1.4.0
 %global rpm_version 4.14.0
