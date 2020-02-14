@@ -59,7 +59,7 @@ _CACHEDIR_RE = r'(?P<repoid>[%s]+)\-[%s]{16}' % (re.escape(_REPOID_CHARS),
 # particular type.  The filename is expected to not contain the base cachedir
 # path components.
 CACHE_FILES = {
-    'metadata': r'^%s\/.*(xml(\.gz|\.xz|\.bz2|.zck)?|asc|cachecookie|%s)$' %
+    'metadata': r'^%s\/.*((xml|yaml)(\.gz|\.xz|\.bz2|.zck)?|asc|cachecookie|%s)$' %
                 (_CACHEDIR_RE, _MIRRORLIST_FILENAME),
     'packages': r'^%s\/%s\/.+rpm$' % (_CACHEDIR_RE, _PACKAGES_RELATIVE_DIR),
     'dbcache': r'^.+(solv|solvx)$',
