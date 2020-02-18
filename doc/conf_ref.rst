@@ -458,7 +458,7 @@ configuration file by your distribution to override the DNF defaults.
 ``enabled``
     :ref:`boolean <boolean-label>`
 
-    Include this repository as a package source. The default is True.
+    Include this repository as a package source. The default is True. A repository that does not have the `enabled=0` entry is enabled by default.
 
 .. _repo_gpgkey-label:
 
