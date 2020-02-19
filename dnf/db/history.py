@@ -199,6 +199,10 @@ class TransactionWrapper(object):
         output = self._trans.getConsoleOutput()
         return bool(output)
 
+    @property
+    def comment(self):
+        return self._trans.getComment()
+
     def tids(self):
         return [self._trans.getId()]
 
@@ -245,6 +249,10 @@ class MergedTransactionWrapper(TransactionWrapper):
     @property
     def releasever(self):
         return self._trans.listReleasevers()
+
+    @property
+    def comment(self):
+        return self._trans.listComments()
 
     def output(self):
         return [i[1] for i in self._trans.getConsoleOutput()]
@@ -390,7 +398,7 @@ class SwdbInterface(object):
 #        return result
 
     # TODO: rename to begin_transaction?
-    def beg(self, rpmdb_version, using_pkgs, tsis, cmdline=None):
+    def beg(self, rpmdb_version, using_pkgs, tsis, cmdline=None, comment=""):
         try:
             self.swdb.initTransaction()
         except:
@@ -461,8 +469,8 @@ class SwdbInterface(object):
             int(calendar.timegm(time.gmtime())),
             str(rpmdb_version),
             cmdline or "",
-            int(misc.getloginuid())
-            )
+            int(misc.getloginuid()),
+            comment)
         self.swdb.setReleasever(self.releasever)
         self._tid = tid
 
