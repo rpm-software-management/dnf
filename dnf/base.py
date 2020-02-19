@@ -951,13 +951,8 @@ class Base(object):
             elif hasattr(self, 'cmds') and self.cmds:
                 cmdline = ' '.join(self.cmds)
 
-            tid = self.history.beg(rpmdbv, using_pkgs, [], cmdline)
-
-            if self.conf.comment:
-                # write out user provided comment to history info
-                # TODO:
-                # self._store_comment_in_history(tid, self.conf.comment)
-                pass
+            comment = self.conf.comment if self.conf.comment else ""
+            tid = self.history.beg(rpmdbv, using_pkgs, [], cmdline, comment)
 
         if self.conf.reset_nice:
             onice = os.nice(0)

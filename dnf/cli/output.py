@@ -1878,11 +1878,12 @@ Transaction Summary
             else:
                 print(_("Command Line   :"), old.cmdline)
 
-        # TODO:
-        # comment = self.history.addon_data.read(old.tid, item='transaction-comment')
-        comment = ""
-        if comment:
-            print(_("Comment        :"), comment)
+        if old.comment is not None:
+            if isinstance(old.comment, (list, tuple)):
+                for comment in old.comment:
+                    print(_("Comment        :"), comment)
+            else:
+                print(_("Comment        :"), old.comment)
 
         perf_with = old.performed_with()
         if perf_with:
