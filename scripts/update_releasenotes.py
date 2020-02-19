@@ -83,6 +83,7 @@ The interface usage is::
 
 """
 
+import update_releasenotes_python3
 
 from __future__ import absolute_import
 
@@ -1633,4 +1634,8 @@ class TestCase(unittest.TestCase):
 
 
 if __name__ == '__main__':
-    main()
+    if sys.version < 3 :
+        main()
+    else :
+        update_releasenotes_python3.main3()
+        
