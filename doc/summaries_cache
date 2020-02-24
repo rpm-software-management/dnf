@@ -3054,5 +3054,41 @@
     [
         1781769,
         "Dnf does not correctly detect the latest version of the module stream"
+    ],
+    [
+        1798475,
+        "[RHEL8/Bug] dnf-makecache timer not on timers.target"
+    ],
+    [
+        1788212,
+        "Packages installed via DNF Python api are not logged to /var/log/dnf.rpm.log or /var/log/dnf.log"
+    ],
+    [
+        1677774,
+        "dnf aborts trying to remove some packages"
+    ],
+    [
+        1786316,
+        "dnf history command output is trimmed because of hardcoded 79 cols limit"
+    ],
+    [
+        1790967,
+        "Misleading Error message when trying to install module without default stream and profile: \"missing groups or modules: <module-name>\""
+    ],
+    [
+        1774617,
+        "mpv reported as package to be installed and skipped at the same time"
+    ],
+    [
+        1534123,
+        "repoquery: --whatrequires is broken with rich deps"
+    ],
+    [
+        1790262,
+        "dnf repoquery  --whatprovides does not support multi paremeters"
+    ],
+    [
+        1788154,
+        "Adding a trailing comma to excludes option causes all items listed for exclusion to be ignored."
     ]
 ]

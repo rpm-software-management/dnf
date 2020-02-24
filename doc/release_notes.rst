@@ -20,6 +20,38 @@
 ###################
 
 ====================
+4.2.19 Release Notes
+====================
+
+- match RHEL behavior for CentOS and do not require deltarpm
+- List arguments: only first empty value is used (RhBug:1788154)
+- Report missing profiles or default as broken module (RhBug:1790967)
+- repoquery: fix rich deps matching by using provide expansion from libdnf (RhBug:1534123)
+- [documentation] repoquery --what* with  multiple arguments (RhBug:1790262)
+- Format history table to use actual terminal width (RhBug:1786316)
+- Update `dnf alias` documentation
+- Handle custom exceptions from libdnf
+- Fix _skipped_packages to return only skipped (RhBug:1774617)
+- Add setter for tsi.reason
+- Add new hook for commands: Run_resolved
+- Add doc entry: include url (RhBug 1786072)
+- Clean also .yaml repository metadata
+- New API function base.setup_loggers() (RhBug:1788212)
+- Use WantedBy=timers.target for all dnf timers (RhBug:1798475)
+
+Bugs fixed in 4.2.19:
+
+* :rhbug:`1798475`
+* :rhbug:`1788212`
+* :rhbug:`1677774`
+* :rhbug:`1786316`
+* :rhbug:`1790967`
+* :rhbug:`1774617`
+* :rhbug:`1534123`
+* :rhbug:`1790262`
+* :rhbug:`1788154`
+
+====================
 4.2.18 Release Notes
 ====================
 

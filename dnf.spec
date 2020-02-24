@@ -504,6 +504,23 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Mon Feb 24 2020 Aleš Matěj <amatej@redhat.com> - 4.2.19-1
+- match RHEL behavior for CentOS and do not require deltarpm
+- List arguments: only first empty value is used (RhBug:1788154)
+- Report missing profiles or default as broken module (RhBug:1790967)
+- repoquery: fix rich deps matching by using provide expansion from libdnf (RhBug:1534123)
+- [documentation] repoquery --what* with  multiple arguments (RhBug:1790262)
+- Format history table to use actual terminal width (RhBug:1786316)
+- Update `dnf alias` documentation
+- Handle custom exceptions from libdnf
+- Fix _skipped_packages to return only skipped (RhBug:1774617)
+- Add setter for tsi.reason
+- Add new hook for commands: Run_resolved
+- Add doc entry: include url (RhBug 1786072)
+- Clean also .yaml repository metadata
+- New API function base.setup_loggers() (RhBug:1788212)
+- Use WantedBy=timers.target for all dnf timers (RhBug:1798475)
+
 * Wed Jan 15 2020 Aleš Matěj <amatej@redhat.com> - 4.2.18-1
 - [doc] Remove note about user-agent whitelist
 - Do a substitution of variables in repo_id (RhBug:1748841)
