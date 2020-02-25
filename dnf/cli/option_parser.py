@@ -404,7 +404,16 @@ class OptionParser(argparse.ArgumentParser):
         else:
             return self.command_positional_parser.add_argument(*args, **kwargs)
 
+    def _check_encoding(self, args):
+        for arg in args:
+            try:
+                arg.encode('utf-8')
+            except UnicodeEncodeError as e:
+                raise dnf.exceptions.ConfigError(
+                    _("Cannot encode argument '%s': %s") % (arg, str(e)))
+
     def parse_main_args(self, args):
+        self._check_encoding(args)
         namespace, _unused_args = self.parse_known_args(args)
         return namespace
 
