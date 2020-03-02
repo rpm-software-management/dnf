@@ -1350,7 +1350,7 @@ class Base(object):
 
             avail = query_for_repo(q.available())
             if not showdups:
-                avail = avail.latest()
+                avail = avail.filterm(latest_per_arch_by_priority=True)
             for pkg in avail:
                 if showdups:
                     if pkg.pkgtup in dinst:
@@ -1395,7 +1395,7 @@ class Base(object):
             else:
                 # we will only look at the latest versions of packages:
                 available_dict = query_for_repo(
-                    q).available().latest()._na_dict()
+                    q).available().filterm(latest_per_arch_by_priority=True)._na_dict()
                 installed_dict = q.installed().latest()._na_dict()
                 for (name, arch) in available_dict:
                     avail_pkg = available_dict[(name, arch)][0]
@@ -1434,7 +1434,7 @@ class Base(object):
         elif pkgnarrow == 'recent':
             avail = q.available()
             if not showdups:
-                avail = avail.latest()
+                avail = avail.filterm(latest_per_arch_by_priority=True)
             recent = query_for_repo(avail)._recent(self.conf.recent)
 
         ygh.installed = installed
