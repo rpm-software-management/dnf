@@ -1348,7 +1348,7 @@ class Base(object):
                     ndinst[key] = po
             installed = list(pkgs_from_repo(dinst.values()))
 
-            avail = query_for_repo(q)
+            avail = query_for_repo(q.available())
             if not showdups:
                 avail = avail.latest()
             for pkg in avail:
