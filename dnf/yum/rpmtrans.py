@@ -46,6 +46,16 @@ TS_FAILED = 100
 TS_INSTALL_STATES = [TS_INSTALL, TS_UPDATE, TS_OBSOLETING]
 TS_REMOVE_STATES = [TS_ERASE, TS_OBSOLETED, TS_UPDATED]
 
+RPM_ACTIONS_SET = {libdnf.transaction.TransactionItemAction_INSTALL,
+                   libdnf.transaction.TransactionItemAction_DOWNGRADE,
+                   libdnf.transaction.TransactionItemAction_DOWNGRADED,
+                   libdnf.transaction.TransactionItemAction_OBSOLETE,
+                   libdnf.transaction.TransactionItemAction_OBSOLETED,
+                   libdnf.transaction.TransactionItemAction_UPGRADE,
+                   libdnf.transaction.TransactionItemAction_UPGRADED,
+                   libdnf.transaction.TransactionItemAction_REMOVE,
+                   libdnf.transaction.TransactionItemAction_REINSTALLED}
+
 logger = logging.getLogger('dnf')
 
 
@@ -240,8 +250,8 @@ class RPMTransaction(object):
                 return self._tsi_cache
         items = []
         for tsi in self.base.transaction:
-            if tsi.action == libdnf.transaction.TransactionItemAction_REINSTALL:
-                # skip REINSTALL in order to return REINSTALLED
+            if tsi.action not in RPM_ACTIONS_SET:
+                # skip REINSTALL in order to return REINSTALLED, or REASON_CHANGE to avoid crash
                 continue
             if str(tsi) == te_nevra:
                 items.append(tsi)
