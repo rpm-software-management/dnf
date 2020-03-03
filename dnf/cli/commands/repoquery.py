@@ -236,7 +236,9 @@ class RepoQueryCommand(commands.Command):
             'provides': _('Display capabilities provided by the package.'),
             'recommends':  _('Display capabilities that the package recommends.'),
             'requires':  _('Display capabilities that the package depends on.'),
-            'requires-pre':  _('Display capabilities that the package depends on for running a %%pre script.'),
+            'requires-pre':  _('If the package is not installed display capabilities that it depends on for '
+                               'running %%pre and %%post scriptlets. If the package is installed display '
+                               'capabilities that is depends for %%pre, %%post, %%preun and %%postun.'),
             'suggests':  _('Display capabilities that the package suggests.'),
             'supplements':  _('Display capabilities that the package can supplement.')
         }
