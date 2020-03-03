@@ -77,7 +77,7 @@ class CheckCommand(commands.Command):
         if self.opts.check_types.intersection({'all', 'dependencies'}):
             sack = None
             for pkg in q:
-                for require in pkg.requires:
+                for require in set(pkg.regular_requires) | set(set(pkg.requires_pre) - set(pkg.prereq_ignoreinst)):
                     if str(require).startswith('rpmlib'):
                         continue
                     if not len(q.filter(provides=[require])):

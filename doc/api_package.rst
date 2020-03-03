@@ -136,11 +136,20 @@
 
   .. attribute:: requires
 
-    Package's requirements (list of Hawkey.Reldep).
+    Package's requirements, combined requires_pre and regular_requires (list of Hawkey.Reldep).
 
   .. attribute:: requires_pre
 
-    Package's install-time requirements (list of Hawkey.Reldep).
+    Installed package's %pre, %post, %preun and %postun requirements (list of Hawkey.Reldep).
+    For not installed package returns just %pre and $post requirements.
+
+  .. attribute:: regular_requires
+
+    Package's requirements without %pre, %post, %preun and %postun requirements (list of Hawkey.Reldep).
+
+  .. attribute:: prereq_ignoreinst
+
+    Safe to remove requires_pre requirements of an installed package (list of Hawkey.Reldep).
 
   .. attribute:: rpmdbid
 
