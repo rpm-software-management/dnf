@@ -59,6 +59,16 @@ configuration file by your distribution to override the DNF defaults.
  [main] Options
 ================
 
+.. _allow_vendor_change-label:
+
+``allow_vendor_change``
+    :ref:`boolean <boolean-label>`
+
+    If disabled dnf will stick to vendor when upgrading or downgrading rpms.
+    Default is ``True``
+
+    .. WARNING:: This option is currently not supported for `downgrade` and `distro-sync` commands
+
 .. _arch-label:
 
 ``arch``
