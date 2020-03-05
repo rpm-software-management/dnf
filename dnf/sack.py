@@ -23,10 +23,13 @@ from __future__ import unicode_literals
 import dnf.util
 import dnf.package
 import dnf.query
+import logging
 import hawkey
 import os
 from dnf.pycomp import basestring
+from dnf.i18n import _
 
+logger = logging.getLogger("dnf")
 
 class Sack(hawkey.Sack):
     # :api
@@ -34,10 +37,14 @@ class Sack(hawkey.Sack):
     def __init__(self, *args, **kwargs):
         super(Sack, self).__init__(*args, **kwargs)
 
-    def _configure(self, installonly=None, installonly_limit=0):
+    def _configure(self, installonly=None, installonly_limit=0, allow_vendor_change=None):
         if installonly:
             self.installonly = installonly
         self.installonly_limit = installonly_limit
+        if allow_vendor_change is not None:
+            self.allow_vendor_change = allow_vendor_change
+            if allow_vendor_change is False:
+                logger.warning(_("allow_vendor_change is disabled. This option is currently not supported for downgrade and distro-sync commands"))
 
     def query(self, flags=0):
         # :api

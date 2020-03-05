@@ -415,7 +415,7 @@ class Base(object):
             else:
                 self.repos.all().disable()
         conf = self.conf
-        self._sack._configure(conf.installonlypkgs, conf.installonly_limit)
+        self._sack._configure(conf.installonlypkgs, conf.installonly_limit, conf.allow_vendor_change)
         self._setup_excludes_includes()
         timer()
         self._goal = dnf.goal.Goal(self._sack)
