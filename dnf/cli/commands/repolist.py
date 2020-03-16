@@ -93,14 +93,14 @@ class RepoListCommand(commands.Command):
                             help=_("Repository specification"))
 
     def pre_configure(self):
-        if not self.opts.verbose and not self.opts.quiet:
+        if not self.opts.quiet:
             self.cli.redirect_logger(stdout=logging.WARNING, stderr=logging.INFO)
 
     def configure(self):
-        if not self.opts.verbose and not self.opts.quiet:
+        if not self.opts.quiet:
             self.cli.redirect_repo_progress()
         demands = self.cli.demands
-        if any((self.opts.verbose, ('repoinfo' in self.opts.command))):
+        if any((self.base.conf.verbose, ('repoinfo' in self.opts.command))):
             demands.available_repos = True
             demands.sack_activation = True
 
