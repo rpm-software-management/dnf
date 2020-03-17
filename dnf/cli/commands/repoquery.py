@@ -272,11 +272,11 @@ class RepoQueryCommand(commands.Command):
                             help=_('the key to search for'))
 
     def pre_configure(self):
-        if not self.opts.verbose and not self.opts.quiet:
+        if not self.opts.quiet:
             self.cli.redirect_logger(stdout=logging.WARNING, stderr=logging.INFO)
 
     def configure(self):
-        if not self.opts.verbose and not self.opts.quiet:
+        if not self.opts.quiet:
             self.cli.redirect_repo_progress()
         demands = self.cli.demands
 
