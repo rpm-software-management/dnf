@@ -87,12 +87,6 @@ following will work::
 
     dnf -x '*flask*' list installed 'python-f*'
 
-==========================================================
- YUM's conf directive ``includepkgs`` is just ``include``
-==========================================================
-
-``include`` directive name of [main] and Repo configuration is a more logical and better named counterpart of ``exclude`` in DNF.
-
 =======================================
 The ``include`` option has been removed
 =======================================
