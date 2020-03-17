@@ -125,7 +125,7 @@ class RepoListCommand(commands.Command):
             logger.warning(_('No repositories available'))
             return
         include_status = arg == 'all' or (arg == 'enabled-default' and extcmds)
-
+        repoinfo_output = []
         for repo in repos:
             if len(extcmds) and not _repo_match(repo, extcmds):
                 continue
@@ -235,9 +235,10 @@ class RepoListCommand(commands.Command):
                 if repo.repofile:
                     out += [self.output.fmtKeyValFill(_("Repo-filename      : "),
                                                       repo.repofile)]
+                repoinfo_output.append("\n".join(map(ucd, out)))
 
-                print("\n" + "\n".join(map(ucd, out)))
-
+        if repoinfo_output:
+            print("\n\n".join(repoinfo_output))
         if not verbose and cols:
             #  Work out the first (id) and last (enabled/disabled/count),
             # then chop the middle (name)...
