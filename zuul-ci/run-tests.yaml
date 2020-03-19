@@ -1,0 +1,9 @@
+- hosts: all
+  roles:
+    - repo-setup
+  tasks:
+    - name: Show zuul-build repo definition
+      command: cat /etc/yum.repos.d/zuul-build.repo 
+    - name: Install fbo/dnf-master copr
+      become: True
+      command: dnf -y copr enable {{ dnf_master_copr }}

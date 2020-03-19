@@ -1,4 +1,22 @@
+- job:
+    name: dnf-run-tests
+    description: Run DNF tests
+    roles:
+      - zuul: zuul-distro-jobs
+    requires: repo
+#    require-projects:
+#      - rpm-software-management/ci-dnf-stack
+    branches:
+      - master
+    vars:
+      dnf_master_copr: fbo/dnf-master
+    run: zuul-ci/run-tests.yaml
+    nodeset: fedora-31-vm
+
 - project:
     check:
       jobs:
         - dnf-rpm-build
+        - dnf-run-tests:
+            dependencies:
+              - dnf-rpm-build
