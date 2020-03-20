@@ -326,24 +326,29 @@ class UpdateInfoCommand(commands.Command):
                         continue
                     elif ref.type == hawkey.REFERENCE_CVE and not self.opts.with_cve:
                         continue
-                    nevra_inst_dict.setdefault((nevra, installed), dict())[ref.id] = (
-                        advisory.type, advisory.severity)
+                    nevra_inst_dict.setdefault((nevra, installed, advisory.updated), dict())[ref.id] = (
+                            advisory.type, advisory.severity)
             else:
-                nevra_inst_dict.setdefault((nevra, installed), dict())[advisory.id] = (
-                    advisory.type, advisory.severity)
+                nevra_inst_dict.setdefault((nevra, installed, advisory.updated), dict())[advisory.id] = (
+                        advisory.type, advisory.severity)
 
         advlist = []
         # convert types to labels, find max len of advisory IDs and types
-        idw = tlw = 0
-        for (nevra, inst), id2type in sorted(nevra_inst_dict.items(), key=lambda x: x[0]):
+        idw = tlw = nw = 0
+        for (nevra, inst, aupdated), id2type in sorted(nevra_inst_dict.items(), key=lambda x: x[0]):
+            nw = max(nw, len(nevra))
             for aid, atypesev in id2type.items():
                 idw = max(idw, len(aid))
                 label = type2label(*atypesev)
                 tlw = max(tlw, len(label))
-                advlist.append((inst2mark(inst), aid, label, nevra))
+                advlist.append((inst2mark(inst), aid, label, nevra, aupdated))
 
-        for (inst, aid, label, nevra) in advlist:
-            print('%s%-*s %-*s %s' % (inst, idw, aid, tlw, label, nevra))
+        for (inst, aid, label, nevra, aupdated) in advlist:
+            if self.base.conf.verbose:
+                print('%s%-*s %-*s %-*s %s' % (inst, idw, aid, tlw, label, nw, nevra, aupdated))
+            else:
+                print('%s%-*s %-*s %s' % (inst, idw, aid, tlw, label, nevra))
+
 
     def display_info(self, apkg_adv_insts):
         """Display the details about available advisories."""
