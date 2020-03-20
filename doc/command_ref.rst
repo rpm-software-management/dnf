@@ -1565,8 +1565,9 @@ Updateinfo Command
 
     Depending on the output type, DNF displays just counts of advisory types
     (omitted or ``--summary``), list of advisories (``--list``) or detailed
-    information (``--info``). When the ``-v`` option is used with ``--info``, the
-    information is even more detailed.
+    information (``--info``). The ``-v`` option extends the output. When
+    used with ``--info`` the information is even more detailed. When used
+    with ``--list`` additional column with date of last advisory update is added.
 
     ``<availability>`` specifies whether advisories about newer versions of
     installed packages (omitted or ``--available``), advisories about equal and
