@@ -744,6 +744,8 @@ Info Command
 ``dnf [options] info [<package-file-spec>...]``
     Lists description and summary information about installed and available packages.
 
+The info command limits the displayed packages the same way as the :ref:`list command<list_command-label>`.
+
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
 .. _install_command-label:
@@ -828,8 +830,10 @@ List Command
 Prints lists of packages depending on the packages' relation to the
 system. A package is ``installed`` if it is present in the RPMDB, and it is ``available``
 if it is not installed but is present in a repository that DNF knows about.
-The list command can also limit the displayed packages according to specific criteria,
-e.g. to only those that update an installed package. The :ref:`exclude
+
+The list command also limits the displayed packages according to specific criteria,
+e.g. to only those that update an installed package (respecting the repository
+:ref:`priority<repo_priority-label>`). The :ref:`exclude
 <exclude-label>` option in the configuration file can influence the
 result, but if the \-\ :ref:`-disableexcludes <disableexcludes-label>` command line
 option is used, it ensures that all installed packages will be listed.
