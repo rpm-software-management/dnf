@@ -1277,6 +1277,8 @@ class Output(object):
             skip_str = _("Skipping packages with conflicts:\n"
                          "(add '%s' to command line "
                          "to force their upgrade)") % " ".join(recommendations)
+            # remove misleading green color from the "packages with conflicts" lines
+            lines = [i[:-1] + ("", ) for i in lines]
             pkglist_lines.append((skip_str, lines))
 
             lines = []
@@ -1288,6 +1290,8 @@ class Output(object):
             else:
                 skip_str = skip_str % _(" or part of a group")
 
+            # remove misleading green color from the "broken dependencies" lines
+            lines = [i[:-1] + ("", ) for i in lines]
             pkglist_lines.append((skip_str, lines))
         output_width = self.term.columns
         if not data['n'] and not self.base._moduleContainer.isChanged() and not \
