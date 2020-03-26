@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-05 09:18-0500\n"
+"POT-Creation-Date: 2020-03-19 09:18-0400\n"
 "PO-Revision-Date: 2016-09-26 01:25+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew (http://www.transifex.com/projects/p/dnf/language/he/)\n"
@@ -2519,6 +2519,11 @@ msgstr ""
 
 #: dnf/cli/option_parser.py:376
 msgid "List of Plugin Commands:"
+msgstr ""
+
+#: dnf/cli/option_parser.py:413
+#, python-format
+msgid "Cannot encode argument '%s': %s"
 msgstr ""
 
 #. Translators: This is abbreviated 'Name'. Should be no longer

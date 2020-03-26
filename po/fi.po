@@ -5,65 +5,65 @@
 # Translators:
 # Ville-Pekka Vainio <vpivaini@cs.helsinki.fi>, 2011
 # Jan Silhan <jsilhan@redhat.com>, 2015. #zanata
-# Jiri Grönroos <jiri.gronroos@iki.fi>, 2015. #zanata
-# Jiri Grönroos <jiri.gronroos@iki.fi>, 2017. #zanata
+# Jiri Grönroos <jiri.gronroos@iki.fi>, 2015. #zanata, 2020.
+# Jiri Grönroos <jiri.gronroos@iki.fi>, 2017. #zanata, 2020.
 # Toni Rantala <trantalafilo@gmail.com>, 2017. #zanata
-# Jiri Grönroos <jiri.gronroos@iki.fi>, 2018. #zanata
+# Jiri Grönroos <jiri.gronroos@iki.fi>, 2018. #zanata, 2020.
 # Jari Korva <jpkorva@iki.fi>, 2019. #zanata
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-05 09:18-0500\n"
-"PO-Revision-Date: 2019-10-30 07:54+0000\n"
-"Last-Translator: Jari Korva <jpkorva@iki.fi>\n"
-"Language-Team: Finnish (http://www.transifex.com/projects/p/dnf/language/fi/)\n"
+"POT-Creation-Date: 2020-03-19 09:18-0400\n"
+"PO-Revision-Date: 2020-03-22 12:29+0000\n"
+"Last-Translator: Jiri Grönroos <jiri.gronroos@iki.fi>\n"
+"Language-Team: Finnish <https://translate.fedoraproject.org/projects/dnf/dnf-master/fi/>\n"
 "Language: fi\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 4.6.2\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 3.11.3\n"
 
 #: dnf/automatic/emitter.py:31
 #, python-format
 msgid "The following updates have been applied on '%s':"
-msgstr ""
+msgstr "Seuraavat päivitykset on toteutettu järjestelmään '%s':"
 
 #: dnf/automatic/emitter.py:32
 #, python-format
 msgid "The following updates are available on '%s':"
-msgstr ""
+msgstr "Seuraavat päivitykset ovat saatavilla järjestelmään '%s':"
 
 #: dnf/automatic/emitter.py:33
 #, python-format
 msgid "The following updates were downloaded on '%s':"
-msgstr ""
+msgstr "Seuraavat päivitykset ladattiin järjestelmään '%s':"
 
 #: dnf/automatic/emitter.py:80
 #, python-format
 msgid "Updates applied on '%s'."
-msgstr ""
+msgstr "Päivitykset toteutettu järjestelmään '%s'."
 
 #: dnf/automatic/emitter.py:82
 #, python-format
 msgid "Updates downloaded on '%s'."
-msgstr ""
+msgstr "Päivitykset ladattu järjestelmään '%s'."
 
 #: dnf/automatic/emitter.py:84
 #, python-format
 msgid "Updates available on '%s'."
-msgstr ""
+msgstr "Päivitykset saatavilla järjestelmään '%s'."
 
 #: dnf/automatic/emitter.py:107
 #, python-format
 msgid "Failed to send an email via '%s': %s"
-msgstr ""
+msgstr "Sähköpostin lähettäminen palvelimen '%s' kautta epäonnistui: %s"
 
 #: dnf/automatic/emitter.py:137
 #, python-format
 msgid "Failed to execute command '%s': returned %d"
-msgstr ""
+msgstr "Komennon '%s' suorittaminen epäonnistui: palautti %d"
 
 #: dnf/automatic/main.py:156 dnf/conf/config.py:151
 #, python-format
@@ -77,7 +77,7 @@ msgstr ""
 
 #: dnf/automatic/main.py:236
 msgid "Started dnf-automatic."
-msgstr ""
+msgstr "Käynnistettiin dnf-automatic."
 
 #: dnf/automatic/main.py:240
 #, python-format
@@ -200,7 +200,7 @@ msgstr "Suoritetaan transaktiotesti"
 
 #: dnf/base.py:848 dnf/base.py:995
 msgid "RPM: {}"
-msgstr ""
+msgstr "RPM: {}"
 
 #: dnf/base.py:849
 msgid "Transaction test error:"
@@ -542,13 +542,13 @@ msgstr ""
 #: dnf/cli/aliases.py:108
 #, python-format
 msgid "Cannot read file \"%s\": %s"
-msgstr ""
+msgstr "Ei voi lukea tiedostoa \"%s\": %s"
 
 #: dnf/cli/aliases.py:115 dnf/cli/aliases.py:129 dnf/cli/cli.py:898
 #: dnf/cli/cli.py:902 dnf/cli/commands/alias.py:108
 #, python-format
 msgid "Config error: %s"
-msgstr ""
+msgstr "Asetusvirhe: %s"
 
 #: dnf/cli/aliases.py:191
 msgid "Aliases contain infinite recursion"
@@ -752,7 +752,7 @@ msgstr ""
 
 #: dnf/cli/cli.py:1016
 msgid "Config file \"{}\" does not exist"
-msgstr ""
+msgstr "Asetustiedostoa \"{}\" ei ole olemassa"
 
 #: dnf/cli/cli.py:1036
 msgid ""
@@ -821,7 +821,7 @@ msgstr ""
 
 #: dnf/cli/commands/__init__.py:167
 msgid "display details about a package or group of packages"
-msgstr ""
+msgstr "näytä tietoja paketista tai ryhmästä paketteja"
 
 #: dnf/cli/commands/__init__.py:177 dnf/cli/commands/__init__.py:749
 msgid "show all packages (default)"
@@ -949,7 +949,7 @@ msgstr ""
 
 #: dnf/cli/commands/__init__.py:809
 msgid "display a helpful usage message"
-msgstr "näyttää avuliaan käyttö viestin"
+msgstr "näyttää avuliaan käyttöviestin"
 
 #: dnf/cli/commands/__init__.py:813
 msgid "COMMAND"
@@ -1010,7 +1010,7 @@ msgstr ""
 
 #: dnf/cli/commands/alias.py:40
 msgid "List or create command aliases"
-msgstr ""
+msgstr "Listaa tai luo komentoaliaksia"
 
 #: dnf/cli/commands/alias.py:47
 msgid "enable aliases resolving"
@@ -1030,11 +1030,11 @@ msgstr ""
 
 #: dnf/cli/commands/alias.py:70
 msgid "Aliases are now enabled"
-msgstr ""
+msgstr "Aliakset ovat nyt käytössä"
 
 #: dnf/cli/commands/alias.py:73
 msgid "Aliases are now disabled"
-msgstr ""
+msgstr "Aliakset ovat nyt pois käytöstä"
 
 #: dnf/cli/commands/alias.py:90 dnf/cli/commands/alias.py:93
 #, python-format
@@ -1077,7 +1077,7 @@ msgstr ""
 
 #: dnf/cli/commands/alias.py:166
 msgid "No aliases specified."
-msgstr ""
+msgstr "Aliaksia ei ole tarkennettu."
 
 #: dnf/cli/commands/alias.py:173
 msgid "No alias specified."
@@ -1085,7 +1085,7 @@ msgstr ""
 
 #: dnf/cli/commands/alias.py:179
 msgid "No aliases defined."
-msgstr ""
+msgstr "Aliaksia ei ole määritetty."
 
 #: dnf/cli/commands/alias.py:186
 #, python-format
@@ -1096,6 +1096,8 @@ msgstr ""
 msgid ""
 "remove all unneeded packages that were originally installed as dependencies"
 msgstr ""
+"poista kaikki tarpeettomat paketit, jotka asennettiin alun perin "
+"riippuvuuksina"
 
 #: dnf/cli/commands/autoremove.py:46 dnf/cli/commands/remove.py:59
 msgid "Package to remove"
@@ -1103,7 +1105,7 @@ msgstr "Poistettava paketti"
 
 #: dnf/cli/commands/check.py:34
 msgid "check for problems in the packagedb"
-msgstr ""
+msgstr "tarkista packagedb ongelmien varalta"
 
 #: dnf/cli/commands/check.py:40
 msgid "show all problems; default"
@@ -1176,7 +1178,7 @@ msgstr "Odotetaan prosessin prosessitunnisteella (PID) %d valmistuvan."
 
 #: dnf/cli/commands/deplist.py:32
 msgid "List package's dependencies and what packages provide them"
-msgstr ""
+msgstr "Listaa paketin riippuvuudet ja mitkä paketit tarjoavat ne"
 
 #: dnf/cli/commands/distrosync.py:32
 msgid "synchronize installed packages to the latest available versions"
@@ -1599,11 +1601,11 @@ msgstr "lähdenimi"
 
 #: dnf/cli/commands/repolist.py:290
 msgid "Total packages: {}"
-msgstr ""
+msgstr "Paketteja yhteensä: {}"
 
 #: dnf/cli/commands/repoquery.py:108
 msgid "search for packages matching keyword"
-msgstr ""
+msgstr "etsi hakusanaa vastaavia paketteja"
 
 #: dnf/cli/commands/repoquery.py:122
 msgid ""
@@ -1719,7 +1721,7 @@ msgstr ""
 
 #: dnf/cli/commands/repoquery.py:195
 msgid "show changelogs of the package"
-msgstr ""
+msgstr "näytä paketin muutoslokit"
 
 #: dnf/cli/commands/repoquery.py:198
 msgid "format for displaying found packages"
@@ -1881,7 +1883,7 @@ msgstr ""
 
 #: dnf/cli/commands/search.py:46
 msgid "search package details for the given string"
-msgstr ""
+msgstr "etsi paketin tiedoista annettua merkkijonoa"
 
 #: dnf/cli/commands/search.py:51
 msgid "search also package description and URL"
@@ -1941,7 +1943,7 @@ msgstr "Tuloksia ei löytynyt."
 #: dnf/cli/commands/shell.py:47
 #, python-brace-format
 msgid "run an interactive {prog} shell"
-msgstr ""
+msgstr "suorita vuorovaikutteinen {prog}:n komentokehote"
 
 #: dnf/cli/commands/shell.py:68
 msgid "SCRIPT"
@@ -2307,7 +2309,7 @@ msgstr ""
 #: dnf/cli/option_parser.py:174
 #, python-brace-format
 msgid "General {prog} options"
-msgstr ""
+msgstr "Yleiset {prog}-valinnat"
 
 #: dnf/cli/option_parser.py:178
 msgid "config file location"
@@ -2324,7 +2326,7 @@ msgstr "yksityiskohtaset tulosteet"
 #: dnf/cli/option_parser.py:185
 #, python-brace-format
 msgid "show {prog} version and exit"
-msgstr ""
+msgstr "näytä {prog}:n versio ja poistu"
 
 #: dnf/cli/option_parser.py:187
 msgid "set install root"
@@ -2332,7 +2334,7 @@ msgstr "aseta asennusjuuri"
 
 #: dnf/cli/option_parser.py:190
 msgid "do not install documentations"
-msgstr ""
+msgstr "älä asenna dokumentaatiota"
 
 #: dnf/cli/option_parser.py:193
 msgid "disable all plugins"
@@ -2340,7 +2342,7 @@ msgstr "poista kaikki lisäosat käytöstä"
 
 #: dnf/cli/option_parser.py:196
 msgid "enable plugins by name"
-msgstr ""
+msgstr "ota liitännäiset käyttöön nimen perusteella"
 
 #: dnf/cli/option_parser.py:200
 msgid "disable plugins by name"
@@ -2464,6 +2466,7 @@ msgstr ""
 #: dnf/cli/option_parser.py:300
 msgid "disable gpg signature checking (if RPM policy allows)"
 msgstr ""
+"poista käytöstä gpg-allekirjoituksen tarkistus (jos RPM-käytäntö sallii)"
 
 #: dnf/cli/option_parser.py:302
 msgid "control whether color is used"
@@ -2527,15 +2530,21 @@ msgstr ""
 
 #: dnf/cli/option_parser.py:353
 msgid "Force the use of an architecture"
-msgstr ""
+msgstr "Pakota arkkitehtuurin käyttö"
 
 #: dnf/cli/option_parser.py:375
 msgid "List of Main Commands:"
-msgstr ""
+msgstr "Listaus pääkomennoista:"
 
 #: dnf/cli/option_parser.py:376
 msgid "List of Plugin Commands:"
-msgstr ""
+msgstr "Listaus liitännäiskomennoista:"
+
+#: dnf/cli/option_parser.py:413
+#, fuzzy, python-format
+#| msgid "Cannot read file \"%s\": %s"
+msgid "Cannot encode argument '%s': %s"
+msgstr "Ei voi lukea tiedostoa \"%s\": %s"
 
 #. Translators: This is abbreviated 'Name'. Should be no longer
 #. than 12 characters. You can use the full version if it is short
@@ -3025,7 +3034,7 @@ msgstr "Uudelleenasennettu"
 
 #: dnf/cli/output.py:1496
 msgid "Skipped"
-msgstr ""
+msgstr "Ohitettu"
 
 #: dnf/cli/output.py:1497
 msgid "Removed"
@@ -3188,7 +3197,7 @@ msgstr "Muutetut paketit:"
 
 #: dnf/cli/output.py:1900
 msgid "Scriptlet output:"
-msgstr "Skriptletin tuloste:"
+msgstr "Sovelman tuloste:"
 
 #: dnf/cli/output.py:1907
 msgid "Errors:"
@@ -3335,7 +3344,7 @@ msgstr "ohitetaan."
 #: dnf/comps.py:187 dnf/comps.py:689
 #, python-format
 msgid "Module or Group '%s' is not installed."
-msgstr ""
+msgstr "Moduuli tai ryhmä '%s' ei ole asennettuna."
 
 #: dnf/comps.py:189 dnf/comps.py:691
 #, python-format
@@ -3345,7 +3354,7 @@ msgstr ""
 #: dnf/comps.py:191
 #, python-format
 msgid "Module or Group '%s' does not exist."
-msgstr ""
+msgstr "Moduulia tai ryhmää '%s' ei ole olemassa."
 
 #: dnf/comps.py:610 dnf/comps.py:627
 #, python-format
@@ -3409,7 +3418,7 @@ msgstr ""
 #: dnf/conf/read.py:51
 #, python-format
 msgid "Warning: failed loading '%s', skipping."
-msgstr ""
+msgstr "Varoitus: ei voitu ladata '%s', ohitetaan."
 
 #: dnf/conf/read.py:63
 msgid "Bad id for repo: {} ({}), byte = {} {}"
@@ -3512,19 +3521,19 @@ msgstr ""
 
 #: dnf/exceptions.py:111
 msgid "missing packages: "
-msgstr ""
+msgstr "puuttuvat paketit: "
 
 #: dnf/exceptions.py:113
 msgid "broken packages: "
-msgstr ""
+msgstr "rikkinäiset paketit: "
 
 #: dnf/exceptions.py:115
 msgid "missing groups or modules: "
-msgstr ""
+msgstr "puuttuvat ryhmät tai moduulit: "
 
 #: dnf/exceptions.py:117
 msgid "broken groups or modules: "
-msgstr ""
+msgstr "rikkinäiset ryhmät tai moduulit: "
 
 #: dnf/exceptions.py:122
 msgid "Modular dependency problem with Defaults:"
@@ -3557,7 +3566,7 @@ msgstr ""
 
 #: dnf/module/__init__.py:29
 msgid "Enabled modules: {}."
-msgstr ""
+msgstr "Käytössä olevat moduulit: {}."
 
 #: dnf/module/__init__.py:30
 msgid "No profile specified for '{}', please specify profile."
@@ -3679,7 +3688,7 @@ msgstr "Ladattu liitännäiset: %s"
 #: dnf/plugin.py:199
 #, python-format
 msgid "Failed loading plugin \"%s\": %s"
-msgstr ""
+msgstr "Liitännäisen \"%s\" lataaminen epäonnistui: %s"
 
 #: dnf/plugin.py:231
 msgid "No matches found for the following enable plugin patterns: {}"
@@ -3702,7 +3711,7 @@ msgstr "Ladattu jo"
 #: dnf/repo.py:346
 #, python-format
 msgid "determining the fastest mirror (%s hosts).. "
-msgstr ""
+msgstr "päätellään nopein peilipalvelin (%s palvelinta).. "
 
 #: dnf/repodict.py:58
 #, python-format
@@ -3758,7 +3767,7 @@ msgstr "Varmistetaan"
 
 #: dnf/transaction.py:97
 msgid "Running scriptlet"
-msgstr "Suoritetaan skriptletti"
+msgstr "Suoritetaan sovelma"
 
 #: dnf/transaction.py:99
 msgid "Preparing"

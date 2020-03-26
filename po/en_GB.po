@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-05 09:18-0500\n"
+"POT-Creation-Date: 2020-03-19 09:18-0400\n"
 "PO-Revision-Date: 2017-10-20 12:19+0000\n"
 "Last-Translator: Waldo Ribeiro <waldoribeiro@sapo.pt>\n"
 "Language-Team: English (United Kingdom) (http://www.transifex.com/projects/p/dnf/language/en_GB/)\n"
@@ -2566,6 +2566,12 @@ msgstr ""
 #: dnf/cli/option_parser.py:376
 msgid "List of Plugin Commands:"
 msgstr ""
+
+#: dnf/cli/option_parser.py:413
+#, fuzzy, python-format
+#| msgid "No match for argument: %s"
+msgid "Cannot encode argument '%s': %s"
+msgstr "No match for argument: %s"
 
 #. Translators: This is abbreviated 'Name'. Should be no longer
 #. than 12 characters. You can use the full version if it is short

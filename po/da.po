@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-05 09:18-0500\n"
+"POT-Creation-Date: 2020-03-19 09:18-0400\n"
 "PO-Revision-Date: 2020-02-28 16:38+0000\n"
 "Last-Translator: Kris Thomsen <lakristho@gmail.com>\n"
 "Language-Team: Danish <https://translate.fedoraproject.org/projects/dnf/dnf-master/da/>\n"
@@ -2687,6 +2687,12 @@ msgstr "Liste over de primære kommandoer:"
 #: dnf/cli/option_parser.py:376
 msgid "List of Plugin Commands:"
 msgstr "Liste over plugin-kommandoer:"
+
+#: dnf/cli/option_parser.py:413
+#, fuzzy, python-format
+#| msgid "Cannot read file \"%s\": %s"
+msgid "Cannot encode argument '%s': %s"
+msgstr "Kan ikke læse filen \"%s\": %s"
 
 #. Translators: This is abbreviated 'Name'. Should be no longer
 #. than 12 characters. You can use the full version if it is short

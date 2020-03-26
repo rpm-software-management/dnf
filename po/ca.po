@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-05 09:18-0500\n"
+"POT-Creation-Date: 2020-03-19 09:18-0400\n"
 "PO-Revision-Date: 2018-11-03 06:46+0000\n"
 "Last-Translator: Robert Antoni Buj Gelonch <rbuj@fedoraproject.org>\n"
 "Language-Team: Catalan (https://fedora.zanata.org/language/view/ca) <fedora@llistes.softcatala.org>\n"
@@ -2621,6 +2621,12 @@ msgstr "Llistat d'ordres principals:"
 #: dnf/cli/option_parser.py:376
 msgid "List of Plugin Commands:"
 msgstr "Llistat d'ordres dels connectors:"
+
+#: dnf/cli/option_parser.py:413
+#, fuzzy, python-format
+#| msgid "No match for argument: %s"
+msgid "Cannot encode argument '%s': %s"
+msgstr "No hi ha cap coincidència per a l'argument: %s"
 
 #. Translators: This is abbreviated 'Name'. Should be no longer
 #. than 12 characters. You can use the full version if it is short

@@ -16,7 +16,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-05 09:18-0500\n"
+"POT-Creation-Date: 2020-03-19 09:18-0400\n"
 "PO-Revision-Date: 2019-11-29 08:32+0000\n"
 "Last-Translator: Meskó Balázs <meskobalazs@gmail.com>\n"
 "Language-Team: Hungarian (http://www.transifex.com/projects/p/dnf/language/hu/)\n"
@@ -2719,6 +2719,12 @@ msgstr "Alapvető parancsok listája:"
 #: dnf/cli/option_parser.py:376
 msgid "List of Plugin Commands:"
 msgstr "Bővítmények parancsok listája:"
+
+#: dnf/cli/option_parser.py:413
+#, fuzzy, python-format
+#| msgid "Cannot read file \"%s\": %s"
+msgid "Cannot encode argument '%s': %s"
+msgstr "A(z) „%s” fájl nem olvasható: %s"
 
 #. Translators: This is abbreviated 'Name'. Should be no longer
 #. than 12 characters. You can use the full version if it is short

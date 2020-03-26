@@ -9,21 +9,21 @@
 # dominique bribanick <chepioq@gmail.com>, 2011
 # Jérôme Fenal <jfenal@gmail.com>, 2014
 # Kévin Raymond <shaiton@fedoraproject.org>, 2011
-# Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>, 2016. #zanata
+# Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>, 2016. #zanata, 2020.
 # José Fournier <jaaf64@zoraldia.com>, 2016. #zanata
-# Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>, 2017. #zanata
+# Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>, 2017. #zanata, 2020.
 # José Fournier <jaaf64@zoraldia.com>, 2017. #zanata
 # Jérôme Fenal <jfenal@gmail.com>, 2017. #zanata
-# Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>, 2018. #zanata
+# Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>, 2018. #zanata, 2020.
 # Ludek Janda <ljanda@redhat.com>, 2018. #zanata
-# Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>, 2019. #zanata
+# Jean-Baptiste Holcroft <jean-baptiste@holcroft.fr>, 2019. #zanata, 2020.
 # Julien Humbert <julroy67@gmail.com>, 2020.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-05 09:18-0500\n"
-"PO-Revision-Date: 2020-03-11 17:38+0000\n"
+"POT-Creation-Date: 2020-03-19 09:18-0400\n"
+"PO-Revision-Date: 2020-03-22 12:29+0000\n"
 "Last-Translator: Julien Humbert <julroy67@gmail.com>\n"
 "Language-Team: French <https://translate.fedoraproject.org/projects/dnf/dnf-master/fr/>\n"
 "Language: fr\n"
@@ -31,7 +31,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n > 1;\n"
-"X-Generator: Weblate 3.11.2\n"
+"X-Generator: Weblate 3.11.3\n"
 
 #: dnf/automatic/emitter.py:31
 #, python-format
@@ -446,7 +446,7 @@ msgstr "Action non gérée : {}"
 #: dnf/cli/commands/__init__.py:913 dnf/cli/commands/group.py:398
 #, python-format
 msgid "No package %s available."
-msgstr "Aucun paquet %s disponible."
+msgstr "Aucun paquet %s n’est disponible."
 
 #: dnf/base.py:2260
 msgid "no package matched"
@@ -2763,6 +2763,11 @@ msgstr "Liste des commandes principales :"
 msgid "List of Plugin Commands:"
 msgstr "Liste des commandes de greffons :"
 
+#: dnf/cli/option_parser.py:413
+#, python-format
+msgid "Cannot encode argument '%s': %s"
+msgstr "Impossible d’encoder l’argument « %s » : %s"
+
 #. Translators: This is abbreviated 'Name'. Should be no longer
 #. than 12 characters. You can use the full version if it is short
 #. enough in your language.
@@ -3684,12 +3689,12 @@ msgstr "La lecture du fichier « {} » a échoué : {}"
 #: dnf/crypto.py:108
 #, python-format
 msgid "repo %s: 0x%s already imported"
-msgstr "dépôt %s : 0x%s déjà importé"
+msgstr "dépôt %s : 0x%s déjà importé"
 
 #: dnf/crypto.py:115
 #, python-format
 msgid "repo %s: imported key 0x%s."
-msgstr "dépôt %s : clé importée 0x%s."
+msgstr "dépôt %s : clé importée 0x%s."
 
 #: dnf/db/group.py:289
 msgid ""

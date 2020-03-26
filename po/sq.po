@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-05 09:18-0500\n"
+"POT-Creation-Date: 2020-03-19 09:18-0400\n"
 "PO-Revision-Date: 2017-04-14 04:37+0000\n"
 "Last-Translator: Enea Jahollari <jahollarienea14@gmail.com>\n"
 "Language-Team: Albanian\n"
@@ -2513,6 +2513,11 @@ msgstr ""
 
 #: dnf/cli/option_parser.py:376
 msgid "List of Plugin Commands:"
+msgstr ""
+
+#: dnf/cli/option_parser.py:413
+#, python-format
+msgid "Cannot encode argument '%s': %s"
 msgstr ""
 
 #. Translators: This is abbreviated 'Name'. Should be no longer

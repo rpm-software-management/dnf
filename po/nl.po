@@ -10,8 +10,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-05 09:18-0500\n"
-"PO-Revision-Date: 2020-03-11 17:38+0000\n"
+"POT-Creation-Date: 2020-03-19 09:18-0400\n"
+"PO-Revision-Date: 2020-03-25 17:38+0000\n"
 "Last-Translator: Geert Warrink <geert.warrink@onsnet.nu>\n"
 "Language-Team: Dutch <https://translate.fedoraproject.org/projects/dnf/dnf-master/nl/>\n"
 "Language: nl\n"
@@ -19,7 +19,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 3.11.2\n"
+"X-Generator: Weblate 3.11.3\n"
 
 #: dnf/automatic/emitter.py:31
 #, python-format
@@ -223,7 +223,7 @@ msgstr[1] "Ten minste {0}MB meer nodig op bestandssysteem {1}."
 
 #: dnf/base.py:919
 msgid "Error Summary"
-msgstr "Foutsamenvatting"
+msgstr "Samenvatting van fouten"
 
 #: dnf/base.py:945
 #, python-brace-format
@@ -339,7 +339,7 @@ msgstr "Pakket %s is niet geïnstalleerd, kan het niet downgraden."
 #: dnf/cli/commands/upgrade.py:110 dnf/cli/commands/upgrade.py:121
 #, python-format
 msgid "No match for argument: %s"
-msgstr "Niets gevonden met argument: %s"
+msgstr "Geen match voor argument: %s"
 
 #: dnf/base.py:1925
 #, python-format
@@ -418,7 +418,7 @@ msgstr "Actie niet afgehandeld: {}"
 #: dnf/cli/commands/__init__.py:913 dnf/cli/commands/group.py:398
 #, python-format
 msgid "No package %s available."
-msgstr "Geen pakket %s beschikbaar."
+msgstr "Pakket %s niet beschikbaar."
 
 #: dnf/base.py:2260
 msgid "no package matched"
@@ -1255,7 +1255,7 @@ msgstr "groepinformatie tonen of gebruiken"
 
 #: dnf/cli/commands/group.py:70
 msgid "No group data available for configured repositories."
-msgstr "Geen groepsdata beschikbaar voor ingestelde repositories."
+msgstr "Geen groepdata beschikbaar voor ingestelde repositories."
 
 #: dnf/cli/commands/group.py:127
 #, python-format
@@ -1337,7 +1337,7 @@ msgstr "installeer pakket"
 
 #: dnf/cli/commands/install.py:118
 msgid "Unable to find a match"
-msgstr "Geen overeenkomst gevonden"
+msgstr "Kan geen match vinden"
 
 #: dnf/cli/commands/install.py:131
 #, python-format
@@ -2704,6 +2704,11 @@ msgstr "Lijst van belangrijkste commando's:"
 msgid "List of Plugin Commands:"
 msgstr "Lijst van plugincommando's:"
 
+#: dnf/cli/option_parser.py:413
+#, python-format
+msgid "Cannot encode argument '%s': %s"
+msgstr "Kan argument '%s' niet coderen: %s"
+
 #. Translators: This is abbreviated 'Name'. Should be no longer
 #. than 12 characters. You can use the full version if it is short
 #. enough in your language.
@@ -2840,7 +2845,7 @@ msgstr "Geen pakketten om te laten zien"
 
 #: dnf/cli/output.py:706
 msgid "y"
-msgstr "y"
+msgstr "j"
 
 #: dnf/cli/output.py:706
 msgid "yes"
@@ -3615,7 +3620,7 @@ msgstr "Ontleden van bestand \"{}\" mislukte: {}"
 #: dnf/crypto.py:108
 #, python-format
 msgid "repo %s: 0x%s already imported"
-msgstr "repo %s: 0x%s is al geimporteerd"
+msgstr "repo %s: 0x%s is al geïmporteerd"
 
 #: dnf/crypto.py:115
 #, python-format

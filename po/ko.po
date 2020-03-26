@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-05 09:18-0500\n"
+"POT-Creation-Date: 2020-03-19 09:18-0400\n"
 "PO-Revision-Date: 2018-11-12 10:05+0000\n"
 "Last-Translator: Copied by Zanata <copied-by-zanata@zanata.org>\n"
 "Language-Team: Korean\n"
@@ -2528,6 +2528,12 @@ msgstr "주요 명령 목록 :"
 #: dnf/cli/option_parser.py:376
 msgid "List of Plugin Commands:"
 msgstr "플러그인 명령리스트 :"
+
+#: dnf/cli/option_parser.py:413
+#, fuzzy, python-format
+#| msgid "No match for argument: %s"
+msgid "Cannot encode argument '%s': %s"
+msgstr "인수와 일치하는 항목 없음 : %s"
 
 #. Translators: This is abbreviated 'Name'. Should be no longer
 #. than 12 characters. You can use the full version if it is short

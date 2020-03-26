@@ -29,20 +29,22 @@
 # Ludek Janda <ljanda@redhat.com>, 2018. #zanata
 # Paul Ritter <paul-ritter@gmx.net>, 2018. #zanata
 # Mario Blättermann <mario.blaettermann@gmail.com>, 2019. #zanata
+# Anonymous <noreply@weblate.org>, 2020.
+# Christian Kujau <fedora@nerdbynature.de>, 2020.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-03-05 09:18-0500\n"
-"PO-Revision-Date: 2019-01-28 08:08+0000\n"
-"Last-Translator: Mario Blättermann <mario.blaettermann@gmail.com>\n"
-"Language-Team: German (http://www.transifex.com/projects/p/dnf/language/de/)\n"
+"POT-Creation-Date: 2020-03-19 09:18-0400\n"
+"PO-Revision-Date: 2020-03-22 12:29+0000\n"
+"Last-Translator: Christian Kujau <fedora@nerdbynature.de>\n"
+"Language-Team: German <https://translate.fedoraproject.org/projects/dnf/dnf-master/de/>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Zanata 4.6.2\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 3.11.3\n"
 
 #: dnf/automatic/emitter.py:31
 #, python-format
@@ -137,7 +139,7 @@ msgstr "Metadaten-Zwischenspeicher wurde kürzlich aktualisiert."
 
 #: dnf/base.py:341 dnf/cli/commands/__init__.py:100
 msgid "There are no enabled repositories in \"{}\"."
-msgstr ""
+msgstr "Es gibt keine aktivierten Repositories in \"{}\"."
 
 #: dnf/base.py:348
 #, python-format
@@ -173,7 +175,7 @@ msgstr "%s: Metadaten von %s werden verwendet."
 #: dnf/base.py:409
 #, python-format
 msgid "Ignoring repositories: %s"
-msgstr ""
+msgstr "Ignoriere Repositories: %s"
 
 #: dnf/base.py:412
 #, python-format
@@ -223,11 +225,11 @@ msgstr "Transaktion wird getestet"
 
 #: dnf/base.py:848 dnf/base.py:995
 msgid "RPM: {}"
-msgstr ""
+msgstr "RPM: {}"
 
 #: dnf/base.py:849
 msgid "Transaction test error:"
-msgstr ""
+msgstr "Transaktionstest fehlerhaft:"
 
 #: dnf/base.py:860
 msgid "Transaction test succeeded."
@@ -2676,6 +2678,12 @@ msgstr "Hauptbefehle"
 #: dnf/cli/option_parser.py:376
 msgid "List of Plugin Commands:"
 msgstr "Plugin-Befehle"
+
+#: dnf/cli/option_parser.py:413
+#, fuzzy, python-format
+#| msgid "No match for argument: %s"
+msgid "Cannot encode argument '%s': %s"
+msgstr "Kein Treffer für Argument: %s"
 
 #. Translators: This is abbreviated 'Name'. Should be no longer
 #. than 12 characters. You can use the full version if it is short
