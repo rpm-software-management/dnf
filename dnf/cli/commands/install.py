@@ -120,10 +120,10 @@ class InstallCommand(commands.Command):
                                                            packages=err_pkgs)
 
     def _get_nevra_forms_from_command(self):
-        return [self.nevra_forms[command]
-                for command in self.opts.command
-                if command in list(self.nevra_forms.keys())
-                ]
+        if self.opts.command in self.nevra_forms:
+            return [self.nevra_forms[self.opts.command]]
+        else:
+            return []
 
     def _log_not_valid_rpm_file_paths(self, grp_specs):
         group_names = map(lambda g: '@' + g, grp_specs)
