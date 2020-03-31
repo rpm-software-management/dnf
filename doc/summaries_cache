@@ -3090,5 +3090,41 @@
     [
         1788154,
         "Adding a trailing comma to excludes option causes all items listed for exclusion to be ignored."
+    ],
+    [
+        1814192,
+        "\"Skipping packages with conflicts\" should not be green"
+    ],
+    [
+        1809600,
+        "Tracebacks in transaction callbacks"
+    ],
+    [
+        1565614,
+        "[RFE] BASH autocompletion for 'dnf module'"
+    ],
+    [
+        1812682,
+        "\"dnf -d 6 repolist\" fails with AttributeError: 'NoneType' object has no attribute 'query'"
+    ],
+    [
+        1750745,
+        "dnf repoquery --unsatisfied: Problem: The operation would result in removing the following protected packages"
+    ],
+    [
+        1813460,
+        "Incorrect information about \"includepkgs\" in the yum2dnf man page"
+    ],
+    [
+        1543449,
+        "'dnf check --dependencies' incorrectly reports missing requires"
+    ],
+    [
+        1800342,
+        "dnf download and list do not respect repo priority"
+    ],
+    [
+        1812693,
+        "DNF doesn't use new translations coming from Weblate"
     ]
 ]

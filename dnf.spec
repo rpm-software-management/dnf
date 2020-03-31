@@ -506,6 +506,21 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Tue Mar 31 2020 Aleš Matěj <amatej@redhat.com> - 4.2.21-1
+- Fix completion helper if solv files not in roon cache (RhBug:1714376)
+- Add bash completion for 'dnf module' (RhBug:1565614)
+- Check command no longer reports  missing %pre and %post deps (RhBug:1543449)
+- Check if arguments can be encoded in 'utf-8'
+- [doc] Remove incorrect information about includepkgs (RhBug:1813460)
+- Fix crash with "dnf -d 6 repolist" (RhBug:1812682)
+- Do not print the first empty line for repoinfo
+- Redirect logger and repo download progress when --verbose
+- Respect repo priority when listing packages (RhBug:1800342)
+- [doc] Document that list and info commands respect repo priority
+- [repoquery] Do not protect running kernel for --unsafisfied (RhBug:1750745)
+- Remove misleading green color from the "broken dependencies" lines (RhBug:1814192)
+- [doc] Document color options
+
 * Mon Feb 24 2020 Aleš Matěj <amatej@redhat.com> - 4.2.19-1
 - match RHEL behavior for CentOS and do not require deltarpm
 - List arguments: only first empty value is used (RhBug:1788154)

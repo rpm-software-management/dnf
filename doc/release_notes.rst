@@ -20,6 +20,36 @@
 ###################
 
 ====================
+4.2.21 Release Notes
+====================
+
+- Fix completion helper if solv files not in roon cache (RhBug:1714376)
+- Add bash completion for 'dnf module' (RhBug:1565614)
+- Check command no longer reports  missing %pre and %post deps (RhBug:1543449)
+- Check if arguments can be encoded in 'utf-8'
+- [doc] Remove incorrect information about includepkgs (RhBug:1813460)
+- Fix crash with "dnf -d 6 repolist" (RhBug:1812682)
+- Do not print the first empty line for repoinfo
+- Redirect logger and repo download progress when --verbose
+- Respect repo priority when listing packages (RhBug:1800342)
+- [doc] Document that list and info commands respect repo priority
+- [repoquery] Do not protect running kernel for --unsafisfied (RhBug:1750745)
+- Remove misleading green color from the "broken dependencies" lines (RhBug:1814192)
+- [doc] Document color options
+
+Bugs fixed in 4.2.21:
+
+* :rhbug:`1814192`
+* :rhbug:`1809600`
+* :rhbug:`1565614`
+* :rhbug:`1812682`
+* :rhbug:`1750745`
+* :rhbug:`1813460`
+* :rhbug:`1543449`
+* :rhbug:`1800342`
+* :rhbug:`1812693`
+
+====================
 4.2.19 Release Notes
 ====================
 
