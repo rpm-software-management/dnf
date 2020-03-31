@@ -112,9 +112,9 @@ class UpdateInfoCommand(commands.Command):
         self.cli.demands.available_repos = True
         self.cli.demands.sack_activation = True
 
-        if self.opts.command[0] in self.direct_commands:
+        if self.opts.command in self.direct_commands:
             # we were called with direct command
-            self.opts.spec_action = self.direct_commands[self.opts.command[0]]
+            self.opts.spec_action = self.direct_commands[self.opts.command]
         else:
             if self.opts._spec_action:
                 self.opts.spec_action = self.opts._spec_action
