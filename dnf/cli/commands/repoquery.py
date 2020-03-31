@@ -448,10 +448,8 @@ class RepoQueryCommand(commands.Command):
             remote_packages = self._add_add_remote_packages()
 
             kwark = {}
-            forms = [self.nevra_forms[command] for command in self.opts.command
-                     if command in list(self.nevra_forms.keys())]
-            if forms:
-                kwark["forms"] = forms
+            if self.opts.command in self.nevra_forms:
+                kwark["forms"] = [self.nevra_forms[self.opts.command]]
             pkgs = []
             query_results = q.filter(empty=True)
 
