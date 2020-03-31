@@ -100,7 +100,7 @@ class RepoListCommand(commands.Command):
         if not self.opts.quiet:
             self.cli.redirect_repo_progress()
         demands = self.cli.demands
-        if any((self.base.conf.verbose, ('repoinfo' in self.opts.command))):
+        if self.base.conf.verbose or self.opts.command == 'repoinfo':
             demands.available_repos = True
             demands.sack_activation = True
 
@@ -139,10 +139,10 @@ class RepoListCommand(commands.Command):
                 enabled = True
                 if arg == 'disabled':
                     continue
-                if any((include_status, verbose, 'repoinfo' in self.opts.command)):
+                if include_status or verbose or self.opts.command == 'repoinfo':
                     ui_enabled = ehibeg + _('enabled') + hiend
                     ui_endis_wid = exact_width(_('enabled'))
-                if verbose or ('repoinfo' in self.opts.command):
+                if verbose or self.opts.command == 'repoinfo':
                     ui_size = _repo_size(self.base.sack, repo)
             else:
                 enabled = False
@@ -151,7 +151,7 @@ class RepoListCommand(commands.Command):
                 ui_enabled = dhibeg + _('disabled') + hiend
                 ui_endis_wid = exact_width(_('disabled'))
 
-            if not any((verbose, ('repoinfo' in self.opts.command))):
+            if not (verbose or self.opts.command == 'repoinfo'):
                 rid = ucd(repo.id)
                 cols.append((rid, repo.name, (ui_enabled, ui_endis_wid)))
             else:
@@ -287,6 +287,6 @@ class RepoListCommand(commands.Command):
                 print("%s %s %s" % (fill_exact_width(rid, id_len),
                                     fill_exact_width(rname, nm_len, nm_len),
                                     ui_enabled))
-        if any((verbose, ('repoinfo' in self.opts.command))):
+        if verbose or self.opts.command == 'repoinfo':
             msg = _('Total packages: {}')
             print(msg.format(_num2ui_num(tot_num)))
