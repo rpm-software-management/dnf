@@ -74,12 +74,12 @@ class InstallCommand(commands.Command):
         nevra_forms = self._get_nevra_forms_from_command()
 
         self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
-        if self.opts.command == ['localinstall'] and (self.opts.grp_specs or self.opts.pkg_specs):
+        if self.opts.command == 'localinstall' and (self.opts.grp_specs or self.opts.pkg_specs):
             self._log_not_valid_rpm_file_paths(self.opts.grp_specs)
             if self.base.conf.strict:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
         skipped_grp_specs = []
-        if self.opts.grp_specs and self.opts.command != ['localinstall']:
+        if self.opts.grp_specs and self.opts.command != 'localinstall':
             if dnf.base.WITH_MODULES:
                 try:
                     module_base = dnf.module.module_base.ModuleBase(self.base)
@@ -108,10 +108,10 @@ class InstallCommand(commands.Command):
             self._inform_not_a_valid_combination(skipped_grp_specs)
             if self.base.conf.strict:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
-        elif skipped_grp_specs and self.opts.command != ['localinstall']:
+        elif skipped_grp_specs and self.opts.command != 'localinstall':
             self._install_groups(skipped_grp_specs)
 
-        if self.opts.command != ['localinstall']:
+        if self.opts.command != 'localinstall':
             errs = self._install_packages(nevra_forms)
 
         if (len(errs) != 0 or len(err_pkgs) != 0 or error_module_specs) and self.base.conf.strict:
