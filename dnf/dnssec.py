@@ -58,7 +58,7 @@ def email2location(email_address, tag="_openpgpkey"):
     """
     split = email_address.split("@")
     if len(split) != 2:
-        msg = "Email address should contain exactly one '@' sign."
+        msg = "Email address must contain exactly one '@' sign."
         logger.error(msg)
         raise DnssecError(msg)
 
