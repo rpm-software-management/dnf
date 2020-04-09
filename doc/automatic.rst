@@ -73,17 +73,17 @@ Setting the mode of operation of the program.
 
     Whether packages comprising the available updates should be downloaded by ``dnf-automatic.timer``. Note that the other timer units override this setting.
 
+``random_sleep``
+    time in seconds, default: 0
+
+    Maximal random delay before downloading.  Note that, by default, the ``systemd`` timers also apply a random delay of up to 5 minutes.
+
 .. _upgrade_type_automatic-label:
 
 ``upgrade_type``
     either one of ``default``, ``security``, default: ``default``
 
     What kind of upgrades to look at. ``default`` signals looking for all available updates, ``security`` only those with an issued security advisory.
-
-``random_sleep``
-    time in seconds, default: 0
-
-    Maximal random delay before downloading.  Note that, by default, the ``systemd`` timers also apply a random delay of up to 5 minutes.
 
 ----------------------
 ``[emitters]`` section
@@ -130,11 +130,6 @@ The command email emitter configuration. Variables usable in format string argum
 
     The shell command to execute.
 
-``stdin_format``
-    format string, default: ``{body}``
-
-    The data to pass to the command on stdin.
-
 ``email_from``
     string, default: ``root``
 
@@ -144,6 +139,11 @@ The command email emitter configuration. Variables usable in format string argum
     list, default: ``root``
 
     List of recipients of the message.
+
+``stdin_format``
+    format string, default: ``{body}``
+
+    The data to pass to the command on stdin.
 
 -------------------
 ``[email]`` section
@@ -156,15 +156,15 @@ The email emitter configuration.
 
     Message's "From:" address.
 
-``email_to``
-    list, default: ``root``
-
-    List of recipients of the message.
-
 ``email_host``
     string, default: ``localhost``
 
     Hostname of the SMTP server used to send the message.
+
+``email_to``
+    list, default: ``root``
+
+    List of recipients of the message.
 
 ------------------
 ``[base]`` section
