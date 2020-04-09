@@ -21,6 +21,13 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
+
+import argparse
+import logging
+import random
+import socket
+import time
+
 from dnf.i18n import _, ucd
 import dnf
 import dnf.automatic.emitter
@@ -28,17 +35,12 @@ import dnf.cli
 import dnf.cli.cli
 import dnf.cli.output
 import dnf.conf
-import libdnf.conf
 import dnf.const
 import dnf.exceptions
 import dnf.util
 import dnf.logging
-import hawkey
-import logging
-import socket
-import argparse
-import random
-import time
+import dnf.pycomp
+import libdnf.conf
 
 logger = logging.getLogger('dnf')
 
