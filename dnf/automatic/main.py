@@ -172,6 +172,7 @@ class CommandsConfig(Config):
         self.add_option('upgrade_type', libdnf.conf.OptionEnumString('default',
                         libdnf.conf.VectorString(['default', 'security'])))
         self.add_option('random_sleep', libdnf.conf.OptionNumberInt32(300))
+        self.add_option('network_online_timeout', libdnf.conf.OptionNumberInt32(60))
 
     def imply(self):
         if self.apply_updates:
@@ -304,8 +305,8 @@ def main(args):
             base.pre_configure_plugins()
             base.read_all_repos()
 
-            if not wait_for_network(base.repos, 600):
-                logger.warning(_('Network connection not detected.'))
+            if not wait_for_network(base.repos, conf.commands.network_online_timeout):
+                logger.warning(_('System is off-line.'))
 
             base.configure_plugins()
             base.fill_sack()

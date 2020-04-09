@@ -73,10 +73,15 @@ Setting the mode of operation of the program.
 
     Whether packages comprising the available updates should be downloaded by ``dnf-automatic.timer``. Note that the other timer units override this setting.
 
+``network_online_timeout``
+    time in seconds, default: 60
+
+    Maximal time dnf-automatic will wait until the system is online. 0 means that network availability detection will be skipped.
+
 ``random_sleep``
     time in seconds, default: 0
 
-    Maximal random delay before downloading.  Note that, by default, the ``systemd`` timers also apply a random delay of up to 5 minutes.
+    Maximal random delay before downloading.  Note that, by default, the ``systemd`` timers also apply a random delay of up to 1 hour.
 
 .. _upgrade_type_automatic-label:
 
