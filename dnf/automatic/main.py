@@ -230,6 +230,54 @@ def gpgsigcheck(base, pkgs):
         raise dnf.exceptions.Error(_("GPG check FAILED"))
 
 
+def wait_for_network(repos, timeout):
+    '''
+    Wait up to <timeout> seconds for network connection to be available.
+    if <timeout> is 0 the network availability detection will be skipped.
+    Returns True if any remote repository is accessible or remote repositories are not enabled.
+    Returns False if none of remote repositories is accessible.
+    '''
+    if timeout <= 0:
+        return True
+
+    remote_schemes = {
+        'http': 80,
+        'https': 443,
+        'ftp': 21,
+    }
+
+    def remote_address(url_list):
+        for url in url_list:
+            parsed_url = dnf.pycomp.urlparse.urlparse(url)
+            if parsed_url.hostname and parsed_url.scheme in remote_schemes:
+                yield (parsed_url.hostname,
+                       parsed_url.port or remote_schemes[parsed_url.scheme])
+
+    # collect possible remote repositories urls
+    addresses = set()
+    for repo in repos.iter_enabled():
+        addresses.update(remote_address(repo.baseurl))
+        addresses.update(remote_address([repo.mirrorlist]))
+        addresses.update(remote_address([repo.metalink]))
+
+    if not addresses:
+        # there is no remote repository enabled so network connection should not be needed
+        return True
+
+    logger.debug(_('Waiting for internet connection...'))
+    time_0 = time.time()
+    while time.time() - time_0 < timeout:
+        for host, port in addresses:
+            try:
+                s = socket.create_connection((host, port), 1)
+                s.close()
+                return True
+            except socket.error:
+                pass
+        time.sleep(1)
+    return False
+
+
 def main(args):
     (opts, parser) = parse_arguments(args)
 
@@ -255,6 +303,10 @@ def main(args):
 
             base.pre_configure_plugins()
             base.read_all_repos()
+
+            if not wait_for_network(base.repos, 600):
+                logger.warning(_('Network connection not detected.'))
+
             base.configure_plugins()
             base.fill_sack()
             upgrade(base, conf.commands.upgrade_type)
