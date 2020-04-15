@@ -33,6 +33,7 @@ import dnf.logging
 import dnf.pycomp
 import dnf.util
 import dnf.yum.misc
+import libdnf.error
 import libdnf.repo
 import functools
 import hashlib
@@ -571,7 +572,7 @@ class Repo(dnf.conf.RepoConf):
         ret = False
         try:
             ret = self._repo.load()
-        except RuntimeError as e:
+        except (libdnf.error.Error, RuntimeError) as e:
             if self._md_pload.mirror_failures:
                 msg = "Errors during downloading metadata for repository '%s':" % self.id
                 for failure in self._md_pload.mirror_failures:
