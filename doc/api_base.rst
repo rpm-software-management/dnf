@@ -185,6 +185,29 @@
 
     When the method is used after :meth:`fill_sack`, information about packages will not be updated.
 
+  .. method:: package_signature_check(pkg)
+
+    Verify the GPG signature of the given package object.
+    Returns tuple (`result`, `error_string`) where result is:
+
+    ======= =================================================
+    result  meaning
+    ======= =================================================
+    0       GPG signature verifies ok or verification is not required.
+    1       GPG verification failed but installation of the right GPG key might help.
+    2       Fatal GPG verification error, give up.
+    ======= =================================================
+
+  .. method:: package_import_key(pkg, askcb=None, fullaskcb=None)
+
+    Retrieve a key for a package. If needed, use the given callback to prompt whether the key should be imported. Raises :exc:`dnf.exceptions.Error` if there are errors retrieving the keys.
+
+    `askcb`: callback function to use to ask permission to import a key.  The arguments `askcb` should take are the package object, the userid of the key, and the keyid
+
+    `fullaskcb`: callback function to use to ask permission to import a key. This differs from `askcb` in that it gets passed a dictionary so that we can expand the values passed.
+
+    Callback functions return ``True`` if the key should be imported, ``False`` otherwise.
+
   .. _package_marking-label:
 
   The :class:`.Base` class provides a number of methods to make packaging requests that can later be resolved and turned into a transaction. The `pkg_spec` argument some of them take must be a package specification recognized by :class:`dnf.subject.Subject`. If these methods fail to find suitable packages for the operation they raise a :exc:`~dnf.exceptions.MarkingError`. Note that successful completion of these methods does not necessarily imply that the desired transaction can be carried out (e.g. for dependency reasons).
