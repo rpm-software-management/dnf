@@ -1238,6 +1238,21 @@ class Base(object):
 
         return result, msg
 
+    def package_signature_check(self, pkg):
+        # :api
+        """Verify the GPG signature of the given package object.
+
+        :param pkg: the package object to verify the signature of
+        :return: (result, error_string)
+           where result is::
+
+              0 = GPG signature verifies ok or verification is not required.
+              1 = GPG verification failed but installation of the right GPG key
+                    might help.
+              2 = Fatal GPG verification error, give up.
+        """
+        return self._sig_check_pkg(pkg)
+
     def _clean_packages(self, packages):
         for fn in packages:
             if not os.path.exists(fn):
@@ -2292,7 +2307,7 @@ class Base(object):
 
         :param po: the package object to retrieve the key of
         :param askcb: Callback function to use to ask permission to
-           import a key.  The arguments *askck* should take are the
+           import a key.  The arguments *askcb* should take are the
            package object, the userid of the key, and the keyid
         :param fullaskcb: Callback function to use to ask permission to
            import a key.  This differs from *askcb* in that it gets
@@ -2411,6 +2426,23 @@ class Base(object):
                 logger.info(msg)
             errmsg = ucd(errmsg)
             raise dnf.exceptions.Error(_prov_key_data(errmsg))
+
+    def package_import_key(self, pkg, askcb=None, fullaskcb=None):
+        # :api
+        """Retrieve a key for a package. If needed, use the given
+        callback to prompt whether the key should be imported.
+
+        :param pkg: the package object to retrieve the key of
+        :param askcb: Callback function to use to ask permission to
+           import a key.  The arguments *askcb* should take are the
+           package object, the userid of the key, and the keyid
+        :param fullaskcb: Callback function to use to ask permission to
+           import a key.  This differs from *askcb* in that it gets
+           passed a dictionary so that we can expand the values passed.
+        :raises: :class:`dnf.exceptions.Error` if there are errors
+           retrieving the keys
+        """
+        _get_key_for_package(pkg, ackcb, fullaskcb)
 
     def _run_rpm_check(self):
         results = []
