@@ -137,8 +137,8 @@ Provides:       dnf-command(upgrade)
 Provides:       dnf-command(upgrade-to)
 Conflicts:      python2-dnf-plugins-core < %{conflicts_dnf_plugins_core_version}
 Conflicts:      python3-dnf-plugins-core < %{conflicts_dnf_plugins_core_version}
-Conflicts:      python2-dnf-plugins-extras < %{conflicts_dnf_plugins_extras_version}
-Conflicts:      python3-dnf-plugins-extras < %{conflicts_dnf_plugins_extras_version}
+Conflicts:      python2-dnf-plugins-extras-common < %{conflicts_dnf_plugins_extras_version}
+Conflicts:      python3-dnf-plugins-extras-common < %{conflicts_dnf_plugins_extras_version}
 
 %description
 %{pkg_description}
@@ -506,6 +506,9 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Fri Apr 24 2020 Stephen Gallagher <sgallagh@redhat.com> - 4.2.21-1
+- Fix up Conflicts: on python3-dnf-plugins-extras so it actually works
+
 * Tue Mar 31 2020 Aleš Matěj <amatej@redhat.com> - 4.2.21-1
 - Fix completion helper if solv files not in roon cache (RhBug:1714376)
 - Add bash completion for 'dnf module' (RhBug:1565614)
