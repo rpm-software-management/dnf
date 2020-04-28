@@ -78,8 +78,10 @@ class GroupPersistor(PersistorBase):
     def new(self, obj_id, name, translated_name, pkg_types):
         swdb_group = self.history.swdb.createCompsGroupItem()
         swdb_group.setGroupId(obj_id)
-        swdb_group.setName(name)
-        swdb_group.setTranslatedName(translated_name)
+        if name is not None:
+            swdb_group.setName(name)
+        if translated_name is not None:
+            swdb_group.setTranslatedName(translated_name)
         swdb_group.setPackageTypes(pkg_types)
         return swdb_group
 
@@ -136,8 +138,10 @@ class EnvironmentPersistor(PersistorBase):
     def new(self, obj_id, name, translated_name, pkg_types):
         swdb_env = self.history.swdb.createCompsEnvironmentItem()
         swdb_env.setEnvironmentId(obj_id)
-        swdb_env.setName(name)
-        swdb_env.setTranslatedName(translated_name)
+        if name is not None:
+            swdb_env.setName(name)
+        if translated_name is not None:
+            swdb_env.setTranslatedName(translated_name)
         swdb_env.setPackageTypes(pkg_types)
         return swdb_env
 

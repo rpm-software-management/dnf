@@ -295,6 +295,15 @@ class ProblemGroupTest(tests.support.ResultTestCase):
         self.assertLength(inst, 1)
         self.assertEmpty(removed)
 
+    def test_group_install_missing_name(self):
+        comps_group = self.base.comps.group_by_pattern('missing-name-group')
+
+        cnt = self.base.group_install(comps_group.id, ('mandatory', 'default', 'optional'),
+                                      strict=False)
+        self._swdb_commit()
+        self.base.resolve()
+        self.assertEqual(cnt, 1)
+
 
 class EnvironmentInstallTest(tests.support.ResultTestCase):
     """Set up a test where sugar is considered not installed."""

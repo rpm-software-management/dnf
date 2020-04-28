@@ -177,7 +177,7 @@ class GroupCommand(commands.Command):
         def _out_grp(sect, group):
             if not done:
                 print(sect)
-            msg = '   %s' % group.ui_name
+            msg = '   %s' % (group.ui_name if group.ui_name is not None else _("<name-unset>"))
             if print_ids:
                 msg += ' (%s)' % group.id
             if group.lang_only:
@@ -188,7 +188,7 @@ class GroupCommand(commands.Command):
             if envs:
                 print(sect)
             for e in envs:
-                msg = '   %s' % e.ui_name
+                msg = '   %s' % (e.ui_name if e.ui_name is not None else _("<name-unset>"))
                 if print_ids:
                     msg += ' (%s)' % e.id
                 print(msg)

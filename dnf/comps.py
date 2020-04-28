@@ -75,7 +75,16 @@ def _by_pattern(pattern, case_sensitive, sqn):
     else:
         match = re.compile(fnmatch.translate(pattern), flags=re.I).match
 
-    return {g for g in sqn if match(g.name) or match(g.id) or match(g.ui_name)}
+    ret = set()
+    for g in sqn:
+        if match(g.id):
+            ret.add(g)
+        elif g.name is not None and match(g.name):
+            ret.add(g)
+        elif g.ui_name is not None and match(g.ui_name):
+            ret.add(g)
+
+    return ret
 
 
 def _fn_display_order(group):
