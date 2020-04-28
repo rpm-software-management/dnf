@@ -49,6 +49,13 @@
       <packagereq type="optional">brokendeps</packagereq>
     </packagelist>
   </group>
+  <group>
+    <id>missing-name-group</id>
+    <name></name>
+    <packagelist>
+      <packagereq type="mandatory">meaning-of-life</packagereq>
+    </packagelist>
+  </group>
   <category>
    <id>base-system</id>
    <display_order>99</display_order>
