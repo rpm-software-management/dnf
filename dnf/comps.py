@@ -108,7 +108,7 @@ class _Langs(object):
         lcl = locale.getlocale(locale.LC_MESSAGES)
         if lcl == (None, None):
             return 'C'
-        return'.'.join(lcl)
+        return '.'.join(lcl)
 
     def get(self):
         current_locale = self._dotted_locale_str()
