@@ -270,11 +270,11 @@ class OptionParser(argparse.ArgumentParser):
                                 help=_('enable just specific repositories by an id or a glob, '
                                        'can be specified multiple times'))
         enable_group = general_grp.add_mutually_exclusive_group()
-        enable_group.add_argument("--enable", "--set-enabled", default=False,
+        enable_group.add_argument("--enable", default=False,
                                   dest="set_enabled", action="store_true",
                                   help=_("enable repos with config-manager "
                                          "command (automatically saves)"))
-        enable_group.add_argument("--disable", "--set-disabled", default=False,
+        enable_group.add_argument("--disable", default=False,
                                   dest="set_disabled", action="store_true",
                                   help=_("disable repos with config-manager "
                                          "command (automatically saves)"))
