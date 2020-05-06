@@ -262,6 +262,9 @@ class Package(hawkey.Package):
     def _is_local_pkg(self):
         if self.repoid == "@System":
             return True
+        if '://' in self.location and not self.location.startswith('file://'):
+            # the package has a remote URL as its location
+            return False
         return self._from_cmdline or \
             (self.repo._repo.isLocal() and (not self.baseurl or self.baseurl.startswith('file://')))
 
