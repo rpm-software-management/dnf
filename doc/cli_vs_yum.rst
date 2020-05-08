@@ -319,34 +319,34 @@ Following sub-commands were removed:
  Changes in DNF plugins compared to YUM plugins
 ###############################################
 
-======================================  ================================================================  ===================================
-Original YUM tool                       DNF command/option                                                Package
---------------------------------------  ----------------------------------------------------------------  -----------------------------------
-``yum check``                           :ref:`dnf repoquery <repoquery_command-label>` ``--unsatisfied``  ``dnf``
-``yum-langpacks``                                                                                         ``dnf``
-``yum-plugin-aliases``                  :ref:`dnf alias <alias_command-label>`                            ``dnf``
-``yum-plugin-auto-update-debug-info``   option in ``debuginfo-install.conf``                              ``dnf-plugins-core``
-``yum-plugin-changelog``                                                                                  ``dnf-plugins-core``
-``yum-plugin-copr``                     `dnf copr`_                                                       ``dnf-plugins-core``
-``yum-plugin-fastestmirror``            ``fastestmirror`` option in `dnf.conf`_                           ``dnf``
-``yum-plugin-fs-snapshot``                                                                                ``dnf-plugins-extras-snapper``
-``yum-plugin-local``                                                                                      ``dnf-plugins-core``
-``yum-plugin-merge-conf``                                                                                 ``dnf-plugins-extras-rpmconf``
-``yum-plugin-priorities``               ``priority`` option in `dnf.conf`_                                ``dnf``
-``yum-plugin-remove-with-leaves``       :ref:`dnf autoremove <autoremove_command-label>`                  ``dnf``
-``yum-plugin-show-leaves``                                                                                ``dnf-plugins-core``
-``yum-plugin-tmprepo``                  ``--repofrompath`` option                                         ``dnf``
-``yum-plugin-tsflags``                  ``tsflags``  option in `dnf.conf`_                                ``dnf``
-``yum-plugin-versionlock``                                                                                ``python3-dnf-plugin-versionlock``
-``yum-rhn-plugin``                                                                                        ``dnf-plugin-spacewalk``
-======================================  ================================================================  ===================================
+=======================================  ================================================================  ===================================
+Original YUM tool                        DNF command/option                                                Package
+---------------------------------------  ----------------------------------------------------------------  -----------------------------------
+``yum check``                            :ref:`dnf repoquery <repoquery_command-label>` ``--unsatisfied``  ``dnf``
+``yum-langpacks``                                                                                          ``dnf``
+``yum-plugin-aliases``                   :ref:`dnf alias <alias_command-label>`                            ``dnf``
+``yum-plugin-auto-update-debug-info``    option in ``debuginfo-install.conf``                              ``dnf-plugins-core``
+``yum-plugin-changelog``                                                                                   ``dnf-plugins-core``
+``yum-plugin-copr``                      `dnf copr`_                                                       ``dnf-plugins-core``
+``yum-plugin-fastestmirror``             ``fastestmirror`` option in `dnf.conf`_                           ``dnf``
+``yum-plugin-fs-snapshot``                                                                                 ``dnf-plugins-extras-snapper``
+``yum-plugin-local``                                                                                       ``dnf-plugins-core``
+``yum-plugin-merge-conf``                                                                                  ``dnf-plugins-extras-rpmconf``
+``yum-plugin-post-transaction-actions``                                                                    ``dnf-plugins-core``
+``yum-plugin-priorities``                ``priority`` option in `dnf.conf`_                                ``dnf``
+``yum-plugin-remove-with-leaves``        :ref:`dnf autoremove <autoremove_command-label>`                  ``dnf``
+``yum-plugin-show-leaves``                                                                                 ``dnf-plugins-core``
+``yum-plugin-tmprepo``                   ``--repofrompath`` option                                         ``dnf``
+``yum-plugin-tsflags``                   ``tsflags``  option in `dnf.conf`_                                ``dnf``
+``yum-plugin-versionlock``                                                                                 ``python3-dnf-plugin-versionlock``
+``yum-rhn-plugin``                                                                                         ``dnf-plugin-spacewalk``
+=======================================  ================================================================  ===================================
 
 Plugins that have not been ported yet:
 
 ``yum-plugin-filter-data``,
 ``yum-plugin-keys``,
 ``yum-plugin-list-data``,
-``yum-plugin-post-transaction-actions``,
 ``yum-plugin-protectbase``,
 ``yum-plugin-ps``,
 ``yum-plugin-puppetverify``,
