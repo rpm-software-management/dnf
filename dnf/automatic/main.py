@@ -58,6 +58,9 @@ def build_emitters(conf):
             elif name == 'motd':
                 emitter = dnf.automatic.emitter.MotdEmitter(system_name)
                 emitters.append(emitter)
+            elif name == 'command':
+                emitter = dnf.automatic.emitter.CommandEmitter(system_name, conf.command)
+                emitters.append(emitter)
             elif name == 'command_email':
                 emitter = dnf.automatic.emitter.CommandEmailEmitter(system_name, conf.command_email)
                 emitters.append(emitter)
@@ -88,6 +91,7 @@ class AutomaticConfig(object):
         self.commands = CommandsConfig()
         self.email = EmailConfig()
         self.emitters = EmittersConfig()
+        self.command = CommandConfig()
         self.command_email = CommandEmailConfig()
         self._parser = None
         self._load(filename)
@@ -118,6 +122,8 @@ class AutomaticConfig(object):
         self.email.populate(parser, 'email', filename, libdnf.conf.Option.Priority_AUTOMATICCONFIG)
         self.emitters.populate(parser, 'emitters', filename,
                                libdnf.conf.Option.Priority_AUTOMATICCONFIG)
+        self.command.populate(parser, 'command', filename,
+                              libdnf.conf.Option.Priority_AUTOMATICCONFIG)
         self.command_email.populate(parser, 'command_email', filename,
                                     libdnf.conf.Option.Priority_AUTOMATICCONFIG)
         self._parser = parser

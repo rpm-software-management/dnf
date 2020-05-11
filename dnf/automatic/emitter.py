@@ -140,6 +140,10 @@ class CommandEmitterMixIn(object):
 
 
 class CommandEmitter(CommandEmitterMixIn, Emitter):
+    def __init__(self, system_name, conf):
+        super(CommandEmitter, self).__init__(system_name)
+        self._conf = conf
+
     def _prepare_msg(self):
         return {'body': super(CommandEmitter, self)._prepare_msg()}
 
