@@ -286,6 +286,7 @@ class _BaseStubMixin(object):
 
         self._sack._configure(self.conf.installonlypkgs)
         self._goal = dnf.goal.Goal(self._sack)
+        self._goal.protect_running_kernel = self.conf.protect_running_kernel
         return self._sack
 
     def mock_cli(self):
@@ -494,6 +495,7 @@ class FakeConf(dnf.conf.Conf):
             ('persistdir', dnf.const.PERSISTDIR),
             ('transformdb', False),
             ('protected_packages', ["dnf"]),
+            ('protect_running_kernel', True),
             ('plugins', False),
             ('showdupesfromrepos', False),
             ('tsflags', []),

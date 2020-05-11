@@ -88,6 +88,7 @@ class CheckCommand(commands.Command):
                             selector = dnf.selector.Selector(sack)
                             selector.set(provides=str(require))
                             goal = dnf.goal.Goal(sack)
+                            goal.protect_running_kernel = self.base.conf.protect_running_kernel
                             goal.install(select=selector, optional=False)
                             solved = goal.run()
                             # there ase only @system repo in sack, therefore solved is only in case

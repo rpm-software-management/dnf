@@ -419,6 +419,7 @@ class Base(object):
         self._setup_excludes_includes()
         timer()
         self._goal = dnf.goal.Goal(self._sack)
+        self._goal.protect_running_kernel = conf.protect_running_kernel
         self._plugins.run_sack()
         return self._sack
 
@@ -488,6 +489,7 @@ class Base(object):
             self._goal = None
             if self._sack is not None:
                 self._goal = dnf.goal.Goal(self._sack)
+                self._goal.protect_running_kernel = self.conf.protect_running_kernel
             if self._sack and self._moduleContainer:
                 # sack must be set to enable operations on moduleContainer
                 self._moduleContainer.rollback()
