@@ -366,7 +366,14 @@ configuration file by your distribution to override the DNF defaults.
 
     The default is: ``dnf``, ``glob:/etc/yum/protected.d/*.conf`` and ``glob:/etc/dnf/protected.d/*.conf``. So any packages which should be protected can do so by including a file in ``/etc/dnf/protected.d`` with their package name in it.
 
-    DNF will protect also the package corresponding to the running version of the kernel.
+    DNF will protect also the package corresponding to the running version of the kernel. See also :ref:`protect_running_kernel <protect_running_kernel-label>` option.
+
+.. _protect_running_kernel-label:
+
+``protect_running_kernel``
+	:ref:`boolean <boolean-label>`
+
+	Controls whether the package corresponding to the running version of kernel is protected from removal. Default is ``True``.
 
 ``releasever``
     :ref:`string <string-label>`
