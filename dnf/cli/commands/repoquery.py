@@ -43,13 +43,12 @@ QFORMAT_DEFAULT = '%{name}-%{epoch}:%{version}-%{release}.%{arch}'
 # matches %[-][dd]{attr}
 QFORMAT_MATCH = re.compile(r'%(-?\d*?){([:.\w]+?)}')
 
-QUERY_TAGS = """
+QUERY_TAGS = """\
 name, arch, epoch, version, release, reponame (repoid), evr,
 debug_name, source_name, source_debug_name,
 installtime, buildtime, size, downloadsize, installsize,
 provides, requires, obsoletes, conflicts, sourcerpm,
-description, summary, license, url, reason
-"""
+description, summary, license, url, reason"""
 
 OPTS_MAPPING = {
     'conflicts': 'conflicts',
@@ -165,9 +164,6 @@ class RepoQueryCommand(commands.Command):
             'used with --whatrequires, and --requires --resolve, query packages recursively.'))
         parser.add_argument('--deplist', action='store_true', help=_(
             "show a list of all dependencies and what packages provide them"))
-        parser.add_argument('--querytags', action='store_true',
-                            help=_('show available tags to use with '
-                                   '--queryformat'))
         parser.add_argument('--resolve', action='store_true',
                             help=_('resolve capabilities to originating package(s)'))
         parser.add_argument("--tree", action="store_true",
@@ -195,7 +191,12 @@ class RepoQueryCommand(commands.Command):
                              help=_('show changelogs of the package'))
         outform.add_argument('--qf', "--queryformat", dest='queryformat',
                              default=QFORMAT_DEFAULT,
-                             help=_('format for displaying found packages'))
+                             help=_('display format for listing packages: '
+                                    '"%%{name} %%{version} ...", '
+                                    'use --querytags to view full tag list'))
+        parser.add_argument('--querytags', action='store_true',
+                            help=_('show available tags to use with '
+                                   '--queryformat'))
         outform.add_argument("--nevra", dest='queryformat', const=QFORMAT_DEFAULT,
                              action='store_const',
                              help=_('use name-epoch:version-release.architecture format for '
@@ -433,7 +434,6 @@ class RepoQueryCommand(commands.Command):
 
     def run(self):
         if self.opts.querytags:
-            print(_('Available query-tags: use --queryformat ".. %{tag} .."'))
             print(QUERY_TAGS)
             return
 
