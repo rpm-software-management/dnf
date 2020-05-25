@@ -50,7 +50,7 @@ class CommandsCliTest(tests.support.DnfBaseTestCase):
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     def test_history_get_error_output_rollback_transactioncheckerror(self):
         """Test get_error_output with the history rollback and a TransactionCheckError."""
-        cmd = dnf.cli.commands.HistoryCommand(self.cli)
+        cmd = dnf.cli.commands.history.HistoryCommand(self.cli)
         tests.support.command_configure(cmd, ['rollback', '1'])
 
         lines = cmd.get_error_output(dnf.exceptions.TransactionCheckError())
@@ -63,7 +63,7 @@ class CommandsCliTest(tests.support.DnfBaseTestCase):
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     def test_history_get_error_output_undo_transactioncheckerror(self):
         """Test get_error_output with the history undo and a TransactionCheckError."""
-        cmd = dnf.cli.commands.HistoryCommand(self.cli)
+        cmd = dnf.cli.commands.history.HistoryCommand(self.cli)
         tests.support.command_configure(cmd, ['undo', '1'])
 
         lines = cmd.get_error_output(dnf.exceptions.TransactionCheckError())
@@ -76,7 +76,7 @@ class CommandsCliTest(tests.support.DnfBaseTestCase):
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     def test_history_convert_tids(self):
         """Test history _convert_tids()."""
-        cmd = dnf.cli.commands.HistoryCommand(self.cli)
+        cmd = dnf.cli.commands.history.HistoryCommand(self.cli)
         cmd.cli.base.output = mock.MagicMock()
         cmd.cli.base.output.history.last().tid = 123
         cmd.cli.base.output.history.search = mock.MagicMock(return_value=[99])
