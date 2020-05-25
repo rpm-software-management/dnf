@@ -55,6 +55,7 @@ import dnf.cli.commands.deplist
 import dnf.cli.commands.distrosync
 import dnf.cli.commands.downgrade
 import dnf.cli.commands.group
+import dnf.cli.commands.history
 import dnf.cli.commands.install
 import dnf.cli.commands.makecache
 import dnf.cli.commands.mark
@@ -722,6 +723,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.deplist.DeplistCommand)
         self.register_command(dnf.cli.commands.downgrade.DowngradeCommand)
         self.register_command(dnf.cli.commands.group.GroupCommand)
+        self.register_command(dnf.cli.commands.history.HistoryCommand)
         self.register_command(dnf.cli.commands.install.InstallCommand)
         self.register_command(dnf.cli.commands.makecache.MakeCacheCommand)
         self.register_command(dnf.cli.commands.mark.MarkCommand)
@@ -742,7 +744,6 @@ class Cli(object):
         self.register_command(dnf.cli.commands.CheckUpdateCommand)
         self.register_command(dnf.cli.commands.RepoPkgsCommand)
         self.register_command(dnf.cli.commands.HelpCommand)
-        self.register_command(dnf.cli.commands.HistoryCommand)
 
     def _configure_repos(self, opts):
         self.base.read_all_repos(opts)
