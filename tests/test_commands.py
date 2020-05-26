@@ -81,7 +81,7 @@ class CommandsCliTest(tests.support.DnfBaseTestCase):
         cmd.cli.base.output.history.last().tid = 123
         cmd.cli.base.output.history.search = mock.MagicMock(return_value=[99])
         tests.support.command_configure(cmd, ['list', '1..5', 'last', 'last-10', 'kernel'])
-        self.assertEqual(cmd._args2transaction_ids(), [123, 113, 99, 5, 4, 3, 2, 1])
+        self.assertEqual(cmd._args2transaction_ids(), ([123, 113, 99, 5, 4, 3, 2, 1], {(1, 5)}))
 
 
 class CommandTest(tests.support.DnfBaseTestCase):
