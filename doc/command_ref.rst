@@ -86,7 +86,6 @@ Available commands:
 * :ref:`updateinfo <updateinfo_command-label>`
 * :ref:`upgrade <upgrade_command-label>`
 * :ref:`upgrade-minimal <upgrade_minimal_command-label>`
-* :ref:`upgrade-to <upgrade_to_command-label>`
 
 Additional information:
 
@@ -410,6 +409,9 @@ For an explanation of ``<transaction-spec>`` see :ref:`\specifying_transactions-
 -------------
 Alias Command
 -------------
+
+| Command: ``alias``
+
 Allows the user to define and manage a list of aliases (in the form ``<name=value>``),
 which can be then used as dnf commands to abbreviate longer command sequences. For examples on using
 the alias command, see :ref:`\Alias Examples\ <alias_examples-label>`. For examples on the alias
@@ -476,9 +478,12 @@ If there is defined alias ``in=install``:
 
 .. _autoremove_command-label:
 
--------------------
-Auto Remove Command
--------------------
+------------------
+Autoremove Command
+------------------
+
+| Command: ``autoremove``
+| Aliases for :ref:`explicit NEVRA matching <specifying_nevra_matching_explicitly-label>`: ``autoremove-n``, ``autoremove-na``, ``autoremove-nevra``
 
 ``dnf [options] autoremove``
 
@@ -503,9 +508,11 @@ This command by default does not force a sync of expired metadata. See also :ref
 
 .. _check_command-label:
 
---------------------
+-------------
 Check Command
---------------------
+-------------
+
+| Command: ``check``
 
 ``dnf [options] check [--dependencies] [--duplicates] [--obsoleted] [--provides]``
 
@@ -520,6 +527,10 @@ Check Command
 Check-Update Command
 --------------------
 
+| Command: ``check-update``
+| Aliases: ``check-upgrade``
+
+
 ``dnf [options] check-update [--changelogs] [<package-file-spec>...]``
 
     Non-interactively checks if updates of the specified packages are available. If no ``<package-file-spec>`` is given, checks whether any updates at all are available for your system. DNF exit code will be 100 when there are updates available and a list of the updates will be printed, 0 if not and 1 if an error occurs. If ``--changelogs`` option is specified, also changelog delta of packages about to be updated is printed.
@@ -533,6 +544,9 @@ Check-Update Command
 -------------
 Clean Command
 -------------
+
+| Command: ``clean``
+
 Performs cleanup of temporary files kept for repositories. This includes any
 such data left behind from disabled or removed repositories as well as for
 different distribution release versions.
@@ -559,7 +573,7 @@ different distribution release versions.
 .. _deplist_command-label:
 
 ---------------
-Deplist command
+Deplist Command
 ---------------
 
 ``dnf [options] deplist [<select-options>] [<query-options>] [<package-spec>]``
@@ -568,8 +582,12 @@ Deplist command
 .. _distro_sync_command-label:
 
 -------------------
-Distro-Sync command
+Distro-Sync Command
 -------------------
+
+| Command: ``distro-sync``
+| Aliases: ``dsync``
+| Deprecated aliases: ``distrosync``, ``distribution-synchronization``
 
 ``dnf distro-sync [<package-spec>...]``
     As necessary upgrades, downgrades or keeps selected installed packages to match
@@ -577,38 +595,29 @@ Distro-Sync command
 
     See also :ref:`\configuration_files_replacement_policy-label`.
 
-------------------------------------
-Distribution-Synchronization command
-------------------------------------
-
-``dnf distribution-synchronization``
-    Deprecated alias for the :ref:`\distro_sync_command-label`.
-
 .. _downgrade_command-label:
 
 -----------------
 Downgrade Command
 -----------------
 
+| Command: ``downgrade``
+| Aliases: ``dg``
+
 ``dnf [options] downgrade <package-spec>...``
     Downgrades the specified packages to the highest installable package of all known lower versions
     if possible. When version is given and is lower than version of installed package then it
     downgrades to target version.
-
-.. _erase_command-label:
-
--------------
-Erase Command
--------------
-
-``dnf [options] erase <spec>...``
-    Deprecated alias for the :ref:`\remove_command-label`.
 
 .. _group_command-label:
 
 -------------
 Group Command
 -------------
+
+| Command: ``group``
+| Aliases: ``grp``
+| Deprecated aliases: ``groups``, ``grouplist``, ``groupinstall``, ``groupupdate``, ``groupremove``, ``grouperase``, ``groupinfo``
 
 Groups are virtual collections of packages. DNF keeps track of groups that the user selected ("marked") installed and can manipulate the comprising packages with simple commands.
 
@@ -654,20 +663,13 @@ Groups can also be marked installed or removed without physically manipulating a
 
 See also :ref:`\configuration_files_replacement_policy-label`.
 
-.. _groups_command-label:
-
---------------
-Groups Command
---------------
-
-``dnf [options] groups``
-    Deprecated alias for the :ref:`\group_command-label`.
-
 .. _help_command-label:
 
 ------------
 Help Command
 ------------
+
+| Command: ``help``
 
 ``dnf help [<command>]``
     Displays the help text for all commands. If given a command name then only
@@ -678,6 +680,9 @@ Help Command
 ---------------
 History Command
 ---------------
+
+| Command: ``history``
+| Aliases: ``hist``
 
 The history command allows the user to view what has happened in past
 transactions and act according to this information (assuming the
@@ -740,6 +745,8 @@ and :ref:`\configuration_files_replacement_policy-label`.
 Info Command
 ------------
 
+| Command: ``info``
+
 ``dnf [options] info [<package-file-spec>...]``
     Lists description and summary information about installed and available packages.
 
@@ -752,6 +759,11 @@ This command by default does not force a sync of expired metadata. See also :ref
 ---------------
 Install Command
 ---------------
+
+| Command: ``install``
+| Aliases: ``in``
+| Aliases for :ref:`explicit NEVRA matching <specifying_nevra_matching_explicitly-label>`: ``install-n``, ``install-na``, ``install-nevra``
+| Deprecated aliases: ``localinstall``
 
 ``dnf [options] install <spec>...``
     Makes sure that the given packages and their dependencies are installed
@@ -826,6 +838,9 @@ Install Examples
 List Command
 ------------
 
+| Command: ``list``
+| Aliases: ``ls``
+
 Prints lists of packages depending on the packages' relation to the
 system. A package is ``installed`` if it is present in the RPMDB, and it is ``available``
 if it is not installed but is present in a repository that DNF knows about.
@@ -865,20 +880,14 @@ option is used, it ensures that all installed packages will be listed.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
-.. _localinstall_command-label:
-
---------------------
-Localinstall Command
---------------------
-
-``dnf [options] localinstall <spec>...``
-    Deprecated alias for the :ref:`\install_command-label`.
-
 .. _makecache_command-label:
 
 -----------------
 Makecache Command
 -----------------
+
+| Command: ``makecache``
+| Aliases: ``mc``
 
 ``dnf [options] makecache``
     Downloads and caches metadata for all known repos. Tries to
@@ -898,6 +907,8 @@ Makecache Command
 Mark Command
 -------------
 
+| Command: ``mark``
+
 ``dnf mark install <package-spec>...``
     Marks the specified packages as installed by user. This can be useful if any package was installed as a dependency and is desired to stay on the system when :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with `clean_requirements_on_remove` configuration option set to ``True`` is executed.
 
@@ -914,6 +925,8 @@ Mark Command
 ---------------
 Module Command
 ---------------
+
+| Command: ``module``
 
 Modularity overview is available at :ref:`man page dnf.modularity(7) <modularity-label>`.
 Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arguments that specify modules or profiles.
@@ -1015,6 +1028,9 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
 Provides Command
 ----------------
 
+| Command: ``provides``
+| Aliases: ``prov``, ``whatprovides``
+
 ``dnf [options] provides <provide-spec>``
     Finds the packages providing the given ``<provide-spec>``. This is useful
     when one knows a filename and wants to find what package (installed or not)
@@ -1052,6 +1068,9 @@ Provides Command
 Reinstall Command
 -----------------
 
+| Command: ``reinstall``
+| Aliases: ``rei``
+
 ``dnf [options] reinstall <package-spec>...``
     Installs the specified packages, fails if some of the packages are either
     not installed or not available (i.e. there is no repository where to
@@ -1062,6 +1081,11 @@ Reinstall Command
 --------------
 Remove Command
 --------------
+
+| Command: ``remove``
+| Aliases: ``rm``
+| Aliases for :ref:`explicit NEVRA matching <specifying_nevra_matching_explicitly-label>`: ``remove-n``, ``remove-na``, ``remove-nevra``
+| Deprecated aliases: ``erase``, ``erase-n``, ``erase-na``, ``erase-nevra``
 
 ``dnf [options] remove <package-spec>...``
     Removes the specified packages from the system along with any packages depending on the packages being removed. Each ``<spec>`` can be either a ``<package-spec>``, which specifies a package directly, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If ``clean_requirements_on_remove`` is enabled (the default), also removes any dependencies that are no longer needed.
@@ -1098,6 +1122,8 @@ Remove older versions of duplicated packages (an equivalent of yum's `package-cl
 Repoinfo Command
 ----------------
 
+| Command: ``repoinfo``
+
     An alias for the :ref:`repolist <repolist_command-label>` command
     that provides more detailed information like ``dnf repolist -v``.
 
@@ -1106,6 +1132,8 @@ Repoinfo Command
 ----------------
 Repolist Command
 ----------------
+
+| Command: ``repolist``
 
 ``dnf [options] repolist [--enabled|--disabled|--all]``
     Depending on the exact command lists enabled, disabled or all known
@@ -1119,6 +1147,10 @@ This command by default does not force a sync of expired metadata. See also :ref
 -----------------
 Repoquery Command
 -----------------
+
+| Command: ``repoquery``
+| Aliases: ``rq``
+| Aliases for :ref:`explicit NEVRA matching <specifying_nevra_matching_explicitly-label>`: ``repoquery-n``, ``repoquery-na``, ``repoquery-nevra``
 
 ``dnf [options] repoquery [<select-options>] [<query-options>] [<package-file-spec>]``
     Searches available DNF repositories for selected packages and displays the requested information about them. It
@@ -1394,20 +1426,14 @@ Display source packages that require a <provide> for a build::
 
     dnf repoquery --disablerepo="*" --enablerepo="*-source" --arch=src --whatrequires <provide>
 
-.. _repo_pkgs_command-label:
-
------------------
-Repo-Pkgs Command
------------------
-
-``dnf [options] repo-pkgs``
-    Deprecated alias for the :ref:`\repository_packages_command-label`.
-
 .. _repository_packages_command-label:
 
 ---------------------------
 Repository-Packages Command
 ---------------------------
+
+| Command: ``repository-packages``
+| Deprecated aliases: ``repo-pkgs``, ``repo-packages``, ``repository-pkgs``
 
 The repository-packages command allows the user to run commands on top of all packages in the repository named ``<repoid>``. However, any dependency resolution takes into account packages from all enabled repositories. The ``<package-file-spec>`` and ``<package-spec>`` specifications further limit the candidates to only those packages matching at least one of them.
 
@@ -1492,6 +1518,9 @@ The ``info`` subcommand lists description and summary information about packages
 Search Command
 --------------
 
+| Command: ``search``
+| Aliases: ``se``
+
 ``dnf [options] search [--all] <keywords>...``
     Search package metadata for keywords. Keywords are matched as case-insensitive substrings, globbing is supported.
     By default lists packages that match all requested keys (AND operation). Keys are searched in package names and summaries.
@@ -1506,6 +1535,9 @@ This command by default does not force a sync of expired metadata. See also :ref
 -------------
 Shell Command
 -------------
+
+| Command: ``shell``
+| Aliases: ``sh``
 
 ``dnf [options] shell [filename]``
     Open an interactive shell for conducting multiple commands during a single execution of DNF. These commands can be issued manually
@@ -1536,6 +1568,8 @@ Shell Command
 Swap Command
 ------------
 
+| Command: ``swap``
+
 ``dnf [options] swap <remove-spec> <install-spec>``
 
     Remove spec and install spec in one transaction. Each ``<spec>`` can be either a
@@ -1544,20 +1578,14 @@ Swap Command
     conflict solving is provided in DNF by the --allowerasing option that provides the functionality of the swap
     command automatically.
 
-.. _update_command-label:
-
---------------
-Update Command
---------------
-
-``dnf [options] update``
-    Deprecated alias for the :ref:`\upgrade_command-label`.
-
 .. _updateinfo_command-label:
 
 ------------------
 Updateinfo Command
 ------------------
+
+| Command: ``updateinfo``
+| Deprecated aliases: ``list-updateinfo``, ``list-security``, ``list-sec``, ``info-updateinfo``, ``info-security``, ``info-sec``, ``summary-updateinfo``
 
 ``dnf [options] updateinfo [--summary|--list|--info] [<availability>] [<spec>...]``
     Display information about update advisories.
@@ -1597,22 +1625,15 @@ Updateinfo Command
 
     Output of the ``--summary`` option is affected by the :ref:`autocheck_running_kernel <autocheck_running_kernel-label>` configuration option.
 
-
-.. _update_minimal_command-label:
-
-----------------------
-Update-Minimal Command
-----------------------
-
-``dnf [options] update-minimal``
-    Deprecated alias for the :ref:`\upgrade_minimal_command-label`.
-
-
 .. _upgrade_command-label:
 
 ---------------
 Upgrade Command
 ---------------
+
+| Command: ``upgrade``
+| Aliases: ``up``
+| Deprecated aliases: ``update``, ``upgrade-to``, ``update-to``, ``localupdate``
 
 ``dnf [options] upgrade``
     Updates each package to the latest version that is both available and
@@ -1638,6 +1659,10 @@ See also :ref:`\configuration_files_replacement_policy-label`.
 Upgrade-Minimal Command
 -----------------------
 
+| Command: ``upgrade-minimal``
+| Aliases: ``up-min``
+| Deprecated aliases: ``update-minimal``
+
 ``dnf [options] upgrade-minimal``
     Updates each package to the latest available version that provides a bugfix, enhancement
     or a fix for a security issue (security).
@@ -1646,22 +1671,6 @@ Upgrade-Minimal Command
     Updates each specified package to the latest available version that provides
     a bugfix, enhancement or a fix for security issue (security). Updates
     dependencies as necessary.
-
------------------
-Update-To Command
------------------
-
-``dnf [options] update-to <package-nevr-specs>...``
-    Deprecated alias for the :ref:`\upgrade_command-label`.
-
-.. _upgrade_to_command-label:
-
-------------------
-Upgrade-To Command
-------------------
-
-``dnf [options] upgrade-to <package-nevr-specs>...``
-    Deprecated alias for the :ref:`\upgrade_command-label`.
 
 .. _specifying_packages-label:
 
