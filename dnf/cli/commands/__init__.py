@@ -226,7 +226,7 @@ class ListCommand(InfoCommand):
     list command.
     """
 
-    aliases = ('list',)
+    aliases = ('list', 'ls')
     summary = _('list a package or groups of packages')
 
     def run(self):
