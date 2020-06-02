@@ -3126,5 +3126,41 @@
     [
         1812693,
         "DNF doesn't use new translations coming from Weblate"
+    ],
+    [
+        1339617,
+        "[RFE] api for handling of gpg signature check and fetching keys"
+    ],
+    [
+        1801092,
+        "[RFE]  getting a list of all CVE availble for the system with their respective release date ."
+    ],
+    [
+        1727882,
+        "yum-config-manager cannot update repos on RHEL8"
+    ],
+    [
+        1773679,
+        "add option to include comments when running DNF/YUM transaction"
+    ],
+    [
+        1793298,
+        "dnf-automatic upgrade packages that does not have the signing key accepted"
+    ],
+    [
+        1788182,
+        "[abrt] DNF raises RuntimeError when passing invalid values to `--repofrompath`"
+    ],
+    [
+        1811802,
+        "[RFE] Sort alphabetically yum/dnf results as in RHEL7"
+    ],
+    [
+        1813244,
+        "gpgkey_dns_verification=True does not handle"
+    ],
+    [
+        1786335,
+        "dnf history command output is trimmed because of hardcoded 79 cols limit"
     ]
 ]

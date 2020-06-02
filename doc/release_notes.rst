@@ -20,6 +20,37 @@
 ###################
 
 ====================
+4.2.23 Release Notes
+====================
+
+- Fix behavior of install-n, autoremove-n, remove-n, repoquery-n
+- Fix behavior of localinstall and list-updateinfo aliases
+- Add updated field to verbose output of updateinfo list (RhBug: 1801092)
+- Add comment option to transaction (RhBug:1773679)
+- Add new API for handling gpg signatures (RhBug:1339617)
+- Verify GPG signatures when running dnf-automatic (RhBug:1793298)
+- Fix up Conflicts: on python-dnf-plugins-extras
+- [doc] Move yum-plugin-post-transaction-actions to dnf-plugins-core
+- Remove args "--set-enabled", "--set-disabled" from DNF (RhBug:1727882)
+- Search command is now alphabetical (RhBug:1811802)
+- Fix downloading packages with full URL as their location
+- repo: catch libdnf.error.Error in addition to RuntimeError in load() (RhBug:1788182)
+- History table to max size when redirect to file (RhBug:1786335,1786316)
+
+Bugs fixed in 4.2.23:
+
+* :rhbug:`1339617`
+* :rhbug:`1801092`
+* :rhbug:`1727882`
+* :rhbug:`1786316`
+* :rhbug:`1773679`
+* :rhbug:`1793298`
+* :rhbug:`1788182`
+* :rhbug:`1811802`
+* :rhbug:`1813244`
+* :rhbug:`1786335`
+
+====================
 4.2.21 Release Notes
 ====================
 
