@@ -70,11 +70,14 @@ _VERBOSE_VAL_MAPPING = {
     4 : logging.DEBUG,
     5 : logging.DEBUG,
     6 : logging.DEBUG, # verbose value
+    7 : DDEBUG,
+    8 : SUBDEBUG,
+    9 : TRACE,
     }
 
 def _cfg_verbose_val2level(cfg_errval):
     assert 0 <= cfg_errval <= 10
-    return _VERBOSE_VAL_MAPPING.get(cfg_errval, DDEBUG)
+    return _VERBOSE_VAL_MAPPING.get(cfg_errval, TRACE)
 
 
 # Both the DNF default and the verbose default are WARNING. Note that ERROR has
@@ -157,13 +160,14 @@ class Logging(object):
         self.stderr_handler = stderr
 
     @only_once
-    def _setup_file_loggers(self, verbose_level, logdir, log_size, log_rotate):
+    def _setup_file_loggers(self, logfile_level, verbose_level, logdir, log_size, log_rotate):
         logger_dnf = logging.getLogger("dnf")
         logger_dnf.setLevel(TRACE)
 
         # setup file logger
         logfile = os.path.join(logdir, dnf.const.LOG)
         handler = _create_filehandler(logfile, log_size, log_rotate)
+        handler.setLevel(logfile_level)
         logger_dnf.addHandler(handler)
         # put the marker in the file now:
         _paint_mark(logger_dnf)
@@ -185,14 +189,14 @@ class Logging(object):
         _paint_mark(logger_rpm)
 
     @only_once
-    def _setup(self, verbose_level, error_level, logdir, log_size, log_rotate):
+    def _setup(self, verbose_level, error_level, logfile_level, logdir, log_size, log_rotate):
         self._presetup()
 
         # temporarily turn off stdout/stderr handlers:
         self.stdout_handler.setLevel(SUPERCRITICAL)
         self.stderr_handler.setLevel(SUPERCRITICAL)
 
-        self._setup_file_loggers(verbose_level, logdir, log_size, log_rotate)
+        self._setup_file_loggers(logfile_level, verbose_level, logdir, log_size, log_rotate)
 
         logger_warnings = logging.getLogger("py.warnings")
         logger_warnings.addHandler(self.stderr_handler)
@@ -209,13 +213,14 @@ class Logging(object):
     def _setup_from_dnf_conf(self, conf, file_loggers_only=False):
         verbose_level_r = _cfg_verbose_val2level(conf.debuglevel)
         error_level_r = _cfg_err_val2level(conf.errorlevel)
+        logfile_level_r = _cfg_verbose_val2level(conf.logfilelevel)
         logdir = conf.logdir
         log_size = conf.log_size
         log_rotate = conf.log_rotate
         if file_loggers_only:
-            return self._setup_file_loggers(verbose_level_r, logdir, log_size, log_rotate)
+            return self._setup_file_loggers(logfile_level_r, verbose_level_r, logdir, log_size, log_rotate)
         else:
-            return self._setup(verbose_level_r, error_level_r, logdir, log_size, log_rotate)
+            return self._setup(verbose_level_r, error_level_r, logfile_level_r, logdir, log_size, log_rotate)
 
 
 class Timer(object):
