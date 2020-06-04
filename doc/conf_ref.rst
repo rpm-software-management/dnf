@@ -268,6 +268,12 @@ configuration file by your distribution to override the DNF defaults.
 
     Directory where the log files will be stored. Default is ``/var/log``.
 
+``logfilelevel``
+    :ref:`integer <integer-label>`
+
+    Log file messages output level, in the range 0 to 10. The higher the number the
+    more debug output is put to logs. Default is 9.
+
 .. _log_rotate-label:
 
 ``log_rotate``
