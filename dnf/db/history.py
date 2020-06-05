@@ -52,6 +52,21 @@ class RPMTransactionItemWrapper(object):
     def match(self, pattern):
         return True
 
+    def is_package(self):
+        return self._item.getRPMItem() is not None
+
+    def is_group(self):
+        return self._item.getCompsGroupItem() is not None
+
+    def is_environment(self):
+        return self._item.getCompsEnvironmentItem() is not None
+
+    def get_group(self):
+        return self._item.getCompsGroupItem()
+
+    def get_environment(self):
+        return self._item.getCompsEnvironmentItem()
+
     @property
     def name(self):
         return self._item.getRPMItem().getName()
