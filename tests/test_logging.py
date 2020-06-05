@@ -88,7 +88,7 @@ class TestLogging(tests.support.TestCase):
         logger = logging.getLogger("dnf")
         with tests.support.patch_std_streams() as (stdout, stderr):
             self.logging._setup(
-                logging.INFO, logging.ERROR, self.logdir, self.log_size, self.log_rotate)
+                logging.INFO, logging.ERROR, dnf.logging.TRACE, self.logdir, self.log_size, self.log_rotate)
             self._bench(logger)
         self.assertEqual("i\n", stdout.getvalue())
         self.assertEqual("e\n", stderr.getvalue())
@@ -97,7 +97,7 @@ class TestLogging(tests.support.TestCase):
         logger = logging.getLogger("dnf")
         with tests.support.patch_std_streams() as (stdout, stderr):
             self.logging._setup(
-                logging.DEBUG, logging.WARNING, self.logdir, self.log_size, self.log_rotate)
+                logging.DEBUG, logging.WARNING, dnf.logging.TRACE, self.logdir, self.log_size, self.log_rotate)
             self._bench(logger)
         self.assertEqual("d\ni\n", stdout.getvalue())
         self.assertEqual("w\ne\n", stderr.getvalue())
@@ -105,20 +105,22 @@ class TestLogging(tests.support.TestCase):
     @mock.patch('dnf.logging.Logging._setup')
     def test_setup_from_dnf_conf(self, setup_m):
         conf = mock.Mock(
-            debuglevel=2, errorlevel=3, logdir=self.logdir,
+            debuglevel=2, errorlevel=3, logfilelevel=2, logdir=self.logdir,
             log_size=self.log_size, log_rotate=self.log_rotate)
         self.logging._setup_from_dnf_conf(conf)
         self.assertEqual(setup_m.call_args, mock.call(dnf.logging.INFO,
                                                       dnf.logging.WARNING,
+                                                      dnf.logging.INFO,
                                                       self.logdir,
                                                       self.log_size,
                                                       self.log_rotate))
         conf = mock.Mock(
-            debuglevel=6, errorlevel=6, logdir=self.logdir,
+            debuglevel=6, errorlevel=6, logfilelevel=6, logdir=self.logdir,
             log_size=self.log_size, log_rotate=self.log_rotate)
         self.logging._setup_from_dnf_conf(conf)
         self.assertEqual(setup_m.call_args, mock.call(dnf.logging.DEBUG,
                                                       dnf.logging.WARNING,
+                                                      dnf.logging.DEBUG,
                                                       self.logdir,
                                                       self.log_size,
                                                       self.log_rotate))
@@ -126,7 +128,7 @@ class TestLogging(tests.support.TestCase):
     def test_file_logging(self):
         # log nothing to the console:
         self.logging._setup(
-            dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL,
+            dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL, dnf.logging.TRACE,
             self.logdir, self.log_size, self.log_rotate)
         logger = logging.getLogger("dnf")
         with tests.support.patch_std_streams() as (stdout, stderr):
@@ -145,7 +147,7 @@ class TestLogging(tests.support.TestCase):
     def test_rpm_logging(self):
         # log everything to the console:
         self.logging._setup(
-            dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
+            dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG, dnf.logging.TRACE,
             self.logdir, self.log_size, self.log_rotate)
         logger = logging.getLogger("dnf.rpm")
         with tests.support.patch_std_streams() as (stdout, stderr):
@@ -167,7 +169,7 @@ class TestLogging(tests.support.TestCase):
         logger = logging.getLogger("dnf")
         self.assertLength(logger.handlers, 0)
         self.logging._setup(
-            dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
+            dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG, dnf.logging.TRACE,
             self.logdir, self.log_size, self.log_rotate)
         cnt = len(logger.handlers)
         self.assertGreater(cnt, 0)
