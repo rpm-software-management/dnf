@@ -177,8 +177,12 @@ class Logging(object):
         logger_warnings = logging.getLogger("py.warnings")
         logger_warnings.addHandler(handler)
 
-        lr_logfile = os.path.join(logdir, dnf.const.LOG_LIBREPO)
-        libdnf.repo.LibrepoLog.addHandler(lr_logfile, logfile_level <= ALL)
+        logger_librepo = logging.getLogger("librepo")
+        logger_librepo.setLevel(TRACE)
+        logfile = os.path.join(logdir, dnf.const.LOG_LIBREPO)
+        handler = _create_filehandler(logfile, log_size, log_rotate)
+        logger_librepo.addHandler(handler)
+        libdnf.repo.LibrepoLog.addHandler(logfile, logfile_level <= ALL)
 
         # setup RPM callbacks logger
         logger_rpm = logging.getLogger("dnf.rpm")
@@ -250,7 +254,8 @@ _LIBDNF_TO_DNF_LOGLEVEL_MAPPING = {
 class LibdnfLoggerCB(libdnf.utils.Logger):
     def __init__(self):
         super(LibdnfLoggerCB, self).__init__()
-        self._logger = logging.getLogger("dnf")
+        self._dnf_logger = logging.getLogger("dnf")
+        self._librepo_logger = logging.getLogger("librepo")
 
     def write(self, source, *args):
         """Log message.
@@ -261,7 +266,10 @@ class LibdnfLoggerCB(libdnf.utils.Logger):
             level, message = args
         elif len(args) == 4:
             time, pid, level, message = args
-        self._logger.log(_LIBDNF_TO_DNF_LOGLEVEL_MAPPING[level], message)
+        if source == libdnf.utils.Logger.LOG_SOURCE_LIBREPO:
+            self._librepo_logger.log(_LIBDNF_TO_DNF_LOGLEVEL_MAPPING[level], message)
+        else:
+            self._dnf_logger.log(_LIBDNF_TO_DNF_LOGLEVEL_MAPPING[level], message)
 
 
 libdnfLoggerCB = LibdnfLoggerCB()
