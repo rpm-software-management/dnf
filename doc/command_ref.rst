@@ -714,11 +714,52 @@ transactions and act according to this information (assuming the
     if more than one transaction for given <package-file-spec> is found. If it is not possible
     to redo some operations due to the current state of RPMDB, it will not redo the transaction.
 
+.. _history_replay_command-label:
+
+``dnf history replay [--ignore-installed] [--ignore-extras] [--skip-unavailable] <filename>``
+    Replay a transaction stored in file ``<filename>`` by :ref:`History Store
+    Command <history_store_command-label>`. The replay will perform the exact
+    same operations on the packages as in the original transaction and will
+    return with an error if case of any differences in installed packages or
+    their versions. See also the :ref:`Transaction JSON Format specification <transaction_json-label>` of the
+    file format.
+
+    ``--ignore-installed``
+        Don't check for the installed packages being in the same state as those
+        recorded in the transaction. E.g. in case there is an upgrade
+        ``foo-1.0`` -> ``foo-2.0`` stored in the transaction, but there is
+        ``foo-1.1`` installed on the target system.
+
+    ``--ignore-extras``
+        Don't check for extra packages pulled into the transaction on the
+        target system. E.g. the target system may not have some dependency,
+        which was installed on the source system. The replay errors out on this
+        by default, as the transaction would not be the same.
+
+    ``--skip-unavailable``
+        In case some packages stored in the transaction are not available on
+        the target system, skip them instead of erroring out.
+
 ``dnf history rollback <transaction-spec>|<package-file-spec>``
     Undo all transactions performed after the specified transaction. Uses the last transaction
     (with the highest ID) if more than one transaction for given <package-file-spec> is found.
     If it is not possible to undo some transactions due to the current state of RPMDB, it will not undo
     any transaction.
+
+.. _history_store_command-label:
+
+``dnf history store [--output <output-file>] <transaction-spec>``
+    Store a transaction specified by ``<transaction-spec>``. The transaction
+    can later be replayed by the :ref:`History Replay Command
+    <history_replay_command-label>`.
+
+    Warning: The stored transaction format is considered unstable and may
+    change at any time. It will work if the same version of dnf is used to
+    store and replay (or between versions as long as it stays the same).
+
+
+    ``-o <output-file>, --output=<output-file>``
+    Store the serialized transaction into ``<output-file``. Default is ``transaction.json``.
 
 ``dnf history undo <transaction-spec>|<package-file-spec>``
     Perform the opposite operation to all operations performed in the specified transaction.
@@ -1903,6 +1944,7 @@ See Also
 * :manpage:`dnf.conf(5)`, :ref:`DNF Configuration Reference <conf_ref-label>`
 * :manpage:`dnf-PLUGIN(8)` for documentation on DNF plugins.
 * :manpage:`dnf.modularity(7)`, :ref:`Modularity overview <modularity-label>`.
+* :manpage:`dnf-transaction-json(5)`, :ref:`Stored Transaction JSON Format Specification <transaction_json-label>`.
 * `DNF`_ project homepage (https://github.com/rpm-software-management/dnf/)
 * How to report a bug (https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting)
 * `YUM`_ project homepage (http://yum.baseurl.org/)

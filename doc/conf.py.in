@@ -224,6 +224,8 @@ man_pages = [
      AUTHORS, 5),
     ('conf_ref', 'yum.conf', u'redirecting to DNF Configuration Reference',
      AUTHORS, 5),
+    ('transaction_json', 'dnf-transaction-json', u'DNF Stored Transaction JSON',
+     AUTHORS, 5),
     ('cli_vs_yum', 'yum2dnf', u'Changes in DNF compared to YUM',
      AUTHORS, 8),
     ('command_ref', 'yum', u'redirecting to DNF Command Reference',
