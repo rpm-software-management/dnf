@@ -225,7 +225,7 @@ class ProblemGroupTest(tests.support.ResultTestCase):
         swdb_group = self.history.group.get(comps_group.id)
         self.assertIsNone(swdb_group)
 
-        cnt = self.base.group_install(comps_group.id, ('mandatory'))
+        cnt = self.base.group_install(comps_group.id, ('mandatory',))
         self._swdb_commit()
         self.base.resolve()
         # this counts packages *listed* in the group, so 2

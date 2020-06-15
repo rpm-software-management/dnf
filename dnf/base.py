@@ -1574,7 +1574,7 @@ class Base(object):
         solver = self._build_comps_solver()
 
         if not isinstance(types, int):
-            types = self._translate_comps_pkg_types(types)
+            types = libdnf.transaction.listToCompsPackageType(types)
 
         trans = dnf.comps.install_or_skip(solver._environment_install,
                                           env_id, types, exclude or set(),
@@ -1589,21 +1589,6 @@ class Base(object):
         solver = self._build_comps_solver()
         trans = solver._environment_remove(env_id)
         return self._add_comps_trans(trans)
-
-    _COMPS_TRANSLATION = {
-        'default': dnf.comps.DEFAULT,
-        'mandatory': dnf.comps.MANDATORY,
-        'optional': dnf.comps.OPTIONAL,
-        'conditional': dnf.comps.CONDITIONAL
-    }
-
-    @staticmethod
-    def _translate_comps_pkg_types(pkg_types):
-        ret = 0
-        for (name, enum) in Base._COMPS_TRANSLATION.items():
-            if name in pkg_types:
-                ret |= enum
-        return ret
 
     def group_install(self, grp_id, pkg_types, exclude=None, strict=True):
         # :api
@@ -1634,7 +1619,7 @@ class Base(object):
         solver = self._build_comps_solver()
 
         if not isinstance(pkg_types, int):
-            pkg_types = self._translate_comps_pkg_types(pkg_types)
+            pkg_types = libdnf.transaction.listToCompsPackageType(pkg_types)
 
         trans = dnf.comps.install_or_skip(solver._group_install,
                                           grp_id, pkg_types, exclude_pkgnames,
