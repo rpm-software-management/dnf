@@ -1565,9 +1565,17 @@ class Base(object):
 
     def environment_install(self, env_id, types, exclude=None, strict=True, exclude_groups=None):
         # :api
+        """Installs packages of environment group identified by env_id.
+        :param types: Types of packages to install. Either an integer as a
+            logical conjunction of CompsPackageType ids or a list of string
+            package type ids (conditional, default, mandatory, optional).
+        """
         assert dnf.util.is_string_type(env_id)
         solver = self._build_comps_solver()
-        types = self._translate_comps_pkg_types(types)
+
+        if not isinstance(types, int):
+            types = self._translate_comps_pkg_types(types)
+
         trans = dnf.comps.install_or_skip(solver._environment_install,
                                           env_id, types, exclude or set(),
                                           strict, exclude_groups)
@@ -1600,6 +1608,9 @@ class Base(object):
     def group_install(self, grp_id, pkg_types, exclude=None, strict=True):
         # :api
         """Installs packages of selected group
+        :param pkg_types: Types of packages to install. Either an integer as a
+            logical conjunction of CompsPackageType ids or a list of string
+            package type ids (conditional, default, mandatory, optional).
         :param exclude: list of package name glob patterns
             that will be excluded from install set
         :param strict: boolean indicating whether group packages that
@@ -1621,7 +1632,10 @@ class Base(object):
             exclude_pkgnames = itertools.chain.from_iterable(nested_excludes)
 
         solver = self._build_comps_solver()
-        pkg_types = self._translate_comps_pkg_types(pkg_types)
+
+        if not isinstance(pkg_types, int):
+            pkg_types = self._translate_comps_pkg_types(pkg_types)
+
         trans = dnf.comps.install_or_skip(solver._group_install,
                                           grp_id, pkg_types, exclude_pkgnames,
                                           strict)
