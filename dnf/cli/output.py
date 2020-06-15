@@ -1947,7 +1947,6 @@ Transaction Summary
         :param pats: a list of patterns.  Packages that match a patten
            in *pats* will be highlighted in the output
         """
-        last = None
         #  Note that these don't use _simple_pkg() because we are showing what
         # happened to them in the transaction ... not the difference between the
         # version in the transaction and now.
@@ -1976,107 +1975,12 @@ Transaction Summary
                     highlight = 'bold'
             (hibeg, hiend) = self._highlight(highlight)
 
-            cn = str(pkg)
-
             uistate = all_uistates.get(pkg.action_name, pkg.action_name)
             uistate = fill_exact_width(ucd(uistate), maxlen)
 
-            if (last is not None and last.action == libdnf.transaction.TransactionItemAction_UPGRADED and
-                    last.name == pkg.name and pkg.action == libdnf.transaction.TransactionItemAction_UPGRADE):
-
-                ln = len(pkg.name) + 1
-                cn = (" " * ln) + cn[ln:]
-            elif (last is not None and last.action == libdnf.transaction.TransactionItemAction_DOWNGRADE and
-                  last.name == pkg.name and pkg.action == libdnf.transaction.TransactionItemAction_DOWNGRADED):
-
-                ln = len(pkg.name) + 1
-                cn = (" " * ln) + cn[ln:]
-            else:
-                last = None
-                if pkg.action in (libdnf.transaction.TransactionItemAction_UPGRADED, libdnf.transaction.TransactionItemAction_DOWNGRADE):
-                    last = pkg
             print("%s%s%s%s %-*s %s" % (prefix, hibeg, uistate, hiend,
                                         pkg_max_len, str(pkg),
                                         pkg.ui_from_repo()))
-
-    def historyPackageListCmd(self, extcmds):
-        """Print a list of information about transactions from history
-        that involve the given package or packages.
-
-        :param extcmds: list of extra command line arguments
-        """
-        tids = self.history.search(extcmds)
-        limit = None
-        if extcmds and not tids:
-            logger.critical(_('Bad transaction IDs, or package(s), given'))
-            return 1, ['Failed history packages-list']
-        if not tids:
-            limit = 20
-
-        all_uistates = self._history_state2uistate
-
-        fmt = "%s | %s | %s"
-        # REALLY Needs to use columns!
-        print(fmt % (fill_exact_width(_("ID"), 6, 6),
-                     fill_exact_width(_("Action(s)"), 14, 14),
-        # This is also a hack to resolve RhBug 1302935 correctly.
-                     fill_exact_width(C_("long", "Package"), 53, 53)))
-        print("-" * 79)
-        fmt = "%6u | %s | %-50s"
-        num = 0
-        for old in self.history.old(tids, limit=limit):
-            packages = old.packages()
-            if limit and num and (num + len(packages)) > limit:
-                break
-            last = None
-
-            # Copy and paste from list ... uh.
-            rmark = lmark = ' '
-            if old.return_code is None:
-                rmark = lmark = '*'
-            elif old.return_code:
-                rmark = lmark = '#'
-                # We don't check .errors, because return_code will be non-0
-            elif old.output:
-                rmark = lmark = 'E'
-            elif old.rpmdb_problems:
-                rmark = lmark = 'P'
-            elif old.trans_skip:
-                rmark = lmark = 's'
-            if old.altered_lt_rpmdb:
-                rmark = '<'
-            if old.altered_gt_rpmdb:
-                lmark = '>'
-
-            # Find a pkg to go with each cmd...
-            for pkg in packages:
-                if limit is None:
-                    if not any([pkg.match(pat) for pat in extcmds]):
-                        continue
-
-                uistate = all_uistates.get(pkg.action_name, pkg.action_name)
-                uistate = fill_exact_width(uistate, 14)
-
-                #  To chop the name off we need nevra strings, str(pkg) gives
-                # envra so we have to do it by hand ... *sigh*.
-                cn = pkg.ui_nevra
-
-                if (last is not None and last.action == libdnf.transaction.TransactionItemAction_UPGRADED and
-                        last.name == pkg.name and pkg.action == libdnf.transaction.TransactionItemAction_UPGRADE):
-                    ln = len(pkg.name) + 1
-                    cn = (" " * ln) + cn[ln:]
-                elif (last is not None and
-                      last.action == libdnf.transaction.TransactionItemAction_DOWNGRADE and last.name == pkg.name and
-                      pkg.action == libdnf.transaction.TransactionItemAction_DOWNGRADED):
-                    ln = len(pkg.name) + 1
-                    cn = (" " * ln) + cn[ln:]
-                else:
-                    last = None
-                    if pkg.action in (libdnf.transaction.TransactionItemAction_UPGRADED, libdnf.transaction.TransactionItemAction_DOWNGRADE):
-                        last = pkg
-
-                num += 1
-                print(fmt % (old.tid, uistate, cn), "%s%s" % (lmark, rmark))
 
 class DepSolveProgressCallBack(dnf.callback.Depsolve):
     """Provides text output callback functions for Dependency Solver callback."""
