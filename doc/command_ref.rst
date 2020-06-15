@@ -689,13 +689,16 @@ transactions and act according to this information (assuming the
 
 .. _history_list_command-label:
 
-``dnf history [list] [<spec>...]``
+``dnf history [list] [--reverse] [<spec>...]``
     The default history action is listing information about given transactions
     in a table. Each ``<spec>`` can be either a ``<transaction-spec>``, which
     specifies a transaction directly, or a ``<transaction-spec>..<transaction-spec>``,
     which specifies a range of transactions, or a ``<package-name-spec>``,
     which specifies a transaction by a package which it manipulated. When no
     transaction is specified, list all known transactions.
+
+    ``--reverse``
+        The order of ``history list`` output is printed in reverse order.
 
 ``dnf history info [<spec>...]``
     Describe the given transactions. The meaning of ``<spec>`` is the same as
