@@ -24,6 +24,8 @@ from dnf.comps import CompsQuery
 from dnf.cli import commands
 from dnf.i18n import _, ucd
 
+import libdnf.transaction
+
 import dnf.cli
 import dnf.exceptions
 import dnf.util
@@ -243,7 +245,7 @@ class GroupCommand(commands.Command):
             types = tuple(self.base.conf.group_package_types + ['optional'])
         else:
             types = tuple(self.base.conf.group_package_types)
-        pkg_types = self.base._translate_comps_pkg_types(types)
+        pkg_types = libdnf.transaction.listToCompsPackageType(types)
         for env_id in res.environments:
             dnf.comps.install_or_skip(solver._environment_install, env_id, pkg_types)
         for group_id in res.groups:
