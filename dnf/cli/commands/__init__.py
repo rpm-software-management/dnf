@@ -841,6 +841,8 @@ class HistoryCommand(Command):
                             help="Available commands: {} (default), {}".format(
                                 HistoryCommand._CMDS[0],
                                 ", ".join(HistoryCommand._CMDS[1:])))
+        parser.add_argument('--reverse', action='store_true',
+                            help="display history list output reversed")
         parser.add_argument('transactions', nargs='*', metavar="TRANSACTION",
                             help="Transaction ID (<number>, 'last' or 'last-<number>' "
                                  "for one transaction, <transaction-id>..<transaction-id> "
@@ -1011,7 +1013,8 @@ class HistoryCommand(Command):
 
         ret = None
         if vcmd == 'list' and (self.transaction_ids or not self.opts.transactions):
-            ret = self.output.historyListCmd(self.transaction_ids)
+            ret = self.output.historyListCmd(self.transaction_ids,
+                reverse=self.opts.reverse)
         elif vcmd == 'info' and (self.transaction_ids or not self.opts.transactions):
             ret = self.output.historyInfoCmd(self.transaction_ids, self.opts.transactions,
                                              self.merged_transaction_ids)

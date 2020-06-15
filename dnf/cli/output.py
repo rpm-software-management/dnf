@@ -1611,7 +1611,7 @@ Transaction Summary
         except KeyError:
             return ucd(uid)
 
-    def historyListCmd(self, tids):
+    def historyListCmd(self, tids, reverse=False):
         """Output a list of information about the history of yum
         transactions.
 
@@ -1659,6 +1659,8 @@ Transaction Summary
         print("-" * table_width)
         fmt = "%6u | %s | %-16.16s | %s | %4u"
 
+        if reverse is True:
+            transactions = reversed(transactions)
         for transaction in transactions:
             if len(uids) == 1:
                 name = transaction.cmdline or ''
