@@ -595,6 +595,9 @@ class Solver(object):
     def _environment_install(self, env_id, pkg_types, exclude, strict=True, exclude_groups=None):
         assert dnf.util.is_string_type(env_id)
         comps_env = self.comps._environment_by_id(env_id)
+        if not comps_env:
+            raise CompsError(_("Environment id '%s' does not exist.") % ucd(env_id))
+
         swdb_env = self.history.env.new(env_id, comps_env.name, comps_env.ui_name, pkg_types)
         self.history.env.install(swdb_env)
 
@@ -663,7 +666,7 @@ class Solver(object):
         assert dnf.util.is_string_type(group_id)
         comps_group = self.comps._group_by_id(group_id)
         if not comps_group:
-            raise ValueError(_("Group_id '%s' does not exist.") % ucd(group_id))
+            raise CompsError(_("Group_id '%s' does not exist.") % ucd(group_id))
 
         swdb_group = self.history.group.new(group_id, comps_group.name, comps_group.ui_name, pkg_types)
         for i in comps_group.packages_iter():
