@@ -53,7 +53,7 @@ def _build_sack(base):
                 arch=base.conf.substitutions["arch"],
                 cachedir=cachedir, rootdir=base.conf.installroot,
                 logfile=os.path.join(base.conf.logdir, dnf.const.LOG_HAWKEY),
-                logdebug=base.conf.debuglevel > 2)
+                logdebug=base.conf.logfilelevel > 9)
 
 
 def _rpmdb_sack(base):
