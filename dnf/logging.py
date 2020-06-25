@@ -43,6 +43,7 @@ DEBUG = logging.DEBUG
 DDEBUG = 8  # used by anaconda (pyanaconda/payload/dnfpayload.py)
 SUBDEBUG = 6
 TRACE = 4
+ALL = 2
 
 def only_once(func):
     """Method decorator turning the method into noop on second or later calls."""
@@ -73,6 +74,7 @@ _VERBOSE_VAL_MAPPING = {
     7 : DDEBUG,
     8 : SUBDEBUG,
     9 : TRACE,
+    10: ALL,   # more verbous librepo and hawkey
     }
 
 def _cfg_verbose_val2level(cfg_errval):
@@ -138,6 +140,7 @@ class Logging(object):
         logging.addLevelName(DDEBUG, "DDEBUG")
         logging.addLevelName(SUBDEBUG, "SUBDEBUG")
         logging.addLevelName(TRACE, "TRACE")
+        logging.addLevelName(ALL, "ALL")
         logging.captureWarnings(True)
         logging.raiseExceptions = False
 
@@ -160,7 +163,7 @@ class Logging(object):
         self.stderr_handler = stderr
 
     @only_once
-    def _setup_file_loggers(self, logfile_level, verbose_level, logdir, log_size, log_rotate):
+    def _setup_file_loggers(self, logfile_level, logdir, log_size, log_rotate):
         logger_dnf = logging.getLogger("dnf")
         logger_dnf.setLevel(TRACE)
 
@@ -177,7 +180,7 @@ class Logging(object):
         logger_warnings.addHandler(handler)
 
         lr_logfile = os.path.join(logdir, dnf.const.LOG_LIBREPO)
-        libdnf.repo.LibrepoLog.addHandler(lr_logfile, verbose_level <= DEBUG)
+        libdnf.repo.LibrepoLog.addHandler(lr_logfile, logfile_level <= ALL)
 
         # setup RPM callbacks logger
         logger_rpm = logging.getLogger("dnf.rpm")
@@ -196,7 +199,7 @@ class Logging(object):
         self.stdout_handler.setLevel(SUPERCRITICAL)
         self.stderr_handler.setLevel(SUPERCRITICAL)
 
-        self._setup_file_loggers(logfile_level, verbose_level, logdir, log_size, log_rotate)
+        self._setup_file_loggers(logfile_level, logdir, log_size, log_rotate)
 
         logger_warnings = logging.getLogger("py.warnings")
         logger_warnings.addHandler(self.stderr_handler)
@@ -218,7 +221,7 @@ class Logging(object):
         log_size = conf.log_size
         log_rotate = conf.log_rotate
         if file_loggers_only:
-            return self._setup_file_loggers(logfile_level_r, verbose_level_r, logdir, log_size, log_rotate)
+            return self._setup_file_loggers(logfile_level_r, logdir, log_size, log_rotate)
         else:
             return self._setup(verbose_level_r, error_level_r, logfile_level_r, logdir, log_size, log_rotate)
 

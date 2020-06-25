@@ -274,6 +274,9 @@ configuration file by your distribution to override the DNF defaults.
     Log file messages output level, in the range 0 to 10. The higher the number the
     more debug output is put to logs. Default is 9.
 
+    This option controls dnf.log, dnf.librepo.log and hawkey.log. Although dnf.librepo.log
+    and hawkey.log are affected only by setting the logfilelevel to 10.
+
 .. _log_rotate-label:
 
 ``log_rotate``
