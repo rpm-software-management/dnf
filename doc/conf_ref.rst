@@ -629,6 +629,21 @@ In addition to these hard coded variables, user-defined ones can also be used. T
 
     $ DNF_VAR_MY_VARIABLE=value
 
+To use such variable in your repository configuration remove the prefix. E.g.::
+
+    [myrepo]
+    baseurl=https://example.site/pub/fedora/$MY_VARIABLE/releases/$releasever
+
+Note that it is not possible to override the ``arch`` and ``basearch`` variables using either variable files or environmental variables.
+
+Although users are encouraged to use named variables, the numbered environmental variables ``DNF0`` - ``DNF9`` are still supported::
+
+    $ DNF1=value
+
+    [myrepo]
+    baseurl=https://example.site/pub/fedora/$DNF1/releases/$releasever
+
+
 .. _conf_main_and_repo_options-label:
 
 ==================================
