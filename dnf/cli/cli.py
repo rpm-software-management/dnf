@@ -782,7 +782,10 @@ class Cli(object):
         for repo in notmatch:
             logger.warning(_("No repository match: %s"), repo)
 
-        for rid in self.base._repo_persistor.get_expired_repos():
+        expired_repos = self.base._repo_persistor.get_expired_repos()
+        if expired_repos is None:
+            expired_repos = self.base.repos.keys()
+        for rid in expired_repos:
             repo = self.base.repos.get(rid)
             if repo:
                 repo._repo.expire()

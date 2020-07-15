@@ -84,12 +84,20 @@ class RepoPersistor(JSONDB):
         return os.path.join(self.cachedir, "last_makecache")
 
     def get_expired_repos(self):
-        self._check_json_db(self.db_path)
-        return set(self._get_json_db(self.db_path))
+        try:
+            self._check_json_db(self.db_path)
+            return set(self._get_json_db(self.db_path))
+        except OSError as e:
+            logger.warning(_("Failed to load expired repos cache: %s"), e)
+            return None
 
     def save(self):
-        self._check_json_db(self.db_path)
-        self._write_json_db(self.db_path, list(self.expired_to_add))
+        try:
+            self._check_json_db(self.db_path)
+            self._write_json_db(self.db_path, list(self.expired_to_add))
+        except OSError as e:
+            logger.warning(_("Failed to store expired repos cache: %s"), e)
+            return False
         if self.reset_last_makecache:
             try:
                 dnf.util.touch(self._last_makecache_path)
