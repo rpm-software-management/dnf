@@ -31,6 +31,7 @@ import os
 import sys
 import time
 import warnings
+import gzip
 
 # :api loggers are: 'dnf', 'dnf.plugin', 'dnf.rpm'
 
@@ -95,6 +96,24 @@ def _cfg_err_val2level(cfg_errval):
     return _ERR_VAL_MAPPING.get(cfg_errval, logging.WARNING)
 
 
+def compression_namer(name):
+    return name + ".gz"
+
+
+CHUNK_SIZE = 128 * 1024 # 128 KB
+
+
+def compression_rotator(source, dest):
+    with open(source, "rb") as sf:
+        with gzip.open(dest, 'wb') as wf:
+            while True:
+                data = sf.read(CHUNK_SIZE)
+                if not data:
+                    break
+                wf.write(data)
+    os.remove(source)
+
+
 class MultiprocessRotatingFileHandler(logging.handlers.RotatingFileHandler):
     def __init__(self, filename, mode='a', maxBytes=0, backupCount=0, encoding=None, delay=False):
         super(MultiprocessRotatingFileHandler, self).__init__(
@@ -116,7 +135,7 @@ class MultiprocessRotatingFileHandler(logging.handlers.RotatingFileHandler):
                 return
 
 
-def _create_filehandler(logfile, log_size, log_rotate):
+def _create_filehandler(logfile, log_size, log_rotate, log_compress):
     if not os.path.exists(logfile):
         dnf.util.ensure_dir(os.path.dirname(logfile))
         dnf.util.touch(logfile)
@@ -128,6 +147,9 @@ def _create_filehandler(logfile, log_size, log_rotate):
                                   "%Y-%m-%dT%H:%M:%SZ")
     formatter.converter = time.gmtime
     handler.setFormatter(formatter)
+    if log_compress:
+        handler.rotator = compression_rotator
+        handler.namer = compression_namer
     return handler
 
 def _paint_mark(logger):
@@ -163,13 +185,13 @@ class Logging(object):
         self.stderr_handler = stderr
 
     @only_once
-    def _setup_file_loggers(self, logfile_level, logdir, log_size, log_rotate):
+    def _setup_file_loggers(self, logfile_level, logdir, log_size, log_rotate, log_compress):
         logger_dnf = logging.getLogger("dnf")
         logger_dnf.setLevel(TRACE)
 
         # setup file logger
         logfile = os.path.join(logdir, dnf.const.LOG)
-        handler = _create_filehandler(logfile, log_size, log_rotate)
+        handler = _create_filehandler(logfile, log_size, log_rotate, log_compress)
         handler.setLevel(logfile_level)
         logger_dnf.addHandler(handler)
 
@@ -180,7 +202,7 @@ class Logging(object):
         logger_librepo = logging.getLogger("librepo")
         logger_librepo.setLevel(TRACE)
         logfile = os.path.join(logdir, dnf.const.LOG_LIBREPO)
-        handler = _create_filehandler(logfile, log_size, log_rotate)
+        handler = _create_filehandler(logfile, log_size, log_rotate, log_compress)
         logger_librepo.addHandler(handler)
         libdnf.repo.LibrepoLog.addHandler(logfile, logfile_level <= ALL)
 
@@ -189,14 +211,14 @@ class Logging(object):
         logger_rpm.propagate = False
         logger_rpm.setLevel(SUBDEBUG)
         logfile = os.path.join(logdir, dnf.const.LOG_RPM)
-        handler = _create_filehandler(logfile, log_size, log_rotate)
+        handler = _create_filehandler(logfile, log_size, log_rotate, log_compress)
         logger_rpm.addHandler(handler)
 
     @only_once
-    def _setup(self, verbose_level, error_level, logfile_level, logdir, log_size, log_rotate):
+    def _setup(self, verbose_level, error_level, logfile_level, logdir, log_size, log_rotate, log_compress):
         self._presetup()
 
-        self._setup_file_loggers(logfile_level, logdir, log_size, log_rotate)
+        self._setup_file_loggers(logfile_level, logdir, log_size, log_rotate, log_compress)
 
         logger_warnings = logging.getLogger("py.warnings")
         logger_warnings.addHandler(self.stderr_handler)
@@ -223,10 +245,12 @@ class Logging(object):
         logdir = conf.logdir
         log_size = conf.log_size
         log_rotate = conf.log_rotate
+        log_compress = conf.log_compress
         if file_loggers_only:
-            return self._setup_file_loggers(logfile_level_r, logdir, log_size, log_rotate)
+            return self._setup_file_loggers(logfile_level_r, logdir, log_size, log_rotate, log_compress)
         else:
-            return self._setup(verbose_level_r, error_level_r, logfile_level_r, logdir, log_size, log_rotate)
+            return self._setup(
+                verbose_level_r, error_level_r, logfile_level_r, logdir, log_size, log_rotate, log_compress)
 
 
 class Timer(object):
