@@ -277,6 +277,11 @@ configuration file by your distribution to override the DNF defaults.
     This option controls dnf.log, dnf.librepo.log and hawkey.log. Although dnf.librepo.log
     and hawkey.log are affected only by setting the logfilelevel to 10.
 
+``log_compress``
+	:ref:`boolean <boolean-label>`
+
+	When set to ``True``, log files are compressed when they are rotated. Default is ``False``.
+
 .. _log_rotate-label:
 
 ``log_rotate``
