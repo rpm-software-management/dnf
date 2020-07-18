@@ -19,7 +19,12 @@ ELSE ()
     MESSAGE (FATAL_ERROR "Invalid PYTHON_DESIRED value: " ${PYTHON_DESIRED})
 ENDIF()
 
-EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c "from sys import stdout; from distutils import sysconfig; stdout.write(sysconfig.get_python_lib())" OUTPUT_VARIABLE PYTHON_INSTALL_DIR)
+EXECUTE_PROCESS(COMMAND ${PYTHON_EXECUTABLE} -c "
+from sys import stdout
+from distutils import sysconfig
+path=sysconfig.get_python_lib(True, prefix='${CMAKE_INSTALL_PREFIX}')
+stdout.write(path)"
+OUTPUT_VARIABLE PYTHON_INSTALL_DIR)
 MESSAGE(STATUS "Python install dir is ${PYTHON_INSTALL_DIR}")
 
 ADD_SUBDIRECTORY (dnf)
