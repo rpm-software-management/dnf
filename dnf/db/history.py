@@ -94,6 +94,10 @@ class RPMTransactionItemWrapper(object):
         return "{}-{}".format(self.version, self.release)
 
     @property
+    def nevra(self):
+        return self._item.getRPMItem().getNEVRA()
+
+    @property
     def action(self):
         return self._item.getAction()
 
