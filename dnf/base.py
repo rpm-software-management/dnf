@@ -161,7 +161,8 @@ class Base(object):
         try:
             solver_errors = self.sack.filter_modules(
                 self._moduleContainer, hot_fix_repos, self.conf.installroot,
-                self.conf.module_platform_id, update_only=False, debugsolver=self.conf.debug_solver)
+                self.conf.module_platform_id, update_only=False, debugsolver=self.conf.debug_solver,
+                module_obsoletes=self.conf.module_obsoletes)
         except hawkey.Exception as e:
             raise dnf.exceptions.Error(ucd(e))
         if solver_errors:
