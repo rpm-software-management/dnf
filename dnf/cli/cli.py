@@ -166,15 +166,16 @@ class BaseCli(dnf.Base):
         :return: history database transaction ID or None
         """
         if dnf.base.WITH_MODULES:
-            switchedModules = dict(self._moduleContainer.getSwitchedStreams())
-            if switchedModules:
-                report_module_switch(switchedModules)
-                msg = _("It is not possible to switch enabled streams of a module.\n"
-                        "It is recommended to remove all installed content from the module, and "
-                        "reset the module using '{prog} module reset <module_name>' command. After "
-                        "you reset the module, you can install the other stream.").format(
-                    prog=dnf.util.MAIN_PROG)
-                raise dnf.exceptions.Error(msg)
+            if not self.conf.module_stream_switch:
+                switchedModules = dict(self._moduleContainer.getSwitchedStreams())
+                if switchedModules:
+                    report_module_switch(switchedModules)
+                    msg = _("It is not possible to switch enabled streams of a module.\n"
+                            "It is recommended to remove all installed content from the module, and "
+                            "reset the module using '{prog} module reset <module_name>' command. After "
+                            "you reset the module, you can install the other stream.").format(
+                        prog=dnf.util.MAIN_PROG)
+                    raise dnf.exceptions.Error(msg)
 
         trans = self.transaction
         pkg_str = self.output.list_transaction(trans)
