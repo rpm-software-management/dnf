@@ -681,8 +681,9 @@ class Solver(object):
     def _group_remove(self, group_id):
         assert dnf.util.is_string_type(group_id)
         swdb_group = self.history.group.get(group_id)
+        if not swdb_group:
+            raise CompsError(_("Module or Group '%s' is not installed.") % group_id)
         self.history.group.remove(swdb_group)
-
         trans = TransactionBunch()
         trans.remove = {pkg for pkg in swdb_group.getPackages() if self._removable_pkg(pkg.getName())}
         return trans
