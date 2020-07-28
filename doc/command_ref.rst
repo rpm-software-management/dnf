@@ -395,7 +395,7 @@ List options are comma-separated. Command-line options override respective setti
 Commands
 ========
 
-For an explanation of ``<package-spec>`` and ``<package-file-spec>`` see
+For an explanation of ``<package-spec>``, ``<package-file-spec>`` and ``<package-name-spec>`` see
 :ref:`\specifying_packages-label`.
 
 For an explanation of ``<package-nevr-spec>`` see
