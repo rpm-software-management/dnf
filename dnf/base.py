@@ -2315,6 +2315,11 @@ class Base(object):
         :raises: :class:`dnf.exceptions.Error` if there are errors
            retrieving the keys
         """
+        if po._from_cmdline:
+            # raise an exception, because po.repoid is not in self.repos
+            msg = _('Unable to retrieve a key for a commandline package: %s')
+            raise ValueError(msg % po)
+
         repo = self.repos[po.repoid]
         key_installed = repo.id in self._repo_set_imported_gpg_keys
         keyurls = [] if key_installed else repo.gpgkey
@@ -2442,7 +2447,7 @@ class Base(object):
         :raises: :class:`dnf.exceptions.Error` if there are errors
            retrieving the keys
         """
-        _get_key_for_package(pkg, ackcb, fullaskcb)
+        self._get_key_for_package(pkg, askcb, fullaskcb)
 
     def _run_rpm_check(self):
         results = []
