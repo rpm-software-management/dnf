@@ -1733,6 +1733,19 @@ to match across the NEVRA separators). In that case, however, you need to write
 the spec to match against full package NEVRAs, as it is not possible to split
 such spec into NEVRA forms.
 
+.. _specifying_nevra_matching_explicitly-label:
+
+Specifying NEVRA Matching Explicitly
+------------------------------------
+
+Some commands (``autoremove``, ``install``, ``remove`` and ``repoquery``) also
+have aliases with suffixes ``-n``, ``-na`` and ``-nevra`` that allow to
+explicitly specify how to parse the arguments:
+
+* Command ``install-n`` only matches against ``name``.
+* Command ``install-na`` only matches against ``name.arch``.
+* Command ``install-nevra`` only matches against ``name-[epoch:]version-release.arch``.
+
 .. _specifying_provides-label:
 
 ===================
