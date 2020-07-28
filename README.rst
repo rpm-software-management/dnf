@@ -111,7 +111,7 @@ Here's the most direct way to get your work merged into the project.
 #. Push the branch up to your fork
 #. Send a pull request for your branch
 
-Please, do not create the pull requests with translation (.po) files improvements. Fix the translation on `Zanata <https://fedora.zanata.org/iteration/view/dnf/master>`_ instead.
+Please, do not create the pull requests with translation (.po) files improvements. Fix the translation on `Fedora Weblate <https://translate.fedoraproject.org/projects/dnf/>`_ instead.
 
 ===============
  Documentation
