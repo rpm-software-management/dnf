@@ -92,7 +92,6 @@ Additional information:
 
 * :ref:`Options <options-label>`
 * :ref:`Specifying Packages <specifying_packages-label>`
-* :ref:`Specifying Exact Versions of Packages <specifying_packages_versions-label>`
 * :ref:`Specifying Provides <specifying_provides-label>`
 * :ref:`Specifying Groups <specifying_groups-label>`
 * :ref:`Specifying Transactions <specifying_transactions-label>`
@@ -397,9 +396,6 @@ Commands
 
 For an explanation of ``<package-spec>``, ``<package-file-spec>`` and ``<package-name-spec>`` see
 :ref:`\specifying_packages-label`.
-
-For an explanation of ``<package-nevr-spec>`` see
-:ref:`\specifying_packages_versions-label`.
 
 For an explanation of ``<provide-spec>`` see :ref:`\specifying_provides-label`.
 
@@ -1485,10 +1481,10 @@ The ``info`` subcommand lists description and summary information about packages
 
 ``dnf [options] repository-packages <repoid> upgrade [<package-spec>...]``
     Update all packages to the highest resolvable version available in the repository.
+    When versions are specified in the ``<package-spec>``, update to these versions.
 
-``dnf [options] repository-packages <repoid> upgrade-to <package-nevr-specs>...``
-    Update packages to the specified versions that are available in the repository. Upgrade-to is
-    a deprecated alias for the upgrade subcommand.
+``dnf [options] repository-packages <repoid> upgrade-to [<package-specs>...]``
+    A deprecated alias for the upgrade subcommand.
 
 .. _search_command-label:
 
@@ -1624,10 +1620,8 @@ Upgrade Command
 
 ``dnf [options] upgrade <package-spec>...``
     Updates each specified package to the latest available version. Updates
-    dependencies as necessary.
-
-``dnf [options] upgrade <package-nevr-specs>...``
-    Upgrades packages to the specified versions.
+    dependencies as necessary. When versions are specified in the
+    ``<package-spec>``, update to these versions.
 
 ``dnf [options] upgrade @<spec>...``
     Alias for the `dnf module update` command.
@@ -1738,17 +1732,6 @@ specify a glob pattern to match over multiple NEVRA components (in other words,
 to match across the NEVRA separators). In that case, however, you need to write
 the spec to match against full package NEVRAs, as it is not possible to split
 such spec into NEVRA forms.
-
-.. _specifying_packages_versions-label:
-
-=====================================
-Specifying Exact Versions of Packages
-=====================================
-
-Commands accepting the ``<package-nevr-spec>`` parameter need not only the name
-of the package, but also its version, release and optionally the
-architecture. Further, the version part can be preceded by an epoch when it is
-relevant (i.e. the epoch is non-zero).
 
 .. _specifying_provides-label:
 
