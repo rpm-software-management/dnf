@@ -1987,10 +1987,6 @@ Transaction Summary
 class DepSolveProgressCallBack(dnf.callback.Depsolve):
     """Provides text output callback functions for Dependency Solver callback."""
 
-    def __init__(self):
-        """requires yum-cli log and errorlog functions as arguments"""
-        self.loops = 0
-
     def pkg_added(self, pkg, mode):
         """Print information about a package being added to the
         transaction set.
@@ -2037,7 +2033,6 @@ class DepSolveProgressCallBack(dnf.callback.Depsolve):
         process.
         """
         logger.debug(_('--> Starting dependency resolution'))
-        self.loops += 1
 
     def end(self):
         """Output a message stating that dependency resolution has finished."""
