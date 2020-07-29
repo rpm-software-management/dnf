@@ -773,8 +773,9 @@ class RepoPkgsCommand(Command):
             'reponame', nargs=1, action=OptionParser._RepoCallbackEnable,
             metavar=_('REPOID'), help=_("Repository ID"))
         subcommand_choices = [subcmd.aliases[0] for subcmd in self.SUBCMDS]
+        subcommand_choices_all = [alias for subcmd in self.SUBCMDS for alias in subcmd.aliases]
         parser.add_argument('subcmd', nargs=1, metavar="SUBCOMMAND",
-                            choices=subcommand_choices, help=", ".join(subcommand_choices))
+                            choices=subcommand_choices_all, help=", ".join(subcommand_choices))
         DEFAULT_PKGNARROW = 'all'
         pkgnarrows = {DEFAULT_PKGNARROW, 'installed', 'available',
                       'autoremove', 'extras', 'obsoletes', 'recent',
