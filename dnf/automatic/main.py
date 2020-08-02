@@ -208,7 +208,7 @@ class CommandConfig(Config):
 
 
 class CommandEmailConfig(CommandConfig):
-    _default_command_format = "mail -s {subject} -r {email_from} {email_to}"
+    _default_command_format = "mail -Ssendwait -s {subject} -r {email_from} {email_to}"
 
     def __init__(self):
         super(CommandEmailConfig, self).__init__()
