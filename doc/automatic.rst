@@ -131,7 +131,7 @@ The command emitter configuration. Variables usable in format string arguments a
 The command email emitter configuration. Variables usable in format string arguments are ``body`` with message body, ``subject`` with email subject, ``email_from`` with the "From:" address and ``email_to`` with a space-separated list of recipients.
 
 ``command_format``
-    format string, default: ``mail -s {subject} -r {email_from} {email_to}``
+    format string, default: ``mail -Ssendwait -s {subject} -r {email_from} {email_to}``
 
     The shell command to execute.
 
