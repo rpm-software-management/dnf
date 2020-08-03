@@ -8,6 +8,7 @@ Wants=network-online.target
 [Timer]
 OnBootSec=10min
 OnUnitInactiveSec=1h
+RandomizedDelaySec=60m
 Unit=dnf-makecache.service
 
 [Install]
