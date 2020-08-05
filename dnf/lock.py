@@ -114,6 +114,18 @@ class ProcessLock(object):
                 os.write(fd, str(pid).encode('utf-8'))
                 return pid
 
+            try:
+                with open('/proc/%d/status' % old_pid) as f:
+                    if not re.findall(r'Name:(.*)(dnf|yum)', f.read(), re.I):
+                        os.write(fd, str(pid).encode('utf-8'))
+                        return pid
+            except OSError as e:
+                msg = _('Malformed lock file found: %s.\n'
+                        'But pid in lock file is invalid '
+                        'Ensure no other dnf/yum process is running and '
+                        'remove the lock file manually.') % (self.target)
+                raise LockError(msg)
+
             return old_pid
 
         finally:
