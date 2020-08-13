@@ -48,7 +48,8 @@ class MakeCacheCommandTest(tests.support.DnfBaseTestCase):
                 new_callable=tests.support.mock_logger)
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.util.on_ac_power', return_value=True)
-    def test_makecache_timer(self, _on_ac_power, logger):
+    @mock.patch('dnf.util.on_metered_connection', return_value=False)
+    def test_makecache_timer(self, _on_ac_power, _on_metered_connection, logger):
         cmd = makecache.MakeCacheCommand(self.cli)
 
         self.base.conf.metadata_timer_sync = 0
@@ -64,7 +65,8 @@ class MakeCacheCommandTest(tests.support.DnfBaseTestCase):
                 new_callable=tests.support.mock_logger)
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.util.on_ac_power', return_value=False)
-    def test_makecache_timer_battery(self, _on_ac_power, logger):
+    @mock.patch('dnf.util.on_metered_connection', return_value=False)
+    def test_makecache_timer_battery(self, _on_ac_power, _on_metered_connection, logger):
         cmd = makecache.MakeCacheCommand(self.cli)
         self.base.conf.metadata_timer_sync = 5
 
@@ -74,7 +76,21 @@ class MakeCacheCommandTest(tests.support.DnfBaseTestCase):
 
     @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
     @mock.patch('dnf.util.on_ac_power', return_value=None)
-    def test_makecache_timer_battery2(self, _on_ac_power):
+    @mock.patch('dnf.util.on_metered_connection', return_value=False)
+    def test_makecache_timer_battery2(self, _on_ac_power, _on_metered_connection):
         cmd = makecache.MakeCacheCommand(self.cli)
         self.base.conf.metadata_timer_sync = 5
         self.assertTrue(self._do_makecache(cmd))
+
+    @mock.patch('dnf.base.logger',
+                new_callable=tests.support.mock_logger)
+    @mock.patch('dnf.cli.commands._', dnf.pycomp.NullTranslations().ugettext)
+    @mock.patch('dnf.util.on_ac_power', return_value=False)
+    @mock.patch('dnf.util.on_metered_connection', return_value=True)
+    def test_makecache_timer_metered(self, _on_ac_power, _on_metered_connection, logger):
+        cmd = makecache.MakeCacheCommand(self.cli)
+        self.base.conf.metadata_timer_sync = 5
+
+        self.assertFalse(self._do_makecache(cmd))
+        msg = u'Metadata timer caching disabled when running on metered connection.'
+        self.assert_last_info(logger, msg)
