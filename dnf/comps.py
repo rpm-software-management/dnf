@@ -670,7 +670,7 @@ class Solver(object):
 
         swdb_group = self.history.group.new(group_id, comps_group.name, comps_group.ui_name, pkg_types)
         for i in comps_group.packages_iter():
-            swdb_group.addPackage(i.name, False, i.type)
+            swdb_group.addPackage(i.name, False, Package._OPT_MAP[i.type])
         self.history.group.install(swdb_group)
 
         trans = TransactionBunch()
@@ -709,7 +709,7 @@ class Solver(object):
         # create a new record for current transaction
         swdb_group = self.history.group.new(group_id, comps_group.name, comps_group.ui_name, pkg_types)
         for i in comps_group.packages_iter():
-            swdb_group.addPackage(i.name, False, i.type)
+            swdb_group.addPackage(i.name, False, Package._OPT_MAP[i.type])
         self.history.group.upgrade(swdb_group)
 
         trans = TransactionBunch()
