@@ -631,7 +631,7 @@ class Solver(object):
     def _environment_upgrade(self, env_id):
         assert dnf.util.is_string_type(env_id)
         comps_env = self.comps._environment_by_id(env_id)
-        swdb_env = self.history.env.get(comps_env.id)
+        swdb_env = self.history.env.get(env_id)
         if not swdb_env:
             raise CompsError(_("Environment '%s' is not installed.") % env_id)
         if not comps_env:
