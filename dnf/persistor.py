@@ -1,7 +1,7 @@
 # persistor.py
 # Persistence data container.
 #
-# Copyright (C) 2013-2016 Red Hat, Inc.
+# Copyright (C) 2013-2020 Red Hat, Inc.
 #
 # This copyrighted material is made available to anyone wishing to use,
 # modify, copy, or redistribute it subject to the terms and conditions of
@@ -28,6 +28,7 @@ from __future__ import unicode_literals
 from dnf.i18n import _
 import distutils.version
 import dnf.util
+
 import errno
 import fnmatch
 import json
@@ -35,33 +36,32 @@ import logging
 import os
 import re
 
+
 logger = logging.getLogger("dnf")
 
 
 class JSONDB(object):
 
-    def _check_json_db(self, json_path):
-        if not os.path.isfile(json_path):
-            # initialize new db
-            dnf.util.ensure_dir(os.path.dirname(json_path))
-            self._write_json_db(json_path, [])
+    def _get_json_db(self, json_path, default=None):
+        if default is None:
+            default = []
 
-    def _get_json_db(self, json_path, default=[]):
-        with open(json_path, 'r') as f:
-            content = f.read()
-        if content == "":
-            # empty file is invalid json format
-            logger.warning(_("%s is empty file"), json_path)
-            self._write_json_db(json_path, default)
-        else:
-            try:
-                default = json.loads(content)
-            except ValueError as e:
-                logger.warning(e)
-        return default
+        try:
+            with open(json_path, 'r') as f:
+                result = json.load(f)
+        except FileNotFoundError:
+            # data on disk not found, use the default value
+            result = default
+        except Exception:
+            # unable to deserialize data on disk, use the default value
+            logger.warning(_("%s doesn't have a valid JSON format"), json_path)
+            result = default
+        return result
 
     @staticmethod
     def _write_json_db(json_path, content):
+        if not os.path.isfile(json_path):
+            dnf.util.ensure_dir(os.path.dirname(json_path))
         with open(json_path, 'w') as f:
             json.dump(content, f)
 
@@ -84,11 +84,9 @@ class RepoPersistor(JSONDB):
         return os.path.join(self.cachedir, "last_makecache")
 
     def get_expired_repos(self):
-        self._check_json_db(self.db_path)
         return set(self._get_json_db(self.db_path))
 
     def save(self):
-        self._check_json_db(self.db_path)
         self._write_json_db(self.db_path, list(self.expired_to_add))
         if self.reset_last_makecache:
             try:
@@ -114,13 +112,11 @@ class TempfilePersistor(JSONDB):
         self._empty = False
 
     def get_saved_tempfiles(self):
-        self._check_json_db(self.db_path)
         return self._get_json_db(self.db_path)
 
     def save(self):
         if not self._empty and not self.tempfiles_to_add:
             return
-        self._check_json_db(self.db_path)
         if self._empty:
             self._write_json_db(self.db_path, [])
             return
