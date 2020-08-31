@@ -17,7 +17,7 @@ import json
 
 import gi
 
-gi.require_version('Modulemd', '1.0')
+gi.require_version('Modulemd', '2.0')
 from gi.repository import Modulemd
 
 MODULES_DIR = os.path.join(os.path.dirname(__file__), "..", "modules")
@@ -64,27 +64,24 @@ for module_id in os.listdir(MODULES_DIR):
             rpms_with_epoch.append(nevra)
         rpms = rpms_with_epoch
 
-        mmd = Modulemd.Module()
-        mmd.set_mdversion(int(1))
-        mmd.set_name(name)
-        mmd.set_stream(stream)
-        mmd.set_version(int(version))
-        sset = Modulemd.SimpleSet()
-        sset.add("LGPLv2")
-        mmd.set_module_licenses(sset)
-        mmd.set_summary("Fake module")
-        mmd.set_description(mmd.peek_summary())
-        artifacts = Modulemd.SimpleSet()
+        module_stream = Modulemd.ModuleStreamV2.new(name, stream)
+        module_stream.set_version(int(version))
+        module_stream.add_module_license("LGPLv2")
+        module_stream.set_summary("Fake module")
+        module_stream.set_description(module_stream.get_summary())
         for rpm in rpms:
-            artifacts.add(rpm[:-4])
-        mmd.set_rpm_artifacts(artifacts)
+            module_stream.add_rpm_artifact(rpm[:-4])
         for profile_name in profiles:
-            profile = Modulemd.Profile()
-            profile.set_name(profile_name)
+            profile = Modulemd.Profile.new(profile_name)
             profile.set_description("Description for profile %s." % profile_name)
-            profile_rpms = Modulemd.SimpleSet()
-            profile_rpms.set(profiles[profile_name]["rpms"])
-            profile.set_rpms(profile_rpms)
-            mmd.add_profile(profile)
 
-        Modulemd.dump([mmd], os.path.join(module_dir, "%s.%s.yaml" % (module_id, arch)))
+            for profile_rpm in profiles[profile_name]["rpms"]:
+                profile.add_rpm(profile_rpm)
+
+            module_stream.add_profile(profile)
+
+        module_index = Modulemd.ModuleIndex()
+        module_index.add_module_stream(module_stream)
+
+        with open(os.path.join(module_dir, "%s.%s.yaml" % (module_id, arch)), 'w') as f:
+            f.write(module_index.dump_to_string())

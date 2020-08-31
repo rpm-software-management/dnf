@@ -4,7 +4,7 @@
 # default dependencies
 %global hawkey_version 0.55.1
 %global libcomps_version 0.1.8
-%global libmodulemd_version 1.4.0
+%global libmodulemd_version 2.9.3
 %global rpm_version 4.14.0
 
 # conflicts
@@ -181,7 +181,6 @@ BuildRequires:  python2-libcomps >= %{libcomps_version}
 BuildRequires:  python2-libdnf
 BuildRequires:  python2-nose
 BuildRequires:  libmodulemd >= %{libmodulemd_version}
-Requires:       libmodulemd >= %{libmodulemd_version}
 %if (0%{?rhel} && 0%{?rhel} <= 7)
 BuildRequires:  pygpgme
 Requires:       pygpgme
@@ -228,7 +227,6 @@ BuildRequires:  python3-libdnf >= %{hawkey_version}
 BuildRequires:  python3-libcomps >= %{libcomps_version}
 BuildRequires:  python3-libdnf
 BuildRequires:  libmodulemd >= %{libmodulemd_version}
-Requires:       libmodulemd >= %{libmodulemd_version}
 BuildRequires:  python3-nose
 BuildRequires:  python3-gpg
 Requires:       python3-gpg
