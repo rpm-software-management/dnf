@@ -1,6 +1,6 @@
 ---
 document: modulemd
-version: 1
+version: 2
 data:
   name: m4
   stream: 1.4.18
