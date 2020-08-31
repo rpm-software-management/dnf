@@ -12,7 +12,7 @@ import subprocess
 import tempfile
 
 import gi
-gi.require_version('Modulemd', '1.0')
+gi.require_version('Modulemd', '2.0')
 from gi.repository import Modulemd
 
 
@@ -35,21 +35,27 @@ def get_parser():
 
 
 def index_modulemd_files(repo_path):
-    result = []
+    merger = Modulemd.ModuleIndexMerger()
     for fn in sorted(os.listdir(repo_path)):
         if not fn.endswith(".yaml"):
             continue
         yaml_path = os.path.join(repo_path, fn)
-        mmd = Modulemd.objects_from_file_ext(yaml_path)
-        result.append(mmd[0][0])
-    return result
+
+        mmd = Modulemd.ModuleIndex()
+        mmd.update_from_file(yaml_path, strict=True)
+
+        merger.associate_index(mmd, 0)
+
+    return merger.resolve()
 
 
-def modify_repo(repo_path, modules):
+def modify_repo(repo_path, module_index):
     tmp = tempfile.mkdtemp()
     path = os.path.join(tmp, "modules.yaml")
-    for module in modules:
-        Modulemd.dump(modules, path)
+
+    with open(path, 'w') as f:
+        f.write(module_index.dump_to_string())
+
     subprocess.check_call(["modifyrepo_c", "--mdtype=modules", path,
                            os.path.join(repo_path, "repodata")])
     os.unlink(path)
@@ -60,5 +66,5 @@ if __name__ == "__main__":
     parser = get_parser()
     args = parser.parse_args()
 
-    modules = index_modulemd_files(args.path)
-    modify_repo(args.path, modules)
+    module_index = index_modulemd_files(args.path)
+    modify_repo(args.path, module_index)
