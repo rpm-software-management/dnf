@@ -637,7 +637,7 @@ class Solver(object):
         if not comps_env:
             raise CompsError(_("Environment '%s' is not available.") % env_id)
 
-        old_set = set([i.getGroupId() for i in swdb_env.getGroups() if i.getInstalled()])
+        old_set = set([i.getGroupId() for i in swdb_env.getGroups()])
         pkg_types = swdb_env.getPackageTypes()
 
         # create a new record for current transaction
@@ -646,8 +646,9 @@ class Solver(object):
         trans = TransactionBunch()
         for comps_group in comps_env.mandatory_groups:
             if comps_group.id in old_set:
-                # upgrade existing group
-                trans += self._group_upgrade(comps_group.id)
+                if self.history.group.get(comps_group.id):
+                    # upgrade installed group
+                    trans += self._group_upgrade(comps_group.id)
             else:
                 # install new group
                 trans += self._group_install(comps_group.id, pkg_types)
