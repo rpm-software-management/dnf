@@ -1685,13 +1685,11 @@ class Base(object):
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.INSTALLED)
         group_upgraded = False
-        done = True
         for pattern in patterns:
             try:
                 res = q.get(pattern)
             except dnf.exceptions.CompsError as err:
                 logger.error(ucd(err))
-                done = False
                 continue
             for env in res.environments:
                 try:
@@ -1707,8 +1705,6 @@ class Base(object):
                 except dnf.exceptions.CompsError as err:
                     logger.error(ucd(err))
                     continue
-        if not done:
-            raise dnf.exceptions.Error(_('Nothing to do.'))
         if not group_upgraded:
             msg = _('No group marked for upgrade.')
             raise dnf.cli.CliError(msg)
