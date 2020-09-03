@@ -102,7 +102,7 @@ configuration file by your distribution to override the DNF defaults.
 
     ``True`` instructs the solver to either use a package with the highest available
     version or fail. On ``False``, do not fail if the latest version cannot be
-    installed and go with the lower version. The default is ``True``.  Note
+    installed and go with the lower version. The default is ``False``.  Note
     this option in particular :ref:`can be set in your configuration file by
     your distribution <conf_distribution_specific-label>`.
 
