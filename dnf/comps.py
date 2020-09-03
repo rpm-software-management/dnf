@@ -655,6 +655,9 @@ class Solver(object):
             swdb_env.addGroup(comps_group.id, True, MANDATORY)
 
         for comps_group in comps_env.optional_groups:
+            if comps_group.id in old_set and self.history.group.get(comps_group.id):
+                # upgrade installed group
+                trans += self._group_upgrade(comps_group.id)
             swdb_env.addGroup(comps_group.id, False, OPTIONAL)
             # TODO: if a group is already installed, mark it as installed?
         self.history.env.upgrade(swdb_env)
