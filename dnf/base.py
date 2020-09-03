@@ -1683,7 +1683,7 @@ class Base(object):
         q = CompsQuery(self.comps, self.history,
                        CompsQuery.GROUPS | CompsQuery.ENVIRONMENTS,
                        CompsQuery.INSTALLED)
-        cnt = 0
+        group_upgraded = False
         done = True
         for pattern in patterns:
             try:
@@ -1694,19 +1694,21 @@ class Base(object):
                 continue
             for env in res.environments:
                 try:
-                    cnt += self.environment_upgrade(env)
+                    self.environment_upgrade(env)
+                    group_upgraded = True
                 except dnf.exceptions.CompsError as err:
                     logger.error(ucd(err))
                     continue
             for grp in res.groups:
                 try:
-                    cnt += self.group_upgrade(grp)
+                    self.group_upgrade(grp)
+                    group_upgraded = True
                 except dnf.exceptions.CompsError as err:
                     logger.error(ucd(err))
                     continue
         if not done:
             raise dnf.exceptions.Error(_('Nothing to do.'))
-        if not cnt:
+        if not group_upgraded:
             msg = _('No group marked for upgrade.')
             raise dnf.cli.CliError(msg)
 
