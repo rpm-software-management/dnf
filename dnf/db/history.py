@@ -381,6 +381,9 @@ class SwdbInterface(object):
                 prev_trans.altered_gt_rpmdb = True
         return result[::-1]
 
+    def get_current(self):
+        return TransactionWrapper(self.swdb.getCurrent())
+
     def set_reason(self, pkg, reason):
         """Set reason for package"""
         rpm_item = self.rpm._pkg_to_swdb_rpm_item(pkg)
