@@ -28,7 +28,7 @@ import random
 import socket
 import time
 
-from dnf.i18n import _, ucd
+from dnf.i18n import _, ucd, P_
 import dnf
 import dnf.automatic.emitter
 import dnf.cli
@@ -305,7 +305,7 @@ def main(args):
 
             if opts.timer:
                 sleeper = random.randint(0, conf.commands.random_sleep)
-                logger.debug(_('Sleep for %s seconds'), sleeper)
+                logger.debug(P_('Sleep for {} second', 'Sleep for {} seconds', sleeper).format(sleeper))
                 time.sleep(sleeper)
 
             base.pre_configure_plugins()
