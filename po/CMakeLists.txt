@@ -8,6 +8,14 @@ find_package(Git)
 find_package(Gettext)
 
 if (GIT_FOUND)
+    # detect current git branch
+    execute_process(
+        COMMAND ${GIT_EXECUTABLE} symbolic-ref --short -q HEAD
+        COMMAND tr -d '[:space:]'
+        OUTPUT_VARIABLE CURRENT_BRANCH
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        )
+
     # output _weblate-clone is never created so the clonning of weblate repo is always processed
     # and fresh *.po files are used
     add_custom_command(OUTPUT _weblate-clone
@@ -20,8 +28,8 @@ if (GIT_FOUND)
     add_custom_target(gettext-update
         COMMENT "Updating translation files from weblate repo"
 
-        COMMAND ${CMAKE_COMMAND} -E copy ${WEBLATE_REPO_PATH}/*.po .
-        COMMAND ${CMAKE_COMMAND} -E copy ${WEBLATE_REPO_PATH}/${PROJECT_NAME}.pot .
+        COMMAND ${CMAKE_COMMAND} -E copy ${WEBLATE_REPO_PATH}/${CURRENT_BRANCH}/*.po .
+        COMMAND ${CMAKE_COMMAND} -E copy ${WEBLATE_REPO_PATH}/${CURRENT_BRANCH}/${PROJECT_NAME}.pot .
         COMMAND ${CMAKE_SOURCE_DIR}/scripts/sanitize_po_files.py *.po
 
         DEPENDS _weblate-clone
