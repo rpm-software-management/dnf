@@ -42,7 +42,7 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
   .. attribute:: substitutions
 
-    A mapping of substitutions used in repositories' remote URL configuration. The commonly used ones are:
+    An instance of :class:`dnf.conf.substitutions.Substitutions` class. A mapping of substitutions used in repositories' remote URL configuration. The commonly used ones are:
 
     ==========     ============================================== ============
     key            meaning                                        default
@@ -88,3 +88,10 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
     Update or create config file. Where `filename` represents name of config file (.conf or .repo); `section_id`
     represents id of modified section (e.g. main, fedora, updates); `substitutions` represents an instance of
     base.conf.substitutions; `modify` represents dict of modified options.
+
+
+.. class:: dnf.conf.substitutions.Substitutions
+
+  .. method:: update_from_etc(installroot, varsdir=("/etc/yum/vars/", "/etc/dnf/vars/"))
+
+    Read user-defined variables values from variable directories. See :ref:`variable files <varfiles-label>` in Configuration reference.
