@@ -972,6 +972,7 @@ Files
     Any properly named file in /etc/dnf/vars is turned into a variable named after the filename (or
     overrides any of the above variables but those set from commandline). Filenames may contain only
     alphanumeric characters and underscores and be in lowercase.
+    Variables are also read from /etc/yum/vars for YUM compatibility reasons.
 
 ==========
  See Also
