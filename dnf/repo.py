@@ -460,7 +460,7 @@ class Repo(dnf.conf.RepoConf):
     def pkgdir(self):
         # :api
         if self._repo.isLocal():
-            return dnf.util.strip_prefix(self.baseurl[0], 'file://')
+            return self._repo.getLocalBaseurl()
         return self.cache_pkgdir()
 
     def cache_pkgdir(self):

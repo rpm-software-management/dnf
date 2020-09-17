@@ -1149,7 +1149,7 @@ class Base(object):
         if self.conf.destdir:
             for pkg in local_pkgs:
                 if pkg.baseurl:
-                    location = os.path.join(pkg.baseurl.replace("file://", ""),
+                    location = os.path.join(pkg.get_local_baseurl(),
                                             pkg.location.lstrip("/"))
                 else:
                     location = os.path.join(pkg.repo.pkgdir, pkg.location.lstrip("/"))

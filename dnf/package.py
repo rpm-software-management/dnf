@@ -244,7 +244,7 @@ class Package(hawkey.Package):
             return self.location
         loc = self.location
         if self.repo._repo.isLocal() and self.baseurl and self.baseurl.startswith('file://'):
-            return os.path.join(self.baseurl, loc.lstrip("/"))[7:]
+            return os.path.join(self.get_local_baseurl(), loc.lstrip("/"))
         if not self._is_local_pkg():
             loc = os.path.basename(loc)
         return os.path.join(self.pkgdir, loc.lstrip("/"))
