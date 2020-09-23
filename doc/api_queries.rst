@@ -188,14 +188,13 @@
     searched for a match. `forms` is a list of pattern forms from `hawkey`_. Leaving the parameter
     to ``None`` results in using a reasonable default list of forms.
 
-  .. method:: get_best_selector(sack, forms=None, obsoletes=True, reponame=None, reports=False)
+  .. method:: get_best_selector(sack, forms=None, obsoletes=True, reponame=None)
 
     Returns a :class:`~dnf.selector.Selector` that will select a single best-matching package when
     used in a transaction operation. `sack` and `forms` have the same meaning as in
     :meth:`get_best_query`. If ``obsoletes``, selector will also contain packages that obsoletes
     requested packages (default is True). If ``reponame``, the selection of available packages is
-    limited to packages from that repo (default is None). Attribute ``reports`` is deprecated and
-    not used any more. Will be removed on 2018-01-01.
+    limited to packages from that repo (default is None).
 
   .. method:: get_nevra_possibilities(self, forms=None)
 
