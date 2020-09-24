@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 
 import logging
 import collections
+import gzip
 import operator
 import os
 import tempfile
@@ -183,3 +184,25 @@ class TestLogging(tests.support.TestCase):
             self.logdir, self.log_size, self.log_rotate, self.log_compress)
         # no new handlers
         self.assertEqual(cnt, len(logger.handlers))
+
+    def test_log_compression(self):
+        # log nothing to the console and set log_compress=True and log_size to minimal size, so it's always rotated:
+        self.logging._setup(
+            dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL, dnf.logging.TRACE,
+            self.logdir, log_size=1, log_rotate=self.log_rotate, log_compress=True)
+        logger = logging.getLogger("dnf")
+        with tests.support.patch_std_streams() as (stdout, stderr):
+            logger.info("i")
+            logger.critical("c")
+        logfile = os.path.join(self.logdir, "dnf.log")
+        self.assertFile(logfile)
+        with open(logfile) as f:
+            msgs = map(operator.attrgetter("message"),
+                       map(_split_logfile_entry, f.readlines()))
+        self.assertSequenceEqual(list(msgs), ['c'])
+        logfile_rotated = os.path.join(self.logdir, "dnf.log.1.gz")
+        self.assertFile(logfile_rotated)
+        with gzip.open(logfile_rotated, 'rt') as f:
+            msgs = map(operator.attrgetter("message"),
+                       map(_split_logfile_entry, f.readlines()))
+        self.assertSequenceEqual(list(msgs), ['i'])
