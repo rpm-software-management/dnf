@@ -46,7 +46,8 @@ class DnfConfTest(TestCase):
         self.assertHasType(dnf.conf.config.PRIO_RUNTIME, int)
 
     def test_get_reposdir(self):
-        # Conf.get_reposiir
+        # Conf.get_reposdir
+        self.conf.reposdir = ["."]
         self.assertHasAttr(self.conf, "get_reposdir")
         self.assertHasType(self.conf.get_reposdir, str)
 
