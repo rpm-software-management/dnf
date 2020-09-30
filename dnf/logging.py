@@ -144,8 +144,8 @@ def _create_filehandler(logfile, log_size, log_rotate, log_compress):
         os.chmod(logfile, 0o644)
     handler = MultiprocessRotatingFileHandler(logfile, maxBytes=log_size, backupCount=log_rotate)
     formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s",
-                                  "%Y-%m-%dT%H:%M:%SZ")
-    formatter.converter = time.gmtime
+                                  "%Y-%m-%dT%H:%M:%S%z")
+    formatter.converter = time.localtime
     handler.setFormatter(formatter)
     if log_compress:
         handler.rotator = compression_rotator
