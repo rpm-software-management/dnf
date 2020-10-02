@@ -257,6 +257,7 @@ class TransactionReplay(object):
         try:
             action = pkg_data["action"]
             nevra = pkg_data["nevra"]
+            repo_id = pkg_data["repo_id"]
             reason = libdnf.transaction.StringToTransactionItemReason(pkg_data["reason"])
         except KeyError as e:
             raise TransactionError(
@@ -281,6 +282,18 @@ class TransactionReplay(object):
 
         epoch = parsed_nevra.epoch if parsed_nevra.epoch is not None else 0
         query = query_na.filter(epoch=epoch, version=parsed_nevra.version, release=parsed_nevra.release)
+
+        # In case the package is found in the same repo as in the original
+        # transaction, limit the query to that plus installed packages. IOW
+        # remove packages with the same NEVRA in case they are found in
+        # multiple repos and the repo the package came from originally is one
+        # of them.
+        # This can e.g. make a difference in the system-upgrade plugin, in case
+        # the same NEVRA is in two repos, this makes sure the same repo is used
+        # for both download and upgrade steps of the plugin.
+        query_repo = query.filter(reponame=repo_id)
+        if query_repo:
+            query = query_repo.union(query.installed())
 
         if not query:
             self._raise_or_warn(self._skip_unavailable, _('Cannot find rpm nevra "{nevra}".').format(nevra=nevra))
