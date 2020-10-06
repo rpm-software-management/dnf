@@ -13,8 +13,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-09-14 09:18-0400\n"
-"PO-Revision-Date: 2020-09-15 11:18+0000\n"
+"POT-Creation-Date: 2020-10-05 09:18-0400\n"
+"PO-Revision-Date: 2020-10-06 08:38+0000\n"
 "Last-Translator: scootergrisen <scootergrisen@gmail.com>\n"
 "Language-Team: Danish <https://translate.fedoraproject.org/projects/dnf/dnf-master/da/>\n"
 "Language: da\n"
@@ -177,7 +177,7 @@ msgstr "Ignorerer softwarearkiver: %s"
 msgid "Last metadata expiration check: %s ago on %s."
 msgstr "Sidste tjek af metadataudløb: %s siden %s."
 
-#: dnf/base.py:442
+#: dnf/base.py:443
 msgid ""
 "The downloaded packages were saved in cache until the next successful "
 "transaction."
@@ -185,97 +185,97 @@ msgstr ""
 "De downloadede pakker blev gemt i mellemlageret indtil næste transaktion som"
 " lykkedes."
 
-#: dnf/base.py:444
+#: dnf/base.py:445
 #, python-format
 msgid "You can remove cached packages by executing '%s'."
 msgstr "Du kan fjern mellemlagrede pakker ved at udføre '%s'."
 
-#: dnf/base.py:533
+#: dnf/base.py:535
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "Ugyldigt tsflag i konfigurationsfilen: %s"
 
-#: dnf/base.py:589
+#: dnf/base.py:591
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Tilføjelse af gruppefil fejlede for følgende softwarearkiv: %s - %s"
 
-#: dnf/base.py:821
+#: dnf/base.py:823
 msgid "Running transaction check"
 msgstr "Kører transaktionskontrol"
 
-#: dnf/base.py:829
+#: dnf/base.py:831
 msgid "Error: transaction check vs depsolve:"
 msgstr "Fejl: transaktionstjek vs. depsolve:"
 
-#: dnf/base.py:835
+#: dnf/base.py:837
 msgid "Transaction check succeeded."
 msgstr "Transaktionstest afsluttet uden fejl."
 
-#: dnf/base.py:838
+#: dnf/base.py:840
 msgid "Running transaction test"
 msgstr "Kører transaktionstest"
 
-#: dnf/base.py:848 dnf/base.py:990
+#: dnf/base.py:850 dnf/base.py:992
 msgid "RPM: {}"
 msgstr "RPM: {}"
 
-#: dnf/base.py:849
+#: dnf/base.py:851
 msgid "Transaction test error:"
 msgstr "Fejl ved test af transaktion:"
 
-#: dnf/base.py:860
+#: dnf/base.py:862
 msgid "Transaction test succeeded."
 msgstr "Transaktionstest afsluttet uden fejl."
 
-#: dnf/base.py:881
+#: dnf/base.py:883
 msgid "Running transaction"
 msgstr "Kører transaktion"
 
-#: dnf/base.py:909
+#: dnf/base.py:911
 msgid "Disk Requirements:"
 msgstr "Diskkrav:"
 
-#: dnf/base.py:912
+#: dnf/base.py:914
 #, python-brace-format
 msgid "At least {0}MB more space needed on the {1} filesystem."
 msgid_plural "At least {0}MB more space needed on the {1} filesystem."
 msgstr[0] "Der kræves mindst {0}MB mere plads på {1}-filsystemet."
 msgstr[1] "Der kræves mindst {0}MB mere plads på {1}-filsystemet."
 
-#: dnf/base.py:919
+#: dnf/base.py:921
 msgid "Error Summary"
 msgstr "Fejlopsummering"
 
-#: dnf/base.py:945
+#: dnf/base.py:947
 #, python-brace-format
 msgid "RPMDB altered outside of {prog}."
 msgstr "RPMDB ændret udenfor {prog}."
 
-#: dnf/base.py:991 dnf/base.py:999
+#: dnf/base.py:993 dnf/base.py:1001
 msgid "Could not run transaction."
 msgstr "Kunne ikke køre transaktion."
 
-#: dnf/base.py:994
+#: dnf/base.py:996
 msgid "Transaction couldn't start:"
 msgstr "Transaktion kunne ikke starte:"
 
-#: dnf/base.py:1008
+#: dnf/base.py:1010
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Kunne ikke slette transaktionsfilen %s"
 
-#: dnf/base.py:1090
+#: dnf/base.py:1092
 msgid "Some packages were not downloaded. Retrying."
 msgstr "Nogle pakker blev ikke downloadet - Prøver igen."
 
-#: dnf/base.py:1120
+#: dnf/base.py:1122
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
 msgstr ""
 "Delta RPMs reducerede %.1f MB af opdateringen til %.1f MB (%d.1%% sparet)"
 
-#: dnf/base.py:1123
+#: dnf/base.py:1125
 #, python-format
 msgid ""
 "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
@@ -283,75 +283,75 @@ msgstr ""
 "Mislykkede delta-RPM'er øgede %.1f MB af opdatering til %.1f MB (%d.1%% "
 "spildt)"
 
-#: dnf/base.py:1165
+#: dnf/base.py:1167
 msgid "Cannot add local packages, because transaction job already exists"
 msgstr "Kan ikke tilføje lokale pakker, da transaktionsjobbet allerede findes"
 
-#: dnf/base.py:1179
+#: dnf/base.py:1181
 msgid "Could not open: {}"
 msgstr "Kunne ikke åbne: {}"
 
-#: dnf/base.py:1217
+#: dnf/base.py:1219
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "Offentlig nøgle for %s er ikke installeret"
 
-#: dnf/base.py:1221
+#: dnf/base.py:1223
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Kunne ikke åbne pakke %s"
 
-#: dnf/base.py:1229
+#: dnf/base.py:1231
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "Offentlig nøgle for %s er ikke sikker"
 
-#: dnf/base.py:1233
+#: dnf/base.py:1235
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Pakken %s er ikke signeret"
 
-#: dnf/base.py:1263
+#: dnf/base.py:1265
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Kan ikke fjerne %s"
 
-#: dnf/base.py:1267
+#: dnf/base.py:1269
 #, python-format
 msgid "%s removed"
 msgstr "%s fjernet"
 
-#: dnf/base.py:1547
+#: dnf/base.py:1549
 msgid "No match for group package \"{}\""
 msgstr "Intet match til gruppepakken \"{}\""
 
-#: dnf/base.py:1633
+#: dnf/base.py:1635
 #, python-format
 msgid "Adding packages from group '%s': %s"
 msgstr "Tilføjer pakker fra gruppen '%s': %s"
 
-#: dnf/base.py:1656 dnf/cli/cli.py:219 dnf/cli/commands/__init__.py:442
+#: dnf/base.py:1658 dnf/cli/cli.py:219 dnf/cli/commands/__init__.py:442
 #: dnf/cli/commands/__init__.py:499 dnf/cli/commands/__init__.py:592
 #: dnf/cli/commands/__init__.py:641 dnf/cli/commands/install.py:80
 #: dnf/cli/commands/install.py:103 dnf/cli/commands/install.py:110
 msgid "Nothing to do."
 msgstr "Intet at udføre."
 
-#: dnf/base.py:1674
+#: dnf/base.py:1676
 msgid "No groups marked for removal."
 msgstr "Ingen grupper mærket til fjernelse."
 
-#: dnf/base.py:1708
+#: dnf/base.py:1710
 msgid "No group marked for upgrade."
 msgstr "Ingen gruppe mærket til opgradering."
 
-#: dnf/base.py:1923
+#: dnf/base.py:1925
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
 msgstr "Pakken %s er ikke installeret, kan ikke nedgradere den."
 
-#: dnf/base.py:1925 dnf/base.py:1944 dnf/base.py:1957 dnf/base.py:1978
-#: dnf/base.py:2027 dnf/base.py:2035 dnf/base.py:2170 dnf/cli/cli.py:411
+#: dnf/base.py:1927 dnf/base.py:1946 dnf/base.py:1959 dnf/base.py:1980
+#: dnf/base.py:2029 dnf/base.py:2037 dnf/base.py:2172 dnf/cli/cli.py:411
 #: dnf/cli/commands/__init__.py:425 dnf/cli/commands/__init__.py:482
 #: dnf/cli/commands/__init__.py:586 dnf/cli/commands/__init__.py:633
 #: dnf/cli/commands/__init__.py:711 dnf/cli/commands/install.py:147
@@ -361,29 +361,29 @@ msgstr "Pakken %s er ikke installeret, kan ikke nedgradere den."
 msgid "No match for argument: %s"
 msgstr "Intet match for argument: %s"
 
-#: dnf/base.py:1932
+#: dnf/base.py:1934
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
 msgstr ""
 "Pakken %s af lavere version er allerede installeret - kan ikke nedgradere "
 "den."
 
-#: dnf/base.py:1955
+#: dnf/base.py:1957
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
 msgstr "Pakken %s er ikke installeret, kan ikke geninstallere den."
 
-#: dnf/base.py:1970
+#: dnf/base.py:1972
 #, python-format
 msgid "File %s is a source package and cannot be updated, ignoring."
 msgstr "Filen %s er en kildepakke og kan ikke opdateres - ignorerer."
 
-#: dnf/base.py:1976
+#: dnf/base.py:1978
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr "Pakken %s er ikke installeret, så den kan ikke opdateres."
 
-#: dnf/base.py:1985
+#: dnf/base.py:1987
 #, python-format
 msgid ""
 "The same or higher version of %s is already installed, cannot update it."
@@ -391,123 +391,123 @@ msgstr ""
 "Den samme eller højere version af %s er allerede installeret - kan ikke "
 "opdatere den."
 
-#: dnf/base.py:2024 dnf/cli/commands/reinstall.py:81
+#: dnf/base.py:2026 dnf/cli/commands/reinstall.py:81
 #, python-format
 msgid "Package %s available, but not installed."
 msgstr "Pakke %s tilgængelig, men ikke installeret."
 
-#: dnf/base.py:2030
+#: dnf/base.py:2032
 #, python-format
 msgid "Package %s available, but installed for different architecture."
 msgstr "Pakken %s er tilgængelig - men installeret til anden arkitektur."
 
-#: dnf/base.py:2055 dnf/base.py:2248 dnf/cli/cli.py:668 dnf/cli/cli.py:699
+#: dnf/base.py:2057 dnf/base.py:2250 dnf/cli/cli.py:668 dnf/cli/cli.py:699
 #, python-format
 msgid "No package %s installed."
 msgstr "Pakken %s ikke installeret."
 
-#: dnf/base.py:2073 dnf/cli/commands/install.py:136
+#: dnf/base.py:2075 dnf/cli/commands/install.py:136
 #: dnf/cli/commands/remove.py:133
 #, python-format
 msgid "Not a valid form: %s"
 msgstr "Ikke en gyldig form: %s"
 
-#: dnf/base.py:2089 dnf/cli/commands/__init__.py:681
+#: dnf/base.py:2091 dnf/cli/commands/__init__.py:681
 #: dnf/cli/commands/remove.py:163
 msgid "No packages marked for removal."
 msgstr "Ingen pakker markeret til fjernelse."
 
-#: dnf/base.py:2177 dnf/cli/cli.py:422
+#: dnf/base.py:2179 dnf/cli/cli.py:422
 #, python-format
 msgid "Packages for argument %s available, but not installed."
 msgstr "Pakker til argumentet %s tilgængelige, min ikke installeret."
 
-#: dnf/base.py:2182
+#: dnf/base.py:2184
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr ""
 "Pakken %s af laveste version er allerede installeret - kan ikke nedgradere "
 "den."
 
-#: dnf/base.py:2240
+#: dnf/base.py:2242
 msgid "Action not handled: {}"
 msgstr "Handling ikke håndteret: {}"
 
-#: dnf/base.py:2254 dnf/cli/cli.py:419 dnf/cli/cli.py:673 dnf/cli/cli.py:703
+#: dnf/base.py:2256 dnf/cli/cli.py:419 dnf/cli/cli.py:673 dnf/cli/cli.py:703
 #: dnf/cli/commands/group.py:400 dnf/cli/commands/history.py:169
 #, python-format
 msgid "No package %s available."
 msgstr "Pakken %s er ikke tilgængelig."
 
-#: dnf/base.py:2267
+#: dnf/base.py:2269
 msgid "no package matched"
 msgstr "ingen pakke matchede"
 
-#: dnf/base.py:2288
+#: dnf/base.py:2290
 msgid "No security updates needed, but {} update available"
 msgstr ""
 "Ingen sikkerhedsopdateringer nødvendige, men {} opdatering tilgængelig"
 
-#: dnf/base.py:2290
+#: dnf/base.py:2292
 msgid "No security updates needed, but {} updates available"
 msgstr ""
 "Ingen sikkerhedsopdateringer nødvendige, men {} opdateringer tilgængelige"
 
-#: dnf/base.py:2294
+#: dnf/base.py:2296
 msgid "No security updates needed for \"{}\", but {} update available"
 msgstr ""
 "Ingen sikkerhedsopdateringer nødvendige for \"{}\", men {} opdatering "
 "tilgængelig"
 
-#: dnf/base.py:2296
+#: dnf/base.py:2298
 msgid "No security updates needed for \"{}\", but {} updates available"
 msgstr ""
 "Ingen sikkerhedsopdateringer nødvendige for \"{}\", men {} opdateringer "
 "tilgængelige"
 
 #. raise an exception, because po.repoid is not in self.repos
-#: dnf/base.py:2317
+#: dnf/base.py:2319
 #, python-format
 msgid "Unable to retrieve a key for a commandline package: %s"
 msgstr "Kan ikke indhente en nøgle til en kommandolinjepakke: %s"
 
-#: dnf/base.py:2325
+#: dnf/base.py:2327
 #, python-format
 msgid ". Failing package is: %s"
 msgstr ". Mislykkede pakke er: %s"
 
-#: dnf/base.py:2326
+#: dnf/base.py:2328
 #, python-format
 msgid "GPG Keys are configured as: %s"
 msgstr "GPG-nøgler er konfigureret som: %s"
 
-#: dnf/base.py:2338
+#: dnf/base.py:2340
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "GPG-nøgle på %s (0x%s) er allerede installeret"
 
-#: dnf/base.py:2371
+#: dnf/base.py:2373
 msgid "The key has been approved."
 msgstr "Nøglen er blevet godkendt."
 
-#: dnf/base.py:2374
+#: dnf/base.py:2376
 msgid "The key has been rejected."
 msgstr "Nøglen er blevet afvist."
 
-#: dnf/base.py:2407
+#: dnf/base.py:2409
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Import af nøgle mislykkedes (kode %d)"
 
-#: dnf/base.py:2409
+#: dnf/base.py:2411
 msgid "Key imported successfully"
 msgstr "Nøglen blev importeret"
 
-#: dnf/base.py:2413
+#: dnf/base.py:2415
 msgid "Didn't install any keys"
 msgstr "Installerede ingen nøgler"
 
-#: dnf/base.py:2416
+#: dnf/base.py:2418
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
@@ -516,27 +516,27 @@ msgstr ""
 "De GPG-nøgler som vises for \"%s\"-softwarearkivet er allerede installeret, men de er ikke korrekte for denne pakke.\n"
 "Kontrollér at konfigurationen af nøgle-URL'er er korrekt for dette softwarearkiv."
 
-#: dnf/base.py:2427
+#: dnf/base.py:2429
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Import af nøgle(r) hjalp ikke, forkerte nøgle(r)?"
 
-#: dnf/base.py:2480
+#: dnf/base.py:2482
 msgid "  * Maybe you meant: {}"
 msgstr "  * Måske mente du: {}"
 
-#: dnf/base.py:2512
+#: dnf/base.py:2514
 msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
 msgstr "Pakken \"{}\" fra lokalt softwarearkiv \"{}\" har ukorrekt tjeksum"
 
-#: dnf/base.py:2515
+#: dnf/base.py:2517
 msgid "Some packages from local repository have incorrect checksum"
 msgstr "Nogle pakker fra lokalt softwarearkiv har ukorrekte tjeksumme"
 
-#: dnf/base.py:2518
+#: dnf/base.py:2520
 msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
 msgstr "Pakken \"{}\" fra softwarearkivet \"{}\" har ukorrekt tjeksum"
 
-#: dnf/base.py:2521
+#: dnf/base.py:2523
 msgid ""
 "Some packages have invalid cache, but cannot be downloaded due to \"--"
 "cacheonly\" option"
@@ -544,23 +544,23 @@ msgstr ""
 "Nogle pakker har ugyldigt mellemlager, men kan ikke downloades pga. \"--"
 "cacheonly\"-tilvalg"
 
-#: dnf/base.py:2539 dnf/base.py:2559
+#: dnf/base.py:2541 dnf/base.py:2561
 msgid "No match for argument"
 msgstr "Intet match for argument"
 
-#: dnf/base.py:2547 dnf/base.py:2567
+#: dnf/base.py:2549 dnf/base.py:2569
 msgid "All matches were filtered out by exclude filtering for argument"
 msgstr "Alle match blev filtreret ud af ekskluder-filtrering for argument"
 
-#: dnf/base.py:2549
+#: dnf/base.py:2551
 msgid "All matches were filtered out by modular filtering for argument"
 msgstr "Alle match blev filtreret ud af modulær-filtrering for argument"
 
-#: dnf/base.py:2565
+#: dnf/base.py:2567
 msgid "All matches were installed from a different repository for argument"
 msgstr "Alle match blev installeret fra et andet softwarearkiv for argument"
 
-#: dnf/base.py:2581
+#: dnf/base.py:2583
 #, python-format
 msgid "Package %s is already installed."
 msgstr "Pakken %s er allerede installeret."
@@ -1144,19 +1144,19 @@ msgstr "vis forældede pakker"
 msgid "show problems with provides"
 msgstr "vis problemer med udbydere"
 
-#: dnf/cli/commands/check.py:97
+#: dnf/cli/commands/check.py:98
 msgid "{} has missing requires of {}"
 msgstr "{} har manglende krav af {}"
 
-#: dnf/cli/commands/check.py:117
+#: dnf/cli/commands/check.py:118
 msgid "{} is a duplicate with {}"
 msgstr "{} er et duplikat med {}"
 
-#: dnf/cli/commands/check.py:128
+#: dnf/cli/commands/check.py:129
 msgid "{} is obsoleted by {}"
 msgstr "{} er forældet af {}"
 
-#: dnf/cli/commands/check.py:137
+#: dnf/cli/commands/check.py:138
 msgid "{} provides {} but it cannot be found"
 msgstr "{} leverer {} men den kan ikke findes"
 
@@ -1302,25 +1302,31 @@ msgstr "vis eller brug transaktionshistorikken"
 
 #: dnf/cli/commands/history.py:66
 msgid "For the store command, file path to store the transaction to"
-msgstr ""
+msgstr "Til store-kommandoen, filsti hvor transaktionen skal gemmes i"
 
 #: dnf/cli/commands/history.py:68
 msgid ""
 "For the replay command, don't check for installed packages matching those in"
 " transaction"
 msgstr ""
+"Til replay-kommandoen, tjek ikke efter installerede pakker som matcher dem i"
+" transaktionen"
 
 #: dnf/cli/commands/history.py:71
 msgid ""
 "For the replay command, don't check for extra packages pulled into the "
 "transaction"
 msgstr ""
+"Til replay-kommandoen, tjek ikke for ekstra pakker som er trukket ind i "
+"transaktionen"
 
 #: dnf/cli/commands/history.py:74
 msgid ""
 "For the replay command, skip packages that are not available or have missing"
 " dependencies"
 msgstr ""
+"Til replay-kommandoen, spring over pakker som ikke er tilgængelige eller har"
+" manglende afhængigheder"
 
 #: dnf/cli/commands/history.py:94
 msgid ""
@@ -1392,11 +1398,11 @@ msgstr "Transaktions-id'et \"{id}\" ikke fundet."
 
 #: dnf/cli/commands/history.py:313
 msgid "{} exists, overwrite?"
-msgstr ""
+msgstr "{} findes, overskriv?"
 
 #: dnf/cli/commands/history.py:316
 msgid "Not overwriting {}, exiting."
-msgstr ""
+msgstr "Overskriver ikke {}, afslutter."
 
 #: dnf/cli/commands/history.py:323
 msgid "Transaction saved to {}."
@@ -1410,6 +1416,7 @@ msgstr "Fejl da transaktion skulle gemmes: {}"
 msgid ""
 "Warning, the following problems occurred while replaying the transaction:"
 msgstr ""
+"Advarsel, følgende problemer opstod under genafspilning af transaktionen:"
 
 #: dnf/cli/commands/install.py:47
 msgid "install a package or packages on your system"
@@ -3932,12 +3939,12 @@ msgstr "%s er en tom fil"
 #: dnf/persistor.py:91
 #, python-format
 msgid "Failed to load expired repos cache: %s"
-msgstr ""
+msgstr "Kunne ikke indlæse udløbet softwarearkivs mellemlager: %s"
 
 #: dnf/persistor.py:99
 #, python-format
 msgid "Failed to store expired repos cache: %s"
-msgstr ""
+msgstr "Kunne ikke gemme udløbet softwarearkivs mellemlager: %s"
 
 #: dnf/persistor.py:106
 msgid "Failed storing last makecache time."
@@ -4048,22 +4055,22 @@ msgstr "Forbereder"
 #: dnf/transaction_sr.py:60
 #, python-brace-format
 msgid "Errors in \"{filename}\":"
-msgstr ""
+msgstr "Fejl i \"{filename}\":"
 
 #: dnf/transaction_sr.py:70
 #, python-brace-format
 msgid "Error in \"{filename}\": {error}"
-msgstr ""
+msgstr "Fejl i \"{filename}\": {error}"
 
 #: dnf/transaction_sr.py:87
 #, python-brace-format
 msgid "Invalid major version \"{major}\", number expected."
-msgstr ""
+msgstr "Ugyldig større version \"{major}\", tal ventet."
 
 #: dnf/transaction_sr.py:95
 #, python-brace-format
 msgid "Invalid minor version \"{minor}\", number expected."
-msgstr ""
+msgstr "Ugyldig mindre version \"{minor}\", tal ventet."
 
 #: dnf/transaction_sr.py:101
 #, python-brace-format
@@ -4071,36 +4078,38 @@ msgid ""
 "Incompatible major version \"{major}\", supported major version is "
 "\"{major_supp}\"."
 msgstr ""
+"Inkompatibel større version \"{major}\", understøttede større version er "
+"\"{major_supp}\"."
 
 #: dnf/transaction_sr.py:244
 #, python-brace-format
 msgid "Unexpected type of \"{id}\", {exp} expected."
-msgstr ""
+msgstr "Uventet type \"{id}\", {exp} ventet."
 
 #: dnf/transaction_sr.py:250
 #, python-brace-format
 msgid "Missing key \"{key}\"."
-msgstr ""
+msgstr "Mangler nøglen \"{key}\"."
 
 #: dnf/transaction_sr.py:263
 #, python-brace-format
 msgid "Missing object key \"{key}\" in an rpm."
-msgstr ""
+msgstr "Mangler objektnøglen \"{key}\" i en rpm."
 
 #: dnf/transaction_sr.py:267
 #, python-brace-format
 msgid "Unexpected value of package reason \"{reason}\" for rpm nevra \"{nevra}\"."
-msgstr ""
+msgstr "Uventet værdi af pakkeårsagen \"{reason}\" for rpm nevra \"{nevra}\"."
 
 #: dnf/transaction_sr.py:275
 #, python-brace-format
 msgid "Cannot parse NEVRA for package \"{nevra}\"."
-msgstr ""
+msgstr "Kan ikke fortolke NEVRA for pakken \"{nevra}\"."
 
 #: dnf/transaction_sr.py:286
 #, python-brace-format
 msgid "Cannot find rpm nevra \"{nevra}\"."
-msgstr ""
+msgstr "Kan ikke finde rpm nevra \"{nevra}\"."
 
 #: dnf/transaction_sr.py:301
 #, python-brace-format
@@ -4113,16 +4122,18 @@ msgid ""
 "Package nevra \"{nevra}\" not available in repositories for action "
 "\"{action}\"."
 msgstr ""
+"Pakke nevra \"{nevra}\" ikke tilgængelige i softwarearkiver for handlingen "
+"\"{action}\"."
 
 #: dnf/transaction_sr.py:322
 #, python-brace-format
 msgid "Package nevra \"{nevra}\" not installed for action \"{action}\"."
-msgstr ""
+msgstr "Pakke nevra \"{nevra}\" ikke installeret for handlingen \"{action}\"."
 
 #: dnf/transaction_sr.py:336
 #, python-brace-format
 msgid "Unexpected value of package action \"{action}\" for rpm nevra \"{nevra}\"."
-msgstr ""
+msgstr "Uventet værdi af pakkehandlingen \"{action}\" for rpm nevra \"{nevra}\"."
 
 #: dnf/transaction_sr.py:343
 #, python-format
@@ -4132,7 +4143,7 @@ msgstr "Gruppe-id'et '%s' er ikke tilgængeligt."
 #: dnf/transaction_sr.py:364
 #, python-brace-format
 msgid "Missing object key \"{key}\" in groups.packages."
-msgstr ""
+msgstr "Manglende objektnøgle \"{key}\" i groups.packages."
 
 #: dnf/transaction_sr.py:377 dnf/transaction_sr.py:387
 #, python-format
@@ -4150,31 +4161,33 @@ msgid ""
 "Invalid value \"{group_type}\" of environments.groups.group_type, only "
 "\"mandatory\" or \"optional\" is supported."
 msgstr ""
+"Ugyldig værdi \"{group_type}\" af environments.groups.group_type, kun "
+"\"mandatory\" eller \"optional\" understøttes."
 
 #: dnf/transaction_sr.py:430
 #, python-brace-format
 msgid "Missing object key \"{key}\" in environments.groups."
-msgstr ""
+msgstr "Manglende objektnøgle \"{key}\" i environments.groups."
 
 #: dnf/transaction_sr.py:508
 #, python-brace-format
 msgid "Unexpected value of group action \"{action}\" for group \"{group}\"."
-msgstr ""
+msgstr "Uventet værdi af gruppehandlingen \"{action}\" for gruppen \"{group}\"."
 
 #: dnf/transaction_sr.py:513
 #, python-brace-format
 msgid "Missing object key \"{key}\" in a group."
-msgstr ""
+msgstr "Manglende objektnøgle \"{key}\" i en gruppe."
 
 #: dnf/transaction_sr.py:537
 #, python-brace-format
 msgid "Unexpected value of environment action \"{action}\" for environment \"{env}\"."
-msgstr ""
+msgstr "Uventet værdi af miljøhandlingen \"{action}\" for miljøet \"{env}\"."
 
 #: dnf/transaction_sr.py:542
 #, python-brace-format
 msgid "Missing object key \"{key}\" in an environment."
-msgstr ""
+msgstr "Manglende objektnøgle \"{key}\" i et miljø."
 
 #: dnf/transaction_sr.py:581
 #, python-brace-format
@@ -4182,6 +4195,8 @@ msgid ""
 "Package nevra \"{nevra}\", which is not present in the transaction file, was"
 " pulled into the transaction."
 msgstr ""
+"Pakke nevra \"{nevra}\", som ikke findes i transaktionsfilen, blev trukket "
+"ind i transaktionen."
 
 #: dnf/util.py:391 dnf/util.py:393
 msgid "Problem"
