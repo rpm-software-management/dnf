@@ -19,6 +19,53 @@
  DNF Release Notes
 ###################
 
+===================
+4.4.0 Release Notes
+===================
+
+- Handle empty comps group name (RhBug:1826198)
+- Remove dead history info code (RhBug:1845800)
+- Improve command emmitter in dnf-automatic
+- Enhance --querytags and --qf help output
+- [history] add option --reverse to history list (RhBug:1846692)
+- Add logfilelevel configuration (RhBug:1802074)
+- Don't turn off stdout/stderr logging longer than necessary (RhBug:1843280)
+- Mention the date/time that updates were applied
+- [dnf-automatic] Wait for internet connection (RhBug:1816308)
+- [doc] Enhance repo variables documentation (RhBug:1848161,1848615)
+- Add librepo logger for handling messages from librepo (RhBug:1816573)
+- [doc] Add package-name-spec to the list of possible specs
+- [doc] Do not use <package-nevr-spec>
+- [doc] Add section to explain -n, -na and -nevra suffixes
+- Add alias 'ls' for list command
+- README: Reference Fedora Weblate instead of Zanata
+- remove log_lock.pid after reboot(Rhbug:1863006)
+- comps: Raise CompsError when removing a non-existent group
+- Add methods for working with comps to RPMTransactionItemWrapper
+- Implement storing and replaying a transaction
+- Log failure to access last makecache time as warning
+- [doc] Document Substitutions class
+- Dont document removed attribute ``reports`` for get_best_selector
+- Change the debug log timestamps from UTC to local time
+
+Bugs fixed in 4.4.0:
+
+* :rhbug:`1698145`
+* :rhbug:`1848161`
+* :rhbug:`1846692`
+* :rhbug:`1857029`
+* :rhbug:`1853349`
+* :rhbug:`1848615`
+* :rhbug:`1845800`
+* :rhbug:`1872586`
+* :rhbug:`1839951`
+* :rhbug:`1843280`
+* :rhbug:`1862739`
+* :rhbug:`1816308`
+* :rhbug:`1802074`
+* :rhbug:`1858491`
+* :rhbug:`1816573`
+
 ====================
 4.2.23 Release Notes
 ====================

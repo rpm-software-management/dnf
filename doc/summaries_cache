@@ -3162,5 +3162,65 @@
     [
         1786335,
         "dnf history command output is trimmed because of hardcoded 79 cols limit"
+    ],
+    [
+        1698145,
+        "dnf protects certain packages in container, when it should not"
+    ],
+    [
+        1848161,
+        "Custom DNF variables which worked in CentOS 8.1.1911 are broken in 8.2.2004"
+    ],
+    [
+        1846692,
+        "dnf should offer a 'history list' in reverse order"
+    ],
+    [
+        1857029,
+        "dnf-makecache.timer make my network bandwidth higher than my prediction"
+    ],
+    [
+        1853349,
+        "Cannot install package from local repository when there is encoded character in path"
+    ],
+    [
+        1848615,
+        "dnf numeric variable substitutions are undocumented"
+    ],
+    [
+        1845800,
+        "History info tracebacks when group is upgraded/downgraded"
+    ],
+    [
+        1872586,
+        "Environment upgrade fails when one of its groups is removed"
+    ],
+    [
+        1839951,
+        "shorter aliases for popular options (eg dnf i == dnf install)"
+    ],
+    [
+        1843280,
+        "Discrepancies in permission related problems not/reporting"
+    ],
+    [
+        1862739,
+        "dnf-automatic command_email example will not work"
+    ],
+    [
+        1816308,
+        "dnf-automatic.timer runs before the computer can connect to the internet"
+    ],
+    [
+        1802074,
+        "Excessive and non configurable logging in /var/log/dnf.log"
+    ],
+    [
+        1858491,
+        "`dnf list-sec` output is the same as `dnf list-updateinfo`"
+    ],
+    [
+        1816573,
+        "[RHEL8/RFE] dnf logrotation experience differs from RHEL7 (yum)"
     ]
 ]
