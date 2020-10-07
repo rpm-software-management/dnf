@@ -35,6 +35,7 @@ class DnfSubjectApiTest(TestCase):
                 with_filenames=False,
                 forms=None
             ), dnf.query.Query)
+        b.close()
 
     def test_get_best_selector(self):
         # Subject.get_best_selector
@@ -48,6 +49,7 @@ class DnfSubjectApiTest(TestCase):
                 obsoletes=False,
                 reponame=None
             ), dnf.selector.Selector)
+        b.close()
 
     def test_get_nevra_possibilities(self):
         # Subject.get_nevra_possibilities
