@@ -466,6 +466,7 @@ class Base(object):
         self._closed = True
         self._finalize_base()
         self.reset(sack=True, repos=True, goal=True)
+        self._plugins = None
 
     def read_all_repos(self, opts=None):
         # :api
@@ -497,6 +498,7 @@ class Base(object):
                 self.history.close()
             self._comps_trans = dnf.comps.TransactionBunch()
             self._transaction = None
+        self._update_security_filters = []
 
     def _closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""
