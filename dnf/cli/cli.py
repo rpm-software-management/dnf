@@ -974,8 +974,6 @@ class Cli(object):
 
         self.base.configure_plugins()
 
-        self.base.conf._configure_from_options(opts)
-
         self.command.configure()
 
         if self.base.conf.destdir:
