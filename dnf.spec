@@ -1,3 +1,6 @@
+# Always build out-of-source
+%undefine __cmake_in_source_build
+
 # default dependencies
 %global hawkey_version 0.54.1
 %global libcomps_version 0.1.8
@@ -263,39 +266,33 @@ Systemd units that can periodically download package upgrades and apply them.
 
 %prep
 %autosetup
-mkdir build-py2
-mkdir build-py3
 
 
 %build
 %if %{with python2}
-    pushd build-py2
-    %cmake .. -DPYTHON_DESIRED:FILEPATH=%{__python2} -DDNF_VERSION=%{version}
-    %make_build
-    make doc-man
-    popd
+    %global _vpath_builddir build-py2
+    %cmake -DPYTHON_DESIRED:FILEPATH=%{__python2} -DDNF_VERSION=%{version}
+    %cmake_build
+    %cmake_build --target doc-man
 %endif
 
 %if %{with python3}
-    pushd build-py3
-    %cmake .. -DPYTHON_DESIRED:FILEPATH=%{__python3} -DDNF_VERSION=%{version}
-    %make_build
-    make doc-man
-    popd
+    %global _vpath_builddir build-py3
+    %cmake -DPYTHON_DESIRED:FILEPATH=%{__python3} -DDNF_VERSION=%{version}
+    %cmake_build
+    %cmake_build --target doc-man
 %endif
 
 
 %install
 %if %{with python2}
-    pushd build-py2
-    %make_install
-    popd
+    %global _vpath_builddir build-py2
+    %cmake_install
 %endif
 
 %if %{with python3}
-    pushd build-py3
-    %make_install
-    popd
+    %global _vpath_builddir build-py3
+    %cmake_install
 %endif
 
 %find_lang %{name}
@@ -352,15 +349,13 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 
 %check
 %if %{with python2}
-    pushd build-py2
-    ctest -VV
-    popd
+    %global _vpath_builddir build-py2
+    %ctest
 %endif
 
 %if %{with python3}
-    pushd build-py3
-    ctest -VV
-    popd
+    %global _vpath_builddir build-py3
+    %ctest
 %endif
 
 
