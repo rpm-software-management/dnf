@@ -252,8 +252,12 @@ class BaseCli(dnf.Base):
             trans = None
 
         if trans:
-            msg = self.output.post_transaction_output(trans)
-            logger.info(msg)
+            # the post transaction summary is already written to log during
+            # Base.do_transaction() so here only print the messages to the
+            # user arranged in columns
+            print()
+            print('\n'.join(self.output.post_transaction_output(trans)))
+            print()
             for tsi in trans:
                 if tsi.state == libdnf.transaction.TransactionItemState_ERROR:
                     raise dnf.exceptions.Error(_('Transaction failed'))
