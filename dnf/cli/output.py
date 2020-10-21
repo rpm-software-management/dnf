@@ -52,7 +52,8 @@ import dnf.yum.misc
 
 logger = logging.getLogger('dnf')
 
-def _make_lists(transaction, goal):
+
+def _make_lists(transaction):
     b = dnf.util.Bunch({
         'downgraded': [],
         'erased': [],
@@ -1101,7 +1102,7 @@ class Output(object):
             # in order to display module changes when RPM transaction is empty
             transaction = []
 
-        list_bunch = _make_lists(transaction, self.base._goal)
+        list_bunch = _make_lists(transaction)
         pkglist_lines = []
         data = {'n' : {}, 'v' : {}, 'r' : {}}
         a_wid = 0 # Arch can't get "that big" ... so always use the max.
@@ -1488,7 +1489,7 @@ Transaction Summary
             return (item1.arch > item2.arch) - (item1.arch < item2.arch)
 
         out = ''
-        list_bunch = _make_lists(transaction, self.base._goal)
+        list_bunch = _make_lists(transaction)
 
         skipped_conflicts, skipped_broken = self._skipped_packages(
             report_problems=False, transaction=transaction)
