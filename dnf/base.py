@@ -28,12 +28,12 @@ import argparse
 import dnf
 import libdnf.transaction
 
+from copy import deepcopy
 from dnf.comps import CompsQuery
 from dnf.i18n import _, P_, ucd
 from dnf.util import _parse_specs
 from dnf.db.history import SwdbInterface
 from dnf.yum import misc
-from functools import reduce
 try:
     from collections.abc import Sequence
 except ImportError:
@@ -545,7 +545,7 @@ class Base(object):
         if self.conf.ignorearch:
             self._rpm_probfilter.add(rpm.RPMPROB_FILTER_IGNOREARCH)
 
-        probfilter = reduce(operator.or_, self._rpm_probfilter, 0)
+        probfilter = functools.reduce(operator.or_, self._rpm_probfilter, 0)
         self._priv_ts.setProbFilter(probfilter)
         return self._priv_ts
 
@@ -885,6 +885,15 @@ class Base(object):
         timer()
         self._plugins.unload_removed_plugins(self.transaction)
         self._plugins.run_transaction()
+
+        # log post transaction summary
+        def _pto_callback(action, tsis):
+            msgs = []
+            for tsi in tsis:
+                msgs.append('{}: {}'.format(action, str(tsi)))
+            return msgs
+        for msg in dnf.util._post_transaction_output(self, self.transaction, _pto_callback):
+            logger.debug(msg)
 
         return tid
 
@@ -1307,7 +1316,7 @@ class Base(object):
         if patterns is None or len(patterns) == 0:
             return list_fn(None)
         yghs = map(list_fn, patterns)
-        return reduce(lambda a, b: a.merge_lists(b), yghs)
+        return functools.reduce(lambda a, b: a.merge_lists(b), yghs)
 
     def _list_pattern(self, pkgnarrow, pattern, showdups, ignore_case,
                       reponame=None):
@@ -2576,6 +2585,37 @@ class Base(object):
         way as if DNF was run from CLI.
         """
         self._logging._setup_from_dnf_conf(self.conf, file_loggers_only=True)
+
+    def _skipped_packages(self, report_problems, transaction):
+        """returns set of conflicting packages and set of packages with broken dependency that would
+        be additionally installed when --best and --allowerasing"""
+        if self._goal.actions & (hawkey.INSTALL | hawkey.UPGRADE | hawkey.UPGRADE_ALL):
+            best = True
+        else:
+            best = False
+        ng = deepcopy(self._goal)
+        params = {"allow_uninstall": self._allow_erasing,
+                  "force_best": best,
+                  "ignore_weak": True}
+        ret = ng.run(**params)
+        if not ret and report_problems:
+            msg = dnf.util._format_resolve_problems(ng.problem_rules())
+            logger.warning(msg)
+        problem_conflicts = set(ng.problem_conflicts(available=True))
+        problem_dependency = set(ng.problem_broken_dependency(available=True)) - problem_conflicts
+
+        def _nevra(item):
+            return hawkey.NEVRA(name=item.name, epoch=item.epoch, version=item.version,
+                                release=item.release, arch=item.arch)
+
+        # Sometimes, pkg is not in transaction item, therefore, comparing by nevra
+        transaction_nevras = [_nevra(tsi) for tsi in transaction]
+        skipped_conflicts = set(
+            [pkg for pkg in problem_conflicts if _nevra(pkg) not in transaction_nevras])
+        skipped_dependency = set(
+            [pkg for pkg in problem_dependency if _nevra(pkg) not in transaction_nevras])
+
+        return skipped_conflicts, skipped_dependency
 
 
 def _msg_installed(pkg):

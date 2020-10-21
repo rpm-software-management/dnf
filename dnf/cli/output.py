@@ -21,9 +21,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-from copy import deepcopy
 import fnmatch
-import functools
 import hawkey
 import itertools
 import libdnf.transaction
@@ -51,51 +49,6 @@ import dnf.util
 import dnf.yum.misc
 
 logger = logging.getLogger('dnf')
-
-
-def _make_lists(transaction):
-    b = dnf.util.Bunch({
-        'downgraded': [],
-        'erased': [],
-        'erased_clean': [],
-        'erased_dep': [],
-        'installed': [],
-        'installed_group': [],
-        'installed_dep': [],
-        'installed_weak': [],
-        'reinstalled': [],
-        'upgraded': [],
-        'failed': [],
-    })
-
-    for tsi in transaction:
-        if tsi.state == libdnf.transaction.TransactionItemState_ERROR:
-            b.failed.append(tsi)
-        elif tsi.action == libdnf.transaction.TransactionItemAction_DOWNGRADE:
-            b.downgraded.append(tsi)
-        elif tsi.action == libdnf.transaction.TransactionItemAction_INSTALL:
-            if tsi.reason == libdnf.transaction.TransactionItemReason_GROUP:
-                b.installed_group.append(tsi)
-            elif tsi.reason == libdnf.transaction.TransactionItemReason_DEPENDENCY:
-                b.installed_dep.append(tsi)
-            elif tsi.reason == libdnf.transaction.TransactionItemReason_WEAK_DEPENDENCY:
-                b.installed_weak.append(tsi)
-            else:
-                # TransactionItemReason_USER
-                b.installed.append(tsi)
-        elif tsi.action == libdnf.transaction.TransactionItemAction_REINSTALL:
-            b.reinstalled.append(tsi)
-        elif tsi.action == libdnf.transaction.TransactionItemAction_REMOVE:
-            if tsi.reason == libdnf.transaction.TransactionItemReason_CLEAN:
-                b.erased_clean.append(tsi)
-            elif tsi.reason == libdnf.transaction.TransactionItemReason_DEPENDENCY:
-                b.erased_dep.append(tsi)
-            else:
-                b.erased.append(tsi)
-        elif tsi.action == libdnf.transaction.TransactionItemAction_UPGRADE:
-            b.upgraded.append(tsi)
-
-    return b
 
 
 def _spread_in_columns(cols_count, label, lst):
@@ -1057,37 +1010,6 @@ class Output(object):
             out[0:0] = self._banner(col_data, (_('Group'), _('Packages'), '', ''))
         return '\n'.join(out)
 
-    def _skipped_packages(self, report_problems, transaction):
-        """returns set of conflicting packages and set of packages with broken dependency that would
-        be additionally installed when --best and --allowerasing"""
-        if self.base._goal.actions & (hawkey.INSTALL | hawkey.UPGRADE | hawkey.UPGRADE_ALL):
-            best = True
-        else:
-            best = False
-        ng = deepcopy(self.base._goal)
-        params = {"allow_uninstall": self.base._allow_erasing,
-                  "force_best": best,
-                  "ignore_weak": True}
-        ret = ng.run(**params)
-        if not ret and report_problems:
-            msg = dnf.util._format_resolve_problems(ng.problem_rules())
-            logger.warning(msg)
-        problem_conflicts = set(ng.problem_conflicts(available=True))
-        problem_dependency = set(ng.problem_broken_dependency(available=True)) - problem_conflicts
-
-        def _nevra(item):
-            return hawkey.NEVRA(name=item.name, epoch=item.epoch, version=item.version,
-                                release=item.release, arch=item.arch)
-
-        # Sometimes, pkg is not in transaction item, therefore, comparing by nevra
-        transaction_nevras = [_nevra(tsi) for tsi in transaction]
-        skipped_conflicts = set(
-            [pkg for pkg in problem_conflicts if _nevra(pkg) not in transaction_nevras])
-        skipped_dependency = set(
-            [pkg for pkg in problem_dependency if _nevra(pkg) not in transaction_nevras])
-
-        return skipped_conflicts, skipped_dependency
-
     def list_transaction(self, transaction, total_width=None):
         """Return a string representation of the transaction in an
         easy-to-read format.
@@ -1102,7 +1024,7 @@ class Output(object):
             # in order to display module changes when RPM transaction is empty
             transaction = []
 
-        list_bunch = _make_lists(transaction)
+        list_bunch = dnf.util._make_lists(transaction)
         pkglist_lines = []
         data = {'n' : {}, 'v' : {}, 'r' : {}}
         a_wid = 0 # Arch can't get "that big" ... so always use the max.
@@ -1271,7 +1193,7 @@ class Output(object):
         # show skipped conflicting packages
         if not self.conf.best and self.base._goal.actions & forward_actions:
             lines = []
-            skipped_conflicts, skipped_broken = self._skipped_packages(
+            skipped_conflicts, skipped_broken = self.base._skipped_packages(
                 report_problems=True, transaction=transaction)
             skipped_broken = dict((str(pkg), pkg) for pkg in skipped_broken)
             for pkg in sorted(skipped_conflicts):
@@ -1436,13 +1358,8 @@ Transaction Summary
                                   max_msg_count, count, msg_pkgs))
         return ''.join(out)
 
-    def post_transaction_output(self, transaction):
-        """Returns a human-readable summary of the results of the
-        transaction.
 
-        :return: a string containing a human-readable summary of the
-           results of the transaction
-        """
+    def _pto_callback(self, action, tsis):
         #  Works a bit like calcColumns, but we never overflow a column we just
         # have a dynamic number of columns.
         def _fits_in_cols(msgs, num):
@@ -1472,60 +1389,32 @@ Transaction Summary
                 col_lens[col] *= -1
             return col_lens
 
-        def _tsi_or_pkg_nevra_cmp(item1, item2):
-            """Compares two transaction items or packages by nevra.
-               Used as a fallback when tsi does not contain package object.
-            """
-            ret = (item1.name > item2.name) - (item1.name < item2.name)
-            if ret != 0:
-                return ret
-            nevra1 = hawkey.NEVRA(name=item1.name, epoch=item1.epoch, version=item1.version,
-                                  release=item1.release, arch=item1.arch)
-            nevra2 = hawkey.NEVRA(name=item2.name, epoch=item2.epoch, version=item2.version,
-                                  release=item2.release, arch=item2.arch)
-            ret = nevra1.evr_cmp(nevra2, self.sack)
-            if ret != 0:
-                return ret
-            return (item1.arch > item2.arch) - (item1.arch < item2.arch)
-
-        out = ''
-        list_bunch = _make_lists(transaction)
-
-        skipped_conflicts, skipped_broken = self._skipped_packages(
-            report_problems=False, transaction=transaction)
-        skipped = skipped_conflicts.union(skipped_broken)
-
-        for (action, tsis) in [(_('Upgraded'), list_bunch.upgraded),
-                               (_('Downgraded'), list_bunch.downgraded),
-                               (_('Installed'), list_bunch.installed +
-                                list_bunch.installed_group +
-                                list_bunch.installed_weak +
-                                list_bunch.installed_dep),
-                               (_('Reinstalled'), list_bunch.reinstalled),
-                               (_('Skipped'), skipped),
-                               (_('Removed'), list_bunch.erased +
-                                   list_bunch.erased_dep +
-                                   list_bunch.erased_clean),
-                               (_('Failed'), list_bunch.failed)]:
-            if not tsis:
-                continue
-            msgs = []
-            out += '\n%s:\n' % action
-            for tsi in sorted(tsis, key=functools.cmp_to_key(_tsi_or_pkg_nevra_cmp)):
-                msgs.append(str(tsi))
-            for num in (8, 7, 6, 5, 4, 3, 2):
-                cols = _fits_in_cols(msgs, num)
-                if cols:
-                    break
-            if not cols:
-                cols = [-(self.term.columns - 2)]
-            while msgs:
-                current_msgs = msgs[:len(cols)]
-                out += '  '
-                out += self.fmtColumns(zip(current_msgs, cols), end=u'\n')
-                msgs = msgs[len(cols):]
-
+        if not tsis:
+            return ''
+        out = []
+        msgs = []
+        out.append('{}:'.format(action))
+        for tsi in tsis:
+            msgs.append(str(tsi))
+        for num in (8, 7, 6, 5, 4, 3, 2):
+            cols = _fits_in_cols(msgs, num)
+            if cols:
+                break
+        if not cols:
+            cols = [-(self.term.columns - 2)]
+        while msgs:
+            current_msgs = msgs[:len(cols)]
+            out.append('  {}'.format(self.fmtColumns(zip(current_msgs, cols))))
+            msgs = msgs[len(cols):]
         return out
+
+
+    def post_transaction_output(self, transaction):
+        """
+        Return a human-readable summary of the transaction. Packages in sections
+        are arranged to columns.
+        """
+        return dnf.util._post_transaction_output(self.base, transaction, self._pto_callback)
 
     def setup_progress_callbacks(self):
         """Set up the progress callbacks and various
