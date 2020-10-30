@@ -133,6 +133,11 @@ class DnfPackageApiTest(TestCase):
         self.assertHasAttr(self.package, "name")
         self.assertHasType(self.package.name, str)
 
+    def test_vendor(self):
+        # Package.vendor
+        self.assertHasAttr(self.package, "vendor")
+        self.assertHasType(self.package.vendor, str)
+
     def test_obsoletes(self):
         # Package.obsoletes
         self.assertHasAttr(self.package, "obsoletes")
