@@ -13,7 +13,7 @@ from .common import TOUR_4_4
 
 class DnfBaseApiTest(TestCase):
     def setUp(self):
-        self.base = dnf.Base()
+        self.base = dnf.Base(dnf.conf.Conf())
 
     def tearDown(self):
         self.base.close()
@@ -24,7 +24,7 @@ class DnfBaseApiTest(TestCase):
         self.assertHasType(dnf.base.Base, object)
 
     def test_init(self):
-        base = dnf.Base()
+        base = dnf.Base(dnf.conf.Conf())
 
     def test_init_conf(self):
         conf = dnf.conf.Conf()

@@ -11,7 +11,7 @@ from .common import TestCase
 
 class DnfSackApiTest(TestCase):
     def setUp(self):
-        self.base = dnf.Base()
+        self.base = dnf.Base(dnf.conf.Conf())
 
     def tearDown(self):
         self.base.close()

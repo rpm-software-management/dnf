@@ -12,7 +12,7 @@ from .common import TestCase
 
 class DnfModuleBaseApiTest(TestCase):
     def setUp(self):
-        self.base = dnf.Base()
+        self.base = dnf.Base(dnf.conf.Conf())
         self.moduleBase = dnf.module.module_base.ModuleBase(self.base)
 
     def tearDown(self):

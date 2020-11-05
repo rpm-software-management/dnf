@@ -25,7 +25,7 @@ class DnfSubjectApiTest(TestCase):
     def test_get_best_query(self):
         # Subject.get_best_query
         self.assertHasAttr(self.subject, "get_best_query")
-        b = dnf.Base()
+        b = dnf.Base(dnf.conf.Conf())
         b.fill_sack(False, False)
         self.assertHasType(
             self.subject.get_best_query(
@@ -39,7 +39,7 @@ class DnfSubjectApiTest(TestCase):
     def test_get_best_selector(self):
         # Subject.get_best_selector
         self.assertHasAttr(self.subject, "get_best_selector")
-        b = dnf.Base()
+        b = dnf.Base(dnf.conf.Conf())
         b.fill_sack(False, False)
         self.assertHasType(
             self.subject.get_best_selector(

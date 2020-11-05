@@ -11,7 +11,7 @@ from .common import TestCase
 
 class DnfConfTest(TestCase):
     def setUp(self):
-        self.base = dnf.Base()
+        self.base = dnf.Base(dnf.conf.Conf())
         self.conf = self.base.conf
 
     def tearDown(self):

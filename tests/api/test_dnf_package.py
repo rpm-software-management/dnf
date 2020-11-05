@@ -11,7 +11,7 @@ from .common import TestCase
 
 class DnfPackageApiTest(TestCase):
     def setUp(self):
-        self.base = dnf.Base()
+        self.base = dnf.Base(dnf.conf.Conf())
         self.package = self._get_pkg()
 
     def tearDown(self):
