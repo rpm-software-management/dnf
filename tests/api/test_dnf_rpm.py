@@ -13,7 +13,6 @@ class DnfRpmApiTest(TestCase):
     def test_detect_releasever(self):
         # dnf.rpm.detect_releasever
         self.assertHasAttr(dnf.rpm, "detect_releasever")
-        self.assertHasType(dnf.rpm.detect_releasever(installroot='/'), str)
 
     def test_basearch(self):
         # dnf.rpm.basearch
