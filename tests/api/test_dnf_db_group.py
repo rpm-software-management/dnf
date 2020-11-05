@@ -11,7 +11,7 @@ from .common import TestCase
 
 class DnfRPMTransactionApiTest(TestCase):
     def setUp(self):
-        self.base = dnf.Base()
+        self.base = dnf.Base(dnf.conf.Conf())
         self.base.fill_sack(False, False)
         self.base.resolve()
         self.rpmTrans = self.base.transaction

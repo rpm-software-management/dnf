@@ -14,7 +14,7 @@ from .common import TestCase
 
 class DnfModulePackageApiTest(TestCase):
     def setUp(self):
-        self.base = dnf.Base()
+        self.base = dnf.Base(dnf.conf.Conf())
         repo = self.base.repos.add_new_repo(
             'api-module-test-repo', self.base.conf,
             baseurl=[os.path.join(os.path.dirname(__file__), "../modules/modules/_all/x86_64/")]

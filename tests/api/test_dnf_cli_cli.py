@@ -12,7 +12,7 @@ from .common import TestCase
 
 class DnfCliCliApiTest(TestCase):
     def setUp(self):
-        base = dnf.Base()
+        base = dnf.Base(dnf.conf.Conf())
         self.cli = dnf.cli.cli.Cli(base=base)
 
     def test_cli(self):
@@ -21,7 +21,7 @@ class DnfCliCliApiTest(TestCase):
         self.assertHasType(dnf.cli.cli.Cli, object)
 
     def test_init(self):
-        base = dnf.Base()
+        base = dnf.Base(dnf.conf.Conf())
         _ = dnf.cli.cli.Cli(base=base)
 
     def test_demands(self):
