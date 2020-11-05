@@ -188,10 +188,10 @@ class ConfigureTest(tests.support.DnfBaseTestCase):
     @mock.patch('dnf.util.am_i_root', lambda: False)
     def test_configure_user(self):
         """ Test Cli.configure as user."""
-        self.base._conf = dnf.conf.Conf()
+        self.base._conf.installroot = self._installroot
         with mock.patch('dnf.rpm.detect_releasever', return_value=69):
             self.cli.configure(['update', '-c', self.conffile])
-        reg = re.compile('^/var/tmp/dnf-[.a-zA-Z0-9_-]+$')
+        reg = re.compile('^' + self._installroot + '/var/tmp/dnf-[.a-zA-Z0-9_-]+$')
         self.assertIsNotNone(reg.match(self.base.conf.cachedir))
         parser = argparse.ArgumentParser()
         expected = "%s update -c %s " % (parser.prog, self.conffile)
@@ -210,6 +210,7 @@ class ConfigureTest(tests.support.DnfBaseTestCase):
         self.assertEqual(self.cli.cmdstring, expected)
 
     def test_configure_verbose(self):
+        self.base._conf.installroot = self._installroot
         with mock.patch('dnf.rpm.detect_releasever', return_value=69):
             self.cli.configure(['-v', 'update', '-c', self.conffile])
         parser = argparse.ArgumentParser()
