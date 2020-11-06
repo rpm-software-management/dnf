@@ -188,6 +188,8 @@ class ConfigureTest(tests.support.DnfBaseTestCase):
     @mock.patch('dnf.util.am_i_root', lambda: False)
     def test_configure_user(self):
         """ Test Cli.configure as user."""
+        # call setUp() once again *after* am_i_root() is mocked so the cachedir is set as expected
+        self.setUp()
         self.base._conf.installroot = self._installroot
         with mock.patch('dnf.rpm.detect_releasever', return_value=69):
             self.cli.configure(['update', '-c', self.conffile])
