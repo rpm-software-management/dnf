@@ -3222,5 +3222,13 @@
     [
         1816573,
         "[RHEL8/RFE] dnf logrotation experience differs from RHEL7 (yum)"
+    ],
+    [
+        1876561,
+        "dnf python API does not provide a package vendor (as yum API does)"
+    ],
+    [
+        1788371,
+        "[Feature Request] Package vendor stickiness as available in Zypper"
     ]
 ]

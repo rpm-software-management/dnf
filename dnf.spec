@@ -84,7 +84,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.4.1
+Version:        4.4.2
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -502,6 +502,13 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Mon Nov 09 2020 Nicola Sella <nsella@redhat.com> - 4.4.2-1
+- spec: Fix building with new cmake macros (backport from downstream)
+- Warn about key retrieval over http:
+- Fix --setopt=cachedir writing outside of installroot
+- Add vendor to dnf API (RhBug:1876561)
+- Add allow_vendor_change option (RhBug:1788371) (RhBug:1788371)
+
 * Tue Oct 06 2020 Nicola Sella <nsella@redhat.com> - 4.4.0-1
 - Handle empty comps group name (RhBug:1826198)
 - Remove dead history info code (RhBug:1845800)

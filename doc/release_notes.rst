@@ -20,6 +20,21 @@
 ###################
 
 ===================
+4.4.2 Release Notes
+===================
+
+- spec: Fix building with new cmake macros (backport from downstream)
+- Warn about key retrieval over http:
+- Fix --setopt=cachedir writing outside of installroot
+- Add vendor to dnf API (RhBug:1876561)
+- Add allow_vendor_change option (RhBug:1788371) (RhBug:1788371)
+
+Bugs fixed in 4.4.2:
+
+* :rhbug:`1876561`
+* :rhbug:`1788371`
+
+===================
 4.4.0 Release Notes
 ===================
 
