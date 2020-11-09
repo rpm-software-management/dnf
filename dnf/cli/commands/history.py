@@ -33,7 +33,6 @@ import dnf.util
 import json
 import logging
 import os
-import sys
 
 
 logger = logging.getLogger('dnf')
@@ -293,13 +292,6 @@ class HistoryCommand(commands.Command):
             elif vcmd == 'userinstalled':
                 ret = self._hcmd_userinstalled()
             elif vcmd == 'store':
-                print(
-                    "Warning: The stored transaction format is considered unstable and may "
-                    "change at any time. It will work if the same version of dnf is used to "
-                    "store and replay (or between versions as long as it stays the same).",
-                    file=sys.stderr
-                )
-
                 transactions = self.output.history.old(tids)
                 if not transactions:
                     raise dnf.cli.CliError(_('Transaction ID "{id}" not found.').format(id=tids[0]))
