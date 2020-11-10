@@ -61,9 +61,10 @@ Without modules, packages with the highest version are used by default.
 
 Module streams can distribute packages with lower versions than available in the
 repositories available to the operating system. To make such packages available
-for installs and upgrades, the non-modular packages are filtered out when they match
-by name with modular packages from any existing stream.
-
+for installs and upgrades, the non-modular packages are filtered out when their
+name or provide matches against a modular package name from any enabled, default,
+or dependent stream. Modular source packages will not cause non-modular binary
+packages to be filtered out.
 
 =====================
  Hotfix repositories
