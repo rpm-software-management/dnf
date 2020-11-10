@@ -14,6 +14,7 @@ from .common import TOUR_4_4
 class DnfBaseApiTest(TestCase):
     def setUp(self):
         self.base = dnf.Base(dnf.conf.Conf())
+        self.base.conf.persistdir = "/tmp/tests"
 
     def tearDown(self):
         self.base.close()
