@@ -323,7 +323,7 @@ class ModuleBase(object):
             assert len(streamDict) == 1
         return moduleDict
 
-    def _resolve_specs_enable_update_sack(self, module_specs):
+    def _resolve_specs_enable(self, module_specs):
         no_match_specs = []
         error_spec = []
         module_dicts = {}
@@ -339,6 +339,9 @@ class ModuleBase(object):
                 error_spec.append(spec)
                 logger.error(ucd(e))
                 logger.error(_("Unable to resolve argument {}").format(spec))
+        return no_match_specs, error_spec, module_dicts
+
+    def _update_sack(self):
         hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
         try:
             solver_errors = self.base.sack.filter_modules(
@@ -347,6 +350,10 @@ class ModuleBase(object):
                 debugsolver=self.base.conf.debug_solver)
         except hawkey.Exception as e:
             raise dnf.exceptions.Error(ucd(e))
+        return solver_errors
+
+    def _enable_dependencies(self, module_dicts):
+        error_spec = []
         for spec, (nsvcap, moduleDict) in module_dicts.items():
             for streamDict in moduleDict.values():
                 for modules in streamDict.values():
@@ -357,6 +364,17 @@ class ModuleBase(object):
                         error_spec.append(spec)
                         logger.error(ucd(e))
                         logger.error(_("Unable to resolve argument {}").format(spec))
+        return error_spec
+
+    def _resolve_specs_enable_update_sack(self, module_specs):
+        no_match_specs, error_spec, module_dicts = self._resolve_specs_enable(module_specs)
+
+        solver_errors = self._update_sack()
+
+        dependency_error_spec = self._enable_dependencies(module_dicts)
+        if dependency_error_spec:
+            error_spec.extend(dependency_error_spec)
+
         return no_match_specs, error_spec, solver_errors, module_dicts
 
     def _modules_reset_or_disable(self, module_specs, to_state):
@@ -379,14 +397,7 @@ class ModuleBase(object):
                 if to_state == STATE_DISABLED:
                     self.base._moduleContainer.disable(name)
 
-        hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
-        try:
-            solver_errors = self.base.sack.filter_modules(
-                self.base._moduleContainer, hot_fix_repos, self.base.conf.installroot,
-                self.base.conf.module_platform_id, update_only=True,
-                debugsolver=self.base.conf.debug_solver)
-        except hawkey.Exception as e:
-            raise dnf.exceptions.Error(ucd(e))
+        solver_errors = self._update_sack()
         return no_match_specs, solver_errors
 
     def _get_package_name_set_and_remove_profiles(self, module_list, nsvcap, remove=False):
