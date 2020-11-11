@@ -140,31 +140,140 @@ class ModuleBase(object):
         if fail_safe_repo_used:
             raise dnf.exceptions.Error(_(
                 "Installing module from Fail-Safe repository is not allowed"))
-        #  Remove source packages they cannot be installed or upgraded
-        base_no_source_query = self.base.sack.query().filterm(arch__neq=['src', 'nosrc']).apply()
-        install_base_query = base_no_source_query.filter(nevra_strict=install_set_artefacts)
+        __, profiles_errors = self._install_profiles_internal(
+            install_set_artefacts, install_dict, strict)
+        if profiles_errors:
+            error_specs.extend(profiles_errors)
 
-        # add hot-fix packages
-        hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
-        hotfix_packages = base_no_source_query.filter(
-            reponame=hot_fix_repos, name=install_dict.keys())
-        install_base_query = install_base_query.union(hotfix_packages)
+        if no_match_specs or error_specs or solver_errors:
+            raise dnf.exceptions.MarkingErrors(no_match_group_specs=no_match_specs,
+                                               error_group_specs=error_specs,
+                                               module_depsolv_errors=solver_errors)
 
-        for pkg_name, set_specs in install_dict.items():
-            query = install_base_query.filter(name=pkg_name)
-            if not query:
-                # package can also be non-modular or part of another stream
-                query = base_no_source_query.filter(name=pkg_name)
-                if not query:
-                    for spec in set_specs:
-                        logger.error(_("Unable to resolve argument {}").format(spec))
-                    logger.error(_("No match for package {}").format(pkg_name))
-                    error_specs.extend(set_specs)
-                    continue
-            self.base._goal.group_members.add(pkg_name)
+    def switch_to(self, module_specs, strict=True):
+        # :api
+        no_match_specs, error_specs, module_dicts = self._resolve_specs_enable(module_specs)
+        # collect name of artifacts from new modules for distrosync
+        new_artifacts_names = set()
+        # collect name of artifacts from active modules for distrosync before sack update
+        active_artifacts_names = set()
+        src_arches = {"nosrc", "src"}
+        for spec, (nsvcap, moduledict) in module_dicts.items():
+            for name in moduledict.keys():
+                for module in self.base._moduleContainer.query(name, "", "", "", ""):
+                    if self.base._moduleContainer.isModuleActive(module):
+                        for artifact in module.getArtifacts():
+                            arch = artifact.rsplit(".", 1)[1]
+                            if arch in src_arches:
+                                continue
+                            pkg_name = artifact.rsplit("-", 2)[0]
+                            active_artifacts_names.add(pkg_name)
+
+        solver_errors = self._update_sack()
+
+        dependency_error_spec = self._enable_dependencies(module_dicts)
+        if dependency_error_spec:
+            error_specs.extend(dependency_error_spec)
+
+        # <package_name, set_of_spec>
+        fail_safe_repo = hawkey.MODULE_FAIL_SAFE_REPO_NAME
+        install_dict = {}
+        install_set_artifacts = set()
+        fail_safe_repo_used = False
+
+        # list of name: [profiles] for module profiles being removed
+        removed_profiles = self.base._moduleContainer.getRemovedProfiles()
+
+        for spec, (nsvcap, moduledict) in module_dicts.items():
+            for name, streamdict in moduledict.items():
+                for stream, module_list in streamdict.items():
+                    install_module_list = [x for x in module_list
+                                           if self.base._moduleContainer.isModuleActive(x.getId())]
+                    if not install_module_list:
+                        "No active matches for argument '{0}' in module '{1}:{2}'"
+                        logger.error(_("No active matches for argument '{0}' in module "
+                                       "'{1}:{2}'").format(spec, name, stream))
+                        error_specs.append(spec)
+                        continue
+                    profiles = []
+                    latest_module = self._get_latest(install_module_list)
+                    if latest_module.getRepoID() == fail_safe_repo:
+                        msg = _(
+                            "Installing module '{0}' from Fail-Safe repository {1} is not allowed")
+                        logger.critical(msg.format(latest_module.getNameStream(), fail_safe_repo))
+                        fail_safe_repo_used = True
+                    if nsvcap.profile:
+                        profiles.extend(latest_module.getProfiles(nsvcap.profile))
+                        if not profiles:
+                            available_profiles = latest_module.getProfiles()
+                            if available_profiles:
+                                profile_names = ", ".join(sorted(
+                                    [profile.getName() for profile in available_profiles]))
+                                msg = _("Unable to match profile for argument {}. Available "
+                                        "profiles for '{}:{}': {}").format(
+                                    spec, name, stream, profile_names)
+                            else:
+                                msg = _("Unable to match profile for argument {}").format(spec)
+                            logger.error(msg)
+                            no_match_specs.append(spec)
+                            continue
+                    elif name in removed_profiles:
+
+                        for profile in removed_profiles[name]:
+                            module_profiles = latest_module.getProfiles(profile)
+                            if not module_profiles:
+                                logger.warning(
+                                    _("Installed profile '{0}' is not available in module "
+                                      "'{1}' stream '{2}'").format(profile, name, stream))
+                                continue
+                            profiles.extend(module_profiles)
+                    for profile in profiles:
+                        self.base._moduleContainer.install(latest_module, profile.getName())
+                        for pkg_name in profile.getContent():
+                            install_dict.setdefault(pkg_name, set()).add(spec)
+                    for module in install_module_list:
+                        artifacts = module.getArtifacts()
+                        install_set_artifacts.update(artifacts)
+                        for artifact in artifacts:
+                            arch = artifact.rsplit(".", 1)[1]
+                            if arch in src_arches:
+                                continue
+                            pkg_name = artifact.rsplit("-", 2)[0]
+                            new_artifacts_names.add(pkg_name)
+        if fail_safe_repo_used:
+            raise dnf.exceptions.Error(_(
+                "Installing module from Fail-Safe repository is not allowed"))
+        install_base_query, profiles_errors = self._install_profiles_internal(
+            install_set_artifacts, install_dict, strict)
+        if profiles_errors:
+            error_specs.extend(profiles_errors)
+
+        # distrosync module name
+        all_names = set()
+        all_names.update(new_artifacts_names)
+        all_names.update(active_artifacts_names)
+        remove_query = self.base.sack.query().filterm(empty=True)
+        for pkg_name in all_names:
+            query = self.base.sack.query().filterm(name=pkg_name)
+            installed = query.installed()
+            if not installed:
+                continue
+            available = query.available()
+            if not available:
+                logger.warning(_("No packages available to distrosync for package name "
+                                 "'{}'").format(pkg_name))
+                if pkg_name not in new_artifacts_names:
+                    remove_query = remove_query.union(query)
+                continue
+
+            only_new_module = query.intersection(install_base_query)
+            if only_new_module:
+                query = only_new_module
             sltr = dnf.selector.Selector(self.base.sack)
             sltr.set(pkg=query)
-            self.base._goal.install(select=sltr, optional=(not strict))
+            self.base._goal.distupgrade(select=sltr)
+        self.base._remove_if_unneeded(remove_query)
+
         if no_match_specs or error_specs or solver_errors:
             raise dnf.exceptions.MarkingErrors(no_match_group_specs=no_match_specs,
                                                error_group_specs=error_specs,
@@ -183,7 +292,7 @@ class ModuleBase(object):
         fail_safe_repo = hawkey.MODULE_FAIL_SAFE_REPO_NAME
         fail_safe_repo_used = False
 
-        #  Remove source packages they cannot be installed or upgraded
+        #  Remove source packages because they cannot be installed or upgraded
         base_no_source_query = self.base.sack.query().filterm(arch__neq=['src', 'nosrc']).apply()
 
         for spec in module_specs:
@@ -693,6 +802,35 @@ class ModuleBase(object):
 
     def _format_repoid(self, repo_name):
         return "{}\n".format(self.base.output.term.bold(repo_name))
+
+    def _install_profiles_internal(self, install_set_artifacts, install_dict, strict):
+        #  Remove source packages because they cannot be installed or upgraded
+        base_no_source_query = self.base.sack.query().filterm(arch__neq=['src', 'nosrc']).apply()
+        install_base_query = base_no_source_query.filter(nevra_strict=install_set_artifacts)
+        error_specs = []
+
+        # add hot-fix packages
+        hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
+        hotfix_packages = base_no_source_query.filter(
+            reponame=hot_fix_repos, name=install_dict.keys())
+        install_base_query = install_base_query.union(hotfix_packages)
+
+        for pkg_name, set_specs in install_dict.items():
+            query = install_base_query.filter(name=pkg_name)
+            if not query:
+                # package can also be non-modular or part of another stream
+                query = base_no_source_query.filter(name=pkg_name)
+                if not query:
+                    for spec in set_specs:
+                        logger.error(_("Unable to resolve argument {}").format(spec))
+                    logger.error(_("No match for package {}").format(pkg_name))
+                    error_specs.extend(set_specs)
+                    continue
+            self.base._goal.group_members.add(pkg_name)
+            sltr = dnf.selector.Selector(self.base.sack)
+            sltr.set(pkg=query)
+            self.base._goal.install(select=sltr, optional=(not strict))
+        return install_base_query, error_specs
 
 
 def format_modular_solver_errors(errors):

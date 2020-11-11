@@ -271,6 +271,28 @@ class ModuleCommand(commands.Command):
 
             logger.error(dnf.exceptions.MarkingErrors(no_match_group_specs=skipped_groups))
 
+    class SwitchToSubCommand(SubCommand):
+
+        aliases = ('switch-to',)
+        summary = _('switch a module to a stream and distrosync rpm packages')
+
+        def configure(self):
+            demands = self.cli.demands
+            demands.available_repos = True
+            demands.sack_activation = True
+            demands.resolving = True
+            demands.root_user = True
+            self.base.conf.module_stream_switch = True
+
+        def run_on_module(self):
+            try:
+                self.module_base.switch_to(self.opts.module_spec, strict=self.base.conf.strict)
+            except dnf.exceptions.MarkingErrors as e:
+                if self.base.conf.strict:
+                    if e.no_match_group_specs or e.error_group_specs:
+                        raise e
+                logger.error(str(e))
+
     class ProvidesSubCommand(SubCommand):
 
         aliases = ("provides", )
@@ -319,7 +341,7 @@ class ModuleCommand(commands.Command):
 
     SUBCMDS = {ListSubCommand, InfoSubCommand, EnableSubCommand,
                DisableSubCommand, ResetSubCommand, InstallSubCommand, UpdateSubCommand,
-               RemoveSubCommand, ProvidesSubCommand, RepoquerySubCommand}
+               RemoveSubCommand, SwitchToSubCommand, ProvidesSubCommand, RepoquerySubCommand}
 
     SUBCMDS_NOT_REQUIRED_ARG = {ListSubCommand}
 
