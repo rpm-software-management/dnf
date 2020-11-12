@@ -979,14 +979,30 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
     In case no profile was provided, all default profiles get installed.
     Module streams get enabled accordingly.
 
-    This command cannot be used for switching module streams. It is recommended to remove all
-    installed content from the module and reset the module using the
-    :ref:`reset <module_reset_command-label>` command. After you reset the module, you can install
-    the other stream.
+    This command cannot be used for switching module streams. Use the
+    :ref:`dnf module switch-to <module_switch_to_command-label>` command for that.
 
 ``dnf [options] module update <module-spec>...``
     Update packages associated with an active module stream, optionally restricted to a profile.
     If the `profile_name` is provided, only the packages referenced by that profile will be updated.
+
+.. _module_switch_to_command-label:
+
+``dnf [options] module switch-to <module-spec>...``
+    Switch to or enable a module stream, change versions of installed packages to versions provided
+    by the new stream, and remove packages from the old stream that are no longer available. It also
+    updates installed profiles if they are available for the new stream. When a profile was
+    provided, it installs that profile and does not update any already installed profiles.
+
+    This command can be used as a stronger version of the
+    :ref:`dnf module enable <module_enable_command-label>` command, which not only enables modules,
+    but also does a `distrosync` to all modular packages in the enabled modules.
+
+    It can also be used as a stronger version of the
+    :ref:`dnf module install <module_install_command-label>` command, but it requires to specify
+    profiles that are supposed to be installed, because `switch-to` command does not use `default
+    profiles`. The `switch-to` command doesn't only install profiles, it also makes a `distrosync`
+    to all modular packages in the installed module.
 
 ``dnf [options] module remove <module-spec>...``
     Remove installed module profiles, including packages that were installed with the
@@ -1010,10 +1026,8 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
     of modular dependency issue the operation will be rejected. To perform the action anyway please use
     \-\ :ref:`-skip-broken <skip-broken_option-label>` option.
 
-    This command cannot be used for switching module streams. It is recommended to remove all
-    installed content from the module, and reset the module using the
-    :ref:`reset <module_reset_command-label>` command. After you reset the module, you can enable
-    the other stream.
+    This command cannot be used for switching module streams. Use the
+    :ref:`dnf module switch-to <module_switch_to_command-label>` command for that.
 
 .. _module_disable_command-label:
 
