@@ -73,7 +73,7 @@ class ModuleBase(object):
         # <package_name, set_of_spec>
         fail_safe_repo = hawkey.MODULE_FAIL_SAFE_REPO_NAME
         install_dict = {}
-        install_set_artefacts = set()
+        install_set_artifacts = set()
         fail_safe_repo_used = False
         for spec, (nsvcap, moduledict) in module_dicts.items():
             for name, streamdict in moduledict.items():
@@ -136,12 +136,12 @@ class ModuleBase(object):
                         for pkg_name in profile.getContent():
                             install_dict.setdefault(pkg_name, set()).add(spec)
                     for module in install_module_list:
-                        install_set_artefacts.update(module.getArtifacts())
+                        install_set_artifacts.update(module.getArtifacts())
         if fail_safe_repo_used:
             raise dnf.exceptions.Error(_(
                 "Installing module from Fail-Safe repository is not allowed"))
         __, profiles_errors = self._install_profiles_internal(
-            install_set_artefacts, install_dict, strict)
+            install_set_artifacts, install_dict, strict)
         if profiles_errors:
             error_specs.extend(profiles_errors)
 
@@ -326,8 +326,8 @@ class ModuleBase(object):
                     else:
                         for profile in latest_module.getProfiles():
                             upgrade_package_set.update(profile.getContent())
-                        for artefact in latest_module.getArtifacts():
-                            subj = hawkey.Subject(artefact)
+                        for artifact in latest_module.getArtifacts():
+                            subj = hawkey.Subject(artifact)
                             for nevra_obj in subj.get_nevra_possibilities(
                                     forms=[hawkey.FORM_NEVRA]):
                                 upgrade_package_set.add(nevra_obj.name)
