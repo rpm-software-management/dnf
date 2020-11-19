@@ -1564,7 +1564,7 @@ Transaction Summary
         actions_short = set()
         count = 0
         for pkg in hpkgs:
-            if pkg.action in (libdnf.transaction.TransactionItemAction_UPGRADED, libdnf.transaction.TransactionItemAction_DOWNGRADED):
+            if pkg.action != libdnf.transaction.TransactionItemAction_REMOVE and pkg.action in dnf.transaction.BACKWARD_ACTIONS:
                 # skip states we don't want to display in user input
                 continue
             actions.add(pkg.action_name)
