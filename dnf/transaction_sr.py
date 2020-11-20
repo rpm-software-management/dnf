@@ -55,6 +55,10 @@ class TransactionFileError(dnf.exceptions.Error):
         :param errors: a list of error classes or a string with an error description
         """
 
+        # store args in case someone wants to read them from a caught exception
+        self.filename = filename
+        self.errors = errors
+
         if isinstance(errors, (list, tuple)):
             if len(errors) > 1:
                 msg = _('Errors in "{filename}":').format(filename=filename)
