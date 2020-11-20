@@ -120,6 +120,10 @@ class HistoryCommand(commands.Command):
             if not self.opts.transactions:
                 raise dnf.cli.CliError(_('No transaction ID or package name given.'))
         elif self.opts.transactions_action in ['redo', 'undo', 'rollback']:
+            demands.available_repos = True
+            demands.resolving = True
+            demands.root_user = True
+
             self._require_one_transaction_id = True
             if not self.opts.transactions:
                 msg = _('No transaction ID or package name given.')
@@ -157,28 +161,16 @@ class HistoryCommand(commands.Command):
         old = self.base.history_get_transaction(extcmds)
         if old is None:
             return 1, ['Failed history redo']
-        tm = dnf.util.normalize_time(old.beg_timestamp)
-        print('Repeating transaction %u, from %s' % (old.tid, tm))
-        self.output.historyInfoCmdPkgsAltered(old)
 
-        for i in old.packages():
-            pkgs = list(self.base.sack.query().filter(nevra=str(i), reponame=i.from_repo))
-            if i.action in dnf.transaction.FORWARD_ACTIONS:
-                if not pkgs:
-                    logger.info(_('No package %s available.'),
-                    self.output.term.bold(ucd(str(i))))
-                    return 1, ['An operation cannot be redone']
-                pkg = pkgs[0]
-                self.base.install(str(pkg))
-            elif i.action == libdnf.transaction.TransactionItemAction_REMOVE:
-                if not pkgs:
-                    # package was removed already, we can skip removing it again
-                    continue
-                pkg = pkgs[0]
-                self.base.remove(str(pkg))
-
-        self.base.resolve()
-        self.base.do_transaction()
+        data = serialize_transaction(old)
+        self.replay = TransactionReplay(
+            self.base,
+            data=data,
+            ignore_installed=True,
+            ignore_extras=True,
+            skip_unavailable=self.opts.skip_unavailable
+        )
+        self.replay.run()
 
     def _hcmd_undo(self, extcmds):
         try:
@@ -326,13 +318,13 @@ class HistoryCommand(commands.Command):
             raise dnf.exceptions.Error(strs[0])
 
     def run_resolved(self):
-        if self.opts.transactions_action != "replay":
+        if self.opts.transactions_action not in ("replay", "redo"):
             return
 
         self.replay.post_transaction()
 
     def run_transaction(self):
-        if self.opts.transactions_action != "replay":
+        if self.opts.transactions_action not in ("replay", "redo"):
             return
 
         warnings = self.replay.get_warnings()
