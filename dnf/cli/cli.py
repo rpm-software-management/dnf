@@ -624,62 +624,6 @@ class BaseCli(dnf.Base):
             logger.critical(_('Found more than one transaction ID!'))
         return old[0]
 
-    def history_rollback_transaction(self, extcmd):
-        """Rollback given transaction."""
-        old = self.history_get_transaction((extcmd,))
-        if old is None:
-            return 1, ['Failed history rollback, no transaction']
-        last = self.history.last()
-        if last is None:
-            return 1, ['Failed history rollback, no last?']
-        if old.tid == last.tid:
-            return 0, ['Rollback to current, nothing to do']
-
-        mobj = None
-        for trans in self.history.old(list(range(old.tid + 1, last.tid + 1))):
-            if trans.altered_lt_rpmdb:
-                logger.warning(_('Transaction history is incomplete, before %u.'), trans.tid)
-            elif trans.altered_gt_rpmdb:
-                logger.warning(_('Transaction history is incomplete, after %u.'), trans.tid)
-
-            if mobj is None:
-                mobj = dnf.db.history.MergedTransactionWrapper(trans)
-            else:
-                mobj.merge(trans)
-
-        tm = dnf.util.normalize_time(old.beg_timestamp)
-        print("Rollback to transaction %u, from %s" % (old.tid, tm))
-        print(self.output.fmtKeyValFill("  Undoing the following transactions: ",
-                                        ", ".join((str(x) for x in mobj.tids()))))
-        self.output.historyInfoCmdPkgsAltered(mobj)  # :todo
-
-#        history = dnf.history.open_history(self.history)  # :todo
-#        m = libdnf.transaction.MergedTransaction()
-
-#        return
-
-#        operations = dnf.history.NEVRAOperations()
-#        for id_ in range(old.tid + 1, last.tid + 1):
-#            operations += history.transaction_nevra_ops(id_)
-
-        try:
-            self._history_undo_operations(mobj, old.tid + 1, True, strict=self.conf.strict)
-        except dnf.exceptions.PackagesNotInstalledError as err:
-            raise
-            logger.info(_('No package %s installed.'),
-                        self.output.term.bold(ucd(err.pkg_spec)))
-            return 1, ['A transaction cannot be undone']
-        except dnf.exceptions.PackagesNotAvailableError as err:
-            raise
-            logger.info(_('No package %s available.'),
-                        self.output.term.bold(ucd(err.pkg_spec)))
-            return 1, ['A transaction cannot be undone']
-        except dnf.exceptions.MarkingError:
-            raise
-            assert False
-        else:
-            return 2, ["Rollback to transaction %u" % (old.tid,)]
-
     def history_undo_transaction(self, extcmd):
         """Undo given transaction."""
         old = self.history_get_transaction((extcmd,))
