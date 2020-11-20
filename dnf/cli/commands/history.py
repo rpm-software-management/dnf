@@ -20,6 +20,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import libdnf
+import hawkey
 
 from dnf.i18n import _, ucd
 from dnf.cli import commands
@@ -33,6 +34,7 @@ import dnf.util
 import json
 import logging
 import os
+import sys
 
 
 logger = logging.getLogger('dnf')
@@ -179,10 +181,70 @@ class HistoryCommand(commands.Command):
             return 1, [str(err)]
 
     def _hcmd_rollback(self, extcmds):
+        old = self.base.history_get_transaction(extcmds)
+        if old is None:
+            return 1, ['Failed history rollback']
+        last = self.base.history.last()
+
+        merged_trans = None
+        if old.tid != last.tid:
+            # history.old([]) returns all transactions and we don't want that
+            # so skip merging the transactions when trying to rollback to the last transaction
+            # which is the current system state and rollback is not applicable
+            for trans in self.base.history.old(list(range(old.tid + 1, last.tid + 1))):
+                if trans.altered_lt_rpmdb:
+                    logger.warning(_('Transaction history is incomplete, before %u.'), trans.tid)
+                elif trans.altered_gt_rpmdb:
+                    logger.warning(_('Transaction history is incomplete, after %u.'), trans.tid)
+
+                if merged_trans is None:
+                    merged_trans = dnf.db.history.MergedTransactionWrapper(trans)
+                else:
+                    merged_trans.merge(trans)
+
+        return self._revert_transaction(merged_trans)
+
+    def _revert_transaction(self, trans):
+        action_map = {
+            "Install": "Removed",
+            "Removed": "Install",
+            "Upgrade": "Downgraded",
+            "Upgraded": "Downgrade",
+            "Downgrade": "Upgraded",
+            "Downgraded": "Upgrade",
+            "Reinstalled": "Reinstall",
+            "Reinstall": "Reinstalled",
+            "Obsoleted": "Install",
+            "Obsolete": "Obsoleted",
+        }
+
+        data = serialize_transaction(trans)
+
+        # revert actions in the serialized transaction data to perform rollback/undo
+        for content_type in ("rpms", "groups", "environments"):
+            for ti in data.get(content_type, []):
+                ti["action"] = action_map[ti["action"]]
+
+                if ti["action"] == "Install" and ti.get("reason", None) == "clean":
+                    ti["reason"] = "dependency"
+
+                if ti.get("repo_id") == hawkey.SYSTEM_REPO_NAME:
+                    # erase repo_id, because it's not possible to perform forward actions from the @System repo
+                    ti["repo_id"] = None
+
+        self.replay = TransactionReplay(
+            self.base,
+            data=data,
+            ignore_installed=True,
+            ignore_extras=True,
+            skip_unavailable=self.opts.skip_unavailable
+        )
         try:
-            return self.base.history_rollback_transaction(extcmds[0])
-        except dnf.exceptions.Error as err:
-            return 1, [str(err)]
+            self.replay.run()
+        except dnf.transaction_sr.TransactionFileError as ex:
+            for error in ex.errors:
+                print(str(error), file=sys.stderr)
+            raise dnf.exceptions.PackageNotFoundError(_('no package matched'))
 
     def _hcmd_userinstalled(self):
         """Execute history userinstalled command."""
@@ -318,13 +380,13 @@ class HistoryCommand(commands.Command):
             raise dnf.exceptions.Error(strs[0])
 
     def run_resolved(self):
-        if self.opts.transactions_action not in ("replay", "redo"):
+        if self.opts.transactions_action not in ("replay", "redo", "rollback"):
             return
 
         self.replay.post_transaction()
 
     def run_transaction(self):
-        if self.opts.transactions_action not in ("replay", "redo"):
+        if self.opts.transactions_action not in ("replay", "redo", "rollback"):
             return
 
         warnings = self.replay.get_warnings()
