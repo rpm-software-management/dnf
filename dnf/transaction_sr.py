@@ -120,6 +120,9 @@ def serialize_transaction(transaction):
     groups = []
     environments = []
 
+    if transaction is None:
+        return data
+
     for tsi in transaction.packages():
         if tsi.is_package():
             rpms.append({
