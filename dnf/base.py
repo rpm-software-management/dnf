@@ -242,6 +242,8 @@ class Base(object):
     @property
     def comps(self):
         # :api
+        if self._comps is None:
+            self.read_comps(arch_filter=True)
         return self._comps
 
     @property
@@ -1874,7 +1876,6 @@ class Base(object):
             no_match_module_specs = install_specs.grp_specs
 
         if no_match_module_specs:
-            self.read_comps(arch_filter=True)
             exclude_specs.grp_specs = self._expand_groups(exclude_specs.grp_specs)
             self._install_groups(no_match_module_specs, exclude_specs, no_match_group_specs, strict)
 
@@ -2077,7 +2078,6 @@ class Base(object):
                     msg = _('Not a valid form: %s')
                     logger.warning(msg, grp_spec)
             elif grp_specs:
-                self.read_comps(arch_filter=True)
                 if self.env_group_remove(grp_specs):
                     done = True
 

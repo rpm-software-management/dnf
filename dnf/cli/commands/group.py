@@ -110,9 +110,6 @@ class GroupCommand(commands.Command):
 
         return installed, available
 
-    def _grp_setup(self):
-        self.base.read_comps(arch_filter=True)
-
     def _info(self, userlist):
         for strng in userlist:
             group_matched = False
@@ -369,8 +366,6 @@ class GroupCommand(commands.Command):
     def run(self):
         cmd = self.opts.subcmd
         extcmds = self.opts.args
-
-        self._grp_setup()
 
         if cmd == 'summary':
             return self._summary(extcmds)
