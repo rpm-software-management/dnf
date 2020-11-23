@@ -34,9 +34,7 @@ class DnfBaseApiTest(TestCase):
     def test_comps(self):
         # Base.comps
         self.assertHasAttr(self.base, "comps")
-
-        # blank initially
-        self.assertEqual(self.base.comps, None)
+        self.assertHasType(self.base.comps, dnf.comps.Comps)
 
         self.base.read_comps()
         self.assertHasType(self.base.comps, dnf.comps.Comps)

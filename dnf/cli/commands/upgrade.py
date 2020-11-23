@@ -124,7 +124,6 @@ class UpgradeCommand(commands.Command):
 
     def _update_groups(self):
         if self.skipped_grp_specs:
-            self.base.read_comps(arch_filter=True)
             self.base.env_group_upgrade(self.skipped_grp_specs)
             return True
         return False

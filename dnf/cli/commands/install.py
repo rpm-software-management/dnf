@@ -151,7 +151,6 @@ class InstallCommand(commands.Command):
         return err_pkgs
 
     def _install_groups(self, grp_specs):
-        self.base.read_comps(arch_filter=True)
         try:
             self.base.env_group_install(grp_specs,
                                         tuple(self.base.conf.group_package_types),

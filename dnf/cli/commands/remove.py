@@ -142,7 +142,6 @@ class RemoveCommand(commands.Command):
                 skipped_grps = self.opts.grp_specs
 
             if skipped_grps:
-                self.base.read_comps(arch_filter=True)
                 for group in skipped_grps:
                     try:
                         if self.base.env_group_remove([group]):
