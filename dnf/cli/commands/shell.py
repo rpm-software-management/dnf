@@ -239,6 +239,9 @@ exit (or quit)           exit the shell""")
             if fill_sack:
                 self.base.fill_sack()
 
+            # reset base._comps, as it has changed due to changing the repos
+            self.base._comps = None
+
         else:
             self._help('repo')
 

@@ -266,8 +266,6 @@ class HistoryCommand(commands.Command):
         ret = None
 
         if vcmd == 'replay':
-            self.base.read_comps(arch_filter=True)
-
             self.replay = TransactionReplay(
                 self.base,
                 self.opts.transaction_filename,

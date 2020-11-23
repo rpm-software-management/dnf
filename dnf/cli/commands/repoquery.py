@@ -632,7 +632,6 @@ class RepoQueryCommand(commands.Command):
                 print("\n".join(sorted(pkgs)))
 
     def _group_member_report(self, query):
-        self.base.read_comps(arch_filter=True)
         package_conf_dict = {}
         for group in self.base.comps.groups:
             package_conf_dict[group.id] = set([pkg.name for pkg in group.packages_iter()])
