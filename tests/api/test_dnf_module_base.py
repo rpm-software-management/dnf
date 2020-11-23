@@ -7,16 +7,26 @@ from __future__ import unicode_literals
 import dnf
 import dnf.module.module_base
 
+import os
+import shutil
+import tempfile
+
 from .common import TestCase
 
 
 class DnfModuleBaseApiTest(TestCase):
     def setUp(self):
         self.base = dnf.Base(dnf.conf.Conf())
+        self._installroot = tempfile.mkdtemp(prefix="dnf_test_installroot_")
+        self.base.conf.installroot = self._installroot
+        self.base.conf.cachedir = os.path.join(self._installroot, "var/cache/dnf")
+        self.base._sack = dnf.sack._build_sack(self.base)
         self.moduleBase = dnf.module.module_base.ModuleBase(self.base)
 
     def tearDown(self):
         self.base.close()
+        if self._installroot.startswith("/tmp/"):
+            shutil.rmtree(self._installroot)
 
     def test_init(self):
         moduleBase = dnf.module.module_base.ModuleBase(self.base)
@@ -51,12 +61,7 @@ class DnfModuleBaseApiTest(TestCase):
     def test_install(self):
         # ModuleBase.install()
         self.assertHasAttr(self.moduleBase, "install")
-        self.assertRaises(
-            AttributeError,
-            self.moduleBase.install,
-            module_specs=[],
-            strict=False,
-        )
+        self.moduleBase.install(module_specs=[], strict=False)
 
     def test_remove(self):
         # ModuleBase.remove()
