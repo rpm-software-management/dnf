@@ -140,20 +140,21 @@ class ModuleBase(object):
         if fail_safe_repo_used:
             raise dnf.exceptions.Error(_(
                 "Installing module from Fail-Safe repository is not allowed"))
-        install_base_query = self.base.sack.query().filterm(
-            nevra_strict=install_set_artefacts).apply()
+        #  Remove source packages they cannot be installed or upgraded
+        base_no_source_query = self.base.sack.query().filterm(arch__neq=['src', 'nosrc']).apply()
+        install_base_query = base_no_source_query.filter(nevra_strict=install_set_artefacts)
 
         # add hot-fix packages
         hot_fix_repos = [i.id for i in self.base.repos.iter_enabled() if i.module_hotfixes]
-        hotfix_packages = self.base.sack.query().filterm(reponame=hot_fix_repos).filterm(
-            name=install_dict.keys())
+        hotfix_packages = base_no_source_query.filter(
+            reponame=hot_fix_repos, name=install_dict.keys())
         install_base_query = install_base_query.union(hotfix_packages)
 
         for pkg_name, set_specs in install_dict.items():
             query = install_base_query.filter(name=pkg_name)
             if not query:
                 # package can also be non-modular or part of another stream
-                query = self.base.sack.query().filterm(name=pkg_name)
+                query = base_no_source_query.filter(name=pkg_name)
                 if not query:
                     for spec in set_specs:
                         logger.error(_("Unable to resolve argument {}").format(spec))
@@ -181,6 +182,9 @@ class ModuleBase(object):
         no_match_specs = []
         fail_safe_repo = hawkey.MODULE_FAIL_SAFE_REPO_NAME
         fail_safe_repo_used = False
+
+        #  Remove source packages they cannot be installed or upgraded
+        base_no_source_query = self.base.sack.query().filterm(arch__neq=['src', 'nosrc']).apply()
 
         for spec in module_specs:
             module_list, nsvcap = self._get_modules(spec)
@@ -221,7 +225,7 @@ class ModuleBase(object):
 
             if not upgrade_package_set:
                 logger.error(_("Unable to match profile in argument {}").format(spec))
-            query = self.base.sack.query().filterm(name=upgrade_package_set)
+            query = base_no_source_query.filter(name=upgrade_package_set)
             if query:
                 sltr = dnf.selector.Selector(self.base.sack)
                 sltr.set(pkg=query)
