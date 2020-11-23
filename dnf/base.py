@@ -1543,7 +1543,7 @@ class Base(object):
                 if (comps_pkg.basearchonly):
                     query_args.update({'arch': basearch})
                 q = self.sack.query().filterm(**query_args).apply()
-                q.filterm(arch__neq="src")
+                q.filterm(arch__neq=["src", "nosrc"])
                 if not q:
                     package_string = comps_pkg.name
                     if comps_pkg.basearchonly:
