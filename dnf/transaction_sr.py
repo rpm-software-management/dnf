@@ -314,9 +314,10 @@ class TransactionReplay(object):
         # This can e.g. make a difference in the system-upgrade plugin, in case
         # the same NEVRA is in two repos, this makes sure the same repo is used
         # for both download and upgrade steps of the plugin.
-        query_repo = query.filter(reponame=repo_id)
-        if query_repo:
-            query = query_repo.union(query.installed())
+        if repo_id:
+            query_repo = query.filter(reponame=repo_id)
+            if query_repo:
+                query = query_repo.union(query.installed())
 
         if not query:
             self._raise_or_warn(self._skip_unavailable, _('Cannot find rpm nevra "{nevra}".').format(nevra=nevra))
