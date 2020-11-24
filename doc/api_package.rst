@@ -138,7 +138,7 @@
 
   .. attribute:: reponame
 
-    Id of repository the package was installed from (string).
+    Id of repository the package belongs to (@System for installed packages) (string).
 
   .. attribute:: requires
 
