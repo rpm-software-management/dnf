@@ -76,11 +76,14 @@ class Package(hawkey.Package):
         pkgrepo = None
         if self._from_system:
             pkgrepo = self.base.history.repo(self)
-        else:
-            pkgrepo = {}
         if pkgrepo:
             return '@' + pkgrepo
         return self.reponame
+
+    @property
+    def from_repo(self):
+        # :api
+        return self._from_repo
 
     @property
     def _header(self):
