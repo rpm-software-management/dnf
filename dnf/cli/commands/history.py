@@ -270,7 +270,7 @@ class HistoryCommand(commands.Command):
 
             self.replay = TransactionReplay(
                 self.base,
-                self.opts.transaction_filename,
+                filename=self.opts.transaction_filename,
                 ignore_installed = self.opts.ignore_installed,
                 ignore_extras = self.opts.ignore_extras,
                 skip_unavailable = self.opts.skip_unavailable
