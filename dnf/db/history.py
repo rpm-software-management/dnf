@@ -389,8 +389,6 @@ class SwdbInterface(object):
         rpm_item = self.rpm._pkg_to_swdb_rpm_item(pkg)
         repoid = self.repo(pkg)
         action = libdnf.transaction.TransactionItemAction_REASON_CHANGE
-        reason = reason
-        replaced_by = None
         ti = self.swdb.addItem(rpm_item, repoid, action, reason)
         ti.setState(libdnf.transaction.TransactionItemState_DONE)
         return ti
