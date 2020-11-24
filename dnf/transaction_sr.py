@@ -187,21 +187,23 @@ class TransactionReplay(object):
     def __init__(
         self,
         base,
-        fn,
+        filename="",
+        data=None,
         ignore_extras=False,
         ignore_installed=False,
         skip_unavailable=False
     ):
         """
         :param base: the dnf base
-        :param fn: the filename to load the transaction from
+        :param filename: the filename to load the transaction from (conflicts with the 'data' argument)
+        :param data: the dictionary to load the transaction from (conflicts with the 'filename' argument)
         :param ignore_extras: whether to ignore extra package pulled into the transaction
         :param ignore_installed: whether to ignore installed versions of packages
         :param skip_unavailable: whether to skip transaction packages that aren't available
         """
 
         self._base = base
-        self._filename = fn
+        self._filename = filename
         self._ignore_installed = ignore_installed
         self._ignore_extras = ignore_extras
         self._skip_unavailable = skip_unavailable
@@ -213,25 +215,39 @@ class TransactionReplay(object):
         self._nevra_reason_cache = {}
         self._warnings = []
 
+        if filename and data:
+            raise ValueError(_("Conflicting TransactionReplay arguments have been specified: filename, data"))
+        elif filename:
+            self._load_from_file(filename)
+        else:
+            self._load_from_data(data)
+
+
+    def _load_from_file(self, fn):
+        self._filename = fn
         with open(fn, "r") as f:
             try:
-                self._replay_data = json.load(f)
+                replay_data = json.load(f)
             except json.decoder.JSONDecodeError as e:
                 raise TransactionFileError(fn, str(e) + ".")
 
         try:
-            self._verify_toplevel_json(self._replay_data)
-
-            self._rpms = self._replay_data.get("rpms", [])
-            self._assert_type(self._rpms, list, "rpms", "array")
-
-            self._groups = self._replay_data.get("groups", [])
-            self._assert_type(self._groups, list, "groups", "array")
-
-            self._environments = self._replay_data.get("environments", [])
-            self._assert_type(self._environments, list, "environments", "array")
+            self._load_from_data(replay_data)
         except TransactionError as e:
             raise TransactionFileError(fn, e)
+
+    def _load_from_data(self, data):
+        self._replay_data = data
+        self._verify_toplevel_json(self._replay_data)
+
+        self._rpms = self._replay_data.get("rpms", [])
+        self._assert_type(self._rpms, list, "rpms", "array")
+
+        self._groups = self._replay_data.get("groups", [])
+        self._assert_type(self._groups, list, "groups", "array")
+
+        self._environments = self._replay_data.get("environments", [])
+        self._assert_type(self._environments, list, "environments", "array")
 
     def _raise_or_warn(self, warn_only, msg):
         if warn_only:
