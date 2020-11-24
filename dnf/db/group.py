@@ -46,14 +46,21 @@ class PersistorBase(object):
     def _get_obj_id(self, obj):
         raise NotImplementedError
 
+    def _add_to_history(self, item, action):
+        ti = self.history.swdb.addItem(item, "", action, libdnf.transaction.TransactionItemReason_USER)
+        ti.setState(libdnf.transaction.TransactionItemState_DONE)
+
     def install(self, obj):
         self._installed[self._get_obj_id(obj)] = obj
+        self._add_to_history(obj, libdnf.transaction.TransactionItemAction_INSTALL)
 
     def remove(self, obj):
         self._removed[self._get_obj_id(obj)] = obj
+        self._add_to_history(obj, libdnf.transaction.TransactionItemAction_REMOVE)
 
     def upgrade(self, obj):
         self._upgraded[self._get_obj_id(obj)] = obj
+        self._add_to_history(obj, libdnf.transaction.TransactionItemAction_UPGRADE)
 
     def new(self, obj_id, name, translated_name, pkg_types):
         raise NotImplementedError

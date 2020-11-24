@@ -313,6 +313,11 @@ class EnvironmentInstallTest(tests.support.ResultTestCase):
     COMPS_SEED_HISTORY = True
 
     def test_environment_install(self):
+        # actually commit the pre-mocked comps, as otherwise
+        # 'sugar-desktop-environment' is already present in the open
+        # transaction and it wins over the one installed here
+        self._swdb_commit()
+
         env_id = 'sugar-desktop-environment'
         comps_env = self.comps.environment_by_pattern(env_id)
         self.base.environment_install(comps_env.id, ('mandatory',))
