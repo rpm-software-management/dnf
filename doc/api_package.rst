@@ -74,6 +74,12 @@
 
     Files the package provides (list of strings).
 
+  .. attribute:: from_repo
+
+    For installed packages returns id of repository from which the package was installed prefixed
+    with '@' (if such information is available in the history database). Otherwise returns id of
+    repository the package belongs to (@System for installed packages of unknown origin) (string).
+
   .. attribute:: group
 
     Group of the package (string).

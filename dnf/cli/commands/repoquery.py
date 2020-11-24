@@ -44,7 +44,7 @@ QFORMAT_DEFAULT = '%{name}-%{epoch}:%{version}-%{release}.%{arch}'
 QFORMAT_MATCH = re.compile(r'%(-?\d*?){([:.\w]+?)}')
 
 QUERY_TAGS = """\
-name, arch, epoch, version, release, reponame (repoid), evr,
+name, arch, epoch, version, release, reponame (repoid), from_repo, evr,
 debug_name, source_name, source_debug_name,
 installtime, buildtime, size, downloadsize, installsize,
 provides, requires, obsoletes, conflicts, sourcerpm,
