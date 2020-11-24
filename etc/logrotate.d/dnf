@@ -3,5 +3,5 @@
     notifempty
     rotate 4
     weekly
-    create 0600 root root
+    create
 }
