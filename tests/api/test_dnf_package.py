@@ -163,6 +163,11 @@ class DnfPackageApiTest(TestCase):
         self.assertHasAttr(self.package, "reponame")
         self.assertHasType(self.package.reponame, str)
 
+    def test_from_repo(self):
+        # Package.reponame
+        self.assertHasAttr(self.package, "from_repo")
+        self.assertHasType(self.package.from_repo, str)
+
     def test_requires(self):
         # Package.requires
         self.assertHasAttr(self.package, "requires")
