@@ -253,8 +253,10 @@ class ModuleBase(object):
         all_names.update(new_artifacts_names)
         all_names.update(active_artifacts_names)
         remove_query = self.base.sack.query().filterm(empty=True)
+        base_no_source_query = self.base.sack.query().filterm(arch__neq=['src', 'nosrc']).apply()
+
         for pkg_name in all_names:
-            query = self.base.sack.query().filterm(name=pkg_name)
+            query = base_no_source_query.filter(name=pkg_name)
             installed = query.installed()
             if not installed:
                 continue
