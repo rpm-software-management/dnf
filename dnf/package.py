@@ -73,6 +73,12 @@ class Package(hawkey.Package):
 
     @property
     def _from_repo(self):
+        """
+        For installed packages returns id of repository from which the package was installed
+        prefixed with '@' (if such information is available in the history database). Otherwise
+        returns id of repository the package belongs to (@System for installed packages of unknown
+        origin)
+        """
         pkgrepo = None
         if self._from_system:
             pkgrepo = self.base.history.repo(self)
@@ -83,7 +89,9 @@ class Package(hawkey.Package):
     @property
     def from_repo(self):
         # :api
-        return self._from_repo
+        if self._from_system:
+            return self.base.history.repo(self)
+        return ""
 
     @property
     def _header(self):
