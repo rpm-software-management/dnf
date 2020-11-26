@@ -89,7 +89,9 @@ class Package(hawkey.Package):
     @property
     def from_repo(self):
         # :api
-        return self.base.history.repo(self)
+        if self._from_system:
+            return self.base.history.repo(self)
+        return ""
 
     @property
     def _header(self):
