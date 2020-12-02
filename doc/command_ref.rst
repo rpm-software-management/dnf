@@ -577,7 +577,7 @@ Deplist Command
 ---------------
 
 ``dnf [options] deplist [<select-options>] [<query-options>] [<package-spec>]``
-    Alias for :ref:`dnf repoquery --deplist <deplist_option-label>`.
+    Deprecated alias for :ref:`dnf repoquery --deplist <deplist_option-label>`.
 
 .. _distro_sync_command-label:
 
