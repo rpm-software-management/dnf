@@ -502,6 +502,17 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Wed Dec 02 2020 Nicola Sella <nsella@redhat.com> - 4.5.1-1
+- Add a get_current() method to SwdbInterface
+- Add `from_repo` attribute for Package class (RhBug:1898968,1879168)
+- Correct description of Package().reponane attribute
+- Add unittest for new API
+- Make rotated log file (mode, owner, group) match previous log settings (RhBug:1894344)
+- [doc] Improve description of modular filtering
+- [doc] add documentation for from_repo
+- [doc] deprecated alias for dnf repoquery --deplist <deplist_option-label>
+- New config option module_allow_stream_switch allows switching enabled streams
+
 * Mon Nov 09 2020 Nicola Sella <nsella@redhat.com> - 4.4.2-1
 - spec: Fix building with new cmake macros (backport from downstream)
 - Warn about key retrieval over http:

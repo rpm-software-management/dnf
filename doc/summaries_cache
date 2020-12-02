@@ -3230,5 +3230,21 @@
     [
         1788371,
         "[Feature Request] Package vendor stickiness as available in Zypper"
+    ],
+    [
+        1894344,
+        "Permissions in /etc/logrotate.d/dnf do not match the rpm permissions"
+    ],
+    [
+        1898548,
+        "\"dnf install @perl-App-cpanminus:1.7044/common\" fails on installing a source package"
+    ],
+    [
+        1879168,
+        "dnf.package.Package.reponame is always \"@System\""
+    ],
+    [
+        1898968,
+        "Listing an installed package from a specific repository not operational"
     ]
 ]
