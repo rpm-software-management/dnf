@@ -34,7 +34,6 @@ import dnf.util
 import json
 import logging
 import os
-import sys
 
 
 logger = logging.getLogger('dnf')
@@ -160,10 +159,7 @@ class HistoryCommand(commands.Command):
         return dnf.cli.commands.Command.get_error_output(self, error)
 
     def _hcmd_redo(self, extcmds):
-        old = self.base.history_get_transaction(extcmds)
-        if old is None:
-            return 1, ['Failed history redo']
-
+        old = self._history_get_transaction(extcmds)
         data = serialize_transaction(old)
         self.replay = TransactionReplay(
             self.base,
@@ -174,16 +170,27 @@ class HistoryCommand(commands.Command):
         )
         self.replay.run()
 
+    def _history_get_transactions(self, extcmds):
+        if not extcmds:
+            raise dnf.cli.CliError(_('No transaction ID given'))
+
+        old = self.base.history.old(extcmds)
+        if not old:
+            raise dnf.cli.CliError(_('Transaction ID "{0}" not found.').format(extcmds[0]))
+        return old
+
+    def _history_get_transaction(self, extcmds):
+        old = self._history_get_transactions(extcmds)
+        if len(old) > 1:
+            raise dnf.cli.CliError(_('Found more than one transaction ID!'))
+        return old[0]
+
     def _hcmd_undo(self, extcmds):
-        old = self.base.history_get_transaction(extcmds)
-        if old is None:
-            return 1, ['Failed history undo']
+        old = self._history_get_transaction(extcmds)
         return self._revert_transaction(old)
 
     def _hcmd_rollback(self, extcmds):
-        old = self.base.history_get_transaction(extcmds)
-        if old is None:
-            return 1, ['Failed history rollback']
+        old = self._history_get_transaction(extcmds)
         last = self.base.history.last()
 
         merged_trans = None
@@ -239,12 +246,7 @@ class HistoryCommand(commands.Command):
             ignore_extras=True,
             skip_unavailable=self.opts.skip_unavailable
         )
-        try:
-            self.replay.run()
-        except dnf.transaction_sr.TransactionFileError as ex:
-            for error in ex.errors:
-                print(str(error), file=sys.stderr)
-            raise dnf.exceptions.PackageNotFoundError(_('no package matched'))
+        self.replay.run()
 
     def _hcmd_userinstalled(self):
         """Execute history userinstalled command."""
@@ -346,11 +348,8 @@ class HistoryCommand(commands.Command):
             elif vcmd == 'userinstalled':
                 ret = self._hcmd_userinstalled()
             elif vcmd == 'store':
-                transactions = self.output.history.old(tids)
-                if not transactions:
-                    raise dnf.cli.CliError(_('Transaction ID "{id}" not found.').format(id=tids[0]))
-
-                data = serialize_transaction(transactions[0])
+                tid = self._history_get_transaction(tids)
+                data = serialize_transaction(tid)
                 try:
                     filename = self.opts.output if self.opts.output is not None else "transaction.json"
 
@@ -371,14 +370,6 @@ class HistoryCommand(commands.Command):
                 except OSError as e:
                     raise dnf.cli.CliError(_('Error storing transaction: {}').format(str(e)))
 
-        if ret is None:
-            return
-        (code, strs) = ret
-        if code == 2:
-            self.cli.demands.resolving = True
-        elif code != 0:
-            raise dnf.exceptions.Error(strs[0])
-
     def run_resolved(self):
         if self.opts.transactions_action not in ("replay", "redo", "rollback", "undo"):
             return
@@ -393,7 +384,7 @@ class HistoryCommand(commands.Command):
         if warnings:
             logger.log(
                 dnf.logging.WARNING,
-                _("Warning, the following problems occurred while replaying the transaction:")
+                _("Warning, the following problems occurred while running a transaction:")
             )
             for w in warnings:
                 logger.log(dnf.logging.WARNING, "  " + w)
