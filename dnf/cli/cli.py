@@ -609,25 +609,6 @@ class BaseCli(dnf.Base):
             return False
         return True
 
-    def _history_get_transactions(self, extcmds):
-        if not extcmds:
-            logger.critical(_('No transaction ID given'))
-            return None
-
-        old = self.history.old(extcmds)
-        if not old:
-            logger.critical(_('Not found given transaction ID'))
-            return None
-        return old
-
-    def history_get_transaction(self, extcmds):
-        old = self._history_get_transactions(extcmds)
-        if old is None:
-            return None
-        if len(old) > 1:
-            logger.critical(_('Found more than one transaction ID!'))
-        return old[0]
-
 
 class Cli(object):
     def __init__(self, base):
