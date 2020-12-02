@@ -425,6 +425,68 @@ class Base(object):
         self._plugins.run_sack()
         return self._sack
 
+    def fill_sack_from_repos_in_cache(self, load_system_repo=True):
+        # :api
+        """
+        Prepare Sack and Goal objects and also load all enabled repositories from cache only,
+        it doesn't download anything and it doesn't check if metadata are expired.
+        If there is not enough metadata present (repond.xml or both primary.xml and solv file
+        are missing) given repo is either skipped or it throws a RepoError exception depending
+        on skip_if_unavailable configuration.
+        """
+        timer = dnf.logging.Timer('sack setup')
+        self.reset(sack=True, goal=True)
+        self._sack = dnf.sack._build_sack(self)
+        lock = dnf.lock.build_metadata_lock(self.conf.cachedir, self.conf.exit_on_lock)
+        with lock:
+            if load_system_repo is not False:
+                try:
+                    # FIXME: If build_cache=True, @System.solv is incorrectly updated in install-
+                    # remove loops
+                    self._sack.load_system_repo(build_cache=False)
+                except IOError:
+                    if load_system_repo != 'auto':
+                        raise
+
+            error_repos = []
+            # Iterate over installed GPG keys and check their validity using DNSSEC
+            if self.conf.gpgkey_dns_verification:
+                dnf.dnssec.RpmImportedKeys.check_imported_keys_validity()
+            for repo in self.repos.iter_enabled():
+                try:
+                    repo._repo.loadCache(throwExcept=True, ignoreMissing=True)
+                    mdload_flags = dict(load_filelists=True,
+                                        load_presto=repo.deltarpm,
+                                        load_updateinfo=True)
+                    if repo.load_metadata_other:
+                        mdload_flags["load_other"] = True
+
+                    self._sack.load_repo(repo._repo, **mdload_flags)
+
+                    logger.debug(_("%s: using metadata from %s."), repo.id,
+                                 dnf.util.normalize_time(
+                                     repo._repo.getMaxTimestamp()))
+                except (RuntimeError, hawkey.Exception) as e:
+                    if repo.skip_if_unavailable is False:
+                        raise dnf.exceptions.RepoError(
+                            _("loading repo '{}' failure: {}").format(repo.id, e))
+                    else:
+                        logger.debug(_("loading repo '{}' failure: {}").format(repo.id, e))
+                    error_repos.append(repo.id)
+                    repo.disable()
+            if error_repos:
+                logger.warning(
+                    _("Ignoring repositories: %s"), ', '.join(error_repos))
+
+        conf = self.conf
+        self._sack._configure(conf.installonlypkgs, conf.installonly_limit, conf.allow_vendor_change)
+        self._setup_excludes_includes()
+        timer()
+        self._goal = dnf.goal.Goal(self._sack)
+        self._goal.protect_running_kernel = conf.protect_running_kernel
+        self._plugins.run_sack()
+        return self._sack
+
     def _finalize_base(self):
         self._tempfile_persistor = dnf.persistor.TempfilePersistor(
             self.conf.cachedir)
