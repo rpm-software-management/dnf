@@ -113,7 +113,10 @@ class TransactionDisplay(object):
         pass
 
     def scriptout(self, msgs):
-        """msgs is the messages that were output (if any)."""
+        """Hook for reporting an rpm scriptlet output.
+
+        :param msgs: the scriptlet output
+        """
         pass
 
     def error(self, message):
@@ -155,6 +158,10 @@ class LoggingTransactionDisplay(ErrorTransactionDisplay):
         action_str = dnf.transaction.FILE_ACTIONS[action]
         msg = '%s: %s' % (action_str, package)
         self.rpm_logger.log(dnf.logging.SUBDEBUG, msg)
+
+    def scriptout(self, msgs):
+        if msgs:
+            self.rpm_logger.info(ucd(msgs))
 
 
 class RPMTransaction(object):

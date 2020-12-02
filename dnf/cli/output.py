@@ -2036,12 +2036,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         pass
 
     def scriptout(self, msgs):
-        """Print messages originating from a package script.
-
-        :param msgs: the messages coming from the script
-        """
-        if msgs:
-            self.rpm_logger.info(ucd(msgs))
+        pass
 
     def _makefmt(self, percent, ts_done, ts_total, progress=True,
                  pkgname=None, wid1=15):
