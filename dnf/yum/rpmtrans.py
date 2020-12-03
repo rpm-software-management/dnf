@@ -143,7 +143,7 @@ class ErrorTransactionDisplay(TransactionDisplay):
         dnf.util._terminal_messenger('print', message, sys.stderr)
 
 
-class LoggingTransactionDisplay(ErrorTransactionDisplay):
+class LoggingTransactionDisplay(TransactionDisplay):
     '''
     Base class for a RPMTransaction display callback class
     '''

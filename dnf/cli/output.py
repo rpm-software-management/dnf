@@ -37,7 +37,7 @@ import time
 from dnf.cli.format import format_number, format_time
 from dnf.i18n import _, C_, P_, ucd, fill_exact_width, textwrap_fill, exact_width, select_short_long
 from dnf.pycomp import xrange, basestring, long, unicode, sys_maxsize
-from dnf.yum.rpmtrans import LoggingTransactionDisplay
+from dnf.yum.rpmtrans import TransactionDisplay
 from dnf.db.history import MergedTransactionWrapper
 import dnf.base
 import dnf.callback
@@ -2071,7 +2071,7 @@ class CliKeyImport(dnf.callback.KeyImport):
         return self.output.userconfirm()
 
 
-class CliTransactionDisplay(LoggingTransactionDisplay):
+class CliTransactionDisplay(TransactionDisplay):
     """A YUM specific callback class for RPM operations."""
 
     width = property(lambda self: dnf.cli.term._term_width())
@@ -2093,7 +2093,7 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
         :param package: the package involved in the event
         :param action: the type of action that is taking place.  Valid
            values are given by
-           :func:`rpmtrans.LoggingTransactionDisplay.action.keys()`
+           :func:`rpmtrans.TransactionDisplay.action.keys()`
         :param ti_done: a number representing the amount of work
            already done in the current transaction
         :param ti_total: a number representing the total amount of work
@@ -2143,15 +2143,6 @@ class CliTransactionDisplay(LoggingTransactionDisplay):
                 self.lastmsg = msg
                 if ti_done == ti_total:
                     print(" ")
-
-    def filelog(self, package, action):
-        pass
-
-    def error(self, message):
-        pass
-
-    def scriptout(self, msgs):
-        pass
 
     def _makefmt(self, percent, ts_done, ts_total, progress=True,
                  pkgname=None, wid1=15):
