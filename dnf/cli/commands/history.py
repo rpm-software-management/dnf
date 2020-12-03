@@ -175,10 +175,10 @@ class HistoryCommand(commands.Command):
         self.replay.run()
 
     def _hcmd_undo(self, extcmds):
-        try:
-            return self.base.history_undo_transaction(extcmds[0])
-        except dnf.exceptions.Error as err:
-            return 1, [str(err)]
+        old = self.base.history_get_transaction(extcmds)
+        if old is None:
+            return 1, ['Failed history undo']
+        return self._revert_transaction(old)
 
     def _hcmd_rollback(self, extcmds):
         old = self.base.history_get_transaction(extcmds)
@@ -378,13 +378,13 @@ class HistoryCommand(commands.Command):
             raise dnf.exceptions.Error(strs[0])
 
     def run_resolved(self):
-        if self.opts.transactions_action not in ("replay", "redo", "rollback"):
+        if self.opts.transactions_action not in ("replay", "redo", "rollback", "undo"):
             return
 
         self.replay.post_transaction()
 
     def run_transaction(self):
-        if self.opts.transactions_action not in ("replay", "redo", "rollback"):
+        if self.opts.transactions_action not in ("replay", "redo", "rollback", "undo"):
             return
 
         warnings = self.replay.get_warnings()

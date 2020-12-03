@@ -628,34 +628,6 @@ class BaseCli(dnf.Base):
             logger.critical(_('Found more than one transaction ID!'))
         return old[0]
 
-    def history_undo_transaction(self, extcmd):
-        """Undo given transaction."""
-        old = self.history_get_transaction((extcmd,))
-        if old is None:
-            return 1, ['Failed history undo']
-
-        tm = dnf.util.normalize_time(old.beg_timestamp)
-        msg = _("Undoing transaction {}, from {}").format(old.tid, ucd(tm))
-        logger.info(msg)
-        self.output.historyInfoCmdPkgsAltered(old)  # :todo
-
-
-        mobj = dnf.db.history.MergedTransactionWrapper(old)
-
-        try:
-            self._history_undo_operations(mobj, old.tid, strict=self.conf.strict)
-        except dnf.exceptions.PackagesNotInstalledError as err:
-            logger.info(_('No package %s installed.'),
-                        self.output.term.bold(ucd(err.pkg_spec)))
-            return 1, ['An operation cannot be undone']
-        except dnf.exceptions.PackagesNotAvailableError as err:
-            logger.info(_('No package %s available.'),
-                        self.output.term.bold(ucd(err.pkg_spec)))
-            return 1, ['An operation cannot be undone']
-        except dnf.exceptions.MarkingError:
-            raise
-        else:
-            return 2, ["Undoing transaction %u" % (old.tid,)]
 
 class Cli(object):
     def __init__(self, base):
