@@ -20,6 +20,15 @@
 ###################
 
 ===================
+4.5.2 Release Notes
+===================
+
+- Change behaviour of Package().from_repo
+
+Bugs fixed in 4.5.2:
+
+
+===================
 4.5.1 Release Notes
 ===================
 

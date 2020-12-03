@@ -84,7 +84,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.5.1
+Version:        4.5.2
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -502,6 +502,9 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Thu Dec 03 2020 Nicola Sella <nsella@redhat.com> - 4.5.2-1
+- Change behaviour of Package().from_repo
+
 * Wed Dec 02 2020 Nicola Sella <nsella@redhat.com> - 4.5.1-1
 - Add a get_current() method to SwdbInterface
 - Add `from_repo` attribute for Package class (RhBug:1898968,1879168)
