@@ -45,6 +45,9 @@ class ModuleCommand(commands.Command):
             modules_from_specs = set()
             for module_spec in self.opts.module_spec:
                 __, nsvcap = self.module_base._get_modules(module_spec)
+                # When there is no match, the problem was already reported by module_base.remove()
+                if nsvcap is None:
+                    continue
                 name = nsvcap.name if nsvcap.name else ""
                 stream = nsvcap.stream if nsvcap.stream else ""
                 if (nsvcap.version and nsvcap.version != -1) or nsvcap.context:
