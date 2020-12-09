@@ -29,7 +29,7 @@ class DeplistCommand(RepoQueryCommand):
     """
 
     aliases = ('deplist',)
-    summary = _("List package's dependencies and what packages provide them")
+    summary = _("[deprecated, use repoquery --deplist] List package's dependencies and what packages provide them")
 
     def configure(self):
         RepoQueryCommand.configure(self)
