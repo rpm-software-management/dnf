@@ -26,6 +26,8 @@ from dnf.module.exceptions import EnableMultipleStreamsException
 from dnf.util import logger
 from dnf.i18n import _, P_, ucd
 
+import functools
+
 STATE_DEFAULT = libdnf.module.ModulePackageContainer.ModuleState_DEFAULT
 STATE_ENABLED = libdnf.module.ModulePackageContainer.ModuleState_ENABLED
 STATE_DISABLED = libdnf.module.ModulePackageContainer.ModuleState_DISABLED
@@ -307,7 +309,7 @@ class ModuleBase(object):
             if not update_module_list:
                 logger.error(_("Unable to resolve argument {}").format(spec))
                 continue
-            module_dict = self._create_module_dict_and_enable(update_module_list, False)
+            module_dict = self._create_module_dict_and_enable(update_module_list, spec, False)
             upgrade_package_set = set()
             for name, streamdict in module_dict.items():
                 for stream, module_list_from_dict in streamdict.items():
@@ -356,7 +358,7 @@ class ModuleBase(object):
             if not module_list:
                 no_match_specs.append(spec)
                 continue
-            module_dict = self._create_module_dict_and_enable(module_list, False)
+            module_dict = self._create_module_dict_and_enable(module_list, spec, False)
             remove_packages_names = []
             for name, streamdict in module_dict.items():
                 for stream, module_list_from_dict in streamdict.items():
@@ -404,7 +406,7 @@ class ModuleBase(object):
                     latest = module
         return latest
 
-    def _create_module_dict_and_enable(self, module_list, enable=True):
+    def _create_module_dict_and_enable(self, module_list, spec, enable=True):
         moduleDict = {}
         for module in module_list:
             moduleDict.setdefault(
@@ -415,7 +417,14 @@ class ModuleBase(object):
             if len(streamDict) > 1:
                 if moduleState != STATE_DEFAULT and moduleState != STATE_ENABLED \
                         and moduleState != STATE_DISABLED:
-                    raise EnableMultipleStreamsException(moduleName)
+                    streams_str = "', '".join(
+                        sorted(streamDict.keys(), key=functools.cmp_to_key(self.base.sack.evr_cmp)))
+                    msg = _("Argument '{argument}' matches {stream_count} streams ('{streams}') of "
+                            "module '{module}', but non of the streams are enabled or "
+                            "default").format(
+                        argument=spec, stream_count=len(streamDict), streams=streams_str,
+                        module=moduleName)
+                    raise EnableMultipleStreamsException(moduleName, msg)
                 if moduleState == STATE_ENABLED:
                     stream = self.base._moduleContainer.getEnabledStream(moduleName)
                 else:
@@ -444,7 +453,7 @@ class ModuleBase(object):
                 no_match_specs.append(spec)
                 continue
             try:
-                module_dict = self._create_module_dict_and_enable(module_list, True)
+                module_dict = self._create_module_dict_and_enable(module_list, spec, True)
                 module_dicts[spec] = (nsvcap, module_dict)
             except (RuntimeError, EnableMultipleStreamsException) as e:
                 error_spec.append(spec)
