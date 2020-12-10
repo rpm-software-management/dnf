@@ -107,6 +107,12 @@ class DnfBaseApiTest(TestCase):
 
         self.base.fill_sack(load_system_repo=False, load_available_repos=False)
 
+    def test_fill_sack_from_repos_in_cache(self):
+        # Base.fill_sack_from_repos_in_cache(self, load_system_repo=True):
+        self.assertHasAttr(self.base, "fill_sack_from_repos_in_cache")
+
+        self.base.fill_sack_from_repos_in_cache(load_system_repo=False)
+
     def test_close(self):
         # Base.close()
         self.assertHasAttr(self.base, "close")
