@@ -57,21 +57,19 @@ class TransactionFileError(dnf.exceptions.Error):
 
         # store args in case someone wants to read them from a caught exception
         self.filename = filename
-        self.errors = errors
-
         if isinstance(errors, (list, tuple)):
-            if len(errors) > 1:
-                msg = _('Errors in "{filename}":').format(filename=filename)
-                for error in errors:
-                    msg += "\n  " + str(error)
+            self.errors = errors
+        else:
+            self.errors = [errors]
 
-                super(TransactionFileError, self).__init__(msg)
-                return
+        if filename:
+            msg = _('The following problems occurred while replaying the transaction from file "{filename}":').format(filename=filename)
+        else:
+            msg = _('The following problems occurred while running a transaction:')
 
-            else:
-                errors = str(errors[0])
+        for error in self.errors:
+            msg += "\n  " + str(error)
 
-        msg = _('Error in "{filename}": {error}').format(filename=filename, error=errors)
         super(TransactionFileError, self).__init__(msg)
 
 
