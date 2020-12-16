@@ -862,11 +862,17 @@ class Base(object):
         display = \
             [dnf.yum.rpmtrans.LoggingTransactionDisplay()] + list(display)
 
+        # save changed stream states into history database
+        modules_changed = self._moduleContainer.saveHistory(self.history._swdb)
+
+        # save module states on disk right before entering rpm transaction,
+        # because we want system in recoverable state if transaction gets interrupted
+        self._moduleContainer.save()
+        self._moduleContainer.updateFailSafeData()
+
         if not self.transaction:
             # packages are not changed, but comps and modules changes need to be committed
-            self._moduleContainer.save()
-            self._moduleContainer.updateFailSafeData()
-            if self._history and (self._history.group or self._history.env):
+            if self._history and (self._history.group or self._history.env or modules_changed):
                 cmdline = None
                 if hasattr(self, 'args') and self.args:
                     cmdline = ' '.join(self.args)
@@ -2290,6 +2296,7 @@ class Base(object):
         :param rollback: True if transaction is performing a rollback
         :param strict: if True, raise an exception on any errors
         """
+        module_base = dnf.module.module_base.ModuleBase(self)
 
         # map actions to their opposites
         action_map = {
@@ -2305,9 +2312,17 @@ class Base(object):
             libdnf.transaction.TransactionItemAction_UPGRADE: None,
             libdnf.transaction.TransactionItemAction_UPGRADED: libdnf.transaction.TransactionItemAction_DOWNGRADE,
             libdnf.transaction.TransactionItemAction_REASON_CHANGE: None,
+
+            libdnf.transaction.TransactionItemAction_ENABLE_OUT: libdnf.transaction.TransactionItemAction_ENABLE,
+            libdnf.transaction.TransactionItemAction_ENABLE: None,
+            libdnf.transaction.TransactionItemAction_DISABLE_OUT: libdnf.transaction.TransactionItemAction_DISABLE,
+            libdnf.transaction.TransactionItemAction_DISABLE: None,
+            libdnf.transaction.TransactionItemAction_RESET_OUT: libdnf.transaction.TransactionItemAction_RESET,
+            libdnf.transaction.TransactionItemAction_RESET: None,
         }
 
         failed = False
+
         for ti in operations.packages():
             try:
                 action = action_map[ti.action]
@@ -2315,6 +2330,30 @@ class Base(object):
                 raise RuntimeError(_("Action not handled: {}".format(action)))
 
             if action is None:
+                continue
+
+            if action == libdnf.transaction.TransactionItemAction_ENABLE:
+                module_base.enable([str(ti)])
+                continue
+
+            if action == libdnf.transaction.TransactionItemAction_DISABLE:
+                module_base.disable([str(ti)])
+                continue
+
+            if action == libdnf.transaction.TransactionItemAction_RESET:
+                module_base.reset([str(ti)])
+                continue
+
+            if ti._item.getCompsGroupItem() or ti._item.getCompsEnvironmentItem():
+                if action == libdnf.transaction.TransactionItemAction_REMOVE:
+                    if ti._item.getCompsGroupItem():
+                        self.read_comps(arch_filter=True)
+                        self.group_remove(str(ti).lstrip("@"))
+                    elif ti._item.getCompsEnvironmentItem():
+                        self.read_comps(arch_filter=True)
+                        self.env_group_remove([str(ti).lstrip("@")])
+                else:
+                    self.install_specs([str(ti)], [])
                 continue
 
             if action == libdnf.transaction.TransactionItemAction_REMOVE:

@@ -70,6 +70,9 @@ BACKWARD_ACTIONS = [
     libdnf.transaction.TransactionItemAction_OBSOLETED,
     libdnf.transaction.TransactionItemAction_UPGRADED,
     libdnf.transaction.TransactionItemAction_REMOVE,
+    libdnf.transaction.TransactionItemAction_ENABLE_OUT,
+    libdnf.transaction.TransactionItemAction_DISABLE_OUT,
+    libdnf.transaction.TransactionItemAction_RESET_OUT,
 # TODO: REINSTALLED may and may not belong here; the same NEVRA is in FORWARD_ACTIONS already
 #    libdnf.transaction.TransactionItemAction_REINSTALLED,
 ]
