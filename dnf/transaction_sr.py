@@ -48,7 +48,7 @@ class TransactionError(dnf.exceptions.Error):
         super(TransactionError, self).__init__(msg)
 
 
-class TransactionFileError(dnf.exceptions.Error):
+class TransactionReplayError(dnf.exceptions.Error):
     def __init__(self, filename, errors):
         """
         :param filename: The name of the transaction file being replayed
@@ -70,10 +70,10 @@ class TransactionFileError(dnf.exceptions.Error):
         for error in self.errors:
             msg += "\n  " + str(error)
 
-        super(TransactionFileError, self).__init__(msg)
+        super(TransactionReplayError, self).__init__(msg)
 
 
-class IncompatibleTransactionVersionError(TransactionFileError):
+class IncompatibleTransactionVersionError(TransactionReplayError):
     def __init__(self, filename, msg):
         super(IncompatibleTransactionVersionError, self).__init__(filename, msg)
 
@@ -84,7 +84,7 @@ def _check_version(version, filename):
     try:
         major = int(major)
     except ValueError as e:
-        raise TransactionFileError(
+        raise TransactionReplayError(
             filename,
             _('Invalid major version "{major}", number expected.').format(major=major)
         )
@@ -92,7 +92,7 @@ def _check_version(version, filename):
     try:
         int(minor)  # minor is unused, just check it's a number
     except ValueError as e:
-        raise TransactionFileError(
+        raise TransactionReplayError(
             filename,
             _('Invalid minor version "{minor}", number expected.').format(minor=minor)
         )
@@ -234,12 +234,12 @@ class TransactionReplay(object):
             try:
                 replay_data = json.load(f)
             except json.decoder.JSONDecodeError as e:
-                raise TransactionFileError(fn, str(e) + ".")
+                raise TransactionReplayError(fn, str(e) + ".")
 
         try:
             self._load_from_data(replay_data)
         except TransactionError as e:
-            raise TransactionFileError(fn, e)
+            raise TransactionReplayError(fn, e)
 
     def _load_from_data(self, data):
         self._replay_data = data
@@ -268,7 +268,7 @@ class TransactionReplay(object):
         fn = self._filename
 
         if "version" not in replay_data:
-            raise TransactionFileError(fn, _('Missing key "{key}".'.format(key="version")))
+            raise TransactionReplayError(fn, _('Missing key "{key}".'.format(key="version")))
 
         self._assert_type(replay_data["version"], str, "version", "string")
 
@@ -580,7 +580,7 @@ class TransactionReplay(object):
                 errors.append(e)
 
         if errors:
-            raise TransactionFileError(fn, errors)
+            raise TransactionReplayError(fn, errors)
 
     def post_transaction(self):
         """
@@ -635,4 +635,4 @@ class TransactionReplay(object):
                 pass
 
         if errors:
-            raise TransactionFileError(self._filename, errors)
+            raise TransactionReplayError(self._filename, errors)
