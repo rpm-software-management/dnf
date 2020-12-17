@@ -334,7 +334,6 @@ class TransactionReplay(object):
             if action == "Install" and query_na.installed() and not self._base._get_installonly_query(query_na):
                 self._raise_or_warn(self._ignore_installed,
                     _('Package "{na}" is already installed for action "{action}".').format(na=na, action=action))
-                return
 
             sltr = dnf.selector.Selector(self._base.sack).set(pkg=query)
             self._base.goal.install(select=sltr, optional=not self._base.conf.strict)
