@@ -316,6 +316,8 @@ class Base(object):
         # :api
 
         period = self.conf.metadata_timer_sync
+        if self._repo_persistor is None:
+            self._activate_persistor()
         persistor = self._repo_persistor
         if timer:
             if dnf.util.on_metered_connection():
