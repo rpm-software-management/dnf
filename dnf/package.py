@@ -287,11 +287,14 @@ class Package(hawkey.Package):
     def remote_location(self, schemes=('http', 'ftp', 'file', 'https')):
         # :api
         """
-        The location from where the package can be downloaded from
+        The location from where the package can be downloaded from. Returns None for installed and
+        commandline packages.
 
         :param schemes: list of allowed protocols. Default is ('http', 'ftp', 'file', 'https')
         :return: location (string) or None
         """
+        if self._from_system or self._from_cmdline:
+            return None
         return self.repo.remote_location(self.location, schemes)
 
     def _is_local_pkg(self):
