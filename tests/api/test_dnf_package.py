@@ -250,8 +250,7 @@ class DnfPackageApiTest(TestCase):
     def test_remote_location(self):
         # Package.remote_location
         self.assertHasAttr(self.package, "remote_location")
-        # This fails due to a bug (filed RhBug:1873146)
-        #self.package.remote_location(schemes='http')
+        self.package.remote_location(schemes='http')
 
     def test_debuginfo_suffix(self):
         # Package.DEBUGINFO_SUFFIX
