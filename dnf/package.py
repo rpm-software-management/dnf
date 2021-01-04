@@ -298,7 +298,7 @@ class Package(hawkey.Package):
         return self.repo.remote_location(self.location, schemes)
 
     def _is_local_pkg(self):
-        if self.repoid == "@System":
+        if self._from_system:
             return True
         if '://' in self.location and not self.location.startswith('file://'):
             # the package has a remote URL as its location
