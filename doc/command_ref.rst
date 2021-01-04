@@ -821,6 +821,13 @@ Install Command
     version of the package is already installed. The former version of the package
     will be removed in the case of non-installonly package.
 
+    On the other hand if :ref:`<package-spec> <specifying_packages-label>` specifies only a name,
+    DNF also takes into account packages obsoleting it when picking which package to install.
+    This behaviour is specific to the install command.
+    Note that this can lead to seemingly unexpected results if a package has multiple versions and
+    some older version is being obsoleted. It creates a split in the upgrade-path and both ways
+    are considered correct, the resulting package is picked simply by lexicographical order.
+
     There are also a few specific install commands ``install-n``, ``install-na`` and
     ``install-nevra`` that allow the specification of an exact argument in the NEVRA format.
 
