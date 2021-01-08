@@ -597,18 +597,10 @@ class Output(object):
                        number
                  '>' - highlighting used when the package has a higher version
                        number
-        :return: (exit_code, [errors])
-
-        exit_code is::
-
-            0 = we're done, exit
-            1 = we've errored, exit with error string
-
+        :return: number of packages listed
         """
         if outputType in ['list', 'info', 'name', 'nevra']:
-            thingslisted = 0
             if len(lst) > 0:
-                thingslisted = 1
                 print('%s' % description)
                 info_set = set()
                 if outputType == 'list':
@@ -645,9 +637,7 @@ class Output(object):
                 if info_set:
                     print("\n".join(sorted(info_set)))
 
-            if thingslisted == 0:
-                return 1, [_('No packages to list')]
-            return 0, []
+            return len(lst)
 
     def userconfirm(self, msg=None, defaultyes_msg=None):
         """Get a yes or no from the user, and default to No
