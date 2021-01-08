@@ -187,7 +187,7 @@ class HistoryCommand(commands.Command):
 
     def _hcmd_undo(self, extcmds):
         old = self._history_get_transaction(extcmds)
-        return self._revert_transaction(old)
+        self._revert_transaction(old)
 
     def _hcmd_rollback(self, extcmds):
         old = self._history_get_transaction(extcmds)
@@ -209,7 +209,7 @@ class HistoryCommand(commands.Command):
                 else:
                     merged_trans.merge(trans)
 
-        return self._revert_transaction(merged_trans)
+        self._revert_transaction(merged_trans)
 
     def _revert_transaction(self, trans):
         action_map = {
@@ -321,7 +321,6 @@ class HistoryCommand(commands.Command):
 
     def run(self):
         vcmd = self.opts.transactions_action
-        ret = None
 
         if vcmd == 'replay':
             self.base.read_comps(arch_filter=True)
@@ -338,17 +337,17 @@ class HistoryCommand(commands.Command):
             tids, merged_tids = self._args2transaction_ids()
 
             if vcmd == 'list' and (tids or not self.opts.transactions):
-                ret = self.output.historyListCmd(tids, reverse=self.opts.reverse)
+                self.output.historyListCmd(tids, reverse=self.opts.reverse)
             elif vcmd == 'info' and (tids or not self.opts.transactions):
-                ret = self.output.historyInfoCmd(tids, self.opts.transactions, merged_tids)
+                self.output.historyInfoCmd(tids, self.opts.transactions, merged_tids)
             elif vcmd == 'undo':
-                ret = self._hcmd_undo(tids)
+                self._hcmd_undo(tids)
             elif vcmd == 'redo':
-                ret = self._hcmd_redo(tids)
+                self._hcmd_redo(tids)
             elif vcmd == 'rollback':
-                ret = self._hcmd_rollback(tids)
+                self._hcmd_rollback(tids)
             elif vcmd == 'userinstalled':
-                ret = self._hcmd_userinstalled()
+                self._hcmd_userinstalled()
             elif vcmd == 'store':
                 tid = self._history_get_transaction(tids)
                 data = serialize_transaction(tid)
