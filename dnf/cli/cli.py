@@ -505,7 +505,7 @@ class BaseCli(dnf.Base):
             # XXX put this into the ListCommand at some point
             if len(ypl.obsoletes) > 0 and basecmd == 'list':
             # if we've looked up obsolete lists and it's a list request
-                rop = [0, '']
+                rop = len(ypl.obsoletes)
                 print(_('Obsoleting Packages'))
                 for obtup in sorted(ypl.obsoletesTuples,
                                     key=operator.itemgetter(0)):
@@ -517,8 +517,7 @@ class BaseCli(dnf.Base):
             rrap = self.output.listPkgs(ypl.recent, _('Recently Added Packages'),
                                  basecmd, columns=columns)
             if len(patterns) and \
-                rrap[0] and rop[0] and rup[0] and rep[0] and rap[0] and \
-                raep[0] and rip[0]:
+                    rrap == 0 and rop == 0 and rup == 0 and rep == 0 and rap == 0 and raep == 0 and rip == 0:
                 raise dnf.exceptions.Error(_('No matching Packages to list'))
 
     def returnPkgLists(self, pkgnarrow='all', patterns=None,
