@@ -251,7 +251,9 @@ class HistoryCommand(commands.Command):
     def _hcmd_userinstalled(self):
         """Execute history userinstalled command."""
         pkgs = tuple(self.base.iter_userinstalled())
-        return self.output.listPkgs(pkgs, 'Packages installed by user', 'nevra')
+        n_listed = self.output.listPkgs(pkgs, 'Packages installed by user', 'nevra')
+        if n_listed == 0:
+            raise dnf.cli.CliError(_('No packages to list'))
 
     def _args2transaction_ids(self):
         """Convert commandline arguments to transaction ids"""
