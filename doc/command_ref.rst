@@ -1763,8 +1763,10 @@ The following patterns are supported:
     those two characters, inclusive, is matched. If the first character
     following the ``[`` is a ``!`` or a ``^`` then any character not enclosed
     is matched.
-``{}``
-    Matches any of the comma separated list of enclosed strings.
+
+Note: Curly brackets (``{}``) are not supported. You can still use them in
+shells that support them and let the shell do the expansion, but if quoted or
+escaped, dnf will not expand them.
 
 --------------
 NEVRA Matching
