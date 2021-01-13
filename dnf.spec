@@ -27,19 +27,6 @@
 %endif
 
 
-%if 0%{?rhel} && 0%{?rhel} <= 7
-%bcond_with python3
-%else
-%bcond_without python3
-%endif
-
-%if 0%{?rhel} >= 8 || 0%{?fedora} > 29
-# Disable python2 build
-%bcond_with python2
-%else
-%bcond_without python2
-%endif
-
 # YUM compat subpackage configuration
 #
 # level=full    -> deploy all compat symlinks (conflicts with yum < 4)
@@ -67,13 +54,7 @@
 %global confdir %{_sysconfdir}/%{name}
 %global pluginconfpath %{confdir}/plugins
 
-%if %{with python2}
-    %global py2pluginpath %{python2_sitelib}/%{name}-plugins
-%endif
-
-%if %{with python3}
-    %global py3pluginpath %{python3_sitelib}/%{name}-plugins
-%endif
+%global py3pluginpath %{python3_sitelib}/%{name}-plugins
 
 # Use the same directory of the main package for subpackage licence and docs
 %global _docdir_fmt %{name}
@@ -97,22 +78,13 @@ BuildRequires:  gettext
 # Documentation
 BuildRequires:  systemd
 BuildRequires:  bash-completion
-%if %{with python3}
 BuildRequires:  %{_bindir}/sphinx-build-3
 Requires:       python3-%{name} = %{version}-%{release}
-%else
-BuildRequires:  %{_bindir}/sphinx-build
-Requires:       python2-%{name} = %{version}-%{release}
-%endif
 %if 0%{?rhel} && 0%{?rhel} <= 7
 Requires:       python-dbus
 Requires:       %{_bindir}/sqlite3
 %else
-%if %{with python3}
 Recommends:     (python3-dbus if NetworkManager)
-%else
-Recommends:     (python2-dbus if NetworkManager)
-%endif
 Recommends:     (%{_bindir}/sqlite3 if bash-completion)
 %endif
 Provides:       dnf-command(alias)
@@ -138,9 +110,7 @@ Provides:       dnf-command(search)
 Provides:       dnf-command(updateinfo)
 Provides:       dnf-command(upgrade)
 Provides:       dnf-command(upgrade-to)
-Conflicts:      python2-dnf-plugins-core < %{conflicts_dnf_plugins_core_version}
 Conflicts:      python3-dnf-plugins-core < %{conflicts_dnf_plugins_core_version}
-Conflicts:      python2-dnf-plugins-extras-common < %{conflicts_dnf_plugins_extras_version}
 Conflicts:      python3-dnf-plugins-extras-common < %{conflicts_dnf_plugins_extras_version}
 
 %description
@@ -170,55 +140,6 @@ Conflicts:      yum < 3.4.3-505
 %description -n %{yum_subpackage_name}
 %{pkg_description}
 
-%if %{with python2}
-%package -n python2-%{name}
-Summary:        Python 2 interface to DNF
-%{?python_provide:%python_provide python2-%{name}}
-BuildRequires:  python2-devel
-BuildRequires:  python2-hawkey >= %{hawkey_version}
-BuildRequires:  python2-libdnf >= %{hawkey_version}
-BuildRequires:  python2-libcomps >= %{libcomps_version}
-BuildRequires:  python2-libdnf
-BuildRequires:  python2-nose
-BuildRequires:  libmodulemd >= %{libmodulemd_version}
-Requires:       libmodulemd >= %{libmodulemd_version}
-%if (0%{?rhel} && 0%{?rhel} <= 7)
-BuildRequires:  pygpgme
-Requires:       pygpgme
-BuildRequires:  python-enum34
-Requires:       python-enum34
-%else
-BuildRequires:  python2-gpg
-Requires:       python2-gpg
-BuildRequires:  python2-enum34
-Requires:       python2-enum34
-%endif
-Requires:       %{name}-data = %{version}-%{release}
-%if 0%{?fedora}
-Recommends:     deltarpm
-# required for DNSSEC main.gpgkey_dns_verification https://dnf.readthedocs.io/en/latest/conf_ref.html
-Recommends:     python2-unbound
-%endif
-Requires:       python2-hawkey >= %{hawkey_version}
-Requires:       python2-libdnf >= %{hawkey_version}
-Requires:       python2-libcomps >= %{libcomps_version}
-Requires:       python2-libdnf
-%if 0%{?rhel} && 0%{?rhel} <= 7
-BuildRequires:  rpm-python >= %{rpm_version}
-Requires:       rpm-python >= %{rpm_version}
-%else
-BuildRequires:  python2-rpm >= %{rpm_version}
-Requires:       python2-rpm >= %{rpm_version}
-Recommends:     rpm-plugin-systemd-inhibit
-%endif
-Conflicts:      dnfdaemon < %{conflicts_dnfdaemon_version}
-
-%description -n python2-%{name}
-Python 2 interface to DNF.
-%endif
-# ^ %%{with python2}
-
-%if %{with python3}
 %package -n python3-%{name}
 Summary:        Python 3 interface to DNF
 %{?python_provide:%python_provide python3-%{name}}
@@ -252,7 +173,6 @@ Recommends:     rpm-plugin-systemd-inhibit
 
 %description -n python3-%{name}
 Python 3 interface to DNF.
-%endif
 
 %package automatic
 Summary:        %{pkg_summary} - automated upgrades
@@ -269,31 +189,17 @@ Systemd units that can periodically download package upgrades and apply them.
 
 
 %build
-%if %{with python2}
-    %global _vpath_builddir build-py2
-    %cmake -DPYTHON_DESIRED:FILEPATH=%{__python2} -DDNF_VERSION=%{version}
-    %cmake_build
-    %cmake_build --target doc-man
-%endif
 
-%if %{with python3}
-    %global _vpath_builddir build-py3
-    %cmake -DPYTHON_DESIRED:FILEPATH=%{__python3} -DDNF_VERSION=%{version}
-    %cmake_build
-    %cmake_build --target doc-man
-%endif
+%global _vpath_builddir build-py3
+%cmake -DPYTHON_DESIRED:FILEPATH=%{__python3} -DDNF_VERSION=%{version}
+%cmake_build
+%cmake_build --target doc-man
 
 
 %install
-%if %{with python2}
-    %global _vpath_builddir build-py2
-    %cmake_install
-%endif
 
-%if %{with python3}
-    %global _vpath_builddir build-py3
-    %cmake_install
-%endif
+%global _vpath_builddir build-py3
+%cmake_install
 
 %find_lang %{name}
 mkdir -p %{buildroot}%{confdir}/vars
@@ -301,22 +207,12 @@ mkdir -p %{buildroot}%{confdir}/aliases.d
 mkdir -p %{buildroot}%{pluginconfpath}/
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/modules.d
 mkdir -p %{buildroot}%{_sysconfdir}/%{name}/modules.defaults.d
-%if %{with python2}
-mkdir -p %{buildroot}%{py2pluginpath}/
-%endif
-%if %{with python3}
 mkdir -p %{buildroot}%{py3pluginpath}/__pycache__/
-%endif
 mkdir -p %{buildroot}%{_localstatedir}/log/
 mkdir -p %{buildroot}%{_var}/cache/dnf/
 touch %{buildroot}%{_localstatedir}/log/%{name}.log
-%if %{with python3}
 ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf
 mv %{buildroot}%{_bindir}/dnf-automatic-3 %{buildroot}%{_bindir}/dnf-automatic
-%else
-ln -sr %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/dnf
-mv %{buildroot}%{_bindir}/dnf-automatic-2 %{buildroot}%{_bindir}/dnf-automatic
-%endif
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
 # Strict conf distribution
@@ -328,17 +224,7 @@ rm -vf %{buildroot}%{confdir}/%{name}-strict.conf
 
 # YUM compat layer
 ln -sr  %{buildroot}%{confdir}/%{name}.conf %{buildroot}%{_sysconfdir}/yum.conf
-%if %{with python3}
 ln -sr  %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/yum
-%else
-%if "%{yum_compat_level}" == "preview"
-ln -sr  %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/yum4
-ln -sr  %{buildroot}%{_mandir}/man8/dnf.8.gz %{buildroot}%{_mandir}/man8/yum4.8.gz
-rm -f %{buildroot}%{_mandir}/man8/yum.8.gz
-%else
-ln -sr  %{buildroot}%{_bindir}/dnf-2 %{buildroot}%{_bindir}/yum
-%endif
-%endif
 %if "%{yum_compat_level}" == "full"
 mkdir -p %{buildroot}%{_sysconfdir}/yum
 ln -sr  %{buildroot}%{pluginconfpath} %{buildroot}%{_sysconfdir}/yum/pluginconf.d
@@ -348,15 +234,9 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 
 
 %check
-%if %{with python2}
-    %global _vpath_builddir build-py2
-    %ctest
-%endif
 
-%if %{with python3}
-    %global _vpath_builddir build-py3
-    %ctest
-%endif
+%global _vpath_builddir build-py3
+%ctest
 
 
 %post
@@ -466,22 +346,12 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %exclude %{_mandir}/man8/yum.8*
 %endif
 
-%if %{with python2}
-%files -n python2-%{name}
-%{_bindir}/%{name}-2
-%exclude %{python2_sitelib}/%{name}/automatic
-%{python2_sitelib}/%{name}/
-%dir %{py2pluginpath}
-%endif
-
-%if %{with python3}
 %files -n python3-%{name}
 %{_bindir}/%{name}-3
 %exclude %{python3_sitelib}/%{name}/automatic
 %{python3_sitelib}/%{name}/
 %dir %{py3pluginpath}
 %dir %{py3pluginpath}/__pycache__
-%endif
 
 %files automatic
 %{_bindir}/%{name}-automatic
@@ -495,11 +365,7 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %{_unitdir}/%{name}-automatic-download.timer
 %{_unitdir}/%{name}-automatic-install.service
 %{_unitdir}/%{name}-automatic-install.timer
-%if %{with python3}
 %{python3_sitelib}/%{name}/automatic/
-%else
-%{python2_sitelib}/%{name}/automatic/
-%endif
 
 %changelog
 * Thu Dec 03 2020 Nicola Sella <nsella@redhat.com> - 4.5.2-1
