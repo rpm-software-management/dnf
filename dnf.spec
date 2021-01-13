@@ -1,5 +1,5 @@
 # Always build out-of-source
-%undefine __cmake_in_source_build
+%define __cmake_in_source_build 1
 
 # default dependencies
 %global hawkey_version 0.57.0
@@ -187,19 +187,21 @@ Systemd units that can periodically download package upgrades and apply them.
 %prep
 %autosetup
 
+mkdir build-py3
 
 %build
 
-%global _vpath_builddir build-py3
-%cmake -DPYTHON_DESIRED:FILEPATH=%{__python3} -DDNF_VERSION=%{version}
-%cmake_build
-%cmake_build --target doc-man
-
+pushd build-py3
+%cmake .. -DPYTHON_DESIRED:FILEPATH=%{__python3} -DDNF_VERSION=%{version}
+%make_build
+make doc-man
+popd
 
 %install
 
-%global _vpath_builddir build-py3
-%cmake_install
+pushd build-py3
+%make_install
+popd
 
 %find_lang %{name}
 mkdir -p %{buildroot}%{confdir}/vars
@@ -235,8 +237,9 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 
 %check
 
-%global _vpath_builddir build-py3
-%ctest
+pushd build-py3
+ctest -VV
+popd
 
 
 %post
