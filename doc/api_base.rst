@@ -111,6 +111,47 @@
             print("id: {}".format(repo.id))
             print("baseurl: {}".format(repo.baseurl))
 
+  .. method:: fill_sack_from_repos_in_cache(load_system_repo=True)
+
+    Prepare Sack and Goal objects and load all enabled repositories from cache only, it doesn't download anything and it doesn't check if metadata are expired.
+    To successfully load a repository cache it requires repond.xml plus metadata (xml, yaml) or repond.xml plus generated cache files (solv, solvx).
+    If there is not enough metadata given repo is either skipped or it throws a :exc:`dnf.exceptions.RepoError` exception depending on :attr:`dnf.conf.Conf.skip_if_unavailable` configuration.
+
+    All additional metadata are loaded if present but are not generally required. Note that some metadata like updateinfo.xml get processed into a solvx cache file and its sufficient to have either xml or solvx. Module metadata represented by modules.yaml are not processed therefore they are needed when they are defined in repomd.xml.
+
+    Example of loading all configured repositories from cache and printing available packages' names::
+
+        #!/usr/bin/python3
+        import dnf
+
+        with dnf.Base() as base:
+            base.read_all_repos()
+
+            base.fill_sack_from_repos_in_cache(load_system_repo=False)
+
+            query = base.sack.query().available()
+            for pkg in query.run():
+                print(pkg.name)
+
+    Example of loading a single repository and printing available packages' names without reading repository configuration::
+
+        #!/usr/bin/python3
+        import dnf
+
+        with dnf.Base() as base:
+            repo = dnf.repo.Repo("rawhide", base.conf)
+
+            # Repository cache is also identified by its source therefore to find it you need to
+            # set metalink, mirrorlist or baseurl to the same value from which it was created.
+            repo.metalink = "https://mirrors.fedoraproject.org/metalink?repo=rawhide&arch=x86_64"
+
+            base.repos.add(repo)
+
+            base.fill_sack_from_repos_in_cache(load_system_repo=False)
+
+            query = base.sack.query().available()
+            for pkg in query.run():
+                print(pkg.name)
 
   .. method:: do_transaction([display])
 
