@@ -1,6 +1,6 @@
 #!/bin/bash
 
-THISDIR="$( readlink -f "$( dirname "$0 )" )"
+THISDIR="$( readlink -f "$( dirname "$0" )" )"
 cd "$THISDIR"
 git rm -rf repodata/
 createrepo --no-database -o . ..
