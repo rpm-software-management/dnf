@@ -26,11 +26,13 @@ from __future__ import unicode_literals
 from dnf.i18n import _
 
 import binascii
+import dnf.exceptions
 import dnf.rpm
 import dnf.yum.misc
 import hawkey
 import logging
 import os
+import rpm
 
 logger = logging.getLogger("dnf")
 
@@ -95,6 +97,11 @@ class Package(hawkey.Package):
 
     @property
     def _header(self):
+        """
+        Returns the header of a locally present rpm package file. As opposed to
+        self.get_header(), which retrieves the header of an installed package
+        from rpmdb.
+        """
         return dnf.rpm._header(self.localPkg())
 
     @property
@@ -163,6 +170,23 @@ class Package(hawkey.Package):
         # assuming self.source_name is None only for a source package
         src_name = self.source_name if self.source_name is not None else self.name
         return src_name + self.DEBUGSOURCE_SUFFIX
+
+    def get_header(self):
+        """
+        Returns the rpm header of the package if it is installed. If not
+        installed, returns None. The header is not cached, it is retrieved from
+        rpmdb on every call. In case of a failure (e.g. when the rpmdb changes
+        between loading the data and calling this method), raises an instance
+        of PackageNotFoundError.
+        """
+        if not self._from_system:
+            return None
+
+        try:
+            # RPMDBI_PACKAGES stands for the header of the package
+            return next(self.base._ts.dbMatch(rpm.RPMDBI_PACKAGES, self.rpmdbid))
+        except StopIteration:
+            raise dnf.exceptions.PackageNotFoundError("Package not found when attempting to retrieve header", str(self))
 
     @property
     def source_debug_name(self):
