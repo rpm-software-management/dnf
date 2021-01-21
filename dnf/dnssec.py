@@ -166,7 +166,7 @@ class DNSSECKeyVerification:
             import unbound
         except ImportError as e:
             msg = _("Configuration option 'gpgkey_dns_verification' requires "
-                    "libunbound ({})".format(e))
+                    "python3-unbound ({})".format(e))
             raise dnf.exceptions.Error(msg)
 
         ctx = unbound.ub_ctx()
