@@ -794,7 +794,7 @@ configuration.
 
     The period after which the remote repository is checked for metadata update and in the positive
     case the local metadata cache is updated. The default corresponds to 48 hours. Set this to
-    ``-1`` or ``never`` to make the repo never considered expired. Expire of metadata can bee also
+    ``-1`` or ``never`` to make the repo never considered expired. Expire of metadata can be also
     triggered by change of timestamp of configuration files (``dnf.conf``, ``<repo>.repo``). See
     also :ref:`check_config_file_age <check_config_file_age-label>`.
 
