@@ -139,9 +139,6 @@ def _create_filehandler(logfile, log_size, log_rotate, log_compress):
     if not os.path.exists(logfile):
         dnf.util.ensure_dir(os.path.dirname(logfile))
         dnf.util.touch(logfile)
-        # By default, make logfiles readable by the user (so the reporting ABRT
-        # user can attach root logfiles).
-        os.chmod(logfile, 0o644)
     handler = MultiprocessRotatingFileHandler(logfile, maxBytes=log_size, backupCount=log_rotate)
     formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s",
                                   "%Y-%m-%dT%H:%M:%S%z")
