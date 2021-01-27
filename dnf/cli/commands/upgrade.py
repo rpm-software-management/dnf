@@ -64,13 +64,8 @@ class UpgradeCommand(commands.Command):
         self.skipped_grp_specs = None
 
     def run(self):
-        query = self.base.sack.query().upgrades()
-        if self.base.conf.obsoletes:
-            obsoleted = query.union(self.base.sack.query().installed())
-            obsoletes = self.base.sack.query().filter(obsoletes=obsoleted)
-            query = query.union(obsoletes)
         cmp_type = "eq" if self.upgrade_minimal else "gte"
-        self.cli._populate_update_security_filter(self.opts, query, cmp_type=cmp_type,
+        self.cli._populate_update_security_filter(self.opts, cmp_type=cmp_type,
                                                   all=self.all_security)
 
         if self.opts.filenames or self.opts.pkg_specs or self.opts.grp_specs:

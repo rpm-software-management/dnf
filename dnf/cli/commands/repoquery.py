@@ -437,7 +437,7 @@ class RepoQueryCommand(commands.Command):
             print(QUERY_TAGS)
             return
 
-        self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
+        self.cli._populate_update_security_filter(self.opts)
 
         q = self.base.sack.query(
             flags=hawkey.IGNORE_MODULAR_EXCLUDES

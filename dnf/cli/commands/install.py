@@ -73,7 +73,7 @@ class InstallCommand(commands.Command):
 
         nevra_forms = self._get_nevra_forms_from_command()
 
-        self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
+        self.cli._populate_update_security_filter(self.opts)
         if self.opts.command == 'localinstall' and (self.opts.grp_specs or self.opts.pkg_specs):
             self._log_not_valid_rpm_file_paths(self.opts.grp_specs)
             if self.base.conf.strict:

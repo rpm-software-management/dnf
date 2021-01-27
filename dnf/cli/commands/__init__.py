@@ -208,7 +208,7 @@ class InfoCommand(Command):
             self.opts.packages_action = 'upgrades'
 
     def run(self):
-        self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
+        self.cli._populate_update_security_filter(self.opts)
         return self.base.output_packages('info', self.opts.packages_action,
                                          self.opts.packages)
 
@@ -221,7 +221,7 @@ class ListCommand(InfoCommand):
     summary = _('list a package or groups of packages')
 
     def run(self):
-        self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
+        self.cli._populate_update_security_filter(self.opts)
         return self.base.output_packages('list', self.opts.packages_action,
                                          self.opts.packages)
 
@@ -274,12 +274,7 @@ class CheckUpdateCommand(Command):
         _checkEnabledRepo(self.base)
 
     def run(self):
-        query = self.base.sack.query().filterm(upgrades_by_priority=True)
-        if self.base.conf.obsoletes:
-            obsoleted = query.union(self.base.sack.query().installed())
-            obsoletes = self.base.sack.query().filter(obsoletes=obsoleted)
-            query = query.union(obsoletes)
-        self.cli._populate_update_security_filter(self.opts, query, cmp_type="gte")
+        self.cli._populate_update_security_filter(self.opts, cmp_type="gte")
 
         found = self.base.check_updates(self.opts.packages, print_=True,
                                         changelogs=self.opts.changelogs)
@@ -330,7 +325,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
+            self.cli._populate_update_security_filter(self.opts)
             self.base.output_packages('info', self.opts.pkg_specs_action,
                                       self.opts.pkg_specs, self.reponame)
 
@@ -347,7 +342,7 @@ class RepoPkgsCommand(Command):
             demands.root_user = True
 
         def run_on_repo(self):
-            self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
+            self.cli._populate_update_security_filter(self.opts)
             """Execute the command with respect to given arguments *cli_args*."""
             _checkGPGKey(self.base, self.cli)
 
@@ -382,7 +377,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-            self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
+            self.cli._populate_update_security_filter(self.opts)
             self.base.output_packages('list', self.opts.pkg_specs_action,
                                       self.opts.pkg_specs, self.reponame)
 

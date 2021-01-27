@@ -950,43 +950,30 @@ class Cli(object):
         timer()
         return conf
 
-    def _populate_update_security_filter(self, opts, query, cmp_type='eq', all=None):
+    def _populate_update_security_filter(self, opts, cmp_type='eq', all=None):
         """
 
         :param opts:
-        :param query: base package set for filters
-        :param cmp_type: string like "eq", "gt", "gte", "lt", "lte"
+        :param cmp_type: string supported "eq", "gte"
         :param all:
         :return:
         """
         if (opts is None) and (all is None):
             return
-        filters = []
+        types = []
+
         if opts.bugfix or all:
-            key = {'advisory_type__' + cmp_type: 'bugfix'}
-            filters.append(query.filter(**key))
+            types.append('bugfix')
         if opts.enhancement or all:
-            key = {'advisory_type__' + cmp_type: 'enhancement'}
-            filters.append(query.filter(**key))
+            types.append('enhancement')
         if opts.newpackage or all:
-            key = {'advisory_type__' + cmp_type: 'newpackage'}
-            filters.append(query.filter(**key))
+            types.append('newpackage')
         if opts.security or all:
-            key = {'advisory_type__' + cmp_type: 'security'}
-            filters.append(query.filter(**key))
-        if opts.advisory:
-            key = {'advisory__' + cmp_type: opts.advisory}
-            filters.append(query.filter(**key))
-        if opts.bugzilla:
-            key = {'advisory_bug__' + cmp_type: opts.bugzilla}
-            filters.append(query.filter(**key))
-        if opts.cves:
-            key = {'advisory_cve__' + cmp_type: opts.cves}
-            filters.append(query.filter(**key))
-        if opts.severity:
-            key = {'advisory_severity__' + cmp_type: opts.severity}
-            filters.append(query.filter(**key))
-        self.base._update_security_filters = filters
+            types.append('security')
+
+        self.base.add_security_filters(cmp_type, types=types, advisory=opts.advisory,
+                                       bugzilla=opts.bugzilla, cves=opts.cves,
+                                       severity=opts.severity)
 
     def redirect_logger(self, stdout=None, stderr=None):
         # :api
