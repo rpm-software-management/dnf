@@ -2,7 +2,7 @@
 %define __cmake_in_source_build 1
 
 # default dependencies
-%global hawkey_version 0.59.0
+%global hawkey_version 0.61.0
 %global libcomps_version 0.1.8
 %global libmodulemd_version 2.9.3
 %global rpm_version 4.14.0

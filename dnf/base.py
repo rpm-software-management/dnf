@@ -112,6 +112,7 @@ class Base(object):
         self._trans_install_set = False
         self._tempfile_persistor = None
         self._update_security_filters = []
+        self._update_security_options = {}
         self._allow_erasing = False
         self._repo_set_imported_gpg_keys = set()
         self.output = None
@@ -1460,7 +1461,7 @@ class Base(object):
         elif pkgnarrow == 'upgrades':
             updates = query_for_repo(q).filterm(upgrades_by_priority=True)
             # reduce a query to security upgrades if they are specified
-            updates = self._merge_update_filters(updates)
+            updates = self._merge_update_filters(updates, upgrade=True)
             # reduce a query to latest packages
             updates = updates.latest().run()
 
@@ -2077,7 +2078,7 @@ class Base(object):
             q = q.union(obsoletes)
         if reponame is not None:
             q.filterm(reponame=reponame)
-        q = self._merge_update_filters(q, pkg_spec=pkg_spec)
+        q = self._merge_update_filters(q, pkg_spec=pkg_spec, upgrade=True)
         if q:
             q = q.available().union(installed_query.latest())
             sltr = dnf.selector.Selector(self.sack)
@@ -2285,19 +2286,64 @@ class Base(object):
                                for prefix in ['/bin/', '/sbin/', '/usr/bin/', '/usr/sbin/']]
         return self.sack.query().filterm(file__glob=binary_provides), binary_provides
 
-    def _merge_update_filters(self, q, pkg_spec=None, warning=True):
+    def add_security_filters(self, cmp_type, types=(), advisory=(), bugzilla=(), cves=(), severity=()):
+        #  :api
+        """
+        It modifies results of install, upgrade, and distrosync methods according to provided
+        filters.
+
+        :param cmp_type: only 'eq' or 'gte' allowed
+        :param types: List or tuple with strings. E.g. 'bugfix', 'enhancement', 'newpackage',
+        'security'
+        :param advisory: List or tuple with strings. E.g.Eg. FEDORA-2201-123
+        :param bugzilla: List or tuple with strings. Include packages that fix a Bugzilla ID,
+        Eg. 123123.
+        :param cves: List or tuple with strings. Include packages that fix a CVE
+        (Common Vulnerabilities and Exposures) ID. Eg. CVE-2201-0123
+        :param severity: List or tuple with strings. Includes packages that provide a fix
+        for an issue of the specified severity.
+        """
+        cmp_dict = {'eq': '__eqg', 'gte': '__eqg__gt'}
+        if cmp_type not in cmp_dict:
+            raise ValueError("Unsupported value for `cmp_type`")
+        cmp = cmp_dict[cmp_type]
+        if types:
+            key = 'advisory_type' + cmp
+            self._update_security_options.setdefault(key, set()).update(types)
+        if advisory:
+            key = 'advisory' + cmp
+            self._update_security_options.setdefault(key, set()).update(advisory)
+        if bugzilla:
+            key = 'advisory_bug' + cmp
+            self._update_security_options.setdefault(key, set()).update(bugzilla)
+        if cves:
+            key = 'advisory_cve' + cmp
+            self._update_security_options.setdefault(key, set()).update(cves)
+        if severity:
+            key = 'advisory_severity' + cmp
+            self._update_security_options.setdefault(key, set()).update(severity)
+
+    def _merge_update_filters(self, q, pkg_spec=None, warning=True, upgrade=False):
         """
         Merge Queries in _update_filters and return intersection with q Query
         @param q: Query
         @return: Query
         """
-        if not self._update_security_filters or not q:
+        if not (self._update_security_options or self._update_security_filters) or not q:
             return q
-        merged_queries = self._update_security_filters[0]
-        for query in self._update_security_filters[1:]:
-            merged_queries = merged_queries.union(query)
+        merged_queries = self.sack.query().filterm(empty=True)
+        if self._update_security_filters:
+            for query in self._update_security_filters:
+                merged_queries = merged_queries.union(query)
 
-        self._update_security_filters = [merged_queries]
+            self._update_security_filters = [merged_queries]
+        if self._update_security_options:
+            for filter_name, values in self._update_security_options.items():
+                if upgrade:
+                    filter_name = filter_name + '__upgrade'
+                kwargs = {filter_name: values}
+                merged_queries = merged_queries.union(q.filter(**kwargs))
+
         merged_queries = q.intersection(merged_queries)
         if not merged_queries:
             if warning:
