@@ -84,7 +84,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.5.2
+Version:        4.6.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -502,6 +502,25 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %changelog
+* Thu Jan 28 2021 Nicola Sella <nsella@redhat.com> - 4.6.0-1
+- Log scriptlets output also for API users (RhBug:1847340)
+- Fix module remove --all when no match spec (RhBug:1904490)
+- yum.misc.decompress() to handle uncompressed files (RhBug:1895059)
+- Make an error message more informative (RhBug:1814831)
+- Add deprecation notice to help messages of deplist
+- Remove Base._history_undo_operations() as it was replaced with transaction_sr code
+- cli/output: Return number of listed packages from listPkgs()
+- Clean up history command error handling
+- [doc] Describe install with just a name and obsoletes (RhBug:1902279)
+- Add api function fill_sack_from_repos_in_cache to allow loading a repo cache with repomd and (solv file or primary xml) only (RhBug:1865803)
+- Packages installed/removed via DNF API are logged into dnf.log (RhBug:1855158)
+- Support comps groups in history redo (RhBug:1657123,1809565,1809639)
+- Support comps groups in history rollback (RhBug:1657123,1809565,1809639)
+- Support comps groups in history undo (RhBug:1657123,1809565,1809639)
+- New optional parameter for filter_modules enables following modular obsoletes based on a config option module_obsoletes
+- Add get_header() method to the Package class (RhBug:1876606)
+- Fix documentation of globs not supporting curly brackets (RhBug:1913418)
+
 * Thu Dec 03 2020 Nicola Sella <nsella@redhat.com> - 4.5.2-1
 - Change behaviour of Package().from_repo
 

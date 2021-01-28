@@ -3246,5 +3246,53 @@
     [
         1898968,
         "Listing an installed package from a specific repository not operational"
+    ],
+    [
+        1657123,
+        "Cannot undo a group install or remove"
+    ],
+    [
+        1809639,
+        "Can't undo a transaction that installed a package group"
+    ],
+    [
+        1913418,
+        "dnf API glob filter does not support brace expansion"
+    ],
+    [
+        1865803,
+        "[RFE] allow dnf to run with solv* files only"
+    ],
+    [
+        1904490,
+        "Backtrace when performing \"yum module remove --all perl:common\""
+    ],
+    [
+        1847340,
+        "RPM scriptlet output is not logged to /var/log/dnf.rpm.log when installed via DNF Python api"
+    ],
+    [
+        1814831,
+        "dnf error when enabling a module with multiple streams is unclear"
+    ],
+    [
+        1895059,
+        "reposync -m --downloadcomps does not download a comps.xml file"
+    ],
+    [
+        1855158,
+        "Packages installed / removed via DNF Python api are not logged to /var/log/dnf.log"
+    ],
+    [
+        1873146,
+        "package.remote_location() tracebacks for @commandline package"
+    ],
+    [
+        1809565,
+        "Can't undo a group operation"
+    ],
+    [
+        1876606,
+        "dnf python API does not provide an rpm header of a package (as yum API does)"
     ]
 ]

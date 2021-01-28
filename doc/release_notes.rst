@@ -20,6 +20,55 @@
 ###################
 
 ===================
+4.6.0 Release Notes
+===================
+
+- Log scriptlets output also for API users (RhBug:1847340)
+- Fix module remove --all when no match spec (RhBug:1904490)
+- yum.misc.decompress() to handle uncompressed files (RhBug:1895059)
+- Make an error message more informative (RhBug:1814831)
+- Add deprecation notice to help messages of deplist
+- Remove Base._history_undo_operations() as it was replaced with transaction_sr code
+- cli/output: Return number of listed packages from listPkgs()
+- Clean up history command error handling
+- [doc] Describe install with just a name and obsoletes (RhBug:1902279)
+- Add api function fill_sack_from_repos_in_cache to allow loading a repo cache with repomd and (solv file or primary xml) only (RhBug:1865803)
+- Packages installed/removed via DNF API are logged into dnf.log (RhBug:1855158)
+- Support comps groups in history redo (RhBug:1657123,1809565,1809639)
+- Support comps groups in history rollback (RhBug:1657123,1809565,1809639)
+- Support comps groups in history undo (RhBug:1657123,1809565,1809639)
+- New optional parameter for filter_modules enables following modular obsoletes based on a config option module_obsoletes
+- Add get_header() method to the Package class (RhBug:1876606)
+- Fix documentation of globs not supporting curly brackets (RhBug:1913418)
+
+- New features:
+  - Add api function fill_sack_from_repos_in_cache to allow loading a repo cache with repomd and (solv file or primary xml) only (RhBug:1865803)
+  - Packages installed/removed via DNF API are logged into dnf.log (RhBug:1855158)
+  - Support comps groups in history redo (RhBug:1657123,1809565,1809639)
+  - Support comps groups in history rollback (RhBug:1657123,1809565,1809639)
+  - Support comps groups in history undo (RhBug:1657123,1809565,1809639)
+  - New optional parameter for filter_modules enables following modular obsoletes based on a config option module_obsoletes
+  - Add get_header() method to the Package class (RhBug:1876606)
+
+- Bug fixes:
+  - Fix documentation of globs not supporting curly brackets (RhBug:1913418)
+
+Bugs fixed in 4.6.0:
+
+* :rhbug:`1657123`
+* :rhbug:`1809639`
+* :rhbug:`1913418`
+* :rhbug:`1865803`
+* :rhbug:`1904490`
+* :rhbug:`1847340`
+* :rhbug:`1814831`
+* :rhbug:`1895059`
+* :rhbug:`1855158`
+* :rhbug:`1873146`
+* :rhbug:`1809565`
+* :rhbug:`1876606`
+
+===================
 4.5.2 Release Notes
 ===================
 
