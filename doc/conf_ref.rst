@@ -881,7 +881,7 @@ configuration.
 ``sslcacert``
     :ref:`string <string-label>`
 
-    Path to the directory or file containing the certificate authorities to verify SSL certificates.
+    Path to the file containing the certificate authorities to verify SSL certificates.
     Empty by default - uses system default.
 
 .. _sslverify-label:
