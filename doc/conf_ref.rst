@@ -849,6 +849,37 @@ configuration.
     Defaults to ``any``
 
 
+.. _proxy_sslcacert-label:
+
+``proxy_sslcacert``
+    :ref:`string <string-label>`
+
+    Path to the file containing the certificate authorities to verify proxy SSL certificates.
+    Empty by default - uses system default.
+
+.. _proxy_sslverify-label:
+
+``proxy_sslverify``
+    :ref:`boolean <boolean-label>`
+
+    When enabled, proxy SSL certificates are verified. If the client can not be authenticated, connecting fails and the repository is not used any further. If ``False``, SSL connections can be used, but certificates are not verified. Default is ``True``.
+
+.. _proxy_sslclientcert-label:
+
+``proxy_sslclientcert``
+    :ref:`string <string-label>`
+
+    Path to the SSL client certificate used to connect to proxy server.
+    Empty by default.
+
+.. _proxy_sslclientkey-label:
+
+``proxy_sslclientkey``
+    :ref:`string <string-label>`
+
+    Path to the SSL client key used to connect to proxy server.
+    Empty by default.
+
 .. _repo_gpgcheck-label:
 
 ``repo_gpgcheck``
