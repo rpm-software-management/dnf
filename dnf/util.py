@@ -101,6 +101,7 @@ def _urlopen_progress(url, conf, progress=None):
         logger.error(str(e))
     return pload.local_path
 
+
 def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
     """
     Open the specified absolute url, return a file object
@@ -121,6 +122,7 @@ def _urlopen(url, conf=None, repo=None, mode='w+b', **kwargs):
     fo.seek(0)
     return fo
 
+
 def rtrim(s, r):
     if s.endswith(r):
         s = s[:-len(r)]
@@ -130,6 +132,7 @@ def rtrim(s, r):
 def am_i_root():
     # used by ansible (lib/ansible/modules/packaging/os/dnf.py)
     return os.geteuid() == 0
+
 
 def clear_dir(path):
     """Remove all files and dirs under `path`
@@ -141,6 +144,7 @@ def clear_dir(path):
         contained_path = os.path.join(path, entry)
         rm_rf(contained_path)
 
+
 def ensure_dir(dname):
     # used by ansible (lib/ansible/modules/packaging/os/dnf.py)
     try:
@@ -149,12 +153,14 @@ def ensure_dir(dname):
         if e.errno != errno.EEXIST or not os.path.isdir(dname):
             raise e
 
+
 def empty(iterable):
     try:
         l = len(iterable)
     except TypeError:
         l = len(list(iterable))
     return l == 0
+
 
 def first(iterable):
     """Returns the first item from an iterable or None if it has no elements."""
@@ -176,14 +182,17 @@ def first_not_none(iterable):
 def file_age(fn):
     return time.time() - file_timestamp(fn)
 
+
 def file_timestamp(fn):
     return os.stat(fn).st_mtime
+
 
 def get_effective_login():
     try:
         return pwd.getpwuid(os.geteuid())[0]
     except KeyError:
         return "UID: %s" % os.geteuid()
+
 
 def get_in(dct, keys, not_found):
     """Like dict.get() for nested dicts."""
@@ -193,11 +202,13 @@ def get_in(dct, keys, not_found):
             return not_found
     return dct
 
+
 def group_by_filter(fn, iterable):
     def splitter(acc, item):
         acc[not bool(fn(item))].append(item)
         return acc
     return functools.reduce(splitter, iterable, ([], []))
+
 
 def insert_if(item, iterable, condition):
     """Insert an item into an iterable by a condition."""
@@ -205,6 +216,7 @@ def insert_if(item, iterable, condition):
         if condition(original_item):
             yield item
         yield original_item
+
 
 def is_exhausted(iterator):
     """Test whether an iterator is exhausted."""
@@ -215,16 +227,19 @@ def is_exhausted(iterator):
     else:
         return False
 
+
 def is_glob_pattern(pattern):
     if is_string_type(pattern):
         pattern = [pattern]
     return (isinstance(pattern, list) and any(set(p) & set("*[?") for p in pattern))
+
 
 def is_string_type(obj):
     if PY3:
         return isinstance(obj, str)
     else:
         return isinstance(obj, basestring)
+
 
 def lazyattr(attrname):
     """Decorator to get lazy attribute initialization.
@@ -252,6 +267,7 @@ def mapall(fn, *seq):
     """
     return list(map(fn, *seq))
 
+
 def normalize_time(timestamp):
     """Convert time into locale aware datetime string object."""
     t = time.strftime("%c", time.localtime(timestamp))
@@ -261,6 +277,7 @@ def normalize_time(timestamp):
             t = t.decode(current_locale_setting)
     return t
 
+
 def on_ac_power():
     """Decide whether we are on line power.
 
@@ -269,9 +286,14 @@ def on_ac_power():
 
     """
     try:
-        with open("/sys/class/power_supply/AC/online") as ac_status:
-            data = ac_status.read()
-            return int(data) == 1
+        ps_folder = "/sys/class/power_supply"
+        ac_nodes = [node for node in os.listdir(ps_folder) if node.startswith("AC")]
+        if len(ac_nodes) > 0:
+            ac_node = ac_nodes[0]
+            with open("{}/{}/online".format(ps_folder, ac_node)) as ac_status:
+                data = ac_status.read()
+                return int(data) == 1
+        return None
     except (IOError, ValueError):
         return None
 
@@ -296,14 +318,15 @@ def on_metered_connection():
         metered = iface.Get("org.freedesktop.NetworkManager", "Metered")
     except dbus.DBusException:
         return None
-    if metered == 0: # NM_METERED_UNKNOWN
+    if metered == 0:  # NM_METERED_UNKNOWN
         return None
-    elif metered in (1, 3): # NM_METERED_YES, NM_METERED_GUESS_YES
+    elif metered in (1, 3):  # NM_METERED_YES, NM_METERED_GUESS_YES
         return True
-    elif metered in (2, 4): # NM_METERED_NO, NM_METERED_GUESS_NO
+    elif metered in (2, 4):  # NM_METERED_NO, NM_METERED_GUESS_NO
         return False
-    else: # Something undocumented (at least at this moment)
+    else:  # Something undocumented (at least at this moment)
         raise ValueError("Unknown value for metered property: %r", metered)
+
 
 def partition(pred, iterable):
     """Use a predicate to partition entries into false entries and true entries.
@@ -314,11 +337,13 @@ def partition(pred, iterable):
     t1, t2 = itertools.tee(iterable)
     return dnf.pycomp.filterfalse(pred, t1), filter(pred, t2)
 
+
 def rm_rf(path):
     try:
         shutil.rmtree(path)
     except OSError:
         pass
+
 
 def split_by(iterable, condition):
     """Split an iterable into tuples by a condition.
@@ -329,6 +354,7 @@ def split_by(iterable, condition):
     """
     separator = object()  # A unique object.
     # Create a function returning tuple of objects before the separator.
+
     def next_subsequence(it):
         return tuple(itertools.takewhile(lambda e: e != separator, it))
 
@@ -343,6 +369,7 @@ def split_by(iterable, condition):
         if not subsequence:
             break
         yield subsequence
+
 
 def strip_prefix(s, prefix):
     if s.startswith(prefix):
@@ -473,6 +500,7 @@ class tmpdir(object):
     def __exit__(self, exc_type, exc_value, traceback):
         rm_rf(self.path)
 
+
 class Bunch(dict):
     """Dictionary with attribute accessing syntax.
 
@@ -481,9 +509,10 @@ class Bunch(dict):
     Credit: Alex Martelli, Doug Hudgeon
 
     """
+
     def __init__(self, *args, **kwds):
-         super(Bunch, self).__init__(*args, **kwds)
-         self.__dict__ = self
+        super(Bunch, self).__init__(*args, **kwds)
+        self.__dict__ = self
 
     def __hash__(self):
         return id(self)
