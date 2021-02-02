@@ -65,8 +65,9 @@ class AutoremoveCommand(commands.Command):
 
     def run(self):
         if any([self.opts.grp_specs, self.opts.pkg_specs, self.opts.filenames]):
-            forms = [self.nevra_forms[command] for command in self.opts.command
-                     if command in list(self.nevra_forms.keys())]
+            forms = []
+            if self.opts.command in self.nevra_forms:
+                forms = [self.nevra_forms[self.opts.command]]
 
             self.base.autoremove(forms,
                                  self.opts.pkg_specs,

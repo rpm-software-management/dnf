@@ -42,11 +42,32 @@ and ``:``. The minimal repository configuration file should aside from repo ID
 consists of :ref:`baseurl <baseurl-label>`, :ref:`metalink <metalink-label>`
 or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
+.. _conf_distribution_specific-label:
+
+=====================================
+ Distribution-Specific Configuration
+=====================================
+
+Configuration options, namely :ref:`best <best-label>` and
+:ref:`skip_if_unavailable <skip_if_unavailable-label>`, can be set in the DNF
+configuration file by your distribution to override the DNF defaults.
+
+
 .. _conf_main_options-label:
 
 ================
  [main] Options
 ================
+
+.. _allow_vendor_change-label:
+
+``allow_vendor_change``
+    :ref:`boolean <boolean-label>`
+
+    If disabled dnf will stick to vendor when upgrading or downgrading rpms.
+    Default is ``True``
+
+    .. WARNING:: This option is currently not supported for `downgrade` and `distro-sync` commands
 
 .. _arch-label:
 
@@ -84,12 +105,16 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     The base architecture used for installing packages. By default this is auto-detected.
 
+.. _best-label:
+
 ``best``
     :ref:`boolean <boolean-label>`
 
     ``True`` instructs the solver to either use a package with the highest available
     version or fail. On ``False``, do not fail if the latest version cannot be
-    installed and go with the lower version. The default is ``True``.
+    installed and go with the lower version. The default is ``False``.  Note
+    this option in particular :ref:`can be set in your configuration file by
+    your distribution <conf_distribution_specific-label>`.
 
 ``cachedir``
     :ref:`string <string-label>`
@@ -174,17 +199,18 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     :ref:`boolean <boolean-label>`
 
     Should the dnf attempt to automatically verify GPG verification keys using the DNS
-    system. This option requires libunbound to be installed on the client system. This
-    system has two main features. The first one is to check if any of the already
-    installed keys have been revoked. Automatic removal of the key is not yet available,
-    so it is up to the user, to remove revoked keys from the system. The second feature is
-    automatic verification of new keys when a repository is added to the system. In
-    interactive mode, the result is written to the output as a suggestion to the user. In
-    non-interactive mode (i.e. when -y is used), this system will automatically accept
-    keys that are available in the DNS and are correctly signed using DNSSEC. It will also
-    accept keys that do not exist in the DNS system and their NON-existence is
-    cryptographically proven using DNSSEC. This is mainly to preserve backward
-    compatibility.
+    system. This option requires the unbound python module (python3-unbound) to
+    be installed on the client system. This system has two main features. The first
+    one is to check if any of the already installed keys have been revoked. Automatic
+    removal of the key is not yet available, so it is up to the user, to remove
+    revoked keys from the system. The second feature is automatic verification
+    of new keys when a repository is added to the system. In interactive mode, the
+    result is written to the output as a suggestion to the user. In
+    non-interactive mode (i.e. when -y is used), this system will automatically
+    accept keys that are available in the DNS and are correctly signed using
+    DNSSEC. It will also accept keys that do not exist in the DNS system and
+    their NON-existence is cryptographically proven using DNSSEC. This is mainly to
+    preserve backward compatibility.
     Default is ``False``.
 
 
@@ -252,6 +278,20 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     :ref:`string <string-label>`
 
     Directory where the log files will be stored. Default is ``/var/log``.
+
+``logfilelevel``
+    :ref:`integer <integer-label>`
+
+    Log file messages output level, in the range 0 to 10. The higher the number the
+    more debug output is put to logs. Default is 9.
+
+    This option controls dnf.log, dnf.librepo.log and hawkey.log. Although dnf.librepo.log
+    and hawkey.log are affected only by setting the logfilelevel to 10.
+
+``log_compress``
+	:ref:`boolean <boolean-label>`
+
+	When set to ``True``, log files are compressed when they are rotated. Default is ``False``.
 
 .. _log_rotate-label:
 
@@ -342,7 +382,14 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     The default is: ``dnf``, ``glob:/etc/yum/protected.d/*.conf`` and ``glob:/etc/dnf/protected.d/*.conf``. So any packages which should be protected can do so by including a file in ``/etc/dnf/protected.d`` with their package name in it.
 
-    DNF will protect also the package corresponding to the running version of the kernel.
+    DNF will protect also the package corresponding to the running version of the kernel. See also :ref:`protect_running_kernel <protect_running_kernel-label>` option.
+
+.. _protect_running_kernel-label:
+
+``protect_running_kernel``
+	:ref:`boolean <boolean-label>`
+
+	Controls whether the package corresponding to the running version of kernel is protected from removal. Default is ``True``.
 
 ``releasever``
     :ref:`string <string-label>`
@@ -364,6 +411,13 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     RPM debug scriptlet output level. One of: ``critical``, ``emergency``,
     ``error``, ``warn``, ``info`` or ``debug``. Default is ``info``.
+
+.. _strict-label:
+
+``strict``
+    :ref:`boolean <boolean-label>`
+
+    If disabled, all unavailable packages or packages with broken dependencies given to DNF command will be skipped without raising the error causing the whole operation to fail. Currently works for install command only. The default is True.
 
 ``tsflags``
     :ref:`list <list-label>`
@@ -396,6 +450,8 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     Set this to False to disable the automatic running of ``group upgrade`` when running the ``upgrade`` command. Default is ``True`` (perform the operation).
 
+.. _varsdir_options-label:
+
 ``varsdir``
     :ref:`list <list-label>`
 
@@ -409,6 +465,91 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
     :ref:`boolean <boolean-label>`
 
     Enables or disables the use of repository metadata compressed using the zchunk format (if available). Default is ``True``.
+
+
+.. _conf_main_options-colors-label:
+
+=========================
+ [main] Options - Colors
+=========================
+
+``color``
+    :ref:`string <string-label>`
+
+    Controls if DNF uses colored output on the command line.
+    Possible values: "auto", "never", "always". Default is "auto".
+
+``color_list_available_downgrade``
+    :ref:`color <color-label>`
+
+    Color of available packages that are older than installed packages.
+    The option is used during list operations.
+
+``color_list_available_install``
+    :ref:`color <color-label>`
+
+    Color of packages that are available for installation and none of their versions in installed.
+    The option is used during list operations.
+
+``color_list_available_reinstall``
+    :ref:`color <color-label>`
+
+    Color of available packages that are identical to installed versions and are available for reinstalls.
+    The option is used during list operations.
+
+``color_list_available_upgrade``
+    :ref:`color <color-label>`
+
+    Color of available packages that are newer than installed packages.
+    The option is used during list operations.
+
+``color_list_installed_extra``
+    :ref:`color <color-label>`
+
+    Color of installed packages that do not have any version among available packages.
+    The option is used during list operations.
+
+``color_list_installed_newer``
+    :ref:`color <color-label>`
+
+    Color of installed packages that are newer than any version among available packages.
+    The option is used during list operations.
+
+``color_list_installed_older``
+    :ref:`color <color-label>`
+
+    Color of installed packages that are older than any version among available packages.
+    The option is used during list operations.
+
+``color_list_installed_reinstall``
+    :ref:`color <color-label>`
+
+    Color of installed packages that are among available packages and can be reinstalled.
+    The option is used during list operations.
+
+``color_search_match``
+    :ref:`color <color-label>`
+
+    Color of patterns matched in search output.
+
+``color_update_installed``
+    :ref:`color <color-label>`
+
+    Color of removed packages.
+    This option is used during displaying transactions.
+
+``color_update_local``
+    :ref:`color <color-label>`
+
+    Color of local packages that are installed from the @commandline repository.
+    This option is used during displaying transactions.
+
+``color_update_remote``
+    :ref:`color <color-label>`
+
+    Color of packages that are installed/upgraded/downgraded from remote repositories.
+    This option is used during displaying transactions.
+
 
 ==============
  Repo Options
@@ -479,13 +620,6 @@ or :ref:`mirrorlist <mirrorlist-label>` option definition.
 
     The priority value of this repository, default is 99. If there is more than one candidate package for a particular operation, the one from a repo with *the lowest priority value* is picked, possibly despite being less convenient otherwise (e.g. by being a lower version).
 
-.. _strict-label:
-
-``strict``
-    :ref:`boolean <boolean-label>`
-
-    If disabled, all unavailable packages or packages with broken dependencies given to DNF command will be skipped without raising the error causing the whole operation to fail. Currently works for install command only. The default is True.
-
 ``type``
     :ref:`string <string-label>`
 
@@ -518,6 +652,21 @@ In addition to these hard coded variables, user-defined ones can also be used. T
 
     $ DNF_VAR_MY_VARIABLE=value
 
+To use such variable in your repository configuration remove the prefix. E.g.::
+
+    [myrepo]
+    baseurl=https://example.site/pub/fedora/$MY_VARIABLE/releases/$releasever
+
+Note that it is not possible to override the ``arch`` and ``basearch`` variables using either variable files or environmental variables.
+
+Although users are encouraged to use named variables, the numbered environmental variables ``DNF0`` - ``DNF9`` are still supported::
+
+    $ DNF1=value
+
+    [myrepo]
+    baseurl=https://example.site/pub/fedora/$DNF1/releases/$releasever
+
+
 .. _conf_main_and_repo_options-label:
 
 ==================================
@@ -539,16 +688,24 @@ configuration.
 ``countme``
     :ref:`boolean <boolean-label>`
 
-    Determines whether a "countme" flag should be added to a single, randomly
-    chosen metalink query each week.
+    Determines whether a special flag should be added to a single, randomly
+    chosen metalink/mirrorlist query each week.
     This allows the repository owner to estimate the number of systems
     consuming it, by counting such queries over a week's time, which is much
     more accurate than just counting unique IP addresses (which is subject to
     both overcounting and undercounting due to short DHCP leases and NAT,
     respectively).
-    The flag is a simple static parameter appended to the metalink URL and is
-    the same on every system (that means, no personal or machine-specific
-    information is included).
+
+    The flag is a simple "countme=N" parameter appended to the metalink and
+    mirrorlist URL, where N is an integer representing the "longevity" bucket
+    this system belongs to.
+    The following 4 buckets are defined, based on how many full weeks have
+    passed since the beginning of the week when this system was installed: 1 =
+    first week, 2 = first month (2-4 weeks), 3 = six months (5-24 weeks) and 4
+    = more than six months (> 24 weeks).
+    This information is meant to help distinguish short-lived installs from
+    long-term ones, and to gather other statistics about system lifecycle.
+
     Default is False.
 
 .. _deltarpm-label:
@@ -605,7 +762,7 @@ configuration.
     :ref:`list <list-label>`
 
     Include packages of this repository, specified by a name or a glob and separated by a comma, in all operations.
-    Inverse of :ref:`excludepkgs <exclude-label>`, DNF will exclude any package in the repository that doesn't match this list. This works in conjunction with exclude and doesn't override it, so if you 'excludepkgs=*.i386' and 'includepkgs=python*' then only packages starting with python that do not have an i386 arch will be seen by DNF in this repo.
+    Inverse of :ref:`excludepkgs <exclude-label>`, DNF will exclude any package in the repository that doesn't match this list. This works in conjunction with ``excludepkgs`` and doesn't override it, so if you 'excludepkgs=*.i386' and 'includepkgs=python*' then only packages starting with python that do not have an i386 arch will be seen by DNF in this repo.
     Can be disabled using ``--disableexcludes`` command line switch.
     Defaults to ``[]``.
 
@@ -637,7 +794,7 @@ configuration.
 
     The period after which the remote repository is checked for metadata update and in the positive
     case the local metadata cache is updated. The default corresponds to 48 hours. Set this to
-    ``-1`` or ``never`` to make the repo never considered expired. Expire of metadata can bee also
+    ``-1`` or ``never`` to make the repo never considered expired. Expire of metadata can be also
     triggered by change of timestamp of configuration files (``dnf.conf``, ``<repo>.repo``). See
     also :ref:`check_config_file_age <check_config_file_age-label>`.
 
@@ -702,7 +859,10 @@ configuration.
 ``retries``
     :ref:`integer <integer-label>`
 
-    Set the number of times any attempt to retrieve a file should retry before returning an error. Setting this to `0` makes dnf try forever. Default is `10`.
+    Set the number of total retries for downloading packages. The number is
+    accumulative, so e.g. for `retries=10`, dnf will fail after any package
+    download fails for eleventh time. Setting this to `0` makes dnf try
+    forever. Default is `10`.
 
 .. _skip_if_unavailable-label:
 
@@ -713,6 +873,8 @@ configuration.
     for any reason. This option doesn't affect skipping of unavailable packages after dependency
     resolution. To check inaccessibility of repository use it in combination with
     :ref:`refresh command line option <refresh_command-label>`. The default is ``False``.
+    Note this option in particular :ref:`can be set in your configuration file
+    by your distribution <conf_distribution_specific-label>`.
 
 .. _sslcacert-label:
 
@@ -770,18 +932,14 @@ configuration.
     The User-Agent string to include in HTTP requests sent by DNF.
     Defaults to ::
 
-        libdnf/VERSION (NAME VERSION_ID; VARIANT_ID; OS.BASEARCH)
+        libdnf (NAME VERSION_ID; VARIANT_ID; OS.BASEARCH)
 
-    where VERSION is the libdnf version, NAME, VERSION_ID and VARIANT_ID are OS
-    identifiers read from the :manpage:`os-release(5)` file and OS and BASEARCH
-    are the canonical OS name and base architecture, respectively.
+    where NAME, VERSION_ID and VARIANT_ID are OS identifiers read from the
+    :manpage:`os-release(5)` file, and OS and BASEARCH are the canonical OS
+    name and base architecture, respectively.
     Example: ::
 
-        libdnf/0.35.2 (Fedora 31; server; Linux.x86_64)
-
-    To prevent the leakage of identifiable information, the whole OS part
-    (enclosed in parenthesis) is omitted if this is a non-Fedora or non-Linux
-    system, or is running an unknown Fedora variant.
+        libdnf (Fedora 31; server; Linux.x86_64)
 
 =================
 Types of Options
@@ -809,6 +967,15 @@ Types of Options
 ``string``
     It is a sequence of symbols or digits without any whitespace character.
 
+.. _color-label:
+
+``color``
+    A string describing color and modifiers separated with a comma, for example "red,bold".
+
+    * Colors: black, blue, cyan, green, magenta, red, white, yellow
+    * Modifiers: bold, blink, dim, normal, reverse, underline
+
+
 ==========
 Files
 ==========
@@ -828,6 +995,7 @@ Files
     Any properly named file in /etc/dnf/vars is turned into a variable named after the filename (or
     overrides any of the above variables but those set from commandline). Filenames may contain only
     alphanumeric characters and underscores and be in lowercase.
+    Variables are also read from /etc/yum/vars for YUM compatibility reasons.
 
 ==========
  See Also

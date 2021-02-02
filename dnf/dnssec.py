@@ -58,8 +58,7 @@ def email2location(email_address, tag="_openpgpkey"):
     """
     split = email_address.split("@")
     if len(split) != 2:
-        msg = "Email address should contain exactly one '@' sign."
-        logger.error(msg)
+        msg = "Email address must contain exactly one '@' sign."
         raise DnssecError(msg)
 
     local = split[0]
@@ -167,7 +166,7 @@ class DNSSECKeyVerification:
             import unbound
         except ImportError as e:
             msg = _("Configuration option 'gpgkey_dns_verification' requires "
-                    "libunbound ({})".format(e))
+                    "python3-unbound ({})".format(e))
             raise dnf.exceptions.Error(msg)
 
         ctx = unbound.ub_ctx()
@@ -287,8 +286,8 @@ class RpmImportedKeys:
                 result = DNSSECKeyVerification.verify(key)
             except DnssecError as e:
                 # Errors in this exception should not be fatal, print it and just continue
-                logger.exception("Exception raised in DNSSEC extension: email={}, exception={}"
-                                 .format(key.email, repr(e)))
+                logger.warning("DNSSEC extension error (email={}): {}"
+                             .format(key.email, e.value))
                 continue
             # TODO: remove revoked keys automatically and possibly ask user to confirm
             if result == Validity.VALID:

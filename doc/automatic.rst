@@ -49,7 +49,7 @@ Regardless of the configuration file settings, the first will only notify of ava
 
 You can select one that most closely fits your needs, customize ``/etc/dnf/automatic.conf`` for any specific behaviors, and enable the timer unit.
 
-For example: ``systemctl enable dnf-automatic-notifyonly.timer && systemctl start dnf-automatic-notifyonly.timer``
+For example: ``systemctl enable --now dnf-automatic-notifyonly.timer``
 
 ===========================
  Configuration File Format
@@ -73,17 +73,22 @@ Setting the mode of operation of the program.
 
     Whether packages comprising the available updates should be downloaded by ``dnf-automatic.timer``. Note that the other timer units override this setting.
 
+``network_online_timeout``
+    time in seconds, default: 60
+
+    Maximal time dnf-automatic will wait until the system is online. 0 means that network availability detection will be skipped.
+
+``random_sleep``
+    time in seconds, default: 0
+
+    Maximal random delay before downloading.  Note that, by default, the ``systemd`` timers also apply a random delay of up to 1 hour.
+
 .. _upgrade_type_automatic-label:
 
 ``upgrade_type``
     either one of ``default``, ``security``, default: ``default``
 
     What kind of upgrades to look at. ``default`` signals looking for all available updates, ``security`` only those with an issued security advisory.
-
-``random_sleep``
-    time in seconds, default: 0
-
-    Maximal random delay before downloading.  Note that, by default, the ``systemd`` timers also apply a random delay of up to 5 minutes.
 
 ----------------------
 ``[emitters]`` section
@@ -126,14 +131,9 @@ The command emitter configuration. Variables usable in format string arguments a
 The command email emitter configuration. Variables usable in format string arguments are ``body`` with message body, ``subject`` with email subject, ``email_from`` with the "From:" address and ``email_to`` with a space-separated list of recipients.
 
 ``command_format``
-    format string, default: ``mail -s {subject} -r {email_from} {email_to}``
+    format string, default: ``mail -Ssendwait -s {subject} -r {email_from} {email_to}``
 
     The shell command to execute.
-
-``stdin_format``
-    format string, default: ``{body}``
-
-    The data to pass to the command on stdin.
 
 ``email_from``
     string, default: ``root``
@@ -144,6 +144,11 @@ The command email emitter configuration. Variables usable in format string argum
     list, default: ``root``
 
     List of recipients of the message.
+
+``stdin_format``
+    format string, default: ``{body}``
+
+    The data to pass to the command on stdin.
 
 -------------------
 ``[email]`` section
@@ -156,19 +161,18 @@ The email emitter configuration.
 
     Message's "From:" address.
 
-``email_to``
-    list, default: ``root``
-
-    List of recipients of the message.
-
 ``email_host``
     string, default: ``localhost``
 
     Hostname of the SMTP server used to send the message.
+
+``email_to``
+    list, default: ``root``
+
+    List of recipients of the message.
 
 ------------------
 ``[base]`` section
 ------------------
 
 Can be used to override settings from DNF's main configuration file. See :doc:`conf_ref`.
-

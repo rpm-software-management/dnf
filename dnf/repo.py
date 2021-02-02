@@ -33,6 +33,7 @@ import dnf.logging
 import dnf.pycomp
 import dnf.util
 import dnf.yum.misc
+import libdnf.error
 import libdnf.repo
 import functools
 import hashlib
@@ -59,7 +60,7 @@ _CACHEDIR_RE = r'(?P<repoid>[%s]+)\-[%s]{16}' % (re.escape(_REPOID_CHARS),
 # particular type.  The filename is expected to not contain the base cachedir
 # path components.
 CACHE_FILES = {
-    'metadata': r'^%s\/.*(xml(\.gz|\.xz|\.bz2|.zck)?|asc|cachecookie|%s)$' %
+    'metadata': r'^%s\/.*((xml|yaml)(\.gz|\.xz|\.bz2|.zck)?|asc|cachecookie|%s)$' %
                 (_CACHEDIR_RE, _MIRRORLIST_FILENAME),
     'packages': r'^%s\/%s\/.+rpm$' % (_CACHEDIR_RE, _PACKAGES_RELATIVE_DIR),
     'dbcache': r'^.+(solv|solvx)$',
@@ -325,6 +326,7 @@ class MDPayload(dnf.callback.Payload):
         self._text = ""
         self._download_size = 0
         self.fastest_mirror_running = False
+        self.mirror_failures = set()
 
     def __str__(self):
         if dnf.pycomp.PY3:
@@ -352,6 +354,7 @@ class MDPayload(dnf.callback.Payload):
         self.progress.message(msg)
 
     def _mirror_failure_cb(self, cbdata, msg, url, metadata):
+        self.mirror_failures.add(msg)
         msg = 'error: %s (%s).' % (msg, url)
         logger.debug(msg)
 
@@ -422,7 +425,7 @@ class Repo(dnf.conf.RepoConf):
         super(Repo, self).__init__(section=name, parent=parent_conf)
 
         self._config.this.disown()  # _repo will be the owner of _config
-        self._repo = libdnf.repo.Repo(name, self._config)
+        self._repo = libdnf.repo.Repo(name if name else "", self._config)
 
         self._md_pload = MDPayload(dnf.callback.NullDownloadProgress())
         self._callbacks = RepoCallbacks(self)
@@ -457,7 +460,7 @@ class Repo(dnf.conf.RepoConf):
     def pkgdir(self):
         # :api
         if self._repo.isLocal():
-            return dnf.util.strip_prefix(self.baseurl[0], 'file://')
+            return self._repo.getLocalBaseurl()
         return self.cache_pkgdir()
 
     def cache_pkgdir(self):
@@ -514,6 +517,22 @@ class Repo(dnf.conf.RepoConf):
         """
         self._repo.addMetadataTypeToDownload(metadata_type)
 
+    def remove_metadata_type_from_download(self, metadata_type):
+        # :api
+        """Stop asking for this additional repository metadata type
+        in download.
+
+        Given metadata_type is no longer downloaded by default
+        when this repository is downloaded.
+
+        Parameters
+        ----------
+        metadata_type: string
+
+        Example: remove_metadata_type_from_download("productid")
+        """
+        self._repo.removeMetadataTypeFromDownload(metadata_type)
+
     def get_metadata_path(self, metadata_type):
         # :api
         """Return path to the file with downloaded repository metadata of given type.
@@ -553,8 +572,15 @@ class Repo(dnf.conf.RepoConf):
         ret = False
         try:
             ret = self._repo.load()
-        except RuntimeError as e:
+        except (libdnf.error.Error, RuntimeError) as e:
+            if self._md_pload.mirror_failures:
+                msg = "Errors during downloading metadata for repository '%s':" % self.id
+                for failure in self._md_pload.mirror_failures:
+                    msg += "\n  - %s" % failure
+                logger.warning(msg)
             raise dnf.exceptions.RepoError(str(e))
+        finally:
+            self._md_pload.mirror_failures = set()
         self.metadata = Metadata(self._repo)
         return ret
 

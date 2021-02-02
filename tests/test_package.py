@@ -68,6 +68,18 @@ class PackageTest(tests.support.DnfBaseTestCase):
             with self.assertRaises(IOError):
                 pkg._header
 
+    # rpm.hdr() is not easy to construct with custom data, we just return a string
+    # instead, as we don't actually need an instance of rpm.hdr for the test
+    @mock.patch("rpm.TransactionSet.dbMatch", lambda self, a, b: iter(["package_header_test_data"]))
+    def test_get_header(self):
+        pkg = self.sack.query().installed().filter(name="pepper")[0]
+        header = pkg.get_header()
+        self.assertEqual(header, "package_header_test_data")
+
+        pkg = self.sack.query().available().filter(name="pepper")[0]
+        header = pkg.get_header()
+        self.assertEqual(header, None)
+
     @mock.patch("dnf.package.Package.rpmdbid", long(3))
     def test_idx(self):
         """ pkg.idx is an int. """

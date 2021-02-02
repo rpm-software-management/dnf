@@ -79,8 +79,9 @@ class RemoveCommand(commands.Command):
 
     def run(self):
 
-        forms = [self.nevra_forms[command] for command in self.opts.command
-                 if command in list(self.nevra_forms.keys())]
+        forms = []
+        if self.opts.command in self.nevra_forms:
+            forms = [self.nevra_forms[self.opts.command]]
 
         # local pkgs not supported in erase command
         self.opts.pkg_specs += self.opts.filenames
@@ -110,8 +111,14 @@ class RemoveCommand(commands.Command):
 
         if self.opts.oldinstallonly:
             q = self.base.sack.query()
-            instonly = self.base._get_installonly_query(q.installed()).latest(
-                - self.base.conf.installonly_limit)
+            instonly = self.base._get_installonly_query(q.installed()).latest(-1)
+            # also remove running kernel from the set
+            kernel = self.base.sack.get_running_kernel()
+            if kernel is not None:
+                running_installonly = instonly.filter(
+                    epoch=kernel.epoch, version=kernel.version, release=kernel.release)
+                if running_installonly:
+                    instonly = instonly.difference(running_installonly)
             if instonly:
                 for pkg in instonly:
                     self.base.package_remove(pkg)
@@ -135,7 +142,6 @@ class RemoveCommand(commands.Command):
                 skipped_grps = self.opts.grp_specs
 
             if skipped_grps:
-                self.base.read_comps(arch_filter=True)
                 for group in skipped_grps:
                     try:
                         if self.base.env_group_remove([group]):
@@ -146,9 +152,9 @@ class RemoveCommand(commands.Command):
         for pkg_spec in self.opts.pkg_specs:
             try:
                 self.base.remove(pkg_spec, forms=forms)
-            except dnf.exceptions.MarkingError:
-                logger.info(_('No match for argument: %s'),
-                                      pkg_spec)
+            except dnf.exceptions.MarkingError as e:
+                msg = '{}: {}'.format(e.value, self.base.output.term.bold(pkg_spec))
+                logger.info(msg)
             else:
                 done = True
 

@@ -37,6 +37,8 @@ import dnf.i18n
 import dnf.logging
 import dnf.util
 import errno
+import hawkey
+import libdnf.error
 import logging
 import os
 import os.path
@@ -74,6 +76,12 @@ def main(args, conf_class=Conf, cli_class=Cli, option_parser_class=OptionParser)
         return 1
     except dnf.exceptions.Error as e:
         return ex_Error(e)
+    except hawkey.Exception as e:
+        logger.critical(_('Error: %s'), ucd(e))
+        return 1
+    except libdnf.error.Error as e:
+        logger.critical(_('Error: %s'), ucd(e))
+        return 1
     except IOError as e:
         return ex_IOError(e)
     except KeyboardInterrupt as e:
@@ -157,6 +165,8 @@ def resolving(cli, base):
     if base.transaction is None:
         base.resolve(cli.demands.allow_erasing)
         logger.info(_('Dependencies resolved.'))
+
+    cli.command.run_resolved()
 
     # Run the transaction
     displays = []

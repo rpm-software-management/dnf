@@ -26,6 +26,7 @@ import libdnf.utils
 
 from dnf.i18n import ucd
 from dnf.yum import misc
+from dnf.exceptions import DatabaseError
 
 from .group import GroupPersistor, EnvironmentPersistor, RPMTransaction
 
@@ -50,6 +51,21 @@ class RPMTransactionItemWrapper(object):
 
     def match(self, pattern):
         return True
+
+    def is_package(self):
+        return self._item.getRPMItem() is not None
+
+    def is_group(self):
+        return self._item.getCompsGroupItem() is not None
+
+    def is_environment(self):
+        return self._item.getCompsEnvironmentItem() is not None
+
+    def get_group(self):
+        return self._item.getCompsGroupItem()
+
+    def get_environment(self):
+        return self._item.getCompsEnvironmentItem()
 
     @property
     def name(self):
@@ -78,6 +94,10 @@ class RPMTransactionItemWrapper(object):
         return "{}-{}".format(self.version, self.release)
 
     @property
+    def nevra(self):
+        return self._item.getRPMItem().getNEVRA()
+
+    @property
     def action(self):
         return self._item.getAction()
 
@@ -88,6 +108,10 @@ class RPMTransactionItemWrapper(object):
     @property
     def reason(self):
         return self._item.getReason()
+
+    @reason.setter
+    def reason(self, value):
+        return self._item.setReason(value)
 
     @property
     def action_name(self):
@@ -194,6 +218,10 @@ class TransactionWrapper(object):
         output = self._trans.getConsoleOutput()
         return bool(output)
 
+    @property
+    def comment(self):
+        return self._trans.getComment()
+
     def tids(self):
         return [self._trans.getId()]
 
@@ -240,6 +268,10 @@ class MergedTransactionWrapper(TransactionWrapper):
     @property
     def releasever(self):
         return self._trans.listReleasevers()
+
+    @property
+    def comment(self):
+        return self._trans.listComments()
 
     def output(self):
         return [i[1] for i in self._trans.getConsoleOutput()]
@@ -288,7 +320,10 @@ class SwdbInterface(object):
         """ Lazy initialize Swdb object """
         if not self._swdb:
             # _db_dir == persistdir which is prepended with installroot already
-            self._swdb = libdnf.transaction.Swdb(self.dbpath)
+            try:
+                self._swdb = libdnf.transaction.Swdb(self.dbpath)
+            except RuntimeError as ex:
+                raise DatabaseError(str(ex))
             self._swdb.initTransaction()
             # TODO: vars -> libdnf
         return self._swdb
@@ -302,11 +337,11 @@ class SwdbInterface(object):
             del self._tid
         except AttributeError:
             pass
-        self.swdb.closeTransaction()
         self._rpm = None
         self._group = None
         self._env = None
         if self._swdb:
+            self._swdb.closeTransaction()
             self._swdb.closeDatabase()
         self._swdb = None
         self._output = []
@@ -346,6 +381,9 @@ class SwdbInterface(object):
                 prev_trans.altered_gt_rpmdb = True
         return result[::-1]
 
+    def get_current(self):
+        return TransactionWrapper(self.swdb.getCurrent())
+
     def set_reason(self, pkg, reason):
         """Set reason for package"""
         rpm_item = self.rpm._pkg_to_swdb_rpm_item(pkg)
@@ -382,7 +420,7 @@ class SwdbInterface(object):
 #        return result
 
     # TODO: rename to begin_transaction?
-    def beg(self, rpmdb_version, using_pkgs, tsis, cmdline=None):
+    def beg(self, rpmdb_version, using_pkgs, tsis, cmdline=None, comment=""):
         try:
             self.swdb.initTransaction()
         except:
@@ -453,8 +491,8 @@ class SwdbInterface(object):
             int(calendar.timegm(time.gmtime())),
             str(rpmdb_version),
             cmdline or "",
-            int(misc.getloginuid())
-            )
+            int(misc.getloginuid()),
+            comment)
         self.swdb.setReleasever(self.releasever)
         self._tid = tid
 

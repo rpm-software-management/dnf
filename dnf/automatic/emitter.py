@@ -27,8 +27,10 @@ import dnf.pycomp
 import smtplib
 import email.utils
 import subprocess
+import time
 
 APPLIED = _("The following updates have been applied on '%s':")
+APPLIED_TIMESTAMP = _("Updates completed at %s")
 AVAILABLE = _("The following updates are available on '%s':")
 DOWNLOADED = _("The following updates were downloaded on '%s':")
 
@@ -48,6 +50,7 @@ class Emitter(object):
         if self._applied:
             msg.append(APPLIED % self._system_name)
             msg.append(self._available_msg)
+            msg.append(APPLIED_TIMESTAMP % time.strftime("%c"))
         elif self._downloaded:
             msg.append(DOWNLOADED % self._system_name)
             msg.append(self._available_msg)
@@ -140,6 +143,10 @@ class CommandEmitterMixIn(object):
 
 
 class CommandEmitter(CommandEmitterMixIn, Emitter):
+    def __init__(self, system_name, conf):
+        super(CommandEmitter, self).__init__(system_name)
+        self._conf = conf
+
     def _prepare_msg(self):
         return {'body': super(CommandEmitter, self)._prepare_msg()}
 

@@ -116,7 +116,7 @@ Repository Configuration
   .. method:: __init__(name=None, parent_conf=None)
 
     Init repository with ID `name` and the `parent_conf` which an instance of :class:`dnf.conf.Conf`
-    holding main dnf configuration.
+    holding main dnf configuration. Repository ID must be a string that can contain ASCII letters, digits, and `-_.:` characters.
 
   .. method:: add_metadata_type_to_download(metadata_type)
 

@@ -77,7 +77,7 @@ class CheckCommand(commands.Command):
         if self.opts.check_types.intersection({'all', 'dependencies'}):
             sack = None
             for pkg in q:
-                for require in pkg.requires:
+                for require in set(pkg.regular_requires) | set(set(pkg.requires_pre) - set(pkg.prereq_ignoreinst)):
                     if str(require).startswith('rpmlib'):
                         continue
                     if not len(q.filter(provides=[require])):
@@ -88,6 +88,7 @@ class CheckCommand(commands.Command):
                             selector = dnf.selector.Selector(sack)
                             selector.set(provides=str(require))
                             goal = dnf.goal.Goal(sack)
+                            goal.protect_running_kernel = self.base.conf.protect_running_kernel
                             goal.install(select=selector, optional=False)
                             solved = goal.run()
                             # there ase only @system repo in sack, therefore solved is only in case

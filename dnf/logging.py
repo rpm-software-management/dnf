@@ -31,6 +31,7 @@ import os
 import sys
 import time
 import warnings
+import gzip
 
 # :api loggers are: 'dnf', 'dnf.plugin', 'dnf.rpm'
 
@@ -43,6 +44,7 @@ DEBUG = logging.DEBUG
 DDEBUG = 8  # used by anaconda (pyanaconda/payload/dnfpayload.py)
 SUBDEBUG = 6
 TRACE = 4
+ALL = 2
 
 def only_once(func):
     """Method decorator turning the method into noop on second or later calls."""
@@ -70,11 +72,15 @@ _VERBOSE_VAL_MAPPING = {
     4 : logging.DEBUG,
     5 : logging.DEBUG,
     6 : logging.DEBUG, # verbose value
+    7 : DDEBUG,
+    8 : SUBDEBUG,
+    9 : TRACE,
+    10: ALL,   # more verbous librepo and hawkey
     }
 
 def _cfg_verbose_val2level(cfg_errval):
     assert 0 <= cfg_errval <= 10
-    return _VERBOSE_VAL_MAPPING.get(cfg_errval, DDEBUG)
+    return _VERBOSE_VAL_MAPPING.get(cfg_errval, TRACE)
 
 
 # Both the DNF default and the verbose default are WARNING. Note that ERROR has
@@ -88,6 +94,24 @@ _ERR_VAL_MAPPING = {
 def _cfg_err_val2level(cfg_errval):
     assert 0 <= cfg_errval <= 10
     return _ERR_VAL_MAPPING.get(cfg_errval, logging.WARNING)
+
+
+def compression_namer(name):
+    return name + ".gz"
+
+
+CHUNK_SIZE = 128 * 1024 # 128 KB
+
+
+def compression_rotator(source, dest):
+    with open(source, "rb") as sf:
+        with gzip.open(dest, 'wb') as wf:
+            while True:
+                data = sf.read(CHUNK_SIZE)
+                if not data:
+                    break
+                wf.write(data)
+    os.remove(source)
 
 
 class MultiprocessRotatingFileHandler(logging.handlers.RotatingFileHandler):
@@ -111,18 +135,18 @@ class MultiprocessRotatingFileHandler(logging.handlers.RotatingFileHandler):
                 return
 
 
-def _create_filehandler(logfile, log_size, log_rotate):
+def _create_filehandler(logfile, log_size, log_rotate, log_compress):
     if not os.path.exists(logfile):
         dnf.util.ensure_dir(os.path.dirname(logfile))
         dnf.util.touch(logfile)
-        # By default, make logfiles readable by the user (so the reporting ABRT
-        # user can attach root logfiles).
-        os.chmod(logfile, 0o644)
     handler = MultiprocessRotatingFileHandler(logfile, maxBytes=log_size, backupCount=log_rotate)
     formatter = logging.Formatter("%(asctime)s %(levelname)s %(message)s",
-                                  "%Y-%m-%dT%H:%M:%SZ")
-    formatter.converter = time.gmtime
+                                  "%Y-%m-%dT%H:%M:%S%z")
+    formatter.converter = time.localtime
     handler.setFormatter(formatter)
+    if log_compress:
+        handler.rotator = compression_rotator
+        handler.namer = compression_namer
     return handler
 
 def _paint_mark(logger):
@@ -132,12 +156,15 @@ def _paint_mark(logger):
 class Logging(object):
     def __init__(self):
         self.stdout_handler = self.stderr_handler = None
-
-    @only_once
-    def _presetup(self):
         logging.addLevelName(DDEBUG, "DDEBUG")
         logging.addLevelName(SUBDEBUG, "SUBDEBUG")
         logging.addLevelName(TRACE, "TRACE")
+        logging.addLevelName(ALL, "ALL")
+        logging.captureWarnings(True)
+        logging.raiseExceptions = False
+
+    @only_once
+    def _presetup(self):
         logger_dnf = logging.getLogger("dnf")
         logger_dnf.setLevel(TRACE)
 
@@ -155,51 +182,72 @@ class Logging(object):
         self.stderr_handler = stderr
 
     @only_once
-    def _setup(self, verbose_level, error_level, logdir, log_size, log_rotate):
-        self._presetup()
+    def _setup_file_loggers(self, logfile_level, logdir, log_size, log_rotate, log_compress):
         logger_dnf = logging.getLogger("dnf")
+        logger_dnf.setLevel(TRACE)
 
         # setup file logger
         logfile = os.path.join(logdir, dnf.const.LOG)
-        handler = _create_filehandler(logfile, log_size, log_rotate)
+        handler = _create_filehandler(logfile, log_size, log_rotate, log_compress)
+        handler.setLevel(logfile_level)
         logger_dnf.addHandler(handler)
-        # temporarily turn off stdout/stderr handlers:
-        self.stdout_handler.setLevel(SUPERCRITICAL)
-        self.stderr_handler.setLevel(SUPERCRITICAL)
-        # put the marker in the file now:
-        _paint_mark(logger_dnf)
 
         # setup Python warnings
-        logging.captureWarnings(True)
         logger_warnings = logging.getLogger("py.warnings")
-        logger_warnings.addHandler(self.stderr_handler)
         logger_warnings.addHandler(handler)
 
-        lr_logfile = os.path.join(logdir, dnf.const.LOG_LIBREPO)
-        libdnf.repo.LibrepoLog.addHandler(lr_logfile, verbose_level <= DEBUG)
+        logger_librepo = logging.getLogger("librepo")
+        logger_librepo.setLevel(TRACE)
+        logfile = os.path.join(logdir, dnf.const.LOG_LIBREPO)
+        handler = _create_filehandler(logfile, log_size, log_rotate, log_compress)
+        logger_librepo.addHandler(handler)
+        libdnf.repo.LibrepoLog.addHandler(logfile, logfile_level <= ALL)
 
         # setup RPM callbacks logger
         logger_rpm = logging.getLogger("dnf.rpm")
         logger_rpm.propagate = False
         logger_rpm.setLevel(SUBDEBUG)
         logfile = os.path.join(logdir, dnf.const.LOG_RPM)
-        handler = _create_filehandler(logfile, log_size, log_rotate)
+        handler = _create_filehandler(logfile, log_size, log_rotate, log_compress)
+        logger_rpm.addHandler(handler)
+
+    @only_once
+    def _setup(self, verbose_level, error_level, logfile_level, logdir, log_size, log_rotate, log_compress):
+        self._presetup()
+
+        self._setup_file_loggers(logfile_level, logdir, log_size, log_rotate, log_compress)
+
+        logger_warnings = logging.getLogger("py.warnings")
+        logger_warnings.addHandler(self.stderr_handler)
+
+        # setup RPM callbacks logger
+        logger_rpm = logging.getLogger("dnf.rpm")
         logger_rpm.addHandler(self.stdout_handler)
         logger_rpm.addHandler(self.stderr_handler)
-        logger_rpm.addHandler(handler)
+
+        logger_dnf = logging.getLogger("dnf")
+        # temporarily turn off stdout/stderr handlers:
+        self.stdout_handler.setLevel(WARNING)
+        self.stderr_handler.setLevel(WARNING)
+        _paint_mark(logger_dnf)
         _paint_mark(logger_rpm)
         # bring std handlers to the preferred level
         self.stdout_handler.setLevel(verbose_level)
         self.stderr_handler.setLevel(error_level)
-        logging.raiseExceptions = False
 
-    def _setup_from_dnf_conf(self, conf):
+    def _setup_from_dnf_conf(self, conf, file_loggers_only=False):
         verbose_level_r = _cfg_verbose_val2level(conf.debuglevel)
         error_level_r = _cfg_err_val2level(conf.errorlevel)
+        logfile_level_r = _cfg_verbose_val2level(conf.logfilelevel)
         logdir = conf.logdir
         log_size = conf.log_size
         log_rotate = conf.log_rotate
-        return self._setup(verbose_level_r, error_level_r, logdir, log_size, log_rotate)
+        log_compress = conf.log_compress
+        if file_loggers_only:
+            return self._setup_file_loggers(logfile_level_r, logdir, log_size, log_rotate, log_compress)
+        else:
+            return self._setup(
+                verbose_level_r, error_level_r, logfile_level_r, logdir, log_size, log_rotate, log_compress)
 
 
 class Timer(object):
@@ -227,7 +275,8 @@ _LIBDNF_TO_DNF_LOGLEVEL_MAPPING = {
 class LibdnfLoggerCB(libdnf.utils.Logger):
     def __init__(self):
         super(LibdnfLoggerCB, self).__init__()
-        self._logger = logging.getLogger("dnf")
+        self._dnf_logger = logging.getLogger("dnf")
+        self._librepo_logger = logging.getLogger("librepo")
 
     def write(self, source, *args):
         """Log message.
@@ -238,7 +287,10 @@ class LibdnfLoggerCB(libdnf.utils.Logger):
             level, message = args
         elif len(args) == 4:
             time, pid, level, message = args
-        self._logger.log(_LIBDNF_TO_DNF_LOGLEVEL_MAPPING[level], message)
+        if source == libdnf.utils.Logger.LOG_SOURCE_LIBREPO:
+            self._librepo_logger.log(_LIBDNF_TO_DNF_LOGLEVEL_MAPPING[level], message)
+        else:
+            self._dnf_logger.log(_LIBDNF_TO_DNF_LOGLEVEL_MAPPING[level], message)
 
 
 libdnfLoggerCB = LibdnfLoggerCB()

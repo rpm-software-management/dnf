@@ -108,7 +108,14 @@ class SearchCommand(commands.Command):
         limit = None
         if not self.base.conf.showdupesfromrepos:
             limit = self.base.sack.query().filterm(pkg=counter.keys()).latest()
+
+        seen = set()
         for pkg in counter.sorted(reverse=True, limit_to=limit):
+            if not self.base.conf.showdupesfromrepos:
+                if pkg.name + pkg.arch in seen:
+                    continue
+                seen.add(pkg.name + pkg.arch)
+
             if used_attrs != counter.matched_keys(pkg):
                 used_attrs = counter.matched_keys(pkg)
                 print_section_header = True
@@ -136,11 +143,11 @@ class SearchCommand(commands.Command):
         return counter
 
     def pre_configure(self):
-        if not self.opts.verbose and not self.opts.quiet:
+        if not self.opts.quiet:
             self.cli.redirect_logger(stdout=logging.WARNING, stderr=logging.INFO)
 
     def configure(self):
-        if not self.opts.verbose and not self.opts.quiet:
+        if not self.opts.quiet:
             self.cli.redirect_repo_progress()
         demands = self.cli.demands
         demands.available_repos = True

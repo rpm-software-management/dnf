@@ -26,11 +26,13 @@ from __future__ import unicode_literals
 from dnf.i18n import _
 
 import binascii
+import dnf.exceptions
 import dnf.rpm
 import dnf.yum.misc
 import hawkey
 import logging
 import os
+import rpm
 
 logger = logging.getLogger("dnf")
 
@@ -73,17 +75,33 @@ class Package(hawkey.Package):
 
     @property
     def _from_repo(self):
+        """
+        For installed packages returns id of repository from which the package was installed
+        prefixed with '@' (if such information is available in the history database). Otherwise
+        returns id of repository the package belongs to (@System for installed packages of unknown
+        origin)
+        """
         pkgrepo = None
         if self._from_system:
             pkgrepo = self.base.history.repo(self)
-        else:
-            pkgrepo = {}
         if pkgrepo:
             return '@' + pkgrepo
         return self.reponame
 
     @property
+    def from_repo(self):
+        # :api
+        if self._from_system:
+            return self.base.history.repo(self)
+        return ""
+
+    @property
     def _header(self):
+        """
+        Returns the header of a locally present rpm package file. As opposed to
+        self.get_header(), which retrieves the header of an installed package
+        from rpmdb.
+        """
         return dnf.rpm._header(self.localPkg())
 
     @property
@@ -152,6 +170,23 @@ class Package(hawkey.Package):
         # assuming self.source_name is None only for a source package
         src_name = self.source_name if self.source_name is not None else self.name
         return src_name + self.DEBUGSOURCE_SUFFIX
+
+    def get_header(self):
+        """
+        Returns the rpm header of the package if it is installed. If not
+        installed, returns None. The header is not cached, it is retrieved from
+        rpmdb on every call. In case of a failure (e.g. when the rpmdb changes
+        between loading the data and calling this method), raises an instance
+        of PackageNotFoundError.
+        """
+        if not self._from_system:
+            return None
+
+        try:
+            # RPMDBI_PACKAGES stands for the header of the package
+            return next(self.base._ts.dbMatch(rpm.RPMDBI_PACKAGES, self.rpmdbid))
+        except StopIteration:
+            raise dnf.exceptions.PackageNotFoundError("Package not found when attempting to retrieve header", str(self))
 
     @property
     def source_debug_name(self):
@@ -244,7 +279,7 @@ class Package(hawkey.Package):
             return self.location
         loc = self.location
         if self.repo._repo.isLocal() and self.baseurl and self.baseurl.startswith('file://'):
-            return os.path.join(self.baseurl, loc.lstrip("/"))[7:]
+            return os.path.join(self.get_local_baseurl(), loc.lstrip("/"))
         if not self._is_local_pkg():
             loc = os.path.basename(loc)
         return os.path.join(self.pkgdir, loc.lstrip("/"))
@@ -252,16 +287,22 @@ class Package(hawkey.Package):
     def remote_location(self, schemes=('http', 'ftp', 'file', 'https')):
         # :api
         """
-        The location from where the package can be downloaded from
+        The location from where the package can be downloaded from. Returns None for installed and
+        commandline packages.
 
         :param schemes: list of allowed protocols. Default is ('http', 'ftp', 'file', 'https')
         :return: location (string) or None
         """
+        if self._from_system or self._from_cmdline:
+            return None
         return self.repo.remote_location(self.location, schemes)
 
     def _is_local_pkg(self):
-        if self.repoid == "@System":
+        if self._from_system:
             return True
+        if '://' in self.location and not self.location.startswith('file://'):
+            # the package has a remote URL as its location
+            return False
         return self._from_cmdline or \
             (self.repo._repo.isLocal() and (not self.baseurl or self.baseurl.startswith('file://')))
 

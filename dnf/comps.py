@@ -75,7 +75,16 @@ def _by_pattern(pattern, case_sensitive, sqn):
     else:
         match = re.compile(fnmatch.translate(pattern), flags=re.I).match
 
-    return {g for g in sqn if match(g.name) or match(g.id) or match(g.ui_name)}
+    ret = set()
+    for g in sqn:
+        if match(g.id):
+            ret.add(g)
+        elif g.name is not None and match(g.name):
+            ret.add(g)
+        elif g.ui_name is not None and match(g.ui_name):
+            ret.add(g)
+
+    return ret
 
 
 def _fn_display_order(group):
@@ -108,7 +117,7 @@ class _Langs(object):
         lcl = locale.getlocale(locale.LC_MESSAGES)
         if lcl == (None, None):
             return 'C'
-        return'.'.join(lcl)
+        return '.'.join(lcl)
 
     def get(self):
         current_locale = self._dotted_locale_str()
@@ -586,6 +595,9 @@ class Solver(object):
     def _environment_install(self, env_id, pkg_types, exclude, strict=True, exclude_groups=None):
         assert dnf.util.is_string_type(env_id)
         comps_env = self.comps._environment_by_id(env_id)
+        if not comps_env:
+            raise CompsError(_("Environment id '%s' does not exist.") % ucd(env_id))
+
         swdb_env = self.history.env.new(env_id, comps_env.name, comps_env.ui_name, pkg_types)
         self.history.env.install(swdb_env)
 
@@ -607,7 +619,7 @@ class Solver(object):
         assert dnf.util.is_string_type(env_id) is True
         swdb_env = self.history.env.get(env_id)
         if not swdb_env:
-            raise CompsError(_("Environment '%s' is not installed.") % env_id)
+            raise CompsError(_("Environment id '%s' is not installed.") % env_id)
 
         self.history.env.remove(swdb_env)
 
@@ -622,13 +634,13 @@ class Solver(object):
     def _environment_upgrade(self, env_id):
         assert dnf.util.is_string_type(env_id)
         comps_env = self.comps._environment_by_id(env_id)
-        swdb_env = self.history.env.get(comps_env.id)
+        swdb_env = self.history.env.get(env_id)
         if not swdb_env:
             raise CompsError(_("Environment '%s' is not installed.") % env_id)
         if not comps_env:
             raise CompsError(_("Environment '%s' is not available.") % env_id)
 
-        old_set = set([i.getGroupId() for i in swdb_env.getGroups() if i.getInstalled()])
+        old_set = set([i.getGroupId() for i in swdb_env.getGroups()])
         pkg_types = swdb_env.getPackageTypes()
 
         # create a new record for current transaction
@@ -637,14 +649,18 @@ class Solver(object):
         trans = TransactionBunch()
         for comps_group in comps_env.mandatory_groups:
             if comps_group.id in old_set:
-                # upgrade existing group
-                trans += self._group_upgrade(comps_group.id)
+                if self.history.group.get(comps_group.id):
+                    # upgrade installed group
+                    trans += self._group_upgrade(comps_group.id)
             else:
                 # install new group
                 trans += self._group_install(comps_group.id, pkg_types)
             swdb_env.addGroup(comps_group.id, True, MANDATORY)
 
         for comps_group in comps_env.optional_groups:
+            if comps_group.id in old_set and self.history.group.get(comps_group.id):
+                # upgrade installed group
+                trans += self._group_upgrade(comps_group.id)
             swdb_env.addGroup(comps_group.id, False, OPTIONAL)
             # TODO: if a group is already installed, mark it as installed?
         self.history.env.upgrade(swdb_env)
@@ -654,11 +670,11 @@ class Solver(object):
         assert dnf.util.is_string_type(group_id)
         comps_group = self.comps._group_by_id(group_id)
         if not comps_group:
-            raise ValueError(_("Group_id '%s' does not exist.") % ucd(group_id))
+            raise CompsError(_("Group id '%s' does not exist.") % ucd(group_id))
 
         swdb_group = self.history.group.new(group_id, comps_group.name, comps_group.ui_name, pkg_types)
         for i in comps_group.packages_iter():
-            swdb_group.addPackage(i.name, False, i.type)
+            swdb_group.addPackage(i.name, False, Package._OPT_MAP[i.type])
         self.history.group.install(swdb_group)
 
         trans = TransactionBunch()
@@ -672,8 +688,9 @@ class Solver(object):
     def _group_remove(self, group_id):
         assert dnf.util.is_string_type(group_id)
         swdb_group = self.history.group.get(group_id)
+        if not swdb_group:
+            raise CompsError(_("Module or Group '%s' is not installed.") % group_id)
         self.history.group.remove(swdb_group)
-
         trans = TransactionBunch()
         trans.remove = {pkg for pkg in swdb_group.getPackages() if self._removable_pkg(pkg.getName())}
         return trans
@@ -696,7 +713,7 @@ class Solver(object):
         # create a new record for current transaction
         swdb_group = self.history.group.new(group_id, comps_group.name, comps_group.ui_name, pkg_types)
         for i in comps_group.packages_iter():
-            swdb_group.addPackage(i.name, False, i.type)
+            swdb_group.addPackage(i.name, False, Package._OPT_MAP[i.type])
         self.history.group.upgrade(swdb_group)
 
         trans = TransactionBunch()

@@ -24,6 +24,8 @@ from dnf.comps import CompsQuery
 from dnf.cli import commands
 from dnf.i18n import _, ucd
 
+import libdnf.transaction
+
 import dnf.cli
 import dnf.exceptions
 import dnf.util
@@ -108,9 +110,6 @@ class GroupCommand(commands.Command):
 
         return installed, available
 
-    def _grp_setup(self):
-        self.base.read_comps(arch_filter=True)
-
     def _info(self, userlist):
         for strng in userlist:
             group_matched = False
@@ -132,7 +131,9 @@ class GroupCommand(commands.Command):
         uservisible = 1
         showinstalled = 0
         showavailable = 0
-        if len(userlist) > 0:
+        print_ids = self.base.conf.verbose or self.opts.ids
+
+        while userlist:
             if userlist[0] == 'hidden':
                 uservisible = 0
                 userlist.pop(0)
@@ -142,6 +143,11 @@ class GroupCommand(commands.Command):
             elif userlist[0] == 'available':
                 showavailable = 1
                 userlist.pop(0)
+            elif userlist[0] == 'ids':
+                print_ids = True
+                userlist.pop(0)
+            else:
+                break
         if self.opts.hidden:
             uservisible = 0
         if self.opts.installed:
@@ -170,8 +176,8 @@ class GroupCommand(commands.Command):
         def _out_grp(sect, group):
             if not done:
                 print(sect)
-            msg = '   %s' % group.ui_name
-            if self.base.conf.verbose:
+            msg = '   %s' % (group.ui_name if group.ui_name is not None else _("<name-unset>"))
+            if print_ids:
                 msg += ' (%s)' % group.id
             if group.lang_only:
                 msg += ' [%s]' % group.lang_only
@@ -181,8 +187,8 @@ class GroupCommand(commands.Command):
             if envs:
                 print(sect)
             for e in envs:
-                msg = '   %s' % e.ui_name
-                if self.base.conf.verbose:
+                msg = '   %s' % (e.ui_name if e.ui_name is not None else _("<name-unset>"))
+                if print_ids:
                     msg += ' (%s)' % e.id
                 print(msg)
 
@@ -236,7 +242,7 @@ class GroupCommand(commands.Command):
             types = tuple(self.base.conf.group_package_types + ['optional'])
         else:
             types = tuple(self.base.conf.group_package_types)
-        pkg_types = self.base._translate_comps_pkg_types(types)
+        pkg_types = libdnf.transaction.listToCompsPackageType(types)
         for env_id in res.environments:
             dnf.comps.install_or_skip(solver._environment_install, env_id, pkg_types)
         for group_id in res.groups:
@@ -318,6 +324,8 @@ class GroupCommand(commands.Command):
                                help=_("show only installed groups"))
         grpparser.add_argument('--available', action='store_true',
                                help=_("show only available groups"))
+        grpparser.add_argument('--ids', action='store_true',
+                               help=_("show also ID of groups"))
         parser.add_argument('subcmd', nargs='?', metavar='COMMAND',
                             help=_('available subcommands: {} (default), {}').format(
                                 GroupCommand._GROUP_SUBCOMMANDS[0],
@@ -358,8 +366,6 @@ class GroupCommand(commands.Command):
     def run(self):
         cmd = self.opts.subcmd
         extcmds = self.opts.args
-
-        self._grp_setup()
 
         if cmd == 'summary':
             return self._summary(extcmds)

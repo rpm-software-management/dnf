@@ -33,6 +33,10 @@
 
     An instance of :class:`dnf.conf.Conf`, concentrates all the different configuration options. :meth:`__init__` initializes this to usable defaults.
 
+  .. attribute:: goal
+
+    An instance of :class:`dnf.goal.Goal` that this :class:`Base<dnf.Base>` object is using.
+
   .. attribute:: repos
 
     A :class:`dnf.repodict.RepoDict` instance, this member object contains all the repositories available.
@@ -51,11 +55,12 @@
 
   .. method:: add_remote_rpms(path_list, strict=True, progress=None)
 
-    Add RPM files at list `path_list` to the :attr:`sack` and return the list of respective
-    :class:`dnf.package.Package` instances. Does the download to a temporary files for each path if
-    `path` is a remote URL. Raises :exc:`IOError` if there are problems obtaining during reading
-    files and `strict=True`. `progress`, if given, should be a :class:`.DownloadProgress` and can be
-    used by the caller to monitor the progress of the download.
+    This function must be called before anything is added to the :attr:`goal`. Adds RPM files
+    in path_list to the :attr:`sack` and return the list of respective :class:`dnf.package.Package`
+    instances. Downloads the RPMs to a temporary file for each path if it is a remote URL.
+    Raises :exc:`IOError` if there are `IO` problems with files and `strict=True`. Raises
+    :exc:`dnf.exceptions.Error` if the :attr:`goal` is not empty. `progress`, if given, should be a
+    :class:`.DownloadProgress` instance which can be used to monitor the progress of the download.
 
   .. method:: close()
 
@@ -179,6 +184,29 @@
     successful update_cache operation.
 
     When the method is used after :meth:`fill_sack`, information about packages will not be updated.
+
+  .. method:: package_signature_check(pkg)
+
+    Verify the GPG signature of the given package object.
+    Returns tuple (`result`, `error_string`) where result is:
+
+    ======= =================================================
+    result  meaning
+    ======= =================================================
+    0       GPG signature verifies ok or verification is not required.
+    1       GPG verification failed but installation of the right GPG key might help.
+    2       Fatal GPG verification error, give up.
+    ======= =================================================
+
+  .. method:: package_import_key(pkg, askcb=None, fullaskcb=None)
+
+    Retrieve a key for a package. If needed, use the given callback to prompt whether the key should be imported. Raises :exc:`dnf.exceptions.Error` if there are errors retrieving the keys.
+
+    `askcb`: callback function to use to ask permission to import a key.  The arguments `askcb` should take are the package object, the userid of the key, and the keyid
+
+    `fullaskcb`: callback function to use to ask permission to import a key. This differs from `askcb` in that it gets passed a dictionary so that we can expand the values passed.
+
+    Callback functions return ``True`` if the key should be imported, ``False`` otherwise.
 
   .. _package_marking-label:
 

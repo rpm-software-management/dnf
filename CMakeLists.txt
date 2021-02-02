@@ -36,3 +36,4 @@ CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/dnf/const.py.in ${CMAKE_SOURCE_DIR}/dnf/const
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/dnf/cli/completion_helper.py.in ${CMAKE_SOURCE_DIR}/dnf/cli/completion_helper.py @ONLY)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/tests/modules/etc/dnf/repos.d/test.repo.in ${CMAKE_SOURCE_DIR}/tests/modules/etc/dnf/repos.d/test.repo @ONLY)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/tests/modules/etc/dnf/dnf.conf.in ${CMAKE_SOURCE_DIR}/tests/modules/etc/dnf/dnf.conf @ONLY)
+CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/doc/conf.py.in ${CMAKE_SOURCE_DIR}/doc/conf.py @ONLY)

@@ -74,6 +74,11 @@
 
     Files the package provides (list of strings).
 
+  .. attribute:: from_repo
+
+    For installed packages returns id of repository from which the package was installed if such
+    information is available in the history database. Otherwise returns an empty string (string).
+
   .. attribute:: group
 
     Group of the package (string).
@@ -132,15 +137,24 @@
 
   .. attribute:: reponame
 
-    Id of repository the package was installed from (string).
+    Id of repository the package belongs to (@System for installed packages) (string).
 
   .. attribute:: requires
 
-    Package's requirements (list of Hawkey.Reldep).
+    Package's requirements, combined requires_pre and regular_requires (list of Hawkey.Reldep).
 
   .. attribute:: requires_pre
 
-    Package's install-time requirements (list of Hawkey.Reldep).
+    Installed package's %pre, %post, %preun and %postun requirements (list of Hawkey.Reldep).
+    For not installed package returns just %pre and $post requirements.
+
+  .. attribute:: regular_requires
+
+    Package's requirements without %pre, %post, %preun and %postun requirements (list of Hawkey.Reldep).
+
+  .. attribute:: prereq_ignoreinst
+
+    Safe to remove requires_pre requirements of an installed package (list of Hawkey.Reldep).
 
   .. attribute:: rpmdbid
 

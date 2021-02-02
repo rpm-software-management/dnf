@@ -58,6 +58,10 @@ class ConfigError(Error):
         self.raw_error = ucd(raw_error) if raw_error is not None else None
 
 
+class DatabaseError(Error):
+    pass
+
+
 class DepsolveError(Error):
     # :api
     pass

@@ -46,6 +46,16 @@ TS_FAILED = 100
 TS_INSTALL_STATES = [TS_INSTALL, TS_UPDATE, TS_OBSOLETING]
 TS_REMOVE_STATES = [TS_ERASE, TS_OBSOLETED, TS_UPDATED]
 
+RPM_ACTIONS_SET = {libdnf.transaction.TransactionItemAction_INSTALL,
+                   libdnf.transaction.TransactionItemAction_DOWNGRADE,
+                   libdnf.transaction.TransactionItemAction_DOWNGRADED,
+                   libdnf.transaction.TransactionItemAction_OBSOLETE,
+                   libdnf.transaction.TransactionItemAction_OBSOLETED,
+                   libdnf.transaction.TransactionItemAction_UPGRADE,
+                   libdnf.transaction.TransactionItemAction_UPGRADED,
+                   libdnf.transaction.TransactionItemAction_REMOVE,
+                   libdnf.transaction.TransactionItemAction_REINSTALLED}
+
 logger = logging.getLogger('dnf')
 
 
@@ -103,7 +113,10 @@ class TransactionDisplay(object):
         pass
 
     def scriptout(self, msgs):
-        """msgs is the messages that were output (if any)."""
+        """Hook for reporting an rpm scriptlet output.
+
+        :param msgs: the scriptlet output
+        """
         pass
 
     def error(self, message):
@@ -130,7 +143,7 @@ class ErrorTransactionDisplay(TransactionDisplay):
         dnf.util._terminal_messenger('print', message, sys.stderr)
 
 
-class LoggingTransactionDisplay(ErrorTransactionDisplay):
+class LoggingTransactionDisplay(TransactionDisplay):
     '''
     Base class for a RPMTransaction display callback class
     '''
@@ -145,6 +158,10 @@ class LoggingTransactionDisplay(ErrorTransactionDisplay):
         action_str = dnf.transaction.FILE_ACTIONS[action]
         msg = '%s: %s' % (action_str, package)
         self.rpm_logger.log(dnf.logging.SUBDEBUG, msg)
+
+    def scriptout(self, msgs):
+        if msgs:
+            self.rpm_logger.info(ucd(msgs))
 
 
 class RPMTransaction(object):
@@ -240,8 +257,8 @@ class RPMTransaction(object):
                 return self._tsi_cache
         items = []
         for tsi in self.base.transaction:
-            if tsi.action == libdnf.transaction.TransactionItemAction_REINSTALL:
-                # skip REINSTALL in order to return REINSTALLED
+            if tsi.action not in RPM_ACTIONS_SET:
+                # skip REINSTALL in order to return REINSTALLED, or REASON_CHANGE to avoid crash
                 continue
             if str(tsi) == te_nevra:
                 items.append(tsi)

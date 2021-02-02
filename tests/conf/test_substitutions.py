@@ -50,5 +50,5 @@ class SubstitutionsFromEnvironmentTest(tests.support.TestCase):
         os.environ = env
         self.assertCountEqual(
             conf.substitutions.keys(),
-            ['basearch', 'arch', 'DNF_VAR_GENRE', 'DNF_VAR_EMPTY'])
-        self.assertEqual('opera', conf.substitutions['DNF_VAR_GENRE'])
+            ['basearch', 'arch', 'GENRE', 'EMPTY'])
+        self.assertEqual('opera', conf.substitutions['GENRE'])

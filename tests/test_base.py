@@ -157,17 +157,12 @@ class BaseTest(tests.support.TestCase):
         self.assertEqual(base.history.repo(pkg), 'main')
         base.close()
 
-    def test_translate_comps_pkg_types(self):
-        base = tests.support.MockBase()
-        num = base._translate_comps_pkg_types(('mandatory', 'optional'))
-        self.assertEqual(num, 12)
-        base.close()
-
 
 class MockBaseTest(tests.support.DnfBaseTestCase):
     """Test the Base methods that need a Sack."""
 
     REPOS = ["main"]
+    INIT_SACK = True
 
     def test_add_remote_rpms(self):
         pkgs = self.base.add_remote_rpms([tests.support.TOUR_50_PKG_PATH])

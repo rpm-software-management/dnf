@@ -123,7 +123,8 @@ class Aliases(object):
         for filename in filenames:
             try:
                 conf = self._load_conf(filename)
-                self.aliases.update(conf.aliases)
+                if conf.enabled:
+                    self.aliases.update(conf.aliases)
             except dnf.exceptions.ConfigError as e:
                 logger.warning(_('Config error: %s'), e)
 
@@ -143,7 +144,7 @@ class Aliases(object):
         try:
             if not os.path.exists(ALIASES_DROPIN_DIR):
                 os.mkdir(ALIASES_DROPIN_DIR)
-            for fn in os.listdir(ALIASES_DROPIN_DIR):
+            for fn in sorted(os.listdir(ALIASES_DROPIN_DIR)):
                 if _ignore_filename(fn):
                     continue
                 filenames.append(os.path.join(ALIASES_DROPIN_DIR, fn))
@@ -176,8 +177,13 @@ class Aliases(object):
                     suffix[0].startswith('\\')):  # End resolving
                 try:
                     stack.pop()
+
+                    # strip the '\' if it exists
+                    if suffix[0].startswith('\\'):
+                        suffix[0] = suffix[0][1:]
                 except IndexError:
                     pass
+
                 return suffix
 
             if suffix[0] in stack:  # Infinite recursion detected

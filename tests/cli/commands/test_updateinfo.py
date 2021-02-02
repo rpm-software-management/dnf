@@ -75,8 +75,8 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
     def test_avail_filter_pkgs_nonex(self):
         """Test querying with a non-existent packages filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        tests.support.command_configure(cmd, [])
-        apkg_adv_insts = cmd.available_apkg_adv_insts(['non-existent'])
+        tests.support.command_configure(cmd, ['non-existent'])
+        apkg_adv_insts = cmd.available_apkg_adv_insts(cmd.opts.spec)
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [], 'incorrect pairs')
@@ -105,8 +105,8 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
     def test_inst_filter_bugfix(self):
         """Test querying with a bugfix filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        tests.support.command_configure(cmd, [])
-        apkg_adv_insts = cmd.installed_apkg_adv_insts(['bugfix'])
+        tests.support.command_configure(cmd, ['bugfix'])
+        apkg_adv_insts = cmd.installed_apkg_adv_insts(cmd.opts.spec)
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-4-4.noarch.rpm', 'DNF-2014-1', True)],
@@ -115,8 +115,8 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
     def test_inst_filter_enhancement(self):
         """Test querying with an enhancement filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        tests.support.command_configure(cmd, [])
-        apkg_adv_insts = cmd.installed_apkg_adv_insts(['enhancement'])
+        tests.support.command_configure(cmd, ['enhancement'])
+        apkg_adv_insts = cmd.installed_apkg_adv_insts(cmd.opts.spec)
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-5-0.noarch.rpm', 'DNF-2014-2', True)],
@@ -146,9 +146,8 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
     def test_all_filter_advisories(self):
         """Test querying with an advisories filter."""
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        tests.support.command_configure(cmd, [])
-        apkg_adv_insts = cmd.all_apkg_adv_insts(
-            ['DNF-201*-[13]', 'NO-0000-0'])
+        tests.support.command_configure(cmd, ['DNF-201*-[13]', 'NO-0000-0'])
+        apkg_adv_insts = cmd.all_apkg_adv_insts(cmd.opts.spec)
         self.assertCountEqual(
             ((apk.filename, adv.id, ins) for apk, adv, ins in apkg_adv_insts),
             [('tour-4-4.noarch.rpm', 'DNF-2014-1', True),
@@ -167,7 +166,8 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
              for adv in pkg.get_advisories(hawkey.LT | hawkey.EQ)
              for apkg in adv.packages))
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.display_list(apkg_adv_insts, True)
+        tests.support.command_configure(cmd, ['--all'])
+        cmd.display_list(apkg_adv_insts)
         self.assertEqual(
             self._stdout.getvalue(),
             'i DNF-2014-1 bugfix       tour-4-4.noarch\n'
@@ -185,7 +185,8 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
         )
         self.cli.base.set_debuglevel(dnf.const.VERBOSE_LEVEL)
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.display_info(apkg_adv_insts, False)
+        tests.support.command_configure(cmd, [])
+        cmd.display_info(apkg_adv_insts)
         updated = datetime.datetime.fromtimestamp(1404841143)
         self.assertEqual(self._stdout.getvalue(),
                          '========================================'
@@ -213,7 +214,8 @@ class UpdateInfoCommandTest(tests.support.DnfBaseTestCase):
              for apkg in adv.packages))
         self.cli.base.set_debuglevel(dnf.const.VERBOSE_LEVEL)
         cmd = dnf.cli.commands.updateinfo.UpdateInfoCommand(self.cli)
-        cmd.display_info(apkg_adv_insts, True)
+        tests.support.command_configure(cmd, ['--all'])
+        cmd.display_info(apkg_adv_insts)
         updated1 = datetime.datetime.fromtimestamp(1404840841)
         updated2 = datetime.datetime.fromtimestamp(1404841082)
         updated3 = datetime.datetime.fromtimestamp(1404841143)

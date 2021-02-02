@@ -74,12 +74,12 @@ class InstallCommand(commands.Command):
         nevra_forms = self._get_nevra_forms_from_command()
 
         self.cli._populate_update_security_filter(self.opts, self.base.sack.query())
-        if self.opts.command == ['localinstall'] and (self.opts.grp_specs or self.opts.pkg_specs):
+        if self.opts.command == 'localinstall' and (self.opts.grp_specs or self.opts.pkg_specs):
             self._log_not_valid_rpm_file_paths(self.opts.grp_specs)
             if self.base.conf.strict:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
         skipped_grp_specs = []
-        if self.opts.grp_specs and self.opts.command != ['localinstall']:
+        if self.opts.grp_specs and self.opts.command != 'localinstall':
             if dnf.base.WITH_MODULES:
                 try:
                     module_base = dnf.module.module_base.ModuleBase(self.base)
@@ -108,10 +108,10 @@ class InstallCommand(commands.Command):
             self._inform_not_a_valid_combination(skipped_grp_specs)
             if self.base.conf.strict:
                 raise dnf.exceptions.Error(_('Nothing to do.'))
-        elif skipped_grp_specs and self.opts.command != ['localinstall']:
+        elif skipped_grp_specs and self.opts.command != 'localinstall':
             self._install_groups(skipped_grp_specs)
 
-        if self.opts.command != ['localinstall']:
+        if self.opts.command != 'localinstall':
             errs = self._install_packages(nevra_forms)
 
         if (len(errs) != 0 or len(err_pkgs) != 0 or error_module_specs) and self.base.conf.strict:
@@ -120,10 +120,10 @@ class InstallCommand(commands.Command):
                                                            packages=err_pkgs)
 
     def _get_nevra_forms_from_command(self):
-        return [self.nevra_forms[command]
-                for command in self.opts.command
-                if command in list(self.nevra_forms.keys())
-                ]
+        if self.opts.command in self.nevra_forms:
+            return [self.nevra_forms[self.opts.command]]
+        else:
+            return []
 
     def _log_not_valid_rpm_file_paths(self, grp_specs):
         group_names = map(lambda g: '@' + g, grp_specs)
@@ -151,7 +151,6 @@ class InstallCommand(commands.Command):
         return err_pkgs
 
     def _install_groups(self, grp_specs):
-        self.base.read_comps(arch_filter=True)
         try:
             self.base.env_group_install(grp_specs,
                                         tuple(self.base.conf.group_package_types),
@@ -175,9 +174,9 @@ class InstallCommand(commands.Command):
         for pkg_spec in self.opts.pkg_specs:
             try:
                 self.base.install(pkg_spec, strict=strict, forms=nevra_forms)
-            except dnf.exceptions.MarkingError:
-                msg = _('No match for argument: %s')
-                logger.info(msg, self.base.output.term.bold(pkg_spec))
+            except dnf.exceptions.MarkingError as e:
+                msg = '{}: {}'.format(e.value, self.base.output.term.bold(pkg_spec))
+                logger.info(msg)
                 self.base._report_icase_hint(pkg_spec)
                 self._report_alternatives(pkg_spec)
                 errs.append(pkg_spec)

@@ -24,12 +24,14 @@ from __future__ import unicode_literals
 
 from .pycomp import PY3, basestring
 from dnf.i18n import _, ucd
-from functools import reduce
+import argparse
 import dnf
 import dnf.callback
 import dnf.const
 import dnf.pycomp
 import errno
+import functools
+import hawkey
 import itertools
 import locale
 import logging
@@ -40,8 +42,12 @@ import sys
 import tempfile
 import time
 import libdnf.repo
+import libdnf.transaction
 
 logger = logging.getLogger('dnf')
+
+MAIN_PROG = argparse.ArgumentParser().prog if argparse.ArgumentParser().prog == "yum" else "dnf"
+MAIN_PROG_UPPER = MAIN_PROG.upper()
 
 """DNF Utilities."""
 
@@ -191,7 +197,7 @@ def group_by_filter(fn, iterable):
     def splitter(acc, item):
         acc[not bool(fn(item))].append(item)
         return acc
-    return reduce(splitter, iterable, ([], []))
+    return functools.reduce(splitter, iterable, ([], []))
 
 def insert_if(item, iterable, condition):
     """Insert an item into an iterable by a condition."""
@@ -500,3 +506,99 @@ class MultiCallList(list):
         def setter(item):
             setattr(item, what, val)
         return list(map(setter, self))
+
+
+def _make_lists(transaction):
+    b = Bunch({
+        'downgraded': [],
+        'erased': [],
+        'erased_clean': [],
+        'erased_dep': [],
+        'installed': [],
+        'installed_group': [],
+        'installed_dep': [],
+        'installed_weak': [],
+        'reinstalled': [],
+        'upgraded': [],
+        'failed': [],
+    })
+
+    for tsi in transaction:
+        if tsi.state == libdnf.transaction.TransactionItemState_ERROR:
+            b.failed.append(tsi)
+        elif tsi.action == libdnf.transaction.TransactionItemAction_DOWNGRADE:
+            b.downgraded.append(tsi)
+        elif tsi.action == libdnf.transaction.TransactionItemAction_INSTALL:
+            if tsi.reason == libdnf.transaction.TransactionItemReason_GROUP:
+                b.installed_group.append(tsi)
+            elif tsi.reason == libdnf.transaction.TransactionItemReason_DEPENDENCY:
+                b.installed_dep.append(tsi)
+            elif tsi.reason == libdnf.transaction.TransactionItemReason_WEAK_DEPENDENCY:
+                b.installed_weak.append(tsi)
+            else:
+                # TransactionItemReason_USER
+                b.installed.append(tsi)
+        elif tsi.action == libdnf.transaction.TransactionItemAction_REINSTALL:
+            b.reinstalled.append(tsi)
+        elif tsi.action == libdnf.transaction.TransactionItemAction_REMOVE:
+            if tsi.reason == libdnf.transaction.TransactionItemReason_CLEAN:
+                b.erased_clean.append(tsi)
+            elif tsi.reason == libdnf.transaction.TransactionItemReason_DEPENDENCY:
+                b.erased_dep.append(tsi)
+            else:
+                b.erased.append(tsi)
+        elif tsi.action == libdnf.transaction.TransactionItemAction_UPGRADE:
+            b.upgraded.append(tsi)
+
+    return b
+
+
+def _post_transaction_output(base, transaction, action_callback):
+    """Returns a human-readable summary of the results of the
+    transaction.
+
+    :param action_callback: function generating output for specific action. It
+       takes two parameters - action as a string and list of affected packages for
+       this action
+    :return: a list of lines containing a human-readable summary of the
+       results of the transaction
+    """
+    def _tsi_or_pkg_nevra_cmp(item1, item2):
+        """Compares two transaction items or packages by nevra.
+           Used as a fallback when tsi does not contain package object.
+        """
+        ret = (item1.name > item2.name) - (item1.name < item2.name)
+        if ret != 0:
+            return ret
+        nevra1 = hawkey.NEVRA(name=item1.name, epoch=item1.epoch, version=item1.version,
+                              release=item1.release, arch=item1.arch)
+        nevra2 = hawkey.NEVRA(name=item2.name, epoch=item2.epoch, version=item2.version,
+                              release=item2.release, arch=item2.arch)
+        ret = nevra1.evr_cmp(nevra2, base.sack)
+        if ret != 0:
+            return ret
+        return (item1.arch > item2.arch) - (item1.arch < item2.arch)
+
+    list_bunch = dnf.util._make_lists(transaction)
+
+    skipped_conflicts, skipped_broken = base._skipped_packages(
+        report_problems=False, transaction=transaction)
+    skipped = skipped_conflicts.union(skipped_broken)
+
+    out = []
+    for (action, tsis) in [(_('Upgraded'), list_bunch.upgraded),
+                           (_('Downgraded'), list_bunch.downgraded),
+                           (_('Installed'), list_bunch.installed +
+                            list_bunch.installed_group +
+                            list_bunch.installed_weak +
+                            list_bunch.installed_dep),
+                           (_('Reinstalled'), list_bunch.reinstalled),
+                           (_('Skipped'), skipped),
+                           (_('Removed'), list_bunch.erased +
+                               list_bunch.erased_dep +
+                               list_bunch.erased_clean),
+                           (_('Failed'), list_bunch.failed)]:
+        out.extend(action_callback(
+            action, sorted(tsis, key=functools.cmp_to_key(_tsi_or_pkg_nevra_cmp))))
+
+    return out

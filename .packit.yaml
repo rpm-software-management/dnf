@@ -1,13 +1,9 @@
 ---
-upstream_project_name: dnf
-specfile_path: dnf.spec
 jobs:
 - job: copr_build
   trigger: pull_request
   metadata:
     targets:
-    - fedora-rawhide-x86_64
-    - fedora-30-x86_64
-    - fedora-29-x86_64
+    - fedora-all
     - mageia-cauldron-x86_64
     - opensuse-tumbleweed-x86_64

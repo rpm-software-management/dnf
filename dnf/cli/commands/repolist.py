@@ -27,6 +27,7 @@ import dnf.cli.format
 import dnf.pycomp
 import dnf.util
 import fnmatch
+import hawkey
 import logging
 import operator
 
@@ -61,7 +62,7 @@ def _repo_match(repo, patterns):
 
 def _repo_size(sack, repo):
     ret = 0
-    for pkg in sack.query().filterm(reponame__eq=repo.id):
+    for pkg in sack.query(flags=hawkey.IGNORE_EXCLUDES).filterm(reponame__eq=repo.id):
         ret += pkg._size
     return dnf.cli.format.format_number(ret)
 
@@ -86,21 +87,22 @@ class RepoListCommand(commands.Command):
         repolimit.add_argument('--disabled', dest='_repos_action',
                                action='store_const', const='disabled',
                                help=_("show disabled repos"))
-        parser.add_argument('repos', nargs='*', default='enabled', metavar="REPOSITORY",
+        parser.add_argument('repos', nargs='*', default='enabled-default', metavar="REPOSITORY",
                             choices=['all', 'enabled', 'disabled'],
                             action=OptionParser.PkgNarrowCallback,
                             help=_("Repository specification"))
 
     def pre_configure(self):
-        if not self.opts.verbose and not self.opts.quiet:
+        if not self.opts.quiet:
             self.cli.redirect_logger(stdout=logging.WARNING, stderr=logging.INFO)
 
     def configure(self):
-        if not self.opts.verbose and not self.opts.quiet:
+        if not self.opts.quiet:
             self.cli.redirect_repo_progress()
         demands = self.cli.demands
-        demands.available_repos = True
-        demands.sack_activation = True
+        if self.base.conf.verbose or self.opts.command == 'repoinfo':
+            demands.available_repos = True
+            demands.sack_activation = True
 
         if self.opts._repos_action:
             self.opts.repos_action = self.opts._repos_action
@@ -113,7 +115,6 @@ class RepoListCommand(commands.Command):
 
         repos = list(self.base.repos.values())
         repos.sort(key=operator.attrgetter('id'))
-        enabled_repos = list(self.base.repos.iter_enabled())
         term = self.output.term
         on_ehibeg = term.FG_COLOR['green'] + term.MODE['bold']
         on_dhibeg = term.FG_COLOR['red']
@@ -123,180 +124,169 @@ class RepoListCommand(commands.Command):
         if not repos:
             logger.warning(_('No repositories available'))
             return
-
+        include_status = arg == 'all' or (arg == 'enabled-default' and extcmds)
+        repoinfo_output = []
         for repo in repos:
             if len(extcmds) and not _repo_match(repo, extcmds):
                 continue
             (ehibeg, dhibeg, hiend) = '', '', ''
             ui_enabled = ''
             ui_endis_wid = 0
-            ui_num = ""
             ui_excludes_num = ''
-            force_show = False
-            if arg == 'all' or repo.id in extcmds or repo.name in extcmds:
-                force_show = True
+            if include_status:
                 (ehibeg, dhibeg, hiend) = (on_ehibeg, on_dhibeg, on_hiend)
-            if repo in enabled_repos:
+            if repo.enabled:
                 enabled = True
-                if arg == 'enabled':
-                    force_show = False
-                elif arg == 'disabled' and not force_show:
+                if arg == 'disabled':
                     continue
-                if any((force_show, verbose, 'repoinfo' in self.opts.command)):
+                if include_status or verbose or self.opts.command == 'repoinfo':
                     ui_enabled = ehibeg + _('enabled') + hiend
                     ui_endis_wid = exact_width(_('enabled'))
-                    if not any((verbose, 'repoinfo' in self.opts.command)):
-                        ui_enabled += ": "
-                        ui_endis_wid += 2
-                if verbose or ('repoinfo' in self.opts.command):
+                if verbose or self.opts.command == 'repoinfo':
                     ui_size = _repo_size(self.base.sack, repo)
-                # We don't show status for list disabled
-                if arg != 'disabled' or verbose:
-                    num = len(self.base.sack.query().filterm(reponame__eq=repo.id))
-                    ui_num = _num2ui_num(num)
-                    tot_num += num
             else:
                 enabled = False
-                if arg == 'disabled':
-                    force_show = False
-                elif arg == 'enabled' and not force_show:
+                if arg == 'enabled' or (arg == 'enabled-default' and not extcmds):
                     continue
                 ui_enabled = dhibeg + _('disabled') + hiend
                 ui_endis_wid = exact_width(_('disabled'))
 
-            if not any((verbose, ('repoinfo' in self.opts.command))):
+            if not (verbose or self.opts.command == 'repoinfo'):
                 rid = ucd(repo.id)
-                if enabled and repo.metalink:
-                    mdts = repo._repo.getTimestamp()
-                    if mdts > repo._repo.getMaxTimestamp():
-                        rid = '*' + rid
-                cols.append((rid, repo.name,
-                             (ui_enabled, ui_endis_wid), ui_num))
+                cols.append((rid, repo.name, (ui_enabled, ui_endis_wid)))
             else:
                 if enabled:
                     md = repo.metadata
                 else:
                     md = None
-                out = [self.output.fmtKeyValFill(_("Repo-id      : "), repo.id),
-                       self.output.fmtKeyValFill(_("Repo-name    : "), repo.name)]
+                out = [self.output.fmtKeyValFill(_("Repo-id            : "), repo.id),
+                       self.output.fmtKeyValFill(_("Repo-name          : "), repo.name)]
 
-                if force_show or extcmds:
-                    out += [self.output.fmtKeyValFill(_("Repo-status  : "),
+                if include_status:
+                    out += [self.output.fmtKeyValFill(_("Repo-status        : "),
                                                       ui_enabled)]
                 if md and repo._repo.getRevision():
-                    out += [self.output.fmtKeyValFill(_("Repo-revision: "),
+                    out += [self.output.fmtKeyValFill(_("Repo-revision      : "),
                                                       repo._repo.getRevision())]
                 if md and repo._repo.getContentTags():
                     tags = repo._repo.getContentTags()
-                    out += [self.output.fmtKeyValFill(_("Repo-tags    : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-tags          : "),
                                                       ", ".join(sorted(tags)))]
 
                 if md and repo._repo.getDistroTags():
                     distroTagsDict = {k: v for (k, v) in repo._repo.getDistroTags()}
                     for (distro, tags) in distroTagsDict.items():
                         out += [self.output.fmtKeyValFill(
-                            _("Repo-distro-tags: "),
+                            _("Repo-distro-tags      : "),
                             "[%s]: %s" % (distro, ", ".join(sorted(tags))))]
 
                 if md:
+                    num = len(self.base.sack.query(flags=hawkey.IGNORE_EXCLUDES).filterm(
+                        reponame__eq=repo.id))
+                    num_available = len(self.base.sack.query().filterm(reponame__eq=repo.id))
+                    ui_num = _num2ui_num(num)
+                    ui_num_available = _num2ui_num(num_available)
+                    tot_num += num
                     out += [
                         self.output.fmtKeyValFill(
-                            _("Repo-updated : "),
+                            _("Repo-updated       : "),
                             dnf.util.normalize_time(repo._repo.getMaxTimestamp())),
-                        self.output.fmtKeyValFill(_("Repo-pkgs    : "), ui_num),
-                        self.output.fmtKeyValFill(_("Repo-size    : "), ui_size)]
+                        self.output.fmtKeyValFill(_("Repo-pkgs          : "), ui_num),
+                        self.output.fmtKeyValFill(_("Repo-available-pkgs: "), ui_num_available),
+                        self.output.fmtKeyValFill(_("Repo-size          : "), ui_size)]
 
                 if repo.metalink:
-                    out += [self.output.fmtKeyValFill(_("Repo-metalink: "),
+                    out += [self.output.fmtKeyValFill(_("Repo-metalink      : "),
                                                       repo.metalink)]
                     if enabled:
                         ts = repo._repo.getTimestamp()
                         out += [self.output.fmtKeyValFill(
-                            _("  Updated    : "), dnf.util.normalize_time(ts))]
+                            _("  Updated          : "), dnf.util.normalize_time(ts))]
                 elif repo.mirrorlist:
-                    out += [self.output.fmtKeyValFill(_("Repo-mirrors : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-mirrors       : "),
                                                       repo.mirrorlist)]
                 baseurls = repo.baseurl
                 if baseurls:
-                    out += [self.output.fmtKeyValFill(_("Repo-baseurl : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-baseurl       : "),
                                                       ", ".join(baseurls))]
                 elif enabled:
                     mirrors = repo._repo.getMirrors()
                     if mirrors:
                         url = "%s (%d more)" % (mirrors[0], len(mirrors) - 1)
-                        out += [self.output.fmtKeyValFill(_("Repo-baseurl : "), url)]
+                        out += [self.output.fmtKeyValFill(_("Repo-baseurl       : "), url)]
 
                 expire = _expire_str(repo, md)
-                out += [self.output.fmtKeyValFill(_("Repo-expire  : "), expire)]
+                out += [self.output.fmtKeyValFill(_("Repo-expire        : "), expire)]
 
                 if repo.excludepkgs:
                     # TRANSLATORS: Packages that are excluded - their names like (dnf systemd)
-                    out += [self.output.fmtKeyValFill(_("Repo-exclude : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-exclude       : "),
                                                       ", ".join(repo.excludepkgs))]
 
                 if repo.includepkgs:
-                    out += [self.output.fmtKeyValFill(_("Repo-include : "),
+                    out += [self.output.fmtKeyValFill(_("Repo-include       : "),
                                                       ", ".join(repo.includepkgs))]
 
                 if ui_excludes_num:
                     # TRANSLATORS: Number of packages that where excluded (5)
-                    out += [self.output.fmtKeyValFill(_("Repo-excluded: "),
+                    out += [self.output.fmtKeyValFill(_("Repo-excluded      : "),
                                                       ui_excludes_num)]
 
                 if repo.repofile:
-                    out += [self.output.fmtKeyValFill(_("Repo-filename: "),
+                    out += [self.output.fmtKeyValFill(_("Repo-filename      : "),
                                                       repo.repofile)]
+                repoinfo_output.append("\n".join(map(ucd, out)))
 
-                print("\n" + "\n".join(map(ucd, out)))
-
+        if repoinfo_output:
+            print("\n\n".join(repoinfo_output))
         if not verbose and cols:
             #  Work out the first (id) and last (enabled/disabled/count),
             # then chop the middle (name)...
+
             id_len = exact_width(_('repo id'))
             nm_len = 0
             st_len = 0
-            ui_len = 0
 
-            for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
+            for (rid, rname, (ui_enabled, ui_endis_wid)) in cols:
                 if id_len < exact_width(rid):
                     id_len = exact_width(rid)
                 if nm_len < exact_width(rname):
                     nm_len = exact_width(rname)
-                if st_len < (ui_endis_wid + len(ui_num)):
-                    st_len = (ui_endis_wid + len(ui_num))
+                if st_len < ui_endis_wid:
+                    st_len = ui_endis_wid
                 # Need this as well as above for: fill_exact_width()
-                if ui_len < len(ui_num):
-                    ui_len = len(ui_num)
-            if arg == 'disabled': # Don't output a status column.
+            if include_status:
+                if exact_width(_('status')) > st_len:
+                    left = term.columns - (id_len + len(_('status')) + 2)
+                else:
+                    left = term.columns - (id_len + st_len + 2)
+            else:  # Don't output a status column.
                 left = term.columns - (id_len + 1)
-            elif exact_width(_('status')) > st_len:
-                left = term.columns - (id_len + len(_('status')) + 2)
-            else:
-                left = term.columns - (id_len + st_len + 2)
 
-            if left < nm_len: # Name gets chopped
+            if left < nm_len:  # Name gets chopped
                 nm_len = left
-            else: # Share the extra...
+            else:  # Share the extra...
                 left -= nm_len
                 id_len += left // 2
                 nm_len += left - (left // 2)
 
             txt_rid = fill_exact_width(_('repo id'), id_len)
-            txt_rnam = fill_exact_width(_('repo name'), nm_len, nm_len)
-            if arg == 'disabled': # Don't output a status column.
+            if include_status:
+                txt_rnam = fill_exact_width(_('repo name'), nm_len, nm_len)
+            else:
+                txt_rnam = _('repo name')
+            if not include_status:  # Don't output a status column.
                 print("%s %s" % (txt_rid, txt_rnam))
             else:
                 print("%s %s %s" % (txt_rid, txt_rnam, _('status')))
-            for (rid, rname, (ui_enabled, ui_endis_wid), ui_num) in cols:
-                if arg == 'disabled': # Don't output a status column.
-                    print("%s %s" % (fill_exact_width(rid, id_len),
-                                     fill_exact_width(rname, nm_len, nm_len)))
+            for (rid, rname, (ui_enabled, ui_endis_wid)) in cols:
+                if not include_status:  # Don't output a status column.
+                    print("%s %s" % (fill_exact_width(rid, id_len), rname))
                     continue
 
-                if ui_num:
-                    ui_num = fill_exact_width(ui_num, ui_len, left=False)
-                print("%s %s %s%s" % (fill_exact_width(rid, id_len),
-                                      fill_exact_width(rname, nm_len, nm_len),
-                                      ui_enabled, ui_num))
-        msg = _('Total packages: %s')
-        logger.debug(msg, _num2ui_num(tot_num))
+                print("%s %s %s" % (fill_exact_width(rid, id_len),
+                                    fill_exact_width(rname, nm_len, nm_len),
+                                    ui_enabled))
+        if verbose or self.opts.command == 'repoinfo':
+            msg = _('Total packages: {}')
+            print(msg.format(_num2ui_num(tot_num)))

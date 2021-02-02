@@ -22,7 +22,7 @@ from __future__ import unicode_literals
 
 from dnf.yum import misc
 from dnf.i18n import ucd, _
-from dnf.pycomp import basestring
+from dnf.pycomp import basestring, urlparse
 
 import fnmatch
 import dnf.conf.substitutions
@@ -34,6 +34,8 @@ import hawkey
 import logging
 import os
 import libdnf.conf
+import libdnf.repo
+import tempfile
 
 PRIO_EMPTY = libdnf.conf.Option.Priority_EMPTY
 PRIO_DEFAULT = libdnf.conf.Option.Priority_DEFAULT
@@ -227,6 +229,13 @@ class MainConf(BaseConfig):
         self._config.cachedir().set(PRIO_DEFAULT, cachedir)
         self._config.logdir().set(PRIO_DEFAULT, logdir)
 
+        # track list of temporary files created
+        self.tempfiles = []
+
+    def __del__(self):
+        for file_name in self.tempfiles:
+            os.unlink(file_name)
+
     @property
     def get_reposdir(self):
         # :api
@@ -243,24 +252,60 @@ class MainConf(BaseConfig):
             dnf.util.ensure_dir(myrepodir)
         return myrepodir
 
-    def _search_inside_installroot(self, optname):
+    def _check_remote_file(self, optname):
+        """
+        In case the option value is a remote URL, download it to the temporary location
+        and use this temporary file instead.
+        """
         prio = self._get_priority(optname)
-        # dont modify paths specified on commandline
+        val = self._get_value(optname)
+        if isinstance(val, basestring):
+            location = urlparse.urlparse(val)
+            if location[0] in ('file', ''):
+                # just strip the file:// prefix
+                self._set_value(optname, location.path, prio)
+            else:
+                downloader = libdnf.repo.Downloader()
+                temp_fd, temp_path = tempfile.mkstemp(prefix='dnf-downloaded-config-')
+                self.tempfiles.append(temp_path)
+                try:
+                    downloader.downloadURL(None, val, temp_fd)
+                except RuntimeError as e:
+                    raise dnf.exceptions.ConfigError(
+                        _('Configuration file URL "{}" could not be downloaded:\n'
+                          '  {}').format(val, str(e)))
+                else:
+                    self._set_value(optname, temp_path, prio)
+                finally:
+                    os.close(temp_fd)
+
+    def _search_inside_installroot(self, optname):
+        """
+        Return root used as prefix for option (installroot or "/"). When specified from commandline
+        it returns value from conf.installroot
+        """
+        installroot = self._get_value('installroot')
+        if installroot == "/":
+            return installroot
+        prio = self._get_priority(optname)
+        # don't modify paths specified on commandline
         if prio >= PRIO_COMMANDLINE:
-            return
+            return installroot
         val = self._get_value(optname)
         # if it exists inside installroot use it (i.e. adjust configuration)
         # for lists any component counts
         if not isinstance(val, str):
-            if any(os.path.exists(os.path.join(self._get_value('installroot'),
-                                               p.lstrip('/'))) for p in val):
+            if any(os.path.exists(os.path.join(installroot, p.lstrip('/'))) for p in val):
                 self._set_value(
                     optname,
                     libdnf.conf.VectorString([self._prepend_installroot_path(p) for p in val]),
                     prio
                 )
-        elif os.path.exists(os.path.join(self._get_value('installroot'), val.lstrip('/'))):
+                return installroot
+        elif os.path.exists(os.path.join(installroot, val.lstrip('/'))):
             self._set_value(optname, self._prepend_installroot_path(val), prio)
+            return installroot
+        return "/"
 
     def prepend_installroot(self, optname):
         # :api
@@ -426,9 +471,13 @@ class RepoConf(BaseConfig):
     """Option definitions for repository INI file sections."""
 
     def __init__(self, parent, section=None, parser=None):
-        super(RepoConf, self).__init__(libdnf.conf.ConfigRepo(
-            parent._config if parent else libdnf.conf.ConfigMain()), section, parser)
-        self._masterConfig = parent._config if parent else libdnf.conf.ConfigMain()
+        masterConfig = parent._config if parent else libdnf.conf.ConfigMain()
+        super(RepoConf, self).__init__(libdnf.conf.ConfigRepo(masterConfig), section, parser)
+        # Do not remove! Attribute is a reference holder.
+        # Prevents premature removal of the masterConfig. The libdnf ConfigRepo points to it.
+        self._masterConfigRefHolder = masterConfig
+        if section:
+            self._config.name().set(PRIO_DEFAULT, section)
 
     def _configure_from_options(self, opts):
         """Configure repos from the opts. """

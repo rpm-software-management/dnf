@@ -24,6 +24,7 @@ from dnf.util import _parse_specs
 
 import argparse
 import dnf.exceptions
+import dnf.util
 import dnf.rpm
 import dnf.yum.misc
 import logging
@@ -32,6 +33,7 @@ import re
 import sys
 
 logger = logging.getLogger("dnf")
+
 
 class MultilineHelpFormatter(argparse.HelpFormatter):
     def _split_lines(self, text, width):
@@ -48,7 +50,6 @@ class OptionParser(argparse.ArgumentParser):
         self.command_positional_parser = None
         self.command_group = None
         self._add_general_options()
-        self._main_prog = argparse.ArgumentParser().prog
         if reset_usage:
             self._cmd_usage = {}      # names, summary for dnf commands, to build usage
             self._cmd_groups = set()  # cmd groups added (main, plugin)
@@ -81,9 +82,15 @@ class OptionParser(argparse.ArgumentParser):
         SPLITTER = r'\s*[,\s]\s*'
 
         def __call__(self, parser, namespace, values, opt_str):
+            first = True
             for val in re.split(self.SPLITTER, values):
-                super(OptionParser._SplitCallback,
-                      self).__call__(parser, namespace, val, opt_str)
+                if first or val:
+                    # Empty values are sometimes used to clear existing content of the option.
+                    # Only the first value in the parsed string can be empty. Other empty values
+                    # are ignored.
+                    super(OptionParser._SplitCallback,
+                          self).__call__(parser, namespace, val, opt_str)
+                first = False
 
     class _SplitExtendDictCallback(argparse.Action):
         """ Split string at "," or whitespace to (key, value).
@@ -164,7 +171,8 @@ class OptionParser(argparse.ArgumentParser):
         """ Standard options known to all dnf subcommands. """
         # All defaults need to be a None, so we can always tell whether the user
         # has set something or whether we are getting a default.
-        general_grp = self.add_argument_group('General DNF options')
+        general_grp = self.add_argument_group(_('General {prog} options'.format(
+            prog=dnf.util.MAIN_PROG_UPPER)))
         general_grp.add_argument("-c", "--config", dest="config_file_path",
                                  default=None, metavar='[config file]',
                                  help=_("config file location"))
@@ -174,7 +182,8 @@ class OptionParser(argparse.ArgumentParser):
         general_grp.add_argument("-v", "--verbose", action="store_true",
                                  default=None, help=_("verbose operation"))
         general_grp.add_argument("--version", action="store_true", default=None,
-                                 help=_("show DNF version and exit"))
+                                 help=_("show {prog} version and exit").format(
+                                     prog=dnf.util.MAIN_PROG_UPPER))
         general_grp.add_argument("--installroot", help=_("set install root"),
                                  metavar='[path]')
         general_grp.add_argument("--nodocs", action="store_const", const=['nodocs'], dest='tsflags',
@@ -234,9 +243,10 @@ class OptionParser(argparse.ArgumentParser):
                                  help=_("error output level"))
         general_grp.add_argument("--obsoletes", default=None, dest="obsoletes",
                                  action="store_true",
-                                 help=_("enables dnf's obsoletes processing logic "
+                                 help=_("enables {prog}'s obsoletes processing logic "
                                         "for upgrade or display capabilities that "
-                                        "the package obsoletes for info, list and repoquery"))
+                                        "the package obsoletes for info, list and "
+                                        "repoquery").format(prog=dnf.util.MAIN_PROG))
         general_grp.add_argument("--rpmverbosity", default=None,
                                  help=_("debugging output level for rpm"),
                                  metavar='[debug level name]')
@@ -260,11 +270,11 @@ class OptionParser(argparse.ArgumentParser):
                                 help=_('enable just specific repositories by an id or a glob, '
                                        'can be specified multiple times'))
         enable_group = general_grp.add_mutually_exclusive_group()
-        enable_group.add_argument("--enable", "--set-enabled", default=False,
+        enable_group.add_argument("--enable", default=False,
                                   dest="set_enabled", action="store_true",
                                   help=_("enable repos with config-manager "
                                          "command (automatically saves)"))
-        enable_group.add_argument("--disable", "--set-disabled", default=False,
+        enable_group.add_argument("--disable", default=False,
                                   dest="set_disabled", action="store_true",
                                   help=_("disable repos with config-manager "
                                          "command (automatically saves)"))
@@ -364,7 +374,7 @@ class OptionParser(argparse.ArgumentParser):
         """ get the usage information to show the user. """
         desc = {'main': _('List of Main Commands:'),
                 'plugin': _('List of Plugin Commands:')}
-        usage = '%s [options] COMMAND\n' % self._main_prog
+        usage = '%s [options] COMMAND\n' % dnf.util.MAIN_PROG
         for grp in ['main', 'plugin']:
             if not grp in self._cmd_groups:
                 # dont add plugin usage, if we dont have plugins
@@ -377,7 +387,7 @@ class OptionParser(argparse.ArgumentParser):
         return usage
 
     def _add_command_options(self, command):
-        self.prog = "%s %s" % (self._main_prog, command._basecmd)
+        self.prog = "%s %s" % (dnf.util.MAIN_PROG, command._basecmd)
         self.description = command.summary
         self.command_positional_parser = argparse.ArgumentParser(self.prog, add_help=False)
         self.command_positional_parser.print_usage = self.print_usage
@@ -394,7 +404,16 @@ class OptionParser(argparse.ArgumentParser):
         else:
             return self.command_positional_parser.add_argument(*args, **kwargs)
 
+    def _check_encoding(self, args):
+        for arg in args:
+            try:
+                arg.encode('utf-8')
+            except UnicodeEncodeError as e:
+                raise dnf.exceptions.ConfigError(
+                    _("Cannot encode argument '%s': %s") % (arg, str(e)))
+
     def parse_main_args(self, args):
+        self._check_encoding(args)
         namespace, _unused_args = self.parse_known_args(args)
         return namespace
 

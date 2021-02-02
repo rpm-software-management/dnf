@@ -24,7 +24,9 @@ import contextlib
 import logging
 import os
 import re
+import shutil
 import sys
+import tempfile
 import unittest
 from functools import reduce
 
@@ -92,7 +94,7 @@ SYSTEM_NSOLVABLES = TOTAL_RPMDB_COUNT
 MAIN_NSOLVABLES = 9
 UPDATES_NSOLVABLES = 4
 AVAILABLE_NSOLVABLES = MAIN_NSOLVABLES + UPDATES_NSOLVABLES
-TOTAL_GROUPS = 4
+TOTAL_GROUPS = 5
 TOTAL_NSOLVABLES = SYSTEM_NSOLVABLES + AVAILABLE_NSOLVABLES
 
 
@@ -222,8 +224,8 @@ class _BaseStubMixin(object):
     different arches.
 
     """
-    def __init__(self, *extra_repos):
-        super(_BaseStubMixin, self).__init__(FakeConf())
+    def __init__(self, *extra_repos, **config_opts):
+        super(_BaseStubMixin, self).__init__(FakeConf(**config_opts))
         for r in extra_repos:
             repo = MockRepo(r, self.conf)
             repo.enable()
@@ -232,6 +234,7 @@ class _BaseStubMixin(object):
         self._repo_persistor = FakePersistor()
         self._ds_callback = mock.Mock()
         self._history = None
+        self._closed = False
         self._closing = False
 
     def add_test_dir_repo(self, id_, cachedir):
@@ -283,6 +286,7 @@ class _BaseStubMixin(object):
 
         self._sack._configure(self.conf.installonlypkgs)
         self._goal = dnf.goal.Goal(self._sack)
+        self._goal.protect_running_kernel = self.conf.protect_running_kernel
         return self._sack
 
     def mock_cli(self):
@@ -308,9 +312,9 @@ class _BaseStubMixin(object):
 class BaseCliStub(_BaseStubMixin, dnf.cli.cli.BaseCli):
     """A class mocking `dnf.cli.cli.BaseCli`."""
 
-    def __init__(self, *extra_repos):
+    def __init__(self, *extra_repos, **config_opts):
         """Initialize the base."""
-        super(BaseCliStub, self).__init__(*extra_repos)
+        super(BaseCliStub, self).__init__(*extra_repos, **config_opts)
         self.output.term = MockTerminal()
 
 
@@ -484,13 +488,14 @@ class FakeConf(dnf.conf.Conf):
             ('history_record', False),
             ('installonly_limit', 0),
             ('installonlypkgs', ['kernel']),
-            ('installroot', '/tmp/swdb/'),
+            ('installroot', '/tmp/dnf-test-installroot/'),
             ('ip_resolve', None),
             ('multilib_policy', 'best'),
             ('obsoletes', True),
             ('persistdir', dnf.const.PERSISTDIR),
             ('transformdb', False),
             ('protected_packages', ["dnf"]),
+            ('protect_running_kernel', True),
             ('plugins', False),
             ('showdupesfromrepos', False),
             ('tsflags', []),
@@ -506,6 +511,11 @@ class FakeConf(dnf.conf.Conf):
             if opt in kwargs:
                 continue
             self.prepend_installroot(opt)
+
+        try:
+            os.makedirs(self.persistdir)
+        except:
+            pass
 
     @property
     def releasever(self):
@@ -628,10 +638,12 @@ class DnfBaseTestCase(TestCase):
     COMPS_SOLVER = False
 
     def setUp(self):
+        self._installroot = tempfile.mkdtemp(prefix="dnf_test_installroot_")
+
         if self.BASE_CLI:
-            self.base = BaseCliStub(*self.REPOS)
+            self.base = BaseCliStub(*self.REPOS, installroot=self._installroot)
         else:
-            self.base = MockBase(*self.REPOS)
+            self.base = MockBase(*self.REPOS, installroot=self._installroot)
 
         if self.CLI is None:
             self.cli = None
@@ -660,6 +672,8 @@ class DnfBaseTestCase(TestCase):
 
     def tearDown(self):
         self.base.close()
+        if self._installroot.startswith("/tmp/"):
+            shutil.rmtree(self._installroot)
 
     @property
     def comps(self):

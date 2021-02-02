@@ -44,6 +44,8 @@ may find/install the package which provides it using the appropriate virtual pro
 'dnf-command(versionlock)'`` installs a ``versionlock`` plugin. This approach also applies to
 specifying dependencies of packages that require a particular DNF command.
 
+.. _exit_codes-label:
+
 Return values:
 
 * ``0``  : Operation was successful.
@@ -84,13 +86,11 @@ Available commands:
 * :ref:`updateinfo <updateinfo_command-label>`
 * :ref:`upgrade <upgrade_command-label>`
 * :ref:`upgrade-minimal <upgrade_minimal_command-label>`
-* :ref:`upgrade-to <upgrade_to_command-label>`
 
 Additional information:
 
 * :ref:`Options <options-label>`
 * :ref:`Specifying Packages <specifying_packages-label>`
-* :ref:`Specifying Exact Versions of Packages <specifying_packages_versions-label>`
 * :ref:`Specifying Provides <specifying_provides-label>`
 * :ref:`Specifying Groups <specifying_groups-label>`
 * :ref:`Specifying Transactions <specifying_transactions-label>`
@@ -171,6 +171,8 @@ Options
     Disable specified repositories (automatically saves). The option has to be used together with the
     ``config-manager`` command (dnf-plugins-core).
 
+.. _disableplugin-label:
+
 ``--disableplugin=<plugin names>``
     Disable the listed plugins specified by names or globs.
 
@@ -208,10 +210,10 @@ Options
 
 .. _exclude_option-label:
 
-``-x <package-spec>, --exclude=<package-spec>``
-    Exclude packages specified by ``<package-spec>`` from the operation.
+``-x <package-file-spec>, --exclude=<package-file-spec>``
+    Exclude packages specified by ``<package-file-spec>`` from the operation.
 
-``--excludepkgs=<package-spec>``
+``--excludepkgs=<package-file-spec>``
     Deprecated option. It was replaced by the \-\ :ref:`-exclude <exclude_option-label>` option.
 
 ``--forcearch=<arch>``
@@ -242,6 +244,12 @@ Options
   (``--config=<config file>`` in case of *configuration file* and
   ``--setopt=reposdir=<reposdir>`` for *reposdir*) then this path is always
   relative to the host with no exceptions.
+
+- *vars* are taken from the host system or installroot according to :ref:`reposdir <reposdir-label>`
+  . When *reposdir* path is specified within a command line argument, vars are taken from the
+  installroot. When :ref:`varsdir <varsdir_options-label>` paths are specified within a command line
+  argument (``--setopt=varsdir=<reposdir>``) then those path are always relative to the host with no
+  exceptions.
 
 - The *pluginpath* and *pluginconfpath* are relative to the host.
 
@@ -318,14 +326,17 @@ Options
 
 
 ``--repofrompath <repo>,<path/url>``
-    Specify a path or url to a repository (same path as in a baseurl) to add to
-    the repositories for this query. This option can be used multiple times. The
-    repository label for the repository is specified by <repo>. If you want to view
-    only packages from this repository, combine this with the ``--repo=<repo>``
-    or ``--disablerepo="*"`` switches.
-    The repository label for the repository is specified by <repo>.
-    The configuration for the repo could be adjusted using \-\
-    :ref:`-setopt <setopt_option-label>`\=<repo>.<option>=<value>\.
+    Specify a repository to add to the repositories for this query.
+    This option can be used multiple times.
+
+- The repository label is specified by ``<repo>``.
+- The path or url to the repository is specified by ``<path/url>``.
+  It is the same path as a baseurl and can be also enriched by the
+  :ref:`repo variables <repo-variables-label>`.
+- The configuration for the repository can be adjusted using \-\
+  :ref:`-setopt <setopt_option-label>`\=<repo>.<option>=<value>\.
+- If you want to view only packages from this repository, combine this
+  with the ``--repo=<repo>`` or ``--disablerepo="*"`` switches.
 
 ``--repo=<repoid>, --repoid=<repoid>``
     Enable just specific repositories by an id or a glob. Can be used multiple
@@ -382,11 +393,8 @@ List options are comma-separated. Command-line options override respective setti
 Commands
 ========
 
-For an explanation of ``<package-spec>`` and ``<package-name-spec>`` see
+For an explanation of ``<package-spec>``, ``<package-file-spec>`` and ``<package-name-spec>`` see
 :ref:`\specifying_packages-label`.
-
-For an explanation of ``<package-nevr-spec>`` see
-:ref:`\specifying_packages_versions-label`.
 
 For an explanation of ``<provide-spec>`` see :ref:`\specifying_provides-label`.
 
@@ -401,6 +409,9 @@ For an explanation of ``<transaction-spec>`` see :ref:`\specifying_transactions-
 -------------
 Alias Command
 -------------
+
+| Command: ``alias``
+
 Allows the user to define and manage a list of aliases (in the form ``<name=value>``),
 which can be then used as dnf commands to abbreviate longer command sequences. For examples on using
 the alias command, see :ref:`\Alias Examples\ <alias_examples-label>`. For examples on the alias
@@ -410,10 +421,15 @@ To use an alias (name=value), the name must be placed as the first "command" (e.
 that is not an option). It is then replaced by its value and the resulting sequence is again searched
 for aliases. The alias processing stops when the first found command is not a name of any alias.
 
+In case the processing would result in an infinite recursion, the original arguments are used instead.
+
 Also, like in shell aliases, if the result starts with a ``\``, the alias processing will stop.
 
 All aliases are defined in configuration files in the ``/etc/dnf/aliases.d/`` directory in the [aliases] section,
-and aliases created by the alias command are written to the ``USER.conf`` file.
+and aliases created by the alias command are written to the ``USER.conf`` file. In case of conflicts,
+the ``USER.conf`` has the highest priority, and alphabetical ordering is used for the rest of the
+configuration files.
+
 Optionally, there is the ``enabled`` option in the ``[main]`` section defaulting to True. This can be set for each
 file separately in the respective file, or globally for all aliases in the ``ALIASES.conf`` file.
 
@@ -438,10 +454,12 @@ Alias Examples
     Lists all defined aliases.
 
 ``dnf alias add rm=remove``
-    Adds new alias command called "rm" which does the same thing as the command "remove".
+    Adds a new command alias called ``rm`` which works the same as the ``remove`` command.
 
-``dnf alias add update="\update --skip-broken --disableexcludes=all --obsoletes"``
-    Adds new alias command called "update" which does the same thing as the command "update", but with options ``--skip-broken --disableexcludes=all --obsoletes``.
+``dnf alias add upgrade="\upgrade --skip-broken --disableexcludes=all --obsoletes"``
+    Adds a new command alias called ``upgrade`` which works the same as the ``upgrade`` command,
+    with additional options. Note that the original ``upgrade`` command is prefixed with a ``\``
+    to prevent an infinite loop in alias processing.
 
 .. _alias_processing_examples-label:
 
@@ -460,9 +478,12 @@ If there is defined alias ``in=install``:
 
 .. _autoremove_command-label:
 
--------------------
-Auto Remove Command
--------------------
+------------------
+Autoremove Command
+------------------
+
+| Command: ``autoremove``
+| Aliases for :ref:`explicit NEVRA matching <specifying_nevra_matching_explicitly-label>`: ``autoremove-n``, ``autoremove-na``, ``autoremove-nevra``
 
 ``dnf [options] autoremove``
 
@@ -487,9 +508,11 @@ This command by default does not force a sync of expired metadata. See also :ref
 
 .. _check_command-label:
 
---------------------
+-------------
 Check Command
---------------------
+-------------
+
+| Command: ``check``
 
 ``dnf [options] check [--dependencies] [--duplicates] [--obsoleted] [--provides]``
 
@@ -504,9 +527,13 @@ Check Command
 Check-Update Command
 --------------------
 
-``dnf [options] check-update [--changelogs] [<package-specs>...]``
+| Command: ``check-update``
+| Aliases: ``check-upgrade``
 
-    Non-interactively checks if updates of the specified packages are available. If no ``<package-specs>`` are given, checks whether any updates at all are available for your system. DNF exit code will be 100 when there are updates available and a list of the updates will be printed, 0 if not and 1 if an error occurs. If ``--changelogs`` option is specified, also changelog delta of packages about to be updated is printed.
+
+``dnf [options] check-update [--changelogs] [<package-file-spec>...]``
+
+    Non-interactively checks if updates of the specified packages are available. If no ``<package-file-spec>`` is given, checks whether any updates at all are available for your system. DNF exit code will be 100 when there are updates available and a list of the updates will be printed, 0 if not and 1 if an error occurs. If ``--changelogs`` option is specified, also changelog delta of packages about to be updated is printed.
 
     Please note that having a specific newer version available for an installed package (and reported by ``check-update``) does not imply that subsequent ``dnf upgrade`` will install it. The difference is that ``dnf upgrade`` has restrictions (like package dependencies being satisfied) to take into account.
 
@@ -517,6 +544,9 @@ Check-Update Command
 -------------
 Clean Command
 -------------
+
+| Command: ``clean``
+
 Performs cleanup of temporary files kept for repositories. This includes any
 such data left behind from disabled or removed repositories as well as for
 different distribution release versions.
@@ -543,17 +573,21 @@ different distribution release versions.
 .. _deplist_command-label:
 
 ---------------
-Deplist command
+Deplist Command
 ---------------
 
-``dnf [options] deplist [<select-options>] [<query-options>] [<pkg-spec>]``
-    Alias for :ref:`dnf repoquery --deplist <deplist_option-label>`.
+``dnf [options] deplist [<select-options>] [<query-options>] [<package-spec>]``
+    Deprecated alias for :ref:`dnf repoquery --deplist <deplist_option-label>`.
 
 .. _distro_sync_command-label:
 
 -------------------
-Distro-Sync command
+Distro-Sync Command
 -------------------
+
+| Command: ``distro-sync``
+| Aliases: ``dsync``
+| Deprecated aliases: ``distrosync``, ``distribution-synchronization``
 
 ``dnf distro-sync [<package-spec>...]``
     As necessary upgrades, downgrades or keeps selected installed packages to match
@@ -561,38 +595,29 @@ Distro-Sync command
 
     See also :ref:`\configuration_files_replacement_policy-label`.
 
-------------------------------------
-Distribution-Synchronization command
-------------------------------------
-
-``dnf distribution-synchronization``
-    Deprecated alias for the :ref:`\distro_sync_command-label`.
-
 .. _downgrade_command-label:
 
 -----------------
 Downgrade Command
 -----------------
 
-``dnf [options] downgrade <package-installed-specs>...``
+| Command: ``downgrade``
+| Aliases: ``dg``
+
+``dnf [options] downgrade <package-spec>...``
     Downgrades the specified packages to the highest installable package of all known lower versions
     if possible. When version is given and is lower than version of installed package then it
     downgrades to target version.
-
-.. _erase_command-label:
-
--------------
-Erase Command
--------------
-
-``dnf [options] erase <spec>...``
-    Deprecated alias for the :ref:`\remove_command-label`.
 
 .. _group_command-label:
 
 -------------
 Group Command
 -------------
+
+| Command: ``group``
+| Aliases: ``grp``
+| Deprecated aliases: ``groups``, ``grouplist``, ``groupinstall``, ``groupupdate``, ``groupremove``, ``grouperase``, ``groupinfo``
 
 Groups are virtual collections of packages. DNF keeps track of groups that the user selected ("marked") installed and can manipulate the comprising packages with simple commands.
 
@@ -611,6 +636,7 @@ Groups are virtual collections of packages. DNF keeps track of groups that the u
     specified. All `mandatory` and `Default` packages will be installed whenever possible.
     Conditional packages are installed if they meet their requirement.
     If the group is already (partially) installed, the command installs the missing packages from the group.
+    Depending on the value of :ref:`obsoletes configuration option <obsoletes_conf_option-label>` group installation takes obsoletes into account.
 
 .. _grouplist_command-label:
 
@@ -619,7 +645,7 @@ Groups are virtual collections of packages. DNF keeps track of groups that the u
     nothing is specified, list all known groups. ``--installed`` and ``--available`` options narrow down the requested list.
     Records are ordered by the `display_order` tag defined in comps.xml file.
     Provides a list of all hidden groups by using option ``--hidden``.
-    Provides more detailed information when the ``-v`` option is used.
+    Provides group IDs when the ``-v`` or ``--ids`` options are used.
 
 ``dnf [options] group remove <group-spec>...``
     Mark the group removed and remove those packages in the group from the system which do not belong to another installed group and were not installed explicitly by the user.
@@ -637,20 +663,13 @@ Groups can also be marked installed or removed without physically manipulating a
 
 See also :ref:`\configuration_files_replacement_policy-label`.
 
-.. _groups_command-label:
-
---------------
-Groups Command
---------------
-
-``dnf [options] groups``
-    Deprecated alias for the :ref:`\group_command-label`.
-
 .. _help_command-label:
 
 ------------
 Help Command
 ------------
+
+| Command: ``help``
 
 ``dnf help [<command>]``
     Displays the help text for all commands. If given a command name then only
@@ -662,19 +681,25 @@ Help Command
 History Command
 ---------------
 
+| Command: ``history``
+| Aliases: ``hist``
+
 The history command allows the user to view what has happened in past
 transactions and act according to this information (assuming the
 ``history_record`` configuration option is set).
 
 .. _history_list_command-label:
 
-``dnf history [list] [<spec>...]``
+``dnf history [list] [--reverse] [<spec>...]``
     The default history action is listing information about given transactions
     in a table. Each ``<spec>`` can be either a ``<transaction-spec>``, which
     specifies a transaction directly, or a ``<transaction-spec>..<transaction-spec>``,
     which specifies a range of transactions, or a ``<package-name-spec>``,
     which specifies a transaction by a package which it manipulated. When no
     transaction is specified, list all known transactions.
+
+    ``--reverse``
+        The order of ``history list`` output is printed in reverse order.
 
 ``dnf history info [<spec>...]``
     Describe the given transactions. The meaning of ``<spec>`` is the same as
@@ -684,21 +709,62 @@ transactions and act according to this information (assuming the
 
 .. _history_redo_command-label:
 
-``dnf history redo <transaction-spec>|<package-name-spec>``
+``dnf history redo <transaction-spec>|<package-file-spec>``
     Repeat the specified transaction. Uses the last transaction (with the highest ID)
-    if more than one transaction for given <package-name-spec> is found. If it is not possible
+    if more than one transaction for given <package-file-spec> is found. If it is not possible
     to redo some operations due to the current state of RPMDB, it will not redo the transaction.
 
-``dnf history rollback <transaction-spec>|<package-name-spec>``
+.. _history_replay_command-label:
+
+``dnf history replay [--ignore-installed] [--ignore-extras] [--skip-unavailable] <filename>``
+    Replay a transaction stored in file ``<filename>`` by :ref:`History Store
+    Command <history_store_command-label>`. The replay will perform the exact
+    same operations on the packages as in the original transaction and will
+    return with an error if case of any differences in installed packages or
+    their versions. See also the :ref:`Transaction JSON Format specification <transaction_json-label>` of the
+    file format.
+
+    ``--ignore-installed``
+        Don't check for the installed packages being in the same state as those
+        recorded in the transaction. E.g. in case there is an upgrade
+        ``foo-1.0`` -> ``foo-2.0`` stored in the transaction, but there is
+        ``foo-1.1`` installed on the target system.
+
+    ``--ignore-extras``
+        Don't check for extra packages pulled into the transaction on the
+        target system. E.g. the target system may not have some dependency,
+        which was installed on the source system. The replay errors out on this
+        by default, as the transaction would not be the same.
+
+    ``--skip-unavailable``
+        In case some packages stored in the transaction are not available on
+        the target system, skip them instead of erroring out.
+
+``dnf history rollback <transaction-spec>|<package-file-spec>``
     Undo all transactions performed after the specified transaction. Uses the last transaction
-    (with the highest ID) if more than one transaction for given <package-name-spec> is found.
+    (with the highest ID) if more than one transaction for given <package-file-spec> is found.
     If it is not possible to undo some transactions due to the current state of RPMDB, it will not undo
     any transaction.
 
-``dnf history undo <transaction-spec>|<package-name-spec>``
+.. _history_store_command-label:
+
+``dnf history store [--output <output-file>] <transaction-spec>``
+    Store a transaction specified by ``<transaction-spec>``. The transaction
+    can later be replayed by the :ref:`History Replay Command
+    <history_replay_command-label>`.
+
+    Warning: The stored transaction format is considered unstable and may
+    change at any time. It will work if the same version of dnf is used to
+    store and replay (or between versions as long as it stays the same).
+
+
+    ``-o <output-file>, --output=<output-file>``
+    Store the serialized transaction into ``<output-file``. Default is ``transaction.json``.
+
+``dnf history undo <transaction-spec>|<package-file-spec>``
     Perform the opposite operation to all operations performed in the specified transaction.
     Uses the last transaction (with the highest ID) if more than one transaction for given
-    <package-name-spec> is found. If it is not possible to undo some operations due to
+    <package-file-spec> is found. If it is not possible to undo some operations due to
     the current state of RPMDB, it will not undo the transaction.
 
 ``dnf history userinstalled``
@@ -720,8 +786,12 @@ and :ref:`\configuration_files_replacement_policy-label`.
 Info Command
 ------------
 
-``dnf [options] info [<package-name-spec>...]``
+| Command: ``info``
+
+``dnf [options] info [<package-file-spec>...]``
     Lists description and summary information about installed and available packages.
+
+The info command limits the displayed packages the same way as the :ref:`list command<list_command-label>`.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
@@ -730,6 +800,11 @@ This command by default does not force a sync of expired metadata. See also :ref
 ---------------
 Install Command
 ---------------
+
+| Command: ``install``
+| Aliases: ``in``
+| Aliases for :ref:`explicit NEVRA matching <specifying_nevra_matching_explicitly-label>`: ``install-n``, ``install-na``, ``install-nevra``
+| Deprecated aliases: ``localinstall``
 
 ``dnf [options] install <spec>...``
     Makes sure that the given packages and their dependencies are installed
@@ -745,6 +820,13 @@ Install Command
     of the package is given, DNF will install the desired version, no matter which
     version of the package is already installed. The former version of the package
     will be removed in the case of non-installonly package.
+
+    On the other hand if :ref:`<package-spec> <specifying_packages-label>` specifies only a name,
+    DNF also takes into account packages obsoleting it when picking which package to install.
+    This behaviour is specific to the install command.
+    Note that this can lead to seemingly unexpected results if a package has multiple versions and
+    some older version is being obsoleted. It creates a split in the upgrade-path and both ways
+    are considered correct, the resulting package is picked simply by lexicographical order.
 
     There are also a few specific install commands ``install-n``, ``install-na`` and
     ``install-nevra`` that allow the specification of an exact argument in the NEVRA format.
@@ -804,39 +886,41 @@ Install Examples
 List Command
 ------------
 
+| Command: ``list``
+| Aliases: ``ls``
+
 Prints lists of packages depending on the packages' relation to the
 system. A package is ``installed`` if it is present in the RPMDB, and it is ``available``
 if it is not installed but is present in a repository that DNF knows about.
-The list command can also limit the displayed packages according to specific criteria,
-e.g. to only those that update an installed package. The :ref:`exclude
+
+The list command also limits the displayed packages according to specific criteria,
+e.g. to only those that update an installed package (respecting the repository
+:ref:`priority<repo_priority-label>`). The :ref:`exclude
 <exclude-label>` option in the configuration file can influence the
 result, but if the \-\ :ref:`-disableexcludes <disableexcludes-label>` command line
 option is used, it ensures that all installed packages will be listed.
 
-All the forms take the ``[<package-specs>...]`` parameter to further limit the
-result to only packages that matching it.
-
-``dnf [options] list [--all] [<package-name-specs>...]``
+``dnf [options] list [--all] [<package-file-spec>...]``
     Lists all packages, present in the RPMDB, in a repository or both.
 
-``dnf [options] list --installed [<package-name-specs>...]``
+``dnf [options] list --installed [<package-file-spec>...]``
     Lists installed packages.
 
-``dnf [options] list --available [<package-name-specs>...]``
+``dnf [options] list --available [<package-file-spec>...]``
     Lists available packages.
 
-``dnf [options] list --extras [<package-name-specs>...]``
+``dnf [options] list --extras [<package-file-spec>...]``
     Lists extras, that is packages installed on the system that are not
     available in any known repository.
 
-``dnf [options] list --obsoletes [<package-name-specs>...]``
+``dnf [options] list --obsoletes [<package-file-spec>...]``
     List packages installed on the system that are obsoleted by packages in
     any known repository.
 
-``dnf [options] list --recent [<package-name-specs>...]``
+``dnf [options] list --recent [<package-file-spec>...]``
     List packages recently added into the repositories.
 
-``dnf [options] list --upgrades [<package-name-specs>...]``
+``dnf [options] list --upgrades [<package-file-spec>...]``
     List upgrades available for the installed packages.
 
 ``dnf [options] list --autoremove``
@@ -844,20 +928,14 @@ result to only packages that matching it.
 
 This command by default does not force a sync of expired metadata. See also :ref:`\metadata_synchronization-label`.
 
-.. _localinstall_command-label:
-
---------------------
-Localinstall Command
---------------------
-
-``dnf [options] localinstall <spec>...``
-    Deprecated alias for the :ref:`\install_command-label`.
-
 .. _makecache_command-label:
 
 -----------------
 Makecache Command
 -----------------
+
+| Command: ``makecache``
+| Aliases: ``mc``
 
 ``dnf [options] makecache``
     Downloads and caches metadata for all known repos. Tries to
@@ -877,13 +955,15 @@ Makecache Command
 Mark Command
 -------------
 
-``dnf mark install <package-specs>...``
+| Command: ``mark``
+
+``dnf mark install <package-spec>...``
     Marks the specified packages as installed by user. This can be useful if any package was installed as a dependency and is desired to stay on the system when :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with `clean_requirements_on_remove` configuration option set to ``True`` is executed.
 
-``dnf mark remove <package-specs>...``
+``dnf mark remove <package-spec>...``
     Unmarks the specified packages as installed by user. Whenever you as a user don't need a specific package you can mark it for removal. The package stays installed on the system but will be removed when :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with `clean_requirements_on_remove` configuration option set to ``True`` is executed. You should use this operation instead of :ref:`\remove_command-label` if you're not sure whether the package is a requirement of other user installed packages on the system.
 
-``dnf mark group <package-specs>...``
+``dnf mark group <package-spec>...``
     Marks the specified packages as installed by group. This can be useful if any package was
     installed as a dependency or a user and is desired to be protected and handled as a group
     member like during group remove.
@@ -893,6 +973,8 @@ Mark Command
 ---------------
 Module Command
 ---------------
+
+| Command: ``module``
 
 Modularity overview is available at :ref:`man page dnf.modularity(7) <modularity-label>`.
 Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arguments that specify modules or profiles.
@@ -904,20 +986,43 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
     In case no profile was provided, all default profiles get installed.
     Module streams get enabled accordingly.
 
-    This command cannot be used for switching module streams. It is recommended to remove all
-    installed content from the module and reset the module using the
-    :ref:`reset <module_reset_command-label>` command. After you reset the module, you can install
-    the other stream.
+    This command cannot be used for switching module streams. Use the
+    :ref:`dnf module switch-to <module_switch_to_command-label>` command for that.
 
 ``dnf [options] module update <module-spec>...``
     Update packages associated with an active module stream, optionally restricted to a profile.
     If the `profile_name` is provided, only the packages referenced by that profile will be updated.
+
+.. _module_switch_to_command-label:
+
+``dnf [options] module switch-to <module-spec>...``
+    Switch to or enable a module stream, change versions of installed packages to versions provided
+    by the new stream, and remove packages from the old stream that are no longer available. It also
+    updates installed profiles if they are available for the new stream. When a profile was
+    provided, it installs that profile and does not update any already installed profiles.
+
+    This command can be used as a stronger version of the
+    :ref:`dnf module enable <module_enable_command-label>` command, which not only enables modules,
+    but also does a `distrosync` to all modular packages in the enabled modules.
+
+    It can also be used as a stronger version of the
+    :ref:`dnf module install <module_install_command-label>` command, but it requires to specify
+    profiles that are supposed to be installed, because `switch-to` command does not use `default
+    profiles`. The `switch-to` command doesn't only install profiles, it also makes a `distrosync`
+    to all modular packages in the installed module.
 
 ``dnf [options] module remove <module-spec>...``
     Remove installed module profiles, including packages that were installed with the
     :ref:`dnf module install <module_install_command-label>` command. Will not remove packages
     required by other installed module profiles or by other user-installed packages.
     In case no profile was provided, all installed profiles get removed.
+
+``dnf [options] module remove --all <module-spec>...``
+    Remove installed module profiles, including packages that were installed with the
+    :ref:`dnf module install <module_install_command-label>` command.
+    With --all option it additionally removes all packages whose names are provided by specified
+    modules. Packages required by other installed module profiles and packages whose names are also
+    provided by any other module are not removed.
 
 .. _module_enable_command-label:
 
@@ -928,10 +1033,8 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
     of modular dependency issue the operation will be rejected. To perform the action anyway please use
     \-\ :ref:`-skip-broken <skip-broken_option-label>` option.
 
-    This command cannot be used for switching module streams. It is recommended to remove all
-    installed content from the module, and reset the module using the
-    :ref:`reset <module_reset_command-label>` command. After you reset the module, you can enable
-    the other stream.
+    This command cannot be used for switching module streams. Use the
+    :ref:`dnf module switch-to <module_switch_to_command-label>` command for that.
 
 .. _module_disable_command-label:
 
@@ -948,6 +1051,11 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
     Reset module state so it's no longer enabled or disabled.
     Consequently, all installed profiles will be removed and
     only RPMs from the default stream will be available in the package set.
+
+.. _module_provide_command-label:
+
+``dnf [options] module provides <package-name-spec>...``
+    Lists all modular packages matching ``<package-name-spec>`` from all modules (including disabled), along with the modules and streams they belong to.
 
 ``dnf [options] module list [--all] [module_name...]``
     Lists all module streams, their profiles and states (enabled, disabled, default).
@@ -967,11 +1075,23 @@ Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arg
 ``dnf [options] module info --profile <module-spec>...``
     Print detailed information about given module profiles.
 
+``dnf [options] module repoquery <module-spec>...``
+    List all available packages belonging to selected modules.
+
+``dnf [options] module repoquery --available <module-spec>...``
+    List all available packages belonging to selected modules.
+
+``dnf [options] module repoquery --installed <module-spec>...``
+    List all installed packages with same name like packages belonging to selected modules.
+
 .. _provides_command-label:
 
 ----------------
 Provides Command
 ----------------
+
+| Command: ``provides``
+| Aliases: ``prov``, ``whatprovides``
 
 ``dnf [options] provides <provide-spec>``
     Finds the packages providing the given ``<provide-spec>``. This is useful
@@ -1010,7 +1130,10 @@ Provides Command
 Reinstall Command
 -----------------
 
-``dnf [options] reinstall <package-specs>...``
+| Command: ``reinstall``
+| Aliases: ``rei``
+
+``dnf [options] reinstall <package-spec>...``
     Installs the specified packages, fails if some of the packages are either
     not installed or not available (i.e. there is no repository where to
     download the same RPM).
@@ -1021,7 +1144,12 @@ Reinstall Command
 Remove Command
 --------------
 
-``dnf [options] remove <package-specs>...``
+| Command: ``remove``
+| Aliases: ``rm``
+| Aliases for :ref:`explicit NEVRA matching <specifying_nevra_matching_explicitly-label>`: ``remove-n``, ``remove-na``, ``remove-nevra``
+| Deprecated aliases: ``erase``, ``erase-n``, ``erase-na``, ``erase-nevra``
+
+``dnf [options] remove <package-spec>...``
     Removes the specified packages from the system along with any packages depending on the packages being removed. Each ``<spec>`` can be either a ``<package-spec>``, which specifies a package directly, or a ``@<group-spec>``, which specifies an (environment) group which contains it. If ``clean_requirements_on_remove`` is enabled (the default), also removes any dependencies that are no longer needed.
 
 ``dnf [options] remove --duplicates``
@@ -1031,7 +1159,7 @@ Remove Command
     dnf-shell sub-commands could help.
 
 ``dnf [options] remove --oldinstallonly``
-    Removes old installonly packages, keeping only ``installonly_limit`` latest versions.
+    Removes old installonly packages, keeping only latest versions and version of running kernel.
 
     There are also a few specific remove commands ``remove-n``, ``remove-na`` and ``remove-nevra``
     that allow the specification of an exact argument in the NEVRA format.
@@ -1056,6 +1184,8 @@ Remove older versions of duplicated packages (an equivalent of yum's `package-cl
 Repoinfo Command
 ----------------
 
+| Command: ``repoinfo``
+
     An alias for the :ref:`repolist <repolist_command-label>` command
     that provides more detailed information like ``dnf repolist -v``.
 
@@ -1064,6 +1194,8 @@ Repoinfo Command
 ----------------
 Repolist Command
 ----------------
+
+| Command: ``repolist``
 
 ``dnf [options] repolist [--enabled|--disabled|--all]``
     Depending on the exact command lists enabled, disabled or all known
@@ -1078,7 +1210,11 @@ This command by default does not force a sync of expired metadata. See also :ref
 Repoquery Command
 -----------------
 
-``dnf [options] repoquery [<select-options>] [<query-options>] [<pkg-spec>]``
+| Command: ``repoquery``
+| Aliases: ``rq``
+| Aliases for :ref:`explicit NEVRA matching <specifying_nevra_matching_explicitly-label>`: ``repoquery-n``, ``repoquery-na``, ``repoquery-nevra``
+
+``dnf [options] repoquery [<select-options>] [<query-options>] [<package-file-spec>]``
     Searches available DNF repositories for selected packages and displays the requested information about them. It
     is an equivalent of ``rpm -q`` for remote repositories.
 
@@ -1091,11 +1227,11 @@ Repoquery Command
 Select Options
 --------------
 
-Together with ``<pkg-spec>``, control what packages are displayed in the output. If ``<pkg-spec>`` is given, limits the resulting set of
-packages to those matching the specification. All packages are considered if no ``<pkg-spec>`` is specified.
+Together with ``<package-file-spec>``, control what packages are displayed in the output. If ``<package-file-spec>`` is given, limits the resulting set of
+packages to those matching the specification. All packages are considered if no ``<package-file-spec>`` is specified.
 
-``<pkg-spec>``
-    Package specification in the NEVRA format (name[-[epoch:]version[-release]][.arch]). See :ref:`Specifying Packages
+``<package-file-spec>``
+    Package specification in the NEVRA format (name[-[epoch:]version[-release]][.arch]), a package provide or a file provide. See :ref:`Specifying Packages
     <specifying_packages-label>`.
 
 ``-a``, ``--all``
@@ -1118,6 +1254,9 @@ packages to those matching the specification. All packages are considered if no 
 
 ``--available``
     Limit the resulting set to available packages only (set by default).
+
+``--disable-modular-filtering``
+    Disables filtering of modular packages, so that packages of inactive module streams are included in the result.
 
 ``--extras``
     Limit the resulting set to packages that are not present in any of the available repositories.
@@ -1159,37 +1298,37 @@ packages to those matching the specification. All packages are considered if no 
 
 .. _whatdepends_option-label:
 
-``--whatdepends <capability>``
+``--whatdepends <capability>[,<capability>...]``
     Limit the resulting set only to packages that require, enhance, recommend, suggest or
-    supplement ``<capability>``.
+    supplement any of ``<capabilities>``.
 
-``--whatconflicts <capability>``
-    Limit the resulting set only to packages that conflict ``<capability>``.
+``--whatconflicts <capability>[,<capability>...]``
+    Limit the resulting set only to packages that conflict with any of ``<capabilities>``.
 
-``--whatenhances <capability>``
-    Limit the resulting set only to packages that enhance ``<capability>``. Use \-\
+``--whatenhances <capability>[,<capability>...]``
+    Limit the resulting set only to packages that enhance any of ``<capabilities>``. Use \-\
     :ref:`-whatdepends <whatdepends_option-label>` if you want to list all depending packages.
 
-``--whatobsoletes <capability>``
-    Limit the resulting set only to packages that obsolete ``<capability>``.
+``--whatobsoletes <capability>[,<capability>...]``
+    Limit the resulting set only to packages that obsolete any of ``<capabilities>``.
 
-``--whatprovides <capability>``
-    Limit the resulting set only to packages that provide ``<capability>``.
+``--whatprovides <capability>[,<capability>...]``
+    Limit the resulting set only to packages that provide any of ``<capabilities>``.
 
-``--whatrecommends <capability>``
-    Limit the resulting set only to packages that recommend ``<capability>``. Use \-\
+``--whatrecommends <capability>[,<capability>...]``
+    Limit the resulting set only to packages that recommend any of ``<capabilities>``. Use \-\
     :ref:`-whatdepends <whatdepends_option-label>` if you want to list all depending packages.
 
-``--whatrequires <capability>``
-    Limit the resulting set only to packages that require ``<capability>``. Use \-\
+``--whatrequires <capability>[,<capability>...]``
+    Limit the resulting set only to packages that require any of ``<capabilities>``. Use \-\
     :ref:`-whatdepends <whatdepends_option-label>` if you want to list all depending packages.
 
-``--whatsuggests <capability>``
-    Limit the resulting set only to packages that suggest ``<capability>``. Use \-\
+``--whatsuggests <capability>[,<capability>...]``
+    Limit the resulting set only to packages that suggest any of ``<capabilities>``. Use \-\
     :ref:`-whatdepends <whatdepends_option-label>` if you want to list all depending packages.
 
-``--whatsupplements <capability>``
-    Limit the resulting set only to packages that supplement ``<capability>``. Use \-\
+``--whatsupplements <capability>[,<capability>...]``
+    Limit the resulting set only to packages that supplement any of ``<capabilities>``. Use \-\
     :ref:`-whatdepends <whatdepends_option-label>` if you want to list all depending packages.
 
 ``--alldeps``
@@ -1347,16 +1486,7 @@ Display duplicate packages::
 
 Display source packages that require a <provide> for a build::
 
-    dnf repoquery --disablerepo=* --enablerepo=*-source --arch=src --whatrequires <provide>
-
-.. _repo_pkgs_command-label:
-
------------------
-Repo-Pkgs Command
------------------
-
-``dnf [options] repo-pkgs``
-    Deprecated alias for the :ref:`\repository_packages_command-label`.
+    dnf repoquery --disablerepo="*" --enablerepo="*-source" --arch=src --whatrequires <provide>
 
 .. _repository_packages_command-label:
 
@@ -1364,88 +1494,94 @@ Repo-Pkgs Command
 Repository-Packages Command
 ---------------------------
 
-The repository-packages command allows the user to run commands on top of all packages in the repository named ``<repoid>``. However, any dependency resolution takes into account packages from all enabled repositories. The ``<package-name-spec>`` and ``<package-spec>`` specifications further limit the candidates to only those packages matching at least one of them.
+| Command: ``repository-packages``
+| Deprecated aliases: ``repo-pkgs``, ``repo-packages``, ``repository-pkgs``
+
+The repository-packages command allows the user to run commands on top of all packages in the repository named ``<repoid>``. However, any dependency resolution takes into account packages from all enabled repositories. The ``<package-file-spec>`` and ``<package-spec>`` specifications further limit the candidates to only those packages matching at least one of them.
 
 The ``info`` subcommand lists description and summary information about packages depending on the packages' relation to the repository. The ``list`` subcommand just prints lists of those packages.
 
-``dnf [options] repository-packages <repoid> check-update [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> check-update [<package-file-spec>...]``
     Non-interactively checks if updates of the specified packages in the repository are available. DNF exit code will be 100 when there are updates available and a list of the updates will be printed.
 
-``dnf [options] repository-packages <repoid> info [--all] [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info [--all] [<package-file-spec>...]``
     List all related packages.
 
-``dnf [options] repository-packages <repoid> info --installed [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info --installed [<package-file-spec>...]``
     List packages installed from the repository.
 
-``dnf [options] repository-packages <repoid> info --available [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info --available [<package-file-spec>...]``
     List packages available in the repository but not currently installed on the system.
 
-``dnf [options] repository-packages <repoid> info --extras [<package-name-specs>...]``
+``dnf [options] repository-packages <repoid> info --extras [<package-file-specs>...]``
     List packages installed from the repository that are not available in any repository.
 
-``dnf [options] repository-packages <repoid> info --obsoletes [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info --obsoletes [<package-file-spec>...]``
     List packages in the repository that obsolete packages installed on the system.
 
-``dnf [options] repository-packages <repoid> info --recent [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info --recent [<package-file-spec>...]``
     List packages recently added into the repository.
 
-``dnf [options] repository-packages <repoid> info --upgrades [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> info --upgrades [<package-file-spec>...]``
     List packages in the repository that upgrade packages installed on the system.
 
 ``dnf [options] repository-packages <repoid> install [<package-spec>...]``
     Install all packages in the repository.
 
-``dnf [options] repository-packages <repoid> list [--all] [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list [--all] [<package-file-spec>...]``
     List all related packages.
 
-``dnf [options] repository-packages <repoid> list --installed [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --installed [<package-file-spec>...]``
     List packages installed from the repository.
 
-``dnf [options] repository-packages <repoid> list --available [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --available [<package-file-spec>...]``
     List packages available in the repository but not currently installed on the system.
 
-``dnf [options] repository-packages <repoid> list --extras [<package-name-specs>...]``
+``dnf [options] repository-packages <repoid> list --extras [<package-file-spec>...]``
     List packages installed from the repository that are not available in any repository.
 
-``dnf [options] repository-packages <repoid> list --obsoletes [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --obsoletes [<package-file-spec>...]``
     List packages in the repository that obsolete packages installed on the system.
 
-``dnf [options] repository-packages <repoid> list --recent [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --recent [<package-file-spec>...]``
     List packages recently added into the repository.
 
-``dnf [options] repository-packages <repoid> list --upgrades [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> list --upgrades [<package-file-spec>...]``
     List packages in the repository that upgrade packages installed on the system.
 
-``dnf [options] repository-packages <repoid> move-to [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> move-to [<package-spec>...]``
     Reinstall all those packages that are available in the repository.
 
-``dnf [options] repository-packages <repoid> reinstall [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> reinstall [<package-spec>...]``
     Run the ``reinstall-old`` subcommand. If it fails, run the ``move-to`` subcommand.
 
-``dnf [options] repository-packages <repoid> reinstall-old [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> reinstall-old [<package-spec>...]``
     Reinstall all those packages that were installed from the repository and simultaneously are available in the repository.
 
-``dnf [options] repository-packages <repoid> remove [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> remove [<package-spec>...]``
     Remove all packages installed from the repository along with any packages depending on the packages being removed. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
-``dnf [options] repository-packages <repoid> remove-or-distro-sync [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> remove-or-distro-sync [<package-spec>...]``
     Select all packages installed from the repository. Upgrade, downgrade or keep those of them that are available in another repository to match the latest version available there and remove the others along with any packages depending on the packages being removed. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
-``dnf [options] repository-packages <repoid> remove-or-reinstall [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> remove-or-reinstall [<package-spec>...]``
     Select all packages installed from the repository. Reinstall those of them that are available in another repository and remove the others along with any packages depending on the packages being removed. If ``clean_requirements_on_remove`` is enabled (the default) also removes any dependencies that are no longer needed.
 
-``dnf [options] repository-packages <repoid> upgrade [<package-name-spec>...]``
+``dnf [options] repository-packages <repoid> upgrade [<package-spec>...]``
     Update all packages to the highest resolvable version available in the repository.
+    When versions are specified in the ``<package-spec>``, update to these versions.
 
-``dnf [options] repository-packages <repoid> upgrade-to <package-nevr-specs>...``
-    Update packages to the specified versions that are available in the repository. Upgrade-to is
-    a deprecated alias for the upgrade subcommand.
+``dnf [options] repository-packages <repoid> upgrade-to [<package-specs>...]``
+    A deprecated alias for the upgrade subcommand.
 
 .. _search_command-label:
 
 --------------
 Search Command
 --------------
+
+| Command: ``search``
+| Aliases: ``se``
 
 ``dnf [options] search [--all] <keywords>...``
     Search package metadata for keywords. Keywords are matched as case-insensitive substrings, globbing is supported.
@@ -1461,6 +1597,9 @@ This command by default does not force a sync of expired metadata. See also :ref
 -------------
 Shell Command
 -------------
+
+| Command: ``shell``
+| Aliases: ``sh``
 
 ``dnf [options] shell [filename]``
     Open an interactive shell for conducting multiple commands during a single execution of DNF. These commands can be issued manually
@@ -1480,11 +1619,18 @@ Shell Command
         * reset: reset the transaction
         * run: resolve and run the transaction
 
+    Note that all local packages must be used in the first shell transaction subcommand (e.g.
+    `install /tmp/nodejs-1-1.x86_64.rpm /tmp/acpi-1-1.noarch.rpm`) otherwise an error will occur.
+    Any `disable`, `enable`, and `reset` module operations (e.g. `module enable nodejs`) must also
+    be performed before any other shell transaction subcommand is used.
+
 .. _swap_command-label:
 
 ------------
 Swap Command
 ------------
+
+| Command: ``swap``
 
 ``dnf [options] swap <remove-spec> <install-spec>``
 
@@ -1494,28 +1640,24 @@ Swap Command
     conflict solving is provided in DNF by the --allowerasing option that provides the functionality of the swap
     command automatically.
 
-.. _update_command-label:
-
---------------
-Update Command
---------------
-
-``dnf [options] update``
-    Deprecated alias for the :ref:`\upgrade_command-label`.
-
 .. _updateinfo_command-label:
 
 ------------------
 Updateinfo Command
 ------------------
 
+| Command: ``updateinfo``
+| Deprecated aliases: ``list-updateinfo``, ``list-security``, ``list-sec``, ``info-updateinfo``, ``info-security``, ``info-sec``, ``summary-updateinfo``
+
 ``dnf [options] updateinfo [--summary|--list|--info] [<availability>] [<spec>...]``
     Display information about update advisories.
 
     Depending on the output type, DNF displays just counts of advisory types
     (omitted or ``--summary``), list of advisories (``--list``) or detailed
-    information (``--info``). When the ``-v`` option is used with ``--info``, the
-    information is even more detailed.
+    information (``--info``). The ``-v`` option extends the output. When
+    used with ``--info``, the information is even more detailed. When used
+    with ``--list``, an additional column with date of the last advisory update
+    is added.
 
     ``<availability>`` specifies whether advisories about newer versions of
     installed packages (omitted or ``--available``), advisories about equal and
@@ -1527,6 +1669,16 @@ Updateinfo Command
     cases when an advisory refers to a newer version but there is no enabled
     repository which contains any newer version.
 
+    Note, that ``--available`` tooks only the latest installed versions of
+    packages into account. In case of the kernel packages (when multiple
+    version could be installed simultaneously) also packages of the currently
+    running version of kernel are added.
+
+    To print only advisories referencing a CVE or a bugzilla use ``--with-cve`` or
+    ``--with-bz`` options. When these switches are used also the output
+    of the ``--list`` is altered - the ID of the CVE or the bugzilla is printed
+    instead of the one of the advisory.
+
     If given and if neither ID, type (``bugfix``, ``enhancement``,
     ``security``/``sec``) nor a package name of an advisory matches
     ``<spec>``, the advisory is not taken into account. The matching is
@@ -1535,33 +1687,24 @@ Updateinfo Command
 
     Output of the ``--summary`` option is affected by the :ref:`autocheck_running_kernel <autocheck_running_kernel-label>` configuration option.
 
-
-.. _update_minimal_command-label:
-
-----------------------
-Update-Minimal Command
-----------------------
-
-``dnf [options] update-minimal``
-    Deprecated alias for the :ref:`\upgrade_minimal_command-label`.
-
-
 .. _upgrade_command-label:
 
 ---------------
 Upgrade Command
 ---------------
 
+| Command: ``upgrade``
+| Aliases: ``up``
+| Deprecated aliases: ``update``, ``upgrade-to``, ``update-to``, ``localupdate``
+
 ``dnf [options] upgrade``
     Updates each package to the latest version that is both available and
     resolvable.
 
-``dnf [options] upgrade <package-installed-specs>...``
+``dnf [options] upgrade <package-spec>...``
     Updates each specified package to the latest available version. Updates
-    dependencies as necessary.
-
-``dnf [options] upgrade <package-nevr-specs>...``
-    Upgrades packages to the specified versions.
+    dependencies as necessary. When versions are specified in the
+    ``<package-spec>``, update to these versions.
 
 ``dnf [options] upgrade @<spec>...``
     Alias for the `dnf module update` command.
@@ -1578,30 +1721,18 @@ See also :ref:`\configuration_files_replacement_policy-label`.
 Upgrade-Minimal Command
 -----------------------
 
+| Command: ``upgrade-minimal``
+| Aliases: ``up-min``
+| Deprecated aliases: ``update-minimal``
+
 ``dnf [options] upgrade-minimal``
     Updates each package to the latest available version that provides a bugfix, enhancement
     or a fix for a security issue (security).
 
-``dnf [options] upgrade-minimal <package-installed-specs>...``
+``dnf [options] upgrade-minimal <package-spec>...``
     Updates each specified package to the latest available version that provides
     a bugfix, enhancement or a fix for security issue (security). Updates
     dependencies as necessary.
-
------------------
-Update-To Command
------------------
-
-``dnf [options] update-to <package-nevr-specs>...``
-    Deprecated alias for the :ref:`\upgrade_command-label`.
-
-.. _upgrade_to_command-label:
-
-------------------
-Upgrade-To Command
-------------------
-
-``dnf [options] upgrade-to <package-nevr-specs>...``
-    Deprecated alias for the :ref:`\upgrade_command-label`.
 
 .. _specifying_packages-label:
 
@@ -1609,47 +1740,84 @@ Upgrade-To Command
 Specifying Packages
 ===================
 
-Many commands take a ``<package-spec>`` parameter that selects a package for the
-operation. DNF looks for interpretations of the parameter from the most commonly
-used meanings to the least, that is it tries to see if the given spec fits one
-of the following patterns (in decreasing order of priority):
+Many commands take a ``<package-spec>`` parameter that selects a package for
+the operation. The ``<package-spec>`` argument is matched against package
+NEVRAs, provides and file provides.
 
+``<package-file-spec>`` is similar to ``<package-spec>``, except provides
+matching is not performed. Therefore, ``<package-file-spec>`` is matched only
+against NEVRAs and file provides.
+
+``<package-name-spec>`` is matched against NEVRAs only.
+
+-----
+Globs
+-----
+
+Package specification supports the same glob pattern matching that shell does,
+in all three above mentioned packages it matches against (NEVRAs, provides and
+file provides).
+
+The following patterns are supported:
+
+``*``
+    Matches any number of characters.
+``?``
+    Matches any single character.
+``[]``
+    Matches any one of the enclosed characters. A pair of characters separated
+    by a hyphen denotes a range expression; any character that falls between
+    those two characters, inclusive, is matched. If the first character
+    following the ``[`` is a ``!`` or a ``^`` then any character not enclosed
+    is matched.
+
+Note: Curly brackets (``{}``) are not supported. You can still use them in
+shells that support them and let the shell do the expansion, but if quoted or
+escaped, dnf will not expand them.
+
+--------------
+NEVRA Matching
+--------------
+
+When matching against NEVRAs, partial matching is supported. DNF tries to match
+the spec against the following list of NEVRA forms (in decreasing order of
+priority):
+
+* ``name-[epoch:]version-release.arch``
 * ``name.arch``
 * ``name``
-* ``name-[epoch:]version-release.arch``
 * ``name-[epoch:]version-release``
 * ``name-[epoch:]version``
 
-Note that ``name`` can in general contain dashes (e.g. ``package-subpackage``).
+Note that ``name`` can in general contain dashes (e.g. ``package-with-dashes``).
 
-Failing to match the input argument to an existing package name based on the
-patterns above, DNF tries to see if the argument matches an existing provide.
+The first form that matches any packages is used and the remaining forms are
+not tried. If none of the forms match any packages, an attempt is made to match
+the ``<package-spec>`` against full package NEVRAs. This is only relevant
+if globs are present in the ``<package-spec>``.
 
-By default, if multiple versions of the selected package exist in the repository, the
-most recent version suitable for the given operation is used. If the selected
-package exists for multiple architectures, the packages which best match the
-system's architecture will be preferred. The name specification is
-case-sensitive, globbing characters "``?``, ``*`` and ``[`` are allowed and
-trigger shell-like glob matching. If a globbing character is present in ``name``,
-DNF expands given ``name`` first and consequently selects all packages matching
-the expanded ``<package-spec>``.
+``<package-spec>`` matches NEVRAs the same way ``<package-name-spec>`` does,
+but in case matching NEVRAs fails, it attempts to match against provides and
+file provides of packages as well.
 
-``<package-name-spec>`` is similar to ``<package-spec>`` except the provides
-matching is never attempted there.
+You can specify globs as part of any of the five NEVRA components. You can also
+specify a glob pattern to match over multiple NEVRA components (in other words,
+to match across the NEVRA separators). In that case, however, you need to write
+the spec to match against full package NEVRAs, as it is not possible to split
+such spec into NEVRA forms.
 
-``<package-installed-specs>`` is similar to ``<package-specs>`` except it
-considers only installed packages.
+.. _specifying_nevra_matching_explicitly-label:
 
-.. _specifying_packages_versions-label:
+Specifying NEVRA Matching Explicitly
+------------------------------------
 
-=====================================
-Specifying Exact Versions of Packages
-=====================================
+Some commands (``autoremove``, ``install``, ``remove`` and ``repoquery``) also
+have aliases with suffixes ``-n``, ``-na`` and ``-nevra`` that allow to
+explicitly specify how to parse the arguments:
 
-Commands accepting the ``<package-nevr-spec>`` parameter need not only the name
-of the package, but also its version, release and optionally the
-architecture. Further, the version part can be preceded by an epoch when it is
-relevant (i.e. the epoch is non-zero).
+* Command ``install-n`` only matches against ``name``.
+* Command ``install-na`` only matches against ``name.arch``.
+* Command ``install-nevra`` only matches against ``name-[epoch:]version-release.arch``.
 
 .. _specifying_provides-label:
 
@@ -1706,6 +1874,53 @@ of the most recent transaction. The last form is ``last-<offset>``, where
 ``<offset>`` is a positive integer. It specifies offset-th transaction preceding
 the most recent transaction.
 
+.. _excluded_packages-label:
+
+=================
+Package Filtering
+=================
+
+Package filtering filters packages out from the available package set, making them invisible to most
+of dnf commands. They cannot be used in a transaction. Packages can be filtered out by either
+Exclude Filtering or Modular Filtering.
+
+-----------------
+Exclude Filtering
+-----------------
+
+Exclude Filtering is a mechanism used by a user or by a DNF plugin to modify the set of available
+packages. Exclude Filtering can be modified by either :ref:`includepkgs <include-label>` or
+:ref:`excludepkgs <exclude-label>` configuration options in
+:ref:`configuration files <conf_ref-label>`. The -:ref:`-disableexcludes <disableexcludes-label>`
+command line option can be used to override excludes from configuration files. In addition to
+user-configured excludes, plugins can also extend the set of excluded packages. To disable excludes
+from a DNF plugin you can use the -:ref:`-disableplugin <disableplugin-label>` command line option.
+
+To disable all excludes for e.g. the install command you can use the following combination
+of command line options:
+
+``dnf --disableexcludes=all --disableplugin="*" install bash``
+
+-----------------
+Modular Filtering
+-----------------
+
+Please see :ref:`the modularity documentation <modularity-label>` for details on how Modular
+Filtering works.
+
+With modularity, only RPM packages from ``active`` module streams are included in the available
+package set. RPM packages from ``inactive`` module streams, as well as non-modular packages with
+the same name or provides as a package from an ``active`` module stream, are filtered out. Modular
+filtering is not applied to packages added from the command line, installed packages, or packages
+from repositories with ``module_hotfixes=true`` in their ``.repo`` file.
+
+Disabling of modular filtering is not recommended, because it could cause the system to get into
+a broken state. To disable modular filtering for a particular repository, specify
+``module_hotfixes=true`` in the ``.repo`` file or use ``--setopt=<repo_id>.module_hotfixes=true``.
+
+To discover the module which contains an excluded package use
+:ref:`dnf module provides <module_provide_command-label>`.
+
 .. _metadata_synchronization-label:
 
 ========================
@@ -1750,8 +1965,9 @@ See Also
 ========
 
 * :manpage:`dnf.conf(5)`, :ref:`DNF Configuration Reference <conf_ref-label>`
-* :manpage:`dnf.plugin.*(8)`, assorted DNF plugins that might be installed on the system.
+* :manpage:`dnf-PLUGIN(8)` for documentation on DNF plugins.
 * :manpage:`dnf.modularity(7)`, :ref:`Modularity overview <modularity-label>`.
+* :manpage:`dnf-transaction-json(5)`, :ref:`Stored Transaction JSON Format Specification <transaction_json-label>`.
 * `DNF`_ project homepage (https://github.com/rpm-software-management/dnf/)
 * How to report a bug (https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting)
 * `YUM`_ project homepage (http://yum.baseurl.org/)

@@ -101,16 +101,19 @@
     release           string         match against packages' releases
     reponame          string         match against packages repositories' names
     version           string         match against packages' versions
-    obsoletes         Query          match packages that obsolete any package from query
     pkg               Query          match against packages in query
     pkg*              list           match against hawkey.Packages in list
     provides          string         match against packages' provides
     provides*         Hawkey.Reldep  match against packages' provides
-    requires          string         match against packages' requirements
-    requires*         Hawkey.Reldep  match against packages' requirements
+    <DEP>             string         match against packages' <DEP>
+    <DEP>*            Hawkey.Reldep  match a reldep against packages' <DEP>
+    <DEP>*            Query          match the result of a query against packages' <DEP>
+    <DEP>*            list(Package)  match the list of hawkey.Packages against packages' <DEP>
     sourcerpm         string         match against packages' source rpm
     upgrades          boolean        see :meth:`upgrades`. Defaults to ``False``.
     ===============   ============== ======================================================
+
+    ``<DEP>`` can be any of: requires, conflicts, obsoletes, enhances, recomments, suggests, supplements
 
     \* The key can also accept a list of values with specified type.
 
@@ -132,6 +135,8 @@
     For example, the following creates a query that matches all packages containing the string "club" in its name::
 
       q = base.sack.query().filter(name__substr="club")
+
+    Note that using packages or queries for dependency filtering performs a more advanced resolution than using a string or a reldep. When a package list or a query is used, rich dependencies are resolved in a more precise way than what is possible when a string or a reldep is used.
 
   .. method:: filterm(\*\*kwargs)
 
@@ -183,14 +188,13 @@
     searched for a match. `forms` is a list of pattern forms from `hawkey`_. Leaving the parameter
     to ``None`` results in using a reasonable default list of forms.
 
-  .. method:: get_best_selector(sack, forms=None, obsoletes=True, reponame=None, reports=False)
+  .. method:: get_best_selector(sack, forms=None, obsoletes=True, reponame=None)
 
     Returns a :class:`~dnf.selector.Selector` that will select a single best-matching package when
     used in a transaction operation. `sack` and `forms` have the same meaning as in
     :meth:`get_best_query`. If ``obsoletes``, selector will also contain packages that obsoletes
     requested packages (default is True). If ``reponame``, the selection of available packages is
-    limited to packages from that repo (default is None). Attribute ``reports`` is deprecated and
-    not used any more. Will be removed on 2018-01-01.
+    limited to packages from that repo (default is None).
 
   .. method:: get_nevra_possibilities(self, forms=None)
 

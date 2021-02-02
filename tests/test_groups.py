@@ -225,7 +225,7 @@ class ProblemGroupTest(tests.support.ResultTestCase):
         swdb_group = self.history.group.get(comps_group.id)
         self.assertIsNone(swdb_group)
 
-        cnt = self.base.group_install(comps_group.id, ('mandatory'))
+        cnt = self.base.group_install(comps_group.id, ('mandatory',))
         self._swdb_commit()
         self.base.resolve()
         # this counts packages *listed* in the group, so 2
@@ -294,6 +294,15 @@ class ProblemGroupTest(tests.support.ResultTestCase):
         # the above should work, but only 'lotus' actually installed
         self.assertLength(inst, 1)
         self.assertEmpty(removed)
+
+    def test_group_install_missing_name(self):
+        comps_group = self.base.comps.group_by_pattern('missing-name-group')
+
+        cnt = self.base.group_install(comps_group.id, ('mandatory', 'default', 'optional'),
+                                      strict=False)
+        self._swdb_commit()
+        self.base.resolve()
+        self.assertEqual(cnt, 1)
 
 
 class EnvironmentInstallTest(tests.support.ResultTestCase):

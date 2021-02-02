@@ -21,24 +21,26 @@
 from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
-from dnf.i18n import _, ucd
+
+import argparse
+import logging
+import random
+import socket
+import time
+
+from dnf.i18n import _, ucd, P_
 import dnf
 import dnf.automatic.emitter
 import dnf.cli
 import dnf.cli.cli
 import dnf.cli.output
 import dnf.conf
-import libdnf.conf
 import dnf.const
 import dnf.exceptions
 import dnf.util
 import dnf.logging
-import hawkey
-import logging
-import socket
-import argparse
-import random
-import time
+import dnf.pycomp
+import libdnf.conf
 
 logger = logging.getLogger('dnf')
 
@@ -57,6 +59,9 @@ def build_emitters(conf):
                 emitters.append(emitter)
             elif name == 'motd':
                 emitter = dnf.automatic.emitter.MotdEmitter(system_name)
+                emitters.append(emitter)
+            elif name == 'command':
+                emitter = dnf.automatic.emitter.CommandEmitter(system_name, conf.command)
                 emitters.append(emitter)
             elif name == 'command_email':
                 emitter = dnf.automatic.emitter.CommandEmailEmitter(system_name, conf.command_email)
@@ -88,6 +93,7 @@ class AutomaticConfig(object):
         self.commands = CommandsConfig()
         self.email = EmailConfig()
         self.emitters = EmittersConfig()
+        self.command = CommandConfig()
         self.command_email = CommandEmailConfig()
         self._parser = None
         self._load(filename)
@@ -118,6 +124,8 @@ class AutomaticConfig(object):
         self.email.populate(parser, 'email', filename, libdnf.conf.Option.Priority_AUTOMATICCONFIG)
         self.emitters.populate(parser, 'emitters', filename,
                                libdnf.conf.Option.Priority_AUTOMATICCONFIG)
+        self.command.populate(parser, 'command', filename,
+                              libdnf.conf.Option.Priority_AUTOMATICCONFIG)
         self.command_email.populate(parser, 'command_email', filename,
                                     libdnf.conf.Option.Priority_AUTOMATICCONFIG)
         self._parser = parser
@@ -170,6 +178,7 @@ class CommandsConfig(Config):
         self.add_option('upgrade_type', libdnf.conf.OptionEnumString('default',
                         libdnf.conf.VectorString(['default', 'security'])))
         self.add_option('random_sleep', libdnf.conf.OptionNumberInt32(300))
+        self.add_option('network_online_timeout', libdnf.conf.OptionNumberInt32(60))
 
     def imply(self):
         if self.apply_updates:
@@ -199,7 +208,7 @@ class CommandConfig(Config):
 
 
 class CommandEmailConfig(CommandConfig):
-    _default_command_format = "mail -s {subject} -r {email_from} {email_to}"
+    _default_command_format = "mail -Ssendwait -s {subject} -r {email_from} {email_to}"
 
     def __init__(self):
         super(CommandEmailConfig, self).__init__()
@@ -215,6 +224,65 @@ class EmittersConfig(Config):
             libdnf.conf.VectorString(['email', 'stdio'])))
         self.add_option('output_width', libdnf.conf.OptionNumberInt32(80))
         self.add_option('system_name', libdnf.conf.OptionString(socket.gethostname()))
+
+
+def gpgsigcheck(base, pkgs):
+    ok = True
+    for po in pkgs:
+        result, errmsg = base.package_signature_check(po)
+        if result != 0:
+            ok = False
+            logger.critical(errmsg)
+    if not ok:
+        raise dnf.exceptions.Error(_("GPG check FAILED"))
+
+
+def wait_for_network(repos, timeout):
+    '''
+    Wait up to <timeout> seconds for network connection to be available.
+    if <timeout> is 0 the network availability detection will be skipped.
+    Returns True if any remote repository is accessible or remote repositories are not enabled.
+    Returns False if none of remote repositories is accessible.
+    '''
+    if timeout <= 0:
+        return True
+
+    remote_schemes = {
+        'http': 80,
+        'https': 443,
+        'ftp': 21,
+    }
+
+    def remote_address(url_list):
+        for url in url_list:
+            parsed_url = dnf.pycomp.urlparse.urlparse(url)
+            if parsed_url.hostname and parsed_url.scheme in remote_schemes:
+                yield (parsed_url.hostname,
+                       parsed_url.port or remote_schemes[parsed_url.scheme])
+
+    # collect possible remote repositories urls
+    addresses = set()
+    for repo in repos.iter_enabled():
+        addresses.update(remote_address(repo.baseurl))
+        addresses.update(remote_address([repo.mirrorlist]))
+        addresses.update(remote_address([repo.metalink]))
+
+    if not addresses:
+        # there is no remote repository enabled so network connection should not be needed
+        return True
+
+    logger.debug(_('Waiting for internet connection...'))
+    time_0 = time.time()
+    while time.time() - time_0 < timeout:
+        for host, port in addresses:
+            try:
+                s = socket.create_connection((host, port), 1)
+                s.close()
+                return True
+            except socket.error:
+                pass
+        time.sleep(1)
+    return False
 
 
 def main(args):
@@ -237,11 +305,15 @@ def main(args):
 
             if opts.timer:
                 sleeper = random.randint(0, conf.commands.random_sleep)
-                logger.debug(_('Sleep for %s seconds'), sleeper)
+                logger.debug(P_('Sleep for {} second', 'Sleep for {} seconds', sleeper).format(sleeper))
                 time.sleep(sleeper)
 
             base.pre_configure_plugins()
             base.read_all_repos()
+
+            if not wait_for_network(base.repos, conf.commands.network_online_timeout):
+                logger.warning(_('System is off-line.'))
+
             base.configure_plugins()
             base.fill_sack()
             upgrade(base, conf.commands.upgrade_type)
@@ -251,7 +323,7 @@ def main(args):
             if not trans:
                 return 0
 
-            lst = output.list_transaction(trans)
+            lst = output.list_transaction(trans, total_width=80)
             emitters = build_emitters(conf)
             emitters.notify_available(lst)
             if not conf.commands.download_updates:
@@ -264,6 +336,7 @@ def main(args):
                 emitters.commit()
                 return 0
 
+            gpgsigcheck(base, trans.install_set)
             base.do_transaction()
             emitters.notify_applied()
             emitters.commit()

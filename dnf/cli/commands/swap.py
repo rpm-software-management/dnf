@@ -20,6 +20,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _
 from dnf.cli import commands
+
+import dnf.util
 import logging
 
 logger = logging.getLogger("dnf")
@@ -30,7 +32,8 @@ class SwapCommand(commands.Command):
     """
 
     aliases = ('swap',)
-    summary = _('run an interactive dnf mod for remove and install one spec')
+    summary = _('run an interactive {prog} mod for remove and install one spec').format(
+        prog=dnf.util.MAIN_PROG_UPPER)
 
     @staticmethod
     def set_argparser(parser):

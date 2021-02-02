@@ -2886,5 +2886,413 @@
     [
         1741381,
         "DNF wants to remove kernel-core"
+    ],
+    [
+        1738837,
+        "man dnf.conf mentions best=False as default"
+    ],
+    [
+        1674296,
+        "package-cleanup doesn't work as expected"
+    ],
+    [
+        1577889,
+        "Description in search output is wrapped when stdout isn't terminal"
+    ],
+    [
+        1669711,
+        "kickstart install: additional nfs repos are not accepted"
+    ],
+    [
+        1643109,
+        "dnf should not list redundant entries in \"Skipping packages with conflicts:\" formatted output"
+    ],
+    [
+        1649383,
+        "dnf update updateinfo shows up-to-date packages"
+    ],
+    [
+        1666236,
+        "dnf(8) does not document module provides subcommand"
+    ],
+    [
+        1728894,
+        "dnf repolist should be very fast"
+    ],
+    [
+        1727137,
+        "dnf download ignores destdir argument for some packages"
+    ],
+    [
+        1742926,
+        "search yields duplicate entries"
+    ],
+    [
+        1761137,
+        "Conflicting request while trying to install xfce-desktop-environment in Fedora 30"
+    ],
+    [
+        1706382,
+        "Group subcommand should support listing IDs"
+    ],
+    [
+        1761518,
+        "dnf.conf.Conf strict option is not honored"
+    ],
+    [
+        1752249,
+        "Revert skip_if_unavailable default back to true"
+    ],
+    [
+        1760937,
+        "dnf-yum in F30 is now higher versioned than F31+ yum's \"Obsoletes\" (affects upgrades)"
+    ],
+    [
+        1713055,
+        "dnf repolist should not update metadata or anything else"
+    ],
+    [
+        1724779,
+        "Incorrect logging of post-transaction scripts"
+    ],
+    [
+        1745170,
+        "dnf ignores repo expiration limit set by metadata-expire in /etc/dnf/dnf.conf, updates repo data unless -C added"
+    ],
+    [
+        1750528,
+        "\"yum updateinfo list cves\" does not list cves"
+    ],
+    [
+        1696204,
+        "dnf should enable parent-required-modules if user specify exact module version to install. Or print missing installed modules."
+    ],
+    [
+        1709563,
+        "yum operations on disabled appstreams should have more targeted error messages"
+    ],
+    [
+        1721091,
+        "yum doesn't read config file via http any more"
+    ],
+    [
+        1769788,
+        "dnf autoremove tries to remove kernel"
+    ],
+    [
+        1706386,
+        "[RFE] Discoverable man page names for DNF plugins"
+    ],
+    [
+        1750620,
+        "dnf check-update not honouring versionlock"
+    ],
+    [
+        1713627,
+        "dnf exits with \"Error: Failed to synchronize cache for repo 'xxx'\" without further details"
+    ],
+    [
+        1672618,
+        "Upgrading obsoleted package doesn't keep reason"
+    ],
+    [
+        1754609,
+        "Modify default dnf-automatic unit timers"
+    ],
+    [
+        1691430,
+        "dnf.exceptions.Error: Incorrect or unknown \"arch\": armv7hcnl"
+    ],
+    [
+        1773483,
+        "The dnf shell will fail to load multiple transactions when using locally downloaded packages."
+    ],
+    [
+        1758447,
+        "dnf module disable <module:stream> disables all streams"
+    ],
+    [
+        1748841,
+        "dnf: Bad id for repo when dnf variables are used inside repoid field of repo file"
+    ],
+    [
+        1679008,
+        "no auto completion with dnf"
+    ],
+    [
+        1680482,
+        "dnf update alias from man page doesn't work"
+    ],
+    [
+        1680566,
+        "cannot disable an alias"
+    ],
+    [
+        1784148,
+        "dnf deplist is not returning linux-firmware dependency"
+    ],
+    [
+        1680488,
+        "dnf alias infinite recursion processing"
+    ],
+    [
+        1759847,
+        "command `dnf downgrade pkg` emits Error: No packages marked for downgrade"
+    ],
+    [
+        1773436,
+        "dnf update no longer sorts the list of rpms being updated."
+    ],
+    [
+        1783041,
+        "dnf seems to ignore retries and skip_if_unavailable when reading repo cache"
+    ],
+    [
+        1680489,
+        "dnf alias does not define order of alias config files"
+    ],
+    [
+        1781769,
+        "Dnf does not correctly detect the latest version of the module stream"
+    ],
+    [
+        1798475,
+        "[RHEL8/Bug] dnf-makecache timer not on timers.target"
+    ],
+    [
+        1788212,
+        "Packages installed via DNF Python api are not logged to /var/log/dnf.rpm.log or /var/log/dnf.log"
+    ],
+    [
+        1677774,
+        "dnf aborts trying to remove some packages"
+    ],
+    [
+        1786316,
+        "dnf history command output is trimmed because of hardcoded 79 cols limit"
+    ],
+    [
+        1790967,
+        "Misleading Error message when trying to install module without default stream and profile: \"missing groups or modules: <module-name>\""
+    ],
+    [
+        1774617,
+        "mpv reported as package to be installed and skipped at the same time"
+    ],
+    [
+        1534123,
+        "repoquery: --whatrequires is broken with rich deps"
+    ],
+    [
+        1790262,
+        "dnf repoquery  --whatprovides does not support multi paremeters"
+    ],
+    [
+        1788154,
+        "Adding a trailing comma to excludes option causes all items listed for exclusion to be ignored."
+    ],
+    [
+        1814192,
+        "\"Skipping packages with conflicts\" should not be green"
+    ],
+    [
+        1809600,
+        "Tracebacks in transaction callbacks"
+    ],
+    [
+        1565614,
+        "[RFE] BASH autocompletion for 'dnf module'"
+    ],
+    [
+        1812682,
+        "\"dnf -d 6 repolist\" fails with AttributeError: 'NoneType' object has no attribute 'query'"
+    ],
+    [
+        1750745,
+        "dnf repoquery --unsatisfied: Problem: The operation would result in removing the following protected packages"
+    ],
+    [
+        1813460,
+        "Incorrect information about \"includepkgs\" in the yum2dnf man page"
+    ],
+    [
+        1543449,
+        "'dnf check --dependencies' incorrectly reports missing requires"
+    ],
+    [
+        1800342,
+        "dnf download and list do not respect repo priority"
+    ],
+    [
+        1812693,
+        "DNF doesn't use new translations coming from Weblate"
+    ],
+    [
+        1339617,
+        "[RFE] api for handling of gpg signature check and fetching keys"
+    ],
+    [
+        1801092,
+        "[RFE]  getting a list of all CVE availble for the system with their respective release date ."
+    ],
+    [
+        1727882,
+        "yum-config-manager cannot update repos on RHEL8"
+    ],
+    [
+        1773679,
+        "add option to include comments when running DNF/YUM transaction"
+    ],
+    [
+        1793298,
+        "dnf-automatic upgrade packages that does not have the signing key accepted"
+    ],
+    [
+        1788182,
+        "[abrt] DNF raises RuntimeError when passing invalid values to `--repofrompath`"
+    ],
+    [
+        1811802,
+        "[RFE] Sort alphabetically yum/dnf results as in RHEL7"
+    ],
+    [
+        1813244,
+        "gpgkey_dns_verification=True does not handle"
+    ],
+    [
+        1786335,
+        "dnf history command output is trimmed because of hardcoded 79 cols limit"
+    ],
+    [
+        1698145,
+        "dnf protects certain packages in container, when it should not"
+    ],
+    [
+        1848161,
+        "Custom DNF variables which worked in CentOS 8.1.1911 are broken in 8.2.2004"
+    ],
+    [
+        1846692,
+        "dnf should offer a 'history list' in reverse order"
+    ],
+    [
+        1857029,
+        "dnf-makecache.timer make my network bandwidth higher than my prediction"
+    ],
+    [
+        1853349,
+        "Cannot install package from local repository when there is encoded character in path"
+    ],
+    [
+        1848615,
+        "dnf numeric variable substitutions are undocumented"
+    ],
+    [
+        1845800,
+        "History info tracebacks when group is upgraded/downgraded"
+    ],
+    [
+        1872586,
+        "Environment upgrade fails when one of its groups is removed"
+    ],
+    [
+        1839951,
+        "shorter aliases for popular options (eg dnf i == dnf install)"
+    ],
+    [
+        1843280,
+        "Discrepancies in permission related problems not/reporting"
+    ],
+    [
+        1862739,
+        "dnf-automatic command_email example will not work"
+    ],
+    [
+        1816308,
+        "dnf-automatic.timer runs before the computer can connect to the internet"
+    ],
+    [
+        1802074,
+        "Excessive and non configurable logging in /var/log/dnf.log"
+    ],
+    [
+        1858491,
+        "`dnf list-sec` output is the same as `dnf list-updateinfo`"
+    ],
+    [
+        1816573,
+        "[RHEL8/RFE] dnf logrotation experience differs from RHEL7 (yum)"
+    ],
+    [
+        1876561,
+        "dnf python API does not provide a package vendor (as yum API does)"
+    ],
+    [
+        1788371,
+        "[Feature Request] Package vendor stickiness as available in Zypper"
+    ],
+    [
+        1894344,
+        "Permissions in /etc/logrotate.d/dnf do not match the rpm permissions"
+    ],
+    [
+        1898548,
+        "\"dnf install @perl-App-cpanminus:1.7044/common\" fails on installing a source package"
+    ],
+    [
+        1879168,
+        "dnf.package.Package.reponame is always \"@System\""
+    ],
+    [
+        1898968,
+        "Listing an installed package from a specific repository not operational"
+    ],
+    [
+        1657123,
+        "Cannot undo a group install or remove"
+    ],
+    [
+        1809639,
+        "Can't undo a transaction that installed a package group"
+    ],
+    [
+        1913418,
+        "dnf API glob filter does not support brace expansion"
+    ],
+    [
+        1865803,
+        "[RFE] allow dnf to run with solv* files only"
+    ],
+    [
+        1904490,
+        "Backtrace when performing \"yum module remove --all perl:common\""
+    ],
+    [
+        1847340,
+        "RPM scriptlet output is not logged to /var/log/dnf.rpm.log when installed via DNF Python api"
+    ],
+    [
+        1814831,
+        "dnf error when enabling a module with multiple streams is unclear"
+    ],
+    [
+        1895059,
+        "reposync -m --downloadcomps does not download a comps.xml file"
+    ],
+    [
+        1855158,
+        "Packages installed / removed via DNF Python api are not logged to /var/log/dnf.log"
+    ],
+    [
+        1873146,
+        "package.remote_location() tracebacks for @commandline package"
+    ],
+    [
+        1809565,
+        "Can't undo a group operation"
+    ],
+    [
+        1876606,
+        "dnf python API does not provide an rpm header of a package (as yum API does)"
     ]
 ]

@@ -55,6 +55,7 @@ import dnf.cli.commands.deplist
 import dnf.cli.commands.distrosync
 import dnf.cli.commands.downgrade
 import dnf.cli.commands.group
+import dnf.cli.commands.history
 import dnf.cli.commands.install
 import dnf.cli.commands.makecache
 import dnf.cli.commands.mark
@@ -165,14 +166,16 @@ class BaseCli(dnf.Base):
         :return: history database transaction ID or None
         """
         if dnf.base.WITH_MODULES:
-            switchedModules = dict(self._moduleContainer.getSwitchedStreams())
-            if switchedModules:
-                report_module_switch(switchedModules)
-                msg = _("It is not possible to switch enabled streams of a module.\n"
-                        "It is recommended to remove all installed content from the module, and "
-                        "reset the module using 'dnf module reset <module_name>' command. After "
-                        "you reset the module, you can install the other stream.")
-                raise dnf.exceptions.Error(msg)
+            if not self.conf.module_stream_switch:
+                switchedModules = dict(self._moduleContainer.getSwitchedStreams())
+                if switchedModules:
+                    report_module_switch(switchedModules)
+                    msg = _("It is not possible to switch enabled streams of a module.\n"
+                            "It is recommended to remove all installed content from the module, and "
+                            "reset the module using '{prog} module reset <module_name>' command. After "
+                            "you reset the module, you can install the other stream.").format(
+                        prog=dnf.util.MAIN_PROG)
+                    raise dnf.exceptions.Error(msg)
 
         trans = self.transaction
         pkg_str = self.output.list_transaction(trans)
@@ -205,10 +208,11 @@ class BaseCli(dnf.Base):
                 (self._history and (self._history.group or self._history.env)):
             # confirm with user
             if self.conf.downloadonly:
-                logger.info(_("DNF will only download packages for the transaction."))
+                logger.info(_("{prog} will only download packages for the transaction.").format(
+                    prog=dnf.util.MAIN_PROG_UPPER))
             elif 'test' in self.conf.tsflags:
-                logger.info(_("DNF will only download packages, install gpg keys, and check the "
-                              "transaction."))
+                logger.info(_("{prog} will only download packages, install gpg keys, and check the "
+                              "transaction.").format(prog=dnf.util.MAIN_PROG_UPPER))
             if self._promptWanted():
                 if self.conf.assumeno or not self.output.userconfirm():
                     raise CliError(_("Operation aborted."))
@@ -248,8 +252,12 @@ class BaseCli(dnf.Base):
             trans = None
 
         if trans:
-            msg = self.output.post_transaction_output(trans)
-            logger.info(msg)
+            # the post transaction summary is already written to log during
+            # Base.do_transaction() so here only print the messages to the
+            # user arranged in columns
+            print()
+            print('\n'.join(self.output.post_transaction_output(trans)))
+            print()
             for tsi in trans:
                 if tsi.state == libdnf.transaction.TransactionItemState_ERROR:
                     raise dnf.exceptions.Error(_('Transaction failed'))
@@ -399,21 +407,19 @@ class BaseCli(dnf.Base):
         :param file_pkgs: a list of pkg objects from local files
         """
 
-        oldcount = self._goal.req_length()
+        result = False
         for pkg in file_pkgs:
             try:
                 self.package_downgrade(pkg, strict=strict)
-                continue # it was something on disk and it ended in rpm
-                         # no matter what we don't go looking at repos
+                result = True
             except dnf.exceptions.MarkingError as e:
                 logger.info(_('No match for argument: %s'),
                             self.output.term.bold(pkg.location))
-                # it was something on disk and it ended in rpm
-                # no matter what we don't go looking at repos
 
         for arg in specs:
             try:
                 self.downgrade_to(arg, strict=strict)
+                result = True
             except dnf.exceptions.PackageNotFoundError as err:
                 msg = _('No package %s available.')
                 logger.info(msg, self.output.term.bold(arg))
@@ -422,8 +428,8 @@ class BaseCli(dnf.Base):
                             self.output.term.bold(err.pkg_spec))
             except dnf.exceptions.MarkingError:
                 assert False
-        cnt = self._goal.req_length() - oldcount
-        if cnt <= 0:
+
+        if not result:
             raise dnf.exceptions.Error(_('No packages marked for downgrade.'))
 
     def output_packages(self, basecmd, pkgnarrow='all', patterns=(), reponame=None):
@@ -500,7 +506,7 @@ class BaseCli(dnf.Base):
             # XXX put this into the ListCommand at some point
             if len(ypl.obsoletes) > 0 and basecmd == 'list':
             # if we've looked up obsolete lists and it's a list request
-                rop = [0, '']
+                rop = len(ypl.obsoletes)
                 print(_('Obsoleting Packages'))
                 for obtup in sorted(ypl.obsoletesTuples,
                                     key=operator.itemgetter(0)):
@@ -512,8 +518,7 @@ class BaseCli(dnf.Base):
             rrap = self.output.listPkgs(ypl.recent, _('Recently Added Packages'),
                                  basecmd, columns=columns)
             if len(patterns) and \
-                rrap[0] and rop[0] and rup[0] and rep[0] and rap[0] and \
-                raep[0] and rip[0]:
+                    rrap == 0 and rop == 0 and rup == 0 and rep == 0 and rap == 0 and raep == 0 and rip == 0:
                 raise dnf.exceptions.Error(_('No matching Packages to list'))
 
     def returnPkgLists(self, pkgnarrow='all', patterns=None,
@@ -603,109 +608,6 @@ class BaseCli(dnf.Base):
             return False
         return True
 
-    def _history_get_transactions(self, extcmds):
-        if not extcmds:
-            logger.critical(_('No transaction ID given'))
-            return None
-
-        old = self.history.old(extcmds)
-        if not old:
-            logger.critical(_('Not found given transaction ID'))
-            return None
-        return old
-
-    def history_get_transaction(self, extcmds):
-        old = self._history_get_transactions(extcmds)
-        if old is None:
-            return None
-        if len(old) > 1:
-            logger.critical(_('Found more than one transaction ID!'))
-        return old[0]
-
-    def history_rollback_transaction(self, extcmd):
-        """Rollback given transaction."""
-        old = self.history_get_transaction((extcmd,))
-        if old is None:
-            return 1, ['Failed history rollback, no transaction']
-        last = self.history.last()
-        if last is None:
-            return 1, ['Failed history rollback, no last?']
-        if old.tid == last.tid:
-            return 0, ['Rollback to current, nothing to do']
-
-        mobj = None
-        for trans in self.history.old(list(range(old.tid + 1, last.tid + 1))):
-            if trans.altered_lt_rpmdb:
-                logger.warning(_('Transaction history is incomplete, before %u.'), trans.tid)
-            elif trans.altered_gt_rpmdb:
-                logger.warning(_('Transaction history is incomplete, after %u.'), trans.tid)
-
-            if mobj is None:
-                mobj = dnf.db.history.MergedTransactionWrapper(trans)
-            else:
-                mobj.merge(trans)
-
-        tm = dnf.util.normalize_time(old.beg_timestamp)
-        print("Rollback to transaction %u, from %s" % (old.tid, tm))
-        print(self.output.fmtKeyValFill("  Undoing the following transactions: ",
-                                        ", ".join((str(x) for x in mobj.tids()))))
-        self.output.historyInfoCmdPkgsAltered(mobj)  # :todo
-
-#        history = dnf.history.open_history(self.history)  # :todo
-#        m = libdnf.transaction.MergedTransaction()
-
-#        return
-
-#        operations = dnf.history.NEVRAOperations()
-#        for id_ in range(old.tid + 1, last.tid + 1):
-#            operations += history.transaction_nevra_ops(id_)
-
-        try:
-            self._history_undo_operations(mobj, old.tid + 1, True, strict=self.conf.strict)
-        except dnf.exceptions.PackagesNotInstalledError as err:
-            raise
-            logger.info(_('No package %s installed.'),
-                        self.output.term.bold(ucd(err.pkg_spec)))
-            return 1, ['A transaction cannot be undone']
-        except dnf.exceptions.PackagesNotAvailableError as err:
-            raise
-            logger.info(_('No package %s available.'),
-                        self.output.term.bold(ucd(err.pkg_spec)))
-            return 1, ['A transaction cannot be undone']
-        except dnf.exceptions.MarkingError:
-            raise
-            assert False
-        else:
-            return 2, ["Rollback to transaction %u" % (old.tid,)]
-
-    def history_undo_transaction(self, extcmd):
-        """Undo given transaction."""
-        old = self.history_get_transaction((extcmd,))
-        if old is None:
-            return 1, ['Failed history undo']
-
-        tm = dnf.util.normalize_time(old.beg_timestamp)
-        msg = _("Undoing transaction {}, from {}").format(old.tid, ucd(tm))
-        logger.info(msg)
-        self.output.historyInfoCmdPkgsAltered(old)  # :todo
-
-
-        mobj = dnf.db.history.MergedTransactionWrapper(old)
-
-        try:
-            self._history_undo_operations(mobj, old.tid, strict=self.conf.strict)
-        except dnf.exceptions.PackagesNotInstalledError as err:
-            logger.info(_('No package %s installed.'),
-                        self.output.term.bold(ucd(err.pkg_spec)))
-            return 1, ['An operation cannot be undone']
-        except dnf.exceptions.PackagesNotAvailableError as err:
-            logger.info(_('No package %s available.'),
-                        self.output.term.bold(ucd(err.pkg_spec)))
-            return 1, ['An operation cannot be undone']
-        except dnf.exceptions.MarkingError:
-            raise
-        else:
-            return 2, ["Undoing transaction %u" % (old.tid,)]
 
 class Cli(object):
     def __init__(self, base):
@@ -722,6 +624,7 @@ class Cli(object):
         self.register_command(dnf.cli.commands.deplist.DeplistCommand)
         self.register_command(dnf.cli.commands.downgrade.DowngradeCommand)
         self.register_command(dnf.cli.commands.group.GroupCommand)
+        self.register_command(dnf.cli.commands.history.HistoryCommand)
         self.register_command(dnf.cli.commands.install.InstallCommand)
         self.register_command(dnf.cli.commands.makecache.MakeCacheCommand)
         self.register_command(dnf.cli.commands.mark.MarkCommand)
@@ -742,7 +645,6 @@ class Cli(object):
         self.register_command(dnf.cli.commands.CheckUpdateCommand)
         self.register_command(dnf.cli.commands.RepoPkgsCommand)
         self.register_command(dnf.cli.commands.HelpCommand)
-        self.register_command(dnf.cli.commands.HistoryCommand)
 
     def _configure_repos(self, opts):
         self.base.read_all_repos(opts)
@@ -781,7 +683,10 @@ class Cli(object):
         for repo in notmatch:
             logger.warning(_("No repository match: %s"), repo)
 
-        for rid in self.base._repo_persistor.get_expired_repos():
+        expired_repos = self.base._repo_persistor.get_expired_repos()
+        if expired_repos is None:
+            expired_repos = self.base.repos.keys()
+        for rid in expired_repos:
             repo = self.base.repos.get(rid)
             if repo:
                 repo._repo.expire()
@@ -793,7 +698,8 @@ class Cli(object):
         self.base.repos.all()._set_key_import(key_import)
 
     def _log_essentials(self):
-        logger.debug('DNF version: %s', dnf.const.VERSION)
+        logger.debug('{prog} version: %s'.format(prog=dnf.util.MAIN_PROG_UPPER),
+                     dnf.const.VERSION)
         logger.log(dnf.logging.DDEBUG,
                         'Command: %s', self.cmdstring)
         logger.log(dnf.logging.DDEBUG,
@@ -808,7 +714,9 @@ class Cli(object):
 
         if demands.root_user:
             if not dnf.util.am_i_root():
-                raise dnf.exceptions.Error(_('This command has to be run under the root user.'))
+                raise dnf.exceptions.Error(
+                    _('This command has to be run with superuser privileges '
+                        '(under the root user on most systems).'))
 
         if demands.changelogs:
             for repo in repos.iter_enabled():
@@ -840,11 +748,13 @@ class Cli(object):
             logger.critical(_('No such command: %s. Please use %s --help'),
                             basecmd, sys.argv[0])
             if self.base.conf.plugins:
-                logger.critical(_("It could be a DNF plugin command, "
-                            "try: \"dnf install 'dnf-command(%s)'\""), basecmd)
+                logger.critical(_("It could be a {PROG} plugin command, "
+                                  "try: \"{prog} install 'dnf-command(%s)'\"").format(
+                    prog=dnf.util.MAIN_PROG, PROG=dnf.util.MAIN_PROG_UPPER), basecmd)
             else:
-                logger.critical(_("It could be a DNF plugin command, "
-                            "but loading of plugins is currently disabled."))
+                logger.critical(_("It could be a {prog} plugin command, "
+                                  "but loading of plugins is currently disabled.").format(
+                    prog=dnf.util.MAIN_PROG_UPPER))
             raise CliError
         self.command = command_cls(self)
 
@@ -998,6 +908,9 @@ class Cli(object):
         timer = dnf.logging.Timer('config')
         conf = self.base.conf
 
+        # replace remote config path with downloaded file
+        conf._check_remote_file('config_file_path')
+
         # search config file inside the installroot first
         conf._search_inside_installroot('config_file_path')
 
@@ -1011,11 +924,13 @@ class Cli(object):
         conf.read(priority=dnf.conf.PRIO_MAINCONFIG)
 
         # search reposdir file inside the installroot first
-        conf._search_inside_installroot('reposdir')
-
-        # cachedir, logs, releasever, and gpgkey are taken from or stored in installroot
+        from_root = conf._search_inside_installroot('reposdir')
+        # Update vars from same root like repos were taken
+        if conf._get_priority('varsdir') == dnf.conf.PRIO_COMMANDLINE:
+            from_root = "/"
         subst = conf.substitutions
-        subst.update_from_etc(conf.installroot)
+        subst.update_from_etc(from_root, varsdir=conf._get_value('varsdir'))
+        # cachedir, logs, releasever, and gpgkey are taken from or stored in installroot
         if releasever is None and conf.releasever is None:
             releasever = dnf.rpm.detect_releasever(conf.installroot)
         elif releasever == '/':

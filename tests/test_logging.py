@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 
 import logging
 import collections
+import gzip
 import operator
 import os
 import tempfile
@@ -64,6 +65,7 @@ class TestLogging(tests.support.TestCase):
         self.logdir = tempfile.mkdtemp(prefix="dnf-logtest-")
         self.log_size = 1024 * 1024
         self.log_rotate = 4
+        self.log_compress = False
         self.logging = dnf.logging.Logging()
 
     def tearDown(self):
@@ -88,7 +90,8 @@ class TestLogging(tests.support.TestCase):
         logger = logging.getLogger("dnf")
         with tests.support.patch_std_streams() as (stdout, stderr):
             self.logging._setup(
-                logging.INFO, logging.ERROR, self.logdir, self.log_size, self.log_rotate)
+                logging.INFO, logging.ERROR, dnf.logging.TRACE,
+                self.logdir, self.log_size, self.log_rotate, self.log_compress)
             self._bench(logger)
         self.assertEqual("i\n", stdout.getvalue())
         self.assertEqual("e\n", stderr.getvalue())
@@ -97,7 +100,8 @@ class TestLogging(tests.support.TestCase):
         logger = logging.getLogger("dnf")
         with tests.support.patch_std_streams() as (stdout, stderr):
             self.logging._setup(
-                logging.DEBUG, logging.WARNING, self.logdir, self.log_size, self.log_rotate)
+                logging.DEBUG, logging.WARNING, dnf.logging.TRACE,
+                self.logdir, self.log_size, self.log_rotate, self.log_compress)
             self._bench(logger)
         self.assertEqual("d\ni\n", stdout.getvalue())
         self.assertEqual("w\ne\n", stderr.getvalue())
@@ -105,29 +109,33 @@ class TestLogging(tests.support.TestCase):
     @mock.patch('dnf.logging.Logging._setup')
     def test_setup_from_dnf_conf(self, setup_m):
         conf = mock.Mock(
-            debuglevel=2, errorlevel=3, logdir=self.logdir,
-            log_size=self.log_size, log_rotate=self.log_rotate)
+            debuglevel=2, errorlevel=3, logfilelevel=2, logdir=self.logdir,
+            log_size=self.log_size, log_rotate=self.log_rotate, log_compress=self.log_compress)
         self.logging._setup_from_dnf_conf(conf)
         self.assertEqual(setup_m.call_args, mock.call(dnf.logging.INFO,
                                                       dnf.logging.WARNING,
+                                                      dnf.logging.INFO,
                                                       self.logdir,
                                                       self.log_size,
-                                                      self.log_rotate))
+                                                      self.log_rotate,
+                                                      self.log_compress))
         conf = mock.Mock(
-            debuglevel=6, errorlevel=6, logdir=self.logdir,
-            log_size=self.log_size, log_rotate=self.log_rotate)
+            debuglevel=6, errorlevel=6, logfilelevel=6, logdir=self.logdir,
+            log_size=self.log_size, log_rotate=self.log_rotate, log_compress=self.log_compress)
         self.logging._setup_from_dnf_conf(conf)
         self.assertEqual(setup_m.call_args, mock.call(dnf.logging.DEBUG,
                                                       dnf.logging.WARNING,
+                                                      dnf.logging.DEBUG,
                                                       self.logdir,
                                                       self.log_size,
-                                                      self.log_rotate))
+                                                      self.log_rotate,
+                                                      self.log_compress))
 
     def test_file_logging(self):
         # log nothing to the console:
         self.logging._setup(
-            dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL,
-            self.logdir, self.log_size, self.log_rotate)
+            dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL, dnf.logging.TRACE,
+            self.logdir, self.log_size, self.log_rotate, self.log_compress)
         logger = logging.getLogger("dnf")
         with tests.support.patch_std_streams() as (stdout, stderr):
             logger.info("i")
@@ -145,8 +153,8 @@ class TestLogging(tests.support.TestCase):
     def test_rpm_logging(self):
         # log everything to the console:
         self.logging._setup(
-            dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
-            self.logdir, self.log_size, self.log_rotate)
+            dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG, dnf.logging.TRACE,
+            self.logdir, self.log_size, self.log_rotate, self.log_compress)
         logger = logging.getLogger("dnf.rpm")
         with tests.support.patch_std_streams() as (stdout, stderr):
             logger.info('rpm transaction happens.')
@@ -167,12 +175,34 @@ class TestLogging(tests.support.TestCase):
         logger = logging.getLogger("dnf")
         self.assertLength(logger.handlers, 0)
         self.logging._setup(
-            dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
-            self.logdir, self.log_size, self.log_rotate)
+            dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG, dnf.logging.TRACE,
+            self.logdir, self.log_size, self.log_rotate, self.log_compress)
         cnt = len(logger.handlers)
         self.assertGreater(cnt, 0)
         self.logging._setup(
             dnf.logging.SUBDEBUG, dnf.logging.SUBDEBUG,
-            self.logdir, self.log_size, self.log_rotate)
+            self.logdir, self.log_size, self.log_rotate, self.log_compress)
         # no new handlers
         self.assertEqual(cnt, len(logger.handlers))
+
+    def test_log_compression(self):
+        # log nothing to the console and set log_compress=True and log_size to minimal size, so it's always rotated:
+        self.logging._setup(
+            dnf.logging.SUPERCRITICAL, dnf.logging.SUPERCRITICAL, dnf.logging.TRACE,
+            self.logdir, log_size=1, log_rotate=self.log_rotate, log_compress=True)
+        logger = logging.getLogger("dnf")
+        with tests.support.patch_std_streams() as (stdout, stderr):
+            logger.info("i")
+            logger.critical("c")
+        logfile = os.path.join(self.logdir, "dnf.log")
+        self.assertFile(logfile)
+        with open(logfile) as f:
+            msgs = map(operator.attrgetter("message"),
+                       map(_split_logfile_entry, f.readlines()))
+        self.assertSequenceEqual(list(msgs), ['c'])
+        logfile_rotated = os.path.join(self.logdir, "dnf.log.1.gz")
+        self.assertFile(logfile_rotated)
+        with gzip.open(logfile_rotated, 'rt') as f:
+            msgs = map(operator.attrgetter("message"),
+                       map(_split_logfile_entry, f.readlines()))
+        self.assertSequenceEqual(list(msgs), ['i'])

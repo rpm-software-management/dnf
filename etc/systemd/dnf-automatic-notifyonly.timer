@@ -5,10 +5,9 @@ ConditionPathExists=!/run/ostree-booted
 Wants=network-online.target
 
 [Timer]
-OnBootSec=1h
-OnUnitInactiveSec=1d
-RandomizedDelaySec=5m
-AccuracySec=1s
+OnCalendar=*-*-* 6:00
+RandomizedDelaySec=60m
+Persistent=true
 
 [Install]
-WantedBy=multi-user.target
+WantedBy=timers.target

@@ -53,18 +53,12 @@ class MatchCounter(dict):
             key = match[0]
             needle = match[1]
             haystack = getattr(pkg, key)
-            coef = 2 if haystack == needle else 1
-            return coef * WEIGHTS[key]
+            if key == "name" and haystack == needle:
+                # if package matches exactly by name, increase weight
+                return 2 * WEIGHTS[key]
+            return WEIGHTS[key]
 
         return sum(map(weight, matches))
-
-    @staticmethod
-    def _eval_distance(pkg, matches):
-        dist = 0
-        for (key, needle) in matches:
-            haystack = getattr(pkg, key)
-            dist += len(haystack) - len(needle)
-        return dist
 
     def _key_func(self):
         """Get the key function used for sorting matches.
@@ -78,11 +72,13 @@ class MatchCounter(dict):
         pkg -> (weights_sum, canonized_needles_set, -distance)
 
         """
-        max_length = self._max_needles()
         def get_key(pkg):
-            return (self._eval_weights(pkg, self[pkg]),
-                    _canonize_string_set(self.matched_needles(pkg), max_length),
-                    -self._eval_distance(pkg, self[pkg]))
+            return (
+                # use negative value to make sure packages with the highest weight come first
+                - self._eval_weights(pkg, self[pkg]),
+                # then order packages alphabetically
+                pkg.name,
+            )
         return get_key
 
     def _max_needles(self):
@@ -115,7 +111,7 @@ class MatchCounter(dict):
 
     def sorted(self, reverse=False, limit_to=None):
         keys = limit_to if limit_to else self.keys()
-        return sorted(keys, key=self._key_func(), reverse=reverse)
+        return sorted(keys, key=self._key_func())
 
     def total(self):
         return reduce(lambda total, pkg: total + len(self[pkg]), self, 0)

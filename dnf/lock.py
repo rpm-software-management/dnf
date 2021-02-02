@@ -40,7 +40,7 @@ def _fit_lock_dir(dir_):
         # for regular users the best we currently do is not to clash with
         # another DNF process of the same user. Since dir_ is quite definitely
         # not writable for us, yet significant, use its hash:
-        hexdir = hashlib.md5(dir_.encode('utf-8')).hexdigest()
+        hexdir = hashlib.sha1(dir_.encode('utf-8')).hexdigest()
         dir_ = os.path.join(misc.getCacheDir(), 'locks', hexdir)
     return dir_
 
@@ -98,7 +98,7 @@ class ProcessLock(object):
                 old_pid = int(old_pid)
             except ValueError:
                 msg = _('Malformed lock file found: %s.\n'
-                        'Ensure no other dnf process is running and '
+                        'Ensure no other dnf/yum process is running and '
                         'remove the lock file manually or run '
                         'systemd-tmpfiles --remove dnf.conf.') % (self.target)
                 raise LockError(msg)

@@ -87,11 +87,11 @@ following will work::
 
     dnf -x '*flask*' list installed 'python-f*'
 
-==========================================================
- YUM's conf directive ``includepkgs`` is just ``include``
-==========================================================
+=======================================
+The ``include`` option has been removed
+=======================================
 
-``include`` directive name of [main] and Repo configuration is a more logical and better named counterpart of ``exclude`` in DNF.
+Inclusion of other configuration files in the main configuration file is no longer supported.
 
 ====================================================
 ``dnf provides /bin/<file>`` is not fully supported
@@ -117,14 +117,15 @@ Also see related Fedora bugzillas `982947
 
 .. _skip_if_unavailable_default:
 
-============================================
- ``skip_if_unavailable`` enabled by default
-============================================
+====================================================
+ ``skip_if_unavailable`` could be enabled by default
+====================================================
 
-The important system repos should never be down and we see the third-party repos
-down often enough to warrant this change. Note that without this setting and
-without an explicit ``skip_if_unavailable=True`` in the relevant repo .ini file
-YUM immediately stops on a repo error, confusing and bothering the user.
+In some distributions DNF is shipped with ``skip_if_unavailable=True`` in
+the :ref:`DNF configuration file <conf_ref-label>`. The reason for the change
+is that third-party repositories can often be unavailable. Without this setting
+in the relevant repository configuration file YUM immediately stops on a
+repository synchronization error, confusing and bothering the user.
 
 See the related `Fedora bug 984483 <https://bugzilla.redhat.com/show_bug.cgi?id=984483>`_.
 
@@ -161,17 +162,6 @@ the related `Fedora bug 948788
 =================================
 
 Unsupported to simplify the configuration.
-
-.. _group_package_types_dropped:
-
-=================================
- ``group_package_types`` dropped
-=================================
-
-Done to simplify the configuration. Users will typically want to decide what
-packages to install per-group and not via a global setting::
-
-    dnf group install with-optional Editors
 
 .. _upgrade_requirements_on_install_dropped:
 
@@ -329,34 +319,34 @@ Following sub-commands were removed:
  Changes in DNF plugins compared to YUM plugins
 ###############################################
 
-======================================  ================================================================  ===================================
-Original YUM tool                       DNF command/option                                                Package
---------------------------------------  ----------------------------------------------------------------  -----------------------------------
-``yum check``                           :ref:`dnf repoquery <repoquery_command-label>` ``--unsatisfied``  ``dnf``
-``yum-langpacks``                                                                                         ``dnf``
-``yum-plugin-aliases``                  :ref:`dnf alias <alias_command-label>`                            ``dnf``
-``yum-plugin-auto-update-debug-info``   option in ``debuginfo-install.conf``                              ``dnf-plugins-core``
-``yum-plugin-changelog``                                                                                  ``dnf-plugins-core``
-``yum-plugin-copr``                     `dnf copr`_                                                       ``dnf-plugins-core``
-``yum-plugin-fastestmirror``            ``fastestmirror`` option in `dnf.conf`_                           ``dnf``
-``yum-plugin-fs-snapshot``                                                                                ``dnf-plugins-extras-snapper``
-``yum-plugin-local``                                                                                      ``dnf-plugins-core``
-``yum-plugin-merge-conf``                                                                                 ``dnf-plugins-extras-rpmconf``
-``yum-plugin-priorities``               ``priority`` option in `dnf.conf`_                                ``dnf``
-``yum-plugin-remove-with-leaves``       :ref:`dnf autoremove <autoremove_command-label>`                  ``dnf``
-``yum-plugin-show-leaves``                                                                                ``dnf-plugins-core``
-``yum-plugin-tmprepo``                  ``--repofrompath`` option                                         ``dnf``
-``yum-plugin-tsflags``                  ``tsflags``  option in `dnf.conf`_                                ``dnf``
-``yum-plugin-versionlock``                                                                                ``python3-dnf-plugin-versionlock``
-``yum-rhn-plugin``                                                                                        ``dnf-plugin-spacewalk``
-======================================  ================================================================  ===================================
+=======================================  ================================================================  ===================================
+Original YUM tool                        DNF command/option                                                Package
+---------------------------------------  ----------------------------------------------------------------  -----------------------------------
+``yum check``                            :ref:`dnf repoquery <repoquery_command-label>` ``--unsatisfied``  ``dnf``
+``yum-langpacks``                                                                                          ``dnf``
+``yum-plugin-aliases``                   :ref:`dnf alias <alias_command-label>`                            ``dnf``
+``yum-plugin-auto-update-debug-info``    option in ``debuginfo-install.conf``                              ``dnf-plugins-core``
+``yum-plugin-changelog``                                                                                   ``dnf-plugins-core``
+``yum-plugin-copr``                      `dnf copr`_                                                       ``dnf-plugins-core``
+``yum-plugin-fastestmirror``             ``fastestmirror`` option in `dnf.conf`_                           ``dnf``
+``yum-plugin-fs-snapshot``                                                                                 ``dnf-plugins-extras-snapper``
+``yum-plugin-local``                                                                                       ``dnf-plugins-core``
+``yum-plugin-merge-conf``                                                                                  ``dnf-plugins-extras-rpmconf``
+``yum-plugin-post-transaction-actions``                                                                    ``dnf-plugins-core``
+``yum-plugin-priorities``                ``priority`` option in `dnf.conf`_                                ``dnf``
+``yum-plugin-remove-with-leaves``        :ref:`dnf autoremove <autoremove_command-label>`                  ``dnf``
+``yum-plugin-show-leaves``                                                                                 ``dnf-plugins-core``
+``yum-plugin-tmprepo``                   ``--repofrompath`` option                                         ``dnf``
+``yum-plugin-tsflags``                   ``tsflags``  option in `dnf.conf`_                                ``dnf``
+``yum-plugin-versionlock``                                                                                 ``python3-dnf-plugin-versionlock``
+``yum-rhn-plugin``                                                                                         ``dnf-plugin-spacewalk``
+=======================================  ================================================================  ===================================
 
 Plugins that have not been ported yet:
 
 ``yum-plugin-filter-data``,
 ``yum-plugin-keys``,
 ``yum-plugin-list-data``,
-``yum-plugin-post-transaction-actions``,
 ``yum-plugin-protectbase``,
 ``yum-plugin-ps``,
 ``yum-plugin-puppetverify``,
@@ -397,15 +387,15 @@ Original YUM tool          New DNF command                                  Pack
 
 Detailed table for ``package-cleanup`` replacement:
 
-==================================       =====================================
-``package-cleanup --dupes``              ``dnf repoquery --duplicates``
-``package-cleanup --leaves``             ``dnf repoquery --unneeded``
-``package-cleanup --orphans``            ``dnf repoquery --extras``
-``package-cleanup --oldkernels``         ``dnf repoquery --installonly``
-``package-cleanup --problems``           ``dnf repoquery --unsatisfied``
-``package-cleanup --cleandupes``         ``dnf remove --duplicates``
-``package-cleanup --oldkernels``         ``dnf remove --oldinstallonly``
-==================================       =====================================
+==========================================       ===============================================================
+``package-cleanup --dupes``                      ``dnf repoquery --duplicates``
+``package-cleanup --leaves``                     ``dnf repoquery --unneeded``
+``package-cleanup --orphans``                    ``dnf repoquery --extras``
+``package-cleanup --problems``                   ``dnf repoquery --unsatisfied``
+``package-cleanup --cleandupes``                 ``dnf remove --duplicates``
+``package-cleanup --oldkernels``                 ``dnf remove --oldinstallonly``
+``package-cleanup --oldkernels --keep=2``        ``dnf remove $(dnf repoquery --installonly --latest-limit=-2)``
+==========================================       ===============================================================
 
 =============================
 yum-updateonboot and yum-cron
@@ -416,11 +406,11 @@ However, the similar result can be achieved by ``dnf automatic`` command (see :d
 
 You can either use the shortcut::
 
-  $ systemctl enable dnf-automatic-install.timer && systemctl start dnf-automatic-install.timer
+  $ systemctl enable --now dnf-automatic-install.timer
 
 Or set ``apply_updates`` option of ``/etc/dnf/automatic.conf`` to True and use generic timer unit::
 
-  $ systemctl enable dnf-automatic.timer && systemctl start dnf-automatic.timer
+  $ systemctl enable --now dnf-automatic.timer
 
 The timer in both cases is activated 1 hour after the system was booted up and then repetitively once every 24 hours. There is also a random delay on these timers set to 5 minutes. These values can be tweaked via ``dnf-automatic*.timer`` config files located in the ``/usr/lib/systemd/system/`` directory.
 

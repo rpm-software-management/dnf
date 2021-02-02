@@ -173,6 +173,8 @@ def rawkey2infos(key_fo):
 
 
 def retrieve(keyurl, repo=None):
+    if keyurl.startswith('http:'):
+        logger.warning(_("retrieving repo key for %s unencrypted from %s"), repo.id, keyurl)
     with dnf.util._urlopen(keyurl, repo=repo) as handle:
         keyinfos = rawkey2infos(handle)
     for keyinfo in keyinfos:

@@ -19,6 +19,367 @@
  DNF Release Notes
 ###################
 
+===================
+4.6.0 Release Notes
+===================
+
+- Log scriptlets output also for API users (RhBug:1847340)
+- Fix module remove --all when no match spec (RhBug:1904490)
+- yum.misc.decompress() to handle uncompressed files (RhBug:1895059)
+- Make an error message more informative (RhBug:1814831)
+- Add deprecation notice to help messages of deplist
+- Remove Base._history_undo_operations() as it was replaced with transaction_sr code
+- cli/output: Return number of listed packages from listPkgs()
+- Clean up history command error handling
+- [doc] Describe install with just a name and obsoletes (RhBug:1902279)
+- Add api function fill_sack_from_repos_in_cache to allow loading a repo cache with repomd and (solv file or primary xml) only (RhBug:1865803)
+- Packages installed/removed via DNF API are logged into dnf.log (RhBug:1855158)
+- Support comps groups in history redo (RhBug:1657123,1809565,1809639)
+- Support comps groups in history rollback (RhBug:1657123,1809565,1809639)
+- Support comps groups in history undo (RhBug:1657123,1809565,1809639)
+- New optional parameter for filter_modules enables following modular obsoletes based on a config option module_obsoletes
+- Add get_header() method to the Package class (RhBug:1876606)
+- Fix documentation of globs not supporting curly brackets (RhBug:1913418)
+
+- New features:
+  - Add api function fill_sack_from_repos_in_cache to allow loading a repo cache with repomd and (solv file or primary xml) only (RhBug:1865803)
+  - Packages installed/removed via DNF API are logged into dnf.log (RhBug:1855158)
+  - Support comps groups in history redo (RhBug:1657123,1809565,1809639)
+  - Support comps groups in history rollback (RhBug:1657123,1809565,1809639)
+  - Support comps groups in history undo (RhBug:1657123,1809565,1809639)
+  - New optional parameter for filter_modules enables following modular obsoletes based on a config option module_obsoletes
+  - Add get_header() method to the Package class (RhBug:1876606)
+
+- Bug fixes:
+  - Fix documentation of globs not supporting curly brackets (RhBug:1913418)
+
+Bugs fixed in 4.6.0:
+
+* :rhbug:`1657123`
+* :rhbug:`1809639`
+* :rhbug:`1913418`
+* :rhbug:`1865803`
+* :rhbug:`1904490`
+* :rhbug:`1847340`
+* :rhbug:`1814831`
+* :rhbug:`1895059`
+* :rhbug:`1855158`
+* :rhbug:`1873146`
+* :rhbug:`1809565`
+* :rhbug:`1876606`
+
+===================
+4.5.2 Release Notes
+===================
+
+- Change behaviour of Package().from_repo
+
+Bugs fixed in 4.5.2:
+
+
+===================
+4.5.1 Release Notes
+===================
+
+- Add a get_current() method to SwdbInterface
+- Add `from_repo` attribute for Package class (RhBug:1898968,1879168)
+- Correct description of Package().reponane attribute
+- Add unittest for new API
+- Make rotated log file (mode, owner, group) match previous log settings (RhBug:1894344)
+- [doc] Improve description of modular filtering
+- [doc] add documentation for from_repo
+- [doc] deprecated alias for dnf repoquery --deplist <deplist_option-label>
+
+- New features:
+  - New config option module_allow_stream_switch allows switching enabled streams
+
+Bugs fixed in 4.5.1:
+
+* :rhbug:`1894344`
+* :rhbug:`1898548`
+* :rhbug:`1879168`
+* :rhbug:`1898968`
+
+===================
+4.4.2 Release Notes
+===================
+
+- spec: Fix building with new cmake macros (backport from downstream)
+- Warn about key retrieval over http:
+- Fix --setopt=cachedir writing outside of installroot
+- Add vendor to dnf API (RhBug:1876561)
+- Add allow_vendor_change option (RhBug:1788371) (RhBug:1788371)
+
+Bugs fixed in 4.4.2:
+
+* :rhbug:`1876561`
+* :rhbug:`1788371`
+
+===================
+4.4.0 Release Notes
+===================
+
+- Handle empty comps group name (RhBug:1826198)
+- Remove dead history info code (RhBug:1845800)
+- Improve command emmitter in dnf-automatic
+- Enhance --querytags and --qf help output
+- [history] add option --reverse to history list (RhBug:1846692)
+- Add logfilelevel configuration (RhBug:1802074)
+- Don't turn off stdout/stderr logging longer than necessary (RhBug:1843280)
+- Mention the date/time that updates were applied
+- [dnf-automatic] Wait for internet connection (RhBug:1816308)
+- [doc] Enhance repo variables documentation (RhBug:1848161,1848615)
+- Add librepo logger for handling messages from librepo (RhBug:1816573)
+- [doc] Add package-name-spec to the list of possible specs
+- [doc] Do not use <package-nevr-spec>
+- [doc] Add section to explain -n, -na and -nevra suffixes
+- Add alias 'ls' for list command
+- README: Reference Fedora Weblate instead of Zanata
+- remove log_lock.pid after reboot(Rhbug:1863006)
+- comps: Raise CompsError when removing a non-existent group
+- Add methods for working with comps to RPMTransactionItemWrapper
+- Implement storing and replaying a transaction
+- Log failure to access last makecache time as warning
+- [doc] Document Substitutions class
+- Dont document removed attribute ``reports`` for get_best_selector
+- Change the debug log timestamps from UTC to local time
+
+Bugs fixed in 4.4.0:
+
+* :rhbug:`1698145`
+* :rhbug:`1848161`
+* :rhbug:`1846692`
+* :rhbug:`1857029`
+* :rhbug:`1853349`
+* :rhbug:`1848615`
+* :rhbug:`1845800`
+* :rhbug:`1872586`
+* :rhbug:`1839951`
+* :rhbug:`1843280`
+* :rhbug:`1862739`
+* :rhbug:`1816308`
+* :rhbug:`1802074`
+* :rhbug:`1858491`
+* :rhbug:`1816573`
+
+====================
+4.2.23 Release Notes
+====================
+
+- Fix behavior of install-n, autoremove-n, remove-n, repoquery-n
+- Fix behavior of localinstall and list-updateinfo aliases
+- Add updated field to verbose output of updateinfo list (RhBug: 1801092)
+- Add comment option to transaction (RhBug:1773679)
+- Add new API for handling gpg signatures (RhBug:1339617)
+- Verify GPG signatures when running dnf-automatic (RhBug:1793298)
+- Fix up Conflicts: on python-dnf-plugins-extras
+- [doc] Move yum-plugin-post-transaction-actions to dnf-plugins-core
+- Remove args "--set-enabled", "--set-disabled" from DNF (RhBug:1727882)
+- Search command is now alphabetical (RhBug:1811802)
+- Fix downloading packages with full URL as their location
+- repo: catch libdnf.error.Error in addition to RuntimeError in load() (RhBug:1788182)
+- History table to max size when redirect to file (RhBug:1786335,1786316)
+
+Bugs fixed in 4.2.23:
+
+* :rhbug:`1339617`
+* :rhbug:`1801092`
+* :rhbug:`1727882`
+* :rhbug:`1786316`
+* :rhbug:`1773679`
+* :rhbug:`1793298`
+* :rhbug:`1788182`
+* :rhbug:`1811802`
+* :rhbug:`1813244`
+* :rhbug:`1786335`
+
+====================
+4.2.21 Release Notes
+====================
+
+- Fix completion helper if solv files not in roon cache (RhBug:1714376)
+- Add bash completion for 'dnf module' (RhBug:1565614)
+- Check command no longer reports  missing %pre and %post deps (RhBug:1543449)
+- Check if arguments can be encoded in 'utf-8'
+- [doc] Remove incorrect information about includepkgs (RhBug:1813460)
+- Fix crash with "dnf -d 6 repolist" (RhBug:1812682)
+- Do not print the first empty line for repoinfo
+- Redirect logger and repo download progress when --verbose
+- Respect repo priority when listing packages (RhBug:1800342)
+- [doc] Document that list and info commands respect repo priority
+- [repoquery] Do not protect running kernel for --unsafisfied (RhBug:1750745)
+- Remove misleading green color from the "broken dependencies" lines (RhBug:1814192)
+- [doc] Document color options
+
+Bugs fixed in 4.2.21:
+
+* :rhbug:`1814192`
+* :rhbug:`1809600`
+* :rhbug:`1565614`
+* :rhbug:`1812682`
+* :rhbug:`1750745`
+* :rhbug:`1813460`
+* :rhbug:`1543449`
+* :rhbug:`1800342`
+* :rhbug:`1812693`
+
+====================
+4.2.19 Release Notes
+====================
+
+- match RHEL behavior for CentOS and do not require deltarpm
+- List arguments: only first empty value is used (RhBug:1788154)
+- Report missing profiles or default as broken module (RhBug:1790967)
+- repoquery: fix rich deps matching by using provide expansion from libdnf (RhBug:1534123)
+- [documentation] repoquery --what* with  multiple arguments (RhBug:1790262)
+- Format history table to use actual terminal width (RhBug:1786316)
+- Update `dnf alias` documentation
+- Handle custom exceptions from libdnf
+- Fix _skipped_packages to return only skipped (RhBug:1774617)
+- Add setter for tsi.reason
+- Add new hook for commands: Run_resolved
+- Add doc entry: include url (RhBug 1786072)
+- Clean also .yaml repository metadata
+- New API function base.setup_loggers() (RhBug:1788212)
+- Use WantedBy=timers.target for all dnf timers (RhBug:1798475)
+
+Bugs fixed in 4.2.19:
+
+* :rhbug:`1798475`
+* :rhbug:`1788212`
+* :rhbug:`1677774`
+* :rhbug:`1786316`
+* :rhbug:`1790967`
+* :rhbug:`1774617`
+* :rhbug:`1534123`
+* :rhbug:`1790262`
+* :rhbug:`1788154`
+
+====================
+4.2.18 Release Notes
+====================
+
+- [doc] Remove note about user-agent whitelist
+- Do a substitution of variables in repo_id (RhBug:1748841)
+- Respect order of config files in aliases.d (RhBug:1680489)
+- Unify downgrade exit codes with upgrade (RhBug:1759847)
+- Improve help for 'dnf module' command (RhBug:1758447)
+- Add shell restriction for local packages (RhBug:1773483)
+- Fix detection of the latest module (RhBug:1781769)
+- Document the retries config option only works for packages (RhBug:1783041)
+- Sort packages in transaction output by nevra (RhBug:1773436)
+- Honor repo priority with check-update (RhBug:1769466)
+- Strip '\' from aliases when processing (RhBug:1680482)
+- Print the whole alias definition in case of infinite recursion (RhBug:1680488)
+- Add support of commandline packages by repoquery (RhBug:1784148)
+- Running with tsflags=test doesn't update log files
+- Restore functionality of remove --oldinstallonly
+- Allow disabling individual aliases config files (RhBug:1680566)
+
+Bugs fixed in 4.2.18:
+
+* :rhbug:`1773483`
+* :rhbug:`1758447`
+* :rhbug:`1748841`
+* :rhbug:`1679008`
+* :rhbug:`1680482`
+* :rhbug:`1680566`
+* :rhbug:`1784148`
+* :rhbug:`1680488`
+* :rhbug:`1759847`
+* :rhbug:`1773436`
+* :rhbug:`1783041`
+* :rhbug:`1680489`
+* :rhbug:`1781769`
+
+====================
+4.2.17 Release Notes
+====================
+
+- Enable versionlock for check-update command (RhBug:1750620)
+- Add error message when no active modules matched (RhBug:1696204)
+- Log mirror failures as warning when repo load fails (RhBug:1713627)
+- dnf-automatic: Change all systemd timers to a fixed time of day (RhBug:1754609)
+- DNF can use config from the remote location (RhBug:1721091)
+- [doc] update reference to plugin documentation (RhBug:1706386)
+- [yum compatibility] Report all packages in repoinfo
+- [doc] Add definition of active/inactive module stream
+- repoquery: Add a switch to disable modular excludes
+- Report more informative messages when no match for argument (RhBug:1709563)
+- [doc] Add description of excludes in dnf
+- Report more descriptive message when removed package is excluded
+- Add module repoquery command
+- Fix assumptions about ARMv8 and the way the rpm features work (RhBug:1691430)
+- Add Requires information into module info commands
+- Enhance inheritance of transaction reasons (RhBug:1672618,1769788)
+
+Bugs fixed in 4.2.17:
+
+* :rhbug:`1696204`
+* :rhbug:`1709563`
+* :rhbug:`1721091`
+* :rhbug:`1769788`
+* :rhbug:`1706386`
+* :rhbug:`1750620`
+* :rhbug:`1713627`
+* :rhbug:`1672618`
+* :rhbug:`1754609`
+* :rhbug:`1691430`
+
+====================
+4.2.16 Release Notes
+====================
+
+- Make DNF compatible with FIPS mode (RhBug:1762032)
+- Return always alphabetically sorted modular profiles
+- Revert "Fix messages for starting and failing scriptlets"
+
+====================
+4.2.15 Release Notes
+====================
+
+- Fix downloading local packages into destdir (RhBug:1727137)
+- Report skipped packages with identical nevra only once (RhBug:1643109)
+- Restore functionality of dnf remove --duplicates (RhBug:1674296)
+- Improve API documentation
+- Document NEVRA parsing in the man page
+- Do not wrap output when no terminal (RhBug:1577889)
+- Allow to ship alternative dnf.conf (RhBug:1752249)
+- Don't check if repo is expired if it doesn't have loaded metadata (RhBug:1745170)
+- Remove duplicate entries from "dnf search" output (RhBug:1742926)
+- Set default value of repo name attribute to repo id (RhBug:1669711)
+- Allow searching in disabled modules using "dnf module provides" (RhBug:1629667)
+- Group install takes obsoletes into account (RhBug:1761137)
+- Improve handling of vars
+- Do not load metadata for repolist commands (RhBug:1697472,1713055,1728894)
+- Fix messages for starting and failing scriptlets (RhBug:1724779)
+- Don't show older install-only pkgs updates in updateinfo (RhBug:1649383,1728004)
+- Add --ids option to the group command (RhBug:1706382)
+- Add --with_cve and --with_bz options to the updateinfo command (RhBug:1750528)
+
+Bugs fixed in 4.2.15:
+
+* :rhbug:`1738837`
+* :rhbug:`1674296`
+* :rhbug:`1577889`
+* :rhbug:`1669711`
+* :rhbug:`1643109`
+* :rhbug:`1649383`
+* :rhbug:`1666236`
+* :rhbug:`1728894`
+* :rhbug:`1727137`
+* :rhbug:`1689645`
+* :rhbug:`1742926`
+* :rhbug:`1761137`
+* :rhbug:`1706382`
+* :rhbug:`1761518`
+* :rhbug:`1752249`
+* :rhbug:`1760937`
+* :rhbug:`1713055`
+* :rhbug:`1724779`
+* :rhbug:`1745170`
+* :rhbug:`1750528`
+
 ====================
 4.2.11 Release Notes
 ====================
@@ -1843,7 +2204,7 @@ We start to publish the :doc:`api` with this release. It is largely
 incomprehensive at the moment, yet outlines the shape of the documentation and
 the process the project is going to use to maintain it.
 
-There are two YUM configuration options that were dropped: :ref:`group_package_types <group_package_types_dropped>` and :ref:`upgrade_requirements_on_install <upgrade_requirements_on_install_dropped>`.
+The :ref:upgrade_requirements_on_install <upgrade_requirements_on_install_dropped> configuration option was dropped.
 
 Bugs fixed in 0.4.7:
 

@@ -1,0 +1,16 @@
+
+
+# In addition to regular commit message, you can uncomment and fill in the
+# following to include this change in the released RPM package changelog:
+
+# = changelog =
+# msg:
+# type:
+# resolves:
+# related:
+
+# msg        = message to be included in the changelog
+# type       = one of: bugfix/enhancement/security
+# resolves   = URLs to bugs or issues resolved by this commit
+# related    = URLs to any related bugs or issues
+

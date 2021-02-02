@@ -31,6 +31,7 @@ Contents:
    api
    user_faq
    modularity
+   transaction_json
    release_notes
    cli_vs_yum
    api_vs_yum
