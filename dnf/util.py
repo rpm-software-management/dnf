@@ -269,9 +269,14 @@ def on_ac_power():
 
     """
     try:
-        with open("/sys/class/power_supply/AC/online") as ac_status:
-            data = ac_status.read()
-            return int(data) == 1
+        ps_folder = "/sys/class/power_supply"
+        ac_nodes = [node for node in os.listdir(ps_folder) if node.startswith("AC")]
+        if len(ac_nodes) > 0:
+            ac_node = ac_nodes[0]
+            with open("{}/{}/online".format(ps_folder, ac_node)) as ac_status:
+                data = ac_status.read()
+                return int(data) == 1
+        return None
     except (IOError, ValueError):
         return None
 
