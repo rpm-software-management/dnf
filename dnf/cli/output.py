@@ -1518,12 +1518,14 @@ Transaction Summary
             name = _("Command line")
             real_cols = self.term.real_columns
             if real_cols is None:
-                name_width = (
-                        24 if not transactions
-                        else max([len(t.cmdline) for t in transactions])
-                        )
-            else:
-                name_width = real_cols - 55 if real_cols > 79 else 24
+                # if output is redirected in `less` the columns
+                # detected are None value, to detect terminal size
+                # use stdin file descriptor
+                real_cols = dnf.cli.term._real_term_width(0)
+            if real_cols is None:
+                # if even stdin fd fails use 24 to fit to 80 cols
+                real_cols = 24
+            name_width = real_cols - 55 if real_cols > 79 else 24
         else:
             # TRANSLATORS: user names who executed transaction in history command output
             name = _("User name")
