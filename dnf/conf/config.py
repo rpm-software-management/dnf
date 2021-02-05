@@ -471,11 +471,11 @@ class RepoConf(BaseConfig):
     """Option definitions for repository INI file sections."""
 
     def __init__(self, parent, section=None, parser=None):
-        masterConfig = parent._config if parent else libdnf.conf.ConfigMain()
-        super(RepoConf, self).__init__(libdnf.conf.ConfigRepo(masterConfig), section, parser)
+        mainConfig = parent._config if parent else libdnf.conf.ConfigMain()
+        super(RepoConf, self).__init__(libdnf.conf.ConfigRepo(mainConfig), section, parser)
         # Do not remove! Attribute is a reference holder.
-        # Prevents premature removal of the masterConfig. The libdnf ConfigRepo points to it.
-        self._masterConfigRefHolder = masterConfig
+        # Prevents premature removal of the mainConfig. The libdnf ConfigRepo points to it.
+        self._mainConfigRefHolder = mainConfig
         if section:
             self._config.name().set(PRIO_DEFAULT, section)
 
