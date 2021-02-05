@@ -138,7 +138,7 @@ Basic class for handling modules.
 
 .. class:: libdnf.module.ModulePackage
 
-This class represents a record identified by NSVCA from the repository modular metadata. See also https://github.com/fedora-modularity/libmodulemd/blob/master/spec.v2.yaml.
+This class represents a record identified by NSVCA from the repository modular metadata. See also https://github.com/fedora-modularity/libmodulemd/blob/main/spec.v2.yaml.
 
   .. method:: getName()
 
