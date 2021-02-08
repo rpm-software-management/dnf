@@ -42,6 +42,7 @@ class FillSackFromReposInCacheTest(unittest.TestCase):
     def _create_cache_for_repo(self, repopath, tmpdir):
         conf = dnf.conf.MainConf()
         conf.cachedir = os.path.join(tmpdir, "cache")
+        conf.installroot = os.path.join(tmpdir)
 
         base = dnf.Base(conf=conf)
 
@@ -68,6 +69,7 @@ class FillSackFromReposInCacheTest(unittest.TestCase):
         # Prepare base for the actual test
         conf = dnf.conf.MainConf()
         conf.cachedir = os.path.join(self.tmpdir, "cache")
+        conf.installroot = os.path.join(self.tmpdir)
         self.test_base = dnf.Base(conf=conf)
         repoconf = dnf.repo.Repo(TEST_REPO_NAME, conf)
         repoconf.baseurl = self.repo_copy_path
@@ -258,5 +260,5 @@ class FillSackFromReposInCacheTest(unittest.TestCase):
         self.assertEqual(packages[0].evr, "10.0-7")
 
         self.module_base = dnf.module.module_base.ModuleBase(self.test_base)
-        modules, _ = self.module_base._get_modules("base-runtime*")
+        modules, _ = self.module_base._get_modules("*")
         self.assertEqual(len(modules), 0)
