@@ -1,0 +1,46 @@
+---
+name: DNF CI
+on: pull_request_target
+
+jobs:
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    container:
+      image: fedora:latest
+      options: --privileged
+    steps:
+      - name: Install API token for Copr
+        id: copr
+        run: |
+          # hack: Github replaces secrets with *** in the whole output (even in
+          # e.g. Copr URLs printed by rpm-gitoverlay). If there's a comment (#)
+          # at the end of the secret (e.g.  "rpmsofwaremanagement #"), this
+          # will clean it up and since it is no longer the whole secret being
+          # printed, Github won't hide it anymore.
+          COPR_USER=${{secrets.COPR_USER}}
+          if [ -z "$COPR_USER" ]; then echo "COPR_USER secret is required to run the CI."; exit 1; fi
+          echo "::set-output name=copr-user::$COPR_USER"
+
+          mkdir -p "$HOME/.config"
+          echo "${{secrets.COPR_API_TOKEN}}" > "$HOME/.config/copr"
+
+      - name: Check out ci-dnf-stack
+        uses: actions/checkout@v2
+        with:
+          repository: rpm-software-management/ci-dnf-stack
+
+      - name: Setup CI
+        uses: ./.github/actions/setup-ci
+
+      - name: Check out sources
+        uses: actions/checkout@v2
+        with:
+          path: gits/${{github.event.pull_request.head.repo.name}}
+          ref: ${{github.event.pull_request.head.sha}}  # check out the PR HEAD
+          fetch-depth: 0
+
+      - name: Run CI
+        uses: ./.github/actions/run-ci
+        with:
+          copr-user: ${{steps.copr.outputs.copr-user}}
