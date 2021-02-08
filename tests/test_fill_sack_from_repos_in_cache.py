@@ -42,7 +42,10 @@ class FillSackFromReposInCacheTest(unittest.TestCase):
     def _create_cache_for_repo(self, repopath, tmpdir):
         conf = dnf.conf.MainConf()
         conf.cachedir = os.path.join(tmpdir, "cache")
-        conf.installroot = os.path.join(tmpdir)
+        conf.installroot = tmpdir
+        conf.persistdir = os.path.join(conf.installroot, conf.persistdir.lstrip("/"))
+        conf.substitutions["arch"] = "x86_64"
+        conf.substitutions["basearch"] = dnf.rpm.basearch(conf.substitutions["arch"])
 
         base = dnf.Base(conf=conf)
 
@@ -56,29 +59,35 @@ class FillSackFromReposInCacheTest(unittest.TestCase):
         base.close()
 
     def _setUp_from_repo_path(self, original_repo_path):
-        self.tmpdir = tempfile.mkdtemp(prefix="dnf_test_")
+        repo_copy_path = os.path.join(self.tmpdir, "repo")
+        shutil.copytree(original_repo_path, repo_copy_path)
 
-        self.repo_copy_path = os.path.join(self.tmpdir, "repo")
-        shutil.copytree(original_repo_path, self.repo_copy_path)
-
-        self._create_cache_for_repo(self.repo_copy_path, self.tmpdir)
+        self._create_cache_for_repo(repo_copy_path, self.tmpdir)
 
         # Just to be sure remove repo (it shouldn't be used)
-        shutil.rmtree(self.repo_copy_path)
+        shutil.rmtree(repo_copy_path)
 
         # Prepare base for the actual test
         conf = dnf.conf.MainConf()
         conf.cachedir = os.path.join(self.tmpdir, "cache")
-        conf.installroot = os.path.join(self.tmpdir)
+        conf.installroot = self.tmpdir
+        conf.persistdir = os.path.join(conf.installroot, conf.persistdir.lstrip("/"))
+        conf.substitutions["arch"] = "x86_64"
+        conf.substitutions["basearch"] = dnf.rpm.basearch(conf.substitutions["arch"])
         self.test_base = dnf.Base(conf=conf)
         repoconf = dnf.repo.Repo(TEST_REPO_NAME, conf)
-        repoconf.baseurl = self.repo_copy_path
+        repoconf.baseurl = repo_copy_path
         repoconf.enable()
         self.test_base.repos.add(repoconf)
 
+    def setUp(self):
+        self.tmpdir = tempfile.mkdtemp(prefix="dnf_test_")
+        self.test_base = None
+
     def tearDown(self):
-        self.test_base.close()
         shutil.rmtree(self.tmpdir)
+        if self.test_base:
+            self.test_base.close()
 
     def test_with_solv_solvx_repomd(self):
         self._setUp_from_repo_path(os.path.join(os.path.abspath(os.path.dirname(__file__)), "repos/rpm"))
@@ -231,8 +240,13 @@ class FillSackFromReposInCacheTest(unittest.TestCase):
 
         q = self.test_base.sack.query()
         packages = q.run()
-        self.assertEqual(len(packages), 8)
-        self.assertEqual(packages[0].evr, "2.02-0.40")
+
+        pkg_names = []
+        for pkg in packages:
+            pkg_names.append(pkg.name)
+
+        self.assertEqual(pkg_names, ['grub2', 'httpd', 'httpd', 'httpd-doc', 'httpd-doc', 'httpd-provides-name-doc',
+                                     'httpd-provides-name-version-release-doc', 'libnghttp2'])
 
         self.module_base = dnf.module.module_base.ModuleBase(self.test_base)
         modules, _ = self.module_base._get_modules("base-runtime*")
