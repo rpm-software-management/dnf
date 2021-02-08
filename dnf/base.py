@@ -111,6 +111,7 @@ class Base(object):
         self._trans_success = False
         self._trans_install_set = False
         self._tempfile_persistor = None
+        #  self._update_security_filters is used by ansible
         self._update_security_filters = []
         self._update_security_options = {}
         self._allow_erasing = False
