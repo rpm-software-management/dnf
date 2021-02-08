@@ -62,6 +62,18 @@
     :exc:`dnf.exceptions.Error` if the :attr:`goal` is not empty. `progress`, if given, should be a
     :class:`.DownloadProgress` instance which can be used to monitor the progress of the download.
 
+ .. method:: add_security_filters(cmp_type, types=(), advisory=(), bugzilla=(), cves=(), severity=())
+
+    It modifies results of install, upgrade, and distrosync methods according to provided filters.
+    `cmp_type` - only 'eq' or 'gte' allowed
+    `types` - List or tuple with strings. Eg. `bugfix`, `enhancement`, `newpackage`, `security`
+    `advisory` - List or tuple with strings. Eg. `FEDORA-2201-123`
+    `bugzilla` - List or tuple with strings. Include packages that fix a Bugzilla ID, Eg. `123123`.
+    `cves` - List or tuple with strings. Include packages that fix a CVE (Common Vulnerabilities
+    and Exposures) ID. Eg. `CVE-2201-0123`
+    `severity` - List or tuple with strings. Includes packages that provide a fix for an issue
+    of the specified severity.
+
   .. method:: close()
 
     Close all external handles the object holds. This is called automatically via context manager mechanism if the instance is handled using the ``with`` statement.
