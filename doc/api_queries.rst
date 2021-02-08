@@ -119,9 +119,9 @@
 
     The key name can be supplemented with a relation-specifying suffix, separated by ``__``:
 
-    ==========   =========== ==========================================================
+    ==========   =========== ===========================================================
     key suffix   value type  semantics
-    ==========   =========== ==========================================================
+    ==========   =========== ===========================================================
     eq           any         exact match; This is the default if no suffix is specified.
     glob         string      shell-style wildcard match
     gt           integer     the actual value is greater than specified
@@ -130,7 +130,9 @@
     lte          integer     the actual value is less than or equal to specified
     neq          any         does not equal
     substr       string      the specified value is contained in the actual value
-    ==========   =========== ==========================================================
+    eqg          string      exact match or the first higher, used with advisory filters
+    upgrade      string      skips advisory resolved by installed packages
+    ==========   =========== ===========================================================
 
     For example, the following creates a query that matches all packages containing the string "club" in its name::
 
