@@ -102,6 +102,9 @@ class KeyInfo:
         self.email = email
         self.key = key
 
+    def __repr__(self):
+        return 'KeyInfo("{}", "{}...")'.format(self.email, self.key.decode('ascii')[:6])
+
     @staticmethod
     def from_rpm_key_object(userid, raw_key):
         # type: (str, bytes) -> KeyInfo
