@@ -74,6 +74,10 @@
     `severity` - List or tuple with strings. Includes packages that provide a fix for an issue
     of the specified severity.
 
+ .. method:: reset_security_filters()
+
+    Reset all security filters
+
   .. method:: close()
 
     Close all external handles the object holds. This is called automatically via context manager mechanism if the instance is handled using the ``with`` statement.

@@ -2324,6 +2324,13 @@ class Base(object):
             key = 'advisory_severity' + cmp
             self._update_security_options.setdefault(key, set()).update(severity)
 
+    def reset_security_filters(self):
+        #  :api
+        """
+        Reset all security filters
+        """
+        self._update_security_options = {}
+
     def _merge_update_filters(self, q, pkg_spec=None, warning=True, upgrade=False):
         """
         Merge Queries in _update_filters and return intersection with q Query
