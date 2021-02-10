@@ -179,8 +179,11 @@ class DNSSECKeyVerification:
         if ctx.set_option("qname-minimisation:", "yes") != 0:
             logger.debug("Unbound context: Failed to set qname minimisation")
 
-        if ctx.resolvconf() != 0:
-            logger.debug("Unbound context: Failed to read resolv.conf")
+        # Current resolv.conf use systemd-resolved which cannot verify DNSSEC
+        # See https://github.com/systemd/systemd/issues/4621
+        # without local resolvconf unbound does full recursive query
+        # if ctx.resolvconf() != 0:
+        #     logger.debug("Unbound context: Failed to read resolv.conf")
 
         if ctx.add_ta_file("/var/lib/unbound/root.key") != 0:
             logger.debug("Unbound context: Failed to add trust anchor file")
