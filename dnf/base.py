@@ -2368,7 +2368,10 @@ class Base(object):
 
                 # Try installing/updating GPG key
                 info.url = keyurl
-                dnf.crypto.log_key_import(info)
+                if self.conf.gpgkey_dns_verification:
+                    dnf.crypto.log_dns_key_import(info, dns_result)
+                else:
+                    dnf.crypto.log_key_import(info)
                 rc = False
                 if self.conf.assumeno:
                     rc = False

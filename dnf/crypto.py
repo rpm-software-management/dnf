@@ -139,6 +139,13 @@ def log_key_import(keyinfo):
     logger.critical("%s", msg)
 
 
+def log_dns_key_import(keyinfo, dns_result):
+    log_key_import(keyinfo)
+    if dns_result == dnf.dnssec.Validity.VALID:
+        logger.critical(_('Verified using DNS record with DNSSEC signature.'))
+    else:
+        logger.critical(_('NOT verified using DNS record.'))
+
 @contextlib.contextmanager
 def pubring_dir(pubring_dir):
     orig = os.environ.get(GPG_HOME_ENV, None)
