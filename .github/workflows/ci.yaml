@@ -10,28 +10,18 @@ jobs:
       image: fedora:latest
       options: --privileged
     steps:
-      - name: Install API token for Copr
-        id: copr
-        run: |
-          # hack: Github replaces secrets with *** in the whole output (even in
-          # e.g. Copr URLs printed by rpm-gitoverlay). If there's a comment (#)
-          # at the end of the secret (e.g.  "rpmsofwaremanagement #"), this
-          # will clean it up and since it is no longer the whole secret being
-          # printed, Github won't hide it anymore.
-          COPR_USER=${{secrets.COPR_USER}}
-          if [ -z "$COPR_USER" ]; then echo "COPR_USER secret is required to run the CI."; exit 1; fi
-          echo "::set-output name=copr-user::$COPR_USER"
-
-          mkdir -p "$HOME/.config"
-          echo "${{secrets.COPR_API_TOKEN}}" > "$HOME/.config/copr"
-
       - name: Check out ci-dnf-stack
         uses: actions/checkout@v2
         with:
           repository: rpm-software-management/ci-dnf-stack
 
       - name: Setup CI
+        id: setup-ci
         uses: ./.github/actions/setup-ci
+        with:
+          copr-user: ${{secrets.COPR_USER}}
+          copr-api-token: ${{secrets.COPR_API_TOKEN}}
+          setup-integration-testing: true
 
       - name: Check out sources
         uses: actions/checkout@v2
@@ -43,4 +33,4 @@ jobs:
       - name: Run CI
         uses: ./.github/actions/run-ci
         with:
-          copr-user: ${{steps.copr.outputs.copr-user}}
+          copr-user: ${{steps.setup-ci.outputs.copr-user}}
