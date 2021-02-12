@@ -196,13 +196,14 @@ class DNSSECKeyVerification:
         if not result.secure:
             logger.debug("Result is not secured with DNSSEC")
             return Validity.RESULT_NOT_SECURE
-        if result.nxdomain:
+        if result.nxdomain or (result.rcode == unbound.RCODE_NOERROR and not result.havedata):
             logger.debug("Non-existence of this record was proven by DNSSEC")
             return Validity.PROVEN_NONEXISTENCE
         if not result.havedata:
             # TODO: This is weird result, but there is no way to perform validation, so just return
             # an error
-            logger.debug("Unknown error in DNS communication")
+            # Should handle only SERVFAIL, REFUSED and similar rcodes
+            logger.debug("Unknown error in DNS communication: {}".format(result.rcode_str))
             return Validity.ERROR
         else:
             data = result.data.as_raw_data()[0]
