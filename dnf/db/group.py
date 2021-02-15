@@ -265,7 +265,8 @@ class RPMTransaction(object):
         self.add_remove(old, reason)
 
     def add_install(self, new, obsoleted=None, reason=None):
-        reason = reason or libdnf.transaction.TransactionItemReason_USER
+        if reason is None:
+            reason = libdnf.transaction.TransactionItemReason_USER
         ti_new = self.new(new, libdnf.transaction.TransactionItemAction_INSTALL, reason)
         self._add_obsoleted(obsoleted, replaced_by=ti_new)
 
