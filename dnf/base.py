@@ -758,10 +758,18 @@ class Base(object):
                 ts.add_upgrade(pkg, upgraded, obs)
                 self._ds_callback.pkg_added(upgraded, 'ud')
             self._ds_callback.pkg_added(pkg, 'u')
-        for pkg in goal.list_erasures():
-            self._ds_callback.pkg_added(pkg, 'e')
-            reason = goal.get_reason(pkg)
-            ts.add_erase(pkg, reason)
+        erasures = goal.list_erasures()
+        if erasures:
+            remaining_installed_query = self.sack.query(flags=hawkey.IGNORE_EXCLUDES).installed()
+            remaining_installed_query.filterm(pkg__neq=erasures)
+            for pkg in erasures:
+                if remaining_installed_query.filter(name=pkg.name):
+                    remaining = remaining_installed_query[0]
+                    ts.get_reason(remaining)
+                    self.history.set_reason(remaining, ts.get_reason(remaining))
+                self._ds_callback.pkg_added(pkg, 'e')
+                reason = goal.get_reason(pkg)
+                ts.add_erase(pkg, reason)
         return ts
 
     def _query_matches_installed(self, q):
