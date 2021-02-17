@@ -114,7 +114,7 @@
   .. method:: fill_sack_from_repos_in_cache(load_system_repo=True)
 
     Prepare Sack and Goal objects and load all enabled repositories from cache only, it doesn't download anything and it doesn't check if metadata are expired.
-    To successfully load a repository cache it requires repond.xml plus metadata (xml, yaml) or repond.xml plus generated cache files (solv, solvx).
+    To successfully load a repository cache it requires repomd.xml plus metadata (xml, yaml) or repomd.xml plus generated cache files (solv, solvx).
     If there is not enough metadata given repo is either skipped or it throws a :exc:`dnf.exceptions.RepoError` exception depending on :attr:`dnf.conf.Conf.skip_if_unavailable` configuration.
 
     All additional metadata are loaded if present but are not generally required. Note that some metadata like updateinfo.xml get processed into a solvx cache file and its sufficient to have either xml or solvx. Module metadata represented by modules.yaml are not processed therefore they are needed when they are defined in repomd.xml.
