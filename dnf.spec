@@ -150,7 +150,6 @@ BuildRequires:  python3-libcomps >= %{libcomps_version}
 BuildRequires:  python3-libdnf
 BuildRequires:  libmodulemd >= %{libmodulemd_version}
 Requires:       libmodulemd >= %{libmodulemd_version}
-BuildRequires:  python3-nose
 BuildRequires:  python3-gpg
 Requires:       python3-gpg
 Requires:       %{name}-data = %{version}-%{release}
