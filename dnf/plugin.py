@@ -167,20 +167,32 @@ class Plugins(object):
         del sys.modules[DYNAMIC_PACKAGE]
 
     def unload_removed_plugins(self, transaction):
-        erased = set([package.name for package in transaction.remove_set])
-        if not erased:
+        """
+        Unload plugins that were removed in the `transaction`.
+        """
+        if not transaction.remove_set:
             return
-        installed = set([package.name for package in transaction.install_set])
-        transaction_diff = erased - installed
-        if not transaction_diff:
-            return
-        files_erased = set()
+
+        # gather all installed plugins and their files
+        plugins = dict()
+        for plugin in self.plugins:
+            plugins[inspect.getfile(plugin.__class__)] = plugin
+
+        # gather all removed files that are plugin files
+        plugin_files = set(plugins.keys())
+        erased_plugin_files = set()
         for pkg in transaction.remove_set:
-            if pkg.name in transaction_diff:
-                files_erased.update(pkg.files)
-        for plugin in self.plugins[:]:
-            if inspect.getfile(plugin.__class__) in files_erased:
-                self.plugins.remove(plugin)
+            erased_plugin_files.update(plugin_files.intersection(pkg.files))
+        if not erased_plugin_files:
+            return
+
+        # check whether removed plugin file is added at the same time (upgrade of a plugin)
+        for pkg in transaction.install_set:
+            erased_plugin_files.difference_update(pkg.files)
+
+        # unload plugins that were removed in transaction
+        for plugin_file in erased_plugin_files:
+            self.plugins.remove(plugins[plugin_file])
 
 
 def _plugin_classes():
