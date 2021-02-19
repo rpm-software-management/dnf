@@ -139,7 +139,7 @@ class DNSSECKeyVerification:
 
     # Mapping from email address to b64 encoded public key or NoKey in case of proven nonexistence
     _cache = {}
-    # type: Dict[str, Union[str, NoKey]]
+    # type: Dict[str, Union[Set[str], NoKey]]
 
     @staticmethod
     def _cache_hit(key_union, input_key_string):
@@ -147,12 +147,12 @@ class DNSSECKeyVerification:
         """
         Compare the key in case it was found in the cache.
         """
-        if key_union == input_key_string:
-            logger.debug("Cache hit, valid key")
-            return Validity.VALID
-        elif key_union is NoKey:
+        if key_union is NoKey:
             logger.debug("Cache hit, proven non-existence")
             return Validity.PROVEN_NONEXISTENCE
+        if isinstance(key_union, set) and input_key_string in key_union:
+            logger.debug("Cache hit, valid key")
+            return Validity.VALID
         else:
             logger.debug("Key in cache: {}".format(key_union))
             logger.debug("Input key   : {}".format(input_key_string))
@@ -198,6 +198,7 @@ class DNSSECKeyVerification:
             return Validity.RESULT_NOT_SECURE
         if result.nxdomain or (result.rcode == unbound.RCODE_NOERROR and not result.havedata):
             logger.debug("Non-existence of this record was proven by DNSSEC")
+            DNSSECKeyVerification._cache[input_key.email] = NoKey()
             return Validity.PROVEN_NONEXISTENCE
         if not result.havedata:
             # TODO: This is weird result, but there is no way to perform validation, so just return
@@ -206,14 +207,16 @@ class DNSSECKeyVerification:
             logger.debug("Unknown error in DNS communication: {}".format(result.rcode_str))
             return Validity.ERROR
         else:
-            data = result.data.as_raw_data()[0]
-            dns_data_b64 = base64.b64encode(data)
-            if dns_data_b64 == input_key.key:
+            data = set(result.data.as_raw_data())
+            dns_data_b64 = map(base64.b64encode, data)
+            DNSSECKeyVerification._cache[input_key.email] = dns_data_b64
+            if input_key.key in dns_data_b64:
                 return Validity.VALID
             else:
                 # In case it is different, print the keys for further examination in debug mode
-                logger.debug("Key from DNS: {}".format(dns_data_b64))
                 logger.debug("Input key   : {}".format(input_key.key))
+                for key in dns_data_b64:
+                    logger.debug("Key from DNS: {}".format(key))
                 return Validity.REVOKED
 
     @staticmethod
@@ -227,12 +230,7 @@ class DNSSECKeyVerification:
         if key_union is not None:
             return DNSSECKeyVerification._cache_hit(key_union, input_key.key)
         else:
-            result = DNSSECKeyVerification._cache_miss(input_key)
-            if result == Validity.VALID:
-                DNSSECKeyVerification._cache[input_key.email] = input_key.key
-            elif result == Validity.PROVEN_NONEXISTENCE:
-                DNSSECKeyVerification._cache[input_key.email] = NoKey()
-            return result
+            return DNSSECKeyVerification._cache_miss(input_key)
 
 
 def nice_user_msg(ki, v):
