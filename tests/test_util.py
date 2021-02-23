@@ -21,6 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import operator
+import os
 
 import dnf.util
 
@@ -209,6 +210,31 @@ class Util(tests.support.TestCase):
     def test_touch(self):
         self.assertRaises(OSError, dnf.util.touch,
                           tests.support.NONEXISTENT_FILE, no_create=True)
+
+    def test_split_path(self):
+        path_orig = ""
+        path_split = dnf.util.split_path(path_orig)
+        path_join = os.path.join(*path_split)
+        self.assertEqual(path_split, [""])
+        self.assertEqual(path_join, path_orig)
+
+        path_orig = "/"
+        path_split = dnf.util.split_path(path_orig)
+        path_join = os.path.join(*path_split)
+        self.assertEqual(path_split, ["/"])
+        self.assertEqual(path_join, path_orig)
+
+        path_orig = "abc"
+        path_split = dnf.util.split_path(path_orig)
+        path_join = os.path.join(*path_split)
+        self.assertEqual(path_split, ["abc"])
+        self.assertEqual(path_join, path_orig)
+
+        path_orig = "/a/bb/ccc/dddd.conf"
+        path_split = dnf.util.split_path(path_orig)
+        path_join = os.path.join(*path_split)
+        self.assertEqual(path_split, ["/", "a", "bb", "ccc", "dddd.conf"])
+        self.assertEqual(path_join, path_orig)
 
 
 class TestMultiCall(tests.support.TestCase):

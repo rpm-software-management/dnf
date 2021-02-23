@@ -27,6 +27,7 @@ import dnf.exceptions
 import dnf.repo
 import glob
 import logging
+import os
 
 logger = logging.getLogger('dnf')
 
@@ -42,8 +43,16 @@ class RepoReader(object):
             yield r
 
         # read .repo files from directories specified by conf.reposdir
-        for repofn in (repofn for reposdir in self.conf.reposdir
-                       for repofn in sorted(glob.glob('{}/*.repo'.format(reposdir)))):
+        repo_configs = []
+        for reposdir in self.conf.reposdir:
+            for path in glob.glob(os.path.join(reposdir, "*.repo")):
+                repo_configs.append(path)
+
+        # remove .conf suffix before calling the sort function
+        # also split the path so the separators are not treated as ordinary characters
+        repo_configs.sort(key=lambda x: dnf.util.split_path(x[:-5]))
+
+        for repofn in repo_configs:
             try:
                 for r in self._get_repos(repofn):
                     yield r
