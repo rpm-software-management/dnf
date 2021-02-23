@@ -3,12 +3,13 @@ name: DNF CI
 on: pull_request_target
 
 jobs:
-  integration-tests:
-    name: Integration Tests
+  copr-build:
+    name: Copr Build
     runs-on: ubuntu-latest
     container:
-      image: fedora:latest
-      options: --privileged
+      image: ghcr.io/rpm-software-management/dnf-ci-host
+    outputs:
+      package-urls: ${{steps.copr-build.outputs.package-urls}}
     steps:
       - name: Check out ci-dnf-stack
         uses: actions/checkout@v2
@@ -21,7 +22,6 @@ jobs:
         with:
           copr-user: ${{secrets.COPR_USER}}
           copr-api-token: ${{secrets.COPR_API_TOKEN}}
-          setup-integration-testing: true
 
       - name: Check out sources
         uses: actions/checkout@v2
@@ -30,7 +30,26 @@ jobs:
           ref: ${{github.event.pull_request.head.sha}}  # check out the PR HEAD
           fetch-depth: 0
 
-      - name: Run CI
-        uses: ./.github/actions/run-ci
+      - name: Run Copr Build
+        id: copr-build
+        uses: ./.github/actions/copr-build
         with:
           copr-user: ${{steps.setup-ci.outputs.copr-user}}
+
+  integration-tests:
+    name: Integration Tests
+    needs: copr-build
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/rpm-software-management/dnf-ci-host
+      options: --privileged
+    steps:
+      - name: Check out ci-dnf-stack
+        uses: actions/checkout@v2
+        with:
+          repository: rpm-software-management/ci-dnf-stack
+
+      - name: Run Integration Tests
+        uses: ./.github/actions/integration-tests
+        with:
+          package-urls: ${{needs.copr-build.outputs.package-urls}}
