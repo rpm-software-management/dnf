@@ -149,6 +149,27 @@ def ensure_dir(dname):
         if e.errno != errno.EEXIST or not os.path.isdir(dname):
             raise e
 
+
+def split_path(path):
+    """
+    Split path by path separators.
+    Use os.path.join() to join the path back to string.
+    """
+    result = []
+
+    head = path
+    while True:
+        head, tail = os.path.split(head)
+        if not tail:
+            if head or not result:
+                # if not result: make sure result is [""] so os.path.join(*result) can be called
+                result.insert(0, head)
+            break
+        result.insert(0, tail)
+
+    return result
+
+
 def empty(iterable):
     try:
         l = len(iterable)
