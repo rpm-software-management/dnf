@@ -56,7 +56,7 @@ def email2location(email_address, tag="_openpgpkey"):
     :param tag:
     :return:
     """
-    split = email_address.split("@")
+    split = email_address.rsplit("@", 1)
     if len(split) != 2:
         msg = "Email address must contain exactly one '@' sign."
         raise DnssecError(msg)
