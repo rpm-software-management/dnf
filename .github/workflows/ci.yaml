@@ -53,3 +53,21 @@ jobs:
         uses: ./.github/actions/integration-tests
         with:
           package-urls: ${{needs.copr-build.outputs.package-urls}}
+
+  ansible-tests:
+    name: Ansible Tests
+    needs: copr-build
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/rpm-software-management/dnf-ci-host
+      options: --privileged
+    steps:
+      - name: Check out ci-dnf-stack
+        uses: actions/checkout@v2
+        with:
+          repository: rpm-software-management/ci-dnf-stack
+
+      - name: Run Ansible Tests
+        uses: ./.github/actions/ansible-tests
+        with:
+          package-urls: ${{needs.copr-build.outputs.package-urls}}
