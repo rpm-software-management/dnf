@@ -125,7 +125,10 @@ class MultiprocessRotatingFileHandler(logging.handlers.RotatingFileHandler):
             try:
                 if self.shouldRollover(record):
                     with self.rotate_lock:
+                        # Do rollover while preserving the mode of the new log file
+                        mode = os.stat(self.baseFilename).st_mode
                         self.doRollover()
+                        os.chmod(self.baseFilename, mode)
                 logging.FileHandler.emit(self, record)
                 return
             except (dnf.exceptions.ProcessLockError, dnf.exceptions.ThreadLockError):
