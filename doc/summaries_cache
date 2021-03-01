@@ -3294,5 +3294,25 @@
     [
         1876606,
         "dnf python API does not provide an rpm header of a package (as yum API does)"
+    ],
+    [
+        1852577,
+        "\"dnf history list\" displays an erratic output"
+    ],
+    [
+        1910084,
+        "hardcoded logfile permissions"
+    ],
+    [
+        1897573,
+        "[spec] Make new cmake macros optional"
+    ],
+    [
+        1929163,
+        "problem with transaction() hook"
+    ],
+    [
+        1906970,
+        "dnf history wrong output if piped through more or redirected to file"
     ]
 ]

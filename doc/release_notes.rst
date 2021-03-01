@@ -20,6 +20,38 @@
 ###################
 
 ===================
+4.6.1 Release Notes
+===================
+
+- Fix recreate script
+- Add unit test for fill_sack_from_repos_in_cache (RhBug:1865803)
+- Add docs and examples for fill_sack_from_repos_in_cache (RhBug:1865803)
+- [spec] remove python2 support
+- Remove problematic language
+- The noroot plugin no longer exists, remove mention
+- Run tests for fill_sack_from_repos_in_cache in installroot (RhBug:1865803)
+- expand history to full term size when output is redirected (RhBug:1852577) (RhBug:1852577,1906970)
+- [doc] Fix: "sslcacert" contains path to the file
+- [doc] Added proxy ssl configuration options, increase libdnf require
+- Set persistdir and substitutions for fill_sack_from_repos_in_cache tests (RhBug:1865803)
+- Update documentation for module_obsoletes and module_stream_switch
+- print additional information when verifying GPG key using DNS
+
+- Bug fixes:
+  - Bugs fixed (RhBug:1897573)
+  - Remove hardcoded logfile permissions (RhBug:1910084)
+  - Enhanced detection of plugins removed in transaction (RhBug:1929163)
+
+Bugs fixed in 4.6.1:
+
+* :rhbug:`1852577`
+* :rhbug:`1910084`
+* :rhbug:`1897573`
+* :rhbug:`1929163`
+* :rhbug:`1865803`
+* :rhbug:`1906970`
+
+===================
 4.6.0 Release Notes
 ===================
 

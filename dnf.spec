@@ -65,7 +65,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.6.0
+Version:        4.6.1
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -371,6 +371,24 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Tue Mar 02 2021 Nicola Sella <nsella@redhat.com> - 4.6.1-1
+- Fix recreate script
+- Add unit test for fill_sack_from_repos_in_cache (RhBug:1865803)
+- Add docs and examples for fill_sack_from_repos_in_cache (RhBug:1865803)
+- [spec] remove python2 support
+- Remove problematic language
+- The noroot plugin no longer exists, remove mention
+- Run tests for fill_sack_from_repos_in_cache in installroot (RhBug:1865803)
+- expand history to full term size when output is redirected (RhBug:1852577) (RhBug:1852577,1906970)
+- [doc] Fix: "sslcacert" contains path to the file
+- [doc] Added proxy ssl configuration options, increase libdnf require
+- Set persistdir and substitutions for fill_sack_from_repos_in_cache tests (RhBug:1865803)
+- Update documentation for module_obsoletes and module_stream_switch
+- print additional information when verifying GPG key using DNS
+- Bugs fixed (RhBug:1897573)
+- Remove hardcoded logfile permissions (RhBug:1910084)
+- Enhanced detection of plugins removed in transaction (RhBug:1929163)
+
 * Thu Jan 28 2021 Nicola Sella <nsella@redhat.com> - 4.6.0-1
 - Log scriptlets output also for API users (RhBug:1847340)
 - Fix module remove --all when no match spec (RhBug:1904490)
