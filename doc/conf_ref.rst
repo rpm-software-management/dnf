@@ -65,7 +65,7 @@ configuration file by your distribution to override the DNF defaults.
     :ref:`boolean <boolean-label>`
 
     If disabled dnf will stick to vendor when upgrading or downgrading rpms.
-    Default is ``True``
+    Default is ``False``
 
     .. WARNING:: This option is currently not supported for `downgrade` and `distro-sync` commands
 
