@@ -420,7 +420,7 @@ class ModuleBase(object):
                     streams_str = "', '".join(
                         sorted(streamDict.keys(), key=functools.cmp_to_key(self.base.sack.evr_cmp)))
                     msg = _("Argument '{argument}' matches {stream_count} streams ('{streams}') of "
-                            "module '{module}', but non of the streams are enabled or "
+                            "module '{module}', but none of the streams are enabled or "
                             "default").format(
                         argument=spec, stream_count=len(streamDict), streams=streams_str,
                         module=moduleName)
