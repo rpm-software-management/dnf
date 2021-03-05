@@ -148,7 +148,7 @@ class BaseConfig(object):
                     try:
                         self._config.optBinds().at(name).newString(priority, value)
                     except RuntimeError as e:
-                        logger.debug(_('Unknown configuration value: %s=%s in %s; %s'),
+                        logger.error(_('Invalid configuration value: %s=%s in %s; %s'),
                                      ucd(name), ucd(value), ucd(filename), str(e))
                 else:
                     if name == 'arch' and hasattr(self, name):
