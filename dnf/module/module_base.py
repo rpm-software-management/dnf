@@ -579,6 +579,9 @@ class ModuleBase(object):
                 else ", "
         return profiles_str[:-2]
 
+    def _summary_report_formatter(self, summary):
+        return summary.strip().replace("\n", " ")
+
     def _module_strs_formatter(self, modulePackage, markActive=False):
         default_str = ""
         enabled_str = ""
@@ -761,7 +764,8 @@ class ModuleBase(object):
                     column_stream).setData(
                     modulePackage.getStream() + default_str + enabled_str + disabled_str)
                 line.getColumnCell(column_profiles).setData(profiles_str)
-                line.getColumnCell(column_info).setData(modulePackage.getSummary())
+                summary_str = self._summary_report_formatter(modulePackage.getSummary())
+                line.getColumnCell(column_info).setData(summary_str)
 
         return table
 
