@@ -250,8 +250,9 @@ configuration file by your distribution to override the DNF defaults.
     :ref:`integer <integer-label>`
 
     Number of :ref:`installonly packages <installonlypkgs-label>` allowed to be installed
-    concurrently. Defaults to 3. The minimal number of installonly packages is 2. Value 0 or 1 means
-    unlimited number of installonly packages.
+    concurrently. Defaults to 3. The minimal number of installonly packages is 2. Value 0 means
+    unlimited number of installonly packages. Value 1 is explicitely not allowed since it
+    complicates kernel upgrades due to protection of the running kernel from removal.
 
 ``installroot``
     :ref:`string <string-label>`
