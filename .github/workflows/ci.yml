@@ -37,7 +37,7 @@ jobs:
           copr-user: ${{steps.setup-ci.outputs.copr-user}}
 
   integration-tests:
-    name: Integration Tests
+    name: DNF Integration Tests
     needs: copr-build
     runs-on: ubuntu-latest
     container:
