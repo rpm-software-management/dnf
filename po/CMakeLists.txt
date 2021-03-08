@@ -15,6 +15,7 @@ if (GIT_FOUND)
         OUTPUT_VARIABLE CURRENT_BRANCH
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         )
+    set(CURRENT_BRANCH "rhel-8")
 
     # output _weblate-clone is never created so the clonning of weblate repo is always processed
     # and fresh *.po files are used
