@@ -71,7 +71,8 @@ packages to be filtered out.
 =====================
 In special cases, a user wants to cherry-pick individual packages provided outside module
 streams and make them available on along with packages from the active streams.
-Under normal circumstances, such packages are filtered out.
+Under normal circumstances, such packages are filtered out or rejected from getting on the system by
+Fail-safe mechanisms.
 To make the system use packages from a repository regardless of their modularity,
 specify ``module_hotfixes=true`` in the .repo file. This protects the repository from package filtering.
 
@@ -111,4 +112,5 @@ Orphaned modular packages
 All packages that are built as a part of a module have ``%{modularitylabel}`` RPM header set.
 If such package becomes part of RPM transaction and cannot be associated with any available
 modulemd, DNF prevents from getting it on the system (package is available, but cannot be
-installed, upgraded, etc.)
+installed, upgraded, etc.). Packages from Hotfix repositories or Commandline repository are not
+affected by Fail-safe mechanisms.
