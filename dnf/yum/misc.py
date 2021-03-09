@@ -22,7 +22,6 @@ Assorted utility functions for yum.
 
 from __future__ import print_function, absolute_import
 from __future__ import unicode_literals
-from dnf.exceptions import MiscError
 from dnf.pycomp import base64_decodebytes, basestring, unicode
 from stat import *
 import libdnf.utils
@@ -32,7 +31,6 @@ import dnf.exceptions
 import dnf.i18n
 import errno
 import glob
-import hashlib
 import io
 import os
 import os.path
@@ -41,7 +39,6 @@ import re
 import shutil
 import tempfile
 
-_available_checksums = set(['md5', 'sha1', 'sha256', 'sha384', 'sha512'])
 _default_checksums = ['sha256']
 
 
@@ -68,118 +65,8 @@ def re_full_search_needed(s):
             return True
     return False
 
-
-class Checksums(object):
-    """ Generate checksum(s), on given pieces of data. Producing the
-        Length and the result(s) when complete. """
-
-    def __init__(self, checksums=None, ignore_missing=False, ignore_none=False):
-        if checksums is None:
-            checksums = _default_checksums
-        self._sumalgos = []
-        self._sumtypes = []
-        self._len = 0
-
-        done = set()
-        for sumtype in checksums:
-            if sumtype == 'sha':
-                sumtype = 'sha1'
-            if sumtype in done:
-                continue
-
-            if sumtype in _available_checksums:
-                sumalgo = hashlib.new(sumtype)
-            elif ignore_missing:
-                continue
-            else:
-                raise MiscError('Error Checksumming, bad checksum type %s' %
-                                sumtype)
-            done.add(sumtype)
-            self._sumtypes.append(sumtype)
-            self._sumalgos.append(sumalgo)
-        if not done and not ignore_none:
-            raise MiscError('Error Checksumming, no valid checksum type')
-
-    def __len__(self):
-        return self._len
-
-    # Note that len(x) is assert limited to INT_MAX, which is 2GB on i686.
-    length = property(fget=lambda self: self._len)
-
-    def update(self, data):
-        self._len += len(data)
-        for sumalgo in self._sumalgos:
-            data = data.encode('utf-8') if isinstance(data, unicode) else data
-            sumalgo.update(data)
-
-    def read(self, fo, size=2**16):
-        data = fo.read(size)
-        self.update(data)
-        return data
-
-    def hexdigests(self):
-        ret = {}
-        for sumtype, sumdata in zip(self._sumtypes, self._sumalgos):
-            ret[sumtype] = sumdata.hexdigest()
-        return ret
-
-    def hexdigest(self, checksum=None):
-        if checksum is None:
-            if not self._sumtypes:
-                return None
-            checksum = self._sumtypes[0]
-        if checksum == 'sha':
-            checksum = 'sha1'
-        return self.hexdigests()[checksum]
-
-    def digests(self):
-        ret = {}
-        for sumtype, sumdata in zip(self._sumtypes, self._sumalgos):
-            ret[sumtype] = sumdata.digest()
-        return ret
-
-    def digest(self, checksum=None):
-        if checksum is None:
-            if not self._sumtypes:
-                return None
-            checksum = self._sumtypes[0]
-        if checksum == 'sha':
-            checksum = 'sha1'
-        return self.digests()[checksum]
-
 def get_default_chksum_type():
     return _default_checksums[0]
-
-def checksum(sumtype, file, CHUNK=2**16, datasize=None):
-    """takes filename, hand back Checksum of it
-       sumtype = md5 or sha/sha1/sha256/sha512 (note sha == sha1)
-       filename = /path/to/file
-       CHUNK=65536 by default"""
-
-    # chunking brazenly lifted from Ryan Tomayko
-
-    if isinstance(file, basestring):
-        try:
-            with open(file, 'rb', CHUNK) as fo:
-                return checksum(sumtype, fo, CHUNK, datasize)
-        except (IOError, OSError):
-            raise MiscError('Error opening file for checksum: %s' % file)
-
-    try:
-        # assumes file is a file-like-object
-        data = Checksums([sumtype])
-        while data.read(file, CHUNK):
-            if datasize is not None and data.length > datasize:
-                break
-
-        # This screws up the length, but that shouldn't matter. We only care
-        # if this checksum == what we expect.
-        if datasize is not None and datasize != data.length:
-            return '!%u!%s' % (datasize, data.hexdigest(sumtype))
-
-        return data.hexdigest(sumtype)
-    except (IOError, OSError) as e:
-        raise MiscError('Error reading file for checksum: %s' % file)
 
 class GenericHolder(object):
     """Generic Holder class used to hold other objects of known types

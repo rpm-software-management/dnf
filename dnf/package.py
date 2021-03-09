@@ -30,6 +30,8 @@ import dnf.exceptions
 import dnf.rpm
 import dnf.yum.misc
 import hawkey
+import libdnf.error
+import libdnf.utils
 import logging
 import os
 import rpm
@@ -56,7 +58,10 @@ class Package(hawkey.Package):
             return self._priv_chksum
         if self._from_cmdline:
             chksum_type = dnf.yum.misc.get_default_chksum_type()
-            chksum_val = dnf.yum.misc.checksum(chksum_type, self.location)
+            try:
+                chksum_val = libdnf.utils.checksum_value(chksum_type, self.location)
+            except libdnf.error.Error as e:
+                raise dnf.exceptions.MiscError(str(e))
             return (hawkey.chksum_type(chksum_type),
                     binascii.unhexlify(chksum_val))
         return super(Package, self).chksum
@@ -330,10 +335,7 @@ class Package(hawkey.Package):
         if self._from_cmdline:
             return True # local package always verifies against itself
         (chksum_type, chksum) = self.returnIdSum()
-        real_sum = dnf.yum.misc.checksum(chksum_type, self.localPkg(),
-                                         datasize=self._size)
-        if real_sum != chksum:
-            logger.debug(_('%s: %s check failed: %s vs %s'),
-                         self, chksum_type, real_sum, chksum)
-            return False
-        return True
+        try:
+            return libdnf.utils.checksum_check(chksum_type, self.localPkg(), chksum)
+        except libdnf.error.Error as e:
+            raise dnf.exceptions.MiscError(str(e))
