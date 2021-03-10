@@ -389,8 +389,6 @@ class SwdbInterface(object):
         rpm_item = self.rpm._pkg_to_swdb_rpm_item(pkg)
         repoid = self.repo(pkg)
         action = libdnf.transaction.TransactionItemAction_REASON_CHANGE
-        reason = reason
-        replaced_by = None
         ti = self.swdb.addItem(rpm_item, repoid, action, reason)
         ti.setState(libdnf.transaction.TransactionItemState_DONE)
         return ti
@@ -426,67 +424,6 @@ class SwdbInterface(object):
         except:
             pass
 
-        '''
-        for pkg in using_pkgs:
-            pid = self.pkg2pid(pkg)
-            self.swdb.trans_with(tid, pid)
-        '''
-
-        # add RPMs to the transaction
-        # TODO: _populate_rpm_ts() ?
-
-        if self.group:
-            for group_id, group_item in sorted(self.group._installed.items()):
-                repoid = ""
-                action = libdnf.transaction.TransactionItemAction_INSTALL
-                reason = libdnf.transaction.TransactionItemReason_USER
-                replaced_by = None
-                ti = self.swdb.addItem(group_item, repoid, action, reason)
-                ti.setState(libdnf.transaction.TransactionItemState_DONE)
-
-            for group_id, group_item in sorted(self.group._upgraded.items()):
-                repoid = ""
-                action = libdnf.transaction.TransactionItemAction_UPGRADE
-                reason = libdnf.transaction.TransactionItemReason_USER
-                replaced_by = None
-                ti = self.swdb.addItem(group_item, repoid, action, reason)
-                ti.setState(libdnf.transaction.TransactionItemState_DONE)
-
-            for group_id, group_item in sorted(self.group._removed.items()):
-                repoid = ""
-                action = libdnf.transaction.TransactionItemAction_REMOVE
-                reason = libdnf.transaction.TransactionItemReason_USER
-                replaced_by = None
-                ti = self.swdb.addItem(group_item, repoid, action, reason)
-                ti.setState(libdnf.transaction.TransactionItemState_DONE)
-
-        if self.env:
-            for env_id, env_item in sorted(self.env._installed.items()):
-                repoid = ""
-                action = libdnf.transaction.TransactionItemAction_INSTALL
-                reason = libdnf.transaction.TransactionItemReason_USER
-                replaced_by = None
-                ti = self.swdb.addItem(env_item, repoid, action, reason)
-                ti.setState(libdnf.transaction.TransactionItemState_DONE)
-
-            for env_id, env_item in sorted(self.env._upgraded.items()):
-                repoid = ""
-                action = libdnf.transaction.TransactionItemAction_UPGRADE
-                reason = libdnf.transaction.TransactionItemReason_USER
-                replaced_by = None
-                ti = self.swdb.addItem(env_item, repoid, action, reason)
-                ti.setState(libdnf.transaction.TransactionItemState_DONE)
-
-            for env_id, env_item in sorted(self.env._removed.items()):
-                repoid = ""
-                action = libdnf.transaction.TransactionItemAction_REMOVE
-                reason = libdnf.transaction.TransactionItemReason_USER
-                replaced_by = None
-                ti = self.swdb.addItem(env_item, repoid, action, reason)
-                ti.setState(libdnf.transaction.TransactionItemState_DONE)
-
-
-        # save when everything is in memory
         tid = self.swdb.beginTransaction(
             int(calendar.timegm(time.gmtime())),
             str(rpmdb_version),
