@@ -936,6 +936,11 @@ configuration.
 
     When enabled, remote SSL certificates are verified. If the client can not be authenticated, connecting fails and the repository is not used any further. If ``False``, SSL connections can be used, but certificates are not verified. Default is ``True``.
 
+``sslverifystatus``
+    :ref:`boolean <boolean-label>`
+
+    When enabled, revocation status of the server certificate is verified using the "Certificate Status Request" TLS extension (aka. OCSP stapling). Default is ``False``.
+
 .. _sslclientcert-label:
 
 ``sslclientcert``
