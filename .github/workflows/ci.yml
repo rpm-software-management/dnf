@@ -26,7 +26,7 @@ jobs:
       - name: Check out sources
         uses: actions/checkout@v2
         with:
-          path: gits/${{github.event.pull_request.head.repo.name}}
+          path: gits/${{github.event.pull_request.repository.name}}
           ref: ${{github.event.pull_request.head.sha}}  # check out the PR HEAD
           fetch-depth: 0
 
