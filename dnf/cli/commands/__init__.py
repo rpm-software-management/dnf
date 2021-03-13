@@ -154,7 +154,7 @@ class InfoCommand(Command):
     info command.
     """
 
-    aliases = ('info',)
+    aliases = ('info', 'if')
     summary = _('display details about a package or group of packages')
     DEFAULT_PKGNARROW = 'all'
     pkgnarrows = {'available', 'installed', 'extras', 'updates', 'upgrades',

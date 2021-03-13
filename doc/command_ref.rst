@@ -791,6 +791,7 @@ Info Command
 ------------
 
 | Command: ``info``
+| Aliases: ``if``
 
 ``dnf [options] info [<package-file-spec>...]``
     Lists description and summary information about installed and available packages.
