@@ -59,7 +59,7 @@ class UpdateInfoCommand(commands.Command):
                        'info-security'      : 'info',
                        'info-sec'           : 'info',
                        'summary-updateinfo' : 'summary'}
-    aliases = ['updateinfo'] + list(direct_commands.keys())
+    aliases = ['updateinfo', 'upif'] + list(direct_commands.keys())
     summary = _('display advisories about packages')
     availability_default = 'available'
     availabilities = ['installed', 'updates', 'all', availability_default]

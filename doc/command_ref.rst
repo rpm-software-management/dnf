@@ -1652,6 +1652,7 @@ Updateinfo Command
 ------------------
 
 | Command: ``updateinfo``
+| Aliases: ``upif``
 | Deprecated aliases: ``list-updateinfo``, ``list-security``, ``list-sec``, ``info-updateinfo``, ``info-security``, ``info-sec``, ``summary-updateinfo``
 
 ``dnf [options] updateinfo [--summary|--list|--info] [<availability>] [<spec>...]``
