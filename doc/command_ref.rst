@@ -1096,7 +1096,7 @@ Provides Command
 ----------------
 
 | Command: ``provides``
-| Aliases: ``prov``, ``whatprovides``
+| Aliases: ``prov``, ``whatprovides``, ``wp``
 
 ``dnf [options] provides <provide-spec>``
     Finds the packages providing the given ``<provide-spec>``. This is useful
