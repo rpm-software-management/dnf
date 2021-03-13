@@ -231,7 +231,7 @@ class ProvidesCommand(Command):
     provides command.
     """
 
-    aliases = ('provides', 'whatprovides', 'prov')
+    aliases = ('provides', 'whatprovides', 'prov', 'wp')
     summary = _('find what package provides the given value')
 
     @staticmethod
