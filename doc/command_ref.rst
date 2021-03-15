@@ -1531,7 +1531,7 @@ The ``info`` subcommand lists description and summary information about packages
     List packages in the repository that upgrade packages installed on the system.
 
 ``dnf [options] repository-packages <repoid> install [<package-spec>...]``
-    Install all packages in the repository.
+    Install packages matching ``<package-spec>`` from the repository. If ``<package-spec>`` isn't specified at all, install all packages from the repository.
 
 ``dnf [options] repository-packages <repoid> list [--all] [<package-file-spec>...]``
     List all related packages.
