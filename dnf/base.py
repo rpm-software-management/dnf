@@ -2061,12 +2061,18 @@ class Base(object):
             msg = _("File %s is a source package and cannot be updated, ignoring.")
             logger.info(msg, pkg.location)
             return 0
-
-        q = self.sack.query().installed().filterm(name=pkg.name, arch=[pkg.arch, "noarch"])
+        installed = self.sack.query().installed().apply()
+        if self.conf.obsoletes and self.sack.query().filterm(pkg=[pkg]).filterm(obsoletes=installed):
+            sltr = dnf.selector.Selector(self.sack)
+            sltr.set(pkg=[pkg])
+            self._goal.upgrade(select=sltr)
+            return 1
+        q = installed.filter(name=pkg.name, arch=[pkg.arch, "noarch"])
         if not q:
             msg = _("Package %s not installed, cannot update it.")
             logger.warning(msg, pkg.name)
-            raise dnf.exceptions.MarkingError(_('No match for argument: %s') % pkg.location, pkg.name)
+            raise dnf.exceptions.MarkingError(
+                _('No match for argument: %s') % pkg.location, pkg.name)
         elif sorted(q)[-1] < pkg:
             sltr = dnf.selector.Selector(self.sack)
             sltr.set(pkg=[pkg])
@@ -2080,20 +2086,21 @@ class Base(object):
 
     def _upgrade_internal(self, query, obsoletes, reponame, pkg_spec=None):
         installed_all = self.sack.query().installed()
+        # Add only relevant obsoletes to transaction => installed, upgrades
         q = query.intersection(self.sack.query().filterm(name=[pkg.name for pkg in installed_all]))
         installed_query = q.installed()
         if obsoletes:
             obsoletes = self.sack.query().available().filterm(
                 obsoletes=installed_query.union(q.upgrades()))
             # add obsoletes into transaction
-            q = q.union(obsoletes)
+            query = query.union(obsoletes)
         if reponame is not None:
-            q.filterm(reponame=reponame)
-        q = self._merge_update_filters(q, pkg_spec=pkg_spec, upgrade=True)
-        if q:
-            q = q.available().union(installed_query.latest())
+            query.filterm(reponame=reponame)
+        query = self._merge_update_filters(query, pkg_spec=pkg_spec, upgrade=True)
+        if query:
+            query = query.union(installed_query.latest())
             sltr = dnf.selector.Selector(self.sack)
-            sltr.set(pkg=q)
+            sltr.set(pkg=query)
             self._goal.upgrade(select=sltr)
         return 1
 
@@ -2108,18 +2115,21 @@ class Base(object):
             # wildcard shouldn't print not installed packages
             # only solution with nevra.name provide packages with same name
             if not wildcard and solution['nevra'] and solution['nevra'].name:
-                installed = self.sack.query().installed()
                 pkg_name = solution['nevra'].name
-                installed.filterm(name=pkg_name).apply()
-                if not installed:
-                    msg = _('Package %s available, but not installed.')
-                    logger.warning(msg, pkg_name)
-                    raise dnf.exceptions.PackagesNotInstalledError(
-                        _('No match for argument: %s') % pkg_spec, pkg_spec)
-                if solution['nevra'].arch and not dnf.util.is_glob_pattern(solution['nevra'].arch):
-                    if not installed.filter(arch=solution['nevra'].arch):
-                        msg = _('Package %s available, but installed for different architecture.')
-                        logger.warning(msg, "{}.{}".format(pkg_name, solution['nevra'].arch))
+                installed = self.sack.query().installed().apply()
+                obsoleters = q.filter(obsoletes=installed) \
+                    if self.conf.obsoletes else self.sack.query().filterm(empty=True)
+                if not obsoleters:
+                    installed_name = installed.filter(name=pkg_name).apply()
+                    if not installed_name:
+                        msg = _('Package %s available, but not installed.')
+                        logger.warning(msg, pkg_name)
+                        raise dnf.exceptions.PackagesNotInstalledError(
+                            _('No match for argument: %s') % pkg_spec, pkg_spec)
+                    elif solution['nevra'].arch and not dnf.util.is_glob_pattern(solution['nevra'].arch):
+                        if not installed_name.filterm(arch=solution['nevra'].arch):
+                            msg = _('Package %s available, but installed for different architecture.')
+                            logger.warning(msg, "{}.{}".format(pkg_name, solution['nevra'].arch))
             obsoletes = self.conf.obsoletes and solution['nevra'] \
                         and solution['nevra'].has_just_name()
             return self._upgrade_internal(q, obsoletes, reponame, pkg_spec)
