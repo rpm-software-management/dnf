@@ -2367,18 +2367,19 @@ class Base(object):
             if warning:
                 q = q.upgrades()
                 count = len(q._name_dict().keys())
-                if pkg_spec is None:
-                    msg1 = _("No security updates needed, but {} update "
-                             "available").format(count)
-                    msg2 = _("No security updates needed, but {} updates "
-                             "available").format(count)
-                    logger.warning(P_(msg1, msg2, count))
-                else:
-                    msg1 = _('No security updates needed for "{}", but {} '
-                             'update available').format(pkg_spec, count)
-                    msg2 = _('No security updates needed for "{}", but {} '
-                             'updates available').format(pkg_spec, count)
-                    logger.warning(P_(msg1, msg2, count))
+                if count > 0:
+                    if pkg_spec is None:
+                        msg1 = _("No security updates needed, but {} update "
+                                "available").format(count)
+                        msg2 = _("No security updates needed, but {} updates "
+                                "available").format(count)
+                        logger.warning(P_(msg1, msg2, count))
+                    else:
+                        msg1 = _('No security updates needed for "{}", but {} '
+                                'update available').format(pkg_spec, count)
+                        msg2 = _('No security updates needed for "{}", but {} '
+                                'updates available').format(pkg_spec, count)
+                        logger.warning(P_(msg1, msg2, count))
         return merged_queries
 
     def _get_key_for_package(self, po, askcb=None, fullaskcb=None):
