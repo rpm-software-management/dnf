@@ -2,13 +2,13 @@
 %define __cmake_in_source_build 1
 
 # default dependencies
-%global hawkey_version 0.61.0
+%global hawkey_version 0.61.1
 %global libcomps_version 0.1.8
 %global libmodulemd_version 2.9.3
 %global rpm_version 4.14.0
 
 # conflicts
-%global conflicts_dnf_plugins_core_version 4.0.16
+%global conflicts_dnf_plugins_core_version 4.0.20
 %global conflicts_dnf_plugins_extras_version 4.0.4
 %global conflicts_dnfdaemon_version 0.3.19
 
