@@ -799,7 +799,7 @@ configuration.
 ``max_parallel_downloads``
     :ref:`integer <integer-label>`
 
-    Maximum number of simultaneous package downloads. Defaults to 3.
+    Maximum number of simultaneous package downloads. Defaults to 3. Maximum of 20.
 
 .. _metadata_expire-label:
 
