@@ -26,6 +26,7 @@ import dnf.exceptions
 from dnf.i18n import _
 from dnf.util import logger
 
+import rpm
 
 class PersistorBase(object):
     def __init__(self, history):
@@ -310,43 +311,46 @@ class RPMTransaction(object):
         modular_problems = 0
 
         for tsi in self:
-            if tsi.action == libdnf.transaction.TransactionItemAction_DOWNGRADE:
-                hdr = tsi.pkg._header
-                modular_problems += self._test_fail_safe(hdr, tsi.pkg)
-                ts.addInstall(hdr, tsi, 'u')
-            elif tsi.action == libdnf.transaction.TransactionItemAction_DOWNGRADED:
-                ts.addErase(tsi.pkg.idx)
-            elif tsi.action == libdnf.transaction.TransactionItemAction_INSTALL:
-                hdr = tsi.pkg._header
-                modular_problems += self._test_fail_safe(hdr, tsi.pkg)
-                ts.addInstall(hdr, tsi, 'i')
-            elif tsi.action == libdnf.transaction.TransactionItemAction_OBSOLETE:
-                hdr = tsi.pkg._header
-                modular_problems += self._test_fail_safe(hdr, tsi.pkg)
-                ts.addInstall(hdr, tsi, 'u')
-            elif tsi.action == libdnf.transaction.TransactionItemAction_OBSOLETED:
-                ts.addErase(tsi.pkg.idx)
-            elif tsi.action == libdnf.transaction.TransactionItemAction_REINSTALL:
-                # note: in rpm 4.12 there should not be set
-                # rpm.RPMPROB_FILTER_REPLACEPKG to work
-                hdr = tsi.pkg._header
-                modular_problems += self._test_fail_safe(hdr, tsi.pkg)
-                ts.addReinstall(hdr, tsi)
-            elif tsi.action == libdnf.transaction.TransactionItemAction_REINSTALLED:
-                # Required when multiple packages with the same NEVRA marked as installed
-                ts.addErase(tsi.pkg.idx)
-            elif tsi.action == libdnf.transaction.TransactionItemAction_REMOVE:
-                ts.addErase(tsi.pkg.idx)
-            elif tsi.action == libdnf.transaction.TransactionItemAction_UPGRADE:
-                hdr = tsi.pkg._header
-                modular_problems += self._test_fail_safe(hdr, tsi.pkg)
-                ts.addInstall(hdr, tsi, 'u')
-            elif tsi.action == libdnf.transaction.TransactionItemAction_UPGRADED:
-                ts.addErase(tsi.pkg.idx)
-            elif tsi.action == libdnf.transaction.TransactionItemAction_REASON_CHANGE:
-                pass
-            else:
-                raise RuntimeError("TransactionItemAction not handled: %s" % tsi.action)
+            try:
+                if tsi.action == libdnf.transaction.TransactionItemAction_DOWNGRADE:
+                    hdr = tsi.pkg._header
+                    modular_problems += self._test_fail_safe(hdr, tsi.pkg)
+                    ts.addInstall(hdr, tsi, 'u')
+                elif tsi.action == libdnf.transaction.TransactionItemAction_DOWNGRADED:
+                    ts.addErase(tsi.pkg.idx)
+                elif tsi.action == libdnf.transaction.TransactionItemAction_INSTALL:
+                    hdr = tsi.pkg._header
+                    modular_problems += self._test_fail_safe(hdr, tsi.pkg)
+                    ts.addInstall(hdr, tsi, 'i')
+                elif tsi.action == libdnf.transaction.TransactionItemAction_OBSOLETE:
+                    hdr = tsi.pkg._header
+                    modular_problems += self._test_fail_safe(hdr, tsi.pkg)
+                    ts.addInstall(hdr, tsi, 'u')
+                elif tsi.action == libdnf.transaction.TransactionItemAction_OBSOLETED:
+                    ts.addErase(tsi.pkg.idx)
+                elif tsi.action == libdnf.transaction.TransactionItemAction_REINSTALL:
+                    # note: in rpm 4.12 there should not be set
+                    # rpm.RPMPROB_FILTER_REPLACEPKG to work
+                    hdr = tsi.pkg._header
+                    modular_problems += self._test_fail_safe(hdr, tsi.pkg)
+                    ts.addReinstall(hdr, tsi)
+                elif tsi.action == libdnf.transaction.TransactionItemAction_REINSTALLED:
+                    # Required when multiple packages with the same NEVRA marked as installed
+                    ts.addErase(tsi.pkg.idx)
+                elif tsi.action == libdnf.transaction.TransactionItemAction_REMOVE:
+                    ts.addErase(tsi.pkg.idx)
+                elif tsi.action == libdnf.transaction.TransactionItemAction_UPGRADE:
+                    hdr = tsi.pkg._header
+                    modular_problems += self._test_fail_safe(hdr, tsi.pkg)
+                    ts.addInstall(hdr, tsi, 'u')
+                elif tsi.action == libdnf.transaction.TransactionItemAction_UPGRADED:
+                    ts.addErase(tsi.pkg.idx)
+                elif tsi.action == libdnf.transaction.TransactionItemAction_REASON_CHANGE:
+                    pass
+                else:
+                    raise RuntimeError("TransactionItemAction not handled: %s" % tsi.action)
+            except rpm.error as e:
+                raise dnf.exceptions.Error(_("An rpm exception occurred: %s" % e))
         if modular_problems:
             raise dnf.exceptions.Error(_("No available modular metadata for modular package"))
 
