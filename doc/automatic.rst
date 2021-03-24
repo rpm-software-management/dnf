@@ -101,7 +101,7 @@ Choosing how the results should be reported.
 ``emit_via``
     list, default: ``email, stdio, motd``
 
-    List of emitters to report the results through. Available emitters are ``stdio`` to print the result to standard output, ``command`` to send the result to a custom command, ``command_email`` to send an email using a command, and ``email`` to send the report via email and ``motd`` sends the result to */etc/motd* file.
+    List of emitters to report the results through. Available emitters are ``stdio`` to print the result to standard output, ``command`` to send the result to a custom command, ``command_email`` to send an email using a command, and ``email`` to send the report via email and ``motd`` sends the result to */etc/motd.d/dnf* file.
 
 ``system_name``
     string, default: hostname of the given system

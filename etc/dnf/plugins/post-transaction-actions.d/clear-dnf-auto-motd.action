@@ -1,0 +1,4 @@
+# If the python3-dnf-plugin-post-transaction-actions package is installed,
+# this action will clear the dnf-automatic motd after ideally an upgrade,
+# but also an install or downgrade, of one or more packages.
+*:in:echo '' > /etc/motd.d/dnf

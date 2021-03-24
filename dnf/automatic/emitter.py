@@ -22,6 +22,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.i18n import _
+from os import makedirs
 import logging
 import dnf.pycomp
 import smtplib
@@ -168,7 +169,8 @@ class StdIoEmitter(Emitter):
 
 class MotdEmitter(Emitter):
     def commit(self):
+        makedirs('/etc/motd.d/', exist_ok=True)
         msg = self._prepare_msg()
-        with open('/etc/motd', 'w') as fobj:
+        with open('/etc/motd.d/dnf', 'w') as fobj:
             fobj.write(msg)
 
