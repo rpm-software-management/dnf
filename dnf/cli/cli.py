@@ -292,7 +292,7 @@ class BaseCli(dnf.Base):
                 fn = lambda x, y, z: self.output.userconfirm()
                 try:
                     self._get_key_for_package(po, fn)
-                except dnf.exceptions.Error as e:
+                except (dnf.exceptions.Error, ValueError) as e:
                     error_messages.append(str(e))
 
             else:
