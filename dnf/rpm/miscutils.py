@@ -18,6 +18,7 @@ from __future__ import unicode_literals
 
 import rpm
 import os
+import re
 
 from dnf.i18n import ucd
 
@@ -30,7 +31,7 @@ def checkSig(ts, package):
     return 3 if the key is not trusted
     return 4 if the pkg is not gpg or pgp signed"""
 
-    value = 0
+    value = 4
     currentflags = ts.setVSFlags(0)
     fdno = os.open(package, os.O_RDONLY)
     try:
@@ -38,10 +39,12 @@ def checkSig(ts, package):
     except rpm.error as e:
         if str(e) == "public key not available":
             value = 1
-        if str(e) == "public key not trusted":
+        elif str(e) == "public key not trusted":
             value = 3
-        if str(e) == "error reading package header":
+        elif str(e) == "error reading package header":
             value = 2
+        else:
+            raise ValueError('Unexpected error value %r from ts.hdrFromFdno when checking signature.' % str(e))
     else:
         # checks signature from an hdr
         string = '%|DSAHEADER?{%{DSAHEADER:pgpsig}}:{%|RSAHEADER?{%{RSAHEADER:pgpsig}}:' \
@@ -49,17 +52,20 @@ def checkSig(ts, package):
         try:
             siginfo = hdr.sprintf(string)
             siginfo = ucd(siginfo)
+            rpm_pgpsig_format_regex = re.compile(r'[0-9]{2}:[0-9]{2}:[0-9]{2} [0-9]{4}, Key ID [0-9a-f]{16}\Z')
+
             if siginfo == '(none)':
                 value = 4
+            elif rpm_pgpsig_format_regex.search(siginfo):
+                value = 0
+            else:
+                raise ValueError('Unexpected return value %r from hdr.sprintf when checking signature.' % siginfo)
         except UnicodeDecodeError:
             pass
 
         del hdr
 
-    try:
-        os.close(fdno)
-    except OSError as e:  # if we're not opened, don't scream about it
-        pass
+    os.close(fdno)
 
     ts.setVSFlags(currentflags)  # put things back like they were before
     return value
