@@ -19,9 +19,39 @@ from __future__ import unicode_literals
 import rpm
 import os
 import re
+import subprocess
+import logging
 
 from dnf.i18n import ucd
+from shutil import which
 
+
+logger = logging.getLogger('dnf')
+
+
+def _verifyPkgUsingRpmkeys(package, installroot):
+    rpmkeys_binary = '/usr/bin/rpmkeys'
+    if not rpmkeys_binary:
+        rpmkeys_binary = which("rpmkeys")
+        logger.info(_('Using rpmkeys executable from {path} to verify signature for package: {package}.').format(
+            path=rpmkeys_binary, package=package))
+
+    if not rpmkeys_binary:
+        logger.critical(_('Cannot find rpmkeys executable to verify signatures.'))
+        return 0
+
+    args = ('rpmkeys', '--checksig', '--root', installroot, '--define', '_pkgverify_level all', '--', package)
+    with subprocess.Popen(
+            args=args,
+            executable=rpmkeys_binary,
+            env={'LC_ALL': 'C'},
+            stdout=subprocess.PIPE,
+            cwd='/') as p:
+        data, _ = p.communicate()
+    if p.returncode != 0 or data != (package.encode('ascii', 'strict') + b': digests signatures OK\n'):
+        return 0
+    else:
+        return 1
 
 def checkSig(ts, package):
     """Takes a transaction set and a package, check it's sigs,
@@ -56,7 +86,7 @@ def checkSig(ts, package):
 
             if siginfo == '(none)':
                 value = 4
-            elif rpm_pgpsig_format_regex.search(siginfo):
+            elif rpm_pgpsig_format_regex.search(siginfo) and _verifyPkgUsingRpmkeys(package, ts.ts.rootDir):
                 value = 0
             else:
                 raise ValueError('Unexpected return value %r from hdr.sprintf when checking signature.' % siginfo)
