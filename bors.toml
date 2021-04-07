@@ -1,2 +1,0 @@
-status = ["DNF CI"]
-timeout_sec = 10800  # 3 hours
