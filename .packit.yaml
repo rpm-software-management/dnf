@@ -1,9 +1,0 @@
----
-jobs:
-- job: copr_build
-  trigger: pull_request
-  metadata:
-    targets:
-    - fedora-all
-    - mageia-cauldron-x86_64
-    - opensuse-tumbleweed-x86_64
