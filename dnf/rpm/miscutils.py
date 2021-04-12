@@ -18,7 +18,6 @@ from __future__ import unicode_literals
 
 import rpm
 import os
-import re
 import subprocess
 import logging
 
@@ -82,11 +81,10 @@ def checkSig(ts, package):
         try:
             siginfo = hdr.sprintf(string)
             siginfo = ucd(siginfo)
-            rpm_pgpsig_format_regex = re.compile(r'[0-9]{2}:[0-9]{2}:[0-9]{2} [0-9]{4}, Key ID [0-9a-f]{16}\Z')
 
             if siginfo == '(none)':
                 value = 4
-            elif rpm_pgpsig_format_regex.search(siginfo) and _verifyPkgUsingRpmkeys(package, ts.ts.rootDir):
+            elif "Key ID" in siginfo and _verifyPkgUsingRpmkeys(package, ts.ts.rootDir):
                 value = 0
             else:
                 raise ValueError('Unexpected return value %r from hdr.sprintf when checking signature.' % siginfo)
