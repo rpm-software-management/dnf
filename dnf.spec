@@ -370,6 +370,25 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Mon Apr 12 2021 Nicola Sella <nsella@redhat.com> - 4.7.0-1
+- Improve repo config path ordering to fix a comps merging issue (RhBug:1928181)
+- Keep reason when package is removed (RhBug:1921063)
+- Improve mechanism for application of security filters (RhBug:1918475)
+- [doc] Add description for new API
+- [API] Add new method for reset of security filters
+- [doc] Improve documentation for Hotfix repositories
+- [doc] fix: "makecache" command downloads only enabled repositories
+- Use libdnf.utils.checksum_{check,value}
+- [doc] Add info that maximum parallel downloads is 20
+- Increase loglevel in case of invalid config options
+- [doc] installonly_limit documentation follows behavior
+- Prevent traceback (catch ValueError) if pkg is from cmdline
+- Add documentation for config option sslverifystatus (RhBug:1814383)
+- Check for specific key string when verifing signatures (RhBug:1915990)
+- Use rpmkeys binary to verify package signature (RhBug:1915990)
+- Bugs fixed (RhBug:1916783)
+- Preserve file mode during log rotation (RhBug:1910084)
+
 * Tue Mar 02 2021 Nicola Sella <nsella@redhat.com> - 4.6.1-1
 - Fix recreate script
 - Add unit test for fill_sack_from_repos_in_cache (RhBug:1865803)

@@ -3314,5 +3314,21 @@
     [
         1906970,
         "dnf history wrong output if piped through more or redirected to file"
+    ],
+    [
+        1921063,
+        "dnf autoremove wants to remove \"kernel-modules-extra\" if you have a rawhide kernel installed"
+    ],
+    [
+        1918475,
+        "dnf --security pulling in packages without security advisory"
+    ],
+    [
+        1814383,
+        "librepo does not do TLS certificate revocation checking"
+    ],
+    [
+        1928181,
+        "comps from the updates repo don't override comps from the fedora repo"
     ]
 ]
