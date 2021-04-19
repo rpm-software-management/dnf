@@ -19,7 +19,7 @@
 #
 
 from __future__ import unicode_literals
-import distutils.sysconfig
+import sysconfig
 
 CONF_FILENAME='/etc/dnf/dnf.conf' # :api
 CONF_AUTOMATIC_FILENAME='/etc/dnf/automatic.conf'
@@ -50,7 +50,7 @@ VERBOSE_LEVEL=6
 PREFIX=NAME.lower()
 PROGRAM_NAME=NAME.lower()  # Deprecated - no longer used, Argparser prints program name based on sys.argv
 PLUGINCONFPATH = '/etc/dnf/plugins'  # :api
-PLUGINPATH = '%s/dnf-plugins' % distutils.sysconfig.get_python_lib()
+PLUGINPATH = '%s/dnf-plugins' % sysconfig.get_path('purelib')
 VERSION='@DNF_VERSION@'
 USER_AGENT = "dnf/%s" % VERSION
 
