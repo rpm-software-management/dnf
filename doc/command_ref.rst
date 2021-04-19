@@ -124,6 +124,10 @@ Options
 ``-b, --best``
     Try the best available package versions in transactions. Specifically during :ref:`dnf upgrade <upgrade_command-label>`, which by default skips over updates that can not be installed for dependency reasons, the switch forces DNF to only consider the latest packages. When running into packages with broken dependencies, DNF will fail giving a reason why the latest version can not be installed.
 
+    Note that the use of the newest available version is only guaranteed for
+    the packages directly requested (e.g. as a command line arguments), and the
+    solver may use older versions of dependencies to meet their requirements.
+
 ``--bugfix``
     Include packages that fix a bugfix issue. Applicable for the install, repoquery, updateinfo and
     upgrade commands.
