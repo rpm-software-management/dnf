@@ -252,22 +252,13 @@ popd
 
 
 %post automatic
-%systemd_post dnf-automatic.timer
-%systemd_post dnf-automatic-notifyonly.timer
-%systemd_post dnf-automatic-download.timer
-%systemd_post dnf-automatic-install.timer
+%systemd_post dnf-automatic.timer dnf-automatic-notifyonly.timer dnf-automatic-download.timer dnf-automatic-install.timer
 
 %preun automatic
-%systemd_preun dnf-automatic.timer
-%systemd_preun dnf-automatic-notifyonly.timer
-%systemd_preun dnf-automatic-download.timer
-%systemd_preun dnf-automatic-install.timer
+%systemd_preun dnf-automatic.timer dnf-automatic-notifyonly.timer dnf-automatic-download.timer dnf-automatic-install.timer
 
 %postun automatic
-%systemd_postun_with_restart dnf-automatic.timer
-%systemd_postun_with_restart dnf-automatic-notifyonly.timer
-%systemd_postun_with_restart dnf-automatic-download.timer
-%systemd_postun_with_restart dnf-automatic-install.timer
+%systemd_postun_with_restart dnf-automatic.timer dnf-automatic-notifyonly.timer dnf-automatic-download.timer dnf-automatic-install.timer
 
 
 %files -f %{name}.lang
