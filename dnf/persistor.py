@@ -26,7 +26,6 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _
-import distutils.version
 import dnf.util
 import errno
 import fnmatch
