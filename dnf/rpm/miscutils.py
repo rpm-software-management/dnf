@@ -29,7 +29,8 @@ from shutil import which
 logger = logging.getLogger('dnf')
 
 
-def _verifyPkgUsingRpmkeys(package, installroot):
+def _verifyPkgUsingRpmkeys(package, installroot, fdno):
+    os.lseek(fdno, 0, os.SEEK_SET)
     rpmkeys_binary = '/usr/bin/rpmkeys'
     if not os.path.isfile(rpmkeys_binary):
         rpmkeys_binary = which("rpmkeys")
@@ -40,15 +41,16 @@ def _verifyPkgUsingRpmkeys(package, installroot):
         logger.critical(_('Cannot find rpmkeys executable to verify signatures.'))
         return 0
 
-    args = ('rpmkeys', '--checksig', '--root', installroot, '--define', '_pkgverify_level all', '--', package)
+    args = ('rpmkeys', '--checksig', '--root', installroot, '--define', '_pkgverify_level all', '-')
     with subprocess.Popen(
             args=args,
             executable=rpmkeys_binary,
             env={'LC_ALL': 'C'},
+            stdin=fdno,
             stdout=subprocess.PIPE,
             cwd='/') as p:
         data, err = p.communicate()
-    if p.returncode != 0 or data != (package.encode('ascii', 'strict') + b': digests signatures OK\n'):
+    if p.returncode != 0 or data != b'-: digests signatures OK\n':
         return 0
     else:
         return 1
@@ -85,7 +87,7 @@ def checkSig(ts, package):
 
             if siginfo == '(none)':
                 value = 4
-            elif "Key ID" in siginfo and _verifyPkgUsingRpmkeys(package, ts.ts.rootDir):
+            elif "Key ID" in siginfo and _verifyPkgUsingRpmkeys(package, ts.ts.rootDir, fdno):
                 value = 0
             else:
                 raise ValueError('Unexpected return value %r from hdr.sprintf when checking signature.' % siginfo)
