@@ -14,7 +14,10 @@ jobs:
       - name: Check out ci-dnf-stack
         uses: actions/checkout@v2
         with:
-          repository: rpm-software-management/ci-dnf-stack
+          #repository: rpm-software-management/ci-dnf-stack
+          repository: lukash/ci-dnf-stack
+          ref: infer-chroot
+
 
       - name: Setup CI
         id: setup-ci
