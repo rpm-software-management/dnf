@@ -1,3 +1,4 @@
+HI
 .. image:: https://translate.fedoraproject.org/widgets/dnf/-/dnf-master/svg-badge.svg
     :alt: Translation status
     :target: https://translate.fedoraproject.org/engage/dnf/?utm_source=widget
