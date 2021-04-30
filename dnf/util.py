@@ -88,8 +88,6 @@ def _urlopen_progress(url, conf, progress=None):
     if progress is None:
         progress = dnf.callback.NullDownloadProgress()
     pload = dnf.repo.RemoteRPMPayload(url, conf, progress)
-    if os.path.exists(pload.local_path):
-        return pload.local_path
     est_remote_size = sum([pload.download_size])
     progress.start(1, est_remote_size)
     targets = [pload._librepo_target()]
