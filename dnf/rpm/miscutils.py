@@ -22,6 +22,7 @@ import subprocess
 import logging
 
 from dnf.i18n import ucd
+from dnf.i18n import _
 from shutil import which
 
 
@@ -46,7 +47,7 @@ def _verifyPkgUsingRpmkeys(package, installroot):
             env={'LC_ALL': 'C'},
             stdout=subprocess.PIPE,
             cwd='/') as p:
-        data, _ = p.communicate()
+        data, err = p.communicate()
     if p.returncode != 0 or data != (package.encode('ascii', 'strict') + b': digests signatures OK\n'):
         return 0
     else:
