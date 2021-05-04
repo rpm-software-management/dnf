@@ -29,11 +29,9 @@ logger = logging.getLogger('dnf')
 
 
 def _verifyPkgUsingRpmkeys(package, installroot):
-    rpmkeys_binary = '/usr/bin/rpmkeys'
-    if not os.path.isfile(rpmkeys_binary):
-        rpmkeys_binary = which("rpmkeys")
-        logger.info(_('Using rpmkeys executable from {path} to verify signature for package: {package}.').format(
-            path=rpmkeys_binary, package=package))
+    rpmkeys_binary = which("rpmkeys")
+    logger.info(_('Using rpmkeys executable from {path} to verify signature for package: {package}.').format(
+        path=rpmkeys_binary, package=package))
 
     if not os.path.isfile(rpmkeys_binary):
         logger.critical(_('Cannot find rpmkeys executable to verify signatures.'))
