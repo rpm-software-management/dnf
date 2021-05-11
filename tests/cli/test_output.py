@@ -207,7 +207,6 @@ class OutputTest(tests.support.DnfBaseTestCase):
 
 
 PKGS_IN_GROUPS_OUTPUT = u"""\
-
 Group: Pepper's
  Mandatory Packages:
    hole
@@ -215,7 +214,6 @@ Group: Pepper's
 """
 
 PKGS_IN_GROUPS_VERBOSE_OUTPUT = u"""\
-
 Group: Pepper's
  Group-Id: Peppers
  Mandatory Packages:

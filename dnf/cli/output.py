@@ -736,7 +736,7 @@ class Output(object):
         """
         def names(packages):
             return sorted(pkg.name for pkg in packages)
-        print('\n' + _('Group: %s') % group.ui_name)
+        print(_('Group: %s') % group.ui_name)
 
         verbose = self.conf.verbose
         if verbose:
