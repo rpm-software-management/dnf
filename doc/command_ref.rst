@@ -1673,7 +1673,7 @@ Updateinfo Command
     cases when an advisory refers to a newer version but there is no enabled
     repository which contains any newer version.
 
-    Note, that ``--available`` tooks only the latest installed versions of
+    Note, that ``--available`` takes only the latest installed versions of
     packages into account. In case of the kernel packages (when multiple
     version could be installed simultaneously) also packages of the currently
     running version of kernel are added.
