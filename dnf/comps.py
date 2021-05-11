@@ -471,9 +471,9 @@ class CompsTransPkg(object):
 
     def __eq__(self, other):
         return (self.name == other.name and
-                self.basearchonly == self.basearchonly and
-                self.optional == self.optional and
-                self.requires == self.requires)
+                self.basearchonly == other.basearchonly and
+                self.optional == other.optional and
+                self.requires == other.requires)
 
     def __str__(self):
         return self.name
