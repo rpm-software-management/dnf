@@ -626,3 +626,8 @@ def _post_transaction_output(base, transaction, action_callback):
             action, sorted(tsis, key=functools.cmp_to_key(_tsi_or_pkg_nevra_cmp))))
 
     return out
+
+
+def _name_unset_wrapper(input_name):
+    # returns <name-unset> for everything that evaluates to False (None, empty..)
+    return input_name if input_name else _("<name-unset>")

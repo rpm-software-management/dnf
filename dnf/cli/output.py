@@ -735,8 +735,8 @@ class Output(object):
         :param group: a Group object to output information about
         """
         def names(packages):
-            return sorted(pkg.name for pkg in packages)
-        print(_('Group: %s') % group.ui_name)
+            return sorted(dnf.util._name_unset_wrapper(pkg.name) for pkg in packages)
+        print(_('Group: %s') % dnf.util._name_unset_wrapper(group.ui_name))
 
         verbose = self.conf.verbose
         if verbose:
@@ -774,8 +774,8 @@ class Output(object):
         :param environment: an Environment object to output information about
         """
         def names(groups):
-            return sorted(group.name for group in groups)
-        print(_('Environment Group: %s') % environment.ui_name)
+            return sorted(dnf.util._name_unset_wrapper(group.name) for group in groups)
+        print(_('Environment Group: %s') % dnf.util._name_unset_wrapper(environment.ui_name))
 
         if self.conf.verbose:
             print(_(' Environment-Id: %s') % ucd(environment.id))
@@ -1135,8 +1135,7 @@ class Output(object):
             pkglist_lines.append((action, lines))
         if self.base._history:
             def format_line(group):
-                name = group.getName()
-                return (name if name else _("<name-unset>"), "", "", "", "", "", "")
+                return (dnf.util._name_unset_wrapper(group.getName()), "", "", "", "", "", "")
 
             install_env_group = self.base._history.env._installed
             if install_env_group:
