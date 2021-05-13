@@ -100,6 +100,8 @@ configuration file by your distribution to override the DNF defaults.
 
     Automatic check whether there is installed newer kernel module with security update than currently running kernel. Default is ``True``.
 
+.. _basearch-label:
+
 ``basearch``
     :ref:`string <string-label>`
 
@@ -118,12 +120,16 @@ configuration file by your distribution to override the DNF defaults.
     use of the highest available version is only guaranteed for the packages
     directly requested and not for their dependencies.
 
+.. _cachedir-label:
+
 ``cachedir``
     :ref:`string <string-label>`
 
     Path to a directory used by various DNF subsystems for storing cache data.
     Has a reasonable root-writable default depending on the distribution. DNF
     needs to be able to create files and directories at this location.
+
+.. _cacheonly-label:
 
 ``cacheonly``
     :ref:`boolean <boolean-label>`
@@ -152,16 +158,22 @@ configuration file by your distribution to override the DNF defaults.
     pulled in as a dependency. The default is True.
     (:ref:`installonlypkgs <installonlypkgs-label>` are never automatically removed.)
 
+.. _config_file_path-label:
+
 ``config_file_path``
     :ref:`string <string-label>`
 
     Path to the default main configuration file. Default is ``/etc/dnf/dnf.conf``.
+
+.. _debuglevel-label:
 
 ``debuglevel``
     :ref:`integer <integer-label>`
 
     Debug messages output level, in the range 0 to 10. The higher the number the
     more debug output is put to stdout. Default is 2.
+
+.. _debug_solver-label:
 
 ``debug_solver``
     :ref:`boolean <boolean-label>`
@@ -178,11 +190,15 @@ configuration file by your distribution to override the DNF defaults.
     If enabled the default answer to user confirmation prompts will be ``Yes``. Not
     to be confused with :ref:`assumeyes <assumeyes-label>` which will not prompt at all. Default is ``False``.
 
+.. _diskspacecheck-label:
+
 ``diskspacecheck``
     :ref:`boolean <boolean-label>`
 
     Controls wheather rpm shoud check available disk space during the transaction.
     Default is ``True``.
+
+.. _errorlevel-label:
 
 ``errorlevel``
     :ref:`integer <integer-label>`
@@ -192,10 +208,14 @@ configuration file by your distribution to override the DNF defaults.
     and overwritten by \-\ :ref:`-verbose <verbose_options-label>` commandline
     option.
 
+.. _exit_on_lock-label:
+
 ``exit_on_lock``
     :ref:`boolean <boolean-label>`
 
     Should the dnf client exit immediately when something else has the lock. Default is ``False``.
+
+.. _gpgkey_dns_verification-label:
 
 ``gpgkey_dns_verification``
     :ref:`boolean <boolean-label>`
@@ -215,6 +235,7 @@ configuration file by your distribution to override the DNF defaults.
     preserve backward compatibility.
     Default is ``False``.
 
+.. _group_package_types-label:
 
 ``group_package_types``
     :ref:`list <list-label>`
@@ -256,10 +277,14 @@ configuration file by your distribution to override the DNF defaults.
     unlimited number of installonly packages. Value 1 is explicitely not allowed since it
     complicates kernel upgrades due to protection of the running kernel from removal.
 
+.. _installroot-label:
+
 ``installroot``
     :ref:`string <string-label>`
 
     The root of the filesystem for all packaging operations. It requires an absolute path. See also :ref:`--installroot commandline option <installroot-label>`.
+
+.. _install_weak_deps-label:
 
 ``install_weak_deps``
     :ref:`boolean <boolean-label>`
@@ -277,10 +302,14 @@ configuration file by your distribution to override the DNF defaults.
     installed they will still persist until next successful transaction. The default
     is ``False``.
 
+.. _logdir-label:
+
 ``logdir``
     :ref:`string <string-label>`
 
     Directory where the log files will be stored. Default is ``/var/log``.
+
+.. _logfilelevel-label:
 
 ``logfilelevel``
     :ref:`integer <integer-label>`
@@ -290,6 +319,8 @@ configuration file by your distribution to override the DNF defaults.
 
     This option controls dnf.log, dnf.librepo.log and hawkey.log. Although dnf.librepo.log
     and hawkey.log are affected only by setting the logfilelevel to 10.
+
+.. _log_compress-label:
 
 ``log_compress``
 	:ref:`boolean <boolean-label>`
@@ -350,6 +381,8 @@ configuration file by your distribution to override the DNF defaults.
 
     This option controls whether it's possible to switch enabled streams of a module.
 
+.. _multilib_policy-label:
+
 ``multilib_policy``
     :ref:`string <string-label>`
 
@@ -368,10 +401,14 @@ configuration file by your distribution to override the DNF defaults.
 
     Command-line option: :ref:`--obsoletes <obsoletes_option-label>`
 
+.. _persistdir-label:
+
 ``persistdir``
     :ref:`string <string-label>`
 
     Directory where DNF stores its persistent data between runs. Default is ``"/var/lib/dnf"``.
+
+.. _pluginconfpath-label:
 
 ``pluginconfpath``
     :ref:`list <list-label>`
@@ -387,10 +424,14 @@ configuration file by your distribution to override the DNF defaults.
 
     List of directories that are searched for plugins to load. Plugins found in *any of the directories* in this configuration option are used. The default contains a Python version-specific path.
 
+.. _plugins-label:
+
 ``plugins``
     :ref:`boolean <boolean-label>`
 
     Controls whether the plugins are enabled. Default is ``True``.
+
+.. _protected_packages-label:
 
 ``protected_packages``
     :ref:`list <list-label>`
@@ -408,6 +449,8 @@ configuration file by your distribution to override the DNF defaults.
 
 	Controls whether the package corresponding to the running version of kernel is protected from removal. Default is ``True``.
 
+.. _releasever-label:
+
 ``releasever``
     :ref:`string <string-label>`
 
@@ -423,6 +466,8 @@ configuration file by your distribution to override the DNF defaults.
     ``reposdir``. The behavior of ``reposdir`` could differ when it is used
     along with \-\ :ref:`-installroot <installroot-label>` option.
 
+.. _rpmverbosity-label:
+
 ``rpmverbosity``
     :ref:`string <string-label>`
 
@@ -435,6 +480,8 @@ configuration file by your distribution to override the DNF defaults.
     :ref:`boolean <boolean-label>`
 
     If disabled, all unavailable packages or packages with broken dependencies given to DNF command will be skipped without raising the error causing the whole operation to fail. Currently works for install command only. The default is True.
+
+.. _tsflags-label:
 
 ``tsflags``
     :ref:`list <list-label>`
@@ -461,6 +508,8 @@ configuration file by your distribution to override the DNF defaults.
     file conflicts.
     The ``nocaps`` is supported with rpm-4.14 or later. When ``nocaps`` is used but rpm
     doesn't support it, DNF only reports it as an invalid tsflag.
+
+.. _upgrade_group_objects_upgrade-label:
 
 ``upgrade_group_objects_upgrade``
     :ref:`boolean <boolean-label>`
@@ -490,11 +539,15 @@ configuration file by your distribution to override the DNF defaults.
  [main] Options - Colors
 =========================
 
+.. _color-label:
+
 ``color``
     :ref:`string <string-label>`
 
     Controls if DNF uses colored output on the command line.
     Possible values: "auto", "never", "always". Default is "auto".
+
+.. _color_list_available_downgrade-label:
 
 ``color_list_available_downgrade``
     :ref:`color <color-label>`
@@ -502,11 +555,15 @@ configuration file by your distribution to override the DNF defaults.
     Color of available packages that are older than installed packages.
     The option is used during list operations.
 
+.. _color_list_available_install-label:
+
 ``color_list_available_install``
     :ref:`color <color-label>`
 
     Color of packages that are available for installation and none of their versions in installed.
     The option is used during list operations.
+
+.. _color_list_available_reinstall-label:
 
 ``color_list_available_reinstall``
     :ref:`color <color-label>`
@@ -514,11 +571,15 @@ configuration file by your distribution to override the DNF defaults.
     Color of available packages that are identical to installed versions and are available for reinstalls.
     The option is used during list operations.
 
+.. _color_list_available_upgrade-label:
+
 ``color_list_available_upgrade``
     :ref:`color <color-label>`
 
     Color of available packages that are newer than installed packages.
     The option is used during list operations.
+
+.. _color_list_installed_extra-label:
 
 ``color_list_installed_extra``
     :ref:`color <color-label>`
@@ -526,11 +587,15 @@ configuration file by your distribution to override the DNF defaults.
     Color of installed packages that do not have any version among available packages.
     The option is used during list operations.
 
+.. _color_list_installed_newer-label:
+
 ``color_list_installed_newer``
     :ref:`color <color-label>`
 
     Color of installed packages that are newer than any version among available packages.
     The option is used during list operations.
+
+.. _color_list_installed_older-label:
 
 ``color_list_installed_older``
     :ref:`color <color-label>`
@@ -538,16 +603,22 @@ configuration file by your distribution to override the DNF defaults.
     Color of installed packages that are older than any version among available packages.
     The option is used during list operations.
 
+.. _color_list_installed_reinstall-label:
+
 ``color_list_installed_reinstall``
     :ref:`color <color-label>`
 
     Color of installed packages that are among available packages and can be reinstalled.
     The option is used during list operations.
 
+.. _color_search_match-label:
+
 ``color_search_match``
     :ref:`color <color-label>`
 
     Color of patterns matched in search output.
+
+.. _color_update_installed-label:
 
 ``color_update_installed``
     :ref:`color <color-label>`
@@ -555,11 +626,15 @@ configuration file by your distribution to override the DNF defaults.
     Color of removed packages.
     This option is used during displaying transactions.
 
+.. _color_update_local-label:
+
 ``color_update_local``
     :ref:`color <color-label>`
 
     Color of local packages that are installed from the @commandline repository.
     This option is used during displaying transactions.
+
+.. _color_update_remote-label:
 
 ``color_update_remote``
     :ref:`color <color-label>`
@@ -567,6 +642,7 @@ configuration file by your distribution to override the DNF defaults.
     Color of packages that are installed/upgraded/downgraded from remote repositories.
     This option is used during displaying transactions.
 
+.. _repo-options-label:
 
 ==============
  Repo Options
@@ -588,6 +664,8 @@ configuration file by your distribution to override the DNF defaults.
     value is compared when the priorities of two repositories are the same. The
     repository with *the lowest cost* is picked. It is useful to make the
     library prefer on-disk repositories to remote ones.
+
+.. _enabled-label:
 
 ``enabled``
     :ref:`boolean <boolean-label>`
@@ -637,6 +715,8 @@ configuration file by your distribution to override the DNF defaults.
 
     The priority value of this repository, default is 99. If there is more than one candidate package for a particular operation, the one from a repo with *the lowest priority value* is picked, possibly despite being less convenient otherwise (e.g. by being a lower version).
 
+.. _type-label:
+
 ``type``
     :ref:`string <string-label>`
 
@@ -651,19 +731,26 @@ configuration file by your distribution to override the DNF defaults.
 
 Right side of every repo option can be enriched by the following variables:
 
+.. _variable-arch-label:
+
 ``$arch``
 
     Refers to the system’s CPU architecture e.g, aarch64, i586, i686 and x86_64.
+
+.. _variable-basearch-label:
 
 ``$basearch``
 
     Refers to the base architecture of the system. For example, i686 and i586 machines
     both have a base architecture of i386, and AMD64 and Intel64 machines have a base architecture of x86_64.
 
+.. _variable-releasever-label:
+
 ``$releasever``
 
     Refers to the release version of operating system which DNF derives from information available in RPMDB.
 
+.. _variable-user-defined-label:
 
 In addition to these hard coded variables, user-defined ones can also be used. They can be defined either via :ref:`variable files <varfiles-label>`, or by using special environmental variables. The names of these variables must be prefixed with DNF_VAR\_ and they can only consist of alphanumeric characters and underscores::
 
@@ -702,6 +789,8 @@ configuration.
 
     Total bandwidth available for downloading. Meaningful when used with the :ref:`throttle option <throttle-label>`. Storage size is in bytes by default but can be specified with a unit of storage. Valid units are 'k', 'M', 'G'.
 
+.. _countme-label:
+
 ``countme``
     :ref:`boolean <boolean-label>`
 
@@ -734,12 +823,16 @@ configuration.
     files, rebuilding them to RPM locally. However, this is quite CPU and I/O
     intensive. Default is True.
 
+.. _deltarpm_percentage-label:
+
 ``deltarpm_percentage``
     :ref:`integer <integer-label>`
 
     When the relative size of delta vs pkg is larger than this, delta is not used.  Default value is 75
     (Deltas must be at least 25% smaller than the pkg).  Use `0` to turn off delta rpm processing. Local repositories (with
     file:// baseurl) have delta rpms turned off by default.
+
+.. _enablegroups-label:
 
 ``enablegroups``
     :ref:`boolean <boolean-label>`
@@ -755,6 +848,8 @@ configuration.
     separated by a comma, from all operations.
     Can be disabled using ``--disableexcludes`` command line switch.
     Defaults to ``[]``.
+
+.. _fastestmirror-label:
 
 ``fastestmirror``
     :ref:`boolean <boolean-label>`
@@ -799,6 +894,8 @@ configuration.
     The default is False.
     This option is subject to the active RPM security policy (see :ref:`gpgcheck <gpgcheck-label>` for more details).
 
+.. _max_parallel_downloads-label:
+
 ``max_parallel_downloads``
     :ref:`integer <integer-label>`
 
@@ -822,10 +919,14 @@ configuration.
 
     This sets the low speed threshold in bytes per second. If the server is sending data at the same or slower speed than this value for at least :ref:`timeout option <timeout-label>` seconds, DNF aborts the connection. The default is 1000. Valid units are 'k', 'M', 'G'.
 
+.. _password-label:
+
 ``password``
     :ref:`string <string-label>`
 
     The password to use for connecting to a repository with basic HTTP authentication. Empty by default.
+
+.. _proxy-label:
 
 ``proxy``
     :ref:`string <string-label>`
@@ -835,15 +936,21 @@ configuration.
 
     Note: The curl environment variables (such as ``http_proxy``) are effective if this option is unset. See the ``curl`` man page for details.
 
+.. _proxy_username-label:
+
 ``proxy_username``
     :ref:`string <string-label>`
 
     The username to use for connecting to the proxy server. Empty by default.
 
+.. _proxy_password-label:
+
 ``proxy_password``
     :ref:`string <string-label>`
 
     The password to use for connecting to the proxy server. Empty by default.
+
+.. _proxy_auth_method-label:
 
 ``proxy_auth_method``
     :ref:`string <string-label>`
@@ -904,6 +1011,8 @@ configuration.
 
     Whether to perform GPG signature check on this repository's metadata. The default is False.
 
+.. _retries-label:
+
 ``retries``
     :ref:`integer <integer-label>`
 
@@ -938,6 +1047,8 @@ configuration.
     :ref:`boolean <boolean-label>`
 
     When enabled, remote SSL certificates are verified. If the client can not be authenticated, connecting fails and the repository is not used any further. If ``False``, SSL connections can be used, but certificates are not verified. Default is ``True``.
+
+.. _sslverifystatus-label:
 
 ``sslverifystatus``
     :ref:`boolean <boolean-label>`
@@ -974,10 +1085,14 @@ configuration.
 
     Number of seconds to wait for a connection before timing out. Used in combination with :ref:`minrate option <minrate-label>` option. Defaults to 30 seconds.
 
+.. _username-label:
+
 ``username``
     :ref:`string <string-label>`
 
     The username to use for connecting to repo with basic HTTP authentication. Empty by default.
+
+.. _user_agent-label:
 
 ``user_agent``
     :ref:`string <string-label>`
@@ -1033,11 +1148,17 @@ Types of Options
 Files
 ==========
 
+.. _files-cache-label:
+
 ``Cache Files``
     /var/cache/dnf
 
+.. _files-main-label:
+
 ``Main Configuration File``
     /etc/dnf/dnf.conf
+
+.. _files-repository-label:
 
 ``Repository``
     /etc/yum.repos.d/
