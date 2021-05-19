@@ -1,6 +1,6 @@
 ADD_TEST(
     NAME test
-    COMMAND ${PYTHON_EXECUTABLE} -m unittest discover -s tests
+    COMMAND ${PYTHON_EXECUTABLE} -m unittest discover -s tests -t ${PROJECT_SOURCE_DIR}
     WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 # For libdnf built with sanitizers, has no effect otherwise.
