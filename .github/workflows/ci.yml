@@ -43,6 +43,10 @@ jobs:
     container:
       image: ghcr.io/rpm-software-management/dnf-ci-host
       options: --privileged
+      volumes:
+        # A workaround for an undeterministic "OCI not found" error, see
+        # https://github.com/containers/podman/issues/10321
+        - /var/lib/mycontainer:/var/lib/containers
     steps:
       - name: Check out ci-dnf-stack
         uses: actions/checkout@v2
