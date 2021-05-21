@@ -553,7 +553,7 @@ configuration file by your distribution to override the DNF defaults.
     :ref:`color <color-label>`
 
     Color of available packages that are older than installed packages.
-    The option is used during list operations.
+    The option is used during list operations. Default is dim,cyan.
 
 .. _color_list_available_install-label:
 
@@ -561,14 +561,14 @@ configuration file by your distribution to override the DNF defaults.
     :ref:`color <color-label>`
 
     Color of packages that are available for installation and none of their versions in installed.
-    The option is used during list operations.
+    The option is used during list operations. Default is normal.
 
 .. _color_list_available_reinstall-label:
 
 ``color_list_available_reinstall``
     :ref:`color <color-label>`
 
-    Color of available packages that are identical to installed versions and are available for reinstalls.
+    Color of available packages that are identical to installed versions and are available for reinstalls. Default is bold,underline,green.
     The option is used during list operations.
 
 .. _color_list_available_upgrade-label:
@@ -576,7 +576,7 @@ configuration file by your distribution to override the DNF defaults.
 ``color_list_available_upgrade``
     :ref:`color <color-label>`
 
-    Color of available packages that are newer than installed packages.
+    Color of available packages that are newer than installed packages. Default is bold,blue.
     The option is used during list operations.
 
 .. _color_list_installed_extra-label:
@@ -585,7 +585,7 @@ configuration file by your distribution to override the DNF defaults.
     :ref:`color <color-label>`
 
     Color of installed packages that do not have any version among available packages.
-    The option is used during list operations.
+    The option is used during list operations. Default is bold,red.
 
 .. _color_list_installed_newer-label:
 
@@ -593,7 +593,7 @@ configuration file by your distribution to override the DNF defaults.
     :ref:`color <color-label>`
 
     Color of installed packages that are newer than any version among available packages.
-    The option is used during list operations.
+    The option is used during list operations. Default is bold,yellow.
 
 .. _color_list_installed_older-label:
 
@@ -601,7 +601,7 @@ configuration file by your distribution to override the DNF defaults.
     :ref:`color <color-label>`
 
     Color of installed packages that are older than any version among available packages.
-    The option is used during list operations.
+    The option is used during list operations. Default is bold.
 
 .. _color_list_installed_reinstall-label:
 
@@ -609,21 +609,21 @@ configuration file by your distribution to override the DNF defaults.
     :ref:`color <color-label>`
 
     Color of installed packages that are among available packages and can be reinstalled.
-    The option is used during list operations.
+    The option is used during list operations. Default is normal.
 
 .. _color_search_match-label:
 
 ``color_search_match``
     :ref:`color <color-label>`
 
-    Color of patterns matched in search output.
+    Color of patterns matched in search output. Default is bold.
 
 .. _color_update_installed-label:
 
 ``color_update_installed``
     :ref:`color <color-label>`
 
-    Color of removed packages.
+    Color of removed packages. Default is normal.
     This option is used during displaying transactions.
 
 .. _color_update_local-label:
@@ -632,7 +632,7 @@ configuration file by your distribution to override the DNF defaults.
     :ref:`color <color-label>`
 
     Color of local packages that are installed from the @commandline repository.
-    This option is used during displaying transactions.
+    This option is used during displaying transactions. Default is bold.
 
 .. _color_update_remote-label:
 
@@ -640,7 +640,7 @@ configuration file by your distribution to override the DNF defaults.
     :ref:`color <color-label>`
 
     Color of packages that are installed/upgraded/downgraded from remote repositories.
-    This option is used during displaying transactions.
+    This option is used during displaying transactions. Default is normal.
 
 .. _repo-options-label:
 
