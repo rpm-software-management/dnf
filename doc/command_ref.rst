@@ -322,6 +322,9 @@ Options
 ``--refresh``
     Set metadata as expired before running the command.
 
+``--refreshrepo``
+    Set metadata as expired for specified repositories before running the command.
+
 ``--releasever=<release>``
     Configure DNF as if the distribution release was ``<release>``. This can
     affect cache paths, values in configuration files and mirrorlist URLs.

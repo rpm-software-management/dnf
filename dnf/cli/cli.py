@@ -33,6 +33,7 @@ import datetime
 import logging
 import operator
 import os
+import pprint
 import random
 import rpm
 import sys
@@ -616,6 +617,7 @@ class Cli(object):
         self.cli_commands = {}
         self.command = None
         self.demands = dnf.cli.demand.DemandSheet()  # :api
+        self.freshest_metadata_repo = []
 
         self.register_command(dnf.cli.commands.alias.AliasCommand)
         self.register_command(dnf.cli.commands.autoremove.AutoremoveCommand)
@@ -734,6 +736,11 @@ class Cli(object):
             elif not demands.fresh_metadata:
                 for repo in repos.values():
                     repo._repo.setSyncStrategy(dnf.repo.SYNC_LAZY)
+            if self.freshest_metadata_repo:
+                for repo in repos.values():
+                    for refresh_repo in self.freshest_metadata_repo:
+                        if refresh_repo.lower() in repo.name.lower():
+                            repo._repo.expire()
 
         if demands.sack_activation:
             self.base.fill_sack(
@@ -862,6 +869,8 @@ class Cli(object):
             self.base._allow_erasing = True
         if opts.freshest_metadata:
             self.demands.freshest_metadata = opts.freshest_metadata
+        if opts.freshest_metadata_repo:
+            self.freshest_metadata_repo = opts.freshest_metadata_repo
         if opts.debugsolver:
             self.base.conf.debug_solver = True
         if opts.obsoletes:

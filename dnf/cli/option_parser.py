@@ -304,6 +304,11 @@ class OptionParser(argparse.ArgumentParser):
                                  action="store_true",
                                  help=_("set metadata as expired before running"
                                         " the command"))
+        general_grp.add_argument("--refreshrepo", dest="freshest_metadata_repo",
+                                 action=self._SplitCallback,
+                                 metavar='[repo]',
+                                 help=_("set metadata as expired for given repos before running"
+                                        " the command"))
         general_grp.add_argument("-4", dest="ip_resolve", default=None,
                                  help=_("resolve to IPv4 addresses only"),
                                  action="store_const", const='ipv4')
