@@ -498,72 +498,72 @@ configuration file by your distribution to override the DNF defaults.
     :ref:`color <color-label>`
 
     Color of available packages that are older than installed packages.
-    The option is used during list operations.
+    The option is used during list operations. Default is dim,cyan.
 
 ``color_list_available_install``
     :ref:`color <color-label>`
 
     Color of packages that are available for installation and none of their versions in installed.
-    The option is used during list operations.
+    The option is used during list operations. Default is normal.
 
 ``color_list_available_reinstall``
     :ref:`color <color-label>`
 
-    Color of available packages that are identical to installed versions and are available for reinstalls.
+    Color of available packages that are identical to installed versions and are available for reinstalls. Default is bold,underline,green.
     The option is used during list operations.
 
 ``color_list_available_upgrade``
     :ref:`color <color-label>`
 
-    Color of available packages that are newer than installed packages.
+    Color of available packages that are newer than installed packages. Default is bold,blue.
     The option is used during list operations.
 
 ``color_list_installed_extra``
     :ref:`color <color-label>`
 
     Color of installed packages that do not have any version among available packages.
-    The option is used during list operations.
+    The option is used during list operations. Default is bold,red.
 
 ``color_list_installed_newer``
     :ref:`color <color-label>`
 
     Color of installed packages that are newer than any version among available packages.
-    The option is used during list operations.
+    The option is used during list operations. Default is bold,yellow.
 
 ``color_list_installed_older``
     :ref:`color <color-label>`
 
     Color of installed packages that are older than any version among available packages.
-    The option is used during list operations.
+    The option is used during list operations. Default is bold.
 
 ``color_list_installed_reinstall``
     :ref:`color <color-label>`
 
     Color of installed packages that are among available packages and can be reinstalled.
-    The option is used during list operations.
+    The option is used during list operations. Default is normal.
 
 ``color_search_match``
     :ref:`color <color-label>`
 
-    Color of patterns matched in search output.
+    Color of patterns matched in search output. Default is bold.
 
 ``color_update_installed``
     :ref:`color <color-label>`
 
-    Color of removed packages.
+    Color of removed packages. Default is normal.
     This option is used during displaying transactions.
 
 ``color_update_local``
     :ref:`color <color-label>`
 
     Color of local packages that are installed from the @commandline repository.
-    This option is used during displaying transactions.
+    This option is used during displaying transactions. Default is bold.
 
 ``color_update_remote``
     :ref:`color <color-label>`
 
     Color of packages that are installed/upgraded/downgraded from remote repositories.
-    This option is used during displaying transactions.
+    This option is used during displaying transactions. Default is normal.
 
 
 ==============
