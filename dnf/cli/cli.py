@@ -33,7 +33,6 @@ import datetime
 import logging
 import operator
 import os
-import pprint
 import random
 import rpm
 import sys
