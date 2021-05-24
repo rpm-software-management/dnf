@@ -208,6 +208,23 @@ configuration file by your distribution to override the DNF defaults.
     and overwritten by \-\ :ref:`-verbose <verbose_options-label>` commandline
     option.
 
+.. _exclude_from_weak-label:
+
+``exclude_from_weak``
+    :ref:`list <list-label>`
+
+    Prevent installing packages as weak dependencies (recommends or supplements). The packages can be specified
+    by a name or a glob and separated by a comma. Defaults to ``[]``.
+
+.. _exclude_from_weak_autodetect-label:
+
+``exclude_from_weak_autodetect``
+    :ref:`boolean <boolean-label>`
+
+    If enabled, dnf will autodetect unmet weak dependencies (recommends or supplements) of packages installed on the
+    system. Providers of these weak dependencies will not be installed by dnf as weak dependencies any more (they will
+    still be installed if pulled in as a regular dependency). Defaults to ``true``.
+
 .. _exit_on_lock-label:
 
 ``exit_on_lock``
@@ -525,7 +542,6 @@ configuration file by your distribution to override the DNF defaults.
     ``"/etc/dnf/vars", "/etc/yum/vars"``. See :ref:`variable files <varfiles-label>`
     in Configuration reference.
 
-.. _conf_repo_options-label:
 
 ``zchunk``
     :ref:`boolean <boolean-label>`
@@ -642,7 +658,7 @@ configuration file by your distribution to override the DNF defaults.
     Color of packages that are installed/upgraded/downgraded from remote repositories.
     This option is used during displaying transactions. Default is bold,green.
 
-
+.. _conf_repo_options-label:
 .. _repo-options-label:
 
 ==============
