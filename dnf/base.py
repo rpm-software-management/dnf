@@ -814,6 +814,21 @@ class Base(object):
             goal.write_debugdata('./debugdata/rpms')
         return ret
 
+    def _set_excludes_from_weak_to_goal(self):
+        """
+        Add exclude_from_weak from configuration and autodetect unmet weak deps exclude them from candidates to satisfy
+        weak dependencies
+        """
+        self._goal.reset_exclude_from_weak()
+        if self.conf.exclude_from_weak_autodetect:
+            self._goal.exclude_from_weak_autodetect()
+
+        for weak_exclude in self.conf.exclude_from_weak:
+            subj = dnf.subject.Subject(weak_exclude)
+            query = subj.get_best_query(self.sack, with_nevra=True, with_provides=False, with_filenames=False)
+            query = query.available()
+            self._goal.add_exclude_from_weak(query)
+
     def resolve(self, allow_erasing=False):
         # :api
         """Build the transaction set."""
@@ -838,6 +853,9 @@ class Base(object):
 
         goal.add_protected(self.sack.query().filterm(
             name=self.conf.protected_packages))
+
+        self._set_excludes_from_weak_to_goal()
+
         if not self._run_hawkey_goal(goal, allow_erasing):
             if self.conf.debuglevel >= 6:
                 goal.log_decisions()
