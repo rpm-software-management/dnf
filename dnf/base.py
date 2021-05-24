@@ -814,6 +814,17 @@ class Base(object):
             goal.write_debugdata('./debugdata/rpms')
         return ret
 
+    def _add_weakexcludes_to_goal(self):
+        """
+        Add weak excludes to goal as disfavor
+        """
+        self._goal.reset_disfavor()
+        for weakexclude in self.conf.weakexcludes:
+            subj = dnf.subject.Subject(weakexclude)
+            query = subj.get_best_query(self.sack, with_nevra=True, with_provides=False, with_filenames=False)
+            query = query.available()
+            self._goal.add_disfavor(query)
+
     def resolve(self, allow_erasing=False):
         # :api
         """Build the transaction set."""
@@ -838,6 +849,9 @@ class Base(object):
 
         goal.add_protected(self.sack.query().filterm(
             name=self.conf.protected_packages))
+
+        self._add_weakexcludes_to_goal()
+
         if not self._run_hawkey_goal(goal, allow_erasing):
             if self.conf.debuglevel >= 6:
                 goal.log_decisions()
