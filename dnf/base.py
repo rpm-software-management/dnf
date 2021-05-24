@@ -814,6 +814,30 @@ class Base(object):
             goal.write_debugdata('./debugdata/rpms')
         return ret
 
+    def _add_disfavor_to_goal(self):
+        """
+        Add disfavor from configuration and autodetected unmet weak deps to goal
+        """
+        self._goal.reset_disfavor()
+        for disfavor in self.conf.disfavor:
+            subj = dnf.subject.Subject(disfavor)
+            query = subj.get_best_query(self.sack, with_nevra=True, with_provides=False, with_filenames=False)
+            query = query.available()
+            self._goal.add_disfavor(query)
+
+        if self.conf.disfavor_unmet_weak_deps:
+            installed_query = self.sack.query(flags=hawkey.IGNORE_EXCLUDES).installed().apply()
+            base_query = self.sack.query().apply()
+            for pkg in installed_query:
+                for rec in pkg.recommends:
+                    test_query = base_query.filter(provides=rec)
+                    if test_query and not test_query.installed():
+                        self._goal.add_disfavor(test_query)
+                for sup in pkg.supplements:
+                    test_query = base_query.filter(provides=sup)
+                    if test_query and not test_query.installed:
+                        self._goal.add_disfavor(test_query)
+
     def resolve(self, allow_erasing=False):
         # :api
         """Build the transaction set."""
@@ -838,6 +862,9 @@ class Base(object):
 
         goal.add_protected(self.sack.query().filterm(
             name=self.conf.protected_packages))
+
+        self._add_disfavor_to_goal()
+
         if not self._run_hawkey_goal(goal, allow_erasing):
             if self.conf.debuglevel >= 6:
                 goal.log_decisions()

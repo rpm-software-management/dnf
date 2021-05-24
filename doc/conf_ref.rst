@@ -190,6 +190,24 @@ configuration file by your distribution to override the DNF defaults.
     If enabled the default answer to user confirmation prompts will be ``Yes``. Not
     to be confused with :ref:`assumeyes <assumeyes-label>` which will not prompt at all. Default is ``False``.
 
+.. _disfavor-label:
+
+``disfavor``
+    :ref:`list <list-label>`
+
+    Disfavor packages specified by a name or a glob and separated by a comma. This can also be used to block
+    recommended or supplemented packages from being installed. The order of values is taken in account where the latest
+    disfavor is stronger. Defaults to ``[]``.
+
+.. _disfavor_unmet_weak_deps-label:
+
+``disfavor_unmet_weak_deps``
+    :ref:`boolean <boolean-label>`
+
+    If enabled it will autodetect unmet weak dependencies of installed packages and disfavor packages matching those
+    dependencies. It is used to block automatically recommended or supplemented packages that are probably
+    unwanted on the system. Defaults to ``true``.
+
 .. _diskspacecheck-label:
 
 ``diskspacecheck``
@@ -525,8 +543,6 @@ configuration file by your distribution to override the DNF defaults.
     ``"/etc/dnf/vars", "/etc/yum/vars"``. See :ref:`variable files <varfiles-label>`
     in Configuration reference.
 
-.. _conf_repo_options-label:
-
 ``zchunk``
     :ref:`boolean <boolean-label>`
 
@@ -642,6 +658,7 @@ configuration file by your distribution to override the DNF defaults.
     Color of packages that are installed/upgraded/downgraded from remote repositories.
     This option is used during displaying transactions. Default is bold,green.
 
+.. _conf_repo_options-label:
 .. _repo-options-label:
 
 ==============
