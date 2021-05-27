@@ -498,13 +498,13 @@ configuration file by your distribution to override the DNF defaults.
     :ref:`color <color-label>`
 
     Color of available packages that are older than installed packages.
-    The option is used during list operations. Default is dim,cyan.
+    The option is used during list operations. Default is magenta.
 
 ``color_list_available_install``
     :ref:`color <color-label>`
 
     Color of packages that are available for installation and none of their versions in installed.
-    The option is used during list operations. Default is normal.
+    The option is used during list operations. Default is bold,cyan.
 
 ``color_list_available_reinstall``
     :ref:`color <color-label>`
@@ -534,36 +534,36 @@ configuration file by your distribution to override the DNF defaults.
     :ref:`color <color-label>`
 
     Color of installed packages that are older than any version among available packages.
-    The option is used during list operations. Default is bold.
+    The option is used during list operations. Default is yellow.
 
 ``color_list_installed_reinstall``
     :ref:`color <color-label>`
 
     Color of installed packages that are among available packages and can be reinstalled.
-    The option is used during list operations. Default is normal.
+    The option is used during list operations. Default is cyan.
 
 ``color_search_match``
     :ref:`color <color-label>`
 
-    Color of patterns matched in search output. Default is bold.
+    Color of patterns matched in search output. Default is bold,magenta.
 
 ``color_update_installed``
     :ref:`color <color-label>`
 
-    Color of removed packages. Default is normal.
+    Color of removed packages. Default is red. 
     This option is used during displaying transactions.
 
 ``color_update_local``
     :ref:`color <color-label>`
 
     Color of local packages that are installed from the @commandline repository.
-    This option is used during displaying transactions. Default is bold.
+    This option is used during displaying transactions. Default is green.
 
 ``color_update_remote``
     :ref:`color <color-label>`
 
     Color of packages that are installed/upgraded/downgraded from remote repositories.
-    This option is used during displaying transactions. Default is normal.
+    This option is used during displaying transactions. Default is bold,green.
 
 
 ==============
