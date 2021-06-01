@@ -92,6 +92,7 @@ Additional information:
 * :ref:`Options <options-label>`
 * :ref:`Specifying Packages <specifying_packages-label>`
 * :ref:`Specifying Provides <specifying_provides-label>`
+* :ref:`Specifying File Provides <specifying_file-provides-label>`
 * :ref:`Specifying Groups <specifying_groups-label>`
 * :ref:`Specifying Transactions <specifying_transactions-label>`
 * :ref:`Metadata Synchronization <metadata_synchronization-label>`
@@ -1838,6 +1839,14 @@ Specifying Provides
 packages providing the given spec. This can either be an explicit provide, an
 implicit provide (i.e. name of the package) or a file provide. The selection is
 case-sensitive and globbing is supported.
+
+.. _specifying_file-provides-label:
+
+------------------------
+Specifying File Provides
+------------------------
+
+If a spec starts with either ``/`` or ``*/``, it is considered as a potential file provide.
 
 .. _specifying_groups-label:
 
