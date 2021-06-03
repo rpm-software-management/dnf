@@ -2033,7 +2033,7 @@ class Base(object):
         if pkg in already_inst:
             self._report_already_installed([pkg])
         elif pkg not in itertools.chain.from_iterable(available):
-            raise dnf.exceptions.PackageNotFoundError(_('No match for argument: %s'), pkg.location)
+            raise dnf.exceptions.PackageNotFoundError(_('No match for argument: %s') % pkg.location)
         else:
             sltr = dnf.selector.Selector(self.sack)
             sltr.set(pkg=[pkg])
