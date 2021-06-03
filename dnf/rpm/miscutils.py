@@ -66,11 +66,10 @@ def _verifyPackageUsingRpmkeys(package, installroot):
         _logger.critical(_('Cannot find rpmkeys executable to verify signatures.'))
         return 2
 
-    # "--define=_pkgverify_level all" enforces signature checking;
-    # "--define=_pkgverify_flags 0x0" ensures that all signatures and digests
-    # are checked.
+    # "--define=_pkgverify_level signature" enforces signature checking;
+    # "--define=_pkgverify_flags 0x0" ensures that all signatures are checked.
     args = ('rpmkeys', '--checksig', '--root', installroot, '--verbose',
-            '--define=_pkgverify_level all', '--define=_pkgverify_flags 0x0',
+            '--define=_pkgverify_level signature', '--define=_pkgverify_flags 0x0',
             '-')
     with subprocess.Popen(
             args=args,
