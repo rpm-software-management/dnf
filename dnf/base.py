@@ -831,11 +831,21 @@ class Base(object):
             for pkg in installed_query:
                 for rec in pkg.recommends:
                     test_query = base_query.filter(provides=rec)
+                    if rec.version:
+                        #  Versioned provides which differs between packages can be incorrectly detected
+                        #  It can be resolve by an additional search with the reldep name
+                        if not test_query.installed():
+                            test_query = base_query.filter(provides=rec.name)
                     if test_query and not test_query.installed():
                         self._goal.add_disfavor(test_query)
                 for sup in pkg.supplements:
                     test_query = base_query.filter(provides=sup)
-                    if test_query and not test_query.installed:
+                    if sup.version:
+                        #  Versioned provides which differs between packages can be incorrectly detected
+                        #  It can be resolve by an additional search with the reldep name
+                        if not test_query.installed():
+                            test_query = base_query.filter(provides=sup.name)
+                    if test_query and not test_query.installed():
                         self._goal.add_disfavor(test_query)
 
     def resolve(self, allow_erasing=False):
