@@ -38,6 +38,14 @@ if (GIT_FOUND)
         )
 endif()
 
+add_custom_target(gettext-pot
+    COMMENT "Generating fresh dnf.pot file from sources"
+
+    COMMAND find ./dnf -iname "*.py" |
+        xargs xgettext -F --from-code=UTF-8 --keyword=P_:1,2 --keyword=C_:1c,2 -c --output=${CMAKE_CURRENT_SOURCE_DIR}/dnf.pot
+
+    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+    )
 
 IF (GETTEXT_FOUND)
     # this process unfortunately reformats .po files so copy them
