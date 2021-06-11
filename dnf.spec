@@ -65,7 +65,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.7.0
+Version:        4.8.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -361,6 +361,16 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Mon Jun 14 2021 Pavla Kratochvilova <pkratoch@redhat.com> - 4.8.0-1
+- Do not assume that a remote rpm is complete if present
+- Use positive percentage for "Failed delta RPMs" message
+- Remove redundant new line in Groups output
+- Format empty group names outputs to <name-unset>
+- [doc] Document default colors
+- Use rpmkeys alone to verify signature
+- Add dnf.error message to explain rpm.error traceback when package not found after resolving a transaction (RhBug:1815327,1887293,1909845)
+- Bugs fixed (RhBug:1946975,1955309)
+
 * Mon Apr 12 2021 Nicola Sella <nsella@redhat.com> - 4.7.0-1
 - Improve repo config path ordering to fix a comps merging issue (RhBug:1928181)
 - Keep reason when package is removed (RhBug:1921063)

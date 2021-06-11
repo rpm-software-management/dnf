@@ -20,6 +20,28 @@
 ###################
 
 ===================
+4.8.0 Release Notes
+===================
+
+- Do not assume that a remote rpm is complete if present
+- Use positive percentage for "Failed delta RPMs" message
+- Remove redundant new line in Groups output
+- Format empty group names outputs to <name-unset>
+- [doc] Document default colors
+- Use rpmkeys alone to verify signature
+
+- Bug fixes:
+  - Bugs fixed (RhBug:1946975,1955309)
+  - Add dnf.error message to explain rpm.error traceback when package not found after resolving a transaction (RhBug:1815327,1887293,1909845)
+
+Bugs fixed in 4.8.0:
+
+* :rhbug:`1955309`
+* :rhbug:`1950229`
+* :rhbug:`1887293`
+* :rhbug:`1946975`
+
+===================
 4.7.0 Release Notes
 ===================
 

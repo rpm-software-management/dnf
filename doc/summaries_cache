@@ -3330,5 +3330,21 @@
     [
         1928181,
         "comps from the updates repo don't override comps from the fedora repo"
+    ],
+    [
+        1955309,
+        "Improperly formatted text string in dnf package_install"
+    ],
+    [
+        1950229,
+        "dnf with Python 3.10: DeprecationWarning: The distutils package is deprecated"
+    ],
+    [
+        1887293,
+        "[abrt] dnf: addErase(): transaction.py:103:addErase:_rpm.error: package not installed"
+    ],
+    [
+        1946975,
+        "dnf installs old version of dependency even though --best is used"
     ]
 ]
