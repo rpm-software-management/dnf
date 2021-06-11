@@ -819,12 +819,6 @@ class Base(object):
         Add disfavor from configuration and autodetected unmet weak deps to goal
         """
         self._goal.reset_disfavor()
-        for disfavor in self.conf.disfavor:
-            subj = dnf.subject.Subject(disfavor)
-            query = subj.get_best_query(self.sack, with_nevra=True, with_provides=False, with_filenames=False)
-            query = query.available()
-            self._goal.add_disfavor(query)
-
         if self.conf.disfavor_unmet_weak_deps:
             installed_query = self.sack.query(flags=hawkey.IGNORE_EXCLUDES).installed().apply()
             base_query = self.sack.query().apply()
@@ -847,6 +841,13 @@ class Base(object):
                             test_query = base_query.filter(provides=sup.name)
                     if test_query and not test_query.installed():
                         self._goal.add_disfavor(test_query)
+
+        #  Add disfavor from configuration after disfavor_unmet_weak_deps because they will be stronger
+        for disfavor in self.conf.disfavor:
+            subj = dnf.subject.Subject(disfavor)
+            query = subj.get_best_query(self.sack, with_nevra=True, with_provides=False, with_filenames=False)
+            query = query.available()
+            self._goal.add_disfavor(query)
 
     def resolve(self, allow_erasing=False):
         # :api
