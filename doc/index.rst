@@ -37,19 +37,21 @@ Contents:
    api_vs_yum
    dnf-1_vs_dnf-2
 
-DNF Plugins and components
+Links:
 
-
+* `Repository`_
+* `Bug Reports`_
 * `DNF Plugins Core`_
 * `DNF Plugins Extras`_
-* `Hawkey`_
+* `libdnf`_
 
-Indices and tables
-
+Indices and tables:
 
 * :ref:`genindex`
 * :ref:`modindex`
-* :ref:`search`
 
-.. _DNF Plugins Core: https://dnf-plugins-core.readthedocs.io/en/latest/
-.. _DNF Plugins Extras: https://dnf-plugins-extras.readthedocs.io/en/latest/
+.. _DNF Plugins Core: https://dnf-plugins-core.readthedocs.org/en/latest/
+.. _DNF Plugins Extras: https://dnf-plugins-extras.readthedocs.org/en/latest/
+.. _Repository: https://github.com/rpm-software-management/dnf#readme
+.. _Bug Reports: https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting
+.. _libdnf: https://github.com/rpm-software-management/libdnf
