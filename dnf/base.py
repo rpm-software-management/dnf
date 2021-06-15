@@ -822,6 +822,7 @@ class Base(object):
         if self.conf.disfavor_unmet_weak_deps:
             installed_query = self.sack.query(flags=hawkey.IGNORE_EXCLUDES).installed().apply()
             base_query = self.sack.query().apply()
+            to_disfavor = base_query.filter(empty=True)
             for pkg in installed_query:
                 for rec in pkg.recommends:
                     test_query = base_query.filter(provides=rec)
@@ -831,7 +832,7 @@ class Base(object):
                         if not test_query.installed():
                             test_query = base_query.filter(provides=rec.name)
                     if test_query and not test_query.installed():
-                        self._goal.add_disfavor(test_query)
+                        to_disfavor = to_disfavor.union(test_query)
                 for sup in pkg.supplements:
                     test_query = base_query.filter(provides=sup)
                     if sup.version:
@@ -840,7 +841,10 @@ class Base(object):
                         if not test_query.installed():
                             test_query = base_query.filter(provides=sup.name)
                     if test_query and not test_query.installed():
-                        self._goal.add_disfavor(test_query)
+                        to_disfavor = to_disfavor.union(test_query)
+            #  Disfavor all together to disfavor them with the same weight
+            if to_disfavor:
+                self._goal.add_disfavor(to_disfavor)
 
         #  Add disfavor from configuration after disfavor_unmet_weak_deps because they will be stronger
         for disfavor in self.conf.disfavor:
