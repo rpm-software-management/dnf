@@ -154,6 +154,17 @@ Repository Configuration
 
     Set new user headers and rewrite existing ones. `headers` must be an instance of tuple of strings or list of strings.
 
+  .. method:: set_or_append_opt_value(name, value_string, priority=PRIO_RUNTIME).
+
+    For standard repository options, sets the value of the option if the `priority` is equal to or higher
+    than the current priority.
+    For "append" options, appends the values parsed from `value_string` to the current list of values. If the first
+    parsed element of the list of values is empty and the `priority` is equal to or higher than the current
+    priority, the current list is replaced with the new values.
+    If the `priority` is higher than the current priority, the current priority is increased to the `priority`.
+    Raises :exc:`dnf.exceptions.ConfigError` if the option with the given `name` does not exist or `value_string` contains
+    an invalid value or not allowed value.
+
   .. method:: set_progress_bar(progress)
 
     Set the download progress reporting object for this repo during :meth:`load`. `progress` must be an instance of :class:`dnf.callback.DownloadProgress`.

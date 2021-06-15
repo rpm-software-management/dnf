@@ -83,6 +83,18 @@ Configurable settings of the :class:`dnf.Base` object are stored into a :class:`
 
     Print configuration values, including inherited values.
 
+  .. method:: set_or_append_opt_value(name, value_string, priority=PRIO_RUNTIME).
+
+    For standard options, sets the value of the option if the `priority` is equal to or higher
+    than the current priority.
+    For "append" options, appends the values parsed from `value_string` to the current list of values. If the first
+    parsed element of the list of values is empty and the `priority` is equal to or higher than the current
+    priority, the current list is replaced with the new values.
+    If the `priority` is higher than the current priority, the current priority is increased to the `priority`.
+    Raises :exc:`dnf.exceptions.ConfigError` if the option with the given `name` does not exist or `value_string` contains
+    an invalid value or not allowed value.
+
+
   .. method:: write_raw_configfile(filename, section_id, substitutions, modify)
 
     Update or create config file. Where `filename` represents name of config file (.conf or .repo); `section_id`
