@@ -654,6 +654,8 @@ configuration file by your distribution to override the DNF defaults.
     :ref:`list <list-label>`
 
     List of URLs for the repository. Defaults to ``[]``.
+    
+    URLs are tried in the listed order (equivalent to yum's "failovermethod=priority" behaviour).
 
 .. _repo_cost-label:
 
