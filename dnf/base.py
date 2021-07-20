@@ -1669,9 +1669,7 @@ class Base(object):
         if not isinstance(types, int):
             types = libdnf.transaction.listToCompsPackageType(types)
 
-        trans = dnf.comps.install_or_skip(solver._environment_install,
-                                          env_id, types, exclude or set(),
-                                          strict, exclude_groups)
+        trans = solver._environment_install(env_id, types, exclude or set(), strict, exclude_groups)
         if not trans:
             return 0
         return self._add_comps_trans(trans)
@@ -1714,9 +1712,7 @@ class Base(object):
         if not isinstance(pkg_types, int):
             pkg_types = libdnf.transaction.listToCompsPackageType(pkg_types)
 
-        trans = dnf.comps.install_or_skip(solver._group_install,
-                                          grp_id, pkg_types, exclude_pkgnames,
-                                          strict)
+        trans = solver._group_install(grp_id, pkg_types, exclude_pkgnames, strict)
         if not trans:
             return 0
         if strict:

@@ -244,9 +244,9 @@ class GroupCommand(commands.Command):
             types = tuple(self.base.conf.group_package_types)
         pkg_types = libdnf.transaction.listToCompsPackageType(types)
         for env_id in res.environments:
-            dnf.comps.install_or_skip(solver._environment_install, env_id, pkg_types)
+            solver._environment_install(env_id, pkg_types)
         for group_id in res.groups:
-            dnf.comps.install_or_skip(solver._group_install, group_id, pkg_types)
+            solver._group_install(group_id, pkg_types)
 
     def _mark_remove(self, patterns):
         q = CompsQuery(self.base.comps, self.base.history,
