@@ -179,7 +179,7 @@
 
   .. method:: group_install(group_id, pkg_types, exclude=None, strict=True)
 
-    Mark group with corresponding `group_id` installed and mark the packages in the group for installation. Return the number of packages that the operation has marked for installation. `pkg_types` is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by including ``"mandatory"``, ``"default"`` or ``"optional"`` in it. If `exclude` is given, it has to be an iterable of package name glob patterns: :meth:`.group_install` will then not mark the respective packages for installation whenever possible. Parameter `strict` is a boolean indicating whether group packages that exist but are non-installable due to e.g. dependency issues should be skipped (False) or cause transaction to fail to resolve (True).
+    Mark group with corresponding `group_id` installed and mark the packages in the group for installation. Return the number of packages that the operation has marked for installation. `pkg_types` is a sequence of strings determining the kinds of packages to be installed, where the respective groups can be selected by including ``"mandatory"``, ``"default"`` or ``"optional"`` in it. If `exclude` is given, it has to be an iterable of package name glob patterns: :meth:`.group_install` will then not mark the respective packages for installation whenever possible. Parameter `strict` is a boolean indicating whether group packages that exist but are non-installable due to e.g. dependency issues should be skipped (False) or cause transaction to fail to resolve (True).  Raises :exc:`dnf.exceptions.CompsError` in case the group doesn't exist.
 
   .. method:: group_remove(group_id)
 
@@ -191,7 +191,7 @@
 
   .. method:: environment_install(env_id, types, exclude=None, strict=True, exclude_groups=None)
 
-    Similar to :meth:`.group_install` but operates on environmental groups. `exclude_groups` is an iterable of group IDs that will not be marked as installed.
+    Similar to :meth:`.group_install` but operates on environmental groups. `exclude_groups` is an iterable of group IDs that will not be marked as installed.  Raises :exc:`dnf.exceptions.CompsError` in case the group doesn't exist.
 
   .. method:: environment_remove(env_id)
 
