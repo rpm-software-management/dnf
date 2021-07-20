@@ -93,15 +93,15 @@ def _fn_display_order(group):
 
 def install_or_skip(install_fnc, grp_or_env_id, types, exclude=None,
                     strict=True, exclude_groups=None):
-    """Either mark in persistor as installed given `grp_or_env` (group
-       or environment) or skip it (if it's already installed).
-       `install_fnc` has to be Solver._group_install
-       or Solver._environment_install.
-       """
-    try:
-        return install_fnc(grp_or_env_id, types, exclude, strict, exclude_groups)
-    except dnf.comps.CompsError as e:
-        logger.warning("%s, %s", ucd(e)[:-1], _("skipping."))
+    """
+    Installs a group or an environment identified by grp_or_env_id.
+    This method is preserved for API compatibility. It used to catch an
+    exception thrown when a gorup or env was already installed, which is no
+    longer thrown.
+    `install_fnc` has to be Solver._group_install or
+    Solver._environment_install.
+    """
+    return install_fnc(grp_or_env_id, types, exclude, strict, exclude_groups)
 
 
 class _Langs(object):
@@ -592,7 +592,7 @@ class Solver(object):
         assert dnf.util.is_string_type(group_id)
         return self.history.env.is_removable_group(group_id)
 
-    def _environment_install(self, env_id, pkg_types, exclude, strict=True, exclude_groups=None):
+    def _environment_install(self, env_id, pkg_types, exclude=None, strict=True, exclude_groups=None):
         assert dnf.util.is_string_type(env_id)
         comps_env = self.comps._environment_by_id(env_id)
         if not comps_env:
