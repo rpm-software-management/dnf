@@ -62,7 +62,7 @@
     :exc:`dnf.exceptions.Error` if the :attr:`goal` is not empty. `progress`, if given, should be a
     :class:`.DownloadProgress` instance which can be used to monitor the progress of the download.
 
- .. method:: add_security_filters(cmp_type, types=(), advisory=(), bugzilla=(), cves=(), severity=())
+  .. method:: add_security_filters(cmp_type, types=(), advisory=(), bugzilla=(), cves=(), severity=())
 
     It modifies results of install, upgrade, and distrosync methods according to provided filters.
     `cmp_type` - only 'eq' or 'gte' allowed
@@ -74,7 +74,7 @@
     `severity` - List or tuple with strings. Includes packages that provide a fix for an issue
     of the specified severity.
 
- .. method:: reset_security_filters()
+  .. method:: reset_security_filters()
 
     Reset all security filters
 
@@ -275,7 +275,7 @@
 
   .. method:: install(pkg_spec, reponame=None, strict=True, forms=None)
 
-    Mark packages matching `pkg_spec` for installation. 
+    Mark packages matching `pkg_spec` for installation.
     `reponame` can be a name of a repository or a list of repository names. If given, the selection of available packages is limited to packages from these repositories. If strict is set to False, the installation ignores packages with dependency solving problems. Parameter `forms` has the same meaning as in :meth:`dnf.subject.Subject.get_best_query`.
 
   .. method:: package_downgrade(pkg, strict=False)
