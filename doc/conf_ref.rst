@@ -539,7 +539,7 @@ configuration file by your distribution to override the DNF defaults.
  [main] Options - Colors
 =========================
 
-.. _color-label:
+.. _color-option-label:
 
 ``color``
     :ref:`string <string-label>`
@@ -547,7 +547,7 @@ configuration file by your distribution to override the DNF defaults.
     Controls if DNF uses colored output on the command line.
     Possible values: "auto", "never", "always". Default is "auto".
 
-.. _color_list_available_downgrade-label:
+.. _color_list_available_downgrade-option-label:
 
 ``color_list_available_downgrade``
     :ref:`color <color-label>`
@@ -555,7 +555,7 @@ configuration file by your distribution to override the DNF defaults.
     Color of available packages that are older than installed packages.
     The option is used during list operations. Default is magenta.
 
-.. _color_list_available_install-label:
+.. _color_list_available_install-option-label:
 
 ``color_list_available_install``
     :ref:`color <color-label>`
@@ -563,7 +563,7 @@ configuration file by your distribution to override the DNF defaults.
     Color of packages that are available for installation and none of their versions in installed.
     The option is used during list operations. Default is bold,cyan.
 
-.. _color_list_available_reinstall-label:
+.. _color_list_available_reinstall-option-label:
 
 ``color_list_available_reinstall``
     :ref:`color <color-label>`
@@ -571,7 +571,7 @@ configuration file by your distribution to override the DNF defaults.
     Color of available packages that are identical to installed versions and are available for reinstalls. Default is bold,underline,green.
     The option is used during list operations.
 
-.. _color_list_available_upgrade-label:
+.. _color_list_available_upgrade-option-label:
 
 ``color_list_available_upgrade``
     :ref:`color <color-label>`
@@ -579,7 +579,7 @@ configuration file by your distribution to override the DNF defaults.
     Color of available packages that are newer than installed packages. Default is bold,blue.
     The option is used during list operations.
 
-.. _color_list_installed_extra-label:
+.. _color_list_installed_extra-option-label:
 
 ``color_list_installed_extra``
     :ref:`color <color-label>`
@@ -587,7 +587,7 @@ configuration file by your distribution to override the DNF defaults.
     Color of installed packages that do not have any version among available packages.
     The option is used during list operations. Default is bold,red.
 
-.. _color_list_installed_newer-label:
+.. _color_list_installed_newer-option-label:
 
 ``color_list_installed_newer``
     :ref:`color <color-label>`
@@ -595,7 +595,7 @@ configuration file by your distribution to override the DNF defaults.
     Color of installed packages that are newer than any version among available packages.
     The option is used during list operations. Default is bold,yellow.
 
-.. _color_list_installed_older-label:
+.. _color_list_installed_older-option-label:
 
 ``color_list_installed_older``
     :ref:`color <color-label>`
@@ -603,7 +603,7 @@ configuration file by your distribution to override the DNF defaults.
     Color of installed packages that are older than any version among available packages.
     The option is used during list operations. Default is yellow.
 
-.. _color_list_installed_reinstall-label:
+.. _color_list_installed_reinstall-option-label:
 
 ``color_list_installed_reinstall``
     :ref:`color <color-label>`
@@ -611,14 +611,14 @@ configuration file by your distribution to override the DNF defaults.
     Color of installed packages that are among available packages and can be reinstalled.
     The option is used during list operations. Default is cyan.
 
-.. _color_search_match-label:
+.. _color_search_match-option-label:
 
 ``color_search_match``
     :ref:`color <color-label>`
 
     Color of patterns matched in search output. Default is bold,magenta.
 
-.. _color_update_installed-label:
+.. _color_update_installed-option-label:
 
 ``color_update_installed``
     :ref:`color <color-label>`
@@ -626,7 +626,7 @@ configuration file by your distribution to override the DNF defaults.
     Color of removed packages. Default is red. 
     This option is used during displaying transactions.
 
-.. _color_update_local-label:
+.. _color_update_local-option-label:
 
 ``color_update_local``
     :ref:`color <color-label>`
@@ -634,13 +634,14 @@ configuration file by your distribution to override the DNF defaults.
     Color of local packages that are installed from the @commandline repository.
     This option is used during displaying transactions. Default is green.
 
-.. _color_update_remote-label:
+.. _color_update_remote-option-label:
 
 ``color_update_remote``
     :ref:`color <color-label>`
 
     Color of packages that are installed/upgraded/downgraded from remote repositories.
     This option is used during displaying transactions. Default is bold,green.
+
 
 .. _repo-options-label:
 
