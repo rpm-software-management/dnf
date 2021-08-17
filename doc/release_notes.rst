@@ -2017,7 +2017,7 @@ Support for ``dnf distro-sync <spec>`` finally arrives in this version.
 
 DNF has moved to handling groups as objects,  tagged installed/uninstalled independently from the actual installed packages. This has been in YUM as the ``group_command=objects`` setting and the default in recent Fedora releases. There are API extensions related to this change as well as two new CLI commands: ``group mark install`` and ``group mark remove``.
 
-API items deprecated in 0.4.8 and 0.4.9 have been dropped in 0.4.18, in accordance with our :ref:`deprecating-label`.
+API items deprecated in 0.4.8 and 0.4.9 have been dropped in 0.4.18, in accordance with our deprecation policy.
 
 API changes in 0.4.18:
 
@@ -2218,7 +2218,7 @@ Several YUM features are revived in this release. ``dnf history rollback`` now w
 
 We're happy to announce that the API in 0.4.9 has been extended to finally support plugins. There is a limited set of plugin hooks now, we will carefully add new ones in the following releases. New marking operations have ben added to the API and also some configuration options.
 
-An alternative to ``yum shell`` is provided now for its most common use case: :ref:`replacing a non-leaf package with a conflicting package <allowerasing_instead_of_shell>` is achieved by using the ``--allowerasing`` switch now.
+An alternative to ``yum shell`` is provided now for its most common use case: replacing a non-leaf package with a conflicting package is achieved by using the ``--allowerasing`` switch now.
 
 API additions in 0.4.9:
 
