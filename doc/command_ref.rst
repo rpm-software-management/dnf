@@ -1223,6 +1223,9 @@ Repoquery Command
     Searches available DNF repositories for selected packages and displays the requested information about them. It
     is an equivalent of ``rpm -q`` for remote repositories.
 
+``dnf [options] repoquery --groupmember <package-spec>...``
+    Query what group the <package-spec> belong to.
+    
 ``dnf [options] repoquery --querytags``
     Provides the list of tags recognized by the \-\ :ref:`-queryformat <queryformat_repoquery-label>` repoquery option.
 
