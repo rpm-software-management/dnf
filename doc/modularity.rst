@@ -66,6 +66,13 @@ name or provide matches against a modular package name from any enabled, default
 or dependent stream. Modular source packages will not cause non-modular binary
 packages to be filtered out.
 
+
+Demodularized rpms
+==================
+Contains names of RPMs excluded from package filtering for particular module stream. When defined in the latest active
+module, non-modular RPMs with the same name or provide which were previously filtered out will reappear.
+
+
 =====================
  Hotfix repositories
 =====================
