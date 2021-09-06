@@ -351,7 +351,9 @@ configuration file by your distribution to override the DNF defaults.
 ``multilib_policy``
     :ref:`string <string-label>`
 
-    Controls how multilib packages are treated during install operations. Can either be ``"best"`` (the default) for the depsolver to prefer packages which best match the system's architecture, or ``"all"`` to install all available packages with compatible architectures.
+    Controls how multilib packages are treated during install operations. Can either be ``"best"`` (the default) for
+    the depsolver to prefer packages which best match the system's architecture, or ``"all"`` to install packages for
+    all available architectures.
 
 .. _obsoletes_conf_option-label:
 
