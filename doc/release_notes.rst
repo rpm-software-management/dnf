@@ -20,6 +20,28 @@
 ###################
 
 ===================
+4.9.0 Release Notes
+===================
+
+- New features:
+  - [API] Add method "set_or_append_opt_value" to BaseConfig (RhBug:1967925)
+  - Add aliases for commands: info, updateinfo, provides (RhBug:1938333)
+  - Add report about demodularized rpms into module info (RhBug:1805260)
+
+- Bug fixes:
+  - Remove DNSSEC errors on COPR group email keys
+  - Documentation inprovements - bugs: 1938352, 1993899, 1963704
+
+Bugs fixed in 4.9.0:
+
+* :rhbug:`1993899`
+* :rhbug:`1805260`
+* :rhbug:`1938352`
+* :rhbug:`1967925`
+* :rhbug:`1963704`
+* :rhbug:`1938333`
+
+===================
 4.8.0 Release Notes
 ===================
 

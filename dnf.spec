@@ -65,7 +65,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.8.0
+Version:        4.9.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -361,6 +361,13 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Thu Sep 16 2021 Pavla Kratochvilova <pkratoch@redhat.com> - 4.9.0-1
+- [API] Add method "set_or_append_opt_value" to BaseConfig (RhBug:1967925)
+- Add aliases for commands: info, updateinfo, provides (RhBug:1938333)
+- Add report about demodularized rpms into module info (RhBug:1805260)
+- Remove DNSSEC errors on COPR group email keys
+- Documentation inprovements - bugs: 1938352, 1993899, 1963704
+
 * Mon Jun 14 2021 Pavla Kratochvilova <pkratoch@redhat.com> - 4.8.0-1
 - Do not assume that a remote rpm is complete if present
 - Use positive percentage for "Failed delta RPMs" message

@@ -3346,5 +3346,29 @@
     [
         1946975,
         "dnf installs old version of dependency even though --best is used"
+    ],
+    [
+        1993899,
+        "4.8.0: sphinx warnings"
+    ],
+    [
+        1805260,
+        "Old module packages still show as default"
+    ],
+    [
+        1938352,
+        "Fix documentation: repository-packages"
+    ],
+    [
+        1967925,
+        "[RFE] Provide API to set repo configuration options as string"
+    ],
+    [
+        1963704,
+        "`dnf provides` requires a wildcard or else it only matches full paths"
+    ],
+    [
+        1938333,
+        "[rfe] Add aliases if and ar"
     ]
 ]
