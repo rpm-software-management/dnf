@@ -84,7 +84,7 @@ def _pkg2payload(pkg, progress, *factories):
     raise ValueError(_('no matching payload factory for %s') % pkg)
 
 
-def _download_payloads(payloads, drpm):
+def _download_payloads(payloads, drpm, fail_fast=True):
     # download packages
     def _download_sort_key(payload):
         return not hasattr(payload, 'delta')
@@ -94,7 +94,7 @@ def _download_payloads(payloads, drpm):
                for pload in sorted(payloads, key=_download_sort_key)]
     errs = _DownloadErrors()
     try:
-        libdnf.repo.PackageTarget.downloadPackages(libdnf.repo.VectorPPackageTarget(targets), True)
+        libdnf.repo.PackageTarget.downloadPackages(libdnf.repo.VectorPPackageTarget(targets), fail_fast)
     except RuntimeError as e:
         errs._fatal = str(e)
     drpm.wait()
