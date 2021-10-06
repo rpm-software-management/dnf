@@ -112,7 +112,7 @@ def _download_payloads(payloads, drpm):
             errs._skipped.add(pkg)
             continue
         pkg.repo._repo.expire()
-        errs._irrecoverable[pkg] = [err]
+        errs._pkg_irrecoverable[pkg] = [err]
 
     return errs
 
@@ -131,15 +131,14 @@ def _update_saving(saving, payloads, errs):
 
 class _DownloadErrors(object):
     def __init__(self):
-        self._val_irrecoverable = {}
+        self._pkg_irrecoverable = {}
         self._val_recoverable = {}
         self._fatal = None
         self._skipped = set()
 
-    @property
     def _irrecoverable(self):
-        if self._val_irrecoverable:
-            return self._val_irrecoverable
+        if self._pkg_irrecoverable:
+            return self._pkg_irrecoverable
         if self._fatal:
             return {'': [self._fatal]}
         return {}
