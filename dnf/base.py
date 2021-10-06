@@ -1165,8 +1165,8 @@ class Base(object):
                 progress.start(len(payloads), est_remote_size)
             errors = dnf.repo._download_payloads(payloads, drpm)
 
-            if errors._irrecoverable:
-                raise dnf.exceptions.DownloadError(errors._irrecoverable)
+            if errors._irrecoverable():
+                raise dnf.exceptions.DownloadError(errors._irrecoverable())
 
             remote_size = sum(errors._bandwidth_used(pload)
                               for pload in payloads)
@@ -1191,8 +1191,8 @@ class Base(object):
                 progress.start(len(payloads), est_remote_size)
                 errors = dnf.repo._download_payloads(payloads, drpm)
 
-                if errors._irrecoverable:
-                    raise dnf.exceptions.DownloadError(errors._irrecoverable)
+                if errors._irrecoverable():
+                    raise dnf.exceptions.DownloadError(errors._irrecoverable())
 
                 remote_size += \
                     sum(errors._bandwidth_used(pload) for pload in payloads)
