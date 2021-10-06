@@ -1151,7 +1151,7 @@ class Base(object):
         timer()
         self._trans_success = True
 
-    def _download_remote_payloads(self, payloads, drpm, progress, callback_total):
+    def _download_remote_payloads(self, payloads, drpm, progress, callback_total, fail_fast=True):
         lock = dnf.lock.build_download_lock(self.conf.cachedir, self.conf.exit_on_lock)
         with lock:
             beg_download = time.time()
@@ -1163,7 +1163,7 @@ class Base(object):
                 progress.start(len(payloads), est_remote_size, total_drpms=total_drpm)
             else:
                 progress.start(len(payloads), est_remote_size)
-            errors = dnf.repo._download_payloads(payloads, drpm)
+            errors = dnf.repo._download_payloads(payloads, drpm, fail_fast)
 
             if errors._irrecoverable():
                 raise dnf.exceptions.DownloadError(errors._irrecoverable())
@@ -1189,7 +1189,7 @@ class Base(object):
                 est_remote_size = sum(pload.download_size
                                       for pload in payloads)
                 progress.start(len(payloads), est_remote_size)
-                errors = dnf.repo._download_payloads(payloads, drpm)
+                errors = dnf.repo._download_payloads(payloads, drpm, fail_fast)
 
                 if errors._irrecoverable():
                     raise dnf.exceptions.DownloadError(errors._irrecoverable())
