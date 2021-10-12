@@ -99,7 +99,7 @@ class CleanCommand(commands.Command):
         rpmdb_lock = dnf.lock.build_rpmdb_lock(self.base.conf.persistdir, True)
         while True:
             try:
-                with md_lock and download_lock and rpmdb_lock:
+                with md_lock, download_lock, rpmdb_lock:
                     types = set(t for c in self.opts.type for t in _CACHE_TYPES[c])
                     files = list(_tree(cachedir))
                     logger.debug(_('Cleaning data: ' + ' '.join(types)))
