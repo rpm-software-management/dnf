@@ -434,7 +434,7 @@ class Repo(dnf.conf.RepoConf):
         self._pkgdir = None
         self._key_import = _NullKeyImport()
         self.metadata = None  # :api
-        self._repo.setSyncStrategy(self.DEFAULT_SYNC)
+        self._repo.setSyncStrategy(SYNC_ONLY_CACHE if parent_conf and parent_conf.cacheonly else self.DEFAULT_SYNC)
         if parent_conf:
             self._repo.setSubstitutions(parent_conf.substitutions)
         self._substitutions = dnf.conf.substitutions.Substitutions()
