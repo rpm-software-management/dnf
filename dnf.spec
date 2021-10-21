@@ -65,7 +65,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.9.2
+Version:        4.10.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -361,6 +361,13 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Thu Oct 21 2021 Pavla Kratochvilova <pkratoch@redhat.com> - 4.10.0-1
+- Add support for autodetecting packages to be excluded from being installed as weak dependencies (RhBug:1699672)
+- Add support for excluding packages to be installed as weak dependencies (RhBug:1699672)
+- Add fail_fast parameter to download_payloads methods for use in reposync
+- Acquire all relevant locks during "dnf clean"
+- API: Raise CompsError when group/env not found in install_group and install_environment (RhBug:1947958)
+
 * Thu Sep 16 2021 Pavla Kratochvilova <pkratoch@redhat.com> - 4.9.0-1
 - [API] Add method "set_or_append_opt_value" to BaseConfig (RhBug:1967925)
 - Add aliases for commands: info, updateinfo, provides (RhBug:1938333)

@@ -19,6 +19,24 @@
  DNF Release Notes
 ###################
 
+====================
+4.10.0 Release Notes
+====================
+
+- New features:
+  - Add support for autodetecting packages to be excluded from being installed as weak dependencies (RhBug:1699672)
+  - Add support for excluding packages to be installed as weak dependencies (RhBug:1699672)
+  - Add fail_fast parameter to download_payloads methods for use in reposync
+
+- Bug fixes:
+  - Acquire all relevant locks during "dnf clean"
+  - API: Raise CompsError when group/env not found in install_group and install_environment (RhBug:1947958)
+
+Bugs fixed in 4.10.0:
+
+* :rhbug:`1699672`
+* :rhbug:`1947958`
+
 ===================
 4.9.0 Release Notes
 ===================

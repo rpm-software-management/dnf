@@ -3370,5 +3370,13 @@
     [
         1938333,
         "[rfe] Add aliases if and ar"
+    ],
+    [
+        1699672,
+        "RFE: dnf should not pull (already broken) weak dependencies on updates"
+    ],
+    [
+        1947958,
+        "DNF no longer raises an error when an unknown group is installed"
     ]
 ]
