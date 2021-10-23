@@ -561,7 +561,7 @@ class RepoQueryCommand(commands.Command):
                     _("No valid switch specified\nusage: {prog} repoquery [--conflicts|"
                       "--enhances|--obsoletes|--provides|--recommends|--requires|"
                       "--suggest|--supplements|--whatrequires] [key] [--tree]\n\n"
-                      "description:\n  For the given packages print a tree of the"
+                      "description:\n  For the given packages print a tree of the "
                       "packages.").format(prog=dnf.util.MAIN_PROG))
             self.tree_seed(q, orquery, self.opts)
             return
