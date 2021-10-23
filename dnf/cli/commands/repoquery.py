@@ -132,7 +132,7 @@ class RepoQueryCommand(commands.Command):
                             help=_('show only results that conflict REQ'))
         parser.add_argument('--whatdepends', default=[], action=_CommaSplitCallback,
                             metavar='REQ',
-                            help=_('shows results that requires, suggests, supplements, enhances,'
+                            help=_('shows results that requires, suggests, supplements, enhances, '
                                    'or recommends package provides and files REQ'))
         parser.add_argument('--whatobsoletes', default=[], action=_CommaSplitCallback,
                             metavar='REQ',
