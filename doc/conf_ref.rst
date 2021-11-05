@@ -137,6 +137,9 @@ configuration file by your distribution to override the DNF defaults.
     If set to ``True`` DNF will run entirely from system cache, will not update
     the cache and will use it even in case it is expired. Default is ``False``.
 
+    API Notes: Must be set before repository objects are created. Plugins must set
+    this in the pre_config hook. Later changes are ignored.
+
 .. _check_config_file_age-label:
 
 ``check_config_file_age``
