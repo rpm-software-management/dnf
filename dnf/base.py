@@ -1655,7 +1655,7 @@ class Base(object):
                     package_string = comps_pkg.name
                     if comps_pkg.basearchonly:
                         package_string += '.' + basearch
-                    logger.warning(_('No match for group package "{}"').format(package_string))
+                    logger.debug(_('No match for group package "{}"').format(package_string))
                     continue
                 remove_query = fn(q, remove_query, comps_pkg)
                 self._goal.group_members.add(comps_pkg.name)
