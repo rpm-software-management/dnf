@@ -191,7 +191,7 @@ class DNSSECKeyVerification:
             logger.debug("Communication with DNS servers failed")
             return Validity.ERROR
         if result.bogus:
-            logger.debug("DNSSEC signatures are wrong")
+            logger.debug("DNSSEC signatures are wrong ({})".format(result.why_bogus))
             return Validity.BOGUS_RESULT
         if not result.secure:
             logger.debug("Result is not secured with DNSSEC")
