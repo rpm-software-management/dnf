@@ -85,7 +85,6 @@ Requires:       python-dbus
 Requires:       %{_bindir}/sqlite3
 %else
 Recommends:     (python3-dbus if NetworkManager)
-Recommends:     (%{_bindir}/sqlite3 if bash-completion)
 %endif
 Provides:       dnf-command(alias)
 Provides:       dnf-command(autoremove)
