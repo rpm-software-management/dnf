@@ -166,7 +166,7 @@ Requires:       python3-rpm >= %{rpm_version}
 %if 0%{?rhel} && 0%{?rhel} <= 7
 Requires:       rpm-plugin-systemd-inhibit
 %else
-Recommends:     rpm-plugin-systemd-inhibit
+Recommends:     (rpm-plugin-systemd-inhibit if systemd)
 %endif
 
 %description -n python3-%{name}
