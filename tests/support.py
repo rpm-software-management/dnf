@@ -77,7 +77,8 @@ skip = unittest.skip
 TRACEBACK_RE = re.compile(
     r'(Traceback \(most recent call last\):\n'
     r'(?:  File "[^"\n]+", line \d+, in \w+\n'
-    r'(?:    .+\n)?)+'
+    r'(?:    .+\n)?'
+    r'(?:    \s*\~*\^+\~*\n)?)+'
     r'\S.*\n)')
 REASONS = {
     'hole': 'group',
@@ -585,7 +586,6 @@ class TestCase(unittest.TestCase):
 
     if not dnf.pycomp.PY3:
         assertCountEqual = unittest.TestCase.assertItemsEqual
-        assertRegex = unittest.TestCase.assertRegexpMatches
 
     def assertEmpty(self, collection):
         return self.assertEqual(len(collection), 0)
