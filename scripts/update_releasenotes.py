@@ -724,7 +724,7 @@ class TestCase(unittest.TestCase):
         """
         with tests.mock.patch(stream, io.BytesIO()) as mock:
             yield
-            self.assertRegexpMatches(mock.getvalue(), regex)
+            self.assertRegex(mock.getvalue(), regex)
 
     def _assert_iter_equal(self, actual, expected):
         """Test whether two iterables are equal.
