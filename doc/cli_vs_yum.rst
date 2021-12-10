@@ -427,20 +427,20 @@ Utilities that have not been ported yet
 
 Take a look at the FAQ_ about YUM to DNF migration. Feel free to file an RFE_ for missing functionality if you need it.
 
-.. _dnf debuginfo-install: http://dnf-plugins-core.readthedocs.org/en/latest/debuginfo-install.html
-.. _dnf list installed: http://dnf.readthedocs.org/en/latest/command_ref.html
-.. _dnf tracer: http://dnf-plugins-extras.readthedocs.org/en/latest/tracer.html
+.. _dnf debuginfo-install: https://dnf-plugins-core.readthedocs.io/en/latest/debuginfo-install.html
+.. _dnf list installed: https://dnf.readthedocs.io/en/latest/command_ref.html
+.. _dnf tracer: https://dnf-plugins-extras.readthedocs.io/en/latest/tracer.html
 .. _dnf repoclosure: https://dnf-plugins-core.readthedocs.io/en/latest/repoclosure.html
-.. _dnf repodiff: http://dnf-plugins-core.readthedocs.org/en/latest/repodiff.html
+.. _dnf repodiff: https://dnf-plugins-core.readthedocs.io/en/latest/repodiff.html
 .. _dnf repograph: https://dnf-plugins-core.readthedocs.io/en/latest/repograph.html
 .. _dnf repomanage: https://dnf-plugins-core.readthedocs.io/en/latest/repomanage.html
-.. _dnf reposync: http://dnf-plugins-core.readthedocs.org/en/latest/reposync.html
-.. _dnf download: http://dnf-plugins-core.readthedocs.org/en/latest/download.html
-.. _dnf builddep: http://dnf-plugins-core.readthedocs.org/en/latest/builddep.html
-.. _dnf config-manager: http://dnf-plugins-core.readthedocs.org/en/latest/config_manager.html
+.. _dnf reposync: https://dnf-plugins-core.readthedocs.io/en/latest/reposync.html
+.. _dnf download: https://dnf-plugins-core.readthedocs.io/en/latest/download.html
+.. _dnf builddep: https://dnf-plugins-core.readthedocs.io/en/latest/builddep.html
+.. _dnf config-manager: https://dnf-plugins-core.readthedocs.io/en/latest/config_manager.html
 .. _dnf debug-dump: https://dnf-plugins-core.readthedocs.io/en/latest/debug.html
 .. _dnf debug-restore: https://dnf-plugins-core.readthedocs.io/en/latest/debug.html
 .. _dnf copr: https://dnf-plugins-core.readthedocs.io/en/latest/copr.html
-.. _dnf.conf: http://dnf.readthedocs.org/en/latest/conf_ref.html
+.. _dnf.conf: https://dnf.readthedocs.io/en/latest/conf_ref.html
 .. _RFE: https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting#new-feature-request
-.. _FAQ: http://dnf.readthedocs.io/en/latest/user_faq.html
+.. _FAQ: https://dnf.readthedocs.io/en/latest/user_faq.html

@@ -1990,4 +1990,4 @@ See Also
 * How to report a bug (https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting)
 * `YUM`_ project homepage (http://yum.baseurl.org/)
 
-.. _dnf config-manager: https://dnf-plugins-core.readthedocs.org/en/latest/config_manager.html
+.. _dnf config-manager: https://dnf-plugins-core.readthedocs.io/en/latest/config_manager.html
