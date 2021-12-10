@@ -51,5 +51,5 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-.. _DNF Plugins Core: https://dnf-plugins-core.readthedocs.org/en/latest/
-.. _DNF Plugins Extras: https://dnf-plugins-extras.readthedocs.org/en/latest/
+.. _DNF Plugins Core: https://dnf-plugins-core.readthedocs.io/en/latest/
+.. _DNF Plugins Extras: https://dnf-plugins-extras.readthedocs.io/en/latest/
