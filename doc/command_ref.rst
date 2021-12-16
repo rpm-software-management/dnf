@@ -182,7 +182,9 @@ Options
     Disable the listed plugins specified by names or globs.
 
 ``--disablerepo=<repoid>``
-    Disable specific repositories by an id or a glob. This option is mutually exclusive with ``--repo``.
+    Temporarily disable active repositories for the purpose of the current dnf command.
+    Accepts an id, a comma-separated list of ids, or a glob of ids. This option can be
+    specified multiple times, but is mutually exclusive with ``--repo``.
 
 ``--downloaddir=<path>, --destdir=<path>``
     Redirect downloaded packages to provided directory. The option has to be used together with the \-\
@@ -207,7 +209,9 @@ Options
     Enable the listed plugins specified by names or globs.
 
 ``--enablerepo=<repoid>``
-    Enable additional repositories by an id or a glob.
+    Temporarily enable additional repositories for the purpose of the current dnf command.
+    Accepts an id, a comma-separated list of ids, or a glob of ids. This option can be
+    specified multiple times.
 
 ``--enhancement``
     Include enhancement relevant packages. Applicable for the install, repoquery, updateinfo and
