@@ -270,8 +270,6 @@ class CompsTest(tests.support.DnfBaseTestCase):
     REPOS = ["main"]
     COMPS = True
 
-    # prevent creating the gen/ directory:
-    @mock.patch('dnf.yum.misc.repo_gen_decompress', lambda x, y: x)
     def test_read_comps(self):
         self.assertLength(self.base.comps.groups, tests.support.TOTAL_GROUPS)
 
