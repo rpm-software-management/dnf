@@ -80,6 +80,7 @@ import os
 import operator
 import re
 import rpm
+import tempfile
 import time
 import shutil
 
@@ -647,20 +648,24 @@ class Base(object):
 
             logger.log(dnf.logging.DDEBUG,
                        'Adding group file from repository: %s', repo.id)
-            if repo._repo.getSyncStrategy() == dnf.repo.SYNC_ONLY_CACHE:
-                decompressed = misc.calculate_repo_gen_dest(comps_fn,
-                                                            'groups.xml')
-                if not os.path.exists(decompressed):
-                    # root privileges are needed for comps decompression
-                    continue
-            else:
-                decompressed = misc.repo_gen_decompress(comps_fn, 'groups.xml')
-
+            gen_dir = os.path.join(os.path.dirname(comps_fn), 'gen')
+            gen_file = os.path.join(gen_dir, 'groups.xml')
+            temp_file = None
             try:
-                self._comps._add_from_xml_filename(decompressed)
+                if not os.path.exists(gen_dir):
+                    os.makedirs(gen_dir, mode=0o755)
+                misc.decompress(comps_fn, dest=gen_file, check_timestamps=True)
+            except (PermissionError, dnf.exceptions.MiscError):
+                temp_file = tempfile.NamedTemporaryFile()
+                gen_file = temp_file.name
+                misc.decompress(comps_fn, dest=gen_file, check_timestamps=False)
+            try:
+                self._comps._add_from_xml_filename(gen_file)
             except dnf.exceptions.CompsError as e:
                 msg = _('Failed to add groups file for repository: %s - %s')
                 logger.critical(msg, repo.id, e)
+            if temp_file:
+                temp_file.close()
 
         if arch_filter:
             self._comps._i.arch_filter(
