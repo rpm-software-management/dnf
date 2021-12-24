@@ -97,6 +97,7 @@ _BASEARCH_MAP = _invert({
     'mipsel': ('mipsel',),
     'mips64': ('mips64',),
     'mips64el': ('mips64el',),
+    'loongarch64': ('loongarch64',),
     'noarch': ('noarch',),
     'ppc': ('ppc',),
     'ppc64': ('ppc64', 'ppc64iseries', 'ppc64p7', 'ppc64pseries'),
