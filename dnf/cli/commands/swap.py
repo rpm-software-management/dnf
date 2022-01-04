@@ -58,5 +58,8 @@ class SwapCommand(commands.Command):
             cmd.run()
 
     def run(self):
-        self._perform('remove', self.opts.remove_spec)
+        # The install part must be performed before the remove one because it can
+        # operate on local rpm files. Command line packages cannot be added
+        # to the sack once the goal is created.
         self._perform('install', self.opts.install_spec)
+        self._perform('remove', self.opts.remove_spec)
