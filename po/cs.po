@@ -32,7 +32,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-13 09:18-0400\n"
+"POT-Creation-Date: 2022-01-11 01:52+0000\n"
 "PO-Revision-Date: 2021-02-06 12:40+0000\n"
 "Last-Translator: Lukas Zapletal <lzap@redhat.com>\n"
 "Language-Team: Czech <https://translate.fedoraproject.org/projects/dnf/dnf-master/cs/>\n"
@@ -221,82 +221,82 @@ msgstr "Neplatný tsflag v konfiguračním souboru: %s"
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Selhalo přidání souboru se skupinou pro repozitář: %s - %s"
 
-#: dnf/base.py:904
+#: dnf/base.py:922
 msgid "Running transaction check"
 msgstr "Spouští se kontrola transakce"
 
-#: dnf/base.py:912
+#: dnf/base.py:930
 msgid "Error: transaction check vs depsolve:"
 msgstr "Chyba: kontrola transakce vs řešení závislostí:"
 
-#: dnf/base.py:918
+#: dnf/base.py:936
 msgid "Transaction check succeeded."
 msgstr "Kontrola transakce byla úspěšná"
 
-#: dnf/base.py:921
+#: dnf/base.py:939
 msgid "Running transaction test"
 msgstr "Probíhá test transakce"
 
-#: dnf/base.py:931 dnf/base.py:1082
+#: dnf/base.py:949 dnf/base.py:1100
 msgid "RPM: {}"
 msgstr "RPM: {}"
 
-#: dnf/base.py:932
+#: dnf/base.py:950
 msgid "Transaction test error:"
 msgstr ""
 
-#: dnf/base.py:943
+#: dnf/base.py:961
 msgid "Transaction test succeeded."
 msgstr "Test transakce byl úspěšný."
 
-#: dnf/base.py:964
+#: dnf/base.py:982
 msgid "Running transaction"
 msgstr "Transakce probíhá"
 
-#: dnf/base.py:1001
+#: dnf/base.py:1019
 msgid "Disk Requirements:"
 msgstr "Požadavky na místo na disku:"
 
-#: dnf/base.py:1004
+#: dnf/base.py:1022
 #, python-brace-format
 msgid "At least {0}MB more space needed on the {1} filesystem."
 msgid_plural "At least {0}MB more space needed on the {1} filesystem."
 msgstr[0] ""
 
-#: dnf/base.py:1011
+#: dnf/base.py:1029
 msgid "Error Summary"
 msgstr "Přehled chyb"
 
-#: dnf/base.py:1037
+#: dnf/base.py:1055
 #, python-brace-format
 msgid "RPMDB altered outside of {prog}."
 msgstr ""
 
-#: dnf/base.py:1083 dnf/base.py:1091
+#: dnf/base.py:1101 dnf/base.py:1109
 msgid "Could not run transaction."
 msgstr "Nelze spustit transakci."
 
-#: dnf/base.py:1086
+#: dnf/base.py:1104
 msgid "Transaction couldn't start:"
 msgstr "Transakce nemůže začít:"
 
-#: dnf/base.py:1100
+#: dnf/base.py:1118
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Selhalo odstranění transakčního souboru %s."
 
-#: dnf/base.py:1182
+#: dnf/base.py:1200
 msgid "Some packages were not downloaded. Retrying."
 msgstr "Některé balíčky nebyly staženy. Další pokus."
 
-#: dnf/base.py:1212
+#: dnf/base.py:1230
 #, fuzzy, python-format
 #| msgid ""
 #| "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%.1f%% saved)"
 msgstr "Delta RPM zmenšil %.1f MB aktualizací na %.1f MB (%d.1%% ušetřeno)"
 
-#: dnf/base.py:1216
+#: dnf/base.py:1234
 #, fuzzy, python-format
 #| msgid ""
 #| "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
@@ -306,75 +306,75 @@ msgstr ""
 "Neúspěšná Delta RPM zvýšila %.1f MB aktualizací na %.1f MB (zbytečných "
 "%d.1%%)"
 
-#: dnf/base.py:1258
+#: dnf/base.py:1276
 msgid "Cannot add local packages, because transaction job already exists"
 msgstr ""
 
-#: dnf/base.py:1272
+#: dnf/base.py:1290
 msgid "Could not open: {}"
 msgstr "Nelze otevřít: {}"
 
-#: dnf/base.py:1310
+#: dnf/base.py:1328
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "Veřejný klíč %s není nainstalován"
 
-#: dnf/base.py:1314
+#: dnf/base.py:1332
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Problém s otevřením balíčku %s"
 
-#: dnf/base.py:1322
+#: dnf/base.py:1340
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "Veřejný klíč %s není důvěryhodný"
 
-#: dnf/base.py:1326
+#: dnf/base.py:1344
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Balíček %s není podepsán"
 
-#: dnf/base.py:1356
+#: dnf/base.py:1374
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Nelze odstranit %s"
 
-#: dnf/base.py:1360
+#: dnf/base.py:1378
 #, python-format
 msgid "%s removed"
 msgstr "%s odstraněn"
 
-#: dnf/base.py:1640
+#: dnf/base.py:1658
 msgid "No match for group package \"{}\""
 msgstr "Neexistuje shoda pro skupinu balíčků \"{}\""
 
-#: dnf/base.py:1726
+#: dnf/base.py:1740
 #, python-format
 msgid "Adding packages from group '%s': %s"
 msgstr ""
 
-#: dnf/base.py:1749 dnf/cli/cli.py:221 dnf/cli/commands/__init__.py:437
+#: dnf/base.py:1763 dnf/cli/cli.py:221 dnf/cli/commands/__init__.py:437
 #: dnf/cli/commands/__init__.py:494 dnf/cli/commands/__init__.py:587
 #: dnf/cli/commands/__init__.py:636 dnf/cli/commands/install.py:80
 #: dnf/cli/commands/install.py:103 dnf/cli/commands/install.py:110
 msgid "Nothing to do."
 msgstr "Není co dělat."
 
-#: dnf/base.py:1767
+#: dnf/base.py:1781
 msgid "No groups marked for removal."
 msgstr "Nebyly vybrány žádné skupiny pro odstranění."
 
-#: dnf/base.py:1801
+#: dnf/base.py:1815
 msgid "No group marked for upgrade."
 msgstr "Nebyly vybrány žádné skupiny pro aktualizaci."
 
-#: dnf/base.py:2015
+#: dnf/base.py:2029
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
 msgstr "Balíček %s není nainstalován, nelze ho downgradovat."
 
-#: dnf/base.py:2017 dnf/base.py:2036 dnf/base.py:2049 dnf/base.py:2076
-#: dnf/base.py:2129 dnf/base.py:2137 dnf/base.py:2271 dnf/cli/cli.py:417
+#: dnf/base.py:2031 dnf/base.py:2050 dnf/base.py:2063 dnf/base.py:2090
+#: dnf/base.py:2143 dnf/base.py:2151 dnf/base.py:2285 dnf/cli/cli.py:417
 #: dnf/cli/commands/__init__.py:420 dnf/cli/commands/__init__.py:477
 #: dnf/cli/commands/__init__.py:581 dnf/cli/commands/__init__.py:628
 #: dnf/cli/commands/__init__.py:706 dnf/cli/commands/install.py:147
@@ -384,135 +384,135 @@ msgstr "Balíček %s není nainstalován, nelze ho downgradovat."
 msgid "No match for argument: %s"
 msgstr "Žádná shoda pro argument: %s"
 
-#: dnf/base.py:2024
+#: dnf/base.py:2038
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
 msgstr "Balíček %s nižší verze je již nainstalován, nelze jej downgradovat."
 
-#: dnf/base.py:2047
+#: dnf/base.py:2061
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
 msgstr "Balíček %s není nainstalován, nelze jej přeinstalovat."
 
-#: dnf/base.py:2062
+#: dnf/base.py:2076
 #, python-format
 msgid "File %s is a source package and cannot be updated, ignoring."
 msgstr ""
 "Soubor %s je zdrojovým balíčkem a nemůže být aktualizován, ignoruje se."
 
-#: dnf/base.py:2073
+#: dnf/base.py:2087
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr "Balíček %s není nainstalován, nelze jej aktualizovat."
 
-#: dnf/base.py:2083
+#: dnf/base.py:2097
 #, python-format
 msgid ""
 "The same or higher version of %s is already installed, cannot update it."
 msgstr ""
 
-#: dnf/base.py:2126 dnf/cli/commands/reinstall.py:81
+#: dnf/base.py:2140 dnf/cli/commands/reinstall.py:81
 #, python-format
 msgid "Package %s available, but not installed."
 msgstr "Balíček %s je dostupný, ale není nainstalován."
 
-#: dnf/base.py:2132
+#: dnf/base.py:2146
 #, python-format
 msgid "Package %s available, but installed for different architecture."
 msgstr "Balíček %s je dostupný, ale je nainstalován pro jinou architekturu."
 
-#: dnf/base.py:2157
+#: dnf/base.py:2171
 #, python-format
 msgid "No package %s installed."
 msgstr "Balík %s nenainstalován."
 
-#: dnf/base.py:2175 dnf/cli/commands/install.py:136
+#: dnf/base.py:2189 dnf/cli/commands/install.py:136
 #: dnf/cli/commands/remove.py:133
 #, python-format
 msgid "Not a valid form: %s"
 msgstr "Neplatná forma: %s"
 
-#: dnf/base.py:2190 dnf/cli/commands/__init__.py:676
+#: dnf/base.py:2204 dnf/cli/commands/__init__.py:676
 #: dnf/cli/commands/remove.py:162
 msgid "No packages marked for removal."
 msgstr "Žádné balíčky ke smazání"
 
-#: dnf/base.py:2278 dnf/cli/cli.py:428
+#: dnf/base.py:2292 dnf/cli/cli.py:428
 #, python-format
 msgid "Packages for argument %s available, but not installed."
 msgstr "Balíček je pro argument %s dostupný, ale není nainstalován."
 
-#: dnf/base.py:2283
+#: dnf/base.py:2297
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr ""
 "Balíček %s nejstarší verze je již nainstalován, nelze nainstalovat starší "
 "verzi."
 
-#: dnf/base.py:2383
+#: dnf/base.py:2397
 msgid "No security updates needed, but {} update available"
 msgstr "Nejsou zapotřebí žádné aktualizace, ale k dispozici je aktualizace {}"
 
-#: dnf/base.py:2385
+#: dnf/base.py:2399
 msgid "No security updates needed, but {} updates available"
 msgstr ""
 "Nejsou zapotřebí žádné aktualizace, ale k dispozici jsou aktualizace {}"
 
-#: dnf/base.py:2389
+#: dnf/base.py:2403
 msgid "No security updates needed for \"{}\", but {} update available"
 msgstr ""
 "Nejsou zapotřebí žádné aktualizace pro \"{}\", ale k dispozici je "
 "aktualizace {}"
 
-#: dnf/base.py:2391
+#: dnf/base.py:2405
 msgid "No security updates needed for \"{}\", but {} updates available"
 msgstr ""
 "Nejsou zapotřebí žádné aktualizace pro \"{}\", ale k dispozici jsou "
 "aktualizace {}"
 
 #. raise an exception, because po.repoid is not in self.repos
-#: dnf/base.py:2412
+#: dnf/base.py:2426
 #, python-format
 msgid "Unable to retrieve a key for a commandline package: %s"
 msgstr ""
 
-#: dnf/base.py:2420
+#: dnf/base.py:2434
 #, python-format
 msgid ". Failing package is: %s"
 msgstr ". Chybující balíček je: %s"
 
-#: dnf/base.py:2421
+#: dnf/base.py:2435
 #, python-format
 msgid "GPG Keys are configured as: %s"
 msgstr "GPG klíče jsou zkonfigurovány jako: %s"
 
-#: dnf/base.py:2433
+#: dnf/base.py:2447
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "GPG klíč %s (0x%s) je již nainstalován"
 
-#: dnf/base.py:2469
+#: dnf/base.py:2483
 msgid "The key has been approved."
 msgstr ""
 
-#: dnf/base.py:2472
+#: dnf/base.py:2486
 msgid "The key has been rejected."
 msgstr ""
 
-#: dnf/base.py:2505
+#: dnf/base.py:2519
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Import klíče selhal (kód %d)"
 
-#: dnf/base.py:2507
+#: dnf/base.py:2521
 msgid "Key imported successfully"
 msgstr "Import klíče proběhl úspěšně"
 
-#: dnf/base.py:2511
+#: dnf/base.py:2525
 msgid "Didn't install any keys"
 msgstr "Nebyly instalovány žádné klíče"
 
-#: dnf/base.py:2514
+#: dnf/base.py:2528
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
@@ -521,27 +521,27 @@ msgstr ""
 "GPG klíče určené pro repozitář „%s“ jsou již nainstalovány, avšak pro tento balíček nejsou správné.\n"
 "Zkontrolujte, zda URL klíčů jsou pro tento repozitář správně nastaveny."
 
-#: dnf/base.py:2525
+#: dnf/base.py:2539
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Import klíče/ů nepomohl, špatný klíč(e)?"
 
-#: dnf/base.py:2578
+#: dnf/base.py:2592
 msgid "  * Maybe you meant: {}"
 msgstr "  * Možná jste měli na mysli: {}"
 
-#: dnf/base.py:2610
+#: dnf/base.py:2624
 msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
 msgstr "Balíček \"{}\" z místního repozitáře \"{}\" má nesprávný kontrolní součet"
 
-#: dnf/base.py:2613
+#: dnf/base.py:2627
 msgid "Some packages from local repository have incorrect checksum"
 msgstr "Některé balíčky z místního repozitáře mají nesprávný kontrolní součet"
 
-#: dnf/base.py:2616
+#: dnf/base.py:2630
 msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
 msgstr "Balíček \"{}\" z repozitáře \"{}\" má nesprávný kontrolní součet"
 
-#: dnf/base.py:2619
+#: dnf/base.py:2633
 msgid ""
 "Some packages have invalid cache, but cannot be downloaded due to \"--"
 "cacheonly\" option"
@@ -549,23 +549,23 @@ msgstr ""
 "Některé balíčky mají neplatnou mezipaměť, ale nemohou být staženy kvůli "
 "volbě \"--cacheonly\""
 
-#: dnf/base.py:2637 dnf/base.py:2657
+#: dnf/base.py:2651 dnf/base.py:2671
 msgid "No match for argument"
 msgstr ""
 
-#: dnf/base.py:2645 dnf/base.py:2665
+#: dnf/base.py:2659 dnf/base.py:2679
 msgid "All matches were filtered out by exclude filtering for argument"
 msgstr ""
 
-#: dnf/base.py:2647
+#: dnf/base.py:2661
 msgid "All matches were filtered out by modular filtering for argument"
 msgstr ""
 
-#: dnf/base.py:2663
+#: dnf/base.py:2677
 msgid "All matches were installed from a different repository for argument"
 msgstr ""
 
-#: dnf/base.py:2710
+#: dnf/base.py:2724
 #, python-format
 msgid "Package %s is already installed."
 msgstr "Balíček %s je již nainstalován."
@@ -575,7 +575,7 @@ msgstr "Balíček %s je již nainstalován."
 msgid "Unexpected value of environment variable: DNF_DISABLE_ALIASES=%s"
 msgstr ""
 
-#: dnf/cli/aliases.py:105 dnf/conf/config.py:457
+#: dnf/cli/aliases.py:105 dnf/conf/config.py:475
 #, python-format
 msgid "Parsing file \"%s\" failed: %s"
 msgstr ""
@@ -1756,10 +1756,12 @@ msgid "show only results that conflict REQ"
 msgstr "Zobrazit pouze výsledky v konfliktu s REQ"
 
 #: dnf/cli/commands/repoquery.py:135
+#, fuzzy
+#| msgid "shows results that requires package provides and files REQ"
 msgid ""
-"shows results that requires, suggests, supplements, enhances,or recommends "
+"shows results that requires, suggests, supplements, enhances, or recommends "
 "package provides and files REQ"
-msgstr ""
+msgstr "Zobrazí výsledky, které potřebují poskytovatelé balíčku a soubory REQ"
 
 #: dnf/cli/commands/repoquery.py:139
 msgid "show only results that obsolete REQ"
@@ -2017,7 +2019,7 @@ msgid ""
 "usage: {prog} repoquery [--conflicts|--enhances|--obsoletes|--provides|--recommends|--requires|--suggest|--supplements|--whatrequires] [key] [--tree]\n"
 "\n"
 "description:\n"
-"  For the given packages print a tree of thepackages."
+"  For the given packages print a tree of the packages."
 msgstr ""
 
 #: dnf/cli/commands/search.py:46
@@ -2592,17 +2594,20 @@ msgstr "Automaticky odpovědět ne na všechny otázky"
 
 #: dnf/cli/option_parser.py:261
 msgid ""
-"Enable additional repositories. List option. Supports globs, can be "
-"specified multiple times."
+"Temporarily enable repositories for the purposeof the current dnf command. "
+"Accepts an id, acomma-separated list of ids, or a glob of ids.This option "
+"can be specified multiple times."
 msgstr ""
 
-#: dnf/cli/option_parser.py:266
+#: dnf/cli/option_parser.py:268
 msgid ""
-"Disable repositories. List option. Supports globs, can be specified multiple"
-" times."
+"Temporarily disable active repositories for thepurpose of the current dnf "
+"command. Accepts an id,a comma-separated list of ids, or a glob of ids.This "
+"option can be specified multiple times, butis mutually exclusive with "
+"`--repo`."
 msgstr ""
 
-#: dnf/cli/option_parser.py:270
+#: dnf/cli/option_parser.py:275
 msgid ""
 "enable just specific repositories by an id or a glob, can be specified "
 "multiple times"
@@ -2610,115 +2615,115 @@ msgstr ""
 "Povolit jen určité repozitáře na základě jejich ID nebo vzoru, mohou být "
 "zadány vícekrát"
 
-#: dnf/cli/option_parser.py:275
+#: dnf/cli/option_parser.py:280
 msgid "enable repos with config-manager command (automatically saves)"
 msgstr ""
 
-#: dnf/cli/option_parser.py:279
+#: dnf/cli/option_parser.py:284
 msgid "disable repos with config-manager command (automatically saves)"
 msgstr ""
 
-#: dnf/cli/option_parser.py:283
+#: dnf/cli/option_parser.py:288
 msgid "exclude packages by name or glob"
 msgstr "Vyloučit balíček/balíčky na základě jména nebo vzoru"
 
-#: dnf/cli/option_parser.py:288
+#: dnf/cli/option_parser.py:293
 msgid "disable excludepkgs"
 msgstr "Zakázat excludepkgs"
 
-#: dnf/cli/option_parser.py:293
+#: dnf/cli/option_parser.py:298
 msgid ""
 "label and path to an additional repository to use (same path as in a "
 "baseurl), can be specified multiple times."
 msgstr ""
 
-#: dnf/cli/option_parser.py:297
+#: dnf/cli/option_parser.py:302
 msgid "disable removal of dependencies that are no longer used"
 msgstr "Zakázat odstranění závislostí, které se již nepoužívají"
 
-#: dnf/cli/option_parser.py:300
+#: dnf/cli/option_parser.py:305
 msgid "disable gpg signature checking (if RPM policy allows)"
 msgstr ""
 
-#: dnf/cli/option_parser.py:302
+#: dnf/cli/option_parser.py:307
 msgid "control whether color is used"
 msgstr "Kontrola zda jsou použity barvy"
 
-#: dnf/cli/option_parser.py:305
+#: dnf/cli/option_parser.py:310
 msgid "set metadata as expired before running the command"
 msgstr "Nastavit metada před spuštěním příkazu jako časově neplatná"
 
-#: dnf/cli/option_parser.py:308
+#: dnf/cli/option_parser.py:313
 msgid "resolve to IPv4 addresses only"
 msgstr "Vyřešit pouze IPv4 adresy"
 
-#: dnf/cli/option_parser.py:311
+#: dnf/cli/option_parser.py:316
 msgid "resolve to IPv6 addresses only"
 msgstr "Vyřešit pouze IPv6 adresy"
 
-#: dnf/cli/option_parser.py:314
+#: dnf/cli/option_parser.py:319
 msgid "set directory to copy packages to"
 msgstr "Nastavit adresář, do něhož budou balíčky kopírovány"
 
-#: dnf/cli/option_parser.py:317
+#: dnf/cli/option_parser.py:322
 msgid "only download packages"
 msgstr "Balíčky jen stáhnout"
 
-#: dnf/cli/option_parser.py:319
+#: dnf/cli/option_parser.py:324
 msgid "add a comment to transaction"
 msgstr "přidat k transakci poznámku"
 
-#: dnf/cli/option_parser.py:322
+#: dnf/cli/option_parser.py:327
 msgid "Include bugfix relevant packages, in updates"
 msgstr "Zahrnovat opravy chyb příslušných balíčků do aktualizací"
 
-#: dnf/cli/option_parser.py:325
+#: dnf/cli/option_parser.py:330
 msgid "Include enhancement relevant packages, in updates"
 msgstr "Zahrnovat vylepšení příslušných balíčků do aktualizací"
 
-#: dnf/cli/option_parser.py:328
+#: dnf/cli/option_parser.py:333
 msgid "Include newpackage relevant packages, in updates"
 msgstr "Zahrnovat nové balíčky příslušných balíčků do aktualizací"
 
-#: dnf/cli/option_parser.py:331
+#: dnf/cli/option_parser.py:336
 msgid "Include security relevant packages, in updates"
 msgstr "Zahrnovat zabezpečení příslušných balíčků do aktualizací"
 
-#: dnf/cli/option_parser.py:335
+#: dnf/cli/option_parser.py:340
 msgid "Include packages needed to fix the given advisory, in updates"
 msgstr "Zahrnovat balíčky potřebné k opravě daného varování do aktualizací"
 
-#: dnf/cli/option_parser.py:339
+#: dnf/cli/option_parser.py:344
 msgid "Include packages needed to fix the given BZ, in updates"
 msgstr ""
 "Zahrnovat balíčky potřebné k opravě daného záznamu o chybě z Bugzilly do "
 "aktualizací"
 
-#: dnf/cli/option_parser.py:342
+#: dnf/cli/option_parser.py:347
 msgid "Include packages needed to fix the given CVE, in updates"
 msgstr ""
 "Zahrnovat balíčky potřebné k opravě daného záznamu o chybě z CVE do "
 "aktualizací"
 
-#: dnf/cli/option_parser.py:347
+#: dnf/cli/option_parser.py:352
 msgid "Include security relevant packages matching the severity, in updates"
 msgstr ""
 "Zahrnovat zabezpečení příslušných balíčků odpovídajících závažnosti do "
 "aktualizací"
 
-#: dnf/cli/option_parser.py:353
+#: dnf/cli/option_parser.py:358
 msgid "Force the use of an architecture"
 msgstr "Vynutit použití architektury"
 
-#: dnf/cli/option_parser.py:375
+#: dnf/cli/option_parser.py:380
 msgid "List of Main Commands:"
 msgstr "Seznam hlavních příkazů:"
 
-#: dnf/cli/option_parser.py:376
+#: dnf/cli/option_parser.py:381
 msgid "List of Plugin Commands:"
 msgstr "Seznam příkazů zásuvných modulů:"
 
-#: dnf/cli/option_parser.py:413
+#: dnf/cli/option_parser.py:418
 #, fuzzy, python-format
 #| msgid "No match for argument: %s"
 msgid "Cannot encode argument '%s': %s"
@@ -3494,10 +3499,6 @@ msgstr "    Spuštěn: %s - před %s"
 msgid "    State  : %s"
 msgstr "    Stav : %s"
 
-#: dnf/comps.py:104
-msgid "skipping."
-msgstr "přeskakuje se."
-
 #: dnf/comps.py:196 dnf/comps.py:692 dnf/comps.py:706
 #, python-format
 msgid "Module or Group '%s' is not installed."
@@ -3552,41 +3553,45 @@ msgstr "Chyba při parsování '%s': %s"
 msgid "Invalid configuration value: %s=%s in %s; %s"
 msgstr "Neznámá hodnota konfigurace: %s=%s v %s; %s"
 
-#: dnf/conf/config.py:226
+#: dnf/conf/config.py:194
+msgid "Cannot set \"{}\" to \"{}\": {}"
+msgstr ""
+
+#: dnf/conf/config.py:244
 msgid "Could not set cachedir: {}"
 msgstr ""
 
-#: dnf/conf/config.py:275
+#: dnf/conf/config.py:293
 msgid ""
 "Configuration file URL \"{}\" could not be downloaded:\n"
 "  {}"
 msgstr ""
 
-#: dnf/conf/config.py:355 dnf/conf/config.py:391
+#: dnf/conf/config.py:373 dnf/conf/config.py:409
 #, python-format
 msgid "Unknown configuration option: %s = %s"
 msgstr "Neznámá hodnota konfigurace: %s = %s"
 
-#: dnf/conf/config.py:372
+#: dnf/conf/config.py:390
 #, python-format
 msgid "Error parsing --setopt with key '%s', value '%s': %s"
 msgstr ""
 
-#: dnf/conf/config.py:380
+#: dnf/conf/config.py:398
 #, python-format
 msgid "Main config did not have a %s attr. before setopt"
 msgstr ""
 
-#: dnf/conf/config.py:427 dnf/conf/config.py:445
+#: dnf/conf/config.py:445 dnf/conf/config.py:463
 msgid "Incorrect or unknown \"{}\": {}"
 msgstr "Nesprávné nebo neznámé \"{}\": {}"
 
-#: dnf/conf/config.py:501
+#: dnf/conf/config.py:519
 #, python-format
 msgid "Error parsing --setopt with key '%s.%s', value '%s': %s"
 msgstr ""
 
-#: dnf/conf/config.py:504
+#: dnf/conf/config.py:522
 #, python-format
 msgid "Repo %s did not have a %s attr. before setopt"
 msgstr ""
@@ -3667,32 +3672,32 @@ msgstr ""
 msgid "Will not install a source rpm package (%s)."
 msgstr "Nenainstaluje zdrojový rpm balíček (%s)."
 
-#: dnf/dnssec.py:168
+#: dnf/dnssec.py:171
 msgid ""
 "Configuration option 'gpgkey_dns_verification' requires python3-unbound ({})"
 msgstr ""
 
-#: dnf/dnssec.py:239
+#: dnf/dnssec.py:243
 msgid "DNSSEC extension: Key for user "
 msgstr ""
 
-#: dnf/dnssec.py:241
+#: dnf/dnssec.py:245
 msgid "is valid."
 msgstr ""
 
-#: dnf/dnssec.py:243
+#: dnf/dnssec.py:247
 msgid "has unknown status."
 msgstr ""
 
-#: dnf/dnssec.py:251
+#: dnf/dnssec.py:255
 msgid "DNSSEC extension: "
 msgstr ""
 
-#: dnf/dnssec.py:283
+#: dnf/dnssec.py:287
 msgid "Testing already imported keys for their validity."
 msgstr ""
 
-#: dnf/drpm.py:62 dnf/repo.py:268
+#: dnf/drpm.py:62 dnf/repo.py:267
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr "nepodporovaný typ kontrolního součtu: %s"
@@ -3734,7 +3739,7 @@ msgid "Modular dependency problem with Defaults:"
 msgid_plural "Modular dependency problems with Defaults:"
 msgstr[0] ""
 
-#: dnf/exceptions.py:131 dnf/module/module_base.py:854
+#: dnf/exceptions.py:131 dnf/module/module_base.py:857
 msgid "Modular dependency problem:"
 msgid_plural "Modular dependency problems:"
 msgstr[0] ""
@@ -3827,7 +3832,7 @@ msgid ""
 msgstr ""
 
 #: dnf/module/module_base.py:56 dnf/module/module_base.py:556
-#: dnf/module/module_base.py:615 dnf/module/module_base.py:681
+#: dnf/module/module_base.py:615 dnf/module/module_base.py:684
 msgid "Ignoring unnecessary profile: '{}/{}'"
 msgstr ""
 
@@ -3883,7 +3888,7 @@ msgstr ""
 #: dnf/module/module_base.py:310 dnf/module/module_base.py:461
 #: dnf/module/module_base.py:486 dnf/module/module_base.py:505
 #: dnf/module/module_base.py:552 dnf/module/module_base.py:611
-#: dnf/module/module_base.py:677 dnf/module/module_base.py:840
+#: dnf/module/module_base.py:680 dnf/module/module_base.py:843
 msgid "Unable to resolve argument {}"
 msgstr ""
 
@@ -3913,7 +3918,7 @@ msgid ""
 "'{}'"
 msgstr ""
 
-#: dnf/module/module_base.py:841
+#: dnf/module/module_base.py:844
 msgid "No match for package {}"
 msgstr ""
 
@@ -3974,7 +3979,7 @@ msgid "Already downloaded"
 msgstr "Již stažen"
 
 #. pinging mirrors, this might take a while
-#: dnf/repo.py:347
+#: dnf/repo.py:346
 #, python-format
 msgid "determining the fastest mirror (%s hosts).. "
 msgstr ""
@@ -4242,6 +4247,9 @@ msgstr "Selhalo"
 #| msgid "<unset>"
 msgid "<name-unset>"
 msgstr "<nenastaveno>"
+
+#~ msgid "skipping."
+#~ msgstr "přeskakuje se."
 
 #~ msgid "%s: %s check failed: %s vs %s"
 #~ msgstr "%s: kontrola součtu %s neúspěšná: součet %s vs %s"

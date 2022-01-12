@@ -26,20 +26,21 @@
 # Anonymous <noreply@weblate.org>, 2020.
 # Hongqiao Chen <harrychen0314@gmail.com>, 2020.
 # Harry Chen <harrychen0314@gmail.com>, 2020.
+# weidong <weidongkl@sina.com>, 2021.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-13 09:18-0400\n"
-"PO-Revision-Date: 2021-04-23 08:02+0000\n"
-"Last-Translator: Charles Lee <lchopn@gmail.com>\n"
+"POT-Creation-Date: 2022-01-11 01:52+0000\n"
+"PO-Revision-Date: 2021-12-04 02:16+0000\n"
+"Last-Translator: weidong <weidongkl@sina.com>\n"
 "Language-Team: Chinese (Simplified) <https://translate.fedoraproject.org/projects/dnf/dnf-master/zh_CN/>\n"
 "Language: zh_CN\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.6\n"
+"X-Generator: Weblate 4.9.1\n"
 
 #: dnf/automatic/emitter.py:32
 #, python-format
@@ -213,158 +214,154 @@ msgstr "配置文件 %s 中使用 tsflag 是错误的"
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "为仓库 %s 添加组文件时失败：%s"
 
-#: dnf/base.py:904
+#: dnf/base.py:922
 msgid "Running transaction check"
 msgstr "运行事务检查"
 
-#: dnf/base.py:912
+#: dnf/base.py:930
 msgid "Error: transaction check vs depsolve:"
 msgstr "错误：事务检查与依赖解决错误："
 
-#: dnf/base.py:918
+#: dnf/base.py:936
 msgid "Transaction check succeeded."
 msgstr "事务检查成功。"
 
-#: dnf/base.py:921
+#: dnf/base.py:939
 msgid "Running transaction test"
 msgstr "运行事务测试"
 
-#: dnf/base.py:931 dnf/base.py:1082
+#: dnf/base.py:949 dnf/base.py:1100
 msgid "RPM: {}"
 msgstr "RPM软件包: {}"
 
-#: dnf/base.py:932
+#: dnf/base.py:950
 msgid "Transaction test error:"
 msgstr "事物测试失败："
 
-#: dnf/base.py:943
+#: dnf/base.py:961
 msgid "Transaction test succeeded."
 msgstr "事务测试成功。"
 
-#: dnf/base.py:964
+#: dnf/base.py:982
 msgid "Running transaction"
 msgstr "运行事务"
 
-#: dnf/base.py:1001
+#: dnf/base.py:1019
 msgid "Disk Requirements:"
 msgstr "磁盘需求："
 
-#: dnf/base.py:1004
+#: dnf/base.py:1022
 #, python-brace-format
 msgid "At least {0}MB more space needed on the {1} filesystem."
 msgid_plural "At least {0}MB more space needed on the {1} filesystem."
 msgstr[0] "在文件系统{1}上至少需要{0}MB的可用空间。"
 
-#: dnf/base.py:1011
+#: dnf/base.py:1029
 msgid "Error Summary"
 msgstr "错误汇总"
 
-#: dnf/base.py:1037
+#: dnf/base.py:1055
 #, python-brace-format
 msgid "RPMDB altered outside of {prog}."
 msgstr "RPMDB 在 {prog} 外被改动了。"
 
-#: dnf/base.py:1083 dnf/base.py:1091
+#: dnf/base.py:1101 dnf/base.py:1109
 msgid "Could not run transaction."
 msgstr "不能执行事务。"
 
-#: dnf/base.py:1086
+#: dnf/base.py:1104
 msgid "Transaction couldn't start:"
 msgstr "事务无法启动："
 
-#: dnf/base.py:1100
+#: dnf/base.py:1118
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "移除事务文件 %s 失败"
 
-#: dnf/base.py:1182
+#: dnf/base.py:1200
 msgid "Some packages were not downloaded. Retrying."
 msgstr "某些软件包没有被下载。正在重试。"
 
-#: dnf/base.py:1212
-#, fuzzy, python-format
-#| msgid ""
-#| "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
+#: dnf/base.py:1230
+#, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%.1f%% saved)"
-msgstr "增量 RPM 将 %.1f MB 的更新减少至 %.1f MB（已节省 %d.1%% ）"
+msgstr "增量 RPM 将 %.1f MB 的更新减少至 %.1f MB（已节省 %.1f%% ）"
 
-#: dnf/base.py:1216
-#, fuzzy, python-format
-#| msgid ""
-#| "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
+#: dnf/base.py:1234
+#, python-format
 msgid ""
 "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%.1f%% wasted)"
-msgstr "增量 RPM 未能将 %.1f MB 的更新减少至 %.1f MB（已浪费 %d.1%% ）"
+msgstr "增量 RPM 将 %.1f MB 的更新增加至 %.1f MB（已浪费 %.1f%% ）"
 
-#: dnf/base.py:1258
+#: dnf/base.py:1276
 msgid "Cannot add local packages, because transaction job already exists"
 msgstr "由于事物已经存在，无法添加本地软件包"
 
-#: dnf/base.py:1272
+#: dnf/base.py:1290
 msgid "Could not open: {}"
 msgstr "无法打开： {}"
 
-#: dnf/base.py:1310
+#: dnf/base.py:1328
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "%s 的公钥没有安装"
 
-#: dnf/base.py:1314
+#: dnf/base.py:1332
 #, python-format
 msgid "Problem opening package %s"
 msgstr "打开软件包 %s 出现问题"
 
-#: dnf/base.py:1322
+#: dnf/base.py:1340
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "%s 的公钥不可信任"
 
-#: dnf/base.py:1326
+#: dnf/base.py:1344
 #, python-format
 msgid "Package %s is not signed"
 msgstr "软件包 %s 没有签名"
 
-#: dnf/base.py:1356
+#: dnf/base.py:1374
 #, python-format
 msgid "Cannot remove %s"
 msgstr "无法删除 %s"
 
-#: dnf/base.py:1360
+#: dnf/base.py:1378
 #, python-format
 msgid "%s removed"
 msgstr "%s 已删除"
 
-#: dnf/base.py:1640
+#: dnf/base.py:1658
 msgid "No match for group package \"{}\""
 msgstr "没有和组 \"{}\" 匹配的"
 
-#: dnf/base.py:1726
+#: dnf/base.py:1740
 #, python-format
 msgid "Adding packages from group '%s': %s"
 msgstr "从组 '%s': %s 添加软件包"
 
-#: dnf/base.py:1749 dnf/cli/cli.py:221 dnf/cli/commands/__init__.py:437
+#: dnf/base.py:1763 dnf/cli/cli.py:221 dnf/cli/commands/__init__.py:437
 #: dnf/cli/commands/__init__.py:494 dnf/cli/commands/__init__.py:587
 #: dnf/cli/commands/__init__.py:636 dnf/cli/commands/install.py:80
 #: dnf/cli/commands/install.py:103 dnf/cli/commands/install.py:110
 msgid "Nothing to do."
 msgstr "无需任何处理。"
 
-#: dnf/base.py:1767
+#: dnf/base.py:1781
 msgid "No groups marked for removal."
 msgstr "没有软件包组需要移除。"
 
-#: dnf/base.py:1801
+#: dnf/base.py:1815
 msgid "No group marked for upgrade."
 msgstr "没有标记为要升级的组。"
 
-#: dnf/base.py:2015
+#: dnf/base.py:2029
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
 msgstr "软件包 %s 并没有能够安装，无法进行降级操作。"
 
-#: dnf/base.py:2017 dnf/base.py:2036 dnf/base.py:2049 dnf/base.py:2076
-#: dnf/base.py:2129 dnf/base.py:2137 dnf/base.py:2271 dnf/cli/cli.py:417
+#: dnf/base.py:2031 dnf/base.py:2050 dnf/base.py:2063 dnf/base.py:2090
+#: dnf/base.py:2143 dnf/base.py:2151 dnf/base.py:2285 dnf/cli/cli.py:417
 #: dnf/cli/commands/__init__.py:420 dnf/cli/commands/__init__.py:477
 #: dnf/cli/commands/__init__.py:581 dnf/cli/commands/__init__.py:628
 #: dnf/cli/commands/__init__.py:706 dnf/cli/commands/install.py:147
@@ -374,127 +371,127 @@ msgstr "软件包 %s 并没有能够安装，无法进行降级操作。"
 msgid "No match for argument: %s"
 msgstr "未找到匹配的参数： %s"
 
-#: dnf/base.py:2024
+#: dnf/base.py:2038
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
 msgstr "软件包 %s 的低版本已经安装，无法进行降级。"
 
-#: dnf/base.py:2047
+#: dnf/base.py:2061
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
 msgstr "软件包 %s 未能够安装成功，无法进行重新安装。"
 
-#: dnf/base.py:2062
+#: dnf/base.py:2076
 #, python-format
 msgid "File %s is a source package and cannot be updated, ignoring."
 msgstr "%s 文件无法被升级，已忽略。"
 
-#: dnf/base.py:2073
+#: dnf/base.py:2087
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr "软件包 %s 未安装，无法更新。"
 
-#: dnf/base.py:2083
+#: dnf/base.py:2097
 #, python-format
 msgid ""
 "The same or higher version of %s is already installed, cannot update it."
 msgstr "已经安装了软件包%s的相同或更高版本，无法更新。"
 
-#: dnf/base.py:2126 dnf/cli/commands/reinstall.py:81
+#: dnf/base.py:2140 dnf/cli/commands/reinstall.py:81
 #, python-format
 msgid "Package %s available, but not installed."
 msgstr "软件包 %s 可用，但没有被安装。"
 
-#: dnf/base.py:2132
+#: dnf/base.py:2146
 #, python-format
 msgid "Package %s available, but installed for different architecture."
 msgstr "软件包 %s 可用，当是为其它架构安装。"
 
-#: dnf/base.py:2157
+#: dnf/base.py:2171
 #, python-format
 msgid "No package %s installed."
 msgstr "没有软件包 %s 安装。"
 
-#: dnf/base.py:2175 dnf/cli/commands/install.py:136
+#: dnf/base.py:2189 dnf/cli/commands/install.py:136
 #: dnf/cli/commands/remove.py:133
 #, python-format
 msgid "Not a valid form: %s"
 msgstr "无效: %s"
 
-#: dnf/base.py:2190 dnf/cli/commands/__init__.py:676
+#: dnf/base.py:2204 dnf/cli/commands/__init__.py:676
 #: dnf/cli/commands/remove.py:162
 msgid "No packages marked for removal."
 msgstr "没有软件包需要移除。"
 
-#: dnf/base.py:2278 dnf/cli/cli.py:428
+#: dnf/base.py:2292 dnf/cli/cli.py:428
 #, python-format
 msgid "Packages for argument %s available, but not installed."
 msgstr "针对于参数 %s 的软件包可用， 但是目前没有安装。"
 
-#: dnf/base.py:2283
+#: dnf/base.py:2297
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr "软件包 %s 的最低版本已经安装，无法再进行降级。"
 
-#: dnf/base.py:2383
+#: dnf/base.py:2397
 msgid "No security updates needed, but {} update available"
 msgstr "没有必须的安全更新， 但是 {} 的更新可用"
 
-#: dnf/base.py:2385
+#: dnf/base.py:2399
 msgid "No security updates needed, but {} updates available"
 msgstr "没有必须的安全更新， 但是 {} 的更新可用"
 
-#: dnf/base.py:2389
+#: dnf/base.py:2403
 msgid "No security updates needed for \"{}\", but {} update available"
 msgstr "没有针对于\"{}\" 所必须的安全更新， 但是 {} 的更新可用"
 
-#: dnf/base.py:2391
+#: dnf/base.py:2405
 msgid "No security updates needed for \"{}\", but {} updates available"
 msgstr "没有针对于\"{}\" 所必须的安全更新， 但是 {} 的更新可用"
 
 #. raise an exception, because po.repoid is not in self.repos
-#: dnf/base.py:2412
+#: dnf/base.py:2426
 #, python-format
 msgid "Unable to retrieve a key for a commandline package: %s"
 msgstr "无法获取来自命令行的软件包的密钥：%s"
 
-#: dnf/base.py:2420
+#: dnf/base.py:2434
 #, python-format
 msgid ". Failing package is: %s"
 msgstr ". 失败的软件包是：%s"
 
-#: dnf/base.py:2421
+#: dnf/base.py:2435
 #, python-format
 msgid "GPG Keys are configured as: %s"
 msgstr "GPG密钥配置为：%s"
 
-#: dnf/base.py:2433
+#: dnf/base.py:2447
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "%s 的 GPG 公钥(0x%s)已安装"
 
-#: dnf/base.py:2469
+#: dnf/base.py:2483
 msgid "The key has been approved."
 msgstr "密钥已被确认。"
 
-#: dnf/base.py:2472
+#: dnf/base.py:2486
 msgid "The key has been rejected."
 msgstr "密钥已被拒绝。"
 
-#: dnf/base.py:2505
+#: dnf/base.py:2519
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "导入公钥失败(代码 %d)"
 
-#: dnf/base.py:2507
+#: dnf/base.py:2521
 msgid "Key imported successfully"
 msgstr "导入公钥成功"
 
-#: dnf/base.py:2511
+#: dnf/base.py:2525
 msgid "Didn't install any keys"
 msgstr "没有安装任何公钥"
 
-#: dnf/base.py:2514
+#: dnf/base.py:2528
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
@@ -503,49 +500,49 @@ msgstr ""
 "仓库 \"%s\" 的 GPG 公钥已安装，但是不适用于此软件包。\n"
 "请检查此仓库的公钥 URL 是否配置正确。"
 
-#: dnf/base.py:2525
+#: dnf/base.py:2539
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "导入的密钥没有公钥，错误的公钥？"
 
-#: dnf/base.py:2578
+#: dnf/base.py:2592
 msgid "  * Maybe you meant: {}"
 msgstr "  * 可能您的意思是：{}"
 
-#: dnf/base.py:2610
+#: dnf/base.py:2624
 msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
 msgstr "软件包 \"{}\"（来自于本地仓库 \"{}\"）的 checksum 不正确"
 
-#: dnf/base.py:2613
+#: dnf/base.py:2627
 msgid "Some packages from local repository have incorrect checksum"
 msgstr "本地仓库的一些软件包校验值(checksum)不正确，无法确定软件包完整"
 
-#: dnf/base.py:2616
+#: dnf/base.py:2630
 msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
 msgstr "软件包 \"{}\"（来自仓库 \"{}\"）的 checksum 不正确"
 
-#: dnf/base.py:2619
+#: dnf/base.py:2633
 msgid ""
 "Some packages have invalid cache, but cannot be downloaded due to \"--"
 "cacheonly\" option"
 msgstr "以下软件包有无效缓存，因为使用了 \"--cacheonly\" 选项不能下载"
 
-#: dnf/base.py:2637 dnf/base.py:2657
+#: dnf/base.py:2651 dnf/base.py:2671
 msgid "No match for argument"
 msgstr "未找到匹配的参数"
 
-#: dnf/base.py:2645 dnf/base.py:2665
+#: dnf/base.py:2659 dnf/base.py:2679
 msgid "All matches were filtered out by exclude filtering for argument"
 msgstr "由于您的搜索参数，所有相关结果都已被滤掉"
 
-#: dnf/base.py:2647
+#: dnf/base.py:2661
 msgid "All matches were filtered out by modular filtering for argument"
 msgstr "所有的匹配结果均已经被参数的模块化过滤条件筛除"
 
-#: dnf/base.py:2663
+#: dnf/base.py:2677
 msgid "All matches were installed from a different repository for argument"
 msgstr "已从另一个仓库安装了参数的所有匹配"
 
-#: dnf/base.py:2710
+#: dnf/base.py:2724
 #, python-format
 msgid "Package %s is already installed."
 msgstr "软件包 %s 已安装。"
@@ -555,7 +552,7 @@ msgstr "软件包 %s 已安装。"
 msgid "Unexpected value of environment variable: DNF_DISABLE_ALIASES=%s"
 msgstr "该环境变量具有错误的值：DNF_DISABLE_ALIASES=%s"
 
-#: dnf/cli/aliases.py:105 dnf/conf/config.py:457
+#: dnf/cli/aliases.py:105 dnf/conf/config.py:475
 #, python-format
 msgid "Parsing file \"%s\" failed: %s"
 msgstr "解析文件 \"%s\" 失败：%s"
@@ -1242,7 +1239,7 @@ msgstr "显示或使用事务历史"
 
 #: dnf/cli/commands/history.py:66
 msgid "For the store command, file path to store the transaction to"
-msgstr "对于 store 命令，将事务保存到的文件路径"
+msgstr "对于 store 命令，要将事务保存到的文件路径"
 
 #: dnf/cli/commands/history.py:68
 msgid ""
@@ -1609,15 +1606,15 @@ msgstr "禁用"
 
 #: dnf/cli/commands/repolist.py:162
 msgid "Repo-id            : "
-msgstr "Repo-id            : "
+msgstr "仓库ID            : "
 
 #: dnf/cli/commands/repolist.py:163
 msgid "Repo-name          : "
-msgstr "Repo-name          : "
+msgstr "仓库名称          : "
 
 #: dnf/cli/commands/repolist.py:166
 msgid "Repo-status        : "
-msgstr "Repo-status        : "
+msgstr "仓库状态        : "
 
 #: dnf/cli/commands/repolist.py:169
 msgid "Repo-revision      : "
@@ -1679,11 +1676,11 @@ msgstr "Repo-include       : "
 #. TRANSLATORS: Number of packages that where excluded (5)
 #: dnf/cli/commands/repolist.py:232
 msgid "Repo-excluded      : "
-msgstr "Repo-excluded      : "
+msgstr "排除的仓库      : "
 
 #: dnf/cli/commands/repolist.py:236
 msgid "Repo-filename      : "
-msgstr "Repo-filename      : "
+msgstr "仓库文件名      : "
 
 #. Work out the first (id) and last (enabled/disabled/count),
 #. then chop the middle (name)...
@@ -1732,7 +1729,7 @@ msgstr "只显示与 REQ 冲突的结果"
 
 #: dnf/cli/commands/repoquery.py:135
 msgid ""
-"shows results that requires, suggests, supplements, enhances,or recommends "
+"shows results that requires, suggests, supplements, enhances, or recommends "
 "package provides and files REQ"
 msgstr "选择 requires、suggest、supplement、enhance 或 recommend 软件包提供和文件 REQ 的结果"
 
@@ -1984,7 +1981,7 @@ msgid ""
 "usage: {prog} repoquery [--conflicts|--enhances|--obsoletes|--provides|--recommends|--requires|--suggest|--supplements|--whatrequires] [key] [--tree]\n"
 "\n"
 "description:\n"
-"  For the given packages print a tree of thepackages."
+"  For the given packages print a tree of the packages."
 msgstr ""
 "没有指定有效参数\n"
 "用法：{prog} repoquery [--conflicts|--enhances|--obsoletes|--provides|--recommends|--requires|--suggest|--supplements|--whatrequires] [key] [--tree]\n"
@@ -2562,125 +2559,128 @@ msgstr "全部问题自动应答为否"
 
 #: dnf/cli/option_parser.py:261
 msgid ""
-"Enable additional repositories. List option. Supports globs, can be "
-"specified multiple times."
-msgstr "启用附加仓库。列出选项。支持通配符，可以指定多次。"
+"Temporarily enable repositories for the purposeof the current dnf command. "
+"Accepts an id, acomma-separated list of ids, or a glob of ids.This option "
+"can be specified multiple times."
+msgstr ""
 
-#: dnf/cli/option_parser.py:266
+#: dnf/cli/option_parser.py:268
 msgid ""
-"Disable repositories. List option. Supports globs, can be specified multiple"
-" times."
-msgstr "停用仓库。列出选项。支持通配符，可指定多次。"
+"Temporarily disable active repositories for thepurpose of the current dnf "
+"command. Accepts an id,a comma-separated list of ids, or a glob of ids.This "
+"option can be specified multiple times, butis mutually exclusive with "
+"`--repo`."
+msgstr ""
 
-#: dnf/cli/option_parser.py:270
+#: dnf/cli/option_parser.py:275
 msgid ""
 "enable just specific repositories by an id or a glob, can be specified "
 "multiple times"
 msgstr "启用指定 id 或 glob 的仓库，可以指定多次"
 
-#: dnf/cli/option_parser.py:275
+#: dnf/cli/option_parser.py:280
 msgid "enable repos with config-manager command (automatically saves)"
 msgstr "使用 config-manager 命令启用 repos (自动保存)"
 
-#: dnf/cli/option_parser.py:279
+#: dnf/cli/option_parser.py:284
 msgid "disable repos with config-manager command (automatically saves)"
 msgstr "使用 config-manager 命令禁用 repos (自动保存)"
 
-#: dnf/cli/option_parser.py:283
+#: dnf/cli/option_parser.py:288
 msgid "exclude packages by name or glob"
 msgstr "用全名或通配符排除软件包"
 
-#: dnf/cli/option_parser.py:288
+#: dnf/cli/option_parser.py:293
 msgid "disable excludepkgs"
 msgstr "禁用 excludepkgs"
 
-#: dnf/cli/option_parser.py:293
+#: dnf/cli/option_parser.py:298
 msgid ""
 "label and path to an additional repository to use (same path as in a "
 "baseurl), can be specified multiple times."
 msgstr "附加仓库所要使用的标签和路径（与 baseurl 中的路径一致），可以指定多次。"
 
-#: dnf/cli/option_parser.py:297
+#: dnf/cli/option_parser.py:302
 msgid "disable removal of dependencies that are no longer used"
 msgstr "禁用删除不再被使用的依赖软件包"
 
-#: dnf/cli/option_parser.py:300
+#: dnf/cli/option_parser.py:305
 msgid "disable gpg signature checking (if RPM policy allows)"
 msgstr "禁用 gpg 签名检查 (如果 RPM 策略允许)"
 
-#: dnf/cli/option_parser.py:302
+#: dnf/cli/option_parser.py:307
 msgid "control whether color is used"
 msgstr "配置是否使用颜色"
 
-#: dnf/cli/option_parser.py:305
+#: dnf/cli/option_parser.py:310
 msgid "set metadata as expired before running the command"
 msgstr "在运行命令之前将元数据标记为过期"
 
-#: dnf/cli/option_parser.py:308
+#: dnf/cli/option_parser.py:313
 msgid "resolve to IPv4 addresses only"
 msgstr "仅解析 IPv4 地址"
 
-#: dnf/cli/option_parser.py:311
+#: dnf/cli/option_parser.py:316
 msgid "resolve to IPv6 addresses only"
 msgstr "仅解析 IPv6 地址"
 
-#: dnf/cli/option_parser.py:314
+#: dnf/cli/option_parser.py:319
 msgid "set directory to copy packages to"
 msgstr "设置软件包要复制到的目录"
 
-#: dnf/cli/option_parser.py:317
+#: dnf/cli/option_parser.py:322
 msgid "only download packages"
 msgstr "仅下载软件包"
 
-#: dnf/cli/option_parser.py:319
+#: dnf/cli/option_parser.py:324
 msgid "add a comment to transaction"
 msgstr "为事务添加一个注释"
 
-#: dnf/cli/option_parser.py:322
+#: dnf/cli/option_parser.py:327
 msgid "Include bugfix relevant packages, in updates"
 msgstr "在更新中包括与 bug 修复有关的软件包"
 
-#: dnf/cli/option_parser.py:325
+#: dnf/cli/option_parser.py:330
 msgid "Include enhancement relevant packages, in updates"
 msgstr "在更新中包括与功能增强有关的软件包"
 
-#: dnf/cli/option_parser.py:328
+#: dnf/cli/option_parser.py:333
 msgid "Include newpackage relevant packages, in updates"
 msgstr "在更新中包括与新软件包有关的软件包"
 
-#: dnf/cli/option_parser.py:331
+#: dnf/cli/option_parser.py:336
 msgid "Include security relevant packages, in updates"
 msgstr "在更新中包括与安全有关的软件包"
 
-#: dnf/cli/option_parser.py:335
+#: dnf/cli/option_parser.py:340
 msgid "Include packages needed to fix the given advisory, in updates"
 msgstr "在更新中包括修复指定公告所必须的软件包"
 
-#: dnf/cli/option_parser.py:339
+#: dnf/cli/option_parser.py:344
 msgid "Include packages needed to fix the given BZ, in updates"
 msgstr "在更新中包括修复给定 BZ 所必须的软件包"
 
-#: dnf/cli/option_parser.py:342
+#: dnf/cli/option_parser.py:347
 msgid "Include packages needed to fix the given CVE, in updates"
 msgstr "在更新中包括修复给定 CVE 所必须的软件包"
 
-#: dnf/cli/option_parser.py:347
+#: dnf/cli/option_parser.py:352
 msgid "Include security relevant packages matching the severity, in updates"
 msgstr "在更新中包括匹配给定安全等级的安全相关的软件包"
 
-#: dnf/cli/option_parser.py:353
+#: dnf/cli/option_parser.py:358
 msgid "Force the use of an architecture"
 msgstr "强制使用一个架构"
 
-#: dnf/cli/option_parser.py:375
+#: dnf/cli/option_parser.py:380
 msgid "List of Main Commands:"
 msgstr "主要命令列表："
 
-#: dnf/cli/option_parser.py:376
+#: dnf/cli/option_parser.py:381
 msgid "List of Plugin Commands:"
 msgstr "插件命令列表："
 
-#: dnf/cli/option_parser.py:413
+#: dnf/cli/option_parser.py:418
 #, python-format
 msgid "Cannot encode argument '%s': %s"
 msgstr "无法编码参数 '%s': %s"
@@ -3451,10 +3451,6 @@ msgstr "    已启动： %s - %s之前"
 msgid "    State  : %s"
 msgstr "    状态  ： %s"
 
-#: dnf/comps.py:104
-msgid "skipping."
-msgstr "正在跳过。"
-
 #: dnf/comps.py:196 dnf/comps.py:692 dnf/comps.py:706
 #, python-format
 msgid "Module or Group '%s' is not installed."
@@ -3505,11 +3501,15 @@ msgstr "解析 “%s” 时错误： %s"
 msgid "Invalid configuration value: %s=%s in %s; %s"
 msgstr "无效配置值： %s=%s 在 %s 中; %s"
 
-#: dnf/conf/config.py:226
+#: dnf/conf/config.py:194
+msgid "Cannot set \"{}\" to \"{}\": {}"
+msgstr "无法将“{}”设置为“{}”：{}"
+
+#: dnf/conf/config.py:244
 msgid "Could not set cachedir: {}"
 msgstr "不能设置 cachedir: {}"
 
-#: dnf/conf/config.py:275
+#: dnf/conf/config.py:293
 msgid ""
 "Configuration file URL \"{}\" could not be downloaded:\n"
 "  {}"
@@ -3517,31 +3517,31 @@ msgstr ""
 "配置文件的 URL \"{}\" 无法下载：\n"
 "  {}"
 
-#: dnf/conf/config.py:355 dnf/conf/config.py:391
+#: dnf/conf/config.py:373 dnf/conf/config.py:409
 #, python-format
 msgid "Unknown configuration option: %s = %s"
 msgstr "未知配置选项： %s = %s"
 
-#: dnf/conf/config.py:372
+#: dnf/conf/config.py:390
 #, python-format
 msgid "Error parsing --setopt with key '%s', value '%s': %s"
 msgstr "解析 --setopt 时出现错误，键为 '%s'，值是 '%s': %s"
 
-#: dnf/conf/config.py:380
+#: dnf/conf/config.py:398
 #, python-format
 msgid "Main config did not have a %s attr. before setopt"
 msgstr "主配置在 setopt 前没有一个 %s 属性"
 
-#: dnf/conf/config.py:427 dnf/conf/config.py:445
+#: dnf/conf/config.py:445 dnf/conf/config.py:463
 msgid "Incorrect or unknown \"{}\": {}"
 msgstr "不正确或未知的 \"{}\": {}"
 
-#: dnf/conf/config.py:501
+#: dnf/conf/config.py:519
 #, python-format
 msgid "Error parsing --setopt with key '%s.%s', value '%s': %s"
 msgstr "解析 --setopt 时出现错误，键为 '%s.%s', 值是 '%s': %s"
 
-#: dnf/conf/config.py:504
+#: dnf/conf/config.py:522
 #, python-format
 msgid "Repo %s did not have a %s attr. before setopt"
 msgstr "Repo %s 在 setopt 前没有一个 %s 属性"
@@ -3622,32 +3622,32 @@ msgstr "对于模块软件包没有可用的模块元数据"
 msgid "Will not install a source rpm package (%s)."
 msgstr "将不安装一个源码 RPM 软件包 (%s)。"
 
-#: dnf/dnssec.py:168
+#: dnf/dnssec.py:171
 msgid ""
 "Configuration option 'gpgkey_dns_verification' requires python3-unbound ({})"
 msgstr "配置文件选项 'gpgkey_dns_verification' 要求 python3-unbound ({})"
 
-#: dnf/dnssec.py:239
+#: dnf/dnssec.py:243
 msgid "DNSSEC extension: Key for user "
 msgstr "DNSSEC 扩展 : 用户的密钥 "
 
-#: dnf/dnssec.py:241
+#: dnf/dnssec.py:245
 msgid "is valid."
 msgstr "有效。"
 
-#: dnf/dnssec.py:243
+#: dnf/dnssec.py:247
 msgid "has unknown status."
 msgstr "具有未知的状态。"
 
-#: dnf/dnssec.py:251
+#: dnf/dnssec.py:255
 msgid "DNSSEC extension: "
 msgstr "DNSSEC 扩展 : "
 
-#: dnf/dnssec.py:283
+#: dnf/dnssec.py:287
 msgid "Testing already imported keys for their validity."
 msgstr "测试已导入的密钥以检查有效性。"
 
-#: dnf/drpm.py:62 dnf/repo.py:268
+#: dnf/drpm.py:62 dnf/repo.py:267
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr "不支持的校验类型： %s"
@@ -3689,7 +3689,7 @@ msgid "Modular dependency problem with Defaults:"
 msgid_plural "Modular dependency problems with Defaults:"
 msgstr[0] "默认设置中的模块依赖问题 :"
 
-#: dnf/exceptions.py:131 dnf/module/module_base.py:854
+#: dnf/exceptions.py:131 dnf/module/module_base.py:857
 msgid "Modular dependency problem:"
 msgid_plural "Modular dependency problems:"
 msgstr[0] "模块依赖问题："
@@ -3784,7 +3784,7 @@ msgstr ""
 "提示 : [d]默认, [e]启用, [x]禁用, [i]已安装的, [a]活跃的"
 
 #: dnf/module/module_base.py:56 dnf/module/module_base.py:556
-#: dnf/module/module_base.py:615 dnf/module/module_base.py:681
+#: dnf/module/module_base.py:615 dnf/module/module_base.py:684
 msgid "Ignoring unnecessary profile: '{}/{}'"
 msgstr "正在忽略无用的配置文件'{}/{}'"
 
@@ -3840,7 +3840,7 @@ msgstr "软件包名称 '{}' 没有可用的软件包用于 distrosync"
 #: dnf/module/module_base.py:310 dnf/module/module_base.py:461
 #: dnf/module/module_base.py:486 dnf/module/module_base.py:505
 #: dnf/module/module_base.py:552 dnf/module/module_base.py:611
-#: dnf/module/module_base.py:677 dnf/module/module_base.py:840
+#: dnf/module/module_base.py:680 dnf/module/module_base.py:843
 msgid "Unable to resolve argument {}"
 msgstr "无法解析参数 {}"
 
@@ -3872,7 +3872,7 @@ msgid ""
 "'{}'"
 msgstr "只需要模块名。正在忽略'{}'中的无用信息"
 
-#: dnf/module/module_base.py:841
+#: dnf/module/module_base.py:844
 msgid "No match for package {}"
 msgstr "没有和{}匹配的软件包"
 
@@ -3933,7 +3933,7 @@ msgid "Already downloaded"
 msgstr "已下载"
 
 #. pinging mirrors, this might take a while
-#: dnf/repo.py:347
+#: dnf/repo.py:346
 #, python-format
 msgid "determining the fastest mirror (%s hosts).. "
 msgstr "正在查找最快的镜像（%s 的主机） "
@@ -3949,10 +3949,9 @@ msgid "Added %s repo from %s"
 msgstr "已添加 %s 仓库来自 %s"
 
 #: dnf/rpm/miscutils.py:32
-#, fuzzy, python-format
-#| msgid "Cannot find rpmkeys executable to verify signatures."
+#, python-format
 msgid "Using rpmkeys executable at %s to verify signatures"
-msgstr "无法找到 rpmkeys 的可执行文件以验证签名。"
+msgstr "使用位于 %s 的 rpmkeys 的可执行文件以验证签名"
 
 #: dnf/rpm/miscutils.py:66
 msgid "Cannot find rpmkeys executable to verify signatures."
@@ -4196,6 +4195,19 @@ msgstr "失败"
 #: dnf/util.py:633
 msgid "<name-unset>"
 msgstr "<名称-未设定>"
+
+#~ msgid ""
+#~ "Enable additional repositories. List option. Supports globs, can be "
+#~ "specified multiple times."
+#~ msgstr "启用附加仓库。列出选项。支持通配符，可以指定多次。"
+
+#~ msgid ""
+#~ "Disable repositories. List option. Supports globs, can be specified multiple"
+#~ " times."
+#~ msgstr "停用仓库。列出选项。支持通配符，可指定多次。"
+
+#~ msgid "skipping."
+#~ msgstr "正在跳过。"
 
 #~ msgid ""
 #~ "Using rpmkeys executable from {path} to verify signature for package: "

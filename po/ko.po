@@ -6,8 +6,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-13 09:18-0400\n"
-"PO-Revision-Date: 2021-06-07 17:15+0000\n"
+"POT-Creation-Date: 2022-01-11 01:52+0000\n"
+"PO-Revision-Date: 2021-11-17 21:16+0000\n"
 "Last-Translator: simmon <simmon@nplob.com>\n"
 "Language-Team: Korean <https://translate.fedoraproject.org/projects/dnf/dnf-master/ko/>\n"
 "Language: ko\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.6.2\n"
+"X-Generator: Weblate 4.9\n"
 
 #: dnf/automatic/emitter.py:32
 #, python-format
@@ -166,7 +166,7 @@ msgstr "저장소를 무시합니다: %s"
 #: dnf/base.py:419
 #, python-format
 msgid "Last metadata expiration check: %s ago on %s."
-msgstr "마지막 메타자료 만료 확인: %s 이전에 %s."
+msgstr "마지막 메타자료 만료확인 %s 이전인: %s."
 
 #: dnf/base.py:512
 msgid ""
@@ -189,154 +189,154 @@ msgstr "설정 파일에서 tsflag 사용이 잘못되었습니다: %s"
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "리포지토리의 그룹 파일을 추가하지 못했습니다. %s - %s"
 
-#: dnf/base.py:904
+#: dnf/base.py:922
 msgid "Running transaction check"
 msgstr "연결 확인 실행 중"
 
-#: dnf/base.py:912
+#: dnf/base.py:930
 msgid "Error: transaction check vs depsolve:"
-msgstr "오류 : 연결 확인 및 종속성 해결 오류:"
+msgstr "오류: 연결 확인 및 종속성 해결 오류:"
 
-#: dnf/base.py:918
+#: dnf/base.py:936
 msgid "Transaction check succeeded."
 msgstr "연결 확인에 성공했습니다."
 
-#: dnf/base.py:921
+#: dnf/base.py:939
 msgid "Running transaction test"
 msgstr "연결 시험 실행 중"
 
-#: dnf/base.py:931 dnf/base.py:1082
+#: dnf/base.py:949 dnf/base.py:1100
 msgid "RPM: {}"
 msgstr "RPM: {}"
 
-#: dnf/base.py:932
+#: dnf/base.py:950
 msgid "Transaction test error:"
 msgstr "연결 시험 오류:"
 
-#: dnf/base.py:943
+#: dnf/base.py:961
 msgid "Transaction test succeeded."
 msgstr "연결 시험에 성공했습니다."
 
-#: dnf/base.py:964
+#: dnf/base.py:982
 msgid "Running transaction"
 msgstr "연결 실행 중"
 
-#: dnf/base.py:1001
+#: dnf/base.py:1019
 msgid "Disk Requirements:"
 msgstr "디스크 요구 사항 :"
 
-#: dnf/base.py:1004
+#: dnf/base.py:1022
 #, python-brace-format
 msgid "At least {0}MB more space needed on the {1} filesystem."
 msgid_plural "At least {0}MB more space needed on the {1} filesystem."
 msgstr[0] "{1} 파일 시스템에 최소 {0}MB의 공간이 더 필요합니다."
 
-#: dnf/base.py:1011
+#: dnf/base.py:1029
 msgid "Error Summary"
 msgstr "오류 요약"
 
-#: dnf/base.py:1037
+#: dnf/base.py:1055
 #, python-brace-format
 msgid "RPMDB altered outside of {prog}."
 msgstr "RPMDB는 {prog} 외부에서 변경되었습니다."
 
-#: dnf/base.py:1083 dnf/base.py:1091
+#: dnf/base.py:1101 dnf/base.py:1109
 msgid "Could not run transaction."
 msgstr "연결를 실행 할 수 없습니다."
 
-#: dnf/base.py:1086
+#: dnf/base.py:1104
 msgid "Transaction couldn't start:"
 msgstr "연결을 시작 할 수 없습니다 :"
 
-#: dnf/base.py:1100
+#: dnf/base.py:1118
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "%s 연결 파일을 삭제하지 못했습니다"
 
-#: dnf/base.py:1182
+#: dnf/base.py:1200
 msgid "Some packages were not downloaded. Retrying."
-msgstr "일부 꾸러미가 내려받기되지 않았습니다. 다시 시도 중입니다."
+msgstr "일부 꾸러미를 내려받지 못했습니다. 다시 시도합니다."
 
-#: dnf/base.py:1212
+#: dnf/base.py:1230
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%.1f%% saved)"
-msgstr "델타 RPM이 %.1f MB의 최신화를 %.1f MB로 줄였습니다. (%.1%% 절약됨)"
+msgstr "델타 RPM은 %.1fMB의 최신화를 %.1fMB으로 줄였습니다.(%.1f%% 절약됨)"
 
-#: dnf/base.py:1216
+#: dnf/base.py:1234
 #, python-format
 msgid ""
 "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%.1f%% wasted)"
-msgstr "Delta RPM은 %.1f MB의 최신화를 %.1f MB로 줄이는데 실패했습니다. (%.1f%% 손실됨)"
+msgstr "Delta RPM은 %.1fMB의 최신화를 %.1fMB로 늘리는데 실패했습니다.(%.1f%% 낭비됨)"
 
-#: dnf/base.py:1258
+#: dnf/base.py:1276
 msgid "Cannot add local packages, because transaction job already exists"
 msgstr "연결 작업이 이미 존재하므로 로컬 꾸러미를 추가할 수 없습니다"
 
-#: dnf/base.py:1272
+#: dnf/base.py:1290
 msgid "Could not open: {}"
 msgstr "열 수 없음 : {}"
 
-#: dnf/base.py:1310
+#: dnf/base.py:1328
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "%s의 공개 키는 설치되어 있지 않습니다"
 
-#: dnf/base.py:1314
+#: dnf/base.py:1332
 #, python-format
 msgid "Problem opening package %s"
 msgstr "%s 꾸러미를 여는 중에 문제가 발생했습니다"
 
-#: dnf/base.py:1322
+#: dnf/base.py:1340
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "%s의 공개 키는 신뢰 할 수 없습니다"
 
-#: dnf/base.py:1326
+#: dnf/base.py:1344
 #, python-format
 msgid "Package %s is not signed"
 msgstr "%s 꾸러미가 서명되지 않았습니다"
 
-#: dnf/base.py:1356
+#: dnf/base.py:1374
 #, python-format
 msgid "Cannot remove %s"
 msgstr "%s를 삭제 할 수 없습니다"
 
-#: dnf/base.py:1360
+#: dnf/base.py:1378
 #, python-format
 msgid "%s removed"
 msgstr "%s가 삭제되었습니다"
 
-#: dnf/base.py:1640
+#: dnf/base.py:1658
 msgid "No match for group package \"{}\""
 msgstr "그룹 꾸러미 \"{}\"에 일치하는 항목이 없습니다"
 
-#: dnf/base.py:1726
+#: dnf/base.py:1740
 #, python-format
 msgid "Adding packages from group '%s': %s"
 msgstr "'%s' 그룹에서 꾸러미 추가: %s"
 
-#: dnf/base.py:1749 dnf/cli/cli.py:221 dnf/cli/commands/__init__.py:437
+#: dnf/base.py:1763 dnf/cli/cli.py:221 dnf/cli/commands/__init__.py:437
 #: dnf/cli/commands/__init__.py:494 dnf/cli/commands/__init__.py:587
 #: dnf/cli/commands/__init__.py:636 dnf/cli/commands/install.py:80
 #: dnf/cli/commands/install.py:103 dnf/cli/commands/install.py:110
 msgid "Nothing to do."
 msgstr "처리가 필요하지 않습니다."
 
-#: dnf/base.py:1767
+#: dnf/base.py:1781
 msgid "No groups marked for removal."
 msgstr "제거할 꾸러미 그룹이 없습니다."
 
-#: dnf/base.py:1801
+#: dnf/base.py:1815
 msgid "No group marked for upgrade."
 msgstr "향상을 위해 표시된 그룹이 없습니다."
 
-#: dnf/base.py:2015
+#: dnf/base.py:2029
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
 msgstr "%s 꾸러미가 설치되어 있지 않기 때문에 하향설치 할 수 없습니다."
 
-#: dnf/base.py:2017 dnf/base.py:2036 dnf/base.py:2049 dnf/base.py:2076
-#: dnf/base.py:2129 dnf/base.py:2137 dnf/base.py:2271 dnf/cli/cli.py:417
+#: dnf/base.py:2031 dnf/base.py:2050 dnf/base.py:2063 dnf/base.py:2090
+#: dnf/base.py:2143 dnf/base.py:2151 dnf/base.py:2285 dnf/cli/cli.py:417
 #: dnf/cli/commands/__init__.py:420 dnf/cli/commands/__init__.py:477
 #: dnf/cli/commands/__init__.py:581 dnf/cli/commands/__init__.py:628
 #: dnf/cli/commands/__init__.py:706 dnf/cli/commands/install.py:147
@@ -346,127 +346,127 @@ msgstr "%s 꾸러미가 설치되어 있지 않기 때문에 하향설치 할 �
 msgid "No match for argument: %s"
 msgstr "인수가 일치하지 않습니다: %s"
 
-#: dnf/base.py:2024
+#: dnf/base.py:2038
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
 msgstr "%s 꾸러미의 하위 버전이 이미 설치되어 있으므로 다운그레이드 할 수 없습니다."
 
-#: dnf/base.py:2047
+#: dnf/base.py:2061
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
-msgstr "%s 꾸러미가 설치되어 있지 않기 때문에 다시 설치할 수 없습니다."
+msgstr "꾸러미 %s가 설치되지 않아서, 다시 설치 할 수 없습니다."
 
-#: dnf/base.py:2062
+#: dnf/base.py:2076
 #, python-format
 msgid "File %s is a source package and cannot be updated, ignoring."
 msgstr "%s 파일은 소스 꾸러미이며 최신화 할 수 없습니다. 무시합니다."
 
-#: dnf/base.py:2073
+#: dnf/base.py:2087
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr "%s 꾸러미가 설치되어 있지 않기 때문에 최신화 할 수 없습니다."
 
-#: dnf/base.py:2083
+#: dnf/base.py:2097
 #, python-format
 msgid ""
 "The same or higher version of %s is already installed, cannot update it."
 msgstr "%s 이상의 버전이 이미 설치되어 있으므로 최신화 할 수 없습니다."
 
-#: dnf/base.py:2126 dnf/cli/commands/reinstall.py:81
+#: dnf/base.py:2140 dnf/cli/commands/reinstall.py:81
 #, python-format
 msgid "Package %s available, but not installed."
 msgstr "%s 꾸러미는 사용할 수는 있지만 설치되어 있지 않습니다."
 
-#: dnf/base.py:2132
+#: dnf/base.py:2146
 #, python-format
 msgid "Package %s available, but installed for different architecture."
 msgstr "%s 꾸러미는 사용 가능하지만 다른 구조용으로 설치되어 있습니다."
 
-#: dnf/base.py:2157
+#: dnf/base.py:2171
 #, python-format
 msgid "No package %s installed."
 msgstr "%s 꾸러미는 설치되어 있지 않습니다."
 
-#: dnf/base.py:2175 dnf/cli/commands/install.py:136
+#: dnf/base.py:2189 dnf/cli/commands/install.py:136
 #: dnf/cli/commands/remove.py:133
 #, python-format
 msgid "Not a valid form: %s"
 msgstr "잘못된 형식: %s"
 
-#: dnf/base.py:2190 dnf/cli/commands/__init__.py:676
+#: dnf/base.py:2204 dnf/cli/commands/__init__.py:676
 #: dnf/cli/commands/remove.py:162
 msgid "No packages marked for removal."
 msgstr "제거 대상 꾸러미가 없습니다."
 
-#: dnf/base.py:2278 dnf/cli/cli.py:428
+#: dnf/base.py:2292 dnf/cli/cli.py:428
 #, python-format
 msgid "Packages for argument %s available, but not installed."
 msgstr "%s 인수에 대한 꾸러미를 사용할 수 있지만 설치되어 있지 않습니다."
 
-#: dnf/base.py:2283
+#: dnf/base.py:2297
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr "%s 꾸러미의 최하위 버전이 이미 설치되어 있으므로 다운그레이드 할 수 없습니다."
 
-#: dnf/base.py:2383
+#: dnf/base.py:2397
 msgid "No security updates needed, but {} update available"
 msgstr "보안 최신화가 필요하지 않지만, {} 최신화가 가능합니다"
 
-#: dnf/base.py:2385
+#: dnf/base.py:2399
 msgid "No security updates needed, but {} updates available"
 msgstr "보안 최신화는 필요하지 않지만 {} 최신화는 가능합니다"
 
-#: dnf/base.py:2389
+#: dnf/base.py:2403
 msgid "No security updates needed for \"{}\", but {} update available"
 msgstr "\"{}\"에는 보안 최신화가 필요하지 않지만 {} 최신화가 가능합니다"
 
-#: dnf/base.py:2391
+#: dnf/base.py:2405
 msgid "No security updates needed for \"{}\", but {} updates available"
 msgstr "\"{}\"에는 보안 최신화가 필요하지 않지만 {} 최신화가 가능합니다"
 
 #. raise an exception, because po.repoid is not in self.repos
-#: dnf/base.py:2412
+#: dnf/base.py:2426
 #, python-format
 msgid "Unable to retrieve a key for a commandline package: %s"
 msgstr "명령줄 꾸러미: %s 대한 키를 검색 할 수 없습니다"
 
-#: dnf/base.py:2420
+#: dnf/base.py:2434
 #, python-format
 msgid ". Failing package is: %s"
 msgstr "실패한 꾸러미는 다음과 같습니다. %s"
 
-#: dnf/base.py:2421
+#: dnf/base.py:2435
 #, python-format
 msgid "GPG Keys are configured as: %s"
 msgstr "GPG 키는 다음과 같이 설정되어 있습니다. %s"
 
-#: dnf/base.py:2433
+#: dnf/base.py:2447
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "%s (0x%s)의 GPG 키가 이미 설치되어 있습니다"
 
-#: dnf/base.py:2469
+#: dnf/base.py:2483
 msgid "The key has been approved."
 msgstr "키가 승인되었습니다."
 
-#: dnf/base.py:2472
+#: dnf/base.py:2486
 msgid "The key has been rejected."
 msgstr "키가 거부되었습니다."
 
-#: dnf/base.py:2505
+#: dnf/base.py:2519
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "키 가져 오기에 실패했습니다 (코드 %d)"
 
-#: dnf/base.py:2507
+#: dnf/base.py:2521
 msgid "Key imported successfully"
 msgstr "키 가져오기에 성공했습니다"
 
-#: dnf/base.py:2511
+#: dnf/base.py:2525
 msgid "Didn't install any keys"
 msgstr "키를 하나도 설치하지 못했습니다"
 
-#: dnf/base.py:2514
+#: dnf/base.py:2528
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
@@ -475,59 +475,59 @@ msgstr ""
 "해당 GPG 키는 \"%s\"저장소가 이미 설치되어 있지만이 꾸러미에 맞지 않습니다.\n"
 "이 저장소에 대해 올바른 키 URL이 구성되었는지 확인하십시오."
 
-#: dnf/base.py:2525
+#: dnf/base.py:2539
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "가져온 키에 문제가 있습니다. 잘못된 키입니까?"
 
-#: dnf/base.py:2578
+#: dnf/base.py:2592
 msgid "  * Maybe you meant: {}"
 msgstr "  * 다음을 의미 할 수도 있습니다: {}"
 
-#: dnf/base.py:2610
+#: dnf/base.py:2624
 msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
 msgstr "로컬 저장소 \"{}\"의 \"{}\"꾸러미에 잘못된 체크섬이 있습니다"
 
-#: dnf/base.py:2613
+#: dnf/base.py:2627
 msgid "Some packages from local repository have incorrect checksum"
 msgstr "로컬 저장소의 일부 꾸러미에 잘못된 체크섬이 있습니다"
 
-#: dnf/base.py:2616
+#: dnf/base.py:2630
 msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
 msgstr "저장소 \"{}\"의 꾸러미 \"{}\"에 잘못된 체크섬이 있습니다"
 
-#: dnf/base.py:2619
+#: dnf/base.py:2633
 msgid ""
 "Some packages have invalid cache, but cannot be downloaded due to \"--"
 "cacheonly\" option"
 msgstr "일부 꾸러미에는 유효하지 않은 캐쉬가 있지만 \"--cacheonly\"옵션으로 인해 내려받기 할 수 없습니다"
 
-#: dnf/base.py:2637 dnf/base.py:2657
+#: dnf/base.py:2651 dnf/base.py:2671
 msgid "No match for argument"
 msgstr "일치하는 인수가 없습니다"
 
-#: dnf/base.py:2645 dnf/base.py:2665
+#: dnf/base.py:2659 dnf/base.py:2679
 msgid "All matches were filtered out by exclude filtering for argument"
 msgstr "모든 일치 항목이 인수의 제외 필터로 필터링되었습니다"
 
-#: dnf/base.py:2647
+#: dnf/base.py:2661
 msgid "All matches were filtered out by modular filtering for argument"
 msgstr "모든 일치 항목이 인수의 모듈식 필터로 필터링되었습니다"
 
-#: dnf/base.py:2663
+#: dnf/base.py:2677
 msgid "All matches were installed from a different repository for argument"
 msgstr "모든 일치 항목이 인수의 다른 리포지토리에서 설치되었습니다"
 
-#: dnf/base.py:2710
+#: dnf/base.py:2724
 #, python-format
 msgid "Package %s is already installed."
-msgstr "꾸러미 %s 가 이미 설치되어 있습니다."
+msgstr "꾸러미 %s가 이미 설치되어 있습니다."
 
 #: dnf/cli/aliases.py:96
 #, python-format
 msgid "Unexpected value of environment variable: DNF_DISABLE_ALIASES=%s"
 msgstr "예상치 못한 환경 변수 값 : DNF_DISABLE_ALIASES =%s"
 
-#: dnf/cli/aliases.py:105 dnf/conf/config.py:457
+#: dnf/cli/aliases.py:105 dnf/conf/config.py:475
 #, python-format
 msgid "Parsing file \"%s\" failed: %s"
 msgstr "\"%s\" 파일의 구문 분석에 실패했습니다 : %s"
@@ -575,8 +575,8 @@ msgid ""
 "It is not possible to switch enabled streams of a module unless explicitly enabled via configuration option module_stream_switch.\n"
 "It is recommended to rather remove all installed content from the module, and reset the module using '{prog} module reset <module_name>' command. After you reset the module, you can install the other stream."
 msgstr ""
-"설정 선택 module_stream_switch을 통해 명시적으로 활성화 하지 않는한 모듈의 활성화된 스트림을 전환 할 수 없습니다.\n"
-"모듈에서 설치된 모든 내용을 모듈에서 제거하고, '{prog} module reset <module_name>'명령을 사용하여 모듈을 재설정하는 것을 권장합니다. 모듈을 재설정 후에, 다른 스트림을 설치 할 수 있습니다."
+"구성 옵션 module_stream_switch를 통해 명시적으로 활성화하지 않는 한 활성화된 모듈 스트림을 전환 할 수 없습니다.\n"
+"설치된 모든 내용을 모듈에서 제거하고 ‘{prog} module reset <module_name>' 명령을 사용하여 모듈을 재설정하는 것이 좋습니다. 모듈을 재설정한 후 다른 스트림을 설치 할 수 있습니다."
 
 #: dnf/cli/cli.py:212
 #, python-brace-format
@@ -790,13 +790,13 @@ msgid ""
 msgstr ""
 "GPG 키를 통해 꾸러미 검사를 활성화했습니다. 이는 적절한 작업 실행입니다.\n"
 "그러나 GPG 공개 키가 설치되어 있지 않습니다.\n"
-"설치하려는 꾸러미의 키를 내려받기하여 설치해야 합니다.\n"
+"설치하려는 꾸러미의 키를 내려 받기하여 설치해야 합니다.\n"
 "다음 명령으로 이 작업을 수행할 수 있습니다:\n"
 "rpm --import public.gpg.key\n"
 "\n"
 "\n"
-"또는 저장소 섹션의 'gpgkey' 옵션을 사용하여\n"
-"저장소에 사용할 키의 URL을 지정할 수 있으며 {prog}가\n"
+"또는 저장소 부분의 'gpgkey' 옵션을 사용하여\n"
+"저장소에 사용할 키의 URL을 지정 할 수 있으며 {prog}가\n"
 "이를 설치합니다\n"
 "\n"
 "자세한 내용은 배포 또는 꾸러미 공급 업체에 문의하십시오."
@@ -1116,7 +1116,7 @@ msgstr "PID %d 프로세스가 종료되기를 기다리고 있습니다."
 msgid ""
 "[deprecated, use repoquery --deplist] List package's dependencies and what "
 "packages provide them"
-msgstr "[비추천, repoquery --deplist 사용] 꾸러미 의존성과 이를 제공하는 꾸러미를 나열"
+msgstr "[더 이상 사용되지 않음, repoquery --deplist 사용] 꾸러미의 종속성과 이를 제공하는 꾸러미 목록 나열"
 
 #: dnf/cli/commands/distrosync.py:32
 msgid "synchronize installed packages to the latest available versions"
@@ -1665,7 +1665,7 @@ msgstr "Repo-filename : "
 #. then chop the middle (name)...
 #: dnf/cli/commands/repolist.py:246 dnf/cli/commands/repolist.py:273
 msgid "repo id"
-msgstr "리포지터리 ID"
+msgstr "레포지터리 ID"
 
 #: dnf/cli/commands/repolist.py:259 dnf/cli/commands/repolist.py:260
 #: dnf/cli/commands/repolist.py:281
@@ -1674,7 +1674,7 @@ msgstr "상태"
 
 #: dnf/cli/commands/repolist.py:275 dnf/cli/commands/repolist.py:277
 msgid "repo name"
-msgstr "리포지터리 이름"
+msgstr "레포지터리 이름"
 
 #: dnf/cli/commands/repolist.py:291
 msgid "Total packages: {}"
@@ -1708,9 +1708,9 @@ msgstr "REQ와 충돌하는 결과 만 표시"
 
 #: dnf/cli/commands/repoquery.py:135
 msgid ""
-"shows results that requires, suggests, supplements, enhances,or recommends "
+"shows results that requires, suggests, supplements, enhances, or recommends "
 "package provides and files REQ"
-msgstr "REQ를 제공하고 파일 꾸러미를 요구, 제안, 보완, 개선, 권장하는 결과를 표시합니다"
+msgstr "꾸러미 제공과 파일 REQ를 요구, 제안, 보완, 향상 또는 권장하는 결과를 표시합니다"
 
 #: dnf/cli/commands/repoquery.py:139
 msgid "show only results that obsolete REQ"
@@ -1962,13 +1962,13 @@ msgid ""
 "usage: {prog} repoquery [--conflicts|--enhances|--obsoletes|--provides|--recommends|--requires|--suggest|--supplements|--whatrequires] [key] [--tree]\n"
 "\n"
 "description:\n"
-"  For the given packages print a tree of thepackages."
+"  For the given packages print a tree of the packages."
 msgstr ""
-"유효한 매개 변수를 지정하지 않았습니다.\n"
+"유효한 스위치가 지정되지 않았습니다.\n"
 "사용법: {prog} repoquery [--conflicts|--enhances|--obsoletes|--provides|--recommends|--requires|--suggest|--supplements|--whatrequires] [key] [--tree]\n"
 "\n"
 "설명:\n"
-"  지정된 꾸러미의 경우 꾸러미 트리를 출력하십시오."
+"  지정된 꾸러미의 경우 꾸러미 트리를 출력합니다."
 
 #: dnf/cli/commands/search.py:46
 msgid "search package details for the given string"
@@ -2016,14 +2016,14 @@ msgstr " & "
 #: dnf/cli/commands/search.py:80
 #, python-format
 msgid "%s Exactly Matched: %%s"
-msgstr "%s 정확히 일치하는 항목: %%s"
+msgstr "%s과 정확히 일치하는 항목: %%s"
 
 #. TRANSLATORS: %s  - translated package attributes,
 #. %%s - found keys (in listed attributes)
 #: dnf/cli/commands/search.py:84
 #, python-format
 msgid "%s Matched: %%s"
-msgstr "%s 일치하는 항목: %%s"
+msgstr "%s과 일치하는 항목: %%s"
 
 #: dnf/cli/commands/search.py:134
 msgid "No matches found."
@@ -2383,7 +2383,7 @@ msgstr "현재 디렉토리에서 읽기 / 실행 액세스가 없습니다. /�
 
 #: dnf/cli/main.py:135
 msgid "try to add '{}' to command line to replace conflicting packages"
-msgstr "충돌하는 꾸러미를 바꾸려면 명령 줄에 '{}'을 (를) 추가하십시오"
+msgstr "충돌하는 꾸러미를 교체하려면 명령줄에 '{}'을 추가하세요"
 
 #: dnf/cli/main.py:139
 msgid "try to add '{}' to skip uninstallable packages"
@@ -2475,7 +2475,7 @@ msgstr "설정 파일 및 리포지토리 파일에서 $releasever 값을 무시
 
 #: dnf/cli/option_parser.py:207
 msgid "set arbitrary config and repo options"
-msgstr "임의의 설정 옵션 및 리포지토리 옵션 설정"
+msgstr "임의의 설정 옵션 과 저장소 옵션 설정"
 
 #: dnf/cli/option_parser.py:210
 msgid "resolve depsolve problems by skipping packages"
@@ -2495,7 +2495,7 @@ msgstr "연결에서 사용 가능한 최상의 꾸러미 버전을 사용해보
 
 #: dnf/cli/option_parser.py:223
 msgid "do not limit the transaction to the best candidate"
-msgstr "연결를 최상의 선택 옵션으로 제한하지 마십시오"
+msgstr "연결을 최상의 선택 옵션으로 제한하지 마십시오"
 
 #: dnf/cli/option_parser.py:226
 msgid "run entirely from system cache, don't update cache"
@@ -2544,125 +2544,128 @@ msgstr "모든 질문에 대해 \"아니오\"(no)로 자동 응답합니다"
 
 #: dnf/cli/option_parser.py:261
 msgid ""
-"Enable additional repositories. List option. Supports globs, can be "
-"specified multiple times."
-msgstr "추가 리포지토리를 활성화하십시오. 옵션이 나열됩니다. glob를 지원하며 여러 번 지정할 수 있습니다."
+"Temporarily enable repositories for the purposeof the current dnf command. "
+"Accepts an id, acomma-separated list of ids, or a glob of ids.This option "
+"can be specified multiple times."
+msgstr ""
 
-#: dnf/cli/option_parser.py:266
+#: dnf/cli/option_parser.py:268
 msgid ""
-"Disable repositories. List option. Supports globs, can be specified multiple"
-" times."
-msgstr "리포지토리를 비활성화합니다. 옵션이 나열됩니다. glob를 지원하며 여러 번 지정할 수 있습니다."
+"Temporarily disable active repositories for thepurpose of the current dnf "
+"command. Accepts an id,a comma-separated list of ids, or a glob of ids.This "
+"option can be specified multiple times, butis mutually exclusive with "
+"`--repo`."
+msgstr ""
 
-#: dnf/cli/option_parser.py:270
+#: dnf/cli/option_parser.py:275
 msgid ""
 "enable just specific repositories by an id or a glob, can be specified "
 "multiple times"
 msgstr "id 나 glob로 특정 리포지토리를 활성화할 수 있습니다. 여러 번 지정할 수 있습니다"
 
-#: dnf/cli/option_parser.py:275
+#: dnf/cli/option_parser.py:280
 msgid "enable repos with config-manager command (automatically saves)"
 msgstr "config-manager 명령으로 repos를 활성화합니다 (자동 저장)"
 
-#: dnf/cli/option_parser.py:279
+#: dnf/cli/option_parser.py:284
 msgid "disable repos with config-manager command (automatically saves)"
 msgstr "config-manager 명령으로 repos를 비활성화합니다 (자동 저장)"
 
-#: dnf/cli/option_parser.py:283
+#: dnf/cli/option_parser.py:288
 msgid "exclude packages by name or glob"
 msgstr "이름이나 glob로 꾸러미를 제거합니다"
 
-#: dnf/cli/option_parser.py:288
+#: dnf/cli/option_parser.py:293
 msgid "disable excludepkgs"
 msgstr "excludepkgs 비활성화"
 
-#: dnf/cli/option_parser.py:293
+#: dnf/cli/option_parser.py:298
 msgid ""
 "label and path to an additional repository to use (same path as in a "
 "baseurl), can be specified multiple times."
-msgstr "사용할 추가 리포지터리에 대한 레이블 및 경로 (baseurl과 동일한 경로)를 여러 번 지정할 수 있습니다."
+msgstr "사용 할 추가 레포지터리에 대한 이름표와 경로 (baseurl과 동일한 경로)를 여러 번 지정와 할 수 있습니다."
 
-#: dnf/cli/option_parser.py:297
+#: dnf/cli/option_parser.py:302
 msgid "disable removal of dependencies that are no longer used"
 msgstr "더 이상 사용되지 않는 종속성 제거를 비활성화"
 
-#: dnf/cli/option_parser.py:300
+#: dnf/cli/option_parser.py:305
 msgid "disable gpg signature checking (if RPM policy allows)"
 msgstr "gpg 서명 확인을 비활성화 (RPM 정책이 허용하는 경우)"
 
-#: dnf/cli/option_parser.py:302
+#: dnf/cli/option_parser.py:307
 msgid "control whether color is used"
 msgstr "색상 사용 여부 제어"
 
-#: dnf/cli/option_parser.py:305
+#: dnf/cli/option_parser.py:310
 msgid "set metadata as expired before running the command"
 msgstr "명령을 실행하기 전에 메타 데이터를 만료된 것으로 설정"
 
-#: dnf/cli/option_parser.py:308
+#: dnf/cli/option_parser.py:313
 msgid "resolve to IPv4 addresses only"
 msgstr "IPv4 주소 만 확인"
 
-#: dnf/cli/option_parser.py:311
+#: dnf/cli/option_parser.py:316
 msgid "resolve to IPv6 addresses only"
 msgstr "IPv6 주소 만 확인"
 
-#: dnf/cli/option_parser.py:314
+#: dnf/cli/option_parser.py:319
 msgid "set directory to copy packages to"
 msgstr "꾸러미를 복사할 디렉토리를 설정하십시오"
 
-#: dnf/cli/option_parser.py:317
+#: dnf/cli/option_parser.py:322
 msgid "only download packages"
 msgstr "꾸러미만 내려받기"
 
-#: dnf/cli/option_parser.py:319
+#: dnf/cli/option_parser.py:324
 msgid "add a comment to transaction"
 msgstr "연결에 의견을 추가하십시오"
 
-#: dnf/cli/option_parser.py:322
+#: dnf/cli/option_parser.py:327
 msgid "Include bugfix relevant packages, in updates"
 msgstr "결점(bug) 수정 관련 꾸러미 최신화에 포함"
 
-#: dnf/cli/option_parser.py:325
+#: dnf/cli/option_parser.py:330
 msgid "Include enhancement relevant packages, in updates"
 msgstr "개선된 기능과 관련된 꾸러미를 초신화에 포함"
 
-#: dnf/cli/option_parser.py:328
+#: dnf/cli/option_parser.py:333
 msgid "Include newpackage relevant packages, in updates"
 msgstr "새 꾸러미 관련 꾸러미 최신화에 포함"
 
-#: dnf/cli/option_parser.py:331
+#: dnf/cli/option_parser.py:336
 msgid "Include security relevant packages, in updates"
 msgstr "보안 관련 꾸러미 최신화에 포함"
 
-#: dnf/cli/option_parser.py:335
+#: dnf/cli/option_parser.py:340
 msgid "Include packages needed to fix the given advisory, in updates"
 msgstr "주어진 권고를 수정하는 데 필요한 꾸러미를 최신화에 포함"
 
-#: dnf/cli/option_parser.py:339
+#: dnf/cli/option_parser.py:344
 msgid "Include packages needed to fix the given BZ, in updates"
 msgstr "주어진 BZ를 수정하는 데 필요한 꾸러미를 최신화에 포함"
 
-#: dnf/cli/option_parser.py:342
+#: dnf/cli/option_parser.py:347
 msgid "Include packages needed to fix the given CVE, in updates"
 msgstr "주어진 CVE를 수정하는 데 필요한 꾸러미를 최신화에 포함"
 
-#: dnf/cli/option_parser.py:347
+#: dnf/cli/option_parser.py:352
 msgid "Include security relevant packages matching the severity, in updates"
 msgstr "심각도와 일치하는 보안 관련 꾸러미를 최신화에 포함"
 
-#: dnf/cli/option_parser.py:353
+#: dnf/cli/option_parser.py:358
 msgid "Force the use of an architecture"
 msgstr "구조의 사용을 강제합니다"
 
-#: dnf/cli/option_parser.py:375
+#: dnf/cli/option_parser.py:380
 msgid "List of Main Commands:"
 msgstr "주요 명령 목록:"
 
-#: dnf/cli/option_parser.py:376
+#: dnf/cli/option_parser.py:381
 msgid "List of Plugin Commands:"
 msgstr "플러그인 명령 목록:"
 
-#: dnf/cli/option_parser.py:413
+#: dnf/cli/option_parser.py:418
 #, python-format
 msgid "Cannot encode argument '%s': %s"
 msgstr "‘%s' 인수를 인코딩할 수 없습니다: %s"
@@ -2739,19 +2742,19 @@ msgstr "소스"
 #: dnf/cli/output.py:479 dnf/cli/output.py:1253
 msgctxt "short"
 msgid "Repo"
-msgstr "리포지터리"
+msgstr "레포지터리"
 
 #. Translators: This is the full word 'Repository', used when
 #. we have enough space.
 #: dnf/cli/output.py:480 dnf/cli/output.py:1256
 msgctxt "long"
 msgid "Repository"
-msgstr "리포지터리"
+msgstr "레포지터리"
 
 #. Translators: This message should be no longer than 12 chars.
 #: dnf/cli/output.py:487
 msgid "From repo"
-msgstr "리포지터리에서"
+msgstr "레포지터리에서"
 
 #. :hawkey does not support changelog information
 #. print(_("Committer   : %s") % ucd(pkg.committer))
@@ -2969,7 +2972,7 @@ msgstr "그룹 꾸러미 설치"
 #: dnf/cli/output.py:1051
 msgctxt "summary"
 msgid "Installing"
-msgstr "설치중"
+msgstr "설치 중"
 
 #. TRANSLATORS: This is for a list of packages to be upgraded.
 #: dnf/cli/output.py:1053
@@ -3038,7 +3041,7 @@ msgstr "모듈 재설정"
 
 #: dnf/cli/output.py:1142
 msgid "Installing Environment Groups"
-msgstr "환경 그룹 설치중"
+msgstr "환경 그룹 설치 중"
 
 #: dnf/cli/output.py:1149
 msgid "Upgrading Environment Groups"
@@ -3066,8 +3069,8 @@ msgid ""
 "Skipping packages with conflicts:\n"
 "(add '%s' to command line to force their upgrade)"
 msgstr ""
-"충돌 꾸러미 건너 뛰기 :\n"
-"(최신화를 강제하려면 명령행에 '%s' 추가)"
+"충돌 꾸러미 건너 뛰기:\n"
+"(향상을 강제하려면 명령행에 '%s' 추가)"
 
 #: dnf/cli/output.py:1203
 #, python-format
@@ -3195,7 +3198,7 @@ msgstr "연결 ID 또는 꾸러미가 지정되지 않았습니다"
 
 #: dnf/cli/output.py:1653
 msgid "Erased"
-msgstr "제거됨"
+msgstr "제거되었습니다"
 
 #: dnf/cli/output.py:1654 dnf/cli/output.py:1821 dnf/util.py:614
 msgid "Downgraded"
@@ -3393,7 +3396,7 @@ msgstr ""
 
 #: dnf/cli/utils.py:98
 msgid "Running"
-msgstr "실행중"
+msgstr "실행 중"
 
 #: dnf/cli/utils.py:99
 msgid "Sleeping"
@@ -3439,10 +3442,6 @@ msgstr "    시작됨: %s - %s 전"
 #, python-format
 msgid "    State  : %s"
 msgstr "    상태  : %s"
-
-#: dnf/comps.py:104
-msgid "skipping."
-msgstr "건너 뛰기."
 
 #: dnf/comps.py:196 dnf/comps.py:692 dnf/comps.py:706
 #, python-format
@@ -3492,13 +3491,17 @@ msgstr "'%s' 구문 분석 중 오류 발생: %s"
 #: dnf/conf/config.py:151
 #, python-format
 msgid "Invalid configuration value: %s=%s in %s; %s"
-msgstr "알 수없는 설정 값: %s; %s에서 %s=%s"
+msgstr "잘못된 구성 값: %s=%s (%s; %s에서)"
 
-#: dnf/conf/config.py:226
+#: dnf/conf/config.py:194
+msgid "Cannot set \"{}\" to \"{}\": {}"
+msgstr "\"{}\" 을 \"{}\"으로 설정 할 수 없습니다: {}"
+
+#: dnf/conf/config.py:244
 msgid "Could not set cachedir: {}"
 msgstr "cachedir를 설정할 수 없습니다: {}"
 
-#: dnf/conf/config.py:275
+#: dnf/conf/config.py:293
 msgid ""
 "Configuration file URL \"{}\" could not be downloaded:\n"
 "  {}"
@@ -3506,31 +3509,31 @@ msgstr ""
 "구성 파일 URL \"{}\"를 내려받기 할 수 없습니다:\n"
 "  {}"
 
-#: dnf/conf/config.py:355 dnf/conf/config.py:391
+#: dnf/conf/config.py:373 dnf/conf/config.py:409
 #, python-format
 msgid "Unknown configuration option: %s = %s"
 msgstr "알 수 없는 설정 옵션 : %s = %s"
 
-#: dnf/conf/config.py:372
+#: dnf/conf/config.py:390
 #, python-format
 msgid "Error parsing --setopt with key '%s', value '%s': %s"
 msgstr "키 ‘%s', 값 '%s'를 사용하여 --setopt 구문 분석 중 오류 발생: %s"
 
-#: dnf/conf/config.py:380
+#: dnf/conf/config.py:398
 #, python-format
 msgid "Main config did not have a %s attr. before setopt"
 msgstr "기본 설정에는 setopt 이전에 %s attr이 없습니다"
 
-#: dnf/conf/config.py:427 dnf/conf/config.py:445
+#: dnf/conf/config.py:445 dnf/conf/config.py:463
 msgid "Incorrect or unknown \"{}\": {}"
 msgstr "잘못되었거나 알 수 없음 \"{}\": {}"
 
-#: dnf/conf/config.py:501
+#: dnf/conf/config.py:519
 #, python-format
 msgid "Error parsing --setopt with key '%s.%s', value '%s': %s"
 msgstr "키 %s.%s', 값 '%s'를 사용하여 --setopt 구문 분석 중 오류 발생: %s"
 
-#: dnf/conf/config.py:504
+#: dnf/conf/config.py:522
 #, python-format
 msgid "Repo %s did not have a %s attr. before setopt"
 msgstr "Repo %s에 setopt 이전에 %s attr이 없습니다"
@@ -3542,11 +3545,11 @@ msgstr "경고: '%s'을 적재하지 못했습니다, 건너 뛰기."
 
 #: dnf/conf/read.py:72
 msgid "Bad id for repo: {} ({}), byte = {} {}"
-msgstr "리포지터리의 ID가 잘못되었습니다. {} ({}), byte = {} {}"
+msgstr "레포지터리의 ID가 잘못되었습니다. {} ({}), byte = {} {}"
 
 #: dnf/conf/read.py:76
 msgid "Bad id for repo: {}, byte = {} {}"
-msgstr "리포지터리의 ID가 잘못되었습니다. {}, byte = {} {}"
+msgstr "레포지터리의 ID가 잘못되었습니다. {}, byte = {} {}"
 
 #: dnf/conf/read.py:84
 msgid "Repository '{}' ({}): Error parsing config: {}"
@@ -3580,11 +3583,11 @@ msgstr "repo %s: 0x%s 키를 가져왔습니다."
 
 #: dnf/crypto.py:145
 msgid "Verified using DNS record with DNSSEC signature."
-msgstr "DNSSEC 서명과 함께 DNS 기록을 사용하여 확인되었습니다."
+msgstr "DNSSEC 서명이 있는 DNS 레코드를 사용하여 확인됨."
 
 #: dnf/crypto.py:147
 msgid "NOT verified using DNS record."
-msgstr "DNS 기록 사용은 검증되지 않았습니다."
+msgstr "DNS 레코드를 사용하여 확인되지 않음."
 
 #: dnf/crypto.py:184
 #, python-format
@@ -3611,32 +3614,32 @@ msgstr "모듈 꾸러미에 사용 가능한 모듈 메타 자료가 없습니�
 msgid "Will not install a source rpm package (%s)."
 msgstr "소스 RPM 꾸러미를 설치하지 않습니다 (%s)."
 
-#: dnf/dnssec.py:168
+#: dnf/dnssec.py:171
 msgid ""
 "Configuration option 'gpgkey_dns_verification' requires python3-unbound ({})"
-msgstr "설정 선택 'gpgkey_dns_verification'는 python3-unbound ({}) 가 필요합니다"
+msgstr "구성 선택 'gpgkey_dns_verification'에는 python3-unbound ({})가 필요합니다"
 
-#: dnf/dnssec.py:239
+#: dnf/dnssec.py:243
 msgid "DNSSEC extension: Key for user "
 msgstr "DNSSEC 확장 : 사용자 키 "
 
-#: dnf/dnssec.py:241
+#: dnf/dnssec.py:245
 msgid "is valid."
 msgstr "유효합니다."
 
-#: dnf/dnssec.py:243
+#: dnf/dnssec.py:247
 msgid "has unknown status."
 msgstr "알 수 없는 상태입니다."
 
-#: dnf/dnssec.py:251
+#: dnf/dnssec.py:255
 msgid "DNSSEC extension: "
 msgstr "DNSSEC 확장: "
 
-#: dnf/dnssec.py:283
+#: dnf/dnssec.py:287
 msgid "Testing already imported keys for their validity."
 msgstr "유효성 검사를 위해 이미 가져온 키를 테스트 중입니다."
 
-#: dnf/drpm.py:62 dnf/repo.py:268
+#: dnf/drpm.py:62 dnf/repo.py:267
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr "지원되지 않는 검사 유형: %s"
@@ -3680,7 +3683,7 @@ msgid "Modular dependency problem with Defaults:"
 msgid_plural "Modular dependency problems with Defaults:"
 msgstr[0] "기본값의 모듈 종속성 문제 :"
 
-#: dnf/exceptions.py:131 dnf/module/module_base.py:854
+#: dnf/exceptions.py:131 dnf/module/module_base.py:857
 msgid "Modular dependency problem:"
 msgid_plural "Modular dependency problems:"
 msgstr[0] "모듈 종속성 문제 :"
@@ -3720,19 +3723,19 @@ msgstr "그런 모듈이 없습니다: {}"
 
 #: dnf/module/exceptions.py:33
 msgid "No such stream: {}"
-msgstr "그런 스트림: {} 없습니다"
+msgstr "그런 스트림이 없습니다: {}"
 
 #: dnf/module/exceptions.py:39
 msgid "No enabled stream for module: {}"
-msgstr "모듈에 대한 스트림이 없습니다 : {}"
+msgstr "모듈에 대한 활성화된 스트림이 없습니다: {}"
 
 #: dnf/module/exceptions.py:46
 msgid "Cannot enable more streams from module '{}' at the same time"
-msgstr "동시에 모듈'{}'에서 더이상 스트림을 활성화 할 수 없습니다"
+msgstr "동시에 모듈 '{}'에서 더 많은 스트림을 활성화 할 수 없습니다"
 
 #: dnf/module/exceptions.py:52
 msgid "Different stream enabled for module: {}"
-msgstr "모듈: {} 을 위한 다른 스트림이 활성화되었습니다"
+msgstr "모듈에 대해 활성화된 다른 스트림: {}"
 
 #: dnf/module/exceptions.py:58
 msgid "No such profile: {}"
@@ -3740,19 +3743,19 @@ msgstr "그런 프로파일이 없습니다: {}"
 
 #: dnf/module/exceptions.py:64
 msgid "Specified profile not installed for {}"
-msgstr "{}을 위한 지정한 프로파일이 설치되어 있지 않습니다"
+msgstr "{}를 위한 지정된 프로필이 설치되지 않았습니다"
 
 #: dnf/module/exceptions.py:70
 msgid "No stream specified for '{}', please specify stream"
-msgstr "'{}'에 지정된 프로필이 없습니다. 프로필을 지정하십시오"
+msgstr "'{}'을 위한 지정된 스트림이 없으며, 스트림을 지정해주세요"
 
 #: dnf/module/exceptions.py:82
 msgid "No such profile: {}. No profiles available"
-msgstr "그런 프로파일이 없습니다: {}. 가용한 프로파일이 없습니다"
+msgstr "그런 프로파일이 없습니다: {}. 사용 가능한 프로파일이 없습니다"
 
 #: dnf/module/exceptions.py:88
 msgid "No profile to remove for '{}'"
-msgstr "'{}' 위해 제거 할 프로파일이 없습니다"
+msgstr "제거되는 프로파일이 없습니다('{}'를 위해 )"
 
 #: dnf/module/module_base.py:35
 msgid ""
@@ -3775,7 +3778,7 @@ msgstr ""
 "힌트 : [d] efault, [e] nabled, [x] disabled, [i] stalled, [a] ctive"
 
 #: dnf/module/module_base.py:56 dnf/module/module_base.py:556
-#: dnf/module/module_base.py:615 dnf/module/module_base.py:681
+#: dnf/module/module_base.py:615 dnf/module/module_base.py:684
 msgid "Ignoring unnecessary profile: '{}/{}'"
 msgstr "불필요한 프로파일을 무시합니다: '{}/{}'"
 
@@ -3812,7 +3815,7 @@ msgstr "{} 모듈에서 기본 프로필 {}을 (를) 사용할 수 없음 : {}"
 
 #: dnf/module/module_base.py:144 dnf/module/module_base.py:247
 msgid "Installing module from Fail-Safe repository is not allowed"
-msgstr "Fail-Safe 리포지토리에서 모듈을 설치할 수 없습니다"
+msgstr "실패-방지 저장소에서 설치된 모듈은 허용하지 않습니다"
 
 #: dnf/module/module_base.py:196
 #, python-brace-format
@@ -3831,7 +3834,7 @@ msgstr "꾸러미 이름 '{}'를 위하여 배포판에서 사용 할 수 있는
 #: dnf/module/module_base.py:310 dnf/module/module_base.py:461
 #: dnf/module/module_base.py:486 dnf/module/module_base.py:505
 #: dnf/module/module_base.py:552 dnf/module/module_base.py:611
-#: dnf/module/module_base.py:677 dnf/module/module_base.py:840
+#: dnf/module/module_base.py:680 dnf/module/module_base.py:843
 msgid "Unable to resolve argument {}"
 msgstr "인수 {}을 (를) 구문 분석할 수 없습니다"
 
@@ -3854,8 +3857,8 @@ msgid ""
 "Argument '{argument}' matches {stream_count} streams ('{streams}') of module"
 " '{module}', but none of the streams are enabled or default"
 msgstr ""
-"인수 '{argument}' 일치 {stream_count} 스트림 ('{streams}') of 모듈 '{module}', 그러나 "
-"활성화 된 스트림 또는 기본 스트림이 없습니다"
+"인수 '{argument}'는 {stream_count} 스트림 ('{streams}')과 일치합니다 (모듈의 '{module}'), "
+"하지만 활성화 되었거나 지정된 스트림이 없습니다"
 
 #: dnf/module/module_base.py:509
 msgid ""
@@ -3863,7 +3866,7 @@ msgid ""
 "'{}'"
 msgstr "모듈 이름만 필요합니다. '{}'인수에서 불필요한 정보를 무시합니다"
 
-#: dnf/module/module_base.py:841
+#: dnf/module/module_base.py:844
 msgid "No match for package {}"
 msgstr "{} 꾸러미와 일치하지 않습니다"
 
@@ -3924,7 +3927,7 @@ msgid "Already downloaded"
 msgstr "이미 내려받음"
 
 #. pinging mirrors, this might take a while
-#: dnf/repo.py:347
+#: dnf/repo.py:346
 #, python-format
 msgid "determining the fastest mirror (%s hosts).. "
 msgstr "가장 빠른 미러 지정 (%s 호스트).. "
@@ -3946,7 +3949,7 @@ msgstr "%s에서 실행 가능한 rpmkey를 사용하여 서명 확인"
 
 #: dnf/rpm/miscutils.py:66
 msgid "Cannot find rpmkeys executable to verify signatures."
-msgstr "서명 확인에서 실행 가능한 rpmkey를 찾을 수 없습니다."
+msgstr "서명을 확인하기 위해 실행 할 수 있는 rpmkeys를 찾을 수 없습니다."
 
 #: dnf/rpm/transaction.py:119
 msgid "Errors occurred during test transaction."
@@ -3962,7 +3965,7 @@ msgstr "허용_공급업체_변화는 사용 할 수 없습니다. 이 선택은
 #: dnf/transaction.py:80
 msgctxt "currently"
 msgid "Downgrading"
-msgstr "하향설치중"
+msgstr "하향 설치 중"
 
 #: dnf/transaction.py:81 dnf/transaction.py:88 dnf/transaction.py:93
 #: dnf/transaction.py:95
@@ -3973,7 +3976,7 @@ msgstr "정리"
 #: dnf/transaction.py:83
 msgctxt "currently"
 msgid "Installing"
-msgstr "설치중"
+msgstr "설치 중"
 
 #. TRANSLATORS: This is for a single package currently being reinstalled.
 #: dnf/transaction.py:87
@@ -4174,7 +4177,7 @@ msgstr "건너 뛰기됨"
 
 #: dnf/util.py:621
 msgid "Removed"
-msgstr "제거됨"
+msgstr "제거되었습니다"
 
 #: dnf/util.py:624
 msgid "Failed"
@@ -4184,6 +4187,19 @@ msgstr "실패하였습니다"
 #: dnf/util.py:633
 msgid "<name-unset>"
 msgstr "<name-unset>"
+
+#~ msgid ""
+#~ "Enable additional repositories. List option. Supports globs, can be "
+#~ "specified multiple times."
+#~ msgstr "추가 저장소를 활성화하십시오. 옵션이 나열됩니다. glob를 지원하며 여러 번 지정 할 수 있습니다."
+
+#~ msgid ""
+#~ "Disable repositories. List option. Supports globs, can be specified multiple"
+#~ " times."
+#~ msgstr "저장소를 비활성화 합니다. 옵션이 나열됩니다. glob를 지원하며 여러 번 지정 할 수 있습니다."
+
+#~ msgid "skipping."
+#~ msgstr "건너 뛰기."
 
 #~ msgid ""
 #~ "Using rpmkeys executable from {path} to verify signature for package: "

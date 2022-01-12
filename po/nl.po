@@ -1,18 +1,18 @@
-# Geert Warrink <geert.warrink@onsnet.nu>, 2016. #zanata, 2020, 2021.
+# Geert Warrink <geert.warrink@onsnet.nu>, 2016. #zanata, 2020, 2021, 2022.
 # Richard E. van der Luit <nippur@fedoraproject.org>, 2016. #zanata
 # Corne van der Plas <vdplas@gmail.com>, 2017. #zanata
-# Geert Warrink <geert.warrink@onsnet.nu>, 2017. #zanata, 2020, 2021.
+# Geert Warrink <geert.warrink@onsnet.nu>, 2017. #zanata, 2020, 2021, 2022.
 # Richard E. van der Luit <nippur@fedoraproject.org>, 2017. #zanata
-# Geert Warrink <geert.warrink@onsnet.nu>, 2018. #zanata, 2020, 2021.
-# Geert Warrink <geert.warrink@onsnet.nu>, 2019. #zanata, 2020, 2021.
-# Geert Warrink <geert.warrink@onsnet.nu>, 2020. #zanata, 2021.
+# Geert Warrink <geert.warrink@onsnet.nu>, 2018. #zanata, 2020, 2021, 2022.
+# Geert Warrink <geert.warrink@onsnet.nu>, 2019. #zanata, 2020, 2021, 2022.
+# Geert Warrink <geert.warrink@onsnet.nu>, 2020. #zanata, 2021, 2022.
 # Richard E. van der Luit <fedoraproject@veneax.nl>, 2020.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2021-06-13 09:18-0400\n"
-"PO-Revision-Date: 2021-06-07 17:15+0000\n"
+"POT-Creation-Date: 2022-01-11 01:52+0000\n"
+"PO-Revision-Date: 2022-01-11 20:16+0000\n"
 "Last-Translator: Geert Warrink <geert.warrink@onsnet.nu>\n"
 "Language-Team: Dutch <https://translate.fedoraproject.org/projects/dnf/dnf-master/nl/>\n"
 "Language: nl\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Weblate 4.6.2\n"
+"X-Generator: Weblate 4.10.1\n"
 
 #: dnf/automatic/emitter.py:32
 #, python-format
@@ -197,82 +197,82 @@ msgstr "Ongeldige tsflag in configbestand: %s"
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "Groepbestand voor repository %s - %s toevoegen mislukt"
 
-#: dnf/base.py:904
+#: dnf/base.py:922
 msgid "Running transaction check"
 msgstr "Uitvoeren transactiecontrole"
 
-#: dnf/base.py:912
+#: dnf/base.py:930
 msgid "Error: transaction check vs depsolve:"
 msgstr "Fout: transactiecontrole vs oplossen afhankelijkheden:"
 
-#: dnf/base.py:918
+#: dnf/base.py:936
 msgid "Transaction check succeeded."
 msgstr "Transactiecontrole ok."
 
-#: dnf/base.py:921
+#: dnf/base.py:939
 msgid "Running transaction test"
 msgstr "Uitvoeren transactietest"
 
-#: dnf/base.py:931 dnf/base.py:1082
+#: dnf/base.py:949 dnf/base.py:1100
 msgid "RPM: {}"
 msgstr "RPM: {}"
 
-#: dnf/base.py:932
+#: dnf/base.py:950
 msgid "Transaction test error:"
 msgstr "Transactietest fout:"
 
-#: dnf/base.py:943
+#: dnf/base.py:961
 msgid "Transaction test succeeded."
 msgstr "Transactietest ok."
 
-#: dnf/base.py:964
+#: dnf/base.py:982
 msgid "Running transaction"
 msgstr "Uitvoeren transactie"
 
-#: dnf/base.py:1001
+#: dnf/base.py:1019
 msgid "Disk Requirements:"
 msgstr "Schijfvereisten:"
 
-#: dnf/base.py:1004
+#: dnf/base.py:1022
 #, python-brace-format
 msgid "At least {0}MB more space needed on the {1} filesystem."
 msgid_plural "At least {0}MB more space needed on the {1} filesystem."
 msgstr[0] "Ten minste {0}MB meer nodig op bestandssysteem {1}."
 msgstr[1] "Ten minste {0}MB meer nodig op bestandssysteem {1}."
 
-#: dnf/base.py:1011
+#: dnf/base.py:1029
 msgid "Error Summary"
 msgstr "Samenvatting van fouten"
 
-#: dnf/base.py:1037
+#: dnf/base.py:1055
 #, python-brace-format
 msgid "RPMDB altered outside of {prog}."
 msgstr "RPMDB is buiten {prog} gewijzigd."
 
-#: dnf/base.py:1083 dnf/base.py:1091
+#: dnf/base.py:1101 dnf/base.py:1109
 msgid "Could not run transaction."
 msgstr "Kon transactie niet uitvoeren."
 
-#: dnf/base.py:1086
+#: dnf/base.py:1104
 msgid "Transaction couldn't start:"
 msgstr "Transactie kon niet starten:"
 
-#: dnf/base.py:1100
+#: dnf/base.py:1118
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "Verwijderen van transactiebestand %s mislukt"
 
-#: dnf/base.py:1182
+#: dnf/base.py:1200
 msgid "Some packages were not downloaded. Retrying."
 msgstr "Sommige pakketten zijn niet gedownload. Opnieuw proberen.."
 
-#: dnf/base.py:1212
+#: dnf/base.py:1230
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%.1f%% saved)"
 msgstr ""
 "Delta-RPMs brachten %.1f MB aan updates terug tot %.1f MB (scheelt %.1f%%)"
 
-#: dnf/base.py:1216
+#: dnf/base.py:1234
 #, python-format
 msgid ""
 "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%.1f%% wasted)"
@@ -280,75 +280,75 @@ msgstr ""
 "Mislukte Delta RPM's verhoogden %.1f MB updates naar %.1f MB (%.1f%% "
 "verspild)"
 
-#: dnf/base.py:1258
+#: dnf/base.py:1276
 msgid "Cannot add local packages, because transaction job already exists"
 msgstr "Kan geen lokale pakketten toevoegen omdat transactietaak al bestaat"
 
-#: dnf/base.py:1272
+#: dnf/base.py:1290
 msgid "Could not open: {}"
 msgstr "Kon niet openen: {}"
 
-#: dnf/base.py:1310
+#: dnf/base.py:1328
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "Publieke sleutel voor %s is niet geïnstalleerd"
 
-#: dnf/base.py:1314
+#: dnf/base.py:1332
 #, python-format
 msgid "Problem opening package %s"
 msgstr "Er deed zich een probleem voor tijdens het openen van pakket %s"
 
-#: dnf/base.py:1322
+#: dnf/base.py:1340
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "Publieke sleutel voor %s is niet vertrouwd"
 
-#: dnf/base.py:1326
+#: dnf/base.py:1344
 #, python-format
 msgid "Package %s is not signed"
 msgstr "Publieke sleutel voor %s is niet getekend"
 
-#: dnf/base.py:1356
+#: dnf/base.py:1374
 #, python-format
 msgid "Cannot remove %s"
 msgstr "Kan %s niet verwijderen"
 
-#: dnf/base.py:1360
+#: dnf/base.py:1378
 #, python-format
 msgid "%s removed"
 msgstr "%s verwijderd"
 
-#: dnf/base.py:1640
+#: dnf/base.py:1658
 msgid "No match for group package \"{}\""
 msgstr "Geen match voor groeppakket \"{}\""
 
-#: dnf/base.py:1726
+#: dnf/base.py:1740
 #, python-format
 msgid "Adding packages from group '%s': %s"
 msgstr "Pakketten van groep '%s' toevoegen: %s"
 
-#: dnf/base.py:1749 dnf/cli/cli.py:221 dnf/cli/commands/__init__.py:437
+#: dnf/base.py:1763 dnf/cli/cli.py:221 dnf/cli/commands/__init__.py:437
 #: dnf/cli/commands/__init__.py:494 dnf/cli/commands/__init__.py:587
 #: dnf/cli/commands/__init__.py:636 dnf/cli/commands/install.py:80
 #: dnf/cli/commands/install.py:103 dnf/cli/commands/install.py:110
 msgid "Nothing to do."
 msgstr "Niets te doen."
 
-#: dnf/base.py:1767
+#: dnf/base.py:1781
 msgid "No groups marked for removal."
 msgstr "Geen pakketten voor verwijdering aangemerkt."
 
-#: dnf/base.py:1801
+#: dnf/base.py:1815
 msgid "No group marked for upgrade."
 msgstr "Geen pakketten voor upgrade aangemerkt."
 
-#: dnf/base.py:2015
+#: dnf/base.py:2029
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
 msgstr "Pakket %s is niet geïnstalleerd, kan het niet downgraden."
 
-#: dnf/base.py:2017 dnf/base.py:2036 dnf/base.py:2049 dnf/base.py:2076
-#: dnf/base.py:2129 dnf/base.py:2137 dnf/base.py:2271 dnf/cli/cli.py:417
+#: dnf/base.py:2031 dnf/base.py:2050 dnf/base.py:2063 dnf/base.py:2090
+#: dnf/base.py:2143 dnf/base.py:2151 dnf/base.py:2285 dnf/cli/cli.py:417
 #: dnf/cli/commands/__init__.py:420 dnf/cli/commands/__init__.py:477
 #: dnf/cli/commands/__init__.py:581 dnf/cli/commands/__init__.py:628
 #: dnf/cli/commands/__init__.py:706 dnf/cli/commands/install.py:147
@@ -358,30 +358,30 @@ msgstr "Pakket %s is niet geïnstalleerd, kan het niet downgraden."
 msgid "No match for argument: %s"
 msgstr "Geen match voor argument: %s"
 
-#: dnf/base.py:2024
+#: dnf/base.py:2038
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
 msgstr ""
 "Pakket %s met lagere versie is al geïnstalleerd, kan het niet downgraden."
 
-#: dnf/base.py:2047
+#: dnf/base.py:2061
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
 msgstr "Pakket %s is niet geïnstalleerd, kan het niet herinstalleren."
 
-#: dnf/base.py:2062
+#: dnf/base.py:2076
 #, python-format
 msgid "File %s is a source package and cannot be updated, ignoring."
 msgstr ""
 "Bestand %s is een broncode-pakket en kan niet worden geupdate, wordt "
 "genegeerd."
 
-#: dnf/base.py:2073
+#: dnf/base.py:2087
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr "Pakket %s is niet geïnstalleerd, kan het niet updaten."
 
-#: dnf/base.py:2083
+#: dnf/base.py:2097
 #, python-format
 msgid ""
 "The same or higher version of %s is already installed, cannot update it."
@@ -389,104 +389,104 @@ msgstr ""
 "Dezelfde of een nieuwere versie van %s is al geïnstalleerd, kan het niet "
 "bijwerken."
 
-#: dnf/base.py:2126 dnf/cli/commands/reinstall.py:81
+#: dnf/base.py:2140 dnf/cli/commands/reinstall.py:81
 #, python-format
 msgid "Package %s available, but not installed."
 msgstr "Pakket %s is beschikbaar, maar niet geïnstalleerd."
 
-#: dnf/base.py:2132
+#: dnf/base.py:2146
 #, python-format
 msgid "Package %s available, but installed for different architecture."
 msgstr ""
 "Pakket %s is beschikbaar, maar geïnstalleerd voor een andere architectuur."
 
-#: dnf/base.py:2157
+#: dnf/base.py:2171
 #, python-format
 msgid "No package %s installed."
 msgstr "Pakket %s is niet geïnstalleerd."
 
-#: dnf/base.py:2175 dnf/cli/commands/install.py:136
+#: dnf/base.py:2189 dnf/cli/commands/install.py:136
 #: dnf/cli/commands/remove.py:133
 #, python-format
 msgid "Not a valid form: %s"
 msgstr "Geen geldig formulier: %s"
 
-#: dnf/base.py:2190 dnf/cli/commands/__init__.py:676
+#: dnf/base.py:2204 dnf/cli/commands/__init__.py:676
 #: dnf/cli/commands/remove.py:162
 msgid "No packages marked for removal."
 msgstr "Geen pakketten aangemerkt om te verwijderen."
 
-#: dnf/base.py:2278 dnf/cli/cli.py:428
+#: dnf/base.py:2292 dnf/cli/cli.py:428
 #, python-format
 msgid "Packages for argument %s available, but not installed."
 msgstr "Pakketten voor argument %s beschikbaar, maar niet geïnstalleerd."
 
-#: dnf/base.py:2283
+#: dnf/base.py:2297
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
 msgstr ""
 "Pakket %s met laagste versie is al geïnstalleerd, kan het niet downgraden."
 
-#: dnf/base.py:2383
+#: dnf/base.py:2397
 msgid "No security updates needed, but {} update available"
 msgstr "Geen beveiligingsupdates nodig, maar update {} is beschikbaar"
 
-#: dnf/base.py:2385
+#: dnf/base.py:2399
 msgid "No security updates needed, but {} updates available"
 msgstr "Geen beveiligingsupdates nodig, maar updates {} zijn beschikbaar"
 
-#: dnf/base.py:2389
+#: dnf/base.py:2403
 msgid "No security updates needed for \"{}\", but {} update available"
 msgstr "Geen beveiligingsupdates nodig voor\"{}\", maar update {} is beschikbaar"
 
-#: dnf/base.py:2391
+#: dnf/base.py:2405
 msgid "No security updates needed for \"{}\", but {} updates available"
 msgstr ""
 "Geen beveiligingsupdates nodig voor\"{}\", maar updates {} zijn beschikbaar"
 
 #. raise an exception, because po.repoid is not in self.repos
-#: dnf/base.py:2412
+#: dnf/base.py:2426
 #, python-format
 msgid "Unable to retrieve a key for a commandline package: %s"
 msgstr "Kan geen sleutel ophalen voor een commandoregelpakket: %s"
 
-#: dnf/base.py:2420
+#: dnf/base.py:2434
 #, python-format
 msgid ". Failing package is: %s"
 msgstr ". Pakket dat mislukt is: %s"
 
-#: dnf/base.py:2421
+#: dnf/base.py:2435
 #, python-format
 msgid "GPG Keys are configured as: %s"
 msgstr "GPG-sleutels zijn geconfigureerd als: %s"
 
-#: dnf/base.py:2433
+#: dnf/base.py:2447
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "GPG-sleutel op %s (0x%s) is al geïnstalleerd"
 
-#: dnf/base.py:2469
+#: dnf/base.py:2483
 msgid "The key has been approved."
 msgstr "De sleutel is goedgekeurd."
 
-#: dnf/base.py:2472
+#: dnf/base.py:2486
 msgid "The key has been rejected."
 msgstr "De sleutel is verworpen."
 
-#: dnf/base.py:2505
+#: dnf/base.py:2519
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "Importeren sleutel mislukt (code %d)"
 
-#: dnf/base.py:2507
+#: dnf/base.py:2521
 msgid "Key imported successfully"
 msgstr "Sleutel met succes geïmporteerd"
 
-#: dnf/base.py:2511
+#: dnf/base.py:2525
 msgid "Didn't install any keys"
 msgstr "Er werden geen sleutels geïnstalleerd"
 
-#: dnf/base.py:2514
+#: dnf/base.py:2528
 #, python-format
 msgid ""
 "The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
@@ -495,28 +495,28 @@ msgstr ""
 "De GPG-sleutels bedoeld voor repository \"%s\" zijn al geïnstalleerd maar niet correct voor dit pakket.\n"
 "Controleer of de juiste sleutel-URLs voor deze repository zijn opgegeven."
 
-#: dnf/base.py:2525
+#: dnf/base.py:2539
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "Importen van sleutel(s) hielp niet; verkeerde sleutel(s)?"
 
-#: dnf/base.py:2578
+#: dnf/base.py:2592
 msgid "  * Maybe you meant: {}"
 msgstr "  * Misschien bedoel  je: {}"
 
-#: dnf/base.py:2610
+#: dnf/base.py:2624
 msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
 msgstr "Pakket \"{}\" van lokale repository \"{}\" heeft een onjuiste checksum"
 
-#: dnf/base.py:2613
+#: dnf/base.py:2627
 msgid "Some packages from local repository have incorrect checksum"
 msgstr ""
 "Sommige paketten van de lokale repository hebbenb een onjuiste checksum"
 
-#: dnf/base.py:2616
+#: dnf/base.py:2630
 msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
 msgstr "Pakket \"{}\" van repository \"{}\" heeft een onjuiste checksum"
 
-#: dnf/base.py:2619
+#: dnf/base.py:2633
 msgid ""
 "Some packages have invalid cache, but cannot be downloaded due to \"--"
 "cacheonly\" option"
@@ -524,26 +524,26 @@ msgstr ""
 "Sommige pakketten hebben een ongeldige cache, maar kunnen door de \"--"
 "cacheonly\" optie niet gedownload worden"
 
-#: dnf/base.py:2637 dnf/base.py:2657
+#: dnf/base.py:2651 dnf/base.py:2671
 msgid "No match for argument"
 msgstr "Er is geen match voor argument"
 
-#: dnf/base.py:2645 dnf/base.py:2665
+#: dnf/base.py:2659 dnf/base.py:2679
 msgid "All matches were filtered out by exclude filtering for argument"
 msgstr ""
 "Alle matches werden uitgefilterd door het uitsluiten van filteren voor "
 "argument"
 
-#: dnf/base.py:2647
+#: dnf/base.py:2661
 msgid "All matches were filtered out by modular filtering for argument"
 msgstr "Alle matches werden uitgefilterd door modulair filteren voor argument"
 
-#: dnf/base.py:2663
+#: dnf/base.py:2677
 msgid "All matches were installed from a different repository for argument"
 msgstr ""
 "Alle matches werden geïnstalleerd van een andere repository voor argument"
 
-#: dnf/base.py:2710
+#: dnf/base.py:2724
 #, python-format
 msgid "Package %s is already installed."
 msgstr "Pakket %s is al geïnstalleerd."
@@ -553,7 +553,7 @@ msgstr "Pakket %s is al geïnstalleerd."
 msgid "Unexpected value of environment variable: DNF_DISABLE_ALIASES=%s"
 msgstr "Onverwachte waarde voor omgevingsvariabele: DNF_DISABLE_ALIASES=%s"
 
-#: dnf/cli/aliases.py:105 dnf/conf/config.py:457
+#: dnf/cli/aliases.py:105 dnf/conf/config.py:475
 #, python-format
 msgid "Parsing file \"%s\" failed: %s"
 msgstr "Ontleden van bestand \"%s\" mislukte: %s"
@@ -1772,7 +1772,7 @@ msgstr "toon alleen resultaten die in conflict zijn met VEREISTE"
 
 #: dnf/cli/commands/repoquery.py:135
 msgid ""
-"shows results that requires, suggests, supplements, enhances,or recommends "
+"shows results that requires, suggests, supplements, enhances, or recommends "
 "package provides and files REQ"
 msgstr ""
 "toont resultaten die vereiste, gesuggereerde, aanvullende, verbeterende of "
@@ -2057,7 +2057,7 @@ msgid ""
 "usage: {prog} repoquery [--conflicts|--enhances|--obsoletes|--provides|--recommends|--requires|--suggest|--supplements|--whatrequires] [key] [--tree]\n"
 "\n"
 "description:\n"
-"  For the given packages print a tree of thepackages."
+"  For the given packages print a tree of the packages."
 msgstr ""
 "Geen geldige schakelaar gespecificeerd\n"
 "gebruik: {prog} repoquery [--conflicts|--enhances|--obsoletes|--provides|--recommends|--requires|--suggest|--supplements|--whatrequires] [key] [--tree]\n"
@@ -2650,21 +2650,27 @@ msgstr "automatisch nee op alle vragen"
 
 #: dnf/cli/option_parser.py:261
 msgid ""
-"Enable additional repositories. List option. Supports globs, can be "
-"specified multiple times."
+"Temporarily enable repositories for the purposeof the current dnf command. "
+"Accepts an id, acomma-separated list of ids, or a glob of ids.This option "
+"can be specified multiple times."
 msgstr ""
-"Zet extra repositories aan. Toon optie. Ondersteunt globs, kan meerdere "
-"keren gespecificeerd worden."
+"Schakel tijdelijk repositories in voor het huidige dnf commando. Accepteert "
+"een ID, een door komma's gescheiden lijst met ID's of een hele reeks ID's. "
+"Deze optie kan meerdere keren worden opgegeven."
 
-#: dnf/cli/option_parser.py:266
+#: dnf/cli/option_parser.py:268
 msgid ""
-"Disable repositories. List option. Supports globs, can be specified multiple"
-" times."
+"Temporarily disable active repositories for thepurpose of the current dnf "
+"command. Accepts an id,a comma-separated list of ids, or a glob of ids.This "
+"option can be specified multiple times, butis mutually exclusive with "
+"`--repo`."
 msgstr ""
-"Zet extra repositories uit. Toon optie. Ondersteunt globs, kan meerdere "
-"keren gespecificeerd worden."
+"Schakel actieve repositories tijdelijk uit voor het huidige dnf commando. "
+"Accepteert een ID, een door komma's gescheiden lijst van ID's of een hele "
+"reeks ID's. Deze optie kan meerdere keren worden opgegeven, maar sluit "
+"elkaar uit met `--repo`."
 
-#: dnf/cli/option_parser.py:270
+#: dnf/cli/option_parser.py:275
 msgid ""
 "enable just specific repositories by an id or a glob, can be specified "
 "multiple times"
@@ -2672,25 +2678,25 @@ msgstr ""
 "zet specifieke repositories aan volgens een id of een glob, kan meerdere "
 "keren gespecificeerd worden"
 
-#: dnf/cli/option_parser.py:275
+#: dnf/cli/option_parser.py:280
 msgid "enable repos with config-manager command (automatically saves)"
 msgstr ""
 "zet repo's aan met config-manager commando (wordt automatisch opgeslagen)"
 
-#: dnf/cli/option_parser.py:279
+#: dnf/cli/option_parser.py:284
 msgid "disable repos with config-manager command (automatically saves)"
 msgstr ""
 "zet repo's uit met config-manager commando (wordt automatisch opgeslagen)"
 
-#: dnf/cli/option_parser.py:283
+#: dnf/cli/option_parser.py:288
 msgid "exclude packages by name or glob"
 msgstr "Pakketten uitsluiten op naam of glob"
 
-#: dnf/cli/option_parser.py:288
+#: dnf/cli/option_parser.py:293
 msgid "disable excludepkgs"
 msgstr "zet excludepkgs uit"
 
-#: dnf/cli/option_parser.py:293
+#: dnf/cli/option_parser.py:298
 msgid ""
 "label and path to an additional repository to use (same path as in a "
 "baseurl), can be specified multiple times."
@@ -2698,93 +2704,93 @@ msgstr ""
 "Label en pad naar nog een te gebruiken repository (hetzelfde pad als in "
 "baseurl), kan meerdere keren worden opgegeven."
 
-#: dnf/cli/option_parser.py:297
+#: dnf/cli/option_parser.py:302
 msgid "disable removal of dependencies that are no longer used"
 msgstr ""
 "zet verwijderen van afhankelijkheden die niet langer gebruikt worden uit"
 
-#: dnf/cli/option_parser.py:300
+#: dnf/cli/option_parser.py:305
 msgid "disable gpg signature checking (if RPM policy allows)"
 msgstr "zet gpg handtekeningscontrole uit (als RPM beleid dit toestaat)"
 
-#: dnf/cli/option_parser.py:302
+#: dnf/cli/option_parser.py:307
 msgid "control whether color is used"
 msgstr "Kleurbeheer"
 
-#: dnf/cli/option_parser.py:305
+#: dnf/cli/option_parser.py:310
 msgid "set metadata as expired before running the command"
 msgstr "Instellen metadata als verlopen voordat opdracht wordt uitgevoerd"
 
-#: dnf/cli/option_parser.py:308
+#: dnf/cli/option_parser.py:313
 msgid "resolve to IPv4 addresses only"
 msgstr "Alleen IPv4-adressen gebruiken"
 
-#: dnf/cli/option_parser.py:311
+#: dnf/cli/option_parser.py:316
 msgid "resolve to IPv6 addresses only"
 msgstr "Alleen IPv6-adressen gebruiken"
 
-#: dnf/cli/option_parser.py:314
+#: dnf/cli/option_parser.py:319
 msgid "set directory to copy packages to"
 msgstr "stel map in waarnaar pakketten gekopieerd worden"
 
-#: dnf/cli/option_parser.py:317
+#: dnf/cli/option_parser.py:322
 msgid "only download packages"
 msgstr "Pakketten alleen downloaden"
 
-#: dnf/cli/option_parser.py:319
+#: dnf/cli/option_parser.py:324
 msgid "add a comment to transaction"
 msgstr "voeg een commentaar toe aan de transactie"
 
-#: dnf/cli/option_parser.py:322
+#: dnf/cli/option_parser.py:327
 msgid "Include bugfix relevant packages, in updates"
 msgstr "Omvat voor bugreparatie relevante pakketten, in updates"
 
-#: dnf/cli/option_parser.py:325
+#: dnf/cli/option_parser.py:330
 msgid "Include enhancement relevant packages, in updates"
 msgstr "Omvat voor verbetering relevante pakketten, in updates"
 
-#: dnf/cli/option_parser.py:328
+#: dnf/cli/option_parser.py:333
 msgid "Include newpackage relevant packages, in updates"
 msgstr "Omvat voor newpackage relevante pakketten, in updates"
 
-#: dnf/cli/option_parser.py:331
+#: dnf/cli/option_parser.py:336
 msgid "Include security relevant packages, in updates"
 msgstr "Omvat voor beveiliging relevante pakketten, in updates"
 
-#: dnf/cli/option_parser.py:335
+#: dnf/cli/option_parser.py:340
 msgid "Include packages needed to fix the given advisory, in updates"
 msgstr ""
 "Omvat pakketten nodig voor het repareren van het gegeven advies, in updates"
 
-#: dnf/cli/option_parser.py:339
+#: dnf/cli/option_parser.py:344
 msgid "Include packages needed to fix the given BZ, in updates"
 msgstr ""
 "Omvat pakketten nodig voor het repareren van de gegeven BZ, in updates"
 
-#: dnf/cli/option_parser.py:342
+#: dnf/cli/option_parser.py:347
 msgid "Include packages needed to fix the given CVE, in updates"
 msgstr ""
 "Omvat pakketten nodig voor het repareren van de gegeven CVE, in updates"
 
-#: dnf/cli/option_parser.py:347
+#: dnf/cli/option_parser.py:352
 msgid "Include security relevant packages matching the severity, in updates"
 msgstr ""
 "Omvat voor beveiliging relevante pakketten overeenkomend met de ernst , in "
 "updates"
 
-#: dnf/cli/option_parser.py:353
+#: dnf/cli/option_parser.py:358
 msgid "Force the use of an architecture"
 msgstr "Forceer het gebruik van een architectuur"
 
-#: dnf/cli/option_parser.py:375
+#: dnf/cli/option_parser.py:380
 msgid "List of Main Commands:"
 msgstr "Lijst van belangrijkste commando's:"
 
-#: dnf/cli/option_parser.py:376
+#: dnf/cli/option_parser.py:381
 msgid "List of Plugin Commands:"
 msgstr "Lijst van plugincommando's:"
 
-#: dnf/cli/option_parser.py:413
+#: dnf/cli/option_parser.py:418
 #, python-format
 msgid "Cannot encode argument '%s': %s"
 msgstr "Kan argument '%s' niet coderen: %s"
@@ -3558,10 +3564,6 @@ msgstr "    Gestart: %s - %s geleden"
 msgid "    State  : %s"
 msgstr "    Status  : %s"
 
-#: dnf/comps.py:104
-msgid "skipping."
-msgstr "wordt overgeslagen."
-
 #: dnf/comps.py:196 dnf/comps.py:692 dnf/comps.py:706
 #, python-format
 msgid "Module or Group '%s' is not installed."
@@ -3612,11 +3614,15 @@ msgstr "Fout bij ontleden van '%s': %s"
 msgid "Invalid configuration value: %s=%s in %s; %s"
 msgstr "Ongeldige configuratiewaarde: %s=%s in %s; %s"
 
-#: dnf/conf/config.py:226
+#: dnf/conf/config.py:194
+msgid "Cannot set \"{}\" to \"{}\": {}"
+msgstr "Kan \"{}\" niet instellen naar \"{}\": {}"
+
+#: dnf/conf/config.py:244
 msgid "Could not set cachedir: {}"
 msgstr "Kan cachemap niet instellen: {}"
 
-#: dnf/conf/config.py:275
+#: dnf/conf/config.py:293
 msgid ""
 "Configuration file URL \"{}\" could not be downloaded:\n"
 "  {}"
@@ -3624,31 +3630,31 @@ msgstr ""
 "Configuratiebestand URL \"{}\" kon niet gedownload worden:\n"
 "  {}"
 
-#: dnf/conf/config.py:355 dnf/conf/config.py:391
+#: dnf/conf/config.py:373 dnf/conf/config.py:409
 #, python-format
 msgid "Unknown configuration option: %s = %s"
 msgstr "Onbekende configuratie-optie: %s = %s"
 
-#: dnf/conf/config.py:372
+#: dnf/conf/config.py:390
 #, python-format
 msgid "Error parsing --setopt with key '%s', value '%s': %s"
 msgstr "Fout bij ontleden van --setopt met sleutel '%s', waarde '%s': %s"
 
-#: dnf/conf/config.py:380
+#: dnf/conf/config.py:398
 #, python-format
 msgid "Main config did not have a %s attr. before setopt"
 msgstr "Hoofdconfiguratie heeft geen %s attr. voor setopt"
 
-#: dnf/conf/config.py:427 dnf/conf/config.py:445
+#: dnf/conf/config.py:445 dnf/conf/config.py:463
 msgid "Incorrect or unknown \"{}\": {}"
 msgstr "Niet-correct of onbekend \"{}\": {}"
 
-#: dnf/conf/config.py:501
+#: dnf/conf/config.py:519
 #, python-format
 msgid "Error parsing --setopt with key '%s.%s', value '%s': %s"
 msgstr "Fout bij ontleden van --setopt met sleutel '%s.%s', waarde '%s': %s"
 
-#: dnf/conf/config.py:504
+#: dnf/conf/config.py:522
 #, python-format
 msgid "Repo %s did not have a %s attr. before setopt"
 msgstr "Repo %s heeft geen %s attr. voor setopt"
@@ -3731,33 +3737,33 @@ msgstr "Geen modulaire metadata beschikbaar voor modulair pakket"
 msgid "Will not install a source rpm package (%s)."
 msgstr "Zal een bron-rpmpakket (%s) niet installeren."
 
-#: dnf/dnssec.py:168
+#: dnf/dnssec.py:171
 msgid ""
 "Configuration option 'gpgkey_dns_verification' requires python3-unbound ({})"
 msgstr ""
 "Configuratie optie 'gpgkey_dns_verification' vereist python3-unbound ({})"
 
-#: dnf/dnssec.py:239
+#: dnf/dnssec.py:243
 msgid "DNSSEC extension: Key for user "
 msgstr "DNSSEC extensie: Sleutel voor gebruiker "
 
-#: dnf/dnssec.py:241
+#: dnf/dnssec.py:245
 msgid "is valid."
 msgstr "is geldig."
 
-#: dnf/dnssec.py:243
+#: dnf/dnssec.py:247
 msgid "has unknown status."
 msgstr "heeft een onbekende status."
 
-#: dnf/dnssec.py:251
+#: dnf/dnssec.py:255
 msgid "DNSSEC extension: "
 msgstr "DNSSEC extensie: "
 
-#: dnf/dnssec.py:283
+#: dnf/dnssec.py:287
 msgid "Testing already imported keys for their validity."
 msgstr "Testen van reeds geïmporteerde sleutels voor hun geldigheid."
 
-#: dnf/drpm.py:62 dnf/repo.py:268
+#: dnf/drpm.py:62 dnf/repo.py:267
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr "Niet ondersteund checksumtype: %s"
@@ -3800,7 +3806,7 @@ msgid_plural "Modular dependency problems with Defaults:"
 msgstr[0] "Modulair afhankelijkheidsprobleem met Standaardwaarden:"
 msgstr[1] "Modulaire afhankelijkheidsproblemen met Standaardwaaeden:"
 
-#: dnf/exceptions.py:131 dnf/module/module_base.py:854
+#: dnf/exceptions.py:131 dnf/module/module_base.py:857
 msgid "Modular dependency problem:"
 msgid_plural "Modular dependency problems:"
 msgstr[0] "Modulair afhankelijkheid probleem:"
@@ -3897,7 +3903,7 @@ msgstr ""
 "Hint: [d]standaard, [e]aangezet, [x]uitgezet, [i]geïnstalleerd, [a]ctief"
 
 #: dnf/module/module_base.py:56 dnf/module/module_base.py:556
-#: dnf/module/module_base.py:615 dnf/module/module_base.py:681
+#: dnf/module/module_base.py:615 dnf/module/module_base.py:684
 msgid "Ignoring unnecessary profile: '{}/{}'"
 msgstr "Onnodig profiel wordt genegeerd: '{}/{}'"
 
@@ -3959,7 +3965,7 @@ msgstr "Geen pakketten beschikbaar voor distrosync voor pakketnaam '{}'"
 #: dnf/module/module_base.py:310 dnf/module/module_base.py:461
 #: dnf/module/module_base.py:486 dnf/module/module_base.py:505
 #: dnf/module/module_base.py:552 dnf/module/module_base.py:611
-#: dnf/module/module_base.py:677 dnf/module/module_base.py:840
+#: dnf/module/module_base.py:680 dnf/module/module_base.py:843
 msgid "Unable to resolve argument {}"
 msgstr "Kan argument {} niet oplossen"
 
@@ -3997,7 +4003,7 @@ msgstr ""
 "Alleen modulenaam is vereist. Onnodige informatie in argument '{}' wordt "
 "genegeerd"
 
-#: dnf/module/module_base.py:841
+#: dnf/module/module_base.py:844
 msgid "No match for package {}"
 msgstr "Geen match voor pakket {}"
 
@@ -4062,7 +4068,7 @@ msgid "Already downloaded"
 msgstr "Al gedownload"
 
 #. pinging mirrors, this might take a while
-#: dnf/repo.py:347
+#: dnf/repo.py:346
 #, python-format
 msgid "determining the fastest mirror (%s hosts).. "
 msgstr "snelste spiegel wordt bepaald (%s hosts).. "
@@ -4338,6 +4344,23 @@ msgstr "Mislukte"
 #: dnf/util.py:633
 msgid "<name-unset>"
 msgstr "<name-unset>"
+
+#~ msgid ""
+#~ "Enable additional repositories. List option. Supports globs, can be "
+#~ "specified multiple times."
+#~ msgstr ""
+#~ "Zet extra repositories aan. Toon optie. Ondersteunt globs, kan meerdere "
+#~ "keren gespecificeerd worden."
+
+#~ msgid ""
+#~ "Disable repositories. List option. Supports globs, can be specified multiple"
+#~ " times."
+#~ msgstr ""
+#~ "Zet extra repositories uit. Toon optie. Ondersteunt globs, kan meerdere "
+#~ "keren gespecificeerd worden."
+
+#~ msgid "skipping."
+#~ msgstr "wordt overgeslagen."
 
 #~ msgid ""
 #~ "Using rpmkeys executable from {path} to verify signature for package: "
