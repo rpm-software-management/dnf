@@ -71,10 +71,12 @@ def _verifyPackageUsingRpmkeys(package, installroot):
     args = ('rpmkeys', '--checksig', '--root', installroot, '--verbose',
             '--define=_pkgverify_level signature', '--define=_pkgverify_flags 0x0',
             '-')
+    env = dict(os.environ)
+    env['LC_ALL'] = 'C'
     with subprocess.Popen(
             args=args,
             executable=rpmkeys_binary,
-            env={'LC_ALL': 'C'},
+            env=env,
             stdout=subprocess.PIPE,
             cwd='/',
             stdin=package) as p:
