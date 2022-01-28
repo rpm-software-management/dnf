@@ -12,8 +12,10 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _
+import logging
 import rpm
 
+_logger = logging.getLogger('dnf')
 read_ts = None
 ts = None
 
@@ -60,6 +62,20 @@ class TransactionWrapper(object):
         for (tag, tp, pat) in patterns:
             mi.pattern(tag, tp, pat)
         return mi
+
+    def dbCookie(self):
+        # dbCookie() does not support lazy opening of rpm database.
+        # The following line opens the database if it is not already open.
+        if self.ts.openDB() != 0:
+            _logger.error(_('The openDB() function connot open rpm database.'))
+            return ''
+
+        cookie = self.ts.dbCookie()
+        if not cookie:
+            _logger.error(_('The dbCookie() function did not return cookie of rpm database.'))
+            return ''
+
+        return cookie
 
     def __getattr__(self, attr):
         if attr in self._methods:
