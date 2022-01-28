@@ -1607,7 +1607,7 @@ Transaction Summary
             if lastdbv is not None and trans.tid == lasttid:
                 #  If this is the last transaction, is good and it doesn't
                 # match the current rpmdb ... then mark it as bad.
-                rpmdbv = self.sack._rpmdb_version()
+                rpmdbv = self.base._ts.dbCookie()
                 trans.compare_rpmdbv(str(rpmdbv))
             lastdbv = None
 
