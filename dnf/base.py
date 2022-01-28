@@ -907,7 +907,7 @@ class Base(object):
                     cmdline = ' '.join(self.cmds)
                 old = self.history.last()
                 if old is None:
-                    rpmdb_version = self.sack._rpmdb_version()
+                    rpmdb_version = self._ts.dbCookie()
                 else:
                     rpmdb_version = old.end_rpmdb_version
 
@@ -1046,7 +1046,7 @@ class Base(object):
             using_pkgs_pats = list(self.conf.history_record_packages)
             installed_query = self.sack.query().installed()
             using_pkgs = installed_query.filter(name=using_pkgs_pats).run()
-            rpmdbv = self.sack._rpmdb_version()
+            rpmdbv = self._ts.dbCookie()
             lastdbv = self.history.last()
             if lastdbv is not None:
                 lastdbv = lastdbv.end_rpmdb_version
@@ -1163,7 +1163,7 @@ class Base(object):
         for tsi in transaction_items:
             count = display_banner(tsi.pkg, count)
 
-        rpmdbv = rpmdb_sack._rpmdb_version()
+        rpmdbv = self._ts.dbCookie()
         self.history.end(rpmdbv)
 
         timer()

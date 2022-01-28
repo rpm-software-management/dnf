@@ -89,7 +89,7 @@ class MarkCommand(commands.Command):
 
         old = self.base.history.last()
         if old is None:
-            rpmdb_version = self.base.sack._rpmdb_version()
+            rpmdb_version = self.base._ts.dbCookie()
         else:
             rpmdb_version = old.end_rpmdb_version
 
