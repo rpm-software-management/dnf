@@ -84,7 +84,7 @@ to store and replay (or between versions as long as it stays the same).
 ``repo_id``
     Type: string
 
-    The id of the repository this package is coming from. Note repository ids are defined in the local respository configuration and may differ between systems.
+    The id of the repository this package is coming from. Note repository ids are defined in the local repository configuration and may differ between systems.
 
 
 .. _group-label:

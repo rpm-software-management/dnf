@@ -198,7 +198,7 @@ configuration file by your distribution to override the DNF defaults.
 ``diskspacecheck``
     :ref:`boolean <boolean-label>`
 
-    Controls wheather rpm shoud check available disk space during the transaction.
+    Controls whether rpm should check available disk space during the transaction.
     Default is ``True``.
 
 .. _errorlevel-label:
@@ -294,7 +294,7 @@ configuration file by your distribution to override the DNF defaults.
 
     Number of :ref:`installonly packages <installonlypkgs-label>` allowed to be installed
     concurrently. Defaults to 3. The minimal number of installonly packages is 2. Value 0 means
-    unlimited number of installonly packages. Value 1 is explicitely not allowed since it
+    unlimited number of installonly packages. Value 1 is explicitly not allowed since it
     complicates kernel upgrades due to protection of the running kernel from removal.
 
 .. _installroot-label:
