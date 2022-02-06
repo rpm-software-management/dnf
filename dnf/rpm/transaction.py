@@ -67,7 +67,7 @@ class TransactionWrapper(object):
         # dbCookie() does not support lazy opening of rpm database.
         # The following line opens the database if it is not already open.
         if self.ts.openDB() != 0:
-            _logger.error(_('The openDB() function connot open rpm database.'))
+            _logger.error(_('The openDB() function cannot open rpm database.'))
             return ''
 
         cookie = self.ts.dbCookie()
@@ -91,8 +91,8 @@ class TransactionWrapper(object):
         # profile/etc info
         return getattr(self.ts, method)
 
-    # push/pop methods so we dont lose the previous
-    # set value, and we can potentiall debug a bit
+    # push/pop methods so we don't lose the previous
+    # set value, and we can potentially debug a bit
     # easier
     def pushVSFlags(self, flags):
         self.tsflags.append(flags)

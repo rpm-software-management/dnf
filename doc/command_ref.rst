@@ -1299,7 +1299,7 @@ packages to those matching the specification. All packages are considered if no 
 
 ``--unsatisfied``
     Report unsatisfied dependencies among installed packages (i.e. missing requires and
-    and existing conflicts).
+    existing conflicts).
 
 ``--upgrades``
     Limit the resulting set to packages that provide an upgrade for some already installed package.

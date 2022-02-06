@@ -1897,7 +1897,7 @@ Bugs fixed in 0.5.4:
 
 A set of bugfixes related to i18n and Unicode handling. There is a ``-4/-6`` switch and a corresponding :ref:`ip_resolve <ip-resolve-label>` configuration option (both known from YUM) to force DNS resolving of hosts to IPv4 or IPv6 addresses.
 
-0.5.3 comes with several extensions and clarifications in the API: notably :class:`~.dnf.transaction.Transaction` is introspectible now, :class:`Query.filter <dnf.query.Query.filter>` is more useful with new types of arguments and we've hopefully shed more light on how a client is expected to setup the configuration :attr:`~dnf.conf.Conf.substitutions`.
+0.5.3 comes with several extensions and clarifications in the API: notably :class:`~.dnf.transaction.Transaction` is introspectable now, :class:`Query.filter <dnf.query.Query.filter>` is more useful with new types of arguments and we've hopefully shed more light on how a client is expected to setup the configuration :attr:`~dnf.conf.Conf.substitutions`.
 
 Finally, plugin authors can now use a new :meth:`~dnf.Plugin.resolved` hook.
 
