@@ -384,7 +384,7 @@ configuration file by your distribution to override the DNF defaults.
 ``module_obsoletes``
     :ref:`boolean <boolean-label>`
 
-    This option controls whether dnf should apply modular obsoletes when possible.
+    This option controls whether dnf should apply modular obsoletes when possible. Default is ``False``.
 
 .. _module_platform_id-label:
 
@@ -399,7 +399,7 @@ configuration file by your distribution to override the DNF defaults.
 ``module_stream_switch``
     :ref:`boolean <boolean-label>`
 
-    This option controls whether it's possible to switch enabled streams of a module.
+    This option controls whether it's possible to switch enabled streams of a module. Default is ``False``.
 
 .. _multilib_policy-label:
 
