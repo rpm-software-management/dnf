@@ -223,6 +223,7 @@ class HistoryCommand(commands.Command):
             "Reinstall": "Reinstalled",
             "Obsoleted": "Install",
             "Obsolete": "Obsoleted",
+            "Reason Change": "Reason Change",
         }
 
         data = serialize_transaction(trans)
@@ -234,6 +235,16 @@ class HistoryCommand(commands.Command):
 
                 if ti["action"] == "Install" and ti.get("reason", None) == "clean":
                     ti["reason"] = "dependency"
+
+                if ti["action"] == "Reason Change" and "nevra" in ti:
+                    subj = hawkey.Subject(ti["nevra"])
+                    nevra = subj.get_nevra_possibilities(forms=[hawkey.FORM_NEVRA])[0]
+                    reason = self.output.history.swdb.resolveRPMTransactionItemReason(
+                        nevra.name,
+                        nevra.arch,
+                        trans.tids()[0] - 1
+                    )
+                    ti["reason"] = libdnf.transaction.TransactionItemReasonToString(reason)
 
                 if ti.get("repo_id") == hawkey.SYSTEM_REPO_NAME:
                     # erase repo_id, because it's not possible to perform forward actions from the @System repo
