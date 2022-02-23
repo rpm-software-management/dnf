@@ -23,7 +23,11 @@ import os
 import sys
 
 here = sys.path[0]
-if here != '/usr/bin':
+if here == '/usr/bin':
+    # we never import Python modules from /usr/bin
+    # removing this lowers the risk of accidental imports of weird files
+    del sys.path[0]
+else:
     # git checkout
     dnf_toplevel = os.path.dirname(here)
     sys.path[0] = dnf_toplevel
