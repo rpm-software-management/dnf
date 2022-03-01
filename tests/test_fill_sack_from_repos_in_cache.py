@@ -39,7 +39,7 @@ TEST_REPO_NAME = "test-repo"
 
 
 class FillSackFromReposInCacheTest(unittest.TestCase):
-    def _create_cache_for_repo(self, repopath, tmpdir):
+    def _create_cache_for_repo(self, repopath, tmpdir, repo_name=TEST_REPO_NAME):
         conf = dnf.conf.MainConf()
         conf.cachedir = os.path.join(tmpdir, "cache")
         conf.installroot = tmpdir
@@ -49,7 +49,7 @@ class FillSackFromReposInCacheTest(unittest.TestCase):
 
         base = dnf.Base(conf=conf)
 
-        repoconf = dnf.repo.Repo(TEST_REPO_NAME, base.conf)
+        repoconf = dnf.repo.Repo(repo_name, base.conf)
         repoconf.baseurl = repopath
         repoconf.enable()
 
@@ -194,6 +194,8 @@ class FillSackFromReposInCacheTest(unittest.TestCase):
 
     def test_exception_with_checksum_mismatch_and_only_repomd(self):
         self._setUp_from_repo_path(os.path.join(os.path.abspath(os.path.dirname(__file__)), "repos/rpm"))
+        self._create_cache_for_repo(os.path.join(os.path.abspath(os.path.dirname(__file__)), "repos/drpm"),
+                                    self.tmpdir, "drpm-repo")
 
         # Remove xml metadata except repomd
         # repomd.xml is not compressed and doesn't end with .gz
@@ -201,12 +203,11 @@ class FillSackFromReposInCacheTest(unittest.TestCase):
         for f in repodata_without_repomd:
             os.remove(f)
 
-        # Modify checksum of solv file so it doesn't match with repomd
-        solv = glob.glob(os.path.join(self.tmpdir, "cache/*.solv"))[0]
-        with open(solv, "a") as opensolv:
-            opensolv.write("appended text to change checksum")
+        # Replace solvfile of test-repo with solvfile from drpm-repo which has different data (different checksum)
+        shutil.move(os.path.join(self.tmpdir, "cache/drpm-repo.solv"),
+                    os.path.join(self.tmpdir, "cache/test-repo.solv"))
 
-        # Now we only have cache with solvx, modified solv file and just repomd
+        # Now we only have cache with solvx, mismatching solv file and just repomd
         # Since we don't have original xml metadata we cannot regenerate solv -> fail (exception)
 
         self.assertRaises(dnf.exceptions.RepoError,
@@ -214,13 +215,14 @@ class FillSackFromReposInCacheTest(unittest.TestCase):
 
     def test_checksum_mistmatch_regenerates_solv(self):
         self._setUp_from_repo_path(os.path.join(os.path.abspath(os.path.dirname(__file__)), "repos/rpm"))
+        self._create_cache_for_repo(os.path.join(os.path.abspath(os.path.dirname(__file__)), "repos/drpm"),
+                                    self.tmpdir, "drpm-repo")
 
-        # Modify checksum of solv file so it doesn't match with repomd
-        solv = glob.glob(os.path.join(self.tmpdir, "cache/*.solv"))[0]
-        with open(solv, "a") as opensolv:
-            opensolv.write("appended text to change checksum")
+        # Replace solvfile of test-repo with solvfile from drpm-repo which has different data (different checksum)
+        shutil.move(os.path.join(self.tmpdir, "cache/drpm-repo.solv"),
+                    os.path.join(self.tmpdir, "cache/test-repo.solv"))
 
-        # Now we only have cache with solvx, modified solv file and xml metadata.
+        # Now we only have cache with solvx, mismatching solv file and xml metadata.
         # Checksum mistmatch causes regeneration of solv file and repo works.
 
         self.test_base.fill_sack_from_repos_in_cache(load_system_repo=False)
