@@ -106,6 +106,21 @@ __dnf_repopkgs_subcmds="
     upgrade upgrade-to
 "
 
+__dnf_cache_file="/var/cache/dnf/packages.db"
+
+_dnf_query_db()
+{
+    local table=$1
+    local prefix=$2
+    local query="select pkg from $table where pkg like \"$prefix%\""
+    if [ "$table" = "available" ]; then
+        # The available table contains both installed and non-installed
+        # packages. Exclude the installed packages.
+	query="$query and pkg not in (select pkg from installed)"
+    fi
+    sqlite3 -batch -init /dev/null "$__dnf_cache_file" "$query"
+}
+
 __dnf_python_exec=
 _dnf_set_python_exec()
 {
@@ -148,7 +163,23 @@ _dnf_show_packages()
     shift
 
     if ! _dnf_is_path "$cur"; then
-        COMPREPLY+=( $(compgen -W "$( _dnf_commands_helper $cmd "$@" "$cur" )") )
+        if [ -r "$__dnf_cache_file" ] && [ -x /usr/bin/sqlite3 ]; then
+            case "$cmd$*" in
+            listinstalled|listupdates|\
+            dg|downgrade|\
+            ri|rei|reinstall|\
+            rm|remove*|erase*|\
+            um|u-m|upgrade|upgrade-n*|\
+            up|up-min|update|update-n*)
+                COMPREPLY+=( $(_dnf_query_db installed "$cur") )
+                ;;
+            *)
+                COMPREPLY+=( $(_dnf_query_db available "$cur") )
+                ;;
+            esac
+        else
+            COMPREPLY+=( $(compgen -W "$( _dnf_commands_helper $cmd "$@" "$cur" )") )
+        fi
     fi
 
     [[ $COMPREPLY ]] && return
