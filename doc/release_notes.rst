@@ -20,6 +20,46 @@
 ###################
 
 ====================
+4.11.0 Release Notes
+====================
+
+- New features:
+  - Allow destdir option with modulesync command
+  - Add documentation for query api flags (RhBug:2035577)
+
+- Bug fixes:
+  - Fix swap command to work with local rpm files correctly (RhBug:2036434)
+  - Don't recommend %{_bindir}/sqlite3 for bash-completion (RhBug:1947925)
+  - Don't recommend python3-unbound on RHEL (RhBug:1947924)
+  - Recommend rpm-plugin-systemd-inhibit only if systemd (RhBug:1947924)
+  - Fix regression in verifying signatures using rpmkeys
+  - Use rpm.TransactionSet.dbCookie() to determining if rpmdb has changed (RhBug:2043476)
+  - Fix decompression of groups.xml (RhBug:2030255)
+  - Fix history undo on a Reason Change (RhBug:2010259,2053014)
+  - Remove /usr/bin from sys.path to avoid accidentally importing garbage
+  - Fix: Python dnf API does not respect cacheonly (RhBug:1862970)
+  - Fix python3.11 build: remove deprecated, update traceback regex
+  - fix dnf mark error when history sqlite missing
+  - [doc] Improve description of multilib_policy=all (RhBug:1996681,1995630)
+  - [doc] clarify effect of --enablerepo and --disablerepo options (RhBug:2031414)
+  - [doc] default values for module_obsoletes and module_stream_switch (RhBug: 2051846)
+
+Bugs fixed in 4.11.0:
+
+* :rhbug:`2051846`
+* :rhbug:`1996681`
+* :rhbug:`1995630`
+* :rhbug:`2030255`
+* :rhbug:`2036434`
+* :rhbug:`2010259`
+* :rhbug:`1947924`
+* :rhbug:`1947925`
+* :rhbug:`2053014`
+* :rhbug:`2035577`
+* :rhbug:`1862970`
+* :rhbug:`2031414`
+
+====================
 4.10.0 Release Notes
 ====================
 

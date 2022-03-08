@@ -3378,5 +3378,53 @@
     [
         1947958,
         "DNF no longer raises an error when an unknown group is installed"
+    ],
+    [
+        2051846,
+        "dnf.conf(5) does not document a default value for module_obsoletes and module_stream_switch"
+    ],
+    [
+        1996681,
+        "yum tries to install packages with incompatible architecture when multilib_policy=all"
+    ],
+    [
+        1995630,
+        "yum tries to install packages with incompatible architecture when multilib_policy=all"
+    ],
+    [
+        2030255,
+        "Intermittent failure of `dnf --cacheonly`"
+    ],
+    [
+        2036434,
+        "dnf swap with local rpm produces Error: Cannot add local packages, because transaction job already exists"
+    ],
+    [
+        2010259,
+        "[abrt] dnf: _revert_transaction(): history.py:233:_revert_transaction:KeyError: 'Reason Change'"
+    ],
+    [
+        1947924,
+        "python3-dnf uses Recommends for python3-unbound and rpm-plugin-systemd-inhibit"
+    ],
+    [
+        1947925,
+        "dnf uses Recommends for /usr/bin/sqlite3 if bash-completion and python3-dbus if NetworkManager"
+    ],
+    [
+        2053014,
+        "Undoing an undo produces a python backtrace"
+    ],
+    [
+        2035577,
+        "sack.query() does not contain full package set"
+    ],
+    [
+        1862970,
+        "python3-dnf does not respect cacheonly"
+    ],
+    [
+        2031414,
+        "`dnf --disablerepo`/`dnf --enablerepo` documentation is confusing"
     ]
 ]
