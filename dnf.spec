@@ -65,7 +65,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.11.0
+Version:        4.11.1
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -359,6 +359,9 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Mon Mar 14 2022 Pavla Kratochvilova <pkratoch@redhat.com> - 4.11.1-1
+- Bump version, so that 4.11.0 can be released separately
+
 * Tue Mar 08 2022 Jaroslav Rohel <jrohel@redhat.com> - 4.11.0-1
 - Allow destdir option with modulesync command
 - Add documentation for query api flags (RhBug:2035577)
