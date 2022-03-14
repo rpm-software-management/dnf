@@ -108,7 +108,7 @@ def _download_payloads(payloads, drpm, fail_fast=True):
         callbacks = tgt.getCallbacks()
         payload = callbacks.package_pload
         pkg = payload.pkg
-        if err == _('Already downloaded'):
+        if err == 'Already downloaded':
             errs._skipped.add(pkg)
             continue
         pkg.repo._repo.expire()
