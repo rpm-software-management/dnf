@@ -358,7 +358,8 @@ class GroupCommand(commands.Command):
         else:
             demands.available_repos = True
 
-        commands._checkEnabledRepo(self.base)
+        if cmd not in ('remove'):
+            commands._checkEnabledRepo(self.base)
 
         if cmd in ('install', 'upgrade'):
             commands._checkGPGKey(self.base, self.cli)
