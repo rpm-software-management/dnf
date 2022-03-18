@@ -276,6 +276,9 @@ class HistoryCommand(commands.Command):
                 s = s[4:]
             transaction_id = int(s)
             if transaction_id <= 0:
+                if not self.output.history.last():
+                    logger.critical("Not found given transaction ID")
+                    raise ValueError
                 transaction_id += self.output.history.last().tid
             return transaction_id
 
