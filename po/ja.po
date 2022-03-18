@@ -14,7 +14,7 @@
 # Hajime Taira <htaira@fedoraproject.org>, 2017. #zanata
 # Ooyama Yosiyuki <qqke6wd9k@apricot.ocn.ne.jp>, 2017. #zanata
 # Casey Jones <nahareport@live.com>, 2018. #zanata
-# Ludek Janda <ljanda@redhat.com>, 2018. #zanata
+# Ludek Janda <ljanda@redhat.com>, 2018. #zanata, 2021.
 # Noriko Mizumoto <noriko.mizumoto@gmail.com>, 2018. #zanata
 # Ooyama Yosiyuki <qqke6wd9k@apricot.ocn.ne.jp>, 2018. #zanata
 # Hajime Taira <htaira@fedoraproject.org>, 2019. #zanata
@@ -22,20 +22,23 @@
 # Julien Humbert <julroy67@gmail.com>, 2020.
 # Casey Jones <nahareport@yahoo.com>, 2020.
 # Hajime Taira <htaira@pantora.net>, 2020.
+# Sundeep Anand <suanand@redhat.com>, 2021.
+# Transtats <suanand@redhat.com>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-10-05 09:18-0400\n"
-"PO-Revision-Date: 2020-07-27 05:29+0000\n"
-"Last-Translator: Hajime Taira <htaira@pantora.net>\n"
-"Language-Team: Japanese <https://translate.fedoraproject.org/projects/dnf/dnf-master/ja/>\n"
+"POT-Creation-Date: 2022-02-28 11:24+0100\n"
+"PO-Revision-Date: 2022-03-09 12:39+0000\n"
+"Last-Translator: Transtats <suanand@redhat.com>\n"
+"Language-Team: Japanese <https://translate.fedoraproject.org/projects/dnf/"
+"dnf-rhel-8/ja/>\n"
 "Language: ja\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Weblate 4.1.1\n"
+"X-Generator: Weblate 4.11.2\n"
 
 #: dnf/automatic/emitter.py:32
 #, python-format
@@ -45,7 +48,7 @@ msgstr "'%s' に以下の更新が適用されました:"
 #: dnf/automatic/emitter.py:33
 #, python-format
 msgid "Updates completed at %s"
-msgstr "'%s' に更新が適用されました。"
+msgstr "'%s' に更新が適用されました"
 
 #: dnf/automatic/emitter.py:34
 #, python-format
@@ -82,7 +85,7 @@ msgstr "'%s' を使用した電子メールの送信に失敗しました: %s"
 msgid "Failed to execute command '%s': returned %d"
 msgstr "コマンド '%s' の実行に失敗しました: %d を返しました"
 
-#: dnf/automatic/main.py:164 dnf/conf/config.py:151
+#: dnf/automatic/main.py:164
 #, python-format
 msgid "Unknown configuration value: %s=%s in %s; %s"
 msgstr "不明な設定値: %s=%s in %s; %s"
@@ -92,7 +95,7 @@ msgstr "不明な設定値: %s=%s in %s; %s"
 msgid "Unknown configuration option: %s = %s in %s"
 msgstr "不明な設定オプション: %s = %s in %s"
 
-#: dnf/automatic/main.py:237 dnf/cli/cli.py:299
+#: dnf/automatic/main.py:237 dnf/cli/cli.py:305
 msgid "GPG check FAILED"
 msgstr "GPG の確認に失敗しました"
 
@@ -105,9 +108,9 @@ msgid "Started dnf-automatic."
 msgstr "dnf-automatic を開始しました。"
 
 #: dnf/automatic/main.py:308
-#, python-format
-msgid "Sleep for %s seconds"
-msgstr "%s 秒スリープします"
+msgid "Sleep for {} second"
+msgid_plural "Sleep for {} seconds"
+msgstr[0] "{} 秒スリープします"
 
 #: dnf/automatic/main.py:315
 msgid "System is off-line."
@@ -119,439 +122,455 @@ msgstr "システムはオフラインです。"
 msgid "Error: %s"
 msgstr "エラー: %s"
 
-#: dnf/base.py:146
+#: dnf/base.py:148 dnf/base.py:477 dnf/base.py:479
 msgid "loading repo '{}' failure: {}"
 msgstr "repo '{}' のロードに失敗しました: {}"
 
-#: dnf/base.py:148
+#: dnf/base.py:150
 msgid "Loading repository '{}' has failed"
 msgstr "repository '{}' のロードに失敗しました"
 
-#: dnf/base.py:320
+#: dnf/base.py:327
 msgid "Metadata timer caching disabled when running on metered connection."
-msgstr "metered 接続で実行する際、メタデータタイマーキャッシュは無効化されました。"
+msgstr ""
+"metered 接続で実行する際、メタデータタイマーキャッシュは無効化されました。"
 
-#: dnf/base.py:325
+#: dnf/base.py:332
 msgid "Metadata timer caching disabled when running on a battery."
-msgstr "バッテリーで実行する際、メタデータタイマーキャッシュは無効化されました。"
+msgstr ""
+"バッテリーで実行する際、メタデータタイマーキャッシュは無効化されました。"
 
-#: dnf/base.py:330
+#: dnf/base.py:337
 msgid "Metadata timer caching disabled."
 msgstr "メタデータタイマーキャッシュは無効化されました。"
 
-#: dnf/base.py:335
+#: dnf/base.py:342
 msgid "Metadata cache refreshed recently."
 msgstr "メタデータキャッシュは最近、リフレッシュされました。"
 
-#: dnf/base.py:341 dnf/cli/commands/__init__.py:91
+#: dnf/base.py:348 dnf/cli/commands/__init__.py:91
 msgid "There are no enabled repositories in \"{}\"."
 msgstr "\"{}\" には有効化されたリポジトリーがありません。"
 
-#: dnf/base.py:348
+#: dnf/base.py:355
 #, python-format
 msgid "%s: will never be expired and will not be refreshed."
 msgstr "%s: は期限切れになることはなく、リフレッシュされることもありません。"
 
-#: dnf/base.py:350
+#: dnf/base.py:357
 #, python-format
 msgid "%s: has expired and will be refreshed."
 msgstr "%s: は期限切れとなったのでリフレッシュされます。"
 
 #. expires within the checking period:
-#: dnf/base.py:354
+#: dnf/base.py:361
 #, python-format
 msgid "%s: metadata will expire after %d seconds and will be refreshed now"
 msgstr "%s: メタデータは %d 秒後に期限切れとなり、すぐにリフレッシュされます"
 
-#: dnf/base.py:358
+#: dnf/base.py:365
 #, python-format
 msgid "%s: will expire after %d seconds."
 msgstr "%s: は %d 秒後に期限切れとなります。"
 
 #. performs the md sync
-#: dnf/base.py:364
+#: dnf/base.py:371
 msgid "Metadata cache created."
 msgstr "メタデータキャッシュを作成しました。"
 
-#: dnf/base.py:397
+#: dnf/base.py:404 dnf/base.py:471
 #, python-format
 msgid "%s: using metadata from %s."
-msgstr "%s: は %s から取得したメタデータを使用中"
+msgstr "%s: は %s から取得したメタデータを使用中。"
 
-#: dnf/base.py:409
+#: dnf/base.py:416 dnf/base.py:484
 #, python-format
 msgid "Ignoring repositories: %s"
 msgstr "リポジトリーを無視します: %s"
 
-#: dnf/base.py:412
+#: dnf/base.py:419
 #, python-format
 msgid "Last metadata expiration check: %s ago on %s."
 msgstr "メタデータの期限切れの最終確認: %s 時間前の %s に実施しました。"
 
-#: dnf/base.py:443
+#: dnf/base.py:512
 msgid ""
 "The downloaded packages were saved in cache until the next successful "
 "transaction."
-msgstr "ダウンロード済みのパッケージは、次の正常なトランザクションまでキャッシュに保存されました。"
+msgstr ""
+"ダウンロード済みのパッケージは、次の正常なトランザクションまでキャッシュに保"
+"存されました。"
 
-#: dnf/base.py:445
+#: dnf/base.py:514
 #, python-format
 msgid "You can remove cached packages by executing '%s'."
 msgstr "'%s' を実行することでキャッシュパッケージを削除できます。"
 
-#: dnf/base.py:535
+#: dnf/base.py:606
 #, python-format
 msgid "Invalid tsflag in config file: %s"
 msgstr "設定ファイルの tsflag が無効です: %s"
 
-#: dnf/base.py:591
+#: dnf/base.py:662
 #, python-format
 msgid "Failed to add groups file for repository: %s - %s"
 msgstr "リポジトリーのグループファイルを追加できませんでした: %s - %s"
 
-#: dnf/base.py:823
+#: dnf/base.py:904
 msgid "Running transaction check"
 msgstr "トランザクションの確認を実行中"
 
-#: dnf/base.py:831
+#: dnf/base.py:912
 msgid "Error: transaction check vs depsolve:"
 msgstr "エラー: トランザクションの確認 vs depsolve:"
 
-#: dnf/base.py:837
+#: dnf/base.py:918
 msgid "Transaction check succeeded."
 msgstr "トランザクションの確認に成功しました。"
 
-#: dnf/base.py:840
+#: dnf/base.py:921
 msgid "Running transaction test"
 msgstr "トランザクションのテストを実行中"
 
-#: dnf/base.py:850 dnf/base.py:992
+#: dnf/base.py:931 dnf/base.py:1082
 msgid "RPM: {}"
 msgstr "RPM: {}"
 
-#: dnf/base.py:851
+#: dnf/base.py:932
 msgid "Transaction test error:"
 msgstr "トランザクションテストエラー:"
 
-#: dnf/base.py:862
+#: dnf/base.py:943
 msgid "Transaction test succeeded."
 msgstr "トランザクションのテストに成功しました。"
 
-#: dnf/base.py:883
+#: dnf/base.py:964
 msgid "Running transaction"
 msgstr "トランザクションを実行中"
 
-#: dnf/base.py:911
+#: dnf/base.py:1001
 msgid "Disk Requirements:"
-msgstr "ディスク要件"
+msgstr "ディスク要件:"
 
-#: dnf/base.py:914
+#: dnf/base.py:1004
 #, python-brace-format
 msgid "At least {0}MB more space needed on the {1} filesystem."
 msgid_plural "At least {0}MB more space needed on the {1} filesystem."
 msgstr[0] "{1} ファイルシステムに最低 {0}MB の追加スペースが必要です。"
 
-#: dnf/base.py:921
+#: dnf/base.py:1011
 msgid "Error Summary"
 msgstr "エラーの概要"
 
-#: dnf/base.py:947
+#: dnf/base.py:1037
 #, python-brace-format
 msgid "RPMDB altered outside of {prog}."
 msgstr "RPMDBは {prog} のサポート外に変更されました。"
 
-#: dnf/base.py:993 dnf/base.py:1001
+#: dnf/base.py:1083 dnf/base.py:1091
 msgid "Could not run transaction."
 msgstr "トランザクションを実行できませんでした。"
 
-#: dnf/base.py:996
+#: dnf/base.py:1086
 msgid "Transaction couldn't start:"
 msgstr "トランザクションを開始できませんでした:"
 
-#: dnf/base.py:1010
+#: dnf/base.py:1100
 #, python-format
 msgid "Failed to remove transaction file %s"
 msgstr "トランザクションファイル %s の削除に失敗しました"
 
-#: dnf/base.py:1092
+#: dnf/base.py:1182
 msgid "Some packages were not downloaded. Retrying."
 msgstr "一部のパッケージはダウンロードされませんでした。再試行中です。"
 
-#: dnf/base.py:1122
+#: dnf/base.py:1212
 #, python-format
 msgid "Delta RPMs reduced %.1f MB of updates to %.1f MB (%d.1%% saved)"
-msgstr "Delta RPM により %.1f MB の更新を %.1f MB に削減できました。(%d.1%% がキャッシュされていました)"
+msgstr ""
+"Delta RPM により %.1f MB の更新を %.1f MB に削減できました。(%d.1%% がキャッ"
+"シュされていました)"
 
-#: dnf/base.py:1125
+#: dnf/base.py:1215
 #, python-format
 msgid ""
 "Failed Delta RPMs increased %.1f MB of updates to %.1f MB (%d.1%% wasted)"
-msgstr "非効率な Delta RPM により %.1f MB の更新が増加し、%.1f MB となりました。(%d.1%% が無駄になりました)"
+msgstr ""
+"非効率な Delta RPM により %.1f MB の更新が増加し、%.1f MB となりました。"
+"(%d.1%% が無駄になりました)"
 
-#: dnf/base.py:1167
+#: dnf/base.py:1257
 msgid "Cannot add local packages, because transaction job already exists"
-msgstr "ローカルパッケージを追加できません、トランザクションジョブがすでに存在するためです"
+msgstr ""
+"ローカルパッケージを追加できません、トランザクションジョブがすでに存在するた"
+"めです"
 
-#: dnf/base.py:1181
+#: dnf/base.py:1271
 msgid "Could not open: {}"
 msgstr "開くことができませんでした: {}"
 
-#: dnf/base.py:1219
+#: dnf/base.py:1309
 #, python-format
 msgid "Public key for %s is not installed"
 msgstr "%s の公開鍵がインストールされていません"
 
-#: dnf/base.py:1223
+#: dnf/base.py:1313
 #, python-format
 msgid "Problem opening package %s"
 msgstr "パッケージ %s を開くことができません"
 
-#: dnf/base.py:1231
+#: dnf/base.py:1321
 #, python-format
 msgid "Public key for %s is not trusted"
 msgstr "%s の公開鍵は信頼されていません"
 
-#: dnf/base.py:1235
+#: dnf/base.py:1325
 #, python-format
 msgid "Package %s is not signed"
 msgstr "パッケージ %s は署名されていません"
 
-#: dnf/base.py:1265
+#: dnf/base.py:1355
 #, python-format
 msgid "Cannot remove %s"
 msgstr "%s を削除できません"
 
-#: dnf/base.py:1269
+#: dnf/base.py:1359
 #, python-format
 msgid "%s removed"
 msgstr "%s を削除しました"
 
-#: dnf/base.py:1549
+#: dnf/base.py:1639
 msgid "No match for group package \"{}\""
-msgstr "グループパッケージ  \"{}\" に一致するものはありません"
+msgstr "グループパッケージ \"{}\" に一致するものはありません"
 
-#: dnf/base.py:1635
+#: dnf/base.py:1721
 #, python-format
 msgid "Adding packages from group '%s': %s"
 msgstr "グループ '%s' からのパッケージを追加します: %s"
 
-#: dnf/base.py:1658 dnf/cli/cli.py:219 dnf/cli/commands/__init__.py:442
-#: dnf/cli/commands/__init__.py:499 dnf/cli/commands/__init__.py:592
-#: dnf/cli/commands/__init__.py:641 dnf/cli/commands/install.py:80
+#: dnf/base.py:1744 dnf/cli/cli.py:221 dnf/cli/commands/__init__.py:437
+#: dnf/cli/commands/__init__.py:494 dnf/cli/commands/__init__.py:587
+#: dnf/cli/commands/__init__.py:636 dnf/cli/commands/install.py:80
 #: dnf/cli/commands/install.py:103 dnf/cli/commands/install.py:110
 msgid "Nothing to do."
 msgstr "行うべきことはありません。"
 
-#: dnf/base.py:1676
+#: dnf/base.py:1762
 msgid "No groups marked for removal."
 msgstr "削除対象のパッケージはありません。"
 
-#: dnf/base.py:1710
+#: dnf/base.py:1796
 msgid "No group marked for upgrade."
 msgstr "アップグレード対象のグループはありません。"
 
-#: dnf/base.py:1925
+#: dnf/base.py:2010
 #, python-format
 msgid "Package %s not installed, cannot downgrade it."
-msgstr "パッケージ %s はインストールされていないので、ダウングレードできません。"
+msgstr ""
+"パッケージ %s はインストールされていないので、ダウングレードできません。"
 
-#: dnf/base.py:1927 dnf/base.py:1946 dnf/base.py:1959 dnf/base.py:1980
-#: dnf/base.py:2029 dnf/base.py:2037 dnf/base.py:2172 dnf/cli/cli.py:411
-#: dnf/cli/commands/__init__.py:425 dnf/cli/commands/__init__.py:482
-#: dnf/cli/commands/__init__.py:586 dnf/cli/commands/__init__.py:633
-#: dnf/cli/commands/__init__.py:711 dnf/cli/commands/install.py:147
+#: dnf/base.py:2012 dnf/base.py:2031 dnf/base.py:2044 dnf/base.py:2071
+#: dnf/base.py:2124 dnf/base.py:2132 dnf/base.py:2266 dnf/cli/cli.py:417
+#: dnf/cli/commands/__init__.py:420 dnf/cli/commands/__init__.py:477
+#: dnf/cli/commands/__init__.py:581 dnf/cli/commands/__init__.py:628
+#: dnf/cli/commands/__init__.py:706 dnf/cli/commands/install.py:147
 #: dnf/cli/commands/reinstall.py:70 dnf/cli/commands/reinstall.py:84
-#: dnf/cli/commands/upgrade.py:110 dnf/cli/commands/upgrade.py:121
+#: dnf/cli/commands/upgrade.py:105 dnf/cli/commands/upgrade.py:116
 #, python-format
 msgid "No match for argument: %s"
 msgstr "一致した引数がありません: %s"
 
-#: dnf/base.py:1934
+#: dnf/base.py:2019
 #, python-format
 msgid "Package %s of lower version already installed, cannot downgrade it."
-msgstr "下位バージョンのパッケージ %s はインストール済みなので、ダウングレードできません。"
+msgstr ""
+"下位バージョンのパッケージ %s はインストール済みなので、ダウングレードできま"
+"せん。"
 
-#: dnf/base.py:1957
+#: dnf/base.py:2042
 #, python-format
 msgid "Package %s not installed, cannot reinstall it."
-msgstr "パッケージ %s はインストールされていないのでの、再インストールできません。"
+msgstr ""
+"パッケージ %s はインストールされていないのでの、再インストールできません。"
 
-#: dnf/base.py:1972
+#: dnf/base.py:2057
 #, python-format
 msgid "File %s is a source package and cannot be updated, ignoring."
 msgstr "ファイル %s はソースパッケージで更新できません。無視します。"
 
-#: dnf/base.py:1978
+#: dnf/base.py:2068
 #, python-format
 msgid "Package %s not installed, cannot update it."
 msgstr "パッケージ %s はインストールされていないので、更新できません。"
 
-#: dnf/base.py:1987
+#: dnf/base.py:2078
 #, python-format
 msgid ""
 "The same or higher version of %s is already installed, cannot update it."
-msgstr "同じまたはさらに新しいバージョンの %s が既にインストールされています、アップデートできません。"
+msgstr ""
+"同じまたはさらに新しいバージョンの %s が既にインストールされています、アップ"
+"デートできません。"
 
-#: dnf/base.py:2026 dnf/cli/commands/reinstall.py:81
+#: dnf/base.py:2121 dnf/cli/commands/reinstall.py:81
 #, python-format
 msgid "Package %s available, but not installed."
 msgstr "パッケージ %s は利用可能ですが、インストールされていません。"
 
-#: dnf/base.py:2032
+#: dnf/base.py:2127
 #, python-format
 msgid "Package %s available, but installed for different architecture."
-msgstr "パッケージ %s は利用可能ですが、他のアーキテクチャー用にインストールされています。"
+msgstr ""
+"パッケージ %s は利用可能ですが、他のアーキテクチャー用にインストールされてい"
+"ます。"
 
-#: dnf/base.py:2057 dnf/base.py:2250 dnf/cli/cli.py:668 dnf/cli/cli.py:699
+#: dnf/base.py:2152
 #, python-format
 msgid "No package %s installed."
 msgstr "パッケージ %s はインストールされていません。"
 
-#: dnf/base.py:2075 dnf/cli/commands/install.py:136
+#: dnf/base.py:2170 dnf/cli/commands/install.py:136
 #: dnf/cli/commands/remove.py:133
 #, python-format
 msgid "Not a valid form: %s"
 msgstr "有効な形式ではありません: %s"
 
-#: dnf/base.py:2091 dnf/cli/commands/__init__.py:681
-#: dnf/cli/commands/remove.py:163
+#: dnf/base.py:2185 dnf/cli/commands/__init__.py:676
+#: dnf/cli/commands/remove.py:162
 msgid "No packages marked for removal."
 msgstr "削除対象のパッケージはありません。"
 
-#: dnf/base.py:2179 dnf/cli/cli.py:422
+#: dnf/base.py:2273 dnf/cli/cli.py:428
 #, python-format
 msgid "Packages for argument %s available, but not installed."
-msgstr "引数  %s のパッケージは利用可能ですが、インストールされていません。"
+msgstr "引数 %s のパッケージは利用可能ですが、インストールされていません。"
 
-#: dnf/base.py:2184
+#: dnf/base.py:2278
 #, python-format
 msgid "Package %s of lowest version already installed, cannot downgrade it."
-msgstr "最下位バージョンのパッケージ %s はインストール済みなので、ダウングレードできません。"
+msgstr ""
+"最下位バージョンのパッケージ %s はインストール済みなので、ダウングレードでき"
+"ません。"
 
-#: dnf/base.py:2242
-msgid "Action not handled: {}"
-msgstr "動作は対処されていません: {}"
-
-#: dnf/base.py:2256 dnf/cli/cli.py:419 dnf/cli/cli.py:673 dnf/cli/cli.py:703
-#: dnf/cli/commands/group.py:400 dnf/cli/commands/history.py:169
-#, python-format
-msgid "No package %s available."
-msgstr "利用可能なパッケージ %s がありません。"
-
-#: dnf/base.py:2269
-msgid "no package matched"
-msgstr "一致したパッケージはありません。"
-
-#: dnf/base.py:2290
+#: dnf/base.py:2378
 msgid "No security updates needed, but {} update available"
 msgstr "セキュリティー更新は必要ありませんが、{} 更新が利用可能です"
 
-#: dnf/base.py:2292
+#: dnf/base.py:2380
 msgid "No security updates needed, but {} updates available"
 msgstr "セキュリティー更新は必要ありませんが、{} 更新が利用可能です"
 
-#: dnf/base.py:2296
+#: dnf/base.py:2384
 msgid "No security updates needed for \"{}\", but {} update available"
 msgstr "\"{}\" のセキュリティー更新は必要ありませんが、{} 更新が利用可能です"
 
-#: dnf/base.py:2298
+#: dnf/base.py:2386
 msgid "No security updates needed for \"{}\", but {} updates available"
 msgstr "\"{}\" のセキュリティー更新は必要ありませんが、{} 更新が利用可能です"
 
 #. raise an exception, because po.repoid is not in self.repos
-#: dnf/base.py:2319
+#: dnf/base.py:2407
 #, python-format
 msgid "Unable to retrieve a key for a commandline package: %s"
-msgstr ""
+msgstr "コマンドラインパッケージのキーを取得できません： %s"
 
-#: dnf/base.py:2327
+#: dnf/base.py:2415
 #, python-format
 msgid ". Failing package is: %s"
 msgstr ". 失敗したパッケージは: %s"
 
-#: dnf/base.py:2328
+#: dnf/base.py:2416
 #, python-format
 msgid "GPG Keys are configured as: %s"
 msgstr "GPG 鍵が設定されています: %s"
 
-#: dnf/base.py:2340
+#: dnf/base.py:2428
 #, python-format
 msgid "GPG key at %s (0x%s) is already installed"
 msgstr "%s (0x%s) の GPG 鍵はインストール済みです"
 
-#: dnf/base.py:2373
+#: dnf/base.py:2464
 msgid "The key has been approved."
 msgstr "鍵が承認されました。"
 
-#: dnf/base.py:2376
+#: dnf/base.py:2467
 msgid "The key has been rejected."
 msgstr "鍵が拒否されました。"
 
-#: dnf/base.py:2409
+#: dnf/base.py:2500
 #, python-format
 msgid "Key import failed (code %d)"
 msgstr "鍵のインポートに失敗しました (コード: %d)"
 
-#: dnf/base.py:2411
+#: dnf/base.py:2502
 msgid "Key imported successfully"
 msgstr "鍵のインポートに成功しました"
 
-#: dnf/base.py:2415
+#: dnf/base.py:2506
 msgid "Didn't install any keys"
 msgstr "鍵を 1 つもインストールしませんでした"
 
-#: dnf/base.py:2418
+#: dnf/base.py:2509
 #, python-format
 msgid ""
-"The GPG keys listed for the \"%s\" repository are already installed but they are not correct for this package.\n"
+"The GPG keys listed for the \"%s\" repository are already installed but they "
+"are not correct for this package.\n"
 "Check that the correct key URLs are configured for this repository."
 msgstr ""
-"\"%s\" リポジトリーに一覧表示されている GPG 鍵はインストール済みですが、このパッケージには適切ではありません。\n"
+"\"%s\" リポジトリーに一覧表示されている GPG 鍵はインストール済みですが、この"
+"パッケージには適切ではありません。\n"
 "正しい鍵 URL がこのリポジトリー用に設定されているか確認してください。"
 
-#: dnf/base.py:2429
+#: dnf/base.py:2520
 msgid "Import of key(s) didn't help, wrong key(s)?"
 msgstr "鍵をインポートしても役に立ちませんでした。鍵が間違っていませんか?"
 
-#: dnf/base.py:2482
+#: dnf/base.py:2573
 msgid "  * Maybe you meant: {}"
 msgstr "  * おそらく: {}"
 
-#: dnf/base.py:2514
+#: dnf/base.py:2605
 msgid "Package \"{}\" from local repository \"{}\" has incorrect checksum"
-msgstr "ローカルリポジトリー \"{}\" のパッケージ \"{}\" のチェックサムは正しくありません"
+msgstr ""
+"ローカルリポジトリー \"{}\" のパッケージ \"{}\" のチェックサムは正しくありま"
+"せん"
 
-#: dnf/base.py:2517
+#: dnf/base.py:2608
 msgid "Some packages from local repository have incorrect checksum"
-msgstr "ローカルリポジトリーのいくつかのパッケージのチェックサムは正しくありません"
+msgstr ""
+"ローカルリポジトリーのいくつかのパッケージのチェックサムは正しくありません"
 
-#: dnf/base.py:2520
+#: dnf/base.py:2611
 msgid "Package \"{}\" from repository \"{}\" has incorrect checksum"
-msgstr "リポジトリー \"{}\" のパッケージ \"{}\" のチェックサムは正しくありません"
+msgstr ""
+"リポジトリー \"{}\" のパッケージ \"{}\" のチェックサムは正しくありません"
 
-#: dnf/base.py:2523
+#: dnf/base.py:2614
 msgid ""
 "Some packages have invalid cache, but cannot be downloaded due to \"--"
 "cacheonly\" option"
-msgstr "いくつかのパッケージには無効なキャッシュがありますが、\"--cacheonly\" オプションによりダウンロードできません"
+msgstr ""
+"いくつかのパッケージには無効なキャッシュがありますが、\"--cacheonly\" オプ"
+"ションによりダウンロードできません"
 
-#: dnf/base.py:2541 dnf/base.py:2561
+#: dnf/base.py:2632 dnf/base.py:2652
 msgid "No match for argument"
 msgstr "一致した引数がありません"
 
-#: dnf/base.py:2549 dnf/base.py:2569
+#: dnf/base.py:2640 dnf/base.py:2660
 msgid "All matches were filtered out by exclude filtering for argument"
-msgstr "すべての検索結果は引数の除外フィルタリングに一致しません(filter out)"
+msgstr "すべての検索結果は引数の除外フィルタリングに一致しません (filter out)"
 
-#: dnf/base.py:2551
+#: dnf/base.py:2642
 msgid "All matches were filtered out by modular filtering for argument"
-msgstr "すべての検出結果は引数のモジュラーフィルタリングに一致しません(filter out)"
+msgstr ""
+"すべての検出結果は引数のモジュラーフィルタリングに一致しません (filter out)"
 
-#: dnf/base.py:2567
+#: dnf/base.py:2658
 msgid "All matches were installed from a different repository for argument"
-msgstr "すべての検索結果は引数に対し異なるレポジトリからインストールされたものです"
+msgstr ""
+"すべての検索結果は引数に対し異なるレポジトリからインストールされたものです"
 
-#: dnf/base.py:2583
+#: dnf/base.py:2705
 #, python-format
 msgid "Package %s is already installed."
 msgstr "パッケージ %s は既にインストールされています。"
@@ -571,8 +590,8 @@ msgstr "ファイル \"%s\" の解析に失敗しました: %s"
 msgid "Cannot read file \"%s\": %s"
 msgstr "ファイル \"%s\" を読み込めません: %s"
 
-#: dnf/cli/aliases.py:115 dnf/cli/aliases.py:129 dnf/cli/cli.py:902
-#: dnf/cli/cli.py:906 dnf/cli/commands/alias.py:108
+#: dnf/cli/aliases.py:115 dnf/cli/aliases.py:129 dnf/cli/cli.py:804
+#: dnf/cli/cli.py:808 dnf/cli/commands/alias.py:108
 #, python-format
 msgid "Config error: %s"
 msgstr "設定エラー: %s"
@@ -601,46 +620,56 @@ msgstr "  ビルド      : %s  (日時: %s)"
 msgid ""
 "The operation would result in switching of module '{0}' stream '{1}' to "
 "stream '{2}'"
-msgstr "オペレーションは、モジュール '{0}' ストリーム '{1}' を ストリーム '{2}' へと切り替える結果となります"
+msgstr ""
+"オペレーションは、モジュール '{0}' ストリーム '{1}' を ストリーム '{2}' へと"
+"切り替える結果となります"
 
-#: dnf/cli/cli.py:172
+#: dnf/cli/cli.py:173
 #, python-brace-format
 msgid ""
-"It is not possible to switch enabled streams of a module.\n"
-"It is recommended to remove all installed content from the module, and reset the module using '{prog} module reset <module_name>' command. After you reset the module, you can install the other stream."
+"It is not possible to switch enabled streams of a module unless explicitly "
+"enabled via configuration option module_stream_switch.\n"
+"It is recommended to rather remove all installed content from the module, "
+"and reset the module using '{prog} module reset <module_name>' command. "
+"After you reset the module, you can install the other stream."
 msgstr ""
-"モジュールの有効なストリームを切り替えることはできません。\n"
-"モジュールからインストールされた全てのコンテンツを削除し、 '{prog} module reset <module_name>' コマンドを使用してリセットすることが推奨されます。モジュールのリセット後、他のストリームをインストール可能です。"
+"設定オプション module_stream_switch から明示的に有効化されていない限り、モ"
+"ジュールの有効なストリームを切り替えることはできません。\n"
+"モジュールからインストールされた全てのコンテンツを削除し、'{prog} module "
+"reset <module_name>' コマンドを使用してリセットすることが推奨されます。モ"
+"ジュールのリセット後、他のストリームをインストール可能です。"
 
-#: dnf/cli/cli.py:210
+#: dnf/cli/cli.py:212
 #, python-brace-format
 msgid "{prog} will only download packages for the transaction."
 msgstr "{prog} はトランザクションでパッケージのダウンロードのみ行います。"
 
-#: dnf/cli/cli.py:213
+#: dnf/cli/cli.py:215
 #, python-brace-format
 msgid ""
 "{prog} will only download packages, install gpg keys, and check the "
 "transaction."
-msgstr "{prog} はパッケージのダウンロード、gpgキーのインストール、トランザクションのチェックのみ行います。"
+msgstr ""
+"{prog} はパッケージのダウンロード、gpgキーのインストール、トランザクションの"
+"チェックのみ行います。"
 
-#: dnf/cli/cli.py:217
+#: dnf/cli/cli.py:219
 msgid "Operation aborted."
 msgstr "操作が中断されました。"
 
-#: dnf/cli/cli.py:224
+#: dnf/cli/cli.py:226
 msgid "Downloading Packages:"
 msgstr "パッケージのダウンロード:"
 
-#: dnf/cli/cli.py:230
+#: dnf/cli/cli.py:232
 msgid "Error downloading packages:"
 msgstr "パッケージのダウンロード中にエラーが発生しました:"
 
-#: dnf/cli/cli.py:258
+#: dnf/cli/cli.py:264
 msgid "Transaction failed"
 msgstr "トランザクションが失敗しました"
 
-#: dnf/cli/cli.py:281
+#: dnf/cli/cli.py:287
 msgid ""
 "Refusing to automatically import keys when running unattended.\n"
 "Use \"-y\" to override."
@@ -648,171 +677,159 @@ msgstr ""
 "無人での実行中に鍵の自動インポートを拒否します。\n"
 "オーバーライドするには \"-y\" を使用してください。"
 
-#: dnf/cli/cli.py:331
+#: dnf/cli/cli.py:337
 msgid "Changelogs for {}"
 msgstr "{} の Changelogs"
 
-#: dnf/cli/cli.py:364 dnf/cli/cli.py:505 dnf/cli/cli.py:511
+#: dnf/cli/cli.py:370 dnf/cli/cli.py:511 dnf/cli/cli.py:517
 msgid "Obsoleting Packages"
 msgstr "パッケージの廃止"
 
-#: dnf/cli/cli.py:393
+#: dnf/cli/cli.py:399
 msgid "No packages marked for distribution synchronization."
-msgstr "ディストリビューション同期対象のパッケージがありません"
+msgstr "ディストリビューション同期対象のパッケージがありません。"
 
-#: dnf/cli/cli.py:428
+#: dnf/cli/cli.py:425 dnf/cli/commands/group.py:395
+#, python-format
+msgid "No package %s available."
+msgstr "利用可能なパッケージ %s はありません。"
+
+#: dnf/cli/cli.py:434
 msgid "No packages marked for downgrade."
 msgstr "ダウングレード対象のパッケージはありません。"
 
-#: dnf/cli/cli.py:479
+#: dnf/cli/cli.py:485
 msgid "Installed Packages"
 msgstr "インストール済みパッケージ"
 
-#: dnf/cli/cli.py:487
+#: dnf/cli/cli.py:493
 msgid "Available Packages"
 msgstr "利用可能なパッケージ"
 
-#: dnf/cli/cli.py:491
+#: dnf/cli/cli.py:497
 msgid "Autoremove Packages"
 msgstr "パッケージを自動削除します"
 
-#: dnf/cli/cli.py:493
+#: dnf/cli/cli.py:499
 msgid "Extra Packages"
 msgstr "エクストラパッケージ"
 
-#: dnf/cli/cli.py:497
+#: dnf/cli/cli.py:503
 msgid "Available Upgrades"
 msgstr "利用可能なアップグレード"
 
-#: dnf/cli/cli.py:513
+#: dnf/cli/cli.py:519
 msgid "Recently Added Packages"
 msgstr "最近追加したパッケージ"
 
-#: dnf/cli/cli.py:518
+#: dnf/cli/cli.py:523
 msgid "No matching Packages to list"
 msgstr "表示するための一致したパッケージはありません"
 
-#: dnf/cli/cli.py:599
+#: dnf/cli/cli.py:604
 msgid "No Matches found"
 msgstr "一致したものは見つかりませんでした"
 
-#: dnf/cli/cli.py:609
-msgid "No transaction ID given"
-msgstr "トランザクション ID は指定されていません"
-
-#: dnf/cli/cli.py:614
-msgid "Not found given transaction ID"
-msgstr "指定されたトランザクション ID は見つかりません"
-
-#: dnf/cli/cli.py:623
-msgid "Found more than one transaction ID!"
-msgstr "1 つ以上のトランザクション ID が見つかりました!"
-
-#: dnf/cli/cli.py:640
-#, python-format
-msgid "Transaction history is incomplete, before %u."
-msgstr "%u の前のトランザクション履歴が不完全です。"
-
-#: dnf/cli/cli.py:642
-#, python-format
-msgid "Transaction history is incomplete, after %u."
-msgstr "%u の後のトランザクション履歴が不完全です。"
-
-#: dnf/cli/cli.py:689
-msgid "Undoing transaction {}, from {}"
-msgstr "トランザクション {} を {} から取り消しています"
-
-#: dnf/cli/cli.py:769 dnf/cli/commands/shell.py:237
+#: dnf/cli/cli.py:671 dnf/cli/commands/shell.py:237
 #, python-format
 msgid "Unknown repo: '%s'"
 msgstr "不明な repo : '%s'"
 
-#: dnf/cli/cli.py:783
+#: dnf/cli/cli.py:685
 #, python-format
 msgid "No repository match: %s"
 msgstr "一致するリポジトリーがありません: %s"
 
-#: dnf/cli/cli.py:817
+#: dnf/cli/cli.py:719
 msgid ""
-"This command has to be run with superuser privileges (under the root user on"
-" most systems)."
-msgstr "このコマンドはスーパーユーザー特権(大概のシステムではrootユーザー)で実行しなければいけません。"
+"This command has to be run with superuser privileges (under the root user on "
+"most systems)."
+msgstr ""
+"このコマンドはスーパーユーザー特権(大概のシステムではrootユーザー)で実行しな"
+"ければいけません。"
 
-#: dnf/cli/cli.py:847
+#: dnf/cli/cli.py:749
 #, python-format
 msgid "No such command: %s. Please use %s --help"
-msgstr "そのようなコマンドはありません: %s. %s --help を使用してください。"
+msgstr "そのようなコマンドはありません: %s. %s --help を使用してください"
 
-#: dnf/cli/cli.py:850
+#: dnf/cli/cli.py:752
 #, python-format, python-brace-format
 msgid ""
 "It could be a {PROG} plugin command, try: \"{prog} install 'dnf-"
 "command(%s)'\""
-msgstr "{PROG} プラグインコマンドを実行できません、試してください: \"{prog} install 'dnf-command(%s)'\""
+msgstr ""
+"{PROG} プラグインコマンドを実行できません、試してください: \"{prog} install "
+"'dnf-command(%s)'\""
 
-#: dnf/cli/cli.py:854
+#: dnf/cli/cli.py:756
 #, python-brace-format
 msgid ""
 "It could be a {prog} plugin command, but loading of plugins is currently "
 "disabled."
-msgstr "{prog} プラグインコマンドを実行できません、プラグインのロードが現在無効になっているようです。"
+msgstr ""
+"{prog} プラグインコマンドを実行できません、プラグインのロードが現在無効になっ"
+"ているようです。"
 
-#: dnf/cli/cli.py:912
+#: dnf/cli/cli.py:814
 msgid ""
 "--destdir or --downloaddir must be used with --downloadonly or download or "
 "system-upgrade command."
 msgstr ""
-"--destdir または --downloaddir は、--downloadonly、download あるいは system-upgrade "
-"コマンドと共に使用する必要があります。"
+"--destdir または --downloaddir は、--downloadonly、download あるいは system-"
+"upgrade コマンドと共に使用する必要があります。"
 
-#: dnf/cli/cli.py:918
+#: dnf/cli/cli.py:820
 msgid ""
 "--enable, --set-enabled and --disable, --set-disabled must be used with "
 "config-manager command."
 msgstr ""
-"--enable と --set-enabled および --disable と --set-disabled は、config-manager "
-"コマンドと共に使用しなければなりません。"
+"--enable と --set-enabled および --disable と --set-disabled は、config-"
+"manager コマンドと共に使用しなければなりません。"
 
-#: dnf/cli/cli.py:1000
+#: dnf/cli/cli.py:902
 msgid ""
 "Warning: Enforcing GPG signature check globally as per active RPM security "
 "policy (see 'gpgcheck' in dnf.conf(5) for how to squelch this message)"
 msgstr ""
-"警告: アクティブな RPM セキュリティーポリシーにより、GPG 署名の確認をグローバルに強制します "
-"(このメッセージをスケルチするには、dnf.conf(5) の 'gpgcheck' を参照してください)"
+"警告: アクティブな RPM セキュリティーポリシーにより、GPG 署名の確認をグローバ"
+"ルに強制します (このメッセージをスケルチするには、dnf.conf(5) の 'gpgcheck' "
+"を参照してください)"
 
-#: dnf/cli/cli.py:1020
+#: dnf/cli/cli.py:922
 msgid "Config file \"{}\" does not exist"
 msgstr "設定ファイル \"{}\" は存在しません"
 
-#: dnf/cli/cli.py:1040
+#: dnf/cli/cli.py:942
 msgid ""
 "Unable to detect release version (use '--releasever' to specify release "
 "version)"
-msgstr "リリースバージョンを検出できません (リリースバージョンを指定するには '--releasever' を使用してください)"
+msgstr ""
+"リリースバージョンを検出できません (リリースバージョンを指定するには '--"
+"releasever' を使用してください)"
 
-#: dnf/cli/cli.py:1127 dnf/cli/commands/repoquery.py:471
+#: dnf/cli/cli.py:1016 dnf/cli/commands/repoquery.py:471
 msgid "argument {}: not allowed with argument {}"
 msgstr "引数 {}: 引数 {} と許可されていません"
 
-#: dnf/cli/cli.py:1134
+#: dnf/cli/cli.py:1023
 #, python-format
 msgid "Command \"%s\" already defined"
 msgstr "コマンド \"%s\" はすでに定義済みです"
 
-#: dnf/cli/cli.py:1154
+#: dnf/cli/cli.py:1043
 msgid "Excludes in dnf.conf: "
 msgstr "dnf.conf で除外します: "
 
-#: dnf/cli/cli.py:1157
+#: dnf/cli/cli.py:1046
 msgid "Includes in dnf.conf: "
 msgstr "dnf.conf で含めます: "
 
-#: dnf/cli/cli.py:1160
+#: dnf/cli/cli.py:1049
 msgid "Excludes in repo "
 msgstr "repo で除外します "
 
-#: dnf/cli/cli.py:1163
+#: dnf/cli/cli.py:1052
 msgid "Includes in repo "
 msgstr "repo に含めます "
 
@@ -824,13 +841,16 @@ msgstr "問題を診断するには実行してみてください: '%s'."
 #: dnf/cli/commands/__init__.py:40
 #, python-format
 msgid "You probably have corrupted RPMDB, running '%s' might fix the issue."
-msgstr "RPMDB を破損させたかもしれませんが、'%s' を実行することでこの問題を解決できる可能性があります。"
+msgstr ""
+"RPMDB を破損させたかもしれませんが、'%s' を実行することでこの問題を解決できる"
+"可能性があります。"
 
 #: dnf/cli/commands/__init__.py:44
 #, python-brace-format
 msgid ""
 "You have enabled checking of packages via GPG keys. This is a good thing.\n"
-"However, you do not have any GPG public keys installed. You need to download\n"
+"However, you do not have any GPG public keys installed. You need to "
+"download\n"
 "the keys for packages you wish to install and install them.\n"
 "You can do that by running the command:\n"
 "    rpm --import public.gpg.key\n"
@@ -849,11 +869,13 @@ msgstr ""
 "    rpm --import public.gpg.key\n"
 "\n"
 "\n"
-"代わりにレポジトリーセクションの 'gpgkey' オプションにあるレポジトリーを使用し\n"
+"代わりにレポジトリーセクションの 'gpgkey' オプションにあるレポジトリーを使用"
+"し\n"
 "キーのurlを特定したのち、 {prog} がインストールされます。\n"
 "\n"
 "\n"
-"詳細情報はディストリビューションまたはパッケージプロバイダーにコンタクトしてください。"
+"詳細情報はディストリビューションまたはパッケージプロバイダーにコンタクトして"
+"ください。"
 
 #: dnf/cli/commands/__init__.py:71
 #, python-format
@@ -864,38 +886,38 @@ msgstr "問題のリポジトリ: %s"
 msgid "display details about a package or group of packages"
 msgstr "パッケージもしくはパッケージのグループについての詳細を表示します"
 
-#: dnf/cli/commands/__init__.py:168 dnf/cli/commands/__init__.py:740
+#: dnf/cli/commands/__init__.py:168 dnf/cli/commands/__init__.py:735
 msgid "show all packages (default)"
 msgstr "すべてのパッケージを表示します (デフォルト)"
 
-#: dnf/cli/commands/__init__.py:171 dnf/cli/commands/__init__.py:743
-#: dnf/cli/commands/module.py:351
+#: dnf/cli/commands/__init__.py:171 dnf/cli/commands/__init__.py:738
+#: dnf/cli/commands/module.py:376
 msgid "show only available packages"
 msgstr "利用可能なパッケージのみを表示します"
 
-#: dnf/cli/commands/__init__.py:174 dnf/cli/commands/__init__.py:746
+#: dnf/cli/commands/__init__.py:174 dnf/cli/commands/__init__.py:741
 msgid "show only installed packages"
 msgstr "インストール済みのパッケージのみを表示します"
 
-#: dnf/cli/commands/__init__.py:177 dnf/cli/commands/__init__.py:749
+#: dnf/cli/commands/__init__.py:177 dnf/cli/commands/__init__.py:744
 msgid "show only extras packages"
 msgstr "エクストラパッケージのみを表示します"
 
 #: dnf/cli/commands/__init__.py:180 dnf/cli/commands/__init__.py:183
-#: dnf/cli/commands/__init__.py:752 dnf/cli/commands/__init__.py:755
+#: dnf/cli/commands/__init__.py:747 dnf/cli/commands/__init__.py:750
 msgid "show only upgrades packages"
 msgstr "アップグレードパッケージのみを表示します"
 
-#: dnf/cli/commands/__init__.py:186 dnf/cli/commands/__init__.py:758
+#: dnf/cli/commands/__init__.py:186 dnf/cli/commands/__init__.py:753
 msgid "show only autoremove packages"
 msgstr "自動削除パッケージのみを表示します"
 
-#: dnf/cli/commands/__init__.py:189 dnf/cli/commands/__init__.py:761
+#: dnf/cli/commands/__init__.py:189 dnf/cli/commands/__init__.py:756
 msgid "show only recently changed packages"
 msgstr "最近変更されたパッケージのみを表示します"
 
 #: dnf/cli/commands/__init__.py:190 dnf/cli/commands/__init__.py:265
-#: dnf/cli/commands/__init__.py:774 dnf/cli/commands/autoremove.py:48
+#: dnf/cli/commands/__init__.py:769 dnf/cli/commands/autoremove.py:48
 #: dnf/cli/commands/install.py:51 dnf/cli/commands/reinstall.py:44
 #: dnf/cli/commands/remove.py:61 dnf/cli/commands/upgrade.py:46
 msgid "PACKAGE"
@@ -933,70 +955,70 @@ msgstr "利用可能なパッケージのアップグレードを確認します
 msgid "show changelogs before update"
 msgstr "更新前に changelogs を表示します"
 
-#: dnf/cli/commands/__init__.py:361 dnf/cli/commands/__init__.py:414
-#: dnf/cli/commands/__init__.py:470
+#: dnf/cli/commands/__init__.py:356 dnf/cli/commands/__init__.py:409
+#: dnf/cli/commands/__init__.py:465
 msgid "No package available."
 msgstr "利用可能なパッケージがありません。"
 
-#: dnf/cli/commands/__init__.py:376
+#: dnf/cli/commands/__init__.py:371
 msgid "No packages marked for install."
 msgstr "インストール対象のパッケージはありません。"
 
-#: dnf/cli/commands/__init__.py:412
+#: dnf/cli/commands/__init__.py:407
 msgid "No package installed."
 msgstr "インストールされたパッケージはありません。"
 
-#: dnf/cli/commands/__init__.py:432 dnf/cli/commands/__init__.py:489
+#: dnf/cli/commands/__init__.py:427 dnf/cli/commands/__init__.py:484
 #: dnf/cli/commands/reinstall.py:91
 #, python-format
 msgid " (from %s)"
 msgstr " (%s から)"
 
-#: dnf/cli/commands/__init__.py:433 dnf/cli/commands/__init__.py:490
+#: dnf/cli/commands/__init__.py:428 dnf/cli/commands/__init__.py:485
 #: dnf/cli/commands/reinstall.py:92 dnf/cli/commands/remove.py:105
 #, python-format
 msgid "Installed package %s%s not available."
 msgstr "インストール済みパッケージ %s%s は利用できません。"
 
-#: dnf/cli/commands/__init__.py:467 dnf/cli/commands/__init__.py:576
-#: dnf/cli/commands/__init__.py:619 dnf/cli/commands/__init__.py:666
+#: dnf/cli/commands/__init__.py:462 dnf/cli/commands/__init__.py:571
+#: dnf/cli/commands/__init__.py:614 dnf/cli/commands/__init__.py:661
 msgid "No package installed from the repository."
 msgstr "リポジトリーからインストールされたパッケージはありません。"
 
-#: dnf/cli/commands/__init__.py:530 dnf/cli/commands/reinstall.py:101
+#: dnf/cli/commands/__init__.py:525 dnf/cli/commands/reinstall.py:101
 msgid "No packages marked for reinstall."
 msgstr "再インストール対象のパッケージはありません。"
 
-#: dnf/cli/commands/__init__.py:716 dnf/cli/commands/upgrade.py:89
+#: dnf/cli/commands/__init__.py:711 dnf/cli/commands/upgrade.py:84
 msgid "No packages marked for upgrade."
 msgstr "アップグレード対象のパッケージがありません。"
 
-#: dnf/cli/commands/__init__.py:726
+#: dnf/cli/commands/__init__.py:721
 msgid "run commands on top of all packages in given repository"
 msgstr "特定のリポジトリーのすべてのパッケージに対して、コマンドを実行します"
 
-#: dnf/cli/commands/__init__.py:765
+#: dnf/cli/commands/__init__.py:760
 msgid "REPOID"
 msgstr "REPOID"
 
-#: dnf/cli/commands/__init__.py:765
+#: dnf/cli/commands/__init__.py:760
 msgid "Repository ID"
 msgstr "リポジトリーID"
 
-#: dnf/cli/commands/__init__.py:777 dnf/cli/commands/mark.py:48
+#: dnf/cli/commands/__init__.py:772 dnf/cli/commands/mark.py:48
 #: dnf/cli/commands/updateinfo.py:108
 msgid "Package specification"
 msgstr "パッケージspec"
 
-#: dnf/cli/commands/__init__.py:801
+#: dnf/cli/commands/__init__.py:796
 msgid "display a helpful usage message"
 msgstr "有用な使用方法のメッセージを表示します"
 
-#: dnf/cli/commands/__init__.py:805
+#: dnf/cli/commands/__init__.py:800
 msgid "COMMAND"
 msgstr "コマンド"
 
-#: dnf/cli/commands/__init__.py:806
+#: dnf/cli/commands/__init__.py:801
 #, python-brace-format
 msgid "{prog} command to get help for"
 msgstr "{prog} コマンドでヘルプ表示"
@@ -1088,7 +1110,8 @@ msgstr "一致するエイリアスがありません: %s"
 #: dnf/cli/commands/autoremove.py:41
 msgid ""
 "remove all unneeded packages that were originally installed as dependencies"
-msgstr "当初は依存関係としてインストールされた不要なパッケージをすべて削除します"
+msgstr ""
+"当初は依存関係としてインストールされた不要なパッケージをすべて削除します"
 
 #: dnf/cli/commands/autoremove.py:46 dnf/cli/commands/remove.py:59
 msgid "Package to remove"
@@ -1167,8 +1190,12 @@ msgid "Waiting for process with pid %d to finish."
 msgstr "pid %d のプロセスが終了するのを待ちます。"
 
 #: dnf/cli/commands/deplist.py:32
-msgid "List package's dependencies and what packages provide them"
-msgstr "パッケージの依存関係とこれを提供するパッケージがどれかを一覧表示します"
+msgid ""
+"[deprecated, use repoquery --deplist] List package's dependencies and what "
+"packages provide them"
+msgstr ""
+"[非推奨、epoquery --deplist を使用] パッケージの依存関係とこれを提供するパッ"
+"ケージがどれかを一覧表示します"
 
 #: dnf/cli/commands/distrosync.py:32
 msgid "synchronize installed packages to the latest available versions"
@@ -1194,78 +1221,78 @@ msgstr "グループ情報を表示または使用します"
 msgid "No group data available for configured repositories."
 msgstr "設定されたリポジトリーが利用可能なグループデータはありません。"
 
-#: dnf/cli/commands/group.py:129
+#: dnf/cli/commands/group.py:126
 #, python-format
 msgid "Warning: Group %s does not exist."
 msgstr "警告: グループ %s は存在しません。"
 
-#: dnf/cli/commands/group.py:170
+#: dnf/cli/commands/group.py:167
 msgid "Warning: No groups match:"
 msgstr "警告: 一致するグループはありません:"
 
-#: dnf/cli/commands/group.py:182 dnf/cli/commands/group.py:193
-#: dnf/cli/output.py:1226
+#: dnf/cli/commands/group.py:179 dnf/cli/commands/group.py:190
+#: dnf/cli/output.py:1139
 msgid "<name-unset>"
 msgstr "<name-unset>"
 
-#: dnf/cli/commands/group.py:199
+#: dnf/cli/commands/group.py:196
 msgid "Available Environment Groups:"
 msgstr "利用可能な環境グループ:"
 
-#: dnf/cli/commands/group.py:201
+#: dnf/cli/commands/group.py:198
 msgid "Installed Environment Groups:"
 msgstr "インストール済みの環境グループ:"
 
-#: dnf/cli/commands/group.py:208 dnf/cli/commands/group.py:294
+#: dnf/cli/commands/group.py:205 dnf/cli/commands/group.py:291
 msgid "Installed Groups:"
 msgstr "インストール済みのグループ:"
 
-#: dnf/cli/commands/group.py:215 dnf/cli/commands/group.py:301
+#: dnf/cli/commands/group.py:212 dnf/cli/commands/group.py:298
 msgid "Installed Language Groups:"
 msgstr "インストール済みの言語グループ:"
 
-#: dnf/cli/commands/group.py:225 dnf/cli/commands/group.py:308
+#: dnf/cli/commands/group.py:222 dnf/cli/commands/group.py:305
 msgid "Available Groups:"
 msgstr "利用可能なグループ:"
 
-#: dnf/cli/commands/group.py:232 dnf/cli/commands/group.py:315
+#: dnf/cli/commands/group.py:229 dnf/cli/commands/group.py:312
 msgid "Available Language Groups:"
 msgstr "利用可能な言語グループ:"
 
-#: dnf/cli/commands/group.py:322
+#: dnf/cli/commands/group.py:319
 msgid "include optional packages from group"
 msgstr "グループのオプションパッケージを含めます"
 
-#: dnf/cli/commands/group.py:325
+#: dnf/cli/commands/group.py:322
 msgid "show also hidden groups"
 msgstr "非表示のグループも表示します"
 
-#: dnf/cli/commands/group.py:327
+#: dnf/cli/commands/group.py:324
 msgid "show only installed groups"
 msgstr "インストール済みのグループのみを表示します"
 
-#: dnf/cli/commands/group.py:329
+#: dnf/cli/commands/group.py:326
 msgid "show only available groups"
 msgstr "利用可能なグループのみを表示します"
 
-#: dnf/cli/commands/group.py:331
+#: dnf/cli/commands/group.py:328
 msgid "show also ID of groups"
 msgstr "グループIDも表示"
 
-#: dnf/cli/commands/group.py:333
+#: dnf/cli/commands/group.py:330
 msgid "available subcommands: {} (default), {}"
 msgstr "利用可能なサブコマンド: {} (default), {}"
 
-#: dnf/cli/commands/group.py:337
+#: dnf/cli/commands/group.py:334
 msgid "argument for group subcommand"
 msgstr "グループサブコマンドの引数"
 
-#: dnf/cli/commands/group.py:346
+#: dnf/cli/commands/group.py:343
 #, python-format
 msgid "Invalid groups sub-command, use: %s."
-msgstr "groups のサブコマンドが無効です: %s. を使用します"
+msgstr "groups のサブコマンドが無効です: %s を使用します。"
 
-#: dnf/cli/commands/group.py:403
+#: dnf/cli/commands/group.py:398
 msgid "Unable to find a mandatory group package."
 msgstr "必須のグループパッケージを見つけることができません。"
 
@@ -1275,25 +1302,31 @@ msgstr "トランザクション履歴を表示、または使用します"
 
 #: dnf/cli/commands/history.py:66
 msgid "For the store command, file path to store the transaction to"
-msgstr ""
+msgstr "store コマンドの場合は、トランザクションを保存するファイルパス"
 
 #: dnf/cli/commands/history.py:68
 msgid ""
-"For the replay command, don't check for installed packages matching those in"
-" transaction"
+"For the replay command, don't check for installed packages matching those in "
+"transaction"
 msgstr ""
+"replay コマンドの場合は、トランザクション内のパッケージに一致するインストール"
+"済みパッケージを確認しない"
 
 #: dnf/cli/commands/history.py:71
 msgid ""
 "For the replay command, don't check for extra packages pulled into the "
 "transaction"
 msgstr ""
+"replay コマンドの場合は、トランザクションにプルされた追加パッケージを確認しな"
+"い"
 
 #: dnf/cli/commands/history.py:74
 msgid ""
-"For the replay command, skip packages that are not available or have missing"
-" dependencies"
+"For the replay command, skip packages that are not available or have missing "
+"dependencies"
 msgstr ""
+"replay コマンドの場合は、利用できないパッケージや、依存関係が不足しているパッ"
+"ケージをスキップ"
 
 #: dnf/cli/commands/history.py:94
 msgid ""
@@ -1304,41 +1337,68 @@ msgstr ""
 "'{}' は 1 つのトランザクション ID またはパッケージ名が必要です。"
 
 #: dnf/cli/commands/history.py:101
-#, fuzzy
-#| msgid "No transaction ID or package name given."
 msgid "No transaction file name given."
-msgstr "トランザクション ID、またはパッケージ名が指定されていません。"
+msgstr "トランザクションファイル名が指定されていません。"
 
 #: dnf/cli/commands/history.py:103
-#, fuzzy
-#| msgid "Failed to remove transaction file %s"
 msgid "More than one argument given as transaction file name."
-msgstr "トランザクションファイル %s の削除に失敗しました"
+msgstr "トランザクションファイル名として指定された複数の引数。"
 
-#: dnf/cli/commands/history.py:122 dnf/cli/commands/history.py:126
+#: dnf/cli/commands/history.py:122 dnf/cli/commands/history.py:130
 msgid "No transaction ID or package name given."
 msgstr "トランザクション ID、またはパッケージ名が指定されていません。"
 
-#: dnf/cli/commands/history.py:138
+#: dnf/cli/commands/history.py:142
 #, python-format
 msgid "You don't have access to the history DB: %s"
 msgstr "履歴 DB にアクセスできません: %s"
 
-#: dnf/cli/commands/history.py:147
+#: dnf/cli/commands/history.py:151
 #, python-format
 msgid ""
-"Cannot undo transaction %s, doing so would result in an inconsistent package"
-" database."
-msgstr "トランザクション %s を取り消すことはできません。取り消すことで、パッケージデータベースに矛盾が生じます。"
+"Cannot undo transaction %s, doing so would result in an inconsistent package "
+"database."
+msgstr ""
+"トランザクション %s を取り消すことはできません。取り消すことで、パッケージ"
+"データベースに矛盾が生じます。"
 
-#: dnf/cli/commands/history.py:152
+#: dnf/cli/commands/history.py:156
 #, python-format
 msgid ""
 "Cannot rollback transaction %s, doing so would result in an inconsistent "
 "package database."
-msgstr "トランザクション %s をロールバックすることはできません。ロールバックすることで、パッケージデータベースに矛盾が生じます。"
+msgstr ""
+"トランザクション %s をロールバックすることはできません。ロールバックすること"
+"で、パッケージデータベースに矛盾が生じます。"
 
-#: dnf/cli/commands/history.py:222
+#: dnf/cli/commands/history.py:175
+msgid "No transaction ID given"
+msgstr "トランザクション ID は指定されていません"
+
+#: dnf/cli/commands/history.py:179
+#, python-brace-format
+msgid "Transaction ID \"{0}\" not found."
+msgstr "トランザクション ID \"{0}\" が見つかりません。"
+
+#: dnf/cli/commands/history.py:185
+msgid "Found more than one transaction ID!"
+msgstr "1 つ以上のトランザクション ID が見つかりました!"
+
+#: dnf/cli/commands/history.py:203
+#, python-format
+msgid "Transaction history is incomplete, before %u."
+msgstr "%u の前のトランザクション履歴が不完全です。"
+
+#: dnf/cli/commands/history.py:205
+#, python-format
+msgid "Transaction history is incomplete, after %u."
+msgstr "%u の後のトランザクション履歴が不完全です。"
+
+#: dnf/cli/commands/history.py:256
+msgid "No packages to list"
+msgstr "一覧表示するパッケージはありません"
+
+#: dnf/cli/commands/history.py:279
 msgid ""
 "Invalid transaction ID range definition '{}'.\n"
 "Use '<transaction-id>..<transaction-id>'."
@@ -1346,7 +1406,7 @@ msgstr ""
 "無効なトランザクション ID の範囲の定義 '{}'。\n"
 "'<transaction-id>..<transaction-id>' を使用してください。"
 
-#: dnf/cli/commands/history.py:226
+#: dnf/cli/commands/history.py:283
 msgid ""
 "Can't convert '{}' to transaction ID.\n"
 "Use '<number>', 'last', 'last-<number>'."
@@ -1354,40 +1414,29 @@ msgstr ""
 "'{}' をトランザクション IDに変換できません。\n"
 "'<number>', 'last', 'last-<number>' を使用してください。"
 
-#: dnf/cli/commands/history.py:255
+#: dnf/cli/commands/history.py:312
 msgid "No transaction which manipulates package '{}' was found."
 msgstr "パッケージ '{}' を操作するトランザクションが見つかりません。"
 
-#: dnf/cli/commands/history.py:305
-#, fuzzy, python-brace-format
-#| msgid "TransactionItem not found for key: {}"
-msgid "Transaction ID \"{id}\" not found."
-msgstr "TransactionItemが見つかりません鍵: {}"
-
-#: dnf/cli/commands/history.py:313
+#: dnf/cli/commands/history.py:357
 msgid "{} exists, overwrite?"
-msgstr ""
+msgstr "{} は存在します。上書きしますか?"
 
-#: dnf/cli/commands/history.py:316
+#: dnf/cli/commands/history.py:360
 msgid "Not overwriting {}, exiting."
-msgstr ""
+msgstr "{} は存在するため上書きしません。"
 
-#: dnf/cli/commands/history.py:323
-#, fuzzy
-#| msgid "Transaction failed"
+#: dnf/cli/commands/history.py:367
 msgid "Transaction saved to {}."
-msgstr "トランザクションが失敗しました"
+msgstr "{} に保存されているトランザクション。"
 
-#: dnf/cli/commands/history.py:326
-#, fuzzy
-#| msgid "Errors occurred during transaction."
+#: dnf/cli/commands/history.py:370
 msgid "Error storing transaction: {}"
-msgstr "トランザクション中にエラーが発生しました。"
+msgstr "トランザクションの保存エラー： {}"
 
-#: dnf/cli/commands/history.py:350
-msgid ""
-"Warning, the following problems occurred while replaying the transaction:"
-msgstr ""
+#: dnf/cli/commands/history.py:386
+msgid "Warning, the following problems occurred while running a transaction:"
+msgstr "警告: トランザクションの実行中に以下の問題が発生しました："
 
 #: dnf/cli/commands/install.py:47
 msgid "install a package or packages on your system"
@@ -1406,7 +1455,7 @@ msgstr "一致するものが見つかりません"
 msgid "Not a valid rpm file path: %s"
 msgstr "有効な rpm ファイルパスではありません: %s"
 
-#: dnf/cli/commands/install.py:167
+#: dnf/cli/commands/install.py:166
 #, python-brace-format
 msgid "There are following alternatives for \"{0}\": {1}"
 msgstr "\"{0}\"には次の選択肢があります: {1}"
@@ -1421,7 +1470,9 @@ msgstr "すべてのメタデータファイルのキャッシュファイルを
 
 #: dnf/cli/commands/mark.py:39
 msgid "mark or unmark installed packages as installed by user."
-msgstr "インストール済みパッケージをユーザーがインストールしたとマークするか、またはマークをはずします。"
+msgstr ""
+"インストール済みパッケージをユーザーがインストールしたとマークするか、または"
+"マークをはずします。"
 
 #: dnf/cli/commands/mark.py:44
 msgid ""
@@ -1449,7 +1500,7 @@ msgid "%s marked as group installed."
 msgstr "グループインストールには %s のマークがついています。"
 
 #: dnf/cli/commands/mark.py:85 dnf/cli/commands/shell.py:129
-#: dnf/cli/commands/shell.py:237 dnf/cli/commands/shell.py:279
+#: dnf/cli/commands/shell.py:237 dnf/cli/commands/shell.py:282
 msgid "Error:"
 msgstr "エラー:"
 
@@ -1458,89 +1509,95 @@ msgstr "エラー:"
 msgid "Package %s is not installed."
 msgstr "パッケージ %s はインストールされていません。"
 
-#: dnf/cli/commands/module.py:51
+#: dnf/cli/commands/module.py:54
 msgid ""
-"Only module name, stream, architecture or profile is used. Ignoring unneeded"
-" information in argument: '{}'"
-msgstr "モジュール名、ストリーム、アーキテクチャーまたはプロファイルのみが使用されています。引数: '{}' の不要な情報は無視します"
+"Only module name, stream, architecture or profile is used. Ignoring unneeded "
+"information in argument: '{}'"
+msgstr ""
+"モジュール名、ストリーム、アーキテクチャーまたはプロファイルのみが使用されて"
+"います。引数: '{}' の不要な情報は無視します"
 
-#: dnf/cli/commands/module.py:77
+#: dnf/cli/commands/module.py:80
 msgid "list all module streams, profiles and states"
 msgstr "全てのモジュールストリーム、プロファイル、状態をリスト"
 
-#: dnf/cli/commands/module.py:105 dnf/cli/commands/module.py:128
+#: dnf/cli/commands/module.py:108 dnf/cli/commands/module.py:131
 msgid "No matching Modules to list"
 msgstr "表示する一致モジュールはありません"
 
-#: dnf/cli/commands/module.py:111
+#: dnf/cli/commands/module.py:114
 msgid "print detailed information about a module"
 msgstr "モジュールに関する詳細情報を表示"
 
-#: dnf/cli/commands/module.py:133
+#: dnf/cli/commands/module.py:136
 msgid "enable a module stream"
 msgstr "モジュールストリームを有効化"
 
-#: dnf/cli/commands/module.py:157
+#: dnf/cli/commands/module.py:160
 msgid "disable a module with all its streams"
 msgstr "すべてのストリームのモジュールを無効化"
 
-#: dnf/cli/commands/module.py:181
+#: dnf/cli/commands/module.py:184
 msgid "reset a module"
 msgstr "モジュールのリセット"
 
-#: dnf/cli/commands/module.py:202
+#: dnf/cli/commands/module.py:205
 msgid "install a module profile including its packages"
 msgstr "パッケージを含むモジュールプロファイルのインストール"
 
-#: dnf/cli/commands/module.py:223
+#: dnf/cli/commands/module.py:226
 msgid "update packages associated with an active stream"
 msgstr "アクティブストリームに紐づいたパッケージをアップデート"
 
-#: dnf/cli/commands/module.py:240
+#: dnf/cli/commands/module.py:243
 msgid "remove installed module profiles and their packages"
 msgstr "インストールされたモジュールプロファイルとそのパッケージを削除"
 
-#: dnf/cli/commands/module.py:264
+#: dnf/cli/commands/module.py:267
 msgid "Package {} belongs to multiple modules, skipping"
 msgstr "パッケージ {} は複数のモジュールに属しています、スキップします"
 
-#: dnf/cli/commands/module.py:277
+#: dnf/cli/commands/module.py:280
+msgid "switch a module to a stream and distrosync rpm packages"
+msgstr "モジュールをストリームに切り替え、rpm パッケージを distrosync します"
+
+#: dnf/cli/commands/module.py:302
 msgid "list modular packages"
 msgstr "モジュラーパッケージをリスト"
 
-#: dnf/cli/commands/module.py:292
+#: dnf/cli/commands/module.py:317
 msgid "list packages belonging to a module"
 msgstr "モジュールに属するパッケージをリスト"
 
-#: dnf/cli/commands/module.py:327
+#: dnf/cli/commands/module.py:352
 msgid "Interact with Modules."
 msgstr "モジュールと対話します。"
 
-#: dnf/cli/commands/module.py:340
+#: dnf/cli/commands/module.py:365
 msgid "show only enabled modules"
 msgstr "有効なモジュールのみを表示します"
 
-#: dnf/cli/commands/module.py:343
+#: dnf/cli/commands/module.py:368
 msgid "show only disabled modules"
 msgstr "無効なモジュールのみを表示します"
 
-#: dnf/cli/commands/module.py:346
+#: dnf/cli/commands/module.py:371
 msgid "show only installed modules or packages"
 msgstr "インストールされたモジュールまたはパッケージのみ表示"
 
-#: dnf/cli/commands/module.py:349
+#: dnf/cli/commands/module.py:374
 msgid "show profile content"
 msgstr "プロファイルコンテンツを表示します"
 
-#: dnf/cli/commands/module.py:354
+#: dnf/cli/commands/module.py:379
 msgid "remove all modular packages"
 msgstr "すべてのモジュラーパッケージを削除"
 
-#: dnf/cli/commands/module.py:364
+#: dnf/cli/commands/module.py:389
 msgid "Module specification"
 msgstr "モジュールspec"
 
-#: dnf/cli/commands/module.py:386
+#: dnf/cli/commands/module.py:411
 msgid "{} {} {}: too few arguments"
 msgstr "{} {} {}: 引数が足りません"
 
@@ -1729,7 +1786,9 @@ msgstr "キーワードに一致するパッケージを検索します"
 msgid ""
 "Query all packages (shorthand for repoquery '*' or repoquery without "
 "argument)"
-msgstr "すべてのパッケージをクエリーします (repoquery '*' の短縮形、または引数なしの repoquery)"
+msgstr ""
+"すべてのパッケージをクエリーします (repoquery '*' の短縮形、または引数なしの "
+"repoquery)"
 
 #: dnf/cli/commands/repoquery.py:124
 msgid "Query all versions of packages (default)"
@@ -1751,7 +1810,9 @@ msgstr "REQ と競合する結果のみを表示します"
 msgid ""
 "shows results that requires, suggests, supplements, enhances,or recommends "
 "package provides and files REQ"
-msgstr "REQ を提供およびファイルするパッケージを必要、提案、補完、機能強化、または推奨する結果を表示します"
+msgstr ""
+"REQ を提供およびファイルするパッケージを必要、提案、補完、機能強化、または推"
+"奨する結果を表示します"
 
 #: dnf/cli/commands/repoquery.py:139
 msgid "show only results that obsolete REQ"
@@ -1793,7 +1854,9 @@ msgstr "指定されたとおりに依存関係を確認します。--alldeps �
 msgid ""
 "used with --whatrequires, and --requires --resolve, query packages "
 "recursively."
-msgstr "--whatrequires および --requires --resolve と共に使用し、パッケージを再帰的にクエリーします。"
+msgstr ""
+"--whatrequires および --requires --resolve と共に使用し、パッケージを再帰的に"
+"クエリーします。"
 
 #: dnf/cli/commands/repoquery.py:166
 msgid "show a list of all dependencies and what packages provide them"
@@ -1815,7 +1878,9 @@ msgstr "対応するソース RPM で操作します"
 msgid ""
 "show N latest packages for a given name.arch (or latest but N if N is "
 "negative)"
-msgstr "特定の name.arch に最新パッケージ N を表示します (または N がネガティブな場合は N 以外の最新のもの)"
+msgstr ""
+"特定の name.arch に最新パッケージ N を表示します (または N がネガティブな場合"
+"は N 以外の最新のもの)"
 
 #: dnf/cli/commands/repoquery.py:177
 msgid "list also packages of inactive module streams"
@@ -1840,9 +1905,11 @@ msgstr "パッケージの changelogs を表示します"
 #: dnf/cli/commands/repoquery.py:194
 #, python-format, python-brace-format
 msgid ""
-"display format for listing packages: \"%%{name} %%{version} ...\", use "
-"--querytags to view full tag list"
+"display format for listing packages: \"%%{name} %%{version} ...\", use --"
+"querytags to view full tag list"
 msgstr ""
+"パッケージを一覧表示するための形式の表示： \"%%{name} %%{version} ...\"。--"
+"querytags を指定して完全なタグリストを表示"
 
 #: dnf/cli/commands/repoquery.py:198
 msgid "show available tags to use with --queryformat"
@@ -1853,19 +1920,24 @@ msgid ""
 "use name-epoch:version-release.architecture format for displaying found "
 "packages (default)"
 msgstr ""
-"見つかったパッケージを表示するには  name-epoch:version-release.architecture 形式を使用します (デフォルト)"
+"見つかったパッケージを表示するには name-epoch:version-release.architecture 形"
+"式を使用します (デフォルト)"
 
 #: dnf/cli/commands/repoquery.py:205
 msgid ""
 "use name-version-release format for displaying found packages (rpm query "
 "default)"
-msgstr "見つかったパッケージを表示するには name-version-release 形式を使用します (rpm クエリーデフォルト)"
+msgstr ""
+"見つかったパッケージを表示するには name-version-release 形式を使用します "
+"(rpm クエリーデフォルト)"
 
 #: dnf/cli/commands/repoquery.py:211
 msgid ""
 "use epoch:name-version-release.architecture format for displaying found "
 "packages"
-msgstr "見つかったパッケージを表示するには epoch:name-version-release.architecture 形式を使用します"
+msgstr ""
+"見つかったパッケージを表示するには epoch:name-version-release.architecture 形"
+"式を使用します"
 
 #: dnf/cli/commands/repoquery.py:214
 msgid "Display in which comps groups are presented selected packages"
@@ -1881,7 +1953,8 @@ msgstr "インストール済みの installonly パッケージへのクエリ�
 
 #: dnf/cli/commands/repoquery.py:228
 msgid "limit the query to installed packages with unsatisfied dependencies"
-msgstr "未充足な依存関係があるインストール済みパッケージへのクエリーを制限します"
+msgstr ""
+"未充足な依存関係があるインストール済みパッケージへのクエリーを制限します"
 
 #: dnf/cli/commands/repoquery.py:230
 msgid "show a location from where packages can be downloaded"
@@ -1895,7 +1968,8 @@ msgstr "パッケージが競合する機能を表示します。"
 msgid ""
 "Display capabilities that the package can depend on, enhance, recommend, "
 "suggest, and supplement."
-msgstr "パッケージが依存、機能強化、推奨、提案、および補完できる機能を表示します。"
+msgstr ""
+"パッケージが依存、機能強化、推奨、提案、および補完できる機能を表示します。"
 
 #: dnf/cli/commands/repoquery.py:236
 msgid "Display capabilities that the package can enhance."
@@ -1920,9 +1994,10 @@ msgid ""
 "running %%pre and %%post scriptlets. If the package is installed display "
 "capabilities that is depends for %%pre, %%post, %%preun and %%postun."
 msgstr ""
-"このパッケージがインストールされていない場合、 %%pre と %%post "
-"スクリプトレット実行に依存するケイパビリティを表示します。このパッケージがインストールされている場合、 %%pre, %%post, %%preun と"
-" %%postun に依存するケイパビリティを表示します。"
+"このパッケージがインストールされていない場合、 %%pre と %%post スクリプトレッ"
+"ト実行に依存するケイパビリティを表示します。このパッケージがインストールされ"
+"ている場合、 %%pre, %%post, %%preun と %%postun に依存するケイパビリティを表"
+"示します。"
 
 #: dnf/cli/commands/repoquery.py:243
 msgid "Display capabilities that the package suggests."
@@ -1949,7 +2024,9 @@ msgstr "利用可能なリポジトリーに存在しないパッケージのみ
 msgid ""
 "Display only packages that provide an upgrade for some already installed "
 "package."
-msgstr "インストール済みのパッケージの一部にアップグレードを提供するパッケージのみを表示します。"
+msgstr ""
+"インストール済みのパッケージの一部にアップグレードを提供するパッケージのみを"
+"表示します。"
 
 #: dnf/cli/commands/repoquery.py:256
 #, python-brace-format
@@ -1971,26 +2048,28 @@ msgstr "検索するための鍵"
 
 #: dnf/cli/commands/repoquery.py:295
 msgid ""
-"Option '--resolve' has to be used together with one of the '--conflicts', '"
-"--depends', '--enhances', '--provides', '--recommends', '--requires', '--"
+"Option '--resolve' has to be used together with one of the '--conflicts', '--"
+"depends', '--enhances', '--provides', '--recommends', '--requires', '--"
 "requires-pre', '--suggests' or '--supplements' options"
 msgstr ""
-"オプションの '--resolve' は、'--conflicts'、'--depends'、'--enhances'、'--provides'、'--"
-"recommends'、'--requires'、'--requires-pre'、'--suggests' または '--supplements' "
-"オプションのいずれか 1 つと使用する必要があります。"
+"オプションの '--resolve' は、'--conflicts'、'--depends'、'--enhances'、'--"
+"provides'、'--recommends'、'--requires'、'--requires-pre'、'--suggests' また"
+"は '--supplements' オプションのいずれか 1 つと使用する必要があります"
 
 #: dnf/cli/commands/repoquery.py:305
 msgid ""
 "Option '--recursive' has to be used with '--whatrequires <REQ>' (optionally "
-"with '--alldeps', but not with '--exactdeps'), or with '--requires <REQ> "
-"--resolve'"
+"with '--alldeps', but not with '--exactdeps'), or with '--requires <REQ> --"
+"resolve'"
 msgstr ""
-"オプションの '--recursive' は、'--whatrequires <REQ>' (オプションでは '--exactdeps' ではなく、'"
-"--alldeps' と共に使用) または '--requires <REQ> --resolve' と共に使用する必要があります。"
+"オプションの '--recursive' は、'--whatrequires <REQ>' (オプションでは '--"
+"exactdeps' ではなく、'--alldeps' と共に使用) または '--requires <REQ> --"
+"resolve' と共に使用する必要があります"
 
 #: dnf/cli/commands/repoquery.py:312
 msgid "argument {} requires --whatrequires or --whatdepends option"
-msgstr "引数 {} は --whatrequires または --whatdepends オプションを必要とします"
+msgstr ""
+"引数 {} は --whatrequires または --whatdepends オプションを必要とします"
 
 #: dnf/cli/commands/repoquery.py:344
 msgid "Package {} contains no files"
@@ -2000,13 +2079,17 @@ msgstr "パッケージ {} はファイルを含んでいません"
 #, python-brace-format
 msgid ""
 "No valid switch specified\n"
-"usage: {prog} repoquery [--conflicts|--enhances|--obsoletes|--provides|--recommends|--requires|--suggest|--supplements|--whatrequires] [key] [--tree]\n"
+"usage: {prog} repoquery [--conflicts|--enhances|--obsoletes|--provides|--"
+"recommends|--requires|--suggest|--supplements|--whatrequires] [key] [--"
+"tree]\n"
 "\n"
 "description:\n"
 "  For the given packages print a tree of thepackages."
 msgstr ""
 "正規のスイッチが特定されません\n"
-"usage: {prog} repoquery [--conflicts|--enhances|--obsoletes|--provides|--recommends|--requires|--suggest|--supplements|--whatrequires] [key] [--tree]\n"
+"usage: {prog} repoquery [--conflicts|--enhances|--obsoletes|--provides|--"
+"recommends|--requires|--suggest|--supplements|--whatrequires] [key] [--"
+"tree]\n"
 "\n"
 "説明:\n"
 "  与えられたパッケージではパッケージのツリーを表示します。"
@@ -2027,27 +2110,26 @@ msgstr "KEYWORD"
 msgid "Keyword to search for"
 msgstr "検索のキーワード"
 
-#: dnf/cli/commands/search.py:61 dnf/cli/output.py:506
+#: dnf/cli/commands/search.py:61 dnf/cli/output.py:460
 msgctxt "long"
 msgid "Name"
 msgstr "名前"
 
-#: dnf/cli/commands/search.py:62 dnf/cli/output.py:559
+#: dnf/cli/commands/search.py:62 dnf/cli/output.py:513
 msgctxt "long"
 msgid "Summary"
 msgstr "概要"
 
-#: dnf/cli/commands/search.py:63 dnf/cli/output.py:569
+#: dnf/cli/commands/search.py:63 dnf/cli/output.py:523
 msgctxt "long"
 msgid "Description"
 msgstr "説明"
 
-#: dnf/cli/commands/search.py:64 dnf/cli/output.py:562
+#: dnf/cli/commands/search.py:64 dnf/cli/output.py:516
 msgid "URL"
 msgstr "URL"
 
-#. TRANSLATORS: separator used between package attributes (eg. Name & Summary
-#. & URL)
+#. TRANSLATORS: separator used between package attributes (eg. Name & Summary & URL)
 #: dnf/cli/commands/search.py:76
 msgid " & "
 msgstr " & "
@@ -2123,7 +2205,8 @@ msgid ""
 "  disable: disable repositories. option = repository id"
 msgstr ""
 "{} arg [オプション]\n"
-" 一覧: リポジトリーとその状態を一覧表示します。オプション = [all | id | glob]\n"
+" 一覧: リポジトリーとその状態を一覧表示します。オプション = [all | id | "
+"glob]\n"
 "  有効化: リポジトリーの有効化。オプション = リポジトリー id\n"
 "  無効化: リポジトリーの無効化。オプション = リポジトリー id"
 
@@ -2181,27 +2264,30 @@ msgstr ""
 "ヘルプ                     ヘルプの印刷\n"
 "リポジトリー (または repo)     リポジトリーの有効化、無効化、または一覧表示\n"
 "resolvedep               トランザクションセットの解決\n"
-"トランザクション (または ts)      トランザクションセットの一覧表示、再設定、または実行\n"
+"トランザクション (または ts)      トランザクションセットの一覧表示、再設定、"
+"または実行\n"
 "実行                      トランザクションセットの解決および実行\n"
 "終了 (または 中止)           シェルの終了"
 
-#: dnf/cli/commands/shell.py:259
+#: dnf/cli/commands/shell.py:262
 #, python-format
 msgid "Error: Cannot open %s for reading"
 msgstr "エラー: 読み込み用に %s を開くことができません"
 
-#: dnf/cli/commands/shell.py:281 dnf/cli/main.py:187
+#: dnf/cli/commands/shell.py:284 dnf/cli/main.py:187
 msgid "Complete!"
 msgstr "完了しました!"
 
-#: dnf/cli/commands/shell.py:291
+#: dnf/cli/commands/shell.py:294
 msgid "Leaving Shell"
 msgstr "シェルを終了します"
 
 #: dnf/cli/commands/swap.py:35
 #, python-brace-format
 msgid "run an interactive {prog} mod for remove and install one spec"
-msgstr "一つのspecを削除またはインストールするためインタラクティブ {prog} モジュールを実行"
+msgstr ""
+"一つのspecを削除またはインストールするためインタラクティブ {prog} モジュール"
+"を実行"
 
 #: dnf/cli/commands/swap.py:40
 msgid "The specs that will be removed"
@@ -2253,13 +2339,16 @@ msgstr "インストール済みパッケージの新しいバージョンに関
 
 #: dnf/cli/commands/updateinfo.py:80
 msgid "advisories about equal and older versions of installed packages"
-msgstr "インストール済みパッケージの同じバージョンおよび古いバージョンに関する勧告"
+msgstr ""
+"インストール済みパッケージの同じバージョンおよび古いバージョンに関する勧告"
 
 #: dnf/cli/commands/updateinfo.py:83
 msgid ""
 "advisories about newer versions of those installed packages for which a "
 "newer version is available"
-msgstr "最新バージョンが利用可能なインストール済みパッケージの最新バージョンに関する勧告"
+msgstr ""
+"最新バージョンが利用可能なインストール済みパッケージの最新バージョンに関する"
+"勧告"
 
 #: dnf/cli/commands/updateinfo.py:87
 msgid "advisories about any versions of installed packages"
@@ -2385,8 +2474,8 @@ msgstr "重大度"
 msgid "Files"
 msgstr "ファイル"
 
-#: dnf/cli/commands/updateinfo.py:359 dnf/cli/output.py:1499
-#: dnf/cli/output.py:1772 dnf/cli/output.py:1774
+#: dnf/cli/commands/updateinfo.py:359 dnf/cli/output.py:1654
+#: dnf/cli/output.py:1656 dnf/util.py:617
 msgid "Installed"
 msgstr "インストール済み"
 
@@ -2400,7 +2489,8 @@ msgstr "正"
 
 #: dnf/cli/commands/upgrade.py:40
 msgid "upgrade a package or packages on your system"
-msgstr "システム上の 1 つのパッケージまたは複数のパッケージをアップグレードします"
+msgstr ""
+"システム上の 1 つのパッケージまたは複数のパッケージをアップグレードします"
 
 #: dnf/cli/commands/upgrade.py:44
 msgid "Package to upgrade"
@@ -2410,7 +2500,9 @@ msgstr "アップグレードするパッケージ"
 msgid ""
 "upgrade, but only 'newest' package match which fixes a problem that affects "
 "your system"
-msgstr "システムに影響する問題を修正する「最新の」パッケージに一致したもののみをアップグレードします"
+msgstr ""
+"システムに影響する問題を修正する「最新の」パッケージに一致したもののみをアッ"
+"プグレードします"
 
 #: dnf/cli/main.py:88
 msgid "Terminated."
@@ -2422,23 +2514,29 @@ msgstr "現在のディレクトリーには読み取り/実行権限があり�
 
 #: dnf/cli/main.py:135
 msgid "try to add '{}' to command line to replace conflicting packages"
-msgstr "競合するパッケージを置き換えるには、コマンドラインに '{}' を追加してみてください"
+msgstr ""
+"競合するパッケージを置き換えるには、コマンドラインに '{}' を追加してみてくだ"
+"さい"
 
 #: dnf/cli/main.py:139
 msgid "try to add '{}' to skip uninstallable packages"
-msgstr "インストール不可のパッケージをスキップするには、'{}' を追加してみてください"
+msgstr ""
+"インストール不可のパッケージをスキップするには、'{}' を追加してみてください"
 
 #: dnf/cli/main.py:142
 msgid " or '{}' to skip uninstallable packages"
-msgstr " または、'{}' を追加して、インストール不可のパッケージをスキップしてください"
+msgstr ""
+" または、'{}' を追加して、インストール不可のパッケージをスキップしてください"
 
 #: dnf/cli/main.py:147
 msgid "try to add '{}' to use not only best candidate packages"
-msgstr "最適候補のパッケージのみを使用しないためには、'{}' を追加してみてください"
+msgstr ""
+"最適候補のパッケージのみを使用しないためには、'{}' を追加してみてください"
 
 #: dnf/cli/main.py:150
 msgid " or '{}' to use not only best candidate packages"
-msgstr " または、'{}' を追加して、最適候補のパッケージのみを使用しないでください"
+msgstr ""
+" または、'{}' を追加して、最適候補のパッケージのみを使用しないでください"
 
 #: dnf/cli/main.py:167
 msgid "Dependencies resolved."
@@ -2530,7 +2628,9 @@ msgstr "依存関係を解決するために、インストール済みパッケ
 
 #: dnf/cli/option_parser.py:221
 msgid "try the best available package versions in transactions."
-msgstr "トランザクションにおいて利用可能な最適なパッケージバージョンを試してください。"
+msgstr ""
+"トランザクションにおいて利用可能な最適なパッケージバージョンを試してくださ"
+"い。"
 
 #: dnf/cli/option_parser.py:223
 msgid "do not limit the transaction to the best candidate"
@@ -2566,8 +2666,8 @@ msgid ""
 "enables {prog}'s obsoletes processing logic for upgrade or display "
 "capabilities that the package obsoletes for info, list and repoquery"
 msgstr ""
-"アップグレードまたは、info, list, repoquery で旧パッケージのケイパビリティを表示するため、 {prog} "
-"の旧プロセスロジックを有効化"
+"アップグレードまたは、info, list, repoquery で旧パッケージのケイパビリティを"
+"表示するため、 {prog} の旧プロセスロジックを有効化"
 
 #: dnf/cli/option_parser.py:251
 msgid "debugging output level for rpm"
@@ -2585,19 +2685,25 @@ msgstr "すべての質問に「いいえ」(no) と自動的に答えます"
 msgid ""
 "Enable additional repositories. List option. Supports globs, can be "
 "specified multiple times."
-msgstr "追加レポジトリを有効化、オプションのリスト、globsのサポートは何度でも指定可能です。"
+msgstr ""
+"追加レポジトリを有効化、オプションのリスト、globsのサポートは何度でも指定可能"
+"です。"
 
 #: dnf/cli/option_parser.py:266
 msgid ""
-"Disable repositories. List option. Supports globs, can be specified multiple"
-" times."
-msgstr "追加レポジトリを無効化、オプションのリスト、globsのサポートは何度でも指定可能です。"
+"Disable repositories. List option. Supports globs, can be specified multiple "
+"times."
+msgstr ""
+"追加レポジトリを無効化、オプションのリスト、globsのサポートは何度でも指定可能"
+"です。"
 
 #: dnf/cli/option_parser.py:270
 msgid ""
 "enable just specific repositories by an id or a glob, can be specified "
 "multiple times"
-msgstr "id または glob により特定のリポジトリーだけを有効にします。複数回指定することが可能です"
+msgstr ""
+"id または glob により特定のリポジトリーだけを有効にします。複数回指定すること"
+"が可能です"
 
 #: dnf/cli/option_parser.py:275
 msgid "enable repos with config-manager command (automatically saves)"
@@ -2619,7 +2725,9 @@ msgstr "excludepkgs を無効にします"
 msgid ""
 "label and path to an additional repository to use (same path as in a "
 "baseurl), can be specified multiple times."
-msgstr "利用する追加レポジトリ(baseurlと同じパス)のラベルとパスは何度でも指定可能です。"
+msgstr ""
+"利用する追加レポジトリ(baseurlと同じパス)のラベルとパスは何度でも指定可能で"
+"す。"
 
 #: dnf/cli/option_parser.py:297
 msgid "disable removal of dependencies that are no longer used"
@@ -2699,7 +2807,7 @@ msgstr "主要コマンドの一覧:"
 
 #: dnf/cli/option_parser.py:376
 msgid "List of Plugin Commands:"
-msgstr "プラグインコマンドの一覧"
+msgstr "プラグインコマンドの一覧:"
 
 #: dnf/cli/option_parser.py:413
 #, python-format
@@ -2709,13 +2817,13 @@ msgstr "引数をエンコードできません '%s': %s"
 #. Translators: This is abbreviated 'Name'. Should be no longer
 #. than 12 characters. You can use the full version if it is short
 #. enough in your language.
-#: dnf/cli/output.py:505
+#: dnf/cli/output.py:459
 msgctxt "short"
 msgid "Name"
 msgstr "名前"
 
 #. Translators: This message should be no longer than 12 characters.
-#: dnf/cli/output.py:511
+#: dnf/cli/output.py:465
 msgid "Epoch"
 msgstr "エポック"
 
@@ -2723,38 +2831,38 @@ msgstr "エポック"
 #. use the full (unabbreviated) term 'Version' if you think that
 #. the translation to your language is not too long and will
 #. always fit to limited space.
-#: dnf/cli/output.py:512 dnf/cli/output.py:1335
+#: dnf/cli/output.py:466 dnf/cli/output.py:1248
 msgctxt "short"
 msgid "Version"
 msgstr "バージョン"
 
 #. Translators: This is the full (unabbreviated) term 'Version'.
-#: dnf/cli/output.py:513 dnf/cli/output.py:1337
+#: dnf/cli/output.py:467 dnf/cli/output.py:1250
 msgctxt "long"
 msgid "Version"
 msgstr "バージョン"
 
 #. Translators: This message should be no longer than 12 characters.
-#: dnf/cli/output.py:516
+#: dnf/cli/output.py:470
 msgid "Release"
 msgstr "リリース"
 
 #. Translators: This is abbreviated 'Architecture', used when
 #. we have not enough space to display the full word.
-#: dnf/cli/output.py:517 dnf/cli/output.py:1326
+#: dnf/cli/output.py:471 dnf/cli/output.py:1239
 msgctxt "short"
 msgid "Arch"
 msgstr "Arch"
 
 #. Translators: This is the full word 'Architecture', used when
 #. we have enough space.
-#: dnf/cli/output.py:518 dnf/cli/output.py:1329
+#: dnf/cli/output.py:472 dnf/cli/output.py:1242
 msgctxt "long"
 msgid "Architecture"
 msgstr "アーキテクチャー"
 
 #. Translators: This is the full (unabbreviated) term 'Size'.
-#: dnf/cli/output.py:520 dnf/cli/output.py:1352
+#: dnf/cli/output.py:474 dnf/cli/output.py:1265
 msgctxt "long"
 msgid "Size"
 msgstr "サイズ"
@@ -2763,32 +2871,32 @@ msgstr "サイズ"
 #. not be longer than 5 characters. If the term 'Size' in your
 #. language is not longer than 5 characters then you can use it
 #. unabbreviated.
-#: dnf/cli/output.py:520 dnf/cli/output.py:1350
+#: dnf/cli/output.py:474 dnf/cli/output.py:1263
 msgctxt "short"
 msgid "Size"
 msgstr "サイズ"
 
 #. Translators: This message should be no longer than 12 characters.
-#: dnf/cli/output.py:524
+#: dnf/cli/output.py:478
 msgid "Source"
 msgstr "ソース"
 
 #. Translators: This is abbreviated 'Repository', used when
 #. we have not enough space to display the full word.
-#: dnf/cli/output.py:525 dnf/cli/output.py:1341
+#: dnf/cli/output.py:479 dnf/cli/output.py:1254
 msgctxt "short"
 msgid "Repo"
 msgstr "Repo"
 
 #. Translators: This is the full word 'Repository', used when
 #. we have enough space.
-#: dnf/cli/output.py:526 dnf/cli/output.py:1344
+#: dnf/cli/output.py:480 dnf/cli/output.py:1257
 msgctxt "long"
 msgid "Repository"
 msgstr "リポジトリー"
 
 #. Translators: This message should be no longer than 12 chars.
-#: dnf/cli/output.py:533
+#: dnf/cli/output.py:487
 msgid "From repo"
 msgstr "repo から"
 
@@ -2796,312 +2904,308 @@ msgstr "repo から"
 #. print(_("Committer   : %s") % ucd(pkg.committer))
 #. print(_("Committime  : %s") % time.ctime(pkg.committime))
 #. Translators: This message should be no longer than 12 characters.
-#: dnf/cli/output.py:539
+#: dnf/cli/output.py:493
 msgid "Packager"
 msgstr "パッケージャー"
 
 #. Translators: This message should be no longer than 12 characters.
-#: dnf/cli/output.py:541
+#: dnf/cli/output.py:495
 msgid "Buildtime"
 msgstr "ビルド時間"
 
 #. Translators: This message should be no longer than 12 characters.
-#: dnf/cli/output.py:545
+#: dnf/cli/output.py:499
 msgid "Install time"
 msgstr "インストール時間"
 
 #. Translators: This message should be no longer than 12 chars.
-#: dnf/cli/output.py:554
+#: dnf/cli/output.py:508
 msgid "Installed by"
 msgstr "インストール済み"
 
 #. Translators: This is abbreviated 'Summary'. Should be no longer
 #. than 12 characters. You can use the full version if it is short
 #. enough in your language.
-#: dnf/cli/output.py:558
+#: dnf/cli/output.py:512
 msgctxt "short"
 msgid "Summary"
 msgstr "概要"
 
 #. Translators: This message should be no longer than 12 characters.
-#: dnf/cli/output.py:564
+#: dnf/cli/output.py:518
 msgid "License"
 msgstr "ライセンス"
 
 #. Translators: This is abbreviated 'Description'. Should be no longer
 #. than 12 characters. You can use the full version if it is short
 #. enough in your language.
-#: dnf/cli/output.py:568
+#: dnf/cli/output.py:522
 msgctxt "short"
 msgid "Description"
 msgstr "説明"
 
-#: dnf/cli/output.py:695
-msgid "No packages to list"
-msgstr "一覧表示するパッケージはありません"
-
-#: dnf/cli/output.py:706
+#: dnf/cli/output.py:650
 msgid "y"
 msgstr "y"
 
-#: dnf/cli/output.py:706
+#: dnf/cli/output.py:650
 msgid "yes"
 msgstr "はい"
 
-#: dnf/cli/output.py:707
+#: dnf/cli/output.py:651
 msgid "n"
 msgstr "n"
 
-#: dnf/cli/output.py:707
+#: dnf/cli/output.py:651
 msgid "no"
 msgstr "いいえ"
 
-#: dnf/cli/output.py:711
+#: dnf/cli/output.py:655
 msgid "Is this ok [y/N]: "
 msgstr "これでよろしいですか? [y/N]: "
 
-#: dnf/cli/output.py:715
+#: dnf/cli/output.py:659
 msgid "Is this ok [Y/n]: "
 msgstr "これでよろしいですか? [Y/n]: "
 
-#: dnf/cli/output.py:795
+#: dnf/cli/output.py:739
 #, python-format
 msgid "Group: %s"
 msgstr "グループ: %s"
 
-#: dnf/cli/output.py:799
+#: dnf/cli/output.py:743
 #, python-format
 msgid " Group-Id: %s"
 msgstr " グループ ID: %s"
 
-#: dnf/cli/output.py:801 dnf/cli/output.py:840
+#: dnf/cli/output.py:745 dnf/cli/output.py:784
 #, python-format
 msgid " Description: %s"
 msgstr " 説明: %s"
 
-#: dnf/cli/output.py:803
+#: dnf/cli/output.py:747
 #, python-format
 msgid " Language: %s"
 msgstr " 言語: %s"
 
-#: dnf/cli/output.py:806
+#: dnf/cli/output.py:750
 msgid " Mandatory Packages:"
 msgstr " 必須なパッケージ:"
 
-#: dnf/cli/output.py:807
+#: dnf/cli/output.py:751
 msgid " Default Packages:"
 msgstr " 標準パッケージ:"
 
-#: dnf/cli/output.py:808
+#: dnf/cli/output.py:752
 msgid " Optional Packages:"
 msgstr " オプション パッケージ:"
 
-#: dnf/cli/output.py:809
+#: dnf/cli/output.py:753
 msgid " Conditional Packages:"
 msgstr " 条件付きパッケージ:"
 
-#: dnf/cli/output.py:834
+#: dnf/cli/output.py:778
 #, python-format
 msgid "Environment Group: %s"
 msgstr "環境グループ: %s"
 
-#: dnf/cli/output.py:837
+#: dnf/cli/output.py:781
 #, python-format
 msgid " Environment-Id: %s"
 msgstr " 環境 Id: %s"
 
-#: dnf/cli/output.py:843
+#: dnf/cli/output.py:787
 msgid " Mandatory Groups:"
 msgstr " 必須なグループ:"
 
-#: dnf/cli/output.py:844
+#: dnf/cli/output.py:788
 msgid " Optional Groups:"
 msgstr " 任意なグループ:"
 
-#: dnf/cli/output.py:865
+#: dnf/cli/output.py:809
 msgid "Matched from:"
 msgstr "一致:"
 
-#: dnf/cli/output.py:879
+#: dnf/cli/output.py:823
 #, python-format
 msgid "Filename    : %s"
 msgstr "ファイル名    : %s"
 
-#: dnf/cli/output.py:904
+#: dnf/cli/output.py:848
 #, python-format
 msgid "Repo        : %s"
 msgstr "Repo        : %s"
 
-#: dnf/cli/output.py:913
+#: dnf/cli/output.py:857
 msgid "Description : "
-msgstr "説明                : "
+msgstr "説明: "
 
-#: dnf/cli/output.py:917
+#: dnf/cli/output.py:861
 #, python-format
 msgid "URL         : %s"
 msgstr "URL                 : %s"
 
-#: dnf/cli/output.py:921
+#: dnf/cli/output.py:865
 #, python-format
 msgid "License     : %s"
 msgstr "ライセンス    : %s"
 
-#: dnf/cli/output.py:927
+#: dnf/cli/output.py:871
 #, python-format
 msgid "Provide    : %s"
 msgstr "提供する    : %s"
 
-#: dnf/cli/output.py:947
+#: dnf/cli/output.py:891
 #, python-format
 msgid "Other       : %s"
 msgstr "その他       : %s"
 
-#: dnf/cli/output.py:996
+#: dnf/cli/output.py:940
 msgid "There was an error calculating total download size"
 msgstr "ダウンロードサイズの合計を計算中にエラーが発生しました"
 
-#: dnf/cli/output.py:1002
+#: dnf/cli/output.py:946
 #, python-format
 msgid "Total size: %s"
 msgstr "合計サイズ: %s"
 
-#: dnf/cli/output.py:1005
+#: dnf/cli/output.py:949
 #, python-format
 msgid "Total download size: %s"
 msgstr "ダウンロードサイズの合計: %s"
 
-#: dnf/cli/output.py:1008
+#: dnf/cli/output.py:952
 #, python-format
 msgid "Installed size: %s"
 msgstr "インストール後のサイズ: %s"
 
-#: dnf/cli/output.py:1026
+#: dnf/cli/output.py:970
 msgid "There was an error calculating installed size"
 msgstr "インストール後のサイズを計算中にエラーが発生しました"
 
-#: dnf/cli/output.py:1030
+#: dnf/cli/output.py:974
 #, python-format
 msgid "Freed space: %s"
 msgstr "解放された容量: %s"
 
-#: dnf/cli/output.py:1039
+#: dnf/cli/output.py:983
 msgid "Marking packages as installed by the group:"
 msgstr "パッケージをグループごとにインストール済みとマークします:"
 
-#: dnf/cli/output.py:1046
+#: dnf/cli/output.py:990
 msgid "Marking packages as removed by the group:"
 msgstr "パッケージをグループごとに削除済みとマークします:"
 
-#: dnf/cli/output.py:1056
+#: dnf/cli/output.py:1000
 msgid "Group"
 msgstr "グループ"
 
-#: dnf/cli/output.py:1056
+#: dnf/cli/output.py:1000
 msgid "Packages"
 msgstr "パッケージ"
 
-#: dnf/cli/output.py:1133
+#: dnf/cli/output.py:1046
 msgid "Installing group/module packages"
 msgstr "group/moduleパッケージをインストール"
 
-#: dnf/cli/output.py:1134
+#: dnf/cli/output.py:1047
 msgid "Installing group packages"
 msgstr "グループパッケージのインストール"
 
 #. TRANSLATORS: This is for a list of packages to be installed.
-#: dnf/cli/output.py:1138
+#: dnf/cli/output.py:1051
 msgctxt "summary"
 msgid "Installing"
 msgstr "インストール"
 
 #. TRANSLATORS: This is for a list of packages to be upgraded.
-#: dnf/cli/output.py:1140
+#: dnf/cli/output.py:1053
 msgctxt "summary"
 msgid "Upgrading"
 msgstr "アップグレード"
 
 #. TRANSLATORS: This is for a list of packages to be reinstalled.
-#: dnf/cli/output.py:1142
+#: dnf/cli/output.py:1055
 msgctxt "summary"
 msgid "Reinstalling"
 msgstr "再インストール"
 
-#: dnf/cli/output.py:1144
+#: dnf/cli/output.py:1057
 msgid "Installing dependencies"
 msgstr "依存関係のインストール"
 
-#: dnf/cli/output.py:1145
+#: dnf/cli/output.py:1058
 msgid "Installing weak dependencies"
 msgstr "弱い依存関係のインストール"
 
 #. TRANSLATORS: This is for a list of packages to be removed.
-#: dnf/cli/output.py:1147
+#: dnf/cli/output.py:1060
 msgid "Removing"
 msgstr "削除中"
 
-#: dnf/cli/output.py:1148
+#: dnf/cli/output.py:1061
 msgid "Removing dependent packages"
 msgstr "依存関係パッケージの削除"
 
-#: dnf/cli/output.py:1149
+#: dnf/cli/output.py:1062
 msgid "Removing unused dependencies"
 msgstr "未使用の依存関係の削除"
 
 #. TRANSLATORS: This is for a list of packages to be downgraded.
-#: dnf/cli/output.py:1151
+#: dnf/cli/output.py:1064
 msgctxt "summary"
 msgid "Downgrading"
 msgstr "ダウングレード"
 
-#: dnf/cli/output.py:1176
+#: dnf/cli/output.py:1089
 msgid "Installing module profiles"
 msgstr "モジュールプロファイルのインストール中"
 
-#: dnf/cli/output.py:1185
+#: dnf/cli/output.py:1098
 msgid "Disabling module profiles"
 msgstr "モジュールプロファイルの無効化中"
 
-#: dnf/cli/output.py:1194
+#: dnf/cli/output.py:1107
 msgid "Enabling module streams"
 msgstr "モジュールストリームの有効化中"
 
-#: dnf/cli/output.py:1202
+#: dnf/cli/output.py:1115
 msgid "Switching module streams"
 msgstr "モジュールストリームの切り替え中"
 
-#: dnf/cli/output.py:1210
+#: dnf/cli/output.py:1123
 msgid "Disabling modules"
 msgstr "モジュールの無効化"
 
-#: dnf/cli/output.py:1218
+#: dnf/cli/output.py:1131
 msgid "Resetting modules"
 msgstr "モジュールの再設定中"
 
-#: dnf/cli/output.py:1230
+#: dnf/cli/output.py:1143
 msgid "Installing Environment Groups"
 msgstr "環境グループのインストール中"
 
-#: dnf/cli/output.py:1237
+#: dnf/cli/output.py:1150
 msgid "Upgrading Environment Groups"
 msgstr "環境グループのアップグレード中"
 
-#: dnf/cli/output.py:1244
+#: dnf/cli/output.py:1157
 msgid "Removing Environment Groups"
 msgstr "環境グループの削除中"
 
-#: dnf/cli/output.py:1251
+#: dnf/cli/output.py:1164
 msgid "Installing Groups"
 msgstr "グループのインストール中"
 
-#: dnf/cli/output.py:1258
+#: dnf/cli/output.py:1171
 msgid "Upgrading Groups"
 msgstr "グループのアップグレード中"
 
-#: dnf/cli/output.py:1265
+#: dnf/cli/output.py:1178
 msgid "Removing Groups"
 msgstr "グループの削除中"
 
-#: dnf/cli/output.py:1281
+#: dnf/cli/output.py:1194
 #, python-format
 msgid ""
 "Skipping packages with conflicts:\n"
@@ -3110,12 +3214,12 @@ msgstr ""
 "競合するパッケージをスキップします:\n"
 "(アップグレードを強制するにはコマンドラインに '%s' を追加します)"
 
-#: dnf/cli/output.py:1291
+#: dnf/cli/output.py:1204
 #, python-format
 msgid "Skipping packages with broken dependencies%s"
 msgstr "壊れた dependencies%s のパッケージをスキップします"
 
-#: dnf/cli/output.py:1295
+#: dnf/cli/output.py:1208
 msgid " or part of a group"
 msgstr " またはグループの一部"
 
@@ -3123,22 +3227,22 @@ msgstr " またはグループの一部"
 #. use the full (unabbreviated) term 'Package' if you think that
 #. the translation to your language is not too long and will
 #. always fit to limited space.
-#: dnf/cli/output.py:1320
+#: dnf/cli/output.py:1233
 msgctxt "short"
 msgid "Package"
 msgstr "パッケージ"
 
 #. Translators: This is the full (unabbreviated) term 'Package'.
-#: dnf/cli/output.py:1322
+#: dnf/cli/output.py:1235
 msgctxt "long"
 msgid "Package"
 msgstr "パッケージ"
 
-#: dnf/cli/output.py:1371
+#: dnf/cli/output.py:1284
 msgid "replacing"
 msgstr "置き換え"
 
-#: dnf/cli/output.py:1378
+#: dnf/cli/output.py:1291
 #, python-format
 msgid ""
 "\n"
@@ -3150,287 +3254,271 @@ msgstr ""
 "%s\n"
 
 #. TODO: remove
-#: dnf/cli/output.py:1383 dnf/cli/output.py:1932 dnf/cli/output.py:1933
+#: dnf/cli/output.py:1296 dnf/cli/output.py:1814 dnf/cli/output.py:1815
 msgid "Install"
 msgstr "インストール"
 
-#: dnf/cli/output.py:1387 dnf/cli/output.py:1941
+#: dnf/cli/output.py:1300 dnf/cli/output.py:1823
 msgid "Upgrade"
 msgstr "アップグレード"
 
-#: dnf/cli/output.py:1388
+#: dnf/cli/output.py:1301
 msgid "Remove"
 msgstr "削除"
 
-#: dnf/cli/output.py:1390 dnf/cli/output.py:1939
+#: dnf/cli/output.py:1303 dnf/cli/output.py:1821
 msgid "Downgrade"
 msgstr "ダウングレード"
 
-#: dnf/cli/output.py:1391
+#: dnf/cli/output.py:1304
 msgid "Skip"
 msgstr "スキップ"
 
-#: dnf/cli/output.py:1400 dnf/cli/output.py:1416
+#: dnf/cli/output.py:1313 dnf/cli/output.py:1329
 msgid "Package"
 msgid_plural "Packages"
 msgstr[0] "パッケージ"
 
-#: dnf/cli/output.py:1418
+#: dnf/cli/output.py:1331
 msgid "Dependent package"
 msgid_plural "Dependent packages"
 msgstr[0] "依存パッケージ"
 
-#: dnf/cli/output.py:1497 dnf/cli/output.py:1773 dnf/cli/output.py:1942
-msgid "Upgraded"
-msgstr "アップグレード済み"
-
-#: dnf/cli/output.py:1498 dnf/cli/output.py:1773 dnf/cli/output.py:1940
-msgid "Downgraded"
-msgstr "ダウングレード済み"
-
-#: dnf/cli/output.py:1503
-msgid "Reinstalled"
-msgstr "再インストール済み"
-
-#: dnf/cli/output.py:1504
-msgid "Skipped"
-msgstr "スキップ済み"
-
-#: dnf/cli/output.py:1505
-msgid "Removed"
-msgstr "削除しました"
-
-#: dnf/cli/output.py:1508
-msgid "Failed"
-msgstr "失敗しました"
-
-#: dnf/cli/output.py:1559
+#: dnf/cli/output.py:1439
 msgid "Total"
 msgstr "合計"
 
-#: dnf/cli/output.py:1587
+#: dnf/cli/output.py:1467
 msgid "<unset>"
 msgstr "<未設定>"
 
-#: dnf/cli/output.py:1588
+#: dnf/cli/output.py:1468
 msgid "System"
 msgstr "システム"
 
-#: dnf/cli/output.py:1638
+#: dnf/cli/output.py:1518
 msgid "Command line"
 msgstr "コマンドライン"
 
 #. TRANSLATORS: user names who executed transaction in history command output
-#: dnf/cli/output.py:1649
+#: dnf/cli/output.py:1531
 msgid "User name"
 msgstr "ユーザー名"
 
-#: dnf/cli/output.py:1651
+#: dnf/cli/output.py:1533
 msgid "ID"
 msgstr "ID"
 
-#: dnf/cli/output.py:1653
+#: dnf/cli/output.py:1535
 msgid "Date and time"
 msgstr "日時"
 
-#: dnf/cli/output.py:1654
+#: dnf/cli/output.py:1536
 msgid "Action(s)"
 msgstr "動作"
 
-#: dnf/cli/output.py:1655
+#: dnf/cli/output.py:1537
 msgid "Altered"
 msgstr "変更されました"
 
-#: dnf/cli/output.py:1698
+#: dnf/cli/output.py:1580
 msgid "No transactions"
 msgstr "トランザクションがありません"
 
-#: dnf/cli/output.py:1699 dnf/cli/output.py:1715
+#: dnf/cli/output.py:1581 dnf/cli/output.py:1597
 msgid "Failed history info"
 msgstr "失敗した履歴情報"
 
-#: dnf/cli/output.py:1714
+#: dnf/cli/output.py:1596
 msgid "No transaction ID, or package, given"
 msgstr "トランザクション ID、またはパッケージが指定されていません"
 
-#: dnf/cli/output.py:1772
+#: dnf/cli/output.py:1654
 msgid "Erased"
 msgstr "削除されました"
 
-#: dnf/cli/output.py:1774
+#: dnf/cli/output.py:1655 dnf/cli/output.py:1822 dnf/util.py:616
+msgid "Downgraded"
+msgstr "ダウングレード済み"
+
+#: dnf/cli/output.py:1655 dnf/cli/output.py:1824 dnf/util.py:615
+msgid "Upgraded"
+msgstr "アップグレード済み"
+
+#: dnf/cli/output.py:1656
 msgid "Not installed"
 msgstr "インストールされていません"
 
-#: dnf/cli/output.py:1775
+#: dnf/cli/output.py:1657
 msgid "Newer"
 msgstr "新しい"
 
-#: dnf/cli/output.py:1775
+#: dnf/cli/output.py:1657
 msgid "Older"
 msgstr "古い"
 
-#: dnf/cli/output.py:1823 dnf/cli/output.py:1825
+#: dnf/cli/output.py:1705 dnf/cli/output.py:1707
 msgid "Transaction ID :"
 msgstr "トランザクション ID :"
 
-#: dnf/cli/output.py:1828
+#: dnf/cli/output.py:1710
 msgid "Begin time     :"
 msgstr "開始時間            :"
 
-#: dnf/cli/output.py:1831 dnf/cli/output.py:1833
+#: dnf/cli/output.py:1713 dnf/cli/output.py:1715
 msgid "Begin rpmdb    :"
 msgstr "開始 rpmdb          :"
 
-#: dnf/cli/output.py:1839
+#: dnf/cli/output.py:1721
 #, python-format
 msgid "(%u seconds)"
 msgstr "(%u 秒)"
 
-#: dnf/cli/output.py:1841
+#: dnf/cli/output.py:1723
 #, python-format
 msgid "(%u minutes)"
 msgstr "(%u 分)"
 
-#: dnf/cli/output.py:1843
+#: dnf/cli/output.py:1725
 #, python-format
 msgid "(%u hours)"
 msgstr "(%u 時間)"
 
-#: dnf/cli/output.py:1845
+#: dnf/cli/output.py:1727
 #, python-format
 msgid "(%u days)"
 msgstr "(%u 日)"
 
-#: dnf/cli/output.py:1846
+#: dnf/cli/output.py:1728
 msgid "End time       :"
 msgstr "終了時間            :"
 
-#: dnf/cli/output.py:1849 dnf/cli/output.py:1851
+#: dnf/cli/output.py:1731 dnf/cli/output.py:1733
 msgid "End rpmdb      :"
 msgstr "終了 rpmdb          :"
 
-#: dnf/cli/output.py:1858 dnf/cli/output.py:1860
+#: dnf/cli/output.py:1740 dnf/cli/output.py:1742
 msgid "User           :"
 msgstr "ユーザー            :"
 
-#: dnf/cli/output.py:1864 dnf/cli/output.py:1871
+#: dnf/cli/output.py:1746 dnf/cli/output.py:1753
 msgid "Aborted"
 msgstr "中断しました"
 
-#: dnf/cli/output.py:1864 dnf/cli/output.py:1867 dnf/cli/output.py:1869
-#: dnf/cli/output.py:1871 dnf/cli/output.py:1873 dnf/cli/output.py:1875
+#: dnf/cli/output.py:1746 dnf/cli/output.py:1749 dnf/cli/output.py:1751
+#: dnf/cli/output.py:1753 dnf/cli/output.py:1755 dnf/cli/output.py:1757
 msgid "Return-Code    :"
 msgstr "終了コード          :"
 
-#: dnf/cli/output.py:1867 dnf/cli/output.py:1875
+#: dnf/cli/output.py:1749 dnf/cli/output.py:1757
 msgid "Success"
 msgstr "成功"
 
-#: dnf/cli/output.py:1869
+#: dnf/cli/output.py:1751
 msgid "Failures:"
 msgstr "失敗:"
 
-#: dnf/cli/output.py:1873
+#: dnf/cli/output.py:1755
 msgid "Failure:"
 msgstr "失敗しました:"
 
-#: dnf/cli/output.py:1883 dnf/cli/output.py:1885
+#: dnf/cli/output.py:1765 dnf/cli/output.py:1767
 msgid "Releasever     :"
 msgstr "Releasever     :"
 
-#: dnf/cli/output.py:1890 dnf/cli/output.py:1892
+#: dnf/cli/output.py:1772 dnf/cli/output.py:1774
 msgid "Command Line   :"
 msgstr "コマンドライン      :"
 
-#: dnf/cli/output.py:1897 dnf/cli/output.py:1899
+#: dnf/cli/output.py:1779 dnf/cli/output.py:1781
 msgid "Comment        :"
 msgstr "コメント        :"
 
-#: dnf/cli/output.py:1903
+#: dnf/cli/output.py:1785
 msgid "Transaction performed with:"
 msgstr "実行されたトランザクション:"
 
-#: dnf/cli/output.py:1912
+#: dnf/cli/output.py:1794
 msgid "Packages Altered:"
 msgstr "変更されたパッケージ:"
 
-#: dnf/cli/output.py:1918
+#: dnf/cli/output.py:1800
 msgid "Scriptlet output:"
 msgstr "Scriptlet の出力:"
 
-#: dnf/cli/output.py:1925
+#: dnf/cli/output.py:1807
 msgid "Errors:"
 msgstr "エラー:"
 
-#: dnf/cli/output.py:1934
+#: dnf/cli/output.py:1816
 msgid "Dep-Install"
 msgstr "Dep-Install"
 
-#: dnf/cli/output.py:1935
+#: dnf/cli/output.py:1817
 msgid "Obsoleted"
 msgstr "廃止された"
 
-#: dnf/cli/output.py:1936 dnf/transaction.py:84 dnf/transaction.py:85
+#: dnf/cli/output.py:1818 dnf/transaction.py:84 dnf/transaction.py:85
 msgid "Obsoleting"
 msgstr "廃止"
 
-#: dnf/cli/output.py:1937
+#: dnf/cli/output.py:1819
 msgid "Erase"
 msgstr "削除"
 
-#: dnf/cli/output.py:1938
+#: dnf/cli/output.py:1820
 msgid "Reinstall"
 msgstr "再インストール"
 
-#: dnf/cli/output.py:2016
+#: dnf/cli/output.py:1894
 #, python-format
 msgid "---> Package %s.%s %s will be installed"
 msgstr "---> パッケージ %s.%s %s はインストールされます"
 
-#: dnf/cli/output.py:2018
+#: dnf/cli/output.py:1896
 #, python-format
 msgid "---> Package %s.%s %s will be an upgrade"
 msgstr "---> パッケージ %s.%s %s はアップグレードされます"
 
-#: dnf/cli/output.py:2020
+#: dnf/cli/output.py:1898
 #, python-format
 msgid "---> Package %s.%s %s will be erased"
 msgstr "---> パッケージ %s.%s %s は消去されます"
 
-#: dnf/cli/output.py:2022
+#: dnf/cli/output.py:1900
 #, python-format
 msgid "---> Package %s.%s %s will be reinstalled"
 msgstr "---> パッケージ %s.%s %s は再インストールされます"
 
-#: dnf/cli/output.py:2024
+#: dnf/cli/output.py:1902
 #, python-format
 msgid "---> Package %s.%s %s will be a downgrade"
 msgstr "---> パッケージ %s.%s %s はダウングレードされます"
 
-#: dnf/cli/output.py:2026
+#: dnf/cli/output.py:1904
 #, python-format
 msgid "---> Package %s.%s %s will be obsoleting"
 msgstr "---> パッケージ %s.%s %s は廃止となります"
 
-#: dnf/cli/output.py:2028
+#: dnf/cli/output.py:1906
 #, python-format
 msgid "---> Package %s.%s %s will be upgraded"
 msgstr "---> パッケージ %s.%s %s はアップグレードされます"
 
-#: dnf/cli/output.py:2030
+#: dnf/cli/output.py:1908
 #, python-format
 msgid "---> Package %s.%s %s will be obsoleted"
 msgstr "---> パッケージ %s.%s %s は廃止されます"
 
-#: dnf/cli/output.py:2039
+#: dnf/cli/output.py:1917
 msgid "--> Starting dependency resolution"
 msgstr "--> 依存関係の解決を開始しました"
 
-#: dnf/cli/output.py:2044
+#: dnf/cli/output.py:1921
 msgid "--> Finished dependency resolution"
 msgstr "--> 依存関係の解決が完了しました"
 
-#: dnf/cli/output.py:2058 dnf/crypto.py:132
+#: dnf/cli/output.py:1935 dnf/crypto.py:132
 #, python-format
 msgid ""
 "Importing GPG key 0x%s:\n"
@@ -3492,10 +3580,6 @@ msgstr "    開始しました   : %s - %s 秒経過"
 msgid "    State  : %s"
 msgstr "    状態  : %s"
 
-#: dnf/comps.py:104
-msgid "skipping."
-msgstr "スキップします。"
-
 #: dnf/comps.py:196 dnf/comps.py:692 dnf/comps.py:706
 #, python-format
 msgid "Module or Group '%s' is not installed."
@@ -3512,16 +3596,14 @@ msgid "Module or Group '%s' does not exist."
 msgstr "モジュールまたはグループ '%s' は存在しません。"
 
 #: dnf/comps.py:599
-#, fuzzy, python-format
-#| msgid "Environment '%s' is not installed."
+#, python-format
 msgid "Environment id '%s' does not exist."
-msgstr "環境 '%s' はインストールされていません。"
+msgstr "環境 id '%s' は存在しません。"
 
-#: dnf/comps.py:622 dnf/transaction_sr.py:443 dnf/transaction_sr.py:453
-#, fuzzy, python-format
-#| msgid "Environment '%s' is not installed."
+#: dnf/comps.py:622 dnf/transaction_sr.py:477 dnf/transaction_sr.py:487
+#, python-format
 msgid "Environment id '%s' is not installed."
-msgstr "環境 '%s' はインストールされていません。"
+msgstr "環境 id '%s' はインストールされていません。"
 
 #: dnf/comps.py:639
 #, python-format
@@ -3534,15 +3616,19 @@ msgid "Environment '%s' is not available."
 msgstr "環境 '%s' は利用不可です。"
 
 #: dnf/comps.py:673
-#, fuzzy, python-format
-#| msgid "Group_id '%s' does not exist."
+#, python-format
 msgid "Group id '%s' does not exist."
-msgstr "Group_id '%s' は存在しません。"
+msgstr "グループ id '%s' は存在しません。"
 
 #: dnf/conf/config.py:136
 #, python-format
 msgid "Error parsing '%s': %s"
 msgstr "'%s' の解析中にエラーが発生しました: %s"
+
+#: dnf/conf/config.py:151
+#, python-format
+msgid "Invalid configuration value: %s=%s in %s; %s"
+msgstr "正しくない設定値: %s=%s in %s; %s"
 
 #: dnf/conf/config.py:226
 msgid "Could not set cachedir: {}"
@@ -3585,36 +3671,36 @@ msgstr "鍵 '%s.%s'、値 '%s' の --setopt を解析中にエラーが発生し
 msgid "Repo %s did not have a %s attr. before setopt"
 msgstr "repo %s には setopt の前に %s attr. がありませんでした"
 
-#: dnf/conf/read.py:51
+#: dnf/conf/read.py:60
 #, python-format
 msgid "Warning: failed loading '%s', skipping."
-msgstr "警告:  '%s' のロードに失敗、スキップします。"
+msgstr "警告: '%s' のロードに失敗、スキップします。"
 
-#: dnf/conf/read.py:63
+#: dnf/conf/read.py:72
 msgid "Bad id for repo: {} ({}), byte = {} {}"
 msgstr "repo: {} ({}) に正しくないid、 byte = {} {}"
 
-#: dnf/conf/read.py:67
+#: dnf/conf/read.py:76
 msgid "Bad id for repo: {}, byte = {} {}"
 msgstr "repo: {} に正しくないid、byte = {} {}"
 
-#: dnf/conf/read.py:75
+#: dnf/conf/read.py:84
 msgid "Repository '{}' ({}): Error parsing config: {}"
 msgstr "レポジトリ '{}' ({}): 設定変更エラー: {}"
 
-#: dnf/conf/read.py:78
+#: dnf/conf/read.py:87
 msgid "Repository '{}': Error parsing config: {}"
 msgstr "レポジトリ '{}': 設定変更エラー: {}"
 
-#: dnf/conf/read.py:84
+#: dnf/conf/read.py:93
 msgid "Repository '{}' ({}) is missing name in configuration, using id."
 msgstr "レポジトリ '{}' ({}) はidを使用した設定内に見つかりません。"
 
-#: dnf/conf/read.py:87
+#: dnf/conf/read.py:96
 msgid "Repository '{}' is missing name in configuration, using id."
 msgstr "レポジトリ '{}' idを使用した設定内に見つかりません。"
 
-#: dnf/conf/read.py:104
+#: dnf/conf/read.py:113
 msgid "Parsing file \"{}\" failed: {}"
 msgstr "ファイル \"{}\" の解析に失敗しました: {}"
 
@@ -3626,27 +3712,43 @@ msgstr "repo %s: 0x%s はインポート済みです"
 #: dnf/crypto.py:115
 #, python-format
 msgid "repo %s: imported key 0x%s."
-msgstr "repo %s: インポート済みの鍵 0x%s。"
+msgstr "repo %s: インポート済みのキー 0x%s。"
 
-#: dnf/db/group.py:293
+#: dnf/crypto.py:145
+msgid "Verified using DNS record with DNSSEC signature."
+msgstr "DNSSEC 署名付きの DNS レコードを使用して検証しました。"
+
+#: dnf/crypto.py:147
+msgid "NOT verified using DNS record."
+msgstr "DNS レコードを使用して検証されませんでした。"
+
+#: dnf/crypto.py:184
+#, python-format
+msgid "retrieving repo key for %s unencrypted from %s"
+msgstr "%s から暗号化されていない %s の repo キーを取得しています"
+
+#: dnf/db/group.py:301
 msgid ""
 "No available modular metadata for modular package '{}', it cannot be "
 "installed on the system"
-msgstr "モジュラーパッケージ '{}' のモジュラーメタデータは利用不可です、システムにインストールはできません"
+msgstr ""
+"モジュラーパッケージ '{}' のモジュラーメタデータは利用不可です、システムにイ"
+"ンストールはできません"
 
-#: dnf/db/group.py:343
+#: dnf/db/group.py:351
 msgid "No available modular metadata for modular package"
 msgstr "モジュラーパッケージ のモジュラーメタデータは利用不可です"
 
-#: dnf/db/group.py:377
+#: dnf/db/group.py:385
 #, python-format
 msgid "Will not install a source rpm package (%s)."
 msgstr "ソース rpm パッケージ (%s) をインストールしません。"
 
 #: dnf/dnssec.py:168
 msgid ""
-"Configuration option 'gpgkey_dns_verification' requires libunbound ({})"
-msgstr "設定オプション 'gpgkey_dns_verification' は libunbound ({}) が必要です"
+"Configuration option 'gpgkey_dns_verification' requires python3-unbound ({})"
+msgstr ""
+"設定オプション 'gpgkey_dns_verification' は python3-unbound ({}) が必要です"
 
 #: dnf/dnssec.py:239
 msgid "DNSSEC extension: Key for user "
@@ -3668,7 +3770,7 @@ msgstr "DNSSEC 拡張: "
 msgid "Testing already imported keys for their validity."
 msgstr "すでにインポートされた鍵の有効性をテストします。"
 
-#: dnf/drpm.py:62 dnf/repo.py:268
+#: dnf/drpm.py:62 dnf/repo.py:267
 #, python-format
 msgid "unsupported checksum type: %s"
 msgstr "サポートされていないチェックサム形式: %s"
@@ -3710,7 +3812,7 @@ msgid "Modular dependency problem with Defaults:"
 msgid_plural "Modular dependency problems with Defaults:"
 msgstr[0] "デフォルトのモジュラー依存問題:"
 
-#: dnf/exceptions.py:131 dnf/module/module_base.py:686
+#: dnf/exceptions.py:131 dnf/module/module_base.py:854
 msgid "Modular dependency problem:"
 msgid_plural "Modular dependency problems:"
 msgstr[0] "モジュラーの依存に関する問題:"
@@ -3719,10 +3821,12 @@ msgstr[0] "モジュラーの依存に関する問題:"
 #, python-format
 msgid ""
 "Malformed lock file found: %s.\n"
-"Ensure no other dnf/yum process is running and remove the lock file manually or run systemd-tmpfiles --remove dnf.conf."
+"Ensure no other dnf/yum process is running and remove the lock file manually "
+"or run systemd-tmpfiles --remove dnf.conf."
 msgstr ""
 "不正な形式のロックファイル: %s 。\n"
-"他のdnf/yum プロセスが実行されていないことを確認し、ロックファイルを手動削除するかsystemd-tmpfiles --remove dnf.conf を実行してください。"
+"他のdnf/yum プロセスが実行されていないことを確認し、ロックファイルを手動削除"
+"するかsystemd-tmpfiles --remove dnf.conf を実行してください。"
 
 #: dnf/module/__init__.py:26
 msgid "Enabling different stream for '{}'."
@@ -3734,7 +3838,8 @@ msgstr "表示するものがありません。"
 
 #: dnf/module/__init__.py:28
 msgid "Installing newer version of '{}' than specified. Reason: {}"
-msgstr "指定されたものよりも新しいバージョンの '{}' をインストールします。理由: {}"
+msgstr ""
+"指定されたものよりも新しいバージョンの '{}' をインストールします。理由: {}"
 
 #: dnf/module/__init__.py:29
 msgid "Enabled modules: {}."
@@ -3742,9 +3847,51 @@ msgstr "有効なモジュール: {}."
 
 #: dnf/module/__init__.py:30
 msgid "No profile specified for '{}', please specify profile."
-msgstr "'{}' に指定したプロファイルはありません。プロファイルを指定してください。"
+msgstr ""
+"'{}' に指定したプロファイルはありません。プロファイルを指定してください。"
 
-#: dnf/module/module_base.py:33
+#: dnf/module/exceptions.py:27
+msgid "No such module: {}"
+msgstr "次のようなモジュールはありません: {}"
+
+#: dnf/module/exceptions.py:33
+msgid "No such stream: {}"
+msgstr "次のようなストリームはありません: {}"
+
+#: dnf/module/exceptions.py:39
+msgid "No enabled stream for module: {}"
+msgstr "次のモジュールに有効化されたストリームはありません: {}"
+
+#: dnf/module/exceptions.py:46
+msgid "Cannot enable more streams from module '{}' at the same time"
+msgstr "モジュール '{}' から、さらにストリームを同時に有効にできません"
+
+#: dnf/module/exceptions.py:52
+msgid "Different stream enabled for module: {}"
+msgstr "次のモジュールに有効化された異なるストリーム: {}"
+
+#: dnf/module/exceptions.py:58
+msgid "No such profile: {}"
+msgstr "次ようなプロファイルはありません: {}"
+
+#: dnf/module/exceptions.py:64
+msgid "Specified profile not installed for {}"
+msgstr "指定のプロファイルは次にインストールされていません: {}"
+
+#: dnf/module/exceptions.py:70
+msgid "No stream specified for '{}', please specify stream"
+msgstr "'{}' に指定したストリームはありません。ストリームを指定してください"
+
+#: dnf/module/exceptions.py:82
+msgid "No such profile: {}. No profiles available"
+msgstr ""
+"次のようなプロファイルはありません: {}。利用できるプロファイルはありません"
+
+#: dnf/module/exceptions.py:88
+msgid "No profile to remove for '{}'"
+msgstr "'{}' の削除するプロファイルがありません"
+
+#: dnf/module/module_base.py:35
 msgid ""
 "\n"
 "\n"
@@ -3754,7 +3901,7 @@ msgstr ""
 "\n"
 "ヒント: [d]efault, [e]nabled, [x]disabled, [i]nstalled"
 
-#: dnf/module/module_base.py:34
+#: dnf/module/module_base.py:36
 msgid ""
 "\n"
 "\n"
@@ -3764,80 +3911,110 @@ msgstr ""
 "\n"
 "ヒント: [d]efault, [e]nabled, [x]disabled, [i]nstalled, [a]ctive"
 
-#: dnf/module/module_base.py:54 dnf/module/module_base.py:421
-#: dnf/module/module_base.py:477 dnf/module/module_base.py:543
+#: dnf/module/module_base.py:56 dnf/module/module_base.py:556
+#: dnf/module/module_base.py:615 dnf/module/module_base.py:681
 msgid "Ignoring unnecessary profile: '{}/{}'"
 msgstr "不要なプロファイルを無視します: '{}/{}'"
 
-#: dnf/module/module_base.py:84
+#: dnf/module/module_base.py:86
 #, python-brace-format
 msgid "All matches for argument '{0}' in module '{1}:{2}' are not active"
-msgstr "モジュール '{1}:{2}' の引数 '{0}' に一致するものはすべて非アクティブです"
+msgstr ""
+"モジュール '{1}:{2}' の引数 '{0}' に一致するものはすべて非アクティブです"
 
-#: dnf/module/module_base.py:92
+#: dnf/module/module_base.py:94 dnf/module/module_base.py:204
 #, python-brace-format
 msgid "Installing module '{0}' from Fail-Safe repository {1} is not allowed"
-msgstr "フェイルセーフレポジトリー {1} からのモジュール '{0}' インストールは許可されていません"
+msgstr ""
+"フェイルセーフレポジトリー {1} からのモジュール '{0}' インストールは許可され"
+"ていません"
 
-#: dnf/module/module_base.py:102
+#: dnf/module/module_base.py:104 dnf/module/module_base.py:214
 msgid ""
 "Unable to match profile for argument {}. Available profiles for '{}:{}': {}"
-msgstr "引数 {} でプロファイルが見つかりません。利用可能プロファイル '{}:{}': {}"
+msgstr ""
+"引数 {} でプロファイルが見つかりません。利用可能プロファイル '{}:{}': {}"
 
-#: dnf/module/module_base.py:106
+#: dnf/module/module_base.py:108 dnf/module/module_base.py:218
 msgid "Unable to match profile for argument {}"
 msgstr "引数 {} でプロファイルが見つかりません"
 
-#: dnf/module/module_base.py:118
+#: dnf/module/module_base.py:120
 msgid "No default profiles for module {}:{}. Available profiles: {}"
-msgstr "モジュール {}:{} にデフォルトのプロファイルがありません。利用可能プロファイル: {}"
+msgstr ""
+"モジュール {}:{} にデフォルトのプロファイルがありません。利用可能プロファイ"
+"ル: {}"
 
-#: dnf/module/module_base.py:122
+#: dnf/module/module_base.py:124
 msgid "No profiles for module {}:{}"
 msgstr "モジュール {}:{} にプロファイルがありません"
 
-#: dnf/module/module_base.py:129
+#: dnf/module/module_base.py:131
 msgid "Default profile {} not available in module {}:{}"
 msgstr "デフォルトのプロファイル {} はモジュール {}:{} で利用不可です"
 
-#: dnf/module/module_base.py:142
+#: dnf/module/module_base.py:144 dnf/module/module_base.py:247
 msgid "Installing module from Fail-Safe repository is not allowed"
-msgstr "フェイルセーフレポジトリーからのモジュールインストールは許可されていません"
+msgstr ""
+"フェイルセーフレポジトリーからのモジュールインストールは許可されていません"
 
-#: dnf/module/module_base.py:159 dnf/module/module_base.py:193
-#: dnf/module/module_base.py:337 dnf/module/module_base.py:355
-#: dnf/module/module_base.py:363 dnf/module/module_base.py:417
-#: dnf/module/module_base.py:473 dnf/module/module_base.py:539
+#: dnf/module/module_base.py:196
+#, python-brace-format
+msgid "No active matches for argument '{0}' in module '{1}:{2}'"
+msgstr "モジュール '{1}:{2}' の引数 '{0}' には、アクティブな一致がありません"
+
+#: dnf/module/module_base.py:228
+#, python-brace-format
+msgid "Installed profile '{0}' is not available in module '{1}' stream '{2}'"
+msgstr ""
+"インストールされたプロファイル '{0}' は、モジュール '{1}' ストリーム '{2}' で"
+"は利用できません"
+
+#: dnf/module/module_base.py:267
+msgid "No packages available to distrosync for package name '{}'"
+msgstr "パッケージ名 '{}' 向けに distrosync するパッケージはありません"
+
+#: dnf/module/module_base.py:310 dnf/module/module_base.py:461
+#: dnf/module/module_base.py:486 dnf/module/module_base.py:505
+#: dnf/module/module_base.py:552 dnf/module/module_base.py:611
+#: dnf/module/module_base.py:677 dnf/module/module_base.py:840
 msgid "Unable to resolve argument {}"
 msgstr "引数 {} を解決できません"
 
-#: dnf/module/module_base.py:160
-msgid "No match for package {}"
-msgstr "パッケージ {} に一致するものはありません"
-
-#: dnf/module/module_base.py:204
+#: dnf/module/module_base.py:321
 #, python-brace-format
 msgid "Upgrading module '{0}' from Fail-Safe repository {1} is not allowed"
-msgstr "フェイルセーフレポジトリー {1} からのモジュール '{0}' アップグレードは許可されていません"
+msgstr ""
+"フェイルセーフレポジトリー {1} からのモジュール '{0}' アップグレードは許可さ"
+"れていません"
 
-#: dnf/module/module_base.py:223 dnf/module/module_base.py:251
+#: dnf/module/module_base.py:340 dnf/module/module_base.py:368
 msgid "Unable to match profile in argument {}"
 msgstr "引数 {} でプロファイルを一致できません"
 
-#: dnf/module/module_base.py:231
+#: dnf/module/module_base.py:348
 msgid "Upgrading module from Fail-Safe repository is not allowed"
-msgstr "フェイルセーフレポジトリーからのモジュールアップグレードは許可されていません"
+msgstr ""
+"フェイルセーフレポジトリーからのモジュールアップグレードは許可されていません"
 
-#: dnf/module/module_base.py:367
+#: dnf/module/module_base.py:422
+#, python-brace-format
 msgid ""
-"Only module name is required. Ignoring unneeded information in argument: "
-"'{}'"
+"Argument '{argument}' matches {stream_count} streams ('{streams}') of module "
+"'{module}', but none of the streams are enabled or default"
+msgstr ""
+"引数 '{argument}' は、モジュール '{module}' の {stream_count} ストリーム "
+"('{streams}' と一致しますが、有効化されている、あるいはデフォルトのストリーム"
+"はありません"
+
+#: dnf/module/module_base.py:509
+msgid ""
+"Only module name is required. Ignoring unneeded information in argument: '{}'"
 msgstr "モジュール名のみが必要です。引数で不必要な情報を無視します: '{}'"
 
-#: dnf/package.py:298
-#, python-format
-msgid "%s: %s check failed: %s vs %s"
-msgstr "%s: %s の確認に失敗しました: %s vs %s"
+#: dnf/module/module_base.py:841
+msgid "No match for package {}"
+msgstr "パッケージ {} に一致するものはありません"
 
 #. empty file is invalid json format
 #: dnf/persistor.py:54
@@ -3848,12 +4025,12 @@ msgstr "%s は空のファイルです"
 #: dnf/persistor.py:91
 #, python-format
 msgid "Failed to load expired repos cache: %s"
-msgstr ""
+msgstr "期限切れのリポジトリーキャッシュのロードに失敗しました: %s"
 
 #: dnf/persistor.py:99
 #, python-format
 msgid "Failed to store expired repos cache: %s"
-msgstr ""
+msgstr "期限切れのリポジトリーキャッシュの保存に失敗しました: %s"
 
 #: dnf/persistor.py:106
 msgid "Failed storing last makecache time."
@@ -3873,16 +4050,16 @@ msgstr "ファイルの解析に失敗しました: %s"
 msgid "Loaded plugins: %s"
 msgstr "ロードされたプラグイン: %s"
 
-#: dnf/plugin.py:199
+#: dnf/plugin.py:211
 #, python-format
 msgid "Failed loading plugin \"%s\": %s"
 msgstr "plugin \"%s\" のロードに失敗しました: %s"
 
-#: dnf/plugin.py:231
+#: dnf/plugin.py:243
 msgid "No matches found for the following enable plugin patterns: {}"
 msgstr "以下有効プラグインパターンが見つかりません: {}"
 
-#: dnf/plugin.py:235
+#: dnf/plugin.py:247
 msgid "No matches found for the following disable plugin patterns: {}"
 msgstr "以下無効プラグインパターンが見つかりません: {}"
 
@@ -3896,7 +4073,7 @@ msgid "Already downloaded"
 msgstr "ダウンロード済み"
 
 #. pinging mirrors, this might take a while
-#: dnf/repo.py:347
+#: dnf/repo.py:346
 #, python-format
 msgid "determining the fastest mirror (%s hosts).. "
 msgstr "最速のミラーを確定しています (%s hosts).. "
@@ -3911,9 +4088,26 @@ msgstr "%s リポジトリーの有効化"
 msgid "Added %s repo from %s"
 msgstr "%s から %s repo を追加しました"
 
+#: dnf/rpm/miscutils.py:32
+#, python-format
+msgid "Using rpmkeys executable at %s to verify signatures"
+msgstr "%s で rpmkeys 実行可能ファイルを使用して、署名を検証します"
+
+#: dnf/rpm/miscutils.py:66
+msgid "Cannot find rpmkeys executable to verify signatures."
+msgstr "署名を検証する rpmkeys 実行ファイルが見つかりません。"
+
 #: dnf/rpm/transaction.py:119
 msgid "Errors occurred during test transaction."
 msgstr "テストトランザクション中にエラーが発生しました。"
+
+#: dnf/sack.py:47
+msgid ""
+"allow_vendor_change is disabled. This option is currently not supported for "
+"downgrade and distro-sync commands"
+msgstr ""
+"allow_vendor_change は無効になっています。このオプションは、downgrade コマン"
+"ドおよび distro-sync コマンドではサポートされていません"
 
 #. TRANSLATORS: This is for a single package currently being downgraded.
 #: dnf/transaction.py:80
@@ -3961,167 +4155,230 @@ msgstr "scriptletの実行中"
 msgid "Preparing"
 msgstr "準備"
 
-#: dnf/transaction_sr.py:60
+#: dnf/transaction_sr.py:66
 #, python-brace-format
-msgid "Errors in \"{filename}\":"
+msgid ""
+"The following problems occurred while replaying the transaction from file "
+"\"{filename}\":"
 msgstr ""
+"ファイル \"{filename}\" からのトランザクションの再生中に以下の問題が発生しま"
+"した："
 
-#: dnf/transaction_sr.py:70
-#, python-brace-format
-msgid "Error in \"{filename}\": {error}"
-msgstr ""
+#: dnf/transaction_sr.py:68
+msgid "The following problems occurred while running a transaction:"
+msgstr "トランザクションの実行中に以下の問題が発生しました："
 
-#: dnf/transaction_sr.py:87
+#: dnf/transaction_sr.py:89
 #, python-brace-format
 msgid "Invalid major version \"{major}\", number expected."
-msgstr ""
+msgstr "無効なメジャーバージョン \"{major}\"。数字が必要です。"
 
-#: dnf/transaction_sr.py:95
+#: dnf/transaction_sr.py:97
 #, python-brace-format
 msgid "Invalid minor version \"{minor}\", number expected."
-msgstr ""
+msgstr "無効なマイナーバージョン \"{minor}\"。数字が必要です。"
 
-#: dnf/transaction_sr.py:101
+#: dnf/transaction_sr.py:103
 #, python-brace-format
 msgid ""
 "Incompatible major version \"{major}\", supported major version is "
 "\"{major_supp}\"."
 msgstr ""
+"互換性のないメジャーバージョン \"{major}\"。サポートされているメジャーバー"
+"ジョンは \"{major_supp}\" です。"
 
-#: dnf/transaction_sr.py:244
+#: dnf/transaction_sr.py:224
+msgid ""
+"Conflicting TransactionReplay arguments have been specified: filename, data"
+msgstr "競合する TransactionReplay 引数が指定されています。filename, data"
+
+#: dnf/transaction_sr.py:265
 #, python-brace-format
 msgid "Unexpected type of \"{id}\", {exp} expected."
-msgstr ""
+msgstr "予期しない {id}\" のタイプ。{exp} が必要です。"
 
-#: dnf/transaction_sr.py:250
+#: dnf/transaction_sr.py:271
 #, python-brace-format
 msgid "Missing key \"{key}\"."
-msgstr ""
+msgstr "\"{key}\" キーがありません。"
 
-#: dnf/transaction_sr.py:263
+#: dnf/transaction_sr.py:285
 #, python-brace-format
 msgid "Missing object key \"{key}\" in an rpm."
-msgstr ""
+msgstr "オブジェクトキー \"{key}\" が rpm にありません。"
 
-#: dnf/transaction_sr.py:267
+#: dnf/transaction_sr.py:289
 #, python-brace-format
-msgid "Unexpected value of package reason \"{reason}\" for rpm nevra \"{nevra}\"."
-msgstr ""
+msgid ""
+"Unexpected value of package reason \"{reason}\" for rpm nevra \"{nevra}\"."
+msgstr "rpm nevra \"{nevra}\" の予期しないパッケージ理由 \"{reason}\" の値。"
 
-#: dnf/transaction_sr.py:275
+#: dnf/transaction_sr.py:297
 #, python-brace-format
 msgid "Cannot parse NEVRA for package \"{nevra}\"."
-msgstr ""
+msgstr "パッケージ \"{nevra}\" の NEVRA を解析できません。"
 
-#: dnf/transaction_sr.py:286
+#: dnf/transaction_sr.py:321
 #, python-brace-format
 msgid "Cannot find rpm nevra \"{nevra}\"."
-msgstr ""
+msgstr "rpm nevra \"{nevra}\" を見つけることはできません。"
 
-#: dnf/transaction_sr.py:301
-#, fuzzy, python-brace-format
-#| msgid "Package %s is already installed."
+#: dnf/transaction_sr.py:336
+#, python-brace-format
 msgid "Package \"{na}\" is already installed for action \"{action}\"."
-msgstr "パッケージ %s は既にインストールされています。"
+msgstr ""
+"パッケージ \"{na}\" は、アクション \"{action}\" 用に既にインストールされてい"
+"ます。"
 
-#: dnf/transaction_sr.py:311
+#: dnf/transaction_sr.py:345
 #, python-brace-format
 msgid ""
 "Package nevra \"{nevra}\" not available in repositories for action "
 "\"{action}\"."
 msgstr ""
+"アクション \"{action}\" に利用できる パッケージ nevra \"{nevra}\" はレポジト"
+"リーにありません。"
 
-#: dnf/transaction_sr.py:322
+#: dnf/transaction_sr.py:356
 #, python-brace-format
 msgid "Package nevra \"{nevra}\" not installed for action \"{action}\"."
 msgstr ""
+"アクション \"{action}\" には、パッケージ nevra \"{nevra}\" インストールされて"
+"いません。"
 
-#: dnf/transaction_sr.py:336
+#: dnf/transaction_sr.py:370
 #, python-brace-format
-msgid "Unexpected value of package action \"{action}\" for rpm nevra \"{nevra}\"."
+msgid ""
+"Unexpected value of package action \"{action}\" for rpm nevra \"{nevra}\"."
 msgstr ""
+"rpm nevra \"{nevra}\" の、パッケージアクション \"{action}\" の予期しない値。"
 
-#: dnf/transaction_sr.py:343
-#, fuzzy, python-format
-#| msgid "Module or Group '%s' is not available."
+#: dnf/transaction_sr.py:377
+#, python-format
 msgid "Group id '%s' is not available."
-msgstr "モジュールまたはグループ '%s' は利用不可です。"
-
-#: dnf/transaction_sr.py:364
-#, python-brace-format
-msgid "Missing object key \"{key}\" in groups.packages."
-msgstr ""
-
-#: dnf/transaction_sr.py:377 dnf/transaction_sr.py:387
-#, fuzzy, python-format
-#| msgid "Module or Group '%s' is not installed."
-msgid "Group id '%s' is not installed."
-msgstr "モジュールまたはグループ '%s' がインストールされていません。"
+msgstr "グループ id '%s' は利用できません。"
 
 #: dnf/transaction_sr.py:398
-#, fuzzy, python-format
-#| msgid "Environment '%s' is not available."
-msgid "Environment id '%s' is not available."
-msgstr "環境 '%s' は利用不可です。"
+#, python-brace-format
+msgid "Missing object key \"{key}\" in groups.packages."
+msgstr "オブジェクトキー \"{key}\" が groups.packages に含まれません。"
 
-#: dnf/transaction_sr.py:422
+#: dnf/transaction_sr.py:411 dnf/transaction_sr.py:421
+#, python-format
+msgid "Group id '%s' is not installed."
+msgstr "グループ id '%s' がインストールされていません。"
+
+#: dnf/transaction_sr.py:432
+#, python-format
+msgid "Environment id '%s' is not available."
+msgstr "環境 id '%s' は利用できません。"
+
+#: dnf/transaction_sr.py:456
 #, python-brace-format
 msgid ""
 "Invalid value \"{group_type}\" of environments.groups.group_type, only "
 "\"mandatory\" or \"optional\" is supported."
 msgstr ""
+"environments.groups.group_type の無効な値 \"{group_type}\"。\"mandatory\" ま"
+"たは \"optional\" のみに対応しています。"
 
-#: dnf/transaction_sr.py:430
+#: dnf/transaction_sr.py:464
 #, python-brace-format
 msgid "Missing object key \"{key}\" in environments.groups."
-msgstr ""
-
-#: dnf/transaction_sr.py:508
-#, python-brace-format
-msgid "Unexpected value of group action \"{action}\" for group \"{group}\"."
-msgstr ""
-
-#: dnf/transaction_sr.py:513
-#, python-brace-format
-msgid "Missing object key \"{key}\" in a group."
-msgstr ""
-
-#: dnf/transaction_sr.py:537
-#, python-brace-format
-msgid "Unexpected value of environment action \"{action}\" for environment \"{env}\"."
-msgstr ""
+msgstr "オブジェクトキー \"{key}\" が environments.groups に含まれません。"
 
 #: dnf/transaction_sr.py:542
 #, python-brace-format
-msgid "Missing object key \"{key}\" in an environment."
+msgid "Unexpected value of group action \"{action}\" for group \"{group}\"."
 msgstr ""
+"グループ \"{group}\" の グループアクション \"{action}\" の予期しない値。"
 
-#: dnf/transaction_sr.py:581
+#: dnf/transaction_sr.py:547
+#, python-brace-format
+msgid "Missing object key \"{key}\" in a group."
+msgstr "オブジェクトキー \"{key}\" がグループ内にありません。"
+
+#: dnf/transaction_sr.py:571
 #, python-brace-format
 msgid ""
-"Package nevra \"{nevra}\", which is not present in the transaction file, was"
-" pulled into the transaction."
+"Unexpected value of environment action \"{action}\" for environment "
+"\"{env}\"."
+msgstr "環境 \"{env}\" の環境アクション \"{action}\" の予期しない値。"
+
+#: dnf/transaction_sr.py:576
+#, python-brace-format
+msgid "Missing object key \"{key}\" in an environment."
+msgstr "オブジェクトキー \"{key}\" が環境にありません。"
+
+#: dnf/transaction_sr.py:615
+#, python-brace-format
+msgid ""
+"Package nevra \"{nevra}\", which is not present in the transaction file, was "
+"pulled into the transaction."
 msgstr ""
+"トランザクションファイルに存在しないパッケージ nevra \"{nevra}\" がトランザク"
+"ションにプルされていました。"
 
 # translation auto-copied from project jbpm-designer, version 6.0.1, document
 # org.jbpm/jbpm-designer-
 # api/resources/org/jbpm/designer/resources/i18n/DesignerConstants, author
 # nmirasch
-#: dnf/util.py:391 dnf/util.py:393
+#: dnf/util.py:419 dnf/util.py:421
 msgid "Problem"
 msgstr "問題"
 
-#: dnf/util.py:444
+#: dnf/util.py:472
 msgid "TransactionItem not found for key: {}"
 msgstr "TransactionItemが見つかりません鍵: {}"
 
-#: dnf/util.py:454
+#: dnf/util.py:482
 msgid "TransactionSWDBItem not found for key: {}"
 msgstr "TransactionSWDBItemが見つかりません鍵: {}"
 
-#: dnf/util.py:457
+#: dnf/util.py:485
 msgid "Errors occurred during transaction."
 msgstr "トランザクション中にエラーが発生しました。"
+
+#: dnf/util.py:621
+msgid "Reinstalled"
+msgstr "再インストール済み"
+
+#: dnf/util.py:622
+msgid "Skipped"
+msgstr "スキップ済み"
+
+#: dnf/util.py:623
+msgid "Removed"
+msgstr "削除しました"
+
+#: dnf/util.py:626
+msgid "Failed"
+msgstr "失敗しました"
+
+#~ msgid "skipping."
+#~ msgstr "スキップします。"
+
+#~ msgid ""
+#~ "Using rpmkeys executable from {path} to verify signature for package: "
+#~ "{package}."
+#~ msgstr ""
+#~ "{path} から実行可能ファイル rpmkeys を使用して、パッケージの署名を検証しま"
+#~ "す: {package}。"
+
+#~ msgid "%s: %s check failed: %s vs %s"
+#~ msgstr "%s: %s の確認に失敗しました: %s vs %s"
+
+#~ msgid "Action not handled: {}"
+#~ msgstr "動作は対処されていません: {}"
+
+#~ msgid "no package matched"
+#~ msgstr "一致したパッケージはありません。"
+
+#~ msgid "Not found given transaction ID"
+#~ msgstr "指定されたトランザクション ID は見つかりません"
+
+#~ msgid "Undoing transaction {}, from {}"
+#~ msgstr "トランザクション {} を {} から取り消しています"
 
 #~ msgid "format for displaying found packages"
 #~ msgstr "見つかったパッケージを表示する形式"
@@ -4133,5 +4390,7 @@ msgstr "トランザクション中にエラーが発生しました。"
 #~ msgstr "不正なトランザクション ID、またはパッケージが指定されました"
 
 #~ msgid ""
-#~ "Display capabilities that the package depends on for running a %%pre script."
-#~ msgstr "%%pre スクリプトを実行するためにパッケージが依存する機能を表示します。"
+#~ "Display capabilities that the package depends on for running a %%pre "
+#~ "script."
+#~ msgstr ""
+#~ "%%pre スクリプトを実行するためにパッケージが依存する機能を表示します。"
