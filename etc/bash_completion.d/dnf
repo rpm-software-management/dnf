@@ -124,7 +124,7 @@ _dnf_commands_helper()
 {
     local helper_cmd="import sys; from dnf.cli import completion_helper as ch; ch.main(sys.argv[1:])"
     local helper_opts="-d 0 -q -C --assumeno --nogpgcheck"
-    echo "$( ${__dnf_python_exec} -c "$helper_cmd" "$@" $helper_opts 2>/dev/null </dev/null )"
+    "${__dnf_python_exec}" -c "$helper_cmd" "$@" $helper_opts 2>/dev/null </dev/null
 }
 
 # decide "path-like?" per initial: dot (./f.rpm, ../b.rpm), / (full path) or ~
