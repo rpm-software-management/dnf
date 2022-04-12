@@ -955,10 +955,10 @@ configuration.
 ``proxy``
     :ref:`string <string-label>`
 
-    URL of a proxy server to connect through. Set to an empty string to disable the proxy setting inherited from the main section and use direct connection instead. The expected format of this option is ``<scheme>://<ip-or-hostname>[:port]``.
+    URL of a proxy server to connect through. Set to an empty string in the repository configuration to disable proxy setting inherited from the main section. The expected format of this option is ``<scheme>://<ip-or-hostname>[:port]``.
     (For backward compatibility, '_none_' can be used instead of the empty string.)
 
-    Note: The curl environment variables (such as ``http_proxy``) are effective if this option is unset. See the ``curl`` man page for details.
+    Note: The curl environment variables (such as ``http_proxy``) are effective if this option is unset (or '_none_' is set in the repository configuration). See the ``curl`` man page for details.
 
 .. _proxy_username-label:
 
