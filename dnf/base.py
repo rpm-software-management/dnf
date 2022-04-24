@@ -72,6 +72,7 @@ import dnf.transaction
 import dnf.util
 import dnf.yum.rpmtrans
 import functools
+import gc
 import hawkey
 import itertools
 import logging
@@ -568,6 +569,46 @@ class Base(object):
             self._comps_trans = dnf.comps.TransactionBunch()
             self._transaction = None
         self._update_security_filters = []
+        if sack and goal:
+            # We've just done this, above:
+            #
+            #      _sack                     _goal
+            #         |                        |
+            #    -- [CUT] --              -- [CUT] --
+            #         |                        |
+            #         v                |       v
+            #    +----------------+   [C]  +-------------+
+            #    | DnfSack object | <-[U]- | Goal object |
+            #    +----------------+   [T]  +-------------+
+            #      |^    |^    |^      |
+            #      ||    ||    ||
+            #      ||    ||    ||         |
+            #   +--||----||----||---+    [C]
+            #   |  v|    v|    v|   | <--[U]-- _transaction
+            #   | Pkg1  Pkg2  PkgN  |    [T]
+            #   |                   |     |
+            #   | Transaction oject |
+            #   +-------------------+
+            #
+            # At this point, the DnfSack object would be released only
+            # eventually, by Python's generational garbage collector, due to the
+            # cyclic references DnfSack<->Pkg1 ... DnfSack<->PkgN.
+            #
+            # The delayed release is a problem: the DnfSack object may
+            # (indirectly) own "page file" file descriptors in libsolv, via
+            # libdnf. For example,
+            #
+            #   sack->priv->pool->repos[1]->repodata[1]->store.pagefd = 7
+            #   sack->priv->pool->repos[1]->repodata[2]->store.pagefd = 8
+            #
+            # These file descriptors are closed when the DnfSack object is
+            # eventually released, that is, when dnf_sack_finalize() (in libdnf)
+            # calls pool_free() (in libsolv).
+            #
+            # We need that to happen right now, as callers may want to unmount
+            # the filesystems which those file descriptors refer to immediately
+            # after reset() returns. Therefore, force a garbage collection here.
+            gc.collect()
 
     def _closeRpmDB(self):
         """Closes down the instances of rpmdb that could be open."""
