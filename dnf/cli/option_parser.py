@@ -258,17 +258,17 @@ class OptionParser(argparse.ArgumentParser):
                                                       " for all questions"))
         general_grp.add_argument("--enablerepo", action=self._RepoCallback,
                                  dest='repos_ed', default=[], metavar='[repo]',
-                                 help=_("Temporarily enable repositories for the purpose"
-                                        "of the current dnf command. Accepts an id, a"
-                                        "comma-separated list of ids, or a glob of ids."
+                                 help=_("Temporarily enable repositories for the purpose "
+                                        "of the current dnf command. Accepts an id, a "
+                                        "comma-separated list of ids, or a glob of ids. "
                                         "This option can be specified multiple times."))
         repo_group = general_grp.add_mutually_exclusive_group()
         repo_group.add_argument("--disablerepo", action=self._RepoCallback,
                                 dest='repos_ed', default=[], metavar='[repo]',
-                                help=_("Temporarily disable active repositories for the"
-                                       "purpose of the current dnf command. Accepts an id,"
-                                       "a comma-separated list of ids, or a glob of ids."
-                                       "This option can be specified multiple times, but"
+                                help=_("Temporarily disable active repositories for the "
+                                       "purpose of the current dnf command. Accepts an id, "
+                                       "a comma-separated list of ids, or a glob of ids. "
+                                       "This option can be specified multiple times, but "
                                        "is mutually exclusive with `--repo`."))
         repo_group.add_argument('--repo', '--repoid', metavar='[repo]', dest='repo',
                                 action=self._SplitCallback, default=[],
