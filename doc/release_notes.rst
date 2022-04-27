@@ -20,6 +20,28 @@
 ###################
 
 ====================
+4.12.0 Release Notes
+====================
+
+- dnf.conf: hint users where to find more info about defaults and other options
+- Fix unittests that relied on checksum being at the end of solvfiles
+- completion: remove unnecessary echo
+- Fix remove when no repos are enabled (RhBug:2064341)
+- Add loongarch support for dnf
+- Add spaces between words to fix typos (RhBug:2077296)
+- [doc] Improve "proxy" configuration option documentation (RhBug:2072332)
+
+- Bug fixes:
+  - Fix download errors handling in non-english locales (RhBug:2024527)
+
+Bugs fixed in 4.12.0:
+
+* :rhbug:`2064341`
+* :rhbug:`2077296`
+* :rhbug:`2072332`
+* :rhbug:`2024527`
+
+====================
 4.11.1 Release Notes
 ====================
 

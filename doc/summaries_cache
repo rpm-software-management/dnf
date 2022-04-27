@@ -3426,5 +3426,21 @@
     [
         2031414,
         "`dnf --disablerepo`/`dnf --enablerepo` documentation is confusing"
+    ],
+    [
+        2077296,
+        "dnf --help is missing spaces for --enablerepo and --disablerepo"
+    ],
+    [
+        2072332,
+        "YUM option proxy=_none_ not correctly handled when setup global proxy"
+    ],
+    [
+        2024527,
+        "dnf breaks updateprocess with \"already downloaded\""
+    ],
+    [
+        2064341,
+        "dnf group remove will not remove a group if repositories are disabled"
     ]
 ]

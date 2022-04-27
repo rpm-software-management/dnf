@@ -65,7 +65,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.11.1
+Version:        4.12.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -359,6 +359,16 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Wed Apr 27 2022 Jaroslav Rohel <jrohel@redhat.com> - 4.12.0-1
+- dnf.conf: hint users where to find more info about defaults and other options
+- Fix unittests that relied on checksum being at the end of solvfiles
+- completion: remove unnecessary echo
+- Fix remove when no repos are enabled (RhBug:2064341)
+- Add loongarch support for dnf
+- Add spaces between words to fix typos (RhBug:2077296)
+- [doc] Improve "proxy" configuration option documentation (RhBug:2072332)
+- Fix download errors handling in non-english locales (RhBug:2024527)
+
 * Mon Mar 14 2022 Pavla Kratochvilova <pkratoch@redhat.com> - 4.11.1-1
 - Bump version, so that 4.11.0 can be released separately
 
