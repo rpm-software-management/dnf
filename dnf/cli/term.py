@@ -290,6 +290,7 @@ class Term(object):
             flags = re.I if ignore_case else 0
             haystack = re.sub(pat, render, haystack, flags=flags)
         return haystack
+
     def sub_norm(self, haystack, beg, needles, **kwds):
         """Search the string *haystack* for all occurrences of any
         string in the list *needles*.  Prefix each occurrence with
