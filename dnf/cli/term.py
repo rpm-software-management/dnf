@@ -287,9 +287,8 @@ class Term(object):
         render = lambda match: beg + match.group() + end
         for needle in needles:
             pat = escape(needle)
-            if ignore_case:
-                pat = re.template(pat, re.I)
-            haystack = re.sub(pat, render, haystack)
+            flags = re.I if ignore_case else 0
+            haystack = re.sub(pat, render, haystack, flags=flags)
         return haystack
     def sub_norm(self, haystack, beg, needles, **kwds):
         """Search the string *haystack* for all occurrences of any
