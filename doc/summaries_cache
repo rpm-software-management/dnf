@@ -3442,5 +3442,9 @@
     [
         2064341,
         "dnf group remove will not remove a group if repositories are disabled"
+    ],
+    [
+        1815895,
+        "dnf autocomplete too slow"
     ]
 ]

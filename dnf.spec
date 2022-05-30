@@ -65,7 +65,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.12.0
+Version:        4.13.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -359,6 +359,12 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Mon May 30 2022 Jaroslav Rohel <jrohel@redhat.com> - 4.13.0-1
+- Base.reset: plug (temporary) leak of libsolv's page file descriptors
+- Don't use undocumented re.template()
+- Small change to better present the option
+- Use sqlite cache to make bash completion snappier (RhBug:1815895)
+
 * Wed Apr 27 2022 Jaroslav Rohel <jrohel@redhat.com> - 4.12.0-1
 - dnf.conf: hint users where to find more info about defaults and other options
 - Fix unittests that relied on checksum being at the end of solvfiles

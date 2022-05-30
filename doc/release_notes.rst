@@ -20,6 +20,21 @@
 ###################
 
 ====================
+4.13.0 Release Notes
+====================
+
+- Base.reset: plug (temporary) leak of libsolv's page file descriptors
+- Don't use undocumented re.template()
+- Small change to better present the option
+
+- New features:
+  - Use sqlite cache to make bash completion snappier (RhBug:1815895)
+
+Bugs fixed in 4.13.0:
+
+* :rhbug:`1815895`
+
+====================
 4.12.0 Release Notes
 ====================
 
