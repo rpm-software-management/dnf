@@ -812,7 +812,7 @@ Install Command
 ---------------
 
 | Command: ``install``
-| Aliases: ``in``
+| Aliases: ``in``, ``add``
 | Aliases for :ref:`explicit NEVRA matching <specifying_nevra_matching_explicitly-label>`: ``install-n``, ``install-na``, ``install-nevra``
 | Deprecated aliases: ``localinstall``
 
