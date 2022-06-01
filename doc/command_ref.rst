@@ -1155,7 +1155,7 @@ Remove Command
 --------------
 
 | Command: ``remove``
-| Aliases: ``rm``
+| Aliases: ``rm``, ``uninstall``
 | Aliases for :ref:`explicit NEVRA matching <specifying_nevra_matching_explicitly-label>`: ``remove-n``, ``remove-na``, ``remove-nevra``
 | Deprecated aliases: ``erase``, ``erase-n``, ``erase-na``, ``erase-nevra``
 
