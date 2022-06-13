@@ -38,6 +38,11 @@ jobs:
 
   integration-tests:
     name: DNF Integration Tests
+    # Run integration-tests only for PRs agains master.
+    # We use branches to keep track of older versions + patches that are
+    # present in various releases (rhel, fedora), these get behind master
+    # and no longer work with upstream master ci-dnf-stack.
+    if: github.ref == 'refs/heads/master'
     needs: copr-build
     runs-on: ubuntu-latest
     container:
