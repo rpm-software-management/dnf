@@ -21,7 +21,7 @@ jobs:
         uses: ./.github/actions/setup-ci
         with:
           copr-user: ${{secrets.COPR_USER}}
-          copr-api-token: ${{secrets.COPR_API_TOKEN}}
+          copr-api-token: ${{secrets.COPR_API_CONFIG}}
 
       - name: Check out sources
         uses: actions/checkout@v2
