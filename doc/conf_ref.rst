@@ -906,6 +906,12 @@ configuration.
     :ref:`boolean <boolean-label>`
 
     Whether to perform GPG signature check on this repository's metadata. The default is False.
+    Note that GPG keys for this check are stored separately from GPG keys used in package signature
+    verification. Furthermore, they are also stored separately for each repository.
+
+    This means that dnf may ask to import the same key multiple times. For example, when a key was
+    already imported for package signature verification and this option is turned on, it may be needed
+    to import it again for the repository.
 
 ``retries``
     :ref:`integer <integer-label>`
