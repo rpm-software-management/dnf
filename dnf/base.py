@@ -2152,7 +2152,7 @@ class Base(object):
             #     packages. Otherwise if for example kernel-1 and kernel-3 were installed and present in the
             #     transaction libsolv could decide to install kernel-2 because it is an upgrade for kernel-1 even
             #     though we don't want it because there already is a newer version present.
-            query = query.union(installed_query.latest().filter(name=[pkg.name for pkg in query]))
+            query = query.union(installed_all.latest().filter(name=[pkg.name for pkg in query]))
             sltr = dnf.selector.Selector(self.sack)
             sltr.set(pkg=query)
             self._goal.upgrade(select=sltr)
