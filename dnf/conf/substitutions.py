@@ -53,6 +53,7 @@ class Substitutions(dict):
                 continue
             for fsvar in fsvars:
                 filepath = os.path.join(dir_fsvars, fsvar)
+                val = None
                 if os.path.isfile(filepath):
                     try:
                         with open(filepath) as fp:
@@ -61,4 +62,5 @@ class Substitutions(dict):
                             val = val[:-1]
                     except (OSError, IOError):
                         continue
-                self[fsvar] = val
+                if val is not None:
+                    self[fsvar] = val
