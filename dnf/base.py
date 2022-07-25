@@ -1589,7 +1589,7 @@ class Base(object):
             obsoletes = query_for_repo(
                 self.sack.query()).filter(obsoletes_by_priority=inst)
             # reduce a query to security upgrades if they are specified
-            obsoletes = self._merge_update_filters(obsoletes, warning=False)
+            obsoletes = self._merge_update_filters(obsoletes, warning=False, upgrade=True)
             obsoletesTuples = []
             for new in obsoletes:
                 obsoleted_reldeps = new.obsoletes
