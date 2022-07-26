@@ -50,8 +50,8 @@ Indices and tables:
 * :ref:`genindex`
 * :ref:`modindex`
 
-.. _DNF Plugins Core: https://dnf-plugins-core.readthedocs.org/en/latest/
-.. _DNF Plugins Extras: https://dnf-plugins-extras.readthedocs.org/en/latest/
+.. _DNF Plugins Core: https://dnf-plugins-core.readthedocs.io/en/latest/
+.. _DNF Plugins Extras: https://dnf-plugins-extras.readthedocs.io/en/latest/
 .. _Repository: https://github.com/rpm-software-management/dnf#readme
 .. _Bug Reports: https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting
 .. _libdnf: https://github.com/rpm-software-management/libdnf
