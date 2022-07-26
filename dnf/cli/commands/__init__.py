@@ -169,6 +169,9 @@ class InfoCommand(Command):
         narrows.add_argument('--available', dest='_packages_action',
                              action='store_const', const='available',
                              help=_("show only available packages"))
+        narrows.add_argument('--userinstalled', dest='_packages_action',
+                             action='store_const', const='userinstalled',
+                             help=_("show only packages installed by user"))
         narrows.add_argument('--installed', dest='_packages_action',
                              action='store_const', const='installed',
                              help=_("show only installed packages"))
@@ -222,6 +225,10 @@ class ListCommand(InfoCommand):
 
     def run(self):
         self.cli._populate_update_security_filter(self.opts)
+        if self.opts.packages_action == 'userinstalled':
+            pkgs = tuple(self.base.iter_userinstalled())
+            self.output.listPkgs(pkgs, 'Packages installed by user', 'nevra')
+            return
         return self.base.output_packages('list', self.opts.packages_action,
                                          self.opts.packages)
 
