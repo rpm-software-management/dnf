@@ -39,7 +39,7 @@ There is one restriction: DNF and YUM keep additional data about each installed 
 
 To transfer transaction additional data from yum to DNF, run::
 
-    dnf install python-dnf-plugins-extras-migrate && dnf-2 migrate
+    dnf install python-dnf-plugins-extras-migrate && dnf migrate
 
 .. _dnf_yum_package-label:
 

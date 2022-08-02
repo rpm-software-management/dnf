@@ -41,17 +41,13 @@ To build DNF::
 
     mkdir build;
     pushd build;
-    cmake ..; # add '-DPYTHON_DESIRED="3"' option for Python 3 build
+    cmake ..;
     make;
     popd;
 
-To run DNF when compiled for Python2::
+To run DNF::
 
-    PYTHONPATH=`readlink -f .` bin/dnf-2 <arguments>
-
-To run DNF when compiled for Python3::
-
-    PYTHONPATH=`readlink -f .` bin/dnf-3 <arguments>
+    PYTHONPATH=`readlink -f .` bin/dnf <arguments>
 
 If you want to build the manpages, use the option ``-DWITH_MAN=0`` with cmake.
 
