@@ -121,25 +121,11 @@ _dnf_query_db()
     sqlite3 -batch -init /dev/null "$__dnf_cache_file" "$query"
 }
 
-__dnf_python_exec=
-_dnf_set_python_exec()
-{
-    if [[ "$( readlink /usr/bin/dnf )" == "dnf-2" ]]; then
-        __dnf_python_exec="/usr/bin/python2"
-    else
-        if [ -x /usr/libexec/platform-python ]; then
-            __dnf_python_exec="/usr/libexec/platform-python"
-        else
-            __dnf_python_exec="/usr/bin/python3"
-        fi
-    fi
-}
-
 _dnf_commands_helper()
 {
     local helper_cmd="import sys; from dnf.cli import completion_helper as ch; ch.main(sys.argv[1:])"
     local helper_opts="-d 0 -q -C --assumeno --nogpgcheck"
-    "${__dnf_python_exec}" -c "$helper_cmd" "$@" $helper_opts 2>/dev/null </dev/null
+    /usr/bin/python3 -c "$helper_cmd" "$@" $helper_opts 2>/dev/null </dev/null
 }
 
 # decide "path-like?" per initial: dot (./f.rpm, ../b.rpm), / (full path) or ~
@@ -203,8 +189,6 @@ _dnf_get_first_command()
 
 _dnf()
 {
-    _dnf_set_python_exec
-
     local complete_commands complete_options extra_options command cmd_list
     local cur prev words cword split
     _init_completion -s || return
@@ -433,4 +417,4 @@ _dnf()
     return 0
 }
 
-complete -F _dnf dnf dnf-2 dnf-3
+complete -F _dnf dnf
