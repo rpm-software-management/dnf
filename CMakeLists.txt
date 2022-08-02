@@ -30,8 +30,6 @@ ADD_SUBDIRECTORY (po)
 ENABLE_TESTING()
 ADD_SUBDIRECTORY (tests)
 
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/bin/dnf.in ${CMAKE_SOURCE_DIR}/bin/dnf-${PYTHON_VERSION_MAJOR} @ONLY)
-CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/bin/dnf-automatic.in ${CMAKE_SOURCE_DIR}/bin/dnf-automatic-${PYTHON_VERSION_MAJOR} @ONLY)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/dnf/const.py.in ${CMAKE_SOURCE_DIR}/dnf/const.py @ONLY)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/dnf/cli/completion_helper.py.in ${CMAKE_SOURCE_DIR}/dnf/cli/completion_helper.py @ONLY)
 CONFIGURE_FILE(${CMAKE_SOURCE_DIR}/tests/modules/etc/dnf/repos.d/test.repo.in ${CMAKE_SOURCE_DIR}/tests/modules/etc/dnf/repos.d/test.repo @ONLY)
