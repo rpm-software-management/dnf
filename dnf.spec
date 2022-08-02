@@ -335,7 +335,7 @@ popd
 %endif
 
 %files -n python3-%{name}
-%{_bindir}/%{name}-3
+%{_bindir}/%{name}
 %exclude %{python3_sitelib}/%{name}/automatic
 %{python3_sitelib}/%{name}/
 %dir %{py3pluginpath}
