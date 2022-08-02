@@ -210,9 +210,6 @@ mkdir -p %{buildroot}%{py3pluginpath}/__pycache__/
 mkdir -p %{buildroot}%{_localstatedir}/log/
 mkdir -p %{buildroot}%{_var}/cache/dnf/
 touch %{buildroot}%{_localstatedir}/log/%{name}.log
-ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf
-mv %{buildroot}%{_bindir}/dnf-automatic-3 %{buildroot}%{_bindir}/dnf-automatic
-rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
 # Strict conf distribution
 %if 0%{?rhel}
@@ -223,7 +220,7 @@ rm -vf %{buildroot}%{confdir}/%{name}-strict.conf
 
 # YUM compat layer
 ln -sr  %{buildroot}%{confdir}/%{name}.conf %{buildroot}%{_sysconfdir}/yum.conf
-ln -sr  %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/yum
+ln -sr  %{buildroot}%{_bindir}/dnf %{buildroot}%{_bindir}/yum
 %if "%{yum_compat_level}" == "full"
 mkdir -p %{buildroot}%{_sysconfdir}/yum
 ln -sr  %{buildroot}%{pluginconfpath} %{buildroot}%{_sysconfdir}/yum/pluginconf.d
