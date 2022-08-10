@@ -423,7 +423,7 @@ class RPMTransaction(object):
             pkg = 'None'
         else:
             transaction_list = self._extract_cbkey(key, throw=False)
-            if transaction_list == None:
+            if transaction_list is None:
                 return
             pkg = transaction_list[0].pkg
         complete = self.complete_actions if self.total_actions != 0 and self.complete_actions != 0 \
