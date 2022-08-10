@@ -243,7 +243,7 @@ class RPMTransaction(object):
     def __del__(self):
         self._shutdownOutputLogging()
 
-    def _extract_cbkey(self, cbkey):
+    def _extract_cbkey(self, cbkey, throw=True):
         """Obtain the package related to the calling callback."""
 
         if hasattr(cbkey, "pkg"):
@@ -265,7 +265,8 @@ class RPMTransaction(object):
         if items:
             self._tsi_cache = items
             return items
-        raise RuntimeError("TransactionItem not found for key: %s" % cbkey)
+        if throw:
+            raise RuntimeError("TransactionItem not found for key: %s" % cbkey)
 
     def callback(self, what, amount, total, key, client_data):
         try:
@@ -421,7 +422,9 @@ class RPMTransaction(object):
         if key is None and self._te_list == []:
             pkg = 'None'
         else:
-            transaction_list = self._extract_cbkey(key)
+            transaction_list = self._extract_cbkey(key, throw=False)
+            if transaction_list == None:
+                return
             pkg = transaction_list[0].pkg
         complete = self.complete_actions if self.total_actions != 0 and self.complete_actions != 0 \
             else 1
