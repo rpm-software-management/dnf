@@ -224,17 +224,17 @@ def _get_plugins_files(paths, disable_plugins, enable_plugins):
             matched = True
             enable_pattern_tested = False
             for pattern_skip in disable_plugins:
-                if fnmatch.fnmatch(plugin_name, pattern_skip):
+                if _plugin_name_matches_pattern(plugin_name, pattern_skip):
                     pattern_disable_found.add(pattern_skip)
                     matched = False
                     for pattern_enable in enable_plugins:
-                        if fnmatch.fnmatch(plugin_name, pattern_enable):
+                        if _plugin_name_matches_pattern(plugin_name, pattern_enable):
                             matched = True
                             pattern_enable_found.add(pattern_enable)
                     enable_pattern_tested = True
             if not enable_pattern_tested:
                 for pattern_enable in enable_plugins:
-                    if fnmatch.fnmatch(plugin_name, pattern_enable):
+                    if _plugin_name_matches_pattern(plugin_name, pattern_enable):
                         pattern_enable_found.add(pattern_enable)
             if matched:
                 plugins.append(fn)
@@ -247,6 +247,20 @@ def _get_plugins_files(paths, disable_plugins, enable_plugins):
         logger.warning(_("No matches found for the following disable plugin patterns: {}").format(
             ", ".join(sorted(disable_not_found))))
     return plugins
+
+
+def _plugin_name_matches_pattern(plugin_name, pattern):
+    """
+    Checks plugin name matches the pattern.
+
+    The alternative plugin name using dashes instead of underscores is tried
+    in case of original name is not matched.
+
+    (see https://bugzilla.redhat.com/show_bug.cgi?id=1980712)
+    """
+
+    try_names = set((plugin_name, plugin_name.replace('_', '-')))
+    return any(fnmatch.fnmatch(name, pattern) for name in try_names)
 
 
 def register_command(command_class):
