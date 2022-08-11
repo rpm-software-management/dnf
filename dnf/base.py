@@ -2128,7 +2128,11 @@ class Base(object):
             sltr.set(pkg=[pkg])
             self._goal.upgrade(select=sltr)
             return 1
-        q = installed.filter(name=pkg.name, arch=[pkg.arch, "noarch"])
+        # do not filter by arch if the package is noarch
+        if pkg.arch == "noarch":
+            q = installed.filter(name=pkg.name)
+        else:
+            q = installed.filter(name=pkg.name, arch=[pkg.arch, "noarch"])
         if not q:
             msg = _("Package %s not installed, cannot update it.")
             logger.warning(msg, pkg.name)
