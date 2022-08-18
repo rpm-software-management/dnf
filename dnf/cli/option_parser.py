@@ -110,10 +110,7 @@ class OptionParser(argparse.ArgumentParser):
         """ Parse setopts arguments and put them into main_<setopts>
             and repo_<setopts>."""
         def __call__(self, parser, namespace, values, opt_str):
-            vals = values.split('=')
-            if len(vals) > 2:
-                logger.warning(_("Setopt argument has multiple values: %s"), values)
-                return
+            vals = values.split('=', maxsplit=1)
             if len(vals) < 2:
                 logger.warning(_("Setopt argument has no value: %s"), values)
                 return
