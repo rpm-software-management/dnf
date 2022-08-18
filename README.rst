@@ -88,7 +88,7 @@ Here's the most direct way to get your work merged into the project.
 1. Fork the project
 #. Clone down your fork
 #. Implement your feature or bug fix and commit changes
-#. If the change fixes a bug at `Red Hat bugzilla <https://bugzilla.redhat.com/>`_, or if it is important to the end user, add the following block to the commit message::
+#. If the change fixes a bug at `Red Hat bugzilla <https://bugzilla.redhat.com/buglist.cgi?component=dnf>`_, or if it is important to the end user, add the following block to the commit message::
 
     = changelog =
     msg:           message to be included in the changelog
@@ -123,6 +123,6 @@ The DNF package distribution contains man pages, dnf(8) and dnf.conf(8). It is a
  Bug reporting etc.
 ====================
 
-Please report discovered bugs to the `Red Hat bugzilla <https://bugzilla.redhat.com/>`_ following this `guide <https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting>`_. If you planned to propose the patch in the report, consider `Contribution`_ instead.
+Please report discovered bugs to the `Red Hat bugzilla <https://bugzilla.redhat.com/buglist.cgi?component=dnf>`_ following this `guide <https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting>`_. If you planned to propose the patch in the report, consider `Contribution`_ instead.
 
 Freenode's irc channel ``#yum`` is meant for discussions related to both YUM and DNF. Questions should be asked there, issues discussed. Remember: ``#yum`` is not a support channel and prior research is expected from the questioner.
