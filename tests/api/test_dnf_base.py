@@ -95,6 +95,13 @@ class DnfBaseApiTest(TestCase):
 
         self.base.configure_plugins()
 
+    def test_unload_plugins(self):
+        # Base.unload_plugins()
+        self.assertHasAttr(self.base, "unload_plugins")
+
+        self.base.init_plugins()
+        self.base.unload_plugins()
+
     def test_update_cache(self):
         # Base.update_cache(self, timer=False)
         self.assertHasAttr(self.base, "update_cache")
