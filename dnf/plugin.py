@@ -164,6 +164,7 @@ class Plugins(object):
         self._caller('transaction')
 
     def _unload(self):
+        logger.debug(_('Plugins were unloaded'))
         del sys.modules[DYNAMIC_PACKAGE]
 
     def unload_removed_plugins(self, transaction):
