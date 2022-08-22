@@ -97,6 +97,10 @@
 
      Configure plugins by running their configure() method.
 
+  .. method:: unload_plugins()
+
+     Unload all plugins.
+
   .. method:: fill_sack([load_system_repo=True, load_available_repos=True])
 
     Setup the package sack. If `load_system_repo` is ``True``, load information about packages in the local RPMDB into the sack. Else no package is considered installed during dependency solving. If `load_available_repos` is ``True``, load information about packages from the available repositories into the sack.

@@ -317,6 +317,11 @@ class Base(object):
         """Run plugins configure() method."""
         self._plugins._run_config()
 
+    def unload_plugins(self):
+        # :api
+        """Run plugins unload() method."""
+        self._plugins._unload()
+
     def update_cache(self, timer=False):
         # :api
 
