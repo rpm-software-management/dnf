@@ -416,6 +416,16 @@ class TransactionReplay(object):
         if swdb_group is not None:
             self._base.history.group.upgrade(swdb_group)
 
+    def _swdb_group_downgrade(self, group_id, pkg_types, pkgs):
+        if not self._base.history.group.get(group_id):
+            self._raise_or_warn(self._ignore_installed, _("Group id '%s' is not installed.") % group_id)
+            return
+
+        swdb_group = self._create_swdb_group(group_id, pkg_types, pkgs)
+
+        if swdb_group is not None:
+            self._base.history.group.downgrade(swdb_group)
+
     def _swdb_group_remove(self, group_id, pkg_types, pkgs):
         if not self._base.history.group.get(group_id):
             self._raise_or_warn(self._ignore_installed, _("Group id '%s' is not installed.") % group_id)
@@ -482,6 +492,16 @@ class TransactionReplay(object):
         if swdb_env is not None:
             self._base.history.env.upgrade(swdb_env)
 
+    def _swdb_environment_downgrade(self, env_id, pkg_types, groups):
+        if not self._base.history.env.get(env_id):
+            self._raise_or_warn(self._ignore_installed, _("Environment id '%s' is not installed.") % env_id)
+            return
+
+        swdb_env = self._create_swdb_environment(env_id, pkg_types, groups)
+
+        if swdb_env is not None:
+            self._base.history.env.downgrade(swdb_env)
+
     def _swdb_environment_remove(self, env_id, pkg_types, groups):
         if not self._base.history.env.get(env_id):
             self._raise_or_warn(self._ignore_installed, _("Environment id '%s' is not installed.") % env_id)
@@ -535,6 +555,8 @@ class TransactionReplay(object):
                     self._swdb_group_install(group_id, pkg_types, group_data["packages"])
                 elif action == "Upgrade":
                     self._swdb_group_upgrade(group_id, pkg_types, group_data["packages"])
+                elif action == "Downgraded":
+                    self._swdb_group_downgrade(group_id, pkg_types, group_data["packages"])
                 elif action == "Removed":
                     self._swdb_group_remove(group_id, pkg_types, group_data["packages"])
                 else:
@@ -564,6 +586,8 @@ class TransactionReplay(object):
                     self._swdb_environment_install(env_id, pkg_types, env_data["groups"])
                 elif action == "Upgrade":
                     self._swdb_environment_upgrade(env_id, pkg_types, env_data["groups"])
+                elif action == "Downgraded":
+                    self._swdb_environment_downgrade(env_id, pkg_types, env_data["groups"])
                 elif action == "Removed":
                     self._swdb_environment_remove(env_id, pkg_types, env_data["groups"])
                 else:

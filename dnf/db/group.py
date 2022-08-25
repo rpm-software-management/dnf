@@ -35,14 +35,16 @@ class PersistorBase(object):
         self._installed = {}
         self._removed = {}
         self._upgraded = {}
+        self._downgraded = {}
 
     def __len__(self):
-        return len(self._installed) + len(self._removed) + len(self._upgraded)
+        return len(self._installed) + len(self._removed) + len(self._upgraded) + len(self._downgraded)
 
     def clean(self):
         self._installed = {}
         self._removed = {}
         self._upgraded = {}
+        self._downgraded = {}
 
     def _get_obj_id(self, obj):
         raise NotImplementedError
@@ -62,6 +64,10 @@ class PersistorBase(object):
     def upgrade(self, obj):
         self._upgraded[self._get_obj_id(obj)] = obj
         self._add_to_history(obj, libdnf.transaction.TransactionItemAction_UPGRADE)
+
+    def downgrade(self, obj):
+        self._downgraded[self._get_obj_id(obj)] = obj
+        self._add_to_history(obj, libdnf.transaction.TransactionItemAction_DOWNGRADE)
 
     def new(self, obj_id, name, translated_name, pkg_types):
         raise NotImplementedError
