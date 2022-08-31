@@ -189,8 +189,7 @@ Options
 ``--downloaddir=<path>, --destdir=<path>``
     Redirect downloaded packages to provided directory. The option has to be used together with the \-\
     :ref:`-downloadonly <downloadonly-label>` command line option, with the
-    ``download``, ``modulesync`` or ``reposync`` commands (dnf-plugins-core) or with the ``system-upgrade`` command
-    (dnf-plugins-extras).
+    ``download``, ``modulesync``, ``reposync`` or ``system-upgrade`` commands (dnf-plugins-core).
 
 .. _downloadonly-label:
 
