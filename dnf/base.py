@@ -75,6 +75,7 @@ import functools
 import gc
 import hawkey
 import itertools
+import libcomps
 import logging
 import math
 import os
@@ -880,11 +881,14 @@ class Base(object):
             query = query.available()
             self._goal.add_exclude_from_weak(query)
 
-    def resolve(self, allow_erasing=False):
+    def resolve(self, allow_erasing=False, missing_dict=None):
         # :api
         """Build the transaction set."""
         exc = None
-        self._finalize_comps_trans()
+        missing_group_pkgs = self._finalize_comps_trans()
+        if isinstance(missing_dict, dict):
+            for (key, value) in missing_group_pkgs.items():
+                missing_dict[key] = value
 
         timer = dnf.logging.Timer('depsolve')
         self._ds_callback.start()
@@ -1695,6 +1699,12 @@ class Base(object):
                    (trans.upgrade, trans_upgrade),
                    (trans.remove, trans_remove))
 
+        missing_group_pkgs = {
+            libcomps.PACKAGE_TYPE_OPTIONAL: [],
+            libcomps.PACKAGE_TYPE_DEFAULT: [],
+            libcomps.PACKAGE_TYPE_MANDATORY: [],
+            libcomps.PACKAGE_TYPE_CONDITIONAL: []
+        }
         for (attr, fn) in attr_fn:
             for comps_pkg in attr:
                 query_args = {'name': comps_pkg.name}
@@ -1707,11 +1717,13 @@ class Base(object):
                     if comps_pkg.basearchonly:
                         package_string += '.' + basearch
                     logger.warning(_('No match for group package "{}"').format(package_string))
+                    missing_group_pkgs[comps_pkg.type].append(package_string)
                     continue
                 remove_query = fn(q, remove_query, comps_pkg)
                 self._goal.group_members.add(comps_pkg.name)
 
         self._remove_if_unneeded(remove_query)
+        return missing_group_pkgs
 
     def _build_comps_solver(self):
         def reason_fn(pkgname):
