@@ -287,7 +287,7 @@ class MainConf(BaseConfig):
                 temp_fd, temp_path = tempfile.mkstemp(prefix='dnf-downloaded-config-')
                 self.tempfiles.append(temp_path)
                 try:
-                    downloader.downloadURL(None, val, temp_fd)
+                    downloader.downloadURL(self._config, val, temp_fd)
                 except RuntimeError as e:
                     raise dnf.exceptions.ConfigError(
                         _('Configuration file URL "{}" could not be downloaded:\n'
