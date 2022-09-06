@@ -1180,7 +1180,7 @@ class Output(object):
                     lines.append(format_line(group))
                 pkglist_lines.append((action, lines))
         # show skipped conflicting packages
-        if not self.conf.best and self.base._goal.actions & forward_actions:
+        if (not self.conf.best or not self.conf.strict) and self.base._goal.actions & forward_actions:
             lines = []
             skipped_conflicts, skipped_broken = self.base._skipped_packages(
                 report_problems=True, transaction=transaction)
