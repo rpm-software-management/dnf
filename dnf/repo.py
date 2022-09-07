@@ -47,6 +47,7 @@ import string
 import sys
 import time
 import traceback
+import urllib
 
 _PACKAGES_RELATIVE_DIR = "packages"
 _MIRRORLIST_FILENAME = "mirrorlist"
@@ -295,7 +296,7 @@ class RemoteRPMPayload(PackagePayload):
         self.local_path = os.path.join(self.pkgdir, self.__str__().lstrip("/"))
 
     def __str__(self):
-        return os.path.basename(self.remote_location)
+        return os.path.basename(urllib.parse.unquote(self.remote_location))
 
     def _progress_cb(self, cbdata, total, done):
         self.remote_size = total
@@ -308,8 +309,8 @@ class RemoteRPMPayload(PackagePayload):
 
     def _librepo_target(self):
         return libdnf.repo.PackageTarget(
-            self.conf._config, os.path.basename(self.remote_location),
-            self.pkgdir, 0, None, 0, os.path.dirname(self.remote_location),
+            self.conf._config, self.remote_location,
+            self.pkgdir, 0, None, 0, None,
             True, 0, 0, self.callbacks)
 
     @property
