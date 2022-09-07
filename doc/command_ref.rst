@@ -197,6 +197,10 @@ Options
 ``--downloadonly``
     Download the resolved package set without performing any rpm transaction (install/upgrade/erase).
 
+    Packages are removed after the next successful transaction. This applies also when used together
+    with ``--destdir`` option as the directory is considered as a part of the DNF cache. To persist 
+    the packages, use the ``download`` command instead.
+
 ``-e <error level>, --errorlevel=<error level>``
     Error output level. This is an integer value between 0 (no error output) and
     10 (shows all error messages), default is 3. Deprecated, use ``-v`` instead.
