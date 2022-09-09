@@ -65,7 +65,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.13.0
+Version:        4.14.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -359,6 +359,20 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Fri Sep 09 2022 Jaroslav Rohel <jrohel@redhat.com> - 4.14.0-1
+- doc: Describe how gpg keys are stored for `repo_ggpcheck` (RhBug:2020678)
+- Set default value for variable to prevent crash (RhBug:2091636)
+- Add only relevant pkgs to upgrade transaction (RhBug:2097757)
+- Use `installed_all` because `installed_query` is filtered user input
+- Don't include resolved advisories for obsoletes filtering with security filters (RhBug:2101421)
+- Allow passing plugin parameters with dashes in names (RhBug:1980712)
+- Fix upgrade from file to noarch pkg (RhBug:2006018)
+- Translations update
+- Expose plugin unload method to API (RhBug:2047251)
+- Add support for group upgrade rollback (RhBug:2016070)
+- Fix broken dependencies error reporting (RhBug:2088422)
+- Add doc related to --destdir and --downloadonly options (RhBug:2100811)
+
 * Mon May 30 2022 Jaroslav Rohel <jrohel@redhat.com> - 4.13.0-1
 - Base.reset: plug (temporary) leak of libsolv's page file descriptors
 - Don't use undocumented re.template()

@@ -3446,5 +3446,41 @@
     [
         1815895,
         "dnf autocomplete too slow"
+    ],
+    [
+        2088422,
+        "dnf install should report an error when it cannot resolve the dependencies of a package to install, even when strict=False and best=True"
+    ],
+    [
+        2020678,
+        "[conn] reposync with installroot fails when repo_gpgcheck is True"
+    ],
+    [
+        1980712,
+        "dnf --enableplugin and --disableplugin issues"
+    ],
+    [
+        2016070,
+        "dnf rollback of a transaction with a group upgrade in it causes errors when trying to downgrade group"
+    ],
+    [
+        2100811,
+        "A yum install command success will delete the content of the previous command downloadonly destdir"
+    ],
+    [
+        2047251,
+        "dnf api is missing a method to unload plugins"
+    ],
+    [
+        2091636,
+        "python3-dnf wrong indentation level in substitutions.py:64"
+    ],
+    [
+        2097757,
+        "yum update --security"
+    ],
+    [
+        2101421,
+        "yum check-update --security shows obsoleting packages when no security updates apply"
     ]
 ]
