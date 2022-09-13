@@ -553,12 +553,14 @@ class TransactionReplay(object):
 
                 if action == "Install":
                     self._swdb_group_install(group_id, pkg_types, group_data["packages"])
-                elif action == "Upgrade":
-                    self._swdb_group_upgrade(group_id, pkg_types, group_data["packages"])
-                elif action == "Downgraded":
-                    self._swdb_group_downgrade(group_id, pkg_types, group_data["packages"])
                 elif action == "Removed":
                     self._swdb_group_remove(group_id, pkg_types, group_data["packages"])
+                # Groups are not versioned, but a reverse transaction could be applied,
+                # therefore we treat both actions the same way
+                elif action == "Upgrade" or action == "Upgraded":
+                    self._swdb_group_upgrade(group_id, pkg_types, group_data["packages"])
+                elif action == "Downgrade" or action == "Downgraded":
+                    self._swdb_group_downgrade(group_id, pkg_types, group_data["packages"])
                 else:
                     errors.append(TransactionError(
                         _('Unexpected value of group action "{action}" for group "{group}".')
@@ -584,12 +586,14 @@ class TransactionReplay(object):
 
                 if action == "Install":
                     self._swdb_environment_install(env_id, pkg_types, env_data["groups"])
-                elif action == "Upgrade":
-                    self._swdb_environment_upgrade(env_id, pkg_types, env_data["groups"])
-                elif action == "Downgraded":
-                    self._swdb_environment_downgrade(env_id, pkg_types, env_data["groups"])
                 elif action == "Removed":
                     self._swdb_environment_remove(env_id, pkg_types, env_data["groups"])
+                # Environments are not versioned, but a reverse transaction could be applied,
+                # therefore we treat both actions the same way
+                elif action == "Upgrade" or action == "Upgraded":
+                    self._swdb_environment_upgrade(env_id, pkg_types, env_data["groups"])
+                elif action == "Downgrade" or action == "Downgraded":
+                    self._swdb_environment_downgrade(env_id, pkg_types, env_data["groups"])
                 else:
                     errors.append(TransactionError(
                         _('Unexpected value of environment action "{action}" for environment "{env}".')
