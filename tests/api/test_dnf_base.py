@@ -7,8 +7,21 @@ from __future__ import unicode_literals
 import dnf
 import dnf.conf
 
+import tests.support
+
 from .common import TestCase
 from .common import TOUR_4_4
+
+
+def conf_with_empty_plugins():
+    """
+    Use empty configuration to avoid importing plugins from default paths
+    which would lead to crash of other tests.
+    """
+    conf = tests.support.FakeConf()
+    conf.plugins = True
+    conf.pluginpath = []
+    return conf
 
 
 class DnfBaseApiTest(TestCase):
@@ -75,13 +88,12 @@ class DnfBaseApiTest(TestCase):
         self.assertHasType(self.base.transaction, dnf.db.group.RPMTransaction)
 
     def test_init_plugins(self):
-        # Base.init_plugins(disabled_glob=(), enable_plugins=(), cli=None)
+        # Base.init_plugins()
         self.assertHasAttr(self.base, "init_plugins")
 
-        # disable plugins to avoid calling dnf.plugin.Plugins._load() multiple times
-        # which causes the tests to crash
-        self.base.conf.plugins = False
-        self.base.init_plugins(disabled_glob=(), enable_plugins=(), cli=None)
+        self.base._conf = conf_with_empty_plugins()
+
+        self.base.init_plugins()
 
     def test_pre_configure_plugins(self):
         # Base.pre_configure_plugins()
@@ -98,6 +110,8 @@ class DnfBaseApiTest(TestCase):
     def test_unload_plugins(self):
         # Base.unload_plugins()
         self.assertHasAttr(self.base, "unload_plugins")
+
+        self.base._conf = conf_with_empty_plugins()
 
         self.base.init_plugins()
         self.base.unload_plugins()

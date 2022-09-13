@@ -98,6 +98,9 @@ class Plugins(object):
         self.plugin_cls = []
         self.plugins = []
 
+    def __del__(self):
+        self._unload()
+
     def _caller(self, method):
         for plugin in self.plugins:
             try:
@@ -164,8 +167,9 @@ class Plugins(object):
         self._caller('transaction')
 
     def _unload(self):
-        logger.debug(_('Plugins were unloaded'))
-        del sys.modules[DYNAMIC_PACKAGE]
+        if DYNAMIC_PACKAGE in sys.modules:
+            logger.log(dnf.logging.DDEBUG, 'Plugins were unloaded.')
+            del sys.modules[DYNAMIC_PACKAGE]
 
     def unload_removed_plugins(self, transaction):
         """
