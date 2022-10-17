@@ -5,7 +5,7 @@
 %global hawkey_version 0.66.0
 %global libcomps_version 0.1.8
 %global libmodulemd_version 2.9.3
-%global rpm_version 4.14.0
+%global rpm_version 4.18.0
 
 # conflicts
 %global conflicts_dnf_plugins_core_version 4.0.26
