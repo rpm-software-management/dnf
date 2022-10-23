@@ -177,7 +177,7 @@ class OptionParser(argparse.ArgumentParser):
                                  default=None, metavar='[config file]',
                                  help=_("config file location"))
         general_grp.add_argument("-q", "--quiet", dest="quiet",
-                                 action="store_true", default=None,
+                                 action="append_const", default=None, const=True,
                                  help=_("quiet operation"))
         general_grp.add_argument("-v", "--verbose", action="store_true",
                                  default=None, help=_("verbose operation"))

@@ -321,6 +321,7 @@ Options
 
 ``-q, --quiet``
     In combination with a non-interactive command, shows just the relevant content. Suppresses messages notifying about the current state or actions of DNF.
+    -qq More quiet output, suppress the list of installed or removed packages.
 
 ``-R <minutes>, --randomwait=<minutes>``
     Maximum command wait time.
