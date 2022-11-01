@@ -113,7 +113,7 @@ Options
 
 ``--advisory=<advisory>, --advisories=<advisory>``
     Include packages corresponding to the advisory ID, Eg. FEDORA-2201-123.
-    Applicable for the install, repoquery, updateinfo and upgrade commands.
+    Applicable for the ``install``, ``repoquery``, ``updateinfo``, ``upgrade`` and ``offline-upgrade`` (dnf-plugins-core) commands.
 
 ``--allowerasing``
     Allow erasing of installed packages to resolve dependencies. This option could be used as an alternative to the ``yum swap`` command where packages to remove are not explicitly defined.
@@ -125,12 +125,12 @@ Options
     Try the best available package versions in transactions. Specifically during :ref:`dnf upgrade <upgrade_command-label>`, which by default skips over updates that can not be installed for dependency reasons, the switch forces DNF to only consider the latest packages. When running into packages with broken dependencies, DNF will fail giving a reason why the latest version can not be installed.
 
 ``--bugfix``
-    Include packages that fix a bugfix issue. Applicable for the install, repoquery, updateinfo and
-    upgrade commands.
+    Include packages that fix a bugfix issue. 
+    Applicable for the ``install``, ``repoquery``, ``updateinfo``, ``upgrade`` and ``offline-upgrade`` (dnf-plugins-core) commands.
 
 ``--bz=<bugzilla>, --bzs=<bugzilla>``
-    Include packages that fix a Bugzilla ID, Eg. 123123. Applicable for the install, repoquery,
-    updateinfo and upgrade commands.
+    Include packages that fix a Bugzilla ID, Eg. 123123. 
+    Applicable for the ``install``, ``repoquery``, ``updateinfo``, ``upgrade`` and ``offline-upgrade`` (dnf-plugins-core) commands.
 
 ``-C, --cacheonly``
     Run entirely from system cache, don't update the cache and use it even in case it is expired.
@@ -148,8 +148,8 @@ Options
 
 ``--cve=<cves>, --cves=<cves>``
     Include packages that fix a CVE (Common Vulnerabilities and Exposures) ID
-    (http://cve.mitre.org/about/), Eg. CVE-2201-0123. Applicable for the install, repoquery, updateinfo,
-    and upgrade commands.
+    (http://cve.mitre.org/about/), Eg. CVE-2201-0123. 
+    Applicable for the ``install``, ``repoquery``, ``updateinfo``, ``upgrade`` and ``offline-upgrade`` (dnf-plugins-core) commands.
 
 ``-d <debug level>, --debuglevel=<debug level>``
     Debugging output level. This is an integer value between 0 (no additional information strings) and 10 (shows all debugging information, even that not understandable to the user), default is 2. Deprecated, use ``-v`` instead.
@@ -208,8 +208,8 @@ Options
     Enable additional repositories by an id or a glob.
 
 ``--enhancement``
-    Include enhancement relevant packages. Applicable for the install, repoquery, updateinfo and
-    upgrade commands.
+    Include enhancement relevant packages. 
+    Applicable for the ``install``, ``repoquery``, ``updateinfo``, ``upgrade`` and ``offline-upgrade`` (dnf-plugins-core) commands.
 
 .. _exclude_option-label:
 
@@ -280,8 +280,8 @@ Options
      ``--setopt`` using configuration from ``/path/dnf.conf``.
 
 ``--newpackage``
-    Include newpackage relevant packages. Applicable for the install, repoquery, updateinfo and
-    upgrade commands.
+    Include newpackage relevant packages. 
+    Applicable for the ``install``, ``repoquery``, ``updateinfo``, ``upgrade`` and ``offline-upgrade`` (dnf-plugins-core) commands.
 
 ``--noautoremove``
     Disable removal of dependencies that are no longer used. It sets
@@ -353,11 +353,11 @@ Options
 
 ``--sec-severity=<severity>, --secseverity=<severity>``
     Includes packages that provide a fix for an issue of the specified severity.
-    Applicable for the install, repoquery, updateinfo and upgrade commands.
+    Applicable for the ``install``, ``repoquery``, ``updateinfo``, ``upgrade`` and ``offline-upgrade`` (dnf-plugins-core) commands.
 
 ``--security``
-    Includes packages that provide a fix for a security issue. Applicable for the
-    upgrade command.
+    Includes packages that provide a fix for a security issue. 
+    Applicable for the ``install``, ``repoquery``, ``updateinfo``, ``upgrade`` and ``offline-upgrade`` (dnf-plugins-core) commands.
 
 .. _setopt_option-label:
 
