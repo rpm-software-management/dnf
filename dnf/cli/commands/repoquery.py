@@ -41,7 +41,7 @@ logger = logging.getLogger('dnf')
 
 QFORMAT_DEFAULT = '%{name}-%{epoch}:%{version}-%{release}.%{arch}'
 # matches %[-][dd]{attr}
-QFORMAT_MATCH = re.compile(r'%(-?\d*?){([:.\w]+?)}')
+QFORMAT_MATCH = re.compile(r'%(-?\d*?){([:\w]+?)}')
 
 QUERY_TAGS = """\
 name, arch, epoch, version, release, reponame (repoid), from_repo, evr,
@@ -50,6 +50,13 @@ installtime, buildtime, size, downloadsize, installsize,
 provides, requires, obsoletes, conflicts, sourcerpm,
 description, summary, license, url, reason"""
 
+ALLOWED_QUERY_TAGS = ('name', 'arch', 'epoch', 'version', 'release',
+                      'reponame', 'repoid', 'from_repo', 'evr', 'debug_name',
+                      'source_name', 'source_debug_name', 'installtime',
+                      'buildtime', 'size', 'downloadsize', 'installsize',
+                      'provides', 'requires', 'obsoletes', 'conflicts',
+                      'sourcerpm', 'description', 'summary', 'license', 'url',
+                      'reason')
 OPTS_MAPPING = {
     'conflicts': 'conflicts',
     'enhances': 'enhances',
@@ -68,6 +75,8 @@ def rpm2py_format(queryformat):
     def fmt_repl(matchobj):
         fill = matchobj.groups()[0]
         key = matchobj.groups()[1]
+        if key not in ALLOWED_QUERY_TAGS:
+            return brackets(matchobj.group())
         if fill:
             if fill[0] == '-':
                 fill = '>' + fill[1:]
