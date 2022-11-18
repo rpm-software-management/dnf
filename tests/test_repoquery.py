@@ -123,17 +123,39 @@ class SourceRPMFormatTest(tests.support.TestCase):
 
 class OutputTest(tests.support.TestCase):
     def test_output(self):
-        pkg = PkgStub()
+        pkg = dnf.cli.commands.repoquery.PackageWrapper(PkgStub())
         fmt = dnf.cli.commands.repoquery.rpm2py_format(
             '%{name}-%{version}-%{release}.%{arch} (%{reponame})')
         self.assertEqual(fmt.format(pkg), 'foobar-1.0.1-1.f20.x86_64 (@System)')
 
+    def test_nonexistant_attr(self):
+        """
+        dnf.package.Package does not have a 'notfound' attribute.
+        Therefore, rpm2py_format should leave a %{notfound}
+        """
+        pkg = dnf.cli.commands.repoquery.PackageWrapper(PkgStub())
+        fmt = dnf.cli.commands.repoquery.rpm2py_format('%{notfound}').format(pkg)
+        self.assertEqual(fmt, "%{notfound}")
+
     def test_illegal_attr(self):
-        pkg = PkgStub()
-        with self.assertRaises(AttributeError) as ctx:
-            dnf.cli.commands.repoquery.rpm2py_format('%{notfound}').format(pkg)
-        self.assertEqual(str(ctx.exception),
-                         "'PkgStub' object has no attribute 'notfound'")
+        """
+        dnf.package.Package has a 'base' attribute,
+        but it isn't allowed in queryformat strings and
+        should also leave a literal %{base}.
+        """
+        pkg = dnf.cli.commands.repoquery.PackageWrapper(PkgStub())
+        fmt = dnf.cli.commands.repoquery.rpm2py_format("%{base}").format(pkg)
+        self.assertEqual(fmt, "%{base}")
+
+    def test_combo_attr(self):
+        """
+        Ensure that illegal attributes in a queryformat string along with legal
+        attributes are properly escaped.
+        """
+        pkg = dnf.cli.commands.repoquery.PackageWrapper(PkgStub())
+        fmt = dnf.cli.commands.repoquery.rpm2py_format(
+            "%{name} | %{base} | {brackets}").format(pkg)
+        self.assertEqual(fmt, "foobar | %{base} | {brackets}")
 
 
 class Rpm2PyFormatTest(tests.support.TestCase):
