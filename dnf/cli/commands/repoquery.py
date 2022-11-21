@@ -42,14 +42,6 @@ logger = logging.getLogger('dnf')
 QFORMAT_DEFAULT = '%{name}-%{epoch}:%{version}-%{release}.%{arch}'
 # matches %[-][dd]{attr}
 QFORMAT_MATCH = re.compile(r'%(-?\d*?){([:\w]+?)}')
-
-QUERY_TAGS = """\
-name, arch, epoch, version, release, reponame (repoid), from_repo, evr,
-debug_name, source_name, source_debug_name,
-installtime, buildtime, size, downloadsize, installsize,
-provides, requires, obsoletes, conflicts, sourcerpm,
-description, summary, license, url, reason"""
-
 ALLOWED_QUERY_TAGS = ('name', 'arch', 'epoch', 'version', 'release',
                       'reponame', 'repoid', 'from_repo', 'evr', 'debug_name',
                       'source_name', 'source_debug_name', 'installtime',
@@ -443,7 +435,7 @@ class RepoQueryCommand(commands.Command):
 
     def run(self):
         if self.opts.querytags:
-            print(QUERY_TAGS)
+            print("\n".join(sorted(ALLOWED_QUERY_TAGS)))
             return
 
         self.cli._populate_update_security_filter(self.opts)
