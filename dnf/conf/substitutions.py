@@ -18,13 +18,15 @@
 # Red Hat, Inc.
 #
 
+import logging
 import os
 import re
 
-import dnf
-import dnf.exceptions
+from dnf.i18n import _
 
 ENVIRONMENT_VARS_RE = re.compile(r'^DNF_VAR_[A-Za-z0-9_]+$')
+logger = logging.getLogger('dnf')
+
 
 class Substitutions(dict):
     # :api
@@ -60,7 +62,8 @@ class Substitutions(dict):
                             val = fp.readline()
                         if val and val[-1] == '\n':
                             val = val[:-1]
-                    except (OSError, IOError):
+                    except (OSError, IOError, UnicodeDecodeError) as e:
+                        logger.warning(_("Error when parsing a variable from file '{0}': {1}").format(filepath, e))
                         continue
                 if val is not None:
                     self[fsvar] = val
