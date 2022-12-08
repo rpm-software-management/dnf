@@ -9,6 +9,8 @@ TAGS
 build/
 package/dnf.spec
 dnf/const.py
+dnf/cli/completion_helper.py
+doc/conf.py
 bin/dnf*-2
 bin/dnf*-3
 bin/yum-2

@@ -2479,11 +2479,21 @@ class Base(object):
                         logger.warning(P_(msg1, msg2, count))
         return merged_queries
 
-    def _get_key_for_package(self, po, askcb=None, fullaskcb=None):
-        """Retrieve a key for a package. If needed, use the given
-        callback to prompt whether the key should be imported.
+    def _prov_key_data(self, msg, repo, po=None):
+        if po is not None:
+            msg += _('. Failing package is: %s') % (po) + '\n '
+        else:
+            msg += _('.\n')
+        msg += _('GPG Keys are configured as: %s') % \
+               (', '.join(repo.gpgkey))
+        return msg
 
-        :param po: the package object to retrieve the key of
+    def retrieve_key_for_repo(self, repo, askcb=None, fullaskcb=None):
+        # :api
+        """Retrieve a key for a repo. If needed, use the given callback
+        to prompt whether the key should be imported
+
+        :param repo: the repo object to retrieve the key of
         :param askcb: Callback function to use to ask permission to
            import a key.  The arguments *askcb* should take are the
            package object, the userid of the key, and the keyid
@@ -2493,20 +2503,8 @@ class Base(object):
         :raises: :class:`dnf.exceptions.Error` if there are errors
            retrieving the keys
         """
-        if po._from_cmdline:
-            # raise an exception, because po.repoid is not in self.repos
-            msg = _('Unable to retrieve a key for a commandline package: %s')
-            raise ValueError(msg % po)
-
-        repo = self.repos[po.repoid]
         key_installed = repo.id in self._repo_set_imported_gpg_keys
         keyurls = [] if key_installed else repo.gpgkey
-
-        def _prov_key_data(msg):
-            msg += _('. Failing package is: %s') % (po) + '\n '
-            msg += _('GPG Keys are configured as: %s') % \
-                    (', '.join(repo.gpgkey))
-            return msg
 
         user_cb_fail = False
         self._repo_set_imported_gpg_keys.add(repo.id)
@@ -2565,13 +2563,13 @@ class Base(object):
                 # rc = True else ask as normal.
 
                 elif fullaskcb:
-                    rc = fullaskcb({"po": po, "userid": info.userid,
+                    rc = fullaskcb({"userid": info.userid,
                                     "hexkeyid": info.short_id,
                                     "keyurl": keyurl,
                                     "fingerprint": info.fingerprint,
                                     "timestamp": info.timestamp})
                 elif askcb:
-                    rc = askcb(po, info.userid, info.short_id)
+                    rc = askcb(info.userid, info.short_id)
 
                 if not rc:
                     user_cb_fail = True
@@ -2589,9 +2587,43 @@ class Base(object):
                     self._ts.setFlags(orig_flags)
                 if result != 0:
                     msg = _('Key import failed (code %d)') % result
-                    raise dnf.exceptions.Error(_prov_key_data(msg))
+                    raise dnf.exceptions.Error(self._prov_key_data(msg, repo))
                 logger.info(_('Key imported successfully'))
                 key_installed = True
+
+        return key_installed, user_cb_fail
+
+    def _get_key_for_package(self, po, askcb=None, fullaskcb=None):
+        """Retrieve a key for a package. If needed, use the given
+        callback to prompt whether the key should be imported.
+
+        :param po: the package object to retrieve the key of
+        :param askcb: Callback function to use to ask permission to
+           import a key.  The arguments *askcb* should take are the
+           package object, the userid of the key, and the keyid
+        :param fullaskcb: Callback function to use to ask permission to
+           import a key.  This differs from *askcb* in that it gets
+           passed a dictionary so that we can expand the values passed.
+        :raises: :class:`dnf.exceptions.Error` if there are errors
+           retrieving the keys
+        """
+        if po._from_cmdline:
+            # raise an exception, because po.repoid is not in self.repos
+            msg = _('Unable to retrieve a key for a commandline package: %s')
+            raise ValueError(msg % po)
+
+        repo = self.repos[po.repoid]
+        key_installed = repo.id in self._repo_set_imported_gpg_keys
+        keyurls = [] if key_installed else repo.gpgkey
+
+        # Partial application of functions with package-specific data
+        _fullaskcb = (lambda x: fullaskcb({**x, "po": po})) if fullaskcb is not None else None
+        _askcb = (lambda y, z: askcb(po, y, z)) if askcb is not None else None
+        _prov_key_data = self._prov_key_data
+        self._prov_key_data = lambda x, y: _prov_key_data(x, y, po)
+
+        key_installed, user_cb_fail = self.retrieve_key_for_repo(repo, _askcb, _fullaskcb)
+        self._prov_key_data = _prov_key_data
 
         if not key_installed and user_cb_fail:
             raise dnf.exceptions.Error(_("Didn't install any keys"))
@@ -2602,7 +2634,7 @@ class Base(object):
                     'package.\n'
                     'Check that the correct key URLs are configured for '
                     'this repository.') % repo.name
-            raise dnf.exceptions.Error(_prov_key_data(msg))
+            raise dnf.exceptions.Error(self._prov_key_data(msg, repo, po))
 
         # Check if the newly installed keys helped
         result, errmsg = self._sig_check_pkg(po)
@@ -2611,7 +2643,7 @@ class Base(object):
                 msg = _("Import of key(s) didn't help, wrong key(s)?")
                 logger.info(msg)
             errmsg = ucd(errmsg)
-            raise dnf.exceptions.Error(_prov_key_data(errmsg))
+            raise dnf.exceptions.Error(self._prov_key_data(errmsg, repo, po))
 
     def package_import_key(self, pkg, askcb=None, fullaskcb=None):
         # :api
