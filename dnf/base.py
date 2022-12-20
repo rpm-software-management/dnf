@@ -1519,6 +1519,8 @@ class Base(object):
             updates = query_for_repo(q).filterm(upgrades_by_priority=True)
             # reduce a query to security upgrades if they are specified
             updates = self._merge_update_filters(updates, upgrade=True)
+            # reduce a query to remove src RPMs
+            updates.filterm(arch__neq=['src', 'nosrc'])
             # reduce a query to latest packages
             updates = updates.latest().run()
 
@@ -1571,6 +1573,8 @@ class Base(object):
                 self.sack.query()).filter(obsoletes_by_priority=inst)
             # reduce a query to security upgrades if they are specified
             obsoletes = self._merge_update_filters(obsoletes, warning=False, upgrade=True)
+            # reduce a query to remove src RPMs
+            obsoletes.filterm(arch__neq=['src', 'nosrc'])
             obsoletesTuples = []
             for new in obsoletes:
                 obsoleted_reldeps = new.obsoletes
