@@ -286,6 +286,11 @@ class DnfBaseApiTest(TestCase):
         pkg = self._get_pkg()
         self.assertRaises(dnf.exceptions.MarkingError, self.base.package_upgrade, pkg=pkg)
 
+    def test_package_remove(self):
+        # Base.package_remove(self, pkg)
+        pkg = self._get_pkg()
+        self.assertRaises(dnf.exceptions.MarkingError, self.base.package_remove, pkg=pkg)
+
     def test_upgrade(self):
         # Base.upgrade(self, pkg_spec, reponame=None)
         self.base.fill_sack(load_system_repo=False, load_available_repos=False)
