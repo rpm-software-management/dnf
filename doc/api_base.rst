@@ -290,6 +290,10 @@
 
     Mark `pkg` (a :class:`dnf.package.Package` instance) for installation. Ignores package that is already installed. `strict` has the same meaning as in :meth:`install`.
 
+  .. method:: package_remove(pkg)
+
+    Mark `pkg` (a :class:`dnf.package.Package` instance) for removal. 
+
   .. method:: package_upgrade(pkg)
 
     If `pkg` is a :class:`dnf.package.Package` in an available repository, mark the matching installed package for upgrade to `pkg`.
