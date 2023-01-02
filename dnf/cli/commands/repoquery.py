@@ -47,8 +47,9 @@ ALLOWED_QUERY_TAGS = ('name', 'arch', 'epoch', 'version', 'release',
                       'source_name', 'source_debug_name', 'installtime',
                       'buildtime', 'size', 'downloadsize', 'installsize',
                       'provides', 'requires', 'obsoletes', 'conflicts',
+                      'suggests', 'recommends', 'enhances', 'supplements',
                       'sourcerpm', 'description', 'summary', 'license', 'url',
-                      'reason')
+                      'reason', 'group', 'vendor', 'packager',)
 OPTS_MAPPING = {
     'conflicts': 'conflicts',
     'enhances': 'enhances',
