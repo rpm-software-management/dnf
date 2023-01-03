@@ -289,6 +289,10 @@
   .. method:: package_install(pkg, strict=True)
 
     Mark `pkg` (a :class:`dnf.package.Package` instance) for installation. Ignores package that is already installed. `strict` has the same meaning as in :meth:`install`.
+  
+  .. method:: package_remove(pkg)
+
+    Mark `pkg` (a :class:`dnf.package.Package` instance) for removal.
 
   .. method:: package_upgrade(pkg)
 

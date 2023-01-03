@@ -2114,8 +2114,14 @@ class Base(object):
         raise dnf.exceptions.MarkingError(_('No match for argument: %s') % pkg.location, pkg.name)
 
     def package_remove(self, pkg):
-        self._goal.erase(pkg)
-        return 1
+        # :api
+        clean_deps = self.conf.clean_requirements_on_remove
+        if (self.sack.query().installed().filterm(name=pkg.name, evr=pkg.evr, arch=pkg.arch)):
+            self._goal.erase(pkg, clean_deps=clean_deps)
+            return 1
+        msg = _("Package %s not installed, cannot remove it.")
+        logger.warning(msg, str(pkg))
+        raise dnf.exceptions.MarkingError(_("No match for argument: %s") % pkg.location, pkg.name)
 
     def package_upgrade(self, pkg):
         # :api
