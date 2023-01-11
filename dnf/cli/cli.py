@@ -256,9 +256,10 @@ class BaseCli(dnf.Base):
             # the post transaction summary is already written to log during
             # Base.do_transaction() so here only print the messages to the
             # user arranged in columns
-            print()
-            print('\n'.join(self.output.post_transaction_output(trans)))
-            print()
+            if not self._really_quiet:
+                print()
+                print('\n'.join(self.output.post_transaction_output(trans)))
+                print('')
             for tsi in trans:
                 if tsi.state == libdnf.transaction.TransactionItemState_ERROR:
                     raise dnf.exceptions.Error(_('Transaction failed'))
@@ -790,6 +791,7 @@ class Cli(object):
             opts.errorlevel = 2
         if opts.verbose:
             opts.debuglevel = opts.errorlevel = dnf.const.VERBOSE_LEVEL
+        self.base._really_quiet = opts.quiet and len(opts.quiet)>1
 
         # Read up configuration options and initialize plugins
         try:
