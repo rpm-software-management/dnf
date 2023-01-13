@@ -313,7 +313,7 @@ def decompress(filename, dest=None, check_timestamps=False):
 def read_in_items_from_dot_dir(thisglob, line_as_list=True):
     """ Takes a glob of a dir (like /etc/foo.d/\\*.foo) returns a list of all
        the lines in all the files matching that glob, ignores comments and blank
-       lines, optional paramater 'line_as_list tells whether to treat each line
+       lines, optional parameter 'line_as_list tells whether to treat each line
        as a space or comma-separated list, defaults to True.
     """
     results = []
