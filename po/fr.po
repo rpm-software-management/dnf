@@ -23,7 +23,6 @@
 # Guillaume Jacob <abun.lp@gmail.com>, 2021.
 # Côme Borsoi <fedora@borsoi.fr>, 2021.
 # Sundeep Anand <suanand@redhat.com>, 2021.
-# Titouan Bénard <itotutona@evta.fr>, 2021.
 # Transtats <suanand@redhat.com>, 2022.
 # Alexandre GUIOT--VALENTIN <reach@42paris.fr>, 2022.
 # Arthur Tavernier <arthur.tavernier45@gmail.com>, 2022.
