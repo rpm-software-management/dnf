@@ -24,6 +24,7 @@ from __future__ import unicode_literals
 
 import argparse
 import logging
+import os
 import random
 import socket
 import time
@@ -179,6 +180,9 @@ class CommandsConfig(Config):
                         libdnf.conf.VectorString(['default', 'security'])))
         self.add_option('random_sleep', libdnf.conf.OptionNumberInt32(300))
         self.add_option('network_online_timeout', libdnf.conf.OptionNumberInt32(60))
+        self.add_option('reboot', libdnf.conf.OptionEnumString('never',
+                        libdnf.conf.VectorString(['never', 'when-changed', 'when-needed'])))
+        self.add_option('reboot_command', libdnf.conf.OptionString('shutdown -r'))
 
     def imply(self):
         if self.apply_updates:
@@ -340,6 +344,11 @@ def main(args):
             base.do_transaction()
             emitters.notify_applied()
             emitters.commit()
+
+            if (conf.commands.reboot == 'when-changed' or
+               (conf.commands.reboot == 'when-needed' and base.reboot_needed())):
+                if os.waitstatus_to_exitcode(os.system(conf.commands.reboot_command)) != 0:
+                    return 1
     except dnf.exceptions.Error as exc:
         logger.error(_('Error: %s'), ucd(exc))
         return 1

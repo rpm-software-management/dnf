@@ -2794,6 +2794,20 @@ class Base(object):
 
         return skipped_conflicts, skipped_dependency
 
+    def reboot_needed(self):
+        """Check whether a system reboot is recommended following the transaction
+
+        :return: bool
+        """
+        if not self.transaction:
+            return False
+
+        # List taken from DNF needs-restarting
+        need_reboot = frozenset(('kernel', 'kernel-rt', 'glibc',
+                                'linux-firmware', 'systemd', 'dbus',
+                                'dbus-broker', 'dbus-daemon'))
+        changed_pkgs = self.transaction.install_set | self.transaction.remove_set
+        return any(pkg.name in need_reboot for pkg in changed_pkgs)
 
 def _msg_installed(pkg):
     name = ucd(pkg)
