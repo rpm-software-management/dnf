@@ -49,3 +49,7 @@ class TestConfig(tests.support.TestCase):
         conf = dnf.automatic.main.AutomaticConfig(FILE, downloadupdates=True, installupdates=False)
         self.assertTrue(conf.commands.download_updates)
         self.assertFalse(conf.commands.apply_updates)
+
+        # test that reboot is "never" by default
+        conf = dnf.automatic.main.AutomaticConfig(FILE)
+        self.assertEqual(conf.commands.reboot, 'never')
