@@ -96,9 +96,9 @@ Setting the mode of operation of the program.
     When the system should reboot following upgrades. ``never`` does not reboot the system. ``when-changed`` triggers a reboot after any upgrade. ``when-needed`` triggers a reboot only when rebooting is necessary to apply changes, such as when systemd or the kernel is upgraded.
 
 ``reboot_command``
-    string, default: ``shutdown -r``
+    string, default: ``shutdown -r +5 'Rebooting after applying package updates'``
 
-    Specify the command to run to trigger a reboot of the system. For example, add a 5-minute delay and a wall message by using ``shutdown -r +5 'Rebooting after upgrading packages'`` 
+    Specify the command to run to trigger a reboot of the system. For example, to skip the 5-minute delay and wall message, use ``shutdown -r``
 
 
 

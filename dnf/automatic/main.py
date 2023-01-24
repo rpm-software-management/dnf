@@ -182,7 +182,7 @@ class CommandsConfig(Config):
         self.add_option('network_online_timeout', libdnf.conf.OptionNumberInt32(60))
         self.add_option('reboot', libdnf.conf.OptionEnumString('never',
                         libdnf.conf.VectorString(['never', 'when-changed', 'when-needed'])))
-        self.add_option('reboot_command', libdnf.conf.OptionString('shutdown -r'))
+        self.add_option('reboot_command', libdnf.conf.OptionString('shutdown -r +5 \'Rebooting after applying package updates\''))
 
     def imply(self):
         if self.apply_updates:
