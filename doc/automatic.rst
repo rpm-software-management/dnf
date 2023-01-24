@@ -90,6 +90,18 @@ Setting the mode of operation of the program.
 
     What kind of upgrades to look at. ``default`` signals looking for all available updates, ``security`` only those with an issued security advisory.
 
+``reboot``
+    either one of ``never``, ``when-changed``, ``when-needed``, default: ``never``
+
+    When the system should reboot following upgrades. ``never`` does not reboot the system. ``when-changed`` triggers a reboot after any upgrade. ``when-needed`` triggers a reboot only when rebooting is necessary to apply changes, such as when systemd or the kernel is upgraded.
+
+``reboot_command``
+    string, default: ``shutdown -r``
+
+    Specify the command to run to trigger a reboot of the system. For example, add a 5-minute delay and a wall message by using ``shutdown -r +5 'Rebooting after upgrading packages'`` 
+
+
+
 ----------------------
 ``[emitters]`` section
 ----------------------
