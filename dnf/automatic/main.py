@@ -347,7 +347,9 @@ def main(args):
 
             if (conf.commands.reboot == 'when-changed' or
                (conf.commands.reboot == 'when-needed' and base.reboot_needed())):
-                if os.waitstatus_to_exitcode(os.system(conf.commands.reboot_command)) != 0:
+                exit_code = os.waitstatus_to_exitcode(os.system(conf.commands.reboot_command))
+                if exit_code != 0:
+                    logger.error('Error: reboot command returned nonzero exit code: %d', exit_code)
                     return 1
     except dnf.exceptions.Error as exc:
         logger.error(_('Error: %s'), ucd(exc))
