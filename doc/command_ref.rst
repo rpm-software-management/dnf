@@ -1602,7 +1602,7 @@ Search Command
 ``dnf [options] search [--all] <keywords>...``
     Search package metadata for keywords. Keywords are matched as case-insensitive substrings, globbing is supported.
     By default lists packages that match all requested keys (AND operation). Keys are searched in package names and summaries.
-    If the "--all" option is used, lists packages that match at least one of the keys (an OR operation).
+    If the ``--all`` option is used, lists packages that match at least one of the keys (an OR operation).
     In addition the keys are searched in the package descriptions and URLs.
     The result is sorted from the most relevant results to the least.
 
