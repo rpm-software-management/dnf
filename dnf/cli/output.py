@@ -205,7 +205,7 @@ class Output(object):
                     full_columns.append(col[-1][0])
                 else:
                     full_columns.append(columns[d] + 1)
-            full_columns[0] += len(indent)
+            full_columns[0] += len(indent) * 2
             # if possible, try to keep default width (usually 80 columns)
             default_width = self.term.columns
             if sum(full_columns) > default_width:
