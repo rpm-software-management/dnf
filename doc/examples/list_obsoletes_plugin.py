@@ -14,7 +14,7 @@
 # License and may only be used or replicated with the express permission of
 # Red Hat, Inc.
 
-"""A plugin that lists installed packages that are obsolted by any available package"""
+"""A plugin that lists installed packages that are obsoleted by any available package"""
 
 from dnf.i18n import _
 import dnf
