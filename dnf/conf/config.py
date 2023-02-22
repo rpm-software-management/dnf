@@ -251,8 +251,9 @@ class MainConf(BaseConfig):
         self.tempfiles = []
 
     def __del__(self):
-        for file_name in self.tempfiles:
-            os.unlink(file_name)
+        if hasattr(self, 'tempfiles'):
+            for file_name in self.tempfiles:
+                os.unlink(file_name)
 
     @property
     def get_reposdir(self):
