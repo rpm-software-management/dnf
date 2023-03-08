@@ -4059,7 +4059,7 @@ msgstr "Ověřuje se"
 
 #: dnf/transaction.py:97
 msgid "Running scriptlet"
-msgstr "Probíhá skriplet"
+msgstr "Probíhá skriptlet"
 
 #: dnf/transaction.py:99
 msgid "Preparing"
