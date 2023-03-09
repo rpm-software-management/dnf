@@ -645,7 +645,7 @@ Groups are virtual collections of packages. DNF keeps track of groups that the u
 ``dnf [options] group install [--with-optional] <group-spec>...``
     Mark the specified group installed and install packages it contains. Also
     include `optional` packages of the group if ``--with-optional`` is
-    specified. All `mandatory` and `Default` packages will be installed whenever possible.
+    specified. All `Mandatory` and `Default` packages will be installed whenever possible.
     Conditional packages are installed if they meet their requirement.
     If the group is already (partially) installed, the command installs the missing packages from the group.
     Depending on the value of :ref:`obsoletes configuration option <obsoletes_conf_option-label>` group installation takes obsoletes into account.
