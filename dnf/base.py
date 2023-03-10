@@ -2795,6 +2795,7 @@ class Base(object):
         return skipped_conflicts, skipped_dependency
 
     def reboot_needed(self):
+        # :api
         """Check whether a system reboot is recommended following the transaction
 
         :return: bool

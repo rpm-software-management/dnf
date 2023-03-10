@@ -336,3 +336,6 @@
         base.download_packages(base.transaction.install_set, progress)
         print("Installing...")
         base.do_transaction()
+  .. method:: reboot_needed()
+
+    Check whether a system reboot is recommended following the transaction. If the transaction involves `kernel`, `glibc`, `dbus`, or some other "core" package, then a reboot is recommended, and this function returns `true`. Otherwise, a reboot is probably not necessary, and this function returns `false`.
