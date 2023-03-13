@@ -106,7 +106,7 @@ class EmailEmitter(Emitter):
             smtp = smtplib.SMTP(self._conf.email_host, timeout=300)
             smtp.sendmail(email_from, email_to, message.as_string())
             smtp.close()
-        except smtplib.SMTPException as exc:
+        except OSError as exc:
             msg = _("Failed to send an email via '%s': %s") % (
                 self._conf.email_host, exc)
             logger.error(msg)
