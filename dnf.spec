@@ -449,7 +449,7 @@ popd
 - [doc] installonly_limit documentation follows behavior
 - Prevent traceback (catch ValueError) if pkg is from cmdline
 - Add documentation for config option sslverifystatus (RhBug:1814383)
-- Check for specific key string when verifing signatures (RhBug:1915990)
+- Check for specific key string when verifying signatures (RhBug:1915990)
 - Use rpmkeys binary to verify package signature (RhBug:1915990)
 - Bugs fixed (RhBug:1916783)
 - Preserve file mode during log rotation (RhBug:1910084)
