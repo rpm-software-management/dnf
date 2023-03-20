@@ -423,7 +423,7 @@ popd
 - Add aliases for commands: info, updateinfo, provides (RhBug:1938333)
 - Add report about demodularized rpms into module info (RhBug:1805260)
 - Remove DNSSEC errors on COPR group email keys
-- Documentation inprovements - bugs: 1938352, 1993899, 1963704
+- Documentation improvements - bugs: 1938352, 1993899, 1963704
 
 * Mon Jun 14 2021 Pavla Kratochvilova <pkratoch@redhat.com> - 4.8.0-1
 - Do not assume that a remote rpm is complete if present
