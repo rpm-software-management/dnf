@@ -515,7 +515,7 @@ popd
 * Tue Oct 06 2020 Nicola Sella <nsella@redhat.com> - 4.4.0-1
 - Handle empty comps group name (RhBug:1826198)
 - Remove dead history info code (RhBug:1845800)
-- Improve command emmitter in dnf-automatic
+- Improve command emitter in dnf-automatic
 - Enhance --querytags and --qf help output
 - [history] add option --reverse to history list (RhBug:1846692)
 - Add logfilelevel configuration (RhBug:1802074)
