@@ -959,7 +959,7 @@ popd
 - Update to 2.7.2-1
 - Added new option ``--comment=<comment>`` that adds a comment to transaction in history
 - :meth:`dnf.Base.pre_configure_plugin` configure plugins by running their pre_configure() method
-- Added pre_configure() methotd for plugins and commands to configure dnf before repos are loaded
+- Added pre_configure() method for plugins and commands to configure dnf before repos are loaded
 - Resolves: rhbz#1421478 - dnf repository-packages: error: unrecognized arguments: -x rust-rpm-macros
 - Resolves: rhbz#1491560 - 'dnf check' reports spurious "has missing requires of" errors
 - Resolves: rhbz#1465292 - DNF remove protected duplicate package
