@@ -182,7 +182,8 @@ class CommandsConfig(Config):
         self.add_option('network_online_timeout', libdnf.conf.OptionNumberInt32(60))
         self.add_option('reboot', libdnf.conf.OptionEnumString('never',
                         libdnf.conf.VectorString(['never', 'when-changed', 'when-needed'])))
-        self.add_option('reboot_command', libdnf.conf.OptionString('shutdown -r +5 \'Rebooting after applying package updates\''))
+        self.add_option('reboot_command', libdnf.conf.OptionString(
+            'shutdown -r +5 \'Rebooting after applying package updates\''))
 
     def imply(self):
         if self.apply_updates:
@@ -255,21 +256,29 @@ def wait_for_network(repos, timeout):
         'http': 80,
         'https': 443,
         'ftp': 21,
+        'socks': 1080,
+        'socks5': 1080,
     }
 
     def remote_address(url_list):
         for url in url_list:
             parsed_url = dnf.pycomp.urlparse.urlparse(url)
-            if parsed_url.hostname and parsed_url.scheme in remote_schemes:
-                yield (parsed_url.hostname,
-                       parsed_url.port or remote_schemes[parsed_url.scheme])
+            if (not parsed_url.hostname) \
+                    or (not parsed_url.port and parsed_url.scheme not in remote_schemes):
+                # skip urls without hostname or without recognized port
+                continue
+            yield (parsed_url.hostname,
+                   parsed_url.port or remote_schemes[parsed_url.scheme])
 
     # collect possible remote repositories urls
     addresses = set()
     for repo in repos.iter_enabled():
-        addresses.update(remote_address(repo.baseurl))
-        addresses.update(remote_address([repo.mirrorlist]))
-        addresses.update(remote_address([repo.metalink]))
+        if repo.proxy:
+            addresses.update(remote_address([repo.proxy]))
+        else:
+            addresses.update(remote_address(repo.baseurl))
+            addresses.update(remote_address([repo.mirrorlist]))
+            addresses.update(remote_address([repo.metalink]))
 
     if not addresses:
         # there is no remote repository enabled so network connection should not be needed
