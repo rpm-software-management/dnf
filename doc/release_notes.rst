@@ -20,6 +20,38 @@
 ###################
 
 ====================
+4.15.0 Release Notes
+====================
+
+- New features:
+  - Add reboot option to DNF Automatic (RhBug:2124793)
+  - cli: Allow = in setopt values
+  - Mark strftime format specifiers for translation
+
+- Bug fixes:
+  - Add support for rollback of group upgrade rollback (RhBug:2016070)
+  - Omit src RPMs from check-update (RhBug:2151910)
+  - repoquery: Properly sanitize queryformat strings (RhBug:2140884)
+  - Don't double-encode RPM URLs passed on CLI (RhBug:2103015)
+  - Allow passing CLI options when loading remote cfg (RhBug:2060127)
+  - Ignore processing variable files with unsupported encoding (RhBug:2141215)
+  - Fix AttributeError when IO busy and press ctrl+c (RhBug:2172433)
+  - Unload plugins upon their deletion
+  - Fixes in docs and help command
+  - Fix plugins unit tests
+  - Add unit tests for dnf mark
+  - smtplib: catch OSError, not SMTPException
+
+Bugs fixed in 4.15.0:
+
+* :rhbug:`2124793`
+* :rhbug:`2016070`
+* :rhbug:`2151910`
+* :rhbug:`2140884`
+* :rhbug:`2103015`
+* :rhbug:`2141215`
+
+====================
 4.14.0 Release Notes
 ====================
 
