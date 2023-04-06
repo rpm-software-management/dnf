@@ -65,7 +65,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.14.0
+Version:        4.15.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -359,6 +359,23 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Thu Apr 06 2023 Jan Kolarik <jkolarik@redhat.com> - 4.15.0-1
+- Add reboot option to DNF Automatic (RhBug:2124793)
+- Add support for rollback of group upgrade rollback (RhBug:2016070)
+- Omit src RPMs from check-update (RhBug:2151910)
+- repoquery: Properly sanitize queryformat strings (RhBug:2140884)
+- Don't double-encode RPM URLs passed on CLI (RhBug:2103015)
+- Allow passing CLI options when loading remote cfg (RhBug:2060127)
+- Ignore processing variable files with unsupported encoding (RhBug:2141215)
+- Fix AttributeError when IO busy and press ctrl+c (RhBug:2172433)
+- cli: Allow = in setopt values
+- Mark strftime format specifiers for translation
+- Unload plugins upon their deletion
+- Fixes in docs and help command
+- Fix plugins unit tests
+- Add unit tests for dnf mark
+- smtplib: catch OSError, not SMTPException
+
 * Fri Sep 09 2022 Jaroslav Rohel <jrohel@redhat.com> - 4.14.0-1
 - doc: Describe how gpg keys are stored for `repo_ggpcheck` (RhBug:2020678)
 - Set default value for variable to prevent crash (RhBug:2091636)

@@ -3482,5 +3482,45 @@
     [
         2101421,
         "yum check-update --security shows obsoleting packages when no security updates apply"
+    ],
+    [
+        2124793,
+        "automatic reboot in dnf-automatic in RHEL 9"
+    ],
+    [
+        2016070,
+        "dnf rollback of a transaction with a group upgrade in it causes errors when trying to downgrade group"
+    ],
+    [
+        2151910,
+        "yum check-update incorrectly reports source packages as updates"
+    ],
+    [
+        2140884,
+        "dnf repoquery --qf doesn't properly sanitize values"
+    ],
+    [
+        2103015,
+        "yum install URL fails do download RPM due to urlencoding provided URL"
+    ],
+    [
+        2060127,
+        "[RFE] Allow DNF to fetch packages via a secure file protocols such as (FTPs and SFTP/SSH)"
+    ],
+    [
+        2141215,
+        "dnf dies with \"Config error: 'utf-8' codec can't decode byte\" when a vim swp file exists"
+    ],
+    [
+        2172433,
+        "dnf happen AttributeError and RuntimeError when io busy and press ctrl c"
+    ],
+    [
+        1939975,
+        "'dnf offline-upgrade' does not support --advisory properly"
+    ],
+    [
+        2054235,
+        "Offline updates"
     ]
 ]
