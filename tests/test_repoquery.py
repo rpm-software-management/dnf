@@ -125,7 +125,7 @@ class OutputTest(tests.support.TestCase):
     def test_output(self):
         pkg = dnf.cli.commands.repoquery.PackageWrapper(PkgStub())
         fmt = dnf.cli.commands.repoquery.rpm2py_format(
-            '%{name}-%{version}-%{release}.%{arch} (%{reponame})')
+            '%{NAME}-%{version}-%{RELEASE}.%{arch} (%{REPONAME})')
         self.assertEqual(fmt.format(pkg), 'foobar-1.0.1-1.f20.x86_64 (@System)')
 
     def test_nonexistant_attr(self):

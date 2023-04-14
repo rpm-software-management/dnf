@@ -68,6 +68,7 @@ def rpm2py_format(queryformat):
     def fmt_repl(matchobj):
         fill = matchobj.groups()[0]
         key = matchobj.groups()[1]
+        key = key.lower()  # we allow both uppercase and lowercase variants
         if key not in ALLOWED_QUERY_TAGS:
             return brackets(matchobj.group())
         if fill:
@@ -76,7 +77,7 @@ def rpm2py_format(queryformat):
             else:
                 fill = '<' + fill
             fill = ':' + fill
-        return '{0.' + key.lower() + fill + "}"
+        return '{0.' + key + fill + "}"
 
     def brackets(txt):
         return txt.replace('{', '{{').replace('}', '}}')
