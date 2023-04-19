@@ -288,7 +288,12 @@ popd
 %dir %{confdir}/aliases.d
 %exclude %{confdir}/aliases.d/zypper.conf
 %config(noreplace) %{confdir}/%{name}.conf
-%config(noreplace) %{confdir}/protected.d/%{name}.conf
+# No longer using `noreplace` here. Older versions of DNF 4 marked `dnf` as a
+# protected package, but since Fedora 39, DNF needs to be able to update itself
+# to DNF 5, so we need to replace the old /etc/dnf/protected.d/dnf.conf.
+%config %{confdir}/protected.d/%{name}.conf
+# Protect python3-dnf instead, which does not conflict with DNF 5
+%config(noreplace) %{confdir}/protected.d/python3-%{name}.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %ghost %attr(644,-,-) %{_localstatedir}/log/hawkey.log
 %ghost %attr(644,-,-) %{_localstatedir}/log/%{name}.log
@@ -314,7 +319,10 @@ popd
 %{_mandir}/man5/yum.conf.5.*
 %{_mandir}/man8/yum-shell.8*
 %{_mandir}/man1/yum-aliases.1*
-%config(noreplace) %{confdir}/protected.d/yum.conf
+# No longer using `noreplace` here. Older versions of DNF 4 marked `yum` as a
+# protected package, but since Fedora 39, DNF needs to be able to update itself
+# to DNF 5, so we need to replace the old /etc/dnf/protected.d/yum.conf.
+%config %{confdir}/protected.d/yum.conf
 %else
 %exclude %{_sysconfdir}/yum.conf
 %exclude %{_sysconfdir}/yum/pluginconf.d
