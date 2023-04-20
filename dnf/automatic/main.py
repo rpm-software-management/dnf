@@ -346,6 +346,13 @@ def main(args):
 
             gpgsigcheck(base, trans.install_set)
             base.do_transaction()
+
+            # In case of no global error occurred within the transaction,
+            # we need to check state of individual transaction items.
+            for tsi in trans:
+                if tsi.state == libdnf.transaction.TransactionItemState_ERROR:
+                    raise dnf.exceptions.Error(_('Transaction failed'))
+
             emitters.notify_applied()
             emitters.commit()
     except dnf.exceptions.Error as exc:
