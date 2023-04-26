@@ -283,11 +283,8 @@ popd
 %dir %{confdir}/modules.d
 %dir %{confdir}/modules.defaults.d
 %dir %{pluginconfpath}
-%dir %{confdir}/protected.d
-%dir %{confdir}/vars
 %dir %{confdir}/aliases.d
 %exclude %{confdir}/aliases.d/zypper.conf
-%config(noreplace) %{confdir}/%{name}.conf
 # No longer using `noreplace` here. Older versions of DNF 4 marked `dnf` as a
 # protected package, but since Fedora 39, DNF needs to be able to update itself
 # to DNF 5, so we need to replace the old /etc/dnf/protected.d/dnf.conf.
