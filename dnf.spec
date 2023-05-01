@@ -118,6 +118,7 @@ Conflicts:      python3-dnf-plugins-extras-common < %{conflicts_dnf_plugins_extr
 %package data
 Summary:        Common data and configuration files for DNF
 Requires:       libreport-filesystem
+Requires:       libdnf5
 Obsoletes:      %{name}-conf <= %{version}-%{release}
 Provides:       %{name}-conf = %{version}-%{release}
 
@@ -141,6 +142,7 @@ Obsoletes:      %{name}-yum < 5
 %package -n python3-%{name}
 Summary:        Python 3 interface to DNF
 %{?python_provide:%python_provide python3-%{name}}
+Requires:       libdnf5
 BuildRequires:  python3-devel
 BuildRequires:  python3-hawkey >= %{hawkey_version}
 BuildRequires:  python3-libdnf >= %{hawkey_version}
