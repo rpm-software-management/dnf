@@ -181,7 +181,7 @@ class CommandsConfig(Config):
         self.add_option('random_sleep', libdnf.conf.OptionNumberInt32(300))
         self.add_option('network_online_timeout', libdnf.conf.OptionNumberInt32(60))
         self.add_option('reboot', libdnf.conf.OptionEnumString('never',
-                        libdnf.conf.VectorString(['never', 'when-changed', 'when-needed'])))
+                        libdnf.conf.VectorString(['never', 'when-changed', 'when-needed', 'always'])))
         self.add_option('reboot_command', libdnf.conf.OptionString(
             'shutdown -r +5 \'Rebooting after applying package updates\''))
 
@@ -334,6 +334,11 @@ def main(args):
             output = dnf.cli.output.Output(base, base.conf)
             trans = base.transaction
             if not trans:
+                if (conf.commands.reboot == 'always'):
+                    exit_code = os.waitstatus_to_exitcode(os.system(conf.commands.reboot_command))
+                    if exit_code != 0:
+                        logger.error('Error: reboot command returned nonzero exit code: %d', exit_code)
+                        return 1
                 return 0
 
             lst = output.list_transaction(trans, total_width=80)

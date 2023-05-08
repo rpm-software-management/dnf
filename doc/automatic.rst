@@ -91,9 +91,9 @@ Setting the mode of operation of the program.
     What kind of upgrades to look at. ``default`` signals looking for all available updates, ``security`` only those with an issued security advisory.
 
 ``reboot``
-    either one of ``never``, ``when-changed``, ``when-needed``, default: ``never``
+    either one of ``never``, ``when-changed``, ``when-needed``, ``always``, default: ``never``
 
-    When the system should reboot following upgrades. ``never`` does not reboot the system. ``when-changed`` triggers a reboot after any upgrade. ``when-needed`` triggers a reboot only when rebooting is necessary to apply changes, such as when systemd or the kernel is upgraded.
+    When the system should reboot following upgrades. ``never`` does not reboot the system. ``when-changed`` triggers a reboot after any upgrade. ``when-needed`` triggers a reboot only when rebooting is necessary to apply changes, such as when systemd or the kernel is upgraded. ``always`` triggers a reboot regardless of any changes.
 
 ``reboot_command``
     string, default: ``shutdown -r +5 'Rebooting after applying package updates'``
