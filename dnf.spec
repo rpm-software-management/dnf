@@ -142,7 +142,6 @@ Obsoletes:      %{name}-yum < 5
 %package -n python3-%{name}
 Summary:        Python 3 interface to DNF
 %{?python_provide:%python_provide python3-%{name}}
-Requires:       libdnf5
 BuildRequires:  python3-devel
 BuildRequires:  python3-hawkey >= %{hawkey_version}
 BuildRequires:  python3-libdnf >= %{hawkey_version}
@@ -176,7 +175,7 @@ Python 3 interface to DNF.
 %package automatic
 Summary:        %{pkg_summary} - automated upgrades
 BuildRequires:  systemd
-Requires:       %{name} = %{version}-%{release}
+Requires:       python3-%{name} = %{version}-%{release}
 %{?systemd_requires}
 
 %description automatic
