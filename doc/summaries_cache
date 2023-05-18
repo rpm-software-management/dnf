@@ -3522,5 +3522,17 @@
     [
         2054235,
         "Offline updates"
+    ],
+    [
+        2022440,
+        "dnf-automatic ignore proxy setting"
+    ],
+    [
+        2170093,
+        "dnf-automatic returns \"success\" ( zero exit status return ) even if the called dnf command returns error"
+    ],
+    [
+        2185239,
+        "dnf 4.15 broke repoquery's \"%{INSTALLTIME}\" queryformat"
     ]
 ]
