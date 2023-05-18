@@ -20,6 +20,24 @@
 ###################
 
 ====================
+4.15.1 Release Notes
+====================
+
+- Bug fixes:
+  - automatic: Fix online detection with proxy (RhBug:2022440)
+  - automatic: Return an error when transaction fails (RhBug:2170093)
+  - repoquery: Allow uppercased query tags (RhBug:2185239)
+
+- Others:
+  - Unprotect dnf and yum, protect python3-dnf
+
+Bugs fixed in 4.15.1:
+
+* :rhbug:`2022440`
+* :rhbug:`2170093`
+* :rhbug:`2185239`
+
+====================
 4.15.0 Release Notes
 ====================
 

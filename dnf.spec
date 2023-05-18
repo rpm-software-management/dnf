@@ -65,7 +65,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.15.0
+Version:        4.15.1
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -367,6 +367,12 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Thu May 18 2023 Jan Kolarik <jkolarik@redhat.com> - 4.15.1-1
+- automatic: Fix online detection with proxy (RhBug:2022440)
+- automatic: Return an error when transaction fails (RhBug:2170093)
+- repoquery: Allow uppercased query tags (RhBug:2185239)
+- Unprotect dnf and yum, protect python3-dnf
+
 * Thu Apr 06 2023 Jan Kolarik <jkolarik@redhat.com> - 4.15.0-1
 - Add reboot option to DNF Automatic (RhBug:2124793)
 - Add support for rollback of group upgrade rollback (RhBug:2016070)
