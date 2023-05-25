@@ -20,6 +20,15 @@
 ###################
 
 ====================
+4.16.0 Release Notes
+====================
+
+- Prepare for updating to DNF5:
+  - Remove ownership of dnf.conf, protected.d, vars
+  - Add requirement of libdnf5 to dnf-data
+  - dnf-automatic: require python3-dnf, not dnf
+
+====================
 4.15.1 Release Notes
 ====================
 
