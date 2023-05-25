@@ -65,7 +65,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.15.1
+Version:        4.16.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -365,6 +365,11 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Thu May 25 2023 Jan Kolarik <jkolarik@redhat.com> - 4.16.0-1
+- Remove ownership of dnf.conf, protected.d, vars
+- Add requirement of libdnf5 to dnf-data
+- dnf-automatic: require python3-dnf, not dnf
+
 * Thu May 18 2023 Jan Kolarik <jkolarik@redhat.com> - 4.15.1-1
 - automatic: Fix online detection with proxy (RhBug:2022440)
 - automatic: Return an error when transaction fails (RhBug:2170093)
