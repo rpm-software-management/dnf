@@ -86,29 +86,6 @@ Requires:       %{_bindir}/sqlite3
 %else
 Recommends:     (python3-dbus if NetworkManager)
 %endif
-Provides:       dnf-command(alias)
-Provides:       dnf-command(autoremove)
-Provides:       dnf-command(check-update)
-Provides:       dnf-command(clean)
-Provides:       dnf-command(distro-sync)
-Provides:       dnf-command(downgrade)
-Provides:       dnf-command(group)
-Provides:       dnf-command(history)
-Provides:       dnf-command(info)
-Provides:       dnf-command(install)
-Provides:       dnf-command(list)
-Provides:       dnf-command(makecache)
-Provides:       dnf-command(mark)
-Provides:       dnf-command(provides)
-Provides:       dnf-command(reinstall)
-Provides:       dnf-command(remove)
-Provides:       dnf-command(repolist)
-Provides:       dnf-command(repoquery)
-Provides:       dnf-command(repository-packages)
-Provides:       dnf-command(search)
-Provides:       dnf-command(updateinfo)
-Provides:       dnf-command(upgrade)
-Provides:       dnf-command(upgrade-to)
 Conflicts:      python3-dnf-plugins-core < %{conflicts_dnf_plugins_core_version}
 Conflicts:      python3-dnf-plugins-extras-common < %{conflicts_dnf_plugins_extras_version}
 
@@ -168,6 +145,29 @@ Requires:       rpm-plugin-systemd-inhibit
 %else
 Recommends:     (rpm-plugin-systemd-inhibit if systemd)
 %endif
+Provides:       dnf-command(alias)
+Provides:       dnf-command(autoremove)
+Provides:       dnf-command(check-update)
+Provides:       dnf-command(clean)
+Provides:       dnf-command(distro-sync)
+Provides:       dnf-command(downgrade)
+Provides:       dnf-command(group)
+Provides:       dnf-command(history)
+Provides:       dnf-command(info)
+Provides:       dnf-command(install)
+Provides:       dnf-command(list)
+Provides:       dnf-command(makecache)
+Provides:       dnf-command(mark)
+Provides:       dnf-command(provides)
+Provides:       dnf-command(reinstall)
+Provides:       dnf-command(remove)
+Provides:       dnf-command(repolist)
+Provides:       dnf-command(repoquery)
+Provides:       dnf-command(repository-packages)
+Provides:       dnf-command(search)
+Provides:       dnf-command(updateinfo)
+Provides:       dnf-command(upgrade)
+Provides:       dnf-command(upgrade-to)
 
 %description -n python3-%{name}
 Python 3 interface to DNF.
