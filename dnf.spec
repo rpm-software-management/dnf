@@ -378,6 +378,9 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Mon May 29 2023 Jan Kolarik <jkolarik@redhat.com> - 4.16.1-1
+- DNF5 should not deprecate DNF on Fedora 38
+
 * Thu May 25 2023 Jan Kolarik <jkolarik@redhat.com> - 4.16.0-1
 - Remove ownership of dnf.conf, protected.d, vars
 - Add requirement of libdnf5 to dnf-data
