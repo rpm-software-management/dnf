@@ -710,6 +710,24 @@ transactions and act according to this information (assuming the
     which specifies a transaction by a package which it manipulated. When no
     transaction is specified, list all known transactions.
 
+    The "Action(s)" column lists each type of action taken in the transaction. The possible values are:
+
+    * Install (I): a new package was installed on the system
+    * Downgrade (D): an older version of a package replaced the previously-installed version
+    * Obsolete (O): an obsolete package was replaced by a new package
+    * Upgrade (U): a newer version of the package replaced the previously-installed version
+    * Remove (E): a package was removed from the system
+    * Reinstall (R): a package was reinstalled with the same version
+    * Reason change (C): a package was kept in the system but its reason for being installed changed
+
+    The "Altered" column lists the number of actions taken in each transaction, possibly followed by one or two the following symbols:
+
+    * ``>``: The RPM database was changed, outside DNF, after the transaction
+    * ``<``: The RPM database was changed, outside DNF, before the transaction
+    * ``*``: The transaction aborted before completion
+    * ``#``: The transaction completed, but with a non-zero status
+    * ``E``: The transaction completed successfully, but had warning/error output
+
     ``--reverse``
         The order of ``history list`` output is printed in reverse order.
 
