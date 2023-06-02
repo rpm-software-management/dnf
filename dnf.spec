@@ -96,7 +96,7 @@ Conflicts:      python3-dnf-plugins-extras-common < %{conflicts_dnf_plugins_extr
 Summary:        Common data and configuration files for DNF
 Requires:       libreport-filesystem
 %if 0%{?fedora} > 38
-Requires:       libdnf5
+Requires:       /etc/dnf/dnf.conf
 %endif
 Obsoletes:      %{name}-conf <= %{version}-%{release}
 Provides:       %{name}-conf = %{version}-%{release}
