@@ -70,6 +70,7 @@ class ProcessLock(object):
         self.description = description
         self.target = target
         self.thread_lock = threading.RLock()
+        self.fd = None
 
     def _lock_thread(self):
         if not self.thread_lock.acquire(blocking=False):
@@ -79,6 +80,7 @@ class ProcessLock(object):
 
     def _try_lock(self, pid):
         fd = os.open(self.target, os.O_CREAT | os.O_RDWR, 0o644)
+        self.fd = fd
 
         try:
             try:
@@ -116,8 +118,13 @@ class ProcessLock(object):
 
             return old_pid
 
-        finally:
-            os.close(fd)
+        except Exception:
+            self._close_fd()
+
+    def _close_fd(self):
+        if self.fd is not None:
+            os.close(self.fd)
+            self.fd = None
 
     def _unlock_thread(self):
         self.count -= 1
@@ -146,3 +153,4 @@ class ProcessLock(object):
         if self.count == 1:
             os.unlink(self.target)
         self._unlock_thread()
+        self._close_fd()
