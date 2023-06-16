@@ -120,7 +120,8 @@ def _list_cmd_calc_columns(output, ypl):
 
 def print_versions(pkgs, base, output):
     def sm_ui_time(x):
-        return time.strftime("%c", time.gmtime(x))
+        dt = datetime.datetime.fromtimestamp(x)
+        return dt.strftime("%c")
 
     rpmdb_sack = dnf.sack.rpmdb_sack(base)
     done = False
