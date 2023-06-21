@@ -136,7 +136,10 @@ class ModuleBase(object):
                     for profile in profiles:
                         self.base._moduleContainer.install(latest_module ,profile.getName())
                         for pkg_name in profile.getContent():
-                            install_dict.setdefault(pkg_name, set()).add(spec)
+                            if install_dict.get(pkg_name):
+                                install_dict[pkg_name].add(spec)
+                            else:
+                                install_dict[pkg_name] = {spec}
                     for module in install_module_list:
                         install_set_artifacts.update(module.getArtifacts())
         if fail_safe_repo_used:
@@ -232,7 +235,10 @@ class ModuleBase(object):
                     for profile in profiles:
                         self.base._moduleContainer.install(latest_module, profile.getName())
                         for pkg_name in profile.getContent():
-                            install_dict.setdefault(pkg_name, set()).add(spec)
+                            if install_dict.get(pkg_name):
+                                install_dict[pkg_name].add(spec)
+                            else:
+                                install_dict[pkg_name] = {spec}
                     for module in install_module_list:
                         artifacts = module.getArtifacts()
                         install_set_artifacts.update(artifacts)
