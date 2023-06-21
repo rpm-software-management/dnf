@@ -22,7 +22,11 @@ import sys
 
 def sanitize_po_file(po_file):
     print("Processing", po_file)
-    po = polib.pofile(po_file)
+    try:
+        po = polib.pofile(po_file)
+    except Exception as e:
+        print(f"Error: Failed to read PO file {po_file}: {e}")
+        return
     for entry in po:
         msgid_without_indents = entry.msgid.strip()
         msgstr_without_indents = entry.msgstr.strip()
@@ -40,7 +44,10 @@ def sanitize_po_file(po_file):
                     msgstr_plural_without_indents)
                 if re.match(r"^\s+$", entry.msgstr_plural[i]):
                     entry.msgstr_plural[i] = ""
-    po.save()
+    try:
+        po.save()
+    except Exception as e:
+        print(f"Error: Failed to save PO file {po_file}: {e}")
 
 
 if __name__ == "__main__":
