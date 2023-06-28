@@ -198,6 +198,7 @@ class EmailConfig(Config):
         self.add_option('email_from', libdnf.conf.OptionString("root"))
         self.add_option('email_host', libdnf.conf.OptionString("localhost"))
         self.add_option('email_port', libdnf.conf.OptionNumberInt32(25))
+        self.add_option('email_tls', libdnf.conf.OptionString("no"))
 
 
 class CommandConfig(Config):
