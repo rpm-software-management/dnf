@@ -95,6 +95,7 @@ class EmailEmitter(Emitter):
         message.set_charset('utf-8')
         email_from = self._conf.email_from
         email_to = self._conf.email_to
+        email_port = self._conf.email_port
         message['Date'] = email.utils.formatdate()
         message['From'] = email_from
         message['Subject'] = subj
@@ -103,7 +104,7 @@ class EmailEmitter(Emitter):
 
         # Send the email
         try:
-            smtp = smtplib.SMTP(self._conf.email_host, timeout=300)
+            smtp = smtplib.SMTP(self._conf.email_host, self._conf.email_port, timeout=300)
             smtp.sendmail(email_from, email_to, message.as_string())
             smtp.close()
         except OSError as exc:
