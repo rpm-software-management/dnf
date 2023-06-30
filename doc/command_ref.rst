@@ -720,7 +720,7 @@ transactions and act according to this information (assuming the
     * Reinstall (R): a package was reinstalled with the same version
     * Reason change (C): a package was kept in the system but its reason for being installed changed
 
-    The "Altered" column lists the number of actions taken in each transaction, possibly followed by one or two the following symbols:
+    The "Altered" column lists the number of actions taken in each transaction, possibly followed by one or two of the following symbols:
 
     * ``>``: The RPM database was changed, outside DNF, after the transaction
     * ``<``: The RPM database was changed, outside DNF, before the transaction
