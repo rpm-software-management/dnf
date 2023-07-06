@@ -60,49 +60,53 @@ def seconds_to_ui_time(seconds):
 def get_process_info(pid):
     """Return info dict about a process."""
 
-    pid = int(pid)
+    try:
+        pid = int(pid)
 
-    # Maybe true if /proc isn't mounted, or not Linux ... or something.
-    if (not os.path.exists("/proc/%d/status" % pid) or
-        not os.path.exists("/proc/stat") or
-        not os.path.exists("/proc/%d/stat" % pid)):
-        return
+        # Maybe true if /proc isn't mounted, or not Linux ... or something.
+        if (not os.path.exists("/proc/%d/status" % pid) or
+            not os.path.exists("/proc/stat") or
+            not os.path.exists("/proc/%d/stat" % pid)):
+            return None
 
-    ps = {}
-    with open("/proc/%d/status" % pid) as status_file:
-        for line in status_file:
-            if line[-1] != '\n':
-                continue
-            data = line[:-1].split(':\t', 1)
-            if len(data) < 2:
-                continue
-            data[1] = dnf.util.rtrim(data[1], ' kB')
-            ps[data[0].strip().lower()] = data[1].strip()
-    if 'vmrss' not in ps:
-        return
-    if 'vmsize' not in ps:
-        return
+        ps = {}
+        with open("/proc/%d/status" % pid) as status_file:
+            for line in status_file:
+                if line[-1] != '\n':
+                    continue
+                data = line[:-1].split(':\t', 1)
+                if len(data) < 2:
+                    continue
+                data[1] = dnf.util.rtrim(data[1], ' kB')
+                ps[data[0].strip().lower()] = data[1].strip()
+        if 'vmrss' not in ps:
+            return None
+        if 'vmsize' not in ps:
+            return None
 
-    boot_time = None
-    with open("/proc/stat") as stat_file:
-        for line in stat_file:
-            if line.startswith("btime "):
-                boot_time = int(line[len("btime "):-1])
-                break
-    if boot_time is None:
-        return
+        boot_time = None
+        with open("/proc/stat") as stat_file:
+            for line in stat_file:
+                if line.startswith("btime "):
+                    boot_time = int(line[len("btime "):-1])
+                    break
+        if boot_time is None:
+            return None
 
-    with open('/proc/%d/stat' % pid) as stat_file:
-        ps_stat = stat_file.read().split()
-        ps['start_time'] = boot_time + jiffies_to_seconds(ps_stat[21])
-        ps['state'] = {'R' : _('Running'),
-                       'S' : _('Sleeping'),
-                       'D' : _('Uninterruptible'),
-                       'Z' : _('Zombie'),
-                       'T' : _('Traced/Stopped')
-                       }.get(ps_stat[2], _('Unknown'))
+        with open('/proc/%d/stat' % pid) as stat_file:
+            ps_stat = stat_file.read().split()
+            ps['start_time'] = boot_time + jiffies_to_seconds(ps_stat[21])
+            ps['state'] = {'R' : _('Running'),
+                           'S' : _('Sleeping'),
+                           'D' : _('Uninterruptible'),
+                           'Z' : _('Zombie'),
+                           'T' : _('Traced/Stopped')
+                           }.get(ps_stat[2], _('Unknown'))
 
-    return ps
+        return ps
+    except (OSError, ValueError) as e:
+        logger.error("Failed to get process info: %s", e)
+        return None
 
 
 def show_lock_owner(pid):
