@@ -79,8 +79,8 @@ class RepoDict(dict):
                     if isinstance(value, str):
                         substituted.append(
                             libdnf.conf.ConfigParser.substitute(value, conf.substitutions))
-                    if substituted:
-                        return substituted
+                if substituted:
+                    return substituted
             return values
 
         repo = dnf.repo.Repo(repoid, conf)
