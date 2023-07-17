@@ -214,6 +214,7 @@ mkdir -p %{buildroot}%{_localstatedir}/log/
 mkdir -p %{buildroot}%{_var}/cache/dnf/
 touch %{buildroot}%{_localstatedir}/log/%{name}.log
 ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf
+ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf4
 mv %{buildroot}%{_bindir}/dnf-automatic-3 %{buildroot}%{_bindir}/dnf-automatic
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
@@ -358,6 +359,7 @@ popd
 
 %files -n python3-%{name}
 %{_bindir}/%{name}-3
+%{_bindir}/%{name}4
 %exclude %{python3_sitelib}/%{name}/automatic
 %{python3_sitelib}/%{name}/
 %dir %{py3pluginpath}
