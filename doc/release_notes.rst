@@ -20,6 +20,25 @@
 ###################
 
 ====================
+4.16.2 Release Notes
+====================
+
+- dnf-data: depend on /etc/dnf/dnf.conf, not libdnf5
+- Update repo metadata cache pattern to include zstd
+- typo in doc/command_ref.rst
+- Add provide exception handling
+- When parsing over a KVP list, do not return till the whole list is parsed
+- Add to authors
+- python3-dnf: Provide /usr/bin/dnf4 symlink to /usr/bin/dnf-3
+
+- Bug fixes:
+  - Document the symbols in the output of `dnf history list` (RhBug:2172067)
+
+Bugs fixed in 4.16.2:
+
+* :rhbug:`2172067`
+
+====================
 4.16.1 Release Notes
 ====================
 

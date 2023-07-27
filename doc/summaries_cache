@@ -3534,5 +3534,9 @@
     [
         2185239,
         "dnf 4.15 broke repoquery's \"%{INSTALLTIME}\" queryformat"
+    ],
+    [
+        2172067,
+        "Missing a description of symbols in dnf history list output"
     ]
 ]
