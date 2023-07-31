@@ -95,7 +95,7 @@ Conflicts:      python3-dnf-plugins-extras-common < %{conflicts_dnf_plugins_extr
 %package data
 Summary:        Common data and configuration files for DNF
 Requires:       libreport-filesystem
-%if 0%{?fedora} > 38
+%if 0%{?fedora} > 40 || 0%{?rhel} > 10
 Requires:       /etc/dnf/dnf.conf
 %endif
 Obsoletes:      %{name}-conf <= %{version}-%{release}
@@ -235,7 +235,7 @@ ln -sr  %{buildroot}%{confdir}/protected.d %{buildroot}%{_sysconfdir}/yum/protec
 ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
-%if 0%{?fedora} > 38
+%if 0%{?fedora} > 40 || 0%{?rhel} > 10
 rm %{buildroot}%{confdir}/%{name}.conf
 %endif
 
@@ -290,13 +290,13 @@ popd
 %dir %{confdir}/modules.d
 %dir %{confdir}/modules.defaults.d
 %dir %{pluginconfpath}
-%if 0%{?fedora} <= 38
+%if ! (0%{?fedora} > 40 || 0%{?rhel} > 10)
 %dir %{confdir}/protected.d
 %dir %{confdir}/vars
 %endif
 %dir %{confdir}/aliases.d
 %exclude %{confdir}/aliases.d/zypper.conf
-%if 0%{?fedora} <= 38
+%if ! (0%{?fedora} > 40 || 0%{?rhel} > 10)
 %config(noreplace) %{confdir}/%{name}.conf
 %endif
 
