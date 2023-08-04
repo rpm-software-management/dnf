@@ -12,6 +12,8 @@
 %global conflicts_dnf_plugins_extras_version 4.0.4
 %global conflicts_dnfdaemon_version 0.3.19
 
+%bcond obsolete_dnf %[0%{?fedora} > 40 || 0%{?rhel} > 10]
+
 # override dependencies for rhel 7
 %if 0%{?rhel} == 7
     %global rpm_version 4.11.3-32
@@ -95,7 +97,7 @@ Conflicts:      python3-dnf-plugins-extras-common < %{conflicts_dnf_plugins_extr
 %package data
 Summary:        Common data and configuration files for DNF
 Requires:       libreport-filesystem
-%if 0%{?fedora} > 40 || 0%{?rhel} > 10
+%if %{without obsolete_dnf}
 Requires:       /etc/dnf/dnf.conf
 %endif
 Obsoletes:      %{name}-conf <= %{version}-%{release}
@@ -235,7 +237,7 @@ ln -sr  %{buildroot}%{confdir}/protected.d %{buildroot}%{_sysconfdir}/yum/protec
 ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
-%if 0%{?fedora} > 40 || 0%{?rhel} > 10
+%if %{without obsolete_dnf}
 rm %{buildroot}%{confdir}/%{name}.conf
 %endif
 
@@ -290,13 +292,13 @@ popd
 %dir %{confdir}/modules.d
 %dir %{confdir}/modules.defaults.d
 %dir %{pluginconfpath}
-%if ! (0%{?fedora} > 40 || 0%{?rhel} > 10)
+%if %{with obsolete_dnf}
 %dir %{confdir}/protected.d
 %dir %{confdir}/vars
 %endif
 %dir %{confdir}/aliases.d
 %exclude %{confdir}/aliases.d/zypper.conf
-%if ! (0%{?fedora} > 40 || 0%{?rhel} > 10)
+%if %{with obsolete_dnf}
 %config(noreplace) %{confdir}/%{name}.conf
 %endif
 
