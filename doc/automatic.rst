@@ -178,6 +178,11 @@ The email emitter configuration.
 
     Hostname of the SMTP server used to send the message.
 
+``email_port``
+    integer, default: ``25``
+
+    Port number to connect to at the SMTP server.
+
 ``email_to``
     list, default: ``root``
 
