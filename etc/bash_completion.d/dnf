@@ -112,7 +112,7 @@ _dnf_query_db()
 {
     local table=$1
     local prefix=$2
-    local query="select pkg from $table where pkg like \"$prefix%\""
+    local query="select pkg from $table where pkg like '$prefix%'"
     if [ "$table" = "available" ]; then
         # The available table contains both installed and non-installed
         # packages. Exclude the installed packages.
