@@ -22,74 +22,20 @@ from __future__ import print_function
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _
+import libdnf.repo
 import contextlib
 import dnf.pycomp
 import dnf.util
 import dnf.yum.misc
-import io
 import logging
 import os
-import tempfile
-
-try:
-    from gpg import Context
-    from gpg import Data
-except ImportError:
-    import gpgme
-
-
-    class Context(object):
-        def __init__(self):
-            self.__dict__["ctx"] = gpgme.Context()
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, type, value, tb):
-            pass
-
-        @property
-        def armor(self):
-            return self.ctx.armor
-
-        @armor.setter
-        def armor(self, value):
-            self.ctx.armor = value
-
-        def op_import(self, key_fo):
-            if isinstance(key_fo, basestring):
-                key_fo = io.BytesIO(key_fo)
-            self.ctx.import_(key_fo)
-
-        def op_export(self, pattern, mode, keydata):
-            self.ctx.export(pattern, keydata)
-
-        def __getattr__(self, name):
-            return getattr(self.ctx, name)
-
-
-    class Data(object):
-        def __init__(self):
-            self.__dict__["buf"] = io.BytesIO()
-
-        def __enter__(self):
-            return self
-
-        def __exit__(self, type, value, tb):
-            pass
-
-        def read(self):
-            return self.buf.getvalue()
-
-        def __getattr__(self, name):
-            return getattr(self.buf, name)
-
 
 GPG_HOME_ENV = 'GNUPGHOME'
 logger = logging.getLogger('dnf')
 
-
 def _extract_signing_subkey(key):
+    # :deprecated, undocumented
+    """ Deprecated feature. It was used internally. It is no longer used. """
     return dnf.util.first(subkey for subkey in key.subkeys if subkey.can_sign)
 
 
@@ -99,6 +45,11 @@ def _printable_fingerprint(fpr_hex):
 
 
 def import_repo_keys(repo):
+    # :deprecated, undocumented
+    """ Deprecated function. Please do not use.
+        It was used internally. In 2018, the code was rewritten into libdnf. This code is no longer used.
+        It was broken in 2018 - the `repo._key_import._confirm` method now needs 5 arguments.
+        It is now fixed and marked as deprecated. Please do not use. """
     gpgdir = repo._pubring_dir
     known_keys = keyids_from_pubring(gpgdir)
     for keyurl in repo.gpgkey:
@@ -107,7 +58,8 @@ def import_repo_keys(repo):
             if keyid in known_keys:
                 logger.debug(_('repo %s: 0x%s already imported'), repo.id, keyid)
                 continue
-            if not repo._key_import._confirm(keyinfo):
+            if not repo._key_import._confirm(
+                keyid, keyinfo.userid, keyinfo.fingerprint, keyinfo.url, keyinfo.timestamp):
                 continue
             dnf.yum.misc.import_key_to_pubring(
                 keyinfo.raw_key, keyinfo.short_id, gpgdir=gpgdir,
@@ -116,16 +68,12 @@ def import_repo_keys(repo):
 
 
 def keyids_from_pubring(gpgdir):
-    if not os.path.exists(gpgdir):
-        return []
-
-    with pubring_dir(gpgdir), Context() as ctx:
-        keyids = []
-        for k in ctx.keylist():
-            subkey = _extract_signing_subkey(k)
-            if subkey is not None:
-                keyids.append(subkey.keyid)
-        return keyids
+    # :deprecated, undocumented
+    """ Used internally by deprecated function `import_repo_keys` """
+    keyids = []
+    for keyid in libdnf.repo.keyidsFromPubring(gpgdir):
+        keyids.append(keyid)
+    return keyids
 
 
 def log_key_import(keyinfo):
@@ -148,6 +96,8 @@ def log_dns_key_import(keyinfo, dns_result):
 
 @contextlib.contextmanager
 def pubring_dir(pubring_dir):
+    # :deprecated, undocumented
+    """ Deprecated feature. It was used internally. It is no longer used. """
     orig = os.environ.get(GPG_HOME_ENV, None)
     os.environ[GPG_HOME_ENV] = pubring_dir
     try:
@@ -160,22 +110,10 @@ def pubring_dir(pubring_dir):
 
 
 def rawkey2infos(key_fo):
-    pb_dir = tempfile.mkdtemp()
     keyinfos = []
-    with pubring_dir(pb_dir), Context() as ctx:
-        ctx.op_import(key_fo)
-        for key in ctx.keylist():
-            subkey = _extract_signing_subkey(key)
-            if subkey is None:
-                continue
-            keyinfos.append(Key(key, subkey))
-        ctx.armor = True
-        for info in keyinfos:
-            with Data() as sink:
-                ctx.op_export(info.id_, 0, sink)
-                sink.seek(0, os.SEEK_SET)
-                info.raw_key = sink.read()
-    dnf.util.rm_rf(pb_dir)
+    keys = libdnf.repo.Key.keysFromFd(key_fo.fileno())
+    for key in keys:
+        keyinfos.append(Key(key))
     return keyinfos
 
 
@@ -190,13 +128,13 @@ def retrieve(keyurl, repo=None):
 
 
 class Key(object):
-    def __init__(self, key, subkey):
-        self.id_ = subkey.keyid
-        self.fingerprint = subkey.fpr
-        self.raw_key = None
-        self.timestamp = subkey.timestamp
-        self.url = None
-        self.userid = key.uids[0].uid
+    def __init__(self, repokey):
+        self.id_ = repokey.getId()
+        self.fingerprint = repokey.getFingerprint()
+        self.raw_key = bytes(repokey.getAsciiArmoredKey(), 'utf-8')
+        self.timestamp = repokey.getTimestamp()
+        self.url = repokey.getUrl()
+        self.userid = repokey.getUserId()
 
     @property
     def short_id(self):
