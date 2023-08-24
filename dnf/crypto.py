@@ -29,13 +29,17 @@ import dnf.util
 import dnf.yum.misc
 import logging
 import os
+import warnings
 
 GPG_HOME_ENV = 'GNUPGHOME'
 logger = logging.getLogger('dnf')
 
 def _extract_signing_subkey(key):
     # :deprecated, undocumented
-    """ Deprecated feature. It was used internally. It is no longer used. """
+    """ It was used internally and is no longer used. """
+    msg = "Function `_extract_signing_subkey` is deprecated. Will be removed after 2023-10-30."
+    warnings.warn(msg, DeprecationWarning, stacklevel=2)
+
     return dnf.util.first(subkey for subkey in key.subkeys if subkey.can_sign)
 
 
@@ -50,6 +54,9 @@ def import_repo_keys(repo):
         It was used internally. In 2018, the code was rewritten into libdnf. This code is no longer used.
         It was broken in 2018 - the `repo._key_import._confirm` method now needs 5 arguments.
         It is now fixed and marked as deprecated. Please do not use. """
+    msg = "Function `import_repo_keys` is deprecated. Will be removed after 2023-10-30."
+    warnings.warn(msg, DeprecationWarning, stacklevel=2)
+
     gpgdir = repo._pubring_dir
     known_keys = keyids_from_pubring(gpgdir)
     for keyurl in repo.gpgkey:
@@ -69,7 +76,10 @@ def import_repo_keys(repo):
 
 def keyids_from_pubring(gpgdir):
     # :deprecated, undocumented
-    """ Used internally by deprecated function `import_repo_keys` """
+    """ It is used internally by deprecated function `import_repo_keys`. """
+    msg = "Function `keyids_from_pubring` is deprecated. Will be removed after 2023-10-30."
+    warnings.warn(msg, DeprecationWarning, stacklevel=2)
+
     keyids = []
     for keyid in libdnf.repo.keyidsFromPubring(gpgdir):
         keyids.append(keyid)
@@ -97,7 +107,10 @@ def log_dns_key_import(keyinfo, dns_result):
 @contextlib.contextmanager
 def pubring_dir(pubring_dir):
     # :deprecated, undocumented
-    """ Deprecated feature. It was used internally. It is no longer used. """
+    """ It was used internally and is no longer used. """
+    msg = "Function `pubring_dir` is deprecated. Will be removed after 2023-10-30."
+    warnings.warn(msg, DeprecationWarning, stacklevel=2)
+
     orig = os.environ.get(GPG_HOME_ENV, None)
     os.environ[GPG_HOME_ENV] = pubring_dir
     try:
