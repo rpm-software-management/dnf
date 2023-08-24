@@ -39,6 +39,7 @@ import pwd
 import re
 import shutil
 import tempfile
+import warnings
 
 _default_checksums = ['sha256']
 
@@ -161,7 +162,9 @@ def keyInstalled(ts, keyid, timestamp):
 
 def import_key_to_pubring(rawkey, keyid, gpgdir=None, make_ro_copy=True):
     # :deprecated, undocumented
-    """ Used internally by deprecated function `import_repo_keys` """
+    """ It is used internally by deprecated function `import_repo_keys`. """
+    msg = "Function `import_key_to_pubring` is deprecated. Will be removed after 2023-10-30."
+    warnings.warn(msg, DeprecationWarning, stacklevel=2)
 
     if not os.path.exists(gpgdir):
         os.makedirs(gpgdir)
