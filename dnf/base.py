@@ -1028,6 +1028,9 @@ class Base(object):
                 for display_ in cb.displays:
                     display_.output = False
 
+            # block signals to disallow external interruptions of the transaction
+            rpm.blockSignals(True)
+
             self._plugins.run_pre_transaction()
 
             logger.info(_('Running transaction'))
@@ -1044,6 +1047,9 @@ class Base(object):
             return msgs
         for msg in dnf.util._post_transaction_output(self, self.transaction, _pto_callback):
             logger.debug(msg)
+
+        # unblock signals as we are done with the transaction
+        rpm.blockSignals(False)
 
         return tid
 
