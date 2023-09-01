@@ -381,6 +381,14 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Fri Sep 01 2023 Jan Kolarik <jkolarik@redhat.com> - 4.17.0-1
+- crypto: Use libdnf crypto API instead of using GnuPG/GpgME
+- Reprotect dnf, unprotect python3-dnf (RhBug:2221905)
+- Block signals during RPM transaction processing (RhBug:2133398)
+- Fix bash completion due to sqlite changes (RhBug:2232052)
+- automatic: allow use of STARTTLS/TLS
+- automatic: use email_port specified in config
+
 * Thu Jul 27 2023 Nicola Sella <nsella@redhat.com> - 4.16.2-1
 - depend on /etc/dnf/dnf.conf, not libdnf5
 - Update repo metadata cache pattern to include zstd

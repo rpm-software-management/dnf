@@ -20,6 +20,28 @@
 ###################
 
 ====================
+4.17.0 Release Notes
+====================
+
+- New features:
+  - crypto: Use libdnf crypto API instead of using GnuPG/GpgME
+  - automatic: allow use of STARTTLS/TLS
+  - automatic: use email_port specified in config
+
+- Bug fixes:
+  - Block signals during RPM transaction processing (RhBug:2133398)
+  - Fix bash completion due to sqlite changes (RhBug:2232052)
+
+- Others:
+  - Reprotect dnf, unprotect python3-dnf (RhBug:2221905)
+
+Bugs fixed in 4.17.0:
+
+* :rhbug:`2221905`
+* :rhbug:`2133398`
+* :rhbug:`2232052`
+
+====================
 4.16.2 Release Notes
 ====================
 

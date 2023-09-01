@@ -3538,5 +3538,17 @@
     [
         2172067,
         "Missing a description of symbols in dnf history list output"
+    ],
+    [
+        2221905,
+        "python3-dnf is needlessly marked as protected"
+    ],
+    [
+        2133398,
+        "dnf unfinished transaction when upgrading via SSH session"
+    ],
+    [
+        2232052,
+        "Bash completion no longer works due to sqlite upstream changes"
     ]
 ]
