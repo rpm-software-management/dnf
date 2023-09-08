@@ -96,7 +96,9 @@ Conflicts:      python3-dnf-plugins-extras-common < %{conflicts_dnf_plugins_extr
 
 %package data
 Summary:        Common data and configuration files for DNF
-Requires:       libreport-filesystem
+
+#  We provide a configuration file (/etc/libreport/events.d/collect_dnf.conf) for libreport
+Recommends:     libreport-filesystem
 %if %{with dnf5_obsoletes_dnf}
 Requires:       /etc/dnf/dnf.conf
 %endif
