@@ -180,6 +180,12 @@ class ProcessLockError(LockError):
         return (ProcessLockError, (self.value, self.pid))
 
 
+class ReadOnlyVariableError(Error):
+    def __init__(self, value, variable_name):
+        super(ReadOnlyVariableError, self).__init__(value)
+        self.variable_name = variable_name
+
+
 class RepoError(Error):
     # :api
     pass
