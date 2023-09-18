@@ -23,8 +23,10 @@ import os
 import re
 
 from dnf.i18n import _
+from dnf.exceptions import ReadOnlyVariableError
 
 ENVIRONMENT_VARS_RE = re.compile(r'^DNF_VAR_[A-Za-z0-9_]+$')
+READ_ONLY_VARIABLES = frozenset(("releasever_major", "releasever_minor"))
 logger = logging.getLogger('dnf')
 
 
@@ -42,6 +44,35 @@ class Substitutions(dict):
                 self[key[8:]] = val  # remove "DNF_VAR_" prefix
             elif key in numericvars:
                 self[key] = val
+
+    @staticmethod
+    def _split_releasever(releasever):
+        # type: (str) -> tuple[str, str]
+        pos = releasever.find(".")
+        if pos == -1:
+            releasever_major = releasever
+            releasever_minor = ""
+        else:
+            releasever_major = releasever[:pos]
+            releasever_minor = releasever[pos + 1:]
+        return releasever_major, releasever_minor
+
+    def __setitem__(self, key, value):
+        if Substitutions.is_read_only(key):
+            raise ReadOnlyVariableError(f"Variable \"{key}\" is read-only", variable_name=key)
+
+        setitem = super(Substitutions, self).__setitem__
+        setitem(key, value)
+
+        if key == "releasever" and value:
+            releasever_major, releasever_minor = Substitutions._split_releasever(value)
+            setitem("releasever_major", releasever_major)
+            setitem("releasever_minor", releasever_minor)
+
+    @staticmethod
+    def is_read_only(key):
+        # type: (str) -> bool
+        return key in READ_ONLY_VARIABLES
 
     def update_from_etc(self, installroot, varsdir=("/etc/yum/vars/", "/etc/dnf/vars/")):
         # :api
