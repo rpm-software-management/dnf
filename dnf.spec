@@ -85,6 +85,8 @@ Requires:       python3-%{name} = %{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} <= 7
 Requires:       python-dbus
 Requires:       %{_bindir}/sqlite3
+%elif 0%{?fedora}
+Recommends:     (%{_bindir}/sqlite3 if (bash-completion and python3-dnf-plugins-core))
 %else
 Recommends:     (python3-dbus if NetworkManager)
 %endif
