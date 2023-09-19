@@ -1180,7 +1180,7 @@ class Base(object):
 
         # sync up what just happened versus what is in the rpmdb
         if not self._ts.isTsFlagSet(rpm.RPMTRANS_FLAG_TEST):
-            self._verify_transaction(cb.verify_tsi_package)
+            self._verify_transaction()
 
         return tid
 
