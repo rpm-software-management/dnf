@@ -54,6 +54,11 @@ class ParserTest(tests.support.TestCase):
         result = '$Substitute some fact}withoutspace.'
         self.assertEqual(substitute(rawstr, substs), result)
 
+        # Test ${variable:-word} and ${variable:+word} shell-like expansion
+        rawstr = '${lies:+alternate}-${unset:-default}-${nn:+n${nn:-${nnn:}'
+        result = 'alternate-default-${nn:+n${nn:-${nnn:}'
+        self.assertEqual(substitute(rawstr, substs), result)
+
     def test_empty_option(self):
         # Parser is able to read config file with option without value
         FN = tests.support.resource_path('etc/empty_option.conf')
