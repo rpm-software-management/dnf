@@ -302,7 +302,6 @@ popd
 # If DNF5 does not obsolete DNF ownership of dnf.conf should be DNF's
 %config(noreplace) %{confdir}/%{name}.conf
 %endif
-%config(noreplace) %{confdir}/protected.d/%{name}.conf
 %config(noreplace) %{_sysconfdir}/logrotate.d/%{name}
 %ghost %attr(644,-,-) %{_localstatedir}/log/hawkey.log
 %ghost %attr(644,-,-) %{_localstatedir}/log/%{name}.log
