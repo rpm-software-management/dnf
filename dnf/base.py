@@ -1690,7 +1690,16 @@ class Base(object):
                     sltr.set(provides="({} if {})".format(comps_pkg.name, comps_pkg.requires))
                 else:
                     if self.conf.obsoletes:
-                        query = query.union(self.sack.query().filterm(obsoletes=query))
+                        # If there is no installed package in the pkgs_list, add only
+                        # obsoleters of the latest versions. Otherwise behave
+                        # consistently with upgrade and add all obsoleters.
+                        # See https://bugzilla.redhat.com/show_bug.cgi?id=2176263
+                        # for details of the problem.
+                        if query.installed():
+                            query = query.union(self.sack.query().filterm(obsoletes=query))
+                        else:
+                            query = query.union(self.sack.query().filterm(
+                                obsoletes=query.filter(latest_per_arch_by_priority=True)))
                     sltr.set(pkg=query)
                 self._goal.install(select=sltr, optional=not strict)
             return remove_query
@@ -1927,7 +1936,11 @@ class Base(object):
             sltr = dnf.selector.Selector(self.sack)
             q = self.sack.query().filterm(pkg=packages)
             if self.conf.obsoletes:
-                q = q.union(self.sack.query().filterm(obsoletes=q))
+                # use only obsoletes of the latest versions
+                # See https://bugzilla.redhat.com/show_bug.cgi?id=2176263
+                # for details of the problem.
+                q = q.union(self.sack.query().filterm(
+                    obsoletes=q.filter(latest_per_arch_by_priority=True)))
             sltr = sltr.set(pkg=q)
             if reponame is not None:
                 sltr = sltr.set(reponame=reponame)
