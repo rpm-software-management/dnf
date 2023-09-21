@@ -1,60 +1,61 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Phu Hung Nguyen <phuhnguyen@disroot.org>, 2020.
+# Elhanan Jair <elhananjair@gmail.com>, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2023-09-17 01:39+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: Automatically generated\n"
-"Language-Team: none\n"
-"Language: vi\n"
+"PO-Revision-Date: 2023-06-07 21:20+0000\n"
+"Last-Translator: Elhanan Jair <elhananjair@gmail.com>\n"
+"Language-Team: Oromo <https://translate.fedoraproject.org/projects/dnf/dnf-master/om/>\n"
+"Language: om\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
+"X-Generator: Weblate 4.17\n"
 
 #: dnf/automatic/emitter.py:32
-#, python-format
+#, fuzzy, python-format
 msgid "The following updates have been applied on '%s':"
-msgstr ""
+msgstr "Haaromsootiin armaan gadii yeroo '%s'tti hojiirra oolaniiru:"
 
 #: dnf/automatic/emitter.py:33
-#, python-format
+#, fuzzy, python-format
 msgid "Updates completed at %s"
-msgstr ""
+msgstr "Haaromsi yeroo %s'tti xumurame"
 
 #: dnf/automatic/emitter.py:34
-#, python-format
+#, fuzzy, python-format
 msgid "The following updates are available on '%s':"
-msgstr ""
+msgstr "Haaromsootiin armaan gadii yeroo '%s'tti jiraatu:"
 
 #: dnf/automatic/emitter.py:35
-#, python-format
+#, fuzzy, python-format
 msgid "The following updates were downloaded on '%s':"
-msgstr ""
+msgstr "Haaromsootiin armaan gadii yeero '%s'tti bu'aniiru:"
 
 #: dnf/automatic/emitter.py:83
-#, python-format
+#, fuzzy, python-format
 msgid "Updates applied on '%s'."
-msgstr ""
+msgstr "Haaromsi %stti hojiirra ooleera."
 
 #: dnf/automatic/emitter.py:85
-#, python-format
+#, fuzzy, python-format
 msgid "Updates downloaded on '%s'."
-msgstr ""
+msgstr "Haaromsootiin yeroo '%s'tti bu'aniiru"
 
 #: dnf/automatic/emitter.py:87
-#, python-format
+#, fuzzy, python-format
 msgid "Updates available on '%s'."
-msgstr ""
+msgstr "Haaromsootiin '%s'tti jiraatu."
 
 #: dnf/automatic/emitter.py:117
-#, python-format
+#, fuzzy, python-format
 msgid "Failed to send an email via '%s': %s"
-msgstr ""
+msgstr "Imeelii karaa '%s':%s erguuf hin milkoofne"
 
 #: dnf/automatic/emitter.py:147
 #, python-format
@@ -72,25 +73,29 @@ msgid "Unknown configuration option: %s = %s in %s"
 msgstr ""
 
 #: dnf/automatic/main.py:243 dnf/cli/cli.py:305
+#, fuzzy
 msgid "GPG check FAILED"
-msgstr ""
+msgstr "sakatta'ini GPG hin milkoofne"
 
 #: dnf/automatic/main.py:288
 msgid "Waiting for internet connection..."
 msgstr ""
 
 #: dnf/automatic/main.py:318
+#, fuzzy
 msgid "Started dnf-automatic."
-msgstr ""
+msgstr "dnf-automatic jalqabame"
 
 #: dnf/automatic/main.py:322
 msgid "Sleep for {} second"
 msgid_plural "Sleep for {} seconds"
 msgstr[0] ""
+msgstr[1] ""
 
 #: dnf/automatic/main.py:329
+#, fuzzy
 msgid "System is off-line."
-msgstr ""
+msgstr "Sirni sarara aladha."
 
 #: dnf/automatic/main.py:360 dnf/cli/cli.py:264
 msgid "Transaction failed"
@@ -98,9 +103,9 @@ msgstr ""
 
 #: dnf/automatic/main.py:372 dnf/cli/main.py:59 dnf/cli/main.py:80
 #: dnf/cli/main.py:83
-#, python-format
+#, fuzzy, python-format
 msgid "Error: %s"
-msgstr ""
+msgstr "Dogoggora: %s"
 
 #: dnf/base.py:150 dnf/base.py:484 dnf/base.py:486
 msgid "loading repo '{}' failure: {}"
@@ -162,9 +167,9 @@ msgid "%s: using metadata from %s."
 msgstr ""
 
 #: dnf/base.py:423 dnf/base.py:491
-#, python-format
+#, fuzzy, python-format
 msgid "Ignoring repositories: %s"
-msgstr ""
+msgstr "Kuusaawwan dhiisuu: %s"
 
 #: dnf/base.py:426
 #, python-format
@@ -210,7 +215,7 @@ msgstr ""
 
 #: dnf/base.py:1000 dnf/base.py:1157
 msgid "RPM: {}"
-msgstr ""
+msgstr "RPM: {}"
 
 #: dnf/base.py:1001
 msgid "Transaction test error:"
@@ -233,10 +238,12 @@ msgstr ""
 msgid "At least {0}MB more space needed on the {1} filesystem."
 msgid_plural "At least {0}MB more space needed on the {1} filesystem."
 msgstr[0] ""
+msgstr[1] ""
 
 #: dnf/base.py:1086
+#, fuzzy
 msgid "Error Summary"
-msgstr ""
+msgstr "Dogoggora goolabbii"
 
 #: dnf/base.py:1112
 #, python-brace-format
@@ -276,8 +283,9 @@ msgid "Cannot add local packages, because transaction job already exists"
 msgstr ""
 
 #: dnf/base.py:1347
+#, fuzzy
 msgid "Could not open: {}"
-msgstr ""
+msgstr "Banuu hin dandeenye: {}"
 
 #: dnf/base.py:1385
 #, python-format
@@ -300,9 +308,9 @@ msgid "Package %s is not signed"
 msgstr ""
 
 #: dnf/base.py:1431
-#, python-format
+#, fuzzy, python-format
 msgid "Cannot remove %s"
-msgstr ""
+msgstr "%s haqu hin dandeenye"
 
 #: dnf/base.py:1435
 #, python-format
@@ -322,8 +330,9 @@ msgstr ""
 #: dnf/cli/commands/__init__.py:494 dnf/cli/commands/__init__.py:587
 #: dnf/cli/commands/__init__.py:636 dnf/cli/commands/install.py:80
 #: dnf/cli/commands/install.py:103 dnf/cli/commands/install.py:110
+#, fuzzy
 msgid "Nothing to do."
-msgstr ""
+msgstr "Homaa hin godhaamu."
 
 #: dnf/base.py:1842
 msgid "No groups marked for removal."
@@ -1082,6 +1091,7 @@ msgstr ""
 msgid "%d file removed"
 msgid_plural "%d files removed"
 msgstr[0] ""
+msgstr[1] ""
 
 #: dnf/cli/commands/clean.py:119 dnf/lock.py:139
 #, python-format
@@ -3064,11 +3074,13 @@ msgstr ""
 msgid "Package"
 msgid_plural "Packages"
 msgstr[0] ""
+msgstr[1] ""
 
 #: dnf/cli/output.py:1330
 msgid "Dependent package"
 msgid_plural "Dependent packages"
 msgstr[0] ""
+msgstr[1] ""
 
 #: dnf/cli/output.py:1438
 msgid "Total"
@@ -3603,11 +3615,13 @@ msgstr ""
 msgid "Modular dependency problem with Defaults:"
 msgid_plural "Modular dependency problems with Defaults:"
 msgstr[0] ""
+msgstr[1] ""
 
 #: dnf/exceptions.py:131 dnf/module/module_base.py:857
 msgid "Modular dependency problem:"
 msgid_plural "Modular dependency problems:"
 msgstr[0] ""
+msgstr[1] ""
 
 #: dnf/lock.py:100
 #, python-format

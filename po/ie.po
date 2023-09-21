@@ -1,7 +1,7 @@
 # SOME DESCRIPTIVE TITLE.
 # Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
 # This file is distributed under the same license as the PACKAGE package.
-# Phu Hung Nguyen <phuhnguyen@disroot.org>, 2020.
+# Olga Smirnova <mistresssilvara@hotmail.com>, 2022.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
@@ -10,11 +10,11 @@ msgstr ""
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: Automatically generated\n"
 "Language-Team: none\n"
-"Language: vi\n"
+"Language: ie\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=1; plural=0;\n"
+"Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #: dnf/automatic/emitter.py:32
 #, python-format
@@ -87,6 +87,7 @@ msgstr ""
 msgid "Sleep for {} second"
 msgid_plural "Sleep for {} seconds"
 msgstr[0] ""
+msgstr[1] ""
 
 #: dnf/automatic/main.py:329
 msgid "System is off-line."
@@ -233,6 +234,7 @@ msgstr ""
 msgid "At least {0}MB more space needed on the {1} filesystem."
 msgid_plural "At least {0}MB more space needed on the {1} filesystem."
 msgstr[0] ""
+msgstr[1] ""
 
 #: dnf/base.py:1086
 msgid "Error Summary"
@@ -1082,6 +1084,7 @@ msgstr ""
 msgid "%d file removed"
 msgid_plural "%d files removed"
 msgstr[0] ""
+msgstr[1] ""
 
 #: dnf/cli/commands/clean.py:119 dnf/lock.py:139
 #, python-format
@@ -3064,11 +3067,13 @@ msgstr ""
 msgid "Package"
 msgid_plural "Packages"
 msgstr[0] ""
+msgstr[1] ""
 
 #: dnf/cli/output.py:1330
 msgid "Dependent package"
 msgid_plural "Dependent packages"
 msgstr[0] ""
+msgstr[1] ""
 
 #: dnf/cli/output.py:1438
 msgid "Total"
@@ -3603,11 +3608,13 @@ msgstr ""
 msgid "Modular dependency problem with Defaults:"
 msgid_plural "Modular dependency problems with Defaults:"
 msgstr[0] ""
+msgstr[1] ""
 
 #: dnf/exceptions.py:131 dnf/module/module_base.py:857
 msgid "Modular dependency problem:"
 msgid_plural "Modular dependency problems:"
 msgstr[0] ""
+msgstr[1] ""
 
 #: dnf/lock.py:100
 #, python-format
