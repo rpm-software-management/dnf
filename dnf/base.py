@@ -2250,7 +2250,7 @@ class Base(object):
             sltrs = subject._get_best_selectors(self, solution=solution,
                                                 obsoletes=self.conf.obsoletes, reports=True)
             if not sltrs:
-                logger.info(_('No package %s installed.'), pkg_spec)
+                logger.info(_('No match for argument: %s'), pkg_spec)
                 return 0
             for sltr in sltrs:
                 self._goal.distupgrade(select=sltr)
