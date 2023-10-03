@@ -363,6 +363,7 @@ popd
 %{_bindir}/%{name}-3
 %{_bindir}/%{name}4
 %exclude %{python3_sitelib}/%{name}/automatic
+%{python3_sitelib}/%{name}-*.dist-info
 %{python3_sitelib}/%{name}/
 %dir %{py3pluginpath}
 %dir %{py3pluginpath}/__pycache__
