@@ -33,6 +33,7 @@ APPLIED = _("The following updates have been applied on '%s':")
 APPLIED_TIMESTAMP = _("Updates completed at %s")
 AVAILABLE = _("The following updates are available on '%s':")
 DOWNLOADED = _("The following updates were downloaded on '%s':")
+ERROR = _("An error has occured on: '%s'")
 
 logger = logging.getLogger('dnf')
 
@@ -44,10 +45,15 @@ class Emitter(object):
         self._downloaded = False
         self._system_name = system_name
         self._trans_msg = None
+        self._error = False
+        self._error_msg = None
 
     def _prepare_msg(self):
         msg = []
-        if self._applied:
+        if self._error:
+            msg.append(ERROR % self._system_name)
+            msg.append(self._error_msg)
+        elif self._applied:
             msg.append(APPLIED % self._system_name)
             msg.append(self._available_msg)
             msg.append(APPLIED_TIMESTAMP % time.strftime("%c"))
@@ -72,6 +78,10 @@ class Emitter(object):
         assert self._available_msg
         self._downloaded = True
 
+    def notify_error(self, msg):
+        self._error = True
+        self._error_msg = msg
+
 
 class EmailEmitter(Emitter):
     def __init__(self, system_name, conf):
@@ -79,7 +89,9 @@ class EmailEmitter(Emitter):
         self._conf = conf
 
     def _prepare_msg(self):
-        if self._applied:
+        if self._error:
+            subj = _("An error has occured on '%s'.") % self._system_name
+        elif self._applied:
             subj = _("Updates applied on '%s'.") % self._system_name
         elif self._downloaded:
             subj = _("Updates downloaded on '%s'.") % self._system_name
@@ -95,6 +107,7 @@ class EmailEmitter(Emitter):
         message.set_charset('utf-8')
         email_from = self._conf.email_from
         email_to = self._conf.email_to
+        email_host = self._conf.email_host
         email_port = self._conf.email_port
         email_tls = self._conf.email_tls
         message['Date'] = email.utils.formatdate()
@@ -105,17 +118,17 @@ class EmailEmitter(Emitter):
 
         # Send the email
         try:
-            if self._conf.email_tls == 'yes':
-                smtp = smtplib.SMTP_SSL(self._conf.email_host, self._conf.email_port, timeout=300)
+            if email_tls == 'yes':
+                smtp = smtplib.SMTP_SSL(email_host, email_port, timeout=300)
             else:
-                smtp = smtplib.SMTP(self._conf.email_host, self._conf.email_port, timeout=300)
-                if self._conf.email_tls == 'starttls':
+                smtp = smtplib.SMTP(email_host, email_port, timeout=300)
+                if email_tls == 'starttls':
                     smtp.starttls()
             smtp.sendmail(email_from, email_to, message.as_string())
             smtp.close()
         except OSError as exc:
             msg = _("Failed to send an email via '%s': %s") % (
-                self._conf.email_host, exc)
+                email_host, exc)
             logger.error(msg)
 
 

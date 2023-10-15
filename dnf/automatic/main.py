@@ -305,6 +305,7 @@ def main(args):
     try:
         conf = AutomaticConfig(opts.conf_path, opts.downloadupdates,
                                opts.installupdates)
+        emitters = None
         with dnf.Base() as base:
             cli = dnf.cli.Cli(base)
             cli._read_conf_file()
@@ -367,9 +368,13 @@ def main(args):
                 exit_code = os.waitstatus_to_exitcode(os.system(conf.commands.reboot_command))
                 if exit_code != 0:
                     logger.error('Error: reboot command returned nonzero exit code: %d', exit_code)
+                    emitters.notify_error('Error: reboot command returned nonzero exit code: %d', exit_code)
+                    emitters.commit()
                     return 1
     except dnf.exceptions.Error as exc:
         logger.error(_('Error: %s'), ucd(exc))
+        emitters.notify_error(_('Error: %s') % str(exc))
+        emitters.commit()
         return 1
     return 0
 
