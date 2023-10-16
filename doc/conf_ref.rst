@@ -809,6 +809,18 @@ Although users are encouraged to use named variables, the numbered environmental
     [myrepo]
     baseurl=https://example.site/pub/fedora/$DNF1/releases/$releasever
 
+A limited form of shell-like parameter expansion is supported for variables.
+
+``${my_variable:-word}`` If ``my_variable`` is unset or empty, then ``word`` will be substituted. Otherwise, the value of ``my_variable`` will be substituted.
+
+``${my_variable:+word}`` If ``my_variable`` is set and not empty, then ``word`` will be substituted. Otherwise, the empty string will be substituted.
+
+Parameter expansions can be nested up to a maximum depth of 32. For example::
+
+    ${my_defined_variable:+${my_undefined_variable:-foobar}}
+
+will evaluate to ``foobar``.
+
 
 .. _conf_main_and_repo_options-label:
 
