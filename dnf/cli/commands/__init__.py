@@ -244,6 +244,7 @@ class ProvidesCommand(Command):
         demands.available_repos = True
         demands.fresh_metadata = False
         demands.sack_activation = True
+        self.base.conf.optional_metadata_types += ["filelists"]
 
     def run(self):
         logger.debug(_("Searching Packages: "))
@@ -271,6 +272,8 @@ class CheckUpdateCommand(Command):
         demands.plugin_filtering_enabled = True
         if self.opts.changelogs:
             demands.changelogs = True
+        if dnf.util._is_file_pattern_present(self.opts.packages):
+            self.base.conf.optional_metadata_types += ["filelists"]
         _checkEnabledRepo(self.base)
 
     def run(self):
