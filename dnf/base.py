@@ -139,9 +139,10 @@ class Base(object):
 
     def _add_repo_to_sack(self, repo):
         repo.load()
-        mdload_flags = dict(load_filelists=True,
-                            load_presto=repo.deltarpm,
+        mdload_flags = dict(load_presto=repo.deltarpm,
                             load_updateinfo=True)
+        if 'filelists' in self.conf.optional_metadata_types:
+            mdload_flags["load_filelists"] = True
         if repo.load_metadata_other:
             mdload_flags["load_other"] = True
         try:
@@ -467,9 +468,10 @@ class Base(object):
             for repo in self.repos.iter_enabled():
                 try:
                     repo._repo.loadCache(throwExcept=True, ignoreMissing=True)
-                    mdload_flags = dict(load_filelists=True,
-                                        load_presto=repo.deltarpm,
+                    mdload_flags = dict(load_presto=repo.deltarpm,
                                         load_updateinfo=True)
+                    if 'filelists' in self.conf.optional_metadata_types:
+                        mdload_flags["load_filelists"] = True
                     if repo.load_metadata_other:
                         mdload_flags["load_other"] = True
 
