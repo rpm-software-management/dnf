@@ -631,3 +631,11 @@ def _post_transaction_output(base, transaction, action_callback):
 def _name_unset_wrapper(input_name):
     # returns <name-unset> for everything that evaluates to False (None, empty..)
     return input_name if input_name else _("<name-unset>")
+
+
+def _is_file_pattern_present(specs):
+    for spec in specs:
+        subj = dnf.subject.Subject(spec)
+        if subj._filename_pattern:
+            return True
+    return False
