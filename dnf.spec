@@ -392,6 +392,7 @@ popd
 - Do not print details of verifying (RhBug:1908253)
 - Add Recommends %{_bindir}/sqlite3 for bash-completion for Fedora
 - conf: Split $releasever to $releasever_major and $releasever_minor (RhBug:1789346)
+- Allow DNF to be removed by DNF 5 (RhBug:2221907)
 - Update translations
 
 * Fri Sep 01 2023 Jan Kolarik <jkolarik@redhat.com> - 4.17.0-1

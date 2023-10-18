@@ -3578,5 +3578,9 @@
     [
         1789346,
         "RFE: Add support for $releasever_major, $releasever_minor, and limited shell expansion for zypp yum repo file compatibility"
+    ],
+    [
+        2221907,
+        "dnf5 is not marked as protected, removal leaves system more or less bricked"
     ]
 ]

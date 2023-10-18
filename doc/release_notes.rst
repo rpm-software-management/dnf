@@ -36,6 +36,7 @@
   - Revert "Block signals during RPM transaction processing" (RhBug:2133398)
 
 - Others:
+  - Allow DNF to be removed by DNF 5 (RhBug:2221907)
   - Update translations
 
 Bugs fixed in 4.18.0:
@@ -48,6 +49,7 @@ Bugs fixed in 4.18.0:
 * :rhbug:`2133398`
 * :rhbug:`1908253`
 * :rhbug:`1789346`
+* :rhbug:`2221907`
 
 ====================
 4.17.0 Release Notes
