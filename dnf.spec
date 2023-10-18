@@ -67,7 +67,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.17.1
+Version:        4.18.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -383,6 +383,17 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Wed Oct 18 2023 Jan Kolarik <jkolarik@redhat.com> - 4.18.0-1
+- base: Add obsoleters of only latest versions (RhBug:2183279,2176263)
+- comps: Fix marking a group package as installed (RhBug:2066638)
+- distro-sync: Print better info message when no match (RhBug:2011850)
+- Include dist-info for python3-dnf (RhBug:2239323)
+- Revert "Block signals during RPM transaction processing" (RhBug:2133398)
+- Do not print details of verifying (RhBug:1908253)
+- Add Recommends %{_bindir}/sqlite3 for bash-completion for Fedora
+- conf: Split $releasever to $releasever_major and $releasever_minor (RhBug:1789346)
+- Update translations
+
 * Fri Sep 01 2023 Jan Kolarik <jkolarik@redhat.com> - 4.17.0-1
 - crypto: Use libdnf crypto API instead of using GnuPG/GpgME
 - Reprotect dnf, unprotect python3-dnf (RhBug:2221905)

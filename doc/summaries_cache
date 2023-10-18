@@ -3550,5 +3550,33 @@
     [
         2232052,
         "Bash completion no longer works due to sqlite upstream changes"
+    ],
+    [
+        2183279,
+        "systemd-udev resolving to systemd-boot-unsigned after split"
+    ],
+    [
+        2176263,
+        "Attempting to run \"dnf install systemd-udev\" no longer installs systemd-udev on F37 container"
+    ],
+    [
+        2066638,
+        "\"dnf group remove\" removes packages that belong to another installed group"
+    ],
+    [
+        2011850,
+        "dnf distro-sync says a pkg isn’t installed even when it is"
+    ],
+    [
+        2239323,
+        "Missing Provides: python3dist on python3-dnf"
+    ],
+    [
+        1908253,
+        "RFE: do not print details of Verifying"
+    ],
+    [
+        1789346,
+        "RFE: Add support for $releasever_major, $releasever_minor, and limited shell expansion for zypp yum repo file compatibility"
     ]
 ]

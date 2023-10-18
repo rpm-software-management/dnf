@@ -20,6 +20,36 @@
 ###################
 
 ====================
+4.18.0 Release Notes
+====================
+
+- New features:
+  - Do not print details of verifying (RhBug:1908253)
+  - Add Recommends %{_bindir}/sqlite3 for bash-completion for Fedora
+  - conf: Split $releasever to $releasever_major and $releasever_minor (RhBug:1789346)
+
+- Bug fixes:
+  - base: Add obsoleters of only latest versions (RhBug:2183279,2176263)
+  - comps: Fix marking a group package as installed (RhBug:2066638)
+  - distro-sync: Print better info message when no match (RhBug:2011850)
+  - Include dist-info for python3-dnf (RhBug:2239323)
+  - Revert "Block signals during RPM transaction processing" (RhBug:2133398)
+
+- Others:
+  - Update translations
+
+Bugs fixed in 4.18.0:
+
+* :rhbug:`2183279`
+* :rhbug:`2176263`
+* :rhbug:`2066638`
+* :rhbug:`2011850`
+* :rhbug:`2239323`
+* :rhbug:`2133398`
+* :rhbug:`1908253`
+* :rhbug:`1789346`
+
+====================
 4.17.0 Release Notes
 ====================
 
