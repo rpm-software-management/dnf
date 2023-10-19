@@ -373,8 +373,9 @@ def main(args):
                     return 1
     except dnf.exceptions.Error as exc:
         logger.error(_('Error: %s'), ucd(exc))
-        emitters.notify_error(_('Error: %s') % str(exc))
-        emitters.commit()
+        if conf.emitters != None:
+            emitters.notify_error(_('Error: %s') % str(exc))
+            emitters.commit()
         return 1
     return 0
 
