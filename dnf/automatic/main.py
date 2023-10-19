@@ -230,6 +230,7 @@ class EmittersConfig(Config):
             libdnf.conf.VectorString(['email', 'stdio'])))
         self.add_option('output_width', libdnf.conf.OptionNumberInt32(80))
         self.add_option('system_name', libdnf.conf.OptionString(socket.gethostname()))
+        self.add_option('send_error_messages', libdnf.conf.OptionBool(False))
 
 
 def gpgsigcheck(base, pkgs):
@@ -367,13 +368,10 @@ def main(args):
                (conf.commands.reboot == 'when-needed' and base.reboot_needed())):
                 exit_code = os.waitstatus_to_exitcode(os.system(conf.commands.reboot_command))
                 if exit_code != 0:
-                    logger.error('Error: reboot command returned nonzero exit code: %d', exit_code)
-                    emitters.notify_error('Error: reboot command returned nonzero exit code: %d', exit_code)
-                    emitters.commit()
-                    return 1
+                    raise dnf.exceptions.Error('reboot command returned nonzero exit code: %d', exit_code)
     except dnf.exceptions.Error as exc:
         logger.error(_('Error: %s'), ucd(exc))
-        if conf.emitters != None:
+        if conf.emitters.send_error_messages and emitters != None:
             emitters.notify_error(_('Error: %s') % str(exc))
             emitters.commit()
         return 1

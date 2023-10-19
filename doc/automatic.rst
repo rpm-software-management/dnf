@@ -120,6 +120,11 @@ Choosing how the results should be reported.
 
     How the system is called in the reports.
 
+``send_error_messages``
+    boolean, default: False
+
+    Invokes emitters when an errors occurs
+
 ---------------------
 ``[command]`` section
 ---------------------
