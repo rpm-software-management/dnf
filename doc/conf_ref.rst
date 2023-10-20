@@ -423,6 +423,21 @@ configuration file by your distribution to override the DNF defaults.
 
     Command-line option: :ref:`--obsoletes <obsoletes_option-label>`
 
+.. _optional_metadata_types-label:
+
+``optional_metadata_types``
+    :ref:`list <list-label>`
+
+    List of metadata types to be loaded in addition to ``primary``, ``modules``, ``comps``, ``updateinfo`` and ``presto``,
+    which are loaded always.
+
+    Note that the list can be extended by individual commands to explicitly request loading specific metadata type.
+
+    Currently only ``filelists`` value is supported. Default is ``filelists``.
+
+..
+    # TODO(jkolarik): Change the default to an empty list when dropping the filelists for Fedora 40
+
 .. _persistdir-label:
 
 ``persistdir``
