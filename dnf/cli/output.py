@@ -73,7 +73,7 @@ class Output(object):
     def __init__(self, base, conf):
         self.conf = conf
         self.base = base
-        self.term = dnf.cli.term.Term()
+        self.term = dnf.cli.term.Term(color=base.conf.color)
         self.progress = None
 
     def _banner(self, col_data, row):
