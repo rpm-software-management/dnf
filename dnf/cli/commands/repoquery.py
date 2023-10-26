@@ -721,8 +721,7 @@ class PackageWrapper(object):
     def _get_timestamp(timestamp):
         if timestamp > 0:
             dt = datetime.datetime.utcfromtimestamp(timestamp)
-            # TRANSLATORS: This is the default time format for dnf repoquery.
-            return dt.strftime(_("%Y-%m-%d %H:%M"))
+            return dt.strftime("%Y-%m-%d %H:%M")
         else:
             return ''
 
