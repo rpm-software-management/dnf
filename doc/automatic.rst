@@ -123,7 +123,7 @@ Choosing how the results should be reported.
 ``send_error_messages``
     boolean, default: False
 
-    Invokes emitters when an errors occurs
+    Invokes emitters when an error occurs.
 
 ---------------------
 ``[command]`` section
