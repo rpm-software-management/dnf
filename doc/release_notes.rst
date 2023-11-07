@@ -20,6 +20,18 @@
 ###################
 
 ====================
+4.18.1 Release Notes
+====================
+
+- Bug fixes:
+  - Do not translate repoquery time format strings (RhBug:2245773)
+  - automatic: Fix applying the color option
+
+Bugs fixed in 4.18.1:
+
+* :rhbug:`2245773`
+
+====================
 4.18.0 Release Notes
 ====================
 

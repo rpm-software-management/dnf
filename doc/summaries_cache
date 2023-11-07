@@ -3565,7 +3565,7 @@
     ],
     [
         2011850,
-        "dnf distro-sync says a pkg isn’t installed even when it is"
+        "dnf distro-sync says a pkg isn\u2019t installed even when it is"
     ],
     [
         2239323,
@@ -3582,5 +3582,9 @@
     [
         2221907,
         "dnf5 is not marked as protected, removal leaves system more or less bricked"
+    ],
+    [
+        2245773,
+        "dnf 4.18 broke fedora-update-feedback"
     ]
 ]
