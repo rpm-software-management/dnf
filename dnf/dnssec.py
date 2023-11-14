@@ -185,6 +185,10 @@ class DNSSECKeyVerification:
         if ctx.add_ta_file("/var/lib/unbound/root.key") != 0:
             logger.debug("Unbound context: Failed to add trust anchor file")
 
+        if input_key.email is None:
+            logger.debug("A key has no associated e-mail address")
+            return Validity.ERROR
+
         status, result = ctx.resolve(email2location(input_key.email),
                                      RR_TYPE_OPENPGPKEY, unbound.RR_CLASS_IN)
         if status != 0:
@@ -273,7 +277,16 @@ class RpmImportedKeys:
         return_list = []
         for pkg in packages:
             packager = dnf.rpm.getheader(pkg, 'packager')
-            email = re.search('<(.*@.*)>', packager).group(1)
+            if packager is None:
+                email = None
+            else:
+                email = re.search('<(.*@.*)>', packager).group(1)
+            if email is None:
+                logger.debug(any_msg(_(
+                    "Exempting key package {} from a validation "
+                    "because it's not bound to any e-mail address").format(
+                        dnf.rpm.getheader(pkg, 'nevra'))))
+                continue
             description = dnf.rpm.getheader(pkg, 'description')
             # Extract Radix-64-encoded PGP key. Without armor headers and
             # a checksum.
