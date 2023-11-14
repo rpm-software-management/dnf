@@ -213,7 +213,7 @@ class FillSackFromReposInCacheTest(unittest.TestCase):
         self.assertRaises(dnf.exceptions.RepoError,
                           self.test_base.fill_sack_from_repos_in_cache, load_system_repo=False)
 
-    def test_checksum_mistmatch_regenerates_solv(self):
+    def test_checksum_mismatch_regenerates_solv(self):
         self._setUp_from_repo_path(os.path.join(os.path.abspath(os.path.dirname(__file__)), "repos/rpm"))
         self._create_cache_for_repo(os.path.join(os.path.abspath(os.path.dirname(__file__)), "repos/drpm"),
                                     self.tmpdir, "drpm-repo")
@@ -223,7 +223,7 @@ class FillSackFromReposInCacheTest(unittest.TestCase):
                     os.path.join(self.tmpdir, "cache/test-repo.solv"))
 
         # Now we only have cache with solvx, mismatching solv file and xml metadata.
-        # Checksum mistmatch causes regeneration of solv file and repo works.
+        # Checksum mismatch causes regeneration of solv file and repo works.
 
         self.test_base.fill_sack_from_repos_in_cache(load_system_repo=False)
 
