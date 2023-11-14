@@ -150,7 +150,7 @@ class DNSSECKeyVerification:
         if key_union == input_key_string:
             logger.debug("Cache hit, valid key")
             return Validity.VALID
-        elif key_union is NoKey:
+        elif isinstance(key_union, NoKey):
             logger.debug("Cache hit, proven non-existence")
             return Validity.PROVEN_NONEXISTENCE
         else:
