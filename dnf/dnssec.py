@@ -275,7 +275,16 @@ class RpmImportedKeys:
             packager = dnf.rpm.getheader(pkg, 'packager')
             email = re.search('<(.*@.*)>', packager).group(1)
             description = dnf.rpm.getheader(pkg, 'description')
-            key_lines = description.split('\n')[3:-3]
+            # Extract Radix-64-encoded PGP key. Without armor headers and
+            # a checksum.
+            key_lines = []
+            in_headers = True
+            for line in description.split('\n')[0:-3]:
+                if in_headers:
+                    if re.match(r'\A\s*\Z', line, re.NOFLAG):
+                        in_headers = False
+                else:
+                    key_lines.append(line)
             key_str = ''.join(key_lines)
             return_list += [KeyInfo(email, key_str.encode('ascii'))]
 
