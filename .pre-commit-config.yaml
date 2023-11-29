@@ -1,0 +1,13 @@
+# See https://pre-commit.com for more information
+# See https://pre-commit.com/hooks.html for more hooks
+repos:
+- repo: https://github.com/rpm-software-management/rpmlint.git
+  rev: 2.5.0
+  hooks:
+  - id: rpmlint
+    files: ^dnf\.spec$
+  # Passes if packit not installed. Needed for validation locally
+- repo: https://github.com/packit/pre-commit-hooks
+  rev: v1.2.0
+  hooks:
+  - id: validate-config
