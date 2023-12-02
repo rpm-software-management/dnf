@@ -351,15 +351,15 @@ class BaseCli(dnf.Base):
             raise dnf.exceptions.Error(_("GPG check FAILED"))
 
     def latest_changelogs(self, package):
-        """Return list of changelogs for package newer then installed version"""
-        newest = None
-        # find the date of the newest changelog for installed version of package
+        """Return list of changelogs for package newer then newest installed version"""
+        newest_times = []
+        # find the date of the newest changelog for installed versions of package
         # stored in rpmdb
         for mi in self._rpmconn.readonly_ts.dbMatch('name', package.name):
             changelogtimes = mi[rpm.RPMTAG_CHANGELOGTIME]
             if changelogtimes:
-                newest = datetime.date.fromtimestamp(changelogtimes[0])
-                break
+                newest_times.append(datetime.date.fromtimestamp(changelogtimes[0]))
+        newest = max(newest_times) if newest_times else None
         chlogs = [chlog for chlog in package.changelogs
                   if newest is None or chlog['timestamp'] > newest]
         return chlogs
