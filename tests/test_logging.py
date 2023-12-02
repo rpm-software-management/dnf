@@ -50,6 +50,8 @@ def drop_all_handlers():
     for logger_name in ('dnf', 'dnf.rpm'):
         logger = logging.getLogger(logger_name)
         for handler in logger.handlers[:]:
+            if isinstance(handler, logging.FileHandler):
+                handler.close()
             logger.removeHandler(handler)
 
 
