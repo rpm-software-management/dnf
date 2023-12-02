@@ -8,7 +8,12 @@ asthelper.completions
 TAGS
 build/
 package/dnf.spec
+dnf/cli/completion_helper.py
 dnf/const.py
+doc/conf.py
+file.conf
+tests/modules/var/
+usr/
 bin/dnf*-2
 bin/dnf*-3
 bin/yum-2
