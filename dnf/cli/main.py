@@ -149,6 +149,13 @@ def cli_run(cli, base):
                     else:
                         msg += _(" or '{}' to use not only best candidate packages").format(
                             "--nobest")
+            if base._goal.file_dep_problem_present() and 'filelists' not in cli.base.conf.optional_metadata_types:
+                if not msg:
+                    msg += _("try to add '{}' to load additional filelists metadata").format(
+                        "--setopt=optional_metadata_types=filelists")
+                else:
+                    msg += _(" or '{}' to load additional filelists metadata").format(
+                        "--setopt=optional_metadata_types=filelists")
             if msg:
                 logger.info("({})".format(msg))
             raise
