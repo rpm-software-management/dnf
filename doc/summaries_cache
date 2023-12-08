@@ -3586,5 +3586,9 @@
     [
         2245773,
         "dnf 4.18 broke fedora-update-feedback"
+    ],
+    [
+        2249380,
+        "Setting gpgkey_dns_verification=yes triggers a warning: DNSSEC extension: GPG Key fedora-39-primary has been revoked and should be removed immediately"
     ]
 ]

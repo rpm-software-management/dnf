@@ -20,6 +20,20 @@
 ###################
 
 ====================
+4.18.2 Release Notes
+====================
+
+- New features:
+  - automatic: Add feature to allow emitters to invoke on dnf error
+
+- Bug fixes:
+  - dnssec: Fix parsing PGP keys for DNS validation (RhBug:2249380)
+
+Bugs fixed in 4.18.2:
+
+* :rhbug:`2249380`
+
+====================
 4.18.1 Release Notes
 ====================
 

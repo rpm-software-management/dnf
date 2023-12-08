@@ -67,7 +67,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.18.1
+Version:        4.18.2
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -383,6 +383,10 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Fri Dec 08 2023 Jan Kolarik <jkolarik@redhat.com> - 4.18.2-1
+- automatic: Add feature to allow emitters to invoke on dnf error
+- dnssec: Fix parsing PGP keys for DNS validation (RhBug:2249380)
+
 * Tue Nov 07 2023 Jan Kolarik <jkolarik@redhat.com> - 4.18.1-1
 - Do not translate repoquery time format strings (RhBug:2245773)
 - automatic: Fix applying the color option
