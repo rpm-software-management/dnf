@@ -41,8 +41,8 @@ class TestConfig(tests.support.TestCase):
 
         # test includepkg and excludepkgs
         conf = dnf.automatic.main.AutomaticConfig(FILE)
-        self.assertEqual(list(conf.commands.includepkgs), ["dnf","dnf-automatic"])
-        self.assertEqual(list(conf.commands.excludepkgs), ["gtk3","gtk3-immodule-xim"])
+        self.assertEqual(list(conf.commands.includepkgs), ["dnf", "dnf-automatic"])
+        self.assertEqual(list(conf.commands.excludepkgs), ["gtk3", "gtk3-immodule-xim"])
 
         # test overriding installupdates
         conf = dnf.automatic.main.AutomaticConfig(FILE, installupdates=False)
