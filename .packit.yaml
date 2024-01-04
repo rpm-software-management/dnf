@@ -8,4 +8,11 @@ jobs:
     trigger: pull_request
     targets:
       - fedora-all
-
+  - job: tests
+    trigger: pull_request
+    identifier: "dnf-tests"
+    targets:
+      - fedora-all
+    fmf_url: https://github.com/rpm-software-management/ci-dnf-stack.git
+    fmf_ref: enable-tmt-dnf-4-stack
+    tmt_plan: "^/plans/integration/behave-dnf$"
