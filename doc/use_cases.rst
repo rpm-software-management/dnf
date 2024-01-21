@@ -98,7 +98,7 @@ fails.
    :code: python
    :start-line: 16
 
-If it makes a sense, the plugin can do the operation in appropriate hooks
+If it makes any sense, the plugin can do the operation in appropriate hooks
 instead of registering a new command that needs to be called from the command
 line.
 
