@@ -872,7 +872,7 @@ configuration.
 
     When enabled, DNF will save bandwidth by downloading much smaller delta RPM
     files, rebuilding them to RPM locally. However, this is quite CPU and I/O
-    intensive. Default is True.
+    intensive. Default is False. It requires `/usr/bin/applydeltarpm` on the system.
 
 .. _deltarpm_percentage-label:
 
