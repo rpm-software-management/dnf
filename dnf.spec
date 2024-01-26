@@ -134,7 +134,9 @@ BuildRequires:  libmodulemd >= %{libmodulemd_version}
 Requires:       libmodulemd >= %{libmodulemd_version}
 Requires:       %{name}-data = %{version}-%{release}
 %if 0%{?fedora}
+%if 0%{?fedora} < 40
 Recommends:     deltarpm
+%endif
 # required for DNSSEC main.gpgkey_dns_verification https://dnf.readthedocs.io/en/latest/conf_ref.html
 Recommends:     python3-unbound
 %endif
