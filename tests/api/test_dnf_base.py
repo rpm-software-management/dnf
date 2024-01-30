@@ -28,6 +28,7 @@ class DnfBaseApiTest(TestCase):
     def setUp(self):
         self.base = dnf.Base(dnf.conf.Conf())
         self.base.conf.persistdir = "/tmp/tests"
+        self.base.conf.installroot = "/tmp/dnf-test-installroot/"
 
     def tearDown(self):
         self.base.close()
