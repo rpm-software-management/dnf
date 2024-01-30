@@ -536,6 +536,9 @@ class TransactionReplay(object):
 
         for pkg_data in self._rpms:
             try:
+                action = pkg_data["action"]
+                if action is None:
+                    continue
                 self._replay_pkg_action(pkg_data)
             except TransactionError as e:
                 errors.append(e)
@@ -543,6 +546,8 @@ class TransactionReplay(object):
         for group_data in self._groups:
             try:
                 action = group_data["action"]
+                if action is None:
+                    continue
                 group_id = group_data["id"]
 
                 try:
@@ -576,6 +581,8 @@ class TransactionReplay(object):
         for env_data in self._environments:
             try:
                 action = env_data["action"]
+                if action is None:
+                    continue
                 env_id = env_data["id"]
 
                 try:

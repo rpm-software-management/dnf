@@ -209,21 +209,26 @@ class HistoryCommand(commands.Command):
                 else:
                     merged_trans.merge(trans)
 
+        tm = dnf.util.normalize_time(old.beg_timestamp)
+        print("Rollback to transaction %u, from %s" % (old.tid, tm))
+        print(self.output.fmtKeyValFill("  Undoing the following transactions: ",
+                                        ", ".join((str(x) for x in merged_trans.tids()))))
+        self.output.historyInfoCmdPkgsAltered(merged_trans)
         self._revert_transaction(merged_trans)
 
     def _revert_transaction(self, trans):
         action_map = {
             "Install": "Removed",
             "Removed": "Install",
-            "Upgrade": "Downgraded",
+            "Upgrade": None,
             "Upgraded": "Downgrade",
-            "Downgrade": "Upgraded",
+            "Downgrade": None,
             "Downgraded": "Upgrade",
-            "Reinstalled": "Reinstall",
-            "Reinstall": "Reinstalled",
+            "Reinstalled": None,
+            "Reinstall": None,
             "Obsoleted": "Install",
-            "Obsolete": "Obsoleted",
-            "Reason Change": "Reason Change",
+            "Obsolete": None,
+            "Reason Change": None,
         }
 
         data = serialize_transaction(trans)
