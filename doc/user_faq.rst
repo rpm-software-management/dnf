@@ -144,3 +144,10 @@ Then, when you want to include the packages from the rawhide repo, execute a DNF
 .. note::
 
     Installing rawhide packages onto a stable Fedora release system is generally discouraged as it leads to less tested combinations of installed packages. Please consider this step carefully.
+
+Starting with Fedora 40, I noticed repository metadata is synchronized much faster. What happened?
+===================================================================================================
+
+This is because filelists metadata is no longer downloaded by default. This change is associated with the Fedora system-wide `change <https://fedoraproject.org/wiki/Changes/DNFConditionalFilelists>`_, and the related `change <https://pagure.io/packaging-committee/pull-request/1321>`_ in the Fedora packaging guidelines policy, which specifies that packages must not rely on filepath dependencies requiring filelists metadata.
+
+All Fedora packages have been adjusted to align with this updated behavior, and users don't need to take any additional action. If you encounter any issues, such as non-compliance from a third-party package or if you prefer filelists metadata to be consistently downloaded, you can configure it using the :ref:`optional_metadata_types <optional_metadata_types-label>` configuration option.
