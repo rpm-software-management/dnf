@@ -29,6 +29,7 @@ import inspect
 import logging
 import operator
 import os
+import rpm
 import sys
 import traceback
 
@@ -193,7 +194,7 @@ class Plugins(object):
 
         # check whether removed plugin file is added at the same time (upgrade of a plugin)
         for pkg in transaction.install_set:
-            erased_plugin_files.difference_update(pkg.files)
+            erased_plugin_files.difference_update(pkg._header[rpm.RPMTAG_FILENAMES])
 
         # unload plugins that were removed in transaction
         for plugin_file in erased_plugin_files:
