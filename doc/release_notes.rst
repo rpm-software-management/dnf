@@ -20,6 +20,30 @@
 ###################
 
 ====================
+4.19.0 Release Notes
+====================
+
+- Major changes:
+  - filelists metadata not loaded by default
+  - deltarpm disabled by default
+
+- New features:
+  - conf: Introduce new optional_metadata_types option to load filelists on demand
+  - cli: Add a hint for user on transaction file dependency failure
+  - cli: Setup filelists metadata for commands that need them
+  - util: Add function for detecting file in specs
+
+- Bug fixes:
+  - Fix failing API unit test on rawhide (RhBug:2261066)
+  - automatic: Use add_security_filters, not _update_security_filters
+
+Bugs fixed in 4.19.0:
+
+* :rhbug:`2252128`
+* :rhbug:`2254789`
+* :rhbug:`2261066`
+
+====================
 4.18.2 Release Notes
 ====================
 

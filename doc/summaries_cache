@@ -3590,5 +3590,17 @@
     [
         2249380,
         "Setting gpgkey_dns_verification=yes triggers a warning: DNSSEC extension: GPG Key fedora-39-primary has been revoked and should be removed immediately"
+    ],
+    [
+        2252128,
+        "set \"deltarpm=False\" in default dnf.conf on Fedora 40+"
+    ],
+    [
+        2254789,
+        "DNF: Do not download filelists by default"
+    ],
+    [
+        2261066,
+        "dnf: FTBFS in Fedora rawhide/f40"
     ]
 ]
