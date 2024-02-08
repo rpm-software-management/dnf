@@ -220,7 +220,7 @@ class HistoryCommand(commands.Command):
             "Downgrade": "Upgraded",
             "Downgraded": "Upgrade",
             "Reinstalled": "Reinstall",
-            "Reinstall": "Reinstalled",
+            "Reinstall": "Reinstall",
             "Obsoleted": "Install",
             "Obsolete": "Obsoleted",
             "Reason Change": "Reason Change",
