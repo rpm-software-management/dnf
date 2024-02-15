@@ -33,11 +33,13 @@ import errno
 import functools
 import hawkey
 import itertools
+import json
 import locale
 import logging
 import os
 import pwd
 import shutil
+import subprocess
 import sys
 import tempfile
 import time
@@ -638,4 +640,33 @@ def _is_file_pattern_present(specs):
         subj = dnf.subject.Subject(spec)
         if subj._filename_pattern:
             return True
+    return False
+
+
+def is_container():
+    """Returns true is the system is managed as an immutable container,
+       false otherwise.  If msg is True, a warning message is displayed
+       for the user.
+    """
+
+    bootc = '/usr/bin/bootc'
+    ostree = '/sysroot/ostree'
+
+    if os.path.isfile(bootc) and os.access(bootc, os.X_OK):
+        p = subprocess.Popen([bootc, "status", "--json"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+        (out, err) = p.communicate()
+
+        if p.returncode == 0:
+            # check the output of 'bootc status'
+            j = json.loads(out)
+
+            # XXX: the API from bootc status is evolving
+            status = j.get("status", "")
+            kind = j.get("kind", "")
+
+            if kind.lower() == "bootchost" and bool(status.get("isContainer", None)):
+                return True
+    elif os.path.isdir(ostree):
+        return True
+
     return False
