@@ -25,6 +25,7 @@ from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _
 
 import dnf.exceptions
+import dnf.util
 import hawkey
 import logging
 
@@ -64,6 +65,8 @@ class AutoremoveCommand(commands.Command):
             demands.fresh_metadata = False
 
     def run(self):
+        dnf.util.is_container()
+
         if any([self.opts.grp_specs, self.opts.pkg_specs, self.opts.filenames]):
             forms = []
             if self.opts.command in self.nevra_forms:

@@ -30,6 +30,7 @@ import dnf.cli.aliases
 from dnf.cli import commands
 import dnf.conf
 import dnf.exceptions
+import dnf.util
 from dnf.i18n import _
 
 logger = logging.getLogger('dnf')
@@ -157,6 +158,8 @@ class AliasCommand(commands.Command):
             print(_("Alias %s='%s'") % (cmd, " ".join(args)))
 
     def run(self):
+        dnf.util.is_container()
+
         if not self.aliases_base.enabled:
             logger.warning(_("Aliases resolving is disabled."))
 

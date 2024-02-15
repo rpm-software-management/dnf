@@ -365,6 +365,7 @@ class GroupCommand(commands.Command):
             commands._checkGPGKey(self.base, self.cli)
 
     def run(self):
+        dnf.util.is_container()
         cmd = self.opts.subcmd
         extcmds = self.opts.args
 

@@ -331,6 +331,7 @@ class HistoryCommand(commands.Command):
         return sorted(tids, reverse=True), merged_tids
 
     def run(self):
+        dnf.util.is_container()
         vcmd = self.opts.transactions_action
 
         if vcmd == 'replay':

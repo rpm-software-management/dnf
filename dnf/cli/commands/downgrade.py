@@ -23,6 +23,7 @@ from __future__ import unicode_literals
 from dnf.cli import commands
 from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _
+import dnf.util
 
 
 class DowngradeCommand(commands.Command):
@@ -50,6 +51,7 @@ class DowngradeCommand(commands.Command):
             commands._checkEnabledRepo(self.base)
 
     def run(self):
+        dnf.util.is_container()
         file_pkgs = self.base.add_remote_rpms(self.opts.filenames, strict=False,
                                               progress=self.base.output.progress)
         return self.base.downgradePkgs(

@@ -25,6 +25,7 @@ from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _
 
 import dnf.exceptions
+import dnf.util
 import logging
 
 logger = logging.getLogger('dnf')
@@ -59,6 +60,7 @@ class ReinstallCommand(commands.Command):
             commands._checkEnabledRepo(self.base)
 
     def run(self):
+        dnf.util.is_container()
 
         # Reinstall files.
         done = False

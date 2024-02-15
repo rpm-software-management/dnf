@@ -44,6 +44,7 @@ class MakeCacheCommand(commands.Command):
                             metavar='timer', help=argparse.SUPPRESS)
 
     def run(self):
+        dnf.util.is_container()
         timer = self.opts.timer is not None or self.opts.timer_opt
         msg = _("Making cache files for all metadata files.")
         logger.debug(msg)
