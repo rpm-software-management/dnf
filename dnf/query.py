@@ -43,4 +43,7 @@ def _by_provides(sack, patterns, ignore_case=False, get_query=False):
     return q.run()
 
 def _per_nevra_dict(pkg_list):
-    return {ucd(pkg):pkg for pkg in pkg_list}
+    nevra_dic = {}
+    for pkg in pkg_list:
+        nevra_dic.setdefault(ucd(pkg), []).append(pkg)
+    return nevra_dic
