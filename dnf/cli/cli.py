@@ -214,6 +214,15 @@ class BaseCli(dnf.Base):
             elif 'test' in self.conf.tsflags:
                 logger.info(_("{prog} will only download packages, install gpg keys, and check the "
                               "transaction.").format(prog=dnf.util.MAIN_PROG_UPPER))
+            if dnf.util.is_container():
+                _container_msg = _("""
+*** This system is managed with ostree.  Changes to the system
+*** made with dnf will be lost with the next ostree-based update.
+*** If you do not want to lose these changes, use 'rpm-ostree'.
+""")
+                logger.info(_container_msg)
+                raise CliError(_("Operation aborted."))
+
             if self._promptWanted():
                 if self.conf.assumeno or not self.output.userconfirm():
                     raise CliError(_("Operation aborted."))
