@@ -128,4 +128,9 @@ class DictsTest(tests.support.TestCase):
         dct = dnf.query._per_nevra_dict(pkgs)
         self.assertCountEqual(dct.keys(),
                               ["lotus-3-16.x86_64", "lotus-3-16.i686"])
-        self.assertCountEqual(dct.values(), pkgs)
+        test_list = []
+        for list_items in dct.values():
+            for item in list_items:
+                test_list.append(item)
+
+        self.assertCountEqual(test_list, pkgs)
