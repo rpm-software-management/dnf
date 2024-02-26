@@ -628,7 +628,8 @@ class Base(object):
                         'test': rpm.RPMTRANS_FLAG_TEST,
                         'justdb': rpm.RPMTRANS_FLAG_JUSTDB,
                         'nocontexts': rpm.RPMTRANS_FLAG_NOCONTEXTS,
-                        'nocrypto': rpm.RPMTRANS_FLAG_NOFILEDIGEST}
+                        'nocrypto': rpm.RPMTRANS_FLAG_NOFILEDIGEST,
+                        'deploops': rpm.RPMTRANS_FLAG_DEPLOOPS}
     if hasattr(rpm, 'RPMTRANS_FLAG_NOCAPS'):
         # Introduced in rpm-4.14
         _TS_FLAGS_TO_RPM['nocaps'] = rpm.RPMTRANS_FLAG_NOCAPS
