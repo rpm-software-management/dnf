@@ -501,9 +501,6 @@ Autoremove Command
 
     Removes all "leaf" packages from the system that were originally installed as dependencies of user-installed packages, but which are no longer required by any such package.
 
-Packages listed in :ref:`installonlypkgs <installonlypkgs-label>` are never automatically removed by
-this command.
-
 ``dnf [options] autoremove <spec>...``
 
     This is an alias for the :ref:`\remove_command-label` command with clean_requirements_on_remove set to
