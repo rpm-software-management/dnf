@@ -499,7 +499,7 @@ Autoremove Command
 
 ``dnf [options] autoremove``
 
-    Removes all "leaf" packages from the system that were originally installed as dependencies of user-installed packages, but which are no longer required by any such package.
+    Removes all packages from the system that were originally installed as dependencies of user-installed packages, but which are no longer required by any such package.
 
 ``dnf [options] autoremove <spec>...``
 
