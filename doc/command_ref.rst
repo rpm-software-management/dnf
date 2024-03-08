@@ -795,8 +795,8 @@ transactions and act according to this information (assuming the
     the current state of RPMDB, it will not undo the transaction.
 
 ``dnf history userinstalled``
-    Show all installonly packages, packages installed outside of DNF and packages not
-    installed as dependency. I.e. it lists packages that will stay on the system when
+    Show all packages installed by user, installed from a group or a module profile, and packages
+    installed outside of DNF. I.e. it lists packages that will stay on the system when
     :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with
     `clean_requirements_on_remove` configuration option set to True is executed. Note the same
     results can be accomplished with ``dnf repoquery --userinstalled``, and the repoquery
