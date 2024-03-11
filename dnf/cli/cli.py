@@ -601,9 +601,11 @@ class BaseCli(dnf.Base):
         self.conf.showdupesfromrepos = old_sdup
 
         if not matches:
-            raise dnf.exceptions.Error(_('No matches found. If searching for a file, '
-                                         'try specifying the full path or using a '
-                                         'wildcard prefix ("*/") at the beginning.'))
+            if not '*' in args[0]:
+                print('If searching for a file, '
+                'try specifying the full path or using a '
+                'wildcard prefix ("*/") at the beginning.')
+            raise dnf.exceptions.Error(_('No matches found.'))
 
     def _promptWanted(self):
         # shortcut for the always-off/always-on options
