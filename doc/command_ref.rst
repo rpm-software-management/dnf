@@ -972,10 +972,11 @@ Makecache Command
 
 ``dnf [options] makecache --timer``
     Like plain ``makecache``, but instructs DNF to be more resource-aware,
-    meaning it will not do anything if running on battery power and will terminate
+    meaning it will not do anything if running on battery power, it will terminate
     immediately if it's too soon after the last successful ``makecache`` run
     (see :manpage:`dnf.conf(5)`, :ref:`metadata_timer_sync
-    <metadata_timer_sync-label>`).
+    <metadata_timer_sync-label>`), and if the first mirror in a repository mirrorlist fails,
+    it will not try to synchronize the metadata from more mirrors for that repository.
 
 .. _mark_command-label:
 
