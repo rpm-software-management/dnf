@@ -76,19 +76,24 @@ def parse_arguments(args):
     parser = argparse.ArgumentParser()
     parser.add_argument('conf_path', nargs='?', default=dnf.const.CONF_AUTOMATIC_FILENAME)
     parser.add_argument('--timer', action='store_true')
+    parser.add_argument('--includepkgs', dest='includepkgs', action='append')
+    parser.add_argument('--excludepkgs', dest='excludepkgs', action='append')
     parser.add_argument('--installupdates', dest='installupdates', action='store_true')
     parser.add_argument('--downloadupdates', dest='downloadupdates', action='store_true')
     parser.add_argument('--no-installupdates', dest='installupdates', action='store_false')
     parser.add_argument('--no-downloadupdates', dest='downloadupdates', action='store_false')
     parser.set_defaults(installupdates=None)
     parser.set_defaults(downloadupdates=None)
+    parser.set_defaults(includepkgs=[])
+    parser.set_defaults(excludepkgs=[])
 
     return parser.parse_args(args), parser
 
 
 class AutomaticConfig(object):
     def __init__(self, filename=None, downloadupdates=None,
-                 installupdates=None):
+                 installupdates=None, includepkgs=[],
+                 excludepkgs=[]):
         if not filename:
             filename = dnf.const.CONF_AUTOMATIC_FILENAME
         self.commands = CommandsConfig()
@@ -107,6 +112,9 @@ class AutomaticConfig(object):
             self.commands.apply_updates = True
         elif installupdates is False:
             self.commands.apply_updates = False
+
+        self.commands.includepkgs.extend(includepkgs)
+        self.commands.excludepkgs.extend(excludepkgs)
 
         self.commands.imply()
         self.filename = filename
@@ -174,6 +182,8 @@ class CommandsConfig(Config):
     def __init__(self):
         super(CommandsConfig, self).__init__()
         self.add_option('apply_updates', libdnf.conf.OptionBool(False))
+        self.add_option('includepkgs', libdnf.conf.OptionStringList(libdnf.conf.VectorString([])))
+        self.add_option('excludepkgs', libdnf.conf.OptionStringList(libdnf.conf.VectorString([])))
         self.add_option('base_config_file', libdnf.conf.OptionString('/etc/dnf/dnf.conf'))
         self.add_option('download_updates', libdnf.conf.OptionBool(False))
         self.add_option('upgrade_type', libdnf.conf.OptionEnumString('default',
@@ -305,7 +315,8 @@ def main(args):
 
     try:
         conf = AutomaticConfig(opts.conf_path, opts.downloadupdates,
-                               opts.installupdates)
+                               opts.installupdates, opts.includepkgs,
+                               opts.excludepkgs)
         emitters = None
         with dnf.Base() as base:
             cli = dnf.cli.Cli(base)
@@ -332,6 +343,24 @@ def main(args):
 
             base.configure_plugins()
             base.fill_sack()
+
+            include_query = base.sack.query().filterm(empty=True)
+            if len(conf.commands.includepkgs) > 0:
+                for incl in set(conf.commands.includepkgs):
+                    subj = dnf.subject.Subject(incl)
+                    include_query = include_query.union(subj.get_best_query(
+                        base.sack, with_nevra=True, with_provides=False, with_filenames=False))
+            exclude_query = base.sack.query().filterm(empty=True)
+            for excl in set(conf.commands.excludepkgs):
+                subj = dnf.subject.Subject(excl)
+                exclude_query = exclude_query.union(subj.get_best_query(
+                    base.sack, with_nevra=True, with_provides=False, with_filenames=False))
+            if len(conf.commands.includepkgs) > 0:
+                base.sack.add_includes(include_query)
+                base.sack.set_use_includes(True)
+            if exclude_query:
+                base.sack.add_excludes(exclude_query)
+
             upgrade(base, conf.commands.upgrade_type)
             base.resolve()
             output = dnf.cli.output.Output(base, base.conf)
