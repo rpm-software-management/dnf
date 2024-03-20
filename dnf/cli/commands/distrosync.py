@@ -21,6 +21,7 @@
 from __future__ import absolute_import
 from dnf.cli import commands
 from dnf.i18n import _
+import dnf.util
 
 
 class DistroSyncCommand(commands.Command):
@@ -45,4 +46,5 @@ class DistroSyncCommand(commands.Command):
         commands._checkEnabledRepo(self.base, self.opts.package)
 
     def run(self):
+        dnf.util.is_container()
         return self.base.distro_sync_userlist(self.opts.package)

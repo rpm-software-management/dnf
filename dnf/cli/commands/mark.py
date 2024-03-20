@@ -27,6 +27,7 @@ from dnf.i18n import _
 from dnf.cli import commands
 
 import dnf
+import dnf.util
 import functools
 import logging
 
@@ -67,6 +68,7 @@ class MarkCommand(commands.Command):
         demands.resolving = False
 
     def run(self):
+        dnf.util.container()
         cmd = self.opts.mark[0]
         pkgs = self.opts.package
 

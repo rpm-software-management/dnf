@@ -398,6 +398,7 @@ class ModuleCommand(commands.Command):
         self.subcmd.configure()
 
     def run(self):
+        dnf.util.is_container()
         self.check_required_argument()
         self.subcmd.run_on_module()
 

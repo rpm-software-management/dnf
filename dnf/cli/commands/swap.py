@@ -58,6 +58,7 @@ class SwapCommand(commands.Command):
             cmd.run()
 
     def run(self):
+        dnf.util.is_container()
         # The install part must be performed before the remove one because it can
         # operate on local rpm files. Command line packages cannot be added
         # to the sack once the goal is created.

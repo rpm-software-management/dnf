@@ -69,6 +69,7 @@ class UpgradeCommand(commands.Command):
         self.skipped_grp_specs = None
 
     def run(self):
+        dnf.util.is_container()
         cmp_type = "eq" if self.upgrade_minimal else "gte"
         self.cli._populate_update_security_filter(self.opts, cmp_type=cmp_type,
                                                   all=self.all_security)

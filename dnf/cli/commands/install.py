@@ -72,6 +72,8 @@ class InstallCommand(commands.Command):
             commands._checkEnabledRepo(self.base)
 
     def run(self):
+        dnf.util.is_container()
+
         err_pkgs = []
         errs = []
         error_module_specs = []

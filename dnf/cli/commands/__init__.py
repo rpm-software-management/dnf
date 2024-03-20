@@ -277,6 +277,7 @@ class CheckUpdateCommand(Command):
         _checkEnabledRepo(self.base)
 
     def run(self):
+        dnf.util.is_container()
         self.cli._populate_update_security_filter(self.opts, cmp_type="gte")
 
         found = self.base.check_updates(self.opts.packages, print_=True,
@@ -303,6 +304,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
+            dnf.util.is_container()
             found = self.base.check_updates(self.opts.pkg_specs,
                                             self.reponame, print_=True)
             if found:
@@ -345,6 +347,7 @@ class RepoPkgsCommand(Command):
             demands.root_user = True
 
         def run_on_repo(self):
+            dnf.util.is_container()
             self.cli._populate_update_security_filter(self.opts)
             """Execute the command with respect to given arguments *cli_args*."""
             _checkGPGKey(self.base, self.cli)
@@ -398,6 +401,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
+            dnf.util.is_container()
             _checkGPGKey(self.base, self.cli)
 
             done = False
@@ -453,6 +457,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
+            dnf.util.is_container()
             _checkGPGKey(self.base, self.cli)
 
             done = False
@@ -516,6 +521,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
+            dnf.util.is_container()
             _checkGPGKey(self.base, self.cli)
             for command in self.wrapped_commands:
                 try:
@@ -562,6 +568,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
+            dnf.util.is_container()
             _checkGPGKey(self.base, self.cli)
 
             done = False
@@ -603,6 +610,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
+            dnf.util.is_container()
             _checkGPGKey(self.base, self.cli)
 
             done = False
@@ -653,7 +661,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
-
+            dnf.util.is_container()
             done = False
 
             if not self.opts.pkg_specs:
@@ -692,6 +700,7 @@ class RepoPkgsCommand(Command):
 
         def run_on_repo(self):
             """Execute the command with respect to given arguments *cli_args*."""
+            dnf.util.is_container()
             _checkGPGKey(self.base, self.cli)
 
             done = False

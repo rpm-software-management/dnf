@@ -83,6 +83,8 @@ class ShellCommand(commands.Command, cmd.Cmd):
                 setattr(self.cli.demands, attr, getattr(default_demands, attr))
 
     def run(self):
+        dnf.util.is_container()
+
         if self.opts.script:
             self._run_script(self.opts.script)
         else:
