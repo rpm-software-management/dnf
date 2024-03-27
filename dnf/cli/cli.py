@@ -601,7 +601,7 @@ class BaseCli(dnf.Base):
         self.conf.showdupesfromrepos = old_sdup
 
         if not matches:
-            if not '*' in args[0]:
+            if '*' not in args[0]:
                 print('If searching for a file, '
                 'try specifying the full path or using a '
                 'wildcard prefix ("*/") at the beginning.')
