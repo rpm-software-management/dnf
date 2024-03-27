@@ -818,9 +818,11 @@ class Base(object):
         if erasures:
             remaining_installed_query = self.sack.query(flags=hawkey.IGNORE_EXCLUDES).installed()
             remaining_installed_query.filterm(pkg__neq=erasures)
+            remaining_installed_query.apply()
             for pkg in erasures:
-                if remaining_installed_query.filter(name=pkg.name):
-                    remaining = remaining_installed_query[0]
+                tmp_remaining_installed_query = remaining_installed_query.filter(name=pkg.name, arch=pkg.arch)
+                if tmp_remaining_installed_query:
+                    remaining = tmp_remaining_installed_query[0]
                     ts.get_reason(remaining)
                     self.history.set_reason(remaining, ts.get_reason(remaining))
                 self._ds_callback.pkg_added(pkg, 'e')

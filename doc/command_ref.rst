@@ -499,10 +499,7 @@ Autoremove Command
 
 ``dnf [options] autoremove``
 
-    Removes all "leaf" packages from the system that were originally installed as dependencies of user-installed packages, but which are no longer required by any such package.
-
-Packages listed in :ref:`installonlypkgs <installonlypkgs-label>` are never automatically removed by
-this command.
+    Removes all packages from the system that were originally installed as dependencies of user-installed packages, but which are no longer required by any such package.
 
 ``dnf [options] autoremove <spec>...``
 
@@ -798,8 +795,8 @@ transactions and act according to this information (assuming the
     the current state of RPMDB, it will not undo the transaction.
 
 ``dnf history userinstalled``
-    Show all installonly packages, packages installed outside of DNF and packages not
-    installed as dependency. I.e. it lists packages that will stay on the system when
+    Show all packages installed by user, installed from a group or a module profile, and packages
+    installed outside of DNF. I.e. it lists packages that will stay on the system when
     :ref:`\autoremove_command-label` or :ref:`\remove_command-label` along with
     `clean_requirements_on_remove` configuration option set to True is executed. Note the same
     results can be accomplished with ``dnf repoquery --userinstalled``, and the repoquery
@@ -975,10 +972,11 @@ Makecache Command
 
 ``dnf [options] makecache --timer``
     Like plain ``makecache``, but instructs DNF to be more resource-aware,
-    meaning it will not do anything if running on battery power and will terminate
+    meaning it will not do anything if running on battery power, it will terminate
     immediately if it's too soon after the last successful ``makecache`` run
     (see :manpage:`dnf.conf(5)`, :ref:`metadata_timer_sync
-    <metadata_timer_sync-label>`).
+    <metadata_timer_sync-label>`), and if the first mirror in a repository mirrorlist fails,
+    it will not try to synchronize the metadata from more mirrors for that repository.
 
 .. _mark_command-label:
 
