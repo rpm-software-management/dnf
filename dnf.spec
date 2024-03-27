@@ -224,6 +224,8 @@ mkdir -p %{buildroot}%{_var}/cache/dnf/
 touch %{buildroot}%{_localstatedir}/log/%{name}.log
 ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf
 ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf4
+ln -sr %{buildroot}%{_datadir}/bash-completion/completions/dnf-3 %{buildroot}%{_datadir}/bash-completion/completions/dnf4
+ln -sr %{buildroot}%{_datadir}/bash-completion/completions/dnf-3 %{buildroot}%{_datadir}/bash-completion/completions/dnf
 mv %{buildroot}%{_bindir}/dnf-automatic-3 %{buildroot}%{_bindir}/dnf-automatic
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
@@ -280,8 +282,6 @@ popd
 %if 0%{?rhel} && 0%{?rhel} <= 7
 %{_sysconfdir}/bash_completion.d/%{name}
 %else
-%dir %{_datadir}/bash-completion
-%dir %{_datadir}/bash-completion/completions
 %{_datadir}/bash-completion/completions/%{name}
 %endif
 %{_mandir}/man8/%{name}.8*
@@ -369,6 +369,10 @@ popd
 %files -n python3-%{name}
 %{_bindir}/%{name}-3
 %{_bindir}/%{name}4
+%dir %{_datadir}/bash-completion
+%dir %{_datadir}/bash-completion/completions
+%{_datadir}/bash-completion/completions/%{name}-3
+%{_datadir}/bash-completion/completions/%{name}4
 %exclude %{python3_sitelib}/%{name}/automatic
 %{python3_sitelib}/%{name}-*.dist-info
 %{python3_sitelib}/%{name}/
