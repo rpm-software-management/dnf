@@ -433,4 +433,11 @@ _dnf()
     return 0
 }
 
-complete -F _dnf dnf dnf-2 dnf-3
+complete_cmds="dnf-2 dnf-3 dnf4"
+dnf_target=$(readlink -f "/usr/bin/dnf")
+
+if [ "$dnf_target" = "/usr/bin/dnf-3" ]; then
+    complete_cmds+=" dnf"
+fi
+
+complete -F _dnf $complete_cmds

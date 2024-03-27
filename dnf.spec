@@ -84,6 +84,7 @@ BuildRequires:  bash-completion-devel
 %else
 BuildRequires:  bash-completion
 %endif
+Requires:       coreutils
 BuildRequires:  %{_bindir}/sphinx-build-3
 Requires:       python3-%{name} = %{version}-%{release}
 %if 0%{?rhel} && 0%{?rhel} <= 7
