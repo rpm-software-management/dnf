@@ -8,7 +8,7 @@
 %global rpm_version 4.14.0
 
 # conflicts
-%global conflicts_dnf_plugins_core_version 4.0.26
+%global conflicts_dnf_plugins_core_version 4.7.0
 %global conflicts_dnf_plugins_extras_version 4.0.4
 %global conflicts_dnfdaemon_version 0.3.19
 
@@ -226,6 +226,11 @@ ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf
 ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf4
 ln -sr %{buildroot}%{_datadir}/bash-completion/completions/dnf-3 %{buildroot}%{_datadir}/bash-completion/completions/dnf4
 ln -sr %{buildroot}%{_datadir}/bash-completion/completions/dnf-3 %{buildroot}%{_datadir}/bash-completion/completions/dnf
+for file in %{buildroot}%{_mandir}/man[578]/dnf4[-.]*; do
+    dir=$(dirname $file)
+    filename=$(basename $file)
+    ln -sr $file $dir/${filename/dnf4/dnf}
+done
 mv %{buildroot}%{_bindir}/dnf-automatic-3 %{buildroot}%{_bindir}/dnf-automatic
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
@@ -248,6 +253,7 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 
 %if %{with dnf5_obsoletes_dnf}
 rm %{buildroot}%{confdir}/%{name}.conf
+rm %{buildroot}%{_mandir}/man5/%{name}.conf.5*
 %endif
 
 %check
@@ -319,7 +325,10 @@ popd
 %ghost %attr(644,-,-) %{_sharedstatedir}/%{name}/groups.json
 %ghost %attr(755,-,-) %dir %{_sharedstatedir}/%{name}/yumdb
 %ghost %attr(755,-,-) %dir %{_sharedstatedir}/%{name}/history
+%{_mandir}/man5/%{name}4.conf.5*
+%if %{without dnf5_obsoletes_dnf}
 %{_mandir}/man5/%{name}.conf.5*
+%endif
 %{_tmpfilesdir}/%{name}.conf
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 
@@ -373,6 +382,9 @@ popd
 %dir %{_datadir}/bash-completion/completions
 %{_datadir}/bash-completion/completions/%{name}-3
 %{_datadir}/bash-completion/completions/%{name}4
+%{_mandir}/man8/%{name}4.8*
+%{_mandir}/man7/dnf4.modularity.7*
+%{_mandir}/man5/dnf4-transaction-json.5*
 %exclude %{python3_sitelib}/%{name}/automatic
 %{python3_sitelib}/%{name}-*.dist-info
 %{python3_sitelib}/%{name}/

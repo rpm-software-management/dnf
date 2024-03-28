@@ -20,18 +20,18 @@ ADD_CUSTOM_TARGET (doc)
 ADD_DEPENDENCIES (doc doc-html doc-man)
 
 if (NOT WITH_MAN EQUAL 0)
-    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/dnf.8
+    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/dnf4.8
               ${CMAKE_CURRENT_BINARY_DIR}/dnf-automatic.8
               ${CMAKE_CURRENT_BINARY_DIR}/yum2dnf.8
               ${CMAKE_CURRENT_BINARY_DIR}/yum.8
               ${CMAKE_CURRENT_BINARY_DIR}/yum-shell.8
               DESTINATION share/man/man8)
-    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/dnf.conf.5
+    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/dnf4.conf.5
               ${CMAKE_CURRENT_BINARY_DIR}/yum.conf.5
-              ${CMAKE_CURRENT_BINARY_DIR}/dnf-transaction-json.5
+              ${CMAKE_CURRENT_BINARY_DIR}/dnf4-transaction-json.5
               DESTINATION share/man/man5)
     INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/yum-aliases.1
               DESTINATION share/man/man1)
-    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/dnf.modularity.7
+    INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/dnf4.modularity.7
               DESTINATION share/man/man7)
 endif()
