@@ -20,6 +20,26 @@
 ###################
 
 ====================
+4.19.1 Release Notes
+====================
+
+- Add required `.readthedocs.yaml`, `conf.py` and set `sphinx_rtd_theme`
+- Drop dnf obsoletion temporarily
+- doc: Update FAQ entry on filelists
+- build: Adapt to changes in Fedora packaging of bash-completion
+- Support RPMTRANS_FLAG_DEPLOOPS
+- Add all candidates for reinstall to solver
+- Fix handling installonly packages reasons
+- Remove confusing sentence from documentation
+- Remove "leaf" word from documentation
+- Update documentation of history userinstalled command
+- Onboard packit tests
+- doc: Makecache with timer tries only one mirror
+- ELN: Don't obsolete DNF with DNF5 yet
+- bash-completion: Complete dnf command only if we own it
+- bash-completion: Prepare ownerships for dnf5 switch
+
+====================
 4.19.0 Release Notes
 ====================
 

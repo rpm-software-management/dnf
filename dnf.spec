@@ -67,7 +67,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.19.0
+Version:        4.19.1
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -394,6 +394,23 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Thu Mar 28 2024 Evan Goode <mail@evangoo.de> - 4.19.1-1
+- Add required `.readthedocs.yaml`, `conf.py` and set `sphinx_rtd_theme`
+- Drop dnf obsoletion temporarily
+- doc: Update FAQ entry on filelists
+- build: Adapt to changes in Fedora packaging of bash-completion
+- Support RPMTRANS_FLAG_DEPLOOPS
+- Add all candidates for reinstall to solver
+- Fix handling installonly packages reasons
+- Remove confusing sentence from documentation
+- Remove "leaf" word from documentation
+- Update documentation of history userinstalled command
+- Onboard packit tests
+- doc: Makecache with timer tries only one mirror
+- ELN: Don't obsolete DNF with DNF5 yet
+- bash-completion: Complete dnf command only if we own it
+- bash-completion: Prepare ownerships for dnf5 switch
+
 * Thu Feb 08 2024 Jan Kolarik <jkolarik@redhat.com> - 4.19.0-1
 - filelists metadata loading on demand
 - deltarpm disabled on Fedora by default
