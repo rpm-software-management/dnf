@@ -218,13 +218,13 @@ latex_documents = [
 man_pages = [
     ('automatic', 'dnf-automatic', u'DNF Automatic',
      AUTHORS, 8),
-    ('command_ref', 'dnf', u'DNF Command Reference',
+    ('command_ref', 'dnf4', u'DNF Command Reference',
      AUTHORS, 8),
-    ('conf_ref', 'dnf.conf', u'DNF Configuration Reference',
+    ('conf_ref', 'dnf4.conf', u'DNF Configuration Reference',
      AUTHORS, 5),
     ('conf_ref', 'yum.conf', u'redirecting to DNF Configuration Reference',
      AUTHORS, 5),
-    ('transaction_json', 'dnf-transaction-json', u'DNF Stored Transaction JSON',
+    ('transaction_json', 'dnf4-transaction-json', u'DNF Stored Transaction JSON',
      AUTHORS, 5),
     ('cli_vs_yum', 'yum2dnf', u'Changes in DNF compared to YUM',
      AUTHORS, 8),
@@ -234,7 +234,7 @@ man_pages = [
      AUTHORS, 8),
     ('command_ref', 'yum-aliases', u'redirecting to DNF Command Reference',
      AUTHORS, 1),
-    ('modularity', 'dnf.modularity', u'Modularity in DNF',
+    ('modularity', 'dnf4.modularity', u'Modularity in DNF',
      AUTHORS, 7),
 ]
 
