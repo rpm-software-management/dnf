@@ -2,7 +2,7 @@
 %define __cmake_in_source_build 1
 
 # default dependencies
-%global hawkey_version 0.73.0
+%global hawkey_version 0.73.1
 %global libcomps_version 0.1.8
 %global libmodulemd_version 2.9.3
 %global rpm_version 4.14.0
@@ -67,7 +67,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.19.1
+Version:        4.19.2
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -394,6 +394,9 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Fri Mar 29 2024 Evan Goode <mail@evangoo.de> - 4.19.2-1
+- Bump libdnf requirement to 0.73.1
+
 * Thu Mar 28 2024 Evan Goode <mail@evangoo.de> - 4.19.1-1
 - Add required `.readthedocs.yaml`, `conf.py` and set `sphinx_rtd_theme`
 - Drop dnf obsoletion temporarily
