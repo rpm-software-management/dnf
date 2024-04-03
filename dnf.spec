@@ -256,6 +256,16 @@ rm %{buildroot}%{confdir}/%{name}.conf
 rm %{buildroot}%{_mandir}/man5/%{name}.conf.5*
 %endif
 
+%if 0%{?fedora} >= 41 || 0%{?rhel} >= 10
+# Don't add -P to Python shebangs
+# The executable Python scripts import each other
+%undefine _py3_shebang_P
+
+%py3_shebang_fix %{buildroot}%{_bindir}/dnf-3
+%py3_shebang_fix %{buildroot}%{_bindir}/dnf-automatic
+%py3_shebang_fix %{buildroot}%{python3_sitelib}/%{name}/cli/completion_helper.py
+%endif
+
 %check
 
 pushd build-py3
