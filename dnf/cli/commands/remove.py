@@ -92,7 +92,8 @@ class RemoveCommand(commands.Command):
             instonly = self.base._get_installonly_query(q.installed())
             dups = q.duplicated().difference(instonly)
             if not dups:
-                raise dnf.exceptions.Error(_('No duplicated packages found for removal.'))
+                logger.info(_('No duplicated packages found for removal.'))
+                return
 
             for (name, arch), pkgs_list in dups._na_dict().items():
                 if len(pkgs_list) < 2:
