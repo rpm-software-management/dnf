@@ -124,8 +124,7 @@ class RemoveCommand(commands.Command):
                 for pkg in instonly:
                     self.base.package_remove(pkg)
             else:
-                raise dnf.exceptions.Error(
-                    _('No old installonly packages found for removal.'))
+                logger.info(_('No old installonly packages found for removal.'))
             return
 
         # Remove groups.
