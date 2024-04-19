@@ -327,7 +327,7 @@ class RepoQueryCommand(commands.Command):
         if self.opts.querychangelogs:
             demands.changelogs = True
 
-        if self.opts.queryfilelist or dnf.util._is_file_pattern_present(self.opts.key):
+        if self.opts.queryfilelist or self.opts.file or dnf.util._is_file_pattern_present(self.opts.key):
             self.base.conf.optional_metadata_types += ["filelists"]
 
     def build_format_fn(self, opts, pkg):
