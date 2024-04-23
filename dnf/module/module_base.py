@@ -434,12 +434,12 @@ class ModuleBase(object):
                 for key in sorted(streamDict.keys()):
                     if key == stream:
                         if enable:
-                            self.base._moduleContainer.enable(moduleName, key)
+                            self.base._moduleContainer.enable(moduleName, key, streamDict[key])
                         continue
                     del streamDict[key]
             elif enable:
                 for key in streamDict.keys():
-                    self.base._moduleContainer.enable(moduleName, key)
+                    self.base._moduleContainer.enable(moduleName, key, streamDict[key])
             assert len(streamDict) == 1
         return moduleDict
 
