@@ -67,7 +67,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.19.2
+Version:        4.20.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -416,6 +416,13 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Wed Apr 24 2024 Jan Kolarik <jkolarik@redhat.com> - 4.20.0-1
+- repoquery: Fix loading filelists when -f is used (RhBug:2276012)
+- remove: --duplicates and --oldinstallonly exit with 0 when nothing to do (RHEL-6424)
+- spec: Do not add user site-packages directory to sys.path (RHEL-26646)
+- man: Prepare pages for dnf5 switch
+- spec: Prepare for switch of dnf5 in Rawhide
+
 * Fri Mar 29 2024 Evan Goode <mail@evangoo.de> - 4.19.2-1
 - Bump libdnf requirement to 0.73.1
 
