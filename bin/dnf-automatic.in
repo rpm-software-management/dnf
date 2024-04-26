@@ -27,10 +27,6 @@ if here == '/usr/bin':
     # we never import Python modules from /usr/bin
     # removing this lowers the risk of accidental imports of weird files
     del sys.path[0]
-else:
-    # git checkout
-    dnf_toplevel = os.path.dirname(here)
-    sys.path[0] = dnf_toplevel
 
 import dnf.automatic.main
 sys.exit(dnf.automatic.main.main(sys.argv[1:]))
