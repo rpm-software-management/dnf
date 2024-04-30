@@ -1759,11 +1759,11 @@ Upgrade-Minimal Command
 | Deprecated aliases: ``update-minimal``
 
 ``dnf [options] upgrade-minimal``
-    Updates each package to the latest available version that provides a bugfix, enhancement
-    or a fix for a security issue (security).
+    Updates each package to the nearest available version that provides
+    a bugfix, enhancement or a fix for a security issue (security).
 
 ``dnf [options] upgrade-minimal <package-spec>...``
-    Updates each specified package to the latest available version that provides
+    Updates each specified package to the nearest available version that provides
     a bugfix, enhancement or a fix for security issue (security). Updates
     dependencies as necessary.
 
