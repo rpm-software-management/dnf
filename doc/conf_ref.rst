@@ -858,23 +858,50 @@ configuration.
 ``countme``
     :ref:`boolean <boolean-label>`
 
-    Determines whether a special flag should be added to a single, randomly
-    chosen metalink/mirrorlist query each week.
-    This allows the repository owner to estimate the number of systems
-    consuming it, by counting such queries over a week's time, which is much
-    more accurate than just counting unique IP addresses (which is subject to
-    both overcounting and undercounting due to short DHCP leases and NAT,
-    respectively).
+    When enabled, one (and only one) HTTP GET request for the metalink file
+    will be selected at random every week to carry a special URL flag.
 
-    The flag is a simple "countme=N" parameter appended to the metalink and
-    mirrorlist URL, where N is an integer representing the "longevity" bucket
-    this system belongs to.
-    The following 4 buckets are defined, based on how many full weeks have
-    passed since the beginning of the week when this system was installed: 1 =
-    first week, 2 = first month (2-4 weeks), 3 = six months (5-24 weeks) and 4
-    = more than six months (> 24 weeks).
-    This information is meant to help distinguish short-lived installs from
-    long-term ones, and to gather other statistics about system lifecycle.
+    This flag allows the repository provider to estimate the number of systems
+    consuming the repository, by counting such requests over a week's time.
+    This method is more accurate than just counting unique IP addresses (which
+    is subject to both overcounting and undercounting due to short DHCP leases
+    and NAT, respectively).
+
+    This is *not* an out-of-band HTTP request made for this purpose alone.
+    Only requests initiated by DNF during normal operation, such as to check
+    for metadata updates, can get this flag.
+
+    The flag is a simple "countme=N" parameter appended to the metalink URL
+    where N is an integer representing the age "bucket" this system belongs to.
+    Four buckets are defined, based on how many full weeks have passed since
+    the installation of a system:
+
+    ======  ===============================
+    bucket  system age
+    ======  ===============================
+    1       first week
+    2       first month (2 - 4 weeks)
+    3       first 6 months (5 - 24 weeks)
+    4       more than 6 months (> 24 weeks)
+    ======  ===============================
+
+    This number is meant to help distinguish short-lived (throwaway) machines
+    from long-term installs and get a better picture of how systems are used
+    over time.
+
+    To determine a system's installation time ("epoch"), the ``machine-id(5)``
+    file's modification time is used as the single source of truth.  This file
+    is semantically tied to the system's lifetime as it's typically populated
+    at installation time or during the first boot by an installer tool or init
+    system (such as ``systemd(1)``), respectively, and remains unchanged.
+
+    If the file is empty or missing (such as in containers), the time of the
+    very first request made using the expanded metalink URL (i.e. with any
+    repository variables such as ``$releasever`` substituted) that carried the
+    flag is declared as the epoch.
+
+    If no metalink URL is defined for this repository but a mirrorlist URL is,
+    the latter is used for this purpose instead.
 
     Default is False.
 
