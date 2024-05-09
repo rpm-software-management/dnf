@@ -103,7 +103,7 @@ Conflicts:      python3-dnf-plugins-extras-common < %{conflicts_dnf_plugins_extr
 
 %package data
 Summary:        Common data and configuration files for DNF
-Requires:       libreport-filesystem
+Requires:       (%{name}-libreport if libreport)
 %if %{with dnf5_obsoletes_dnf}
 Requires:       /etc/dnf/dnf.conf
 %endif
@@ -112,6 +112,19 @@ Provides:       %{name}-conf = %{version}-%{release}
 
 %description data
 Common data and configuration files for DNF
+
+%package libreport
+Summary:        libreport configuration for collecting DNF logs
+Requires:       coreutils
+Requires:       findutils
+Requires:       libreport-filesystem
+Requires:       systemd
+Requires:       %{name}-data = %{version}-%{release}
+# Split from %%{name}-data-4.20-1
+Conflicts:      %{name}-data <= 4.20.0-2
+
+%description libreport
+Configuration files which help ABRT/libreport to collect DNF log files.
 
 %package -n %{yum_subpackage_name}
 Requires:       %{name} = %{version}-%{release}
@@ -336,6 +349,8 @@ popd
 %{_mandir}/man5/%{name}.conf.5*
 %endif
 %{_tmpfilesdir}/%{name}.conf
+
+%files libreport
 %{_sysconfdir}/libreport/events.d/collect_dnf.conf
 
 %files -n %{yum_subpackage_name}
