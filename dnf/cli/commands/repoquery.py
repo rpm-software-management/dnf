@@ -461,9 +461,10 @@ class RepoQueryCommand(commands.Command):
         if self.opts.key:
             remote_packages = self._add_add_remote_packages()
 
-            kwark = {}
+            kwark = {'with_provides': False}
             if self.opts.command in self.nevra_forms:
                 kwark["forms"] = [self.nevra_forms[self.opts.command]]
+                kwark['with_filenames'] = False
             pkgs = []
             query_results = q.filter(empty=True)
 
@@ -474,7 +475,7 @@ class RepoQueryCommand(commands.Command):
             for key in self.opts.key:
                 query_results = query_results.union(
                     dnf.subject.Subject(key, ignore_case=True).get_best_query(
-                        self.base.sack, with_provides=False, query=q, **kwark))
+                        self.base.sack, query=q, **kwark))
             q = query_results
 
         if self.opts.recent:

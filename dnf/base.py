@@ -2064,9 +2064,14 @@ class Base(object):
     def install(self, pkg_spec, reponame=None, strict=True, forms=None):
         # :api
         """Mark package(s) given by pkg_spec and reponame for installation."""
+        kwargs = {'forms': forms, 'with_src': False}
+        if forms:
+            kwargs['with_nevra'] = True
+            kwargs['with_provides'] = False
+            kwargs['with_filenames'] = False
 
         subj = dnf.subject.Subject(pkg_spec)
-        solution = subj.get_best_solution(self.sack, forms=forms, with_src=False)
+        solution = subj.get_best_solution(self.sack, **kwargs)
 
         if self.conf.multilib_policy == "all" or subj._is_arch_specified(solution):
             q = solution['query']
@@ -2306,8 +2311,13 @@ class Base(object):
     def remove(self, pkg_spec, reponame=None, forms=None):
         # :api
         """Mark the specified package for removal."""
+        kwargs = {'forms': forms}
+        if forms:
+            kwargs['with_nevra'] = True
+            kwargs['with_provides'] = False
+            kwargs['with_filenames'] = False
 
-        matches = dnf.subject.Subject(pkg_spec).get_best_query(self.sack, forms=forms)
+        matches = dnf.subject.Subject(pkg_spec).get_best_query(self.sack, **kwargs)
         installed = [
             pkg for pkg in matches.installed()
             if reponame is None or
