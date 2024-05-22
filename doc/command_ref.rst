@@ -857,7 +857,8 @@ Install Command
     are considered correct, the resulting package is picked simply by lexicographical order.
 
     There are also a few specific install commands ``install-n``, ``install-na`` and
-    ``install-nevra`` that allow the specification of an exact argument in the NEVRA format.
+    ``install-nevra`` that allow the specification of an exact argument in the NEVRA format. As a consequence, <spec>
+    will be not matched with provides and file provides.
 
     See also :ref:`\configuration_files_replacement_policy-label`.
 
@@ -1191,7 +1192,8 @@ Remove Command
     Removes old installonly packages, keeping only latest versions and version of running kernel.
 
     There are also a few specific remove commands ``remove-n``, ``remove-na`` and ``remove-nevra``
-    that allow the specification of an exact argument in the NEVRA format.
+    that allow the specification of an exact argument in the NEVRA format. As a consequence, <spec>
+    will be not matched with provides and file provides.
 
 Remove Examples
 ---------------
@@ -1255,6 +1257,7 @@ Repoquery Command
 
     There are also a few specific repoquery commands ``repoquery-n``, ``repoquery-na`` and ``repoquery-nevra``
     that allow the specification of an exact argument in the NEVRA format (does not affect arguments of options like --whatprovides <arg>, ...).
+    As a consequence, <spec> will be not matched with file provides.
 
 Select Options
 --------------

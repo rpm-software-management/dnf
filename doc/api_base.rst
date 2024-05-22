@@ -280,7 +280,11 @@
   .. method:: install(pkg_spec, reponame=None, strict=True, forms=None)
 
     Mark packages matching `pkg_spec` for installation.
-    `reponame` can be a name of a repository or a list of repository names. If given, the selection of available packages is limited to packages from these repositories. If strict is set to False, the installation ignores packages with dependency solving problems. Parameter `forms` has the same meaning as in :meth:`dnf.subject.Subject.get_best_query`.
+    `reponame` can be a name of a repository or a list of repository names. If given, the selection of available
+    packages is limited to packages from these repositories. If strict is set to False, the installation ignores
+    packages with dependency solving problems. Parameter `forms` is list of pattern forms from `hawkey`_.
+    Leaving the parameter to ``None`` results in using a reasonable default list of forms. When forms is specified,
+    method will not match `pkg_spec` with provides and file provides.
 
   .. method:: package_downgrade(pkg, strict=False)
 
