@@ -1266,7 +1266,7 @@ Together with ``<package-file-spec>``, control what packages are displayed in th
 packages to those matching the specification. All packages are considered if no ``<package-file-spec>`` is specified.
 
 ``<package-file-spec>``
-    Package specification in the NEVRA format (name[-[epoch:]version[-release]][.arch]), a package provide or a file provide. See :ref:`Specifying Packages
+    Package specification in the NEVRA format (name[-[epoch:]version[-release]][.arch]) or a file provide. See :ref:`Specifying Packages
     <specifying_packages-label>`.
 
 ``-a``, ``--all``
