@@ -103,7 +103,6 @@ Conflicts:      python3-dnf-plugins-extras-common < %{conflicts_dnf_plugins_extr
 
 %package data
 Summary:        Common data and configuration files for DNF
-Requires:       libreport-filesystem
 %if %{with dnf5_obsoletes_dnf}
 Requires:       /etc/dnf/dnf.conf
 %endif
@@ -336,7 +335,6 @@ popd
 %{_mandir}/man5/%{name}.conf.5*
 %endif
 %{_tmpfilesdir}/%{name}.conf
-%{_sysconfdir}/libreport/events.d/collect_dnf.conf
 
 %files -n %{yum_subpackage_name}
 %if "%{yum_compat_level}" == "full"
