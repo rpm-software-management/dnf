@@ -67,7 +67,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.20.0
+Version:        4.21.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -410,6 +410,16 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Tue Jun 18 2024 Evan Goode <mail@evangoo.de> - 4.21.0-1
+- Add detection for ostree-based systems and warn users about losing changes
+- Fix: No traceback when Python interpreter is running with -P
+- Allow `%py3_shebang_fix` macro to add `-P` argument to shebang lines
+- man: Improve upgrade-minimal command docs (RHEL-6417)
+- Limit queries to nevra forms when provided by command
+- [doc] Remove provide of spec definition for repoquery command
+- Update the man page entry for the countme option
+- Drop collect file for ABRT
+
 * Wed Apr 24 2024 Jan Kolarik <jkolarik@redhat.com> - 4.20.0-1
 - repoquery: Fix loading filelists when -f is used (RhBug:2276012)
 - remove: --duplicates and --oldinstallonly exit with 0 when nothing to do (RHEL-6424)

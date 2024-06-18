@@ -20,6 +20,19 @@
 ###################
 
 ====================
+4.21.0 Release Notes
+====================
+
+- Add detection for ostree-based systems and warn users about losing changes
+- Fix: No traceback when Python interpreter is running with -P
+- Allow `%py3_shebang_fix` macro to add `-P` argument to shebang lines
+- man: Improve upgrade-minimal command docs (RHEL-6417)
+- Limit queries to nevra forms when provided by command
+- [doc] Remove provide of spec definition for repoquery command
+- Update the man page entry for the countme option
+- Drop collect file for ABRT
+
+====================
 4.20.0 Release Notes
 ====================
 
