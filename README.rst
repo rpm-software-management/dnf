@@ -57,7 +57,7 @@ If you want to build the manpages, use the option ``-DWITH_MAN=0`` with cmake.
 
 Man pages will be located in ``build/doc`` and can be read with ``man -l``, e.g::
 
-    man -l build/doc/dnf.8
+    man -l build/doc/dnf4.8
 
 =============================
  Building and installing rpm
