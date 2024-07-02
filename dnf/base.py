@@ -1320,7 +1320,10 @@ class Base(object):
                                             pkg.location.lstrip("/"))
                 else:
                     location = os.path.join(pkg.repo.pkgdir, pkg.location.lstrip("/"))
-                shutil.copy(location, self.conf.destdir)
+                try:
+                    shutil.copy(location, self.conf.destdir)
+                except shutil.SameFileError:
+                    pass
 
     def add_remote_rpms(self, path_list, strict=True, progress=None):
         # :api
