@@ -33,13 +33,11 @@ import errno
 import functools
 import hawkey
 import itertools
-import json
 import locale
 import logging
 import os
 import pwd
 import shutil
-import subprocess
 import sys
 import tempfile
 import time
@@ -643,30 +641,16 @@ def _is_file_pattern_present(specs):
     return False
 
 
-def is_container():
+def _is_bootc_host():
     """Returns true is the system is managed as an immutable container,
        false otherwise.  If msg is True, a warning message is displayed
        for the user.
     """
+    ostree_booted = '/run/ostree-booted'
+    usr = '/usr/'
+    # Check if usr is writtable and we are in a running ostree system.
+    # We want this code to return true only when the system is in locked state. If someone ran
+    # bootc overlay or ostree admin unlock we would want normal DNF path to be ran as it will be
+    # temporary changes (until reboot).
+    return os.path.isfile(ostree_booted) and not os.access(usr, os.W_OK)
 
-    bootc = '/usr/bin/bootc'
-    ostree = '/sysroot/ostree'
-
-    if os.path.isfile(bootc) and os.access(bootc, os.X_OK):
-        p = subprocess.Popen([bootc, "status", "--json"], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-        (out, err) = p.communicate()
-
-        if p.returncode == 0:
-            # check the output of 'bootc status'
-            j = json.loads(out)
-
-            # XXX: the API from bootc status is evolving
-            status = j.get("status", "")
-            kind = j.get("kind", "")
-
-            if kind.lower() == "bootchost" and bool(status.get("isContainer", None)):
-                return True
-    elif os.path.isdir(ostree):
-        return True
-
-    return False
