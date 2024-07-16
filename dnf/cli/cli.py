@@ -214,13 +214,12 @@ class BaseCli(dnf.Base):
             elif 'test' in self.conf.tsflags:
                 logger.info(_("{prog} will only download packages, install gpg keys, and check the "
                               "transaction.").format(prog=dnf.util.MAIN_PROG_UPPER))
-            if dnf.util.is_container():
-                _container_msg = _("""
-*** This system is managed with ostree.  Changes to the system
-*** made with dnf will be lost with the next ostree-based update.
-*** If you do not want to lose these changes, use 'rpm-ostree'.
+            if dnf.util._is_bootc_host():
+                _bootc_host_msg = _("""
+*** Error: system is configured to be read-only; for more
+*** information run `bootc status` or `ostree admin status`.
 """)
-                logger.info(_container_msg)
+                logger.info(_bootc_host_msg)
                 raise CliError(_("Operation aborted."))
 
             if self._promptWanted():
