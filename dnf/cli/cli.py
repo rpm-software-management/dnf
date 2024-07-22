@@ -217,7 +217,7 @@ class BaseCli(dnf.Base):
             if dnf.util._is_bootc_host():
                 _bootc_host_msg = _("""
 *** Error: system is configured to be read-only; for more
-*** information run `bootc status` or `ostree admin status`.
+*** information run `bootc --help`.
 """)
                 logger.info(_bootc_host_msg)
                 raise CliError(_("Operation aborted."))
