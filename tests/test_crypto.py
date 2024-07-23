@@ -30,7 +30,7 @@ import dnf.yum.misc
 import tests.support
 
 
-FINGERPRINT = '0BE49FAF9C955F4F1A98D14B24362A8492530C8E'
+FINGERPRINT = '88FBCE424BA9952A141A6A297B5443AEAA6F01F3'
 KEYFILE = tests.support.resource_path('keys/key.pub')
 KEYFILE_URL = 'file://%s' % KEYFILE
 
@@ -53,11 +53,11 @@ class CryptoTest(tests.support.TestCase):
 
     def test_keyids_from_pubring(self):
         ids = dnf.crypto.keyids_from_pubring(self.PUBRING_DIR)
-        self.assertIn('24362A8492530C8E', ids)
+        self.assertIn('7B5443AEAA6F01F3', ids)
 
     def test_printable_fingerprint(self):
         self.assertEqual(dnf.crypto._printable_fingerprint(FINGERPRINT),
-                         '0BE4 9FAF 9C95 5F4F 1A98 D14B 2436 2A84 9253 0C8E')
+                         '88FB CE42 4BA9 952A 141A 6A29 7B54 43AE AA6F 01F3')
 
     def test_pubring_dir(self):
         self.assertNotEqual(os.environ.get('GNUPGHOME'), self.PUBRING_DIR)
@@ -68,10 +68,10 @@ class CryptoTest(tests.support.TestCase):
         with open(KEYFILE, 'rb') as keyfile:
             info = dnf.crypto.rawkey2infos(keyfile)[0]
         self.assertEqual(info.fingerprint, FINGERPRINT)
-        self.assertEqual(info.short_id, '92530C8E')
-        self.assertEqual(info.rpm_id, '92530c8e')
-        self.assertIn(b'Frmy6HXUL\n', info.raw_key)
-        self.assertEqual(info.timestamp, 1408534646)
+        self.assertEqual(info.short_id, 'AA6F01F3')
+        self.assertEqual(info.rpm_id, 'aa6f01f3')
+        self.assertIn(b'E4bO2zVZwe\n', info.raw_key)
+        self.assertEqual(info.timestamp, 1721738657)
         self.assertEqual(info.userid, 'Dandy Fied <dnf@example.com>')
 
     def test_retrieve(self):
