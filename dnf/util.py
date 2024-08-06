@@ -631,17 +631,3 @@ def _post_transaction_output(base, transaction, action_callback):
 def _name_unset_wrapper(input_name):
     # returns <name-unset> for everything that evaluates to False (None, empty..)
     return input_name if input_name else _("<name-unset>")
-
-
-def _is_bootc_host():
-    """Returns true is the system is managed as an immutable container,
-       false otherwise.  If msg is True, a warning message is displayed
-       for the user.
-    """
-    ostree_booted = '/run/ostree-booted'
-    usr = '/usr/'
-    # Check if usr is writtable and we are in a running ostree system.
-    # We want this code to return true only when the system is in locked state. If someone ran
-    # bootc overlay or ostree admin unlock we would want normal DNF path to be ran as it will be
-    # temporary changes (until reboot).
-    return os.path.isfile(ostree_booted) and not os.access(usr, os.W_OK)
