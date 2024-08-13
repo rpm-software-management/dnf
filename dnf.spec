@@ -301,7 +301,6 @@ popd
 %{_mandir}/man5/dnf-transaction-json.5*
 %{_unitdir}/%{name}-makecache.service
 %{_unitdir}/%{name}-makecache.timer
-%{_var}/cache/%{name}/
 
 %files data
 %license COPYING PACKAGE-LICENSING
@@ -394,6 +393,7 @@ popd
 %{python3_sitelib}/%{name}/
 %dir %{py3pluginpath}
 %dir %{py3pluginpath}/__pycache__
+%{_var}/cache/%{name}/
 
 %files automatic
 %{_bindir}/%{name}-automatic
