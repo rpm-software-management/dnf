@@ -219,15 +219,17 @@ mkdir -p %{buildroot}%{py3pluginpath}/__pycache__/
 mkdir -p %{buildroot}%{_localstatedir}/log/
 mkdir -p %{buildroot}%{_var}/cache/dnf/
 touch %{buildroot}%{_localstatedir}/log/%{name}.log
+%if %{without dnf5_obsoletes_dnf}
 ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf
-ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf4
-ln -sr %{buildroot}%{_datadir}/bash-completion/completions/dnf-3 %{buildroot}%{_datadir}/bash-completion/completions/dnf4
 ln -sr %{buildroot}%{_datadir}/bash-completion/completions/dnf-3 %{buildroot}%{_datadir}/bash-completion/completions/dnf
 for file in %{buildroot}%{_mandir}/man[578]/dnf4[-.]*; do
     dir=$(dirname $file)
     filename=$(basename $file)
     ln -sr $file $dir/${filename/dnf4/dnf}
 done
+%endif
+ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf4
+ln -sr %{buildroot}%{_datadir}/bash-completion/completions/dnf-3 %{buildroot}%{_datadir}/bash-completion/completions/dnf4
 mv %{buildroot}%{_bindir}/dnf-automatic-3 %{buildroot}%{_bindir}/dnf-automatic
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
@@ -238,6 +240,7 @@ mv -f %{buildroot}%{confdir}/%{name}-strict.conf %{buildroot}%{confdir}/%{name}.
 rm -vf %{buildroot}%{confdir}/%{name}-strict.conf
 %endif
 
+%if %{without dnf5_obsoletes_dnf}
 # YUM compat layer
 ln -sr  %{buildroot}%{confdir}/%{name}.conf %{buildroot}%{_sysconfdir}/yum.conf
 ln -sr  %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/yum
@@ -247,10 +250,14 @@ ln -sr  %{buildroot}%{pluginconfpath} %{buildroot}%{_sysconfdir}/yum/pluginconf.
 ln -sr  %{buildroot}%{confdir}/protected.d %{buildroot}%{_sysconfdir}/yum/protected.d
 ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
+%endif
 
 %if %{with dnf5_obsoletes_dnf}
 rm %{buildroot}%{confdir}/%{name}.conf
-rm %{buildroot}%{_mandir}/man5/%{name}.conf.5*
+rm %{buildroot}%{_datadir}/locale/*/LC_MESSAGES/%{name}.mo
+rm %{buildroot}%{_mandir}/man8/yum2dnf.8*
+rm %{buildroot}%{_unitdir}/%{name}-makecache.service
+rm %{buildroot}%{_unitdir}/%{name}-makecache.timer
 %endif
 
 %if 0%{?fedora} >= 41 || 0%{?rhel} >= 10
@@ -266,6 +273,7 @@ ctest -VV
 popd
 
 
+%if %{without dnf5_obsoletes_dnf}
 %post
 %systemd_post dnf-makecache.timer
 
@@ -274,6 +282,7 @@ popd
 
 %postun
 %systemd_postun_with_restart dnf-makecache.timer
+%endif
 
 
 %post automatic
@@ -286,6 +295,7 @@ popd
 %systemd_postun_with_restart dnf-automatic.timer dnf-automatic-notifyonly.timer dnf-automatic-download.timer dnf-automatic-install.timer
 
 
+%if %{without dnf5_obsoletes_dnf}
 %files -f %{name}.lang
 %{_bindir}/%{name}
 %if 0%{?rhel} && 0%{?rhel} <= 7
@@ -299,6 +309,7 @@ popd
 %{_mandir}/man5/dnf-transaction-json.5*
 %{_unitdir}/%{name}-makecache.service
 %{_unitdir}/%{name}-makecache.timer
+%endif
 
 %files data
 %license COPYING PACKAGE-LICENSING
@@ -333,6 +344,7 @@ popd
 %endif
 %{_tmpfilesdir}/%{name}.conf
 
+%if %{without dnf5_obsoletes_dnf}
 %files -n %{yum_subpackage_name}
 %{_bindir}/yum
 %{_mandir}/man8/yum.8*
@@ -342,20 +354,20 @@ popd
 %{_mandir}/man5/yum.conf.5.*
 %{_mandir}/man8/yum-shell.8*
 %{_mandir}/man1/yum-aliases.1*
-%if %{without dnf5_obsoletes_dnf}
 # If DNF5 does not obsolete DNF, protected.d/yum.conf should be owned by DNF
 %config(noreplace) %{confdir}/protected.d/yum.conf
-%else
-# If DNF5 obsoletes DNF
-# No longer using `noreplace` here. Older versions of DNF 4 marked `yum` as a
-# protected package, but since Fedora 39, DNF needs to be able to update itself
-# to DNF 5, so we need to replace the old /etc/dnf/protected.d/yum.conf.
-%config %{confdir}/protected.d/yum.conf
-%endif
 %else
 %exclude %{_sysconfdir}/yum.conf
 %exclude %{confdir}/protected.d/yum.conf
 %exclude %{_mandir}/man5/yum.conf.5.*
+%exclude %{_mandir}/man8/yum-shell.8*
+%exclude %{_mandir}/man1/yum-aliases.1*
+%endif
+%else
+# No %%{yum_subpackage_name} package
+%exclude %{confdir}/protected.d/yum.conf
+%exclude %{_mandir}/man5/yum.conf.5.*
+%exclude %{_mandir}/man8/yum.8*
 %exclude %{_mandir}/man8/yum-shell.8*
 %exclude %{_mandir}/man1/yum-aliases.1*
 %endif
