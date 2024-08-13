@@ -334,13 +334,13 @@ popd
 %{_tmpfilesdir}/%{name}.conf
 
 %files -n %{yum_subpackage_name}
-%if "%{yum_compat_level}" == "full"
 %{_bindir}/yum
+%{_mandir}/man8/yum.8*
+%if "%{yum_compat_level}" == "full"
 %{_sysconfdir}/yum.conf
 %{_sysconfdir}/yum/pluginconf.d
 %{_sysconfdir}/yum/protected.d
 %{_sysconfdir}/yum/vars
-%{_mandir}/man8/yum.8*
 %{_mandir}/man5/yum.conf.5.*
 %{_mandir}/man8/yum-shell.8*
 %{_mandir}/man1/yum-aliases.1*
@@ -363,11 +363,6 @@ popd
 %exclude %{_mandir}/man5/yum.conf.5.*
 %exclude %{_mandir}/man8/yum-shell.8*
 %exclude %{_mandir}/man1/yum-aliases.1*
-%endif
-
-%if "%{yum_compat_level}" == "minimal"
-%{_bindir}/yum
-%{_mandir}/man8/yum.8*
 %endif
 
 %files -n python3-%{name}
