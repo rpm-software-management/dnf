@@ -34,7 +34,6 @@
 # level=full    -> deploy all compat symlinks (conflicts with yum < 4)
 # level=minimal -> deploy a subset of compat symlinks only
 #                  (no conflict with yum >= 3.4.3-505)*
-# level=preview -> minimal level with altered paths (no conflict with yum < 4)
 # *release 505 renamed /usr/bin/yum to /usr/bin/yum-deprecated
 %global yum_compat_level full
 %global yum_subpackage_name yum
@@ -48,7 +47,6 @@
     %endif
 %endif
 %if 0%{?rhel} && 0%{?rhel} <= 7
-    %global yum_compat_level preview
     %global yum_subpackage_name nextgen-yum4
 %endif
 
@@ -370,12 +368,6 @@ popd
 %if "%{yum_compat_level}" == "minimal"
 %{_bindir}/yum
 %{_mandir}/man8/yum.8*
-%endif
-
-%if "%{yum_compat_level}" == "preview"
-%{_bindir}/yum4
-%{_mandir}/man8/yum4.8*
-%exclude %{_mandir}/man8/yum.8*
 %endif
 
 %files -n python3-%{name}
