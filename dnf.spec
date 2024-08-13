@@ -337,10 +337,8 @@ popd
 %{_bindir}/yum
 %{_mandir}/man8/yum.8*
 %if "%{yum_compat_level}" == "full"
+%{_sysconfdir}/yum
 %{_sysconfdir}/yum.conf
-%{_sysconfdir}/yum/pluginconf.d
-%{_sysconfdir}/yum/protected.d
-%{_sysconfdir}/yum/vars
 %{_mandir}/man5/yum.conf.5.*
 %{_mandir}/man8/yum-shell.8*
 %{_mandir}/man1/yum-aliases.1*
@@ -356,9 +354,6 @@ popd
 %endif
 %else
 %exclude %{_sysconfdir}/yum.conf
-%exclude %{_sysconfdir}/yum/pluginconf.d
-%exclude %{_sysconfdir}/yum/protected.d
-%exclude %{_sysconfdir}/yum/vars
 %exclude %{confdir}/protected.d/yum.conf
 %exclude %{_mandir}/man5/yum.conf.5.*
 %exclude %{_mandir}/man8/yum-shell.8*
