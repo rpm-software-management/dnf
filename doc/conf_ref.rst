@@ -763,6 +763,14 @@ configuration file by your distribution to override the DNF defaults.
     Type of repository metadata. Supported values are: ``rpm-md``.
     Aliases for ``rpm-md``: ``rpm``, ``repomd``, ``rpmmd``, ``yum``, ``YUM``.
 
+=====================================
+Source and debuginfo repository names
+=====================================
+
+For a given repository with an identifier in the form "<ID>-rpms", its corresponding source repository is expected to have an identifier in the form "<ID>-source-rpms" and debuginfo repository an identifier in the form "<ID>-debug-rpms". Otherwise (if the repository identifier doesn't have the "-rpms" suffix), the source repository is expected to have an identifier in the form "<ID>-source" and debuginfo repository an identifier in the form "<ID>-debuginfo".
+
+For example, for repository "fedora", the source repository is "fedora-source" and debuginfo repository is "fedora-debuginfo". For repository "fedora-rpms", the source repository is "fedora-source-rpms" and debuginfo repository is "fedora-debug-rpms".
+
 .. _repo-variables-label:
 
 ================
