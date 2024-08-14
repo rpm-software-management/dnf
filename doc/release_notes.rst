@@ -20,6 +20,17 @@
 ###################
 
 ====================
+4.21.1 Release Notes
+====================
+
+- doc: minor formatting and consistency fixes
+- Allow local downloads to same `downloaddir`
+- Fix "console" width on non real terminals (pipe)
+- Update ostree/bootc host system check.
+- Update bootc hosts message to point to bootc --help
+- tests: Use PGP keys without SHA-1
+
+====================
 4.21.0 Release Notes
 ====================
 

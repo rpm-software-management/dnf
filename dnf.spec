@@ -67,7 +67,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.21.0
+Version:        4.21.1
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -410,6 +410,14 @@ popd
 %{python3_sitelib}/%{name}/automatic/
 
 %changelog
+* Wed Aug 14 2024 Evan Goode <mail@evangoo.de> - 4.21.1-1
+- doc: minor formatting and consistency fixes
+- Allow local downloads to same `downloaddir`
+- Fix "console" width on non real terminals (pipe)
+- Update ostree/bootc host system check.
+- Update bootc hosts message to point to bootc --help
+- tests: Use PGP keys without SHA-1
+
 * Tue Jun 18 2024 Evan Goode <mail@evangoo.de> - 4.21.0-1
 - Add detection for ostree-based systems and warn users about losing changes
 - Fix: No traceback when Python interpreter is running with -P
