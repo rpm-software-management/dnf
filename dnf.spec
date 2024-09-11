@@ -230,7 +230,9 @@ done
 %endif
 ln -sr %{buildroot}%{_bindir}/dnf-3 %{buildroot}%{_bindir}/dnf4
 ln -sr %{buildroot}%{_datadir}/bash-completion/completions/dnf-3 %{buildroot}%{_datadir}/bash-completion/completions/dnf4
+%if %{without dnf5_obsoletes_dnf}
 mv %{buildroot}%{_bindir}/dnf-automatic-3 %{buildroot}%{_bindir}/dnf-automatic
+%endif
 rm -vf %{buildroot}%{_bindir}/dnf-automatic-*
 
 # Strict conf distribution
@@ -253,16 +255,28 @@ ln -sr  %{buildroot}%{confdir}/vars %{buildroot}%{_sysconfdir}/yum/vars
 %endif
 
 %if %{with dnf5_obsoletes_dnf}
+rm %{buildroot}%{confdir}/automatic.conf
 rm %{buildroot}%{confdir}/%{name}.conf
 rm %{buildroot}%{_datadir}/locale/*/LC_MESSAGES/%{name}.mo
+rm %{buildroot}%{_mandir}/man8/%{name}-automatic.8*
 rm %{buildroot}%{_mandir}/man8/yum2dnf.8*
+rm %{buildroot}%{_unitdir}/%{name}-automatic.service
+rm %{buildroot}%{_unitdir}/%{name}-automatic.timer
+rm %{buildroot}%{_unitdir}/%{name}-automatic-notifyonly.service
+rm %{buildroot}%{_unitdir}/%{name}-automatic-notifyonly.timer
+rm %{buildroot}%{_unitdir}/%{name}-automatic-download.service
+rm %{buildroot}%{_unitdir}/%{name}-automatic-download.timer
+rm %{buildroot}%{_unitdir}/%{name}-automatic-install.service
+rm %{buildroot}%{_unitdir}/%{name}-automatic-install.timer
 rm %{buildroot}%{_unitdir}/%{name}-makecache.service
 rm %{buildroot}%{_unitdir}/%{name}-makecache.timer
 %endif
 
 %if 0%{?fedora} >= 41 || 0%{?rhel} >= 10
 %py3_shebang_fix %{buildroot}%{_bindir}/dnf-3
+%if %{without dnf5_obsoletes_dnf}
 %py3_shebang_fix %{buildroot}%{_bindir}/dnf-automatic
+%endif
 %py3_shebang_fix %{buildroot}%{python3_sitelib}/%{name}/cli/completion_helper.py
 %endif
 
@@ -282,7 +296,6 @@ popd
 
 %postun
 %systemd_postun_with_restart dnf-makecache.timer
-%endif
 
 
 %post automatic
@@ -293,6 +306,7 @@ popd
 
 %postun automatic
 %systemd_postun_with_restart dnf-automatic.timer dnf-automatic-notifyonly.timer dnf-automatic-download.timer dnf-automatic-install.timer
+%endif
 
 
 %if %{without dnf5_obsoletes_dnf}
@@ -389,6 +403,7 @@ popd
 %dir %{py3pluginpath}/__pycache__
 %{_var}/cache/%{name}/
 
+%if %{without dnf5_obsoletes_dnf}
 %files automatic
 %{_bindir}/%{name}-automatic
 %config(noreplace) %{confdir}/automatic.conf
@@ -402,6 +417,7 @@ popd
 %{_unitdir}/%{name}-automatic-install.service
 %{_unitdir}/%{name}-automatic-install.timer
 %{python3_sitelib}/%{name}/automatic/
+%endif
 
 %changelog
 * Wed Aug 14 2024 Evan Goode <mail@evangoo.de> - 4.21.1-1
