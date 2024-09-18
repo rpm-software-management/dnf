@@ -300,6 +300,8 @@ class Package(hawkey.Package):
         """
         if self._from_system or self._from_cmdline:
             return None
+        if self.baseurl:
+            return os.path.join(self.baseurl, self.location.lstrip("/"))
         return self.repo.remote_location(self.location, schemes)
 
     def _is_local_pkg(self):
