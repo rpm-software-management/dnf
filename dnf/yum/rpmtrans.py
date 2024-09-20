@@ -397,6 +397,8 @@ class RPMTransaction(object):
             display.error(msg)
 
     def _unpackError(self, key):
+        self._scriptout()
+
         transaction_list = self._extract_cbkey(key)
         msg = "Error unpacking rpm package %s" % transaction_list[0].pkg
         for display in self.displays:
