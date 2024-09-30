@@ -89,6 +89,10 @@ class Plugin(object):
         # :api
         pass
 
+    def pre_transaction_test(self):
+        # :api
+        pass
+
     def transaction(self):
         # :api
         pass
@@ -160,6 +164,9 @@ class Plugins(object):
 
     def run_resolved(self):
         self._caller('resolved')
+
+    def run_pre_transaction_test(self):
+        self._caller('pre_transaction_test')
 
     def run_pre_transaction(self):
         self._caller('pre_transaction')
