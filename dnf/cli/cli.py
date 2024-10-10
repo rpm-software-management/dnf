@@ -215,7 +215,8 @@ class BaseCli(dnf.Base):
                 logger.info(_("{prog} will only download packages, install gpg keys, and check the "
                               "transaction.").format(prog=dnf.util.MAIN_PROG_UPPER))
             if dnf.util._is_bootc_host() and \
-                    os.path.realpath(self.conf.installroot) == "/":
+                    os.path.realpath(self.conf.installroot) == "/" and \
+                    not self.conf.downloadonly:
                 _bootc_host_msg = _("""
 *** Error: system is configured to be read-only; for more
 *** information run `bootc --help`.
