@@ -2832,8 +2832,8 @@ class Base(object):
 
         # List taken from DNF needs-restarting
         need_reboot = frozenset(('kernel', 'kernel-rt', 'glibc',
-                                'linux-firmware', 'systemd', 'dbus',
-                                'dbus-broker', 'dbus-daemon'))
+                                 'linux-firmware', 'systemd', 'dbus',
+                                 'dbus-broker', 'dbus-daemon', 'microcode_ctl'))
         changed_pkgs = self.transaction.install_set | self.transaction.remove_set
         return any(pkg.name in need_reboot for pkg in changed_pkgs)
 
