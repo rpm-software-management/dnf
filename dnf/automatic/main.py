@@ -74,7 +74,7 @@ def build_emitters(conf):
 
 def parse_arguments(args):
     parser = argparse.ArgumentParser()
-    parser.add_argument('conf_path', nargs='?', default=dnf.const.CONF_AUTOMATIC_FILENAME)
+    parser.add_argument('conf_path', nargs='?')
     parser.add_argument('--timer', action='store_true')
     parser.add_argument('--installupdates', dest='installupdates', action='store_true')
     parser.add_argument('--downloadupdates', dest='downloadupdates', action='store_true')
@@ -89,7 +89,17 @@ def parse_arguments(args):
 class AutomaticConfig(object):
     def __init__(self, filename=None, downloadupdates=None,
                  installupdates=None):
-        if not filename:
+        if filename:
+            # Specific config file was explicitely requested. Check that it exists
+            # and is readable.
+            if os.access(filename, os.F_OK):
+                if not os.access(filename, os.R_OK):
+                    raise dnf.exceptions.Error(
+                        "Configuration file \"{}\" is not readable.".format(filename))
+            else:
+                raise dnf.exceptions.Error(
+                    "Configuration file \"{}\" not found.".format(filename))
+        else:
             filename = dnf.const.CONF_AUTOMATIC_FILENAME
         self.commands = CommandsConfig()
         self.email = EmailConfig()
@@ -302,11 +312,12 @@ def wait_for_network(repos, timeout):
 
 def main(args):
     (opts, parser) = parse_arguments(args)
+    conf = None
+    emitters = None
 
     try:
         conf = AutomaticConfig(opts.conf_path, opts.downloadupdates,
                                opts.installupdates)
-        emitters = None
         with dnf.Base() as base:
             cli = dnf.cli.Cli(base)
             cli._read_conf_file()
@@ -371,7 +382,7 @@ def main(args):
                     raise dnf.exceptions.Error('reboot command returned nonzero exit code: %d', exit_code)
     except dnf.exceptions.Error as exc:
         logger.error(_('Error: %s'), ucd(exc))
-        if conf.emitters.send_error_messages and emitters != None:
+        if conf is not None and conf.emitters.send_error_messages and emitters is not None:
             emitters.notify_error(_('Error: %s') % str(exc))
             emitters.commit()
         return 1
