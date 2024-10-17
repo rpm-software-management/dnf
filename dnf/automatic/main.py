@@ -73,7 +73,7 @@ def build_emitters(conf):
 
 def parse_arguments(args):
     parser = argparse.ArgumentParser()
-    parser.add_argument('conf_path', nargs='?', default=dnf.const.CONF_AUTOMATIC_FILENAME)
+    parser.add_argument('conf_path', nargs='?')
     parser.add_argument('--timer', action='store_true')
     parser.add_argument('--installupdates', dest='installupdates', action='store_true')
     parser.add_argument('--downloadupdates', dest='downloadupdates', action='store_true')
@@ -88,7 +88,17 @@ def parse_arguments(args):
 class AutomaticConfig(object):
     def __init__(self, filename=None, downloadupdates=None,
                  installupdates=None):
-        if not filename:
+        if filename:
+            # Specific config file was explicitely requested. Check that it exists
+            # and is readable.
+            if os.access(filename, os.F_OK):
+                if not os.access(filename, os.R_OK):
+                    raise dnf.exceptions.Error(
+                        "Configuration file \"{}\" is not readable.".format(filename))
+            else:
+                raise dnf.exceptions.Error(
+                    "Configuration file \"{}\" not found.".format(filename))
+        else:
             filename = dnf.const.CONF_AUTOMATIC_FILENAME
         self.commands = CommandsConfig()
         self.email = EmailConfig()
@@ -295,6 +305,8 @@ def wait_for_network(repos, timeout):
 
 def main(args):
     (opts, parser) = parse_arguments(args)
+    conf = None
+    emitters = None
 
     try:
         conf = AutomaticConfig(opts.conf_path, opts.downloadupdates,
