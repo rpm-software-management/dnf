@@ -61,9 +61,20 @@ class HistoryCommand(commands.Command):
                                 HistoryCommand._CMDS[0],
                                 ", ".join(HistoryCommand._CMDS[1:])))
         parser.add_argument('--reverse', action='store_true',
-                            help="display history list output reversed")
+                            help="display history list output in reverse "
+                                 "(in ascending order with the first transaction first)")
+
         parser.add_argument("-o", "--output", default=None,
-                            help=_("For the store command, file path to store the transaction to"))
+                            help=_("For the store command, file path to store history transactions in "
+                                   "(default: transaction[s].[json|txt])"))
+        parser.add_argument("-a", "--all", dest='store_all', action='store_true', default=False,
+                            help=_("For the store command, whether to store all transactions"))
+        parser.add_argument("--commands", dest='store_shell_commands', action='store_true', default=False,
+                            help=_("For the store command, whether to store just shell command(s) in a transaction(s).txt"))
+        parser.add_argument("--comments", dest='store_shell_command_comments', action='store_true', default=False,
+                            help=_("For the store command, whether to include comments before "
+                                   "history transaction shell command(s)"))
+
         parser.add_argument("--ignore-installed", action="store_true",
                             help=_("For the replay command, don't check for installed packages matching "
                             "those in transaction"))
@@ -117,9 +128,10 @@ class HistoryCommand(commands.Command):
 
             dnf.cli.commands._checkGPGKey(self.base, self.cli)
         elif self.opts.transactions_action == 'store':
-            self._require_one_transaction_id = True
-            if not self.opts.transactions:
-                raise dnf.cli.CliError(_('No transaction ID or package name given.'))
+            self._require_one_transaction_id = True  # TODO
+            if not self.opts.store_all:
+                if not self.opts.transactions:
+                    raise dnf.cli.CliError(_('No transaction ID or package name or -a/--all given.'))
         elif self.opts.transactions_action in ['redo', 'undo', 'rollback']:
             demands.available_repos = True
             demands.resolving = True
@@ -177,6 +189,10 @@ class HistoryCommand(commands.Command):
         old = self.base.history.old(extcmds)
         if not old:
             raise dnf.cli.CliError(_('Transaction ID "{0}" not found.').format(extcmds[0]))
+        return old
+
+    def _history_get_all_transactions(self, extcmds=None):
+        old = self.base.history.old(extcmds)
         return old
 
     def _history_get_transaction(self, extcmds):
@@ -358,7 +374,10 @@ class HistoryCommand(commands.Command):
             elif vcmd == 'userinstalled':
                 self._hcmd_userinstalled()
             elif vcmd == 'store':
-                self._hcmd_store(tids)
+                if self.opts.store_all:
+                    self._hcmd_store_all(tids)
+                else:
+                    self._hcmd_store(tids)
 
     def _hcmd_store(self, extcmd):
         tid = self._history_get_transaction(extcmd)
@@ -368,6 +387,45 @@ class HistoryCommand(commands.Command):
             self._write_json(filename, data)
         except OSError as e:
             raise dnf.cli.CliError(_('Error storing transaction: {}').format(str(e)))
+
+    def _hcmd_store_all(self, extcmd):
+        #breakpoint()
+        transactions = self._history_get_all_transactions(extcmd)
+        data = {}
+        for txn in transactions:
+            data[txn.tid] = serialize_transaction(txn)
+        if not self.opts.store_shell_commands and not self.opts.store_shell_command_comments:
+            try:
+                filename = self.opts.output if self.opts.output is not None else "transactions.json"
+                self._write_json(filename, data)
+            except OSError as e:
+                raise dnf.cli.CliError(_('Error storing transactions: {}').format(str(e)))
+        else:
+            filename = self.opts.output if self.opts.output is not None else "transactions.txt"
+            try:
+                with open(filename, 'w') as f:
+                    for transaction in reversed(transactions):
+                        tid = transaction.tid
+                        #breakpoint()
+                        if self.opts.store_shell_command_comments:
+                            transaction_dict = {'tid': transaction.tid}  #serialize_transaction(transaction)
+                            #transaction_dict['cmdline'] = str(transaction.cmdline)
+                            transaction_dict['uid'] = dnf.cli.output.Output._pwd_ui_username(
+                                dnf.cli.output.Output, transaction.loginuid, limit=24)   # TODO: why 24?
+                            #f.write(f'## dnf history info {transaction.tid} \n') # TODO: which fields only
+                            f.write(f"## {transaction_dict} \n")
+                        if transaction.cmdline is None:
+                            cmdlines = []
+                        elif isinstance(transaction.cmdline, (tuple, list)):
+                            cmdlines = transaction.cmdline
+                        else:
+                            cmdlines = [transaction.cmdline]
+                        for cmdline in cmdlines:
+                            f.write("dnf {}\n".format(cmdline))
+            except OSError as e:
+                raise dnf.cli.CliError(_('Error storing transactions: {}').format(str(e)))
+            print(_("Wrote transactions to: ")+filename)
+
 
     def _write_json(self, filename, data):
         # it is absolutely possible for both assumeyes and assumeno to be True, go figure
