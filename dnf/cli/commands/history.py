@@ -358,27 +358,30 @@ class HistoryCommand(commands.Command):
             elif vcmd == 'userinstalled':
                 self._hcmd_userinstalled()
             elif vcmd == 'store':
-                tid = self._history_get_transaction(tids)
-                data = serialize_transaction(tid)
-                try:
-                    filename = self.opts.output if self.opts.output is not None else "transaction.json"
+                self._hcmd_store(tids)
 
-                    # it is absolutely possible for both assumeyes and assumeno to be True, go figure
-                    if (self.base.conf.assumeno or not self.base.conf.assumeyes) and os.path.isfile(filename):
-                        msg = _("{} exists, overwrite?").format(filename)
-                        if self.base.conf.assumeno or not self.base.output.userconfirm(
-                            msg='\n{} [y/N]: '.format(msg), defaultyes_msg='\n{} [Y/n]: '.format(msg)):
-                                print(_("Not overwriting {}, exiting.").format(filename))
-                                return
+    def _hcmd_store(self, extcmd):
+        tid = self._history_get_transaction(extcmd)
+        data = serialize_transaction(tid)
+        try:
+            filename = self.opts.output if self.opts.output is not None else "transaction.json"
+            self._write_json(filename, data)
+        except OSError as e:
+            raise dnf.cli.CliError(_('Error storing transaction: {}').format(str(e)))
 
-                    with open(filename, "w") as f:
-                        json.dump(data, f, indent=4, sort_keys=True)
-                        f.write("\n")
+    def _write_json(self, filename, data):
+        # it is absolutely possible for both assumeyes and assumeno to be True, go figure
+        if (self.base.conf.assumeno or not self.base.conf.assumeyes) and os.path.isfile(filename):
+            msg = _("{} exists, overwrite?").format(filename)
+            if self.base.conf.assumeno or not self.base.output.userconfirm(
+                msg='\n{} [y/N]: '.format(msg), defaultyes_msg='\n{} [Y/n]: '.format(msg)):
+                    print(_("Not overwriting {}, exiting.").format(filename))
+                    return
 
-                    print(_("Transaction saved to {}.").format(filename))
-
-                except OSError as e:
-                    raise dnf.cli.CliError(_('Error storing transaction: {}').format(str(e)))
+        with open(filename, "w") as f:
+            json.dump(data, f, indent=4, sort_keys=True)
+            f.write("\n")
+        print(_("Transaction saved to {}.").format(filename))
 
     def run_resolved(self):
         if self.opts.transactions_action not in ("replay", "redo", "rollback", "undo"):
