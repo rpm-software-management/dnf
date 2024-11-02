@@ -40,7 +40,7 @@ extensions and plugins.
 Plugins can modify or extend features of DNF or provide additional CLI commands on top of those
 mentioned below. If you know the name of such a command (including commands mentioned below), you
 may find/install the package which provides it using the appropriate virtual provide in the form of
-``dnf-command(<alias>)``, where ``<alias>`` is the name of the command; e.g.``dnf install
+``dnf-command(<alias>)``, where ``<alias>`` is the name of the command; e.g. ``dnf install
 'dnf-command(versionlock)'`` installs a ``versionlock`` plugin. This approach also applies to
 specifying dependencies of packages that require a particular DNF command.
 
