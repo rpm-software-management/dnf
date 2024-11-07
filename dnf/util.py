@@ -38,6 +38,7 @@ import logging
 import os
 import pwd
 import shutil
+import subprocess
 import sys
 import tempfile
 import time
@@ -634,14 +635,32 @@ def _name_unset_wrapper(input_name):
 
 
 def _is_bootc_host():
-    """Returns true is the system is managed as an immutable container,
-       false otherwise.  If msg is True, a warning message is displayed
-       for the user.
-    """
-    ostree_booted = '/run/ostree-booted'
-    usr = '/usr/'
-    # Check if usr is writtable and we are in a running ostree system.
-    # We want this code to return true only when the system is in locked state. If someone ran
-    # bootc overlay or ostree admin unlock we would want normal DNF path to be ran as it will be
-    # temporary changes (until reboot).
-    return os.path.isfile(ostree_booted) and not os.access(usr, os.W_OK)
+    """Returns true is the system is managed as an immutable container, false
+    otherwise."""
+    ostree_booted = "/run/ostree-booted"
+    return os.path.isfile(ostree_booted)
+
+
+def _is_bootc_unlocked():
+    """Check whether /usr is writeable, e.g. if we are in a normal mutable
+    system or if we are in a bootc after `bootc usr-overlay` or `ostree admin
+    unlock` was run."""
+    usr = "/usr"
+    return os.access(usr, os.W_OK)
+
+
+def _bootc_unlock():
+    """Set up a writeable overlay on bootc systems."""
+
+    if _is_bootc_unlocked():
+        return
+
+    unlock_command = ["bootc", "usr-overlay"]
+
+    try:
+        completed_process = subprocess.run(unlock_command, text=True)
+        completed_process.check_returncode()
+    except FileNotFoundError:
+        raise dnf.exceptions.Error(_("bootc command not found. Is this a bootc system?"))
+    except subprocess.CalledProcessError:
+        raise dnf.exceptions.Error(_("Failed to unlock system: %s", completed_process.stderr))
