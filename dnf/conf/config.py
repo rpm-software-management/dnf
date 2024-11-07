@@ -342,7 +342,7 @@ class MainConf(BaseConfig):
                        'best', 'assumeyes', 'assumeno', 'clean_requirements_on_remove', 'gpgcheck',
                        'showdupesfromrepos', 'plugins', 'ip_resolve',
                        'rpmverbosity', 'disable_excludes', 'color',
-                       'downloadonly', 'exclude', 'excludepkgs', 'skip_broken',
+                       'downloadonly', 'persistence', 'exclude', 'excludepkgs', 'skip_broken',
                        'tsflags', 'arch', 'basearch', 'ignorearch', 'cacheonly', 'comment']
 
         for name in config_args:
