@@ -3606,5 +3606,9 @@
     [
         2276012,
         "\"Do not download filelists by default\" change broke `dnf repoquery -f`"
+    ],
+    [
+        2312906,
+        "Unable to update the filesystem package"
     ]
 ]
