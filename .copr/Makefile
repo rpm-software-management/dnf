@@ -18,11 +18,11 @@ SPEC = $(topdir)/$(shell basename $(SPEC_TEMPLATE))
 # Replace placeholders in the spec file template
 RPMDATE = $(shell date +'%a %b %d %Y')
 #RPMAUTHOR = $(shell git log | grep ^Author: | head -n 1 | cut -d ' ' -f 2,3,4)
-RPMAUTHOR = "David Cantrell <dcantrell@redhat.com>"
+RPMAUTHOR = David Cantrell <dcantrell@redhat.com>
 
 # Various things we need to generate a tarball
-PKG = $(shell grep ^Name: "$(SPEC_TEMPLATE)" | awk '{ print $$2; }')
-VER = $(shell grep ^Version: "$(SPEC_TEMPLATE)" | awk '{ print $$2; }')
+PKG = $(shell rpmspec -P "$(SPEC_TEMPLATE)" | grep ^Name: | awk '{ print $$2; }')
+VER = $(shell rpmspec -P "$(SPEC_TEMPLATE)" | grep ^Version: | awk '{ print $$2; }')
 
 ifeq ($(BUILDTYPE),copr)
 GITDATE          = $(shell date +'%Y%m%d%H%M')
@@ -41,15 +41,16 @@ endif
 STARTING_POINT = $(shell expr $(shell grep -n ^%changelog "$(SPEC)" | cut -d ':' -f 1) + 1)
 
 srpm:
+	sed -i -e '1i %global source_date_epoch_from_changelog 0' "$(SPEC)"
 	sed -e 's|%%VERSION%%|$(VER)|g' < "$(SPEC_TEMPLATE)" > "$(SPEC)".new
 	mv "$(SPEC)".new "$(SPEC)"
 ifeq ($(BUILDTYPE),copr)
 	sed -i -e '/^Release:/ s/1[^%]*/0.1.$(GITDATE)git$(GITHASH)/' "$(SPEC)"
 	sed -i -e 's|^Source0:.*$$|Source0: $(TARBALL_BASENAME).tar.gz|g' "$(SPEC)"
 	sed -i -e 's|^%autosetup.*$$|%autosetup -n $(TARBALL_BASENAME)|g' "$(SPEC)"
-	sed -i -e '$(STARTING_POINT)i\\' "$(SPEC)"
-	sed -i -e '$(STARTING_POINT)i - Build $(PKG)-$(VER)-$(GITDATE)git$(GITHASH) snapshot' "$(SPEC)"
-	sed -i -e '$(STARTING_POINT)i * $(RPMDATE) $(RPMAUTHOR) - $(VER)-$(GITDATE)git$(GITHASH)' "$(SPEC)"
+	sed -i -e '$(STARTING_POINT)a\\' "$(SPEC)"
+	sed -i -e '$(STARTING_POINT)a - Build $(PKG)-$(VER)-$(GITDATE)git$(GITHASH) snapshot' "$(SPEC)"
+	sed -i -e '$(STARTING_POINT)a * $(RPMDATE) $(RPMAUTHOR) - $(VER)-$(GITDATE)git$(GITHASH)' "$(SPEC)"
 endif
 	git archive \
 		--format=tar \
