@@ -727,9 +727,8 @@ class Cli(object):
 
         if demands.root_user:
             if not dnf.util.am_i_root():
-                raise dnf.exceptions.Error(
-                    _('This command has to be run with superuser privileges '
-                        '(under the root user on most systems).'))
+                logger.warning('In most cases, this command has to be run with superuser privileges '
+                               '(usually under the root user)')
 
         if demands.changelogs:
             for repo in repos.iter_enabled():
