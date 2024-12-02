@@ -312,6 +312,8 @@ class BaseCli(dnf.Base):
         if error_messages:
             for msg in error_messages:
                 logger.critical(msg)
+            logger.info("\nUse the `--enableplugin=expired-pgp-keys' "
+                        "parameter to resolve the problem.\n")
             raise dnf.exceptions.Error(_("GPG check FAILED"))
 
     def latest_changelogs(self, package):
