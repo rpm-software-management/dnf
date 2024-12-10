@@ -1,19 +1,25 @@
 .. image:: https://translate.fedoraproject.org/widgets/dnf/-/dnf-master/svg-badge.svg
     :alt: Translation status
     :target: https://translate.fedoraproject.org/engage/dnf/?utm_source=widget
-###############
- Dandified YUM
-###############
+
+==================================================================================================================================================================================================
+⚠️ **Notice:** This repository is for **DNF4** only. The current DNF version (DNF5) has its `own repo <https://github.com/rpm-software-management/dnf5>`_.
+==================================================================================================================================================================================================
+
+
+#################
+ Dandified YUM 4
+#################
 
 .. image:: https://raw.githubusercontent.com/rpm-software-management/dnf/gh-pages/logos/DNF_logo.png
  
-Dandified YUM (DNF) is the next upcoming major version of `YUM <http://yum.baseurl.org/>`_. It does package management using `RPM <http://rpm.org/>`_, `libsolv <https://github.com/openSUSE/libsolv>`_ and `hawkey <https://github.com/rpm-software-management/hawkey>`_ libraries. For metadata handling and package downloads it utilizes `librepo <https://github.com/tojaj/librepo>`_. To process and effectively handle the comps data it uses `libcomps <https://github.com/midnightercz/libcomps>`_.
+Dandified YUM 4 (DNF) is the 4th iteration of next upcoming major version of `YUM <http://yum.baseurl.org/>`_. It does package management using `RPM <http://rpm.org/>`_, `libsolv <https://github.com/openSUSE/libsolv>`_ and `hawkey <https://github.com/rpm-software-management/hawkey>`_ libraries. For metadata handling and package downloads it utilizes `librepo <https://github.com/tojaj/librepo>`_. To process and effectively handle the comps data it uses `libcomps <https://github.com/midnightercz/libcomps>`_.
 
 ============
  Installing
 ============
 
-DNF and all its dependencies are available in Fedora 18 and later, including the
+DNF4 and all its dependencies are available in Fedora 18 and later, including the
 rawhide Fedora.
 
 Optionally you can use repositories with DNF nightly builds for last 2 stable Fedora versions available at copr://rpmsoftwaremanagement/dnf-nightly. You can enable the repository e.g. using:: 
@@ -22,7 +28,7 @@ Optionally you can use repositories with DNF nightly builds for last 2 stable Fe
 
 Then install DNF typing::
 
-    sudo yum install dnf
+    sudo yum install dnf4
 
 In other RPM-based distributions you need to build all the components from their
 sources.
