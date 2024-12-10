@@ -1,3 +1,11 @@
+=====================================
+⚠️ **Notice:** This repository is for **DNF4** only
+=====================================
+
+.. warning::
+   For the next-generation version (DNF5), visit 
+   `https://github.com/rpm-software-management/dnf5 <https://github.com/rpm-software-management/dnf5>`_.
+
 .. image:: https://translate.fedoraproject.org/widgets/dnf/-/dnf-master/svg-badge.svg
     :alt: Translation status
     :target: https://translate.fedoraproject.org/engage/dnf/?utm_source=widget
