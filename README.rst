@@ -3,7 +3,7 @@
     :target: https://translate.fedoraproject.org/engage/dnf/?utm_source=widget
 
 ==================================================================================================================================================================================================
-⚠️ **Notice:** This repository is for **DNF4** only. The current DNF version (DNF5), has its ` own repo <https://github.com/rpm-software-management/dnf5>`_
+⚠️ **Notice:** This repository is for **DNF4** only. The current DNF version (DNF5), has its `own repo <https://github.com/rpm-software-management/dnf5>`_.
 ==================================================================================================================================================================================================
 
 
