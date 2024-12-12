@@ -165,11 +165,13 @@ Options
 .. _disableexcludes-label:
 
 ``--disableexcludes=[all|main|<repoid>], --disableexcludepkgs=[all|main|<repoid>]``
-    Disable the configuration file excludes. Takes one of the following three options:
+    Disable ``excludepkgs`` and ``includepkgs`` configuration options. Takes one of the following three options:
 
-    * ``all``, disables all configuration file excludes
-    * ``main``, disables excludes defined in the ``[main]`` section
-    * ``repoid``, disables excludes defined for the given repository
+    * ``all``, disables all ``excludepkgs`` and ``includepkgs`` configurations
+    * ``main``, disables ``excludepkgs`` and ``includepkgs`` defined in the ``[main]`` section
+    * ``repoid``, disables ``excludepkgs`` and ``includepkgs`` defined for the given repository
+
+    Note that the \-\ :ref:`-exclude <exclude_option-label>` option appends to the ``[main]`` ``excludepkgs`` configuration and therefore is disabled when ``main`` or ``all`` is specified.
 
 ``--disable, --set-disabled``
     Disable specified repositories (automatically saves). The option has to be used together with the
