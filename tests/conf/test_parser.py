@@ -66,3 +66,19 @@ class ParserTest(tests.support.TestCase):
         conf.config_file_path = FN
         conf.read()
         self.assertEqual(conf.reposdir, '')
+
+    def test_iterator_segfault(self):
+        # Verify the behavior fixed in https://bugzilla.redhat.com/show_bug.cgi?id=2330562
+        empty_conf_path = tests.support.resource_path('etc/empty.conf')
+
+        parser = ConfigParser()
+        parser.read(empty_conf_path)
+        self.assertTrue(parser.hasSection("main"))
+
+        sectObj = parser.getData()["main"]
+
+        # segfaulting before with Python 3.13.1
+        [item for item in sectObj]
+
+        # segfaulting before with Python 3.13.0
+        [item for item in iter(sectObj)]
