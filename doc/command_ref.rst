@@ -167,7 +167,7 @@ Options
 ``--disableexcludes=[all|main|<repoid>], --disableexcludepkgs=[all|main|<repoid>]``
     Disable the configuration file excludes. Takes one of the following three options:
 
-    * ``all``, disables all configuration file excludes
+    * ``all``, disables all configuration excludes and includes
     * ``main``, disables excludes defined in the ``[main]`` section
     * ``repoid``, disables excludes defined for the given repository
 
