@@ -42,6 +42,15 @@ import tests.support
 from tests.support import mock
 
 
+# The tests here are not compatible with the forkserver method,
+# which is the default on Python 3.14+.
+# See https://github.com/python/cpython/issues/125714
+if multiprocessing.get_start_method() == 'forkserver':
+    mp_context = multiprocessing.get_context(method='fork')
+else:
+    mp_context = multiprocessing.get_context()
+
+
 class ConcurrencyMixin(object):
     def __init__(self, lock):
         self.lock = lock
@@ -61,11 +70,11 @@ class OtherThread(ConcurrencyMixin, threading.Thread):
         self.queue = dnf.pycomp.Queue(1)
 
 
-class OtherProcess(ConcurrencyMixin, multiprocessing.Process):
+class OtherProcess(ConcurrencyMixin, mp_context.Process):
     def __init__(self, lock):
         ConcurrencyMixin.__init__(self, lock)
-        multiprocessing.Process.__init__(self)
-        self.queue = multiprocessing.Queue(1)
+        mp_context.Process.__init__(self)
+        self.queue = mp_context.Queue(1)
 
 
 TARGET = os.path.join(tests.support.USER_RUNDIR, 'unit-test.pid')
