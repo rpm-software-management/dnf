@@ -101,6 +101,7 @@ Conflicts:      python3-dnf-plugins-extras-common < %{conflicts_dnf_plugins_extr
 
 %package data
 Summary:        Common data and configuration files for DNF
+Requires(post): /usr/bin/sed
 %if %{with dnf5_obsoletes_dnf}
 Requires:       /etc/dnf/dnf.conf
 %endif
@@ -307,6 +308,12 @@ popd
 %postun automatic
 %systemd_postun_with_restart dnf-automatic.timer dnf-automatic-notifyonly.timer dnf-automatic-download.timer dnf-automatic-install.timer
 %endif
+
+
+%post data
+if [ -f "/run/ostree-booted" ] && [ ! -w "/usr/" ]; then
+    sed -i -e '/^[main]/a installonlypkgs=' %{confdir}/%{name}.conf
+fi
 
 
 %if %{without dnf5_obsoletes_dnf}
