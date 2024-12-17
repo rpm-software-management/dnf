@@ -387,6 +387,11 @@ Options
 ``--showduplicates``
     Show duplicate packages in repositories. Applicable for the list and search commands.
 
+.. _transient_option-label:
+
+``--transient``
+    Applicable only on bootc systems. Perform transactions using a transient overlay which will reset on reboot. See also the :ref:`persistence <persistence-label>` configuration option.
+
 .. _verbose_options-label:
 
 ``-v, --verbose``
