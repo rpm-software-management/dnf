@@ -388,6 +388,11 @@ Options
 ``--showduplicates``
     Show duplicate packages in repositories. Applicable for the list and search commands.
 
+.. _transient_option-label:
+
+``--transient``
+    Applicable only on bootc (bootable containers) systems. Perform transactions using a transient overlay which will be lost on the next reboot. See also the :ref:`persistence <persistence-label>` configuration option.
+
 .. _verbose_options-label:
 
 ``-v, --verbose``
@@ -706,6 +711,10 @@ transactions and act according to this information (assuming the
     which specifies a range of transactions, or a ``<package-name-spec>``,
     which specifies a transaction by a package which it manipulated. When no
     transaction is specified, list all known transactions.
+
+    Note that transient transactions (see :ref:`--transient
+    <transient_option-label>`) will be listed even though they do not make
+    persistent changes to files under ``/usr`` or to the RPM database.
 
     The "Action(s)" column lists each type of action taken in the transaction. The possible values are:
 
