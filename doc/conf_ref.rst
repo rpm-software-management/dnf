@@ -430,6 +430,17 @@ configuration file by your distribution to override the DNF defaults.
 
     Directory where DNF stores its persistent data between runs. Default is ``"/var/lib/dnf"``.
 
+.. _persistence-label:
+
+``persistence``
+    :ref:`string <string-label>`
+
+    Whether changes should persist across system reboots. Default is ``auto``. Passing :ref:`--transient <transient_option-label>` will override this setting to ``transient``. Valid values are:
+
+    * ``auto``: Changes will persist across reboots, unless the target is a running bootc system and the system is already in an unlocked state (i.e. ``/usr`` is writable).
+    * ``transient``: Changes will be lost on the next reboot. Only applicable on bootc systems. Beware that changes to ``/etc`` and ``/var`` will persist, depending on the configuration of your bootc system. See also https://containers.github.io/bootc/man/bootc-usr-overlay.html.
+    * ``persist``: Changes will persist across reboots.
+
 .. _pluginconfpath-label:
 
 ``pluginconfpath``
