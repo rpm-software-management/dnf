@@ -1,9 +1,7 @@
 # MinWoo Joh <igtzhsou@naver.com>, 2015. #zanata
 # Eun-Ju Kim <eukim@redhat.com>, 2016. #zanata
 # Ludek Janda <ljanda@redhat.com>, 2018. #zanata, 2020.
-# simmon <simmon@nplob.com>, 2021, 2022.
-# Kim InSoo <simmon@nplob.com>, 2022.
-# 김인수 <simmon@nplob.com>, 2022, 2023.
+# 김인수 <simmon@nplob.com>, 2021, 2022, 2023, 2024.
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
