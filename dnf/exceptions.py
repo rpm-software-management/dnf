@@ -86,6 +86,10 @@ class DownloadError(Error):
         return self.errmap2str(self.errmap)
 
 
+class InvalidInstalledGPGKeyError(Error):
+    pass
+
+
 class LockError(Error):
     pass
 

@@ -2640,7 +2640,7 @@ class Base(object):
                     'package.\n'
                     'Check that the correct key URLs are configured for '
                     'this repository.') % repo.name
-            raise dnf.exceptions.Error(_prov_key_data(msg))
+            raise dnf.exceptions.InvalidInstalledGPGKeyError(_prov_key_data(msg))
 
         # Check if the newly installed keys helped
         result, errmsg = self._sig_check_pkg(po)

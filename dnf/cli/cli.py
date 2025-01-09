@@ -284,6 +284,7 @@ class BaseCli(dnf.Base):
         :raises: Will raise :class:`Error` if there's a problem
         """
         error_messages = []
+        print_plugin_recommendation = False
         for po in pkgs:
             result, errmsg = self._sig_check_pkg(po)
 
@@ -304,6 +305,8 @@ class BaseCli(dnf.Base):
                     self._get_key_for_package(po, fn)
                 except (dnf.exceptions.Error, ValueError) as e:
                     error_messages.append(str(e))
+                    if isinstance(e, dnf.exceptions.InvalidInstalledGPGKeyError):
+                        print_plugin_recommendation = True
 
             else:
                 # Fatal error
@@ -312,6 +315,11 @@ class BaseCli(dnf.Base):
         if error_messages:
             for msg in error_messages:
                 logger.critical(msg)
+            if print_plugin_recommendation:
+                msg = '\n' + _("Try to add '--enableplugin=expired-pgp-keys' to resolve the problem. "
+                               "Note: This plugin might not be installed by default, as it is part of "
+                               "the 'dnf-plugins-core' package.") + '\n'
+                logger.info(msg)
             raise dnf.exceptions.Error(_("GPG check FAILED"))
 
     def latest_changelogs(self, package):
