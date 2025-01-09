@@ -159,6 +159,7 @@ Requires:       rpm-plugin-systemd-inhibit
 %else
 Recommends:     (rpm-plugin-systemd-inhibit if systemd)
 %endif
+Provides:       dnf4 = %{version}-%{release}
 Provides:       dnf-command(alias)
 Provides:       dnf-command(autoremove)
 Provides:       dnf-command(check-update)
