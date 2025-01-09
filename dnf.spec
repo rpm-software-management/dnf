@@ -171,6 +171,7 @@ Requires:       rpm-plugin-systemd-inhibit
 %else
 Recommends:     (rpm-plugin-systemd-inhibit if systemd)
 %endif
+Provides:       dnf4 = %{version}-%{release}
 
 %description -n python3-%{name}
 Python 3 interface to DNF.
