@@ -642,33 +642,67 @@ def _is_file_pattern_present(specs):
     return False
 
 
-def _is_bootc_host():
-    """Returns true is the system is managed as an immutable container, false
-    otherwise."""
-    ostree_booted = "/run/ostree-booted"
-    return os.path.isfile(ostree_booted)
-
-
-def _is_bootc_unlocked():
-    """Check whether /usr is writeable, e.g. if we are in a normal mutable
-    system or if we are in a bootc after `bootc usr-overlay` or `ostree admin
-    unlock` was run."""
+class _Bootc:
     usr = "/usr"
-    return os.access(usr, os.W_OK)
 
+    def __init__(self):
+        if not self.is_bootc_host():
+            raise RuntimeError(_("Not running on a bootc system."))
 
-def _bootc_unlock():
-    """Set up a writeable overlay on bootc systems."""
+        import gi
+        self._gi = gi
 
-    if _is_bootc_unlocked():
-        return
+        gi.require_version("OSTree", "1.0")
+        from gi.repository import OSTree
 
-    unlock_command = ["bootc", "usr-overlay"]
+        self._OSTree = OSTree
 
-    try:
-        completed_process = subprocess.run(unlock_command, text=True)
-        completed_process.check_returncode()
-    except FileNotFoundError:
-        raise dnf.exceptions.Error(_("bootc command not found. Is this a bootc system?"))
-    except subprocess.CalledProcessError:
-        raise dnf.exceptions.Error(_("Failed to unlock system: %s", completed_process.stderr))
+        self._sysroot = self._OSTree.Sysroot.new_default()
+        assert self._sysroot.load(None)
+
+        self._booted_deployment = self._sysroot.require_booted_deployment()
+        assert self._booted_deployment is not None
+
+    @staticmethod
+    def is_bootc_host():
+        """Returns true is the system is managed as an immutable container, false
+        otherwise."""
+        ostree_booted = "/run/ostree-booted"
+        return os.path.isfile(ostree_booted)
+
+    def _get_unlocked_state(self):
+        return self._booted_deployment.get_unlocked()
+
+    def is_unlocked(self):
+        return self._get_unlocked_state() != self._OSTree.DeploymentUnlockedState.NONE
+
+    def unlock_and_prepare(self):
+        """Set up a writeable overlay on bootc systems."""
+
+        bootc_unlocked_state = self._get_unlocked_state()
+
+        valid_bootc_unlocked_states = (
+            self._OSTree.DeploymentUnlockedState.NONE,
+            self._OSTree.DeploymentUnlockedState.DEVELOPMENT,
+            # self._OSTree.DeploymentUnlockedState.TRANSIENT,
+            # self._OSTree.DeploymentUnlockedState.HOTFIX,
+        )
+
+        if bootc_unlocked_state not in valid_bootc_unlocked_states:
+            raise ValueError(_("Unhandled bootc unlocked state: %s") % bootc_unlocked_state.value_nick)
+
+        if bootc_unlocked_state == self._OSTree.DeploymentUnlockedState.DEVELOPMENT:
+            # System is already unlocked.
+            pass
+        elif bootc_unlocked_state == self._OSTree.DeploymentUnlockedState.NONE:
+            unlock_command = ["ostree", "admin", "unlock"]
+
+            try:
+                completed_process = subprocess.run(unlock_command, text=True)
+                completed_process.check_returncode()
+            except FileNotFoundError:
+                raise dnf.exceptions.Error(_("ostree command not found. Is this a bootc system?"))
+            except subprocess.CalledProcessError:
+                raise dnf.exceptions.Error(_("Failed to unlock system: %s", completed_process.stderr))
+
+        assert os.access(self.usr, os.W_OK)
