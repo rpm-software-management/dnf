@@ -25,6 +25,7 @@ from __future__ import unicode_literals
 from .pycomp import PY3, basestring
 from dnf.i18n import _, ucd
 import argparse
+import ctypes
 import dnf
 import dnf.callback
 import dnf.const
@@ -634,11 +635,12 @@ def _name_unset_wrapper(input_name):
     return input_name if input_name else _("<name-unset>")
 
 
-class _Bootc:
+class _BootcSystem:
     usr = "/usr"
+    CLONE_NEWNS = 0x00020000  # defined in linux/include/uapi/linux/sched.h
 
     def __init__(self):
-        if not self.is_bootc_host():
+        if not self.is_bootc_system():
             raise RuntimeError(_("Not running on a bootc system."))
 
         import gi
@@ -656,45 +658,87 @@ class _Bootc:
         assert self._booted_deployment is not None
 
     @staticmethod
-    def is_bootc_host():
+    def is_bootc_system():
         """Returns true is the system is managed as an immutable container, false
         otherwise."""
         ostree_booted = "/run/ostree-booted"
         return os.path.isfile(ostree_booted)
 
+    @classmethod
+    def is_writable(cls):
+        """Returns true if and only if /usr is writable."""
+        return os.access(cls.usr, os.W_OK)
+
     def _get_unlocked_state(self):
         return self._booted_deployment.get_unlocked()
 
-    def is_unlocked(self):
-        return self._get_unlocked_state() != self._OSTree.DeploymentUnlockedState.NONE
+    def is_unlocked_transient(self):
+        """Returns true if and only if the bootc system is unlocked in a
+        transient state, i.e. a overlayfs is mounted as read-only on /usr.
+        Changes can be made to the overlayfs by remounting /usr as
+        read/write in a private mount namespace."""
+        return self._get_unlocked_state() == self._OSTree.DeploymentUnlockedState.TRANSIENT
 
-    def unlock_and_prepare(self):
-        """Set up a writeable overlay on bootc systems."""
+    @classmethod
+    def _set_up_mountns(cls):
+        # os.unshare is only available in Python >= 3.12.
+
+        # Access symbols in libraries loaded by the Python interpreter,
+        # which will include libc. See https://bugs.python.org/issue34592.
+        libc = ctypes.CDLL(None)
+        if libc.unshare(cls.CLONE_NEWNS) != 0:
+            raise OSError("Failed to unshare mount namespace")
+
+        mount_command = ["mount", "--options-source=disable", "-o", "remount,rw", cls.usr]
+        try:
+            completed_process = subprocess.run(mount_command, text=True)
+            completed_process.check_returncode()
+        except FileNotFoundError:
+            raise dnf.exceptions.Error(_("%s: command not found.") % mount_command[0])
+        except subprocess.CalledProcessError:
+            raise dnf.exceptions.Error(_("Failed to mount %s as read/write: %s", cls.usr, completed_process.stderr))
+
+    @staticmethod
+    def _unlock():
+        unlock_command = ["ostree", "admin", "unlock", "--transient"]
+        try:
+            completed_process = subprocess.run(unlock_command, text=True)
+            completed_process.check_returncode()
+        except FileNotFoundError:
+            raise dnf.exceptions.Error(_("%s: command not found. Is this a bootc system?") % unlock_command[0])
+        except subprocess.CalledProcessError:
+            raise dnf.exceptions.Error(_("Failed to unlock system: %s", completed_process.stderr))
+
+    def make_writable(self):
+        """Set up a writable overlay on bootc systems."""
 
         bootc_unlocked_state = self._get_unlocked_state()
 
         valid_bootc_unlocked_states = (
             self._OSTree.DeploymentUnlockedState.NONE,
             self._OSTree.DeploymentUnlockedState.DEVELOPMENT,
-            # self._OSTree.DeploymentUnlockedState.TRANSIENT,
-            # self._OSTree.DeploymentUnlockedState.HOTFIX,
+            self._OSTree.DeploymentUnlockedState.TRANSIENT,
+            self._OSTree.DeploymentUnlockedState.HOTFIX,
         )
-
         if bootc_unlocked_state not in valid_bootc_unlocked_states:
             raise ValueError(_("Unhandled bootc unlocked state: %s") % bootc_unlocked_state.value_nick)
 
-        if bootc_unlocked_state == self._OSTree.DeploymentUnlockedState.DEVELOPMENT:
-            # System is already unlocked.
+        writable_unlocked_states = (
+            self._OSTree.DeploymentUnlockedState.DEVELOPMENT,
+            self._OSTree.DeploymentUnlockedState.HOTFIX,
+        )
+        if bootc_unlocked_state in writable_unlocked_states:
+            # System is already unlocked in development mode, and usr is
+            # already mounted read/write.
             pass
         elif bootc_unlocked_state == self._OSTree.DeploymentUnlockedState.NONE:
-            unlock_command = ["ostree", "admin", "unlock"]
-
-            try:
-                completed_process = subprocess.run(unlock_command, text=True)
-                completed_process.check_returncode()
-            except FileNotFoundError:
-                raise dnf.exceptions.Error(_("ostree command not found. Is this a bootc system?"))
-            except subprocess.CalledProcessError:
-                raise dnf.exceptions.Error(_("Failed to unlock system: %s", completed_process.stderr))
+            # System is not unlocked. Unlock it in transient mode, then set up
+            # a mount namespace for DNF.
+            self._unlock()
+            self._set_up_mountns()
+        elif bootc_unlocked_state == self._OSTree.DeploymentUnlockedState.TRANSIENT:
+            # System is unlocked in transient mode, so usr is mounted
+            # read-only. Set up a mount namespace for DNF.
+            self._set_up_mountns()
 
         assert os.access(self.usr, os.W_OK)
