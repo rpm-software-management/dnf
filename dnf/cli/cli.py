@@ -205,8 +205,6 @@ class BaseCli(dnf.Base):
             else:
                 self.output.reportDownloadSize(install_pkgs, install_only)
 
-        bootc_unlock_requested = False
-
         if trans or self._moduleContainer.isChanged() or \
                 (self._history and (self._history.group or self._history.env)):
             # confirm with user
@@ -218,40 +216,45 @@ class BaseCli(dnf.Base):
                 logger.info(_("{prog} will only download packages, install gpg keys, and check the "
                               "transaction.").format(prog=dnf.util.MAIN_PROG_UPPER))
 
-            is_bootc_transaction = dnf.util._Bootc.is_bootc_host() and \
+            is_bootc_transaction = dnf.util._BootcSystem.is_bootc_system() and \
                 os.path.realpath(self.conf.installroot) == "/" and \
                 not self.conf.downloadonly
 
             # Handle bootc transactions. `--transient` must be specified if
             # /usr is not already writeable.
-            bootc = None
+            bootc_system = None
             if is_bootc_transaction:
                 if self.conf.persistence == "persist":
                     logger.info(_("Persistent transactions aren't supported on bootc systems."))
                     raise CliError(_("Operation aborted."))
                 assert self.conf.persistence in ("auto", "transient")
 
-                bootc = dnf.util._Bootc()
+                bootc_system = dnf.util._BootcSystem()
 
-                if not bootc.is_unlocked():
+                if not bootc_system.is_writable():
                     if self.conf.persistence == "auto":
                         logger.info(_("This bootc system is configured to be read-only. Pass --transient to "
-                                      "perform this and subsequent transactions in a transient overlay which "
-                                      "will reset when the system reboots."))
+                                      "perform this transaction in a transient overlay which will reset when "
+                                      "the system reboots."))
                         raise CliError(_("Operation aborted."))
                     assert self.conf.persistence == "transient"
-                    logger.info(_("A transient overlay will be created on /usr that will be discarded on reboot. "
-                                  "Keep in mind that changes to /etc and /var will still persist, and packages "
-                                  "commonly modify these directories."))
-            elif self.conf.persistence == "transient":
-                raise CliError(_("Transient transactions are only supported on bootc systems."))
+                    if not bootc_system.is_unlocked_transient():
+                        # Only tell the user about the transient overlay if
+                        # it's not already in place
+                        logger.info(_("A transient overlay will be created on /usr that will be discarded on reboot. "
+                                      "Keep in mind that changes to /etc and /var will still persist, and packages "
+                                      "commonly modify these directories."))
+            else:
+                # Not a bootc transaction.
+                if self.conf.persistence == "transient":
+                    raise CliError(_("Transient transactions are only supported on bootc systems."))
 
             if self._promptWanted():
                 if self.conf.assumeno or not self.output.userconfirm():
                     raise CliError(_("Operation aborted."))
 
-            if bootc:
-                bootc.unlock_and_prepare()
+            if bootc_system:
+                bootc_system.make_writable()
         else:
             logger.info(_('Nothing to do.'))
             return
