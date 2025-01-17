@@ -710,6 +710,10 @@ transactions and act according to this information (assuming the
     which specifies a transaction by a package which it manipulated. When no
     transaction is specified, list all known transactions.
 
+    Note that transient transactions (see :ref:`--transient
+    <transient_option-label>`) will be listed even though they do not make
+    persistent changes to files under ``/usr`` or to the RPM database.
+
     The "Action(s)" column lists each type of action taken in the transaction. The possible values are:
 
     * Install (I): a new package was installed on the system
