@@ -157,8 +157,14 @@ class Base(object):
         conf = dnf.conf.Conf()
         subst = conf.substitutions
         if 'releasever' not in subst:
-            subst['releasever'] = \
-                dnf.rpm.detect_releasever(conf.installroot)
+            releasever, major, minor = \
+                dnf.rpm.detect_releasevers(conf.installroot)
+            subst['releasever'] = releasever
+            if major is not None:
+                subst['releasever_major'] = major
+            if minor is not None:
+                subst['releasever_minor'] = minor
+
         return conf
 
     def _setup_modular_excludes(self):
