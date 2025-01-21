@@ -979,13 +979,20 @@ class Cli(object):
             from_root = "/"
         subst = conf.substitutions
         subst.update_from_etc(from_root, varsdir=conf._get_value('varsdir'))
+
         # cachedir, logs, releasever, and gpgkey are taken from or stored in installroot
+        major = None
+        minor = None
         if releasever is None and conf.releasever is None:
-            releasever = dnf.rpm.detect_releasever(conf.installroot)
+            releasever, major, minor = dnf.rpm.detect_releasevers(conf.installroot)
         elif releasever == '/':
-            releasever = dnf.rpm.detect_releasever(releasever)
+            releasever, major, minor = dnf.rpm.detect_releasevers(releasever)
         if releasever is not None:
             conf.releasever = releasever
+            if major is not None:
+                conf.releasever_major = major
+            if minor is not None:
+                conf.releasever_minor = minor
         if conf.releasever is None:
             logger.warning(_("Unable to detect release version (use '--releasever' to specify "
                              "release version)"))
