@@ -25,6 +25,8 @@ CONF_AUTOMATIC_FILENAME='/etc/dnf/automatic.conf'
 DISTROVERPKG=('system-release(releasever)', 'system-release',
               'distribution-release(releasever)', 'distribution-release',
               'redhat-release', 'suse-release')
+DISTROVER_MAJOR_PKG='system-release(releasever_major)'
+DISTROVER_MINOR_PKG='system-release(releasever_minor)'
 GROUP_PACKAGE_TYPES = ('mandatory', 'default', 'conditional') # :api
 INSTALLONLYPKGS=['kernel', 'kernel-PAE',
                  'installonlypkg(kernel)',
