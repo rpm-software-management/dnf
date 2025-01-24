@@ -859,7 +859,7 @@ class Cli(object):
                                           dnf.conf.PRIO_DEFAULT)
                 self.demands.cacheonly = True
             self.base.conf._configure_from_options(opts)
-            self._read_conf_file(opts.releasever)
+            self._read_conf_file(opts.releasever, opts.releasever_major, opts.releasever_minor)
             if 'arch' in opts:
                 self.base.conf.arch = opts.arch
             self.base.conf._adjust_conf_options()
@@ -968,7 +968,7 @@ class Cli(object):
                       )
                 )
 
-    def _read_conf_file(self, releasever=None):
+    def _read_conf_file(self, releasever=None, releasever_major=None, releasever_minor=None):
         timer = dnf.logging.Timer('config')
         conf = self.base.conf
 
@@ -996,18 +996,23 @@ class Cli(object):
         subst.update_from_etc(from_root, varsdir=conf._get_value('varsdir'))
 
         # cachedir, logs, releasever, and gpgkey are taken from or stored in installroot
-        major = None
-        minor = None
+
+        det_major = None
+        det_minor = None
         if releasever is None and conf.releasever is None:
-            releasever, major, minor = dnf.rpm.detect_releasevers(conf.installroot)
+            releasever, det_major, det_minor = dnf.rpm.detect_releasevers(conf.installroot)
         elif releasever == '/':
-            releasever, major, minor = dnf.rpm.detect_releasevers(releasever)
-        if releasever is not None:
-            conf.releasever = releasever
-            if major is not None:
-                conf.releasever_major = major
-            if minor is not None:
-                conf.releasever_minor = minor
+            releasever, det_major, det_minor = dnf.rpm.detect_releasevers(releasever)
+
+        def or_else(*args):
+            for arg in args:
+                if arg is not None:
+                    return arg
+            return None
+        conf.releasever = or_else(releasever, conf.releasever)
+        conf.releasever_major = or_else(releasever_major, det_major, conf.releasever_major)
+        conf.releasever_minor = or_else(releasever_minor, det_minor, conf.releasever_minor)
+
         if conf.releasever is None:
             logger.warning(_("Unable to detect release version (use '--releasever' to specify "
                              "release version)"))
