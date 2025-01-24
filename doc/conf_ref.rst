@@ -503,6 +503,8 @@ configuration file by your distribution to override the DNF defaults.
 
     The ``$releasever_major`` and ``$releasever_minor`` variables will be automatically derived from ``$releasever`` by splitting it on the first ``.``. For example, if ``$releasever`` is set to ``1.23``, then ``$releasever_major`` will be ``1`` and ``$releasever_minor`` will be ``23``.
 
+    ``$releasever_major`` and ``$releasever_minor`` can also be set by the distribution.
+
     See also :ref:`repo variables <repo-variables-label>`.
 
 .. _reposdir-label:
