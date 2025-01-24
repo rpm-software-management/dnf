@@ -202,6 +202,12 @@ class OptionParser(argparse.ArgumentParser):
         general_grp.add_argument("--releasever", default=None,
                                  help=_("override the value of $releasever"
                                         " in config and repo files"))
+        general_grp.add_argument("--releasever-major", default=None,
+                                 help=_("override the value of $releasever_major"
+                                        " in config and repo files"))
+        general_grp.add_argument("--releasever-minor", default=None,
+                                 help=_("override the value of $releasever_minor"
+                                        " in config and repo files"))
         general_grp.add_argument("--setopt", dest="setopts", default=[],
                                  action=self._SetoptsCallback,
                                  help=_("set arbitrary config and repo options"))
