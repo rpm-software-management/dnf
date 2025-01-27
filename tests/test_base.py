@@ -57,7 +57,7 @@ class BaseTest(tests.support.TestCase):
         self.assertIsNotNone(base)
         base.close()
 
-    @mock.patch('dnf.rpm.detect_releasever', lambda x: 'x')
+    @mock.patch('dnf.rpm.detect_releasevers', lambda x: ('x', None, None))
     @mock.patch('dnf.util.am_i_root', lambda: True)
     def test_default_config_root(self):
         base = dnf.Base()
@@ -67,7 +67,7 @@ class BaseTest(tests.support.TestCase):
         self.assertIsNotNone(reg.match(base.conf.cachedir))
         base.close()
 
-    @mock.patch('dnf.rpm.detect_releasever', lambda x: 'x')
+    @mock.patch('dnf.rpm.detect_releasevers', lambda x: ('x', None, None))
     @mock.patch('dnf.util.am_i_root', lambda: False)
     def test_default_config_user(self):
         base = dnf.Base()
