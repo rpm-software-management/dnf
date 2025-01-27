@@ -14,6 +14,10 @@ class DnfRpmApiTest(TestCase):
         # dnf.rpm.detect_releasever
         self.assertHasAttr(dnf.rpm, "detect_releasever")
 
+    def test_detect_releasevers(self):
+        # dnf.rpm.detect_releasevers
+        self.assertHasAttr(dnf.rpm, "detect_releasevers")
+
     def test_basearch(self):
         # dnf.rpm.basearch
         self.assertHasAttr(dnf.rpm, "basearch")
