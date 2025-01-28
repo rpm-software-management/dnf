@@ -177,7 +177,7 @@ def command_run(cmd, args):
 
 class Base(dnf.Base):
     def __init__(self, *args, **kwargs):
-        with mock.patch('dnf.rpm.detect_releasever', return_value=69):
+        with mock.patch('dnf.rpm.detect_releasevers', return_value=(69, None, None)):
             super(Base, self).__init__(*args, **kwargs)
 
 # mock objects

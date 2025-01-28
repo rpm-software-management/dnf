@@ -430,6 +430,36 @@ class MainConf(BaseConfig):
             return
         self.substitutions['releasever'] = str(val)
 
+        major, minor = libdnf.conf.ConfigParser.splitReleasever(str(val))
+        self.substitutions['releasever_major'] = major
+        self.substitutions['releasever_minor'] = minor
+
+    @property
+    def releasever_major(self):
+        # :api
+        return self.substitutions.get('releasever_major')
+
+    @releasever_major.setter
+    def releasever_major(self, val):
+        # :api
+        if val is None:
+            self.substitutions.pop('releasever_major', None)
+            return
+        self.substitutions['releasever_major'] = str(val)
+
+    @property
+    def releasever_minor(self):
+        # :api
+        return self.substitutions.get('releasever_minor')
+
+    @releasever_minor.setter
+    def releasever_minor(self, val):
+        # :api
+        if val is None:
+            self.substitutions.pop('releasever_minor', None)
+            return
+        self.substitutions['releasever_minor'] = str(val)
+
     @property
     def arch(self):
         # :api

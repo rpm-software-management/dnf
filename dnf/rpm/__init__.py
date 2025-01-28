@@ -26,12 +26,21 @@ import dnf.exceptions
 import rpm  # used by ansible (dnf.rpm.rpm.labelCompare in lib/ansible/modules/packaging/os/dnf.py)
 
 
-def detect_releasever(installroot):
+def detect_releasevers(installroot):
     # :api
-    """Calculate the release version for the system."""
+    """Calculate the release version for the system, including releasever_major
+    and releasever_minor if they are overriden by the system-release-major or
+    system-release-minor provides."""
 
     ts = transaction.initReadOnlyTransaction(root=installroot)
     ts.pushVSFlags(~(rpm._RPMVSF_NOSIGNATURES | rpm._RPMVSF_NODIGESTS))
+
+    distrover_major_pkg = dnf.const.DISTROVER_MAJOR_PKG
+    distrover_minor_pkg = dnf.const.DISTROVER_MINOR_PKG
+    if dnf.pycomp.PY3:
+        distrover_major_pkg = bytes(distrover_major_pkg, 'utf-8')
+        distrover_minor_pkg = bytes(distrover_minor_pkg, 'utf-8')
+
     for distroverpkg in dnf.const.DISTROVERPKG:
         if dnf.pycomp.PY3:
             distroverpkg = bytes(distroverpkg, 'utf-8')
@@ -47,6 +56,8 @@ def detect_releasever(installroot):
             msg = 'Error: rpmdb failed to list provides. Try: rpm --rebuilddb'
             raise dnf.exceptions.Error(msg)
         releasever = hdr['version']
+        releasever_major = None
+        releasever_minor = None
         try:
             try:
                 # header returns bytes -> look for bytes
@@ -61,13 +72,37 @@ def detect_releasever(installroot):
                 if hdr['name'] not in (distroverpkg, distroverpkg.decode("utf8")):
                     # override the package version
                     releasever = ver
+
+            for provide, flag, ver in zip(
+                    hdr[rpm.RPMTAG_PROVIDENAME],
+                    hdr[rpm.RPMTAG_PROVIDEFLAGS],
+                    hdr[rpm.RPMTAG_PROVIDEVERSION]):
+                if isinstance(provide, str):
+                    provide = bytes(provide, "utf-8")
+                if provide == distrover_major_pkg and flag == rpm.RPMSENSE_EQUAL and ver:
+                    releasever_major = ver
+                if provide == distrover_minor_pkg and flag == rpm.RPMSENSE_EQUAL and ver:
+                    releasever_minor = ver
+
         except (ValueError, KeyError, IndexError):
             pass
 
         if is_py3bytes(releasever):
             releasever = str(releasever, "utf-8")
-        return releasever
-    return None
+        if is_py3bytes(releasever_major):
+            releasever_major = str(releasever_major, "utf-8")
+        if is_py3bytes(releasever_minor):
+            releasever_minor = str(releasever_minor, "utf-8")
+        return releasever, releasever_major, releasever_minor
+    return (None, None, None)
+
+
+def detect_releasever(installroot):
+    # :api
+    """Calculate the release version for the system."""
+
+    releasever, _, _ = detect_releasevers(installroot)
+    return releasever
 
 
 def _header(path):

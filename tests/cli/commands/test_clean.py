@@ -31,7 +31,7 @@ from tests.support import mock
 '''
 def _run(cli, args):
     with mock.patch('sys.stdout', new_callable=StringIO), \
-            mock.patch('dnf.rpm.detect_releasever', return_value=69):
+            mock.patch('dnf.rpm.detect_releasevers', return_value=(69, None, None)):
         cli.configure(['clean', '--config', '/dev/null'] + args)
         cli.run()
 
