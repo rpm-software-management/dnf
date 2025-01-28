@@ -180,6 +180,17 @@ Requires:       %{name} = %{version}-%{release}
 %description automatic
 Systemd units that can periodically download package upgrades and apply them.
 
+%package bootc
+Summary:        %{pkg_summary} - additional bootc dependencies
+Requires:       python3-%{name} = %{version}-%{release}
+Requires:       ostree
+Requires:       ostree-libs
+Requires:       python3-gobject-base
+Requires:       util-linux-core
+
+%description bootc
+Additional dependencies needed to perform transactions on booted bootc (bootable containers) systems.
+
 
 %prep
 %autosetup
@@ -357,6 +368,9 @@ popd
 %{_unitdir}/%{name}-automatic-install.service
 %{_unitdir}/%{name}-automatic-install.timer
 %{python3_sitelib}/%{name}/automatic/
+
+%files bootc
+# bootc subpackage does not include any files
 
 %changelog
 * Fri Sep 09 2022 Jaroslav Rohel <jrohel@redhat.com> - 4.14.0-1
