@@ -317,6 +317,9 @@ class OptionParser(argparse.ArgumentParser):
         general_grp.add_argument("--downloadonly", dest="downloadonly",
                                  action="store_true", default=False,
                                  help=_("only download packages"))
+        general_grp.add_argument("--transient", dest="persistence",
+                                 action="store_const", const="transient", default=None,
+                                 help=_("Use a transient overlay which will reset on reboot"))
         general_grp.add_argument("--comment", dest="comment", default=None,
                                  help=_("add a comment to transaction"))
         # Updateinfo options...
