@@ -149,15 +149,18 @@ class ConfTest(tests.support.TestCase):
     def test_releasever_major_minor(self):
         conf = Conf()
         conf.releasever = '1.2'
+        self.assertEqual(conf.releasever, '1.2')
         self.assertEqual(conf.releasever_major, '1')
         self.assertEqual(conf.releasever_minor, '2')
 
         # override releasever_major
         conf.releasever_major = '3'
+        self.assertEqual(conf.releasever, '1.2')
         self.assertEqual(conf.releasever_major, '3')
         self.assertEqual(conf.releasever_minor, '2')
 
         # override releasever_minor
         conf.releasever_minor = '4'
+        self.assertEqual(conf.releasever, '1.2')
         self.assertEqual(conf.releasever_major, '3')
         self.assertEqual(conf.releasever_minor, '4')
