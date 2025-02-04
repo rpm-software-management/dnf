@@ -191,8 +191,10 @@ Systemd units that can periodically download package upgrades and apply them.
 
 %package bootc
 Summary:        %{pkg_summary} - additional bootc dependencies
+Requires:       ostree
 Requires:       ostree-libs
 Requires:       python3-gobject-base
+Requires:       util-linux-core
 
 %description bootc
 Additional dependencies needed to perform transactions on booted bootc (bootable containers) systems.
