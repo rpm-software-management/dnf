@@ -205,8 +205,6 @@ class BaseCli(dnf.Base):
             else:
                 self.output.reportDownloadSize(install_pkgs, install_only)
 
-        bootc_unlock_requested = False
-
         if trans or self._moduleContainer.isChanged() or \
                 (self._history and (self._history.group or self._history.env)):
             # confirm with user
