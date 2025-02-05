@@ -2,7 +2,7 @@
 %define __cmake_in_source_build 1
 
 # default dependencies
-%global hawkey_version 0.66.0
+%global hawkey_version 0.74.0
 %global libcomps_version 0.1.8
 %global libmodulemd_version 2.9.3
 %global rpm_version 4.14.0
@@ -19,6 +19,10 @@
 
 %if 0%{?rhel} == 7 && 0%{?centos}
     %global rpm_version 4.11.3-25.el7.centos.1
+%endif
+
+%if 0%{?rhel} == 9
+    %global hawkey_version 0.69.0-13
 %endif
 
 # override dependencies for fedora 26
