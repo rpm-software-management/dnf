@@ -457,16 +457,16 @@ class MainConf(BaseConfig):
     @property
     def releasever_minor(self):
         # :api
-        """
-        Override the releasever_minor variable, which is usually derived from
-        the releasever variable. This setter does not update the value of
-        $releasever.
-        """
         return self.substitutions.get('releasever_minor')
 
     @releasever_minor.setter
     def releasever_minor(self, val):
         # :api
+        """
+        Override the releasever_minor variable, which is usually derived from
+        the releasever variable. This setter does not update the value of
+        $releasever.
+        """
         if val is None:
             self.substitutions.pop('releasever_minor', None)
             return
