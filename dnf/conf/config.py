@@ -425,10 +425,52 @@ class MainConf(BaseConfig):
     @releasever.setter
     def releasever(self, val):
         # :api
+        """
+        Sets the releasever variable and sets releasever_major and
+        releasever_minor accordingly. releasever_major is set to the part of
+        $releasever before the first ".". releasever_minor is set to the part
+        after the first ".".
+        """
         if val is None:
             self.substitutions.pop('releasever', None)
             return
         self.substitutions['releasever'] = str(val)
+
+    @property
+    def releasever_major(self):
+        # :api
+        return self.substitutions.get('releasever_major')
+
+    @releasever_major.setter
+    def releasever_major(self, val):
+        # :api
+        """
+        Override the releasever_major variable, which is usually derived from
+        the releasever variable. This setter does not update the value of
+        $releasever.
+        """
+        if val is None:
+            self.substitutions.pop('releasever_major', None)
+            return
+        self.substitutions['releasever_major'] = str(val)
+
+    @property
+    def releasever_minor(self):
+        # :api
+        """
+        Override the releasever_minor variable, which is usually derived from
+        the releasever variable. This setter does not update the value of
+        $releasever.
+        """
+        return self.substitutions.get('releasever_minor')
+
+    @releasever_minor.setter
+    def releasever_minor(self, val):
+        # :api
+        if val is None:
+            self.substitutions.pop('releasever_minor', None)
+            return
+        self.substitutions['releasever_minor'] = str(val)
 
     @property
     def arch(self):

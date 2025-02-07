@@ -32,8 +32,12 @@ if __name__ == '__main__':
 
     with dnf.Base() as base:
         # Substitutions are needed for correct interpretation of repo files.
-        RELEASEVER = dnf.rpm.detect_releasever(base.conf.installroot)
+        RELEASEVER, MAJOR, MINOR = dnf.rpm.detect_releasever(base.conf.installroot)
         base.conf.substitutions['releasever'] = RELEASEVER
+        if MAJOR is not None:
+            base.conf.substitutions['releasever_major'] = MAJOR
+        if MINOR is not None:
+            base.conf.substitutions['releasever_minor'] = MINOR
         # Repositories are needed if we want to install anything.
         base.read_all_repos()
         # A sack is required by marking methods and dependency resolving.

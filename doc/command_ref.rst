@@ -334,6 +334,16 @@ Options
     Configure DNF as if the distribution release was ``<release>``. This can
     affect cache paths, values in configuration files and mirrorlist URLs.
 
+``--releasever_major=<major version>``
+    Override the releasever_major variable, which is usually automatically
+    detected or taken from the part of ``$releasever`` before the first ``.``.
+    This option does not affect the ``$releasever`` variable.
+
+``--releasever_minor=<minor version>``
+    Override the releasever_minor variable, which is usually automatically
+    detected or taken from the part of ``$releasever`` after the first ``.``.
+    This option does not affect the ``$releasever`` variable.
+
 .. _repofrompath_options-label:
 
 

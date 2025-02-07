@@ -56,16 +56,6 @@ class SubstitutionsFromEnvironmentTest(tests.support.TestCase):
         self.assertEqual('opera', conf.substitutions['GENRE'])
 
 
-class SubstitutionsReadOnlyTest(tests.support.TestCase):
-    def test_set_readonly(self):
-        conf = dnf.conf.Conf()
-        variable_name = "releasever_major"
-        self.assertTrue(Substitutions.is_read_only(variable_name))
-        with self.assertRaises(ReadOnlyVariableError) as cm:
-            conf.substitutions["releasever_major"] = "1"
-        self.assertEqual(cm.exception.variable_name, "releasever_major")
-
-
 class SubstitutionsReleaseverTest(tests.support.TestCase):
     def test_releasever_simple(self):
         conf = dnf.conf.Conf()
@@ -84,3 +74,12 @@ class SubstitutionsReleaseverTest(tests.support.TestCase):
         conf.substitutions["releasever"] = "1.23.45"
         self.assertEqual(conf.substitutions["releasever_major"], "1")
         self.assertEqual(conf.substitutions["releasever_minor"], "23.45")
+
+    def test_releasever_major_minor_overrides(self):
+        conf = dnf.conf.Conf()
+        conf.substitutions["releasever"] = "1.23"
+        conf.substitutions["releasever_major"] = "45"
+        conf.substitutions["releasever_minor"] = "67"
+        self.assertEqual(conf.substitutions["releasever"], "1.23")
+        self.assertEqual(conf.substitutions["releasever_major"], "45")
+        self.assertEqual(conf.substitutions["releasever_minor"], "67")
