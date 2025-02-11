@@ -126,7 +126,7 @@ class RepoQueryCommand(commands.Command):
         parser.add_argument('--show-duplicates', action='store_true',
                             help=_("Query all versions of packages (default)"))
         parser.add_argument('--arch', '--archlist', dest='arches', default=[],
-                            action=_CommaSplitCallback, metavar='[arch]',
+                            action=_CommaSplitCallback, metavar='ARCH',
                             help=_('show only results from this ARCH'))
         parser.add_argument('-f', '--file', metavar='FILE', nargs='+',
                             help=_('show only results that owns FILE'))
