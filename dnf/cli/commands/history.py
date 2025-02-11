@@ -116,7 +116,7 @@ class HistoryCommand(commands.Command):
             self.base.conf.install_weak_deps = False
 
             dnf.cli.commands._checkGPGKey(self.base, self.cli)
-        elif self.opts.transactions_action == 'store':
+        elif self.opts.transactions_action in ['store', 'list', 'info']:
             self._require_one_transaction_id = True
             if not self.opts.transactions:
                 raise dnf.cli.CliError(_('No transaction ID or package name given.'))
