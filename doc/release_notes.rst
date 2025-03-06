@@ -20,6 +20,36 @@
 ###################
 
 ====================
+4.23.0 Release Notes
+====================
+
+- spec: toggle dnf5_obsoletes_dnf for RHEL 11
+- automatic: Enhance errors reporting
+- automatic: Fix incorrect Error class instantiation
+- doc: `--disableexcludepkgs=all` doesn't affect just file configuration
+- Update ko.po
+- Update README.rst started 1
+- Tests: Avoid the multiprocessing forkserver method
+- cli: Print a plugin suggestion on installed but expired pgp key
+- spec: Provide dnf4 by python3-dnf
+- copr: Add Copr build files
+- Add support for --transient
+- bootc: Document `--transient` and `persistence`
+- bootc: Use ostree GObject API to get deployment status
+- bootc: "Re-locking": use ostree admin unlock --transient
+- spec: Add dnf-bootc subpackage
+- Require libdnf >= 0.74.0 with `persistence` option
+- Derive releasever_{major,minor} in conf, not substitutions
+- Override releasever_{major,minor} with provides
+- Add --releasever-major and --releasever-minor options
+- doc: Document detect_releasevers and update example
+- tests: Patch detect_releasevers, not detect_releasever
+- Document how --releasever, --releasever_{major,minor} affect each other
+- Move releasever_minor setter docstring to the correct function
+- Enable automatic PR reviews
+- Usage help: don't mark mandatory option parameters as optional
+
+====================
 4.22.0 Release Notes
 ====================
 
