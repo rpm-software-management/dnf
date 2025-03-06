@@ -160,8 +160,7 @@ class LoggingTransactionDisplay(TransactionDisplay):
         self.rpm_logger.log(dnf.logging.SUBDEBUG, msg)
 
     def scriptout(self, msgs):
-        if msgs:
-            self.rpm_logger.info(ucd(msgs))
+        self.rpm_logger.info(ucd(msgs))
 
 
 class RPMTransaction(object):
@@ -236,6 +235,8 @@ class RPMTransaction(object):
 
     def _scriptout(self):
         msgs = self._scriptOutput()
+        if not msgs:
+            return
         for display in self.displays:
             display.scriptout(msgs)
         self.base.history.log_scriptlet_output(msgs)

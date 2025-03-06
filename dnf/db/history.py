@@ -447,8 +447,6 @@ class SwdbInterface(object):
     def log_scriptlet_output(self, msg):
         if not hasattr(self, '_tid'):
             return
-        if not msg:
-            return
         for line in msg.splitlines():
             line = ucd(line)
             # logging directly to database fails if transaction runs in a background process
