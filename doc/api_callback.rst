@@ -96,7 +96,13 @@
     TRANS_POST         The post-trans phase started. In this case, all the other arguments are ``None``. 4
     ================== ================================================================================= ===========
 
-  \*\ This is order in which state of transaction which callback action can appear. Only PKG_SCRIPTLET
-  can appear anytime during transaction even before transaction starts.
+    \*\ This is order in which state of transaction which callback action can appear. Only PKG_SCRIPTLET
+    can appear anytime during transaction even before transaction starts.
 
-  `ti_done` is the number of processed bytes of the transaction item, `ti_total` is the total number of bytes of the transaction item, `ts_done` is the number of actions processed in the whole transaction and `ts_total` is the total number of actions in the whole transaction.
+    `ti_done` is the number of processed bytes of the transaction item, `ti_total` is the total number of bytes
+    of the transaction item, `ts_done` is the number of actions processed in the whole transaction and `ts_total`
+    is the total number of actions in the whole transaction.
+
+  .. method:: scriptout(msgs)
+
+    Report the bytes from the combined stdout/stderr of a scriptlet.
