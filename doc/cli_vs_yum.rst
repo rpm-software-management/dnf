@@ -314,6 +314,15 @@ Following sub-commands were removed:
 * langlist
 * langinfo
 
+======================================================================================
+``dnf history`` subcommands ``list`` and ``info`` return 0 when transactions not found
+======================================================================================
+DNF ``dnf history list`` and ``dnf history info`` return a zero exit status when they
+fail to find transactions for a specified package.
+
+This is different from corresponding YUM ``yum history package-list`` and
+``yum history list``, which both return a non-zero exit status when they fail to find
+ transactions for a specified package.
 
 ###############################################
  Changes in DNF plugins compared to YUM plugins
