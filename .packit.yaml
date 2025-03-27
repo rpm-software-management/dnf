@@ -3,6 +3,10 @@
 
 specfile_path: dnf.spec
 
+actions:
+  get-current-version:
+    - rpmspec --srpm --query --queryformat "%{version}" dnf.spec
+
 jobs:
   - job: copr_build
     trigger: pull_request
