@@ -15,6 +15,8 @@
  
 Dandified YUM 4 (DNF) is the 4th iteration of next upcoming major version of `YUM <http://yum.baseurl.org/>`_. It does package management using `RPM <http://rpm.org/>`_, `libsolv <https://github.com/openSUSE/libsolv>`_ and `hawkey <https://github.com/rpm-software-management/hawkey>`_ libraries. For metadata handling and package downloads it utilizes `librepo <https://github.com/tojaj/librepo>`_. To process and effectively handle the comps data it uses `libcomps <https://github.com/midnightercz/libcomps>`_.
 
+Join us on IRC at ``#dnf`` on `Libera.Chat <https://libera.chat>`_. Questions should be asked there, issues discussed. Remember: ``#dnf`` is not a support channel, and prior research is expected from the questioner.
+
 ============
  Installing
 ============
@@ -125,10 +127,8 @@ Please, do not create the pull requests with translation (.po) files improvement
 
 The DNF package distribution contains man pages, dnf(8) and dnf.conf(8). It is also possible to `read the DNF documentation <http://dnf.readthedocs.org>`_ online, the page includes API documentation. There's also a `wiki <https://github.com/rpm-software-management/dnf/wiki>`_ meant for contributors to DNF and related projects.
 
-====================
- Bug reporting etc.
-====================
+===============
+ Bug reporting
+===============
 
-Please report discovered bugs to the `Red Hat bugzilla <https://bugzilla.redhat.com/>`_ following this `guide <https://github.com/rpm-software-management/dnf/wiki/Bug-Reporting>`_. If you planned to propose the patch in the report, consider `Contribution`_ instead.
-
-Libera.Chat's IRC channel ``#yum`` is meant for discussions related to both YUM and DNF. Questions should be asked there, issues discussed. Remember: ``#yum`` is not a support channel, and prior research is expected from the questioner.
+Please report discovered bugs to `GitHub Issues <https://github.com/rpm-software-management/dnf/issues>`_ or to the `Red Hat bugzilla <https://bugzilla.redhat.com/>`_. If you plan to propose the patch in the report, consider `Contribution`_ instead.
