@@ -997,6 +997,8 @@ class Base(object):
 
             logger.info(_('Transaction check succeeded.'))
 
+            self._plugins.run_pre_transaction_test()
+
             timer = dnf.logging.Timer('transaction test')
             logger.info(_('Running transaction test'))
 
