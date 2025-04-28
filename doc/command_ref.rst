@@ -164,7 +164,7 @@ Options
 
 .. _disableexcludes-label:
 
-``--disableexcludes=[all|main|<repoid>], --disableexcludepkgs=[all|main|<repoid>]``
+``--disableexcludes={all|main|<repoid>}, --disableexcludepkgs={all|main|<repoid>}``
     Disable ``excludepkgs`` and ``includepkgs`` configuration options. Takes one of the following three options:
 
     * ``all``, disables all ``excludepkgs`` and ``includepkgs`` configurations
