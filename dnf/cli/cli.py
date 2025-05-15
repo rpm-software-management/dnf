@@ -244,10 +244,13 @@ class BaseCli(dnf.Base):
                         logger.info(_("A transient overlay will be created on /usr that will be discarded on reboot. "
                                       "Keep in mind that changes to /etc and /var will still persist, and packages "
                                       "commonly modify these directories."))
+                self._persistence = libdnf.transaction.TransactionPersistence_TRANSIENT
             else:
                 # Not a bootc transaction.
                 if self.conf.persistence == "transient":
                     raise CliError(_("Transient transactions are only supported on bootc systems."))
+
+                self._persistence = libdnf.transaction.TransactionPersistence_PERSIST
 
             if self._promptWanted():
                 if self.conf.assumeno or not self.output.userconfirm():

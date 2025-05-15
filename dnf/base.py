@@ -118,6 +118,7 @@ class Base(object):
         self._update_security_options = {}
         self._allow_erasing = False
         self._repo_set_imported_gpg_keys = set()
+        self._persistence = libdnf.transaction.TransactionPersistence_UNKNOWN
         self.output = None
 
     def __enter__(self):
@@ -964,7 +965,7 @@ class Base(object):
                 else:
                     rpmdb_version = old.end_rpmdb_version
 
-                self.history.beg(rpmdb_version, [], [], cmdline)
+                self.history.beg(rpmdb_version, [], [], cmdline=cmdline, persistence=self._persistence)
                 self.history.end(rpmdb_version)
             self._plugins.run_pre_transaction()
             self._plugins.run_transaction()
@@ -1115,7 +1116,8 @@ class Base(object):
                 cmdline = ' '.join(self.cmds)
 
             comment = self.conf.comment if self.conf.comment else ""
-            tid = self.history.beg(rpmdbv, using_pkgs, [], cmdline, comment)
+            tid = self.history.beg(rpmdbv, using_pkgs, [], cmdline=cmdline,
+                                   comment=comment, persistence=self._persistence)
 
         if self.conf.reset_nice:
             onice = os.nice(0)
