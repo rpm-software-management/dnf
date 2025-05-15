@@ -222,6 +222,10 @@ class TransactionWrapper(object):
     def comment(self):
         return self._trans.getComment()
 
+    @property
+    def persistence(self):
+        return self._trans.getPersistence()
+
     def tids(self):
         return [self._trans.getId()]
 
@@ -418,7 +422,8 @@ class SwdbInterface(object):
 #        return result
 
     # TODO: rename to begin_transaction?
-    def beg(self, rpmdb_version, using_pkgs, tsis, cmdline=None, comment=""):
+    def beg(self, rpmdb_version, using_pkgs, tsis, cmdline=None, comment="",
+            persistence=libdnf.transaction.TransactionPersistence_UNKNOWN):
         try:
             self.swdb.initTransaction()
         except:
@@ -431,6 +436,7 @@ class SwdbInterface(object):
             int(misc.getloginuid()),
             comment)
         self.swdb.setReleasever(self.releasever)
+        self.swdb.setPersistence(persistence)
         self._tid = tid
 
         return tid
