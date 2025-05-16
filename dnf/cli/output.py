@@ -1777,6 +1777,14 @@ Transaction Summary
             else:
                 print(_("Command Line   :"), old.cmdline)
 
+        if old.persistence == libdnf.transaction.TransactionPersistence_PERSIST:
+            persistence_str = "Persist"
+        elif old.persistence == libdnf.transaction.TransactionPersistence_TRANSIENT:
+            persistence_str = "Transient"
+        else:
+            persistence_str = "Unknown"
+        print(_("Persistence    :"), persistence_str)
+
         if old.comment is not None:
             if isinstance(old.comment, (list, tuple)):
                 for comment in old.comment:
