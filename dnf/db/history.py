@@ -270,6 +270,10 @@ class MergedTransactionWrapper(TransactionWrapper):
         return self._trans.listCmdlines()
 
     @property
+    def persistence(self):
+        return self._trans.listPersistences()
+
+    @property
     def releasever(self):
         return self._trans.listReleasevers()
 
