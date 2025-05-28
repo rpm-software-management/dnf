@@ -29,6 +29,7 @@ try:
     from collections.abc import Sequence
 except ImportError:
     from collections import Sequence
+from collections import defaultdict
 import datetime
 import logging
 import operator
@@ -244,6 +245,22 @@ class BaseCli(dnf.Base):
                         logger.info(_("A transient overlay will be created on /usr that will be discarded on reboot. "
                                       "Keep in mind that changes to /etc and /var will still persist, and packages "
                                       "commonly modify these directories."))
+
+                # Check whether the transaction modifies unsafe paths
+                trans_unsafe_paths = defaultdict(list)
+                for pkg in trans:
+                    for pkg_file_path in sorted(pkg.files):
+                        for unsafe_path in self.conf.bootc_unsafe_paths:
+                            if pkg_file_path.startswith("%s/" % unsafe_path) or pkg_file_path == unsafe_path:
+                                trans_unsafe_paths[pkg.nevra].append(pkg_file_path)
+                if trans_unsafe_paths:
+                    logger.info(_('This operation would modify paths that may be unsafe to modify on bootc systems:'))
+                    for nevra, unsafe_paths in trans_unsafe_paths.items():
+                        logger.info(nevra)
+                        for unsafe_path in unsafe_paths:
+                            logger.info("\t%s" % unsafe_path)
+                    raise CliError(_("Operation aborted."))
+
             else:
                 # Not a bootc transaction.
                 if self.conf.persistence == "transient":
