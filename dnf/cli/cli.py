@@ -29,6 +29,7 @@ try:
     from collections.abc import Sequence
 except ImportError:
     from collections import Sequence
+from collections import defaultdict
 import datetime
 import logging
 import operator
@@ -245,6 +246,24 @@ class BaseCli(dnf.Base):
                                       "Keep in mind that changes to /etc and /var will still persist, and packages "
                                       "commonly modify these directories."))
                 self._persistence = libdnf.transaction.TransactionPersistence_TRANSIENT
+
+                # Check whether the transaction modifies usr_drift_protected_paths
+                transaction_protected_paths = defaultdict(list)
+                for pkg in trans:
+                    for pkg_file_path in sorted(pkg.files):
+                        for protected_path in self.conf.usr_drift_protected_paths:
+                            if pkg_file_path.startswith("%s/" % protected_path) or pkg_file_path == protected_path:
+                                transaction_protected_paths[pkg.nevra].append(pkg_file_path)
+                if transaction_protected_paths:
+                    logger.info(_('This operation would modify the following paths, possibly introducing '
+                                  'inconsistencies when the transient overlay on /usr is discarded. See the '
+                                  'usr_drift_protected_paths configuration option for more information.'))
+                    for nevra, protected_paths in transaction_protected_paths.items():
+                        logger.info(nevra)
+                        for protected_path in protected_paths:
+                            logger.info("  %s" % protected_path)
+                    raise CliError(_("Operation aborted."))
+
             else:
                 # Not a bootc transaction.
                 if self.conf.persistence == "transient":
