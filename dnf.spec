@@ -1,6 +1,3 @@
-# Always build out-of-source
-%define __cmake_in_source_build 1
-
 # default dependencies
 %global hawkey_version 0.75.0
 %global libcomps_version 0.1.8
@@ -205,21 +202,13 @@ Additional dependencies needed to perform transactions on booted bootc (bootable
 %prep
 %autosetup
 
-mkdir build-py3
-
 %build
-
-pushd build-py3
-%cmake .. -DPYTHON_DESIRED:FILEPATH=%{__python3} -DDNF_VERSION=%{version}
-%make_build
-make doc-man
-popd
+%cmake -DPYTHON_DESIRED:FILEPATH=%{__python3} -DDNF_VERSION=%{version}
+%cmake_build
+%cmake_build -t doc-man
 
 %install
-
-pushd build-py3
-%make_install
-popd
+%cmake_install
 
 %find_lang %{name}
 mkdir -p %{buildroot}%{confdir}/vars
@@ -293,10 +282,7 @@ rm %{buildroot}%{_unitdir}/%{name}-makecache.timer
 %endif
 
 %check
-
-pushd build-py3
-ctest -VV
-popd
+%ctest -VV
 
 
 %if %{without dnf5_obsoletes_dnf}
