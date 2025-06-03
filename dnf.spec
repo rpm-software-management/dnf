@@ -282,7 +282,13 @@ rm %{buildroot}%{_unitdir}/%{name}-makecache.timer
 %endif
 
 %check
+%if 0%{?rhel} && 0%{?rhel} < 10
+pushd %{__cmake_builddir}
+ctest -VV
+popd
+%else
 %ctest -VV
+%endif
 
 
 %if %{without dnf5_obsoletes_dnf}
