@@ -301,6 +301,7 @@ popd
 %dir %{confdir}/modules.defaults.d
 %dir %{pluginconfpath}
 %dir %{confdir}/protected.d
+%dir %{confdir}/usr-drift-protected-paths.d
 %dir %{confdir}/vars
 %dir %{confdir}/aliases.d
 %exclude %{confdir}/aliases.d/zypper.conf
