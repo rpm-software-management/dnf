@@ -332,6 +332,7 @@ popd
 %dir %{pluginconfpath}
 %if %{without dnf5_obsoletes_dnf}
 %dir %{confdir}/protected.d
+%dir %{confdir}/usr-drift-protected-paths.d
 %dir %{confdir}/vars
 %endif
 %dir %{confdir}/aliases.d
