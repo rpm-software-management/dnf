@@ -262,7 +262,7 @@ class BaseCli(dnf.Base):
                         logger.info(nevra)
                         for protected_path in protected_paths:
                             logger.info("  %s" % protected_path)
-                    raise CliError(_("Operation aborted."))
+                    raise CliError(_("Operation aborted. Pass --setopt=usr_drift_protected_paths= to disable this check and proceed anyway."))
 
             else:
                 # Not a bootc transaction.
