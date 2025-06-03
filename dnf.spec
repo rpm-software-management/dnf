@@ -11,15 +11,6 @@
 
 %bcond dnf5_obsoletes_dnf %[0%{?fedora} > 40 || 0%{?rhel} > 10]
 
-# override dependencies for rhel 7
-%if 0%{?rhel} == 7
-    %global rpm_version 4.11.3-32
-%endif
-
-%if 0%{?rhel} == 7 && 0%{?centos}
-    %global rpm_version 4.11.3-25.el7.centos.1
-%endif
-
 # override dependencies for fedora 26
 %if 0%{?fedora} == 26
     %global rpm_version 4.13.0.1-7
@@ -42,9 +33,6 @@
         # Avoid name conflict with yum < 4
         %global yum_subpackage_name %{name}-yum
     %endif
-%endif
-%if 0%{?rhel} && 0%{?rhel} <= 7
-    %global yum_subpackage_name nextgen-yum4
 %endif
 
 # paths
@@ -82,10 +70,7 @@ BuildRequires:  bash-completion
 Requires:       coreutils
 BuildRequires:  %{_bindir}/sphinx-build-3
 Requires:       python3-%{name} = %{version}-%{release}
-%if 0%{?rhel} && 0%{?rhel} <= 7
-Requires:       python-dbus
-Requires:       %{_bindir}/sqlite3
-%elif 0%{?fedora}
+%if 0%{?fedora}
 Recommends:     (%{_bindir}/sqlite3 if (bash-completion and python3-dnf-plugins-core))
 %else
 Recommends:     (python3-dbus if NetworkManager)
@@ -145,11 +130,7 @@ Requires:       python3-libcomps >= %{libcomps_version}
 Requires:       python3-libdnf
 BuildRequires:  python3-rpm >= %{rpm_version}
 Requires:       python3-rpm >= %{rpm_version}
-%if 0%{?rhel} && 0%{?rhel} <= 7
-Requires:       rpm-plugin-systemd-inhibit
-%else
 Recommends:     (rpm-plugin-systemd-inhibit if systemd)
-%endif
 Provides:       dnf4 = %{version}-%{release}
 Provides:       dnf-command(alias)
 Provides:       dnf-command(autoremove)
@@ -313,11 +294,7 @@ fi
 %if %{without dnf5_obsoletes_dnf}
 %files -f %{name}.lang
 %{_bindir}/%{name}
-%if 0%{?rhel} && 0%{?rhel} <= 7
-%{_sysconfdir}/bash_completion.d/%{name}
-%else
 %{_datadir}/bash-completion/completions/%{name}
-%endif
 %{_mandir}/man8/%{name}.8*
 %{_mandir}/man8/yum2dnf.8*
 %{_mandir}/man7/dnf.modularity.7*
