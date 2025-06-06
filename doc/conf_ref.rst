@@ -549,6 +549,15 @@ configuration file by your distribution to override the DNF defaults.
 
     Set this to False to disable the automatic running of ``group upgrade`` when running the ``upgrade`` command. Default is ``True`` (perform the operation).
 
+.. _usr_drift_protected_paths-label:
+
+``usr_drift_protected_paths``
+    :ref:`list <list-label>`
+
+    List of paths that are likely to cause problems when their contents drift with respect to ``/usr``, e.g. ``/etc/pam.d/*``. If a transient transaction would modify these paths, DNF aborts the operation and prints an error. Supports globs. Defaults to ``glob:/etc/dnf/usr-drift-protected-paths.d/*.conf``. So a list of paths can be protected by creating a ``.conf`` file in ``/etc/dnf/usr-drift-protected-paths.d/`` containing one path (or glob pattern) per line.
+
+    When using ``persistence=transient`` on bootc systems, a transient overlay is created on ``/usr``, and any changes DNF makes to ``/usr`` will be discarded on reboot. However, other paths such as ``/etc`` and ``/var`` are (often) not backed by a transient overlay, so changes to them will persist across reboots. Usually, this "filesystem drift" is fine, but it can cause problems in certain situations. For example, a configuration file in ``/etc`` that's shared by multiple packages might reference a ``.so`` file under ``/usr/lib64`` that no longer exists.
+
 .. _varsdir_options-label:
 
 ``varsdir``
