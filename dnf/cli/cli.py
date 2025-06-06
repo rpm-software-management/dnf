@@ -31,6 +31,7 @@ except ImportError:
     from collections import Sequence
 from collections import defaultdict
 import datetime
+from fnmatch import fnmatch
 import logging
 import operator
 import os
@@ -251,8 +252,8 @@ class BaseCli(dnf.Base):
                 transaction_protected_paths = defaultdict(list)
                 for pkg in trans:
                     for pkg_file_path in sorted(pkg.files):
-                        for protected_path in self.conf.usr_drift_protected_paths:
-                            if pkg_file_path.startswith("%s/" % protected_path) or pkg_file_path == protected_path:
+                        for protected_pattern in self.conf.usr_drift_protected_paths:
+                            if fnmatch(pkg_file_path, protected_pattern):
                                 transaction_protected_paths[pkg.nevra].append(pkg_file_path)
                 if transaction_protected_paths:
                     logger.info(_('This operation would modify the following paths, possibly introducing '
