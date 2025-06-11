@@ -128,7 +128,11 @@ class ProcessLock(object):
         self._lock_thread()
         prev_pid = -1
         my_pid = os.getpid()
-        pid = self._try_lock(my_pid)
+        try:
+            pid = self._try_lock(my_pid)
+        except Exception:
+            self._unlock_thread()
+            raise
         while pid != my_pid:
             if pid != -1:
                 if not self.blocking:
@@ -140,7 +144,11 @@ class ProcessLock(object):
                     logger.info(msg)
                     prev_pid = pid
             time.sleep(1)
-            pid = self._try_lock(my_pid)
+            try:
+                pid = self._try_lock(my_pid)
+            except Exception:
+                self._unlock_thread()
+                raise
 
     def __exit__(self, *exc_args):
         if self.count == 1:
