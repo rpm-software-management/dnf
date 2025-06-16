@@ -191,7 +191,7 @@ def resolving(cli, base):
     except IOError as e:
         return ex_IOError(e)
     else:
-        logger.info(_('Complete!'))
+        logger.info(_('Complete! :)'))
     return 0
 
 
