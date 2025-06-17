@@ -417,6 +417,12 @@ class MainConf(BaseConfig):
         if skip_broken_val:
             self._set_value('strict', not skip_broken_val, self._get_priority('skip_broken'))
 
+        usr_drift_protected_paths = self._get_value('usr_drift_protected_paths')
+        if usr_drift_protected_paths:
+            optional_metadata_types = set(self._get_value('optional_metadata_types'))
+            optional_metadata_types.add('filelists')
+            self._set_value('optional_metadata_types', list(optional_metadata_types))
+
     @property
     def releasever(self):
         # :api
