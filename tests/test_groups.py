@@ -22,6 +22,7 @@ from __future__ import unicode_literals
 
 import operator
 
+import libcomps
 import libdnf.transaction
 
 import dnf.comps
@@ -200,10 +201,12 @@ class PresetPersistorTest(tests.support.ResultTestCase):
 class ProblemGroupTest(tests.support.ResultTestCase):
     """Test some cases involving problems in groups: packages that
     don't exist, and packages that exist but cannot be installed. The
-    "broken" group lists three packages. "meaning-of-life", explicitly
-    'default', does not exist. "lotus", implicitly 'mandatory' (no
-    explicit type), exists and is installable. "brokendeps",
-    explicitly 'optional', exists but has broken dependencies. See
+    "broken" group lists four packages. "meaning-of-life", explicitly
+    'mandatory', does not exist. "lotus", explicitly 'mandatory' (no
+    explicit type), exists and is installable. "librita", explicitly
+    'default', exists, but requires non-existent "no-such-package".
+    "brokendeps", explicitly 'optional', exists but has broken
+    dependencies. See
     https://bugzilla.redhat.com/show_bug.cgi?id=1292892,
     https://bugzilla.redhat.com/show_bug.cgi?id=1337731,
     https://bugzilla.redhat.com/show_bug.cgi?id=1427365, and
@@ -218,8 +221,9 @@ class ProblemGroupTest(tests.support.ResultTestCase):
     def test_group_install_broken_mandatory(self):
         """Here we will test installing the group with only mandatory
         packages. We expect this to succeed, leaving out the
-        non-existent 'meaning-of-life': it should also log a warning,
-        but we don't test that.
+        non-existent 'meaning-of-life', and populating the 'missing
+        dict' with information on the missing package. It should also
+        log a warning, but we don't test that.
         """
         comps_group = self.base.comps.group_by_pattern('Broken Group')
         swdb_group = self.history.group.get(comps_group.id)
@@ -227,7 +231,8 @@ class ProblemGroupTest(tests.support.ResultTestCase):
 
         cnt = self.base.group_install(comps_group.id, ('mandatory',))
         self._swdb_commit()
-        self.base.resolve()
+        missing_dict = {}
+        self.base.resolve(missing_dict=missing_dict)
         # this counts packages *listed* in the group, so 2
         self.assertEqual(cnt, 2)
 
@@ -235,6 +240,14 @@ class ProblemGroupTest(tests.support.ResultTestCase):
         # the above should work, but only 'lotus' actually installed
         self.assertLength(inst, 1)
         self.assertEmpty(removed)
+        # the dict should record that 'meaning-of-life' was missing
+        expected_dict = {
+            libcomps.PACKAGE_TYPE_OPTIONAL: [],
+            libcomps.PACKAGE_TYPE_DEFAULT: [],
+            libcomps.PACKAGE_TYPE_MANDATORY: ['meaning-of-life'],
+            libcomps.PACKAGE_TYPE_CONDITIONAL: []
+        }
+        self.assertEqual(missing_dict, expected_dict)
 
     def test_group_install_broken_default(self):
         """Here we will test installing the group with only mandatory
@@ -242,7 +255,9 @@ class ProblemGroupTest(tests.support.ResultTestCase):
         factor is an entry pulling in librita if no-such-package is
         also included or installed. We expect this not to actually
         pull in librita (as no-such-package obviously *isn't* there),
-        but also not to cause a fatal error.
+        but also not to cause a fatal error. We also expect the
+        missing dict to record 'meaning-of-life', but not 'librita',
+        as missing.
         """
         comps_group = self.base.comps.group_by_pattern('Broken Group')
         swdb_group = self.history.group.get(comps_group.id)
@@ -250,7 +265,8 @@ class ProblemGroupTest(tests.support.ResultTestCase):
 
         cnt = self.base.group_install(comps_group.id, ('mandatory', 'default'))
         self._swdb_commit()
-        self.base.resolve()
+        missing_dict = {}
+        self.base.resolve(missing_dict=missing_dict)
         # this counts packages *listed* in the group, so 3
         self.assertEqual(cnt, 3)
 
@@ -258,6 +274,15 @@ class ProblemGroupTest(tests.support.ResultTestCase):
         # the above should work, but only 'lotus' actually installed
         self.assertLength(inst, 1)
         self.assertEmpty(removed)
+        # the dict should record that 'meaning-of-life' was missing,
+        # but *not* librita
+        expected_dict = {
+            libcomps.PACKAGE_TYPE_OPTIONAL: [],
+            libcomps.PACKAGE_TYPE_DEFAULT: [],
+            libcomps.PACKAGE_TYPE_MANDATORY: ['meaning-of-life'],
+            libcomps.PACKAGE_TYPE_CONDITIONAL: []
+        }
+        self.assertEqual(missing_dict, expected_dict)
 
     def test_group_install_broken_optional(self):
         """Here we test installing the group with optional packages

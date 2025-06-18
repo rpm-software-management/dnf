@@ -452,6 +452,7 @@ class CompsTransPkg(object):
             self.name = pkg_or_name
             self.optional = True
             self.requires = None
+            self.type = libcomps.PACKAGE_TYPE_OPTIONAL
         elif isinstance(pkg_or_name, libdnf.transaction.CompsGroupPackage):
             # from swdb package
             # TODO:
@@ -462,12 +463,14 @@ class CompsTransPkg(object):
             # TODO:
             self.requires = None
             # self.requires = pkg_or_name.requires
+            self.type = pkg_or_name.getPackageType()
         else:
             # from comps package
             self.basearchonly = pkg_or_name.basearchonly
             self.name = pkg_or_name.name
             self.optional = pkg_or_name.type & libcomps.PACKAGE_TYPE_OPTIONAL
             self.requires = pkg_or_name.requires
+            self.type = pkg_or_name.type
 
     def __eq__(self, other):
         return (self.name == other.name and
