@@ -23,6 +23,12 @@ jobs:
     fmf_url: https://github.com/evan-goode/ci-dnf-stack.git
     fmf_ref: evan-goode/bootc
     tmt_plan: "^/plans/integration/bootc-behave-dnf$"
+    tf_extra_params:
+      environments:
+        - artifacts:
+            - type: repository-file
+              # We use the rawhide repo file for all fedora releases, the url doesn't change and it is not rawhide specific (it contains "fedora-$releasever-$basearch")
+              id: https://copr.fedorainfracloud.org/coprs/rpmsoftwaremanagement/dnf-nightly/repo/fedora-rawhide/rpmsoftwaremanagement-dnf-nightly-fedora-rawhide.repo
   - job: tests
     trigger: pull_request
     identifier: "dnf-tests"
