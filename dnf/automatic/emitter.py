@@ -22,6 +22,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 from dnf.i18n import _
+import libdnf
 import logging
 import dnf.pycomp
 import smtplib
@@ -126,6 +127,20 @@ class EmailEmitter(Emitter):
             logger.error(msg)
 
 
+class ShellQuotedLists(dict):
+    """
+    Dictionary which returns values quoted with dnf.pycomp.shlex_quote().
+    If a looked-up value is a list or libdnf.module.VectorString, it will
+    quote the list members and then concatenate them with a space and return
+    the resulting string.
+    """
+    def __getitem__(self, key):
+        value = super(ShellQuotedLists, self).__getitem__(key)
+        if isinstance(value, (list, libdnf.module.VectorString)):
+            return ' '.join(dnf.pycomp.shlex_quote(item) for item in value)
+        else:
+            return dnf.pycomp.shlex_quote(value)
+
 class CommandEmitterMixIn(object):
     """
     Executes a desired command, and pushes data into its stdin.
@@ -141,9 +156,7 @@ class CommandEmitterMixIn(object):
         msg = self._prepare_msg()
         # all strings passed to shell should be quoted to avoid accidental code
         # execution
-        quoted_msg = dict((key, dnf.pycomp.shlex_quote(val))
-                          for key, val in msg.items())
-        command = command_fmt.format(**quoted_msg)
+        command = command_fmt.format_map(ShellQuotedLists(msg))
         stdin_feed = stdin_fmt.format(**msg).encode('utf-8')
 
         # Execute the command
@@ -171,7 +184,7 @@ class CommandEmailEmitter(CommandEmitterMixIn, EmailEmitter):
         return {'subject': subject,
                 'body': body,
                 'email_from': self._conf.email_from,
-                'email_to': ' '.join(self._conf.email_to)}
+                'email_to': self._conf.email_to}
 
 
 class StdIoEmitter(Emitter):
