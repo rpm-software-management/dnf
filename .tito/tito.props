@@ -3,3 +3,4 @@ builder = tito.builder.Builder
 tagger = tito.tagger.VersionTagger
 changelog_do_not_remove_cherrypick = 0
 changelog_format = %s (%ae)
+test_version_suffix = .test
