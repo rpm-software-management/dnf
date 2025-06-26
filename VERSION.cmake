@@ -1,8 +1,9 @@
 set (DEFAULT_DNF_VERSION "4.14.0")
 
 if(DEFINED DNF_VERSION)
-  if(NOT ${DEFAULT_DNF_VERSION} STREQUAL ${DNF_VERSION})
-    message(FATAL_ERROR "Variable DEFAULT_DNF_VERSION=" ${DEFAULT_DNF_VERSION} " in VERSION.cmake differs from Version=" ${DNF_VERSION} " in spec")
+  string(REGEX REPLACE "\\.test$" "" DNF_VERSION_BASE "${DNF_VERSION}")
+  if(NOT ${DEFAULT_DNF_VERSION} STREQUAL ${DNF_VERSION_BASE})
+    message(FATAL_ERROR "Variable DEFAULT_DNF_VERSION=" ${DEFAULT_DNF_VERSION} " in VERSION.cmake differs from Version=" ${DNF_VERSION_BASE} " in spec")
   endif()
 else()
   set (DNF_VERSION ${DEFAULT_DNF_VERSION})
