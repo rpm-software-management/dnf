@@ -183,6 +183,10 @@ Provides:       dnf-command(search)
 Provides:       dnf-command(updateinfo)
 Provides:       dnf-command(upgrade)
 Provides:       dnf-command(upgrade-to)
+# RHEL-9-only multisig DNF plugin is function-wise superseded by DNF,
+# RHEL-102336
+Provides:       python3-dnf-plugin-multisig = %{version}-%{release}
+Obsoletes:      python3-dnf-plugin-multisig < 4.4.3
 
 %description -n python3-%{name}
 Python 3 interface to DNF.
