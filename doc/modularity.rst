@@ -21,9 +21,10 @@
  Modularity
 ############
 
+.. warning:: Modularity is deprecated, and functionality will be removed in a future release of DNF5.
+
 Modularity is new way of building, organizing and delivering packages.
 For more details see: https://docs.pagure.org/modularity/
-
 
 =============
  Definitions
