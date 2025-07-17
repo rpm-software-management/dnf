@@ -349,7 +349,7 @@ class ModuleCommand(commands.Command):
     SUBCMDS_NOT_REQUIRED_ARG = {ListSubCommand}
 
     aliases = ("module",)
-    summary = _("Interact with Modules.")
+    summary = _("Interact with Modules. WARNING: modularity is deprecated, and functionality will be removed in a future release of DNF5.")
 
     def __init__(self, cli):
         super(ModuleCommand, self).__init__(cli)
@@ -389,6 +389,7 @@ class ModuleCommand(commands.Command):
                             help=_("Module specification"))
 
     def configure(self):
+        logger.warning(_("WARNING: modularity is deprecated, and functionality will be removed in a future release of DNF5."))
         try:
             self.subcmd = self._subcmd_name2obj[self.opts.subcmd[0]]
         except (CliError, KeyError):

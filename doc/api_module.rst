@@ -19,6 +19,8 @@
  Modularity Interface
 =====================
 
+.. warning:: Modularity is deprecated, and functionality will be removed in a future release of DNF5.
+
 .. module:: dnf.module.module_base
 
 

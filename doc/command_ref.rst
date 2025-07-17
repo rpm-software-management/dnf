@@ -1025,6 +1025,8 @@ Module Command
 
 | Command: ``module``
 
+.. warning:: Modularity is deprecated, and functionality will be removed in a future release of DNF5.
+
 Modularity overview is available at :ref:`man page dnf.modularity(7) <modularity-label>`.
 Module subcommands take :ref:`\<module-spec>\ <specifying_modules-label>`... arguments that specify modules or profiles.
 
