@@ -21,6 +21,7 @@ from __future__ import unicode_literals
 
 import argparse
 
+import dnf
 import dnf.conf
 import dnf.conf.read
 import dnf.exceptions
@@ -164,3 +165,14 @@ class ConfTest(tests.support.TestCase):
         self.assertEqual(conf.releasever, '1.2')
         self.assertEqual(conf.releasever_major, '3')
         self.assertEqual(conf.releasever_minor, '4')
+
+    def test__read_conf_file_preserves_autodetected_releasever_major_minor(self):
+        base = dnf.Base()
+        base.conf.releasever = '1'  # Do not set to '1.2', autodetection pretends '1'
+        base.conf.releasever_major = '1'
+        base.conf.releasever_minor = '2'
+        cli = dnf.cli.Cli(base)
+        cli._read_conf_file()
+        self.assertEqual(base.conf.releasever, '1')
+        self.assertEqual(base.conf.releasever_major, '1')
+        self.assertEqual(base.conf.releasever_minor, '2')
