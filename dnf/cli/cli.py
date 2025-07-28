@@ -1018,9 +1018,13 @@ class Cli(object):
                 if arg is not None:
                     return arg
             return None
+        # Setting conf.releasever rewrites conf.releasever_major and
+        # conf.releasever_minor. Copy them for later use.
+        old_releasever_major = conf.releasever_major
+        old_releasever_minor = conf.releasever_minor
         conf.releasever = or_else(releasever, conf.releasever)
-        conf.releasever_major = or_else(releasever_major, det_major, conf.releasever_major)
-        conf.releasever_minor = or_else(releasever_minor, det_minor, conf.releasever_minor)
+        conf.releasever_major = or_else(releasever_major, det_major, old_releasever_major)
+        conf.releasever_minor = or_else(releasever_minor, det_minor, old_releasever_minor)
 
         if conf.releasever is None:
             logger.warning(_("Unable to detect release version (use '--releasever' to specify "
