@@ -20,6 +20,60 @@
 ###################
 
 ====================
+4.24.0 Release Notes
+====================
+
+Enhancements:
+
+- For all transactions on a Bootc system, store whether the transaction was
+  persistent or transient in the history database. This flags is visible in
+  "dnf history info" output.
+- Before performing a transient transaction on a Bootc system DNF checks for
+  changed files that could cause problems when discarding transient
+  transactions on the next reboot. The names of the files can be configured
+  using globs in paths configured in a new "usr_drift_protected_paths" option,
+  defaulting to "glob:/etc/dnf/usr-drift-protected-paths.d/*.conf".
+  Be ware that if the "usr_drift_protected_paths" option is set, filelist are
+  always downloaded.
+- Don't call scriptout() of TransactionProgress object with non-actionable
+  None argument.
+- Improve the included spec file to allow building with Ninja build system.
+- Document that modularity support, including "module" command, is
+  deprecated.
+- Document scriptout() hook of TransactionProgress class.
+
+Changes:
+
+- Minimal required libdnf version changed to 0.75.0.
+- Automatic plugin: Expand email_to variable in command_email emitter to
+  individual arguments. This is required to support s-nail. It is compatible
+  with mailx.
+- Remove support for building DNF for RHEL <= 7 from the included spec file.
+  This brings the spec file in line with DNF code which has been unbuildable
+  there for a long time.
+
+Bug fixes:
+
+- Check all installed versions of a package for the newest change log date.
+  This corrects obtaining a change log entry for packages which can be
+  installed in multiple versions (like kernel).
+- Fix detecting releasever_minor variable value in dnf-automatic tool.
+- Fix building on CentOS 9.
+- Fix packaging the dnf-automatic.timer to keep the systemd timer enabled when
+  when upgrading to DNF5.
+- Document changes in exit codes of some history subcommands between YUM and
+  DNF.
+- Correct a documentation of "--disableexcludes" and "--disableexcludepkgs"
+  options so that its clear that their values are not optional.
+- Fix incorrect Bootc documentation link.
+- Correct documentation to point to #dnf channel on Libera.Chat IRC network.
+- Close file handles during tests.
+
+Internal changes:
+
+- Allow using destdir option for the new manifest plugin.
+
+====================
 4.23.0 Release Notes
 ====================
 

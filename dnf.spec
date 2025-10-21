@@ -408,6 +408,47 @@ fi
 # bootc subpackage does not include any files
 
 %changelog
+* Tue Oct 21 2025 Petr Písař <ppisar@redhat.com> - 4.24.0-1
+- TransactionProgress: don't call scriptout() with None
+- doc: document scriptout hook of TransactionProgress
+- Add exit code change of some history subcommands
+- Add Dane H Lim to contributors list
+- README: direct to Libera.Chat instead of Freenode
+- cli: Allow using destdir option for the new manifest plugin
+- packit: Use package version from the attached spec file
+- Fix building on CentOS 9
+- README: link to #dnf instead of #yum IRC
+- Do not disable dnf-automatic.timer when upgrading to dnf5-plugin-automatic
+- Fix typo from previous commit (left over `]`)
+- `--disableexcludes` and `--disableexcludepkgs` values are not optional
+- Add missing entries `.gitignore` file
+- Close file handles during tests
+- Add name and email to `AUTHORS`
+- bootc tmt testing
+- persistence: store persist/transient in history DB
+- Print "persist" or "transient" in history info
+- history: persistence for MergedTransaction
+- spec: Allow to build with ninja
+- spec: Remove support for RHEL <= 7
+- spec: Fix executing ctest on RHEL < 10
+- ci: Remove "DNF CI" workflow
+- conf: Test for segfaulting iterator in ConfigParser
+- bootc: Check whether protected paths will be modified
+- spec: package /etc/dnf/usr_drift_protected_paths.d
+- Support globs in usr_drift_protected_paths
+- doc: Document `usr_drift_protected_paths`
+- Load filelists if there are any usr_drift_protected_paths
+- Enable packit copr-builds and testing
+- Add nightly to bootc tests
+- Switch `centos-stream-9-x86_64` copr-builds to `centos-stream+epel-next-9-x86_64`
+- automatic: Expand email_to in command_email emitter to individual arguments
+- Add deprecation warning for module commands
+- Add modularity deprecation warning to doc pages
+- automatic: Fix detecting releasever_minor
+- Fix incorrect bootc documentation link
+- SideCI seems to have shut down in 2023
+- Check all installed versions of package for newest changelog date
+
 * Thu Mar 06 2025 Evan Goode <mail@evangoo.de> - 4.23.0-1
 - spec: toggle dnf5_obsoletes_dnf for RHEL 11
 - automatic: Enhance errors reporting
