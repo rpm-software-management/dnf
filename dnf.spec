@@ -311,7 +311,7 @@ fi
 
 %files data
 %license COPYING PACKAGE-LICENSING
-%doc AUTHORS README.rst
+%doc AUTHORS README.rst doc/release_notes.rst
 %dir %{confdir}
 %dir %{confdir}/modules.d
 %dir %{confdir}/modules.defaults.d
