@@ -177,7 +177,8 @@ Requires:       python3-gobject-base
 Requires:       util-linux-core
 
 %description bootc
-Additional dependencies needed to perform transactions on booted bootc (bootable containers) systems.
+Additional dependencies needed to perform transactions on booted bootc
+(bootable containers) systems.
 
 
 %prep
