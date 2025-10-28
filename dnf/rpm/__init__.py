@@ -146,6 +146,7 @@ _BASEARCH_MAP = _invert({
     'sparc': ('sparc', 'sparc64', 'sparc64v', 'sparcv8', 'sparcv9',
               'sparcv9v'),
     'x86_64': ('x86_64', 'amd64', 'ia32e'),
+    'e2k': ('e2k', 'e2kv4', 'e2kv5', 'e2kv6'),
 })
 
 
