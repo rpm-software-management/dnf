@@ -124,10 +124,19 @@ class MultiprocessRotatingFileHandler(logging.handlers.RotatingFileHandler):
             try:
                 if self.shouldRollover(record):
                     with self.rotate_lock:
-                        # Do rollover while preserving the mode of the new log file
+                        # Do rollover while preserving the mode and ACL of the new log file
                         mode = os.stat(self.baseFilename).st_mode
+                        acl = None
+                        try:
+                            acl = os.getxattr(self.baseFilename, "system.posix_acl_access")
+                        except:
+                            # The extended attribute does not exist or the
+                            # file system does not support them.
+                            pass
                         self.doRollover()
                         os.chmod(self.baseFilename, mode)
+                        if acl is not None:
+                            os.setxattr(self.baseFilename, "system.posix_acl_access", acl)
                 logging.FileHandler.emit(self, record)
                 return
             except (dnf.exceptions.ProcessLockError, dnf.exceptions.ThreadLockError):
