@@ -19,6 +19,23 @@
 ###################
 
 ====================
+4.25.0 Release Notes
+====================
+
+Enhancements:
+
+- DNF now recognizes Elbrus2000 architectures (e2k, e2kv4, e2kv5, and e2kv6)
+  and maps them to "e2k" base architecture.
+- Access control list is preserved when rotating log files.
+- DNF release notes are packaged now as a documentation.
+
+Bug fixes:
+
+- GPL-2.0 license text and disclaimers were updated to the current Free
+  Software Foundation's wording, replacing the invalid postal address.
+- Overlong dnf-bootc package description was wrapped.
+
+====================
 4.24.0 Release Notes
 ====================
 
