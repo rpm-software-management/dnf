@@ -50,7 +50,7 @@
 It supports RPMs, modules and comps groups & environments.
 
 Name:           dnf
-Version:        4.24.0
+Version:        4.25.0
 Release:        1%{?dist}
 Summary:        %{pkg_summary}
 # For a breakdown of the licensing, see PACKAGE-LICENSING
@@ -409,6 +409,13 @@ fi
 # bootc subpackage does not include any files
 
 %changelog
+* Fri Nov 21 2025 Petr Pisar <ppisar@redhat.com> - 4.25.0-1
+- spec: Package release notes
+- spec: Wrap overlong dnf-bootc description
+- Update GPL-2.0 text to current FSF's wording
+- Teach dnf about Elbrus2000 architecture
+- Preserve ACL when rotating logs
+
 * Tue Oct 21 2025 Petr Písař <ppisar@redhat.com> - 4.24.0-1
 - TransactionProgress: don't call scriptout() with None
 - doc: document scriptout hook of TransactionProgress
