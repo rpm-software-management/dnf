@@ -224,6 +224,7 @@ class BaseCli(dnf.Base):
             # Handle bootc transactions. `--transient` must be specified if
             # /usr is not already writeable.
             bootc_system = None
+            bootc_system_needs_unlock = False
             if is_bootc_transaction:
                 if self.conf.persistence == "persist":
                     logger.info(_("Persistent transactions aren't supported on bootc systems."))
@@ -245,6 +246,7 @@ class BaseCli(dnf.Base):
                         logger.info(_("A transient overlay will be created on /usr that will be discarded on reboot. "
                                       "Keep in mind that changes to /etc and /var will still persist, and packages "
                                       "commonly modify these directories."))
+                        bootc_system_needs_unlock = True
                 self._persistence = libdnf.transaction.TransactionPersistence_TRANSIENT
 
                 # Check whether the transaction modifies usr_drift_protected_paths
@@ -275,7 +277,7 @@ class BaseCli(dnf.Base):
                 if self.conf.assumeno or not self.output.userconfirm():
                     raise CliError(_("Operation aborted."))
 
-            if bootc_system:
+            if bootc_system and bootc_system_needs_unlock:
                 bootc_system.make_writable()
         else:
             logger.info(_('Nothing to do.'))
