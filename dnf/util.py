@@ -748,4 +748,4 @@ class _BootcSystem:
             # read-only. Set up a mount namespace for DNF.
             self._set_up_mountns()
 
-        assert os.access(self.usr, os.W_OK)
+        assert self.is_writable()
