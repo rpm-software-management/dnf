@@ -2311,9 +2311,23 @@ class Base(object):
                 logger.warning(_('No packages marked for removal.'))
 
         else:
-            pkgs = self.sack.query()._unneeded(self.history.swdb,
+            unneeded_pkgs = self.sack.query()._unneeded(self.history.swdb,
                                                debug_solver=self.conf.debug_solver)
-            for pkg in pkgs:
+
+            protected = self.sack.query().installed().filterm(name=self.conf.protected_packages)
+            protected_found = False
+            for pkg in protected:
+                if pkg in unneeded_pkgs:
+                    msg = _('Unneeded protected package: %s (and its dependencies) cannot be removed, '
+                            'either mark it as user-installed or change protected_packages configuration option.')
+                    logger.warning(msg, pkg)
+                    protected_found = True
+
+            if protected_found:
+                unneeded_pkgs = self.sack.query()._unneeded_extra_userinstalled(self.history.swdb, protected,
+                                                   debug_solver=self.conf.debug_solver)
+
+            for pkg in unneeded_pkgs:
                 self.package_remove(pkg)
 
     def remove(self, pkg_spec, reponame=None, forms=None):
