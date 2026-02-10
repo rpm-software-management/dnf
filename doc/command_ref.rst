@@ -1695,14 +1695,23 @@ Updateinfo Command
 | Deprecated aliases: ``list-updateinfo``, ``list-security``, ``list-sec``, ``info-updateinfo``, ``info-security``, ``info-sec``, ``summary-updateinfo``
 
 ``dnf [options] updateinfo [--summary|--list|--info] [<availability>] [<spec>...]``
+
+``dnf [options] updateinfo summary [<availability>] [<spec>...]``
+
+``dnf [options] updateinfo list [<availability>] [<spec>...]``
+
+``dnf [options] updateinfo info [<availability>] [<spec>...]``
+
     Display information about update advisories.
 
     Depending on the output type, DNF displays just counts of advisory types
     (omitted or ``--summary``), list of advisories (``--list``) or detailed
-    information (``--info``). The ``-v`` option extends the output. When
-    used with ``--info``, the information is even more detailed. When used
-    with ``--list``, an additional column with date of the last advisory update
-    is added.
+    information (``--info``). The output type may be selected either by passing
+    ``--summary``, ``--list``, or ``--info`` as an option, or by using
+    ``summary``, ``list``, or ``info`` as a subcommand. The ``-v`` option
+    extends the output. When used with ``--info``/``info``, the information is
+    even more detailed. When used with ``--list``/``list``, an additional column
+    with date of the last advisory update is added.
 
     ``<availability>`` specifies whether advisories about newer versions of
     installed packages (omitted or ``--available``), advisories about equal and
@@ -1721,8 +1730,8 @@ Updateinfo Command
 
     To print only advisories referencing a CVE or a bugzilla use ``--with-cve`` or
     ``--with-bz`` options. When these switches are used also the output
-    of the ``--list`` is altered - the ID of the CVE or the bugzilla is printed
-    instead of the one of the advisory.
+    of the ``--list``/``list`` is altered - the ID of the CVE or the bugzilla is
+    printed instead of the one of the advisory.
 
     If given and if neither ID, type (``bugfix``, ``enhancement``,
     ``security``/``sec``) nor a package name of an advisory matches
@@ -1730,7 +1739,36 @@ Updateinfo Command
     case-sensitive and in the case of advisory IDs and package names, globbing
     is supported.
 
-    Output of the ``--summary`` option is affected by the :ref:`autocheck_running_kernel <autocheck_running_kernel-label>` configuration option.
+    Output of the ``--summary``/``summary`` option is affected by the :ref:`autocheck_running_kernel <autocheck_running_kernel-label>` configuration option.
+
+    The following provides details on each subcommand:
+
+    ``dnf updateinfo summary``
+        Displays a summary of the number of available advisories grouped by
+        type. This is the default when no subcommand or output type option is
+        given. The output includes counts for each advisory type: New Package
+        notices, Security notices (further broken down by severity: Critical,
+        Important, Moderate, Low), Bugfix notices, and Enhancement notices.
+
+    ``dnf updateinfo list``
+        Displays a list of available advisories. Each advisory is printed on a
+        single line with the following columns: the advisory ID, the advisory
+        type and severity (e.g. ``bugfix``, ``Important/Sec.``), and the package
+        NEVRA (Name-Epoch:Version-Release.Architecture). When used with
+        ``--all``, an additional marker at the beginning of each line indicates
+        whether the advisory is installed (``i``) or available (blank). When
+        used with the ``-v`` option, an additional column shows the date of the
+        last advisory update.
+
+    ``dnf updateinfo info``
+        Displays detailed information about each available advisory. Each
+        advisory is displayed as a block that includes: the advisory title
+        (as a header), Update ID, Type (bugfix, enhancement, security,
+        newpackage, or unknown), Updated date, associated Bugs (bugzilla
+        references), CVEs, a full Description, and Severity. When used with
+        the ``-v`` option, additional fields are shown: Rights and Files
+        (the RPM filenames related to the advisory). When used with ``--all``,
+        an Installed field (true/false) is also included.
 
 .. _upgrade_command-label:
 
