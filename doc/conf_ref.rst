@@ -549,6 +549,7 @@ configuration file by your distribution to override the DNF defaults.
     nocaps        RPMTRANS_FLAG_NOCAPS
     nocrypto      RPMTRANS_FLAG_NOFILEDIGEST
     deploops      RPMTRANS_FLAG_DEPLOOPS
+    noplugins     RPMTRANS_FLAG_NOPLUGINS
     ============  ===========================
 
     The ``nocrypto`` option will also set the ``_RPMVSF_NOSIGNATURES`` and
@@ -558,6 +559,8 @@ configuration file by your distribution to override the DNF defaults.
     file conflicts.
     The ``nocaps`` is supported with rpm-4.14 or later. When ``nocaps`` is used but rpm
     doesn't support it, DNF only reports it as an invalid tsflag.
+    The ``noplugins`` option is supported with rpm-4.12 or later to disable use of rpm plugins.
+    Similarly, this will be reported as an invalid tsflag if rpm doesn't support it.
 
 .. _upgrade_group_objects_upgrade-label:
 

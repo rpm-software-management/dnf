@@ -639,6 +639,9 @@ class Base(object):
     if hasattr(rpm, 'RPMTRANS_FLAG_NOCAPS'):
         # Introduced in rpm-4.14
         _TS_FLAGS_TO_RPM['nocaps'] = rpm.RPMTRANS_FLAG_NOCAPS
+    if hasattr(rpm, 'RPMTRANS_FLAG_NOPLUGINS'):
+        # Introduced in rpm-4.12
+        _TS_FLAGS_TO_RPM['noplugins'] = rpm.RPMTRANS_FLAG_NOPLUGINS
 
     _TS_VSFLAGS_TO_RPM = {'nocrypto': rpm._RPMVSF_NOSIGNATURES |
                           rpm._RPMVSF_NODIGESTS}
