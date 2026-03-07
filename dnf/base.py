@@ -1405,7 +1405,6 @@ class Base(object):
                     result = 1
                 else:
                     result = 2
-                result = 1
                 msg = _('Public key for %s is not trusted') % localfn
 
             elif sigresult == 4:
