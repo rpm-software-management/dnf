@@ -1778,9 +1778,9 @@ Transaction Summary
                 print(_("Command Line   :"), old.cmdline)
 
         def print_persistence(persistence):
-            if old.persistence == libdnf.transaction.TransactionPersistence_PERSIST:
+            if persistence == libdnf.transaction.TransactionPersistence_PERSIST:
                 persistence_str = "Persist"
-            elif old.persistence == libdnf.transaction.TransactionPersistence_TRANSIENT:
+            elif persistence == libdnf.transaction.TransactionPersistence_TRANSIENT:
                 persistence_str = "Transient"
             else:
                 persistence_str = "Unknown"
