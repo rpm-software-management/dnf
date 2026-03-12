@@ -188,6 +188,32 @@ class UpdateInfoCommand(commands.Command):
         q = self._installed_query.filter(name=apackage.name, evr__gte=apackage.evr)
         return len(q) > 0
 
+    def _match_apackage_spec(self, apackage, pat):
+        """Match a spec pattern against an advisory package's name or NEVRA.
+
+        Tries the following forms in order:
+          name                            e.g. openssl
+          name-epoch:version-release.arch e.g. openssl-1:3.5.1-7.el10_1.x86_64
+          name-epoch:version-release      e.g. openssl-1:3.5.1-7.el10_1
+          name-version-release.arch       e.g. openssl-3.5.1-7.el10_1.x86_64
+          name-version-release            e.g. openssl-3.5.1-7.el10_1
+        """
+        if fnmatch.fnmatchcase(apackage.name, pat):
+            return True
+        nevra = '%s-%s.%s' % (apackage.name, apackage.evr, apackage.arch)
+        if fnmatch.fnmatchcase(nevra, pat):
+            return True
+        nvr = '%s-%s' % (apackage.name, apackage.evr)
+        if fnmatch.fnmatchcase(nvr, pat):
+            return True
+        if ':' in apackage.evr:
+            vr = apackage.evr.split(':', 1)[1]
+            if fnmatch.fnmatchcase('%s-%s.%s' % (apackage.name, vr, apackage.arch), pat):
+                return True
+            if fnmatch.fnmatchcase('%s-%s' % (apackage.name, vr), pat):
+                return True
+        return False
+
     def _advisory_matcher(self, advisory):
         if not self.opts._advisory_types \
                 and not self.opts.spec \
@@ -220,7 +246,7 @@ class UpdateInfoCommand(commands.Command):
         for apackage in pkgs_query.get_advisory_pkgs(cmptype):
             advisory = apackage.get_advisory(self.base.sack)
             advisory_match = self._advisory_matcher(advisory)
-            apackage_match = any(fnmatch.fnmatchcase(apackage.name, pat)
+            apackage_match = any(self._match_apackage_spec(apackage, pat)
                                  for pat in self.opts.spec)
             if advisory_match or apackage_match:
                 installed = self._newer_equal_installed(apackage)
