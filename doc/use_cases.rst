@@ -93,9 +93,9 @@ fails.
  Plugins/CLI API
 -----------------
 
-.. include:: examples/install_plugin.py
-   :code: python
-   :start-line: 16
+.. literalinclude:: examples/install_plugin.py
+   :language: python
+   :start-after: permission of Red Hat, Inc.
 
 If it makes any sense, the plugin can do the operation in appropriate hooks
 instead of registering a new command that needs to be called from the command
@@ -105,9 +105,9 @@ line.
  Extension API
 ---------------
 
-.. include:: examples/install_extension.py
-   :code: python
-   :start-line: 16
+.. literalinclude:: examples/install_extension.py
+   :language: python
+   :start-after: permission of Red Hat, Inc.
 
 =========================================================================
 Get a list of available packages filtered by their relation to the system
@@ -153,14 +153,14 @@ CLI
 Plugins/CLI API
 -----------------
 
-.. include:: examples/list_obsoletes_plugin.py
-   :code: python
-   :start-line: 16
+.. literalinclude:: examples/list_obsoletes_plugin.py
+   :language: python
+   :start-after: permission of Red Hat, Inc.
 
 ---------------
 Extension API
 ---------------
 
-.. include:: examples/list_extras_extension.py
-   :code: python
-   :start-line: 16
+.. literalinclude:: examples/list_extras_extension.py
+   :language: python
+   :start-after: permission of Red Hat, Inc.
