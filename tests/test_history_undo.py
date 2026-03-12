@@ -206,7 +206,7 @@ class BaseTest(tests.support.DnfBaseTestCase):
             self.assertRaises(StopIteration, next, transaction_it)
 
     def test_history_undo_operations_reinstall_notavailable(self):
-        """Test history_undo_operations with an unvailable reinstall."""
+        """Test history_undo_operations with an unavailable reinstall."""
         operations = NEVRAOperations()
         operations.add('Reinstall', 'mrkite-2-0.x86_64', 'mrkite-2-0.x86_64')
 

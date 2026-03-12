@@ -405,7 +405,7 @@ class TransactionConverterTest(tests.support.TestCase):
         self.assertEqual(ctx.exception.pkg_spec, 'none-1-0.noarch')
 
     def test_find_installed_ni(self):
-        """Test finding with an unistalled NEVRA."""
+        """Test finding with an uninstalled NEVRA."""
         sack = tests.support.mock_sack('main')
         converter = dnf.history.TransactionConverter(sack)
         with self.assertRaises(dnf.exceptions.PackagesNotInstalledError) as ctx:

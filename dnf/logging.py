@@ -74,7 +74,7 @@ _VERBOSE_VAL_MAPPING = {
     7 : DDEBUG,
     8 : SUBDEBUG,
     9 : TRACE,
-    10: ALL,   # more verbous librepo and hawkey
+    10: ALL,   # more verbose librepo and hawkey
     }
 
 def _cfg_verbose_val2level(cfg_errval):

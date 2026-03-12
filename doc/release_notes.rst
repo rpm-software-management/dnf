@@ -548,7 +548,7 @@ Bugs fixed in 4.10.0:
 
 - Bug fixes:
   - Remove DNSSEC errors on COPR group email keys
-  - Documentation inprovements - bugs: 1938352, 1993899, 1963704
+  - Documentation improvements - bugs: 1938352, 1993899, 1963704
 
 Bugs fixed in 4.9.0:
 
@@ -600,7 +600,7 @@ Bugs fixed in 4.8.0:
 - Add documentation for config option sslverifystatus (RhBug:1814383)
 
 - Security fixes:
-  - Check for specific key string when verifing signatures (RhBug:1915990)
+  - Check for specific key string when verifying signatures (RhBug:1915990)
   - Use rpmkeys binary to verify package signature (RhBug:1915990)
 
 - Bug fixes:
