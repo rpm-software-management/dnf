@@ -28,7 +28,7 @@ import rpm  # used by ansible (dnf.rpm.rpm.labelCompare in lib/ansible/modules/p
 def detect_releasevers(installroot):
     # :api
     """Calculate the release version for the system, including releasever_major
-    and releasever_minor if they are overriden by the system-release-major or
+    and releasever_minor if they are overridden by the system-release-major or
     system-release-minor provides."""
 
     ts = transaction.initReadOnlyTransaction(root=installroot)

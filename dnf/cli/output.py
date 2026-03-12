@@ -1845,7 +1845,7 @@ Transaction Summary
 
         :param old: the :class:`DnfSwdbTrans` to
            print information about
-        :param pats: a list of patterns.  Packages that match a patten
+        :param pats: a list of patterns.  Packages that match a pattern
            in *pats* will be highlighted in the output
         """
         #  Note that these don't use _simple_pkg() because we are showing what

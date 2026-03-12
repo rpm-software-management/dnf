@@ -112,7 +112,7 @@
     upgrades          boolean        see :meth:`upgrades`. Defaults to ``False``.
     ===============   ============== ======================================================
 
-    ``<DEP>`` can be any of: requires, conflicts, obsoletes, enhances, recomments, suggests, supplements
+    ``<DEP>`` can be any of: requires, conflicts, obsoletes, enhances, recommends, suggests, supplements
 
     \* The key can also accept a list of values with specified type.
 

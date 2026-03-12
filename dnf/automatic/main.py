@@ -89,7 +89,7 @@ class AutomaticConfig(object):
     def __init__(self, filename=None, downloadupdates=None,
                  installupdates=None):
         if filename:
-            # Specific config file was explicitely requested. Check that it exists
+            # Specific config file was explicitly requested. Check that it exists
             # and is readable.
             if os.access(filename, os.F_OK):
                 if not os.access(filename, os.R_OK):

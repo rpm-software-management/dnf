@@ -449,7 +449,7 @@ class Base(object):
         """
         Prepare Sack and Goal objects and also load all enabled repositories from cache only,
         it doesn't download anything and it doesn't check if metadata are expired.
-        If there is not enough metadata present (repond.xml or both primary.xml and solv file
+        If there is not enough metadata present (repomd.xml or both primary.xml and solv file
         are missing) given repo is either skipped or it throws a RepoError exception depending
         on skip_if_unavailable configuration.
         """
@@ -597,12 +597,12 @@ class Base(object):
             #      |^    |^    |^      |
             #      ||    ||    ||
             #      ||    ||    ||         |
-            #   +--||----||----||---+    [C]
-            #   |  v|    v|    v|   | <--[U]-- _transaction
-            #   | Pkg1  Pkg2  PkgN  |    [T]
-            #   |                   |     |
-            #   | Transaction oject |
-            #   +-------------------+
+            #   +--||----||----||----+    [C]
+            #   |  v|    v|    v|    | <--[U]-- _transaction
+            #   | Pkg1  Pkg2  PkgN   |    [T]
+            #   |                    |     |
+            #   | Transaction object |
+            #   +--------------------+
             #
             # At this point, the DnfSack object would be released only
             # eventually, by Python's generational garbage collector, due to the

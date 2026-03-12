@@ -95,7 +95,7 @@ def install_or_skip(install_fnc, grp_or_env_id, types, exclude=None,
     """
     Installs a group or an environment identified by grp_or_env_id.
     This method is preserved for API compatibility. It used to catch an
-    exception thrown when a gorup or env was already installed, which is no
+    exception thrown when a group or env was already installed, which is no
     longer thrown.
     `install_fnc` has to be Solver._group_install or
     Solver._environment_install.

@@ -34,7 +34,7 @@ Basic class for handling modules.
   .. method:: enable(module_specs)
 
     Mark module streams matching the `module_specs` list and also all required modular dependencies for enabling.
-    For specs that do not specify the stream, the default stream is used. In case that the module has only one stream available, this stream is used regardles of whether it is the default or not.
+    For specs that do not specify the stream, the default stream is used. In case that the module has only one stream available, this stream is used regardless of whether it is the default or not.
     Note that only one stream of any given module can be enabled on a system.
     The method raises :exc:`dnf.exceptions.MarkingErrors` in case of errors.
 
