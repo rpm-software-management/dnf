@@ -1702,6 +1702,8 @@ Updateinfo Command
 
 ``dnf [options] updateinfo info [<availability>] [<spec>...]``
 
+``dnf [options] updateinfo [--summary|--list|--info] --contains-build <NEVRA>``
+
     Display information about update advisories.
 
     Depending on the output type, DNF displays just counts of advisory types
@@ -1732,6 +1734,16 @@ Updateinfo Command
     ``--with-bz`` options. When these switches are used also the output
     of the ``--list``/``list`` is altered - the ID of the CVE or the bugzilla is
     printed instead of the one of the advisory.
+
+    When ``--contains-build`` is specified, ``<spec>`` is interpreted as a
+    package build in NEVRA format (Name-Epoch:Version-Release.Architecture) or
+    shortened forms (NVR). All advisories containing the specified package build
+    are displayed, regardless of whether the package is installed on the system.
+    The ``<availability>`` options are ignored in this mode. If the epoch is
+    omitted from the spec, it is treated as epoch ``0``. For example::
+
+        dnf updateinfo --contains-build --list openssl-1:3.5.1-7.el10_1.x86_64
+        dnf updateinfo --contains-build --info openssl-3.5.1-7.el10_1.x86_64
 
     If given and if neither ID, type (``bugfix``, ``enhancement``,
     ``security``/``sec``) nor a package name of an advisory matches

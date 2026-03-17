@@ -101,6 +101,12 @@ class UpdateInfoCommand(commands.Command):
         parser.add_argument("--with-bz", dest='with_bz', default=False,
                             action='store_true',
                             help=_('show only advisories with bugzilla reference'))
+        parser.add_argument("--contains-build", dest='contains_build',
+                            default=False, action='store_true',
+                            help=_('show advisories containing the specified '
+                                   'package build (NEVRA). Searches all '
+                                   'advisories regardless of whether the '
+                                   'package is installed'))
         parser.add_argument('spec', nargs='*', metavar='SPEC',
                             choices=cmds, default=cmds[0],
                             action=OptionParser.PkgNarrowCallback,
@@ -162,7 +168,10 @@ class UpdateInfoCommand(commands.Command):
 
     def run(self):
         """Execute the command with arguments."""
-        if self.opts.availability == 'installed':
+        if self.opts.contains_build:
+            apkg_adv_insts = self.contains_build_apkg_adv_insts()
+            description = _('contains-build')
+        elif self.opts.availability == 'installed':
             apkg_adv_insts = self.installed_apkg_adv_insts(self.opts.spec)
             description = _('installed')
         elif self.opts.availability == 'updates':
@@ -187,6 +196,41 @@ class UpdateInfoCommand(commands.Command):
             self._installed_query = self.base.sack.query().installed().apply()
         q = self._installed_query.filter(name=apackage.name, evr__gte=apackage.evr)
         return len(q) > 0
+
+    @staticmethod
+    def _normalize_epoch(spec):
+        """If spec looks like a NEVRA or NVR but has no epoch, insert epoch 0.
+
+        Omitted epoch is treated as epoch 0, not as "any epoch".
+        Examples:
+          openssl-3.5.1-7.el10_1.x86_64  -> openssl-0:3.5.1-7.el10_1.x86_64
+          openssl-3.5.1-7.el10_1          -> openssl-0:3.5.1-7.el10_1
+          openssl-1:3.5.1-7.el10_1.x86_64 -> unchanged (already has epoch)
+          openssl                          -> unchanged (bare name)
+        """
+        if ':' in spec:
+            return spec
+        parts = spec.rsplit('-', 2)
+        if len(parts) >= 3:
+            name = '-'.join(parts[:-2])
+            version_release = '-'.join(parts[-2:])
+            return '%s-0:%s' % (name, version_release)
+        return spec
+
+    def _match_build_spec(self, apackage, pat):
+        """Match a --contains-build pattern against an advisory package NEVRA.
+
+        Matches against full NEVRA and NVR. Omitted epoch in the pattern
+        is treated as epoch 0.
+        """
+        pat = self._normalize_epoch(pat)
+        nevra = '%s-%s.%s' % (apackage.name, apackage.evr, apackage.arch)
+        if fnmatch.fnmatchcase(nevra, pat):
+            return True
+        nvr = '%s-%s' % (apackage.name, apackage.evr)
+        if fnmatch.fnmatchcase(nvr, pat):
+            return True
+        return False
 
     def _advisory_matcher(self, advisory):
         if not self.opts._advisory_types \
@@ -257,6 +301,20 @@ class UpdateInfoCommand(commands.Command):
         """Return installed (adv. package, adv., inst.) triplets"""
         return self._apackage_advisory_installed(
             self.base.sack.query().installed(), hawkey.LT | hawkey.EQ | hawkey.GT, specs)
+
+    def contains_build_apkg_adv_insts(self):
+        """Return (adv. package, advisory, installed) triplets for all
+        advisories containing the specified build, regardless of whether
+        the package is installed."""
+        q = self.base.sack.query()
+        cmptype = hawkey.EQ | hawkey.GT | hawkey.LT
+        for apackage in q.get_advisory_pkgs(cmptype):
+            advisory = apackage.get_advisory(self.base.sack)
+            if not any(self._match_build_spec(apackage, pat)
+                       for pat in self.opts.spec):
+                continue
+            installed = self._newer_equal_installed(apackage)
+            yield apackage, advisory, installed
 
     def _summary(self, apkg_adv_insts):
         """Make the summary of advisories."""
