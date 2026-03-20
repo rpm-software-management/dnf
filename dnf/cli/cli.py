@@ -235,6 +235,7 @@ class BaseCli(dnf.Base):
                 bootc_system = dnf.util._BootcSystem()
 
                 if not bootc_system.is_writable():
+                    bootc_system_needs_unlock = True
                     if self.conf.persistence == "auto":
                         logger.info(_("This bootc system is configured to be read-only. Pass --transient to "
                                       "perform this transaction in a transient overlay which will reset when "
@@ -247,7 +248,6 @@ class BaseCli(dnf.Base):
                         logger.info(_("A transient overlay will be created on /usr that will be discarded on reboot. "
                                       "Keep in mind that changes to /etc and /var will still persist, and packages "
                                       "commonly modify these directories."))
-                        bootc_system_needs_unlock = True
                 self._persistence = libdnf.transaction.TransactionPersistence_TRANSIENT
 
                 # Check whether the transaction modifies usr_drift_protected_paths
