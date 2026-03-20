@@ -246,7 +246,7 @@ class BaseCli(dnf.Base):
                         logger.info(_("A transient overlay will be created on /usr that will be discarded on reboot. "
                                       "Keep in mind that changes to /etc and /var will still persist, and packages "
                                       "commonly modify these directories."))
-                        bootc_system_needs_unlock = True
+                    bootc_system_needs_unlock = True
                 self._persistence = libdnf.transaction.TransactionPersistence_TRANSIENT
 
                 # Check whether the transaction modifies usr_drift_protected_paths
