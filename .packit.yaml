@@ -1,7 +1,9 @@
 # See the documentation for more information:
-# https://packit.dev/docs/configuration/
+# https://packit.dev/docs/configuration
 
 specfile_path: dnf.spec
+version_suffix: "^{PACKIT_PROJECT_SNAPSHOTID}"
+update_release: false
 
 actions:
   get-current-version:
