@@ -63,7 +63,7 @@ CACHE_FILES = {
     'metadata': r'^%s\/.*((xml|yaml)(\.gz|\.xz|\.bz2|\.zck|\.zst)?|asc|cachecookie|%s)$' %
                 (_CACHEDIR_RE, _MIRRORLIST_FILENAME),
     'packages': r'^%s\/%s\/.+rpm$' % (_CACHEDIR_RE, _PACKAGES_RELATIVE_DIR),
-    'dbcache': r'^.+(solv|solvx)$',
+    'dbcache': r'^.+\.(solv|solvx)(\.[A-Za-z0-9]+)?$',
 }
 
 logger = logging.getLogger("dnf")

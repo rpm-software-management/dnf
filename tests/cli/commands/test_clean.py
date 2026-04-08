@@ -52,7 +52,7 @@ class CleanTest(tests.support.TestCase):
             (
                 repo.basecachedir,
                 [os.path.basename(repo._cachedir)],
-                [repo.id + '.solv'],
+                [repo.id + '.solv'], [repo.id + '.solvx'], [repo.id + '.solvx.XXXXX'],
             ),
             (repo._cachedir, ['repodata', 'packages'], ['metalink.xml']),
             (repo._cachedir + '/repodata', [], ['foo.xml', 'bar.xml.bz2']),
@@ -76,7 +76,7 @@ class CleanTest(tests.support.TestCase):
                 _run(self.cli, args)
 
         calls = [call[0] for call in _clean.call_args_list]
-        counts = (5, 4, 5, 5, 1, 0)
+        counts = (7, 6, 7, 7, 3, 0)
         for call, count in zip(calls, counts):
             files = list(call[1])
             assert len(files) == count
