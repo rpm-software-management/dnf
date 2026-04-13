@@ -52,7 +52,7 @@ class CleanTest(tests.support.TestCase):
             (
                 repo.basecachedir,
                 [os.path.basename(repo._cachedir)],
-                [repo.id + '.solv'], [repo.id + '.solvx'], [repo.id + '.solvx.XXXXX'],
+                [repo.id + '.solv', repo.id + '.solvx', repo.id + '.solvx.XXXXX']
             ),
             (repo._cachedir, ['repodata', 'packages'], ['metalink.xml']),
             (repo._cachedir + '/repodata', [], ['foo.xml', 'bar.xml.bz2']),
