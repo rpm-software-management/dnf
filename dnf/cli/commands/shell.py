@@ -32,6 +32,12 @@ import sys
 logger = logging.getLogger('dnf')
 
 
+def ex_Error(e):
+    logger.log(dnf.logging.SUBDEBUG, '', exc_info=True)
+    if e.value is not None:
+        logger.critical(_('Error: %s'), ucd(e))
+    return 1
+
 # only demands we'd like to override
 class ShellDemandSheet(object):
     available_repos = True
@@ -248,7 +254,36 @@ exit (or quit)           exit the shell""")
         try:
             self.cli.base.resolve(self.cli.demands.allow_erasing)
         except dnf.exceptions.DepsolveError as e:
-            print(e)
+            ex_Error(e)
+            msg = ""
+            if not self.cli.demands.allow_erasing and self.base._goal.problem_conflicts(available=True):
+                msg += _("try to add '{}' to command line to replace conflicting "
+                         "packages").format("--allowerasing")
+            if self.cli.base.conf.strict:
+                if not msg:
+                    msg += _("try to add '{}' to skip uninstallable packages").format(
+                        "--skip-broken")
+                else:
+                    msg += _(" or '{}' to skip uninstallable packages").format("--skip-broken")
+            if self.cli.base.conf.best:
+                prio = self.cli.base.conf._get_priority("best")
+                if prio <= dnf.conf.PRIO_MAINCONFIG:
+                    if not msg:
+                        msg += _("try to add '{}' to use not only best candidate packages").format(
+                            "--nobest")
+                    else:
+                        msg += _(" or '{}' to use not only best candidate packages").format(
+                            "--nobest")
+            if self.base._goal.file_dep_problem_present() and 'filelists' not in self.cli.base.conf.optional_metadata_types:
+                if not msg:
+                    msg += _("try to add '{}' to load additional filelists metadata").format(
+                        "--setopt=optional_metadata_types=filelists")
+                else:
+                    msg += _(" or '{}' to load additional filelists metadata").format(
+                        "--setopt=optional_metadata_types=filelists")
+            if msg:
+                logger.info("({})".format(msg))
+            return 1
 
     def _run_script(self, file):
         try:
@@ -268,7 +303,11 @@ exit (or quit)           exit the shell""")
             self._clean()
             return
 
-        self._resolve()
+        ret = self._resolve()
+        if ret:
+            # Resolve failed, don't continue
+            return
+
         if cmd in ['list', None]:
             if self.base._transaction:
                 out = self.base.output.list_transaction(self.base._transaction)
