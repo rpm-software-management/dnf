@@ -59,13 +59,6 @@ def _repo_match(repo, patterns):
     return False
 
 
-def _repo_size(sack, repo):
-    ret = 0
-    for pkg in sack.query(flags=hawkey.IGNORE_EXCLUDES).filterm(reponame__eq=repo.id):
-        ret += pkg._size
-    return dnf.cli.format.format_number(ret)
-
-
 class RepoListCommand(commands.Command):
     """A class containing methods needed by the cli to execute the
     repolist command.
@@ -142,7 +135,13 @@ class RepoListCommand(commands.Command):
                     ui_enabled = ehibeg + _('enabled') + hiend
                     ui_endis_wid = exact_width(_('enabled'))
                 if verbose or self.opts.command == 'repoinfo':
-                    ui_size = _repo_size(self.base.sack, repo)
+                    size = 0
+                    unique_pkgs = set()
+                    for pkg in self.base.sack.query(flags=hawkey.IGNORE_EXCLUDES).filterm(reponame__eq=repo.id):
+                        size += pkg._size
+                        unique_pkgs.add(str(pkg))
+                    ui_size = dnf.cli.format.format_number(size)
+                    ui_num_unique = dnf.cli.format.format_number(len(unique_pkgs))
             else:
                 enabled = False
                 if arg == 'enabled' or (arg == 'enabled-default' and not extcmds):
@@ -192,6 +191,7 @@ class RepoListCommand(commands.Command):
                             dnf.util.normalize_time(repo._repo.getMaxTimestamp())),
                         self.output.fmtKeyValFill(_("Repo-pkgs          : "), ui_num),
                         self.output.fmtKeyValFill(_("Repo-available-pkgs: "), ui_num_available),
+                        self.output.fmtKeyValFill(_("Repo-unique-NEVRAs : "), ui_num_unique),
                         self.output.fmtKeyValFill(_("Repo-size          : "), ui_size)]
 
                 if repo.metalink:
