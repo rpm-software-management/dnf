@@ -1324,6 +1324,11 @@ class Base(object):
             self._download_remote_payloads(payloads, drpm, progress, callback_total)
 
         if self.conf.destdir:
+            for pkg in remote_pkgs:
+                try:
+                    shutil.copy(pkg.localPkg(), self.conf.destdir)
+                except shutil.SameFileError:
+                    pass
             for pkg in local_pkgs:
                 if pkg.baseurl:
                     location = os.path.join(pkg.get_local_baseurl(),
