@@ -22,6 +22,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import argparse
+import contextlib
 import logging
 import os
 import random
@@ -43,6 +44,36 @@ import dnf.pycomp
 import libdnf.conf
 
 logger = logging.getLogger('dnf')
+
+
+@contextlib.contextmanager
+def systemd_inhibit():
+    """Acquire a systemd inhibitor lock to block system shutdown/sleep.
+    """
+    fd = None
+    try:
+        import dbus
+    except ImportError:
+        logger.debug(_("dbus module is not available, skipping systemd inhibitor lock"))
+        yield
+        return
+
+    try:
+        bus = dbus.SystemBus()
+        proxy = bus.get_object("org.freedesktop.login1",
+                               "/org/freedesktop/login1")
+        manager = dbus.Interface(proxy, "org.freedesktop.login1.Manager")
+        fd = manager.Inhibit("idle:sleep:shutdown",
+                            "dnf-automatic",
+                            "Transaction running",
+                            "block")
+    except dbus.DBusException as e:
+        logger.debug(_("Failed to acquire systemd inhibitor lock: %s"), e)
+    try:
+        yield
+    finally:
+        if fd is not None:
+            os.close(fd.take())
 
 
 def build_emitters(conf):
@@ -189,6 +220,7 @@ class CommandsConfig(Config):
                         libdnf.conf.VectorString(['default', 'security'])))
         self.add_option('random_sleep', libdnf.conf.OptionNumberInt32(300))
         self.add_option('network_online_timeout', libdnf.conf.OptionNumberInt32(60))
+        self.add_option('systemd_inhibit', libdnf.conf.OptionBool(True))
         self.add_option('reboot', libdnf.conf.OptionEnumString('never',
                         libdnf.conf.VectorString(['never', 'when-changed', 'when-needed'])))
         self.add_option('reboot_command', libdnf.conf.OptionString(
@@ -362,17 +394,20 @@ def main(args):
                 emitters.commit()
                 return 0
 
-            gpgsigcheck(base, trans.install_set)
-            base.do_transaction()
+            inhibit = systemd_inhibit() if conf.commands.systemd_inhibit \
+                else contextlib.nullcontext()
+            with inhibit:
+                gpgsigcheck(base, trans.install_set)
+                base.do_transaction()
 
-            # In case of no global error occurred within the transaction,
-            # we need to check state of individual transaction items.
-            for tsi in trans:
-                if tsi.state == libdnf.transaction.TransactionItemState_ERROR:
-                    raise dnf.exceptions.Error(_('Transaction failed'))
+                # In case of no global error occurred within the transaction,
+                # we need to check state of individual transaction items.
+                for tsi in trans:
+                    if tsi.state == libdnf.transaction.TransactionItemState_ERROR:
+                        raise dnf.exceptions.Error(_('Transaction failed'))
 
-            emitters.notify_applied()
-            emitters.commit()
+                emitters.notify_applied()
+                emitters.commit()
 
             if (conf.commands.reboot == 'when-changed' or
                (conf.commands.reboot == 'when-needed' and base.reboot_needed())):
