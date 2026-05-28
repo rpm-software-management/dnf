@@ -163,6 +163,7 @@ Python 3 interface to DNF.
 Summary:        %{pkg_summary} - automated upgrades
 BuildRequires:  systemd
 Requires:       python3-%{name} = %{version}-%{release}
+Recommends:     (python3-dbus if systemd)
 %{?systemd_requires}
 
 %description automatic

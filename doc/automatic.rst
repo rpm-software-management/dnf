@@ -89,6 +89,11 @@ Setting the mode of operation of the program.
 
     What kind of upgrades to look at. ``default`` signals looking for all available updates, ``security`` only those with an issued security advisory.
 
+``systemd_inhibit``
+    boolean, default: True
+
+    Whether to block system shutdown while applying package updates. When enabled, dnf-automatic acquires a systemd inhibitor lock during the transaction phase to prevent scheduled reboots or system shutdown from interrupting package installation. The lock is automatically released when the transaction completes. If systemd-logind is unavailable (e.g., in containers), this setting has no effect. Set to ``False`` to disable if the inhibitor conflicts with your maintenance workflows.
+
 ``reboot``
     either one of ``never``, ``when-changed``, ``when-needed``, default: ``never``
 
