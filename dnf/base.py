@@ -1299,7 +1299,7 @@ class Base(object):
             elif real > full:
                 msg = _("Failed Delta RPMs increased %.1f MB of updates to %.1f MB "
                         "(%.1f%% wasted)")
-                percent = 100 - full / real * 100
+                percent = real / full * 100 - 100
             logger.info(msg, full / 1024 ** 2, real / 1024 ** 2, percent)
 
     def download_packages(self, pkglist, progress=None, callback_total=None):
