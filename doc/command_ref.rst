@@ -1721,7 +1721,9 @@ Updateinfo Command
     packages (``--all``) are taken into account. Most of the time, ``--available``
     and ``--updates`` displays the same output. The outputs differ only in the
     cases when an advisory refers to a newer version but there is no enabled
-    repository which contains any newer version.
+    repository which contains any newer version. When modularity is active,
+    advisories for packages excluded by :ref:`modular filtering <command_ref_modular_filtering-label>`
+    are not displayed.
 
     Note, that ``--available`` takes only the latest installed versions of
     packages into account. In case of the kernel packages (when multiple
@@ -1991,6 +1993,8 @@ To disable all excludes for e.g. the install command you can use the following c
 of command line options:
 
 ``dnf --disableexcludes=all --disableplugin="*" install bash``
+
+.. _command_ref_modular_filtering-label:
 
 -----------------
 Modular Filtering
