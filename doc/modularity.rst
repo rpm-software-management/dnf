@@ -67,6 +67,22 @@ or dependent stream. Modular source packages will not cause non-modular binary
 packages to be filtered out.
 
 
+
+====================
+ Advisory filtering
+====================
+When modular package filtering is active, update advisories for non-modular
+versions of packages governed by an active module stream are also filtered out.
+This prevents displaying advisories that cannot be acted upon because the
+corresponding packages are excluded by modular filtering.
+
+The filtering matches advisory packages against the set of module-excluded
+packages. Advisories referencing packages not present in any enabled repository
+(e.g. older versions no longer available in repositories) cannot be matched and
+may still be displayed even though the packages are not installable.
+
+
+
 Demodularized rpms
 ==================
 Contains names of RPMs excluded from package filtering for particular module stream. When defined in the latest active
