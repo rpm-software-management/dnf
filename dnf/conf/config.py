@@ -328,6 +328,9 @@ class MainConf(BaseConfig):
     def prepend_installroot(self, optname):
         # :api
         prio = self._get_priority(optname)
+        # don't modify paths specified on commandline
+        if prio >= PRIO_COMMANDLINE:
+            return
         new_path = self._prepend_installroot_path(self._get_value(optname))
         self._set_value(optname, new_path, prio)
 
