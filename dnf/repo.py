@@ -47,6 +47,7 @@ import sys
 import time
 import traceback
 import urllib
+import tempfile
 
 _PACKAGES_RELATIVE_DIR = "packages"
 _MIRRORLIST_FILENAME = "mirrorlist"
@@ -282,17 +283,21 @@ class RPMPayload(PackagePayload):
 
 class RemoteRPMPayload(PackagePayload):
 
-    def __init__(self, remote_location, conf, progress):
+    def __init__(self, remote_location, conf, progress, temp=False):
         super(RemoteRPMPayload, self).__init__("unused_object", progress)
         self.remote_location = remote_location
         self.remote_size = 0
         self.conf = conf
-        s = (self.conf.releasever or "") + self.conf.substitutions.get('basearch')
-        digest = hashlib.sha256(s.encode('utf8')).hexdigest()[:16]
-        repodir = "commandline-" + digest
-        self.pkgdir = os.path.join(self.conf.cachedir, repodir, "packages")
-        dnf.util.ensure_dir(self.pkgdir)
-        self.local_path = os.path.join(self.pkgdir, self.__str__().lstrip("/"))
+        if temp:
+            self.pkgdir = tempfile.gettempdir()
+            self.local_path = os.path.join(self.pkgdir, self.__str__().lstrip("/"))
+        else:
+            s = (self.conf.releasever or "") + self.conf.substitutions.get('basearch')
+            digest = hashlib.sha256(s.encode('utf8')).hexdigest()[:16]
+            repodir = "commandline-" + digest
+            self.pkgdir = os.path.join(self.conf.cachedir, repodir, "packages")
+            dnf.util.ensure_dir(self.pkgdir)
+            self.local_path = os.path.join(self.pkgdir, self.__str__().lstrip("/"))
 
     def __str__(self):
         return os.path.basename(urllib.parse.unquote(self.remote_location))
