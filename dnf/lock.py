@@ -29,6 +29,7 @@ import fcntl
 import hashlib
 import logging
 import os
+import psutil
 import threading
 import time
 
@@ -108,6 +109,24 @@ class ProcessLock(object):
 
             if not os.access('/proc/%d/stat' % old_pid, os.F_OK):
                 # locked by a dead process, write our pid
+                os.lseek(fd, 0, os.SEEK_SET)
+                os.ftruncate(fd, 0)
+                os.write(fd, str(pid).encode('utf-8'))
+                return pid
+
+            # When dnf is killed or exited abnormally, a PID will remain in
+            # rpmdb_lock.pid, and when the system runs for a period of time
+            # the PID maybe reused, and at this time, the command will be
+            # stuck when the dnf operation (such as dnf install) is performed
+            # again. Therefore, it is not sufficient to detect whether the
+            # PID exists, and the creation time of rpmdb_lock.pid needs to
+            # be later than the startup time of pid=PID process is to solve
+            # this problem.
+            oldproc = psutil.Process(old_pid)
+            oldproc_ctime = oldproc.create_time()
+            lockfile_ctime = os.path.getctime(self.target)
+            if oldproc_ctime > lockfile_ctime:
+                # locked by a bad old process, write our pid
                 os.lseek(fd, 0, os.SEEK_SET)
                 os.ftruncate(fd, 0)
                 os.write(fd, str(pid).encode('utf-8'))
