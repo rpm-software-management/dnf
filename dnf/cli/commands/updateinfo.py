@@ -31,6 +31,8 @@ from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _, exact_width
 from dnf.pycomp import unicode
 
+import sys
+import json
 
 def _maxlen(iterable):
     """Return maximum length of items in a non-empty iterable."""
@@ -101,6 +103,9 @@ class UpdateInfoCommand(commands.Command):
         parser.add_argument("--with-bz", dest='with_bz', default=False,
                             action='store_true',
                             help=_('show only advisories with bugzilla reference'))
+        parser.add_argument("--json", dest='json', default=False,
+                            action='store_true',
+                            help=_('Display in JSON format.'))
         parser.add_argument('spec', nargs='*', metavar='SPEC',
                             choices=cmds, default=cmds[0],
                             action=OptionParser.PkgNarrowCallback,
@@ -155,6 +160,10 @@ class UpdateInfoCommand(commands.Command):
                 self.opts.with_cve = True
             else:
                 self.opts.spec.insert(0, spec)
+
+        # Keep quiet when dumping JSON output
+        if self.opts.json:
+            self.cli.redirect_logger(stdout=sys.maxsize, stderr=sys.maxsize)
 
         if self.opts.advisory:
             self.opts.spec.extend(self.opts.advisory)
@@ -326,10 +335,10 @@ class UpdateInfoCommand(commands.Command):
                     elif ref.type == hawkey.REFERENCE_CVE and not self.opts.with_cve:
                         continue
                     nevra_inst_dict.setdefault((nevra, installed, advisory.updated), dict())[ref.id] = (
-                            advisory.type, advisory.severity)
+                        advisory.type, advisory.severity)
             else:
                 nevra_inst_dict.setdefault((nevra, installed, advisory.updated), dict())[advisory.id] = (
-                        advisory.type, advisory.severity)
+                    advisory.type, advisory.severity)
 
         advlist = []
         # convert types to labels, find max len of advisory IDs and types
@@ -338,15 +347,84 @@ class UpdateInfoCommand(commands.Command):
             nw = max(nw, len(nevra))
             for aid, atypesev in id2type.items():
                 idw = max(idw, len(aid))
+                typ, sev = atypesev
                 label = type2label(*atypesev)
+                # use dnf5 style for JSON output
+                atype = self.TYPE2LABEL.get(typ, _('unspecified'))
+                asev = self.SECURITY2LABEL.get(sev, _('None'))
+                asev = asev.split("/")[0].strip()
                 tlw = max(tlw, len(label))
-                advlist.append((inst2mark(inst), aid, label, nevra, aupdated))
+                advlist.append((inst2mark(inst), aid, label, atype, asev, nevra, aupdated))
+        if self.opts.json:
+            dtlst = []
+            for (inst, aid, label, atype, asev, nevra, aupdated) in advlist:
+                dtlst.append(
+                    {
+                        "name": aid,
+                        "type": atype,
+                        "severity": asev,
+                        "nevra": nevra,
+                        "buildtime": aupdated,
+                    }
+                )
+            print(json.dumps(dtlst, default=str, indent=2))
+        else:
+            for (inst, aid, label, atype, asev, nevra, aupdated) in advlist:
+                if self.base.conf.verbose:
+                    print('%s%-*s %-*s %-*s %s' % (inst, idw, aid, tlw, label, nw, nevra, aupdated))
+                else:
+                    print('%s%-*s %-*s %s' % (inst, idw, aid, tlw, label, nevra))
 
-        for (inst, aid, label, nevra, aupdated) in advlist:
-            if self.base.conf.verbose:
-                print('%s%-*s %-*s %-*s %s' % (inst, idw, aid, tlw, label, nw, nevra, aupdated))
-            else:
-                print('%s%-*s %-*s %s' % (inst, idw, aid, tlw, label, nevra))
+    def _process_advisory(self, advisory):
+        """Convert DNF advisory object directly to desired format."""
+        advisory_id = getattr(advisory, 'id', None)
+
+        package_list = []
+        for pkg in getattr(advisory, 'packages', []):
+            if not getattr(pkg, 'name', None):
+                continue
+            pkg_info = {
+                'name': getattr(pkg, 'name', None),
+                'evr': getattr(pkg, 'evr', None),
+                'arch': getattr(pkg, 'arch', None),
+            }
+            pkg_str = f"{pkg_info.get('name')}-{pkg_info.get('evr')}"
+            if pkg_info.get('arch'):
+                pkg_str += f".{pkg_info.get('arch')}"
+            package_list.append(pkg_str)
+
+        REFERENCE_TYPES = {0: 'unknown', 1: 'bugzilla', 2: 'cve', 3: 'vendor', 4: 'security'}
+        references = []
+        for ref in getattr(advisory, 'references', []):
+            ref_dict = {
+                'Title': getattr(ref, 'title', None),
+                'Id': getattr(ref, 'id', None),
+                'Type': REFERENCE_TYPES.get(getattr(ref, 'type', 0), 'unknown'),
+                'Url': getattr(ref, 'href', None) or getattr(ref, 'url', None) or getattr(ref, 'link', None)
+            }
+            ref_dict = {k: v for k, v in ref_dict.items() if v is not None}
+            references.append(ref_dict)
+
+        result = {
+            advisory_id: {
+                'Name': advisory_id,
+                'Title': getattr(advisory, 'title', None),
+                'Severity': getattr(advisory, 'severity', 'None'),
+                'Type': self.TYPE2LABEL.get(getattr(advisory, 'type'), _('unspecified')),
+                'Issued': getattr(advisory, 'updated', '').strftime("%Y-%m-%d %H:%M:%S")
+                if getattr(advisory, 'updated', None)
+                else None,
+                'Description': getattr(advisory, 'description', None),
+                'Message': '',
+                'Rights': getattr(advisory, 'rights', None),
+                'references': references,
+                'collections': {
+                    'packages': package_list
+                }
+            }
+        }
+
+        return result
 
 
     def display_info(self, apkg_adv_insts):
@@ -397,8 +475,14 @@ class UpdateInfoCommand(commands.Command):
                     lines.append('%*s%s: %s' % (key_padding, "", key, line))
             return '\n'.join(lines)
 
+        dt_advisories = {}
         advisories = set()
         for apkg, advisory, installed in apkg_adv_insts:
-            advisories.add(advisory2info(advisory, installed))
+            dt_advisories.update(self._process_advisory(advisory))
+            formatted_attributes = advisory2info(advisory, installed)
+            advisories.add(formatted_attributes)
 
-        print("\n\n".join(sorted(advisories, key=lambda x: x.lower())))
+        if self.opts.json:
+            print(json.dumps(dt_advisories, default=str, indent=2))
+        else:
+            print("\n\n".join(sorted(advisories, key=lambda x: x.lower())))
