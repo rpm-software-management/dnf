@@ -19,6 +19,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import os
 import tempfile
 
 import dnf.comps
@@ -47,3 +48,35 @@ class RepoPersistorTest(tests.support.TestCase):
 
         persistor = dnf.persistor.RepoPersistor(self.persistdir)
         self.assertEqual(persistor.get_expired_repos(), IDS)
+
+
+class PackagesInUsePersistorTest(tests.support.TestCase):
+    def setUp(self):
+        self.cachedir = tempfile.mkdtemp(prefix="dnf-pkg-reservation-test-")
+        self.pkg_path = os.path.join(self.cachedir, 'fedora-abc0123456789abcd', 'packages', 'foo.rpm')
+
+    def tearDown(self):
+        dnf.util.rm_rf(self.cachedir)
+
+    def test_add(self):
+        persistor = dnf.persistor.PackagesInUsePersistor(self.cachedir)
+        persistor.append_paths_pid_write([self.pkg_path], os.getpid())
+        persistor.append_paths_pid_write([self.pkg_path], 99999)
+        data = persistor.get_in_use_rel_paths_prune_read()
+        self.assertLength(data, 1)
+        self.assertIn(os.path.relpath(self.pkg_path, self.cachedir), data)
+
+    def test_add_and_remove(self):
+        persistor = dnf.persistor.PackagesInUsePersistor(self.cachedir)
+        persistor.append_paths_pid_write([self.pkg_path], os.getpid())
+        persistor.append_paths_pid_write([self.pkg_path], 99999)
+        data = persistor.remove_pid_prune_write(123123)
+        self.assertLength(data, 1)
+        self.assertIn(os.path.relpath(self.pkg_path, self.cachedir), data)
+
+        data = persistor.get_in_use_rel_paths_prune_read()
+        self.assertLength(data, 1)
+        self.assertIn(os.path.relpath(self.pkg_path, self.cachedir), data)
+
+        data = persistor.remove_pid_prune_write(os.getpid())
+        self.assertLength(data, 0)

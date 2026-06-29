@@ -25,6 +25,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _
+import dnf.lock
 import dnf.util
 import errno
 import fnmatch
@@ -137,3 +138,62 @@ class TempfilePersistor(JSONDB):
 
     def empty(self):
         self._empty = True
+
+
+class PackagesInUsePersistor(JSONDB):
+    """Track files with an associated PID.
+
+    It can be used to ensure different dnf processes don't remove each others files.
+    """
+
+    def __init__(self, cachedir):
+        self.cachedir = os.path.normpath(cachedir)
+        # Stores pairs (path, pid), this allows multiple processes to own the same file
+        db_dir = dnf.lock._fit_lock_dir(self.cachedir)
+        self.db_path = os.path.join(db_dir, "packages_in_use.json")
+
+    @staticmethod
+    def _keep_alive_pids(data):
+        """Remove data paths owned by processes that are no longer running."""
+        return [(path, pid) for path, pid in data if os.access('/proc/%d/stat' % pid, os.F_OK)]
+
+    def append_paths_pid_write(self, paths, pid):
+        try:
+            self._check_json_db(self.db_path)
+            data = self._get_json_db(self.db_path)
+        except OSError as e:
+            logger.warning(_("Failed to load packages in use persistor: %s"), e)
+            return False
+        for path in paths:
+            data.append((path, pid))
+        try:
+            self._write_json_db(self.db_path, list(data))
+        except OSError as e:
+            logger.warning(_("Failed to store packages in use persistor: %s"), e)
+            return False
+        return True
+
+    def remove_pid_prune_write(self, in_pid):
+        try:
+            self._check_json_db(self.db_path)
+            data = self._get_json_db(self.db_path)
+        except OSError as e:
+            logger.warning(_("Failed to load packages in use persistor: %s"), e)
+            return []
+        data = {(path, pid) for path, pid in data if pid != in_pid}
+        data = self._keep_alive_pids(data)
+
+        try:
+            self._write_json_db(self.db_path, data)
+        except OSError as e:
+            logger.warning(_("Failed to store packages in use persistor: %s"), e)
+        return [os.path.relpath(f, self.cachedir) for f, _ in data]
+
+    def get_in_use_rel_paths_prune_read(self):
+        try:
+            self._check_json_db(self.db_path)
+            data = self._keep_alive_pids(self._get_json_db(self.db_path))
+        except OSError as e:
+            logger.warning(_("Failed to load packages in use persistor: %s"), e)
+            return []
+        return [os.path.relpath(f, self.cachedir) for f, _ in data]
