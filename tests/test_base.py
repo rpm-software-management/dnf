@@ -22,6 +22,8 @@ from __future__ import unicode_literals
 import binascii
 import itertools
 import re
+import tempfile
+import shutil
 
 import hawkey
 import libdnf.transaction
@@ -60,9 +62,13 @@ class BaseTest(tests.support.TestCase):
     @mock.patch('dnf.util.am_i_root', lambda: True)
     def test_default_config_root(self):
         base = dnf.Base()
+        installroot = tempfile.mkdtemp(prefix="dnf_test_installroot_")
+        self.addCleanup(shutil.rmtree, installroot)
+        base.conf.installroot = installroot
+        base.conf.prepend_installroot("cachedir")
         self.assertIsNotNone(base.conf)
         self.assertIsNotNone(base.conf.cachedir)
-        reg = re.compile('/var/cache/dnf')
+        reg = re.compile('/tmp/dnf_test_installroot_.*/var/cache/dnf')
         self.assertIsNotNone(reg.match(base.conf.cachedir))
         base.close()
 
