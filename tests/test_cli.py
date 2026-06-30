@@ -203,11 +203,13 @@ class ConfigureTest(tests.support.DnfBaseTestCase):
         """ Test Cli.configure as root."""
         self.base._conf = dnf.conf.Conf()
         with mock.patch('dnf.rpm.detect_releasevers', return_value=(69, None, None)):
-            self.cli.configure(['update', '--nogpgcheck', '-c', self.conffile])
+            self.cli.configure(['update', '--nogpgcheck', '-c', self.conffile,
+                                '--installroot', self._installroot])
         reg = re.compile('^/var/cache/dnf$')
         self.assertIsNotNone(reg.match(self.base.conf.system_cachedir))
         parser = argparse.ArgumentParser()
-        expected = "%s update --nogpgcheck -c %s " % (parser.prog, self.conffile)
+        expected = "%s update --nogpgcheck -c %s --installroot %s " % (
+            parser.prog, self.conffile, self._installroot)
         self.assertEqual(self.cli.cmdstring, expected)
 
     def test_configure_verbose(self):
