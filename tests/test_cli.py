@@ -225,17 +225,18 @@ class ConfigureTest(tests.support.DnfBaseTestCase):
     def test_conf_exists_in_installroot(self, ospathexists):
         with mock.patch('logging.Logger.warning'), \
                 mock.patch('dnf.rpm.detect_releasevers', return_value=(69, None, None)):
-            self.cli.configure(['--installroot', '/roots/dnf', 'update'])
-        self.assertEqual(self.base.conf.config_file_path, '/roots/dnf/etc/dnf/dnf.conf')
-        self.assertEqual(self.base.conf.installroot, '/roots/dnf')
+            self.cli.configure(['--installroot', self._installroot, 'update'])
+        self.assertEqual(self.base.conf.config_file_path,
+                         os.path.join(self._installroot, 'etc/dnf/dnf.conf'))
+        self.assertEqual(self.base.conf.installroot, self._installroot)
 
     @mock.patch('dnf.cli.cli.Cli._parse_commands', new=mock.MagicMock)
     @mock.patch('os.path.exists', return_value=False)
     def test_conf_notexists_in_installroot(self, ospathexists):
         with mock.patch('dnf.rpm.detect_releasevers', return_value=(69, None, None)):
-            self.cli.configure(['--installroot', '/roots/dnf', 'update'])
+            self.cli.configure(['--installroot', self._installroot, 'update'])
         self.assertEqual(self.base.conf.config_file_path, '/etc/dnf/dnf.conf')
-        self.assertEqual(self.base.conf.installroot, '/roots/dnf')
+        self.assertEqual(self.base.conf.installroot, self._installroot)
 
     @mock.patch('dnf.cli.cli.Cli._parse_commands', new=mock.MagicMock)
     def test_installroot_with_etc(self):
@@ -248,7 +249,8 @@ class ConfigureTest(tests.support.DnfBaseTestCase):
 
     def test_installroot_configurable(self):
         """Test that conffile is detected in a new installroot."""
-
-        conf = os.path.join(tests.support.dnf_toplevel(), "tests/etc/installroot.conf")
-        self.cli.configure(['-c', conf, '--nogpgcheck', '--releasever', '17', 'update'])
-        self.assertEqual(self.base.conf.installroot, '/roots/dnf')
+        conf_path = os.path.join(self._installroot, 'installroot.conf')
+        with open(conf_path, 'w') as conf_file:
+            conf_file.write('[main]\ninstallroot=%s\n' % self._installroot)
+        self.cli.configure(['-c', conf_path, '--nogpgcheck', '--releasever', '17', 'update'])
+        self.assertEqual(self.base.conf.installroot, self._installroot)
