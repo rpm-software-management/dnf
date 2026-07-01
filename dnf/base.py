@@ -511,17 +511,19 @@ class Base(object):
         self._tempfile_persistor = dnf.persistor.TempfilePersistor(
             self.conf.cachedir)
 
-        if not self.conf.keepcache:
-            self._clean_packages(self._tempfiles)
-            if self._trans_success:
-                self._trans_tempfiles.update(
-                    self._tempfile_persistor.get_saved_tempfiles())
-                self._tempfile_persistor.empty()
-                if self._trans_install_set:
-                    self._clean_packages(self._trans_tempfiles)
-            else:
-                self._tempfile_persistor.tempfiles_to_add.update(
-                    self._trans_tempfiles)
+        lock = dnf.lock.build_download_lock(self.conf.cachedir, self.conf.exit_on_lock)
+        with lock:
+            if not self.conf.keepcache:
+                self._clean_packages(self._tempfiles)
+                if self._trans_success:
+                    self._trans_tempfiles.update(
+                        self._tempfile_persistor.get_saved_tempfiles())
+                    self._tempfile_persistor.empty()
+                    if self._trans_install_set:
+                        self._clean_packages(self._trans_tempfiles)
+                else:
+                    self._tempfile_persistor.tempfiles_to_add.update(
+                        self._trans_tempfiles)
 
         if self._tempfile_persistor.tempfiles_to_add:
             logger.info(_("The downloaded packages were saved in cache "
