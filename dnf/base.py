@@ -513,14 +513,18 @@ class Base(object):
 
         lock = dnf.lock.build_download_lock(self.conf.cachedir, self.conf.exit_on_lock)
         with lock:
+            in_use_rel_paths = dnf.persistor.PackagesInUsePersistor(self.conf.cachedir).remove_pid_prune_write(os.getpid())
+
             if not self.conf.keepcache:
-                self._clean_packages(self._tempfiles)
+                c = [f for f in self._tempfiles if f not in in_use_rel_paths]
+                self._clean_packages(c)
                 if self._trans_success:
                     self._trans_tempfiles.update(
                         self._tempfile_persistor.get_saved_tempfiles())
                     self._tempfile_persistor.empty()
                     if self._trans_install_set:
-                        self._clean_packages(self._trans_tempfiles)
+                        c = [f for f in self._trans_tempfiles if f not in in_use_rel_paths]
+                        self._clean_packages(c)
                 else:
                     self._tempfile_persistor.tempfiles_to_add.update(
                         self._trans_tempfiles)
@@ -1251,6 +1255,9 @@ class Base(object):
                 progress.start(len(payloads), est_remote_size)
             errors = dnf.repo._download_payloads(payloads, drpm, fail_fast)
 
+            path_list = [payload.pkg.localPkg() for payload in payloads]
+            dnf.persistor.PackagesInUsePersistor(self.conf.cachedir).append_paths_pid_write(path_list, os.getpid())
+
             if errors._irrecoverable():
                 raise dnf.exceptions.DownloadError(errors._irrecoverable())
 
@@ -1363,6 +1370,9 @@ class Base(object):
                 except IOError as e:
                     logger.warning(e)
                     pkgs_error.append(path)
+
+            path_list = [pkg.localPkg() for pkg in pkgs]
+            dnf.persistor.PackagesInUsePersistor(self.conf.cachedir).append_paths_pid_write(path_list, os.getpid())
 
         self._setup_excludes_includes(only_main=True)
         if pkgs_error and strict:
