@@ -88,7 +88,7 @@ def _parse_specs(namespace, values):
 def _urlopen_progress(url, conf, progress=None):
     if progress is None:
         progress = dnf.callback.NullDownloadProgress()
-    pload = dnf.repo.RemoteRPMPayload(url, conf, progress)
+    pload = dnf.repo.RemoteRPMPayload(url, conf, progress, temp=True)
     est_remote_size = sum([pload.download_size])
     progress.start(1, est_remote_size)
     targets = [pload._librepo_target()]
