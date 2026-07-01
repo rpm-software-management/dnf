@@ -27,6 +27,7 @@ import dnf.cli
 import dnf.exceptions
 import dnf.lock
 import dnf.logging
+import dnf.persistor
 import dnf.repo
 import logging
 import os
@@ -57,6 +58,12 @@ def _tree(dirpath):
 def _filter(files, patterns):
     """Yield those filenames that match any of the patterns."""
     return (f for f in files for p in patterns if re.match(p, f))
+
+
+def _filter_packages_used_by_different_processes(files, cachedir):
+    """Keep only package paths that are not reserved by a running DNF process."""
+    in_use_rel_paths = dnf.persistor.PackagesInUsePersistor(cachedir).get_in_use_rel_paths_prune_read()
+    return [f for f in files if f not in in_use_rel_paths]
 
 
 def _clean(dirpath, files):
@@ -110,7 +117,10 @@ class CleanCommand(commands.Command):
                         logger.info(_('Cache was expired'))
 
                     patterns = [dnf.repo.CACHE_FILES[t] for t in types]
-                    count = _clean(cachedir, _filter(files, patterns))
+                    to_clean = _filter(files, patterns)
+                    if 'packages' in types:
+                        to_clean = _filter_packages_used_by_different_processes(to_clean, cachedir)
+                    count = _clean(cachedir, to_clean)
                     logger.info(P_('%d file removed', '%d files removed', count) % count)
                     return
             except dnf.exceptions.LockError as e:
