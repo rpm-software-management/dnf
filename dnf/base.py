@@ -1349,16 +1349,19 @@ class Base(object):
             raise dnf.exceptions.Error(
                 _("Cannot add local packages, because transaction job already exists"))
         pkgs_error = []
-        for path in path_list:
-            if not os.path.exists(path) and '://' in path:
-                # download remote rpm to a tempfile
-                path = dnf.util._urlopen_progress(path, self.conf, progress)
-                self._add_tempfiles([path])
-            try:
-                pkgs.append(self.sack.add_cmdline_package(path))
-            except IOError as e:
-                logger.warning(e)
-                pkgs_error.append(path)
+        lock = dnf.lock.build_download_lock(self.conf.cachedir, self.conf.exit_on_lock)
+        with lock:
+            for path in path_list:
+                if not os.path.exists(path) and '://' in path:
+                        # download remote rpm to a tempfile
+                        path = dnf.util._urlopen_progress(path, self.conf, progress)
+                        self._add_tempfiles([path])
+                try:
+                    pkgs.append(self.sack.add_cmdline_package(path))
+                except IOError as e:
+                    logger.warning(e)
+                    pkgs_error.append(path)
+
         self._setup_excludes_includes(only_main=True)
         if pkgs_error and strict:
             raise IOError(_("Could not open: {}").format(' '.join(pkgs_error)))
