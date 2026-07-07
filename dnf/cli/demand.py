@@ -21,9 +21,10 @@
 from __future__ import unicode_literals
 
 
-class _BoolDefault(object):
-    def __init__(self, default):
+class _Default(object):
+    def __init__(self, default, choices=None):
         self.default = default
+        self.choices = choices
         self._storing_name = '__%s%x' % (self.__class__.__name__, id(self))
 
     def __get__(self, obj, objtype=None):
@@ -33,12 +34,18 @@ class _BoolDefault(object):
         return self.default
 
     def __set__(self, obj, val):
+        if self.choices is not None and val not in self.choices:
+            raise ValueError('Invalid demand value: %s' % val)
         objdict = obj.__dict__
         if self._storing_name in objdict:
             current_val = objdict[self._storing_name]
             if current_val != val:
                 raise AttributeError('Demand already set.')
         objdict[self._storing_name] = val
+
+
+_BoolDefault = _Default
+
 
 class DemandSheet(object):
     """Collection of demands that different CLI parts have on other parts. :api"""
