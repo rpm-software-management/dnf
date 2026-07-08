@@ -146,3 +146,38 @@ class ProcessLock(object):
         if self.count == 1:
             os.unlink(self.target)
         self._unlock_thread()
+
+
+class FileLock(object):
+    """
+    A file lock with read/write access and blocking/non blocking mode.
+    """
+
+    def __init__(self, target, description, blocking=False, read=False):
+        self.blocking = blocking
+        self.read = read
+        self.description = description
+        self.target = target
+        self.fd = None
+
+    def __enter__(self):
+        dnf.util.ensure_dir(os.path.dirname(self.target))
+        self.fd = os.open(self.target, os.O_CREAT | os.O_RDWR, 0o644)
+        flags = fcntl.LOCK_SH if self.read else fcntl.LOCK_EX
+        if not self.blocking:
+            flags |= fcntl.LOCK_NB
+        try:
+            fcntl.flock(self.fd, flags)
+        except OSError as e:
+            os.close(self.fd)
+            self.fd = None
+            if e.errno == errno.EWOULDBLOCK:
+                msg = '%s already locked' % self.description
+                raise ProcessLockError(msg, -1)
+            raise
+
+    def __exit__(self, *exc_args):
+        if self.fd is not None:
+            fcntl.flock(self.fd, fcntl.LOCK_UN)
+            os.close(self.fd)
+            self.fd = None
