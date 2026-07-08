@@ -24,6 +24,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.conf import Conf
 from dnf.cli.cli import Cli
+from dnf.cli.demand import CleanCommandLock
 from dnf.cli.option_parser import OptionParser
 from dnf.i18n import ucd
 from dnf.cli.utils import show_lock_owner
@@ -33,6 +34,7 @@ import dnf.cli
 import dnf.cli.cli
 import dnf.cli.option_parser
 import dnf.exceptions
+import dnf.lock
 import dnf.i18n
 import dnf.logging
 import dnf.util
@@ -43,6 +45,7 @@ import logging
 import os
 import os.path
 import sys
+from contextlib import nullcontext
 
 logger = logging.getLogger("dnf")
 
@@ -118,45 +121,56 @@ def cli_run(cli, base):
     else:
         f.close()
 
-    try:
-        cli.run()
-    except dnf.exceptions.LockError:
-        raise
-    except (IOError, OSError) as e:
-        return ex_IOError(e)
+    lock = None
+    if cli.demands.clean_command_lock == CleanCommandLock.NONE:
+        lock = nullcontext()
+    elif cli.demands.clean_command_lock == CleanCommandLock.READ:
+        lock = dnf.lock.build_clean_command_lock(base.conf.cachedir, base.conf.exit_on_lock, True)
+    elif cli.demands.clean_command_lock == CleanCommandLock.WRITE:
+        lock = dnf.lock.build_clean_command_lock(base.conf.cachedir, base.conf.exit_on_lock, False)
+    else:
+        raise RuntimeError('Invalid demands.clean_command_lock: %s' % cli.demands.clean_command_lock)
 
-    if cli.demands.resolving:
+    with lock:
         try:
-            ret = resolving(cli, base)
-        except dnf.exceptions.DepsolveError as e:
-            ex_Error(e)
-            msg = ""
-            if not cli.demands.allow_erasing and base._goal.problem_conflicts(available=True):
-                msg += _("try to add '{}' to command line to replace conflicting "
-                         "packages").format("--allowerasing")
-            if cli.base.conf.strict:
-                if not msg:
-                    msg += _("try to add '{}' to skip uninstallable packages").format(
-                        "--skip-broken")
-                else:
-                    msg += _(" or '{}' to skip uninstallable packages").format("--skip-broken")
-            if cli.base.conf.best:
-                prio = cli.base.conf._get_priority("best")
-                if prio <= dnf.conf.PRIO_MAINCONFIG:
-                    if not msg:
-                        msg += _("try to add '{}' to use not only best candidate packages").format(
-                            "--nobest")
-                    else:
-                        msg += _(" or '{}' to use not only best candidate packages").format(
-                            "--nobest")
-            if msg:
-                logger.info("({})".format(msg))
+            cli.run()
+        except dnf.exceptions.LockError:
             raise
-        if ret:
-            return ret
+        except (IOError, OSError) as e:
+            return ex_IOError(e)
 
-    cli.command.run_transaction()
-    return cli.demands.success_exit_status
+        if cli.demands.resolving:
+            try:
+                ret = resolving(cli, base)
+            except dnf.exceptions.DepsolveError as e:
+                ex_Error(e)
+                msg = ""
+                if not cli.demands.allow_erasing and base._goal.problem_conflicts(available=True):
+                    msg += _("try to add '{}' to command line to replace conflicting "
+                             "packages").format("--allowerasing")
+                if cli.base.conf.strict:
+                    if not msg:
+                        msg += _("try to add '{}' to skip uninstallable packages").format(
+                            "--skip-broken")
+                    else:
+                        msg += _(" or '{}' to skip uninstallable packages").format("--skip-broken")
+                if cli.base.conf.best:
+                    prio = cli.base.conf._get_priority("best")
+                    if prio <= dnf.conf.PRIO_MAINCONFIG:
+                        if not msg:
+                            msg += _("try to add '{}' to use not only best candidate packages").format(
+                                "--nobest")
+                        else:
+                            msg += _(" or '{}' to use not only best candidate packages").format(
+                                "--nobest")
+                if msg:
+                    logger.info("({})".format(msg))
+                raise
+            if ret:
+                return ret
+
+        cli.command.run_transaction()
+        return cli.demands.success_exit_status
 
 
 def resolving(cli, base):

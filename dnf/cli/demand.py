@@ -20,6 +20,15 @@
 
 from __future__ import unicode_literals
 
+from enum import Enum
+
+
+class CleanCommandLock(Enum):
+    """Clean command lock modes. :api"""
+    NONE = 0
+    READ = 1
+    WRITE = 2
+
 
 class _Default(object):
     def __init__(self, default, choices=None):
@@ -70,3 +79,8 @@ class DemandSheet(object):
     # repositories packages (e.g. versionlock).
     # If it stays None, the demands.resolving is used as a fallback.
     plugin_filtering_enabled = _BoolDefault(None)
+
+    # Determines if/how to lock the clean command lock.
+    # This lock is used to ensure clean command (which uses WRITE mode) running concurrently
+    # with another dnf process doesn't delete required data (packages).
+    clean_command_lock = _Default(CleanCommandLock.NONE, tuple(CleanCommandLock))

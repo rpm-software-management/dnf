@@ -63,6 +63,11 @@ def build_log_lock(logdir, exit_on_lock):
                        'log', not exit_on_lock)
 
 
+def build_clean_command_lock(cachedir, exit_on_lock, read):
+    return FileLock(os.path.join(_fit_lock_dir(cachedir), 'clean_command.lock'),
+                     'clean command', not exit_on_lock, read)
+
+
 class ProcessLock(object):
     def __init__(self, target, description, blocking=False):
         self.blocking = blocking

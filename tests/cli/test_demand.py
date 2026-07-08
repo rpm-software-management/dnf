@@ -21,6 +21,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import dnf.cli.demand
+from dnf.cli.demand import CleanCommandLock
 
 import tests.support
 
@@ -42,6 +43,7 @@ class DemandTest(tests.support.TestCase):
         self.assertFalse(demands.sack_activation)
         self.assertFalse(demands.root_user)
         self.assertEqual(demands.success_exit_status, 0)
+        self.assertEqual(demands.clean_command_lock, CleanCommandLock.NONE)
 
     def test_independence(self):
         d1 = dnf.cli.demand.DemandSheet()
