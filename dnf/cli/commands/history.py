@@ -25,6 +25,7 @@ import hawkey
 from dnf.i18n import _, ucd
 from dnf.cli import commands
 from dnf.transaction_sr import TransactionReplay, serialize_transaction
+from dnf.cli.demand import CleanCommandLock
 
 import dnf.cli
 import dnf.exceptions
@@ -110,6 +111,7 @@ class HistoryCommand(commands.Command):
             demands.available_repos = True
             demands.resolving = True
             demands.root_user = True
+            demands.clean_command_lock = CleanCommandLock.READ
 
             # Override configuration options that affect how the transaction is resolved
             self.base.conf.clean_requirements_on_remove = False
@@ -124,6 +126,7 @@ class HistoryCommand(commands.Command):
             demands.available_repos = True
             demands.resolving = True
             demands.root_user = True
+            demands.clean_command_lock = CleanCommandLock.READ
 
             self._require_one_transaction_id = True
             if not self.opts.transactions:

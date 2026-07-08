@@ -22,6 +22,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.comps import CompsQuery
 from dnf.cli import commands
+from dnf.cli.demand import CleanCommandLock
 from dnf.i18n import _, ucd
 
 import libdnf.transaction
@@ -363,6 +364,7 @@ class GroupCommand(commands.Command):
 
         if cmd in ('install', 'upgrade'):
             commands._checkGPGKey(self.base, self.cli)
+            demands.clean_command_lock = CleanCommandLock.READ
 
     def run(self):
         cmd = self.opts.subcmd

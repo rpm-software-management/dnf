@@ -20,6 +20,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.i18n import _
 from dnf.cli import commands
+from dnf.cli.demand import CleanCommandLock
 
 import dnf.util
 import logging
@@ -47,6 +48,7 @@ class SwapCommand(commands.Command):
         demands.available_repos = True
         demands.resolving = True
         demands.root_user = True
+        demands.clean_command_lock = CleanCommandLock.READ
         commands._checkGPGKey(self.base, self.cli)
         commands._checkEnabledRepo(self.base, [self.opts.install_spec])
 

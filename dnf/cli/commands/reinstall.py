@@ -21,6 +21,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 from dnf.cli import commands
+from dnf.cli.demand import CleanCommandLock
 from dnf.cli.option_parser import OptionParser
 from dnf.i18n import _
 
@@ -54,6 +55,7 @@ class ReinstallCommand(commands.Command):
         demands.available_repos = True
         demands.resolving = True
         demands.root_user = True
+        demands.clean_command_lock = CleanCommandLock.READ
         commands._checkGPGKey(self.base, self.cli)
         if not self.opts.filenames:
             commands._checkEnabledRepo(self.base)
