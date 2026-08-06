@@ -142,7 +142,7 @@ class RepoListCommand(commands.Command):
                         size += pkg._size
                         unique_pkgs.add(str(pkg))
                     ui_size = dnf.cli.format.format_number(size)
-                    ui_num_unique = dnf.cli.format.format_number(len(unique_pkgs))
+                    ui_num_unique = _num2ui_num(len(unique_pkgs))
             else:
                 enabled = False
                 if arg == 'enabled' or (arg == 'enabled-default' and not extcmds):
