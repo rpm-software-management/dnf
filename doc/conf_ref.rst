@@ -1143,6 +1143,36 @@ configuration.
     already imported for package signature verification and this option is turned on, it may be needed
     to import it again for the repository.
 
+.. _repo_gpgcheck_auto_import_keys-label:
+
+``repo_gpgcheck_auto_import_keys``
+    :ref:`boolean <boolean-label>`
+
+    Whether to automatically import the metadata signing key configured via :ref:`gpgkey
+    <repo_gpgkey-label>` into the repository's metadata keyring, instead of asking for
+    interactive confirmation. Only applies when :ref:`repo_gpgcheck <repo_gpgcheck-label>`
+    is enabled. The default is False.
+
+    The keys used to verify repository metadata are stored in a separate keyring for each
+    repository, and that keyring is bound to the repository's resolved URL. As a result the
+    interactive ``Is this ok [y/N]:`` prompt to import the metadata key reappears whenever the
+    repository serves content at a new URL (for example after a ``$releasever`` change), and in
+    unattended runs the prompt defaults to No and the repository is dropped. Enabling this option
+    trusts the key configured in ``gpgkey`` directly from the repository configuration, so the
+    metadata key import succeeds without a prompt. This is the same behavior the dnf Python API uses
+    by default.
+
+    The automatic import only applies to keys configured with a local ``file://`` URL, such as keys
+    shipped in the system image under ``/etc/pki/rpm-gpg/``. Keys fetched over the network (for
+    example an ``https://`` ``gpgkey`` URL) always go through the interactive confirmation so the
+    key fingerprint can be verified before it is trusted.
+
+    The imported key and its fingerprint are logged so the import is not silent. The ``assumeno``
+    option (or ``--assumeno``) takes precedence: the key details are shown and the import is
+    declined, as if this option were not set. Only enable this for repositories whose ``gpgkey``
+    you control and trust, because doing so removes the manual confirmation step for that
+    repository's metadata key.
+
 .. _retries-label:
 
 ``retries``

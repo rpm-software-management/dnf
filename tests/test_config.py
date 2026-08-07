@@ -135,6 +135,25 @@ class ConfTest(tests.support.TestCase):
         self.assertEqual(conf.minrate, 2000)
         self.assertEqual(repo.minrate, 4096)
 
+    def test_repo_gpgcheck_auto_import_keys(self):
+        conf = Conf()
+        repo = RepoConf(conf)
+
+        # opt-in: must default to False so dnf keeps prompting before
+        # importing a repository metadata signing key
+        self.assertFalse(conf.repo_gpgcheck_auto_import_keys)
+        self.assertFalse(repo.repo_gpgcheck_auto_import_keys)
+
+        # the repo option is a child of the main option and inherits its value
+        conf.repo_gpgcheck_auto_import_keys = True
+        self.assertTrue(conf.repo_gpgcheck_auto_import_keys)
+        self.assertTrue(repo.repo_gpgcheck_auto_import_keys)
+
+        # a per-repo value overrides the inherited main value
+        repo.repo_gpgcheck_auto_import_keys = False
+        self.assertTrue(conf.repo_gpgcheck_auto_import_keys)
+        self.assertFalse(repo.repo_gpgcheck_auto_import_keys)
+
     def test_prepend_installroot(self):
         conf = Conf()
         conf.installroot = '/mnt/root'
