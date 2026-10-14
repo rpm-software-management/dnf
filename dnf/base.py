@@ -2545,6 +2545,15 @@ class Base(object):
                         logger.warning(P_(msg1, msg2, count))
         return merged_queries
 
+    def _keys_auto_importable(self, po):
+        """Return True if every key of the package's repository may be
+        imported without asking (see the auto_import_local_keys option)."""
+        if po._from_cmdline:
+            return False
+        repo = self.repos[po.repoid]
+        return bool(repo.gpgkey) and all(
+            repo._repo.isKeyAutoImportable(keyurl) for keyurl in repo.gpgkey)
+
     def _get_key_for_package(self, po, askcb=None, fullaskcb=None):
         """Retrieve a key for a package. If needed, use the given
         callback to prompt whether the key should be imported.
@@ -2578,6 +2587,10 @@ class Base(object):
         self._repo_set_imported_gpg_keys.add(repo.id)
         for keyurl in keyurls:
             keys = dnf.crypto.retrieve(keyurl, repo)
+            # A key allowed by auto_import_local_keys is imported without
+            # asking, the same way assumeyes does. libdnf decides it, with
+            # the rule it applies to the repository metadata keys.
+            auto_importable = repo._repo.isKeyAutoImportable(keyurl)
 
             for info in keys:
                 # Check if key is already installed
@@ -2603,7 +2616,7 @@ class Base(object):
                 rc = False
                 if self.conf.assumeno:
                     rc = False
-                elif self.conf.assumeyes:
+                elif self.conf.assumeyes or auto_importable:
                     # DNS Extension: We assume, that the key is trusted in case it is valid,
                     # its existence is explicitly denied or in case the domain is not signed
                     # and therefore there is no way to know for sure (this is mainly for

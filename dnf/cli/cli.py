@@ -346,7 +346,8 @@ class BaseCli(dnf.Base):
 
             elif result == 1:
                 ay = self.conf.assumeyes and not self.conf.assumeno
-                if (not sys.stdin or not sys.stdin.isatty()) and not ay:
+                if (not sys.stdin or not sys.stdin.isatty()) and not ay \
+                        and not self._keys_auto_importable(po):
                     raise dnf.exceptions.Error(_('Refusing to automatically import keys when running ' \
                             'unattended.\nUse "-y" to override.'))
 
