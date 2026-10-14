@@ -21,15 +21,18 @@ from __future__ import unicode_literals
 
 import binascii
 import itertools
+import os
 import re
 import tempfile
 import shutil
 
 import hawkey
+import libdnf.repo
 import libdnf.transaction
 import rpm
 
 import dnf
+import dnf.crypto
 import dnf.exceptions
 import dnf.package
 import dnf.subject
@@ -305,3 +308,113 @@ class Goal2TransactionTest(tests.support.DnfBaseTestCase):
         tsi = tsis[2]
         self.assertEqual(str(tsi.pkg), "tour-5-0.noarch")
         self.assertEqual(tsi.action, libdnf.transaction.TransactionItemAction_OBSOLETED)
+
+
+class KeyImportTest(tests.support.DnfBaseTestCase):
+    """Import of the package signing keys with auto_import_local_keys."""
+
+    REPOS = ['main']
+    BASE_CLI = True
+
+    KEYURL = 'file:///etc/pki/rpm-gpg/RPM-GPG-KEY-test'
+    KEYFILE = os.path.abspath(tests.support.resource_path('keys/key.pub'))
+
+    def setUp(self):
+        super(KeyImportTest, self).setUp()
+        self.repo = self.base.repos['main']
+        self.repo.gpgkey = [self.KEYURL]
+        self.pkg = mock.Mock(_from_cmdline=False, repoid='main')
+        with open(self.KEYFILE, 'rb') as keyfile:
+            self.keys = dnf.crypto.rawkey2infos(keyfile)
+        self.ts = mock.Mock(**{'isTsFlagSet.return_value': False,
+                               'pgpImportPubkey.return_value': 0})
+        self.base._priv_ts = self.ts
+        self.base._sig_check_pkg = mock.Mock(return_value=(0, ''))
+        for target, value in (('dnf.crypto.retrieve', self.keys),
+                              ('dnf.yum.misc.keyInstalled', -1)):
+            patcher = mock.patch(target, return_value=value)
+            patcher.start()
+            self.addCleanup(patcher.stop)
+
+    def _patch_auto_importable(self, value):
+        patcher = mock.patch.object(libdnf.repo.Repo, 'isKeyAutoImportable',
+                                    return_value=value)
+        patched = patcher.start()
+        self.addCleanup(patcher.stop)
+        return patched
+
+    def test_auto_import(self):
+        auto_importable = self._patch_auto_importable(True)
+        askcb = mock.Mock(return_value=False)
+
+        self.base._get_key_for_package(self.pkg, askcb=askcb)
+
+        auto_importable.assert_called_once_with(self.KEYURL)
+        askcb.assert_not_called()
+        self.ts.pgpImportPubkey.assert_called_once()
+
+    def test_auto_import_assumeno(self):
+        # dnf checks assumeno before it looks at the libdnf answer, so the
+        # key is declined even when libdnf would allow it.
+        self._patch_auto_importable(True)
+        self.base.conf.assumeno = True
+        askcb = mock.Mock(return_value=True)
+
+        with self.assertRaisesRegex(dnf.exceptions.Error, 'install any keys'):
+            self.base._get_key_for_package(self.pkg, askcb=askcb)
+
+        askcb.assert_not_called()
+        self.ts.pgpImportPubkey.assert_not_called()
+
+    def test_auto_import_not_allowed(self):
+        self._patch_auto_importable(False)
+        askcb = mock.Mock(return_value=True)
+
+        self.base._get_key_for_package(self.pkg, askcb=askcb)
+
+        askcb.assert_called_once_with(self.pkg, self.keys[0].userid,
+                                      self.keys[0].short_id)
+        self.ts.pgpImportPubkey.assert_called_once()
+
+    def test_auto_import_not_allowed_declined(self):
+        self._patch_auto_importable(False)
+        askcb = mock.Mock(return_value=False)
+
+        with self.assertRaisesRegex(dnf.exceptions.Error, 'install any keys'):
+            self.base._get_key_for_package(self.pkg, askcb=askcb)
+
+        askcb.assert_called_once()
+        self.ts.pgpImportPubkey.assert_not_called()
+
+    def test_auto_import_key_outside_trusted_directory(self):
+        # The real libdnf rule: the option is on, but the key file is not in
+        # the trusted keys directory, so the key still asks for confirmation.
+        self.repo.gpgkey = ['file://%s' % self.KEYFILE]
+        self.repo.auto_import_local_keys = True
+        askcb = mock.Mock(return_value=True)
+
+        self.base._get_key_for_package(self.pkg, askcb=askcb)
+
+        askcb.assert_called_once()
+        self.ts.pgpImportPubkey.assert_called_once()
+
+    def test_gpgsigcheck_unattended(self):
+        # Without a terminal, gpgsigcheck() refuses to import keys unless
+        # every key of the repository may be imported without asking.
+        self.base._sig_check_pkg = mock.Mock(return_value=(1, ''))
+        get_key = mock.Mock()
+        self.base._get_key_for_package = get_key
+        auto_importable = self._patch_auto_importable(False)
+
+        with mock.patch('sys.stdin', None):
+            with self.assertRaisesRegex(dnf.exceptions.Error, 'unattended'):
+                self.base.gpgsigcheck([self.pkg])
+            get_key.assert_not_called()
+
+            auto_importable.return_value = True
+            self.base.gpgsigcheck([self.pkg])
+            get_key.assert_called_once()
+
+            self.pkg._from_cmdline = True
+            with self.assertRaisesRegex(dnf.exceptions.Error, 'unattended'):
+                self.base.gpgsigcheck([self.pkg])
