@@ -135,6 +135,23 @@ class ConfTest(tests.support.TestCase):
         self.assertEqual(conf.minrate, 2000)
         self.assertEqual(repo.minrate, 4096)
 
+    def test_auto_import_local_keys(self):
+        conf = Conf()
+        repo = RepoConf(conf)
+
+        # the option is an opt-in, so it defaults to False
+        self.assertFalse(conf.auto_import_local_keys)
+        self.assertFalse(repo.auto_import_local_keys)
+
+        # a repository inherits the value set in [main]
+        conf.auto_import_local_keys = True
+        self.assertTrue(repo.auto_import_local_keys)
+
+        # a value set for the repository overrides the inherited one
+        repo.auto_import_local_keys = False
+        self.assertTrue(conf.auto_import_local_keys)
+        self.assertFalse(repo.auto_import_local_keys)
+
     def test_prepend_installroot(self):
         conf = Conf()
         conf.installroot = '/mnt/root'
