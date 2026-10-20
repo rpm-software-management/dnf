@@ -55,9 +55,9 @@ class RepoReader(object):
             try:
                 for r in self._get_repos(repofn):
                     yield r
-            except dnf.exceptions.ConfigError:
-                logger.warning(_("Warning: failed loading '%s', skipping."),
-                               repofn)
+            except dnf.exceptions.ConfigError as ex:
+                logger.warning(_("Warning: failed loading '%s', skipping: %s."),
+                               repofn, ex)
 
     def _build_repo(self, parser, id_, repofn):
         """Build a repository using the parsed data."""
