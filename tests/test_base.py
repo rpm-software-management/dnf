@@ -300,3 +300,50 @@ class Goal2TransactionTest(tests.support.DnfBaseTestCase):
         tsi = tsis[2]
         self.assertEqual(str(tsi.pkg), "tour-5-0.noarch")
         self.assertEqual(tsi.action, libdnf.transaction.TransactionItemAction_OBSOLETED)
+
+
+class SigCheckPkgTest(tests.support.DnfBaseTestCase):
+    """Base._sig_check_pkg() result mapping for the untrusted-key case.
+
+    Regression test for the stray `result = 1` that made an untrusted key
+    (sigresult == 3) non-fatal even when no gpgkey was configured.
+    https://github.com/rpm-software-management/dnf/issues/2301
+    """
+
+    REPOS = ['main']
+
+    def setUp(self):
+        super(SigCheckPkgTest, self).setUp()
+        self.repo = self.base.repos['main']
+        self.repo.gpgcheck = True
+        self.pkg = mock.Mock(_from_cmdline=False, repoid='main')
+        self.pkg.localPkg.return_value = '/tmp/pepper-20-0.x86_64.rpm'
+        # _sig_check_pkg opens a read-only rpm transaction; stub it out so the
+        # test never touches a real rpmdb. The signature verdict is injected
+        # per-test via checkSig in _check_pkg().
+        patcher = mock.patch('dnf.rpm.transaction.initReadOnlyTransaction')
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def _check_pkg(self, sigresult):
+        # sigresult is what rpmkeys/checkSig reports:
+        #   0 ok, 1 NOKEY (missing), 2 damaged, 3 NOTTRUSTED, 4 not signed
+        with mock.patch('dnf.rpm.miscutils.checkSig', return_value=sigresult):
+            return self.base._sig_check_pkg(self.pkg)
+
+    def test_untrusted_key_with_gpgkey_configured(self):
+        # A gpgkey is configured, so importing the right key might fix it:
+        # result 1 ("verification failed, but installing the key might help").
+        self.repo.gpgkey = ['file:///etc/pki/rpm-gpg/RPM-GPG-KEY-test']
+        result, msg = self._check_pkg(3)
+        self.assertEqual(result, 1)
+        self.assertIn('not trusted', msg)
+
+    def test_untrusted_key_without_gpgkey_configured(self):
+        # No gpgkey -> nothing to import -> fatal error (result 2).
+        # This is the regression: before the fix a stray `result = 1`
+        # overwrote the value and wrongly returned 1 here.
+        self.repo.gpgkey = []
+        result, msg = self._check_pkg(3)
+        self.assertEqual(result, 2)
+        self.assertIn('not trusted', msg)
