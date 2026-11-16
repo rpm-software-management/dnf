@@ -985,9 +985,8 @@ Makecache Command
 | Aliases: ``mc``
 
 ``dnf [options] makecache``
-    Downloads and caches metadata for enabled repositories. Tries to
-    avoid downloading whenever possible (e.g. when the local metadata hasn't
-    expired yet or when the metadata timestamp hasn't changed).
+    Downloads and caches metadata for enabled repositories. The metadata is
+    refreshed even if the local cache has not expired yet.
 
 ``dnf [options] makecache --timer``
     Like plain ``makecache``, but instructs DNF to be more resource-aware,
