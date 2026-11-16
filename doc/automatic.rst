@@ -63,12 +63,12 @@ The configuration file is separated into topical sections.
 Setting the mode of operation of the program.
 
 ``apply_updates``
-    boolean, default: False
+    :ref:`boolean <boolean-label>`, default: ``False``
 
     Whether packages comprising the available updates should be applied by ``dnf-automatic.timer``, i.e. installed via RPM. Implies ``download_updates``. Note that if this is set to ``False``, downloaded packages will be left in the cache till the next successful DNF transaction. Note that the other timer units override this setting.
 
 ``download_updates``
-    boolean, default: False
+    :ref:`boolean <boolean-label>`, default: ``False``
 
     Whether packages comprising the available updates should be downloaded by ``dnf-automatic.timer``. Note that the other timer units override this setting.
 
@@ -90,7 +90,7 @@ Setting the mode of operation of the program.
     What kind of upgrades to look at. ``default`` signals looking for all available updates, ``security`` only those with an issued security advisory.
 
 ``systemd_inhibit``
-    boolean, default: True
+    :ref:`boolean <boolean-label>`, default: ``True``
 
     Whether to block system shutdown while applying package updates. When enabled, dnf-automatic acquires a systemd inhibitor lock during the transaction phase to prevent scheduled reboots or system shutdown from interrupting package installation. The lock is automatically released when the transaction completes. If systemd-logind is unavailable (e.g., in containers), this setting has no effect. Set to ``False`` to disable if the inhibitor conflicts with your maintenance workflows.
 
@@ -125,7 +125,7 @@ Choosing how the results should be reported.
     How the system is called in the reports.
 
 ``send_error_messages``
-    boolean, default: False
+    :ref:`boolean <boolean-label>`, default: ``False``
 
     Invokes emitters when an error occurs.
 
