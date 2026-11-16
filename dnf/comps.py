@@ -671,11 +671,23 @@ class Solver(object):
         if not comps_group:
             raise CompsError(_("Group id '%s' does not exist.") % ucd(group_id))
 
-        swdb_group = self.history.group.new(group_id, comps_group.name, comps_group.ui_name, pkg_types)
-        for pkg in comps_group.packages_iter():
-            pkg_installed = self.history.swdb.getPackageCompsGroups(pkg.name) != ()
-            swdb_group.addPackage(pkg.name, pkg_installed, Package._OPT_MAP[pkg.type])
-        self.history.group.install(swdb_group)
+        # Do not record an already installed group again unless the requested
+        # package types or the group's package list have changed.
+        installed_group = self.history.group.get(group_id)
+        group_unchanged = False
+        if installed_group is not None:
+            installed_names = {pkg.getName() for pkg in installed_group.getPackages()}
+            requested_names = {pkg.name for pkg in self._pkgs_of_type(comps_group, pkg_types)}
+            group_unchanged = not (pkg_types & ~installed_group.getPackageTypes()) and \
+                requested_names.issubset(installed_names)
+
+        if not group_unchanged:
+            swdb_group = self.history.group.new(group_id, comps_group.name, comps_group.ui_name,
+                                                pkg_types)
+            for pkg in comps_group.packages_iter():
+                pkg_installed = self.history.swdb.getPackageCompsGroups(pkg.name) != ()
+                swdb_group.addPackage(pkg.name, pkg_installed, Package._OPT_MAP[pkg.type])
+            self.history.group.install(swdb_group)
 
         trans = TransactionBunch()
         # TODO: remove exclude
