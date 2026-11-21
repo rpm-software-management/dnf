@@ -42,6 +42,20 @@ class EmptyPersistorTest(tests.support.ResultTestCase):
         cnt = self.base.group_install(grp.id, ('mandatory',))
         self.assertEqual(cnt, 2)
 
+    def test_group_install_already_installed(self):
+        comps_group = self.base.comps.group_by_pattern('Base')
+        self.base.group_install(comps_group.id, ('mandatory',))
+        self._swdb_commit()
+
+        self.base.reset(goal=True)
+        pkg_count = self.base.group_install(comps_group.id, ('mandatory',))
+        self.assertEqual(pkg_count, 2)
+        self.assertEqual(len(self.base.history.group), 0)
+
+        trans_count = len(self.base.history.old())
+        self.base.do_transaction()
+        self.assertEqual(len(self.base.history.old()), trans_count)
+
     def test_finalize_comps_trans(self):
         trans = dnf.comps.TransactionBunch()
         trans.install = ('trampoline',)
@@ -108,7 +122,10 @@ class PresetPersistorTest(tests.support.ResultTestCase):
            handle them manually for proper functionality of group remove"""
         group_id = 'somerset'
         self.base.group_install(group_id, ('mandatory',))
-        swdb_group = self.history.group._installed[group_id]
+        swdb_group = self.history.group._installed.get(group_id)
+        if swdb_group is None:
+            swdb_group = self.history.group.get(group_id)
+        self.assertIsNotNone(swdb_group)
         tsis = []
         for swdb_pkg in swdb_group.getPackages():
             swdb_pkg.setInstalled(True)
